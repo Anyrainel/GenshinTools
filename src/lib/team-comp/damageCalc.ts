@@ -189,9 +189,12 @@ type ProvidedStaticBuff = {
 /** Precomputed context for repeated optimizer evaluations. */
 export type OptimizerContext = {
   swapCharId: string;
+  /** All character IDs whose artifact stats are variable (includes swapCharId). */
+  variableCharIds: Set<string>;
   calcTargetId: string;
   ctx?: CalcContext;
   targetDependent: Record<string, StatBuff[]>;
+  /** Pre-computed stats for non-variable characters (artifact sheets baked in). */
   supportPreStats: Record<string, StatSheet>;
   charBuildOrder: [string, CharBuild][];
   /** Original artifact stat sheets (needed for off-field stat recomputation). */
@@ -933,19 +936,26 @@ export class TeamBuild {
    */
   createOptimizerContext(
     baseSheets: Record<string, StatSheet>,
-    swapCharId: string,
+    swapCharId: string | string[],
     calcTargetId: string,
     ctx?: CalcContext
   ): OptimizerContext {
+    const variableCharIds = Array.isArray(swapCharId)
+      ? new Set(swapCharId)
+      : new Set([swapCharId]);
+    const primarySwapCharId = Array.isArray(swapCharId)
+      ? swapCharId[0]
+      : swapCharId;
+
     // Field-dependent buff filtering (constant for a given calcTargetId)
     const targetDependent = this.getFieldDependentBuffs(calcTargetId);
 
-    // Support preStats (constant since their artifact sheets don't change)
+    // Support preStats: only for non-variable characters (their artifact sheets are baked in)
     const supportPreStats: Record<string, StatSheet> = {};
     // charBuildOrder preserves Object.entries iteration order for FP parity
     const charBuildOrder = Object.entries(this.charBuilds);
     for (const [id, build] of charBuildOrder) {
-      if (id !== swapCharId) {
+      if (!variableCharIds.has(id)) {
         supportPreStats[id] = build.getPreStats(
           baseSheets[id] ?? new StatSheet([]),
           targetDependent[id]!
@@ -954,7 +964,8 @@ export class TeamBuild {
     }
 
     return {
-      swapCharId,
+      swapCharId: primarySwapCharId,
+      variableCharIds,
       calcTargetId,
       ctx,
       targetDependent,

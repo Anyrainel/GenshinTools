@@ -10,16 +10,18 @@ import type { ArtifactData, GlobalStatWeights, MainStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
-import type { OptimizerContext, TeamBuild } from "../damageCalc";
+import type { TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import {
   buildArtifactVarLookup,
-  compileTeamDamage,
+  compileComboTeamDamage,
   fillVarsFromRawStats,
+  makeCompiledEvalDamage,
 } from "../formulaCompiler";
 import type {
   CalcContext,
   CharOptConfig,
+  ComboFormula,
   DamageResult,
   OptFailReason,
   PartialBuffInfo,
@@ -38,11 +40,7 @@ import {
   ConstraintChecker,
   boostWeightsForConstraints,
 } from "./constraintChecker";
-import {
-  evaluateBuild,
-  evaluateUpperBound,
-  evaluateUpperBoundCompiled,
-} from "./evaluation";
+import { evaluateUpperBoundCompiled } from "./evaluation";
 import { computeMarginalWeights } from "./marginalWeights";
 import { TopKCollector } from "./topKCollector";
 import type {
@@ -84,87 +82,6 @@ const SET22_PATTERNS: number[][] = (() => {
   }
   return patterns;
 })();
-
-// ─── Core B&B DFS ───
-
-/** Standard (non-compiled) B&B DFS. */
-function bnbDfs(
-  slotGroups: ArtifactData[][],
-  slotSupers: SuperArtifact[],
-  ctx: BnBContext
-): void {
-  const { constraints, collector } = ctx;
-  const { hasEr, hasCr } = constraints;
-
-  const suffixMaxEr = new Float64Array(6);
-  const suffixMaxCr = new Float64Array(6);
-  for (let s = 4; s >= 0; s--) {
-    suffixMaxEr[s] = suffixMaxEr[s + 1] + slotSupers[s].maxEr;
-    suffixMaxCr[s] = suffixMaxCr[s + 1] + slotSupers[s].maxCr;
-  }
-  const superStatsBySlot = slotSupers.map((s) => s.stats);
-  const pieces: ArtifactTuple = [null, null, null, null, null];
-
-  function dfs(depth: number, cumEr: number, cumCr: number): void {
-    if (ctx.aborted) return;
-    if (ctx.deadline && ctx.evaluations % 1000 === 0) {
-      if (performance.now() > ctx.deadline) {
-        ctx.aborted = true;
-        return;
-      }
-    }
-    if (depth === 5) {
-      const { damage, result } = evaluateBuild(pieces, ctx);
-      collector.add(damage, result, pieces);
-      ctx.evaluations++;
-      ctx.sinceLastYield++;
-      if (ctx.sinceLastYield >= 50_000 && ctx.onProgress) {
-        ctx.sinceLastYield = 0;
-        ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
-      }
-      return;
-    }
-    const group = slotGroups[depth];
-    if (group.length === 0) {
-      pieces[depth] = null;
-      dfs(depth + 1, cumEr, cumCr);
-      return;
-    }
-    const sfxEr = suffixMaxEr[depth + 1];
-    const sfxCr = suffixMaxCr[depth + 1];
-
-    for (let gi = 0; gi < group.length; gi++) {
-      const art = group[gi];
-      const artEr = hasEr ? getArtifactEr(art) : 0;
-      const artCr = hasCr ? getArtifactCr(art) : 0;
-      const newCumEr = cumEr + artEr;
-      const newCumCr = cumCr + artCr;
-
-      if (!constraints.canMeet(newCumEr, newCumCr, sfxEr, sfxCr)) continue;
-
-      pieces[depth] = art;
-      if (collector.threshold > 0 && depth < 4) {
-        const remaining: Partial<Record<StatKey, number>>[] = [];
-        for (let s = depth + 1; s < 5; s++) remaining.push(superStatsBySlot[s]);
-        const ub = evaluateUpperBound(
-          pieces.slice(0, depth + 1),
-          remaining,
-          ctx
-        );
-        ctx.evaluations++;
-        ctx.sinceLastYield++;
-        if (ctx.sinceLastYield >= 50_000 && ctx.onProgress) {
-          ctx.sinceLastYield = 0;
-          ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
-        }
-        if (ub <= collector.threshold) continue;
-      }
-      dfs(depth + 1, newCumEr, newCumCr);
-    }
-    pieces[depth] = null;
-  }
-  dfs(0, 0, 0);
-}
 
 // ─── Compiled B&B DFS (incremental vars, pre-computed deltas) ───
 
@@ -344,6 +261,45 @@ function bnbDfsCompiled(
   dfs(0, 0, 0);
 }
 
+/** Evaluate a complete build using the compiled expression (for hill-climb warm-start). */
+function evaluateBuildCompiled(pieces: ArtifactTuple, ctx: BnBContext): number {
+  const { compiled, lookup } = ctx.compiledCtx;
+  const numVars = compiled.numVars;
+  const vars = new Float64Array(numVars);
+
+  for (let i = 0; i < 5; i++) {
+    const art = pieces[i];
+    if (!art) continue;
+    const mainKey = art.mainStatKey;
+    if (mainKey) {
+      const idx = lookup.keyToIdx.get(mainKey);
+      if (idx !== undefined) {
+        const displayVal = getMainStatValueAtLevel(
+          mainKey as MainStat,
+          art.rarity,
+          art.level
+        );
+        vars[idx] += lookup.keyIsPct.get(mainKey)
+          ? displayVal / 100
+          : displayVal;
+      }
+    }
+    if (art.substats) {
+      for (const subKey of Object.keys(art.substats)) {
+        const subVal = art.substats[subKey as keyof typeof art.substats];
+        if (!subVal) continue;
+        const idx = lookup.keyToIdx.get(subKey);
+        if (idx !== undefined) {
+          vars[idx] += lookup.keyIsPct.get(subKey) ? subVal / 100 : subVal;
+        }
+      }
+    }
+  }
+
+  if (!ctx.constraints.isFeasibleCompiled(compiled, vars)) return -1;
+  return compiled.evaluate(vars);
+}
+
 function buildSlotGroupsForPattern(
   pattern: number[],
   slotData: PreparedSlotData[],
@@ -386,56 +342,64 @@ export function runCharacterBnB(
   baseSheets: Record<string, StatSheet>,
   calcContext: CalcContext,
   excludedIds: Set<string> | undefined,
-  reactionOverride: ReactionOverride | undefined,
-  scoreFn:
-    | ((sheets: Record<string, StatSheet>, calcTargetId: string) => number)
-    | undefined,
+  combo: ComboFormula,
+  reactionOverrides: Record<string, ReactionOverride> | undefined,
   topK: number,
   deadline?: number,
   warmStartThreshold?: number,
   maxArtsPerSlot = 0,
-  /** @internal For benchmarking only — disable AST compilation */
-  _noCompile = false,
   onProgress?: (bestDamage: number, evaluations: number) => void,
-  partialBuffs?: PartialBuffInfo[]
+  comboLinePartialBuffs?: Record<number, PartialBuffInfo[]>
 ): CharacterBnBResult {
   const swapCharId = charId;
-  const calcTargetId = carryCharId;
-  const formulaCharId = carryCharId;
 
   // CR discount: reduce CR weight in artifact ranking when the character
   // already has high base CR (from character stats, weapon, team buffs).
   // The damage formula caps CR at 100%, so additional CR substats have
   // diminishing value as total CR approaches the cap.
   let crDiscount = 1;
-  if (swapCharId === formulaCharId) {
-    {
-      const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
-      const blStats = teamBuild.getTeamStats(
-        blSheets,
-        calcTargetId,
-        calcContext
-      );
-      const effectiveCr = blStats[formulaCharId]?.get("cr", null) ?? 0;
-      crDiscount = effectiveCr >= 1.0 ? 0 : Math.max(0, 1 - effectiveCr);
-    }
+  {
+    const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
+    const blStats = teamBuild.getTeamStats(blSheets, carryCharId, calcContext);
+    const effectiveCr = blStats[swapCharId]?.get("cr", null) ?? 0;
+    crDiscount = effectiveCr >= 1.0 ? 0 : Math.max(0, 1 - effectiveCr);
   }
 
-  // Compute midpoint marginal-gain weights for carry characters (costs ~20 damage evals).
+  // Compile a single-formula evaluator for marginal weight computation.
+  // Reused for both initial marginals and post-warm-start recomputation.
+  const marginalCombo: ComboFormula = {
+    id: "__marginal__",
+    label: { zh: "", en: "" },
+    lines: [{ charId: swapCharId, formulaId, count: 1 }],
+  };
+  const marginalCompiled = compileComboTeamDamage(
+    teamBuild,
+    marginalCombo,
+    swapCharId,
+    baseSheets,
+    calcContext
+  );
+  const marginalCharIdx = marginalCompiled.charIdxMap?.get(swapCharId) ?? 0;
+  const marginalVars = new Float64Array(marginalCompiled.numVars);
+  const marginalEvalFn = makeCompiledEvalDamage(
+    swapCharId,
+    marginalCompiled,
+    marginalCharIdx,
+    marginalVars
+  );
+
+  // Compute midpoint marginal-gain weights for carry characters.
   // Used for initial artifact ranking (hill-climb warm-start). After the warm-start
   // finds a good solution, we recompute marginals at that solution's operating point
   // and re-sort artifacts before the full DFS — this gives more accurate diminishing
   // returns (e.g., ER on high-ER Raiden) than the synthetic midpoint.
   let marginals: MarginalWeights | null = null;
-  if (swapCharId === formulaCharId && !scoreFn) {
+  if (combo.lines.some((l) => l.charId === swapCharId && l.count > 0)) {
     marginals = computeMarginalWeights(
-      teamBuild,
+      marginalEvalFn,
       swapCharId,
-      formulaId,
       baseSheets,
-      calcContext,
-      charConfig.buildMatch, // use original buildMatch for marginal computation (damage-based)
-      reactionOverride
+      charConfig.buildMatch // use original buildMatch for marginal computation (damage-based)
     );
   }
 
@@ -444,12 +408,11 @@ export function runCharacterBnB(
     teamBuild,
     charId,
     baseSheets,
-    calcTargetId,
+    carryCharId,
     calcContext,
     charConfig.minEr,
     charConfig.minCr
   );
-
   // Boost ER/CR artifact weights so high-ER/CR artifacts survive pool truncation.
   let effectiveBuildMatch = charConfig.buildMatch;
   let effectiveMarginals = marginals;
@@ -578,60 +541,47 @@ export function runCharacterBnB(
     }
   }
 
-  // Precompute optimizer context for fast getTeamStats (caches support preStats)
-  const optCtx = scoreFn
-    ? undefined
-    : teamBuild.createOptimizerContext(
-        baseSheets,
-        swapCharId,
-        calcTargetId,
-        calcContext
-      );
+  // Convert comboLinePartialBuffs to the string-keyed format for the compiler
+  const buffOverrides: Record<string, PartialBuffInfo[]> | undefined =
+    comboLinePartialBuffs
+      ? Object.fromEntries(
+          Object.entries(comboLinePartialBuffs).map(([idx, buffs]) => [
+            `line:${idx}`,
+            buffs,
+          ])
+        )
+      : undefined;
 
-  // Try to compile the damage formula for fast evaluation in DFS
-  let compiledCtx: CompiledContext | undefined;
-  if (optCtx && swapCharId === formulaCharId && !scoreFn && !_noCompile) {
-    try {
-      const compiled = compileTeamDamage(
-        teamBuild,
-        formulaCharId,
-        formulaId,
-        calcContext,
-        optCtx,
-        reactionOverride,
-        constraints.active ? constraints.charId : undefined,
-        constraints.minEr,
-        constraints.minCr,
-        partialBuffs
-      );
-      const charIdx = Object.keys(teamBuild.charBuilds).indexOf(swapCharId);
-      compiledCtx = {
-        compiled,
-        vars: new Float64Array(compiled.numVars),
-        charIdx,
-        lookup: buildArtifactVarLookup(compiled.varMapping, charIdx),
-      };
-    } catch {
-      // Compilation failed — fall back to standard evaluation
-    }
-  }
+  const compiled = compileComboTeamDamage(
+    teamBuild,
+    combo,
+    swapCharId,
+    baseSheets,
+    calcContext,
+    reactionOverrides,
+    buffOverrides,
+    constraints.active ? constraints.charId : undefined,
+    constraints.minEr,
+    constraints.minCr
+  );
+  const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
+  const compiledCtx: CompiledContext = {
+    compiled,
+    vars: new Float64Array(compiled.numVars),
+    charIdx,
+    lookup: buildArtifactVarLookup(compiled.varMapping, charIdx),
+  };
 
   const collector = new TopKCollector(topK, warmStartThreshold);
   const ctx: BnBContext = {
     teamBuild,
     swapCharId,
-    formulaCharId,
-    formulaId,
     baseSheets,
-    calcTargetId,
     calcContext,
     constraints,
-    reactionOverride,
-    scoreFn,
     collector,
     evaluations: 0,
     sinceLastYield: 0,
-    optCtx,
     compiledCtx,
     deadline,
     onProgress,
@@ -683,6 +633,27 @@ export function runCharacterBnB(
       ];
       const seeds: ArtifactTuple[] = [baseSeed];
 
+      // ER-greedy seed: when ER constraint exists, add a seed that picks
+      // the highest-ER artifact per slot. This ensures the HC explores at
+      // least one starting point that can meet ER, even if the weight-based
+      // greedy seed doesn't. Without this, the HC gets stuck when no single-
+      // slot swap from the greedy seed crosses the ER threshold.
+      if (constraints.erGap > 0) {
+        const erSeed: ArtifactTuple = [...baseSeed] as ArtifactTuple;
+        for (let s = 0; s < 5; s++) {
+          const group = task.groups[s];
+          let bestEr = getArtifactEr(erSeed[s]);
+          for (const art of group) {
+            const er = getArtifactEr(art);
+            if (er > bestEr) {
+              bestEr = er;
+              erSeed[s] = art;
+            }
+          }
+        }
+        seeds.push(erSeed);
+      }
+
       if (useDiverseSeeds) {
         // For sands/goblet/circlet, seed from each distinct main stat's best
         for (let s = 2; s < 5 && seeds.length <= 7; s++) {
@@ -705,8 +676,8 @@ export function runCharacterBnB(
       for (const seed of seeds) {
         if (ctx.aborted) break;
         const pieces: ArtifactTuple = [...seed] as ArtifactTuple;
-        let bestDamage = evaluateBuild(pieces, ctx).damage;
-        collector.add(bestDamage, null, pieces);
+        let bestDamage = evaluateBuildCompiled(pieces, ctx);
+        if (bestDamage > 0) collector.add(bestDamage, null, pieces);
         ctx.evaluations++;
         if (ctx.onProgress)
           ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
@@ -725,7 +696,7 @@ export function runCharacterBnB(
               if (group[gi] === pieces[s]) continue;
               const saved = pieces[s];
               pieces[s] = group[gi];
-              const { damage } = evaluateBuild(pieces, ctx);
+              const damage = evaluateBuildCompiled(pieces, ctx);
               ctx.evaluations++;
               if (damage > bestDamage) {
                 bestDamage = damage;
@@ -759,7 +730,6 @@ export function runCharacterBnB(
     let hc2Collector: TopKCollector | null = null;
     if (
       isCarry &&
-      !scoreFn &&
       !ctx.aborted &&
       collector.best &&
       collector.best.damage > 0
@@ -768,13 +738,10 @@ export function runCharacterBnB(
         (a): a is ArtifactData => a != null
       );
       const warmMarginals = computeMarginalWeights(
-        teamBuild,
+        marginalEvalFn,
         swapCharId,
-        formulaId,
         baseSheets,
-        calcContext,
         effectiveBuildMatch,
-        reactionOverride,
         StatSheet.fromArtifacts(warmArts)
       );
       if (warmMarginals) {
@@ -815,20 +782,14 @@ export function runCharacterBnB(
 
     // Sort by upper bound descending — explore most promising patterns first
     tasks.sort((a, b) => b.upperBound - a.upperBound);
-    const useCompiled = !!ctx.compiledCtx;
     for (const task of tasks) {
       if (ctx.aborted) break;
       if (
         ctx.collector.threshold > 0 &&
         task.upperBound <= ctx.collector.threshold
-      ) {
+      )
         continue;
-      }
-      if (useCompiled) {
-        bnbDfsCompiled(task.groups, task.supers, ctx);
-      } else {
-        bnbDfs(task.groups, task.supers, ctx);
-      }
+      bnbDfsCompiled(task.groups, task.supers, ctx);
     }
 
     // Merge HC2 results into main collector after DFS
@@ -840,24 +801,17 @@ export function runCharacterBnB(
   }
 
   function computePatternUpperBound(supers: SuperArtifact[]): number {
-    if (ctx.compiledCtx) {
-      const { compiled, lookup, charIdx, vars } = ctx.compiledCtx;
-      const superStats = supers.map((s) => s.stats);
-      return evaluateUpperBoundCompiled(
-        [],
-        0,
-        superStats,
-        superStats.length,
-        compiled,
-        lookup,
-        charIdx,
-        vars
-      );
-    }
-    return evaluateUpperBound(
+    const { compiled, lookup, charIdx, vars } = ctx.compiledCtx;
+    const superStats = supers.map((s) => s.stats);
+    return evaluateUpperBoundCompiled(
       [],
-      supers.map((s) => s.stats),
-      ctx
+      0,
+      superStats,
+      superStats.length,
+      compiled,
+      lookup,
+      charIdx,
+      vars
     );
   }
 

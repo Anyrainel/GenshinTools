@@ -56,6 +56,8 @@ export interface CompiledTeamDamage {
   numVars: number;
   /** The raw expression (for testing/debugging) */
   damageExpr: Expr;
+  /** Maps variable character IDs → charIdx (their position in charBuildOrder). */
+  charIdxMap?: Map<string, number>;
 }
 
 // ─── All possible artifact stat keys ───
@@ -87,33 +89,41 @@ const ARTIFACT_STAT_KEYS: StatKey[] = [
 /**
  * Build postExprStats for a given optimizer context, using a shared VarMapping.
  * This is the core pipeline shared between single-formula and combo compilation.
+ *
+ * All characters in `optCtx.variableCharIds` get Float64Array variables for their
+ * artifact stats; other characters' stats are baked in from `supportPreStats`.
  */
 function buildPostExprStatsForContext(
   teamBuild: TeamBuild,
   optCtx: OptimizerContext,
   varMapping: VarMapping,
-  charIdx: number,
   calcContext: CalcContext
 ): Record<string, ExprStats> {
-  const { swapCharId, charBuildOrder, supportPreStats, targetDependent } =
+  const { variableCharIds, charBuildOrder, supportPreStats, targetDependent } =
     optCtx;
 
-  const charBuild =
-    charBuildOrder.find(([id]) => id === swapCharId)?.[1] ?? null;
-  if (!charBuild)
-    throw new Error(`Character ${swapCharId} not found in team build`);
-
   const emptySheet = new StatSheet([]);
-  const swapBaseline = charBuild.getPreStats(
-    emptySheet,
-    targetDependent[swapCharId] ?? []
-  );
+
+  // Compute baselines (empty-sheet preStats) for all variable characters
+  const variableBaselines: Record<string, StatSheet> = {};
+  for (const varCharId of variableCharIds) {
+    const build = charBuildOrder.find(([id]) => id === varCharId)?.[1];
+    if (!build)
+      throw new Error(
+        `Variable character ${varCharId} not found in team build`
+      );
+    variableBaselines[varCharId] = build.getPreStats(
+      emptySheet,
+      targetDependent[varCharId] ?? []
+    );
+  }
 
   const exprStatsMap: Record<string, ExprStats> = {};
   for (const [id] of charBuildOrder) {
-    if (id === swapCharId) {
+    if (variableCharIds.has(id)) {
+      const charIdx = charBuildOrder.findIndex(([cid]) => cid === id);
       exprStatsMap[id] = createExprStats(
-        swapBaseline,
+        variableBaselines[id],
         charIdx,
         varMapping,
         new Set(ARTIFACT_STAT_KEYS)
@@ -131,16 +141,16 @@ function buildPostExprStatsForContext(
   const dynamicBuffExprs = collectDynamicBuffExprs(
     teamBuild,
     exprStatsMap,
-    swapCharId,
+    variableCharIds,
     supportPreStats,
-    swapBaseline
+    variableBaselines
   );
 
   const postExprStats = applyDynamicBuffExprs(
     exprStatsMap,
     dynamicBuffExprs,
     teamBuild,
-    swapCharId,
+    variableCharIds,
     optCtx
   );
 
@@ -164,41 +174,45 @@ function buildPostExprStatsExcluding(
   teamBuild: TeamBuild,
   optCtx: OptimizerContext,
   varMapping: VarMapping,
-  charIdx: number,
   calcContext: CalcContext,
   excludeKeys: Set<string>
 ): Record<string, ExprStats> {
-  const { swapCharId, charBuildOrder, supportPreStats, targetDependent } =
+  const { variableCharIds, charBuildOrder, supportPreStats, targetDependent } =
     optCtx;
 
-  const charBuild =
-    charBuildOrder.find(([id]) => id === swapCharId)?.[1] ?? null;
-  if (!charBuild)
-    throw new Error(`Character ${swapCharId} not found in team build`);
-
-  // Use exclusion-aware preStats for the swap character
   const emptySheet = new StatSheet([]);
-  const swapBaseline = charBuild.getPreStatsExcluding(
-    emptySheet,
-    targetDependent[swapCharId] ?? [],
-    teamBuild.allStaticBuffs,
-    excludeKeys,
-    swapCharId,
-    teamBuild.teamMeta.regions[swapCharId],
-    teamBuild.teamMeta.factions[swapCharId]
-  );
+
+  // Compute exclusion-aware baselines for variable characters
+  const variableBaselines: Record<string, StatSheet> = {};
+  for (const varCharId of variableCharIds) {
+    const build = charBuildOrder.find(([id]) => id === varCharId)?.[1];
+    if (!build)
+      throw new Error(
+        `Variable character ${varCharId} not found in team build`
+      );
+    variableBaselines[varCharId] = build.getPreStatsExcluding(
+      emptySheet,
+      targetDependent[varCharId] ?? [],
+      teamBuild.allStaticBuffs,
+      excludeKeys,
+      varCharId,
+      teamBuild.teamMeta.regions[varCharId],
+      teamBuild.teamMeta.factions[varCharId]
+    );
+  }
 
   const exprStatsMap: Record<string, ExprStats> = {};
   for (const [id] of charBuildOrder) {
-    if (id === swapCharId) {
+    if (variableCharIds.has(id)) {
+      const charIdx = charBuildOrder.findIndex(([cid]) => cid === id);
       exprStatsMap[id] = createExprStats(
-        swapBaseline,
+        variableBaselines[id],
         charIdx,
         varMapping,
         new Set(ARTIFACT_STAT_KEYS)
       );
     } else {
-      // Support characters also need exclusion-aware preStats
+      // Non-variable characters also need exclusion-aware preStats
       const supportBuild = charBuildOrder.find(([cid]) => cid === id)?.[1];
       if (supportBuild) {
         const supportExcluded = supportBuild.getPreStatsExcluding(
@@ -231,16 +245,16 @@ function buildPostExprStatsExcluding(
   const dynamicBuffExprs = collectDynamicBuffExprs(
     teamBuild,
     exprStatsMap,
-    swapCharId,
+    variableCharIds,
     supportPreStats,
-    swapBaseline
+    variableBaselines
   ).filter((b) => !excludeKeys.has(buffSourceKey(b.source)));
 
   const postExprStats = applyDynamicBuffExprs(
     exprStatsMap,
     dynamicBuffExprs,
     teamBuild,
-    swapCharId,
+    variableCharIds,
     optCtx
   );
 
@@ -267,7 +281,6 @@ function buildExprStatVariants(
   teamBuild: TeamBuild,
   optCtx: OptimizerContext,
   varMapping: VarMapping,
-  charIdx: number,
   calcContext: CalcContext
 ): Map<string, ExprStats> {
   const variants = new Map<string, ExprStats>();
@@ -303,7 +316,6 @@ function buildExprStatVariants(
         teamBuild,
         optCtx,
         varMapping,
-        charIdx,
         calcContext,
         excludeSet
       );
@@ -340,15 +352,11 @@ export function compileTeamDamage(
   partialBuffs?: PartialBuffInfo[]
 ): CompiledTeamDamage {
   const varMapping = new VarMapping();
-  const charIdx = optCtx.charBuildOrder.findIndex(
-    ([id]) => id === optCtx.swapCharId
-  );
 
   const postExprStats = buildPostExprStatsForContext(
     teamBuild,
     optCtx,
     varMapping,
-    charIdx,
     calcContext
   );
 
@@ -374,7 +382,7 @@ export function compileTeamDamage(
     if (otherCharId) {
       const offFieldOptCtx = teamBuild.createOptimizerContext(
         optCtx.baseSheets,
-        optCtx.swapCharId,
+        [...optCtx.variableCharIds],
         otherCharId,
         calcContext
       );
@@ -382,7 +390,6 @@ export function compileTeamDamage(
         teamBuild,
         offFieldOptCtx,
         varMapping,
-        charIdx,
         calcContext
       );
       offFieldFormulaStats = offFieldPostExprStats[formulaCharId];
@@ -400,7 +407,6 @@ export function compileTeamDamage(
       teamBuild,
       optCtx,
       varMapping,
-      charIdx,
       calcContext
     );
     if (offFieldFormulaStats) {
@@ -410,7 +416,7 @@ export function compileTeamDamage(
       if (otherCharId) {
         const offFieldOptCtx = teamBuild.createOptimizerContext(
           optCtx.baseSheets,
-          optCtx.swapCharId,
+          [...optCtx.variableCharIds],
           otherCharId,
           calcContext
         );
@@ -421,7 +427,6 @@ export function compileTeamDamage(
           teamBuild,
           offFieldOptCtx,
           varMapping,
-          charIdx,
           calcContext
         );
       }
@@ -465,6 +470,13 @@ export function compileTeamDamage(
     }
   }
 
+  // Build charIdxMap for all variable characters
+  const charIdxMap = new Map<string, number>();
+  for (const varCharId of optCtx.variableCharIds) {
+    const idx = optCtx.charBuildOrder.findIndex(([id]) => id === varCharId);
+    if (idx >= 0) charIdxMap.set(varCharId, idx);
+  }
+
   return {
     varMapping,
     evaluate,
@@ -472,6 +484,7 @@ export function compileTeamDamage(
     evaluateCr,
     numVars: varMapping.totalVars,
     damageExpr: simplified,
+    charIdxMap,
   };
 }
 
@@ -483,11 +496,14 @@ export function compileTeamDamage(
 export function compileComboTeamDamage(
   teamBuild: TeamBuild,
   combo: ComboFormula,
-  swapCharId: string,
+  swapCharId: string | string[],
   baseSheets: Record<string, StatSheet>,
   calcContext: CalcContext,
   singleModeOverrides?: Record<string, ReactionOverride>,
-  buffOverrides?: Record<string, PartialBuffInfo[]>
+  buffOverrides?: Record<string, PartialBuffInfo[]>,
+  erCheckCharId?: string,
+  minEr?: number,
+  minCr?: number
 ): CompiledTeamDamage {
   const allFormulas = teamBuild.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
@@ -518,6 +534,9 @@ export function compileComboTeamDamage(
 
   const varMapping = new VarMapping();
   const allPartExprs: Expr[] = [];
+  // Capture any postExprStats for ER/CR constraint compilation (ER/CR is not
+  // on-field-dependent, so any calcTarget's stats work for the constraint char)
+  let anyPostExprStats: Record<string, ExprStats> | undefined;
 
   for (const [calcTargetId, lines] of linesByCalcTarget) {
     const optCtx = teamBuild.createOptimizerContext(
@@ -526,17 +545,13 @@ export function compileComboTeamDamage(
       calcTargetId,
       calcContext
     );
-    const charIdx = optCtx.charBuildOrder.findIndex(
-      ([id]) => id === swapCharId
-    );
-
     const postExprStats = buildPostExprStatsForContext(
       teamBuild,
       optCtx,
       varMapping,
-      charIdx,
       calcContext
     );
+    if (!anyPostExprStats) anyPostExprStats = postExprStats;
 
     for (const line of lines) {
       const formulaCharBuild = optCtx.charBuildOrder.find(
@@ -599,7 +614,6 @@ export function compileComboTeamDamage(
             teamBuild,
             offFieldOptCtx,
             varMapping,
-            charIdx,
             calcContext
           );
           offFieldFormulaStats = offFieldPostExprStats[line.charId];
@@ -623,7 +637,6 @@ export function compileComboTeamDamage(
           teamBuild,
           optCtx,
           varMapping,
-          charIdx,
           calcContext
         );
         if (offFieldFormulaStats) {
@@ -644,7 +657,6 @@ export function compileComboTeamDamage(
               teamBuild,
               offFieldOptCtx2,
               varMapping,
-              charIdx,
               calcContext
             );
           }
@@ -678,11 +690,54 @@ export function compileComboTeamDamage(
   const damageExpr = simplify(E.add(...allPartExprs));
   const evaluate = compileExpr(damageExpr);
 
+  // Compile ER/CR constraint expressions (same pattern as compileTeamDamage)
+  let evaluateEr: ((vars: Float64Array) => number) | undefined;
+  let evaluateCr: ((vars: Float64Array) => number) | undefined;
+
+  if (erCheckCharId && anyPostExprStats) {
+    const erStats = anyPostExprStats[erCheckCharId];
+    if (erStats) {
+      if (minEr && minEr > 0) {
+        const erExpr = simplify(
+          E.add(erStats.get("er", null), E.const(-minEr))
+        );
+        evaluateEr = compileExpr(erExpr);
+      }
+      if (minCr && minCr > 0) {
+        const crExpr = simplify(
+          E.add(erStats.get("cr", null), E.const(-minCr))
+        );
+        evaluateCr = compileExpr(crExpr);
+      }
+    }
+  }
+
+  // Build charIdxMap for all variable characters
+  // Use any optCtx's charBuildOrder (they all share the same ordering)
+  const variableCharIds = Array.isArray(swapCharId) ? swapCharId : [swapCharId];
+  const sampleCalcTarget = validLines[0]?.charId ?? variableCharIds[0];
+  const sampleOptCtx = teamBuild.createOptimizerContext(
+    baseSheets,
+    swapCharId,
+    sampleCalcTarget,
+    calcContext
+  );
+  const charIdxMap = new Map<string, number>();
+  for (const varCharId of variableCharIds) {
+    const idx = sampleOptCtx.charBuildOrder.findIndex(
+      ([id]) => id === varCharId
+    );
+    if (idx >= 0) charIdxMap.set(varCharId, idx);
+  }
+
   return {
     varMapping,
     evaluate,
+    evaluateEr,
+    evaluateCr,
     numVars: varMapping.totalVars,
     damageExpr,
+    charIdxMap,
   };
 }
 
@@ -699,19 +754,21 @@ interface DynamicBuffExpr {
 function collectDynamicBuffExprs(
   teamBuild: TeamBuild,
   exprStatsMap: Record<string, ExprStats>,
-  swapCharId: string,
+  variableCharIds: Set<string>,
   supportPreStats: Record<string, StatSheet>,
-  swapBaseline: StatSheet
+  variableBaselines: Record<string, StatSheet>
 ): DynamicBuffExpr[] {
   const results: DynamicBuffExpr[] = [];
 
-  // Build teamPreStatsArr at baseline (supports have fixed artifacts, swap has none).
-  // Used for fallback numeric evaluation of opaque dynamicBuffs (e.g. Nahida P1).
+  // Build teamPreStatsArr at baseline (variable chars use empty-sheet baselines,
+  // non-variable chars use supportPreStats). Used for fallback numeric evaluation
+  // of opaque dynamicBuffs (e.g. Nahida P1).
   const teamPreStatsArr: StatSheet[] = [];
   const charIds = Object.keys(exprStatsMap);
+  const firstVariableBaseline = Object.values(variableBaselines)[0];
   for (const id of charIds) {
-    if (id === swapCharId) {
-      teamPreStatsArr.push(swapBaseline);
+    if (variableCharIds.has(id)) {
+      teamPreStatsArr.push(variableBaselines[id]);
     } else if (supportPreStats[id]) {
       teamPreStatsArr.push(supportPreStats[id]);
     }
@@ -760,10 +817,9 @@ function collectDynamicBuffExprs(
       }
     } else if (buff.dynamicBuffs !== StatBuff.prototype.dynamicBuffs) {
       // Opaque dynamicBuffs override — fallback to numeric evaluation at baseline.
-      const ownerSheet =
-        providerCharId === swapCharId
-          ? swapBaseline
-          : (supportPreStats[providerCharId] ?? swapBaseline);
+      const ownerSheet = variableCharIds.has(providerCharId)
+        ? variableBaselines[providerCharId]
+        : (supportPreStats[providerCharId] ?? firstVariableBaseline);
       const entries = buff.dynamicBuffs(ownerSheet, teamPreStatsArr);
       for (const { key, value } of entries) {
         results.push({
@@ -855,7 +911,7 @@ function applyDynamicBuffExprs(
   preExprStats: Record<string, ExprStats>,
   dynamicBuffExprs: DynamicBuffExpr[],
   teamBuild: TeamBuild,
-  swapCharId: string,
+  _variableCharIds: Set<string>,
   optCtx: OptimizerContext
 ): Record<string, ExprStats> {
   const result: Record<string, ExprStats> = {};
@@ -1319,6 +1375,26 @@ export function fillVarsFromSheet(
       vars[idx] += entry.value;
     }
   }
+}
+
+/**
+ * Create a fast evalDamage callback that fills a Float64Array from a single
+ * character's StatSheet and evaluates the compiled expression.
+ *
+ * Returned signature matches DamageEvalFn: (sheets) => number.
+ */
+export function makeCompiledEvalDamage(
+  swapCharId: string,
+  compiled: CompiledTeamDamage,
+  charIdx: number,
+  vars: Float64Array
+): (sheets: Record<string, StatSheet>) => number {
+  return (sheets: Record<string, StatSheet>) => {
+    vars.fill(0);
+    const sheet = sheets[swapCharId];
+    if (sheet) fillVarsFromSheet(sheet, compiled.varMapping, charIdx, vars);
+    return compiled.evaluate(vars);
+  };
 }
 
 /**

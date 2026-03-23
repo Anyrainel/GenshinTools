@@ -3,7 +3,7 @@
  */
 
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import type { OptimizerContext, TeamBuild } from "../damageCalc";
+import type { TeamBuild } from "../damageCalc";
 import type { StatSheet } from "../damageModels";
 import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
 import type {
@@ -11,7 +11,6 @@ import type {
   CharOptConfig,
   DamageResult,
   OptFailReason,
-  ReactionOverride,
   StatKey,
 } from "../types";
 import type { ConstraintChecker } from "./constraintChecker";
@@ -74,19 +73,13 @@ export interface CompiledContext {
 export interface BnBContext {
   teamBuild: TeamBuild;
   swapCharId: string;
-  formulaCharId: string;
-  formulaId: string;
   baseSheets: Record<string, StatSheet>;
-  calcTargetId: string;
   calcContext: CalcContext;
   constraints: ConstraintChecker;
-  reactionOverride?: ReactionOverride;
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
   collector: TopKCollectorLike;
   evaluations: number;
   sinceLastYield: number;
-  optCtx?: OptimizerContext;
-  compiledCtx?: CompiledContext;
+  compiledCtx: CompiledContext;
   deadline?: number;
   aborted?: boolean;
   onProgress?: (bestDamage: number, evaluations: number) => void;

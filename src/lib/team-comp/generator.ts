@@ -15,7 +15,7 @@ import {
   rollToInternal,
 } from "./constrainedGreedy";
 import type { TeamBuild } from "./damageCalc";
-import { evaluateCombo, hasOffFieldParts } from "./damageCalc";
+import { evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import {
   ER_20_HALF_SET_ID,
@@ -29,8 +29,8 @@ import {
 import type { CompiledTeamDamage } from "./formulaCompiler";
 import {
   compileComboTeamDamage,
-  compileTeamDamage,
   fillVarsFromSheet,
+  makeCompiledEvalDamage,
 } from "./formulaCompiler";
 import type { SubstatBudgetPreset } from "./substatBudget";
 import {
@@ -141,9 +141,15 @@ function pickRandom5StarSetKey(): string {
 
 // ─── Helpers ───
 
+/**
+ * One-shot damage evaluation using compiled path.
+ * Compiles fresh each call — use only for cold paths (≤10 calls per generator run).
+ * For hot loops, use compileEval + makeCompiledEvalDamage instead.
+ */
 function evaluateDamage(
   teamBuild: TeamBuild,
   sheets: Record<string, StatSheet>,
+  charId: string,
   carryCharId: string,
   formulaId: string,
   ctx: CalcContext,
@@ -151,46 +157,29 @@ function evaluateDamage(
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>
 ): number {
-  try {
-    if (combo) {
-      return evaluateCombo(teamBuild, combo, sheets, ctx, reactionOverrides)
-        .totalDamage;
-    }
-    const teamStats = teamBuild.getTeamStats(sheets, carryCharId, ctx);
-    // Compute off-field stats if the formula has off-field parts
-    let offFieldStats: Record<string, StatSheet> | undefined;
-    if (hasOffFieldParts(teamBuild, carryCharId, formulaId)) {
-      const otherCharId = Object.keys(teamBuild.charBuilds).find(
-        (id) => id !== carryCharId
-      );
-      if (otherCharId) {
-        offFieldStats = teamBuild.getTeamStats(sheets, otherCharId, ctx);
-      }
-    }
-    const result = teamBuild.getDamageResult(
-      carryCharId,
-      formulaId,
-      teamStats,
-      ctx,
-      reactionOverride,
-      offFieldStats
-    );
-    return result.totalDamage;
-  } catch (e) {
-    console.warn(
-      `[generator] evaluateDamage failed for ${carryCharId}/${formulaId}:`,
-      e
-    );
-    return 0;
-  }
+  const { compiled, charIdx, vars } = compileEval(
+    teamBuild,
+    charId,
+    carryCharId,
+    formulaId,
+    sheets,
+    ctx,
+    reactionOverride,
+    combo,
+    reactionOverrides
+  );
+  vars.fill(0);
+  const sheet = sheets[charId];
+  if (sheet) fillVarsFromSheet(sheet, compiled.varMapping, charIdx, vars);
+  return compiled.evaluate(vars);
 }
 
 /**
  * Try to compile an AST-based fast evaluator for a single varying character.
- * Supports both single-formula and combo mode.
+ * Always uses compileComboTeamDamage (single formula is normalized to 1-line combo).
  * Returns null if compilation fails.
  */
-function tryCompileEval(
+function compileEval(
   teamBuild: TeamBuild,
   swapCharId: string,
   carryCharId: string,
@@ -200,83 +189,37 @@ function tryCompileEval(
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
-  partialBuffs?: PartialBuffInfo[],
+  _partialBuffs?: PartialBuffInfo[],
   comboBuffOverrides?: Record<string, PartialBuffInfo[]>
 ): {
   compiled: CompiledTeamDamage;
   charIdx: number;
   vars: Float64Array;
-} | null {
-  try {
-    if (combo) {
-      // Combo mode: compile all formula lines into one expression
-      const compiled = compileComboTeamDamage(
-        teamBuild,
-        combo,
-        swapCharId,
-        currentSheets,
-        ctx,
-        reactionOverrides,
-        comboBuffOverrides
-      );
-      // charIdx must match the ordering used inside compileComboTeamDamage,
-      // which uses createOptimizerContext → charBuildOrder = Object.entries(charBuilds).
-      // We get the same ordering by creating any optCtx and reading charBuildOrder.
-      const anyCalcTargetId = combo.lines[0]?.charId ?? carryCharId;
-      const tmpCtx = teamBuild.createOptimizerContext(
-        currentSheets,
-        swapCharId,
-        anyCalcTargetId,
-        ctx
-      );
-      const charIdx = tmpCtx.charBuildOrder.findIndex(
-        ([id]) => id === swapCharId
-      );
-      const vars = new Float64Array(compiled.numVars);
-      return { compiled, charIdx, vars };
-    }
-    // Single formula mode
-    const optCtx = teamBuild.createOptimizerContext(
-      currentSheets,
-      swapCharId,
-      carryCharId,
-      ctx
-    );
-    const compiled = compileTeamDamage(
-      teamBuild,
-      carryCharId,
-      formulaId,
-      ctx,
-      optCtx,
-      reactionOverride,
-      undefined, // erCheckCharId
-      undefined, // minEr
-      undefined, // minCr
-      partialBuffs
-    );
-    const charIdx = optCtx.charBuildOrder.findIndex(
-      ([id]) => id === swapCharId
-    );
-    const vars = new Float64Array(compiled.numVars);
-    return { compiled, charIdx, vars };
-  } catch {
-    return null;
-  }
-}
-
-/** Create a fast evalDamage callback using compiled AST. */
-function makeCompiledEvalDamage(
-  swapCharId: string,
-  compiled: CompiledTeamDamage,
-  charIdx: number,
-  vars: Float64Array
-): (sheets: Record<string, StatSheet>) => number {
-  return (sheets: Record<string, StatSheet>) => {
-    vars.fill(0);
-    const sheet = sheets[swapCharId];
-    if (sheet) fillVarsFromSheet(sheet, compiled.varMapping, charIdx, vars);
-    return compiled.evaluate(vars);
+} {
+  // Normalize single formula to 1-line combo
+  const effectiveCombo: ComboFormula = combo ?? {
+    id: "__single__",
+    label: { zh: "", en: "" },
+    lines: [{ charId: carryCharId, formulaId, count: 1 }],
   };
+  const effectiveOverrides = combo
+    ? reactionOverrides
+    : reactionOverride
+      ? { [`${carryCharId}.${formulaId}`]: reactionOverride }
+      : undefined;
+
+  const compiled = compileComboTeamDamage(
+    teamBuild,
+    effectiveCombo,
+    swapCharId,
+    currentSheets,
+    ctx,
+    effectiveOverrides,
+    comboBuffOverrides
+  );
+  const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
+  const vars = new Float64Array(compiled.numVars);
+  return { compiled, charIdx, vars };
 }
 
 function synthesizeArtifacts(
@@ -380,7 +323,7 @@ function findBestMainStats(
   reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
-  const compiledCtx = tryCompileEval(
+  const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
     carryCharId,
@@ -391,14 +334,7 @@ function findBestMainStats(
     combo,
     reactionOverrides
   );
-  const fastEval = compiledCtx
-    ? makeCompiledEvalDamage(
-        charId,
-        compiledCtx.compiled,
-        compiledCtx.charIdx,
-        compiledCtx.vars
-      )
-    : null;
+  const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
   let bestDamage = -1;
   let bestMainStats: Record<Slot, MainStat> = {
@@ -429,18 +365,7 @@ function findBestMainStats(
           flex
         );
         const sheets = { ...currentSheets, [charId]: sheet };
-        const dmg = fastEval
-          ? fastEval(sheets)
-          : evaluateDamage(
-              teamBuild,
-              sheets,
-              carryCharId,
-              formulaId,
-              ctx,
-              reactionOverride,
-              combo,
-              reactionOverrides
-            );
+        const dmg = fastEval(sheets);
 
         if (dmg > bestDamage) {
           bestDamage = dmg;
@@ -479,7 +404,7 @@ function fillSubstats(
 ): Record<Slot, Partial<Record<SubStat, number>>> {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
-  const compiledCtx = tryCompileEval(
+  const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
     carryCharId,
@@ -490,32 +415,13 @@ function fillSubstats(
     combo,
     reactionOverrides
   );
-  const fastEval = compiledCtx
-    ? makeCompiledEvalDamage(
-        charId,
-        compiledCtx.compiled,
-        compiledCtx.charIdx,
-        compiledCtx.vars
-      )
-    : null;
+  const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
   return constrainedGreedyAllocate({
     charId,
     mainStats,
     currentSheets,
-    evalDamage: fastEval
-      ? fastEval
-      : (sheets) =>
-          evaluateDamage(
-            teamBuild,
-            sheets,
-            carryCharId,
-            formulaId,
-            ctx,
-            reactionOverride,
-            combo,
-            reactionOverrides
-          ),
+    evalDamage: fastEval,
     rv,
     rarity,
     preFill,
@@ -662,6 +568,7 @@ function constraintAwareGenerate(
     const damage = evaluateDamage(
       teamBuild,
       sheets,
+      charId,
       carryCharId,
       formulaId,
       ctx,
@@ -719,6 +626,7 @@ function constraintAwareGenerate(
     const damage = evaluateDamage(
       teamBuild,
       sheets,
+      charId,
       carryCharId,
       formulaId,
       ctx,
@@ -756,7 +664,7 @@ function findBestMainStatsConstrained(
 ): Record<Slot, MainStat> | null {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
-  const compiledCtx = tryCompileEval(
+  const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
     carryCharId,
@@ -767,14 +675,7 @@ function findBestMainStatsConstrained(
     combo,
     reactionOverrides
   );
-  const fastEval = compiledCtx
-    ? makeCompiledEvalDamage(
-        charId,
-        compiledCtx.compiled,
-        compiledCtx.charIdx,
-        compiledCtx.vars
-      )
-    : null;
+  const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
   let bestDamage = -1;
   let bestMainStats: Record<Slot, MainStat> | null = null;
@@ -825,18 +726,7 @@ function findBestMainStatsConstrained(
           flex
         );
         const sheets = { ...currentSheets, [charId]: sheet };
-        const dmg = fastEval
-          ? fastEval(sheets)
-          : evaluateDamage(
-              teamBuild,
-              sheets,
-              carryCharId,
-              formulaId,
-              ctx,
-              reactionOverride,
-              combo,
-              reactionOverrides
-            );
+        const dmg = fastEval(sheets);
 
         if (dmg > bestDamage) {
           bestDamage = dmg;
@@ -868,7 +758,7 @@ function findBestMainStatsWithSubs(
   reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
-  const compiledCtx = tryCompileEval(
+  const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
     carryCharId,
@@ -879,14 +769,7 @@ function findBestMainStatsWithSubs(
     combo,
     reactionOverrides
   );
-  const fastEval = compiledCtx
-    ? makeCompiledEvalDamage(
-        charId,
-        compiledCtx.compiled,
-        compiledCtx.charIdx,
-        compiledCtx.vars
-      )
-    : null;
+  const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
   let bestDamage = -1;
   let bestMainStats: Record<Slot, MainStat> = {
@@ -917,18 +800,7 @@ function findBestMainStatsWithSubs(
           flex
         );
         const sheets = { ...currentSheets, [charId]: sheet };
-        const dmg = fastEval
-          ? fastEval(sheets)
-          : evaluateDamage(
-              teamBuild,
-              sheets,
-              carryCharId,
-              formulaId,
-              ctx,
-              reactionOverride,
-              combo,
-              reactionOverrides
-            );
+        const dmg = fastEval(sheets);
 
         if (dmg > bestDamage) {
           bestDamage = dmg;
@@ -1144,6 +1016,7 @@ export async function* runGenerator(
     const damage = evaluateDamage(
       teamBuild,
       sheets,
+      cid,
       carryCharId,
       formulaId,
       calcContext,
@@ -1317,6 +1190,7 @@ export async function* runGenerator(
       teamBuild,
       currentSheets,
       carryCharId,
+      carryCharId,
       formulaId,
       calcContext,
       reactionOverride,
@@ -1362,6 +1236,7 @@ export async function* runGenerator(
     const altDmg = evaluateDamage(
       teamBuild,
       altSheets,
+      carryCharId,
       carryCharId,
       formulaId,
       calcContext,

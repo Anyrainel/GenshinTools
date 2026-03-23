@@ -45,8 +45,8 @@ import {
   type WeightedFormula,
   autoTuneWeights,
   averageWeights,
+  compileAutoTuneEval,
   computeIdealScore,
-  evalBaselineDamage,
   toWeightedFormulas,
 } from "./autoTune";
 import type { AutoTuneResult } from "./utils";
@@ -169,6 +169,20 @@ function runComboEnumerationPipeline(
     try {
       if (ctx.formulas.length === 0) continue;
 
+      // Compile once per team context
+      const compileBaseStats = buildTeamArtifactStats(
+        ctx.configs,
+        characterId,
+        new StatSheet([])
+      );
+      const evalDamageFn = compileAutoTuneEval(
+        ctx.teamBuild,
+        characterId,
+        ctx.formulas,
+        compileBaseStats,
+        DEFAULT_CALC_CTX
+      );
+
       // ─── Phase 1: Quick baseline eval for all combos ───
       const combos: {
         s: MainStat;
@@ -186,13 +200,7 @@ function runComboEnumerationPipeline(
               characterId,
               sheet
             );
-            const dmg = evalBaselineDamage(
-              ctx.teamBuild,
-              characterId,
-              ctx.formulas,
-              artifactStats,
-              DEFAULT_CALC_CTX
-            );
+            const dmg = evalDamageFn(artifactStats);
             combos.push({ s, g, c, baselineDmg: dmg });
           }
         }
@@ -218,21 +226,17 @@ function runComboEnumerationPipeline(
           goblet: combo.g,
           circlet: combo.c,
         };
-        // Build teammate artifact stats (DPS sheet will be built by autoTuneWeights from mainStats)
         const dummySheet = buildBaselineSheet(combo.s, combo.g, combo.c);
         const artifactStats = buildTeamArtifactStats(
           ctx.configs,
           characterId,
           dummySheet
         );
-
         const tuneResult = autoTuneWeights(
-          ctx.teamBuild,
           characterId,
-          ctx.formulas,
           mainStats,
           artifactStats,
-          DEFAULT_CALC_CTX
+          evalDamageFn
         );
 
         teamResults.push({ combo, tuneResult });
@@ -445,6 +449,21 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
     throw new Error(`No formulas found for ${characterId} in team "${label}"`);
   }
 
+  // Compile once — reused across all main stat combos in Phase 1 + Phase 2.
+  // Teammates get flower+plume sheet; DPS sheet doesn't matter (variable).
+  const compileBaseStats = buildTeamArtifactStats(
+    configs,
+    characterId,
+    new StatSheet([])
+  );
+  const evalDamageFn = compileAutoTuneEval(
+    teamBuild,
+    characterId,
+    formulas,
+    compileBaseStats,
+    DEFAULT_CALC_CTX
+  );
+
   // Phase 1: Quick baseline eval for all combos
   const combos: {
     s: MainStat;
@@ -462,13 +481,7 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
           characterId,
           sheet
         );
-        const dmg = evalBaselineDamage(
-          teamBuild,
-          characterId,
-          formulas,
-          artifactStats,
-          DEFAULT_CALC_CTX
-        );
+        const dmg = evalDamageFn(artifactStats);
         combos.push({ s, g, c, baselineDmg: dmg });
       }
     }
@@ -501,12 +514,10 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
       dummySheet
     );
     const tuneResult = autoTuneWeights(
-      teamBuild,
       characterId,
-      formulas,
       mainStats,
       artifactStats,
-      DEFAULT_CALC_CTX
+      evalDamageFn
     );
     teamResults.push({ combo, tuneResult });
   }

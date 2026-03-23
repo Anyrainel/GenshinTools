@@ -79,6 +79,7 @@ import {
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
 import { runCharacterBnB } from "@/lib/team-comp/optimizer";
+import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import type {
   CalcContext,
   ComboFormula,
@@ -264,6 +265,27 @@ function evaluateAssignment(
     }
     if (configs.length === 0) return null;
 
+    // Detect actual equipped sets and override config when they differ.
+    // Without this, solutions stored with off-set artifacts would be
+    // evaluated with the team-config set bonuses, inflating damage.
+    const artifactPieces: Record<string, ArtifactData[]> = {};
+    for (const [cid, slots] of Object.entries(assignment)) {
+      const pieces: ArtifactData[] = [];
+      for (const artId of Object.values(slots)) {
+        const art = artById.get(artId);
+        if (art) pieces.push(art);
+      }
+      artifactPieces[cid] = pieces;
+    }
+
+    for (const cfg of configs) {
+      const pieces = artifactPieces[cfg.charId];
+      if (!pieces) continue;
+      const detected = detectEquippedSets(pieces);
+      cfg.artifactSetId = detected.artifactSetId;
+      cfg.artifactHalfSetIds = detected.artifactHalfSetIds;
+    }
+
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
@@ -279,12 +301,7 @@ function evaluateAssignment(
     const carryCharId = team.characters[0]!;
 
     const artifactStats: Record<string, StatSheet> = {};
-    for (const [cid, slots] of Object.entries(assignment)) {
-      const pieces: ArtifactData[] = [];
-      for (const artId of Object.values(slots)) {
-        const art = artById.get(artId);
-        if (art) pieces.push(art);
-      }
+    for (const [cid, pieces] of Object.entries(artifactPieces)) {
       artifactStats[cid] = StatSheet.fromArtifacts(pieces);
     }
 
@@ -350,6 +367,24 @@ function checkConstraints(
     }
     if (configs.length === 0) return [];
 
+    // Detect actual equipped sets (same as evaluateAssignment)
+    const artifactPieces: Record<string, ArtifactData[]> = {};
+    for (const [cid, slots] of Object.entries(assignment)) {
+      const pieces: ArtifactData[] = [];
+      for (const artId of Object.values(slots)) {
+        const art = artById.get(artId);
+        if (art) pieces.push(art);
+      }
+      artifactPieces[cid] = pieces;
+    }
+    for (const cfg of configs) {
+      const pieces = artifactPieces[cfg.charId];
+      if (!pieces) continue;
+      const detected = detectEquippedSets(pieces);
+      cfg.artifactSetId = detected.artifactSetId;
+      cfg.artifactHalfSetIds = detected.artifactHalfSetIds;
+    }
+
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
@@ -365,12 +400,7 @@ function checkConstraints(
     const carryCharId = team.characters[0]!;
 
     const artifactStats: Record<string, StatSheet> = {};
-    for (const [cid, slots] of Object.entries(assignment)) {
-      const pieces: ArtifactData[] = [];
-      for (const artId of Object.values(slots)) {
-        const art = artById.get(artId);
-        if (art) pieces.push(art);
-      }
+    for (const [cid, pieces] of Object.entries(artifactPieces)) {
       artifactStats[cid] = StatSheet.fromArtifacts(pieces);
     }
 
@@ -2388,6 +2418,12 @@ async function cmdCarryDiagnose(opts: {
       for (const artId of Object.values(slots)) supportArtIds.add(artId);
     }
 
+    const benchCombo: ComboFormula = {
+      id: "__bench__",
+      label: { zh: "", en: "" },
+      lines: [{ charId: carryId, formulaId: problem.formulaId, count: 1 }],
+    };
+
     const carryResult = runCharacterBnB(
       carryId,
       carryConfig,
@@ -2399,8 +2435,8 @@ async function cmdCarryDiagnose(opts: {
       baseSheets,
       calcContext,
       supportArtIds, // exclude support artifacts
-      undefined, // reactionOverride
-      undefined, // scoreFn
+      benchCombo,
+      undefined, // reactionOverrides
       15, // topK
       performance.now() + opts.timeoutSec * 1000, // deadline
       undefined, // warmStartThreshold
@@ -2472,7 +2508,7 @@ async function cmdCarryDiagnose(opts: {
       baseSheets,
       calcContext,
       undefined,
-      undefined,
+      benchCombo,
       undefined,
       15,
       performance.now() + opts.timeoutSec * 1000,
@@ -2626,9 +2662,7 @@ async function cmdFuzz(opts: {
     }
 
     const compiledVars = new Float64Array(compiled.numVars);
-    const charIdx = optCtx.charBuildOrder.findIndex(
-      ([id]) => id === carryCharId
-    );
+    const charIdx = compiled.charIdxMap?.get(carryCharId) ?? 0;
 
     // Run trials with random artifact tuples
     let mismatches = 0;
@@ -2904,15 +2938,7 @@ async function cmdFuzzCombo(opts: {
           team.calcContext
         );
 
-        const optCtx = teamBuild.createOptimizerContext(
-          baseSheets,
-          swapCharId,
-          team.charIds[0],
-          team.calcContext
-        );
-        const charIdx = optCtx.charBuildOrder.findIndex(
-          ([id]) => id === swapCharId
-        );
+        const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
 
         // Run trials with random artifact sheets for the swap char
         for (let t = 0; t < opts.trials; t++) {

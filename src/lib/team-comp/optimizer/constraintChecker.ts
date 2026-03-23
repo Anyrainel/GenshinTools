@@ -99,7 +99,10 @@ export class ConstraintChecker {
     compiled: CompiledTeamDamage,
     vars: Float64Array
   ): boolean {
-    if (compiled.evaluateEr && compiled.evaluateEr(vars) < 0) return false;
+    if (compiled.evaluateEr) {
+      const erVal = compiled.evaluateEr(vars);
+      if (erVal < 0) return false;
+    }
     if (compiled.evaluateCr && compiled.evaluateCr(vars) < 0) return false;
     return true;
   }

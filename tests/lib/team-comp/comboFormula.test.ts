@@ -735,3 +735,145 @@ describe("combo edge cases", () => {
     }
   });
 });
+
+// ═══════════════════════════════════════════════════════════════
+// 6. Single→Combo normalization equivalence
+// Verifies that single mode and 1-line combo mode produce the same
+// bestDamage from the optimizer (internally both use combo path now).
+// ═══════════════════════════════════════════════════════════════
+
+describe("single↔combo normalization equivalence", () => {
+  const perChar: Record<string, CharOptConfig> = {
+    diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
+    xingqiu: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
+  };
+
+  it("single mode and 1-line combo mode produce same bestDamage", async () => {
+    const tb = makeTeamBuild();
+    const formulaId = getFirstFormulaId(tb, "diluc");
+    const inventory = [
+      makeArt("flower"),
+      makeArt("plume"),
+      makeArt("sands"),
+      makeArt("goblet"),
+      makeArt("circlet"),
+    ];
+
+    // Single mode (no combo)
+    const singleOpts: TeamOptimizerOptions = {
+      teamBuild: tb,
+      carryCharId: "diluc",
+      formulaId,
+      inventory,
+      calcContext: CTX,
+      globalConfig: GLOBAL_CONFIG,
+      baseSheets: {
+        ...dilucEmptySheets(),
+        diluc: StatSheet.fromArtifacts(inventory),
+      },
+      perChar,
+    };
+    const singleResults = await drain(runTeamOptimization(singleOpts));
+    const singleFinal = singleResults[singleResults.length - 1];
+    expect(singleFinal.done).toBe(true);
+
+    // 1-line combo mode (same formula, count=1)
+    const combo: ComboFormula = {
+      id: "__equiv__",
+      label: { zh: "", en: "" },
+      lines: [{ charId: "diluc", formulaId, count: 1 }],
+    };
+    const comboOpts: TeamOptimizerOptions = {
+      ...singleOpts,
+      combo,
+    };
+    const comboResults = await drain(runTeamOptimization(comboOpts));
+    const comboFinal = comboResults[comboResults.length - 1];
+    expect(comboFinal.done).toBe(true);
+
+    if (singleFinal.done && comboFinal.done) {
+      // Both should produce the same bestDamage (or very close)
+      const relErr =
+        singleFinal.bestDamage === 0
+          ? comboFinal.bestDamage === 0
+            ? 0
+            : Number.POSITIVE_INFINITY
+          : Math.abs(comboFinal.bestDamage - singleFinal.bestDamage) /
+            Math.abs(singleFinal.bestDamage);
+      expect(relErr).toBeLessThan(1e-6);
+    }
+  });
+
+  it("single mode with reaction and 1-line combo with same reaction produce same damage", async () => {
+    const tb = makeTeamBuild();
+    const formulaId = getFirstFormulaId(tb, "diluc");
+    const inventory = [
+      makeArt("flower"),
+      makeArt("plume"),
+      makeArt("sands"),
+      makeArt("goblet"),
+      makeArt("circlet"),
+    ];
+
+    const baseSheets = {
+      ...dilucEmptySheets(),
+      diluc: StatSheet.fromArtifacts(inventory),
+    };
+
+    // Single mode with vaporize
+    const singleOpts: TeamOptimizerOptions = {
+      teamBuild: tb,
+      carryCharId: "diluc",
+      formulaId,
+      inventory,
+      calcContext: CTX,
+      globalConfig: GLOBAL_CONFIG,
+      baseSheets,
+      perChar,
+      reactionOverride: { reaction: "vaporize" },
+    };
+    const singleResults = await drain(runTeamOptimization(singleOpts));
+    const singleFinal = singleResults[singleResults.length - 1];
+
+    // Combo mode with vaporize via reactionOverrides
+    const combo: ComboFormula = {
+      id: "__equiv-rxn__",
+      label: { zh: "", en: "" },
+      lines: [
+        {
+          charId: "diluc",
+          formulaId,
+          count: 1,
+          reaction: { reaction: "vaporize" },
+        },
+      ],
+    };
+    const comboOpts: TeamOptimizerOptions = {
+      teamBuild: tb,
+      carryCharId: "diluc",
+      formulaId,
+      inventory,
+      calcContext: CTX,
+      globalConfig: GLOBAL_CONFIG,
+      baseSheets,
+      perChar,
+      combo,
+      reactionOverrides: { [`diluc.${formulaId}`]: { reaction: "vaporize" } },
+    };
+    const comboResults = await drain(runTeamOptimization(comboOpts));
+    const comboFinal = comboResults[comboResults.length - 1];
+
+    expect(singleFinal.done).toBe(true);
+    expect(comboFinal.done).toBe(true);
+    if (singleFinal.done && comboFinal.done) {
+      const relErr =
+        singleFinal.bestDamage === 0
+          ? comboFinal.bestDamage === 0
+            ? 0
+            : Number.POSITIVE_INFINITY
+          : Math.abs(comboFinal.bestDamage - singleFinal.bestDamage) /
+            Math.abs(singleFinal.bestDamage);
+      expect(relErr).toBeLessThan(1e-6);
+    }
+  });
+});

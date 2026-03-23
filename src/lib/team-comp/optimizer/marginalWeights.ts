@@ -5,7 +5,8 @@
  * adding each possible main stat. This gives context-aware weights that
  * account for CR capping, team buffs, and formula-specific stat valuation.
  *
- * Cost: ~20 damage evaluations (10 substats + ~10 main stats).
+ * Uses compiled AST evaluation for all damage computations.
+ * Cost: ~20 compiled evaluations (10 substats + ~10 main stats).
  */
 
 import { MAIN_STAT_VALUES_5STAR, statPools } from "@/data/constants";
@@ -15,10 +16,9 @@ import {
   type BuildMatchResult,
   getTargetMainStatsForSlot,
 } from "../../account-data/artifactScore";
-import type { TeamBuild } from "../damageCalc";
-import { hasOffFieldParts } from "../damageCalc";
+import type { DamageEvalFn } from "../constrainedGreedy";
 import { StatSheet } from "../damageModels";
-import type { CalcContext, ReactionOverride, StatKey } from "../types";
+import type { StatKey } from "../types";
 import type { MarginalWeights } from "./types";
 
 const MARGINAL_SUBSTATS: SubStat[] = [
@@ -41,13 +41,10 @@ const VARIABLE_SLOT_POOLS: Record<string, readonly MainStat[]> = {
 };
 
 export function computeMarginalWeights(
-  teamBuild: TeamBuild,
+  evalDamageFn: DamageEvalFn,
   charId: string,
-  formulaId: string,
   baseSheets: Record<string, StatSheet>,
-  calcContext: CalcContext,
   buildMatch: BuildMatchResult | null | undefined,
-  reactionOverride?: ReactionOverride,
   operatingPointSheet?: StatSheet
 ): MarginalWeights | null {
   // Operating point: use provided sheet (e.g. from warm-start) or synthetic midpoint
@@ -75,33 +72,8 @@ export function computeMarginalWeights(
 
   const sheets = { ...baseSheets, [charId]: baseSheet };
 
-  // Precompute off-field target (if needed)
-  const needsOffField = hasOffFieldParts(teamBuild, charId, formulaId);
-  const offFieldCalcTarget = needsOffField
-    ? Object.keys(teamBuild.charBuilds).find((id) => id !== charId)
-    : undefined;
-
-  const getOffField = (s: Record<string, StatSheet>) =>
-    offFieldCalcTarget
-      ? teamBuild.getTeamStats(s, offFieldCalcTarget, calcContext)
-      : undefined;
-
   // Baseline damage at the operating point
-  const teamStats = teamBuild.getTeamStats(sheets, charId, calcContext);
-  let baseDamage: number;
-  try {
-    const result = teamBuild.getDamageResult(
-      charId,
-      formulaId,
-      teamStats,
-      calcContext,
-      reactionOverride,
-      getOffField(sheets)
-    );
-    baseDamage = result.totalDamage;
-  } catch {
-    return null;
-  }
+  const baseDamage = evalDamageFn(sheets);
   if (baseDamage <= 0) return null;
 
   // Substat marginals: damage delta from +1 average roll of each substat
@@ -115,20 +87,8 @@ export function computeMarginalWeights(
     }
     const tweakedSheet = baseSheet.withDelta(stat as StatKey, delta);
     const tweakedSheets = { ...baseSheets, [charId]: tweakedSheet };
-    const ts = teamBuild.getTeamStats(tweakedSheets, charId, calcContext);
-    try {
-      const r = teamBuild.getDamageResult(
-        charId,
-        formulaId,
-        ts,
-        calcContext,
-        reactionOverride,
-        getOffField(tweakedSheets)
-      );
-      subMarginals[stat] = Math.max(0, r.totalDamage - baseDamage);
-    } catch {
-      subMarginals[stat] = 0;
-    }
+    const dmg = evalDamageFn(tweakedSheets);
+    subMarginals[stat] = Math.max(0, dmg - baseDamage);
     if (subMarginals[stat] > maxMarginal) maxMarginal = subMarginals[stat];
   }
 
@@ -155,20 +115,8 @@ export function computeMarginalWeights(
       const internalVal = toInternal(mainStat, value);
       const msSheet = baseSheet.withDelta(mainStat as StatKey, internalVal);
       const msSheets = { ...baseSheets, [charId]: msSheet };
-      const ts = teamBuild.getTeamStats(msSheets, charId, calcContext);
-      try {
-        const r = teamBuild.getDamageResult(
-          charId,
-          formulaId,
-          ts,
-          calcContext,
-          reactionOverride,
-          getOffField(msSheets)
-        );
-        slotMarginals[mainStat] = Math.max(0, r.totalDamage - baseDamage);
-      } catch {
-        slotMarginals[mainStat] = 0;
-      }
+      const dmg = evalDamageFn(msSheets);
+      slotMarginals[mainStat] = Math.max(0, dmg - baseDamage);
       if (slotMarginals[mainStat] > slotMax) slotMax = slotMarginals[mainStat];
     }
     // Normalize: best main stat → 1.0

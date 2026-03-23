@@ -6,7 +6,7 @@ import type { ArtifactData, Element, GlobalStatWeights } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 // Side-effect: register all character/weapon/artifact implementations
 import "./index";
-import { TeamBuild, evaluateCombo } from "./damageCalc";
+import { TeamBuild } from "./damageCalc";
 import type { OptionMap } from "./damageModels";
 import { StatSheet } from "./damageModels";
 import { runCharacterBnB } from "./optimizer";
@@ -39,7 +39,6 @@ export type BnBWorkerRequest = {
     { key: StatKey; filterKey: string; value: number }[]
   >;
   calcContext: CalcContext;
-  reactionOverride?: ReactionOverride;
   topK: number;
   /** Duration in ms (not absolute timestamp — worker converts to local deadline). */
   deadlineMs?: number;
@@ -47,12 +46,9 @@ export type BnBWorkerRequest = {
   maxArtsPerSlot: number;
   /** Artifact IDs to exclude from search (Phase 3: teammates' locked artifacts). */
   excludedIds?: string[];
-  // Combo mode (replaces scoreFn closure)
-  isComboMode: boolean;
-  combo?: ComboFormula;
+  /** Combo formula (always present — single formula is pre-normalized to 1-line combo). */
+  combo: ComboFormula;
   reactionOverrides?: Record<string, ReactionOverride>;
-  /** Pre-computed partial buff specs for stack-limited / user-overridden buffs. */
-  partialBuffs?: PartialBuffInfo[];
   /** Per-line PartialBuffInfo[] for combo mode. */
   comboLinePartialBuffs?: Record<number, PartialBuffInfo[]>;
 };
@@ -86,8 +82,6 @@ export type BnBWorkerResponse =
   | { id: number; type: "error"; error: string }
   | { id: number; type: "ready" };
 
-const warnedCalcErrors = new Set<string>();
-
 self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
   const req = e.data;
   try {
@@ -105,29 +99,6 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
     for (const [charId, dump] of Object.entries(req.baseSheetsDump)) {
       baseSheets[charId] = StatSheet.fromDump(dump);
     }
-
-    // Build combo scoreFn if needed
-    const scoreFn = req.isComboMode
-      ? (sheets: Record<string, StatSheet>, _calcTargetId: string): number => {
-          try {
-            return evaluateCombo(
-              teamBuild,
-              req.combo!,
-              sheets,
-              req.calcContext,
-              req.reactionOverrides,
-              req.comboLinePartialBuffs
-            ).totalDamage;
-          } catch (err) {
-            const key = `comboScoreFn:${_calcTargetId}`;
-            if (!warnedCalcErrors.has(key)) {
-              warnedCalcErrors.add(key);
-              console.warn("[optimizer.worker] comboScoreFn failed:", err);
-            }
-            return 0;
-          }
-        }
-      : undefined;
 
     // Convert duration to absolute deadline
     const deadline = req.deadlineMs
@@ -160,15 +131,14 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       baseSheets,
       req.calcContext,
       req.excludedIds ? new Set(req.excludedIds) : undefined,
-      req.reactionOverride,
-      scoreFn,
+      req.combo,
+      req.reactionOverrides,
       req.topK,
       deadline,
       req.warmStartThreshold,
       req.maxArtsPerSlot,
-      false, // _noCompile
       onProgress,
-      req.partialBuffs
+      req.comboLinePartialBuffs
     );
 
     // Serialize TopKEntry[] (convert Set to string[])

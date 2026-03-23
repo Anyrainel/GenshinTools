@@ -26,6 +26,7 @@ import { VarMapping, createExprStats } from "@/lib/team-comp/exprStats";
 import {
   compileComboTeamDamage,
   compileTeamDamage,
+  fillVarsFromArtifacts,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
 import type {
@@ -1648,4 +1649,404 @@ describe("random team fuzz (compiled vs standard)", () => {
     }
     expect(teamsOk).toBeGreaterThanOrEqual(5);
   });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ER/CR Constraint Compilation Tests
+// Verifies that compileComboTeamDamage with erCheckCharId/minEr/minCr
+// produces correct evaluateEr/evaluateCr functions.
+// ═══════════════════════════════════════════════════════════════
+
+describe("compileComboTeamDamage — ER/CR constraints", () => {
+  const rv = getRollValues();
+
+  it("evaluateEr returns positive when ER constraint is met", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const formulaId = getFirstFormulaId(tb, "diluc");
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    const combo: ComboFormula = {
+      id: "er-test",
+      label: { zh: "测试", en: "test" },
+      lines: [{ charId: "diluc", formulaId, count: 1 }],
+    };
+
+    // Use a sheet with high ER to satisfy constraint
+    const highErSheet = buildSheetFromMainAndSubs(
+      {
+        flower: "hp",
+        plume: "atk",
+        sands: "er",
+        goblet: "pyro%",
+        circlet: "cr",
+      },
+      {
+        flower: { er: 6 },
+        plume: { er: 6 },
+        sands: {},
+        goblet: { er: 6 },
+        circlet: { er: 6 },
+      },
+      rv
+    );
+    const sheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) {
+      sheets[cid] = cid === "diluc" ? highErSheet : new StatSheet([]);
+    }
+
+    const compiled = compileComboTeamDamage(
+      tb,
+      combo,
+      "diluc",
+      sheets,
+      FUZZ_CTX,
+      undefined,
+      undefined,
+      "diluc",
+      1.2,
+      0
+    );
+
+    expect(compiled.evaluateEr).toBeDefined();
+    expect(compiled.evaluateCr).toBeUndefined();
+
+    // Fill vars from the high-ER sheet
+    const optCtx = tb.createOptimizerContext(
+      sheets,
+      "diluc",
+      "diluc",
+      FUZZ_CTX
+    );
+    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "diluc");
+    const vars = new Float64Array(compiled.numVars);
+    fillVarsFromSheet(highErSheet, compiled.varMapping, charIdx, vars);
+
+    // With high ER, evaluateEr should return >= 0
+    const erVal = compiled.evaluateEr!(vars);
+    expect(erVal).toBeGreaterThanOrEqual(0);
+  });
+
+  it("evaluateEr returns negative when ER constraint is NOT met", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const formulaId = getFirstFormulaId(tb, "diluc");
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    const combo: ComboFormula = {
+      id: "er-unmet",
+      label: { zh: "测试", en: "test" },
+      lines: [{ charId: "diluc", formulaId, count: 1 }],
+    };
+
+    const sheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) sheets[cid] = new StatSheet([]);
+
+    // Very high ER requirement — empty sheet won't meet it
+    const compiled = compileComboTeamDamage(
+      tb,
+      combo,
+      "diluc",
+      sheets,
+      FUZZ_CTX,
+      undefined,
+      undefined,
+      "diluc",
+      2.0,
+      0
+    );
+
+    expect(compiled.evaluateEr).toBeDefined();
+
+    const vars = new Float64Array(compiled.numVars);
+    const erVal = compiled.evaluateEr!(vars);
+    expect(erVal).toBeLessThan(0);
+  });
+
+  it("evaluateCr returns positive/negative based on CR constraint", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const formulaId = getFirstFormulaId(tb, "diluc");
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    const combo: ComboFormula = {
+      id: "cr-test",
+      label: { zh: "测试", en: "test" },
+      lines: [{ charId: "diluc", formulaId, count: 1 }],
+    };
+
+    const sheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) sheets[cid] = new StatSheet([]);
+
+    // Compile with CR constraint
+    const compiled = compileComboTeamDamage(
+      tb,
+      combo,
+      "diluc",
+      sheets,
+      FUZZ_CTX,
+      undefined,
+      undefined,
+      "diluc",
+      0,
+      0.7
+    );
+
+    expect(compiled.evaluateCr).toBeDefined();
+
+    // Empty vars → baseline CR only (should be below 70%)
+    const vars = new Float64Array(compiled.numVars);
+    const crValEmpty = compiled.evaluateCr!(vars);
+    expect(crValEmpty).toBeLessThan(0);
+
+    // With high-CR sheet, constraint should be met
+    const highCrSheet = buildSheetFromMainAndSubs(
+      {
+        flower: "hp",
+        plume: "atk",
+        sands: "atk%",
+        goblet: "pyro%",
+        circlet: "cr",
+      },
+      {
+        flower: { cr: 6 },
+        plume: { cr: 6 },
+        sands: { cr: 6 },
+        goblet: { cr: 6 },
+        circlet: {},
+      },
+      rv
+    );
+    const optCtx = tb.createOptimizerContext(
+      sheets,
+      "diluc",
+      "diluc",
+      FUZZ_CTX
+    );
+    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "diluc");
+    const vars2 = new Float64Array(compiled.numVars);
+    fillVarsFromSheet(highCrSheet, compiled.varMapping, charIdx, vars2);
+    const crValHigh = compiled.evaluateCr!(vars2);
+    expect(crValHigh).toBeGreaterThanOrEqual(0);
+  });
+
+  it("compiled ER check agrees with domain-object ER for random artifacts", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const formulaId = getFirstFormulaId(tb, "diluc");
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+    const minEr = 1.4;
+
+    const combo: ComboFormula = {
+      id: "er-fuzz",
+      label: { zh: "测试", en: "test" },
+      lines: [{ charId: "diluc", formulaId, count: 1 }],
+    };
+
+    for (let trial = 0; trial < 30; trial++) {
+      const sheets: Record<string, StatSheet> = {};
+      for (const cid of charIds) {
+        sheets[cid] = buildSheetFromMainAndSubs(
+          randomMainStats(),
+          randomSubRolls(),
+          rv
+        );
+      }
+
+      const compiled = compileComboTeamDamage(
+        tb,
+        combo,
+        "diluc",
+        sheets,
+        FUZZ_CTX,
+        undefined,
+        undefined,
+        "diluc",
+        minEr,
+        0
+      );
+
+      const optCtx = tb.createOptimizerContext(
+        sheets,
+        "diluc",
+        "diluc",
+        FUZZ_CTX
+      );
+      const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "diluc");
+      const vars = new Float64Array(compiled.numVars);
+      fillVarsFromSheet(sheets.diluc, compiled.varMapping, charIdx, vars);
+
+      const compiledErSign = compiled.evaluateEr!(vars) >= 0;
+
+      // Domain-object path
+      const postStats = tb.getTeamStats(sheets, "diluc", FUZZ_CTX);
+      const domainEr = postStats.diluc?.get("er", null) ?? 0;
+      const domainErSign = domainEr >= minEr;
+
+      expect(compiledErSign).toBe(domainErSign);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Single→Combo Normalization Parity
+// Verifies that a single formula compiled via compileComboTeamDamage
+// as a 1-line combo produces identical damage to the standard single-formula path.
+// ═══════════════════════════════════════════════════════════════
+
+describe("single→combo normalization parity", () => {
+  const rv = getRollValues();
+
+  function testNormalization(label: string, configs: TeamSlotConfig[]) {
+    it(`${label}: 1-line combo compiled matches evaluateCombo single formula`, () => {
+      const tb = new TeamBuild(configs);
+      const carryId = configs[0].charId;
+      const formulaId = getFirstFormulaId(tb, carryId);
+      const charIds = configs.map((c) => c.charId);
+
+      for (let trial = 0; trial < 20; trial++) {
+        const sheets: Record<string, StatSheet> = {};
+        for (const cid of charIds) {
+          sheets[cid] = buildSheetFromMainAndSubs(
+            randomMainStats(),
+            randomSubRolls(),
+            rv
+          );
+        }
+
+        // Domain-object path via evaluateCombo with 1-line combo
+        const combo: ComboFormula = {
+          id: "__single__",
+          label: { zh: "", en: "" },
+          lines: [{ charId: carryId, formulaId, count: 1 }],
+        };
+        const oldDamage = evaluateCombo(
+          tb,
+          combo,
+          sheets,
+          FUZZ_CTX
+        ).totalDamage;
+
+        // Compiled combo path
+        const compiled = compileComboTeamDamage(
+          tb,
+          combo,
+          carryId,
+          sheets,
+          FUZZ_CTX
+        );
+        const optCtx = tb.createOptimizerContext(
+          sheets,
+          carryId,
+          carryId,
+          FUZZ_CTX
+        );
+        const charIdx = optCtx.charBuildOrder.findIndex(
+          ([id]) => id === carryId
+        );
+        const vars = new Float64Array(compiled.numVars);
+        fillVarsFromSheet(sheets[carryId], compiled.varMapping, charIdx, vars);
+        const newDamage = compiled.evaluate(vars);
+
+        const relErr =
+          oldDamage === 0
+            ? newDamage === 0
+              ? 0
+              : Number.POSITIVE_INFINITY
+            : Math.abs(newDamage - oldDamage) / Math.abs(oldDamage);
+        expect(relErr).toBeLessThan(1e-6);
+      }
+    });
+  }
+
+  testNormalization("diluc team", DILUC_TEAM);
+  testNormalization("raiden team", RAIDEN_TEAM);
+  testNormalization("varka team", VARKA_TEAM);
+  testNormalization("chasca team", CHASCA_TEAM);
+  testNormalization("eula team", EULA_TEAM);
+  testNormalization("clorinde team", CLORINDE_TEAM);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Multi-Character Variable Compilation Parity
+// Verifies that compiling a combo with ALL characters as variable
+// produces identical damage to the domain-object evaluateCombo path.
+// This is the core of the team allocation compiled evaluation.
+// ═══════════════════════════════════════════════════════════════
+
+describe("multi-char variable compilation parity", () => {
+  const rv = getRollValues();
+
+  function buildFullCombo(tb: TeamBuild): ComboFormula {
+    const allFormulas = tb.getFormulaIds();
+    const lines: ComboFormula["lines"] = [];
+    for (const [charId, formulas] of Object.entries(allFormulas)) {
+      for (const formulaId of Object.keys(formulas)) {
+        lines.push({ charId, formulaId, count: 1 });
+      }
+    }
+    return { id: "multi-char-test", label: { zh: "", en: "" }, lines };
+  }
+
+  function testMultiChar(label: string, configs: TeamSlotConfig[]) {
+    it(`${label}: all-chars-variable compiled matches evaluateCombo`, () => {
+      const tb = new TeamBuild(configs);
+      const charIds = configs.map((c) => c.charId);
+      const combo = buildFullCombo(tb);
+
+      // Compile with all characters as variable (empty base sheets)
+      const emptyBaseSheets: Record<string, StatSheet> = {};
+      for (const cid of charIds) {
+        emptyBaseSheets[cid] = new StatSheet([]);
+      }
+      const compiled = compileComboTeamDamage(
+        tb,
+        combo,
+        charIds,
+        emptyBaseSheets,
+        FUZZ_CTX
+      );
+      expect(compiled.charIdxMap).toBeDefined();
+      expect(compiled.charIdxMap!.size).toBe(charIds.length);
+
+      for (let trial = 0; trial < 20; trial++) {
+        // Random artifact sheets for all characters
+        const sheets: Record<string, StatSheet> = {};
+        for (const cid of charIds) {
+          sheets[cid] = buildSheetFromMainAndSubs(
+            randomMainStats(),
+            randomSubRolls(),
+            rv
+          );
+        }
+
+        // Domain-object path
+        const oldDamage = evaluateCombo(
+          tb,
+          combo,
+          sheets,
+          FUZZ_CTX
+        ).totalDamage;
+
+        // Compiled path: fill vars from each character's sheet
+        const vars = new Float64Array(compiled.numVars);
+        for (const cid of charIds) {
+          const charIdx = compiled.charIdxMap!.get(cid)!;
+          fillVarsFromSheet(sheets[cid], compiled.varMapping, charIdx, vars);
+        }
+        const newDamage = compiled.evaluate(vars);
+
+        const relErr =
+          oldDamage === 0
+            ? newDamage === 0
+              ? 0
+              : Number.POSITIVE_INFINITY
+            : Math.abs(newDamage - oldDamage) / Math.abs(oldDamage);
+        expect(relErr).toBeLessThan(1e-6);
+      }
+    });
+  }
+
+  testMultiChar("diluc team", DILUC_TEAM);
+  testMultiChar("raiden team", RAIDEN_TEAM);
+  testMultiChar("varka team", VARKA_TEAM);
+  testMultiChar("chasca team", CHASCA_TEAM);
+  testMultiChar("eula team", EULA_TEAM);
+  testMultiChar("clorinde team", CLORINDE_TEAM);
 });

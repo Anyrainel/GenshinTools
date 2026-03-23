@@ -1,8 +1,8 @@
 /**
  * Damage evaluation functions for the B&B optimizer.
  *
- * - evaluateBuild: evaluate a complete 5-piece artifact build
- * - evaluateUpperBound: compute an optimistic upper bound using super-artifacts
+ * - evaluateBuild: evaluate a complete 5-piece artifact build (cold path)
+ * - evaluateUpperBoundCompiled: compute an optimistic upper bound using compiled expression
  */
 
 import type { ArtifactData, MainStat } from "@/data/types";
@@ -18,7 +18,8 @@ import type {
   ReactionOverride,
   StatKey,
 } from "../types";
-import type { ArtifactTuple, BnBContext, SuperArtifact } from "./types";
+import type { ConstraintChecker } from "./constraintChecker";
+import type { ArtifactTuple } from "./types";
 
 // ─── Off-Field Stats ───
 
@@ -40,32 +41,21 @@ export function getOffFieldStats(
 
 // ─── Core Evaluation ───
 
+/** Evaluate a complete 5-piece build using the domain-object path (cold path only). */
 export function evaluateBuild(
   pieces: ArtifactTuple,
-  ctx: BnBContext
+  teamBuild: TeamBuild,
+  swapCharId: string,
+  formulaCharId: string,
+  formulaId: string,
+  baseSheets: Record<string, StatSheet>,
+  calcTargetId: string,
+  calcContext: CalcContext,
+  constraints: ConstraintChecker,
+  reactionOverride?: ReactionOverride,
+  optCtx?: OptimizerContext
 ): { damage: number; result: DamageResult | null } {
-  const {
-    teamBuild,
-    swapCharId,
-    formulaCharId,
-    formulaId,
-    baseSheets,
-    calcTargetId,
-    calcContext,
-    constraints,
-    reactionOverride,
-    scoreFn,
-    optCtx,
-  } = ctx;
-
   const charSheet = StatSheet.fromArtifacts(pieces);
-
-  if (scoreFn) {
-    if (!constraints.isFeasibleByArtifacts(pieces))
-      return { damage: -1, result: null };
-    const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
-    return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
-  }
 
   const postStats = optCtx
     ? teamBuild.getTeamStatsFast(charSheet, optCtx)
@@ -75,12 +65,9 @@ export function evaluateBuild(
         calcContext
       );
 
-  if (
-    !constraints.isFeasibleByStats(
-      postStats[constraints.charId]?.get("er", null) ?? 0,
-      postStats[constraints.charId]?.get("cr", null) ?? 0
-    )
-  ) {
+  const er = postStats[constraints.charId]?.get("er", null) ?? 0;
+  const cr = postStats[constraints.charId]?.get("cr", null) ?? 0;
+  if (!constraints.isFeasibleByStats(er, cr)) {
     return { damage: -1, result: null };
   }
 
@@ -105,61 +92,6 @@ export function evaluateBuild(
 }
 
 // ─── Compiled Evaluation ───
-
-export function evaluateUpperBound(
-  realPieces: (ArtifactData | null)[],
-  superStatsRemaining: Partial<Record<StatKey, number>>[],
-  ctx: BnBContext
-): number {
-  const {
-    teamBuild,
-    swapCharId,
-    formulaCharId,
-    formulaId,
-    baseSheets,
-    calcTargetId,
-    calcContext,
-    reactionOverride,
-    scoreFn,
-    optCtx,
-  } = ctx;
-
-  const realArts = realPieces.filter((a): a is ArtifactData => a != null);
-  let sheet = StatSheet.fromArtifacts(realArts);
-  for (const ss of superStatsRemaining) {
-    if (Object.keys(ss).length > 0) sheet = sheet.merge(StatSheet.fromRaw(ss));
-  }
-
-  if (scoreFn) {
-    const updatedSheets = { ...baseSheets, [swapCharId]: sheet };
-    return scoreFn(updatedSheets, calcTargetId);
-  }
-
-  const postStats = optCtx
-    ? teamBuild.getTeamStatsFast(sheet, optCtx)
-    : teamBuild.getTeamStats(
-        { ...baseSheets, [swapCharId]: sheet },
-        calcTargetId,
-        calcContext
-      );
-  const updatedSheets = { ...baseSheets, [swapCharId]: sheet };
-  const offFieldStats = getOffFieldStats(
-    teamBuild,
-    formulaCharId,
-    formulaId,
-    updatedSheets,
-    calcContext
-  );
-
-  return teamBuild.getDamageResult(
-    formulaCharId,
-    formulaId,
-    postStats,
-    calcContext,
-    reactionOverride,
-    offFieldStats
-  ).totalDamage;
-}
 
 /**
  * Evaluate upper bound using the compiled damage expression.

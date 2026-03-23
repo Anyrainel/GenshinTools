@@ -1,7 +1,7 @@
 /**
  * Auto-Tuning Engine for Build Weights
  *
- * Uses the real TeamBuild damage calculator for marginal analysis.
+ * Uses compiled AST evaluation for marginal analysis (~100x faster than domain objects).
  * Algorithm: constrained greedy allocation at midpoint.
  *
  * 1. Construct baseline artifact stats (main stats only, no substats)
@@ -12,6 +12,7 @@
 
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import {
+  type DamageEvalFn,
   buildSheetFromMainAndSubs,
   constrainedGreedyAllocate,
   emptySubRolls,
@@ -20,18 +21,18 @@ import {
 } from "@/lib/team-comp/constrainedGreedy";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import {
+  compileComboTeamDamage,
+  makeCompiledEvalDamage,
+} from "@/lib/team-comp/formulaCompiler";
 import type {
   CalcContext,
+  ComboFormula,
   ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
 import type { AutoTuneResult } from "./utils";
-import {
-  AVG_ROLL_CD_EQUIV,
-  AVG_SUBSTAT_ROLL,
-  IDEAL_ROLL_DISTRIBUTION,
-  SUBSTAT_BUDGET_ROLLS,
-} from "./utils";
+import { AVG_SUBSTAT_ROLL } from "./utils";
 export { computeIdealScore } from "./utils";
 
 /** Substat keys eligible for roll allocation */
@@ -61,42 +62,57 @@ export type WeightedFormula = {
   reaction?: ReactionOverride;
 };
 
+/** Build a ComboFormula from WeightedFormula[] for a given DPS character. */
+export function buildAutoTuneCombo(
+  charId: string,
+  formulas: WeightedFormula[]
+): ComboFormula {
+  return {
+    id: "__autotune__",
+    label: { zh: "", en: "" },
+    lines: formulas.map((f) => ({
+      charId,
+      formulaId: f.formulaId,
+      count: f.count,
+      reaction: f.reaction,
+    })),
+  };
+}
+
 /**
- * Evaluate damage for a given artifact stat configuration.
- * Sums damage across all provided formulas, weighted by count.
- * Each formula carries its own reaction override.
+ * Compile a DamageEvalFn from a TeamBuild + WeightedFormula[].
+ *
+ * Compiles the full damage pipeline into a single JS function.
+ * The returned callback takes `Record<string, StatSheet>` and reads only
+ * the DPS character's sheet — teammates' stats are baked into constants.
  */
-function evalDamage(
+export function compileAutoTuneEval(
   teamBuild: TeamBuild,
   dpsCharId: string,
   formulas: WeightedFormula[],
-  artifactStats: Record<string, StatSheet>,
-  ctx: CalcContext
-): number {
-  const teamStats = teamBuild.getTeamStats(artifactStats, dpsCharId, ctx);
-  let total = 0;
-  for (const { formulaId, count, reaction } of formulas) {
-    const result = teamBuild.getDamageResult(
-      dpsCharId,
-      formulaId,
-      teamStats,
-      ctx,
-      reaction
-    );
-    total += result.totalDamage * count;
-  }
-  return total;
+  baseArtifactStats: Record<string, StatSheet>,
+  ctx: CalcContext = DEFAULT_CALC_CTX
+): DamageEvalFn {
+  const combo = buildAutoTuneCombo(dpsCharId, formulas);
+  const compiled = compileComboTeamDamage(
+    teamBuild,
+    combo,
+    dpsCharId,
+    baseArtifactStats,
+    ctx
+  );
+  const charIdx = compiled.charIdxMap?.get(dpsCharId) ?? 0;
+  const vars = new Float64Array(compiled.numVars);
+  return makeCompiledEvalDamage(dpsCharId, compiled, charIdx, vars);
 }
 
 /**
  * Compute marginal damage gain for +1 avg roll of each substat.
  */
 function computeMarginals(
-  teamBuild: TeamBuild,
+  evalDamageFn: DamageEvalFn,
   dpsCharId: string,
-  formulas: WeightedFormula[],
   artifactStats: Record<string, StatSheet>,
-  ctx: CalcContext,
   baseDamage: number
 ): Record<SubStat, number> {
   const marginals = {} as Record<SubStat, number>;
@@ -113,7 +129,7 @@ function computeMarginals(
       ...artifactStats,
       [dpsCharId]: baseSheet.withDelta(stat as StatKey, delta),
     };
-    const dmg = evalDamage(teamBuild, dpsCharId, formulas, tweaked, ctx);
+    const dmg = evalDamageFn(tweaked);
     marginals[stat] = dmg - baseDamage;
   }
 
@@ -144,30 +160,20 @@ function applyAllocation(
  * compute marginals at that operating point, normalize to 0-100.
  */
 function computeMidpointWeights(
-  teamBuild: TeamBuild,
+  evalDamageFn: DamageEvalFn,
   dpsCharId: string,
-  formulas: WeightedFormula[],
   baseArtifactStats: Record<string, StatSheet>,
-  allocation: Record<SubStat, number>,
-  ctx: CalcContext
+  allocation: Record<SubStat, number>
 ): Record<SubStat, number> {
   const baseSheet = baseArtifactStats[dpsCharId] ?? new StatSheet([]);
   const midpointSheet = applyAllocation(baseSheet, allocation, 0.5);
 
   const midpointStats = { ...baseArtifactStats, [dpsCharId]: midpointSheet };
-  const baseDmg = evalDamage(
-    teamBuild,
-    dpsCharId,
-    formulas,
-    midpointStats,
-    ctx
-  );
+  const baseDmg = evalDamageFn(midpointStats);
   const marginals = computeMarginals(
-    teamBuild,
+    evalDamageFn,
     dpsCharId,
-    formulas,
     midpointStats,
-    ctx,
     baseDmg
   );
 
@@ -195,27 +201,23 @@ export function toWeightedFormulas(
 }
 
 /**
- * Main auto-tuning function using the real TeamBuild damage calculator.
+ * Main auto-tuning function.
  *
  * Uses constrained greedy allocation that respects real artifact rules:
  * - 4 distinct substats per artifact
  * - Main stat / substat exclusion
  * - Per-stat and per-artifact roll caps
  *
- * @param teamBuild - Constructed TeamBuild with full team + buff resolution
  * @param dpsCharId - The DPS character to optimize
- * @param formulas - Weighted formulas (formulaId + count + per-formula reaction)
  * @param mainStats - Main stats per artifact slot
  * @param baseArtifactStats - Artifact stats for all team members (teammates' sheets)
- * @param ctx - Calc context (enemy level, res, etc.)
+ * @param evalDamageFn - Compiled damage evaluator (from compileAutoTuneEval)
  */
 export function autoTuneWeights(
-  teamBuild: TeamBuild,
   dpsCharId: string,
-  formulas: WeightedFormula[],
   mainStats: Record<Slot, MainStat>,
   baseArtifactStats: Record<string, StatSheet>,
-  ctx: CalcContext = DEFAULT_CALC_CTX
+  evalDamageFn: DamageEvalFn
 ): AutoTuneResult {
   const rv = getRollValues();
 
@@ -228,8 +230,7 @@ export function autoTuneWeights(
     charId: dpsCharId,
     mainStats,
     currentSheets: baseStats,
-    evalDamage: (sheets) =>
-      evalDamage(teamBuild, dpsCharId, formulas, sheets, ctx),
+    evalDamage: evalDamageFn,
     rv,
   });
 
@@ -238,37 +239,27 @@ export function autoTuneWeights(
 
   // Step 2: Midpoint weights
   const weights = computeMidpointWeights(
-    teamBuild,
+    evalDamageFn,
     dpsCharId,
-    formulas,
     baseStats,
-    allocation,
-    ctx
+    allocation
   );
 
   // Step 3: Midpoint marginals (for debugging/display)
   const midpointSheet = applyAllocation(baseSheet, allocation, 0.5);
   const midStats = { ...baseStats, [dpsCharId]: midpointSheet };
-  const midDmg = evalDamage(teamBuild, dpsCharId, formulas, midStats, ctx);
+  const midDmg = evalDamageFn(midStats);
   const midpointMarginals = computeMarginals(
-    teamBuild,
+    evalDamageFn,
     dpsCharId,
-    formulas,
     midStats,
-    ctx,
     midDmg
   );
 
   // Step 4: Final damage (full allocation applied)
   const finalSheet = applyAllocation(baseSheet, allocation);
   const finalStats = { ...baseStats, [dpsCharId]: finalSheet };
-  const finalDamage = evalDamage(
-    teamBuild,
-    dpsCharId,
-    formulas,
-    finalStats,
-    ctx
-  );
+  const finalDamage = evalDamageFn(finalStats);
 
   return {
     weights,
@@ -276,19 +267,6 @@ export function autoTuneWeights(
     midpointMarginals,
     finalDamage,
   };
-}
-
-/**
- * Evaluate baseline damage with no substats (for quick combo comparison).
- */
-export function evalBaselineDamage(
-  teamBuild: TeamBuild,
-  dpsCharId: string,
-  formulas: WeightedFormula[],
-  artifactStats: Record<string, StatSheet>,
-  ctx: CalcContext = DEFAULT_CALC_CTX
-): number {
-  return evalDamage(teamBuild, dpsCharId, formulas, artifactStats, ctx);
 }
 
 /**

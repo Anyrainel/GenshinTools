@@ -15,14 +15,20 @@ import { allSlots } from "@/data/types";
 import { scoreSlot } from "../../account-data/artifactScore";
 import { TeamBuild, evaluateCombo } from "../damageCalc";
 import { StatSheet } from "../damageModels";
+import {
+  compileComboTeamDamage,
+  fillVarsFromArtifacts,
+} from "../formulaCompiler";
 import type { BnBWorkerRequest, BnBWorkerResponse } from "../optimizer.worker";
 import { detectEquippedSets } from "../teamOptUtils";
 import type {
   CalcContext,
   CharOptConfig,
+  ComboFormula,
   ComboResult,
   DamageResult,
   OptFailReason,
+  PartialBuffInfo,
   ReactionOverride,
   StatKey,
   TeamOptComboResult,
@@ -42,8 +48,7 @@ import {
 import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
 import { evaluateBuild, getOffFieldStats } from "./evaluation";
-import { TopKCollector } from "./topKCollector";
-import type { ArtifactTuple, BnBContext, TopKEntry } from "./types";
+import type { ArtifactTuple, TopKEntry } from "./types";
 
 // ─── Constants & Dynamic Hyperparameters ───
 
@@ -79,9 +84,7 @@ function computeHyperparams(inventorySize: number): {
   return { topK, maxTeamSearch };
 }
 
-const warnedCalcErrors = new Set<string>();
-
-/** Helper to evaluate a build without a pre-existing BnBContext. */
+/** Helper to evaluate a build without a pre-existing BnBContext (cold path). */
 function evaluateBuildDirect(
   pieces: ArtifactTuple,
   teamBuild: TeamBuild,
@@ -92,10 +95,10 @@ function evaluateBuildDirect(
   calcTargetId: string,
   calcContext: CalcContext,
   constraints: ConstraintChecker,
-  reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  reactionOverride?: ReactionOverride
 ): { damage: number; result: DamageResult | null } {
-  const tempCtx: BnBContext = {
+  return evaluateBuild(
+    pieces,
     teamBuild,
     swapCharId,
     formulaCharId,
@@ -104,13 +107,8 @@ function evaluateBuildDirect(
     calcTargetId,
     calcContext,
     constraints,
-    reactionOverride,
-    scoreFn,
-    collector: new TopKCollector(1),
-    evaluations: 0,
-    sinceLastYield: 0,
-  };
-  return evaluateBuild(pieces, tempCtx);
+    reactionOverride
+  );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -574,28 +572,39 @@ export async function* runTeamOptimization(
   const isComboMode =
     combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
 
-  // Combo scoring function
-  const comboScoreFn = isComboMode
-    ? (sheets: Record<string, StatSheet>, _calcTargetId: string): number => {
-        try {
-          return evaluateCombo(
-            teamBuild,
-            combo,
-            sheets,
-            calcContext,
-            reactionOverrides,
-            comboLinePartialBuffs
-          ).totalDamage;
-        } catch (e) {
-          const key = `comboScoreFn:${_calcTargetId}`;
-          if (!warnedCalcErrors.has(key)) {
-            warnedCalcErrors.add(key);
-            console.warn("[optimizer] comboScoreFn failed:", e);
-          }
-          return 0;
-        }
-      }
-    : undefined;
+  // Normalize single formula to a 1-line combo so all downstream code uses one path
+  const effectiveCombo: ComboFormula = isComboMode
+    ? combo
+    : {
+        id: "__single__",
+        label: { zh: "", en: "" },
+        lines: [
+          {
+            charId: carryCharId,
+            formulaId,
+            count: 1,
+            reaction: reactionOverride
+              ? {
+                  partReactions: reactionOverride.partReactions,
+                  partHits: reactionOverride.partHits,
+                }
+              : undefined,
+          },
+        ],
+      };
+  const effectiveReactionOverrides: Record<string, ReactionOverride> =
+    isComboMode
+      ? (reactionOverrides ?? {})
+      : reactionOverride
+        ? { [`${carryCharId}.${formulaId}`]: reactionOverride }
+        : {};
+  const effectiveComboLinePartialBuffs:
+    | Record<number, PartialBuffInfo[]>
+    | undefined = isComboMode
+    ? comboLinePartialBuffs
+    : partialBuffs && partialBuffs.length > 0
+      ? { 0: partialBuffs }
+      : undefined;
 
   const getOffFieldStatsFor = (
     tb: TeamBuild,
@@ -624,24 +633,13 @@ export async function* runTeamOptimization(
       try {
         // Evaluate with empty artifact sheet
         const emptySheets = { ...baseSheets, [cid]: new StatSheet([]) };
-        let dmgEmpty: number;
-        if (comboScoreFn) {
-          dmgEmpty = comboScoreFn(emptySheets, carryCharId);
-        } else {
-          const ps = teamBuild.getTeamStats(
-            emptySheets,
-            carryCharId,
-            calcContext
-          );
-          dmgEmpty = teamBuild.getDamageResult(
-            carryCharId,
-            formulaId,
-            ps,
-            calcContext,
-            reactionOverride,
-            getOffFieldStatsFor(teamBuild, emptySheets)
-          ).totalDamage;
-        }
+        const dmgEmpty = evaluateCombo(
+          teamBuild,
+          effectiveCombo,
+          emptySheets,
+          calcContext,
+          effectiveReactionOverrides
+        ).totalDamage;
 
         // Build super-artifact sheet: max stat per slot, then sum across slots
         const superStats: Partial<Record<StatKey, number>> = {};
@@ -657,36 +655,54 @@ export async function* runTeamOptimization(
         }
         const superSheet = StatSheet.fromRaw(superStats);
         const superSheets = { ...baseSheets, [cid]: superSheet };
-        let dmgSuper: number;
-        if (comboScoreFn) {
-          dmgSuper = comboScoreFn(superSheets, carryCharId);
-        } else {
-          const ps = teamBuild.getTeamStats(
-            superSheets,
-            carryCharId,
-            calcContext
-          );
-          dmgSuper = teamBuild.getDamageResult(
-            carryCharId,
-            formulaId,
-            ps,
-            calcContext,
-            reactionOverride,
-            getOffFieldStatsFor(teamBuild, superSheets)
-          ).totalDamage;
-        }
+        const dmgSuper = evaluateCombo(
+          teamBuild,
+          effectiveCombo,
+          superSheets,
+          calcContext,
+          effectiveReactionOverrides
+        ).totalDamage;
 
         const base = Math.max(dmgEmpty, 1);
         const satDelta = Math.abs(dmgSuper - dmgEmpty) / base;
         if (satDelta < 0.001) {
-          saturatedCharIds.add(cid);
-          // [DEBUG-CONSTRAINT] Remove this logging block after investigation
-          const epc = perChar[cid];
-          if (epc && (epc.minEr > 0 || epc.minCr > 0)) {
-            console.log(
-              `[DEBUG-CONSTRAINT] ${cid} marked SATURATED (delta=${(satDelta * 100).toFixed(4)}%) with constraints: minEr=${epc.minEr} minCr=${epc.minCr}`
+          // Substats don't matter, but the set bonus might.
+          // If the character has a configured 4pc/2pc set, check whether
+          // losing that set bonus changes damage. If so, the character
+          // is NOT saturated — the heuristic fill might pick off-set
+          // artifacts, and the set-detection rebuild would remove the bonus.
+          const charPerConf = perChar[cid];
+          const hasSetConfig =
+            !!charPerConf?.artifactSetId ||
+            (charPerConf?.artifactHalfSetIds?.length ?? 0) > 0;
+
+          if (hasSetConfig) {
+            // Build a TeamBuild with this character's set stripped
+            const noSetConfigs = teamBuild.configs.map((c) =>
+              c.charId === cid
+                ? { ...c, artifactSetId: null, artifactHalfSetIds: [] }
+                : c
             );
+            const noSetTB = new TeamBuild(
+              noSetConfigs,
+              teamBuild.combatOpts,
+              teamBuild.enemyElementAura
+            );
+            const dmgNoSet = evaluateCombo(
+              noSetTB,
+              effectiveCombo,
+              emptySheets,
+              calcContext,
+              effectiveReactionOverrides
+            ).totalDamage;
+            const setDelta = Math.abs(dmgEmpty - dmgNoSet) / base;
+            if (setDelta >= 0.001) {
+              // Set bonus matters — don't mark as saturated
+              continue;
+            }
           }
+
+          saturatedCharIds.add(cid);
         }
       } catch {
         // If evaluation fails, don't mark as saturated — let B&B handle it
@@ -959,17 +975,12 @@ export async function* runTeamOptimization(
             globalConfig,
             baseSheetsDump,
             calcContext,
-            reactionOverride,
             topK: TOP_K,
             deadlineMs: phase1BudgetMs,
             maxArtsPerSlot: maxArtsPerSlot ?? 0,
-            isComboMode,
-            combo: isComboMode ? combo : undefined,
-            reactionOverrides: isComboMode ? reactionOverrides : undefined,
-            partialBuffs,
-            comboLinePartialBuffs: isComboMode
-              ? comboLinePartialBuffs
-              : undefined,
+            combo: effectiveCombo,
+            reactionOverrides: effectiveReactionOverrides,
+            comboLinePartialBuffs: effectiveComboLinePartialBuffs,
           };
 
           worker.postMessage(request);
@@ -1049,15 +1060,14 @@ export async function* runTeamOptimization(
         heuristicSheets,
         calcContext,
         undefined,
-        reactionOverride,
-        comboScoreFn,
+        effectiveCombo,
+        effectiveReactionOverrides,
         TOP_K,
         charDeadline,
         undefined,
         maxArtsPerSlot ?? 0,
-        false,
         undefined,
-        partialBuffs
+        effectiveComboLinePartialBuffs
       );
 
       topKByChar[charId] = result.collector.results;
@@ -1110,15 +1120,14 @@ export async function* runTeamOptimization(
         heuristicSheets,
         calcContext,
         undefined,
-        reactionOverride,
-        comboScoreFn,
+        effectiveCombo,
+        effectiveReactionOverrides,
         TOP_K,
         charDeadline,
         undefined,
         maxArtsPerSlot ?? 0,
-        false,
         undefined,
-        partialBuffs
+        effectiveComboLinePartialBuffs
       );
       topKByChar[charId] = result.collector.results;
       if (result.failReason) {
@@ -1247,15 +1256,14 @@ export async function* runTeamOptimization(
           heuristicSheets,
           calcContext,
           excludeSet,
-          reactionOverride,
-          comboScoreFn,
+          effectiveCombo,
+          effectiveReactionOverrides,
           TOP_K,
           altDeadline,
           undefined,
           maxArtsPerSlot ?? 0,
-          false,
           undefined,
-          partialBuffs
+          effectiveComboLinePartialBuffs
         );
 
         // Merge alternative results into the existing top-K
@@ -1304,39 +1312,35 @@ export async function* runTeamOptimization(
 
   // Build the team evaluation function that uses the actual optimization goal.
   // This is the ONLY scoring used in allocation — no per-character proxies.
+  // Compiled multi-char evaluation: all chars variable → ~100x faster than domain objects.
+  const compiledTeamEvalEmptySheets: Record<string, StatSheet> = {};
+  for (const cid of allCharIds) {
+    compiledTeamEvalEmptySheets[cid] = new StatSheet([]);
+  }
+  const compiledTeamEval = compileComboTeamDamage(
+    effectiveTeamBuild,
+    effectiveCombo,
+    allCharIds,
+    compiledTeamEvalEmptySheets,
+    calcContext,
+    effectiveReactionOverrides
+  );
+  const compiledTeamVars = new Float64Array(compiledTeamEval.numVars);
   const teamEvalFn: TeamEvalFn = (assignment) => {
-    const candidateArts: Record<string, Record<Slot, ArtifactData | null>> = {};
+    compiledTeamVars.fill(0);
     for (const charId of allCharIds) {
-      if (assignment[charId]) {
-        candidateArts[charId] = artsTupleToRecord(assignment[charId].artifacts);
-      } else {
-        const best = topKByChar[charId]?.[0];
-        candidateArts[charId] = best
-          ? artsTupleToRecord(best.artifacts)
-          : { ...emptyArtifacts };
+      const entry = assignment[charId] ?? topKByChar[charId]?.[0];
+      const charIdx = compiledTeamEval.charIdxMap!.get(charId);
+      if (entry && charIdx !== undefined) {
+        fillVarsFromArtifacts(
+          entry.artifacts,
+          compiledTeamEval.varMapping,
+          charIdx,
+          compiledTeamVars
+        );
       }
     }
-    const sheets = buildSheetsFromArtifacts(baseSheets, candidateArts);
-    if (comboScoreFn) {
-      return comboScoreFn(sheets, carryCharId);
-    }
-    try {
-      const postStats = effectiveTeamBuild.getTeamStats(
-        sheets,
-        carryCharId,
-        calcContext
-      );
-      return effectiveTeamBuild.getDamageResult(
-        carryCharId,
-        formulaId,
-        postStats,
-        calcContext,
-        reactionOverride,
-        getOffFieldStatsFor(effectiveTeamBuild, sheets)
-      ).totalDamage;
-    } catch {
-      return 0;
-    }
+    return compiledTeamEval.evaluate(compiledTeamVars);
   };
 
   let { candidates, iterations: allocIterations } = findBestTeamAllocation(
@@ -1392,15 +1396,14 @@ export async function* runTeamOptimization(
           heuristicSheets,
           calcContext,
           seqUsed,
-          reactionOverride,
-          comboScoreFn,
+          effectiveCombo,
+          effectiveReactionOverrides,
           1, // only need the best result
           altDeadline,
           undefined,
           maxArtsPerSlot ?? 0,
-          false,
           undefined,
-          partialBuffs
+          effectiveComboLinePartialBuffs
         );
         const best = altResult.collector.best;
         if (best) {
@@ -1486,15 +1489,14 @@ export async function* runTeamOptimization(
             heuristicSheets,
             calcContext,
             excludeSet,
-            reactionOverride,
-            comboScoreFn,
+            effectiveCombo,
+            effectiveReactionOverrides,
             1, // only need best result
             altDeadline,
             undefined,
             maxArtsPerSlot ?? 0,
-            false,
             undefined,
-            partialBuffs
+            effectiveComboLinePartialBuffs
           );
 
           const secondBest = altResult.collector.best;
@@ -1567,14 +1569,6 @@ export async function* runTeamOptimization(
       bestArtifactsByChar[charId] = best
         ? artsTupleToRecord(best.artifacts)
         : { ...emptyArtifacts };
-      // [DEBUG-CONSTRAINT] Remove this logging block after investigation
-      const epc = effectivePerChar[charId];
-      if (epc && epc.minEr > 0) {
-        const topKLen = topKByChar[charId]?.length ?? 0;
-        console.log(
-          `[DEBUG-CONSTRAINT] ${charId} Phase 2 allocation: NOT in bestAllocation, topK has ${topKLen} entries, using ${best ? "topK[0]" : "EMPTY artifacts"}`
-        );
-      }
     }
   }
 
@@ -1631,20 +1625,13 @@ export async function* runTeamOptimization(
     // Compute current team damage baseline
     const currentTeamDamage = (() => {
       const sheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
-      if (comboScoreFn) return comboScoreFn(sheets, carryCharId);
       try {
-        const ps = effectiveTeamBuild.getTeamStats(
+        return evaluateCombo(
+          effectiveTeamBuild,
+          effectiveCombo,
           sheets,
-          carryCharId,
-          calcContext
-        );
-        return effectiveTeamBuild.getDamageResult(
-          carryCharId,
-          formulaId,
-          ps,
           calcContext,
-          reactionOverride,
-          getOffFieldStatsFor(effectiveTeamBuild, sheets)
+          effectiveReactionOverrides
         ).totalDamage;
       } catch {
         return 0;
@@ -1710,8 +1697,7 @@ export async function* runTeamOptimization(
         carryCharId,
         calcContext,
         phase3Constraints,
-        reactionOverride,
-        comboScoreFn
+        reactionOverride
       );
 
       // Serialize sheets for worker
@@ -1828,20 +1814,15 @@ export async function* runTeamOptimization(
               globalConfig,
               baseSheetsDump: input.refinedSheetsDump,
               calcContext,
-              reactionOverride,
               topK: TOP_K,
               deadlineMs: budgetMs,
               warmStartThreshold:
                 input.currentDamage > 0 ? input.currentDamage : undefined,
               maxArtsPerSlot: maxArtsPerSlot ?? 0,
               excludedIds: input.excludedIds,
-              isComboMode,
-              combo: isComboMode ? combo : undefined,
-              reactionOverrides: isComboMode ? reactionOverrides : undefined,
-              partialBuffs,
-              comboLinePartialBuffs: isComboMode
-                ? comboLinePartialBuffs
-                : undefined,
+              combo: effectiveCombo,
+              reactionOverrides: effectiveReactionOverrides,
+              comboLinePartialBuffs: effectiveComboLinePartialBuffs,
             };
 
             worker.postMessage(request);
@@ -1871,15 +1852,14 @@ export async function* runTeamOptimization(
           input.refinedBaseSheets,
           calcContext,
           new Set(input.excludedIds),
-          reactionOverride,
-          comboScoreFn,
+          effectiveCombo,
+          effectiveReactionOverrides,
           TOP_K,
           reoptDeadline,
           input.currentDamage > 0 ? input.currentDamage : undefined,
           maxArtsPerSlot ?? 0,
-          false,
           undefined,
-          partialBuffs
+          effectiveComboLinePartialBuffs
         );
 
         if (
@@ -1917,26 +1897,16 @@ export async function* runTeamOptimization(
         tentativeArts
       );
       let tentativeDamage: number;
-      if (comboScoreFn) {
-        tentativeDamage = comboScoreFn(tentativeSheets, carryCharId);
-      } else {
-        try {
-          const ps = effectiveTeamBuild.getTeamStats(
-            tentativeSheets,
-            carryCharId,
-            calcContext
-          );
-          tentativeDamage = effectiveTeamBuild.getDamageResult(
-            carryCharId,
-            formulaId,
-            ps,
-            calcContext,
-            reactionOverride,
-            getOffFieldStatsFor(effectiveTeamBuild, tentativeSheets)
-          ).totalDamage;
-        } catch {
-          tentativeDamage = 0;
-        }
+      try {
+        tentativeDamage = evaluateCombo(
+          effectiveTeamBuild,
+          effectiveCombo,
+          tentativeSheets,
+          calcContext,
+          effectiveReactionOverrides
+        ).totalDamage;
+      } catch {
+        tentativeDamage = 0;
       }
 
       const improvement = tentativeDamage - currentTeamDamage;
@@ -1973,12 +1943,6 @@ export async function* runTeamOptimization(
     if (!hasArtifacts) needsHeuristicFill.add(charId);
   }
 
-  // [DEBUG-CONSTRAINT] Remove this logging block after investigation
-  if (needsHeuristicFill.size > 0) {
-    console.log(
-      `[DEBUG-CONSTRAINT] Heuristic fill needed for: ${[...needsHeuristicFill].join(", ")} (saturated: ${[...saturatedCharIds].join(", ")})`
-    );
-  }
   if (needsHeuristicFill.size > 0) {
     // Collect all artifact IDs already assigned to characters NOT needing fill
     const assignedIds = new Set<string>();
@@ -1990,10 +1954,21 @@ export async function* runTeamOptimization(
       }
     }
 
-    for (const charId of allCharIds) {
-      if (!needsHeuristicFill.has(charId)) continue;
-      const charConfig = effectivePerChar[charId];
-      if (!charConfig) continue;
+    // Sort heuristic-fill characters by ER constraint difficulty (highest
+    // erGap first). This gives the most constrained characters first pick
+    // of high-ER artifacts from the remaining pool.
+    const heuristicOrder = allCharIds
+      .filter(
+        (cid) => needsHeuristicFill.has(cid) && effectivePerChar[cid] != null
+      )
+      .sort((a, b) => {
+        return (
+          (effectivePerChar[b]!.minEr || 0) - (effectivePerChar[a]!.minEr || 0)
+        );
+      });
+
+    for (const charId of heuristicOrder) {
+      const charConfig = effectivePerChar[charId]!;
 
       const is4pc = !!charConfig.artifactSetId;
       const is2pc =
@@ -2190,155 +2165,58 @@ export async function* runTeamOptimization(
         const crViolated =
           checker.hasCr && checker.crFloor + pickedCr < checker.minCr - 1e-6;
 
-        // [DEBUG-CONSTRAINT] Remove this logging block after investigation
-        if (checker.hasEr) {
-          console.log(
-            `[DEBUG-CONSTRAINT] ${charId} heuristic greedy pick: erFloor=${(checker.erFloor * 100).toFixed(1)}% + pickedEr=${(pickedEr * 100).toFixed(1)}% = ${((checker.erFloor + pickedEr) * 100).toFixed(1)}% vs required=${(checker.minEr * 100).toFixed(1)}% → ${erViolated ? "VIOLATED" : "ok"}`
-          );
-        }
-
         if (erViolated || crViolated) {
-          // Constraint violated. Re-pick: force mainstat pieces for the
-          // violated stats, then fill remaining slots sorted by need.
+          // Constraint violated. Instead of re-picking everything by ER
+          // (which destroys damage-relevant substats), keep the damage-
+          // optimal greedy picks and minimally swap individual slots to
+          // higher-ER/CR artifacts until the constraint is met.
+          for (let attempt = 0; attempt < 5; attempt++) {
+            let curEr = 0;
+            let curCr = 0;
+            for (const slot of allSlots) {
+              curEr += getArtifactEr(picked[slot]);
+              curCr += getArtifactCr(picked[slot]);
+            }
+            const needEr =
+              erViolated && checker.erFloor + curEr < checker.minEr - 1e-6;
+            const needCr =
+              crViolated && checker.crFloor + curCr < checker.minCr - 1e-6;
+            if (!needEr && !needCr) break;
 
-          // Clear current picks
-          for (const slot of allSlots) {
-            const art = picked[slot];
-            if (art) pickedIds.delete(art.id);
-            picked[slot] = null;
-          }
-
-          // Helper: pick best mainstat candidate for a slot with set constraint
-          const pickMainstat = (slotIdx: number, mainStat: string): boolean => {
-            const slot = allSlots[slotIdx];
-            let candidates = inventory.filter(
-              (a) =>
-                a.slotKey === slot &&
-                !assignedIds.has(a.id) &&
-                !pickedIds.has(a.id) &&
-                a.mainStatKey === mainStat
-            );
-            const setReq = slotSetAssignment[slotIdx];
-            if (setReq) {
-              const halfSet = artifactHalfSetsById[setReq];
-              if (halfSet) {
-                const validSets = new Set(halfSet.setIds);
-                const f = candidates.filter((a) => validSets.has(a.setKey));
-                if (f.length > 0) candidates = f;
-              } else {
-                const f = candidates.filter((a) => a.setKey === setReq);
-                if (f.length > 0) candidates = f;
+            // Find the slot swap with the biggest ER/CR improvement.
+            // Try both on-set and off-set candidates (ER/CR requirements
+            // take priority over set bonuses).
+            let bestSlotIdx = -1;
+            let bestImprovement = 0;
+            let bestCandidate: ArtifactData | null = null;
+            for (let si = 0; si < 5; si++) {
+              const slot = allSlots[si];
+              const curSlotEr = getArtifactEr(picked[slot]);
+              const curSlotCr = getArtifactCr(picked[slot]);
+              const candidates = inventory.filter(
+                (a) =>
+                  a.slotKey === slot &&
+                  !assignedIds.has(a.id) &&
+                  !pickedIds.has(a.id)
+              );
+              for (const cand of candidates) {
+                let improvement = 0;
+                if (needEr) improvement += getArtifactEr(cand) - curSlotEr;
+                if (needCr) improvement += getArtifactCr(cand) - curSlotCr;
+                if (improvement > bestImprovement) {
+                  bestImprovement = improvement;
+                  bestSlotIdx = si;
+                  bestCandidate = cand;
+                }
               }
             }
-            if (candidates.length === 0) return false;
-            // Sort by the stat contribution descending
-            const getFn = mainStat === "er" ? getArtifactEr : getArtifactCr;
-            candidates.sort((a, b) => getFn(b) - getFn(a));
-            picked[slot] = candidates[0];
-            pickedIds.add(candidates[0].id);
-            return true;
-          };
-
-          // Pass 1: Force ER% sands if ER is violated
-          if (erViolated) {
-            pickMainstat(2, "er"); // sands = slot index 2
+            if (bestSlotIdx < 0 || !bestCandidate) break;
+            // Swap: replace current pick with higher-ER/CR candidate
+            const oldArt = picked[allSlots[bestSlotIdx]];
+            if (oldArt) pickedIds.delete(oldArt.id);
+            picked[allSlots[bestSlotIdx]] = bestCandidate;
+            pickedIds.add(bestCandidate.id);
           }
-
-          // Pass 1b: Force CR% circlet if CR is violated
-          if (crViolated) {
-            pickMainstat(4, "cr"); // circlet = slot index 4
-          }
-
-          // Pass 2: Fill remaining slots, sorted by constraint need
-          for (let si = 0; si < 5; si++) {
-            const slot = allSlots[si];
-            if (picked[slot]) continue;
-
-            const requiredSetOrHalf = slotSetAssignment[si];
-            let candidates = inventory.filter(
-              (a) =>
-                a.slotKey === slot &&
-                !assignedIds.has(a.id) &&
-                !pickedIds.has(a.id)
-            );
-            if (requiredSetOrHalf) {
-              const halfSet = artifactHalfSetsById[requiredSetOrHalf];
-              if (halfSet) {
-                const validSets = new Set(halfSet.setIds);
-                const f = candidates.filter((a) => validSets.has(a.setKey));
-                if (f.length > 0) candidates = f;
-              } else {
-                const f = candidates.filter(
-                  (a) => a.setKey === requiredSetOrHalf
-                );
-                if (f.length > 0) candidates = f;
-              }
-            }
-            if (candidates.length === 0) continue;
-
-            // Sort by combined ER+CR contribution for violated stats
-            candidates.sort((a, b) => {
-              let diff = 0;
-              if (erViolated) diff += getArtifactEr(b) - getArtifactEr(a);
-              if (crViolated) diff += getArtifactCr(b) - getArtifactCr(a);
-              if (Math.abs(diff) > 0.001) return diff;
-              const sa = buildMatch
-                ? computeWeightScore(a, buildMatch, globalConfig, 1)
-                : scoreSlot(
-                    a,
-                    {
-                      ...(erViolated ? { er: 100 } : {}),
-                      ...(crViolated ? { cr: 100 } : {}),
-                    } as Record<string, number>,
-                    globalConfig
-                  );
-              const sb = buildMatch
-                ? computeWeightScore(b, buildMatch, globalConfig, 1)
-                : scoreSlot(
-                    b,
-                    {
-                      ...(erViolated ? { er: 100 } : {}),
-                      ...(crViolated ? { cr: 100 } : {}),
-                    } as Record<string, number>,
-                    globalConfig
-                  );
-              return sb - sa;
-            });
-
-            picked[slot] = candidates[0];
-            pickedIds.add(candidates[0].id);
-          }
-        }
-      }
-
-      // [DEBUG-CONSTRAINT] Remove this logging block after investigation
-      {
-        const { minEr, minCr } = charConfig;
-        if (minEr > 0 || minCr > 0) {
-          let finalPickedEr = 0;
-          let finalPickedCr = 0;
-          for (const slot of allSlots) {
-            if (picked[slot]) {
-              finalPickedEr += getArtifactEr(picked[slot]!);
-              finalPickedCr += getArtifactCr(picked[slot]!);
-            }
-          }
-          const missingSlots = allSlots.filter((s) => !picked[s]);
-          const checker = new ConstraintChecker(
-            effectiveTeamBuild,
-            charId,
-            baseSheets,
-            carryCharId,
-            calcContext,
-            minEr,
-            minCr
-          );
-          console.log(
-            `[DEBUG-CONSTRAINT] ${charId} FINAL heuristic: erFloor=${(checker.erFloor * 100).toFixed(1)}% + artEr=${(finalPickedEr * 100).toFixed(1)}% = ${((checker.erFloor + finalPickedEr) * 100).toFixed(1)}% vs required=${(minEr * 100).toFixed(1)}%` +
-              (missingSlots.length > 0
-                ? ` (${missingSlots.length} empty slots: ${missingSlots.join(",")})`
-                : "")
-          );
         }
       }
 
@@ -2407,10 +2285,6 @@ export async function* runTeamOptimization(
       const cr = validationStats[charId]?.get("cr", null) ?? 0;
 
       if (minEr > 0 && er < minEr - 1e-6) {
-        // [DEBUG-CONSTRAINT] Remove this logging block after investigation
-        console.log(
-          `[DEBUG-CONSTRAINT] ${charId} FINAL VALIDATION FAIL: er=${(er * 100).toFixed(1)}% < required=${(minEr * 100).toFixed(1)}% (saturated=${saturatedCharIds.has(charId)}, hasArts=${!!bestArtifactsByChar[charId]})`
-        );
         failReasons[charId] = { kind: "er-unmet", minEr, bestEr: er };
       } else if (minCr > 0 && cr < minCr - 1e-6) {
         failReasons[charId] = { kind: "cr-unmet", minCr, bestCr: cr };
