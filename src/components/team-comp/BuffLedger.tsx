@@ -187,6 +187,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
       {/* biome-ignore lint/a11y/useSemanticElements: div needed because nested Switch prevents using button */}
       <div
         role="button"
+        aria-expanded={open}
         tabIndex={0}
         onClick={() => setOpen(!open)}
         onKeyDown={(e) => {
