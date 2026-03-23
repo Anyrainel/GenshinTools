@@ -1,13 +1,1 @@
 # Fontaine Damage Tracker
-- id: sigewinne-p1-off-field
-  entity: sigewinne
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    P1 off-field party members only (excluding Sigewinne) approximated as otherOnField.
-  detail: >
-    Changed P1 ScalingBuff receiver from otherOnField to otherOffField,
-    matching the game text "处于后台的角色" (off-field party members).
-  created: "2026-02-25"
-  resolved: "2026-03-22"

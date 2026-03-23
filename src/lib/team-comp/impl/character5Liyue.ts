@@ -487,11 +487,10 @@ class Baizhu extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Q Spiritvein DMG: Lv10 174.7%, Lv13 (C3+) 206.3%
-    // ~6 Seamless Shields over 14s duration
     const qMult = this.constellation >= 3 ? 2.063 : 1.747;
     return {
       "baizhu-burst": {
-        label: { zh: "Q×6", en: "Q (×6)" },
+        label: { zh: "Q 灵气脉", en: "Q Spiritvein" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -499,7 +498,6 @@ class Baizhu extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            hits: 6,
             offField: true,
           },
         ],
@@ -525,9 +523,10 @@ class Baizhu extends CharacterBase {
     };
   })();
 
-  // Rotation: E > Q (Dendro healer/support, spiritveins baked into Q ×6)
+  // Rotation: E > Q (Dendro healer/support)
+  // Q Spiritvein triggers on shield refresh/break; ~3 hits as conservative estimate
   protected override get defaultCombo() {
-    return { "baizhu-burst": 1 };
+    return { "baizhu-burst": 3 };
   }
 }
 

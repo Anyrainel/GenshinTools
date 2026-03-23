@@ -15,18 +15,6 @@
   created: "2026-02-25"
   resolved: "2026-02-26"
 
-- id: xiangling-q-tick-count
-  entity: xiangling
-  rule: S6
-  status: wont-do
-  category: approximation
-  summary: >
-    Pyronado tick count approximated as ~10 (C0-C3) or ~14 (C4+).
-  detail: >
-    Acceptable approximation. Exact tick count depends on enemy hitbox and positioning.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
-
 - id: xiao-p1-ramp
   entity: xiao
   rule: S6
@@ -51,23 +39,6 @@
   created: "2026-02-25"
   resolved: "2026-02-25"
 
-- id: baizhu-q-hit-count
-  entity: baizhu
-  rule: S6
-  status: wont-do
-  category: missing-formula
-  summary: >
-    Q Spiritvein hit count depends on incoming damage; approximated as x6.
-  detail: >
-    Baizhu is a Dendro healer/support not in DmgRunbook. Q Pulsing Clarity lasts 14s,
-    generating a new Seamless Shield every 2.5s (~5 refreshes). Spiritveins fire when a
-    new shield is generated while old one is active, or when a shield breaks/expires. The
-    x6 approximation is within acceptable range for typical combat scenarios. Shield breaks
-    from incoming damage may add 1-2 extra procs but this is highly variable and Baizhu's
-    personal DPS is not a primary concern.
-  created: "2026-02-25"
-  resolved: "2026-02-26"
-
 - id: ganyu-c4-ramp
   entity: ganyu
   rule: S6
@@ -80,20 +51,6 @@
     and Yelan P2.
   created: "2026-02-26"
   resolved: "2026-02-26"
-
-- id: xiao-p2-stacks
-  entity: xiao
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    P2 E DMG stacks (max 3x15%=45%) approximated as 2 stacks (30%).
-  detail: >
-    Added OptionDef (xiaoOption) with choices for 2 stacks (30%) and 3 stacks
-    (45%). P2 buff now uses 0.15 * stacks instead of hardcoded 0.3. Default
-    remains 2 stacks.
-  created: "2026-02-26"
-  resolved: "2026-03-22"
 
 - id: shenhe-c4-skyfrost
   entity: shenhe
@@ -112,21 +69,3 @@
     value, so impact is low.
   created: "2026-03-22"
   resolved: null
-
-- id: chongyun-c6-enemy-hp
-  entity: chongyun
-  rule: S6
-  status: wont-do
-  category: engine-gap
-  summary: >
-    C6 Q +15% DMG vs enemies with lower HP% than Chongyun is assumed always-active. Relative HP
-    comparison is hard to model with standard OptionMap.
-  detail: >
-    Requires comparing enemy HP% to character HP%, which is a relative comparison not
-    supported by OptionMap (which only models absolute thresholds like "below 50%"). Adding
-    this would require a new engine concept for relative HP state. The always-active assumption
-    is acceptable because Chongyun Q is typically used as a burst nuke on enemies already
-    damaged, where the condition is naturally satisfied. The 15% dmg% buff on a 4-star C6 Q
-    is not worth the engine complexity.
-  created: "2026-02-26"
-  resolved: "2026-02-26"

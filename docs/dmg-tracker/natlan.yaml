@@ -50,21 +50,3 @@
   detail: ""
   created: "2026-03-21"
   resolved: null
-
-- id: ifa-excel-missing-q
-  entity: ifa
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Excel shows Q burst damage at 915.3% ATK (Anemo) plus Sedation Mark hits
-    at 196.1% per element. TS has no damage formulas at all (labeled as pure
-    healer/support).
-  detail: >
-    Added Q burst DirectFormula (915.3% Lv10, 1080.5% Lv13 C5+) with
-    Anemo/burst/none tag. Added per-element Sedation Mark DirectFormulas
-    (196.1% Lv10, 231.5% Lv13 C5+) for each unique team element
-    (Pyro/Hydro/Cryo/Electro), combined into a single formula entry.
-  created: "2026-03-22"
-  resolved: "2026-03-22"
-

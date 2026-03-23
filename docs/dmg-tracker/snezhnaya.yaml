@@ -18,36 +18,3 @@
     increase) but universal across all party members.
   created: "2026-02-25"
   resolved: "2026-02-25"
-
-- id: arlecchino-excel-e-damage
-  entity: arlecchino
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Excel calculator includes E skill damage formulas (spike 26.7% x4, cleave 240.4%,
-    blood-debt directive 57.2%) that are absent from TS formulaMap. The cleave is a
-    meaningful one-time hit per rotation. Verify whether E damage warrants a formula entry.
-  detail: >
-    Added DirectFormula for E Cleave (240.4% Lv10, 283.8% Lv13 C3+) with
-    Pyro/skill/none tag. Spike and blood-debt directive omitted as low-impact
-    periodic procs not listed in runbook.
-  created: "2026-03-22"
-  resolved: "2026-03-22"
-
-- id: tartaglia-excel-riptide-slash
-  entity: tartaglia
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Excel calculator includes Riptide Slash (119%/144% ATK, hydro skill DMG, once per 1.5s)
-    and Stance Change DMG (130%/153% ATK, hydro skill DMG) that are absent from TS formulaMap.
-    Riptide Slash procs repeatedly during melee window and may be a significant damage source.
-  detail: >
-    Added DirectFormula for Riptide Slash (119% Lv10, 144% Lv13 C3+) with
-    Hydro/skill/none tag, default 6 procs in combo. Added DirectFormula for
-    Stance Change DMG (130% Lv10, 153% Lv13 C3+) with Hydro/skill/none tag,
-    default 1 proc in combo.
-  created: "2026-03-22"
-  resolved: "2026-03-22"

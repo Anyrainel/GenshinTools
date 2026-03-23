@@ -12,20 +12,6 @@
   created: "2026-02-25"
   resolved: "2026-02-25"
 
-- id: skirk-p3-party-level
-  entity: skirk
-  rule: S6
-  status: wont-do
-  category: approximation
-  summary: >
-    P3 +1 E level to all party members requires all-Hydro/Cryo team with at least
-    1 of each; team buff not implemented.
-  detail: >
-    Known limitation. Skirk's own talent level is handled but team-wide E level buff
-    requires team composition validation not currently supported. Shared limitation
-    with tartaglia P3.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: aloy-e-freeze-bomb
   entity: aloy
@@ -60,15 +46,18 @@
   created: "2026-02-25"
   resolved: "2026-02-26"
 
-- id: skirk-all-shall-wither
+- id: skirk-p3-party-level
   entity: skirk
-  rule: S8
+  rule: S6
   status: wont-do
-  category: missing-formula
+  category: approximation
   summary: >
-    All Shall Wither E-mode complex combat state interactions not modeled.
+    P3 +1 E level to all party members requires all-Hydro/Cryo team with at least
+    1 of each; team buff not implemented.
   detail: >
-    Complex combat state interaction is encapsulated in different formulas (assume certain E state).
+    Known limitation. Skirk's own talent level is handled but team-wide E level buff
+    requires team composition validation not currently supported. Implemented escoffier
+    and furina for this passive too.
   created: "2026-02-25"
   resolved: "2026-02-25"
 

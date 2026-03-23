@@ -311,7 +311,6 @@ class Xiangling extends CharacterBase {
   // Pyronado tick: 202% (Lv10) / 238% (Lv13)
   // C0-C3 Duration 10s: ~10 ticks; C4+ Duration 14s: ~14 ticks
   protected readonly formulaMap = (() => {
-    const ticks = this.constellation >= 4 ? 14 : 10;
     const isC3 = this.constellation >= 3;
     const swing1 = isC3 ? 1.53 : 1.3;
     const swing2 = isC3 ? 1.87 : 1.58;
@@ -325,15 +324,19 @@ class Xiangling extends CharacterBase {
     };
 
     return {
-      "xiangling-pyronado": {
-        label: { zh: `Q ${ticks}跳`, en: `Q ${ticks} ticks` },
+      "xiangling-pyronado-swing": {
+        label: { zh: "Q 三段挥舞", en: "Q Swings" },
         parts: [
           { formula: new DirectFormula(swing1, pyroTag) },
           { formula: new DirectFormula(swing2, pyroTag) },
           { formula: new DirectFormula(swing3, pyroTag) },
+        ],
+      },
+      "xiangling-pyronado-tick": {
+        label: { zh: "Q 旋火轮", en: "Q Pyronado" },
+        parts: [
           {
             formula: new DirectFormula(tickMult, pyroTag),
-            hits: ticks,
             offField: true,
           },
         ],
@@ -341,14 +344,27 @@ class Xiangling extends CharacterBase {
     };
   })();
 
-  // Rotation: E > Q (off-field Pyronado sub-DPS, swings + ticks baked in)
+  // Rotation: E > Q (off-field Pyronado sub-DPS)
+  // C0-C3: ~10 ticks; C4+: ~14 ticks
   protected override get defaultCombo() {
-    return { "xiangling-pyronado": 1 };
+    const ticks = this.constellation >= 4 ? 14 : 10;
+    return { "xiangling-pyronado-swing": 1, "xiangling-pyronado-tick": ticks };
   }
 }
 
-@RegisterCharacter("chongyun")
+const chongyunOption = {
+  label: { zh: "敌人HP状态", en: "Enemy HP" },
+  choices: [
+    { value: "lower", label: { zh: "HP% < 重云", en: "HP% < Chongyun" } },
+    { value: "higher", label: { zh: "HP% ≥ 重云", en: "HP% >= Chongyun" } },
+  ] as const,
+  default: "lower",
+} satisfies OptionDef;
+
+@RegisterCharacter("chongyun", chongyunOption)
 class Chongyun extends CharacterBase {
+  private readonly o = resolveOption(chongyunOption, this.option);
+
   readonly buffs = [
     // P1: Sword, Claymore, Polearm chars in E field get Normal ATK SPD +8%
     new StatBuff(
@@ -362,8 +378,8 @@ class Chongyun extends CharacterBase {
       { receiver: "team", filter: { elements: ["Cryo"] } },
       [{ key: "resReduction%", value: 0.1 }]
     ),
-    // C6: Q deals +15% DMG to low-HP enemies
-    ...(this.constellation >= 6
+    // C6: Q deals +15% DMG to enemies with lower HP% than Chongyun
+    ...(this.constellation >= 6 && this.o === "lower"
       ? [
           new StatBuff(
             cbs(this, "C6", ["Q"]),
