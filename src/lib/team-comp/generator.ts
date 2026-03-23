@@ -421,7 +421,8 @@ function constraintAwareGenerate(
   rarity: 4 | 5,
   budgetPreset: SubstatBudgetPreset,
   reactionOverrides?: Record<string, ReactionOverride>,
-  flex?: FlexSlotConfig
+  flex?: FlexSlotConfig,
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): ConstraintAwareResult {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
@@ -886,7 +887,8 @@ export async function* runGenerator(
         cR,
         budgetPreset,
         reactionOverrides,
-        flex
+        flex,
+        buffOverrides
       );
     }
     const mainStats = findBestMainStats(

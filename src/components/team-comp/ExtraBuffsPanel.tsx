@@ -109,8 +109,7 @@ export function ExtraBuffsPanel({
   onEnemyAuraChange,
   t,
 }: ExtraBuffsPanelProps) {
-  const extraBuffs: ExtraBuff[] =
-    ((team as Record<string, unknown>).extraBuffs as ExtraBuff[]) ?? [];
+  const extraBuffs: ExtraBuff[] = team.extraBuffs ?? [];
   const [customDialogOpen, setCustomDialogOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
 

@@ -151,8 +151,8 @@ describe("TeamBuild with extraBuffs", () => {
 
     // Every character should have higher ATK
     for (const c of baseConfigs) {
-      const atkBefore = statsWithout[c.charId]!.get("atk");
-      const atkAfter = statsWith[c.charId]!.get("atk");
+      const atkBefore = statsWithout[c.charId]!.get("atk", null);
+      const atkAfter = statsWith[c.charId]!.get("atk", null);
       expect(atkAfter).toBeGreaterThan(atkBefore);
     }
   });
@@ -178,13 +178,13 @@ describe("TeamBuild with extraBuffs", () => {
     const statsWith = tbWith.getTeamStats(emptySheets, "hu_tao");
 
     // Hu Tao should have +0.15 CR
-    const htCrBefore = statsWithout.hu_tao!.get("cr");
-    const htCrAfter = statsWith.hu_tao!.get("cr");
+    const htCrBefore = statsWithout.hu_tao!.get("cr", null);
+    const htCrAfter = statsWith.hu_tao!.get("cr", null);
     expect(htCrAfter - htCrBefore).toBeCloseTo(0.15);
 
     // Xingqiu should be unaffected
-    const xqCrBefore = statsWithout.xingqiu!.get("cr");
-    const xqCrAfter = statsWith.xingqiu!.get("cr");
+    const xqCrBefore = statsWithout.xingqiu!.get("cr", null);
+    const xqCrAfter = statsWith.xingqiu!.get("cr", null);
     expect(xqCrAfter).toBeCloseTo(xqCrBefore);
   });
 
@@ -351,7 +351,7 @@ describe("buffDisplayUtils for extraBuff source", () => {
   it("getSourceName returns translated name via t.envBuff", () => {
     const mockT = {
       envBuff: (id: string) => `translated:${id}`,
-    } as Parameters<typeof getSourceName>[1];
+    } as unknown as Parameters<typeof getSourceName>[1];
     const name = getSourceName({ type: "extra", id: "gateau_debord" }, mockT);
     expect(name).toBe("translated:gateau_debord");
   });

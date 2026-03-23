@@ -443,7 +443,6 @@ describe("validateStatFilter", () => {
 describe("resolveOption", () => {
   const testOption = {
     label: { zh: "测试", en: "Test" },
-    default: "alpha",
     choices: [
       { value: "alpha", label: { zh: "甲", en: "Alpha" } },
       { value: "beta", label: { zh: "乙", en: "Beta" } },

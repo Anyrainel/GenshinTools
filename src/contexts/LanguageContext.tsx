@@ -98,6 +98,7 @@ interface LanguageContextType {
     skills: (id: string) => CharacterSkill[] | null;
     passives: (id: string) => CharacterEffect[] | null;
     constellations: (id: string) => CharacterEffect[] | null;
+    envBuff: (id: string) => string;
     glossary: (id: string) => CharacterEffect[] | null;
     lang: Language;
   };

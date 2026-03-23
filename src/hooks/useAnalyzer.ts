@@ -32,7 +32,7 @@ function buildCacheKey(opts: AnalyzerOptions): string {
   const rxPart = reactionOverrides
     ? Object.entries(reactionOverrides)
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => `${k}=${v.type}`)
+        .map(([k, v]) => `${k}=${v.reaction}`)
         .join(";")
     : "";
 
