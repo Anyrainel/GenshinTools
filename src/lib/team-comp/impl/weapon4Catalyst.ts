@@ -145,7 +145,6 @@ const widsithOption = {
     },
     { value: "average", label: { zh: "期望平均", en: "Average" } },
   ] as const,
-  default: "recitative",
 } satisfies OptionDef;
 
 @RegisterWeapon("the_widsith", widsithOption)

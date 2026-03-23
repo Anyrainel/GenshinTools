@@ -314,24 +314,11 @@ class Zibai extends CharacterBase {
 const xianyunOption = {
   label: { zh: "风翎层数", en: "Storm Pinion Stacks" },
   choices: [
-    {
-      value: "4",
-      label: { zh: "4 层 (+10% 暴击率)", en: "4 stacks (+10% Crit Rate)" },
-    },
-    {
-      value: "3",
-      label: { zh: "3 层 (+8% 暴击率)", en: "3 stacks (+8% Crit Rate)" },
-    },
-    {
-      value: "2",
-      label: { zh: "2 层 (+6% 暴击率)", en: "2 stacks (+6% Crit Rate)" },
-    },
-    {
-      value: "1",
-      label: { zh: "1 层 (+4% 暴击率)", en: "1 stack (+4% Crit Rate)" },
-    },
+    { value: "4", label: { zh: "4 层", en: "4 stacks" } },
+    { value: "3", label: { zh: "3 层", en: "3 stacks" } },
+    { value: "2", label: { zh: "2 层", en: "2 stacks" } },
+    { value: "1", label: { zh: "1 层", en: "1 stack" } },
   ] as const,
-  default: "4",
 } satisfies OptionDef;
 
 @RegisterCharacter("xianyun", xianyunOption)
@@ -689,16 +676,9 @@ class Yelan extends CharacterBase {
 const xiaoOption = {
   label: { zh: "固有天赋2：E叠层数", en: "P2: E DMG Stacks" },
   choices: [
-    {
-      value: "2",
-      label: { zh: "2层（30%）", en: "2 stacks (30%)" },
-    },
-    {
-      value: "3",
-      label: { zh: "3层（45%）", en: "3 stacks (45%)" },
-    },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
+    { value: "3", label: { zh: "3层", en: "3 stacks" } },
   ] as const,
-  default: "2",
 } satisfies OptionDef;
 
 @RegisterCharacter("xiao", xiaoOption)
@@ -765,7 +745,6 @@ const zhongliOption = {
       label: { zh: "无附近的岩元素创造物", en: "No nearby Geo construct" },
     },
   ] as const,
-  default: "yes",
 } satisfies OptionDef;
 
 @RegisterCharacter("zhongli", zhongliOption)
@@ -880,7 +859,6 @@ const huTaoOption = {
       when: (tm) => (tm.constellations.hu_tao ?? 0) >= 6,
     },
   ] as const,
-  default: "low",
 } satisfies OptionDef;
 
 @RegisterCharacter("hu_tao", huTaoOption)
@@ -1012,28 +990,12 @@ const shenheOption = {
   choices: [
     {
       value: "both",
-      label: {
-        zh: "点按+长按 (全+15%)",
-        en: "Press+Hold (All +15%)",
-      },
+      label: { zh: "点按+长按", en: "Press+Hold" },
       when: (tm) => (tm.constellations.shenhe ?? 0) >= 1,
     },
-    {
-      value: "press",
-      label: {
-        zh: "点按 (技能/爆发+15%)",
-        en: "Press (Skill/Burst +15%)",
-      },
-    },
-    {
-      value: "hold",
-      label: {
-        zh: "长按 (普攻/重击/下落+15%)",
-        en: "Hold (Normal/Charged/Plunge +15%)",
-      },
-    },
+    { value: "press", label: { zh: "点按", en: "Press" } },
+    { value: "hold", label: { zh: "长按", en: "Hold" } },
   ] as const,
-  default: "both",
 } satisfies OptionDef;
 
 @RegisterCharacter("shenhe", shenheOption)

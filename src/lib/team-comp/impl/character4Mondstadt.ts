@@ -118,7 +118,6 @@ const razorOption = {
       label: { zh: "HP≥30%（C2不生效）", en: "HP ≥30% (C2 inactive)" },
     },
   ] as const,
-  default: "below30",
 } satisfies OptionDef;
 
 @RegisterCharacter("razor", razorOption)

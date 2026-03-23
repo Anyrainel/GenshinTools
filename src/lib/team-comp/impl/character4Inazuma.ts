@@ -147,7 +147,6 @@ const kukiOption = {
     { value: "high", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
     { value: "critical", label: { zh: "HP < 25%", en: "HP < 25%" } },
   ] as const,
-  default: "low",
 } satisfies OptionDef;
 
 @RegisterCharacter("kuki_shinobu", kukiOption)

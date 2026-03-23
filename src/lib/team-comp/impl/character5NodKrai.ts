@@ -42,8 +42,13 @@ const columbinaOption = {
       label: { zh: "月结晶", en: "Lunar-Crystallize" },
       when: (tm) => tm.hasReaction("lunarCrystallize"),
     },
+    {
+      value: "none",
+      label: { zh: "--", en: "--" },
+      when: (tm) =>
+        LUNAR_REACTIONS.every((r) => !tm.hasReaction(r as ReactionType)),
+    },
   ] as const,
-  default: "lunarBloom",
 } satisfies OptionDef;
 
 @RegisterCharacter("columbina", columbinaOption)
@@ -110,7 +115,7 @@ class Columbina extends CharacterBase {
       // C2 (Ascendant Gleam): On-field buff based on dominant Lunar reaction type
       // "月兆·满辉：皎辉效果持续期间..." — requires ≥2 Nod-Krai
       // Lunar-Charged → ATK +1% Max HP; Lunar-Bloom → EM +0.35% Max HP; Lunar-Crystallize → DEF +1% Max HP
-      if (this.teamMeta.countByFaction("Moonsign") >= 2) {
+      if (this.o !== "none" && this.teamMeta.countByFaction("Moonsign") >= 2) {
         const c2Map = {
           lunarCharged: { stat: "atk" as const, scale: 0.01 },
           lunarBloom: { stat: "em" as const, scale: 0.0035 },
@@ -132,7 +137,7 @@ class Columbina extends CharacterBase {
 
     // C4: Per Gravity Interference, HP%-based baseDmg on the dominant Lunar reaction skill hit
     // lunarCharged +12.5% HP, lunarBloom +2.5% HP, lunarCrystallize +12.5% HP (once/15s)
-    if (this.constellation >= 4) {
+    if (this.constellation >= 4 && this.o !== "none") {
       const c4Scale = {
         lunarCharged: 0.125,
         lunarBloom: 0.025,
@@ -156,7 +161,7 @@ class Columbina extends CharacterBase {
     // C6: +80% CD for elements involved in the dominant Lunar reaction
     // "依据参与反应的元素类型，使队伍中的所有角色造成的对应元素类型伤害的暴击伤害提升80%"
     // All lunar reactions involve Hydro plus a second element
-    if (this.constellation >= 6) {
+    if (this.constellation >= 6 && this.o !== "none") {
       const c6Elements = {
         lunarCharged: ["Electro" as const, "Hydro" as const],
         lunarBloom: ["Dendro" as const, "Hydro" as const],
@@ -301,7 +306,6 @@ const neferOption = {
     { value: "1", label: { zh: "1 层", en: "1 stack" } },
     { value: "0", label: { zh: "0 层", en: "0 stacks" } },
   ] as const,
-  default: "5",
 } satisfies OptionDef;
 
 @RegisterCharacter("nefer", neferOption)

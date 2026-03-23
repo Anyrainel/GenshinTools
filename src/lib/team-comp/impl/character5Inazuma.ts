@@ -671,7 +671,6 @@ const ayatoOption = {
     { value: "above50", label: { zh: "敌人HP>50%", en: "Enemy HP >50%" } },
     { value: "below50", label: { zh: "敌人HP≤50%", en: "Enemy HP ≤50%" } },
   ] as const,
-  default: "above50",
 } satisfies OptionDef;
 
 @RegisterCharacter("kamisato_ayato", ayatoOption)
@@ -1043,7 +1042,6 @@ const yoimiyaOption = {
     { value: "yes", label: { zh: "施放Q", en: "Cast Q" } },
     { value: "no", label: { zh: "不施放Q", en: "Skip Q" } },
   ] as const,
-  default: "yes",
 } satisfies OptionDef;
 
 @RegisterCharacter("yoimiya", yoimiyaOption)

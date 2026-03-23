@@ -249,7 +249,6 @@ const ferrousShadowOption = {
       label: { zh: "生命值高于阈值", en: "HP above threshold" },
     },
   ] as const,
-  default: "low",
 } satisfies OptionDef;
 
 @RegisterWeapon("ferrous_shadow", ferrousShadowOption)

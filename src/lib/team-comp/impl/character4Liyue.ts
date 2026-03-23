@@ -358,7 +358,6 @@ const chongyunOption = {
     { value: "lower", label: { zh: "HP% < 重云", en: "HP% < Chongyun" } },
     { value: "higher", label: { zh: "HP% ≥ 重云", en: "HP% >= Chongyun" } },
   ] as const,
-  default: "lower",
 } satisfies OptionDef;
 
 @RegisterCharacter("chongyun", chongyunOption)
@@ -661,7 +660,6 @@ const yanfeiOption = {
     { value: "below-50", label: { zh: "HP < 50%", en: "HP < 50%" } },
     { value: "above-50", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
   ] as const,
-  default: "below-50",
 } satisfies OptionDef;
 
 @RegisterCharacter("yanfei", yanfeiOption)

@@ -146,7 +146,6 @@ const fadingTwilightOption = {
     { value: "afterglow", label: { zh: "流霞", en: "Afterglow" } },
     { value: "dawnblaze", label: { zh: "朝辉", en: "Dawnblaze" } },
   ] as const,
-  default: "average",
 } satisfies OptionDef;
 
 @RegisterWeapon("fading_twilight", fadingTwilightOption)

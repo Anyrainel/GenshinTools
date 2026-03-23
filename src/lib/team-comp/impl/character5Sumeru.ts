@@ -375,7 +375,6 @@ const nahidaOption = {
     { value: "3", label: { zh: "3个敌人", en: "3 enemies" } },
     { value: "4", label: { zh: "4个或以上", en: "4+ enemies" } },
   ] as const,
-  default: "1",
 } satisfies OptionDef;
 
 @RegisterCharacter("nahida", nahidaOption)

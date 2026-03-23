@@ -34,7 +34,6 @@ const durinOption = {
       when: (tm) => (tm.constellations.durin ?? 0) >= 4,
     },
   ] as const,
-  default: "white",
 } satisfies OptionDef;
 
 @RegisterCharacter("durin", durinOption)
@@ -401,7 +400,6 @@ const albedoOption = {
       label: { zh: "HP≥50%（P1不生效）", en: "HP ≥50% (P1 inactive)" },
     },
   ] as const,
-  default: "below50",
 } satisfies OptionDef;
 
 @RegisterCharacter("albedo", albedoOption)
@@ -620,7 +618,6 @@ const dilucOption = {
       label: { zh: "<50%（C1不生效）", en: "<50% (C1 inactive)" },
     },
   ] as const,
-  default: "above50",
 } satisfies OptionDef;
 
 @RegisterCharacter("diluc", dilucOption)
@@ -1297,7 +1294,6 @@ const eulaOption = {
       label: { zh: ">50%（C4不生效）", en: ">50% (C4 inactive)" },
     },
   ] as const,
-  default: "below50",
 } satisfies OptionDef;
 
 @RegisterCharacter("eula", eulaOption)

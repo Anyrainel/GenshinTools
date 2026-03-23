@@ -149,8 +149,8 @@ const citlaliOption = {
   label: { zh: "1命星刃层数", en: "C1 Stellar Blade Stacks" },
   choices: [
     {
-      value: "unlimited",
-      label: { zh: "无限", en: "Unlimited" },
+      value: "19",
+      label: { zh: "19层", en: "19 stacks" },
       when: (tm) => (tm.constellations.citlali ?? 0) >= 1,
     },
     {
@@ -168,8 +168,12 @@ const citlaliOption = {
       label: { zh: "10层", en: "10 stacks" },
       when: (tm) => (tm.constellations.citlali ?? 0) >= 1,
     },
+    {
+      value: "0",
+      label: { zh: "--", en: "--" },
+      when: (tm) => (tm.constellations.citlali ?? 0) < 1,
+    },
   ] as const,
-  default: "unlimited",
 } satisfies OptionDef;
 
 @RegisterCharacter("citlali", citlaliOption)
@@ -211,15 +215,13 @@ class Citlali extends CharacterBase {
     // because the Q Skull should NOT receive this bonus.
     // (see formulaMap "citlali-burst-total" Ice Storm part)
     // C1: Stellar Blade — on-field active character (not Citlali) gains +200% EM as baseDmg
-    // 10 base stacks (+3 per Frozen/Melt every 8s). OptionMap: 10/13/16/unlimited.
+    // 10 base stacks (+3 per Frozen/Melt every 8s). OptionMap: 10/13/16/19.
     ...(this.constellation >= 1
       ? [
           new ScalingBuff(
             {
               ...cbs(this, "C1", ["E"]),
-              ...(this.c1Stacks !== "unlimited" && {
-                maxStacks: Number(this.c1Stacks),
-              }),
+              maxStacks: Number(this.c1Stacks),
             },
             {
               receiver: "otherOnField",

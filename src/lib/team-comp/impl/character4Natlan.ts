@@ -109,7 +109,6 @@ const iansanOption = {
       label: { zh: "～27 点（+13.5% 攻击）", en: "~27 pts (+13.5% ATK)" },
     },
   ] as const,
-  default: "high",
 } satisfies OptionDef;
 
 @RegisterCharacter("iansan", iansanOption)

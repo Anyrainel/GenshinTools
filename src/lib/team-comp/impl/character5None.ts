@@ -50,7 +50,6 @@ const skirkOption = {
     },
     { value: "0", label: { zh: "0枚", en: "0 Rifts" } },
   ] as const,
-  default: "3",
 } satisfies OptionDef;
 
 @RegisterCharacter("skirk", skirkOption)

@@ -148,7 +148,6 @@ const homaOption = {
     { value: "below50", label: { zh: "生命值≤50%", en: "HP ≤ 50%" } },
     { value: "above50", label: { zh: "生命值>50%", en: "HP > 50%" } },
   ] as const,
-  default: "below50",
 } satisfies OptionDef;
 
 @RegisterWeapon("staff_of_homa", homaOption)

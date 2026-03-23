@@ -275,7 +275,6 @@ const arlecchinoOption = {
     { value: "155", label: { zh: "155% 生命之契", en: "155%" } },
     { value: "200", label: { zh: "200% 生命之契", en: "200%" } },
   ] as const,
-  default: "130",
 } satisfies OptionDef;
 
 @RegisterCharacter("arlecchino", arlecchinoOption)

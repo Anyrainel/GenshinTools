@@ -123,7 +123,6 @@ const wolfsGravestoneOption = {
       label: { zh: "敌人生命值高于30%", en: "Enemy HP above 30%" },
     },
   ] as const,
-  default: "below30",
 } satisfies OptionDef;
 
 @RegisterWeapon("wolfs_gravestone", wolfsGravestoneOption)

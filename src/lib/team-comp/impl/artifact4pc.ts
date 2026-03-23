@@ -21,16 +21,16 @@ const blizzardStrayerOption = {
   choices: [
     {
       value: "40",
-      label: { zh: "+40%暴击 (冻结)", en: "+40% CR (Frozen)" },
+      label: { zh: "冻结", en: "Frozen" },
       when: (tm) => tm.hasReaction("frozen"),
     },
     {
       value: "20",
-      label: { zh: "+20%暴击 (挂冰)", en: "+20% CR (Cryo-aff.)" },
+      label: { zh: "挂冰", en: "Cryo-affected" },
       when: (tm) => tm.countByElement("Cryo") >= 1,
     },
+    { value: "0", label: { zh: "无", en: "None" } },
   ] as const,
-  default: "40",
 } satisfies OptionDef;
 
 @RegisterArtifactSet("blizzard_strayer", blizzardStrayerOption)
@@ -40,13 +40,20 @@ class BlizzardStrayer4pc extends ArtifactSetBase {
   private readonly o = resolveOption(blizzardStrayerOption, this.option);
   readonly halfSetId = "cryo%-15";
   readonly stats: StatEntry[] = [];
-  readonly buffs = [
-    new StatBuff(
-      { type: "artifactSet", id: this.artifactSetId, triggers: ["vs-cryo"] },
-      { receiver: "self" },
-      [{ key: "cr", value: this.o === "40" ? 0.4 : 0.2 }]
-    ),
-  ];
+  readonly buffs =
+    this.o !== "0"
+      ? [
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["vs-cryo"],
+            },
+            { receiver: "self" },
+            [{ key: "cr", value: this.o === "40" ? 0.4 : 0.2 }]
+          ),
+        ]
+      : [];
 }
 
 @RegisterArtifactSet("finale_of_the_deep_galleries")
@@ -89,32 +96,13 @@ class TenacityOfTheMillelith4pc extends ArtifactSetBase {
 const vourukashaOption = {
   label: { zh: "花海层数", en: "Vourukasha Stacks" },
   choices: [
-    {
-      value: "5",
-      label: { zh: "5层 (+50%技能/爆发)", en: "5 stacks (+50% Skill/Burst)" },
-    },
-    {
-      value: "4",
-      label: { zh: "4层 (+42%技能/爆发)", en: "4 stacks (+42% Skill/Burst)" },
-    },
-    {
-      value: "3",
-      label: { zh: "3层 (+34%技能/爆发)", en: "3 stacks (+34% Skill/Burst)" },
-    },
-    {
-      value: "2",
-      label: { zh: "2层 (+26%技能/爆发)", en: "2 stacks (+26% Skill/Burst)" },
-    },
-    {
-      value: "1",
-      label: { zh: "1层 (+18%技能/爆发)", en: "1 stack (+18% Skill/Burst)" },
-    },
-    {
-      value: "0",
-      label: { zh: "0层 (+10%技能/爆发)", en: "0 stacks (+10% Skill/Burst)" },
-    },
+    { value: "5", label: { zh: "5层", en: "5 stacks" } },
+    { value: "4", label: { zh: "4层", en: "4 stacks" } },
+    { value: "3", label: { zh: "3层", en: "3 stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
+    { value: "1", label: { zh: "1层", en: "1 stack" } },
+    { value: "0", label: { zh: "0层", en: "0 stacks" } },
   ] as const,
-  default: "5",
 } satisfies OptionDef;
 
 @RegisterArtifactSet("vourukashas_glow", vourukashaOption)
@@ -141,25 +129,12 @@ class VourukashasGlow4pc extends ArtifactSetBase {
 const huskOption = {
   label: { zh: "华馆4件套", en: "Husk 4pc" },
   choices: [
-    {
-      value: "4",
-      label: { zh: "4层 (24%防+24%岩)", en: "4 stacks (24% DEF+Geo)" },
-    },
-    {
-      value: "3",
-      label: { zh: "3层 (18%防+18%岩)", en: "3 stacks (18% DEF+Geo)" },
-    },
-    {
-      value: "2",
-      label: { zh: "2层 (12%防+12%岩)", en: "2 stacks (12% DEF+Geo)" },
-    },
-    {
-      value: "1",
-      label: { zh: "1层 (6%防+6%岩)", en: "1 stacks (6% DEF+Geo)" },
-    },
-    { value: "0", label: { zh: "0层 (无加成)", en: "0 stacks (no bonus)" } },
+    { value: "4", label: { zh: "4层", en: "4 stacks" } },
+    { value: "3", label: { zh: "3层", en: "3 stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
+    { value: "1", label: { zh: "1层", en: "1 stack" } },
+    { value: "0", label: { zh: "0层", en: "0 stacks" } },
   ] as const,
-  default: "4",
 } satisfies OptionDef;
 
 @RegisterArtifactSet("husk_of_opulent_dreams", huskOption)
@@ -293,18 +268,11 @@ class ArchaicPetra4pc extends ArtifactSetBase {
 const crimsonWitchOption = {
   label: { zh: "魔女E层数", en: "CW E Stacks" },
   choices: [
-    {
-      value: "3",
-      label: { zh: "3层 (+22.5%火伤)", en: "3 stacks (+22.5% Pyro)" },
-    },
-    { value: "2", label: { zh: "2层 (+15%火伤)", en: "2 stacks (+15% Pyro)" } },
-    {
-      value: "1",
-      label: { zh: "1层 (+7.5%火伤)", en: "1 stack (+7.5% Pyro)" },
-    },
-    { value: "0", label: { zh: "0层 (无加成)", en: "0 stacks (no bonus)" } },
+    { value: "3", label: { zh: "3层", en: "3 stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
+    { value: "1", label: { zh: "1层", en: "1 stack" } },
+    { value: "0", label: { zh: "0层", en: "0 stacks" } },
   ] as const,
-  default: "3",
 } satisfies OptionDef;
 
 @RegisterArtifactSet("crimson_witch_of_flames", crimsonWitchOption)
@@ -632,13 +600,12 @@ class ShimenawasReminiscence4pc extends ArtifactSetBase {
 const vermillionOption = {
   label: { zh: "辰砂层数", en: "Vermillion Stacks" },
   choices: [
-    { value: "4", label: { zh: "4层 (+48%攻击)", en: "4 stacks (+48% ATK)" } },
-    { value: "3", label: { zh: "3层 (+38%攻击)", en: "3 stacks (+38% ATK)" } },
-    { value: "2", label: { zh: "2层 (+28%攻击)", en: "2 stacks (+28% ATK)" } },
-    { value: "1", label: { zh: "1层 (+18%攻击)", en: "1 stack (+18% ATK)" } },
-    { value: "0", label: { zh: "0层 (+8%攻击)", en: "0 stacks (+8% ATK)" } },
+    { value: "4", label: { zh: "4层", en: "4 stacks" } },
+    { value: "3", label: { zh: "3层", en: "3 stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
+    { value: "1", label: { zh: "1层", en: "1 stack" } },
+    { value: "0", label: { zh: "0层", en: "0 stacks" } },
   ] as const,
-  default: "4",
 } satisfies OptionDef;
 
 @RegisterArtifactSet("vermillion_hereafter", vermillionOption)
@@ -1003,9 +970,9 @@ class ScrollOfTheHero4pc extends ArtifactSetBase {
     // When enemy aura is set, it fixes the aura side — only that element can
     // participate (even if no team member has it).
     const buffedElements = new Set<Element>();
-    if (teamMeta.enemyElementAura) {
-      if (attachEls.includes(teamMeta.enemyElementAura)) {
-        buffedElements.add(teamMeta.enemyElementAura);
+    if (teamMeta.enemyAura) {
+      if (attachEls.includes(teamMeta.enemyAura)) {
+        buffedElements.add(teamMeta.enemyAura);
       }
     } else {
       for (const el of attachEls) {
@@ -1220,7 +1187,6 @@ const berserkerOption = {
     { value: "low", label: { zh: "HP<70%", en: "HP <70%" } },
     { value: "high", label: { zh: "HP≥70%", en: "HP ≥70%" } },
   ] as const,
-  default: "low",
 } satisfies OptionDef;
 
 @RegisterArtifactSet("berserker", berserkerOption)
@@ -1252,7 +1218,6 @@ const braveHeartOption = {
     { value: "above50", label: { zh: ">50%", en: ">50%" } },
     { value: "below50", label: { zh: "≤50%", en: "≤50%" } },
   ] as const,
-  default: "above50",
 } satisfies OptionDef;
 
 @RegisterArtifactSet("brave_heart", braveHeartOption)

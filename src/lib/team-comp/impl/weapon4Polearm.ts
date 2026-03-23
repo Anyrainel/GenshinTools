@@ -326,7 +326,6 @@ const deathmatchOption = {
       label: { zh: "少于2个敌人", en: "Fewer than 2 enemies" },
     },
   ] as const,
-  default: "gte2",
 } satisfies OptionDef;
 
 @RegisterWeapon("deathmatch", deathmatchOption)
