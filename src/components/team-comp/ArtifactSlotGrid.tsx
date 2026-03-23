@@ -30,7 +30,7 @@ export function ArtifactSlotGrid({
   compact?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-5 gap-1.5">
+    <div className="grid grid-cols-5 gap-0.5 md:gap-1 lg:gap-1.5">
       {ARTIFACT_SLOTS.map((slot) => {
         const art = artifactsObj[slot];
         if (!art)

@@ -29,6 +29,7 @@ import {
 } from "@/lib/gameStatsLoader";
 import {
   TeamMeta,
+  getDefaultOptionValue,
   getEntityOption,
   isChoiceEnabled,
 } from "@/lib/team-comp/damageModels";
@@ -91,7 +92,8 @@ export function TeamRosterCard({
       isChoiceEnabled(c, teamMeta)
     );
     // If selected value is disabled, fall back to first enabled choice
-    const raw = team.opts?.[entityId] || schema.default;
+    const raw =
+      team.opts?.[entityId] || getDefaultOptionValue(schema, teamMeta);
     const allDisabled = enabledChoices.length === 0;
     const value = allDisabled
       ? ""
@@ -174,12 +176,12 @@ export function TeamRosterCard({
   }
   // biome-ignore lint/correctness/useExhaustiveDependencies: stable serialized deps
   const teamMeta = useMemo(
-    () => new TeamMeta(charIds, constellations, artSets, team.enemyElementAura),
+    () => new TeamMeta(charIds, constellations, artSets, team.enemyAura),
     [
       charIds.join(),
       JSON.stringify(constellations),
       JSON.stringify(artSets),
-      team.enemyElementAura,
+      team.enemyAura,
     ]
   );
 
@@ -203,7 +205,7 @@ export function TeamRosterCard({
         isChoiceEnabled(c, teamMeta)
       );
       if (enabledChoices.length === 0) continue;
-      const raw = team.opts?.[eid] || schema.default;
+      const raw = team.opts?.[eid] || getDefaultOptionValue(schema, teamMeta);
       const effective = enabledChoices.some((c) => c.value === raw)
         ? raw
         : enabledChoices[0].value;

@@ -421,12 +421,12 @@ export function StatSheetPanel({
             <div className="flex items-center gap-2 p-2 bg-black/20 border-b border-border/10 w-full">
               <img
                 src={getAssetUrl(char?.imagePath)}
-                className="w-7 h-7 rounded-full bg-black/20 shrink-0"
+                className="w-5 h-5 md:w-7 md:h-7 rounded-full bg-black/20 shrink-0"
                 alt={charId}
               />
               <span
                 className={cn(
-                  "font-bold text-sm truncate",
+                  "font-bold text-xs md:text-sm truncate",
                   isTarget ? "text-primary/90" : "text-foreground/70"
                 )}
               >
@@ -435,7 +435,7 @@ export function StatSheetPanel({
               {result && !isTarget && marginalKeys.length === 0 && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="shrink-0 text-xs font-bold bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-full cursor-help">
+                    <span className="shrink-0 text-[10px] md:text-xs font-bold bg-amber-500/15 text-amber-400 px-1 md:px-1.5 py-0.5 rounded-full cursor-help">
                       {t.ui("teamComp.saturated")}
                     </span>
                   </TooltipTrigger>
@@ -456,18 +456,18 @@ export function StatSheetPanel({
                 <button
                   type="button"
                   onClick={() => onUnfreezeChar(charId)}
-                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-red-400/40 bg-red-500/10 text-red-300 ring-1 ring-red-400/20 hover:bg-red-500/15 hover:text-red-200 hover:ring-red-400/40 transition-colors whitespace-nowrap"
+                  className="flex items-center gap-0.5 md:gap-1 h-5 md:h-6 px-1.5 md:px-2.5 rounded-md text-[10px] md:text-xs font-bold border border-red-400/40 bg-red-500/10 text-red-300 ring-1 ring-red-400/20 hover:bg-red-500/15 hover:text-red-200 hover:ring-red-400/40 transition-colors whitespace-nowrap"
                 >
-                  <Flame className="w-3 h-3 shrink-0" />
+                  <Flame className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
                   {t.ui("teamComp.unfreezeChar")}
                 </button>
               ) : onFreezeChar && result && hasArtifacts ? (
                 <button
                   type="button"
                   onClick={() => onFreezeChar(charId)}
-                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/20 hover:bg-cyan-500/15 hover:text-cyan-200 hover:ring-cyan-400/40 transition-colors whitespace-nowrap"
+                  className="flex items-center gap-0.5 md:gap-1 h-5 md:h-6 px-1.5 md:px-2.5 rounded-md text-[10px] md:text-xs font-bold border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/20 hover:bg-cyan-500/15 hover:text-cyan-200 hover:ring-cyan-400/40 transition-colors whitespace-nowrap"
                 >
-                  <Snowflake className="w-3 h-3 shrink-0" />
+                  <Snowflake className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
                   {t.ui("teamComp.freezeChar")}
                 </button>
               ) : null}
@@ -476,7 +476,7 @@ export function StatSheetPanel({
             {/* Artifacts Grid or Fail Reason — frozen overlay only here */}
             <div
               className={cn(
-                "p-2 border-b border-border/10",
+                "p-0 md:p-1 lg:p-2 border-b border-border/10",
                 isFrozen && "frozen-card"
               )}
             >
@@ -521,7 +521,7 @@ export function StatSheetPanel({
                     type="button"
                     onClick={() => toggleView(charId, mode)}
                     className={cn(
-                      "flex-1 flex items-center justify-center text-[10px] xl:text-xs font-bold px-2.5 py-1 rounded-full transition-all leading-relaxed",
+                      "flex-1 flex items-center justify-center text-[9px] md:text-[11px] xl:text-xs font-semibold px-1 md:px-1.5 py-0.5 md:py-1 rounded-full transition-all",
                       showChevrons && "gap-0.5",
                       activeView === mode
                         ? "bg-primary text-primary-foreground shadow-sm"
@@ -637,18 +637,18 @@ function MarginalView({
             onMouseLeave={() => onStatHover(null)}
             onClick={() => onStatHover(isHl ? null : { key: hlKey, charId })}
             className={cn(
-              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
+              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-xs md:text-sm font-mono leading-none",
               isHl
                 ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
                 : ""
             )}
           >
-            <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
               +1
             </span>
             <span
               className={cn(
-                "font-bold text-base",
+                "font-bold text-xs md:text-sm",
                 isHl
                   ? "text-[color:hsl(var(--primary))] opacity-100"
                   : "text-primary"
@@ -656,7 +656,7 @@ function MarginalView({
             >
               {t.statShort(k)}
             </span>
-            <span className="text-xs whitespace-nowrap">
+            <span className="hidden md:inline text-[10px] md:text-xs whitespace-nowrap">
               <span className="text-muted-foreground opacity-60">
                 ({t.ui("teamComp.avgVal")}
               </span>
@@ -665,13 +665,13 @@ function MarginalView({
               </span>
               <span className="text-muted-foreground opacity-60">)</span>
             </span>
-            <span className="text-xs text-muted-foreground opacity-50 px-0.5">
+            <span className="text-[10px] md:text-xs text-muted-foreground opacity-50 px-0.5">
               ➔
             </span>
-            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
+            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-xs md:text-sm">
               {fmtPercent(gain, true)}
             </span>
-            <span className="text-foreground opacity-60">
+            <span className="hidden md:inline text-foreground opacity-60">
               {t.ui("teamComp.gain")}
             </span>
           </div>
@@ -690,18 +690,18 @@ function MarginalView({
               onStatHover(lvHl ? null : { key: "charLevel", charId })
             }
             className={cn(
-              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
+              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-xs md:text-sm font-mono leading-none",
               lvHl
                 ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
                 : ""
             )}
           >
-            <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
               Lv
             </span>
             <span
               className={cn(
-                "font-bold text-base",
+                "font-bold text-xs md:text-sm",
                 lvHl
                   ? "text-[color:hsl(var(--primary))] opacity-100"
                   : "text-primary"
@@ -713,13 +713,13 @@ function MarginalView({
                 levelUpGain.to
               )}
             </span>
-            <span className="text-xs text-muted-foreground opacity-50 px-0.5">
+            <span className="text-[10px] md:text-xs text-muted-foreground opacity-50 px-0.5">
               ➔
             </span>
-            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
+            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-xs md:text-sm">
               {fmtPercent(levelUpGain.gain, true)}
             </span>
-            <span className="text-foreground opacity-60">
+            <span className="hidden md:inline text-foreground opacity-60">
               {t.ui("teamComp.gain")}
             </span>
           </div>
@@ -750,9 +750,9 @@ function MaxView({
 
   return (
     <div className="bg-black/20 pt-1 px-2 pb-2">
-      <table className="w-full border-collapse text-xs xl:text-sm">
+      <table className="w-full border-collapse text-[10px] md:text-xs xl:text-sm">
         <thead>
-          <tr className="text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
+          <tr className="text-[8px] md:text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
             <th className="text-left font-bold py-1 pr-2 whitespace-nowrap">
               {t.ui("teamComp.stats")}
             </th>
@@ -839,9 +839,9 @@ function ConditionalView({
 
   return (
     <div className="bg-black/20 pt-1 px-2 pb-2">
-      <table className="w-full border-collapse text-xs xl:text-sm">
+      <table className="w-full border-collapse text-[10px] md:text-xs xl:text-sm">
         <thead>
-          <tr className="text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
+          <tr className="text-[8px] md:text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
             <th className="text-left font-bold py-1 pr-2 whitespace-nowrap">
               {t.ui("teamComp.stats")}
             </th>
@@ -883,7 +883,7 @@ function ConditionalView({
                   >
                     {showKey ? t.statShort(row.key) : "\u00A0"}
                   </td>
-                  <td className="py-1 px-1 text-muted-foreground text-[10px] xl:text-xs tracking-tight">
+                  <td className="py-1 px-1 text-muted-foreground text-[8px] md:text-[10px] xl:text-xs tracking-tight">
                     {formatFilter(row.condition, t)}
                   </td>
                   <td className={cn("py-1 px-1", valueCls(primary, "off"))}>
@@ -954,7 +954,7 @@ function LegacyStatView({
               )
             }
             className={cn(
-              "flex items-center justify-between px-1.5 py-1 rounded-sm hover:bg-white/5 transition-colors cursor-default text-xs",
+              "flex items-center justify-between px-1.5 py-1 rounded-sm hover:bg-white/5 transition-colors cursor-default text-[10px] md:text-xs",
               isKeyHighlighted(highlightedStat, charId, k)
                 ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
                 : ""

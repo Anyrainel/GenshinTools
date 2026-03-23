@@ -1,15 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
+  OptionButton,
+  OptionButtonCell,
+  OptionButtonRow,
+} from "@/components/ui/option-button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, elementResourcesByName } from "@/data/constants";
-import type { Element, ReactionType } from "@/data/types";
-import { elements } from "@/data/types";
+import { charactersById } from "@/data/constants";
+import type { ReactionType } from "@/data/types";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import { type TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import type {
@@ -17,9 +15,10 @@ import type {
   I18nLabel,
   ReactionOverride,
 } from "@/lib/team-comp/types";
-import { cn, getAssetUrl, getElementColor } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Minus, Plus, RotateCcw, Swords, TrendingUp } from "lucide-react";
+import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
 import { ReactionSelector } from "./ReactionSelector";
 
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
@@ -54,80 +53,6 @@ interface FormulaSelectorCardProps {
   t: ReturnType<typeof useLanguage>["t"];
 }
 
-function EnemyAuraSelect({
-  value,
-  onChange,
-  label,
-  t,
-}: {
-  value?: Element;
-  onChange: (el: Element | undefined) => void;
-  label: string;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
-  return (
-    <div className="flex-1 min-w-0">
-      <Select
-        value={value ?? "__none__"}
-        onValueChange={(v) =>
-          onChange(v === "__none__" ? undefined : (v as Element))
-        }
-      >
-        <SelectTrigger
-          className={cn(
-            "h-auto rounded-lg border-2 px-3 py-2 shadow-none border-border/30 bg-black/5",
-            value && "ring-2 ring-primary/50"
-          )}
-        >
-          <div className="flex items-center justify-center gap-3 w-full">
-            <span className="text-base md:text-lg font-bold text-foreground/80 shrink-0">
-              {label}
-            </span>
-            {value ? (
-              <>
-                <img
-                  src={getAssetUrl(elementResourcesByName[value]?.imagePath)}
-                  alt={value}
-                  className="w-6 h-6"
-                />
-                <span
-                  className={cn(
-                    "text-base md:text-lg font-bold",
-                    getElementColor(value, "text")
-                  )}
-                >
-                  {t.element(value)}
-                </span>
-              </>
-            ) : (
-              <span className="text-base md:text-lg font-bold text-foreground/80 pl-9">
-                {t.ui("teamComp.enemyAuraNone")}
-              </span>
-            )}
-          </div>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="__none__">
-            {t.ui("teamComp.enemyAuraNone")}
-          </SelectItem>
-          {elements.map((el) => (
-            <SelectItem key={el} value={el}>
-              <div className="flex items-center gap-2">
-                <img
-                  src={getAssetUrl(elementResourcesByName[el]?.imagePath)}
-                  alt={el}
-                  className="w-6 h-6"
-                />
-                <span>{t.element(el)}</span>
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
 export function FormulaSelectorCard({
   team,
   effectiveTeam,
@@ -160,72 +85,35 @@ export function FormulaSelectorCard({
           </span>
         </h3>
       </CardHeader>
-      <div className="flex flex-col md:flex-row gap-2 px-2 2xl:px-4 py-2 border-b border-border/20">
-        {/* Enemy Element Aura — dropdown select */}
-        <EnemyAuraSelect
-          value={team.enemyElementAura}
-          onChange={(el) => updateTeam(team.id, { enemyElementAura: el })}
-          label={t.ui("teamComp.enemyAura")}
-          t={t}
-        />
-        {(["single", "combo"] as const).map((mode) => {
-          const selected = formulaMode === mode;
-          return (
-            <div key={mode} className="flex-1 min-w-0">
-              <button
-                type="button"
-                onClick={() => updateTeam(team.id, { formulaMode: mode })}
-                className={cn(
-                  "w-full flex items-start gap-2.5 rounded-lg border-2 px-3 py-2 text-left transition-all",
-                  selected
-                    ? "border-primary bg-primary/10 shadow-sm"
-                    : "border-border/30 bg-black/5 hover:border-border/50 hover:bg-black/10"
-                )}
-              >
-                {/* Radio circle */}
-                <div
-                  className={cn(
-                    "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                    selected ? "border-primary" : "border-border"
-                  )}
-                >
-                  {selected && (
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                  )}
-                </div>
-                <div className="flex flex-wrap items-baseline gap-x-1.5 min-w-0">
-                  <span
-                    className={cn(
-                      "text-base md:text-lg font-bold",
-                      selected ? "text-foreground" : "text-foreground/70"
-                    )}
-                  >
-                    {t.ui(
-                      mode === "single"
-                        ? "teamComp.singleFormula"
-                        : "teamComp.comboFormula"
-                    )}
-                  </span>
-                  <span
-                    className={cn(
-                      "text-xs leading-snug",
-                      selected
-                        ? "text-muted-foreground"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    {t.ui(
-                      mode === "single"
-                        ? "teamComp.singleFormulaDesc"
-                        : "teamComp.comboFormulaDesc"
-                    )}
-                  </span>
-                </div>
-              </button>
-            </div>
-          );
-        })}
-      </div>
+      <OptionButtonRow>
+        <OptionButtonCell>
+          <ExtraBuffsPanel
+            team={team}
+            updateTeam={updateTeam}
+            enemyAura={team.enemyAura}
+            onEnemyAuraChange={(el) => updateTeam(team.id, { enemyAura: el })}
+            t={t}
+          />
+        </OptionButtonCell>
+        {(["single", "combo"] as const).map((mode) => (
+          <OptionButtonCell key={mode}>
+            <OptionButton
+              selected={formulaMode === mode}
+              onClick={() => updateTeam(team.id, { formulaMode: mode })}
+              title={t.ui(
+                mode === "single"
+                  ? "teamComp.singleFormula"
+                  : "teamComp.comboFormula"
+              )}
+              subtitle={t.ui(
+                mode === "single"
+                  ? "teamComp.singleFormulaDesc"
+                  : "teamComp.comboFormulaDesc"
+              )}
+            />
+          </OptionButtonCell>
+        ))}
+      </OptionButtonRow>
       {formulaMode === "combo" && (
         <div className="flex items-center justify-between px-2 2xl:px-4 pt-0.5 pb-1.5 border-b border-border/20">
           <p className="text-xs text-foreground/80 italic">
@@ -295,9 +183,9 @@ export function FormulaSelectorCard({
                                 <button
                                   type="button"
                                   className={cn(
-                                    "flex items-center gap-2 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-sm",
+                                    "flex items-center gap-2 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm xl:text-base",
                                     isSelected
-                                      ? "bg-primary/15 text-foreground border-primary/40 shadow-md"
+                                      ? "bg-primary/15 text-foreground border-primary/40"
                                       : "bg-card/40 text-foreground hover:bg-card/60 border-border/20"
                                   )}
                                   onClick={() =>
@@ -370,7 +258,7 @@ export function FormulaSelectorCard({
                         )}
                       </div>
                     ) : (
-                      <div className="px-2 py-1 flex flex-col 2xl:grid 2xl:grid-cols-2 2xl:gap-x-2">
+                      <div className="px-2 py-1 flex flex-col md:grid md:grid-cols-2 md:gap-x-2 lg:grid-cols-1 xl:grid-cols-2">
                         {Object.entries(charFormulas).map(
                           ([formulaId, label]) => {
                             const isSelected =
@@ -386,7 +274,7 @@ export function FormulaSelectorCard({
                                       className="w-5 h-5 rounded-full bg-secondary/40 shrink-0"
                                     />
                                   )}
-                                  <span className="text-sm xl:text-base font-bold text-foreground flex flex-wrap items-baseline gap-x-1">
+                                  <span className="text-xs md:text-sm xl:text-base font-bold text-foreground flex flex-wrap items-baseline gap-x-1">
                                     <span className="truncate">
                                       {t.resolveLabel(label)}
                                     </span>
@@ -426,7 +314,7 @@ export function FormulaSelectorCard({
                                         >
                                           <span
                                             className={cn(
-                                              "text-base font-semibold",
+                                              "text-xs md:text-sm xl:text-base font-semibold",
                                               count > 0
                                                 ? "text-foreground"
                                                 : "text-muted-foreground"
@@ -447,11 +335,11 @@ export function FormulaSelectorCard({
                                               )
                                             }
                                           >
-                                            <Minus className="w-3.5 h-3.5" />
+                                            <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
                                           </button>
                                           <span
                                             className={cn(
-                                              "text-base font-mono tabular-nums w-5 text-center font-bold",
+                                              "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
                                               count === 0 &&
                                                 "text-muted-foreground"
                                             )}
@@ -471,7 +359,7 @@ export function FormulaSelectorCard({
                                               )
                                             }
                                           >
-                                            <Plus className="w-3.5 h-3.5" />
+                                            <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
                                           </button>
                                         </div>
                                       );
@@ -498,11 +386,11 @@ export function FormulaSelectorCard({
                                                 )
                                               }
                                             >
-                                              <Minus className="w-4 h-4" />
+                                              <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
                                             </button>
                                             <span
                                               className={cn(
-                                                "text-base font-mono tabular-nums w-5 text-center font-bold",
+                                                "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
                                                 c === 0 &&
                                                   "text-muted-foreground"
                                               )}
@@ -522,7 +410,7 @@ export function FormulaSelectorCard({
                                                 )
                                               }
                                             >
-                                              <Plus className="w-4 h-4" />
+                                              <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
                                             </button>
                                           </>
                                         );
@@ -558,7 +446,7 @@ export function FormulaSelectorCard({
               onClick={onInvestmentClick}
             >
               <TrendingUp className="w-4 h-4" />
-              {t.ui("teamComp.investment")}
+              {t.ui("teamComp.analyzer")}
             </Button>
           </div>
         )}

@@ -6,6 +6,11 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
+import {
+  OptionButton,
+  OptionButtonCell,
+  OptionButtonRow,
+} from "@/components/ui/option-button";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -24,7 +29,6 @@ import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
 import {
   aggregateComboFormulaDefaults,
-  calcDisplayResult,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";
 import type {
@@ -33,7 +37,6 @@ import type {
   TeamOptimizationResult,
 } from "@/lib/team-comp/types";
 import type {
-  BuffActivationMap,
   CalcContext,
   ComboLine,
   ComboResult,
@@ -46,7 +49,6 @@ import type {
 import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
-import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import type { Team } from "@/stores/useTeamStore";
 import {
   AlertTriangle,
@@ -104,7 +106,7 @@ const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
 const CARD_BODY_CLS = "p-1 2xl:p-2 space-y-2";
 
-/** Shared body for current / optimized / ideal tabs. */
+/** Shared body for current / optimized / generated tabs. */
 function DamageBody({
   team,
   hasFormula,
@@ -202,7 +204,11 @@ function DamageBody({
                         critMode={critMode}
                         setCritMode={setCritMode}
                         isMobile={isMobile}
-                        {...getCritDisableFlags(displayResult?.parts)}
+                        {...getCritDisableFlags(
+                          formulaKey
+                            ? displayResult?.partsByFormula[formulaKey]
+                            : undefined
+                        )}
                         t={t}
                       />
                       <div
@@ -221,7 +227,10 @@ function DamageBody({
                       )}
                     >
                       {fmtDamage(
-                        displayResult.parts.reduce(
+                        (formulaKey
+                          ? (displayResult.partsByFormula[formulaKey] ?? [])
+                          : []
+                        ).reduce(
                           (sum, p) =>
                             sum + adjustPartDamage(p, critMode) * (p.hits ?? 1),
                           0
@@ -255,7 +264,11 @@ function DamageBody({
             <CollapsibleContent>
               {displayResult && targetCharId && (
                 <FormulaBreakdown
-                  parts={displayResult.parts}
+                  parts={
+                    (formulaKey
+                      ? displayResult.partsByFormula[formulaKey]
+                      : undefined) ?? []
+                  }
                   highlightedStat={
                     highlightedStat?.charId === targetCharId
                       ? highlightedStat?.key
@@ -318,6 +331,7 @@ function ComboBreakdown({
   comboId,
   teamBuild,
   damageValue,
+  displayResult,
   critMode,
   setCritMode,
   disableCrit,
@@ -334,6 +348,7 @@ function ComboBreakdown({
   comboId?: string;
   teamBuild: TeamBuild;
   damageValue: number;
+  displayResult: DisplayResult | null | undefined;
   critMode: CritMode;
   setCritMode: (mode: CritMode) => void;
   disableCrit?: boolean;
@@ -396,26 +411,13 @@ function ComboBreakdown({
     formulaId: string;
   } | null>(null);
 
-  // Compute DisplayResult lazily for the focused formula
-  const focusedDisplayResult = useMemo(() => {
-    if (!focusedLine) return null;
-    const sheets = toStatSheets(teamCharIds, artifactsByChar);
-    const rxnKey = `${focusedLine.charId}.${focusedLine.formulaId}`;
-    return calcDisplayResult(
-      teamBuild,
-      focusedLine,
-      sheets,
-      calcContext,
-      reactionOverrides[rxnKey]
-    );
-  }, [
-    focusedLine,
-    teamCharIds,
-    artifactsByChar,
-    teamBuild,
-    calcContext,
-    reactionOverrides,
-  ]);
+  // Look up pre-computed per-formula parts from the combo DisplayResult
+  const focusedFormulaParts = useMemo(() => {
+    if (!focusedLine) return undefined;
+    return displayResult?.partsByFormula[
+      `${focusedLine.charId}.${focusedLine.formulaId}`
+    ];
+  }, [focusedLine, displayResult]);
 
   // Combo count for focused formula (total repetitions across all combo lines)
   const focusedComboInfo = useMemo(() => {
@@ -434,15 +436,13 @@ function ComboBreakdown({
     };
   }, [focusedLine, comboId, activeLines]);
 
-  // ── Combo-wide defaults (shared maxStack budget) ──
-  // Memoized independently of focusedLine so it's computed once per combo.
+  // Aggregate combo defaults for the focused formula's drill-down (buff override dialog)
   const comboDefaults = useMemo(() => {
     if (activeLines.length === 0) return undefined;
     const sheets = toStatSheets(teamCharIds, artifactsByChar);
     return teamBuild.getComboFormulaDefaults(activeLines, sheets, calcContext);
   }, [teamBuild, activeLines, teamCharIds, artifactsByChar, calcContext]);
 
-  // Aggregate combo defaults for the focused formula's drill-down
   const focusedComboActivation = useMemo(() => {
     if (!focusedLine || !comboDefaults) return undefined;
     return aggregateComboFormulaDefaults(
@@ -453,76 +453,17 @@ function ComboBreakdown({
     );
   }, [focusedLine, comboDefaults, activeLines]);
 
-  // Re-annotate display parts with combo-aware partialBuffs.
-  // In combo mode, totalHits = partHits × comboCount and activatedHits = combo default.
-  // Also merge user overrides on top so the dot indicator reflects actual state.
-  const comboKey = focusedComboInfo?.comboKey;
-  const comboOverrides = useBuffOverrideStore((s) =>
-    comboKey ? s.comboOverrides[comboKey] : undefined
-  );
-  const focusedParts = useMemo(() => {
-    if (!focusedDisplayResult || !focusedLine) return undefined;
-    const comboCount = focusedComboInfo?.comboCount ?? 1;
-    if (comboCount <= 1 || !comboDefaults) return undefined;
-
-    // Merge user overrides on top of combo defaults
-    const merged: BuffActivationMap = { ...focusedComboActivation };
-    if (comboOverrides) {
-      for (const [bKey, partMap] of Object.entries(comboOverrides)) {
-        if (!merged[bKey]) merged[bKey] = {};
-        for (const [pidx, hits] of Object.entries(partMap)) {
-          merged[bKey][Number(pidx)] = hits;
-        }
-      }
-    }
-
-    // Re-annotate parts
-    return focusedDisplayResult.parts.map((p, idx) => {
-      const sourceIdx = p.sourcePartIndex ?? idx;
-      const partHits = p.hits ?? 1;
-      const totalHits = partHits * comboCount;
-      const partialBuffs: DisplayPart["partialBuffs"] = [];
-
-      for (const [bKey, partMap] of Object.entries(merged)) {
-        const activated = partMap[sourceIdx];
-        if (activated != null && activated < totalHits) {
-          partialBuffs.push({
-            buffKey: bKey,
-            activatedHits: activated,
-            totalHits,
-          });
-        }
-      }
-
-      return partialBuffs.length > 0
-        ? { ...p, partialBuffs, sourcePartIndex: sourceIdx }
-        : p;
-    });
-  }, [
-    focusedDisplayResult,
-    focusedLine,
-    focusedComboInfo,
-    comboDefaults,
-    focusedComboActivation,
-    comboOverrides,
-  ]);
-
   return (
-    <div className={cn(isMobile ? "space-y-1" : "space-y-2")}>
+    <div className="space-y-1 md:space-y-2">
       <Collapsible open={expanded} onOpenChange={setExpanded}>
-        <div
-          className={cn(
-            "border border-dashed border-border/20 rounded-lg bg-black/5 text-sm",
-            isMobile ? "p-1.5" : "p-2"
-          )}
-        >
+        <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1.5 md:p-2">
           {/* Total damage — clickable to toggle breakdown */}
           <div className="flex flex-col items-center justify-center">
             <CollapsibleTrigger asChild>
               <div
                 className={cn(
                   "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
-                  isMobile ? "gap-1.5 px-2 py-1.5" : "gap-2.5 px-4 py-2",
+                  "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2",
                   "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                   "hover:bg-primary/15"
                 )}
@@ -536,29 +477,14 @@ function ComboBreakdown({
                     disableNoCrit={disableNoCrit}
                     t={t}
                   />
-                  <div
-                    className={cn(
-                      "text-primary font-semibold tracking-wide whitespace-nowrap leading-none",
-                      isMobile ? "text-xs" : "text-sm"
-                    )}
-                  >
+                  <div className="text-primary font-semibold tracking-wide whitespace-nowrap leading-none text-xs md:text-sm">
                     {t.ui("teamComp.totalDamage")}
                   </div>
                 </div>
-                <div
-                  className={cn(
-                    "text-foreground font-[math] font-black drop-shadow-sm",
-                    isMobile ? "text-2xl" : "text-3xl md:text-4xl"
-                  )}
-                >
+                <div className="text-foreground font-[math] font-black drop-shadow-sm text-2xl md:text-3xl xl:text-4xl">
                   {fmtDamage(damageValue)}
                 </div>
-                <span
-                  className={cn(
-                    "text-muted-foreground whitespace-nowrap",
-                    isMobile ? "text-[10px] ml-0.5" : "text-xs ml-1.5"
-                  )}
-                >
+                <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
                   {expanded
                     ? t.ui("teamComp.collapseFormula")
                     : t.ui("teamComp.expandFormula")}
@@ -575,50 +501,65 @@ function ComboBreakdown({
 
           {/* Below total: either combo grid or focused formula breakdown */}
           <CollapsibleContent>
-            {focusedLine && focusedDisplayResult ? (
+            {focusedLine && displayResult && focusedFormulaParts ? (
               /* ── Focused formula drill-down ── */
               <div className="mt-3">
-                <button
-                  type="button"
-                  className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors cursor-pointer mb-2 px-1"
-                  onClick={() => setFocusedLine(null)}
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  {t.ui("teamComp.backToCombo")}
-                </button>
-                <div className="flex items-center gap-2 px-2 py-1 mb-1">
-                  {charactersById[focusedLine.charId] && (
-                    <img
-                      src={getAssetUrl(
-                        charactersById[focusedLine.charId]!.imagePath
+                <div className="flex items-center mx-auto w-fit border-b border-border pb-2">
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 text-xs md:text-base text-primary hover:text-primary/80 transition-colors cursor-pointer px-1"
+                    onClick={() => setFocusedLine(null)}
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    {t.ui("teamComp.backToCombo")}
+                  </button>
+                  <div className="flex items-center gap-2 ml-4">
+                    {charactersById[focusedLine.charId] && (
+                      <img
+                        src={getAssetUrl(
+                          charactersById[focusedLine.charId]!.imagePath
+                        )}
+                        alt={focusedLine.charId}
+                        className="w-5 h-5 md:w-6 md:h-6 object-contain rounded-full bg-secondary/40 shrink-0"
+                      />
+                    )}
+                    <span className="text-xs md:text-base font-semibold text-foreground/80">
+                      {t.character(focusedLine.charId)}
+                      {" — "}
+                      {(() => {
+                        const label =
+                          allFormulaIds[focusedLine.charId]?.[
+                            focusedLine.formulaId
+                          ];
+                        return label
+                          ? t.resolveLabel(label)
+                          : focusedLine.formulaId;
+                      })()}
+                    </span>
+                    <span className="font-[math] text-sm md:text-base font-bold text-foreground ml-2">
+                      {fmtDamage(
+                        focusedFormulaParts.reduce(
+                          (sum, p) =>
+                            sum + adjustPartDamage(p, critMode) * (p.hits ?? 1),
+                          0
+                        )
                       )}
-                      alt={focusedLine.charId}
-                      className="w-6 h-6 object-contain rounded-full bg-secondary/40 shrink-0"
-                    />
-                  )}
-                  <span className="text-sm font-semibold text-foreground/80">
-                    {t.character(focusedLine.charId)}
-                    {" — "}
-                    {(() => {
-                      const label =
-                        allFormulaIds[focusedLine.charId]?.[
-                          focusedLine.formulaId
-                        ];
-                      return label
-                        ? t.resolveLabel(label)
-                        : focusedLine.formulaId;
-                    })()}
-                  </span>
+                    </span>
+                    {focusedComboInfo && focusedComboInfo.comboCount > 1 && (
+                      <span className="text-primary bg-primary/10 rounded-sm px-1 text-xs md:text-sm font-bold">
+                        × {focusedComboInfo.comboCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <FormulaBreakdown
-                  parts={focusedParts ?? focusedDisplayResult.parts}
+                  parts={focusedFormulaParts}
                   highlightedStat={null}
                   critMode={critMode}
                   t={t}
-                  buffs={focusedDisplayResult.buffs}
+                  buffs={displayResult.buffs}
                   defaultActivation={
-                    focusedComboActivation ??
-                    focusedDisplayResult.buffActivation
+                    focusedComboActivation ?? displayResult.buffActivation
                   }
                   formulaKey={`${focusedLine.charId}.${focusedLine.formulaId}`}
                   comboCount={focusedComboInfo?.comboCount}
@@ -649,16 +590,16 @@ function ComboBreakdown({
                             <img
                               src={getAssetUrl(charRes.imagePath)}
                               alt={charId}
-                              className="w-7 h-7 object-contain rounded-full bg-secondary/40 shrink-0"
+                              className="w-5 h-5 md:w-7 md:h-7 object-contain rounded-full bg-secondary/40 shrink-0"
                             />
                           )}
-                          <span className="text-sm font-bold text-foreground/80 truncate">
+                          <span className="text-xs md:text-sm font-bold text-foreground/80 truncate">
                             {t.character(charId)}
                           </span>
                         </div>
 
                         {/* Formula lines — name is clickable to drill down */}
-                        <div className="p-1 flex flex-col 2xl:grid 2xl:grid-cols-2 gap-2">
+                        <div className="p-1 flex flex-col md:grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-0 lg:gap-1">
                           {lines && lines.length > 0 ? (
                             lines.map(
                               ({ line, perHit, total, isPartial }, idx) => {
@@ -667,12 +608,12 @@ function ComboBreakdown({
                                 return (
                                   <div
                                     key={idx}
-                                    className="flex flex-col gap-0.5 px-1 py-1"
+                                    className="flex flex-col gap-0.5 px-1 py-0.5 md:py-1"
                                   >
                                     <div className="flex items-center gap-1 min-w-0">
                                       <button
                                         type="button"
-                                        className="flex items-center gap-0.5 text-base font-semibold text-foreground hover:text-primary transition-colors truncate cursor-pointer"
+                                        className="flex items-center gap-0.5 text-sm md:text-base font-semibold text-foreground hover:text-primary transition-colors truncate cursor-pointer"
                                         onClick={() =>
                                           setFocusedLine({
                                             charId: line.charId,
@@ -698,12 +639,12 @@ function ComboBreakdown({
                                         </span>
                                       )}
                                       {rxn && rxn !== "none" && (
-                                        <span className="text-base text-primary font-semibold shrink-0">
+                                        <span className="text-sm md:text-base text-primary font-semibold shrink-0">
                                           [{t.reaction(rxn)}]
                                         </span>
                                       )}
                                     </div>
-                                    <div className="flex items-baseline gap-1 text-lg font-mono tabular-nums">
+                                    <div className="flex items-baseline gap-1 text-sm md:text-base font-mono tabular-nums">
                                       <span className="text-foreground">
                                         {fmtDamage(perHit)}
                                       </span>
@@ -820,9 +761,14 @@ function ComboResultView({
         comboId={comboId}
         teamBuild={teamBuild}
         damageValue={displayResult?.totalDamage ?? comboResult.totalDamage}
+        displayResult={displayResult}
         critMode={critMode}
         setCritMode={setCritMode}
-        {...getCritDisableFlags(displayResult?.parts)}
+        {...getCritDisableFlags(
+          displayResult?.partsByFormula
+            ? Object.values(displayResult.partsByFormula).flat()
+            : undefined
+        )}
         reactionOverrides={reactionOverrides}
         isMobile={isMobile}
         t={t}
@@ -857,13 +803,13 @@ interface DamageCardProps {
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   optimizedDisplayResult: DisplayResult | null | undefined;
   minErRaw: number;
-  // Ideal gen (dev only)
-  idealComputing: boolean;
-  idealResult: GeneratorResult | null;
-  idealError: Error | null;
-  handleGenerateIdeal: () => void;
-  idealArtifactsByChar: Record<string, Record<string, ArtifactData>>;
-  idealDisplayResult: DisplayResult | null | undefined;
+  // Generator (dev only)
+  genComputing: boolean;
+  genResult: GeneratorResult | null;
+  genError: Error | null;
+  handleGenerate: () => void;
+  genArtifactsByChar: Record<string, Record<string, ArtifactData>>;
+  genDisplayResult: DisplayResult | null | undefined;
   // Combo mode
   comboResult?: ComboResult | null;
   comboLines?: ComboLine[] | null;
@@ -871,7 +817,7 @@ interface DamageCardProps {
   teamBuild?: TeamBuild | null;
   formulaMode?: "single" | "combo";
   optimizedComboResult?: ComboResult | null;
-  idealComboResult?: ComboResult | null;
+  genComboResult?: ComboResult | null;
   // Freeze
   hasOptResult?: boolean;
   isFrozen?: boolean;
@@ -898,11 +844,8 @@ type CtxProps = {
   t: ReturnType<typeof useLanguage>["t"];
 };
 
-const LABEL_CLS = (mobile: boolean) =>
-  cn(
-    "font-semibold text-foreground/80 select-none whitespace-nowrap",
-    mobile ? "text-xs" : "text-sm"
-  );
+const LABEL_CLS =
+  "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
 
 function EnemyLevelInput({
   team,
@@ -912,8 +855,8 @@ function EnemyLevelInput({
   t,
 }: CtxProps) {
   return (
-    <div className={cn("flex items-center", isMobile ? "gap-1" : "gap-2")}>
-      <span className={LABEL_CLS(isMobile)}>{t.ui("teamComp.enemyLevel")}</span>
+    <div className="flex items-center gap-1 md:gap-2">
+      <span className={LABEL_CLS}>{t.ui("teamComp.enemyLevel")}</span>
       <Input
         type="text"
         inputMode="numeric"
@@ -925,10 +868,7 @@ function EnemyLevelInput({
               calcContext: { ...team.calcContext, enemyLevel: num || 100 },
             });
         }}
-        className={cn(
-          "text-sm text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0",
-          isMobile ? "h-7 w-14" : "h-8 w-16"
-        )}
+        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-12 px-1 md:text-sm md:h-8 md:w-16 md:px-3"
       />
     </div>
   );
@@ -1008,8 +948,8 @@ function EnemyResInput({
   t,
 }: CtxProps) {
   return (
-    <div className={cn("flex items-center", isMobile ? "gap-1" : "gap-2")}>
-      <span className={LABEL_CLS(isMobile)}>{t.ui("teamComp.enemyRes")}</span>
+    <div className="flex items-center gap-1 md:gap-2">
+      <span className={LABEL_CLS}>{t.ui("teamComp.enemyRes")}</span>
       <div className="flex items-center gap-1">
         <Input
           type="number"
@@ -1022,12 +962,11 @@ function EnemyResInput({
               },
             })
           }
-          className={cn(
-            "text-sm text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-            isMobile ? "h-7 w-14" : "h-8 w-16"
-          )}
+          className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-12 px-1 md:text-sm md:h-8 md:w-16 md:px-3"
         />
-        <span className="text-xs font-bold text-muted-foreground">%</span>
+        <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
+          %
+        </span>
       </div>
     </div>
   );
@@ -1042,10 +981,7 @@ function CritRateTargetInput({
 }: CtxProps) {
   return (
     <div className="flex items-center gap-1 shrink-0">
-      <span
-        className={LABEL_CLS(isMobile)}
-        title={t.ui("teamComp.critRateTargetTip")}
-      >
+      <span className={LABEL_CLS} title={t.ui("teamComp.critRateTargetTip")}>
         {t.ui("teamComp.critRateTarget")}
       </span>
       <Input
@@ -1065,12 +1001,11 @@ function CritRateTargetInput({
             },
           });
         }}
-        className={cn(
-          "text-sm text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-          isMobile ? "h-7 w-14" : "h-8 w-16"
-        )}
+        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-12 px-1 md:text-sm md:h-8 md:w-16 md:px-3"
       />
-      <span className="text-xs font-bold text-muted-foreground">%</span>
+      <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
+        %
+      </span>
     </div>
   );
 }
@@ -1083,10 +1018,8 @@ function RollMultSelect({
   t,
 }: CtxProps) {
   return (
-    <div className={cn("flex items-center", isMobile ? "gap-1" : "gap-2")}>
-      <span className={LABEL_CLS(isMobile)}>
-        {t.ui("teamComp.rollMultiplier")}
-      </span>
+    <div className="flex items-center gap-1 md:gap-2">
+      <span className={LABEL_CLS}>{t.ui("teamComp.rollMultiplier")}</span>
       <Select
         value={String(activeContext.rollMultiplier ?? 0.85)}
         onValueChange={(v) =>
@@ -1095,12 +1028,7 @@ function RollMultSelect({
           })
         }
       >
-        <SelectTrigger
-          className={cn(
-            "text-sm font-bold border-border/20 bg-background/50",
-            isMobile ? "h-7 w-18" : "h-8 w-20"
-          )}
-        >
+        <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-16 px-1.5 md:text-sm md:h-8 md:w-20 md:px-3">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -1122,30 +1050,22 @@ function SubstatBudgetSelect({
   isMobile,
   t,
 }: CtxProps) {
-  const value =
-    activeContext.idealSubstatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET;
+  const value = activeContext.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET;
   return (
-    <div className={cn("flex items-center", isMobile ? "gap-1" : "gap-2")}>
-      <span className={LABEL_CLS(isMobile)}>
-        {t.ui("teamComp.substatBudget")}
-      </span>
+    <div className="flex items-center gap-1 md:gap-2">
+      <span className={LABEL_CLS}>{t.ui("teamComp.substatBudget")}</span>
       <Select
         value={value}
         onValueChange={(v) =>
           updateTeam(team.id, {
             calcContext: {
               ...team.calcContext,
-              idealSubstatBudget: v as SubstatBudgetPreset,
+              substatBudget: v as SubstatBudgetPreset,
             },
           })
         }
       >
-        <SelectTrigger
-          className={cn(
-            "text-sm font-bold border-border/20 bg-background/50 min-w-0 max-w-[10.5rem]",
-            isMobile ? "h-7" : "h-8"
-          )}
-        >
+        <SelectTrigger className="font-bold border-border/20 bg-background/50 min-w-0 max-w-[10.5rem] text-xs h-6 px-1.5 md:text-sm md:h-8 md:px-3">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -1176,23 +1096,20 @@ function ActionButton({
       onClick={onClick}
       disabled={disabled}
       size="sm"
-      className="gap-1.5 font-bold px-4 shadow-md text-xs"
+      className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8"
     >
       {computing ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 animate-spin" />
       ) : (
-        <Play className="w-3.5 h-3.5" />
+        <Play className="w-3 h-3 md:w-3.5 md:h-3.5" />
       )}
       <span>{computing ? labelBusy : labelIdle}</span>
     </Button>
   );
 }
 
-const CONTROLS_CLS = (mobile: boolean) =>
-  cn(
-    "flex flex-wrap items-center justify-center mb-3",
-    mobile ? "gap-x-3 gap-y-1.5" : "gap-x-5 gap-y-2"
-  );
+const CONTROLS_CLS =
+  "flex flex-wrap items-center justify-center mb-3 gap-x-2 gap-y-1 md:gap-x-5 md:gap-y-2";
 
 export function DamageCard({
   team,
@@ -1213,19 +1130,19 @@ export function DamageCard({
   optimizedArtifactsByChar,
   optimizedDisplayResult,
   minErRaw,
-  idealComputing,
-  idealResult,
-  idealError,
-  handleGenerateIdeal,
-  idealArtifactsByChar,
-  idealDisplayResult,
+  genComputing,
+  genResult,
+  genError,
+  handleGenerate,
+  genArtifactsByChar,
+  genDisplayResult,
   comboResult,
   comboLines,
   comboId,
   teamBuild,
   formulaMode = "single",
   optimizedComboResult,
-  idealComboResult,
+  genComboResult,
   hasOptResult,
   isFrozen,
   isFullyFrozen,
@@ -1302,7 +1219,7 @@ export function DamageCard({
       </CardHeader>
 
       {/* Radio-button selector */}
-      <div className="flex gap-2 px-2 2xl:px-4 py-2 border-b border-border/20">
+      <OptionButtonRow>
         {(
           [
             {
@@ -1321,57 +1238,22 @@ export function DamageCard({
               desc: "teamComp.tabGenerateDesc" as const,
             },
           ] as const
-        ).map(({ key, label, desc }) => {
-          const selected = resultsTab === key;
-          return (
-            <button
-              key={key}
-              type="button"
+        ).map(({ key, label, desc }) => (
+          <OptionButtonCell key={key}>
+            <OptionButton
+              selected={resultsTab === key}
               onClick={() => setResultsTab(key)}
-              className={cn(
-                "flex-1 flex items-start gap-2.5 rounded-lg border-2 px-3 py-2 text-left transition-all",
-                selected
-                  ? "border-primary bg-primary/10 shadow-sm"
-                  : "border-border/30 bg-black/5 hover:border-border/50 hover:bg-black/10"
-              )}
-            >
-              <div
-                className={cn(
-                  "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                  selected ? "border-primary" : "border-border"
-                )}
-              >
-                {selected && (
-                  <div className="w-2 h-2 rounded-full bg-primary" />
-                )}
-              </div>
-              <div className="flex flex-wrap items-baseline gap-x-1.5 min-w-0">
-                <span
-                  className={cn(
-                    "text-base md:text-lg font-bold",
-                    selected ? "text-foreground" : "text-foreground/70"
-                  )}
-                >
-                  {t.ui(label)}
-                </span>
-                <span
-                  className={cn(
-                    "text-xs leading-snug",
-                    selected ? "text-muted-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  {t.ui(desc)}
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
+              title={t.ui(label)}
+              subtitle={t.ui(desc)}
+            />
+          </OptionButtonCell>
+        ))}
+      </OptionButtonRow>
 
       {/* ── Content: Current Equipped ── */}
       {resultsTab === "current" && (
         <CardContent className={CARD_BODY_CLS}>
-          <div className={CONTROLS_CLS(isMobile)}>
+          <div className={CONTROLS_CLS}>
             <EnemyLevelInput {...ctxProps} />
             <EnemyResInput {...ctxProps} />
           </div>
@@ -1438,7 +1320,7 @@ export function DamageCard({
             )}
 
           <CardContent className={CARD_BODY_CLS}>
-            <div className={CONTROLS_CLS(isMobile)}>
+            <div className={CONTROLS_CLS}>
               <EnemyLevelInput {...ctxProps} />
               <EnemyResInput {...ctxProps} />
               <CritRateTargetInput {...ctxProps} />
@@ -1470,9 +1352,9 @@ export function DamageCard({
                   variant="outline"
                   size="sm"
                   onClick={onRestoreOriginal}
-                  className="gap-1.5 font-bold px-4 text-xs shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:!bg-amber-500/15 hover:!text-amber-200 hover:ring-amber-400/40"
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:!bg-amber-500/15 hover:!text-amber-200 hover:ring-amber-400/40"
                 >
-                  <Undo2 className="w-3.5 h-3.5" />
+                  <Undo2 className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   {t.ui("teamComp.swapRestore")}
                 </Button>
               )}
@@ -1486,9 +1368,9 @@ export function DamageCard({
                     (teamResult?.done && teamResult.bestDamage <= 0) ||
                     !hasActiveFormula
                   }
-                  className="gap-1.5 font-bold px-4 text-xs shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
                 >
-                  <Snowflake className="w-3.5 h-3.5" />
+                  <Snowflake className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   {t.ui("teamComp.freezeTeam")}
                 </Button>
               )}
@@ -1497,9 +1379,9 @@ export function DamageCard({
                   variant="outline"
                   size="sm"
                   onClick={onUnfreezeAll}
-                  className="gap-1.5 font-bold px-4 text-xs shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
                 >
-                  <Flame className="w-3.5 h-3.5" />
+                  <Flame className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   {t.ui("teamComp.unfreezeAll")}
                 </Button>
               )}
@@ -1685,8 +1567,7 @@ export function DamageCard({
                   teamResult?.done ? teamResult.saturatedCharIds : undefined
                 }
               />
-            ) : teamResult?.mode === "single" ||
-              (hasOptResult && optimizedDisplayResult) ? (
+            ) : hasOptResult && optimizedDisplayResult ? (
               <DamageBody
                 team={effectiveTeam}
                 hasFormula
@@ -1743,26 +1624,26 @@ export function DamageCard({
         </>
       )}
 
-      {/* ── Content: Generate Ideal (dev only) ── */}
+      {/* ── Content: Generate (dev only) ── */}
       {resultsTab === "generate" && (
         <CardContent className={CARD_BODY_CLS}>
-          <div className={CONTROLS_CLS(isMobile)}>
+          <div className={CONTROLS_CLS}>
             <EnemyLevelInput {...ctxProps} />
             <EnemyResInput {...ctxProps} />
             <CritRateTargetInput {...ctxProps} />
             <RollMultSelect {...ctxProps} />
             <SubstatBudgetSelect {...ctxProps} />
             <ActionButton
-              onClick={handleGenerateIdeal}
-              disabled={idealComputing || !hasActiveFormula}
-              computing={idealComputing}
+              onClick={handleGenerate}
+              disabled={genComputing || !hasActiveFormula}
+              computing={genComputing}
               labelIdle={t.ui("teamComp.tabGenerate")}
               labelBusy={t.ui("teamComp.generatingIdeal")}
             />
           </div>
 
           {/* Empty state */}
-          {!idealComputing && !idealResult?.done && !idealError && (
+          {!genComputing && !genResult?.done && !genError && (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
               <p>{t.ui("teamComp.idealEmptyMessage")}</p>
@@ -1770,24 +1651,24 @@ export function DamageCard({
           )}
 
           {/* Error state */}
-          {idealError && (
+          {genError && (
             <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
               <span className="font-bold">{t.ui("teamComp.optError")}</span>{" "}
-              {idealError.message}
+              {genError.message}
             </div>
           )}
 
           {/* Progress */}
-          {idealComputing && idealResult && (
+          {genComputing && genResult && (
             <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-semibold">{idealResult.phase}</span>
+                <span className="font-semibold">{genResult.phase}</span>
                 <span className="font-mono font-bold">
-                  {Math.round(idealResult.progress * 100)}%
+                  {Math.round(genResult.progress * 100)}%
                 </span>
               </div>
               <Progress
-                value={idealResult.progress * 100}
+                value={genResult.progress * 100}
                 className="h-1.5 bg-black/40"
               />
             </div>
@@ -1795,17 +1676,17 @@ export function DamageCard({
 
           {/* Results */}
           {formulaMode === "combo" &&
-          idealComboResult &&
+          genComboResult &&
           comboLines &&
           teamBuild ? (
             <ComboResultView
-              displayResult={idealDisplayResult}
-              comboResult={idealComboResult}
+              displayResult={genDisplayResult}
+              comboResult={genComboResult}
               comboLines={comboLines}
               comboId={comboId}
               teamBuild={teamBuild}
               team={effectiveTeam}
-              artifactsByChar={idealArtifactsByChar}
+              artifactsByChar={genArtifactsByChar}
               calcContext={activeContext}
               critMode={critMode}
               setCritMode={setCritMode}
@@ -1813,14 +1694,14 @@ export function DamageCard({
               t={t}
               reactionOverrides={team.reactionOverrides}
             />
-          ) : idealResult?.done && idealDisplayResult ? (
+          ) : genResult?.done && genDisplayResult ? (
             <DamageBody
               team={effectiveTeam}
               hasFormula
               emptyMessage=""
-              artifactsByChar={idealArtifactsByChar}
+              artifactsByChar={genArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
-              displayResult={idealDisplayResult}
+              displayResult={genDisplayResult}
               formulaKey={
                 resolvedFormula
                   ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`

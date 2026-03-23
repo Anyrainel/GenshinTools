@@ -170,13 +170,13 @@ function CharacterSwapColumn({
   return (
     <div className="flex flex-col bg-black/15 border border-border/10 rounded-lg overflow-hidden">
       {/* Character header */}
-      <div className="flex items-center gap-2 p-2 bg-black/20 border-b border-border/10">
+      <div className="flex items-center gap-2 px-2 py-1 md:py-2 bg-black/20">
         <img
           src={getAssetUrl(char?.imagePath)}
-          className="w-7 h-7 rounded-full bg-black/20 shrink-0"
+          className="w-5 h-5 md:w-7 md:h-7 rounded-full bg-black/20 shrink-0"
           alt={charId}
         />
-        <span className="font-bold text-sm truncate text-foreground/70">
+        <span className="font-bold text-xs md:text-sm truncate text-foreground/70">
           {t.character(charId)}
         </span>
       </div>
@@ -260,7 +260,7 @@ function SlotRow({
             <img
               src={getAssetUrl(setIcon)}
               alt={setName}
-              className="w-5 h-5 lg:w-6 lg:h-6 object-contain rounded-sm bg-secondary/50 shrink-0"
+              className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain rounded-sm bg-secondary/50 shrink-0"
             />
           )}
           <span className="text-[10px] md:text-xs lg:text-sm font-semibold text-foreground/80 truncate leading-tight">
@@ -289,20 +289,20 @@ function SlotRow({
         <div className="flex items-baseline gap-1 leading-none">
           <span
             className={cn(
-              "text-xs lg:text-sm font-bold truncate text-amber-100"
+              "text-[10px] md:text-xs lg:text-sm font-bold truncate text-amber-100"
             )}
           >
             {t.statMin(artifact.mainStatKey)}
           </span>
           <span
             className={cn(
-              "text-[10px] lg:text-xs font-mono tabular-nums shrink-0",
+              "text-[8px] md:text-[10px] lg:text-xs font-mono tabular-nums shrink-0",
               getRarityColor(artifact.rarity, "text")
             )}
           >
             +{artifact.level}
           </span>
-          <span className="text-xs lg:text-sm font-mono font-bold text-amber-100 ml-auto shrink-0">
+          <span className="text-[10px] md:text-xs lg:text-sm font-mono font-bold text-amber-100 ml-auto shrink-0">
             {fmtStat(artifact.mainStatKey, mainStatValue, false, true)}
           </span>
         </div>
@@ -356,7 +356,7 @@ function StatusBadge({
     return (
       <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-green-400 font-medium leading-none">
         <Check className="w-2.5 h-2.5 lg:w-3 lg:h-3 shrink-0" />
-        <span>{t.ui("accountData.equipped")}</span>
+        <span className="hidden md:inline">{t.ui("accountData.equipped")}</span>
       </div>
     );
   }
@@ -365,7 +365,9 @@ function StatusBadge({
     return (
       <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-amber-400 font-medium leading-none">
         <ArrowRightLeft className="w-2.5 h-2.5 lg:w-3 lg:h-3 shrink-0" />
-        <span className="truncate">{t.character(status.charId)}</span>
+        <span className="hidden md:inline truncate">
+          {t.character(status.charId)}
+        </span>
       </div>
     );
   }
@@ -373,7 +375,9 @@ function StatusBadge({
   return (
     <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-sky-400 font-medium leading-none">
       <Package className="w-2.5 h-2.5 lg:w-3 lg:h-3 shrink-0" />
-      <span>{t.ui("teamComp.swapStatusInventory")}</span>
+      <span className="hidden md:inline">
+        {t.ui("teamComp.swapStatusInventory")}
+      </span>
     </div>
   );
 }

@@ -19,10 +19,10 @@ import type {
   ReactionType,
   Slot,
 } from "@/data/types";
+import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
-import { useInvestmentAnalysis } from "@/hooks/useInvestmentAnalysis";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
@@ -32,10 +32,9 @@ import {
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
-  buildComboLinePartialBuffs,
+  buildBuffOverrides,
   buildTeamConfigs,
   calcComboResults,
-  calcDisplayResult,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";
 import type { TeamOptDetailProps } from "@/lib/team-comp/teamOptUtils";
@@ -47,6 +46,7 @@ import type {
   I18nLabel,
   ReactionOverride,
 } from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
@@ -57,10 +57,10 @@ import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Info } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnalyzerDialog } from "./AnalyzerDialog";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
-import { InvestmentDialog } from "./InvestmentDialog";
 import { TeamRosterCard } from "./TeamRosterCard";
 
 /** Get the reaction override key for a charId + formulaId pair */
@@ -159,7 +159,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         teamBuild: new TeamBuild(
           configs,
           team.opts || {},
-          team.enemyElementAura
+          team.enemyAura,
+          team.extraBuffs
         ),
         buildError: null,
       };
@@ -170,7 +171,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         buildError: e instanceof Error ? e.message : String(e),
       };
     }
-  }, [configs, team.opts, team.enemyElementAura, characterStats, weaponStats]);
+  }, [
+    configs,
+    team.opts,
+    team.enemyAura,
+    team.extraBuffs,
+    characterStats,
+    weaponStats,
+  ]);
 
   const availableFormulas = useMemo(() => {
     return teamBuild ? teamBuild.getFormulaIds() : {};
@@ -224,7 +232,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       enemyRes: team.calcContext?.enemyRes ?? 0.1,
       critRateTarget: team.calcContext?.critRateTarget,
       rollMultiplier: team.calcContext?.rollMultiplier,
-      idealSubstatBudget: team.calcContext?.idealSubstatBudget,
+      substatBudget: team.calcContext?.substatBudget,
     };
   }, [team.calcContext]);
 
@@ -351,82 +359,100 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [comboLineMap, updateCombo]
   );
 
-  // Build per-line PartialBuffInfo[] for combo (defaults + user overrides)
-  const comboLinePartialBuffs = useMemo(() => {
-    if (formulaMode !== "combo" || !teamBuild) return undefined;
-    const activeLines = combo.lines.filter((l) => l.count > 0);
+  // ─── Display Combo (always a ComboFormula, even in single mode) ───
+
+  const displayCombo = useMemo<ComboFormula>(() => {
+    if (formulaMode === "combo") {
+      const activeLines = combo.lines.filter((l) => l.count > 0);
+      return activeLines.length > 0 ? { ...combo, lines: activeLines } : combo;
+    }
+    if (!resolvedFormula)
+      return { id: "__single__", label: { en: "", zh: "" }, lines: [] };
+    return singleFormulaCombo(
+      resolvedFormula.charId,
+      resolvedFormula.formulaId,
+      currentReactionOverride
+    );
+  }, [formulaMode, combo, resolvedFormula, currentReactionOverride]);
+
+  const displayReactionOverrides =
+    formulaMode === "combo" ? team.reactionOverrides : undefined;
+
+  // Build per-line PartialBuffInfo[] (defaults + user overrides) — works for both modes
+  const buffOverrides = useMemo(() => {
+    if (!teamBuild) return undefined;
+    const activeLines = displayCombo.lines.filter((l) => l.count > 0);
     if (activeLines.length === 0) return undefined;
 
-    // Gather user overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
-    const formulaOverrides: Record<string, BuffActivationMap> = {};
-    for (const key of Object.keys(comboStoreOverrides)) {
-      const prefix = `combo:${combo.id}:`;
-      if (key.startsWith(prefix)) {
-        const formulaKey = key.slice(prefix.length);
-        formulaOverrides[formulaKey] = comboStoreOverrides[key];
+    if (formulaMode === "combo") {
+      // Gather user overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
+      const formulaOverrides: Record<string, BuffActivationMap> = {};
+      for (const key of Object.keys(comboStoreOverrides)) {
+        const prefix = `combo:${combo.id}:`;
+        if (key.startsWith(prefix)) {
+          const formulaKey = key.slice(prefix.length);
+          formulaOverrides[formulaKey] = comboStoreOverrides[key];
+        }
       }
+      return buildBuffOverrides(
+        activeLines,
+        teamBuild,
+        artifactSheets,
+        displayContext,
+        team.reactionOverrides,
+        Object.keys(formulaOverrides).length > 0 ? formulaOverrides : undefined
+      );
     }
-
-    return buildComboLinePartialBuffs(
+    // Single mode: convert userBuffOverrides to combo format
+    const formulaOverrides: Record<string, BuffActivationMap> = {};
+    if (
+      resolvedFormula &&
+      userBuffOverrides &&
+      Object.keys(userBuffOverrides).length > 0
+    ) {
+      const fKey = `${resolvedFormula.charId}.${resolvedFormula.formulaId}`;
+      formulaOverrides[fKey] = userBuffOverrides;
+    }
+    return buildBuffOverrides(
       activeLines,
       teamBuild,
       artifactSheets,
       displayContext,
-      team.reactionOverrides,
+      undefined,
       Object.keys(formulaOverrides).length > 0 ? formulaOverrides : undefined
     );
   }, [
     formulaMode,
-    combo,
+    displayCombo,
+    combo.id,
     teamBuild,
     artifactSheets,
     displayContext,
     team.reactionOverrides,
     comboStoreOverrides,
+    resolvedFormula,
+    userBuffOverrides,
   ]);
 
-  const { comboResult, comboDisplay: comboDisplayResult } = useMemo(
-    () =>
-      formulaMode === "combo"
-        ? calcComboResults(
-            teamBuild,
-            combo,
-            artifactSheets,
-            displayContext,
-            team.reactionOverrides,
-            comboLinePartialBuffs
-          )
-        : { comboResult: null, comboDisplay: null },
-    [
-      formulaMode,
-      combo,
-      teamBuild,
-      artifactSheets,
-      displayContext,
-      team.reactionOverrides,
-      comboLinePartialBuffs,
-    ]
-  );
+  // ─── Damage Calculations (always via combo path) ───
 
-  // ─── Damage Calculations ───
-
-  const currentDisplayResult = useMemo(
+  const { comboResult, comboDisplay: currentDisplayResult } = useMemo(
     () =>
-      calcDisplayResult(
+      calcComboResults(
         teamBuild,
-        resolvedFormula,
+        displayCombo,
         artifactSheets,
         displayContext,
-        currentReactionOverride,
-        userBuffOverrides
+        displayReactionOverrides,
+        buffOverrides
       ),
     [
       teamBuild,
-      resolvedFormula,
+      displayCombo,
       artifactSheets,
       displayContext,
-      currentReactionOverride,
-      userBuffOverrides,
+      displayReactionOverrides,
+      buffOverrides,
     ]
   );
 
@@ -530,7 +556,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       optTeamBuild = new TeamBuild(
         optimizerConfigs,
         team.opts || {},
-        team.enemyElementAura
+        team.enemyAura,
+        team.extraBuffs
       );
     } catch (e) {
       console.warn(
@@ -557,6 +584,15 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       }
     }
 
+    // Always use combo: in single-formula mode, wrap as a 1-line combo
+    const optCombo: ComboFormula =
+      formulaMode === "combo"
+        ? { ...combo, lines: combo.lines.filter((l) => l.count > 0) }
+        : singleFormulaCombo(carryCharId, formulaId, currentReactionOverride);
+
+    const optReactionOverrides =
+      formulaMode === "combo" ? team.reactionOverrides : undefined;
+
     // Compute partial buff specs from user overrides for the optimizer
     const optPartialBuffs =
       userBuffOverrides && Object.keys(userBuffOverrides).length > 0
@@ -569,26 +605,28 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             userBuffOverrides
           )
         : undefined;
+    const optBuffOverrides =
+      formulaMode === "combo"
+        ? buffOverrides
+        : optPartialBuffs && optPartialBuffs.length > 0
+          ? { 0: optPartialBuffs }
+          : undefined;
 
     startTeamOpt({
       teamBuild: optTeamBuild,
       carryCharId,
-      formulaId,
+      formula: {
+        combo: optCombo,
+        reactionOverrides: optReactionOverrides,
+        buffOverrides: optBuffOverrides,
+      },
       inventory: getInventory(),
       calcContext: activeContext,
       globalConfig: scoreConfig.global,
       baseSheets: optBaseSheets,
       perChar,
-      reactionOverride: currentReactionOverride,
-      altCount: isMobile ? 5 : 7,
       teamDeadlineMs: performance.now() + 30_000,
-      ...(formulaMode === "combo" && {
-        combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
-        reactionOverrides: team.reactionOverrides,
-        comboLinePartialBuffs,
-      }),
       ignoreArtifactSets,
-      partialBuffs: optPartialBuffs,
     });
   };
 
@@ -681,59 +719,35 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   // Use rebuilt TeamBuild from optimizer result if sets were adjusted
   const optTeamBuild = teamResult?.teamBuild ?? teamBuild;
 
-  const optimizedDisplayResult = useMemo(
+  const { comboDisplay: optimizedDisplayResult } = useMemo(
     () =>
       hasOptResult
-        ? calcDisplayResult(
-            optTeamBuild,
-            resolvedFormula,
-            optArtifactSheets,
-            displayContext,
-            currentReactionOverride,
-            userBuffOverrides
-          )
-        : null,
-    [
-      optTeamBuild,
-      resolvedFormula,
-      optArtifactSheets,
-      hasOptResult,
-      displayContext,
-      currentReactionOverride,
-      userBuffOverrides,
-    ]
-  );
-
-  const { comboDisplay: optimizedComboDisplayResult } = useMemo(
-    () =>
-      formulaMode === "combo" && hasOptResult
         ? calcComboResults(
             optTeamBuild,
-            combo,
+            displayCombo,
             optArtifactSheets,
             displayContext,
-            team.reactionOverrides,
-            comboLinePartialBuffs
+            displayReactionOverrides,
+            buffOverrides
           )
         : { comboResult: null, comboDisplay: null },
     [
-      formulaMode,
-      combo,
       optTeamBuild,
+      displayCombo,
       optArtifactSheets,
       hasOptResult,
       displayContext,
-      team.reactionOverrides,
-      comboLinePartialBuffs,
+      displayReactionOverrides,
+      buffOverrides,
     ]
   );
 
-  // ─── Ideal Artifact Generator (dev only) ───
+  // ─── Artifact Generator (dev only) ───
 
   const {
-    result: idealResult,
-    isComputing: idealComputing,
-    error: idealError,
+    result: genResult,
+    isComputing: genComputing,
+    error: genError,
     start: startGenerator,
     stop: stopGenerator,
   } = useAsyncGenerator();
@@ -744,10 +758,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     };
   }, [stopGenerator]);
 
-  const handleGenerateIdeal = () => {
+  const handleGenerate = () => {
     if (!teamBuild) return;
     if (!resolvedFormula && formulaMode !== "combo") return;
-    const idealContext: CalcContext = { ...activeContext };
+    const genContext: CalcContext = { ...activeContext };
 
     const setKeysByChar: Record<string, Record<Slot, string>> = {};
     for (let i = 0; i < effectiveTeam.characters.length; i++) {
@@ -772,7 +786,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         const sk1 =
           hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
           hs1?.setIds[0] ??
-          "ideal";
+          "generated";
         // For sk2, skip sk1 so both half-sets use distinct concrete sets
         const sk2 =
           hs2?.setIds.find(
@@ -780,7 +794,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           ) ??
           hs2?.setIds.find((id) => id !== sk1) ??
           hs2?.setIds[0] ??
-          "ideal";
+          "generated";
         setKeysByChar[cid] = {
           flower: sk1,
           plume: sk1,
@@ -796,105 +810,90 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       resolvedFormula?.charId ??
       combo.lines.find((l) => l.count > 0)?.charId ??
       effectiveTeam.characters.find((c): c is string => c != null)!;
-    const idealFormulaId = resolvedFormula?.formulaId ?? "";
+    const genFormulaId = resolvedFormula?.formulaId ?? "";
 
-    const idealReactionOverride = resolvedFormula
-      ? (team.reactionOverrides?.[
-          getReactionKey(resolvedFormula.charId, resolvedFormula.formulaId)
-        ] ?? {})
-      : {};
-
-    // Build per-char ER/CR constraints for ideal gen
-    const idealPerChar: Record<string, { minEr: number; minCr: number }> = {};
+    // Build per-char ER/CR constraints for generator
+    const genPerChar: Record<string, { minEr: number; minCr: number }> = {};
     for (const cid of effectiveTeam.characters) {
       if (!cid) continue;
-      idealPerChar[cid] = {
+      genPerChar[cid] = {
         minEr: team.minEr?.[cid] ?? 1.0,
         minCr: team.minCr?.[cid] ?? 0,
       };
     }
 
+    // Always use combo: in single-formula mode, wrap as a 1-line combo
+    const genCombo: ComboFormula =
+      formulaMode === "combo"
+        ? { ...combo, lines: combo.lines.filter((l) => l.count > 0) }
+        : singleFormulaCombo(
+            carryCharId,
+            genFormulaId,
+            team.reactionOverrides?.[
+              getReactionKey(
+                resolvedFormula!.charId,
+                resolvedFormula!.formulaId
+              )
+            ]
+          );
+
+    const genReactionOverrides =
+      formulaMode === "combo" ? team.reactionOverrides : undefined;
+
     startGenerator({
       teamBuild,
       carryCharId,
-      formulaId: idealFormulaId,
-      calcContext: idealContext,
+      formula: {
+        combo: genCombo,
+        reactionOverrides: genReactionOverrides,
+        buffOverrides: buffOverrides,
+      },
+      calcContext: genContext,
       setKeysByChar,
       rollMultiplier: activeContext.rollMultiplier,
-      reactionOverride: idealReactionOverride,
-      perChar: idealPerChar,
+      perChar: genPerChar,
       ignoreArtifactSets: ignoreArtifactSets ?? undefined,
-      ...(formulaMode === "combo" && {
-        combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
-        reactionOverrides: team.reactionOverrides,
-      }),
     });
   };
 
-  const idealArtifactsByChar = useMemo(() => {
-    if (!idealResult?.done || !idealResult.artifactsByChar)
+  const genArtifactsByChar = useMemo(() => {
+    if (!genResult?.done || !genResult.artifactsByChar)
       return equippedArtifactsByChar;
     const map = { ...equippedArtifactsByChar };
-    for (const [charId, arts] of Object.entries(idealResult.artifactsByChar)) {
+    for (const [charId, arts] of Object.entries(genResult.artifactsByChar)) {
       map[charId] = arts as Record<string, ArtifactData>;
     }
     return map;
-  }, [idealResult, equippedArtifactsByChar]);
+  }, [genResult, equippedArtifactsByChar]);
 
-  const idealArtifactSheets = useMemo(
-    () => toStatSheets(effectiveTeam.characters, idealArtifactsByChar),
-    [idealArtifactsByChar, effectiveTeam.characters]
+  const genArtifactSheets = useMemo(
+    () => toStatSheets(effectiveTeam.characters, genArtifactsByChar),
+    [genArtifactsByChar, effectiveTeam.characters]
   );
 
-  const idealDisplayResult = useMemo(
-    () =>
-      idealResult?.done
-        ? calcDisplayResult(
-            teamBuild,
-            resolvedFormula,
-            idealArtifactSheets,
-            displayContext,
-            currentReactionOverride,
-            userBuffOverrides
-          )
-        : null,
-    [
-      teamBuild,
-      resolvedFormula,
-      idealArtifactSheets,
-      idealResult?.done,
-      displayContext,
-      currentReactionOverride,
-      userBuffOverrides,
-    ]
-  );
-
-  const {
-    comboResult: idealComboResultRecalc,
-    comboDisplay: idealComboDisplayResult,
-  } = useMemo(
-    () =>
-      formulaMode === "combo" && idealResult?.done
-        ? calcComboResults(
-            teamBuild,
-            combo,
-            idealArtifactSheets,
-            displayContext,
-            team.reactionOverrides,
-            comboLinePartialBuffs
-          )
-        : { comboResult: null, comboDisplay: null },
-    [
-      formulaMode,
-      combo,
-      teamBuild,
-      idealArtifactSheets,
-      idealResult?.done,
-      displayContext,
-      team.reactionOverrides,
-      comboLinePartialBuffs,
-    ]
-  );
+  const { comboResult: genComboResultRecalc, comboDisplay: genDisplayResult } =
+    useMemo(
+      () =>
+        genResult?.done
+          ? calcComboResults(
+              teamBuild,
+              displayCombo,
+              genArtifactSheets,
+              displayContext,
+              displayReactionOverrides,
+              buffOverrides
+            )
+          : { comboResult: null, comboDisplay: null },
+      [
+        teamBuild,
+        displayCombo,
+        genArtifactSheets,
+        genResult?.done,
+        displayContext,
+        displayReactionOverrides,
+        buffOverrides,
+      ]
+    );
 
   // ─── Artifact Swap (ephemeral local overrides) ───
 
@@ -970,9 +969,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null ||
       Object.keys(cachedFreezeArtifacts.current).length > 0);
 
-  // ─── Investment Analysis Dialog ───
-  const [investmentOpen, setInvestmentOpen] = useState(false);
-  const investmentAnalysis = useInvestmentAnalysis();
+  // ─── Analyzer Dialog ───
+  const [analyzerOpen, setAnalyzerOpen] = useState(false);
+  const analyzerState = useAnalyzer();
 
   return (
     <div
@@ -1052,7 +1051,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         }}
         onInvestmentClick={
           teamBuild && formulaMode === "combo"
-            ? () => setInvestmentOpen(true)
+            ? () => setAnalyzerOpen(true)
             : undefined
         }
         isMobile={isMobile}
@@ -1074,10 +1073,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           if (!teamResult?.done && !isFrozen) return;
           // Freeze all chars with current view artifacts
           // Skip: chars with nothing equipped, and saturated chars (no marginal gains)
-          const marginalGains =
-            formulaMode === "combo"
-              ? optimizedComboDisplayResult?.marginalGains
-              : optimizedDisplayResult?.marginalGains;
+          const marginalGains = optimizedDisplayResult?.marginalGains;
           const byChar: Record<string, Record<Slot, ArtifactData | null>> = {};
           const freezableCharIds: string[] = [];
           for (const [charId, arts] of Object.entries(
@@ -1089,12 +1085,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
               const charMarginal = marginalGains[charId];
               if (!charMarginal || Object.keys(charMarginal).length === 0) {
                 // Check if this is the carry (target) — carries are never skipped
-                const isCarry =
-                  formulaMode === "combo"
-                    ? combo.lines.some(
-                        (l) => l.count > 0 && l.charId === charId
-                      )
-                    : resolvedFormula?.charId === charId;
+                const isCarry = displayCombo.lines.some(
+                  (l) => l.count > 0 && l.charId === charId
+                );
                 if (!isCarry) continue;
               }
             }
@@ -1132,12 +1125,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         isMobile={isMobile}
         t={t}
         equippedArtifactsByChar={equippedArtifactsByChar}
-        currentDisplayResult={
-          formulaMode === "combo" ? comboDisplayResult : currentDisplayResult
-        }
-        comboResult={formulaMode === "combo" ? comboResult : null}
-        comboLines={formulaMode === "combo" ? combo.lines : null}
-        comboId={formulaMode === "combo" ? combo.id : undefined}
+        currentDisplayResult={currentDisplayResult}
+        comboResult={comboResult}
+        comboLines={displayCombo.lines}
+        comboId={displayCombo.id}
         teamBuild={teamBuild}
         formulaMode={formulaMode}
         accountData={accountData}
@@ -1148,26 +1139,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         teamError={teamError}
         handleOptimize={handleOptimize}
         optimizedArtifactsByChar={optimizedArtifactsByChar}
-        optimizedComboResult={
-          teamResult?.mode === "combo" ? teamResult.bestComboResult : null
-        }
-        optimizedDisplayResult={
-          formulaMode === "combo"
-            ? optimizedComboDisplayResult
-            : optimizedDisplayResult
-        }
+        optimizedComboResult={teamResult?.bestComboResult ?? null}
+        optimizedDisplayResult={optimizedDisplayResult}
         minErRaw={minErRaw}
-        idealComputing={idealComputing}
-        idealResult={idealResult}
-        idealError={idealError}
-        handleGenerateIdeal={handleGenerateIdeal}
-        idealArtifactsByChar={idealArtifactsByChar}
-        idealDisplayResult={
-          formulaMode === "combo" ? idealComboDisplayResult : idealDisplayResult
-        }
-        idealComboResult={
-          formulaMode === "combo" ? (idealComboResultRecalc ?? null) : null
-        }
+        genComputing={genComputing}
+        genResult={genResult}
+        genError={genError}
+        handleGenerate={handleGenerate}
+        genArtifactsByChar={genArtifactsByChar}
+        genDisplayResult={genDisplayResult}
+        genComboResult={genComboResultRecalc ?? null}
         onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
         hasSwapOverrides={hasSwapOverrides}
         onRestoreOriginal={hasSwapOverrides ? handleRestoreOriginal : undefined}
@@ -1190,18 +1171,20 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         />
       )}
 
-      {/* Investment Analysis Dialog */}
+      {/* Analyzer Dialog */}
       {teamBuild && (
-        <InvestmentDialog
-          open={investmentOpen}
-          onOpenChange={setInvestmentOpen}
+        <AnalyzerDialog
+          open={analyzerOpen}
+          onOpenChange={setAnalyzerOpen}
           teamId={team.id}
           teamBuild={teamBuild}
           baseConfigs={configs}
-          combo={combo}
-          analysis={investmentAnalysis}
-          calcContext={activeContext}
-          reactionOverrides={team.reactionOverrides}
+          formula={{
+            combo,
+            reactionOverrides: team.reactionOverrides,
+            buffOverrides,
+          }}
+          analysis={analyzerState}
           perChar={Object.fromEntries(
             effectiveTeam.characters
               .filter((c): c is string => c != null)

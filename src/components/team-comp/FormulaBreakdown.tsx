@@ -992,8 +992,8 @@ export function FormulaBreakdown({
   comboKey,
 }: Props) {
   return (
-    <div className="w-full overflow-x-auto pt-3 px-1">
-      <div className="w-max mx-auto flex flex-col items-center gap-2 md:gap-4">
+    <div className="w-full overflow-x-auto pt-2 px-1">
+      <div className="w-max mx-auto flex flex-col items-center md:gap-1">
         {parts.map((p, idx) => {
           const Renderer = RENDERERS[p.template];
           const displayDamage = adjustPartDamage(p, critMode);
