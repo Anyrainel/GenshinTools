@@ -707,7 +707,7 @@ export class TeamBuild {
      * (Other characters' constellations in the original TeamMeta are irrelevant
      * because no implementation checks cross-character constellation/refinement.)
      */
-    _cachedCharBuilds?: Record<string, CharBuild>
+    cachedCharBuilds?: Record<string, CharBuild>
   ) {
     this.configs = configs;
     this.combatOpts = combatOpts;
@@ -730,9 +730,9 @@ export class TeamBuild {
 
     // Create or reuse CharBuilds
     this.charBuilds = {};
-    if (_cachedCharBuilds) {
+    if (cachedCharBuilds) {
       for (const config of configs) {
-        const cached = _cachedCharBuilds[config.charId];
+        const cached = cachedCharBuilds[config.charId];
         if (cached) {
           cached.resetStatSheet();
           this.charBuilds[config.charId] = cached;

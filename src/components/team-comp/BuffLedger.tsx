@@ -184,6 +184,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
       onOpenChange={setOpen}
       className="bg-black/15 border border-border/20 rounded-lg overflow-hidden"
     >
+      {/* biome-ignore lint/a11y/useSemanticElements: div needed because nested Switch prevents using button */}
       <div
         role="button"
         tabIndex={0}
