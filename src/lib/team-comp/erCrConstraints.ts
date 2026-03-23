@@ -1,5 +1,5 @@
 /**
- * Shared ER/CR constraint utilities for the optimizer and ideal artifact generator.
+ * Shared ER/CR constraint utilities for the optimizer and artifact generator.
  *
  * Both systems need to:
  * 1. Compute how much ER/CR artifacts must provide (the "gap")

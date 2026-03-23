@@ -9,6 +9,7 @@ import "./index";
 import { TeamBuild } from "./damageCalc";
 import type { OptionMap } from "./damageModels";
 import { StatSheet } from "./damageModels";
+import type { ExtraBuff } from "./extraBuffTypes";
 import { runCharacterBnB } from "./optimizer";
 import type {
   CalcContext,
@@ -28,10 +29,9 @@ export type BnBWorkerRequest = {
   // TeamBuild reconstruction
   configs: TeamSlotConfig[];
   combatOpts: OptionMap;
-  enemyElementAura?: Element;
+  enemyAura?: Element;
   // B&B parameters
   carryCharId: string;
-  formulaId: string;
   inventory: ArtifactData[];
   globalConfig: GlobalStatWeights;
   baseSheetsDump: Record<
@@ -50,7 +50,9 @@ export type BnBWorkerRequest = {
   combo: ComboFormula;
   reactionOverrides?: Record<string, ReactionOverride>;
   /** Per-line PartialBuffInfo[] for combo mode. */
-  comboLinePartialBuffs?: Record<number, PartialBuffInfo[]>;
+  buffOverrides?: Record<number, PartialBuffInfo[]>;
+  /** Extra buffs (food/env/status/custom) to apply to TeamBuild stat sheets. */
+  extraBuffs?: ExtraBuff[];
 };
 
 export type SerializedTopKEntry = {
@@ -91,7 +93,8 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
     const teamBuild = new TeamBuild(
       req.configs,
       req.combatOpts,
-      req.enemyElementAura
+      req.enemyAura,
+      req.extraBuffs
     );
 
     // Reconstruct baseSheets
@@ -125,7 +128,6 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       req.charConfig,
       teamBuild,
       req.carryCharId,
-      req.formulaId,
       req.inventory,
       req.globalConfig,
       baseSheets,
@@ -138,7 +140,7 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       req.warmStartThreshold,
       req.maxArtsPerSlot,
       onProgress,
-      req.comboLinePartialBuffs
+      req.buffOverrides
     );
 
     // Serialize TopKEntry[] (convert Set to string[])

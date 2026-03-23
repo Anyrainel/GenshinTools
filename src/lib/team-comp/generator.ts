@@ -42,7 +42,7 @@ import type {
   CalcContext,
   ComboFormula,
   ComboResult,
-  DamageResult,
+  FormulaContext,
   PartialBuffInfo,
   ReactionOverride,
   StatKey,
@@ -55,23 +55,17 @@ export type { SubstatBudgetPreset } from "./substatBudget";
 export interface GeneratorOptions {
   teamBuild: TeamBuild;
   carryCharId: string;
-  formulaId: string;
+  formula: FormulaContext;
   calcContext: CalcContext;
   /** Per-char, per-slot artifact set key for proper icon rendering */
   setKeysByChar?: Record<string, Record<Slot, string>>;
   /** Substat roll magnitude multiplier (0.7–1.0, default 0.85) */
   rollMultiplier?: number;
   /**
-   * Per-slot substat roll budget preset. Overrides `calcContext.idealSubstatBudget`
-   * when set (e.g. investment passes the default preset to ignore calcContext).
+   * Per-slot substat roll budget preset. Overrides `calcContext.substatBudget`
+   * when set (e.g. analyzer passes the default preset to ignore calcContext).
    */
-  idealSubstatBudget?: SubstatBudgetPreset;
-  /** Override reaction types for the damage formula */
-  reactionOverride?: ReactionOverride;
-  /** Combo formula for combo mode */
-  combo?: ComboFormula;
-  /** Per-formula reaction overrides for combo mode */
-  reactionOverrides?: Record<string, ReactionOverride>;
+  substatBudget?: SubstatBudgetPreset;
   /** Per-character ER/CR thresholds (internal format, e.g. 1.6 = 160% ER). */
   perChar?: Record<string, { minEr: number; minCr: number }>;
   /** Per-character "ignore artifact sets when ER/CR unmet" flag. */
@@ -82,8 +76,7 @@ export interface GeneratorResult {
   artifactsByChar: Record<string, Record<Slot, ArtifactData>>;
   sheetsByChar: Record<string, StatSheet>;
   damage: number;
-  damageResult: DamageResult | null;
-  comboResult?: ComboResult;
+  comboResult: ComboResult | null;
   phase: string;
   progress: number;
   done: boolean;
@@ -135,7 +128,7 @@ function makeFlexConfig(
 /** Pick a random 5★ artifact set key for the flex slot display icon. */
 function pickRandom5StarSetKey(): string {
   const all5Star = Object.values(artifactsById).filter((a) => a?.rarity === 5);
-  if (all5Star.length === 0) return "ideal";
+  if (all5Star.length === 0) return "generated";
   return all5Star[Math.floor(Math.random() * all5Star.length)].id;
 }
 
@@ -150,23 +143,19 @@ function evaluateDamage(
   teamBuild: TeamBuild,
   sheets: Record<string, StatSheet>,
   charId: string,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   ctx: CalcContext,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): number {
   const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
-    carryCharId,
-    formulaId,
+    combo,
     sheets,
     ctx,
-    reactionOverride,
-    combo,
-    reactionOverrides
+    reactionOverrides,
+    buffOverrides
   );
   vars.fill(0);
   const sheet = sheets[charId];
@@ -175,46 +164,28 @@ function evaluateDamage(
 }
 
 /**
- * Try to compile an AST-based fast evaluator for a single varying character.
- * Always uses compileComboTeamDamage (single formula is normalized to 1-line combo).
- * Returns null if compilation fails.
+ * Compile an AST-based fast evaluator for a single varying character.
  */
 function compileEval(
   teamBuild: TeamBuild,
   swapCharId: string,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
-  _partialBuffs?: PartialBuffInfo[],
   comboBuffOverrides?: Record<string, PartialBuffInfo[]>
 ): {
   compiled: CompiledTeamDamage;
   charIdx: number;
   vars: Float64Array;
 } {
-  // Normalize single formula to 1-line combo
-  const effectiveCombo: ComboFormula = combo ?? {
-    id: "__single__",
-    label: { zh: "", en: "" },
-    lines: [{ charId: carryCharId, formulaId, count: 1 }],
-  };
-  const effectiveOverrides = combo
-    ? reactionOverrides
-    : reactionOverride
-      ? { [`${carryCharId}.${formulaId}`]: reactionOverride }
-      : undefined;
-
   const compiled = compileComboTeamDamage(
     teamBuild,
-    effectiveCombo,
+    combo,
     swapCharId,
     currentSheets,
     ctx,
-    effectiveOverrides,
+    reactionOverrides,
     comboBuffOverrides
   );
   const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
@@ -241,9 +212,9 @@ function synthesizeArtifacts(
       subs[stat as SubStat] = +(slotRv[stat as SubStat] * rolls).toFixed(2);
     }
 
-    const setKey = slotSetKeys?.[slot] ?? "ideal";
+    const setKey = slotSetKeys?.[slot] ?? "generated";
     result[slot] = {
-      id: `ideal-${charId}-${slot}`,
+      id: `gen-${charId}-${slot}`,
       setKey,
       slotKey: slot,
       rarity: artifactsById[setKey]?.rarity ?? 5,
@@ -263,7 +234,7 @@ function synthesizeArtifacts(
  * For 4pc: all 5 slots → the 4pc set key.
  * For 2+2pc: slots 1-3 (flower/plume/sands) → first half-set,
  *            slots 4-5 (goblet/circlet) → second half-set.
- * Falls back to "ideal" if half-set lookup fails.
+ * Falls back to "generated" if half-set lookup fails.
  */
 function deriveSetKeysByChar(
   teamBuild: TeamBuild
@@ -286,7 +257,7 @@ function deriveSetKeysByChar(
       const sk1 =
         hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
         hs1?.setIds[0] ??
-        "ideal";
+        "generated";
       // For sk2, skip sk1 so both half-sets use distinct concrete sets
       const sk2 =
         hs2?.setIds.find(
@@ -294,7 +265,7 @@ function deriveSetKeysByChar(
         ) ??
         hs2?.setIds.find((id) => id !== sk1) ??
         hs2?.setIds[0] ??
-        "ideal";
+        "generated";
       result[cfg.charId] = {
         flower: sk1,
         plume: sk1,
@@ -312,26 +283,20 @@ function deriveSetKeysByChar(
 function findBestMainStats(
   teamBuild: TeamBuild,
   charId: string,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   rarity: 4 | 5 = 5,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
   const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
-    carryCharId,
-    formulaId,
+    combo,
     currentSheets,
     ctx,
-    reactionOverride,
-    combo,
     reactionOverrides
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
@@ -388,16 +353,13 @@ function findBestMainStats(
 function fillSubstats(
   teamBuild: TeamBuild,
   charId: string,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   mainStats: Record<Slot, MainStat>,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   rarity: 4 | 5,
   budgetPreset: SubstatBudgetPreset,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
   preFill?: Record<Slot, Partial<Record<SubStat, number>>>,
   flex?: FlexSlotConfig
@@ -407,12 +369,9 @@ function fillSubstats(
   const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
-    carryCharId,
-    formulaId,
+    combo,
     currentSheets,
     ctx,
-    reactionOverride,
-    combo,
     reactionOverrides
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
@@ -454,16 +413,13 @@ interface ConstraintAwareResult {
 function constraintAwareGenerate(
   teamBuild: TeamBuild,
   charId: string,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   gap: ErCrGap,
   rarity: 4 | 5,
   budgetPreset: SubstatBudgetPreset,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): ConstraintAwareResult {
@@ -501,8 +457,7 @@ function constraintAwareGenerate(
     const mainStats = findBestMainStatsConstrained(
       teamBuild,
       charId,
-      carryCharId,
-      formulaId,
+      combo,
       currentSheets,
       ctx,
       rv,
@@ -511,8 +466,6 @@ function constraintAwareGenerate(
       budgetPreset,
       variant.forceSands,
       variant.forceCirclet,
-      reactionOverride,
-      combo,
       reactionOverrides,
       flex
     );
@@ -543,16 +496,13 @@ function constraintAwareGenerate(
     const subRolls = fillSubstats(
       teamBuild,
       charId,
-      carryCharId,
-      formulaId,
+      combo,
       mainStats,
       currentSheets,
       ctx,
       rv,
       rarity,
       budgetPreset,
-      reactionOverride,
-      combo,
       reactionOverrides,
       preFill,
       flex
@@ -569,12 +519,10 @@ function constraintAwareGenerate(
       teamBuild,
       sheets,
       charId,
-      carryCharId,
-      formulaId,
-      ctx,
-      reactionOverride,
       combo,
-      reactionOverrides
+      ctx,
+      reactionOverrides,
+      buffOverrides
     );
 
     if (!best || damage > best.damage) {
@@ -587,30 +535,24 @@ function constraintAwareGenerate(
     const mainStats = findBestMainStats(
       teamBuild,
       charId,
-      carryCharId,
-      formulaId,
+      combo,
       currentSheets,
       ctx,
       rv,
       rarity,
-      reactionOverride,
-      combo,
       reactionOverrides,
       flex
     );
     const subRolls = fillSubstats(
       teamBuild,
       charId,
-      carryCharId,
-      formulaId,
+      combo,
       mainStats,
       currentSheets,
       ctx,
       rv,
       rarity,
       budgetPreset,
-      reactionOverride,
-      combo,
       reactionOverrides,
       undefined, // preFill
       flex
@@ -627,12 +569,10 @@ function constraintAwareGenerate(
       teamBuild,
       sheets,
       charId,
-      carryCharId,
-      formulaId,
-      ctx,
-      reactionOverride,
       combo,
-      reactionOverrides
+      ctx,
+      reactionOverrides,
+      buffOverrides
     );
     best = { mainStats, subRolls, sheet, damage };
   }
@@ -647,8 +587,7 @@ function constraintAwareGenerate(
 function findBestMainStatsConstrained(
   teamBuild: TeamBuild,
   charId: string,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
   rv: Record<SubStat, number>,
@@ -657,8 +596,6 @@ function findBestMainStatsConstrained(
   budgetPreset: SubstatBudgetPreset,
   forceSands?: MainStat,
   forceCirclet?: MainStat,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> | null {
@@ -667,12 +604,9 @@ function findBestMainStatsConstrained(
   const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
-    carryCharId,
-    formulaId,
+    combo,
     currentSheets,
     ctx,
-    reactionOverride,
-    combo,
     reactionOverrides
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
@@ -746,27 +680,21 @@ function findBestMainStatsConstrained(
 function findBestMainStatsWithSubs(
   teamBuild: TeamBuild,
   charId: string,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   currentSheets: Record<string, StatSheet>,
   existingSubRolls: Record<Slot, Partial<Record<SubStat, number>>>,
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   rarity: 4 | 5 = 5,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
   const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
-    carryCharId,
-    formulaId,
+    combo,
     currentSheets,
     ctx,
-    reactionOverride,
-    combo,
     reactionOverrides
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
@@ -826,17 +754,10 @@ function findBestMainStatsWithSubs(
 export async function* runGenerator(
   opts: GeneratorOptions
 ): AsyncGenerator<GeneratorResult> {
-  const {
-    teamBuild,
-    carryCharId,
-    formulaId,
-    calcContext,
-    reactionOverride,
-    combo,
-    reactionOverrides,
-  } = opts;
+  const { teamBuild, carryCharId, calcContext } = opts;
+  const { combo, reactionOverrides, buffOverrides } = opts.formula;
   const budgetPreset = resolveSubstatBudgetPreset(
-    opts.idealSubstatBudget,
+    opts.substatBudget,
     calcContext
   );
   // Derive slot→set mapping from TeamBuild configs; caller entries override
@@ -886,14 +807,12 @@ export async function* runGenerator(
       phase,
       step / totalSteps,
       teamBuild,
-      carryCharId,
-      formulaId,
+      combo,
       calcContext,
       charRv,
       setKeysByChar,
-      reactionOverride,
-      combo,
-      reactionOverrides
+      reactionOverrides,
+      buffOverrides
     );
 
   // ── Helper: compute ER/CR gap for a character ──
@@ -959,16 +878,13 @@ export async function* runGenerator(
       return constraintAwareGenerate(
         teamBuild,
         cid,
-        carryCharId,
-        formulaId,
+        combo,
         currentSheets,
         calcContext,
         cRv,
         cGap,
         cR,
         budgetPreset,
-        reactionOverride,
-        combo,
         reactionOverrides,
         flex
       );
@@ -976,14 +892,11 @@ export async function* runGenerator(
     const mainStats = findBestMainStats(
       teamBuild,
       cid,
-      carryCharId,
-      formulaId,
+      combo,
       currentSheets,
       calcContext,
       cRv,
       cR,
-      reactionOverride,
-      combo,
       reactionOverrides,
       flex
     );
@@ -997,16 +910,13 @@ export async function* runGenerator(
     const subRolls = fillSubstats(
       teamBuild,
       cid,
-      carryCharId,
-      formulaId,
+      combo,
       mainStats,
       currentSheets,
       calcContext,
       cRv,
       cR,
       budgetPreset,
-      reactionOverride,
-      combo,
       reactionOverrides,
       undefined, // preFill
       flex
@@ -1017,12 +927,10 @@ export async function* runGenerator(
       teamBuild,
       sheets,
       cid,
-      carryCharId,
-      formulaId,
-      calcContext,
-      reactionOverride,
       combo,
-      reactionOverrides
+      calcContext,
+      reactionOverrides,
+      buffOverrides
     );
     return { mainStats, subRolls, sheet, damage };
   };
@@ -1114,15 +1022,12 @@ export async function* runGenerator(
   allMainStats[carryCharId] = findBestMainStatsWithSubs(
     teamBuild,
     carryCharId,
-    carryCharId,
-    formulaId,
+    combo,
     currentSheets,
     allSubRolls[carryCharId],
     calcContext,
     carryRv,
     carryR,
-    reactionOverride,
-    combo,
     reactionOverrides,
     carryFlex
   );
@@ -1150,16 +1055,13 @@ export async function* runGenerator(
     allSubRolls[carryCharId] = fillSubstats(
       teamBuild,
       carryCharId,
-      carryCharId,
-      formulaId,
+      combo,
       allMainStats[carryCharId],
       currentSheets,
       calcContext,
       carryRv,
       carryR,
       budgetPreset,
-      reactionOverride,
-      combo,
       reactionOverrides,
       refinedPreFill,
       carryFlex
@@ -1190,12 +1092,10 @@ export async function* runGenerator(
       teamBuild,
       currentSheets,
       carryCharId,
-      carryCharId,
-      formulaId,
-      calcContext,
-      reactionOverride,
       combo,
-      reactionOverrides
+      calcContext,
+      reactionOverrides,
+      buffOverrides
     );
 
     // Try the alternative circlet with fresh substats
@@ -1211,16 +1111,13 @@ export async function* runGenerator(
     const altSubRolls = fillSubstats(
       teamBuild,
       carryCharId,
-      carryCharId,
-      formulaId,
+      combo,
       altMainStats,
       currentSheets,
       calcContext,
       carryRv,
       carryR,
       budgetPreset,
-      reactionOverride,
-      combo,
       reactionOverrides,
       altPreFill,
       carryFlex
@@ -1237,12 +1134,10 @@ export async function* runGenerator(
       teamBuild,
       altSheets,
       carryCharId,
-      carryCharId,
-      formulaId,
-      calcContext,
-      reactionOverride,
       combo,
-      reactionOverrides
+      calcContext,
+      reactionOverrides,
+      buffOverrides
     );
 
     if (altDmg > currentDmg) {
@@ -1289,33 +1184,17 @@ export async function* runGenerator(
   }
 
   let damage = 0;
-  let damageResult: DamageResult | null = null;
-  let finalComboResult: ComboResult | undefined;
+  let finalComboResult: ComboResult | null = null;
   try {
-    if (combo) {
-      finalComboResult = evaluateCombo(
-        teamBuild,
-        combo,
-        currentSheets,
-        calcContext,
-        reactionOverrides
-      );
-      damage = finalComboResult.totalDamage;
-    } else {
-      const teamStats = teamBuild.getTeamStats(
-        currentSheets,
-        carryCharId,
-        calcContext
-      );
-      damageResult = teamBuild.getDamageResult(
-        carryCharId,
-        formulaId,
-        teamStats,
-        calcContext,
-        reactionOverride
-      );
-      damage = damageResult.totalDamage;
-    }
+    finalComboResult = evaluateCombo(
+      teamBuild,
+      combo,
+      currentSheets,
+      calcContext,
+      reactionOverrides,
+      buffOverrides
+    );
+    damage = finalComboResult.totalDamage;
   } catch (e) {
     console.warn(`[generator] final damage calc failed for ${carryCharId}:`, e);
   }
@@ -1324,7 +1203,6 @@ export async function* runGenerator(
     artifactsByChar,
     sheetsByChar,
     damage,
-    damageResult,
     comboResult: finalComboResult,
     phase: "done",
     progress: 1,
@@ -1342,14 +1220,12 @@ function makeResult(
   phase: string,
   progress: number,
   teamBuild: TeamBuild,
-  carryCharId: string,
-  formulaId: string,
+  combo: ComboFormula,
   ctx: CalcContext,
   charRvMap: Record<string, Record<SubStat, number>>,
   setKeysByChar?: Record<string, Record<Slot, string>>,
-  reactionOverride?: ReactionOverride,
-  combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): GeneratorResult {
   const artifactsByChar: Record<string, Record<Slot, ArtifactData>> = {};
   const sheetsByChar: Record<string, StatSheet> = {};
@@ -1370,41 +1246,25 @@ function makeResult(
   }
 
   let damage = 0;
-  let damageResult: DamageResult | null = null;
-  let comboResult: ComboResult | undefined;
+  let comboResult: ComboResult | null = null;
   try {
-    if (combo) {
-      comboResult = evaluateCombo(
-        teamBuild,
-        combo,
-        currentSheets,
-        ctx,
-        reactionOverrides
-      );
-      damage = comboResult.totalDamage;
-    } else {
-      const teamStats = teamBuild.getTeamStats(currentSheets, carryCharId, ctx);
-      damageResult = teamBuild.getDamageResult(
-        carryCharId,
-        formulaId,
-        teamStats,
-        ctx,
-        reactionOverride
-      );
-      damage = damageResult.totalDamage;
-    }
-  } catch (e) {
-    console.warn(
-      `[generator] snapshot damage calc failed for ${carryCharId}:`,
-      e
+    comboResult = evaluateCombo(
+      teamBuild,
+      combo,
+      currentSheets,
+      ctx,
+      reactionOverrides,
+      buffOverrides
     );
+    damage = comboResult.totalDamage;
+  } catch (e) {
+    console.warn("[generator] snapshot damage calc failed:", e);
   }
 
   return {
     artifactsByChar,
     sheetsByChar,
     damage,
-    damageResult,
     comboResult,
     phase,
     progress,

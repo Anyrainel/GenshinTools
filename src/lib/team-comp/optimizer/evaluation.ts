@@ -1,95 +1,14 @@
 /**
- * Damage evaluation functions for the B&B optimizer.
+ * Compiled evaluation functions for the B&B optimizer.
  *
- * - evaluateBuild: evaluate a complete 5-piece artifact build (cold path)
  * - evaluateUpperBoundCompiled: compute an optimistic upper bound using compiled expression
  */
 
 import type { ArtifactData, MainStat } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
-import type { OptimizerContext, TeamBuild } from "../damageCalc";
-import { hasOffFieldParts } from "../damageCalc";
-import { StatSheet } from "../damageModels";
 import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
 import { fillVarsFromRawStats } from "../formulaCompiler";
-import type {
-  CalcContext,
-  DamageResult,
-  ReactionOverride,
-  StatKey,
-} from "../types";
-import type { ConstraintChecker } from "./constraintChecker";
-import type { ArtifactTuple } from "./types";
-
-// ─── Off-Field Stats ───
-
-/** Compute team stats with a non-formula character on-field (for off-field formula parts). */
-export function getOffFieldStats(
-  teamBuild: TeamBuild,
-  formulaCharId: string,
-  formulaId: string,
-  sheets: Record<string, StatSheet>,
-  calcContext: CalcContext
-): Record<string, StatSheet> | undefined {
-  if (!hasOffFieldParts(teamBuild, formulaCharId, formulaId)) return undefined;
-  const otherCharId = Object.keys(teamBuild.charBuilds).find(
-    (id) => id !== formulaCharId
-  );
-  if (!otherCharId) return undefined;
-  return teamBuild.getTeamStats(sheets, otherCharId, calcContext);
-}
-
-// ─── Core Evaluation ───
-
-/** Evaluate a complete 5-piece build using the domain-object path (cold path only). */
-export function evaluateBuild(
-  pieces: ArtifactTuple,
-  teamBuild: TeamBuild,
-  swapCharId: string,
-  formulaCharId: string,
-  formulaId: string,
-  baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
-  calcContext: CalcContext,
-  constraints: ConstraintChecker,
-  reactionOverride?: ReactionOverride,
-  optCtx?: OptimizerContext
-): { damage: number; result: DamageResult | null } {
-  const charSheet = StatSheet.fromArtifacts(pieces);
-
-  const postStats = optCtx
-    ? teamBuild.getTeamStatsFast(charSheet, optCtx)
-    : teamBuild.getTeamStats(
-        { ...baseSheets, [swapCharId]: charSheet },
-        calcTargetId,
-        calcContext
-      );
-
-  const er = postStats[constraints.charId]?.get("er", null) ?? 0;
-  const cr = postStats[constraints.charId]?.get("cr", null) ?? 0;
-  if (!constraints.isFeasibleByStats(er, cr)) {
-    return { damage: -1, result: null };
-  }
-
-  const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
-  const offFieldStats = getOffFieldStats(
-    teamBuild,
-    formulaCharId,
-    formulaId,
-    updatedSheets,
-    calcContext
-  );
-
-  const dmgRes = teamBuild.getDamageResult(
-    formulaCharId,
-    formulaId,
-    postStats,
-    calcContext,
-    reactionOverride,
-    offFieldStats
-  );
-  return { damage: dmgRes.totalDamage, result: dmgRes };
-}
+import type { StatKey } from "../types";
 
 // ─── Compiled Evaluation ───
 

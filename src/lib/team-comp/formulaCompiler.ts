@@ -623,15 +623,15 @@ export function compileComboTeamDamage(
       // Look up by line index first (for per-line combo overrides), then formula key
       const lineIdx = validLines.indexOf(line);
       const lineKey = `${line.charId}.${line.formulaId}`;
-      const linePartialBuffs =
+      const lineBuffs =
         buffOverrides?.[`line:${lineIdx}`] ?? buffOverrides?.[lineKey];
 
       // Pre-build ExprStats variants for partial buff blending
       let lineExprVariants: Map<string, ExprStats> | undefined;
       let lineOffFieldVariants: Map<string, ExprStats> | undefined;
-      if (linePartialBuffs && linePartialBuffs.length > 0) {
+      if (lineBuffs && lineBuffs.length > 0) {
         lineExprVariants = buildExprStatVariants(
-          linePartialBuffs,
+          lineBuffs,
           entry.parts,
           line.charId,
           teamBuild,
@@ -651,7 +651,7 @@ export function compileComboTeamDamage(
               calcContext
             );
             lineOffFieldVariants = buildExprStatVariants(
-              linePartialBuffs,
+              lineBuffs,
               entry.parts,
               line.charId,
               teamBuild,
@@ -670,7 +670,7 @@ export function compileComboTeamDamage(
         calcContext,
         effectiveReaction,
         offFieldFormulaStats,
-        linePartialBuffs,
+        lineBuffs,
         lineExprVariants,
         lineOffFieldVariants
       );

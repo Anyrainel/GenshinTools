@@ -22,7 +22,6 @@ import type {
   CalcContext,
   CharOptConfig,
   ComboFormula,
-  DamageResult,
   OptFailReason,
   PartialBuffInfo,
   ReactionOverride,
@@ -336,7 +335,6 @@ export function runCharacterBnB(
   charConfig: CharOptConfig,
   teamBuild: TeamBuild,
   carryCharId: string,
-  formulaId: string,
   inventory: ArtifactData[],
   globalConfig: GlobalStatWeights,
   baseSheets: Record<string, StatSheet>,
@@ -349,7 +347,7 @@ export function runCharacterBnB(
   warmStartThreshold?: number,
   maxArtsPerSlot = 0,
   onProgress?: (bestDamage: number, evaluations: number) => void,
-  comboLinePartialBuffs?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): CharacterBnBResult {
   const swapCharId = charId;
 
@@ -365,16 +363,12 @@ export function runCharacterBnB(
     crDiscount = effectiveCr >= 1.0 ? 0 : Math.max(0, 1 - effectiveCr);
   }
 
-  // Compile a single-formula evaluator for marginal weight computation.
-  // Reused for both initial marginals and post-warm-start recomputation.
-  const marginalCombo: ComboFormula = {
-    id: "__marginal__",
-    label: { zh: "", en: "" },
-    lines: [{ charId: swapCharId, formulaId, count: 1 }],
-  };
+  // Compile the combo evaluator for marginal weight computation.
+  // Uses the full combo with swapCharId as the variable character, so marginals
+  // reflect this character's contribution across all combo lines.
   const marginalCompiled = compileComboTeamDamage(
     teamBuild,
-    marginalCombo,
+    combo,
     swapCharId,
     baseSheets,
     calcContext
@@ -541,11 +535,11 @@ export function runCharacterBnB(
     }
   }
 
-  // Convert comboLinePartialBuffs to the string-keyed format for the compiler
-  const buffOverrides: Record<string, PartialBuffInfo[]> | undefined =
-    comboLinePartialBuffs
+  // Convert buffOverrides to the string-keyed format for the compiler
+  const buffOverridesStr: Record<string, PartialBuffInfo[]> | undefined =
+    buffOverrides
       ? Object.fromEntries(
-          Object.entries(comboLinePartialBuffs).map(([idx, buffs]) => [
+          Object.entries(buffOverrides).map(([idx, buffs]) => [
             `line:${idx}`,
             buffs,
           ])
@@ -559,7 +553,7 @@ export function runCharacterBnB(
     baseSheets,
     calcContext,
     reactionOverrides,
-    buffOverrides,
+    buffOverridesStr,
     constraints.active ? constraints.charId : undefined,
     constraints.minEr,
     constraints.minCr

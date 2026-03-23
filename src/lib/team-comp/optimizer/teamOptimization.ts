@@ -3,7 +3,6 @@
  *
  * Contains the team-level orchestration logic:
  * - Dynamic hyperparameter computation
- * - evaluateBuildDirect helper (internal)
  * - findBestTeamAllocation (conflict-aware DFS)
  * - Heuristic artifact assignment helpers
  * - runTeamOptimization async generator (main entry point)
@@ -26,17 +25,14 @@ import type {
   CharOptConfig,
   ComboFormula,
   ComboResult,
-  DamageResult,
   OptFailReason,
-  PartialBuffInfo,
   ReactionOverride,
   StatKey,
-  TeamOptComboResult,
   TeamOptPassId,
   TeamOptPassResult,
-  TeamOptSingleResult,
   TeamOptYield,
   TeamOptimizationProgress,
+  TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "../types";
 import {
@@ -47,7 +43,6 @@ import {
 } from "./artifactScoring";
 import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
-import { evaluateBuild, getOffFieldStats } from "./evaluation";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
 // ─── Constants & Dynamic Hyperparameters ───
@@ -82,33 +77,6 @@ function computeHyperparams(inventorySize: number): {
   );
 
   return { topK, maxTeamSearch };
-}
-
-/** Helper to evaluate a build without a pre-existing BnBContext (cold path). */
-function evaluateBuildDirect(
-  pieces: ArtifactTuple,
-  teamBuild: TeamBuild,
-  swapCharId: string,
-  formulaCharId: string,
-  formulaId: string,
-  baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
-  calcContext: CalcContext,
-  constraints: ConstraintChecker,
-  reactionOverride?: ReactionOverride
-): { damage: number; result: DamageResult | null } {
-  return evaluateBuild(
-    pieces,
-    teamBuild,
-    swapCharId,
-    formulaCharId,
-    formulaId,
-    baseSheets,
-    calcTargetId,
-    calcContext,
-    constraints,
-    reactionOverride
-  );
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -536,21 +504,16 @@ export async function* runTeamOptimization(
   const {
     teamBuild,
     carryCharId,
-    formulaId,
     inventory,
     calcContext,
     globalConfig,
     baseSheets,
     perChar,
-    reactionOverride,
-    combo,
-    reactionOverrides,
     perCharDeadlineMs: rawPerCharDeadlineMs,
     teamDeadlineMs,
     maxArtsPerSlot,
-    partialBuffs,
-    comboLinePartialBuffs,
   } = opts;
+  const { combo, reactionOverrides, buffOverrides } = opts.formula;
 
   // ── Dynamic hyperparameters based on inventory size ──
   const { topK: TOP_K, maxTeamSearch: MAX_TEAM_SEARCH } = computeHyperparams(
@@ -569,55 +532,12 @@ export async function* runTeamOptimization(
       )
     : rawPerCharDeadlineMs;
 
-  const isComboMode =
-    combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
-
-  // Normalize single formula to a 1-line combo so all downstream code uses one path
-  const effectiveCombo: ComboFormula = isComboMode
-    ? combo
-    : {
-        id: "__single__",
-        label: { zh: "", en: "" },
-        lines: [
-          {
-            charId: carryCharId,
-            formulaId,
-            count: 1,
-            reaction: reactionOverride
-              ? {
-                  partReactions: reactionOverride.partReactions,
-                  partHits: reactionOverride.partHits,
-                }
-              : undefined,
-          },
-        ],
-      };
-  const effectiveReactionOverrides: Record<string, ReactionOverride> =
-    isComboMode
-      ? (reactionOverrides ?? {})
-      : reactionOverride
-        ? { [`${carryCharId}.${formulaId}`]: reactionOverride }
-        : {};
-  const effectiveComboLinePartialBuffs:
-    | Record<number, PartialBuffInfo[]>
-    | undefined = isComboMode
-    ? comboLinePartialBuffs
-    : partialBuffs && partialBuffs.length > 0
-      ? { 0: partialBuffs }
-      : undefined;
-
-  const getOffFieldStatsFor = (
-    tb: TeamBuild,
-    sheets: Record<string, StatSheet>
-  ): Record<string, StatSheet> | undefined =>
-    getOffFieldStats(tb, carryCharId, formulaId, sheets, calcContext);
+  const effectiveReactionOverrides = reactionOverrides ?? {};
 
   const allCharIds = Object.keys(perChar);
-  const carryCharIds = isComboMode
-    ? allCharIds.filter((id) =>
-        combo.lines.some((l) => l.count > 0 && l.charId === id)
-      )
-    : [carryCharId];
+  const carryCharIds = allCharIds.filter((id) =>
+    combo.lines.some((l) => l.count > 0 && l.charId === id)
+  );
 
   // ── Saturation detection ──
   // For each support, test if any artifact stats affect team damage.
@@ -635,7 +555,7 @@ export async function* runTeamOptimization(
         const emptySheets = { ...baseSheets, [cid]: new StatSheet([]) };
         const dmgEmpty = evaluateCombo(
           teamBuild,
-          effectiveCombo,
+          combo,
           emptySheets,
           calcContext,
           effectiveReactionOverrides
@@ -657,7 +577,7 @@ export async function* runTeamOptimization(
         const superSheets = { ...baseSheets, [cid]: superSheet };
         const dmgSuper = evaluateCombo(
           teamBuild,
-          effectiveCombo,
+          combo,
           superSheets,
           calcContext,
           effectiveReactionOverrides
@@ -686,11 +606,12 @@ export async function* runTeamOptimization(
             const noSetTB = new TeamBuild(
               noSetConfigs,
               teamBuild.combatOpts,
-              teamBuild.enemyElementAura
+              teamBuild.enemyAura,
+              teamBuild.extraBuffs
             );
             const dmgNoSet = evaluateCombo(
               noSetTB,
-              effectiveCombo,
+              combo,
               emptySheets,
               calcContext,
               effectiveReactionOverrides
@@ -729,7 +650,8 @@ export async function* runTeamOptimization(
     return new TeamBuild(
       newConfigs,
       teamBuild.combatOpts,
-      teamBuild.enemyElementAura
+      teamBuild.enemyAura,
+      teamBuild.extraBuffs
     );
   }
 
@@ -968,9 +890,9 @@ export async function* runTeamOptimization(
             charConfig,
             configs: teamBuild.configs,
             combatOpts: teamBuild.combatOpts,
-            enemyElementAura: teamBuild.enemyElementAura,
+            enemyAura: teamBuild.enemyAura,
+            extraBuffs: teamBuild.extraBuffs,
             carryCharId,
-            formulaId,
             inventory,
             globalConfig,
             baseSheetsDump,
@@ -978,9 +900,9 @@ export async function* runTeamOptimization(
             topK: TOP_K,
             deadlineMs: phase1BudgetMs,
             maxArtsPerSlot: maxArtsPerSlot ?? 0,
-            combo: effectiveCombo,
+            combo: combo,
             reactionOverrides: effectiveReactionOverrides,
-            comboLinePartialBuffs: effectiveComboLinePartialBuffs,
+            buffOverrides: buffOverrides,
           };
 
           worker.postMessage(request);
@@ -1054,20 +976,19 @@ export async function* runTeamOptimization(
         charConfig,
         effectiveTeamBuild,
         carryCharId,
-        formulaId,
         inventory,
         globalConfig,
         heuristicSheets,
         calcContext,
         undefined,
-        effectiveCombo,
+        combo,
         effectiveReactionOverrides,
         TOP_K,
         charDeadline,
         undefined,
         maxArtsPerSlot ?? 0,
         undefined,
-        effectiveComboLinePartialBuffs
+        buffOverrides
       );
 
       topKByChar[charId] = result.collector.results;
@@ -1114,20 +1035,19 @@ export async function* runTeamOptimization(
         effectivePerChar[charId],
         effectiveTeamBuild,
         carryCharId,
-        formulaId,
         inventory,
         globalConfig,
         heuristicSheets,
         calcContext,
         undefined,
-        effectiveCombo,
+        combo,
         effectiveReactionOverrides,
         TOP_K,
         charDeadline,
         undefined,
         maxArtsPerSlot ?? 0,
         undefined,
-        effectiveComboLinePartialBuffs
+        buffOverrides
       );
       topKByChar[charId] = result.collector.results;
       if (result.failReason) {
@@ -1250,20 +1170,19 @@ export async function* runTeamOptimization(
           charConfig,
           effectiveTeamBuild,
           carryCharId,
-          formulaId,
           inventory,
           globalConfig,
           heuristicSheets,
           calcContext,
           excludeSet,
-          effectiveCombo,
+          combo,
           effectiveReactionOverrides,
           TOP_K,
           altDeadline,
           undefined,
           maxArtsPerSlot ?? 0,
           undefined,
-          effectiveComboLinePartialBuffs
+          buffOverrides
         );
 
         // Merge alternative results into the existing top-K
@@ -1319,7 +1238,7 @@ export async function* runTeamOptimization(
   }
   const compiledTeamEval = compileComboTeamDamage(
     effectiveTeamBuild,
-    effectiveCombo,
+    combo,
     allCharIds,
     compiledTeamEvalEmptySheets,
     calcContext,
@@ -1390,20 +1309,19 @@ export async function* runTeamOptimization(
           charConfig,
           effectiveTeamBuild,
           carryCharId,
-          formulaId,
           inventory,
           globalConfig,
           heuristicSheets,
           calcContext,
           seqUsed,
-          effectiveCombo,
+          combo,
           effectiveReactionOverrides,
           1, // only need the best result
           altDeadline,
           undefined,
           maxArtsPerSlot ?? 0,
           undefined,
-          effectiveComboLinePartialBuffs
+          buffOverrides
         );
         const best = altResult.collector.best;
         if (best) {
@@ -1483,20 +1401,19 @@ export async function* runTeamOptimization(
             secondConfig,
             effectiveTeamBuild,
             carryCharId,
-            formulaId,
             inventory,
             globalConfig,
             heuristicSheets,
             calcContext,
             excludeSet,
-            effectiveCombo,
+            combo,
             effectiveReactionOverrides,
             1, // only need best result
             altDeadline,
             undefined,
             maxArtsPerSlot ?? 0,
             undefined,
-            effectiveComboLinePartialBuffs
+            buffOverrides
           );
 
           const secondBest = altResult.collector.best;
@@ -1628,7 +1545,7 @@ export async function* runTeamOptimization(
       try {
         return evaluateCombo(
           effectiveTeamBuild,
-          effectiveCombo,
+          combo,
           sheets,
           calcContext,
           effectiveReactionOverrides
@@ -1675,30 +1592,25 @@ export async function* runTeamOptimization(
       }
 
       // Evaluate current assignment
+      // Evaluate current assignment using combo
       const currentPieces = allSlots.map(
         (s) => bestArtifactsByChar[charId]?.[s] ?? null
       ) as ArtifactTuple;
-      const phase3Constraints = new ConstraintChecker(
-        effectiveTeamBuild,
-        charId,
-        refinedBaseSheets,
-        carryCharId,
-        calcContext,
-        charConfig.minEr,
-        charConfig.minCr
-      );
-      const currentEval = evaluateBuildDirect(
-        currentPieces,
-        effectiveTeamBuild,
-        charId,
-        carryCharId,
-        formulaId,
-        refinedBaseSheets,
-        carryCharId,
-        calcContext,
-        phase3Constraints,
-        reactionOverride
-      );
+      const charSheet = StatSheet.fromArtifacts(currentPieces);
+      const evalSheets = { ...refinedBaseSheets, [charId]: charSheet };
+      let currentDamage: number;
+      try {
+        currentDamage = evaluateCombo(
+          effectiveTeamBuild,
+          combo,
+          evalSheets,
+          calcContext,
+          effectiveReactionOverrides,
+          buffOverrides
+        ).totalDamage;
+      } catch {
+        currentDamage = -1;
+      }
 
       // Serialize sheets for worker
       const sheetsDump: Record<
@@ -1716,7 +1628,7 @@ export async function* runTeamOptimization(
         refinedBaseSheets,
         refinedSheetsDump: sheetsDump,
         excludedIds: [...excludedIdSet],
-        currentDamage: currentEval.damage,
+        currentDamage,
       });
     }
 
@@ -1807,9 +1719,9 @@ export async function* runTeamOptimization(
               charConfig: input.charConfig,
               configs: effectiveTeamBuild.configs,
               combatOpts: effectiveTeamBuild.combatOpts,
-              enemyElementAura: effectiveTeamBuild.enemyElementAura,
+              enemyAura: effectiveTeamBuild.enemyAura,
+              extraBuffs: effectiveTeamBuild.extraBuffs,
               carryCharId,
-              formulaId,
               inventory,
               globalConfig,
               baseSheetsDump: input.refinedSheetsDump,
@@ -1820,9 +1732,9 @@ export async function* runTeamOptimization(
                 input.currentDamage > 0 ? input.currentDamage : undefined,
               maxArtsPerSlot: maxArtsPerSlot ?? 0,
               excludedIds: input.excludedIds,
-              combo: effectiveCombo,
+              combo: combo,
               reactionOverrides: effectiveReactionOverrides,
-              comboLinePartialBuffs: effectiveComboLinePartialBuffs,
+              buffOverrides: buffOverrides,
             };
 
             worker.postMessage(request);
@@ -1846,20 +1758,19 @@ export async function* runTeamOptimization(
           input.charConfig,
           effectiveTeamBuild,
           carryCharId,
-          formulaId,
           inventory,
           globalConfig,
           input.refinedBaseSheets,
           calcContext,
           new Set(input.excludedIds),
-          effectiveCombo,
+          combo,
           effectiveReactionOverrides,
           TOP_K,
           reoptDeadline,
           input.currentDamage > 0 ? input.currentDamage : undefined,
           maxArtsPerSlot ?? 0,
           undefined,
-          effectiveComboLinePartialBuffs
+          buffOverrides
         );
 
         if (
@@ -1900,7 +1811,7 @@ export async function* runTeamOptimization(
       try {
         tentativeDamage = evaluateCombo(
           effectiveTeamBuild,
-          effectiveCombo,
+          combo,
           tentativeSheets,
           calcContext,
           effectiveReactionOverrides
@@ -2301,45 +2212,22 @@ export async function* runTeamOptimization(
     done: true as const,
   };
 
-  if (isComboMode) {
-    let comboRes: ComboResult;
-    try {
-      comboRes = evaluateCombo(
-        effectiveTeamBuild,
-        combo,
-        finalSheets,
-        calcContext,
-        reactionOverrides,
-        comboLinePartialBuffs
-      );
-    } catch {
-      comboRes = { lineDamages: [], totalDamage: 0 };
-    }
-    yield {
-      ...resultBase,
-      mode: "combo",
-      bestDamage: comboRes.totalDamage,
-      bestComboResult: comboRes,
-    } satisfies TeamOptComboResult;
-  } else {
-    const finalPostStats = effectiveTeamBuild.getTeamStats(
+  let comboRes: ComboResult;
+  try {
+    comboRes = evaluateCombo(
+      effectiveTeamBuild,
+      combo,
       finalSheets,
-      carryCharId,
-      calcContext
-    );
-    const finalDmg = effectiveTeamBuild.getDamageResult(
-      carryCharId,
-      formulaId,
-      finalPostStats,
       calcContext,
-      reactionOverride,
-      getOffFieldStatsFor(effectiveTeamBuild, finalSheets)
+      effectiveReactionOverrides,
+      buffOverrides
     );
-    yield {
-      ...resultBase,
-      mode: "single",
-      bestDamage: finalDmg.totalDamage,
-      bestDamageResult: finalDmg,
-    } satisfies TeamOptSingleResult;
+  } catch {
+    comboRes = { lineDamages: [], totalDamage: 0 };
   }
+  yield {
+    ...resultBase,
+    bestDamage: comboRes.totalDamage,
+    bestComboResult: comboRes,
+  } satisfies TeamOptimizationResult;
 }

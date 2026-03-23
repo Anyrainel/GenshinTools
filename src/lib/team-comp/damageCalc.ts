@@ -66,6 +66,9 @@ import {
 
 export { TeamMeta };
 
+import type { ExtraBuff } from "./extraBuffTypes";
+import { resolveExtraBuffEntries } from "./extraBuffTypes";
+
 // ═══════════════════════════════════════════════════════════════
 // TeamResonance
 // ═══════════════════════════════════════════════════════════════
@@ -228,7 +231,8 @@ export class CharBuild {
   constructor(
     config: TeamSlotConfig,
     teamMeta: TeamMeta,
-    combatOpts: OptionMap = {}
+    combatOpts: OptionMap = {},
+    extraStatEntries: StatEntry[] = []
   ) {
     this.charBase = createCharacter(
       config.charId,
@@ -319,12 +323,13 @@ export class CharBuild {
       );
     }
 
-    // Phase 1: Assemble base stats from character + weapon + artifact set 2pc bonuses
+    // Phase 1: Assemble base stats from character + weapon + artifact set 2pc bonuses + extra buffs
     const baseEntries: StatEntry[] = [
       ...this.charBase.stats,
       ...this.weaponBase.stats,
       ...(this.artifactSetBase?.stats ?? []),
       ...this.artifactHalfSetBases.flatMap((h) => h.stats),
+      ...extraStatEntries,
     ];
     this.innerStatSheet = new StatSheet(baseEntries);
     this.baseStatSheet = this.innerStatSheet;
@@ -679,16 +684,20 @@ export class TeamBuild {
   /** Original combat opts used to construct this TeamBuild (for reconstruction). */
   readonly combatOpts: OptionMap;
   /** Enemy persistent element aura (for reconstruction). */
-  readonly enemyElementAura?: Element;
+  readonly enemyAura?: Element;
+  /** Extra buffs (food/env/status/custom) applied to stat sheets. */
+  readonly extraBuffs: ExtraBuff[];
 
   constructor(
     configs: TeamSlotConfig[],
     combatOpts: OptionMap = {},
-    enemyElementAura?: Element
+    enemyAura?: Element,
+    extraBuffs: ExtraBuff[] = []
   ) {
     this.configs = configs;
     this.combatOpts = combatOpts;
-    this.enemyElementAura = enemyElementAura;
+    this.enemyAura = enemyAura;
+    this.extraBuffs = extraBuffs;
     const charIds = configs.map((c) => c.charId);
     const constellations: Record<string, number> = {};
     const artifactSets: Record<string, string> = {};
@@ -700,17 +709,22 @@ export class TeamBuild {
       charIds,
       constellations,
       artifactSets,
-      enemyElementAura
+      enemyAura
     );
     this.teamResonance = new TeamResonance(this.teamMeta);
 
-    // Create CharBuilds
+    // Create CharBuilds (with per-character extra buff entries)
     this.charBuilds = {};
     for (const config of configs) {
+      const extraEntries =
+        extraBuffs.length > 0
+          ? resolveExtraBuffEntries(extraBuffs, config.charId)
+          : [];
       this.charBuilds[config.charId] = new CharBuild(
         config,
         this.teamMeta,
-        combatOpts
+        combatOpts,
+        extraEntries
       );
     }
 
@@ -1459,7 +1473,7 @@ export class TeamBuild {
     );
 
     return {
-      parts,
+      partsByFormula: { [`${charId}.${formulaId}`]: parts },
       totalDamage,
       buffs,
       buffActivation,
@@ -1947,7 +1961,8 @@ export class TeamBuild {
       const tweakedTeam = new TeamBuild(
         tweakedConfigs,
         this.combatOpts,
-        this.enemyElementAura
+        this.enemyAura,
+        this.extraBuffs
       );
       const tweakedStats = tweakedTeam.getTeamStats(
         artifactStats,
@@ -2329,7 +2344,7 @@ export function evaluateCombo(
   /** Single-mode per-formula reaction overrides — used as defaults for per-part config. */
   singleModeOverrides?: Record<string, ReactionOverride>,
   /** Per-line PartialBuffInfo[], keyed by line index in validLines. */
-  linePartialBuffs?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): ComboResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();
@@ -2402,7 +2417,7 @@ export function evaluateCombo(
     }
 
     // Build stat variants if this line has partial buffs
-    const lineInfos = linePartialBuffs?.[lineIdx];
+    const lineInfos = buffOverrides?.[lineIdx];
     let lineVariants: Map<string, StatSheet> | undefined;
     let lineOffFieldVariants: Map<string, StatSheet> | undefined;
     if (lineInfos && lineInfos.length > 0) {
@@ -2475,7 +2490,7 @@ export function getComboDisplayResult(
   artifactStats: Record<string, StatSheet>,
   ctx: CalcContext,
   singleModeOverrides?: Record<string, ReactionOverride>,
-  linePartialBuffs?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): DisplayResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();
@@ -2581,7 +2596,7 @@ export function getComboDisplayResult(
     artifactStats,
     ctx,
     singleModeOverrides,
-    linePartialBuffs
+    buffOverrides
   );
   const baseDamage = baseResult.totalDamage;
 
@@ -2716,7 +2731,8 @@ export function getComboDisplayResult(
       const tweakedTeam = new TeamBuild(
         tweakedConfigs,
         teamBuild.combatOpts,
-        teamBuild.enemyElementAura
+        teamBuild.enemyAura,
+        teamBuild.extraBuffs
       );
       const newResult = evaluateCombo(
         tweakedTeam,
@@ -2749,8 +2765,210 @@ export function getComboDisplayResult(
     }
   }
 
+  // ── Per-formula display parts ──
+  const partsByFormula: Record<string, DisplayPart[]> = {};
+
+  // Group active lines by formula key
+  const linesByFormula = new Map<
+    string,
+    { lineIdx: number; line: (typeof activeLines)[0] }[]
+  >();
+  for (let i = 0; i < activeLines.length; i++) {
+    const line = activeLines[i];
+    const key = `${line.charId}.${line.formulaId}`;
+    let arr = linesByFormula.get(key);
+    if (!arr) {
+      arr = [];
+      linesByFormula.set(key, arr);
+    }
+    arr.push({ lineIdx: i, line });
+  }
+
+  for (const [formulaKey, formulaLines] of linesByFormula) {
+    const { charId, formulaId } = formulaLines[0].line;
+    const build = teamBuild.charBuilds[charId];
+    if (!build) continue;
+
+    const postStats = getStats(charId);
+
+    // Compute effective reaction (first line merged with single-mode overrides)
+    const firstLine = formulaLines[0].line;
+    let effectiveReaction = firstLine.reaction;
+    if (singleModeOverrides) {
+      const singleOverride = singleModeOverrides[formulaKey];
+      if (singleOverride && effectiveReaction) {
+        effectiveReaction = {
+          ...effectiveReaction,
+          partReactions: {
+            ...singleOverride.partReactions,
+            ...effectiveReaction.partReactions,
+          },
+          partHits: {
+            ...singleOverride.partHits,
+            ...effectiveReaction.partHits,
+          },
+        };
+        if (
+          effectiveReaction.partReactions &&
+          Object.keys(effectiveReaction.partReactions).length === 0
+        )
+          effectiveReaction.partReactions = undefined;
+        if (
+          effectiveReaction.partHits &&
+          Object.keys(effectiveReaction.partHits).length === 0
+        )
+          effectiveReaction.partHits = undefined;
+      } else if (singleOverride && !effectiveReaction) {
+        effectiveReaction = singleOverride;
+      }
+    }
+
+    // Off-field stats
+    const entry = build.charBase.getFormulaEntry(formulaId);
+    const formulaHasOffField = entry?.parts.some((p) => p.offField) ?? false;
+    let offFieldPostStats: StatSheet | undefined;
+    if (formulaHasOffField) {
+      const otherCharId = Object.keys(teamBuild.charBuilds).find(
+        (id) => id !== charId
+      );
+      if (otherCharId) {
+        offFieldPostStats = getStats(otherCharId)[charId];
+      }
+    }
+
+    // Get raw display parts
+    const { parts } = build.getDisplayParts(
+      formulaId,
+      postStats[charId]!,
+      ctx,
+      effectiveReaction,
+      offFieldPostStats
+    );
+
+    // Aggregate partial buffs across combo lines for this formula
+    const totalComboCount = formulaLines.reduce(
+      (sum, fl) => sum + fl.line.count,
+      0
+    );
+    const hasLinePartialBuffs = formulaLines.some(
+      (fl) => buffOverrides?.[fl.lineIdx]?.length
+    );
+
+    if (hasLinePartialBuffs && entry) {
+      // Sum activated × count across lines per buff per part
+      const buffAgg = new Map<string, Record<number, number>>();
+      for (const fl of formulaLines) {
+        const lineInfos = buffOverrides?.[fl.lineIdx];
+        if (!lineInfos) continue;
+        for (const info of lineInfos) {
+          let agg = buffAgg.get(info.buffKey);
+          if (!agg) {
+            agg = {};
+            buffAgg.set(info.buffKey, agg);
+          }
+          for (const [pidxStr, activated] of Object.entries(
+            info.partActivation
+          )) {
+            const pidx = Number(pidxStr);
+            agg[pidx] = (agg[pidx] ?? 0) + activated * fl.line.count;
+          }
+        }
+      }
+
+      // Build per-cast-average PartialBuffInfo[] for blended damage
+      const aggregatedInfos: PartialBuffInfo[] = [];
+      for (const [buffKey, partAgg] of buffAgg) {
+        const perCastActivation: Record<number, number> = {};
+        for (const [pidxStr, totalActivated] of Object.entries(partAgg)) {
+          perCastActivation[Number(pidxStr)] = totalActivated / totalComboCount;
+        }
+        aggregatedInfos.push({
+          buffKey,
+          partActivation: perCastActivation,
+        });
+      }
+
+      if (aggregatedInfos.length > 0) {
+        // Build stat variants and compute blended damage
+        const statsVariants = buildStatVariants(
+          aggregatedInfos,
+          entry.parts,
+          (excl) =>
+            teamBuild.getTeamStatsExcluding(artifactStats, charId, ctx, excl)[
+              charId
+            ]!
+        );
+        let offFieldVariants: Map<string, StatSheet> | undefined;
+        if (offFieldPostStats) {
+          const otherCharId = Object.keys(teamBuild.charBuilds).find(
+            (id) => id !== charId
+          );
+          if (otherCharId) {
+            offFieldVariants = buildStatVariants(
+              aggregatedInfos,
+              entry.parts,
+              (excl) =>
+                teamBuild.getTeamStatsExcluding(
+                  artifactStats,
+                  otherCharId,
+                  ctx,
+                  excl
+                )[charId]!
+            );
+          }
+        }
+
+        const blended = computeBlendedDamage(
+          entry.parts,
+          aggregatedInfos,
+          postStats[charId]!,
+          statsVariants,
+          build.charBase.charLevel,
+          ctx,
+          offFieldPostStats,
+          offFieldVariants
+        );
+
+        for (let i = 0; i < parts.length; i++) {
+          if (blended.partDamages[i]) {
+            parts[i] = {
+              ...parts[i],
+              damage: blended.partDamages[i].damage,
+              sourcePartIndex: i,
+            };
+          }
+        }
+      }
+
+      // Annotate parts with combo-wide partial buff info
+      for (const [buffKey, partAgg] of buffAgg) {
+        for (const [pidxStr, totalActivated] of Object.entries(partAgg)) {
+          const pidx = Number(pidxStr);
+          if (pidx >= parts.length) continue;
+          const partHits = entry.parts[pidx]?.hits ?? 1;
+          const totalHits = partHits * totalComboCount;
+          if (totalActivated < totalHits) {
+            if (!parts[pidx].partialBuffs) {
+              parts[pidx] = { ...parts[pidx], partialBuffs: [] };
+            }
+            parts[pidx].partialBuffs!.push({
+              buffKey,
+              activatedHits: totalActivated,
+              totalHits,
+            });
+            if (parts[pidx].sourcePartIndex === undefined) {
+              parts[pidx] = { ...parts[pidx], sourcePartIndex: pidx };
+            }
+          }
+        }
+      }
+    }
+
+    partsByFormula[formulaKey] = parts;
+  }
+
   return {
-    parts: [],
+    partsByFormula,
     totalDamage: baseDamage,
     buffs,
     statSheets,

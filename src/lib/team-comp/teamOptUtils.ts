@@ -186,34 +186,9 @@ export function toStatSheets(
 }
 
 /**
- * Compute DisplayResult for a single formula.
- * Returns null when any input is missing or the formula doesn't exist.
- */
-export function calcDisplayResult(
-  build: TeamBuild | null,
-  formula: { charId: string; formulaId: string } | null,
-  sheets: Record<string, StatSheet>,
-  context: CalcContext,
-  override?: ReactionOverride,
-  userBuffOverrides?: BuffActivationMap
-): DisplayResult | null {
-  if (!build || !formula) return null;
-  const { charId, formulaId } = formula;
-  const formulas = build.getFormulaIds()[charId];
-  if (!formulas || !formulas[formulaId]) return null;
-  return build.getDisplayResult(
-    charId,
-    formulaId,
-    sheets,
-    context,
-    override,
-    userBuffOverrides
-  );
-}
-
-/**
  * Compute combo-mode DisplayResult (and optionally ComboResult) for a rotation.
  * Filters to active lines and returns null when inputs are missing.
+ * The returned DisplayResult includes per-formula display parts in `partsByFormula`.
  */
 export function calcComboResults(
   build: TeamBuild | null,
@@ -221,7 +196,7 @@ export function calcComboResults(
   sheets: Record<string, StatSheet>,
   context: CalcContext,
   overrides?: Record<string, ReactionOverride>,
-  linePartialBuffs?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): { comboResult: ComboResult | null; comboDisplay: DisplayResult | null } {
   if (!build) return { comboResult: null, comboDisplay: null };
   const activeLines = combo.lines.filter((l) => l.count > 0);
@@ -234,7 +209,7 @@ export function calcComboResults(
     sheets,
     context,
     overrides,
-    linePartialBuffs
+    buffOverrides
   );
   const comboDisplay = getComboDisplayResult(
     build,
@@ -242,8 +217,9 @@ export function calcComboResults(
     sheets,
     context,
     overrides,
-    linePartialBuffs
+    buffOverrides
   );
+
   return { comboResult, comboDisplay };
 }
 
@@ -262,7 +238,7 @@ export function calcComboResults(
  * @param rxnOverrides - Per-formula reaction overrides
  * @param comboOverrides - User overrides from the buff override store (optional)
  */
-export function buildComboLinePartialBuffs(
+export function buildBuffOverrides(
   activeLines: ComboLine[],
   build: TeamBuild,
   sheets: Record<string, StatSheet>,

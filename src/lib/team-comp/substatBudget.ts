@@ -34,11 +34,9 @@ export function maxRollsPerStatForPreset(
 
 export function resolveSubstatBudgetPreset(
   fromOptions: SubstatBudgetPreset | undefined,
-  calcContext: { idealSubstatBudget?: SubstatBudgetPreset }
+  calcContext: { substatBudget?: SubstatBudgetPreset }
 ): SubstatBudgetPreset {
   return (
-    fromOptions ??
-    calcContext.idealSubstatBudget ??
-    SUBSTAT_BUDGET_DEFAULT_PRESET
+    fromOptions ?? calcContext.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET
   );
 }

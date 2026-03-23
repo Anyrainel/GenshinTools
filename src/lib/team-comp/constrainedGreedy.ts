@@ -7,7 +7,7 @@
  * - Per-stat roll cap per artifact (defaults: 5★: 6, 4★: 4)
  * - Per-artifact total roll cap (defaults: 5★: 9, 4★: 7)
  *
- * Used by both generator (full ideal artifact generation) and
+ * Used by both generator (full artifact generation) and
  * autoTune (scoring weight generation).
  */
 
@@ -56,7 +56,7 @@ function maxRollsPerStat(rarity: 4 | 5): number {
 
 /**
  * Get roll values per stat in display format for a given rarity.
- * When multiplier is provided, returns max × multiplier (for ideal-gen quality scaling).
+ * When multiplier is provided, returns max × multiplier (for generator quality scaling).
  * When omitted, returns exact averages from game data.
  */
 export function getRollValues(
