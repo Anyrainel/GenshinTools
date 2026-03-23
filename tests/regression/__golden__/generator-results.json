@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-03-23T04:39:26.712Z",
+  "generatedAt": "2026-03-23T12:38:59.389Z",
   "teams": {
     "W408g301RCS53VAWT": {
       "teamName": "varka / durin / bennett / venti",
@@ -313,7 +313,187 @@
       },
       "display": {
         "totalDamage": 26316271.6045,
-        "parts": [],
+        "partsByFormula": {
+          "varka.varka-normal": [
+            {
+              "damage": 334622.2118,
+              "template": "direct"
+            },
+            {
+              "damage": 143367.3421,
+              "template": "direct"
+            },
+            {
+              "damage": 231238.6112,
+              "template": "direct"
+            },
+            {
+              "damage": 182326.6674,
+              "template": "direct"
+            },
+            {
+              "damage": 301491.161,
+              "template": "direct"
+            },
+            {
+              "damage": 288425.3834,
+              "template": "direct"
+            },
+            {
+              "damage": 165470.2668,
+              "template": "direct"
+            },
+            {
+              "damage": 354332.8586,
+              "template": "direct"
+            },
+            {
+              "damage": 199998.6476,
+              "template": "direct"
+            }
+          ],
+          "varka.varka-four-winds": [
+            {
+              "damage": 869385.4985,
+              "template": "direct"
+            },
+            {
+              "damage": 469064.5542,
+              "template": "direct"
+            },
+            {
+              "damage": 1771169.066,
+              "template": "direct"
+            }
+          ],
+          "varka.varka-azure-devour": [
+            {
+              "damage": 478308.3473,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 264693.5005,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 1771169.066,
+              "template": "direct"
+            }
+          ],
+          "varka.varka-burst": [
+            {
+              "damage": 400733.5796,
+              "template": "direct"
+            },
+            {
+              "damage": 221079.4864,
+              "template": "direct"
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 118477.6591,
+              "template": "direct"
+            },
+            {
+              "damage": 96028.7672,
+              "template": "direct"
+            },
+            {
+              "damage": 111400.8686,
+              "template": "direct"
+            },
+            {
+              "damage": 98579.0149,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 56330.8656,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 66714.4653,
+              "template": "direct"
+            }
+          ],
+          "venti.venti-windsunder": [
+            {
+              "damage": 50473.8911,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 87504.6643,
+              "template": "direct"
+            },
+            {
+              "damage": 99848.2554,
+              "template": "direct"
+            },
+            {
+              "damage": 59223.7785,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 97192.0396,
+              "template": "direct"
+            },
+            {
+              "damage": 128363.5132,
+              "template": "direct"
+            },
+            {
+              "damage": 25286.7155,
+              "template": "direct",
+              "hits": 4
+            },
+            {
+              "damage": 32692.8701,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 35161.5883,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 27036.6929,
+              "template": "direct",
+              "hits": 4
+            },
+            {
+              "damage": 34630.3451,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 40864.6399,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "venti.venti-burst-total": [
+            {
+              "damage": 16494.1481,
+              "template": "direct",
+              "hits": 20
+            }
+          ],
+          "venti.venti-c2-skill": [
+            {
+              "damage": 568357.8476,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -1241,7 +1421,7 @@
             }
           },
           "circlet": {
-            "setKey": "night_of_the_skys_unveiling",
+            "setKey": "vermillion_hereafter",
             "mainStat": "def%",
             "substats": {
               "cr": 3.31,
@@ -1290,7 +1470,133 @@
       },
       "display": {
         "totalDamage": 10687809.6772,
-        "parts": [],
+        "partsByFormula": {
+          "zibai.zibai-e-combo": [
+            {
+              "damage": 17521.3414,
+              "template": "direct"
+            },
+            {
+              "damage": 16352.8196,
+              "template": "direct"
+            },
+            {
+              "damage": 11777.1342,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 25528.7909,
+              "template": "direct"
+            },
+            {
+              "damage": 543105.2832,
+              "template": "lunarDirect"
+            }
+          ],
+          "zibai.zibai-steed": [
+            {
+              "damage": 47829.107,
+              "template": "direct"
+            },
+            {
+              "damage": 1194006.8544,
+              "template": "lunarDirect"
+            }
+          ],
+          "zibai.zibai-steed-c1": [
+            {
+              "damage": 47829.107,
+              "template": "direct"
+            },
+            {
+              "damage": 1609824.4373,
+              "template": "lunarDirect"
+            }
+          ],
+          "zibai.zibai-burst": [
+            {
+              "damage": 35922.4848,
+              "template": "direct"
+            },
+            {
+              "damage": 1241989.1983,
+              "template": "lunarDirect"
+            }
+          ],
+          "illuga.illuga-skill-press": [
+            {
+              "damage": 30381.1987,
+              "template": "direct"
+            }
+          ],
+          "illuga.illuga-skill-hold": [
+            {
+              "damage": 37676.7637,
+              "template": "direct"
+            }
+          ],
+          "illuga.illuga-burst": [
+            {
+              "damage": 51213.6414,
+              "template": "direct"
+            }
+          ],
+          "illuga.illuga-c2-aedon": [
+            {
+              "damage": 7702.0182,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-skill-initial": [
+            {
+              "damage": 33465.4219,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-burst": [
+            {
+              "damage": 64574.124,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-charge": [
+            {
+              "damage": 27032.9779,
+              "template": "lunarDirect",
+              "hits": 3
+            }
+          ],
+          "columbina.columbina-skill-interference": [
+            {
+              "damage": 39035.9973,
+              "template": "lunarDirect",
+              "hits": 5
+            }
+          ],
+          "columbina.columbina-ripple": [
+            {
+              "damage": 18759.49,
+              "template": "direct"
+            }
+          ],
+          "gorou.gorou-skill": [
+            {
+              "damage": 9032.2294,
+              "template": "direct"
+            }
+          ],
+          "gorou.gorou-burst": [
+            {
+              "damage": 8316.3123,
+              "template": "direct"
+            },
+            {
+              "damage": 3041.026,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -2211,7 +2517,7 @@
             }
           },
           "goblet": {
-            "setKey": "emblem_of_severed_fate",
+            "setKey": "echoes_of_an_offering",
             "mainStat": "hp%",
             "substats": {
               "cr": 16.53,
@@ -2267,7 +2573,142 @@
       },
       "display": {
         "totalDamage": 22223543.9859,
-        "parts": [],
+        "partsByFormula": {
+          "nefer.nefer-skill": [
+            {
+              "damage": 33682.0424,
+              "template": "direct"
+            }
+          ],
+          "nefer.nefer-phantasm": [
+            {
+              "damage": 15213.7614,
+              "template": "direct"
+            },
+            {
+              "damage": 475637.7604,
+              "template": "lunarDirect"
+            },
+            {
+              "damage": 844709.1931,
+              "template": "lunarDirect",
+              "hits": 2
+            },
+            {
+              "damage": 1055607.1546,
+              "template": "lunarDirect"
+            },
+            {
+              "damage": 584188.1818,
+              "template": "lunarDirect"
+            }
+          ],
+          "nefer.nefer-burst": [
+            {
+              "damage": 341781.2252,
+              "template": "direct"
+            },
+            {
+              "damage": 512665.5733,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-skill-initial": [
+            {
+              "damage": 43788.1579,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-burst": [
+            {
+              "damage": 84492.6427,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-charge": [
+            {
+              "damage": 303490.3551,
+              "template": "lunarDirect",
+              "hits": 3
+            }
+          ],
+          "columbina.columbina-skill-interference": [
+            {
+              "damage": 325009.6998,
+              "template": "lunarDirect",
+              "hits": 5
+            }
+          ],
+          "columbina.columbina-ripple": [
+            {
+              "damage": 24546.0378,
+              "template": "direct"
+            }
+          ],
+          "lauma.lauma-sanctuary": [
+            {
+              "damage": 26529.0377,
+              "template": "direct"
+            }
+          ],
+          "lauma.lauma-hold": [
+            {
+              "damage": 11372.8356,
+              "template": "direct"
+            },
+            {
+              "damage": 1103630.4244,
+              "template": "lunarDirect"
+            }
+          ],
+          "lauma.lauma-c6-normal": [
+            {
+              "damage": 241475.3363,
+              "template": "lunarDirect"
+            }
+          ],
+          "lauma.lauma-c6-sanctuary": [
+            {
+              "damage": 256866.08,
+              "template": "lunarDirect",
+              "hits": 8
+            }
+          ],
+          "nilou.nilou-e-dance": [
+            {
+              "damage": 8049.0405,
+              "template": "direct"
+            },
+            {
+              "damage": 10962.5665,
+              "template": "direct"
+            },
+            {
+              "damage": 12390.9877,
+              "template": "direct"
+            },
+            {
+              "damage": 28488.502,
+              "template": "direct"
+            }
+          ],
+          "nilou.nilou-burst": [
+            {
+              "damage": 66659.6596,
+              "template": "direct"
+            },
+            {
+              "damage": 81454.0228,
+              "template": "direct"
+            }
+          ],
+          "nilou.nilou-bountiful-core": [
+            {
+              "damage": 69290.4524,
+              "template": "transform"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -3158,7 +3599,121 @@
       },
       "display": {
         "totalDamage": 16925918.8839,
-        "parts": [],
+        "partsByFormula": {
+          "flins.flins-spearstorm": [
+            {
+              "damage": 32778.4503,
+              "template": "direct"
+            },
+            {
+              "damage": 306909.7191,
+              "template": "lunarDirect"
+            }
+          ],
+          "flins.flins-thunderous": [
+            {
+              "damage": 931777.9073,
+              "template": "lunarDirect"
+            },
+            {
+              "damage": 1355927.1392,
+              "template": "lunarDirect"
+            }
+          ],
+          "flins.flins-burst-total": [
+            {
+              "damage": 47745.3449,
+              "template": "direct"
+            },
+            {
+              "damage": 211767.7062,
+              "template": "lunarDirect",
+              "hits": 4
+            },
+            {
+              "damage": 1525341.3041,
+              "template": "lunarDirect"
+            }
+          ],
+          "columbina.columbina-skill-initial": [
+            {
+              "damage": 53885.9418,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-burst": [
+            {
+              "damage": 103977.0989,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-charge": [
+            {
+              "damage": 34196.6573,
+              "template": "lunarDirect",
+              "hits": 3
+            }
+          ],
+          "columbina.columbina-skill-interference": [
+            {
+              "damage": 38635.6274,
+              "template": "lunarDirect",
+              "hits": 5
+            }
+          ],
+          "columbina.columbina-ripple": [
+            {
+              "damage": 30206.4857,
+              "template": "direct"
+            }
+          ],
+          "ineffa.ineffa-skill-initial": [
+            {
+              "damage": 12236.5771,
+              "template": "direct"
+            }
+          ],
+          "ineffa.ineffa-birgitta": [
+            {
+              "damage": 11665.7415,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 161665.4813,
+              "template": "lunarDirect",
+              "hits": 10
+            }
+          ],
+          "ineffa.ineffa-burst": [
+            {
+              "damage": 95853.187,
+              "template": "direct"
+            },
+            {
+              "damage": 746148.3754,
+              "template": "lunarDirect"
+            }
+          ],
+          "ineffa.ineffa-c6-thundercloud": [
+            {
+              "damage": 335766.7689,
+              "template": "lunarDirect"
+            }
+          ],
+          "sucrose.sucrose-skill": [
+            {
+              "damage": 5316.1391,
+              "template": "direct"
+            }
+          ],
+          "sucrose.sucrose-burst": [
+            {
+              "damage": 2937.8413,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -4133,7 +4688,166 @@
       },
       "display": {
         "totalDamage": 45648103.9413,
-        "parts": [],
+        "partsByFormula": {
+          "skirk.skirk-e-normal": [
+            {
+              "damage": 506787.0884,
+              "template": "direct"
+            },
+            {
+              "damage": 469514.118,
+              "template": "direct"
+            },
+            {
+              "damage": 343237.8122,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 357130.4648,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 689424.6433,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-e-normal-2": [
+            {
+              "damage": 506787.0884,
+              "template": "direct"
+            },
+            {
+              "damage": 469514.118,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-e-charge": [
+            {
+              "damage": 165446.722,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-burst": [
+            {
+              "damage": 899431.4085,
+              "template": "direct",
+              "hits": 5
+            },
+            {
+              "damage": 1062264.3695,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-c1-blade": [
+            {
+              "damage": 360087.6298,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-c6-burst-coord": [
+            {
+              "damage": 1357404.9634,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-c6-normal-coord": [
+            {
+              "damage": 329796.9532,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "escoffier.escoffier-skill-parfait": [
+            {
+              "damage": 45383.913,
+              "template": "direct"
+            },
+            {
+              "damage": 53038.2685,
+              "template": "direct",
+              "hits": 21
+            }
+          ],
+          "escoffier.escoffier-burst": [
+            {
+              "damage": 386430.9983,
+              "template": "direct"
+            }
+          ],
+          "escoffier.escoffier-c6-parfait": [
+            {
+              "damage": 98219.0158,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 78107.4957,
+              "template": "direct"
+            },
+            {
+              "damage": 7919.1322,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 108107.5917,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 262303.2062,
+              "template": "direct"
+            },
+            {
+              "damage": 21863.0089,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 37593.7579,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 69344.1945,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 96440.6583,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 205483.3901,
+              "template": "direct"
+            },
+            {
+              "damage": 203861.2217,
+              "template": "direct"
+            },
+            {
+              "damage": 207846.1138,
+              "template": "direct"
+            },
+            {
+              "damage": 214176.0974,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -5099,7 +5813,152 @@
       },
       "display": {
         "totalDamage": 45636502.5378,
-        "parts": [],
+        "partsByFormula": {
+          "skirk.skirk-e-normal": [
+            {
+              "damage": 538482.7126,
+              "template": "direct"
+            },
+            {
+              "damage": 500895.0013,
+              "template": "direct"
+            },
+            {
+              "damage": 373552.3918,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 387562.3569,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 722662.4976,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-e-normal-2": [
+            {
+              "damage": 538482.7126,
+              "template": "direct"
+            },
+            {
+              "damage": 500895.0013,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-e-charge": [
+            {
+              "damage": 185870.9963,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-burst": [
+            {
+              "damage": 934442.6044,
+              "template": "direct",
+              "hits": 5
+            },
+            {
+              "damage": 1098650.5612,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-c1-blade": [
+            {
+              "damage": 377487.0549,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-c6-burst-coord": [
+            {
+              "damage": 1396283.3847,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-c6-normal-coord": [
+            {
+              "damage": 359998.0353,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "escoffier.escoffier-skill-parfait": [
+            {
+              "damage": 50462.4751,
+              "template": "direct"
+            },
+            {
+              "damage": 68923.8277,
+              "template": "direct",
+              "hits": 21
+            }
+          ],
+          "escoffier.escoffier-burst": [
+            {
+              "damage": 300422.8448,
+              "template": "direct"
+            }
+          ],
+          "escoffier.escoffier-c6-parfait": [
+            {
+              "damage": 107938.3536,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 32154.154,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 59310.4821,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 82486.241,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 136503.3533,
+              "template": "direct"
+            },
+            {
+              "damage": 135331.0977,
+              "template": "direct"
+            },
+            {
+              "damage": 138210.769,
+              "template": "direct"
+            },
+            {
+              "damage": 142785.1143,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-skill": [
+            {
+              "damage": 98867.649,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-q-dot": [
+            {
+              "damage": 62213.6209,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -6054,7 +6913,169 @@
       },
       "display": {
         "totalDamage": 55299413.9933,
-        "parts": [],
+        "partsByFormula": {
+          "skirk.skirk-e-normal": [
+            {
+              "damage": 588870.2949,
+              "template": "direct"
+            },
+            {
+              "damage": 542981.2372,
+              "template": "direct"
+            },
+            {
+              "damage": 387514.672,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 404618.7753,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 813726.6776,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-e-normal-2": [
+            {
+              "damage": 588870.2949,
+              "template": "direct"
+            },
+            {
+              "damage": 542981.2372,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-e-charge": [
+            {
+              "damage": 170315.229,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-burst": [
+            {
+              "damage": 1072278.9869,
+              "template": "direct",
+              "hits": 5
+            },
+            {
+              "damage": 1272752.7098,
+              "template": "direct"
+            }
+          ],
+          "skirk.skirk-c1-blade": [
+            {
+              "damage": 405465.7315,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-c6-burst-coord": [
+            {
+              "damage": 1636118.5377,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "skirk.skirk-c6-normal-coord": [
+            {
+              "damage": 370966.7997,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "escoffier.escoffier-skill-parfait": [
+            {
+              "damage": 24403.4635,
+              "template": "direct"
+            },
+            {
+              "damage": 50301.3894,
+              "template": "direct",
+              "hits": 21
+            }
+          ],
+          "escoffier.escoffier-burst": [
+            {
+              "damage": 271085.035,
+              "template": "direct"
+            }
+          ],
+          "escoffier.escoffier-c6-parfait": [
+            {
+              "damage": 93150.7212,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 27843.2372,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 51358.7085,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 71427.2866,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 120065.1275,
+              "template": "direct"
+            },
+            {
+              "damage": 118939.216,
+              "template": "direct"
+            },
+            {
+              "damage": 121705.042,
+              "template": "direct"
+            },
+            {
+              "damage": 126098.5443,
+              "template": "direct"
+            }
+          ],
+          "kamisato_ayaka.ayaka-charged": [
+            {
+              "damage": 166729.8461,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "kamisato_ayaka.ayaka-burst": [
+            {
+              "damage": 128863.0619,
+              "template": "direct",
+              "hits": 19
+            },
+            {
+              "damage": 159527.4378,
+              "template": "direct"
+            }
+          ],
+          "kamisato_ayaka.ayaka-burst-offfield": [
+            {
+              "damage": 32499.6708,
+              "template": "direct",
+              "hits": 19
+            },
+            {
+              "damage": 48681.5152,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -6987,7 +8008,96 @@
       },
       "display": {
         "totalDamage": 6102729.4804,
-        "parts": [],
+        "partsByFormula": {
+          "ifa.ifa-burst": [
+            {
+              "damage": 54100.3417,
+              "template": "direct"
+            },
+            {
+              "damage": 13816.8835,
+              "template": "direct"
+            },
+            {
+              "damage": 13816.8835,
+              "template": "direct"
+            }
+          ],
+          "ororon.ororon-skill": [
+            {
+              "damage": 42475.6574,
+              "template": "direct"
+            }
+          ],
+          "ororon.ororon-burst": [
+            {
+              "damage": 37488.6369,
+              "template": "direct"
+            },
+            {
+              "damage": 4700.8401,
+              "template": "direct"
+            },
+            {
+              "damage": 12815.1676,
+              "template": "direct"
+            }
+          ],
+          "ororon.ororon-hypersense": [
+            {
+              "damage": 12815.1676,
+              "template": "direct",
+              "hits": 8
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 41276.4819,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 76124.1667,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 105804.781,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 125332.0725,
+              "template": "direct"
+            },
+            {
+              "damage": 124565.5111,
+              "template": "direct"
+            },
+            {
+              "damage": 126448.5858,
+              "template": "direct"
+            },
+            {
+              "damage": 129439.8416,
+              "template": "direct"
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 22058.9824,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 3501.4258,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -7639,7 +8749,7 @@
             }
           },
           "circlet": {
-            "setKey": "a_day_carved_from_rising_winds",
+            "setKey": "noblesse_oblige",
             "mainStat": "cr",
             "substats": {
               "atk%": 24.77,
@@ -7734,7 +8844,85 @@
       },
       "display": {
         "totalDamage": 7639085.4969,
-        "parts": [],
+        "partsByFormula": {
+          "varesa.varesa-kick": [
+            {
+              "damage": 189157.552,
+              "template": "direct"
+            }
+          ],
+          "varesa.varesa-plunge": [
+            {
+              "damage": 884038.7991,
+              "template": "direct"
+            }
+          ],
+          "varesa.varesa-kablam": [
+            {
+              "damage": 931565.4533,
+              "template": "direct"
+            }
+          ],
+          "iansan.iansan-skill": [
+            {
+              "damage": 68475.8209,
+              "template": "direct"
+            }
+          ],
+          "iansan.iansan-burst": [
+            {
+              "damage": 102905.0046,
+              "template": "direct"
+            }
+          ],
+          "iansan.iansan-swift-stormflight": [
+            {
+              "damage": 18722.2751,
+              "template": "direct"
+            }
+          ],
+          "xianyun.xianyun-driftcloud": [
+            {
+              "damage": 148317.646,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 21916.141,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 40418.8511,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 56178.0558,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 107807.9112,
+              "template": "direct"
+            },
+            {
+              "damage": 106779.9057,
+              "template": "direct"
+            },
+            {
+              "damage": 109305.2236,
+              "template": "direct"
+            },
+            {
+              "damage": 113316.68,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -8547,7 +9735,57 @@
       },
       "display": {
         "totalDamage": 4640949.0557,
-        "parts": [],
+        "partsByFormula": {
+          "varesa.varesa-kick": [
+            {
+              "damage": 287059.7103,
+              "template": "direct"
+            }
+          ],
+          "varesa.varesa-plunge": [
+            {
+              "damage": 778467.6585,
+              "template": "direct"
+            }
+          ],
+          "varesa.varesa-kablam": [
+            {
+              "damage": 891810.2713,
+              "template": "direct"
+            }
+          ],
+          "iansan.iansan-skill": [
+            {
+              "damage": 102401.9635,
+              "template": "direct"
+            }
+          ],
+          "iansan.iansan-burst": [
+            {
+              "damage": 152170.374,
+              "template": "direct"
+            }
+          ],
+          "iansan.iansan-swift-stormflight": [
+            {
+              "damage": 30481.7309,
+              "template": "direct"
+            }
+          ],
+          "chevreuse.chevreuse-c2-chain": [
+            {
+              "damage": 12494.3978,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 53094.0236,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -9238,7 +10476,7 @@
             }
           },
           "circlet": {
-            "setKey": "echoes_of_an_offering",
+            "setKey": "pale_flame",
             "mainStat": "def%",
             "substats": {
               "cr": 9.92,
@@ -9330,7 +10568,117 @@
       },
       "display": {
         "totalDamage": 13799760.406,
-        "parts": [],
+        "partsByFormula": {
+          "mavuika.mavuika-sunfell": [
+            {
+              "damage": 1465205.9839,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-combo": [
+            {
+              "damage": 326649.051,
+              "template": "direct"
+            },
+            {
+              "damage": 535391.1046,
+              "template": "direct"
+            },
+            {
+              "damage": 159292.3199,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-szszzp": [
+            {
+              "damage": 159292.3199,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 535391.1046,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 611663.8218,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-c6-ring": [
+            {
+              "damage": 440666.7444,
+              "template": "direct"
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 31666.5696,
+              "template": "direct"
+            },
+            {
+              "damage": 10794.9613,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 148660.3355,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 298521.5717,
+              "template": "direct"
+            },
+            {
+              "damage": 29316.5853,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 68385.0646,
+              "template": "direct"
+            },
+            {
+              "damage": 68141.3755,
+              "template": "direct"
+            },
+            {
+              "damage": 70873.2585,
+              "template": "direct"
+            },
+            {
+              "damage": 76003.5552,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-skill": [
+            {
+              "damage": 20843.7264,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-plunge-c6": [
+            {
+              "damage": 51080.2505,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-burst": [
+            {
+              "damage": 26874.6365,
+              "template": "direct"
+            },
+            {
+              "damage": 6533.2795,
+              "template": "direct",
+              "hits": 5
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -10293,7 +11641,7 @@
             }
           },
           "goblet": {
-            "setKey": "echoes_of_an_offering",
+            "setKey": "gladiators_finale",
             "mainStat": "def%",
             "substats": {
               "cr": 16.53,
@@ -10399,7 +11747,100 @@
       },
       "display": {
         "totalDamage": 12723285.1713,
-        "parts": [],
+        "partsByFormula": {
+          "mavuika.mavuika-sunfell": [
+            {
+              "damage": 1364597.5047,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-combo": [
+            {
+              "damage": 297253.8441,
+              "template": "direct"
+            },
+            {
+              "damage": 486750.4803,
+              "template": "direct"
+            },
+            {
+              "damage": 161249.7705,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-szszzp": [
+            {
+              "damage": 161249.7705,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 486750.4803,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 563960.4685,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-c6-ring": [
+            {
+              "damage": 440769.7374,
+              "template": "direct"
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 37427.1787,
+              "template": "direct"
+            },
+            {
+              "damage": 7948.482,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 108545.9361,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 317891.8351,
+              "template": "direct"
+            },
+            {
+              "damage": 21929.8818,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 76166.0704,
+              "template": "direct"
+            },
+            {
+              "damage": 75890.9122,
+              "template": "direct"
+            },
+            {
+              "damage": 78975.5811,
+              "template": "direct"
+            },
+            {
+              "damage": 84768.3867,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 86652.5042,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -11321,7 +12762,7 @@
             }
           },
           "goblet": {
-            "setKey": "bloodstained_chivalry",
+            "setKey": "silken_moons_serenade",
             "mainStat": "def%",
             "substats": {
               "er": 5.51,
@@ -11427,7 +12868,136 @@
       },
       "display": {
         "totalDamage": 6390056.598,
-        "parts": [],
+        "partsByFormula": {
+          "chasca.chasca-shining-volley": [
+            {
+              "damage": 61564.2968,
+              "template": "direct"
+            },
+            {
+              "damage": 61564.2968,
+              "template": "direct"
+            },
+            {
+              "damage": 189835.1331,
+              "template": "direct"
+            },
+            {
+              "damage": 189835.1331,
+              "template": "direct"
+            },
+            {
+              "damage": 264520.4927,
+              "template": "direct"
+            },
+            {
+              "damage": 264520.4927,
+              "template": "direct"
+            },
+            {
+              "damage": 128089.339,
+              "template": "direct"
+            },
+            {
+              "damage": 178482.5311,
+              "template": "direct"
+            }
+          ],
+          "chasca.chasca-p2-burning": [
+            {
+              "damage": 59104.2169,
+              "template": "direct"
+            }
+          ],
+          "chasca.chasca-burst": [
+            {
+              "damage": 38088.4268,
+              "template": "direct"
+            },
+            {
+              "damage": 43069.2035,
+              "template": "direct"
+            },
+            {
+              "damage": 43069.2035,
+              "template": "direct"
+            },
+            {
+              "damage": 114710.2861,
+              "template": "direct"
+            },
+            {
+              "damage": 114710.2861,
+              "template": "direct"
+            },
+            {
+              "damage": 166690.8187,
+              "template": "direct"
+            },
+            {
+              "damage": 166690.8187,
+              "template": "direct"
+            },
+            {
+              "damage": 128089.339,
+              "template": "direct"
+            },
+            {
+              "damage": 178482.5311,
+              "template": "direct"
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 17988.2815,
+              "template": "direct"
+            },
+            {
+              "damage": 5105.7914,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 78364.3763,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 159110.419,
+              "template": "direct"
+            },
+            {
+              "damage": 10841.3953,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 48945.3882,
+              "template": "direct"
+            },
+            {
+              "damage": 48775.8001,
+              "template": "direct"
+            },
+            {
+              "damage": 50676.9715,
+              "template": "direct"
+            },
+            {
+              "damage": 54247.2463,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 76116.9946,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -12353,7 +13923,161 @@
       },
       "display": {
         "totalDamage": 10985171.3144,
-        "parts": [],
+        "partsByFormula": {
+          "chasca.chasca-shining-volley": [
+            {
+              "damage": 61210.2401,
+              "template": "direct"
+            },
+            {
+              "damage": 171502.2291,
+              "template": "direct"
+            },
+            {
+              "damage": 171502.2291,
+              "template": "direct"
+            },
+            {
+              "damage": 246505.9499,
+              "template": "direct"
+            },
+            {
+              "damage": 246505.9499,
+              "template": "direct"
+            },
+            {
+              "damage": 253347.0031,
+              "template": "direct"
+            },
+            {
+              "damage": 79168.0508,
+              "template": "direct"
+            },
+            {
+              "damage": 113790.915,
+              "template": "direct"
+            },
+            {
+              "damage": 116948.8497,
+              "template": "direct"
+            }
+          ],
+          "chasca.chasca-p2-burning": [
+            {
+              "damage": 62611.6172,
+              "template": "direct"
+            }
+          ],
+          "chasca.chasca-burst": [
+            {
+              "damage": 49999.0937,
+              "template": "direct"
+            },
+            {
+              "damage": 114413.7292,
+              "template": "direct"
+            },
+            {
+              "damage": 114413.7292,
+              "template": "direct"
+            },
+            {
+              "damage": 170063.9445,
+              "template": "direct"
+            },
+            {
+              "damage": 170063.9445,
+              "template": "direct"
+            },
+            {
+              "damage": 176031.1004,
+              "template": "direct"
+            },
+            {
+              "damage": 176031.1004,
+              "template": "direct"
+            },
+            {
+              "damage": 79168.0508,
+              "template": "direct"
+            },
+            {
+              "damage": 113790.915,
+              "template": "direct"
+            },
+            {
+              "damage": 116948.8497,
+              "template": "direct"
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 12067.9209,
+              "template": "direct"
+            },
+            {
+              "damage": 3352.9303,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 58971.9434,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 112865.404,
+              "template": "direct"
+            },
+            {
+              "damage": 8090.8448,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 31972.5034,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 58965.301,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 81955.7182,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 179810.9163,
+              "template": "direct"
+            },
+            {
+              "damage": 178534.4237,
+              "template": "direct"
+            },
+            {
+              "damage": 181670.1555,
+              "template": "direct"
+            },
+            {
+              "damage": 186651.2517,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 68931.4522,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -13248,7 +14972,169 @@
       },
       "display": {
         "totalDamage": 11423726.6156,
-        "parts": [],
+        "partsByFormula": {
+          "chasca.chasca-shining-volley": [
+            {
+              "damage": 41506.3143,
+              "template": "direct"
+            },
+            {
+              "damage": 41506.3143,
+              "template": "direct"
+            },
+            {
+              "damage": 160955.4423,
+              "template": "direct"
+            },
+            {
+              "damage": 160955.4423,
+              "template": "direct"
+            },
+            {
+              "damage": 155701.1841,
+              "template": "direct"
+            },
+            {
+              "damage": 155701.1841,
+              "template": "direct"
+            },
+            {
+              "damage": 90935.2781,
+              "template": "direct"
+            },
+            {
+              "damage": 87966.7707,
+              "template": "direct"
+            }
+          ],
+          "chasca.chasca-p2-burning": [
+            {
+              "damage": 68121.8839,
+              "template": "direct"
+            }
+          ],
+          "chasca.chasca-burst": [
+            {
+              "damage": 43579.4931,
+              "template": "direct"
+            },
+            {
+              "damage": 51200.0782,
+              "template": "direct"
+            },
+            {
+              "damage": 51200.0782,
+              "template": "direct"
+            },
+            {
+              "damage": 119918.0681,
+              "template": "direct"
+            },
+            {
+              "damage": 119918.0681,
+              "template": "direct"
+            },
+            {
+              "damage": 115140.4558,
+              "template": "direct"
+            },
+            {
+              "damage": 115140.4558,
+              "template": "direct"
+            },
+            {
+              "damage": 90935.2781,
+              "template": "direct"
+            },
+            {
+              "damage": 87966.7707,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-sunfell": [
+            {
+              "damage": 528915.3044,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-combo": [
+            {
+              "damage": 94974.4466,
+              "template": "direct"
+            },
+            {
+              "damage": 169431.0023,
+              "template": "direct"
+            },
+            {
+              "damage": 64398.3219,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-szszzp": [
+            {
+              "damage": 64398.3219,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 169431.0023,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 200266.3558,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-c6-ring": [
+            {
+              "damage": 166317.98,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 29822.4931,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 55000.1438,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 76444.5566,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 155046.5643,
+              "template": "direct"
+            },
+            {
+              "damage": 153830.34,
+              "template": "direct"
+            },
+            {
+              "damage": 156818.0213,
+              "template": "direct"
+            },
+            {
+              "damage": 161563.9398,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 50833.8666,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -14144,7 +16030,96 @@
       },
       "display": {
         "totalDamage": 14461717.8159,
-        "parts": [],
+        "partsByFormula": {
+          "kinich.kinich-cannon": [
+            {
+              "damage": 1363688.038,
+              "template": "direct"
+            },
+            {
+              "damage": 841458.4573,
+              "template": "direct"
+            }
+          ],
+          "kinich.kinich-burst": [
+            {
+              "damage": 158462.5386,
+              "template": "direct"
+            },
+            {
+              "damage": 144792.7996,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 56343.6172,
+              "template": "direct"
+            },
+            {
+              "damage": 45667.7499,
+              "template": "direct"
+            },
+            {
+              "damage": 52978.1559,
+              "template": "direct"
+            },
+            {
+              "damage": 54311.5827,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 31035.1901,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "emilie.emilie-skill-burning": [
+            {
+              "damage": 39370.3599,
+              "template": "direct",
+              "hits": 28
+            },
+            {
+              "damage": 132337.344,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "emilie.emilie-burst-9hit": [
+            {
+              "damage": 95678.3053,
+              "template": "direct",
+              "hits": 9
+            }
+          ],
+          "emilie.emilie-c6-normal": [
+            {
+              "damage": 112737.6527,
+              "template": "direct"
+            },
+            {
+              "damage": 110468.671,
+              "template": "direct"
+            },
+            {
+              "damage": 119327.0243,
+              "template": "direct"
+            },
+            {
+              "damage": 129055.6721,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 38078.0613,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -15026,7 +17001,7 @@
             }
           },
           "goblet": {
-            "setKey": "gladiators_finale",
+            "setKey": "husk_of_opulent_dreams",
             "mainStat": "def%",
             "substats": {
               "cr": 16.53,
@@ -15080,7 +17055,106 @@
       },
       "display": {
         "totalDamage": 17275335.9444,
-        "parts": [],
+        "partsByFormula": {
+          "mualani.mualani-bite": [
+            {
+              "damage": 1228648.7322,
+              "template": "direct"
+            }
+          ],
+          "mualani.mualani-burst": [
+            {
+              "damage": 1211861.3113,
+              "template": "direct"
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 18582.0346,
+              "template": "direct"
+            },
+            {
+              "damage": 6944.18,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 103089.5492,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 176883.7039,
+              "template": "direct"
+            },
+            {
+              "damage": 16056.352,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-sunfell": [
+            {
+              "damage": 1378091.3107,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-combo": [
+            {
+              "damage": 319187.7693,
+              "template": "direct"
+            },
+            {
+              "damage": 515066.6519,
+              "template": "direct"
+            },
+            {
+              "damage": 149476.3566,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-szszzp": [
+            {
+              "damage": 149476.3566,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 515066.6519,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 586639.2669,
+              "template": "direct"
+            }
+          ],
+          "mavuika.mavuika-c6-ring": [
+            {
+              "damage": 416686.5624,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 79146.4745,
+              "template": "direct"
+            },
+            {
+              "damage": 78859.94,
+              "template": "direct"
+            },
+            {
+              "damage": 82072.1422,
+              "template": "direct"
+            },
+            {
+              "damage": 88104.4468,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -16124,7 +18198,120 @@
       },
       "display": {
         "totalDamage": 7599809.7366,
-        "parts": [],
+        "partsByFormula": {
+          "clorinde.clorinde-normal": [
+            {
+              "damage": 72991.9107,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 64954.3762,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 57531.3321,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 99316.6797,
+              "template": "direct"
+            }
+          ],
+          "clorinde.clorinde-burst": [
+            {
+              "damage": 140198.5579,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "columbina.columbina-skill-initial": [
+            {
+              "damage": 87964.1186,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-burst": [
+            {
+              "damage": 169733.5809,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-charge": [
+            {
+              "damage": 51989.9199,
+              "template": "lunarDirect",
+              "hits": 3
+            }
+          ],
+          "columbina.columbina-skill-interference": [
+            {
+              "damage": 42599.9453,
+              "template": "lunarDirect",
+              "hits": 5
+            }
+          ],
+          "columbina.columbina-ripple": [
+            {
+              "damage": 49309.4636,
+              "template": "direct"
+            }
+          ],
+          "ineffa.ineffa-skill-initial": [
+            {
+              "damage": 12531.4392,
+              "template": "direct"
+            }
+          ],
+          "ineffa.ineffa-birgitta": [
+            {
+              "damage": 13923.8214,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 77576.9324,
+              "template": "lunarDirect",
+              "hits": 10
+            }
+          ],
+          "ineffa.ineffa-burst": [
+            {
+              "damage": 98162.9406,
+              "template": "direct"
+            },
+            {
+              "damage": 358047.3804,
+              "template": "lunarDirect"
+            }
+          ],
+          "ineffa.ineffa-c6-thundercloud": [
+            {
+              "damage": 161121.3212,
+              "template": "lunarDirect"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 60035.3741,
+              "template": "direct"
+            },
+            {
+              "damage": 59795.586,
+              "template": "direct"
+            },
+            {
+              "damage": 62483.7371,
+              "template": "direct"
+            },
+            {
+              "damage": 67531.9081,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -16938,7 +19125,79 @@
       },
       "display": {
         "totalDamage": 9956766.6686,
-        "parts": [],
+        "partsByFormula": {
+          "clorinde.clorinde-normal": [
+            {
+              "damage": 109549.4346,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 91646.961,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 75113.1779,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 168184.1419,
+              "template": "direct"
+            }
+          ],
+          "clorinde.clorinde-burst": [
+            {
+              "damage": 304849.6407,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 92663.884,
+              "template": "direct"
+            },
+            {
+              "damage": 75106.1307,
+              "template": "direct"
+            },
+            {
+              "damage": 87128.9764,
+              "template": "direct"
+            },
+            {
+              "damage": 116724.9297,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 66699.9598,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "chevreuse.chevreuse-c2-chain": [
+            {
+              "damage": 14270.0997,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 29806.1458,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 4731.1343,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -17823,7 +20082,84 @@
       },
       "display": {
         "totalDamage": 3177079.9117,
-        "parts": [],
+        "partsByFormula": {
+          "clorinde.clorinde-normal": [
+            {
+              "damage": 44552.7397,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 36587.3237,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 29230.8845,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 70641.3041,
+              "template": "direct"
+            }
+          ],
+          "clorinde.clorinde-burst": [
+            {
+              "damage": 138907.5111,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 24713.2056,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 29628.8981,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "kaedehara_kazuha.kazuha-skill": [
+            {
+              "damage": 7640.4267,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-plunge-c6": [
+            {
+              "damage": 20124.2847,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-burst": [
+            {
+              "damage": 10449.4071,
+              "template": "direct"
+            },
+            {
+              "damage": 4775.2667,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 18475.8353,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 2932.6723,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -18670,7 +21006,67 @@
       },
       "display": {
         "totalDamage": 1288759.6045,
-        "parts": [],
+        "partsByFormula": {
+          "sethos.sethos-shadowpiercer": [
+            {
+              "damage": 58892.3407,
+              "template": "direct"
+            }
+          ],
+          "sethos.sethos-dusk-bolt": [
+            {
+              "damage": 45448.8967,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 32086.7188,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 33334.8708,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "zhongli.zhongli-hold": [
+            {
+              "damage": 16691.3403,
+              "template": "direct"
+            },
+            {
+              "damage": 5086.2946,
+              "template": "direct"
+            }
+          ],
+          "zhongli.zhongli-resonance": [
+            {
+              "damage": 7987.5561,
+              "template": "direct"
+            }
+          ],
+          "zhongli.zhongli-burst": [
+            {
+              "damage": 130449.6174,
+              "template": "direct"
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 10624.2605,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 1686.3906,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -19406,7 +21802,7 @@
             }
           },
           "goblet": {
-            "setKey": "pale_flame",
+            "setKey": "deepwood_memories",
             "mainStat": "def%",
             "substats": {
               "cr": 16.53,
@@ -19512,7 +21908,106 @@
       },
       "display": {
         "totalDamage": 10234397.7891,
-        "parts": [],
+        "partsByFormula": {
+          "arlecchino.arlecchino-normal": [
+            {
+              "damage": 413702.1212,
+              "template": "direct"
+            },
+            {
+              "damage": 398439.5473,
+              "template": "direct"
+            },
+            {
+              "damage": 396605.4568,
+              "template": "direct"
+            },
+            {
+              "damage": 339800.8578,
+              "template": "direct"
+            },
+            {
+              "damage": 322775.9288,
+              "template": "direct"
+            },
+            {
+              "damage": 351675.5416,
+              "template": "direct"
+            },
+            {
+              "damage": 358069.1351,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-burst": [
+            {
+              "damage": 992715.8827,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-e-cleave": [
+            {
+              "damage": 141356.35,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-c2-bloodfire": [
+            {
+              "damage": 401891.2037,
+              "template": "direct"
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 26266.0598,
+              "template": "direct"
+            },
+            {
+              "damage": 6811.3698,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 97188.3517,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 226493.3459,
+              "template": "direct"
+            },
+            {
+              "damage": 17225.5702,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 54535.1671,
+              "template": "direct"
+            },
+            {
+              "damage": 54340.1468,
+              "template": "direct"
+            },
+            {
+              "damage": 56526.4265,
+              "template": "direct"
+            },
+            {
+              "damage": 60632.1159,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 76355.5857,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -20451,7 +22946,121 @@
       },
       "display": {
         "totalDamage": 9325426.7164,
-        "parts": [],
+        "partsByFormula": {
+          "arlecchino.arlecchino-normal": [
+            {
+              "damage": 289462.7585,
+              "template": "direct"
+            },
+            {
+              "damage": 277977.224,
+              "template": "direct"
+            },
+            {
+              "damage": 276597.0171,
+              "template": "direct"
+            },
+            {
+              "damage": 233849.8902,
+              "template": "direct"
+            },
+            {
+              "damage": 221038.1317,
+              "template": "direct"
+            },
+            {
+              "damage": 242785.9381,
+              "template": "direct"
+            },
+            {
+              "damage": 247597.3047,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-burst": [
+            {
+              "damage": 725449.4248,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-e-cleave": [
+            {
+              "damage": 91003.1434,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-c2-bloodfire": [
+            {
+              "damage": 288593.4781,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 46693.1909,
+              "template": "direct"
+            },
+            {
+              "damage": 46506.693,
+              "template": "direct"
+            },
+            {
+              "damage": 48597.4329,
+              "template": "direct"
+            },
+            {
+              "damage": 52523.7049,
+              "template": "direct"
+            }
+          ],
+          "yelan.yelan-skill": [
+            {
+              "damage": 133847.5196,
+              "template": "direct"
+            }
+          ],
+          "yelan.yelan-burst-throw": [
+            {
+              "damage": 30454.5655,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "yelan.yelan-burst-throw-onfield": [
+            {
+              "damage": 32832.4444,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "yelan.yelan-c2-arrow": [
+            {
+              "damage": 41194.5814,
+              "template": "direct",
+              "hits": 8
+            }
+          ],
+          "yelan.yelan-c2-arrow-onfield": [
+            {
+              "damage": 44411.036,
+              "template": "direct",
+              "hits": 8
+            }
+          ],
+          "yelan.yelan-c6-barb": [
+            {
+              "damage": 104894.6414,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 41011.3309,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -21309,7 +23918,138 @@
       },
       "display": {
         "totalDamage": 7968428.233,
-        "parts": [],
+        "partsByFormula": {
+          "arlecchino.arlecchino-normal": [
+            {
+              "damage": 172389.7626,
+              "template": "direct"
+            },
+            {
+              "damage": 164903.4351,
+              "template": "direct"
+            },
+            {
+              "damage": 164003.8095,
+              "template": "direct"
+            },
+            {
+              "damage": 136141.0235,
+              "template": "direct"
+            },
+            {
+              "damage": 127790.2567,
+              "template": "direct"
+            },
+            {
+              "damage": 141965.5831,
+              "template": "direct"
+            },
+            {
+              "damage": 145101.6554,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-burst": [
+            {
+              "damage": 472851.4774,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-e-cleave": [
+            {
+              "damage": 59068.4415,
+              "template": "direct"
+            }
+          ],
+          "arlecchino.arlecchino-c2-bloodfire": [
+            {
+              "damage": 187320.6389,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 18043.3671,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 33276.4863,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 46250.9017,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 86395.1337,
+              "template": "direct"
+            },
+            {
+              "damage": 85761.722,
+              "template": "direct"
+            },
+            {
+              "damage": 87317.7116,
+              "template": "direct"
+            },
+            {
+              "damage": 89789.3941,
+              "template": "direct"
+            }
+          ],
+          "yelan.yelan-skill": [
+            {
+              "damage": 87727.3478,
+              "template": "direct"
+            }
+          ],
+          "yelan.yelan-burst-throw": [
+            {
+              "damage": 20780.7041,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "yelan.yelan-burst-throw-onfield": [
+            {
+              "damage": 22506.1961,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "yelan.yelan-c2-arrow": [
+            {
+              "damage": 28109.165,
+              "template": "direct",
+              "hits": 8
+            }
+          ],
+          "yelan.yelan-c2-arrow-onfield": [
+            {
+              "damage": 30443.1639,
+              "template": "direct",
+              "hits": 8
+            }
+          ],
+          "yelan.yelan-c6-barb": [
+            {
+              "damage": 59294.2031,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 25412.8834,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -22133,7 +24873,157 @@
       },
       "display": {
         "totalDamage": 21735063.5946,
-        "parts": [],
+        "partsByFormula": {
+          "chiori.chiori-e-combo": [
+            {
+              "damage": 230744.2757,
+              "template": "direct",
+              "hits": 3
+            },
+            {
+              "damage": 113275.1071,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 192567.6821,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "chiori.chiori-burst": [
+            {
+              "damage": 322881.8305,
+              "template": "direct"
+            }
+          ],
+          "chiori.chiori-burst-kinu": [
+            {
+              "damage": 192567.6821,
+              "template": "direct",
+              "hits": 4
+            }
+          ],
+          "chiori.chiori-pets-onfield": [
+            {
+              "damage": 126692.8311,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 215377.8128,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "chiori.chiori-pets-offfield": [
+            {
+              "damage": 113275.1071,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 192567.6821,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "chiori.chiori-na": [
+            {
+              "damage": 137235.6933,
+              "template": "direct"
+            },
+            {
+              "damage": 136347.1833,
+              "template": "direct"
+            },
+            {
+              "damage": 130685.1098,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 146085.9498,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 136635.3825,
+              "template": "direct"
+            },
+            {
+              "damage": 136089.6452,
+              "template": "direct"
+            },
+            {
+              "damage": 142207.6474,
+              "template": "direct"
+            },
+            {
+              "damage": 153696.8534,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-burst-beats": [
+            {
+              "damage": 160224.6615,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 32731.2233,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 60364.5704,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 83900.5592,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 128720.5543,
+              "template": "direct"
+            },
+            {
+              "damage": 128129.0203,
+              "template": "direct"
+            },
+            {
+              "damage": 129582.1365,
+              "template": "direct"
+            },
+            {
+              "damage": 131890.4051,
+              "template": "direct"
+            }
+          ],
+          "gorou.gorou-skill": [
+            {
+              "damage": 47709.3998,
+              "template": "direct"
+            }
+          ],
+          "gorou.gorou-burst": [
+            {
+              "damage": 39393.7829,
+              "template": "direct"
+            },
+            {
+              "damage": 20687.2813,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -23027,7 +25917,67 @@
       },
       "display": {
         "totalDamage": 6045690.7972,
-        "parts": [],
+        "partsByFormula": {
+          "gaming.gaming-cloudstrider": [
+            {
+              "damage": 232808.0043,
+              "template": "direct"
+            }
+          ],
+          "gaming.gaming-burst-manchai": [
+            {
+              "damage": 135363.9691,
+              "template": "direct"
+            }
+          ],
+          "xianyun.xianyun-driftcloud": [
+            {
+              "damage": 140420.7971,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 41276.4819,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 76124.1667,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 105804.781,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 130070.2426,
+              "template": "direct"
+            },
+            {
+              "damage": 128847.7067,
+              "template": "direct"
+            },
+            {
+              "damage": 131850.8928,
+              "template": "direct"
+            },
+            {
+              "damage": 136621.4405,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 29744.2668,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -23650,7 +26600,7 @@
             }
           },
           "goblet": {
-            "setKey": "vermillion_hereafter",
+            "setKey": "long_nights_oath",
             "mainStat": "anemo%",
             "substats": {
               "cr": 16.53,
@@ -23854,7 +26804,67 @@
       },
       "display": {
         "totalDamage": 3108861.0858,
-        "parts": [],
+        "partsByFormula": {
+          "xianyun.xianyun-driftcloud": [
+            {
+              "damage": 319617.8433,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 18182.0009,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 33532.1619,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 46606.2644,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 66863.1953,
+              "template": "direct"
+            },
+            {
+              "damage": 66196.6006,
+              "template": "direct"
+            },
+            {
+              "damage": 67834.1051,
+              "template": "direct"
+            },
+            {
+              "damage": 70435.2737,
+              "template": "direct"
+            }
+          ],
+          "faruzan.faruzan-vortex": [
+            {
+              "damage": 30248.9322,
+              "template": "direct"
+            }
+          ],
+          "faruzan.faruzan-polyhedron": [
+            {
+              "damage": 41356.9949,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 29780.8021,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -24676,7 +27686,106 @@
       },
       "display": {
         "totalDamage": 11426657.0696,
-        "parts": [],
+        "partsByFormula": {
+          "navia.navia-crystalshot": [
+            {
+              "damage": 1131988.1683,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-skill-initial": [
+            {
+              "damage": 119891.9093,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-burst": [
+            {
+              "damage": 231340.7264,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-charge": [
+            {
+              "damage": 38780.1245,
+              "template": "lunarDirect",
+              "hits": 3
+            }
+          ],
+          "columbina.columbina-skill-interference": [
+            {
+              "damage": 30688.8553,
+              "template": "lunarDirect",
+              "hits": 5
+            }
+          ],
+          "columbina.columbina-ripple": [
+            {
+              "damage": 67207.0139,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 116441.1081,
+              "template": "direct"
+            },
+            {
+              "damage": 115976.0291,
+              "template": "direct"
+            },
+            {
+              "damage": 121189.81,
+              "template": "direct"
+            },
+            {
+              "damage": 130980.948,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-burst-beats": [
+            {
+              "damage": 136207.179,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 48773.1843,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 89949.963,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 125021.2193,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 204834.4991,
+              "template": "direct"
+            },
+            {
+              "damage": 204111.7855,
+              "template": "direct"
+            },
+            {
+              "damage": 205887.1471,
+              "template": "direct"
+            },
+            {
+              "damage": 208707.301,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -25607,7 +28716,73 @@
       },
       "display": {
         "totalDamage": 11131638.604,
-        "parts": [],
+        "partsByFormula": {
+          "navia.navia-crystalshot": [
+            {
+              "damage": 1563738.0293,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 91122.8396,
+              "template": "direct"
+            },
+            {
+              "damage": 90758.8846,
+              "template": "direct"
+            },
+            {
+              "damage": 94839.0118,
+              "template": "direct"
+            },
+            {
+              "damage": 102501.2224,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 57630.4591,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 106284.9952,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 147725.2379,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 207458.7147,
+              "template": "direct"
+            },
+            {
+              "damage": 206066.7536,
+              "template": "direct"
+            },
+            {
+              "damage": 209486.1363,
+              "template": "direct"
+            },
+            {
+              "damage": 214917.8106,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 52390.489,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -26475,7 +29650,7 @@
             }
           },
           "circlet": {
-            "setKey": "obsidian_codex",
+            "setKey": "nighttime_whispers_in_the_echoing_woods",
             "mainStat": "cr",
             "substats": {
               "cd": 33.02,
@@ -26518,7 +29693,99 @@
       },
       "display": {
         "totalDamage": 14689180.058,
-        "parts": [],
+        "partsByFormula": {
+          "furina.furina-salon-total": [
+            {
+              "damage": 69448.5091,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 128080.4381,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 178018.6674,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 350242.8637,
+              "template": "direct"
+            },
+            {
+              "damage": 348734.8362,
+              "template": "direct"
+            },
+            {
+              "damage": 352439.3386,
+              "template": "direct"
+            },
+            {
+              "damage": 358323.9243,
+              "template": "direct"
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 109779.8178,
+              "template": "direct"
+            },
+            {
+              "damage": 94380.5466,
+              "template": "direct"
+            },
+            {
+              "damage": 104925.3502,
+              "template": "direct"
+            },
+            {
+              "damage": 99787.0122,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 57021.1498,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 18879.9095,
+              "template": "direct"
+            },
+            {
+              "damage": 5078.0254,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 74783.3653,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 124466.0537,
+              "template": "direct"
+            },
+            {
+              "damage": 11967.6871,
+              "template": "direct"
+            }
+          ],
+          "xianyun.xianyun-driftcloud": [
+            {
+              "damage": 283567.0351,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -27377,7 +30644,7 @@
             }
           },
           "sands": {
-            "setKey": "gladiators_finale",
+            "setKey": "marechaussee_hunter",
             "mainStat": "er",
             "substats": {
               "cr": 9.92,
@@ -27492,7 +30759,91 @@
       },
       "display": {
         "totalDamage": 8371892.4429,
-        "parts": [],
+        "partsByFormula": {
+          "wriothesley.wriothesley-normal": [
+            {
+              "damage": 133201.744,
+              "template": "direct"
+            },
+            {
+              "damage": 130798.3348,
+              "template": "direct"
+            },
+            {
+              "damage": 154767.4697,
+              "template": "direct"
+            },
+            {
+              "damage": 109167.6521,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 191403.2205,
+              "template": "direct"
+            }
+          ],
+          "wriothesley.wriothesley-charge": [
+            {
+              "damage": 330608.6566,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "wriothesley.wriothesley-burst": [
+            {
+              "damage": 193696.604,
+              "template": "direct",
+              "hits": 5
+            },
+            {
+              "damage": 106843.6599,
+              "template": "direct"
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 82978.646,
+              "template": "direct"
+            },
+            {
+              "damage": 67256.0307,
+              "template": "direct"
+            },
+            {
+              "damage": 78022.2474,
+              "template": "direct"
+            },
+            {
+              "damage": 81967.8476,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 46838.7701,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "shenhe.shenhe-skill": [
+            {
+              "damage": 45416.8026,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-q-dot": [
+            {
+              "damage": 20439.8696,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 38716.3815,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -28445,7 +31796,114 @@
       },
       "display": {
         "totalDamage": 15193676.8449,
-        "parts": [],
+        "partsByFormula": {
+          "wriothesley.wriothesley-normal": [
+            {
+              "damage": 200372.1357,
+              "template": "direct"
+            },
+            {
+              "damage": 197713.4644,
+              "template": "direct"
+            },
+            {
+              "damage": 224228.3214,
+              "template": "direct"
+            },
+            {
+              "damage": 173785.4227,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 264755.0947,
+              "template": "direct"
+            }
+          ],
+          "wriothesley.wriothesley-charge": [
+            {
+              "damage": 399955.3023,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "wriothesley.wriothesley-burst": [
+            {
+              "damage": 209571.7338,
+              "template": "direct",
+              "hits": 5
+            },
+            {
+              "damage": 119651.9466,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 95807.2295,
+              "template": "direct"
+            },
+            {
+              "damage": 95424.5645,
+              "template": "direct"
+            },
+            {
+              "damage": 99714.4404,
+              "template": "direct"
+            },
+            {
+              "damage": 107770.5455,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 63399.2733,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 116924.1328,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 162512.5477,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 222738.1738,
+              "template": "direct"
+            },
+            {
+              "damage": 221927.7956,
+              "template": "direct"
+            },
+            {
+              "damage": 223918.5072,
+              "template": "direct"
+            },
+            {
+              "damage": 227080.7437,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-skill": [
+            {
+              "damage": 65052.3428,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-q-dot": [
+            {
+              "damage": 29276.1446,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -29410,7 +32868,101 @@
       },
       "display": {
         "totalDamage": 18884060.3568,
-        "parts": [],
+        "partsByFormula": {
+          "neuvillette.neuvillette-judgment": [
+            {
+              "damage": 263092.1041,
+              "template": "direct",
+              "hits": 8
+            }
+          ],
+          "neuvillette.neuvillette-c6-currents": [
+            {
+              "damage": 181533.3686,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 14641.9369,
+              "template": "direct"
+            },
+            {
+              "damage": 6845.8513,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 105389.611,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 142034.2236,
+              "template": "direct"
+            },
+            {
+              "damage": 14416.4756,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 101560.3833,
+              "template": "direct"
+            },
+            {
+              "damage": 101192.6777,
+              "template": "direct"
+            },
+            {
+              "damage": 105314.8519,
+              "template": "direct"
+            },
+            {
+              "damage": 113056.0243,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 79919.722,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 147391.9763,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 204859.724,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 351951.1748,
+              "template": "direct"
+            },
+            {
+              "damage": 350987.3931,
+              "template": "direct"
+            },
+            {
+              "damage": 353354.9437,
+              "template": "direct"
+            },
+            {
+              "damage": 357115.7872,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -30413,7 +33965,105 @@
       },
       "display": {
         "totalDamage": 11591774.3752,
-        "parts": [],
+        "partsByFormula": {
+          "neuvillette.neuvillette-judgment": [
+            {
+              "damage": 165131.004,
+              "template": "direct",
+              "hits": 8
+            }
+          ],
+          "neuvillette.neuvillette-c6-currents": [
+            {
+              "damage": 105874.6396,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 82545.3382,
+              "template": "direct"
+            },
+            {
+              "damage": 82215.6427,
+              "template": "direct"
+            },
+            {
+              "damage": 85911.7026,
+              "template": "direct"
+            },
+            {
+              "damage": 92852.6602,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-burst-beats": [
+            {
+              "damage": 96301.7307,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 51700.522,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 95348.7066,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 132524.9189,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 184026.9634,
+              "template": "direct"
+            },
+            {
+              "damage": 183351.2741,
+              "template": "direct"
+            },
+            {
+              "damage": 185011.1197,
+              "template": "direct"
+            },
+            {
+              "damage": 187647.7772,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-skill": [
+            {
+              "damage": 14404.7762,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-plunge-c6": [
+            {
+              "damage": 32932.6759,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-burst": [
+            {
+              "damage": 19700.6498,
+              "template": "direct"
+            },
+            {
+              "damage": 9002.9851,
+              "template": "direct",
+              "hits": 5
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -31345,7 +34995,91 @@
       },
       "display": {
         "totalDamage": 12607143.5901,
-        "parts": [],
+        "partsByFormula": {
+          "freminet.freminet-shatter-lv4": [
+            {
+              "damage": 75085.2642,
+              "template": "direct"
+            }
+          ],
+          "freminet.freminet-burst": [
+            {
+              "damage": 248691.1786,
+              "template": "direct"
+            }
+          ],
+          "escoffier.escoffier-skill-parfait": [
+            {
+              "damage": 63420.4656,
+              "template": "direct"
+            },
+            {
+              "damage": 83757.8577,
+              "template": "direct",
+              "hits": 21
+            }
+          ],
+          "escoffier.escoffier-burst": [
+            {
+              "damage": 404947.6348,
+              "template": "direct"
+            }
+          ],
+          "escoffier.escoffier-c6-parfait": [
+            {
+              "damage": 134339.3478,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 46888.9725,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 86475.0045,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 120191.3836,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 147715.0322,
+              "template": "direct"
+            },
+            {
+              "damage": 146594.9499,
+              "template": "direct"
+            },
+            {
+              "damage": 149346.4565,
+              "template": "direct"
+            },
+            {
+              "damage": 153717.2124,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-skill": [
+            {
+              "damage": 77863.9456,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-q-dot": [
+            {
+              "damage": 48005.093,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -32262,7 +35996,75 @@
       },
       "display": {
         "totalDamage": 9895523.6849,
-        "parts": [],
+        "partsByFormula": {
+          "lyney.lyney-prop": [
+            {
+              "damage": 345018.5936,
+              "template": "direct"
+            }
+          ],
+          "lyney.lyney-strike": [
+            {
+              "damage": 480224.6725,
+              "template": "direct"
+            }
+          ],
+          "lyney.lyney-skill-max": [
+            {
+              "damage": 616998.4767,
+              "template": "direct"
+            }
+          ],
+          "lyney.lyney-c6-strike": [
+            {
+              "damage": 403111.363,
+              "template": "direct"
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 134767.2627,
+              "template": "direct"
+            },
+            {
+              "damage": 109231.8518,
+              "template": "direct"
+            },
+            {
+              "damage": 126717.4777,
+              "template": "direct"
+            },
+            {
+              "damage": 146438.4241,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 83679.0995,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "chevreuse.chevreuse-c2-chain": [
+            {
+              "damage": 17292.7195,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 28474.5235,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 4519.7656,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -33172,7 +36974,68 @@
       },
       "display": {
         "totalDamage": 777044.2431,
-        "parts": [],
+        "partsByFormula": {
+          "kaveh.kaveh-core": [
+            {
+              "damage": 36900.2214,
+              "template": "transform"
+            }
+          ],
+          "kaveh.kaveh-c6-pairidaeza": [
+            {
+              "damage": 1206.9988,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 25239.9574,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 25989.1578,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "kuki_shinobu.shinobu-burst": [
+            {
+              "damage": 3923.0988,
+              "template": "direct",
+              "hits": 12
+            }
+          ],
+          "kuki_shinobu.shinobu-hyperbloom": [
+            {
+              "damage": 30533.5703,
+              "template": "transform"
+            }
+          ],
+          "kuki_shinobu.shinobu-c4-thundergrass": [
+            {
+              "damage": 5101.6362,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-skill": [
+            {
+              "damage": 35916.5949,
+              "template": "direct"
+            },
+            {
+              "damage": 40846.3237,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-burst-tick": [
+            {
+              "damage": 9764.6867,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -33927,7 +37790,7 @@
             }
           },
           "goblet": {
-            "setKey": "song_of_days_past",
+            "setKey": "crimson_witch_of_flames",
             "mainStat": "hydro%",
             "substats": {
               "atk%": 24.77,
@@ -33981,7 +37844,70 @@
       },
       "display": {
         "totalDamage": 1989583.8382,
-        "parts": [],
+        "partsByFormula": {
+          "alhaitham.alhaitham-projection": [
+            {
+              "damage": 54373.9423,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "alhaitham.alhaitham-burst": [
+            {
+              "damage": 52561.3295,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 28227.8663,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 29546.6344,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "kuki_shinobu.shinobu-burst": [
+            {
+              "damage": 2449.8279,
+              "template": "direct",
+              "hits": 12
+            }
+          ],
+          "kuki_shinobu.shinobu-hyperbloom": [
+            {
+              "damage": 37413.4572,
+              "template": "transform"
+            }
+          ],
+          "kuki_shinobu.shinobu-c4-thundergrass": [
+            {
+              "damage": 3254.9013,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-skill": [
+            {
+              "damage": 12957.26,
+              "template": "direct"
+            },
+            {
+              "damage": 14735.7074,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-burst-tick": [
+            {
+              "damage": 2789.8638,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -34805,7 +38731,78 @@
       },
       "display": {
         "totalDamage": 5478127.3648,
-        "parts": [],
+        "partsByFormula": {
+          "wanderer.wanderer-normal": [
+            {
+              "damage": 133084.1686,
+              "template": "direct"
+            },
+            {
+              "damage": 126948.1619,
+              "template": "direct"
+            },
+            {
+              "damage": 98117.3357,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "wanderer.wanderer-charge": [
+            {
+              "damage": 113257.0475,
+              "template": "direct"
+            }
+          ],
+          "wanderer.wanderer-burst": [
+            {
+              "damage": 157740.2908,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 68836.8591,
+              "template": "direct"
+            },
+            {
+              "damage": 55793.7992,
+              "template": "direct"
+            },
+            {
+              "damage": 64725.1638,
+              "template": "direct"
+            },
+            {
+              "damage": 67927.1522,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 38815.5155,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "faruzan.faruzan-vortex": [
+            {
+              "damage": 39152.4042,
+              "template": "direct"
+            }
+          ],
+          "faruzan.faruzan-polyhedron": [
+            {
+              "damage": 50592.1309,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 34311.1447,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -35679,7 +39676,90 @@
       },
       "display": {
         "totalDamage": 3997300.32,
-        "parts": [],
+        "partsByFormula": {
+          "nilou.nilou-e-dance": [
+            {
+              "damage": 12453.1378,
+              "template": "direct"
+            },
+            {
+              "damage": 16960.8228,
+              "template": "direct"
+            },
+            {
+              "damage": 19170.8163,
+              "template": "direct"
+            },
+            {
+              "damage": 44076.2149,
+              "template": "direct"
+            }
+          ],
+          "nilou.nilou-burst": [
+            {
+              "damage": 92205.3359,
+              "template": "direct"
+            },
+            {
+              "damage": 112669.2752,
+              "template": "direct"
+            }
+          ],
+          "nilou.nilou-bountiful-core": [
+            {
+              "damage": 104081.5072,
+              "template": "transform"
+            }
+          ],
+          "lauma.lauma-sanctuary": [
+            {
+              "damage": 22968.6098,
+              "template": "direct"
+            }
+          ],
+          "lauma.lauma-hold": [
+            {
+              "damage": 11073.8293,
+              "template": "direct"
+            },
+            {
+              "damage": 362324.1783,
+              "template": "lunarDirect"
+            }
+          ],
+          "lauma.lauma-c6-normal": [
+            {
+              "damage": 88833.4732,
+              "template": "lunarDirect"
+            }
+          ],
+          "lauma.lauma-c6-sanctuary": [
+            {
+              "damage": 89703.9073,
+              "template": "lunarDirect",
+              "hits": 8
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 51807.8359,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 53043.6569,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "sangonomiya_kokomi.kokomi-c1-fish": [
+            {
+              "damage": 24131.9234,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -36259,7 +40339,7 @@
           "minCr": 0.01
         }
       },
-      "damage": 1260351.7116,
+      "damage": 1175176.8641,
       "comboResult": {
         "lineDamages": [
           {
@@ -36271,8 +40351,8 @@
             "total": 166077.3382
           },
           {
-            "perHit": 51104.9085,
-            "total": 102209.817
+            "perHit": 8517.4847,
+            "total": 17034.9695
           },
           {
             "perHit": 30965.1651,
@@ -36291,7 +40371,7 @@
             "total": 241505.0783
           }
         ],
-        "totalDamage": 1260351.7116
+        "totalDamage": 1175176.8641
       },
       "artifacts": {
         "cyno": {
@@ -36532,8 +40612,81 @@
         }
       },
       "display": {
-        "totalDamage": 1260351.7116,
-        "parts": [],
+        "totalDamage": 1175176.8641,
+        "partsByFormula": {
+          "cyno.cyno-combo": [
+            {
+              "damage": 21382.2108,
+              "template": "direct"
+            },
+            {
+              "damage": 22356.5852,
+              "template": "direct"
+            },
+            {
+              "damage": 27530.5133,
+              "template": "direct"
+            },
+            {
+              "damage": 15175.4459,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 33649.5844,
+              "template": "direct"
+            },
+            {
+              "damage": 38245.9891,
+              "template": "direct"
+            }
+          ],
+          "cyno.cyno-c6-bolts": [
+            {
+              "damage": 16607.7338,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "baizhu.baizhu-burst": [
+            {
+              "damage": 8517.4847,
+              "template": "direct"
+            }
+          ],
+          "baizhu.baizhu-c2-sprite": [
+            {
+              "damage": 10321.7217,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 23639.5447,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 24526.5424,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 8684.258,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 1378.4536,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -37039,27 +41192,27 @@
         },
         "marginalGains": {
           "cyno": {
-            "atk%": 0.0041,
-            "em": 0.0066,
-            "cr": 0.0091,
-            "cd": 0.0094
+            "atk%": 0.0044,
+            "em": 0.0071,
+            "cr": 0.0097,
+            "cd": 0.0101
           },
           "baizhu": {
-            "hp%": 0.0005,
-            "atk%": 0.0024,
-            "cr": 0.0025,
-            "cd": 0.0027
+            "hp%": 0.0002,
+            "atk%": 0.0013,
+            "cr": 0.0013,
+            "cd": 0.0014
           },
           "nahida": {
-            "atk%": 0.003,
-            "em": 0.0026,
-            "cr": 0.0065,
-            "cd": 0.0059
+            "atk%": 0.0032,
+            "em": 0.0028,
+            "cr": 0.007,
+            "cd": 0.0063
           },
           "fischl": {
-            "atk%": 0.0039,
-            "cr": 0.0046,
-            "cd": 0.0042
+            "atk%": 0.0042,
+            "cr": 0.0049,
+            "cd": 0.0045
           }
         },
         "levelUpGains": {}
@@ -37374,7 +41527,86 @@
       },
       "display": {
         "totalDamage": 1161663.6304,
-        "parts": [],
+        "partsByFormula": {
+          "tighnari.tighnari-charge": [
+            {
+              "damage": 12352.1579,
+              "template": "direct"
+            },
+            {
+              "damage": 7648.5581,
+              "template": "direct",
+              "hits": 4
+            },
+            {
+              "damage": 11975.87,
+              "template": "direct"
+            }
+          ],
+          "tighnari.tighnari-burst": [
+            {
+              "damage": 5755.8769,
+              "template": "direct",
+              "hits": 6
+            },
+            {
+              "damage": 7036.5838,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "yae_miko.yae_miko-skill": [
+            {
+              "damage": 38924.9211,
+              "template": "direct"
+            }
+          ],
+          "yae_miko.yae_miko-burst": [
+            {
+              "damage": 31863.2668,
+              "template": "direct"
+            },
+            {
+              "damage": 40925.8264,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "zhongli.zhongli-hold": [
+            {
+              "damage": 10577.0811,
+              "template": "direct"
+            },
+            {
+              "damage": 3166.3404,
+              "template": "direct"
+            }
+          ],
+          "zhongli.zhongli-resonance": [
+            {
+              "damage": 5019.0256,
+              "template": "direct"
+            }
+          ],
+          "zhongli.zhongli-burst": [
+            {
+              "damage": 81884.08,
+              "template": "direct"
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 11143.132,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 1768.7511,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -38197,7 +42429,101 @@
       },
       "display": {
         "totalDamage": 3278275.718,
-        "parts": [],
+        "partsByFormula": {
+          "kamisato_ayato.ayato-shunsuiken": [
+            {
+              "damage": 26219.7318,
+              "template": "direct",
+              "hits": 6
+            },
+            {
+              "damage": 28060.8516,
+              "template": "direct",
+              "hits": 5
+            },
+            {
+              "damage": 29901.9714,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "kamisato_ayato.ayato-bloomwater": [
+            {
+              "damage": 11541.5873,
+              "template": "direct",
+              "hits": 30
+            }
+          ],
+          "kamisato_ayato.ayato-bloomwater-onfield": [
+            {
+              "damage": 11541.5873,
+              "template": "direct",
+              "hits": 30
+            }
+          ],
+          "kamisato_ayato.ayato-c6-strikes": [
+            {
+              "damage": 57534.9933,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 26316.3706,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 32368.5575,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "kuki_shinobu.shinobu-burst": [
+            {
+              "damage": 5081.8095,
+              "template": "direct",
+              "hits": 12
+            }
+          ],
+          "kuki_shinobu.shinobu-hyperbloom": [
+            {
+              "damage": 36086.7148,
+              "template": "transform"
+            }
+          ],
+          "kuki_shinobu.shinobu-c4-thundergrass": [
+            {
+              "damage": 6590.2202,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-skill": [
+            {
+              "damage": 7414.4167,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-plunge-c6": [
+            {
+              "damage": 19528.992,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-burst": [
+            {
+              "damage": 10140.3052,
+              "template": "direct"
+            },
+            {
+              "damage": 4634.0104,
+              "template": "direct",
+              "hits": 5
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -39033,7 +43359,95 @@
       },
       "display": {
         "totalDamage": 11775844.9116,
-        "parts": [],
+        "partsByFormula": {
+          "arataki_itto.itto-kesagiri": [
+            {
+              "damage": 218599.4878,
+              "template": "direct",
+              "hits": 8
+            },
+            {
+              "damage": 365365.0542,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 111890.2351,
+              "template": "direct"
+            },
+            {
+              "damage": 111443.3328,
+              "template": "direct"
+            },
+            {
+              "damage": 116453.3433,
+              "template": "direct"
+            },
+            {
+              "damage": 125861.8138,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-burst-beats": [
+            {
+              "damage": 131207.413,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 47963.6183,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 88456.9205,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 122946.0435,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 166389.2506,
+              "template": "direct"
+            },
+            {
+              "damage": 165710.6961,
+              "template": "direct"
+            },
+            {
+              "damage": 167377.5799,
+              "template": "direct"
+            },
+            {
+              "damage": 170025.4174,
+              "template": "direct"
+            }
+          ],
+          "gorou.gorou-skill": [
+            {
+              "damage": 45000.7023,
+              "template": "direct"
+            }
+          ],
+          "gorou.gorou-burst": [
+            {
+              "damage": 37601.3864,
+              "template": "direct"
+            },
+            {
+              "damage": 19405.2834,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -39958,7 +44372,74 @@
       },
       "display": {
         "totalDamage": 8304472.0436,
-        "parts": [],
+        "partsByFormula": {
+          "arataki_itto.itto-kesagiri": [
+            {
+              "damage": 209901.3893,
+              "template": "direct",
+              "hits": 8
+            },
+            {
+              "damage": 350590.1499,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 93629.8049,
+              "template": "direct"
+            },
+            {
+              "damage": 93255.8368,
+              "template": "direct"
+            },
+            {
+              "damage": 97448.2162,
+              "template": "direct"
+            },
+            {
+              "damage": 105321.229,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-burst-beats": [
+            {
+              "damage": 109400.3763,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "albedo.albedo-blossom": [
+            {
+              "damage": 165974.9924,
+              "template": "direct"
+            }
+          ],
+          "albedo.albedo-burst": [
+            {
+              "damage": 209512.527,
+              "template": "direct"
+            },
+            {
+              "damage": 117867.1457,
+              "template": "direct",
+              "hits": 7
+            }
+          ],
+          "albedo.albedo-c2-offfield": [
+            {
+              "damage": 77435.6098,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "mona.mona-burst": [
+            {
+              "damage": 81114.5496,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -40898,7 +45379,116 @@
       },
       "display": {
         "totalDamage": 10925749.6617,
-        "parts": [],
+        "partsByFormula": {
+          "raiden_shogun.raiden-coordinated": [
+            {
+              "damage": 16421.5751,
+              "template": "direct",
+              "hits": 27
+            }
+          ],
+          "raiden_shogun.raiden-initial": [
+            {
+              "damage": 433850.9237,
+              "template": "direct"
+            }
+          ],
+          "raiden_shogun.raiden-charge": [
+            {
+              "damage": 71213.8797,
+              "template": "direct"
+            },
+            {
+              "damage": 79809.7685,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-skill-initial": [
+            {
+              "damage": 169981.0371,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-burst": [
+            {
+              "damage": 347690.7725,
+              "template": "direct"
+            }
+          ],
+          "columbina.columbina-charge": [
+            {
+              "damage": 38681.5622,
+              "template": "lunarDirect",
+              "hits": 3
+            }
+          ],
+          "columbina.columbina-skill-interference": [
+            {
+              "damage": 36790.4187,
+              "template": "lunarDirect",
+              "hits": 5
+            }
+          ],
+          "columbina.columbina-ripple": [
+            {
+              "damage": 95285.1447,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 60443.1113,
+              "template": "direct"
+            },
+            {
+              "damage": 60201.6946,
+              "template": "direct"
+            },
+            {
+              "damage": 62908.1026,
+              "template": "direct"
+            },
+            {
+              "damage": 67990.5589,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 49025.2507,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 90414.8364,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 125667.3457,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 234498.4465,
+              "template": "direct"
+            },
+            {
+              "damage": 233191.1911,
+              "template": "direct"
+            },
+            {
+              "damage": 236402.4923,
+              "template": "direct"
+            },
+            {
+              "damage": 241503.63,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -41772,7 +46362,71 @@
       },
       "display": {
         "totalDamage": 3150830.0267,
-        "parts": [],
+        "partsByFormula": {
+          "raiden_shogun.raiden-coordinated": [
+            {
+              "damage": 11131.4843,
+              "template": "direct",
+              "hits": 27
+            }
+          ],
+          "raiden_shogun.raiden-initial": [
+            {
+              "damage": 646195.7074,
+              "template": "direct"
+            }
+          ],
+          "raiden_shogun.raiden-charge": [
+            {
+              "damage": 106068.9303,
+              "template": "direct"
+            },
+            {
+              "damage": 118872.0064,
+              "template": "direct"
+            }
+          ],
+          "kujou_sara.sara-burst": [
+            {
+              "damage": 175071.0461,
+              "template": "direct"
+            },
+            {
+              "damage": 14582.5492,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "kaedehara_kazuha.kazuha-skill": [
+            {
+              "damage": 14775.1272,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-plunge-c6": [
+            {
+              "damage": 42640.5268,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-burst": [
+            {
+              "damage": 22901.4472,
+              "template": "direct"
+            },
+            {
+              "damage": 4903.0185,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 36329.7572,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -42236,7 +46890,7 @@
           "minCr": 0.1
         }
       },
-      "damage": 2083492.4319,
+      "damage": 1575102.7665,
       "comboResult": {
         "lineDamages": [
           {
@@ -42252,8 +46906,12 @@
             "total": 211497.2083
           },
           {
-            "perHit": 352518.1996,
-            "total": 705036.3993
+            "perHit": 78769.9183,
+            "total": 157539.8365
+          },
+          {
+            "perHit": 19553.4487,
+            "total": 39106.8973
           },
           {
             "perHit": 67722.9013,
@@ -42268,7 +46926,7 @@
             "total": 40067.7742
           }
         ],
-        "totalDamage": 2083492.4319
+        "totalDamage": 1575102.7665
       },
       "artifacts": {
         "raiden_shogun": {
@@ -42511,8 +47169,74 @@
         }
       },
       "display": {
-        "totalDamage": 2083492.4319,
-        "parts": [],
+        "totalDamage": 1575102.7665,
+        "partsByFormula": {
+          "raiden_shogun.raiden-coordinated": [
+            {
+              "damage": 6895.9957,
+              "template": "direct",
+              "hits": 27
+            }
+          ],
+          "raiden_shogun.raiden-initial": [
+            {
+              "damage": 303787.719,
+              "template": "direct"
+            }
+          ],
+          "raiden_shogun.raiden-charge": [
+            {
+              "damage": 49864.8289,
+              "template": "direct"
+            },
+            {
+              "damage": 55883.7753,
+              "template": "direct"
+            }
+          ],
+          "xiangling.xiangling-pyronado-swing": [
+            {
+              "damage": 21032.8054,
+              "template": "direct"
+            },
+            {
+              "damage": 25706.7622,
+              "template": "direct"
+            },
+            {
+              "damage": 32030.3507,
+              "template": "direct"
+            }
+          ],
+          "xiangling.xiangling-pyronado-tick": [
+            {
+              "damage": 19553.4487,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-skill": [
+            {
+              "damage": 31686.8621,
+              "template": "direct"
+            },
+            {
+              "damage": 36036.0392,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-burst-tick": [
+            {
+              "damage": 5743.021,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 20033.8871,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -42919,27 +47643,27 @@
         },
         "marginalGains": {
           "raiden_shogun": {
-            "atk%": 0.007,
-            "er": 0.0042,
-            "cr": 0.0134,
-            "cd": 0.0132
+            "atk%": 0.0092,
+            "er": 0.0055,
+            "cr": 0.0178,
+            "cd": 0.0174
           },
           "xiangling": {
-            "atk%": 0.0045,
-            "er": 0.0032,
-            "cr": 0.0078,
-            "cd": 0.0079
+            "atk%": 0.0013,
+            "er": 0.001,
+            "cr": 0.0029,
+            "cd": 0.0029
           },
           "xingqiu": {
-            "atk%": 0.0007,
+            "atk%": 0.001,
             "er": 0,
-            "cr": 0.0017,
-            "cd": 0.0016
+            "cr": 0.0022,
+            "cd": 0.0021
           },
           "bennett": {
-            "atk%": 0.0002,
-            "cr": 0.0005,
-            "cd": 0.0004
+            "atk%": 0.0003,
+            "cr": 0.0006,
+            "cd": 0.0006
           }
         },
         "levelUpGains": {}
@@ -43151,7 +47875,7 @@
             }
           },
           "goblet": {
-            "setKey": "gilded_dreams",
+            "setKey": "echoes_of_an_offering",
             "mainStat": "def%",
             "substats": {
               "cr": 16.53,
@@ -43258,7 +47982,124 @@
       },
       "display": {
         "totalDamage": 5678718.6508,
-        "parts": [],
+        "partsByFormula": {
+          "yoimiya.yoimiya-normal": [
+            {
+              "damage": 125549.8942,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 161151.5148,
+              "template": "direct"
+            },
+            {
+              "damage": 183463.4894,
+              "template": "direct"
+            },
+            {
+              "damage": 137254.5366,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 201934.8782,
+              "template": "direct"
+            }
+          ],
+          "yoimiya.yoimiya-c6-arrow": [
+            {
+              "damage": 110041.243,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 131402.2154,
+              "template": "direct"
+            },
+            {
+              "damage": 144789.4001,
+              "template": "direct"
+            },
+            {
+              "damage": 117064.0284,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 155872.2334,
+              "template": "direct"
+            }
+          ],
+          "citlali.citlali-e-total": [
+            {
+              "damage": 10776.8768,
+              "template": "direct"
+            },
+            {
+              "damage": 4779.7248,
+              "template": "direct",
+              "hits": 20
+            },
+            {
+              "damage": 72660.6336,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "citlali.citlali-burst-total": [
+            {
+              "damage": 103834.6159,
+              "template": "direct"
+            },
+            {
+              "damage": 10411.7341,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 71869.2705,
+              "template": "direct"
+            },
+            {
+              "damage": 71636.2917,
+              "template": "direct"
+            },
+            {
+              "damage": 74248.1073,
+              "template": "direct"
+            },
+            {
+              "damage": 79152.9253,
+              "template": "direct"
+            }
+          ],
+          "yun_jin.yun_jin-skill-press": [
+            {
+              "damage": 26296.0714,
+              "template": "direct"
+            }
+          ],
+          "yun_jin.yun_jin-skill-charge1": [
+            {
+              "damage": 41764.4004,
+              "template": "direct"
+            }
+          ],
+          "yun_jin.yun_jin-skill-charge2": [
+            {
+              "damage": 57239.2396,
+              "template": "direct"
+            }
+          ],
+          "yun_jin.yun_jin-burst": [
+            {
+              "damage": 20120.2608,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -44234,7 +49075,108 @@
       },
       "display": {
         "totalDamage": 32480338.7527,
-        "parts": [],
+        "partsByFormula": {
+          "kamisato_ayaka.ayaka-charged": [
+            {
+              "damage": 431414.6651,
+              "template": "direct",
+              "hits": 3
+            }
+          ],
+          "kamisato_ayaka.ayaka-burst": [
+            {
+              "damage": 342771.5374,
+              "template": "direct",
+              "hits": 19
+            },
+            {
+              "damage": 418886.7248,
+              "template": "direct"
+            }
+          ],
+          "kamisato_ayaka.ayaka-burst-offfield": [
+            {
+              "damage": 136449.0344,
+              "template": "direct",
+              "hits": 19
+            },
+            {
+              "damage": 175584.8753,
+              "template": "direct"
+            }
+          ],
+          "escoffier.escoffier-skill-parfait": [
+            {
+              "damage": 56790.0619,
+              "template": "direct"
+            },
+            {
+              "damage": 77923.7757,
+              "template": "direct",
+              "hits": 21
+            }
+          ],
+          "escoffier.escoffier-burst": [
+            {
+              "damage": 359535.9127,
+              "template": "direct"
+            }
+          ],
+          "escoffier.escoffier-c6-parfait": [
+            {
+              "damage": 128028.0344,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 34188.0523,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 63051.3279,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 87634.8764,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 153647.2798,
+              "template": "direct"
+            },
+            {
+              "damage": 152322.6313,
+              "template": "direct"
+            },
+            {
+              "damage": 155576.6591,
+              "template": "direct"
+            },
+            {
+              "damage": 160745.6678,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-skill": [
+            {
+              "damage": 111141.1566,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-q-dot": [
+            {
+              "damage": 70914.7784,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -45204,7 +50146,107 @@
       },
       "display": {
         "totalDamage": 18707043.076,
-        "parts": [],
+        "partsByFormula": {
+          "eula.eula-skill-tap": [
+            {
+              "damage": 42413.9161,
+              "template": "direct"
+            }
+          ],
+          "eula.eula-skill-hold": [
+            {
+              "damage": 71189.9171,
+              "template": "direct"
+            },
+            {
+              "damage": 27821.3469,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 259164.0896,
+              "template": "direct"
+            }
+          ],
+          "eula.eula-burst-lightfall": [
+            {
+              "damage": 87920.4012,
+              "template": "direct"
+            },
+            {
+              "damage": 2635926.118,
+              "template": "direct"
+            }
+          ],
+          "eula.eula-burst-lightfall-max": [
+            {
+              "damage": 87920.4012,
+              "template": "direct"
+            },
+            {
+              "damage": 3694725.0874,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 27848.6028,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 51359.7958,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 71384.8464,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 84991.625,
+              "template": "direct"
+            },
+            {
+              "damage": 84432.863,
+              "template": "direct"
+            },
+            {
+              "damage": 85805.474,
+              "template": "direct"
+            },
+            {
+              "damage": 87985.8605,
+              "template": "direct"
+            }
+          ],
+          "raiden_shogun.raiden-coordinated": [
+            {
+              "damage": 11375.0256,
+              "template": "direct",
+              "hits": 27
+            }
+          ],
+          "raiden_shogun.raiden-initial": [
+            {
+              "damage": 332200.911,
+              "template": "direct"
+            }
+          ],
+          "raiden_shogun.raiden-charge": [
+            {
+              "damage": 54528.6743,
+              "template": "direct"
+            },
+            {
+              "damage": 61110.5713,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -45957,7 +50999,95 @@
       },
       "display": {
         "totalDamage": 8497051.3466,
-        "parts": [],
+        "partsByFormula": {
+          "hu_tao.hutao-charged": [
+            {
+              "damage": 83343.116,
+              "template": "direct"
+            }
+          ],
+          "hu_tao.hutao-blood-blossom": [
+            {
+              "damage": 37058.2084,
+              "template": "direct"
+            }
+          ],
+          "hu_tao.hutao-burst": [
+            {
+              "damage": 205011.1476,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 79826.2827,
+              "template": "direct"
+            },
+            {
+              "damage": 79507.4474,
+              "template": "direct"
+            },
+            {
+              "damage": 83081.7586,
+              "template": "direct"
+            },
+            {
+              "damage": 89794.08,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 54507.0057,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 100524.5652,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 139718.8313,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 192842.89,
+              "template": "direct"
+            },
+            {
+              "damage": 192233.7039,
+              "template": "direct"
+            },
+            {
+              "damage": 193730.1828,
+              "template": "direct"
+            },
+            {
+              "damage": 196107.3328,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-skill": [
+            {
+              "damage": 97547.4006,
+              "template": "direct"
+            },
+            {
+              "damage": 110936.2594,
+              "template": "direct"
+            }
+          ],
+          "xingqiu.xingqiu-burst-tick": [
+            {
+              "damage": 23064.5161,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -46850,7 +51980,67 @@
       },
       "display": {
         "totalDamage": 6529125.734,
-        "parts": [],
+        "partsByFormula": {
+          "xiao.xiao-plunge-high": [
+            {
+              "damage": 178711.4335,
+              "template": "direct"
+            }
+          ],
+          "xianyun.xianyun-driftcloud": [
+            {
+              "damage": 200629.1429,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 47935.3213,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 88404.7338,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 122873.5093,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 142040.635,
+              "template": "direct"
+            },
+            {
+              "damage": 141488.2272,
+              "template": "direct"
+            },
+            {
+              "damage": 142845.229,
+              "template": "direct"
+            },
+            {
+              "damage": 145000.8202,
+              "template": "direct"
+            }
+          ],
+          "faruzan.faruzan-vortex": [
+            {
+              "damage": 17371.9601,
+              "template": "direct"
+            }
+          ],
+          "faruzan.faruzan-polyhedron": [
+            {
+              "damage": 23629.4839,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -47659,7 +52849,148 @@
       },
       "display": {
         "totalDamage": 9891249.9061,
-        "parts": [],
+        "partsByFormula": {
+          "ganyu.ganyu-frostflake": [
+            {
+              "damage": 120339.3037,
+              "template": "direct"
+            },
+            {
+              "damage": 166537.775,
+              "template": "direct"
+            }
+          ],
+          "ganyu.ganyu-q-shard": [
+            {
+              "damage": 78462.2736,
+              "template": "direct"
+            }
+          ],
+          "ganyu.ganyu-q-shard-onfield": [
+            {
+              "damage": 89606.4394,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 58876.3572,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 108582.7431,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 150918.8719,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 184403.7748,
+              "template": "direct"
+            },
+            {
+              "damage": 183410.0779,
+              "template": "direct"
+            },
+            {
+              "damage": 185851.116,
+              "template": "direct"
+            },
+            {
+              "damage": 189728.694,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-skill": [
+            {
+              "damage": 80692.6652,
+              "template": "direct"
+            }
+          ],
+          "shenhe.shenhe-q-dot": [
+            {
+              "damage": 36682.0605,
+              "template": "direct"
+            }
+          ],
+          "venti.venti-windsunder": [
+            {
+              "damage": 15743.3605,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 34260.3651,
+              "template": "direct"
+            },
+            {
+              "damage": 40432.7,
+              "template": "direct"
+            },
+            {
+              "damage": 20118.6865,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 39104.476,
+              "template": "direct"
+            },
+            {
+              "damage": 54691.5748,
+              "template": "direct"
+            },
+            {
+              "damage": 3148.6721,
+              "template": "direct",
+              "hits": 4
+            },
+            {
+              "damage": 6852.073,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 8086.54,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 4023.7373,
+              "template": "direct",
+              "hits": 4
+            },
+            {
+              "damage": 7820.8952,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 10938.315,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "venti.venti-burst-total": [
+            {
+              "damage": 11364.5417,
+              "template": "direct",
+              "hits": 20
+            }
+          ],
+          "venti.venti-c2-skill": [
+            {
+              "damage": 274707.9674,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -48317,47 +53648,51 @@
           "minCr": 0.23
         }
       },
-      "damage": 2165333.5075,
+      "damage": 1438852.6889,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 136764.4126,
-            "total": 273528.8253
+            "perHit": 133954.9506,
+            "total": 267909.9012
           },
           {
-            "perHit": 257422.0129,
-            "total": 514844.0258
+            "perHit": 252010.648,
+            "total": 504021.296
           },
           {
-            "perHit": 29870.0805,
-            "total": 59740.1609
+            "perHit": 29242.1703,
+            "total": 58484.3406
           },
           {
-            "perHit": 31736.9605,
-            "total": 63473.921
+            "perHit": 31069.8059,
+            "total": 62139.6118
           },
           {
-            "perHit": 13788.7074,
-            "total": 27577.4149
+            "perHit": 17825.2494,
+            "total": 35650.4989
           },
           {
-            "perHit": 35347.4567,
-            "total": 70694.9133
+            "perHit": 35870.1542,
+            "total": 71740.3084
           },
           {
-            "perHit": 45813.4543,
-            "total": 91626.9086
+            "perHit": 59130.1468,
+            "total": 118260.2935
           },
           {
-            "perHit": 499366.4468,
-            "total": 998732.8937
+            "perHit": 100718.2271,
+            "total": 201436.4543
           },
           {
-            "perHit": 32557.222,
-            "total": 65114.444
+            "perHit": 27850.0275,
+            "total": 55700.0549
+          },
+          {
+            "perHit": 31754.9646,
+            "total": 63509.9292
           }
         ],
-        "totalDamage": 2165333.5075
+        "totalDamage": 1438852.6889
       },
       "artifacts": {
         "tartaglia": {
@@ -48418,7 +53753,9 @@
             "mainStat": "hp",
             "substats": {
               "er": 27.53,
-              "cr": 9.92
+              "cr": 3.31,
+              "em": 19.82,
+              "cd": 6.6
             }
           },
           "plume": {
@@ -48426,7 +53763,9 @@
             "mainStat": "atk",
             "substats": {
               "er": 27.53,
-              "cr": 9.92
+              "em": 19.82,
+              "cr": 3.31,
+              "cd": 6.6
             }
           },
           "sands": {
@@ -48434,27 +53773,27 @@
             "mainStat": "em",
             "substats": {
               "er": 11.01,
-              "cr": 13.22,
-              "cd": 6.6,
+              "cd": 26.42,
+              "cr": 3.31,
               "atk%": 4.96
             }
           },
           "goblet": {
             "setKey": "viridescent_venerer",
-            "mainStat": "em",
+            "mainStat": "anemo%",
             "substats": {
-              "cd": 13.21,
-              "cr": 13.22,
-              "atk%": 4.96,
-              "atk": 16.54
+              "em": 99.08,
+              "cd": 6.6,
+              "cr": 3.31,
+              "atk%": 4.96
             }
           },
           "circlet": {
             "setKey": "viridescent_venerer",
-            "mainStat": "em",
+            "mainStat": "cr",
             "substats": {
-              "cd": 33.02,
-              "cr": 3.31,
+              "em": 99.08,
+              "cd": 6.6,
               "atk%": 4.96,
               "atk": 16.54
             }
@@ -48483,11 +53822,11 @@
           },
           "sands": {
             "setKey": "emblem_of_severed_fate",
-            "mainStat": "atk%",
+            "mainStat": "er",
             "substats": {
               "cd": 26.42,
               "cr": 6.61,
-              "er": 5.51,
+              "atk%": 4.96,
               "atk": 16.54
             }
           },
@@ -48576,16 +53915,16 @@
         "kaedehara_kazuha": {
           "hp": 4780,
           "er": 0.6606,
-          "cr": 0.4958,
-          "atk": 344,
-          "em": 560,
-          "cd": 0.5284
+          "cr": 0.4432,
+          "em": 424,
+          "cd": 0.5284,
+          "atk": 328
         },
         "xiangling": {
           "hp": 4780,
           "cr": 0.7407,
           "cd": 1.0568,
-          "er": 0.2753,
+          "er": 0.7382,
           "atk": 344
         },
         "bennett": {
@@ -48597,8 +53936,102 @@
         }
       },
       "display": {
-        "totalDamage": 2165333.5075,
-        "parts": [],
+        "totalDamage": 1438852.6889,
+        "partsByFormula": {
+          "tartaglia.tartaglia-melee-combo": [
+            {
+              "damage": 19356.2097,
+              "template": "direct"
+            },
+            {
+              "damage": 20728.4007,
+              "template": "direct"
+            },
+            {
+              "damage": 28046.7528,
+              "template": "direct"
+            },
+            {
+              "damage": 29980.2947,
+              "template": "direct"
+            },
+            {
+              "damage": 35843.2927,
+              "template": "direct"
+            }
+          ],
+          "tartaglia.tartaglia-burst-melee": [
+            {
+              "damage": 200227.6382,
+              "template": "direct"
+            },
+            {
+              "damage": 51783.0099,
+              "template": "direct"
+            }
+          ],
+          "tartaglia.tartaglia-riptide-slash": [
+            {
+              "damage": 29242.1703,
+              "template": "direct"
+            }
+          ],
+          "tartaglia.tartaglia-stance-change": [
+            {
+              "damage": 31069.8059,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-skill": [
+            {
+              "damage": 17825.2494,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-plunge-c6": [
+            {
+              "damage": 35870.1542,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-burst": [
+            {
+              "damage": 24378.65,
+              "template": "direct"
+            },
+            {
+              "damage": 6950.2994,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "xiangling.xiangling-pyronado-swing": [
+            {
+              "damage": 26893.3486,
+              "template": "direct"
+            },
+            {
+              "damage": 32869.6483,
+              "template": "direct"
+            },
+            {
+              "damage": 40955.2302,
+              "template": "direct"
+            }
+          ],
+          "xiangling.xiangling-pyronado-tick": [
+            {
+              "damage": 27850.0275,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 31754.9646,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -48636,7 +54069,7 @@
             "entries": [
               {
                 "key": "dmg%",
-                "value": 0.429
+                "value": 0.3749
               }
             ],
             "providerCharId": "kaedehara_kazuha"
@@ -48760,7 +54193,7 @@
             "entries": [
               {
                 "key": "dmg%",
-                "value": 0.6316
+                "value": 0.7473
               }
             ],
             "providerCharId": "xiangling"
@@ -48855,23 +54288,23 @@
           },
           "kaedehara_kazuha": {
             "onField": {
-              "em": 1073,
-              "cr": 0.5458,
+              "em": 937,
+              "cr": 0.4932,
               "cd": 1.0284,
               "er": 1.6606,
               "dmg%": 0.2,
               "hp": 19077,
-              "atk": 3652,
+              "atk": 3636,
               "def": 864
             },
             "offField": {
-              "em": 1073,
-              "cr": 0.5458,
+              "em": 937,
+              "cr": 0.4932,
               "cd": 1.0284,
               "er": 1.6606,
               "dmg%": 0.2,
               "hp": 19077,
-              "atk": 2285,
+              "atk": 2268,
               "def": 864
             }
           },
@@ -48880,18 +54313,18 @@
               "em": 296,
               "cr": 0.7907,
               "cd": 1.5568,
-              "er": 2.5263,
+              "er": 2.9892,
               "hp": 16407,
-              "atk": 4705,
+              "atk": 4565,
               "def": 715
             },
             "offField": {
               "em": 96,
               "cr": 0.7907,
               "cd": 1.5568,
-              "er": 2.5263,
+              "er": 2.9892,
               "hp": 16407,
-              "atk": 3346,
+              "atk": 3206,
               "def": 715
             }
           },
@@ -48925,7 +54358,7 @@
               "cr": 0.9429,
               "cd": 1.9146,
               "er": 1.0551,
-              "dmg%": 1.633,
+              "dmg%": 1.5789,
               "resReduction%": 0.4
             },
             "offField": {
@@ -48935,53 +54368,53 @@
               "cr": 0.9429,
               "cd": 1.9146,
               "er": 1.0551,
-              "dmg%": 1.633,
+              "dmg%": 1.5789,
               "resReduction%": 0.4
             }
           },
           "kaedehara_kazuha": {
             "onField": {
-              "atk": 3652,
+              "atk": 3636,
               "hp": 19077,
               "def": 864,
-              "em": 1073,
-              "cr": 0.5458,
+              "em": 937,
+              "cr": 0.4932,
               "cd": 1.0284,
               "er": 1.6606,
-              "dmg%": 2.495
+              "dmg%": 2.6906
             },
             "offField": {
-              "atk": 2285,
+              "atk": 2268,
               "hp": 19077,
               "def": 864,
-              "em": 1073,
-              "cr": 0.5458,
+              "em": 937,
+              "cr": 0.4932,
               "cd": 1.0284,
               "er": 1.6606,
-              "dmg%": 0.35
+              "dmg%": 0.816
             }
           },
           "xiangling": {
             "onField": {
-              "atk": 4705,
+              "atk": 4565,
               "hp": 16407,
               "def": 715,
               "em": 296,
               "cr": 0.7907,
               "cd": 1.5568,
-              "er": 2.5263,
-              "dmg%": 1.8266,
+              "er": 2.9892,
+              "dmg%": 1.8882,
               "resReduction%": 0.55
             },
             "offField": {
-              "atk": 3346,
+              "atk": 3206,
               "hp": 16407,
               "def": 715,
               "em": 96,
               "cr": 0.7907,
               "cd": 1.5568,
-              "er": 2.5263,
-              "dmg%": 1.6766,
+              "er": 2.9892,
+              "dmg%": 1.7382,
               "resReduction%": 0.55
             }
           },
@@ -48994,7 +54427,7 @@
               "cr": 0.6585,
               "cd": 1.4247,
               "er": 1.7074,
-              "dmg%": 1.195,
+              "dmg%": 1.1409,
               "resReduction%": 0.55
             },
             "offField": {
@@ -49004,33 +54437,33 @@
               "cr": 0.6585,
               "cd": 1.4247,
               "er": 1.7074,
-              "dmg%": 1.045,
+              "dmg%": 0.9909,
               "resReduction%": 0.55
             }
           }
         },
         "marginalGains": {
           "tartaglia": {
-            "atk%": 0.004,
-            "cr": 0.0095,
-            "cd": 0.0093
+            "atk%": 0.0059,
+            "cr": 0.014,
+            "cd": 0.0138
           },
           "kaedehara_kazuha": {
-            "atk%": 0.0014,
+            "atk%": 0.0025,
             "em": 0.0031,
-            "cr": 0.0019,
-            "cd": 0.002
+            "cr": 0.0035,
+            "cd": 0.0034
           },
           "xiangling": {
-            "atk%": 0.0057,
-            "er": 0.0059,
-            "cr": 0.0106,
-            "cd": 0.0108
+            "atk%": 0.0019,
+            "er": 0.0013,
+            "cr": 0.0041,
+            "cd": 0.0042
           },
           "bennett": {
-            "atk%": 0.0003,
-            "cr": 0.0007,
-            "cd": 0.0007
+            "atk%": 0.0005,
+            "cr": 0.0011,
+            "cd": 0.001
           }
         },
         "levelUpGains": {}
@@ -49342,7 +54775,81 @@
       },
       "display": {
         "totalDamage": 1805523.9352,
-        "parts": [],
+        "partsByFormula": {
+          "keqing.keqing-charged": [
+            {
+              "damage": 23350.2972,
+              "template": "direct"
+            },
+            {
+              "damage": 26115.4639,
+              "template": "direct"
+            }
+          ],
+          "keqing.keqing-burst": [
+            {
+              "damage": 28727.0103,
+              "template": "direct"
+            },
+            {
+              "damage": 7834.6392,
+              "template": "direct",
+              "hits": 8
+            },
+            {
+              "damage": 61601.7708,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-karma": [
+            {
+              "damage": 33353.9847,
+              "template": "direct"
+            }
+          ],
+          "nahida.nahida-c6-karma": [
+            {
+              "damage": 40994.1109,
+              "template": "direct",
+              "hits": 6
+            }
+          ],
+          "kaedehara_kazuha.kazuha-skill": [
+            {
+              "damage": 15692.5242,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-plunge-c6": [
+            {
+              "damage": 26495.4959,
+              "template": "direct"
+            }
+          ],
+          "kaedehara_kazuha.kazuha-burst": [
+            {
+              "damage": 21461.8345,
+              "template": "direct"
+            },
+            {
+              "damage": 9807.8276,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 22171.0139,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 3519.2086,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -50177,7 +55684,69 @@
       },
       "display": {
         "totalDamage": 7407789.6261,
-        "parts": [],
+        "partsByFormula": {
+          "klee.klee-charged": [
+            {
+              "damage": 243943.7045,
+              "template": "direct"
+            }
+          ],
+          "klee.klee-c1-proc": [
+            {
+              "damage": 69270.0356,
+              "template": "direct"
+            }
+          ],
+          "klee.klee-c4-explosion": [
+            {
+              "damage": 274024.6753,
+              "template": "direct"
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 120706.5964,
+              "template": "direct"
+            },
+            {
+              "damage": 97835.3702,
+              "template": "direct"
+            },
+            {
+              "damage": 113496.6691,
+              "template": "direct"
+            },
+            {
+              "damage": 150624.9103,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 86071.3773,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "chevreuse.chevreuse-c2-chain": [
+            {
+              "damage": 17526.02,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 27515.9581,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 4367.6124,
+              "template": "direct",
+              "hits": 12
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -51113,7 +56682,103 @@
       },
       "display": {
         "totalDamage": 13899738.6518,
-        "parts": [],
+        "partsByFormula": {
+          "klee.klee-charged": [
+            {
+              "damage": 195230.2485,
+              "template": "direct"
+            }
+          ],
+          "klee.klee-c1-proc": [
+            {
+              "damage": 33325.5952,
+              "template": "direct"
+            }
+          ],
+          "klee.klee-c4-explosion": [
+            {
+              "damage": 170122.3818,
+              "template": "direct"
+            }
+          ],
+          "xilonen.xilonen-normal": [
+            {
+              "damage": 81271.449,
+              "template": "direct"
+            },
+            {
+              "damage": 80946.8416,
+              "template": "direct"
+            },
+            {
+              "damage": 84585.8617,
+              "template": "direct"
+            },
+            {
+              "damage": 91419.7022,
+              "template": "direct"
+            }
+          ],
+          "furina.furina-salon-total": [
+            {
+              "damage": 77452.1212,
+              "template": "direct",
+              "hits": 18
+            },
+            {
+              "damage": 142841.1027,
+              "template": "direct",
+              "hits": 9
+            },
+            {
+              "damage": 198534.4766,
+              "template": "direct",
+              "hits": 5
+            }
+          ],
+          "furina.furina-c6-normal": [
+            {
+              "damage": 276932.2422,
+              "template": "direct"
+            },
+            {
+              "damage": 276037.6444,
+              "template": "direct"
+            },
+            {
+              "damage": 278235.2433,
+              "template": "direct"
+            },
+            {
+              "damage": 281726.1194,
+              "template": "direct"
+            }
+          ],
+          "albedo.albedo-blossom": [
+            {
+              "damage": 179729.9659,
+              "template": "direct"
+            }
+          ],
+          "albedo.albedo-burst": [
+            {
+              "damage": 171246.2728,
+              "template": "direct"
+            },
+            {
+              "damage": 117526.9399,
+              "template": "direct",
+              "hits": 7
+            }
+          ],
+          "albedo.albedo-c2-offfield": [
+            {
+              "damage": 84663.5632,
+              "template": "direct",
+              "hits": 3
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -52108,7 +57773,79 @@
       },
       "display": {
         "totalDamage": 1847114.5279,
-        "parts": [],
+        "partsByFormula": {
+          "razor.razor-burst-na": [
+            {
+              "damage": 31791.9427,
+              "template": "direct"
+            },
+            {
+              "damage": 27950.6188,
+              "template": "direct"
+            },
+            {
+              "damage": 33872.6598,
+              "template": "direct"
+            },
+            {
+              "damage": 43315.9146,
+              "template": "direct"
+            },
+            {
+              "damage": 48820.2989,
+              "template": "direct"
+            },
+            {
+              "damage": 45081.2697,
+              "template": "direct"
+            },
+            {
+              "damage": 50845.6064,
+              "template": "direct"
+            },
+            {
+              "damage": 60037.3865,
+              "template": "direct"
+            }
+          ],
+          "razor.razor-c6-lightning": [
+            {
+              "damage": 38341.5067,
+              "template": "direct"
+            }
+          ],
+          "razor.razor-p4-lightning": [
+            {
+              "damage": 53615.3188,
+              "template": "direct"
+            }
+          ],
+          "chevreuse.chevreuse-c2-chain": [
+            {
+              "damage": 12456.8189,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "fischl.fischl-oz-total": [
+            {
+              "damage": 30726.2051,
+              "template": "direct",
+              "hits": 12
+            },
+            {
+              "damage": 4877.1754,
+              "template": "direct",
+              "hits": 12
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 37730.5366,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {
@@ -52909,7 +58646,121 @@
       },
       "display": {
         "totalDamage": 12101505.498,
-        "parts": [],
+        "partsByFormula": {
+          "venti.venti-windsunder": [
+            {
+              "damage": 109331.1246,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 186119.6975,
+              "template": "direct"
+            },
+            {
+              "damage": 211715.8884,
+              "template": "direct"
+            },
+            {
+              "damage": 127475.26,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 206207.8473,
+              "template": "direct"
+            },
+            {
+              "damage": 270846.3295,
+              "template": "direct"
+            },
+            {
+              "damage": 57101.935,
+              "template": "direct",
+              "hits": 4
+            },
+            {
+              "damage": 72459.6495,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 77578.8877,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 60730.762,
+              "template": "direct",
+              "hits": 4
+            },
+            {
+              "damage": 76477.2795,
+              "template": "direct",
+              "hits": 2
+            },
+            {
+              "damage": 89404.976,
+              "template": "direct",
+              "hits": 2
+            }
+          ],
+          "venti.venti-burst-total": [
+            {
+              "damage": 38881.1878,
+              "template": "direct",
+              "hits": 20
+            }
+          ],
+          "venti.venti-c2-skill": [
+            {
+              "damage": 1183237.1362,
+              "template": "direct"
+            }
+          ],
+          "durin.durin-burst-white": [
+            {
+              "damage": 88396.8974,
+              "template": "direct"
+            },
+            {
+              "damage": 71647.6435,
+              "template": "direct"
+            },
+            {
+              "damage": 83116.8612,
+              "template": "direct"
+            },
+            {
+              "damage": 73695.3428,
+              "template": "direct",
+              "hits": 10
+            },
+            {
+              "damage": 42111.6244,
+              "template": "direct",
+              "hits": 10
+            }
+          ],
+          "faruzan.faruzan-vortex": [
+            {
+              "damage": 77473.4863,
+              "template": "direct"
+            }
+          ],
+          "faruzan.faruzan-polyhedron": [
+            {
+              "damage": 98669.4845,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-skill": [
+            {
+              "damage": 60842.9054,
+              "template": "direct"
+            }
+          ]
+        },
         "activeBuffs": [
           {
             "source": {

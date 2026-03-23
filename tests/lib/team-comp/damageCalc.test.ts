@@ -133,7 +133,7 @@ describe("TeamResonance", () => {
   });
 });
 
-describe("TeamMeta — enemyElementAura", () => {
+describe("TeamMeta — enemyAura", () => {
   const meta = new TeamMeta(["hu_tao"], {}, {}, "Hydro");
 
   it("hasReaction sees aura element for vaporize", () => {
@@ -616,11 +616,12 @@ describe("TeamBuild lifecycle", () => {
       );
 
       // Parts
-      expect(display.parts.length).toBeGreaterThanOrEqual(1);
+      const parts = display.partsByFormula["diluc.diluc-skill"] ?? [];
+      expect(parts.length).toBeGreaterThanOrEqual(1);
       expect(display.totalDamage).toBeGreaterThan(0);
 
       // Every part has required display fields
-      for (const part of display.parts) {
+      for (const part of parts) {
         expect(part.template).toBeTruthy();
         expect(part.scalingKeys).toBeDefined();
         expect(part.scalingMulti).toBeDefined();

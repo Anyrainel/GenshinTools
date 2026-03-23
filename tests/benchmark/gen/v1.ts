@@ -19,12 +19,9 @@ import type {
   CharOptConfig,
   ComboFormula,
   ComboResult,
-  DamageResult,
   ReactionOverride,
-  TeamOptComboResult,
   TeamOptPassId,
   TeamOptPassResult,
-  TeamOptSingleResult,
   TeamOptYield,
   TeamOptimizationProgress,
   TeamOptimizationResult,
@@ -168,16 +165,18 @@ export async function* runTeamOptimization(
   const {
     teamBuild,
     carryCharId,
-    formulaId,
     inventory,
     calcContext,
     globalConfig,
     baseSheets,
     perChar,
-    reactionOverride,
-    combo,
-    reactionOverrides,
+    formula,
   } = opts;
+  const { combo, reactionOverrides } = formula;
+
+  const formulaId =
+    combo.lines.find((l) => l.charId === carryCharId)?.formulaId ?? "";
+  const reactionOverride = reactionOverrides?.[carryCharId + "." + formulaId];
 
   const isComboMode =
     combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
@@ -250,11 +249,7 @@ export async function* runTeamOptimization(
       }
       return c;
     });
-    return new TeamBuild(
-      newConfigs,
-      teamBuild.combatOpts,
-      teamBuild.enemyElementAura
-    );
+    return new TeamBuild(newConfigs, teamBuild.combatOpts, teamBuild.enemyAura);
   }
 
   // Helper: run a single character's optimizer pass and yield progress
@@ -325,7 +320,6 @@ export async function* runTeamOptimization(
       erCheckCharId: charId,
       excludedArtifactIds: excludedIds,
       reactionOverride,
-      altCount: opts.altCount,
       scoreFn: passComboScoreFn,
     };
 
@@ -1095,52 +1089,21 @@ export async function* runTeamOptimization(
     done: true as const,
   };
 
-  if (isComboMode) {
-    const comboRes = evaluateCombo(
+  let comboRes: ComboResult;
+  try {
+    comboRes = evaluateCombo(
       effectiveTeamBuild,
       combo,
       finalSheets,
       calcContext,
       reactionOverrides
     );
-    yield {
-      ...resultBase,
-      mode: "combo",
-      bestDamage: comboRes.totalDamage,
-      bestComboResult: comboRes,
-    } satisfies TeamOptComboResult;
-  } else {
-    const finalPostStats = effectiveTeamBuild.getTeamStats(
-      finalSheets,
-      carryCharId,
-      calcContext
-    );
-    let finalOffFieldStats: Record<string, StatSheet> | undefined;
-    if (hasOffFieldParts(effectiveTeamBuild, carryCharId, formulaId)) {
-      const otherCharId = Object.keys(effectiveTeamBuild.charBuilds).find(
-        (id) => id !== carryCharId
-      );
-      if (otherCharId) {
-        finalOffFieldStats = effectiveTeamBuild.getTeamStats(
-          finalSheets,
-          otherCharId,
-          calcContext
-        );
-      }
-    }
-    const finalDmg = effectiveTeamBuild.getDamageResult(
-      carryCharId,
-      formulaId,
-      finalPostStats,
-      calcContext,
-      reactionOverride,
-      finalOffFieldStats
-    );
-    yield {
-      ...resultBase,
-      mode: "single",
-      bestDamage: finalDmg.totalDamage,
-      bestDamageResult: finalDmg,
-    } satisfies TeamOptSingleResult;
+  } catch {
+    comboRes = { lineDamages: [], totalDamage: 0 };
   }
+  yield {
+    ...resultBase,
+    bestDamage: comboRes.totalDamage,
+    bestComboResult: comboRes,
+  } satisfies TeamOptimizationResult;
 }

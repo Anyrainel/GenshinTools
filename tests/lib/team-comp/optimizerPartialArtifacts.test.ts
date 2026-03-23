@@ -13,6 +13,7 @@ import type {
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 import { type OptimizerOptions, runOptimization } from "./optimizerV1";
 
@@ -303,7 +304,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formulaId,
+      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -340,7 +341,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formulaId,
+      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -372,7 +373,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formulaId,
+      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
       inventory: carryArtifacts,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -403,13 +404,12 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formulaId,
+      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(inventory),
-        // Teammates omitted — simulates characters not in accountData
       },
       perChar,
     };

@@ -31,7 +31,7 @@ import {
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { TeamBuild, hasOffFieldParts } from "@/lib/team-comp/damageCalc";
+import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer";
 import type {
@@ -40,6 +40,7 @@ import type {
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/team-comp/types";
 import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { runTeamOptimization as runAStar } from "./gen/astar";
 import { runTeamOptimization as runMona } from "./gen/mona";
@@ -82,7 +83,7 @@ export interface Team {
   formulaMode?: "single" | "combo";
   combos?: unknown[];
   selectedCombo?: string | null;
-  enemyElementAura?: string;
+  enemyAura?: string;
 }
 
 export interface TeamCompData {
@@ -376,7 +377,7 @@ export function getCarryFormulaIds(
     const tb = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyElementAura as Element | undefined
+      team.enemyAura as Element | undefined
     );
     const carryId = team.characters[0]!;
     const formulas = tb.getFormulaIds()[carryId];
@@ -435,7 +436,7 @@ export async function runOptimizerOnTeam(
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyElementAura as Element | undefined
+      team.enemyAura as Element | undefined
     );
 
     const calcContext: CalcContext = {
@@ -466,7 +467,7 @@ export async function runOptimizerOnTeam(
     const opts: TeamOptimizerOptions = {
       teamBuild,
       carryCharId,
-      formulaId: targetFormulaId,
+      formula: { combo: singleFormulaCombo(carryCharId, targetFormulaId) },
       inventory,
       calcContext,
       globalConfig: DEFAULT_GLOBAL_CONFIG,
@@ -579,32 +580,17 @@ export async function runOptimizerOnTeam(
 
     for (const [formulaId, label] of formulaEntries) {
       try {
-        // Compute off-field stats if the formula has off-field parts
-        let offFieldStats: Record<string, StatSheet> | undefined;
-        if (hasOffFieldParts(optTeamBuild, carryCharId, formulaId)) {
-          const otherCharId = Object.keys(optTeamBuild.charBuilds).find(
-            (id) => id !== carryCharId
-          );
-          if (otherCharId) {
-            offFieldStats = optTeamBuild.getTeamStats(
-              artifactStats,
-              otherCharId,
-              calcContext
-            );
-          }
-        }
-        const dmg = optTeamBuild.getDamageResult(
-          carryCharId,
-          formulaId,
-          postStats,
-          calcContext,
-          undefined,
-          offFieldStats
+        const singleCombo = singleFormulaCombo(carryCharId, formulaId);
+        const comboRes = evaluateCombo(
+          optTeamBuild,
+          singleCombo,
+          artifactStats,
+          calcContext
         );
         result.formulaResults.push({
           formulaId,
           labelEn: label.en || label.zh || formulaId,
-          damage: dmg.totalDamage,
+          damage: comboRes.totalDamage,
         });
       } catch {
         result.formulaResults.push({

@@ -1,14 +1,14 @@
 #!/usr/bin/env tsx
 /**
- * Ideal-Gen Regression Test: Deterministic golden-file testing for the
- * ideal artifact generator across all team presets.
+ * Generator Regression Test: Deterministic golden-file testing for the
+ * artifact generator across all team presets.
  *
  * Runs runGenerator in combo mode (every formula × 2) with random
  * ER/CR constraints, captures all UI-displayable data, and diffs against
  * a golden file.
  *
  * Commands:
- *   run [options]    Run ideal gen on all teams, compare against golden file
+ *   run [options]    Run generator on all teams, compare against golden file
  *
  * Options:
  *   --update         Overwrite golden file with new results
@@ -30,7 +30,7 @@ import {
   type DiffEntry,
   type GoldenFile,
   PRNG_SEED,
-  buildIdealGenProblem,
+  buildGeneratorProblem,
   deepDiff,
   fmt,
   formatSummary,
@@ -39,7 +39,7 @@ import {
   loadTeamPreset,
   mulberry32,
   preloadGameStats,
-  runIdealGenForTeam,
+  runGeneratorForTeam,
 } from "./runner";
 
 // ─── Paths ───────────────────────────────────────────────────────────────────
@@ -117,12 +117,12 @@ async function main() {
     );
   }
 
-  console.log(`${C.bold}=== Ideal-Gen Regression Test ===${C.reset}`);
+  console.log(`${C.bold}=== Generator Regression Test ===${C.reset}`);
   console.log(
     `${C.dim}Running ${matchCount} teams, seed=0x${opts.seed.toString(16).toUpperCase()}${C.reset}\n`
   );
 
-  // Run ideal gen for all teams (iterate all to keep PRNG stable)
+  // Run generator for all teams (iterate all to keep PRNG stable)
   const rand = mulberry32(opts.seed);
   const goldenFile: GoldenFile = {
     version: 1,
@@ -139,7 +139,7 @@ async function main() {
 
     try {
       // Always build the problem (consumes PRNG), but only run if it matches filter
-      const problem = buildIdealGenProblem(team, rand);
+      const problem = buildGeneratorProblem(team, rand);
       if (!problem) {
         if (opts.verbose && matchesFilter(team)) {
           console.log(
@@ -156,7 +156,7 @@ async function main() {
       }
 
       const startMs = performance.now();
-      const result = await runIdealGenForTeam(problem);
+      const result = await runGeneratorForTeam(problem);
       const elapsedMs = performance.now() - startMs;
 
       goldenFile.teams[team.id] = result;

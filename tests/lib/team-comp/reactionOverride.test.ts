@@ -7,12 +7,20 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   type CalcContext,
+  type DisplayPart,
   type ReactionOverride,
   type TeamSlotConfig,
   resolvePartReaction,
 } from "@/lib/team-comp/types";
 
 await preloadGameStats();
+
+/** Extract the single formula's parts from a DisplayResult. */
+function getOnlyParts(r: {
+  partsByFormula: Record<string, DisplayPart[]>;
+}): DisplayPart[] {
+  return Object.values(r.partsByFormula)[0] ?? [];
+}
 
 // ─── resolvePartReaction unit tests ───
 
@@ -111,8 +119,8 @@ describe("per-part reaction override — damage calc", () => {
       ctx
     );
     // Diluc E has 3 parts, all direct
-    expect(result.parts.length).toBe(3);
-    for (const dp of result.parts) {
+    expect(getOnlyParts(result).length).toBe(3);
+    for (const dp of getOnlyParts(result)) {
       expect(dp.template).toBe("direct");
     }
   });
@@ -125,8 +133,8 @@ describe("per-part reaction override — damage calc", () => {
       ctx,
       { reaction: "vaporize" }
     );
-    expect(result.parts.length).toBe(3);
-    for (const dp of result.parts) {
+    expect(getOnlyParts(result).length).toBe(3);
+    for (const dp of getOnlyParts(result)) {
       expect(dp.template).toBe("amplify");
       expect(dp.tag?.reaction).toBe("vaporize");
     }
@@ -154,10 +162,10 @@ describe("per-part reaction override — damage calc", () => {
       { reaction: "vaporize", partReactions: { 1: "none" } }
     );
     // 3 parts: part 0 = amplify, part 1 = direct, part 2 = amplify
-    expect(result.parts.length).toBe(3);
-    expect(result.parts[0].template).toBe("amplify");
-    expect(result.parts[1].template).toBe("direct");
-    expect(result.parts[2].template).toBe("amplify");
+    expect(getOnlyParts(result).length).toBe(3);
+    expect(getOnlyParts(result)[0].template).toBe("amplify");
+    expect(getOnlyParts(result)[1].template).toBe("direct");
+    expect(getOnlyParts(result)[2].template).toBe("amplify");
   });
 
   it("disabling one part gives damage between full-direct and full-vape", () => {
@@ -248,9 +256,9 @@ describe("partHits — multi-hit split", () => {
       emptySheets,
       ctx
     );
-    expect(result.parts.length).toBe(2);
-    expect(result.parts[0].hits).toBe(1);
-    expect(result.parts[1].hits).toBe(3);
+    expect(getOnlyParts(result).length).toBe(2);
+    expect(getOnlyParts(result)[0].hits).toBe(1);
+    expect(getOnlyParts(result)[1].hits).toBe(3);
   });
 
   it("aggravate gate: all parts catalyze", () => {
@@ -262,10 +270,10 @@ describe("partHits — multi-hit split", () => {
       { reaction: "aggravate" }
     );
     // Both parts are Electro → both become catalyze
-    expect(result.parts.length).toBe(2);
-    expect(result.parts[0].template).toBe("catalyze");
-    expect(result.parts[1].template).toBe("catalyze");
-    expect(result.parts[1].hits).toBe(3);
+    expect(getOnlyParts(result).length).toBe(2);
+    expect(getOnlyParts(result)[0].template).toBe("catalyze");
+    expect(getOnlyParts(result)[1].template).toBe("catalyze");
+    expect(getOnlyParts(result)[1].hits).toBe(3);
   });
 
   it("partHits limits reacting hits on multi-hit part, splits into two display entries", () => {
@@ -278,13 +286,13 @@ describe("partHits — multi-hit split", () => {
     );
     // Part 0: initial hit → catalyze (1 hit)
     // Part 1 split: 2 thunderbolts catalyze + 1 thunderbolt direct
-    expect(result.parts.length).toBe(3);
-    expect(result.parts[0].template).toBe("catalyze");
-    expect(result.parts[0].hits).toBe(1);
-    expect(result.parts[1].template).toBe("catalyze");
-    expect(result.parts[1].hits).toBe(2);
-    expect(result.parts[2].template).toBe("direct");
-    expect(result.parts[2].hits).toBe(1);
+    expect(getOnlyParts(result).length).toBe(3);
+    expect(getOnlyParts(result)[0].template).toBe("catalyze");
+    expect(getOnlyParts(result)[0].hits).toBe(1);
+    expect(getOnlyParts(result)[1].template).toBe("catalyze");
+    expect(getOnlyParts(result)[1].hits).toBe(2);
+    expect(getOnlyParts(result)[2].template).toBe("direct");
+    expect(getOnlyParts(result)[2].hits).toBe(1);
   });
 
   it("partHits=1 on 3-hit part: 1 catalyze + 2 direct", () => {
@@ -295,15 +303,15 @@ describe("partHits — multi-hit split", () => {
       ctx,
       { reaction: "aggravate", partHits: { 1: 1 } }
     );
-    expect(result.parts.length).toBe(3);
+    expect(getOnlyParts(result).length).toBe(3);
     // Part 0: initial catalyze
-    expect(result.parts[0].template).toBe("catalyze");
-    expect(result.parts[0].hits).toBe(1);
+    expect(getOnlyParts(result)[0].template).toBe("catalyze");
+    expect(getOnlyParts(result)[0].hits).toBe(1);
     // Part 1 split: 1 catalyze, 2 direct
-    expect(result.parts[1].template).toBe("catalyze");
-    expect(result.parts[1].hits).toBe(1);
-    expect(result.parts[2].template).toBe("direct");
-    expect(result.parts[2].hits).toBe(2);
+    expect(getOnlyParts(result)[1].template).toBe("catalyze");
+    expect(getOnlyParts(result)[1].hits).toBe(1);
+    expect(getOnlyParts(result)[2].template).toBe("direct");
+    expect(getOnlyParts(result)[2].hits).toBe(2);
   });
 
   it("partHits >= total hits is same as no partHits override", () => {
@@ -322,7 +330,7 @@ describe("partHits — multi-hit split", () => {
       { reaction: "aggravate", partHits: { 1: 5 } } // 5 > 3 thunderbolts
     );
     expect(overHits.totalDamage).toBeCloseTo(full.totalDamage, 2);
-    expect(overHits.parts.length).toBe(full.parts.length);
+    expect(getOnlyParts(overHits).length).toBe(getOnlyParts(full).length);
   });
 
   it("split damage sums correctly: partial = weighted reacting + non-reacting", () => {
@@ -348,8 +356,8 @@ describe("partHits — multi-hit split", () => {
     );
 
     // Initial hit (part 0) damage should be the same across all-aggravate and partial
-    const initialDmgFull = allAggravate.parts[0].damage;
-    const initialDmgPartial = partial.parts[0].damage;
+    const initialDmgFull = getOnlyParts(allAggravate)[0].damage;
+    const initialDmgPartial = getOnlyParts(partial)[0].damage;
     expect(initialDmgPartial).toBeCloseTo(initialDmgFull, 2);
 
     // Partial total should be between none and full aggravate
@@ -371,13 +379,13 @@ describe("partHits — multi-hit split", () => {
     );
     // Part 0: disabled → direct (1 hit)
     // Part 1 split: 1 catalyze + 2 direct
-    expect(result.parts.length).toBe(3);
-    expect(result.parts[0].template).toBe("direct");
-    expect(result.parts[0].hits).toBe(1);
-    expect(result.parts[1].template).toBe("catalyze");
-    expect(result.parts[1].hits).toBe(1);
-    expect(result.parts[2].template).toBe("direct");
-    expect(result.parts[2].hits).toBe(2);
+    expect(getOnlyParts(result).length).toBe(3);
+    expect(getOnlyParts(result)[0].template).toBe("direct");
+    expect(getOnlyParts(result)[0].hits).toBe(1);
+    expect(getOnlyParts(result)[1].template).toBe("catalyze");
+    expect(getOnlyParts(result)[1].hits).toBe(1);
+    expect(getOnlyParts(result)[2].template).toBe("direct");
+    expect(getOnlyParts(result)[2].hits).toBe(2);
   });
 
   it("disabled part ignores partHits override for that part", () => {
@@ -394,10 +402,10 @@ describe("partHits — multi-hit split", () => {
     );
     // Part 0: catalyze (1 hit)
     // Part 1: all 3 hits direct (disabled overrides partHits)
-    expect(result.parts.length).toBe(2);
-    expect(result.parts[0].template).toBe("catalyze");
-    expect(result.parts[1].template).toBe("direct");
-    expect(result.parts[1].hits).toBe(3);
+    expect(getOnlyParts(result).length).toBe(2);
+    expect(getOnlyParts(result)[0].template).toBe("catalyze");
+    expect(getOnlyParts(result)[1].template).toBe("direct");
+    expect(getOnlyParts(result)[1].hits).toBe(3);
   });
 });
 
@@ -465,7 +473,7 @@ describe("getDamageResult matches getDisplayResult total damage", () => {
         override
       );
       // Sum display parts manually
-      const displayTotal = display.parts.reduce(
+      const displayTotal = getOnlyParts(display).reduce(
         (sum, dp) => sum + dp.damage * (dp.hits ?? 1),
         0
       );

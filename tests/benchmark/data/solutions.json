@@ -861,6 +861,41 @@
           "foundAt": "2026-03-23T05:59:09.883Z",
           "algorithm": "v2",
           "solveTimeSec": 22.182787
+        },
+        {
+          "artifactAssignment": {
+            "nefer": {
+              "flower": "artifact-1434",
+              "plume": "artifact-1141",
+              "sands": "artifact-1485",
+              "goblet": "artifact-1537",
+              "circlet": "artifact-1293"
+            },
+            "columbina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1422",
+              "sands": "artifact-1153",
+              "goblet": "artifact-1409",
+              "circlet": "artifact-1334"
+            },
+            "lauma": {
+              "flower": "artifact-1430",
+              "plume": "artifact-225",
+              "sands": "artifact-405",
+              "goblet": "artifact-246",
+              "circlet": "artifact-238"
+            },
+            "nilou": {
+              "flower": "artifact-838",
+              "plume": "artifact-1995",
+              "sands": "artifact-1507",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1579"
+            }
+          },
+          "recordedDamage": 3907939.8087223438,
+          "foundAt": "2026-03-23T17:42:10.230Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -1018,6 +1053,41 @@
           "foundAt": "2026-03-23T07:22:23.890Z",
           "algorithm": "v2",
           "solveTimeSec": 24.451661100000003
+        },
+        {
+          "artifactAssignment": {
+            "nefer": {
+              "flower": "artifact-3",
+              "plume": "artifact-1141",
+              "sands": "artifact-1548",
+              "goblet": "artifact-1537",
+              "circlet": "artifact-1293"
+            },
+            "columbina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1422",
+              "sands": "artifact-1153",
+              "goblet": "artifact-1409",
+              "circlet": "artifact-1418"
+            },
+            "lauma": {
+              "flower": "artifact-252",
+              "plume": "artifact-214",
+              "sands": "artifact-405",
+              "goblet": "artifact-246",
+              "circlet": "artifact-707"
+            },
+            "nilou": {
+              "flower": "artifact-838",
+              "plume": "artifact-1995",
+              "sands": "artifact-1507",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1579"
+            }
+          },
+          "recordedDamage": 913524.3115299436,
+          "foundAt": "2026-03-23T17:42:11.150Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -1746,6 +1816,42 @@
           "foundAt": "2026-03-23T07:24:46.193Z",
           "algorithm": "v2",
           "solveTimeSec": 8.060108399999997
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 3652292.7784706834,
+          "foundAt": "2026-03-23T16:20:52.521Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.3923692
         }
       ]
     },
@@ -1973,6 +2079,77 @@
           "foundAt": "2026-03-23T07:25:01.422Z",
           "algorithm": "v2",
           "solveTimeSec": 7.488169200000004
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 608513.0008611328,
+          "foundAt": "2026-03-23T16:20:52.421Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1477830999999996
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-3",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-1052",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1726",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-187"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 518321.14550490887,
+          "foundAt": "2026-03-23T17:42:20.431Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -2200,6 +2377,77 @@
           "foundAt": "2026-03-23T07:25:09.057Z",
           "algorithm": "v2",
           "solveTimeSec": 7.632283800000005
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 6472487.401523463,
+          "foundAt": "2026-03-23T16:20:52.554Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1945396000000001
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-750",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-38",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-187"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 6472487.401523463,
+          "foundAt": "2026-03-23T17:42:08.005Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -2996,6 +3244,77 @@
           "foundAt": "2026-03-23T07:22:47.087Z",
           "algorithm": "v2",
           "solveTimeSec": 15.602732099999997
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-963",
+              "plume": "artifact-939",
+              "sands": "artifact-921",
+              "goblet": "artifact-557",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-721",
+              "sands": "artifact-884",
+              "goblet": "artifact-750",
+              "circlet": "artifact-899"
+            },
+            "xianyun": {
+              "flower": "artifact-168",
+              "plume": "artifact-158",
+              "sands": "artifact-164",
+              "goblet": "artifact-163",
+              "circlet": "artifact-1326"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 971102.0634472619,
+          "foundAt": "2026-03-23T16:20:53.495Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.7520755999999997
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-1228",
+              "plume": "artifact-924",
+              "sands": "artifact-921",
+              "goblet": "artifact-922",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-721",
+              "sands": "artifact-896",
+              "goblet": "artifact-754",
+              "circlet": "artifact-735"
+            },
+            "xianyun": {
+              "flower": "artifact-321",
+              "plume": "artifact-158",
+              "sands": "artifact-164",
+              "goblet": "artifact-163",
+              "circlet": "artifact-1367"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-38",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-187"
+            }
+          },
+          "recordedDamage": 889280.2509258819,
+          "foundAt": "2026-03-23T17:42:20.425Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -3476,6 +3795,77 @@
           "foundAt": "2026-03-23T07:22:49.642Z",
           "algorithm": "v2",
           "solveTimeSec": 15.546780400000003
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-950",
+              "plume": "artifact-939",
+              "sands": "artifact-921",
+              "goblet": "artifact-557",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-721",
+              "sands": "artifact-884",
+              "goblet": "artifact-750",
+              "circlet": "artifact-899"
+            },
+            "xianyun": {
+              "flower": "artifact-168",
+              "plume": "artifact-158",
+              "sands": "artifact-164",
+              "goblet": "artifact-163",
+              "circlet": "artifact-1326"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-889"
+            }
+          },
+          "recordedDamage": 1031936.5445151873,
+          "foundAt": "2026-03-23T16:20:54.007Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.8501255000000005
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-1228",
+              "plume": "artifact-924",
+              "sands": "artifact-921",
+              "goblet": "artifact-922",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-721",
+              "sands": "artifact-896",
+              "goblet": "artifact-754",
+              "circlet": "artifact-735"
+            },
+            "xianyun": {
+              "flower": "artifact-321",
+              "plume": "artifact-158",
+              "sands": "artifact-164",
+              "goblet": "artifact-163",
+              "circlet": "artifact-1367"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-38",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-187"
+            }
+          },
+          "recordedDamage": 959501.4278257438,
+          "foundAt": "2026-03-23T17:42:19.517Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -3632,6 +4022,41 @@
           "foundAt": "2026-03-22T16:02:06.638Z",
           "algorithm": "v2",
           "solveTimeSec": 44.884676600000006
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1228",
+              "plume": "artifact-853",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-819",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-1403",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-1985",
+              "sands": "artifact-386",
+              "goblet": "artifact-2315",
+              "circlet": "artifact-949"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            }
+          },
+          "recordedDamage": 1806529.4103162596,
+          "foundAt": "2026-03-23T17:42:34.360Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -3788,6 +4213,41 @@
           "foundAt": "2026-03-23T06:04:23.581Z",
           "algorithm": "v2",
           "solveTimeSec": 35.408892099999996
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1228",
+              "plume": "artifact-853",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-819",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-748",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            }
+          },
+          "recordedDamage": 1279990.376480321,
+          "foundAt": "2026-03-23T17:42:37.068Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -3944,6 +4404,41 @@
           "foundAt": "2026-03-22T15:31:22.738Z",
           "algorithm": "v2",
           "solveTimeSec": 52.3257708
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1709",
+              "plume": "artifact-1031",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-819",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-748",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            }
+          },
+          "recordedDamage": 3177018.4000715083,
+          "foundAt": "2026-03-23T17:42:39.403Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -4508,6 +5003,41 @@
           "foundAt": "2026-03-23T07:11:27.981Z",
           "algorithm": "v2",
           "solveTimeSec": 15.400505799999992
+        },
+        {
+          "artifactAssignment": {
+            "mualani": {
+              "flower": "artifact-1709",
+              "plume": "artifact-752",
+              "sands": "artifact-681",
+              "goblet": "artifact-338",
+              "circlet": "artifact-934"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "mavuika": {
+              "flower": "artifact-713",
+              "plume": "artifact-130",
+              "sands": "artifact-846",
+              "goblet": "artifact-847",
+              "circlet": "artifact-1079"
+            },
+            "xilonen": {
+              "flower": "artifact-1665",
+              "plume": "artifact-1985",
+              "sands": "artifact-1557",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-447"
+            }
+          },
+          "recordedDamage": 1369162.677448829,
+          "foundAt": "2026-03-23T17:42:46.354Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -4807,6 +5337,42 @@
           "foundAt": "2026-03-23T07:23:12.485Z",
           "algorithm": "v2",
           "solveTimeSec": 26.751144100000005
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-1228",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 1456716.763139294,
+          "foundAt": "2026-03-23T16:20:53.782Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1869474
         }
       ]
     },
@@ -5108,6 +5674,77 @@
           "foundAt": "2026-03-23T07:23:11.000Z",
           "algorithm": "v2",
           "solveTimeSec": 24.930282499999993
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-673",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-990"
+            },
+            "citlali": {
+              "flower": "artifact-877",
+              "plume": "artifact-913",
+              "sands": "artifact-801",
+              "goblet": "artifact-734",
+              "circlet": "artifact-735"
+            },
+            "xilonen": {
+              "flower": "artifact-1665",
+              "plume": "artifact-1995",
+              "sands": "artifact-416",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-1579"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 67339.44887284607,
+          "foundAt": "2026-03-23T16:20:53.728Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1490347000000005
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-3",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-677"
+            },
+            "citlali": {
+              "flower": "artifact-1430",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-700"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-1985",
+              "sands": "artifact-386",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-1695"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1010",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 66372.67287192147,
+          "foundAt": "2026-03-23T17:42:32.054Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -5407,6 +6044,42 @@
           "foundAt": "2026-03-23T07:23:13.176Z",
           "algorithm": "v2",
           "solveTimeSec": 26.9974718
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-1228",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 1134469.5627098228,
+          "foundAt": "2026-03-23T16:20:53.806Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1848418
         }
       ]
     },
@@ -5742,6 +6415,42 @@
           "foundAt": "2026-03-23T07:23:04.871Z",
           "algorithm": "v2",
           "solveTimeSec": 18.584685999999994
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-1228",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1449"
+            }
+          },
+          "recordedDamage": 1474374.068216576,
+          "foundAt": "2026-03-23T16:20:54.178Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1588727000000008
         }
       ]
     },
@@ -5899,6 +6608,77 @@
           "foundAt": "2026-03-23T07:23:08.928Z",
           "algorithm": "v2",
           "solveTimeSec": 21.83033869999999
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-673",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-990"
+            },
+            "citlali": {
+              "flower": "artifact-877",
+              "plume": "artifact-913",
+              "sands": "artifact-801",
+              "goblet": "artifact-734",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 68145.78665600659,
+          "foundAt": "2026-03-23T16:20:54.320Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.2533920000000007
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-3",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-677"
+            },
+            "citlali": {
+              "flower": "artifact-1430",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-700"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-759"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1010",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 67480.61131743451,
+          "foundAt": "2026-03-23T17:42:33.585Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -6198,6 +6978,42 @@
           "foundAt": "2026-03-23T07:23:06.125Z",
           "algorithm": "v2",
           "solveTimeSec": 18.9688966
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-1228",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1449"
+            }
+          },
+          "recordedDamage": 1385924.7008135072,
+          "foundAt": "2026-03-23T16:20:54.377Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1966023999999997
         }
       ]
     },
@@ -6921,6 +7737,77 @@
           "foundAt": "2026-03-23T07:25:31.271Z",
           "algorithm": "v2",
           "solveTimeSec": 12.686479999999982
+        },
+        {
+          "artifactAssignment": {
+            "clorinde": {
+              "flower": "artifact-565",
+              "plume": "artifact-551",
+              "sands": "artifact-548",
+              "goblet": "artifact-557",
+              "circlet": "artifact-558"
+            },
+            "durin": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "chevreuse": {
+              "flower": "artifact-692",
+              "plume": "artifact-852",
+              "sands": "artifact-1046",
+              "goblet": "artifact-414",
+              "circlet": "artifact-735"
+            },
+            "fischl": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1704",
+              "sands": "artifact-892",
+              "goblet": "artifact-890",
+              "circlet": "artifact-889"
+            }
+          },
+          "recordedDamage": 867917.1251479994,
+          "foundAt": "2026-03-23T16:20:55.064Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1952757
+        },
+        {
+          "artifactAssignment": {
+            "clorinde": {
+              "flower": "artifact-565",
+              "plume": "artifact-551",
+              "sands": "artifact-548",
+              "goblet": "artifact-557",
+              "circlet": "artifact-558"
+            },
+            "durin": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-777",
+              "goblet": "artifact-109",
+              "circlet": "artifact-1326"
+            },
+            "chevreuse": {
+              "flower": "artifact-1080",
+              "plume": "artifact-305",
+              "sands": "artifact-801",
+              "goblet": "artifact-750",
+              "circlet": "artifact-749"
+            },
+            "fischl": {
+              "flower": "artifact-197",
+              "plume": "artifact-761",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-806"
+            }
+          },
+          "recordedDamage": 860287.683425456,
+          "foundAt": "2026-03-23T17:42:44.347Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -7184,6 +8071,77 @@
           "foundAt": "2026-03-23T07:25:43.253Z",
           "algorithm": "v2",
           "solveTimeSec": 11.979780800000007
+        },
+        {
+          "artifactAssignment": {
+            "clorinde": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-548",
+              "goblet": "artifact-602",
+              "circlet": "artifact-1101"
+            },
+            "durin": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "chevreuse": {
+              "flower": "artifact-692",
+              "plume": "artifact-852",
+              "sands": "artifact-1046",
+              "goblet": "artifact-414",
+              "circlet": "artifact-735"
+            },
+            "fischl": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1704",
+              "sands": "artifact-892",
+              "goblet": "artifact-890",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 1568007.1372354324,
+          "foundAt": "2026-03-23T16:20:55.103Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0891314000000003
+        },
+        {
+          "artifactAssignment": {
+            "clorinde": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-548",
+              "goblet": "artifact-602",
+              "circlet": "artifact-1101"
+            },
+            "durin": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-777",
+              "goblet": "artifact-109",
+              "circlet": "artifact-1326"
+            },
+            "chevreuse": {
+              "flower": "artifact-1080",
+              "plume": "artifact-305",
+              "sands": "artifact-801",
+              "goblet": "artifact-750",
+              "circlet": "artifact-749"
+            },
+            "fischl": {
+              "flower": "artifact-197",
+              "plume": "artifact-761",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-806"
+            }
+          },
+          "recordedDamage": 1554959.7639239626,
+          "foundAt": "2026-03-23T17:42:46.715Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -7619,6 +8577,41 @@
           "foundAt": "2026-03-23T07:23:39.227Z",
           "algorithm": "v2",
           "solveTimeSec": 26.03404079999999
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-766",
+              "goblet": "artifact-559",
+              "circlet": "artifact-697"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1571",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-909"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1651",
+              "circlet": "artifact-1015"
+            }
+          },
+          "recordedDamage": 2531419.756211069,
+          "foundAt": "2026-03-23T17:42:55.085Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -7846,6 +8839,41 @@
           "foundAt": "2026-03-23T07:23:31.998Z",
           "algorithm": "v2",
           "solveTimeSec": 17.675872199999997
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-766",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-1985",
+              "sands": "artifact-386",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-1695"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1651",
+              "circlet": "artifact-1315"
+            }
+          },
+          "recordedDamage": 960525.5241022476,
+          "foundAt": "2026-03-23T17:42:48.759Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -8038,6 +9066,42 @@
           "foundAt": "2026-03-23T07:23:27.514Z",
           "algorithm": "v2",
           "solveTimeSec": 8.1130058
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-766",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "yelan": {
+              "flower": "artifact-3",
+              "plume": "artifact-483",
+              "sands": "artifact-204",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 1090040.465637328,
+          "foundAt": "2026-03-23T16:20:55.468Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.7568597999999993
         }
       ]
     },
@@ -8230,6 +9294,42 @@
           "foundAt": "2026-03-23T07:23:29.572Z",
           "algorithm": "v2",
           "solveTimeSec": 8.108036199999988
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-766",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "yelan": {
+              "flower": "artifact-3",
+              "plume": "artifact-483",
+              "sands": "artifact-204",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 489812.25512077584,
+          "foundAt": "2026-03-23T16:20:55.532Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.7885631999999996
         }
       ]
     },
@@ -8458,6 +9558,41 @@
           "foundAt": "2026-03-23T06:01:26.875Z",
           "algorithm": "v2",
           "solveTimeSec": 9.320659899999999
+        },
+        {
+          "artifactAssignment": {
+            "chiori": {
+              "flower": "artifact-1228",
+              "plume": "artifact-516",
+              "sands": "artifact-131",
+              "goblet": "artifact-504",
+              "circlet": "artifact-514"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-913",
+              "sands": "artifact-801",
+              "goblet": "artifact-685",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1219",
+              "sands": "artifact-470",
+              "goblet": "artifact-694",
+              "circlet": "artifact-479"
+            },
+            "gorou": {
+              "flower": "artifact-363",
+              "plume": "artifact-505",
+              "sands": "artifact-382",
+              "goblet": "artifact-515",
+              "circlet": "artifact-183"
+            }
+          },
+          "recordedDamage": 2513432.944963553,
+          "foundAt": "2026-03-23T17:42:58.191Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -9125,6 +10260,77 @@
           "foundAt": "2026-03-23T07:23:42.810Z",
           "algorithm": "v2",
           "solveTimeSec": 14.2414381
+        },
+        {
+          "artifactAssignment": {
+            "xianyun": {
+              "flower": "artifact-3",
+              "plume": "artifact-46",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-990"
+            },
+            "furina": {
+              "flower": "artifact-1460",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-215"
+            },
+            "faruzan": {
+              "flower": "artifact-729",
+              "plume": "artifact-130",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 368453.4175084545,
+          "foundAt": "2026-03-23T16:20:57.350Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.936184799999999
+        },
+        {
+          "artifactAssignment": {
+            "xianyun": {
+              "flower": "artifact-157",
+              "plume": "artifact-370",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-744"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1219",
+              "sands": "artifact-470",
+              "goblet": "artifact-694",
+              "circlet": "artifact-531"
+            },
+            "faruzan": {
+              "flower": "artifact-368",
+              "plume": "artifact-1728",
+              "sands": "artifact-892",
+              "goblet": "artifact-39",
+              "circlet": "artifact-759"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1010",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 282111.3703694764,
+          "foundAt": "2026-03-23T17:43:21.300Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -9282,6 +10488,77 @@
           "foundAt": "2026-03-23T07:23:36.708Z",
           "algorithm": "v2",
           "solveTimeSec": 5.591762000000003
+        },
+        {
+          "artifactAssignment": {
+            "furina": {
+              "flower": "artifact-963",
+              "plume": "artifact-924",
+              "sands": "artifact-921",
+              "goblet": "artifact-1356",
+              "circlet": "artifact-953"
+            },
+            "durin": {
+              "flower": "artifact-29",
+              "plume": "artifact-17",
+              "sands": "artifact-204",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-744"
+            },
+            "citlali": {
+              "flower": "artifact-877",
+              "plume": "artifact-913",
+              "sands": "artifact-801",
+              "goblet": "artifact-1040",
+              "circlet": "artifact-735"
+            },
+            "xianyun": {
+              "flower": "artifact-678",
+              "plume": "artifact-1627",
+              "sands": "artifact-291",
+              "goblet": "artifact-345",
+              "circlet": "artifact-899"
+            }
+          },
+          "recordedDamage": 2930917.6372664673,
+          "foundAt": "2026-03-23T16:20:55.881Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.4064591
+        },
+        {
+          "artifactAssignment": {
+            "furina": {
+              "flower": "artifact-3",
+              "plume": "artifact-924",
+              "sands": "artifact-921",
+              "goblet": "artifact-952",
+              "circlet": "artifact-953"
+            },
+            "durin": {
+              "flower": "artifact-363",
+              "plume": "artifact-1314",
+              "sands": "artifact-263",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1657"
+            },
+            "citlali": {
+              "flower": "artifact-1430",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-700"
+            },
+            "xianyun": {
+              "flower": "artifact-159",
+              "plume": "artifact-358",
+              "sands": "artifact-799",
+              "goblet": "artifact-163",
+              "circlet": "artifact-744"
+            }
+          },
+          "recordedDamage": 2702294.897947844,
+          "foundAt": "2026-03-23T17:43:01.863Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -9473,6 +10750,42 @@
           "foundAt": "2026-03-23T07:23:38.654Z",
           "algorithm": "v2",
           "solveTimeSec": 9.070310700000002
+        },
+        {
+          "artifactAssignment": {
+            "navia": {
+              "flower": "artifact-580",
+              "plume": "artifact-634",
+              "sands": "artifact-974",
+              "goblet": "artifact-152",
+              "circlet": "artifact-659"
+            },
+            "columbina": {
+              "flower": "artifact-1460",
+              "plume": "artifact-1422",
+              "sands": "artifact-1165",
+              "goblet": "artifact-1356",
+              "circlet": "artifact-69"
+            },
+            "xilonen": {
+              "flower": "artifact-1080",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-750",
+              "circlet": "artifact-706"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 974637.2641459286,
+          "foundAt": "2026-03-23T16:20:56.187Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.7266280999999999
         }
       ]
     },
@@ -9628,6 +10941,41 @@
           "foundAt": "2026-03-22T16:07:53.570Z",
           "algorithm": "v2",
           "solveTimeSec": 39.39503289999999
+        },
+        {
+          "artifactAssignment": {
+            "neuvillette": {
+              "flower": "artifact-501",
+              "plume": "artifact-589",
+              "sands": "artifact-1615",
+              "goblet": "artifact-480",
+              "circlet": "artifact-697"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-506",
+              "plume": "artifact-699",
+              "sands": "artifact-520",
+              "goblet": "artifact-107",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1067",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-479"
+            }
+          },
+          "recordedDamage": 2072903.074869783,
+          "foundAt": "2026-03-23T17:43:00.387Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -10112,6 +11460,42 @@
           "foundAt": "2026-03-23T07:23:55.776Z",
           "algorithm": "v2",
           "solveTimeSec": 17.356148799999996
+        },
+        {
+          "artifactAssignment": {
+            "lyney": {
+              "flower": "artifact-501",
+              "plume": "artifact-530",
+              "sands": "artifact-930",
+              "goblet": "artifact-359",
+              "circlet": "artifact-612"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-350",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "chevreuse": {
+              "flower": "artifact-380",
+              "plume": "artifact-219",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1315"
+            },
+            "fischl": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1704",
+              "sands": "artifact-892",
+              "goblet": "artifact-890",
+              "circlet": "artifact-617"
+            }
+          },
+          "recordedDamage": 182297.67200305444,
+          "foundAt": "2026-03-23T16:20:57.081Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0143136000000004
         }
       ]
     },
@@ -10233,6 +11617,42 @@
           "foundAt": "2026-03-23T07:23:56.634Z",
           "algorithm": "v2",
           "solveTimeSec": 17.969703999999997
+        },
+        {
+          "artifactAssignment": {
+            "lyney": {
+              "flower": "artifact-501",
+              "plume": "artifact-530",
+              "sands": "artifact-930",
+              "goblet": "artifact-359",
+              "circlet": "artifact-612"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-350",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "chevreuse": {
+              "flower": "artifact-380",
+              "plume": "artifact-219",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1315"
+            },
+            "fischl": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1704",
+              "sands": "artifact-892",
+              "goblet": "artifact-890",
+              "circlet": "artifact-617"
+            }
+          },
+          "recordedDamage": 256939.2477566211,
+          "foundAt": "2026-03-23T16:20:57.228Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0994110000000001
         }
       ]
     },
@@ -10354,6 +11774,42 @@
           "foundAt": "2026-03-23T07:23:55.657Z",
           "algorithm": "v2",
           "solveTimeSec": 16.416452300000003
+        },
+        {
+          "artifactAssignment": {
+            "lyney": {
+              "flower": "artifact-501",
+              "plume": "artifact-530",
+              "sands": "artifact-930",
+              "goblet": "artifact-359",
+              "circlet": "artifact-612"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-350",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "chevreuse": {
+              "flower": "artifact-380",
+              "plume": "artifact-219",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1315"
+            },
+            "fischl": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1704",
+              "sands": "artifact-892",
+              "goblet": "artifact-890",
+              "circlet": "artifact-617"
+            }
+          },
+          "recordedDamage": 381908.2543458714,
+          "foundAt": "2026-03-23T16:20:57.286Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1218976999999994
         }
       ]
     },
@@ -10617,6 +12073,41 @@
           "foundAt": "2026-03-23T07:21:52.193Z",
           "algorithm": "v2",
           "solveTimeSec": 2.4455919999999995
+        },
+        {
+          "artifactAssignment": {
+            "alhaitham": {
+              "flower": "artifact-243",
+              "plume": "artifact-1031",
+              "sands": "artifact-229",
+              "goblet": "artifact-241",
+              "circlet": "artifact-248"
+            },
+            "nahida": {
+              "flower": "artifact-1430",
+              "plume": "artifact-1424",
+              "sands": "artifact-405",
+              "goblet": "artifact-247",
+              "circlet": "artifact-707"
+            },
+            "kuki_shinobu": {
+              "flower": "artifact-281",
+              "plume": "artifact-307",
+              "sands": "artifact-280",
+              "goblet": "artifact-246",
+              "circlet": "artifact-285"
+            },
+            "xingqiu": {
+              "flower": "artifact-1228",
+              "plume": "artifact-2248",
+              "sands": "artifact-2329",
+              "goblet": "artifact-2316",
+              "circlet": "artifact-2193"
+            }
+          },
+          "recordedDamage": 117435.16604446879,
+          "foundAt": "2026-03-23T17:43:08.917Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -10844,6 +12335,41 @@
           "foundAt": "2026-03-23T07:23:51.286Z",
           "algorithm": "v2",
           "solveTimeSec": 8.462937299999991
+        },
+        {
+          "artifactAssignment": {
+            "alhaitham": {
+              "flower": "artifact-243",
+              "plume": "artifact-231",
+              "sands": "artifact-774",
+              "goblet": "artifact-241",
+              "circlet": "artifact-248"
+            },
+            "nahida": {
+              "flower": "artifact-1430",
+              "plume": "artifact-1424",
+              "sands": "artifact-405",
+              "goblet": "artifact-247",
+              "circlet": "artifact-707"
+            },
+            "kuki_shinobu": {
+              "flower": "artifact-281",
+              "plume": "artifact-307",
+              "sands": "artifact-280",
+              "goblet": "artifact-246",
+              "circlet": "artifact-285"
+            },
+            "xingqiu": {
+              "flower": "artifact-1228",
+              "plume": "artifact-2248",
+              "sands": "artifact-2329",
+              "goblet": "artifact-2316",
+              "circlet": "artifact-2193"
+            }
+          },
+          "recordedDamage": 363419.01032906363,
+          "foundAt": "2026-03-23T17:43:08.673Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -11415,6 +12941,42 @@
           "foundAt": "2026-03-23T07:24:02.518Z",
           "algorithm": "v2",
           "solveTimeSec": 11.008044900000009
+        },
+        {
+          "artifactAssignment": {
+            "nilou": {
+              "flower": "artifact-418",
+              "plume": "artifact-327",
+              "sands": "artifact-432",
+              "goblet": "artifact-775",
+              "circlet": "artifact-895"
+            },
+            "lauma": {
+              "flower": "artifact-1127",
+              "plume": "artifact-225",
+              "sands": "artifact-405",
+              "goblet": "artifact-247",
+              "circlet": "artifact-1648"
+            },
+            "nahida": {
+              "flower": "artifact-243",
+              "plume": "artifact-1729",
+              "sands": "artifact-204",
+              "goblet": "artifact-241",
+              "circlet": "artifact-215"
+            },
+            "sangonomiya_kokomi": {
+              "flower": "artifact-281",
+              "plume": "artifact-305",
+              "sands": "artifact-291",
+              "goblet": "artifact-295",
+              "circlet": "artifact-399"
+            }
+          },
+          "recordedDamage": 110747.70467656208,
+          "foundAt": "2026-03-23T16:20:57.035Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.43865749999999937
         }
       ]
     },
@@ -11677,6 +13239,42 @@
           "foundAt": "2026-03-23T07:25:51.484Z",
           "algorithm": "v2",
           "solveTimeSec": 8.22880680000002
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayaka": {
+              "flower": "artifact-26",
+              "plume": "artifact-193",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-63"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 1390233.6628476302,
+          "foundAt": "2026-03-23T16:20:58.496Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.9982353999999996
         }
       ]
     },
@@ -11976,6 +13574,77 @@
           "foundAt": "2026-03-23T07:25:59.730Z",
           "algorithm": "v2",
           "solveTimeSec": 8.24321829999998
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayaka": {
+              "flower": "artifact-26",
+              "plume": "artifact-25",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-127"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 7376835.830336507,
+          "foundAt": "2026-03-23T16:20:58.865Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0947078000000001
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayaka": {
+              "flower": "artifact-26",
+              "plume": "artifact-25",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-127"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-750",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-38",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-187"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 7376835.830336507,
+          "foundAt": "2026-03-23T17:43:32.414Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -12170,6 +13839,42 @@
           "foundAt": "2026-03-23T07:24:21.069Z",
           "algorithm": "v2",
           "solveTimeSec": 23.284555500000018
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-600",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-502",
+              "circlet": "artifact-494"
+            },
+            "columbina": {
+              "flower": "artifact-380",
+              "plume": "artifact-1729",
+              "sands": "artifact-1561",
+              "goblet": "artifact-1581",
+              "circlet": "artifact-69"
+            },
+            "xilonen": {
+              "flower": "artifact-1080",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-750",
+              "circlet": "artifact-706"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-727",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-618"
+            }
+          },
+          "recordedDamage": 375592.26480206713,
+          "foundAt": "2026-03-23T16:20:58.318Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1825201000000016
         }
       ]
     },
@@ -12292,6 +13997,42 @@
           "foundAt": "2026-03-23T07:24:10.700Z",
           "algorithm": "v2",
           "solveTimeSec": 12.78004830000001
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-535",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-345",
+              "circlet": "artifact-63"
+            },
+            "columbina": {
+              "flower": "artifact-380",
+              "plume": "artifact-1729",
+              "sands": "artifact-1561",
+              "goblet": "artifact-1581",
+              "circlet": "artifact-69"
+            },
+            "xilonen": {
+              "flower": "artifact-1080",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-750",
+              "circlet": "artifact-706"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-727",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-618"
+            }
+          },
+          "recordedDamage": 368783.024786739,
+          "foundAt": "2026-03-23T16:20:58.437Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.2022032
         }
       ]
     },
@@ -12414,6 +14155,42 @@
           "foundAt": "2026-03-23T07:24:10.695Z",
           "algorithm": "v2",
           "solveTimeSec": 12.732371499999994
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-535",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-345",
+              "circlet": "artifact-63"
+            },
+            "columbina": {
+              "flower": "artifact-380",
+              "plume": "artifact-1729",
+              "sands": "artifact-1561",
+              "goblet": "artifact-1581",
+              "circlet": "artifact-69"
+            },
+            "xilonen": {
+              "flower": "artifact-1080",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-750",
+              "circlet": "artifact-706"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-727",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-618"
+            }
+          },
+          "recordedDamage": 128373.49133827495,
+          "foundAt": "2026-03-23T16:20:58.555Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.2625426000000006
         }
       ]
     },
@@ -12641,6 +14418,42 @@
           "foundAt": "2026-03-23T07:24:53.932Z",
           "algorithm": "v2",
           "solveTimeSec": 7.73644279999999
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 1157724.8816906589,
+          "foundAt": "2026-03-23T16:20:52.471Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.2044674999999998
         }
       ]
     },
@@ -12832,6 +14645,77 @@
           "foundAt": "2026-03-23T07:22:22.531Z",
           "algorithm": "v2",
           "solveTimeSec": 22.979967399999996
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 3581695.817210412,
+          "foundAt": "2026-03-23T16:20:51.263Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.5167559000000002
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-1403",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-759"
+            }
+          },
+          "recordedDamage": 3581695.817210412,
+          "foundAt": "2026-03-23T17:42:22.438Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -12987,6 +14871,42 @@
           "foundAt": "2026-03-23T07:22:35.341Z",
           "algorithm": "v2",
           "solveTimeSec": 21.6587143
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 1142934.1813897216,
+          "foundAt": "2026-03-23T16:20:52.136Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1974042999999996
         }
       ]
     },
@@ -13178,6 +15098,42 @@
           "foundAt": "2026-03-23T07:22:35.418Z",
           "algorithm": "v2",
           "solveTimeSec": 21.376341299999996
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 563356.5998279148,
+          "foundAt": "2026-03-23T16:20:52.131Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1811552
         }
       ]
     },
@@ -13369,6 +15325,42 @@
           "foundAt": "2026-03-23T07:22:36.106Z",
           "algorithm": "v2",
           "solveTimeSec": 22.059208400000003
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 6569394.586177719,
+          "foundAt": "2026-03-23T16:20:52.153Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1815583
         }
       ]
     },
@@ -13560,6 +15552,42 @@
           "foundAt": "2026-03-23T07:22:47.144Z",
           "algorithm": "v2",
           "solveTimeSec": 22.3189807
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "kamisato_ayaka": {
+              "flower": "artifact-1008",
+              "plume": "artifact-377",
+              "sands": "artifact-1009",
+              "goblet": "artifact-685",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 3499106.066130941,
+          "foundAt": "2026-03-23T16:20:52.611Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.2266111000000006
         }
       ]
     },
@@ -13751,6 +15779,42 @@
           "foundAt": "2026-03-23T07:22:46.267Z",
           "algorithm": "v2",
           "solveTimeSec": 21.2664214
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "kamisato_ayaka": {
+              "flower": "artifact-1008",
+              "plume": "artifact-377",
+              "sands": "artifact-1009",
+              "goblet": "artifact-685",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 1122014.7742600464,
+          "foundAt": "2026-03-23T16:20:52.516Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1072718
         }
       ]
     },
@@ -13942,6 +16006,77 @@
           "foundAt": "2026-03-23T07:22:46.050Z",
           "algorithm": "v2",
           "solveTimeSec": 20.731494199999997
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "kamisato_ayaka": {
+              "flower": "artifact-1008",
+              "plume": "artifact-377",
+              "sands": "artifact-1009",
+              "goblet": "artifact-685",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 502863.17534982937,
+          "foundAt": "2026-03-23T16:20:52.493Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0624559999999996
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1726",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-187"
+            },
+            "kamisato_ayaka": {
+              "flower": "artifact-380",
+              "plume": "artifact-377",
+              "sands": "artifact-1009",
+              "goblet": "artifact-282",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 495552.36737515405,
+          "foundAt": "2026-03-23T17:42:09.078Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -14133,6 +16268,42 @@
           "foundAt": "2026-03-23T07:22:48.010Z",
           "algorithm": "v2",
           "solveTimeSec": 21.2090377
+        },
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "kamisato_ayaka": {
+              "flower": "artifact-1008",
+              "plume": "artifact-377",
+              "sands": "artifact-1009",
+              "goblet": "artifact-685",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 6576953.908093628,
+          "foundAt": "2026-03-23T16:20:52.558Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1169073000000003
         }
       ]
     },
@@ -14361,6 +16532,41 @@
           "foundAt": "2026-03-23T07:23:03.922Z",
           "algorithm": "v2",
           "solveTimeSec": 19.255155699999996
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1228",
+              "plume": "artifact-853",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-1985",
+              "sands": "artifact-386",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-1695"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1651",
+              "circlet": "artifact-1315"
+            }
+          },
+          "recordedDamage": 1579546.9771352326,
+          "foundAt": "2026-03-23T17:42:32.756Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -14589,6 +16795,77 @@
           "foundAt": "2026-03-23T07:23:11.615Z",
           "algorithm": "v2",
           "solveTimeSec": 26.674764000000003
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1709",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-127"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-748",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 1119909.9267704801,
+          "foundAt": "2026-03-23T16:20:53.704Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1799251
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1228",
+              "plume": "artifact-853",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1571",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-909"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1651",
+              "circlet": "artifact-1015"
+            }
+          },
+          "recordedDamage": 1103243.5324307552,
+          "foundAt": "2026-03-23T17:42:35.029Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -14817,6 +17094,77 @@
           "foundAt": "2026-03-23T07:23:11.684Z",
           "algorithm": "v2",
           "solveTimeSec": 26.525510699999998
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1709",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-127"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-748",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 2774706.9799849456,
+          "foundAt": "2026-03-23T16:20:53.690Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1593529000000002
+        },
+        {
+          "artifactAssignment": {
+            "mavuika": {
+              "flower": "artifact-1228",
+              "plume": "artifact-853",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1571",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-909"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1651",
+              "circlet": "artifact-1015"
+            }
+          },
+          "recordedDamage": 2733049.9324547295,
+          "foundAt": "2026-03-23T17:42:34.235Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -15009,6 +17357,77 @@
           "foundAt": "2026-03-23T07:22:59.883Z",
           "algorithm": "v2",
           "solveTimeSec": 11.861161399999997
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-673",
+              "plume": "artifact-366",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "mavuika": {
+              "flower": "artifact-171",
+              "plume": "artifact-913",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1315"
+            }
+          },
+          "recordedDamage": 1065825.641803734,
+          "foundAt": "2026-03-23T16:20:54.788Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.2856763999999994
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-673",
+              "plume": "artifact-366",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "mavuika": {
+              "flower": "artifact-197",
+              "plume": "artifact-670",
+              "sands": "artifact-1046",
+              "goblet": "artifact-1040",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-759"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 1065825.641803734,
+          "foundAt": "2026-03-23T17:42:44.298Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -15166,6 +17585,77 @@
           "foundAt": "2026-03-23T07:23:09.858Z",
           "algorithm": "v2",
           "solveTimeSec": 20.205895600000005
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-673",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-990"
+            },
+            "mavuika": {
+              "flower": "artifact-171",
+              "plume": "artifact-913",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 92324.76107891835,
+          "foundAt": "2026-03-23T16:20:54.998Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.4105325000000002
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-3",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-677"
+            },
+            "mavuika": {
+              "flower": "artifact-1228",
+              "plume": "artifact-670",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-759"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 91885.49127760377,
+          "foundAt": "2026-03-23T17:42:35.142Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -15358,6 +17848,42 @@
           "foundAt": "2026-03-23T07:23:11.657Z",
           "algorithm": "v2",
           "solveTimeSec": 11.762915400000006
+        },
+        {
+          "artifactAssignment": {
+            "chasca": {
+              "flower": "artifact-1228",
+              "plume": "artifact-722",
+              "sands": "artifact-1078",
+              "goblet": "artifact-1201",
+              "circlet": "artifact-1041"
+            },
+            "mavuika": {
+              "flower": "artifact-171",
+              "plume": "artifact-913",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1315"
+            }
+          },
+          "recordedDamage": 1008293.4326469081,
+          "foundAt": "2026-03-23T16:20:54.827Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.1625847000000002
         }
       ]
     },
@@ -15514,6 +18040,41 @@
           "foundAt": "2026-03-23T07:11:29.715Z",
           "algorithm": "v2",
           "solveTimeSec": 10.526987999999998
+        },
+        {
+          "artifactAssignment": {
+            "clorinde": {
+              "flower": "artifact-555",
+              "plume": "artifact-551",
+              "sands": "artifact-548",
+              "goblet": "artifact-557",
+              "circlet": "artifact-558"
+            },
+            "nahida": {
+              "flower": "artifact-252",
+              "plume": "artifact-225",
+              "sands": "artifact-405",
+              "goblet": "artifact-348",
+              "circlet": "artifact-234"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "fischl": {
+              "flower": "artifact-496",
+              "plume": "artifact-1219",
+              "sands": "artifact-470",
+              "goblet": "artifact-75",
+              "circlet": "artifact-479"
+            }
+          },
+          "recordedDamage": 319607.7280443408,
+          "foundAt": "2026-03-23T17:42:45.119Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -16162,6 +18723,42 @@
           "foundAt": "2026-03-23T07:23:34.159Z",
           "algorithm": "v2",
           "solveTimeSec": 16.04908099999999
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-766",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "xilonen": {
+              "flower": "artifact-676",
+              "plume": "artifact-841",
+              "sands": "artifact-1369",
+              "goblet": "artifact-685",
+              "circlet": "artifact-735"
+            },
+            "yelan": {
+              "flower": "artifact-3",
+              "plume": "artifact-483",
+              "sands": "artifact-204",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1315"
+            }
+          },
+          "recordedDamage": 1623303.4726989002,
+          "foundAt": "2026-03-23T16:20:55.465Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.8771901000000007
         }
       ]
     },
@@ -19252,6 +21849,41 @@
           "foundAt": "2026-03-23T07:12:08.190Z",
           "algorithm": "v2",
           "solveTimeSec": 12.4321725
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayato": {
+              "flower": "artifact-94",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-175",
+              "circlet": "artifact-697"
+            },
+            "nahida": {
+              "flower": "artifact-252",
+              "plume": "artifact-225",
+              "sands": "artifact-405",
+              "goblet": "artifact-348",
+              "circlet": "artifact-234"
+            },
+            "kuki_shinobu": {
+              "flower": "artifact-281",
+              "plume": "artifact-70",
+              "sands": "artifact-291",
+              "goblet": "artifact-295",
+              "circlet": "artifact-285"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            }
+          },
+          "recordedDamage": 473732.3515509796,
+          "foundAt": "2026-03-23T17:43:36.885Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -19671,6 +22303,42 @@
           "foundAt": "2026-03-23T07:24:13.556Z",
           "algorithm": "v2",
           "solveTimeSec": 15.832373499999987
+        },
+        {
+          "artifactAssignment": {
+            "arataki_itto": {
+              "flower": "artifact-1228",
+              "plume": "artifact-516",
+              "sands": "artifact-131",
+              "goblet": "artifact-504",
+              "circlet": "artifact-725"
+            },
+            "xilonen": {
+              "flower": "artifact-676",
+              "plume": "artifact-841",
+              "sands": "artifact-1369",
+              "goblet": "artifact-685",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "gorou": {
+              "flower": "artifact-113",
+              "plume": "artifact-776",
+              "sands": "artifact-1009",
+              "goblet": "artifact-1313",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 1945736.5126368525,
+          "foundAt": "2026-03-23T16:20:58.077Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.9550919999999987
         }
       ]
     },
@@ -19900,6 +22568,41 @@
           "foundAt": "2026-03-23T05:04:19.795Z",
           "algorithm": "v2",
           "solveTimeSec": 11.509425500000011
+        },
+        {
+          "artifactAssignment": {
+            "arataki_itto": {
+              "flower": "artifact-24",
+              "plume": "artifact-516",
+              "sands": "artifact-131",
+              "goblet": "artifact-504",
+              "circlet": "artifact-184"
+            },
+            "xilonen": {
+              "flower": "artifact-1665",
+              "plume": "artifact-670",
+              "sands": "artifact-801",
+              "goblet": "artifact-685",
+              "circlet": "artifact-735"
+            },
+            "albedo": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-1046",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "mona": {
+              "flower": "artifact-3",
+              "plume": "artifact-596",
+              "sands": "artifact-732",
+              "goblet": "artifact-742",
+              "circlet": "artifact-744"
+            }
+          },
+          "recordedDamage": 1590121.6283093067,
+          "foundAt": "2026-03-23T17:43:34.620Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -20128,6 +22831,41 @@
           "foundAt": "2026-03-23T07:24:21.940Z",
           "algorithm": "v2",
           "solveTimeSec": 23.763773499999996
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-3",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-134",
+              "circlet": "artifact-63"
+            },
+            "kujou_sara": {
+              "flower": "artifact-1228",
+              "plume": "artifact-596",
+              "sands": "artifact-732",
+              "goblet": "artifact-742",
+              "circlet": "artifact-989"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1103",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 216384.21892468582,
+          "foundAt": "2026-03-23T17:43:25.610Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -20284,6 +23022,41 @@
           "foundAt": "2026-03-23T07:24:12.996Z",
           "algorithm": "v2",
           "solveTimeSec": 14.354296099999992
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-3",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-134",
+              "circlet": "artifact-990"
+            },
+            "kujou_sara": {
+              "flower": "artifact-1228",
+              "plume": "artifact-596",
+              "sands": "artifact-732",
+              "goblet": "artifact-742",
+              "circlet": "artifact-989"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1103",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 468162.97001012095,
+          "foundAt": "2026-03-23T17:43:21.741Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -20440,6 +23213,41 @@
           "foundAt": "2026-03-23T07:24:14.298Z",
           "algorithm": "v2",
           "solveTimeSec": 14.397928599999998
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-3",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-134",
+              "circlet": "artifact-990"
+            },
+            "kujou_sara": {
+              "flower": "artifact-1228",
+              "plume": "artifact-596",
+              "sands": "artifact-732",
+              "goblet": "artifact-742",
+              "circlet": "artifact-989"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1103",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 162967.68271872052,
+          "foundAt": "2026-03-23T17:43:19.829Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -20739,6 +23547,41 @@
           "foundAt": "2026-03-23T07:24:08.153Z",
           "algorithm": "v2",
           "solveTimeSec": 7.893150599999993
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-3",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-134",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-623",
+              "plume": "artifact-596",
+              "sands": "artifact-1187",
+              "goblet": "artifact-825",
+              "circlet": "artifact-71"
+            },
+            "xingqiu": {
+              "flower": "artifact-1709",
+              "plume": "artifact-594",
+              "sands": "artifact-1186",
+              "goblet": "artifact-271",
+              "circlet": "artifact-607"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 129205.20574515857,
+          "foundAt": "2026-03-23T17:43:19.104Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -20895,6 +23738,41 @@
           "foundAt": "2026-03-23T07:24:06.642Z",
           "algorithm": "v2",
           "solveTimeSec": 4.111112399999998
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-3",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-134",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-623",
+              "plume": "artifact-596",
+              "sands": "artifact-1187",
+              "goblet": "artifact-825",
+              "circlet": "artifact-71"
+            },
+            "xingqiu": {
+              "flower": "artifact-1228",
+              "plume": "artifact-594",
+              "sands": "artifact-1186",
+              "goblet": "artifact-271",
+              "circlet": "artifact-744"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 216597.2736456773,
+          "foundAt": "2026-03-23T17:43:18.123Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -21051,6 +23929,41 @@
           "foundAt": "2026-03-23T07:24:10.775Z",
           "algorithm": "v2",
           "solveTimeSec": 4.124664600000004
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-3",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-134",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-623",
+              "plume": "artifact-596",
+              "sands": "artifact-1187",
+              "goblet": "artifact-825",
+              "circlet": "artifact-71"
+            },
+            "xingqiu": {
+              "flower": "artifact-1228",
+              "plume": "artifact-594",
+              "sands": "artifact-1186",
+              "goblet": "artifact-271",
+              "circlet": "artifact-744"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 75397.58167645238,
+          "foundAt": "2026-03-23T17:43:16.767Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -23407,6 +26320,42 @@
           "foundAt": "2026-03-23T07:24:36.334Z",
           "algorithm": "v2",
           "solveTimeSec": 22.77145240000001
+        },
+        {
+          "artifactAssignment": {
+            "ganyu": {
+              "flower": "artifact-26",
+              "plume": "artifact-25",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-127"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "venti": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1394",
+              "circlet": "artifact-15"
+            }
+          },
+          "recordedDamage": 75389.38154643765,
+          "foundAt": "2026-03-23T16:20:59.150Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.8187523000000001
         }
       ]
     },
@@ -23634,6 +26583,42 @@
           "foundAt": "2026-03-23T07:24:30.331Z",
           "algorithm": "v2",
           "solveTimeSec": 15.443989499999995
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-197",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-675",
+              "circlet": "artifact-205"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-217",
+              "plume": "artifact-360",
+              "sands": "artifact-263",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 102133.67481242814,
+          "foundAt": "2026-03-23T16:20:59.111Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.7357830000000013
         }
       ]
     },
@@ -23861,6 +26846,42 @@
           "foundAt": "2026-03-23T07:24:31.522Z",
           "algorithm": "v2",
           "solveTimeSec": 15.160499299999996
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-197",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-675",
+              "circlet": "artifact-205"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-217",
+              "plume": "artifact-360",
+              "sands": "artifact-263",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 183319.15374874376,
+          "foundAt": "2026-03-23T16:20:59.146Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.7025201000000015
         }
       ]
     },
@@ -24438,6 +27459,42 @@
           "foundAt": "2026-03-23T07:24:36.086Z",
           "algorithm": "v2",
           "solveTimeSec": 14.140447400000005
+        },
+        {
+          "artifactAssignment": {
+            "klee": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-697"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-350",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "chevreuse": {
+              "flower": "artifact-380",
+              "plume": "artifact-561",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1315"
+            },
+            "fischl": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1704",
+              "sands": "artifact-892",
+              "goblet": "artifact-890",
+              "circlet": "artifact-759"
+            }
+          },
+          "recordedDamage": 225427.84103230818,
+          "foundAt": "2026-03-23T16:20:59.703Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0948127999999997
         }
       ]
     },
@@ -25351,6 +28408,41 @@
           "foundAt": "2026-03-23T07:23:36.050Z",
           "algorithm": "v2",
           "solveTimeSec": 8.525402099999992
+        },
+        {
+          "artifactAssignment": {
+            "chiori": {
+              "flower": "artifact-1228",
+              "plume": "artifact-516",
+              "sands": "artifact-131",
+              "goblet": "artifact-504",
+              "circlet": "artifact-514"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-913",
+              "sands": "artifact-801",
+              "goblet": "artifact-750",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1219",
+              "sands": "artifact-470",
+              "goblet": "artifact-694",
+              "circlet": "artifact-479"
+            },
+            "gorou": {
+              "flower": "artifact-363",
+              "plume": "artifact-505",
+              "sands": "artifact-382",
+              "goblet": "artifact-515",
+              "circlet": "artifact-183"
+            }
+          },
+          "recordedDamage": 1787399.8721337968,
+          "foundAt": "2026-03-23T17:43:00.582Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -25698,6 +28790,77 @@
           "foundAt": "2026-03-23T07:24:36.569Z",
           "algorithm": "v2",
           "solveTimeSec": 27.302594100000018
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayaka": {
+              "flower": "artifact-26",
+              "plume": "artifact-25",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-127"
+            },
+            "escoffier": {
+              "flower": "artifact-363",
+              "plume": "artifact-671",
+              "sands": "artifact-801",
+              "goblet": "artifact-790",
+              "circlet": "artifact-700"
+            },
+            "furina": {
+              "flower": "artifact-380",
+              "plume": "artifact-38",
+              "sands": "artifact-892",
+              "goblet": "artifact-762",
+              "circlet": "artifact-187"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 2904421.0051819244,
+          "foundAt": "2026-03-23T16:20:59.078Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0774881999999997
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayaka": {
+              "flower": "artifact-26",
+              "plume": "artifact-25",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-127"
+            },
+            "escoffier": {
+              "flower": "artifact-363",
+              "plume": "artifact-724",
+              "sands": "artifact-1046",
+              "goblet": "artifact-750",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-38",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-187"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 2904421.0051819244,
+          "foundAt": "2026-03-23T17:43:33.944Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26047,6 +29210,41 @@
           "foundAt": "2026-03-23T07:22:23.634Z",
           "algorithm": "v2",
           "solveTimeSec": 24.2465689
+        },
+        {
+          "artifactAssignment": {
+            "nefer": {
+              "flower": "artifact-1434",
+              "plume": "artifact-1141",
+              "sands": "artifact-1548",
+              "goblet": "artifact-1537",
+              "circlet": "artifact-1293"
+            },
+            "columbina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1422",
+              "sands": "artifact-1153",
+              "goblet": "artifact-1409",
+              "circlet": "artifact-1418"
+            },
+            "lauma": {
+              "flower": "artifact-252",
+              "plume": "artifact-214",
+              "sands": "artifact-405",
+              "goblet": "artifact-246",
+              "circlet": "artifact-707"
+            },
+            "nilou": {
+              "flower": "artifact-838",
+              "plume": "artifact-1995",
+              "sands": "artifact-1507",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1579"
+            }
+          },
+          "recordedDamage": 35191.027930213066,
+          "foundAt": "2026-03-23T17:42:11.337Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26205,6 +29403,77 @@
           "foundAt": "2026-03-23T07:22:38.036Z",
           "algorithm": "v2",
           "solveTimeSec": 6.7054424999999975
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-963",
+              "plume": "artifact-924",
+              "sands": "artifact-921",
+              "goblet": "artifact-557",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-721",
+              "sands": "artifact-884",
+              "goblet": "artifact-750",
+              "circlet": "artifact-899"
+            },
+            "xianyun": {
+              "flower": "artifact-678",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-345",
+              "circlet": "artifact-1367"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 220609.78016706518,
+          "foundAt": "2026-03-23T16:20:52.380Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.7366572000000001
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-3",
+              "plume": "artifact-939",
+              "sands": "artifact-921",
+              "goblet": "artifact-922",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-721",
+              "sands": "artifact-896",
+              "goblet": "artifact-754",
+              "circlet": "artifact-735"
+            },
+            "xianyun": {
+              "flower": "artifact-321",
+              "plume": "artifact-158",
+              "sands": "artifact-799",
+              "goblet": "artifact-345",
+              "circlet": "artifact-9"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-38",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-187"
+            }
+          },
+          "recordedDamage": 184258.9974498054,
+          "foundAt": "2026-03-23T17:42:19.586Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26291,6 +29560,41 @@
           "foundAt": "2026-03-23T07:11:30.282Z",
           "algorithm": "v2",
           "solveTimeSec": 4.105661399999997
+        },
+        {
+          "artifactAssignment": {
+            "sethos": {
+              "flower": "artifact-1430",
+              "plume": "artifact-43",
+              "sands": "artifact-391",
+              "goblet": "artifact-424",
+              "circlet": "artifact-264"
+            },
+            "nahida": {
+              "flower": "artifact-249",
+              "plume": "artifact-225",
+              "sands": "artifact-405",
+              "goblet": "artifact-348",
+              "circlet": "artifact-1650"
+            },
+            "zhongli": {
+              "flower": "artifact-380",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-39",
+              "circlet": "artifact-617"
+            },
+            "fischl": {
+              "flower": "artifact-496",
+              "plume": "artifact-1219",
+              "sands": "artifact-470",
+              "goblet": "artifact-75",
+              "circlet": "artifact-479"
+            }
+          },
+          "recordedDamage": 30188.7627778959,
+          "foundAt": "2026-03-23T17:42:45.210Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26413,6 +29717,77 @@
           "foundAt": "2026-03-23T07:23:29.709Z",
           "algorithm": "v2",
           "solveTimeSec": 7.896945999999996
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-548",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-887",
+              "circlet": "artifact-760"
+            },
+            "yelan": {
+              "flower": "artifact-3",
+              "plume": "artifact-483",
+              "sands": "artifact-204",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 61157.88561515497,
+          "foundAt": "2026-03-23T16:20:55.645Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.8493352999999997
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-548",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-1700",
+              "circlet": "artifact-759"
+            },
+            "yelan": {
+              "flower": "artifact-339",
+              "plume": "artifact-79",
+              "sands": "artifact-646",
+              "goblet": "artifact-742",
+              "circlet": "artifact-744"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 61157.88561515497,
+          "foundAt": "2026-03-23T17:42:51.215Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26571,6 +29946,41 @@
           "foundAt": "2026-03-23T07:23:27.976Z",
           "algorithm": "v2",
           "solveTimeSec": 9.364355200000006
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-548",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-852",
+              "sands": "artifact-801",
+              "goblet": "artifact-790",
+              "circlet": "artifact-706"
+            },
+            "yelan": {
+              "flower": "artifact-339",
+              "plume": "artifact-79",
+              "sands": "artifact-646",
+              "goblet": "artifact-742",
+              "circlet": "artifact-744"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1102",
+              "circlet": "artifact-1099"
+            }
+          },
+          "recordedDamage": 81539.04459032454,
+          "foundAt": "2026-03-23T17:42:50.657Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26657,6 +30067,76 @@
           "foundAt": "2026-03-23T07:23:34.392Z",
           "algorithm": "v2",
           "solveTimeSec": 17.447069300000003
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-555",
+              "plume": "artifact-539",
+              "sands": "artifact-921",
+              "goblet": "artifact-559",
+              "circlet": "artifact-558"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-263",
+              "goblet": "artifact-690",
+              "circlet": "artifact-735"
+            },
+            "xilonen": {
+              "flower": "artifact-1665",
+              "plume": "artifact-1995",
+              "sands": "artifact-1571",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 132270.03725246235,
+          "foundAt": "2026-03-23T17:39:37.066Z",
+          "algorithm": "v1"
+        },
+        {
+          "artifactAssignment": {
+            "arlecchino": {
+              "flower": "artifact-565",
+              "plume": "artifact-539",
+              "sands": "artifact-548",
+              "goblet": "artifact-559",
+              "circlet": "artifact-697"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "xilonen": {
+              "flower": "artifact-269",
+              "plume": "artifact-1985",
+              "sands": "artifact-386",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-1695"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1651",
+              "circlet": "artifact-1315"
+            }
+          },
+          "recordedDamage": 140233.0594025481,
+          "foundAt": "2026-03-23T17:42:50.712Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26743,6 +30223,112 @@
           "foundAt": "2026-03-23T07:24:31.670Z",
           "algorithm": "v2",
           "solveTimeSec": 14.892153500000015
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-197",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-675",
+              "circlet": "artifact-205"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-217",
+              "plume": "artifact-360",
+              "sands": "artifact-263",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 21271.521466413455,
+          "foundAt": "2026-03-23T16:20:59.194Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.6945933000000004
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-94",
+              "plume": "artifact-223",
+              "sands": "artifact-921",
+              "goblet": "artifact-175",
+              "circlet": "artifact-93"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-217",
+              "plume": "artifact-360",
+              "sands": "artifact-263",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 18901.193551585737,
+          "foundAt": "2026-03-23T17:40:47.613Z",
+          "algorithm": "v1"
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-197",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-345",
+              "circlet": "artifact-205"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-623",
+              "plume": "artifact-596",
+              "sands": "artifact-1187",
+              "goblet": "artifact-825",
+              "circlet": "artifact-71"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1103",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 19433.785719568605,
+          "foundAt": "2026-03-23T17:43:26.245Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -26829,6 +30415,112 @@
           "foundAt": "2026-03-23T07:24:33.993Z",
           "algorithm": "v2",
           "solveTimeSec": 12.919141299999989
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-197",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-675",
+              "circlet": "artifact-205"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-217",
+              "plume": "artifact-360",
+              "sands": "artifact-263",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 22600.9915580643,
+          "foundAt": "2026-03-23T16:20:59.183Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.6540663000000004
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-94",
+              "plume": "artifact-223",
+              "sands": "artifact-921",
+              "goblet": "artifact-175",
+              "circlet": "artifact-93"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-217",
+              "plume": "artifact-360",
+              "sands": "artifact-263",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-379"
+            }
+          },
+          "recordedDamage": 20082.518148559848,
+          "foundAt": "2026-03-23T17:40:47.654Z",
+          "algorithm": "v1"
+        },
+        {
+          "artifactAssignment": {
+            "tartaglia": {
+              "flower": "artifact-197",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-345",
+              "circlet": "artifact-205"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-844",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            },
+            "xiangling": {
+              "flower": "artifact-623",
+              "plume": "artifact-596",
+              "sands": "artifact-1187",
+              "goblet": "artifact-825",
+              "circlet": "artifact-71"
+            },
+            "bennett": {
+              "flower": "artifact-313",
+              "plume": "artifact-1321",
+              "sands": "artifact-1018",
+              "goblet": "artifact-1103",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 20648.397327041643,
+          "foundAt": "2026-03-23T17:43:26.575Z",
+          "algorithm": "astar"
         }
       ]
     },
@@ -27037,6 +30729,41 @@
           "foundAt": "2026-03-23T07:10:51.644Z",
           "algorithm": "v2",
           "solveTimeSec": 2.790996299999999
+        },
+        {
+          "artifactAssignment": {
+            "ifa": {
+              "flower": "artifact-1685",
+              "plume": "artifact-1379",
+              "sands": "artifact-221",
+              "goblet": "artifact-1382",
+              "circlet": "artifact-876"
+            },
+            "ororon": {
+              "flower": "artifact-1709",
+              "plume": "artifact-829",
+              "sands": "artifact-780",
+              "goblet": "artifact-795",
+              "circlet": "artifact-739"
+            },
+            "furina": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1219",
+              "sands": "artifact-470",
+              "goblet": "artifact-694",
+              "circlet": "artifact-531"
+            },
+            "fischl": {
+              "flower": "artifact-496",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-194",
+              "circlet": "artifact-531"
+            }
+          },
+          "recordedDamage": 60520.60996314124,
+          "foundAt": "2026-03-23T17:42:19.645Z",
+          "algorithm": "astar"
         }
       ]
     },

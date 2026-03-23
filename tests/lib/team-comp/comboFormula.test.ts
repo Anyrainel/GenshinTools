@@ -23,6 +23,7 @@ import type {
   ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
@@ -288,7 +289,7 @@ describe("evaluateCombo", () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe("getComboDisplayResult", () => {
-  it("returns DisplayResult with empty parts array", () => {
+  it("returns DisplayResult with populated partsByFormula", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = dilucEmptySheets();
@@ -300,7 +301,9 @@ describe("getComboDisplayResult", () => {
     };
 
     const result = getComboDisplayResult(tb, combo, sheets, CTX);
-    expect(result.parts).toEqual([]);
+    const parts = result.partsByFormula[`diluc.${formulaId}`];
+    expect(parts).toBeDefined();
+    expect(parts!.length).toBeGreaterThanOrEqual(1);
   });
 
   it("totalDamage matches evaluateCombo", () => {
@@ -404,7 +407,7 @@ describe("runTeamOptimization — combo mode", () => {
     xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
   };
 
-  it("combo mode yields result with mode='combo' and bestComboResult", async () => {
+  it("combo mode yields result with bestComboResult", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
@@ -417,35 +420,31 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo },
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
       baseSheets: dilucEmptySheets(),
       perChar,
-      combo,
     };
 
     const results = await drain(runTeamOptimization(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     if (final.done) {
-      expect(final.mode).toBe("combo");
-      if (final.mode === "combo") {
-        expect(final.bestComboResult).toBeDefined();
-        expect(final.bestComboResult.lineDamages).toHaveLength(1);
-      }
+      expect(final.bestComboResult).toBeDefined();
+      expect(final.bestComboResult.lineDamages).toHaveLength(1);
     }
   });
 
-  it("single mode yields result with mode='single' and bestDamageResult", async () => {
+  it("single-formula combo yields result with bestComboResult", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo: singleFormulaCombo("diluc", formulaId) },
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -457,10 +456,7 @@ describe("runTeamOptimization — combo mode", () => {
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     if (final.done) {
-      expect(final.mode).toBe("single");
-      if (final.mode === "single") {
-        expect(final.bestDamageResult).toBeDefined();
-      }
+      expect(final.bestComboResult).toBeDefined();
     }
   });
 
@@ -482,7 +478,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId: dilucFormula,
+      formula: { combo },
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -491,7 +487,6 @@ describe("runTeamOptimization — combo mode", () => {
         diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
         xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
       },
-      combo,
     };
 
     const results = await drain(runTeamOptimization(opts));
@@ -528,7 +523,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo },
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -539,7 +534,6 @@ describe("runTeamOptimization — combo mode", () => {
       perChar: {
         diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       },
-      combo,
     };
 
     const results = await drain(runTeamOptimization(opts));
@@ -563,7 +557,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo },
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -571,7 +565,6 @@ describe("runTeamOptimization — combo mode", () => {
       perChar: {
         diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       },
-      combo,
     };
 
     const results = await drain(runTeamOptimization(opts));
@@ -590,17 +583,16 @@ describe("runGenerator — combo mode", () => {
     const formulaId = getFirstFormulaId(tb, "diluc");
 
     const combo: ComboFormula = {
-      id: "ideal-combo",
-      label: { zh: "理想", en: "Ideal" },
+      id: "gen-combo",
+      label: { zh: "生成", en: "Generated" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
 
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo },
       calcContext: CTX,
-      combo,
     };
 
     const results = await drain(runGenerator(opts));
@@ -610,29 +602,29 @@ describe("runGenerator — combo mode", () => {
     expect(final.comboResult!.totalDamage).toBeGreaterThan(0);
   });
 
-  it("without combo option, result does NOT include comboResult", async () => {
+  it("single-formula combo result includes comboResult", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo: singleFormulaCombo("diluc", formulaId) },
       calcContext: CTX,
     };
 
     const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
-    expect(final.comboResult).toBeUndefined();
+    expect(final.comboResult).toBeDefined();
   });
 
-  it("combo ideal gen damage should be > 0", async () => {
+  it("combo generator damage should be > 0", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
     const combo: ComboFormula = {
-      id: "ideal-dmg",
+      id: "gen-dmg",
       label: { zh: "伤害", en: "Damage" },
       lines: [{ charId: "diluc", formulaId, count: 3 }],
     };
@@ -640,9 +632,8 @@ describe("runGenerator — combo mode", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo },
       calcContext: CTX,
-      combo,
     };
 
     const results = await drain(runGenerator(opts));
@@ -708,7 +699,7 @@ describe("combo edge cases", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo },
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -718,7 +709,6 @@ describe("combo edge cases", () => {
         xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
         bennett: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       },
-      combo,
     };
 
     const results = await drain(runTeamOptimization(opts));
@@ -748,7 +738,7 @@ describe("single↔combo normalization equivalence", () => {
     xingqiu: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
   };
 
-  it("single mode and 1-line combo mode produce same bestDamage", async () => {
+  it("singleFormulaCombo and explicit 1-line combo produce same bestDamage", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const inventory = [
@@ -759,11 +749,11 @@ describe("single↔combo normalization equivalence", () => {
       makeArt("circlet"),
     ];
 
-    // Single mode (no combo)
+    // singleFormulaCombo helper
     const singleOpts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo: singleFormulaCombo("diluc", formulaId) },
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -777,7 +767,7 @@ describe("single↔combo normalization equivalence", () => {
     const singleFinal = singleResults[singleResults.length - 1];
     expect(singleFinal.done).toBe(true);
 
-    // 1-line combo mode (same formula, count=1)
+    // Explicit 1-line combo (same formula, count=1)
     const combo: ComboFormula = {
       id: "__equiv__",
       label: { zh: "", en: "" },
@@ -785,14 +775,13 @@ describe("single↔combo normalization equivalence", () => {
     };
     const comboOpts: TeamOptimizerOptions = {
       ...singleOpts,
-      combo,
+      formula: { combo },
     };
     const comboResults = await drain(runTeamOptimization(comboOpts));
     const comboFinal = comboResults[comboResults.length - 1];
     expect(comboFinal.done).toBe(true);
 
     if (singleFinal.done && comboFinal.done) {
-      // Both should produce the same bestDamage (or very close)
       const relErr =
         singleFinal.bestDamage === 0
           ? comboFinal.bestDamage === 0
@@ -804,7 +793,7 @@ describe("single↔combo normalization equivalence", () => {
     }
   });
 
-  it("single mode with reaction and 1-line combo with same reaction produce same damage", async () => {
+  it("combo with vaporize reaction via line and via reactionOverrides produce same damage", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const inventory = [
@@ -820,24 +809,9 @@ describe("single↔combo normalization equivalence", () => {
       diluc: StatSheet.fromArtifacts(inventory),
     };
 
-    // Single mode with vaporize
-    const singleOpts: TeamOptimizerOptions = {
-      teamBuild: tb,
-      carryCharId: "diluc",
-      formulaId,
-      inventory,
-      calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
-      baseSheets,
-      perChar,
-      reactionOverride: { reaction: "vaporize" },
-    };
-    const singleResults = await drain(runTeamOptimization(singleOpts));
-    const singleFinal = singleResults[singleResults.length - 1];
-
-    // Combo mode with vaporize via reactionOverrides
-    const combo: ComboFormula = {
-      id: "__equiv-rxn__",
+    // Combo with vaporize via line reaction
+    const comboWithLineRxn: ComboFormula = {
+      id: "__line-rxn__",
       label: { zh: "", en: "" },
       lines: [
         {
@@ -848,31 +822,53 @@ describe("single↔combo normalization equivalence", () => {
         },
       ],
     };
-    const comboOpts: TeamOptimizerOptions = {
+    const lineRxnOpts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formulaId,
+      formula: { combo: comboWithLineRxn },
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
       baseSheets,
       perChar,
-      combo,
-      reactionOverrides: { [`diluc.${formulaId}`]: { reaction: "vaporize" } },
     };
-    const comboResults = await drain(runTeamOptimization(comboOpts));
-    const comboFinal = comboResults[comboResults.length - 1];
+    const lineRxnResults = await drain(runTeamOptimization(lineRxnOpts));
+    const lineRxnFinal = lineRxnResults[lineRxnResults.length - 1];
 
-    expect(singleFinal.done).toBe(true);
-    expect(comboFinal.done).toBe(true);
-    if (singleFinal.done && comboFinal.done) {
+    // Combo with vaporize via reactionOverrides
+    const comboNoRxn: ComboFormula = {
+      id: "__override-rxn__",
+      label: { zh: "", en: "" },
+      lines: [{ charId: "diluc", formulaId, count: 1 }],
+    };
+    const overrideRxnOpts: TeamOptimizerOptions = {
+      teamBuild: tb,
+      carryCharId: "diluc",
+      formula: {
+        combo: comboNoRxn,
+        reactionOverrides: { [`diluc.${formulaId}`]: { reaction: "vaporize" } },
+      },
+      inventory,
+      calcContext: CTX,
+      globalConfig: GLOBAL_CONFIG,
+      baseSheets,
+      perChar,
+    };
+    const overrideRxnResults = await drain(
+      runTeamOptimization(overrideRxnOpts)
+    );
+    const overrideRxnFinal = overrideRxnResults[overrideRxnResults.length - 1];
+
+    expect(lineRxnFinal.done).toBe(true);
+    expect(overrideRxnFinal.done).toBe(true);
+    if (lineRxnFinal.done && overrideRxnFinal.done) {
       const relErr =
-        singleFinal.bestDamage === 0
-          ? comboFinal.bestDamage === 0
+        lineRxnFinal.bestDamage === 0
+          ? overrideRxnFinal.bestDamage === 0
             ? 0
             : Number.POSITIVE_INFINITY
-          : Math.abs(comboFinal.bestDamage - singleFinal.bestDamage) /
-            Math.abs(singleFinal.bestDamage);
+          : Math.abs(overrideRxnFinal.bestDamage - lineRxnFinal.bestDamage) /
+            Math.abs(lineRxnFinal.bestDamage);
       expect(relErr).toBeLessThan(1e-6);
     }
   });

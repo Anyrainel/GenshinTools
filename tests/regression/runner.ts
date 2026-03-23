@@ -1,7 +1,7 @@
 /**
- * Core runner for ideal-gen regression testing.
+ * Core runner for generator regression testing.
  *
- * Builds team configs from presets, runs ideal artifact generation in combo
+ * Builds team configs from presets, runs artifact generation in combo
  * mode, collects comprehensive results, serializes to a golden file format,
  * and provides diffing utilities.
  */
@@ -57,7 +57,7 @@ interface PresetTeam {
   opts?: Record<string, string>;
   minEr?: Record<string, number>;
   minCr?: Record<string, number>;
-  enemyElementAura?: string;
+  enemyAura?: string;
 }
 
 interface TeamCompData {
@@ -134,7 +134,7 @@ function parseArtifactSets(goalArt: ArtifactConfig | null): {
   return { artifactSetId, artifactHalfSetIds };
 }
 
-export interface IdealGenProblem {
+export interface GeneratorProblem {
   team: PresetTeam;
   configs: TeamSlotConfig[];
   teamBuild: TeamBuild;
@@ -145,10 +145,10 @@ export interface IdealGenProblem {
   setKeysByChar: Record<string, Record<Slot, string>>;
 }
 
-export function buildIdealGenProblem(
+export function buildGeneratorProblem(
   team: PresetTeam,
   rand: () => number
-): IdealGenProblem | null {
+): GeneratorProblem | null {
   const charIds = team.characters.filter((c): c is string => !!c);
   if (charIds.length === 0) return null;
 
@@ -200,7 +200,7 @@ export function buildIdealGenProblem(
   const teamBuild = new TeamBuild(
     configs,
     team.opts ?? {},
-    team.enemyElementAura as Element | undefined
+    team.enemyAura as Element | undefined
   );
 
   // Get all formulas
@@ -220,7 +220,7 @@ export function buildIdealGenProblem(
 
   const combo: ComboFormula = {
     id: `idealgen-test-${team.id}`,
-    label: { zh: "IdealGen Test", en: "IdealGen Test" },
+    label: { zh: "Generator Test", en: "Generator Test" },
     lines,
   };
 
@@ -251,8 +251,8 @@ function resolveHalfSetToFullId(halfSetId: string): string {
 
 // ─── Execution ───────────────────────────────────────────────────────────────
 
-export async function runIdealGenForTeam(
-  problem: IdealGenProblem
+export async function runGeneratorForTeam(
+  problem: GeneratorProblem
 ): Promise<GoldenTeamResult> {
   const {
     teamBuild,
@@ -266,9 +266,8 @@ export async function runIdealGenForTeam(
   const opts: GeneratorOptions = {
     teamBuild,
     carryCharId,
-    formulaId: firstCarryFormulaId,
     calcContext: DEFAULT_CALC_CONTEXT,
-    combo,
+    formula: { combo },
     perChar,
     setKeysByChar,
   };
@@ -283,7 +282,7 @@ export async function runIdealGenForTeam(
 
   if (!finalResult) {
     throw new Error(
-      `Ideal gen returned no result for team "${problem.team.name}"`
+      `Generator returned no result for team "${problem.team.name}"`
     );
   }
 
@@ -434,7 +433,7 @@ function sortStatKeys(keys: Set<StatKey>): StatKey[] {
 }
 
 function serializeTeamResult(
-  problem: IdealGenProblem,
+  problem: GeneratorProblem,
   gen: GeneratorResult,
   display: DisplayResult,
   charIds: string[],
@@ -480,9 +479,10 @@ function serializeTeamResult(
       }
     : { lineDamages: [], totalDamage: 0 };
 
-  // Display parts (include partialBuffs when present)
-  const parts = display.parts.map((p) => {
-    const entry: {
+  // Display parts per formula (include partialBuffs when present)
+  const partsByFormula: Record<
+    string,
+    {
       damage: number;
       template: string;
       hits?: number;
@@ -491,20 +491,36 @@ function serializeTeamResult(
         activatedHits: number;
         totalHits: number;
       }[];
-    } = {
-      damage: r4(p.damage),
-      template: p.template,
-    };
-    if (p.hits != null && p.hits > 1) entry.hits = p.hits;
-    if (p.partialBuffs && p.partialBuffs.length > 0) {
-      entry.partialBuffs = p.partialBuffs.map((pb) => ({
-        buffKey: pb.buffKey,
-        activatedHits: r4(pb.activatedHits),
-        totalHits: pb.totalHits,
-      }));
-    }
-    return entry;
-  });
+    }[]
+  > = {};
+  for (const [formulaKey, formulaParts] of Object.entries(
+    display.partsByFormula
+  )) {
+    partsByFormula[formulaKey] = formulaParts.map((p) => {
+      const entry: {
+        damage: number;
+        template: string;
+        hits?: number;
+        partialBuffs?: {
+          buffKey: string;
+          activatedHits: number;
+          totalHits: number;
+        }[];
+      } = {
+        damage: r4(p.damage),
+        template: p.template,
+      };
+      if (p.hits != null && p.hits > 1) entry.hits = p.hits;
+      if (p.partialBuffs && p.partialBuffs.length > 0) {
+        entry.partialBuffs = p.partialBuffs.map((pb) => ({
+          buffKey: pb.buffKey,
+          activatedHits: r4(pb.activatedHits),
+          totalHits: pb.totalHits,
+        }));
+      }
+      return entry;
+    });
+  }
 
   // Active buffs
   const activeBuffs = display.buffs
@@ -616,7 +632,7 @@ function serializeTeamResult(
     stats,
     display: {
       totalDamage: r4(display.totalDamage),
-      parts,
+      partsByFormula,
       activeBuffs,
       detailStats,
       maxStats,
@@ -662,16 +678,19 @@ export interface GoldenTeamResult {
   stats: Record<string, Record<string, number>>;
   display: {
     totalDamage: number;
-    parts: {
-      damage: number;
-      template: string;
-      hits?: number;
-      partialBuffs?: {
-        buffKey: string;
-        activatedHits: number;
-        totalHits: number;
-      }[];
-    }[];
+    partsByFormula: Record<
+      string,
+      {
+        damage: number;
+        template: string;
+        hits?: number;
+        partialBuffs?: {
+          buffKey: string;
+          activatedHits: number;
+          totalHits: number;
+        }[];
+      }[]
+    >;
     activeBuffs: GoldenBuff[];
     detailStats: Record<
       string,

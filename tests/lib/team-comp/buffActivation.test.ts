@@ -5,7 +5,7 @@
  * 2. getDisplayResult with userBuffOverrides — cold path display
  * 3. compileTeamDamage with partialBuffs — hot path AST compiler
  * 4. runTeamOptimization with partialBuffs — optimizer integration
- * 5. runGenerator (generate) — ideal artifact flow
+ * 5. runGenerator (generate) — artifact generation flow
  * 6. Combo mode — compileComboTeamDamage with buffOverrides
  */
 import { describe, expect, it } from "vitest";
@@ -30,7 +30,7 @@ import type {
   TeamOptimizerOptions,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import { buffSourceKey } from "@/lib/team-comp/types";
+import { buffSourceKey, singleFormulaCombo } from "@/lib/team-comp/types";
 import {
   drain,
   emptySheets,
@@ -40,6 +40,12 @@ import {
 } from "../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
+
+function getOnlyParts(r: {
+  partsByFormula: Record<string, unknown[]>;
+}): unknown[] {
+  return Object.values(r.partsByFormula)[0] ?? [];
+}
 
 const CTX: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
 
@@ -291,7 +297,10 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
     );
 
     // Part 0 should have partialBuffs annotation
-    const part0 = result.parts[0];
+    const parts = getOnlyParts(result) as {
+      partialBuffs?: { buffKey: string; activatedHits: number }[];
+    }[];
+    const part0 = parts[0];
     expect(part0.partialBuffs).toBeDefined();
     expect(part0.partialBuffs!.length).toBeGreaterThan(0);
     const annotation = part0.partialBuffs!.find(
@@ -547,18 +556,20 @@ describe("runTeamOptimization with partialBuffs", () => {
       makeArt("circlet", "crimson_witch_of_flames", "cr"),
     ];
 
-    // Run optimizer with partialBuffs — should complete without errors
+    // Run optimizer with buffOverrides — should complete without errors
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: carryId,
-      formulaId,
+      formula: {
+        combo: singleFormulaCombo(carryId, formulaId),
+        buffOverrides: { 0: specs },
+      },
       inventory,
       calcContext: CTX,
       globalConfig: { flatAtk: 80, flatHp: 30, flatDef: 10 },
       baseSheets: sheets,
       perChar: { diluc: { minEr: 1.0, minCr: 0 } },
       teamDeadlineMs: performance.now() + 10_000,
-      partialBuffs: specs,
     };
 
     const results = await drain(runTeamOptimization(opts));
@@ -603,21 +614,23 @@ describe("runTeamOptimization with partialBuffs", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: carryId,
-      formulaId,
+      formula: {
+        combo,
+        buffOverrides: {
+          0: [
+            {
+              buffKey: "character:bennett:Q",
+              partActivation: { 0: 0 },
+            },
+          ],
+        },
+      },
       inventory,
       calcContext: CTX,
       globalConfig: { flatAtk: 80, flatHp: 30, flatDef: 10 },
       baseSheets: sheets,
       perChar: { diluc: { minEr: 1.0, minCr: 0 } },
-      combo,
       teamDeadlineMs: performance.now() + 10_000,
-      // partialBuffs in combo mode — should not crash
-      partialBuffs: [
-        {
-          buffKey: "character:bennett:Q",
-          partActivation: { 0: 0 },
-        },
-      ],
     };
 
     const results = await drain(runTeamOptimization(opts));
@@ -637,7 +650,7 @@ describe("runGenerator with buff overrides", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: carryId,
-      formulaId,
+      formula: { combo: singleFormulaCombo(carryId, formulaId) },
       calcContext: CTX,
     };
 

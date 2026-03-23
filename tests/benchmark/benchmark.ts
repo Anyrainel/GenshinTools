@@ -203,7 +203,7 @@ interface CachedProblem {
   formulaLabel: string;
   configs: TeamSlotConfig[];
   combatOpts: Record<string, string>;
-  enemyElementAura?: string;
+  enemyAura?: string;
   calcContext: CalcContext;
   perChar: Record<string, CharOptConfig>;
 }
@@ -289,7 +289,7 @@ function evaluateAssignment(
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyElementAura as import("@/data/types").Element | undefined
+      team.enemyAura as import("@/data/types").Element | undefined
     );
 
     const calcContext: CalcContext = {
@@ -388,7 +388,7 @@ function checkConstraints(
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyElementAura as import("@/data/types").Element | undefined
+      team.enemyAura as import("@/data/types").Element | undefined
     );
 
     const calcContext: CalcContext = {
@@ -1576,7 +1576,7 @@ async function cmdRefresh(): Promise<void> {
         formulaLabel: label,
         configs,
         combatOpts: team.opts || {},
-        enemyElementAura: team.enemyElementAura,
+        enemyAura: team.enemyAura,
         calcContext,
         perChar,
       });
@@ -1983,7 +1983,7 @@ async function cmdCompare(opts: {
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyElementAura as import("@/data/types").Element | undefined
+      team.enemyAura as import("@/data/types").Element | undefined
     );
     const calcContext: CalcContext = {
       enemyLevel:
@@ -2297,7 +2297,7 @@ async function cmdCarryDiagnose(opts: {
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyElementAura as import("@/data/types").Element | undefined
+      team.enemyAura as import("@/data/types").Element | undefined
     );
     const calcContext: CalcContext = {
       enemyLevel:
@@ -2607,7 +2607,7 @@ async function cmdFuzz(opts: {
       teamBuild = new TeamBuild(
         prob.configs,
         prob.combatOpts,
-        prob.enemyElementAura as import("@/data/types").Element | undefined
+        prob.enemyAura as import("@/data/types").Element | undefined
       );
     } catch (e) {
       console.log(
@@ -2829,7 +2829,7 @@ async function cmdFuzzCombo(opts: {
       calcContext: CalcContext;
       teamName: string;
       combatOpts: Record<string, string>;
-      enemyElementAura?: string;
+      enemyAura?: string;
     }
   >();
   for (const prob of problemCache.problems) {
@@ -2853,7 +2853,7 @@ async function cmdFuzzCombo(opts: {
       calcContext: prob.calcContext,
       teamName: prob.teamName,
       combatOpts: prob.combatOpts,
-      enemyElementAura: prob.enemyElementAura,
+      enemyAura: prob.enemyAura,
     });
   }
 
@@ -2879,7 +2879,7 @@ async function cmdFuzzCombo(opts: {
       teamBuild = new TeamBuild(
         team.configs,
         team.combatOpts,
-        team.enemyElementAura as import("@/data/types").Element | undefined
+        team.enemyAura as import("@/data/types").Element | undefined
       );
     } catch (e) {
       console.log(

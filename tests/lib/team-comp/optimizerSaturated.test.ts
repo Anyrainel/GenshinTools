@@ -17,6 +17,7 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type { TeamSlotConfig } from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/team-comp/types";
 import "@/lib/team-comp/index";
 
 await preloadGameStats();
@@ -161,7 +162,7 @@ describe("Saturated character handling", () => {
     const gen = runTeamOptimization({
       teamBuild,
       carryCharId: "hu_tao",
-      formulaId,
+      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
       inventory,
       calcContext: { enemyLevel: 90, enemyRes: 10 },
       globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },

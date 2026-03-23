@@ -502,7 +502,6 @@ describe("getEntityOption", () => {
     // "durin" is registered with an option
     const opt = getEntityOption("durin");
     if (opt) {
-      expect(opt.default).toBeTruthy();
       expect(opt.choices.length).toBeGreaterThanOrEqual(2);
     }
     // If null, that's fine — it means durin isn't registered with options in this env

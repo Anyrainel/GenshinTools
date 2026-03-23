@@ -348,6 +348,177 @@ describe("migrateTeamStore", () => {
     ).toBeUndefined();
   });
 
+  it("migrates v5 → v6: renames investmentConfigs → analyzerConfigs", () => {
+    const configs = [
+      {
+        charId: "hu_tao",
+        rarity: 5,
+        startConstellation: 0,
+        startRefinement: 0,
+        maxConstellation: 6,
+        maxRefinement: 5,
+      },
+    ];
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          reactionOverrides: {},
+          selectedCombo: null,
+          formulaMode: "single",
+          extraBuffs: [],
+          investmentConfigs: configs,
+        }),
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 5);
+    const team = result.teams[0] as Team;
+
+    // v5→v6 renames, then v7→v8 converts to stored format (altWeapon only)
+    expect(team.analyzerConfigs).toEqual([
+      {
+        charId: "hu_tao",
+        altWeapon: undefined,
+        startConstellation: 0,
+        startRefinement: 0,
+        maxConstellation: 6,
+        maxRefinement: 5,
+      },
+    ]);
+    expect(
+      (team as unknown as Record<string, unknown>).investmentConfigs
+    ).toBeUndefined();
+  });
+
+  it("migrates v7 → current: converts analyzerConfigs to stored format (altWeapon only)", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          reactionOverrides: {},
+          selectedCombo: null,
+          formulaMode: "single",
+          extraBuffs: [],
+          analyzerConfigs: [
+            {
+              charId: "hu_tao",
+              rarity: 5,
+              weapon4Star: { id: "dragons_bane", refinement: 5 },
+              weapon5Star: { id: "staff_of_homa" },
+              startConstellation: 1,
+              startRefinement: 1,
+              maxConstellation: 6,
+              maxRefinement: 5,
+            },
+          ],
+        }),
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 7);
+    const team = result.teams[0] as Team;
+
+    // Roster weapon is "staff_of_homa" (from team.weapons[0]), so 5★ is roster → alt is the 4★
+    expect(team.analyzerConfigs).toEqual([
+      {
+        charId: "hu_tao",
+        altWeapon: { id: "dragons_bane", refinement: 5 },
+        startConstellation: 1,
+        startRefinement: 1,
+        maxConstellation: 6,
+        maxRefinement: 5,
+      },
+    ]);
+  });
+
+  it("migrates v7 → current: no alt weapon when only roster weapon exists", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          reactionOverrides: {},
+          selectedCombo: null,
+          formulaMode: "single",
+          extraBuffs: [],
+          analyzerConfigs: [
+            {
+              charId: "hu_tao",
+              rarity: 5,
+              weapon4Star: undefined,
+              weapon5Star: { id: "staff_of_homa" },
+              startConstellation: 0,
+              startRefinement: 1,
+              maxConstellation: 6,
+              maxRefinement: 5,
+            },
+          ],
+        }),
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 7);
+    const team = result.teams[0] as Team;
+
+    // weapon5Star matches roster → no alt
+    expect(team.analyzerConfigs).toEqual([
+      {
+        charId: "hu_tao",
+        altWeapon: undefined,
+        startConstellation: 0,
+        startRefinement: 1,
+        maxConstellation: 6,
+        maxRefinement: 5,
+      },
+    ]);
+  });
+
+  it("migrates v6 → current: renames idealSubstatBudget → substatBudget + enemyElementAura → enemyAura", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          reactionOverrides: {},
+          selectedCombo: null,
+          formulaMode: "single",
+          extraBuffs: [],
+          analyzerConfigs: [],
+          calcContext: {
+            enemyLevel: 110,
+            enemyRes: 0.1,
+            idealSubstatBudget: "9_7",
+          },
+          enemyElementAura: "Pyro",
+        }),
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 6);
+    const team = result.teams[0] as Team;
+
+    expect(team.calcContext?.substatBudget).toBe("9_7");
+    expect(
+      (team.calcContext as unknown as Record<string, unknown>)
+        .idealSubstatBudget
+    ).toBeUndefined();
+    expect(team.enemyAura).toBe("Pyro");
+    expect(
+      (team as unknown as Record<string, unknown>).enemyElementAura
+    ).toBeUndefined();
+  });
+
   it("full migration from v0 applies all steps", () => {
     const state = {
       teams: [

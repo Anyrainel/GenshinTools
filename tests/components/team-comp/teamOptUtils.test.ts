@@ -4,7 +4,6 @@ import type { OptionMap } from "@/lib/team-comp/damageModels";
 import {
   buildTeamConfigs,
   calcComboResults,
-  calcDisplayResult,
   detectEquippedSets,
   setsMatch,
   toStatSheets,
@@ -477,36 +476,6 @@ describe("toStatSheets", () => {
   it("returns empty record for all-null charIds", () => {
     const sheets = toStatSheets([null, null], {});
     expect(sheets).toEqual({});
-  });
-});
-
-// ── calcDisplayResult ────────────────────────────────────────────────────
-
-describe("calcDisplayResult", () => {
-  it("returns null when build is null", () => {
-    const result = calcDisplayResult(
-      null,
-      { charId: "hu_tao", formulaId: "E" },
-      {},
-      {
-        enemyLevel: 100,
-        enemyRes: 0.1,
-      }
-    );
-    expect(result).toBeNull();
-  });
-
-  it("returns null when formula is null", () => {
-    const result = calcDisplayResult(
-      {} as never,
-      null,
-      {},
-      {
-        enemyLevel: 100,
-        enemyRes: 0.1,
-      }
-    );
-    expect(result).toBeNull();
   });
 });
 
