@@ -20,14 +20,16 @@ import {
   runGenerator,
 } from "@/lib/team-comp/generator";
 import type {
+  BuffActivationMap,
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   ComboLine,
   DamageTag,
   DisplayResult,
   StatKey,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
+import { buffSourceKey } from "@/lib/team-comp/types";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -134,7 +136,7 @@ function parseArtifactSets(goalArt: ArtifactConfig | null): {
 
 export interface IdealGenProblem {
   team: PresetTeam;
-  configs: CharCompConfig[];
+  configs: TeamSlotConfig[];
   teamBuild: TeamBuild;
   combo: ComboFormula;
   carryCharId: string;
@@ -151,7 +153,7 @@ export function buildIdealGenProblem(
   if (charIds.length === 0) return null;
 
   // Build configs: lv100, C6, R5 for all
-  const configs: CharCompConfig[] = [];
+  const configs: TeamSlotConfig[] = [];
   const setKeysByChar: Record<string, Record<Slot, string>> = {};
 
   for (let i = 0; i < team.characters.length; i++) {
@@ -293,8 +295,22 @@ export async function runIdealGenForTeam(
     DEFAULT_CALC_CONTEXT
   );
 
+  // Compute combo-wide stack-limited buff allocation
+  const activeLines = combo.lines.filter((l) => l.count > 0);
+  const comboDefaults = teamBuild.getComboFormulaDefaults(
+    activeLines,
+    finalResult.sheetsByChar,
+    DEFAULT_CALC_CONTEXT
+  );
+
   const charIds = problem.configs.map((c) => c.charId);
-  return serializeTeamResult(problem, finalResult, displayResult, charIds);
+  return serializeTeamResult(
+    problem,
+    finalResult,
+    displayResult,
+    charIds,
+    comboDefaults
+  );
 }
 
 // ─── Serialization ───────────────────────────────────────────────────────────
@@ -421,7 +437,13 @@ function serializeTeamResult(
   problem: IdealGenProblem,
   gen: GeneratorResult,
   display: DisplayResult,
-  charIds: string[]
+  charIds: string[],
+  comboDefaults?: {
+    perLine: BuffActivationMap[];
+    stackLimited: import(
+      "@/lib/team-comp/stackAllocation"
+    ).StackLimitedBuffInfo[];
+  }
 ): GoldenTeamResult {
   // Artifacts
   const artifacts: GoldenTeamResult["artifacts"] = {};
@@ -458,13 +480,29 @@ function serializeTeamResult(
       }
     : { lineDamages: [], totalDamage: 0 };
 
-  // Display parts
+  // Display parts (include partialBuffs when present)
   const parts = display.parts.map((p) => {
-    const entry: { damage: number; template: string; hits?: number } = {
+    const entry: {
+      damage: number;
+      template: string;
+      hits?: number;
+      partialBuffs?: {
+        buffKey: string;
+        activatedHits: number;
+        totalHits: number;
+      }[];
+    } = {
       damage: r4(p.damage),
       template: p.template,
     };
     if (p.hits != null && p.hits > 1) entry.hits = p.hits;
+    if (p.partialBuffs && p.partialBuffs.length > 0) {
+      entry.partialBuffs = p.partialBuffs.map((pb) => ({
+        buffKey: pb.buffKey,
+        activatedHits: r4(pb.activatedHits),
+        totalHits: pb.totalHits,
+      }));
+    }
     return entry;
   });
 
@@ -539,6 +577,29 @@ function serializeTeamResult(
     }
   }
 
+  // Stack allocation: serialize per-buff combo-wide totals (for maxStacks validation)
+  let stackAllocation: GoldenTeamResult["stackAllocation"];
+  if (comboDefaults && comboDefaults.stackLimited.length > 0) {
+    stackAllocation = {};
+    for (const buffInfo of comboDefaults.stackLimited) {
+      const bKey = buffSourceKey(buffInfo.source);
+      // Sum per-line per-cast × count to get the total allocated across the combo
+      let totalAllocated = 0;
+      const activeLines = problem.combo.lines.filter((l) => l.count > 0);
+      for (let i = 0; i < activeLines.length; i++) {
+        const lineMap = comboDefaults.perLine[i];
+        if (!lineMap?.[bKey]) continue;
+        for (const perCast of Object.values(lineMap[bKey])) {
+          totalAllocated += perCast * activeLines[i].count;
+        }
+      }
+      stackAllocation[bKey] = {
+        maxStacks: buffInfo.maxStacks,
+        totalAllocated: r4(totalAllocated),
+      };
+    }
+  }
+
   return {
     teamName: problem.team.name || charIds.join(" / "),
     characters: charIds,
@@ -562,6 +623,7 @@ function serializeTeamResult(
       marginalGains,
       levelUpGains,
     },
+    ...(stackAllocation ? { stackAllocation } : {}),
   };
 }
 
@@ -600,7 +662,16 @@ export interface GoldenTeamResult {
   stats: Record<string, Record<string, number>>;
   display: {
     totalDamage: number;
-    parts: { damage: number; template: string; hits?: number }[];
+    parts: {
+      damage: number;
+      template: string;
+      hits?: number;
+      partialBuffs?: {
+        buffKey: string;
+        activatedHits: number;
+        totalHits: number;
+      }[];
+    }[];
     activeBuffs: GoldenBuff[];
     detailStats: Record<
       string,
@@ -613,6 +684,11 @@ export interface GoldenTeamResult {
     marginalGains: Record<string, Record<string, number>>;
     levelUpGains: Record<string, { gain: number; from: number; to: number }[]>;
   };
+  /** Per stack-limited buff: maxStacks cap and total allocated across combo. */
+  stackAllocation?: Record<
+    string,
+    { maxStacks: number; totalAllocated: number }
+  >;
 }
 
 // ─── Diffing ─────────────────────────────────────────────────────────────────
