@@ -437,8 +437,12 @@ function BaseGroup({
   return (
     <ParenGroup enabled={needsGrouping}>
       <ScalingZone p={p} hl={hl} t={t} />
-      <Op />
-      {hasBaseBonus && <BaseBonusZone p={p} hl={hl} t={t} />}
+      {hasBaseBonus && (
+        <>
+          <Op />
+          <BaseBonusZone p={p} hl={hl} t={t} />
+        </>
+      )}
       {isCatalyze && (
         <>
           <Op char="+" />

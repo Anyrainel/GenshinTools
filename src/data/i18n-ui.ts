@@ -25,7 +25,6 @@ export const i18nUiData = {
     constellationFormat: { en: "C{0}", zh: "{0}命" },
     refinementFormat: { en: "R{0}", zh: "精{0}" },
     constellationRefinementCompact: { en: "C{0}R{1}", zh: "{0}+{1}" },
-    constellationOnlyCompact: { en: "C{0}", zh: "{0}" },
     restore: { en: "Restore Preset", zh: "恢复预设" },
     gotIt: { en: "Got it", zh: "知道了" },
     save: { en: "Save", zh: "保存" },
@@ -734,7 +733,7 @@ export const i18nUiData = {
     base: { en: "Base", zh: "基础" },
     buffsLedger: { en: "Buffs & Effects Ledger", zh: "Buff 效果明细表" },
     showAllBuffs: { en: "Show all buffs", zh: "显示所有效果" },
-    teamResonance: { en: "Team Resonance", zh: "队伍共鸣" },
+    teamResonance: { en: "Team Resonance & Environment", zh: "队伍共鸣与环境" },
     nStacks: { en: "{0} stacks", zh: "{0}层" },
     noBuffsOriginate: { en: "No buffs originating", zh: "未提供 Buff 效果" },
     receiverSelf: { en: "Self", zh: "自身" },
@@ -968,6 +967,18 @@ export const i18nUiData = {
       en: "Run Analysis",
       zh: "开始分析",
     },
+    analyzerPhase1: {
+      en: "Generating artifacts…",
+      zh: "生成圣遗物中…",
+    },
+    analyzerPhase2: {
+      en: "Evaluating combinations…",
+      zh: "评估组合中…",
+    },
+    analyzerPhase3: {
+      en: "Optimizing paths…",
+      zh: "优化路径中…",
+    },
     analyzerChart: {
       en: "Chart",
       zh: "图表",
@@ -977,8 +988,8 @@ export const i18nUiData = {
       zh: "表格",
     },
     analyzerSequence: {
-      en: "Sequence",
-      zh: "顺序",
+      en: "Path",
+      zh: "路径",
     },
     analyzerMinConfig: {
       en: "Min",

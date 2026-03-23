@@ -1,8 +1,4 @@
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
@@ -11,6 +7,7 @@ import {
   formatReceiverLabel,
   getReceiverBadgeClasses,
   getSourceIcon,
+  getSourceName,
 } from "@/lib/team-comp/buffDisplayUtils";
 import { fmtOrigin, fmtStat } from "@/lib/team-comp/displayFormatters";
 import type {
@@ -78,11 +75,13 @@ function BuffChip({
           <div className="flex flex-col min-w-0 leading-tight gap-0.5 md:gap-1">
             <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
               <span className="font-bold text-xs md:text-sm text-foreground/90 truncate">
-                {source.type === "teamResonance"
-                  ? t.resonance(source.id) || t.ui("teamComp.teamResonance")
-                  : source.origin
-                    ? fmtOrigin(source.origin, t.lang)
-                    : t.ui("teamComp.base")}
+                {source.type === "extra"
+                  ? getSourceName(source, t)
+                  : source.type === "teamResonance"
+                    ? t.resonance(source.id) || t.ui("teamComp.teamResonance")
+                    : source.origin
+                      ? fmtOrigin(source.origin, t.lang)
+                      : t.ui("teamComp.base")}
               </span>
               {source.triggers?.map((trig) => (
                 <span
@@ -175,7 +174,9 @@ export function BuffLedger({ buffs, team, t }: Props) {
   const activeCount = buffs.filter((b) => b.active).length;
   const visibleBuffs = buffs.filter((b) => showAll || b.active);
 
-  const resonanceBuffs = visibleBuffs.filter((b) => !b.providerCharId);
+  const resonanceBuffs = visibleBuffs.filter(
+    (b) => !b.providerCharId || b.source.type === "extra"
+  );
 
   return (
     <Collapsible
@@ -183,7 +184,18 @@ export function BuffLedger({ buffs, team, t }: Props) {
       onOpenChange={setOpen}
       className="bg-black/15 border border-border/20 rounded-lg overflow-hidden"
     >
-      <CollapsibleTrigger className="flex items-center w-full px-2 py-2 md:px-4 md:py-3 hover:bg-white/5 transition-colors">
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setOpen(!open)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(!open);
+          }
+        }}
+        className="flex items-center w-full px-2 py-2 md:px-4 md:py-3 hover:bg-white/5 transition-colors cursor-pointer select-none"
+      >
         <div className="flex flex-1 items-center gap-1.5 md:gap-2">
           <span className="text-xs md:text-sm font-bold">
             {t.ui("teamComp.buffsLedger")}
@@ -214,7 +226,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
             open && "rotate-180"
           )}
         />
-      </CollapsibleTrigger>
+      </div>
 
       <CollapsibleContent>
         <div className="p-1 md:p-2 border-t border-border/10 flex flex-col gap-1 lg:gap-2 bg-black/5">
@@ -227,7 +239,11 @@ export function BuffLedger({ buffs, team, t }: Props) {
                 </span>
                 <span className="text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
                   {resonanceBuffs.filter((b) => b.active).length}/
-                  {buffs.filter((b) => !b.providerCharId).length}
+                  {
+                    buffs.filter(
+                      (b) => !b.providerCharId || b.source.type === "extra"
+                    ).length
+                  }
                 </span>
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">

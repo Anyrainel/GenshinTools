@@ -182,6 +182,7 @@ export const envBuffs: EnvBuff[] = [
   {
     id: "status_theater",
     category: "status",
+    imagePath: "/food/imaginarium_theater.webp",
     stats: [
       { key: "atk%", value: 0.2 },
       { key: "hp%", value: 0.2 },
@@ -191,6 +192,7 @@ export const envBuffs: EnvBuff[] = [
   {
     id: "status_rift",
     category: "status",
+    imagePath: "/food/stygian_onslaught.webp",
     stats: [
       { key: "atk%", value: 0.2 },
       { key: "hp%", value: 0.2 },
