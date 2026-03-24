@@ -1,5 +1,8 @@
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
-import { CharacterView } from "@/components/account-data/CharacterView";
+import {
+  CharacterView,
+  type CharacterViewHandle,
+} from "@/components/account-data/CharacterView";
 import { EvaluationView } from "@/components/account-data/EvaluationView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { RecommendationView } from "@/components/account-data/RecommendationView";
@@ -57,6 +60,7 @@ import {
   AlertTriangle,
   Database,
   Download,
+  FileDown,
   FileJson,
   Globe,
   HelpCircle,
@@ -150,6 +154,7 @@ export default function AccountDataPage() {
 
   // Control refs for ref-based dialog pattern
   const importRef = useRef<ControlHandle>(null);
+  const characterViewRef = useRef<CharacterViewHandle>(null);
 
   const setActiveTab = (tab: string) => {
     setSearchParams((prev) => {
@@ -435,6 +440,16 @@ export default function AccountDataPage() {
         onTrigger: () => importRef.current?.open(),
         tourStepId: "ad-import",
       },
+      ...(activeTab === "characters"
+        ? [
+            {
+              key: "print",
+              icon: FileDown,
+              label: t.ui("app.print"),
+              onTrigger: () => characterViewRef.current?.downloadImage(),
+            },
+          ]
+        : []),
       ...(activeTab === "characters" || activeTab === "inventory"
         ? [
             {
@@ -555,7 +570,11 @@ export default function AccountDataPage() {
       <Tabs value={activeTab} className="h-full overflow-hidden">
         <TabsContent value="characters" className="mt-0 h-full">
           {accountData ? (
-            <CharacterView scores={scores} isEditMode={isEditMode} />
+            <CharacterView
+              ref={characterViewRef}
+              scores={scores}
+              isEditMode={isEditMode}
+            />
           ) : (
             <NoDataPlaceholder
               t={t}

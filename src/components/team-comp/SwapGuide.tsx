@@ -1,20 +1,40 @@
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById, charactersById } from "@/data/constants";
-import type { AccountData, ArtifactData, Slot, SubStat } from "@/data/types";
+import {
+  artifactHalfSetsById,
+  artifactsById,
+  charactersById,
+  weaponsById,
+} from "@/data/constants";
+import type {
+  AccountData,
+  ArtifactData,
+  CharacterData,
+  Slot,
+  SubStat,
+} from "@/data/types";
 import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
 } from "@/lib/account-data/scoring/utils";
+import { downloadElementAsImage } from "@/lib/downloadImage";
+import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
-import { ArrowRightLeft, Check, ChevronDown, Package } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  ArrowRightLeft,
+  Check,
+  ChevronDown,
+  Download,
+  Package,
+} from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
 
@@ -23,7 +43,7 @@ type ArtifactStatus =
   | { type: "fromChar"; charId: string }
   | { type: "inventory" };
 
-function buildArtifactOwnerMap(
+export function buildArtifactOwnerMap(
   accountData: AccountData | null
 ): Map<string, string> {
   const map = new Map<string, string>();
@@ -36,7 +56,7 @@ function buildArtifactOwnerMap(
   return map;
 }
 
-function getArtifactStatus(
+export function getArtifactStatus(
   optimizedArt: ArtifactData | undefined,
   equippedArt: ArtifactData | undefined,
   charId: string,
@@ -76,6 +96,16 @@ export function SwapGuide({
   t,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  const handleDownload = useCallback(() => {
+    if (!exportRef.current) return;
+    const charNames = team.characters
+      .filter((id): id is string => id != null)
+      .map((id) => t.character(id))
+      .join("_");
+    downloadElementAsImage(exportRef.current, charNames, t);
+  }, [t, team.characters]);
 
   const ownerMap = useMemo(
     () => buildArtifactOwnerMap(accountData),
@@ -125,6 +155,47 @@ export function SwapGuide({
 
       <CollapsibleContent>
         <div className="border-t border-border/10 bg-black/5">
+          {/* Download button */}
+          <div className="flex justify-end px-2 pt-1.5">
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:text-cyan-200 transition-colors"
+              title={t.ui("teamComp.downloadSwapGuide")}
+            >
+              <Download className="w-3 h-3" />
+              <span className="hidden md:inline">
+                {t.ui("teamComp.downloadSwapGuide")}
+              </span>
+            </button>
+          </div>
+
+          {/* Hidden export container — icon headers + on-page slot rows */}
+          <div
+            style={{ position: "fixed", left: -9999, top: 0 }}
+            aria-hidden="true"
+          >
+            <div ref={exportRef} style={{ width: 1400 }}>
+              <div className="grid grid-cols-4 gap-px bg-border/10">
+                {team.characters.map((charId, i) => {
+                  if (!charId) return <div key={i} />;
+                  return (
+                    <ExportColumn
+                      key={charId}
+                      charId={charId}
+                      team={team}
+                      equipped={equippedArtifactsByChar[charId] ?? {}}
+                      optimized={optimizedArtifactsByChar[charId] ?? {}}
+                      ownerMap={ownerMap}
+                      accountData={accountData}
+                      t={t}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {/* 2x2 on small screens, 4x1 on large — same as StatSheetPanel */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2 p-1 md:p-2">
             {team.characters.map((charId, i) => {
@@ -216,7 +287,7 @@ function CharacterSwapColumn({
 
 // ─── Per-slot row: two-column layout ───
 
-function SlotRow({
+export function SlotRow({
   artifact,
   slot,
   status,
@@ -270,7 +341,7 @@ function SlotRow({
 
         {/* Slot name + status badge */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] md:text-[11px] lg:text-xs text-foreground/80 capitalize">
+          <span className="text-[10px] md:text-[11px] lg:text-xs text-foreground/80 capitalize whitespace-nowrap shrink-0">
             {t.slot(slot)}
           </span>
           <StatusBadge status={status} t={t} />
@@ -354,7 +425,7 @@ function StatusBadge({
 }) {
   if (status.type === "same") {
     return (
-      <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-green-400 font-medium leading-none">
+      <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-green-400 font-medium leading-none whitespace-nowrap">
         <Check className="w-2.5 h-2.5 lg:w-3 lg:h-3 shrink-0" />
         <span className="hidden md:inline">{t.ui("accountData.equipped")}</span>
       </div>
@@ -363,7 +434,7 @@ function StatusBadge({
 
   if (status.type === "fromChar") {
     return (
-      <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-amber-400 font-medium leading-none">
+      <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-amber-400 font-medium leading-none whitespace-nowrap">
         <ArrowRightLeft className="w-2.5 h-2.5 lg:w-3 lg:h-3 shrink-0" />
         <span className="hidden md:inline truncate">
           {t.character(status.charId)}
@@ -373,11 +444,154 @@ function StatusBadge({
   }
 
   return (
-    <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-sky-400 font-medium leading-none">
+    <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] lg:text-xs text-sky-400 font-medium leading-none whitespace-nowrap">
       <Package className="w-2.5 h-2.5 lg:w-3 lg:h-3 shrink-0" />
       <span className="hidden md:inline">
         {t.ui("teamComp.swapStatusInventory")}
       </span>
+    </div>
+  );
+}
+
+// ─── Export-only column: icon header + on-page slot rows ───
+
+function resolveBuildInfo(
+  charId: string,
+  team: Team,
+  accountData: AccountData | null
+) {
+  const acctChar = accountData?.characters.find(
+    (c: CharacterData) => c.key === charId
+  );
+  const charLevel =
+    team.opts?.[`${charId}.overrideLevel`] !== undefined
+      ? Number(team.opts[`${charId}.overrideLevel`])
+      : acctChar
+        ? Number(getCharacterLevelTier(acctChar.level))
+        : 90;
+  const charConst =
+    team.opts?.[`${charId}.overrideConstellation`] !== undefined
+      ? Number(team.opts[`${charId}.overrideConstellation`])
+      : (acctChar?.constellation ?? 0);
+  const idx = team.characters.indexOf(charId);
+  const weaponId = idx >= 0 ? team.weapons[idx] : null;
+  let defaultRefine = 1;
+  if (weaponId && accountData) {
+    const refinements: number[] = [];
+    for (const c of accountData.characters) {
+      if (c.weapon?.key === weaponId) refinements.push(c.weapon.refinement);
+    }
+    for (const w of accountData.extraWeapons) {
+      if (w.key === weaponId) refinements.push(w.refinement);
+    }
+    if (refinements.length > 0) defaultRefine = Math.max(...refinements);
+  }
+  const weaponRefine =
+    team.opts?.[`${charId}.overrideRefinement`] !== undefined
+      ? Number(team.opts[`${charId}.overrideRefinement`])
+      : defaultRefine;
+  const artConfig = idx >= 0 ? team.artifacts[idx] : null;
+  return { charLevel, charConst, weaponId, weaponRefine, artConfig };
+}
+
+export function ExportColumn({
+  charId,
+  team,
+  equipped,
+  optimized,
+  ownerMap,
+  accountData,
+  t,
+}: {
+  charId: string;
+  team: Team;
+  equipped: Record<string, ArtifactData>;
+  optimized: Record<string, ArtifactData>;
+  ownerMap: Map<string, string>;
+  accountData: AccountData | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const char = charactersById[charId];
+  const { charLevel, charConst, weaponId, weaponRefine, artConfig } =
+    resolveBuildInfo(charId, team, accountData);
+  const weapon = weaponId ? weaponsById[weaponId] : null;
+
+  return (
+    <div className="flex flex-col overflow-hidden">
+      {/* Build info header — icons only */}
+      <div className="flex items-end gap-4 px-4 py-2 bg-black/10">
+        {char && (
+          <ItemIcon
+            imagePath={char.imagePath}
+            rarity={char.rarity}
+            badge={`C${charConst}`}
+            level={`Lv.${charLevel}`}
+            size="lg"
+            characterId={charId}
+          />
+        )}
+        {weapon && (
+          <ItemIcon
+            imagePath={weapon.imagePath}
+            rarity={weapon.rarity}
+            badge={`R${weaponRefine}`}
+            level="Lv.90"
+            size="md"
+          />
+        )}
+        {artConfig && artConfig.type === "4pc" && (
+          <ItemIcon
+            imagePath={artifactsById[artConfig.setId]?.imagePaths?.flower ?? ""}
+            rarity={5}
+            size="sm"
+          />
+        )}
+        {artConfig && artConfig.type === "2pc+2pc" && (
+          <ItemIcon
+            imagePath={
+              (
+                artifactsById[artConfig.id1] ??
+                artifactHalfSetsById[artConfig.id1]
+              )?.imagePaths?.flower ?? ""
+            }
+            imagePath2={
+              (
+                artifactsById[artConfig.id2] ??
+                artifactHalfSetsById[artConfig.id2]
+              )?.imagePaths?.flower ?? ""
+            }
+            size="sm"
+          />
+        )}
+      </div>
+
+      {/* Artifact slot rows — same components as on-page */}
+      <div className="flex flex-col divide-y divide-border">
+        {SLOTS.map((slot) => {
+          const optArt = optimized[slot];
+          const eqArt = equipped[slot];
+          const status = getArtifactStatus(optArt, eqArt, charId, ownerMap);
+          if (!optArt) {
+            return (
+              <div
+                key={slot}
+                className="px-2 py-1.5 flex items-center justify-center text-[10px] text-muted-foreground"
+              >
+                —
+              </div>
+            );
+          }
+          return (
+            <SlotRow
+              key={slot}
+              artifact={optArt}
+              slot={slot}
+              status={status}
+              t={t}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

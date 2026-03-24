@@ -4,14 +4,10 @@ import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDe
 import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
 import { WeightsView } from "@/components/artifact-builds/WeightsView";
 
-// ... (imports are mostly fine from previous step, just adding ArtifactBuildsView back)
-
-// Skipping re-importing everything, just targeting the file content fix.
-// Actually replace_file_content replaces the block.
-// Let's use multi_replace to fix specific areas.
 import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import { captureWithBranding } from "@/components/shared/ExportBranding";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
@@ -31,10 +27,10 @@ import {
   createBuildExportPayloadV5,
   serializeBuildExportPayload,
 } from "@/lib/artifact-builds/buildUtils";
+import { downloadElementAsImage } from "@/lib/downloadImage";
 import { loadPresetMetadata } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { toPng } from "html-to-image";
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -137,41 +133,13 @@ export default function ArtifactBuildsPage() {
   );
 
   const handleDownloadImage = useCallback(async () => {
-    if (!computeContentRef.current) return;
-
-    try {
-      const loadingToast = toast.loading(t.ui("app.generatingImage"));
-
-      // Add a small delay to allow toast to show
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const element = computeContentRef.current;
-      const { scrollWidth, scrollHeight } = element;
-
-      const dataUrl = await toPng(element, {
-        cacheBust: true,
-        backgroundColor: "#10141d", // Match the dark theme background
-        width: scrollWidth,
-        height: scrollHeight,
-        pixelRatio: 2,
-        style: {
-          // Explicitly set width/height in style to prevent reflow during capture
-          width: `${scrollWidth}px`,
-          height: `${scrollHeight}px`,
-        },
-      });
-
-      const link = document.createElement("a");
-      link.download = `artifact-configs-${new Date().toISOString().split("T")[0]}.png`;
-      link.href = dataUrl;
-      link.click();
-
-      toast.dismiss(loadingToast);
-      toast.success(t.ui("app.imageGenerated"));
-    } catch (err) {
-      console.error(err);
-      toast.error(t.ui("app.imageGenerationFailed"));
-    }
+    const content = computeContentRef.current;
+    if (!content) return;
+    await captureWithBranding(
+      content,
+      (wrapper) => downloadElementAsImage(wrapper, "artifact-configs", t),
+      { minWidth: 1200 }
+    );
   }, [t]);
 
   const handleExportTrigger = useCallback(() => {

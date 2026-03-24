@@ -6,6 +6,7 @@ import {
 import { CharacterEditDialog } from "@/components/account-data/CharacterEditDialog";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
+import { ExportBranding } from "@/components/shared/ExportBranding";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, CharacterData } from "@/data/types";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
@@ -13,19 +14,32 @@ import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacterData } from "@/lib/characterFilters";
+import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+export interface CharacterViewHandle {
+  downloadImage: () => void;
+}
 
 export interface CharacterViewProps {
   scores: Record<string, ArtifactScoreResult | null>;
   isEditMode?: boolean;
 }
 
-export function CharacterView({
-  scores,
-  isEditMode = false,
-}: CharacterViewProps) {
+export const CharacterView = forwardRef<
+  CharacterViewHandle,
+  CharacterViewProps
+>(function CharacterView({ scores, isEditMode = false }, ref) {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
   const activeAccount = useAccountStore(getActiveAccount);
@@ -79,6 +93,53 @@ export function CharacterView({
       addOrUpdateAccount(activeAccountId, { data: newData });
     },
     [activeAccountId, addOrUpdateAccount]
+  );
+
+  const exportRef = useRef<HTMLDivElement>(null);
+  const [showExport, setShowExport] = useState(false);
+
+  // Characters eligible for export: has artifacts, sorted by score desc
+  const exportCharacters = useMemo(
+    () =>
+      filteredCharacters
+        .filter((char) => Object.keys(char.artifacts).length > 0)
+        .sort(
+          (a, b) =>
+            (scores[b.key]?.normalized.normalizedScore ?? 0) -
+            (scores[a.key]?.normalized.normalizedScore ?? 0)
+        ),
+    [filteredCharacters, scores]
+  );
+
+  const handleDownloadImage = useCallback(() => {
+    setShowExport(true);
+  }, []);
+
+  useImperativeHandle(ref, () => ({ downloadImage: handleDownloadImage }), [
+    handleDownloadImage,
+  ]);
+
+  // Once showExport is true and ref is attached, capture and unmount
+  useEffect(() => {
+    if (!showExport || !exportRef.current) return;
+    // Wait for next frame to let all cards render
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!exportRef.current) return;
+        const filename = t
+          .ui("teamComp.characterScoreExportFilename")
+          .replace("{0}", String(exportCharacters.length));
+        downloadElementAsImage(exportRef.current, filename, t).finally(() =>
+          setShowExport(false)
+        );
+      });
+    });
+  }, [showExport, t, exportCharacters.length]);
+
+  /** Fixed layout for export (no responsive, desktop-style) */
+  const exportLayout: CardLayout = useMemo(
+    () => ({ isMobile: false, isVeryNarrow: false, isArtifactCompact: false }),
+    []
   );
 
   if (!accountData) return null;
@@ -137,6 +198,32 @@ export function CharacterView({
         />
       )}
 
+      {/* Hidden export container — mounted only during capture */}
+      {showExport && (
+        <div
+          style={{ position: "fixed", left: -9999, top: 0 }}
+          aria-hidden="true"
+        >
+          <div ref={exportRef} className="p-3" style={{ width: 1824 }}>
+            <ExportBranding />
+            <div
+              className="grid gap-3"
+              style={{ gridTemplateColumns: "repeat(3, 600px)" }}
+            >
+              {exportCharacters.map((char) => (
+                <div key={char.key} className="[&>*]:max-w-none [&>*]:mx-0">
+                  <CharacterCard
+                    char={char}
+                    score={scores[char.key]}
+                    layout={exportLayout}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Edit dialog */}
       {editingChar && accountData && (
         <CharacterEditDialog
@@ -151,7 +238,7 @@ export function CharacterView({
       )}
     </SidebarLayout>
   );
-}
+});
 
 // ─── Virtualized grid ────────────────────────────────────────────
 

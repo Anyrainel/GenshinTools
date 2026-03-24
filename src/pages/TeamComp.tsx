@@ -7,14 +7,21 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import "@/lib/team-comp";
 import type { ControlHandle } from "@/components/layout/AppBar";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import { ExportBranding } from "@/components/shared/ExportBranding";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
+import {
+  ExportColumn,
+  buildArtifactOwnerMap,
+} from "@/components/team-comp/SwapGuide";
 import { Button } from "@/components/ui/button";
 import { useTour } from "@/components/ui/tour";
 import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, PresetOption, Region } from "@/data/types";
 import { elements, regions } from "@/data/types";
+import type { ArtifactData, CharacterData } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
+import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
@@ -25,6 +32,7 @@ import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import {
   Download,
+  FileDown,
   Flame,
   HelpCircle,
   Plus,
@@ -72,6 +80,7 @@ export default function TeamCompPage() {
   const importRef = useRef<ControlHandle>(null);
   const exportRef = useRef<ControlHandle>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const frozenExportRef = useRef<HTMLDivElement>(null);
 
   // Preset options
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
@@ -208,6 +217,56 @@ export default function TeamCompPage() {
       console.error("Error exporting teams:", error);
     }
   };
+
+  // Frozen teams data for export
+  const frozenTeamEntries = useMemo(() => {
+    const entries: {
+      team: (typeof teams)[number];
+      equippedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
+      optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
+    }[] = [];
+    for (const [teamId, frozenData] of Object.entries(
+      freezeStore.frozenTeams
+    )) {
+      const team = teams.find((t) => t.id === teamId);
+      if (!team) continue;
+      const equipped: Record<string, Record<string, ArtifactData>> = {};
+      for (const cid of team.characters) {
+        if (!cid) continue;
+        const acctChar = accountData?.characters.find(
+          (c: CharacterData) => c.key === cid
+        );
+        equipped[cid] = (acctChar?.artifacts || {}) as Record<
+          string,
+          ArtifactData
+        >;
+      }
+      const optimized: Record<string, Record<string, ArtifactData>> = {};
+      for (const [cid, artsBySlot] of Object.entries(
+        frozenData.artifactsByChar
+      )) {
+        const slotMap: Record<string, ArtifactData> = {};
+        for (const [slot, art] of Object.entries(artsBySlot)) {
+          if (art) slotMap[slot] = art;
+        }
+        optimized[cid] = slotMap;
+      }
+      entries.push({
+        team,
+        equippedArtifactsByChar: equipped,
+        optimizedArtifactsByChar: optimized,
+      });
+    }
+    return entries;
+  }, [freezeStore.frozenTeams, teams, accountData]);
+
+  const handleDownloadAllFrozen = useCallback(() => {
+    if (!frozenExportRef.current) return;
+    const filename = t
+      .ui("teamComp.frozenExportFilename")
+      .replace("{0}", String(frozenTeamEntries.length));
+    downloadElementAsImage(frozenExportRef.current, filename, t);
+  }, [t, frozenTeamEntries]);
 
   if (activeTeamId) {
     const activeTeam = teams.find((t) => t.id === activeTeamId);
@@ -350,15 +409,26 @@ export default function TeamCompPage() {
               {/* Add team / unfreeze buttons */}
               <div className="flex items-center gap-1 2xl:gap-2">
                 {Object.keys(freezeStore.frozenTeams).length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                    onClick={() => freezeStore.clearAll()}
-                  >
-                    <Flame className="w-3 h-3" />
-                    <span>{t.ui("teamComp.unfreezeAll")}</span>
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 text-sm leading-none h-8 border-cyan-500/40 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10"
+                      onClick={handleDownloadAllFrozen}
+                    >
+                      <FileDown className="w-3 h-3" />
+                      <span>{t.ui("teamComp.downloadAllFrozen")}</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      onClick={() => freezeStore.clearAll()}
+                    >
+                      <Flame className="w-3 h-3" />
+                      <span>{t.ui("teamComp.unfreezeAll")}</span>
+                    </Button>
+                  </>
                 )}
                 <Button
                   variant="outline"
@@ -470,6 +540,48 @@ export default function TeamCompPage() {
           </div>
         </div>
       </ScrollLayout>
+
+      {/* Hidden export container for all frozen teams */}
+      {frozenTeamEntries.length > 0 && (
+        <div
+          style={{ position: "fixed", left: -9999, top: 0 }}
+          aria-hidden="true"
+        >
+          <div ref={frozenExportRef} className="p-3" style={{ width: 1400 }}>
+            <ExportBranding />
+            {frozenTeamEntries.map((entry, i) => {
+              const ownerMap = buildArtifactOwnerMap(accountData);
+              const charIds = entry.team.characters.filter(
+                (id): id is string => id != null
+              );
+              return (
+                <div key={entry.team.id}>
+                  {i > 0 && <div className="h-px bg-border/20" />}
+                  {entry.team.name && (
+                    <div className="text-center py-1.5 text-sm font-bold text-foreground/90 bg-black/20">
+                      {entry.team.name}
+                    </div>
+                  )}
+                  <div className="grid grid-cols-4 gap-px bg-border/10">
+                    {charIds.map((charId) => (
+                      <ExportColumn
+                        key={charId}
+                        charId={charId}
+                        team={entry.team}
+                        equipped={entry.equippedArtifactsByChar[charId] ?? {}}
+                        optimized={entry.optimizedArtifactsByChar[charId] ?? {}}
+                        ownerMap={ownerMap}
+                        accountData={accountData}
+                        t={t}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 }

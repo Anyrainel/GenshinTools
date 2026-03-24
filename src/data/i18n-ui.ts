@@ -915,6 +915,16 @@ export const i18nUiData = {
     swapGuideChange: { en: "change", zh: "处变更" },
     swapGuideChanges: { en: "changes", zh: "处变更" },
     swapStatusInventory: { en: "Inventory", zh: "背包中" },
+    downloadSwapGuide: { en: "Download Swap Guide", zh: "下载换装指南" },
+    downloadAllFrozen: { en: "Download All Frozen", zh: "下载所有冻结" },
+    frozenExportFilename: {
+      en: "{0} Teams Optimized Export",
+      zh: "{0}队伍优化导出",
+    },
+    characterScoreExportFilename: {
+      en: "{0} Character Score Export",
+      zh: "{0}角色评分导出",
+    },
     frozenTooltip: {
       en: "All characters are frozen — thaw to re-optimize.",
       zh: "所有角色已冻结——解冻后可重新优化。",
