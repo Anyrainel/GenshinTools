@@ -1,5 +1,6 @@
 import {
   AlertCircle,
+  Download,
   ExternalLink,
   Info,
   Loader2,
@@ -8,7 +9,13 @@ import {
   Star,
   Upload,
 } from "lucide-react";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import {
+  Fragment,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 
 import type { ControlHandle } from "@/components/layout/AppBar";
 import { Button } from "@/components/ui/button";
@@ -39,6 +46,17 @@ const TOOLS = [
   {
     labelKey: "import.toolGoodScanner" as const,
     url: "https://github.com/Anyrainel/GOODScanner/releases",
+  },
+] as const;
+
+const PROXY_TOOLS = [
+  {
+    label: "irminsul.exe",
+    url: "https://gh-proxy.org/https://github.com/konkers/irminsul/releases/latest/download/irminsul.exe",
+  },
+  {
+    label: "GOODScanner.exe",
+    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe",
   },
 ] as const;
 
@@ -224,6 +242,32 @@ export const AccountImportControl = forwardRef<
                   </a>
                 ))}
               </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-1 mt-2">
+              <span className="text-xs text-foreground/80">
+                {t.ui("import.proxyHint")}
+              </span>
+              {PROXY_TOOLS.map((tool, i) => (
+                <Fragment key={tool.label}>
+                  {i > 0 && (
+                    <span className="text-xs text-foreground/50">/</span>
+                  )}
+                  <a
+                    href={tool.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
+                      "text-xs font-medium",
+                      "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+                      "transition-colors"
+                    )}
+                  >
+                    {tool.label}
+                    <Download className="w-3 h-3 opacity-60" />
+                  </a>
+                </Fragment>
+              ))}
             </div>
 
             {/* Upload button */}

@@ -104,20 +104,20 @@ export function getReceiverBadgeClasses(target: BuffTarget): string {
 
 export function formatFilter(target: BuffTarget, t: T): string | null {
   const filter = target.filter;
-  const parts: string[] = [];
+  const groups: string[] = [];
   if (filter) {
     if (filter.abilities?.length)
-      parts.push(...filter.abilities.map((a) => t.ability(a)));
+      groups.push(filter.abilities.map((a) => t.ability(a)).join("/"));
     if (filter.elements?.length)
-      parts.push(...filter.elements.map((e) => t.element(e)));
+      groups.push(filter.elements.map((e) => t.element(e)).join("/"));
     if (filter.reactions?.length)
-      parts.push(...filter.reactions.map((r) => t.reaction(r)));
+      groups.push(filter.reactions.map((r) => t.reaction(r)).join("/"));
   }
   if (target.regions?.length)
-    parts.push(...target.regions.map((r) => t.region(r)));
+    groups.push(target.regions.map((r) => t.region(r)).join("/"));
   if (target.factions?.length)
-    parts.push(...target.factions.map((f) => t.faction(f)));
-  return parts.length > 0 ? parts.join("/") : null;
+    groups.push(target.factions.map((f) => t.faction(f)).join("/"));
+  return groups.length > 0 ? groups.join("|") : null;
 }
 
 // ─── Stat entry row ──────────────────────────────────────────────────────────

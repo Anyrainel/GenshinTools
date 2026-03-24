@@ -107,7 +107,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     cachedFreezeArtifacts.current = frozenTeamData.artifactsByChar;
   }
 
-  const { characterStats, weaponStats } = useGameStats();
+  const { characterStats, weaponStats, ready: gameStatsReady } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
 
   const [ignoreArtifactSets, setIgnoreArtifactSets] = useState<
@@ -156,6 +156,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: characterStats/weaponStats are intentional invalidation triggers — TeamBuild reads them indirectly via global registries
   const { teamBuild, buildError } = useMemo(() => {
+    if (!gameStatsReady) return { teamBuild: null, buildError: null };
     try {
       return {
         teamBuild: new TeamBuild(
@@ -178,6 +179,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     team.opts,
     team.enemyAura,
     team.extraBuffs,
+    gameStatsReady,
     characterStats,
     weaponStats,
   ]);

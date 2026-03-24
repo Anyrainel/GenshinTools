@@ -135,6 +135,10 @@ export const i18nUiData = {
       en: "GOODScanner (OCR, 16:9 Chinese client)",
       zh: "GOODScanner (扫图, 16:9)",
     },
+    proxyHint: {
+      en: "Slow GitHub connection? Direct download:",
+      zh: "GitHub 下载慢？直接下载：",
+    },
     wrongFormat: {
       en: "This file is not in GOOD format. Please export using a supported scanner tool.",
       zh: "该文件不是 GOOD 格式，请使用支持的扫描工具导出。",
@@ -142,7 +146,7 @@ export const i18nUiData = {
     uidTitle: { en: "Quick UID Import", zh: "UID 快捷导入" },
     uidDescription: {
       en: "Fetch from Enka Network. Limited to 12 showcase characters and their equipments. Make sure you allowed character details!",
-      zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。确保你打开了角色详情！",
+      zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。确保你打开了角色详情！（不支持B服）",
     },
     uidPlaceholder: {
       en: "Enter UID (e.g. 800000000)",
@@ -821,6 +825,8 @@ export const i18nUiData = {
       en: "Control how many hits each buff is active for",
       zh: "控制每个增益生效的命中次数",
     },
+    disableAll: { en: "Disable All", zh: "全部关闭" },
+    enableAll: { en: "Enable All", zh: "全部开启" },
     emptyBuffMsg: {
       en: "No applicable buffs for this part.",
       zh: "此部分没有可用的增益。",
