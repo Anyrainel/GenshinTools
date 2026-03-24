@@ -19,19 +19,23 @@ import { VALUE_COLORS, cn, getAssetUrl, getValueColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { BuffDialog, type BuffLedgerFormula } from "./BuffDialog";
 
 type Props = {
   buffs: ResolvedBuff[];
   team: Team;
   t: ReturnType<typeof useLanguage>["t"];
+  formulas?: BuffLedgerFormula[];
 };
 
 function BuffChip({
   buff,
   t,
+  formulas,
 }: {
   buff: ResolvedBuff;
   t: ReturnType<typeof useLanguage>["t"];
+  formulas?: BuffLedgerFormula[];
 }) {
   const { source, target, staticEntries, dynamicEntries, active } = buff;
   const icon = getSourceIcon(source);
@@ -150,13 +154,23 @@ function BuffChip({
                       VALUE_COLORS.cap
                     )}
                   >
-                    / {fmtStat(e.key as StatKey, dynE.cap)}
+                    /{fmtStat(e.key as StatKey, dynE.cap)}
                   </span>
                 )}
               </div>
-              {isLast && source.maxStacks != null && (
-                <span className="ml-auto text-[11px] lg:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded">
-                  {t.format("teamComp.nStacks", source.maxStacks)}
+              {isLast && (
+                <span className="ml-auto flex items-center gap-1">
+                  {source.maxStacks != null && (
+                    <span className="text-[11px] lg:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded">
+                      {t.format("teamComp.nStacks", source.maxStacks)}
+                    </span>
+                  )}
+                  {active &&
+                    !buff.bespokeLabel &&
+                    formulas &&
+                    formulas.length > 0 && (
+                      <BuffDialog buff={buff} formulas={formulas} t={t} />
+                    )}
                 </span>
               )}
             </div>
@@ -167,7 +181,7 @@ function BuffChip({
   );
 }
 
-export function BuffLedger({ buffs, team, t }: Props) {
+export function BuffLedger({ buffs, team, t, formulas }: Props) {
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
@@ -250,7 +264,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
                 {resonanceBuffs.map((b, i) => (
-                  <BuffChip key={i} buff={b} t={t} />
+                  <BuffChip key={i} buff={b} t={t} formulas={formulas} />
                 ))}
               </div>
             </div>
@@ -291,7 +305,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
 
                   <div className="flex flex-col gap-1 lg:gap-1.5">
                     {charBuffs.map((b, i2) => (
-                      <BuffChip key={i2} buff={b} t={t} />
+                      <BuffChip key={i2} buff={b} t={t} formulas={formulas} />
                     ))}
                     {charBuffs.length === 0 && (
                       <div className="text-xs text-muted-foreground opacity-50 italic text-center py-6 rounded-lg border border-dashed border-border/10 flex items-center justify-center">

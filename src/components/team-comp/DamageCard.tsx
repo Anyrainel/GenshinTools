@@ -67,6 +67,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { type BuffLedgerFormula, buildBuffApplicability } from "./BuffDialog";
 import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown, adjustPartDamage } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
@@ -115,6 +116,7 @@ function DamageBody({
   targetCharId,
   displayResult,
   formulaKey,
+  formulaLabel,
   critMode,
   setCritMode,
   isMobile,
@@ -134,6 +136,8 @@ function DamageBody({
   displayResult?: DisplayResult | null;
   /** Formula key for scoping buff overrides (e.g. "ganyu.charged"). */
   formulaKey?: string;
+  /** I18n label for the active formula. */
+  formulaLabel?: Record<string, string>;
   critMode: CritMode;
   setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
@@ -287,7 +291,26 @@ function DamageBody({
       )}
 
       {hasFormula && displayResult && (
-        <BuffLedger buffs={displayResult.buffs} team={team} t={t} />
+        <BuffLedger
+          buffs={displayResult.buffs}
+          team={team}
+          t={t}
+          formulas={
+            formulaKey
+              ? [
+                  {
+                    formulaKey,
+                    parts: displayResult.partsByFormula[formulaKey] ?? [],
+                    defaultActivation: displayResult.buffActivation,
+                    formulaLabel,
+                    buffApplicability: buildBuffApplicability(
+                      displayResult.buffs
+                    ),
+                  },
+                ]
+              : undefined
+          }
+        />
       )}
     </div>
   );
@@ -812,6 +835,74 @@ function ComboResultView({
   onUnfreezeChar?: (charId: string) => void;
   saturatedCharIds?: string[];
 }) {
+  const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
+  const activeLines = useMemo(
+    () =>
+      comboLines.filter(
+        (l) =>
+          l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
+      ),
+    [comboLines, allFormulaIds]
+  );
+  const teamCharIds = useMemo(
+    () => team.characters.filter((id): id is string => id != null),
+    [team.characters]
+  );
+
+  // Build per-formula contexts for BuffLedger's override dialog
+  const comboFormulas = useMemo((): BuffLedgerFormula[] | undefined => {
+    if (!displayResult) return undefined;
+    const sheets = toStatSheets(teamCharIds, artifactsByChar);
+    const defaults = teamBuild.getComboFormulaDefaults(
+      activeLines,
+      sheets,
+      calcContext
+    );
+    return Object.entries(displayResult.partsByFormula).map(([fKey, parts]) => {
+      const [charId, formulaId] = fKey.split(".");
+      const count = activeLines
+        .filter((l) => l.charId === charId && l.formulaId === formulaId)
+        .reduce((sum, l) => sum + l.count, 0);
+      const activation = aggregateComboFormulaDefaults(
+        activeLines,
+        defaults.perLine,
+        charId,
+        formulaId
+      );
+      // Per-formula buff resolution for correct part applicability
+      let buffApplicability: Record<string, number[] | undefined> | undefined;
+      try {
+        const dr = teamBuild.getDisplayResult(
+          charId,
+          formulaId,
+          sheets,
+          calcContext
+        );
+        buffApplicability = buildBuffApplicability(dr.buffs);
+      } catch {
+        // Ignore — fall back to buff-level activePartIndices
+      }
+      return {
+        formulaKey: fKey,
+        parts,
+        defaultActivation: activation,
+        comboCount: count,
+        comboKey: comboId ? `combo:${comboId}:${fKey}` : undefined,
+        formulaLabel: allFormulaIds[charId]?.[formulaId],
+        buffApplicability,
+      };
+    });
+  }, [
+    displayResult,
+    activeLines,
+    teamCharIds,
+    artifactsByChar,
+    teamBuild,
+    calcContext,
+    comboId,
+    allFormulaIds,
+  ]);
+
   return (
     <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
       {displayResult && (
@@ -856,7 +947,12 @@ function ComboResultView({
         calcContext={calcContext}
       />
       {displayResult && (
-        <BuffLedger buffs={displayResult.buffs} team={team} t={t} />
+        <BuffLedger
+          buffs={displayResult.buffs}
+          team={team}
+          t={t}
+          formulas={comboFormulas}
+        />
       )}
     </div>
   );
@@ -1289,6 +1385,14 @@ export function DamageCard({
 
   const ctxProps: CtxProps = { team, activeContext, updateTeam, isMobile, t };
 
+  // Formula label for the active single-formula selection
+  const activeFormulaLabel = useMemo(() => {
+    if (!resolvedFormula || !teamBuild) return undefined;
+    return teamBuild.getFormulaIds()[resolvedFormula.charId]?.[
+      resolvedFormula.formulaId
+    ];
+  }, [resolvedFormula, teamBuild]);
+
   const hasActiveFormula =
     formulaMode === "combo"
       ? comboLines?.some((l) => l.count > 0)
@@ -1389,6 +1493,7 @@ export function DamageCard({
                   ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
                   : undefined
               }
+              formulaLabel={activeFormulaLabel}
               critMode={critMode}
               setCritMode={setCritMode}
               isMobile={isMobile}
@@ -1678,6 +1783,7 @@ export function DamageCard({
                     ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
                     : undefined
                 }
+                formulaLabel={activeFormulaLabel}
                 critMode={critMode}
                 setCritMode={setCritMode}
                 isMobile={isMobile}
@@ -1805,6 +1911,7 @@ export function DamageCard({
                   ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
                   : undefined
               }
+              formulaLabel={activeFormulaLabel}
               critMode={critMode}
               setCritMode={setCritMode}
               isMobile={isMobile}

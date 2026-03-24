@@ -1498,9 +1498,53 @@ export class TeamBuild {
           offFieldVariantsMap
         );
         totalDamage = blended.totalDamage;
-        // Annotate display parts with partial buff info and update damage
+        // Rebuild display parts with 1st-hit stats: exclude only buffs
+        // with 0 activation (never applied), keep blended average damage.
         for (let i = 0; i < parts.length; i++) {
-          if (blended.partDamages[i]) {
+          if (!blended.partDamages[i]) continue;
+
+          // Collect buffs with 0 activation on this part (never applied)
+          const zeroBuffKeys = new Set<string>();
+          if (i < entry.parts.length) {
+            const h = entry.parts[i].hits ?? 1;
+            for (const info of allInfos) {
+              if ((info.partActivation[i] ?? h) === 0) {
+                zeroBuffKeys.add(info.buffKey);
+              }
+            }
+          }
+
+          if (zeroBuffKeys.size > 0 && i < entry.parts.length) {
+            const { formula, offField, bespokeBuff } = entry.parts[i];
+            const eKey = exclusionKey(zeroBuffKeys);
+            const baseVariant =
+              offField && offFieldVariantsMap
+                ? (offFieldVariantsMap.get(eKey) ?? offFieldPostStats!)
+                : (statsVariants.get(eKey) ?? postStats[charId]!);
+            const displayStats = bespokeBuff
+              ? baseVariant.merge(
+                  StatSheet.fromEntries(
+                    [
+                      ...bespokeBuff.staticBuffs,
+                      ...bespokeBuff.dynamicBuffs(baseVariant, []),
+                    ],
+                    bespokeBuff.target.filter
+                  )
+                )
+              : baseVariant;
+            const rebuilt = formula.displayFull(
+              displayStats,
+              build.charBase.charLevel,
+              ctx
+            );
+            parts[i] = {
+              ...rebuilt,
+              hits: parts[i].hits,
+              offField: parts[i].offField,
+              damage: blended.partDamages[i].damage,
+              sourcePartIndex: i,
+            };
+          } else {
             parts[i] = {
               ...parts[i],
               damage: blended.partDamages[i].damage,
@@ -3148,8 +3192,51 @@ export function getComboDisplayResult(
           offFieldVariants
         );
 
+        // Rebuild display parts with 1st-hit stats (exclude 0-activation buffs)
         for (let i = 0; i < parts.length; i++) {
-          if (blended.partDamages[i]) {
+          if (!blended.partDamages[i]) continue;
+
+          const zeroBuffKeys = new Set<string>();
+          if (i < entry.parts.length) {
+            const h = entry.parts[i].hits ?? 1;
+            for (const info of aggregatedInfos) {
+              if ((info.partActivation[i] ?? h) === 0) {
+                zeroBuffKeys.add(info.buffKey);
+              }
+            }
+          }
+
+          if (zeroBuffKeys.size > 0 && i < entry.parts.length) {
+            const { formula, offField, bespokeBuff } = entry.parts[i];
+            const eKey = exclusionKey(zeroBuffKeys);
+            const baseVariant =
+              offField && offFieldVariants
+                ? (offFieldVariants.get(eKey) ?? offFieldPostStats!)
+                : (statsVariants.get(eKey) ?? postStats[charId]!);
+            const displayStats = bespokeBuff
+              ? baseVariant.merge(
+                  StatSheet.fromEntries(
+                    [
+                      ...bespokeBuff.staticBuffs,
+                      ...bespokeBuff.dynamicBuffs(baseVariant, []),
+                    ],
+                    bespokeBuff.target.filter
+                  )
+                )
+              : baseVariant;
+            const rebuilt = formula.displayFull(
+              displayStats,
+              build.charBase.charLevel,
+              ctx
+            );
+            parts[i] = {
+              ...rebuilt,
+              hits: parts[i].hits,
+              offField: parts[i].offField,
+              damage: blended.partDamages[i].damage,
+              sourcePartIndex: i,
+            };
+          } else {
             parts[i] = {
               ...parts[i],
               damage: blended.partDamages[i].damage,
