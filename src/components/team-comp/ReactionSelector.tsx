@@ -7,7 +7,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
+import {
+  ELEMENT_ELIGIBLE_REACTIONS,
+  MULTI_ELEMENT_CHARS,
+} from "@/lib/team-comp/constants";
 import type { TeamMeta } from "@/lib/team-comp/damageCalc";
 import type { FormulaEntry } from "@/lib/team-comp/damageModels";
 import type {
@@ -106,11 +109,25 @@ export function ReactionSelector({
     }
   }
 
-  // Get eligible reactions for this element.
-  const eligible =
-    ELEMENT_ELIGIBLE_REACTIONS[
-      element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
-    ];
+  // For multi-element characters (Chasca, Varka), derive eligible reactions
+  // from the formula parts' actual elements instead of the character's element.
+  const isMultiElement = MULTI_ELEMENT_CHARS.has(charId);
+  const eligible = isMultiElement
+    ? (() => {
+        const rxSet = new Set<ReactionType>(["none"]);
+        for (const part of formulaEntry.parts) {
+          const partEl = part.formula.tag.element;
+          const partEligible =
+            ELEMENT_ELIGIBLE_REACTIONS[
+              partEl as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+            ];
+          if (partEligible) for (const rx of partEligible) rxSet.add(rx);
+        }
+        return Array.from(rxSet);
+      })()
+    : ELEMENT_ELIGIBLE_REACTIONS[
+        element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+      ];
 
   // Hide for elements with only "none" (Anemo, Geo, Physical).
   if (!eligible || eligible.length <= 1) {
@@ -118,8 +135,12 @@ export function ReactionSelector({
   }
 
   // Hide if only "none" remains after filtering by team availability.
+  // For multi-element chars, skip charId check since the converted elements
+  // already come from teammates — just verify the team can support the reaction.
   const availableReactions = eligible.filter(
-    (r) => r === "none" || teamMeta.hasReaction(r, charId)
+    (r) =>
+      r === "none" ||
+      teamMeta.hasReaction(r, isMultiElement ? undefined : charId)
   );
   if (availableReactions.every((r) => r === "none")) {
     return null;
@@ -180,7 +201,7 @@ export function ReactionSelector({
   /** Is this reaction available given the current team composition? */
   function isReactionAvailable(reaction: ReactionType): boolean {
     if (reaction === "none") return true;
-    return teamMeta.hasReaction(reaction, charId);
+    return teamMeta.hasReaction(reaction, isMultiElement ? undefined : charId);
   }
 
   // --- Render ---
@@ -224,7 +245,17 @@ export function ReactionSelector({
       {showPerPart && (
         <div className="flex flex-col gap-1 pl-1 pt-0.5">
           {formulaEntry.parts.map((part, idx) => {
-            const isChecked = reactionOverride.partReactions?.[idx] !== "none";
+            // For multi-element chars, check if this part's element supports the gate reaction
+            const partCanReact = isMultiElement
+              ? (
+                  ELEMENT_ELIGIBLE_REACTIONS[
+                    part.formula.tag
+                      .element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+                  ] ?? []
+                ).includes(currentGate)
+              : true;
+            const isChecked =
+              partCanReact && reactionOverride.partReactions?.[idx] !== "none";
             const totalHits = part.hits ?? 1;
             const reactingHits = isChecked
               ? (reactionOverride.partHits?.[idx] ?? totalHits)
@@ -236,11 +267,14 @@ export function ReactionSelector({
                 <button
                   type="button"
                   onClick={() => handlePartToggle(idx, !isChecked)}
+                  disabled={!partCanReact}
                   className={cn(
                     "w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors",
-                    isChecked
-                      ? "bg-primary border-primary text-primary-foreground"
-                      : "border-border/60 bg-background hover:border-border"
+                    !partCanReact
+                      ? "border-border/60 bg-background opacity-30 cursor-not-allowed"
+                      : isChecked
+                        ? "bg-primary border-primary text-primary-foreground"
+                        : "border-border/60 bg-background hover:border-border"
                   )}
                 >
                   {isChecked && (

@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
+import {
+  ELEMENT_ELIGIBLE_REACTIONS,
+  MULTI_ELEMENT_CHARS,
+} from "@/lib/team-comp/constants";
 import "@/lib/team-comp/index";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
@@ -480,4 +483,154 @@ describe("getDamageResult matches getDisplayResult total damage", () => {
       expect(display.totalDamage).toBeCloseTo(displayTotal, 2);
     });
   }
+});
+
+// ─── Multi-element characters (Chasca, Varka) ───
+
+describe("multi-element character reaction overrides", () => {
+  // Chasca (Anemo) with Pyro + Hydro teammates → converted shells are Pyro & Hydro
+  const configs: TeamSlotConfig[] = [
+    {
+      charId: "chasca",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "aqua_simulacra",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "xiangling",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "the_catch",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "xingqiu",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "sacrificial_sword",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+
+  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+
+  const emptySheets: Record<string, StatSheet> = {
+    chasca: new StatSheet([]),
+    xiangling: new StatSheet([]),
+    xingqiu: new StatSheet([]),
+  };
+
+  const tb = new TeamBuild(configs);
+
+  it("MULTI_ELEMENT_CHARS includes chasca and varka", () => {
+    expect(MULTI_ELEMENT_CHARS.has("chasca")).toBe(true);
+    expect(MULTI_ELEMENT_CHARS.has("varka")).toBe(true);
+    expect(MULTI_ELEMENT_CHARS.has("diluc")).toBe(false);
+  });
+
+  it("chasca shining-volley has mixed Anemo + converted element parts", () => {
+    const entry = tb.charBuilds.chasca?.charBase.getFormulaEntry(
+      "chasca-shining-volley"
+    );
+    expect(entry).toBeDefined();
+    const elements = entry!.parts.map((p) => p.formula.tag.element);
+    // Should have both Anemo and non-Anemo parts
+    expect(elements).toContain("Anemo");
+    const nonAnemo = elements.filter((e) => e !== "Anemo");
+    expect(nonAnemo.length).toBeGreaterThan(0);
+  });
+
+  it("eligible reactions derived from formula parts include vaporize", () => {
+    const entry = tb.charBuilds.chasca?.charBase.getFormulaEntry(
+      "chasca-shining-volley"
+    );
+    expect(entry).toBeDefined();
+    // Collect eligible reactions from all parts (mirrors UI logic)
+    const rxSet = new Set<string>(["none"]);
+    for (const part of entry!.parts) {
+      const partEl = part.formula.tag.element;
+      const partEligible =
+        ELEMENT_ELIGIBLE_REACTIONS[
+          partEl as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+        ];
+      if (partEligible) for (const rx of partEligible) rxSet.add(rx);
+    }
+    // With Pyro + Hydro teammates, should have vaporize (and possibly melt)
+    expect(rxSet.has("vaporize")).toBe(true);
+  });
+
+  it("vaporize gate: converted parts become amplify, Anemo parts stay direct", () => {
+    const result = tb.getDisplayResult(
+      "chasca",
+      "chasca-shining-volley",
+      emptySheets,
+      ctx,
+      { reaction: "vaporize" }
+    );
+    const parts = getOnlyParts(result);
+    const amplifyParts = parts.filter((p) => p.template === "amplify");
+    const directParts = parts.filter((p) => p.template === "direct");
+    // Should have both amplify (converted) and direct (Anemo) parts
+    expect(amplifyParts.length).toBeGreaterThan(0);
+    expect(directParts.length).toBeGreaterThan(0);
+    // Amplify parts should have vaporize reaction
+    for (const p of amplifyParts) {
+      expect(p.tag?.reaction).toBe("vaporize");
+    }
+    // Direct parts should have Anemo element
+    for (const p of directParts) {
+      expect(p.tag?.element).toBe("Anemo");
+    }
+  });
+
+  it("vaporize gate increases total damage vs no reaction", () => {
+    const direct = tb.getDisplayResult(
+      "chasca",
+      "chasca-shining-volley",
+      emptySheets,
+      ctx
+    );
+    const vape = tb.getDisplayResult(
+      "chasca",
+      "chasca-shining-volley",
+      emptySheets,
+      ctx,
+      { reaction: "vaporize" }
+    );
+    expect(vape.totalDamage).toBeGreaterThan(direct.totalDamage);
+  });
+
+  it("display total matches getDamageResult total with vaporize", () => {
+    const override: ReactionOverride = { reaction: "vaporize" };
+    const display = tb.getDisplayResult(
+      "chasca",
+      "chasca-shining-volley",
+      emptySheets,
+      ctx,
+      override
+    );
+    const displayTotal = getOnlyParts(display).reduce(
+      (sum, dp) => sum + dp.damage * (dp.hits ?? 1),
+      0
+    );
+    expect(display.totalDamage).toBeCloseTo(displayTotal, 2);
+  });
+
+  it("team hasReaction without charId returns true for vaporize", () => {
+    // Without charId, hasReaction checks team elements only
+    expect(tb.teamMeta.hasReaction("vaporize")).toBe(true);
+  });
+
+  it("team hasReaction with chasca charId returns false for vaporize (Anemo)", () => {
+    // With charId, hasReaction checks if the character's element participates
+    // Chasca is Anemo, which doesn't participate in vaporize
+    expect(tb.teamMeta.hasReaction("vaporize", "chasca")).toBe(false);
+  });
 });

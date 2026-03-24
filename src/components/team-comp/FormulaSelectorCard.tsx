@@ -8,7 +8,10 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { ReactionType } from "@/data/types";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
+import {
+  ELEMENT_ELIGIBLE_REACTIONS,
+  MULTI_ELEMENT_CHARS,
+} from "@/lib/team-comp/constants";
 import { type TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import type {
   ComboLine,
@@ -143,16 +146,16 @@ export function FormulaSelectorCard({
                 const charElement = teamBuild?.teamMeta.elements[cid];
 
                 // Reactions for combo mode
-                const eligible: ReactionType[] = charElement
+                const isMultiElement = MULTI_ELEMENT_CHARS.has(cid);
+                const charEligible: ReactionType[] = charElement
                   ? (ELEMENT_ELIGIBLE_REACTIONS[
                       charElement as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
                     ] ?? ["none"])
                   : ["none"];
-                const reactions = eligible.filter(
+                const charReactions = charEligible.filter(
                   (rx) =>
                     rx === "none" || teamBuild?.teamMeta.hasReaction(rx, cid)
                 ) as ReactionType[];
-                const hasReactions = reactions.length > 1;
 
                 if (!charFormulas) {
                   return (
@@ -300,124 +303,160 @@ export function FormulaSelectorCard({
                                 </div>
 
                                 {/* Combo mode: per-reaction steppers */}
-                                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                                  {hasReactions ? (
-                                    reactions.map((rx) => {
-                                      const lineKey = `${cid}.${formulaId}.${rx}`;
-                                      const count =
-                                        comboLineMap.get(lineKey)?.line.count ??
-                                        0;
-                                      return (
-                                        <div
-                                          key={lineKey}
-                                          className="flex items-center"
-                                        >
-                                          <span
-                                            className={cn(
-                                              "text-xs md:text-sm xl:text-base font-semibold",
-                                              count > 0
-                                                ? "text-foreground"
-                                                : "text-muted-foreground"
-                                            )}
-                                          >
-                                            {t.reaction(rx)}
-                                          </span>
-                                          <button
-                                            type="button"
-                                            className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                            disabled={count <= 0}
-                                            onClick={() =>
-                                              setComboLineCount(
-                                                cid,
-                                                formulaId,
-                                                rx,
-                                                Math.max(0, count - 1)
-                                              )
-                                            }
-                                          >
-                                            <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                          </button>
-                                          <span
-                                            className={cn(
-                                              "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
-                                              count === 0 &&
-                                                "text-muted-foreground"
-                                            )}
-                                          >
-                                            {count}
-                                          </span>
-                                          <button
-                                            type="button"
-                                            className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                            disabled={count >= 99}
-                                            onClick={() =>
-                                              setComboLineCount(
-                                                cid,
-                                                formulaId,
-                                                rx,
-                                                Math.min(99, count + 1)
-                                              )
-                                            }
-                                          >
-                                            <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                          </button>
+                                {(() => {
+                                  // For multi-element chars, derive reactions from formula parts
+                                  const reactions = isMultiElement
+                                    ? (() => {
+                                        const entry =
+                                          teamBuild?.charBuilds[
+                                            cid
+                                          ]?.charBase.getFormulaEntry(
+                                            formulaId
+                                          );
+                                        if (!entry) return charReactions;
+                                        const rxSet = new Set<ReactionType>([
+                                          "none",
+                                        ]);
+                                        for (const part of entry.parts) {
+                                          const partEl =
+                                            part.formula.tag.element;
+                                          const partEligible =
+                                            ELEMENT_ELIGIBLE_REACTIONS[
+                                              partEl as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+                                            ];
+                                          if (partEligible)
+                                            for (const rx of partEligible)
+                                              rxSet.add(rx);
+                                        }
+                                        return Array.from(rxSet).filter(
+                                          (rx) =>
+                                            rx === "none" ||
+                                            teamBuild?.teamMeta.hasReaction(rx)
+                                        ) as ReactionType[];
+                                      })()
+                                    : charReactions;
+                                  const hasReactions = reactions.length > 1;
+                                  return (
+                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                                      {hasReactions ? (
+                                        reactions.map((rx) => {
+                                          const lineKey = `${cid}.${formulaId}.${rx}`;
+                                          const count =
+                                            comboLineMap.get(lineKey)?.line
+                                              .count ?? 0;
+                                          return (
+                                            <div
+                                              key={lineKey}
+                                              className="flex items-center"
+                                            >
+                                              <span
+                                                className={cn(
+                                                  "text-xs md:text-sm xl:text-base font-semibold",
+                                                  count > 0
+                                                    ? "text-foreground"
+                                                    : "text-muted-foreground"
+                                                )}
+                                              >
+                                                {t.reaction(rx)}
+                                              </span>
+                                              <button
+                                                type="button"
+                                                className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                disabled={count <= 0}
+                                                onClick={() =>
+                                                  setComboLineCount(
+                                                    cid,
+                                                    formulaId,
+                                                    rx,
+                                                    Math.max(0, count - 1)
+                                                  )
+                                                }
+                                              >
+                                                <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                              </button>
+                                              <span
+                                                className={cn(
+                                                  "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
+                                                  count === 0 &&
+                                                    "text-muted-foreground"
+                                                )}
+                                              >
+                                                {count}
+                                              </span>
+                                              <button
+                                                type="button"
+                                                className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                disabled={count >= 99}
+                                                onClick={() =>
+                                                  setComboLineCount(
+                                                    cid,
+                                                    formulaId,
+                                                    rx,
+                                                    Math.min(99, count + 1)
+                                                  )
+                                                }
+                                              >
+                                                <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                              </button>
+                                            </div>
+                                          );
+                                        })
+                                      ) : (
+                                        <div className="flex items-center">
+                                          {(() => {
+                                            const c =
+                                              comboLineMap.get(
+                                                `${cid}.${formulaId}.none`
+                                              )?.line.count ?? 0;
+                                            return (
+                                              <>
+                                                <button
+                                                  type="button"
+                                                  className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                  disabled={c <= 0}
+                                                  onClick={() =>
+                                                    setComboLineCount(
+                                                      cid,
+                                                      formulaId,
+                                                      "none",
+                                                      Math.max(0, c - 1)
+                                                    )
+                                                  }
+                                                >
+                                                  <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                                </button>
+                                                <span
+                                                  className={cn(
+                                                    "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
+                                                    c === 0 &&
+                                                      "text-muted-foreground"
+                                                  )}
+                                                >
+                                                  {c}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                  disabled={c >= 99}
+                                                  onClick={() =>
+                                                    setComboLineCount(
+                                                      cid,
+                                                      formulaId,
+                                                      "none",
+                                                      Math.min(99, c + 1)
+                                                    )
+                                                  }
+                                                >
+                                                  <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                                </button>
+                                              </>
+                                            );
+                                          })()}
                                         </div>
-                                      );
-                                    })
-                                  ) : (
-                                    <div className="flex items-center">
-                                      {(() => {
-                                        const c =
-                                          comboLineMap.get(
-                                            `${cid}.${formulaId}.none`
-                                          )?.line.count ?? 0;
-                                        return (
-                                          <>
-                                            <button
-                                              type="button"
-                                              className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                              disabled={c <= 0}
-                                              onClick={() =>
-                                                setComboLineCount(
-                                                  cid,
-                                                  formulaId,
-                                                  "none",
-                                                  Math.max(0, c - 1)
-                                                )
-                                              }
-                                            >
-                                              <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                            </button>
-                                            <span
-                                              className={cn(
-                                                "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
-                                                c === 0 &&
-                                                  "text-muted-foreground"
-                                              )}
-                                            >
-                                              {c}
-                                            </span>
-                                            <button
-                                              type="button"
-                                              className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                              disabled={c >= 99}
-                                              onClick={() =>
-                                                setComboLineCount(
-                                                  cid,
-                                                  formulaId,
-                                                  "none",
-                                                  Math.min(99, c + 1)
-                                                )
-                                              }
-                                            >
-                                              <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                            </button>
-                                          </>
-                                        );
-                                      })()}
+                                      )}
                                     </div>
-                                  )}
-                                </div>
+                                  );
+                                })()}
                               </div>
                             );
                           }

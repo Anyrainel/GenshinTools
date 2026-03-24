@@ -108,3 +108,11 @@ export const ELEMENT_ELIGIBLE_REACTIONS: Record<
   Geo: ["none"],
   Physical: ["none"],
 };
+
+/**
+ * Characters whose formulas contain parts with elements different from their
+ * innate element (e.g. Chasca/Varka convert attacks to teammate elements).
+ * For these characters, reaction eligibility is derived from formula parts
+ * instead of the character's own element.
+ */
+export const MULTI_ELEMENT_CHARS = new Set(["chasca", "varka"]);
