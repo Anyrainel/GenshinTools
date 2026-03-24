@@ -30,7 +30,7 @@ import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
 type HlKey = StatKey | "charLevel";
 type HighlightedStat = { key: HlKey; charId: string } | null;
 
-type ViewMode = "conditional" | "max" | "marginal";
+type ViewMode = "idle" | "combat" | "marginal";
 
 type Props = {
   result?: DisplayResult | null;
@@ -201,62 +201,7 @@ function formatFailReason(
   }
 }
 
-// ─── Max View Data Hook ───
-
-function useMaxViewData(
-  charId: string,
-  result: DisplayResult | null | undefined
-) {
-  return useMemo(() => {
-    if (!result?.statSheets?.[charId]) return null;
-
-    const allTags = result.charFormulaTags?.[charId] ?? [];
-    const { onField, offField } = result.statSheets[charId];
-
-    const allKeys = new Set<StatKey>(REQUIRED_STATS);
-
-    for (const { key } of onField.dump()) allKeys.add(key);
-    for (const { key } of offField.dump()) allKeys.add(key);
-
-    const rows: { key: StatKey; offValue: number; onValue: number }[] = [];
-    for (const key of getSortedKeys(allKeys)) {
-      if (key === "atk%" || key === "hp%" || key === "def%") continue;
-      if (key === "baseAtk" || key === "baseHp" || key === "baseDef") continue;
-
-      let maxOn: number;
-      let maxOff: number;
-
-      try {
-        maxOn = onField.get(key, null);
-        maxOff = offField.get(key, null);
-      } catch {
-        continue;
-      }
-
-      for (const tag of allTags) {
-        try {
-          maxOn = Math.max(maxOn, onField.get(key, tag));
-          maxOff = Math.max(maxOff, offField.get(key, tag));
-        } catch {
-          // ignore keys that can't be queried with tag
-        }
-      }
-
-      if (key === "atk" || key === "hp" || key === "def" || key === "em") {
-        maxOn = Math.round(maxOn);
-        maxOff = Math.round(maxOff);
-      }
-
-      if (maxOn !== 0 || maxOff !== 0 || REQUIRED_STATS.includes(key)) {
-        rows.push({ key, offValue: maxOff, onValue: maxOn });
-      }
-    }
-
-    return rows;
-  }, [charId, result]);
-}
-
-// ─── Conditional View Data Hook ───
+// ─── Conditional (Combat) View Data Hook ───
 
 function useConditionalViewData(
   charId: string,
@@ -506,10 +451,13 @@ export function StatSheetPanel({
                 {(
                   [
                     {
-                      mode: "conditional" as const,
-                      label: "teamComp.conditional" as const,
+                      mode: "idle" as const,
+                      label: "teamComp.idle" as const,
                     },
-                    { mode: "max" as const, label: "teamComp.max" as const },
+                    {
+                      mode: "combat" as const,
+                      label: "teamComp.combat" as const,
+                    },
                     {
                       mode: "marginal" as const,
                       label: "teamComp.marginalGains" as const,
@@ -549,8 +497,8 @@ export function StatSheetPanel({
             )}
 
             {/* View content */}
-            {result && activeView === "max" && hasStatSheets && (
-              <MaxView
+            {result && activeView === "idle" && (
+              <IdleView
                 charId={charId}
                 result={result}
                 primary={primary}
@@ -559,7 +507,7 @@ export function StatSheetPanel({
                 t={t}
               />
             )}
-            {result && activeView === "conditional" && hasStatSheets && (
+            {result && activeView === "combat" && hasStatSheets && (
               <ConditionalView
                 charId={charId}
                 result={result}
@@ -569,7 +517,7 @@ export function StatSheetPanel({
                 t={t}
               />
             )}
-            {result && activeView === "conditional" && !hasStatSheets && (
+            {result && activeView === "combat" && !hasStatSheets && (
               <LegacyStatView
                 charId={charId}
                 result={result}
@@ -729,9 +677,32 @@ function MarginalView({
   );
 }
 
-// ─── Max View ───
+// ─── Idle View ───
 
-function MaxView({
+/** Stats shown in the idle panel (matches game's character attribute screen). */
+const IDLE_STATS: StatKey[] = [
+  "baseHp",
+  "hp",
+  "baseAtk",
+  "atk",
+  "baseDef",
+  "def",
+  "em",
+  "er",
+  "cr",
+  "cd",
+  "pyro%",
+  "hydro%",
+  "anemo%",
+  "electro%",
+  "dendro%",
+  "cryo%",
+  "geo%",
+  "phys%",
+  "heal%",
+];
+
+function IdleView({
   charId,
   result,
   primary,
@@ -746,7 +717,9 @@ function MaxView({
   onStatHover: (stat: { key: StatKey; charId: string } | null) => void;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
-  const rows = useMaxViewData(charId, result);
+  const rec = result.idleStatRecords?.[charId];
+  const off = rec?.offField ?? {};
+  const on = rec?.onField ?? {};
 
   return (
     <div className="bg-black/20 pt-1 px-2 pb-2">
@@ -765,60 +738,47 @@ function MaxView({
           </tr>
         </thead>
         <tbody>
-          {rows && rows.length > 0 ? (
-            rows.map((row) => {
-              const off = row.offValue || 0;
-              const on = row.onValue || 0;
-              if (off === 0 && on === 0 && !REQUIRED_STATS.includes(row.key))
-                return null;
-              const isHl = isKeyHighlighted(highlightedStat, charId, row.key);
-              return (
-                <tr
-                  key={row.key}
-                  onMouseEnter={() => onStatHover({ key: row.key, charId })}
-                  onMouseLeave={() => onStatHover(null)}
-                  onClick={() =>
-                    onStatHover(isHl ? null : { key: row.key, charId })
-                  }
+          {IDLE_STATS.map((key) => {
+            const offVal = (off[key] as number) ?? 0;
+            const onVal = (on[key] as number) ?? 0;
+            if (offVal === 0 && onVal === 0 && !REQUIRED_STATS.includes(key))
+              return null;
+            const isHl = isKeyHighlighted(highlightedStat, charId, key);
+            return (
+              <tr
+                key={key}
+                onMouseEnter={() => onStatHover({ key, charId })}
+                onMouseLeave={() => onStatHover(null)}
+                onClick={() => onStatHover(isHl ? null : { key, charId })}
+                className={cn(
+                  "cursor-default hover:bg-white/5 transition-colors",
+                  isHl && "bg-primary/10 ring-1 ring-primary/20"
+                )}
+              >
+                <td
                   className={cn(
-                    "cursor-default hover:bg-white/5 transition-colors",
-                    isHl && "bg-primary/10 ring-1 ring-primary/20"
+                    "py-1 pr-2 whitespace-nowrap",
+                    isHl && "text-[color:hsl(var(--primary))]"
                   )}
                 >
-                  <td
-                    className={cn(
-                      "py-1 pr-2 whitespace-nowrap",
-                      isHl && "text-[color:hsl(var(--primary))]"
-                    )}
-                  >
-                    {t.statShort(row.key)}
-                  </td>
-                  <td className={cn("py-1 px-1", valueCls(primary, "off"))}>
-                    {fmtStat(row.key, off)}
-                  </td>
-                  <td className={cn("py-1 pl-1", valueCls(primary, "on"))}>
-                    {fmtStat(row.key, on)}
-                  </td>
-                </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td
-                colSpan={3}
-                className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center"
-              >
-                {t.ui("teamComp.noStatsResolved")}
-              </td>
-            </tr>
-          )}
+                  {t.stat(key)}
+                </td>
+                <td className={cn("py-1 px-1", valueCls(primary, "off"))}>
+                  {fmtStat(key, offVal)}
+                </td>
+                <td className={cn("py-1 pl-1", valueCls(primary, "on"))}>
+                  {fmtStat(key, onVal)}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
   );
 }
 
-// ─── Conditional View ───
+// ─── Combat (Conditional) View ───
 
 function ConditionalView({
   charId,
@@ -846,7 +806,7 @@ function ConditionalView({
               {t.ui("teamComp.stats")}
             </th>
             <th className="text-left font-bold py-1 px-1 tracking-tight w-full">
-              {t.ui("teamComp.conditional")}
+              {t.ui("teamComp.condition")}
             </th>
             <th className="text-right font-bold py-1 px-1 whitespace-nowrap">
               {t.ui("teamComp.offField")}

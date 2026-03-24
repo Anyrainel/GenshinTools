@@ -111,20 +111,20 @@ export function TeamRosterCard({
     return (
       <div
         key={entityId}
-        className="flex items-center flex-wrap min-w-0 gap-1 p-1 lg:gap-2 lg:p-2 rounded-md bg-black/10 border border-border/30"
+        className="flex items-center flex-wrap min-w-0 gap-0.5 p-0.5 md:gap-1 md:p-1 rounded-md bg-black/10 border border-border/30"
       >
         <img
           src={getAssetUrl(imagePath)}
           alt={entityId}
-          className="w-5 h-5 lg:w-7 lg:h-7 object-contain rounded-full bg-secondary/40 shrink-0 border border-border/30"
+          className="w-5 h-5 xl:w-7 xl:h-7 object-contain rounded-full bg-secondary/40 shrink-0 border border-border/30"
         />
-        <span className="font-bold text-foreground/80 text-xs lg:text-sm min-w-0 truncate">
+        <span className="font-bold text-foreground/80 text-xs md:text-sm lg:text-xs xl:text-sm min-w-0 truncate">
           {t.resolveLabel(schema.label)}
         </span>
 
         <div className="ml-auto shrink-0">
           {allDisabled ? (
-            <span className="font-bold text-foreground/40 text-xs lg:text-sm">
+            <span className="font-bold text-foreground/40 text-xs xl:text-sm">
               --
             </span>
           ) : (
@@ -132,7 +132,7 @@ export function TeamRosterCard({
               value={value}
               onValueChange={(v) => handleOptionChange(entityId, v)}
             >
-              <LightweightSelectTrigger className="font-bold [&>span]:text-center [&>span]:w-full bg-black/20 border-border/30 w-[90px] lg:w-[150px] h-6 lg:h-8 text-[10px] lg:text-sm">
+              <LightweightSelectTrigger className="font-bold [&>span]:text-center [&>span]:w-full bg-black/20 border-border/30 w-24 md:w-32 lg:w-28 xl:w-36 h-6 xl:h-8 text-[10px] md:text-sm lg:text-[11px] xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -266,12 +266,7 @@ export function TeamRosterCard({
               return (
                 <div
                   key={i}
-                  className={cn(
-                    "flex flex-col items-center justify-center rounded-lg bg-black/10 border border-dashed border-border/30",
-                    isMobile
-                      ? "p-1 gap-1 min-h-[80px]"
-                      : "p-2 gap-2 min-h-[100px]"
-                  )}
+                  className="flex flex-col items-center justify-center rounded-lg bg-black/10 border border-dashed border-border/30 p-1 gap-1 min-h-[80px] lg:p-2 lg:gap-2 lg:min-h-[100px]"
                 >
                   <ItemPicker
                     type="character"
@@ -379,19 +374,13 @@ export function TeamRosterCard({
               <div
                 key={i}
                 className={cn(
-                  "flex flex-col rounded-lg bg-black/10 border border-border/10",
-                  isMobile ? "p-1 gap-1" : "p-2 gap-2",
+                  "flex flex-col rounded-lg bg-black/10 border border-border/10 p-1 gap-1 xl:p-2",
                   isCharFrozen &&
                     "frozen-card pointer-events-none ring-1 ring-cyan-400/20"
                 )}
               >
                 {/* Row 1: Interactive icons */}
-                <div
-                  className={cn(
-                    "flex items-end",
-                    isMobile ? "gap-0.5" : "gap-1.5"
-                  )}
-                >
+                <div className="flex items-end gap-0.5 md:gap-1.5">
                   <ItemPicker
                     type="character"
                     value={charId}
@@ -530,152 +519,100 @@ export function TeamRosterCard({
                 </div>
 
                 {/* Row 2: Name + Min. CR / Min. ER */}
-                <div
-                  className={cn(
-                    "flex items-center flex-wrap",
-                    isMobile ? "gap-1" : "gap-1"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "font-bold text-foreground/90",
-                      isMobile ? "text-xs ml-0.5 truncate" : "text-base ml-1"
-                    )}
-                  >
+                <div className="flex items-center flex-wrap gap-1">
+                  <span className="font-bold text-foreground/90 truncate min-w-0 text-xs md:text-base lg:text-sm xl:text-base">
                     {t.character(charId)}
                   </span>
                   <div className="flex-1" />
-                  <div
-                    className={cn(
-                      "flex items-center bg-secondary/60 rounded-md border border-border/30",
-                      isMobile ? "gap-0.5 px-1 py-0.5" : "gap-0.5 px-1.5 py-1.5"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "font-bold text-foreground/70",
-                        isMobile ? "text-[10px]" : "text-xs"
-                      )}
-                    >
-                      {t.ui("teamComp.minCr")}
-                    </span>
-                    <Input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="--"
-                      value={
-                        team.minCr?.[charId] != null
-                          ? String(Math.round(team.minCr[charId] * 100))
-                          : ""
-                      }
-                      onChange={(e) => {
-                        const raw = e.target.value.trim();
-                        if (raw === "") {
-                          const next = { ...(team.minCr ?? {}) };
-                          delete next[charId];
-                          updateTeam(team.id, { minCr: next });
-                          return;
+                  <div className="flex items-center flex-wrap gap-0.5">
+                    <div className="flex items-center bg-secondary/60 rounded-md border border-border/30 gap-0.5 px-1 py-0.5 lg:py-1.5 xl:px-1.5">
+                      <span className="font-bold text-foreground/70 text-[10px] md:text-xs lg:text-[11px] 2xl:text-xs">
+                        {t.ui("teamComp.minCr")}
+                      </span>
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="--"
+                        value={
+                          team.minCr?.[charId] != null
+                            ? String(Math.round(team.minCr[charId] * 100))
+                            : ""
                         }
-                        const val = Number(raw) / 100;
-                        if (!Number.isNaN(val)) {
-                          updateTeam(team.id, {
-                            minCr: {
-                              ...(team.minCr ?? {}),
-                              [charId]: Math.max(0, Math.min(1, val)),
-                            },
-                          });
+                        onChange={(e) => {
+                          const raw = e.target.value.trim();
+                          if (raw === "") {
+                            const next = { ...(team.minCr ?? {}) };
+                            delete next[charId];
+                            updateTeam(team.id, { minCr: next });
+                            return;
+                          }
+                          const val = Number(raw) / 100;
+                          if (!Number.isNaN(val)) {
+                            updateTeam(team.id, {
+                              minCr: {
+                                ...(team.minCr ?? {}),
+                                [charId]: Math.max(0, Math.min(1, val)),
+                              },
+                            });
+                          }
+                        }}
+                        className="text-center font-bold bg-black/20 rounded border border-border/20 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm"
+                      />
+                      <span className="font-bold text-muted-foreground -ml-0.5 text-[10px] lg:text-xs">
+                        %
+                      </span>
+                    </div>
+                    <div className="flex items-center bg-secondary/60 rounded-md border border-border/30 gap-0.5 px-1 py-0.5 lg:py-1.5 xl:px-1.5">
+                      <span className="font-bold text-foreground/70 text-[10px] md:text-xs lg:text-[11px] 2xl:text-xs">
+                        {t.ui("teamComp.minEr")}
+                      </span>
+                      <Input
+                        type="number"
+                        min={100}
+                        max={400}
+                        step={5}
+                        value={
+                          team.minEr[charId] != null
+                            ? Math.round(team.minEr[charId] * 100)
+                            : ""
                         }
-                      }}
-                      className={cn(
-                        "text-center font-bold bg-black/20 rounded border border-border/20 p-0 focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                        isMobile ? "w-9 h-5 text-xs" : "w-12 h-6 text-sm"
-                      )}
-                    />
-                    <span
-                      className={cn(
-                        "font-bold text-muted-foreground",
-                        isMobile ? "text-[10px]" : "text-xs"
-                      )}
-                    >
-                      %
-                    </span>
-                  </div>
-                  <div
-                    className={cn(
-                      "flex items-center bg-secondary/60 rounded-md border border-border/30",
-                      isMobile ? "gap-0.5 px-1 py-0.5" : "gap-0.5 px-1.5 py-1.5"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "font-bold text-foreground/70",
-                        isMobile ? "text-[10px]" : "text-xs"
-                      )}
-                    >
-                      {t.ui("teamComp.minEr")}
-                    </span>
-                    <Input
-                      type="number"
-                      min={100}
-                      max={400}
-                      step={5}
-                      value={Math.round((team.minEr[charId] ?? 1.0) * 100)}
-                      onChange={(e) => {
-                        const val = Number(e.target.value) / 100;
-                        if (!Number.isNaN(val)) {
-                          updateTeam(team.id, {
-                            minEr: {
-                              ...team.minEr,
-                              [charId]: val,
-                            },
-                          });
-                        }
-                      }}
-                      className={cn(
-                        "text-center font-bold bg-black/20 rounded border border-border/20 p-0 focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                        isMobile ? "w-9 h-5 text-xs" : "w-12 h-6 text-sm"
-                      )}
-                    />
-                    <span
-                      className={cn(
-                        "font-bold text-muted-foreground",
-                        isMobile ? "text-[10px]" : "text-xs"
-                      )}
-                    >
-                      %
-                    </span>
+                        placeholder="100"
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          if (raw === "") {
+                            const { [charId]: _, ...rest } = team.minEr;
+                            updateTeam(team.id, { minEr: rest });
+                            return;
+                          }
+                          const val = Number(raw) / 100;
+                          if (!Number.isNaN(val)) {
+                            updateTeam(team.id, {
+                              minEr: {
+                                ...team.minEr,
+                                [charId]: val,
+                              },
+                            });
+                          }
+                        }}
+                        className="text-center font-bold bg-black/20 rounded border border-border/20 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm"
+                      />
+                      <span className="font-bold text-muted-foreground -ml-0.5 text-[10px] lg:text-xs">
+                        %
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Row 3: Overrides */}
-                <div
-                  className={cn(
-                    "flex items-start justify-between bg-black/10 rounded-md border border-border/30",
-                    isMobile ? "gap-1 px-1 py-1" : "gap-1.5 px-1.5 py-1.5"
-                  )}
-                >
-                  <div className="flex flex-col gap-1 w-full shrink pr-0.5">
-                    <span
-                      className={cn(
-                        "font-bold text-muted-foreground line-clamp-1 break-all",
-                        isMobile ? "text-[10px] px-0.5" : "text-xs px-1"
-                      )}
-                      title={t.ui("common.level")}
-                    >
-                      {t.ui("common.level")}
-                    </span>
+                <div className="flex items-center justify-between bg-black/10 rounded-md border border-border/30 gap-1 px-1 py-0.5 lg:px-2 lg:py-1">
+                  <div className="w-full shrink pr-0.5">
                     <Select
                       value={String(charLevel)}
                       onValueChange={(v) =>
                         handleOptionChange(`${charId}.overrideLevel`, v)
                       }
                     >
-                      <SelectTrigger
-                        className={cn(
-                          "w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold",
-                          isMobile ? "h-6 px-1 text-xs" : "h-7 px-1.5 text-sm"
-                        )}
-                      >
+                      <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -688,28 +625,14 @@ export function TeamRosterCard({
                     </Select>
                   </div>
 
-                  <div className="flex flex-col gap-1 w-full shrink px-0.5 border-l border-border/20">
-                    <span
-                      className={cn(
-                        "font-bold text-muted-foreground line-clamp-1 break-all",
-                        isMobile ? "text-[10px] px-0.5" : "text-xs px-1"
-                      )}
-                      title={t.ui("teamComp.overrideConst")}
-                    >
-                      {t.ui("teamComp.overrideConst")}
-                    </span>
+                  <div className="w-full shrink px-0.5 border-l border-border/20">
                     <Select
                       value={String(charConst)}
                       onValueChange={(v) =>
                         handleOptionChange(`${charId}.overrideConstellation`, v)
                       }
                     >
-                      <SelectTrigger
-                        className={cn(
-                          "w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold",
-                          isMobile ? "h-6 px-1 text-xs" : "h-7 px-1.5 text-sm"
-                        )}
-                      >
+                      <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -723,28 +646,14 @@ export function TeamRosterCard({
                   </div>
 
                   {weaponId && (
-                    <div className="flex flex-col gap-1 w-full shrink pl-0.5 border-l border-border/20">
-                      <span
-                        className={cn(
-                          "font-bold text-muted-foreground line-clamp-1 break-all",
-                          isMobile ? "text-[10px] px-0.5" : "text-xs px-1"
-                        )}
-                        title={t.ui("teamComp.overrideRefine")}
-                      >
-                        {t.ui("teamComp.overrideRefine")}
-                      </span>
+                    <div className="w-full shrink pl-0.5 border-l border-border/20">
                       <Select
                         value={String(weaponRefine)}
                         onValueChange={(v) =>
                           handleOptionChange(`${charId}.overrideRefinement`, v)
                         }
                       >
-                        <SelectTrigger
-                          className={cn(
-                            "w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold",
-                            isMobile ? "h-6 px-1 text-xs" : "h-7 px-1.5 text-sm"
-                          )}
-                        >
+                        <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -761,7 +670,7 @@ export function TeamRosterCard({
 
                 {/* Per-character combat options */}
                 {(charHasOption || weaponHasOption || artifactHasOption) && (
-                  <div className="w-full space-y-1.5 pt-1">
+                  <div className="w-full space-y-1">
                     {charHasOption && renderOption(charId, "character")}
                     {weaponHasOption &&
                       weaponId &&
@@ -789,7 +698,7 @@ export function TeamRosterCard({
                   return (
                     <label
                       htmlFor={cbId}
-                      className="flex items-center gap-1.5 pt-0.5 cursor-pointer select-none"
+                      className="flex items-center gap-1 mt-auto pt-1 cursor-pointer select-none ml-1 xl:ml-2"
                     >
                       <Checkbox
                         id={cbId}
@@ -802,12 +711,7 @@ export function TeamRosterCard({
                         }
                         className="h-3.5 w-3.5"
                       />
-                      <span
-                        className={cn(
-                          "font-medium text-foreground/50",
-                          isMobile ? "text-[10px]" : "text-xs"
-                        )}
-                      >
+                      <span className="font-medium text-foreground/50 text-[10px] md:text-xs lg:text-[11px] xl:text-xs">
                         {t.ui("teamComp.ignoreSets")}
                       </span>
                     </label>

@@ -21,6 +21,7 @@ import type { Element, PresetOption, Region } from "@/data/types";
 import { elements, regions } from "@/data/types";
 import type { ArtifactData, CharacterData } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
@@ -43,8 +44,9 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-/** Max card width drives auto-fit column sizing */
+/** Max card width drives auto-fit column sizing — compact on ≤lg, spacious on xl+ */
 const CARD_MAX_WIDTH = 320;
+const CARD_MAX_WIDTH_COMPACT = 284;
 
 const presetModules = import.meta.glob<{ default: TeamCompData }>(
   "@/presets/team-comp/*.json",
@@ -54,6 +56,8 @@ const presetModules = import.meta.glob<{ default: TeamCompData }>(
 export default function TeamCompPage() {
   const { t } = useLanguage();
   const tour = useTour();
+  const isXl = useMediaQuery("(min-width: 1280px)");
+  const cardMinWidth = isXl ? CARD_MAX_WIDTH : CARD_MAX_WIDTH_COMPACT;
   const { characterStats } = useGameStats();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
@@ -492,9 +496,9 @@ export default function TeamCompPage() {
             </div>
           )}
           <div
-            className={cn("grid gap-4 justify-center items-start")}
+            className={cn("grid gap-3 xl:gap-4 justify-center items-start")}
             style={{
-              gridTemplateColumns: `repeat(auto-fill, minmax(${CARD_MAX_WIDTH}px, max-content))`,
+              gridTemplateColumns: `repeat(auto-fill, minmax(${cardMinWidth}px, max-content))`,
             }}
           >
             {filteredTeams.map((team, index) => {

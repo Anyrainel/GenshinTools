@@ -393,6 +393,31 @@ function ComboBreakdown({
     return map;
   }, [activeLines, lineDamages, reactionOverrides]);
 
+  // Per-character damage totals and max line proportion for color scaling
+  const { charDamageMap, totalLineDamage, maxLineProportion } = useMemo(() => {
+    const map: Record<string, number> = {};
+    let total = 0;
+    let maxProp = 0;
+    for (const [charId, lines] of byChar) {
+      const charTotal = lines.reduce((sum, l) => sum + l.total, 0);
+      map[charId] = charTotal;
+      total += charTotal;
+    }
+    if (total > 0) {
+      for (const lines of byChar.values()) {
+        for (const l of lines) {
+          const prop = l.total / total;
+          if (prop > maxProp) maxProp = prop;
+        }
+      }
+    }
+    return {
+      charDamageMap: map,
+      totalLineDamage: total,
+      maxLineProportion: maxProp,
+    };
+  }, [byChar]);
+
   // Whether any visible line has partial reaction settings
   const anyPartial = useMemo(
     () =>
@@ -595,6 +620,33 @@ function ComboBreakdown({
                           )}
                           <span className="text-xs md:text-sm font-bold text-foreground/80 truncate">
                             {t.character(charId)}
+                            {totalLineDamage > 0 &&
+                              (charDamageMap[charId] ?? 0) > 0 && (
+                                <span
+                                  className={cn(
+                                    "text-xs md:text-sm font-mono ml-1",
+                                    (() => {
+                                      const pct =
+                                        ((charDamageMap[charId] ?? 0) /
+                                          totalLineDamage) *
+                                        100;
+                                      if (pct >= 50)
+                                        return "font-bold text-foreground";
+                                      if (pct >= 20)
+                                        return "font-semibold text-foreground/80";
+                                      return "font-normal text-foreground/60";
+                                    })()
+                                  )}
+                                >
+                                  (
+                                  {(
+                                    ((charDamageMap[charId] ?? 0) /
+                                      totalLineDamage) *
+                                    100
+                                  ).toFixed(0)}
+                                  %)
+                                </span>
+                              )}
                           </span>
                         </div>
 
@@ -613,7 +665,7 @@ function ComboBreakdown({
                                     <div className="flex items-center gap-1 min-w-0">
                                       <button
                                         type="button"
-                                        className="flex items-center gap-0.5 text-sm md:text-base font-semibold text-foreground hover:text-primary transition-colors truncate cursor-pointer"
+                                        className="flex items-center gap-0.5 text-sm md:text-base font-semibold text-foreground hover:text-primary transition-colors truncate cursor-pointer border-b border-dotted border-current"
                                         onClick={() =>
                                           setFocusedLine({
                                             charId: line.charId,
@@ -645,7 +697,35 @@ function ComboBreakdown({
                                       )}
                                     </div>
                                     <div className="flex items-baseline gap-1 text-sm md:text-base font-mono tabular-nums">
-                                      <span className="text-foreground">
+                                      <span
+                                        className="text-foreground/80"
+                                        style={{
+                                          color: (() => {
+                                            if (
+                                              totalLineDamage <= 0 ||
+                                              maxLineProportion <= 0
+                                            )
+                                              return undefined;
+                                            const pct =
+                                              (total / totalLineDamage) * 100;
+                                            // <5% contribution: no color (falls back to class)
+                                            if (pct < 5) return undefined;
+                                            // Normalize within [5%, max%] to t ∈ [0, 1]
+                                            const maxPct =
+                                              maxLineProportion * 100;
+                                            const t = Math.min(
+                                              1,
+                                              (pct - 5) /
+                                                Math.max(1, maxPct - 5)
+                                            );
+                                            // Low → warm gold, high → vivid orange
+                                            const hue = 45 - 20 * t;
+                                            const sat = 60 + 35 * t;
+                                            const lum = 75 - 12 * t;
+                                            return `hsl(${hue}, ${sat}%, ${lum}%)`;
+                                          })(),
+                                        }}
+                                      >
                                         {fmtDamage(perHit)}
                                       </span>
                                       {line.count > 1 && (
@@ -855,20 +935,27 @@ function EnemyLevelInput({
   t,
 }: CtxProps) {
   return (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-0.5 md:gap-1">
       <span className={LABEL_CLS}>{t.ui("teamComp.enemyLevel")}</span>
       <Input
         type="text"
         inputMode="numeric"
-        value={activeContext.enemyLevel}
+        value={team.calcContext?.enemyLevel ?? ""}
+        placeholder="110"
         onChange={(e) => {
-          const num = Number(e.target.value);
-          if (e.target.value === "" || !Number.isNaN(num))
+          const raw = e.target.value;
+          if (raw === "") {
+            const { enemyLevel: _, ...rest } = team.calcContext ?? {};
+            updateTeam(team.id, { calcContext: rest });
+            return;
+          }
+          const num = Number(raw);
+          if (!Number.isNaN(num))
             updateTeam(team.id, {
-              calcContext: { ...team.calcContext, enemyLevel: num || 100 },
+              calcContext: { ...team.calcContext, enemyLevel: num },
             });
         }}
-        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-12 px-1 md:text-sm md:h-8 md:w-16 md:px-3"
+        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1"
       />
     </div>
   );
@@ -948,21 +1035,32 @@ function EnemyResInput({
   t,
 }: CtxProps) {
   return (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-0.5 md:gap-1">
       <span className={LABEL_CLS}>{t.ui("teamComp.enemyRes")}</span>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0">
         <Input
           type="number"
-          value={Math.round(activeContext.enemyRes * 100)}
-          onChange={(e) =>
+          value={
+            team.calcContext?.enemyRes != null
+              ? Math.round(team.calcContext.enemyRes * 100)
+              : ""
+          }
+          placeholder="10"
+          onChange={(e) => {
+            const raw = e.target.value;
+            if (raw === "") {
+              const { enemyRes: _, ...rest } = team.calcContext ?? {};
+              updateTeam(team.id, { calcContext: rest });
+              return;
+            }
             updateTeam(team.id, {
               calcContext: {
                 ...team.calcContext,
-                enemyRes: (Number(e.target.value) || 0) / 100,
+                enemyRes: (Number(raw) || 0) / 100,
               },
-            })
-          }
-          className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-12 px-1 md:text-sm md:h-8 md:w-16 md:px-3"
+            });
+          }}
+          className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1"
         />
         <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
           %
@@ -980,7 +1078,7 @@ function CritRateTargetInput({
   t,
 }: CtxProps) {
   return (
-    <div className="flex items-center gap-1 shrink-0">
+    <div className="flex items-center gap-0.5 md:gap-1 shrink-0">
       <span className={LABEL_CLS} title={t.ui("teamComp.critRateTargetTip")}>
         {t.ui("teamComp.critRateTarget")}
       </span>
@@ -1001,9 +1099,9 @@ function CritRateTargetInput({
             },
           });
         }}
-        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-12 px-1 md:text-sm md:h-8 md:w-16 md:px-3"
+        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1"
       />
-      <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
+      <span className="font-bold text-muted-foreground text-[10px] md:text-xs -ml-0.5 md:-ml-1">
         %
       </span>
     </div>
@@ -1018,7 +1116,7 @@ function RollMultSelect({
   t,
 }: CtxProps) {
   return (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-0.5 md:gap-1">
       <span className={LABEL_CLS}>{t.ui("teamComp.rollMultiplier")}</span>
       <Select
         value={String(activeContext.rollMultiplier ?? 0.85)}
@@ -1028,7 +1126,7 @@ function RollMultSelect({
           })
         }
       >
-        <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-16 px-1.5 md:text-sm md:h-8 md:w-20 md:px-3">
+        <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-14 px-1 py-0 md:text-sm md:h-7 md:w-16 md:px-1.5">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -1052,7 +1150,7 @@ function SubstatBudgetSelect({
 }: CtxProps) {
   const value = activeContext.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET;
   return (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className="flex items-center gap-0.5 md:gap-1">
       <span className={LABEL_CLS}>{t.ui("teamComp.substatBudget")}</span>
       <Select
         value={value}
@@ -1065,7 +1163,7 @@ function SubstatBudgetSelect({
           })
         }
       >
-        <SelectTrigger className="font-bold border-border/20 bg-background/50 min-w-0 max-w-[10.5rem] text-xs h-6 px-1.5 md:text-sm md:h-8 md:px-3">
+        <SelectTrigger className="font-bold border-border/20 bg-background/50 min-w-0 max-w-[9rem] text-xs h-6 px-1 py-0 md:text-sm md:h-7 md:max-w-[10rem] md:px-1.5">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

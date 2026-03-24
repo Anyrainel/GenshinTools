@@ -118,7 +118,7 @@ export function TeamCard({
 
   const multiSelectTriggerClass = cn(
     "border-border/40 bg-foreground/5 rounded-full h-auto w-auto",
-    "min-w-[7rem] pl-2 pr-1 py-1 text-sm [&>svg]:h-3 [&>svg]:w-3"
+    "min-w-[6rem] xl:min-w-[7rem] pl-1.5 xl:pl-2 pr-1 py-0.5 xl:py-1 text-xs xl:text-sm [&>svg]:h-3 [&>svg]:w-3"
   );
 
   return (
@@ -136,8 +136,8 @@ export function TeamCard({
       )}
     >
       {/* Header: Index + Reaction tags + Name + Context menu */}
-      <div className="flex items-center gap-1.5 px-3 pt-3 pb-1">
-        <span className="text-xs font-bold text-muted-foreground select-none w-5 text-center shrink-0">
+      <div className="flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 pt-2 xl:pt-3 pb-0.5 xl:pb-1">
+        <span className="text-[11px] xl:text-xs font-bold text-muted-foreground select-none w-4 xl:w-5 text-center shrink-0">
           {index + 1}
         </span>
         <LightweightMultiSelect
@@ -154,7 +154,7 @@ export function TeamCard({
           value={team.name}
           onChange={(e) => onUpdate({ name: e.target.value })}
           placeholder={t.ui("teamComp.teamName")}
-          className="font-semibold text-sm bg-transparent border-none px-2 h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
+          className="font-semibold !text-xs xl:!text-sm bg-transparent border-none px-1.5 xl:px-2 h-6 xl:h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
           disabled={isFullyFrozen}
         />
         <DropdownMenu>
@@ -162,9 +162,9 @@ export function TeamCard({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 p-0 opacity-60 transition-opacity"
+              className="h-6 w-6 xl:h-7 xl:w-7 p-0 opacity-60 transition-opacity"
             >
-              <MoreVertical className="h-4 w-4" />
+              <MoreVertical className="h-3.5 w-3.5 xl:h-4 xl:w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -195,11 +195,11 @@ export function TeamCard({
       {/* Body: 5-column grid — element row + row-label + 4 pickers */}
       <div
         className={cn(
-          "px-3 py-2",
+          "px-2 xl:px-3 py-1.5 xl:py-2",
           isFrozen && "frozen-card pointer-events-none"
         )}
       >
-        <div className="grid grid-cols-[auto_repeat(4,auto)] gap-3 w-fit mx-auto pr-2 justify-items-center items-center">
+        <div className="grid grid-cols-[auto_repeat(4,auto)] gap-1.5 xl:gap-3 w-fit mx-auto pr-1 xl:pr-2 justify-items-center items-center">
           {/* Row 0: Element icons — dim by default, bright on resonance (2+ same element) */}
           <div />
           {/* spacer for icon column */}
@@ -224,14 +224,14 @@ export function TeamCard({
             return (
               <div
                 key={`el-${idx}`}
-                className="h-5 flex items-center justify-center"
+                className="h-4 xl:h-5 flex items-center justify-center"
               >
                 {elRes && charMeta?.element != null && (
                   <img
                     src={getAssetUrl(elRes.imagePath)}
                     alt={charMeta.element}
                     className={cn(
-                      "w-5 h-5 object-contain transition-all duration-200",
+                      "w-4 h-4 xl:w-5 xl:h-5 object-contain transition-all duration-200",
                       hasResonance
                         ? "opacity-100 scale-110 brightness-110"
                         : "opacity-50 grayscale"
@@ -244,7 +244,7 @@ export function TeamCard({
           })}
 
           {/* Row 1: Character icon + Character pickers */}
-          <User2 className="w-3.5 h-3.5 text-muted-foreground" />
+          <User2 className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-muted-foreground" />
           {team.characters.map((charId, idx) => {
             // Only allow clearing the last filled slot (enforce prefix ordering)
             const isLastFilled =
@@ -349,7 +349,7 @@ export function TeamCard({
           })}
 
           {/* Row 2: Weapon icon + Weapon pickers */}
-          <Swords className="w-3.5 h-3.5 text-muted-foreground" />
+          <Swords className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-muted-foreground" />
           {team.weapons.map((weaponId, idx) => {
             const charId = team.characters[idx];
             return (
@@ -393,7 +393,7 @@ export function TeamCard({
           })}
 
           {/* Row 3: Artifact icon + Artifact pickers */}
-          <Diamond className="w-3.5 h-3.5 text-muted-foreground" />
+          <Diamond className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-muted-foreground" />
           {team.artifacts.map((artConfig, idx) => {
             const charId = team.characters[idx];
             const charFrozen = !!(charId && frozenCharIds?.has(charId));
@@ -422,14 +422,19 @@ export function TeamCard({
       </div>
 
       {/* Footer: Optimize / Unfreeze buttons */}
-      <div className={cn("px-3 pb-3 pt-2", isFrozen ? "flex gap-2" : "")}>
+      <div
+        className={cn(
+          "px-2 xl:px-3 pb-2 xl:pb-3 pt-1.5 xl:pt-2",
+          isFrozen ? "flex gap-1.5 xl:gap-2" : ""
+        )}
+      >
         {isFrozen && onUnfreeze && (
           <Button
             variant="outline"
-            className="flex-1 font-semibold h-9 gap-2 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+            className="flex-1 font-semibold h-8 xl:h-9 gap-1.5 xl:gap-2 text-xs xl:text-sm shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
             onClick={onUnfreeze}
           >
-            <Flame className="w-4 h-4" />
+            <Flame className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
             <span>{t.ui("teamComp.unfreezeAll")}</span>
           </Button>
         )}
@@ -437,13 +442,13 @@ export function TeamCard({
           data-tour-step-id="tc-optimize"
           variant="outline"
           className={cn(
-            "font-semibold h-9 gap-2",
+            "font-semibold h-8 xl:h-9 gap-1.5 xl:gap-2 text-xs xl:text-sm",
             isFrozen ? "flex-1" : "w-full"
           )}
           onClick={onSelect}
           disabled={!hasConfiguredMember}
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
           <span>{t.ui("teamComp.teamOptimization")}</span>
         </Button>
       </div>
