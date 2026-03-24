@@ -25,6 +25,7 @@ import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { useTeamInventory } from "@/hooks/useTeamInventory";
 import {
   type BuildMatchResult,
   matchBuild,
@@ -79,6 +80,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
   const freezeStore = useFreezeStore();
+  const teamInventory = useTeamInventory(team.id);
   const isFrozen = freezeStore.isFrozen(team.id);
   const frozenCharIds = freezeStore.getFrozenCharIds(team.id);
   const frozenCharIdSet = useMemo(
@@ -472,31 +474,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return { goalSetId, goalHalfSetIds };
   };
 
-  const getInventory = () => {
-    if (!accountData) return [];
-    // Exclude ALL other teams' frozen artifacts
-    const otherFrozenIds = freezeStore.getFrozenArtifactIds(team.id);
-    // Also exclude THIS team's frozen chars' artifact IDs (they're locked in place)
-    const thisTeamFrozen = freezeStore.getFrozenTeam(team.id);
-    const allExcluded = new Set(otherFrozenIds);
-    if (thisTeamFrozen) {
-      for (const cid of thisTeamFrozen.frozenCharIds) {
-        const arts = thisTeamFrozen.artifactsByChar[cid];
-        if (!arts) continue;
-        for (const art of Object.values(arts)) {
-          if (art) allExcluded.add((art as ArtifactData).id);
-        }
-      }
-    }
-    return [
-      ...accountData.extraArtifacts,
-      ...accountData.characters.flatMap((c: CharacterData) =>
-        (
-          Object.values(c.artifacts || {}) as (ArtifactData | undefined)[]
-        ).filter((a): a is ArtifactData => !!a)
-      ),
-    ].filter((a) => !allExcluded.has(a.id));
-  };
+  // Artifact inventory is provided by useTeamInventory — see teamInventory above
 
   const handleOptimize = () => {
     if (!teamBuild || !accountData) return;
@@ -620,7 +598,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         reactionOverrides: optReactionOverrides,
         buffOverrides: optBuffOverrides,
       },
-      inventory: getInventory(),
+      inventory: teamInventory.availableArtifacts,
       calcContext: activeContext,
       globalConfig: scoreConfig.global,
       baseSheets: optBaseSheets,
@@ -903,31 +881,21 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     artifact: ArtifactData;
   } | null>(null);
 
-  const fullInventory = useMemo(() => {
-    if (!accountData) return [];
-    return [
-      ...accountData.extraArtifacts,
-      ...accountData.characters.flatMap((c: CharacterData) =>
-        (
-          Object.values(c.artifacts || {}) as (ArtifactData | undefined)[]
-        ).filter((a): a is ArtifactData => !!a)
-      ),
-    ];
-  }, [accountData]);
+  // Full inventory is provided by useTeamInventory — see teamInventory above
 
-  // Artifact IDs used by the current result (excluding the slot being swapped)
+  // Artifact IDs used by the current team result (excluding frozen — those are shown labeled in the dialog)
   const usedArtifactIds = useMemo(() => {
     const ids = new Set<string>();
-    const otherFrozen = freezeStore.getFrozenArtifactIds(team.id);
-    for (const id of otherFrozen) ids.add(id);
     for (const arts of Object.values(optimizedArtifactsByChar)) {
       for (const art of Object.values(arts)) {
         if (art && swapTarget && art.id === swapTarget.artifact.id) continue;
-        if (art) ids.add(art.id);
+        // Frozen artifacts are handled separately via frozenArtifactIds
+        if (art && !teamInventory.frozenArtifactIds.has(art.id))
+          ids.add(art.id);
       }
     }
     return ids;
-  }, [optimizedArtifactsByChar, freezeStore, team.id, swapTarget]);
+  }, [optimizedArtifactsByChar, teamInventory.frozenArtifactIds, swapTarget]);
 
   const swapMatchingSetIds = useMemo(() => {
     if (!swapTarget) return new Set<string>();
@@ -1151,8 +1119,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           }}
           currentArtifact={swapTarget.artifact}
           slot={swapTarget.slot}
-          inventory={fullInventory}
+          inventory={teamInventory.allArtifacts}
           usedArtifactIds={usedArtifactIds}
+          frozenArtifactIds={teamInventory.frozenArtifactIds}
           matchingSetIds={swapMatchingSetIds}
           onSwap={handleSwapConfirm}
           t={t}

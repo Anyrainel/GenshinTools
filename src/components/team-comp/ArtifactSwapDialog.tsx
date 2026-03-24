@@ -20,7 +20,7 @@ import { artifactHalfSetsById, artifactsById } from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getRarityColor } from "@/lib/utils";
-import { ArrowRightLeft, Check } from "lucide-react";
+import { ArrowRightLeft, Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
 
 /** All stat keys that can appear on artifacts (main + sub, deduplicated) */
@@ -53,6 +53,7 @@ interface ArtifactSwapDialogProps {
   slot: Slot;
   inventory: ArtifactData[];
   usedArtifactIds: Set<string>;
+  frozenArtifactIds: Set<string>;
   matchingSetIds: Set<string>;
   onSwap: (newArtifact: ArtifactData) => void;
   t: ReturnType<typeof useLanguage>["t"];
@@ -110,6 +111,7 @@ export function ArtifactSwapDialog({
   slot,
   inventory,
   usedArtifactIds,
+  frozenArtifactIds,
   matchingSetIds,
   onSwap,
   t,
@@ -123,7 +125,7 @@ export function ArtifactSwapDialog({
     null,
   ]);
 
-  // Filter inventory to this slot, exclude current and already-used
+  // Filter inventory to this slot, exclude current and team-used (frozen are kept for labeling)
   const { matchingRaw, otherRaw } = useMemo(() => {
     const forSlot = inventory.filter(
       (a) =>
@@ -163,6 +165,7 @@ export function ArtifactSwapDialog({
   const other = hasActiveSorts ? sortByStats(otherRaw, sortStats) : otherRaw;
 
   const handleSelect = (art: ArtifactData) => {
+    if (frozenArtifactIds.has(art.id)) return;
     setSelectedId(art.id === selectedId ? null : art.id);
   };
 
@@ -259,6 +262,7 @@ export function ArtifactSwapDialog({
         {items.map((art) => {
           const artInfo = artifactsById[art.setKey];
           const isSelected = selectedId === art.id;
+          const isFrozen = frozenArtifactIds.has(art.id);
           // Count matched sort stats for badge
           const matchCount =
             activeStats.length > 0
@@ -271,10 +275,12 @@ export function ArtifactSwapDialog({
               onClick={() => handleSelect(art)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg border-2 text-left transition-all",
-                "hover:bg-white/5",
+                isFrozen
+                  ? "opacity-50 cursor-not-allowed border-sky-800/30 bg-sky-950/10"
+                  : "hover:bg-white/5",
                 isSelected
                   ? "border-primary bg-primary/10 shadow-sm"
-                  : "border-border/20 bg-black/10"
+                  : !isFrozen && "border-border/20 bg-black/10"
               )}
             >
               <ArtifactIcon
@@ -288,12 +294,20 @@ export function ArtifactSwapDialog({
                   <span
                     className={cn(
                       "font-bold text-sm truncate",
-                      getRarityColor(art.rarity, "text")
+                      isFrozen
+                        ? "text-muted-foreground"
+                        : getRarityColor(art.rarity, "text")
                     )}
                   >
                     {t.artifact(art.setKey)}
                   </span>
-                  {matchCount > 0 && (
+                  {isFrozen && (
+                    <span className="shrink-0 flex items-center gap-1 text-[10px] font-bold text-sky-400 bg-sky-400/10 px-1.5 py-0.5 rounded-full">
+                      <Snowflake className="w-3 h-3" />
+                      {t.ui("teamComp.frozenBadge")}
+                    </span>
+                  )}
+                  {!isFrozen && matchCount > 0 && (
                     <span className="shrink-0 text-[10px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">
                       {matchCount}/{activeStats.length}
                     </span>
@@ -305,15 +319,18 @@ export function ArtifactSwapDialog({
                 <div className="flex flex-wrap gap-x-2 gap-y-0 mt-0.5">
                   {Object.entries(art.substats ?? {}).map(([key, val]) => {
                     if (val == null) return null;
-                    const isHighlighted = activeStats.includes(key);
+                    const isHighlighted =
+                      !isFrozen && activeStats.includes(key);
                     return (
                       <span
                         key={key}
                         className={cn(
                           "text-xs font-mono",
-                          isHighlighted
-                            ? "text-primary font-bold"
-                            : "text-foreground/70"
+                          isFrozen
+                            ? "text-muted-foreground"
+                            : isHighlighted
+                              ? "text-primary font-bold"
+                              : "text-foreground/70"
                         )}
                       >
                         {t.statMin(key)} {fmtStat(key, val, false, true)}
@@ -333,7 +350,7 @@ export function ArtifactSwapDialog({
                   )}
                 </div>
               </div>
-              {isSelected && (
+              {isSelected && !isFrozen && (
                 <button
                   type="button"
                   onClick={(e) => {
