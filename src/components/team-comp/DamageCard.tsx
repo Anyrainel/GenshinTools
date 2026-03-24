@@ -1126,7 +1126,7 @@ function RollMultSelect({
           })
         }
       >
-        <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-14 px-1 py-0 md:text-sm md:h-7 md:w-16 md:px-1.5">
+        <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-14 px-1 py-0 leading-none [&>span]:leading-none md:text-sm md:h-7 md:w-16 md:px-1.5">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -1163,7 +1163,7 @@ function SubstatBudgetSelect({
           })
         }
       >
-        <SelectTrigger className="font-bold border-border/20 bg-background/50 min-w-0 max-w-[9rem] text-xs h-6 px-1 py-0 md:text-sm md:h-7 md:max-w-[10rem] md:px-1.5">
+        <SelectTrigger className="font-bold border-border/20 bg-background/50 min-w-0 max-w-[9rem] text-xs h-6 px-1 py-0 leading-none [&>span]:leading-none md:text-sm md:h-7 md:max-w-[10rem] md:px-1.5">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
