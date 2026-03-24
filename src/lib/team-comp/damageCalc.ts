@@ -21,8 +21,8 @@ import {
   createWeapon,
 } from "./damageModels";
 
-import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
 import type { OptionMap } from "./damageModels";
+import { computeSubstatMarginals } from "./marginalGains";
 import {
   type ComboLineContext,
   buildPartialBuffInfos,
@@ -1394,6 +1394,9 @@ export class TeamBuild {
       reactionOverride,
       offFieldPostStats
     );
+    // Pre-blending damage: consistent baseline for marginal/level-up gain
+    // comparisons (getDamageResult without partial buffs returns this value).
+    const fullBuffDamage = totalDamage;
 
     // ── Stack allocation + buff activation ──
     const stackLimited = collectStackLimitedBuffs(
@@ -1639,13 +1642,12 @@ export class TeamBuild {
     }
 
     // ── Marginal gains ──
-    const marginalGains = this.computeMarginalGains(
+    const marginalGains = this.computeMarginalGainsUnified(
       charId,
       formulaId,
       artifactStats,
       ctx,
-      totalDamage,
-      parts,
+      fullBuffDamage,
       reactionOverride,
       formulaHasOffField
     );
@@ -1656,7 +1658,7 @@ export class TeamBuild {
       formulaId,
       artifactStats,
       ctx,
-      totalDamage,
+      fullBuffDamage,
       reactionOverride,
       formulaHasOffField
     );
@@ -2059,146 +2061,55 @@ export class TeamBuild {
     return result;
   }
 
-  /** Compute marginal damage gains for +1 avg substat roll. */
-  private computeMarginalGains(
+  /**
+   * Compute marginal damage gains for +1 avg substat roll.
+   * Delegates to the shared computeSubstatMarginals loop and converts
+   * absolute deltas to relative gains.
+   */
+  private computeMarginalGainsUnified(
     calcTargetId: string,
     formulaId: string,
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
     baseDamage: number,
-    displayParts: DisplayPart[],
     reactionOverride?: ReactionOverride,
     hasOffField?: boolean
   ): Record<string, Partial<Record<StatKey, number>>> {
     if (baseDamage === 0) return {};
 
-    const gains: Record<string, Partial<Record<StatKey, number>>> = {};
-
-    // For calc target: check stat keys used by the formula
-    const usedKeys = new Set<StatKey>();
-    for (const dp of displayParts) {
-      for (const key of Object.keys(dp.statValues) as StatKey[]) {
-        usedKeys.add(key);
-      }
-      for (const key of dp.scalingKeys) {
-        usedKeys.add(key);
-      }
-    }
-
-    // Flat hp/atk/def appear in formulas but their substat rolls are negligible;
-    // replace with percent versions which are the meaningful substat rolls.
-    const flatToPercent: Partial<Record<StatKey, StatKey>> = {
-      hp: "hp%",
-      atk: "atk%",
-      def: "def%",
+    const evalFn = (sheets: Record<string, StatSheet>): number => {
+      const stats = this.getTeamStats(sheets, calcTargetId, ctx);
+      const offFieldStats = hasOffField
+        ? this.getOffFieldPostStats(calcTargetId, sheets, ctx)
+        : undefined;
+      const build = this.charBuilds[calcTargetId]!;
+      return build.getDamageResult(
+        formulaId,
+        stats[calcTargetId]!,
+        Object.values(stats),
+        ctx,
+        reactionOverride,
+        offFieldStats
+      ).totalDamage;
     };
-    for (const [flat, pct] of Object.entries(flatToPercent) as [
-      StatKey,
-      StatKey,
-    ][]) {
-      if (usedKeys.has(flat)) {
-        usedKeys.delete(flat);
-        usedKeys.add(pct);
-      }
-    }
 
-    // Also check the calc target's own scaling buffs whose output feeds into the
-    // formula indirectly (e.g. Engulfing Lightning: ER → ATK%).
-    // Must run after flatToPercent so that e.g. "atk%" is in usedKeys.
-    for (const { buff, providerCharId } of this.allStaticBuffs) {
-      if (providerCharId !== calcTargetId) continue;
-      if (buff instanceof ScalingBuff) {
-        if (usedKeys.has(buff.outputKey)) usedKeys.add(buff.inputKey);
-      }
-    }
+    const charIds = Object.keys(this.charBuilds);
+    const deltas = computeSubstatMarginals(
+      evalFn,
+      artifactStats,
+      baseDamage,
+      charIds
+    );
 
-    // Filter to rollable stat keys only
-    const rollableKeys = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
-    const targetRollable = rollableKeys.filter((k) => usedKeys.has(k));
-
-    if (targetRollable.length > 0) {
+    // Convert absolute deltas → relative gains
+    const gains: Record<string, Partial<Record<StatKey, number>>> = {};
+    for (const [cid, charDeltas] of Object.entries(deltas)) {
       const charGains: Partial<Record<StatKey, number>> = {};
-      for (const key of targetRollable) {
-        const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[key];
-        if (!delta) continue;
-        const tweaked = { ...artifactStats };
-        tweaked[calcTargetId] = (
-          artifactStats[calcTargetId] ?? new StatSheet([])
-        ).withDelta(key, delta);
-        const newStats = this.getTeamStats(tweaked, calcTargetId, ctx);
-        const offFieldStats = hasOffField
-          ? this.getOffFieldPostStats(calcTargetId, tweaked, ctx)
-          : undefined;
-        const build = this.charBuilds[calcTargetId]!;
-        const newResult = build.getDamageResult(
-          formulaId,
-          newStats[calcTargetId]!,
-          Object.values(newStats),
-          ctx,
-          reactionOverride,
-          offFieldStats
-        );
-        charGains[key] = (newResult.totalDamage - baseDamage) / baseDamage;
+      for (const [key, delta] of Object.entries(charDeltas)) {
+        charGains[key as StatKey] = delta / baseDamage;
       }
-      gains[calcTargetId] = charGains;
+      gains[cid] = charGains;
     }
-
-    // For teammates: check inputKeys of their scaling buffs that affect calc target
-    for (const cid of Object.keys(this.charBuilds)) {
-      if (cid === calcTargetId) continue;
-      const relevantKeys = new Set<StatKey>();
-      for (const { buff, providerCharId } of this.allStaticBuffs) {
-        if (providerCharId !== cid) continue;
-        if (!this.isBuffApplicableForChar(buff, cid, calcTargetId, true))
-          continue;
-        if (buff instanceof ScalingBuff) {
-          relevantKeys.add(buff.inputKey);
-        }
-      }
-
-      // Same flat→percent substitution as for the carry.
-      for (const [flat, pct] of Object.entries(flatToPercent) as [
-        StatKey,
-        StatKey,
-      ][]) {
-        if (relevantKeys.has(flat)) {
-          relevantKeys.delete(flat);
-          relevantKeys.add(pct);
-        }
-      }
-
-      const teamRollable = rollableKeys.filter((k) => relevantKeys.has(k));
-      if (teamRollable.length === 0) continue;
-
-      const charGains: Partial<Record<StatKey, number>> = {};
-      for (const key of teamRollable) {
-        const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[key];
-        if (!delta) continue;
-        const tweaked = { ...artifactStats };
-        tweaked[cid] = (artifactStats[cid] ?? new StatSheet([])).withDelta(
-          key,
-          delta
-        );
-        const newStats = this.getTeamStats(tweaked, calcTargetId, ctx);
-        const offFieldStats = hasOffField
-          ? this.getOffFieldPostStats(calcTargetId, tweaked, ctx)
-          : undefined;
-        const build = this.charBuilds[calcTargetId]!;
-        const newResult = build.getDamageResult(
-          formulaId,
-          newStats[calcTargetId]!,
-          Object.values(newStats),
-          ctx,
-          reactionOverride,
-          offFieldStats
-        );
-        charGains[key] = (newResult.totalDamage - baseDamage) / baseDamage;
-      }
-      if (Object.keys(charGains).length > 0) {
-        gains[cid] = charGains;
-      }
-    }
-
     return gains;
   }
 
@@ -2862,77 +2773,41 @@ export function getComboDisplayResult(
     buffOverrides
   );
   const baseDamage = baseResult.totalDamage;
+  // Full-buff baseline for marginal/level-up comparisons: consistent with
+  // the tweaked evaluateCombo calls which don't pass buffOverrides.
+  const fullBuffBaseDamage = buffOverrides
+    ? evaluateCombo(
+        teamBuild,
+        { ...combo, lines: activeLines },
+        artifactStats,
+        ctx,
+        singleModeOverrides
+      ).totalDamage
+    : baseDamage;
 
   // ── Marginal gains ──
   const marginalGains: Record<string, Partial<Record<StatKey, number>>> = {};
 
-  if (baseDamage > 0) {
-    const rollableKeys = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
+  if (fullBuffBaseDamage > 0) {
+    const comboConfig = { ...combo, lines: activeLines };
+    const evalFn = (sheets: Record<string, StatSheet>): number =>
+      evaluateCombo(teamBuild, comboConfig, sheets, ctx, singleModeOverrides)
+        .totalDamage;
 
-    for (const cid of allCharIds) {
-      // Determine relevant stat keys for this character
-      const relevantKeys = new Set<StatKey>();
+    const deltas = computeSubstatMarginals(
+      evalFn,
+      artifactStats,
+      fullBuffBaseDamage,
+      allCharIds
+    );
 
-      if (activeCharIds.has(cid)) {
-        // Carry char: include common scaling stats
-        // We test all rollable keys since combo may use multiple formulas
-        for (const key of rollableKeys) {
-          relevantKeys.add(key);
-        }
-      } else {
-        // Support char: check inputKeys of scaling buffs that affect any active char
-        const { allStaticBuffs, teamMeta } = teamBuild;
-        for (const { buff, providerCharId } of allStaticBuffs) {
-          if (providerCharId !== cid) continue;
-          if (buff instanceof ScalingBuff) {
-            relevantKeys.add(buff.inputKey);
-          }
-        }
-      }
-
-      // Flat→percent substitution
-      const flatToPercent: Partial<Record<StatKey, StatKey>> = {
-        hp: "hp%",
-        atk: "atk%",
-        def: "def%",
-      };
-      for (const [flat, pct] of Object.entries(flatToPercent) as [
-        StatKey,
-        StatKey,
-      ][]) {
-        if (relevantKeys.has(flat)) {
-          relevantKeys.delete(flat);
-          relevantKeys.add(pct);
-        }
-      }
-
-      const charRollable = rollableKeys.filter((k) => relevantKeys.has(k));
-      if (charRollable.length === 0) continue;
-
+    // Convert absolute deltas → relative gains
+    for (const [cid, charDeltas] of Object.entries(deltas)) {
       const charGains: Partial<Record<StatKey, number>> = {};
-      for (const key of charRollable) {
-        const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[key];
-        if (!delta) continue;
-        const tweaked = { ...artifactStats };
-        tweaked[cid] = (artifactStats[cid] ?? new StatSheet([])).withDelta(
-          key,
-          delta
-        );
-        const newResult = evaluateCombo(
-          teamBuild,
-          { ...combo, lines: activeLines },
-          tweaked,
-          ctx,
-          singleModeOverrides
-        );
-        const gain = (newResult.totalDamage - baseDamage) / baseDamage;
-        if (gain !== 0) {
-          charGains[key] = gain;
-        }
+      for (const [key, delta] of Object.entries(charDeltas)) {
+        charGains[key as StatKey] = delta / fullBuffBaseDamage;
       }
-      if (Object.keys(charGains).length > 0) {
-        marginalGains[cid] = charGains;
-      }
+      marginalGains[cid] = charGains;
     }
   }
 
@@ -2986,7 +2861,7 @@ export function getComboDisplayResult(
     string,
     { gain: number; from: number; to: number }[]
   > = {};
-  if (baseDamage > 0) {
+  if (fullBuffBaseDamage > 0) {
     const computeComboGain = (charId: string, targetLevel: number) => {
       const tweakedConfigs = teamBuild.configs.map((c) =>
         c.charId === charId ? { ...c, charLevel: targetLevel } : c
@@ -3004,7 +2879,7 @@ export function getComboDisplayResult(
         ctx,
         singleModeOverrides
       );
-      return (newResult.totalDamage - baseDamage) / baseDamage;
+      return (newResult.totalDamage - fullBuffBaseDamage) / fullBuffBaseDamage;
     };
 
     for (const config of teamBuild.configs) {

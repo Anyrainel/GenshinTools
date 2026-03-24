@@ -5,19 +5,20 @@
  * adding each possible main stat. This gives context-aware weights that
  * account for CR capping, team buffs, and formula-specific stat valuation.
  *
- * Uses compiled AST evaluation for all damage computations.
- * Cost: ~20 compiled evaluations (10 substats + ~10 main stats).
+ * Substat marginals delegate to the shared computeSubstatMarginals loop;
+ * main-stat marginals and disagreement detection remain optimizer-specific.
  */
 
 import { MAIN_STAT_VALUES_5STAR, statPools } from "@/data/constants";
 import type { MainStat, SubStat } from "@/data/types";
-import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/account-data/scoring/utils";
+import { toInternal } from "@/lib/account-data/scoring/utils";
 import {
   type BuildMatchResult,
   getTargetMainStatsForSlot,
 } from "../../account-data/artifactScore";
 import type { DamageEvalFn } from "../constrainedGreedy";
 import { StatSheet } from "../damageModels";
+import { computeSubstatMarginals } from "../marginalGains";
 import type { StatKey } from "../types";
 import type { MarginalWeights } from "./types";
 
@@ -76,28 +77,24 @@ export function computeMarginalWeights(
   const baseDamage = evalDamageFn(sheets);
   if (baseDamage <= 0) return null;
 
-  // Substat marginals: damage delta from +1 average roll of each substat
-  const subMarginals: Record<string, number> = {};
-  let maxMarginal = 0;
-  for (const stat of MARGINAL_SUBSTATS) {
-    const delta = AVG_SUBSTAT_ROLL[stat];
-    if (!delta) {
-      subMarginals[stat] = 0;
-      continue;
-    }
-    const tweakedSheet = baseSheet.withDelta(stat as StatKey, delta);
-    const tweakedSheets = { ...baseSheets, [charId]: tweakedSheet };
-    const dmg = evalDamageFn(tweakedSheets);
-    subMarginals[stat] = Math.max(0, dmg - baseDamage);
-    if (subMarginals[stat] > maxMarginal) maxMarginal = subMarginals[stat];
-  }
+  // Substat marginals via shared loop (returns absolute deltas)
+  const rawDeltas = computeSubstatMarginals(evalDamageFn, sheets, baseDamage, [
+    charId,
+  ]);
+  const charDeltas = rawDeltas[charId] ?? {};
 
   // Normalize substats to 0-100 scale
+  let maxMarginal = 0;
+  for (const val of Object.values(charDeltas)) {
+    if (val > maxMarginal) maxMarginal = val;
+  }
   const substatWeights: Record<string, number> = {};
   for (const stat of MARGINAL_SUBSTATS) {
     substatWeights[stat] =
       maxMarginal > 0
-        ? Math.round((subMarginals[stat] / maxMarginal) * 100)
+        ? Math.round(
+            (Math.max(0, charDeltas[stat as StatKey] ?? 0) / maxMarginal) * 100
+          )
         : 0;
   }
 
