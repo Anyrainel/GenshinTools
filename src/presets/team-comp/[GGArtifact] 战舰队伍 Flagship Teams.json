@@ -12,19 +12,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         }
       ],
@@ -42,19 +38,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "night_of_the_skys_unveiling"
         },
         {
-          "type": "4pc",
           "setId": "silken_moons_serenade"
         },
         {
-          "type": "4pc",
           "setId": "aubade_of_morningstar_and_moon"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         }
       ],
@@ -72,19 +64,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "night_of_the_skys_unveiling"
         },
         {
-          "type": "4pc",
           "setId": "silken_moons_serenade"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         }
       ],
@@ -102,26 +90,22 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "night_of_the_skys_unveiling"
         },
         {
-          "type": "4pc",
           "setId": "silken_moons_serenade"
         },
         {
-          "type": "4pc",
           "setId": "aubade_of_morningstar_and_moon"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         }
       ],
       "reactions": ["lunarCharged"]
     },
     {
-      "id": "71K0eyO0e91i11l8Wn",
+      "id": "71K0eyBWe91i11l8Wn",
       "name": "",
       "characters": ["skirk", "escoffier", "citlali", "furina"],
       "weapons": [
@@ -132,19 +116,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "finale_of_the_deep_galleries"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         }
       ],
@@ -162,19 +142,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "finale_of_the_deep_galleries"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -192,19 +168,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "finale_of_the_deep_galleries"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -222,19 +194,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         },
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         }
       ]
@@ -251,20 +219,16 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "long_nights_oath"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "2pc+2pc",
           "id1": "atk%-18",
           "id2": "atk%-18"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         }
       ]
@@ -281,19 +245,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "long_nights_oath"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "song_of_days_past"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -311,19 +271,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         }
       ],
@@ -341,19 +297,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -371,19 +323,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -401,19 +349,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -431,19 +375,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -461,19 +401,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "unfinished_reverie"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         }
       ],
@@ -491,19 +427,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "obsidian_codex"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         }
       ],
@@ -521,19 +453,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "fragment_of_harmonic_whimsy"
         },
         {
-          "type": "4pc",
           "setId": "aubade_of_morningstar_and_moon"
         },
         {
-          "type": "4pc",
           "setId": "silken_moons_serenade"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         }
       ],
@@ -551,19 +479,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "fragment_of_harmonic_whimsy"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         }
       ],
@@ -581,19 +505,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "fragment_of_harmonic_whimsy"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         }
       ],
@@ -611,19 +531,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "wanderers_troupe"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         }
       ],
@@ -641,19 +557,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "fragment_of_harmonic_whimsy"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -671,19 +583,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "fragment_of_harmonic_whimsy"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -701,19 +609,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "fragment_of_harmonic_whimsy"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -731,48 +635,40 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         }
       ]
     },
     {
-      "id": "Ceu3vcSWTDpW1hOv0e",
+      "id": "Ceu3vcQ0TDpW1hOv0e",
       "name": "",
       "characters": ["gaming", "xianyun", "furina", "bennett"],
       "weapons": [
         "serpent_spine",
-        "cashflow_supervision",
+        "cranes_echoing_call",
         "splendor_of_tranquil_waters",
         "aquila_favonia"
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "crimson_witch_of_flames"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -790,20 +686,16 @@
       ],
       "artifacts": [
         {
-          "type": "2pc+2pc",
           "id1": "atk%-18",
           "id2": "atk%-18"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ]
@@ -820,19 +712,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "nighttime_whispers_in_the_echoing_woods"
         },
         {
-          "type": "4pc",
           "setId": "silken_moons_serenade"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         }
       ],
@@ -850,19 +738,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "nighttime_whispers_in_the_echoing_woods"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ]
@@ -879,19 +763,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "long_nights_oath"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "2pc+2pc",
           "id1": "atk%-18",
           "id2": "atk%-18"
         }
@@ -910,19 +790,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "marechaussee_hunter"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -940,19 +816,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "marechaussee_hunter"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -970,19 +842,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "marechaussee_hunter"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         }
       ]
@@ -999,25 +867,21 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "marechaussee_hunter"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         }
       ]
     },
     {
-      "id": "Ewe6OyO0eDpW1hJS0e",
+      "id": "Ewe6OyBWeDpW1hJS0e",
       "name": "",
       "characters": ["freminet", "escoffier", "furina", "shenhe"],
       "weapons": [
@@ -1028,19 +892,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "blizzard_strayer"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -1058,49 +918,41 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "marechaussee_hunter"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         }
       ],
       "reactions": ["overloaded"]
     },
     {
-      "id": "G8i2YGfWKKP42I_EWU",
+      "id": "G4y2YGfWKKP42I_EWU",
       "name": "",
       "characters": ["kaveh", "nahida", "kuki_shinobu", "xingqiu"],
       "weapons": [
-        "favonius_greatsword",
+        "mailed_flower",
         "a_thousand_floating_dreams",
         "freedomsworn",
         "primordial_jade_cutter"
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "flower_of_paradise_lost"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         }
       ],
@@ -1118,19 +970,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "gilded_dreams"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "flower_of_paradise_lost"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         }
       ],
@@ -1148,19 +996,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "desert_pavilion_chronicle"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ]
@@ -1177,20 +1021,16 @@
       ],
       "artifacts": [
         {
-          "type": "2pc+2pc",
           "id1": "hp%-20",
           "id2": "hp%-20"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "gilded_dreams"
         },
         {
-          "type": "4pc",
           "setId": "flower_of_paradise_lost"
         }
       ],
@@ -1208,19 +1048,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "gilded_dreams"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         }
       ],
@@ -1238,26 +1074,22 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "gilded_dreams"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         }
       ],
       "reactions": ["spread"]
     },
     {
-      "id": "PwS4YGfWKKP42JX8WT",
+      "id": "PwS4YGfWKKLK2JX8WT",
       "name": "",
       "characters": [
         "kamisato_ayato",
@@ -1268,24 +1100,20 @@
       "weapons": [
         "haran_geppaku_futsu",
         "a_thousand_floating_dreams",
-        "freedomsworn",
+        "xiphos_moonlight",
         "freedomsworn"
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "heart_of_depth"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "flower_of_paradise_lost"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         }
       ],
@@ -1303,19 +1131,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ]
@@ -1332,19 +1156,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         }
       ]
@@ -1361,19 +1181,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "aubade_of_morningstar_and_moon"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         }
       ],
@@ -1396,19 +1212,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ]
@@ -1425,19 +1237,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -1455,19 +1263,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "shimenawas_reminiscence"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "instructor"
         },
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         }
       ],
@@ -1485,19 +1289,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "blizzard_strayer"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -1515,79 +1315,98 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "pale_flame"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         }
       ],
       "reactions": ["superconduct"]
     },
     {
-      "id": "PBO3vGHW8DpW1g_EWU",
+      "id": "PBO3v8DW8Dum1gb50U",
+      "name": "",
+      "characters": ["hu_tao", "citlali", "furina", "yelan"],
+      "weapons": [
+        "staff_of_homa",
+        "starcallers_watch",
+        "favonius_sword",
+        "favonius_warbow"
+      ],
+      "artifacts": [
+        {
+          "setId": "crimson_witch_of_flames"
+        },
+        {
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "setId": "golden_troupe"
+        },
+        {
+          "setId": "emblem_of_severed_fate"
+        }
+      ],
+      "reactions": ["vaporize", "melt"],
+      "minEr": {
+        "yelan": 2.25,
+        "citlali": 2,
+        "furina": 2.45
+      }
+    },
+    {
+      "id": "PBO3vGHW8DpW1g_D0U",
       "name": "",
       "characters": ["hu_tao", "xilonen", "furina", "xingqiu"],
       "weapons": [
         "staff_of_homa",
         "peak_patrol_song",
         "splendor_of_tranquil_waters",
-        "primordial_jade_cutter"
+        "sacrificial_sword"
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "crimson_witch_of_flames"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         }
       ],
       "reactions": ["vaporize"]
     },
     {
-      "id": "Kyq2vcSWTDpW1gD50T",
+      "id": "Kyq2vcQ0TDpW1gD50T",
       "name": "",
       "characters": ["xiao", "xianyun", "furina", "faruzan"],
       "weapons": [
         "primordial_jade_wingedspear",
-        "cashflow_supervision",
+        "cranes_echoing_call",
         "splendor_of_tranquil_waters",
         "favonius_warbow"
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "vermillion_hereafter"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         }
       ]
@@ -1604,19 +1423,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "blizzard_strayer"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         }
       ],
@@ -1634,19 +1449,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "heart_of_depth"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -1664,19 +1475,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "thundering_fury"
         },
         {
-          "type": "4pc",
           "setId": "deepwood_memories"
         },
         {
-          "type": "4pc",
           "setId": "viridescent_venerer"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         }
       ],
@@ -1694,19 +1501,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         }
       ],
@@ -1724,19 +1527,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "type": "4pc",
           "setId": "golden_troupe"
         },
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         }
       ],
@@ -1754,19 +1553,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         },
         {
-          "type": "4pc",
           "setId": "husk_of_opulent_dreams"
         },
         {
-          "type": "4pc",
           "setId": "emblem_of_severed_fate"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ]
@@ -1783,19 +1578,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "song_of_days_past"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
@@ -1813,19 +1604,15 @@
       ],
       "artifacts": [
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "a_day_carved_from_rising_winds"
         },
         {
-          "type": "4pc",
           "setId": "tenacity_of_the_millelith"
         },
         {
-          "type": "4pc",
           "setId": "noblesse_oblige"
         }
       ],
