@@ -94,6 +94,18 @@ const ELEMENTAL_DMG_KEY_TO_ELEMENT: Partial<
   "phys%": "Physical",
 };
 
+/** Reverse mapping: element name → per-element stat key. */
+const ELEMENT_TO_DMG_KEY: Record<string, StatKey> = {
+  Pyro: "pyro%",
+  Hydro: "hydro%",
+  Electro: "electro%",
+  Cryo: "cryo%",
+  Dendro: "dendro%",
+  Anemo: "anemo%",
+  Geo: "geo%",
+  Physical: "phys%",
+};
+
 /**
  * Convert an incoming stat entry to canonical form: per-element keys (pyro%, phys%, etc.)
  * become dmg% with the corresponding element filter so the sheet stores one representation.
@@ -433,6 +445,65 @@ export class StatSheet {
       let value = this.get(key, tag);
       if (value !== 0) {
         if (key === "atk" || key === "hp" || key === "def" || key === "em") {
+          value = Math.round(value);
+        }
+        result[key] = value;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Return stat values for the idle / character-panel display.
+   *
+   * Like `getAll(null)` but denormalizes `dmg%` entries that carry an
+   * element-only filter back to per-element keys (pyro%, hydro%, …).
+   * Generic (unfiltered) `dmg%` is omitted — the game panel doesn't show it.
+   */
+  getIdleRecord(): Partial<Record<StatKey, number>> {
+    const result: Partial<Record<StatKey, number>> = {};
+    const evalKeys = new Set(this.data.keys());
+    evalKeys.add("atk" as StatKey);
+    evalKeys.add("hp" as StatKey);
+    evalKeys.add("def" as StatKey);
+
+    for (const key of evalKeys) {
+      if (SCALED_PERCENT_KEYS.has(key)) continue;
+
+      if (key === "dmg%") {
+        // Denormalize: element-only filtered entries → per-element keys
+        const bucket = this.data.get("dmg%");
+        if (bucket) {
+          for (const [fk, fv] of bucket) {
+            if (fk === EMPTY_FILTER_KEY || fv === 0) continue;
+            const filter = deserializeFilter(fk);
+            // Only entries with element-only filters (no ability/reaction)
+            if (filter.abilities || filter.reactions) continue;
+            if (!filter.elements || filter.elements.length === 0) continue;
+            // Split multi-element filters into individual per-element keys
+            for (const el of filter.elements) {
+              const elKey = ELEMENT_TO_DMG_KEY[el];
+              if (elKey) {
+                result[elKey] = (result[elKey] ?? 0) + fv;
+              }
+            }
+          }
+        }
+        continue;
+      }
+
+      // Standard universal-only read
+      let value = this.get(key, null);
+      if (value !== 0) {
+        if (
+          key === "atk" ||
+          key === "hp" ||
+          key === "def" ||
+          key === "em" ||
+          key === "baseAtk" ||
+          key === "baseHp" ||
+          key === "baseDef"
+        ) {
           value = Math.round(value);
         }
         result[key] = value;

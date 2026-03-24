@@ -480,6 +480,17 @@ export class CharBuild {
     return selfPreStats.apply(mappedToStatic);
   }
 
+  /**
+   * Compute idle pre-stats: baseStatSheet + artifacts + idle-eligible static buffs.
+   * Bypasses innerStatSheet so only explicitly passed buffs are included.
+   */
+  getIdlePreStats(artifactStats: StatSheet, idleBuffs: StatBuff[]): StatSheet {
+    const sheet = this.baseStatSheet.merge(artifactStats);
+    if (idleBuffs.length === 0) return sheet;
+    const deduped = deduplicateBuffs(idleBuffs, (b) => b.staticBuffs);
+    return sheet.apply(deduped);
+  }
+
   getFormulaIds(): Record<string, I18nLabel> {
     return this.charBase.formulaIds;
   }
@@ -880,6 +891,105 @@ export class TeamBuild {
       }
     }
     return postStats;
+  }
+
+  // ─── Idle stat computation (cold path) ─────────────────────────────────
+
+  /**
+   * Compute idle stat sheets for all team members (cold path, display only).
+   *
+   * Idle stats simulate the game's character-panel view:
+   * - Base stats (character + weapon + artifact-set 2pc bonuses)
+   * - Artifact main/sub stats
+   * - Unconditional buffs only (no triggers, no ability/reaction filters)
+   * - Dynamic (scaling) buffs evaluated from idle pre-stats
+   *
+   * The caller should use `StatSheet.getIdleRecord()` on each result to
+   * denormalize dmg% back to per-element keys for display.
+   */
+  computeIdleStatSheets(
+    artifactStats: Record<string, StatSheet>
+  ): Record<string, { onField: StatSheet; offField: StatSheet }> {
+    // Filter to idle-eligible buffs: no triggers, no ability/reaction filters.
+    // Element-only filters are allowed through — getIdleRecord() handles them:
+    // dmg% with element filter → denormalized to per-element keys (pyro%, etc.),
+    // all other stats with element filter → invisible (read via unfiltered get).
+    const idleBuffs = this.allStaticBuffs.filter(({ buff }) => {
+      if (buff.source.triggers && buff.source.triggers.length > 0) return false;
+      const filter = buff.target.filter;
+      if (filter?.abilities || filter?.reactions) return false;
+      return true;
+    });
+
+    // Compute idle sheets for a given field state
+    const computeForField = (onField: boolean): Record<string, StatSheet> => {
+      // Phase 1: idle pre-stats per character
+      const idlePreStats: Record<string, StatSheet> = {};
+      for (const [charId, build] of Object.entries(this.charBuilds)) {
+        const applicable = idleBuffs
+          .filter(({ buff, providerCharId }) =>
+            isBuffApplicable(
+              buff,
+              providerCharId,
+              charId,
+              onField,
+              this.teamMeta.regions[charId],
+              this.teamMeta.factions[charId]
+            )
+          )
+          .map((b) => b.buff);
+        idlePreStats[charId] = build.getIdlePreStats(
+          artifactStats[charId] ?? new StatSheet([]),
+          applicable
+        );
+      }
+
+      // Phase 2: evaluate dynamic buffs from idle-eligible providers
+      const teamPreStatsArr = Object.values(idlePreStats);
+      const dynamicEntries: EvaluatedDynamicBuff[] = [];
+      for (const { buff, providerCharId } of idleBuffs) {
+        if (providerCharId === "resonance" || providerCharId === "extra")
+          continue;
+        const ownerStats = idlePreStats[providerCharId];
+        if (!ownerStats) continue;
+        const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+        if (entries.length > 0) {
+          dynamicEntries.push({
+            buff,
+            source: buff.source,
+            providerCharId,
+            entries,
+          });
+        }
+      }
+
+      // Phase 3: apply dynamic buffs → idle post-stats
+      const result: Record<string, StatSheet> = {};
+      for (const [charId, build] of Object.entries(this.charBuilds)) {
+        result[charId] = build.getPostStats(
+          idlePreStats[charId]!,
+          dynamicEntries,
+          charId,
+          onField,
+          this.teamMeta.regions[charId],
+          this.teamMeta.factions[charId]
+        );
+      }
+      return result;
+    };
+
+    const onFieldSheets = computeForField(true);
+    const offFieldSheets = computeForField(false);
+
+    const result: Record<string, { onField: StatSheet; offField: StatSheet }> =
+      {};
+    for (const charId of Object.keys(this.charBuilds)) {
+      result[charId] = {
+        onField: onFieldSheets[charId],
+        offField: offFieldSheets[charId],
+      };
+    }
+    return result;
   }
 
   // ─── Team stat computation ──────────────────────────────────────────────
@@ -1507,6 +1617,16 @@ export class TeamBuild {
       formulaHasOffField
     );
 
+    // ── Idle stat records (cold path) ──
+    const idleSheets = this.computeIdleStatSheets(artifactStats);
+    const idleStatRecords: DisplayResult["idleStatRecords"] = {};
+    for (const [cid, { onField, offField }] of Object.entries(idleSheets)) {
+      idleStatRecords[cid] = {
+        onField: onField.getIdleRecord(),
+        offField: offField.getIdleRecord(),
+      };
+    }
+
     return {
       partsByFormula: { [`${charId}.${formulaId}`]: parts },
       totalDamage,
@@ -1516,6 +1636,7 @@ export class TeamBuild {
       charFormulaTags,
       marginalGains,
       levelUpGains,
+      idleStatRecords,
       idleStats,
       combatStats,
     };
@@ -3065,6 +3186,16 @@ export function getComboDisplayResult(
     partsByFormula[formulaKey] = parts;
   }
 
+  // ── Idle stat records (cold path) ──
+  const idleSheets = teamBuild.computeIdleStatSheets(artifactStats);
+  const idleStatRecords: DisplayResult["idleStatRecords"] = {};
+  for (const [cid, { onField, offField }] of Object.entries(idleSheets)) {
+    idleStatRecords[cid] = {
+      onField: onField.getIdleRecord(),
+      offField: offField.getIdleRecord(),
+    };
+  }
+
   return {
     partsByFormula,
     totalDamage: baseDamage,
@@ -3073,6 +3204,7 @@ export function getComboDisplayResult(
     charFormulaTags,
     marginalGains,
     levelUpGains,
+    idleStatRecords,
     idleStats,
     combatStats,
   };

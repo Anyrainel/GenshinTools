@@ -332,6 +332,15 @@ export type DisplayResult = {
    *  Array may contain multiple entries (e.g. 90→95 and 90→100). */
   levelUpGains: Record<string, { gain: number; from: number; to: number }[]>;
 
+  /** Idle stat records per character, on-field and off-field (character-panel view, per-element dmg% keys). */
+  idleStatRecords: Record<
+    string,
+    {
+      onField: Partial<Record<StatKey, number>>;
+      offField: Partial<Record<StatKey, number>>;
+    }
+  >;
+
   // DEPRECATED — kept during migration, remove after UI rewrite verified
   idleStats: Record<string, Partial<Record<StatKey, number>>>;
   combatStats: Record<string, Partial<Record<StatKey, number>>>;

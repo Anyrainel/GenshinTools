@@ -680,6 +680,79 @@ describe("TeamBuild lifecycle", () => {
         expect(display.combatStats[charId]).toBeDefined();
       }
     });
+
+    it("idleStatRecords denormalize dmg% to per-element keys", () => {
+      const display = tb.getDisplayResult(
+        "diluc",
+        "diluc-skill",
+        emptySheets,
+        ctx
+      );
+
+      // Diluc has cryo%-15 artifact half-set → cryo% should appear denormalized
+      const idleDiluc = display.idleStatRecords.diluc;
+      expect(idleDiluc).toBeDefined();
+      expect(idleDiluc.onField["cryo%"]).toBe(0.15);
+      expect(idleDiluc.offField["cryo%"]).toBe(0.15);
+      // No generic dmg% key in idle records
+      expect(idleDiluc.onField["dmg%"]).toBeUndefined();
+      // Base and computed stats should be present
+      expect(idleDiluc.onField["baseAtk"]).toBeGreaterThan(0);
+      expect(idleDiluc.onField["baseHp"]).toBeGreaterThan(0);
+      expect(idleDiluc.onField["baseDef"]).toBeGreaterThan(0);
+      expect(idleDiluc.onField["atk"]).toBeGreaterThan(
+        idleDiluc.onField["baseAtk"]!
+      );
+      expect(idleDiluc.onField["cr"]).toBeGreaterThan(0);
+    });
+
+    it("Varka P1 idle dmg% shows for both on-field and off-field", () => {
+      // Varka (Anemo) + Diluc (Pyro) → priorityElement = Pyro
+      // P1: per 1000 ATK, +10% Anemo + Pyro DMG, cap 25%
+      const varkaConfigs: TeamSlotConfig[] = [
+        {
+          charId: "varka",
+          charLevel: 90,
+          constellation: 0,
+          weaponId: "wolfs_gravestone",
+          refinement: 1,
+          artifactSetId: null,
+          artifactHalfSetIds: [],
+        },
+        {
+          charId: "diluc",
+          charLevel: 90,
+          constellation: 0,
+          weaponId: "wolfs_gravestone",
+          refinement: 1,
+          artifactSetId: null,
+          artifactHalfSetIds: [],
+        },
+      ];
+      const varkaTb = new TeamBuild(varkaConfigs);
+      const varkaEmpty: Record<string, StatSheet> = {
+        varka: new StatSheet([]),
+        diluc: new StatSheet([]),
+      };
+      const display = varkaTb.getDisplayResult(
+        "varka",
+        "varka-normal",
+        varkaEmpty,
+        ctx
+      );
+
+      const varkaIdle = display.idleStatRecords.varka;
+      expect(varkaIdle).toBeDefined();
+      // P1 gives Anemo + Pyro DMG% (ScalingBuff capped at 25%)
+      // receiver: "self" → shows in both on-field and off-field
+      expect(varkaIdle.onField["anemo%"]).toBeGreaterThan(0);
+      expect(varkaIdle.onField["pyro%"]).toBeGreaterThan(0);
+      expect(varkaIdle.offField["anemo%"]).toBeGreaterThan(0);
+      expect(varkaIdle.offField["pyro%"]).toBeGreaterThan(0);
+      // Both should be equal (P1 is field-independent)
+      expect(varkaIdle.onField["anemo%"]).toBe(varkaIdle.offField["anemo%"]);
+      expect(varkaIdle.onField["pyro%"]).toBe(varkaIdle.offField["pyro%"]);
+    });
   });
 
   // ─── resolveBuffs detail assertions ───
