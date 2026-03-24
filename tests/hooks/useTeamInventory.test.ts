@@ -39,6 +39,8 @@ beforeEach(() => {
       test: {
         id: "test",
         name: "Test",
+        scores: {},
+        lastUpdate: 0,
         data: {
           characters: [
             {
