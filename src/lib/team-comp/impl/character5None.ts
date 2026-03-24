@@ -870,7 +870,7 @@ function manekinFormulas(element: Element) {
     },
     // - Q: 583.2% summon hit + 50.4% per trespass (0.5s ICD, 8s duration → 16 ticks)
     "manekin-burst": {
-      label: { zh: "Q生成+踏入×16", en: "Q Summon + Trespass ×16" },
+      label: { zh: "Q生成+踏入×16", en: "Q Summon + Trespass×16" },
       parts: [
         { formula: new DirectFormula(5.832, tag("burst")) },
         {

@@ -436,7 +436,7 @@ class RaidenShogun extends CharacterBase {
       "raiden-coordinated": {
         label: {
           zh: "E协同攻击×27",
-          en: "E Coordinated ATK (×27)",
+          en: "E Coordinated (×27)",
         },
         parts: [
           {
@@ -449,7 +449,7 @@ class RaidenShogun extends CharacterBase {
       "raiden-initial": {
         label: {
           zh: "Q初始斩",
-          en: "Q Initial Slash (60 Resolve)",
+          en: "Q Initial (60 Resolve)",
         },
         parts: [
           {
@@ -803,7 +803,7 @@ class KamisatoAyato extends CharacterBase {
       ...(this.constellation >= 6
         ? {
             "ayato-c6-strikes": {
-              label: { zh: "6命额外瞬水剑×2", en: "C6 Extra Shunsuiken (×2)" },
+              label: { zh: "6命额外瞬水剑×2", en: "C6 Shunsuiken (×2)" },
               parts: [
                 {
                   formula: new DirectFormula(4.5, hydroTag),
@@ -1119,7 +1119,7 @@ class Yoimiya extends CharacterBase {
       "yoimiya-normal": {
         label: {
           zh: "E普攻一套",
-          en: "Normal N1-N5 (E active)",
+          en: "Normal N1-N5 (E on)",
         },
         parts: [
           { formula: new DirectFormula(m(n1), pyroNormal), hits: 2 },
@@ -1136,7 +1136,7 @@ class Yoimiya extends CharacterBase {
       formulas["yoimiya-c6-arrow"] = {
         label: {
           zh: "C6 额外炽焰箭一套",
-          en: "C6 Extra Blazing Arrow N1-N5",
+          en: "C6 Blazing Arrow N1-N5",
         },
         parts: [
           { formula: new DirectFormula(m(n1) * 0.6, pyroNormal), hits: 2 },
@@ -1221,7 +1221,7 @@ class YaeMiko extends CharacterBase {
         ],
       },
       "yae_miko-burst": {
-        label: { zh: "Q 1段+3落雷", en: "Q (1 Hit + 3 Thunderbolts)" },
+        label: { zh: "Q 1段+3落雷", en: "Q Hit + 3 Thunderbolts" },
         parts: [
           {
             formula: new DirectFormula(qInitialMult, {

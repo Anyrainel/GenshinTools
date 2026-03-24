@@ -382,7 +382,7 @@ class Xianyun extends CharacterBase {
       "xianyun-driftcloud": {
         label: {
           zh: "E下落×3",
-          en: "E Driftcloud Wave (3 Skyladders)",
+          en: "E Driftcloud ×3",
         },
         parts: [
           {
@@ -492,7 +492,7 @@ class Baizhu extends CharacterBase {
       ...(this.constellation >= 2
         ? {
             "baizhu-c2-sprite": {
-              label: { zh: "2命游丝徵灵·切×3", en: "C2 Gossamer Splice (×3)" },
+              label: { zh: "2命游丝徵灵·切×3", en: "C2 Gossamer Splice ×3" },
               parts: [
                 {
                   formula: new DirectFormula(2.5, {
@@ -576,7 +576,7 @@ class Yelan extends CharacterBase {
       "yelan-burst-throw": {
         label: {
           zh: "Q单次×3",
-          en: "Q Exquisite Throw (3 Arrows)",
+          en: "Q Exquisite Throw ×3",
         },
         parts: [
           {
@@ -593,7 +593,7 @@ class Yelan extends CharacterBase {
       "yelan-burst-throw-onfield": {
         label: {
           zh: "Q(前台)×3",
-          en: "Q Throw (on-field, 3 Arrows)",
+          en: "Q Throw (on-field) ×3",
         },
         parts: [
           {
@@ -630,7 +630,7 @@ class Yelan extends CharacterBase {
       formulas["yelan-c2-arrow-onfield"] = {
         label: {
           zh: "2命水箭(前台)×8",
-          en: "C2 Arrow (on-field, ×8)",
+          en: "C2 Arrow (on-field) ×8",
         },
         parts: [
           {
@@ -1097,7 +1097,7 @@ class Shenhe extends CharacterBase {
     const qDotMult = this.constellation >= 5 ? 0.704 : 0.596;
     return {
       "shenhe-skill": {
-        label: { zh: "E点按", en: "E Spring Spirit (Press)" },
+        label: { zh: "E点按", en: "E Spring Spirit Press" },
         parts: [
           {
             formula: new DirectFormula(eMult, {

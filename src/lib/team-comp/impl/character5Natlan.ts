@@ -110,7 +110,7 @@ class Varesa extends CharacterBase {
       "varesa-kablam": {
         label: {
           zh: "Q下落",
-          en: "Q Volcano Kablam (Plunge)",
+          en: "Q Volcano Kablam",
         },
         parts: [
           {
@@ -956,7 +956,7 @@ class Xilonen extends CharacterBase {
             "xilonen-normal": {
               label: {
                 zh: "E普攻4段",
-                en: "Normal N4 Combo (Blade Roller)",
+                en: "N4 (Blade Roller)",
               },
               parts: [
                 { formula: new DirectFormula(1.107, nTag, "def") },

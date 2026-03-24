@@ -555,7 +555,7 @@ class Albedo extends CharacterBase {
         ],
       },
       "albedo-burst": {
-        label: { zh: "Q爆发+生灭之花×7", en: "Q Burst + Fatal Blossom ×7" },
+        label: { zh: "Q爆发+生灭之花×7", en: "Q + Fatal Blossom ×7" },
         parts: [
           {
             formula: new DirectFormula(burstMult, {
@@ -581,7 +581,7 @@ class Albedo extends CharacterBase {
             "albedo-c2-offfield": {
               label: {
                 zh: "2命后台生灭之花×3",
-                en: "C2 Off-Field Fatal Blossom ×3",
+                en: "C2 Fatal Blossom ×3",
               },
               parts: [
                 {
@@ -1390,7 +1390,7 @@ class Eula extends CharacterBase {
       "eula-burst-lightfall": {
         label: {
           zh: `Q初击+光降${stacks}层`,
-          en: `Q + Lightfall (${stacks} stacks)`,
+          en: `Q + Lightfall ×${stacks}`,
         },
         parts: [
           {
@@ -1406,7 +1406,7 @@ class Eula extends CharacterBase {
       "eula-burst-lightfall-max": {
         label: {
           zh: "Q初击+光降30层",
-          en: "Q + Lightfall (30 stacks)",
+          en: "Q + Lightfall ×30",
         },
         parts: [
           {
@@ -1463,7 +1463,7 @@ class Varka extends CharacterBase {
         new ScalingBuff(
           cbs(this, "P1", []),
           {
-            receiver: "selfOnField",
+            receiver: "self",
             filter: { elements: (["Anemo", pe] as Element[]).sort() },
           },
           [],
@@ -1647,7 +1647,7 @@ class Varka extends CharacterBase {
     naParts.push({ formula: new DirectFormula(sudN5Left, aTag) });
 
     formulas["varka-normal"] = {
-      label: { zh: "狂飙突进普攻5段", en: "Sturm und Drang NA (5 stages)" },
+      label: { zh: "狂飙突进普攻5段", en: "SuD Normal ×5" },
       parts: naParts,
     };
 

@@ -801,7 +801,7 @@ class Beidou extends CharacterBase {
     };
     return {
       "beidou-skill-counter": {
-        label: { zh: "E(满格反击)", en: "E Max Counter (2 parries)" },
+        label: { zh: "E(满格反击)", en: "E Full Counter" },
         parts: [
           { formula: new DirectFormula(eBaseMult, electroSkillTag) },
           {

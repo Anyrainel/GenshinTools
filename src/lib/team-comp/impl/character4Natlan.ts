@@ -294,7 +294,7 @@ class Ororon extends CharacterBase {
       "ororon-burst": {
         label: {
           zh: `Q+音波${this.constellation >= 6 ? "+6命超感" : ""}`,
-          en: `Q + Soundwave${this.constellation >= 6 ? " + C6 Hypersense" : ""}`,
+          en: `Q +Soundwave${this.constellation >= 6 ? " +C6 Hyper" : ""}`,
         },
         parts: [
           {

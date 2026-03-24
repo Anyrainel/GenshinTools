@@ -323,7 +323,7 @@ class Wanderer extends CharacterBase {
 
     return {
       "wanderer-normal": {
-        label: { zh: "普攻全套", en: "A Kuugo: Fushoudan (N3)" },
+        label: { zh: "普攻全套", en: "Kuugo: Fushoudan (N3)" },
         parts: [
           { formula: new DirectFormula(n1, normalTag) },
           { formula: new DirectFormula(n2, normalTag) },
@@ -950,7 +950,7 @@ class Tighnari extends CharacterBase {
 
     return {
       "tighnari-charge": {
-        label: { zh: "重击花筥箭", en: "CA Wreath + Clusterbloom" },
+        label: { zh: "重击花筥箭", en: "CA Wreath+Clusterbloom" },
         parts: [
           { formula: new DirectFormula(1.57, chargeTag) },
           { formula: new DirectFormula(0.695, chargeTag), hits: 4 },

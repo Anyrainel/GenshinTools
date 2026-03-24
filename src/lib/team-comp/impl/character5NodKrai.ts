@@ -185,7 +185,7 @@ class Columbina extends CharacterBase {
       "columbina-skill-initial": 1,
       "columbina-burst": 1,
       "columbina-charge": 0,
-      "columbina-skill-interference": 2,
+      "columbina-skill-interference": this.constellation >= 2 ? 5 : 4,
       "columbina-ripple": 12,
     };
   }

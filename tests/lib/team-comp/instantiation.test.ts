@@ -229,9 +229,9 @@ describe("Entity Instantiation", () => {
             violations.push(
               `${id}: zh "${label.zh}" (${label.zh.length} > 12)`
             );
-          if (label.en.length > 36)
+          if (label.en.length > 22)
             violations.push(
-              `${id}: en "${label.en}" (${label.en.length} > 36)`
+              `${id}: en "${label.en}" (${label.en.length} > 22)`
             );
         }
         if (violations.length > 0)

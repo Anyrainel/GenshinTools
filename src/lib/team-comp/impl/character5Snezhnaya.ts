@@ -344,7 +344,7 @@ class Arlecchino extends CharacterBase {
       "arlecchino-normal": {
         label: {
           zh: "普攻6段7击",
-          en: "Normal Combo (6-Hit 7-Strike)",
+          en: "Normal (6N 7-Hit)",
         },
         parts: comboParts,
       },
@@ -450,7 +450,7 @@ class Tartaglia extends CharacterBase {
       "tartaglia-burst-melee": {
         label: {
           zh: "Q斩击+断流爆发",
-          en: "Q Slash + Riptide Blast",
+          en: "Q Slash + Riptide",
         },
         parts: [
           {
