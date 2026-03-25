@@ -15,7 +15,6 @@ import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   artifactHalfSetsById,
@@ -376,17 +375,18 @@ function SelectionCard({
           }}
         />
 
-        {/* Checkbox on far left */}
-        <Checkbox
-          checked={noTeams ? false : entry.selected}
-          onCheckedChange={noTeams ? undefined : onToggle}
+        {/* Selection indicator (visual only — outer button handles interaction) */}
+        <div
           className={cn(
-            "shrink-0 pointer-events-none",
+            "grid place-content-center h-4 w-4 shrink-0 rounded-sm border shadow",
+            !noTeams && entry.selected
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-primary",
             noTeams && "opacity-50"
           )}
-          tabIndex={-1}
-          disabled={noTeams}
-        />
+        >
+          {!noTeams && entry.selected && <Check className="h-4 w-4" />}
+        </div>
 
         {/* Character icon */}
         {char && (
