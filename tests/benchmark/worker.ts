@@ -6,6 +6,7 @@
  */
 
 import type { AccountData, ArtifactData } from "@/data/types";
+import type { ComboFormula } from "@/lib/team-comp/types";
 import {
   getAllArtifacts,
   loadAccountData,
@@ -22,6 +23,7 @@ interface RunMessage {
   perCharMs?: number;
   maxArtsPerSlot?: number;
   formulaIdOverride?: string;
+  combo?: ComboFormula;
   teamIdx: number;
 }
 
@@ -58,7 +60,8 @@ process.on("message", async (msg: RunMessage) => {
         msg.timeoutMs,
         msg.perCharMs,
         msg.formulaIdOverride,
-        msg.maxArtsPerSlot
+        msg.maxArtsPerSlot,
+        msg.combo
       );
       process.send!({
         type: "result",

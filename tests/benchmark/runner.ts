@@ -456,7 +456,8 @@ export async function runOptimizerOnTeam(
   timeoutMs = 120_000,
   perCharDeadlineMs?: number,
   formulaIdOverride?: string,
-  maxArtsPerSlot?: number
+  maxArtsPerSlot?: number,
+  comboOverride?: ComboFormula
 ): Promise<TeamResult> {
   const carryCharId = team.characters[0]!;
   const charIds = team.characters.filter((c): c is string => !!c);
@@ -502,25 +503,30 @@ export async function runOptimizerOnTeam(
     const perChar = buildPerChar(team, carryCharId, accountData);
 
     const allFormulas = teamBuild.getFormulaIds();
-    const carryFormulas = allFormulas[carryCharId];
-    if (!carryFormulas || Object.keys(carryFormulas).length === 0) {
-      result.error = `No formulas found for carry ${carryCharId}`;
-      return result;
-    }
-
+    const carryFormulas = allFormulas[carryCharId] ?? {};
     const formulaEntries = Object.entries(carryFormulas);
-    let targetFormulaId: string;
-    if (formulaIdOverride && carryFormulas[formulaIdOverride]) {
-      targetFormulaId = formulaIdOverride;
+
+    let combo: ComboFormula;
+    if (comboOverride) {
+      combo = comboOverride;
+      result.optimizedFormulaId = comboOverride.id;
     } else {
-      targetFormulaId = formulaEntries[0][0];
+      if (formulaEntries.length === 0) {
+        result.error = `No formulas found for carry ${carryCharId}`;
+        return result;
+      }
+      const targetFormulaId =
+        formulaIdOverride && carryFormulas[formulaIdOverride]
+          ? formulaIdOverride
+          : formulaEntries[0][0];
+      result.optimizedFormulaId = targetFormulaId;
+      combo = singleFormulaCombo(carryCharId, targetFormulaId);
     }
-    result.optimizedFormulaId = targetFormulaId;
 
     const opts: TeamOptimizerOptions = {
       teamBuild,
       carryCharId,
-      formula: { combo: singleFormulaCombo(carryCharId, targetFormulaId) },
+      formula: { combo },
       inventory,
       calcContext,
       globalConfig: DEFAULT_GLOBAL_CONFIG,

@@ -101,6 +101,7 @@ import {
   getAllArtifacts,
   getArtifactSetRarity,
   getCarryFormulaIds,
+  getTeamCombo,
   loadAccountData,
   loadTeamPreset,
   preloadGameStats,
@@ -206,6 +207,8 @@ interface CachedProblem {
   enemyAura?: string;
   calcContext: CalcContext;
   perChar: Record<string, CharOptConfig>;
+  /** Multi-line combo formula (only for combo problems). */
+  combo?: ComboFormula;
 }
 
 interface ProblemCache {
@@ -240,13 +243,15 @@ function loadProblemCache(): ProblemCache | null {
 /**
  * Re-evaluate an artifact assignment with current calc code.
  * Returns damage, or null if artifacts are missing.
+ * When `combo` is provided, uses evaluateCombo for multi-line combo problems.
  */
 function evaluateAssignment(
   team: Team,
   formulaId: string,
   assignment: Record<string, Record<string, string>>,
   accountData: AccountData,
-  inventory: ArtifactData[]
+  inventory: ArtifactData[],
+  combo?: ComboFormula
 ): number | null {
   const artById = new Map<string, ArtifactData>();
   for (const a of inventory) artById.set(a.id, a);
@@ -305,6 +310,13 @@ function evaluateAssignment(
       artifactStats[cid] = StatSheet.fromArtifacts(pieces);
     }
 
+    // Combo mode: use evaluateCombo directly
+    if (combo) {
+      return evaluateCombo(teamBuild, combo, artifactStats, calcContext)
+        .totalDamage;
+    }
+
+    // Single-formula mode: use getDamageResult
     const postStats = teamBuild.getTeamStats(
       artifactStats,
       carryCharId,
@@ -495,6 +507,12 @@ async function loadContext(): Promise<BenchmarkContext> {
   return { store, accountData, inventory, artById, teams, teamById };
 }
 
+/** Resolve the combo for a problem — returns the ComboFormula if it's a combo problem. */
+function resolveCombo(formulaId: string, team: Team): ComboFormula | undefined {
+  if (formulaId === "__combo__") return getTeamCombo(team) ?? undefined;
+  return undefined;
+}
+
 function findBestSolution(
   problem: Problem,
   team: Team,
@@ -503,13 +521,15 @@ function findBestSolution(
 ): { bestSol: Solution | null; bestDamage: number } {
   let bestSol: Solution | null = null;
   let bestDamage = Number.NEGATIVE_INFINITY;
+  const combo = resolveCombo(problem.formulaId, team);
   for (const sol of problem.solutions) {
     const dmg = evaluateAssignment(
       team,
       problem.formulaId,
       sol.artifactAssignment,
       accountData,
-      inventory
+      inventory,
+      combo
     );
     if (dmg !== null && dmg > bestDamage) {
       bestDamage = dmg;
@@ -606,7 +626,7 @@ function logConstraintViolations(
 // ─── Parallel Worker Pool ────────────────────────────────────────────────────
 
 async function runParallel(
-  tasks: { team: Team; formulaId: string; key: string }[],
+  tasks: { team: Team; formulaId: string; key: string; combo?: ComboFormula }[],
   algorithm: "v1" | "v2" | "astar" | "mona" | "monaV2",
   timeoutSec: number,
   workerCount: number,
@@ -628,7 +648,7 @@ async function runParallel(
     function dispatchNext(child: ReturnType<typeof cp.fork>): void {
       if (nextIdx < tasks.length) {
         const idx = nextIdx++;
-        const { team, formulaId } = tasks[idx];
+        const { team, formulaId, combo } = tasks[idx];
         const perCharMs =
           algorithm !== "v1" ? (timeoutSec * 1000) / 4 : undefined;
         child.send({
@@ -639,6 +659,7 @@ async function runParallel(
           perCharMs,
           maxArtsPerSlot: maxArtsPerSlot || undefined,
           formulaIdOverride: formulaId,
+          combo,
           teamIdx: idx,
         });
       }
@@ -867,6 +888,7 @@ async function cmdVerify(): Promise<void> {
       continue;
     }
 
+    const combo = resolveCombo(problem.formulaId, team);
     for (let si = 0; si < problem.solutions.length; si++) {
       totalSolutions++;
       const sol = problem.solutions[si];
@@ -875,7 +897,8 @@ async function cmdVerify(): Promise<void> {
         problem.formulaId,
         sol.artifactAssignment,
         accountData,
-        inventory
+        inventory,
+        combo
       );
 
       if (dmg === null) {
@@ -1033,6 +1056,7 @@ async function cmdRun(opts: {
     team: Team;
     formulaId: string;
     label: string;
+    combo?: ComboFormula;
   };
   const problemsToRun: ProblemRun[] = [];
 
@@ -1061,6 +1085,7 @@ async function cmdRun(opts: {
             team,
             formulaId: p.formulaId,
             label: p.teamName,
+            combo: resolveCombo(p.formulaId, team),
           });
         }
       }
@@ -1077,24 +1102,38 @@ async function cmdRun(opts: {
         team,
         formulaId: problem.formulaId,
         label: problem.teamName,
+        combo: resolveCombo(problem.formulaId, team),
       });
     }
   } else {
+    const matchesFilter = (key: string, team: Team) =>
+      !opts.filter ||
+      key.toLowerCase().includes(opts.filter.toLowerCase()) ||
+      team.name?.toLowerCase().includes(opts.filter.toLowerCase()) ||
+      team.characters.some((c) =>
+        c?.toLowerCase().includes(opts.filter!.toLowerCase())
+      );
+
     for (const team of teams) {
       const formulas = getCarryFormulaIds(team);
       for (const { formulaId, label } of formulas) {
         const key = `${team.id}::${formulaId}`;
-        if (
-          opts.filter &&
-          !key.toLowerCase().includes(opts.filter.toLowerCase()) &&
-          !team.name?.toLowerCase().includes(opts.filter.toLowerCase()) &&
-          !team.characters.some((c) =>
-            c?.toLowerCase().includes(opts.filter!.toLowerCase())
-          )
-        ) {
-          continue;
-        }
+        if (!matchesFilter(key, team)) continue;
         problemsToRun.push({ key, team, formulaId, label });
+      }
+
+      // Add combo problem if team has multi-line default combo
+      const teamCombo = getTeamCombo(team);
+      if (teamCombo) {
+        const comboKey = `${team.id}::__combo__`;
+        if (!matchesFilter(comboKey, team)) continue;
+        problemsToRun.push({
+          key: comboKey,
+          team,
+          formulaId: "__combo__",
+          label: "Combo",
+          combo: teamCombo,
+        });
       }
     }
   }
@@ -1250,6 +1289,7 @@ async function cmdRun(opts: {
       team: p.team,
       formulaId: p.formulaId,
       key: p.key,
+      combo: p.combo,
     }));
     const results = await runParallel(
       tasks,
@@ -1266,7 +1306,7 @@ async function cmdRun(opts: {
   } else {
     // Sequential execution
     for (let ri = 0; ri < problemsToRun.length; ri++) {
-      const { key, team, formulaId } = problemsToRun[ri];
+      const { key, team, formulaId, combo } = problemsToRun[ri];
       const result = await runOptimizerOnTeam(
         team,
         accountData,
@@ -1275,7 +1315,8 @@ async function cmdRun(opts: {
         opts.timeoutSec * 1000,
         opts.algo !== "v1" ? (opts.timeoutSec * 1000) / 4 : undefined,
         formulaId,
-        opts.maxArtsPerSlot || undefined
+        opts.maxArtsPerSlot || undefined,
+        combo
       );
       processResult(ri, key, team, formulaId, result);
     }
@@ -1309,7 +1350,8 @@ async function cmdRun(opts: {
         retryTimeout * 1000,
         opts.algo !== "v1" ? (retryTimeout * 1000) / 4 : undefined,
         problem.formulaId,
-        opts.maxArtsPerSlot || undefined
+        opts.maxArtsPerSlot || undefined,
+        resolveCombo(problem.formulaId, team)
       );
 
       const { bestDamage } = findBestSolution(
@@ -1417,7 +1459,8 @@ async function cmdRun(opts: {
         retryTimeout * 1000,
         opts.algo !== "v1" ? (retryTimeout * 1000) / 4 : undefined,
         cf.formulaId,
-        opts.maxArtsPerSlot || undefined
+        opts.maxArtsPerSlot || undefined,
+        resolveCombo(cf.formulaId, team)
       );
 
       const storeResult = tryStoreSolution(
@@ -1581,6 +1624,39 @@ async function cmdRefresh(): Promise<void> {
         perChar,
       });
     }
+
+    // Add combo problem if the team has a multi-line default combo
+    const teamCombo = getTeamCombo(team);
+    if (teamCombo) {
+      const comboKey = `${team.id}::__combo__`;
+      if (!store.problems[comboKey]) {
+        const charIds = team.characters.filter((c): c is string => !!c);
+        store.problems[comboKey] = {
+          teamId: team.id,
+          teamName: team.name || charIds.join("/"),
+          characters: charIds,
+          carryCharId,
+          formulaId: "__combo__",
+          solutions: [],
+        };
+      }
+
+      cached.push({
+        key: comboKey,
+        teamId: team.id,
+        teamName: team.name || team.characters.filter(Boolean).join("/"),
+        characters: team.characters.filter((c): c is string => !!c),
+        carryCharId,
+        formulaId: "__combo__",
+        formulaLabel: "Combo",
+        configs,
+        combatOpts: team.opts || {},
+        enemyAura: team.enemyAura,
+        calcContext,
+        perChar,
+        combo: teamCombo,
+      });
+    }
   }
 
   const cache: ProblemCache = {
@@ -1640,7 +1716,12 @@ async function cmdEnrich(opts: {
     const problem = store.problems[key];
     const team = teamById.get(problem.teamId);
     if (!team) continue;
-    toRun.push({ key, team, formulaId: problem.formulaId });
+    toRun.push({
+      key,
+      team,
+      formulaId: problem.formulaId,
+      combo: resolveCombo(problem.formulaId, team),
+    });
   }
 
   console.log(
@@ -1722,6 +1803,7 @@ async function cmdEnrich(opts: {
       team: p.team,
       formulaId: p.formulaId,
       key: p.key,
+      combo: p.combo,
     }));
     await runParallel(
       tasks,
@@ -1737,7 +1819,7 @@ async function cmdEnrich(opts: {
     );
   } else {
     for (let i = 0; i < toRun.length; i++) {
-      const { key, team, formulaId } = toRun[i];
+      const { key, team, formulaId, combo } = toRun[i];
       const result = await runOptimizerOnTeam(
         team,
         accountData,
@@ -1746,7 +1828,8 @@ async function cmdEnrich(opts: {
         opts.timeoutSec * 1000,
         opts.algo !== "v1" ? (opts.timeoutSec * 1000) / 4 : undefined,
         formulaId,
-        opts.maxArtsPerSlot || undefined
+        opts.maxArtsPerSlot || undefined,
+        combo
       );
       processEnrichResult(i, key, team, formulaId, result);
     }
@@ -1960,7 +2043,8 @@ async function cmdCompare(opts: {
         problem.formulaId,
         lastSol.artifactAssignment,
         accountData,
-        inventory
+        inventory,
+        resolveCombo(problem.formulaId, team)
       );
       if (lastDmg === null) continue;
       currentAssignment = lastSol.artifactAssignment;
