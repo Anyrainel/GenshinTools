@@ -253,11 +253,14 @@ export const useBuildsStore = create<BuildsState>()(
             );
           }
         });
-        invalidateScores();
+        invalidateScores([characterId]);
       },
 
       // Update a build with partial changes
       setBuild: (buildId: string, patch: Partial<Build>, baseBuild?: Build) => {
+        // Determine which character is affected (for targeted score invalidation)
+        const affectedCharId =
+          get().builds[buildId]?.characterId ?? baseBuild?.characterId;
         set((state) => {
           let targetBuild = state.builds[buildId];
           let isNew = false;
@@ -329,7 +332,8 @@ export const useBuildsStore = create<BuildsState>()(
           state.validationErrors[buildId] =
             getBuildValidationErrors(targetBuild);
         });
-        invalidateScores();
+        if (affectedCharId) invalidateScores([affectedCharId]);
+        else invalidateScores();
       },
 
       // Remove a build from a character
@@ -358,7 +362,7 @@ export const useBuildsStore = create<BuildsState>()(
             }
           }
         });
-        invalidateScores();
+        invalidateScores([characterId]);
       },
 
       deleteBuild: (characterId: string, buildId: string) => {
@@ -384,7 +388,7 @@ export const useBuildsStore = create<BuildsState>()(
             state.presetDeletedBuildIds.push(buildId);
           }
         });
-        invalidateScores();
+        invalidateScores([characterId]);
       },
 
       revertBuild: (characterId: string, buildId: string) => {
@@ -403,7 +407,7 @@ export const useBuildsStore = create<BuildsState>()(
             state.presetDeletedBuildIds.splice(deletedIndex, 1);
           }
         });
-        invalidateScores();
+        invalidateScores([characterId]);
       },
 
       // Character visibility

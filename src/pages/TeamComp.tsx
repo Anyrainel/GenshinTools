@@ -24,7 +24,11 @@ import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
-import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import {
+  getCachedPresetMetadata,
+  loadPresetMetadata,
+  loadPresetPayload,
+} from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
@@ -43,6 +47,8 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+
+const EMPTY_SET = new Set<string>();
 
 /** Max card width drives auto-fit column sizing — compact on ≤lg, spacious on xl+ */
 const CARD_MAX_WIDTH = 320;
@@ -87,7 +93,9 @@ export default function TeamCompPage() {
   const frozenExportRef = useRef<HTMLDivElement>(null);
 
   // Preset options
-  const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
+  const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
+    () => getCachedPresetMetadata(presetModules) ?? []
+  );
 
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
@@ -167,6 +175,34 @@ export default function TeamCompPage() {
     const unfrozen = result.filter((t) => !freezeStore.isFrozen(t.id));
     return [...frozen, ...unfrozen];
   }, [teams, elementFilter, regionFilter, characterStats, freezeStore]);
+
+  // Precompute freeze data per team (avoids repeated getFrozenCharIds calls + new Set per card)
+  const teamFreezeMap = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        isFrozen: boolean;
+        isFullyFrozen: boolean;
+        frozenCount: number;
+        totalCharCount: number;
+        frozenCharIds: Set<string>;
+      }
+    >();
+    for (const team of filteredTeams) {
+      const frozenIds = freezeStore.getFrozenCharIds(team.id);
+      const charIds = team.characters.filter(Boolean);
+      map.set(team.id, {
+        isFrozen: frozenIds.length > 0,
+        isFullyFrozen:
+          frozenIds.length > 0 &&
+          charIds.every((id) => frozenIds.includes(id!)),
+        frozenCount: frozenIds.length,
+        totalCharCount: charIds.length,
+        frozenCharIds: new Set(frozenIds),
+      });
+    }
+    return map;
+  }, [filteredTeams, freezeStore]);
 
   // Displayable regions (exclude "None")
   const displayRegions = useMemo(() => regions.filter((r) => r !== "None"), []);
@@ -504,6 +540,7 @@ export default function TeamCompPage() {
             {filteredTeams.map((team, index) => {
               // Use actual index in the full teams array for move logic
               const realIndex = teams.indexOf(team);
+              const freeze = teamFreezeMap.get(team.id);
               return (
                 <TeamCard
                   key={team.id}
@@ -524,18 +561,11 @@ export default function TeamCompPage() {
                       ? () => moveTeam(team.id, "down")
                       : undefined
                   }
-                  isFrozen={freezeStore.isFrozen(team.id)}
-                  isFullyFrozen={(() => {
-                    const frozenIds = freezeStore.getFrozenCharIds(team.id);
-                    const charIds = team.characters.filter(Boolean);
-                    return (
-                      frozenIds.length > 0 &&
-                      charIds.every((id) => frozenIds.includes(id!))
-                    );
-                  })()}
-                  frozenCount={freezeStore.getFrozenCharIds(team.id).length}
-                  totalCharCount={team.characters.filter(Boolean).length}
-                  frozenCharIds={new Set(freezeStore.getFrozenCharIds(team.id))}
+                  isFrozen={freeze?.isFrozen ?? false}
+                  isFullyFrozen={freeze?.isFullyFrozen ?? false}
+                  frozenCount={freeze?.frozenCount ?? 0}
+                  totalCharCount={freeze?.totalCharCount ?? 0}
+                  frozenCharIds={freeze?.frozenCharIds ?? EMPTY_SET}
                   onUnfreeze={() => freezeStore.unfreezeTeam(team.id)}
                   accountData={accountData}
                 />

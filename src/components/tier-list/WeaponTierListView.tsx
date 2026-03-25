@@ -32,7 +32,11 @@ import { useGameStats } from "@/hooks/useGameStats";
 import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
-import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import {
+  getCachedPresetMetadata,
+  loadPresetMetadata,
+  loadPresetPayload,
+} from "@/lib/presetLoader";
 
 import { useIsOwned } from "@/hooks/useOwnership";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
@@ -112,7 +116,9 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
     MainStat[]
   >([]);
   const [ownedOnly, setOwnedOnly] = useState(false);
-  const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
+  const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
+    () => getCachedPresetMetadata(presetModules) ?? []
+  );
   const tableRef = useRef<HTMLDivElement>(null);
 
   const isOwned = useIsOwned();

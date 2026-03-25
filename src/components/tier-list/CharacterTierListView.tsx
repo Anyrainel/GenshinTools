@@ -30,7 +30,11 @@ import type {
 import { elements } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
-import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import {
+  getCachedPresetMetadata,
+  loadPresetMetadata,
+  loadPresetPayload,
+} from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 
 import { useIsOwned } from "@/hooks/useOwnership";
@@ -113,7 +117,9 @@ export function CharacterTierListView({
   const exportRef = useRef<ControlHandle>(null);
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
-  const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
+  const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
+    () => getCachedPresetMetadata(presetModules) ?? []
+  );
   const [show5Star, setShow5Star] = useState(true);
   const [show4Star, setShow4Star] = useState(true);
   const [ownedOnly, setOwnedOnly] = useState(false);
@@ -133,7 +139,6 @@ export function CharacterTierListView({
     }
   }, [tour]);
 
-  // Load preset metadata on mount
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);

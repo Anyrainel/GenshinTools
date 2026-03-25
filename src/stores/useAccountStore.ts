@@ -16,7 +16,13 @@ export type AccountState = {
 interface AccountStore {
   accounts: Record<string, AccountState>;
   activeAccountId: string | null;
-  isScoresStale: boolean;
+  /**
+   * Per-character score staleness.
+   * - `[]` → nothing stale
+   * - `string[]` → those character IDs need rescoring
+   * - `true` → all characters need rescoring (global config change, preset swap, etc.)
+   */
+  staleScoreCharIds: string[] | true;
 
   setActiveAccount: (id: string) => void;
   addOrUpdateAccount: (
@@ -28,8 +34,12 @@ interface AccountStore {
   deleteAccount: (id: string) => void;
   clearAccounts: () => void;
 
+  /** Replace all scores for the active account. Clears all staleness. */
   setScores: (scores: Record<string, ArtifactScoreResult | null>) => void;
-  invalidateScores: () => void;
+  /** Merge partial scores into the active account. Clears staleness only for the scored characters. */
+  mergeScores: (scores: Record<string, ArtifactScoreResult | null>) => void;
+  /** Mark specific characters (or all if no args) as needing rescoring. */
+  invalidateScores: (charIds?: string[]) => void;
 }
 
 export const getActiveAccount = (state: AccountStore) =>
@@ -37,7 +47,7 @@ export const getActiveAccount = (state: AccountStore) =>
 
 type PersistedAccountStore = Pick<
   AccountStore,
-  "accounts" | "activeAccountId" | "isScoresStale"
+  "accounts" | "activeAccountId" | "staleScoreCharIds"
 >;
 
 /**
@@ -58,7 +68,7 @@ export function migrateAccountStore(
     const oldUid = state.lastUid || "";
 
     if (!oldData) {
-      return { accounts: {}, activeAccountId: null, isScoresStale: false };
+      return { accounts: {}, activeAccountId: null, staleScoreCharIds: [] };
     }
 
     const id = oldUid || "default";
@@ -73,7 +83,7 @@ export function migrateAccountStore(
         },
       },
       activeAccountId: id,
-      isScoresStale: state.isScoresStale || false,
+      staleScoreCharIds: state.isScoresStale ? true : [],
     };
   }
 
@@ -99,7 +109,16 @@ export function migrateAccountStore(
     return {
       accounts: newAccounts,
       activeAccountId: activeId,
-      isScoresStale: state.isScoresStale || false,
+      staleScoreCharIds: state.isScoresStale ? true : [],
+    };
+  }
+
+  // v3: had boolean isScoresStale → convert to staleScoreCharIds
+  if (version === 3) {
+    return {
+      accounts: state.accounts ?? {},
+      activeAccountId: state.activeAccountId ?? null,
+      staleScoreCharIds: state.isScoresStale ? true : [],
     };
   }
 
@@ -111,7 +130,7 @@ export const useAccountStore = create<AccountStore>()(
     (set) => ({
       accounts: {},
       activeAccountId: null,
-      isScoresStale: false,
+      staleScoreCharIds: [] as string[] | true,
 
       setActiveAccount: (id) => set({ activeAccountId: id }),
 
@@ -126,13 +145,13 @@ export const useAccountStore = create<AccountStore>()(
             lastUpdate: payload.lastUpdate ?? Date.now(),
           };
 
-          // Mark stale when account data changes so scores are recomputed
+          // Mark all stale when account data changes so scores are recomputed
           const dataChanged = !existing || existing.data !== payload.data;
 
           return {
             accounts: { ...state.accounts, [id]: updated },
             activeAccountId: state.activeAccountId || id, // auto-switch if none active
-            ...(dataChanged && { isScoresStale: true }),
+            ...(dataChanged && { staleScoreCharIds: true as const }),
           };
         }),
 
@@ -180,15 +199,62 @@ export const useAccountStore = create<AccountStore>()(
               ...state.accounts,
               [state.activeAccountId]: { ...acc, scores },
             },
-            isScoresStale: false,
+            staleScoreCharIds: [],
           };
         }),
 
-      invalidateScores: () => set({ isScoresStale: true }),
+      mergeScores: (scores) =>
+        set((state) => {
+          if (!state.activeAccountId) return state;
+          const acc = state.accounts[state.activeAccountId];
+          if (!acc) return state;
+
+          const merged = { ...acc.scores, ...scores };
+
+          // Remove the scored character IDs from staleness
+          let newStale = state.staleScoreCharIds;
+          if (newStale === true) {
+            // Was fully stale — now clear since we've rescored what was needed
+            newStale = [];
+          } else if (newStale.length > 0) {
+            const scored = new Set(Object.keys(scores));
+            newStale = newStale.filter((id) => !scored.has(id));
+          }
+
+          return {
+            accounts: {
+              ...state.accounts,
+              [state.activeAccountId]: { ...acc, scores: merged },
+            },
+            staleScoreCharIds: newStale,
+          };
+        }),
+
+      invalidateScores: (charIds?: string[]) =>
+        set((state) => {
+          if (!charIds) {
+            // Global invalidation (score config change, preset swap, etc.)
+            return { staleScoreCharIds: true as const };
+          }
+          if (state.staleScoreCharIds === true) {
+            // Already fully stale, adding specific chars is a no-op
+            return state;
+          }
+          // Merge with existing stale IDs (deduplicate)
+          const existing = new Set(state.staleScoreCharIds);
+          let changed = false;
+          for (const id of charIds) {
+            if (!existing.has(id)) {
+              existing.add(id);
+              changed = true;
+            }
+          }
+          return changed ? { staleScoreCharIds: [...existing] } : state;
+        }),
     }),
     {
       name: "genshin-account-storage",
-      version: 3,
+      version: 4,
       migrate: migrateAccountStore,
       merge: (persistedState, currentState) => {
         const merged = {
@@ -206,6 +272,6 @@ export const useAccountStore = create<AccountStore>()(
 );
 
 /** Convenience helper for cross-store score invalidation. */
-export function invalidateScores(): void {
-  useAccountStore.getState().invalidateScores();
+export function invalidateScores(charIds?: string[]): void {
+  useAccountStore.getState().invalidateScores(charIds);
 }

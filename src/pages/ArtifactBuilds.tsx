@@ -28,7 +28,10 @@ import {
   serializeBuildExportPayload,
 } from "@/lib/artifact-builds/buildUtils";
 import { downloadElementAsImage } from "@/lib/downloadImage";
-import { loadPresetMetadata } from "@/lib/presetLoader";
+import {
+  getCachedPresetMetadata,
+  loadPresetMetadata,
+} from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
@@ -96,9 +99,11 @@ export default function ArtifactBuildsPage() {
   const description = useBuildsStore((state) => state.description);
   const computeOptions = useBuildsStore((state) => state.computeOptions);
 
-  const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
+  const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
+    () => getCachedPresetMetadata(presetModules) ?? []
+  );
 
-  // Load preset metadata on mount
+  // Load preset metadata on mount (no-op re-render if already cached)
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);

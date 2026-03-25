@@ -5,20 +5,23 @@ import type { PresetOption } from "@/data/types";
  * @param presetModules - Glob pattern result from import.meta.glob
  * @returns Array of preset options with metadata
  */
-// Cache preset metadata to avoid re-loading on every page mount
-let cachedMetadata: PresetOption[] | null = null;
-let cachedModulesRef: unknown = null;
+// Cache preset metadata per modules-ref so multiple pages don't bust each other's cache
+const metadataCache = new Map<unknown, PresetOption[]>();
+
+/** Synchronously return cached metadata for a given modules object, or null if not yet loaded. */
+export function getCachedPresetMetadata(
+  modules: unknown
+): PresetOption[] | null {
+  return metadataCache.get(modules) ?? null;
+}
 
 export async function loadPresetMetadata<
   T extends { author?: string; description?: string },
 >(
   presetModules: Record<string, () => Promise<{ default: T }>>
 ): Promise<PresetOption[]> {
-  // Return cached result if same modules object
-  if (cachedMetadata && cachedModulesRef === presetModules) {
-    return cachedMetadata;
-  }
-  cachedModulesRef = presetModules;
+  const cached = metadataCache.get(presetModules);
+  if (cached) return cached;
 
   const options = await Promise.all(
     Object.keys(presetModules).map(async (path) => {
@@ -48,8 +51,9 @@ export async function loadPresetMetadata<
     })
   );
 
-  cachedMetadata = options.sort((a, b) => a.label.localeCompare(b.label));
-  return cachedMetadata;
+  const sorted = options.sort((a, b) => a.label.localeCompare(b.label));
+  metadataCache.set(presetModules, sorted);
+  return sorted;
 }
 
 /**

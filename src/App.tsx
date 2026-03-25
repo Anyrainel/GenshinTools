@@ -4,14 +4,15 @@ import { TourProvider } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getTours } from "@/lib/tourConfig";
 import { cn } from "@/lib/utils";
-import { useMemo } from "react";
+import { Suspense, lazy, useMemo } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import AccountDataPage from "./pages/AccountData";
-import ArchivePage from "./pages/Archive";
-import ArtifactBuildsPage from "./pages/ArtifactBuilds";
 import Home from "./pages/Home";
-import TeamCompPage from "./pages/TeamComp";
-import TierListPage from "./pages/TierList";
+
+const AccountDataPage = lazy(() => import("./pages/AccountData"));
+const ArtifactBuildsPage = lazy(() => import("./pages/ArtifactBuilds"));
+const TeamCompPage = lazy(() => import("./pages/TeamComp"));
+const TierListPage = lazy(() => import("./pages/TierList"));
+const ArchivePage = lazy(() => import("./pages/Archive"));
 
 function App() {
   const location = useLocation();
@@ -31,14 +32,19 @@ function App() {
               isHomePage ? "overflow-y-auto" : "overflow-hidden"
             )}
           >
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/account-data" element={<AccountDataPage />} />
-              <Route path="/artifact-filter" element={<ArtifactBuildsPage />} />
-              <Route path="/tier-list" element={<TierListPage />} />
-              <Route path="/archive" element={<ArchivePage />} />
-              <Route path="/team-comp" element={<TeamCompPage />} />
-            </Routes>
+            <Suspense fallback={null}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/account-data" element={<AccountDataPage />} />
+                <Route
+                  path="/artifact-filter"
+                  element={<ArtifactBuildsPage />}
+                />
+                <Route path="/tier-list" element={<TierListPage />} />
+                <Route path="/archive" element={<ArchivePage />} />
+                <Route path="/team-comp" element={<TeamCompPage />} />
+              </Routes>
+            </Suspense>
           </main>
           <Toaster />
         </div>

@@ -170,8 +170,8 @@ export default function AccountDataPage() {
     addOrUpdateAccount,
     setActiveAccount,
     promoteToUid,
-    setScores,
-    isScoresStale,
+    mergeScores,
+    staleScoreCharIds,
   } = useAccountStore();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
@@ -213,34 +213,40 @@ export default function AccountDataPage() {
     return map;
   }, [buildGroups]);
 
-  // Recompute scores when stale, missing, or when builds become available
-  // for characters that previously scored null (async preset loading).
-  const needsScoring = useMemo(() => {
-    if (!accountData || accountData.characters.length === 0) return false;
-    if (isScoresStale) return true;
-    return accountData.characters.some((c) => {
+  // Determine which characters need rescoring: stale, missing, or null with builds now available.
+  const charsToScore = useMemo(() => {
+    if (!accountData || accountData.characters.length === 0) return [];
+
+    return accountData.characters.filter((c) => {
+      // Explicitly marked stale (per-character or global)
+      if (
+        staleScoreCharIds === true ||
+        (staleScoreCharIds.length > 0 && staleScoreCharIds.includes(c.key))
+      )
+        return true;
+      // Missing score
       if (!(c.key in scores)) return true;
-      // Rescore null entries when builds are now available
+      // Null score with builds now available (async preset loaded)
       if (scores[c.key] === null && (resolvedBuildsMap[c.key]?.length ?? 0) > 0)
         return true;
       return false;
     });
-  }, [accountData, isScoresStale, scores, resolvedBuildsMap]);
+  }, [accountData, staleScoreCharIds, scores, resolvedBuildsMap]);
 
   useEffect(() => {
-    if (!needsScoring || !accountData) return;
+    if (charsToScore.length === 0) return;
 
     // Short delay to let dependencies (e.g. preset loading) stabilize
     const timer = setTimeout(() => {
       const results: Record<string, ArtifactScoreResult | null> = {};
-      for (const char of accountData.characters) {
+      for (const char of charsToScore) {
         const builds = resolvedBuildsMap[char.key] ?? [];
         results[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);
       }
-      setScores(results);
+      mergeScores(results);
     }, 50);
     return () => clearTimeout(timer);
-  }, [needsScoring, accountData, scoreConfig, setScores, resolvedBuildsMap]);
+  }, [charsToScore, scoreConfig, mergeScores, resolvedBuildsMap]);
 
   useEffect(() => {
     // Detect old data format (missing extraWeapons or missing talents) and clear it
