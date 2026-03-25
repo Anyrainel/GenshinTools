@@ -204,11 +204,19 @@ export const CharacterView = forwardRef<
           style={{ position: "fixed", left: -9999, top: 0 }}
           aria-hidden="true"
         >
-          <div ref={exportRef} className="p-3" style={{ width: 1824 }}>
+          <div
+            ref={exportRef}
+            className="p-1"
+            style={{ width: isMobile ? 1224 : 2460 }}
+          >
             <ExportBranding />
             <div
               className="grid gap-3"
-              style={{ gridTemplateColumns: "repeat(3, 600px)" }}
+              style={{
+                gridTemplateColumns: isMobile
+                  ? "repeat(2, 600px)"
+                  : "repeat(4, 600px)",
+              }}
             >
               {exportCharacters.map((char) => (
                 <div key={char.key} className="[&>*]:max-w-none [&>*]:mx-0">

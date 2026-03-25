@@ -19,15 +19,24 @@ export async function downloadElementAsImage(
 
     const { scrollWidth, scrollHeight } = element;
 
+    // Read the page gradient so exports match the themed background
+    const rootStyle = getComputedStyle(document.documentElement);
+    const gradientPage = rootStyle.getPropertyValue("--gradient-page").trim();
+    const bgImage = gradientPage || undefined;
+    // Solid fallback for any remaining transparent areas
+    const bgHsl = rootStyle.getPropertyValue("--background").trim();
+    const bgColor = bgHsl ? `hsl(${bgHsl})` : "#10141d";
+
     const dataUrl = await toPng(element, {
       cacheBust: true,
-      backgroundColor: "#10141d",
+      backgroundColor: bgColor,
       width: scrollWidth,
       height: scrollHeight,
       pixelRatio: options?.pixelRatio ?? 1,
       style: {
         width: `${scrollWidth}px`,
         height: `${scrollHeight}px`,
+        backgroundImage: bgImage,
       },
     });
 

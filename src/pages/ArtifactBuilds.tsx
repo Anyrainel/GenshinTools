@@ -1,4 +1,7 @@
-import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsView";
+import {
+  ArtifactBuildsView,
+  type ArtifactBuildsViewHandle,
+} from "@/components/artifact-builds/ArtifactBuildsView";
 import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
@@ -7,7 +10,6 @@ import { WeightsView } from "@/components/artifact-builds/WeightsView";
 import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
-import { captureWithBranding } from "@/components/shared/ExportBranding";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
@@ -20,14 +22,13 @@ import type {
   BuildPayloadV5,
   PresetOption,
 } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+
 import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
   createBuildExportPayloadV5,
   serializeBuildExportPayload,
 } from "@/lib/artifact-builds/buildUtils";
-import { downloadElementAsImage } from "@/lib/downloadImage";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
@@ -47,7 +48,7 @@ const presetModules = import.meta.glob<{ default: BuildPayload }>(
 export default function ArtifactBuildsPage() {
   const { t } = useLanguage();
   const tour = useTour();
-  const computeContentRef = useRef<HTMLDivElement>(null);
+  const buildsViewRef = useRef<ArtifactBuildsViewHandle>(null);
   const [targetCharacterId, setTargetCharacterId] = useState<string>();
 
   // Control refs for ref-based dialog pattern
@@ -137,15 +138,9 @@ export default function ArtifactBuildsPage() {
     [computeOptions]
   );
 
-  const handleDownloadImage = useCallback(async () => {
-    const content = computeContentRef.current;
-    if (!content) return;
-    await captureWithBranding(
-      content,
-      (wrapper) => downloadElementAsImage(wrapper, "artifact-configs", t),
-      { minWidth: 1200 }
-    );
-  }, [t]);
+  const handleDownloadImage = useCallback(() => {
+    buildsViewRef.current?.downloadImage();
+  }, []);
 
   const handleExportTrigger = useCallback(() => {
     const state = useBuildsStore.getState();
@@ -274,7 +269,7 @@ export default function ArtifactBuildsPage() {
 
         <TabsContent value="filters" className="mt-0 h-full">
           <ArtifactBuildsView
-            contentRef={computeContentRef}
+            ref={buildsViewRef}
             onJumpToCharacter={(characterId) => {
               setTargetCharacterId(characterId);
               setActiveTab("configure");

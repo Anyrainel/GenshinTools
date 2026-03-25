@@ -581,7 +581,11 @@ export default function TeamCompPage() {
           style={{ position: "fixed", left: -9999, top: 0 }}
           aria-hidden="true"
         >
-          <div ref={frozenExportRef} className="p-3" style={{ width: 1400 }}>
+          <div
+            ref={frozenExportRef}
+            className="p-1"
+            style={{ width: isXl ? 1400 : 700 }}
+          >
             <ExportBranding />
             {frozenTeamEntries.map((entry, i) => {
               const ownerMap = buildArtifactOwnerMap(accountData);
