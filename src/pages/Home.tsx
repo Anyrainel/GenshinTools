@@ -123,7 +123,7 @@ export default function Home() {
               problem={t.ui("app.accountDataProblem")}
               guideline={t.ui("app.accountDataGuideline")}
               link="/account-data"
-              bgImage="assets/home/account_bg.png"
+              bgImage="assets/home/skirk.webp"
               bgPosition="center 12%"
               ctaText={t.ui("app.ctaScoreArtifacts")}
               featured
@@ -138,7 +138,7 @@ export default function Home() {
                 problem={t.ui("app.artifactFilterProblem")}
                 guideline={t.ui("app.artifactFilterGuideline")}
                 link="/artifact-filter"
-                bgImage="assets/home/columbina.png"
+                bgImage="assets/home/columbina.webp"
                 bgPosition="center 50%"
                 ctaText={t.ui("app.ctaConfigureFilters")}
                 index={1}
@@ -150,7 +150,7 @@ export default function Home() {
                 problem={t.ui("app.tierListProblem")}
                 guideline={t.ui("app.tierListGuideline")}
                 link="/tier-list"
-                bgImage="assets/home/traveler.png"
+                bgImage="assets/home/traveler.webp"
                 bgPosition="center 25%"
                 ctaText={t.ui("app.ctaRankCharacters")}
                 index={2}
@@ -162,7 +162,7 @@ export default function Home() {
                 problem={t.ui("app.archiveProblem")}
                 guideline={t.ui("app.archiveGuideline")}
                 link="/archive"
-                bgImage="assets/home/escoffier.png"
+                bgImage="assets/home/escoffier.webp"
                 bgPosition="center 50%"
                 ctaText={t.ui("app.ctaBrowseDetails")}
                 index={3}
@@ -174,7 +174,7 @@ export default function Home() {
                 problem={t.ui("app.teamCompProblem")}
                 guideline={t.ui("app.teamCompGuideline")}
                 link="/team-comp"
-                bgImage="assets/home/ineffa.png"
+                bgImage="assets/home/ineffa.webp"
                 bgPosition="center 48%"
                 ctaText={t.ui("app.ctaCalculateDamage")}
                 index={4}
@@ -188,7 +188,7 @@ export default function Home() {
               problem={t.ui("app.moreProblem")}
               guideline={t.ui("app.moreGuideline")}
               link="https://discord.gg/4RNAHYBaHa"
-              bgImage="assets/home/mizuki.png"
+              bgImage="assets/home/mizuki.webp"
               bgPosition="center 32%"
               ctaText={t.ui("app.ctaJoinCommunity")}
               external
