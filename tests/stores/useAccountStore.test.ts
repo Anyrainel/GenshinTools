@@ -1,6 +1,7 @@
 import type { AccountData, CharacterData } from "@/data/types";
 import { migrateAccountStore, useAccountStore } from "@/stores/useAccountStore";
 import { beforeEach, describe, expect, it } from "vitest";
+import { createArtifactScoreResult } from "../fixtures";
 
 // Reset store before each test
 beforeEach(() => {
@@ -195,15 +196,12 @@ describe("per-character score staleness", () => {
 
   describe("mergeScores", () => {
     it("merges partial scores with existing", () => {
+      const mockScore = createArtifactScoreResult();
       useAccountStore.getState().mergeScores({
-        hu_tao: { subScore: 10, mainScore: 5, totalScore: 15 },
+        hu_tao: mockScore,
       });
       const scores = useAccountStore.getState().accounts.test.scores;
-      expect(scores.hu_tao).toEqual({
-        subScore: 10,
-        mainScore: 5,
-        totalScore: 15,
-      });
+      expect(scores.hu_tao).toEqual(mockScore);
       // Other scores preserved
       expect(scores.xiangling).toBeNull();
       expect(scores.xingqiu).toBeNull();
@@ -212,7 +210,7 @@ describe("per-character score staleness", () => {
     it("clears per-character staleness only for scored characters", () => {
       useAccountStore.getState().invalidateScores(["hu_tao", "xiangling"]);
       useAccountStore.getState().mergeScores({
-        hu_tao: { subScore: 10, mainScore: 5, totalScore: 15 },
+        hu_tao: createArtifactScoreResult(),
       });
       // hu_tao cleared, xiangling remains stale
       expect(useAccountStore.getState().staleScoreCharIds).toEqual([
@@ -223,7 +221,7 @@ describe("per-character score staleness", () => {
     it("clears full staleness (true) to empty after scoring", () => {
       useAccountStore.getState().invalidateScores(); // true
       useAccountStore.getState().mergeScores({
-        hu_tao: { subScore: 10, mainScore: 5, totalScore: 15 },
+        hu_tao: createArtifactScoreResult(),
         xiangling: null,
         xingqiu: null,
       });
