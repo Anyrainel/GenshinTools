@@ -1,15 +1,4 @@
 import { ScoreChangeDialogTrigger } from "@/components/account-data/ScoreChangeAnnouncement";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -196,34 +185,15 @@ export function ArtifactScoreGlobalSettings() {
           <span className="text-muted-foreground text-xs">·</span>
           <ScoreChangeDialogTrigger />
         </div>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-white"
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              {t.ui("common.reset")}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                {t.ui("accountData.resetDefaults")}
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                {t.ui("accountData.resetGlobalConfirm")}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
-              <AlertDialogAction onClick={resetGlobalConfig}>
-                {t.ui("common.reset")}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-white"
+          onClick={resetGlobalConfig}
+        >
+          <RotateCcw className="w-4 h-4 mr-2" />
+          {t.ui("common.reset")}
+        </Button>
       </CardHeader>
       <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 pb-4">
         {(["flatAtk", "flatHp", "flatDef"] as const).map((key) => (

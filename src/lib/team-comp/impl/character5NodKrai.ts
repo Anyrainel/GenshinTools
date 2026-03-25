@@ -487,19 +487,6 @@ class Nefer extends CharacterBase {
     const eAtkMult = isE13 ? 1.623 : 1.375;
     const eEmMult = isE13 ? 3.246 : 2.75;
     return {
-      "nefer-skill": {
-        label: { zh: "E", en: "E" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              eAtkMult,
-              { element: "Dendro", ability: "skill", reaction: "none" },
-              "atk",
-              { key: "em", multiplier: eEmMult }
-            ),
-          },
-        ],
-      },
       ...(hasHydro
         ? {
             "nefer-phantasm": {
@@ -554,6 +541,19 @@ class Nefer extends CharacterBase {
             },
           }
         : {}),
+      "nefer-skill": {
+        label: { zh: "E", en: "E" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              eAtkMult,
+              { element: "Dendro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: eEmMult }
+            ),
+          },
+        ],
+      },
       "nefer-burst": {
         label: { zh: "Q", en: "Q" },
         parts: [

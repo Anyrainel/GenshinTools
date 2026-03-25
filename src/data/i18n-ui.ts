@@ -308,11 +308,6 @@ export const i18nUiData = {
       burst: { en: "Burst", zh: "元素爆发" },
     },
     punishmentFactor: { en: "Punishment Factor", zh: "惩罚系数" },
-    resetDefaults: { en: "Reset Defaults", zh: "重置默认" },
-    resetGlobalConfirm: {
-      en: "Reset global settings to default?",
-      zh: "重置全局设置到默认值？",
-    },
     flatAtk: { en: "Flat ATK", zh: "小攻击" },
     flatHp: { en: "Flat HP", zh: "小生命" },
     flatDef: { en: "Flat DEF", zh: "小防御" },
@@ -921,6 +916,10 @@ export const i18nUiData = {
     swapGuideChanges: { en: "changes", zh: "处变更" },
     swapStatusInventory: { en: "Inventory", zh: "背包中" },
     downloadSwapGuide: { en: "Download Swap Guide", zh: "下载换装指南" },
+    allowSameCharReuse: {
+      en: "Same character can reuse frozen artifacts",
+      zh: "相同角色可复用冻结圣遗物",
+    },
     downloadAllFrozen: { en: "Download All Frozen", zh: "下载所有冻结" },
     frozenExportFilename: {
       en: "{0} Teams Optimized Export",
