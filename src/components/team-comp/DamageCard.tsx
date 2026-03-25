@@ -1358,8 +1358,9 @@ export function DamageCard({
     "expected"
   );
 
-  // Keep progress bar visible for 1s after optimization completes
+  // Keep progress bar visible after optimization completes, then fade out
   const [showProgress, setShowProgress] = useState(false);
+  const [progressFading, setProgressFading] = useState(false);
   const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasComputing = useRef(false);
   useEffect(() => {
@@ -1370,10 +1371,14 @@ export function DamageCard({
         progressTimerRef.current = null;
       }
       setShowProgress(true);
+      setProgressFading(false);
     } else if (wasComputing.current) {
-      // Just finished computing — delay hide by 1s
       wasComputing.current = false;
-      progressTimerRef.current = setTimeout(() => setShowProgress(false), 2000);
+      // Show "Complete" for 1s, then start fade-out
+      progressTimerRef.current = setTimeout(
+        () => setProgressFading(true),
+        1000
+      );
     }
     return () => {
       if (progressTimerRef.current) {
@@ -1399,15 +1404,7 @@ export function DamageCard({
       : resolvedFormula != null;
 
   return (
-    <Card
-      className={cn(
-        CARD_CLS,
-        isFullyFrozen &&
-          "ring-1 ring-cyan-400/30 shadow-[0_0_20px_rgba(34,211,238,0.08)]",
-        isPartiallyFrozen &&
-          "ring-1 ring-cyan-400/15 shadow-[0_0_10px_rgba(34,211,238,0.04)]"
-      )}
-    >
+    <Card className={CARD_CLS}>
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <h3 className={CARD_TITLE_CLS}>
           <span
@@ -1591,7 +1588,7 @@ export function DamageCard({
             </div>
 
             {/* Empty state */}
-            {!isComputing && !teamResult && !teamError && !isFrozen && (
+            {!isComputing && !hasOptResult && !teamError && (
               <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                 <Swords className="w-8 h-8 opacity-15" />
                 <p>{t.ui("teamComp.emptyOptMsg")}</p>
@@ -1614,7 +1611,18 @@ export function DamageCard({
                   ? 100
                   : Math.round((teamProgress?.overallProgress ?? 0) * 100);
                 return (
-                  <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
+                  <div
+                    className={cn(
+                      "space-y-3 bg-black/15 p-3 rounded-lg border border-border/20 transition-opacity duration-1000",
+                      progressFading && "opacity-0"
+                    )}
+                    onTransitionEnd={() => {
+                      if (progressFading) {
+                        setShowProgress(false);
+                        setProgressFading(false);
+                      }
+                    }}
+                  >
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span className="font-semibold">
                         {!isComputing

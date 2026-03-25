@@ -18,6 +18,7 @@ import type {
   Slot,
   SubStat,
 } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
@@ -176,7 +177,7 @@ export function SwapGuide({
             aria-hidden="true"
           >
             <div ref={exportRef} style={{ width: 1400 }}>
-              <div className="grid grid-cols-4 gap-px bg-border/10">
+              <div className="grid grid-cols-4 gap-px">
                 {team.characters.map((charId, i) => {
                   if (!charId) return <div key={i} />;
                   return (
@@ -320,27 +321,34 @@ export function SlotRow({
     <div
       className={cn(
         "flex px-1 md:px-2 2xl:px-4 py-1 2xl:py-2 gap-2 md:gap-3 2xl:gap-4",
-        isSame ? "opacity-80" : "bg-gradient-card"
+        isSame ? "bg-black/10" : "bg-gradient-card"
       )}
     >
       {/* Left column: set info + main stat */}
-      <div className="flex flex-col gap-0.5 min-w-0 w-[45%] shrink-0">
-        {/* Set icon + name */}
+      <div className="flex flex-col md:gap-0.5 min-w-0 w-[45%] shrink-0">
+        {/* Set icon + name + slot/status */}
         <div className="flex items-center gap-1 min-w-0">
           {setIcon && (
             <img
               src={getAssetUrl(setIcon)}
               alt={setName}
-              className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain rounded-sm bg-secondary/50 shrink-0"
+              className="w-3 h-3 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain rounded-sm bg-secondary/50 shrink-0"
             />
           )}
-          <span className="text-[10px] md:text-xs lg:text-sm font-semibold text-foreground/80 truncate leading-tight">
+          <span
+            className={cn(
+              "md:text-xs lg:text-sm font-semibold text-foreground/80 truncate leading-snug",
+              setName.length >= (/[\u4e00-\u9fff]/.test(setName) ? 6 : 12)
+                ? "text-[8px]"
+                : "text-[10px]"
+            )}
+          >
             {setName}
           </span>
         </div>
 
         {/* Slot name + status badge */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 md:gap-1.5 leading-snug">
           <span className="text-[10px] md:text-[11px] lg:text-xs text-foreground/80 capitalize whitespace-nowrap shrink-0">
             {t.slot(slot)}
           </span>
@@ -349,7 +357,7 @@ export function SlotRow({
 
         {/* Roll count */}
         {artifact.totalRolls !== undefined && (
-          <span className="text-[10px] md:text-[11px] lg:text-xs text-muted-foreground">
+          <span className="text-[10px] md:text-[11px] lg:text-xs text-muted-foreground leading-snug">
             {t
               .ui("accountData.totalRolls")
               .replace("{0}", String(artifact.totalRolls))}
@@ -357,10 +365,10 @@ export function SlotRow({
         )}
 
         {/* Main stat line: name +level value */}
-        <div className="flex items-baseline gap-1 leading-none">
+        <div className="flex items-baseline gap-0.5 md:gap-1 leading-none">
           <span
             className={cn(
-              "text-[10px] md:text-xs lg:text-sm font-bold truncate text-amber-100"
+              "text-[10px] md:text-xs lg:text-sm font-semibold truncate text-amber-100"
             )}
           >
             {t.statMin(artifact.mainStatKey)}
@@ -373,7 +381,7 @@ export function SlotRow({
           >
             +{artifact.level}
           </span>
-          <span className="text-[10px] md:text-xs lg:text-sm font-mono font-bold text-amber-100 ml-auto shrink-0">
+          <span className="text-[10px] md:text-xs lg:text-sm font-mono font-semibold text-amber-100 ml-auto shrink-0">
             {fmtStat(artifact.mainStatKey, mainStatValue, false, true)}
           </span>
         </div>
@@ -515,18 +523,19 @@ export function ExportColumn({
   const { charLevel, charConst, weaponId, weaponRefine, artConfig } =
     resolveBuildInfo(charId, team, accountData);
   const weapon = weaponId ? weaponsById[weaponId] : null;
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <div className="flex flex-col overflow-hidden">
       {/* Build info header — icons only */}
-      <div className="flex items-end gap-4 px-4 py-2 bg-black/10">
+      <div className="flex items-end gap-1.5 md:gap-4 px-1 md:px-4 py-1 md:py-2 bg-black/10">
         {char && (
           <ItemIcon
             imagePath={char.imagePath}
             rarity={char.rarity}
-            badge={`C${charConst}`}
+            badge={`${charConst}`}
             level={`Lv.${charLevel}`}
-            size="lg"
+            size={isDesktop ? "lg" : "sm"}
             characterId={charId}
           />
         )}
@@ -534,16 +543,16 @@ export function ExportColumn({
           <ItemIcon
             imagePath={weapon.imagePath}
             rarity={weapon.rarity}
-            badge={`R${weaponRefine}`}
+            badge={`${weaponRefine}`}
             level="Lv.90"
-            size="md"
+            size={isDesktop ? "md" : "xs"}
           />
         )}
         {artConfig && artConfig.type === "4pc" && (
           <ItemIcon
             imagePath={artifactsById[artConfig.setId]?.imagePaths?.flower ?? ""}
             rarity={5}
-            size="sm"
+            size={isDesktop ? "sm" : "xs"}
           />
         )}
         {artConfig && artConfig.type === "2pc+2pc" && (
@@ -560,7 +569,7 @@ export function ExportColumn({
                 artifactHalfSetsById[artConfig.id2]
               )?.imagePaths?.flower ?? ""
             }
-            size="sm"
+            size={isDesktop ? "sm" : "xs"}
           />
         )}
       </div>

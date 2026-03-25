@@ -227,10 +227,8 @@ export function TeamRosterCard({
     charIds,
   ]);
 
-  const hasFrozenChars = frozenCharIds != null && frozenCharIds.size > 0;
-
   return (
-    <Card className={cn(CARD_CLS, hasFrozenChars && "ring-1 ring-cyan-400/20")}>
+    <Card className={CARD_CLS}>
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <h3 className={CARD_TITLE_CLS}>
           <span

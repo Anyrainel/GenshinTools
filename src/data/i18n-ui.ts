@@ -1152,7 +1152,7 @@ export const i18nUiData = {
     },
     optionalConfig: {
       en: "Optional — skip if CR+CD auto-lock is enabled",
-      zh: "此配置可跳过——如已开启双暴自动锁定",
+      zh: "此配置可跳过—若已开启双暴锁定",
     },
     computing: {
       en: "Recomputing configurations…",
