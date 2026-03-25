@@ -18,6 +18,7 @@ import {
   compileComboTeamDamage,
   fillVarsFromArtifacts,
 } from "../formulaCompiler";
+import { computeSubstatMarginals } from "../marginalGains";
 import type { BnBWorkerRequest, BnBWorkerResponse } from "../optimizer.worker";
 import { detectEquippedSets } from "../teamOptUtils";
 import type {
@@ -36,7 +37,6 @@ import type {
   TeamOptimizerOptions,
 } from "../types";
 import {
-  buildSuperArtifact,
   computeWeightScore,
   getArtifactCr,
   getArtifactEr,
@@ -546,65 +546,50 @@ export async function* runTeamOptimization(
     combo.lines.some((l) => l.count > 0 && l.charId === id)
   );
 
-  // ── Saturation detection ──
-  // For each support, test if any artifact stats affect team damage.
-  // If super-artifact (max possible stats) vs empty sheet produces < ε
-  // relative damage difference, the character is "intrinsically saturated"
-  // and B&B is skipped entirely.
+  // ── Saturation detection via marginal weights ──
+  // Compute substat marginals for ALL characters (not just supports).
+  // If +1 avg roll of every substat produces zero damage change, the
+  // character's artifact stats don't affect team damage — "saturated".
+  // This is cheaper and more accurate than the old super-artifact approach
+  // and works for combo formulas where "support" vs "carry" is ambiguous.
   const saturatedCharIds = new Set<string>();
   {
-    const supportCharIds = allCharIds.filter(
-      (id) => !carryCharIds.includes(id)
-    );
-    for (const cid of supportCharIds) {
-      try {
-        // Evaluate with empty artifact sheet
-        const emptySheets = { ...baseSheets, [cid]: new StatSheet([]) };
-        const dmgEmpty = evaluateCombo(
+    const emptySheets: Record<string, StatSheet> = {};
+    for (const cid of allCharIds) {
+      emptySheets[cid] = new StatSheet([]);
+    }
+    try {
+      const evalFn = (sheets: Record<string, StatSheet>) =>
+        evaluateCombo(
           teamBuild,
           combo,
+          sheets,
+          calcContext,
+          effectiveReactionOverrides
+        ).totalDamage;
+      const baseDamage = evalFn(emptySheets);
+
+      if (baseDamage > 0) {
+        const marginals = computeSubstatMarginals(
+          evalFn,
           emptySheets,
-          calcContext,
-          effectiveReactionOverrides
-        ).totalDamage;
+          baseDamage,
+          allCharIds
+        );
 
-        // Build super-artifact sheet: max stat per slot, then sum across slots
-        const superStats: Partial<Record<StatKey, number>> = {};
-        for (let si = 0; si < 5; si++) {
-          const slot = allSlots[si];
-          const slotArts = inventory.filter((a) => a.slotKey === slot);
-          if (slotArts.length === 0) continue;
-          const sa = buildSuperArtifact(slotArts);
-          for (const [key, val] of Object.entries(sa.stats)) {
-            const sk = key as StatKey;
-            superStats[sk] = (superStats[sk] ?? 0) + val;
-          }
-        }
-        const superSheet = StatSheet.fromRaw(superStats);
-        const superSheets = { ...baseSheets, [cid]: superSheet };
-        const dmgSuper = evaluateCombo(
-          teamBuild,
-          combo,
-          superSheets,
-          calcContext,
-          effectiveReactionOverrides
-        ).totalDamage;
+        for (const cid of allCharIds) {
+          const charDeltas = marginals[cid];
+          const hasNonZero =
+            charDeltas &&
+            Object.values(charDeltas).some((v) => v !== undefined && v > 0);
+          if (hasNonZero) continue;
 
-        const base = Math.max(dmgEmpty, 1);
-        const satDelta = Math.abs(dmgSuper - dmgEmpty) / base;
-        if (satDelta < 0.001) {
-          // Substats don't matter, but the set bonus might.
-          // If the character has a configured 4pc/2pc set, check whether
-          // losing that set bonus changes damage. If so, the character
-          // is NOT saturated — the heuristic fill might pick off-set
-          // artifacts, and the set-detection rebuild would remove the bonus.
+          // Substats don't matter. Check if artifact set bonus affects damage.
           const charPerConf = perChar[cid];
           const hasSetConfig =
             !!charPerConf?.artifactSetId ||
             (charPerConf?.artifactHalfSetIds?.length ?? 0) > 0;
-
           if (hasSetConfig) {
-            // Build a TeamBuild with this character's set stripped
             const noSetConfigs = teamBuild.configs.map((c) =>
               c.charId === cid
                 ? { ...c, artifactSetId: null, artifactHalfSetIds: [] }
@@ -623,18 +608,16 @@ export async function* runTeamOptimization(
               calcContext,
               effectiveReactionOverrides
             ).totalDamage;
-            const setDelta = Math.abs(dmgEmpty - dmgNoSet) / base;
-            if (setDelta >= 0.001) {
-              // Set bonus matters — don't mark as saturated
-              continue;
+            if (Math.abs(baseDamage - dmgNoSet) / baseDamage >= 0.001) {
+              continue; // Set bonus matters — don't mark as saturated
             }
           }
 
           saturatedCharIds.add(cid);
         }
-      } catch {
-        // If evaluation fails, don't mark as saturated — let B&B handle it
       }
+    } catch {
+      // If evaluation fails, don't mark anyone as saturated
     }
   }
 
@@ -1478,21 +1461,48 @@ export async function* runTeamOptimization(
   const bestAllocation: Record<string, TopKEntry> | null =
     candidates.length > 0 ? candidates[0].assignment : null;
 
-  // Build final artifact assignment from best full-team-evaluated allocation
+  // Build final artifact assignment from best full-team-evaluated allocation.
+  // When bestAllocation is missing (DFS exhausted) or doesn't cover a
+  // character, use a conflict-aware greedy fallback instead of raw topK[0]
+  // to avoid assigning the same artifact to multiple characters.
   const bestArtifactsByChar: Record<
     string,
     Record<Slot, ArtifactData | null>
   > = {};
+  const usedArtifactIds = new Set<string>();
+  // First pass: assign characters that have entries in bestAllocation
   for (const charId of allCharIds) {
     if (bestAllocation?.[charId]) {
       bestArtifactsByChar[charId] = artsTupleToRecord(
         bestAllocation[charId].artifacts
       );
-    } else {
-      const best = topKByChar[charId]?.[0];
-      bestArtifactsByChar[charId] = best
-        ? artsTupleToRecord(best.artifacts)
-        : { ...emptyArtifacts };
+      for (const artId of bestAllocation[charId].artifactIds) {
+        usedArtifactIds.add(artId);
+      }
+    }
+  }
+  // Second pass: conflict-aware greedy for remaining characters
+  for (const charId of allCharIds) {
+    if (bestArtifactsByChar[charId]) continue;
+    const entries = topKByChar[charId] ?? [];
+    let assigned = false;
+    for (const entry of entries) {
+      let conflict = false;
+      for (const artId of entry.artifactIds) {
+        if (usedArtifactIds.has(artId)) {
+          conflict = true;
+          break;
+        }
+      }
+      if (!conflict) {
+        bestArtifactsByChar[charId] = artsTupleToRecord(entry.artifacts);
+        for (const artId of entry.artifactIds) usedArtifactIds.add(artId);
+        assigned = true;
+        break;
+      }
+    }
+    if (!assigned) {
+      bestArtifactsByChar[charId] = { ...emptyArtifacts };
     }
   }
 

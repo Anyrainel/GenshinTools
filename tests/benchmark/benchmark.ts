@@ -356,12 +356,41 @@ function evaluateAssignment(
  * Check whether an artifact assignment meets the team's minEr/minCr constraints.
  * Returns an array of violations (empty = all constraints met).
  */
+function checkArtifactUniqueness(
+  assignment: Record<string, Record<string, string>>
+): string[] {
+  const seen = new Map<string, string>(); // artId → charId
+  const dupes: string[] = [];
+  for (const [charId, slots] of Object.entries(assignment)) {
+    for (const artId of Object.values(slots)) {
+      const prev = seen.get(artId);
+      if (prev) {
+        dupes.push(`${artId} used by both ${prev} and ${charId}`);
+      } else {
+        seen.set(artId, charId);
+      }
+    }
+  }
+  return dupes;
+}
+
 function checkConstraints(
   team: Team,
   assignment: Record<string, Record<string, string>>,
   accountData: AccountData,
   inventory: ArtifactData[]
 ): ConstraintViolation[] {
+  // Check artifact uniqueness first
+  const dupes = checkArtifactUniqueness(assignment);
+  if (dupes.length > 0) {
+    return dupes.map((d) => ({
+      kind: "er" as const,
+      charId: `DUPLICATE: ${d}`,
+      actual: 0,
+      required: 1,
+    }));
+  }
+
   const artById = new Map<string, ArtifactData>();
   for (const a of inventory) artById.set(a.id, a);
 
@@ -616,10 +645,16 @@ function logConstraintViolations(
   indent = "    "
 ): void {
   for (const v of violations) {
-    const label = v.kind === "er" ? "ER" : "CR";
-    console.log(
-      `${indent}${C.red}[CONSTRAINT FAIL]${C.reset} ${v.charId}: ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
-    );
+    if (v.charId.startsWith("DUPLICATE:")) {
+      console.log(
+        `${indent}${C.red}[DUPLICATE]${C.reset} ${v.charId.slice(11)}`
+      );
+    } else {
+      const label = v.kind === "er" ? "ER" : "CR";
+      console.log(
+        `${indent}${C.red}[CONSTRAINT FAIL]${C.reset} ${v.charId}: ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
+      );
+    }
   }
 }
 
@@ -1002,11 +1037,17 @@ async function cmdPurgeInvalid(): Promise<void> {
           violations,
         });
         for (const v of violations) {
-          const label = v.kind === "er" ? "ER" : "CR";
-          console.log(
-            `  ${C.red}PURGE${C.reset} ${key} [${si}] (${sol.algorithm}): ` +
-              `${v.charId} ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
-          );
+          if (v.charId.startsWith("DUPLICATE:")) {
+            console.log(
+              `  ${C.red}PURGE${C.reset} ${key} [${si}] (${sol.algorithm}): ${v.charId.slice(11)}`
+            );
+          } else {
+            const label = v.kind === "er" ? "ER" : "CR";
+            console.log(
+              `  ${C.red}PURGE${C.reset} ${key} [${si}] (${sol.algorithm}): ` +
+                `${v.charId} ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
+            );
+          }
         }
       } else {
         kept++;
