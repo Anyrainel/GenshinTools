@@ -300,11 +300,7 @@ function CharacterBuildCardComponent({
           )}
         >
           <Link to={`/archive?tab=characters&character=${character.id}`}>
-            <ItemIcon
-              imagePath={character.imagePath}
-              rarity={character.rarity}
-              size={iconSize}
-            />
+            <ItemIcon characterId={character.id} size={iconSize} />
           </Link>
 
           <div className="flex-1 flex items-center justify-between gap-4">

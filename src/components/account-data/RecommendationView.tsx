@@ -386,14 +386,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
               {poolChars.map((c) => {
                 const charInfo = charactersById[c.key];
                 if (!charInfo) return null;
-                return (
-                  <ItemIcon
-                    key={c.key}
-                    imagePath={charInfo.imagePath}
-                    rarity={charInfo.rarity}
-                    size="md"
-                  />
-                );
+                return <ItemIcon key={c.key} characterId={c.key} size="md" />;
               })}
             </div>
           </div>

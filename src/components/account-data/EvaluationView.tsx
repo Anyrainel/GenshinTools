@@ -10,8 +10,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById } from "@/data/constants";
-
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
@@ -267,7 +265,6 @@ function SetGroupSection({
 }) {
   const { t } = useLanguage();
   const is2p2 = group.artifactSet === "__2+2__";
-  const setInfo = !is2p2 ? artifactsById[group.artifactSet] : null;
 
   const worstTier = getTier(group.worstCompleteness);
   const worstPct = Math.round(group.worstCompleteness * 100);
@@ -282,14 +279,10 @@ function SetGroupSection({
       <div className="flex items-center gap-2 pb-1">
         {is2p2 ? (
           <Combine className="w-7 h-7 text-muted-foreground shrink-0" />
-        ) : setInfo ? (
+        ) : !is2p2 ? (
           <Tooltip>
             <TooltipTrigger>
-              <ItemIcon
-                imagePath={setInfo.imagePaths.flower}
-                rarity={setInfo.rarity}
-                size="sm"
-              />
+              <ItemIcon artifactSetId={group.artifactSet} size="sm" />
             </TooltipTrigger>
             <TooltipContent
               side="top"

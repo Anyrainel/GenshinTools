@@ -52,12 +52,14 @@ describe("ItemIcon", () => {
     expect(screen.getByText("Lv. 90")).toBeInTheDocument();
   });
 
-  it("renders children when provided", () => {
-    render(
-      <ItemIcon {...defaultProps}>
-        <span data-testid="child-element">Child</span>
-      </ItemIcon>
+  it("renders weaponTypeBadge when provided", () => {
+    const { container } = render(
+      <ItemIcon {...defaultProps} weaponTypeBadge="weapon/sword.webp" />
     );
-    expect(screen.getByTestId("child-element")).toBeInTheDocument();
+    const imgs = container.querySelectorAll("img");
+    const badgeImg = Array.from(imgs).find((img) =>
+      img.getAttribute("src")?.includes("sword")
+    );
+    expect(badgeImg).toBeInTheDocument();
   });
 });

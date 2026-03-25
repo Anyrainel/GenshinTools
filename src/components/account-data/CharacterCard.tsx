@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo as charInfoData } from "@/data/charInfo";
-import { artifactsById, charactersById, weaponsById } from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/constants";
 import type { CharacterData, MainStatSlot, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
@@ -104,8 +104,7 @@ function CharacterCardComponent({
           {/* Character Icon — links to archive */}
           <Link to={`/archive?tab=characters&character=${char.key}`}>
             <ItemIcon
-              imagePath={charInfo.imagePath}
-              rarity={charInfo.rarity}
+              characterId={char.key}
               badge={char.constellation}
               level={`Lv. ${char.level}`}
               size={isVeryNarrow ? "md" : "lg"}
@@ -168,8 +167,7 @@ function CharacterCardComponent({
               {weapon && weaponInfo ? (
                 <div className="cursor-help flex-shrink-0">
                   <ItemIcon
-                    imagePath={weaponInfo.imagePath}
-                    rarity={weaponInfo.rarity}
+                    weaponId={weapon.key}
                     badge={weapon.refinement}
                     level={`Lv. ${weapon.level}`}
                     size={isVeryNarrow ? "md" : "lg"}
@@ -206,8 +204,7 @@ function CharacterCardComponent({
               <Tooltip key={setKey}>
                 <TooltipTrigger className="flex items-center gap-2 cursor-help">
                   <ItemIcon
-                    imagePath={artifactsById[setKey]?.imagePaths.flower || ""}
-                    rarity={artifactsById[setKey]?.rarity || 5}
+                    artifactSetId={setKey}
                     size={isVeryNarrow ? "sm" : "md"}
                   />
                   <div className="flex flex-col items-start">

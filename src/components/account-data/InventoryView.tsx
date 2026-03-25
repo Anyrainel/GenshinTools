@@ -25,7 +25,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   allHalfSetIds,
   artifactIdToHalfSetId,
-  artifactsById,
   weaponsById,
 } from "@/data/constants";
 import type {
@@ -652,7 +651,6 @@ function WeaponGrid({
   return (
     <div className="flex flex-wrap gap-3 px-2">
       {weapons.map((w) => {
-        const weaponInfo = weaponsById[w.key];
         const name = t.weaponName(w.key);
 
         const cardContent = (
@@ -665,8 +663,7 @@ function WeaponGrid({
           >
             <div className="relative transition-transform group-hover:scale-105 duration-200">
               <ItemIcon
-                imagePath={weaponInfo?.imagePath || ""}
-                rarity={weaponInfo?.rarity || 1}
+                weaponId={w.key}
                 badge={w.refinement}
                 lock={w.lock}
                 level={`Lv. ${w.level}`}
@@ -724,7 +721,6 @@ function ArtifactGrid({
   return (
     <div className="flex flex-wrap gap-3 px-2">
       {artifacts.map((a) => {
-        const artInfo = artifactsById[a.setKey];
         const badge = a.astralMark ? "⭐" : undefined;
 
         const iconContent = (
@@ -736,7 +732,8 @@ function ArtifactGrid({
             onClick={isEditMode ? () => onArtifactClick(a) : undefined}
           >
             <ItemIcon
-              imagePath={artInfo?.imagePaths[a.slotKey] || ""}
+              artifactSetId={a.setKey}
+              slot={a.slotKey}
               rarity={a.rarity}
               badge={badge}
               lock={a.lock}

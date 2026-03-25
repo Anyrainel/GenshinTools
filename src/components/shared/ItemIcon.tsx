@@ -1,7 +1,51 @@
-import type { Rarity } from "@/data/types";
+import {
+  artifactHalfSetsById,
+  artifactsById,
+  charactersById,
+  weaponsById,
+} from "@/data/constants";
+import type { Rarity, Slot } from "@/data/types";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import { Lock } from "lucide-react";
 import { forwardRef } from "react";
+
+/**
+ * Resolve two artifact half-set IDs to distinct flower image paths.
+ * For different half-sets: picks any 5★ artifact from each.
+ * For identical half-sets: picks two different 5★ artifacts from that set.
+ * Throws if a same-ID half-set maps to fewer than 2 five-star artifact sets.
+ */
+export function resolveHalfSetIcons(
+  id1: string | number,
+  id2: string | number
+): [string, string] {
+  const hs1 = artifactHalfSetsById[id1];
+  const hs2 = artifactHalfSetsById[id2];
+
+  const art1 = hs1?.setIds
+    .map((id) => artifactsById[id])
+    .find((a) => a?.rarity === 5);
+
+  if (String(id1) !== String(id2)) {
+    const art2 = hs2?.setIds
+      .map((id) => artifactsById[id])
+      .find((a) => a?.rarity === 5);
+    return [art1?.imagePaths.flower ?? "", art2?.imagePaths.flower ?? ""];
+  }
+
+  // Same half-set used twice — pick two distinct 5★ artifacts
+  const art2 = hs1?.setIds
+    .map((id) => artifactsById[id])
+    .find((a) => a?.rarity === 5 && a.id !== art1?.id);
+
+  if (!art1 || !art2) {
+    throw new Error(
+      `Half-set ${id1} maps to fewer than 2 five-star artifact sets`
+    );
+  }
+
+  return [art1.imagePaths.flower, art2.imagePaths.flower];
+}
 
 /** Character ID prefixes that share the same portrait but need an element overlay */
 const VARIANT_PREFIXES = ["traveler", "manekin"] as const;
@@ -15,20 +59,35 @@ function getVariantElement(characterId?: string): string | null {
 }
 
 interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
-  imagePath: string;
-  /** When provided, renders a split double-icon layout (e.g. 2pc+2pc artifact sets) */
-  imagePath2?: string;
-  rarity?: Rarity;
-  badge?: string | number; // Top Left - Constellation/Refinement/AstralMark (e.g. "1", "⭐")
-  lock?: boolean; // Top Right - Show red lock icon when true
-  elementBadge?: string; // Top Right - Element image path (mutually exclusive with lock)
-  level?: string; // Bottom bar - e.g. "Lv. 90", "+20"
-  size?: ItemIconSize; // Predefined sizes
-  /** When set, auto-adds a bottom-center element overlay for variant characters (traveler/manekin/manekina) */
+  // ── Domain resolution props ──
+  /** Character ID — resolves imagePath, rarity, and variant element overlay */
   characterId?: string;
-  /** Replace rarity background with an icy/snowy background */
+  /** Weapon ID — resolves imagePath, rarity */
+  weaponId?: string;
+  /** Artifact set ID — resolves imagePath (flower by default, or specific slot), rarity */
+  artifactSetId?: string;
+  /** Two half-set IDs for 2pc+2pc — resolves two distinct flower imagePaths */
+  halfSetIds?: [string | number, string | number];
+  /** Artifact slot — with artifactSetId, resolves that slot's image instead of flower */
+  slot?: Slot;
+
+  // ── Manual / override ──
+  /** Raw image path — overrides domain resolution when provided */
+  imagePath?: string;
+  /** Second image path for manual split display (e.g. account-data 2pc+2pc with real set icons) */
+  imagePath2?: string;
+  /** Rarity for background color — overrides domain resolution when provided */
+  rarity?: Rarity;
+
+  // ── Add-on props ──
+  badge?: string | number;
+  lock?: boolean;
+  elementBadge?: string;
+  /** Weapon type overlay badge (top-right, rounded with backdrop blur) */
+  weaponTypeBadge?: string;
+  level?: string;
+  size?: ItemIconSize;
   frozen?: boolean;
-  children?: React.ReactNode;
 }
 
 // Explicit configuration for each size
@@ -116,24 +175,60 @@ export const SIZE_CLASSES = {
 export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
   (
     {
-      imagePath,
-      imagePath2,
-      rarity = 1,
+      characterId,
+      weaponId,
+      artifactSetId,
+      halfSetIds,
+      slot,
+      imagePath: rawImagePath,
+      imagePath2: rawImagePath2,
+      rarity: rawRarity,
       badge,
       lock,
       elementBadge,
+      weaponTypeBadge,
       level,
       size = "lg",
-      characterId,
       frozen,
-      children,
       className,
       style,
       ...props
     },
     ref
   ) => {
-    // Double-icon mode: split layout for 2pc+2pc artifact sets
+    // ── Domain resolution ──
+    // Explicit imagePath/rarity always override resolved values.
+    let imagePath: string;
+    let imagePath2 = rawImagePath2;
+    let rarity: Rarity;
+
+    if (rawImagePath !== undefined) {
+      // Manual mode — caller provided an explicit path
+      imagePath = rawImagePath;
+      rarity = rawRarity ?? 1;
+    } else if (halfSetIds) {
+      const [p1, p2] = resolveHalfSetIcons(halfSetIds[0], halfSetIds[1]);
+      imagePath = p1;
+      imagePath2 = p2;
+      rarity = rawRarity ?? 5;
+    } else if (characterId) {
+      const char = charactersById[characterId];
+      imagePath = char?.imagePath ?? "";
+      rarity = rawRarity ?? char?.rarity ?? 1;
+    } else if (weaponId) {
+      const weapon = weaponsById[weaponId];
+      imagePath = weapon?.imagePath ?? "";
+      rarity = rawRarity ?? weapon?.rarity ?? 1;
+    } else if (artifactSetId) {
+      const art = artifactsById[artifactSetId];
+      imagePath = (slot ? art?.imagePaths[slot] : art?.imagePaths.flower) ?? "";
+      rarity = rawRarity ?? art?.rarity ?? 1;
+    } else {
+      imagePath = "";
+      rarity = rawRarity ?? 1;
+    }
+
+    // ── Double-icon mode: split layout for 2pc+2pc artifact sets ──
     if (imagePath2 !== undefined) {
       const config = ICON_CONFIG[size] || ICON_CONFIG.lg;
       const iconSize = config.icon;
@@ -178,8 +273,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       );
     }
 
+    // ── Single-icon mode ──
     const config = ICON_CONFIG[size];
-    // Fallback to lg if size is invalid (though type check prevents this)
     const effectiveConfig = config || ICON_CONFIG.lg;
 
     const {
@@ -303,6 +398,21 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
             />
           </div>
         )}
+
+        {/* Weapon type badge - top right (rounded with backdrop blur) */}
+        {weaponTypeBadge && !showLock && !showElement && (
+          <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
+            <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
+              <img
+                src={getAssetUrl(weaponTypeBadge)}
+                alt="weapon type"
+                className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
+                draggable={false}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Variant element overlay - bottom center (traveler/manekin/manekina) */}
         {(() => {
           const el = getVariantElement(characterId);
@@ -322,7 +432,6 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
             </div>
           );
         })()}
-        {children}
       </div>
     );
 

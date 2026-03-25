@@ -1,7 +1,6 @@
 import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
-import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById } from "@/data/constants";
 import type { ArtifactData, Slot } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { ArrowRightLeft } from "lucide-react";
@@ -61,10 +60,13 @@ export function ArtifactSlotGrid({
                   "hover:bg-primary/10"
                 )}
               >
-                <ArtifactIcon
-                  artifact={art}
-                  artInfo={artifactsById[art.setKey]}
+                <ItemIcon
+                  artifactSetId={art.setKey}
                   slot={slot}
+                  rarity={art.rarity}
+                  lock={art.lock}
+                  level={`+${art.level}`}
+                  badge={art.astralMark ? "⭐" : undefined}
                   size={compact ? "xs" : "md"}
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
@@ -83,10 +85,13 @@ export function ArtifactSlotGrid({
             side="bottom"
           >
             <div className="cursor-help">
-              <ArtifactIcon
-                artifact={art}
-                artInfo={artifactsById[art.setKey]}
+              <ItemIcon
+                artifactSetId={art.setKey}
                 slot={slot}
+                rarity={art.rarity}
+                lock={art.lock}
+                level={`+${art.level}`}
+                badge={art.astralMark ? "⭐" : undefined}
                 size={compact ? "xs" : "md"}
               />
             </div>

@@ -52,7 +52,7 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
       )}
     >
       <ItemIcon
-        imagePath={weapon.imagePath}
+        weaponId={weapon.id}
         rarity={meta.rarity}
         size="sm"
         className="shrink-0"
@@ -163,7 +163,7 @@ function WeaponDetailDrawer({
           {/* Header: icon + name + stars + ownership */}
           <div className="flex items-center gap-3">
             <ItemIcon
-              imagePath={weapon.imagePath}
+              weaponId={weapon.id}
               rarity={weaponMeta.rarity}
               size="lg"
               className="shrink-0"

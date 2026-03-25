@@ -361,34 +361,12 @@ function PickerTrigger({
   if (type === "artifact") {
     const conf = value as ArtifactConfig;
     if (conf.type === "4pc") {
-      const art = artifactsById[conf.setId];
       return (
-        <ItemIcon
-          imagePath={art?.imagePaths.flower}
-          rarity={art?.rarity ?? 5}
-          size={size}
-          frozen={frozen}
-        />
+        <ItemIcon artifactSetId={conf.setId} size={size} frozen={frozen} />
       );
     }
-    const half1 = artifactHalfSetsById[conf.id1];
-    const half2 = artifactHalfSetsById[conf.id2];
-    // Prefer rarity 5 artifacts for display
-    const art1 = half1?.setIds
-      .map((id) => artifactsById[id])
-      .find((a) => a?.rarity === 5);
-    const art2 = half2?.setIds
-      .filter((id) => half2 !== half1 || id !== art1?.id)
-      .map((id) => artifactsById[id])
-      .find((a) => a?.rarity === 5);
-
     return (
-      <ItemIcon
-        imagePath={art1?.imagePaths.flower || ""}
-        imagePath2={art2?.imagePaths.flower || ""}
-        size={size}
-        frozen={frozen}
-      />
+      <ItemIcon halfSetIds={[conf.id1, conf.id2]} size={size} frozen={frozen} />
     );
   }
 
@@ -412,13 +390,12 @@ function PickerTrigger({
 
   return (
     <ItemIcon
-      imagePath={item?.imagePath}
-      rarity={item?.rarity}
+      characterId={
+        type === "character" ? (item as CharacterResource)?.id : undefined
+      }
+      weaponId={type === "weapon" ? (item as WeaponResource)?.id : undefined}
       size={size}
       elementBadge={elementPath}
-      characterId={
-        type === "character" ? (item as CharacterResource).id : undefined
-      }
       frozen={frozen}
     />
   );
@@ -772,12 +749,21 @@ function PickerContent({
             )}
           >
             <ItemIcon
-              imagePath={item.imagePath}
-              rarity={item.rarity}
-              size={menuSize}
               characterId={
                 type === "character" ? (item.id as string) : undefined
               }
+              weaponId={type === "weapon" ? (item.id as string) : undefined}
+              imagePath={
+                type !== "character" && type !== "weapon"
+                  ? item.imagePath
+                  : undefined
+              }
+              rarity={
+                type !== "character" && type !== "weapon"
+                  ? item.rarity
+                  : undefined
+              }
+              size={menuSize}
             />
           </div>
         </TooltipTrigger>

@@ -188,7 +188,7 @@ export function CharacterDetailPanel({
           <div className="flex flex-col min-[1920px]:flex-row min-[1920px]:items-start min-[1920px]:justify-between gap-4">
             <div className="flex items-center gap-4">
               <ItemIcon
-                imagePath={character.imagePath}
+                characterId={characterId}
                 rarity={meta?.rarity ?? character.rarity}
                 size="xl"
               />

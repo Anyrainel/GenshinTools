@@ -1,21 +1,18 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById } from "@/data/constants";
 import type { ArtifactSetConfigs } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ArtifactConfigCard } from "./ArtifactConfigCard";
 
 interface ArtifactCardProps {
   setId: string;
-  setImagePath: string;
   filter: ArtifactSetConfigs;
   onJumpToCharacter: (characterId: string) => void;
 }
 
 export function ArtifactCard({
   setId,
-  setImagePath,
   filter,
   onJumpToCharacter,
 }: ArtifactCardProps) {
@@ -27,11 +24,7 @@ export function ArtifactCard({
     <Card className="bg-gradient-card">
       <CardHeader className="p-3 md:px-6 md:pb-3 md:pt-5">
         <div className="flex items-center gap-2 md:gap-4">
-          <ItemIcon
-            imagePath={setImagePath}
-            rarity={artifactsById[setId]?.rarity || 5}
-            size={isMobile ? "md" : "lg"}
-          />
+          <ItemIcon artifactSetId={setId} size={isMobile ? "md" : "lg"} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <CardTitle className="text-base md:text-xl text-foreground">

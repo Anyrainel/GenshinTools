@@ -181,7 +181,6 @@ export const ArtifactBuildsView = forwardRef<
                 <ArtifactCard
                   key={set.id}
                   setId={set.id}
-                  setImagePath={set.imagePaths.flower}
                   filter={filter}
                   onJumpToCharacter={onJumpToCharacter}
                 />
@@ -211,7 +210,6 @@ export const ArtifactBuildsView = forwardRef<
                   <ArtifactCard
                     key={set.id}
                     setId={set.id}
-                    setImagePath={set.imagePaths.flower}
                     filter={filter}
                     onJumpToCharacter={onJumpToCharacter}
                   />

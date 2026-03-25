@@ -1,8 +1,7 @@
 import { ArtifactComparisonHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
-import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById, charactersById } from "@/data/constants";
+import { charactersById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import type { Recommendation } from "@/lib/account-data/recommendationEngine";
 import { cn } from "@/lib/utils";
@@ -90,7 +89,6 @@ function ActionRecommendationCardComponent({
     rec.actionType === "swap" ||
     rec.actionType === "equip" ||
     rec.actionType === "upgrade";
-  const afterArtInfo = artifactsById[rec.setKey];
 
   const getPlaceholderIcon = () => {
     switch (rec.actionType) {
@@ -142,11 +140,7 @@ function ActionRecommendationCardComponent({
           <Icon className="w-4 h-4" />
         </div>
       ) : (
-        <ItemIcon
-          imagePath={charInfo.imagePath}
-          rarity={charInfo.rarity}
-          size="sm"
-        />
+        <ItemIcon characterId={rec.characterId} size="sm" />
       )}
 
       {/* Text content */}
@@ -205,17 +199,23 @@ function ActionRecommendationCardComponent({
             <CirclePlus className="w-4 h-4 text-muted-foreground" />
           </div>
         ) : isSwapLike && currentArtifact ? (
-          <ArtifactIcon
-            artifact={currentArtifact}
-            artInfo={artifactsById[currentArtifact.setKey]}
+          <ItemIcon
+            artifactSetId={currentArtifact.setKey}
             slot={rec.slot}
+            rarity={currentArtifact.rarity}
+            lock={currentArtifact.lock}
+            level={`+${currentArtifact.level}`}
+            badge={currentArtifact.astralMark ? "⭐" : undefined}
             size="sm"
           />
         ) : currentArtifact ? (
-          <ArtifactIcon
-            artifact={currentArtifact}
-            artInfo={artifactsById[currentArtifact.setKey]}
+          <ItemIcon
+            artifactSetId={currentArtifact.setKey}
             slot={rec.slot}
+            rarity={currentArtifact.rarity}
+            lock={currentArtifact.lock}
+            level={`+${currentArtifact.level}`}
+            badge={currentArtifact.astralMark ? "⭐" : undefined}
             size="sm"
           />
         ) : (
@@ -225,10 +225,13 @@ function ActionRecommendationCardComponent({
         )}
         <ArrowRight className="w-3 h-3 text-muted-foreground" />
         {isSwapLike && sourceArtifact ? (
-          <ArtifactIcon
-            artifact={sourceArtifact}
-            artInfo={afterArtInfo}
+          <ItemIcon
+            artifactSetId={sourceArtifact.setKey}
             slot={rec.slot}
+            rarity={sourceArtifact.rarity}
+            lock={sourceArtifact.lock}
+            level={`+${sourceArtifact.level}`}
+            badge={sourceArtifact.astralMark ? "⭐" : undefined}
             size="sm"
           />
         ) : isSwapLike || rec.actionType === "equip" ? (

@@ -48,7 +48,6 @@ describe("ArtifactCard", () => {
     render(
       <ArtifactCard
         setId="emblem_of_severed_fate"
-        setImagePath="artifacts/emblem_of_severed_fate/flower.png"
         filter={mockFilter}
         onJumpToCharacter={mockOnJumpToCharacter}
       />
@@ -63,7 +62,6 @@ describe("ArtifactCard", () => {
     const { container } = render(
       <ArtifactCard
         setId="emblem_of_severed_fate"
-        setImagePath="artifacts/emblem_of_severed_fate/flower.png"
         filter={mockFilter}
         onJumpToCharacter={mockOnJumpToCharacter}
       />
@@ -77,7 +75,6 @@ describe("ArtifactCard", () => {
     render(
       <ArtifactCard
         setId="emblem_of_severed_fate"
-        setImagePath="artifacts/emblem_of_severed_fate/flower.png"
         filter={mockFilter}
         onJumpToCharacter={mockOnJumpToCharacter}
       />

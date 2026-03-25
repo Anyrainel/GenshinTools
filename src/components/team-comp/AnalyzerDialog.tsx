@@ -26,12 +26,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  artifactHalfSetsById,
-  artifactsById,
-  charactersById,
-  weaponsById,
-} from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/constants";
 import type { Rarity, WeaponResource } from "@/data/types";
 import type { UseAnalyzerState } from "@/hooks/useAnalyzer";
 import { useGameStats } from "@/hooks/useGameStats";
@@ -455,12 +450,7 @@ function CharConfigGroup({
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <span className="cursor-help">
-                <ItemIcon
-                  imagePath={char.imagePath}
-                  rarity={config.rarity}
-                  size="sm"
-                  characterId={config.charId}
-                />
+                <ItemIcon characterId={config.charId} size="sm" />
               </span>
             </TooltipTrigger>
             <TooltipContent
@@ -476,12 +466,7 @@ function CharConfigGroup({
       <Tooltip disableHoverableContent>
         <TooltipTrigger asChild>
           <span className="cursor-help">
-            <ItemIcon
-              imagePath={artifactIcon.imagePath}
-              imagePath2={artifactIcon.imagePath2}
-              rarity={artifactIcon.rarity}
-              size="xs"
-            />
+            <ItemIcon {...artifactIcon} size="xs" />
           </span>
         </TooltipTrigger>
         {artifactTooltip && (
@@ -500,11 +485,7 @@ function CharConfigGroup({
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <span className="cursor-help">
-                <ItemIcon
-                  imagePath={rosterWeapon.imagePath}
-                  rarity={(rosterWeapon.rarity ?? 4) as Rarity}
-                  size="xs"
-                />
+                <ItemIcon weaponId={baseConfig.weaponId} size="xs" />
               </span>
             </TooltipTrigger>
             <TooltipContent
@@ -533,11 +514,7 @@ function CharConfigGroup({
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
               <span className="cursor-help">
-                <ItemIcon
-                  imagePath={rosterWeapon.imagePath}
-                  rarity={5}
-                  size="xs"
-                />
+                <ItemIcon weaponId={baseConfig.weaponId} size="xs" />
               </span>
             </TooltipTrigger>
             <TooltipContent
@@ -738,33 +715,19 @@ function CharMaxSelectors({
 // ─── Artifact icon helper ───
 
 function getArtifactIconProps(bc: TeamSlotConfig): {
-  imagePath: string;
-  imagePath2?: string;
-  rarity: Rarity;
+  artifactSetId?: string;
+  halfSetIds?: [string | number, string | number];
+  imagePath?: string;
 } {
   if (bc.artifactSetId) {
-    const art = artifactsById[bc.artifactSetId];
-    return {
-      imagePath: art?.imagePaths.flower ?? "",
-      rarity: art?.rarity ?? 5,
-    };
+    return { artifactSetId: bc.artifactSetId };
   }
   if (bc.artifactHalfSetIds.length >= 2) {
-    const half1 = artifactHalfSetsById[bc.artifactHalfSetIds[0]];
-    const half2 = artifactHalfSetsById[bc.artifactHalfSetIds[1]];
-    const art1 = half1?.setIds
-      .map((id) => artifactsById[id])
-      .find((a) => a?.rarity === 5);
-    const art2 = half2?.setIds
-      .map((id) => artifactsById[id])
-      .find((a) => a?.rarity === 5);
     return {
-      imagePath: art1?.imagePaths.flower ?? "",
-      imagePath2: art2?.imagePaths.flower ?? "",
-      rarity: 5,
+      halfSetIds: [bc.artifactHalfSetIds[0], bc.artifactHalfSetIds[1]],
     };
   }
-  return { imagePath: "", rarity: 5 };
+  return { imagePath: "" };
 }
 
 // ─── Reconcile stored configs with current team roster ───

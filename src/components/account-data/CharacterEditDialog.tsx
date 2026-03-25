@@ -290,12 +290,7 @@ export function CharacterEditDialog({
     if (view.kind === "overview")
       return (
         <span className="flex items-center gap-2.5">
-          <ItemIcon
-            imagePath={charInfo.imagePath}
-            rarity={charInfo.rarity}
-            size="sm"
-            className="shadow-sm"
-          />
+          <ItemIcon characterId={char.key} size="sm" className="shadow-sm" />
           <span>{t.character(char.key)}</span>
         </span>
       );
@@ -463,12 +458,7 @@ function OverviewPanel({
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-[140px] flex-1">
             {charInfo && (
-              <ItemIcon
-                imagePath={charInfo.imagePath}
-                rarity={charInfo.rarity}
-                size="md"
-                className="shrink-0"
-              />
+              <ItemIcon characterId={char.key} size="md" className="shrink-0" />
             )}
             <div className="flex flex-col">
               <span className="font-bold text-base">
@@ -551,12 +541,7 @@ function OverviewPanel({
         {weapon && weaponInfo ? (
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-[140px] flex-1">
-              <ItemIcon
-                imagePath={weaponInfo.imagePath}
-                rarity={weaponInfo.rarity}
-                size="md"
-                className="shrink-0"
-              />
+              <ItemIcon weaponId={weapon.key} size="md" className="shrink-0" />
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-base truncate max-w-[120px] lg:max-w-full">
@@ -635,7 +620,6 @@ function OverviewPanel({
         <div className="flex justify-between gap-1 overflow-x-auto pb-1 scrollbar-hide">
           {allSlots.map((slot) => {
             const art = char.artifacts[slot];
-            const setInfo = art ? artifactsById[art.setKey] : null;
             const isSelected = activeSlot === slot;
             return (
               <button
@@ -649,9 +633,10 @@ function OverviewPanel({
                     : "bg-transparent border-transparent hover:bg-accent/50"
                 )}
               >
-                {art && setInfo ? (
+                {art ? (
                   <ItemIcon
-                    imagePath={setInfo.imagePaths[slot]}
+                    artifactSetId={art.setKey}
+                    slot={slot}
                     rarity={art.rarity}
                     level={`+${art.level}`}
                     size="sm"
@@ -1015,8 +1000,7 @@ function WeaponPickPanel({
       {inventory.length > 0 && (
         <PickerSection label={t.ui("accountData.inventory")}>
           {inventory.map((w) => {
-            const info = weaponsById[w.key];
-            if (!info) return null;
+            if (!weaponsById[w.key]) return null;
             return (
               <PickerItem
                 key={w.id}
@@ -1024,8 +1008,7 @@ function WeaponPickPanel({
                 onClick={() => onSelect(w.key)}
               >
                 <ItemIcon
-                  imagePath={info.imagePath}
-                  rarity={info.rarity}
+                  weaponId={w.key}
                   badge={w.refinement}
                   level={`Lv. ${w.level}`}
                   size="sm"
@@ -1039,8 +1022,7 @@ function WeaponPickPanel({
       {equipped.length > 0 && (
         <PickerSection label={t.ui("charEdit.equippedByOthers")}>
           {equipped.map((e) => {
-            const info = weaponsById[e.weapon.key];
-            if (!info) return null;
+            if (!weaponsById[e.weapon.key]) return null;
             return (
               <PickerItem
                 key={e.weapon.id}
@@ -1050,8 +1032,7 @@ function WeaponPickPanel({
               >
                 <div className="relative">
                   <ItemIcon
-                    imagePath={info.imagePath}
-                    rarity={info.rarity}
+                    weaponId={e.weapon.key}
                     badge={e.weapon.refinement}
                     level={`Lv. ${e.weapon.level}`}
                     size="sm"
@@ -1183,8 +1164,6 @@ function ArtifactPickPanel({
       {mode === "equip" && displayedArtifacts.length > 0 && (
         <PickerSection label={t.ui("accountData.inventory")}>
           {displayedArtifacts.map(({ art: a, owner }) => {
-            const info = artifactsById[a.setKey];
-            if (!info) return null;
             return (
               <ArtifactDataHoverCard
                 key={a.id}
@@ -1203,7 +1182,8 @@ function ArtifactPickPanel({
                   disableTooltip
                 >
                   <ItemIcon
-                    imagePath={info.imagePaths[slot]}
+                    artifactSetId={a.setKey}
+                    slot={slot}
                     rarity={a.rarity}
                     level={`+${a.level}`}
                     size="sm"
@@ -1244,11 +1224,7 @@ function ArtifactPickPanel({
                 label={t.artifact(s.id)}
                 onClick={() => onCreate(s.id)}
               >
-                <ItemIcon
-                  imagePath={s.imagePaths[slot]}
-                  rarity={s.rarity}
-                  size="sm"
-                />
+                <ItemIcon artifactSetId={s.id} slot={slot} size="sm" />
               </PickerItem>
             ))}
           </div>

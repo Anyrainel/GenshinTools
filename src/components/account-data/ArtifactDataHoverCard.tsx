@@ -13,7 +13,6 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById } from "@/data/constants";
 import type { ArtifactData, Slot } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getRarityColor } from "@/lib/utils";
@@ -40,7 +39,6 @@ export function ArtifactDataContent({
   fillWidth = false,
 }: ArtifactDataContentProps) {
   const { t } = useLanguage();
-  const artInfo = artifactsById[artifact.setKey];
   const name = t.artifact(artifact.setKey);
   const badge = artifact.astralMark ? "⭐" : undefined;
   const totalRolls = artifact.totalRolls;
@@ -66,9 +64,10 @@ export function ArtifactDataContent({
           showIcon && "flex items-center gap-3"
         )}
       >
-        {showIcon && artInfo && (
+        {showIcon && (
           <ItemIcon
-            imagePath={artInfo.imagePaths[slot]}
+            artifactSetId={artifact.setKey}
+            slot={slot}
             rarity={artifact.rarity}
             badge={badge}
             lock={artifact.lock}

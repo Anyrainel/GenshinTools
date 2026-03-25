@@ -16,11 +16,7 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  artifactHalfSetsById,
-  artifactsById,
-  charactersById,
-} from "@/data/constants";
+import { charactersById } from "@/data/constants";
 import type { AccountData, Build, BuildGroup, Element } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
@@ -270,33 +266,14 @@ function collectEntries(
 
 function ArtifactSetIcons({ build }: { build: Build }) {
   if (build.composition === "4pc" && build.artifactSet) {
-    const art = artifactsById[build.artifactSet];
-    if (!art) return null;
-    return (
-      <ItemIcon
-        imagePath={art.imagePaths.flower}
-        rarity={art.rarity}
-        size="xs"
-      />
-    );
+    return <ItemIcon artifactSetId={build.artifactSet} size="xs" />;
   }
-  if (build.composition === "2pc+2pc") {
-    const hs1 =
-      build.halfSet1 != null ? artifactHalfSetsById[build.halfSet1] : null;
-    const hs2 =
-      build.halfSet2 != null ? artifactHalfSetsById[build.halfSet2] : null;
-    const setId1 = hs1?.setIds.find((s) => artifactsById[s]?.rarity === 5);
-    const setId2 = hs2?.setIds.find((s) => artifactsById[s]?.rarity === 5);
-    const art1 = setId1 ? artifactsById[setId1] : null;
-    const art2 = setId2 ? artifactsById[setId2] : null;
-    if (!art1 && !art2) return null;
-    return (
-      <ItemIcon
-        imagePath={art1?.imagePaths.flower ?? ""}
-        imagePath2={art2?.imagePaths.flower ?? ""}
-        size="xs"
-      />
-    );
+  if (
+    build.composition === "2pc+2pc" &&
+    build.halfSet1 != null &&
+    build.halfSet2 != null
+  ) {
+    return <ItemIcon halfSetIds={[build.halfSet1, build.halfSet2]} size="xs" />;
   }
   return null;
 }
@@ -389,14 +366,7 @@ function SelectionCard({
         </div>
 
         {/* Character icon */}
-        {char && (
-          <ItemIcon
-            imagePath={char.imagePath}
-            rarity={char.rarity}
-            size="md"
-            characterId={entry.characterId}
-          />
-        )}
+        {char && <ItemIcon characterId={entry.characterId} size="md" />}
 
         {/* Right column: name top, artifact + team count bottom */}
         <div className="min-w-0 flex flex-col gap-1 self-stretch py-0.5">
@@ -553,13 +523,7 @@ function ResultCard({
           }}
         />
         <div className="p-3 flex items-center gap-2">
-          {char && (
-            <ItemIcon
-              imagePath={char.imagePath}
-              rarity={char.rarity}
-              size="md"
-            />
-          )}
+          {char && <ItemIcon characterId={entry.characterId} size="md" />}
           <div className="min-w-0 flex-1">
             <div className={cn("font-bold text-base truncate", elColor)}>
               {t.character(entry.characterId)}
@@ -598,13 +562,7 @@ function ResultCard({
       <div className="p-3 space-y-3">
         {/* ── Header ── */}
         <div className="flex items-center gap-2">
-          {char && (
-            <ItemIcon
-              imagePath={char.imagePath}
-              rarity={char.rarity}
-              size="md"
-            />
-          )}
+          {char && <ItemIcon characterId={entry.characterId} size="md" />}
           <div className="min-w-0 flex-1">
             <div className={cn("font-bold text-base truncate", elColor)}>
               {t.character(entry.characterId)}

@@ -77,8 +77,7 @@ function RecommendationCardComponent({
           <Tooltip>
             <TooltipTrigger>
               <ItemIcon
-                imagePath={charInfo.imagePath}
-                rarity={charInfo.rarity}
+                characterId={char.key}
                 badge={char.constellation}
                 level={`Lv. ${char.level}`}
                 size={isCompact ? "md" : "lg"}
@@ -141,11 +140,7 @@ function RecommendationCardComponent({
                     <Tooltip>
                       <TooltipTrigger className={isCompact ? "" : "-mt-1"}>
                         <ItemIcon
-                          imagePath={
-                            artifactsById[activeSets[0][0]]?.imagePaths
-                              .flower || ""
-                          }
-                          rarity={artifactsById[activeSets[0][0]]?.rarity || 5}
+                          artifactSetId={activeSets[0][0]}
                           size={isCompact ? "xs" : "sm"}
                         />
                       </TooltipTrigger>

@@ -66,7 +66,7 @@ const CharacterListItem = memo(
         )}
       >
         <ItemIcon
-          imagePath={character.imagePath}
+          characterId={character.id}
           rarity={meta.rarity}
           size="sm"
           className="shrink-0"
@@ -156,7 +156,7 @@ function CharacterGrid({
               (unreleased || !owned) && "opacity-40"
             )}
           >
-            <ItemIcon imagePath={c.imagePath} rarity={meta.rarity} size="sm" />
+            <ItemIcon characterId={c.id} rarity={meta.rarity} size="sm" />
             <span className="text-xs text-foreground text-center line-clamp-1 w-full">
               {t.character(c.id)}
             </span>

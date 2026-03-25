@@ -5,12 +5,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import {
-  artifactHalfSetsById,
-  artifactsById,
-  charactersById,
-  weaponsById,
-} from "@/data/constants";
+import { artifactsById, charactersById } from "@/data/constants";
 import type {
   AccountData,
   ArtifactData,
@@ -522,7 +517,6 @@ export function ExportColumn({
   const char = charactersById[charId];
   const { charLevel, charConst, weaponId, weaponRefine, artConfig } =
     resolveBuildInfo(charId, team, accountData);
-  const weapon = weaponId ? weaponsById[weaponId] : null;
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
@@ -531,18 +525,15 @@ export function ExportColumn({
       <div className="flex items-end gap-1.5 md:gap-4 px-1 md:px-4 py-1 md:py-2 bg-black/10">
         {char && (
           <ItemIcon
-            imagePath={char.imagePath}
-            rarity={char.rarity}
+            characterId={charId}
             badge={`${charConst}`}
             level={`Lv.${charLevel}`}
             size={isDesktop ? "lg" : "sm"}
-            characterId={charId}
           />
         )}
-        {weapon && (
+        {weaponId && (
           <ItemIcon
-            imagePath={weapon.imagePath}
-            rarity={weapon.rarity}
+            weaponId={weaponId}
             badge={`${weaponRefine}`}
             level="Lv.90"
             size={isDesktop ? "md" : "xs"}
@@ -550,25 +541,13 @@ export function ExportColumn({
         )}
         {artConfig && artConfig.type === "4pc" && (
           <ItemIcon
-            imagePath={artifactsById[artConfig.setId]?.imagePaths?.flower ?? ""}
-            rarity={5}
+            artifactSetId={artConfig.setId}
             size={isDesktop ? "sm" : "xs"}
           />
         )}
         {artConfig && artConfig.type === "2pc+2pc" && (
           <ItemIcon
-            imagePath={
-              (
-                artifactsById[artConfig.id1] ??
-                artifactHalfSetsById[artConfig.id1]
-              )?.imagePaths?.flower ?? ""
-            }
-            imagePath2={
-              (
-                artifactsById[artConfig.id2] ??
-                artifactHalfSetsById[artConfig.id2]
-              )?.imagePaths?.flower ?? ""
-            }
+            halfSetIds={[artConfig.id1, artConfig.id2]}
             size={isDesktop ? "sm" : "xs"}
           />
         )}

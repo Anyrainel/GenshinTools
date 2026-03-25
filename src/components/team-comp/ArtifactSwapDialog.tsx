@@ -1,5 +1,5 @@
 import { ArtifactDataContent } from "@/components/account-data/ArtifactDataHoverCard";
-import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactHalfSetsById, artifactsById } from "@/data/constants";
+import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getRarityColor } from "@/lib/utils";
@@ -260,7 +260,6 @@ export function ArtifactSwapDialog({
     return (
       <div className="grid grid-cols-1 gap-1.5">
         {items.map((art) => {
-          const artInfo = artifactsById[art.setKey];
           const isSelected = selectedId === art.id;
           const isFrozen = frozenArtifactIds.has(art.id);
           // Count matched sort stats for badge
@@ -283,10 +282,13 @@ export function ArtifactSwapDialog({
                   : !isFrozen && "border-border/20 bg-black/10"
               )}
             >
-              <ArtifactIcon
-                artifact={art}
-                artInfo={artInfo}
+              <ItemIcon
+                artifactSetId={art.setKey}
                 slot={slot}
+                rarity={art.rarity}
+                lock={art.lock}
+                level={`+${art.level}`}
+                badge={art.astralMark ? "⭐" : undefined}
                 size="md"
               />
               <div className="flex-1 min-w-0">

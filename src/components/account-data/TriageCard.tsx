@@ -3,7 +3,6 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById } from "@/data/constants";
 import type { TriageDecision, TriageLabel } from "@/lib/account-data/triage";
 import { cn, getRarityColor, getTriageTierColor } from "@/lib/utils";
 import { ChevronDown, ChevronUp, Info, ShieldAlert } from "lucide-react";
@@ -111,7 +110,6 @@ export function TriageCard({
   isProtected?: boolean;
 }) {
   const { artifact } = decision;
-  const artInfo = artifactsById[artifact.setKey];
   const setName = t.artifact(artifact.setKey);
   const dr = decision.decidingResult;
 
@@ -122,15 +120,14 @@ export function TriageCard({
     >
       <CardContent className="p-3 h-full flex flex-col">
         <div className="flex items-center gap-3">
-          {artInfo && (
-            <ItemIcon
-              imagePath={artInfo.imagePaths[artifact.slotKey]}
-              rarity={artifact.rarity}
-              level={`+${artifact.level}`}
-              lock={artifact.lock}
-              size="sm"
-            />
-          )}
+          <ItemIcon
+            artifactSetId={artifact.setKey}
+            slot={artifact.slotKey}
+            rarity={artifact.rarity}
+            level={`+${artifact.level}`}
+            lock={artifact.lock}
+            size="sm"
+          />
 
           <div className="flex-1 min-w-0">
             {/* Row 1: set name + tier badge */}

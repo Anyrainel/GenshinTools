@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { memo } from "react";
@@ -52,23 +52,13 @@ function TierItemComponent<T extends TierItemData>({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const overlay = overlayImage ? (
-    <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
-      <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
-        <img
-          src={getAssetUrl(overlayImage)}
-          alt={overlayImage}
-          className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
-          draggable={false}
-        />
-      </div>
-    </div>
-  ) : null;
-
   const content = (
-    <ItemIcon imagePath={item.imagePath} rarity={item.rarity} size={size}>
-      {overlay}
-    </ItemIcon>
+    <ItemIcon
+      imagePath={item.imagePath}
+      rarity={item.rarity}
+      size={size}
+      weaponTypeBadge={overlayImage}
+    />
   );
 
   const renderItemContent = () => {

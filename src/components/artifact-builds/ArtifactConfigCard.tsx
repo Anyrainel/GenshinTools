@@ -195,11 +195,7 @@ export function ArtifactConfigCard({
         onClick={() => onJumpToCharacter(charInfo.characterId)}
         title={t.character(character.id)}
       >
-        <ItemIcon
-          imagePath={character.imagePath}
-          rarity={character.rarity}
-          size="sm"
-        />
+        <ItemIcon characterId={charInfo.characterId} size="sm" />
       </div>
     );
   };

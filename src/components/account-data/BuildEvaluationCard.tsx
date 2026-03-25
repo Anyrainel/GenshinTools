@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById, charactersById } from "@/data/constants";
+import { charactersById } from "@/data/constants";
 import { allSlots } from "@/data/types";
 import {
   type BuildEvaluation,
@@ -177,14 +177,8 @@ function BuildEvaluationCardComponent({
                   side="top"
                 >
                   <ItemIcon
-                    imagePath={
-                      artifactsById[slotEval.artifact!.setKey]?.imagePaths[
-                        slot
-                      ] || ""
-                    }
-                    rarity={
-                      artifactsById[slotEval.artifact!.setKey]?.rarity ?? 5
-                    }
+                    artifactSetId={slotEval.artifact!.setKey}
+                    slot={slot}
                     size="sm"
                     className={cn(isOffSet && "ring-1 ring-amber-500/60")}
                   />
