@@ -60,7 +60,7 @@ const characterBuildIds = allBuildsJson.characterBuilds as Record<
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface ArtifactConfig {
-  type: "4pc" | "2pc+2pc";
+  type?: "4pc" | "2pc+2pc";
   setId?: string;
   id1?: string | number;
   id2?: string | number;
@@ -199,15 +199,15 @@ function getBuildsForChar(charId: string): Build[] {
 
 export function getArtifactSetRarity(
   goalArt:
-    | { type: string; setId?: string; id1?: string | number }
+    | { type?: string; setId?: string; id1?: string | number }
     | null
     | undefined
 ): number {
   if (!goalArt) return 5;
-  if (goalArt.type === "4pc" && goalArt.setId) {
+  if (goalArt.setId) {
     return artifactsById[goalArt.setId]?.rarity ?? 5;
   }
-  if (goalArt.type === "2pc+2pc") {
+  if (goalArt.id1) {
     const id1 = String(goalArt.id1);
     return artifactsById[id1]?.rarity ?? 5;
   }
@@ -267,9 +267,9 @@ export function buildTeamSlotConfig(
   let artifactSetId: string | null = null;
   let artifactHalfSetIds: string[] = [];
 
-  if (goalArt?.type === "4pc") {
-    artifactSetId = goalArt.setId ?? null;
-  } else if (goalArt?.type === "2pc+2pc") {
+  if (goalArt?.setId) {
+    artifactSetId = goalArt.setId;
+  } else if (goalArt?.id1 && goalArt?.id2) {
     artifactHalfSetIds = [String(goalArt.id1), String(goalArt.id2)];
   }
 
@@ -297,9 +297,9 @@ export function buildPerChar(
     const goalArt = team.artifacts[ci];
     let goalSetId: string | null = null;
     let goalHalfSetIds: string[] = [];
-    if (goalArt?.type === "4pc") {
-      goalSetId = goalArt.setId ?? null;
-    } else if (goalArt?.type === "2pc+2pc") {
+    if (goalArt?.setId) {
+      goalSetId = goalArt.setId;
+    } else if (goalArt?.id1 && goalArt?.id2) {
       goalHalfSetIds = [String(goalArt.id1), String(goalArt.id2)];
     }
 

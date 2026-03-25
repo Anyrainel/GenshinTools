@@ -497,11 +497,10 @@ describe("calcComboResults", () => {
         enemyRes: 0.1,
       }
     );
-    expect(result.comboResult).toBeNull();
-    expect(result.comboDisplay).toBeNull();
+    expect(result).toBeNull();
   });
 
-  it("returns nulls when all lines have count 0", () => {
+  it("returns null when all lines have count 0", () => {
     const combo = {
       id: "c1",
       label: { en: "Test", zh: "测试" },
@@ -516,11 +515,10 @@ describe("calcComboResults", () => {
         enemyRes: 0.1,
       }
     );
-    expect(result.comboResult).toBeNull();
-    expect(result.comboDisplay).toBeNull();
+    expect(result).toBeNull();
   });
 
-  it("returns nulls when lines array is empty", () => {
+  it("returns null when lines array is empty", () => {
     const combo = { id: "c1", label: { en: "Test", zh: "测试" }, lines: [] };
     const result = calcComboResults(
       {} as never,
@@ -531,7 +529,6 @@ describe("calcComboResults", () => {
         enemyRes: 0.1,
       }
     );
-    expect(result.comboResult).toBeNull();
-    expect(result.comboDisplay).toBeNull();
+    expect(result).toBeNull();
   });
 });

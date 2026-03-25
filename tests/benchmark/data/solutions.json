@@ -30974,6 +30974,906 @@
           "solveTimeSec": 6.623473700000003
         }
       ]
+    },
+    "5me0WA1036XG0JH3WT::flins-normal": {
+      "teamId": "5me0WA1036XG0JH3WT",
+      "teamName": "flins/columbina/ineffa/sucrose",
+      "characters": [
+        "flins",
+        "columbina",
+        "ineffa",
+        "sucrose"
+      ],
+      "carryCharId": "flins",
+      "formulaId": "flins-normal",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "flins": {
+              "flower": "artifact-1135",
+              "plume": "artifact-1141",
+              "sands": "artifact-1548",
+              "goblet": "artifact-557",
+              "circlet": "artifact-1260"
+            },
+            "columbina": {
+              "flower": "artifact-1460",
+              "plume": "artifact-1422",
+              "sands": "artifact-1165",
+              "goblet": "artifact-1356",
+              "circlet": "artifact-69"
+            },
+            "ineffa": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1582",
+              "sands": "artifact-204",
+              "goblet": "artifact-2027",
+              "circlet": "artifact-215"
+            },
+            "sucrose": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1376",
+              "goblet": "artifact-348",
+              "circlet": "artifact-1381"
+            }
+          },
+          "recordedDamage": 92098.45262706804,
+          "foundAt": "2026-03-25T19:57:09.855Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.6367379
+        }
+      ]
+    },
+    "71K0eyBWe91i11l8Wn::skirk-e-normal-2": {
+      "teamId": "71K0eyBWe91i11l8Wn",
+      "teamName": "skirk/escoffier/citlali/furina",
+      "characters": [
+        "skirk",
+        "escoffier",
+        "citlali",
+        "furina"
+      ],
+      "carryCharId": "skirk",
+      "formulaId": "skirk-e-normal-2",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 1142934.1813897216,
+          "foundAt": "2026-03-25T19:57:11.146Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.9016463000000001
+        }
+      ]
+    },
+    "71K0eyBWe91i11l8Wn::skirk-e-normal": {
+      "teamId": "71K0eyBWe91i11l8Wn",
+      "teamName": "skirk/escoffier/citlali/furina",
+      "characters": [
+        "skirk",
+        "escoffier",
+        "citlali",
+        "furina"
+      ],
+      "carryCharId": "skirk",
+      "formulaId": "skirk-e-normal",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 3581695.817210412,
+          "foundAt": "2026-03-25T19:57:11.164Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.9356161
+        }
+      ]
+    },
+    "71K0eyBWe91i11l8Wn::skirk-e-charge": {
+      "teamId": "71K0eyBWe91i11l8Wn",
+      "teamName": "skirk/escoffier/citlali/furina",
+      "characters": [
+        "skirk",
+        "escoffier",
+        "citlali",
+        "furina"
+      ],
+      "carryCharId": "skirk",
+      "formulaId": "skirk-e-charge",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 563356.5998279148,
+          "foundAt": "2026-03-25T19:57:11.431Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.8615457999999999
+        }
+      ]
+    },
+    "71K0eyBWe91i11l8Wn::skirk-burst": {
+      "teamId": "71K0eyBWe91i11l8Wn",
+      "teamName": "skirk/escoffier/citlali/furina",
+      "characters": [
+        "skirk",
+        "escoffier",
+        "citlali",
+        "furina"
+      ],
+      "carryCharId": "skirk",
+      "formulaId": "skirk-burst",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "skirk": {
+              "flower": "artifact-933",
+              "plume": "artifact-1031",
+              "sands": "artifact-1007",
+              "goblet": "artifact-419",
+              "circlet": "artifact-1101"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-350",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-246",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            }
+          },
+          "recordedDamage": 6569394.586177719,
+          "foundAt": "2026-03-25T19:57:11.487Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.8960068999999998
+        }
+      ]
+    },
+    "Ceu3vcQ0TDpW1hOv0e::gaming-cloudstrider": {
+      "teamId": "Ceu3vcQ0TDpW1hOv0e",
+      "teamName": "gaming/xianyun/furina/bennett",
+      "characters": [
+        "gaming",
+        "xianyun",
+        "furina",
+        "bennett"
+      ],
+      "carryCharId": "gaming",
+      "formulaId": "gaming-cloudstrider",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "gaming": {
+              "flower": "artifact-61",
+              "plume": "artifact-274",
+              "sands": "artifact-57",
+              "goblet": "artifact-11",
+              "circlet": "artifact-272"
+            },
+            "xianyun": {
+              "flower": "artifact-919",
+              "plume": "artifact-362",
+              "sands": "artifact-350",
+              "goblet": "artifact-1382",
+              "circlet": "artifact-1367"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 248954.05994277762,
+          "foundAt": "2026-03-25T19:57:14.884Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.5587118000000001
+        }
+      ]
+    },
+    "Ceu3vcQ0TDpW1hOv0e::gaming-burst-manchai": {
+      "teamId": "Ceu3vcQ0TDpW1hOv0e",
+      "teamName": "gaming/xianyun/furina/bennett",
+      "characters": [
+        "gaming",
+        "xianyun",
+        "furina",
+        "bennett"
+      ],
+      "carryCharId": "gaming",
+      "formulaId": "gaming-burst-manchai",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "gaming": {
+              "flower": "artifact-61",
+              "plume": "artifact-274",
+              "sands": "artifact-921",
+              "goblet": "artifact-11",
+              "circlet": "artifact-272"
+            },
+            "xianyun": {
+              "flower": "artifact-363",
+              "plume": "artifact-362",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1370",
+              "circlet": "artifact-1386"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1105"
+            }
+          },
+          "recordedDamage": 111251.89753925236,
+          "foundAt": "2026-03-25T19:57:14.966Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.5374558999999999
+        }
+      ]
+    },
+    "Ewe6OyBWeDpW1hJS0e::freminet-shatter-lv4": {
+      "teamId": "Ewe6OyBWeDpW1hJS0e",
+      "teamName": "freminet/escoffier/furina/shenhe",
+      "characters": [
+        "freminet",
+        "escoffier",
+        "furina",
+        "shenhe"
+      ],
+      "carryCharId": "freminet",
+      "formulaId": "freminet-shatter-lv4",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "freminet": {
+              "flower": "artifact-26",
+              "plume": "artifact-193",
+              "sands": "artifact-98",
+              "goblet": "artifact-242",
+              "circlet": "artifact-198"
+            },
+            "escoffier": {
+              "flower": "artifact-29",
+              "plume": "artifact-17",
+              "sands": "artifact-375",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1367"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "shenhe": {
+              "flower": "artifact-380",
+              "plume": "artifact-317",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-9"
+            }
+          },
+          "recordedDamage": 79487.664044927,
+          "foundAt": "2026-03-25T19:57:15.187Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.21502850000000034
+        }
+      ]
+    },
+    "G4y2YGfWKKP42I_EWU::kaveh-core": {
+      "teamId": "G4y2YGfWKKP42I_EWU",
+      "teamName": "kaveh/nahida/kuki_shinobu/xingqiu",
+      "characters": [
+        "kaveh",
+        "nahida",
+        "kuki_shinobu",
+        "xingqiu"
+      ],
+      "carryCharId": "kaveh",
+      "formulaId": "kaveh-core",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "kaveh": {
+              "flower": "artifact-1430",
+              "plume": "artifact-403",
+              "sands": "artifact-1498",
+              "goblet": "artifact-246",
+              "circlet": "artifact-1414"
+            },
+            "nahida": {
+              "flower": "artifact-239",
+              "plume": "artifact-1729",
+              "sands": "artifact-204",
+              "goblet": "artifact-338",
+              "circlet": "artifact-215"
+            },
+            "kuki_shinobu": {
+              "flower": "artifact-1080",
+              "plume": "artifact-305",
+              "sands": "artifact-291",
+              "goblet": "artifact-0",
+              "circlet": "artifact-1522"
+            },
+            "xingqiu": {
+              "flower": "artifact-363",
+              "plume": "artifact-743",
+              "sands": "artifact-151",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            }
+          },
+          "recordedDamage": 25868.526689267772,
+          "foundAt": "2026-03-25T19:57:15.457Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.19154629999999997
+        }
+      ]
+    },
+    "Ewe6OyBWeDpW1hJS0e::freminet-burst": {
+      "teamId": "Ewe6OyBWeDpW1hJS0e",
+      "teamName": "freminet/escoffier/furina/shenhe",
+      "characters": [
+        "freminet",
+        "escoffier",
+        "furina",
+        "shenhe"
+      ],
+      "carryCharId": "freminet",
+      "formulaId": "freminet-burst",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "freminet": {
+              "flower": "artifact-26",
+              "plume": "artifact-25",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-127"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-317",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-375",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-899"
+            }
+          },
+          "recordedDamage": 235313.87330998562,
+          "foundAt": "2026-03-25T19:57:16.545Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.5326549000000005
+        }
+      ]
+    },
+    "PBO3v8DW8Dum1gb50U::hutao-charged": {
+      "teamId": "PBO3v8DW8Dum1gb50U",
+      "teamName": "hu_tao/citlali/furina/yelan",
+      "characters": [
+        "hu_tao",
+        "citlali",
+        "furina",
+        "yelan"
+      ],
+      "carryCharId": "hu_tao",
+      "formulaId": "hutao-charged",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "hu_tao": {
+              "flower": "artifact-61",
+              "plume": "artifact-46",
+              "sands": "artifact-10",
+              "goblet": "artifact-288",
+              "circlet": "artifact-272"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-1403",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "yelan": {
+              "flower": "artifact-3",
+              "plume": "artifact-483",
+              "sands": "artifact-822",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            }
+          },
+          "recordedDamage": 116445.70672025136,
+          "foundAt": "2026-03-25T19:57:17.516Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.27917169999999897
+        }
+      ]
+    },
+    "PBO3v8DW8Dum1gb50U::hutao-blood-blossom": {
+      "teamId": "PBO3v8DW8Dum1gb50U",
+      "teamName": "hu_tao/citlali/furina/yelan",
+      "characters": [
+        "hu_tao",
+        "citlali",
+        "furina",
+        "yelan"
+      ],
+      "carryCharId": "hu_tao",
+      "formulaId": "hutao-blood-blossom",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "hu_tao": {
+              "flower": "artifact-61",
+              "plume": "artifact-274",
+              "sands": "artifact-10",
+              "goblet": "artifact-288",
+              "circlet": "artifact-697"
+            },
+            "citlali": {
+              "flower": "artifact-877",
+              "plume": "artifact-913",
+              "sands": "artifact-801",
+              "goblet": "artifact-840",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-587"
+            },
+            "yelan": {
+              "flower": "artifact-3",
+              "plume": "artifact-483",
+              "sands": "artifact-822",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            }
+          },
+          "recordedDamage": 47007.53017421178,
+          "foundAt": "2026-03-25T19:57:17.527Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.2616326000000008
+        }
+      ]
+    },
+    "PBO3v8DW8Dum1gb50U::hutao-burst": {
+      "teamId": "PBO3v8DW8Dum1gb50U",
+      "teamName": "hu_tao/citlali/furina/yelan",
+      "characters": [
+        "hu_tao",
+        "citlali",
+        "furina",
+        "yelan"
+      ],
+      "carryCharId": "hu_tao",
+      "formulaId": "hutao-burst",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "hu_tao": {
+              "flower": "artifact-61",
+              "plume": "artifact-46",
+              "sands": "artifact-10",
+              "goblet": "artifact-288",
+              "circlet": "artifact-272"
+            },
+            "citlali": {
+              "flower": "artifact-844",
+              "plume": "artifact-911",
+              "sands": "artifact-1046",
+              "goblet": "artifact-1403",
+              "circlet": "artifact-680"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "yelan": {
+              "flower": "artifact-3",
+              "plume": "artifact-483",
+              "sands": "artifact-822",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            }
+          },
+          "recordedDamage": 304670.4691644522,
+          "foundAt": "2026-03-25T19:57:17.546Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.2760371999999989
+        }
+      ]
+    },
+    "PBO3vGHW8DpW1g_D0U::hutao-charged": {
+      "teamId": "PBO3vGHW8DpW1g_D0U",
+      "teamName": "hu_tao/xilonen/furina/xingqiu",
+      "characters": [
+        "hu_tao",
+        "xilonen",
+        "furina",
+        "xingqiu"
+      ],
+      "carryCharId": "hu_tao",
+      "formulaId": "hutao-charged",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "hu_tao": {
+              "flower": "artifact-61",
+              "plume": "artifact-274",
+              "sands": "artifact-10",
+              "goblet": "artifact-288",
+              "circlet": "artifact-697"
+            },
+            "xilonen": {
+              "flower": "artifact-676",
+              "plume": "artifact-841",
+              "sands": "artifact-1369",
+              "goblet": "artifact-685",
+              "circlet": "artifact-735"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-587"
+            },
+            "xingqiu": {
+              "flower": "artifact-1228",
+              "plume": "artifact-743",
+              "sands": "artifact-151",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            }
+          },
+          "recordedDamage": 101842.79215286596,
+          "foundAt": "2026-03-25T19:57:17.547Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.27103110000000014
+        }
+      ]
+    },
+    "PBO3vGHW8DpW1g_D0U::hutao-burst": {
+      "teamId": "PBO3vGHW8DpW1g_D0U",
+      "teamName": "hu_tao/xilonen/furina/xingqiu",
+      "characters": [
+        "hu_tao",
+        "xilonen",
+        "furina",
+        "xingqiu"
+      ],
+      "carryCharId": "hu_tao",
+      "formulaId": "hutao-burst",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "hu_tao": {
+              "flower": "artifact-61",
+              "plume": "artifact-274",
+              "sands": "artifact-10",
+              "goblet": "artifact-288",
+              "circlet": "artifact-697"
+            },
+            "xilonen": {
+              "flower": "artifact-1080",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-706"
+            },
+            "furina": {
+              "flower": "artifact-496",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-155"
+            },
+            "xingqiu": {
+              "flower": "artifact-1228",
+              "plume": "artifact-743",
+              "sands": "artifact-151",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            }
+          },
+          "recordedDamage": 244393.94946048633,
+          "foundAt": "2026-03-25T19:57:17.612Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.24996199999999955
+        }
+      ]
+    },
+    "PBO3vGHW8DpW1g_D0U::hutao-blood-blossom": {
+      "teamId": "PBO3vGHW8DpW1g_D0U",
+      "teamName": "hu_tao/xilonen/furina/xingqiu",
+      "characters": [
+        "hu_tao",
+        "xilonen",
+        "furina",
+        "xingqiu"
+      ],
+      "carryCharId": "hu_tao",
+      "formulaId": "hutao-blood-blossom",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "hu_tao": {
+              "flower": "artifact-61",
+              "plume": "artifact-274",
+              "sands": "artifact-10",
+              "goblet": "artifact-288",
+              "circlet": "artifact-697"
+            },
+            "xilonen": {
+              "flower": "artifact-1080",
+              "plume": "artifact-721",
+              "sands": "artifact-1046",
+              "goblet": "artifact-790",
+              "circlet": "artifact-706"
+            },
+            "furina": {
+              "flower": "artifact-496",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-155"
+            },
+            "xingqiu": {
+              "flower": "artifact-1228",
+              "plume": "artifact-743",
+              "sands": "artifact-151",
+              "goblet": "artifact-271",
+              "circlet": "artifact-63"
+            }
+          },
+          "recordedDamage": 44321.86120218244,
+          "foundAt": "2026-03-25T19:57:17.623Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.26454099999999925
+        }
+      ]
+    },
+    "Kyq2vcQ0TDpW1gD50T::xiao-plunge-high": {
+      "teamId": "Kyq2vcQ0TDpW1gD50T",
+      "teamName": "xiao/xianyun/furina/faruzan",
+      "characters": [
+        "xiao",
+        "xianyun",
+        "furina",
+        "faruzan"
+      ],
+      "carryCharId": "xiao",
+      "formulaId": "xiao-plunge-high",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "xiao": {
+              "flower": "artifact-174",
+              "plume": "artifact-167",
+              "sands": "artifact-173",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-172"
+            },
+            "xianyun": {
+              "flower": "artifact-919",
+              "plume": "artifact-362",
+              "sands": "artifact-350",
+              "goblet": "artifact-1382",
+              "circlet": "artifact-1367"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "faruzan": {
+              "flower": "artifact-363",
+              "plume": "artifact-130",
+              "sands": "artifact-221",
+              "goblet": "artifact-716",
+              "circlet": "artifact-399"
+            }
+          },
+          "recordedDamage": 219817.15749423596,
+          "foundAt": "2026-03-25T19:57:17.628Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.257920900000001
+        }
+      ]
+    },
+    "PdG6OyBW8Dv46BJS0e::ayaka-normal": {
+      "teamId": "PdG6OyBW8Dv46BJS0e",
+      "teamName": "kamisato_ayaka/escoffier/furina/shenhe",
+      "characters": [
+        "kamisato_ayaka",
+        "escoffier",
+        "furina",
+        "shenhe"
+      ],
+      "carryCharId": "kamisato_ayaka",
+      "formulaId": "ayaka-normal",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "kamisato_ayaka": {
+              "flower": "artifact-26",
+              "plume": "artifact-193",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-63"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-671",
+              "sands": "artifact-350",
+              "goblet": "artifact-790",
+              "circlet": "artifact-899"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1729",
+              "sands": "artifact-892",
+              "goblet": "artifact-886",
+              "circlet": "artifact-189"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-846",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-1326"
+            }
+          },
+          "recordedDamage": 1852440.8774660036,
+          "foundAt": "2026-03-25T19:57:17.716Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.9383657000000003
+        }
+      ]
     }
   }
 }

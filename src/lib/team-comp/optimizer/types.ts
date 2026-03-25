@@ -103,4 +103,6 @@ export interface CharacterBnBResult {
   evaluations: number;
   failReason?: OptFailReason;
   marginalWeights?: MarginalWeights | null;
+  /** True when all marginal + buildMatch weights were zero and fallback weights were injected. */
+  usedFallbackWeights?: boolean;
 }

@@ -453,6 +453,45 @@ export function runCharacterBnB(
     }
   }
 
+  // If all effective weights are still zero (saturated character), inject
+  // fallback weights so B&B can rank artifacts.  Prefer constraint-derived
+  // weights (ER/CR requirements); if none, use a generic fallback.
+  let usedFallbackWeights = false;
+  {
+    const allZero = (w: Record<string, number>) =>
+      !Object.values(w).some((v) => v > 0);
+    const marginalZero =
+      !effectiveMarginals || allZero(effectiveMarginals.substatWeights);
+    const buildZero =
+      !effectiveBuildMatch?.statWeights ||
+      allZero(effectiveBuildMatch.statWeights as Record<string, number>);
+    if (marginalZero && buildZero) {
+      usedFallbackWeights = true;
+      const fallback: Record<string, number> = {};
+      if (constraints.hasEr) fallback.er = 1;
+      if (constraints.hasCr) fallback.cr = 1;
+      if (Object.keys(fallback).length === 0) {
+        fallback.er = 1;
+        fallback["hp%"] = 1;
+        fallback["def%"] = 1;
+      }
+      effectiveBuildMatch = {
+        build: {} as BuildMatchResult["build"],
+        buildIndex: 0,
+        statWeights: fallback,
+        setMatched: false,
+        setDifferent: false,
+        mainStatMatches: 0,
+        mainStatMismatches: [],
+      };
+      effectiveMarginals = {
+        substatWeights: fallback,
+        mainStatMarginals: {},
+        hasMainStatDisagreement: false,
+      };
+    }
+  }
+
   const isCarry = swapCharId === carryCharId;
   const slotData = prepareSlotData(
     inventory,
@@ -559,6 +598,7 @@ export function runCharacterBnB(
     constraints.minCr
   );
   const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
+
   const compiledCtx: CompiledContext = {
     compiled,
     vars: new Float64Array(compiled.numVars),
@@ -965,5 +1005,6 @@ export function runCharacterBnB(
     evaluations: ctx.evaluations,
     failReason,
     marginalWeights: returnWeights,
+    usedFallbackWeights,
   };
 }

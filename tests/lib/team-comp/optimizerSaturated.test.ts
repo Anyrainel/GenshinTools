@@ -1,8 +1,9 @@
 /**
- * Test: Saturated character detection and heuristic fill in optimizer V2.
+ * Test: Saturated character handling in the optimizer.
  *
  * Uses a real Hu Tao + Bennett team. Bennett's Q buff reads baseAtk only,
- * so his artifacts should not affect team damage → detected as saturated.
+ * so his artifact substats produce zero marginal gains. The optimizer should
+ * still assign sensible (level-20) artifacts via fallback weights.
  */
 import { describe, expect, it } from "vitest";
 
@@ -158,7 +159,7 @@ describe("Saturated character handling", () => {
     );
   });
 
-  it("detects Bennett as saturated and assigns level-20 artifacts", async () => {
+  it("assigns level-20 artifacts to Bennett via fallback weights", async () => {
     const gen = runTeamOptimization({
       teamBuild,
       carryCharId: "hu_tao",
