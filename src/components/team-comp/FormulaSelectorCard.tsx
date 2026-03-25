@@ -6,11 +6,12 @@ import {
   OptionButtonRow,
 } from "@/components/ui/option-button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import type { ReactionType } from "@/data/types";
+import { charactersById, elementResourcesByName } from "@/data/constants";
+import type { Element, ReactionType } from "@/data/types";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
   MULTI_ELEMENT_CHARS,
+  REACTION_ELEMENT_REQUIREMENTS,
 } from "@/lib/team-comp/constants";
 import { type TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import type {
@@ -23,13 +24,50 @@ import type { Team } from "@/stores/useTeamStore";
 import { Minus, Plus, RotateCcw, Swords, TrendingUp } from "lucide-react";
 import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
 import { ReactionSelector } from "./ReactionSelector";
+import {
+  CARD_BODY_CLS,
+  CARD_CLS,
+  CARD_HEADER_CLS,
+  CARD_TITLE_CLS,
+} from "./cardStyles";
 
-const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
-const CARD_HEADER_CLS =
-  "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
-const CARD_TITLE_CLS =
-  "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-1 2xl:p-2 bg-black/10";
+/** Derive the contributing elements for a reaction formula ID. */
+function getReactionElements(formulaId: string): Element[] {
+  if (formulaId.startsWith("rx-swirl-")) {
+    return ["Anemo", formulaId.slice("rx-swirl-".length) as Element];
+  }
+  const reaction = formulaId.slice(3) as ReactionType;
+  const req = REACTION_ELEMENT_REQUIREMENTS[reaction];
+  if (!req) return [];
+  return req.requiredElements.map((slot) => slot[0]);
+}
+
+/** Render element icon(s) for a reaction formula. */
+function ReactionElementIcons({
+  formulaId,
+  size,
+}: {
+  formulaId: string;
+  size: string;
+}) {
+  const elements = getReactionElements(formulaId);
+  if (elements.length === 0) return null;
+  return (
+    <span className="inline-flex items-center shrink-0">
+      {elements.map((el) => {
+        const res = elementResourcesByName[el];
+        return res ? (
+          <img
+            key={el}
+            src={getAssetUrl(res.imagePath)}
+            alt={el}
+            className={cn(size, "object-contain -ml-0.5 first:ml-0")}
+          />
+        ) : null;
+      })}
+    </span>
+  );
+}
 
 interface FormulaSelectorCardProps {
   team: Team;
@@ -118,7 +156,7 @@ export function FormulaSelectorCard({
         ))}
       </OptionButtonRow>
       {formulaMode === "combo" && (
-        <div className="flex items-center justify-between px-2 2xl:px-4 pt-0.5 pb-1.5 border-b border-border/20">
+        <div className="flex items-center justify-between px-2 2xl:px-4 pt-0.5 pb-1.5 border-b border-border/40">
           <p className="text-xs text-foreground/80 italic">
             {t.ui("teamComp.comboDisclaimer")}
           </p>
@@ -126,7 +164,7 @@ export function FormulaSelectorCard({
             <button
               type="button"
               onClick={onResetCombo}
-              className="flex items-center gap-1 text-xs font-semibold text-foreground/80 bg-secondary hover:bg-secondary/80 px-2 py-1 rounded-md border border-border/30 transition-colors shrink-0 ml-2"
+              className="flex items-center gap-1 text-xs font-semibold text-foreground/80 bg-secondary hover:bg-secondary/80 px-2 py-1 rounded-md border border-border/50 transition-colors shrink-0 ml-2"
             >
               <RotateCcw className="w-3 h-3" />
               <span>{t.ui("common.reset")}</span>
@@ -161,7 +199,7 @@ export function FormulaSelectorCard({
                   return (
                     <div
                       key={cid}
-                      className="rounded-lg border border-border/30 bg-black/5 px-2 py-2 text-xs text-muted-foreground"
+                      className="rounded-lg border border-border bg-black/5 px-2 py-2 text-xs text-muted-foreground"
                     >
                       —
                     </div>
@@ -171,11 +209,11 @@ export function FormulaSelectorCard({
                 return (
                   <div
                     key={cid}
-                    className="rounded-lg border border-border/30 bg-black/5 overflow-hidden"
+                    className="rounded-lg border border-border bg-black/5 overflow-hidden"
                   >
                     {/* Formula buttons/labels */}
                     {formulaMode === "single" ? (
-                      <div className="px-2 py-1 flex flex-wrap items-start gap-1">
+                      <div className="px-2 py-1 flex flex-wrap items-start gap-1.5">
                         {Object.entries(charFormulas).map(
                           ([formulaId, label]) => {
                             const isSelected =
@@ -189,7 +227,7 @@ export function FormulaSelectorCard({
                                     "flex items-center gap-2 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm xl:text-base",
                                     isSelected
                                       ? "bg-primary/15 text-foreground border-primary/40"
-                                      : "bg-card/40 text-foreground hover:bg-card/60 border-border/20"
+                                      : "bg-secondary text-foreground hover:bg-secondary/80 border-border/40"
                                   )}
                                   onClick={() =>
                                     updateTeam(team.id, {
@@ -220,7 +258,7 @@ export function FormulaSelectorCard({
                                       );
                                       if (s === "none") return null;
                                       return (
-                                        <span className="text-muted-foreground font-normal whitespace-nowrap">
+                                        <span className="text-[10px] md:text-xs xl:text-sm text-muted-foreground font-normal whitespace-nowrap">
                                           {t.ui(
                                             s === "full"
                                               ? "common.offFieldSuffix"
@@ -290,7 +328,7 @@ export function FormulaSelectorCard({
                                       );
                                       if (s === "none") return null;
                                       return (
-                                        <span className="text-muted-foreground font-normal whitespace-nowrap">
+                                        <span className="text-[10px] md:text-xs xl:text-sm text-muted-foreground font-normal whitespace-nowrap">
                                           {t.ui(
                                             s === "full"
                                               ? "common.offFieldSuffix"
@@ -351,7 +389,7 @@ export function FormulaSelectorCard({
                                             >
                                               <span
                                                 className={cn(
-                                                  "text-xs md:text-sm xl:text-base font-semibold",
+                                                  "text-[10px] md:text-xs xl:text-sm font-semibold",
                                                   count > 0
                                                     ? "text-foreground"
                                                     : "text-muted-foreground"
@@ -361,7 +399,7 @@ export function FormulaSelectorCard({
                                               </span>
                                               <button
                                                 type="button"
-                                                className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
                                                 disabled={count <= 0}
                                                 onClick={() =>
                                                   setComboLineCount(
@@ -376,7 +414,7 @@ export function FormulaSelectorCard({
                                               </button>
                                               <span
                                                 className={cn(
-                                                  "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
+                                                  "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
                                                   count === 0 &&
                                                     "text-muted-foreground"
                                                 )}
@@ -385,7 +423,7 @@ export function FormulaSelectorCard({
                                               </span>
                                               <button
                                                 type="button"
-                                                className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
                                                 disabled={count >= 99}
                                                 onClick={() =>
                                                   setComboLineCount(
@@ -412,7 +450,7 @@ export function FormulaSelectorCard({
                                               <>
                                                 <button
                                                   type="button"
-                                                  className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                  className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
                                                   disabled={c <= 0}
                                                   onClick={() =>
                                                     setComboLineCount(
@@ -427,7 +465,7 @@ export function FormulaSelectorCard({
                                                 </button>
                                                 <span
                                                   className={cn(
-                                                    "text-xs md:text-sm xl:text-base font-mono tabular-nums w-5 text-center font-bold",
+                                                    "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
                                                     c === 0 &&
                                                       "text-muted-foreground"
                                                   )}
@@ -436,7 +474,7 @@ export function FormulaSelectorCard({
                                                 </span>
                                                 <button
                                                   type="button"
-                                                  className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                  className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
                                                   disabled={c >= 99}
                                                   onClick={() =>
                                                     setComboLineCount(
@@ -467,6 +505,190 @@ export function FormulaSelectorCard({
                 );
               })}
             </div>
+
+            {/* ── Team Reactions ── */}
+            {teamBuild &&
+              (() => {
+                const rxFormulas = teamBuild.reactionProvider.getFormulaIds();
+                const rxEntries = Object.entries(rxFormulas);
+                if (rxEntries.length === 0) return null;
+
+                return (
+                  <div className="rounded-lg border border-border bg-black/5 overflow-hidden">
+                    {formulaMode === "single" ? (
+                      <div className="px-2 py-1 flex flex-wrap items-start justify-center gap-x-4 lg:gap-x-6 2xl:gap-x-8 gap-y-1.5">
+                        {rxEntries.map(([formulaId, label]) => {
+                          const eligible =
+                            teamBuild.reactionProvider.getEligibleCharacters(
+                              formulaId
+                            );
+                          const isMulti =
+                            teamBuild.reactionProvider.isMultiContributor(
+                              formulaId
+                            );
+                          const isSelected =
+                            resolvedFormula?.formulaId === formulaId &&
+                            !!resolvedFormula?.charId &&
+                            eligible.includes(resolvedFormula.charId);
+
+                          return (
+                            <div key={formulaId} className="flex flex-col">
+                              <button
+                                type="button"
+                                className={cn(
+                                  "flex items-center gap-1.5 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm xl:text-base",
+                                  isSelected
+                                    ? "bg-primary/15 text-foreground border-primary/40"
+                                    : "bg-secondary text-foreground hover:bg-secondary/80 border-border/40"
+                                )}
+                                onClick={() => {
+                                  const defaultChar = eligible[0] || "";
+                                  updateTeam(team.id, {
+                                    selectedFormula: {
+                                      charId: defaultChar,
+                                      formulaId,
+                                    },
+                                  });
+                                }}
+                              >
+                                <ReactionElementIcons
+                                  formulaId={formulaId}
+                                  size="w-5 h-5"
+                                />
+                                <span className="truncate">
+                                  {t.resolveLabel(label)}
+                                </span>
+                              </button>
+                              {isSelected && (
+                                <div className="mt-1 flex flex-wrap items-center gap-1">
+                                  <span className="text-xs text-muted-foreground">
+                                    {t.ui(
+                                      isMulti
+                                        ? "teamComp.rxOnField"
+                                        : "teamComp.rxTrigger"
+                                    )}
+                                    :
+                                  </span>
+                                  {eligible.map((cid) => {
+                                    const isTrigger =
+                                      resolvedFormula?.charId === cid;
+                                    return (
+                                      <button
+                                        key={cid}
+                                        type="button"
+                                        className={cn(
+                                          "px-1.5 py-0.5 rounded border text-xs",
+                                          isTrigger
+                                            ? "bg-primary/20 border-primary/40 text-foreground"
+                                            : "bg-secondary/70 border-border/40 text-muted-foreground hover:bg-secondary"
+                                        )}
+                                        onClick={() =>
+                                          updateTeam(team.id, {
+                                            selectedFormula: {
+                                              charId: cid,
+                                              formulaId,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        {t.character(cid)}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="px-2 py-1 flex flex-wrap items-start justify-center gap-x-4 lg:gap-x-6 2xl:gap-x-8 gap-y-1">
+                        {rxEntries.map(([formulaId, label]) => {
+                          const eligible =
+                            teamBuild.reactionProvider.getEligibleCharacters(
+                              formulaId
+                            );
+
+                          return (
+                            <div key={formulaId} className="px-2 py-0.5">
+                              <div className="flex items-center gap-1.5 text-xs md:text-sm xl:text-base font-bold text-foreground mb-0.5">
+                                <ReactionElementIcons
+                                  formulaId={formulaId}
+                                  size="w-4 h-4"
+                                />
+                                {t.resolveLabel(label)}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                                {eligible.map((cid) => {
+                                  const lineKey = `${cid}.${formulaId}.none`;
+                                  const count =
+                                    comboLineMap.get(lineKey)?.line.count ?? 0;
+
+                                  return (
+                                    <div
+                                      key={cid}
+                                      className="flex items-center"
+                                    >
+                                      <span
+                                        className={cn(
+                                          "text-xs md:text-sm xl:text-base font-semibold",
+                                          count > 0
+                                            ? "text-foreground"
+                                            : "text-muted-foreground"
+                                        )}
+                                      >
+                                        {t.character(cid)}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                        disabled={count <= 0}
+                                        onClick={() =>
+                                          setComboLineCount(
+                                            cid,
+                                            formulaId,
+                                            "none",
+                                            Math.max(0, count - 1)
+                                          )
+                                        }
+                                      >
+                                        <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                      </button>
+                                      <span
+                                        className={cn(
+                                          "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
+                                          count === 0 && "text-muted-foreground"
+                                        )}
+                                      >
+                                        {count}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                        disabled={count >= 99}
+                                        onClick={() =>
+                                          setComboLineCount(
+                                            cid,
+                                            formulaId,
+                                            "none",
+                                            Math.min(99, count + 1)
+                                          )
+                                        }
+                                      >
+                                        <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                      </button>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
           </div>
         ) : (
           buildError && (

@@ -330,8 +330,8 @@ class Chiori extends CharacterBase {
         ? {
             "chiori-na": {
               label: {
-                zh: "6命 普攻一套",
-                en: "C6 Normal Combo",
+                zh: "6命 普攻（4段）",
+                en: "C6 Normal (4-hit)",
               },
               parts: [
                 { formula: new DirectFormula(0.977, geoNormal) },
@@ -615,7 +615,7 @@ class KamisatoAyaka extends CharacterBase {
 
   // Rotation: D E Q N1C > 2[N2C] (freeze carry, ~20s)
   protected override get defaultCombo() {
-    return { "ayaka-charged": 3, "ayaka-burst": 1 };
+    return { "ayaka-normal": 1, "ayaka-charged": 3, "ayaka-burst": 1 };
   }
 
   // Charged ATK: Lv10 109.0%×3 (Normal talent, no constellation boost)
@@ -624,12 +624,27 @@ class KamisatoAyaka extends CharacterBase {
   protected readonly formulaMap = (() => {
     const cutMult = this.constellation >= 3 ? 2.39 : 2.02;
     const bloomMult = this.constellation >= 3 ? 3.58 : 3.03;
+    const cryoNormal = {
+      element: "Cryo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
     const cryoBurst = {
       element: "Cryo" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
     return {
+      "ayaka-normal": {
+        label: { zh: "普攻（5段）", en: "Normal (5-hit)" },
+        parts: [
+          { formula: new DirectFormula(0.904, cryoNormal) },
+          { formula: new DirectFormula(0.962, cryoNormal) },
+          { formula: new DirectFormula(1.238, cryoNormal) },
+          { formula: new DirectFormula(0.448, cryoNormal), hits: 3 },
+          { formula: new DirectFormula(1.545, cryoNormal) },
+        ],
+      },
       "ayaka-charged": {
         label: { zh: "重击×3", en: "CA (×3)" },
         parts: [
@@ -1118,8 +1133,8 @@ class Yoimiya extends CharacterBase {
     const formulas: Record<string, FormulaEntry> = {
       "yoimiya-normal": {
         label: {
-          zh: "E普攻一套",
-          en: "Normal N1-N5 (E on)",
+          zh: "E普攻（5段）",
+          en: "Normal (5-hit, E)",
         },
         parts: [
           { formula: new DirectFormula(m(n1), pyroNormal), hits: 2 },
@@ -1135,8 +1150,8 @@ class Yoimiya extends CharacterBase {
       // C6: 50% chance of firing an extra blazing arrow dealing 60% of original DMG per hit
       formulas["yoimiya-c6-arrow"] = {
         label: {
-          zh: "C6 额外炽焰箭一套",
-          en: "C6 Blazing Arrow N1-N5",
+          zh: "C6 额外炽焰箭（5段）",
+          en: "C6 Blazing Arr (5-hit)",
         },
         parts: [
           { formula: new DirectFormula(m(n1) * 0.6, pyroNormal), hits: 2 },

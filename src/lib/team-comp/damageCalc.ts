@@ -68,6 +68,7 @@ export { TeamMeta };
 
 import type { ExtraBuff } from "./extraBuffTypes";
 import { createExtraStatBuffs } from "./extraBuffTypes";
+import { TeamReactionProvider } from "./teamReactions";
 
 // ═══════════════════════════════════════════════════════════════
 // TeamResonance
@@ -194,7 +195,8 @@ export type OptimizerContext = {
   swapCharId: string;
   /** All character IDs whose artifact stats are variable (includes swapCharId). */
   variableCharIds: Set<string>;
-  calcTargetId: string;
+  /** Which character is on-field. null = nobody (off-field damage context). */
+  onFieldCharId: string | null;
   ctx?: CalcContext;
   targetDependent: Record<string, StatBuff[]>;
   /** Pre-computed stats for non-variable characters (artifact sheets baked in). */
@@ -688,13 +690,15 @@ export function isBuffApplicable(
  * Owns the stat resolution pipeline across all 4 team members.
  *
  * Construction is immutable (team composition + OptionMap).
- * `getTeamStats(artifactStats, calcTargetId)` is the hot path.
+ * `getTeamStats(artifactStats, onFieldCharId)` is the hot path.
  */
 export class TeamBuild {
   readonly charBuilds: Record<string, CharBuild>;
   readonly teamMeta: TeamMeta;
   readonly teamResonance: TeamResonance;
   readonly allStaticBuffs: ProvidedStaticBuff[];
+  /** Team-wide reaction formula provider (transformative + lunar). */
+  readonly reactionProvider: TeamReactionProvider;
   /** Original configs used to construct this TeamBuild (for reconstruction). */
   readonly configs: TeamSlotConfig[];
   /** Original combat opts used to construct this TeamBuild (for reconstruction). */
@@ -793,6 +797,17 @@ export class TeamBuild {
         this.teamMeta.factions[charId]
       );
     }
+
+    // Build team-wide reaction formulas after CharBuilds are constructed
+    const charBases: Record<string, CharacterBase> = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      charBases[id] = build.charBase;
+    }
+    this.reactionProvider = new TeamReactionProvider(
+      this.teamMeta,
+      charBases,
+      configs
+    );
   }
 
   /**
@@ -840,11 +855,11 @@ export class TeamBuild {
   }
 
   /**
-   * Collect field-dependent static buffs for each character, given a calcTargetId
-   * that determines field state (charId === calcTargetId → on-field).
+   * Collect field-dependent static buffs for each character, given a onFieldCharId
+   * that determines field state (charId === onFieldCharId → on-field).
    */
   private getFieldDependentBuffs(
-    calcTargetId: string
+    onFieldCharId: string | null
   ): Record<string, StatBuff[]> {
     const result: Record<string, StatBuff[]> = {};
     for (const charId of Object.keys(this.charBuilds)) {
@@ -855,7 +870,7 @@ export class TeamBuild {
             b.buff,
             b.providerCharId,
             charId,
-            charId === calcTargetId
+            charId === onFieldCharId
           );
         })
         .map((b) => b.buff);
@@ -870,7 +885,7 @@ export class TeamBuild {
   private buildTeamPostStats(
     preStats: Record<string, StatSheet>,
     dynamicBuffs: EvaluatedDynamicBuff[],
-    calcTargetId: string,
+    onFieldCharId: string | null,
     ctx?: CalcContext
   ): Record<string, StatSheet> {
     const postStats: Record<string, StatSheet> = {};
@@ -879,7 +894,7 @@ export class TeamBuild {
         preStats[id]!,
         dynamicBuffs,
         id,
-        id === calcTargetId,
+        id === onFieldCharId,
         this.teamMeta.regions[id],
         this.teamMeta.factions[id]
       );
@@ -999,14 +1014,14 @@ export class TeamBuild {
    * This is the hot path during artifact optimization.
    *
    * @param artifactStats  Per-character artifact stat sheets
-   * @param calcTargetId   The character being optimized (determines onField buff routing)
+   * @param onFieldCharId   Who is on-field (determines onField buff routing). null = nobody.
    */
   getTeamStats(
     artifactStats: Record<string, StatSheet>,
-    calcTargetId: string,
+    onFieldCharId: string | null,
     ctx?: CalcContext
   ): Record<string, StatSheet> {
-    const fieldDependent = this.getFieldDependentBuffs(calcTargetId);
+    const fieldDependent = this.getFieldDependentBuffs(onFieldCharId);
     const preStats = this.buildPreStatsFromBuilds(
       artifactStats,
       fieldDependent
@@ -1018,7 +1033,7 @@ export class TeamBuild {
     return this.buildTeamPostStats(
       preStats,
       allDynamicBuffs,
-      calcTargetId,
+      onFieldCharId,
       ctx
     );
   }
@@ -1030,11 +1045,11 @@ export class TeamBuild {
    */
   getTeamStatsExcluding(
     artifactStats: Record<string, StatSheet>,
-    calcTargetId: string,
+    onFieldCharId: string | null,
     ctx: CalcContext | undefined,
     excludeKeys: Set<string>
   ): Record<string, StatSheet> {
-    const fieldDependent = this.getFieldDependentBuffs(calcTargetId);
+    const fieldDependent = this.getFieldDependentBuffs(onFieldCharId);
 
     // Phase 2: Pre-stats (rebuilt from baseStatSheet excluding specified buffs)
     const preStats: Record<string, StatSheet> = {};
@@ -1062,7 +1077,7 @@ export class TeamBuild {
     return this.buildTeamPostStats(
       preStats,
       allDynamicBuffs,
-      calcTargetId,
+      onFieldCharId,
       ctx
     );
   }
@@ -1096,7 +1111,7 @@ export class TeamBuild {
   createOptimizerContext(
     baseSheets: Record<string, StatSheet>,
     swapCharId: string | string[],
-    calcTargetId: string,
+    onFieldCharId: string | null,
     ctx?: CalcContext
   ): OptimizerContext {
     const variableCharIds = Array.isArray(swapCharId)
@@ -1106,8 +1121,8 @@ export class TeamBuild {
       ? swapCharId[0]
       : swapCharId;
 
-    // Field-dependent buff filtering (constant for a given calcTargetId)
-    const targetDependent = this.getFieldDependentBuffs(calcTargetId);
+    // Field-dependent buff filtering (constant for a given onFieldCharId)
+    const targetDependent = this.getFieldDependentBuffs(onFieldCharId);
 
     // Support preStats: only for non-variable characters (their artifact sheets are baked in)
     const supportPreStats: Record<string, StatSheet> = {};
@@ -1125,7 +1140,7 @@ export class TeamBuild {
     return {
       swapCharId: primarySwapCharId,
       variableCharIds,
-      calcTargetId,
+      onFieldCharId,
       ctx,
       targetDependent,
       supportPreStats,
@@ -1145,7 +1160,7 @@ export class TeamBuild {
   ): Record<string, StatSheet> {
     const {
       swapCharId,
-      calcTargetId,
+      onFieldCharId,
       ctx,
       targetDependent,
       supportPreStats,
@@ -1170,19 +1185,13 @@ export class TeamBuild {
     return this.buildTeamPostStats(
       preStats,
       allDynamicBuffs,
-      calcTargetId,
+      onFieldCharId,
       ctx
     );
   }
 
   /**
    * Pick any other team member's charId. Used to derive off-field stats
-   * (by making someone else the calcTarget, the formula character becomes off-field).
-   */
-  private getOtherCharId(excludeId: string): string | undefined {
-    return Object.keys(this.charBuilds).find((id) => id !== excludeId);
-  }
-
   /**
    * Build preStats for all team members from artifact sheets + field-dependent buffs.
    * Extracts the Phase 2 loop that appears in getTeamStats, getDisplayResult, etc.
@@ -1230,18 +1239,15 @@ export class TeamBuild {
     let offFieldSansBuffStats: Map<string, StatSheet> | undefined;
     if (offFieldPostStats) {
       offFieldSansBuffStats = new Map();
-      const otherCharId = this.getOtherCharId(charId);
-      if (otherCharId) {
-        for (const buffInfo of stackLimited) {
-          const bKey = buffSourceKey(buffInfo.source);
-          const excluded = this.getTeamStatsExcluding(
-            artifactStats,
-            otherCharId,
-            ctx,
-            new Set([bKey])
-          );
-          offFieldSansBuffStats.set(bKey, excluded[charId]!);
-        }
+      for (const buffInfo of stackLimited) {
+        const bKey = buffSourceKey(buffInfo.source);
+        const excluded = this.getTeamStatsExcluding(
+          artifactStats,
+          null,
+          ctx,
+          new Set([bKey])
+        );
+        offFieldSansBuffStats.set(bKey, excluded[charId]!);
       }
     }
     return { sansBuffStats, offFieldSansBuffStats };
@@ -1269,10 +1275,10 @@ export class TeamBuild {
   private createStatsCacheFn(
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
-    seed?: Map<string, Record<string, StatSheet>>
-  ): (onFieldCharId: string) => Record<string, StatSheet> {
-    const cache = seed ?? new Map<string, Record<string, StatSheet>>();
-    return (onFieldCharId: string) => {
+    seed?: Map<string | null, Record<string, StatSheet>>
+  ): (onFieldCharId: string | null) => Record<string, StatSheet> {
+    const cache = seed ?? new Map<string | null, Record<string, StatSheet>>();
+    return (onFieldCharId: string | null) => {
       if (!cache.has(onFieldCharId)) {
         cache.set(
           onFieldCharId,
@@ -1285,18 +1291,16 @@ export class TeamBuild {
 
   /**
    * Compute off-field post-stats for a character's formula.
-   * Picks another team member as calcTarget so the formula character is off-field.
+   * Uses onFieldCharId=null so nobody is on-field (correct for off-field damage).
    */
   private getOffFieldPostStats(
     charId: string,
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
-    getStats?: (onFieldCharId: string) => Record<string, StatSheet>
+    getStats?: (onFieldCharId: string | null) => Record<string, StatSheet>
   ): StatSheet | undefined {
-    const otherCharId = this.getOtherCharId(charId);
-    if (!otherCharId) return undefined;
-    if (getStats) return getStats(otherCharId)[charId];
-    return this.getTeamStats(artifactStats, otherCharId, ctx)[charId];
+    if (getStats) return getStats(null)[charId];
+    return this.getTeamStats(artifactStats, null, ctx)[charId];
   }
 
   /** All available formulas across all characters */
@@ -1306,6 +1310,11 @@ export class TeamBuild {
       result[id] = build.getFormulaIds();
     }
     return result;
+  }
+
+  /** Team-wide reaction formula IDs with labels. */
+  getReactionFormulaIds(): Record<string, I18nLabel> {
+    return this.reactionProvider.getFormulaIds();
   }
 
   /** Default combo counts for a character (from CharacterBase.combo). */
@@ -1474,20 +1483,14 @@ export class TeamBuild {
         );
         let offFieldVariantsMap: Map<string, StatSheet> | undefined;
         if (offFieldPostStats) {
-          const otherCharId = this.getOtherCharId(charId);
-          if (otherCharId) {
-            offFieldVariantsMap = buildStatVariants(
-              allInfos,
-              entry.parts,
-              (excludeSet) =>
-                this.getTeamStatsExcluding(
-                  artifactStats,
-                  otherCharId,
-                  ctx,
-                  excludeSet
-                )[charId]!
-            );
-          }
+          offFieldVariantsMap = buildStatVariants(
+            allInfos,
+            entry.parts,
+            (excludeSet) =>
+              this.getTeamStatsExcluding(artifactStats, null, ctx, excludeSet)[
+                charId
+              ]!
+          );
         }
 
         const blended = computeBlendedDamage(
@@ -1580,24 +1583,16 @@ export class TeamBuild {
 
     // ── Buff resolution ──
     const partReadKeys = parts.map((p) => p.readKeys);
+    const partOffField = entry.parts.map((p) => p.offField ?? false);
     const buffs = this.resolveBuffs(
       charId,
       preStats,
       teamPreStatsArr,
       partTags,
       partReadKeys,
+      partOffField,
       formulaId
     );
-
-    // ── Stats (full team) — deprecated flat projections ──
-    const idleStats: Record<string, Partial<Record<StatKey, number>>> = {};
-    const combatStats: Record<string, Partial<Record<StatKey, number>>> = {};
-    for (const cid of Object.keys(this.charBuilds)) {
-      idleStats[cid] = preStats[cid]!.getAll();
-      combatStats[cid] = postStats[cid]!.getAll(
-        cid === charId ? formulaTags[0] : undefined
-      );
-    }
 
     // ── Collect all formula tags per character ──
     const charFormulaTags: Record<string, DamageTag[]> = {};
@@ -1620,7 +1615,7 @@ export class TeamBuild {
     }
 
     // ── Raw StatSheets with on/off field contexts ──
-    const seedCache = new Map<string, Record<string, StatSheet>>();
+    const seedCache = new Map<string | null, Record<string, StatSheet>>();
     seedCache.set(charId, postStats); // reuse existing computation
     const getStats = this.createStatsCacheFn(artifactStats, ctx, seedCache);
 
@@ -1630,14 +1625,7 @@ export class TeamBuild {
     > = {};
     for (const cid of Object.keys(this.charBuilds)) {
       const onField = getStats(cid)[cid]!;
-
-      // Off-field: stats when someone else is on-field
-      const offCtx =
-        cid !== charId
-          ? charId // reuse existing calcTarget context
-          : this.getOtherCharId(cid);
-      const offField = offCtx ? getStats(offCtx)[cid]! : onField;
-
+      const offField = getStats(null)[cid]!;
       statSheets[cid] = { onField, offField };
     }
 
@@ -1663,6 +1651,36 @@ export class TeamBuild {
       formulaHasOffField
     );
 
+    // ── Intrinsic saturation detection ──
+    const intrinsicSaturatedCharIds: string[] = [];
+    {
+      const allCharIds = Object.keys(this.charBuilds);
+      const zeroGainCharIds = allCharIds.filter(
+        (cid) =>
+          !marginalGains[cid] || Object.keys(marginalGains[cid]).length === 0
+      );
+      if (zeroGainCharIds.length > 0 && fullBuffDamage > 0) {
+        const emptySheets = { ...artifactStats };
+        for (const cid of zeroGainCharIds) {
+          emptySheets[cid] = new StatSheet([]);
+        }
+        const emptyGains = this.computeMarginalGainsUnified(
+          charId,
+          formulaId,
+          emptySheets,
+          ctx,
+          fullBuffDamage,
+          reactionOverride,
+          formulaHasOffField
+        );
+        for (const cid of zeroGainCharIds) {
+          if (!emptyGains[cid] || Object.keys(emptyGains[cid]).length === 0) {
+            intrinsicSaturatedCharIds.push(cid);
+          }
+        }
+      }
+    }
+
     // ── Idle stat records (cold path) ──
     const idleSheets = this.computeIdleStatSheets(artifactStats);
     const idleStatRecords: DisplayResult["idleStatRecords"] = {};
@@ -1683,18 +1701,18 @@ export class TeamBuild {
       marginalGains,
       levelUpGains,
       idleStatRecords,
-      idleStats,
-      combatStats,
+      intrinsicSaturatedCharIds,
     };
   }
 
   /** Resolve all buffs into active/inactive ResolvedBuff[] for display. */
   private resolveBuffs(
-    calcTargetId: string,
+    onFieldCharId: string | null,
     preStats: Record<string, StatSheet>,
     teamPreStatsArr: StatSheet[],
     partTags: (DamageTag | undefined)[],
     partReadKeys: (ReadonlySet<StatKey> | undefined)[],
+    partOffField: boolean[],
     formulaId?: string
   ): ResolvedBuff[] {
     const result: ResolvedBuff[] = [];
@@ -1709,17 +1727,17 @@ export class TeamBuild {
     );
 
     // ── Active static set ──
-    // For self* receivers, check against the provider; otherwise against calcTarget.
+    // For self* receivers, check against the provider; otherwise against onFieldCharId.
     let applicableStatic = charBuffEntries
       .filter((b) => {
         const selfId = isSelfReceiver(b.buff.target.receiver)
           ? b.providerCharId
-          : calcTargetId;
+          : onFieldCharId;
         return this.isBuffApplicableForChar(
           b.buff,
           b.providerCharId,
           selfId,
-          selfId === calcTargetId
+          onFieldCharId != null && selfId === onFieldCharId
         );
       })
       .map((b) => b.buff);
@@ -1740,12 +1758,12 @@ export class TeamBuild {
     let applicableDynamic = allDynamic.filter((b) => {
       const selfId = isSelfReceiver(b.buff.target.receiver)
         ? b.providerCharId
-        : calcTargetId;
+        : onFieldCharId;
       return this.isBuffApplicableForChar(
         b.buff,
         b.providerCharId,
         selfId,
-        selfId === calcTargetId
+        onFieldCharId != null && selfId === onFieldCharId
       );
     });
     applicableDynamic = deduplicateBuffs(applicableDynamic, (b) => b.entries);
@@ -1770,7 +1788,7 @@ export class TeamBuild {
       if (!(buff instanceof ScalingBuff)) continue;
       // Only care about scaling buffs whose output reaches the calc target
       if (
-        !this.isBuffApplicableForChar(buff, providerCharId, calcTargetId, true)
+        !this.isBuffApplicableForChar(buff, providerCharId, onFieldCharId, true)
       )
         continue;
       if (!activeDynamicSet.has(buff)) continue;
@@ -1793,12 +1811,12 @@ export class TeamBuild {
     for (const { buff, providerCharId: ownerId } of charBuffEntries) {
       const selfId = isSelfReceiver(buff.target.receiver)
         ? ownerId
-        : calcTargetId;
+        : onFieldCharId;
       const applicable = this.isBuffApplicableForChar(
         buff,
         ownerId,
         selfId,
-        selfId === calcTargetId
+        selfId === onFieldCharId
       );
 
       // Resolve dynamic entries with per-entry caps
@@ -1832,7 +1850,7 @@ export class TeamBuild {
           const reachesCalcTarget = this.isBuffApplicableForChar(
             buff,
             ownerId,
-            calcTargetId,
+            onFieldCharId,
             true
           );
           if (reachesCalcTarget) {
@@ -1847,7 +1865,7 @@ export class TeamBuild {
               buff,
               ownerId,
               cid,
-              cid === calcTargetId
+              cid === onFieldCharId
             );
             if (!buffApplies) continue;
             for (const outKey of rawOutputKeys) {
@@ -1859,7 +1877,20 @@ export class TeamBuild {
           activePartIndices = [];
           // If no effective keys reach the formula at all, buff is irrelevant
           if (effectiveKeys.size > 0) {
+            const receiver = buff.target.receiver;
+            const isOnFieldBuff =
+              receiver === "selfOnField" ||
+              receiver === "teamOnField" ||
+              receiver === "otherOnField";
+            const isOffFieldBuff =
+              receiver === "selfOffField" ||
+              receiver === "teamOffField" ||
+              receiver === "otherOffField";
             for (let pi = 0; pi < partTags.length; pi++) {
+              // Layer 2.5: Field-context filter — onField buffs don't apply to
+              // off-field parts, offField buffs don't apply to on-field parts
+              if (isOnFieldBuff && partOffField[pi]) continue;
+              if (isOffFieldBuff && !partOffField[pi]) continue;
               const tag = partTags[pi];
               // Layer 3: DamageTagFilter
               if (tag && buff.target.filter) {
@@ -1965,7 +1996,7 @@ export class TeamBuild {
     );
     for (const { buff } of extraBuffEntries) {
       // charId filter gates applicability
-      if (buff.target.charId && buff.target.charId !== calcTargetId) {
+      if (buff.target.charId && buff.target.charId !== onFieldCharId) {
         result.push({
           source: buff.source,
           target: buff.target,
@@ -2023,7 +2054,7 @@ export class TeamBuild {
     }
 
     // ── Bespoke buffs (per-formula-part) ──
-    const calcBuild = this.charBuilds[calcTargetId];
+    const calcBuild = this.charBuilds[onFieldCharId];
     const bespokeRaw = calcBuild.charBase.getBespokeBuffs();
     // Deduplicate by buff identity (same buff object on multiple parts)
     const seenBespokeBuffs = new Set<StatBuff>();
@@ -2031,7 +2062,7 @@ export class TeamBuild {
       if (seenBespokeBuffs.has(buff)) continue;
       seenBespokeBuffs.add(buff);
 
-      const ownerStats = preStats[calcTargetId]!;
+      const ownerStats = preStats[onFieldCharId]!;
       const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
       const active = formulaId === fId;
 
@@ -2049,7 +2080,7 @@ export class TeamBuild {
 
       result.push({
         source: buff.source,
-        providerCharId: calcTargetId,
+        providerCharId: onFieldCharId,
         target: buff.target,
         active,
         staticEntries: buff.staticBuffs,
@@ -2067,7 +2098,7 @@ export class TeamBuild {
    * absolute deltas to relative gains.
    */
   private computeMarginalGainsUnified(
-    calcTargetId: string,
+    onFieldCharId: string,
     formulaId: string,
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
@@ -2078,14 +2109,14 @@ export class TeamBuild {
     if (baseDamage === 0) return {};
 
     const evalFn = (sheets: Record<string, StatSheet>): number => {
-      const stats = this.getTeamStats(sheets, calcTargetId, ctx);
+      const stats = this.getTeamStats(sheets, onFieldCharId, ctx);
       const offFieldStats = hasOffField
-        ? this.getOffFieldPostStats(calcTargetId, sheets, ctx)
+        ? this.getOffFieldPostStats(onFieldCharId, sheets, ctx)
         : undefined;
-      const build = this.charBuilds[calcTargetId]!;
+      const build = this.charBuilds[onFieldCharId]!;
       return build.getDamageResult(
         formulaId,
-        stats[calcTargetId]!,
+        stats[onFieldCharId]!,
         Object.values(stats),
         ctx,
         reactionOverride,
@@ -2118,7 +2149,7 @@ export class TeamBuild {
    * Rebuilds the team with the character at Lv100 and compares damage.
    */
   private computeLevelUpGains(
-    calcTargetId: string,
+    onFieldCharId: string,
     formulaId: string,
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
@@ -2140,7 +2171,7 @@ export class TeamBuild {
       );
       const tweakedStats = tweakedTeam.getTeamStats(
         artifactStats,
-        calcTargetId,
+        onFieldCharId,
         ctx
       );
       let offFieldTeamStats: Record<string, StatSheet> | undefined;
@@ -2148,12 +2179,12 @@ export class TeamBuild {
         offFieldTeamStats = getOffFieldStats(
           tweakedTeam,
           artifactStats,
-          calcTargetId,
+          onFieldCharId,
           ctx
         );
       }
       const tweakedResult = tweakedTeam.getDamageResult(
-        calcTargetId,
+        onFieldCharId,
         formulaId,
         tweakedStats,
         ctx,
@@ -2369,17 +2400,16 @@ export class TeamBuild {
     stackLimited: StackLimitedBuffInfo[];
     lineEntries: (ReturnType<CharacterBase["getFormulaEntry"]> | null)[];
   } {
-    // ── Resolve pre/post stats using first on-field char for buff collection ──
-    const firstCharId = activeLines[0].charId;
-    const fieldDependent = this.getFieldDependentBuffs(firstCharId);
-    const preStats = this.buildPreStatsFromBuilds(sheets, fieldDependent);
-    const teamPreStatsArr = Object.values(preStats);
-
     // ── Collect stack-limited buffs ──
+    // Field context doesn't matter here: collectStackLimitedBuffs only checks
+    // whether dynamicBuffs() returns entries (always true for non-no-op buffs),
+    // not their values. Any on-field character produces the same result.
+    const fieldDependent = this.getFieldDependentBuffs(activeLines[0].charId);
+    const preStats = this.buildPreStatsFromBuilds(sheets, fieldDependent);
     const stackLimited = collectStackLimitedBuffs(
       this.allStaticBuffs,
       preStats,
-      teamPreStatsArr
+      Object.values(preStats)
     );
 
     // ── Build per-line contexts with correct postStats ──
@@ -2479,24 +2509,15 @@ export function offFieldStatus(
 
 /**
  * Compute off-field stats for a formula character.
- * Returns stats where calcTargetId is NOT the formula character,
- * so onField/selfOnField buffs don't apply to them.
+ * Uses onFieldCharId=null (nobody on-field) so no character gets onField buffs.
  */
 function getOffFieldStats(
   teamBuild: TeamBuild,
   artifactStats: Record<string, StatSheet>,
-  formulaCharId: string,
+  _formulaCharId: string,
   ctx: CalcContext
 ): Record<string, StatSheet> {
-  // Pick any other team member as the on-field character
-  const otherCharId = Object.keys(teamBuild.charBuilds).find(
-    (id) => id !== formulaCharId
-  );
-  if (!otherCharId) {
-    // Solo team — no off-field distinction possible
-    return teamBuild.getTeamStats(artifactStats, formulaCharId, ctx);
-  }
-  return teamBuild.getTeamStats(artifactStats, otherCharId, ctx);
+  return teamBuild.getTeamStats(artifactStats, null, ctx);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2508,7 +2529,7 @@ function getOffFieldStats(
  * potentially from different characters with different reaction overrides.
  *
  * Groups lines by on-field character and caches getTeamStats() per unique
- * calcTargetId for efficiency (typically 1-2 unique on-field characters).
+ * onFieldCharId for efficiency (typically 1-2 unique on-field characters).
  */
 export function evaluateCombo(
   teamBuild: TeamBuild,
@@ -2520,16 +2541,21 @@ export function evaluateCombo(
   /** Per-line PartialBuffInfo[], keyed by line index in validLines. */
   buffOverrides?: Record<number, PartialBuffInfo[]>
 ): ComboResult {
-  // Skip lines whose formula no longer exists (e.g. constellation lowered)
+  // Skip lines with zero count or whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();
+  const reactionFormulas = teamBuild.reactionProvider.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
+    if (line.count <= 0) return false;
+    if (line.formulaId.startsWith("rx-")) {
+      return reactionFormulas[line.formulaId] !== undefined;
+    }
     const charFormulas = allFormulas[line.charId];
     return charFormulas?.[line.formulaId];
   });
 
-  // Cache stat resolution per unique on-field character
-  const statsCache = new Map<string, Record<string, StatSheet>>();
-  const getStats = (onFieldCharId: string) => {
+  // Cache stat resolution per unique on-field character (null = nobody on-field)
+  const statsCache = new Map<string | null, Record<string, StatSheet>>();
+  const getStats = (onFieldCharId: string | null) => {
     if (!statsCache.has(onFieldCharId)) {
       statsCache.set(
         onFieldCharId,
@@ -2542,16 +2568,37 @@ export function evaluateCombo(
   const lineDamages = validLines.map((line, lineIdx) => {
     const teamStats = getStats(line.charId);
 
+    // Team reaction path: route rx-* formulas to reactionProvider
+    if (line.formulaId.startsWith("rx-")) {
+      const rp = teamBuild.reactionProvider;
+      let result: DamageResult;
+      if (rp.isMultiContributor(line.formulaId)) {
+        result = rp.getMultiContributorResult(
+          line.formulaId,
+          line.charId,
+          teamStats,
+          ctx
+        );
+      } else {
+        result = rp.getDamageResult(
+          line.formulaId,
+          line.charId,
+          teamStats[line.charId]!,
+          ctx
+        );
+      }
+      return {
+        perHit: result.totalDamage,
+        total: result.totalDamage * line.count,
+      };
+    }
+
+    // Normal character formula path
     // Compute off-field stats if the formula has off-field parts
     let offFieldTeamStats: Record<string, StatSheet> | undefined;
     if (hasOffFieldParts(teamBuild, line.charId, line.formulaId)) {
-      // Pick any other team member as on-field to get stats without onField buffs
-      const otherCharId = Object.keys(teamBuild.charBuilds).find(
-        (id) => id !== line.charId
-      );
-      if (otherCharId) {
-        offFieldTeamStats = getStats(otherCharId);
-      }
+      // Nobody on-field for off-field damage parts
+      offFieldTeamStats = getStats(null);
     }
 
     // Merge: single-mode per-part config as defaults, combo line overrides on top
@@ -2611,22 +2658,14 @@ export function evaluateCombo(
             )[line.charId]!
         );
         if (offFieldTeamStats) {
-          const otherCharId = Object.keys(teamBuild.charBuilds).find(
-            (id) => id !== line.charId
+          lineOffFieldVariants = buildStatVariants(
+            lineInfos,
+            lineEntry.parts,
+            (excl) =>
+              teamBuild.getTeamStatsExcluding(artifactStats, null, ctx, excl)[
+                line.charId
+              ]!
           );
-          if (otherCharId) {
-            lineOffFieldVariants = buildStatVariants(
-              lineInfos,
-              lineEntry.parts,
-              (excl) =>
-                teamBuild.getTeamStatsExcluding(
-                  artifactStats,
-                  otherCharId,
-                  ctx,
-                  excl
-                )[line.charId]!
-            );
-          }
         }
       }
     }
@@ -2668,22 +2707,22 @@ export function getComboDisplayResult(
 ): DisplayResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();
+  const reactionFormulas = teamBuild.reactionProvider.getFormulaIds();
   const activeLines = combo.lines.filter((l) => {
     if (l.count <= 0) return false;
+    if (l.formulaId.startsWith("rx-")) {
+      return reactionFormulas[l.formulaId] !== undefined;
+    }
     const charFormulas = allFormulas[l.charId];
     return charFormulas?.[l.formulaId];
   });
 
   // Determine unique on-field characters and which chars have active lines
-  const activeCharIds = new Set(activeLines.map((l) => l.charId));
   const allCharIds = Object.keys(teamBuild.charBuilds);
 
-  // Pick a fallback on-field context for chars with no active lines
-  const fallbackOnField = activeLines[0]?.charId ?? allCharIds[0];
-
-  // ── Stats: compute per unique on-field context ──
-  const statsCache = new Map<string, Record<string, StatSheet>>();
-  const getStats = (onFieldCharId: string) => {
+  // ── Stats: compute per unique on-field context (null = nobody on-field) ──
+  const statsCache = new Map<string | null, Record<string, StatSheet>>();
+  const getStats = (onFieldCharId: string | null) => {
     if (!statsCache.has(onFieldCharId)) {
       statsCache.set(
         onFieldCharId,
@@ -2692,33 +2731,6 @@ export function getComboDisplayResult(
     }
     return statsCache.get(onFieldCharId)!;
   };
-
-  // For idle/combat stats, use each char's own on-field context if active, else fallback
-  const idleStats: Record<string, Partial<Record<StatKey, number>>> = {};
-  const combatStats: Record<string, Partial<Record<StatKey, number>>> = {};
-
-  // Build a representative formula tag per active character (for element-filtered stats)
-  const charFormulaTag: Record<string, DamageTag | undefined> = {};
-  for (const cid of allCharIds) {
-    if (activeCharIds.has(cid)) {
-      const formulaIds = teamBuild.getFormulaIds()[cid];
-      const firstFormulaId = formulaIds
-        ? Object.keys(formulaIds)[0]
-        : undefined;
-      if (firstFormulaId) {
-        const entry =
-          teamBuild.charBuilds[cid]?.charBase.getFormulaEntry(firstFormulaId);
-        charFormulaTag[cid] = entry?.parts[0]?.formula.tag;
-      }
-    }
-  }
-
-  for (const cid of allCharIds) {
-    const onField = activeCharIds.has(cid) ? cid : fallbackOnField;
-    const teamStats = getStats(onField);
-    combatStats[cid] = teamStats[cid]!.getAll(charFormulaTag[cid]);
-    idleStats[cid] = teamStats[cid]!.getAll();
-  }
 
   // ── Collect all formula tags per character ──
   const charFormulaTags: Record<string, DamageTag[]> = {};
@@ -2749,17 +2761,8 @@ export function getComboDisplayResult(
     { onField: StatSheet; offField: StatSheet }
   > = {};
   for (const cid of allCharIds) {
-    // On-field: stats when cid is on-field
-    const onFieldStats = getStats(cid);
-    const onField = onFieldStats[cid]!;
-
-    // Off-field: stats when someone else is on-field
-    const offCtx = activeCharIds.has(cid)
-      ? (allCharIds.find((x) => x !== cid) ?? cid)
-      : fallbackOnField;
-    const offFieldStats = getStats(offCtx);
-    const offField = offFieldStats[cid]!;
-
+    const onField = getStats(cid)[cid]!;
+    const offField = getStats(null)[cid]!;
     statSheets[cid] = { onField, offField };
   }
 
@@ -2811,26 +2814,63 @@ export function getComboDisplayResult(
     }
   }
 
+  // ── Intrinsic saturation detection ──
+  // Characters with zero stat marginal gains at the current operating point
+  // might be intrinsically saturated (e.g. Bennett — buffs scale on baseAtk).
+  // Verify by re-checking with empty artifact sheets: if still zero gains,
+  // the character's artifacts truly don't affect team damage.
+  const intrinsicSaturatedCharIds: string[] = [];
+  {
+    const zeroGainCharIds = allCharIds.filter(
+      (cid) =>
+        !marginalGains[cid] || Object.keys(marginalGains[cid]).length === 0
+    );
+    if (zeroGainCharIds.length > 0 && fullBuffBaseDamage > 0) {
+      const comboConfig = { ...combo, lines: activeLines };
+      const evalFn = (sheets: Record<string, StatSheet>): number =>
+        evaluateCombo(teamBuild, comboConfig, sheets, ctx, singleModeOverrides)
+          .totalDamage;
+      // Build sheets with empty artifacts for each zero-gain character
+      const emptySheets = { ...artifactStats };
+      for (const cid of zeroGainCharIds) {
+        emptySheets[cid] = new StatSheet([]);
+      }
+      const emptyBaseDmg = evalFn(emptySheets);
+      if (emptyBaseDmg > 0) {
+        const emptyDeltas = computeSubstatMarginals(
+          evalFn,
+          emptySheets,
+          emptyBaseDmg,
+          zeroGainCharIds
+        );
+        for (const cid of zeroGainCharIds) {
+          const gains = emptyDeltas[cid];
+          if (!gains || Object.keys(gains).length === 0) {
+            intrinsicSaturatedCharIds.push(cid);
+          }
+        }
+      }
+    }
+  }
+
   // ── Buffs: union across all on-field contexts ──
   // resolveBuffs is private, so we call getDisplayResult for each unique on-field
-  // character and merge buffs. A buff is active if it's active in ANY context.
+  // character+formula pair and merge buffs. A buff is active if it's active in ANY formula.
   const buffMap = new Map<string, ResolvedBuff>();
 
-  for (const onFieldCharId of activeCharIds) {
-    // Find any formula for this char to get a valid DisplayResult
-    const formulaIds = teamBuild.getFormulaIds()[onFieldCharId];
-    if (!formulaIds) continue;
-    const firstFormulaId = Object.keys(formulaIds)[0];
-    if (!firstFormulaId) continue;
+  // Collect unique (charId, formulaId) pairs from active combo lines (skip rx- formulas)
+  const seenFormulas = new Set<string>();
+  for (const line of activeLines) {
+    if (line.formulaId.startsWith("rx-")) continue;
+    const fKey = `${line.charId}.${line.formulaId}`;
+    if (seenFormulas.has(fKey)) continue;
+    seenFormulas.add(fKey);
 
-    // Find the reaction override for this char+formula from single-mode overrides
-    const key = `${onFieldCharId}.${firstFormulaId}`;
-    const rxnOverride = singleModeOverrides?.[key];
-
+    const rxnOverride = singleModeOverrides?.[fKey];
     try {
       const dr = teamBuild.getDisplayResult(
-        onFieldCharId,
-        firstFormulaId,
+        line.charId,
+        line.formulaId,
         artifactStats,
         ctx,
         rxnOverride
@@ -2848,7 +2888,7 @@ export function getComboDisplayResult(
       }
     } catch (e) {
       console.warn(
-        `[damageCalc] buff collection failed for ${onFieldCharId}/${firstFormulaId}:`,
+        `[damageCalc] buff collection failed for ${line.charId}/${line.formulaId}:`,
         e
       );
     }
@@ -2929,6 +2969,45 @@ export function getComboDisplayResult(
 
     const postStats = getStats(charId);
 
+    // ── Team reaction formulas: build display parts from reactionProvider ──
+    if (formulaId.startsWith("rx-")) {
+      const rxEntry = teamBuild.reactionProvider.getFormulaEntry(formulaId);
+      if (!rxEntry) continue;
+      const formula = rxEntry.parts[0].formula;
+      const charLevel =
+        teamBuild.configs.find((c) => c.charId === charId)?.charLevel ?? 90;
+
+      let parts: DisplayPart[];
+      if (teamBuild.reactionProvider.isMultiContributor(formulaId)) {
+        const teamStats = getStats(charId);
+        const display = teamBuild.reactionProvider.getMultiContributorDisplay(
+          formulaId,
+          charId,
+          teamStats,
+          ctx
+        );
+        // Single aggregated display part
+        const dp = formula.displayFull(postStats[charId]!, charLevel, ctx);
+        dp.damage = display.totalDamage;
+        dp.hits = 1;
+        parts = [dp];
+      } else {
+        const dp = formula.displayFull(postStats[charId]!, charLevel, ctx);
+        dp.hits = 1;
+        parts = [dp];
+      }
+
+      const totalComboCount = formulaLines.reduce(
+        (sum, fl) => sum + fl.line.count,
+        0
+      );
+      partsByFormula[formulaKey] = parts.map((dp) => ({
+        ...dp,
+        damage: dp.damage * totalComboCount,
+      }));
+      continue;
+    }
+
     // Compute effective reaction (first line merged with single-mode overrides)
     const firstLine = formulaLines[0].line;
     let effectiveReaction = firstLine.reaction;
@@ -2961,17 +3040,12 @@ export function getComboDisplayResult(
       }
     }
 
-    // Off-field stats
+    // Off-field stats (nobody on-field for off-field parts)
     const entry = build.charBase.getFormulaEntry(formulaId);
     const formulaHasOffField = entry?.parts.some((p) => p.offField) ?? false;
     let offFieldPostStats: StatSheet | undefined;
     if (formulaHasOffField) {
-      const otherCharId = Object.keys(teamBuild.charBuilds).find(
-        (id) => id !== charId
-      );
-      if (otherCharId) {
-        offFieldPostStats = getStats(otherCharId)[charId];
-      }
+      offFieldPostStats = getStats(null)[charId];
     }
 
     // Get raw display parts
@@ -3038,22 +3112,14 @@ export function getComboDisplayResult(
         );
         let offFieldVariants: Map<string, StatSheet> | undefined;
         if (offFieldPostStats) {
-          const otherCharId = Object.keys(teamBuild.charBuilds).find(
-            (id) => id !== charId
+          offFieldVariants = buildStatVariants(
+            aggregatedInfos,
+            entry.parts,
+            (excl) =>
+              teamBuild.getTeamStatsExcluding(artifactStats, null, ctx, excl)[
+                charId
+              ]!
           );
-          if (otherCharId) {
-            offFieldVariants = buildStatVariants(
-              aggregatedInfos,
-              entry.parts,
-              (excl) =>
-                teamBuild.getTeamStatsExcluding(
-                  artifactStats,
-                  otherCharId,
-                  ctx,
-                  excl
-                )[charId]!
-            );
-          }
         }
 
         const blended = computeBlendedDamage(
@@ -3161,13 +3227,13 @@ export function getComboDisplayResult(
   return {
     partsByFormula,
     totalDamage: baseDamage,
+    lineDamages: baseResult.lineDamages,
     buffs,
     statSheets,
     charFormulaTags,
     marginalGains,
     levelUpGains,
     idleStatRecords,
-    idleStats,
-    combatStats,
+    intrinsicSaturatedCharIds,
   };
 }

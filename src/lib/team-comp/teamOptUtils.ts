@@ -3,7 +3,6 @@ import type { AccountData, ArtifactData } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import {
   type TeamBuild,
-  evaluateCombo,
   getComboDisplayResult,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
@@ -13,7 +12,6 @@ import type {
   CalcContext,
   ComboFormula,
   ComboLine,
-  ComboResult,
   DisplayResult,
   PartialBuffInfo,
   ReactionOverride,
@@ -186,9 +184,9 @@ export function toStatSheets(
 }
 
 /**
- * Compute combo-mode DisplayResult (and optionally ComboResult) for a rotation.
+ * Compute combo-mode DisplayResult for a rotation.
  * Filters to active lines and returns null when inputs are missing.
- * The returned DisplayResult includes per-formula display parts in `partsByFormula`.
+ * The returned DisplayResult includes per-formula display parts, lineDamages, etc.
  */
 export function calcComboResults(
   build: TeamBuild | null,
@@ -197,13 +195,12 @@ export function calcComboResults(
   context: CalcContext,
   overrides?: Record<string, ReactionOverride>,
   buffOverrides?: Record<number, PartialBuffInfo[]>
-): { comboResult: ComboResult | null; comboDisplay: DisplayResult | null } {
-  if (!build) return { comboResult: null, comboDisplay: null };
+): DisplayResult | null {
+  if (!build) return null;
   const activeLines = combo.lines.filter((l) => l.count > 0);
-  if (activeLines.length === 0)
-    return { comboResult: null, comboDisplay: null };
+  if (activeLines.length === 0) return null;
   const activeCombo = { ...combo, lines: activeLines };
-  const comboResult = evaluateCombo(
+  return getComboDisplayResult(
     build,
     activeCombo,
     sheets,
@@ -211,16 +208,6 @@ export function calcComboResults(
     overrides,
     buffOverrides
   );
-  const comboDisplay = getComboDisplayResult(
-    build,
-    activeCombo,
-    sheets,
-    context,
-    overrides,
-    buffOverrides
-  );
-
-  return { comboResult, comboDisplay };
 }
 
 /**

@@ -38,13 +38,12 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Users } from "lucide-react";
 import { useEffect, useMemo } from "react";
-
-const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
-const CARD_HEADER_CLS =
-  "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
-const CARD_TITLE_CLS =
-  "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-1.5 md:p-3 bg-black/10";
+import {
+  CARD_BODY_CLS,
+  CARD_CLS,
+  CARD_HEADER_CLS,
+  CARD_TITLE_CLS,
+} from "./cardStyles";
 
 interface TeamRosterCardProps {
   team: Team;

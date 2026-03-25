@@ -34,6 +34,9 @@ export const THEME_IDS: ThemeId[] = [
   "nodkrai",
 ];
 
+/** Themes shown in the UI selector */
+export const SELECTABLE_THEME_IDS: ThemeId[] = THEME_IDS;
+
 interface ThemeContextType {
   theme: ThemeId;
   setTheme: (theme: ThemeId) => void;

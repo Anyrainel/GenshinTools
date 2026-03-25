@@ -111,13 +111,16 @@ interface MonaContext {
   formulaCharId: string;
   formulaId: string;
   baseSheets: Record<string, StatSheet>;
-  calcTargetId: string;
+  onFieldCharId: string;
   calcContext: CalcContext;
   erCheckCharId: string;
   minEr: number;
   minCr: number;
   reactionOverride?: ReactionOverride;
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
+  scoreFn?: (
+    sheets: Record<string, StatSheet>,
+    onFieldCharId: string
+  ) => number;
   collector: TopKCollector;
   evaluations: number;
   deadline?: number;
@@ -146,13 +149,13 @@ function checkHope(
     }
   }
   const updatedSheets = { ...ctx.baseSheets, [ctx.swapCharId]: sheet };
-  if (ctx.scoreFn) return ctx.scoreFn(updatedSheets, ctx.calcTargetId);
+  if (ctx.scoreFn) return ctx.scoreFn(updatedSheets, ctx.onFieldCharId);
 
-  const { teamBuild, formulaCharId, formulaId, calcTargetId, calcContext } =
+  const { teamBuild, formulaCharId, formulaId, onFieldCharId, calcContext } =
     ctx;
   const postStats = teamBuild.getTeamStats(
     updatedSheets,
-    calcTargetId,
+    onFieldCharId,
     calcContext
   );
 
@@ -214,7 +217,7 @@ function enumerateRecursive(
       ctx.formulaCharId,
       ctx.formulaId,
       ctx.baseSheets,
-      ctx.calcTargetId,
+      ctx.onFieldCharId,
       ctx.calcContext,
       ctx.erCheckCharId,
       ctx.minEr,
@@ -268,7 +271,7 @@ function enumerateRecursive(
           ctx.formulaCharId,
           ctx.formulaId,
           ctx.baseSheets,
-          ctx.calcTargetId,
+          ctx.onFieldCharId,
           ctx.calcContext,
           ctx.erCheckCharId,
           ctx.minEr,
@@ -505,7 +508,7 @@ function runCharacterMona(opts: PerCharSearchOpts): PerCharSearchResult {
     formulaCharId: carryCharId,
     formulaId,
     baseSheets,
-    calcTargetId: carryCharId,
+    onFieldCharId: carryCharId,
     calcContext,
     erCheckCharId: charId,
     minEr: charConfig.minEr,

@@ -17,6 +17,7 @@ vi.mock("@/contexts/LanguageContext", () => ({
 
 vi.mock("@/contexts/ThemeContext", () => ({
   THEME_IDS: ["default", "dark"],
+  SELECTABLE_THEME_IDS: ["default", "dark"],
   useTheme: () => ({
     theme: "default",
     setTheme: vi.fn(),

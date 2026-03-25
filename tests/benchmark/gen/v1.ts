@@ -183,7 +183,7 @@ export async function* runTeamOptimization(
 
   // Build combo scoreFn if in combo mode
   const comboScoreFn = isComboMode
-    ? (sheets: Record<string, StatSheet>, _calcTargetId: string): number => {
+    ? (sheets: Record<string, StatSheet>, _onFieldCharId: string): number => {
         try {
           return evaluateCombo(
             teamBuild,
@@ -193,11 +193,11 @@ export async function* runTeamOptimization(
             reactionOverrides
           ).totalDamage;
         } catch (e) {
-          const key = `comboScoreFn:${_calcTargetId}`;
+          const key = `comboScoreFn:${_onFieldCharId}`;
           if (!warnedCalcErrors.has(key)) {
             warnedCalcErrors.add(key);
             console.warn(
-              `[teamOptimizer] comboScoreFn failed for ${_calcTargetId}:`,
+              `[teamOptimizer] comboScoreFn failed for ${_onFieldCharId}:`,
               e
             );
           }
@@ -277,7 +277,7 @@ export async function* runTeamOptimization(
       tb !== teamBuild && isComboMode
         ? (
             sheets: Record<string, StatSheet>,
-            _calcTargetId: string
+            _onFieldCharId: string
           ): number => {
             try {
               return evaluateCombo(
@@ -315,7 +315,7 @@ export async function* runTeamOptimization(
       artifactSetId: charConfig.artifactSetId ?? null,
       artifactHalfSetIds: charConfig.artifactHalfSetIds,
       swapCharId: charId,
-      calcTargetId: carryCharId,
+      onFieldCharId: carryCharId,
       formulaCharId: carryCharId,
       erCheckCharId: charId,
       excludedArtifactIds: excludedIds,
@@ -1083,7 +1083,6 @@ export async function* runTeamOptimization(
     bestArtifactsByChar,
     passResults,
     failReasons,
-    saturatedCharIds: [],
     // Include rebuilt TeamBuild if sets were adjusted
     ...(setsChanged ? { teamBuild: effectiveTeamBuild } : {}),
     done: true as const,
@@ -1104,6 +1103,5 @@ export async function* runTeamOptimization(
   yield {
     ...resultBase,
     bestDamage: comboRes.totalDamage,
-    bestComboResult: comboRes,
   } satisfies TeamOptimizationResult;
 }

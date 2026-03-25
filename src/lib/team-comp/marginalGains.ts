@@ -4,7 +4,7 @@
  * Evaluates the damage delta from +1 avg substat roll for each rollable stat
  * key, for each specified character.  The caller provides an eval function
  * that maps stat sheets → total damage; this lets the same loop power both
- * the display tab (cold-path evaluateCombo / getDamageResult) and the
+ * the display tab (cold-path getComboDisplayResult / getDamageResult) and the
  * optimizer/generator (compiled AST DamageEvalFn).
  *
  * Returns absolute damage deltas.  Callers convert to relative gains
@@ -22,7 +22,7 @@ const ROLLABLE_KEYS = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
  * Compute absolute damage deltas from +1 avg substat roll per character.
  *
  * @param evalFn  Maps team stat sheets → total damage number.
- *                Cold path: wraps evaluateCombo / getDamageResult.
+ *                Cold path: wraps getComboDisplayResult / getDamageResult.
  *                Hot path:  wraps compiled DamageEvalFn.
  * @param baseSheets  Current artifact stat sheets per character.
  * @param baseDamage  Damage evaluated at baseSheets (caller pre-computes

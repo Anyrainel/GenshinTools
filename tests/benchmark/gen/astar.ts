@@ -137,7 +137,7 @@ interface AStarContext {
   formulaCharId: string;
   formulaId: string;
   baseSheets: Record<string, StatSheet>;
-  calcTargetId: string;
+  onFieldCharId: string;
   calcContext: CalcContext;
   erCheckCharId: string;
   minEr: number;
@@ -145,7 +145,10 @@ interface AStarContext {
   erFloor: number;
   crFloor: number;
   reactionOverride?: ReactionOverride;
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
+  scoreFn?: (
+    sheets: Record<string, StatSheet>,
+    onFieldCharId: string
+  ) => number;
   collector: TopKCollector;
   evaluations: number;
   sinceLastYield: number;
@@ -164,7 +167,7 @@ function aStarSearch(
     formulaCharId,
     formulaId,
     baseSheets,
-    calcTargetId,
+    onFieldCharId,
     calcContext,
     erCheckCharId,
     minEr,
@@ -194,7 +197,7 @@ function aStarSearch(
     formulaCharId,
     formulaId,
     baseSheets,
-    calcTargetId,
+    onFieldCharId,
     calcContext,
     reactionOverride,
     scoreFn
@@ -237,7 +240,7 @@ function aStarSearch(
         formulaCharId,
         formulaId,
         baseSheets,
-        calcTargetId,
+        onFieldCharId,
         calcContext,
         erCheckCharId,
         minEr,
@@ -294,7 +297,7 @@ function aStarSearch(
           formulaCharId,
           formulaId,
           baseSheets,
-          calcTargetId,
+          onFieldCharId,
           calcContext,
           reactionOverride,
           scoreFn
@@ -362,7 +365,7 @@ function runCharacterAStar(opts: PerCharSearchOpts): PerCharSearchResult {
     formulaCharId: carryCharId,
     formulaId,
     baseSheets,
-    calcTargetId: carryCharId,
+    onFieldCharId: carryCharId,
     calcContext,
     erCheckCharId: charId,
     minEr: charConfig.minEr,

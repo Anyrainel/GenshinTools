@@ -672,6 +672,7 @@ class Flins extends CharacterBase {
   // Rotation: E > E > sQ > N4D×2 > N2 > E > sQ > N4D > N5 (on-field carry, ~10s field time)
   protected override get defaultCombo() {
     return {
+      "flins-normal": 2,
       "flins-spearstorm": this.constellation >= 1 ? 3 : 2,
       "flins-thunderous": this.constellation >= 1 ? 3 : 2,
     };
@@ -704,9 +705,30 @@ class Flins extends CharacterBase {
       ability: "burst" as const,
       reaction: "lunarCharged" as const,
     };
+    // E-enhanced Normal Attack multipliers (E talent table)
+    const n1 = this.constellation >= 5 ? 1.238 : 1.048;
+    const n2 = this.constellation >= 5 ? 1.249 : 1.058;
+    const n3 = this.constellation >= 5 ? 1.548 : 1.311;
+    const n4 = this.constellation >= 5 ? 0.887 : 0.751; // ×2
+    const n5 = this.constellation >= 5 ? 2.125 : 1.8;
+    const normalTag = {
+      element: "Electro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
     // Q normal: initial + 2 mid + final; Ascendant Gleam with thunderclouds: +2 extra mid
     const qMidHits = hasExtraHits ? 4 : 2;
     return {
+      "flins-normal": {
+        label: { zh: "E普攻（5段）", en: "Normal (5-hit, E)" },
+        parts: [
+          { formula: new DirectFormula(n1, normalTag) },
+          { formula: new DirectFormula(n2, normalTag) },
+          { formula: new DirectFormula(n3, normalTag) },
+          { formula: new DirectFormula(n4, normalTag), hits: 2 },
+          { formula: new DirectFormula(n5, normalTag) },
+        ],
+      },
       "flins-spearstorm": {
         label: {
           zh: this.constellation >= 2 ? "2命 E" : "E",

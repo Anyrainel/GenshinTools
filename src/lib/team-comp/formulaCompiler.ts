@@ -30,6 +30,7 @@ import { StatBuff, StatSheet } from "./damageModels";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
 import type { PartialBuffInfo } from "./stackAllocation";
+import { LUNAR_RANK_WEIGHTS } from "./teamReactions";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -360,6 +361,53 @@ export function compileTeamDamage(
     calcContext
   );
 
+  // Handle team reaction formulas (rx-* prefix)
+  if (formulaId.startsWith("rx-")) {
+    const rp = teamBuild.reactionProvider;
+    const rxEntry = rp.getFormulaEntry(formulaId);
+    if (!rxEntry)
+      throw new Error(`Unknown team reaction formula: ${formulaId}`);
+    const rxFormula = rxEntry.parts[0].formula;
+    const formulaStats = postExprStats[formulaCharId]!;
+
+    let damageExpr: Expr;
+    if (rp.isMultiContributor(formulaId)) {
+      const charExprs: Expr[] = [];
+      for (const cfg of teamBuild.configs) {
+        const charStats = postExprStats[cfg.charId];
+        if (!charStats) continue;
+        charExprs.push(
+          rxFormula.buildExpr(charStats, cfg.charLevel, calcContext)
+        );
+      }
+      if (charExprs.length > 0) {
+        const avgWeight =
+          LUNAR_RANK_WEIGHTS.slice(0, charExprs.length).reduce(
+            (a, b) => a + b,
+            0
+          ) / charExprs.length;
+        damageExpr = simplify(E.mul(E.add(...charExprs), E.const(avgWeight)));
+      } else {
+        damageExpr = E.const(0);
+      }
+    } else {
+      const charLevel =
+        teamBuild.configs.find((c) => c.charId === formulaCharId)?.charLevel ??
+        90;
+      damageExpr = simplify(
+        rxFormula.buildExpr(formulaStats, charLevel, calcContext)
+      );
+    }
+
+    const evaluate = compileExpr(damageExpr);
+    return {
+      varMapping,
+      evaluate,
+      numVars: varMapping.totalVars,
+      damageExpr,
+    };
+  }
+
   // Build formula Expr
   const formulaCharBuild = optCtx.charBuildOrder.find(
     ([id]) => id === formulaCharId
@@ -374,26 +422,23 @@ export function compileTeamDamage(
   const formulaStats = postExprStats[formulaCharId]!;
 
   // Compute off-field ExprStats if the formula has off-field parts
+  // Uses onFieldCharId=null (nobody on-field) for correct off-field buff resolution
   let offFieldFormulaStats: ExprStats | undefined;
+  let offFieldOptCtx: OptimizerContext | undefined;
   if (entry.parts.some((p) => p.offField)) {
-    const otherCharId = optCtx.charBuildOrder
-      .map(([id]) => id)
-      .find((id) => id !== formulaCharId);
-    if (otherCharId) {
-      const offFieldOptCtx = teamBuild.createOptimizerContext(
-        optCtx.baseSheets,
-        [...optCtx.variableCharIds],
-        otherCharId,
-        calcContext
-      );
-      const offFieldPostExprStats = buildPostExprStatsForContext(
-        teamBuild,
-        offFieldOptCtx,
-        varMapping,
-        calcContext
-      );
-      offFieldFormulaStats = offFieldPostExprStats[formulaCharId];
-    }
+    offFieldOptCtx = teamBuild.createOptimizerContext(
+      optCtx.baseSheets,
+      [...optCtx.variableCharIds],
+      null,
+      calcContext
+    );
+    const offFieldPostExprStats = buildPostExprStatsForContext(
+      teamBuild,
+      offFieldOptCtx,
+      varMapping,
+      calcContext
+    );
+    offFieldFormulaStats = offFieldPostExprStats[formulaCharId];
   }
 
   // Pre-build ExprStats variants for partial buff blending
@@ -409,27 +454,16 @@ export function compileTeamDamage(
       varMapping,
       calcContext
     );
-    if (offFieldFormulaStats) {
-      const otherCharId = optCtx.charBuildOrder
-        .map(([id]) => id)
-        .find((id) => id !== formulaCharId);
-      if (otherCharId) {
-        const offFieldOptCtx = teamBuild.createOptimizerContext(
-          optCtx.baseSheets,
-          [...optCtx.variableCharIds],
-          otherCharId,
-          calcContext
-        );
-        offFieldExprVariants = buildExprStatVariants(
-          partialBuffs,
-          entry.parts,
-          formulaCharId,
-          teamBuild,
-          offFieldOptCtx,
-          varMapping,
-          calcContext
-        );
-      }
+    if (offFieldFormulaStats && offFieldOptCtx) {
+      offFieldExprVariants = buildExprStatVariants(
+        partialBuffs,
+        entry.parts,
+        formulaCharId,
+        teamBuild,
+        offFieldOptCtx,
+        varMapping,
+        calcContext
+      );
     }
   }
 
@@ -506,7 +540,12 @@ export function compileComboTeamDamage(
   minCr?: number
 ): CompiledTeamDamage {
   const allFormulas = teamBuild.getFormulaIds();
+  const reactionFormulas = teamBuild.reactionProvider.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
+    if (line.count <= 0) return false;
+    if (line.formulaId.startsWith("rx-")) {
+      return reactionFormulas[line.formulaId] !== undefined;
+    }
     const charFormulas = allFormulas[line.charId];
     return charFormulas?.[line.formulaId];
   });
@@ -521,7 +560,7 @@ export function compileComboTeamDamage(
     };
   }
 
-  // Group lines by on-field character (= calcTargetId)
+  // Group lines by on-field character (= onFieldCharId)
   const linesByCalcTarget = new Map<string, typeof validLines>();
   for (const line of validLines) {
     let group = linesByCalcTarget.get(line.charId);
@@ -534,15 +573,16 @@ export function compileComboTeamDamage(
 
   const varMapping = new VarMapping();
   const allPartExprs: Expr[] = [];
+  const configs = teamBuild.configs;
   // Capture any postExprStats for ER/CR constraint compilation (ER/CR is not
   // on-field-dependent, so any calcTarget's stats work for the constraint char)
   let anyPostExprStats: Record<string, ExprStats> | undefined;
 
-  for (const [calcTargetId, lines] of linesByCalcTarget) {
+  for (const [onFieldCharId, lines] of linesByCalcTarget) {
     const optCtx = teamBuild.createOptimizerContext(
       baseSheets,
       swapCharId,
-      calcTargetId,
+      onFieldCharId,
       calcContext
     );
     const postExprStats = buildPostExprStatsForContext(
@@ -554,6 +594,55 @@ export function compileComboTeamDamage(
     if (!anyPostExprStats) anyPostExprStats = postExprStats;
 
     for (const line of lines) {
+      // Team reaction formula path: compile directly from reactionProvider
+      if (line.formulaId.startsWith("rx-")) {
+        const rp = teamBuild.reactionProvider;
+        const rxEntry = rp.getFormulaEntry(line.formulaId);
+        if (!rxEntry) continue;
+
+        const rxFormula = rxEntry.parts[0].formula;
+
+        if (rp.isMultiContributor(line.formulaId)) {
+          // Multi-contributor lunar: compile per-character exprs and weight
+          // by average rank weight. Rank order can change per artifact set,
+          // so we approximate with equal weighting across all characters.
+          // Exact evaluation uses the interpreted path in getComboDisplayResult.
+          const charExprs: Expr[] = [];
+          for (const cfg of configs) {
+            const charStats = postExprStats[cfg.charId];
+            if (!charStats) continue;
+            charExprs.push(
+              rxFormula.buildExpr(charStats, cfg.charLevel, calcContext)
+            );
+          }
+          if (charExprs.length > 0) {
+            const avgWeight =
+              LUNAR_RANK_WEIGHTS.slice(0, charExprs.length).reduce(
+                (a, b) => a + b,
+                0
+              ) / charExprs.length;
+            const lunarExpr = E.mul(
+              E.add(...charExprs),
+              E.const(avgWeight * line.count)
+            );
+            allPartExprs.push(lunarExpr);
+          }
+        } else {
+          // Single-contributor: compile the trigger character's formula expr
+          const triggerStats = postExprStats[line.charId];
+          if (!triggerStats) continue;
+          const charLevel =
+            configs.find((c) => c.charId === line.charId)?.charLevel ?? 90;
+          const lineExpr = rxFormula.buildExpr(
+            triggerStats,
+            charLevel,
+            calcContext
+          );
+          allPartExprs.push(E.mul(lineExpr, E.const(line.count)));
+        }
+        continue;
+      }
+
       const formulaCharBuild = optCtx.charBuildOrder.find(
         ([id]) => id === line.charId
       )?.[1];
@@ -598,26 +687,23 @@ export function compileComboTeamDamage(
       const formulaStats = postExprStats[line.charId]!;
 
       // Compute off-field ExprStats if the formula has off-field parts
+      // Uses onFieldCharId=null (nobody on-field) for correct off-field buff resolution
       let offFieldFormulaStats: ExprStats | undefined;
+      let lineOffFieldOptCtx: OptimizerContext | undefined;
       if (entry.parts.some((p) => p.offField)) {
-        const otherCharId = optCtx.charBuildOrder
-          .map(([id]) => id)
-          .find((id) => id !== line.charId);
-        if (otherCharId) {
-          const offFieldOptCtx = teamBuild.createOptimizerContext(
-            baseSheets,
-            swapCharId,
-            otherCharId,
-            calcContext
-          );
-          const offFieldPostExprStats = buildPostExprStatsForContext(
-            teamBuild,
-            offFieldOptCtx,
-            varMapping,
-            calcContext
-          );
-          offFieldFormulaStats = offFieldPostExprStats[line.charId];
-        }
+        lineOffFieldOptCtx = teamBuild.createOptimizerContext(
+          baseSheets,
+          swapCharId,
+          null,
+          calcContext
+        );
+        const offFieldPostExprStats = buildPostExprStatsForContext(
+          teamBuild,
+          lineOffFieldOptCtx,
+          varMapping,
+          calcContext
+        );
+        offFieldFormulaStats = offFieldPostExprStats[line.charId];
       }
 
       // Look up by line index first (for per-line combo overrides), then formula key
@@ -639,27 +725,16 @@ export function compileComboTeamDamage(
           varMapping,
           calcContext
         );
-        if (offFieldFormulaStats) {
-          const otherCharId2 = optCtx.charBuildOrder
-            .map(([id]) => id)
-            .find((id) => id !== line.charId);
-          if (otherCharId2) {
-            const offFieldOptCtx2 = teamBuild.createOptimizerContext(
-              baseSheets,
-              swapCharId,
-              otherCharId2,
-              calcContext
-            );
-            lineOffFieldVariants = buildExprStatVariants(
-              lineBuffs,
-              entry.parts,
-              line.charId,
-              teamBuild,
-              offFieldOptCtx2,
-              varMapping,
-              calcContext
-            );
-          }
+        if (offFieldFormulaStats && lineOffFieldOptCtx) {
+          lineOffFieldVariants = buildExprStatVariants(
+            lineBuffs,
+            entry.parts,
+            line.charId,
+            teamBuild,
+            lineOffFieldOptCtx,
+            varMapping,
+            calcContext
+          );
         }
       }
 
@@ -926,7 +1001,7 @@ function applyDynamicBuffExprs(
         { target: dbExpr.target, source: dbExpr.source } as StatBuff,
         dbExpr.providerCharId,
         id,
-        id === optCtx.calcTargetId,
+        id === optCtx.onFieldCharId,
         teamBuild.teamMeta.regions[id],
         teamBuild.teamMeta.factions[id]
       )

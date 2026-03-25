@@ -28,7 +28,7 @@ export class ConstraintChecker {
     teamBuild: TeamBuild,
     charId: string,
     baseSheets: Record<string, StatSheet>,
-    calcTargetId: string,
+    onFieldCharId: string,
     calcContext: CalcContext,
     minEr: number,
     minCr: number
@@ -44,7 +44,7 @@ export class ConstraintChecker {
       const blSheets = { ...baseSheets, [charId]: new StatSheet([]) };
       const blStats = teamBuild.getTeamStats(
         blSheets,
-        calcTargetId,
+        onFieldCharId,
         calcContext
       );
       this.erFloor = this.hasEr ? (blStats[charId]?.get("er", null) ?? 0) : 0;

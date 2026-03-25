@@ -15,7 +15,6 @@ import {
   rollToInternal,
 } from "./constrainedGreedy";
 import type { TeamBuild } from "./damageCalc";
-import { evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import {
   ER_20_HALF_SET_ID,
@@ -41,7 +40,6 @@ import {
 import type {
   CalcContext,
   ComboFormula,
-  ComboResult,
   FormulaContext,
   PartialBuffInfo,
   ReactionOverride,
@@ -75,8 +73,6 @@ export interface GeneratorOptions {
 export interface GeneratorResult {
   artifactsByChar: Record<string, Record<Slot, ArtifactData>>;
   sheetsByChar: Record<string, StatSheet>;
-  damage: number;
-  comboResult: ComboResult | null;
   phase: string;
   progress: number;
   done: boolean;
@@ -807,13 +803,8 @@ export async function* runGenerator(
       allCharIds,
       phase,
       step / totalSteps,
-      teamBuild,
-      combo,
-      calcContext,
       charRv,
-      setKeysByChar,
-      reactionOverrides,
-      buffOverrides
+      setKeysByChar
     );
 
   // ── Helper: compute ER/CR gap for a character ──
@@ -1185,27 +1176,9 @@ export async function* runGenerator(
     sheetsByChar[charId] = currentSheets[charId] ?? new StatSheet([]);
   }
 
-  let damage = 0;
-  let finalComboResult: ComboResult | null = null;
-  try {
-    finalComboResult = evaluateCombo(
-      teamBuild,
-      combo,
-      currentSheets,
-      calcContext,
-      reactionOverrides,
-      buffOverrides
-    );
-    damage = finalComboResult.totalDamage;
-  } catch (e) {
-    console.warn(`[generator] final damage calc failed for ${carryCharId}:`, e);
-  }
-
   yield {
     artifactsByChar,
     sheetsByChar,
-    damage,
-    comboResult: finalComboResult,
     phase: "done",
     progress: 1,
     done: true,
@@ -1221,13 +1194,8 @@ function makeResult(
   allCharIds: string[],
   phase: string,
   progress: number,
-  teamBuild: TeamBuild,
-  combo: ComboFormula,
-  ctx: CalcContext,
   charRvMap: Record<string, Record<SubStat, number>>,
-  setKeysByChar?: Record<string, Record<Slot, string>>,
-  reactionOverrides?: Record<string, ReactionOverride>,
-  buffOverrides?: Record<number, PartialBuffInfo[]>
+  setKeysByChar?: Record<string, Record<Slot, string>>
 ): GeneratorResult {
   const artifactsByChar: Record<string, Record<Slot, ArtifactData>> = {};
   const sheetsByChar: Record<string, StatSheet> = {};
@@ -1247,27 +1215,9 @@ function makeResult(
     }
   }
 
-  let damage = 0;
-  let comboResult: ComboResult | null = null;
-  try {
-    comboResult = evaluateCombo(
-      teamBuild,
-      combo,
-      currentSheets,
-      ctx,
-      reactionOverrides,
-      buffOverrides
-    );
-    damage = comboResult.totalDamage;
-  } catch (e) {
-    console.warn("[generator] snapshot damage calc failed:", e);
-  }
-
   return {
     artifactsByChar,
     sheetsByChar,
-    damage,
-    comboResult,
     phase,
     progress,
     done: false,

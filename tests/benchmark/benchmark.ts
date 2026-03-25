@@ -21,7 +21,7 @@
  *   --problem KEY             Run a single problem by key (teamId::formulaId)
  *   --timeout SECS            Per-team timeout (default: 30)
  *   --algo v1|v2|astar|mona|monaV2  Algorithm to run (default: v2)
- *   --parallel N              Run N problems in parallel (default: CPU cores - 2)
+ *   --parallel N              Run N problems in parallel (default: CPU cores - 4)
  *   --sequential              Disable parallelism (requires --filter or --problem)
  *   --max-arts N              Max artifacts per slot for B&B pre-filtering
  *   --diag                    Enable diagnostic logging
@@ -3051,7 +3051,7 @@ async function main(): Promise<void> {
         "  --problem KEY      Run single problem (supports partial match)\n" +
         "  --timeout SECS     Per-team timeout (default: 30)\n" +
         "  --algo v1|v2|astar|mona|monaV2       Algorithm (default: v2 for run, v1 for enrich)\n" +
-        "  --parallel N       Run N problems in parallel (default: CPU cores - 2)\n" +
+        "  --parallel N       Run N problems in parallel (default: CPU cores - 4)\n" +
         "  --sequential       Disable parallelism (requires --filter or --problem)\n" +
         "  --max-arts N       Max artifacts per slot for B&B pre-filtering\n" +
         "  --diag             Enable diagnostic logging"
@@ -3117,7 +3117,7 @@ async function main(): Promise<void> {
           : parseFlagInt(
               args,
               "--parallel",
-              Math.max(1, availableParallelism() - 2)
+              Math.max(1, availableParallelism() - 4)
             ),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),
@@ -3160,7 +3160,7 @@ async function main(): Promise<void> {
           : parseFlagInt(
               args,
               "--parallel",
-              Math.max(1, availableParallelism() - 2)
+              Math.max(1, availableParallelism() - 4)
             ),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),

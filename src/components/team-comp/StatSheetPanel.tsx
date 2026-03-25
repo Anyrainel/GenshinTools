@@ -51,8 +51,6 @@ type Props = {
   onFreezeChar?: (charId: string) => void;
   /** Callback to unfreeze a character's artifacts */
   onUnfreezeChar?: (charId: string) => void;
-  /** Characters detected as intrinsically saturated by the optimizer. */
-  saturatedCharIds?: string[];
 };
 
 const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
@@ -290,7 +288,6 @@ export function StatSheetPanel({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
-  saturatedCharIds,
 }: Props) {
   // Per-character open view: null = collapsed
   const [openViews, setOpenViews] = useState<Record<string, ViewMode | null>>(
@@ -314,8 +311,6 @@ export function StatSheetPanel({
 
   // Hide chevrons on view-mode bar when below desktop width
   const showChevrons = useMediaQuery("(min-width: 1280px)");
-
-  const hasStatSheets = result?.statSheets != null;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2">
@@ -369,12 +364,7 @@ export function StatSheetPanel({
                 className="w-5 h-5 md:w-7 md:h-7 rounded-full bg-black/20 shrink-0"
                 alt={charId}
               />
-              <span
-                className={cn(
-                  "font-bold text-xs md:text-sm truncate",
-                  isTarget ? "text-primary/90" : "text-foreground/70"
-                )}
-              >
+              <span className="font-bold text-xs md:text-sm truncate text-foreground/70">
                 {t.character(charId)}
               </span>
               {result && !isTarget && marginalKeys.length === 0 && (
@@ -386,7 +376,7 @@ export function StatSheetPanel({
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="max-w-64 text-xs">
                     <p>{t.ui("teamComp.saturatedTooltip")}</p>
-                    {saturatedCharIds?.includes(charId) && (
+                    {result.intrinsicSaturatedCharIds?.includes(charId) && (
                       <p className="mt-1.5 text-amber-400/80">
                         {t.ui("teamComp.saturatedIntrinsicHint")}
                       </p>
@@ -507,20 +497,11 @@ export function StatSheetPanel({
                 t={t}
               />
             )}
-            {result && activeView === "combat" && hasStatSheets && (
+            {result && activeView === "combat" && (
               <ConditionalView
                 charId={charId}
                 result={result}
                 primary={primary}
-                highlightedStat={highlightedStat}
-                onStatHover={onStatHover}
-                t={t}
-              />
-            )}
-            {result && activeView === "combat" && !hasStatSheets && (
-              <LegacyStatView
-                charId={charId}
-                result={result}
                 highlightedStat={highlightedStat}
                 onStatHover={onStatHover}
                 t={t}
@@ -867,73 +848,6 @@ function ConditionalView({
           )}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-// ─── Legacy View (fallback during migration) ───
-
-function LegacyStatView({
-  charId,
-  result,
-  highlightedStat,
-  onStatHover,
-  t,
-}: {
-  charId: string;
-  result: DisplayResult;
-  highlightedStat: HighlightedStat;
-  onStatHover: (stat: HighlightedStat) => void;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
-  const idle = result.idleStats[charId] || {};
-  const combat = result.combatStats[charId] || {};
-
-  const allKeys = new Set([
-    ...REQUIRED_STATS,
-    ...(Object.keys(idle) as StatKey[]),
-    ...(Object.keys(combat) as StatKey[]),
-  ]);
-  const sortedKeys = getSortedKeys(allKeys);
-
-  return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-2 gap-y-[1px] p-2 bg-black/20 pt-1">
-      {sortedKeys.map((k) => {
-        const cVal = (combat[k] as number) || 0;
-        if (cVal === 0 && !REQUIRED_STATS.includes(k)) return null;
-        return (
-          <div
-            key={k}
-            onMouseEnter={() => onStatHover({ key: k, charId })}
-            onMouseLeave={() => onStatHover(null)}
-            onClick={() =>
-              onStatHover(
-                isKeyHighlighted(highlightedStat, charId, k)
-                  ? null
-                  : { key: k, charId }
-              )
-            }
-            className={cn(
-              "flex items-center justify-between px-1.5 py-1 rounded-sm hover:bg-white/5 transition-colors cursor-default text-[10px] md:text-xs",
-              isKeyHighlighted(highlightedStat, charId, k)
-                ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
-                : ""
-            )}
-          >
-            <span className="flex-1 min-w-0 truncate pr-2 opacity-80">
-              {t.statShort(k)}
-            </span>
-            <div className="shrink-0 text-right font-mono font-medium">
-              {fmtStat(k, cVal)}
-            </div>
-          </div>
-        );
-      })}
-      {sortedKeys.length === 0 && (
-        <span className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center col-span-2">
-          {t.ui("teamComp.noStatsResolved")}
-        </span>
-      )}
     </div>
   );
 }

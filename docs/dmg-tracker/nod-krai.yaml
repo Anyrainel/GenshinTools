@@ -37,3 +37,20 @@
     damage and E meowball damage may be significant in rotation context.
   created: "2026-03-22"
   resolved: null
+
+- id: flins-e-normal-combo
+  entity: flins
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    Missing E-enhanced normal attack combo formula. Flins's E transforms NAs to
+    Electro DMG with different multipliers from the E talent table, used heavily
+    in rotation (N4D×2, N2, N4D, N5).
+  detail: >
+    Added DirectFormula normal combo "flins-normal" (5 parts, N4 hits:2) with
+    E talent table multipliers: Lv10 N1=1.048, N2=1.058, N3=1.311, N4=0.751×2,
+    N5=1.80; Lv13 (C5+) N1=1.238, N2=1.249, N3=1.548, N4=0.887×2, N5=2.125.
+    Tag: Electro/normal/none. Updated defaultCombo to include flins-normal: 2.
+  created: "2026-03-25"
+  resolved: "2026-03-25"

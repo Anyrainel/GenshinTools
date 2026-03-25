@@ -300,7 +300,7 @@ class Emilie extends CharacterBase {
       ...(this.constellation >= 6
         ? {
             "emilie-c6-normal": {
-              label: { zh: "6命 普攻一套", en: "C6 Normal Combo" },
+              label: { zh: "6命 普攻（4段）", en: "C6 Normal (4-hit)" },
               parts: normalParts,
             },
           }
@@ -770,8 +770,8 @@ class Furina extends CharacterBase {
         ? {
             "furina-c6-normal": {
               label: {
-                zh: "6命 普攻一套",
-                en: "C6 Normal Combo",
+                zh: "6命 普攻（4段）",
+                en: "C6 Normal (4-hit)",
               },
               parts: [
                 {
@@ -1004,8 +1004,8 @@ class Wriothesley extends CharacterBase {
     return {
       "wriothesley-normal": {
         label: {
-          zh: "普攻全套",
-          en: "Normal Combo",
+          zh: "普攻（5段）",
+          en: "Normal (5-hit)",
         },
         parts: [
           { formula: new DirectFormula(n1, normalTag) },

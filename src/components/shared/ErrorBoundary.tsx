@@ -4,14 +4,29 @@ import { cn } from "@/lib/utils";
 import { AlertTriangle, Home, RefreshCw, Trash2 } from "lucide-react";
 import React, { type ErrorInfo, type ReactNode } from "react";
 
+/** Detect stale-chunk / dynamic-import failures (post-deploy cache mismatch). */
+function isChunkLoadError(error?: Error): boolean {
+  if (!error) return false;
+  const msg = error.message || "";
+  return (
+    msg.includes("Failed to fetch dynamically imported module") ||
+    msg.includes("Importing a module script failed") ||
+    msg.includes("error loading dynamically imported module") ||
+    error.name === "ChunkLoadError" ||
+    msg.includes("Unable to preload CSS")
+  );
+}
+
 interface Props {
   children: ReactNode;
   onClearData?: () => void;
   clearLabel?: string;
   refreshLabel?: string;
+  reloadLabel?: string;
   homeLabel?: string;
   errorTitle?: string;
   errorDefaultMsg?: string;
+  chunkErrorMsg?: string;
   isSection?: boolean;
 }
 
@@ -44,6 +59,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
     window.location.reload();
   };
 
+  /** Cache-busting reload: appends a unique query param so the browser fetches a fresh index.html. */
+  private handleCacheBustReload = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("_r", String(Date.now()));
+    window.location.replace(url.toString());
+  };
+
   private handleHome = () => {
     window.location.href = import.meta.env.BASE_URL || "/";
   };
@@ -51,6 +73,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       const { isSection } = this.props;
+      const isChunkError = isChunkLoadError(this.state.error);
 
       return (
         <div
@@ -89,9 +112,25 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   this.props.errorDefaultMsg ||
                   "An unexpected error occurred."}
               </div>
+              {isChunkError && (
+                <p className="text-muted-foreground text-sm">
+                  {this.props.chunkErrorMsg ||
+                    "This usually means the app was updated. A cache-busting reload should fix it."}
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2 w-full pt-2">
+              {isChunkError && (
+                <Button
+                  onClick={this.handleCacheBustReload}
+                  size={isSection ? "sm" : "default"}
+                  className="w-full gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  {this.props.reloadLabel || "Reload"}
+                </Button>
+              )}
               {this.props.onClearData && (
                 <Button
                   onClick={this.handleClear}
@@ -148,6 +187,7 @@ export function PageErrorBoundary({
       onClearData={onClearData}
       clearLabel={clearLabel || t.ui("common.clear")}
       refreshLabel={t.ui("common.refresh") || "Refresh Page"}
+      reloadLabel={t.ui("common.reload") || "Reload"}
       homeLabel={t.ui("common.home") || "Home"}
       errorTitle={t.ui("common.error") || "Error"}
       errorDefaultMsg={
@@ -155,6 +195,7 @@ export function PageErrorBoundary({
           ? t.ui("common.errorMsg")
           : "An unexpected error occurred."
       }
+      chunkErrorMsg={t.ui("common.appUpdatedMsg") || undefined}
     >
       {children}
     </ErrorBoundary>
@@ -174,6 +215,7 @@ export function SectionErrorBoundary({
       onClearData={onClearData}
       clearLabel={t.ui("common.clear")}
       refreshLabel={t.ui("common.refresh") || "Refresh Page"}
+      reloadLabel={t.ui("common.reload") || "Reload"}
       homeLabel={t.ui("common.home") || "Home"}
       errorTitle={t.ui("common.error") || "Error"}
       errorDefaultMsg={
@@ -181,6 +223,7 @@ export function SectionErrorBoundary({
           ? t.ui("common.errorMsg")
           : "An unexpected error occurred."
       }
+      chunkErrorMsg={t.ui("common.appUpdatedMsg") || undefined}
       isSection
     >
       {children}

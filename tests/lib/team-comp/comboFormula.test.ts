@@ -188,7 +188,7 @@ describe("evaluateCombo", () => {
     );
   });
 
-  it("lines with count=0 do not contribute damage", () => {
+  it("lines with count=0 are filtered out entirely", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = dilucEmptySheets();
@@ -203,10 +203,10 @@ describe("evaluateCombo", () => {
     };
 
     const result = evaluateCombo(tb, combo, sheets, CTX);
-    expect(result.lineDamages[0].total).toBe(0);
-    expect(result.lineDamages[1].total).toBeGreaterThan(0);
-    // Total should equal just the second line
-    expect(result.totalDamage).toBeCloseTo(result.lineDamages[1].total, 2);
+    // count=0 line is dropped — only the count=1 line remains
+    expect(result.lineDamages).toHaveLength(1);
+    expect(result.lineDamages[0].total).toBeGreaterThan(0);
+    expect(result.totalDamage).toBeCloseTo(result.lineDamages[0].total, 2);
   });
 
   it("empty combo (all counts 0) has totalDamage = 0", () => {
@@ -328,7 +328,7 @@ describe("getComboDisplayResult", () => {
     expect(displayResult.totalDamage).toBeCloseTo(comboResult.totalDamage, 2);
   });
 
-  it("combatStats are populated for all team characters", () => {
+  it("statSheets are populated for all team characters", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = dilucEmptySheets();
@@ -341,25 +341,9 @@ describe("getComboDisplayResult", () => {
 
     const result = getComboDisplayResult(tb, combo, sheets, CTX);
     for (const charId of ["diluc", "xingqiu", "bennett", "kaedehara_kazuha"]) {
-      expect(result.combatStats[charId]).toBeDefined();
-      expect(typeof result.combatStats[charId]).toBe("object");
-    }
-  });
-
-  it("idleStats are populated for all team characters", () => {
-    const tb = makeTeamBuild();
-    const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = dilucEmptySheets();
-
-    const combo: ComboFormula = {
-      id: "idle",
-      label: { zh: "空闲", en: "Idle" },
-      lines: [{ charId: "diluc", formulaId, count: 1 }],
-    };
-
-    const result = getComboDisplayResult(tb, combo, sheets, CTX);
-    for (const charId of ["diluc", "xingqiu", "bennett", "kaedehara_kazuha"]) {
-      expect(result.idleStats[charId]).toBeDefined();
+      expect(result.statSheets[charId]).toBeDefined();
+      expect(result.statSheets[charId].onField).toBeDefined();
+      expect(result.statSheets[charId].offField).toBeDefined();
     }
   });
 
@@ -407,7 +391,7 @@ describe("runTeamOptimization — combo mode", () => {
     xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
   };
 
-  it("combo mode yields result with bestComboResult", async () => {
+  it("combo mode yields result with bestDamage > 0", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
@@ -432,12 +416,11 @@ describe("runTeamOptimization — combo mode", () => {
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     if (final.done) {
-      expect(final.bestComboResult).toBeDefined();
-      expect(final.bestComboResult.lineDamages).toHaveLength(1);
+      expect(final.bestDamage).toBeGreaterThan(0);
     }
   });
 
-  it("single-formula combo yields result with bestComboResult", async () => {
+  it("single-formula combo yields result with bestDamage > 0", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
@@ -456,7 +439,7 @@ describe("runTeamOptimization — combo mode", () => {
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     if (final.done) {
-      expect(final.bestComboResult).toBeDefined();
+      expect(final.bestDamage).toBeGreaterThan(0);
     }
   });
 
@@ -598,11 +581,10 @@ describe("runGenerator — combo mode", () => {
     const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
-    expect(final.comboResult).toBeDefined();
-    expect(final.comboResult!.totalDamage).toBeGreaterThan(0);
+    expect(Object.keys(final.artifactsByChar)).toContain("diluc");
   });
 
-  it("single-formula combo result includes comboResult", async () => {
+  it("single-formula combo result has artifacts", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
@@ -616,30 +598,7 @@ describe("runGenerator — combo mode", () => {
     const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
-    expect(final.comboResult).toBeDefined();
-  });
-
-  it("combo generator damage should be > 0", async () => {
-    const tb = makeTeamBuild();
-    const formulaId = getFirstFormulaId(tb, "diluc");
-
-    const combo: ComboFormula = {
-      id: "gen-dmg",
-      label: { zh: "伤害", en: "Damage" },
-      lines: [{ charId: "diluc", formulaId, count: 3 }],
-    };
-
-    const opts: GeneratorOptions = {
-      teamBuild: tb,
-      carryCharId: "diluc",
-      formula: { combo },
-      calcContext: CTX,
-    };
-
-    const results = await drain(runGenerator(opts));
-    const final = results[results.length - 1];
-    expect(final.done).toBe(true);
-    expect(final.damage).toBeGreaterThan(0);
+    expect(Object.keys(final.artifactsByChar)).toContain("diluc");
   });
 });
 

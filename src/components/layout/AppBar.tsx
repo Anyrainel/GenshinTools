@@ -19,7 +19,11 @@ import {
 } from "@/components/ui/sheet";
 import { getNavigationConfig } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { THEME_IDS, type ThemeId, useTheme } from "@/contexts/ThemeContext";
+import {
+  SELECTABLE_THEME_IDS,
+  type ThemeId,
+  useTheme,
+} from "@/contexts/ThemeContext";
 
 import { cn, getAssetUrl } from "@/lib/utils";
 import {
@@ -147,11 +151,13 @@ export function AppBar({
 
   const navItems = getNavigationConfig(t);
 
-  // Split actions: help actions go to context menu, rest split by alwaysShow
-  const helpActions = actions?.filter((a) => a.key === "help") ?? [];
-  const nonHelpActions = actions?.filter((a) => a.key !== "help") ?? [];
-  const alwaysShowActions = nonHelpActions.filter((a) => a.alwaysShow);
-  const collapsibleActions = nonHelpActions.filter((a) => !a.alwaysShow);
+  // Split actions: help & clear always go to context menu, rest split by alwaysShow
+  const menuOnlyActions =
+    actions?.filter((a) => a.key === "help" || a.key === "clear") ?? [];
+  const visibleActions =
+    actions?.filter((a) => a.key !== "help" && a.key !== "clear") ?? [];
+  const alwaysShowActions = visibleActions.filter((a) => a.alwaysShow);
+  const collapsibleActions = visibleActions.filter((a) => !a.alwaysShow);
   const hasCollapsibleActions = collapsibleActions.length > 0;
   const hasTabs = tabs && tabs.length > 0;
   const isHomePage = location.pathname === "/";
@@ -388,9 +394,9 @@ export function AppBar({
                     {hasCollapsibleActions && <DropdownMenuSeparator />}
                   </div>
 
-                  {helpActions.length > 0 && (
+                  {menuOnlyActions.length > 0 && (
                     <>
-                      {helpActions.map((action) => (
+                      {menuOnlyActions.map((action) => (
                         <DropdownMenuItem
                           key={action.key}
                           onClick={action.onTrigger}
@@ -411,7 +417,7 @@ export function AppBar({
                     </DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                       <DropdownMenuSubContent>
-                        {THEME_IDS.map((themeId: ThemeId) => (
+                        {SELECTABLE_THEME_IDS.map((themeId: ThemeId) => (
                           <DropdownMenuItem
                             key={themeId}
                             onClick={() => setTheme(themeId)}
@@ -478,7 +484,7 @@ export function AppBar({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="min-w-0">
-                    {THEME_IDS.map((themeId: ThemeId) => (
+                    {SELECTABLE_THEME_IDS.map((themeId: ThemeId) => (
                       <DropdownMenuItem
                         key={themeId}
                         onClick={() => setTheme(themeId)}

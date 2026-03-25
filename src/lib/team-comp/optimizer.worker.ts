@@ -80,6 +80,7 @@ export type BnBWorkerResponse =
       evaluations: number;
       failReason?: OptFailReason;
       substatWeights?: Record<string, number>;
+      usedFallbackWeights?: boolean;
     }
   | { id: number; type: "error"; error: string }
   | { id: number; type: "ready" };
@@ -160,6 +161,7 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       evaluations: result.evaluations,
       failReason: result.failReason,
       substatWeights: result.marginalWeights?.substatWeights,
+      usedFallbackWeights: result.usedFallbackWeights,
     } satisfies BnBWorkerResponse);
   } catch (err) {
     self.postMessage({

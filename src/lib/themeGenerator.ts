@@ -20,6 +20,7 @@ interface ThemeSeed {
   base: HSL; // Background floor, darkest layer
   glow1: HSL; // Primary accent, center glow (elemental color)
   glow2: HSL; // Secondary accent, arm glow
+  pageDim?: number; // Reduce page gradient glow lightness to ease eye strain (default 0)
 }
 
 /**
@@ -33,6 +34,7 @@ export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
     base: { h: 175, s: 14, l: 10 },
     glow1: { h: 170, s: 38, l: 25 }, // Anemo sky teal
     glow2: { h: 185, s: 32, l: 22 },
+    pageDim: 3,
   },
   liyue: {
     name: "Liyue",
@@ -43,32 +45,36 @@ export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
   inazuma: {
     name: "Inazuma",
     base: { h: 275, s: 16, l: 8 },
-    glow1: { h: 272, s: 38, l: 23 }, // Electro purple
-    glow2: { h: 285, s: 34, l: 20 },
+    glow1: { h: 272, s: 34, l: 23 }, // Electro purple
+    glow2: { h: 285, s: 30, l: 20 },
+    pageDim: 4,
   },
   sumeru: {
     name: "Sumeru",
     base: { h: 85, s: 14, l: 9 },
     glow1: { h: 84, s: 40, l: 20 }, // Dendro green
     glow2: { h: 95, s: 34, l: 17 },
+    pageDim: 2,
   },
   fontaine: {
     name: "Fontaine",
     base: { h: 210, s: 22, l: 8 },
-    glow1: { h: 205, s: 52, l: 25 }, // Hydro ocean blue
-    glow2: { h: 218, s: 44, l: 21 },
+    glow1: { h: 205, s: 48, l: 25 }, // Hydro ocean blue
+    glow2: { h: 218, s: 40, l: 21 },
+    pageDim: 2,
   },
   natlan: {
     name: "Natlan",
-    base: { h: 5, s: 20, l: 10 },
-    glow1: { h: 4, s: 48, l: 24 }, // Pyro red
-    glow2: { h: 350, s: 42, l: 20 },
+    base: { h: 5, s: 16, l: 10 },
+    glow1: { h: 4, s: 36, l: 24 }, // Pyro red
+    glow2: { h: 350, s: 31, l: 20 },
+    pageDim: 4,
   },
   snezhnaya: {
     name: "Snezhnaya",
-    base: { h: 215, s: 18, l: 12 }, // Frosty base
-    glow1: { h: 210, s: 45, l: 30 }, // Cryo ice blue
-    glow2: { h: 225, s: 36, l: 25 },
+    base: { h: 215, s: 5, l: 13 }, // Frosty base
+    glow1: { h: 210, s: 14, l: 32 }, // Cryo ice gray
+    glow2: { h: 225, s: 11, l: 27 },
   },
   nodkrai: {
     name: "Nod-Krai",
@@ -81,6 +87,7 @@ export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
     base: { h: 270, s: 22, l: 3 }, // Near-black void
     glow1: { h: 278, s: 38, l: 13 }, // Corruption purple
     glow2: { h: 315, s: 32, l: 9 }, // Crimson hints
+    pageDim: -2,
   },
 };
 
@@ -126,6 +133,7 @@ function lerpHue(h1: number, h2: number, t: number): number {
  */
 function generatePageGradient(seed: ThemeSeed, isAbyss: boolean): string {
   const { base, glow1, glow2 } = seed;
+  const dim = seed.pageDim ?? 0;
   const vArmOffset = isAbyss ? -5 : 4; // Abyss V-arm near-invisible
 
   // NOTE: All layers MUST be gradient functions (not plain colors)
@@ -134,17 +142,17 @@ function generatePageGradient(seed: ThemeSeed, isAbyss: boolean): string {
   return `
     radial-gradient(
       ellipse 85% 75% at 50% 50%,
-      ${hsl(glow1.h, glow1.s + 5, glow1.l + 7)} 0%,
+      ${hsl(glow1.h, glow1.s + 5, glow1.l + 7 - dim)} 0%,
       transparent 92%
     ),
     radial-gradient(
       ellipse 170% 60% at 50% 50%,
-      ${hsl(glow2.h, glow2.s + 3, glow2.l + 5)} 0%,
+      ${hsl(glow2.h, glow2.s + 3, glow2.l + 5 - dim)} 0%,
       transparent 94%
     ),
     radial-gradient(
       ellipse 60% 165% at 50% 50%,
-      ${hsl(glow2.h, glow2.s + 2, glow2.l + vArmOffset)} 0%,
+      ${hsl(glow2.h, glow2.s + 2, glow2.l + vArmOffset - dim)} 0%,
       transparent 92%
     ),
     radial-gradient(

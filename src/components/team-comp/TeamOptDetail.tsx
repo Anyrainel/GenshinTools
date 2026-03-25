@@ -57,7 +57,7 @@ import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Info } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnalyzerDialog } from "./AnalyzerDialog";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
@@ -97,15 +97,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     teamCharIds.every((id) => frozenCharIdSet.has(id));
   const isPartiallyFrozen = isFrozen && !isFullyFrozen;
 
-  // Ephemeral cache of freeze store artifacts — survives unfreeze within this session
-  const cachedFreezeArtifacts = useRef<
-    Record<string, Record<Slot, ArtifactData | null>>
-  >({});
-  // Keep cache in sync with freeze store
-  const frozenTeamData = freezeStore.getFrozenTeam(team.id);
-  if (frozenTeamData?.artifactsByChar) {
-    cachedFreezeArtifacts.current = frozenTeamData.artifactsByChar;
-  }
+  // Restored artifacts from unfreeze — treated like optimizer results so
+  // freeze/unfreeze/re-freeze all work without special-case state management.
+  const [restoredArtifacts, setRestoredArtifacts] = useState<Record<
+    string,
+    Record<string, ArtifactData>
+  > | null>(null);
 
   const { characterStats, weaponStats, ready: gameStatsReady } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
@@ -217,8 +214,19 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         }
       }
     }
+    // Include team reaction formulas so rx- selections validate
+    if (teamBuild) {
+      const rxFormulas = teamBuild.getReactionFormulaIds();
+      for (const [formulaId, label] of Object.entries(rxFormulas)) {
+        const eligible =
+          teamBuild.reactionProvider.getEligibleCharacters(formulaId);
+        for (const charId of eligible) {
+          list.push({ charId, formulaId, label });
+        }
+      }
+    }
     return list;
-  }, [validCharIds, availableFormulas]);
+  }, [validCharIds, availableFormulas, teamBuild]);
 
   const resolvedFormula = useMemo(() => {
     if (!team.selectedFormula) return allFormulas[0] || null;
@@ -440,7 +448,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // ─── Damage Calculations (always via combo path) ───
 
-  const { comboResult, comboDisplay: currentDisplayResult } = useMemo(
+  const currentDisplayResult = useMemo(
     () =>
       calcComboResults(
         teamBuild,
@@ -482,8 +490,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (!teamBuild || !accountData) return;
     if (!resolvedFormula && formulaMode !== "combo") return;
 
-    // Clear any ephemeral swap overrides when re-optimizing
+    // Clear any ephemeral state when re-optimizing
     setSwapOverrides({});
+    setRestoredArtifacts(null);
 
     // In combo mode, pick the first combo character as the nominal carry
     const carryCharId =
@@ -622,8 +631,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const optimizedArtifactsByChar = useMemo(() => {
     const map: Record<string, Record<string, ArtifactData>> = {};
     const frozenData = freezeStore.getFrozenTeam(team.id);
-    const artifactSource =
-      frozenData?.artifactsByChar ?? cachedFreezeArtifacts.current;
     const hasFrozenChars = frozenData
       ? frozenData.frozenCharIds.length > 0
       : false;
@@ -638,19 +645,21 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       }
     }
 
-    // Layer 1: Apply stored artifacts from freeze store (or ephemeral cache after unfreeze)
-    for (const [cid, arts] of Object.entries(artifactSource)) {
-      if (arts) {
-        map[cid] = { ...(arts as Record<string, ArtifactData>) };
+    // Layer 1: Frozen chars — apply freeze store artifacts (only for frozen chars)
+    if (frozenData) {
+      for (const cid of frozenData.frozenCharIds) {
+        const arts = frozenData.artifactsByChar[cid];
+        if (arts) {
+          map[cid] = { ...(arts as Record<string, ArtifactData>) };
+        }
       }
     }
 
-    // Layer 2: Apply optimizer results for unfrozen chars
+    // Layer 2: Non-frozen chars — optimizer results, restored artifacts, or intermediate results
     if (teamResult?.done) {
       for (const [charId, arts] of Object.entries(
         teamResult.bestArtifactsByChar
       )) {
-        // Don't overwrite frozen chars with optimizer results
         if (frozenData?.frozenCharIds.includes(charId)) continue;
         map[charId] = { ...(arts as Record<string, ArtifactData>) };
       }
@@ -658,12 +667,20 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       // During optimization: show intermediate best artifacts from completed phases
       for (const pr of teamProgress.passResults) {
         if (frozenData?.frozenCharIds.includes(pr.charId)) continue;
-        if (pr.bestDamage <= 0) continue; // skip failed/empty results
+        if (pr.bestDamage <= 0) continue;
         const arts: Record<string, ArtifactData> = {};
         for (const [slot, art] of Object.entries(pr.bestArtifacts)) {
           if (art) arts[slot] = art;
         }
         if (Object.keys(arts).length > 0) map[pr.charId] = arts;
+      }
+    } else if (restoredArtifacts) {
+      // After unfreeze: restored artifacts fill in for non-frozen chars
+      for (const [charId, arts] of Object.entries(restoredArtifacts)) {
+        if (frozenData?.frozenCharIds.includes(charId)) continue;
+        if (arts && Object.values(arts).some(Boolean)) {
+          map[charId] = { ...arts };
+        }
       }
     }
 
@@ -682,6 +699,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     freezeStore,
     team.id,
     swapOverrides,
+    restoredArtifacts,
   ]);
 
   const optArtifactSheets = useMemo(
@@ -691,16 +709,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const hasFrozenResult =
     isFrozen && freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null;
-  const hasCachedArtifacts =
-    Object.keys(cachedFreezeArtifacts.current).length > 0;
   const hasOptResult =
-    teamResult?.done || hasFrozenResult || hasCachedArtifacts || isComputing;
+    teamResult?.done || hasFrozenResult || !!restoredArtifacts || isComputing;
   const hasAnyResult = hasOptResult;
 
   // Use rebuilt TeamBuild from optimizer result if sets were adjusted
   const optTeamBuild = teamResult?.teamBuild ?? teamBuild;
 
-  const { comboDisplay: optimizedDisplayResult } = useMemo(
+  const optimizedDisplayResult = useMemo(
     () =>
       hasOptResult
         ? calcComboResults(
@@ -711,7 +727,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             displayReactionOverrides,
             buffOverrides
           )
-        : { comboResult: null, comboDisplay: null },
+        : null,
     [
       optTeamBuild,
       displayCombo,
@@ -852,29 +868,28 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [genArtifactsByChar, effectiveTeam.characters]
   );
 
-  const { comboResult: genComboResultRecalc, comboDisplay: genDisplayResult } =
-    useMemo(
-      () =>
-        genResult?.done
-          ? calcComboResults(
-              teamBuild,
-              displayCombo,
-              genArtifactSheets,
-              displayContext,
-              displayReactionOverrides,
-              buffOverrides
-            )
-          : { comboResult: null, comboDisplay: null },
-      [
-        teamBuild,
-        displayCombo,
-        genArtifactSheets,
-        genResult?.done,
-        displayContext,
-        displayReactionOverrides,
-        buffOverrides,
-      ]
-    );
+  const genDisplayResult = useMemo(
+    () =>
+      genResult?.done
+        ? calcComboResults(
+            teamBuild,
+            displayCombo,
+            genArtifactSheets,
+            displayContext,
+            displayReactionOverrides,
+            buffOverrides
+          )
+        : null,
+    [
+      teamBuild,
+      displayCombo,
+      genArtifactSheets,
+      genResult?.done,
+      displayContext,
+      displayReactionOverrides,
+      buffOverrides,
+    ]
+  );
 
   // ─── Artifact Swap (ephemeral local overrides) ───
 
@@ -938,7 +953,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     !isFullyFrozen &&
     ((teamResult?.done === true && teamResult.bestDamage > 0) ||
       freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null ||
-      Object.keys(cachedFreezeArtifacts.current).length > 0);
+      restoredArtifacts != null);
 
   // ─── Analyzer Dialog ───
   const [analyzerOpen, setAnalyzerOpen] = useState(false);
@@ -1039,7 +1054,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         isPartiallyFrozen={isPartiallyFrozen}
         frozenCharIds={frozenCharIdSet}
         onFreezeAll={() => {
-          if (!teamResult?.done && !isFrozen) return;
+          if (!teamResult?.done && !isFrozen && !restoredArtifacts) return;
           // Freeze all chars with current view artifacts
           // Skip only chars with nothing equipped
           const byChar: Record<string, Record<Slot, ArtifactData | null>> = {};
@@ -1062,7 +1077,26 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           setSwapOverrides({});
         }}
         onUnfreezeAll={
-          isFrozen ? () => freezeStore.unfreezeTeam(team.id) : undefined
+          isFrozen
+            ? () => {
+                // Snapshot current artifacts as restored before clearing freeze
+                const snapshot: Record<
+                  string,
+                  Record<string, ArtifactData>
+                > = {};
+                for (const [charId, arts] of Object.entries(
+                  optimizedArtifactsByChar
+                )) {
+                  if (Object.values(arts).some(Boolean)) {
+                    snapshot[charId] = { ...arts };
+                  }
+                }
+                setRestoredArtifacts(
+                  Object.keys(snapshot).length > 0 ? snapshot : null
+                );
+                freezeStore.unfreezeTeam(team.id);
+              }
+            : undefined
         }
         onFreezeChar={(charId: string) => {
           // Freeze a single character using current view artifacts
@@ -1077,13 +1111,22 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           });
         }}
         onUnfreezeChar={(charId: string) => {
+          // Capture ALL current artifacts so unfrozen chars keep their display
+          const snapshot: Record<string, Record<string, ArtifactData>> = {};
+          for (const [cid, arts] of Object.entries(optimizedArtifactsByChar)) {
+            if (Object.values(arts).some(Boolean)) {
+              snapshot[cid] = { ...arts };
+            }
+          }
+          setRestoredArtifacts(
+            Object.keys(snapshot).length > 0 ? snapshot : null
+          );
           freezeStore.unfreezeCharacters(team.id, [charId]);
         }}
         isMobile={isMobile}
         t={t}
         equippedArtifactsByChar={equippedArtifactsByChar}
         currentDisplayResult={currentDisplayResult}
-        comboResult={comboResult}
         comboLines={displayCombo.lines}
         comboId={displayCombo.id}
         teamBuild={teamBuild}
@@ -1096,7 +1139,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         teamError={teamError}
         handleOptimize={handleOptimize}
         optimizedArtifactsByChar={optimizedArtifactsByChar}
-        optimizedComboResult={teamResult?.bestComboResult ?? null}
         optimizedDisplayResult={optimizedDisplayResult}
         minErRaw={minErRaw}
         genComputing={genComputing}
@@ -1105,7 +1147,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         handleGenerate={handleGenerate}
         genArtifactsByChar={genArtifactsByChar}
         genDisplayResult={genDisplayResult}
-        genComboResult={genComboResultRecalc ?? null}
         onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
         hasSwapOverrides={hasSwapOverrides}
         onRestoreOriginal={hasSwapOverrides ? handleRestoreOriginal : undefined}

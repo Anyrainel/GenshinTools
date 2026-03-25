@@ -323,7 +323,7 @@ class Wanderer extends CharacterBase {
 
     return {
       "wanderer-normal": {
-        label: { zh: "普攻全套", en: "Kuugo: Fushoudan (N3)" },
+        label: { zh: "普攻（3段）", en: "Kuugo: Fushoudan (N3)" },
         parts: [
           { formula: new DirectFormula(n1, normalTag) },
           { formula: new DirectFormula(n2, normalTag) },

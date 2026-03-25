@@ -365,6 +365,16 @@ export default function TeamCompPage() {
           label: t.ui("export.action"),
           onTrigger: () => exportRef.current?.open(),
         },
+        ...(Object.keys(freezeStore.frozenTeams).length > 0
+          ? [
+              {
+                key: "download-frozen",
+                icon: FileDown,
+                label: t.ui("teamComp.downloadAllFrozen"),
+                onTrigger: handleDownloadAllFrozen,
+              },
+            ]
+          : []),
         {
           key: "clear",
           icon: Trash2,
@@ -401,108 +411,104 @@ export default function TeamCompPage() {
         bodyRef={scrollRef}
         header={
           isEmptyState ? null : (
-            <div className="flex items-center gap-1 2xl:gap-2 flex-wrap">
-              {/* Element chips */}
-              <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
-                {elements.map((el) => {
-                  const active =
-                    elementFilter.length === 0 || elementFilter.includes(el);
-                  const res = elementResourcesByName[el];
-                  return (
-                    <FilterChip
-                      key={el}
-                      active={active}
-                      onClick={() => toggleElement(el)}
-                    >
-                      <img
-                        src={getAssetUrl(res.imagePath)}
-                        alt={el}
-                        className="w-4 h-4"
-                      />
-                      <span className="text-xs">{t.element(el)}</span>
-                    </FilterChip>
-                  );
-                })}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-1 2xl:gap-2 flex-wrap">
+                {/* Element chips */}
+                <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
+                  {elements.map((el) => {
+                    const active =
+                      elementFilter.length === 0 || elementFilter.includes(el);
+                    const res = elementResourcesByName[el];
+                    return (
+                      <FilterChip
+                        key={el}
+                        active={active}
+                        onClick={() => toggleElement(el)}
+                      >
+                        <img
+                          src={getAssetUrl(res.imagePath)}
+                          alt={el}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-xs">{t.element(el)}</span>
+                      </FilterChip>
+                    );
+                  })}
+                </div>
+
+                <div className="h-5 w-px bg-border/50 mx-1" />
+
+                {/* Region chips */}
+                <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
+                  {displayRegions.map((r) => {
+                    const active =
+                      regionFilter.length === 0 || regionFilter.includes(r);
+                    return (
+                      <FilterChip
+                        key={r}
+                        active={active}
+                        onClick={() => toggleRegion(r)}
+                      >
+                        <span className="text-xs">{t.region(r)}</span>
+                      </FilterChip>
+                    );
+                  })}
+                </div>
+
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* Add team buttons */}
+                <div className="flex items-center gap-1 2xl:gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 text-sm leading-none h-8"
+                    onClick={() => handleAddTeam("start")}
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>{t.ui("teamComp.newTeamStart")}</span>
+                    <span className="text-muted-foreground">↑</span>
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="gap-1.5 text-sm leading-none h-8"
+                    onClick={() => handleAddTeam("end")}
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>{t.ui("teamComp.newTeamEnd")}</span>
+                    <span className="opacity-60">↓</span>
+                  </Button>
+                </div>
               </div>
 
-              <div className="h-5 w-px bg-border/50 mx-1" />
-
-              {/* Region chips */}
-              <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
-                {displayRegions.map((r) => {
-                  const active =
-                    regionFilter.length === 0 || regionFilter.includes(r);
-                  return (
-                    <FilterChip
-                      key={r}
-                      active={active}
-                      onClick={() => toggleRegion(r)}
-                    >
-                      <span className="text-xs">{t.region(r)}</span>
-                    </FilterChip>
-                  );
-                })}
-              </div>
-
-              {/* Spacer */}
-              <div className="flex-1" />
-
-              {/* Add team / unfreeze buttons */}
-              <div className="flex items-center gap-1 2xl:gap-2">
-                {Object.keys(freezeStore.frozenTeams).length > 0 && (
-                  <>
-                    <label className="flex items-center gap-1.5 cursor-pointer select-none mr-1">
-                      <Checkbox
-                        checked={freezeStore.allowSameCharReuse}
-                        onCheckedChange={(v) =>
-                          freezeStore.setAllowSameCharReuse(!!v)
-                        }
-                      />
-                      <span className="text-xs text-foreground/80 whitespace-nowrap">
-                        {t.ui("teamComp.allowSameCharReuse")}
-                      </span>
-                    </label>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5 text-sm leading-none h-8 border-cyan-500/40 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10"
-                      onClick={handleDownloadAllFrozen}
-                    >
-                      <FileDown className="w-3 h-3" />
-                      <span>{t.ui("teamComp.downloadAllFrozen")}</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                      onClick={() => freezeStore.clearAll()}
-                    >
-                      <Flame className="w-3 h-3" />
-                      <span>{t.ui("teamComp.unfreezeAll")}</span>
-                    </Button>
-                  </>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 text-sm leading-none h-8"
-                  onClick={() => handleAddTeam("start")}
-                >
-                  <Plus className="w-3 h-3" />
-                  <span>{t.ui("teamComp.newTeamStart")}</span>
-                  <span className="text-muted-foreground">↑</span>
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="gap-1.5 text-sm leading-none h-8"
-                  onClick={() => handleAddTeam("end")}
-                >
-                  <Plus className="w-3 h-3" />
-                  <span>{t.ui("teamComp.newTeamEnd")}</span>
-                  <span className="opacity-60">↓</span>
-                </Button>
-              </div>
+              {/* Freeze controls */}
+              {Object.keys(freezeStore.frozenTeams).length > 0 && (
+                <div className="flex items-center gap-2">
+                  {/* biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is the input */}
+                  <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                    <Checkbox
+                      checked={freezeStore.allowSameCharReuse}
+                      onCheckedChange={(v) =>
+                        freezeStore.setAllowSameCharReuse(!!v)
+                      }
+                    />
+                    <span className="text-xs md:text-sm text-foreground/80 whitespace-nowrap">
+                      {t.ui("teamComp.allowSameCharReuse")}
+                    </span>
+                  </label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    onClick={() => freezeStore.clearAll()}
+                  >
+                    <Flame className="w-3 h-3" />
+                    <span>{t.ui("teamComp.unfreezeAll")}</span>
+                  </Button>
+                </div>
+              )}
             </div>
           )
         }

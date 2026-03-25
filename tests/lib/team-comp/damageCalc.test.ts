@@ -639,10 +639,8 @@ describe("TeamBuild lifecycle", () => {
       expect(omenBuff).toBeDefined();
 
       // Stats
-      expect(display.idleStats.diluc).toBeDefined();
-      expect(display.combatStats.diluc).toBeDefined();
-      expect(display.idleStats.mona).toBeDefined();
-      expect(display.combatStats.mona).toBeDefined();
+      expect(display.statSheets.diluc).toBeDefined();
+      expect(display.statSheets.mona).toBeDefined();
 
       // Marginal gains
       expect(display.marginalGains.diluc).toBeDefined();
@@ -664,7 +662,7 @@ describe("TeamBuild lifecycle", () => {
       expect(coldResult.totalDamage).toBeCloseTo(hotResult.totalDamage, 2);
     });
 
-    it("combatStats differ from idleStats when dynamic buffs are present", () => {
+    it("statSheets provide on/off field contexts for all team members", () => {
       const display = tb.getDisplayResult(
         "diluc",
         "diluc-skill",
@@ -672,12 +670,10 @@ describe("TeamBuild lifecycle", () => {
         ctx
       );
 
-      // idleStats = pre-stats (before dynamic buffs)
-      // combatStats = post-stats (after dynamic buffs)
-      // They should be defined for all 4 team members
       for (const charId of ["diluc", "mona", "jean", "eula"]) {
-        expect(display.idleStats[charId]).toBeDefined();
-        expect(display.combatStats[charId]).toBeDefined();
+        expect(display.statSheets[charId]).toBeDefined();
+        expect(display.statSheets[charId].onField).toBeDefined();
+        expect(display.statSheets[charId].offField).toBeDefined();
       }
     });
 
@@ -697,13 +693,11 @@ describe("TeamBuild lifecycle", () => {
       // No generic dmg% key in idle records
       expect(idleDiluc.onField["dmg%"]).toBeUndefined();
       // Base and computed stats should be present
-      expect(idleDiluc.onField["baseAtk"]).toBeGreaterThan(0);
-      expect(idleDiluc.onField["baseHp"]).toBeGreaterThan(0);
-      expect(idleDiluc.onField["baseDef"]).toBeGreaterThan(0);
-      expect(idleDiluc.onField["atk"]).toBeGreaterThan(
-        idleDiluc.onField["baseAtk"]!
-      );
-      expect(idleDiluc.onField["cr"]).toBeGreaterThan(0);
+      expect(idleDiluc.onField.baseAtk).toBeGreaterThan(0);
+      expect(idleDiluc.onField.baseHp).toBeGreaterThan(0);
+      expect(idleDiluc.onField.baseDef).toBeGreaterThan(0);
+      expect(idleDiluc.onField.atk).toBeGreaterThan(idleDiluc.onField.baseAtk!);
+      expect(idleDiluc.onField.cr).toBeGreaterThan(0);
     });
 
     it("Varka P1 idle dmg% shows for both on-field and off-field", () => {
@@ -1065,7 +1059,7 @@ describe("other buffs apply to teammates' stats and display", () => {
     expect(illugaP1!.active).toBe(true);
   });
 
-  it("combatStats for calc target include other Geo-filtered CR", () => {
+  it("on-field statSheet for calc target includes other Geo-filtered CR", () => {
     const tb = new TeamBuild(configs);
     const display = tb.getDisplayResult(
       "zibai",
@@ -1074,12 +1068,13 @@ describe("other buffs apply to teammates' stats and display", () => {
       ctx
     );
 
-    const zibaiCombatCr = display.combatStats.zibai!.cr!;
+    const zibaiOnFieldCr =
+      display.statSheets.zibai.onField.get("cr", null) ?? 0;
     // Must include Illuga P1 CR (+5%), so > baseline 5%
-    expect(zibaiCombatCr).toBeGreaterThanOrEqual(0.1);
+    expect(zibaiOnFieldCr).toBeGreaterThanOrEqual(0.1);
   });
 
-  it("combo mode combatStats include other Geo-filtered CR", () => {
+  it("combo mode statSheet includes other Geo-filtered CR", () => {
     const tb = new TeamBuild(configs);
     const combo: ComboFormula = {
       id: "test-combo",
@@ -1095,9 +1090,10 @@ describe("other buffs apply to teammates' stats and display", () => {
 
     const comboDisplay = getComboDisplayResult(tb, combo, emptySheets, ctx);
 
-    const zibaiComboCr = comboDisplay.combatStats.zibai!.cr!;
+    const zibaiOnFieldCr =
+      comboDisplay.statSheets.zibai.onField.get("cr", null) ?? 0;
     // Must include Illuga P1 CR in combo mode too
-    expect(zibaiComboCr).toBeGreaterThanOrEqual(0.1);
+    expect(zibaiOnFieldCr).toBeGreaterThanOrEqual(0.1);
   });
 
   it("Illuga P1 buff does NOT activate for non-Geo formulas", () => {

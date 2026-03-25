@@ -38,7 +38,7 @@ export interface OptimizerOptions {
 
   // ── Multi-pass support (all default to targetCharId for backward compat) ──
   swapCharId?: string; // Whose artifacts to enumerate
-  calcTargetId?: string; // Who is "on field" for buff routing
+  onFieldCharId?: string; // Who is "on field" for buff routing
   formulaCharId?: string; // Whose formula to evaluate
   erCheckCharId?: string; // Whose ER to check (default: swapCharId)
   excludedArtifactIds?: Set<string>; // Artifacts locked by prior passes
@@ -48,9 +48,12 @@ export interface OptimizerOptions {
    * Custom scoring function. When provided, replaces the default
    * `getDamageResult(formulaCharId, formulaId, ...).totalDamage` calls.
    * Receives the full sheets map (with the candidate artifacts already applied)
-   * and calcTargetId for getTeamStats routing.
+   * and onFieldCharId for getTeamStats routing.
    */
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
+  scoreFn?: (
+    sheets: Record<string, StatSheet>,
+    onFieldCharId: string
+  ) => number;
 }
 
 /** Why the optimizer failed to find a valid build. */
@@ -276,10 +279,10 @@ function computeMarginalGainsForOptimizer(
   formulaId: string,
   baseSheets: Record<string, StatSheet>,
   currentArtifacts: ArtifactTuple,
-  calcTargetId: string,
+  onFieldCharId: string,
   calcContext: CalcContext,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): Partial<Record<StatKey, number>> {
   const currentSheet = StatSheet.fromArtifacts(currentArtifacts);
   const sheets = { ...baseSheets, [swapCharId]: currentSheet };
@@ -292,9 +295,13 @@ function computeMarginalGainsForOptimizer(
     : undefined;
 
   const baseDamage = scoreFn
-    ? scoreFn(sheets, calcTargetId)
+    ? scoreFn(sheets, onFieldCharId)
     : (() => {
-        const stats = teamBuild.getTeamStats(sheets, calcTargetId, calcContext);
+        const stats = teamBuild.getTeamStats(
+          sheets,
+          onFieldCharId,
+          calcContext
+        );
         const offFieldStats = offFieldCalcTarget
           ? teamBuild.getTeamStats(sheets, offFieldCalcTarget, calcContext)
           : undefined;
@@ -319,11 +326,11 @@ function computeMarginalGainsForOptimizer(
     const tweakedSheets = { ...baseSheets, [swapCharId]: tweakedSheet };
 
     const newDamage = scoreFn
-      ? scoreFn(tweakedSheets, calcTargetId)
+      ? scoreFn(tweakedSheets, onFieldCharId)
       : (() => {
           const newStats = teamBuild.getTeamStats(
             tweakedSheets,
-            calcTargetId,
+            onFieldCharId,
             calcContext
           );
           const offFieldStats = offFieldCalcTarget
@@ -357,19 +364,19 @@ function evaluateBuild(
   formulaCharId: string,
   formulaId: string,
   baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
+  onFieldCharId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
   minEr: number,
   minCr: number,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): { damage: number; result: DamageResult | null } {
   const charSheet = StatSheet.fromArtifacts(pieces);
   const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
   const postStats = teamBuild.getTeamStats(
     updatedSheets,
-    calcTargetId,
+    onFieldCharId,
     calcContext
   );
 
@@ -384,7 +391,7 @@ function evaluateBuild(
   }
 
   if (scoreFn) {
-    return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
+    return { damage: scoreFn(updatedSheets, onFieldCharId), result: null };
   }
 
   // Compute off-field stats if the formula has off-field parts
@@ -453,13 +460,13 @@ function buildSeedBuilds2pc(
   formulaCharId: string,
   formulaId: string,
   baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
+  onFieldCharId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
   minEr: number,
   minCr: number,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): ArtifactTuple[] {
   const [h1, h2] = artifactHalfSetIds;
   // Concrete setKeys for each halfSetId
@@ -506,7 +513,7 @@ function buildSeedBuilds2pc(
       formulaCharId,
       formulaId,
       baseSheets,
-      calcTargetId,
+      onFieldCharId,
       calcContext,
       erCheckCharId,
       minEr,
@@ -672,7 +679,7 @@ export async function* runOptimization(
 
   // Resolve effective IDs (default to targetCharId for backward compat)
   const swapCharId = opts.swapCharId ?? targetCharId;
-  const calcTargetId = opts.calcTargetId ?? targetCharId;
+  const onFieldCharId = opts.onFieldCharId ?? targetCharId;
   const formulaCharId = opts.formulaCharId ?? targetCharId;
   const erCheckCharId = opts.erCheckCharId ?? swapCharId;
 
@@ -685,7 +692,7 @@ export async function* runOptimization(
       const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
       const baselineStats = teamBuild.getTeamStats(
         baselineSheets,
-        calcTargetId,
+        onFieldCharId,
         calcContext
       );
       // CR already includes the critRateTarget bonus from getTeamStats
@@ -729,7 +736,7 @@ export async function* runOptimization(
   let erFloor = 0;
   if (minEr > 0) {
     const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
-    const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
+    const baselineStats = teamBuild.getTeamStats(baselineSheets, onFieldCharId);
     erFloor = baselineStats[erCheckCharId]?.get("er", null) ?? 0;
   }
   const minArtifactEr = Math.max(0, minEr - erFloor);
@@ -772,7 +779,7 @@ export async function* runOptimization(
   let crFloor = 0;
   if (minCr > 0) {
     const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
-    const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
+    const baselineStats = teamBuild.getTeamStats(baselineSheets, onFieldCharId);
     crFloor = baselineStats[erCheckCharId]?.get("cr", null) ?? 0;
   }
   const minArtifactCr = Math.max(0, minCr - crFloor);
@@ -954,7 +961,7 @@ export async function* runOptimization(
       formulaCharId,
       formulaId,
       baseSheets,
-      calcTargetId,
+      onFieldCharId,
       calcContext,
       erCheckCharId,
       minEr,
@@ -1122,7 +1129,7 @@ export async function* runOptimization(
         formulaCharId,
         formulaId,
         baseSheets,
-        calcTargetId,
+        onFieldCharId,
         calcContext,
         erCheckCharId,
         minEr,
@@ -1150,7 +1157,7 @@ export async function* runOptimization(
           formulaId,
           baseSheets,
           current,
-          calcTargetId,
+          onFieldCharId,
           calcContext,
           reactionOverride,
           scoreFn
@@ -1166,7 +1173,7 @@ export async function* runOptimization(
           const sheets = { ...baseSheets, [swapCharId]: currentSheet };
           const postStats = teamBuild.getTeamStats(
             sheets,
-            calcTargetId,
+            onFieldCharId,
             calcContext
           );
           const maxGain = Math.max(
@@ -1245,7 +1252,7 @@ export async function* runOptimization(
             formulaCharId,
             formulaId,
             baseSheets,
-            calcTargetId,
+            onFieldCharId,
             calcContext,
             erCheckCharId,
             minEr,
@@ -1308,7 +1315,7 @@ export async function* runOptimization(
         const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
         const postStats = teamBuild.getTeamStats(
           updatedSheets,
-          calcTargetId,
+          onFieldCharId,
           calcContext
         );
         const er = postStats[erCheckCharId]?.get("er", null) ?? 0;

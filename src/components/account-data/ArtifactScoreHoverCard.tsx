@@ -119,7 +119,7 @@ export function ArtifactScoreHoverCard({
         <span className={labelCn}>{t.ui("accountData.statCount")}</span>
         <span
           className={cn(
-            "italic text-sky-300 drop-shadow-sm tracking-tighter leading-none font-extrabold pr-[2px]",
+            "italic text-sky-300 tracking-tighter leading-none font-extrabold pr-[2px]",
             compact ? "text-xl" : "text-2xl"
           )}
         >
@@ -130,7 +130,7 @@ export function ArtifactScoreHoverCard({
         <span className={labelCn}>{t.ui("accountData.score")}</span>
         <span
           className={cn(
-            "italic bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm tracking-tighter leading-none font-black pr-[2px]",
+            "italic bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent tracking-tighter leading-none font-black pr-[2px]",
             compact ? "text-xl" : "text-2xl"
           )}
         >
@@ -160,7 +160,7 @@ export function ArtifactScoreHoverCard({
           <DrawerDescription className="sr-only">
             Artifact score breakdown by stat
           </DrawerDescription>
-          <div className="p-4 pt-0 safe-area-bottom">
+          <div className="p-3 pt-0 safe-area-bottom">
             {score ? (
               <ArtifactScoreContent
                 artifactScore={score}
@@ -194,7 +194,7 @@ export function ArtifactScoreHoverCard({
       </HoverCardTrigger>
       <HoverCardContent
         ref={contentRef}
-        className="w-auto bg-black/95 border-2 border-amber-500/50 text-gray-200 p-5 shadow-xl"
+        className="w-auto bg-black/95 border-2 border-amber-500/50 text-gray-200 p-3"
       >
         {score ? (
           <ArtifactScoreContent
@@ -270,7 +270,7 @@ function ArtifactScoreContent({
   const normSubTotal = artifactScore.substatScore.subScore * normalizer;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {/* Set build banner - Only show if there is a mismatch */}
       {buildSetLabel && hasSetMismatch && (
         <div className="flex items-center gap-2 rounded-md border px-3 py-1 text-sm bg-amber-500/10 border-amber-500/20 text-amber-300">
@@ -288,7 +288,7 @@ function ArtifactScoreContent({
       )}
 
       {/* Header: title + score summary */}
-      <div className="flex justify-between items-end pb-2">
+      <div className="flex justify-between items-end">
         <span className="text-lg font-bold text-amber-200 uppercase tracking-wider">
           {t.ui("accountData.artifactScore")}
         </span>
@@ -301,7 +301,7 @@ function ArtifactScoreContent({
           </span>
         </div>
       </div>
-      <div className="-mx-5 border-t border-amber-500/50" />
+      <div className="-mx-3 border-t border-amber-500/50" />
 
       {/* Main + Sub score summary bar */}
       <div className="flex items-center gap-3 text-sm font-mono">
@@ -329,7 +329,7 @@ function ArtifactScoreContent({
       </div>
 
       {/* Breakdown by Slot */}
-      <div className="grid grid-cols-[auto_repeat(5,auto)] gap-y-2 gap-x-4 text-base">
+      <div className="grid grid-cols-[auto_repeat(5,auto)] gap-y-1 gap-x-2 text-base">
         {/* Header Row */}
         <div />
         {allSlots.map((slot) => (
@@ -420,7 +420,7 @@ function ArtifactScoreContent({
       </div>
 
       {/* Divider between slot and stat breakdowns */}
-      <div className="-my-1 -mx-5 border-t border-amber-500/50" />
+      <div className="-my-1 -mx-3 border-t border-amber-500/50" />
 
       {/* Breakdown by Stat */}
       <table className="w-full text-base border-collapse">

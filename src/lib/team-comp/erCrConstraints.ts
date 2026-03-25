@@ -33,7 +33,7 @@ export function computeErCrGap(
   teamBuild: TeamBuild,
   charId: string,
   baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
+  onFieldCharId: string,
   calcContext: CalcContext,
   minEr: number,
   minCr: number
@@ -41,7 +41,7 @@ export function computeErCrGap(
   if (minEr <= 0 && minCr <= 0) return { erGap: 0, crGap: 0 };
 
   const blSheets = { ...baseSheets, [charId]: new StatSheet([]) };
-  const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
+  const blStats = teamBuild.getTeamStats(blSheets, onFieldCharId, calcContext);
   const baseEr = blStats[charId]?.get("er", null) ?? 0;
   const baseCr = blStats[charId]?.get("cr", null) ?? 0;
 

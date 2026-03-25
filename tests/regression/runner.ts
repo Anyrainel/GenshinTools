@@ -468,16 +468,14 @@ function serializeTeamResult(
     stats[cid] = serializeStatSheet(sheet);
   }
 
-  // Combo result
-  const comboResult = gen.comboResult
-    ? {
-        lineDamages: gen.comboResult.lineDamages.map((l) => ({
-          perHit: r4(l.perHit),
-          total: r4(l.total),
-        })),
-        totalDamage: r4(gen.comboResult.totalDamage),
-      }
-    : { lineDamages: [], totalDamage: 0 };
+  // Combo result (sourced from display path)
+  const comboResult = {
+    lineDamages: display.lineDamages.map((l) => ({
+      perHit: r4(l.perHit),
+      total: r4(l.total),
+    })),
+    totalDamage: r4(display.totalDamage),
+  };
 
   // Display parts per formula (include partialBuffs when present)
   const partsByFormula: Record<
@@ -626,7 +624,7 @@ function serializeTeamResult(
         { minEr: r4(v.minEr), minCr: r4(v.minCr) },
       ])
     ),
-    damage: r4(gen.damage),
+    damage: r4(display.totalDamage),
     comboResult,
     artifacts,
     stats,

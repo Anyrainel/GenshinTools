@@ -830,6 +830,16 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     return this.formulaMap[formulaId];
   }
 
+  /** Check if any formula in this character's formulaMap produces the given reaction. */
+  hasReactionFormula(reaction: ReactionType): boolean {
+    for (const entry of Object.values(this.formulaMap)) {
+      if (entry.parts.some((p) => p.formula.tag.reaction === reaction)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /** Returns all bespoke buffs across all formula parts, for display in BuffLedger. */
   getBespokeBuffs(): {
     formulaId: string;

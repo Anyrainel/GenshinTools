@@ -106,7 +106,7 @@ export interface PerCharSearchOpts {
   excludedIds: Set<string> | undefined;
   reactionOverride: ReactionOverride | undefined;
   scoreFn:
-    | ((sheets: Record<string, StatSheet>, calcTargetId: string) => number)
+    | ((sheets: Record<string, StatSheet>, onFieldCharId: string) => number)
     | undefined;
   topK: number;
   deadline?: number;
@@ -280,19 +280,19 @@ export function evaluateBuild(
   formulaCharId: string,
   formulaId: string,
   baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
+  onFieldCharId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
   minEr: number,
   minCr: number,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): { damage: number; result: DamageResult | null } {
   const charSheet = StatSheet.fromArtifacts(pieces);
   const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
   const postStats = teamBuild.getTeamStats(
     updatedSheets,
-    calcTargetId,
+    onFieldCharId,
     calcContext
   );
 
@@ -305,7 +305,7 @@ export function evaluateBuild(
     if (cr < minCr) return { damage: -1, result: null };
   }
   if (scoreFn)
-    return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
+    return { damage: scoreFn(updatedSheets, onFieldCharId), result: null };
 
   let offFieldStats: Record<string, StatSheet> | undefined;
   if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
@@ -340,10 +340,10 @@ export function evaluateUpperBound(
   formulaCharId: string,
   formulaId: string,
   baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
+  onFieldCharId: string,
   calcContext: CalcContext,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): number {
   const realArts = realPieces.filter((a): a is ArtifactData => a != null);
   let sheet = StatSheet.fromArtifacts(realArts);
@@ -351,10 +351,10 @@ export function evaluateUpperBound(
     if (Object.keys(ss).length > 0) sheet = sheet.merge(StatSheet.fromRaw(ss));
   }
   const updatedSheets = { ...baseSheets, [swapCharId]: sheet };
-  if (scoreFn) return scoreFn(updatedSheets, calcTargetId);
+  if (scoreFn) return scoreFn(updatedSheets, onFieldCharId);
   const postStats = teamBuild.getTeamStats(
     updatedSheets,
-    calcTargetId,
+    onFieldCharId,
     calcContext
   );
 
@@ -522,7 +522,7 @@ export function setupCharSearch(
     warmStartThreshold,
   } = opts;
   const swapCharId = charId;
-  const calcTargetId = carryCharId;
+  const onFieldCharId = carryCharId;
   const erCheckCharId = charId;
 
   // CR discount
@@ -532,7 +532,7 @@ export function setupCharSearch(
       const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
       const blStats = teamBuild.getTeamStats(
         blSheets,
-        calcTargetId,
+        onFieldCharId,
         calcContext
       );
       const effectiveCr = blStats[carryCharId]?.get("cr", null) ?? 0;
@@ -615,7 +615,11 @@ export function setupCharSearch(
   let crFloor = 0;
   if (charConfig.minEr > 0 || charConfig.minCr > 0) {
     const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
-    const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
+    const blStats = teamBuild.getTeamStats(
+      blSheets,
+      onFieldCharId,
+      calcContext
+    );
     if (charConfig.minEr > 0)
       erFloor = blStats[erCheckCharId]?.get("er", null) ?? 0;
     if (charConfig.minCr > 0)
@@ -949,7 +953,7 @@ async function* runTeamOpt(
     combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
 
   const comboScoreFn = isComboMode
-    ? (sheets: Record<string, StatSheet>, _calcTargetId: string): number => {
+    ? (sheets: Record<string, StatSheet>, _onFieldCharId: string): number => {
         try {
           return evaluateCombo(
             teamBuild,
@@ -959,7 +963,7 @@ async function* runTeamOpt(
             reactionOverrides
           ).totalDamage;
         } catch (e) {
-          const key = `comboScoreFn:${_calcTargetId}`;
+          const key = `comboScoreFn:${_onFieldCharId}`;
           if (!warnedCalcErrors.has(key)) {
             warnedCalcErrors.add(key);
             console.warn("[teamSearch] comboScoreFn failed:", e);
@@ -1671,7 +1675,6 @@ async function* runTeamOpt(
     bestArtifactsByChar,
     passResults,
     failReasons,
-    saturatedCharIds: [] as string[],
     ...(setsChanged ? { teamBuild: effectiveTeamBuild } : {}),
     done: true as const,
   };
@@ -1691,6 +1694,5 @@ async function* runTeamOpt(
   yield {
     ...resultBase,
     bestDamage: comboRes.totalDamage,
-    bestComboResult: comboRes,
   } satisfies TeamOptimizationResult;
 }

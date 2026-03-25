@@ -194,7 +194,7 @@ class Razor extends CharacterBase {
 
     return {
       "razor-burst-na": {
-        label: { zh: "Q普攻一套", en: "Q Normal Combo" },
+        label: { zh: "Q普攻（4段）", en: "Q Normal (4-hit)" },
         parts: [
           // Physical normal attack hits (4 distinct multipliers)
           ...naHits.map((mult) => ({

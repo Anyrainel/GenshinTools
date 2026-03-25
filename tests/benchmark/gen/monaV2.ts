@@ -61,12 +61,12 @@ function computeStatWeights(
   formulaCharId: string,
   formulaId: string,
   baseSheets: Record<string, StatSheet>,
-  calcTargetId: string,
+  onFieldCharId: string,
   calcContext: CalcContext,
   minEr: number,
   minCr: number,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): Map<StatKey, number> {
   const weights = new Map<StatKey, number>();
 
@@ -75,11 +75,11 @@ function computeStatWeights(
   const baseUpdated = { ...baseSheets, [swapCharId]: baseSheet };
   let baseScore: number;
   if (scoreFn) {
-    baseScore = scoreFn(baseUpdated, calcTargetId);
+    baseScore = scoreFn(baseUpdated, onFieldCharId);
   } else {
     const postStats = teamBuild.getTeamStats(
       baseUpdated,
-      calcTargetId,
+      onFieldCharId,
       calcContext
     );
     baseScore = teamBuild.getDamageResult(
@@ -118,11 +118,11 @@ function computeStatWeights(
     const testUpdated = { ...baseSheets, [swapCharId]: testSheet };
     let testScore: number;
     if (scoreFn) {
-      testScore = scoreFn(testUpdated, calcTargetId);
+      testScore = scoreFn(testUpdated, onFieldCharId);
     } else {
       const postStats = teamBuild.getTeamStats(
         testUpdated,
-        calcTargetId,
+        onFieldCharId,
         calcContext
       );
       testScore = teamBuild.getDamageResult(
@@ -316,7 +316,7 @@ interface V2Context {
   formulaCharId: string;
   formulaId: string;
   baseSheets: Record<string, StatSheet>;
-  calcTargetId: string;
+  onFieldCharId: string;
   calcContext: CalcContext;
   erCheckCharId: string;
   minEr: number;
@@ -324,7 +324,10 @@ interface V2Context {
   erFloor: number;
   crFloor: number;
   reactionOverride?: ReactionOverride;
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
+  scoreFn?: (
+    sheets: Record<string, StatSheet>,
+    onFieldCharId: string
+  ) => number;
   collector: TopKCollector;
   evaluations: number;
   factorA: number;
@@ -345,7 +348,7 @@ function evalUpperBound(
     ctx.formulaCharId,
     ctx.formulaId,
     ctx.baseSheets,
-    ctx.calcTargetId,
+    ctx.onFieldCharId,
     ctx.calcContext,
     ctx.reactionOverride,
     ctx.scoreFn
@@ -508,7 +511,7 @@ function doIter(
               ctx.formulaCharId,
               ctx.formulaId,
               ctx.baseSheets,
-              ctx.calcTargetId,
+              ctx.onFieldCharId,
               ctx.calcContext,
               ctx.erCheckCharId,
               ctx.minEr,
@@ -733,7 +736,7 @@ function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
     formulaCharId: carryCharId,
     formulaId,
     baseSheets,
-    calcTargetId: carryCharId,
+    onFieldCharId: carryCharId,
     calcContext,
     erCheckCharId: charId,
     minEr: charConfig.minEr,
@@ -801,7 +804,7 @@ function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
       for (let s = 0; s < 5; s++) {
         let hasSet = false;
         for (const [gk] of v2Slots[s].bySetAndMain) {
-          if (gk.startsWith(setKey + "|")) {
+          if (gk.startsWith(`${setKey}|`)) {
             hasSet = true;
             break;
           }
@@ -848,7 +851,7 @@ function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
       for (let s = 0; s < 5; s++) {
         let hasSet = false;
         for (const [gk] of v2Slots[s].bySetAndMain) {
-          if (gk.startsWith(setKey + "|")) {
+          if (gk.startsWith(`${setKey}|`)) {
             hasSet = true;
             break;
           }

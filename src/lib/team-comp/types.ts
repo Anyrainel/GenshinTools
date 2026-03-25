@@ -308,6 +308,9 @@ export type DisplayResult = {
   /** Per-formula display parts, keyed by "charId.formulaId". */
   partsByFormula: Record<string, DisplayPart[]>;
   totalDamage: number;
+  /** Per-line damage breakdown (same order as active combo lines).
+   *  Only present for combo display results, not single-formula display. */
+  lineDamages?: { perHit: number; total: number }[];
 
   // ── Buffs ──
   buffs: ResolvedBuff[];
@@ -341,9 +344,9 @@ export type DisplayResult = {
     }
   >;
 
-  // DEPRECATED — kept during migration, remove after UI rewrite verified
-  idleStats: Record<string, Partial<Record<StatKey, number>>>;
-  combatStats: Record<string, Partial<Record<StatKey, number>>>;
+  /** Characters whose substats produce zero marginal gains even with no artifact stats.
+   *  These are "intrinsically saturated" — their buffs scale on base stats only (e.g. Bennett). */
+  intrinsicSaturatedCharIds: string[];
 };
 
 // ─── Team ───
@@ -522,14 +525,11 @@ interface TeamOptResultBase {
   bestArtifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
   passResults: TeamOptPassResult[];
   failReasons: Record<string, OptFailReason>;
-  saturatedCharIds: string[];
   teamBuild?: TeamBuild;
   done: true;
 }
 
-export interface TeamOptimizationResult extends TeamOptResultBase {
-  bestComboResult: ComboResult;
-}
+export type TeamOptimizationResult = TeamOptResultBase;
 
 export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
 

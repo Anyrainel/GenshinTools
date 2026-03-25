@@ -28,3 +28,18 @@
     cleanly. Kazuha's primary value is P2 team elemental DMG% buff, not personal damage.
   created: "2026-02-25"
   resolved: "2026-03-14"
+
+- id: ayaka-normal-combo
+  entity: kamisato_ayaka
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    Missing normal attack combo formula. Ayaka's NAs deal Cryo DMG after E/sprint
+    infusion and are part of standard rotations.
+  detail: >
+    Added DirectFormula normal combo "ayaka-normal" with 5 parts (Cryo/normal/none):
+    N1=0.904, N2=0.962, N3=1.238, N4=0.448×3, N5=1.545. Fixed Lv10 multipliers
+    (A talent not boosted by constellation). Updated defaultCombo to include it.
+  created: "2026-03-25"
+  resolved: "2026-03-25"

@@ -39,7 +39,6 @@ import type {
 import type {
   CalcContext,
   ComboLine,
-  ComboResult,
   CritMode,
   DisplayPart,
   DisplayResult,
@@ -72,6 +71,12 @@ import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown, adjustPartDamage } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
+import {
+  CARD_BODY_CLS,
+  CARD_CLS,
+  CARD_HEADER_CLS,
+  CARD_TITLE_CLS,
+} from "./cardStyles";
 
 const SESSION_PREFIX = "dmgCard.";
 
@@ -100,13 +105,6 @@ function useSessionState<T>(key: string, defaultValue: T): [T, (v: T) => void] {
   return [value, setValue];
 }
 
-const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
-const CARD_HEADER_CLS =
-  "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
-const CARD_TITLE_CLS =
-  "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-1 2xl:p-2 space-y-2";
-
 /** Shared body for current / optimized / generated tabs. */
 function DamageBody({
   team,
@@ -126,7 +124,6 @@ function DamageBody({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
-  saturatedCharIds,
 }: {
   team: Team;
   hasFormula: boolean;
@@ -147,7 +144,6 @@ function DamageBody({
   onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
-  saturatedCharIds?: string[];
 }) {
   const [highlightedStat, setHighlightedStat] = useState<{
     key: StatKey | "charLevel";
@@ -180,7 +176,6 @@ function DamageBody({
           onArtifactSwap={onArtifactSwap}
           onFreezeChar={onFreezeChar}
           onUnfreezeChar={onUnfreezeChar}
-          saturatedCharIds={saturatedCharIds}
         />
       )}
 
@@ -325,7 +320,7 @@ function hasPartialReaction(
   const singleOv = singleOverrides[key];
   const lineOv = line.reaction;
 
-  // Merge same as evaluateCombo: single-mode as defaults, line overrides on top
+  // Merge same as combo eval: single-mode as defaults, line overrides on top
   let partReactions: Record<number, string> | undefined;
   let partHits: Record<number, number> | undefined;
 
@@ -349,7 +344,7 @@ function hasPartialReaction(
 /** Combo mode breakdown: 4-column grid grouped by character, with drill-down. */
 function ComboBreakdown({
   team,
-  comboResult,
+  lineDamages,
   comboLines,
   comboId,
   teamBuild,
@@ -366,7 +361,7 @@ function ComboBreakdown({
   calcContext,
 }: {
   team: Team;
-  comboResult: ComboResult;
+  lineDamages: { perHit: number; total: number }[];
   comboLines: ComboLine[];
   comboId?: string;
   teamBuild: TeamBuild;
@@ -383,13 +378,18 @@ function ComboBreakdown({
   calcContext: CalcContext;
 }) {
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
-  // Filter to active lines whose formula still exists (matches evaluateCombo's filtering)
-  const activeLines = comboLines.filter(
-    (l) => l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
+  const rxFormulaIds = useMemo(
+    () => teamBuild.getReactionFormulaIds(),
+    [teamBuild]
   );
-
-  // Build per-line damage lookup (matches evaluateCombo's activeLines order)
-  const lineDamages = comboResult.lineDamages;
+  // Filter to active lines whose formula still exists (matches combo eval filtering)
+  const activeLines = comboLines.filter(
+    (l) =>
+      l.count > 0 &&
+      (allFormulaIds[l.charId]?.[l.formulaId] !== undefined ||
+        (l.formulaId.startsWith("rx-") &&
+          rxFormulaIds[l.formulaId] !== undefined))
+  );
 
   // Group active lines by character
   type LineWithDamage = {
@@ -578,7 +578,10 @@ function ComboBreakdown({
                         const label =
                           allFormulaIds[focusedLine.charId]?.[
                             focusedLine.formulaId
-                          ];
+                          ] ??
+                          (focusedLine.formulaId.startsWith("rx-")
+                            ? rxFormulaIds[focusedLine.formulaId]
+                            : undefined);
                         return label
                           ? t.resolveLabel(label)
                           : focusedLine.formulaId;
@@ -678,7 +681,11 @@ function ComboBreakdown({
                           {lines && lines.length > 0 ? (
                             lines.map(
                               ({ line, perHit, total, isPartial }, idx) => {
-                                const label = charFormulas?.[line.formulaId];
+                                const label =
+                                  charFormulas?.[line.formulaId] ??
+                                  (line.formulaId.startsWith("rx-")
+                                    ? rxFormulaIds[line.formulaId]
+                                    : undefined);
                                 const rxn = line.reaction?.reaction;
                                 return (
                                   <div
@@ -796,7 +803,6 @@ function ComboBreakdown({
 /** Combo-mode result view: StatSheetPanel + ComboBreakdown + BuffLedger. */
 function ComboResultView({
   displayResult,
-  comboResult,
   comboLines,
   comboId,
   teamBuild,
@@ -813,10 +819,8 @@ function ComboResultView({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
-  saturatedCharIds,
 }: {
-  displayResult: DisplayResult | null | undefined;
-  comboResult: ComboResult;
+  displayResult: DisplayResult;
   comboLines: ComboLine[];
   comboId?: string;
   teamBuild: TeamBuild;
@@ -833,16 +837,22 @@ function ComboResultView({
   onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
-  saturatedCharIds?: string[];
 }) {
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
+  const rxFormulaIds = useMemo(
+    () => teamBuild.getReactionFormulaIds(),
+    [teamBuild]
+  );
   const activeLines = useMemo(
     () =>
       comboLines.filter(
         (l) =>
-          l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
+          l.count > 0 &&
+          (allFormulaIds[l.charId]?.[l.formulaId] !== undefined ||
+            (l.formulaId.startsWith("rx-") &&
+              rxFormulaIds[l.formulaId] !== undefined))
       ),
-    [comboLines, allFormulaIds]
+    [comboLines, allFormulaIds, rxFormulaIds]
   );
   const teamCharIds = useMemo(
     () => team.characters.filter((id): id is string => id != null),
@@ -888,7 +898,8 @@ function ComboResultView({
         defaultActivation: activation,
         comboCount: count,
         comboKey: comboId ? `combo:${comboId}:${fKey}` : undefined,
-        formulaLabel: allFormulaIds[charId]?.[formulaId],
+        formulaLabel:
+          allFormulaIds[charId]?.[formulaId] ?? rxFormulaIds[formulaId],
         buffApplicability,
       };
     });
@@ -901,6 +912,7 @@ function ComboResultView({
     calcContext,
     comboId,
     allFormulaIds,
+    rxFormulaIds,
   ]);
 
   return (
@@ -922,16 +934,15 @@ function ComboResultView({
           onArtifactSwap={onArtifactSwap}
           onFreezeChar={onFreezeChar}
           onUnfreezeChar={onUnfreezeChar}
-          saturatedCharIds={saturatedCharIds}
         />
       )}
       <ComboBreakdown
         team={team}
-        comboResult={comboResult}
+        lineDamages={displayResult.lineDamages}
         comboLines={comboLines}
         comboId={comboId}
         teamBuild={teamBuild}
-        damageValue={displayResult?.totalDamage ?? comboResult.totalDamage}
+        damageValue={displayResult.totalDamage}
         displayResult={displayResult}
         critMode={critMode}
         setCritMode={setCritMode}
@@ -987,13 +998,10 @@ interface DamageCardProps {
   genArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   genDisplayResult: DisplayResult | null | undefined;
   // Combo mode
-  comboResult?: ComboResult | null;
   comboLines?: ComboLine[] | null;
   comboId?: string;
   teamBuild?: TeamBuild | null;
   formulaMode?: "single" | "combo";
-  optimizedComboResult?: ComboResult | null;
-  genComboResult?: ComboResult | null;
   // Freeze
   hasOptResult?: boolean;
   isFrozen?: boolean;
@@ -1330,13 +1338,10 @@ export function DamageCard({
   handleGenerate,
   genArtifactsByChar,
   genDisplayResult,
-  comboResult,
   comboLines,
   comboId,
   teamBuild,
   formulaMode = "single",
-  optimizedComboResult,
-  genComboResult,
   hasOptResult,
   isFrozen,
   isFullyFrozen,
@@ -1358,33 +1363,41 @@ export function DamageCard({
     "expected"
   );
 
-  // Keep progress bar visible after optimization completes, then fade out
+  // Keep progress bar visible after optimization completes, then fade + collapse
   const [showProgress, setShowProgress] = useState(false);
   const [progressFading, setProgressFading] = useState(false);
-  const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [progressCollapsing, setProgressCollapsing] = useState(false);
+  const fadeTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const wasComputing = useRef(false);
   useEffect(() => {
     if (isComputing) {
       wasComputing.current = true;
-      if (progressTimerRef.current) {
-        clearTimeout(progressTimerRef.current);
-        progressTimerRef.current = null;
-      }
+      for (const t of fadeTimersRef.current) clearTimeout(t);
+      fadeTimersRef.current = [];
       setShowProgress(true);
       setProgressFading(false);
+      setProgressCollapsing(false);
     } else if (wasComputing.current) {
       wasComputing.current = false;
-      // Show "Complete" for 1s, then start fade-out
-      progressTimerRef.current = setTimeout(
-        () => setProgressFading(true),
-        1000
+      // Phase 1: 1.5s opacity fade
+      setProgressFading(true);
+      fadeTimersRef.current.push(
+        setTimeout(() => {
+          // Phase 2: 0.5s height collapse
+          setProgressCollapsing(true);
+        }, 1500),
+        setTimeout(() => {
+          // Unmount
+          setShowProgress(false);
+          setProgressFading(false);
+          setProgressCollapsing(false);
+          fadeTimersRef.current = [];
+        }, 2000)
       );
     }
     return () => {
-      if (progressTimerRef.current) {
-        clearTimeout(progressTimerRef.current);
-        progressTimerRef.current = null;
-      }
+      for (const t of fadeTimersRef.current) clearTimeout(t);
+      fadeTimersRef.current = [];
     };
   }, [isComputing]);
 
@@ -1393,9 +1406,11 @@ export function DamageCard({
   // Formula label for the active single-formula selection
   const activeFormulaLabel = useMemo(() => {
     if (!resolvedFormula || !teamBuild) return undefined;
-    return teamBuild.getFormulaIds()[resolvedFormula.charId]?.[
-      resolvedFormula.formulaId
-    ];
+    return (
+      teamBuild.getFormulaIds()[resolvedFormula.charId]?.[
+        resolvedFormula.formulaId
+      ] ?? teamBuild.getReactionFormulaIds()[resolvedFormula.formulaId]
+    );
   }, [resolvedFormula, teamBuild]);
 
   const hasActiveFormula =
@@ -1451,15 +1466,17 @@ export function DamageCard({
 
       {/* ── Content: Current Equipped ── */}
       {resultsTab === "current" && (
-        <CardContent className={CARD_BODY_CLS}>
+        <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
           <div className={CONTROLS_CLS}>
             <EnemyLevelInput {...ctxProps} />
             <EnemyResInput {...ctxProps} />
           </div>
-          {formulaMode === "combo" && comboResult && comboLines && teamBuild ? (
+          {formulaMode === "combo" &&
+          currentDisplayResult &&
+          comboLines &&
+          teamBuild ? (
             <ComboResultView
               displayResult={currentDisplayResult}
-              comboResult={comboResult}
               comboLines={comboLines}
               comboId={comboId}
               teamBuild={teamBuild}
@@ -1472,7 +1489,7 @@ export function DamageCard({
               t={t}
               reactionOverrides={team.reactionOverrides}
             />
-          ) : formulaMode === "combo" && comboLines && !comboResult ? (
+          ) : formulaMode === "combo" && comboLines && !currentDisplayResult ? (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
               <p>{t.ui("teamComp.emptyComboMsg")}</p>
@@ -1519,7 +1536,7 @@ export function DamageCard({
               </div>
             )}
 
-          <CardContent className={CARD_BODY_CLS}>
+          <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
             <div className={CONTROLS_CLS}>
               <EnemyLevelInput {...ctxProps} />
               <EnemyResInput {...ctxProps} />
@@ -1564,7 +1581,7 @@ export function DamageCard({
                   size="sm"
                   onClick={onFreezeAll}
                   disabled={
-                    (!teamResult?.done && !isPartiallyFrozen) ||
+                    (!hasOptResult && !isPartiallyFrozen) ||
                     (teamResult?.done && teamResult.bestDamage <= 0) ||
                     !hasActiveFormula
                   }
@@ -1612,125 +1629,134 @@ export function DamageCard({
                   : Math.round((teamProgress?.overallProgress ?? 0) * 100);
                 return (
                   <div
-                    className={cn(
-                      "space-y-3 bg-black/15 p-3 rounded-lg border border-border/20 transition-opacity duration-1000",
-                      progressFading && "opacity-0"
-                    )}
-                    onTransitionEnd={() => {
-                      if (progressFading) {
-                        setShowProgress(false);
-                        setProgressFading(false);
-                      }
+                    className="overflow-hidden"
+                    style={{
+                      maxHeight: progressCollapsing ? 0 : 500,
+                      marginTop: progressCollapsing ? 0 : undefined,
+                      marginBottom: progressCollapsing ? 0 : undefined,
+                      transition: progressCollapsing
+                        ? "max-height 0.5s ease, margin 0.5s ease"
+                        : undefined,
                     }}
                   >
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="font-semibold">
-                        {!isComputing
-                          ? `✓ ${t.ui("teamComp.optComplete")}`
-                          : teamProgress?.phase
-                            ? {
-                                init: t.ui("teamComp.phaseInit"),
-                                phase1: t.ui("teamComp.phasePerChar"),
-                                phase2: t.ui("teamComp.phaseTeamAlloc"),
-                                phase3: `${t.ui("teamComp.phaseTeamRefine")} — ${t.character(teamProgress.currentPassCharId)}`,
-                              }[teamProgress.phase]
-                            : t.ui("teamComp.preparingOpt")}
-                      </span>
-                      <span className="font-mono font-bold">
-                        {progressPct}%
-                      </span>
-                    </div>
-                    <Progress
-                      value={progressPct}
-                      className="h-1.5 bg-black/40"
-                    />
-                    {/* Per-character substat weights (debug) */}
-                    {teamProgress?.passResults?.some(
-                      (pr) => pr.substatWeights
-                    ) && (
-                      <div className="space-y-1">
-                        {teamProgress.passResults
-                          .filter(
-                            (pr) =>
-                              pr.substatWeights &&
-                              Object.keys(pr.substatWeights).length > 0
-                          )
-                          .map((pr) => (
-                            <div
-                              key={pr.charId}
-                              className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground"
-                            >
-                              <span className="font-semibold text-foreground/70 w-16 shrink-0 truncate">
-                                {t.character(pr.charId)}
-                              </span>
-                              <span className="truncate">
-                                {Object.entries(pr.substatWeights!)
-                                  .filter(([, v]) => Math.abs(v) > 0.01)
-                                  .sort(([, a], [, b]) => b - a)
-                                  .map(
-                                    ([k, v]) =>
-                                      `${t.statShort(k)}:${v.toFixed(1)}`
-                                  )
-                                  .join("  ")}
-                              </span>
-                            </div>
-                          ))}
+                    <div
+                      className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20"
+                      style={{
+                        opacity: progressFading ? 0 : 1,
+                        transition: "opacity 1.5s ease",
+                      }}
+                    >
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="font-semibold">
+                          {!isComputing
+                            ? `✓ ${t.ui("teamComp.optComplete")}`
+                            : teamProgress?.phase
+                              ? {
+                                  init: t.ui("teamComp.phaseInit"),
+                                  phase1: t.ui("teamComp.phasePerChar"),
+                                  phase2: t.ui("teamComp.phaseTeamAlloc"),
+                                  phase3: `${t.ui("teamComp.phaseTeamRefine")} — ${t.character(teamProgress.currentPassCharId)}`,
+                                }[teamProgress.phase]
+                              : t.ui("teamComp.preparingOpt")}
+                        </span>
+                        <span className="font-mono font-bold">
+                          {progressPct}%
+                        </span>
                       </div>
-                    )}
-                    {/* Per-character status badges — always visible during optimization */}
-                    <div className="flex flex-wrap gap-1.5">
-                      {effectiveTeam.characters
-                        .filter((id): id is string => id != null)
-                        .map((charId) => {
-                          const pr = teamProgress?.passResults.find(
-                            (r) => r.charId === charId
-                          );
-                          const liveDmg =
-                            teamProgress?.workerBestDamage?.[charId];
-                          if (pr) {
-                            // Completed
+                      <Progress
+                        value={progressPct}
+                        className="h-1.5 bg-black/40"
+                      />
+                      {/* Per-character substat weights (debug) */}
+                      {teamProgress?.passResults?.some(
+                        (pr) => pr.substatWeights
+                      ) && (
+                        <div className="space-y-1">
+                          {teamProgress.passResults
+                            .filter(
+                              (pr) =>
+                                pr.substatWeights &&
+                                Object.keys(pr.substatWeights).length > 0
+                            )
+                            .map((pr) => (
+                              <div
+                                key={pr.charId}
+                                className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground"
+                              >
+                                <span className="font-semibold text-foreground/70 w-16 shrink-0 truncate">
+                                  {t.character(pr.charId)}
+                                </span>
+                                <span className="truncate">
+                                  {Object.entries(pr.substatWeights!)
+                                    .filter(([, v]) => Math.abs(v) > 0.01)
+                                    .sort(([, a], [, b]) => b - a)
+                                    .map(
+                                      ([k, v]) =>
+                                        `${t.statShort(k)}:${v.toFixed(1)}`
+                                    )
+                                    .join("  ")}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                      {/* Per-character status badges — always visible during optimization */}
+                      <div className="flex flex-wrap gap-1.5">
+                        {effectiveTeam.characters
+                          .filter((id): id is string => id != null)
+                          .map((charId) => {
+                            const pr = teamProgress?.passResults.find(
+                              (r) => r.charId === charId
+                            );
+                            const liveDmg =
+                              teamProgress?.workerBestDamage?.[charId];
+                            if (pr) {
+                              // Completed
+                              return (
+                                <span
+                                  key={charId}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold"
+                                >
+                                  <Check className="w-2.5 h-2.5" />
+                                  {t.character(charId)}
+                                  {pr.bestDamage > 0 && (
+                                    <span className="font-mono">
+                                      {Math.round(
+                                        pr.bestDamage
+                                      ).toLocaleString()}
+                                    </span>
+                                  )}
+                                </span>
+                              );
+                            }
+                            if (liveDmg != null) {
+                              // In progress (worker running)
+                              return (
+                                <span
+                                  key={charId}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold"
+                                >
+                                  <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                                  {t.character(charId)}
+                                  {liveDmg > 0 && (
+                                    <span className="font-mono">
+                                      {Math.round(liveDmg).toLocaleString()}
+                                    </span>
+                                  )}
+                                </span>
+                              );
+                            }
+                            // Pending (not yet started)
                             return (
                               <span
                                 key={charId}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold"
                               >
-                                <Check className="w-2.5 h-2.5" />
                                 {t.character(charId)}
-                                {pr.bestDamage > 0 && (
-                                  <span className="font-mono">
-                                    {Math.round(pr.bestDamage).toLocaleString()}
-                                  </span>
-                                )}
                               </span>
                             );
-                          }
-                          if (liveDmg != null) {
-                            // In progress (worker running)
-                            return (
-                              <span
-                                key={charId}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold"
-                              >
-                                <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                                {t.character(charId)}
-                                {liveDmg > 0 && (
-                                  <span className="font-mono">
-                                    {Math.round(liveDmg).toLocaleString()}
-                                  </span>
-                                )}
-                              </span>
-                            );
-                          }
-                          // Pending (not yet started)
-                          return (
-                            <span
-                              key={charId}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold"
-                            >
-                              {t.character(charId)}
-                            </span>
-                          );
-                        })}
+                          })}
+                      </div>
                     </div>
                   </div>
                 );
@@ -1740,7 +1766,7 @@ export function DamageCard({
             {/* Combo mode with no active lines — show hint */}
             {formulaMode === "combo" &&
               comboLines &&
-              !optimizedComboResult &&
+              !optimizedDisplayResult &&
               isFrozen &&
               !teamResult && (
                 <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
@@ -1750,12 +1776,11 @@ export function DamageCard({
               )}
 
             {!hasActiveFormula ? null : formulaMode === "combo" &&
-              optimizedComboResult &&
+              optimizedDisplayResult &&
               comboLines &&
               teamBuild ? (
               <ComboResultView
                 displayResult={optimizedDisplayResult}
-                comboResult={optimizedComboResult}
                 comboLines={comboLines}
                 comboId={comboId}
                 teamBuild={teamBuild}
@@ -1774,9 +1799,6 @@ export function DamageCard({
                 onArtifactSwap={onArtifactSwap}
                 onFreezeChar={onFreezeChar}
                 onUnfreezeChar={onUnfreezeChar}
-                saturatedCharIds={
-                  teamResult?.done ? teamResult.saturatedCharIds : undefined
-                }
               />
             ) : hasOptResult && optimizedDisplayResult ? (
               <DamageBody
@@ -1803,9 +1825,6 @@ export function DamageCard({
                 onArtifactSwap={onArtifactSwap}
                 onFreezeChar={onFreezeChar}
                 onUnfreezeChar={onUnfreezeChar}
-                saturatedCharIds={
-                  teamResult?.done ? teamResult.saturatedCharIds : undefined
-                }
               />
             ) : null}
 
@@ -1838,7 +1857,7 @@ export function DamageCard({
 
       {/* ── Content: Generate (dev only) ── */}
       {resultsTab === "generate" && (
-        <CardContent className={CARD_BODY_CLS}>
+        <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
           <div className={CONTROLS_CLS}>
             <EnemyLevelInput {...ctxProps} />
             <EnemyResInput {...ctxProps} />
@@ -1888,12 +1907,11 @@ export function DamageCard({
 
           {/* Results */}
           {formulaMode === "combo" &&
-          genComboResult &&
+          genDisplayResult &&
           comboLines &&
           teamBuild ? (
             <ComboResultView
               displayResult={genDisplayResult}
-              comboResult={genComboResult}
               comboLines={comboLines}
               comboId={comboId}
               teamBuild={teamBuild}
