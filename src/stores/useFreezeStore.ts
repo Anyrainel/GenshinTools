@@ -14,6 +14,8 @@ interface FrozenTeam {
 interface FreezeState {
   /** Map of teamId → frozen data */
   frozenTeams: Record<string, FrozenTeam>;
+  /** When true, frozen artifacts can be reused by the same character in other teams */
+  allowSameCharReuse: boolean;
 
   /** Freeze specific characters within a team */
   freezeCharacters: (
@@ -26,6 +28,7 @@ interface FreezeState {
   /** Remove the entire team's freeze entry */
   unfreezeTeam: (teamId: string) => void;
   clearAll: () => void;
+  setAllowSameCharReuse: (value: boolean) => void;
   /** True if any character in the team is frozen */
   isFrozen: (teamId: string) => boolean;
   /** True if a specific character is frozen within a team */
@@ -58,6 +61,7 @@ export const useFreezeStore = create<FreezeState>()(
   persist(
     (set, get) => ({
       frozenTeams: {},
+      allowSameCharReuse: true,
 
       freezeCharacters: (teamId, charIds, artifactsByChar) =>
         set((state) => {
@@ -112,6 +116,7 @@ export const useFreezeStore = create<FreezeState>()(
         }),
 
       clearAll: () => set({ frozenTeams: {} }),
+      setAllowSameCharReuse: (value) => set({ allowSameCharReuse: value }),
 
       isFrozen: (teamId) => {
         const entry = get().frozenTeams[teamId];
@@ -148,11 +153,12 @@ export const useFreezeStore = create<FreezeState>()(
     }),
     {
       name: "frozen-teams-storage",
-      // Migrate old shape: { artifactIds, artifactsByChar } → { frozenCharIds, artifactsByChar }
-      version: 1,
-      migrate: (persisted: unknown) => {
-        const state = persisted as {
-          frozenTeams: Record<
+      version: 2,
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as Record<string, unknown>;
+        // v0 → v1: { artifactIds, artifactsByChar } → { frozenCharIds, artifactsByChar }
+        if (version < 1) {
+          const ft = (state.frozenTeams ?? {}) as Record<
             string,
             {
               artifactIds?: string[];
@@ -163,18 +169,24 @@ export const useFreezeStore = create<FreezeState>()(
               >;
             }
           >;
-        };
-        for (const entry of Object.values(state.frozenTeams)) {
-          if (!entry.frozenCharIds) {
-            // Old format: derive frozenCharIds from artifactsByChar keys
-            entry.frozenCharIds = Object.keys(entry.artifactsByChar);
-            entry.artifactIds = undefined;
+          for (const entry of Object.values(ft)) {
+            if (!entry.frozenCharIds) {
+              entry.frozenCharIds = Object.keys(entry.artifactsByChar);
+              entry.artifactIds = undefined;
+            }
           }
         }
-        return state as FreezeState;
+        // v1 → v2: add allowSameCharReuse (default true)
+        if (version < 2) {
+          if (!("allowSameCharReuse" in state)) {
+            (state as Record<string, unknown>).allowSameCharReuse = true;
+          }
+        }
+        return state as unknown as FreezeState;
       },
       partialize: (state) => ({
         frozenTeams: state.frozenTeams,
+        allowSameCharReuse: state.allowSameCharReuse,
       }),
       merge: (persistedState, currentState) => {
         const merged = {
