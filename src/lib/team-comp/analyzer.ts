@@ -632,7 +632,7 @@ async function runGeneration(
   combo: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
   perChar?: Record<string, { minEr: number; minCr: number }>
-): Promise<{ damage: number; sheetsByChar: Record<string, StatSheet> }> {
+): Promise<Record<string, StatSheet>> {
   const configs = baseConfigs.map((bc) => {
     const inv = allocation[bc.charId];
     return inv ? investmentToConfig(inv, bc) : bc;
@@ -658,10 +658,7 @@ async function runGeneration(
     finalResult = result;
   }
 
-  return {
-    damage: finalResult?.damage ?? 0,
-    sheetsByChar: finalResult?.sheetsByChar ?? {},
-  };
+  return finalResult?.sheetsByChar ?? {};
 }
 
 // ─── Progress weight constants ───
@@ -757,7 +754,7 @@ async function* computePhase1(
       perChar
     );
 
-    snapshotCache[snapshot.id] = result.sheetsByChar;
+    snapshotCache[snapshot.id] = result;
   }
 
   yield {

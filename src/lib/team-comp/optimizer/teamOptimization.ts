@@ -2235,6 +2235,5 @@ export async function* runTeamOptimization(
   yield {
     ...resultBase,
     bestDamage: comboRes.totalDamage,
-    bestComboResult: comboRes,
   } satisfies TeamOptimizationResult;
 }

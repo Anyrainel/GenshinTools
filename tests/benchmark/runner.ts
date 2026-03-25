@@ -41,7 +41,12 @@ import type {
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import { singleFormulaCombo } from "@/lib/team-comp/types";
-import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
+import type {
+  CalcContext,
+  ComboFormula,
+  ComboLine,
+  TeamSlotConfig,
+} from "@/lib/team-comp/types";
 import { runTeamOptimization as runAStar } from "./gen/astar";
 import { runTeamOptimization as runMona } from "./gen/mona";
 import { runTeamOptimization as runMonaV2 } from "./gen/monaV2";
@@ -216,7 +221,7 @@ export function getArtifactSetRarity(
 
 function getTeammateTargetEr(
   goalArt:
-    | { type: string; setId?: string; id1?: string | number }
+    | { type?: string; setId?: string; id1?: string | number }
     | null
     | undefined
 ): number {
@@ -388,6 +393,54 @@ export function getCarryFormulaIds(
     }));
   } catch {
     return [];
+  }
+}
+
+/**
+ * Build a ComboFormula from all characters' defaultCombo counts.
+ * Returns null if no character has a non-empty defaultCombo.
+ */
+export function getTeamCombo(team: Team): ComboFormula | null {
+  const configs: TeamSlotConfig[] = [];
+  for (let i = 0; i < team.characters.length; i++) {
+    const charId = team.characters[i];
+    const weaponId = team.weapons[i];
+    if (!charId || !weaponId) continue;
+    configs.push({
+      charId,
+      charLevel: 90,
+      constellation: 0,
+      weaponId,
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    });
+  }
+  if (configs.length === 0) return null;
+  try {
+    const tb = new TeamBuild(
+      configs,
+      team.opts || {},
+      team.enemyAura as Element | undefined
+    );
+    const lines: ComboLine[] = [];
+    for (const charId of team.characters) {
+      if (!charId) continue;
+      const combo = tb.getCombo(charId);
+      for (const [formulaId, count] of Object.entries(combo)) {
+        if (count > 0) {
+          lines.push({ charId, formulaId, count });
+        }
+      }
+    }
+    if (lines.length <= 1) return null; // single-line combos are already covered
+    return {
+      id: "__combo__",
+      label: { zh: "默认连携", en: "Default Combo" },
+      lines,
+    };
+  } catch {
+    return null;
   }
 }
 

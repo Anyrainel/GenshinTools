@@ -938,7 +938,7 @@ function ComboResultView({
       )}
       <ComboBreakdown
         team={team}
-        lineDamages={displayResult.lineDamages}
+        lineDamages={displayResult.lineDamages ?? []}
         comboLines={comboLines}
         comboId={comboId}
         teamBuild={teamBuild}

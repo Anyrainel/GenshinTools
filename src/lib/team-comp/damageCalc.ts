@@ -1583,7 +1583,7 @@ export class TeamBuild {
 
     // ── Buff resolution ──
     const partReadKeys = parts.map((p) => p.readKeys);
-    const partOffField = entry.parts.map((p) => p.offField ?? false);
+    const partOffField = entry?.parts.map((p) => p.offField ?? false) ?? [];
     const buffs = this.resolveBuffs(
       charId,
       preStats,
@@ -1733,6 +1733,7 @@ export class TeamBuild {
         const selfId = isSelfReceiver(b.buff.target.receiver)
           ? b.providerCharId
           : onFieldCharId;
+        if (selfId == null) return false;
         return this.isBuffApplicableForChar(
           b.buff,
           b.providerCharId,
@@ -1759,6 +1760,7 @@ export class TeamBuild {
       const selfId = isSelfReceiver(b.buff.target.receiver)
         ? b.providerCharId
         : onFieldCharId;
+      if (selfId == null) return false;
       return this.isBuffApplicableForChar(
         b.buff,
         b.providerCharId,
@@ -1788,6 +1790,7 @@ export class TeamBuild {
       if (!(buff instanceof ScalingBuff)) continue;
       // Only care about scaling buffs whose output reaches the calc target
       if (
+        onFieldCharId == null ||
         !this.isBuffApplicableForChar(buff, providerCharId, onFieldCharId, true)
       )
         continue;
@@ -1812,12 +1815,14 @@ export class TeamBuild {
       const selfId = isSelfReceiver(buff.target.receiver)
         ? ownerId
         : onFieldCharId;
-      const applicable = this.isBuffApplicableForChar(
-        buff,
-        ownerId,
-        selfId,
-        selfId === onFieldCharId
-      );
+      const applicable =
+        selfId != null &&
+        this.isBuffApplicableForChar(
+          buff,
+          ownerId,
+          selfId,
+          selfId === onFieldCharId
+        );
 
       // Resolve dynamic entries with per-entry caps
       let dynamicEntries: ResolvedStatEntry[] = [];
@@ -1847,12 +1852,9 @@ export class TeamBuild {
           const effectiveKeys = new Set<StatKey>();
 
           // Check if this buff directly affects the calc target's stat sheet
-          const reachesCalcTarget = this.isBuffApplicableForChar(
-            buff,
-            ownerId,
-            onFieldCharId,
-            true
-          );
+          const reachesCalcTarget =
+            onFieldCharId != null &&
+            this.isBuffApplicableForChar(buff, ownerId, onFieldCharId, true);
           if (reachesCalcTarget) {
             for (const k of rawOutputKeys) effectiveKeys.add(k);
           }
@@ -2054,39 +2056,41 @@ export class TeamBuild {
     }
 
     // ── Bespoke buffs (per-formula-part) ──
-    const calcBuild = this.charBuilds[onFieldCharId];
-    const bespokeRaw = calcBuild.charBase.getBespokeBuffs();
-    // Deduplicate by buff identity (same buff object on multiple parts)
-    const seenBespokeBuffs = new Set<StatBuff>();
-    for (const { formulaId: fId, label, buff } of bespokeRaw) {
-      if (seenBespokeBuffs.has(buff)) continue;
-      seenBespokeBuffs.add(buff);
+    if (onFieldCharId != null) {
+      const calcBuild = this.charBuilds[onFieldCharId];
+      const bespokeRaw = calcBuild.charBase.getBespokeBuffs();
+      // Deduplicate by buff identity (same buff object on multiple parts)
+      const seenBespokeBuffs = new Set<StatBuff>();
+      for (const { formulaId: fId, label, buff } of bespokeRaw) {
+        if (seenBespokeBuffs.has(buff)) continue;
+        seenBespokeBuffs.add(buff);
 
-      const ownerStats = preStats[onFieldCharId]!;
-      const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
-      const active = formulaId === fId;
+        const ownerStats = preStats[onFieldCharId]!;
+        const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+        const active = formulaId === fId;
 
-      let dynamicEntries: ResolvedStatEntry[] = [];
-      if (raw.length > 0) {
-        dynamicEntries = raw.map((entry) => {
-          const resolved: ResolvedStatEntry = { ...entry };
-          if (buff instanceof ScalingBuff) {
-            if (buff.cap !== undefined) resolved.cap = buff.cap;
-            resolved.inputKey = buff.inputKey;
-          }
-          return resolved;
+        let dynamicEntries: ResolvedStatEntry[] = [];
+        if (raw.length > 0) {
+          dynamicEntries = raw.map((entry: StatEntry) => {
+            const resolved: ResolvedStatEntry = { ...entry };
+            if (buff instanceof ScalingBuff) {
+              if (buff.cap !== undefined) resolved.cap = buff.cap;
+              resolved.inputKey = buff.inputKey;
+            }
+            return resolved;
+          });
+        }
+
+        result.push({
+          source: buff.source,
+          providerCharId: onFieldCharId,
+          target: buff.target,
+          active,
+          staticEntries: buff.staticBuffs,
+          dynamicEntries,
+          bespokeLabel: label,
         });
       }
-
-      result.push({
-        source: buff.source,
-        providerCharId: onFieldCharId,
-        target: buff.target,
-        active,
-        staticEntries: buff.staticBuffs,
-        dynamicEntries,
-        bespokeLabel: label,
-      });
     }
 
     return result;

@@ -470,7 +470,7 @@ function serializeTeamResult(
 
   // Combo result (sourced from display path)
   const comboResult = {
-    lineDamages: display.lineDamages.map((l) => ({
+    lineDamages: (display.lineDamages ?? []).map((l) => ({
       perHit: r4(l.perHit),
       total: r4(l.total),
     })),
