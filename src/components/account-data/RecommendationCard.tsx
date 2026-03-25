@@ -114,7 +114,7 @@ function RecommendationCardComponent({
                     const halfSetId2 = artifactIdToHalfSetId[twoPcSets[1][0]];
                     return (
                       <Tooltip>
-                        <TooltipTrigger className={isCompact ? "" : "-mt-1"}>
+                        <TooltipTrigger className="md:-mt-1">
                           <ItemIcon
                             imagePath={
                               artifactsById[twoPcSets[0][0]]?.imagePaths

@@ -377,7 +377,7 @@ function BuildCardComponent({
   return (
     <>
       <div className="border border-border/50 rounded-lg bg-muted/30">
-        <div className={cn("px-2 md:px-3 pt-2", isMobile ? "space-y-1.5" : "")}>
+        <div className="px-2 md:px-3 pt-2 space-y-1.5 md:space-y-0">
           <div className="flex items-center gap-2">
             <Switch
               checked={build.visible}
@@ -404,7 +404,6 @@ function BuildCardComponent({
                     ? t.ui("buildCard.buildComplete")
                     : validation.warningMessage
                 }
-                isMobile={isMobile}
               />
 
               <DropdownMenu>
@@ -412,11 +411,9 @@ function BuildCardComponent({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={cn("p-1", isMobile ? "h-7 w-7" : "h-8 w-8")}
+                    className="p-1 h-7 w-7 md:h-8 md:w-8"
                   >
-                    <MoreVertical
-                      className={cn(isMobile ? "h-4 w-4" : "h-5 w-5")}
-                    />
+                    <MoreVertical className="h-4 w-4 md:h-5 md:w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -484,10 +481,7 @@ function BuildCardComponent({
         <div className={cn("px-2 py-1.5 md:py-2")}>
           <div className="pt-1 border-t border-border/30">
             <div
-              className={cn(
-                "flex items-center justify-center",
-                isMobile ? "gap-2" : "gap-3"
-              )}
+              className={cn("flex items-center justify-center gap-2 md:gap-3")}
             >
               <div className={cn("flex-shrink-0 md:pl-1")}>
                 <div className="h-full flex items-center justify-center">
@@ -501,12 +495,7 @@ function BuildCardComponent({
                   />
                 </div>
               </div>
-              <div
-                className={cn(
-                  "flex-1 min-w-0",
-                  isMobile ? "space-y-0.5" : "space-y-1"
-                )}
-              >
+              <div className={cn("flex-1 min-w-0", "space-y-0.5 md:space-y-1")}>
                 <div className={cn("grid grid-cols-3 gap-1")}>
                   {mainStatSlots.map((slot) => {
                     const weightsKey = `${slot}Weights` as const;
@@ -622,11 +611,9 @@ function BuildCardComponent({
 function ValidationPopover({
   isValid,
   message,
-  isMobile,
 }: {
   isValid: boolean;
   message: string | undefined;
-  isMobile: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -661,11 +648,9 @@ function ValidationPopover({
   }, []);
 
   const icon = isValid ? (
-    <Check className={cn(isMobile ? "w-5 h-5" : "w-6 h-6", "text-green-500")} />
+    <Check className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
   ) : (
-    <AlertCircle
-      className={cn(isMobile ? "w-5 h-5" : "w-6 h-6", "text-amber-500")}
-    />
+    <AlertCircle className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
   );
 
   if (isValid) return null;

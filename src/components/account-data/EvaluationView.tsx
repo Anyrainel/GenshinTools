@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
@@ -43,7 +43,7 @@ export function EvaluationView() {
   const accountData = activeAccount?.data || null;
   const buildGroups = useAllResolvedBuilds();
   const { config: scoreConfig } = useArtifactScoreStore();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
@@ -250,11 +250,7 @@ export function EvaluationView() {
     >
       {/* Set Groups */}
       {filteredGroups.map((group) => (
-        <SetGroupSection
-          key={group.artifactSet}
-          group={group}
-          isMobile={isMobile}
-        />
+        <SetGroupSection key={group.artifactSet} group={group} />
       ))}
     </ScrollLayout>
   );
@@ -266,10 +262,8 @@ export function EvaluationView() {
 
 function SetGroupSection({
   group,
-  isMobile,
 }: {
   group: SetGroup;
-  isMobile: boolean;
 }) {
   const { t } = useLanguage();
   const is2p2 = group.artifactSet === "__2+2__";
@@ -279,9 +273,8 @@ function SetGroupSection({
   const worstPct = Math.round(group.worstCompleteness * 100);
 
   // Uniform card widths — cap max so single cards don't stretch to full row
-  const gridClass = isMobile
-    ? "grid-cols-1"
-    : "grid-cols-[repeat(auto-fill,minmax(280px,320px))]";
+  const gridClass =
+    "grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(280px,320px))]";
 
   return (
     <div>

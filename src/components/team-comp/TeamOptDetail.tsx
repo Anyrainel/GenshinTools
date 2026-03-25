@@ -947,13 +947,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     <div
       className={cn(
         "flex flex-col w-full animate-in fade-in duration-300 pb-12",
-        isMobile ? "gap-1.5" : "gap-2"
+        "gap-1.5 lg:gap-2"
       )}
     >
       {/* ── Page Header ── */}
-      <div
-        className={cn("flex items-center gap-2", isMobile ? "px-0.5" : "px-1")}
-      >
+      <div className="flex items-center gap-2 px-0.5 lg:px-1">
         <Button
           variant="ghost"
           size="icon"

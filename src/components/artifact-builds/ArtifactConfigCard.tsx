@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Info } from "lucide-react";
 
 interface ArtifactConfigCardProps {
@@ -24,7 +23,6 @@ export function ArtifactConfigCard({
   onJumpToCharacter,
 }: ArtifactConfigCardProps) {
   const { t } = useLanguage();
-  const isMobile = !useMediaQuery("(min-width: 768px)");
 
   const getStatDisplayName = (stat: string) => {
     return t.statShort(stat);
@@ -71,12 +69,7 @@ export function ArtifactConfigCard({
   // Helper function to render main stat cell
   const renderMainStatCell = (slotName: string, mainStats: MainStatPlus[]) => (
     <div>
-      <Label
-        className={cn(
-          "text-muted-foreground block mb-1",
-          isMobile ? "text-[11px]" : "text-xs"
-        )}
-      >
+      <Label className="text-muted-foreground block mb-1 text-[11px] md:text-xs">
         {slotName} {t.ui("computeFilters.mainStat")}
       </Label>
       <div className="flex flex-wrap gap-1">
@@ -85,21 +78,13 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="outline"
-              className={cn(
-                "font-normal shadow-none bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10",
-                isMobile ? "text-[11px] px-1 py-0" : "text-xs"
-              )}
+              className="font-normal shadow-none bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10 text-[11px] md:text-xs px-1 md:px-2.5 py-0 md:py-0.5"
             >
               {getStatDisplayName(stat)}
             </Badge>
           ))
         ) : (
-          <span
-            className={cn(
-              "text-muted-foreground italic",
-              isMobile ? "text-[11px]" : "text-xs"
-            )}
-          >
+          <span className="text-muted-foreground italic text-[11px] md:text-xs">
             {t.ui("computeFilters.any")}
           </span>
         )}
@@ -110,12 +95,7 @@ export function ArtifactConfigCard({
   // Helper function to render substat cell
   const renderSubstatCell = (slotName: string, slotConfig: SlotConfig) => (
     <div>
-      <Label
-        className={cn(
-          "text-muted-foreground block mb-1",
-          isMobile ? "text-[11px]" : "text-xs"
-        )}
-      >
+      <Label className="text-muted-foreground block mb-1 text-[11px] md:text-xs">
         {slotName} {t.ui("computeFilters.subStat")}{" "}
         <span className="font-semibold text-foreground">
           [{t.ui("computeFilters.atLeast")} {slotConfig.minStatCount}]
@@ -141,8 +121,7 @@ export function ArtifactConfigCard({
                 key={stat}
                 variant="secondary"
                 className={cn(
-                  "font-normal shadow-none",
-                  isMobile ? "text-[11px] px-1 py-0" : "text-xs",
+                  "font-normal shadow-none text-[11px] md:text-xs px-1 md:px-2.5 py-0 md:py-0.5",
                   isMustPresent
                     ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
                     : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
@@ -176,23 +155,17 @@ export function ArtifactConfigCard({
     const value = formatChance(detail.base);
 
     return (
-      <div
-        className={cn(
-          "rounded-md bg-muted/50",
-          isMobile ? "px-1.5 py-1" : "md:mr-3 px-3 py-1.5"
-        )}
-      >
-        {isMobile ? (
-          <div className="space-y-0.5">
-            <div className="text-[11px] text-muted-foreground">{label}</div>
-            <div className={cn("text-xs font-medium", textClass)}>{value}</div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-muted-foreground">{label}</div>
-            <div className={cn("text-sm font-medium", textClass)}>{value}</div>
-          </div>
-        )}
+      <div className="rounded-md bg-muted/50 px-1 md:px-2 py-0.5 md:py-1 md:mr-3">
+        {/* Mobile: stacked */}
+        <div className="space-y-0.5 md:hidden">
+          <div className="text-[11px] text-muted-foreground">{label}</div>
+          <div className={cn("text-xs font-medium", textClass)}>{value}</div>
+        </div>
+        {/* Desktop: inline */}
+        <div className="hidden md:flex items-center justify-between">
+          <div className="text-xs text-muted-foreground">{label}</div>
+          <div className={cn("text-sm font-medium", textClass)}>{value}</div>
+        </div>
       </div>
     );
   };
@@ -232,26 +205,10 @@ export function ArtifactConfigCard({
   };
 
   return (
-    <div
-      className={cn(
-        "bg-muted/20 rounded-lg border border-border/30",
-        isMobile ? "px-1.5 py-2" : "p-3"
-      )}
-    >
+    <div className="bg-muted/20 rounded-lg border border-border/30 px-1.5 py-2 md:p-3">
       {/* Title row with config number and character groups */}
-      {/* Title row with config number and character groups */}
-      <div
-        className={cn(
-          "flex flex-wrap items-center mb-1.5",
-          isMobile ? "gap-1.5" : "gap-2 md:gap-3"
-        )}
-      >
-        <h4
-          className={cn(
-            "font-medium text-foreground px-2 whitespace-nowrap",
-            isMobile && "text-sm"
-          )}
-        >
+      <div className="flex flex-wrap items-center mb-1.5 gap-1.5 md:gap-3">
+        <h4 className="font-medium text-foreground whitespace-nowrap text-sm md:text-base px-1 md:px-2">
           {t.ui("computeFilters.configNum")} {configNumber}
         </h4>
 
@@ -263,13 +220,13 @@ export function ArtifactConfigCard({
 
           {/* 4pc group */}
           {(fourPcPerfect.length > 0 || fourPcImperfect.length > 0) && (
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="flex items-center gap-1 md:gap-1.5">
               {fourPcPerfect.map(renderCharacter)}
               {fourPcPerfect.length > 0 && fourPcImperfect.length > 0 && (
                 <div className="w-px bg-border h-5 mx-0.5" />
               )}
               {fourPcImperfect.map(renderCharacter)}
-              <Label className="text-sm text-muted-foreground mx-0.5 whitespace-nowrap">
+              <Label className="text-muted-foreground mx-0.5 whitespace-nowrap shrink-0 text-xs md:text-sm">
                 ({t.ui("computeFilters.fourPc")})
               </Label>
             </div>
@@ -277,13 +234,13 @@ export function ArtifactConfigCard({
 
           {/* 2pc group */}
           {(twoPcPerfect.length > 0 || twoPcImperfect.length > 0) && (
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="flex items-center gap-1 md:gap-1.5">
               {twoPcPerfect.map(renderCharacter)}
               {twoPcPerfect.length > 0 && twoPcImperfect.length > 0 && (
                 <div className="w-px bg-border h-5 mx-0.5" />
               )}
               {twoPcImperfect.map(renderCharacter)}
-              <Label className="text-sm text-muted-foreground mx-0.5 whitespace-nowrap">
+              <Label className="text-muted-foreground mx-0.5 whitespace-nowrap shrink-0 text-xs md:text-sm">
                 ({t.ui("computeFilters.twoPc")})
               </Label>
             </div>
@@ -293,21 +250,13 @@ export function ArtifactConfigCard({
 
       {/* Grid layout - Always 4 columns */}
       <div
-        className={cn(
-          "grid grid-cols-4 pt-2 border-t border-border/40",
-          isMobile ? "gap-x-1.5 gap-y-1" : "gap-x-3 gap-y-2"
-        )}
+        className="grid grid-cols-4 pt-2 border-t border-border/40 gap-x-1.5 md:gap-x-3 gap-y-1 md:gap-y-2"
         style={{ gridTemplateRows: "auto auto auto" }}
       >
         {/* Row 1: Main Stats */}
         {/* Flower/Plume cell — reused for optional config tip */}
         {hasCrCdMustPresent(config) ? (
-          <div
-            className={cn(
-              "flex items-center gap-1.5 w-fit self-start rounded-md bg-emerald-950/30 text-emerald-300/70",
-              isMobile ? "text-[10px] px-1.5 py-1" : "text-xs px-2 py-1.5"
-            )}
-          >
+          <div className="flex items-center gap-1 w-fit self-start rounded-md bg-emerald-950/30 text-emerald-300/70 text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1">
             <Info className="w-3 h-3 shrink-0" />
             <span className="leading-tight">
               {t.ui("computeFilters.optionalConfig")}

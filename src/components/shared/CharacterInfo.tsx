@@ -6,7 +6,6 @@ import {
 } from "@/data/constants";
 import type { CharacterResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl, getElementColor, getRarityColor } from "@/lib/utils";
 import { memo } from "react";
@@ -49,15 +48,12 @@ export const CharacterInfo = memo(
     const regionName = meta.region ? t.region(meta.region) : "";
     const formattedDate = t.formatDate(meta.releaseDate ?? null);
 
-    const isMobile = !useMediaQuery("(min-width: 768px)");
-
     return (
       <div className={cn("flex flex-col gap-2", className)}>
         <div className="flex items-center gap-2">
           <h3
             className={cn(
-              "font-bold text-foreground whitespace-nowrap",
-              isMobile ? "text-lg" : "text-xl",
+              "font-bold text-foreground whitespace-nowrap text-lg md:text-xl",
               nameClassName
             )}
           >
@@ -65,84 +61,69 @@ export const CharacterInfo = memo(
           </h3>
           {children}
         </div>
-        <div
-          className={cn(
-            "flex items-center flex-wrap",
-            isMobile ? "gap-1" : "gap-2"
-          )}
-        >
+        <div className="flex items-center flex-wrap gap-1 md:gap-2">
           {meta.element != null && (
             <Badge
               variant="outline"
               className={cn(
                 elementTextColor,
                 "rounded-full shadow-none border-current border-2 flex items-center gap-1",
-                isMobile
-                  ? "px-1.5 py-0 text-sm font-normal"
-                  : "font-medium text-sm"
+                "px-1.5 py-0 md:px-2.5 md:py-0.5 text-sm font-normal md:font-medium"
               )}
             >
               <img
                 src={getAssetUrl(elementImagePath)}
                 alt={meta.element}
                 loading="lazy"
-                className={cn(isMobile ? "w-3.5 h-3.5" : "w-5 h-5")}
+                className="w-3.5 h-3.5 md:w-5 md:h-5"
               />
               {elementName}
             </Badge>
           )}
 
-          {!isMobile && (
-            <Badge
-              variant="outline"
-              className={cn(
-                rarityTextColor,
-                "rounded-full shadow-none border-current border-2 font-semibold text-sm"
-              )}
-            >
-              ★ {meta.rarity}
-            </Badge>
-          )}
+          <Badge
+            variant="outline"
+            className={cn(
+              rarityTextColor,
+              "rounded-full shadow-none border-current border-2 font-semibold text-sm",
+              "hidden md:inline-flex"
+            )}
+          >
+            ★ {meta.rarity}
+          </Badge>
 
           {meta.weaponType != null && (
             <Badge
               variant="outline"
               className={cn(
                 "rounded-full shadow-none text-slate-400 border-slate-400 border-2 capitalize flex items-center gap-1",
-                isMobile
-                  ? "px-1.5 py-0 text-sm font-normal"
-                  : "font-medium text-sm"
+                "px-1.5 py-0 md:px-2.5 md:py-0.5 text-sm font-normal md:font-medium"
               )}
             >
               <img
                 src={getAssetUrl(weaponImagePath)}
                 alt={meta.weaponType}
                 loading="lazy"
-                className={cn(isMobile ? "w-3.5 h-3.5" : "w-5 h-5")}
+                className="w-3.5 h-3.5 md:w-5 md:h-5"
               />
               {weaponName}
             </Badge>
           )}
 
-          {!isMobile && meta.region != null && (
+          {meta.region != null && (
             <Badge
               variant="outline"
               className={cn(
                 "rounded-full shadow-none text-slate-400 border-slate-400 border-2 capitalize",
-                "font-medium text-sm"
+                "font-medium text-sm hidden md:inline-flex"
               )}
             >
               {regionName}
             </Badge>
           )}
 
-          {showDate && !isMobile && (
-            <span
-              className={cn(
-                "text-muted-foreground pl-2",
-                isMobile ? "text-xs" : "text-sm"
-              )}
-            >
+          {showDate && (
+            <span className="text-muted-foreground pl-2 text-sm hidden md:inline">
               {formattedDate}
             </span>
           )}
