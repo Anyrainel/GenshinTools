@@ -14,4 +14,5 @@ export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   equippedProtection: true,
   disabledFlexPatterns: [],
   enabledFlexPatterns: [],
+  customFlexInputs: [],
 };

@@ -8,7 +8,7 @@ import type {
 import { allSlots } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";
-import { buildFlexPatterns } from "./flexRegistry";
+import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { isInitial4Line } from "./is4L";
 import { extractRules } from "./ruleBuilder";
 import { type TierResult, evaluateTier } from "./tierEvaluator";
@@ -84,8 +84,15 @@ export function runTriage(
   // 1. Extract rules
   const rules = extractRules(buildGroups, accountData, settings);
 
-  // 2. Build flex patterns
-  const allFlex = buildFlexPatterns(rules);
+  // 2. Build flex patterns (official + custom)
+  const officialFlex = buildFlexPatterns(rules);
+  const customFlex = (settings.customFlexInputs ?? [])
+    .map(buildCustomFlexPattern)
+    .filter(
+      (fp): fp is FlexPattern =>
+        fp !== null && !officialFlex.some((o) => o.key === fp.key)
+    );
+  const allFlex = [...officialFlex, ...customFlex];
   const enabledFlex = allFlex.filter((fp) =>
     fp.defaultOff
       ? settings.enabledFlexPatterns.includes(fp.key)

@@ -266,4 +266,61 @@ describe("runTriage", () => {
     );
     expect(decisions).toHaveLength(0);
   });
+
+  it("custom patterns from customFlexInputs cause FLEX special rule to fire", () => {
+    // Use a unique custom pattern: sands EM with er+hp%
+    // This won't match any official curated pattern (curated EM sands only has cr+cd)
+    const art = makeArt({
+      setKey: "unrelated_set",
+      slotKey: "sands",
+      mainStatKey: "em",
+      substats: { er: 1, "hp%": 1, def: 1, hp: 1 },
+    });
+    const account = makeAccount([], [art]);
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+        customFlexInputs: [
+          { slot: "sands", mainStat: "em", requiredSubs: ["er", "hp%"] },
+        ],
+      }
+    );
+    expect(decisions[0].specialRules).toContain("FLEX");
+    expect(decisions[0].label).toBe("lock");
+  });
+
+  it("custom patterns matching an official key are deduplicated (official wins)", () => {
+    // flower hp cr+cd+atk%+atk is a curated pattern
+    const account = makeAccount([], [makeArt({})]);
+    const { flexPatterns } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        customFlexInputs: [
+          {
+            slot: "flower",
+            mainStat: "hp",
+            requiredSubs: ["cr", "cd", "atk%", "atk"],
+          },
+        ],
+      }
+    );
+    // Should not have duplicates — the custom should be filtered out
+    const keys = flexPatterns.map((fp) => fp.key);
+    const unique = new Set(keys);
+    expect(keys.length).toBe(unique.size);
+    // The official version should not be marked custom
+    const officialMatch = flexPatterns.find(
+      (fp) => fp.key === "flex:flower:hp:cr,cd,atk%,atk"
+    );
+    expect(officialMatch).toBeDefined();
+    expect(officialMatch!.custom).toBeUndefined();
+  });
 });

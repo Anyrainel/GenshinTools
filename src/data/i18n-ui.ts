@@ -1746,5 +1746,20 @@ export const i18nUiData = {
       en: "Auto-detected premium off-piece patterns. Toggle on to lock regardless of set. (Format: Slot·MainStat·SubStat)",
       zh: "自动检测的散件类型。开启后无视套装锁定。（选项为“部位·主词条·副词条”）",
     },
+    globalRules: { en: "Global Rules", zh: "全局规则" },
+    builtInPatterns: { en: "Built-in Patterns", zh: "内置散件" },
+    mainLabel: { en: "Main", zh: "主" },
+    subLabel: { en: "Sub", zh: "副" },
+    customPatterns: { en: "Custom Patterns", zh: "自定义散件" },
+    addCustomFlex: { en: "Add", zh: "添加" },
+    customFlexDuplicate: {
+      en: "Pattern already exists",
+      zh: "该规则已存在",
+    },
+    customFlexInvalid: {
+      en: "Invalid substat combination",
+      zh: "副词条组合无效",
+    },
+    removeCustomFlex: { en: "Remove custom pattern", zh: "删除自定义散件" },
   },
 };

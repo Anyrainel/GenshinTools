@@ -97,6 +97,7 @@ export type TriageSettings = {
   equippedProtection: boolean; // default true
   disabledFlexPatterns: string[];
   enabledFlexPatterns: string[];
+  customFlexInputs: CustomFlexInput[];
 };
 
 // ---------------------------------------------------------------------------
@@ -139,4 +140,12 @@ export type FlexPattern = {
   rarity: number;
   /** If true, this pattern is off by default and must be explicitly enabled */
   defaultOff?: boolean;
+  /** If true, this is a user-created custom pattern */
+  custom?: boolean;
+};
+
+export type CustomFlexInput = {
+  slot: Slot;
+  mainStat: MainStat;
+  requiredSubs: SubStat[];
 };

@@ -1,7 +1,7 @@
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import { SUB_WEIGHTS, pJoint } from "./tierMath";
 import { getMainProb } from "./tierTableBuilder";
-import type { FlexPattern, TriageRule } from "./types";
+import type { CustomFlexInput, FlexPattern, TriageRule } from "./types";
 
 const ELEMENT_MAINS = new Set<MainStat>([
   "pyro%",
@@ -26,7 +26,7 @@ const SUB_ORDER: Record<SubStat, number> = {
   def: 9,
 };
 
-function sortSubs(subs: SubStat[]): SubStat[] {
+export function sortSubs(subs: SubStat[]): SubStat[] {
   return [...subs].sort((a, b) => (SUB_ORDER[a] ?? 99) - (SUB_ORDER[b] ?? 99));
 }
 
@@ -160,7 +160,7 @@ function expandMainStats(mainStats: (MainStat | "elemental%")[]): MainStat[] {
   return result;
 }
 
-function computeRarity(
+export function computeRarity(
   slot: Slot,
   mainStat: MainStat,
   subs: SubStat[]
@@ -206,4 +206,26 @@ export function buildFlexPatterns(_rules: TriageRule[]): FlexPattern[] {
   }
 
   return results;
+}
+
+/**
+ * Builds a FlexPattern from a user-defined custom input.
+ * Returns null if the substat combination is invalid (e.g., rarity < 0).
+ */
+export function buildCustomFlexPattern(
+  input: CustomFlexInput
+): FlexPattern | null {
+  const sorted = sortSubs(input.requiredSubs);
+  const rarity = computeRarity(input.slot, input.mainStat, sorted);
+  if (rarity < 0) return null;
+
+  const key = `flex:${input.slot}:${input.mainStat}:${sorted.join(",")}`;
+  return {
+    key,
+    slot: input.slot,
+    mainStat: input.mainStat,
+    requiredSubs: sorted,
+    rarity,
+    custom: true,
+  };
 }

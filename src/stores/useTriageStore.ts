@@ -23,6 +23,18 @@ export const useTriageStore = create<TriageState>()(
     }),
     {
       name: "triage-settings",
+      version: 1,
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as Record<string, unknown>;
+        // v0 → v1: add customFlexInputs
+        if (version < 1) {
+          const settings = (state.settings ?? {}) as Record<string, unknown>;
+          if (!settings.customFlexInputs) {
+            settings.customFlexInputs = [];
+          }
+        }
+        return state as unknown as Partial<TriageState>;
+      },
       partialize: (state) => ({
         settings: state.settings,
       }),
