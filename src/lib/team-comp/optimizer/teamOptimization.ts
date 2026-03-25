@@ -512,8 +512,15 @@ export async function* runTeamOptimization(
     perCharDeadlineMs: rawPerCharDeadlineMs,
     teamDeadlineMs,
     maxArtsPerSlot,
+    perCharExtraArtifacts,
   } = opts;
   const { combo, reactionOverrides, buffOverrides } = opts.formula;
+
+  /** Get the inventory for a specific character, merging per-char extras. */
+  const getCharInventory = (charId: string): ArtifactData[] => {
+    const extras = perCharExtraArtifacts?.[charId];
+    return extras?.length ? [...inventory, ...extras] : inventory;
+  };
 
   // ── Dynamic hyperparameters based on inventory size ──
   const { topK: TOP_K, maxTeamSearch: MAX_TEAM_SEARCH } = computeHyperparams(
@@ -893,7 +900,7 @@ export async function* runTeamOptimization(
             enemyAura: teamBuild.enemyAura,
             extraBuffs: teamBuild.extraBuffs,
             carryCharId,
-            inventory,
+            inventory: getCharInventory(charId),
             globalConfig,
             baseSheetsDump,
             calcContext,
@@ -976,7 +983,7 @@ export async function* runTeamOptimization(
         charConfig,
         effectiveTeamBuild,
         carryCharId,
-        inventory,
+        getCharInventory(charId),
         globalConfig,
         heuristicSheets,
         calcContext,
@@ -1035,7 +1042,7 @@ export async function* runTeamOptimization(
         effectivePerChar[charId],
         effectiveTeamBuild,
         carryCharId,
-        inventory,
+        getCharInventory(charId),
         globalConfig,
         heuristicSheets,
         calcContext,
@@ -1170,7 +1177,7 @@ export async function* runTeamOptimization(
           charConfig,
           effectiveTeamBuild,
           carryCharId,
-          inventory,
+          getCharInventory(yielderId),
           globalConfig,
           heuristicSheets,
           calcContext,
@@ -1309,7 +1316,7 @@ export async function* runTeamOptimization(
           charConfig,
           effectiveTeamBuild,
           carryCharId,
-          inventory,
+          getCharInventory(cid),
           globalConfig,
           heuristicSheets,
           calcContext,
@@ -1401,7 +1408,7 @@ export async function* runTeamOptimization(
             secondConfig,
             effectiveTeamBuild,
             carryCharId,
-            inventory,
+            getCharInventory(secondId),
             globalConfig,
             heuristicSheets,
             calcContext,
@@ -1722,7 +1729,7 @@ export async function* runTeamOptimization(
               enemyAura: effectiveTeamBuild.enemyAura,
               extraBuffs: effectiveTeamBuild.extraBuffs,
               carryCharId,
-              inventory,
+              inventory: getCharInventory(input.charId),
               globalConfig,
               baseSheetsDump: input.refinedSheetsDump,
               calcContext,
@@ -1758,7 +1765,7 @@ export async function* runTeamOptimization(
           input.charConfig,
           effectiveTeamBuild,
           carryCharId,
-          inventory,
+          getCharInventory(input.charId),
           globalConfig,
           input.refinedBaseSheets,
           calcContext,

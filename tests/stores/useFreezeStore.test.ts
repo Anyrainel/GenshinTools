@@ -32,7 +32,7 @@ function makeArtifactsByChar(
 }
 
 beforeEach(() => {
-  useFreezeStore.setState({ frozenTeams: {} });
+  useFreezeStore.setState({ frozenTeams: {}, allowSameCharReuse: true });
 });
 
 describe("useFreezeStore", () => {
@@ -350,6 +350,24 @@ describe("useFreezeStore", () => {
       });
       const ids = useFreezeStore.getState().getFrozenArtifactIds("t1");
       expect(ids).toEqual(new Set());
+    });
+  });
+
+  describe("allowSameCharReuse", () => {
+    it("defaults to true", () => {
+      expect(useFreezeStore.getState().allowSameCharReuse).toBe(true);
+    });
+
+    it("can be toggled off and on", () => {
+      act(() => {
+        useFreezeStore.getState().setAllowSameCharReuse(false);
+      });
+      expect(useFreezeStore.getState().allowSameCharReuse).toBe(false);
+
+      act(() => {
+        useFreezeStore.getState().setAllowSameCharReuse(true);
+      });
+      expect(useFreezeStore.getState().allowSameCharReuse).toBe(true);
     });
   });
 });

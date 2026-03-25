@@ -469,3 +469,265 @@ describe("runOptimization — set-infeasible early exit", () => {
     expect(result.failReason!.kind).toBe("set-impossible");
   });
 });
+
+// ── Tests: perCharExtraArtifacts isolation ────────────────────────────────────
+
+describe("runTeamOptimization — perCharExtraArtifacts", () => {
+  it("extra artifacts are only visible to the owning character", async () => {
+    // 2-character team: Hu Tao (carry) + Xingqiu (support), no set constraints.
+    // Shared pool has mediocre artifacts (low substats).
+    // Per-char extras give hu_tao excellent artifacts with known IDs.
+    // If isolation works: hu_tao uses the extras, xingqiu cannot.
+    const configs: TeamSlotConfig[] = [
+      {
+        charId: "hu_tao",
+        charLevel: 90,
+        constellation: 1,
+        weaponId: "staff_of_homa",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "sacrificial_sword",
+        refinement: 5,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+
+    // Shared pool: 2 mediocre artifacts per slot (both chars draw from this)
+    const sharedInventory: ArtifactData[] = [];
+    for (const slot of allSlots) {
+      const main =
+        slot === "flower"
+          ? "hp"
+          : slot === "plume"
+            ? "atk"
+            : slot === "sands"
+              ? "hp%"
+              : slot === "goblet"
+                ? "pyro%"
+                : "cr";
+      sharedInventory.push(
+        makeArt(slot, GL, main as ArtifactData["mainStatKey"], {
+          cr: 3.0,
+          cd: 6.0,
+          atk: 10,
+          em: 10,
+        }),
+        makeArt(slot, CW, main as ArtifactData["mainStatKey"], {
+          cr: 2.0,
+          cd: 4.0,
+          atk: 8,
+          em: 8,
+        })
+      );
+    }
+
+    // Per-char extras for hu_tao: excellent artifacts with tracked IDs
+    const extraArtifacts: ArtifactData[] = [];
+    const extraIds: string[] = [];
+    for (const slot of allSlots) {
+      const main =
+        slot === "flower"
+          ? "hp"
+          : slot === "plume"
+            ? "atk"
+            : slot === "sands"
+              ? "hp%"
+              : slot === "goblet"
+                ? "pyro%"
+                : "cr";
+      const art = makeArt(slot, CW, main as ArtifactData["mainStatKey"], {
+        cr: 12.0,
+        cd: 24.0,
+        atk: 40,
+        em: 40,
+      });
+      extraArtifacts.push(art);
+      extraIds.push(art.id);
+    }
+
+    const opts: TeamOptimizerOptions = {
+      teamBuild: tb,
+      carryCharId: "hu_tao",
+      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      inventory: sharedInventory,
+      calcContext: CTX,
+      globalConfig: GLOBAL_CONFIG,
+      baseSheets: emptySheets("hu_tao", "xingqiu"),
+      perChar: {
+        hu_tao: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSetId: null,
+          artifactHalfSetIds: [],
+        },
+        xingqiu: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSetId: null,
+          artifactHalfSetIds: [],
+        },
+      },
+      perCharExtraArtifacts: {
+        hu_tao: extraArtifacts,
+      },
+    };
+
+    const result = await getFinalResult(runTeamOptimization(opts));
+
+    // hu_tao should use the extra artifacts (they're clearly better)
+    const htArts = result.bestArtifactsByChar.hu_tao;
+    const htIds = allSlots.map((s) => htArts[s]?.id).filter(Boolean);
+    const htUsedExtras = htIds.filter((id) => extraIds.includes(id!));
+    expect(htUsedExtras.length).toBeGreaterThan(0);
+
+    // xingqiu must NOT use any extra artifact — they're invisible to xingqiu
+    const xqArts = result.bestArtifactsByChar.xingqiu;
+    const xqIds = allSlots.map((s) => xqArts[s]?.id).filter(Boolean);
+    const xqUsedExtras = xqIds.filter((id) => extraIds.includes(id!));
+    expect(xqUsedExtras).toEqual([]);
+
+    // Sanity: no duplicate artifact IDs across characters
+    const allIds = [...htIds, ...xqIds];
+    const idCounts = new Map<string, number>();
+    for (const id of allIds) {
+      idCounts.set(id!, (idCounts.get(id!) ?? 0) + 1);
+    }
+    const duplicates = [...idCounts.entries()].filter(([, c]) => c > 1);
+    expect(duplicates).toEqual([]);
+  });
+
+  it("extras for xingqiu go to xingqiu, not hu_tao", async () => {
+    // Mirror test: give extras to xingqiu instead of hu_tao.
+    // Proves isolation is bidirectional — not just carry-biased.
+    const configs: TeamSlotConfig[] = [
+      {
+        charId: "hu_tao",
+        charLevel: 90,
+        constellation: 1,
+        weaponId: "staff_of_homa",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "sacrificial_sword",
+        refinement: 5,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+
+    // Shared pool: mediocre artifacts
+    const sharedInventory: ArtifactData[] = [];
+    for (const slot of allSlots) {
+      const main =
+        slot === "flower"
+          ? "hp"
+          : slot === "plume"
+            ? "atk"
+            : slot === "sands"
+              ? "hp%"
+              : slot === "goblet"
+                ? "pyro%"
+                : "cr";
+      sharedInventory.push(
+        makeArt(slot, GL, main as ArtifactData["mainStatKey"], {
+          cr: 3.0,
+          cd: 6.0,
+          atk: 10,
+          em: 10,
+        }),
+        makeArt(slot, CW, main as ArtifactData["mainStatKey"], {
+          cr: 2.0,
+          cd: 4.0,
+          atk: 8,
+          em: 8,
+        })
+      );
+    }
+
+    // Extras for xingqiu — excellent ESF pieces
+    const xqExtras: ArtifactData[] = [];
+    const xqExtraIds: string[] = [];
+    for (const slot of allSlots) {
+      const main =
+        slot === "flower"
+          ? "hp"
+          : slot === "plume"
+            ? "atk"
+            : slot === "sands"
+              ? "hp%"
+              : slot === "goblet"
+                ? "pyro%"
+                : "cr";
+      const art = makeArt(slot, ESF, main as ArtifactData["mainStatKey"], {
+        cr: 12.0,
+        cd: 24.0,
+        atk: 40,
+        em: 40,
+      });
+      xqExtras.push(art);
+      xqExtraIds.push(art.id);
+    }
+
+    const opts: TeamOptimizerOptions = {
+      teamBuild: tb,
+      carryCharId: "hu_tao",
+      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      inventory: sharedInventory,
+      calcContext: CTX,
+      globalConfig: GLOBAL_CONFIG,
+      baseSheets: emptySheets("hu_tao", "xingqiu"),
+      perChar: {
+        hu_tao: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSetId: null,
+          artifactHalfSetIds: [],
+        },
+        xingqiu: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSetId: null,
+          artifactHalfSetIds: [],
+        },
+      },
+      perCharExtraArtifacts: {
+        xingqiu: xqExtras, // extras for xingqiu, NOT hu_tao
+      },
+    };
+
+    const result = await getFinalResult(runTeamOptimization(opts));
+
+    // hu_tao must NOT use any of xingqiu's extras — that's the isolation guarantee
+    const htArts = result.bestArtifactsByChar.hu_tao;
+    const htIds = allSlots.map((s) => htArts[s]?.id).filter(Boolean);
+    const htUsedXqExtras = htIds.filter((id) => xqExtraIds.includes(id!));
+    expect(htUsedXqExtras).toEqual([]);
+
+    // No duplicate artifact IDs across characters
+    const xqArts = result.bestArtifactsByChar.xingqiu;
+    const xqIds = allSlots.map((s) => xqArts[s]?.id).filter(Boolean);
+    const allIds = [...htIds, ...xqIds];
+    const idCounts = new Map<string, number>();
+    for (const id of allIds) {
+      idCounts.set(id!, (idCounts.get(id!) ?? 0) + 1);
+    }
+    const duplicates = [...idCounts.entries()].filter(([, c]) => c > 1);
+    expect(duplicates).toEqual([]);
+  });
+});

@@ -554,4 +554,6 @@ export interface TeamOptimizerOptions {
   perCharDeadlineMs?: number;
   teamDeadlineMs?: number;
   maxArtsPerSlot?: number;
+  /** Extra artifacts available only to specific characters (e.g. same-char frozen reuse) */
+  perCharExtraArtifacts?: Record<string, ArtifactData[]>;
 }

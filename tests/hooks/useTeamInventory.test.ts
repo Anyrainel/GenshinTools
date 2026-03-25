@@ -2,6 +2,7 @@ import type { ArtifactData, Slot } from "@/data/types";
 import { useTeamInventory } from "@/hooks/useTeamInventory";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
+import { useTeamStore } from "@/stores/useTeamStore";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -31,7 +32,7 @@ function makeArtifactsByChar(
 }
 
 beforeEach(() => {
-  useFreezeStore.setState({ frozenTeams: {} });
+  useFreezeStore.setState({ frozenTeams: {}, allowSameCharReuse: true });
   // Set up a basic account with some artifacts
   useAccountStore.setState((prev) => ({
     ...prev,
@@ -65,10 +66,19 @@ beforeEach(() => {
     },
     activeAccountId: "test",
   }));
+
+  // Create teams in team store so the hook can look up character lists
+  act(() => {
+    const store = useTeamStore.getState();
+    store.clearTeams();
+  });
 });
 
 describe("useTeamInventory", () => {
   it("returns all artifacts when nothing is frozen", () => {
+    act(() => {
+      useTeamStore.getState().addTeam({ id: "team1" });
+    });
     const { result } = renderHook(() => useTeamInventory("team1"));
     expect(result.current.allArtifacts).toHaveLength(5); // 2 equipped + 3 inventory
     expect(result.current.availableArtifacts).toHaveLength(5);
@@ -77,6 +87,9 @@ describe("useTeamInventory", () => {
 
   it("excludes frozen artifacts from availableArtifacts", () => {
     act(() => {
+      useTeamStore
+        .getState()
+        .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
       useFreezeStore
         .getState()
         .freezeCharacters(
@@ -95,6 +108,7 @@ describe("useTeamInventory", () => {
 
   it("excludes frozen artifacts from OTHER teams too", () => {
     act(() => {
+      useTeamStore.getState().addTeam({ id: "team1" });
       useFreezeStore
         .getState()
         .freezeCharacters(
@@ -111,6 +125,10 @@ describe("useTeamInventory", () => {
 
   it("combines frozen artifacts from multiple teams", () => {
     act(() => {
+      useTeamStore
+        .getState()
+        .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
+      useTeamStore.getState().addTeam({ id: "team2" });
       useFreezeStore
         .getState()
         .freezeCharacters(
@@ -133,6 +151,11 @@ describe("useTeamInventory", () => {
   });
 
   it("updates when freeze state changes", () => {
+    act(() => {
+      useTeamStore
+        .getState()
+        .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
+    });
     const { result } = renderHook(() => useTeamInventory("team1"));
     expect(result.current.availableArtifacts).toHaveLength(5);
 
@@ -157,6 +180,10 @@ describe("useTeamInventory", () => {
   it("ignores unfrozen characters' stale artifact data", () => {
     // Freeze two chars, then unfreeze one — stale artifactsByChar entry should be ignored
     act(() => {
+      useTeamStore.getState().addTeam({
+        id: "team1",
+        characters: ["hu_tao", "xingqiu", null, null],
+      });
       useFreezeStore
         .getState()
         .freezeCharacters("team1", ["hu_tao", "xingqiu"], {
@@ -182,5 +209,97 @@ describe("useTeamInventory", () => {
     expect(result.current.allArtifacts).toEqual([]);
     expect(result.current.availableArtifacts).toEqual([]);
     expect(result.current.frozenArtifactIds.size).toBe(0);
+  });
+
+  describe("allowSameCharReuse", () => {
+    it("returns per-char extras when same character is in current team", () => {
+      // hu_tao frozen in otherTeam, hu_tao also in team1
+      act(() => {
+        useTeamStore
+          .getState()
+          .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "otherTeam",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["eq1", "eq2"])
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      // Frozen artifacts stay excluded from the shared pool
+      expect(result.current.frozenArtifactIds).toEqual(new Set(["eq1", "eq2"]));
+      expect(result.current.availableArtifacts).toHaveLength(3);
+      // But they're available as per-character extras for hu_tao only
+      expect(result.current.perCharExtraArtifacts.hu_tao).toHaveLength(2);
+      expect(
+        result.current.perCharExtraArtifacts.hu_tao.map((a) => a.id).sort()
+      ).toEqual(["eq1", "eq2"]);
+    });
+
+    it("excludes frozen artifacts when same char reuse is OFF", () => {
+      act(() => {
+        useTeamStore
+          .getState()
+          .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
+        useFreezeStore.getState().setAllowSameCharReuse(false);
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "otherTeam",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["eq1", "eq2"])
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      // With allowSameCharReuse OFF, hu_tao's frozen artifacts are excluded
+      expect(result.current.frozenArtifactIds).toEqual(new Set(["eq1", "eq2"]));
+      expect(result.current.availableArtifacts).toHaveLength(3);
+    });
+
+    it("does not affect same-team frozen artifacts", () => {
+      // hu_tao frozen in team1 itself — always excluded regardless of setting
+      act(() => {
+        useTeamStore
+          .getState()
+          .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "team1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["eq1", "eq2"])
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      // Same-team frozen artifacts are always excluded (they're locked for this team)
+      expect(result.current.frozenArtifactIds).toEqual(new Set(["eq1", "eq2"]));
+      expect(result.current.availableArtifacts).toHaveLength(3);
+    });
+
+    it("only provides extras for characters actually in the team", () => {
+      // hu_tao and ganyu frozen in otherTeam, only hu_tao in team1
+      act(() => {
+        useTeamStore
+          .getState()
+          .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
+        useFreezeStore
+          .getState()
+          .freezeCharacters("otherTeam", ["hu_tao", "ganyu"], {
+            ...makeArtifactsByChar("hu_tao", ["eq1"]),
+            ...makeArtifactsByChar("ganyu", ["inv1"]),
+          });
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      // Both are frozen in the shared pool
+      expect(result.current.frozenArtifactIds).toEqual(
+        new Set(["eq1", "inv1"])
+      );
+      expect(result.current.availableArtifacts).toHaveLength(3);
+      // Only hu_tao gets extras (ganyu not in this team)
+      expect(result.current.perCharExtraArtifacts.hu_tao).toHaveLength(1);
+      expect(result.current.perCharExtraArtifacts.hu_tao[0].id).toBe("eq1");
+      expect(result.current.perCharExtraArtifacts.ganyu).toBeUndefined();
+    });
   });
 });

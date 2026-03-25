@@ -15,6 +15,7 @@ import {
   buildArtifactOwnerMap,
 } from "@/components/team-comp/SwapGuide";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useTour } from "@/components/ui/tour";
 import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, PresetOption, Region } from "@/data/types";
@@ -450,6 +451,17 @@ export default function TeamCompPage() {
               <div className="flex items-center gap-1 2xl:gap-2">
                 {Object.keys(freezeStore.frozenTeams).length > 0 && (
                   <>
+                    <label className="flex items-center gap-1.5 cursor-pointer select-none mr-1">
+                      <Checkbox
+                        checked={freezeStore.allowSameCharReuse}
+                        onCheckedChange={(v) =>
+                          freezeStore.setAllowSameCharReuse(!!v)
+                        }
+                      />
+                      <span className="text-xs text-foreground/80 whitespace-nowrap">
+                        {t.ui("teamComp.allowSameCharReuse")}
+                      </span>
+                    </label>
                     <Button
                       variant="outline"
                       size="sm"

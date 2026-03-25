@@ -607,6 +607,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       perChar,
       teamDeadlineMs: performance.now() + 30_000,
       ignoreArtifactSets,
+      perCharExtraArtifacts: teamInventory.perCharExtraArtifacts,
     });
   };
 
