@@ -1738,7 +1738,12 @@ async function cmdEnrich(opts: {
   const { store, accountData, inventory, teamById } = await loadContext();
 
   const problemKeys = Object.keys(store.problems).sort();
-  const toRun: { key: string; team: Team; formulaId: string }[] = [];
+  const toRun: {
+    key: string;
+    team: Team;
+    formulaId: string;
+    combo?: ComboFormula;
+  }[] = [];
 
   for (const key of problemKeys) {
     if (opts.problemKey) {
