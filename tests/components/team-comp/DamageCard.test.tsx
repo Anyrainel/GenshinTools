@@ -177,7 +177,10 @@ describe("DamageCard", () => {
             bestAllocation: {},
             bestSubstatWeights: {},
             bestComboResult: null,
-          } as CardProps["teamResult"],
+            bestArtifactsByChar: {},
+            passResults: [],
+            failReasons: {},
+          } as unknown as CardProps["teamResult"],
           resolvedFormula: { charId: "hu_tao", formulaId: "charged" },
         })}
       />
