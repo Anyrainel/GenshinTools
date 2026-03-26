@@ -40,7 +40,7 @@ describe("ExportControl", () => {
   });
 
   it("validates empty author field", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const ref = createRef<ControlHandle>();
     render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
@@ -63,7 +63,7 @@ describe("ExportControl", () => {
   });
 
   it("validates empty description field", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const ref = createRef<ControlHandle>();
     render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
@@ -85,37 +85,33 @@ describe("ExportControl", () => {
     expect(defaultOnExport).not.toHaveBeenCalled();
   });
 
-  it(
-    "calls onExport with author and description",
-    { timeout: 15000 },
-    async () => {
-      const user = userEvent.setup();
-      const ref = createRef<ControlHandle>();
-      render(<ExportControl ref={ref} onExport={defaultOnExport} />);
+  it("calls onExport with author and description", async () => {
+    const user = userEvent.setup({ delay: null });
+    const ref = createRef<ControlHandle>();
+    render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-      act(() => {
-        ref.current?.open();
-      });
-      await screen.findByRole("dialog");
+    act(() => {
+      ref.current?.open();
+    });
+    await screen.findByRole("dialog");
 
-      await user.type(screen.getByLabelText(/author/i), "Test Author");
-      await user.type(
-        screen.getByLabelText(/description/i),
-        "Test Description"
-      );
+    await user.type(screen.getByLabelText(/author/i), "Test Author");
+    await user.type(
+      screen.getByLabelText(/description/i),
+      "Test Description"
+    );
 
-      const buttons = screen.getAllByRole("button");
-      const exportButton = buttons.find((btn) =>
-        btn.textContent?.toLowerCase().includes("export")
-      );
-      await user.click(exportButton!);
+    const buttons = screen.getAllByRole("button");
+    const exportButton = buttons.find((btn) =>
+      btn.textContent?.toLowerCase().includes("export")
+    );
+    await user.click(exportButton!);
 
-      expect(defaultOnExport).toHaveBeenCalledWith(
-        "Test Author",
-        "Test Description"
-      );
-    }
-  );
+    expect(defaultOnExport).toHaveBeenCalledWith(
+      "Test Author",
+      "Test Description"
+    );
+  });
 
   it("uses default author and description values", async () => {
     const ref = createRef<ControlHandle>();

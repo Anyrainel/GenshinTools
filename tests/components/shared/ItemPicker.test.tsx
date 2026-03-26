@@ -39,8 +39,8 @@ describe("ItemPicker", () => {
       expect(screen.getByRole("textbox")).toBeInTheDocument();
     });
 
-    it("allows searching for a character", { timeout: 15000 }, async () => {
-      const user = userEvent.setup();
+    it("allows searching for a character", async () => {
+      const user = userEvent.setup({ delay: null });
       const { container } = render(
         <ItemPicker
           type="character"
@@ -182,98 +182,90 @@ describe("ItemPicker", () => {
       });
     });
 
-    it(
-      "filters out unowned characters when toggled",
-      { timeout: 15000 },
-      async () => {
-        const { getIsOwned } = await import("../../hooks/ownershipUtils");
+    it("filters out unowned characters when toggled", async () => {
+      const { getIsOwned } = await import("../../hooks/ownershipUtils");
 
-        // Verify getIsOwned returns expected values
-        expect(getIsOwned("character", ownedIds[0])).toBe(true);
-        expect(getIsOwned("character", unownedIds[0])).toBe(false);
+      // Verify getIsOwned returns expected values
+      expect(getIsOwned("character", ownedIds[0])).toBe(true);
+      expect(getIsOwned("character", unownedIds[0])).toBe(false);
 
-        const user = userEvent.setup();
-        const { container } = render(
-          <ItemPicker
-            type="character"
-            value={null}
-            onChange={mockOnChange}
-            defaultOpen
-          />
-        );
+      const user = userEvent.setup({ delay: null });
+      const { container } = render(
+        <ItemPicker
+          type="character"
+          value={null}
+          onChange={mockOnChange}
+          defaultOpen
+        />
+      );
 
-        // Count grid items — popover content renders in a portal
-        const getGridChildren = () => {
-          const gridEl = document.querySelector(".grid");
-          // Exclude the "no results" placeholder which is always present
-          return gridEl
-            ? Array.from(gridEl.children).filter(
-                (el) => !el.textContent?.includes("noResults")
-              )
-            : [];
-        };
+      // Count grid items — popover content renders in a portal
+      const getGridChildren = () => {
+        const gridEl = document.querySelector(".grid");
+        // Exclude the "no results" placeholder which is always present
+        return gridEl
+          ? Array.from(gridEl.children).filter(
+              (el) => !el.textContent?.includes("noResults")
+            )
+          : [];
+      };
 
-        await waitFor(() => {
-          expect(getGridChildren().length).toBeGreaterThan(0);
-        });
-        const initialCount = getGridChildren().length;
+      await waitFor(() => {
+        expect(getGridChildren().length).toBeGreaterThan(0);
+      });
+      const initialCount = getGridChildren().length;
 
-        // Click the "Owned Only" filter
-        const ownedOnlyBtn = screen.getByText("Owned Only");
-        await user.click(ownedOnlyBtn);
+      // Click the "Owned Only" filter
+      const ownedOnlyBtn = screen.getByText("Owned Only");
+      await user.click(ownedOnlyBtn);
 
-        await waitFor(() => {
-          // Should show only owned characters (+ always-owned like Traveler/Manekin)
-          const filteredCount = getGridChildren().length;
-          expect(filteredCount).toBeLessThan(initialCount);
-          expect(filteredCount).toBeGreaterThanOrEqual(ownedIds.length);
-        });
-      }
-    );
+      await waitFor(() => {
+        // Should show only owned characters (+ always-owned like Traveler/Manekin)
+        const filteredCount = getGridChildren().length;
+        expect(filteredCount).toBeLessThan(initialCount);
+        expect(filteredCount).toBeGreaterThanOrEqual(ownedIds.length);
+      });
+    });
 
-    it(
-      "shows all characters again when owned filter is toggled off",
-      { timeout: 15000 },
-      async () => {
-        const user = userEvent.setup();
-        render(
-          <ItemPicker
-            type="character"
-            value={null}
-            onChange={mockOnChange}
-            defaultOpen
-          />
-        );
+    it("shows all characters again when owned filter is toggled off", async () => {
+      const user = userEvent.setup({ delay: null });
+      render(
+        <ItemPicker
+          type="character"
+          value={null}
+          onChange={mockOnChange}
+          defaultOpen
+        />
+      );
 
-        const getGridChildren = () => {
-          const gridEl = document.querySelector(".grid");
-          return gridEl
-            ? Array.from(gridEl.children).filter(
-                (el) => !el.textContent?.includes("noResults")
-              )
-            : [];
-        };
+      const getGridChildren = () => {
+        const gridEl = document.querySelector(".grid");
+        return gridEl
+          ? Array.from(gridEl.children).filter(
+              (el) => !el.textContent?.includes("noResults")
+            )
+          : [];
+      };
 
-        await waitFor(() => {
-          expect(getGridChildren().length).toBeGreaterThan(0);
-        });
-        const initialCount = getGridChildren().length;
+      await waitFor(() => {
+        expect(getGridChildren().length).toBeGreaterThan(0);
+      });
+      const initialCount = getGridChildren().length;
 
-        const ownedOnlyBtn = screen.getByText("Owned Only");
+      const ownedOnlyBtn = screen.getByText("Owned Only");
 
-        // Toggle on
-        await user.click(ownedOnlyBtn);
-        await waitFor(() => {
-          expect(getGridChildren().length).toBeLessThan(initialCount);
-        });
+      // Toggle on
+      await user.click(ownedOnlyBtn);
+      await waitFor(() => {
+        expect(getGridChildren().length).toBeLessThan(initialCount);
+      });
 
-        // Toggle off
-        await user.click(ownedOnlyBtn);
-        await waitFor(() => {
-          expect(getGridChildren().length).toBe(initialCount);
-        });
-      }
-    );
+      // Toggle off
+      await user.click(ownedOnlyBtn);
+      await waitFor(() => {
+        expect(getGridChildren().length).toBe(initialCount);
+      });
+    });
 
     it("works when activeAccountId is null (no account data = no owned)", async () => {
       useAccountStore.setState({ activeAccountId: null, accounts: {} });
