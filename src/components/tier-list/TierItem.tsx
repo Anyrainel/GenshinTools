@@ -34,20 +34,26 @@ function TierItemComponent<T extends TierItemData>({
   tooltip,
   size = "lg",
 }: TierItemProps<T>) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useSortable({
-      id: item.id,
-      data: {
-        itemId: item.id,
-        tier: tier,
-        group: groupValue,
-      },
-      disabled: disabled,
-      animateLayoutChanges: () => false,
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: item.id,
+    data: {
+      itemId: item.id,
+      tier: tier,
+      group: groupValue,
+    },
+    disabled: disabled,
+  });
 
   const style = {
-    transform: isDragging ? CSS.Transform.toString(transform) : "none",
+    transform: CSS.Transform.toString(transform),
+    transition,
     zIndex: isDragging ? 1000 : "auto",
     opacity: isDragging ? 0.5 : 1,
   };

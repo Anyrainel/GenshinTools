@@ -479,7 +479,12 @@ export function TierTable<T extends TierItemData, K extends string>({
   };
 
   const renderPreview = (item: T) => (
-    <ItemIcon imagePath={item.imagePath} rarity={item.rarity} size={iconSize} />
+    <ItemIcon
+      imagePath={item.imagePath}
+      rarity={item.rarity}
+      size={iconSize}
+      weaponTypeBadge={getOverlayImage?.(item)}
+    />
   );
 
   return (
