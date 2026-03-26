@@ -322,7 +322,7 @@ const FeatureCard = ({
 
           {/* CTA Button */}
           <Button
-            className="gap-1.5 shrink-0 shadow-md shadow-primary/10 group-hover:shadow-lg group-hover:shadow-primary/20 transition-shadow self-start md:self-center"
+            className="gap-1.5 shrink-0 shadow-lg shadow-primary self-start md:self-center"
             tabIndex={-1}
           >
             {ctaText}

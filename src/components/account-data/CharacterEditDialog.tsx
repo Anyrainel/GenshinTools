@@ -627,7 +627,7 @@ function OverviewPanel({
                 type="button"
                 onClick={() => setActiveSlot(isSelected ? null : slot)}
                 className={cn(
-                  "relative flex flex-col items-center flex-1 py-3 px-1 rounded-xl border transition-all",
+                  "relative flex flex-col items-center flex-1 py-3 px-1 rounded-xl border",
                   isSelected
                     ? "bg-accent border-primary/40 shadow-sm ring-1 ring-primary/20"
                     : "bg-transparent border-transparent hover:bg-accent/50"
@@ -1320,12 +1320,10 @@ const PickerItem = forwardRef<
       ref={ref}
       type="button"
       onClick={onClick}
-      className="flex flex-col items-center p-2 rounded-xl border border-transparent hover:border-border hover:bg-accent/40 focus-visible:outline-none focus:bg-accent ring-1 ring-transparent focus:ring-primary/20 transition-all gap-2 group w-full"
+      className="flex flex-col items-center p-2 rounded-xl border border-transparent hover:border-border hover:bg-accent/40 focus-visible:outline-none focus:bg-accent ring-1 ring-transparent focus:ring-primary/20 gap-2 group w-full"
       {...props}
     >
-      <div className="group-hover:scale-105 transition-transform duration-200">
-        {children}
-      </div>
+      <div className="group-hover:scale-105">{children}</div>
       <span className="text-xs leading-tight text-center font-medium line-clamp-2 w-full text-foreground/80 group-hover:text-foreground">
         {label}
       </span>

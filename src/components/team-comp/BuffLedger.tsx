@@ -237,10 +237,7 @@ export function BuffLedger({ buffs, team, t, formulas }: Props) {
           </div>
         </div>
         <ChevronDown
-          className={cn(
-            "w-4 h-4 text-muted-foreground transition-transform",
-            open && "rotate-180"
-          )}
+          className={cn("w-4 h-4 text-muted-foreground", open && "rotate-180")}
         />
       </div>
 

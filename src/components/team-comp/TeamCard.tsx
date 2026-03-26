@@ -173,7 +173,7 @@ export const TeamCard = memo(
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 xl:h-7 xl:w-7 p-0 opacity-60 transition-opacity"
+                className="h-6 w-6 xl:h-7 xl:w-7 p-0 opacity-60"
               >
                 <MoreVertical className="h-3.5 w-3.5 xl:h-4 xl:w-4" />
               </Button>

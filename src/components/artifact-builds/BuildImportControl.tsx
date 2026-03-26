@@ -202,7 +202,7 @@ function BuildImportControlInner(
 
       {/* Action Dialog */}
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent className="overflow-x-hidden max-w-md">
+        <AlertDialogContent className="overflow-x-hidden max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {selectedOption
@@ -226,18 +226,18 @@ function BuildImportControlInner(
             {/* Option 1: Subscribe (Only for Presets) */}
             {selectedOption && (
               <Button
-                variant="default"
-                className="w-full justify-start h-auto py-3 px-4 relative"
+                variant="outline"
+                className="w-full justify-start h-auto py-3 px-4 relative border-l-4 border-l-primary"
                 onClick={handleSubscribe}
                 disabled={isBusy}
               >
                 <Layers className="h-5 w-5 mr-3 shrink-0" />
-                <div className="flex flex-col items-start gap-0.5">
+                <div className="flex flex-col items-start gap-0.5 min-w-0">
                   <span className="font-semibold">
                     {t.ui("import.actionSubscribe") ||
                       "Use as Baseline (Subscribe)"}
                   </span>
-                  <span className="text-xs opacity-80 text-left font-normal">
+                  <span className="text-xs text-muted-foreground text-left font-normal whitespace-normal">
                     {t.ui("import.actionSubscribeDesc") ||
                       "You will receive updates. Customizations are stored as deltas."}
                   </span>
@@ -248,7 +248,7 @@ function BuildImportControlInner(
             {/* Option 2: Copy to Local */}
             <Button
               variant={selectedOption ? "outline" : "default"}
-              className="w-full justify-start h-auto py-3 px-4"
+              className="w-full justify-start h-auto py-3 px-4 border-l-4 border-l-muted-foreground"
               onClick={handleCopy}
               disabled={isBusy}
             >
@@ -258,11 +258,11 @@ function BuildImportControlInner(
                 ) : (
                   <FileJson className="h-5 w-5 mr-3 shrink-0" />
                 )}
-                <div className="flex flex-col items-start gap-0.5">
+                <div className="flex flex-col items-start gap-0.5 min-w-0">
                   <span className="font-semibold">
                     {t.ui("import.actionCopy") || "Copy to Local"}
                   </span>
-                  <span className="text-xs text-muted-foreground text-left font-normal">
+                  <span className="text-xs text-muted-foreground text-left font-normal whitespace-normal">
                     {t.ui("import.actionCopyDesc") ||
                       "One-time import. No connection to the original source."}
                   </span>
