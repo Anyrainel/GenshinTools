@@ -532,7 +532,7 @@ export async function runOptimizerOnTeam(
       globalConfig: DEFAULT_GLOBAL_CONFIG,
       baseSheets,
       perChar,
-      ...(algorithm !== "v1" && timeoutMs > 0
+      ...(timeoutMs > 0
         ? { teamDeadlineMs: performance.now() + timeoutMs }
         : {}),
       ...(perCharDeadlineMs ? { perCharDeadlineMs } : {}),

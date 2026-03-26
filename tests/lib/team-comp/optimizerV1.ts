@@ -44,6 +44,8 @@ export interface OptimizerOptions {
   excludedArtifactIds?: Set<string>; // Artifacts locked by prior passes
   reactionOverride?: ReactionOverride;
   altCount?: number; // Alternatives per slot in hill-climbing (default 7, use 5 on mobile)
+  /** Absolute deadline (performance.now() ms). Hill-climbing exits early when reached. */
+  deadlineMs?: number;
   /**
    * Custom scoring function. When provided, replaces the default
    * `getDamageResult(formulaCharId, formulaId, ...).totalDamage` calls.
@@ -675,6 +677,7 @@ export async function* runOptimization(
     excludedArtifactIds,
     reactionOverride,
     scoreFn,
+    deadlineMs,
   } = opts;
 
   // Resolve effective IDs (default to targetCharId for backward compat)
@@ -701,6 +704,49 @@ export async function* runOptimization(
     }
   }
 
+  // ── Boost buildMatch weights with ER/CR gap from requirements ──
+  // Same approach as V2's boostWeightsForConstraints(): inject synthetic
+  // ER/CR weights proportional to the gap so that artifact ranking already
+  // favours pieces that help meet constraints.
+  let effectiveBuildMatch = buildMatch;
+  if (buildMatch && (minEr > 0 || minCr > 0)) {
+    const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
+    const blStats = teamBuild.getTeamStats(
+      blSheets,
+      onFieldCharId,
+      calcContext
+    );
+    const baseWeights = buildMatch.statWeights;
+    const maxWeight = Math.max(
+      0,
+      ...Object.values(baseWeights).map((v) => Math.abs(v ?? 0))
+    );
+    if (maxWeight > 0) {
+      let boosted: Record<string, number> | null = null;
+      if (minEr > 0) {
+        const erFloorBl = blStats[erCheckCharId]?.get("er", null) ?? 0;
+        const erGap = Math.max(0, minEr - erFloorBl);
+        if (erGap > 0) {
+          boosted = boosted ?? { ...baseWeights };
+          const syntheticEr = Math.min(erGap, 1.5) * maxWeight;
+          boosted.er = Math.max(boosted.er ?? 0, syntheticEr);
+        }
+      }
+      if (minCr > 0) {
+        const crFloorBl = blStats[erCheckCharId]?.get("cr", null) ?? 0;
+        const crGap = Math.max(0, minCr - crFloorBl);
+        if (crGap > 0) {
+          boosted = boosted ?? { ...baseWeights };
+          const syntheticCr = crGap * maxWeight;
+          boosted.cr = Math.max(boosted.cr ?? 0, syntheticCr);
+        }
+      }
+      if (boosted) {
+        effectiveBuildMatch = { ...buildMatch, statWeights: boosted };
+      }
+    }
+  }
+
   // ── Per-slot preparation: keep the full inventory, sorted only for seeding ──
 
   const scoredPools: Record<Slot, ScoredArt[]> = {
@@ -720,7 +766,7 @@ export async function* runOptimization(
 
     const withScore = slotArts.map((art) => ({
       art,
-      score: scorePiece(art, buildMatch, globalConfig, crDiscount),
+      score: scorePiece(art, effectiveBuildMatch, globalConfig, crDiscount),
       er: getArtifactEr(art),
     }));
 
@@ -972,6 +1018,22 @@ export async function* runOptimization(
   } else {
     // 4pc or no-set: 5 seed builds
     seedBuilds = buildSeedBuilds4pc(scoredPools, artifactSetId);
+  }
+
+  // Add ER-greedy seed when there's an ER gap — picks highest-ER artifact per slot
+  if (minArtifactEr > 0 && seedBuilds.length > 0) {
+    const erSeed: ArtifactTuple = [...seedBuilds[0]];
+    for (let s = 0; s < 5; s++) {
+      const slot = allSlots[s];
+      let bestEr = getArtifactEr(erSeed[s]);
+      for (const { art, er } of scoredPools[slot]) {
+        if (er > bestEr) {
+          bestEr = er;
+          erSeed[s] = art;
+        }
+      }
+    }
+    seedBuilds.push(erSeed);
   }
 
   // Deduplicate seeds by artifact ID tuple
@@ -1238,6 +1300,7 @@ export async function* runOptimization(
         let bestLocalDamage = currentEval.damage;
         let bestLocalResult = currentEval.result;
 
+        let deadlineHit = false;
         for (const combo of combos) {
           if (sameTuple(combo, current)) {
             combinationsEvaluated++;
@@ -1276,8 +1339,13 @@ export async function* runOptimization(
             chunkCount = 0;
             yield getResult("evaluating");
             await new Promise((resolve) => setTimeout(resolve, 0));
+            if (deadlineMs && performance.now() >= deadlineMs) {
+              deadlineHit = true;
+              break;
+            }
           }
         }
+        if (deadlineHit) break;
 
         if (bestLocalDamage <= currentEval.damage + IMPROVEMENT_EPSILON) {
           break;
@@ -1289,12 +1357,14 @@ export async function* runOptimization(
 
       yield getResult("evaluating");
       await new Promise((resolve) => setTimeout(resolve, 0));
+      if (deadlineMs && performance.now() >= deadlineMs) break;
     }
 
     // If we found a valid build, or there's no ER/CR requirement, or we've
     // already widened altCount to cover all available pieces, stop retrying.
     if (bestDamage > 0 || (minEr <= 0 && minCr <= 0) || altCount >= maxPoolSize)
       break;
+    if (deadlineMs && performance.now() >= deadlineMs) break;
 
     // Only widen if at least one slot would gain new candidates
     const nextAltCount = Math.min(altCount + ALT_COUNT_STEP, maxPoolSize);

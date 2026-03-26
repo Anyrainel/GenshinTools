@@ -262,7 +262,8 @@ export async function* runTeamOptimization(
     totalPasses: number,
     passResults: TeamOptPassResult[],
     overrideTeamBuild?: TeamBuild,
-    overrideCharConfig?: CharOptConfig
+    overrideCharConfig?: CharOptConfig,
+    deadline?: number
   ): AsyncGenerator<
     TeamOptimizationProgress,
     OptimizationResult | null,
@@ -321,6 +322,7 @@ export async function* runTeamOptimization(
       excludedArtifactIds: excludedIds,
       reactionOverride,
       scoreFn: passComboScoreFn,
+      deadlineMs: deadline,
     };
 
     const gen = runOptimization(passOpts);
@@ -350,6 +352,20 @@ export async function* runTeamOptimization(
   // ════════════════════════════════════════════════════════════════════════
   // Phase 1: Unlocked pass — optimize all characters without locking
   // ════════════════════════════════════════════════════════════════════════
+
+  // ── Time budgeting ──
+  const teamDeadlineMs = opts.teamDeadlineMs;
+  const perCharDeadlineMs = opts.perCharDeadlineMs;
+
+  /** Compute a per-character deadline from the remaining team budget. */
+  function charDeadline(remainingChars: number): number | undefined {
+    if (perCharDeadlineMs) return performance.now() + perCharDeadlineMs;
+    if (!teamDeadlineMs) return undefined;
+    const remaining = teamDeadlineMs - performance.now();
+    if (remaining <= 0) return performance.now(); // already expired
+    // Give each remaining character an equal share of remaining time
+    return performance.now() + remaining / Math.max(1, remainingChars);
+  }
 
   // Estimate total passes for progress: round1 + worst-case permutations + carry-2
   // We'll update totalPasses as we learn more about conflicts
@@ -385,7 +401,10 @@ export async function* runTeamOptimization(
       undefined, // no exclusions
       i,
       estimatedTotal,
-      allPassResults
+      allPassResults,
+      undefined,
+      undefined,
+      charDeadline(round1Order.length - i)
     );
 
     let lastResult: OptimizationResult | null = null;
@@ -423,7 +442,8 @@ export async function* runTeamOptimization(
         estimatedTotal,
         allPassResults,
         effectiveTeamBuild,
-        effectivePerChar[charId]
+        effectivePerChar[charId],
+        charDeadline(round1Order.length - i)
       );
       for (;;) {
         const { value, done } = await retryGen.next();
@@ -532,9 +552,15 @@ export async function* runTeamOptimization(
     // any valid (duplicate-free) permutation result replaces the initial.
     bestR1Score = -1;
 
+    const MAX_PERMS = 6;
     const competitorArr = [...competitorSet];
     const nonCompetitors = allCharIds.filter((id) => !competitorSet.has(id));
-    const perms = permutations(competitorArr);
+    const allPerms = permutations(competitorArr);
+    // Limit permutations: shuffle and take at most MAX_PERMS to avoid factorial blowup
+    const perms =
+      allPerms.length > MAX_PERMS
+        ? shuffle(allPerms).slice(0, MAX_PERMS)
+        : allPerms;
 
     if (LOG_DIAG) {
       console.log(
@@ -598,7 +624,10 @@ export async function* runTeamOptimization(
           permExcluded.size > 0 ? new Set(permExcluded) : undefined,
           globalPassIdx,
           estimatedTotal,
-          [...allPassResults, ...permPassResults]
+          [...allPassResults, ...permPassResults],
+          undefined,
+          undefined,
+          charDeadline(perm.length - ci)
         );
 
         let lastResult: OptimizationResult | null = null;
@@ -676,7 +705,11 @@ export async function* runTeamOptimization(
           const newNonCompetitors = allCharIds.filter(
             (id) => !competitorSet.has(id)
           );
-          const newPerms = permutations(newCompetitorArr);
+          const allNewPerms = permutations(newCompetitorArr);
+          const newPerms =
+            allNewPerms.length > MAX_PERMS
+              ? shuffle(allNewPerms).slice(0, MAX_PERMS)
+              : allNewPerms;
 
           estimatedTotal =
             round1Order.length +
@@ -732,7 +765,10 @@ export async function* runTeamOptimization(
                 newPermExcluded.size > 0 ? new Set(newPermExcluded) : undefined,
                 globalPassIdx,
                 estimatedTotal,
-                [...allPassResults, ...newPermPassResults]
+                [...allPassResults, ...newPermPassResults],
+                undefined,
+                undefined,
+                charDeadline(newPerm.length - ci)
               );
 
               let lastResult: OptimizationResult | null = null;
@@ -798,6 +834,7 @@ export async function* runTeamOptimization(
               bestR1ArtifactsByChar = newPermArtifacts;
               bestR1PassResults = newPermPassResults;
             }
+            if (teamDeadlineMs && performance.now() >= teamDeadlineMs) break;
           }
 
           // Skip remaining original permutations since we did expanded set
@@ -834,6 +871,7 @@ export async function* runTeamOptimization(
         bestR1ArtifactsByChar = permArtifactsByChar;
         bestR1PassResults = permPassResults;
       }
+      if (teamDeadlineMs && performance.now() >= teamDeadlineMs) break;
     }
   }
 
@@ -888,7 +926,10 @@ export async function* runTeamOptimization(
       carry2Excluded.size > 0 ? new Set(carry2Excluded) : undefined,
       carry2StartIdx + ci,
       estimatedTotal,
-      passResults
+      passResults,
+      undefined,
+      undefined,
+      charDeadline(carryCharIds.length - ci)
     );
 
     let lastResult: OptimizationResult | null = null;
@@ -994,7 +1035,10 @@ export async function* runTeamOptimization(
         repairExcluded.size > 0 ? repairExcluded : undefined,
         estimatedTotal, // passIdx doesn't matter for final result
         estimatedTotal + 1,
-        passResults
+        passResults,
+        undefined,
+        undefined,
+        charDeadline(violatingChars.length)
       );
 
       let lastResult: OptimizationResult | null = null;
