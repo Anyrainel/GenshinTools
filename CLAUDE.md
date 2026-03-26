@@ -11,7 +11,7 @@ It would be a good habit to version the store data so there is an easier way to 
 When it is not possible to implement a smooth auto migration, discuss different options with user.
 
 # Commit rules
-When creating a commit from a subset of pending changes, do not use git commands that would override remaining file content (stash, reset, restore, etc). Always assume there are other agents working on them, and must not be disrupted.
+When creating a commit from a subset of pending changes, do not use git commands that would override remaining file content (stash, reset, restore, etc). Always assume there are other agents working on them, and must not be disrupted. Don't use partial staging because pre-commit checks don't run with stash.
 When blocked by type errors or trivial test errors, even if unrelated to the immediate commit, fix the errors so the commit can succeed. In case of complex problems, pause and ask for user preference.
 
 # Testing rules
