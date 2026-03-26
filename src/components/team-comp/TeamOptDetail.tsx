@@ -777,7 +777,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
     // Layer 2: Non-locked chars — optimizer results, restored artifacts, or intermediate results
     const isLocked = (cid: string) =>
-      frozenData?.frozenCharIds.includes(cid) || forceReusedCharIds.has(cid);
+      frozenEntry?.frozenCharIds.includes(cid) || forceReusedCharIds.has(cid);
 
     if (teamResult?.done) {
       for (const [charId, arts] of Object.entries(
