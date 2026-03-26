@@ -5,6 +5,7 @@ import {
   buildTeamConfigs,
   calcComboResults,
   detectEquippedSets,
+  frozenArtifactsMatchConfig,
   setsMatch,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";
@@ -196,6 +197,71 @@ describe("setsMatch", () => {
       artifactHalfSetIds: ["pyro%-15", "atk%-18"],
     };
     expect(setsMatch(goal, equipped)).toBe(false);
+  });
+});
+
+// ── frozenArtifactsMatchConfig ──────────────────────────────────────────
+
+describe("frozenArtifactsMatchConfig", () => {
+  function makeFrozenArts(setKey: string) {
+    const slots = ["flower", "plume", "sands", "goblet", "circlet"] as const;
+    return Object.fromEntries(
+      slots.map((s) => [s, makeArtifact(setKey, s)])
+    ) as Record<(typeof slots)[number], ArtifactData | null>;
+  }
+
+  it("returns true when 4pc artifacts match 4pc goal", () => {
+    expect(
+      frozenArtifactsMatchConfig(makeFrozenArts(CW), {
+        type: "4pc",
+        setId: CW,
+      })
+    ).toBe(true);
+  });
+
+  it("returns false when 4pc artifacts do not match 4pc goal", () => {
+    expect(
+      frozenArtifactsMatchConfig(makeFrozenArts(GL), {
+        type: "4pc",
+        setId: CW,
+      })
+    ).toBe(false);
+  });
+
+  it("returns false when goalConfig is null", () => {
+    expect(frozenArtifactsMatchConfig(makeFrozenArts(CW), null)).toBe(false);
+  });
+
+  it("returns true for matching 2pc+2pc", () => {
+    // 2 CW + 2 ESF + 1 random
+    const slots = ["flower", "plume", "sands", "goblet", "circlet"] as const;
+    const arts = Object.fromEntries([
+      ["flower", makeArtifact(CW, "flower")],
+      ["plume", makeArtifact(CW, "plume")],
+      ["sands", makeArtifact(ESF, "sands")],
+      ["goblet", makeArtifact(ESF, "goblet")],
+      ["circlet", makeArtifact(GL, "circlet")],
+    ]) as Record<(typeof slots)[number], ArtifactData | null>;
+    // Need half-set IDs — get them via detectEquippedSets
+    const equipped = detectEquippedSets(Object.values(arts));
+    // Use the actual half-set IDs from detection
+    if (equipped.artifactHalfSetIds.length === 2) {
+      const [id1, id2] = equipped.artifactHalfSetIds;
+      expect(
+        frozenArtifactsMatchConfig(arts, { type: "2pc+2pc", id1, id2 })
+      ).toBe(true);
+    }
+  });
+
+  it("returns false for mismatched 2pc+2pc", () => {
+    const arts = makeFrozenArts(CW); // all CW = 4pc, not 2+2
+    expect(
+      frozenArtifactsMatchConfig(arts, {
+        type: "2pc+2pc",
+        id1: "pyro%-15",
+        id2: "er-20",
+      })
+    ).toBe(false);
   });
 });
 

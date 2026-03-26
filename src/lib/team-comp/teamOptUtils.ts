@@ -1,5 +1,7 @@
+import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import { artifactIdToHalfSetId } from "@/data/constants";
-import type { AccountData, ArtifactData } from "@/data/types";
+import type { AccountData, ArtifactData, Slot } from "@/data/types";
+import { allSlots } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import {
   type TeamBuild,
@@ -72,6 +74,19 @@ export function detectEquippedSets(
   }
 
   return { artifactSetId: null, artifactHalfSetIds: [] };
+}
+
+/**
+ * Check whether a frozen character's artifacts match the given team artifact config.
+ * Used by forceReuse mode to decide if the frozen artifacts should be reused as-is.
+ */
+export function frozenArtifactsMatchConfig(
+  frozenArts: Record<Slot, ArtifactData | null>,
+  goalConfig: ArtifactConfig | null
+): boolean {
+  if (!goalConfig) return false;
+  const equipped = detectEquippedSets(allSlots.map((s) => frozenArts[s]));
+  return setsMatch(goalConfig, equipped);
 }
 
 /** Check if equipped sets match the goal sets from team config. */

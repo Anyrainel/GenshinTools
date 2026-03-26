@@ -32,7 +32,7 @@ function makeArtifactsByChar(
 }
 
 beforeEach(() => {
-  useFreezeStore.setState({ frozenTeams: {}, allowSameCharReuse: true });
+  useFreezeStore.setState({ frozenTeams: {}, reuseMode: "sameChar" });
   // Set up a basic account with some artifacts
   useAccountStore.setState((prev) => ({
     ...prev,
@@ -211,7 +211,7 @@ describe("useTeamInventory", () => {
     expect(result.current.frozenArtifactIds.size).toBe(0);
   });
 
-  describe("allowSameCharReuse", () => {
+  describe("reuseMode", () => {
     it("returns per-char extras when same character is in current team", () => {
       // hu_tao frozen in otherTeam, hu_tao also in team1
       act(() => {
@@ -237,12 +237,12 @@ describe("useTeamInventory", () => {
       ).toEqual(["eq1", "eq2"]);
     });
 
-    it("excludes frozen artifacts when same char reuse is OFF", () => {
+    it("excludes frozen artifacts when reuseMode is none", () => {
       act(() => {
         useTeamStore
           .getState()
           .addTeam({ id: "team1", characters: ["hu_tao", null, null, null] });
-        useFreezeStore.getState().setAllowSameCharReuse(false);
+        useFreezeStore.getState().setReuseMode("none");
         useFreezeStore
           .getState()
           .freezeCharacters(
@@ -252,7 +252,7 @@ describe("useTeamInventory", () => {
           );
       });
       const { result } = renderHook(() => useTeamInventory("team1"));
-      // With allowSameCharReuse OFF, hu_tao's frozen artifacts are excluded
+      // With reuseMode "none", hu_tao's frozen artifacts are excluded
       expect(result.current.frozenArtifactIds).toEqual(new Set(["eq1", "eq2"]));
       expect(result.current.availableArtifacts).toHaveLength(3);
     });
@@ -300,6 +300,136 @@ describe("useTeamInventory", () => {
       expect(result.current.perCharExtraArtifacts.hu_tao).toHaveLength(1);
       expect(result.current.perCharExtraArtifacts.hu_tao[0].id).toBe("eq1");
       expect(result.current.perCharExtraArtifacts.ganyu).toBeUndefined();
+    });
+  });
+
+  describe("forceReuse mode", () => {
+    function makeArtSet(
+      charId: string,
+      idPrefix: string,
+      setKey: string
+    ): Record<string, Record<Slot, ArtifactData | null>> {
+      const slotMap = Object.fromEntries(
+        SLOTS.map((s) => [
+          s,
+          {
+            id: `${idPrefix}_${s}`,
+            setKey,
+            slotKey: s,
+            level: 20,
+            rarity: 5,
+            mainStatKey: "hp",
+            lock: false,
+            substats: {},
+          } satisfies ArtifactData,
+        ])
+      ) as Record<Slot, ArtifactData | null>;
+      return { [charId]: slotMap };
+    }
+
+    it("populates forceReuseChars when frozen char has matching 4pc config", () => {
+      act(() => {
+        useTeamStore.getState().addTeam({
+          id: "team1",
+          characters: ["hu_tao", null, null, null],
+          artifacts: [{ type: "4pc", setId: "crimson_witch_of_flames" }],
+        });
+        useFreezeStore.getState().setReuseMode("forceReuse");
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "otherTeam",
+            ["hu_tao"],
+            makeArtSet("hu_tao", "fr", "crimson_witch_of_flames")
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      expect(result.current.forceReuseChars.hu_tao).toBeDefined();
+      expect(Object.keys(result.current.forceReuseChars)).toHaveLength(1);
+    });
+
+    it("does NOT force reuse when sets mismatch", () => {
+      act(() => {
+        useTeamStore.getState().addTeam({
+          id: "team1",
+          characters: ["hu_tao", null, null, null],
+          artifacts: [{ type: "4pc", setId: "crimson_witch_of_flames" }],
+        });
+        useFreezeStore.getState().setReuseMode("forceReuse");
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "otherTeam",
+            ["hu_tao"],
+            makeArtSet("hu_tao", "fr", "gladiators_finale")
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      expect(result.current.forceReuseChars.hu_tao).toBeUndefined();
+      // But still has perCharExtraArtifacts
+      expect(result.current.perCharExtraArtifacts.hu_tao).toBeDefined();
+    });
+
+    it("does NOT force reuse when goalConfig is null", () => {
+      act(() => {
+        useTeamStore.getState().addTeam({
+          id: "team1",
+          characters: ["hu_tao", null, null, null],
+          artifacts: [null],
+        });
+        useFreezeStore.getState().setReuseMode("forceReuse");
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "otherTeam",
+            ["hu_tao"],
+            makeArtSet("hu_tao", "fr", "crimson_witch_of_flames")
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      expect(result.current.forceReuseChars.hu_tao).toBeUndefined();
+    });
+
+    it("does NOT force reuse for same-team frozen chars", () => {
+      act(() => {
+        useTeamStore.getState().addTeam({
+          id: "team1",
+          characters: ["hu_tao", null, null, null],
+          artifacts: [{ type: "4pc", setId: "crimson_witch_of_flames" }],
+        });
+        useFreezeStore.getState().setReuseMode("forceReuse");
+        // Frozen in same team (team1)
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "team1",
+            ["hu_tao"],
+            makeArtSet("hu_tao", "fr", "crimson_witch_of_flames")
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      // Same-team frozen chars stay fully locked, not force-reused
+      expect(result.current.forceReuseChars.hu_tao).toBeUndefined();
+    });
+
+    it("returns empty forceReuseChars in sameChar mode", () => {
+      act(() => {
+        useTeamStore.getState().addTeam({
+          id: "team1",
+          characters: ["hu_tao", null, null, null],
+          artifacts: [{ type: "4pc", setId: "crimson_witch_of_flames" }],
+        });
+        useFreezeStore.getState().setReuseMode("sameChar");
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "otherTeam",
+            ["hu_tao"],
+            makeArtSet("hu_tao", "fr", "crimson_witch_of_flames")
+          );
+      });
+      const { result } = renderHook(() => useTeamInventory("team1"));
+      expect(Object.keys(result.current.forceReuseChars)).toHaveLength(0);
     });
   });
 });

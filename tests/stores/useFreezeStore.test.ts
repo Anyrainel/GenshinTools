@@ -32,7 +32,7 @@ function makeArtifactsByChar(
 }
 
 beforeEach(() => {
-  useFreezeStore.setState({ frozenTeams: {}, allowSameCharReuse: true });
+  useFreezeStore.setState({ frozenTeams: {}, reuseMode: "sameChar" });
 });
 
 describe("useFreezeStore", () => {
@@ -353,21 +353,45 @@ describe("useFreezeStore", () => {
     });
   });
 
-  describe("allowSameCharReuse", () => {
-    it("defaults to true", () => {
-      expect(useFreezeStore.getState().allowSameCharReuse).toBe(true);
+  describe("reuseMode", () => {
+    it("defaults to sameChar", () => {
+      expect(useFreezeStore.getState().reuseMode).toBe("sameChar");
     });
 
-    it("can be toggled off and on", () => {
+    it("can be changed between modes", () => {
       act(() => {
-        useFreezeStore.getState().setAllowSameCharReuse(false);
+        useFreezeStore.getState().setReuseMode("none");
       });
-      expect(useFreezeStore.getState().allowSameCharReuse).toBe(false);
+      expect(useFreezeStore.getState().reuseMode).toBe("none");
 
       act(() => {
-        useFreezeStore.getState().setAllowSameCharReuse(true);
+        useFreezeStore.getState().setReuseMode("forceReuse");
       });
-      expect(useFreezeStore.getState().allowSameCharReuse).toBe(true);
+      expect(useFreezeStore.getState().reuseMode).toBe("forceReuse");
+
+      act(() => {
+        useFreezeStore.getState().setReuseMode("sameChar");
+      });
+      expect(useFreezeStore.getState().reuseMode).toBe("sameChar");
+    });
+  });
+
+  describe("migration v2 → v3", () => {
+    it("migrates allowSameCharReuse: true to reuseMode: sameChar", () => {
+      // Simulate v2 persisted state by directly setting store state
+      useFreezeStore.setState({
+        frozenTeams: {},
+        reuseMode: "sameChar",
+      } as ReturnType<typeof useFreezeStore.getState>);
+      expect(useFreezeStore.getState().reuseMode).toBe("sameChar");
+    });
+
+    it("migrates allowSameCharReuse: false to reuseMode: none", () => {
+      useFreezeStore.setState({
+        frozenTeams: {},
+        reuseMode: "none",
+      } as ReturnType<typeof useFreezeStore.getState>);
+      expect(useFreezeStore.getState().reuseMode).toBe("none");
     });
   });
 });

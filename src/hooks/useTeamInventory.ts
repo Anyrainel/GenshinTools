@@ -1,4 +1,5 @@
-import type { ArtifactData, CharacterData } from "@/data/types";
+import type { ArtifactData, CharacterData, Slot } from "@/data/types";
+import { frozenArtifactsMatchConfig } from "@/lib/team-comp/teamOptUtils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -17,24 +18,28 @@ export interface TeamInventory {
    * into the optimizer so only the owning character can use them.
    */
   perCharExtraArtifacts: Record<string, ArtifactData[]>;
+  /** Characters whose artifacts are force-reused (forceReuse mode + set match) */
+  forceReuseChars: Record<string, Record<Slot, ArtifactData | null>>;
 }
 
 /**
  * Centralized hook for accessing the artifact inventory with freeze-awareness.
  * Guards against using frozen artifacts across all optimizer features.
  *
- * When `allowSameCharReuse` is enabled, artifacts frozen for character X in
- * another team are returned via `perCharExtraArtifacts[X]` so the optimizer
- * can inject them into only that character's BnB search.
+ * reuseMode behavior:
+ * - "none": no reuse of frozen artifacts
+ * - "sameChar": frozen artifacts from other teams are available per-character
+ * - "forceReuse": same as sameChar, plus characters with matching set configs
+ *   are force-reused (their artifacts are locked without BnB optimization)
  */
 export function useTeamInventory(teamId: string): TeamInventory {
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const frozenTeams = useFreezeStore((s) => s.frozenTeams);
-  const allowSameCharReuse = useFreezeStore((s) => s.allowSameCharReuse);
-  const teamCharacters = useTeamStore(
-    (s) => s.teams.find((t) => t.id === teamId)?.characters
-  );
+  const reuseMode = useFreezeStore((s) => s.reuseMode);
+  const team = useTeamStore((s) => s.teams.find((t) => t.id === teamId));
+  const teamCharacters = team?.characters;
+  const teamArtifacts = team?.artifacts;
 
   return useMemo(() => {
     if (!accountData) {
@@ -43,6 +48,7 @@ export function useTeamInventory(teamId: string): TeamInventory {
         availableArtifacts: [],
         frozenArtifactIds: new Set<string>(),
         perCharExtraArtifacts: {},
+        forceReuseChars: {},
       };
     }
 
@@ -64,6 +70,11 @@ export function useTeamInventory(teamId: string): TeamInventory {
     const frozenArtifactIds = new Set<string>();
     // Per-character extras: frozen artifacts from OTHER teams for characters in this team
     const perCharExtraArtifacts: Record<string, ArtifactData[]> = {};
+    // forceReuse: chars from other teams whose frozen artifacts match the current team's config
+    const forceReuseChars: Record<
+      string,
+      Record<Slot, ArtifactData | null>
+    > = {};
 
     for (const [tid, entry] of Object.entries(frozenTeams)) {
       if (!entry?.artifactsByChar) continue;
@@ -83,7 +94,7 @@ export function useTeamInventory(teamId: string): TeamInventory {
         // Same-char reuse: collect extras for characters in THIS team
         // from OTHER teams only (same-team frozen chars stay fully locked)
         if (
-          allowSameCharReuse &&
+          reuseMode !== "none" &&
           tid !== teamId &&
           teamCharIdSet.has(cid) &&
           charArtifacts.length > 0
@@ -93,6 +104,22 @@ export function useTeamInventory(teamId: string): TeamInventory {
             existing.push(...charArtifacts);
           } else {
             perCharExtraArtifacts[cid] = charArtifacts;
+          }
+
+          // forceReuse: check if the frozen artifacts match the current team's config
+          if (reuseMode === "forceReuse" && !(cid in forceReuseChars)) {
+            const charIdx = (teamCharacters ?? []).indexOf(cid);
+            const goalConfig =
+              charIdx >= 0 ? (teamArtifacts ?? [])[charIdx] : null;
+            if (
+              goalConfig &&
+              frozenArtifactsMatchConfig(
+                arts as Record<Slot, ArtifactData | null>,
+                goalConfig
+              )
+            ) {
+              forceReuseChars[cid] = arts as Record<Slot, ArtifactData | null>;
+            }
           }
         }
       }
@@ -107,6 +134,14 @@ export function useTeamInventory(teamId: string): TeamInventory {
       availableArtifacts,
       frozenArtifactIds,
       perCharExtraArtifacts,
+      forceReuseChars,
     };
-  }, [accountData, frozenTeams, allowSameCharReuse, teamCharacters, teamId]);
+  }, [
+    accountData,
+    frozenTeams,
+    reuseMode,
+    teamCharacters,
+    teamArtifacts,
+    teamId,
+  ]);
 }
