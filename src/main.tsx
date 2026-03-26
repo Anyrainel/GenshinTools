@@ -16,17 +16,17 @@ if (new URLSearchParams(window.location.search).has("_r")) {
 }
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <ThemeProvider>
-        <LanguageProvider>
-          <TooltipProvider delayDuration={200}>
-            <HashRouter>
-              <App />
-            </HashRouter>
-          </TooltipProvider>
-        </LanguageProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  </StrictMode>
+  // <StrictMode>
+  <ErrorBoundary>
+    <ThemeProvider>
+      <LanguageProvider>
+        <TooltipProvider delayDuration={200}>
+          <HashRouter>
+            <App />
+          </HashRouter>
+        </TooltipProvider>
+      </LanguageProvider>
+    </ThemeProvider>
+  </ErrorBoundary>
+  // </StrictMode>
 );
