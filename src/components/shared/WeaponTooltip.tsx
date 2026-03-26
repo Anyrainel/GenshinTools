@@ -24,8 +24,8 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
     ? getWeaponStatsAt90(weaponStats, weaponId)
     : null;
 
-  const name = t.weaponName(weapon.id);
-  const effectHtml = t.weaponEffectHtml(weapon.id);
+  const name = t.weapon(weapon.id);
+  const effectHtml = t.weaponEffect(weapon.id);
   const statName = meta.secondaryStat != null ? t.stat(meta.secondaryStat) : "";
   const weaponType = meta.type != null ? t.weaponType(meta.type) : "";
 

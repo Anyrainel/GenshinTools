@@ -59,7 +59,7 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
       />
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium line-clamp-2 leading-tight">
-          {t.weaponName(weapon.id)}
+          {t.weapon(weapon.id)}
         </div>
         {meta.secondaryStat != null && (
           <div className="text-xs text-muted-foreground mt-0.5">
@@ -147,8 +147,8 @@ function WeaponDetailDrawer({
   refinement: number;
 }) {
   const { t } = useLanguage();
-  const name = t.weaponName(weapon.id);
-  const effectHtml = t.weaponEffectHtml(weapon.id);
+  const name = t.weapon(weapon.id);
+  const effectHtml = t.weaponEffect(weapon.id);
   const statName =
     weaponMeta.secondaryStat != null ? t.stat(weaponMeta.secondaryStat) : "";
   const weaponType =

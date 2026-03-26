@@ -257,7 +257,7 @@ function PickerItemName({
   ) {
     name = t.ui("buildCard.2pc+2pc");
   } else if (type === "character") name = t.character(value as string);
-  else if (type === "weapon") name = t.weaponName(value as string);
+  else if (type === "weapon") name = t.weapon(value as string);
   else if (
     type === "artifact" &&
     typeof value === "object" &&
@@ -534,7 +534,7 @@ function PickerContent({
           id: w.id,
           imagePath: w.imagePath,
           rarity: meta.rarity,
-          name: t.weaponName(w.id).toLowerCase(),
+          name: t.weapon(w.id).toLowerCase(),
           meta,
           original: w,
         };
@@ -680,7 +680,7 @@ function PickerContent({
       type === "character"
         ? t.character(item.id as string)
         : type === "weapon"
-          ? t.weaponName(item.id as string)
+          ? t.weapon(item.id as string)
           : type === "artifact" && artifactTab === "4pc"
             ? t.artifact(item.id as string)
             : t.artifactHalfSet(item.id);

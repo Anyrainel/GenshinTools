@@ -221,7 +221,7 @@ export function WeaponArchiveView() {
         return false;
       if (query) {
         const lowerQuery = query.toLowerCase();
-        const name = t.weaponName(weapon.id);
+        const name = t.weapon(weapon.id);
         const statLabel =
           meta.secondaryStat != null ? t.statShort(meta.secondaryStat) : "";
         const effect = t.weaponEffect(weapon.id);

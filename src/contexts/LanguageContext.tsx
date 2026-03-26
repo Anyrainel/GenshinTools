@@ -81,9 +81,8 @@ interface LanguageContextType {
     faction: (key: string) => string;
     resonance: (key: string) => string;
     weaponType: (type: string) => string;
-    weaponName: (id: string) => string;
+    weapon: (id: string) => string;
     weaponEffect: (id: string, refinement?: number) => string;
-    weaponEffectHtml: (id: string, refinement?: number) => string;
     slot: (key: string) => string;
     style: (key: string) => string;
     role: (key: string) => string;
@@ -411,21 +410,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     (weaponId: string, refinement?: number): string => {
       const entry = weaponData[weaponId];
       if (!entry?.descHtmlTpl) return "";
-      const html = formatWeaponEffect(
-        entry.descHtmlTpl,
-        entry.refinements,
-        refinement
-      );
-      // Strip HTML tags for plain-text usage
-      return html.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "");
-    },
-    [weaponData]
-  );
-
-  const getWeaponEffectHtml = useCallback(
-    (weaponId: string, refinement?: number): string => {
-      const entry = weaponData[weaponId];
-      if (!entry?.descHtmlTpl) return "";
       return formatWeaponEffect(
         entry.descHtmlTpl,
         entry.refinements,
@@ -579,9 +563,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       faction: getFactionName,
       resonance: getResonanceName,
       weaponType: getWeaponTypeName,
-      weaponName: getWeaponName,
+      weapon: getWeaponName,
       weaponEffect: getWeaponEffect,
-      weaponEffectHtml: getWeaponEffectHtml,
       slot: getSlotName,
       style: getStyleName,
       role: getRoleName,
@@ -620,7 +603,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getWeaponTypeName,
       getWeaponName,
       getWeaponEffect,
-      getWeaponEffectHtml,
       getSlotName,
       getStyleName,
       getRoleName,

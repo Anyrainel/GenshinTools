@@ -412,7 +412,7 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
           }
           groupConfig={weaponGroupConfig}
           getGroupName={(group) => t.weaponType(group)}
-          getItemName={(item) => t.weaponName(item.id)}
+          getItemName={(item) => t.weapon(item.id)}
           getTooltip={(weapon) => <WeaponTooltip weaponId={weapon.id} />}
           filterItem={(weapon) => {
             const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);

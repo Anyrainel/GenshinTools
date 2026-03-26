@@ -24,7 +24,7 @@ function allocationDiffs(
   charIds: string[],
   fmt: {
     charName: (cid: string) => string;
-    weaponName: (wid: string) => string;
+    weapon: (wid: string) => string;
     c: (n: number) => string;
     r: (n: number) => string;
   }
@@ -53,7 +53,7 @@ function allocationDiffs(
       const toR = c.is5StarWeapon ? fmt.r(c.refinement) : "4★";
       entries.push({
         iconPath: wep?.imagePath ?? "",
-        name: fmt.weaponName(c.weaponId),
+        name: fmt.weapon(c.weaponId),
         label: `${fromR}→${toR}`,
         // Switching from 4★ to 5★ is an upgrade
         direction: c.is5StarWeapon ? "up" : "down",
@@ -63,7 +63,7 @@ function allocationDiffs(
       const wep = weaponsById[c.weaponId];
       entries.push({
         iconPath: wep?.imagePath ?? "",
-        name: fmt.weaponName(c.weaponId),
+        name: fmt.weapon(c.weaponId),
         label: `${fmt.r(p.refinement)}→${fmt.r(c.refinement)}`,
         direction: c.refinement > p.refinement ? "up" : "down",
       });
@@ -124,7 +124,7 @@ export function AnalyzerTable({ result, charIds }: AnalyzerTableProps) {
                     charIds,
                     {
                       charName: (cid) => t.character(cid),
-                      weaponName: (wid) => t.weaponName(wid),
+                      weapon: (wid) => t.weapon(wid),
                       c: fmtC,
                       r: fmtR,
                     }

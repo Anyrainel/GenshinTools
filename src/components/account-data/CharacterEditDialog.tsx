@@ -545,7 +545,7 @@ function OverviewPanel({
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-base truncate max-w-[120px] lg:max-w-full">
-                    {t.weaponName(weapon.key)}
+                    {t.weapon(weapon.key)}
                   </span>
                   <Button
                     variant="outline"
@@ -960,7 +960,7 @@ function WeaponPickPanel({
   const inventory = data.extraWeapons.filter((w) => {
     const info = weaponStats?.[w.key];
     const matchesType = !reqType || !info || info.type === reqType;
-    return matchesType && t.weaponName(w.key).toLowerCase().includes(q);
+    return matchesType && t.weapon(w.key).toLowerCase().includes(q);
   });
 
   const equipped = data.characters
@@ -969,9 +969,7 @@ function WeaponPickPanel({
     .filter((e) => {
       const info = weaponStats?.[e.weapon.key];
       const matchesType = !reqType || !info || info.type === reqType;
-      return (
-        matchesType && t.weaponName(e.weapon.key).toLowerCase().includes(q)
-      );
+      return matchesType && t.weapon(e.weapon.key).toLowerCase().includes(q);
     });
 
   return (
@@ -1004,7 +1002,7 @@ function WeaponPickPanel({
             return (
               <PickerItem
                 key={w.id}
-                label={t.weaponName(w.key)}
+                label={t.weapon(w.key)}
                 onClick={() => onSelect(w.key)}
               >
                 <ItemIcon
@@ -1026,7 +1024,7 @@ function WeaponPickPanel({
             return (
               <PickerItem
                 key={e.weapon.id}
-                label={`${t.weaponName(e.weapon.key)}`}
+                label={`${t.weapon(e.weapon.key)}`}
                 subtitle={`${t.character(e.owner)} • ${t.ui("charEdit.willSwap")}`}
                 onClick={() => onSelect(e.weapon.key)}
               >

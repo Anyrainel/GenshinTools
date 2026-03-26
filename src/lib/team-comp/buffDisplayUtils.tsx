@@ -53,7 +53,7 @@ export function getSourceName(source: ResolvedBuff["source"], t: T): string {
     case "character":
       return t.character(source.id);
     case "weapon":
-      return t.weaponName(source.id);
+      return t.weapon(source.id);
     case "artifactSet":
       return t.artifact(source.id);
     case "artifactHalfSet": {

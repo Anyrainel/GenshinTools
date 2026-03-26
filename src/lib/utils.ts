@@ -193,3 +193,45 @@ export const SENTIMENT_BADGE = {
   positive: "bg-green-500/20 text-green-300 border-green-500/30",
   negative: "bg-red-500/20 text-red-300 border-red-500/30",
 } as const;
+
+// ── Chip color schemes (FilterChip / CategoryChip) ──
+
+export const CHIP_COLORS = {
+  teal: {
+    active: "bg-teal-500/15 border-teal-500/40 text-teal-300",
+    inactive: "border-transparent text-teal-400/60 hover:text-teal-400/80",
+    icon: "text-teal-400",
+  },
+  orange: {
+    active: "bg-orange-500/15 border-orange-500/40 text-orange-300",
+    inactive: "border-transparent text-orange-400/60 hover:text-orange-400/80",
+    icon: "text-orange-400",
+  },
+  amber: {
+    active: "bg-amber-500/15 border-amber-500/40 text-amber-400",
+    inactive: "border-transparent text-amber-400/60 hover:text-amber-400/80",
+    icon: "text-amber-400",
+  },
+  sky: {
+    active: "bg-sky-500/15 border-sky-500/40 text-sky-300",
+    inactive: "border-transparent text-sky-400/60 hover:text-sky-400/80",
+    icon: "text-sky-400",
+  },
+  "rarity-5": {
+    active: "bg-rarity-5/25 border-rarity-5/50 text-rarity-5",
+    inactive: "border-transparent text-rarity-5/60 hover:text-rarity-5/80",
+    icon: "text-rarity-5",
+  },
+  "rarity-4": {
+    active: "bg-rarity-4/25 border-rarity-4/50 text-rarity-4",
+    inactive: "border-transparent text-rarity-4/60 hover:text-rarity-4/80",
+    icon: "text-rarity-4",
+  },
+  "rarity-3": {
+    active: "bg-rarity-3/25 border-rarity-3/50 text-rarity-3",
+    inactive: "border-transparent text-rarity-3/60 hover:text-rarity-3/80",
+    icon: "text-rarity-3",
+  },
+} as const;
+
+export type ChipColor = keyof typeof CHIP_COLORS;

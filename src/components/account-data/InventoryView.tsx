@@ -2,6 +2,7 @@ import {
   ArtifactDataContent,
   ArtifactDataHoverCard,
 } from "@/components/account-data/ArtifactDataHoverCard";
+import { CategoryChip } from "@/components/archive/CategoryChip";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -36,8 +37,8 @@ import type {
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
-import { cn } from "@/lib/utils";
-import { Check, Minus, Trash2 } from "lucide-react";
+import { type ChipColor, cn } from "@/lib/utils";
+import { Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
 interface InventoryViewProps {
@@ -459,7 +460,7 @@ export function InventoryView({
         <ResponsiveDialogContent className="sm:max-w-md">
           <ResponsiveDialogHeader>
             <ResponsiveDialogTitle>
-              {selectedWeapon ? t.weaponName(selectedWeapon.key) : ""}
+              {selectedWeapon ? t.weapon(selectedWeapon.key) : ""}
             </ResponsiveDialogTitle>
             <ResponsiveDialogDescription asChild>
               <span>
@@ -549,69 +550,11 @@ export function InventoryView({
 // SUB-COMPONENTS
 // ---------------------------------------------------------------------------
 
-const categoryColors = {
-  teal: {
-    active: "bg-teal-500/15 border-teal-500/40 text-teal-300",
-    icon: "text-teal-400",
-  },
-  orange: {
-    active: "bg-orange-500/15 border-orange-500/40 text-orange-300",
-    icon: "text-orange-400",
-  },
-  "rarity-5": {
-    active: "bg-rarity-5/15 border-rarity-5/40 text-rarity-5",
-    icon: "text-rarity-5",
-  },
-  "rarity-4": {
-    active: "bg-rarity-4/15 border-rarity-4/40 text-rarity-4",
-    icon: "text-rarity-4",
-  },
-  "rarity-3": {
-    active: "bg-rarity-3/15 border-rarity-3/40 text-rarity-3",
-    icon: "text-rarity-3",
-  },
-} as const;
-
-type CategoryColor = keyof typeof categoryColors;
-
-const rarityColor: Record<number, CategoryColor> = {
+const rarityColor: Record<number, ChipColor> = {
   5: "rarity-5",
   4: "rarity-4",
   3: "rarity-3",
 };
-
-function CategoryChip({
-  active,
-  onClick,
-  color,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  color: CategoryColor;
-  children: React.ReactNode;
-}) {
-  const scheme = categoryColors[color];
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm leading-none font-medium transition-all border",
-        active
-          ? scheme.active
-          : "border-transparent text-foreground/70 hover:text-foreground/90"
-      )}
-    >
-      {active ? (
-        <Check className={cn("w-3.5 h-3.5", scheme.icon)} />
-      ) : (
-        <Minus className="w-3.5 h-3.5" />
-      )}
-      {children}
-    </button>
-  );
-}
 
 function groupWeapons(list: (WeaponData & { equipped: boolean })[]) {
   const result: (WeaponData & { equipped: boolean; count: number })[] = [];
@@ -651,7 +594,7 @@ function WeaponGrid({
   return (
     <div className="flex flex-wrap gap-3 px-2">
       {weapons.map((w) => {
-        const name = t.weaponName(w.key);
+        const name = t.weapon(w.key);
 
         const cardContent = (
           <Card
