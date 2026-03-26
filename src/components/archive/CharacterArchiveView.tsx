@@ -359,12 +359,20 @@ export function CharacterArchiveView() {
     );
   }, [setSearchParams]);
 
-  // Auto-select first character on desktop if none selected
+  // Auto-select first released character on desktop if none selected
   useEffect(() => {
-    if (isDesktop && !selectedId && filteredCharacters.length > 0) {
-      handleSelect(filteredCharacters[0].id);
+    if (
+      isDesktop &&
+      !selectedId &&
+      characterStats &&
+      filteredCharacters.length > 0
+    ) {
+      const firstReleased = filteredCharacters.find(
+        (c) => characterStats[c.id]?.releaseDate
+      );
+      handleSelect((firstReleased ?? filteredCharacters[0]).id);
     }
-  }, [isDesktop, selectedId, filteredCharacters, handleSelect]);
+  }, [isDesktop, selectedId, filteredCharacters, characterStats, handleSelect]);
 
   const toggleElement = (el: Element) => {
     setElementFilter((prev) =>
