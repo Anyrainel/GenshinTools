@@ -251,7 +251,9 @@ describe("StatSheetPanel", () => {
       const { container } = render(
         <TestPanel
           {...defaultProps({
-            failReasons: { hu_tao: "emptyPool" },
+            failReasons: {
+              hu_tao: { kind: "empty-pool" as const, emptySlots: [] },
+            },
           })}
         />
       );

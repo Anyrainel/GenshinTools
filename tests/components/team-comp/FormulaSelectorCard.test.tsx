@@ -24,18 +24,29 @@ const mockTeam: Team = {
 };
 
 const mockFormulas = [
-  { charId: "hu_tao", formulaId: "charged", label: { en: "Charged ATK" } },
-  { charId: "hu_tao", formulaId: "burst", label: { en: "Burst" } },
-  { charId: "xingqiu", formulaId: "burst", label: { en: "Rain Swords" } },
+  {
+    charId: "hu_tao",
+    formulaId: "charged",
+    label: { en: "Charged ATK", zh: "重击" },
+  },
+  { charId: "hu_tao", formulaId: "burst", label: { en: "Burst", zh: "爆发" } },
+  {
+    charId: "xingqiu",
+    formulaId: "burst",
+    label: { en: "Rain Swords", zh: "雨帘剑" },
+  },
 ];
 
-const mockAvailableFormulas: Record<string, Record<string, { en: string }>> = {
+const mockAvailableFormulas: Record<
+  string,
+  Record<string, { en: string; zh: string }>
+> = {
   hu_tao: {
-    charged: { en: "Charged ATK" },
-    burst: { en: "Burst" },
+    charged: { en: "Charged ATK", zh: "重击" },
+    burst: { en: "Burst", zh: "爆发" },
   },
   xingqiu: {
-    burst: { en: "Rain Swords" },
+    burst: { en: "Rain Swords", zh: "雨帘剑" },
   },
 };
 
