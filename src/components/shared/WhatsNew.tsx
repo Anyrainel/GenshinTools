@@ -545,7 +545,7 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
                 <article key={entry.date}>
                   <div className="flex items-center gap-2 mb-3">
                     <div className="h-px flex-1 bg-border/50" />
-                    <span className="text-xs font-mono text-muted-foreground shrink-0">
+                    <span className="text-sm font-semibold font-mono text-foreground shrink-0">
                       {entry.date}
                     </span>
                     <div className="h-px flex-1 bg-border/50" />

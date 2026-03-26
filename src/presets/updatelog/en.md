@@ -4,6 +4,26 @@
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
 
+## 2025-03-26
+
+### features
+- Team comp: search, sort, and filter controls for managing large team lists
+- Reuse modes: allow same-character reuse, or force same-character same-set reuse of frozen artifacts
+- Stat panel redesign: idle vs combat stat views with compact responsive layout
+- Per-buff activation dialog: fine-tune buff active state and hit counts per damage part
+- Custom flex rules: user-defined artifact off-piece patterns with add/remove UI
+- Freeze currently equipped artifacts
+- Image export: themed backgrounds and responsive sizing
+- Reaction overrides for multi-element characters (Chasca, Varka)
+- Faster page switching with lazy routes and cached presets
+- Home page assets converted to WebP, reducing load size by 75%
+
+### fixes
+- Fixed critMode not adjusting combo total and per-line damages
+- Fixed duplicate artifact bug; redesigned saturation detection
+- Fixed inflated marginal gains; unified computation across display and optimizer
+- Fixed recommendation threshold filtering producing wrong results
+
 ## 2025-03-23
 
 ### features
