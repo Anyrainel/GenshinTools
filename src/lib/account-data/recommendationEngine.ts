@@ -63,12 +63,14 @@ export interface AllRecommendations {
 
 // ─── Recommendation Generation ───
 
-function generateRecommendations(
+/** @internal — exported for testing */
+export function generateRecommendations(
   char: CharacterData,
   buildMatch: BuildMatchResult,
   optimizerResult: BuildOptimizerResult,
   globalConfig: GlobalStatWeights,
-  targetMainStats: Record<Slot, Set<string>>
+  targetMainStats: Record<Slot, Set<string>>,
+  thresholds?: InvestmentThresholds
 ): CharacterRecommendations {
   const recommendations: Recommendation[] = [];
 
@@ -98,7 +100,8 @@ function generateRecommendations(
         );
         const optimalScore = topBuild.slotScores[slot];
         const diff = optimalScore - currentScore;
-        if (diff > 1.0) {
+        const upgradeMin = thresholds?.upgrade ?? 1.0;
+        if (diff >= upgradeMin) {
           recommendations.push({
             actionType: "upgrade",
             characterId: char.key,
@@ -144,8 +147,16 @@ function generateRecommendations(
         continue;
     }
 
-    // Skip negligible improvements
-    if (slotScoreDiff < 0.5) continue;
+    // Skip improvements below threshold
+    if (thresholds) {
+      let minDiff: number;
+      if (actionType === "swap" || actionType === "equip")
+        minDiff = actionType === "equip" ? 0.5 : thresholds.swap;
+      else if (actionType === "upgrade") minDiff = thresholds.upgrade;
+      else if (actionType === "reroll") minDiff = thresholds.reroll;
+      else minDiff = thresholds.farm;
+      if (slotScoreDiff < minDiff) continue;
+    } else if (slotScoreDiff < 0.5) continue;
 
     recommendations.push({
       actionType,
@@ -386,7 +397,8 @@ export function generateAllRecommendations(
       buildMatch,
       optimizerResult,
       globalConfig,
-      targetMainStats
+      targetMainStats,
+      investmentThresholds
     );
 
     perCharacter[char.key] = charRecs;

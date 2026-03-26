@@ -385,7 +385,7 @@ export const i18nUiData = {
       hopeful: { en: "Hopeful", zh: "乐观" },
     },
     investmentLevel: {
-      label: { en: "Min. Score Diff", zh: "最低分差" },
+      label: { en: "Min. Score Diff", zh: "推荐时最低分差" },
     },
   },
   charEdit: {

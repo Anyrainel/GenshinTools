@@ -31,7 +31,7 @@ import {
   PartyPopper,
   Pickaxe,
 } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 // Height model for masonry layout (measured px values)
@@ -66,6 +66,54 @@ function computeMasonryColumns<T>(
   }
 
   return columns;
+}
+
+function ThresholdInput({
+  label,
+  icon: ThIcon,
+  color,
+  value,
+  onChange,
+}: {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const displayed = draft ?? String(value);
+
+  return (
+    <div className="flex items-center gap-2">
+      <ThIcon className={cn("w-4 h-4", color)} />
+      <span className={cn("text-sm", color)}>{label}</span>
+      <input
+        type="text"
+        inputMode="numeric"
+        value={displayed}
+        onChange={(e) => {
+          const raw = e.target.value;
+          // Allow empty while editing
+          if (raw === "") {
+            setDraft("");
+            return;
+          }
+          const v = Number(raw);
+          if (!Number.isNaN(v) && v >= 0 && v <= 99) {
+            setDraft(raw);
+            onChange(v);
+          }
+        }}
+        onBlur={() => {
+          // Commit empty → 0
+          if (draft === "") onChange(0);
+          setDraft(null);
+        }}
+        className="w-10 bg-transparent border-b border-muted-foreground text-center text-sm font-mono font-bold text-foreground outline-none focus:border-primary"
+      />
+    </div>
+  );
 }
 
 interface RecommendationViewProps {
@@ -220,21 +268,14 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
               },
             ] as const
           ).map(({ key, label, icon: ThIcon, color }) => (
-            <div key={key} className="flex items-center gap-2">
-              <ThIcon className={cn("w-4 h-4", color)} />
-              <span className={cn("text-sm", color)}>{t.ui(label)}</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={investmentThresholds[key]}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  if (!Number.isNaN(v) && v >= 0 && v <= 30)
-                    setInvestmentThreshold(key, v);
-                }}
-                className="w-10 bg-transparent border-b border-muted-foreground text-center text-sm font-mono font-bold text-foreground outline-none focus:border-primary"
-              />
-            </div>
+            <ThresholdInput
+              key={key}
+              label={t.ui(label)}
+              icon={ThIcon}
+              color={color}
+              value={investmentThresholds[key]}
+              onChange={(v) => setInvestmentThreshold(key, v)}
+            />
           ))}
         </CardContent>
       </Card>
