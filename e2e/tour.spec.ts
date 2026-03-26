@@ -20,15 +20,15 @@ const TOURS: TourConfig[] = [
   {
     id: "artifact-filter",
     route: "/#/artifact-filter",
-    stepCount: 3,
+    stepCount: 4,
     initialTab: "configure",
   },
-  { id: "tier-list", route: "/#/tier-list", stepCount: 4 },
+  { id: "tier-list", route: "/#/tier-list", stepCount: 5 },
   { id: "team-comp", route: "/#/team-comp", stepCount: 3 },
   {
     id: "account-data",
     route: "/#/account-data",
-    stepCount: 4,
+    stepCount: 5,
     initialTab: "characters",
   },
 ];

@@ -1357,16 +1357,16 @@ export const i18nUiData = {
       title: { en: "Guide", zh: "指南" },
 
       artifactFilter: {
-        en: "1. Click {import} to use presets, or configure builds in {builds} tab.\n2. In {filters} tab, tweak custom controls to generate your own lock rules.",
-        zh: "1. 点击 {import} 使用预设，或在 {builds} 标签页中配置配装。\n2. 在 {filters} 标签页中调整自定义选项以生成属于你的锁定规则。",
+        en: "1. Click {import} to use presets, or configure builds in {builds} tab.\n2. In {filters} tab, tweak custom controls to generate your own lock rules.\n3. Use AutoTune to let the optimizer calculate substat weights based on your teams.",
+        zh: "1. 点击 {import} 使用预设，或在 {builds} 标签页中配置配装。\n2. 在 {filters} 标签页中调整自定义选项以生成属于你的锁定规则。\n3. 使用自动调参让优化器根据你的队伍自动计算副词条权重。",
       },
       tierList: {
-        en: "1. Use {import} to load community tier list presets.\n2. Use {customize} to modify tier names and settings.",
-        zh: "1. 使用 {import} 加载社区榜单预设。\n2. 使用 {customize} 修改梯度名称和设置。",
+        en: "1. Use {import} to load community tier list presets.\n2. Use {customize} to modify tier names and settings.\n3. Switch to the Weapon tab to create a separate priority list for weapons.",
+        zh: "1. 使用 {import} 加载社区榜单预设。\n2. 使用 {customize} 修改梯度名称和设置。\n3. 切换到武器标签页，为武器单独创建优先级排名。",
       },
       accountData: {
-        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from Inventory Kamera) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.",
-        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 Inventory Kamera）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。",
+        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from Inventory Kamera) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.\n4. Use Set Evaluation to check build completeness, and Artifact Triage for lock/unlock advice.",
+        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 Inventory Kamera）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。\n4. 套装评估可以查看配装完成度，锁定助手则帮你判断该锁定和回收哪些圣遗物。",
       },
       teamComp: {
         en: "1. Pick {characters} , weapons, and artifact sets in each team card.\n2. Click {optimize} to find the best artifact loadout.\n3. Use {import} to load community presets.",
@@ -1391,6 +1391,10 @@ export const i18nUiData = {
         en: "Switch to the Compute tab to see your optimized filter configuration, ready to use with artifact filtering tools.",
         zh: "切换到计算标签页查看优化后的过滤配置，可直接用于圣遗物过滤工具。",
       },
+      weightsTabContent: {
+        en: "Let the optimizer figure out substat weights for you — it simulates your team comps to find the best priorities automatically.",
+        zh: "让优化器根据你的队伍自动算出最佳副词条权重，省去手动调参的麻烦。",
+      },
     },
     tierList: {
       unassignedTitle: { en: "Character Pool", zh: "角色池" },
@@ -1411,6 +1415,10 @@ export const i18nUiData = {
       exportContent: {
         en: "Export your tier list as an image to share with friends or on social media.",
         zh: "将榜单导出为图片，分享给朋友或发布到社交媒体。",
+      },
+      weaponsTabContent: {
+        en: "Switch here to rank weapons the same way — drag and drop into tiers, filter by type or stats.",
+        zh: "切换到这里给武器排名，操作方式和角色一样——拖拽到对应梯度即可。",
       },
     },
     teamComp: {
@@ -1458,6 +1466,14 @@ export const i18nUiData = {
       recommendationsContent: {
         en: "Get personalized recommendations for artifact upgrades, swaps, and farming priorities based on your collection.",
         zh: "根据你的圣遗物收藏，获取个性化的强化、替换和刷取建议。",
+      },
+      evaluationContent: {
+        en: "See how complete your artifact builds are at a glance — scored by set and grouped by completion tier, so you know where to farm next.",
+        zh: "一览所有配装的圣遗物完成情况，按套装分组评分，方便规划接下来刷哪个副本。",
+      },
+      triageContent: {
+        en: "Not sure which artifacts to keep? Triage analyzes your collection against your builds and tells you what to lock and what to toss.",
+        zh: "拿不准哪些圣遗物该留？锁定助手会根据你的配装逐一分析，告诉你该锁哪些、该回收哪些。",
       },
     },
   },
