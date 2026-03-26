@@ -164,15 +164,13 @@ export default function AccountDataPage() {
     });
   };
 
-  const {
-    activeAccountId,
-    clearAccounts,
-    addOrUpdateAccount,
-    setActiveAccount,
-    promoteToUid,
-    mergeScores,
-    staleScoreCharIds,
-  } = useAccountStore();
+  const activeAccountId = useAccountStore((s) => s.activeAccountId);
+  const clearAccounts = useAccountStore((s) => s.clearAccounts);
+  const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
+  const setActiveAccount = useAccountStore((s) => s.setActiveAccount);
+  const promoteToUid = useAccountStore((s) => s.promoteToUid);
+  const mergeScores = useAccountStore((s) => s.mergeScores);
+  const staleScoreCharIds = useAccountStore((s) => s.staleScoreCharIds);
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const scores = activeAccount?.scores || {};
@@ -195,7 +193,7 @@ export default function AccountDataPage() {
       return () => clearTimeout(timer);
     }
   }, [tour, activeTab]);
-  const { config: scoreConfig } = useArtifactScoreStore();
+  const scoreConfig = useArtifactScoreStore((s) => s.config);
   const buildsMap = useBuildsStore((s) => s.builds);
   const characterToBuildIds = useBuildsStore((s) => s.characterToBuildIds);
 

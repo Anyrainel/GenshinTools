@@ -144,10 +144,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const accountData = activeAccount?.data || null;
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
-  const freezeStore = useFreezeStore();
+  // Use targeted selectors — subscribing to the full store caused re-renders
+  // on ANY freeze mutation (other teams, reuseMode changes, etc.).
+  const frozenEntry = useFreezeStore((s) => s.frozenTeams[team.id]);
+  const freezeCharacters = useFreezeStore((s) => s.freezeCharacters);
+  const unfreezeCharacters = useFreezeStore((s) => s.unfreezeCharacters);
+  const unfreezeTeamAction = useFreezeStore((s) => s.unfreezeTeam);
   const teamInventory = useTeamInventory(team.id);
-  const isFrozen = freezeStore.isFrozen(team.id);
-  const frozenCharIds = freezeStore.getFrozenCharIds(team.id);
+  const isFrozen =
+    frozenEntry != null && (frozenEntry.frozenCharIds?.length ?? 0) > 0;
+  const frozenCharIds = frozenEntry?.frozenCharIds ?? [];
   const frozenCharIdSet = useMemo(
     () => new Set(frozenCharIds),
     [frozenCharIds]
@@ -290,11 +296,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   // Value-equivalence frozen check for the current tab: a character is "frozen"
   // on the current tab only if its equipped artifacts match the stored frozen artifacts.
   const currentTabFrozenCharIds = useMemo(() => {
-    const frozenData = freezeStore.getFrozenTeam(team.id);
-    if (!frozenData) return new Set<string>();
+    if (!frozenEntry) return new Set<string>();
     const result = new Set<string>();
-    for (const cid of frozenData.frozenCharIds) {
-      const frozenArts = frozenData.artifactsByChar[cid];
+    for (const cid of frozenEntry.frozenCharIds) {
+      const frozenArts = frozenEntry.artifactsByChar[cid];
       const equippedArts = equippedArtifactsByChar[cid];
       if (!frozenArts || !equippedArts) continue;
       // Check that every frozen artifact matches what's equipped (by ID)
@@ -308,7 +313,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       if (match) result.add(cid);
     }
     return result;
-  }, [freezeStore, team.id, equippedArtifactsByChar]);
+  }, [frozenEntry, team.id, equippedArtifactsByChar]);
 
   const validCharIds = Object.keys(availableFormulas);
 
@@ -666,17 +671,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
     // Use frozen/forced chars' artifact sheets as base so their buffs are accounted for
     const optBaseSheets = { ...artifactSheets };
-    if (isFrozen) {
-      const frozenData = freezeStore.getFrozenTeam(team.id);
-      if (frozenData) {
-        for (const cid of frozenData.frozenCharIds) {
-          const arts = frozenData.artifactsByChar[cid];
-          if (arts) {
-            const pieces = Object.values(arts).filter(
-              (a): a is ArtifactData => a != null
-            );
-            optBaseSheets[cid] = StatSheet.fromArtifacts(pieces);
-          }
+    if (isFrozen && frozenEntry) {
+      for (const cid of frozenEntry.frozenCharIds) {
+        const arts = frozenEntry.artifactsByChar[cid];
+        if (arts) {
+          const pieces = Object.values(arts).filter(
+            (a): a is ArtifactData => a != null
+          );
+          optBaseSheets[cid] = StatSheet.fromArtifacts(pieces);
         }
       }
     }
@@ -744,15 +746,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const optimizedArtifactsByChar = useMemo(() => {
     const map: Record<string, Record<string, ArtifactData>> = {};
-    const frozenData = freezeStore.getFrozenTeam(team.id);
-    const hasFrozenChars = frozenData
-      ? frozenData.frozenCharIds.length > 0
+    const hasFrozenChars = frozenEntry
+      ? frozenEntry.frozenCharIds.length > 0
       : false;
 
     // Layer 0: Base — use equipped artifacts, but leave non-frozen chars empty
     // when the team is partially frozen (their gear may belong to frozen chars)
     for (const [cid, arts] of Object.entries(equippedArtifactsByChar)) {
-      if (hasFrozenChars && !frozenData?.frozenCharIds.includes(cid)) {
+      if (hasFrozenChars && !frozenEntry?.frozenCharIds.includes(cid)) {
         map[cid] = {} as Record<string, ArtifactData>;
       } else {
         map[cid] = { ...arts };
@@ -760,9 +761,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     }
 
     // Layer 1: Frozen chars — apply freeze store artifacts (only for frozen chars)
-    if (frozenData) {
-      for (const cid of frozenData.frozenCharIds) {
-        const arts = frozenData.artifactsByChar[cid];
+    if (frozenEntry) {
+      for (const cid of frozenEntry.frozenCharIds) {
+        const arts = frozenEntry.artifactsByChar[cid];
         if (arts) {
           map[cid] = { ...(arts as Record<string, ArtifactData>) };
         }
@@ -818,7 +819,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     teamResult,
     teamProgress,
     equippedArtifactsByChar,
-    freezeStore,
+    frozenEntry,
     team.id,
     swapOverrides,
     restoredArtifacts,
@@ -832,8 +833,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [optimizedArtifactsByChar, effectiveTeam.characters]
   );
 
-  const hasFrozenResult =
-    isFrozen && freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null;
+  const hasFrozenResult = isFrozen && frozenEntry?.artifactsByChar != null;
   const hasPreResolved = forceReusedCharIds.size > 0;
   const hasOptResult =
     teamResult?.done ||
@@ -1017,18 +1017,19 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       }
 
       const doFreeze = () => {
-        freezeStore.freezeCharacters(team.id, [charId], {
+        freezeCharacters(team.id, [charId], {
           [charId]: charArts as Record<Slot, ArtifactData | null>,
         });
       };
 
       // Check if already frozen with different artifacts → override warning
       if (frozenCharIdSet.has(charId) && !currentTabFrozenCharIds.has(charId)) {
-        const frozenData = freezeStore.getFrozenTeam(team.id);
+        // Read fresh state inside event handler to avoid stale closures
+        const currentFrozen = useFreezeStore.getState().frozenTeams[team.id];
         setPendingFreezeAction({
           action: doFreeze,
           reason: "override",
-          existingArts: frozenData?.artifactsByChar[charId] as
+          existingArts: currentFrozen?.artifactsByChar[charId] as
             | Record<Slot, ArtifactData | null>
             | undefined,
         });
@@ -1039,7 +1040,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       const conflicts = detectFrozenArtifactConflicts(
         { [charId]: charArts },
         teamInventory.frozenArtifactIds,
-        freezeStore.frozenTeams,
+        useFreezeStore.getState().frozenTeams,
         team.id
       );
       if (conflicts.length > 0) {
@@ -1054,7 +1055,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     },
     [
       equippedArtifactsByChar,
-      freezeStore,
+      freezeCharacters,
       team.id,
       teamInventory.frozenArtifactIds,
       frozenCharIdSet,
@@ -1066,9 +1067,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const handleUnfreezeCharFromCurrent = useCallback(
     (charId: string) => {
       setRestoredArtifacts(null);
-      freezeStore.unfreezeCharacters(team.id, [charId]);
+      unfreezeCharacters(team.id, [charId]);
     },
-    [freezeStore, team.id]
+    [unfreezeCharacters, team.id]
   );
 
   const genArtifactsByChar = useMemo(() => {
@@ -1170,7 +1171,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const canSwap =
     !isFullyFrozen &&
     ((teamResult?.done === true && teamResult.bestDamage > 0) ||
-      freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null ||
+      frozenEntry?.artifactsByChar != null ||
       restoredArtifacts != null);
 
   // ─── Analyzer Dialog ───
@@ -1299,7 +1300,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           }
           if (freezableCharIds.length === 0) return;
 
-          freezeStore.freezeCharacters(team.id, freezableCharIds, byChar);
+          freezeCharacters(team.id, freezableCharIds, byChar);
           setSwapOverrides({});
         }}
         onUnfreezeAll={
@@ -1320,7 +1321,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 setRestoredArtifacts(
                   Object.keys(snapshot).length > 0 ? snapshot : null
                 );
-                freezeStore.unfreezeTeam(team.id);
+                unfreezeTeamAction(team.id);
               }
             : undefined
         }
@@ -1333,7 +1334,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             if (art) charArts[slot] = art as ArtifactData;
           }
 
-          freezeStore.freezeCharacters(team.id, [charId], {
+          freezeCharacters(team.id, [charId], {
             [charId]: charArts as Record<Slot, ArtifactData | null>,
           });
         }}
@@ -1348,7 +1349,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           setRestoredArtifacts(
             Object.keys(snapshot).length > 0 ? snapshot : null
           );
-          freezeStore.unfreezeCharacters(team.id, [charId]);
+          unfreezeCharacters(team.id, [charId]);
         }}
         isMobile={isMobile}
         t={t}

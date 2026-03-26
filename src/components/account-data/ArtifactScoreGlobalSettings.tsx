@@ -171,8 +171,9 @@ function ScoreExplanationDialog() {
 
 export function ArtifactScoreGlobalSettings() {
   const { t } = useLanguage();
-  const { config, setGlobalWeight, resetGlobalConfig } =
-    useArtifactScoreStore();
+  const config = useArtifactScoreStore((s) => s.config);
+  const setGlobalWeight = useArtifactScoreStore((s) => s.setGlobalWeight);
+  const resetGlobalConfig = useArtifactScoreStore((s) => s.resetGlobalConfig);
 
   return (
     <Card className="bg-gradient-card shrink-0">

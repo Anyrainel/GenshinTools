@@ -124,14 +124,12 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
   const { t } = useLanguage();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
-  const {
-    tierAssignments,
-    tierCustomization,
-    setTierLuckExpectation,
-    investmentThresholds,
-    setInvestmentThreshold,
-  } = useTierStore();
-  const { config: scoreConfig } = useArtifactScoreStore();
+  const tierAssignments = useTierStore((s) => s.tierAssignments);
+  const tierCustomization = useTierStore((s) => s.tierCustomization);
+  const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
+  const investmentThresholds = useTierStore((s) => s.investmentThresholds);
+  const setInvestmentThreshold = useTierStore((s) => s.setInvestmentThreshold);
+  const scoreConfig = useArtifactScoreStore((s) => s.config);
 
   // Generate optimizer-based recommendations
   const allRecs = useMemo(() => {

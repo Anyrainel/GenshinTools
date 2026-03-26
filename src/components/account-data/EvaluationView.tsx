@@ -40,7 +40,7 @@ export function EvaluationView() {
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const buildGroups = useAllResolvedBuilds();
-  const { config: scoreConfig } = useArtifactScoreStore();
+  const scoreConfig = useArtifactScoreStore((s) => s.config);
 
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");

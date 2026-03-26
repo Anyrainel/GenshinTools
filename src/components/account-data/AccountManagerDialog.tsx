@@ -33,13 +33,11 @@ export function AccountManagerDialog({
   onOpenImportControl,
 }: AccountManagerDialogProps) {
   const { t } = useLanguage();
-  const {
-    accounts,
-    activeAccountId,
-    setActiveAccount,
-    deleteAccount,
-    promoteToUid,
-  } = useAccountStore();
+  const accounts = useAccountStore((s) => s.accounts);
+  const activeAccountId = useAccountStore((s) => s.activeAccountId);
+  const setActiveAccount = useAccountStore((s) => s.setActiveAccount);
+  const deleteAccount = useAccountStore((s) => s.deleteAccount);
+  const promoteToUid = useAccountStore((s) => s.promoteToUid);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editUid, setEditUid] = useState("");
