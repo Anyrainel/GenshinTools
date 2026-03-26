@@ -96,11 +96,19 @@ export default function TeamCompPage() {
   const clearTeamsRaw = useTeamStore((state) => state.clearTeams);
   const author = useTeamStore((state) => state.author);
   const description = useTeamStore((state) => state.description);
-  const freezeStore = useFreezeStore();
+  // Use targeted selectors — subscribing to the full store caused every
+  // freeze mutation to re-render the entire page + recalculate filteredTeams.
+  const frozenTeams = useFreezeStore((s) => s.frozenTeams);
+  const reuseMode = useFreezeStore((s) => s.reuseMode);
+  const setReuseMode = useFreezeStore((s) => s.setReuseMode);
+  const clearAllFrozen = useFreezeStore((s) => s.clearAll);
+  const unfreezeTeam = useFreezeStore((s) => s.unfreezeTeam);
+  const isFrozen = useFreezeStore((s) => s.isFrozen);
+  const getFrozenCharIds = useFreezeStore((s) => s.getFrozenCharIds);
   const clearTeams = useCallback(() => {
-    freezeStore.clearAll();
+    clearAllFrozen();
     clearTeamsRaw();
-  }, [freezeStore, clearTeamsRaw]);
+  }, [clearAllFrozen, clearTeamsRaw]);
 
   const clearRef = useRef<ControlHandle>(null);
   const importRef = useRef<ControlHandle>(null);
@@ -309,8 +317,8 @@ export default function TeamCompPage() {
     }
 
     // Sort frozen teams to the top while preserving relative order
-    const frozen = result.filter((t) => freezeStore.isFrozen(t.id));
-    const unfrozen = result.filter((t) => !freezeStore.isFrozen(t.id));
+    const frozen = result.filter((t) => isFrozen(t.id));
+    const unfrozen = result.filter((t) => !isFrozen(t.id));
     return [...frozen, ...unfrozen];
   }, [
     teams,
@@ -322,13 +330,15 @@ export default function TeamCompPage() {
     hasAccountData,
     teamOwnershipMap,
     characterStats,
-    freezeStore,
+    frozenTeams,
     teamSort,
     tierAssignments,
     tierRank,
   ]);
 
-  // Precompute freeze data per team (avoids repeated getFrozenCharIds calls + new Set per card)
+  // Precompute freeze data per team (avoids repeated getFrozenCharIds calls + new Set per card).
+  // Iterates ALL teams (not filteredTeams) so object references stay stable across filter changes,
+  // allowing React.memo on TeamCard to skip re-renders.
   const teamFreezeMap = useMemo(() => {
     const map = new Map<
       string,
@@ -340,8 +350,8 @@ export default function TeamCompPage() {
         frozenCharIds: Set<string>;
       }
     >();
-    for (const team of filteredTeams) {
-      const frozenIds = freezeStore.getFrozenCharIds(team.id);
+    for (const team of teams) {
+      const frozenIds = getFrozenCharIds(team.id);
       const charIds = team.characters.filter(Boolean);
       map.set(team.id, {
         isFrozen: frozenIds.length > 0,
@@ -354,7 +364,18 @@ export default function TeamCompPage() {
       });
     }
     return map;
-  }, [filteredTeams, freezeStore]);
+  }, [teams, frozenTeams]);
+
+  // Precompute filtered order: maps team id → display position.
+  // Teams not in filteredTeams get hidden via CSS instead of unmounting,
+  // so re-enabling a filter doesn't incur full mount cost for 30+ cards.
+  const filteredTeamOrder = useMemo(() => {
+    const map = new Map<string, number>();
+    for (let i = 0; i < filteredTeams.length; i++) {
+      map.set(filteredTeams[i].id, i);
+    }
+    return map;
+  }, [filteredTeams]);
 
   // Displayable regions (exclude "None")
   const displayRegions = useMemo(() => regions.filter((r) => r !== "None"), []);
@@ -385,7 +406,7 @@ export default function TeamCompPage() {
   };
 
   const handleImport = (data: TeamCompData) => {
-    freezeStore.clearAll();
+    clearAllFrozen();
     importTeams(data);
     toast.success(t.ui("import.action"));
   };
@@ -417,9 +438,7 @@ export default function TeamCompPage() {
       equippedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
       optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
     }[] = [];
-    for (const [teamId, frozenData] of Object.entries(
-      freezeStore.frozenTeams
-    )) {
+    for (const [teamId, frozenData] of Object.entries(frozenTeams)) {
       const team = teams.find((t) => t.id === teamId);
       if (!team) continue;
       const equipped: Record<string, Record<string, ArtifactData>> = {};
@@ -450,7 +469,7 @@ export default function TeamCompPage() {
       });
     }
     return entries;
-  }, [freezeStore.frozenTeams, teams, accountData]);
+  }, [frozenTeams, teams, accountData]);
 
   const handleDownloadAllFrozen = useCallback(() => {
     if (!frozenExportRef.current) return;
@@ -516,7 +535,7 @@ export default function TeamCompPage() {
           label: t.ui("export.action"),
           onTrigger: () => exportRef.current?.open(),
         },
-        ...(Object.keys(freezeStore.frozenTeams).length > 0
+        ...(Object.keys(frozenTeams).length > 0
           ? [
               {
                 key: "download-frozen",
@@ -655,10 +674,8 @@ export default function TeamCompPage() {
                     {t.ui("teamComp.reuseLabel")}
                   </span>
                   <Select
-                    value={freezeStore.reuseMode}
-                    onValueChange={(v) =>
-                      freezeStore.setReuseMode(v as ArtifactReuseMode)
-                    }
+                    value={reuseMode}
+                    onValueChange={(v) => setReuseMode(v as ArtifactReuseMode)}
                   >
                     <SelectTrigger className="w-auto text-xs h-7 md:h-8 gap-1 px-2">
                       <SelectValue />
@@ -680,8 +697,8 @@ export default function TeamCompPage() {
                   variant="outline"
                   size="sm"
                   className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10 disabled:opacity-40 disabled:pointer-events-none"
-                  onClick={() => freezeStore.clearAll()}
-                  disabled={Object.keys(freezeStore.frozenTeams).length === 0}
+                  onClick={() => clearAllFrozen()}
+                  disabled={Object.keys(frozenTeams).length === 0}
                 >
                   <Flame className="w-3 h-3" />
                   <span>{t.ui("teamComp.unfreezeAll")}</span>
@@ -759,9 +776,11 @@ export default function TeamCompPage() {
               gridTemplateColumns: `repeat(auto-fill, minmax(${cardMinWidth}px, max-content))`,
             }}
           >
-            {filteredTeams.map((team, index) => {
-              // Use actual index in the full teams array for move logic
-              const realIndex = teams.indexOf(team);
+            {/* Render ALL teams — hidden ones use display:none + CSS order for sort.
+                This avoids destroying/recreating 30+ cards when toggling filters. */}
+            {teams.map((team, realIndex) => {
+              const order = filteredTeamOrder.get(team.id);
+              const isVisible = order !== undefined;
               const freeze = teamFreezeMap.get(team.id);
               const ownership = teamOwnershipMap.get(team.id);
               const allUnowned =
@@ -770,34 +789,38 @@ export default function TeamCompPage() {
                 ownership.filledCount > 0 &&
                 ownership.ownedCount === 0;
               return (
-                <TeamCard
+                <div
                   key={team.id}
-                  team={team}
-                  index={realIndex}
-                  onUpdate={(patch) => updateTeam(team.id, patch)}
-                  onDelete={() => {
-                    freezeStore.unfreezeTeam(team.id);
-                    deleteTeam(team.id);
-                  }}
-                  onCopy={() => copyTeam(team.id)}
-                  onSelect={() => setActiveTeam(team.id)}
-                  onMoveUp={
-                    realIndex > 0 ? () => moveTeam(team.id, "up") : undefined
-                  }
-                  onMoveDown={
-                    realIndex < teams.length - 1
-                      ? () => moveTeam(team.id, "down")
-                      : undefined
-                  }
-                  isFrozen={freeze?.isFrozen ?? false}
-                  isFullyFrozen={freeze?.isFullyFrozen ?? false}
-                  frozenCount={freeze?.frozenCount ?? 0}
-                  totalCharCount={freeze?.totalCharCount ?? 0}
-                  frozenCharIds={freeze?.frozenCharIds ?? EMPTY_SET}
-                  onUnfreeze={() => freezeStore.unfreezeTeam(team.id)}
-                  accountData={accountData}
-                  allUnowned={allUnowned}
-                />
+                  style={isVisible ? { order } : { display: "none" }}
+                >
+                  <TeamCard
+                    team={team}
+                    index={realIndex}
+                    onUpdate={(patch) => updateTeam(team.id, patch)}
+                    onDelete={() => {
+                      unfreezeTeam(team.id);
+                      deleteTeam(team.id);
+                    }}
+                    onCopy={() => copyTeam(team.id)}
+                    onSelect={() => setActiveTeam(team.id)}
+                    onMoveUp={
+                      realIndex > 0 ? () => moveTeam(team.id, "up") : undefined
+                    }
+                    onMoveDown={
+                      realIndex < teams.length - 1
+                        ? () => moveTeam(team.id, "down")
+                        : undefined
+                    }
+                    isFrozen={freeze?.isFrozen ?? false}
+                    isFullyFrozen={freeze?.isFullyFrozen ?? false}
+                    frozenCount={freeze?.frozenCount ?? 0}
+                    totalCharCount={freeze?.totalCharCount ?? 0}
+                    frozenCharIds={freeze?.frozenCharIds ?? EMPTY_SET}
+                    onUnfreeze={() => unfreezeTeam(team.id)}
+                    accountData={accountData}
+                    allUnowned={allUnowned}
+                  />
+                </div>
               );
             })}
           </div>
