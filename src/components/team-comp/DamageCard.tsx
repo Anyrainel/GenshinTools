@@ -68,7 +68,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { type BuffLedgerFormula, buildBuffApplicability } from "./BuffDialog";
 import { BuffLedger } from "./BuffLedger";
-import { FormulaBreakdown, adjustPartDamage } from "./FormulaBreakdown";
+import {
+  FormulaBreakdown,
+  adjustPartDamage,
+  formulaCritRatio,
+} from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
 import {
@@ -348,7 +352,6 @@ function ComboBreakdown({
   comboLines,
   comboId,
   teamBuild,
-  damageValue,
   displayResult,
   critMode,
   setCritMode,
@@ -365,7 +368,6 @@ function ComboBreakdown({
   comboLines: ComboLine[];
   comboId?: string;
   teamBuild: TeamBuild;
-  damageValue: number;
   displayResult: DisplayResult | null | undefined;
   critMode: CritMode;
   setCritMode: (mode: CritMode) => void;
@@ -391,7 +393,7 @@ function ComboBreakdown({
           rxFormulaIds[l.formulaId] !== undefined))
   );
 
-  // Group active lines by character
+  // Group active lines by character, applying critMode adjustment
   type LineWithDamage = {
     line: ComboLine;
     perHit: number;
@@ -399,22 +401,39 @@ function ComboBreakdown({
     isPartial: boolean;
   };
   const byChar = useMemo(() => {
+    // Cache per-formula crit ratio so each formula is only computed once
+    const ratioCache = new Map<string, number>();
+    const getRatio = (fKey: string): number => {
+      let r = ratioCache.get(fKey);
+      if (r !== undefined) return r;
+      r = formulaCritRatio(displayResult?.partsByFormula[fKey] ?? [], critMode);
+      ratioCache.set(fKey, r);
+      return r;
+    };
+
     const map = new Map<string, LineWithDamage[]>();
     for (let i = 0; i < activeLines.length; i++) {
       const line = activeLines[i];
       const dmg = lineDamages[i];
       if (!dmg) continue;
+      const ratio = getRatio(`${line.charId}.${line.formulaId}`);
       const arr = map.get(line.charId) ?? [];
       arr.push({
         line,
-        perHit: dmg.perHit,
-        total: dmg.total,
+        perHit: dmg.perHit * ratio,
+        total: dmg.total * ratio,
         isPartial: hasPartialReaction(line, reactionOverrides),
       });
       map.set(line.charId, arr);
     }
     return map;
-  }, [activeLines, lineDamages, reactionOverrides]);
+  }, [
+    activeLines,
+    lineDamages,
+    reactionOverrides,
+    critMode,
+    displayResult?.partsByFormula,
+  ]);
 
   // Per-character damage totals and max line proportion for color scaling
   const { charDamageMap, totalLineDamage, maxLineProportion } = useMemo(() => {
@@ -530,7 +549,7 @@ function ComboBreakdown({
                   </div>
                 </div>
                 <div className="text-foreground font-[math] font-black drop-shadow-sm text-2xl md:text-3xl xl:text-4xl">
-                  {fmtDamage(damageValue)}
+                  {fmtDamage(totalLineDamage)}
                 </div>
                 <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
                   {expanded
@@ -942,7 +961,6 @@ function ComboResultView({
         comboLines={comboLines}
         comboId={comboId}
         teamBuild={teamBuild}
-        damageValue={displayResult.totalDamage}
         displayResult={displayResult}
         critMode={critMode}
         setCritMode={setCritMode}

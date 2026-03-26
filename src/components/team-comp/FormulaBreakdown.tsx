@@ -984,6 +984,24 @@ export function adjustPartDamage(p: DisplayPart, critMode: CritMode): number {
   return (p.damage / expectedMult) * targetMult;
 }
 
+/**
+ * Compute critMode adjustment ratio for a formula given its display parts.
+ * Returns 1 for expected mode or when parts are empty/zero-damage.
+ */
+export function formulaCritRatio(
+  parts: DisplayPart[],
+  critMode: CritMode
+): number {
+  if (critMode === "expected" || parts.length === 0) return 1;
+  const expectedSum = parts.reduce((s, p) => s + p.damage * (p.hits ?? 1), 0);
+  if (expectedSum <= 0) return 1;
+  const adjustedSum = parts.reduce(
+    (s, p) => s + adjustPartDamage(p, critMode) * (p.hits ?? 1),
+    0
+  );
+  return adjustedSum / expectedSum;
+}
+
 export function FormulaBreakdown({
   parts,
   highlightedStat,
