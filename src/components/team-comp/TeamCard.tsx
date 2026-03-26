@@ -79,6 +79,7 @@ interface TeamCardProps {
   frozenCharIds?: Set<string>;
   onUnfreeze?: () => void;
   accountData?: AccountData | null;
+  allUnowned?: boolean;
 }
 
 export function TeamCard({
@@ -97,6 +98,7 @@ export function TeamCard({
   frozenCharIds,
   onUnfreeze,
   accountData,
+  allUnowned,
 }: TeamCardProps) {
   const { t } = useLanguage();
   const { characterStats, weaponStats } = useGameStats();
@@ -132,7 +134,8 @@ export function TeamCard({
           "ring-1 ring-cyan-400/30 border-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.1)]",
         isFrozen &&
           !isFullyFrozen &&
-          "ring-1 ring-cyan-400/15 border-cyan-400/10"
+          "ring-1 ring-cyan-400/15 border-cyan-400/10",
+        allUnowned && "grayscale opacity-50 hover:grayscale-0 hover:opacity-100"
       )}
     >
       {/* Header: Index + Reaction tags + Name + Context menu */}
@@ -155,7 +158,6 @@ export function TeamCard({
           onChange={(e) => onUpdate({ name: e.target.value })}
           placeholder={t.ui("teamComp.teamName")}
           className="font-semibold !text-xs xl:!text-sm bg-transparent border-none px-1.5 xl:px-2 h-6 xl:h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
-          disabled={isFullyFrozen}
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -435,7 +437,7 @@ export function TeamCard({
             onClick={onUnfreeze}
           >
             <Flame className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
-            <span>{t.ui("teamComp.unfreezeAll")}</span>
+            <span>{t.ui("teamComp.unfreezeTeam")}</span>
           </Button>
         )}
         <Button

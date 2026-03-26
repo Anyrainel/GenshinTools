@@ -23,6 +23,7 @@ import {
   ChevronDown,
   ChevronUp,
   Flame,
+  Link2,
   Snowflake,
 } from "lucide-react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
@@ -51,6 +52,10 @@ type Props = {
   onFreezeChar?: (charId: string) => void;
   /** Callback to unfreeze a character's artifacts */
   onUnfreezeChar?: (charId: string) => void;
+  /** Characters whose artifacts are force-reused */
+  forceReusedCharIds?: Set<string>;
+  /** Preview mode — hides idle/combat/marginal tabs */
+  preview?: boolean;
 };
 
 const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
@@ -288,6 +293,8 @@ export function StatSheetPanel({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
+  forceReusedCharIds,
+  preview,
 }: Props) {
   // Per-character open view: null = collapsed
   const [openViews, setOpenViews] = useState<Record<string, ViewMode | null>>(
@@ -320,6 +327,7 @@ export function StatSheetPanel({
         const isTarget = charId === targetCharId;
         const char = charactersById[charId];
         const isFrozen = frozenCharIds?.has(charId) ?? false;
+        const isForceReused = forceReusedCharIds?.has(charId) ?? false;
         const marginal = result?.marginalGains[charId] || {};
         const primary = getPrimaryColumn(
           charId,
@@ -354,7 +362,10 @@ export function StatSheetPanel({
                 ? "border-primary/40 shadow-inner"
                 : "border-border/10 text-foreground/80",
               isFrozen &&
-                "ring-1 ring-cyan-400/30 shadow-[0_0_12px_rgba(34,211,238,0.06)]"
+                "ring-1 ring-cyan-400/30 shadow-[0_0_12px_rgba(34,211,238,0.06)]",
+              !isFrozen &&
+                isForceReused &&
+                "ring-1 ring-cyan-400/20 shadow-[0_0_8px_rgba(34,211,238,0.04)]"
             )}
           >
             {/* Header: avatar + name + freeze toggle */}
@@ -386,7 +397,7 @@ export function StatSheetPanel({
               )}
               <span className="flex-1" />
 
-              {/* Freeze/unfreeze toggle */}
+              {/* Freeze / force-reuse button hierarchy */}
               {isFrozen && onUnfreezeChar ? (
                 <button
                   type="button"
@@ -396,7 +407,12 @@ export function StatSheetPanel({
                   <Flame className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
                   {t.ui("teamComp.unfreezeChar")}
                 </button>
-              ) : onFreezeChar && result && hasArtifacts ? (
+              ) : forceReusedCharIds?.has(charId) ? (
+                <span className="flex items-center gap-0.5 md:gap-1 h-5 md:h-6 px-1.5 md:px-2.5 rounded-md text-[10px] md:text-xs font-bold border border-cyan-400/30 bg-cyan-500/8 text-cyan-400 whitespace-nowrap select-none">
+                  <Link2 className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
+                  {t.ui("teamComp.forceReusedBadge")}
+                </span>
+              ) : onFreezeChar && hasArtifacts ? (
                 <button
                   type="button"
                   onClick={() => onFreezeChar(charId)}
@@ -436,7 +452,7 @@ export function StatSheetPanel({
             </div>
 
             {/* Thin view-mode bar */}
-            {result && (
+            {result && !preview && (
               <div className="flex items-stretch gap-1 px-2 py-1.5 bg-black/10 border-b border-border/10">
                 {(
                   [

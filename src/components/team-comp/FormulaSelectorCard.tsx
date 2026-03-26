@@ -224,7 +224,7 @@ export function FormulaSelectorCard({
                                 <button
                                   type="button"
                                   className={cn(
-                                    "flex items-center gap-2 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm xl:text-base",
+                                    "flex items-center gap-2 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm lg:text-xs xl:text-sm",
                                     isSelected
                                       ? "bg-primary/15 text-foreground border-primary/40"
                                       : "bg-secondary text-foreground hover:bg-secondary/80 border-border/40"
@@ -315,7 +315,7 @@ export function FormulaSelectorCard({
                                       className="w-5 h-5 rounded-full bg-secondary/40 shrink-0"
                                     />
                                   )}
-                                  <span className="text-xs md:text-sm xl:text-base font-bold text-foreground flex flex-wrap items-baseline gap-x-1">
+                                  <span className="text-xs md:text-sm lg:text-xs xl:text-sm font-bold text-foreground flex flex-wrap items-baseline gap-x-1">
                                     <span className="truncate">
                                       {t.resolveLabel(label)}
                                     </span>
@@ -536,7 +536,7 @@ export function FormulaSelectorCard({
                               <button
                                 type="button"
                                 className={cn(
-                                  "flex items-center gap-1.5 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm xl:text-base",
+                                  "flex items-center gap-1.5 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm lg:text-xs xl:text-sm",
                                   isSelected
                                     ? "bg-primary/15 text-foreground border-primary/40"
                                     : "bg-secondary text-foreground hover:bg-secondary/80 border-border/40"
@@ -561,7 +561,7 @@ export function FormulaSelectorCard({
                               </button>
                               {isSelected && (
                                 <div className="mt-1 flex flex-wrap items-center gap-1">
-                                  <span className="text-xs text-muted-foreground">
+                                  <span className="text-[10px] md:text-xs lg:text-[10px] xl:text-xs text-muted-foreground">
                                     {t.ui(
                                       isMulti
                                         ? "teamComp.rxOnField"
@@ -611,7 +611,7 @@ export function FormulaSelectorCard({
 
                           return (
                             <div key={formulaId} className="px-2 py-0.5">
-                              <div className="flex items-center gap-1.5 text-xs md:text-sm xl:text-base font-bold text-foreground mb-0.5">
+                              <div className="flex items-center gap-1.5 text-xs md:text-sm lg:text-xs xl:text-sm font-bold text-foreground mb-0.5">
                                 <ReactionElementIcons
                                   formulaId={formulaId}
                                   size="w-4 h-4"

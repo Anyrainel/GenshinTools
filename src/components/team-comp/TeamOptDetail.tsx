@@ -1,3 +1,15 @@
+import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -19,6 +31,7 @@ import type {
   ReactionType,
   Slot,
 } from "@/data/types";
+import { allSlots } from "@/data/types";
 import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
@@ -70,6 +83,58 @@ const getReactionKey = (charId: string, formulaId: string) =>
 
 const limitMap = { en: limitEnRaw, zh: limitZhRaw };
 
+/** A single artifact conflict: this char wants an artifact that's frozen on another char. */
+type ArtifactConflict = {
+  /** Character trying to freeze */
+  charId: string;
+  /** The conflicting artifact */
+  artifact: ArtifactData;
+  /** Character that currently has it frozen */
+  frozenCharId: string;
+};
+
+/**
+ * Find artifacts in `artsByChar` that are already frozen in other teams.
+ * Returns the list of conflicts with details about who owns each artifact.
+ */
+function detectFrozenArtifactConflicts(
+  artsByChar: Record<string, Record<string, ArtifactData | null>>,
+  frozenArtifactIds: Set<string>,
+  frozenTeams: Record<
+    string,
+    {
+      frozenCharIds: string[];
+      artifactsByChar: Record<string, Record<string, ArtifactData | null>>;
+    }
+  >,
+  currentTeamId: string
+): ArtifactConflict[] {
+  if (frozenArtifactIds.size === 0) return [];
+  // Build reverse map: artifact ID → frozen char ID (from other teams)
+  const artIdToFrozenChar = new Map<string, string>();
+  for (const [tid, entry] of Object.entries(frozenTeams)) {
+    if (tid === currentTeamId || !entry?.artifactsByChar) continue;
+    for (const cid of entry.frozenCharIds ?? []) {
+      const arts = entry.artifactsByChar[cid];
+      if (!arts) continue;
+      for (const art of Object.values(arts)) {
+        if (art) artIdToFrozenChar.set(art.id, cid);
+      }
+    }
+  }
+  const conflicts: ArtifactConflict[] = [];
+  for (const [charId, arts] of Object.entries(artsByChar)) {
+    for (const art of Object.values(arts)) {
+      if (!art) continue;
+      const frozenCharId = artIdToFrozenChar.get(art.id);
+      if (frozenCharId) {
+        conflicts.push({ charId, artifact: art, frozenCharId });
+      }
+    }
+  }
+  return conflicts;
+}
+
 export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { t } = useLanguage();
   const limitText = limitMap[t.lang];
@@ -96,6 +161,26 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     teamCharIds.length > 0 &&
     teamCharIds.every((id) => frozenCharIdSet.has(id));
   const isPartiallyFrozen = isFrozen && !isFullyFrozen;
+
+  const forceReusedCharIds = useMemo(
+    () => new Set(Object.keys(teamInventory.forceReuseChars)),
+    [teamInventory.forceReuseChars]
+  );
+  // Combined set of all "locked" characters (frozen + forced)
+  const lockedCharIds = useMemo(
+    () => new Set([...frozenCharIdSet, ...forceReusedCharIds]),
+    [frozenCharIdSet, forceReusedCharIds]
+  );
+
+  // Pending freeze action — held while the conflict/override alert dialog is open
+  const [pendingFreezeAction, setPendingFreezeAction] = useState<{
+    action: () => void;
+    reason: "conflict" | "override";
+    /** For override: existing frozen artifacts for the character */
+    existingArts?: Record<Slot, ArtifactData | null>;
+    /** For conflict: detailed conflict list */
+    conflicts?: ArtifactConflict[];
+  } | null>(null);
 
   // Restored artifacts from unfreeze — treated like optimizer results so
   // freeze/unfreeze/re-freeze all work without special-case state management.
@@ -201,6 +286,29 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     () => toStatSheets(effectiveTeam.characters, equippedArtifactsByChar),
     [effectiveTeam.characters, equippedArtifactsByChar]
   );
+
+  // Value-equivalence frozen check for the current tab: a character is "frozen"
+  // on the current tab only if its equipped artifacts match the stored frozen artifacts.
+  const currentTabFrozenCharIds = useMemo(() => {
+    const frozenData = freezeStore.getFrozenTeam(team.id);
+    if (!frozenData) return new Set<string>();
+    const result = new Set<string>();
+    for (const cid of frozenData.frozenCharIds) {
+      const frozenArts = frozenData.artifactsByChar[cid];
+      const equippedArts = equippedArtifactsByChar[cid];
+      if (!frozenArts || !equippedArts) continue;
+      // Check that every frozen artifact matches what's equipped (by ID)
+      const match = Object.keys(frozenArts).every((slot) => {
+        const fa = frozenArts[slot as Slot];
+        const ea = equippedArts[slot];
+        if (!fa && !ea) return true;
+        if (!fa || !ea) return false;
+        return fa.id === ea.id;
+      });
+      if (match) result.add(cid);
+    }
+    return result;
+  }, [freezeStore, team.id, equippedArtifactsByChar]);
 
   const validCharIds = Object.keys(availableFormulas);
 
@@ -515,8 +623,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     for (let ci = 0; ci < effectiveTeam.characters.length; ci++) {
       const cid = effectiveTeam.characters[ci];
       if (!cid) continue;
-      // Skip frozen characters — their artifacts are locked
-      if (frozenCharIdSet.has(cid)) continue;
+      // Skip frozen and force-reused characters — their artifacts are locked
+      if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
       perChar[cid] = {
@@ -556,7 +664,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       optTeamBuild = teamBuild;
     }
 
-    // Use frozen chars' artifact sheets as base so their buffs are accounted for
+    // Use frozen/forced chars' artifact sheets as base so their buffs are accounted for
     const optBaseSheets = { ...artifactSheets };
     if (isFrozen) {
       const frozenData = freezeStore.getFrozenTeam(team.id);
@@ -572,7 +680,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         }
       }
     }
-
+    // Force-reused characters' artifact sheets
+    for (const [cid, arts] of Object.entries(teamInventory.forceReuseChars)) {
+      const pieces = allSlots
+        .map((s) => arts[s])
+        .filter(Boolean) as ArtifactData[];
+      optBaseSheets[cid] = StatSheet.fromArtifacts(pieces);
+    }
     // Always use combo: in single-formula mode, wrap as a 1-line combo
     const optCombo: ComboFormula =
       formulaMode === "combo"
@@ -655,18 +769,26 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       }
     }
 
-    // Layer 2: Non-frozen chars — optimizer results, restored artifacts, or intermediate results
+    // Layer 1.5: Force-reused chars — artifacts from other frozen teams with matching sets
+    for (const [cid, arts] of Object.entries(teamInventory.forceReuseChars)) {
+      map[cid] = { ...(arts as Record<string, ArtifactData>) };
+    }
+
+    // Layer 2: Non-locked chars — optimizer results, restored artifacts, or intermediate results
+    const isLocked = (cid: string) =>
+      frozenData?.frozenCharIds.includes(cid) || forceReusedCharIds.has(cid);
+
     if (teamResult?.done) {
       for (const [charId, arts] of Object.entries(
         teamResult.bestArtifactsByChar
       )) {
-        if (frozenData?.frozenCharIds.includes(charId)) continue;
+        if (isLocked(charId)) continue;
         map[charId] = { ...(arts as Record<string, ArtifactData>) };
       }
     } else if (teamProgress?.passResults) {
       // During optimization: show intermediate best artifacts from completed phases
       for (const pr of teamProgress.passResults) {
-        if (frozenData?.frozenCharIds.includes(pr.charId)) continue;
+        if (isLocked(pr.charId)) continue;
         if (pr.bestDamage <= 0) continue;
         const arts: Record<string, ArtifactData> = {};
         for (const [slot, art] of Object.entries(pr.bestArtifacts)) {
@@ -677,7 +799,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     } else if (restoredArtifacts) {
       // After unfreeze: restored artifacts fill in for non-frozen chars
       for (const [charId, arts] of Object.entries(restoredArtifacts)) {
-        if (frozenData?.frozenCharIds.includes(charId)) continue;
+        if (isLocked(charId)) continue;
         if (arts && Object.values(arts).some(Boolean)) {
           map[charId] = { ...arts };
         }
@@ -700,6 +822,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     team.id,
     swapOverrides,
     restoredArtifacts,
+    teamInventory.forceReuseChars,
+    forceReusedCharIds,
+    frozenCharIdSet,
   ]);
 
   const optArtifactSheets = useMemo(
@@ -709,16 +834,43 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const hasFrozenResult =
     isFrozen && freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null;
+  const hasPreResolved = forceReusedCharIds.size > 0;
   const hasOptResult =
-    teamResult?.done || hasFrozenResult || !!restoredArtifacts || isComputing;
+    teamResult?.done ||
+    hasFrozenResult ||
+    !!restoredArtifacts ||
+    isComputing ||
+    hasPreResolved;
   const hasAnyResult = hasOptResult;
+
+  // True when every roster character has artifacts from any source
+  // (frozen, force-reused, optimizer results, restored, or equipped)
+  const allCharsResolved = useMemo(() => {
+    const charIds = effectiveTeam.characters.filter(
+      (id): id is string => id != null
+    );
+    if (charIds.length === 0) return false;
+    return charIds.every((cid) => {
+      if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) return true;
+      if (teamResult?.done && teamResult.bestArtifactsByChar[cid]) return true;
+      // Fall back to checking if optimizedArtifactsByChar has actual artifacts
+      const arts = optimizedArtifactsByChar[cid];
+      return arts != null && Object.values(arts).some(Boolean);
+    });
+  }, [
+    effectiveTeam.characters,
+    frozenCharIdSet,
+    forceReusedCharIds,
+    teamResult,
+    optimizedArtifactsByChar,
+  ]);
 
   // Use rebuilt TeamBuild from optimizer result if sets were adjusted
   const optTeamBuild = teamResult?.teamBuild ?? teamBuild;
 
   const optimizedDisplayResult = useMemo(
     () =>
-      hasOptResult
+      hasOptResult && allCharsResolved
         ? calcComboResults(
             optTeamBuild,
             displayCombo,
@@ -733,6 +885,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       displayCombo,
       optArtifactSheets,
       hasOptResult,
+      allCharsResolved,
       displayContext,
       displayReactionOverrides,
       buffOverrides,
@@ -852,6 +1005,71 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       ignoreArtifactSets: ignoreArtifactSets ?? undefined,
     });
   };
+
+  // Freeze a character's equipped artifacts from the current tab
+  const handleFreezeCharFromCurrent = useCallback(
+    (charId: string) => {
+      const arts = equippedArtifactsByChar[charId];
+      if (!arts || !Object.values(arts).some(Boolean)) return;
+      const charArts: Record<string, ArtifactData | null> = {};
+      for (const [slot, art] of Object.entries(arts)) {
+        if (art) charArts[slot] = art as ArtifactData;
+      }
+
+      const doFreeze = () => {
+        freezeStore.freezeCharacters(team.id, [charId], {
+          [charId]: charArts as Record<Slot, ArtifactData | null>,
+        });
+      };
+
+      // Check if already frozen with different artifacts → override warning
+      if (frozenCharIdSet.has(charId) && !currentTabFrozenCharIds.has(charId)) {
+        const frozenData = freezeStore.getFrozenTeam(team.id);
+        setPendingFreezeAction({
+          action: doFreeze,
+          reason: "override",
+          existingArts: frozenData?.artifactsByChar[charId] as
+            | Record<Slot, ArtifactData | null>
+            | undefined,
+        });
+        return;
+      }
+
+      // Check for conflicts with other frozen teams
+      const conflicts = detectFrozenArtifactConflicts(
+        { [charId]: charArts },
+        teamInventory.frozenArtifactIds,
+        freezeStore.frozenTeams,
+        team.id
+      );
+      if (conflicts.length > 0) {
+        setPendingFreezeAction({
+          action: doFreeze,
+          reason: "conflict",
+          conflicts,
+        });
+        return;
+      }
+      doFreeze();
+    },
+    [
+      equippedArtifactsByChar,
+      freezeStore,
+      team.id,
+      teamInventory.frozenArtifactIds,
+      frozenCharIdSet,
+      currentTabFrozenCharIds,
+    ]
+  );
+
+  // Unfreeze from the current tab — clears optimize-tab cache so it resets cleanly
+  const handleUnfreezeCharFromCurrent = useCallback(
+    (charId: string) => {
+      setRestoredArtifacts(null);
+      freezeStore.unfreezeCharacters(team.id, [charId]);
+    },
+    [freezeStore, team.id]
+  );
 
   const genArtifactsByChar = useMemo(() => {
     if (!genResult?.done || !genResult.artifactsByChar)
@@ -1049,12 +1267,19 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         updateTeam={updateTeam}
         resolvedFormula={resolvedFormula}
         hasOptResult={hasOptResult}
+        allCharsResolved={allCharsResolved}
         isFrozen={isFrozen}
         isFullyFrozen={isFullyFrozen}
         isPartiallyFrozen={isPartiallyFrozen}
         frozenCharIds={frozenCharIdSet}
         onFreezeAll={() => {
-          if (!teamResult?.done && !isFrozen && !restoredArtifacts) return;
+          if (
+            !teamResult?.done &&
+            !isFrozen &&
+            !restoredArtifacts &&
+            !hasPreResolved
+          )
+            return;
           // Freeze all chars with current view artifacts
           // Skip only chars with nothing equipped
           const byChar: Record<string, Record<Slot, ArtifactData | null>> = {};
@@ -1073,6 +1298,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             freezableCharIds.push(charId);
           }
           if (freezableCharIds.length === 0) return;
+
           freezeStore.freezeCharacters(team.id, freezableCharIds, byChar);
           setSwapOverrides({});
         }}
@@ -1106,6 +1332,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           for (const [slot, art] of Object.entries(arts)) {
             if (art) charArts[slot] = art as ArtifactData;
           }
+
           freezeStore.freezeCharacters(team.id, [charId], {
             [charId]: charArts as Record<Slot, ArtifactData | null>,
           });
@@ -1150,6 +1377,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
         hasSwapOverrides={hasSwapOverrides}
         onRestoreOriginal={hasSwapOverrides ? handleRestoreOriginal : undefined}
+        forceReusedCharIds={forceReusedCharIds}
+        onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
+        onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}
+        currentTabFrozenCharIds={currentTabFrozenCharIds}
       />
 
       {/* Artifact Swap Dialog */}
@@ -1236,6 +1467,120 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           </ScrollArea>
         </SheetContent>
       </Sheet>
+
+      {/* Freeze Conflict / Override Alert */}
+      <AlertDialog
+        open={pendingFreezeAction != null}
+        onOpenChange={(open) => {
+          if (!open) setPendingFreezeAction(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t.ui(
+                pendingFreezeAction?.reason === "override"
+                  ? "teamComp.freezeOverrideTitle"
+                  : "teamComp.freezeConflictTitle"
+              )}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.ui(
+                pendingFreezeAction?.reason === "override"
+                  ? "teamComp.freezeOverrideDesc"
+                  : "teamComp.freezeConflictDesc"
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {/* Override: show existing frozen artifacts */}
+          {pendingFreezeAction?.reason === "override" &&
+            pendingFreezeAction.existingArts && (
+              <div className="flex items-center justify-center gap-1 md:gap-1.5 py-2">
+                {allSlots.map((slot) => {
+                  const art = pendingFreezeAction.existingArts![slot];
+                  if (!art) {
+                    return (
+                      <div key={slot} className="w-10 h-10 md:w-12 md:h-12" />
+                    );
+                  }
+                  return (
+                    <ArtifactDataHoverCard
+                      key={slot}
+                      artifact={art}
+                      slot={slot}
+                      side="bottom"
+                    >
+                      <div className="cursor-help">
+                        <ItemIcon
+                          artifactSetId={art.setKey}
+                          slot={slot}
+                          rarity={art.rarity}
+                          level={`+${art.level}`}
+                          frozen
+                          size={isMobile ? "xs" : "sm"}
+                        />
+                      </div>
+                    </ArtifactDataHoverCard>
+                  );
+                })}
+              </div>
+            )}
+
+          {/* Conflict: show each conflicting artifact with its owners */}
+          {pendingFreezeAction?.reason === "conflict" &&
+            pendingFreezeAction.conflicts &&
+            pendingFreezeAction.conflicts.length > 0 && (
+              <div className="flex flex-col items-center gap-1.5 md:gap-2 py-2">
+                {pendingFreezeAction.conflicts.map((c, i) => {
+                  return (
+                    <div key={i} className="flex items-center gap-1 md:gap-1.5">
+                      <ItemIcon
+                        characterId={c.charId}
+                        size={isMobile ? "xs" : "sm"}
+                      />
+                      <div className="w-4 md:w-6 border-t border-dashed border-border/40" />
+                      <ArtifactDataHoverCard
+                        artifact={c.artifact}
+                        slot={c.artifact.slotKey}
+                        side="bottom"
+                      >
+                        <div className="cursor-help">
+                          <ItemIcon
+                            artifactSetId={c.artifact.setKey}
+                            slot={c.artifact.slotKey}
+                            rarity={c.artifact.rarity}
+                            level={`+${c.artifact.level}`}
+                            frozen
+                            size={isMobile ? "xs" : "sm"}
+                          />
+                        </div>
+                      </ArtifactDataHoverCard>
+                      <div className="w-4 md:w-6 border-t border-border/60" />
+                      <ItemIcon
+                        characterId={c.frozenCharId}
+                        frozen
+                        size={isMobile ? "xs" : "sm"}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                pendingFreezeAction?.action();
+                setPendingFreezeAction(null);
+              }}
+            >
+              {t.ui("teamComp.freezeConflictConfirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

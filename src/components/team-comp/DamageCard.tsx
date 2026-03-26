@@ -128,6 +128,7 @@ function DamageBody({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
+  forceReusedCharIds,
 }: {
   team: Team;
   hasFormula: boolean;
@@ -148,6 +149,7 @@ function DamageBody({
   onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
+  forceReusedCharIds?: Set<string>;
 }) {
   const [highlightedStat, setHighlightedStat] = useState<{
     key: StatKey | "charLevel";
@@ -180,6 +182,7 @@ function DamageBody({
           onArtifactSwap={onArtifactSwap}
           onFreezeChar={onFreezeChar}
           onUnfreezeChar={onUnfreezeChar}
+          forceReusedCharIds={forceReusedCharIds}
         />
       )}
 
@@ -523,7 +526,7 @@ function ComboBreakdown({
   return (
     <div className="space-y-1 md:space-y-2">
       <Collapsible open={expanded} onOpenChange={setExpanded}>
-        <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1.5 md:p-2">
+        <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
           {/* Total damage — clickable to toggle breakdown */}
           <div className="flex flex-col items-center justify-center">
             <CollapsibleTrigger asChild>
@@ -548,7 +551,10 @@ function ComboBreakdown({
                     {t.ui("teamComp.totalDamage")}
                   </div>
                 </div>
-                <div className="text-foreground font-[math] font-black drop-shadow-sm text-2xl md:text-3xl xl:text-4xl">
+                <div
+                  className="text-foreground font-[math] font-black drop-shadow-sm text-2xl md:text-3xl xl:text-4xl select-text cursor-text"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {fmtDamage(totalLineDamage)}
                 </div>
                 <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
@@ -711,27 +717,32 @@ function ComboBreakdown({
                                     key={idx}
                                     className="flex flex-col gap-0.5 px-1 py-0.5 md:py-1"
                                   >
-                                    <div className="flex items-center gap-1 min-w-0">
-                                      <button
-                                        type="button"
-                                        className="flex items-center gap-0.5 text-sm md:text-base font-semibold text-foreground hover:text-primary transition-colors truncate cursor-pointer border-b border-dotted border-current"
-                                        onClick={() =>
-                                          setFocusedLine({
-                                            charId: line.charId,
-                                            formulaId: line.formulaId,
-                                          })
-                                        }
-                                      >
+                                    <button
+                                      type="button"
+                                      className="flex items-center gap-1 min-w-0 text-xs md:text-sm lg:text-xs xl:text-sm font-semibold text-foreground hover:text-primary transition-colors cursor-pointer"
+                                      onClick={() =>
+                                        setFocusedLine({
+                                          charId: line.charId,
+                                          formulaId: line.formulaId,
+                                        })
+                                      }
+                                    >
+                                      <span className="border-b border-current truncate">
                                         <span className="truncate">
                                           {label
                                             ? t.resolveLabel(label)
                                             : line.formulaId}
                                         </span>
-                                        <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-                                      </button>
+                                        {rxn && rxn !== "none" && (
+                                          <span className="text-primary font-semibold">
+                                            {" "}
+                                            [{t.reaction(rxn)}]
+                                          </span>
+                                        )}
+                                      </span>
                                       {isPartial && (
                                         <span
-                                          className="text-amber-400 text-xl font-bold leading-none"
+                                          className="text-amber-400 text-xl font-bold leading-none shrink-0"
                                           title={t.ui(
                                             "teamComp.partialReactionNote"
                                           )}
@@ -739,12 +750,8 @@ function ComboBreakdown({
                                           *
                                         </span>
                                       )}
-                                      {rxn && rxn !== "none" && (
-                                        <span className="text-sm md:text-base text-primary font-semibold shrink-0">
-                                          [{t.reaction(rxn)}]
-                                        </span>
-                                      )}
-                                    </div>
+                                      <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                                    </button>
                                     <div className="flex items-baseline gap-1 text-sm md:text-base font-mono tabular-nums">
                                       <span
                                         className="text-foreground/80"
@@ -838,6 +845,7 @@ function ComboResultView({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
+  forceReusedCharIds,
 }: {
   displayResult: DisplayResult;
   comboLines: ComboLine[];
@@ -856,6 +864,7 @@ function ComboResultView({
   onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
+  forceReusedCharIds?: Set<string>;
 }) {
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
   const rxFormulaIds = useMemo(
@@ -953,6 +962,7 @@ function ComboResultView({
           onArtifactSwap={onArtifactSwap}
           onFreezeChar={onFreezeChar}
           onUnfreezeChar={onUnfreezeChar}
+          forceReusedCharIds={forceReusedCharIds}
         />
       )}
       <ComboBreakdown
@@ -1022,6 +1032,8 @@ interface DamageCardProps {
   formulaMode?: "single" | "combo";
   // Freeze
   hasOptResult?: boolean;
+  /** True when every roster character has artifacts (frozen/force-reused/optimized) */
+  allCharsResolved?: boolean;
   isFrozen?: boolean;
   isFullyFrozen?: boolean;
   isPartiallyFrozen?: boolean;
@@ -1034,6 +1046,14 @@ interface DamageCardProps {
   onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   hasSwapOverrides?: boolean;
   onRestoreOriginal?: () => void;
+  // Force reuse
+  forceReusedCharIds?: Set<string>;
+  /** Freeze a character's equipped artifacts from the current tab */
+  onFreezeCharFromCurrent?: (charId: string) => void;
+  /** Unfreeze from the current tab — clears optimize-tab cache */
+  onUnfreezeCharFromCurrent?: (charId: string) => void;
+  /** Frozen char IDs for the current tab (value-equivalence: only chars whose equipped arts match frozen) */
+  currentTabFrozenCharIds?: Set<string>;
 }
 
 // ─── Shared inline control helpers ───
@@ -1361,6 +1381,7 @@ export function DamageCard({
   teamBuild,
   formulaMode = "single",
   hasOptResult,
+  allCharsResolved,
   isFrozen,
   isFullyFrozen,
   isPartiallyFrozen,
@@ -1372,6 +1393,10 @@ export function DamageCard({
   onArtifactSwap,
   hasSwapOverrides,
   onRestoreOriginal,
+  forceReusedCharIds,
+  onFreezeCharFromCurrent,
+  onUnfreezeCharFromCurrent,
+  currentTabFrozenCharIds,
 }: DamageCardProps) {
   const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
@@ -1506,6 +1531,9 @@ export function DamageCard({
               isMobile={isMobile}
               t={t}
               reactionOverrides={team.reactionOverrides}
+              frozenCharIds={currentTabFrozenCharIds}
+              onFreezeChar={onFreezeCharFromCurrent}
+              onUnfreezeChar={onUnfreezeCharFromCurrent}
             />
           ) : formulaMode === "combo" && comboLines && !currentDisplayResult ? (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
@@ -1530,6 +1558,9 @@ export function DamageCard({
               setCritMode={setCritMode}
               isMobile={isMobile}
               t={t}
+              frozenCharIds={currentTabFrozenCharIds}
+              onFreezeChar={onFreezeCharFromCurrent}
+              onUnfreezeChar={onUnfreezeCharFromCurrent}
             />
           )}
         </CardContent>
@@ -1622,11 +1653,33 @@ export function DamageCard({
               )}
             </div>
 
-            {/* Empty state */}
-            {!isComputing && !hasOptResult && !teamError && (
-              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                <Swords className="w-8 h-8 opacity-15" />
-                <p>{t.ui("teamComp.emptyOptMsg")}</p>
+            {/* Empty state + preview (shown when not all chars resolved) */}
+            {!isComputing && !allCharsResolved && !teamError && (
+              <div className="space-y-2">
+                {/* Original empty state box */}
+                {!hasOptResult && (
+                  <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                    <Swords className="w-8 h-8 opacity-15" />
+                    <p>{t.ui("teamComp.emptyOptMsg")}</p>
+                  </div>
+                )}
+
+                {/* Partial StatSheetPanel — preview mode, artifacts only */}
+                {hasOptResult && (
+                  <StatSheetPanel
+                    team={effectiveTeam}
+                    artifactsByChar={optimizedArtifactsByChar}
+                    targetCharId=""
+                    highlightedStat={null}
+                    onStatHover={() => {}}
+                    t={t}
+                    frozenCharIds={frozenCharIds}
+                    forceReusedCharIds={forceReusedCharIds}
+                    onFreezeChar={onFreezeChar}
+                    onUnfreezeChar={onUnfreezeChar}
+                    preview
+                  />
+                )}
               </div>
             )}
 
@@ -1780,20 +1833,9 @@ export function DamageCard({
                 );
               })()}
 
-            {/* Results */}
-            {/* Combo mode with no active lines — show hint */}
-            {formulaMode === "combo" &&
-              comboLines &&
-              !optimizedDisplayResult &&
-              isFrozen &&
-              !teamResult && (
-                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                  <Swords className="w-8 h-8 opacity-15" />
-                  <p>{t.ui("teamComp.emptyComboMsg")}</p>
-                </div>
-              )}
-
-            {!hasActiveFormula ? null : formulaMode === "combo" &&
+            {/* Results — only when all characters are resolved */}
+            {!hasActiveFormula ? null : allCharsResolved &&
+              formulaMode === "combo" &&
               optimizedDisplayResult &&
               comboLines &&
               teamBuild ? (
@@ -1817,8 +1859,9 @@ export function DamageCard({
                 onArtifactSwap={onArtifactSwap}
                 onFreezeChar={onFreezeChar}
                 onUnfreezeChar={onUnfreezeChar}
+                forceReusedCharIds={forceReusedCharIds}
               />
-            ) : hasOptResult && optimizedDisplayResult ? (
+            ) : allCharsResolved && hasOptResult && optimizedDisplayResult ? (
               <DamageBody
                 team={effectiveTeam}
                 hasFormula
@@ -1843,11 +1886,18 @@ export function DamageCard({
                 onArtifactSwap={onArtifactSwap}
                 onFreezeChar={onFreezeChar}
                 onUnfreezeChar={onUnfreezeChar}
+                forceReusedCharIds={forceReusedCharIds}
               />
+            ) : allCharsResolved && !isComputing ? (
+              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                <Swords className="w-8 h-8 opacity-15" />
+                <p>{t.ui("teamComp.emptyOptMsg")}</p>
+              </div>
             ) : null}
 
             {/* No results found */}
             {hasActiveFormula &&
+              allCharsResolved &&
               teamResult?.done &&
               teamResult.bestDamage === 0 && (
                 <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
@@ -1859,6 +1909,7 @@ export function DamageCard({
 
             {/* Swap Guide — diff view of optimized vs equipped */}
             {hasActiveFormula &&
+              allCharsResolved &&
               (teamResult?.done || hasOptResult) &&
               teamResult?.bestDamage !== 0 && (
                 <SwapGuide

@@ -1,3 +1,4 @@
+import { CategoryChip } from "@/components/archive/CategoryChip";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -15,14 +16,22 @@ import {
   buildArtifactOwnerMap,
 } from "@/components/team-comp/SwapGuide";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useTour } from "@/components/ui/tour";
 import { charactersById, elementResourcesByName } from "@/data/constants";
-import type { Element, PresetOption, Region } from "@/data/types";
-import { elements, regions } from "@/data/types";
+import type { Element, PresetOption, Region, Tier } from "@/data/types";
+import { elements, regions, tiers } from "@/data/types";
 import type { ArtifactData, CharacterData } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import {
@@ -30,18 +39,24 @@ import {
   loadPresetMetadata,
   loadPresetPayload,
 } from "@/lib/presetLoader";
+import { fuzzyMatch } from "@/lib/search";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import type { ArtifactReuseMode } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
+import { useTierStore } from "@/stores/useTierStore";
 import {
+  ArrowUpDown,
+  Bookmark,
   Download,
   FileDown,
   Flame,
   HelpCircle,
   Plus,
+  Search,
   Swords,
   Trash2,
   Upload,
@@ -124,9 +139,27 @@ export default function TeamCompPage() {
     return loadPresetPayload(presetModules, path);
   }, []);
 
-  // Filters
+  // Ownership
+  const isOwned = useIsOwned();
+  const hasAccountData = useHasAccountData();
+
+  // Tier data
+  const tierAssignments = useTierStore((s) => s.tierAssignments);
+  const tierRank = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (let i = 0; i < tiers.length; i++) map[tiers[i]] = i;
+    return map;
+  }, []);
+
+  // Filters & sort
+  type TeamSort = "default" | "tier" | "release";
+  const [searchQuery, setSearchQuery] = useState("");
   const [elementFilter, setElementFilter] = useState<Element[]>([]);
   const [regionFilter, setRegionFilter] = useState<Region[]>([]);
+  const [ownedOnlyFilter, setOwnedOnlyFilter] = useState(false);
+  const [teamSort, setTeamSort] = useState<TeamSort>("default");
+  const toggleSort = (s: TeamSort) =>
+    setTeamSort((prev) => (prev === s ? "default" : s));
 
   const toggleElement = (el: Element) =>
     setElementFilter((prev) =>
@@ -138,9 +171,56 @@ export default function TeamCompPage() {
       prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]
     );
 
-  // Filter teams based on element/region of their characters
+  // Precompute ownership info per team (how many of the filled characters are owned)
+  const teamOwnershipMap = useMemo(() => {
+    if (!hasAccountData)
+      return new Map<string, { ownedCount: number; filledCount: number }>();
+    const map = new Map<string, { ownedCount: number; filledCount: number }>();
+    for (const team of teams) {
+      const filledChars = team.characters.filter(Boolean) as string[];
+      const ownedCount = filledChars.filter((id) =>
+        isOwned("character", id)
+      ).length;
+      map.set(team.id, { ownedCount, filledCount: filledChars.length });
+    }
+    return map;
+  }, [teams, isOwned, hasAccountData]);
+
+  // Filter teams based on search, element/region of their characters
   const filteredTeams = useMemo(() => {
     let result = teams;
+
+    // Search filter: fuzzy match against team name, character/weapon/artifact names, reaction names
+    const query = searchQuery.trim();
+    if (query) {
+      result = result.filter((team) => {
+        // Team custom name
+        if (team.name && fuzzyMatch(query, team.name)) return true;
+        // Character names
+        for (const id of team.characters) {
+          if (id && fuzzyMatch(query, t.character(id))) return true;
+        }
+        // Weapon names
+        for (const id of team.weapons) {
+          if (id && fuzzyMatch(query, t.weapon(id))) return true;
+        }
+        // Artifact set names
+        for (const art of team.artifacts) {
+          if (!art) continue;
+          if (art.type === "4pc") {
+            if (fuzzyMatch(query, t.artifact(art.setId))) return true;
+          } else {
+            if (fuzzyMatch(query, t.artifact(String(art.id1)))) return true;
+            if (fuzzyMatch(query, t.artifact(String(art.id2)))) return true;
+          }
+        }
+        // Reaction names
+        for (const r of team.reactions) {
+          if (fuzzyMatch(query, t.reaction(r))) return true;
+        }
+        return false;
+      });
+    }
 
     if (elementFilter.length > 0 || regionFilter.length > 0) {
       result = result.filter((team) => {
@@ -171,11 +251,82 @@ export default function TeamCompPage() {
       });
     }
 
+    // Owned-only filter: keep teams where all filled characters are owned
+    if (ownedOnlyFilter && hasAccountData) {
+      result = result.filter((team) => {
+        const ownership = teamOwnershipMap.get(team.id);
+        if (!ownership || ownership.filledCount === 0) return true; // Show unconfigured teams
+        return ownership.ownedCount === ownership.filledCount;
+      });
+    }
+
+    // Sort by tier or release date (stable: original index as tie-breaker)
+    if (teamSort !== "default") {
+      const indexed = result.map((team, i) => ({ team, origIdx: i }));
+      const WORST_TIER = tiers.length; // sentinel for untiered / empty teams
+
+      indexed.sort((a, b) => {
+        const getScore = (t: typeof a.team) => {
+          const charIds = t.characters.filter(Boolean) as string[];
+          if (charIds.length === 0)
+            return teamSort === "tier" ? WORST_TIER : "";
+
+          if (teamSort === "tier") {
+            // Best (lowest) tier rank among team members
+            let best = WORST_TIER;
+            for (const id of charIds) {
+              const assignment = tierAssignments[id];
+              if (assignment) {
+                const rank = tierRank[assignment.tier] ?? WORST_TIER;
+                if (rank < best) best = rank;
+              }
+            }
+            return best;
+          }
+          // Most recent release date among team members
+          let latest = "";
+          for (const id of charIds) {
+            const date = characterStats?.[id]?.releaseDate ?? "";
+            if (date > latest) latest = date;
+          }
+          return latest;
+        };
+
+        const sa = getScore(a.team);
+        const sb = getScore(b.team);
+
+        if (teamSort === "tier") {
+          // Lower rank = better tier → sort ascending
+          if (sa !== sb) return (sa as number) - (sb as number);
+        } else {
+          // More recent date = first → sort descending
+          if (sa !== sb) return sa < sb ? 1 : -1;
+        }
+        return a.origIdx - b.origIdx;
+      });
+
+      result = indexed.map((e) => e.team);
+    }
+
     // Sort frozen teams to the top while preserving relative order
     const frozen = result.filter((t) => freezeStore.isFrozen(t.id));
     const unfrozen = result.filter((t) => !freezeStore.isFrozen(t.id));
     return [...frozen, ...unfrozen];
-  }, [teams, elementFilter, regionFilter, characterStats, freezeStore]);
+  }, [
+    teams,
+    searchQuery,
+    t,
+    elementFilter,
+    regionFilter,
+    ownedOnlyFilter,
+    hasAccountData,
+    teamOwnershipMap,
+    characterStats,
+    freezeStore,
+    teamSort,
+    tierAssignments,
+    tierRank,
+  ]);
 
   // Precompute freeze data per team (avoids repeated getFrozenCharIds calls + new Set per card)
   const teamFreezeMap = useMemo(() => {
@@ -411,54 +562,134 @@ export default function TeamCompPage() {
         bodyRef={scrollRef}
         header={
           isEmptyState ? null : (
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-1 2xl:gap-2 flex-wrap">
-                {/* Element chips */}
-                <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
-                  {elements.map((el) => {
-                    const active =
-                      elementFilter.length === 0 || elementFilter.includes(el);
-                    const res = elementResourcesByName[el];
-                    return (
-                      <FilterChip
-                        key={el}
-                        active={active}
-                        onClick={() => toggleElement(el)}
-                      >
-                        <img
-                          src={getAssetUrl(res.imagePath)}
-                          alt={el}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-xs">{t.element(el)}</span>
-                      </FilterChip>
-                    );
-                  })}
-                </div>
+            <div className="space-y-3">
+              {/* Search bar — centered, prominent (matches Archive pages) */}
+              <div className="relative max-w-2xl mx-auto">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground" />
+                <Input
+                  placeholder={t.ui("teamComp.searchPlaceholder")}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 h-11 text-base rounded-xl bg-card/50 border-border/50 focus:border-primary/50 shadow-sm"
+                />
+              </div>
+
+              {/* Row 1: Element + Region chips */}
+              <div className="flex items-center justify-center gap-1 2xl:gap-2 flex-wrap">
+                {elements.map((el) => {
+                  const active =
+                    elementFilter.length === 0 || elementFilter.includes(el);
+                  const res = elementResourcesByName[el];
+                  return (
+                    <FilterChip
+                      key={el}
+                      active={active}
+                      onClick={() => toggleElement(el)}
+                    >
+                      <img
+                        src={getAssetUrl(res.imagePath)}
+                        alt={el}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-xs">{t.element(el)}</span>
+                    </FilterChip>
+                  );
+                })}
 
                 <div className="h-5 w-px bg-border/50 mx-1" />
 
-                {/* Region chips */}
-                <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
-                  {displayRegions.map((r) => {
-                    const active =
-                      regionFilter.length === 0 || regionFilter.includes(r);
-                    return (
-                      <FilterChip
-                        key={r}
-                        active={active}
-                        onClick={() => toggleRegion(r)}
-                      >
-                        <span className="text-xs">{t.region(r)}</span>
-                      </FilterChip>
-                    );
-                  })}
-                </div>
+                {displayRegions.map((r) => {
+                  const active =
+                    regionFilter.length === 0 || regionFilter.includes(r);
+                  return (
+                    <FilterChip
+                      key={r}
+                      active={active}
+                      onClick={() => toggleRegion(r)}
+                    >
+                      <span className="text-xs">{t.region(r)}</span>
+                    </FilterChip>
+                  );
+                })}
+              </div>
 
-                {/* Spacer */}
+              {/* Row 2: Owned-only + Sort | Freeze controls | New team buttons */}
+              <div className="flex items-center gap-1 2xl:gap-2 flex-wrap">
+                {/* Left: filter & sort chips */}
+                {hasAccountData && (
+                  <CategoryChip
+                    active={ownedOnlyFilter}
+                    onClick={() => setOwnedOnlyFilter((v) => !v)}
+                    color="amber"
+                    activeIcon={Bookmark}
+                    inactiveIcon={Bookmark}
+                  >
+                    {t.ui("common.ownedOnly")}
+                  </CategoryChip>
+                )}
+
+                <CategoryChip
+                  active={teamSort === "tier"}
+                  onClick={() => toggleSort("tier")}
+                  color="sky"
+                  activeIcon={ArrowUpDown}
+                  inactiveIcon={ArrowUpDown}
+                >
+                  {t.ui("teamComp.sortByTier")}
+                </CategoryChip>
+                <CategoryChip
+                  active={teamSort === "release"}
+                  onClick={() => toggleSort("release")}
+                  color="sky"
+                  activeIcon={ArrowUpDown}
+                  inactiveIcon={ArrowUpDown}
+                >
+                  {t.ui("teamComp.sortByRelease")}
+                </CategoryChip>
+
                 <div className="flex-1" />
 
-                {/* Add team buttons */}
+                {/* Center: Freeze controls */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs md:text-sm text-foreground/80 whitespace-nowrap">
+                    {t.ui("teamComp.reuseLabel")}
+                  </span>
+                  <Select
+                    value={freezeStore.reuseMode}
+                    onValueChange={(v) =>
+                      freezeStore.setReuseMode(v as ArtifactReuseMode)
+                    }
+                  >
+                    <SelectTrigger className="w-auto text-xs h-7 md:h-8 gap-1 px-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">
+                        {t.ui("teamComp.reuseNone")}
+                      </SelectItem>
+                      <SelectItem value="sameChar">
+                        {t.ui("teamComp.reuseSameChar")}
+                      </SelectItem>
+                      <SelectItem value="forceReuse">
+                        {t.ui("teamComp.reuseForce")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10 disabled:opacity-40 disabled:pointer-events-none"
+                  onClick={() => freezeStore.clearAll()}
+                  disabled={Object.keys(freezeStore.frozenTeams).length === 0}
+                >
+                  <Flame className="w-3 h-3" />
+                  <span>{t.ui("teamComp.unfreezeAll")}</span>
+                </Button>
+
+                <div className="flex-1" />
+
+                {/* Right: New team buttons */}
                 <div className="flex items-center gap-1 2xl:gap-2">
                   <Button
                     variant="outline"
@@ -482,33 +713,6 @@ export default function TeamCompPage() {
                   </Button>
                 </div>
               </div>
-
-              {/* Freeze controls */}
-              {Object.keys(freezeStore.frozenTeams).length > 0 && (
-                <div className="flex items-center gap-2">
-                  {/* biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is the input */}
-                  <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                    <Checkbox
-                      checked={freezeStore.allowSameCharReuse}
-                      onCheckedChange={(v) =>
-                        freezeStore.setAllowSameCharReuse(!!v)
-                      }
-                    />
-                    <span className="text-xs md:text-sm text-foreground/80 whitespace-nowrap">
-                      {t.ui("teamComp.allowSameCharReuse")}
-                    </span>
-                  </label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                    onClick={() => freezeStore.clearAll()}
-                  >
-                    <Flame className="w-3 h-3" />
-                    <span>{t.ui("teamComp.unfreezeAll")}</span>
-                  </Button>
-                </div>
-              )}
             </div>
           )
         }
@@ -559,6 +763,12 @@ export default function TeamCompPage() {
               // Use actual index in the full teams array for move logic
               const realIndex = teams.indexOf(team);
               const freeze = teamFreezeMap.get(team.id);
+              const ownership = teamOwnershipMap.get(team.id);
+              const allUnowned =
+                hasAccountData &&
+                !!ownership &&
+                ownership.filledCount > 0 &&
+                ownership.ownedCount === 0;
               return (
                 <TeamCard
                   key={team.id}
@@ -586,6 +796,7 @@ export default function TeamCompPage() {
                   frozenCharIds={freeze?.frozenCharIds ?? EMPTY_SET}
                   onUnfreeze={() => freezeStore.unfreezeTeam(team.id)}
                   accountData={accountData}
+                  allUnowned={allUnowned}
                 />
               );
             })}
