@@ -1810,7 +1810,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3652292.7784706834,
+          "recordedDamage": 3674953.583908472,
           "foundAt": "2026-03-22T04:24:10.601Z",
           "algorithm": "v2"
         },
@@ -1845,7 +1845,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3649996.358091195,
+          "recordedDamage": 3672742.146450459,
           "foundAt": "2026-03-22T11:31:50.627Z",
           "algorithm": "v1"
         },
@@ -1880,7 +1880,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3652292.7784706834,
+          "recordedDamage": 3674953.583908472,
           "foundAt": "2026-03-22T11:40:41.136Z",
           "algorithm": "astar"
         },
@@ -1915,7 +1915,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3649996.358091195,
+          "recordedDamage": 3672742.146450459,
           "foundAt": "2026-03-22T12:59:43.889Z",
           "algorithm": "v2",
           "solveTimeSec": 23.651222499999996
@@ -1951,7 +1951,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3649996.358091195,
+          "recordedDamage": 3672742.146450459,
           "foundAt": "2026-03-23T07:22:37.552Z",
           "algorithm": "v2",
           "solveTimeSec": 22.908990900000003
@@ -1987,7 +1987,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3652292.7784706834,
+          "recordedDamage": 3674953.583908472,
           "foundAt": "2026-03-23T07:24:46.193Z",
           "algorithm": "v2",
           "solveTimeSec": 8.060108399999997
@@ -2023,7 +2023,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3652292.7784706834,
+          "recordedDamage": 3674953.583908472,
           "foundAt": "2026-03-23T16:20:52.521Z",
           "algorithm": "v2",
           "solveTimeSec": 1.3923692
@@ -2059,7 +2059,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3652292.7784706834,
+          "recordedDamage": 3674953.583908472,
           "foundAt": "2026-03-25T21:17:36.743Z",
           "algorithm": "monaV2"
         },
@@ -2094,7 +2094,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 3174226.516029229,
+          "recordedDamage": 3194044.9994335286,
           "foundAt": "2026-03-25T21:47:16.759Z",
           "algorithm": "astar"
         }
@@ -2143,7 +2143,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 608513.0008611328,
+          "recordedDamage": 616696.8551220078,
           "foundAt": "2026-03-22T04:24:13.599Z",
           "algorithm": "v2"
         },
@@ -2178,7 +2178,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 607687.5167741689,
+          "recordedDamage": 615901.9194703246,
           "foundAt": "2026-03-22T11:31:50.659Z",
           "algorithm": "v1"
         },
@@ -2213,7 +2213,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 608513.0008611328,
+          "recordedDamage": 616696.8551220078,
           "foundAt": "2026-03-22T11:40:42.452Z",
           "algorithm": "astar"
         },
@@ -2248,7 +2248,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 607687.5167741689,
+          "recordedDamage": 615901.9194703246,
           "foundAt": "2026-03-22T12:59:41.842Z",
           "algorithm": "v2",
           "solveTimeSec": 21.3923636
@@ -2284,7 +2284,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 607687.5167741689,
+          "recordedDamage": 615901.9194703246,
           "foundAt": "2026-03-23T07:22:45.723Z",
           "algorithm": "v2",
           "solveTimeSec": 22.075258700000003
@@ -2320,7 +2320,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 608513.0008611328,
+          "recordedDamage": 616696.8551220078,
           "foundAt": "2026-03-23T07:25:01.422Z",
           "algorithm": "v2",
           "solveTimeSec": 7.488169200000004
@@ -2356,7 +2356,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 608513.0008611328,
+          "recordedDamage": 616696.8551220078,
           "foundAt": "2026-03-23T16:20:52.421Z",
           "algorithm": "v2",
           "solveTimeSec": 1.1477830999999996
@@ -2392,7 +2392,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 518321.14550490887,
+          "recordedDamage": 525332.3481204036,
           "foundAt": "2026-03-23T17:42:20.431Z",
           "algorithm": "astar"
         },
@@ -2427,7 +2427,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 608513.0008611328,
+          "recordedDamage": 616696.8551220078,
           "foundAt": "2026-03-25T21:17:36.006Z",
           "algorithm": "monaV2"
         },
@@ -2462,7 +2462,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 517453.73520892696,
+          "recordedDamage": 524413.7337898362,
           "foundAt": "2026-03-25T21:47:11.932Z",
           "algorithm": "astar"
         }
@@ -2511,7 +2511,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6472487.401523463,
+          "recordedDamage": 6491877.091250543,
           "foundAt": "2026-03-22T04:24:17.978Z",
           "algorithm": "v2"
         },
@@ -2546,7 +2546,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6470519.041198187,
+          "recordedDamage": 6489981.573429388,
           "foundAt": "2026-03-22T11:31:50.641Z",
           "algorithm": "v1"
         },
@@ -2581,7 +2581,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6472487.401523463,
+          "recordedDamage": 6491877.091250543,
           "foundAt": "2026-03-22T11:40:39.632Z",
           "algorithm": "astar"
         },
@@ -2616,7 +2616,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6470519.041198187,
+          "recordedDamage": 6489981.573429388,
           "foundAt": "2026-03-22T12:59:44.360Z",
           "algorithm": "v2",
           "solveTimeSec": 23.9104113
@@ -2652,7 +2652,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6470519.041198187,
+          "recordedDamage": 6489981.573429388,
           "foundAt": "2026-03-23T07:22:46.165Z",
           "algorithm": "v2",
           "solveTimeSec": 22.2618474
@@ -2688,7 +2688,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6472487.401523463,
+          "recordedDamage": 6491877.091250543,
           "foundAt": "2026-03-23T07:25:09.057Z",
           "algorithm": "v2",
           "solveTimeSec": 7.632283800000005
@@ -2724,7 +2724,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6472487.401523463,
+          "recordedDamage": 6491877.091250543,
           "foundAt": "2026-03-23T16:20:52.554Z",
           "algorithm": "v2",
           "solveTimeSec": 1.1945396000000001
@@ -2760,7 +2760,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6472487.401523463,
+          "recordedDamage": 6491877.091250543,
           "foundAt": "2026-03-23T17:42:08.005Z",
           "algorithm": "astar"
         },
@@ -2795,7 +2795,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 6472487.401523463,
+          "recordedDamage": 6491877.091250543,
           "foundAt": "2026-03-25T21:17:34.096Z",
           "algorithm": "monaV2"
         },
@@ -2830,7 +2830,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 5609914.814616237,
+          "recordedDamage": 5626872.815712793,
           "foundAt": "2026-03-25T21:47:11.767Z",
           "algorithm": "astar"
         }
@@ -5032,7 +5032,7 @@
               "circlet": "artifact-735"
             }
           },
-          "recordedDamage": 3198232.9017362064,
+          "recordedDamage": 3195020.777609882,
           "foundAt": "2026-03-22T11:31:55.376Z",
           "algorithm": "v1"
         },
@@ -5209,7 +5209,7 @@
               "circlet": "artifact-425"
             }
           },
-          "recordedDamage": 3021489.6585183647,
+          "recordedDamage": 3018442.7296205726,
           "foundAt": "2026-03-25T21:48:44.566Z",
           "algorithm": "astar"
         }
@@ -17116,7 +17116,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157724.8816906589,
+          "recordedDamage": 1164162.7309981447,
           "foundAt": "2026-03-22T04:24:13.691Z",
           "algorithm": "v2"
         },
@@ -17151,7 +17151,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157068.7615822335,
+          "recordedDamage": 1163530.8917244268,
           "foundAt": "2026-03-22T11:31:50.830Z",
           "algorithm": "v1"
         },
@@ -17186,7 +17186,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157724.8816906589,
+          "recordedDamage": 1164162.7309981447,
           "foundAt": "2026-03-22T11:40:40.736Z",
           "algorithm": "astar"
         },
@@ -17221,7 +17221,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157068.7615822335,
+          "recordedDamage": 1163530.8917244268,
           "foundAt": "2026-03-22T12:59:43.918Z",
           "algorithm": "v2",
           "solveTimeSec": 23.6316135
@@ -17257,7 +17257,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157068.7615822335,
+          "recordedDamage": 1163530.8917244268,
           "foundAt": "2026-03-23T07:22:44.925Z",
           "algorithm": "v2",
           "solveTimeSec": 22.380908899999998
@@ -17293,7 +17293,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157724.8816906589,
+          "recordedDamage": 1164162.7309981447,
           "foundAt": "2026-03-23T07:24:53.932Z",
           "algorithm": "v2",
           "solveTimeSec": 7.73644279999999
@@ -17329,7 +17329,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157724.8816906589,
+          "recordedDamage": 1164162.7309981447,
           "foundAt": "2026-03-23T16:20:52.471Z",
           "algorithm": "v2",
           "solveTimeSec": 1.2044674999999998
@@ -17365,7 +17365,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1157724.8816906589,
+          "recordedDamage": 1164162.7309981447,
           "foundAt": "2026-03-25T21:17:43.327Z",
           "algorithm": "monaV2"
         },
@@ -17400,7 +17400,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 1005659.8272891119,
+          "recordedDamage": 1011290.5525420152,
           "foundAt": "2026-03-25T21:47:13.312Z",
           "algorithm": "astar"
         }
@@ -27487,7 +27487,7 @@
               "circlet": "artifact-379"
             }
           },
-          "recordedDamage": 170749.44826781144,
+          "recordedDamage": 170953.4447353027,
           "foundAt": "2026-03-22T04:26:30.019Z",
           "algorithm": "v2"
         },
@@ -27522,7 +27522,7 @@
               "circlet": "artifact-63"
             }
           },
-          "recordedDamage": 169877.91909299194,
+          "recordedDamage": 170087.06550692872,
           "foundAt": "2026-03-22T11:33:33.271Z",
           "algorithm": "v1"
         },
@@ -27557,7 +27557,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 170749.44826781144,
+          "recordedDamage": 170953.4447353027,
           "foundAt": "2026-03-22T16:10:35.774Z",
           "algorithm": "v2",
           "solveTimeSec": 28.542122100000036
@@ -27593,7 +27593,7 @@
               "circlet": "artifact-797"
             }
           },
-          "recordedDamage": 170749.44826781144,
+          "recordedDamage": 170953.4447353027,
           "foundAt": "2026-03-23T07:24:14.298Z",
           "algorithm": "v2",
           "solveTimeSec": 14.397928599999998
@@ -27629,7 +27629,7 @@
               "circlet": "artifact-1105"
             }
           },
-          "recordedDamage": 162967.68271872052,
+          "recordedDamage": 163163.9003085302,
           "foundAt": "2026-03-23T17:43:19.829Z",
           "algorithm": "astar"
         },
@@ -27664,7 +27664,7 @@
               "circlet": "artifact-797"
             }
           },
-          "recordedDamage": 163337.95336575754,
+          "recordedDamage": 163534.61677165006,
           "foundAt": "2026-03-25T21:26:45.534Z",
           "algorithm": "monaV2"
         }
@@ -30873,7 +30873,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 75389.38154643765,
+          "recordedDamage": 75468.14150623544,
           "foundAt": "2026-03-22T04:26:52.941Z",
           "algorithm": "v2"
         },
@@ -30908,7 +30908,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 60930.24618479693,
+          "recordedDamage": 60994.519537981345,
           "foundAt": "2026-03-22T11:33:36.570Z",
           "algorithm": "v1"
         },
@@ -30943,7 +30943,7 @@
               "circlet": "artifact-1380"
             }
           },
-          "recordedDamage": 68466.22422345029,
+          "recordedDamage": 68537.80958882633,
           "foundAt": "2026-03-22T11:44:33.052Z",
           "algorithm": "astar"
         },
@@ -30978,7 +30978,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 75043.23114877605,
+          "recordedDamage": 75121.92330591864,
           "foundAt": "2026-03-22T14:41:39.795Z",
           "algorithm": "v2",
           "solveTimeSec": 21.74221749999991
@@ -31014,7 +31014,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 75389.38154643765,
+          "recordedDamage": 75468.14150623544,
           "foundAt": "2026-03-22T16:12:08.302Z",
           "algorithm": "v2",
           "solveTimeSec": 30.01879799999995
@@ -31050,7 +31050,7 @@
               "circlet": "artifact-398"
             }
           },
-          "recordedDamage": 75389.38154643765,
+          "recordedDamage": 75468.14150623544,
           "foundAt": "2026-03-23T07:24:36.334Z",
           "algorithm": "v2",
           "solveTimeSec": 22.77145240000001
@@ -31086,7 +31086,7 @@
               "circlet": "artifact-15"
             }
           },
-          "recordedDamage": 75389.38154643765,
+          "recordedDamage": 75468.14150623544,
           "foundAt": "2026-03-23T16:20:59.150Z",
           "algorithm": "v2",
           "solveTimeSec": 0.8187523000000001
@@ -31122,7 +31122,7 @@
               "circlet": "artifact-881"
             }
           },
-          "recordedDamage": 75389.38154643765,
+          "recordedDamage": 75468.14150623544,
           "foundAt": "2026-03-25T21:27:48.695Z",
           "algorithm": "monaV2"
         },
@@ -31157,7 +31157,7 @@
               "circlet": "artifact-1380"
             }
           },
-          "recordedDamage": 67442.78497759152,
+          "recordedDamage": 67512.78632026583,
           "foundAt": "2026-03-25T21:56:15.894Z",
           "algorithm": "astar"
         }
@@ -34061,7 +34061,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 86546.73633414635,
+          "recordedDamage": 86637.15248207709,
           "foundAt": "2026-03-22T04:26:50.651Z",
           "algorithm": "v2"
         },
@@ -34096,7 +34096,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 71124.92603783759,
+          "recordedDamage": 71199.95343026893,
           "foundAt": "2026-03-22T11:33:36.724Z",
           "algorithm": "v1"
         },
@@ -34131,7 +34131,7 @@
               "circlet": "artifact-1380"
             }
           },
-          "recordedDamage": 78880.46990937553,
+          "recordedDamage": 78962.94396608805,
           "foundAt": "2026-03-22T11:44:30.020Z",
           "algorithm": "astar"
         },
@@ -34166,7 +34166,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 86149.35693423811,
+          "recordedDamage": 86239.69524496677,
           "foundAt": "2026-03-22T14:41:39.542Z",
           "algorithm": "v2",
           "solveTimeSec": 20.84413100000005
@@ -34202,7 +34202,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 86546.73633414635,
+          "recordedDamage": 86637.15248207709,
           "foundAt": "2026-03-22T16:12:07.499Z",
           "algorithm": "v2",
           "solveTimeSec": 26.62468129999994
@@ -34238,7 +34238,7 @@
               "circlet": "artifact-398"
             }
           },
-          "recordedDamage": 86546.73633414635,
+          "recordedDamage": 86637.15248207709,
           "foundAt": "2026-03-23T07:24:30.008Z",
           "algorithm": "v2",
           "solveTimeSec": 15.697225399999995
@@ -34274,7 +34274,7 @@
               "circlet": "artifact-881"
             }
           },
-          "recordedDamage": 86546.73633414635,
+          "recordedDamage": 86637.15248207709,
           "foundAt": "2026-03-25T21:27:48.137Z",
           "algorithm": "monaV2"
         },
@@ -34309,7 +34309,7 @@
               "circlet": "artifact-1380"
             }
           },
-          "recordedDamage": 77902.15572712755,
+          "recordedDamage": 77982.70926033963,
           "foundAt": "2026-03-25T21:56:16.334Z",
           "algorithm": "astar"
         }
@@ -34970,7 +34970,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 61157.88561515497,
+          "recordedDamage": 51807.064710952,
           "foundAt": "2026-03-23T05:00:54.275Z",
           "algorithm": "v2",
           "solveTimeSec": 1.6672473000000028
@@ -35006,7 +35006,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 61157.88561515497,
+          "recordedDamage": 51807.064710952,
           "foundAt": "2026-03-23T07:11:31.610Z",
           "algorithm": "v2",
           "solveTimeSec": 1.622092800000013
@@ -35042,7 +35042,7 @@
               "circlet": "artifact-1105"
             }
           },
-          "recordedDamage": 61157.88561515497,
+          "recordedDamage": 51807.064710952,
           "foundAt": "2026-03-23T07:23:29.709Z",
           "algorithm": "v2",
           "solveTimeSec": 7.896945999999996
@@ -35078,7 +35078,7 @@
               "circlet": "artifact-1105"
             }
           },
-          "recordedDamage": 61157.88561515497,
+          "recordedDamage": 51807.064710952,
           "foundAt": "2026-03-23T16:20:55.645Z",
           "algorithm": "v2",
           "solveTimeSec": 0.8493352999999997
@@ -35114,7 +35114,7 @@
               "circlet": "artifact-1099"
             }
           },
-          "recordedDamage": 61157.88561515497,
+          "recordedDamage": 51807.064710952,
           "foundAt": "2026-03-23T17:42:51.215Z",
           "algorithm": "astar"
         },
@@ -35149,7 +35149,7 @@
               "circlet": "artifact-320"
             }
           },
-          "recordedDamage": 61157.88561515497,
+          "recordedDamage": 51807.064710952,
           "foundAt": "2026-03-25T21:22:41.452Z",
           "algorithm": "monaV2"
         },
@@ -35184,7 +35184,7 @@
               "circlet": "artifact-1099"
             }
           },
-          "recordedDamage": 60439.451240417984,
+          "recordedDamage": 51198.47637000142,
           "foundAt": "2026-03-25T21:50:38.395Z",
           "algorithm": "astar"
         }
@@ -35233,7 +35233,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 81539.04459032454,
+          "recordedDamage": 69072.01773034089,
           "foundAt": "2026-03-23T05:00:54.376Z",
           "algorithm": "v2",
           "solveTimeSec": 4.179362399999998
@@ -35269,7 +35269,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 81539.04459032454,
+          "recordedDamage": 69072.01773034089,
           "foundAt": "2026-03-23T06:01:18.375Z",
           "algorithm": "v2",
           "solveTimeSec": 3.629757899999997
@@ -35305,7 +35305,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 81539.04459032454,
+          "recordedDamage": 69072.01773034089,
           "foundAt": "2026-03-23T07:11:31.827Z",
           "algorithm": "v2",
           "solveTimeSec": 3.655613299999997
@@ -35341,7 +35341,7 @@
               "circlet": "artifact-1657"
             }
           },
-          "recordedDamage": 81539.04459032454,
+          "recordedDamage": 69072.01773034089,
           "foundAt": "2026-03-23T07:23:27.976Z",
           "algorithm": "v2",
           "solveTimeSec": 9.364355200000006
@@ -35377,7 +35377,7 @@
               "circlet": "artifact-1099"
             }
           },
-          "recordedDamage": 81539.04459032454,
+          "recordedDamage": 69072.01773034089,
           "foundAt": "2026-03-23T17:42:50.657Z",
           "algorithm": "astar"
         },
@@ -35412,7 +35412,7 @@
               "circlet": "artifact-320"
             }
           },
-          "recordedDamage": 81539.04459032454,
+          "recordedDamage": 69072.01773034089,
           "foundAt": "2026-03-25T21:22:33.703Z",
           "algorithm": "monaV2"
         },
@@ -35447,7 +35447,7 @@
               "circlet": "artifact-1099"
             }
           },
-          "recordedDamage": 80619.03381225766,
+          "recordedDamage": 68292.67329364778,
           "foundAt": "2026-03-25T21:50:31.513Z",
           "algorithm": "astar"
         }
@@ -35496,7 +35496,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 140233.0594025481,
+          "recordedDamage": 122507.7320535724,
           "foundAt": "2026-03-23T05:01:04.532Z",
           "algorithm": "v2",
           "solveTimeSec": 15.5358704
@@ -35532,7 +35532,7 @@
               "circlet": "artifact-28"
             }
           },
-          "recordedDamage": 140233.0594025481,
+          "recordedDamage": 122507.7320535724,
           "foundAt": "2026-03-23T07:23:34.392Z",
           "algorithm": "v2",
           "solveTimeSec": 17.447069300000003
@@ -35568,7 +35568,7 @@
               "circlet": "artifact-379"
             }
           },
-          "recordedDamage": 132270.03725246235,
+          "recordedDamage": 115060.49907074444,
           "foundAt": "2026-03-23T17:39:37.066Z",
           "algorithm": "v1"
         },
@@ -35603,7 +35603,7 @@
               "circlet": "artifact-1315"
             }
           },
-          "recordedDamage": 140233.0594025481,
+          "recordedDamage": 122507.7320535724,
           "foundAt": "2026-03-23T17:42:50.712Z",
           "algorithm": "astar"
         },
@@ -35638,7 +35638,7 @@
               "circlet": "artifact-320"
             }
           },
-          "recordedDamage": 140233.0594025481,
+          "recordedDamage": 122507.7320535724,
           "foundAt": "2026-03-25T21:22:23.245Z",
           "algorithm": "monaV2"
         },
@@ -35673,7 +35673,7 @@
               "circlet": "artifact-1099"
             }
           },
-          "recordedDamage": 133575.47052466925,
+          "recordedDamage": 116037.33301563346,
           "foundAt": "2026-03-25T21:50:18.023Z",
           "algorithm": "astar"
         }
@@ -35722,7 +35722,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 21271.521466413455,
+          "recordedDamage": 21301.06524622792,
           "foundAt": "2026-03-23T05:01:50.969Z",
           "algorithm": "v2",
           "solveTimeSec": 11.009112599999993
@@ -35758,7 +35758,7 @@
               "circlet": "artifact-1105"
             }
           },
-          "recordedDamage": 21271.521466413455,
+          "recordedDamage": 21301.06524622792,
           "foundAt": "2026-03-23T07:24:31.670Z",
           "algorithm": "v2",
           "solveTimeSec": 14.892153500000015
@@ -35794,7 +35794,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 21271.521466413455,
+          "recordedDamage": 21301.06524622792,
           "foundAt": "2026-03-23T16:20:59.194Z",
           "algorithm": "v2",
           "solveTimeSec": 0.6945933000000004
@@ -35830,7 +35830,7 @@
               "circlet": "artifact-379"
             }
           },
-          "recordedDamage": 18901.193551585737,
+          "recordedDamage": 18927.445209296275,
           "foundAt": "2026-03-23T17:40:47.613Z",
           "algorithm": "v1"
         },
@@ -35865,7 +35865,7 @@
               "circlet": "artifact-1105"
             }
           },
-          "recordedDamage": 19433.785719568605,
+          "recordedDamage": 19460.77708862356,
           "foundAt": "2026-03-23T17:43:26.245Z",
           "algorithm": "astar"
         },
@@ -35900,7 +35900,7 @@
               "circlet": "artifact-797"
             }
           },
-          "recordedDamage": 21271.521466413455,
+          "recordedDamage": 21301.06524622792,
           "foundAt": "2026-03-25T21:26:27.370Z",
           "algorithm": "monaV2"
         }
@@ -39185,7 +39185,7 @@
               "circlet": "artifact-398"
             }
           },
-          "recordedDamage": 17323802.298758395,
+          "recordedDamage": 10952198.630697297,
           "foundAt": "2026-03-25T20:47:27.485Z",
           "algorithm": "v2",
           "solveTimeSec": 2.7245824
@@ -39470,7 +39470,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 30214593.099774003,
+          "recordedDamage": 30403374.39420923,
           "foundAt": "2026-03-25T20:47:27.992Z",
           "algorithm": "v2",
           "solveTimeSec": 0.9169997999999996
@@ -39506,7 +39506,7 @@
               "circlet": "artifact-1326"
             }
           },
-          "recordedDamage": 30142855.37627126,
+          "recordedDamage": 30332266.988192204,
           "foundAt": "2026-03-25T21:19:07.575Z",
           "algorithm": "monaV2"
         }
@@ -42588,7 +42588,7 @@
               "circlet": "artifact-425"
             }
           },
-          "recordedDamage": 476765.1208610688,
+          "recordedDamage": 477270.48450770066,
           "foundAt": "2026-03-25T21:27:53.802Z",
           "algorithm": "monaV2"
         },
@@ -42623,7 +42623,7 @@
               "circlet": "artifact-425"
             }
           },
-          "recordedDamage": 460670.8576740508,
+          "recordedDamage": 461133.0941642032,
           "foundAt": "2026-03-25T21:56:09.377Z",
           "algorithm": "astar"
         }
@@ -44705,6 +44705,156 @@
           "recordedDamage": 3753760.504242892,
           "foundAt": "2026-03-25T21:28:58.655Z",
           "algorithm": "monaV2"
+        }
+      ]
+    },
+    "W408g301RCS53VAWT::varka-e": {
+      "teamId": "W408g301RCS53VAWT",
+      "teamName": "varka/durin/bennett/venti",
+      "characters": [
+        "varka",
+        "durin",
+        "bennett",
+        "venti"
+      ],
+      "carryCharId": "varka",
+      "formulaId": "varka-e",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "varka": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-876"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-350",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1105"
+            },
+            "venti": {
+              "flower": "artifact-877",
+              "plume": "artifact-1729",
+              "sands": "artifact-1369",
+              "goblet": "artifact-361",
+              "circlet": "artifact-399"
+            }
+          },
+          "recordedDamage": 781820.6821355759,
+          "foundAt": "2026-03-27T19:16:00.699Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.8584881
+        }
+      ]
+    },
+    "W408g301RCS53VAWT::varka-special-e": {
+      "teamId": "W408g301RCS53VAWT",
+      "teamName": "varka/durin/bennett/venti",
+      "characters": [
+        "varka",
+        "durin",
+        "bennett",
+        "venti"
+      ],
+      "carryCharId": "varka",
+      "formulaId": "varka-special-e",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "varka": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-876"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-350",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            },
+            "venti": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1394",
+              "circlet": "artifact-882"
+            }
+          },
+          "recordedDamage": 1846787.1945970578,
+          "foundAt": "2026-03-27T19:16:00.847Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0150624
+        }
+      ]
+    },
+    "W408g301RCS53VAWT::varka-special-ca": {
+      "teamId": "W408g301RCS53VAWT",
+      "teamName": "varka/durin/bennett/venti",
+      "characters": [
+        "varka",
+        "durin",
+        "bennett",
+        "venti"
+      ],
+      "carryCharId": "varka",
+      "formulaId": "varka-special-ca",
+      "solutions": [
+        {
+          "artifactAssignment": {
+            "varka": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-876"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-350",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            },
+            "venti": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1394",
+              "circlet": "artifact-882"
+            }
+          },
+          "recordedDamage": 1942768.7789047875,
+          "foundAt": "2026-03-27T19:16:00.844Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.0114443
         }
       ]
     }

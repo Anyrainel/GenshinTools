@@ -1434,19 +1434,7 @@ class Varka extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     // C1: Lyrical Libation — first Four Winds or Azure Devour deals 200% original DMG
-    // = baseDmg% +1.0 (doubles the damage), scoped to skill (Four Winds) and charge (Azure Devour)
-    if (this.constellation >= 1) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C1", ["E"]),
-          {
-            receiver: "selfOnField",
-            filter: { abilities: ["skill", "charge"] },
-          },
-          [{ key: "baseDmg%", value: 1.0 }]
-        )
-      );
-    }
+    // Modeled via bespokeBuff on dedicated C1 formula entries (not a global buff)
 
     // P1: Dawn Wind's March — per 1000 ATK, +10% Anemo DMG + priority element DMG, cap 25%
     // Only activates when PHEC characters are in the team (i.e., priorityElement exists)
@@ -1539,12 +1527,14 @@ class Varka extends CharacterBase {
     return buffs;
   })();
 
-  // Rotation: E > 2×N5 > 2×Four Winds > 2×Azure Devour > Q (Anemo carry)
   protected override get defaultCombo() {
     return {
+      "varka-e": 1,
       "varka-normal": 2,
-      "varka-four-winds": 2,
-      "varka-azure-devour": 2,
+      ...(this.constellation >= 1 ? { "varka-c1-special-e": 1 } : {}),
+      "varka-special-e": 2,
+      "varka-special-ca": this.constellation >= 6 ? 3 : 0,
+      ...(this.constellation >= 1 ? { "varka-c1-special-ca": 0 } : {}),
       "varka-burst": 0,
     };
   }
@@ -1555,10 +1545,12 @@ class Varka extends CharacterBase {
     const el = this.priorityElement ?? ("Anemo" as Element);
     const rightEl = el;
 
+    // ── Normal E tap: enters Sturm und Drang (E talent param1) ──
+    const eDmg = this.param("E", 1);
+
     // ── Sturm und Drang Normal Attack multipliers (E talent) ──
     // Each stage has two values: right hand (priority element) + left hand (Anemo)
     const sudN1Right = this.param("E", 3);
-    // Stage 1 is single-hit (only right hand — game data lists one multiplier)
     const sudN2Right = this.param("E", 5);
     const sudN2Left = this.param("E", 4);
     const sudN3Right = this.param("E", 7);
@@ -1604,77 +1596,99 @@ class Varka extends CharacterBase {
       reaction: "none" as const,
     });
 
+    // C1 bespokeBuff: +100% baseDmg% (200% original DMG, consumed on first special E or CA)
+    const c1Buff =
+      this.constellation >= 1
+        ? new StatBuff(
+            cbs(this, "C1", ["E"]),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["skill", "charge"] },
+            },
+            [{ key: "baseDmg%", value: 1.0 }]
+          )
+        : null;
+
     const formulas: Record<string, FormulaEntry> = {};
 
-    // ── 1. Sturm und Drang Normal Attacks (5 stages combined) ──
-    // Each stage: right hand (priority element or Anemo) + left hand (Anemo)
-    // Stage 1 is single-hit (only right hand listed as one multiplier)
-    const naParts: { formula: DirectFormula; hits?: number }[] = [];
+    // ── 0. Normal E tap: Anemo AoE entering Sturm und Drang ──
+    formulas["varka-e"] = {
+      label: { zh: "E", en: "E" },
+      parts: [{ formula: new DirectFormula(eDmg, skillTag("Anemo")) }],
+    };
 
+    // ── 1. Sturm und Drang Normal Attacks (5 stages combined) ──
+    const naParts: { formula: DirectFormula; hits?: number }[] = [];
     const rTag = normalTag(rightEl);
     const aTag = normalTag("Anemo");
 
-    // N1: single hit (right hand only per game data — 161.7%/196%)
+    // N1: single hit (right hand only)
     naParts.push({ formula: new DirectFormula(sudN1Right, rTag) });
-
-    // N2: right hand + left hand
+    // N2–N5: right hand + left hand
     naParts.push({ formula: new DirectFormula(sudN2Right, rTag) });
     naParts.push({ formula: new DirectFormula(sudN2Left, aTag) });
-
-    // N3: right hand + left hand
     naParts.push({ formula: new DirectFormula(sudN3Right, rTag) });
     naParts.push({ formula: new DirectFormula(sudN3Left, aTag) });
-
-    // N4: right hand + left hand
     naParts.push({ formula: new DirectFormula(sudN4Right, rTag) });
     naParts.push({ formula: new DirectFormula(sudN4Left, aTag) });
-
-    // N5: right hand + left hand
     naParts.push({ formula: new DirectFormula(sudN5Right, rTag) });
     naParts.push({ formula: new DirectFormula(sudN5Left, aTag) });
 
     formulas["varka-normal"] = {
-      label: { zh: "狂飙突进普攻5段", en: "SuD Normal ×5" },
+      label: { zh: "E后普攻5段", en: "E NA ×5" },
       parts: naParts,
     };
 
-    // ── 2. Four Winds' Ascension (only when PHEC teammate present) ──
+    // ── 2. Special E: Four Winds' Ascension (only when PHEC teammate present) ──
     if (this.priorityElement) {
       const fwParts: { formula: DirectFormula; hits?: number }[] = [
         { formula: new DirectFormula(fwRight, skillTag(el)) },
         { formula: new DirectFormula(fwLeft, skillTag("Anemo")) },
       ];
-      // C2: extra 800% ATK Anemo AoE hit
       if (this.constellation >= 2) {
         fwParts.push({ formula: new DirectFormula(c2Mult, skillTag("Anemo")) });
       }
-      formulas["varka-four-winds"] = {
-        label: { zh: "E四风将起", en: "E Four Winds' Ascension" },
+      formulas["varka-special-e"] = {
+        label: { zh: "特殊E", en: "Special E" },
         parts: fwParts,
       };
 
-      // ── 3. Azure Devour (only when PHEC teammate present) ──
-      // "特殊重击" — still classified as charge per S4 rule (no "不被视为重击伤害")
+      // C1 Special E: first use deals 200% original DMG
+      if (c1Buff) {
+        formulas["varka-c1-special-e"] = {
+          label: { zh: "C1特殊E", en: "C1 Special E" },
+          parts: fwParts.map((p) => ({ ...p, bespokeBuff: c1Buff })),
+        };
+      }
+
+      // ── 3. Special CA: Azure Devour ──
+      // "特殊重击" — classified as charge per S4 rule
       const azParts: { formula: DirectFormula; hits?: number }[] = [
         { formula: new DirectFormula(azRight, chargeTag(el)), hits: 2 },
         { formula: new DirectFormula(azLeft, chargeTag("Anemo")), hits: 2 },
       ];
-      // C2: extra 800% ATK Anemo AoE hit
       if (this.constellation >= 2) {
         azParts.push({
           formula: new DirectFormula(c2Mult, chargeTag("Anemo")),
         });
       }
-      formulas["varka-azure-devour"] = {
-        label: { zh: "E重击苍噬", en: "E Azure Devour" },
+      formulas["varka-special-ca"] = {
+        label: { zh: "E后特殊重击", en: "E Special CA" },
         parts: azParts,
       };
+
+      // C1 Special CA: first use deals 200% original DMG
+      if (c1Buff) {
+        formulas["varka-c1-special-ca"] = {
+          label: { zh: "C1特殊重击", en: "C1 Special CA" },
+          parts: azParts.map((p) => ({ ...p, bespokeBuff: c1Buff })),
+        };
+      }
     }
 
     // ── 4. Q: Northwind Avatar (2 hits) ──
-    // First hit uses priority element, second is always Anemo
     formulas["varka-burst"] = {
-      label: { zh: "Q我即朔风", en: "Q Northwind Avatar" },
+      label: { zh: "Q", en: "Q" },
       parts: [
         { formula: new DirectFormula(q1, burstTag(el)) },
         { formula: new DirectFormula(q2, burstTag("Anemo")) },
