@@ -66,22 +66,11 @@ class Skirk extends CharacterBase {
     3
   );
 
-  // P3: +1 E level when all party members are Hydro or Cryo (≥1 of each)
-  private readonly hasP3 = (() => {
-    const elements = Object.values(this.teamMeta.elements).filter(
-      (e) => e != null
-    );
-    return (
-      elements.length > 0 &&
-      elements.every((e) => e === "Hydro" || e === "Cryo") &&
-      elements.some((e) => e === "Hydro")
-    );
-  })();
+  // P3: +1 E level handled by CharacterBase._effectiveLevels via TeamMeta.talentPassiveBonuses()
 
   readonly buffs = (() => {
     const stacks = this.deathCrossingStacks;
     const riftCount = this.riftCount;
-    const hasC3 = this.constellation >= 3;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     // P2 死河渡断: Normal ATK baseDmg% (110%/120%/170% → +10%/+20%/+70%)
@@ -103,10 +92,13 @@ class Skirk extends CharacterBase {
     }
 
     // Q 凋尽 "All Shall Wither": per-NA-hit baseDmg% from Extinction rift absorption
-    // 0/1/2/3 rifts at Lv10: 8%/12%/16%/20%, Lv13 (C3+): 9.5%/13.8%/18.4%/23%
-    const witherPct = hasC3
-      ? [0.095, 0.138, 0.184, 0.23][riftCount]
-      : [0.08, 0.12, 0.16, 0.2][riftCount];
+    // Q params 4-7: 0/1/2/3 rift absorption DMG bonus
+    const witherPct = [
+      this.param("Q", 4),
+      this.param("Q", 5),
+      this.param("Q", 6),
+      this.param("Q", 7),
+    ][riftCount];
     // "All Shall Wither" fires on each NA hit, canceled after 10 triggers
     // Self buff → modeled via formula hit counts, not maxStacks.
     buffs.push(
@@ -127,7 +119,7 @@ class Skirk extends CharacterBase {
       subtletyCap
     );
     if (subtletyBonusPts > 0) {
-      const subtletyPerPt = hasC3 ? 0.4106 : 0.3478;
+      const subtletyPerPt = this.param("Q", 3);
       buffs.push(
         new ScalingBuff(
           cbs(this, this.constellation >= 2 ? "Q/C2" : "Q", ["Q"]),
@@ -169,19 +161,15 @@ class Skirk extends CharacterBase {
   // E CA: 88.1×3/94.3×3/106.7×3/112.9×3
   // Q Burst: 5×slash + final slash
   protected readonly formulaMap = (() => {
-    const hasC5 = this.constellation >= 5;
-    const hasC3 = this.constellation >= 3;
-    const p3 = this.hasP3;
     const riftCount = this.riftCount;
-    // E level: base 10 (C5→13) + 1 if P3 active
-    const n1 = hasC5 ? (p3 ? 3.367 : 3.182) : p3 ? 2.811 : 2.626;
-    const n2 = hasC5 ? (p3 ? 3.037 : 2.87) : p3 ? 2.535 : 2.368;
-    const n3 = hasC5 ? (p3 ? 1.919 : 1.814) : p3 ? 1.603 : 1.497;
-    const n4 = hasC5 ? (p3 ? 2.042 : 1.929) : p3 ? 1.704 : 1.592;
-    const n5 = hasC5 ? (p3 ? 4.984 : 4.71) : p3 ? 4.161 : 3.887;
-    const caHit = hasC5 ? (p3 ? 1.129 : 1.067) : p3 ? 0.943 : 0.881;
-    const qSlash = hasC3 ? 2.609 : 2.21;
-    const qFinal = hasC3 ? 4.348 : 3.683;
+    const n1 = this.param("E", 1);
+    const n2 = this.param("E", 2);
+    const n3 = this.param("E", 3); // ×2 hits (param3 === param4)
+    const n4 = this.param("E", 5); // ×2 hits (param5 === param6)
+    const n5 = this.param("E", 7);
+    const caHit = this.param("E", 8); // ×3 hits
+    const qSlash = this.param("Q", 1);
+    const qFinal = this.param("Q", 2);
     const cryoNormal = {
       element: "Cryo" as const,
       ability: "normal" as const,

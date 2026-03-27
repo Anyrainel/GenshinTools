@@ -105,12 +105,12 @@ class ShikanoinHeizou extends CharacterBase {
     return { "heizou-skill": 2, "heizou-burst": 1 };
   }
 
-  // E max stacks (Lv10): 409.5% + 4*102.4% + 204.8% = 1023.9%
-  // E max (Lv13 C3+): 483.5% + 4*120.9% + 241.7% = 1208.8%
-  // Q (Lv10): 566.4%, Q (Lv13 C5+): 668.7%
+  // E max stacks: param1 + 4*param2 + param3
+  // Q: param1
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 12.088 : 10.239;
-    const qMult = this.constellation >= 5 ? 6.687 : 5.664;
+    const eMult =
+      this.param("E", 1) + 4 * this.param("E", 2) + this.param("E", 3);
+    const qMult = this.param("Q", 1);
     return {
       "heizou-skill": {
         label: { zh: "E(正论)", en: "E (Full Conviction)" },
@@ -192,11 +192,10 @@ class KukiShinobu extends CharacterBase {
     };
   }
 
-  // Q: Single hit 6.5%/7.7% HP
+  // Q: Single hit param1 % HP
   // HP ≥ 50%: normal duration → 7 hits; HP ≤ 50%: extended duration → 12 hits
-  // Lv13 (C5+) single hit 7.7% HP
   protected readonly formulaMap = (() => {
-    const qHitMult = this.constellation >= 5 ? 0.077 : 0.065;
+    const qHitMult = this.param("Q", 1);
     const qHits = this.hpState === "high" ? 7 : 12;
     const canHyperbloom = this.teamMeta.hasReaction("hyperbloom");
     return {
@@ -289,8 +288,8 @@ class Sayu extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    // Muji-Muji Daruma DMG: Lv10 = 94%, Lv13 (C3+) = 110%
-    const darumaScaling = this.constellation >= 3 ? 1.1 : 0.94;
+    // Muji-Muji Daruma DMG: Q param4
+    const darumaScaling = this.param("Q", 4);
     return {
       "sayu-daruma": {
         label: { zh: "Q达摩", en: "Q Daruma" },
@@ -333,10 +332,9 @@ class Thoma extends CharacterBase {
     return { "thoma-burst-collapse": 15 };
   }
 
-  // Q Fiery Collapse Lv10: 104% ATK + 2.2% HP (P2)
-  // Lv13 (C5+): 123% ATK + 2.2% HP
+  // Q Fiery Collapse: Q param2 ATK + 2.2% HP (P2)
   protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 5 ? 1.23 : 1.04;
+    const qMult = this.param("Q", 2);
     return {
       "thoma-burst-collapse": {
         label: { zh: "Q崩破", en: "Q Collapse" },
@@ -362,8 +360,8 @@ class Gorou extends CharacterBase {
 
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
-    // E/Q: flat DEF — Lv10 371, Lv13 (C3+) 438
-    const defFlat = this.constellation >= 3 ? 438 : 371;
+    // E/Q: flat DEF — E param2
+    const defFlat = this.param("E", 2);
     buffs.push(
       new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "teamOnField" }, [
         { key: "def", value: defFlat },
@@ -406,9 +404,9 @@ class Gorou extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 2.281 : 1.931;
-    const qMult = this.constellation >= 5 ? 2.089 : 1.77;
-    const ccMult = this.constellation >= 5 ? 1.303 : 1.104;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
+    const ccMult = this.param("Q", 2);
     const eTag = {
       element: "Geo" as const,
       ability: "skill" as const,
@@ -479,15 +477,14 @@ class Gorou extends CharacterBase {
 @RegisterCharacter("kujou_sara")
 class KujouSara extends CharacterBase {
   readonly buffs = [
-    // E/Q: ATK bonus = 77%/91% of Sara's Base ATK to active character
-    // C5 boosts E talent → Lv13 ratio 91%
+    // E/Q: ATK bonus = E param2 of Sara's Base ATK to active character
     new ScalingBuff(
       cbs(this, "E", ["E", "Q"]),
       { receiver: "teamOnField" },
       [],
       "baseAtk",
       "atk",
-      this.constellation >= 5 ? 0.91 : 0.77
+      this.param("E", 2)
     ),
     // C6: Buffed characters gain +60% Electro CRIT DMG
     ...(this.constellation >= 6
@@ -506,10 +503,10 @@ class KujouSara extends CharacterBase {
     return { "sara-burst": 1 };
   }
 
-  // Q Titanbreaker: Lv10 737.3%, Lv13 (C3+) 870.4% + 4×61.4%/72.5% Stormcluster (C4: 6×)
+  // Q Titanbreaker: Q param1 + Stormcluster Q param2 (C4: 6×)
   protected readonly formulaMap = (() => {
-    const titanMult = this.constellation >= 3 ? 8.704 : 7.373;
-    const clusterMult = this.constellation >= 3 ? 0.725 : 0.614;
+    const titanMult = this.param("Q", 1);
+    const clusterMult = this.param("Q", 2);
     const clusterCount = this.constellation >= 4 ? 6 : 4;
     return {
       "sara-burst": {

@@ -26,6 +26,7 @@ import type {
   WeightedSubStat,
 } from "@/data/types";
 import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
+import { MULTI_ELEMENT_CHARS } from "@/lib/team-comp/constants";
 import {
   buildSheetFromMainAndSubs,
   emptySubRolls,
@@ -436,7 +437,12 @@ export type AutoTuneTeamResult = {
 export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
   const { characterId, configs, opts, element, label, teamIndex } = input;
 
-  const gobletCandidates = getGobletPool(element as Element);
+  // Multi-element characters (Varka, Chasca) deal damage in converted elements
+  // (e.g. Pyro from teammates), so the full goblet pool is needed to evaluate
+  // all relevant elemental DMG% options — not just the character's own element.
+  const gobletCandidates = MULTI_ELEMENT_CHARS.has(characterId)
+    ? statPools.goblet
+    : getGobletPool(element as Element);
   const teamBuild = new TeamBuild(configs, opts);
 
   let formulas: WeightedFormula[];
@@ -591,7 +597,9 @@ export function aggregateTeamResults(
   characterId: string,
   element: string
 ): AutoTuneOutput {
-  const gobletCandidates = getGobletPool(element as Element);
+  const gobletCandidates = MULTI_ELEMENT_CHARS.has(characterId)
+    ? statPools.goblet
+    : getGobletPool(element as Element);
   const allQualifying: ComboResult[] = [];
   const teamBreakdowns: TeamBreakdown[] = [];
 

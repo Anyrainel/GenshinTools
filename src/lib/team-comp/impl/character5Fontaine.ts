@@ -7,19 +7,7 @@ import { cbs } from "../helpers";
 // 5★ Fontaine Characters
 // ═══════════════════════════════════════════════════════════════
 
-// Skirk P3 "Mutual Weapons Mentorship": when all party members are Hydro/Cryo
-// (at least 1 Hydro) and Skirk is on the team, E skill level +1 for all members.
-function hasSkirkP3(tm: import("../damageModels").TeamMeta): boolean {
-  if (!tm.characters.includes("skirk")) return false;
-  const elements = Object.values(tm.elements).filter(
-    (e): e is NonNullable<typeof e> => e != null
-  );
-  return (
-    elements.length > 0 &&
-    elements.every((e) => e === "Hydro" || e === "Cryo") &&
-    elements.some((e) => e === "Hydro")
-  );
-}
+// Skirk P3 / Tartaglia P3 talent level bonuses handled by CharacterBase._effectiveLevels
 
 @RegisterCharacter("escoffier")
 class Escoffier extends CharacterBase {
@@ -71,19 +59,12 @@ class Escoffier extends CharacterBase {
     return buffs;
   })();
 
-  // E: Skill cast Lv10: 90.7%, Lv11: 95.8%, Lv13 (C3+): 107.1%, Lv14: 113.4%
-  // E: Parfait Lv10: 216%, Lv11: 228%, Lv13 (C3+): 255%, Lv14: 270%
-  // Skirk P3 gives E+1: Lv10→11, Lv13→14
-  // Q: Scoring Cuts Lv10: 1067.0%, Lv13 (C5+): 1259.7%
-  // C6: Special-Grade Frosty Parfait 500% ATK, triggered by active NA/CA/Plunge,
-  //     max 6× per Cold Storage mode duration.
+  // E param1: Skill DMG, E param2: Parfait DMG
+  // Skirk P3 E+1 handled by CharacterBase._effectiveLevels
   protected readonly formulaMap = (() => {
-    const p3 = hasSkirkP3(this.teamMeta);
-    const skillCastMult =
-      this.constellation >= 3 ? (p3 ? 1.134 : 1.071) : p3 ? 0.958 : 0.907;
-    const parfaitMult =
-      this.constellation >= 3 ? (p3 ? 2.7 : 2.55) : p3 ? 2.28 : 2.16;
-    const qMult = this.constellation >= 5 ? 12.597 : 10.67;
+    const skillCastMult = this.param("E", 1);
+    const parfaitMult = this.param("E", 2);
+    const qMult = this.param("Q", 1);
     const skillTag = {
       element: "Cryo" as const,
       ability: "skill" as const,
@@ -217,39 +198,20 @@ class Emilie extends CharacterBase {
   // P1 Cleardew Cologne: 600% ATK (not skill DMG), fires every 2 scent collections
   // Q Lv3 Case: 391.0% (Lv10), 461.6% (Lv13 C5+), ~4 drops over 2.8s
   protected readonly formulaMap = (() => {
-    const lv2ShotMult = this.constellation >= 3 ? 1.785 : 1.512;
-    const qMult = this.constellation >= 5 ? 4.616 : 3.91;
+    const lv2ShotMult = this.param("E", 3);
+    const qMult = this.param("Q", 1);
     const hasPyro = this.teamMeta.countByElement("Pyro") > 0;
 
+    const normalTag = {
+      element: "Dendro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
     const normalParts = [
-      {
-        formula: new DirectFormula(0.96, {
-          element: "Dendro",
-          ability: "normal",
-          reaction: "none",
-        }),
-      },
-      {
-        formula: new DirectFormula(0.887, {
-          element: "Dendro",
-          ability: "normal",
-          reaction: "none",
-        }),
-      },
-      {
-        formula: new DirectFormula(1.172, {
-          element: "Dendro",
-          ability: "normal",
-          reaction: "none",
-        }),
-      },
-      {
-        formula: new DirectFormula(1.485, {
-          element: "Dendro",
-          ability: "normal",
-          reaction: "none",
-        }),
-      },
+      { formula: new DirectFormula(this.param("A", 1), normalTag) },
+      { formula: new DirectFormula(this.param("A", 2), normalTag) },
+      { formula: new DirectFormula(this.param("A", 3), normalTag) },
+      { formula: new DirectFormula(this.param("A", 4), normalTag) },
     ];
 
     return {
@@ -382,7 +344,7 @@ class Sigewinne extends CharacterBase {
 
   // Q: Super Saturated Syringing Lv10: 21.2% HP, Lv13 (C5+): 25.0% HP
   protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 5 ? 0.25 : 0.212;
+    const qMult = this.param("Q", 1);
     return {
       "sigewinne-burst": {
         label: { zh: "Q伤害×6", en: "Q (×6)" },
@@ -467,11 +429,11 @@ class Clorinde extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Q Last Lightfall: Lv10 228.4%×5, Lv13 (C5+) 269.6%×5
-    const qMult = this.constellation >= 5 ? 2.696 : 2.284;
-    // Swift Hunt rotation: 3× piercing shot (76.7%) + Impale Pact (49.6%×3)
-    const swiftMult = this.constellation >= 3 ? 0.929 : 0.767;
-    const impaleMult = this.constellation >= 3 ? 0.602 : 0.496;
+    // Q Last Lightfall: param1 ×5
+    const qMult = this.param("Q", 1);
+    // Swift Hunt rotation: 3× piercing shot (E param2) + Impale Pact (E param7 ×3)
+    const swiftMult = this.param("E", 2);
+    const impaleMult = this.param("E", 7);
 
     const normalBaseTag = {
       element: "Electro" as const,
@@ -593,7 +555,7 @@ class Navia extends CharacterBase {
   // E (6 shrapnel): Lv10 710.6%, Lv13 (C3+) 839.0%
   // "200% of original" and "+45% per extra shard" modeled as baseDmg%/dmg% buffs above
   protected readonly formulaMap = (() => {
-    const baseMult = this.constellation >= 3 ? 8.39 : 7.106;
+    const baseMult = this.param("E", 1);
     return {
       "navia-crystalshot": {
         label: { zh: "E伤害", en: "E" },
@@ -639,7 +601,7 @@ class Furina extends CharacterBase {
         cbs(this, "Q", ["Q"]),
         { receiver: "team" },
         (() => {
-          const perStack = this.constellation >= 3 ? 0.0031 : 0.0025;
+          const perStack = this.param("Q", 5);
           const avgStacks = this.constellation >= 1 ? 350 : 250;
           return [{ key: "dmg%", value: perStack * avgStacks }];
         })()
@@ -708,25 +670,11 @@ class Furina extends CharacterBase {
   // Surintendante Chevalmarin (海薇玛夫人): 18 hits
   // Mademoiselle Crabaletta (谢贝蕾妲小姐): 5 hits
   // ×1.4 power bonus (4 healthy members) → baseDmg% +0.4 (in buffs above)
-  // Skirk P3 gives E+1: Lv10→11, Lv13→14
+  // Salon member multipliers — Skirk P3 E+1 handled by CharacterBase._effectiveLevels
   protected readonly formulaMap = (() => {
-    const isE13 = this.constellation >= 5;
-    const p3 = hasSkirkP3(this.teamMeta);
-    const usherMult = isE13 ? (p3 ? 0.1341 : 0.1267) : p3 ? 0.1132 : 0.1073;
-    const chevalmarinMult = isE13
-      ? p3
-        ? 0.0727
-        : 0.0687
-      : p3
-        ? 0.0614
-        : 0.0582;
-    const crabalettaMult = isE13
-      ? p3
-        ? 0.1865
-        : 0.1761
-      : p3
-        ? 0.1575
-        : 0.1492;
+    const usherMult = this.param("E", 3);
+    const chevalmarinMult = this.param("E", 4);
+    const crabalettaMult = this.param("E", 5);
     const hydroTag = {
       element: "Hydro" as const,
       ability: "skill" as const,
@@ -775,16 +723,16 @@ class Furina extends CharacterBase {
               },
               parts: [
                 {
-                  formula: new DirectFormula(0.956, c6HydroTag),
+                  formula: new DirectFormula(this.param("A", 1), c6HydroTag),
                 },
                 {
-                  formula: new DirectFormula(0.864, c6HydroTag),
+                  formula: new DirectFormula(this.param("A", 2), c6HydroTag),
                 },
                 {
-                  formula: new DirectFormula(1.09, c6HydroTag),
+                  formula: new DirectFormula(this.param("A", 3), c6HydroTag),
                 },
                 {
-                  formula: new DirectFormula(1.449, c6HydroTag),
+                  formula: new DirectFormula(this.param("A", 4), c6HydroTag),
                 },
               ],
             },
@@ -866,7 +814,7 @@ class Neuvillette extends CharacterBase {
   //     counts as Equitable Judgment DMG (ability: "charge"). Base duration 3s;
   //     absorbing 3 droplets from E extends to 6s → 3 firings × 2 currents = 6 hits.
   protected readonly formulaMap = (() => {
-    const tickMult = this.constellation >= 3 ? 0.1753 : 0.1447;
+    const tickMult = this.param("A", 5);
     const chargeTag = {
       element: "Hydro" as const,
       ability: "charge" as const,
@@ -984,16 +932,15 @@ class Wriothesley extends CharacterBase {
   // Q Burst (Lv10): 5 × 228.96% + Surging Blade 76.32%
   // Q Burst (Lv13 C5+): 5 × 270.30% + Surging Blade 90.10%
   protected readonly formulaMap = (() => {
-    const isC3 = this.constellation >= 3;
-    const n1 = isC3 ? 1.278 : 1.055;
-    const n2 = isC3 ? 1.241 : 1.024;
-    const n3 = isC3 ? 1.61 : 1.329;
-    const n4 = isC3 ? 0.908 : 0.749;
-    const n5 = isC3 ? 2.174 : 1.794;
-    const cMult = isC3 ? 3.25 : 2.753;
+    const n1 = this.param("A", 1);
+    const n2 = this.param("A", 2);
+    const n3 = this.param("A", 3);
+    const n4 = this.param("A", 4);
+    const n5 = this.param("A", 6);
+    const cMult = this.param("A", 7);
     const cHits = this.constellation >= 6 ? 2 : 1; // C6: additional icicle at 100% base DMG
-    const qHitMult = this.constellation >= 5 ? 2.703 : 2.2896;
-    const qBladeMult = this.constellation >= 5 ? 0.901 : 0.7632;
+    const qHitMult = this.param("Q", 1);
+    const qBladeMult = this.param("Q", 2);
 
     const normalTag = {
       element: "Cryo" as const,
@@ -1096,8 +1043,8 @@ class Lyney extends CharacterBase {
 
   // Prop Arrow: Lv10 311.0%, Lv13 (C3+) 367.2% (C3 boosts Normal talent)
   protected readonly formulaMap = (() => {
-    const propMult = this.constellation >= 3 ? 3.672 : 3.11;
-    const strikeMult = this.constellation >= 3 ? 4.505 : 3.816;
+    const propMult = this.param("A", 11);
+    const strikeMult = this.param("A", 15);
     // P1: Perilous Performance → Pyrotechnic Strike gains flat baseDmg = 80% ATK
     const p1Buff = new ScalingBuff(
       cbs(this, "P1", ["charge"]),
@@ -1107,10 +1054,10 @@ class Lyney extends CharacterBase {
       "baseDmg",
       0.8
     );
-    // E has no constellation level boost (C3=Normal, C5=Q), always use Lv10
-    const eMult = 3.01 + 0.958 * 5;
+    // E has no constellation level boost (C3=Normal, C5=Q)
+    const eMult = this.param("E", 1) + this.param("E", 2) * 5;
 
-    const c6StrikeMult = this.constellation >= 3 ? 3.604 : 3.0528;
+    const c6StrikeMult = strikeMult * 0.8;
 
     return {
       "lyney-prop": {

@@ -60,7 +60,7 @@ class Illuga extends CharacterBase {
         [],
         "em",
         "baseDmg",
-        this.constellation >= 3 ? 0.714 : 0.605
+        this.param("Q", 3)
       ),
       // Q: Nightingale's Song — LunarCrystallize tier EM → baseDmg (replaces Geo tier above)
       // Lv10: 406.7% EM, Lv13 (C3+): 480.1% EM
@@ -77,7 +77,7 @@ class Illuga extends CharacterBase {
         [],
         "em",
         "baseDmg",
-        this.constellation >= 3 ? 4.801 : 4.067
+        this.param("Q", 4)
       ),
     ];
     // P2: Hydro/Geo count enhances Nightingale's Song (either/or with LC tier below)
@@ -146,14 +146,12 @@ class Illuga extends CharacterBase {
   // C2: Aedon summon per 7 Nightingale's Song stacks consumed
   // 400% EM + 200% DEF, Geo Burst DMG
   protected readonly formulaMap = (() => {
-    const isE15 = this.constellation >= 5;
-    const isQ15 = this.constellation >= 3;
-    const ePressEmMult = isE15 ? 10.25 : 8.69;
-    const ePressDefMult = isE15 ? 5.13 : 4.34;
-    const eHoldEmMult = isE15 ? 12.82 : 10.86;
-    const eHoldDefMult = isE15 ? 6.41 : 5.43;
-    const qEmMult = isQ15 ? 17.58 : 14.89;
-    const qDefMult = isQ15 ? 8.79 : 7.44;
+    const ePressEmMult = this.param("E", 1);
+    const ePressDefMult = this.param("E", 2);
+    const eHoldEmMult = this.param("E", 3);
+    const eHoldDefMult = this.param("E", 4);
+    const qEmMult = this.param("Q", 1);
+    const qDefMult = this.param("Q", 2);
     return {
       "illuga-skill-press": {
         label: { zh: "E点按", en: "E Press" },
@@ -301,9 +299,9 @@ class Aino extends CharacterBase {
   // Q: Water Ball DMG Lv10: 36.2%, Lv13 (C3+): 42.7%
   // ~14 hits over 14s duration
   protected readonly formulaMap = (() => {
-    const eStage1 = this.constellation >= 5 ? 1.394 : 1.181;
-    const eStage2 = this.constellation >= 5 ? 4.012 : 3.398;
-    const qMult = this.constellation >= 3 ? 0.427 : 0.362;
+    const eStage1 = this.param("E", 1);
+    const eStage2 = this.param("E", 2);
+    const qMult = this.param("Q", 1);
     return {
       "aino-skill": {
         label: { zh: "E伤害", en: "E DMG" },

@@ -92,6 +92,12 @@ const ARTIFACT_SKIP_SET = new Set([
   "luckydog",
   "travelingdoctor",
   "tinymiracle",
+  // 1-piece prayer sets (circlet-only, no useful 2pc effect)
+  "prayersfordestiny",
+  "prayersforillumination",
+  "prayersforwisdom",
+  "prayerstospringtime",
+  "prayerstothefirmament",
 ]);
 
 // Build Reverse Maps

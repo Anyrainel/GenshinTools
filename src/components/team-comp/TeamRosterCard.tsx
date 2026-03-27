@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
+import { charInfo } from "@/data/charInfo";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { AccountData, CharacterData, WeaponResource } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -365,6 +366,31 @@ export function TeamRosterCard({
                 ? Number(team.opts[`${charId}.overrideRefinement`])
                 : defaultRefine;
 
+            // Talent levels: from override → account data → default 10
+            const info = charInfo[charId];
+            const talentAuto =
+              team.opts?.[`${charId}.overrideTalentAuto`] !== undefined &&
+              team.opts[`${charId}.overrideTalentAuto`] !== ""
+                ? Number(team.opts[`${charId}.overrideTalentAuto`])
+                : (acctChar?.talent?.auto ?? 10);
+            const talentSkill =
+              team.opts?.[`${charId}.overrideTalentSkill`] !== undefined &&
+              team.opts[`${charId}.overrideTalentSkill`] !== ""
+                ? Number(team.opts[`${charId}.overrideTalentSkill`])
+                : (acctChar?.talent?.skill ?? 10);
+            const talentBurst =
+              team.opts?.[`${charId}.overrideTalentBurst`] !== undefined &&
+              team.opts[`${charId}.overrideTalentBurst`] !== ""
+                ? Number(team.opts[`${charId}.overrideTalentBurst`])
+                : (acctChar?.talent?.burst ?? 10);
+
+            // Determine which talents get +3 from constellations
+            const c3Bonus = info && charConst >= 3 ? info.c3Talent : null;
+            const c5Bonus = info && charConst >= 5 ? info.c5Talent : null;
+            const autoHasBonus = c3Bonus === "A" || c5Bonus === "A";
+            const skillHasBonus = c3Bonus === "E" || c5Bonus === "E";
+            const burstHasBonus = c3Bonus === "Q" || c5Bonus === "Q";
+
             const isCharFrozen = frozenCharIds?.has(charId) ?? false;
 
             return (
@@ -600,69 +626,141 @@ export function TeamRosterCard({
                   </div>
                 </div>
 
-                {/* Row 3: Overrides */}
-                <div className="flex items-center justify-between bg-black/10 rounded-md border border-border/30 gap-1 px-1 py-0.5 lg:px-2 lg:py-1">
-                  <div className="w-full shrink pr-0.5">
-                    <Select
-                      value={String(charLevel)}
-                      onValueChange={(v) =>
-                        handleOptionChange(`${charId}.overrideLevel`, v)
-                      }
-                    >
-                      <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CHARACTER_LEVEL_TIERS.map((tier) => (
-                          <SelectItem key={tier} value={tier}>
-                            Lv. {tier}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="w-full shrink px-0.5 border-l border-border/20">
-                    <Select
-                      value={String(charConst)}
-                      onValueChange={(v) =>
-                        handleOptionChange(`${charId}.overrideConstellation`, v)
-                      }
-                    >
-                      <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[0, 1, 2, 3, 4, 5, 6].map((c) => (
-                          <SelectItem key={c} value={String(c)}>
-                            {t.format("common.constellationFormat", c)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {weaponId && (
-                    <div className="w-full shrink pl-0.5 border-l border-border/20">
+                {/* Rows 3-4: Level/Constellation/Refinement + Talent overrides */}
+                <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 lg:px-2 lg:py-1">
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="w-full shrink pr-0.5">
                       <Select
-                        value={String(weaponRefine)}
+                        value={String(charLevel)}
                         onValueChange={(v) =>
-                          handleOptionChange(`${charId}.overrideRefinement`, v)
+                          handleOptionChange(`${charId}.overrideLevel`, v)
                         }
                       >
                         <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {[1, 2, 3, 4, 5].map((r) => (
-                            <SelectItem key={r} value={String(r)}>
-                              {t.format("common.refinementFormat", r)}
+                          {CHARACTER_LEVEL_TIERS.map((tier) => (
+                            <SelectItem key={tier} value={tier}>
+                              Lv. {tier}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
-                  )}
+
+                    <div className="w-full shrink px-0.5 border-l border-border/20">
+                      <Select
+                        value={String(charConst)}
+                        onValueChange={(v) =>
+                          handleOptionChange(
+                            `${charId}.overrideConstellation`,
+                            v
+                          )
+                        }
+                      >
+                        <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[0, 1, 2, 3, 4, 5, 6].map((c) => (
+                            <SelectItem key={c} value={String(c)}>
+                              {t.format("common.constellationFormat", c)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {weaponId && (
+                      <div className="w-full shrink pl-0.5 border-l border-border/20">
+                        <Select
+                          value={String(weaponRefine)}
+                          onValueChange={(v) =>
+                            handleOptionChange(
+                              `${charId}.overrideRefinement`,
+                              v
+                            )
+                          }
+                        >
+                          <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[1, 2, 3, 4, 5].map((r) => (
+                              <SelectItem key={r} value={String(r)}>
+                                {t.format("common.refinementFormat", r)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-1 border-t border-border/20 pt-0.5">
+                    {(
+                      [
+                        [
+                          { zh: "普攻", en: "Attack" },
+                          talentAuto,
+                          autoHasBonus,
+                          `${charId}.overrideTalentAuto`,
+                        ],
+                        [
+                          { zh: "战技", en: "Skill" },
+                          talentSkill,
+                          skillHasBonus,
+                          `${charId}.overrideTalentSkill`,
+                        ],
+                        [
+                          { zh: "爆发", en: "Burst" },
+                          talentBurst,
+                          burstHasBonus,
+                          `${charId}.overrideTalentBurst`,
+                        ],
+                      ] as [
+                        { zh: string; en: string },
+                        number,
+                        boolean,
+                        string,
+                      ][]
+                    ).map(([label, value, hasBonus, optKey], idx) => (
+                      <div
+                        key={optKey}
+                        className={cn(
+                          "w-full shrink",
+                          idx === 0
+                            ? "pr-0.5"
+                            : idx === 1
+                              ? "px-0.5 border-l border-border/20"
+                              : "pl-0.5 border-l border-border/20"
+                        )}
+                      >
+                        <Select
+                          value={String(value)}
+                          onValueChange={(v) => handleOptionChange(optKey, v)}
+                        >
+                          <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                            <SelectValue>
+                              {t.resolveLabel(label)}:{" "}
+                              {value + (hasBonus ? 3 : 0)}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 10 }, (_, k) => k + 1).map(
+                              (lv) => (
+                                <SelectItem key={lv} value={String(lv)}>
+                                  {t.resolveLabel(label)}: {lv}
+                                  {hasBonus ? "+3" : ""}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Per-character combat options */}

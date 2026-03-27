@@ -30,6 +30,8 @@ export type CharacterStats = {
   region: Region;
   releaseDate: string;
   levels: Partial<Record<CharacterLevelTier, CharacterLevelStats>>;
+  /** Talent param arrays: [level_index][param_index]. 15 levels (Lv1–Lv15). */
+  talent?: Partial<Record<"A" | "E" | "Q", number[][]>>;
 };
 
 export type CharacterStatsMap = Record<string, CharacterStats>;
@@ -266,4 +268,28 @@ export function resolveWeaponStats(weaponId: string): StatEntry[] {
     });
   }
   return entries;
+}
+
+// ─── Talent Param Accessor ───
+
+/** Get raw talent param value for a character. Requires game stats preloaded. */
+export function getTalentParam(
+  charId: string,
+  skill: "A" | "E" | "Q",
+  levelIndex: number,
+  paramIndex: number
+): number {
+  const statsData = getCharacterStatsSync();
+  if (!statsData)
+    throw new Error(
+      "Character stats not loaded; call preloadGameStats() first."
+    );
+  const entry = statsData[charId];
+  if (!entry) throw new Error(`No character stats for: ${charId}`);
+  const talentData = entry.talent?.[skill];
+  if (!talentData) throw new Error(`No talent data for ${charId}.${skill}`);
+  const levelRow = talentData[levelIndex];
+  if (!levelRow)
+    throw new Error(`No talent level ${levelIndex} for ${charId}.${skill}`);
+  return levelRow[paramIndex] ?? 0;
 }

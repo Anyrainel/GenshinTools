@@ -62,9 +62,9 @@ class Varesa extends CharacterBase {
   // Volcano Kablam (Lv10): 724.8%
   // Volcano Kablam (Lv13 C3+): 855.6%
   protected readonly formulaMap = (() => {
-    const kickMult = this.constellation >= 3 ? 7.334 : 6.212;
-    const naMult = this.constellation >= 5 ? 6.69 : 5.52;
-    const qMult = this.constellation >= 3 ? 8.556 : 7.248;
+    const kickMult = this.param("Q", 1);
+    const naMult = this.param("A", 16);
+    const qMult = this.param("Q", 5);
     return {
       "varesa-kick": {
         label: { zh: "Q飞踢", en: "Q Flying Kick" },
@@ -266,15 +266,15 @@ class Citlali extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // E Frostfall Storm: Lv10 30.6%, Lv13 (C3+) 36.2%
-    const eStormMult = this.constellation >= 3 ? 0.362 : 0.306;
+    const eStormMult = this.param("E", 5);
     // Frostfall Storm ticks (1/s): C0-C3 ~12s, C4-C5 ~16s (C4 skull
     // returns 16 Nightsoul pts every 8s), C6 20s (storm never stops)
     const eHits =
       this.constellation >= 6 ? 20 : this.constellation >= 4 ? 16 : 12;
     // Q Ice Storm: Lv10 967.7%, Lv13 (C5+) 1142.4%
-    const qMult = this.constellation >= 5 ? 11.424 : 9.677;
+    const qMult = this.param("Q", 1);
     // Q Spiritvessel Skull (guaranteed, 1 per target): Lv10 241.9%, Lv13 (C5+) 285.6%
-    const qSkullMult = this.constellation >= 5 ? 2.856 : 2.419;
+    const qSkullMult = this.param("Q", 2);
     const skillTag = {
       element: "Cryo" as const,
       ability: "skill" as const,
@@ -286,7 +286,7 @@ class Citlali extends CharacterBase {
       reaction: "none" as const,
     };
     // E Obsidian Tzitzimitl initial hit: Lv10 131.3%, Lv13 (C3+) 155%
-    const eInitMult = this.constellation >= 3 ? 1.55 : 1.313;
+    const eInitMult = this.param("E", 1);
     const c4Skulls = this.constellation >= 6 ? 3 : 2;
     const c4Prefix = this.constellation >= 4 ? "C4 " : "";
     const c4Zh = this.constellation >= 4 ? "4命 " : "";
@@ -348,7 +348,6 @@ class Citlali extends CharacterBase {
 @RegisterCharacter("mavuika")
 class Mavuika extends CharacterBase {
   readonly buffs = (() => {
-    const qLvl = this.constellation >= 3 ? 13 : 10;
     const buffs: StatBuff[] = [
       // P1: After nearby party member triggers Nightsoul Burst, Mavuika's ATK +30%
       new StatBuff(cbs(this, "P1", ["nightsoul-burst"]), { receiver: "self" }, [
@@ -362,32 +361,32 @@ class Mavuika extends CharacterBase {
           value: this.constellation >= 4 ? 0.5 : 0.4,
         },
       ]),
-      // Q: FS bonus to Sunfell Slice (200 × 2.9%/3.4% ATK, scales with Q talent)
+      // Q: FS bonus to Sunfell Slice (200 × param3 ATK, scales with Q talent)
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["burst"] } },
         [],
         "atk",
         "baseDmg",
-        qLvl === 13 ? 6.8 : 5.8
+        200 * this.param("Q", 3)
       ),
-      // Q: FS bonus to Flamestrider Normal Attacks (200 × 0.51%/0.62% ATK)
+      // Q: FS bonus to Flamestrider Normal Attacks (200 × param4 ATK)
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["normal"] } },
         [],
         "atk",
         "baseDmg",
-        qLvl === 13 ? 1.24 : 1.02
+        200 * this.param("Q", 4)
       ),
-      // Q: FS bonus to Flamestrider Charged Attacks (200 × 1.02%/1.24% ATK)
+      // Q: FS bonus to Flamestrider Charged Attacks (200 × param5 ATK)
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["charge"] } },
         [],
         "atk",
         "baseDmg",
-        qLvl === 13 ? 2.48 : 2.04
+        200 * this.param("Q", 5)
       ),
     ];
 
@@ -463,15 +462,12 @@ class Mavuika extends CharacterBase {
   // Q Sunfell Slice: Lv10 800.6%, Lv13 (C3+) 945.2%
   // FS and C2 ATK bonuses are applied as baseDmg ScalingBuffs (see buffs above)
   protected readonly formulaMap = (() => {
-    const eLvl = this.constellation >= 5 ? 13 : 10;
-    const qLvl = this.constellation >= 3 ? 13 : 10;
-
-    const sunfellMult = qLvl === 13 ? 9.452 : 8.006;
-    const n1Mult = eLvl === 13 ? 1.372 : 1.132;
+    const sunfellMult = this.param("Q", 1);
+    const n1Mult = this.param("E", 4);
     // CA: Cyclic (Lv10 195.5%, Lv13 236.9%) + Final (Lv10 272%, Lv13 329.6%)
-    const caCyclicMult = eLvl === 13 ? 2.369 : 1.955;
-    const caFinalMult = eLvl === 13 ? 3.296 : 2.72;
-    const sprintMult = eLvl === 13 ? 1.936 : 1.598;
+    const caCyclicMult = this.param("E", 10);
+    const caFinalMult = this.param("E", 11);
+    const sprintMult = this.param("E", 9);
 
     return {
       "mavuika-sunfell": {
@@ -603,19 +599,19 @@ class Chasca extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    const shellMult = this.constellation >= 3 ? 1.037 : 0.878;
-    const shiningMult = this.constellation >= 3 ? 3.54 : 2.998;
+    const shellMult = this.param("E", 3);
+    const shiningMult = this.param("E", 4);
     const shiningCount =
       this.eligibleTypes === 0
         ? 0
         : this.eligibleTypes + (this.constellation >= 1 ? 2 : 1);
     const normalCount = 6 - shiningCount;
     // Q Radiant Soulseeker Shell: Lv10 372.2%, Lv13 (C5+) 439.4%
-    const qMult = this.constellation >= 5 ? 4.394 : 3.722;
+    const qMult = this.param("Q", 3);
     // Q Soulseeker Shell: Lv10 186.1%, Lv13 (C5+) 219.7%
-    const qNormMult = this.constellation >= 5 ? 2.197 : 1.861;
+    const qNormMult = this.param("Q", 2);
     // Q Galesplitting: Lv10 158.4%, Lv13 (C5+) 187%
-    const qInitMult = this.constellation >= 5 ? 1.87 : 1.584;
+    const qInitMult = this.param("Q", 1);
     const qRadiantCount = this.eligibleTypes === 0 ? 0 : this.eligibleTypes * 2;
     const qNormalCount = 6 - qRadiantCount;
 
@@ -781,7 +777,7 @@ class Xilonen extends CharacterBase {
   })();
 
   readonly buffs = (() => {
-    const resValue = this.constellation >= 3 ? 0.45 : 0.36;
+    const resValue = this.param("E", 2);
     const buffs: StatBuff[] = [];
 
     // P2: Nightsoul Burst → Xilonen's DEF +20% (personal buff, works off-field)
@@ -949,7 +945,7 @@ class Xilonen extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    const qBeatMult = this.constellation >= 5 ? 5.977 : 5.063;
+    const qBeatMult = this.param("Q", 5);
     return {
       ...(this.constellation >= 6
         ? {
@@ -959,10 +955,18 @@ class Xilonen extends CharacterBase {
                 en: "N4 (Blade Roller)",
               },
               parts: [
-                { formula: new DirectFormula(1.107, nTag, "def") },
-                { formula: new DirectFormula(1.088, nTag, "def") },
-                { formula: new DirectFormula(1.301, nTag, "def") },
-                { formula: new DirectFormula(1.701, nTag, "def") },
+                {
+                  formula: new DirectFormula(this.param("A", 10), nTag, "def"),
+                },
+                {
+                  formula: new DirectFormula(this.param("A", 11), nTag, "def"),
+                },
+                {
+                  formula: new DirectFormula(this.param("A", 12), nTag, "def"),
+                },
+                {
+                  formula: new DirectFormula(this.param("A", 13), nTag, "def"),
+                },
               ],
             },
           }
@@ -1027,8 +1031,9 @@ class Mualani extends CharacterBase {
   // Lv13 (C3+): 18.45% + 3×9.22% + 46.11% = 92.22% HP
   // Q: 105.2%/124.2% HP (Lv10/Lv13 C5+)
   protected readonly formulaMap = (() => {
-    const biteMult = this.constellation >= 3 ? 0.9222 : 0.7811;
-    const burstMult = this.constellation >= 5 ? 1.242 : 1.052;
+    const biteMult =
+      this.param("E", 1) + 3 * this.param("E", 2) + this.param("E", 3);
+    const burstMult = this.param("Q", 1);
     return {
       "mualani-bite": {
         label: { zh: "普攻", en: "NA" },
@@ -1178,9 +1183,9 @@ class Kinich extends CharacterBase {
   //     700% ATK Dendro Skill DMG — inherits P2 baseDmg and C2 dmg% buffs automatically
   //     because those buffs are scoped to ability:"skill" which the bounce also uses.
   protected readonly formulaMap = (() => {
-    const cannonMult = this.constellation >= 3 ? 14.608 : 12.374;
-    const qInit = this.constellation >= 5 ? 2.848 : 2.412;
-    const qBreath = this.constellation >= 5 ? 2.566 : 2.173;
+    const cannonMult = this.param("E", 2);
+    const qInit = this.param("Q", 1);
+    const qBreath = this.param("Q", 2);
     // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
     const c6BouncePart = {
       formula: new DirectFormula(7.0, {

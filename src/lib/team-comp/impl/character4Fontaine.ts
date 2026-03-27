@@ -222,16 +222,15 @@ class Freminet extends CharacterBase {
     return buffs;
   })();
 
-  // E Lv4 Shattering Pressure (Physical): Lv10 438.2%, Lv13 (C5+) 517.3%
-  // Q initial: Lv10 573.1% (no constellation level boost for Q)
+  // E Lv4 Shattering Pressure (Physical): param11
+  // Q initial: param1
   protected readonly formulaMap = (() => {
-    const eLv4Mult = this.constellation >= 5 ? 5.173 : 4.382;
     return {
       "freminet-shatter-lv4": {
         label: { zh: "E四阶", en: "E Stage 4" },
         parts: [
           {
-            formula: new DirectFormula(eLv4Mult, {
+            formula: new DirectFormula(this.param("E", 11), {
               element: "Physical",
               ability: "skill",
               reaction: "none",
@@ -243,7 +242,7 @@ class Freminet extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(5.731, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",

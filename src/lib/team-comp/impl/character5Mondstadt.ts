@@ -203,20 +203,18 @@ class Durin extends CharacterBase {
   > => {
     const { isWhite, isC4Form } = this;
     // Q initial — 3 separate hits with different multipliers, must NOT be summed (S3)
-    // White Lv10: 214.1%, 173.5%, 201.3%; Lv13 (C3+): 252.8%, 204.9%, 237.7%
-    // Dark  Lv10: 225.8%, 183.2%, 201.3%; Lv13 (C3+): 266.6%, 216.2%, 237.7%
-    const hasC3 = this.constellation >= 3;
-    const qW1 = hasC3 ? 2.528 : 2.141;
-    const qW2 = hasC3 ? 2.049 : 1.735;
-    const qW3 = hasC3 ? 2.377 : 2.013;
-    const qD1 = hasC3 ? 2.666 : 2.258;
-    const qD2 = hasC3 ? 2.162 : 1.832;
-    const qD3 = hasC3 ? 2.377 : 2.013;
+    // White: Q param1 + param2 + param3; Dark: Q param4 + param5 + param6
+    const qW1 = this.param("Q", 1);
+    const qW2 = this.param("Q", 2);
+    const qW3 = this.param("Q", 3);
+    const qD1 = this.param("Q", 4);
+    const qD2 = this.param("Q", 5);
+    const qD3 = this.param("Q", 6);
 
-    // Dragon ticks (White): Lv10 170.4%, Lv13 (C3+) 201.1%, 20 ticks over 20s (1s interval)
-    // Dragon ticks (Dark): Lv10 233.7%, Lv13 (C3+) 275.9%, 16 ticks over 20s (1.25s interval)
-    const dragonWhiteMult = hasC3 ? 2.011 : 1.704;
-    const dragonDarkMult = hasC3 ? 2.759 : 2.337;
+    // Dragon ticks (White): Q param7, 20 ticks over 20s (1s interval)
+    // Dragon ticks (Dark): Q param8, 16 ticks over 20s (1.25s interval)
+    const dragonWhiteMult = this.param("Q", 7);
+    const dragonDarkMult = this.param("Q", 8);
 
     // P2 bespokeBuff: per 100 ATK → +3% baseDmg% (cap 75%), only on P2-buffed ticks
     const p2Buff = new ScalingBuff(
@@ -534,12 +532,12 @@ class Albedo extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    // Transient Blossom Lv10: 240% DEF, Lv13 (C3+): 284% DEF
-    const blossomMult = this.constellation >= 3 ? 2.84 : 2.4;
-    // Burst Lv10: 661%, Lv13 (C5+): 780%
-    const burstMult = this.constellation >= 5 ? 7.8 : 6.61;
-    // Fatal Blossom Lv10: 129.6% per blossom, Lv13 (C5+): 153% per blossom, 7 blossoms
-    const fatalMult = this.constellation >= 5 ? 1.53 : 1.296;
+    // Transient Blossom — E param2 (DEF-scaled)
+    const blossomMult = this.param("E", 2);
+    // Burst DMG — Q param1
+    const burstMult = this.param("Q", 1);
+    // Fatal Blossom DMG per blossom — Q param2, 7 blossoms
+    const fatalMult = this.param("Q", 2);
     return {
       "albedo-blossom": {
         label: { zh: "E伤害", en: "E" },
@@ -679,16 +677,13 @@ class Diluc extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    const eLevel = this.constellation >= 3 ? 13 : 10;
-    const qLevel = this.constellation >= 5 ? 13 : 10;
-
     // E: 3 separate hits with different multipliers — must NOT be summed (S3)
-    // Lv10: 170%, 176%, 232%; Lv13 (C3+): 201%, 207%, 274%
-    const e1 = eLevel === 13 ? 2.01 : 1.7;
-    const e2 = eLevel === 13 ? 2.07 : 1.76;
-    const e3 = eLevel === 13 ? 2.74 : 2.32;
-    const qSlash = qLevel === 13 ? 4.34 : 3.67;
-    const qExplosion = qLevel === 13 ? 4.34 : 3.67;
+    // E param1, param2, param3
+    const e1 = this.param("E", 1);
+    const e2 = this.param("E", 2);
+    const e3 = this.param("E", 3);
+    const qSlash = this.param("Q", 1);
+    const qExplosion = this.param("Q", 3);
     const highPlungeMult = 4.42; // Lv10 High Plunge DMG
 
     const hasXianyun = this.teamMeta.characters.includes("xianyun");
@@ -875,9 +870,9 @@ class Mona extends CharacterBase {
     return buffs;
   })();
 
-  // Q: Bubble explosion Lv10 796%, Lv13 (C3+) 940%
+  // Q: Bubble explosion — Q param2
   protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 3 ? 9.4 : 7.96;
+    const qMult = this.param("Q", 2);
     return {
       "mona-burst": {
         label: { zh: "Q伤害", en: "Q" },
@@ -934,11 +929,11 @@ class Jean extends CharacterBase {
       : []),
   ];
 
-  // E: Lv10 526%, Lv13 (C5+) 620%
-  // Q: Lv10 765%, Lv13 (C3+) 903%
+  // E: param1
+  // Q: param1
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 6.2 : 5.26;
-    const qMult = this.constellation >= 3 ? 9.03 : 7.65;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
     return {
       "jean-skill": {
         label: { zh: "E伤害", en: "E" },
@@ -1063,11 +1058,11 @@ class Venti extends CharacterBase {
     return buffs;
   })();
 
-  // DoT Lv10: 67.7% per tick, 20 ticks
-  // DoT Lv13 (C3+): 79.9% per tick, 20 ticks
+  // Q DoT: param1, 20 ticks
+  // E Press: param1
   protected readonly formulaMap = (() => {
-    const qTickMult = this.constellation >= 3 ? 0.799 : 0.677;
-    const ePressMult = this.constellation >= 5 ? 5.86 : 4.97;
+    const qTickMult = this.param("Q", 1);
+    const ePressMult = this.param("E", 1);
     // NA per-hit multipliers at Lv10, each ×2.5 for Windsunder Arrow
     // Must NOT sum different multipliers into one part (S3)
     // N1: 40.3%×2, N2: 87.7%, N3: 103.5%, N4: 51.5%×2, N5: 100.1%, N6: 140%
@@ -1223,9 +1218,6 @@ class Klee extends CharacterBase {
 
   // Charged ATK: Lv10 283% (no constellation boost, C3=E, C5=Q)
   protected readonly formulaMap = (() => {
-    // C1 proc: 120% of Q Sparks 'n' Splash DMG, considered burst DMG
-    // Q Lv10: 76.8%, Lv13 (C5+): 90.6%  →  ×1.2 = 92.16% / 108.72%
-    const c1ProcMult = (this.constellation >= 5 ? 0.906 : 0.768) * 1.2;
     return {
       "klee-charged": {
         label: { zh: "重击", en: "CA" },
@@ -1246,11 +1238,16 @@ class Klee extends CharacterBase {
               label: { zh: "1命火花", en: "C1 Spark" },
               parts: [
                 {
-                  formula: new DirectFormula(c1ProcMult, {
+                  formula: new DirectFormula(this.param("Q", 1), {
                     element: "Pyro",
                     ability: "burst",
                     reaction: "none",
                   }),
+                  bespokeBuff: new StatBuff(
+                    cbs(this, "C1", []),
+                    { receiver: "selfOnField" },
+                    [{ key: "baseDmg%", value: 0.2 }]
+                  ),
                 },
               ],
             },
@@ -1339,22 +1336,18 @@ class Eula extends CharacterBase {
     };
   }
 
-  // E Tap: Lv10 264%, Lv13 (C5+) 311%
-  // E Hold: Lv10 442%, Lv13 (C5+) 522%; Icewhirl Brand: 173%/204% × 2
-  // Q initial Cryo hit: Lv10 442%, Lv13 (C3+) 522%
-  // Q Lightfall Sword — base + per-stack DMG
+  // E Tap: E param1; E Hold: E param2; Icewhirl Brand: E param3 × 2
+  // Q initial Cryo hit: Q param1
+  // Q Lightfall Sword — base (Q param2) + per-stack (Q param3) DMG
   // Typical stacks: C0-C5 ~13, C6 ~20
-  // Lv10: 725.6% + 148.2% × stacks, Lv13 (C3+): 922.3% + 188.4% × stacks
   // P1 Shattered Lightfall: 50% of Lightfall base DMG (on hold E consuming 2 Grimheart)
   protected readonly formulaMap = (() => {
-    const hasC5 = this.constellation >= 5;
-    const hasC3 = this.constellation >= 3;
-    const tapMult = hasC5 ? 3.11 : 2.64;
-    const holdMult = hasC5 ? 5.22 : 4.42;
-    const icewhirlMult = hasC5 ? 2.04 : 1.73;
-    const qInitialMult = hasC3 ? 5.22 : 4.42;
-    const baseMult = hasC3 ? 9.223 : 7.256;
-    const stackMult = hasC3 ? 1.884 : 1.482;
+    const tapMult = this.param("E", 1);
+    const holdMult = this.param("E", 2);
+    const icewhirlMult = this.param("E", 3);
+    const qInitialMult = this.param("Q", 1);
+    const baseMult = this.param("Q", 2);
+    const stackMult = this.param("Q", 3);
     const stacks = this.constellation >= 6 ? 20 : 13;
     const totalMult = baseMult + stackMult * stacks;
     const maxMult = baseMult + stackMult * 30;
@@ -1562,36 +1555,30 @@ class Varka extends CharacterBase {
     const el = this.priorityElement ?? ("Anemo" as Element);
     const rightEl = el;
 
-    // Skill talent levels: C3 upgrades E (Lv10 → Lv13)
-    const eLv13 = this.constellation >= 3;
-    // Burst talent levels: C5 upgrades Q (Lv10 → Lv13)
-    const qLv13 = this.constellation >= 5;
-
     // ── Sturm und Drang Normal Attack multipliers (E talent) ──
     // Each stage has two values: right hand (priority element) + left hand (Anemo)
-    // Lv10 / Lv13 from game data
-    const sudN1Right = eLv13 ? 1.96 : 1.617;
+    const sudN1Right = this.param("E", 3);
     // Stage 1 is single-hit (only right hand — game data lists one multiplier)
-    const sudN2Right = eLv13 ? 0.718 : 0.593;
-    const sudN2Left = eLv13 ? 1.334 : 1.101;
-    const sudN3Right = eLv13 ? 0.971 : 0.801;
-    const sudN3Left = eLv13 ? 1.804 : 1.488;
-    const sudN4Right = eLv13 ? 1.66 : 1.37;
-    const sudN4Left = eLv13 ? 0.894 : 0.738;
-    const sudN5Right = eLv13 ? 2.088 : 1.723;
-    const sudN5Left = eLv13 ? 1.125 : 0.928;
+    const sudN2Right = this.param("E", 5);
+    const sudN2Left = this.param("E", 4);
+    const sudN3Right = this.param("E", 7);
+    const sudN3Left = this.param("E", 6);
+    const sudN4Right = this.param("E", 8);
+    const sudN4Left = this.param("E", 9);
+    const sudN5Right = this.param("E", 10);
+    const sudN5Left = this.param("E", 11);
 
     // ── Four Winds' Ascension multipliers (E talent) ──
-    const fwRight = eLv13 ? 3.735 : 3.164;
-    const fwLeft = eLv13 ? 2.011 : 1.704;
+    const fwRight = this.param("E", 14);
+    const fwLeft = this.param("E", 15);
 
     // ── Azure Devour multipliers (E talent) ──
-    const azRight = eLv13 ? 1.989 : 1.685;
-    const azLeft = eLv13 ? 1.071 : 0.907;
+    const azRight = this.param("E", 16);
+    const azLeft = this.param("E", 17);
 
     // ── Burst multipliers (Q talent) ──
-    const q1 = qLv13 ? 7.16 : 6.065;
-    const q2 = qLv13 ? 3.856 : 3.266;
+    const q1 = this.param("Q", 1);
+    const q2 = this.param("Q", 2);
 
     // ── C2: extra 800% ATK Anemo AoE hit ──
     const c2Mult = 8.0;

@@ -599,6 +599,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // Artifact inventory is provided by useTeamInventory — see teamInventory above
 
+  const [timeBudgetSec, setTimeBudgetSec] = useState(30);
+
   const handleOptimize = () => {
     if (!teamBuild || !accountData) return;
     if (!resolvedFormula && formulaMode !== "combo") return;
@@ -730,7 +732,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       globalConfig: scoreConfig.global,
       baseSheets: optBaseSheets,
       perChar,
-      teamDeadlineMs: performance.now() + 30_000,
+      teamDeadlineMs: performance.now() + timeBudgetSec * 1000,
       ignoreArtifactSets,
       perCharExtraArtifacts: teamInventory.perCharExtraArtifacts,
     });
@@ -1366,6 +1368,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         teamResult={teamResult}
         teamError={teamError}
         handleOptimize={handleOptimize}
+        timeBudgetSec={timeBudgetSec}
+        onTimeBudgetChange={setTimeBudgetSec}
         optimizedArtifactsByChar={optimizedArtifactsByChar}
         optimizedDisplayResult={optimizedDisplayResult}
         minErRaw={minErRaw}

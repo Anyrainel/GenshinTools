@@ -76,7 +76,7 @@ class Columbina extends CharacterBase {
       new StatBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "team", filter: { reactions: [...LUNAR_REACTIONS] } },
-        [{ key: "reactionDmg%", value: this.constellation >= 5 ? 0.49 : 0.4 }]
+        [{ key: "reactionDmg%", value: this.param("Q", 2) }]
       ),
       // C1–C6 cumulative "elevated" bonus:
       // C1: 1.5%, C2: 7%, C3: 1.5%, C4: 1.5%, C5: 1.5%, C6: 7%
@@ -191,32 +191,30 @@ class Columbina extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const isE13 = this.constellation >= 3;
-
     let eInterferenceMult = 0;
     let eInterferenceHits = 1;
     let eInterferenceElement: Element = "Electro";
     let eInterferenceReaction: ReactionType = "lunarCharged";
 
     if (this.o === "lunarCharged") {
-      eInterferenceMult = isE13 ? 0.1 : 0.0847;
+      eInterferenceMult = this.param("E", 3);
       eInterferenceElement = "Electro";
       eInterferenceReaction = "lunarCharged";
     } else if (this.o === "lunarBloom") {
-      eInterferenceMult = isE13 ? 0.0299 : 0.0253;
+      eInterferenceMult = this.param("E", 4);
       eInterferenceHits = 5;
       eInterferenceElement = "Dendro";
       eInterferenceReaction = "lunarBloom";
     } else if (this.o === "lunarCrystallize") {
-      eInterferenceMult = isE13 ? 0.1875 : 0.1588;
+      eInterferenceMult = this.param("E", 5);
       eInterferenceElement = "Geo";
       eInterferenceReaction = "lunarCrystallize";
     }
 
-    // E initial hit: Lv10 30.1% HP, Lv13 (C3+) 35.5% HP
-    const eInitialMult = isE13 ? 0.355 : 0.301;
-    // Q burst hit: Lv10 58% HP, Lv13 (C5+) 68.5% HP
-    const qBurstMult = this.constellation >= 5 ? 0.685 : 0.58;
+    // E initial hit
+    const eInitialMult = this.param("E", 1);
+    // Q burst hit
+    const qBurstMult = this.param("Q", 1);
     return {
       "columbina-skill-initial": {
         label: { zh: "E", en: "E" },
@@ -247,7 +245,7 @@ class Columbina extends CharacterBase {
         parts: [
           {
             formula: new LunarDirectFormula(
-              0.0272,
+              this.param("A", 6),
               { element: "Dendro", ability: "charge", reaction: "lunarBloom" },
               "hp"
             ),
@@ -279,7 +277,7 @@ class Columbina extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              isE13 ? 0.199 : 0.168,
+              this.param("E", 2),
               { element: "Hydro", ability: "skill", reaction: "none" },
               "hp"
             ),
@@ -381,7 +379,7 @@ class Nefer extends CharacterBase {
             [
               {
                 key: "dmg%",
-                value: this.veilStacks * (this.constellation >= 5 ? 0.49 : 0.4),
+                value: this.veilStacks * this.param("Q", 5),
               },
             ]
           ),
@@ -428,26 +426,23 @@ class Nefer extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
-    const isE13 = this.constellation >= 3;
     const isC6 = this.constellation >= 6;
-    const shadeHit12Mult = isE13 ? 2.04 : 1.728;
-    const shadeHit3Mult = isE13 ? 2.72 : 2.304;
-    // Q Hit 1: Lv10 404.4% ATK + 808.7% EM, Lv13 (C5+) 477.4% ATK + 954.7% EM
-    // Q Hit 2: Lv10 606.5% ATK + 1213.1% EM, Lv13 (C5+) 716.0% ATK + 1432.1% EM
-    const q1AtkMult = this.constellation >= 5 ? 4.774 : 4.044;
-    const q1EmMult = this.constellation >= 5 ? 9.547 : 8.087;
-    const q2AtkMult = this.constellation >= 5 ? 7.16 : 6.065;
-    const q2EmMult = this.constellation >= 5 ? 14.321 : 12.131;
+    const shadeHit12Mult = this.param("E", 9);
+    const shadeHit3Mult = this.param("E", 11);
+    const q1AtkMult = this.param("Q", 1);
+    const q1EmMult = this.param("Q", 2);
+    const q2AtkMult = this.param("Q", 3);
+    const q2EmMult = this.param("Q", 4);
     // Self hit parts depend on C6 (Hit 2 converts to LunarBloom)
     const selfParts: FormulaPart[] = isC6
       ? [
           {
-            // Self Hit 1: Lv10 44.4% ATK + 88.7% EM, Lv13 52.4% ATK + 104.7% EM
+            // Self Hit 1
             formula: new DirectFormula(
-              isE13 ? 0.524 : 0.444,
+              this.param("E", 5),
               { element: "Dendro", ability: "charge", reaction: "none" },
               "atk",
-              { key: "em", multiplier: isE13 ? 1.047 : 0.887 }
+              { key: "em", multiplier: this.param("E", 6) }
             ),
           },
           {
@@ -465,27 +460,26 @@ class Nefer extends CharacterBase {
         ]
       : [
           {
-            // Self Hit 1: Lv10 44.4% ATK + 88.7% EM, Lv13 52.4% ATK + 104.7% EM
+            // Self Hit 1
             formula: new DirectFormula(
-              isE13 ? 0.524 : 0.444,
+              this.param("E", 5),
               { element: "Dendro", ability: "charge", reaction: "none" },
               "atk",
-              { key: "em", multiplier: isE13 ? 1.047 : 0.887 }
+              { key: "em", multiplier: this.param("E", 6) }
             ),
           },
           {
-            // Self Hit 2: Lv10 57.7% ATK + 115.3% EM, Lv13 68.1% ATK + 136.1% EM
+            // Self Hit 2
             formula: new DirectFormula(
-              isE13 ? 0.681 : 0.577,
+              this.param("E", 7),
               { element: "Dendro", ability: "charge", reaction: "none" },
               "atk",
-              { key: "em", multiplier: isE13 ? 1.361 : 1.153 }
+              { key: "em", multiplier: this.param("E", 8) }
             ),
           },
         ];
-    // E initial hit: Lv10 137.5% ATK + 275% EM, Lv13 (C3+) 162.3% ATK + 324.6% EM
-    const eAtkMult = isE13 ? 1.623 : 1.375;
-    const eEmMult = isE13 ? 3.246 : 2.75;
+    const eAtkMult = this.param("E", 1);
+    const eEmMult = this.param("E", 2);
     return {
       ...(hasHydro
         ? {
@@ -679,13 +673,13 @@ class Flins extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const spearstormMult = this.constellation >= 5 ? 3.791 : 3.211;
-    const qInitMult = this.constellation >= 3 ? 5.522 : 4.677;
+    const spearstormMult = this.param("E", 7);
+    const qInitMult = this.param("Q", 1);
     // LunarDirectFormula passes raw game% — directCoeff (×3 for lunarCharged) applied internally
-    const qMidMult = this.constellation >= 3 ? 0.345 : 0.292;
-    const qFinalMult = this.constellation >= 3 ? 2.485 : 2.105;
-    const tsMainMult = this.constellation >= 3 ? 1.518 : 1.286;
-    const tsExtraMult = this.constellation >= 3 ? 2.209 : 1.871;
+    const qMidMult = this.param("Q", 2);
+    const qFinalMult = this.param("Q", 3);
+    const tsMainMult = this.param("Q", 6);
+    const tsExtraMult = this.param("Q", 7);
     const isAscendantGleam = this.teamMeta.countByFaction("Moonsign") >= 2;
     // Moonsign Ascendant Gleam + thunderclouds (from prior lunarCharged) for extra Q/TS hits
     const hasExtraHits =
@@ -706,11 +700,11 @@ class Flins extends CharacterBase {
       reaction: "lunarCharged" as const,
     };
     // E-enhanced Normal Attack multipliers (E talent table)
-    const n1 = this.constellation >= 5 ? 1.238 : 1.048;
-    const n2 = this.constellation >= 5 ? 1.249 : 1.058;
-    const n3 = this.constellation >= 5 ? 1.548 : 1.311;
-    const n4 = this.constellation >= 5 ? 0.887 : 0.751; // ×2
-    const n5 = this.constellation >= 5 ? 2.125 : 1.8;
+    const n1 = this.param("E", 1);
+    const n2 = this.param("E", 2);
+    const n3 = this.param("E", 3);
+    const n4 = this.param("E", 4); // ×2
+    const n5 = this.param("E", 5);
     const normalTag = {
       element: "Electro" as const,
       ability: "normal" as const,
@@ -836,7 +830,7 @@ class Lauma extends CharacterBase {
     new StatBuff(
       cbs(this, "E", ["E"]),
       { receiver: "team", filter: { elements: ["Dendro", "Hydro"] } },
-      [{ key: "resReduction%", value: this.constellation >= 5 ? 0.34 : 0.25 }]
+      [{ key: "resReduction%", value: this.param("E", 8) }]
     ),
     // Q Pale Hymn: Bloom/Hyperbloom/Burgeon DMG + EM×500%/590.2%
     // C2: +500% EM on top (non-Ascendant-Gleam extra Pale Hymn enhancement)
@@ -853,8 +847,7 @@ class Lauma extends CharacterBase {
       [],
       "em",
       "baseDmg",
-      (this.constellation >= 3 ? 5.902 : 5.0) +
-        (this.constellation >= 2 ? 5.0 : 0)
+      this.param("Q", 3) + (this.constellation >= 2 ? 5.0 : 0)
     ),
     // Q Pale Hymn: Lunar-Bloom DMG + EM×400%/472.3%
     // C2: +400% EM on top (non-Ascendant-Gleam extra Pale Hymn enhancement)
@@ -868,8 +861,7 @@ class Lauma extends CharacterBase {
       [],
       "em",
       "baseDmg",
-      (this.constellation >= 3 ? 4.723 : 4.0) +
-        (this.constellation >= 2 ? 4.0 : 0)
+      this.param("Q", 4) + (this.constellation >= 2 ? 4.0 : 0)
     ),
     // C2 (Ascendant Gleam): Lunar-Bloom DMG +40%
     // "月兆·满辉：队伍中附近的所有角色造成的月绽放反应伤害提升40%"
@@ -908,11 +900,11 @@ class Lauma extends CharacterBase {
   // E press: Lv10 218.9%, Lv13 (C5+) 258.4%
   // Frostgrove Sanctuary: Lv10 172.8% ATK + 345.6% EM, Lv13 (C5+) 204.0% ATK + 408.0% EM
   protected readonly formulaMap = (() => {
-    const sanctAtkMult = this.constellation >= 5 ? 2.04 : 1.728;
-    const sanctEmMult = this.constellation >= 5 ? 4.08 : 3.456;
+    const sanctAtkMult = this.param("E", 4);
+    const sanctEmMult = this.param("E", 5);
 
-    const hold1Mult = this.constellation >= 5 ? 3.359 : 2.845;
-    const hold2Mult = this.constellation >= 5 ? 3.23 : 2.736;
+    const hold1Mult = this.param("E", 2);
+    const hold2Mult = this.param("E", 3);
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     const hasNascentGleam = this.teamMeta.countByFaction("Moonsign") >= 1;
 
@@ -1065,10 +1057,9 @@ class Ineffa extends CharacterBase {
   // P1: If thunderclouds nearby (from lunarCharged), each discharge also does 65% ATK lunarCharged hit
   // Q: Lv10 1218.2%, Lv13 (C5+) 1438.2%
   protected readonly formulaMap = (() => {
-    // E initial hit: Lv10 155.5%, Lv13 (C3+) 183.6%
-    const eInitialMult = this.constellation >= 3 ? 1.836 : 1.555;
-    const dischargeMult = this.constellation >= 3 ? 2.04 : 1.728;
-    const qMult = this.constellation >= 5 ? 14.382 : 12.182;
+    const eInitialMult = this.param("E", 1);
+    const dischargeMult = this.param("E", 4);
+    const qMult = this.param("Q", 1);
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     return {
       "ineffa-skill-initial": {

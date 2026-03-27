@@ -37,11 +37,11 @@ class Dahlia extends CharacterBase {
       : []),
   ];
 
-  // E: Sacramental Shower — Lv10 419%, Lv13 (C5+) 494.7%
-  // Q: Radiant Psalter — Lv10 731.5%, Lv13 (C3+) 863.6%
+  // E: Sacramental Shower — param1
+  // Q: Radiant Psalter — param1
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 4.947 : 4.19;
-    const qMult = this.constellation >= 3 ? 8.636 : 7.315;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
     return {
       "dahlia-skill": {
         label: { zh: "E伤害", en: "E Skill" },
@@ -79,9 +79,9 @@ class Dahlia extends CharacterBase {
 @RegisterCharacter("mika")
 class Mika extends CharacterBase {
   readonly buffs = [
-    // E: Soulwind -> active character ATK SPD (Lv10: 22%, Lv13: 25%)
+    // E: Soulwind -> active character ATK SPD — param4
     new StatBuff(cbs(this, "E", ["E"]), { receiver: "teamOnField" }, [
-      { key: "atkSpd%", value: this.constellation >= 5 ? 0.25 : 0.22 },
+      { key: "atkSpd%", value: this.param("E", 4) },
     ]),
     // P1+P2: E Soulwind Detector → on-field Physical DMG +10% per stack
     // Max 3 (P1) + 1 (P2) = 4 stacks; C6 adds 1 more → 5 stacks at C6
@@ -189,8 +189,8 @@ class Razor extends CharacterBase {
   protected readonly formulaMap = (() => {
     // Normal attack hits at Lv10 (A is not upgraded by C3/C5)
     const naHits = [1.71, 1.47, 1.84, 2.43];
-    // Soul companion scaling: Lv10 = 43.2%, Lv13 (C3+) = 51.0%
-    const wolfScaling = this.constellation >= 3 ? 0.51 : 0.432;
+    // Soul companion scaling — Q param2
+    const wolfScaling = this.param("Q", 2);
 
     return {
       "razor-burst-na": {
@@ -302,16 +302,28 @@ class Noelle extends CharacterBase {
           ),
         ]
       : []),
-    // Q: DEF → ATK conversion: 72% (Lv10) / 85% (Lv13 C5+), C6 adds +50%
+    // Q: DEF → ATK conversion — Q param3
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "selfOnField" },
       [],
       "def",
       "atk",
-      (this.constellation >= 5 ? 0.85 : 0.72) +
-        (this.constellation >= 6 ? 0.5 : 0)
+      this.param("Q", 3)
     ),
+    // C6: +50% DEF → ATK conversion
+    ...(this.constellation >= 6
+      ? [
+          new ScalingBuff(
+            cbs(this, "C6", ["Q"]),
+            { receiver: "selfOnField" },
+            [],
+            "def",
+            "atk",
+            0.5
+          ),
+        ]
+      : []),
   ];
 
   // Pure on-field DPS with Q infusion — formulas depend on Normal ATK multipliers
@@ -361,10 +373,10 @@ class Fischl extends CharacterBase {
     return buffs;
   })();
 
-  // E: Oz tick DMG Lv10 160%, Lv13 (C3+) 189%
+  // E: Oz tick DMG — param1
   // C6 extends Oz duration by 2s (10s → 12s), so 12 hits instead of 10
   protected readonly formulaMap = (() => {
-    const ozTickMult = this.constellation >= 3 ? 1.89 : 1.6;
+    const ozTickMult = this.param("E", 1);
     const ozHits = this.constellation >= 6 ? 12 : 10;
     const tag = {
       element: "Electro" as const,
@@ -463,12 +475,12 @@ class Rosaria extends CharacterBase {
   ];
 
   // Q initial: 2 separate hits with different multipliers — must NOT be summed (S3)
-  // Lv10: 187%, 274%; Lv13 (C5+): 221%, 323%
-  // Q ice lance tick: Lv10 238%, Lv13 (C5+) 280%; KQM: 2s tick interval → 4 ticks (8s) / 6 ticks (C2, 12s)
+  // Q param1 + Q param2; Q ice lance tick: Q param3
+  // KQM: 2s tick interval → 4 ticks (8s) / 6 ticks (C2, 12s)
   protected readonly formulaMap = (() => {
-    const init1 = this.constellation >= 5 ? 2.21 : 1.87;
-    const init2 = this.constellation >= 5 ? 3.23 : 2.74;
-    const tickMult = this.constellation >= 5 ? 2.8 : 2.38;
+    const init1 = this.param("Q", 1);
+    const init2 = this.param("Q", 2);
+    const tickMult = this.param("Q", 3);
     const tickCount = this.constellation >= 2 ? 6 : 4;
     const cryoBurst = {
       element: "Cryo" as const,
@@ -591,11 +603,11 @@ class Sucrose extends CharacterBase {
     return buffs;
   })();
 
-  // E: Lv10 380%, Lv13 (C3+) 449%
-  // Q DoT: Lv10 266%, Lv13 (C5+) 314%
+  // E: param1
+  // Q DoT: param1
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 4.49 : 3.8;
-    const qMult = this.constellation >= 5 ? 3.14 : 2.66;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
     return {
       "sucrose-skill": {
         label: { zh: "E伤害", en: "E Skill" },
@@ -634,8 +646,8 @@ class Sucrose extends CharacterBase {
 @RegisterCharacter("bennett")
 class Bennett extends CharacterBase {
   readonly buffs = [
-    // Q: Fantastic Voyage — baseATK → flat ATK to on-field
-    // Lv10: 101%, Lv13 (C5+): 119%; C1 adds +20% base ATK bonus
+    // Q: Fantastic Voyage — baseATK → flat ATK to on-field (param4)
+    // C1 adds +20% base ATK bonus
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "teamOnField" },
@@ -643,7 +655,7 @@ class Bennett extends CharacterBase {
       "baseAtk",
       "atk",
       (() => {
-        const base = this.constellation >= 5 ? 1.19 : 1.01;
+        const base = this.param("Q", 4);
         return this.constellation >= 1 ? base + 0.2 : base;
       })()
     ),
@@ -658,8 +670,8 @@ class Bennett extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // E tap: Lv10 248%, Lv13 (C3+) 292%
-    const eMult = this.constellation >= 3 ? 2.92 : 2.48;
+    // E tap: param1
+    const eMult = this.param("E", 1);
     return {
       "bennett-skill": {
         label: { zh: "E点按", en: "E Skill (Tap)" },
@@ -706,8 +718,8 @@ class Amber extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Q Fiery Rain per wave: Lv10 50.5%, Lv13 (C3+) 59.7%, 18 waves
-    const qWaveMult = this.constellation >= 3 ? 0.597 : 0.505;
+    // Q Fiery Rain per wave — Q param1, 18 waves
+    const qWaveMult = this.param("Q", 1);
     return {
       "amber-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
@@ -749,12 +761,12 @@ class Kaeya extends CharacterBase {
       : []),
   ];
 
-  // E: Lv10 344%, Lv13 (C3+) 406%
-  // Q icicle: Lv10 140%, Lv13 (C5+) 165%
+  // E: param1
+  // Q icicle: param1
   // KQM data: ~13 total hits (C0, 3 icicles stationary), ~17 hits (C6, 4 icicles)
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 4.06 : 3.44;
-    const qMult = this.constellation >= 5 ? 1.65 : 1.4;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
     const qHits = this.constellation >= 6 ? 17 : 13;
     return {
       "kaeya-skill": {
@@ -804,12 +816,12 @@ class Lisa extends CharacterBase {
     ]),
   ];
 
-  // E hold (3 stacks): Lv10 877%, Lv13 (C5+) 1035%
-  // Q discharge: Lv10 65.8%, Lv13 (C3+) 77.7%, ~30 discharges over 15s
+  // E hold (3 stacks): E param4
+  // Q discharge: Q param1, ~30 discharges over 15s
   // C4: each discharge fires 1-3 bolts (avg 2) → 60 hits
   protected readonly formulaMap = (() => {
-    const eHoldMult = this.constellation >= 5 ? 10.35 : 8.77;
-    const qDischargeMult = this.constellation >= 3 ? 0.777 : 0.658;
+    const eHoldMult = this.param("E", 4);
+    const qDischargeMult = this.param("Q", 1);
     const qHitCount = this.constellation >= 4 ? 60 : 30;
     return {
       "lisa-hold": {

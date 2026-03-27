@@ -122,30 +122,26 @@ class Zibai extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    // E/Q Levels (max 10 normally, 13 if C3/C5)
-    const eLevel = this.constellation >= 3 ? 13 : 10;
-    const qLevel = this.constellation >= 5 ? 13 : 10;
-
     // Normal Attacks in Phase Shift (DEF Scaled, plain DirectFormula)
     // Lv10: 101.8%/93.8%/62.2%×2/156.9%, Lv13 (C3+): 120.2%/110.7%/73.5%×2/185.3%
-    const n1 = eLevel === 13 ? 1.202 : 1.018;
-    const n2 = eLevel === 13 ? 1.107 : 0.938;
-    const n3 = eLevel === 13 ? 0.735 : 0.622; // x2
-    const n4 = eLevel === 13 ? 1.853 : 1.569;
+    const n1 = this.param("E", 6);
+    const n2 = this.param("E", 7);
+    const n3 = this.param("E", 8); // x2
+    const n4 = this.param("E", 10);
     // N4 Gleam: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
     // Lv10: 53% DEF, Lv13: 62.6% DEF — directCoeff (×1.6 for lunarCrystallize) applied internally
-    const n4GleamTalent = eLevel === 13 ? 0.626 : 0.53;
+    const n4GleamTalent = this.param("E", 3);
 
-    const steed1 = eLevel === 13 ? 3.666 : 3.106;
+    const steed1 = this.param("E", 1);
     // Steed 2nd: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
     // P1 (+60% DEF) and C2 (+550% DEF) are ScalingBuffs above, not baked in here
     // Lv10: 253.7% DEF, Lv13: 299.6% DEF — directCoeff (×1.6) applied internally
-    const steed2Talent = eLevel === 13 ? 2.996 : 2.537;
+    const steed2Talent = this.param("E", 2);
 
-    const q1 = qLevel === 13 ? 2.698 : 2.285;
+    const q1 = this.param("Q", 1);
     // Q 2nd: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
     // Lv10: 319.9% DEF, Lv13: 377.7% DEF — directCoeff (×1.6) applied internally
-    const q2Talent = qLevel === 13 ? 3.777 : 3.199;
+    const q2Talent = this.param("Q", 2);
 
     // Moonsign: Ascendant Gleam (满辉) requires 2+ Moonsign faction members
     const hasAscendantGleam = this.teamMeta.countByFaction("Moonsign") >= 2;
@@ -377,7 +373,7 @@ class Xianyun extends CharacterBase {
   // E Driftcloud Wave 3-Skyladder (Lv10): 607.7%
   // E Driftcloud Wave 3-Skyladder (Lv13 C5+): 717.4%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 7.174 : 6.077;
+    const eMult = this.param("E", 4);
     return {
       "xianyun-driftcloud": {
         label: {
@@ -474,7 +470,7 @@ class Baizhu extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Q Spiritvein DMG: Lv10 174.7%, Lv13 (C3+) 206.3%
-    const qMult = this.constellation >= 3 ? 2.063 : 1.747;
+    const qMult = this.param("Q", 7);
     return {
       "baizhu-burst": {
         label: { zh: "Q 灵气脉", en: "Q Spiritvein" },
@@ -551,14 +547,11 @@ class Yelan extends CharacterBase {
   // Q Throw DMG Lv10: 8.77% Max HP, Lv13 (C3+): 10.35% Max HP
   // C6 Mastermind Barb DMG: 20.84% × 156% = 32.51% Max HP (×5)
   protected readonly formulaMap = (() => {
-    const qLevel = this.constellation >= 3 ? 13 : 10;
-    const eLevel = this.constellation >= 5 ? 13 : 10;
-
-    const barbMult = 0.2084;
+    const barbMult = this.param("A", 7);
     const c6BarbMult = barbMult * 1.56;
 
-    const eMult = eLevel === 13 ? 0.481 : 0.407;
-    const qThrowMult = qLevel === 13 ? 0.1035 : 0.0877;
+    const eMult = this.param("E", 1);
+    const qThrowMult = this.param("Q", 2);
 
     const formulas: Record<string, FormulaEntry> = {
       "yelan-skill": {
@@ -705,7 +698,7 @@ class Xiao extends CharacterBase {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge", "plunge"] },
       },
-      [{ key: "dmg%", value: this.constellation >= 5 ? 1.089 : 0.952 }]
+      [{ key: "dmg%", value: this.param("Q", 1) }]
     ),
   ];
 
@@ -716,7 +709,7 @@ class Xiao extends CharacterBase {
         label: { zh: "下落(高空)", en: "Plunge (High)" },
         parts: [
           {
-            formula: new DirectFormula(4.04, {
+            formula: new DirectFormula(this.param("A", 13), {
               element: "Anemo", // Q converts PHY to Anemo
               ability: "plunge",
               reaction: "none",
@@ -763,14 +756,11 @@ class Zhongli extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    const eLevel = this.constellation >= 3 ? 13 : 10;
-    const qLevel = this.constellation >= 5 ? 13 : 10;
-
     // E levels: Hold DMG / Stele creation / Resonance (Lv10 / Lv13)
-    const eHoldMult = eLevel === 13 ? 1.7 : 1.44;
-    const eSteleMult = eLevel === 13 ? 0.34 : 0.288;
-    const eResonanceMult = eLevel === 13 ? 0.68 : 0.576;
-    const qMult = qLevel === 13 ? 10.84 : 9.0;
+    const eHoldMult = this.param("E", 4);
+    const eSteleMult = this.param("E", 1);
+    const eResonanceMult = this.param("E", 2);
+    const qMult = this.param("Q", 1);
 
     // P2: Dominance of Earth — E-type (Hold/Stele/Resonance) extra HP term (1.9% Max HP)
     const eHpExtra = { key: "hp" as const, multiplier: 0.019 };
@@ -895,7 +885,7 @@ class HuTao extends CharacterBase {
         [],
         "hp",
         "atk",
-        this.constellation >= 3 ? 0.0715 : 0.0626
+        this.param("E", 2)
       ),
     ];
 
@@ -926,18 +916,15 @@ class HuTao extends CharacterBase {
   // Q (high HP): Lv10 494%, Lv13 (C5+) 565%
   protected readonly formulaMap = (() => {
     const isLowHP = this.hpState === "low" || this.hpState === "1";
-    const eLevel = this.constellation >= 3 ? 13 : 10;
 
-    const bbMult = eLevel === 13 ? 1.36 : 1.15;
+    const bbMult = this.param("E", 3);
     // C2: Blood Blossom DMG += 10% Max HP at time of application
     const bbExtra =
       this.constellation >= 2
         ? { key: "hp" as const, multiplier: 0.1 }
         : undefined;
 
-    const qMultLv10 = isLowHP ? 6.17 : 4.94;
-    const qMultLv13 = isLowHP ? 7.06 : 5.65;
-    const qMult = this.constellation >= 5 ? qMultLv13 : qMultLv10;
+    const qMult = this.param("Q", isLowHP ? 2 : 1);
 
     const pyroTag = {
       element: "Pyro" as const,
@@ -952,7 +939,7 @@ class HuTao extends CharacterBase {
     return {
       "hutao-charged": {
         label: { zh: "E重击", en: "E CA" },
-        parts: [{ formula: new DirectFormula(2.426, pyroTag) }],
+        parts: [{ formula: new DirectFormula(this.param("A", 8), pyroTag) }],
       },
       "hutao-blood-blossom": {
         label: { zh: "E血梅香(单次)", en: "E Blood Blossom (x1)" },
@@ -1027,7 +1014,7 @@ class Shenhe extends CharacterBase {
           [],
           "atk",
           "baseDmg",
-          this.constellation >= 3 ? 0.97 : 0.822
+          this.param("E", 3)
         )
     ),
     // P1: Q field → on-field Cryo DMG +15% ("冰元素伤害加成提高15%")
@@ -1092,9 +1079,9 @@ class Shenhe extends CharacterBase {
 
   // E Press: Lv10 251%, Lv13 (C3+) 296%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 2.96 : 2.51;
+    const eMult = this.param("E", 1);
     // Q DoT: Lv10 59.6%, Lv13 (C5+) 70.4%
-    const qDotMult = this.constellation >= 5 ? 0.704 : 0.596;
+    const qDotMult = this.param("Q", 3);
     return {
       "shenhe-skill": {
         label: { zh: "E点按", en: "E Spring Spirit Press" },
@@ -1167,8 +1154,7 @@ class Ganyu extends CharacterBase {
   // Arrow Lv10: 230%, Bloom Lv10: 392%, Total: 622%
   // Q Ice Shard (Q talent): Lv10 126%, Lv13 (C3+) 149%
   protected readonly formulaMap = (() => {
-    const qLevel = this.constellation >= 3 ? 13 : 10;
-    const qShardMult = qLevel === 13 ? 1.49 : 1.26;
+    const qShardMult = this.param("Q", 1);
     const cryoBurstTag = {
       element: "Cryo" as const,
       ability: "burst" as const,
@@ -1179,14 +1165,14 @@ class Ganyu extends CharacterBase {
         label: { zh: "重击+绽发", en: "CA + Bloom" },
         parts: [
           {
-            formula: new DirectFormula(2.3, {
+            formula: new DirectFormula(this.param("A", 9), {
               element: "Cryo",
               ability: "charge",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(3.92, {
+            formula: new DirectFormula(this.param("A", 10), {
               element: "Cryo",
               ability: "charge",
               reaction: "none",
@@ -1276,10 +1262,9 @@ class Keqing extends CharacterBase {
   // Charged ATK: Lv10 152%+170% = 322% (no constellation boost)
   // Q: Lv10 initial 158% + 8×43.2% + final 340%, Lv13 (C3+) 187% + 8×51% + 401%
   protected readonly formulaMap = (() => {
-    const isC3 = this.constellation >= 3;
-    const qInitial = isC3 ? 1.87 : 1.58;
-    const qSlash = isC3 ? 0.51 : 0.432;
-    const qFinal = isC3 ? 4.01 : 3.4;
+    const qInitial = this.param("Q", 1);
+    const qSlash = this.param("Q", 2);
+    const qFinal = this.param("Q", 3);
     const electroBurstTag = {
       element: "Electro" as const,
       ability: "burst" as const,
@@ -1290,14 +1275,14 @@ class Keqing extends CharacterBase {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(1.52, {
+            formula: new DirectFormula(this.param("A", 7), {
               element: "Electro",
               ability: "charge",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(1.7, {
+            formula: new DirectFormula(this.param("A", 8), {
               element: "Electro",
               ability: "charge",
               reaction: "none",
@@ -1345,9 +1330,9 @@ class Qiqi extends CharacterBase {
     // E Herald of Frost DMG: Lv10 64.8%, Lv13 (C5+ upgrades E): 76.5%
     // ~8 hits over 15s duration
     // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
-    const eHeraldMult = this.constellation >= 5 ? 0.765 : 0.648;
+    const eHeraldMult = this.param("E", 5);
     // Q Skill DMG: Lv10 513%, Lv13 (C3+) 605%
-    const qMult = this.constellation >= 3 ? 6.05 : 5.13;
+    const qMult = this.param("Q", 3);
     return {
       "qiqi-skill-hit": {
         label: { zh: "E伤害×8", en: "E (×8)" },

@@ -240,7 +240,8 @@ export class CharBuild {
       config.charLevel,
       config.constellation,
       teamMeta,
-      combatOpts
+      combatOpts,
+      config.talentLevels
     );
     this.weaponBase = createWeapon(
       config.weaponId,

@@ -50,10 +50,10 @@ class Sethos extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    const atkMult = this.constellation >= 3 ? 2.975 : 2.52;
-    const emMult = this.constellation >= 3 ? 2.859 : 2.422;
+    const atkMult = this.param("A", 7);
+    const emMult = this.param("A", 8);
     // Q Dusk Bolt: DMG increase based on EM, considered Charged ATK DMG
-    const duskBoltEmMult = this.constellation >= 5 ? 4.168 : 3.531;
+    const duskBoltEmMult = this.param("Q", 1);
     return {
       "sethos-shadowpiercer": {
         label: { zh: "重击", en: "CA" },
@@ -113,7 +113,7 @@ class Kaveh extends CharacterBase {
       [
         {
           key: "reactionDmg%",
-          value: this.constellation >= 3 ? 0.584 : 0.495,
+          value: this.param("Q", 3),
         },
       ]
     ),
@@ -188,7 +188,7 @@ class Faruzan extends CharacterBase {
     new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { elements: ["Anemo"] } },
-      [{ key: "anemo%", value: this.constellation >= 5 ? 0.382 : 0.324 }]
+      [{ key: "anemo%", value: this.param("Q", 2) }]
     ),
     // P2: Under Q, Anemo DMG gets flat baseDmg from 32% of Faruzan's BASE ATK (not total ATK)
     // Game text: "基于珐露珊基础攻击力的32%，提高造成的伤害"
@@ -222,8 +222,8 @@ class Faruzan extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    const vortexMult = this.constellation >= 3 ? 2.295 : 1.944;
-    const polyhedronMult = this.constellation >= 3 ? 3.162 : 2.678;
+    const vortexMult = this.param("E", 2);
+    const polyhedronMult = this.param("E", 1);
     const eTag = {
       element: "Anemo" as const,
       ability: "skill" as const,

@@ -168,6 +168,24 @@ export function buildTeamConfigs(
       }
     }
 
+    // Talent levels: start from account data, apply per-talent overrides
+    let talentLevels = acctChar?.talent;
+    const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
+    const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
+    const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
+    if (
+      overrideAuto !== undefined ||
+      overrideSkill !== undefined ||
+      overrideBurst !== undefined
+    ) {
+      const base = talentLevels ?? { auto: 10, skill: 10, burst: 10 };
+      talentLevels = {
+        auto: overrideAuto !== undefined ? Number(overrideAuto) : base.auto,
+        skill: overrideSkill !== undefined ? Number(overrideSkill) : base.skill,
+        burst: overrideBurst !== undefined ? Number(overrideBurst) : base.burst,
+      };
+    }
+
     configs.push({
       charId,
       charLevel,
@@ -176,6 +194,7 @@ export function buildTeamConfigs(
       refinement,
       artifactSetId,
       artifactHalfSetIds,
+      talentLevels,
     });
   }
   return configs;

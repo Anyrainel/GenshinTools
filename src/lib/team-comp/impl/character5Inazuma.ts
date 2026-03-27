@@ -20,7 +20,7 @@ import { cbs } from "../helpers";
 @RegisterCharacter("yumemizuki_mizuki")
 class YumemizukiMizuki extends CharacterBase {
   readonly buffs = (() => {
-    const eReactDmg = this.constellation >= 3 ? 0.0054 : 0.0045;
+    const eReactDmg = this.param("E", 2);
     const buffs: StatBuff[] = [
       // E: Dreamdrifter — increases team Swirl DMG by 0.45% per EM (lv10) / 0.54% (lv13, C3+)
       new ScalingBuff(
@@ -91,7 +91,7 @@ class YumemizukiMizuki extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const eTickMult = this.constellation >= 3 ? 0.954 : 0.808;
+    const eTickMult = this.param("E", 1);
     const canSwirl = this.teamMeta.hasReaction("swirl");
 
     return {
@@ -155,12 +155,12 @@ class Chiori extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    // Tamoto: Lv10 148% ATK + 185% DEF, C3+: 174% ATK + 218% DEF
-    const tAtk = this.constellation >= 3 ? 1.74 : 1.48;
-    const tDef = this.constellation >= 3 ? 2.18 : 1.85;
-    // Upward Sweep / P1 coordinated: Lv10 269% ATK + 336% DEF, C3+: 317% ATK + 397% DEF
-    const sweepAtk = this.constellation >= 3 ? 3.17 : 2.69;
-    const sweepDef = this.constellation >= 3 ? 3.97 : 3.36;
+    // Tamoto: E param1 ATK + E param2 DEF
+    const tAtk = this.param("E", 1);
+    const tDef = this.param("E", 2);
+    // Upward Sweep / P1 coordinated: E param5 ATK + E param6 DEF
+    const sweepAtk = this.param("E", 5);
+    const sweepDef = this.param("E", 6);
     // C2/C4 Kinu: 170% of Tamoto DMG (baked into multiplier)
     const kinuAtk = tAtk * 1.7;
     const kinuDef = tDef * 1.7;
@@ -236,18 +236,18 @@ class Chiori extends CharacterBase {
             : []),
         ],
       },
-      // Q Hiyoku: Twin Blades — Lv10 461% ATK + 577% DEF, Lv13 (C5+) 544% ATK + 681% DEF
+      // Q Hiyoku: Twin Blades — Q param1 ATK + Q param2 DEF
       "chiori-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
             formula: new DirectFormula(
-              this.constellation >= 5 ? 5.45 : 4.61,
+              this.param("Q", 1),
               { element: "Geo", ability: "burst", reaction: "none" },
               "atk",
               {
                 key: "def",
-                multiplier: this.constellation >= 5 ? 6.81 : 5.77,
+                multiplier: this.param("Q", 2),
               }
             ),
           },
@@ -406,27 +406,21 @@ class RaidenShogun extends CharacterBase {
     return { "raiden-coordinated": 1, "raiden-initial": 1, "raiden-charge": 3 };
   }
 
-  // Q initial slash: Lv10 721% + 7%×60 = 1141%, Lv13 (C3+): 852% + 8.26%×60 = 1347.6%
-  // Q Charged ATK (Musou Isshin): two hits at different multipliers (S3 requires separate parts)
-  //   Lv10: 109.9% + 132.7%, resolve +1.31%×60 per hit
-  //   Lv13 (C3+): 128.8% + 155.5%, resolve +1.54%×60 per hit
+  // Q initial slash: Q param1 + Q param2 × 60 resolve
+  // Q Charged ATK (Musou Isshin): Q param11 + Q param12, resolve Q param3 × 60 per hit
   protected readonly formulaMap = (() => {
-    const initialResolve = this.constellation >= 3 ? 0.0826 : 0.07;
-    const initialMult =
-      this.constellation >= 3
-        ? 8.52 + initialResolve * 60
-        : 7.21 + initialResolve * 60;
-    const chargeResolve = this.constellation >= 3 ? 0.0154 * 60 : 0.0131 * 60;
+    const initialMult = this.param("Q", 1) + this.param("Q", 2) * 60;
+    const chargeResolve = this.param("Q", 3) * 60;
     // Charged ATK: hit1 + resolve, hit2 + resolve
-    const chargeHit1 = this.constellation >= 3 ? 1.288 : 1.099;
-    const chargeHit2 = this.constellation >= 3 ? 1.555 : 1.327;
+    const chargeHit1 = this.param("Q", 11);
+    const chargeHit2 = this.param("Q", 12);
     const electroBurst = {
       element: "Electro" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    // E coordinated attack: Lv10 75.6%, Lv13 (C5+) 89.2%, every 0.9s over 25s ≈ 27 hits
-    const coordMult = this.constellation >= 5 ? 0.892 : 0.756;
+    // E coordinated attack: E param2, every 0.9s over 25s ≈ 27 hits
+    const coordMult = this.param("E", 2);
     const electroSkill = {
       element: "Electro" as const,
       ability: "skill" as const,
@@ -486,15 +480,14 @@ class RaidenShogun extends CharacterBase {
 @RegisterCharacter("arataki_itto")
 class AratakiItto extends CharacterBase {
   readonly buffs = [
-    // Q: Royal Descent — DEF → ATK conversion
-    // Lv10: 103.7% DEF → ATK, Lv13 (C5+): 122.4% DEF → ATK
+    // Q: Royal Descent — DEF → ATK conversion (Q param2)
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "selfOnField" },
       [],
       "def",
       "atk",
-      this.constellation >= 5 ? 1.224 : 1.037
+      this.param("Q", 2)
     ),
     // P2: Arataki Kesagiri DMG +35% of DEF → flat baseDmg on charge
     new ScalingBuff(
@@ -619,11 +612,11 @@ class KamisatoAyaka extends CharacterBase {
   }
 
   // Charged ATK: Lv10 109.0%×3 (Normal talent, no constellation boost)
-  // Q cutting: Lv10 202%, Lv13 (C3+) 239%, ~19 cuts + bloom 303%/358%
+  // Q cutting: Q param1, bloom: Q param2
   // C2: +2 smaller storms → +40% burst baseDmg% (handled via StatBuff, not pre-multiplied)
   protected readonly formulaMap = (() => {
-    const cutMult = this.constellation >= 3 ? 2.39 : 2.02;
-    const bloomMult = this.constellation >= 3 ? 3.58 : 3.03;
+    const cutMult = this.param("Q", 1);
+    const bloomMult = this.param("Q", 2);
     const cryoNormal = {
       element: "Cryo" as const,
       ability: "normal" as const,
@@ -748,13 +741,13 @@ class KamisatoAyato extends CharacterBase {
   // Namisen per hit: 4 stacks × 1.11% HP (C2: 5 stacks)
   // Q Bloomwater: Lv10 119.6%, Lv13 (C5+) 141.2%, ~30 hits over 18s
   protected readonly formulaMap = (() => {
-    const n1Mult = this.constellation >= 3 ? 1.267 : 1.046;
-    const n2Mult = this.constellation >= 3 ? 1.411 : 1.165;
-    const n3Mult = this.constellation >= 3 ? 1.555 : 1.284;
+    const n1Mult = this.param("E", 1);
+    const n2Mult = this.param("E", 2);
+    const n3Mult = this.param("E", 3);
     const stacks = this.constellation >= 2 ? 5 : 4;
-    const namisenPerHit = this.constellation >= 3 ? 0.0134 : 0.0111;
+    const namisenPerHit = this.param("E", 5);
     const hpPerHit = stacks * namisenPerHit;
-    const qMult = this.constellation >= 5 ? 1.412 : 1.196;
+    const qMult = this.param("Q", 1);
     const hydroTag = {
       element: "Hydro" as const,
       ability: "normal" as const,
@@ -853,8 +846,7 @@ class SangonomiyaKokomi extends CharacterBase {
       "baseDmg%",
       0.15
     ),
-    // Q: Nereid's Ascension — HP → baseDmg for Normal Attacks
-    // Lv10: 8.7% HP, Lv13 (C3+): 10.3% HP
+    // Q: Nereid's Ascension — HP → baseDmg for Normal Attacks (Q param4)
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       {
@@ -864,10 +856,9 @@ class SangonomiyaKokomi extends CharacterBase {
       [],
       "hp",
       "baseDmg",
-      this.constellation >= 3 ? 0.103 : 0.087
+      this.param("Q", 4)
     ),
-    // Q: Nereid's Ascension — HP → baseDmg for Charged Attacks
-    // Lv10: 12.2% HP, Lv13 (C3+): 14.4% HP
+    // Q: Nereid's Ascension — HP → baseDmg for Charged Attacks (Q param5)
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       {
@@ -877,7 +868,7 @@ class SangonomiyaKokomi extends CharacterBase {
       [],
       "hp",
       "baseDmg",
-      this.constellation >= 3 ? 0.144 : 0.122
+      this.param("Q", 5)
     ),
     // C4: During Q, Normal ATK SPD +10%
     ...(this.constellation >= 4
@@ -990,13 +981,12 @@ class KaedeharaKazuha extends CharacterBase {
     return { "kazuha-skill": 2, "kazuha-plunge-c6": 2, "kazuha-burst": 1 };
   }
 
-  // E press: Lv10 346%, Lv13 (C3+) 408%
+  // E press: E param1; Q slash: Q param1; Q DoT: Q param2
   // C6 High Plunge (Midare Ranzan): Normal ATK talent, no constellation boost. High plunge Lv10 404%
-  // Q slash: Lv10 472%, Lv13 (C5+) 558% + DoT Lv10 216%, Lv13 (C5+) 255% ×5
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 4.08 : 3.46;
-    const qSlash = this.constellation >= 5 ? 5.58 : 4.72;
-    const qDot = this.constellation >= 5 ? 2.55 : 2.16;
+    const eMult = this.param("E", 1);
+    const qSlash = this.param("Q", 1);
+    const qDot = this.param("Q", 2);
     return {
       "kazuha-skill": {
         label: { zh: "E伤害", en: "E" },
@@ -1119,7 +1109,7 @@ class Yoimiya extends CharacterBase {
     const n4 = 0.828; // ×2
     const n5 = 1.889;
 
-    const eMult = this.constellation >= 3 ? 1.706 : 1.617;
+    const eMult = this.param("E", 4);
 
     const pyroNormal = {
       element: "Pyro" as const,
@@ -1211,15 +1201,12 @@ class YaeMiko extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    let eMult = 0;
-    if (this.constellation >= 3) {
-      eMult = this.constellation >= 2 ? 2.518 : 2.014; // Lv13 (Lv4 or Lv3)
-    } else {
-      eMult = this.constellation >= 2 ? 2.133 : 1.706; // Lv10 (Lv4 or Lv3)
-    }
+    // C2 raises Sakura from Level 3 to Level 4 → param3 vs param4
+    const eMult =
+      this.constellation >= 2 ? this.param("E", 4) : this.param("E", 3);
 
-    const qInitialMult = this.constellation >= 5 ? 5.52 : 4.68;
-    const qThunderboltMult = this.constellation >= 5 ? 7.09 : 6.01;
+    const qInitialMult = this.param("Q", 1);
+    const qThunderboltMult = this.param("Q", 2);
 
     return {
       "yae_miko-skill": {

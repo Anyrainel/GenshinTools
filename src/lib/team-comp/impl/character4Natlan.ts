@@ -50,8 +50,8 @@ class Ifa extends CharacterBase {
   // Q Skill DMG: Lv10 915.3%, Lv13 (C5+) 1080.5%
   // Q Sedation Mark DMG: Lv10 196.1%, Lv13 (C5+) 231.5% per mark (up to 4)
   protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 5 ? 10.805 : 9.153;
-    const markMult = this.constellation >= 5 ? 2.315 : 1.961;
+    const qMult = this.param("Q", 1);
+    const markMult = this.param("Q", 2);
 
     // Sedation Marks: one per unique team element (Pyro/Hydro/Cryo/Electro)
     const markElements: ElementalOrPhysical[] = [];
@@ -130,7 +130,7 @@ class Iansan extends CharacterBase {
         "atk",
         "atk",
         this.nightsoulLevel === "high" ? 0.27 : 0.135,
-        this.constellation >= 5 ? 810 : 690
+        this.param("Q", 4)
       ),
     ];
     // C2: While off-field with Precise Movement, on-field character (not Iansan) ATK +30%
@@ -155,8 +155,8 @@ class Iansan extends CharacterBase {
   // E: Lv10 515.5%, Lv13 (C3+) 608.6%
   // Q: Lv10 774.7%, Lv13 (C5+) 914.6%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 6.086 : 5.155;
-    const qMult = this.constellation >= 5 ? 9.146 : 7.747;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
     return {
       "iansan-skill": {
         label: { zh: "E伤害", en: "E Skill" },
@@ -188,7 +188,7 @@ class Iansan extends CharacterBase {
         label: { zh: "雷霆飞缒", en: "Swift Stormflight" },
         parts: [
           {
-            formula: new DirectFormula(1.664, {
+            formula: new DirectFormula(this.param("A", 5), {
               element: "Electro",
               ability: "charge",
               reaction: "none",
@@ -267,9 +267,9 @@ class Ororon extends CharacterBase {
   // Q: Lv10 313.9%, Lv13 (C3+) 370.6%
   // Q Soundwave: Lv10 59.8%, Lv13 (C3+) 70.5%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 4.199 : 3.557;
-    const qMult = this.constellation >= 3 ? 3.706 : 3.139;
-    const soundwaveMult = this.constellation >= 3 ? 0.705 : 0.598;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
+    const soundwaveMult = this.param("Q", 2);
 
     // P1 Hypersense: 160% ATK Electro, ability: "special" (no damage tag per KQM)
     // C1 +50% dmg% is handled via StatBuff above, not baked here
@@ -388,8 +388,8 @@ class Kachina extends CharacterBase {
   // Turbo Twirly Independent: Lv10 114.8% DEF, Lv13 (C3+) 135.5% DEF
   // Q: Lv10 692.6% DEF, Lv13 (C5+) 817.7% DEF
   protected readonly formulaMap = (() => {
-    const independentMult = this.constellation >= 3 ? 1.355 : 1.148;
-    const qMult = this.constellation >= 5 ? 8.177 : 6.926;
+    const independentMult = this.param("E", 2);
+    const qMult = this.param("Q", 1);
     return {
       "kachina-twirly": {
         label: { zh: "E伤害", en: "E Skill" },

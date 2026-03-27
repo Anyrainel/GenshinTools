@@ -1,3 +1,4 @@
+import { charInfo } from "@/data/charInfo";
 import { charactersById } from "@/data/constants";
 import type {
   ArtifactData,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/account-data/scoring/utils";
 import {
   getCharacterStatsSync,
+  getTalentParam,
   resolveCharacterStats,
   resolveWeaponStats,
 } from "@/lib/gameStatsLoader";
@@ -38,6 +40,7 @@ import type {
   ReactionType,
   StatEntry,
   StatKey,
+  TalentLevels,
 } from "./types";
 import { exclusionKey } from "./types";
 
@@ -563,8 +566,6 @@ abstract class IDamageProvider {
 // TeamMeta
 // ═══════════════════════════════════════════════════════════════
 
-import { charInfo } from "@/data/charInfo";
-
 /**
  * Immutable team metadata: elements, regions, rarities, factions.
  * Constructed once per team configuration. Provides query helpers
@@ -719,6 +720,33 @@ export class TeamMeta {
 
     return true;
   }
+
+  /**
+   * Compute passive talent level bonuses from teammates.
+   * - Tartaglia P3 "Master of Weaponry": +1 Normal Attack (A) for all party members (unconditional)
+   * - Skirk P3 "Mutual Weapons Mentorship": +1 Skill (E) for all party members
+   *   (only when all characters are Hydro or Cryo, with at least 1 of each)
+   */
+  talentPassiveBonuses(): { A: number; E: number; Q: number } {
+    const bonus = { A: 0, E: 0, Q: 0 };
+    if (this.characters.includes("tartaglia")) {
+      bonus.A += 1;
+    }
+    if (this.characters.includes("skirk")) {
+      const elements = Object.values(this.elements).filter(
+        (e): e is Element => e != null
+      );
+      const allHydroOrCryo = elements.every(
+        (e) => e === "Hydro" || e === "Cryo"
+      );
+      const hasHydro = elements.some((e) => e === "Hydro");
+      const hasCryo = elements.some((e) => e === "Cryo");
+      if (allHydroOrCryo && hasHydro && hasCryo) {
+        bonus.E += 1;
+      }
+    }
+    return bonus;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -778,15 +806,54 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Raw option string from OptionMap. Subclasses narrow via resolveOption(). */
   protected readonly option: string;
 
+  /** Effective talent levels after C3/C5 bonuses. */
+  private readonly _effectiveLevels: { A: number; E: number; Q: number };
+
   constructor(
     readonly charId: string,
     readonly charLevel: number,
     readonly constellation: number,
     readonly teamMeta: TeamMeta,
-    combatOpts: OptionMap = {}
+    combatOpts: OptionMap = {},
+    talentLevels?: TalentLevels
   ) {
     this.stats = resolveCharacterStats(charId, charLevel);
     this.option = combatOpts[charId] ?? "";
+
+    const base = talentLevels ?? { auto: 10, skill: 10, burst: 10 };
+    const info = charInfo[charId];
+    const c3Bonus = this.constellation >= 3 && info ? 3 : 0;
+    const c5Bonus = this.constellation >= 5 && info ? 3 : 0;
+    const passive = teamMeta.talentPassiveBonuses();
+    this._effectiveLevels = {
+      A:
+        base.auto +
+        (info?.c3Talent === "A" ? c3Bonus : 0) +
+        (info?.c5Talent === "A" ? c5Bonus : 0) +
+        passive.A,
+      E:
+        base.skill +
+        (info?.c3Talent === "E" ? c3Bonus : 0) +
+        (info?.c5Talent === "E" ? c5Bonus : 0) +
+        passive.E,
+      Q:
+        base.burst +
+        (info?.c3Talent === "Q" ? c3Bonus : 0) +
+        (info?.c5Talent === "Q" ? c5Bonus : 0) +
+        passive.Q,
+    };
+  }
+
+  /** Get talent param at the character's effective talent level. 1-based paramIndex. */
+  protected param(skill: "A" | "E" | "Q", paramIndex: number): number {
+    const level = this._effectiveLevels[skill];
+    return getTalentParam(this.charId, skill, level - 1, paramIndex - 1);
+  }
+
+  /** Get the effective talent level for an ability (after C3/C5 bonuses). */
+  protected talentLevel(ability: "auto" | "skill" | "burst"): number {
+    const map = { auto: "A", skill: "E", burst: "Q" } as const;
+    return this._effectiveLevels[map[ability]];
   }
 
   get src(): BuffSource {
@@ -1153,7 +1220,8 @@ type CharacterCtor = new (
   charLevel: number,
   constellation: number,
   teamMeta: TeamMeta,
-  combatOpts?: OptionMap
+  combatOpts?: OptionMap,
+  talentLevels?: TalentLevels
 ) => CharacterBase;
 
 type WeaponCtor = new (
@@ -1223,11 +1291,19 @@ export function createCharacter(
   charLevel: number,
   constellation: number,
   teamMeta: TeamMeta,
-  combatOpts: OptionMap = {}
+  combatOpts: OptionMap = {},
+  talentLevels?: TalentLevels
 ): CharacterBase {
   const Ctor = characterRegistry.get(charId);
   if (!Ctor) throw new Error(`No character registered for: ${charId}`);
-  return new Ctor(charId, charLevel, constellation, teamMeta, combatOpts);
+  return new Ctor(
+    charId,
+    charLevel,
+    constellation,
+    teamMeta,
+    combatOpts,
+    talentLevels
+  );
 }
 
 export function createWeapon(

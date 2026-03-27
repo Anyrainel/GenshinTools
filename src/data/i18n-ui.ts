@@ -811,6 +811,10 @@ export const i18nUiData = {
       en: "Optimization timed out",
       zh: "优化超时",
     },
+    timeBudget: {
+      en: "Budget",
+      zh: "时限",
+    },
     failWorkerError: {
       en: "Optimizer error: {0}",
       zh: "优化器错误：{0}",

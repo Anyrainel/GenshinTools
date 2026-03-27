@@ -91,6 +91,8 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
     teamResult: null,
     teamError: null,
     handleOptimize: vi.fn(),
+    timeBudgetSec: 30,
+    onTimeBudgetChange: vi.fn(),
     optimizedArtifactsByChar: {},
     optimizedDisplayResult: null,
     minErRaw: 100,

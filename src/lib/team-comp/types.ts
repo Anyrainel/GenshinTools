@@ -455,6 +455,8 @@ export type FormulaContext = {
 
 // ─── Char Build Config ───
 
+export type TalentLevels = { auto: number; skill: number; burst: number };
+
 export type TeamSlotConfig = {
   charId: string;
   charLevel: number;
@@ -463,6 +465,7 @@ export type TeamSlotConfig = {
   refinement: number;
   artifactSetId: string | null; // null if 2+2
   artifactHalfSetIds: string[]; // 1 (for 4pc) or 2 (for 2+2)
+  talentLevels?: TalentLevels;
 };
 
 // ─── Combat Options (Schema-Driven) ───

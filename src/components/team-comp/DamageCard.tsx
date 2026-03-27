@@ -1015,6 +1015,8 @@ interface DamageCardProps {
   teamResult: TeamOptimizationResult | null;
   teamError: Error | null;
   handleOptimize: () => void;
+  timeBudgetSec: number;
+  onTimeBudgetChange: (sec: number) => void;
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   optimizedDisplayResult: DisplayResult | null | undefined;
   minErRaw: number;
@@ -1367,6 +1369,8 @@ export function DamageCard({
   teamResult,
   teamError,
   handleOptimize,
+  timeBudgetSec,
+  onTimeBudgetChange,
   optimizedArtifactsByChar,
   optimizedDisplayResult,
   minErRaw,
@@ -1590,6 +1594,24 @@ export function DamageCard({
               <EnemyLevelInput {...ctxProps} />
               <EnemyResInput {...ctxProps} />
               <CritRateTargetInput {...ctxProps} />
+              <div className="flex items-center gap-0.5 md:gap-1">
+                <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
+                <Select
+                  value={String(timeBudgetSec)}
+                  onValueChange={(v) => onTimeBudgetChange(Number(v))}
+                  disabled={isComputing}
+                >
+                  <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-[52px] px-1 py-0 md:text-sm md:h-7 md:w-[60px] md:px-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30s</SelectItem>
+                    <SelectItem value="60">60s</SelectItem>
+                    <SelectItem value="120">120s</SelectItem>
+                    <SelectItem value="240">240s</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <span
                 title={
                   isFullyFrozen

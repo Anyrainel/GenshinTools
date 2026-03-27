@@ -77,12 +77,12 @@ class Dehya extends CharacterBase {
   // Fist Lv10: 177.7% ATK + 3.05% HP, Lv13 (C3+): 209.7% ATK + 3.60% HP
   // Drive Lv10: 250.7% ATK + 4.30% HP, Lv13 (C3+): 296.0% ATK + 5.07% HP
   protected readonly formulaMap = (() => {
-    const fieldAtk = this.constellation >= 5 ? 1.279 : 1.084;
-    const fieldHp = this.constellation >= 5 ? 0.0219 : 0.0186;
-    const fistAtk = this.constellation >= 3 ? 2.097 : 1.777;
-    const fistHp = this.constellation >= 3 ? 0.036 : 0.0305;
-    const driveAtk = this.constellation >= 3 ? 2.96 : 2.507;
-    const driveHp = this.constellation >= 3 ? 0.0507 : 0.043;
+    const fieldAtk = this.param("E", 3);
+    const fieldHp = this.param("E", 4);
+    const fistAtk = this.param("Q", 1);
+    const fistHp = this.param("Q", 2);
+    const driveAtk = this.param("Q", 3);
+    const driveHp = this.param("Q", 4);
     const eTag = {
       element: "Pyro" as const,
       ability: "skill" as const,
@@ -184,13 +184,12 @@ class Alhaitham extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // 3-Mirror Projection per hit: Lv10 121.0% ATK + 241.9% EM, C3+: 142.8% ATK + 285.6% EM
-    const projAtk = this.constellation >= 3 ? 1.428 : 1.21;
-    const projEm = this.constellation >= 3 ? 2.856 : 2.419;
-    // Burst single-instance: Lv10 218.9% ATK + 175.1% EM, C5+: 258.4% ATK + 206.7% EM
-    // With 3 mirrors consumed = 10 hits
-    const burstAtk = this.constellation >= 5 ? 2.584 : 2.189;
-    const burstEm = this.constellation >= 5 ? 2.067 : 1.751;
+    // 3-Mirror Projection per hit
+    const projAtk = this.param("E", 8);
+    const projEm = this.param("E", 9);
+    // Burst single-instance, with 3 mirrors consumed = 10 hits
+    const burstAtk = this.param("Q", 1);
+    const burstEm = this.param("Q", 2);
     const projTag = {
       element: "Dendro" as const,
       ability: "skill" as const,
@@ -309,12 +308,12 @@ class Wanderer extends CharacterBase {
   // E Lv10: 143.0%, E Lv13 (C5+): 149.1%
   // Q Burst (Lv10): 265.0%×5, (Lv13 C3+): 312.8%×5
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 1.614 : 1.537;
-    const n1 = 1.358 * eMult;
-    const n2 = 1.285 * eMult;
-    const n3 = 0.942 * eMult;
-    const ca = 2.377 * (this.constellation >= 5 ? 1.491 : 1.43);
-    const qMult = this.constellation >= 3 ? 3.128 : 2.65;
+    const eMult = this.param("E", 2);
+    const n1 = this.param("A", 1) * eMult;
+    const n2 = this.param("A", 2) * eMult;
+    const n3 = this.param("A", 3) * eMult;
+    const ca = this.param("A", 5) * this.param("E", 3);
+    const qMult = this.param("Q", 1);
     const normalTag = {
       element: "Anemo" as const,
       ability: "normal" as const,
@@ -388,9 +387,8 @@ class Nahida extends CharacterBase {
   private readonly pyroBonusDmg = (() => {
     const pyroCount =
       this.teamMeta.countByElement("Pyro") + (this.constellation >= 1 ? 1 : 0);
-    const isQ13 = this.constellation >= 5;
-    if (pyroCount >= 2) return isQ13 ? 0.474 : 0.402;
-    if (pyroCount >= 1) return isQ13 ? 0.316 : 0.268;
+    if (pyroCount >= 2) return this.param("Q", 2);
+    if (pyroCount >= 1) return this.param("Q", 1);
     return 0;
   })();
 
@@ -515,10 +513,10 @@ class Nahida extends CharacterBase {
       : []),
   ];
 
-  // Tri-Karma: Lv10 185.8% ATK + 371.5% EM, Lv13 (C3+) 219.3% ATK + 438.6% EM
+  // Tri-Karma Purification DMG
   protected readonly formulaMap = (() => {
-    const atkMult = this.constellation >= 3 ? 2.193 : 1.858;
-    const emMult = this.constellation >= 3 ? 4.386 : 3.715;
+    const atkMult = this.param("E", 3);
+    const emMult = this.param("E", 4);
     return {
       "nahida-karma": {
         label: { zh: "E伤害", en: "E" },
@@ -607,15 +605,13 @@ class Cyno extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Burst N1-N5 combo (5 distinct multipliers, N4 hits twice = 6 total hits)
-    // Lv10: N1=154.7%, N2=163.0%, N3=206.8%, N4=102.2%×2, N5=258.6%
-    // Lv13 (C3+): N1=187.5%, N2=197.5%, N3=250.6%, N4=123.8%×2, N5=313.4%
-    const n1 = this.constellation >= 3 ? 1.875 : 1.547;
-    const n2 = this.constellation >= 3 ? 1.975 : 1.63;
-    const n3 = this.constellation >= 3 ? 2.506 : 2.068;
-    const n4 = this.constellation >= 3 ? 1.238 : 1.022;
-    const n5 = this.constellation >= 3 ? 3.134 : 2.586;
-    // Mortuary Rite: Lv10 282.2%, C5+ 333.2%
-    const eMult = this.constellation >= 5 ? 3.332 : 2.822;
+    const n1 = this.param("Q", 1);
+    const n2 = this.param("Q", 2);
+    const n3 = this.param("Q", 3);
+    const n4 = this.param("Q", 4);
+    const n5 = this.param("Q", 6);
+    // Mortuary Rite
+    const eMult = this.param("E", 2);
 
     const normalBaseTag = {
       element: "Electro" as const,
@@ -783,8 +779,8 @@ class Nilou extends CharacterBase {
 
   // Q: Lv10 Skill DMG 33.2% HP + Lingering Aeon 40.6% HP, Lv13 (C3+) 39.2% + 47.9%
   protected readonly formulaMap = (() => {
-    const qHit1 = this.constellation >= 3 ? 0.392 : 0.332;
-    const qHit2 = this.constellation >= 3 ? 0.479 : 0.406;
+    const qHit1 = this.param("Q", 1);
+    const qHit2 = this.param("Q", 2);
     const elements = Object.values(this.teamMeta.elements);
     const allDendroHydro = elements.every(
       (e) => e === "Dendro" || e === "Hydro"
@@ -805,13 +801,10 @@ class Nilou extends CharacterBase {
     };
 
     // E Sword Dance: initial + 1st + 2nd + Luminous Illusion (all HP% scaling, Skill DMG)
-    const eInit = this.constellation >= 5 ? 0.071 : 0.0601;
-    const e1 = this.constellation >= 5 ? 0.0967 : 0.0819;
-    const e2 = this.constellation >= 5 ? 0.1093 : 0.0926;
-    // C1: Luminous Illusion DMG +65%
-    const eLumin =
-      (this.constellation >= 5 ? 0.1523 : 0.129) *
-      (this.constellation >= 1 ? 1.65 : 1);
+    const eInit = this.param("E", 1);
+    const e1 = this.param("E", 6);
+    const e2 = this.param("E", 7);
+    const eLumin = this.param("E", 4);
 
     return {
       "nilou-e-dance": {
@@ -820,7 +813,19 @@ class Nilou extends CharacterBase {
           { formula: new DirectFormula(eInit, eTag, "hp") },
           { formula: new DirectFormula(e1, eTag, "hp") },
           { formula: new DirectFormula(e2, eTag, "hp") },
-          { formula: new DirectFormula(eLumin, eTag, "hp") },
+          {
+            formula: new DirectFormula(eLumin, eTag, "hp"),
+            // C1: Luminous Illusion DMG +65%
+            ...(this.constellation >= 1
+              ? {
+                  bespokeBuff: new StatBuff(
+                    cbs(this, "C1", []),
+                    { receiver: "selfOnField" },
+                    [{ key: "baseDmg%", value: 0.65 }]
+                  ),
+                }
+              : {}),
+          },
         ],
       },
       "nilou-burst": {
@@ -943,17 +948,18 @@ class Tighnari extends CharacterBase {
       reaction: "none" as const,
     };
 
-    // Tanglevine: Lv10 100.1%, C3+ Lv13 118.2%
-    const tangleMult = this.constellation >= 3 ? 1.182 : 1.001;
-    // Secondary: Lv10 122.4%, C3+ Lv13 144.5%
-    const secondaryMult = this.constellation >= 3 ? 1.445 : 1.224;
+    const tangleMult = this.param("Q", 1);
+    const secondaryMult = this.param("Q", 2);
 
     return {
       "tighnari-charge": {
         label: { zh: "重击花筥箭", en: "CA Wreath+Clusterbloom" },
         parts: [
-          { formula: new DirectFormula(1.57, chargeTag) },
-          { formula: new DirectFormula(0.695, chargeTag), hits: 4 },
+          { formula: new DirectFormula(this.param("A", 7), chargeTag) },
+          {
+            formula: new DirectFormula(this.param("A", 8), chargeTag),
+            hits: 4,
+          },
           ...(this.constellation >= 6
             ? [{ formula: new DirectFormula(1.5, chargeTag) }]
             : []),

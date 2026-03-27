@@ -70,8 +70,8 @@ class LanYan extends CharacterBase {
   // C1 adds a second Feathermoon Ring, doubling hits. C6 grants an extra E charge.
   // Q: Lv10 433.9% ×3 hits, Lv13 (C5+) 512.3% ×3 hits
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 2.045 : 1.733;
-    const qMult = this.constellation >= 5 ? 5.123 : 4.339;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
     // C1: 2 charges of E, but each cast still hit 1 time
     // E: propagate to 2 additional targets, but we simulate single target damage, so hit is 1
     return {
@@ -145,8 +145,8 @@ class Gaming extends CharacterBase {
   // E Charmed Cloudstrider: Lv10 414.7%, Lv13 (C3+) 489.6% (Pyro plunge)
   // Q Man Chai Smash: Lv10 666.7%, Lv13 (C5+) 787.1% (Pyro burst)
   protected readonly formulaMap = (() => {
-    const plungeMult = this.constellation >= 3 ? 4.896 : 4.147;
-    const manchaiMult = this.constellation >= 5 ? 7.871 : 6.667;
+    const plungeMult = this.param("E", 1);
+    const manchaiMult = this.param("Q", 1);
     return {
       "gaming-cloudstrider": {
         label: { zh: "下落", en: "Plunge" },
@@ -216,9 +216,9 @@ class Yaoyao extends CharacterBase {
   // Q Initial Lv10: 206.2%, Lv13 (C5+): 243.4%
   // Q Radish Lv10: 129.9%, Lv13 (C5+): 153.3%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 0.636 : 0.539;
-    const qInitialMult = this.constellation >= 5 ? 2.434 : 2.062;
-    const qRadishMult = this.constellation >= 5 ? 1.533 : 1.299;
+    const eMult = this.param("E", 1);
+    const qInitialMult = this.param("Q", 4);
+    const qRadishMult = this.param("Q", 1);
 
     const dendroSkill = {
       element: "Dendro" as const,
@@ -311,11 +311,10 @@ class Xiangling extends CharacterBase {
   // Pyronado tick: 202% (Lv10) / 238% (Lv13)
   // C0-C3 Duration 10s: ~10 ticks; C4+ Duration 14s: ~14 ticks
   protected readonly formulaMap = (() => {
-    const isC3 = this.constellation >= 3;
-    const swing1 = isC3 ? 1.53 : 1.3;
-    const swing2 = isC3 ? 1.87 : 1.58;
-    const swing3 = isC3 ? 2.33 : 1.97;
-    const tickMult = isC3 ? 2.38 : 2.02;
+    const swing1 = this.param("Q", 1);
+    const swing2 = this.param("Q", 2);
+    const swing3 = this.param("Q", 3);
+    const tickMult = this.param("Q", 4);
 
     const pyroTag = {
       element: "Pyro" as const,
@@ -391,9 +390,9 @@ class Chongyun extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // E: Lv10 310%, Lv13 (C5+) 366%
-    const eMult = this.constellation >= 5 ? 3.66 : 3.1;
+    const eMult = this.param("E", 1);
     // Q: 3 blades (C6: 4), Lv10 256% each, Lv13 (C3+) 303%
-    const qMult = this.constellation >= 3 ? 3.03 : 2.56;
+    const qMult = this.param("Q", 1);
     const blades = this.constellation >= 6 ? 4 : 3;
     return {
       "chongyun-skill": {
@@ -517,9 +516,9 @@ class Xinyan extends CharacterBase {
   // CA Cyclic DMG Lv10: 123.6%
   // Q Skill DMG Lv10: 613%, Lv13 (C5+): 724%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 3.6 : 3.05;
-    const qMult = this.constellation >= 5 ? 7.24 : 6.13;
-    const caMult = 1.236;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
+    const caMult = this.param("A", 5);
 
     // C6: CA gains ATK equal to 50% of DEF
     const caExtraTerm =
@@ -613,10 +612,10 @@ class Xingqiu extends CharacterBase {
   // Raincutter Sword Rain DMG (Lv10): 97.7%
   // Raincutter Sword Rain DMG (Lv13 C3+): 115.3%
   protected readonly formulaMap = (() => {
-    const eHit1 = this.constellation >= 5 ? 3.57 : 3.02;
-    const eHit2 = this.constellation >= 5 ? 4.06 : 3.44;
+    const eHit1 = this.param("E", 1);
+    const eHit2 = this.param("E", 2);
 
-    const qMult = this.constellation >= 3 ? 1.153 : 0.977;
+    const qMult = this.param("Q", 1);
 
     const hydroSkillTag = {
       element: "Hydro" as const,
@@ -681,7 +680,7 @@ class Yanfei extends CharacterBase {
       new StatBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        [{ key: "dmg%", value: this.constellation >= 5 ? 0.62 : 0.54 }]
+        [{ key: "dmg%", value: this.param("Q", 2) }]
       )
     );
 
@@ -702,9 +701,9 @@ class Yanfei extends CharacterBase {
   // Q Lv10: 328%, Lv13 (C5+): 388%
   // CA Max Seals Lv10: 245% (3 seals), 273% (4 seals)
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 3.6 : 3.05;
-    const qMult = this.constellation >= 5 ? 3.88 : 3.28;
-    const caMult = this.constellation >= 6 ? 2.73 : 2.45;
+    const eMult = this.param("E", 1);
+    const qMult = this.param("Q", 1);
+    const caMult = this.param("A", this.constellation >= 6 ? 8 : 7);
 
     return {
       "yanfei-charge": {
@@ -789,11 +788,11 @@ class Beidou extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Q Lightning DMG: Lv10 173%, Lv13 (C5+) 204%
-    const qMult = this.constellation >= 5 ? 2.04 : 1.73;
+    const qMult = this.param("Q", 2);
     // E Max-Counter: Base + 2×(DMG Bonus on Hit Taken)
     // Lv10: Base 218.88%, Hit Bonus 288%; Lv13 (C3+): Base 258.4%, Hit Bonus 340%
-    const eBaseMult = this.constellation >= 3 ? 2.584 : 2.1888;
-    const eHitBonusMult = this.constellation >= 3 ? 3.4 : 2.88;
+    const eBaseMult = this.param("E", 3);
+    const eHitBonusMult = this.param("E", 4);
     const electroSkillTag = {
       element: "Electro" as const,
       ability: "skill" as const,
@@ -846,8 +845,8 @@ class Ningguang extends CharacterBase {
   // E: Lv10 415%, Lv13 (C5+) 490%
   // Q: 12 gems Lv10 157%×12 = 1884%, Lv13 (C3+) 185%×12 = 2220%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 4.9 : 4.15;
-    const qGemMult = this.constellation >= 3 ? 1.85 : 1.57;
+    const eMult = this.param("E", 2);
+    const qGemMult = this.param("Q", 1);
     return {
       "ningguang-skill": {
         label: { zh: "E伤害", en: "E" },
@@ -886,8 +885,7 @@ class Ningguang extends CharacterBase {
 @RegisterCharacter("yun_jin")
 class YunJin extends CharacterBase {
   readonly buffs = (() => {
-    const qLevel = this.constellation >= 3 ? 13 : 10;
-    const qBaseScale = qLevel === 13 ? 0.68 : 0.58;
+    const qBaseScale = this.param("Q", 2);
 
     const elements = new Set(Object.values(this.teamMeta.elements));
     const count = elements.size;
@@ -956,14 +954,11 @@ class YunJin extends CharacterBase {
   // E Charge 2 DMG Lv10: 671.0% DEF, Lv13: 792.2% DEF
   // Q Skill DMG Lv10: 439%, Lv13: 518%
   protected readonly formulaMap = (() => {
-    const eLevel = this.constellation >= 5 ? 13 : 10;
-    const qLevel = this.constellation >= 3 ? 13 : 10;
+    const ePressMult = this.param("E", 3);
+    const eCharge1Mult = this.param("E", 4);
+    const eCharge2Mult = this.param("E", 5);
 
-    const ePressMult = eLevel === 13 ? 3.169 : 2.684;
-    const eCharge1Mult = eLevel === 13 ? 5.545 : 4.697;
-    const eCharge2Mult = eLevel === 13 ? 7.922 : 6.71;
-
-    const qMult = qLevel === 13 ? 5.18 : 4.39;
+    const qMult = this.param("Q", 1);
 
     return {
       "yun_jin-skill-press": {

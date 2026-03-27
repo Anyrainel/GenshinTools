@@ -69,6 +69,41 @@ def strip_html(html: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", html)).strip()
 
 
+_TEMPLATE_RE = re.compile(r"\{param(\d+):(F1P|F2P|F1|F2|P|I)\}")
+
+
+def _trim_decimal(s: str) -> str:
+    if "." in s:
+        s = s.rstrip("0").rstrip(".")
+    return s or "0"
+
+
+def _format_value(value: float, fmt: str) -> str:
+    if fmt == "I":
+        return str(round(value))
+    if fmt == "F1":
+        return _trim_decimal(f"{value:.1f}")
+    if fmt == "F2":
+        return _trim_decimal(f"{value:.2f}")
+    if fmt == "P":
+        return _trim_decimal(f"{value * 100:.0f}") + "%"
+    if fmt == "F1P":
+        return _trim_decimal(f"{value * 100:.1f}") + "%"
+    if fmt == "F2P":
+        return _trim_decimal(f"{value * 100:.2f}") + "%"
+    return _trim_decimal(f"{value:.2f}")
+
+
+def render_template(template: str, params: list[float]) -> str:
+    def _repl(m: re.Match[str]) -> str:
+        idx = int(m.group(1)) - 1
+        if idx < 0 or idx >= len(params):
+            return "0"
+        return _format_value(params[idx], m.group(2))
+
+    return _TEMPLATE_RE.sub(_repl, template)
+
+
 _EXTRACTED_DATACache: dict[str, Any] | None = None
 _CHAR_STATS_CACHE: dict[str, Any] | None = None
 _WEAPON_STATS_CACHE: dict[str, Any] | None = None
@@ -304,8 +339,8 @@ def cmd_detail(char_id: str, detail_spec: str) -> None:
         sys.exit(1)
 
     skill_code, level = m.group(1), int(m.group(2))
-    if level < 6 or level > 15:
-        print(f"Level {level} out of range (6–15).", file=sys.stderr)
+    if level < 1 or level > 15:
+        print(f"Level {level} out of range (1–15).", file=sys.stderr)
         sys.exit(1)
 
     skill_idx = SKILL_SLOT[skill_code]
@@ -323,18 +358,23 @@ def cmd_detail(char_id: str, detail_spec: str) -> None:
     name_zh = zh_s["name"] if zh_s else ""
     print(f"[{skill_code}] {name_en}  |  {name_zh}  —  Lv{level}")
 
-    # Detail rows: [label, lv6, lv7, ..., lv15]  (11 items; col index = level - 5)
-    col_idx = level - 5
+    # New template format: [label, template]
     en_details = en_s.get("details") or []
     zh_details = (zh_s.get("details") or []) if zh_s else []
 
+    # Load talent params for rendering
+    char_stats = get_char_stats()
+    talent_data = char_stats.get(char_id, {}).get("talent", {}).get(skill_code, [])
+    level_params = talent_data[level - 1] if level - 1 < len(talent_data) else []
+
     for j, row in enumerate(en_details):
-        if not row:
+        if not row or len(row) < 2:
             continue
         en_name = row[0]
+        template = row[1]
         zh_name = zh_details[j][0] if j < len(zh_details) and zh_details[j] else ""
-        val = row[col_idx] if len(row) > col_idx else "N/A"
-        print(f"  {en_name} ({zh_name}): {val}")
+        rendered = render_template(template, level_params)
+        print(f"  {en_name} ({zh_name}): {rendered}")
 
 
 def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
@@ -342,22 +382,10 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
     zh_skills = zh_kit.get("skills", [])
     tags = ["A", "E", "Q"]
 
-    # C3 boosts Q (skill index 2), C5 boosts E (skill index 1).
-    # Only show Lv13 column for the talents that are actually boosted.
-    constellations = en_kit.get("constellations", [])
-    show_lv13: dict[int, bool] = {
-        1: len(constellations) >= 5,  # E boosted by C5
-        2: len(constellations) >= 3,  # Q boosted by C3
-    }
-
-    # Detail rows: [label, Lv6, Lv7, …, Lv15] — 1 label + 10 level values.
-    LV10_IDX, LV13_IDX = 5, 8
-
     for i in range(len(en_skills)):
         en_s = en_skills[i]
         zh_s = zh_skills[i] if i < len(zh_skills) else None
         tag = tags[i] if i < len(tags) else f"S{i}"
-        include_lv13 = show_lv13.get(i, False)
 
         name_en = en_s.get("name", "")
         name_zh = zh_s["name"] if zh_s else ""
@@ -369,26 +397,12 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
         en_details = en_s.get("details") or []
         zh_details = (zh_s.get("details") or []) if zh_s else []
         for j, row in enumerate(en_details):
-            if not row:
+            if not row or len(row) < 2:
                 continue
             en_name = row[0]
-            if len(row) >= 11:
-                lv10 = row[LV10_IDX] if len(row) > LV10_IDX else "-"
-                lv13 = row[LV13_IDX] if len(row) > LV13_IDX else "-"
-            else:
-                # Legacy: either (label, lv6, lv10, lv13) with 4 cols
-                # or (label, lv10, lv13) with 3 cols
-                if len(row) >= 4:
-                    lv10 = row[2]
-                    lv13 = row[3] if len(row) > 3 else "-"
-                else:
-                    lv10 = row[1] if len(row) > 1 else "-"
-                    lv13 = row[2] if len(row) > 2 else "-"
+            template = row[1]
             zh_name = zh_details[j][0] if j < len(zh_details) and zh_details[j] else ""
-            if include_lv13:
-                print(f"  {en_name} ({zh_name}): {lv10} / {lv13}")
-            else:
-                print(f"  {en_name} ({zh_name}): {lv10}")
+            print(f"  {en_name} ({zh_name}): {template}")
 
     en_passives = en_kit.get("passives", [])
     zh_passives = zh_kit.get("passives", [])

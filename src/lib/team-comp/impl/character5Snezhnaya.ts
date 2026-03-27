@@ -309,15 +309,20 @@ class Arlecchino extends CharacterBase {
   }
 
   get formulaMap() {
-    const c3Plus = this.constellation >= 3;
-    const nMults = c3Plus
-      ? [1.138, 1.248, 1.566, 0.89, 0.89, 1.676, 2.045]
-      : [0.939, 1.03, 1.293, 0.734, 0.734, 1.383, 1.688];
+    const nMults = [
+      this.param("A", 1),
+      this.param("A", 2),
+      this.param("A", 3),
+      this.param("A", 4),
+      this.param("A", 4),
+      this.param("A", 5),
+      this.param("A", 6),
+    ];
     const initialBol = Number.parseInt(this.initialBolStr) / 100;
-    const baseMasque = c3Plus ? 2.884 : 2.38;
+    const baseMasque = this.param("A", 12);
     const masqueScale = this.constellation >= 1 ? baseMasque + 1.0 : baseMasque;
 
-    const qMult = this.constellation >= 5 ? 7.871 : 6.667;
+    const qMult = this.param("Q", 1);
 
     const normalBaseTag = {
       element: "Pyro" as const,
@@ -365,7 +370,7 @@ class Arlecchino extends CharacterBase {
         label: { zh: "E切斩", en: "E Cleave" },
         parts: [
           {
-            formula: new DirectFormula(c3Plus ? 2.838 : 2.404, {
+            formula: new DirectFormula(this.param("E", 2), {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
@@ -396,7 +401,7 @@ class Arlecchino extends CharacterBase {
 @RegisterCharacter("tartaglia")
 class Tartaglia extends CharacterBase {
   readonly buffs = [
-    // P3: +1 Normal ATK level for party (not modeled as stat buff)
+    // P3: +1 Normal ATK level for party — handled by CharacterBase._effectiveLevels
     // P1: Riptide extends duration (utility)
     // C4: Riptide triggers every 4s (utility)
   ];
@@ -414,11 +419,14 @@ class Tartaglia extends CharacterBase {
   // Burst Melee (Lv10): 835.0%
   // Burst Melee (Lv13 C5+): 986.0%
   protected readonly formulaMap = (() => {
-    const c3Plus = this.constellation >= 3;
-    const [n1, n2, n3] = c3Plus ? [0.931, 0.997, 1.349] : [0.768, 0.823, 1.113];
-    const [ca1, ca2] = c3Plus ? [1.442, 1.724] : [1.19, 1.423];
-    const qMult = this.constellation >= 5 ? 9.86 : 8.35;
-    const blastMult = this.constellation >= 5 ? 2.55 : 2.16;
+    const [n1, n2, n3] = [
+      this.param("E", 2),
+      this.param("E", 3),
+      this.param("E", 4),
+    ];
+    const [ca1, ca2] = [this.param("E", 9), this.param("E", 10)];
+    const qMult = this.param("Q", 1);
+    const blastMult = this.param("Q", 2);
     const meleeNormalTag = {
       element: "Hydro" as const,
       ability: "normal" as const,
@@ -434,8 +442,8 @@ class Tartaglia extends CharacterBase {
       ability: "skill" as const,
       reaction: "none" as const,
     };
-    const riptideSlashMult = c3Plus ? 1.44 : 1.19;
-    const stanceChangeMult = c3Plus ? 1.53 : 1.3;
+    const riptideSlashMult = this.param("E", 11);
+    const stanceChangeMult = this.param("E", 1);
     return {
       "tartaglia-melee-combo": {
         label: { zh: "E普攻+重击", en: "E Melee N3C Combo" },

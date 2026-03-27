@@ -246,8 +246,13 @@ export type CharacterInfo = {
 };
 
 // Character kit types (lazy-loaded per-language data from character_*.json)
-/** Skill table levels (Lv6–Lv15). Keys used in CharacterSkillDetail without "lv" prefix. */
+/** Skill table levels (Lv1–Lv15). */
 export const SKILL_LEVELS = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
   "6",
   "7",
   "8",
@@ -261,10 +266,11 @@ export const SKILL_LEVELS = [
 ] as const;
 export type SkillLevel = (typeof SKILL_LEVELS)[number];
 
-/** One row of the skill details table: label + optional value per level. */
-export type CharacterSkillDetail = { label: string } & Partial<
-  Record<SkillLevel, string>
->;
+/** One row of the skill details table: label + template string for runtime rendering. */
+export type CharacterSkillDetail = {
+  label: string;
+  template: string;
+};
 
 export type CharacterEffect = {
   name: string;

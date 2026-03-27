@@ -1,6 +1,8 @@
 import { charInfo } from "@/data/charInfo";
 import type { CharacterSkill, SkillLevel } from "@/data/types";
 import { SKILL_LEVELS } from "@/data/types";
+import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
+import { renderTemplate } from "@/lib/talentRenderer";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -38,6 +40,12 @@ export function SkillCard({ skill, characterId, skillIndex }: SkillCardProps) {
   );
   const [expanded, setExpanded] = useState(true);
   const [levels, setLevels] = useState<[SkillLevel, SkillLevel]>(defaultLevels);
+
+  const talentSlot = TALENT_SLOTS[skillIndex] ?? "A";
+  const talentParams = useMemo(() => {
+    const stats = getCharacterStatsSync();
+    return stats?.[characterId]?.talent?.[talentSlot] ?? null;
+  }, [characterId, talentSlot]);
 
   const setLevelAt = (index: 0 | 1, value: SkillLevel) => {
     setLevels((prev) => {
@@ -122,7 +130,12 @@ export function SkillCard({ skill, characterId, skillIndex }: SkillCardProps) {
                             key={lv}
                             className="py-1 px-2 text-right tabular-nums whitespace-nowrap"
                           >
-                            {detail[lv] ?? ""}
+                            {talentParams
+                              ? renderTemplate(
+                                  detail.template,
+                                  talentParams[Number(lv) - 1] ?? []
+                                )
+                              : ""}
                           </td>
                         ))}
                       </tr>

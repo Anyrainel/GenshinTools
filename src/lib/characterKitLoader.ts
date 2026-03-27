@@ -5,7 +5,6 @@ import type {
   CharacterSkillDetail,
   Language,
 } from "@/data/types";
-import { SKILL_LEVELS } from "@/data/types";
 
 // Raw JSON shape before transformation
 type RawSkill = {
@@ -35,34 +34,12 @@ const modules = import.meta.glob<{ default: RawBundle }>(
   { eager: false }
 );
 
-/** Detail row: [label, Lv6, Lv7, …, Lv15] — 1 label + 10 values. */
+/** Detail row: [label, template] — 2 columns. */
 function transformDetails(raw: string[][]): CharacterSkillDetail[] {
-  return raw.map((row) => {
-    const label = row[0] ?? "";
-    const out: CharacterSkillDetail = { label };
-    // New format: 11 columns (label + Lv6..Lv15)
-    if (row.length >= 11) {
-      for (let i = 0; i < SKILL_LEVELS.length; i++) {
-        const level = SKILL_LEVELS[i];
-        const value = row[i + 1];
-        if (value !== undefined && value !== "") out[level] = value;
-      }
-      return out;
-    }
-    // Legacy 4-column (label, lv6, lv10, lv13)
-    if (row.length >= 4) {
-      out["6"] = row[1];
-      out["10"] = row[2];
-      out["13"] = row[3];
-      return out;
-    }
-    // Legacy 3-column (label, lv10, lv13)
-    if (row.length >= 3) {
-      out["10"] = row[1] ?? "";
-      out["13"] = row[2] ?? "";
-    }
-    return out;
-  });
+  return raw.map(([label, template]) => ({
+    label: label ?? "",
+    template: template ?? "",
+  }));
 }
 
 function transformSkill(raw: RawSkill): CharacterSkill {
