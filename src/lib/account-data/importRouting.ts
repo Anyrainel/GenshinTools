@@ -9,15 +9,19 @@
 
 import type { AccountData } from "@/data/types";
 import type { AccountState } from "@/stores/useAccountStore";
+import type { PresentSections } from "./goodConversion";
 
 // ─── Shared types ─────────────────────────────────────────────────────────────
 
 export type PendingImport = {
-  type: "json" | "mona" | "uid";
+  type: "json" | "uid";
   uid: string;
   data: AccountData;
   nickname: string;
   clearBeforeImport?: boolean;
+  /** For partial GOOD imports via dialog — re-convert + merge at resolution time. */
+  rawGOOD?: import("./goodConversion").GOODData;
+  presentSections?: PresentSections;
 };
 
 /** Write data directly to the store, then set it active. */

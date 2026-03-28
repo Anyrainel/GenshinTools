@@ -73,9 +73,17 @@ export interface ConversionWarning {
   key: string;
 }
 
+export interface PresentSections {
+  characters: boolean;
+  weapons: boolean;
+  artifacts: boolean;
+}
+
 export interface ConversionResult {
   data: AccountData;
   warnings: ConversionWarning[];
+  /** Which sections had non-empty data in the GOOD import. */
+  presentSections: PresentSections;
 }
 
 // --- Conversion Logic ---
@@ -190,7 +198,17 @@ const resolveMultiElementKey = (key: string, element?: string): string => {
   return `${key} (${defaultElement})`;
 };
 
-export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
+/**
+ * Convert GOOD data to AccountData.
+ *
+ * @param existingCharacters - When provided and the GOOD characters array is
+ *   empty/missing, seeds the internal character map from these entries so that
+ *   weapon/artifact location resolution still works for partial imports.
+ */
+export const convertGOODToAccountData = (
+  data: GOODData,
+  existingCharacters?: CharacterData[]
+): ConversionResult => {
   const charactersMap = new Map<string, CharacterData>();
   const extraWeapons: WeaponData[] = [];
   const extraArtifacts: ArtifactData[] = [];
@@ -201,12 +219,33 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
   const seenArtifactKeys = new Set<string>();
   const warnings: ConversionWarning[] = [];
 
+  const hasCharacters =
+    Array.isArray(data.characters) && data.characters.length > 0;
+  const hasWeapons = Array.isArray(data.weapons) && data.weapons.length > 0;
+  const hasArtifacts =
+    Array.isArray(data.artifacts) && data.artifacts.length > 0;
+
+  // Seed from existing characters when the characters section is absent.
+  // This lets weapon/artifact location resolution work for partial imports.
+  if (!hasCharacters && existingCharacters) {
+    for (const char of existingCharacters) {
+      charactersMap.set(char.key, {
+        key: char.key,
+        constellation: char.constellation,
+        level: char.level,
+        talent: char.talent ?? { auto: 1, skill: 1, burst: 1 },
+        // Empty — will be populated from GOOD weapon/artifact sections if present
+        artifacts: {},
+      });
+    }
+  }
+
   // Map from bare character key -> element (from character data)
   // Used to resolve weapon/artifact locations for multi-element characters
   const charElementMap = new Map<string, string>();
 
   // 1. Process Characters
-  if (Array.isArray(data.characters)) {
+  if (hasCharacters) {
     for (const char of data.characters) {
       // Store element info for location resolution in weapons/artifacts
       if (char.element && char.key in MULTI_ELEMENT_DEFAULTS) {
@@ -384,5 +423,10 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
       extraWeapons,
     },
     warnings,
+    presentSections: {
+      characters: hasCharacters,
+      weapons: hasWeapons,
+      artifacts: hasArtifacts,
+    },
   };
 };

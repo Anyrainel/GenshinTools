@@ -11,11 +11,7 @@ import { TriageView } from "@/components/account-data/TriageView";
 
 import { AccountManagerDialog } from "@/components/account-data/AccountManagerDialog";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
-import {
-  type ActionConfig,
-  AppBar,
-  type ControlHandle,
-} from "@/components/layout/AppBar";
+import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -49,9 +45,10 @@ import {
   routeResolveImport,
   routeUidImport,
 } from "@/lib/account-data/importRouting";
-import { mergeAccountData } from "@/lib/account-data/mergeAccountData";
-import { mergeMonaWithExisting } from "@/lib/account-data/monaConversion";
-import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
+import {
+  mergeAccountData,
+  mergePartialAccountData,
+} from "@/lib/account-data/mergeAccountData";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
@@ -296,12 +293,38 @@ export default function AccountDataPage() {
 
   const handleLocalImport = (data: GOODData, optionalUid: string) => {
     try {
-      const result = convertGOODToAccountData(data);
       // Read fresh state to avoid stale closure
       const currentAccounts = useAccountStore.getState().accounts;
+
+      // For the direct path, determine the target account so we can seed
+      // existing characters for partial imports (location resolution).
+      const directTargetId =
+        optionalUid ||
+        (Object.keys(currentAccounts).length === 0 ? "default" : null);
+      const existingData = directTargetId
+        ? currentAccounts[directTargetId]?.data
+        : null;
+
+      const result = convertGOODToAccountData(data, existingData?.characters);
+      const { presentSections } = result;
+      const isPartial =
+        !presentSections.characters ||
+        !presentSections.weapons ||
+        !presentSections.artifacts;
+
+      // Merge with existing data for absent sections
+      let importData = result.data;
+      if (isPartial && existingData) {
+        importData = mergePartialAccountData(
+          existingData,
+          result.data,
+          presentSections
+        );
+      }
+
       const routing = routeLocalImport(
         currentAccounts,
-        result.data,
+        importData,
         optionalUid,
         t.ui("accountData.defaultAccount")
       );
@@ -314,7 +337,13 @@ export default function AccountDataPage() {
         setActiveAccount(routing.activeId);
         toast.success(t.ui("accountData.importSuccess"));
       } else {
-        setPendingImport(routing.pendingImport);
+        // Dialog path — store raw GOOD for re-conversion at resolution time
+        const pending = routing.pendingImport;
+        if (isPartial) {
+          pending.rawGOOD = data;
+          pending.presentSections = presentSections;
+        }
+        setPendingImport(pending);
         setIsAccountManagerOpen(true);
       }
 
@@ -377,15 +406,27 @@ export default function AccountDataPage() {
     // Read fresh state to avoid stale closure
     const currentAccounts = useAccountStore.getState().accounts;
 
-    // For Mona imports targeting an existing profile, pre-merge to preserve
-    // character/weapon details regardless of overwrite vs merge action.
+    // For partial GOOD imports via dialog, re-convert with the target's
+    // existing characters so location resolution works, then merge.
     let effectivePending = pendingImport;
-    if (pendingImport.type === "mona" && action !== "create") {
+    if (
+      pendingImport.rawGOOD &&
+      pendingImport.presentSections &&
+      action !== "create"
+    ) {
       const existingData = currentAccounts[targetId]?.data;
       if (existingData) {
+        const reConverted = convertGOODToAccountData(
+          pendingImport.rawGOOD,
+          existingData.characters
+        );
         effectivePending = {
           ...pendingImport,
-          data: mergeMonaWithExisting(existingData, pendingImport.data),
+          data: mergePartialAccountData(
+            existingData,
+            reConverted.data,
+            pendingImport.presentSections
+          ),
         };
       }
     }
@@ -393,10 +434,7 @@ export default function AccountDataPage() {
     const result = routeResolveImport(
       currentAccounts,
       effectivePending,
-      // For Mona, data is already pre-merged, so use "overwrite" to avoid double-merging
-      pendingImport.type === "mona" && action === "merge"
-        ? "overwrite"
-        : action,
+      action,
       targetId,
       renamedName,
       mergeAccountData

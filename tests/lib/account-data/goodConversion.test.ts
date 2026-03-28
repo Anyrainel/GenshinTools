@@ -1,7 +1,9 @@
+import type { AccountData, CharacterData } from "@/data/types";
 import {
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
+import { mergePartialAccountData } from "@/lib/account-data/mergeAccountData";
 import { describe, expect, it } from "vitest";
 import goodMinimal from "../../fixtures/good-minimal.json";
 import goodSample from "../../fixtures/good-sample.json";
@@ -269,6 +271,373 @@ describe("convertGOODToAccountData", () => {
       expect(result.warnings).toHaveLength(1);
       expect(result.warnings[0].type).toBe("artifact");
       expect(result.warnings[0].key).toBe("UnknownSet");
+    });
+  });
+
+  describe("presentSections", () => {
+    it("reports all sections present for full GOOD data", () => {
+      const result = convertGOODToAccountData(goodSample as GOODData);
+      expect(result.presentSections).toEqual({
+        characters: true,
+        weapons: true,
+        artifacts: true,
+      });
+    });
+
+    it("reports no sections present for empty GOOD data", () => {
+      const result = convertGOODToAccountData({
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+      });
+      expect(result.presentSections).toEqual({
+        characters: false,
+        weapons: false,
+        artifacts: false,
+      });
+    });
+
+    it("reports only characters present", () => {
+      const result = convertGOODToAccountData({
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+        characters: [
+          { key: "Amber", level: 90, constellation: 0, ascension: 6 },
+        ],
+        weapons: [],
+        artifacts: [],
+      });
+      expect(result.presentSections).toEqual({
+        characters: true,
+        weapons: false,
+        artifacts: false,
+      });
+    });
+  });
+
+  describe("partial import with existingCharacters", () => {
+    // Simulate existing account data with Hu Tao having weapon + artifacts
+    const existingChars: CharacterData[] = [
+      {
+        key: "hu_tao",
+        constellation: 1,
+        level: 90,
+        talent: { auto: 10, skill: 10, burst: 8 },
+        weapon: {
+          id: "weapon-0",
+          key: "staff_of_homa",
+          level: 90,
+          refinement: 1,
+          lock: true,
+        },
+        artifacts: {
+          flower: {
+            id: "artifact-0",
+            setKey: "crimson_witch_of_flames",
+            slotKey: "flower",
+            level: 20,
+            rarity: 5,
+            mainStatKey: "hp",
+            lock: true,
+            substats: { cd: 28.8 },
+          },
+        },
+      },
+    ];
+
+    it("seeds character map from existing when characters absent", () => {
+      const weaponsOnlyGOOD: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+        weapons: [
+          {
+            key: "StaffOfHoma",
+            level: 90,
+            ascension: 6,
+            refinement: 2,
+            location: "HuTao",
+            lock: true,
+          },
+        ],
+      };
+
+      const result = convertGOODToAccountData(weaponsOnlyGOOD, existingChars);
+      // Hu Tao should have the new weapon assigned via location
+      const hutao = result.data.characters.find((c) => c.key === "hu_tao");
+      expect(hutao).toBeDefined();
+      expect(hutao?.weapon?.key).toBe("staff_of_homa");
+      expect(hutao?.weapon?.refinement).toBe(2);
+    });
+
+    it("assigns artifacts to existing chars when characters absent", () => {
+      const artifactsOnlyGOOD: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+        artifacts: [
+          {
+            setKey: "ShimenawasReminiscence",
+            slotKey: "flower",
+            level: 20,
+            rarity: 5,
+            mainStatKey: "hp",
+            location: "HuTao",
+            lock: false,
+            substats: [{ key: "critRate_", value: 12.0 }],
+          },
+        ],
+      };
+
+      const result = convertGOODToAccountData(artifactsOnlyGOOD, existingChars);
+      const hutao = result.data.characters.find((c) => c.key === "hu_tao");
+      expect(hutao?.artifacts?.flower?.setKey).toBe("shimenawas_reminiscence");
+    });
+
+    it("does not seed when characters section is present", () => {
+      const charOnlyGOOD: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+        characters: [
+          { key: "Amber", level: 90, constellation: 6, ascension: 6 },
+        ],
+      };
+
+      const result = convertGOODToAccountData(charOnlyGOOD, existingChars);
+      // Only Amber should be present, not Hu Tao
+      expect(result.data.characters).toHaveLength(1);
+      expect(result.data.characters[0].key).toBe("amber");
+    });
+  });
+
+  describe("mergePartialAccountData", () => {
+    const existing: AccountData = {
+      characters: [
+        {
+          key: "hu_tao",
+          constellation: 1,
+          level: 90,
+          talent: { auto: 10, skill: 10, burst: 8 },
+          weapon: {
+            id: "weapon-0",
+            key: "staff_of_homa",
+            level: 90,
+            refinement: 1,
+            lock: true,
+          },
+          artifacts: {
+            flower: {
+              id: "artifact-0",
+              setKey: "crimson_witch_of_flames",
+              slotKey: "flower",
+              level: 20,
+              rarity: 5,
+              mainStatKey: "hp",
+              lock: true,
+              substats: { cd: 28.8 },
+            },
+          },
+        },
+        {
+          key: "xingqiu",
+          constellation: 6,
+          level: 90,
+          talent: { auto: 1, skill: 9, burst: 12 },
+          artifacts: {},
+        },
+      ],
+      extraArtifacts: [
+        {
+          id: "artifact-10",
+          setKey: "noblesse_oblige",
+          slotKey: "flower",
+          level: 20,
+          rarity: 5,
+          mainStatKey: "hp",
+          lock: false,
+          substats: {},
+        },
+      ],
+      extraWeapons: [
+        {
+          id: "weapon-10",
+          key: "favonius_sword",
+          level: 90,
+          refinement: 3,
+          lock: false,
+        },
+      ],
+    };
+
+    it("preserves existing weapons when weapons section absent", () => {
+      const incoming: AccountData = {
+        characters: [
+          {
+            key: "hu_tao",
+            constellation: 2, // updated
+            level: 90,
+            talent: { auto: 10, skill: 10, burst: 10 },
+            artifacts: {},
+          },
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      };
+
+      const result = mergePartialAccountData(existing, incoming, {
+        characters: true,
+        weapons: false,
+        artifacts: false,
+      });
+
+      const hutao = result.characters.find((c) => c.key === "hu_tao");
+      // Character stats updated
+      expect(hutao?.constellation).toBe(2);
+      expect(hutao?.talent?.burst).toBe(10);
+      // Weapon preserved from existing
+      expect(hutao?.weapon?.key).toBe("staff_of_homa");
+      // Artifacts preserved from existing
+      expect(hutao?.artifacts?.flower?.setKey).toBe("crimson_witch_of_flames");
+      // Extra weapons preserved
+      expect(result.extraWeapons[0]?.key).toBe("favonius_sword");
+      // Extra artifacts preserved
+      expect(result.extraArtifacts[0]?.setKey).toBe("noblesse_oblige");
+    });
+
+    it("preserves existing chars when characters section absent", () => {
+      const incoming: AccountData = {
+        characters: [
+          {
+            key: "hu_tao",
+            constellation: 1,
+            level: 90,
+            talent: { auto: 10, skill: 10, burst: 8 },
+            weapon: {
+              id: "weapon-0",
+              key: "staff_of_homa",
+              level: 90,
+              refinement: 2, // updated refinement
+              lock: true,
+            },
+            artifacts: {},
+          },
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      };
+
+      const result = mergePartialAccountData(existing, incoming, {
+        characters: false,
+        weapons: true,
+        artifacts: false,
+      });
+
+      // Both existing characters preserved
+      expect(result.characters).toHaveLength(2);
+      const hutao = result.characters.find((c) => c.key === "hu_tao");
+      // Stats from existing (chars section absent)
+      expect(hutao?.constellation).toBe(1);
+      // Weapon from incoming (weapons section present)
+      expect(hutao?.weapon?.refinement).toBe(2);
+      // Artifacts preserved from existing
+      expect(hutao?.artifacts?.flower?.setKey).toBe("crimson_witch_of_flames");
+    });
+
+    it("replaces artifacts but keeps chars and weapons", () => {
+      const incoming: AccountData = {
+        characters: [
+          {
+            key: "hu_tao",
+            constellation: 1,
+            level: 90,
+            talent: { auto: 10, skill: 10, burst: 8 },
+            artifacts: {
+              flower: {
+                id: "artifact-0",
+                setKey: "shimenawas_reminiscence",
+                slotKey: "flower",
+                level: 20,
+                rarity: 5,
+                mainStatKey: "hp",
+                lock: false,
+                substats: { cr: 12.0 },
+              },
+            },
+          },
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      };
+
+      const result = mergePartialAccountData(existing, incoming, {
+        characters: false,
+        weapons: false,
+        artifacts: true,
+      });
+
+      const hutao = result.characters.find((c) => c.key === "hu_tao");
+      // Stats preserved
+      expect(hutao?.constellation).toBe(1);
+      // Weapon preserved
+      expect(hutao?.weapon?.key).toBe("staff_of_homa");
+      // Artifacts replaced
+      expect(hutao?.artifacts?.flower?.setKey).toBe("shimenawas_reminiscence");
+      // Extra artifacts replaced (empty incoming)
+      expect(result.extraArtifacts).toHaveLength(0);
+    });
+
+    it("returns incoming data when all sections present", () => {
+      const incoming: AccountData = {
+        characters: [
+          {
+            key: "amber",
+            constellation: 0,
+            level: 20,
+            talent: { auto: 1, skill: 1, burst: 1 },
+            artifacts: {},
+          },
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      };
+
+      const result = mergePartialAccountData(existing, incoming, {
+        characters: true,
+        weapons: true,
+        artifacts: true,
+      });
+
+      // Full replacement
+      expect(result).toBe(incoming);
+    });
+
+    it("does not add new characters when characters section absent", () => {
+      const incoming: AccountData = {
+        characters: [
+          {
+            key: "amber",
+            constellation: 0,
+            level: 20,
+            talent: { auto: 1, skill: 1, burst: 1 },
+            artifacts: {},
+          },
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      };
+
+      const result = mergePartialAccountData(existing, incoming, {
+        characters: false,
+        weapons: true,
+        artifacts: false,
+      });
+
+      // No Amber added (characters section absent)
+      expect(result.characters.find((c) => c.key === "amber")).toBeUndefined();
+      // Existing characters preserved
+      expect(result.characters).toHaveLength(2);
     });
   });
 
