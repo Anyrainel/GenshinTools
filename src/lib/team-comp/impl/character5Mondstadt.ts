@@ -12,7 +12,7 @@ import type { OptionDef } from "../damageModels";
 import { E, type Expr, simplify } from "../expr";
 import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type { StatEntry, StatKey } from "../types";
+import type { ComboDescriptor, StatEntry, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Mondstadt Characters
@@ -24,13 +24,13 @@ const durinOption = {
     { value: "white", label: { zh: "白焰之龙", en: "White Flame" } },
     {
       value: "white-c4",
-      label: { zh: "C4白焰(无限层)", en: "C4 White (unlimited)" },
+      label: { zh: "白焰(无限层)", en: "White (unlimited)" },
       when: (tm) => (tm.constellations.durin ?? 0) >= 4,
     },
     { value: "dark", label: { zh: "黑蚀之龙", en: "Dark Decay" } },
     {
       value: "dark-c4",
-      label: { zh: "C4黑蚀(14层)", en: "C4 Dark (14 stacks)" },
+      label: { zh: "黑蚀(14层)", en: "Dark (14 stacks)" },
       when: (tm) => (tm.constellations.durin ?? 0) >= 4,
     },
   ] as const,
@@ -379,23 +379,23 @@ class Durin extends CharacterBase {
   })();
 
   // Rotation: E > Q (off-field burst DPS, 3 initial hits + dragon ticks baked in)
-  protected override get defaultCombo(): Record<string, number> {
+  protected override get comboDescriptor(): ComboDescriptor {
     return this.isWhite
-      ? { "durin-burst-white": 1 }
-      : { "durin-burst-dark": 1 };
+      ? [{ id: "durin-burst-white", count: 1 }]
+      : [{ id: "durin-burst-dark", count: 1 }];
   }
 }
 
 const albedoOption = {
-  label: { zh: "敌人血量", en: "Enemy HP" },
+  label: { zh: "敌人血量（被动1）", en: "Enemy HP (P1)" },
   choices: [
     {
       value: "below50",
-      label: { zh: "HP<50%（P1生效）", en: "HP <50% (P1 active)" },
+      label: { zh: "HP<50%", en: "HP<50%" },
     },
     {
       value: "above50",
-      label: { zh: "HP≥50%（P1不生效）", en: "HP ≥50% (P1 inactive)" },
+      label: { zh: "HP≥50%", en: "HP≥50%" },
     },
   ] as const,
 } satisfies OptionDef;
@@ -574,46 +574,46 @@ class Albedo extends CharacterBase {
       },
       // C2: Off-field auto-trigger — 3 Fatal Blossoms × 300% DEF (burst-typed)
       // Triggers when Fatal Reckoning stacks reach 4 while Albedo is off-field
-      ...(this.constellation >= 2
-        ? {
-            "albedo-c2-offfield": {
-              label: {
-                zh: "2命后台生灭之花×3",
-                en: "C2 Fatal Blossom ×3",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    3.0,
-                    { element: "Geo", ability: "burst", reaction: "none" },
-                    "def"
-                  ),
-                  hits: 3,
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "albedo-c2-offfield": {
+        label: {
+          zh: "后台生灭之花×3",
+          en: "Fatal Blossom ×3",
+        },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(
+              3.0,
+              { element: "Geo", ability: "burst", reaction: "none" },
+              "def"
+            ),
+            hits: 3,
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E (place isotoma) + ~5 blossom procs + Q (off-field sub-DPS)
-  protected override get defaultCombo() {
-    return { "albedo-blossom": 5, "albedo-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "albedo-blossom", count: 5 },
+      { id: "albedo-burst", count: 1 },
+    ];
   }
 }
 
 const dilucOption = {
-  label: { zh: "敌人血量", en: "Enemy HP" },
+  label: { zh: "敌人血量（1命）", en: "Enemy HP (C1)" },
   choices: [
     {
       value: "above50",
-      label: { zh: ">50%（C1生效）", en: ">50% (C1 active)" },
+      label: { zh: "HP>50%", en: "HP >50%" },
     },
     {
       value: "below50",
-      label: { zh: "<50%（C1不生效）", en: "<50% (C1 inactive)" },
+      label: { zh: "HP≤50%", en: "HP≤50%" },
     },
   ] as const,
 } satisfies OptionDef;
@@ -744,12 +744,12 @@ class Diluc extends CharacterBase {
   })();
 
   // Rotation: Q > N1E > N1E > N1E (vape carry)
-  protected override get defaultCombo() {
-    return {
-      "diluc-skill": 1,
-      "diluc-burst": 1,
-      "diluc-plunge-xianyun": 3,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "diluc-skill", count: 1 },
+      { id: "diluc-burst", count: 1 },
+      { id: "diluc-plunge-xianyun", count: 3 },
+    ];
   }
 }
 
@@ -891,8 +891,8 @@ class Mona extends CharacterBase {
   })();
 
   // Rotation: Q (omen support, bubble explosion)
-  protected override get defaultCombo() {
-    return { "mona-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "mona-burst", count: 1 }];
   }
 }
 
@@ -963,8 +963,11 @@ class Jean extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (Anemo support, 6s E CD)
-  protected override get defaultCombo() {
-    return { "jean-skill": 1, "jean-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "jean-skill", count: 1 },
+      { id: "jean-burst", count: 1 },
+    ];
   }
 }
 
@@ -1129,35 +1132,32 @@ class Venti extends CharacterBase {
         ],
       },
       // C2: Wherever a Breeze Blows — press E deals 300% of original DMG
-      ...(this.constellation >= 2
-        ? {
-            "venti-c2-skill": {
-              label: {
-                zh: "2命 E伤害",
-                en: "C2 E",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(ePressMult, {
-                    element: "Anemo",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "venti-c2-skill": {
+        label: {
+          zh: "E伤害",
+          en: "E",
+        },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(ePressMult, {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: Q (burst ticks baked in) + 1 Windsunder NA string + C2 E
-  protected override get defaultCombo() {
-    return {
-      "venti-windsunder": 1,
-      "venti-burst-total": 1,
-      "venti-c2-skill": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "venti-windsunder", count: 1 },
+      { id: "venti-burst-total", count: 1 },
+      { id: "venti-c2-skill", count: 1 },
+    ];
   }
 }
 
@@ -1232,63 +1232,57 @@ class Klee extends CharacterBase {
         ],
       },
       // C1: Chained Reactions — proc dealing 120% of Q DMG (burst-typed)
-      ...(this.constellation >= 1
-        ? {
-            "klee-c1-proc": {
-              label: { zh: "1命火花", en: "C1 Spark" },
-              parts: [
-                {
-                  formula: new DirectFormula(this.param("Q", 1), {
-                    element: "Pyro",
-                    ability: "burst",
-                    reaction: "none",
-                  }),
-                  bespokeBuff: new StatBuff(
-                    cbs(this, "C1", []),
-                    { receiver: "selfOnField" },
-                    [{ key: "baseDmg%", value: 0.2 }]
-                  ),
-                },
-              ],
-            },
-          }
-        : {}),
+      "klee-c1-proc": {
+        label: { zh: "火花", en: "Spark" },
+        minC: 1,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), {
+              element: "Pyro",
+              ability: "burst",
+              reaction: "none",
+            }),
+            bespokeBuff: new StatBuff(
+              cbs(this, "C1", []),
+              { receiver: "selfOnField" },
+              [{ key: "baseDmg%", value: 0.2 }]
+            ),
+          },
+        ],
+      },
       // C4: Sparkly Explosion — 555% ATK Pyro burst explosion when leaving field during Q
-      ...(this.constellation >= 4
-        ? {
-            "klee-c4-explosion": {
-              label: { zh: "4命爆炸", en: "C4 Explosion" },
-              parts: [
-                {
-                  formula: new DirectFormula(5.55, {
-                    element: "Pyro",
-                    ability: "burst",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "klee-c4-explosion": {
+        label: { zh: "爆炸", en: "Explosion" },
+        minC: 4,
+        parts: [
+          {
+            formula: new DirectFormula(5.55, {
+              element: "Pyro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: ~6 Charged Attacks per rotation (N1C or N2C combos during Q window)
-  protected override get defaultCombo() {
-    return { "klee-charged": 6 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "klee-charged", count: 6 }];
   }
 }
 
 const eulaOption = {
-  label: { zh: "敌人血量", en: "Enemy HP" },
+  label: { zh: "敌人血量（4命）", en: "Enemy HP (C4)" },
   choices: [
     {
       value: "below50",
-      label: { zh: "<50%（C4生效）", en: "<50% (C4 active)" },
+      label: { zh: "HP<50%", en: "HP<50%" },
     },
     {
       value: "above50",
-      label: { zh: ">50%（C4不生效）", en: ">50% (C4 inactive)" },
+      label: { zh: "HP≥50%", en: "HP≥50%" },
     },
   ] as const,
 } satisfies OptionDef;
@@ -1328,12 +1322,12 @@ class Eula extends CharacterBase {
   ];
 
   // Rotation: E tap + E hold + Q lightfall (physical carry)
-  protected override get defaultCombo() {
-    return {
-      "eula-skill-tap": 1,
-      "eula-skill-hold": 1,
-      "eula-burst-lightfall": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "eula-skill-tap", count: 1 },
+      { id: "eula-skill-hold", count: 1 },
+      { id: "eula-burst-lightfall", count: 1 },
+    ];
   }
 
   // E Tap: E param1; E Hold: E param2; Icewhirl Brand: E param3 × 2
@@ -1527,16 +1521,16 @@ class Varka extends CharacterBase {
     return buffs;
   })();
 
-  protected override get defaultCombo() {
-    return {
-      "varka-e": 1,
-      "varka-normal": 2,
-      ...(this.constellation >= 1 ? { "varka-c1-special-e": 1 } : {}),
-      "varka-special-e": 2,
-      "varka-special-ca": this.constellation >= 6 ? 3 : 0,
-      ...(this.constellation >= 1 ? { "varka-c1-special-ca": 0 } : {}),
-      "varka-burst": 0,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "varka-e", count: 1 },
+      { id: "varka-normal", count: 2 },
+      { id: "varka-c1-special-e", count: 1 },
+      { id: "varka-special-e", count: 2 },
+      { id: "varka-special-ca", count: 0, bonus: [{ minC: 6, delta: 3 }] },
+      { id: "varka-c1-special-ca", count: 0 },
+      { id: "varka-burst", count: 0 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
@@ -1654,12 +1648,14 @@ class Varka extends CharacterBase {
       };
 
       // C1 Special E: first use deals 200% original DMG
-      if (c1Buff) {
-        formulas["varka-c1-special-e"] = {
-          label: { zh: "C1特殊E", en: "C1 Special E" },
-          parts: fwParts.map((p) => ({ ...p, bespokeBuff: c1Buff })),
-        };
-      }
+      formulas["varka-c1-special-e"] = {
+        label: { zh: "特殊E", en: "Special E" },
+        minC: 1,
+        parts: fwParts.map((p) => ({
+          ...p,
+          bespokeBuff: c1Buff ?? undefined,
+        })),
+      };
 
       // ── 3. Special CA: Azure Devour ──
       // "特殊重击" — classified as charge per S4 rule
@@ -1678,12 +1674,14 @@ class Varka extends CharacterBase {
       };
 
       // C1 Special CA: first use deals 200% original DMG
-      if (c1Buff) {
-        formulas["varka-c1-special-ca"] = {
-          label: { zh: "C1特殊重击", en: "C1 Special CA" },
-          parts: azParts.map((p) => ({ ...p, bespokeBuff: c1Buff })),
-        };
-      }
+      formulas["varka-c1-special-ca"] = {
+        label: { zh: "特殊重击", en: "Special CA" },
+        minC: 1,
+        parts: azParts.map((p) => ({
+          ...p,
+          bespokeBuff: c1Buff ?? undefined,
+        })),
+      };
     }
 
     // ── 4. Q: Northwind Avatar (2 hits) ──

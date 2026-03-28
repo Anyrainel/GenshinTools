@@ -2,6 +2,7 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Fontaine Characters
@@ -62,32 +63,29 @@ class Chevreuse extends CharacterBase {
   // C2: Hold-E hit triggers 2 chain explosions, each 120% ATK Pyro Skill DMG (once/10s)
   // Per-instance damage is fully known → add formula; "once/10s" frequency is irrelevant
   // to per-hit optimization (Q1 of decision tree).
-  protected readonly formulaMap = (() => ({
-    ...(this.constellation >= 2
-      ? {
-          "chevreuse-c2-chain": {
-            label: {
-              zh: "2命 E伤害",
-              en: "C2 E",
-            },
-            parts: [
-              {
-                formula: new DirectFormula(1.2, {
-                  element: "Pyro",
-                  ability: "skill",
-                  reaction: "none",
-                }),
-                hits: 2,
-              },
-            ],
-          },
-        }
-      : {}),
-  }))();
+  protected readonly formulaMap = {
+    "chevreuse-c2-chain": {
+      label: {
+        zh: "E伤害",
+        en: "E",
+      },
+      minC: 2,
+      parts: [
+        {
+          formula: new DirectFormula(1.2, {
+            element: "Pyro",
+            ability: "skill",
+            reaction: "none",
+          }),
+          hits: 2,
+        },
+      ],
+    },
+  };
 
   // Rotation: E once per rotation (pure support); C2 chain triggers once/10s
-  protected override get defaultCombo() {
-    return { "chevreuse-c2-chain": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "chevreuse-c2-chain", count: 1 }];
   }
 }
 
@@ -132,32 +130,29 @@ class Charlotte extends CharacterBase {
   // → 180% ATK Cryo DMG counted as Elemental Burst (once/6s).
   // Per-instance damage is fully known → add formula; "once/6s" frequency is irrelevant
   // to per-hit optimization (Q1 of decision tree).
-  protected readonly formulaMap = (() => ({
-    ...(this.constellation >= 6
-      ? {
-          "charlotte-c6-coord": {
-            label: {
-              zh: "6命 协同攻击",
-              en: "C6 Coordinated",
-            },
-            parts: [
-              {
-                formula: new DirectFormula(1.8, {
-                  element: "Cryo",
-                  ability: "burst",
-                  reaction: "none",
-                }),
-                offField: true,
-              },
-            ],
-          },
-        }
-      : {}),
-  }))();
+  protected readonly formulaMap = {
+    "charlotte-c6-coord": {
+      label: {
+        zh: "协同攻击",
+        en: "Coordinated",
+      },
+      minC: 6,
+      parts: [
+        {
+          formula: new DirectFormula(1.8, {
+            element: "Cryo",
+            ability: "burst",
+            reaction: "none",
+          }),
+          offField: true,
+        },
+      ],
+    },
+  };
 
   // Rotation: E + Q (healer/support); C6 coord triggers once/6s ≈ 3 per ~20s rotation
-  protected override get defaultCombo() {
-    return { "charlotte-c6-coord": 3 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "charlotte-c6-coord", count: 3 }];
   }
 }
 
@@ -254,8 +249,11 @@ class Freminet extends CharacterBase {
   })();
 
   // Rotation: EQ N2E 3[EN2E] — 4× Lv4 Shattering Pressure + Q (physical carry, KQM)
-  protected override get defaultCombo() {
-    return { "freminet-shatter-lv4": 4, "freminet-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "freminet-shatter-lv4", count: 4 },
+      { id: "freminet-burst", count: 1 },
+    ];
   }
 }
 

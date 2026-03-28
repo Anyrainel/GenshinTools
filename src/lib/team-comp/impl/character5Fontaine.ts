@@ -2,6 +2,7 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Fontaine Characters
@@ -99,33 +100,30 @@ class Escoffier extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 6
-        ? {
-            "escoffier-c6-parfait": {
-              label: {
-                zh: "6命 E芭菲×6",
-                en: "C6 E Parfait (×6)",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(5.0, skillTag),
-                  hits: 6,
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "escoffier-c6-parfait": {
+        label: {
+          zh: "E芭菲×6",
+          en: "E Parfait (×6)",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(5.0, skillTag),
+            hits: 6,
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E + Q (Cryo healer/support, off-field); formulas already bake in hit counts
-  protected override get defaultCombo() {
-    return {
-      "escoffier-skill-parfait": 1,
-      "escoffier-burst": 1,
-      "escoffier-c6-parfait": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "escoffier-skill-parfait", count: 1 },
+      { id: "escoffier-burst", count: 1 },
+      { id: "escoffier-c6-parfait", count: 1 },
+    ];
   }
 }
 
@@ -259,24 +257,21 @@ class Emilie extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 6
-        ? {
-            "emilie-c6-normal": {
-              label: { zh: "6命 普攻（4段）", en: "C6 Normal (4-hit)" },
-              parts: normalParts,
-            },
-          }
-        : {}),
+      "emilie-c6-normal": {
+        label: { zh: "普攻（4段）", en: "Normal (4-hit)" },
+        minC: 6,
+        parts: normalParts,
+      },
     };
   })();
 
   // Rotation: E + Q (off-field Dendro sub-DPS in Burning teams); formulas bake in hit counts
-  protected override get defaultCombo() {
-    return {
-      "emilie-skill-burning": 1,
-      "emilie-burst-9hit": 1,
-      "emilie-c6-normal": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "emilie-skill-burning", count: 1 },
+      { id: "emilie-burst-9hit", count: 1 },
+      { id: "emilie-c6-normal", count: 1 },
+    ];
   }
 }
 
@@ -359,29 +354,29 @@ class Sigewinne extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 4
-        ? {
-            "sigewinne-burst-c4": {
-              label: { zh: "4命Q伤害×14", en: "C4 Q (×14)" },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    qMult,
-                    { element: "Hydro", ability: "burst", reaction: "none" },
-                    "hp"
-                  ),
-                  hits: 14,
-                },
-              ],
-            },
-          }
-        : {}),
+      "sigewinne-burst-c4": {
+        label: { zh: "Q伤害×14", en: "Q (×14)" },
+        minC: 4,
+        parts: [
+          {
+            formula: new DirectFormula(
+              qMult,
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+            hits: 14,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E + Q (Hydro healer/support); Q used to fill downtime
-  protected override get defaultCombo() {
-    return { "sigewinne-burst": 1, "sigewinne-burst-c4": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "sigewinne-burst", count: 1 },
+      { id: "sigewinne-burst-c4", count: 1 },
+    ];
   }
 }
 
@@ -474,8 +469,11 @@ class Clorinde extends CharacterBase {
   })();
 
   // Rotation: Q > E 6[N3E] — 6 N3E cycles per E window + Q (Electro carry, KQM)
-  protected override get defaultCombo() {
-    return { "clorinde-normal": 6, "clorinde-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "clorinde-normal", count: 6 },
+      { id: "clorinde-burst", count: 1 },
+    ];
   }
 }
 
@@ -573,8 +571,8 @@ class Navia extends CharacterBase {
   })();
 
   // Rotation: Q > teammates > 2[E combo] — 2 E charges per ~16.5s rotation (Geo carry, KQM)
-  protected override get defaultCombo() {
-    return { "navia-crystalshot": 2 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "navia-crystalshot", count: 2 }];
   }
 }
 
@@ -714,36 +712,36 @@ class Furina extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 6
-        ? {
-            "furina-c6-normal": {
-              label: {
-                zh: "6命 普攻（4段）",
-                en: "C6 Normal (4-hit)",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(this.param("A", 1), c6HydroTag),
-                },
-                {
-                  formula: new DirectFormula(this.param("A", 2), c6HydroTag),
-                },
-                {
-                  formula: new DirectFormula(this.param("A", 3), c6HydroTag),
-                },
-                {
-                  formula: new DirectFormula(this.param("A", 4), c6HydroTag),
-                },
-              ],
-            },
-          }
-        : {}),
+      "furina-c6-normal": {
+        label: {
+          zh: "普攻（4段）",
+          en: "Normal (4-hit)",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 1), c6HydroTag),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 2), c6HydroTag),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 3), c6HydroTag),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 4), c6HydroTag),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E + Q then swap off (off-field support); salon formula bakes in 32 hits
-  protected override get defaultCombo() {
-    return { "furina-salon-total": 1, "furina-c6-normal": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "furina-salon-total", count: 1 },
+      { id: "furina-c6-normal", count: 1 },
+    ];
   }
 }
 
@@ -830,30 +828,30 @@ class Neuvillette extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 6
-        ? {
-            "neuvillette-c6-currents": {
-              label: {
-                zh: "6命 额外×6",
-                en: "C6 Extra (×6)",
-              },
-              parts: [
-                {
-                  // 10% Max HP per current; 3 droplets from E extend duration to 6s
-                  // → 3 × 2-current firings = 6 currents total
-                  formula: new DirectFormula(0.1, chargeTag, "hp"),
-                  hits: 6,
-                },
-              ],
-            },
-          }
-        : {}),
+      "neuvillette-c6-currents": {
+        label: {
+          zh: "额外×6",
+          en: "Extra (×6)",
+        },
+        minC: 6,
+        parts: [
+          {
+            // 10% Max HP per current; 3 droplets from E extend duration to 6s
+            // → 3 × 2-current firings = 6 currents total
+            formula: new DirectFormula(0.1, chargeTag, "hp"),
+            hits: 6,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E C E C Q > teammates > 2[C] — 3 CAs per rotation (Hydro carry, KQM)
-  protected override get defaultCombo() {
-    return { "neuvillette-judgment": 3, "neuvillette-c6-currents": 3 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "neuvillette-judgment", count: 3 },
+      { id: "neuvillette-c6-currents", count: 3 },
+    ];
   }
 }
 
@@ -999,12 +997,12 @@ class Wriothesley extends CharacterBase {
   })();
 
   // Rotation: E 5[N3C] Q (every other rot) — ~3 normal combos + 5 CAs + Q (Cryo carry, KQM)
-  protected override get defaultCombo() {
-    return {
-      "wriothesley-normal": 3,
-      "wriothesley-charge": 5,
-      "wriothesley-burst": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "wriothesley-normal", count: 3 },
+      { id: "wriothesley-charge", count: 5 },
+      { id: "wriothesley-burst", count: 1 },
+    ];
   }
 }
 
@@ -1097,33 +1095,30 @@ class Lyney extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 6
-        ? {
-            "lyney-c6-strike": {
-              label: { zh: "6命 礼花重奏", en: "C6 Strike Reprised" },
-              parts: [
-                {
-                  formula: new DirectFormula(c6StrikeMult, {
-                    element: "Pyro",
-                    ability: "charge",
-                    reaction: "none",
-                  }),
-                  bespokeBuff: p1Buff,
-                },
-              ],
-            },
-          }
-        : {}),
+      "lyney-c6-strike": {
+        label: { zh: "礼花重奏", en: "Strike Reprised" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(c6StrikeMult, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+            bespokeBuff: p1Buff,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: 3[CA] Q E — 3 Prop Arrows + 3 Strikes + E max stacks + Q (Pyro carry, KQM)
-  protected override get defaultCombo() {
-    return {
-      "lyney-prop": 3,
-      "lyney-strike": 3,
-      "lyney-skill-max": 1,
-      "lyney-c6-strike": 3,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "lyney-prop", count: 3 },
+      { id: "lyney-strike", count: 3 },
+      { id: "lyney-skill-max", count: 1 },
+      { id: "lyney-c6-strike", count: 3 },
+    ];
   }
 }

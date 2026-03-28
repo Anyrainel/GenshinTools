@@ -17,7 +17,12 @@ import type { OptionDef } from "../damageModels";
 import { E, type Expr, simplify } from "../expr";
 import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type { CalcContext, DamageTag, DisplayPart } from "../types";
+import type {
+  CalcContext,
+  ComboDescriptor,
+  DamageTag,
+  DisplayPart,
+} from "../types";
 
 class ArlecchinoNormalFormula extends DirectFormula {
   constructor(
@@ -300,12 +305,12 @@ class Arlecchino extends CharacterBase {
   ];
 
   // Rotation: E > teammates > C absorb > 6[N3D] > Q (KQM, ~20s carry window)
-  protected override get defaultCombo() {
-    return {
-      "arlecchino-normal": 3,
-      "arlecchino-burst": 1,
-      "arlecchino-c2-bloodfire": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "arlecchino-normal", count: 3 },
+      { id: "arlecchino-burst", count: 1 },
+      { id: "arlecchino-c2-bloodfire", count: 1 },
+    ];
   }
 
   get formulaMap() {
@@ -378,22 +383,19 @@ class Arlecchino extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 2
-        ? {
-            "arlecchino-c2-bloodfire": {
-              label: { zh: "2命厄月血火", en: "C2 Balemoon Bloodfire" },
-              parts: [
-                {
-                  formula: new DirectFormula(9.0, {
-                    element: "Pyro",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "arlecchino-c2-bloodfire": {
+        label: { zh: "厄月血火", en: "Balemoon Bloodfire" },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(9.0, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   }
 }
@@ -407,13 +409,13 @@ class Tartaglia extends CharacterBase {
   ];
 
   // Rotation: rQ > E > 4[N3C] (~9s melee, International team, KQM)
-  protected override get defaultCombo() {
-    return {
-      "tartaglia-melee-combo": 4,
-      "tartaglia-burst-melee": 1,
-      "tartaglia-riptide-slash": 6,
-      "tartaglia-stance-change": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "tartaglia-melee-combo", count: 4 },
+      { id: "tartaglia-burst-melee", count: 1 },
+      { id: "tartaglia-riptide-slash", count: 6 },
+      { id: "tartaglia-stance-change", count: 1 },
+    ];
   }
 
   // Burst Melee (Lv10): 835.0%

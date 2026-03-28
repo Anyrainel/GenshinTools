@@ -2,7 +2,7 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
-import type { AbilityType } from "../types";
+import type { AbilityType, ComboDescriptor } from "../types";
 
 /** NA/CA/PA/E/Q — excludes "special" and "sprint" */
 const COMBAT_ABILITIES: AbilityType[] = [
@@ -136,8 +136,12 @@ class Illuga extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap (support buffer, C2 Aedon fires per 7 stacks; 21 base stacks ≈ 3 triggers)
-  protected override get defaultCombo() {
-    return { "illuga-skill-press": 1, "illuga-burst": 1, "illuga-c2-aedon": 3 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "illuga-skill-press", count: 1 },
+      { id: "illuga-burst", count: 1 },
+      { id: "illuga-c2-aedon", count: 3 },
+    ];
   }
 
   // E press: Lv10 869% EM + 434% DEF, Lv13 (C5+) 1025% EM + 513% DEF
@@ -192,24 +196,21 @@ class Illuga extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 2
-        ? {
-            "illuga-c2-aedon": {
-              label: { zh: "C2阿咚", en: "C2 Aedon" },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    4.0,
-                    { element: "Geo", ability: "burst", reaction: "none" },
-                    "em",
-                    { key: "def", multiplier: 2.0 }
-                  ),
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "illuga-c2-aedon": {
+        label: { zh: "阿咚", en: "Aedon" },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(
+              4.0,
+              { element: "Geo", ability: "burst", reaction: "none" },
+              "em",
+              { key: "def", multiplier: 2.0 }
+            ),
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 }
@@ -289,8 +290,12 @@ class Aino extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap (off-field sub-DPS, Q 14 hits baked in)
-  protected override get defaultCombo() {
-    return { "aino-skill": 1, "aino-burst-total": 1, "aino-c2-ball": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "aino-skill", count: 1 },
+      { id: "aino-burst-total", count: 1 },
+      { id: "aino-c2-ball", count: 1 },
+    ];
   }
 
   // E: Musecatcher — Stage 1 + Stage 2 (separate hits, different multipliers)
@@ -336,29 +341,26 @@ class Aino extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 2
-        ? {
-            "aino-c2-ball": {
-              label: { zh: "C2水弹×3", en: "C2 Ball ×3" },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    0.25,
-                    {
-                      element: "Hydro",
-                      ability: "burst",
-                      reaction: "none",
-                    },
-                    "atk",
-                    { key: "em", multiplier: 1.0 }
-                  ),
-                  hits: 3,
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "aino-c2-ball": {
+        label: { zh: "水弹×3", en: "Ball ×3" },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(
+              0.25,
+              {
+                element: "Hydro",
+                ability: "burst",
+                reaction: "none",
+              },
+              "atk",
+              { key: "em", multiplier: 1.0 }
+            ),
+            hits: 3,
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 }

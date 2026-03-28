@@ -7,7 +7,7 @@ import {
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ElementalOrPhysical } from "../types";
+import type { ComboDescriptor, ElementalOrPhysical } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Natlan Characters
@@ -200,12 +200,12 @@ class Iansan extends CharacterBase {
   })();
 
   // Rotation: E > N1(Swift Stormflight) > Q (ATK support, KQM)
-  protected override get defaultCombo() {
-    return {
-      "iansan-skill": 1,
-      "iansan-burst": 1,
-      "iansan-swift-stormflight": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "iansan-skill", count: 1 },
+      { id: "iansan-burst", count: 1 },
+      { id: "iansan-swift-stormflight", count: 1 },
+    ];
   }
 }
 
@@ -292,10 +292,7 @@ class Ororon extends CharacterBase {
         ],
       },
       "ororon-burst": {
-        label: {
-          zh: `Q+音波${this.constellation >= 6 ? "+6命超感" : ""}`,
-          en: `Q +Soundwave${this.constellation >= 6 ? " +C6 Hyper" : ""}`,
-        },
+        label: { zh: "Q", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -303,15 +300,6 @@ class Ororon extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-          },
-          // Supersonic Oculus Soundwave: 1 rotation during 9s duration
-          {
-            formula: new DirectFormula(soundwaveMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
-            offField: true,
           },
           // C6: Q use triggers one Hypersense-equivalent hit (200% of Hypersense DMG)
           ...(this.constellation >= 6
@@ -326,6 +314,20 @@ class Ororon extends CharacterBase {
                 },
               ]
             : []),
+        ],
+      },
+      // Supersonic Oculus Soundwave: rotating continuous damage during 9s duration
+      "ororon-soundwave": {
+        label: { zh: "音波", en: "Soundwave" },
+        parts: [
+          {
+            formula: new DirectFormula(soundwaveMult, {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+            offField: true,
+          },
         ],
       },
       // P1 Hypersense: 160% ATK Electro DMG per trigger, once per 1.8s.
@@ -349,8 +351,13 @@ class Ororon extends CharacterBase {
   })();
 
   // Rotation: E Q N2 > swap (sub-DPS, Hypersense ×8 baked in, KQM)
-  protected override get defaultCombo() {
-    return { "ororon-skill": 1, "ororon-burst": 1, "ororon-hypersense": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "ororon-skill", count: 1 },
+      { id: "ororon-burst", count: 1 },
+      { id: "ororon-soundwave", count: 6 },
+      { id: "ororon-hypersense", count: 1 },
+    ];
   }
 }
 
@@ -425,32 +432,32 @@ class Kachina extends CharacterBase {
         ],
       },
       // C6: When shield is replaced/destroyed, deal 200% DEF as AoE Geo DMG (once per 5s)
-      ...(this.constellation >= 6
-        ? {
-            "kachina-c6": {
-              label: { zh: "6命护盾破碎", en: "C6 Shield Shatter" },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    2.0,
-                    {
-                      element: "Geo",
-                      ability: "skill",
-                      reaction: "none",
-                    },
-                    "def"
-                  ),
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "kachina-c6": {
+        label: { zh: "护盾破碎", en: "Shield Shatter" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(
+              2.0,
+              {
+                element: "Geo",
+                ability: "skill",
+                reaction: "none",
+              },
+              "def"
+            ),
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E (Turbo Twirly independent ~6 hits over 12s) > Q (sub-DPS, KQM)
-  protected override get defaultCombo() {
-    return { "kachina-twirly": 6, "kachina-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "kachina-twirly", count: 6 },
+      { id: "kachina-burst", count: 1 },
+    ];
   }
 }

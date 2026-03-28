@@ -8,7 +8,7 @@ import {
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ElementalOrPhysical } from "../types";
+import type { ComboDescriptor, ElementalOrPhysical } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Mondstadt Characters
@@ -71,8 +71,11 @@ class Dahlia extends CharacterBase {
   })();
 
   // Rotation: EQ (shield/ATK SPD support)
-  protected override get defaultCombo() {
-    return { "dahlia-skill": 1, "dahlia-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "dahlia-skill", count: 1 },
+      { id: "dahlia-burst", count: 1 },
+    ];
   }
 }
 
@@ -107,15 +110,15 @@ class Mika extends CharacterBase {
 }
 
 const razorOption = {
-  label: { zh: "敌人血量", en: "Enemy HP" },
+  label: { zh: "敌人血量(2命)", en: "Enemy HP (C2)" },
   choices: [
     {
       value: "below30",
-      label: { zh: "HP<30%（C2生效）", en: "HP <30% (C2 active)" },
+      label: { zh: "HP<30%", en: "HP<30%" },
     },
     {
       value: "above30",
-      label: { zh: "HP≥30%（C2不生效）", en: "HP ≥30% (C2 inactive)" },
+      label: { zh: "HP≥30%", en: "HP≥30%" },
     },
   ] as const,
 } satisfies OptionDef;
@@ -215,22 +218,19 @@ class Razor extends CharacterBase {
         ],
       },
       // C6: Lupus Fulguris lightning (100% ATK Electro DMG, once per 10s during Q)
-      ...(this.constellation >= 6
-        ? {
-            "razor-c6-lightning": {
-              label: { zh: "C6狼魂落雷", en: "C6 Lupus Lightning" },
-              parts: [
-                {
-                  formula: new DirectFormula(1.0, {
-                    element: "Electro" as const,
-                    ability: "normal" as const,
-                    reaction: "none" as const,
-                  }),
-                },
-              ],
-            } satisfies FormulaEntry,
-          }
-        : {}),
+      "razor-c6-lightning": {
+        label: { zh: "狼魂落雷", en: "Lupus Lightning" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(1.0, {
+              element: "Electro" as const,
+              ability: "normal" as const,
+              reaction: "none" as const,
+            }),
+          },
+        ],
+      } satisfies FormulaEntry,
       // P4 (Hexerei): Secret Rite lightning — 150% ATK Electro AoE, once per 1s on sigil overflow
       ...(this.teamMeta.countByFaction("Hexerei") >= 2
         ? {
@@ -252,12 +252,12 @@ class Razor extends CharacterBase {
   })();
 
   // Rotation: Q > 4×N4 combo (physical carry, ~15s burst window)
-  protected override get defaultCombo() {
-    return {
-      "razor-burst-na": 4,
-      "razor-c6-lightning": 1,
-      "razor-p4-lightning": 5,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "razor-burst-na", count: 4 },
+      { id: "razor-c6-lightning", count: 1 },
+      { id: "razor-p4-lightning", count: 5 },
+    ];
   }
 }
 
@@ -408,8 +408,8 @@ class Fischl extends CharacterBase {
   })();
 
   // Rotation: E/Q to summon Oz, one Oz duration per rotation (hits baked in)
-  protected override get defaultCombo() {
-    return { "fischl-oz-total": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "fischl-oz-total", count: 1 }];
   }
 }
 
@@ -507,8 +507,8 @@ class Rosaria extends CharacterBase {
   })();
 
   // Rotation: EQ (off-field Cryo sub-DPS, burst ticks baked in)
-  protected override get defaultCombo() {
-    return { "rosaria-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "rosaria-burst", count: 1 }];
   }
 }
 
@@ -638,8 +638,11 @@ class Sucrose extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (EM support/taser driver, C1 gives extra E charge)
-  protected override get defaultCombo() {
-    return { "sucrose-skill": 2, "sucrose-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "sucrose-skill", count: 2 },
+      { id: "sucrose-burst", count: 1 },
+    ];
   }
 }
 
@@ -689,8 +692,8 @@ class Bennett extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (support, tap E has ~4s CD with P1)
-  protected override get defaultCombo() {
-    return { "bennett-skill": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "bennett-skill", count: 1 }];
   }
 }
 
@@ -738,8 +741,8 @@ class Amber extends CharacterBase {
   })();
 
   // Rotation: Q (burst support, 18 waves baked in)
-  protected override get defaultCombo() {
-    return { "amber-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "amber-burst", count: 1 }];
   }
 }
 
@@ -802,8 +805,11 @@ class Kaeya extends CharacterBase {
   })();
 
   // Rotation: E×3 + Q (quickswap Cryo sub-DPS, 6s E CD, burst hits baked in)
-  protected override get defaultCombo() {
-    return { "kaeya-skill": 3, "kaeya-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "kaeya-skill", count: 3 },
+      { id: "kaeya-burst", count: 1 },
+    ];
   }
 }
 
@@ -857,7 +863,10 @@ class Lisa extends CharacterBase {
   })();
 
   // Rotation: E hold (3 stacks) + Q (sub-DPS, burst hits baked in)
-  protected override get defaultCombo() {
-    return { "lisa-hold": 1, "lisa-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "lisa-hold", count: 1 },
+      { id: "lisa-burst", count: 1 },
+    ];
   }
 }

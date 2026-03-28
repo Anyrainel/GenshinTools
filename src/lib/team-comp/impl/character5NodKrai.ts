@@ -18,7 +18,7 @@ import {
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ReactionType } from "../types";
+import type { ComboDescriptor, ReactionType } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Nod-Krai Characters
@@ -180,14 +180,18 @@ class Columbina extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap; off-field enabler. Ripple ticks ~12 over 25s, ~2 Gravity Interferences, ~3 CAs if driving
-  protected override get defaultCombo() {
-    return {
-      "columbina-skill-initial": 1,
-      "columbina-burst": 1,
-      "columbina-charge": 0,
-      "columbina-skill-interference": this.constellation >= 2 ? 5 : 4,
-      "columbina-ripple": 12,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "columbina-skill-initial", count: 1 },
+      { id: "columbina-burst", count: 1 },
+      { id: "columbina-charge", count: 0 },
+      {
+        id: "columbina-skill-interference",
+        count: 4,
+        bonus: [{ minC: 2, delta: 1 }],
+      },
+      { id: "columbina-ripple", count: 12 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
@@ -420,8 +424,12 @@ class Nefer extends CharacterBase {
   // Lv13 (C5+): 1193.4% ATK + 2386.8% EM
 
   // Rotation: E > 3[CA] > E > 3[CA] > E > 3[CA] > Q (on-field Lunar-Bloom carry, 9 CAs, 3 E casts per rotation)
-  protected override get defaultCombo() {
-    return { "nefer-skill": 3, "nefer-phantasm": 9, "nefer-burst": 0 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "nefer-skill", count: 3 },
+      { id: "nefer-phantasm", count: 9 },
+      { id: "nefer-burst", count: 0 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
@@ -485,8 +493,8 @@ class Nefer extends CharacterBase {
         ? {
             "nefer-phantasm": {
               label: {
-                zh: isC6 ? "6命 E重击" : "E重击",
-                en: isC6 ? "C6 E CA" : "E CA",
+                zh: "E重击",
+                en: "E CA",
               },
               parts: [
                 ...selfParts,
@@ -664,12 +672,12 @@ class Flins extends CharacterBase {
   //   Moonsign Ascendant Gleam adds 1 extra hit (187.1%/220.9%)
 
   // Rotation: E > E > sQ > N4D×2 > N2 > E > sQ > N4D > N5 (on-field carry, ~10s field time)
-  protected override get defaultCombo() {
-    return {
-      "flins-normal": 2,
-      "flins-spearstorm": this.constellation >= 1 ? 3 : 2,
-      "flins-thunderous": this.constellation >= 1 ? 3 : 2,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "flins-normal", count: 2 },
+      { id: "flins-spearstorm", count: 2, bonus: [{ minC: 1, delta: 1 }] },
+      { id: "flins-thunderous", count: 2, bonus: [{ minC: 1, delta: 1 }] },
+    ];
   }
 
   protected readonly formulaMap = (() => {
@@ -725,8 +733,8 @@ class Flins extends CharacterBase {
       },
       "flins-spearstorm": {
         label: {
-          zh: this.constellation >= 2 ? "2命 E" : "E",
-          en: this.constellation >= 2 ? "C2 E" : "E",
+          zh: "E",
+          en: "E",
         },
         parts: [
           { formula: new DirectFormula(spearstormMult, skillTag) },
@@ -888,13 +896,13 @@ class Lauma extends CharacterBase {
   ];
 
   // Rotation: Hold E > Q > swap (off-field support). Sanctuary ticks every 2s for 15s ≈ 7 hits.
-  protected override get defaultCombo() {
-    return {
-      "lauma-sanctuary": 7,
-      "lauma-hold": 1,
-      "lauma-c6-normal": 0,
-      "lauma-c6-sanctuary": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "lauma-sanctuary", count: 7 },
+      { id: "lauma-hold", count: 1 },
+      { id: "lauma-c6-normal", count: 0 },
+      { id: "lauma-c6-sanctuary", count: 1 },
+    ];
   }
 
   // E press: Lv10 218.9%, Lv13 (C5+) 258.4%
@@ -955,51 +963,49 @@ class Lauma extends CharacterBase {
             },
           }
         : {}),
-      ...(this.constellation >= 6
-        ? {
-            "lauma-c6-normal": {
-              label: {
-                zh: "6命 普攻",
-                en: "C6 Normal",
+      "lauma-c6-normal": {
+        label: {
+          zh: "普攻",
+          en: "Normal",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new LunarDirectFormula(
+              1.5,
+              {
+                element: "Dendro",
+                ability: "normal",
+                reaction: "lunarBloom",
               },
-              parts: [
-                {
-                  formula: new LunarDirectFormula(
-                    1.5,
-                    {
-                      element: "Dendro",
-                      ability: "normal",
-                      reaction: "lunarBloom",
-                    },
-                    "em"
-                  ),
-                },
-              ],
-            },
-            // C6: Frostgrove Sanctuary extra Lunar-Bloom hit per tick (185% EM, up to 8 times)
-            "lauma-c6-sanctuary": {
-              label: {
-                zh: "6命 圣域×8",
-                en: "C6 Sanctuary ×8",
+              "em"
+            ),
+          },
+        ],
+      },
+      // C6: Frostgrove Sanctuary extra Lunar-Bloom hit per tick (185% EM, up to 8 times)
+      "lauma-c6-sanctuary": {
+        label: {
+          zh: "圣域×8",
+          en: "Sanctuary ×8",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new LunarDirectFormula(
+              1.85,
+              {
+                element: "Dendro",
+                ability: "skill",
+                reaction: "lunarBloom",
               },
-              parts: [
-                {
-                  formula: new LunarDirectFormula(
-                    1.85,
-                    {
-                      element: "Dendro",
-                      ability: "skill",
-                      reaction: "lunarBloom",
-                    },
-                    "em"
-                  ),
-                  hits: 8,
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+              "em"
+            ),
+            hits: 8,
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 }
@@ -1044,13 +1050,13 @@ class Ineffa extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap (off-field sub-DPS). Birgitta 10 hits baked in formula. C6 triggers ~6 times over 20s.
-  protected override get defaultCombo() {
-    return {
-      "ineffa-skill-initial": 1,
-      "ineffa-birgitta": 1,
-      "ineffa-burst": 1,
-      "ineffa-c6-thundercloud": 6,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "ineffa-skill-initial", count: 1 },
+      { id: "ineffa-birgitta", count: 1 },
+      { id: "ineffa-burst", count: 1 },
+      { id: "ineffa-c6-thundercloud", count: 6 },
+    ];
   }
 
   // Birgitta Discharge: Lv10 172.8%, Lv13 (C3+) 204.0%, every 2s ≈ 10 ticks
@@ -1105,8 +1111,8 @@ class Ineffa extends CharacterBase {
       },
       "ineffa-burst": {
         label: {
-          zh: this.constellation >= 2 ? "2命 Q" : "Q",
-          en: this.constellation >= 2 ? "C2 Q" : "Q",
+          zh: "Q",
+          en: "Q",
         },
         parts: [
           {
@@ -1136,7 +1142,7 @@ class Ineffa extends CharacterBase {
       ...(this.constellation >= 6 && hasHydro
         ? {
             "ineffa-c6-thundercloud": {
-              label: { zh: "6命 雷暴云", en: "C6 Thundercloud" },
+              label: { zh: "雷暴云", en: "Thundercloud" },
               parts: [
                 {
                   formula: new LunarDirectFormula(1.35, {

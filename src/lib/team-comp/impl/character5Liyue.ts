@@ -15,14 +15,26 @@ import type { OptionDef, StatSheet } from "../damageModels";
 import { E, type Expr, simplify } from "../expr";
 import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type { StatEntry, StatKey } from "../types";
+import type { ComboDescriptor, StatEntry, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Liyue Characters
 // ═══════════════════════════════════════════════════════════════
 
-@RegisterCharacter("zibai")
+const zibaiOption = {
+  label: { zh: "时隙浮光消耗", en: "Float-Light Points" },
+  choices: [
+    {
+      value: "100",
+      label: { zh: "100 点（6命满点）", en: "100 pts (C6 Full)" },
+    },
+    { value: "70", label: { zh: "70 点", en: "70 pts" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("zibai", zibaiOption)
 class Zibai extends CharacterBase {
+  private readonly floatLightPts = resolveOption(zibaiOption, this.option);
   readonly buffs = (() => {
     const geoCount = Math.max(this.teamMeta.countByElement("Geo") - 1, 0);
     const hydroCount = this.teamMeta.countByElement("Hydro");
@@ -104,8 +116,8 @@ class Zibai extends CharacterBase {
       );
     }
 
-    if (this.constellation >= 6) {
-      // C6: Spirit Steed and Lunar-Crystallize DMG elevated by 48% (assuming 30 excess points consumed)
+    if (this.constellation >= 6 && this.floatLightPts === "100") {
+      // C6: Spirit Steed and Lunar-Crystallize DMG elevated by 48% (30 excess points × 1.6%)
       // Assume the 3s buff covers all lunar crystallize hits.
       buffs.push(
         new StatBuff(
@@ -204,10 +216,7 @@ class Zibai extends CharacterBase {
         ],
       },
       "zibai-steed": {
-        label: {
-          zh: this.constellation >= 6 ? "6命 E (满点)" : "E",
-          en: this.constellation >= 6 ? "C6 E (Full Points)" : "E",
-        },
+        label: { zh: "E", en: "E" },
         parts: [
           {
             formula: new DirectFormula(
@@ -230,45 +239,42 @@ class Zibai extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 1
-        ? {
-            "zibai-steed-c1": {
-              label: {
-                zh: "1命 E (首次)",
-                en: "C1 E (First)",
+      "zibai-steed-c1": {
+        label: {
+          zh: "E (首次)",
+          en: "E (First)",
+        },
+        minC: 1,
+        parts: [
+          {
+            formula: new DirectFormula(
+              steed1,
+              { element: "Geo", ability: "skill", reaction: "none" },
+              "def"
+            ),
+          },
+          {
+            // C1: first Steed's 2nd-hit LC reactionDmg% +220%
+            formula: new LunarDirectFormula(
+              steed2Talent,
+              {
+                element: "Geo",
+                ability: "skill",
+                reaction: "lunarCrystallize",
               },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    steed1,
-                    { element: "Geo", ability: "skill", reaction: "none" },
-                    "def"
-                  ),
-                },
-                {
-                  // C1: first Steed's 2nd-hit LC reactionDmg% +220%
-                  formula: new LunarDirectFormula(
-                    steed2Talent,
-                    {
-                      element: "Geo",
-                      ability: "skill",
-                      reaction: "lunarCrystallize",
-                    },
-                    "def"
-                  ),
-                  bespokeBuff: new StatBuff(
-                    cbs(this, "C1", ["E"]),
-                    {
-                      receiver: "selfOnField",
-                      filter: { reactions: ["lunarCrystallize"] },
-                    },
-                    [{ key: "reactionDmg%", value: 2.2 }]
-                  ),
-                },
-              ],
-            },
-          }
-        : {}),
+              "def"
+            ),
+            bespokeBuff: new StatBuff(
+              cbs(this, "C1", ["E"]),
+              {
+                receiver: "selfOnField",
+                filter: { reactions: ["lunarCrystallize"] },
+              },
+              [{ key: "reactionDmg%", value: 2.2 }]
+            ),
+          },
+        ],
+      },
       "zibai-burst": {
         label: { zh: "Q", en: "Q" },
         parts: [
@@ -297,13 +303,13 @@ class Zibai extends CharacterBase {
   })();
 
   // Rotation: E > 3×N4 combo > 3×Steed > Q (Geo carry, 15s Lunar Phase Shift)
-  protected override get defaultCombo() {
-    return {
-      "zibai-e-combo": 3,
-      "zibai-steed": 3,
-      "zibai-steed-c1": 1,
-      "zibai-burst": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "zibai-e-combo", count: 3 },
+      { id: "zibai-steed", count: 3 },
+      { id: "zibai-steed-c1", count: 1 },
+      { id: "zibai-burst", count: 1 },
+    ];
   }
 }
 
@@ -395,8 +401,8 @@ class Xianyun extends CharacterBase {
   })();
 
   // Rotation: Q > E (3 Skyladders) > Driftcloud Wave (plunge support)
-  protected override get defaultCombo() {
-    return { "xianyun-driftcloud": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "xianyun-driftcloud", count: 1 }];
   }
 }
 
@@ -485,31 +491,28 @@ class Baizhu extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 2
-        ? {
-            "baizhu-c2-sprite": {
-              label: { zh: "2命游丝徵灵·切×3", en: "C2 Gossamer Splice ×3" },
-              parts: [
-                {
-                  formula: new DirectFormula(2.5, {
-                    element: "Dendro",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                  hits: 3,
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "baizhu-c2-sprite": {
+        label: { zh: "游丝徵灵·切×3", en: "Gossamer Splice ×3" },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(2.5, {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 3,
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E > Q (Dendro healer/support)
   // Q Spiritvein triggers on shield refresh/break; ~3 hits as conservative estimate
-  protected override get defaultCombo() {
-    return { "baizhu-burst": 3 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "baizhu-burst", count: 3 }];
   }
 }
 
@@ -601,68 +604,70 @@ class Yelan extends CharacterBase {
       },
     };
 
-    if (this.constellation >= 2) {
-      // C2: Extra water arrow fires once per 1.8s during Q (~8 procs over 15s), 14% Max HP each
-      formulas["yelan-c2-arrow"] = {
-        label: {
-          zh: "2命额外水箭×8",
-          en: "C2 Extra Arrow (x8)",
+    // C2: Extra water arrow fires once per 1.8s during Q (~8 procs over 15s), 14% Max HP each
+    formulas["yelan-c2-arrow"] = {
+      label: {
+        zh: "额外水箭×8",
+        en: "Extra Arrow (x8)",
+      },
+      minC: 2,
+      parts: [
+        {
+          formula: new DirectFormula(
+            0.14,
+            { element: "Hydro", ability: "burst", reaction: "none" },
+            "hp"
+          ),
+          hits: 8,
+          offField: true,
         },
-        parts: [
-          {
-            formula: new DirectFormula(
-              0.14,
-              { element: "Hydro", ability: "burst", reaction: "none" },
-              "hp"
-            ),
-            hits: 8,
-            offField: true,
-          },
-        ],
-      };
-      formulas["yelan-c2-arrow-onfield"] = {
-        label: {
-          zh: "2命水箭(前台)×8",
-          en: "C2 Arrow (on-field) ×8",
+      ],
+    };
+    formulas["yelan-c2-arrow-onfield"] = {
+      label: {
+        zh: "水箭(前台)×8",
+        en: "Arrow (on-field) ×8",
+      },
+      minC: 2,
+      parts: [
+        {
+          formula: new DirectFormula(
+            0.14,
+            { element: "Hydro", ability: "burst", reaction: "none" },
+            "hp"
+          ),
+          hits: 8,
         },
-        parts: [
-          {
-            formula: new DirectFormula(
-              0.14,
-              { element: "Hydro", ability: "burst", reaction: "none" },
-              "hp"
-            ),
-            hits: 8,
-          },
-        ],
-      };
-    }
+      ],
+    };
 
-    if (this.constellation >= 6) {
-      formulas["yelan-c6-barb"] = {
-        label: {
-          zh: "6命 重击",
-          en: "C6 CA",
+    formulas["yelan-c6-barb"] = {
+      label: {
+        zh: "重击",
+        en: "CA",
+      },
+      minC: 6,
+      parts: [
+        {
+          formula: new DirectFormula(
+            c6BarbMult,
+            { element: "Hydro", ability: "charge", reaction: "none" }, // CA DMG
+            "hp"
+          ),
+          hits: 5,
         },
-        parts: [
-          {
-            formula: new DirectFormula(
-              c6BarbMult,
-              { element: "Hydro", ability: "charge", reaction: "none" }, // CA DMG
-              "hp"
-            ),
-            hits: 5,
-          },
-        ],
-      };
-    }
+      ],
+    };
 
     return formulas;
   })();
 
   // Rotation: E > Q > ~15 throw procs (off-field Hydro sub-DPS, 1 proc/sec over 15s)
-  protected override get defaultCombo() {
-    return { "yelan-skill": 1, "yelan-burst-throw": 15 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "yelan-skill", count: 1 },
+      { id: "yelan-burst-throw", count: 15 },
+    ];
   }
 }
 
@@ -721,8 +726,8 @@ class Xiao extends CharacterBase {
   })();
 
   // Rotation: EE > Q > 11×high plunge (Anemo carry, ~15s Q window)
-  protected override get defaultCombo() {
-    return { "xiao-plunge-high": 11 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "xiao-plunge-high", count: 11 }];
   }
 }
 
@@ -830,8 +835,12 @@ class Zhongli extends CharacterBase {
   })();
 
   // Rotation: hE > Q > ~10 resonance ticks (shield support, 20s rotation)
-  protected override get defaultCombo() {
-    return { "zhongli-hold": 1, "zhongli-resonance": 10, "zhongli-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "zhongli-hold", count: 1 },
+      { id: "zhongli-resonance", count: 10 },
+      { id: "zhongli-burst", count: 1 },
+    ];
   }
 }
 
@@ -967,8 +976,12 @@ class HuTao extends CharacterBase {
   })();
 
   // Rotation: E > 9×N1C > Q (Pyro vape carry, 9s E window)
-  protected override get defaultCombo() {
-    return { "hutao-charged": 9, "hutao-blood-blossom": 2, "hutao-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "hutao-charged", count: 9 },
+      { id: "hutao-blood-blossom", count: 2 },
+      { id: "hutao-burst", count: 1 },
+    ];
   }
 }
 
@@ -1111,8 +1124,8 @@ class Shenhe extends CharacterBase {
   })();
 
   // Rotation: E press > Q (Cryo buffer/support, minimal personal damage)
-  protected override get defaultCombo() {
-    return { "shenhe-skill": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "shenhe-skill", count: 1 }];
   }
 }
 
@@ -1201,8 +1214,11 @@ class Ganyu extends CharacterBase {
   })();
 
   // Rotation: 6×CA + Q (~10 shards over 15s, Cryo carry melt/freeze)
-  protected override get defaultCombo() {
-    return { "ganyu-frostflake": 6, "ganyu-q-shard": 10 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "ganyu-frostflake", count: 6 },
+      { id: "ganyu-q-shard", count: 10 },
+    ];
   }
 }
 
@@ -1302,8 +1318,11 @@ class Keqing extends CharacterBase {
   })();
 
   // Rotation: E > Q > 5×N1C (Electro aggravate carry)
-  protected override get defaultCombo() {
-    return { "keqing-charged": 5, "keqing-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "keqing-charged", count: 5 },
+      { id: "keqing-burst", count: 1 },
+    ];
   }
 }
 
@@ -1364,7 +1383,7 @@ class Qiqi extends CharacterBase {
   })();
 
   // Rotation: E (healer, hits baked into E ×8)
-  protected override get defaultCombo() {
-    return { "qiqi-skill-hit": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "qiqi-skill-hit", count: 1 }];
   }
 }

@@ -12,6 +12,7 @@ import {
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Inazuma Characters
@@ -86,8 +87,8 @@ class YumemizukiMizuki extends CharacterBase {
   })();
 
   // Rotation: Q > E (Dreamdrifter ~10s with P1 extension); ~6 ticks during float
-  protected override get defaultCombo() {
-    return { "mizuki-skill-swirl": 6 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "mizuki-skill-swirl", count: 6 }];
   }
 
   protected readonly formulaMap = (() => {
@@ -145,13 +146,13 @@ class Chiori extends CharacterBase {
   ];
 
   // Rotation: EE (Tapestry swap) > Q; off-field Tamoto + Kinu procs per window
-  protected override get defaultCombo() {
-    return {
-      "chiori-e-combo": 1,
-      "chiori-burst": 1,
-      ...(this.constellation >= 2 ? { "chiori-burst-kinu": 1 } : {}),
-      "chiori-na": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "chiori-e-combo", count: 1 },
+      { id: "chiori-burst", count: 1 },
+      { id: "chiori-burst-kinu", count: 0, bonus: [{ minC: 2, delta: 1 }] },
+      { id: "chiori-na", count: 1 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
@@ -254,23 +255,20 @@ class Chiori extends CharacterBase {
         ],
       },
       // C2: Q triggers 4 Kinu attacks (170% of Tamoto DMG, skill DMG, off-field)
-      ...(this.constellation >= 2
-        ? {
-            "chiori-burst-kinu": {
-              label: { zh: "Q犬奴×4", en: "Q Kinu (×4)" },
-              parts: [
-                {
-                  formula: new DirectFormula(kinuAtk, geoSkill, "atk", {
-                    key: "def",
-                    multiplier: kinuDef,
-                  }),
-                  hits: 4,
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "chiori-burst-kinu": {
+        label: { zh: "Q犬奴×4", en: "Q Kinu (×4)" },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(kinuAtk, geoSkill, "atk", {
+              key: "def",
+              multiplier: kinuDef,
+            }),
+            hits: 4,
+            offField: true,
+          },
+        ],
+      },
       // Pet attacks only (on-field) — Tamoto procs + C4 Kinu, on-field stats
       "chiori-pets-onfield": {
         label: {
@@ -326,22 +324,19 @@ class Chiori extends CharacterBase {
         ],
       },
       // C6: Geo-infused normal combo — N1 97.7%, N2 92.6%, N3 60.1%×2, N4 148.5%
-      ...(this.constellation >= 6
-        ? {
-            "chiori-na": {
-              label: {
-                zh: "6命 普攻（4段）",
-                en: "C6 Normal (4-hit)",
-              },
-              parts: [
-                { formula: new DirectFormula(0.977, geoNormal) },
-                { formula: new DirectFormula(0.926, geoNormal) },
-                { formula: new DirectFormula(0.601, geoNormal), hits: 2 },
-                { formula: new DirectFormula(1.485, geoNormal) },
-              ],
-            },
-          }
-        : {}),
+      "chiori-na": {
+        label: {
+          zh: "普攻（4段）",
+          en: "Normal (4-hit)",
+        },
+        minC: 6,
+        parts: [
+          { formula: new DirectFormula(0.977, geoNormal) },
+          { formula: new DirectFormula(0.926, geoNormal) },
+          { formula: new DirectFormula(0.601, geoNormal), hits: 2 },
+          { formula: new DirectFormula(1.485, geoNormal) },
+        ],
+      },
     };
   })();
 }
@@ -402,8 +397,12 @@ class RaidenShogun extends CharacterBase {
   })();
 
   // Rotation: E > supports > Q 3[N3C] N1C (~20s, hypercarry)
-  protected override get defaultCombo() {
-    return { "raiden-coordinated": 1, "raiden-initial": 1, "raiden-charge": 3 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "raiden-coordinated", count: 1 },
+      { id: "raiden-initial", count: 1 },
+      { id: "raiden-charge", count: 3 },
+    ];
   }
 
   // Q initial slash: Q param1 + Q param2 × 60 resolve
@@ -532,8 +531,8 @@ class AratakiItto extends CharacterBase {
   ];
 
   // Rotation: supports > Q > N1 E > 2×Kesagiri chain > E (Geo carry)
-  protected override get defaultCombo() {
-    return { "itto-kesagiri": 2 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "itto-kesagiri", count: 2 }];
   }
 
   protected readonly formulaMap = (() => {
@@ -607,8 +606,12 @@ class KamisatoAyaka extends CharacterBase {
   ];
 
   // Rotation: D E Q N1C > 2[N2C] (freeze carry, ~20s)
-  protected override get defaultCombo() {
-    return { "ayaka-normal": 1, "ayaka-charged": 3, "ayaka-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "ayaka-normal", count: 1 },
+      { id: "ayaka-charged", count: 3 },
+      { id: "ayaka-burst", count: 1 },
+    ];
   }
 
   // Charged ATK: Lv10 109.0%×3 (Normal talent, no constellation boost)
@@ -674,10 +677,10 @@ class KamisatoAyaka extends CharacterBase {
 }
 
 const ayatoOption = {
-  label: { zh: "敌人生命值", en: "Enemy HP" },
+  label: { zh: "敌人血量（1命）", en: "Enemy HP (C1)" },
   choices: [
-    { value: "above50", label: { zh: "敌人HP>50%", en: "Enemy HP >50%" } },
-    { value: "below50", label: { zh: "敌人HP≤50%", en: "Enemy HP ≤50%" } },
+    { value: "below50", label: { zh: "HP≤50%", en: "HP≤50%" } },
+    { value: "above50", label: { zh: "HP>50%", en: "HP>50%" } },
   ] as const,
 } satisfies OptionDef;
 
@@ -726,12 +729,12 @@ class KamisatoAyato extends CharacterBase {
   })();
 
   // Rotation: Q > E (Shunsuiken ×16 baked) > swap (~20s, Hydro carry)
-  protected override get defaultCombo() {
-    return {
-      "ayato-shunsuiken": 1,
-      "ayato-bloomwater": 1,
-      "ayato-c6-strikes": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "ayato-shunsuiken", count: 1 },
+      { id: "ayato-bloomwater", count: 1 },
+      { id: "ayato-c6-strikes", count: 1 },
+    ];
   }
 
   // Shunsuiken 3-hit combo (S3: separate parts per different multiplier)
@@ -808,19 +811,16 @@ class KamisatoAyato extends CharacterBase {
         ],
       },
       // C6: 2 extra Shunsuiken strikes at 450% ATK each, not affected by Namisen
-      ...(this.constellation >= 6
-        ? {
-            "ayato-c6-strikes": {
-              label: { zh: "6命额外瞬水剑×2", en: "C6 Shunsuiken (×2)" },
-              parts: [
-                {
-                  formula: new DirectFormula(4.5, hydroTag),
-                  hits: 2,
-                },
-              ],
-            },
-          }
-        : {}),
+      "ayato-c6-strikes": {
+        label: { zh: "额外瞬水剑×2", en: "Shunsuiken (×2)" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(4.5, hydroTag),
+            hits: 2,
+          },
+        ],
+      },
     };
   })();
 }
@@ -891,28 +891,25 @@ class SangonomiyaKokomi extends CharacterBase {
   ];
 
   // Rotation: E > supports > Q N2D×~5 (on-field during Q, ~3 fish procs at C1)
-  protected override get defaultCombo() {
-    return { "kokomi-c1-fish": 3 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "kokomi-c1-fish", count: 3 }];
   }
 
   protected readonly formulaMap = {
     // C1: Swimming Fish — 30% Max HP as Hydro DMG (not Normal ATK DMG)
-    ...(this.constellation >= 1
-      ? {
-          "kokomi-c1-fish": {
-            label: { zh: "C1游鱼", en: "C1 Swimming Fish" },
-            parts: [
-              {
-                formula: new DirectFormula(
-                  0.3,
-                  { element: "Hydro", ability: "special", reaction: "none" },
-                  "hp"
-                ),
-              },
-            ],
-          },
-        }
-      : {}),
+    "kokomi-c1-fish": {
+      label: { zh: "游鱼", en: "Swimming Fish" },
+      minC: 1,
+      parts: [
+        {
+          formula: new DirectFormula(
+            0.3,
+            { element: "Hydro", ability: "special", reaction: "none" },
+            "hp"
+          ),
+        },
+      ],
+    },
   };
 }
 
@@ -977,8 +974,12 @@ class KaedeharaKazuha extends CharacterBase {
   })();
 
   // Rotation: E (plunge) > Q > E (plunge) (VV support, ~20s)
-  protected override get defaultCombo() {
-    return { "kazuha-skill": 2, "kazuha-plunge-c6": 2, "kazuha-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "kazuha-skill", count: 2 },
+      { id: "kazuha-plunge-c6", count: 2 },
+      { id: "kazuha-burst", count: 1 },
+    ];
   }
 
   // E press: E param1; Q slash: Q param1; Q DoT: Q param2
@@ -1000,22 +1001,19 @@ class KaedeharaKazuha extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 6
-        ? {
-            "kazuha-plunge-c6": {
-              label: { zh: "6命 下落", en: "C6 Plunge" },
-              parts: [
-                {
-                  formula: new DirectFormula(4.04, {
-                    element: "Anemo",
-                    ability: "plunge",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "kazuha-plunge-c6": {
+        label: { zh: "下落", en: "Plunge" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(4.04, {
+              element: "Anemo",
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "kazuha-burst": {
         label: { zh: "Q 1斩+5风场", en: "Q (1 Slash + 5 DoT)" },
         parts: [
@@ -1095,10 +1093,11 @@ class Yoimiya extends CharacterBase {
   })();
 
   // Rotation: supports > E > 3×N1-N5 string (~20s, Pyro carry)
-  protected override get defaultCombo() {
-    const rot: Record<string, number> = { "yoimiya-normal": 3 };
-    if (this.constellation >= 6) rot["yoimiya-c6-arrow"] = 0;
-    return rot;
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "yoimiya-normal", count: 3 },
+      { id: "yoimiya-c6-arrow", count: 0 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
@@ -1140,8 +1139,8 @@ class Yoimiya extends CharacterBase {
       // C6: 50% chance of firing an extra blazing arrow dealing 60% of original DMG per hit
       formulas["yoimiya-c6-arrow"] = {
         label: {
-          zh: "C6 额外炽焰箭（5段）",
-          en: "C6 Blazing Arr (5-hit)",
+          zh: "额外炽焰箭（5段）",
+          en: "Blazing Arr (5-hit)",
         },
         parts: [
           { formula: new DirectFormula(m(n1) * 0.6, pyroNormal), hits: 2 },
@@ -1196,8 +1195,11 @@ class YaeMiko extends CharacterBase {
   })();
 
   // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + 1 burst per rotation
-  protected override get defaultCombo() {
-    return { "yae_miko-skill": 15, "yae_miko-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "yae_miko-skill", count: 15 },
+      { id: "yae_miko-burst", count: 1 },
+    ];
   }
 
   protected readonly formulaMap = (() => {

@@ -7,6 +7,7 @@ import {
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Inazuma Characters
@@ -41,29 +42,26 @@ class Kirara extends CharacterBase {
   ];
 
   // Rotation: E > swap > on-field NA triggers C4 every 3.8s (~5 procs per rotation)
-  protected override get defaultCombo() {
-    return { "kirara-c4-steed": 5 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "kirara-c4-steed", count: 5 }];
   }
 
   protected readonly formulaMap = {
     // C4: Steed of Skanda — 200% ATK as Dendro DMG (considered Burst DMG)
-    ...(this.constellation >= 4
-      ? {
-          "kirara-c4-steed": {
-            label: { zh: "C4驰骋", en: "C4 Steed of Skanda" },
-            parts: [
-              {
-                formula: new DirectFormula(2.0, {
-                  element: "Dendro",
-                  ability: "burst",
-                  reaction: "none",
-                }),
-                offField: true,
-              },
-            ],
-          },
-        }
-      : {}),
+    "kirara-c4-steed": {
+      label: { zh: "驰骋", en: "Steed of Skanda" },
+      minC: 4,
+      parts: [
+        {
+          formula: new DirectFormula(2.0, {
+            element: "Dendro",
+            ability: "burst",
+            reaction: "none",
+          }),
+          offField: true,
+        },
+      ],
+    },
   };
 }
 
@@ -101,8 +99,11 @@ class ShikanoinHeizou extends CharacterBase {
   ];
 
   // Rotation: swap-in > E (full conviction) > Q > swap out (driver sub-DPS)
-  protected override get defaultCombo() {
-    return { "heizou-skill": 2, "heizou-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "heizou-skill", count: 2 },
+      { id: "heizou-burst", count: 1 },
+    ];
   }
 
   // E max stacks: param1 + 4*param2 + param3
@@ -184,12 +185,12 @@ class KukiShinobu extends CharacterBase {
   ];
 
   // Rotation: E (off-field ring) > Q > swap; hyperbloom ~8 seeds per rotation, C4 ~4 procs
-  protected override get defaultCombo() {
-    return {
-      "shinobu-burst": 1,
-      "shinobu-hyperbloom": 8,
-      "shinobu-c4-thundergrass": 4,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "shinobu-burst", count: 1 },
+      { id: "shinobu-hyperbloom", count: 8 },
+      { id: "shinobu-c4-thundergrass", count: 4 },
+    ];
   }
 
   // Q: Single hit param1 % HP
@@ -235,23 +236,20 @@ class KukiShinobu extends CharacterBase {
           }
         : {}),
       // C4: Thundergrass Mark — 9.7% Max HP as Electro DMG
-      ...(this.constellation >= 4
-        ? {
-            "shinobu-c4-thundergrass": {
-              label: { zh: "C4雷草印", en: "C4 Thundergrass Mark" },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    0.097,
-                    { element: "Electro", ability: "skill", reaction: "none" },
-                    "hp"
-                  ),
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "shinobu-c4-thundergrass": {
+        label: { zh: "雷草印", en: "Thundergrass Mark" },
+        minC: 4,
+        parts: [
+          {
+            formula: new DirectFormula(
+              0.097,
+              { element: "Electro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 }
@@ -283,8 +281,8 @@ class Sayu extends CharacterBase {
   })();
 
   // Rotation: E (hold roll) > Q; Daruma attacks ~7 times over 12s (healer/swirl support)
-  protected override get defaultCombo() {
-    return { "sayu-daruma": 7 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "sayu-daruma", count: 7 }];
   }
 
   protected readonly formulaMap = (() => {
@@ -328,8 +326,8 @@ class Thoma extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap; Fiery Collapse every 1s over 15s (C2: 18s)
-  protected override get defaultCombo() {
-    return { "thoma-burst-collapse": 15 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "thoma-burst-collapse", count: 15 }];
   }
 
   // Q Fiery Collapse: Q param2 ATK + 2.2% HP (P2)
@@ -399,8 +397,11 @@ class Gorou extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap (Geo support, minimal field time)
-  protected override get defaultCombo() {
-    return { "gorou-skill": 1, "gorou-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "gorou-skill", count: 1 },
+      { id: "gorou-burst", count: 1 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
@@ -499,8 +500,8 @@ class KujouSara extends CharacterBase {
   ];
 
   // Rotation: E (ATK buff) > Q > swap (Electro support, buff bot)
-  protected override get defaultCombo() {
-    return { "sara-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "sara-burst", count: 1 }];
   }
 
   // Q Titanbreaker: Q param1 + Stormcluster Q param2 (C4: 6×)

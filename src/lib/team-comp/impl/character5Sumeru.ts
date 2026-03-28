@@ -7,7 +7,7 @@ import type { StatSheet } from "../damageModels";
 import { E, type Expr, simplify } from "../expr";
 import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type { StatEntry, StatKey } from "../types";
+import type { ComboDescriptor, StatEntry, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Sumeru Characters
@@ -132,8 +132,11 @@ class Dehya extends CharacterBase {
   })();
 
   // Rotation: E > teammates > E Q(10+1) — E field 1 activation, Q 1 activation (KQM)
-  protected override get defaultCombo() {
-    return { "dehya-molten-inferno": 1, "dehya-burst-combo": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "dehya-molten-inferno", count: 1 },
+      { id: "dehya-burst-combo", count: 1 },
+    ];
   }
 }
 
@@ -226,8 +229,11 @@ class Alhaitham extends CharacterBase {
   })();
 
   // Rotation: Q > N3D N3D N1E N3D N3CD N3D — ~7 Projection triggers + 1 Q (KQM)
-  protected override get defaultCombo() {
-    return { "alhaitham-projection": 7, "alhaitham-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "alhaitham-projection", count: 7 },
+      { id: "alhaitham-burst", count: 1 },
+    ];
   }
 }
 
@@ -361,8 +367,12 @@ class Wanderer extends CharacterBase {
   })();
 
   // Rotation: E > N2C ×5 > Q — hover carry with charged attacks (KQM)
-  protected override get defaultCombo() {
-    return { "wanderer-normal": 5, "wanderer-charge": 5, "wanderer-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "wanderer-normal", count: 5 },
+      { id: "wanderer-charge", count: 5 },
+      { id: "wanderer-burst", count: 1 },
+    ];
   }
 }
 
@@ -532,36 +542,33 @@ class Nahida extends CharacterBase {
           },
         ],
       },
-      ...(this.constellation >= 6
-        ? {
-            "nahida-c6-karma": {
-              label: {
-                zh: "6命 E伤害",
-                en: "C6 E",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    2.0,
-                    { element: "Dendro", ability: "skill", reaction: "none" },
-                    "atk",
-                    { key: "em", multiplier: 4.0 }
-                  ),
-                  hits: 6,
-                },
-              ],
-            },
-          }
-        : {}),
+      "nahida-c6-karma": {
+        label: {
+          zh: "E伤害",
+          en: "E",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(
+              2.0,
+              { element: "Dendro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: 4.0 }
+            ),
+            hits: 6,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E Q > off-field — ~8 Tri-Karma procs per 20s; C6 adds 6 Karmic Oblivion (KQM)
-  protected override get defaultCombo() {
-    return {
-      "nahida-karma": 8,
-      "nahida-c6-karma": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "nahida-karma", count: 8 },
+      { id: "nahida-c6-karma", count: 1 },
+    ];
   }
 }
 
@@ -652,40 +659,37 @@ class Cyno extends CharacterBase {
       },
       // C6 "Day of the Jackal": Each Normal ATK fires an extra Duststalker Bolt
       // (100% ATK, Electro skill DMG). ~5 bolts per combo. P2 EM->baseDmg applies automatically.
-      ...(this.constellation >= 6
-        ? {
-            "cyno-c6-bolts": {
-              label: { zh: "6命渡荒之雷", en: "C6 Duststalker Bolts" },
-              parts: [
-                {
-                  formula: new DirectFormula(1.0, eBaseTag),
-                  hits: 5,
-                  // P2: Duststalker Bolt DMG += 250% EM as baseDmg
-                  bespokeBuff: new ScalingBuff(
-                    cbs(this, "P2", ["E"]),
-                    {
-                      receiver: "selfOnField",
-                      filter: { abilities: ["skill"] },
-                    },
-                    [],
-                    "em",
-                    "baseDmg",
-                    2.5
-                  ),
-                },
-              ],
-            },
-          }
-        : {}),
+      "cyno-c6-bolts": {
+        label: { zh: "渡荒之雷", en: "Duststalker Bolts" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(1.0, eBaseTag),
+            hits: 5,
+            // P2: Duststalker Bolt DMG += 250% EM as baseDmg
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2", ["E"]),
+              {
+                receiver: "selfOnField",
+                filter: { abilities: ["skill"] },
+              },
+              [],
+              "em",
+              "baseDmg",
+              2.5
+            ),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: EQ > E > 6[N4E] — 6 N5+E combos during burst (4TF, KQM)
-  protected override get defaultCombo() {
-    return {
-      "cyno-combo": 6,
-      "cyno-c6-bolts": 6,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "cyno-combo", count: 6 },
+      { id: "cyno-c6-bolts", count: 6 },
+    ];
   }
 }
 
@@ -856,12 +860,12 @@ class Nilou extends CharacterBase {
   })();
 
   // Rotation: Q E E E E — off-field Bloom support, 1 Q + ~5 Bountiful Cores (KQM)
-  protected override get defaultCombo() {
-    return {
-      "nilou-e-dance": 0,
-      "nilou-burst": 0,
-      "nilou-bountiful-core": 5,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "nilou-e-dance", count: 0 },
+      { id: "nilou-burst", count: 0 },
+      { id: "nilou-bountiful-core", count: 5 },
+    ];
   }
 }
 
@@ -979,7 +983,10 @@ class Tighnari extends CharacterBase {
   })();
 
   // Rotation: E 3[CA] Q — quickswap Spread carry (KQM)
-  protected override get defaultCombo() {
-    return { "tighnari-charge": 3, "tighnari-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "tighnari-charge", count: 3 },
+      { id: "tighnari-burst", count: 1 },
+    ];
   }
 }

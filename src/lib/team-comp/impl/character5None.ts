@@ -16,6 +16,7 @@ import {
 } from "../damageModels";
 import type { OptionDef, TeamMeta } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ None Characters
@@ -219,13 +220,14 @@ class Skirk extends CharacterBase {
         ],
       },
       // C1: Each 虚境裂隙 absorbed → 晶刃 (500% ATK, Cryo, CA DMG)
-      ...(this.constellation >= 1 && riftCount > 0
+      ...(riftCount > 0
         ? {
             "skirk-c1-blade": {
               label: {
-                zh: `1命 晶刃×${riftCount}`,
-                en: `C1 Crystal Blade ×${riftCount}`,
+                zh: `晶刃×${riftCount}`,
+                en: `Crystal Blade ×${riftCount}`,
               },
+              minC: 1,
               parts: [
                 {
                   formula: new DirectFormula(5.0, {
@@ -240,13 +242,14 @@ class Skirk extends CharacterBase {
           }
         : {}),
       // C6 极恶技·斩: burst coordinated (750% ATK per stack)
-      ...(this.constellation >= 6 && riftCount > 0
+      ...(riftCount > 0
         ? {
             "skirk-c6-burst-coord": {
               label: {
-                zh: `6命Q协同×${riftCount}`,
-                en: `C6 Q Coord ×${riftCount}`,
+                zh: `Q协同×${riftCount}`,
+                en: `Q Coord ×${riftCount}`,
               },
+              minC: 6,
               parts: [
                 {
                   formula: new DirectFormula(7.5, cryoBurst),
@@ -257,9 +260,10 @@ class Skirk extends CharacterBase {
             // C6: N3/N5 trigger → 3 coordinated attacks each, max 2 triggers per combo
             "skirk-c6-normal-coord": {
               label: {
-                zh: `6命普攻协同×${Math.min(riftCount, 2) * 3}`,
-                en: `C6 NA Coord ×${Math.min(riftCount, 2) * 3}`,
+                zh: `普攻协同×${Math.min(riftCount, 2) * 3}`,
+                en: `NA Coord ×${Math.min(riftCount, 2) * 3}`,
               },
+              minC: 6,
               parts: [
                 {
                   formula: new DirectFormula(1.8, cryoNormal),
@@ -273,16 +277,16 @@ class Skirk extends CharacterBase {
   })();
 
   // Rotation: tE > sQ (Extinction) > 4×N5D > 1 CA (rift absorb) > Q (Ruin) (freeze carry)
-  protected override get defaultCombo() {
-    return {
-      "skirk-e-normal": 4,
-      "skirk-e-normal-2": 4,
-      "skirk-e-charge": 3,
-      "skirk-burst": 1,
-      "skirk-c1-blade": 1,
-      "skirk-c6-burst-coord": 1,
-      "skirk-c6-normal-coord": 4,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "skirk-e-normal", count: 4 },
+      { id: "skirk-e-normal-2", count: 4 },
+      { id: "skirk-e-charge", count: 3 },
+      { id: "skirk-burst", count: 1 },
+      { id: "skirk-c1-blade", count: 1 },
+      { id: "skirk-c6-burst-coord", count: 1 },
+      { id: "skirk-c6-normal-coord", count: 4 },
+    ];
   }
 }
 
@@ -320,8 +324,8 @@ class Aloy extends CharacterBase {
   };
 
   // Rotation: E > Q (sub-DPS, minimal field time)
-  protected override get defaultCombo() {
-    return { "aloy-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "aloy-burst", count: 1 }];
   }
 }
 
@@ -433,8 +437,8 @@ class TravelerAnemo extends CharacterBase {
   })();
 
   // Rotation: E (hold) > Q (Anemo support, quickswap)
-  protected override get defaultCombo() {
-    return { "traveler-anemo-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "traveler-anemo-burst", count: 1 }];
   }
 }
 
@@ -494,8 +498,11 @@ class TravelerGeo extends CharacterBase {
   })();
 
   // Rotation: 3×E > Q (Geo sub-DPS, 6s CD with P1)
-  protected override get defaultCombo() {
-    return { "traveler-geo-skill": 3, "traveler-geo-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "traveler-geo-skill", count: 3 },
+      { id: "traveler-geo-burst", count: 1 },
+    ];
   }
 }
 
@@ -578,8 +585,11 @@ class TravelerElectro extends CharacterBase {
   })();
 
   // Rotation: E > Q (Electro battery/support, 13.5s CD)
-  protected override get defaultCombo() {
-    return { "traveler-electro-skill": 1, "traveler-electro-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "traveler-electro-skill", count: 1 },
+      { id: "traveler-electro-burst", count: 1 },
+    ];
   }
 }
 
@@ -685,8 +695,11 @@ class TravelerDendro extends CharacterBase {
   })();
 
   // Rotation: 2×E > Q (Dendro support, 8s CD)
-  protected override get defaultCombo() {
-    return { "traveler-dendro-skill": 2, "traveler-dendro-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "traveler-dendro-skill", count: 2 },
+      { id: "traveler-dendro-burst", count: 1 },
+    ];
   }
 }
 
@@ -739,8 +752,11 @@ class TravelerHydro extends CharacterBase {
   })();
 
   // Rotation: 2×E > Q (Hydro sub-DPS, 10s CD)
-  protected override get defaultCombo() {
-    return { "traveler-hydro-skill": 2, "traveler-hydro-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "traveler-hydro-skill", count: 2 },
+      { id: "traveler-hydro-burst", count: 1 },
+    ];
   }
 }
 
@@ -838,8 +854,11 @@ class TravelerPyro extends CharacterBase {
   })();
 
   // Rotation: hE > Q > swap (off-field Pyro support)
-  protected override get defaultCombo() {
-    return { "traveler-pyro-skill": 1, "traveler-pyro-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "traveler-pyro-skill", count: 1 },
+      { id: "traveler-pyro-burst", count: 1 },
+    ];
   }
 }
 
@@ -878,17 +897,17 @@ function manekinFormulas(element: Element) {
 }
 
 // Manekin/Manekina rotation: 2×E (2 charges) > Q > swap (off-field support)
-const manekinDefaultRotation = {
-  "manekin-skill": 2,
-  "manekin-burst": 1,
-  "manekin-p1-explosion": 1,
-};
+const manekinDefaultRotation: ComboDescriptor = [
+  { id: "manekin-skill", count: 2 },
+  { id: "manekin-burst", count: 1 },
+  { id: "manekin-p1-explosion", count: 1 },
+];
 
 @RegisterCharacter("manekin_anemo")
 class ManekinAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Anemo");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -897,7 +916,7 @@ class ManekinAnemo extends CharacterBase {
 class ManekinCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Cryo");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -906,7 +925,7 @@ class ManekinCryo extends CharacterBase {
 class ManekinDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Dendro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -915,7 +934,7 @@ class ManekinDendro extends CharacterBase {
 class ManekinElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Electro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -924,7 +943,7 @@ class ManekinElectro extends CharacterBase {
 class ManekinGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Geo");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -933,7 +952,7 @@ class ManekinGeo extends CharacterBase {
 class ManekinHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Hydro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -942,7 +961,7 @@ class ManekinHydro extends CharacterBase {
 class ManekinPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Pyro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -951,7 +970,7 @@ class ManekinPyro extends CharacterBase {
 class ManekinaAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Anemo");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -960,7 +979,7 @@ class ManekinaAnemo extends CharacterBase {
 class ManekinaCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Cryo");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -969,7 +988,7 @@ class ManekinaCryo extends CharacterBase {
 class ManekinaDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Dendro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -978,7 +997,7 @@ class ManekinaDendro extends CharacterBase {
 class ManekinaElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Electro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -987,7 +1006,7 @@ class ManekinaElectro extends CharacterBase {
 class ManekinaGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Geo");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -996,7 +1015,7 @@ class ManekinaGeo extends CharacterBase {
 class ManekinaHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Hydro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }
@@ -1005,7 +1024,7 @@ class ManekinaHydro extends CharacterBase {
 class ManekinaPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Pyro");
-  protected override get defaultCombo() {
+  protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
 }

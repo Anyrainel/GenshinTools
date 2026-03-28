@@ -112,15 +112,15 @@ class Verdict extends WeaponBase {
 }
 
 const wolfsGravestoneOption = {
-  label: { zh: "敌人生命值状态", en: "Enemy HP State" },
+  label: { zh: "敌人血量", en: "Enemy HP" },
   choices: [
     {
       value: "below30",
-      label: { zh: "敌人生命值低于30%", en: "Enemy HP below 30%" },
+      label: { zh: "HP<30%", en: "HP<30%" },
     },
     {
       value: "above30",
-      label: { zh: "敌人生命值高于30%", en: "Enemy HP above 30%" },
+      label: { zh: "HP≥30%", en: "HP≥30%" },
     },
   ] as const,
 } satisfies OptionDef;

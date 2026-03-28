@@ -14,7 +14,7 @@ import {
   resolveOption,
 } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ElementalOrPhysical, StatKey } from "../types";
+import type { ComboDescriptor, ElementalOrPhysical, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -140,13 +140,17 @@ class Varesa extends CharacterBase {
   })();
 
   // Rotation: Q > ECP ×4 + sQ ×2 (~20s, plunge carry, KQM)
-  protected override get defaultCombo() {
-    return { "varesa-kick": 1, "varesa-plunge": 4, "varesa-kablam": 2 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "varesa-kick", count: 1 },
+      { id: "varesa-plunge", count: 4 },
+      { id: "varesa-kablam", count: 2 },
+    ];
   }
 }
 
 const citlaliOption = {
-  label: { zh: "1命星刃层数", en: "C1 Stellar Blade Stacks" },
+  label: { zh: "星刃层数", en: "Stellar Blade Stacks" },
   choices: [
     {
       value: "19",
@@ -288,13 +292,11 @@ class Citlali extends CharacterBase {
     // E Obsidian Tzitzimitl initial hit: Lv10 131.3%, Lv13 (C3+) 155%
     const eInitMult = this.param("E", 1);
     const c4Skulls = this.constellation >= 6 ? 3 : 2;
-    const c4Prefix = this.constellation >= 4 ? "C4 " : "";
-    const c4Zh = this.constellation >= 4 ? "4命 " : "";
     return {
       "citlali-e-total": {
         label: {
-          zh: `${c4Zh}E+风暴×${eHits}`,
-          en: `${c4Prefix}E + Storm ×${eHits}`,
+          zh: `E+风暴×${eHits}`,
+          en: `E + Storm ×${eHits}`,
         },
         parts: [
           { formula: new DirectFormula(eInitMult, skillTag) },
@@ -340,8 +342,11 @@ class Citlali extends CharacterBase {
   })();
 
   // Rotation: E Q > swap (off-field support, E total bakes in all hits, KQM)
-  protected override get defaultCombo() {
-    return { "citlali-e-total": 1, "citlali-burst-total": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "citlali-e-total", count: 1 },
+      { id: "citlali-burst-total", count: 1 },
+    ];
   }
 }
 
@@ -537,28 +542,28 @@ class Mavuika extends CharacterBase {
         ],
       },
       // C6: Scorching Ring deals 500% ATK as Pyro DMG every 3s (Flamestrider mode)
-      ...(this.constellation >= 6
-        ? {
-            "mavuika-c6-ring": {
-              label: { zh: "6命焚曜之环·灼象", en: "C6 Scorching Ring" },
-              parts: [
-                {
-                  formula: new DirectFormula(5.0, {
-                    element: "Pyro",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "mavuika-c6-ring": {
+        label: { zh: "焚曜之环·灼象", en: "Scorching Ring" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(5.0, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: Q (Sunfell) > SCSCC2 combo in 7s Crucible window (Melt carry, KQM)
-  protected override get defaultCombo() {
-    return { "mavuika-sunfell": 1, "mavuika-szszzp": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "mavuika-sunfell", count: 1 },
+      { id: "mavuika-szszzp", count: 1 },
+    ];
   }
 }
 
@@ -744,12 +749,12 @@ class Chasca extends CharacterBase {
   })();
 
   // Rotation: E 4[C] (Q) + P2 proc (on-field carry, Q every ~2 rotations, KQM)
-  protected override get defaultCombo() {
-    return {
-      "chasca-shining-volley": 4,
-      "chasca-p2-burning": 1,
-      "chasca-burst": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "chasca-shining-volley", count: 4 },
+      { id: "chasca-p2-burning", count: 1 },
+      { id: "chasca-burst", count: 1 },
+    ];
   }
 }
 
@@ -947,30 +952,27 @@ class Xilonen extends CharacterBase {
     };
     const qBeatMult = this.param("Q", 5);
     return {
-      ...(this.constellation >= 6
-        ? {
-            "xilonen-normal": {
-              label: {
-                zh: "E普攻4段",
-                en: "N4 (Blade Roller)",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(this.param("A", 10), nTag, "def"),
-                },
-                {
-                  formula: new DirectFormula(this.param("A", 11), nTag, "def"),
-                },
-                {
-                  formula: new DirectFormula(this.param("A", 12), nTag, "def"),
-                },
-                {
-                  formula: new DirectFormula(this.param("A", 13), nTag, "def"),
-                },
-              ],
-            },
-          }
-        : {}),
+      "xilonen-normal": {
+        label: {
+          zh: "E普攻4段",
+          en: "N4 (Blade Roller)",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 10), nTag, "def"),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 11), nTag, "def"),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 12), nTag, "def"),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 13), nTag, "def"),
+          },
+        ],
+      },
       // Q extra beats: only when ≤1 converted sample
       ...(this.convertedSamples <= 1
         ? {
@@ -989,11 +991,11 @@ class Xilonen extends CharacterBase {
   })();
 
   // Rotation: C6 on-field DPS 3×N4; mono-Geo Q extra beats once (KQM)
-  protected override get defaultCombo() {
-    return {
-      "xilonen-normal": 3,
-      "xilonen-burst-beats": 1,
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "xilonen-normal", count: 3 },
+      { id: "xilonen-burst-beats", count: 1 },
+    ];
   }
 }
 
@@ -1110,8 +1112,11 @@ class Mualani extends CharacterBase {
   })();
 
   // Rotation: E combo (3 Surging Bites) > Q (~16s rotation, vape carry, KQM)
-  protected override get defaultCombo() {
-    return { "mualani-bite": 3, "mualani-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "mualani-bite", count: 3 },
+      { id: "mualani-burst", count: 1 },
+    ];
   }
 }
 
@@ -1234,7 +1239,10 @@ class Kinich extends CharacterBase {
   })();
 
   // Rotation: shE Q 5[N2 shE] — ~4 Scalespiker Cannons + Q (Burning carry, KQM)
-  protected override get defaultCombo() {
-    return { "kinich-cannon": 4, "kinich-burst": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "kinich-cannon", count: 4 },
+      { id: "kinich-burst", count: 1 },
+    ];
   }
 }

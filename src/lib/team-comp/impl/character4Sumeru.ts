@@ -2,6 +2,7 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula, TransformFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Sumeru Characters
@@ -84,8 +85,11 @@ class Sethos extends CharacterBase {
   })();
 
   // Rotation: C E 3[C] — 4 Shadowpiercing Shots per 15s cycle (KQM)
-  protected override get defaultCombo() {
-    return { "sethos-shadowpiercer": 4, "sethos-dusk-bolt": 0 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "sethos-shadowpiercer", count: 4 },
+      { id: "sethos-dusk-bolt", count: 0 },
+    ];
   }
 }
 
@@ -147,31 +151,28 @@ class Kaveh extends CharacterBase {
         ],
       },
       // C6: Pairidaeza's Light — 61.8% ATK as Dendro DMG every 3s during Q
-      ...(this.constellation >= 6
-        ? {
-            "kaveh-c6-pairidaeza": {
-              label: { zh: "6命天园之光", en: "C6 Pairidaeza's Light" },
-              parts: [
-                {
-                  formula: new DirectFormula(0.618, {
-                    element: "Dendro",
-                    ability: "burst",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "kaveh-c6-pairidaeza": {
+        label: { zh: "天园之光", en: "Pairidaeza's Light" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(0.618, {
+              element: "Dendro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: Q E N# E N# E — on-field Bloom driver, ~5 cores detonated (KQM)
-  protected override get defaultCombo() {
-    return {
-      "kaveh-core": 5,
-      ...(this.constellation >= 6 ? { "kaveh-c6-pairidaeza": 0 } : {}),
-    };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "kaveh-core", count: 5 },
+      { id: "kaveh-c6-pairidaeza", count: 0 },
+    ];
   }
 }
 
@@ -250,8 +251,8 @@ class Faruzan extends CharacterBase {
   })();
 
   // Rotation: E charged-shot Q — Anemo support, 1 vortex per rotation (KQM)
-  protected override get defaultCombo() {
-    return { "faruzan-vortex": 1 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "faruzan-vortex", count: 1 }];
   }
 }
 
@@ -364,7 +365,7 @@ class Collei extends CharacterBase {
     },
   };
 
-  protected override get defaultCombo() {
-    return { "collei-sprout": 0 };
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "collei-sprout", count: 0 }];
   }
 }
