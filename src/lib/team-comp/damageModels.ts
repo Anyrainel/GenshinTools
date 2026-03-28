@@ -30,6 +30,8 @@ import type {
   BuffSource,
   BuffTarget,
   CalcContext,
+  ComboDescriptor,
+  ComboEntry,
   DamageResult,
   DamageTag,
   DamageTagFilter,
@@ -42,7 +44,7 @@ import type {
   StatKey,
   TalentLevels,
 } from "./types";
-import { exclusionKey } from "./types";
+import { exclusionKey, resolveComboDescriptor } from "./types";
 
 /** A single formula with an optional hit count (defaults to 1). */
 export type FormulaPart = {
@@ -60,6 +62,8 @@ export type FormulaPart = {
 export type FormulaEntry = {
   label: I18nLabel;
   parts: FormulaPart[];
+  /** Minimum constellation required (0-6). Omit or 0 = always available. */
+  minC?: number;
 };
 import { filterMatchesTag, resolvePartReaction } from "./types";
 
@@ -865,29 +869,57 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Subclasses declare all formulas here — labels + formula instances in one place. */
   protected abstract readonly formulaMap: Record<string, FormulaEntry>;
 
-  /** How many times each formula fires in one standard combo (~20-25s).
-   *  Keys = formulaMap keys. Omitted keys = 0 (not used).
+  /** Declarative rotation descriptor — ordered array of ComboEntry.
+   *  Subclasses override this instead of defaultCombo.
    *  Default: empty (no combo defined). */
-  protected get defaultCombo(): Record<string, number> {
-    return {};
+  protected get comboDescriptor(): ComboDescriptor {
+    return [];
   }
 
-  /** Public accessor — filters defaultCombo to only formulas that exist in formulaMap. */
+  /** Resolved combo counts — delegates to comboDescriptor.
+   *  Subclasses should NOT override this; override comboDescriptor instead. */
+  protected get defaultCombo(): Record<string, number> {
+    return resolveComboDescriptor(this.comboDescriptor, this.constellation);
+  }
+
+  /** Public accessor — filters defaultCombo to only formulas that exist in formulaMap
+   *  and whose minC does not exceed the current constellation. */
   get combo(): Record<string, number> {
     const raw = this.defaultCombo;
     const map = this.formulaMap;
     const result: Record<string, number> = {};
     for (const [id, count] of Object.entries(raw)) {
-      if (map[id]) result[id] = count;
+      const entry = map[id];
+      if (entry && (entry.minC ?? 0) <= this.constellation) result[id] = count;
     }
     return result;
   }
 
-  /** Derived from formulaMap — exposes formula IDs and labels for UI/combo evaluation. */
+  /** Structured combo info — descriptor entries filtered to formulaMap. */
+  get comboInfo(): ComboEntry[] {
+    const map = this.formulaMap;
+    return this.comboDescriptor.filter(
+      (e) => map[e.id] && (map[e.id].minC ?? 0) <= this.constellation
+    );
+  }
+
+  /** Derived from formulaMap — exposes formula IDs and labels for UI/combo evaluation.
+   *  Filters out entries whose minC exceeds the current constellation. */
   get formulaIds(): Record<string, I18nLabel> {
     const result: Record<string, I18nLabel> = {};
     for (const [id, entry] of Object.entries(this.formulaMap)) {
+      if ((entry.minC ?? 0) > this.constellation) continue;
       result[id] = entry.label;
+    }
+    return result;
+  }
+
+  /** All formula IDs with their minC info, regardless of constellation.
+   *  Used by UI to render locked/unavailable formulas. */
+  get allFormulaIds(): Record<string, { label: I18nLabel; minC: number }> {
+    const result: Record<string, { label: I18nLabel; minC: number }> = {};
+    for (const [id, entry] of Object.entries(this.formulaMap)) {
+      result[id] = { label: entry.label, minC: entry.minC ?? 0 };
     }
     return result;
   }

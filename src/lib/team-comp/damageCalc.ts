@@ -498,6 +498,11 @@ export class CharBuild {
     return this.charBase.formulaIds;
   }
 
+  /** All formula IDs including constellation-locked ones, with minC info. */
+  getAllFormulaIds(): Record<string, { label: I18nLabel; minC: number }> {
+    return this.charBase.allFormulaIds;
+  }
+
   getDamageResult(
     formulaId: string,
     selfPostStats: StatSheet,
@@ -1309,6 +1314,21 @@ export class TeamBuild {
     const result: Record<string, Record<string, I18nLabel>> = {};
     for (const [id, build] of Object.entries(this.charBuilds)) {
       result[id] = build.getFormulaIds();
+    }
+    return result;
+  }
+
+  /** All formulas including constellation-locked ones, with minC info. */
+  getAllFormulaIds(): Record<
+    string,
+    Record<string, { label: I18nLabel; minC: number }>
+  > {
+    const result: Record<
+      string,
+      Record<string, { label: I18nLabel; minC: number }>
+    > = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      result[id] = build.getAllFormulaIds();
     }
     return result;
   }

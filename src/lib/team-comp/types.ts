@@ -410,6 +410,51 @@ export function resolvePartReaction(
   return "none";
 }
 
+// ─── Combo Descriptor ───
+
+/** A single entry in a ComboDescriptor — one formula's hit count in a rotation. */
+export type ComboEntry = {
+  id: string;
+  count: number;
+  /** Constellation-dependent count adjustments, applied additively when met. */
+  bonus?: ConstellationDelta[];
+};
+
+/** Constellation-gated additive delta for a ComboEntry count. */
+export type ConstellationDelta = {
+  /** Minimum constellation level required (1–6). */
+  minC: number;
+  /** Additive change to count when constellation ≥ minC. */
+  delta: number;
+};
+
+/**
+ * Declarative rotation descriptor — an ordered array of ComboEntry.
+ * Resolved into a flat Record<string, number> by resolveComboDescriptor().
+ */
+export type ComboDescriptor = ComboEntry[];
+
+/**
+ * Resolve a ComboDescriptor into a flat { formulaId → count } map,
+ * applying constellation-dependent bonuses.
+ */
+export function resolveComboDescriptor(
+  descriptor: ComboDescriptor,
+  constellation: number
+): Record<string, number> {
+  const result: Record<string, number> = {};
+  for (const entry of descriptor) {
+    let count = entry.count;
+    if (entry.bonus) {
+      for (const b of entry.bonus) {
+        if (constellation >= b.minC) count += b.delta;
+      }
+    }
+    result[entry.id] = count;
+  }
+  return result;
+}
+
 // ─── Combo Formulas (Rotation Modeling) ───
 
 export type ComboLine = {
