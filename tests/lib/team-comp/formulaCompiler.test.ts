@@ -1127,7 +1127,7 @@ describe("compileComboTeamDamage fuzz", () => {
   fuzzComboTeam("eula team", EULA_TEAM);
   fuzzComboTeam("clorinde team", CLORINDE_TEAM);
 
-  it("combo with reaction overrides matches evaluateCombo", () => {
+  it("combo with reaction on line matches evaluateCombo", () => {
     const tb = new TeamBuild(DILUC_TEAM);
     const dilucFormula = getFirstFormulaId(tb, "diluc");
     const xqFormula = getFirstFormulaId(tb, "xingqiu");
@@ -1137,16 +1137,14 @@ describe("compileComboTeamDamage fuzz", () => {
       id: "rxn-test",
       label: { zh: "测试", en: "test" },
       lines: [
-        { charId: "diluc", formulaId: dilucFormula, count: 3 },
+        {
+          charId: "diluc",
+          formulaId: dilucFormula,
+          count: 3,
+          reaction: { reaction: "vaporize" },
+        },
         { charId: "xingqiu", formulaId: xqFormula, count: 2 },
       ],
-    };
-
-    const singleOverrides: Record<
-      string,
-      import("@/lib/team-comp/types").ReactionOverride
-    > = {
-      [`diluc.${dilucFormula}`]: { reaction: "vaporize" },
     };
 
     for (let trial = 0; trial < 30; trial++) {
@@ -1160,21 +1158,14 @@ describe("compileComboTeamDamage fuzz", () => {
       }
 
       const swapCharId = "diluc";
-      const oldDamage = evaluateCombo(
-        tb,
-        combo,
-        sheets,
-        FUZZ_CTX,
-        singleOverrides
-      ).totalDamage;
+      const oldDamage = evaluateCombo(tb, combo, sheets, FUZZ_CTX).totalDamage;
 
       const compiled = compileComboTeamDamage(
         tb,
         combo,
         swapCharId,
         sheets,
-        FUZZ_CTX,
-        singleOverrides
+        FUZZ_CTX
       );
       const optCtx = tb.createOptimizerContext(
         sheets,
@@ -1701,7 +1692,6 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
       sheets,
       FUZZ_CTX,
       undefined,
-      undefined,
       "diluc",
       1.2,
       0
@@ -1748,7 +1738,6 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
       sheets,
       FUZZ_CTX,
       undefined,
-      undefined,
       "diluc",
       2.0,
       0
@@ -1782,7 +1771,6 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
       "diluc",
       sheets,
       FUZZ_CTX,
-      undefined,
       undefined,
       "diluc",
       0,
@@ -1855,7 +1843,6 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
         "diluc",
         sheets,
         FUZZ_CTX,
-        undefined,
         undefined,
         "diluc",
         minEr,

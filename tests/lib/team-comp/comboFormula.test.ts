@@ -20,7 +20,6 @@ import type {
 import type {
   CalcContext,
   ComboFormula,
-  ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { singleFormulaCombo } from "@/lib/team-comp/types";
@@ -224,7 +223,7 @@ describe("evaluateCombo", () => {
     expect(result.totalDamage).toBe(0);
   });
 
-  it("singleModeOverrides reaction is inherited when combo line has no reaction", () => {
+  it("line.reaction is used directly when set on the combo line", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = dilucEmptySheets();
@@ -237,21 +236,30 @@ describe("evaluateCombo", () => {
     };
     const resultNoRxn = evaluateCombo(tb, noRxn, sheets, CTX);
 
-    // With singleModeOverrides providing vaporize
-    const overrides: Record<string, ReactionOverride> = {
-      [`diluc.${formulaId}`]: { reaction: "vaporize" },
+    // With reaction set directly on the combo line
+    const withRxn: ComboFormula = {
+      id: "with-rxn",
+      label: { zh: "有反应", en: "With reaction" },
+      lines: [
+        {
+          charId: "diluc",
+          formulaId,
+          count: 1,
+          reaction: { reaction: "vaporize" },
+        },
+      ],
     };
-    const resultWithRxn = evaluateCombo(tb, noRxn, sheets, CTX, overrides);
+    const resultWithRxn = evaluateCombo(tb, withRxn, sheets, CTX);
 
     expect(resultWithRxn.totalDamage).toBeGreaterThan(resultNoRxn.totalDamage);
   });
 
-  it("combo line's own reaction overrides singleModeOverrides", () => {
+  it("combo line's reaction: 'none' produces same damage as no reaction", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = dilucEmptySheets();
 
-    // singleModeOverrides says vaporize, combo line says none
+    // Combo line with explicit reaction: "none"
     const combo: ComboFormula = {
       id: "override",
       label: { zh: "覆盖", en: "Override" },
@@ -264,11 +272,8 @@ describe("evaluateCombo", () => {
         },
       ],
     };
-    const overrides: Record<string, ReactionOverride> = {
-      [`diluc.${formulaId}`]: { reaction: "vaporize" },
-    };
 
-    const resultOverride = evaluateCombo(tb, combo, sheets, CTX, overrides);
+    const resultNone = evaluateCombo(tb, combo, sheets, CTX);
 
     // Without any reaction
     const noRxnCombo: ComboFormula = {
@@ -278,9 +283,8 @@ describe("evaluateCombo", () => {
     };
     const resultNoRxn = evaluateCombo(tb, noRxnCombo, sheets, CTX);
 
-    // The combo line's reaction: "none" should override singleModeOverrides' vaporize
-    // So damage should match the no-reaction result
-    expect(resultOverride.totalDamage).toBeCloseTo(resultNoRxn.totalDamage, 2);
+    // reaction: "none" should produce the same damage as no reaction set
+    expect(resultNone.totalDamage).toBeCloseTo(resultNoRxn.totalDamage, 2);
   });
 });
 
@@ -752,7 +756,7 @@ describe("single↔combo normalization equivalence", () => {
     }
   });
 
-  it("combo with vaporize reaction via line and via reactionOverrides produce same damage", async () => {
+  it("combo with vaporize via line reaction produces higher damage than without", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const inventory = [
@@ -794,41 +798,30 @@ describe("single↔combo normalization equivalence", () => {
     const lineRxnResults = await drain(runTeamOptimization(lineRxnOpts));
     const lineRxnFinal = lineRxnResults[lineRxnResults.length - 1];
 
-    // Combo with vaporize via reactionOverrides
+    // Combo without reaction
     const comboNoRxn: ComboFormula = {
-      id: "__override-rxn__",
+      id: "__no-rxn__",
       label: { zh: "", en: "" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
-    const overrideRxnOpts: TeamOptimizerOptions = {
+    const noRxnOpts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: {
-        combo: comboNoRxn,
-        reactionOverrides: { [`diluc.${formulaId}`]: { reaction: "vaporize" } },
-      },
+      formula: { combo: comboNoRxn },
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
       baseSheets,
       perChar,
     };
-    const overrideRxnResults = await drain(
-      runTeamOptimization(overrideRxnOpts)
-    );
-    const overrideRxnFinal = overrideRxnResults[overrideRxnResults.length - 1];
+    const noRxnResults = await drain(runTeamOptimization(noRxnOpts));
+    const noRxnFinal = noRxnResults[noRxnResults.length - 1];
 
     expect(lineRxnFinal.done).toBe(true);
-    expect(overrideRxnFinal.done).toBe(true);
-    if (lineRxnFinal.done && overrideRxnFinal.done) {
-      const relErr =
-        lineRxnFinal.bestDamage === 0
-          ? overrideRxnFinal.bestDamage === 0
-            ? 0
-            : Number.POSITIVE_INFINITY
-          : Math.abs(overrideRxnFinal.bestDamage - lineRxnFinal.bestDamage) /
-            Math.abs(lineRxnFinal.bestDamage);
-      expect(relErr).toBeLessThan(1e-6);
+    expect(noRxnFinal.done).toBe(true);
+    if (lineRxnFinal.done && noRxnFinal.done) {
+      // Vaporize should produce higher damage
+      expect(lineRxnFinal.bestDamage).toBeGreaterThan(noRxnFinal.bestDamage);
     }
   });
 });

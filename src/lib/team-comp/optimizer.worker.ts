@@ -17,7 +17,6 @@ import type {
   ComboFormula,
   OptFailReason,
   PartialBuffInfo,
-  ReactionOverride,
   StatKey,
   TeamSlotConfig,
 } from "./types";
@@ -48,7 +47,6 @@ export type BnBWorkerRequest = {
   excludedIds?: string[];
   /** Combo formula (always present — single formula is pre-normalized to 1-line combo). */
   combo: ComboFormula;
-  reactionOverrides?: Record<string, ReactionOverride>;
   /** Per-line PartialBuffInfo[] for combo mode. */
   buffOverrides?: Record<number, PartialBuffInfo[]>;
   /** Extra buffs (food/env/status/custom) to apply to TeamBuild stat sheets. */
@@ -135,7 +133,6 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       req.calcContext,
       req.excludedIds ? new Set(req.excludedIds) : undefined,
       req.combo,
-      req.reactionOverrides,
       req.topK,
       deadline,
       req.warmStartThreshold,

@@ -13,10 +13,9 @@ const mockTeam: Team = {
   weapons: [null, null, null, null],
   artifacts: [null, null, null, null],
   reactions: [],
-  reactionOverrides: {},
   combos: [],
   selectedCombo: null,
-  formulaMode: "single",
+  formulaMode: "combo",
   minEr: {},
   selectedFormula: null,
   optimizationResult: null,
@@ -63,7 +62,6 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
     team: mockTeam,
     effectiveTeam: mockTeam,
     updateTeam: vi.fn(),
-    formulaMode: "single",
     allFormulas: mockFormulas,
     availableFormulas: mockAvailableFormulas,
     displayFormulas: Object.fromEntries(
@@ -77,11 +75,8 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
         ),
       ])
     ),
-    resolvedFormula: null,
     teamBuild: null,
     buildError: null,
-    currentReactionOverride: {},
-    handleReactionChange: vi.fn(),
     comboLineMap: new Map<string, { lineIndex: number; line: ComboLine }>(),
     setComboLineCount: vi.fn(),
     onResetCombo: vi.fn(),
@@ -103,63 +98,17 @@ describe("FormulaSelectorCard", () => {
     expect(screen.getByText("Rain Swords")).toBeInTheDocument();
   });
 
-  it("highlights selected formula button", () => {
-    const { container } = render(
-      <TestCard
-        {...defaultProps({
-          resolvedFormula: { charId: "hu_tao", formulaId: "charged" },
-        })}
-      />
-    );
-    const selectedBtn = container.querySelector(".bg-primary\\/15");
-    expect(selectedBtn).toBeInTheDocument();
-    expect(selectedBtn?.textContent).toContain("Charged ATK");
-  });
-
-  it("calls updateTeam when a formula button is clicked", async () => {
-    const user = userEvent.setup({ delay: null });
-    const updateTeam = vi.fn();
-    render(<TestCard {...defaultProps({ updateTeam })} />);
-    await user.click(screen.getByText("Charged ATK"));
-    expect(updateTeam).toHaveBeenCalledWith("test-team", {
-      selectedFormula: { charId: "hu_tao", formulaId: "charged" },
-    });
-  });
-
-  it("shows mode toggle buttons for single and combo", () => {
+  it("shows reset button", () => {
     render(<TestCard {...defaultProps()} />);
-    expect(screen.getByText("Single Skill")).toBeInTheDocument();
-    expect(screen.getByText("Rotation Total")).toBeInTheDocument();
-  });
-
-  it("calls updateTeam with formulaMode when combo mode is clicked", async () => {
-    const user = userEvent.setup({ delay: null });
-    const updateTeam = vi.fn();
-    render(<TestCard {...defaultProps({ updateTeam })} />);
-    await user.click(screen.getByText("Rotation Total"));
-    expect(updateTeam).toHaveBeenCalledWith("test-team", {
-      formulaMode: "combo",
-    });
-  });
-
-  it("shows reset button in combo mode", () => {
-    render(<TestCard {...defaultProps({ formulaMode: "combo" })} />);
     expect(screen.getByText("Reset")).toBeInTheDocument();
   });
 
   it("calls onResetCombo when reset button is clicked", async () => {
     const user = userEvent.setup({ delay: null });
     const onResetCombo = vi.fn();
-    render(
-      <TestCard {...defaultProps({ formulaMode: "combo", onResetCombo })} />
-    );
+    render(<TestCard {...defaultProps({ onResetCombo })} />);
     await user.click(screen.getByText("Reset"));
     expect(onResetCombo).toHaveBeenCalledOnce();
-  });
-
-  it("does not show reset button in single mode", () => {
-    render(<TestCard {...defaultProps({ formulaMode: "single" })} />);
-    expect(screen.queryByText("Reset")).not.toBeInTheDocument();
   });
 
   it("shows build error when allFormulas is empty and buildError is set", () => {
@@ -224,9 +173,7 @@ describe("FormulaSelectorCard", () => {
     ]);
 
     it("displays current combo line counts", () => {
-      render(
-        <TestCard {...defaultProps({ formulaMode: "combo", comboLineMap })} />
-      );
+      render(<TestCard {...defaultProps({ comboLineMap })} />);
       const counts = screen.getAllByText("3");
       expect(counts.length).toBeGreaterThan(0);
     });
@@ -257,7 +204,7 @@ describe("FormulaSelectorCard", () => {
 
     it("disables minus button when count is 0", () => {
       const { container } = render(
-        <TestCard {...defaultProps({ formulaMode: "combo", comboLineMap })} />
+        <TestCard {...defaultProps({ comboLineMap })} />
       );
       const disabledMinusButtons = Array.from(
         container.querySelectorAll("button[disabled]")

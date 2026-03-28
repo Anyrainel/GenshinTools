@@ -42,7 +42,6 @@ import type {
   CritMode,
   DisplayPart,
   DisplayResult,
-  ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
 import { buffSourceKey } from "@/lib/team-comp/types";
@@ -109,242 +108,13 @@ function useSessionState<T>(key: string, defaultValue: T): [T, (v: T) => void] {
   return [value, setValue];
 }
 
-/** Shared body for current / optimized / generated tabs. */
-function DamageBody({
-  team,
-  hasFormula,
-  emptyMessage,
-  artifactsByChar,
-  targetCharId,
-  displayResult,
-  formulaKey,
-  formulaLabel,
-  critMode,
-  setCritMode,
-  isMobile,
-  t,
-  failReasons,
-  frozenCharIds,
-  onArtifactSwap,
-  onFreezeChar,
-  onUnfreezeChar,
-  forceReusedCharIds,
-}: {
-  team: Team;
-  hasFormula: boolean;
-  emptyMessage: string;
-  artifactsByChar: Record<string, Record<string, ArtifactData>>;
-  targetCharId?: string;
-  displayResult?: DisplayResult | null;
-  /** Formula key for scoping buff overrides (e.g. "ganyu.charged"). */
-  formulaKey?: string;
-  /** I18n label for the active formula. */
-  formulaLabel?: Record<string, string>;
-  critMode: CritMode;
-  setCritMode: (mode: CritMode) => void;
-  isMobile: boolean;
-  t: ReturnType<typeof useLanguage>["t"];
-  failReasons?: Record<string, OptFailReason>;
-  frozenCharIds?: Set<string>;
-  onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
-  onFreezeChar?: (charId: string) => void;
-  onUnfreezeChar?: (charId: string) => void;
-  forceReusedCharIds?: Set<string>;
-}) {
-  const [highlightedStat, setHighlightedStat] = useState<{
-    key: StatKey | "charLevel";
-    charId: string;
-  } | null>(null);
-  const [formulaExpanded, setFormulaExpanded] = useSessionState(
-    "formulaExpanded",
-    true
-  );
-
+/** Check if a combo line's reaction has partial part settings. */
+function hasPartialReaction(line: ComboLine): boolean {
+  const ov = line.reaction;
+  if (!ov) return false;
   return (
-    <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
-      {!hasFormula && (
-        <div className="text-muted-foreground p-4 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10">
-          {emptyMessage}
-        </div>
-      )}
-
-      {hasFormula && (
-        <StatSheetPanel
-          result={displayResult}
-          team={team}
-          artifactsByChar={artifactsByChar}
-          targetCharId={targetCharId || ""}
-          highlightedStat={highlightedStat}
-          onStatHover={setHighlightedStat}
-          t={t}
-          failReasons={failReasons}
-          frozenCharIds={frozenCharIds}
-          onArtifactSwap={onArtifactSwap}
-          onFreezeChar={onFreezeChar}
-          onUnfreezeChar={onUnfreezeChar}
-          forceReusedCharIds={forceReusedCharIds}
-        />
-      )}
-
-      {hasFormula && (
-        <Collapsible open={formulaExpanded} onOpenChange={setFormulaExpanded}>
-          <div
-            className={cn(
-              "border border-dashed border-border/20 rounded-lg bg-black/5 text-sm",
-              isMobile ? "p-1.5" : "p-2"
-            )}
-          >
-            <div className="flex flex-col items-center justify-center">
-              {displayResult ? (
-                <CollapsibleTrigger asChild>
-                  <div
-                    className={cn(
-                      "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
-                      isMobile ? "gap-1.5 px-2 py-1.5" : "gap-2.5 px-4 py-2",
-                      "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
-                      "hover:bg-primary/15"
-                    )}
-                  >
-                    <div className="flex items-center gap-0">
-                      <CritModeDropdown
-                        critMode={critMode}
-                        setCritMode={setCritMode}
-                        isMobile={isMobile}
-                        {...getCritDisableFlags(
-                          formulaKey
-                            ? displayResult?.partsByFormula[formulaKey]
-                            : undefined
-                        )}
-                        t={t}
-                      />
-                      <div
-                        className={cn(
-                          "text-primary font-semibold tracking-wide whitespace-nowrap leading-none",
-                          isMobile ? "text-xs" : "text-sm"
-                        )}
-                      >
-                        {t.ui("teamComp.totalDamage")}
-                      </div>
-                    </div>
-                    <div
-                      className={cn(
-                        "text-foreground font-[math] font-black drop-shadow-sm",
-                        isMobile ? "text-2xl" : "text-3xl md:text-4xl"
-                      )}
-                    >
-                      {fmtDamage(
-                        (formulaKey
-                          ? (displayResult.partsByFormula[formulaKey] ?? [])
-                          : []
-                        ).reduce(
-                          (sum, p) =>
-                            sum + adjustPartDamage(p, critMode) * (p.hits ?? 1),
-                          0
-                        )
-                      )}
-                    </div>
-                    <span
-                      className={cn(
-                        "text-muted-foreground whitespace-nowrap",
-                        isMobile ? "text-[10px] ml-0.5" : "text-xs ml-1.5"
-                      )}
-                    >
-                      {formulaExpanded
-                        ? t.ui("teamComp.collapseFormula")
-                        : t.ui("teamComp.expandFormula")}
-                    </span>
-                    <ChevronDown
-                      className={cn(
-                        "w-4 h-4 text-muted-foreground transition-transform shrink-0",
-                        formulaExpanded && "rotate-180"
-                      )}
-                    />
-                  </div>
-                </CollapsibleTrigger>
-              ) : (
-                <div className="text-sm uppercase tracking-widest bg-primary/20 text-primary px-3 py-1 rounded font-mono font-bold">
-                  {t.ui("teamComp.pending")}
-                </div>
-              )}
-            </div>
-            <CollapsibleContent>
-              {displayResult && targetCharId && (
-                <FormulaBreakdown
-                  parts={
-                    (formulaKey
-                      ? displayResult.partsByFormula[formulaKey]
-                      : undefined) ?? []
-                  }
-                  highlightedStat={
-                    highlightedStat?.charId === targetCharId
-                      ? highlightedStat?.key
-                      : null
-                  }
-                  critMode={critMode}
-                  t={t}
-                  buffs={displayResult.buffs}
-                  defaultActivation={displayResult.buffActivation}
-                  formulaKey={formulaKey}
-                />
-              )}
-            </CollapsibleContent>
-          </div>
-        </Collapsible>
-      )}
-
-      {hasFormula && displayResult && (
-        <BuffLedger
-          buffs={displayResult.buffs}
-          team={team}
-          t={t}
-          formulas={
-            formulaKey
-              ? [
-                  {
-                    formulaKey,
-                    parts: displayResult.partsByFormula[formulaKey] ?? [],
-                    defaultActivation: displayResult.buffActivation,
-                    formulaLabel,
-                    buffApplicability: buildBuffApplicability(
-                      displayResult.buffs
-                    ),
-                  },
-                ]
-              : undefined
-          }
-        />
-      )}
-    </div>
-  );
-}
-
-/** Check if a combo line's effective reaction has partial part settings. */
-function hasPartialReaction(
-  line: ComboLine,
-  singleOverrides: Record<string, ReactionOverride>
-): boolean {
-  const key = `${line.charId}.${line.formulaId}`;
-  const singleOv = singleOverrides[key];
-  const lineOv = line.reaction;
-
-  // Merge same as combo eval: single-mode as defaults, line overrides on top
-  let partReactions: Record<number, string> | undefined;
-  let partHits: Record<number, number> | undefined;
-
-  if (singleOv && lineOv) {
-    partReactions = { ...singleOv.partReactions, ...lineOv.partReactions };
-    partHits = { ...singleOv.partHits, ...lineOv.partHits };
-  } else if (singleOv) {
-    partReactions = singleOv.partReactions;
-    partHits = singleOv.partHits;
-  } else if (lineOv) {
-    partReactions = lineOv.partReactions;
-    partHits = lineOv.partHits;
-  }
-
-  return (
-    (partReactions != null && Object.keys(partReactions).length > 0) ||
-    (partHits != null && Object.keys(partHits).length > 0)
+    (ov.partReactions != null && Object.keys(ov.partReactions).length > 0) ||
+    (ov.partHits != null && Object.keys(ov.partHits).length > 0)
   );
 }
 
@@ -360,7 +130,6 @@ function ComboBreakdown({
   setCritMode,
   disableCrit,
   disableNoCrit,
-  reactionOverrides,
   isMobile,
   t,
   artifactsByChar,
@@ -376,7 +145,6 @@ function ComboBreakdown({
   setCritMode: (mode: CritMode) => void;
   disableCrit?: boolean;
   disableNoCrit?: boolean;
-  reactionOverrides: Record<string, ReactionOverride>;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
@@ -425,18 +193,12 @@ function ComboBreakdown({
         line,
         perHit: dmg.perHit * ratio,
         total: dmg.total * ratio,
-        isPartial: hasPartialReaction(line, reactionOverrides),
+        isPartial: hasPartialReaction(line),
       });
       map.set(line.charId, arr);
     }
     return map;
-  }, [
-    activeLines,
-    lineDamages,
-    reactionOverrides,
-    critMode,
-    displayResult?.partsByFormula,
-  ]);
+  }, [activeLines, lineDamages, critMode, displayResult?.partsByFormula]);
 
   // Per-character damage totals and max line proportion for color scaling
   const { charDamageMap, totalLineDamage, maxLineProportion } = useMemo(() => {
@@ -839,7 +601,6 @@ function ComboResultView({
   setCritMode,
   isMobile,
   t,
-  reactionOverrides,
   failReasons,
   frozenCharIds,
   onArtifactSwap,
@@ -858,7 +619,6 @@ function ComboResultView({
   setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
-  reactionOverrides: Record<string, ReactionOverride>;
   failReasons?: Record<string, OptFailReason>;
   frozenCharIds?: Set<string>;
   onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
@@ -979,7 +739,6 @@ function ComboResultView({
             ? Object.values(displayResult.partsByFormula).flat()
             : undefined
         )}
-        reactionOverrides={reactionOverrides}
         isMobile={isMobile}
         t={t}
         artifactsByChar={artifactsByChar}
@@ -1031,7 +790,6 @@ interface DamageCardProps {
   comboLines?: ComboLine[] | null;
   comboId?: string;
   teamBuild?: TeamBuild | null;
-  formulaMode?: "single" | "combo";
   // Freeze
   hasOptResult?: boolean;
   /** True when every roster character has artifacts (frozen/force-reused/optimized) */
@@ -1383,7 +1141,6 @@ export function DamageCard({
   comboLines,
   comboId,
   teamBuild,
-  formulaMode = "single",
   hasOptResult,
   allCharsResolved,
   isFrozen,
@@ -1450,20 +1207,7 @@ export function DamageCard({
 
   const ctxProps: CtxProps = { team, activeContext, updateTeam, isMobile, t };
 
-  // Formula label for the active single-formula selection
-  const activeFormulaLabel = useMemo(() => {
-    if (!resolvedFormula || !teamBuild) return undefined;
-    return (
-      teamBuild.getFormulaIds()[resolvedFormula.charId]?.[
-        resolvedFormula.formulaId
-      ] ?? teamBuild.getReactionFormulaIds()[resolvedFormula.formulaId]
-    );
-  }, [resolvedFormula, teamBuild]);
-
-  const hasActiveFormula =
-    formulaMode === "combo"
-      ? comboLines?.some((l) => l.count > 0)
-      : resolvedFormula != null;
+  const hasActiveFormula = comboLines?.some((l) => l.count > 0);
 
   return (
     <Card className={CARD_CLS}>
@@ -1518,10 +1262,7 @@ export function DamageCard({
             <EnemyLevelInput {...ctxProps} />
             <EnemyResInput {...ctxProps} />
           </div>
-          {formulaMode === "combo" &&
-          currentDisplayResult &&
-          comboLines &&
-          teamBuild ? (
+          {currentDisplayResult && comboLines && teamBuild ? (
             <ComboResultView
               displayResult={currentDisplayResult}
               comboLines={comboLines}
@@ -1534,38 +1275,15 @@ export function DamageCard({
               setCritMode={setCritMode}
               isMobile={isMobile}
               t={t}
-              reactionOverrides={team.reactionOverrides}
               frozenCharIds={currentTabFrozenCharIds}
               onFreezeChar={onFreezeCharFromCurrent}
               onUnfreezeChar={onUnfreezeCharFromCurrent}
             />
-          ) : formulaMode === "combo" && comboLines && !currentDisplayResult ? (
+          ) : (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
               <p>{t.ui("teamComp.emptyComboMsg")}</p>
             </div>
-          ) : (
-            <DamageBody
-              team={effectiveTeam}
-              hasFormula={resolvedFormula != null}
-              emptyMessage={t.ui("teamComp.emptyDamageMsg")}
-              artifactsByChar={equippedArtifactsByChar}
-              targetCharId={resolvedFormula?.charId}
-              displayResult={currentDisplayResult}
-              formulaKey={
-                resolvedFormula
-                  ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
-                  : undefined
-              }
-              formulaLabel={activeFormulaLabel}
-              critMode={critMode}
-              setCritMode={setCritMode}
-              isMobile={isMobile}
-              t={t}
-              frozenCharIds={currentTabFrozenCharIds}
-              onFreezeChar={onFreezeCharFromCurrent}
-              onUnfreezeChar={onUnfreezeCharFromCurrent}
-            />
           )}
         </CardContent>
       )}
@@ -1857,7 +1575,6 @@ export function DamageCard({
 
             {/* Results — only when all characters are resolved */}
             {!hasActiveFormula ? null : allCharsResolved &&
-              formulaMode === "combo" &&
               optimizedDisplayResult &&
               comboLines &&
               teamBuild ? (
@@ -1869,34 +1586,6 @@ export function DamageCard({
                 team={effectiveTeam}
                 artifactsByChar={optimizedArtifactsByChar}
                 calcContext={activeContext}
-                critMode={critMode}
-                setCritMode={setCritMode}
-                isMobile={isMobile}
-                t={t}
-                reactionOverrides={team.reactionOverrides}
-                failReasons={
-                  teamResult?.done ? teamResult.failReasons : undefined
-                }
-                frozenCharIds={frozenCharIds}
-                onArtifactSwap={onArtifactSwap}
-                onFreezeChar={onFreezeChar}
-                onUnfreezeChar={onUnfreezeChar}
-                forceReusedCharIds={forceReusedCharIds}
-              />
-            ) : allCharsResolved && hasOptResult && optimizedDisplayResult ? (
-              <DamageBody
-                team={effectiveTeam}
-                hasFormula
-                emptyMessage=""
-                artifactsByChar={optimizedArtifactsByChar}
-                targetCharId={resolvedFormula?.charId}
-                displayResult={optimizedDisplayResult}
-                formulaKey={
-                  resolvedFormula
-                    ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
-                    : undefined
-                }
-                formulaLabel={activeFormulaLabel}
                 critMode={critMode}
                 setCritMode={setCritMode}
                 isMobile={isMobile}
@@ -1997,10 +1686,7 @@ export function DamageCard({
           )}
 
           {/* Results */}
-          {formulaMode === "combo" &&
-          genDisplayResult &&
-          comboLines &&
-          teamBuild ? (
+          {genDisplayResult && comboLines && teamBuild ? (
             <ComboResultView
               displayResult={genDisplayResult}
               comboLines={comboLines}
@@ -2009,26 +1695,6 @@ export function DamageCard({
               team={effectiveTeam}
               artifactsByChar={genArtifactsByChar}
               calcContext={activeContext}
-              critMode={critMode}
-              setCritMode={setCritMode}
-              isMobile={isMobile}
-              t={t}
-              reactionOverrides={team.reactionOverrides}
-            />
-          ) : genResult?.done && genDisplayResult ? (
-            <DamageBody
-              team={effectiveTeam}
-              hasFormula
-              emptyMessage=""
-              artifactsByChar={genArtifactsByChar}
-              targetCharId={resolvedFormula?.charId}
-              displayResult={genDisplayResult}
-              formulaKey={
-                resolvedFormula
-                  ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
-                  : undefined
-              }
-              formulaLabel={activeFormulaLabel}
               critMode={critMode}
               setCritMode={setCritMode}
               isMobile={isMobile}

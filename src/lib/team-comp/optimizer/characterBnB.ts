@@ -24,7 +24,6 @@ import type {
   ComboFormula,
   OptFailReason,
   PartialBuffInfo,
-  ReactionOverride,
   StatKey,
 } from "../types";
 import {
@@ -341,7 +340,6 @@ export function runCharacterBnB(
   calcContext: CalcContext,
   excludedIds: Set<string> | undefined,
   combo: ComboFormula,
-  reactionOverrides: Record<string, ReactionOverride> | undefined,
   topK: number,
   deadline?: number,
   warmStartThreshold?: number,
@@ -591,7 +589,6 @@ export function runCharacterBnB(
     swapCharId,
     baseSheets,
     calcContext,
-    reactionOverrides,
     buffOverridesStr,
     constraints.active ? constraints.charId : undefined,
     constraints.minEr,

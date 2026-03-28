@@ -2561,8 +2561,6 @@ export function evaluateCombo(
   combo: ComboFormula,
   artifactStats: Record<string, StatSheet>,
   ctx: CalcContext,
-  /** Single-mode per-formula reaction overrides — used as defaults for per-part config. */
-  singleModeOverrides?: Record<string, ReactionOverride>,
   /** Per-line PartialBuffInfo[], keyed by line index in validLines. */
   buffOverrides?: Record<number, PartialBuffInfo[]>
 ): ComboResult {
@@ -2626,41 +2624,7 @@ export function evaluateCombo(
       offFieldTeamStats = getStats(null);
     }
 
-    // Merge: single-mode per-part config as defaults, combo line overrides on top
-    let effectiveReaction = line.reaction;
-    if (singleModeOverrides) {
-      const key = `${line.charId}.${line.formulaId}`;
-      const singleOverride = singleModeOverrides[key];
-      if (singleOverride && effectiveReaction) {
-        effectiveReaction = {
-          ...effectiveReaction,
-          // Use single-mode partReactions/partHits as defaults,
-          // combo line's own values override
-          partReactions: {
-            ...singleOverride.partReactions,
-            ...effectiveReaction.partReactions,
-          },
-          partHits: {
-            ...singleOverride.partHits,
-            ...effectiveReaction.partHits,
-          },
-        };
-        // Clean up empty objects
-        if (
-          effectiveReaction.partReactions &&
-          Object.keys(effectiveReaction.partReactions).length === 0
-        )
-          effectiveReaction.partReactions = undefined;
-        if (
-          effectiveReaction.partHits &&
-          Object.keys(effectiveReaction.partHits).length === 0
-        )
-          effectiveReaction.partHits = undefined;
-      } else if (singleOverride && !effectiveReaction) {
-        // Combo line has no reaction override — inherit single-mode fully
-        effectiveReaction = singleOverride;
-      }
-    }
+    const effectiveReaction = line.reaction;
 
     // Build stat variants if this line has partial buffs
     const lineInfos = buffOverrides?.[lineIdx];
@@ -2727,7 +2691,6 @@ export function getComboDisplayResult(
   combo: ComboFormula,
   artifactStats: Record<string, StatSheet>,
   ctx: CalcContext,
-  singleModeOverrides?: Record<string, ReactionOverride>,
   buffOverrides?: Record<number, PartialBuffInfo[]>
 ): DisplayResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
@@ -2797,7 +2760,6 @@ export function getComboDisplayResult(
     { ...combo, lines: activeLines },
     artifactStats,
     ctx,
-    singleModeOverrides,
     buffOverrides
   );
   const baseDamage = baseResult.totalDamage;
@@ -2808,8 +2770,7 @@ export function getComboDisplayResult(
         teamBuild,
         { ...combo, lines: activeLines },
         artifactStats,
-        ctx,
-        singleModeOverrides
+        ctx
       ).totalDamage
     : baseDamage;
 
@@ -2819,8 +2780,7 @@ export function getComboDisplayResult(
   if (fullBuffBaseDamage > 0) {
     const comboConfig = { ...combo, lines: activeLines };
     const evalFn = (sheets: Record<string, StatSheet>): number =>
-      evaluateCombo(teamBuild, comboConfig, sheets, ctx, singleModeOverrides)
-        .totalDamage;
+      evaluateCombo(teamBuild, comboConfig, sheets, ctx).totalDamage;
 
     const deltas = computeSubstatMarginals(
       evalFn,
@@ -2853,8 +2813,7 @@ export function getComboDisplayResult(
     if (zeroGainCharIds.length > 0 && fullBuffBaseDamage > 0) {
       const comboConfig = { ...combo, lines: activeLines };
       const evalFn = (sheets: Record<string, StatSheet>): number =>
-        evaluateCombo(teamBuild, comboConfig, sheets, ctx, singleModeOverrides)
-          .totalDamage;
+        evaluateCombo(teamBuild, comboConfig, sheets, ctx).totalDamage;
       // Build sheets with empty artifacts for each zero-gain character
       const emptySheets = { ...artifactStats };
       for (const cid of zeroGainCharIds) {
@@ -2891,14 +2850,12 @@ export function getComboDisplayResult(
     if (seenFormulas.has(fKey)) continue;
     seenFormulas.add(fKey);
 
-    const rxnOverride = singleModeOverrides?.[fKey];
     try {
       const dr = teamBuild.getDisplayResult(
         line.charId,
         line.formulaId,
         artifactStats,
-        ctx,
-        rxnOverride
+        ctx
       );
 
       for (const buff of dr.buffs) {
@@ -2941,8 +2898,7 @@ export function getComboDisplayResult(
         tweakedTeam,
         { ...combo, lines: activeLines },
         artifactStats,
-        ctx,
-        singleModeOverrides
+        ctx
       );
       return (newResult.totalDamage - fullBuffBaseDamage) / fullBuffBaseDamage;
     };
@@ -3033,37 +2989,8 @@ export function getComboDisplayResult(
       continue;
     }
 
-    // Compute effective reaction (first line merged with single-mode overrides)
     const firstLine = formulaLines[0].line;
-    let effectiveReaction = firstLine.reaction;
-    if (singleModeOverrides) {
-      const singleOverride = singleModeOverrides[formulaKey];
-      if (singleOverride && effectiveReaction) {
-        effectiveReaction = {
-          ...effectiveReaction,
-          partReactions: {
-            ...singleOverride.partReactions,
-            ...effectiveReaction.partReactions,
-          },
-          partHits: {
-            ...singleOverride.partHits,
-            ...effectiveReaction.partHits,
-          },
-        };
-        if (
-          effectiveReaction.partReactions &&
-          Object.keys(effectiveReaction.partReactions).length === 0
-        )
-          effectiveReaction.partReactions = undefined;
-        if (
-          effectiveReaction.partHits &&
-          Object.keys(effectiveReaction.partHits).length === 0
-        )
-          effectiveReaction.partHits = undefined;
-      } else if (singleOverride && !effectiveReaction) {
-        effectiveReaction = singleOverride;
-      }
-    }
+    const effectiveReaction = firstLine.reaction;
 
     // Off-field stats (nobody on-field for off-field parts)
     const entry = build.charBase.getFormulaEntry(formulaId);

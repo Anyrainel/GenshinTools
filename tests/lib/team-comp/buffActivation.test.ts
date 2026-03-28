@@ -741,7 +741,6 @@ describe("compileComboTeamDamage with buffOverrides", () => {
       carryId,
       sheets,
       CTX,
-      undefined,
       buffOverrides
     );
     const varsPartial = new Float64Array(compiledPartial.numVars);

@@ -6,6 +6,7 @@ import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
 import type {
   CalcContext,
   ComboFormula,
+  ComboLine,
   DamageResult,
   ReactionOverride,
 } from "@/lib/team-comp/types";
@@ -128,6 +129,53 @@ export function migrateTeamStore(
       return { ...t, analyzerConfigs: configs };
     });
   }
+  if (version < 9) {
+    // Merge reactionOverrides into combo lines, set formulaMode to "combo"
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy format
+    state.teams = state.teams.map((t: any) => {
+      const overrides: Record<string, ReactionOverride> =
+        t.reactionOverrides ?? {};
+      const combos: ComboFormula[] = (t.combos ?? []).map(
+        (combo: ComboFormula) => ({
+          ...combo,
+          lines: combo.lines.map((line: ComboLine) => {
+            const key = `${line.charId}.${line.formulaId}`;
+            const singleOverride = overrides[key];
+            if (!singleOverride) return line;
+
+            // Merge single-mode per-part config into the line's reaction
+            let merged = line.reaction;
+            if (singleOverride && merged) {
+              merged = {
+                ...merged,
+                partReactions: {
+                  ...singleOverride.partReactions,
+                  ...merged.partReactions,
+                },
+                partHits: {
+                  ...singleOverride.partHits,
+                  ...merged.partHits,
+                },
+              };
+              // Clean up empty objects
+              if (
+                merged.partReactions &&
+                Object.keys(merged.partReactions).length === 0
+              )
+                merged.partReactions = undefined;
+              if (merged.partHits && Object.keys(merged.partHits).length === 0)
+                merged.partHits = undefined;
+            } else if (singleOverride && !merged) {
+              merged = singleOverride;
+            }
+            return { ...line, reaction: merged };
+          }),
+        })
+      );
+      const { reactionOverrides: _, ...rest } = t;
+      return { ...rest, combos, formulaMode: "combo" };
+    });
+  }
   return state;
 }
 
@@ -163,10 +211,9 @@ export interface OptimizationResult {
 /** Default values for team fields that may be missing from persisted data. */
 const DEFAULT_TEAM_FIELDS = {
   reactions: [] as ReactionType[],
-  reactionOverrides: {} as Record<string, ReactionOverride>,
   combos: [] as ComboFormula[],
   selectedCombo: null as string | null,
-  formulaMode: "single" as const,
+  formulaMode: "combo" as const,
   minEr: {} as Record<string, number>,
   minCr: {} as Record<string, number>,
   opts: {} as OptionMap,
@@ -186,10 +233,8 @@ export interface Team {
   selectedFormula: { charId: string; formulaId: string } | null;
   optimizationResult: OptimizationResult | null;
   calcContext?: Partial<CalcContext>;
-  /** Per-formula reaction overrides. Key format: "{charId}.{formulaId}" */
-  reactionOverrides: Record<string, ReactionOverride>;
-  /** Formula mode: single formula or combo rotation */
-  formulaMode: "single" | "combo";
+  /** Formula mode — always "combo" after v9 migration. Kept for backward compat. */
+  formulaMode: "combo";
   /** Combo formulas for rotation modeling */
   combos: ComboFormula[];
   /** Active combo ID, null = single formula mode */
@@ -373,8 +418,7 @@ export const useTeamStore = create<TeamState>()(
               selectedFormula: t.selectedFormula ?? null,
               optimizationResult: null,
               calcContext: t.calcContext,
-              reactionOverrides: t.reactionOverrides ?? {},
-              formulaMode: t.formulaMode ?? "single",
+              formulaMode: "combo",
               combos: t.combos ?? [],
               selectedCombo: t.selectedCombo ?? null,
             };
@@ -449,7 +493,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 8,
+      version: 9,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }

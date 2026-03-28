@@ -21,25 +21,23 @@ function buildCacheKey(opts: AnalyzerOptions): string {
     .sort()
     .join("|");
 
-  const { combo, reactionOverrides } = opts.formula;
+  const { combo } = opts.formula;
 
   const comboPart = combo.lines
     .filter((l) => l.count > 0)
-    .map((l) => `${l.charId}:${l.formulaId}:${l.count}`)
+    .map((l) => {
+      const rx = l.reaction;
+      const rxStr = rx
+        ? `${rx.reaction ?? ""}|${JSON.stringify(rx.partReactions ?? {})}|${JSON.stringify(rx.partHits ?? {})}`
+        : "";
+      return `${l.charId}:${l.formulaId}:${l.count}:${rxStr}`;
+    })
     .join(",");
-
-  // Include reaction overrides in the cache key
-  const rxPart = reactionOverrides
-    ? Object.entries(reactionOverrides)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => `${k}=${v.reaction}`)
-        .join(";")
-    : "";
 
   // buffOverrides intentionally excluded — the analyzer computes fresh
   // greedy defaults per constellation, ignoring page-level overrides.
 
-  return `${charParts}::${comboPart}::${rxPart}`;
+  return `${charParts}::${comboPart}`;
 }
 
 export interface UseAnalyzerState {

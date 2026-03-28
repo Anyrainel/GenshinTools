@@ -27,7 +27,6 @@ import type {
   ComboFormula,
   ComboResult,
   OptFailReason,
-  ReactionOverride,
   StatKey,
   TeamOptPassId,
   TeamOptPassResult,
@@ -514,7 +513,7 @@ export async function* runTeamOptimization(
     maxArtsPerSlot,
     perCharExtraArtifacts,
   } = opts;
-  const { combo, reactionOverrides, buffOverrides } = opts.formula;
+  const { combo, buffOverrides } = opts.formula;
 
   /** Get the inventory for a specific character, merging per-char extras. */
   const getCharInventory = (charId: string): ArtifactData[] => {
@@ -539,8 +538,6 @@ export async function* runTeamOptimization(
       )
     : rawPerCharDeadlineMs;
 
-  const effectiveReactionOverrides = reactionOverrides ?? {};
-
   const allCharIds = Object.keys(perChar);
   const carryCharIds = allCharIds.filter((id) =>
     combo.lines.some((l) => l.count > 0 && l.charId === id)
@@ -560,13 +557,7 @@ export async function* runTeamOptimization(
     }
     try {
       const evalFn = (sheets: Record<string, StatSheet>) =>
-        evaluateCombo(
-          teamBuild,
-          combo,
-          sheets,
-          calcContext,
-          effectiveReactionOverrides
-        ).totalDamage;
+        evaluateCombo(teamBuild, combo, sheets, calcContext).totalDamage;
       const baseDamage = evalFn(emptySheets);
 
       if (baseDamage > 0) {
@@ -605,8 +596,7 @@ export async function* runTeamOptimization(
               noSetTB,
               combo,
               emptySheets,
-              calcContext,
-              effectiveReactionOverrides
+              calcContext
             ).totalDamage;
             if (Math.abs(baseDamage - dmgNoSet) / baseDamage >= 0.001) {
               continue; // Set bonus matters — don't mark as saturated
@@ -891,7 +881,6 @@ export async function* runTeamOptimization(
             deadlineMs: phase1BudgetMs,
             maxArtsPerSlot: maxArtsPerSlot ?? 0,
             combo: combo,
-            reactionOverrides: effectiveReactionOverrides,
             buffOverrides: buffOverrides,
           };
 
@@ -972,7 +961,6 @@ export async function* runTeamOptimization(
         calcContext,
         undefined,
         combo,
-        effectiveReactionOverrides,
         TOP_K,
         charDeadline,
         undefined,
@@ -1031,7 +1019,6 @@ export async function* runTeamOptimization(
         calcContext,
         undefined,
         combo,
-        effectiveReactionOverrides,
         TOP_K,
         charDeadline,
         undefined,
@@ -1166,7 +1153,6 @@ export async function* runTeamOptimization(
           calcContext,
           excludeSet,
           combo,
-          effectiveReactionOverrides,
           TOP_K,
           altDeadline,
           undefined,
@@ -1231,8 +1217,7 @@ export async function* runTeamOptimization(
     combo,
     allCharIds,
     compiledTeamEvalEmptySheets,
-    calcContext,
-    effectiveReactionOverrides
+    calcContext
   );
   const compiledTeamVars = new Float64Array(compiledTeamEval.numVars);
   const teamEvalFn: TeamEvalFn = (assignment) => {
@@ -1305,7 +1290,6 @@ export async function* runTeamOptimization(
           calcContext,
           seqUsed,
           combo,
-          effectiveReactionOverrides,
           1, // only need the best result
           altDeadline,
           undefined,
@@ -1397,7 +1381,6 @@ export async function* runTeamOptimization(
             calcContext,
             excludeSet,
             combo,
-            effectiveReactionOverrides,
             1, // only need best result
             altDeadline,
             undefined,
@@ -1560,13 +1543,8 @@ export async function* runTeamOptimization(
     const currentTeamDamage = (() => {
       const sheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
       try {
-        return evaluateCombo(
-          effectiveTeamBuild,
-          combo,
-          sheets,
-          calcContext,
-          effectiveReactionOverrides
-        ).totalDamage;
+        return evaluateCombo(effectiveTeamBuild, combo, sheets, calcContext)
+          .totalDamage;
       } catch {
         return 0;
       }
@@ -1622,7 +1600,6 @@ export async function* runTeamOptimization(
           combo,
           evalSheets,
           calcContext,
-          effectiveReactionOverrides,
           buffOverrides
         ).totalDamage;
       } catch {
@@ -1750,7 +1727,6 @@ export async function* runTeamOptimization(
               maxArtsPerSlot: maxArtsPerSlot ?? 0,
               excludedIds: input.excludedIds,
               combo: combo,
-              reactionOverrides: effectiveReactionOverrides,
               buffOverrides: buffOverrides,
             };
 
@@ -1781,7 +1757,6 @@ export async function* runTeamOptimization(
           calcContext,
           new Set(input.excludedIds),
           combo,
-          effectiveReactionOverrides,
           TOP_K,
           reoptDeadline,
           input.currentDamage > 0 ? input.currentDamage : undefined,
@@ -1830,8 +1805,7 @@ export async function* runTeamOptimization(
           effectiveTeamBuild,
           combo,
           tentativeSheets,
-          calcContext,
-          effectiveReactionOverrides
+          calcContext
         ).totalDamage;
       } catch {
         tentativeDamage = 0;
@@ -2236,7 +2210,6 @@ export async function* runTeamOptimization(
       combo,
       finalSheets,
       calcContext,
-      effectiveReactionOverrides,
       buffOverrides
     );
   } catch {

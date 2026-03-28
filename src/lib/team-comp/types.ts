@@ -489,12 +489,12 @@ export type ComboResult = {
 };
 
 /**
- * Bundled formula context: combo definition + per-formula overrides.
+ * Bundled formula context: combo definition + per-formula reaction/buff overrides.
  * Always travels as a unit across optimizer, generator, analyzer, and display.
+ * Reaction config lives directly on each ComboLine.reaction.
  */
 export type FormulaContext = {
   combo: ComboFormula;
-  reactionOverrides?: Record<string, ReactionOverride>;
   buffOverrides?: Record<number, PartialBuffInfo[]>;
 };
 

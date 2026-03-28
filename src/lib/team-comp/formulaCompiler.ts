@@ -533,7 +533,6 @@ export function compileComboTeamDamage(
   swapCharId: string | string[],
   baseSheets: Record<string, StatSheet>,
   calcContext: CalcContext,
-  singleModeOverrides?: Record<string, ReactionOverride>,
   buffOverrides?: Record<string, PartialBuffInfo[]>,
   erCheckCharId?: string,
   minEr?: number,
@@ -652,37 +651,7 @@ export function compileComboTeamDamage(
       const entry = charBase.getFormulaEntry(line.formulaId);
       if (!entry) continue;
 
-      // Merge reaction overrides: single-mode as defaults, combo line on top
-      let effectiveReaction = line.reaction;
-      if (singleModeOverrides) {
-        const key = `${line.charId}.${line.formulaId}`;
-        const singleOverride = singleModeOverrides[key];
-        if (singleOverride && effectiveReaction) {
-          effectiveReaction = {
-            ...effectiveReaction,
-            partReactions: {
-              ...singleOverride.partReactions,
-              ...effectiveReaction.partReactions,
-            },
-            partHits: {
-              ...singleOverride.partHits,
-              ...effectiveReaction.partHits,
-            },
-          };
-          if (
-            effectiveReaction.partReactions &&
-            Object.keys(effectiveReaction.partReactions).length === 0
-          )
-            effectiveReaction.partReactions = undefined;
-          if (
-            effectiveReaction.partHits &&
-            Object.keys(effectiveReaction.partHits).length === 0
-          )
-            effectiveReaction.partHits = undefined;
-        } else if (singleOverride && !effectiveReaction) {
-          effectiveReaction = singleOverride;
-        }
-      }
+      const effectiveReaction = line.reaction;
 
       const formulaStats = postExprStats[line.charId]!;
 

@@ -717,11 +717,6 @@ export const i18nUiData = {
     critModeExpected: { en: "Expected", zh: "期望" },
     critModeCrit: { en: "CRIT", zh: "暴击" },
     critModeNoCrit: { en: "Non-CRIT", zh: "非暴击" },
-    pending: { en: "Pending", zh: "等待计算" },
-    emptyDamageMsg: {
-      en: "Configure characters and weapons to see damage metrics.",
-      zh: "配置队伍成员以查看伤害期望。",
-    },
     emptyComboMsg: {
       en: "Add formula counts in the combo tab to see total rotation damage.",
       zh: "在循环公式面板中添加公式次数以查看循环总伤害。",
@@ -968,25 +963,10 @@ export const i18nUiData = {
       zh: "所有角色已冻结——解冻后可重新优化。",
     },
     frozenBadge: { en: "Frozen", zh: "已冻结" },
-    singleFormula: { en: "Single Skill", zh: "单技能" },
-    comboFormula: {
-      en: "Rotation Total",
-      zh: "循环总伤",
-    },
-    singleFormulaDesc: {
-      en: "Evaluate one formula at a time",
-      zh: "每次评估单个公式",
-    },
-    comboFormulaDesc: {
-      en: "Combine formulas into a rotation",
-      zh: "将公式组合为循环",
-    },
     comboDisclaimer: {
       en: "Combo mode does not track buff durations or stacks — results may be inaccurate for long rotations.",
       zh: "组合模式不追踪Buff持续时间，长轴循环的结果可能不准确。",
     },
-    rxTrigger: { en: "Trigger", zh: "触发" },
-    rxOnField: { en: "On-field", zh: "战场" },
     extraBuffs: { en: "Environment", zh: "环境设置" },
     extraBuffsFood: { en: "Food", zh: "料理" },
     extraBuffsEnv: { en: "Environment", zh: "环境" },

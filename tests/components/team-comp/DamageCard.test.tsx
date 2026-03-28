@@ -42,10 +42,9 @@ const mockTeam: Team = {
   weapons: ["staff_of_homa", null, null, null],
   artifacts: [null, null, null, null],
   reactions: [],
-  reactionOverrides: {},
   combos: [],
   selectedCombo: null,
-  formulaMode: "single",
+  formulaMode: "combo",
   minEr: {},
   selectedFormula: null,
   optimizationResult: null,
@@ -126,10 +125,10 @@ describe("DamageCard", () => {
     expect(screen.getByText("Theoretical best stats")).toBeInTheDocument();
   });
 
-  it("shows empty message when no formula is selected", () => {
+  it("shows empty message when no combo lines are active", () => {
     render(<TestCard {...defaultProps()} />);
     expect(
-      screen.getByText(/Configure characters and weapons/i)
+      screen.getByText(/Add formula counts in the combo tab/i)
     ).toBeInTheDocument();
   });
 

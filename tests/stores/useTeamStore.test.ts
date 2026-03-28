@@ -277,7 +277,7 @@ describe("migrateTeamStore", () => {
     expect(result.teams[0].reactions).toEqual([]);
   });
 
-  it("migrates v1 → current: adds combos, reactionOverrides, selectedCombo", () => {
+  it("migrates v1 → current: adds combos, selectedCombo", () => {
     const state = {
       teams: [makeV0Team({ reactions: ["vaporize"] })],
       activeTeamId: null,
@@ -288,13 +288,14 @@ describe("migrateTeamStore", () => {
     const team = result.teams[0] as Team;
 
     expect(team.combos).toEqual([]);
-    expect(team.reactionOverrides).toEqual({});
     expect(team.selectedCombo).toBeNull();
     // reactions should be preserved
     expect(team.reactions).toEqual(["vaporize"]);
+    // v9 migration sets formulaMode to "combo"
+    expect(team.formulaMode).toBe("combo");
   });
 
-  it("migrates v2 → current: adds formulaMode", () => {
+  it("migrates v2 → current: adds formulaMode (now always combo)", () => {
     const state = {
       teams: [
         makeV0Team({
@@ -311,7 +312,8 @@ describe("migrateTeamStore", () => {
     const result = migrateTeamStore(state, 2);
     const team = result.teams[0] as Team;
 
-    expect(team.formulaMode).toBe("single");
+    // v9 migration converts to "combo"
+    expect(team.formulaMode).toBe("combo");
   });
 
   it("migrates v3 → current: renames targetEr/targetCr to minEr/minCr", () => {
@@ -519,6 +521,68 @@ describe("migrateTeamStore", () => {
     ).toBeUndefined();
   });
 
+  it("migrates v8 → current: merges reactionOverrides into combo lines", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [
+            {
+              id: "combo-1",
+              label: { zh: "循环", en: "Rotation" },
+              lines: [
+                {
+                  charId: "hu_tao",
+                  formulaId: "charged",
+                  count: 9,
+                  reaction: { reaction: "vaporize" },
+                },
+                {
+                  charId: "xingqiu",
+                  formulaId: "burst",
+                  count: 3,
+                  reaction: undefined,
+                },
+              ],
+            },
+          ],
+          reactionOverrides: {
+            "hu_tao.charged": {
+              reaction: "vaporize",
+              partReactions: { 1: "none" },
+              partHits: { 0: 7 },
+            },
+          },
+          selectedCombo: "combo-1",
+          formulaMode: "single",
+          extraBuffs: [],
+        }),
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 8);
+    const team = result.teams[0] as Team;
+
+    // formulaMode forced to "combo"
+    expect(team.formulaMode).toBe("combo");
+    // reactionOverrides removed
+    expect(
+      (team as unknown as Record<string, unknown>).reactionOverrides
+    ).toBeUndefined();
+    // combo lines should have merged per-part config
+    const line0 = team.combos[0].lines[0];
+    expect(line0.reaction).toEqual({
+      reaction: "vaporize",
+      partReactions: { 1: "none" },
+      partHits: { 0: 7 },
+    });
+    // xingqiu line should be unaffected (no override existed)
+    const line1 = team.combos[0].lines[1];
+    expect(line1.reaction).toBeUndefined();
+  });
+
   it("full migration from v0 applies all steps", () => {
     const state = {
       teams: [
@@ -544,12 +608,15 @@ describe("migrateTeamStore", () => {
 
     // v0→v1: reactions
     expect(team.reactions).toEqual([]);
-    // v1→v2: combos, reactionOverrides
+    // v1→v2: combos
     expect(team.combos).toEqual([]);
-    expect(team.reactionOverrides).toEqual({});
     expect(team.selectedCombo).toBeNull();
-    // v2→v3: formulaMode
-    expect(team.formulaMode).toBe("single");
+    // v2→v3→v9: formulaMode always "combo"
+    expect(team.formulaMode).toBe("combo");
+    // v9: reactionOverrides removed
+    expect(
+      (team as unknown as Record<string, unknown>).reactionOverrides
+    ).toBeUndefined();
     // v3→v4: targetEr → minEr
     expect(team.minEr).toEqual({ ganyu: 130 });
     expect(team.minCr).toEqual({});
@@ -585,10 +652,9 @@ describe("mergeTeamStore", () => {
     const team = result.teams[0];
 
     expect(team.reactions).toEqual([]);
-    expect(team.reactionOverrides).toEqual({});
     expect(team.combos).toEqual([]);
     expect(team.selectedCombo).toBeNull();
-    expect(team.formulaMode).toBe("single");
+    expect(team.formulaMode).toBe("combo");
     expect(team.minEr).toEqual({});
     expect(team.minCr).toEqual({});
     expect(team.opts).toEqual({});
@@ -607,7 +673,6 @@ describe("mergeTeamStore", () => {
           weapons: [null, null, null, null],
           artifacts: [null, null, null, null],
           reactions: ["melt"] as string[],
-          reactionOverrides: { "ganyu.charged": { reaction: "melt" } },
           combos: [{ id: "c1", label: { zh: "测试", en: "test" }, lines: [] }],
           selectedCombo: "c1",
           formulaMode: "combo" as const,
@@ -657,10 +722,9 @@ describe("mergeTeamStore", () => {
           weapons: [null, null, null, null],
           artifacts: [null, null, null, null],
           reactions: [],
-          reactionOverrides: {},
           combos: [],
           selectedCombo: null,
-          formulaMode: "single" as const,
+          formulaMode: "combo" as const,
           minEr: {},
           minCr: {},
           opts: {},
@@ -690,7 +754,7 @@ describe("mergeTeamStore", () => {
     // Second team: fields defaulted
     expect(result.teams[1].combos).toEqual([]);
     expect(result.teams[1].reactions).toEqual([]);
-    expect(result.teams[1].formulaMode).toBe("single");
+    expect(result.teams[1].formulaMode).toBe("combo");
     expect(result.teams[1].opts).toEqual({});
 
     // Both should be safe to call .map() on combos

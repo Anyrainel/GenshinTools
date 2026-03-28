@@ -40,7 +40,6 @@ import type {
   ComboFormula,
   FormulaContext,
   PartialBuffInfo,
-  ReactionOverride,
   TeamSlotConfig,
 } from "./types";
 
@@ -518,7 +517,6 @@ function evalWithCachedArtifacts(
   enemyAura: Element | undefined,
   combo: ComboFormula,
   calcContext: CalcContext,
-  reactionOverrides?: Record<string, ReactionOverride>,
   charBuildCache?: Map<string, CharBuild>,
   hasAnyStackLimited?: boolean
 ): number {
@@ -571,14 +569,8 @@ function evalWithCachedArtifacts(
       }
     }
 
-    return evaluateCombo(
-      tb,
-      validCombo,
-      sheets,
-      calcContext,
-      reactionOverrides,
-      buffOverrides
-    ).totalDamage;
+    return evaluateCombo(tb, validCombo, sheets, calcContext, buffOverrides)
+      .totalDamage;
   } catch {
     return 0;
   }
@@ -595,7 +587,6 @@ function evalAndCache(
   enemyAura: Element | undefined,
   combo: ComboFormula,
   calcContext: CalcContext,
-  reactionOverrides?: Record<string, ReactionOverride>,
   charBuildCache?: Map<string, CharBuild>,
   hasAnyStackLimited?: boolean
 ): CachedNode {
@@ -612,7 +603,6 @@ function evalAndCache(
     enemyAura,
     combo,
     calcContext,
-    reactionOverrides,
     charBuildCache,
     hasAnyStackLimited
   );
@@ -630,7 +620,6 @@ async function runGeneration(
   combatOpts: OptionMap,
   enemyAura: Element | undefined,
   combo: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>,
   perChar?: Record<string, { minEr: number; minCr: number }>
 ): Promise<Record<string, StatSheet>> {
   const configs = baseConfigs.map((bc) => {
@@ -648,7 +637,6 @@ async function runGeneration(
     calcContext: ANALYZER_CALC_CONTEXT,
     formula: {
       combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
-      reactionOverrides,
     },
     rollMultiplier: ANALYZER_ROLL_MULT,
     substatBudget: SUBSTAT_BUDGET_DEFAULT_PRESET,
@@ -672,7 +660,7 @@ async function* computePhase1(
   opts: AnalyzerOptions
 ): AsyncGenerator<AnalyzerProgress, SnapshotCache> {
   const { configs, baseConfigs, teamBuild, perChar } = opts;
-  const { combo, reactionOverrides } = opts.formula;
+  const { combo } = opts.formula;
   const combatOpts = teamBuild.combatOpts;
   const enemyAura = teamBuild.enemyAura;
 
@@ -750,7 +738,6 @@ async function* computePhase1(
       combatOpts,
       enemyAura,
       combo,
-      reactionOverrides,
       perChar
     );
 
@@ -849,7 +836,7 @@ async function* computePhase2(
   cache: AnalyzerCache
 ): AsyncGenerator<AnalyzerProgress, CharBuildCacheResult> {
   const { configs, baseConfigs, teamBuild } = opts;
-  const { combo, reactionOverrides } = opts.formula;
+  const { combo } = opts.formula;
   const combatOpts = teamBuild.combatOpts;
   const enemyAura = teamBuild.enemyAura;
   const activeCombo = {
@@ -893,7 +880,6 @@ async function* computePhase2(
           enemyAura,
           activeCombo,
           ANALYZER_CALC_CONTEXT,
-          reactionOverrides,
           charBuildCache,
           hasAnyStackLimited
         );
@@ -956,7 +942,7 @@ async function* computePhase3(
   charBuildCacheResult?: CharBuildCacheResult
 ): AsyncGenerator<AnalyzerProgress, AnalyzerEdge[]> {
   const { configs, baseConfigs, teamBuild } = opts;
-  const { combo, reactionOverrides } = opts.formula;
+  const { combo } = opts.formula;
   const combatOpts = teamBuild.combatOpts;
   const enemyAura = teamBuild.enemyAura;
   const activeCombo = {
@@ -1048,7 +1034,6 @@ async function* computePhase3(
           enemyAura,
           activeCombo,
           ANALYZER_CALC_CONTEXT,
-          reactionOverrides,
           charBuildCache,
           hasAnyStackLimited
         );

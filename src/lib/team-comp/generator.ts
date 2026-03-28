@@ -42,7 +42,6 @@ import type {
   ComboFormula,
   FormulaContext,
   PartialBuffInfo,
-  ReactionOverride,
   StatKey,
 } from "./types";
 
@@ -141,7 +140,6 @@ function evaluateDamage(
   charId: string,
   combo: ComboFormula,
   ctx: CalcContext,
-  reactionOverrides?: Record<string, ReactionOverride>,
   buffOverrides?: Record<number, PartialBuffInfo[]>
 ): number {
   const { compiled, charIdx, vars } = compileEval(
@@ -150,7 +148,6 @@ function evaluateDamage(
     combo,
     sheets,
     ctx,
-    reactionOverrides,
     buffOverrides
   );
   vars.fill(0);
@@ -168,7 +165,6 @@ function compileEval(
   combo: ComboFormula,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
-  reactionOverrides?: Record<string, ReactionOverride>,
   comboBuffOverrides?: Record<string, PartialBuffInfo[]>
 ): {
   compiled: CompiledTeamDamage;
@@ -181,7 +177,6 @@ function compileEval(
     swapCharId,
     currentSheets,
     ctx,
-    reactionOverrides,
     comboBuffOverrides
   );
   const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
@@ -284,7 +279,6 @@ function findBestMainStats(
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   rarity: 4 | 5 = 5,
-  reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
   const { compiled, charIdx, vars } = compileEval(
@@ -292,8 +286,7 @@ function findBestMainStats(
     charId,
     combo,
     currentSheets,
-    ctx,
-    reactionOverrides
+    ctx
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
@@ -356,7 +349,6 @@ function fillSubstats(
   rv: Record<SubStat, number>,
   rarity: 4 | 5,
   budgetPreset: SubstatBudgetPreset,
-  reactionOverrides?: Record<string, ReactionOverride>,
   preFill?: Record<Slot, Partial<Record<SubStat, number>>>,
   flex?: FlexSlotConfig
 ): Record<Slot, Partial<Record<SubStat, number>>> {
@@ -367,8 +359,7 @@ function fillSubstats(
     charId,
     combo,
     currentSheets,
-    ctx,
-    reactionOverrides
+    ctx
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
@@ -416,7 +407,6 @@ function constraintAwareGenerate(
   gap: ErCrGap,
   rarity: 4 | 5,
   budgetPreset: SubstatBudgetPreset,
-  reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig,
   buffOverrides?: Record<number, PartialBuffInfo[]>
 ): ConstraintAwareResult {
@@ -463,7 +453,6 @@ function constraintAwareGenerate(
       budgetPreset,
       variant.forceSands,
       variant.forceCirclet,
-      reactionOverrides,
       flex
     );
     if (!mainStats) continue; // no feasible combo found
@@ -500,7 +489,6 @@ function constraintAwareGenerate(
       rv,
       rarity,
       budgetPreset,
-      reactionOverrides,
       preFill,
       flex
     );
@@ -518,7 +506,6 @@ function constraintAwareGenerate(
       charId,
       combo,
       ctx,
-      reactionOverrides,
       buffOverrides
     );
 
@@ -537,7 +524,6 @@ function constraintAwareGenerate(
       ctx,
       rv,
       rarity,
-      reactionOverrides,
       flex
     );
     const subRolls = fillSubstats(
@@ -550,7 +536,6 @@ function constraintAwareGenerate(
       rv,
       rarity,
       budgetPreset,
-      reactionOverrides,
       undefined, // preFill
       flex
     );
@@ -568,7 +553,6 @@ function constraintAwareGenerate(
       charId,
       combo,
       ctx,
-      reactionOverrides,
       buffOverrides
     );
     best = { mainStats, subRolls, sheet, damage };
@@ -593,7 +577,6 @@ function findBestMainStatsConstrained(
   budgetPreset: SubstatBudgetPreset,
   forceSands?: MainStat,
   forceCirclet?: MainStat,
-  reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> | null {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
@@ -603,8 +586,7 @@ function findBestMainStatsConstrained(
     charId,
     combo,
     currentSheets,
-    ctx,
-    reactionOverrides
+    ctx
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
@@ -683,7 +665,6 @@ function findBestMainStatsWithSubs(
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   rarity: 4 | 5 = 5,
-  reactionOverrides?: Record<string, ReactionOverride>,
   flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
   const { compiled, charIdx, vars } = compileEval(
@@ -691,8 +672,7 @@ function findBestMainStatsWithSubs(
     charId,
     combo,
     currentSheets,
-    ctx,
-    reactionOverrides
+    ctx
   );
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
@@ -752,7 +732,7 @@ export async function* runGenerator(
   opts: GeneratorOptions
 ): AsyncGenerator<GeneratorResult> {
   const { teamBuild, carryCharId, calcContext } = opts;
-  const { combo, reactionOverrides, buffOverrides } = opts.formula;
+  const { combo, buffOverrides } = opts.formula;
   const budgetPreset = resolveSubstatBudgetPreset(
     opts.substatBudget,
     calcContext
@@ -877,7 +857,6 @@ export async function* runGenerator(
         cGap,
         cR,
         budgetPreset,
-        reactionOverrides,
         flex,
         buffOverrides
       );
@@ -890,7 +869,6 @@ export async function* runGenerator(
       calcContext,
       cRv,
       cR,
-      reactionOverrides,
       flex
     );
     currentSheets[cid] = buildSheetFromMainAndSubs(
@@ -910,7 +888,6 @@ export async function* runGenerator(
       cRv,
       cR,
       budgetPreset,
-      reactionOverrides,
       undefined, // preFill
       flex
     );
@@ -922,7 +899,6 @@ export async function* runGenerator(
       cid,
       combo,
       calcContext,
-      reactionOverrides,
       buffOverrides
     );
     return { mainStats, subRolls, sheet, damage };
@@ -1021,7 +997,6 @@ export async function* runGenerator(
     calcContext,
     carryRv,
     carryR,
-    reactionOverrides,
     carryFlex
   );
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
@@ -1055,7 +1030,6 @@ export async function* runGenerator(
       carryRv,
       carryR,
       budgetPreset,
-      reactionOverrides,
       refinedPreFill,
       carryFlex
     );
@@ -1087,7 +1061,6 @@ export async function* runGenerator(
       carryCharId,
       combo,
       calcContext,
-      reactionOverrides,
       buffOverrides
     );
 
@@ -1111,7 +1084,6 @@ export async function* runGenerator(
       carryRv,
       carryR,
       budgetPreset,
-      reactionOverrides,
       altPreFill,
       carryFlex
     );
@@ -1129,7 +1101,6 @@ export async function* runGenerator(
       carryCharId,
       combo,
       calcContext,
-      reactionOverrides,
       buffOverrides
     );
 

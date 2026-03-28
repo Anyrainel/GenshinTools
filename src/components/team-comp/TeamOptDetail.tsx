@@ -58,9 +58,7 @@ import type {
   ComboFormula,
   ComboLine,
   I18nLabel,
-  ReactionOverride,
 } from "@/lib/team-comp/types";
-import { singleFormulaCombo } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
@@ -77,9 +75,7 @@ import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamRosterCard } from "./TeamRosterCard";
 
-/** Get the reaction override key for a charId + formulaId pair */
-const getReactionKey = (charId: string, formulaId: string) =>
-  `${charId}.${formulaId}`;
+// getReactionKey removed — reaction config lives on combo lines
 
 const limitMap = { en: limitEnRaw, zh: limitZhRaw };
 
@@ -371,31 +367,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [activeContext]
   );
 
-  // ─── Reaction Override ───
-
-  const currentReactionOverride = useMemo<ReactionOverride>(() => {
-    if (!resolvedFormula) return {};
-    const key = getReactionKey(
-      resolvedFormula.charId,
-      resolvedFormula.formulaId
-    );
-    return team.reactionOverrides?.[key] ?? {};
-  }, [resolvedFormula, team.reactionOverrides]);
-
-  const handleReactionChange = (override: ReactionOverride) => {
-    if (!resolvedFormula) return;
-    const key = getReactionKey(
-      resolvedFormula.charId,
-      resolvedFormula.formulaId
-    );
-    updateTeam(team.id, {
-      reactionOverrides: {
-        ...team.reactionOverrides,
-        [key]: override,
-      },
-    });
-  };
-
   // ─── Buff Overrides ───
 
   const formulaKey = resolvedFormula
@@ -407,8 +378,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const comboStoreOverrides = useBuffOverrideStore((s) => s.comboOverrides);
 
   // ─── Combo Management ───
-
-  const formulaMode = team.formulaMode ?? "single";
 
   const combo = useMemo<ComboFormula>(() => {
     if (team.combos.length > 0) return team.combos[0];
@@ -462,12 +431,20 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       const key = `${charId}.${formulaId}.${reaction}`;
       const existing = comboLineMap.get(key);
       if (existing) {
-        updateCombo((c) => ({
-          ...c,
-          lines: c.lines.map((l, i) =>
-            i === existing.lineIndex ? { ...l, count } : l
-          ),
-        }));
+        if (count <= 0) {
+          // Prune line when count reaches 0
+          updateCombo((c) => ({
+            ...c,
+            lines: c.lines.filter((_, i) => i !== existing.lineIndex),
+          }));
+        } else {
+          updateCombo((c) => ({
+            ...c,
+            lines: c.lines.map((l, i) =>
+              i === existing.lineIndex ? { ...l, count } : l
+            ),
+          }));
+        }
       } else if (count > 0) {
         updateCombo((c) => ({
           ...c,
@@ -489,79 +466,42 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [comboLineMap, updateCombo]
   );
 
-  // ─── Display Combo (always a ComboFormula, even in single mode) ───
+  // ─── Display Combo ───
 
   const displayCombo = useMemo<ComboFormula>(() => {
-    if (formulaMode === "combo") {
-      const activeLines = combo.lines.filter((l) => l.count > 0);
-      return activeLines.length > 0 ? { ...combo, lines: activeLines } : combo;
-    }
-    if (!resolvedFormula)
-      return { id: "__single__", label: { en: "", zh: "" }, lines: [] };
-    return singleFormulaCombo(
-      resolvedFormula.charId,
-      resolvedFormula.formulaId,
-      currentReactionOverride
-    );
-  }, [formulaMode, combo, resolvedFormula, currentReactionOverride]);
+    const activeLines = combo.lines.filter((l) => l.count > 0);
+    return activeLines.length > 0 ? { ...combo, lines: activeLines } : combo;
+  }, [combo]);
 
-  const displayReactionOverrides =
-    formulaMode === "combo" ? team.reactionOverrides : undefined;
-
-  // Build per-line PartialBuffInfo[] (defaults + user overrides) — works for both modes
+  // Build per-line PartialBuffInfo[] (defaults + user overrides)
   const buffOverrides = useMemo(() => {
     if (!teamBuild) return undefined;
     const activeLines = displayCombo.lines.filter((l) => l.count > 0);
     if (activeLines.length === 0) return undefined;
 
-    if (formulaMode === "combo") {
-      // Gather user overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
-      const formulaOverrides: Record<string, BuffActivationMap> = {};
-      for (const key of Object.keys(comboStoreOverrides)) {
-        const prefix = `combo:${combo.id}:`;
-        if (key.startsWith(prefix)) {
-          const formulaKey = key.slice(prefix.length);
-          formulaOverrides[formulaKey] = comboStoreOverrides[key];
-        }
-      }
-      return buildBuffOverrides(
-        activeLines,
-        teamBuild,
-        artifactSheets,
-        displayContext,
-        team.reactionOverrides,
-        Object.keys(formulaOverrides).length > 0 ? formulaOverrides : undefined
-      );
-    }
-    // Single mode: convert userBuffOverrides to combo format
+    // Gather user overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
     const formulaOverrides: Record<string, BuffActivationMap> = {};
-    if (
-      resolvedFormula &&
-      userBuffOverrides &&
-      Object.keys(userBuffOverrides).length > 0
-    ) {
-      const fKey = `${resolvedFormula.charId}.${resolvedFormula.formulaId}`;
-      formulaOverrides[fKey] = userBuffOverrides;
+    for (const key of Object.keys(comboStoreOverrides)) {
+      const prefix = `combo:${combo.id}:`;
+      if (key.startsWith(prefix)) {
+        const formulaKey = key.slice(prefix.length);
+        formulaOverrides[formulaKey] = comboStoreOverrides[key];
+      }
     }
     return buildBuffOverrides(
       activeLines,
       teamBuild,
       artifactSheets,
       displayContext,
-      undefined,
       Object.keys(formulaOverrides).length > 0 ? formulaOverrides : undefined
     );
   }, [
-    formulaMode,
     displayCombo,
     combo.id,
     teamBuild,
     artifactSheets,
     displayContext,
-    team.reactionOverrides,
     comboStoreOverrides,
-    resolvedFormula,
-    userBuffOverrides,
   ]);
 
   // ─── Damage Calculations (always via combo path) ───
@@ -573,17 +513,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         displayCombo,
         artifactSheets,
         displayContext,
-        displayReactionOverrides,
         buffOverrides
       ),
-    [
-      teamBuild,
-      displayCombo,
-      artifactSheets,
-      displayContext,
-      displayReactionOverrides,
-      buffOverrides,
-    ]
+    [teamBuild, displayCombo, artifactSheets, displayContext, buffOverrides]
   );
 
   const minErRaw =
@@ -608,7 +540,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const handleOptimize = () => {
     if (!teamBuild || !accountData) return;
-    if (!resolvedFormula && formulaMode !== "combo") return;
 
     // Clear any ephemeral state when re-optimizing
     setSwapOverrides({});
@@ -696,41 +627,17 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         .filter(Boolean) as ArtifactData[];
       optBaseSheets[cid] = StatSheet.fromArtifacts(pieces);
     }
-    // Always use combo: in single-formula mode, wrap as a 1-line combo
-    const optCombo: ComboFormula =
-      formulaMode === "combo"
-        ? { ...combo, lines: combo.lines.filter((l) => l.count > 0) }
-        : singleFormulaCombo(carryCharId, formulaId, currentReactionOverride);
-
-    const optReactionOverrides =
-      formulaMode === "combo" ? team.reactionOverrides : undefined;
-
-    // Compute partial buff specs from user overrides for the optimizer
-    const optPartialBuffs =
-      userBuffOverrides && Object.keys(userBuffOverrides).length > 0
-        ? optTeamBuild.computePartialBuffSpecs(
-            carryCharId,
-            formulaId,
-            optBaseSheets,
-            activeContext,
-            currentReactionOverride,
-            userBuffOverrides
-          )
-        : undefined;
-    const optBuffOverrides =
-      formulaMode === "combo"
-        ? buffOverrides
-        : optPartialBuffs && optPartialBuffs.length > 0
-          ? { 0: optPartialBuffs }
-          : undefined;
+    const optCombo: ComboFormula = {
+      ...combo,
+      lines: combo.lines.filter((l) => l.count > 0),
+    };
 
     startTeamOpt({
       teamBuild: optTeamBuild,
       carryCharId,
       formula: {
         combo: optCombo,
-        reactionOverrides: optReactionOverrides,
-        buffOverrides: optBuffOverrides,
+        buffOverrides,
       },
       inventory: teamInventory.availableArtifacts,
       calcContext: activeContext,
@@ -883,7 +790,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             displayCombo,
             optArtifactSheets,
             displayContext,
-            displayReactionOverrides,
             buffOverrides
           )
         : null,
@@ -894,7 +800,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       hasOptResult,
       allCharsResolved,
       displayContext,
-      displayReactionOverrides,
       buffOverrides,
     ]
   );
@@ -917,7 +822,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const handleGenerate = () => {
     if (!teamBuild) return;
-    if (!resolvedFormula && formulaMode !== "combo") return;
     const genContext: CalcContext = { ...activeContext };
 
     const setKeysByChar: Record<string, Record<Slot, string>> = {};
@@ -979,30 +883,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       };
     }
 
-    // Always use combo: in single-formula mode, wrap as a 1-line combo
-    const genCombo: ComboFormula =
-      formulaMode === "combo"
-        ? { ...combo, lines: combo.lines.filter((l) => l.count > 0) }
-        : singleFormulaCombo(
-            carryCharId,
-            genFormulaId,
-            team.reactionOverrides?.[
-              getReactionKey(
-                resolvedFormula!.charId,
-                resolvedFormula!.formulaId
-              )
-            ]
-          );
-
-    const genReactionOverrides =
-      formulaMode === "combo" ? team.reactionOverrides : undefined;
+    const genCombo: ComboFormula = {
+      ...combo,
+      lines: combo.lines.filter((l) => l.count > 0),
+    };
 
     startGenerator({
       teamBuild,
       carryCharId,
       formula: {
         combo: genCombo,
-        reactionOverrides: genReactionOverrides,
         buffOverrides: buffOverrides,
       },
       calcContext: genContext,
@@ -1102,7 +992,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             displayCombo,
             genArtifactSheets,
             displayContext,
-            displayReactionOverrides,
             buffOverrides
           )
         : null,
@@ -1112,7 +1001,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       genArtifactSheets,
       genResult?.done,
       displayContext,
-      displayReactionOverrides,
       buffOverrides,
     ]
   );
@@ -1233,15 +1121,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         team={team}
         effectiveTeam={effectiveTeam}
         updateTeam={updateTeam}
-        formulaMode={formulaMode}
         allFormulas={allFormulas}
         availableFormulas={availableFormulas}
         displayFormulas={displayFormulas}
-        resolvedFormula={resolvedFormula}
         teamBuild={teamBuild}
         buildError={buildError}
-        currentReactionOverride={currentReactionOverride}
-        handleReactionChange={handleReactionChange}
         comboLineMap={comboLineMap}
         setComboLineCount={setComboLineCount}
         onResetCombo={() => {
@@ -1260,11 +1144,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             combos: [{ id: combo.id, label: combo.label, lines }],
           });
         }}
-        onInvestmentClick={
-          teamBuild && formulaMode === "combo"
-            ? () => setAnalyzerOpen(true)
-            : undefined
-        }
+        onInvestmentClick={teamBuild ? () => setAnalyzerOpen(true) : undefined}
         isMobile={isMobile}
         t={t}
       />
@@ -1366,7 +1246,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         comboLines={displayCombo.lines}
         comboId={displayCombo.id}
         teamBuild={teamBuild}
-        formulaMode={formulaMode}
         accountData={accountData}
         activeContext={activeContext}
         isComputing={isComputing}
@@ -1422,7 +1301,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           baseConfigs={configs}
           formula={{
             combo,
-            reactionOverrides: team.reactionOverrides,
             buffOverrides,
           }}
           analysis={analyzerState}

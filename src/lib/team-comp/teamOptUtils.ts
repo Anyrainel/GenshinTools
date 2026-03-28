@@ -16,7 +16,6 @@ import type {
   ComboLine,
   DisplayResult,
   PartialBuffInfo,
-  ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
@@ -227,7 +226,6 @@ export function calcComboResults(
   combo: ComboFormula,
   sheets: Record<string, StatSheet>,
   context: CalcContext,
-  overrides?: Record<string, ReactionOverride>,
   buffOverrides?: Record<number, PartialBuffInfo[]>
 ): DisplayResult | null {
   if (!build) return null;
@@ -239,7 +237,6 @@ export function calcComboResults(
     activeCombo,
     sheets,
     context,
-    overrides,
     buffOverrides
   );
 }
@@ -256,7 +253,6 @@ export function calcComboResults(
  * @param build - The TeamBuild for stat resolution
  * @param sheets - Artifact stat sheets per character
  * @param ctx - Calc context
- * @param rxnOverrides - Per-formula reaction overrides
  * @param comboOverrides - User overrides from the buff override store (optional)
  */
 export function buildBuffOverrides(
@@ -264,7 +260,6 @@ export function buildBuffOverrides(
   build: TeamBuild,
   sheets: Record<string, StatSheet>,
   ctx: CalcContext,
-  rxnOverrides?: Record<string, ReactionOverride>,
   comboOverrides?: Record<string, BuffActivationMap>
 ): Record<number, PartialBuffInfo[]> | undefined {
   // ── Distribute user overrides across lines ──
@@ -326,7 +321,7 @@ export function buildBuffOverrides(
     activeLines,
     sheets,
     ctx,
-    rxnOverrides,
+    undefined,
     perLineUserOverrides.size > 0 ? perLineUserOverrides : undefined
   );
 }
