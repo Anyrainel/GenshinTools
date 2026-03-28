@@ -66,6 +66,17 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
     formulaMode: "single",
     allFormulas: mockFormulas,
     availableFormulas: mockAvailableFormulas,
+    displayFormulas: Object.fromEntries(
+      Object.entries(mockAvailableFormulas).map(([cid, formulas]) => [
+        cid,
+        Object.fromEntries(
+          Object.entries(formulas).map(([fid, label]) => [
+            fid,
+            { label, minC: 0 },
+          ])
+        ),
+      ])
+    ),
     resolvedFormula: null,
     teamBuild: null,
     buildError: null,

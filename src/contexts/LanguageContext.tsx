@@ -86,7 +86,6 @@ interface LanguageContextType {
     slot: (key: string) => string;
     style: (key: string) => string;
     role: (key: string) => string;
-    constellation: (key: string | number) => string;
     tier: (key: string) => string;
     halfSetShort: (halfSetId: string) => string;
     formatDate: (dateString: string | null) => string;
@@ -99,6 +98,9 @@ interface LanguageContextType {
     constellations: (id: string) => CharacterEffect[] | null;
     envBuff: (id: string) => string;
     glossary: (id: string) => CharacterEffect[] | null;
+    origin: (key: string) => string;
+    elementRes: (key: string) => string;
+    shortDate: (date: Date) => string;
     lang: Language;
   };
 }
@@ -278,6 +280,45 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getOriginLabel = useCallback(
+    (origin: string): string => {
+      if (language !== "zh") return origin;
+      const m = origin.match(/^([CPR])(\d+)$/);
+      if (m) {
+        const origins = i18nAppData.origins as Record<
+          string,
+          Record<string, string>
+        >;
+        const label = origins[m[1]]?.[language] || m[1];
+        if (m[1] === "C") return `${m[2]}${label}`;
+        return `${label}${m[2]}`;
+      }
+      return origin;
+    },
+    [language]
+  );
+
+  const getElementResLabel = useCallback(
+    (elementKey: string): string => {
+      const labels = i18nAppData.elementRes as Record<
+        string,
+        Record<string, string>
+      >;
+      return labels[elementKey]?.[language] || elementKey;
+    },
+    [language]
+  );
+
+  const formatShortDate = useCallback(
+    (date: Date): string => {
+      return date.toLocaleDateString(language === "zh" ? "zh-CN" : "en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    },
+    [language]
+  );
+
   const getStatShortName = useCallback(
     (statKey: string): string => {
       const stats = i18nAppData.statsShort as Record<
@@ -446,17 +487,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
-  const getConstellationName = useCallback(
-    (consKey: string | number): string => {
-      const cons = i18nAppData.constellations as Record<
-        string,
-        Record<string, string>
-      >;
-      return cons[String(consKey)]?.[language] || `C${consKey}`;
-    },
-    [language]
-  );
-
   const getTierName = useCallback(
     (tierKey: string): string => {
       const tiers = i18nAppData.tiers as Record<string, Record<string, string>>;
@@ -568,7 +598,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       slot: getSlotName,
       style: getStyleName,
       role: getRoleName,
-      constellation: getConstellationName,
       tier: getTierName,
       halfSetShort: getHalfSetShortName,
       formatDate: formatReleaseDate,
@@ -581,6 +610,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       constellations: getConstellations,
       envBuff: getEnvBuffName,
       glossary: getGlossary,
+      origin: getOriginLabel,
+      elementRes: getElementResLabel,
+      shortDate: formatShortDate,
       lang: language,
     }),
     [
@@ -606,7 +638,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getSlotName,
       getStyleName,
       getRoleName,
-      getConstellationName,
       getTierName,
       getHalfSetShortName,
       formatReleaseDate,
@@ -619,6 +650,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getConstellations,
       getEnvBuffName,
       getGlossary,
+      getOriginLabel,
+      getElementResLabel,
+      formatShortDate,
       language,
     ]
   );

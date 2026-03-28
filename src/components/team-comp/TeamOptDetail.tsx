@@ -276,6 +276,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return teamBuild ? teamBuild.getFormulaIds() : {};
   }, [teamBuild]);
 
+  /** All formulas including constellation-locked ones, with minC info for UI rendering. */
+  const displayFormulas = useMemo(() => {
+    return teamBuild ? teamBuild.getAllFormulaIds() : {};
+  }, [teamBuild]);
+
   const equippedArtifactsByChar = useMemo(() => {
     const map: Record<string, Record<string, ArtifactData>> = {};
     for (const cid of effectiveTeam.characters) {
@@ -1231,6 +1236,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         formulaMode={formulaMode}
         allFormulas={allFormulas}
         availableFormulas={availableFormulas}
+        displayFormulas={displayFormulas}
         resolvedFormula={resolvedFormula}
         teamBuild={teamBuild}
         buildError={buildError}

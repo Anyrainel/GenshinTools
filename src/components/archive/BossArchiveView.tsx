@@ -7,7 +7,6 @@ import {
   type BossState,
   ELEMENT_KEYS,
   type ElementKey,
-  allBossIds,
   bossMatchesSearch,
   computeStateRes,
   formatStat,
@@ -40,6 +39,26 @@ import {
   useMemo,
   useState,
 } from "react";
+
+/** Language-aware boss data hooks, kept out of LanguageContext to avoid
+ *  eagerly bundling boss JSON data on every page. */
+function useBossTranslations() {
+  const { language } = useLanguage();
+  return useMemo(
+    () => ({
+      bossName: (id: number) => getBossDisplayName(id, language),
+      bossVariantName: (id: number, tier: number) =>
+        getBossVariantName(id, tier, language),
+      bossDesc: (id: number) => getBossDesc(id, language),
+      bossBullets: (id: number, tier: number) =>
+        getBulletsForTier(id, tier, language),
+      bossAdvantage: (id: number, tier: number) =>
+        getAdvantageForTier(id, tier, language),
+      scheduleName: (id: number) => getScheduleName(id, language),
+    }),
+    [language]
+  );
+}
 
 const BOSS_ICON_SIZES = {
   sm: { outer: "w-8 h-8 rounded", inner: "w-7 h-7" },
@@ -78,18 +97,6 @@ function BossIcon({
 import { ArchiveToolbar } from "./ArchiveToolbar";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-/** Short RES labels per element, by language */
-const ELEMENT_RES_LABEL: Record<ElementKey, { en: string; zh: string }> = {
-  physical: { en: "Phys RES", zh: "物抗" },
-  pyro: { en: "Pyro RES", zh: "火抗" },
-  hydro: { en: "Hydro RES", zh: "水抗" },
-  electro: { en: "Electro RES", zh: "雷抗" },
-  dendro: { en: "Dendro RES", zh: "草抗" },
-  anemo: { en: "Anemo RES", zh: "风抗" },
-  geo: { en: "Geo RES", zh: "岩抗" },
-  cryo: { en: "Cryo RES", zh: "冰抗" },
-};
 
 const ELEMENT_COLOR: Record<ElementKey, string> = {
   physical: "text-gray-300",
@@ -133,12 +140,11 @@ function ResValue({
 function ResGrid({
   res,
   delta,
-  lang,
 }: {
   res: Record<ElementKey, number>;
   delta?: Partial<Record<ElementKey, number>>;
-  lang: "en" | "zh";
 }) {
+  const { t } = useLanguage();
   return (
     <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 p-1.5">
       {ELEMENT_KEYS.map((key) => {
@@ -154,7 +160,7 @@ function ResGrid({
             )}
           >
             <div className={cn("text-sm font-medium", ELEMENT_COLOR[key])}>
-              {ELEMENT_RES_LABEL[key][lang]}
+              {t.elementRes(key)}
             </div>
             <div className="mt-1">
               <ResValue
@@ -283,7 +289,7 @@ function BossListPanel({
   searchQuery: string;
 }) {
   const { t } = useLanguage();
-  const lang = t.lang;
+  const boss = useBossTranslations();
   const currentSchedule = useMemo(() => getCurrentSchedule(), []);
   const reversedSchedules = useMemo(() => [...schedules].reverse(), []);
   const query = searchQuery.trim().toLowerCase();
@@ -292,10 +298,10 @@ function BossListPanel({
     <div className="space-y-0.5">
       {reversedSchedules.map((schedule) => {
         const isCurrent = currentSchedule?.id === schedule.id;
-        const scheduleName = getScheduleName(schedule.id, lang);
+        const scheduleName = boss.scheduleName(schedule.id);
         const openDate = new Date(schedule.open);
         const closeDate = new Date(schedule.close);
-        const dateStr = `${openDate.toLocaleDateString(lang === "zh" ? "zh-CN" : "en-US", { month: "short", day: "numeric" })} – ${closeDate.toLocaleDateString(lang === "zh" ? "zh-CN" : "en-US", { month: "short", day: "numeric" })}`;
+        const dateStr = `${t.shortDate(openDate)} – ${t.shortDate(closeDate)}`;
 
         // Filter bosses by search
         const matchingBossIds = schedule.boss_ids.filter((bossId) =>
@@ -321,7 +327,7 @@ function BossListPanel({
             {matchingBossIds.map((bossId) => {
               const info = getBossInfo(bossId);
               if (!info) return null;
-              const name = getBossDisplayName(bossId, lang);
+              const name = boss.bossName(bossId);
               const imagePath = getBossImagePath(bossId);
               const isSelected = selectedBossId === bossId;
 
@@ -361,7 +367,7 @@ function BossGrid({
   searchQuery: string;
 }) {
   const { t } = useLanguage();
-  const lang = t.lang;
+  const boss = useBossTranslations();
   const currentSchedule = useMemo(() => getCurrentSchedule(), []);
   const reversedSchedules = useMemo(() => [...schedules].reverse(), []);
   const query = searchQuery.trim().toLowerCase();
@@ -370,10 +376,10 @@ function BossGrid({
     <div className="space-y-3 p-2">
       {reversedSchedules.map((schedule) => {
         const isCurrent = currentSchedule?.id === schedule.id;
-        const scheduleName = getScheduleName(schedule.id, lang);
+        const scheduleName = boss.scheduleName(schedule.id);
         const openDate = new Date(schedule.open);
         const closeDate = new Date(schedule.close);
-        const dateStr = `${openDate.toLocaleDateString(lang === "zh" ? "zh-CN" : "en-US", { month: "short", day: "numeric" })} – ${closeDate.toLocaleDateString(lang === "zh" ? "zh-CN" : "en-US", { month: "short", day: "numeric" })}`;
+        const dateStr = `${t.shortDate(openDate)} – ${t.shortDate(closeDate)}`;
 
         const matchingBossIds = schedule.boss_ids.filter((bossId) =>
           bossMatchesSearch(bossId, query)
@@ -400,7 +406,7 @@ function BossGrid({
               {matchingBossIds.map((bossId) => {
                 const info = getBossInfo(bossId);
                 if (!info) return null;
-                const name = getBossDisplayName(bossId, lang);
+                const name = boss.bossName(bossId);
                 const imagePath = getBossImagePath(bossId);
 
                 return (
@@ -429,12 +435,12 @@ function BossGrid({
 
 function BossDetailPanel({ bossId }: { bossId: number }) {
   const { t } = useLanguage();
-  const lang = t.lang;
+  const boss = useBossTranslations();
   const [selectedTier, setSelectedTier] = useState(6);
   const [showDetailedDesc, setShowDetailedDesc] = useState(true);
 
   const info = getBossInfo(bossId);
-  const desc = getBossDesc(bossId, lang);
+  const desc = boss.bossDesc(bossId);
 
   const leylineStates = useMemo(() => {
     if (!info?.states) return [];
@@ -467,15 +473,11 @@ function BossDetailPanel({ bossId }: { bossId: number }) {
   if (!info || !desc) return null;
 
   const tierStats = info.tiers[String(selectedTier)];
-  const variantName = getBossVariantName(bossId, selectedTier, lang);
-  const displayName = getBossDisplayName(bossId, lang);
+  const variantName = boss.bossVariantName(bossId, selectedTier);
+  const displayName = boss.bossName(bossId);
   const imagePath = getBossImagePath(bossId);
-  const bullets = getBulletsForTier(bossId, selectedTier, lang);
-  const { advantage, disadvantage } = getAdvantageForTier(
-    bossId,
-    selectedTier,
-    lang
-  );
+  const bullets = boss.bossBullets(bossId, selectedTier);
+  const { advantage, disadvantage } = boss.bossAdvantage(bossId, selectedTier);
 
   return (
     <Card className="bg-gradient-card">
@@ -652,7 +654,7 @@ function BossDetailPanel({ bossId }: { bossId: number }) {
                     {t.ui("archive.bossBaseRes")}
                   </SectionTitle>
                   <div className="rounded-lg border border-border/50 bg-card/30 overflow-hidden">
-                    <ResGrid res={info.res!} lang={lang} />
+                    <ResGrid res={info.res!} />
                   </div>
                 </div>
               )}
@@ -722,11 +724,7 @@ function BossDetailPanel({ bossId }: { bossId: number }) {
                           )}
                         </div>
                         {totalRes && (
-                          <ResGrid
-                            res={totalRes}
-                            delta={state.res_delta}
-                            lang={lang}
-                          />
+                          <ResGrid res={totalRes} delta={state.res_delta} />
                         )}
                       </div>
                     );

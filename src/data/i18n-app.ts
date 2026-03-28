@@ -198,13 +198,6 @@ export const i18nAppData = {
     support: { en: "Support", zh: "辅助" },
     sustain: { en: "Sustain", zh: "生存" },
   },
-  constellations: {
-    0: { en: "C0+", zh: "0命+" },
-    1: { en: "C1+", zh: "1命+" },
-    2: { en: "C2+", zh: "2命+" },
-    4: { en: "C4+", zh: "4命+" },
-    6: { en: "C6", zh: "6命" },
-  },
   tiers: {
     S: { en: "S", zh: "夯" },
     A: { en: "A", zh: "顶级" },
@@ -247,6 +240,21 @@ export const i18nAppData = {
     "nightsoul-dmg%-15": { en: "Nightsoul DMG", zh: "夜魂伤害" },
     "nightsoul-energy-6": { en: "Nightsoul ER", zh: "夜魂能量" },
     "plunge-dmg%-25": { en: "Plunge", zh: "下落" },
+  },
+  elementRes: {
+    physical: { en: "Phys RES", zh: "物抗" },
+    pyro: { en: "Pyro RES", zh: "火抗" },
+    hydro: { en: "Hydro RES", zh: "水抗" },
+    electro: { en: "Electro RES", zh: "雷抗" },
+    dendro: { en: "Dendro RES", zh: "草抗" },
+    anemo: { en: "Anemo RES", zh: "风抗" },
+    geo: { en: "Geo RES", zh: "岩抗" },
+    cryo: { en: "Cryo RES", zh: "冰抗" },
+  },
+  origins: {
+    C: { en: "C", zh: "命" },
+    P: { en: "P", zh: "被动" },
+    R: { en: "R", zh: "精" },
   },
   envBuffs: {
     gateau_debord: {

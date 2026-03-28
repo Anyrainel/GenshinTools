@@ -365,7 +365,8 @@ function BuildCardComponent({
               className={multiSelectItemClass}
             >
               <span style={{ color: CONS_COLORS[cons] }}>
-                {t.constellation(cons)}
+                {t.format("common.constellationFormat", cons)}
+                {cons < 6 ? "+" : ""}
               </span>
             </LightweightSelectItem>
           ))}

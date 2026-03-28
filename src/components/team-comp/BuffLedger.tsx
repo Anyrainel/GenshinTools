@@ -9,7 +9,7 @@ import {
   getSourceIcon,
   getSourceName,
 } from "@/lib/team-comp/buffDisplayUtils";
-import { fmtOrigin, fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import type {
   ResolvedBuff,
   ResolvedStatEntry,
@@ -84,7 +84,7 @@ function BuffChip({
                   : source.type === "teamResonance"
                     ? t.resonance(source.id) || t.ui("teamComp.teamResonance")
                     : source.origin
-                      ? fmtOrigin(source.origin, t.lang)
+                      ? t.origin(source.origin)
                       : t.ui("teamComp.base")}
               </span>
               {source.triggers?.map((trig) => (

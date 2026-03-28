@@ -25,7 +25,6 @@ import {
   getSourceIcon,
   getSourceName,
 } from "@/lib/team-comp/buffDisplayUtils";
-import { fmtOrigin } from "@/lib/team-comp/displayFormatters";
 import type {
   BuffActivationMap,
   DisplayPart,
@@ -188,7 +187,7 @@ function PartTab({
                   </span>
                   {buff.source.origin && (
                     <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded leading-none shrink-0">
-                      {fmtOrigin(buff.source.origin, t.lang)}
+                      {t.origin(buff.source.origin)}
                     </span>
                   )}
                   {buff.source.triggers?.map((trig) => (
