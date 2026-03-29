@@ -225,11 +225,7 @@ function useConditionalViewData(
       sheet: typeof onField,
       field: "offValue" | "onValue"
     ) => {
-      for (const { key, filterKey, value } of sheet.dump()) {
-        if (key === "atk%" || key === "hp%" || key === "def%") continue;
-        if (key === "baseAtk" || key === "baseHp" || key === "baseDef")
-          continue;
-
+      for (const { key, filterKey, value } of sheet.dumpResolved()) {
         if (filterKey !== "") {
           const filter = StatSheet.parseFilterKey(filterKey);
           if (
@@ -678,10 +674,10 @@ function MarginalView({
 
 /** Stats shown in the idle panel (matches game's character attribute screen). */
 const IDLE_STATS: StatKey[] = [
-  "baseHp",
-  "hp",
   "baseAtk",
   "atk",
+  "baseHp",
+  "hp",
   "baseDef",
   "def",
   "em",

@@ -335,7 +335,7 @@ Constructed once per team configuration. Provides metadata lookups (`characters`
 - **Moonsign levels**: Nascent Gleam = `countByFaction("Moonsign") === 1`, Ascendant Gleam = `countByFaction("Moonsign") >= 2`. Moonsign faction includes Nod-Krai characters with the moonsign passive plus non-Nod-Krai characters like Zibai.
 - **Reaction eligibility**: `teamMeta.hasReaction("vaporize")` checks the team has both Pyro and Hydro.
 - **Lunar reactions**: `hasReaction("lunarCharged")` also requires a 5★ from Nod Krai.
-- **Hexerei**: `teamMeta.countByFaction("Hexerei")` checks the number of Hexerei characters in the team.
+- **Hexerei: Secret Rite** (魔导·秘仪): `teamMeta.countByFaction("Hexerei") >= 2` activates when ≥2 Hexerei faction members are in the party. **Never** check for a specific character name — always use faction count.
 - **Role detection**: `teamMeta.hasHealer()` and `teamMeta.hasShielder()` check if the team includes characters capable of those roles at their current constellation level.
 
 ### 5.3 Extension Examples

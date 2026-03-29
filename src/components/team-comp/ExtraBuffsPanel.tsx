@@ -211,6 +211,7 @@ export function ExtraBuffsPanel({
             title={t.ui("teamComp.extraBuffs")}
             titleClassName="text-foreground/80"
             selectedClassName="border-amber-600/50 bg-amber-900/20"
+            unselectedClassName="border-slate-500/30 bg-slate-700/15 hover:border-slate-500/40 hover:bg-slate-700/25"
             subtitle={
               (enemyAura || activeCount > 0) && (
                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
