@@ -81,7 +81,7 @@ function computePreciseSubstats(
 
   for (const id of appendPropIdList) {
     const decoded = decodeAppendPropId(id);
-    if (!decoded) return null; // If any ID fails, fall back entirely
+    if (!decoded) continue; // Skip unrecognized IDs (astral/elixir bonuses, etc.)
     const prev = sums.get(decoded.statKey) ?? 0;
     sums.set(
       decoded.statKey,

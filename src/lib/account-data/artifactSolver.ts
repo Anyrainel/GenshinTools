@@ -225,32 +225,33 @@ export function solveArtifact(
   const rollArrays = validRollCounts.map((s) => Array.from(s).sort());
 
   // Determine possible totalRolls values
+  // 5★: init = 3 or 4 substats, max_init = 4
+  // 4★: init = 2 or 3 substats, max_init = 3
+  const maxInit = rarity === 5 ? 4 : 3;
+  const minInit = maxInit - 1; // 3 for 5★, 2 for 4★
+
   let totalRollsList: number[];
   if (input.totalRolls !== undefined) {
     totalRollsList = [input.totalRolls];
   } else {
-    // totalRolls = initCount + upgrades
-    // For 5★: init can be 3 or 4 substats. For 4★: init can be 3 or 4.
-    // initCount = number of initial substats (3 or 4)
-    // If artifact has 4 substats and level >= 4, init could be 3 or 4
-    // If level === 0 and has 4 substats, init is 4; if has 3, init is 3
     const possibleInits: number[] = [];
     if (level === 0) {
       // At level 0, init count = number of substats present
       possibleInits.push(numSubstats);
     } else {
-      // Could have started with 3 or 4 init substats
-      // But can't have more init substats than currently present
-      if (numSubstats >= 4) {
-        possibleInits.push(4, 3);
+      // Could have started with minInit or maxInit substats
+      // Try both if artifact has 4 substats (fully upgraded)
+      if (numSubstats >= maxInit) {
+        // For 5★: try [3, 4]. For 4★: try [2, 3].
+        possibleInits.push(minInit, maxInit);
       } else {
-        possibleInits.push(numSubstats);
+        possibleInits.push(Math.min(numSubstats, maxInit));
       }
     }
 
     totalRollsList = possibleInits.map((init) => init + upgrades);
 
-    // Try higher init first for level===0, lower init first for level>0
+    // Try lower init first for leveled artifacts (more common), higher first for lv0
     if (level === 0) {
       totalRollsList.sort((a, b) => b - a);
     } else {

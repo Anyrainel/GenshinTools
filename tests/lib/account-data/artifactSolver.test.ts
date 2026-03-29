@@ -144,14 +144,34 @@ describe("artifactSolver", () => {
       expect(result!.atk).toBe(14);
     });
 
-    it("handles 4★ artifacts", () => {
-      // cr:2.8(1) + cd:10.6(2) + atk%:4.2(1) + em:45(3) = 7 (init=3 + 4 upgrades)
+    it("handles 4★ artifacts with init=3", () => {
+      // 4★ Lv16: 4 upgrades. init=3 → totalRolls=7
       const result = solveArtifact({
         rarity: 4,
         level: 16,
         substats: { cr: 2.8, cd: 10.6, "atk%": 4.2, em: 45 },
       });
       expect(result).not.toBeNull();
+    });
+
+    it("handles 4★ artifacts with init=2", () => {
+      // 4★ Lv16: 4 upgrades. init=2 → totalRolls=6.
+      // 4★ CR tiers (display): [2.18, 2.49, 2.8, 3.11]
+      // 4★ CD tiers (display): [4.35, 4.97, 5.6, 6.22]
+      // 4★ HP% tiers (display): [3.26, 3.73, 4.2, 4.66]
+      // 4★ EM tiers (display): [13.06, 14.92, 16.79, 18.65]
+      // cr:2.8(1) + cd:5.6(1) + hp%:3.7(1) + em:41(3) = 6 rolls, init=2
+      // 4★ EM: 13.06+13.06+14.92 = 41.04 → rounds to 41
+      const result = solveArtifact({
+        rarity: 4,
+        level: 16,
+        substats: { cr: 2.8, cd: 5.6, "hp%": 3.7, em: 41 },
+      });
+      expect(result).not.toBeNull();
+      // Verify pct stats get precise values
+      if (result!.cr !== undefined) {
+        expect(Math.round(result!.cr! * 10) / 10).toBe(2.8);
+      }
     });
   });
 });
