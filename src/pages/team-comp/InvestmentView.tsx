@@ -1,8 +1,8 @@
 import { CategoryChip } from "@/components/archive/CategoryChip";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { InvestmentDetail } from "@/components/team-comp/InvestmentDetail";
 import { TeamCard } from "@/components/team-comp/TeamCard";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, elementResourcesByName } from "@/data/constants";
@@ -18,7 +18,7 @@ import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { ArrowLeft, ArrowUpDown, Bookmark, Search } from "lucide-react";
+import { ArrowUpDown, Bookmark, Search } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 
 const EMPTY_SET = new Set<string>();
@@ -242,26 +242,10 @@ export function InvestmentView() {
     }
 
     return (
-      <ScrollLayout
-        header={
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setActiveInvestmentTeamId(null)}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h2 className="text-lg font-semibold">
-              {team.name || t.ui("teamComp.tabInvestment")}
-            </h2>
-          </div>
-        }
-      >
-        <div className="flex items-center justify-center min-h-[40vh] text-muted-foreground">
-          Investment detail — coming in Task 7
-        </div>
-      </ScrollLayout>
+      <InvestmentDetail
+        team={team}
+        onBack={() => setActiveInvestmentTeamId(null)}
+      />
     );
   }
 
