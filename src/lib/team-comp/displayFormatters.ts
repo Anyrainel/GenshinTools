@@ -21,7 +21,7 @@ export function fmtStat(
     const display = pct ? value.toFixed(1) : (value * 100).toFixed(1);
     return `${sign}${display}%`;
   }
-  return `${sign}${value.toLocaleString(undefined, { maximumFractionDigits: 1 })}`;
+  return `${sign}${Math.round(value).toLocaleString()}`;
 }
 
 export function fmtMult(value: number): string {
