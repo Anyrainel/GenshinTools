@@ -37,15 +37,18 @@ import {
 import type {
   AnalyzerCharConfig,
   AnalyzerOptions,
+  ComboCountOverrides,
+  MinErOverrides,
   StoredAnalyzerCharConfig,
 } from "@/lib/team-comp/analyzer";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import type { FormulaContext, TeamSlotConfig } from "@/lib/team-comp/types";
+import type { ComboFormula, TeamSlotConfig } from "@/lib/team-comp/types";
 import { getAssetUrl } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { Loader2, Play, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnalyzerChart } from "./AnalyzerChart";
+import { AnalyzerComboTab } from "./AnalyzerComboTab";
 import { AnalyzerSequence } from "./AnalyzerSequence";
 import { AnalyzerTable } from "./AnalyzerTable";
 
@@ -55,12 +58,12 @@ interface AnalyzerDialogProps {
   teamId: string;
   teamBuild: TeamBuild;
   baseConfigs: TeamSlotConfig[];
-  formula: FormulaContext;
+  templateCombo: ComboFormula;
   analysis: UseAnalyzerState;
   perChar?: Record<string, { minEr: number; minCr: number }>;
 }
 
-type ViewTab = "chart" | "table" | "sequence";
+type ViewTab = "combo" | "chart" | "table" | "sequence";
 
 export function AnalyzerDialog({
   open,
@@ -68,19 +71,32 @@ export function AnalyzerDialog({
   teamId,
   teamBuild,
   baseConfigs,
-  formula,
+  templateCombo,
   analysis,
   perChar,
 }: AnalyzerDialogProps) {
-  const { combo } = formula;
   const { t } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
-  const storedConfigs = useTeamStore(
-    (s) => s.teams.find((t) => t.id === teamId)?.analyzerConfigs
-  );
+  const team = useTeamStore((s) => s.teams.find((t) => t.id === teamId));
+  const storedConfigs = team?.analyzerConfigs;
   const { progress, result, isComputing, error, start, stop } = analysis;
 
-  const [activeTab, setActiveTab] = useState<ViewTab>("chart");
+  const [activeTab, setActiveTab] = useState<ViewTab>("combo");
+  const [comboOverrides, setComboOverrides] = useState<ComboCountOverrides>(
+    () => team?.analyzerComboOverrides ?? {}
+  );
+  const [minErOverrides, setMinErOverrides] = useState<MinErOverrides>(
+    () => team?.analyzerMinErOverrides ?? {}
+  );
+
+  // Auto-switch to chart tab when analysis completes
+  const prevIsComputing = useRef(isComputing);
+  useEffect(() => {
+    if (prevIsComputing.current && !isComputing && result) {
+      setActiveTab("chart");
+    }
+    prevIsComputing.current = isComputing;
+  }, [isComputing, result]);
 
   // Per-character analyzer configs — initialize from store or defaults,
   // then reconcile with current baseConfigs (team roster may have changed)
@@ -111,6 +127,21 @@ export function AnalyzerDialog({
     });
     updateTeam(teamId, { analyzerConfigs: stored });
   }, [charConfigs, teamId, updateTeam]);
+
+  // Persist combo/minEr overrides
+  useEffect(() => {
+    updateTeam(teamId, {
+      analyzerComboOverrides:
+        Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
+    });
+  }, [comboOverrides, teamId, updateTeam]);
+
+  useEffect(() => {
+    updateTeam(teamId, {
+      analyzerMinErOverrides:
+        Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
+    });
+  }, [minErOverrides, teamId, updateTeam]);
 
   const updateWeapon = useCallback(
     (charId: string, star: "4" | "5", weaponId: string | null) => {
@@ -192,17 +223,31 @@ export function AnalyzerDialog({
       configs: charConfigs,
       baseConfigs,
       teamBuild,
-      formula,
+      templateCombo,
+      comboOverrides:
+        Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
       perChar,
+      minErOverrides:
+        Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
     };
     start(opts, !!result);
-  }, [charConfigs, baseConfigs, result, teamBuild, formula, perChar, start]);
+  }, [
+    charConfigs,
+    baseConfigs,
+    result,
+    teamBuild,
+    templateCombo,
+    comboOverrides,
+    minErOverrides,
+    perChar,
+    start,
+  ]);
 
   const overallPct = progress ? Math.round(progress.overallProgress * 100) : 0;
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <ResponsiveDialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
@@ -215,41 +260,7 @@ export function AnalyzerDialog({
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
-        {/* Combo formula summary + Team config */}
-        <div className="flex items-center justify-center gap-x-3 gap-y-1 flex-wrap py-1">
-          {(() => {
-            const allFormulas = teamBuild.getFormulaIds();
-            return combo.lines
-              .filter(
-                (l) => l.count > 0 && allFormulas[l.charId]?.[l.formulaId]
-              )
-              .map((l) => {
-                const label = t.resolveLabel(
-                  allFormulas[l.charId][l.formulaId]
-                );
-                const char = charactersById[l.charId];
-                return (
-                  <div
-                    key={`${l.charId}.${l.formulaId}`}
-                    className="flex items-center gap-1 text-xs"
-                  >
-                    {char && (
-                      <img
-                        src={getAssetUrl(char.imagePath)}
-                        alt={l.charId}
-                        className="w-4 h-4 rounded-full"
-                      />
-                    )}
-                    <span>{label}</span>
-                    <span className="font-mono text-muted-foreground">
-                      ×{l.count}
-                    </span>
-                  </div>
-                );
-              });
-          })()}
-        </div>
-
+        {/* Team config */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4 py-2">
           {charConfigs.map((cfg) => {
             const bc = baseConfigs.find((b) => b.charId === cfg.charId);
@@ -308,55 +319,85 @@ export function AnalyzerDialog({
                       : ""}
               </p>
             </div>
-          ) : result ? (
+          ) : (
             <div className="absolute inset-0 flex items-center justify-center gap-1 pointer-events-none">
               <div className="flex gap-1 pointer-events-auto">
-                {(["chart", "table", "sequence"] as const).map((tab) => (
-                  <Button
-                    key={tab}
-                    variant={activeTab === tab ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setActiveTab(tab)}
-                    className="text-xs md:text-sm h-7 md:h-8 px-2 md:px-3"
-                  >
-                    {tab === "chart"
-                      ? t.ui("teamComp.analyzerChart")
-                      : tab === "table"
-                        ? t.ui("teamComp.analyzerTable")
-                        : t.ui("teamComp.analyzerSequence")}
-                  </Button>
-                ))}
+                {(["combo", "chart", "table", "sequence"] as const).map(
+                  (tab) => (
+                    <Button
+                      key={tab}
+                      variant={activeTab === tab ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setActiveTab(tab)}
+                      className="text-xs md:text-sm h-7 md:h-8 px-2 md:px-3"
+                    >
+                      {tab === "combo"
+                        ? t.ui("teamComp.analyzerCombo")
+                        : tab === "chart"
+                          ? t.ui("teamComp.analyzerChart")
+                          : tab === "table"
+                            ? t.ui("teamComp.analyzerTable")
+                            : t.ui("teamComp.analyzerSequence")}
+                    </Button>
+                  )
+                )}
               </div>
             </div>
-          ) : null}
+          )}
           {error && (
             <p className="text-sm text-destructive z-10">{error.message}</p>
           )}
         </div>
 
-        {/* Results */}
-        {result && (
-          <div className="space-y-3">
-            {activeTab === "chart" && (
+        {/* Tab content */}
+        <div className="space-y-3">
+          {activeTab === "combo" && (
+            <AnalyzerComboTab
+              teamBuild={teamBuild}
+              charConfigs={charConfigs}
+              baseConfigs={baseConfigs}
+              templateCombo={templateCombo}
+              comboOverrides={comboOverrides}
+              minErOverrides={minErOverrides}
+              perChar={perChar}
+              onComboOverridesChange={setComboOverrides}
+              onMinErOverridesChange={setMinErOverrides}
+            />
+          )}
+          {activeTab === "chart" &&
+            (result ? (
               <AnalyzerChart
                 result={result}
                 charIds={charConfigs.map((c) => c.charId)}
               />
-            )}
-            {activeTab === "table" && (
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {t.ui("teamComp.analyzerNoResults")}
+              </p>
+            ))}
+          {activeTab === "table" &&
+            (result ? (
               <AnalyzerTable
                 result={result}
                 charIds={charConfigs.map((c) => c.charId)}
               />
-            )}
-            {activeTab === "sequence" && (
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {t.ui("teamComp.analyzerNoResults")}
+              </p>
+            ))}
+          {activeTab === "sequence" &&
+            (result ? (
               <AnalyzerSequence
                 result={result}
                 charIds={charConfigs.map((c) => c.charId)}
               />
-            )}
-          </div>
-        )}
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {t.ui("teamComp.analyzerNoResults")}
+              </p>
+            ))}
+        </div>
       </ResponsiveDialogContent>
     </ResponsiveDialog>
   );
