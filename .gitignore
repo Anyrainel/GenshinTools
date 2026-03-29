@@ -37,7 +37,10 @@ blob-report/
 # Wrangler (Cloudflare)
 .wrangler/
 
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/agents/
+.superpowers/
 
 # Worktrees
 beta/
@@ -55,4 +58,5 @@ tests/benchmark/data/problems.json
 docs/DmgQA/
 docs/optimizer-research/
 docs/formulas/
+docs/superpowers/
 memory/
