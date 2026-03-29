@@ -1060,6 +1060,8 @@ export const i18nUiData = {
       en: "Reset to defaults",
       zh: "重置为默认值",
     },
+    tabFrozen: { en: "Frozen", zh: "冻结" },
+    tabInvestment: { en: "Investment", zh: "补金分析" },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },

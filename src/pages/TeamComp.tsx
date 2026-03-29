@@ -4,6 +4,7 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import { TeamOptDetail } from "@/components/team-comp/TeamOptDetail";
+import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import "@/lib/team-comp";
 import type { ControlHandle } from "@/components/layout/AppBar";
@@ -63,7 +64,14 @@ import {
   Upload,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+
+type TeamCompTab = "damage" | "frozen" | "investment";
+
+function isValidTab(tab: string | null): tab is TeamCompTab {
+  return tab === "damage" || tab === "frozen" || tab === "investment";
+}
 
 const EMPTY_SET = new Set<string>();
 
@@ -78,6 +86,13 @@ const presetModules = import.meta.glob<{ default: TeamCompData }>(
 
 export default function TeamCompPage() {
   const { t } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const rawTab = searchParams.get("tab");
+  const activeTab: TeamCompTab = isValidTab(rawTab) ? rawTab : "damage";
+  const setActiveTab = (tab: string) => {
+    setSearchParams({ tab }, { replace: true });
+  };
+  const tabs = useMemo(() => getTabsForRoute(t, "/team-comp"), [t]);
   const tour = useTour();
   const isXl = useMediaQuery("(min-width: 1280px)");
   const cardMinWidth = isXl ? CARD_MAX_WIDTH : CARD_MAX_WIDTH_COMPACT;
@@ -482,6 +497,27 @@ export default function TeamCompPage() {
     downloadElementAsImage(frozenExportRef.current, filename, t);
   }, [t, frozenTeamEntries]);
 
+  if (activeTab === "frozen") {
+    return (
+      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+        <div className="flex items-center justify-center min-h-[40vh] text-muted-foreground">
+          Frozen view — coming soon
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (activeTab === "investment") {
+    return (
+      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+        <div className="flex items-center justify-center min-h-[40vh] text-muted-foreground">
+          Investment view — coming soon
+        </div>
+      </PageLayout>
+    );
+  }
+
+  // Damage tab (default)
   if (activeTeamId) {
     const activeTeam = teams.find((t) => t.id === activeTeamId);
     if (!activeTeam) {
@@ -501,6 +537,9 @@ export default function TeamCompPage() {
 
     return (
       <PageLayout
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         onClearData={clearActiveTeam}
         clearLabel={t.ui("teamComp.clearTeamData")}
         actions={[
@@ -524,6 +563,9 @@ export default function TeamCompPage() {
 
   return (
     <PageLayout
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
       onClearData={clearTeams}
       clearLabel={t.ui("common.clearTeams")}
       actions={[

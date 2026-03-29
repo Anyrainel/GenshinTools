@@ -8,13 +8,16 @@ import {
   Crown,
   Diamond,
   Filter,
+  Flame,
   FlaskConical,
   Lightbulb,
   Lock,
   Settings,
   Skull,
+  Snowflake,
   Sword,
   Swords,
+  TrendingUp,
   Users,
 } from "lucide-react";
 
@@ -153,6 +156,26 @@ export const getNavigationConfig = (
   {
     label: t.ui("app.navTeamComp"),
     href: "/team-comp",
+    children: [
+      {
+        label: t.ui("common.damage"),
+        href: "/team-comp?tab=damage",
+        value: "damage",
+        icon: Flame,
+      },
+      {
+        label: t.ui("teamComp.tabFrozen"),
+        href: "/team-comp?tab=frozen",
+        value: "frozen",
+        icon: Snowflake,
+      },
+      {
+        label: t.ui("teamComp.tabInvestment"),
+        href: "/team-comp?tab=investment",
+        value: "investment",
+        icon: TrendingUp,
+      },
+    ],
   },
 ];
 
