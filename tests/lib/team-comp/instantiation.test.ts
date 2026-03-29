@@ -274,6 +274,62 @@ describe("Entity Instantiation", () => {
     });
   });
 
+  describe("No scaling ER/CR buffs (breaks optimizer constraint model)", () => {
+    // The optimizer precomputes erFloor/crFloor from getTeamStats with empty
+    // sheets, then checks erFloor + artifactEr >= minEr. Static team buffs
+    // are fine (captured in erFloor). But ScalingBuff/CrossScalingBuff with
+    // outputKey "er" or "cr" would make the floor depend on artifact stats,
+    // breaking the precomputed constraint model.
+    //
+    // Known exceptions (inherent to game design):
+    //   traveler_electro P2: ER → ER to "team" (Abundance Amulets)
+    //   rosaria P2: CR → CR to "other" (shares 15% CR, cap 15%)
+    //   nahida P2: EM → CR to "self" (skill CR from EM)
+    //   nilou C6: HP → CR to "self"
+    //   sigewinne C6: HP → CR to "selfOnField"
+    const KNOWN_SCALING_ER_CR: Record<string, Set<string>> = {
+      traveler_electro: new Set(["traveler_electro P2"]),
+      rosaria: new Set(["rosaria P2"]),
+      nahida: new Set(["nahida P2"]),
+      nilou: new Set(["nilou C6"]),
+      sigewinne: new Set(["sigewinne C6"]),
+    };
+
+    it.each(Object.keys(charactersById))("%s", (charId) => {
+      try {
+        const team = new TeamMeta([charId]);
+        const char = createCharacter(charId, 100, 6, team);
+        const known = KNOWN_SCALING_ER_CR[charId];
+        const violations: string[] = [];
+        for (const buff of char.buffs) {
+          if ("outputKey" in buff) {
+            const outputKey = (buff as Record<string, unknown>)
+              .outputKey as string;
+            if (outputKey === "er" || outputKey === "cr") {
+              const buffLabel =
+                `${buff.source.id} ${buff.source.origin ?? ""}`.trim();
+              if (!known?.has(buffLabel)) {
+                violations.push(
+                  `${buffLabel}: scaling buff with outputKey="${outputKey}" (receiver="${buff.target.receiver}")`
+                );
+              }
+            }
+          }
+        }
+        if (violations.length > 0)
+          throw new Error(
+            `Scaling ER/CR buff violations:\n${violations.join("\n")}`
+          );
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No character registered",
+          "No character stats for"
+        );
+      }
+    });
+  });
+
   describe("Weapons", () => {
     it.each(Object.keys(weaponsById))("%s", (weaponId) => {
       try {
@@ -289,6 +345,44 @@ describe("Entity Instantiation", () => {
         );
       }
     });
+
+    // Known exceptions: xiphos_moonlight (EM → ER to self + other)
+    const KNOWN_WEAPON_SCALING_ER_CR = new Set(["xiphos_moonlight"]);
+
+    it.each(Object.keys(weaponsById))(
+      "%s: no scaling ER/CR buffs",
+      (weaponId) => {
+        if (KNOWN_WEAPON_SCALING_ER_CR.has(weaponId)) return;
+        try {
+          const team = new TeamMeta(["amber"]);
+          const weapon = createWeapon(weaponId, 5, "amber", team);
+          const violations: string[] = [];
+          for (const buff of weapon.buffs) {
+            const label = `${buff.source.id} ${buff.source.origin ?? ""}`;
+            if ("outputKey" in buff) {
+              const outputKey = (buff as Record<string, unknown>)
+                .outputKey as string;
+              if (outputKey === "er" || outputKey === "cr") {
+                violations.push(
+                  `${label}: scaling buff with outputKey="${outputKey}" (receiver="${buff.target.receiver}")`
+                );
+              }
+            }
+          }
+          if (violations.length > 0)
+            throw new Error(
+              `Scaling ER/CR buff violations:\n${violations.join("\n")}`
+            );
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No weapon registered",
+            "No weapon stats for",
+            "No L90 weapon stats for"
+          );
+        }
+      }
+    );
   });
 
   describe("Artifact Sets", () => {

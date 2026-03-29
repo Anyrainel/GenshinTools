@@ -5,12 +5,17 @@
  * feasibility checks across DFS, evaluation, and team orchestration.
  */
 
+import { ScalingBuff } from "../damageBuffs";
 import type { TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import type { CompiledTeamDamage } from "../formulaCompiler";
-import type { CalcContext, OptFailReason } from "../types";
+import type { CalcContext, OptFailReason, StatKey } from "../types";
+import { isSelfReceiver } from "../types";
 import { getArtifactCr, getArtifactEr } from "./artifactScoring";
 import type { ArtifactTuple, PreparedSlotData } from "./types";
+
+/** Assumed EM from 3 artifact main stats (sands+goblet+circlet L20). */
+const ESTIMATED_3EM_MAIN = 3 * 186.5;
 
 export class ConstraintChecker {
   readonly charId: string;
@@ -47,8 +52,20 @@ export class ConstraintChecker {
         onFieldCharId,
         calcContext
       );
-      this.erFloor = this.hasEr ? (blStats[charId]?.get("er", null) ?? 0) : 0;
-      this.crFloor = this.hasCr ? (blStats[charId]?.get("cr", null) ?? 0) : 0;
+      const rawErFloor = this.hasEr
+        ? (blStats[charId]?.get("er", null) ?? 0)
+        : 0;
+      const rawCrFloor = this.hasCr
+        ? (blStats[charId]?.get("cr", null) ?? 0)
+        : 0;
+
+      // Adjust for scaling ER/CR buffs whose contribution grows with artifacts.
+      // The raw floor only captures the scaling at empty sheets; we estimate
+      // the likely artifact-boosted contribution so the constraint model is
+      // less conservative (avoids over-requiring ER/CR from artifacts).
+      const bonus = estimateScalingBonus(teamBuild, charId, blStats);
+      this.erFloor = rawErFloor + bonus.er;
+      this.crFloor = rawCrFloor + bonus.cr;
     } else {
       this.erFloor = 0;
       this.crFloor = 0;
@@ -134,6 +151,85 @@ export class ConstraintChecker {
     }
     return undefined;
   }
+}
+
+/**
+ * Estimate the additional ER/CR floor contribution from scaling buffs that
+ * grows with artifact stats, beyond what empty-sheet getTeamStats provides.
+ *
+ * Known scaling ER/CR buffs:
+ *   Characters: traveler_electro (ER→ER team), rosaria (CR→CR other),
+ *               nahida (EM→CR self), nilou C6 (HP→CR self), sigewinne C6 (HP→CR self)
+ *   Weapons:    xiphos_moonlight (EM→ER self+other)
+ *
+ * Strategy:
+ *   - Capped buffs: use cap as the estimated contribution, subtract what
+ *     empty sheets already provide (to avoid double-counting).
+ *   - Uncapped EM→ER (xiphos): estimate with 3 EM main stats.
+ *   - ER→ER (traveler_electro): empty sheets already capture scale × baseER,
+ *     which is a reasonable pre-artifact estimate. No extra adjustment.
+ */
+function estimateScalingBonus(
+  teamBuild: TeamBuild,
+  constraintCharId: string,
+  emptyStats: Record<string, StatSheet>
+): { er: number; cr: number } {
+  let bonusEr = 0;
+  let bonusCr = 0;
+
+  for (const [providerCharId, build] of Object.entries(teamBuild.charBuilds)) {
+    // Collect scaling buffs from character + weapon
+    const allBuffs = [...build.charBase.buffs, ...build.weaponBase.buffs];
+
+    for (const buff of allBuffs) {
+      if (!(buff instanceof ScalingBuff)) continue;
+      const outKey = buff.outputKey;
+      if (outKey !== "er" && outKey !== "cr") continue;
+
+      // Does this buff reach the constraint character?
+      const receiver = buff.target.receiver;
+      const reachesConstraint =
+        (providerCharId === constraintCharId && isSelfReceiver(receiver)) ||
+        receiver === "team" ||
+        (receiver === "other" && providerCharId !== constraintCharId);
+      if (!reachesConstraint) continue;
+
+      // Compute what empty sheets already contribute (already in rawFloor)
+      const providerStats = emptyStats[providerCharId];
+      if (!providerStats) continue;
+      const emptyInput = buff.threshold
+        ? Math.max(0, providerStats.get(buff.inputKey, null) - buff.threshold)
+        : providerStats.get(buff.inputKey, null);
+      const emptyContribution = Math.min(
+        emptyInput * buff.scale,
+        buff.cap ?? Number.POSITIVE_INFINITY
+      );
+
+      let estimatedContribution: number;
+      if (buff.cap != null) {
+        // Capped: assume the buff hits cap with real artifacts
+        estimatedContribution = buff.cap;
+      } else if (buff.inputKey === "em") {
+        // Uncapped EM-based (xiphos_moonlight): estimate EM with 3 main stats
+        const baseEm = providerStats.get("em" as StatKey, null);
+        const estimatedEm = baseEm + ESTIMATED_3EM_MAIN;
+        const estInput = buff.threshold
+          ? Math.max(0, estimatedEm - buff.threshold)
+          : estimatedEm;
+        estimatedContribution = estInput * buff.scale;
+      } else {
+        // Uncapped non-EM (e.g. traveler_electro ER→ER): the empty-sheet
+        // value is a reasonable pre-artifact estimate. No extra adjustment.
+        continue;
+      }
+
+      const extra = Math.max(0, estimatedContribution - emptyContribution);
+      if (outKey === "er") bonusEr += extra;
+      else bonusCr += extra;
+    }
+  }
+
+  return { er: bonusEr, cr: bonusCr };
 }
 
 /** Boost ER/CR weights proportionally to the constraint gap.

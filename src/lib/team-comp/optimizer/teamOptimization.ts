@@ -2170,12 +2170,15 @@ export async function* runTeamOptimization(
 
   // ── Final constraint validation using authoritative stat pipeline ──
   // Catches any ER/CR violations that slipped through earlier phases.
+  // If constraints are violated, clear the offending character's artifacts
+  // so the optimizer never returns an invalid result.
   {
     const validationStats = effectiveTeamBuild.getTeamStats(
       finalSheets,
       carryCharId,
       calcContext
     );
+    let constraintCleared = false;
     for (const charId of allCharIds) {
       const charConfig = effectivePerChar[charId];
       if (!charConfig) continue;
@@ -2188,9 +2191,20 @@ export async function* runTeamOptimization(
 
       if (minEr > 0 && er < minEr - 1e-6) {
         failReasons[charId] = { kind: "er-unmet", minEr, bestEr: er };
+        bestArtifactsByChar[charId] = { ...emptyArtifacts };
+        constraintCleared = true;
       } else if (minCr > 0 && cr < minCr - 1e-6) {
         failReasons[charId] = { kind: "cr-unmet", minCr, bestCr: cr };
+        bestArtifactsByChar[charId] = { ...emptyArtifacts };
+        constraintCleared = true;
       }
+    }
+    // Rebuild sheets if any character's artifacts were cleared
+    if (constraintCleared) {
+      Object.assign(
+        finalSheets,
+        buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar)
+      );
     }
   }
 
