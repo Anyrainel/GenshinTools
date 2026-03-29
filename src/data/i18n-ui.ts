@@ -558,46 +558,13 @@ export const i18nUiData = {
       en: "Thanks to HoYoWiki for the game data.",
       zh: "感谢HoYoWiki的游戏数据。",
     },
-    presetPromptTitle: {
-      en: "Get Started with Presets",
-      zh: "使用预设快速开始",
+    presetAppliedTitle: {
+      en: "Preset Builds Loaded",
+      zh: "预设配装已加载",
     },
-    presetPromptDesc: {
-      en: "Load optimized artifact builds for every character — curated by GGArtifact, customizable by you.",
-      zh: "加载GGArtifact精选的全角色圣遗物配装——随时可按你的想法自定义。",
-    },
-    presetPromptBenefit: {
-      en: "All characters covered. Sets, main stats, and substats optimized for all constellations. Tweak anything anytime.",
-      zh: "覆盖全部角色。各种命座的配装一应俱全。随时可调。",
-    },
-    presetPromptYes: { en: "Enable Preset", zh: "启用预设" },
-    presetPromptNo: { en: "No Thanks", zh: "暂时不用" },
-    presetPromptNoticeTitle: {
-      en: "No Problem!",
-      zh: "没问题！",
-    },
-    presetPromptNoticeDesc: {
-      en: "You can load presets anytime from the Import button on the Artifact Builds page.",
-      zh: "随时可通过圣遗物配装页面的导入按钮加载预设。",
-    },
-
-    presetMigrateTitle: {
-      en: "Existing Builds Found",
-      zh: "检测到已有配装",
-    },
-    presetMigrateDesc: {
-      en: "You already have custom builds. How would you like to proceed?",
-      zh: "你已有自定义配装数据，请选择如何处理：",
-    },
-    presetMigrateFresh: { en: "Start Fresh", zh: "从零开始" },
-    presetMigrateFreshDesc: {
-      en: "Clear existing builds and use the preset only.",
-      zh: "清除现有配装，仅使用预设。",
-    },
-    presetMigrateKeep: { en: "Keep My Builds", zh: "保留我的配装" },
-    presetMigrateKeepDesc: {
-      en: "Layer the preset underneath your existing builds.",
-      zh: "在你现有配装的基础上加载预设。",
+    presetAppliedDesc: {
+      en: "Optimized artifact builds for all characters have been loaded, curated by GGArtifact. You can customize any build, or import/export your own data anytime from the Artifact Builds page.",
+      zh: "已加载GGArtifact精选的全角色圣遗物配装。你可以随时自定义任意角色的配装，或通过圣遗物配装页面的导入/导出功能管理数据。",
     },
   },
   archive: {
@@ -1597,10 +1564,6 @@ export const i18nUiData = {
       en: "{0} artifacts analyzed:",
       zh: "已分析 {0} 个圣遗物：",
     },
-    autoLockWip: {
-      en: "Auto lock/unlock tool coming soon~",
-      zh: "自动加解锁工具正在制作中~",
-    },
     recommendLock: {
       en: "Recommend Lock",
       zh: "未锁定，建议锁定",
@@ -1829,5 +1792,43 @@ export const i18nUiData = {
       zh: "副词条组合无效",
     },
     removeCustomFlex: { en: "Remove custom pattern", zh: "删除自定义散件" },
+  },
+  manager: {
+    title: { en: "Artifact Manager", zh: "圣遗物管理器" },
+    applyToGame: { en: "Apply to Game", zh: "应用到游戏" },
+    equipInGame: { en: "Equip in Game", zh: "在游戏中装备" },
+    port: { en: "Port", zh: "端口" },
+    connect: { en: "Connect", zh: "连接" },
+    ready: { en: "Ready", zh: "就绪" },
+    offline: { en: "Offline", zh: "离线" },
+    busy: { en: "Busy", zh: "忙碌中" },
+    gameNotRunning: { en: "Game not running", zh: "游戏未运行" },
+    paused: { en: "Paused", zh: "已暂停" },
+    submitting: { en: "Sending instructions...", zh: "正在发送指令..." },
+    waitingForGame: {
+      en: "Waiting for game interaction...",
+      zh: "等待游戏交互...",
+    },
+    allApplied: { en: "All changes applied", zh: "所有更改已应用" },
+    completedWithIssues: {
+      en: "Completed with issues",
+      zh: "完成但有问题",
+    },
+    applied: { en: "Applied", zh: "已成功" },
+    alreadyCorrect: { en: "Already correct", zh: "已正确" },
+    notFound: { en: "Not found", zh: "未找到" },
+    errors: { en: "Errors", zh: "错误" },
+    aborted: { en: "Aborted", zh: "已中止" },
+    showDetails: { en: "Show details", zh: "显示详情" },
+    minimize: { en: "Minimize", zh: "最小化" },
+    close: { en: "Close", zh: "关闭" },
+    processed: {
+      en: "{0} / {1} artifacts processed",
+      zh: "已处理 {0} / {1} 个圣遗物",
+    },
+    connectionDesc: {
+      en: "Connect to the local artifact manager to apply changes in-game.",
+      zh: "连接本地圣遗物管理器以在游戏中应用更改。",
+    },
   },
 };

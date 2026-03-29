@@ -1,19 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  submitJob,
-  pollStatus,
-  getResult,
   ArtifactManagerError,
+  getResult,
+  pollStatus,
+  submitJob,
 } from "@/lib/artifact-manager/client";
 import { applyJobResults } from "@/lib/artifact-manager/storeSync";
-import type {
-  Instruction,
-  ResultResponse,
-} from "@/lib/artifact-manager/types";
-import {
-  getActiveAccount,
-  useAccountStore,
-} from "@/stores/useAccountStore";
+import type { Instruction, ResultResponse } from "@/lib/artifact-manager/types";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type JobPhase =
   | { type: "idle" }
@@ -25,7 +19,7 @@ export type JobPhase =
 
 const POLL_INTERVAL = 1000;
 
-export function useArtifactManagerJob() {
+export function useArtifactManagerJob(port = 8765) {
   const [phase, setPhase] = useState<JobPhase>({ type: "idle" });
   const instructionsRef = useRef<Instruction[]>([]);
   const mountedRef = useRef(true);
@@ -51,7 +45,7 @@ export function useArtifactManagerJob() {
     pollTimerRef.current = setInterval(async () => {
       if (!mountedRef.current) return;
       try {
-        const status = await pollStatus();
+        const status = await pollStatus(port);
         if (!mountedRef.current) return;
 
         if (status.state === "running") {
@@ -63,7 +57,7 @@ export function useArtifactManagerJob() {
           });
         } else if (status.state === "completed") {
           stopPolling();
-          const result = await getResult();
+          const result = await getResult(port);
           if (!mountedRef.current) return;
 
           // Sync results to the account store
@@ -72,7 +66,7 @@ export function useArtifactManagerJob() {
             const updated = applyJobResults(
               account.data,
               instructionsRef.current,
-              result.results,
+              result.results
             );
             useAccountStore.getState().addOrUpdateAccount(account.id, {
               data: updated,
@@ -101,7 +95,7 @@ export function useArtifactManagerJob() {
       setPhase({ type: "submitting" });
 
       try {
-        const response = await submitJob(instructions);
+        const response = await submitJob(instructions, port);
         if (!mountedRef.current) return;
         setPhase({ type: "submitted", jobId: response.jobId });
         startPolling();
@@ -118,7 +112,7 @@ export function useArtifactManagerJob() {
         setPhase({ type: "error", message });
       }
     },
-    [startPolling],
+    [startPolling]
   );
 
   const reset = useCallback(() => {

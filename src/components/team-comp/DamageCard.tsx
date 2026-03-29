@@ -1,5 +1,4 @@
-import { ConnectionBadge } from "@/components/artifact-manager/ConnectionBadge";
-import { JobDialog } from "@/components/artifact-manager/JobDialog";
+import { ArtifactManagerDialog } from "@/components/artifact-manager/ArtifactManagerDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -24,8 +23,6 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { AccountData, ArtifactData, Slot } from "@/data/types";
-import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
-import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
 import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
@@ -1519,23 +1516,12 @@ export function DamageCard({
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
 
   // Artifact manager integration
-  const [managerEnabled, setManagerEnabled] = useState(false);
-  const { connection } = useArtifactManagerConnection(managerEnabled);
-  const {
-    phase: jobPhase,
-    submit: submitEquipJob,
-    reset: resetJob,
-  } = useArtifactManagerJob();
-  const [jobDialogOpen, setJobDialogOpen] = useState(false);
-
-  const handleEquipInGame = useCallback(() => {
+  const [managerOpen, setManagerOpen] = useState(false);
+  const buildManagerInstructions = useCallback(() => {
     const frozenTeam = useFreezeStore.getState().frozenTeams[team.id];
-    if (!frozenTeam) return;
-    const instructions = buildEquipInstructions(frozenTeam.artifactsByChar);
-    if (instructions.length === 0) return;
-    setJobDialogOpen(true);
-    submitEquipJob(instructions);
-  }, [team.id, submitEquipJob]);
+    if (!frozenTeam) return [];
+    return buildEquipInstructions(frozenTeam.artifactsByChar);
+  }, [team.id]);
 
   return (
     <>
@@ -1747,34 +1733,15 @@ export function DamageCard({
                   </Button>
                 )}
                 {isFrozen && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setManagerEnabled((v) => !v)}
-                      className={cn(managerEnabled && "border-primary")}
-                    >
-                      <Monitor className="h-4 w-4 mr-1.5" />
-                      Game Link
-                    </Button>
-                    {managerEnabled && (
-                      <>
-                        <ConnectionBadge connection={connection} />
-                        <Button
-                          size="sm"
-                          disabled={
-                            connection.status !== "connected" ||
-                            !connection.health.enabled ||
-                            !connection.health.gameAlive ||
-                            connection.health.busy
-                          }
-                          onClick={handleEquipInGame}
-                        >
-                          Equip in Game
-                        </Button>
-                      </>
-                    )}
-                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => setManagerOpen(true)}
+                  >
+                    <Monitor className="h-4 w-4" />
+                    {t.ui("manager.equipInGame")}
+                  </Button>
                 )}
               </div>
 
@@ -2126,11 +2093,11 @@ export function DamageCard({
           </CardContent>
         )}
       </Card>
-      <JobDialog
-        open={jobDialogOpen}
-        onOpenChange={setJobDialogOpen}
-        phase={jobPhase}
-        onReset={resetJob}
+      <ArtifactManagerDialog
+        open={managerOpen}
+        onOpenChange={setManagerOpen}
+        buildInstructions={buildManagerInstructions}
+        actionLabel={t.ui("manager.equipInGame")}
       />
     </>
   );

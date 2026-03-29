@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { checkHealth } from "@/lib/artifact-manager/client";
 import type { HealthResponse } from "@/lib/artifact-manager/types";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ConnectionState =
   | { status: "disconnected" }
@@ -13,7 +13,7 @@ const POLL_INTERVAL = 5000;
  * Poll artifact manager /health endpoint.
  * Only polls while `enabled` is true.
  */
-export function useArtifactManagerConnection(enabled: boolean) {
+export function useArtifactManagerConnection(enabled: boolean, port = 8765) {
   const [state, setState] = useState<ConnectionState>({
     status: "disconnected",
   });
@@ -21,7 +21,7 @@ export function useArtifactManagerConnection(enabled: boolean) {
 
   const poll = useCallback(async () => {
     try {
-      const health = await checkHealth();
+      const health = await checkHealth(port);
       if (mountedRef.current) {
         setState({ status: "connected", health });
       }
@@ -30,7 +30,7 @@ export function useArtifactManagerConnection(enabled: boolean) {
         setState({ status: "disconnected" });
       }
     }
-  }, []);
+  }, [port]);
 
   useEffect(() => {
     mountedRef.current = true;
