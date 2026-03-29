@@ -23,6 +23,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { DamageView } from "./team-comp/DamageView";
 import { FrozenView } from "./team-comp/FrozenView";
+import { InvestmentView } from "./team-comp/InvestmentView";
 
 type TeamCompTab = "damage" | "frozen" | "investment";
 
@@ -114,9 +115,7 @@ export default function TeamCompPage() {
   if (activeTab === "investment") {
     return (
       <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
-        <div className="flex items-center justify-center min-h-[40vh] text-muted-foreground">
-          Investment view — coming soon
-        </div>
+        <InvestmentView />
       </PageLayout>
     );
   }
