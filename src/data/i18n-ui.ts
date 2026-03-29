@@ -926,6 +926,16 @@ export const i18nUiData = {
       zh: "独立冻结圣遗物",
     },
     freezeArtifact: { en: "Freeze Artifact", zh: "冻结圣遗物" },
+    freezeArtifactDesc: {
+      en: "Select artifacts to freeze — frozen artifacts won't be reassigned by the optimizer",
+      zh: "选择要冻结的圣遗物——冻结后优化器不会重新分配",
+    },
+    freezeSelected: { en: "Freeze Selected", zh: "冻结已选" },
+    freezeAllSlots: { en: "All Slots", zh: "所有位置" },
+    freezeNoArtifacts: {
+      en: "No artifacts in your inventory",
+      zh: "背包中没有圣遗物",
+    },
     frozenEmpty: {
       en: "No frozen teams or artifacts",
       zh: "没有冻结的队伍或圣遗物",
