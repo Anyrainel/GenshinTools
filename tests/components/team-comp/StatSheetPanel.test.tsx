@@ -13,7 +13,6 @@ const mockTeam: Team = {
   weapons: ["staff_of_homa", "sacrificial_sword", null, null],
   artifacts: [null, null, null, null],
   reactions: [],
-  reactionOverrides: {},
   combos: [],
   selectedCombo: null,
   formulaMode: "single",

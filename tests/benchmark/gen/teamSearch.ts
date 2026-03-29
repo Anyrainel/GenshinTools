@@ -943,11 +943,11 @@ async function* runTeamOpt(
     formula,
     perCharDeadlineMs,
   } = opts;
-  const { combo, reactionOverrides } = formula;
+  const { combo, buffOverrides } = formula;
 
-  const formulaId =
-    combo.lines.find((l) => l.charId === carryCharId)?.formulaId ?? "";
-  const reactionOverride = reactionOverrides?.[`${carryCharId}.${formulaId}`];
+  const carryLine = combo.lines.find((l) => l.charId === carryCharId);
+  const formulaId = carryLine?.formulaId ?? "";
+  const reactionOverride = carryLine?.reaction;
 
   const isComboMode =
     combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
@@ -960,7 +960,7 @@ async function* runTeamOpt(
             combo,
             sheets,
             calcContext,
-            reactionOverrides
+            buffOverrides
           ).totalDamage;
         } catch (e) {
           const key = `comboScoreFn:${_onFieldCharId}`;
@@ -1686,7 +1686,7 @@ async function* runTeamOpt(
       combo,
       finalSheets,
       calcContext,
-      reactionOverrides
+      buffOverrides
     );
   } catch {
     comboRes = { lineDamages: [], totalDamage: 0 };

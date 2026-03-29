@@ -19,6 +19,7 @@ import type {
   CharOptConfig,
   ComboFormula,
   ComboResult,
+  PartialBuffInfo,
   ReactionOverride,
   TeamOptPassId,
   TeamOptPassResult,
@@ -110,18 +111,13 @@ function computeFinalScore(
   reactionOverride: ReactionOverride | undefined,
   isComboMode: boolean,
   combo: ComboFormula | undefined,
-  reactionOverrides: Record<string, ReactionOverride> | undefined
+  buffOverrides?: Record<number, PartialBuffInfo[]>
 ): number {
   const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
   if (isComboMode && combo) {
     try {
-      return evaluateCombo(
-        teamBuild,
-        combo,
-        sheets,
-        calcContext,
-        reactionOverrides
-      ).totalDamage;
+      return evaluateCombo(teamBuild, combo, sheets, calcContext, buffOverrides)
+        .totalDamage;
     } catch (e) {
       const key = `computeFinalScore:${carryCharId}`;
       if (!warnedCalcErrors.has(key)) {
@@ -172,11 +168,11 @@ export async function* runTeamOptimization(
     perChar,
     formula,
   } = opts;
-  const { combo, reactionOverrides } = formula;
+  const { combo, buffOverrides } = formula;
 
-  const formulaId =
-    combo.lines.find((l) => l.charId === carryCharId)?.formulaId ?? "";
-  const reactionOverride = reactionOverrides?.[`${carryCharId}.${formulaId}`];
+  const carryLine = combo.lines.find((l) => l.charId === carryCharId);
+  const formulaId = carryLine?.formulaId ?? "";
+  const reactionOverride = carryLine?.reaction;
 
   const isComboMode =
     combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
@@ -190,7 +186,7 @@ export async function* runTeamOptimization(
             combo,
             sheets,
             calcContext,
-            reactionOverrides
+            buffOverrides
           ).totalDamage;
         } catch (e) {
           const key = `comboScoreFn:${_onFieldCharId}`;
@@ -286,7 +282,7 @@ export async function* runTeamOptimization(
                 combo,
                 sheets,
                 calcContext,
-                reactionOverrides
+                buffOverrides
               ).totalDamage;
             } catch (e) {
               const key = `passComboScoreFn:${carryCharId}`;
@@ -543,7 +539,7 @@ export async function* runTeamOptimization(
     reactionOverride,
     isComboMode,
     combo,
-    reactionOverrides
+    buffOverrides
   );
 
   if (competitorSet.size >= 2) {
@@ -826,7 +822,7 @@ export async function* runTeamOptimization(
               reactionOverride,
               isComboMode,
               combo,
-              reactionOverrides
+              buffOverrides
             );
 
             if (permScore > bestR1Score) {
@@ -863,7 +859,7 @@ export async function* runTeamOptimization(
         reactionOverride,
         isComboMode,
         combo,
-        reactionOverrides
+        buffOverrides
       );
 
       if (permScore > bestR1Score) {
@@ -1139,7 +1135,7 @@ export async function* runTeamOptimization(
       combo,
       finalSheets,
       calcContext,
-      reactionOverrides
+      buffOverrides
     );
   } catch {
     comboRes = { lineDamages: [], totalDamage: 0 };

@@ -557,7 +557,7 @@ export async function runOptimizerOnTeam(
         break;
       }
       if (performance.now() - startTime > timeoutMs) {
-        gen.return(undefined as unknown as TeamOptYield);
+        gen.return(undefined as never);
         result.error = `TIMEOUT after ${(timeoutMs / 1000).toFixed(0)}s`;
         result.optimizeTimeSec = (performance.now() - startTime) / 1000;
         return result;

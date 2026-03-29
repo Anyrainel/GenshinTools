@@ -137,7 +137,6 @@ describe("Integration: Team Builder Flow", () => {
       minEr: {},
       selectedFormula: null,
       optimizationResult: null,
-      reactionOverrides: {},
       formulaMode: "single",
       combos: [],
       selectedCombo: null,

@@ -35,11 +35,12 @@ export function migrateTeamStore(
     }));
   }
   if (version < 2) {
-    state.teams = state.teams.map((t) => ({
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy format (reactionOverrides removed in v9)
+    state.teams = state.teams.map((t: any) => ({
       ...t,
-      reactionOverrides: (t as Team).reactionOverrides ?? {},
-      combos: (t as Team).combos ?? [],
-      selectedCombo: (t as Team).selectedCombo ?? null,
+      reactionOverrides: t.reactionOverrides ?? {},
+      combos: t.combos ?? [],
+      selectedCombo: t.selectedCombo ?? null,
     }));
   }
   if (version < 3) {

@@ -64,15 +64,13 @@ const mockSkillQ: CharacterSkill = {
 
 describe("SkillCard", () => {
   it("renders skill name", () => {
-    render(
-      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
-    );
+    render(<SkillCard skill={mockSkillE} characterId={CHAR_ID} />);
     expect(screen.getByText("E. Guide to Afterlife")).toBeInTheDocument();
   });
 
   it("renders description by default (expanded)", () => {
     const { container } = render(
-      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
+      <SkillCard skill={mockSkillE} characterId={CHAR_ID} />
     );
     const descDiv = container.querySelector(".skill-desc");
     expect(descDiv).toBeInTheDocument();
@@ -80,9 +78,7 @@ describe("SkillCard", () => {
   });
 
   it("shows two level columns with rendered values", () => {
-    render(
-      <SkillCard skill={mockSkillA} characterId={CHAR_ID} skillIndex={0} />
-    );
+    render(<SkillCard skill={mockSkillA} characterId={CHAR_ID} />);
     // Default for A (non-buffed): Lv6 vs Lv10
     expect(screen.getByText("Lv.6")).toBeInTheDocument();
     expect(screen.getByText("Lv.10")).toBeInTheDocument();
@@ -93,24 +89,20 @@ describe("SkillCard", () => {
   });
 
   it("shows 10 vs 13 for skill buffed by C3/C5", () => {
-    render(
-      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
-    );
+    render(<SkillCard skill={mockSkillE} characterId={CHAR_ID} />);
     expect(screen.getByText("Lv.10")).toBeInTheDocument();
     expect(screen.getByText("Lv.13")).toBeInTheDocument();
   });
 
   it("shows 10 vs 13 for burst (Q) when C5 boosts it", () => {
-    render(
-      <SkillCard skill={mockSkillQ} characterId={CHAR_ID} skillIndex={2} />
-    );
+    render(<SkillCard skill={mockSkillQ} characterId={CHAR_ID} />);
     expect(screen.getByText("Lv.10")).toBeInTheDocument();
     expect(screen.getByText("Lv.13")).toBeInTheDocument();
   });
 
   it("collapses and expands on click", () => {
     const { container } = render(
-      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
+      <SkillCard skill={mockSkillE} characterId={CHAR_ID} />
     );
 
     expect(container.querySelector(".skill-desc")).toBeInTheDocument();
@@ -126,7 +118,7 @@ describe("SkillCard", () => {
       descHtml: "Just attacks.",
       details: [],
     };
-    render(<SkillCard skill={skill} characterId={CHAR_ID} skillIndex={0} />);
+    render(<SkillCard skill={skill} characterId={CHAR_ID} />);
     expect(screen.queryByText("Lv.10")).not.toBeInTheDocument();
   });
 });

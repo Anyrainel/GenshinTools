@@ -244,6 +244,11 @@ export const convertMonaToAccountData = (data: MonaData): ConversionResult => {
       extraWeapons: [],
     },
     warnings,
+    presentSections: {
+      characters: charactersMap.size > 0,
+      weapons: false,
+      artifacts: extraArtifacts.length > 0,
+    },
   };
 };
 

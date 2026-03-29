@@ -854,7 +854,10 @@ export class TeamBuild {
       for (const config of configs) {
         const stats = baselineStats[config.charId];
         if (!stats) continue;
-        const damage = formula.calc(stats, config.charLevel, {});
+        const damage = formula.calc(stats, config.charLevel, {
+          enemyLevel: 90,
+          enemyRes: 0.1,
+        });
         contributions.push({ charId: config.charId, damage });
       }
 

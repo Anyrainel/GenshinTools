@@ -56,7 +56,6 @@ function makeTeam(
     weapons: ["staff_of_homa", null, null, null],
     artifacts: [null, null, null, null],
     reactions: [],
-    reactionOverrides: {},
     combos: [],
     selectedCombo: null,
     formulaMode: "single",
@@ -73,8 +72,8 @@ function defaultProps(overrides: Partial<RosterProps> = {}): RosterProps {
     team: makeTeam(),
     updateTeam: vi.fn(),
     accountData: null,
-    characterStats: null,
-    weaponStats: null,
+    characterStats: {},
+    weaponStats: {},
     isMobile: false,
     ...overrides,
   };

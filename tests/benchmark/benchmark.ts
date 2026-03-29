@@ -2565,7 +2565,6 @@ async function cmdCarryDiagnose(opts: {
       calcContext,
       supportArtIds, // exclude support artifacts
       benchCombo,
-      undefined, // reactionOverrides
       15, // topK
       performance.now() + opts.timeoutSec * 1000, // deadline
       undefined, // warmStartThreshold
@@ -2637,7 +2636,6 @@ async function cmdCarryDiagnose(opts: {
       calcContext,
       undefined,
       benchCombo,
-      undefined,
       15,
       performance.now() + opts.timeoutSec * 1000,
       undefined,

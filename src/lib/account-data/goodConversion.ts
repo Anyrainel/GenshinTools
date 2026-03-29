@@ -246,7 +246,7 @@ export const convertGOODToAccountData = (
 
   // 1. Process Characters
   if (hasCharacters) {
-    for (const char of data.characters) {
+    for (const char of data.characters!) {
       // Store element info for location resolution in weapons/artifacts
       if (char.element && char.key in MULTI_ELEMENT_DEFAULTS) {
         charElementMap.set(char.key, char.element);
