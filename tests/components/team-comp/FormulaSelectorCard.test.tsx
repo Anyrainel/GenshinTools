@@ -86,7 +86,6 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
     formulaMode: "combo",
     onModeChange: vi.fn(),
     onSelectSingleFormula: vi.fn(),
-    onInvestmentClick: vi.fn(),
     isMobile: false,
     ...overrides,
   };
@@ -139,21 +138,8 @@ describe("FormulaSelectorCard", () => {
     expect(screen.queryByText("Rain Swords")).not.toBeInTheDocument();
   });
 
-  it("renders analyzer button when onInvestmentClick is provided", () => {
+  it("does not render analyzer button (removed from damage flow)", () => {
     render(<TestCard {...defaultProps()} />);
-    expect(screen.getByText("Investment Analysis")).toBeInTheDocument();
-  });
-
-  it("calls onInvestmentClick when analyzer button is clicked", async () => {
-    const user = userEvent.setup({ delay: null });
-    const onInvestmentClick = vi.fn();
-    render(<TestCard {...defaultProps({ onInvestmentClick })} />);
-    await user.click(screen.getByText("Investment Analysis"));
-    expect(onInvestmentClick).toHaveBeenCalledOnce();
-  });
-
-  it("does not render analyzer button when onInvestmentClick is undefined", () => {
-    render(<TestCard {...defaultProps({ onInvestmentClick: undefined })} />);
     expect(screen.queryByText("Investment Analysis")).not.toBeInTheDocument();
   });
 

@@ -27,7 +27,6 @@ import {
   Plus,
   RotateCcw,
   Swords,
-  TrendingUp,
 } from "lucide-react";
 import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
 import { FormulaLabel } from "./FormulaLabel";
@@ -119,7 +118,6 @@ interface FormulaSelectorCardProps {
     formulaId: string,
     reaction: string
   ) => void;
-  onInvestmentClick?: () => void;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
 }
@@ -142,7 +140,6 @@ export function FormulaSelectorCard({
   formulaMode,
   onModeChange,
   onSelectSingleFormula,
-  onInvestmentClick,
   isMobile,
   t,
 }: FormulaSelectorCardProps) {
@@ -185,19 +182,6 @@ export function FormulaSelectorCard({
             title={t.ui("teamComp.comboFormula")}
             subtitle={t.ui("teamComp.comboFormulaDesc")}
           />
-        </OptionButtonCell>
-        <OptionButtonCell>
-          {onInvestmentClick && (
-            <OptionButton
-              icon={
-                <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
-              }
-              title={t.ui("teamComp.analyzer")}
-              onClick={onInvestmentClick}
-              unselectedClassName="border-amber-600/20 bg-amber-600/20 hover:border-amber-600/30 hover:bg-amber-600/30"
-              titleClassName="text-amber-100"
-            />
-          )}
         </OptionButtonCell>
       </OptionButtonRow>
       {!isSingle && (

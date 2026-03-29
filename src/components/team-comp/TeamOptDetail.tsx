@@ -32,7 +32,6 @@ import type {
   Slot,
 } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
@@ -70,7 +69,6 @@ import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Info } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AnalyzerDialog } from "./AnalyzerDialog";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
@@ -1151,10 +1149,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       frozenEntry?.artifactsByChar != null ||
       restoredArtifacts != null);
 
-  // ─── Analyzer Dialog ───
-  const [analyzerOpen, setAnalyzerOpen] = useState(false);
-  const analyzerState = useAnalyzer(team.id);
-
   return (
     <div
       className={cn(
@@ -1243,7 +1237,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             combos: [{ id: combo.id, label: combo.label, lines }],
           });
         }}
-        onInvestmentClick={teamBuild ? () => setAnalyzerOpen(true) : undefined}
         isMobile={isMobile}
         t={t}
       />
@@ -1388,30 +1381,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           matchingSetIds={swapMatchingSetIds}
           onSwap={handleSwapConfirm}
           t={t}
-        />
-      )}
-
-      {/* Analyzer Dialog */}
-      {teamBuild && (
-        <AnalyzerDialog
-          open={analyzerOpen}
-          onOpenChange={setAnalyzerOpen}
-          teamId={team.id}
-          teamBuild={teamBuild}
-          baseConfigs={configs}
-          templateCombo={combo}
-          analysis={analyzerState}
-          perChar={Object.fromEntries(
-            effectiveTeam.characters
-              .filter((c): c is string => c != null)
-              .map((cid) => [
-                cid,
-                {
-                  minEr: team.minEr?.[cid] ?? 1.0,
-                  minCr: team.minCr?.[cid] ?? 0,
-                },
-              ])
-          )}
         />
       )}
 
