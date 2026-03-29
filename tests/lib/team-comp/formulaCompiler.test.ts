@@ -1027,6 +1027,105 @@ describe("compileTeamDamage full pipeline fuzz", () => {
       expect(relErr).toBeLessThan(1e-6);
     }
   });
+
+  // ─── Team reaction formula (rx-*) fuzz ───
+
+  function fuzzTeamReaction(
+    label: string,
+    configs: TeamSlotConfig[],
+    swapCharId?: string
+  ) {
+    it(`${label}: reaction formulas compiled match standard path`, () => {
+      const tb = new TeamBuild(configs);
+      const charIds = configs.map((c) => c.charId);
+      const rxFormulas = tb.reactionProvider.getFormulaIds();
+      const rxIds = Object.keys(rxFormulas);
+      if (rxIds.length === 0) return; // no reactions for this team
+
+      for (const formulaId of rxIds) {
+        const eligible = tb.reactionProvider.getEligibleCharacters(formulaId);
+        if (eligible.length === 0) continue;
+        // Use first eligible char as trigger / on-field
+        const triggerCharId = eligible[0];
+        const swap = swapCharId ?? triggerCharId;
+
+        for (let trial = 0; trial < 20; trial++) {
+          const sheets: Record<string, StatSheet> = {};
+          for (const cid of charIds) {
+            sheets[cid] = buildSheetFromMainAndSubs(
+              randomMainStats(),
+              randomSubRolls(),
+              rv
+            );
+          }
+
+          // Standard path
+          const teamStats = tb.getTeamStats(sheets, triggerCharId, FUZZ_CTX);
+          let oldDamage: number;
+          if (tb.reactionProvider.isMultiContributor(formulaId)) {
+            oldDamage = tb.reactionProvider.getMultiContributorResult(
+              formulaId,
+              triggerCharId,
+              teamStats,
+              FUZZ_CTX
+            ).totalDamage;
+          } else {
+            oldDamage = tb.reactionProvider.getDamageResult(
+              formulaId,
+              triggerCharId,
+              teamStats[triggerCharId]!,
+              FUZZ_CTX
+            ).totalDamage;
+          }
+
+          // Compiled path
+          const optCtx = tb.createOptimizerContext(
+            sheets,
+            swap,
+            triggerCharId,
+            FUZZ_CTX
+          );
+          const compiled = compileTeamDamage(
+            tb,
+            triggerCharId,
+            formulaId,
+            FUZZ_CTX,
+            optCtx
+          );
+          const charIdx = optCtx.charBuildOrder.findIndex(
+            ([id]) => id === swap
+          );
+          const vars = new Float64Array(compiled.numVars);
+          vars.fill(0);
+          fillVarsFromSheet(sheets[swap], compiled.varMapping, charIdx, vars);
+          const newDamage = compiled.evaluate(vars);
+
+          const relErr =
+            oldDamage === 0
+              ? newDamage === 0
+                ? 0
+                : Number.POSITIVE_INFINITY
+              : Math.abs(newDamage - oldDamage) / Math.abs(oldDamage);
+
+          if (relErr >= 1e-6) {
+            throw new Error(
+              `Reaction mismatch for ${label} ${formulaId}, swap=${swap}, trial=${trial}: ` +
+                `old=${oldDamage.toFixed(4)} new=${newDamage.toFixed(4)} relErr=${(relErr * 100).toFixed(8)}%`
+            );
+          }
+        }
+      }
+    });
+  }
+
+  fuzzTeamReaction("raiden team reactions", RAIDEN_TEAM);
+  fuzzTeamReaction(
+    "raiden team reactions (xingqiu swap)",
+    RAIDEN_TEAM,
+    "xingqiu"
+  );
+  fuzzTeamReaction("varka team reactions", VARKA_TEAM);
+  fuzzTeamReaction("diluc team reactions", DILUC_TEAM);
 });
 
 // ─── Combo formula compiled pipeline fuzz ───
@@ -1034,7 +1133,7 @@ describe("compileTeamDamage full pipeline fuzz", () => {
 describe("compileComboTeamDamage fuzz", () => {
   const rv = getRollValues();
 
-  /** Build a combo formula from all formulas of all characters in the team. */
+  /** Build a combo formula from all formulas of all characters + team reactions. */
   function buildFullCombo(tb: TeamBuild): ComboFormula {
     const allFormulas = tb.getFormulaIds();
     const lines: ComboFormula["lines"] = [];
@@ -1043,6 +1142,18 @@ describe("compileComboTeamDamage fuzz", () => {
         lines.push({
           charId,
           formulaId,
+          count: 1 + Math.floor(Math.random() * 3),
+        });
+      }
+    }
+    // Include team reaction formulas (rx-*)
+    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    for (const rxId of Object.keys(rxFormulas)) {
+      const eligible = tb.reactionProvider.getEligibleCharacters(rxId);
+      if (eligible.length > 0) {
+        lines.push({
+          charId: eligible[0],
+          formulaId: rxId,
           count: 1 + Math.floor(Math.random() * 3),
         });
       }

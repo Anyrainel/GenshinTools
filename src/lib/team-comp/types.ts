@@ -266,6 +266,8 @@ export type DisplayPart = {
   }[];
   /** Original part index (stable across reaction-split sub-parts) */
   sourcePartIndex?: number;
+  /** For multi-contributor lunar reactions: which character contributes this part */
+  contributorCharId?: string;
 };
 
 /** StatEntry augmented with an optional cap for scaling buff display. */

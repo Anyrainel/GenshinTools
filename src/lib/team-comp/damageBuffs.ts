@@ -389,46 +389,46 @@ export class CrossScalingBuff extends StatBuff {
 }
 
 /**
- * Filter a list of buffs such that only one buff per noStackId is kept.
- * Ties are broken by the maximum sum of the returned StatEntry values.
+ * Deduplicate buffs within the same noStackId, per stat key.
+ *
+ * In-game: "buffs of the same type will not stack" — "type" means stat key
+ * (atk%, dmg%, em, etc.). Within a noStackId group, for each stat key, only
+ * the buff with the highest value for that key survives. A single buff object
+ * may contribute the winning value for some keys but not others.
+ *
+ * Implementation: group by (noStackId, stat key). For each sub-group, keep
+ * the buff with the highest value. A buff that loses on all its keys is dropped
+ * entirely; a buff that wins on some keys but loses on others is kept (the
+ * losing keys become redundant but harmless since the winner also applies).
  */
 export function deduplicateBuffs<T extends { source: BuffSource }>(
   buffs: T[],
   evaluator: (b: T) => StatEntry[]
 ): T[] {
   const result: T[] = [];
-  const groups = new Map<string, T[]>();
+  // (noStackId, statKey) → best buff and its value
+  const bestPerKey = new Map<string, { buff: T; value: number }>();
 
   for (const b of buffs) {
     if (!b.source.noStackId) {
       result.push(b);
-    } else {
-      let g = groups.get(b.source.noStackId);
-      if (!g) {
-        g = [];
-        groups.set(b.source.noStackId, g);
+      continue;
+    }
+    for (const e of evaluator(b)) {
+      const groupKey = `${b.source.noStackId}\0${e.key}`;
+      const cur = bestPerKey.get(groupKey);
+      if (!cur || e.value > cur.value) {
+        bestPerKey.set(groupKey, { buff: b, value: e.value });
       }
-      g.push(b);
     }
   }
 
-  for (const group of groups.values()) {
-    if (group.length === 1) {
-      result.push(group[0]!);
-    } else {
-      let bestBuff = group[0]!;
-      let maxSum = Number.NEGATIVE_INFINITY;
-      for (const b of group) {
-        let sum = 0;
-        for (const e of evaluator(b)) sum += e.value;
-        if (sum > maxSum) {
-          maxSum = sum;
-          bestBuff = b;
-        }
-      }
-      result.push(bestBuff);
-    }
+  // Collect unique winning buffs (a buff may win on multiple keys)
+  const winners = new Set<T>();
+  for (const { buff } of bestPerKey.values()) {
+    winners.add(buff);
   }
+  for (const b of winners) result.push(b);
 
   return result;
 }

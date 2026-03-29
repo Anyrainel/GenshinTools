@@ -372,24 +372,28 @@ export function compileTeamDamage(
 
     let damageExpr: Expr;
     if (rp.isMultiContributor(formulaId)) {
+      // Use pre-computed rank weights from TeamBuild baseline estimation
+      const rankWeights = rp.getRankWeights(formulaId);
       const charExprs: Expr[] = [];
       for (const cfg of teamBuild.configs) {
         const charStats = postExprStats[cfg.charId];
         if (!charStats) continue;
+        const weight = rankWeights?.get(cfg.charId);
+        // Fall back to average weight if no pre-computed ranks
+        const w =
+          weight ??
+          LUNAR_RANK_WEIGHTS.reduce((a, b) => a + b, 0) /
+            teamBuild.configs.length;
+        if (w === 0) continue;
         charExprs.push(
-          rxFormula.buildExpr(charStats, cfg.charLevel, calcContext)
+          E.mul(
+            rxFormula.buildExpr(charStats, cfg.charLevel, calcContext),
+            E.const(w)
+          )
         );
       }
-      if (charExprs.length > 0) {
-        const avgWeight =
-          LUNAR_RANK_WEIGHTS.slice(0, charExprs.length).reduce(
-            (a, b) => a + b,
-            0
-          ) / charExprs.length;
-        damageExpr = simplify(E.mul(E.add(...charExprs), E.const(avgWeight)));
-      } else {
-        damageExpr = E.const(0);
-      }
+      damageExpr =
+        charExprs.length > 0 ? simplify(E.add(...charExprs)) : E.const(0);
     } else {
       const charLevel =
         teamBuild.configs.find((c) => c.charId === formulaCharId)?.charLevel ??
@@ -602,28 +606,26 @@ export function compileComboTeamDamage(
         const rxFormula = rxEntry.parts[0].formula;
 
         if (rp.isMultiContributor(line.formulaId)) {
-          // Multi-contributor lunar: compile per-character exprs and weight
-          // by average rank weight. Rank order can change per artifact set,
-          // so we approximate with equal weighting across all characters.
-          // Exact evaluation uses the interpreted path in getComboDisplayResult.
+          // Use pre-computed rank weights from TeamBuild baseline estimation
+          const rankWeights = rp.getRankWeights(line.formulaId);
           const charExprs: Expr[] = [];
           for (const cfg of configs) {
             const charStats = postExprStats[cfg.charId];
             if (!charStats) continue;
+            const weight = rankWeights?.get(cfg.charId);
+            const w =
+              weight ??
+              LUNAR_RANK_WEIGHTS.reduce((a, b) => a + b, 0) / configs.length;
+            if (w === 0) continue;
             charExprs.push(
-              rxFormula.buildExpr(charStats, cfg.charLevel, calcContext)
+              E.mul(
+                rxFormula.buildExpr(charStats, cfg.charLevel, calcContext),
+                E.const(w)
+              )
             );
           }
           if (charExprs.length > 0) {
-            const avgWeight =
-              LUNAR_RANK_WEIGHTS.slice(0, charExprs.length).reduce(
-                (a, b) => a + b,
-                0
-              ) / charExprs.length;
-            const lunarExpr = E.mul(
-              E.add(...charExprs),
-              E.const(avgWeight * line.count)
-            );
+            const lunarExpr = E.mul(E.add(...charExprs), E.const(line.count));
             allPartExprs.push(lunarExpr);
           }
         } else {

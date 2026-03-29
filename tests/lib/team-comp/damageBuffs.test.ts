@@ -204,7 +204,7 @@ describe("deduplicateBuffs", () => {
     expect(res2[0]).toBe(b2);
   });
 
-  it("evaluates multiple entries sum for tie breaking", () => {
+  it("keeps both buffs when they win on different keys", () => {
     const src1 = {
       type: "artifactSet" as const,
       id: "a1",
@@ -216,20 +216,20 @@ describe("deduplicateBuffs", () => {
       noStackId: "set-buff",
     };
 
-    // b1: 0.2 + 0.1 = 0.3 total sum
+    // b1 wins on "cr" (no competitor), b2 wins on "atk%" (0.4 > 0.2)
     const b1 = new StatBuff(src1, { receiver: "team" }, [
       { key: "atk%", value: 0.2 },
       { key: "cr", value: 0.1 },
     ]);
 
-    // b2: 0.4 total sum
     const b2 = new StatBuff(src2, { receiver: "team" }, [
       { key: "atk%", value: 0.4 },
     ]);
 
     const res = deduplicateBuffs([b1, b2], evaluator);
-    expect(res).toHaveLength(1);
-    expect(res[0]).toBe(b2);
+    expect(res).toHaveLength(2);
+    expect(res).toContain(b1);
+    expect(res).toContain(b2);
   });
 
   it("handles a mix of stacked and non-stacked buffs", () => {

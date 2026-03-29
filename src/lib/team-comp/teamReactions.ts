@@ -100,6 +100,13 @@ export class TeamReactionProvider {
   /** Config lookup for charLevel per charId. */
   private readonly charLevels: Record<string, number>;
 
+  /**
+   * Pre-computed rank weights for multi-contributor lunar formulas.
+   * Keyed by formula ID (e.g. "rx-lunarCharged"), value maps charId → weight.
+   * Computed from baseline stats (no artifacts) during TeamBuild construction.
+   */
+  private rankWeights: Record<string, Map<string, number>> = {};
+
   constructor(
     private readonly teamMeta: TeamMeta,
     private readonly charBases: Record<string, CharacterBase>,
@@ -231,6 +238,22 @@ export class TeamReactionProvider {
 
   // ─── Public API ───
 
+  /**
+   * Set pre-computed rank weights for a multi-contributor formula.
+   * Called by TeamBuild after construction using baseline stats (no artifacts).
+   */
+  setRankWeights(formulaId: string, weights: Map<string, number>): void {
+    this.rankWeights[formulaId] = weights;
+  }
+
+  /**
+   * Get pre-computed rank weights for a multi-contributor formula.
+   * Returns undefined if not pre-computed (falls back to dynamic ranking).
+   */
+  getRankWeights(formulaId: string): Map<string, number> | undefined {
+    return this.rankWeights[formulaId];
+  }
+
   /** All available reaction formula IDs with i18n labels. */
   getFormulaIds(): Record<string, I18nLabel> {
     const result: Record<string, I18nLabel> = {};
@@ -292,6 +315,7 @@ export class TeamReactionProvider {
     if (!entry) return { parts: [], totalDamage: 0 };
 
     const formula = entry.parts[0].formula;
+    const precomputedWeights = this.rankWeights[formulaId];
 
     // Compute each character's individual contribution
     const contributions: { charId: string; damage: number }[] = [];
@@ -302,12 +326,20 @@ export class TeamReactionProvider {
       contributions.push({ charId: config.charId, damage });
     }
 
-    // Sort descending, apply rank weights
-    contributions.sort((a, b) => b.damage - a.damage);
-    const totalDamage = contributions.reduce(
-      (sum, c, i) => sum + c.damage * (LUNAR_RANK_WEIGHTS[i] ?? 0),
-      0
-    );
+    // Use pre-computed rank weights if available, otherwise sort dynamically
+    let totalDamage: number;
+    if (precomputedWeights) {
+      totalDamage = contributions.reduce(
+        (sum, c) => sum + c.damage * (precomputedWeights.get(c.charId) ?? 0),
+        0
+      );
+    } else {
+      contributions.sort((a, b) => b.damage - a.damage);
+      totalDamage = contributions.reduce(
+        (sum, c, i) => sum + c.damage * (LUNAR_RANK_WEIGHTS[i] ?? 0),
+        0
+      );
+    }
 
     return { parts: [{ damage: totalDamage, hits: 1 }], totalDamage };
   }
@@ -334,6 +366,7 @@ export class TeamReactionProvider {
     if (!entry) return { contributors: [], totalDamage: 0 };
 
     const formula = entry.parts[0].formula;
+    const precomputedWeights = this.rankWeights[formulaId];
 
     const contributions: { charId: string; damage: number }[] = [];
     for (const config of this.configs) {
@@ -343,11 +376,22 @@ export class TeamReactionProvider {
       contributions.push({ charId: config.charId, damage });
     }
 
-    contributions.sort((a, b) => b.damage - a.damage);
+    // Sort by pre-computed rank order if available, otherwise by damage
+    if (precomputedWeights) {
+      contributions.sort(
+        (a, b) =>
+          (precomputedWeights.get(a.charId) ?? 0) -
+          (precomputedWeights.get(b.charId) ?? 0)
+      );
+      // Reverse: highest weight (rank 1 = 1.0) first
+      contributions.reverse();
+    } else {
+      contributions.sort((a, b) => b.damage - a.damage);
+    }
     const ranked = contributions.map((c, i) => ({
       charId: c.charId,
       rank: i + 1,
-      weight: LUNAR_RANK_WEIGHTS[i] ?? 0,
+      weight: precomputedWeights?.get(c.charId) ?? LUNAR_RANK_WEIGHTS[i] ?? 0,
       damage: c.damage,
     }));
     const totalDamage = ranked.reduce((sum, c) => sum + c.damage * c.weight, 0);

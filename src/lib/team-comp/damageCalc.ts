@@ -69,7 +69,11 @@ export { TeamMeta };
 
 import type { ExtraBuff } from "./extraBuffTypes";
 import { createExtraStatBuffs } from "./extraBuffTypes";
-import { TeamReactionProvider } from "./teamReactions";
+import {
+  LUNAR_RANK_WEIGHTS,
+  MULTI_CONTRIBUTOR_REACTIONS,
+  TeamReactionProvider,
+} from "./teamReactions";
 
 // ═══════════════════════════════════════════════════════════════
 // TeamResonance
@@ -818,6 +822,49 @@ export class TeamBuild {
       charBases,
       configs
     );
+
+    // Pre-compute rank weights for multi-contributor lunar formulas
+    // using baseline stats (no artifacts) so ranking is deterministic.
+    this.computeBaselineLunarRanks(configs);
+  }
+
+  /**
+   * Compute rank weights for multi-contributor lunar reactions from baseline
+   * stats (base + weapon + static buffs, no artifacts). This determines
+   * a fixed ranking [1x, 0.5x, 1/12x, 1/12x] that both the compiled and
+   * interpreted paths use consistently.
+   */
+  private computeBaselineLunarRanks(configs: TeamSlotConfig[]): void {
+    const rxFormulas = this.reactionProvider.getFormulaIds();
+    const emptySheet = new StatSheet([]);
+    const emptySheets: Record<string, StatSheet> = {};
+    for (const c of configs) emptySheets[c.charId] = emptySheet;
+
+    // Get baseline team stats (no artifacts, no on-field character)
+    const baselineStats = this.getTeamStats(emptySheets, null);
+
+    for (const formulaId of Object.keys(rxFormulas)) {
+      if (!this.reactionProvider.isMultiContributor(formulaId)) continue;
+      const entry = this.reactionProvider.getFormulaEntry(formulaId);
+      if (!entry) continue;
+      const formula = entry.parts[0].formula;
+
+      // Evaluate each character's baseline damage
+      const contributions: { charId: string; damage: number }[] = [];
+      for (const config of configs) {
+        const stats = baselineStats[config.charId];
+        if (!stats) continue;
+        const damage = formula.calc(stats, config.charLevel, {});
+        contributions.push({ charId: config.charId, damage });
+      }
+
+      contributions.sort((a, b) => b.damage - a.damage);
+      const weights = new Map<string, number>();
+      for (let i = 0; i < contributions.length; i++) {
+        weights.set(contributions[i].charId, LUNAR_RANK_WEIGHTS[i] ?? 0);
+      }
+      this.reactionProvider.setRankWeights(formulaId, weights);
+    }
   }
 
   /**
@@ -2969,18 +3016,31 @@ export function getComboDisplayResult(
 
       let parts: DisplayPart[];
       if (teamBuild.reactionProvider.isMultiContributor(formulaId)) {
-        const teamStats = getStats(charId);
-        const display = teamBuild.reactionProvider.getMultiContributorDisplay(
-          formulaId,
-          charId,
-          teamStats,
-          ctx
-        );
-        // Single aggregated display part
-        const dp = formula.displayFull(postStats[charId]!, charLevel, ctx);
-        dp.damage = display.totalDamage;
-        dp.hits = 1;
-        parts = [dp];
+        // Generate 4 DisplayParts: one per team member, sorted by rank weight.
+        // The on-field character uses on-field stats; others use off-field stats.
+        const rankWeights =
+          teamBuild.reactionProvider.getRankWeights(formulaId);
+        const contributions: { charId: string; weight: number }[] = [];
+        for (const cfg of teamBuild.configs) {
+          const w = rankWeights?.get(cfg.charId) ?? 0;
+          contributions.push({ charId: cfg.charId, weight: w });
+        }
+        // Sort by weight descending (rank 1 first)
+        contributions.sort((a, b) => b.weight - a.weight);
+
+        parts = contributions.map((c) => {
+          // On-field character gets on-field stats, others get off-field stats
+          const stats = getStats(c.charId === charId ? charId : null);
+          const cLevel =
+            teamBuild.configs.find((cfg) => cfg.charId === c.charId)
+              ?.charLevel ?? 90;
+          const dp = formula.displayFull(stats[c.charId]!, cLevel, ctx);
+          dp.damage = dp.damage * c.weight;
+          dp.hits = 1;
+          dp.params = { ...dp.params, rankWeight: c.weight };
+          dp.contributorCharId = c.charId;
+          return dp;
+        });
       } else {
         const dp = formula.displayFull(postStats[charId]!, charLevel, ctx);
         dp.hits = 1;
