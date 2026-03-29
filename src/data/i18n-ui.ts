@@ -986,6 +986,7 @@ export const i18nUiData = {
     },
     rxTrigger: { en: "Trigger", zh: "触发" },
     rxOnField: { en: "On-field", zh: "战场" },
+    teamReactions: { en: "Team Reactions", zh: "队伍反应" },
     extraBuffs: { en: "Environment", zh: "环境设置" },
     extraBuffsFood: { en: "Food", zh: "料理" },
     extraBuffsEnv: { en: "Environment", zh: "环境" },

@@ -87,15 +87,40 @@ class YumemizukiMizuki extends CharacterBase {
   })();
 
   // Rotation: Q > E (Dreamdrifter ~10s with P1 extension); ~6 ticks during float
+  // Q initial + ~6 snack explosions during drift
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "mizuki-skill-swirl", count: 6 }];
+    return [
+      { id: "mizuki-burst-initial", count: 1 },
+      { id: "mizuki-burst-drop", count: 6 },
+      { id: "mizuki-skill-swirl", count: 6 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
     const eTickMult = this.param("E", 1);
     const canSwirl = this.teamMeta.hasReaction("swirl");
+    const qInitialMult = this.param("Q", 1);
+    const qDropMult = this.param("Q", 2);
+    const anemoBurst = {
+      element: "Anemo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
 
     return {
+      "mizuki-burst-initial": {
+        label: { zh: "Q初始伤害", en: "Q Initial" },
+        parts: [{ formula: new DirectFormula(qInitialMult, anemoBurst) }],
+      },
+      "mizuki-burst-drop": {
+        label: { zh: "Q竹星爆炸", en: "Q Drop Explosion" },
+        parts: [
+          {
+            formula: new DirectFormula(qDropMult, anemoBurst),
+            offField: true,
+          },
+        ],
+      },
       "mizuki-skill-swirl": {
         label: {
           zh: "E伤害+扩散",
@@ -367,7 +392,12 @@ class RaidenShogun extends CharacterBase {
               charId,
               filter: { abilities: ["burst"] },
             },
-            [{ key: "dmg%", value: 0.003 * this.teamMeta.energies[charId] }]
+            [
+              {
+                key: "dmg%",
+                value: this.param("E", 4) * this.teamMeta.energies[charId],
+              },
+            ]
           )
       ),
     ];
@@ -529,31 +559,55 @@ class AratakiItto extends CharacterBase {
 
   // Rotation: supports > Q > N1 E > 2×Kesagiri chain > E (Geo carry)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "itto-kesagiri", count: 2 }];
+    return [
+      { id: "itto-ushi", count: 1 },
+      { id: "itto-kesagiri", count: 2 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
     // Arataki Kesagiri: combo slashes + 1 final slash
     // C6: Ushi assists each slash → doubles combo count from 4 to 8
-    // Combo Lv10: 180.2%, Final Lv10: 377.4%
-    const combo = 1.802;
-    const final_ = 3.774;
+    const comboMult = this.param("A", 6);
+    const finalMult = this.param("A", 7);
     const comboCount = this.constellation >= 6 ? 8 : 4;
     const geoCharge = {
       element: "Geo" as const,
       ability: "charge" as const,
       reaction: "none" as const,
     };
+    const geoSkill = {
+      element: "Geo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    // E (Ushi): E param1
+    const ushiMult = this.param("E", 1);
     return {
+      "itto-ushi": {
+        label: { zh: "E阿丑", en: "E Ushi" },
+        parts: [{ formula: new DirectFormula(ushiMult, geoSkill) }],
+      },
       "itto-kesagiri": {
         label: {
           zh: `重击×${comboCount}+终`,
           en: `CA (${comboCount}+Final)`,
         },
         parts: [
-          { formula: new DirectFormula(combo, geoCharge), hits: comboCount },
-          { formula: new DirectFormula(final_, geoCharge) },
+          {
+            formula: new DirectFormula(comboMult, geoCharge),
+            hits: comboCount,
+          },
+          { formula: new DirectFormula(finalMult, geoCharge) },
         ],
+      },
+      "itto-combo-slash": {
+        label: { zh: "逆袈裟连斩", en: "Kesagiri Combo" },
+        parts: [{ formula: new DirectFormula(comboMult, geoCharge) }],
+      },
+      "itto-final-slash": {
+        label: { zh: "逆袈裟终结", en: "Kesagiri Final" },
+        parts: [{ formula: new DirectFormula(finalMult, geoCharge) }],
       },
     };
   })();
@@ -867,6 +921,18 @@ class SangonomiyaKokomi extends CharacterBase {
       "baseDmg",
       this.param("Q", 5)
     ),
+    // Q: Nereid's Ascension — HP → baseDmg for Bake-Kurage (Q param9)
+    new ScalingBuff(
+      cbs(this, "Q", ["Q"]),
+      {
+        receiver: "selfOnField",
+        filter: { abilities: ["skill"] },
+      },
+      [],
+      "hp",
+      "baseDmg",
+      this.param("Q", 9)
+    ),
     // C4: During Q, Normal ATK SPD +10%
     ...(this.constellation >= 4
       ? [
@@ -887,27 +953,76 @@ class SangonomiyaKokomi extends CharacterBase {
       : []),
   ];
 
-  // Rotation: E > supports > Q N2D×~5 (on-field during Q, ~3 fish procs at C1)
+  // Rotation: E > supports > Q N3×5 + Charged×3 + jellyfish ticks (on-field during Q, ~3 fish procs at C1)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "kokomi-c1-fish", count: 3 }];
+    return [
+      { id: "kokomi-normal", count: 5 },
+      { id: "kokomi-charged", count: 3 },
+      { id: "kokomi-jellyfish", count: 1 },
+      { id: "kokomi-c1-fish", count: 3 },
+    ];
   }
 
-  protected readonly formulaMap = {
-    // C1: Swimming Fish — 30% Max HP as Hydro DMG (not Normal ATK DMG)
-    "kokomi-c1-fish": {
-      label: { zh: "游鱼", en: "Swimming Fish" },
-      minC: 1,
-      parts: [
-        {
-          formula: new DirectFormula(
-            0.3,
-            { element: "Hydro", ability: "special", reaction: "none" },
-            "hp"
-          ),
-        },
-      ],
-    },
-  };
+  protected readonly formulaMap = (() => {
+    const hydroNormal = {
+      element: "Hydro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    return {
+      // Normal Attack 3-hit chain (A param1/2/3)
+      "kokomi-normal": {
+        label: { zh: "普攻三段", en: "Normal ATK (N3)" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 1), hydroNormal) },
+          { formula: new DirectFormula(this.param("A", 2), hydroNormal) },
+          { formula: new DirectFormula(this.param("A", 3), hydroNormal) },
+        ],
+      },
+      // Charged Attack (A param4)
+      "kokomi-charged": {
+        label: { zh: "重击", en: "Charged ATK" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 4), {
+              element: "Hydro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      // E: Bake-Kurage — Ripple DMG (E param3), 6 ticks over 12s, off-field
+      "kokomi-jellyfish": {
+        label: { zh: "化海月", en: "Bake-Kurage" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 3), {
+              element: "Hydro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 6,
+            offField: true,
+          },
+        ],
+      },
+      // C1: Swimming Fish — 30% Max HP as Hydro DMG (not Normal ATK DMG)
+      "kokomi-c1-fish": {
+        label: { zh: "游鱼", en: "Swimming Fish" },
+        minC: 1,
+        parts: [
+          {
+            formula: new DirectFormula(
+              0.3,
+              { element: "Hydro", ability: "special", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("kaedehara_kazuha")
@@ -971,21 +1086,36 @@ class KaedeharaKazuha extends CharacterBase {
   })();
 
   // Rotation: E (plunge) > Q > E (plunge) (VV support, ~20s)
+  // Use absorbed-element burst variant when an absorbable element is present
   protected override get comboDescriptor(): ComboDescriptor {
+    const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+    const teamEls = new Set(Object.values(this.teamMeta.elements));
+    const absorbedEl = absorbElements.find((el) => teamEls.has(el));
+    const burstId = absorbedEl
+      ? `kazuha-burst-${absorbedEl.toLowerCase()}`
+      : "kazuha-burst";
     return [
       { id: "kazuha-skill", count: 2 },
       { id: "kazuha-plunge-c6", count: 2 },
-      { id: "kazuha-burst", count: 1 },
+      { id: burstId, count: 1 },
     ];
   }
 
-  // E press: E param1; Q slash: Q param1; Q DoT: Q param2
-  // C6 High Plunge (Midare Ranzan): Normal ATK talent, no constellation boost. High plunge Lv10 404%
+  // E press: E param1; Q slash: Q param1; Q DoT: Q param2; Q absorption: Q param3
+  // High Plunge: A param12
   protected readonly formulaMap = (() => {
     const eMult = this.param("E", 1);
+    const highPlunge = this.param("A", 12);
     const qSlash = this.param("Q", 1);
     const qDot = this.param("Q", 2);
-    return {
+    const qAbsorb = this.param("Q", 3);
+    const anemoBurst = {
+      element: "Anemo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+
+    const formulas: Record<string, FormulaEntry> = {
       "kazuha-skill": {
         label: { zh: "E伤害", en: "E" },
         parts: [
@@ -1003,7 +1133,7 @@ class KaedeharaKazuha extends CharacterBase {
         minC: 6,
         parts: [
           {
-            formula: new DirectFormula(4.04, {
+            formula: new DirectFormula(highPlunge, {
               element: "Anemo",
               ability: "plunge",
               reaction: "none",
@@ -1015,15 +1145,69 @@ class KaedeharaKazuha extends CharacterBase {
         label: { zh: "Q 1斩+5风场", en: "Q (1 Slash + 5 DoT)" },
         parts: [
           {
-            formula: new DirectFormula(qSlash, {
+            formula: new DirectFormula(qSlash, anemoBurst),
+          },
+          {
+            formula: new DirectFormula(qDot, anemoBurst),
+            hits: 5,
+            offField: true,
+          },
+        ],
+      },
+    };
+
+    // S10 element absorption: per-element formulas for absorbable team elements
+    const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+    const teamEls = new Set(Object.values(this.teamMeta.elements));
+
+    // P1 Soumon Swordsmanship: absorbed-element 200% ATK plunge hit
+    for (const el of absorbElements) {
+      if (!teamEls.has(el)) continue;
+      formulas[`kazuha-plunge-c6-${el.toLowerCase()}`] = {
+        label: {
+          zh: `下落+吸收(${el})`,
+          en: `Plunge + Absorbed (${el})`,
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(highPlunge, {
               element: "Anemo",
-              ability: "burst",
+              ability: "plunge",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(qDot, {
-              element: "Anemo",
+            formula: new DirectFormula(2.0, {
+              element: el,
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      };
+    }
+
+    // Q Additional Elemental DMG (param3), 5 ticks
+    for (const el of absorbElements) {
+      if (!teamEls.has(el)) continue;
+      formulas[`kazuha-burst-${el.toLowerCase()}`] = {
+        label: {
+          zh: `Q 1斩+5风场+吸收(${el})`,
+          en: `Q (1 Slash + 5 DoT) + Absorbed (${el})`,
+        },
+        parts: [
+          {
+            formula: new DirectFormula(qSlash, anemoBurst),
+          },
+          {
+            formula: new DirectFormula(qDot, anemoBurst),
+            hits: 5,
+            offField: true,
+          },
+          {
+            formula: new DirectFormula(qAbsorb, {
+              element: el,
               ability: "burst",
               reaction: "none",
             }),
@@ -1031,8 +1215,10 @@ class KaedeharaKazuha extends CharacterBase {
             offField: true,
           },
         ],
-      },
-    };
+      };
+    }
+
+    return formulas;
   })();
 }
 
@@ -1094,6 +1280,9 @@ class Yoimiya extends CharacterBase {
     return [
       { id: "yoimiya-normal", count: 3 },
       { id: "yoimiya-c6-arrow", count: 0 },
+      ...(this.castQ === "yes"
+        ? [{ id: "yoimiya-burst" as const, count: 1 }]
+        : []),
     ];
   }
 
@@ -1145,6 +1334,29 @@ class Yoimiya extends CharacterBase {
           { formula: new DirectFormula(m(n3) * 0.6, pyroNormal) },
           { formula: new DirectFormula(m(n4) * 0.6, pyroNormal), hits: 2 },
           { formula: new DirectFormula(m(n5) * 0.6, pyroNormal) },
+        ],
+      };
+    }
+
+    // Q: Initial hit (Q param1) + Aurous Blaze explosions (Q param2, ~5 procs off-field)
+    if (this.castQ === "yes") {
+      const pyroBurst = {
+        element: "Pyro" as const,
+        ability: "burst" as const,
+        reaction: "none" as const,
+      };
+      formulas["yoimiya-burst"] = {
+        label: {
+          zh: "Q 初击+火光×5",
+          en: "Q (Hit + 5 Blaze)",
+        },
+        parts: [
+          { formula: new DirectFormula(this.param("Q", 1), pyroBurst) },
+          {
+            formula: new DirectFormula(this.param("Q", 2), pyroBurst),
+            hits: 5,
+            offField: true,
+          },
         ],
       };
     }

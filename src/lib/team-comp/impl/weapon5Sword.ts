@@ -304,28 +304,11 @@ class FreedomSworn extends WeaponBase {
       },
     ]),
     new StatBuff(
-      wbs(this, ["elemental-reaction"], "millennial-movement-atk"),
-      { receiver: "team", filter: { abilities: ["normal"] } },
-      [
-        {
-          key: "dmg%",
-          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-        },
-      ]
-    ),
-    new StatBuff(
-      wbs(this, ["elemental-reaction"], "millennial-movement-atk"),
-      { receiver: "team", filter: { abilities: ["charge"] } },
-      [
-        {
-          key: "dmg%",
-          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-        },
-      ]
-    ),
-    new StatBuff(
-      wbs(this, ["elemental-reaction"], "millennial-movement-atk"),
-      { receiver: "team", filter: { abilities: ["plunge"] } },
+      wbs(this, ["elemental-reaction"], "millennial-movement-dmg"),
+      {
+        receiver: "team",
+        filter: { abilities: ["normal", "charge", "plunge"] },
+      },
       [
         {
           key: "dmg%",

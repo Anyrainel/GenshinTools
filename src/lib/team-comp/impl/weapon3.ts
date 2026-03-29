@@ -3,17 +3,29 @@ import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { r, wbs } from "../helpers";
 
-@RegisterWeapon("harbinger_of_dawn")
+const harbingerOption = {
+  label: { zh: "生命值状态", en: "HP State" },
+  choices: [
+    { value: "high", label: { zh: "生命值>90%", en: "HP above 90%" } },
+    { value: "low", label: { zh: "生命值≤90%", en: "HP below 90%" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("harbinger_of_dawn", harbingerOption)
 class HarbingerOfDawn extends WeaponBase {
-  // HP > 90% condition
-  readonly buffs = [
-    new StatBuff(wbs(this, ["high-hp"]), { receiver: "self" }, [
-      {
-        key: "cr",
-        value: r(this.refinement, [0.14, 0.175, 0.21, 0.245, 0.28]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(harbingerOption, this.option);
+
+  get buffs() {
+    if (this.o !== "high") return [];
+    return [
+      new StatBuff(wbs(this, ["high-hp"]), { receiver: "self" }, [
+        {
+          key: "cr",
+          value: r(this.refinement, [0.14, 0.175, 0.21, 0.245, 0.28]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("white_tassel")
@@ -163,8 +175,10 @@ class EmeraldOrb extends WeaponBase {
     const canReact =
       this.teamMeta.hasReaction("vaporize", this.charId) ||
       this.teamMeta.hasReaction("electroCharged", this.charId) ||
+      this.teamMeta.hasReaction("lunarCharged", this.charId) ||
       this.teamMeta.hasReaction("frozen", this.charId) ||
       this.teamMeta.hasReaction("bloom", this.charId) ||
+      this.teamMeta.hasReaction("lunarBloom", this.charId) ||
       (this.teamMeta.elements[this.charId] === "Anemo" &&
         Object.values(this.teamMeta.elements).includes("Hydro"));
 

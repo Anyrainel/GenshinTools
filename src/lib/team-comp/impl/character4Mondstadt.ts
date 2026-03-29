@@ -129,11 +129,11 @@ class Razor extends CharacterBase {
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // Q: Normal ATK SPD +40% (Lv10/Lv13 is 40%)
+      // Q: Normal ATK SPD bonus (talent-level-dependent, param3)
       new StatBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-        [{ key: "atkSpd%", value: 0.4 }]
+        [{ key: "atkSpd%", value: this.param("Q", 3) }]
       ),
       // C1: On elemental particle pickup → self DMG +10%
       ...(this.constellation >= 1
@@ -190,8 +190,13 @@ class Razor extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    // Normal attack hits at Lv10 (A is not upgraded by C3/C5)
-    const naHits = [1.71, 1.47, 1.84, 2.43];
+    // Normal attack hits — A param1 through param4
+    const naHits = [
+      this.param("A", 1),
+      this.param("A", 2),
+      this.param("A", 3),
+      this.param("A", 4),
+    ];
     // Soul companion scaling — Q param2
     const wolfScaling = this.param("Q", 2);
 
@@ -323,8 +328,34 @@ class Noelle extends CharacterBase {
       : []),
   ];
 
-  // Pure on-field DPS with Q infusion — formulas depend on Normal ATK multipliers
-  protected readonly formulaMap = {};
+  // Q-infused Normal Attack 4-hit string (Geo infusion during Q)
+  protected readonly formulaMap = (() => {
+    const n1 = this.param("A", 1);
+    const n2 = this.param("A", 2);
+    const n3 = this.param("A", 3);
+    const n4 = this.param("A", 4);
+    const geoNormal = {
+      element: "Geo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    return {
+      "noelle-na": {
+        label: { zh: "Q普攻（4段）", en: "Q Normal (4-hit)" },
+        parts: [
+          { formula: new DirectFormula(n1, geoNormal) },
+          { formula: new DirectFormula(n2, geoNormal) },
+          { formula: new DirectFormula(n3, geoNormal) },
+          { formula: new DirectFormula(n4, geoNormal) },
+        ],
+      },
+    };
+  })();
+
+  // Rotation: 4N during Q (on-field Geo carry)
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [{ id: "noelle-na", count: 4 }];
+  }
 }
 
 @RegisterCharacter("fischl")
@@ -334,36 +365,39 @@ class Fischl extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
     if (this.isHexerei) {
-      // P4: Hexerei: Secret Rite — buffs to on-field characters when Oz is present
+      // P4: Hexerei: Secret Rite — buffs when Oz is present
+      // "菲谢尔与队伍中附近的当前场上其他角色" → self (Fischl, so Oz off-field benefits) + otherOnField (teammates)
       // C6: After Oz coordinated attack, P4 ATK% and EM effects are increased by 100%
       // Under peak-damage model, C6 coordinated attacks are always active → doubled values
       const c6Mult = this.constellation >= 6 ? 2 : 1;
+      const p4Origin = this.constellation >= 6 ? "P4/C6" : "P4";
       if (this.teamMeta.hasReaction("overloaded")) {
+        const src = cbs(this, p4Origin, ["E", "overloaded"]);
         buffs.push(
-          new StatBuff(
-            cbs(this, this.constellation >= 6 ? "P4/C6" : "P4", [
-              "E",
-              "overloaded",
-            ]),
-            { receiver: "teamOnField" },
-            [{ key: "atk%", value: 0.225 * c6Mult }]
-          )
+          new StatBuff(src, { receiver: "self" }, [
+            { key: "atk%", value: 0.225 * c6Mult },
+          ]),
+          new StatBuff(src, { receiver: "otherOnField" }, [
+            { key: "atk%", value: 0.225 * c6Mult },
+          ])
         );
       }
       if (
         this.teamMeta.hasReaction("electroCharged") ||
         this.teamMeta.hasReaction("lunarCharged")
       ) {
+        const src = cbs(this, p4Origin, [
+          "E",
+          "electroCharged",
+          "lunarCharged",
+        ]);
         buffs.push(
-          new StatBuff(
-            cbs(this, this.constellation >= 6 ? "P4/C6" : "P4", [
-              "E",
-              "electroCharged",
-              "lunarCharged",
-            ]),
-            { receiver: "teamOnField" },
-            [{ key: "em", value: 90 * c6Mult }]
-          )
+          new StatBuff(src, { receiver: "self" }, [
+            { key: "em", value: 90 * c6Mult },
+          ]),
+          new StatBuff(src, { receiver: "otherOnField" }, [
+            { key: "em", value: 90 * c6Mult },
+          ])
         );
       }
     }
@@ -378,6 +412,13 @@ class Fischl extends CharacterBase {
     const tag = {
       element: "Electro" as const,
       ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    // Q: Falling Thunder DMG — param1
+    const qFallingMult = this.param("Q", 1);
+    const burstTag = {
+      element: "Electro" as const,
+      ability: "burst" as const,
       reaction: "none" as const,
     };
     return {
@@ -401,12 +442,50 @@ class Fischl extends CharacterBase {
             : []),
         ],
       },
+      // P2: Thundering Retribution — 80% ATK Electro DMG when on-field triggers Electro reaction while Oz is present
+      // ~10 procs per rotation (0.5s ICD over 10s Oz duration); requires Electro-related reaction
+      "fischl-p2": {
+        label: { zh: "P2圣裁之雷", en: "P2 Thundering Retribution" },
+        when:
+          this.teamMeta.hasReaction("overloaded") ||
+          this.teamMeta.hasReaction("electroCharged") ||
+          this.teamMeta.hasReaction("superconduct") ||
+          this.teamMeta.hasReaction("lunarCharged") ||
+          this.teamMeta.hasReaction("aggravate"),
+        parts: [
+          {
+            formula: new DirectFormula(0.8, tag),
+            hits: 10,
+            offField: true,
+          },
+        ],
+      },
+      "fischl-burst": {
+        label: { zh: "Q落雷", en: "Q Falling Thunder" },
+        parts: [
+          {
+            formula: new DirectFormula(qFallingMult, burstTag),
+          },
+          // C4: Q activation deals 222% ATK as Electro DMG
+          ...(this.constellation >= 4
+            ? [
+                {
+                  formula: new DirectFormula(2.22, burstTag),
+                },
+              ]
+            : []),
+        ],
+      },
     };
   })();
 
-  // Rotation: E/Q to summon Oz, one Oz duration per rotation (hits baked in)
+  // Rotation: Q (falling thunder + C4 hit) + Oz duration (hits baked in)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "fischl-oz-total", count: 1 }];
+    return [
+      { id: "fischl-burst", count: 1 },
+      { id: "fischl-oz-total", count: 1 },
+      { id: "fischl-p2", count: 1 },
+    ];
   }
 }
 
@@ -659,27 +738,49 @@ class Bennett extends CharacterBase {
         return this.constellation >= 1 ? base + 0.2 : base;
       })()
     ),
-    // C6: Pyro DMG +15% within Q field (sword/claymore/polearm only — no filter)
+    // C6: Pyro DMG +15% within Q field (sword/claymore/polearm only)
     ...(this.constellation >= 6
-      ? [
-          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
-            { key: "pyro%", value: 0.15 },
-          ]),
-        ]
+      ? Object.entries(this.teamMeta.weaponTypes)
+          .filter(
+            ([, wt]) => wt === "Sword" || wt === "Claymore" || wt === "Polearm"
+          )
+          .map(
+            ([cid]) =>
+              new StatBuff(
+                cbs(this, "C6", ["Q"]),
+                { receiver: "teamOnField", charId: cid },
+                [{ key: "pyro%", value: 0.15 }]
+              )
+          )
       : []),
   ];
 
   protected readonly formulaMap = (() => {
     // E tap: param1
     const eMult = this.param("E", 1);
+    // Q: Skill DMG — param1
+    const qMult = this.param("Q", 1);
+    const pyroTag = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     return {
       "bennett-skill": {
         label: { zh: "E点按", en: "E Skill (Tap)" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(eMult, pyroTag),
+          },
+        ],
+      },
+      "bennett-burst": {
+        label: { zh: "Q伤害", en: "Q Burst" },
+        parts: [
+          {
+            formula: new DirectFormula(qMult, {
               element: "Pyro",
-              ability: "skill",
+              ability: "burst",
               reaction: "none",
             }),
           },
@@ -688,9 +789,12 @@ class Bennett extends CharacterBase {
     };
   })();
 
-  // Rotation: E×2 + Q (support, tap E has ~4s CD with P1)
+  // Rotation: E + Q (support, tap E has ~4s CD with P1)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "bennett-skill", count: 1 }];
+    return [
+      { id: "bennett-skill", count: 1 },
+      { id: "bennett-burst", count: 1 },
+    ];
   }
 }
 
@@ -718,9 +822,43 @@ class Amber extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
+    // E: Baron Bunny explosion — E param2
+    // C2: Manual detonation deals 200% additional DMG (fixed, not talent-scaled)
+    const eExplosionMult = this.param("E", 2);
+    // C4: Adds 1 additional charge → 2 uses per rotation
+    const eCount = this.constellation >= 4 ? 2 : 1;
     // Q Fiery Rain per wave — Q param1, 18 waves
     const qWaveMult = this.param("Q", 1);
     return {
+      "amber-skill": {
+        label: {
+          zh: `E爆炸×${eCount}`,
+          en: `E Explosion ×${eCount}`,
+        },
+        parts: [
+          {
+            formula: new DirectFormula(eExplosionMult, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: eCount,
+          },
+          // C2: Manual detonation adds 200% ATK as additional explosion DMG
+          ...(this.constellation >= 2
+            ? [
+                {
+                  formula: new DirectFormula(2.0, {
+                    element: "Pyro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                  hits: eCount,
+                },
+              ]
+            : []),
+        ],
+      } satisfies FormulaEntry,
       "amber-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
@@ -737,9 +875,12 @@ class Amber extends CharacterBase {
     };
   })();
 
-  // Rotation: Q (burst support, 18 waves baked in)
+  // Rotation: E (Baron Bunny) + Q (18 waves baked in)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "amber-burst", count: 1 }];
+    return [
+      { id: "amber-skill", count: 1 },
+      { id: "amber-burst", count: 1 },
+    ];
   }
 }
 

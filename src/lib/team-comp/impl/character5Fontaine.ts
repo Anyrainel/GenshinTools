@@ -5,7 +5,7 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
-import type { OptionDef } from "../damageModels";
+import type { OptionDef, TeamMeta } from "../damageModels";
 import { cbs } from "../helpers";
 import type { ComboDescriptor, ReactionType } from "../types";
 
@@ -787,7 +787,7 @@ class Furina extends CharacterBase {
         minC: 6,
         parts: [
           {
-            formula: new DirectFormula(this.param("A", 11), {
+            formula: new DirectFormula(this.param("A", 9), {
               element: "Hydro",
               ability: "plunge",
               reaction: "none",
@@ -943,12 +943,12 @@ class Wriothesley extends CharacterBase {
       new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
         { key: "atk%", value: 0.3 },
       ]),
-      // E: Enhanced Repelling Fist deals 170.3% of Normal ATK DMG (baseDmg% zone)
-      // "造成原本170.3%的伤害" → baseDmg% +0.703
+      // E: Enhanced Repelling Fist deals {param1:F1P} of Normal ATK DMG (baseDmg% zone)
+      // "造成原本X%的伤害" → baseDmg% = param1 - 1.0
       new StatBuff(
         cbs(this, "E", ["E"]),
         { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-        [{ key: "baseDmg%", value: 0.703 }]
+        [{ key: "baseDmg%", value: this.param("E", 1) - 1.0 }]
       ),
     ];
 

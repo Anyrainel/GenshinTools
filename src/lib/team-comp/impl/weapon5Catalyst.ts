@@ -241,7 +241,7 @@ class StarcallersWatch extends WeaponBase {
         { key: "em", value: r(this.refinement, [100, 125, 150, 175, 200]) },
       ]),
     ];
-    if (this.teamMeta.hasShielder()) {
+    if (this.teamMeta.isShielder[this.charId]) {
       buffs.push(
         new StatBuff(
           wbs(this, ["shield"], "starcallers-watch"),

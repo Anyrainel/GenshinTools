@@ -1,20 +1,30 @@
 # Snezhnaya Damage Tracker
-- id: tartaglia-p3-party-level
-  entity: tartaglia
-  rule: S6
+
+- id: "arlecchino-e-spike-missing"
+  entity: "arlecchino"
+  rule: "S8"
   status: wont-do
-  category: approximation
-  summary: >
-    P3 +1 Normal Attack talent level for all party members not modeled.
-    Effect is unconditional but engine lacks talent-level adjustment.
+  category: "missing-formula"
+  summary: "E Spike DMG ({param1}) is not included as a part in the E formula. The spike hits multiple opponents on E cast alongside the cleave — per S8 it should be an extra part in the existing arlecchino-e-cleave entry."
   detail: >
-    P3 "Master of Weaponry" grants +1 Normal Attack Level to all party members
-    (unconditional, no team comp requirement). Engine cannot model this because
-    talent multipliers are hardcoded constants in each character's formulaMap.
-    A +1 talent level maps to different percentage increases per character
-    (~5-7% at Lv10->11), so no single baseDmg% team buff can accurately
-    represent it. Would require a talent-level-aware formula system or
-    per-character multiplier lookup tables. Impact is moderate (~5% Normal ATK
-    increase) but universal across all party members.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
+    E Spike DMG is 26.7% ATK at Lv10 vs Cleave at 240.4% — about 11% of the cleave. In
+    Arlecchino's Normal Attack-heavy rotation (3 full NA sequences at ~1500%+ ATK each,
+    plus Q and E cleave), the spike adds ~26.7% to a single E cast, contributing well
+    under 2% of total rotation DPS. Negligible impact; not worth modeling.
+  created: "2026-03-28"
+  resolved: "2026-03-29"
+
+- id: "arlecchino-directive-periodic"
+  entity: "arlecchino"
+  rule: "S8"
+  status: wont-do
+  category: "missing-formula"
+  summary: "Blood-Debt Directive periodic DMG ({param3}, every 5s, max 2 instances, ability: skill, offField: true) has no formula. Per S8, periodic/proc damage should always be modeled."
+  detail: >
+    Blood-Debt Directive deals 57.2% ATK per tick (Lv10), every 5s, max 2 instances =
+    114.4% ATK total. Arlecchino's rotation is dominated by Masque of the Red Death
+    Normal Attacks (~4500%+ ATK equivalent per rotation with Bond of Life scaling) plus
+    Q and C2 Bloodfire. The directive's 114.4% contributes ~2% of total rotation DPS.
+    Negligible impact; not worth adding a formula for.
+  created: "2026-03-28"
+  resolved: "2026-03-29"

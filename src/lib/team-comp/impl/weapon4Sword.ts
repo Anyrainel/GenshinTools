@@ -243,7 +243,7 @@ class SapwoodBlade extends WeaponBase {
     return [
       new StatBuff(
         wbs(this, ["dendro-reaction"], "leaf-of-consciousness-em"),
-        { receiver: "self" },
+        { receiver: "teamOnField" },
         [{ key: "em", value: r(this.refinement, [60, 75, 90, 105, 120]) }]
       ),
     ];

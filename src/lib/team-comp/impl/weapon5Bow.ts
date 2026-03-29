@@ -76,14 +76,17 @@ class AstralVulturesCrimsonPlumage extends WeaponBase {
       if (id === this.charId) continue;
       if (el !== wielderElement) diffCount++;
     }
-    const buffs: StatBuff[] = [
-      new StatBuff(wbs(this, ["swirl"]), { receiver: "self" }, [
-        {
-          key: "atk%",
-          value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-        },
-      ]),
-    ];
+    const buffs: StatBuff[] = [];
+    if (this.teamMeta.hasReaction("swirl", this.charId)) {
+      buffs.push(
+        new StatBuff(wbs(this, ["swirl"]), { receiver: "self" }, [
+          {
+            key: "atk%",
+            value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+          },
+        ])
+      );
+    }
     if (diffCount >= 2) {
       buffs.push(
         new StatBuff(
@@ -245,12 +248,14 @@ class ElegyForTheEnd extends WeaponBase {
       { key: "em", value: r(this.refinement, [60, 75, 90, 105, 120]) },
     ]),
     new StatBuff(
+      wbs(this, ["E", "Q"], "millennial-movement-em"),
+      { receiver: "team" },
+      [{ key: "em", value: r(this.refinement, [100, 125, 150, 175, 200]) }]
+    ),
+    new StatBuff(
       wbs(this, ["E", "Q"], "millennial-movement-atk"),
       { receiver: "team" },
-      [
-        { key: "em", value: r(this.refinement, [100, 125, 150, 175, 200]) },
-        { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      ]
+      [{ key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }]
     ),
   ];
 }

@@ -11,27 +11,8 @@ import type { ComboDescriptor } from "../types";
 @RegisterCharacter("sethos")
 class Sethos extends CharacterBase {
   readonly buffs = [
-    // P2: EM × 700% → baseDmg for Shadowpiercing Shot
-    // "4枚贯影箭命中敌人后" → removed after 4 hits.
-    // Self buff → modeled as formula nuance (formula already has ≤4 shots).
-    new ScalingBuff(
-      cbs(this, "P2", ["charge"]),
-      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      [],
-      "em",
-      "baseDmg",
-      7.0
-    ),
-    // C1: Shadowpiercing Shot CR +15%
-    ...(this.constellation >= 1
-      ? [
-          new StatBuff(
-            cbs(this, "C1", ["charge"]),
-            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-            [{ key: "cr", value: 0.15 }]
-          ),
-        ]
-      : []),
+    // P2: EM × 700% → baseDmg for Shadowpiercing Shot only (applied via bespokeBuff)
+    // C1: Shadowpiercing Shot CR +15% (applied via bespokeBuff, not here — see formulaMap)
     // C2: Self Electro DMG +30% (2 stacks × 15%)
     ...(this.constellation >= 2
       ? [
@@ -65,6 +46,20 @@ class Sethos extends CharacterBase {
               { element: "Electro", ability: "charge", reaction: "none" },
               "atk",
               { key: "em", multiplier: emMult }
+            ),
+            // P2: EM × 700% → baseDmg for Shadowpiercing Shot only
+            // "4枚贯影箭命中敌人后" → removed after 4 hits.
+            // Self buff → modeled as formula nuance (formula already has ≤4 shots).
+            // C1: Shadowpiercing Shot CR +15% (merged here to avoid leaking to Dusk Bolts)
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2/C1", ["charge"]),
+              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+              this.constellation >= 1
+                ? [{ key: "cr" as const, value: 0.15 }]
+                : [],
+              "em",
+              "baseDmg",
+              7.0
             ),
           },
         ],
@@ -179,11 +174,11 @@ class Kaveh extends CharacterBase {
 @RegisterCharacter("faruzan")
 class Faruzan extends CharacterBase {
   readonly buffs = [
-    // Q: Anemo RES -30% (enemy debuff → always team)
+    // Q: Anemo RES decrease (Q param4)
     new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { elements: ["Anemo"] } },
-      [{ key: "resReduction%", value: 0.3 }]
+      [{ key: "resReduction%", value: this.param("Q", 4) }]
     ),
     // Q: Anemo DMG Bonus — Lv10 32.4%, Lv13 (C5+) 38.2%
     new StatBuff(
@@ -299,11 +294,11 @@ class Layla extends CharacterBase {
 @RegisterCharacter("candace")
 class Candace extends CharacterBase {
   readonly buffs = [
-    // Q: Prayer of Crimson Crown — on-field Normal ATK Elemental DMG +20%
+    // Q: Prayer of Crimson Crown — on-field Normal ATK Elemental DMG bonus (Q param3)
     new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "teamOnField", filter: { abilities: ["normal"] } },
-      [{ key: "dmg%", value: 0.2 }]
+      [{ key: "dmg%", value: this.param("Q", 3) }]
     ),
     // P2: Per 1000 Max HP, Normal ATK Elemental DMG +0.5%
     new ScalingBuff(
@@ -349,23 +344,59 @@ class Collei extends CharacterBase {
       : []),
   ];
 
-  protected readonly formulaMap = {
-    // P1: Sprout — 40% ATK Dendro DMG per second for 3s, considered Elemental Skill DMG
-    "collei-sprout": {
-      label: { zh: "P1新叶", en: "P1 Sprout" },
-      parts: [
-        {
-          formula: new DirectFormula(0.4, {
-            element: "Dendro",
-            ability: "skill",
-            reaction: "none",
-          }),
-        },
-      ],
-    },
-  };
+  protected readonly formulaMap = (() => {
+    const dendroSkill = {
+      element: "Dendro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const dendroBurst = {
+      element: "Dendro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    return {
+      // E: Floral Brush — skill DMG (hits twice: throw + return)
+      "collei-skill": {
+        label: { zh: "E飞叶轮", en: "E Floral Brush" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), dendroSkill) },
+        ],
+      },
+      // P1: Sprout — 40% ATK Dendro DMG per second for 3s, considered Elemental Skill DMG
+      "collei-sprout": {
+        label: { zh: "P1新叶", en: "P1 Sprout" },
+        parts: [
+          { formula: new DirectFormula(0.4, dendroSkill), offField: true },
+        ],
+      },
+      // Q: Trump-Card Kitty — Explosion DMG
+      "collei-burst-explosion": {
+        label: { zh: "Q爆发", en: "Q Explosion" },
+        parts: [
+          { formula: new DirectFormula(this.param("Q", 1), dendroBurst) },
+        ],
+      },
+      // Q: Trump-Card Kitty — Leap DMG (Cuilein-Anbar bounces)
+      "collei-burst-leap": {
+        label: { zh: "Q跃动", en: "Q Leap" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), dendroBurst),
+            offField: true,
+          },
+        ],
+      },
+    };
+  })();
 
+  // Rotation: E Q — off-field Dendro support, 2 E hits (throw+return) + 1 explosion + ~9 leaps per 12s
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "collei-sprout", count: 0 }];
+    return [
+      { id: "collei-skill", count: 2 },
+      { id: "collei-sprout", count: 0 },
+      { id: "collei-burst-explosion", count: 1 },
+      { id: "collei-burst-leap", count: 9 },
+    ];
   }
 }

@@ -14,3 +14,211 @@
     weak spot DMG as a stat. Not worth the engine complexity for a 3-star bow.
   created: "2026-02-25"
   resolved: "2026-02-26"
+
+
+- id: forest-regalia-pickup-gap
+  entity: forest_regalia
+  rule: U1
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Leaf of Consciousness is a special pickup object that only one on-field
+    character can pick up. The single-character pickup limitation is not enforced
+    by the engine (teamOnField applies to all on-field instances).
+  detail: >
+    This is a systemic engine limitation that affects all special pickup objects,
+    not specific to Forest Regalia. The teamOnField receiver is the closest
+    available approximation per U1. Since Forest Regalia is a 4-star weapon and
+    the pickup only generates one Leaf every 20 seconds (single buff instance),
+    the practical impact is minimal — the on-field character at the time of
+    pickup gets the buff, which teamOnField models correctly in most rotations.
+    Not worth engine changes for this case.
+  created: "2026-03-28"
+  resolved: "2026-03-29"
+
+- id: emerald-orb-missing-lunar-reactions
+  entity: emerald_orb
+  rule: U5
+  status: completed
+  category: bug
+  summary: >
+    Game text lists 月感电 (LunarCharged) and 月绽放 (LunarBloom) as triggering
+    reactions, but the canReact check only tests electroCharged, frozen, bloom,
+    and Anemo+Hydro swirl. Missing hasReaction("lunarCharged") and
+    hasReaction("lunarBloom") checks causes the ATK% buff to not activate for
+    teams that can only trigger the lunar variants.
+  detail: >
+    LUNAR_SUPERSEDES makes hasReaction("electroCharged") return false when
+    lunarCharged is possible, and hasReaction("bloom") return false when
+    lunarBloom is possible. Added lunarCharged and lunarBloom checks to
+    the canReact guard. Also updated translator-rules.md S10 to document
+    lunar superseding so triage/review agents catch this pattern.
+  created: "2026-03-28"
+  resolved: "2026-03-29"
+
+- id: calamity-queller-consummation-ramp
+  entity: calamity_queller
+  rule: U4
+  status: wont-do
+  category: approximation
+  summary: >
+    Consummation ATK% ramps from 0 to 6 stacks over 6 seconds (1 stack/s).
+    Implementation hardcodes max 6 stacks with off-field doubling (6*2*3.2%).
+    Per S12, time-dependent ramps should use OptionMap with tiers or be documented
+    as a forced approximation.
+  detail: >
+    The 6-second ramp is short relative to a typical rotation (20+ seconds).
+    Calamity Queller is almost exclusively used on Shenhe, who uses E and
+    immediately swaps off-field. By the time her teammates consume Icy Quill
+    stacks (6+ seconds into the rotation), Consummation is at max stacks.
+    The off-field doubling is also standard for Shenhe's playstyle. Under the
+    peak-damage model (S6), max stacks after a short ramp with no team
+    dependency is an acceptable assumption. The approximation has negligible
+    impact on practical damage calculations.
+  created: "2026-03-28"
+  resolved: "2026-03-29"
+
+- id: royal-greatsword-stack-approx
+  entity: royal_greatsword
+  rule: S12
+  status: wont-do
+  category: approximation
+  summary: >
+    Royal Greatsword CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
+    The effective stack count depends on the character's CRIT Rate, which cannot
+    be determined at construction time. No OptionMap or documentation of the
+    forced average exists.
+  detail: >
+    S12 targets time-dependent ramps, not action-dependent stacks with
+    CRIT-based resets. Royal weapons are not time-ramping buffs — the stack
+    count depends on CRIT Rate, which makes the effective average highly
+    variable (fewer stacks at higher CR). 3 stacks is a reasonable middle-ground
+    approximation. Royal weapons are 4-star Starglitter Exchange weapons widely
+    regarded as suboptimal choices. Adding OptionMap for a low-priority weapon
+    series with a niche stacking mechanic is not worth the complexity.
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: sapwood-blade-receiver
+  entity: sapwood_blade
+  rule: U1
+  status: completed
+  category: bug
+  summary: >
+    Leaf of Consciousness is a special pickup object. Receiver should be
+    "teamOnField" (any on-field character can pick it up), not "self".
+    Same issue as forest_regalia which was already fixed.
+  detail: >
+    Changed receiver from "self" to "teamOnField". noStackId was already
+    present as "leaf-of-consciousness-em".
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: sapwood-blade-pickup-gap
+  entity: sapwood_blade
+  rule: U1
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Leaf of Consciousness is a special pickup object that only one on-field
+    character can pick up. The single-character pickup limitation is not enforced
+    by the engine (teamOnField applies to all on-field instances).
+  detail: >
+    Same systemic engine limitation as forest-regalia-pickup-gap (already
+    wont-do). The teamOnField receiver is the closest available approximation
+    per U1. Sapwood Blade generates one Leaf every 20 seconds with a
+    non-stacking buff, so the practical impact is minimal — the on-field
+    character at pickup time gets the buff, which teamOnField models correctly
+    in most rotations. Not worth engine changes for this case.
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: moonpiercer-pickup-gap
+  entity: moonpiercer
+  rule: U1
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Leaf of Revival is a special pickup object that only one on-field character
+    can pick up. The single-character pickup limitation is not enforced by the
+    engine (teamOnField applies to all on-field instances).
+  detail: >
+    Same systemic engine limitation as forest-regalia-pickup-gap (already
+    wont-do). The teamOnField receiver is the closest available approximation
+    per U1. Moonpiercer generates one Leaf every 20 seconds, so the practical
+    impact is minimal — the on-field character at pickup time gets the buff,
+    which teamOnField models correctly in most rotations. Not worth engine
+    changes for this case.
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: royal-spear-stack-approx
+  entity: royal_spear
+  rule: S12
+  status: wont-do
+  category: approximation
+  summary: >
+    Royal Spear CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
+    The effective stack count depends on the character's CRIT Rate, which cannot
+    be determined at construction time. No OptionMap or documentation of the
+    forced average exists.
+  detail: >
+    Same rationale as royal-greatsword-stack-approx. Royal weapons are not
+    time-ramping buffs — the CRIT-reset mechanic makes effective stacks
+    inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
+    average for these low-priority 4-star Starglitter Exchange weapons.
+    Not worth OptionMap complexity.
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: royal-bow-stack-approx
+  entity: royal_bow
+  rule: S12
+  status: wont-do
+  category: approximation
+  summary: >
+    Royal Bow CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
+    The effective stack count depends on the character's CRIT Rate, which cannot
+    be determined at construction time. No OptionMap or documentation of the
+    forced average exists.
+  detail: >
+    Same rationale as royal-greatsword-stack-approx. Royal weapons are not
+    time-ramping buffs — the CRIT-reset mechanic makes effective stacks
+    inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
+    average for these low-priority 4-star Starglitter Exchange weapons.
+    Not worth OptionMap complexity.
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: astral-vulture-swirl-unconditional
+  entity: astral_vultures_crimson_plumage
+  rule: U5
+  status: completed
+  category: bug
+  summary: >
+    ATK% buff ("after triggering Swirl") is unconditionally active. Per S6,
+    reaction-triggered buffs must be gated on hasReaction("swirl", this.charId).
+    Non-Anemo wielders or teams without a reactive element would incorrectly
+    receive the ATK% bonus.
+  detail: >
+    Added hasReaction("swirl", this.charId) guard around the ATK% StatBuff.
+    Non-Anemo wielders and mono-Anemo teams no longer receive the bonus.
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: snare-hook-reaction-unconditional
+  entity: snare_hook
+  rule: U5
+  status: completed
+  category: bug
+  summary: >
+    EM buff ("after triggering elemental reaction") is unconditionally active.
+    Per S6, reaction-triggered buffs should be gated on a hasReaction check.
+    Teams with no reactive element pairs would incorrectly receive the EM bonus.
+  detail: >
+    Added canReact guard checking 11 representative reactions (vaporize, melt,
+    overloaded, electroCharged, superconduct, frozen, bloom, burning, quicken,
+    swirl, crystallize) with this.charId. EM buff now returns empty if the
+    wielder cannot trigger any reaction.
+  created: "2026-03-29"
+  resolved: "2026-03-29"

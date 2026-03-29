@@ -105,7 +105,7 @@ class UltimateOverlordsMegaMagicSword extends WeaponBase {
     new StatBuff(wbs(this), { receiver: "self" }, [
       {
         key: "atk%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
       },
     ]),
   ];
@@ -202,7 +202,7 @@ class ForestRegalia extends WeaponBase {
     return [
       new StatBuff(
         wbs(this, ["dendro-reaction"], "leaf-of-consciousness-em"),
-        { receiver: "self" },
+        { receiver: "teamOnField" },
         [{ key: "em", value: r(this.refinement, [60, 75, 90, 105, 120]) }]
       ),
     ];
@@ -245,17 +245,15 @@ class Rainslasher extends WeaponBase {
 
 @RegisterWeapon("the_bell")
 class TheBell extends WeaponBase {
-  get buffs() {
-    if (!this.teamMeta.hasShielder()) return [];
-    return [
-      new StatBuff(wbs(this, ["shield"]), { receiver: "self" }, [
-        {
-          key: "dmg%",
-          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-        },
-      ]),
-    ];
-  }
+  // Self-generated shield on taking DMG — unconditional per S6
+  readonly buffs = [
+    new StatBuff(wbs(this, ["shield"]), { receiver: "self" }, [
+      {
+        key: "dmg%",
+        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+      },
+    ]),
+  ];
 }
 
 @RegisterWeapon("prototype_archaic")

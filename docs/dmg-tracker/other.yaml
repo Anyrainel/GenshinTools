@@ -46,21 +46,6 @@
   created: "2026-02-25"
   resolved: "2026-02-26"
 
-- id: skirk-p3-party-level
-  entity: skirk
-  rule: S6
-  status: wont-do
-  category: approximation
-  summary: >
-    P3 +1 E level to all party members requires all-Hydro/Cryo team with at least
-    1 of each; team buff not implemented.
-  detail: >
-    Known limitation. Skirk's own talent level is handled but team-wide E level buff
-    requires team composition validation not currently supported. Implemented escoffier
-    and furina for this passive too.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
-
 - id: traveler-p3-charged-attack
   entity: traveler_anemo
   rule: S8
@@ -87,14 +72,22 @@
   created: "2026-02-25"
   resolved: "2026-02-25"
 
-- id: traveler-pyro-c6-nightsoul
+- id: traveler-pyro-e-hold
   entity: traveler_pyro
   rule: S8
   status: wont-do
   category: missing-formula
   summary: >
-    C6 Nightsoul's Blessing NA/CA/Plunge conversion + CD not modeled.
+    E hold mode (Hold DMG 177.8% + Scorching Threshold coordinated attack 146.6% per 3s)
+    not modeled. Hold mode deals more total damage than tap mode over the skill duration.
   detail: >
-    Complex combat state interaction with Nightsoul's Blessing mode conversion.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
+    Traveler Pyro is primarily an off-field Pyro support. Total personal damage per
+    rotation: tap E 606% + Q 769% = 1375% ATK; hold E 764% + Q 769% = 1533% ATK.
+    The hold mode adds ~158% ATK (~11% more personal damage). For a support character
+    whose value is in C1 dmg% buff and Pyro application, personal damage is well under
+    5% of any realistic team DPS. The missing hold formula does not meet the significance
+    threshold. Additionally, tap mode (Blazing Threshold, proximity-based) is the more
+    commonly used mode per standard rotations since hold mode requires the active character
+    to hit enemies to trigger coordinated attacks, adding a gameplay dependency.
+  created: "2026-03-29"
+  resolved: "2026-03-29"

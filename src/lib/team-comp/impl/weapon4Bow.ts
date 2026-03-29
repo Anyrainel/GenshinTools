@@ -25,6 +25,20 @@ class RainbowSerpentsRainBow extends WeaponBase {
 class SnareHook extends WeaponBase {
   // EM on reaction + Moonsign doubled
   get buffs() {
+    const cid = this.charId;
+    const canReact =
+      this.teamMeta.hasReaction("vaporize", cid) ||
+      this.teamMeta.hasReaction("melt", cid) ||
+      this.teamMeta.hasReaction("overloaded", cid) ||
+      this.teamMeta.hasReaction("electroCharged", cid) ||
+      this.teamMeta.hasReaction("superconduct", cid) ||
+      this.teamMeta.hasReaction("frozen", cid) ||
+      this.teamMeta.hasReaction("bloom", cid) ||
+      this.teamMeta.hasReaction("burning", cid) ||
+      this.teamMeta.hasReaction("quicken", cid) ||
+      this.teamMeta.hasReaction("swirl", cid) ||
+      this.teamMeta.hasReaction("crystallize", cid);
+    if (!canReact) return [];
     const mult = this.teamMeta.countByFaction("Moonsign") >= 2 ? 2 : 1;
     return [
       new StatBuff(

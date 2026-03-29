@@ -377,11 +377,23 @@ class TravelerAnemo extends CharacterBase {
     return buffs;
   })();
 
-  // Q Gust Surge: 8 ticks x 145% Anemo DMG (Lv10), 172% (Lv13 C3+)
-  // Q Absorbed element: 8 ticks x 44.6% (Lv10) / 52.7% (Lv13 C3+)
+  // E Palm Vortex: Press = cutting ticks + storm explosion; Hold = stronger versions
+  // param1: Initial Cutting DMG, param2: Max Cutting DMG
+  // param3: Initial Storm DMG, param4: Max Storm DMG
+  // Q Gust Surge: 8 ticks Anemo + 8 ticks absorbed element
+  // param1: Tornado DMG, param2: Additional Elemental DMG
   protected readonly formulaMap = (() => {
-    const qTick = this.constellation >= 3 ? 1.72 : 1.45;
-    const absorbTick = this.constellation >= 3 ? 0.527 : 0.446;
+    const eCutPress = this.param("E", 1);
+    const eStormPress = this.param("E", 3);
+    const eCutHold = this.param("E", 2);
+    const eStormHold = this.param("E", 4);
+    const qTick = this.param("Q", 1);
+    const absorbTick = this.param("Q", 2);
+    const anemoSkill = {
+      element: "Anemo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     const anemoBurst = {
       element: "Anemo" as const,
       ability: "burst" as const,
@@ -389,6 +401,20 @@ class TravelerAnemo extends CharacterBase {
     };
 
     const formulas: Record<string, FormulaEntry> = {
+      "traveler-anemo-skill-press": {
+        label: { zh: "E点按", en: "E Press" },
+        parts: [
+          { formula: new DirectFormula(eCutPress, anemoSkill) },
+          { formula: new DirectFormula(eStormPress, anemoSkill) },
+        ],
+      },
+      "traveler-anemo-skill-hold": {
+        label: { zh: "E长按", en: "E Hold" },
+        parts: [
+          { formula: new DirectFormula(eCutHold, anemoSkill) },
+          { formula: new DirectFormula(eStormHold, anemoSkill) },
+        ],
+      },
       "traveler-anemo-burst": {
         label: { zh: "Q伤害×8", en: "Q (×8)" },
         parts: [
@@ -433,7 +459,10 @@ class TravelerAnemo extends CharacterBase {
 
   // Rotation: E (hold) > Q (Anemo support, quickswap)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "traveler-anemo-burst", count: 1 }];
+    return [
+      { id: "traveler-anemo-skill-hold", count: 1 },
+      { id: "traveler-anemo-burst", count: 1 },
+    ];
   }
 }
 
@@ -509,9 +538,9 @@ class TravelerGeo extends CharacterBase {
 @RegisterCharacter("traveler_electro")
 class TravelerElectro extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-    // E: Abundance Amulets grant ER +20% to absorbing characters (team utility)
+    // E: Abundance Amulets grant ER bonus to absorbing characters (E param4)
     new StatBuff(cbs(this, "E", ["E"]), { receiver: "team" }, [
-      { key: "er", value: 0.2 },
+      { key: "er", value: this.param("E", 4) },
     ]),
     // P2: Increases amulet ER bonus by 10% of Traveler's ER
     new ScalingBuff(

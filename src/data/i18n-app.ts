@@ -118,6 +118,7 @@ export const i18nAppData = {
     Mult: { en: "Mult", zh: "属性倍率" },
     Add: { en: "Base", zh: "基础" },
     LvMult: { en: "LvMult", zh: "等级系数" },
+    BaseMultZone: { en: "Base Mult Zone", zh: "基础乘区" },
     RxnBase: { en: "RxnBase", zh: "反应基数" },
     EMBonus: { en: "EMBonus", zh: "精通提升" },
     RxnPercent: { en: "Rxn%", zh: "反应加成" },

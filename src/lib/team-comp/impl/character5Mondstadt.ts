@@ -649,16 +649,7 @@ class Diluc extends CharacterBase {
         ])
       );
     }
-    if (this.constellation >= 4) {
-      // C4: 2nd/3rd E cast in combo deals +40% DMG — averaged over 3 hits (approx 26.6%)
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C4", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-          [{ key: "dmg%", value: 0.4 * (2 / 3) }]
-        )
-      );
-    }
+    // C4: 2nd/3rd E cast in combo deals +40% DMG — applied via bespokeBuff on parts[1] and parts[2]
     if (this.constellation >= 6) {
       // C6: After E, next 2 normals DMG +30% and ATK SPD +30%
       // Self buff → modeled via formula hit counts, not maxStacks.
@@ -684,7 +675,7 @@ class Diluc extends CharacterBase {
     const e3 = this.param("E", 3);
     const qSlash = this.param("Q", 1);
     const qExplosion = this.param("Q", 3);
-    const highPlungeMult = 4.42; // Lv10 High Plunge DMG
+    const highPlungeMult = this.param("A", 11); // High Plunge DMG
 
     const pyroSkill = {
       element: "Pyro" as const,
@@ -692,13 +683,22 @@ class Diluc extends CharacterBase {
       reaction: "none" as const,
     };
 
+    const c4Bespoke =
+      this.constellation >= 4
+        ? new StatBuff(
+            cbs(this, "C4", ["E"]),
+            { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+            [{ key: "dmg%", value: 0.4 }]
+          )
+        : undefined;
+
     return {
       "diluc-skill": {
         label: { zh: "E三段", en: "E (3 hits)" },
         parts: [
           { formula: new DirectFormula(e1, pyroSkill) },
-          { formula: new DirectFormula(e2, pyroSkill) },
-          { formula: new DirectFormula(e3, pyroSkill) },
+          { formula: new DirectFormula(e2, pyroSkill), bespokeBuff: c4Bespoke },
+          { formula: new DirectFormula(e3, pyroSkill), bespokeBuff: c4Bespoke },
         ],
       },
       "diluc-burst": {
@@ -763,9 +763,9 @@ class Mona extends CharacterBase {
         "hydro%",
         0.2
       ),
-      // Q: Stellaris Phantasm — Omen: opponents take +60% DMG (enemy debuff, benefits all)
+      // Q: Stellaris Phantasm — Omen: opponents take DMG bonus (talent-level-dependent, param10)
       new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "team" }, [
-        { key: "dmg%", value: 0.6 },
+        { key: "dmg%", value: this.param("Q", 10) },
       ]),
       // C1: Hydro reaction effects +15% (EC, Lunar-Charged, Vaporize, Hydro Swirl, Lunar-Crystallize)
       // "When any of your own party members hits an opponent affected by an Omen" → team-wide
@@ -992,12 +992,17 @@ class Venti extends CharacterBase {
       );
     }
     // C4: After E/Q → Venti and active party members gain 25% Anemo DMG
-    // "温迪与队伍中自己的当前场上其他角色" → onField (provider + active)
+    // "温迪与队伍中自己的当前场上其他角色" → self (Venti's off-field Q ticks benefit) + otherOnField (teammates)
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["E", "Q"]), { receiver: "teamOnField" }, [
+        new StatBuff(cbs(this, "C4", ["E", "Q"]), { receiver: "self" }, [
           { key: "anemo%", value: 0.25 },
-        ])
+        ]),
+        new StatBuff(
+          cbs(this, "C4", ["E", "Q"]),
+          { receiver: "otherOnField" },
+          [{ key: "anemo%", value: 0.25 }]
+        )
       );
     }
     // C6: Q targets take -20% Anemo RES
@@ -1061,10 +1066,16 @@ class Venti extends CharacterBase {
   protected readonly formulaMap = (() => {
     const qTickMult = this.param("Q", 1);
     const ePressMult = this.param("E", 1);
-    // NA per-hit multipliers at Lv10, each ×2.5 for Windsunder Arrow
+    // NA per-hit multipliers (A param1–param6), each × windsunder scaling (A param12)
     // Must NOT sum different multipliers into one part (S3)
-    // N1: 40.3%×2, N2: 87.7%, N3: 103.5%, N4: 51.5%×2, N5: 100.1%, N6: 140%
-    const ws = 2.5; // windsunder multiplier
+    // N1: param1×2, N2: param2, N3: param3, N4: param4×2, N5: param5, N6: param6
+    const ws = this.param("A", 12); // windsunder multiplier
+    const n1 = this.param("A", 1);
+    const n2 = this.param("A", 2);
+    const n3 = this.param("A", 3);
+    const n4 = this.param("A", 4);
+    const n5 = this.param("A", 5);
+    const n6 = this.param("A", 6);
     const naTag = {
       element: "Anemo" as const,
       ability: "normal" as const,
@@ -1075,36 +1086,36 @@ class Venti extends CharacterBase {
       "venti-windsunder": {
         label: { zh: "Q 普攻飓风箭", en: "Q Windsunder Arrow" },
         parts: [
-          { formula: new DirectFormula(0.403 * ws, naTag), hits: 2 }, // N1
-          { formula: new DirectFormula(0.877 * ws, naTag) }, // N2
-          { formula: new DirectFormula(1.035 * ws, naTag) }, // N3
-          { formula: new DirectFormula(0.515 * ws, naTag), hits: 2 }, // N4
-          { formula: new DirectFormula(1.001 * ws, naTag) }, // N5
-          { formula: new DirectFormula(1.4 * ws, naTag) }, // N6
+          { formula: new DirectFormula(n1 * ws, naTag), hits: 2 }, // N1
+          { formula: new DirectFormula(n2 * ws, naTag) }, // N2
+          { formula: new DirectFormula(n3 * ws, naTag) }, // N3
+          { formula: new DirectFormula(n4 * ws, naTag), hits: 2 }, // N4
+          { formula: new DirectFormula(n5 * ws, naTag) }, // N5
+          { formula: new DirectFormula(n6 * ws, naTag) }, // N6
           // C1: 2 tracking arrows per Windsunder hit at 20% original DMG each
           ...(this.constellation >= 1
             ? [
                 {
-                  formula: new DirectFormula(0.403 * ws * 0.2, naTag),
+                  formula: new DirectFormula(n1 * ws * 0.2, naTag),
                   hits: 2 * 2,
                 }, // N1 C1
                 {
-                  formula: new DirectFormula(0.877 * ws * 0.2, naTag),
+                  formula: new DirectFormula(n2 * ws * 0.2, naTag),
                   hits: 2,
                 }, // N2 C1
                 {
-                  formula: new DirectFormula(1.035 * ws * 0.2, naTag),
+                  formula: new DirectFormula(n3 * ws * 0.2, naTag),
                   hits: 2,
                 }, // N3 C1
                 {
-                  formula: new DirectFormula(0.515 * ws * 0.2, naTag),
+                  formula: new DirectFormula(n4 * ws * 0.2, naTag),
                   hits: 2 * 2,
                 }, // N4 C1
                 {
-                  formula: new DirectFormula(1.001 * ws * 0.2, naTag),
+                  formula: new DirectFormula(n5 * ws * 0.2, naTag),
                   hits: 2,
                 }, // N5 C1
-                { formula: new DirectFormula(1.4 * ws * 0.2, naTag), hits: 2 }, // N6 C1
+                { formula: new DirectFormula(n6 * ws * 0.2, naTag), hits: 2 }, // N6 C1
               ]
             : []),
         ],
@@ -1211,14 +1222,15 @@ class Klee extends CharacterBase {
     return buffs;
   })();
 
-  // Charged ATK: Lv10 283% (no constellation boost, C3=E, C5=Q)
+  // Charged ATK: A param4 (talent-level-dependent)
   protected readonly formulaMap = (() => {
+    const chargedMult = this.param("A", 4);
     return {
       "klee-charged": {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(2.83, {
+            formula: new DirectFormula(chargedMult, {
               element: "Pyro",
               ability: "charge",
               reaction: "none",
@@ -1287,14 +1299,22 @@ class Eula extends CharacterBase {
   private readonly hp = resolveOption(eulaOption, this.option);
 
   readonly buffs = [
-    // E (Hold, 2 stacks): Physical RES -25%, Cryo RES -25%
+    // E (Hold, 2 stacks): Physical RES reduction (param4), Cryo RES reduction (param5)
     new StatBuff(
       cbs(this, "E", ["E"]),
       {
         receiver: "team",
-        filter: { elements: ["Physical" as const, "Cryo"] },
+        filter: { elements: ["Physical" as const] },
       },
-      [{ key: "resReduction%", value: 0.25 }]
+      [{ key: "resReduction%", value: this.param("E", 4) }]
+    ),
+    new StatBuff(
+      cbs(this, "E", ["E"]),
+      {
+        receiver: "team",
+        filter: { elements: ["Cryo"] },
+      },
+      [{ key: "resReduction%", value: this.param("E", 5) }]
     ),
     // C1: After consuming Grimheart, Physical DMG +30%
     ...(this.constellation >= 1

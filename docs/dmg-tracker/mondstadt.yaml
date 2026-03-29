@@ -1,1 +1,45 @@
 # Mondstadt Damage Tracker
+
+- id: mona-c6-ramp-hardcoded
+  entity: mona
+  rule: S12
+  status: wont-do
+  category: approximation
+  summary: >
+    C6 Charged Attack DMG ramp (+60%/s up to +180% over 3s) is hardcoded to
+    maximum value 1.8 without OptionMap tiers. The ramp takes 3s to reach max,
+    qualifying for S12 tier selection. Mona has no existing OptionMap so one
+    could be added for C6 users.
+  detail: >
+    Mona C6 ramp is action-gated, not time-gated in the S12 sense: the player
+    enters Illusory Torrent (sprint), waits until the buff reaches max, then fires
+    the charged attack. Unlike Furina fanfare or Xiao burst decay where you deal
+    damage during the ramp, Mona C6 users intentionally delay the charged attack
+    until the buff is full. Hardcoding max is consistent with the S6 peak-damage
+    model for trivially-met conditions. Additionally, C6 Mona is an extremely
+    niche scenario with negligible user impact.
+  created: "2026-03-28"
+  resolved: "2026-03-29"
+
+- id: mona-c1-swirl-scope
+  entity: mona
+  rule: U5
+  status: wont-do
+  category: engine-gap
+  summary: >
+    C1 reactionDmg% filter uses generic "swirl", but game text specifies
+    "水元素扩散反应" (Hydro Swirl) only. The ReactionType enum has no
+    element-specific Swirl variants, so all Swirl DMG is boosted instead
+    of just Hydro Swirl.
+  detail: >
+    The engine lacks element-specific Swirl reaction types (swirlHydro,
+    swirlPyro, etc.), so "swirl" is the only available filter. In practice, the
+    overcounting is negligible: Mona C1 is active when an Omen-affected enemy is
+    hit, and the 15% Swirl DMG bonus applies to all swirl types instead of just
+    Hydro Swirl. However, in a typical Mona team, the Anemo character is most
+    commonly swirling Hydro (from Mona's own aura application), so non-Hydro
+    swirl procs receiving the bonus is a rare edge case. The 15% reactionDmg%
+    on occasional non-Hydro swirls is a trivial overcounting that does not
+    meaningfully affect team DPS calculations.
+  created: "2026-03-29"
+  resolved: "2026-03-29"

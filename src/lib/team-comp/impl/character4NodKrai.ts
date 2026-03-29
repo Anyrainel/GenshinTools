@@ -43,8 +43,8 @@ class Illuga extends CharacterBase {
           ? [{ key: "em", value: isC6 ? 80 : 50 }]
           : []
       ),
-      // Q: Nightingale's Song — EM → Geo baseDmg (either/or with LC tier below)
-      // Buffs NA/CA/PA/E/Q only (excludes special)
+      // Q: Nightingale's Song — EM → Geo baseDmg (pure Geo only, LC gets higher tier below)
+      // Despite game text "进一步提升", testing confirms only the higher tier applies — not both.
       // Lv10: 60.5% EM, Lv13 (C3+): 71.4% EM
       // 21 base stacks + up to 15 from Geo Constructs (3×5) = 36 max
       new ScalingBuff(
@@ -80,7 +80,7 @@ class Illuga extends CharacterBase {
         this.param("Q", 4)
       ),
     ];
-    // P2: Hydro/Geo count enhances Nightingale's Song (either/or with LC tier below)
+    // P2: Hydro/Geo count enhances Nightingale's Song (pure Geo only, LC gets higher tier below)
     // 1/2/3 → +7%/14%/24% EM as additional Geo baseDmg
     const p2Tiers = [0, 0.07, 0.14, 0.24] as const;
     const p2Scale = p2Tiers[Math.min(this.hydroGeo, 3)];

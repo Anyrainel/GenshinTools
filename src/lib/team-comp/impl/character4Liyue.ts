@@ -113,15 +113,29 @@ class LanYan extends CharacterBase {
   }
 }
 
-@RegisterCharacter("gaming")
+const gamingOption = {
+  label: { zh: "嘉明HP状态", en: "Gaming HP" },
+  choices: [
+    { value: "above-50", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
+    { value: "below-50", label: { zh: "HP < 50%", en: "HP < 50%" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("gaming", gamingOption)
 class Gaming extends CharacterBase {
+  private readonly o = resolveOption(gamingOption, this.option);
+
   readonly buffs = [
     // P2: At ≥50% HP, Charmed Cloudstrider DMG +20%
-    new StatBuff(
-      cbs(this, "P2", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
-      [{ key: "dmg%", value: 0.2 }]
-    ),
+    ...(this.o === "above-50"
+      ? [
+          new StatBuff(
+            cbs(this, "P2", ["E"]),
+            { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
+            [{ key: "dmg%", value: 0.2 }]
+          ),
+        ]
+      : []),
     // C2: Healing overflow → ATK +20%
     ...(this.constellation >= 2 && this.teamMeta.hasHealer()
       ? [
@@ -222,10 +236,6 @@ class Yaoyao extends CharacterBase {
   // Q Initial Lv10: 206.2%, Lv13 (C5+): 243.4%
   // Q Radish Lv10: 129.9%, Lv13 (C5+): 153.3%
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qInitialMult = this.param("Q", 4);
-    const qRadishMult = this.param("Q", 1);
-
     const dendroSkill = {
       element: "Dendro" as const,
       ability: "skill" as const,
@@ -245,7 +255,7 @@ class Yaoyao extends CharacterBase {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(eMult, dendroSkill),
+            formula: new DirectFormula(this.param("E", 1), dendroSkill),
             hits: this.constellation >= 6 ? 8 : 10,
             offField: true,
           },
@@ -264,9 +274,9 @@ class Yaoyao extends CharacterBase {
       "yaoyao-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
-          { formula: new DirectFormula(qInitialMult, dendroBurst) },
+          { formula: new DirectFormula(this.param("Q", 4), dendroBurst) },
           {
-            formula: new DirectFormula(qRadishMult, dendroBurst),
+            formula: new DirectFormula(this.param("Q", 1), dendroBurst),
             hits: 5,
             offField: true,
           },
@@ -325,6 +335,9 @@ class Xiangling extends CharacterBase {
     const swing3 = this.param("Q", 3);
     const tickMult = this.param("Q", 4);
 
+    // E Guoba Flame DMG: Lv10 200%, Lv13 (C3+) 236%
+    const guobaMult = this.param("E", 1);
+
     const pyroTag = {
       element: "Pyro" as const,
       ability: "burst" as const,
@@ -332,6 +345,19 @@ class Xiangling extends CharacterBase {
     };
 
     return {
+      "xiangling-guoba": {
+        label: { zh: "E 锅巴喷火", en: "E Guoba Flame" },
+        parts: [
+          {
+            formula: new DirectFormula(guobaMult, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            offField: true,
+          },
+        ],
+      },
       "xiangling-pyronado-swing": {
         label: { zh: "Q 三段挥舞", en: "Q Swings" },
         parts: [
@@ -356,6 +382,7 @@ class Xiangling extends CharacterBase {
   // C0-C3: ~10 ticks; C4+: ~14 ticks
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "xiangling-guoba", count: 4 },
       { id: "xiangling-pyronado-swing", count: 1 },
       {
         id: "xiangling-pyronado-tick",
@@ -616,6 +643,8 @@ class Xingqiu extends CharacterBase {
 
     if (this.constellation >= 4) {
       // C4: During Q, E DMG +50% ("画雨笼山造成的伤害提升50%")
+      // baseDmg% intentional: early character wording uses 伤害提升 but in-game
+      // testing confirms additive baseDmg% behavior, not multiplicative dmg%.
       buffs.push(
         new StatBuff(
           cbs(this, "C4", ["Q"]),

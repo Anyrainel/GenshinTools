@@ -128,7 +128,7 @@ class SymphonistOfScents extends WeaponBase {
       buffs.push(
         new StatBuff(
           wbs(this, ["heal"], "symphonist-sweet-echoes"),
-          { receiver: "teamOnField" },
+          { receiver: "team" },
           [
             {
               key: "atk%",

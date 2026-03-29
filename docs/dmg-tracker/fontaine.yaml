@@ -1,1 +1,36 @@
 # Fontaine Damage Tracker
+
+- id: "lynette-missing-formulas"
+  entity: "lynette"
+  rule: "S8"
+  status: wont-do
+  category: "missing-formula"
+  summary: >
+    Lynette has no damage formulas at all. C6 grants Anemo infusion and +20% Anemo DMG
+    bonus, signaling that her attacks are intended to deal meaningful damage at C6. At
+    minimum, an E Enigma Thrust formula should be added since it is her primary damage source.
+  detail: >
+    Lynette is a 4-star Anemo support whose value lies in VV shred and P1 team ATK buff.
+    KQM guide confirms her personal damage is negligible and talent levels (except Q) are
+    low priority. Even at C6 with Anemo infusion, her on-field DPS window is brief and
+    contributes well under 5% of team DPS in any recommended rotation. Not worth modeling.
+  created: "2026-03-28"
+  resolved: "2026-03-29"
+
+- id: "charlotte-e-mark-tick"
+  entity: "charlotte"
+  rule: "S8"
+  status: wont-do
+  category: "missing-formula"
+  summary: >
+    E Focused Impression mark (param6) deals periodic off-field Cryo Skill DMG that is not
+    modeled. With Hold E used in rotation, this contributes meaningful off-field damage over
+    the mark's duration.
+  detail: >
+    Focused Impression deals 73.1% per tick every 1.5s over 12s = ~8 ticks = ~585% total.
+    Charlotte is a 4-star Cryo healer — KQM guide confirms her skill levels are low priority
+    and personal damage is not her value. In a team context, ~585% ATK from mark ticks is
+    well under 5% of team rotation DPS. The existing E Hold and Q formulas adequately
+    capture Charlotte's damage contribution.
+  created: "2026-03-28"
+  resolved: "2026-03-29"

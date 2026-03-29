@@ -310,7 +310,6 @@ class Ororon extends CharacterBase {
                     ability: "special",
                     reaction: "none",
                   }),
-                  offField: true,
                 },
               ]
             : []),
@@ -432,6 +431,7 @@ class Kachina extends CharacterBase {
         ],
       },
       // C6: When shield is replaced/destroyed, deal 200% DEF as AoE Geo DMG (once per 5s)
+      // No ability classification in game text; use "special" to exclude from P2 skill buff
       "kachina-c6": {
         label: { zh: "护盾破碎", en: "Shield Shatter" },
         minC: 6,
@@ -441,7 +441,7 @@ class Kachina extends CharacterBase {
               2.0,
               {
                 element: "Geo",
-                ability: "skill",
+                ability: "special",
                 reaction: "none",
               },
               "def"

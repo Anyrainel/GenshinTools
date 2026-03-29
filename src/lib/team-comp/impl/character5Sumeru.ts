@@ -307,43 +307,71 @@ class Wanderer extends CharacterBase {
     return buffs;
   })();
 
-  // E Hover Normal: NA Lv10 multipliers × E multiplier (Kuugo: Fushoudan)
-  // N1=135.8%, N2=128.5%, N3=94.2%×2 (4 hits total)
-  // E Lv10: 153.7%, E Lv13 (C5+): 161.4%
-  // E Hover CA: CA Lv10 237.7% × E multiplier (Kuugo: Toufukai)
-  // E Lv10: 143.0%, E Lv13 (C5+): 149.1%
+  // E Hover Normal: NA multipliers with E baseDmg% buff (Kuugo: Fushoudan)
+  // E Hover CA: CA multiplier with E baseDmg% buff (Kuugo: Toufukai)
   // Q Burst (Lv10): 265.0%×5, (Lv13 C3+): 312.8%×5
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 2);
-    const n1 = this.param("A", 1) * eMult;
-    const n2 = this.param("A", 2) * eMult;
-    const n3 = this.param("A", 3) * eMult;
-    const ca = this.param("A", 5) * this.param("E", 3);
+    const normalEBaseDmg = this.param("E", 2) - 1.0;
+    const chargeEBaseDmg = this.param("E", 3) - 1.0;
     const qMult = this.param("Q", 1);
     const normalTag = {
       element: "Anemo" as const,
       ability: "normal" as const,
       reaction: "none" as const,
     };
+    const normalBespoke = new StatBuff(
+      cbs(this, "E", ["E"]),
+      { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+      [{ key: "baseDmg%", value: normalEBaseDmg }]
+    );
 
     return {
       "wanderer-normal": {
         label: { zh: "普攻（3段）", en: "Kuugo: Fushoudan (N3)" },
         parts: [
-          { formula: new DirectFormula(n1, normalTag) },
-          { formula: new DirectFormula(n2, normalTag) },
-          { formula: new DirectFormula(n3, normalTag), hits: 2 },
+          {
+            formula: new DirectFormula(this.param("A", 1), normalTag),
+            bespokeBuff: normalBespoke,
+          },
+          {
+            formula: new DirectFormula(this.param("A", 2), normalTag),
+            bespokeBuff: normalBespoke,
+          },
+          {
+            formula: new DirectFormula(this.param("A", 3), normalTag),
+            hits: 2,
+            bespokeBuff: normalBespoke,
+          },
         ],
       },
       "wanderer-charge": {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(ca, {
+            formula: new DirectFormula(this.param("A", 5), {
               element: "Anemo",
               ability: "charge",
               reaction: "none",
             }),
+            bespokeBuff: new StatBuff(
+              cbs(this, "E", ["E"]),
+              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+              [{ key: "baseDmg%", value: chargeEBaseDmg }]
+            ),
+          },
+        ],
+      },
+      // P2 Gales of Reverie: 4 wind arrows at 35% ATK each (C1: +25% = 60%)
+      "wanderer-p2-arrows": {
+        label: { zh: "P2风矢", en: "P2 Wind Arrows" },
+        parts: [
+          {
+            formula: new DirectFormula(this.constellation >= 1 ? 0.6 : 0.35, {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 4,
           },
         ],
       },
@@ -371,6 +399,7 @@ class Wanderer extends CharacterBase {
     return [
       { id: "wanderer-normal", count: 5 },
       { id: "wanderer-charge", count: 5 },
+      { id: "wanderer-p2-arrows", count: 3 },
       { id: "wanderer-burst", count: 1 },
     ];
   }
@@ -575,9 +604,9 @@ class Nahida extends CharacterBase {
 @RegisterCharacter("cyno")
 class Cyno extends CharacterBase {
   readonly buffs = [
-    // Q: EM +100 and Normal ATK SPD +20% during Pactsworn Pathclearer
+    // Q: EM bonus during Pactsworn Pathclearer (Q param12)
     new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "selfOnField" }, [
-      { key: "em", value: 100 },
+      { key: "em", value: this.param("Q", 12) },
     ]),
     ...(this.constellation >= 1
       ? [
@@ -657,6 +686,29 @@ class Cyno extends CharacterBase {
           },
         ],
       },
+      // P1 Duststalker Bolts: 3 bolts per Judication (100% ATK, Electro skill DMG)
+      // Available at C0+. P2 adds 250% EM as baseDmg.
+      "cyno-p1-bolts": {
+        label: { zh: "P1渡荒之雷", en: "P1 Duststalker Bolts" },
+        parts: [
+          {
+            formula: new DirectFormula(1.0, eBaseTag),
+            hits: 3,
+            // P2: Duststalker Bolt DMG += 250% EM as baseDmg
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2", ["E"]),
+              {
+                receiver: "selfOnField",
+                filter: { abilities: ["skill"] },
+              },
+              [],
+              "em",
+              "baseDmg",
+              2.5
+            ),
+          },
+        ],
+      },
       // C6 "Day of the Jackal": Each Normal ATK fires an extra Duststalker Bolt
       // (100% ATK, Electro skill DMG). ~5 bolts per combo. P2 EM->baseDmg applies automatically.
       "cyno-c6-bolts": {
@@ -688,6 +740,7 @@ class Cyno extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "cyno-combo", count: 6 },
+      { id: "cyno-p1-bolts", count: 6 },
       { id: "cyno-c6-bolts", count: 6 },
     ];
   }
@@ -819,7 +872,8 @@ class Nilou extends CharacterBase {
           { formula: new DirectFormula(e2, eTag, "hp") },
           {
             formula: new DirectFormula(eLumin, eTag, "hp"),
-            // C1: Luminous Illusion DMG +65%
+            // C1: Luminous Illusion DMG +65% (baseDmg% — confirmed by KQM TCL,
+            // same wording pattern as Xingqiu C4 "造成的伤害提升")
             ...(this.constellation >= 1
               ? {
                   bespokeBuff: new StatBuff(

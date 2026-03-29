@@ -135,28 +135,8 @@ class Columbina extends CharacterBase {
       }
     }
 
-    // C4: Per Gravity Interference, HP%-based baseDmg on the dominant Lunar reaction skill hit
-    // lunarCharged +12.5% HP, lunarBloom +2.5% HP, lunarCrystallize +12.5% HP (once/15s)
-    if (this.constellation >= 4 && this.o !== "none") {
-      const c4Scale = {
-        lunarCharged: 0.125,
-        lunarBloom: 0.025,
-        lunarCrystallize: 0.125,
-      }[this.o];
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C4", ["E"]),
-          {
-            receiver: "self",
-            filter: { abilities: ["skill"], reactions: [this.o] },
-          },
-          [],
-          "hp",
-          "baseDmg",
-          c4Scale
-        )
-      );
-    }
+    // C4: HP%-based baseDmg on dominant Lunar reaction — once per 15s, modeled via
+    // separate formula entry with bespokeBuff (self buff cannot use maxStacks)
 
     // C6: +80% CD for elements involved in the dominant Lunar reaction
     // "依据参与反应的元素类型，使队伍中的所有角色造成的对应元素类型伤害的暴击伤害提升80%"
@@ -188,7 +168,15 @@ class Columbina extends CharacterBase {
       {
         id: "columbina-skill-interference",
         count: 4,
-        bonus: [{ minC: 2, delta: 1 }],
+        bonus: [
+          { minC: 2, delta: 1 },
+          { minC: 4, delta: -1 },
+        ],
+      },
+      {
+        id: "columbina-skill-interference-c4",
+        count: 0,
+        bonus: [{ minC: 4, delta: 1 }],
       },
       { id: "columbina-ripple", count: 12 },
     ];
@@ -221,7 +209,7 @@ class Columbina extends CharacterBase {
     const qBurstMult = this.param("Q", 1);
     return {
       "columbina-skill-initial": {
-        label: { zh: "E", en: "E" },
+        label: { zh: "E初始", en: "E Initial" },
         parts: [
           {
             formula: new DirectFormula(
@@ -258,7 +246,7 @@ class Columbina extends CharacterBase {
         ],
       },
       "columbina-skill-interference": {
-        label: { zh: "E干涉 (x1)", en: "E Interference (×1)" },
+        label: { zh: "E干涉", en: "E Interference" },
         parts: [
           {
             formula: new LunarDirectFormula(
@@ -272,6 +260,47 @@ class Columbina extends CharacterBase {
             ),
             hits: eInterferenceHits,
             offField: true,
+          },
+        ],
+      },
+      // C4: One interference per rotation receives HP%-based baseDmg bonus (once per 15s)
+      "columbina-skill-interference-c4": {
+        label: { zh: "E初次干涉", en: "E First Interference" },
+        minC: 4,
+        when: this.o !== "none",
+        parts: [
+          {
+            formula: new LunarDirectFormula(
+              eInterferenceMult,
+              {
+                element: eInterferenceElement,
+                ability: "skill",
+                reaction: eInterferenceReaction,
+              },
+              "hp"
+            ),
+            hits: eInterferenceHits,
+            offField: true,
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "C4", ["E"]),
+              {
+                receiver: "selfOnField",
+                filter: {
+                  abilities: ["skill"],
+                  reactions: [eInterferenceReaction],
+                },
+              },
+              [],
+              "hp",
+              "baseDmg",
+              this.o !== "none"
+                ? {
+                    lunarCharged: 0.125,
+                    lunarBloom: 0.025,
+                    lunarCrystallize: 0.125,
+                  }[this.o]
+                : 0
+            ),
           },
         ],
       },
@@ -337,8 +366,12 @@ class Nefer extends CharacterBase {
       [
         {
           key: "em",
-          value:
-            this.veilStacks >= 3 ? (this.constellation >= 2 ? 200 : 100) : 0,
+          value: (() => {
+            // C2: 200 EM at 5 stacks, 100 EM at 3 stacks; C0-1: 100 EM at 3 stacks
+            if (this.constellation >= 2 && this.veilStacks >= 5) return 200;
+            if (this.veilStacks >= 3) return 100;
+            return 0;
+          })(),
         },
       ]
     ),
@@ -730,8 +763,8 @@ class Flins extends CharacterBase {
       },
       "flins-spearstorm": {
         label: {
-          zh: "E",
-          en: "E",
+          zh: "E北国枪阵",
+          en: "E Spearstorm",
         },
         parts: [
           { formula: new DirectFormula(spearstormMult, skillTag) },
@@ -760,7 +793,7 @@ class Flins extends CharacterBase {
         ],
       },
       "flins-burst-total": {
-        label: { zh: "大Q", en: "Q Full" },
+        label: { zh: "Q满能量", en: "Q Full Energy" },
         parts: [
           // Initial Electro DMG (regular, not lunar)
           { formula: new DirectFormula(qInitMult, burstTag) },
@@ -1018,10 +1051,18 @@ class Ineffa extends CharacterBase {
       0.14
     ),
     // P2: After Q, Ineffa's EM and the active on-field character's EM = 6% of Ineffa ATK
-    // "提升伊涅芙与队伍中自己当前场上角色的元素精通" → onField (closest approximation per U1)
+    // "提升伊涅芙与队伍中自己当前场上角色的元素精通" → Ineffa always (self) + active character excl. self (otherOnField)
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "teamOnField" },
+      { receiver: "self" },
+      [],
+      "atk",
+      "em",
+      0.06
+    ),
+    new ScalingBuff(
+      cbs(this, "P2", ["Q"]),
+      { receiver: "otherOnField" },
       [],
       "atk",
       "em",
@@ -1063,7 +1104,7 @@ class Ineffa extends CharacterBase {
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     return {
       "ineffa-skill-initial": {
-        label: { zh: "E", en: "E" },
+        label: { zh: "E初始", en: "E Initial" },
         parts: [
           {
             formula: new DirectFormula(eInitialMult, {
@@ -1134,7 +1175,7 @@ class Ineffa extends CharacterBase {
       // C6: After thundercloud lightning burst, 135% ATK Electro as Lunar-Charged DMG (once/3.5s)
       // Requires C1 Carrier Flow Composite (always available at C6) and thunderclouds (Hydro teammate)
       "ineffa-c6-thundercloud": {
-        label: { zh: "额外雷击", en: "C6 Extra Lightning" },
+        label: { zh: "额外雷击", en: "Extra Lightning" },
         minC: 6,
         when: hasHydro,
         parts: [

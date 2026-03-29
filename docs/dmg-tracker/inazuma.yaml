@@ -7,39 +7,44 @@
   summary: >
     E hold mode absorption damage not modeled (requires element absorption modeling).
   detail: >
-    Sayu E hold absorption ticks deal elemental DMG matching the absorbed element.
-    Element absorption requires runtime element selection, which would need a new
-    CombatOpt per character with absorption (similar issue to Kazuha Q). Low priority
-    since Sayu is a healer support with minimal field time.
+    Engine now supports S10 element absorption pattern (iterate team elements, create
+    per-element formula variants — see Traveler Anemo Q implementation). However, Sayu
+    is a healer support with minimal field time; E hold absorption ticks are negligible
+    DPS contribution (<2%). Not worth implementing.
   created: "2026-02-25"
   resolved: "2026-03-14"
 
-- id: kaedehara-kazuha-q-absorption
-  entity: kaedehara_kazuha
+- id: heizou-q-windmuster-iris
+  entity: shikanoin_heizou
   rule: S8
   status: wont-do
   category: engine-gap
   summary: >
-    Q absorbed-element slash/DoT damage not modeled (requires element absorption modeling).
+    Q Windmuster Iris (param2) deals elemental DMG matching the element affection on
+    hit enemies. Requires element absorption modeling similar to Kazuha Q / Sayu E hold.
   detail: >
-    Kazuha Q Kazuha Slash deals Anemo DMG plus absorbed-element DoT (65-76% per tick,
-    5 ticks). Element absorption requires a CombatOpt to select which element is absorbed,
-    and different element tags per formula part. This pattern is not currently supported
-    cleanly. Kazuha's primary value is P2 team elemental DMG% buff, not personal damage.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
+    S10 element absorption pattern is supported by the engine and could model this.
+    However, Windmuster Iris DMG is only 38.6% ATK at Lv10 per iris (max 4 enemies).
+    For single-target, this is ~1.2% of Heizou's total rotation DPS (2x E full
+    conviction ~2600% + Q 566%). Even with 4 targets, it's ~4.6% per target.
+    Below the 5% significance threshold. Not worth implementing.
+  created: "2026-03-28"
+  resolved: "2026-03-28"
 
-- id: ayaka-normal-combo
-  entity: kamisato_ayaka
+- id: shinobu-e-ring
+  entity: kuki_shinobu
   rule: S8
-  status: completed
+  status: wont-do
   category: missing-formula
   summary: >
-    Missing normal attack combo formula. Ayaka's NAs deal Cryo DMG after E/sprint
-    infusion and are part of standard rotations.
+    Missing E Grass Ring of Sanctification direct damage formula. Ring deals Electro DMG
+    (E param4) every 1.5s for 12s off-field (~8 ticks), plus P2 EM->baseDmg bonus.
   detail: >
-    Added DirectFormula normal combo "ayaka-normal" with 5 parts (Cryo/normal/none):
-    N1=0.904, N2=0.962, N3=1.238, N4=0.448×3, N5=1.545. Fixed Lv10 multipliers
-    (A talent not boosted by constellation). Updated defaultCombo to include it.
-  created: "2026-03-25"
-  resolved: "2026-03-25"
+    Shinobu's primary role in meta is hyperbloom trigger, where she builds full EM.
+    E ring direct damage scales off ATK (E param4 ~25% per tick at Lv10). With 8
+    ticks, total is ~200% ATK, but on an EM build her ATK is very low. Even with
+    P2's 25% EM->baseDmg per tick (at 800 EM = 200 flat per tick, 1600 total), this
+    is negligible compared to 8 hyperbloom seeds at ~30k each (~240k total). The ring
+    direct damage contributes well under 5% of rotation DPS. Not worth implementing.
+  created: "2026-03-28"
+  resolved: "2026-03-29"

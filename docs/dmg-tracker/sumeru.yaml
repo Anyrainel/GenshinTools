@@ -12,3 +12,19 @@
     support character. Periodic/minor proc, estimated <5% team DPS contribution.
   created: "2026-02-25"
   resolved: "2026-03-14"
+
+- id: nilou-c1-dmg-zone
+  entity: nilou
+  rule: U4
+  status: wont-do
+  category: bug
+  summary: >
+    C1 Luminous Illusion DMG +65% uses baseDmg% but game text says "伤害提升65%"
+    which maps to dmg% (damage bonus zone), not baseDmg% (talent multiplier zone).
+  detail: >
+    baseDmg% is correct. The wording "[attack]造成的伤害提升X%" is confirmed by
+    KQM TCL as Base DMG Multiplier (baseDmg%), not DMG Bonus (dmg%). Same pattern
+    as Xingqiu C4 "画雨笼山造成的伤害提升50%" which is verified baseDmg%. Reverted
+    the change back to baseDmg%.
+  created: "2026-03-29"
+  resolved: "2026-03-29"

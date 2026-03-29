@@ -47,6 +47,55 @@
     Q Supersonic Oculus soundwave modeled as 1 hit over 9s duration. Likely
     fires multiple times (~6 hits at ~1.5s interval). Hit count needs in-game
     verification. C4 increases rotation speed by 25%.
-  detail: ""
+  detail: >
+    The formula is per-hit (ororon-soundwave), and the combo descriptor already
+    uses count: 6 (~1.5s interval over 9s). C4 at 25% faster would be ~7-8 hits.
+    The per-hit formula itself is correct. The remaining question is whether the
+    exact hit count (6 at C0, ~7-8 at C4) is accurate. KQM TCL has not yet
+    published Ororon frame data (page marked "findings not yet added"). KQM quick
+    guide mentions ~9 hits with C4 but without precise sourcing. Needs in-game
+    frame data to confirm exact hit count at C0 and C4. If 6 is correct for C0,
+    the current combo is fine. C4 adjustment would require a constellation-gated
+    combo count bonus.
   created: "2026-03-21"
   resolved: null
+
+- id: ifa-missing-e-tonicshot
+  entity: ifa
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E Tonicshot (Supporting Fire) formula not implemented. Low priority for C0
+    healer builds, but C6 adds a 120% ATK bonus Tonicshot proc. Could be
+    relevant for on-field Ifa damage calculations.
+  detail: >
+    Ifa is a 4-star Anemo healer/support. Tonicshot (E param1, 240% ATK at Lv10)
+    fires during Nightsoul Blessing hover state which is primarily used for healing.
+    Even with multiple tonicshots per E window, Ifa's personal damage is negligible
+    relative to team DPS (<5%). C6 adds a 50% chance extra shot at 120% ATK — still
+    minor. Not worth implementing for a healer whose value is in buffs and utility.
+  created: "2026-03-28"
+  resolved: "2026-03-28"
+
+- id: iansan-q-atk-scaling-option
+  entity: iansan
+  rule: S12
+  status: wont-do
+  category: approximation
+  summary: >
+    Q Kinetic Energy Scale ATK conversion has two modes (high >=42 NP vs low)
+    modeled via OptionMap. However the low-NP option uses a fixed ~27 pts
+    estimate. The actual low-NP value ramps based on movement distance and
+    nightsoul recovery, making the effective value situational.
+  detail: >
+    The high-NP mode (>=42 pts) is the preferred and primary option — Iansan
+    gains 54 pts from E and 15 from Q, reaching high mode immediately after E+Q.
+    The low-NP mode is a brief transitional state. Using ~27 pts as the midpoint
+    estimate for the low mode is within acceptable range (~10%) since: (1) most
+    rotations use high mode, (2) the low mode is a fallback the user explicitly
+    selects, and (3) the actual value is movement-dependent and unknowable without
+    gameplay specifics. The approximation is acceptable.
+  created: "2026-03-28"
+  resolved: "2026-03-28"
+

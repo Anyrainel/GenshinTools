@@ -31,7 +31,7 @@ export type CharacterStats = {
   releaseDate: string;
   levels: Partial<Record<CharacterLevelTier, CharacterLevelStats>>;
   /** Talent param arrays: [level_index][param_index]. 15 levels (Lv1–Lv15). */
-  talent?: Partial<Record<"A" | "E" | "Q", number[][]>>;
+  talent?: Partial<Record<"A" | "E" | "S" | "Q", number[][]>>;
 };
 
 export type CharacterStatsMap = Record<string, CharacterStats>;

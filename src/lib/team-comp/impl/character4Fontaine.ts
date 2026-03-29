@@ -34,17 +34,20 @@ class Chevreuse extends CharacterBase {
 
     // P2: Per 1000 Max HP → Pyro/Electro party members ATK +1% (cap 40%)
     // Only benefits Pyro and Electro characters per game text
-    buffs.push(
-      new ScalingBuff(
-        cbs(this, "P2", ["E"]),
-        { receiver: "team", filter: { elements: ["Pyro", "Electro"] } },
-        [],
-        "hp",
-        "atk%",
-        0.00001,
-        0.4
-      )
-    );
+    // Requires Overloaded to obtain Overcharged Balls (fired via E Hold)
+    if (this.teamMeta.hasReaction("overloaded")) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "P2", ["E"]),
+          { receiver: "team", filter: { elements: ["Pyro", "Electro"] } },
+          [],
+          "hp",
+          "atk%",
+          0.00001,
+          0.4
+        )
+      );
+    }
 
     // C6: After E heal, team Pyro DMG +60% and Electro DMG +60% (20% × 3 stacks)
     // Game text: "20%火元素伤害加成与雷元素伤害加成" → element-specific keys
@@ -60,32 +63,60 @@ class Chevreuse extends CharacterBase {
     return buffs;
   })();
 
-  // C2: Hold-E hit triggers 2 chain explosions, each 120% ATK Pyro Skill DMG (once/10s)
-  // Per-instance damage is fully known → add formula; "once/10s" frequency is irrelevant
-  // to per-hit optimization (Q1 of decision tree).
-  protected readonly formulaMap = {
-    "chevreuse-c2-chain": {
-      label: {
-        zh: "E伤害",
-        en: "E",
+  protected readonly formulaMap = (() => {
+    const tag = (ability: "skill" | "burst") =>
+      ({ element: "Pyro", ability, reaction: "none" }) as const;
+    return {
+      // E Press: param1
+      "chevreuse-e-press": {
+        label: { zh: "E点按", en: "E Press" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), tag("skill")) },
+        ],
       },
-      minC: 2,
-      parts: [
-        {
-          formula: new DirectFormula(1.2, {
-            element: "Pyro",
-            ability: "skill",
-            reaction: "none",
-          }),
-          hits: 2,
-        },
-      ],
-    },
-  };
+      // E Hold: param2
+      "chevreuse-e-hold": {
+        label: { zh: "E长按", en: "E Hold" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 2), tag("skill")) },
+        ],
+      },
+      // C2: Hold-E hit triggers 2 chain explosions, each 120% ATK Pyro Skill DMG (once/10s)
+      "chevreuse-c2-chain": {
+        label: { zh: "C2连锁", en: "C2 Chain" },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(1.2, tag("skill")),
+            hits: 2,
+          },
+        ],
+      },
+      // Q Explosive Grenade: param1
+      "chevreuse-q-grenade": {
+        label: { zh: "Q榴弹", en: "Q Grenade" },
+        parts: [
+          { formula: new DirectFormula(this.param("Q", 1), tag("burst")) },
+        ],
+      },
+      // Q Secondary Explosive Shell: param2 (typically 8 shells, ~4 hit single target)
+      "chevreuse-q-shell": {
+        label: { zh: "Q毁伤弹", en: "Q Shell" },
+        parts: [
+          { formula: new DirectFormula(this.param("Q", 2), tag("burst")) },
+        ],
+      },
+    };
+  })();
 
-  // Rotation: E once per rotation (pure support); C2 chain triggers once/10s
+  // Rotation: E press + Q (grenade + ~4 shells hitting single target); C2 chain once/10s
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "chevreuse-c2-chain", count: 1 }];
+    return [
+      { id: "chevreuse-e-press", count: 1 },
+      { id: "chevreuse-c2-chain", count: 1 },
+      { id: "chevreuse-q-grenade", count: 1 },
+      { id: "chevreuse-q-shell", count: 4 },
+    ];
   }
 }
 
@@ -126,33 +157,63 @@ class Charlotte extends CharacterBase {
     return buffs;
   })();
 
-  // C6: Active character NA/CA hitting Focused Impression enemy triggers coordinated attack
-  // → 180% ATK Cryo DMG counted as Elemental Burst (once/6s).
-  // Per-instance damage is fully known → add formula; "once/6s" frequency is irrelevant
-  // to per-hit optimization (Q1 of decision tree).
-  protected readonly formulaMap = {
-    "charlotte-c6-coord": {
-      label: {
-        zh: "协同攻击",
-        en: "Coordinated",
+  protected readonly formulaMap = (() => {
+    const tag = (ability: "skill" | "burst") =>
+      ({ element: "Cryo", ability, reaction: "none" }) as const;
+    return {
+      // E Press (Framing): param1
+      "charlotte-e-press": {
+        label: { zh: "E点按", en: "E Press" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), tag("skill")) },
+        ],
       },
-      minC: 6,
-      parts: [
-        {
-          formula: new DirectFormula(1.8, {
-            element: "Cryo",
-            ability: "burst",
-            reaction: "none",
-          }),
-          offField: true,
-        },
-      ],
-    },
-  };
+      // E Hold (Focused Impression): param2
+      "charlotte-e-hold": {
+        label: { zh: "E长按", en: "E Hold" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 2), tag("skill")) },
+        ],
+      },
+      // Q initial Skill DMG: param3
+      "charlotte-q-initial": {
+        label: { zh: "Q伤害", en: "Q" },
+        parts: [
+          { formula: new DirectFormula(this.param("Q", 3), tag("burst")) },
+        ],
+      },
+      // Q Kamera DMG tick: param6 (Newsflash Field ticks during 4s duration)
+      "charlotte-q-tick": {
+        label: { zh: "Q持续", en: "Q Tick" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 6), tag("burst")),
+            offField: true,
+          },
+        ],
+      },
+      // C6: Coordinated attack → 180% ATK Cryo DMG as burst (once/6s)
+      "charlotte-c6-coord": {
+        label: { zh: "协同攻击", en: "Coordinated" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(1.8, tag("burst")),
+            offField: true,
+          },
+        ],
+      },
+    };
+  })();
 
-  // Rotation: E + Q (healer/support); C6 coord triggers once/6s ≈ 3 per ~20s rotation
+  // Rotation: E hold + Q (initial + ~2 ticks during 4s field); C6 coord once/6s ≈ 3 per rotation
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "charlotte-c6-coord", count: 3 }];
+    return [
+      { id: "charlotte-e-hold", count: 1 },
+      { id: "charlotte-q-initial", count: 1 },
+      { id: "charlotte-q-tick", count: 2 },
+      { id: "charlotte-c6-coord", count: 3 },
+    ];
   }
 }
 

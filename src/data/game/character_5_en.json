@@ -2253,7 +2253,7 @@
         ]
       },
       {
-        "name": "E. Kamisato Art: Senho",
+        "name": "S. Kamisato Art: Senho",
         "descHtml": "<span style=\"color: #FFD780FF;\">Alternate Sprint</span><br>Ayaka consumes Stamina and cloaks herself in a frozen fog that moves with her.<br><br>In Senho form, she moves swiftly upon water.<br>When she reappears, the following effects occur:<br>·Ayaka unleashes frigid energy to apply <span style=\"color: #99FFFFFF;\">Cryo</span> on nearby opponents.<br>·Coldness condenses around Ayaka's blade, infusing her attacks with <span style=\"color: #99FFFFFF;\">Cryo</span> for a brief period.<br><br><i>\"Feathers fleeting wet / the white heron treads water / a sight without flaw\"</i>",
         "details": [
           ["Activation Stamina Consumption", "{param1:F1}"],
@@ -3771,7 +3771,7 @@
         ]
       },
       {
-        "name": "E. Illusory Torrent",
+        "name": "S. Illusory Torrent",
         "descHtml": "<span style=\"color: #FFD780FF;\">Alternate Sprint</span><br>Mona cloaks herself within the water's flow, consuming Stamina to move rapidly.<br><br>When under the effect of Illusory Torrent, Mona can move at high speed on water.<br>Applies the <span style=\"color: #80C0FFFF;\">Wet</span> status to nearby opponents when she reappears.<br><br><i>This is something that Mona can do, but her teacher cannot. Well, but it's not as if her teacher would pursue any matter concerning Hydro Visions anyway...</i>",
         "details": [
           ["Activation Stamina Consumption", "{param1:F2}"],

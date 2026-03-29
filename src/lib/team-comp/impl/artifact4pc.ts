@@ -628,11 +628,20 @@ class VermillionHereafter4pc extends ArtifactSetBase {
   ];
 }
 
-@RegisterArtifactSet("echoes_of_an_offering")
+const echoesOption = {
+  label: { zh: "来歆余响", en: "Echoes 4pc" },
+  choices: [
+    { value: "max", label: { zh: "每次触发", en: "Every proc" } },
+    { value: "avg", label: { zh: "期望均值", en: "Average" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterArtifactSet("echoes_of_an_offering", echoesOption)
 class EchoesOfAnOffering4pc extends ArtifactSetBase {
   // 2pc: ATK +18% (via halfSetId)
-  // 4pc: Normal ATK has ~52% chance (ramping) → Normal ATK DMG +70% of ATK as flat base damage.
-  // normalBase scales from atk (via self stats) at 0.7 × ~0.5 avg = 0.35
+  // 4pc: Normal ATK has 36% base chance (ramping +20% per miss) → Normal ATK DMG +70% of ATK as baseDmg.
+  // True average proc rate ≈ 50.3% considering ramp chain. max = 0.70, avg = 0.70 × 0.503 ≈ 0.352.
+  private readonly o = resolveOption(echoesOption, this.option);
   readonly halfSetId = "atk%-18";
   readonly stats: StatEntry[] = [];
   readonly buffs = [
@@ -642,7 +651,7 @@ class EchoesOfAnOffering4pc extends ArtifactSetBase {
       [],
       "atk",
       "baseDmg",
-      0.35
+      this.o === "max" ? 0.7 : 0.352
     ),
   ];
 }
@@ -815,15 +824,19 @@ class MarechausseeHunter4pc extends ArtifactSetBase {
 @RegisterArtifactSet("golden_troupe")
 class GoldenTroupe4pc extends ArtifactSetBase {
   // 2pc: Elemental Skill DMG +20% (via halfSetId — ability-scoped)
-  // 4pc: Skill DMG +25%. Off-field: additional +25%.
-  // Modeled as a static +50% since Golden Troupe is primarily an off-field support set.
+  // 4pc: Skill DMG +25% (unconditional). Off-field: additional +25%.
   readonly halfSetId = "skill-dmg%-20";
   readonly stats: StatEntry[] = [];
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId },
       { receiver: "self", filter: { abilities: ["skill"] } },
-      [{ key: "dmg%", value: 0.5 }]
+      [{ key: "dmg%", value: 0.25 }]
+    ),
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId },
+      { receiver: "selfOffField", filter: { abilities: ["skill"] } },
+      [{ key: "dmg%", value: 0.25 }]
     ),
   ];
 }

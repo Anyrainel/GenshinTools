@@ -87,9 +87,23 @@ class Varesa extends CharacterBase {
               ability: "plunge",
               reaction: "none",
             }),
-            // C4: Diligent Refinement — no Fiery Passion → +500% ATK as baseDmg (cap 20000)
-            ...(this.constellation >= 4
-              ? {
+          },
+        ],
+      },
+      // C4: Diligent Refinement — first plunge after Q gets +500% ATK as baseDmg (cap 20000)
+      // Separated from varesa-plunge because the buff is consumed after one ground impact hit.
+      ...(this.constellation >= 4
+        ? {
+            "varesa-plunge-c4": {
+              label: { zh: "C4下落(高空)", en: "C4 Plunge (High)" },
+              minC: 4 as const,
+              parts: [
+                {
+                  formula: new DirectFormula(naMult, {
+                    element: "Electro",
+                    ability: "plunge",
+                    reaction: "none",
+                  }),
                   bespokeBuff: new ScalingBuff(
                     cbs(this, "C4", ["Q"]),
                     {
@@ -102,11 +116,11 @@ class Varesa extends CharacterBase {
                     5.0,
                     20000
                   ),
-                }
-              : {}),
-          },
-        ],
-      },
+                },
+              ],
+            } satisfies FormulaEntry,
+          }
+        : {}),
       "varesa-kablam": {
         label: {
           zh: "Q下落",
@@ -143,7 +157,12 @@ class Varesa extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "varesa-kick", count: 1 },
-      { id: "varesa-plunge", count: 4 },
+      ...(this.constellation >= 4
+        ? [
+            { id: "varesa-plunge-c4", count: 1 },
+            { id: "varesa-plunge", count: 3 },
+          ]
+        : [{ id: "varesa-plunge", count: 4 }]),
       { id: "varesa-kablam", count: 2 },
     ];
   }
@@ -306,10 +325,15 @@ class Citlali extends CharacterBase {
             offField: true,
           },
           // C4: Obsidian Spiritvessel Skull (1800% EM, once per 8s)
+          // "该伤害不被视为元素爆发伤害" — not burst DMG; use "special" to exclude from P2 skill buff
           ...(this.constellation >= 4
             ? [
                 {
-                  formula: new DirectFormula(18.0, skillTag, "em"),
+                  formula: new DirectFormula(
+                    18.0,
+                    { element: "Cryo", ability: "special", reaction: "none" },
+                    "em"
+                  ),
                   hits: c4Skulls,
                   offField: true,
                 },

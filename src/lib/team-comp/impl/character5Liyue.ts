@@ -380,6 +380,11 @@ class Xianyun extends CharacterBase {
   // E Driftcloud Wave 3-Skyladder (Lv13 C5+): 717.4%
   protected readonly formulaMap = (() => {
     const eMult = this.param("E", 4);
+    const burstTag = {
+      element: "Anemo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "xianyun-driftcloud": {
         label: {
@@ -397,12 +402,23 @@ class Xianyun extends CharacterBase {
           },
         ],
       },
+      "xianyun-q-initial": {
+        label: { zh: "Q初始伤害", en: "Q Initial DMG" },
+        parts: [{ formula: new DirectFormula(this.param("Q", 1), burstTag) }],
+      },
+      "xianyun-q-starwicker": {
+        label: { zh: "Q竹星伤害", en: "Q Starwicker DMG" },
+        parts: [{ formula: new DirectFormula(this.param("Q", 2), burstTag) }],
+      },
     };
   })();
 
   // Rotation: Q > E (3 Skyladders) > Driftcloud Wave (plunge support)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "xianyun-driftcloud", count: 1 }];
+    return [
+      { id: "xianyun-q-initial", count: 1 },
+      { id: "xianyun-driftcloud", count: 1 },
+    ];
   }
 }
 
@@ -475,9 +491,25 @@ class Baizhu extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
+    // E Gossamer Sprite DMG: Lv10 142.6%, Lv13 (C3+) 168.3%
+    const eMult = this.param("E", 1);
     // Q Spiritvein DMG: Lv10 174.7%, Lv13 (C3+) 206.3%
     const qMult = this.param("Q", 7);
     return {
+      "baizhu-skill": {
+        label: { zh: "E 游丝徵灵", en: "E Gossamer Sprite" },
+        parts: [
+          {
+            formula: new DirectFormula(eMult, {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 3,
+            offField: true,
+          },
+        ],
+      },
       "baizhu-burst": {
         label: { zh: "Q 灵气脉", en: "Q Spiritvein" },
         parts: [
@@ -512,7 +544,10 @@ class Baizhu extends CharacterBase {
   // Rotation: E > Q (Dendro healer/support)
   // Q Spiritvein triggers on shield refresh/break; ~3 hits as conservative estimate
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "baizhu-burst", count: 3 }];
+    return [
+      { id: "baizhu-skill", count: 1 },
+      { id: "baizhu-burst", count: 3 },
+    ];
   }
 }
 
@@ -723,6 +758,7 @@ class Xiao extends CharacterBase {
   ];
 
   // High Plunge DMG (Lv10): 404.0%
+  // E Skill DMG (Lv10): 404.0% — param1
   protected readonly formulaMap = (() => {
     return {
       "xiao-plunge-high": {
@@ -737,12 +773,27 @@ class Xiao extends CharacterBase {
           },
         ],
       },
+      "xiao-skill": {
+        label: { zh: "E风轮两立", en: "E Lemniscatic" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: EE > Q > 11×high plunge (Anemo carry, ~15s Q window)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "xiao-plunge-high", count: 11 }];
+    return [
+      { id: "xiao-skill", count: 2 },
+      { id: "xiao-plunge-high", count: 11 },
+    ];
   }
 }
 
@@ -1141,6 +1192,7 @@ class Shenhe extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },
@@ -1320,15 +1372,34 @@ class Keqing extends CharacterBase {
   // Charged ATK: Lv10 152%+170% = 322% (no constellation boost)
   // Q: Lv10 initial 158% + 8×43.2% + final 340%, Lv13 (C3+) 187% + 8×51% + 401%
   protected readonly formulaMap = (() => {
+    // E Slashing DMG: Lv10 302%, Lv13 (C3+) 357%
+    const eSlash = this.param("E", 2);
+    // E Thunderclap Slash: Lv10 151.2%, Lv13 (C3+) 178.5%
+    const eThunderclap = this.param("E", 3);
     const qInitial = this.param("Q", 1);
     const qSlash = this.param("Q", 2);
     const qFinal = this.param("Q", 3);
+    const electroSkillTag = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     const electroBurstTag = {
       element: "Electro" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
     return {
+      "keqing-skill": {
+        label: { zh: "E 星斗归位", en: "E Stellar Restoration" },
+        parts: [
+          { formula: new DirectFormula(eSlash, electroSkillTag) },
+          {
+            formula: new DirectFormula(eThunderclap, electroSkillTag),
+            hits: 2,
+          },
+        ],
+      },
       "keqing-charged": {
         label: { zh: "重击", en: "CA" },
         parts: [
@@ -1362,6 +1433,7 @@ class Keqing extends CharacterBase {
   // Rotation: E > Q > 5×N1C (Electro aggravate carry)
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "keqing-skill", count: 1 },
       { id: "keqing-charged", count: 5 },
       { id: "keqing-burst", count: 1 },
     ];

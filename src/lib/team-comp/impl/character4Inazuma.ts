@@ -277,24 +277,42 @@ class Sayu extends CharacterBase {
     return buffs;
   })();
 
-  // Rotation: E (hold roll) > Q; Daruma attacks ~7 times over 12s (healer/swirl support)
+  // Rotation: E (hold roll + kick) > Q > Daruma ~7 ticks (healer/swirl support)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "sayu-daruma", count: 7 }];
+    return [
+      { id: "sayu-e-kick", count: 1 },
+      { id: "sayu-q-initial", count: 1 },
+      { id: "sayu-daruma", count: 7 },
+    ];
   }
 
   protected readonly formulaMap = (() => {
+    const anemoSkill = {
+      element: "Anemo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const anemoBurst = {
+      element: "Anemo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     // Muji-Muji Daruma DMG: Q param4
     const darumaScaling = this.param("Q", 4);
     return {
+      "sayu-e-kick": {
+        label: { zh: "E舞踢", en: "E Kick" },
+        parts: [{ formula: new DirectFormula(this.param("E", 4), anemoSkill) }],
+      },
+      "sayu-q-initial": {
+        label: { zh: "Q初击", en: "Q Initial" },
+        parts: [{ formula: new DirectFormula(this.param("Q", 1), anemoBurst) }],
+      },
       "sayu-daruma": {
         label: { zh: "Q达摩", en: "Q Daruma" },
         parts: [
           {
-            formula: new DirectFormula(darumaScaling, {
-              element: "Anemo",
-              ability: "burst",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(darumaScaling, anemoBurst),
             offField: true,
           },
         ],
@@ -362,11 +380,11 @@ class Gorou extends CharacterBase {
         { key: "def", value: defFlat },
       ])
     );
-    // E/Q: 3+ Geo → Geo DMG +15%
+    // E/Q: 3+ Geo → Geo DMG bonus (E param3)
     if (this.geoCount >= 3) {
       buffs.push(
         new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "teamOnField" }, [
-          { key: "geo%", value: 0.15 },
+          { key: "geo%", value: this.param("E", 3) },
         ])
       );
     }
@@ -496,17 +514,33 @@ class KujouSara extends CharacterBase {
       : []),
   ];
 
-  // Rotation: E (ATK buff) > Q > swap (Electro support, buff bot)
+  // Rotation: E (ATK buff + damage) > Q > swap (Electro support, buff bot)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "sara-burst", count: 1 }];
+    return [
+      { id: "sara-skill", count: 1 },
+      { id: "sara-burst", count: 1 },
+    ];
   }
 
-  // Q Titanbreaker: Q param1 + Stormcluster Q param2 (C4: 6×)
+  // E Ambush: E param1; Q Titanbreaker: Q param1 + Stormcluster Q param2 (C4: 6×)
   protected readonly formulaMap = (() => {
+    const eMult = this.param("E", 1);
     const titanMult = this.param("Q", 1);
     const clusterMult = this.param("Q", 2);
     const clusterCount = this.constellation >= 4 ? 6 : 4;
     return {
+      "sara-skill": {
+        label: { zh: "E伏伤害", en: "E Ambush" },
+        parts: [
+          {
+            formula: new DirectFormula(eMult, {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "sara-burst": {
         label: {
           zh: `Q初始+雷砾×${clusterCount}`,

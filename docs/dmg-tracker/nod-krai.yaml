@@ -20,7 +20,7 @@
 - id: jahoda-excel-missing-eq-formulas
   entity: jahoda
   rule: S8
-  status: open
+  status: wont-do
   category: missing-formula
   summary: >
     Excel calculator has E skill (smoke bomb, flask unfilled/filled, meowball
@@ -29,28 +29,68 @@
     as a pure healer/support with no damage formulas — verify whether E/Q
     damage sources are significant enough to warrant modeling.
   detail: >
-    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: C風元素角色模块2.bas).
-    E has multiple damage modes: Smoke Bomb 286.2%, Unfilled Flask 343.4%,
-    Filled Flask 381.6%, Meowball 230.4% (4 elements). Q initial 373%,
-    Q Robot periodic 31.1% per tick (4 elements), P1 enhances Pyro robot
-    to 130% of original. TS formulaMap is empty. The Q robot periodic
-    damage and E meowball damage may be significant in rotation context.
+    Jahoda is a 4★ Anemo healer/support. Per rotation (one E + one Q +
+    ~6 robot ticks): E filled flask 381.6% ATK + Q initial 373% ATK +
+    robot ~186% ATK = ~940% ATK total personal damage. This is negligible
+    compared to any main DPS character's rotation output (typically 5000%+).
+    Even with P1 Pyro enhancement (robot at 130%), contribution stays well
+    under 5% of team DPS. Meowballs (230.4% each, Ascendant Gleam only)
+    add marginally but Jahoda is never the damage dealer. Not worth modeling.
   created: "2026-03-22"
-  resolved: null
+  resolved: "2026-03-28"
 
-- id: flins-e-normal-combo
-  entity: flins
-  rule: S8
-  status: completed
-  category: missing-formula
+- id: illuga-q-shared-stack-pool
+  entity: illuga
+  rule: U8b
+  status: wont-do
+  category: engine-gap
   summary: >
-    Missing E-enhanced normal attack combo formula. Flins's E transforms NAs to
-    Electro DMG with different multipliers from the E talent table, used heavily
-    in rotation (N4D×2, N2, N4D, N5).
+    Q Nightingale's Song Geo and LunarCrystallize tiers (and their P2 counterparts) each have
+    independent maxStacks: 36, but in-game they share a single pool of 36 stacks. The engine has
+    no mechanism to share a stack budget across multiple ScalingBuff instances with different
+    reaction filters, so total consumption could theoretically exceed 36 in mixed-reaction combos.
   detail: >
-    Added DirectFormula normal combo "flins-normal" (5 parts, N4 hits:2) with
-    E talent table multipliers: Lv10 N1=1.048, N2=1.058, N3=1.311, N4=0.751×2,
-    N5=1.80; Lv13 (C5+) N1=1.238, N2=1.249, N3=1.548, N4=0.887×2, N5=2.125.
-    Tag: Electro/normal/none. Updated defaultCombo to include flins-normal: 2.
-  created: "2026-03-25"
-  resolved: "2026-03-25"
+    In practice, Illuga teams are either Geo-focused (using none-reaction Geo hits) or
+    LunarCrystallize-focused (with a Hydro teammate for Lunar reactions). Mixed-reaction
+    combos where both tiers consume stacks simultaneously are extremely rare in realistic
+    team compositions. The theoretical overcounting risk is marginal and does not justify
+    engine changes. The current separate-pool modeling is an acceptable approximation.
+  created: "2026-03-28"
+  resolved: "2026-03-29"
+
+- id: illuga-q-geo-tier-excludes-lc
+  entity: illuga
+  rule: U5
+  status: wont-do
+  category: approximation
+  summary: >
+    Q Nightingale's Song base Geo tier and P2 base Geo tier use reactions: ["none"] filter,
+    excluding LunarCrystallize hits from the base Geo EM→baseDmg bonus. Game text says
+    "进一步提升" (further increase) for LC, suggesting base Geo bonus should stack with LC bonus.
+  detail: >
+    Despite game text "进一步提升" implying additive stacking, in-game testing confirms
+    only the higher tier applies — pure Geo gets the lower Geo-tier bonus, LunarCrystallize
+    gets the higher LC-tier bonus, but they do not stack. The reactions: ["none"] filter on
+    the Geo tier is correct and intentional.
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+  created: "2026-03-29"
+  resolved: "2026-03-29"
+
+- id: columbina-c4-always-active
+  entity: columbina
+  rule: S12
+  status: completed
+  category: approximation
+  summary: >
+    C4 Gravity Interference HP-based baseDmg bonus is modeled as always-active on all
+    interference hits, but game text limits it to once per 15s. With ~6-8s between
+    interferences, roughly half should receive the C4 bonus. Current implementation
+    overcounts C4 contribution by ~30-50%.
+  detail: >
+    Split interference into two formula entries: columbina-skill-interference (unbuffed)
+    and columbina-skill-interference-c4 (with bespokeBuff for C4 HP→baseDmg). Combo
+    descriptor allocates 1 C4-buffed interference at C4+, reducing unbuffed count by 1.
+    Self buff cannot use maxStacks per design rules.
+  created: "2026-03-29"
+  resolved: "2026-03-29"

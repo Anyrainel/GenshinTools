@@ -220,7 +220,16 @@ class FavoniusLance extends WeaponBase {
 
 @RegisterWeapon("crescent_pike")
 class CrescentPike extends WeaponBase {
-  readonly buffs = [];
+  readonly buffs = [
+    new ScalingBuff(
+      wbs(this, ["particle"]),
+      { receiver: "self", filter: { abilities: ["normal", "charge"] } },
+      [],
+      "atk",
+      "baseDmg",
+      r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4])
+    ),
+  ];
 }
 
 @RegisterWeapon("wavebreakers_fin")
