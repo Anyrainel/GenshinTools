@@ -654,7 +654,7 @@ describe("mergeTeamStore", () => {
     expect(team.reactions).toEqual([]);
     expect(team.combos).toEqual([]);
     expect(team.selectedCombo).toBeNull();
-    expect(team.formulaMode).toBe("combo");
+    expect(team.formulaMode).toBe("single");
     expect(team.minEr).toEqual({});
     expect(team.minCr).toEqual({});
     expect(team.opts).toEqual({});
@@ -754,7 +754,7 @@ describe("mergeTeamStore", () => {
     // Second team: fields defaulted
     expect(result.teams[1].combos).toEqual([]);
     expect(result.teams[1].reactions).toEqual([]);
-    expect(result.teams[1].formulaMode).toBe("combo");
+    expect(result.teams[1].formulaMode).toBe("single");
     expect(result.teams[1].opts).toEqual({});
 
     // Both should be safe to call .map() on combos

@@ -1,6 +1,10 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import type { ArtifactData, Element, ReactionType } from "@/data/types";
-import type { StoredAnalyzerCharConfig } from "@/lib/team-comp/analyzer";
+import type {
+  ComboCountOverrides,
+  MinErOverrides,
+  StoredAnalyzerCharConfig,
+} from "@/lib/team-comp/analyzer";
 import type { OptionMap } from "@/lib/team-comp/damageModels";
 import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
 import type {
@@ -176,6 +180,10 @@ export function migrateTeamStore(
       return { ...rest, combos, formulaMode: "combo" };
     });
   }
+  if (version < 10) {
+    // v10: Add optional analyzerComboOverrides and analyzerMinErOverrides fields.
+    // No transformation needed — fields are optional and default to undefined.
+  }
   return state;
 }
 
@@ -213,7 +221,7 @@ const DEFAULT_TEAM_FIELDS = {
   reactions: [] as ReactionType[],
   combos: [] as ComboFormula[],
   selectedCombo: null as string | null,
-  formulaMode: "combo" as const,
+  formulaMode: "single" as "single" | "combo",
   minEr: {} as Record<string, number>,
   minCr: {} as Record<string, number>,
   opts: {} as OptionMap,
@@ -231,10 +239,12 @@ export interface Team {
   minEr: Record<string, number>;
   minCr?: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;
+  /** Reaction override for the selected single formula. Persisted independently from combo lines. */
+  singleReaction?: ReactionOverride;
   optimizationResult: OptimizationResult | null;
   calcContext?: Partial<CalcContext>;
-  /** Formula mode — always "combo" after v9 migration. Kept for backward compat. */
-  formulaMode: "combo";
+  /** Formula mode: "single" evaluates one formula at a time, "combo" evaluates a full rotation. */
+  formulaMode: "single" | "combo";
   /** Combo formulas for rotation modeling */
   combos: ComboFormula[];
   /** Active combo ID, null = single formula mode */
@@ -243,6 +253,10 @@ export interface Team {
   enemyAura?: Element;
   /** Per-character analyzer configs (alt weapon, start/max C/R). Roster weapon is derived at runtime. */
   analyzerConfigs?: StoredAnalyzerCharConfig[];
+  /** Per-(charId, constellation) combo count overrides for the analyzer. */
+  analyzerComboOverrides?: ComboCountOverrides;
+  /** Per-(charId, constellation) minEr overrides for the analyzer. */
+  analyzerMinErOverrides?: MinErOverrides;
   /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
   extraBuffs?: ExtraBuff[];
 }
@@ -418,7 +432,7 @@ export const useTeamStore = create<TeamState>()(
               selectedFormula: t.selectedFormula ?? null,
               optimizationResult: null,
               calcContext: t.calcContext,
-              formulaMode: "combo",
+              formulaMode: t.formulaMode ?? "combo",
               combos: t.combos ?? [],
               selectedCombo: t.selectedCombo ?? null,
             };
@@ -493,7 +507,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 9,
+      version: 10,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }
