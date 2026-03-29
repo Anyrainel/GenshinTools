@@ -45,6 +45,7 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { ArtifactReuseMode } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
+import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -84,13 +85,13 @@ export default function TeamCompPage() {
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const teams = useTeamStore((state) => state.teams);
-  const activeTeamId = useTeamStore((state) => state.activeTeamId);
+  const activeTeamId = useSessionNavStore((s) => s.activeTeamId);
+  const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
   const addTeam = useTeamStore((state) => state.addTeam);
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const deleteTeam = useTeamStore((state) => state.deleteTeam);
   const copyTeam = useTeamStore((state) => state.copyTeam);
   const moveTeam = useTeamStore((state) => state.moveTeam);
-  const setActiveTeam = useTeamStore((state) => state.setActiveTeam);
   const importTeams = useTeamStore((state) => state.importTeams);
   const exportTeams = useTeamStore((state) => state.exportTeams);
   const clearTeamsRaw = useTeamStore((state) => state.clearTeams);
@@ -195,6 +196,7 @@ export default function TeamCompPage() {
   }, [teams, isOwned, hasAccountData]);
 
   // Filter teams based on search, element/region of their characters
+  // biome-ignore lint/correctness/useExhaustiveDependencies: frozenTeams is the data dep; isFrozen is a stable selector
   const filteredTeams = useMemo(() => {
     let result = teams;
 
@@ -339,6 +341,7 @@ export default function TeamCompPage() {
   // Precompute freeze data per team (avoids repeated getFrozenCharIds calls + new Set per card).
   // Iterates ALL teams (not filteredTeams) so object references stay stable across filter changes,
   // allowing React.memo on TeamCard to skip re-renders.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: frozenTeams is the data dep; getFrozenCharIds is a stable selector
   const teamFreezeMap = useMemo(() => {
     const map = new Map<
       string,
@@ -482,7 +485,7 @@ export default function TeamCompPage() {
   if (activeTeamId) {
     const activeTeam = teams.find((t) => t.id === activeTeamId);
     if (!activeTeam) {
-      setTimeout(() => setActiveTeam(null), 0);
+      setTimeout(() => setActiveTeamId(null), 0);
       return null;
     }
     const clearActiveTeam = () => {
@@ -510,7 +513,10 @@ export default function TeamCompPage() {
         ]}
       >
         <ScrollLayout>
-          <TeamOptDetail team={activeTeam} onBack={() => setActiveTeam(null)} />
+          <TeamOptDetail
+            team={activeTeam}
+            onBack={() => setActiveTeamId(null)}
+          />
         </ScrollLayout>
       </PageLayout>
     );
@@ -802,7 +808,7 @@ export default function TeamCompPage() {
                       deleteTeam(team.id);
                     }}
                     onCopy={() => copyTeam(team.id)}
-                    onSelect={() => setActiveTeam(team.id)}
+                    onSelect={() => setActiveTeamId(team.id)}
                     onMoveUp={
                       realIndex > 0 ? () => moveTeam(team.id, "up") : undefined
                     }

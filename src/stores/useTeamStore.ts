@@ -185,6 +185,23 @@ export function migrateTeamStore(
     // v10: Add optional analyzerComboOverrides and analyzerMinErOverrides fields.
     // No transformation needed — fields are optional and default to undefined.
   }
+  if (version < 11) {
+    // v11: activeTeamId moved to sessionStorage-backed useSessionNavStore.
+    // Transfer the value for the current session, then drop it from persisted state.
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field
+    const oldActiveTeamId = (state as any).activeTeamId;
+    if (oldActiveTeamId) {
+      // Seed session store with the old value (one-time transfer)
+      try {
+        const { useSessionNavStore } = require("./useSessionNavStore");
+        useSessionNavStore.getState().setActiveTeamId(oldActiveTeamId);
+      } catch {
+        // Session store may not be available during testing
+      }
+    }
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field
+    (state as any).activeTeamId = undefined;
+  }
   return state;
 }
 
@@ -289,7 +306,6 @@ export interface TeamCompData {
 
 interface TeamState {
   teams: Team[];
-  activeTeamId: string | null;
   author: string;
   description: string;
 
@@ -300,7 +316,6 @@ interface TeamState {
   copyTeam: (id: string) => void;
   moveTeam: (id: string, direction: "up" | "down") => void;
   clearTeams: () => void;
-  setActiveTeam: (id: string | null) => void;
   setMetadata: (author: string, description: string) => void;
   importTeams: (data: TeamCompData) => void;
   exportTeams: (author: string, description: string) => TeamCompData;
@@ -310,7 +325,6 @@ export const useTeamStore = create<TeamState>()(
   persist(
     immer((set, get) => ({
       teams: [],
-      activeTeamId: null,
       author: "",
       description: "",
 
@@ -349,9 +363,6 @@ export const useTeamStore = create<TeamState>()(
       deleteTeam: (id) => {
         set((state) => {
           state.teams = state.teams.filter((t) => t.id !== id);
-          if (state.activeTeamId === id) {
-            state.activeTeamId = null;
-          }
         });
       },
 
@@ -386,15 +397,8 @@ export const useTeamStore = create<TeamState>()(
       clearTeams: () => {
         set((state) => {
           state.teams = [];
-          state.activeTeamId = null;
           state.author = "";
           state.description = "";
-        });
-      },
-
-      setActiveTeam: (id) => {
-        set((state) => {
-          state.activeTeamId = id;
         });
       },
 
@@ -441,7 +445,6 @@ export const useTeamStore = create<TeamState>()(
 
         set((state) => {
           state.teams = validTeams;
-          state.activeTeamId = null;
           if (!Array.isArray(data)) {
             state.author = data.author ?? "";
             state.description = data.description ?? "";
@@ -508,7 +511,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 10,
+      version: 11,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }
