@@ -21,7 +21,7 @@ function buildCacheKey(opts: AnalyzerOptions): string {
     .sort()
     .join("|");
 
-  const { combo } = opts.formula;
+  const combo = opts.templateCombo;
 
   const comboPart = combo.lines
     .filter((l) => l.count > 0)
@@ -34,10 +34,15 @@ function buildCacheKey(opts: AnalyzerOptions): string {
     })
     .join(",");
 
-  // buffOverrides intentionally excluded — the analyzer computes fresh
-  // greedy defaults per constellation, ignoring page-level overrides.
+  // Include overrides in the cache key so different overrides don't return stale results
+  const overridePart = opts.comboOverrides
+    ? JSON.stringify(opts.comboOverrides)
+    : "";
+  const minErPart = opts.minErOverrides
+    ? JSON.stringify(opts.minErOverrides)
+    : "";
 
-  return `${charParts}::${comboPart}`;
+  return `${charParts}::${comboPart}::${overridePart}::${minErPart}`;
 }
 
 export interface UseAnalyzerState {
@@ -80,8 +85,8 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
 
   const start = useCallback(
     async (opts: AnalyzerOptions, force?: boolean) => {
-      if (!opts.formula) {
-        setError(new Error("Analyzer requires a formula context"));
+      if (!opts.templateCombo) {
+        setError(new Error("Analyzer requires a template combo"));
         return;
       }
       stop();

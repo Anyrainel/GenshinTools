@@ -37,11 +37,14 @@ import { runGenerator } from "./generator";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "./substatBudget";
 import type {
   CalcContext,
+  ComboDescriptor,
   ComboFormula,
-  FormulaContext,
+  ComboLine,
   PartialBuffInfo,
+  ReactionOverride,
   TeamSlotConfig,
 } from "./types";
+import { resolveComboDescriptor } from "./types";
 
 // ─── Fixed analyzer defaults ───
 
@@ -142,12 +145,39 @@ export type AnalyzerProgress = {
   message: string;
 };
 
+/** Stable key for a combo line: formulaId alone for direct, formulaId:reactionType for reactions. */
+export function comboLineKey(
+  formulaId: string,
+  reaction?: ReactionOverride
+): string {
+  if (!reaction?.reaction) return formulaId;
+  return `${formulaId}:${reaction.reaction}`;
+}
+
+/** Per-(charId, constellation) combo count overrides. Sparse — only non-default entries.
+ *  Keyed by comboLineKey (formulaId or formulaId:reactionType). */
+export type ComboCountOverrides = Record<
+  string,
+  Record<number, Record<string, number>>
+>;
+// charId → constellation → lineKey → count
+
+/** Per-(charId, constellation) minEr overrides. Sparse — only non-default entries. */
+export type MinErOverrides = Record<string, Record<number, number>>;
+// charId → constellation → minEr (internal format, e.g. 1.6 = 160%)
+
 export type AnalyzerOptions = {
   configs: AnalyzerCharConfig[];
   baseConfigs: TeamSlotConfig[];
   teamBuild: TeamBuild;
-  formula: FormulaContext;
+  /** Template combo — provides reaction config + line ordering + formulaId set */
+  templateCombo: ComboFormula;
+  /** Per-(charId, constellation) combo count overrides */
+  comboOverrides?: ComboCountOverrides;
+  /** Base per-char constraints (from team store) */
   perChar?: Record<string, { minEr: number; minCr: number }>;
+  /** Per-(charId, constellation) minEr overrides */
+  minErOverrides?: MinErOverrides;
 };
 
 // ─── Tier Snapshot IDs ───
@@ -474,6 +504,119 @@ function getCharOptions(
   return options;
 }
 
+// ─── Per-allocation combo derivation ───
+
+/**
+ * Derive an allocation-specific combo by resolving each character's combo
+ * descriptor at the allocation's constellation, then applying user overrides.
+ * Preserves reaction overrides from the template combo lines.
+ *
+ * When multiple template lines share the same formulaId (different reactions),
+ * the descriptor total for that formulaId is distributed proportionally across
+ * those lines based on their template count ratio.
+ */
+/** @internal exported for testing */
+export function deriveComboForAllocation(
+  allocation: TeamInvestment,
+  templateCombo: ComboFormula,
+  teamBuild: TeamBuild,
+  comboOverrides?: ComboCountOverrides
+): ComboFormula {
+  // Build per-char default counts at current constellation
+  const descriptorCounts: Record<string, Record<string, number>> = {};
+  for (const [charId, inv] of Object.entries(allocation)) {
+    const descriptor = teamBuild.getComboDescriptor(charId);
+    if (descriptor.length > 0) {
+      descriptorCounts[charId] = resolveComboDescriptor(
+        descriptor,
+        inv.constellation
+      );
+    }
+  }
+
+  // Pre-compute template totals per (charId, formulaId) for proportional distribution
+  const templateTotals: Record<string, Record<string, number>> = {};
+  for (const line of templateCombo.lines) {
+    if (!templateTotals[line.charId]) templateTotals[line.charId] = {};
+    templateTotals[line.charId][line.formulaId] =
+      (templateTotals[line.charId][line.formulaId] ?? 0) + line.count;
+  }
+
+  // Build new lines from template, adjusting counts
+  const lines: ComboLine[] = templateCombo.lines.map((line) => {
+    const charId = line.charId;
+    const constellation = allocation[charId]?.constellation ?? 0;
+    const lk = comboLineKey(line.formulaId, line.reaction);
+
+    // Check user override (keyed by comboLineKey)
+    const overrideCount = comboOverrides?.[charId]?.[constellation]?.[lk];
+    if (overrideCount != null) {
+      return { ...line, count: overrideCount };
+    }
+
+    // Proportional distribution from descriptor
+    const descTotal = descriptorCounts[charId]?.[line.formulaId];
+    if (descTotal != null) {
+      const tmplTotal = templateTotals[charId]?.[line.formulaId] ?? 0;
+      if (tmplTotal > 0) {
+        return {
+          ...line,
+          count: Math.round((line.count / tmplTotal) * descTotal),
+        };
+      }
+      return { ...line, count: descTotal };
+    }
+
+    // Fall through to template count
+    return line;
+  });
+
+  return { ...templateCombo, lines };
+}
+
+/**
+ * Get the effective minEr for a character at a given constellation,
+ * checking per-constellation overrides first, then falling back to base.
+ */
+/** @internal exported for testing */
+export function getEffectiveMinEr(
+  charId: string,
+  constellation: number,
+  perChar?: Record<string, { minEr: number; minCr: number }>,
+  minErOverrides?: MinErOverrides
+): number {
+  return (
+    minErOverrides?.[charId]?.[constellation] ?? perChar?.[charId]?.minEr ?? 1.0
+  );
+}
+
+/**
+ * Build effective perChar constraints for a given allocation,
+ * applying per-constellation minEr overrides.
+ */
+/** @internal exported for testing */
+export function buildEffectivePerChar(
+  allocation: TeamInvestment,
+  perChar?: Record<string, { minEr: number; minCr: number }>,
+  minErOverrides?: MinErOverrides
+): Record<string, { minEr: number; minCr: number }> | undefined {
+  if (!minErOverrides || Object.keys(minErOverrides).length === 0)
+    return perChar;
+  const result: Record<string, { minEr: number; minCr: number }> = {};
+  for (const [charId, inv] of Object.entries(allocation)) {
+    result[charId] = {
+      minEr: getEffectiveMinEr(
+        charId,
+        inv.constellation,
+        perChar,
+        minErOverrides
+      ),
+      minCr: perChar?.[charId]?.minCr ?? 0,
+    };
+  }
+  return result;
+}
+
 // ─── Artifact assembly + eval ───
 
 type SnapshotCache = Record<string, Record<string, StatSheet>>;
@@ -659,8 +802,14 @@ const P3_WEIGHT = 0.1; // 90% → 100% (DAG fill)
 async function* computePhase1(
   opts: AnalyzerOptions
 ): AsyncGenerator<AnalyzerProgress, SnapshotCache> {
-  const { configs, baseConfigs, teamBuild, perChar } = opts;
-  const { combo } = opts.formula;
+  const {
+    configs,
+    baseConfigs,
+    teamBuild,
+    templateCombo,
+    perChar,
+    minErOverrides,
+  } = opts;
   const combatOpts = teamBuild.combatOpts;
   const enemyAura = teamBuild.enemyAura;
 
@@ -732,13 +881,24 @@ async function* computePhase1(
       };
     }
 
+    const derivedCombo = deriveComboForAllocation(
+      allocation,
+      templateCombo,
+      teamBuild,
+      opts.comboOverrides
+    );
+    const effectivePerChar = buildEffectivePerChar(
+      allocation,
+      perChar,
+      minErOverrides
+    );
     const result = await runGeneration(
       allocation,
       baseConfigs,
       combatOpts,
       enemyAura,
-      combo,
-      perChar
+      derivedCombo,
+      effectivePerChar
     );
 
     snapshotCache[snapshot.id] = result;
@@ -835,14 +995,9 @@ async function* computePhase2(
   snapshotCache: SnapshotCache,
   cache: AnalyzerCache
 ): AsyncGenerator<AnalyzerProgress, CharBuildCacheResult> {
-  const { configs, baseConfigs, teamBuild } = opts;
-  const { combo } = opts.formula;
+  const { configs, baseConfigs, teamBuild, templateCombo } = opts;
   const combatOpts = teamBuild.combatOpts;
   const enemyAura = teamBuild.enemyAura;
-  const activeCombo = {
-    ...combo,
-    lines: combo.lines.filter((l) => l.count > 0),
-  };
 
   const charOpts = configs.map((cfg, i) => ({
     charId: cfg.charId,
@@ -871,6 +1026,16 @@ async function* computePhase2(
     if (ci >= charOpts.length) {
       const id = allocationNodeId(alloc);
       if (!cache.has(id)) {
+        const derivedCombo = deriveComboForAllocation(
+          alloc,
+          templateCombo,
+          teamBuild,
+          opts.comboOverrides
+        );
+        const activeCombo = {
+          ...derivedCombo,
+          lines: derivedCombo.lines.filter((l) => l.count > 0),
+        };
         const sheets = assembleSheets(alloc, configs, snapshotCache);
         const damage = evalWithCachedArtifacts(
           alloc,
@@ -941,14 +1106,9 @@ async function* computePhase3(
   opts: AnalyzerOptions,
   charBuildCacheResult?: CharBuildCacheResult
 ): AsyncGenerator<AnalyzerProgress, AnalyzerEdge[]> {
-  const { configs, baseConfigs, teamBuild } = opts;
-  const { combo } = opts.formula;
+  const { configs, baseConfigs, teamBuild, templateCombo } = opts;
   const combatOpts = teamBuild.combatOpts;
   const enemyAura = teamBuild.enemyAura;
-  const activeCombo = {
-    ...combo,
-    lines: combo.lines.filter((l) => l.count > 0),
-  };
   const charBuildCache = charBuildCacheResult?.charBuildCache;
   const hasAnyStackLimited = charBuildCacheResult?.hasAnyStackLimited;
 
@@ -1024,6 +1184,16 @@ async function* computePhase3(
         upgrade: string;
       } | null = null;
       for (const up of upgrades) {
+        const derivedCombo = deriveComboForAllocation(
+          up.allocation,
+          templateCombo,
+          teamBuild,
+          opts.comboOverrides
+        );
+        const activeCombo = {
+          ...derivedCombo,
+          lines: derivedCombo.lines.filter((l) => l.count > 0),
+        };
         const cached = evalAndCache(
           up.allocation,
           cache,

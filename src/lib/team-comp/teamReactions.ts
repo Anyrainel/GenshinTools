@@ -121,7 +121,13 @@ export class TeamReactionProvider {
 
     // Generate transformative reaction formulas
     for (const reaction of TRANSFORMATIVE_REACTIONS) {
-      if (!teamMeta.hasReaction(reaction)) continue;
+      // lunarBloom has no separate formula — Dendro Cores deal the same bloom damage.
+      // Generate rx-bloom when either bloom or lunarBloom is possible.
+      if (
+        !teamMeta.hasReaction(reaction) &&
+        !(reaction === "bloom" && teamMeta.hasReaction("lunarBloom"))
+      )
+        continue;
       const element = REACTION_DAMAGE_ELEMENT[reaction];
       if (!element) continue;
 

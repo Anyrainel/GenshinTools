@@ -40,6 +40,7 @@ import type {
   BuffSource,
   BuffTarget,
   CalcContext,
+  ComboDescriptor,
   ComboFormula,
   ComboLine,
   ComboResult,
@@ -498,8 +499,11 @@ export class CharBuild {
     return this.charBase.formulaIds;
   }
 
-  /** All formula IDs including constellation-locked ones, with minC info. */
-  getAllFormulaIds(): Record<string, { label: I18nLabel; minC: number }> {
+  /** All formula IDs including constellation-locked ones, with minC/enabled info. */
+  getAllFormulaIds(): Record<
+    string,
+    { label: I18nLabel; minC: number; enabled: boolean }
+  > {
     return this.charBase.allFormulaIds;
   }
 
@@ -1318,14 +1322,14 @@ export class TeamBuild {
     return result;
   }
 
-  /** All formulas including constellation-locked ones, with minC info. */
+  /** All formulas including constellation-locked ones, with minC/enabled info. */
   getAllFormulaIds(): Record<
     string,
-    Record<string, { label: I18nLabel; minC: number }>
+    Record<string, { label: I18nLabel; minC: number; enabled: boolean }>
   > {
     const result: Record<
       string,
-      Record<string, { label: I18nLabel; minC: number }>
+      Record<string, { label: I18nLabel; minC: number; enabled: boolean }>
     > = {};
     for (const [id, build] of Object.entries(this.charBuilds)) {
       result[id] = build.getAllFormulaIds();
@@ -1341,6 +1345,11 @@ export class TeamBuild {
   /** Default combo counts for a character (from CharacterBase.combo). */
   getCombo(charId: string): Record<string, number> {
     return this.charBuilds[charId]?.charBase.combo ?? {};
+  }
+
+  /** Raw combo descriptor for a character (for per-constellation resolution). */
+  getComboDescriptor(charId: string): ComboDescriptor {
+    return this.charBuilds[charId]?.charBase.rawComboDescriptor ?? [];
   }
 
   /** Evaluate a specific character's damage formula with the given team stats */

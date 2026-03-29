@@ -21,6 +21,7 @@ import {
 
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
+  LUNAR_SUPERSEDES,
   REACTION_AURA_TRIGGER,
   REACTION_ELEMENT_REQUIREMENTS,
 } from "./constants";
@@ -64,6 +65,11 @@ export type FormulaEntry = {
   parts: FormulaPart[];
   /** Minimum constellation required (0-6). Omit or 0 = always available. */
   minC?: number;
+  /** Additional availability condition (evaluated at construction time).
+   *  `false` = formula is disabled (shown in UI but greyed out, excluded from combo).
+   *  Omit or `true` = available (subject to minC check).
+   *  The full condition is: `constellation >= (minC ?? 0) && when !== false`. */
+  when?: boolean;
 };
 import { filterMatchesTag, resolvePartReaction } from "./types";
 
@@ -407,6 +413,74 @@ export class StatSheet {
     }
   }
 
+  /**
+   * Like `dump()` but with scaled stats (ATK/HP/DEF) resolved to computed totals.
+   *
+   * - Intermediate keys (baseAtk, atk%, …) are **not** yielded.
+   * - Universal entry: `base × (1 + universal%) + universalFlat`.
+   * - Per-filter entries: `base × (1 + universal% + filter%) + universalFlat + filterFlat`
+   *   — i.e. the total you'd see when that filter's condition is active.
+   * - Non-scaled stats are yielded unchanged (same as `dump()`).
+   */
+  *dumpResolved(): Iterable<{
+    key: StatKey;
+    filterKey: string;
+    value: number;
+  }> {
+    const scaledFlat = new Set<string>(Object.keys(SCALED_STAT_BASES));
+    const scaledBase = new Set<string>(Object.values(SCALED_STAT_BASES));
+
+    // Non-scaled stats: pass through
+    for (const [key, bucket] of this.data) {
+      if (
+        scaledFlat.has(key) ||
+        scaledBase.has(key) ||
+        SCALED_PERCENT_KEYS.has(key)
+      )
+        continue;
+      for (const [fk, fv] of bucket) {
+        if (fv !== 0) yield { key, filterKey: fk, value: fv };
+      }
+    }
+
+    // Scaled stats: compute totals per filter context
+    for (const [stat, baseKey] of Object.entries(SCALED_STAT_BASES)) {
+      const base = this.getUniversal(baseKey as StatKey);
+      const uniPct = this.getUniversal(`${stat}%` as StatKey);
+      const uniFlat = this.getUniversal(stat as StatKey);
+
+      // Universal total
+      const uniTotal = Math.round(base * (1 + uniPct) + uniFlat);
+      if (uniTotal !== 0) {
+        yield {
+          key: stat as StatKey,
+          filterKey: EMPTY_FILTER_KEY,
+          value: uniTotal,
+        };
+      }
+
+      // Per-filter totals (universal + that filter's contribution)
+      const pctBucket = this.data.get(`${stat}%` as StatKey);
+      const flatBucket = this.data.get(stat as StatKey);
+      const filterKeys = new Set<string>();
+      if (pctBucket)
+        for (const fk of pctBucket.keys())
+          if (fk !== EMPTY_FILTER_KEY) filterKeys.add(fk);
+      if (flatBucket)
+        for (const fk of flatBucket.keys())
+          if (fk !== EMPTY_FILTER_KEY) filterKeys.add(fk);
+
+      for (const fk of filterKeys) {
+        const fPct = pctBucket?.get(fk) ?? 0;
+        const fFlat = flatBucket?.get(fk) ?? 0;
+        const total = Math.round(base * (1 + uniPct + fPct) + uniFlat + fFlat);
+        if (total !== 0) {
+          yield { key: stat as StatKey, filterKey: fk, value: total };
+        }
+      }
+    }
+  }
+
   /** Serialize to a structured-clonable array (for Web Worker transfer). */
   toSerializable(): { key: StatKey; filterKey: string; value: number }[] {
     return [...this.dump()];
@@ -722,6 +796,15 @@ export class TeamMeta {
       if (!hasGeoOrClaymore) return false;
     }
 
+    // Lunar reactions supersede base reactions when possible.
+    // e.g. lunarCharged replaces electroCharged on teams with a Moonsign 5★.
+    const supersede = LUNAR_SUPERSEDES[reaction];
+    if (supersede && this.hasReaction(supersede.lunar)) {
+      // Full supersede unless team has elements that still trigger the base
+      if (!supersede.survivalElements) return false;
+      return supersede.survivalElements.some((el) => teamElements.includes(el));
+    }
+
     return true;
   }
 
@@ -876,50 +959,69 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     return [];
   }
 
+  /** Public read-only access to the raw combo descriptor.
+   *  Used by the analyzer combo tab to compute defaults per constellation. */
+  get rawComboDescriptor(): ComboDescriptor {
+    return this.comboDescriptor;
+  }
+
   /** Resolved combo counts — delegates to comboDescriptor.
    *  Subclasses should NOT override this; override comboDescriptor instead. */
   protected get defaultCombo(): Record<string, number> {
     return resolveComboDescriptor(this.comboDescriptor, this.constellation);
   }
 
-  /** Public accessor — filters defaultCombo to only formulas that exist in formulaMap
-   *  and whose minC does not exceed the current constellation. */
+  /** Check if a formula entry is enabled (minC + when satisfied). */
+  private isFormulaEnabled(entry: FormulaEntry): boolean {
+    return (entry.minC ?? 0) <= this.constellation && entry.when !== false;
+  }
+
+  /** Public accessor — filters defaultCombo to only enabled formulas. */
   get combo(): Record<string, number> {
     const raw = this.defaultCombo;
     const map = this.formulaMap;
     const result: Record<string, number> = {};
     for (const [id, count] of Object.entries(raw)) {
       const entry = map[id];
-      if (entry && (entry.minC ?? 0) <= this.constellation) result[id] = count;
+      if (entry && this.isFormulaEnabled(entry)) result[id] = count;
     }
     return result;
   }
 
-  /** Structured combo info — descriptor entries filtered to formulaMap. */
+  /** Structured combo info — descriptor entries filtered to enabled formulas. */
   get comboInfo(): ComboEntry[] {
     const map = this.formulaMap;
     return this.comboDescriptor.filter(
-      (e) => map[e.id] && (map[e.id].minC ?? 0) <= this.constellation
+      (e) => map[e.id] && this.isFormulaEnabled(map[e.id])
     );
   }
 
-  /** Derived from formulaMap — exposes formula IDs and labels for UI/combo evaluation.
-   *  Filters out entries whose minC exceeds the current constellation. */
+  /** Derived from formulaMap — exposes enabled formula IDs and labels for combo evaluation. */
   get formulaIds(): Record<string, I18nLabel> {
     const result: Record<string, I18nLabel> = {};
     for (const [id, entry] of Object.entries(this.formulaMap)) {
-      if ((entry.minC ?? 0) > this.constellation) continue;
+      if (!this.isFormulaEnabled(entry)) continue;
       result[id] = entry.label;
     }
     return result;
   }
 
-  /** All formula IDs with their minC info, regardless of constellation.
+  /** All formula IDs with minC and enabled info, regardless of constellation.
    *  Used by UI to render locked/unavailable formulas. */
-  get allFormulaIds(): Record<string, { label: I18nLabel; minC: number }> {
-    const result: Record<string, { label: I18nLabel; minC: number }> = {};
+  get allFormulaIds(): Record<
+    string,
+    { label: I18nLabel; minC: number; enabled: boolean }
+  > {
+    const result: Record<
+      string,
+      { label: I18nLabel; minC: number; enabled: boolean }
+    > = {};
     for (const [id, entry] of Object.entries(this.formulaMap)) {
-      result[id] = { label: entry.label, minC: entry.minC ?? 0 };
+      result[id] = {
+        label: entry.label,
+        minC: entry.minC ?? 0,
+        enabled: this.isFormulaEnabled(entry),
+      };
     }
     return result;
   }

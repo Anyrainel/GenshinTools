@@ -116,3 +116,31 @@ export const ELEMENT_ELIGIBLE_REACTIONS: Record<
  * instead of the character's own element.
  */
 export const MULTI_ELEMENT_CHARS = new Set(["chasca", "varka"]);
+
+/** Characters who always have 0 energy during their damage window (e.g., energy consumed on burst cast). */
+export const ZERO_ENERGY_CHARS = new Set(["skirk", "mavuika"]);
+
+/**
+ * When a lunar reaction is possible, it supersedes the base reaction.
+ * electroCharged/bloom: full supersede (identical element requirements).
+ * crystallize: partial — only the Hydro+Geo combination becomes lunar;
+ *   other PHEC+Geo combinations still produce regular crystallize.
+ */
+export const LUNAR_SUPERSEDES: Partial<
+  Record<
+    ReactionType,
+    {
+      lunar: LunarReactionType;
+      /** Base reaction survives if team has any of these elements
+       *  (they can still trigger the non-lunar base with Geo). */
+      survivalElements?: Element[];
+    }
+  >
+> = {
+  electroCharged: { lunar: "lunarCharged" },
+  bloom: { lunar: "lunarBloom" },
+  crystallize: {
+    lunar: "lunarCrystallize",
+    survivalElements: ["Pyro", "Electro", "Cryo"],
+  },
+};
