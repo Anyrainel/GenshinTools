@@ -171,7 +171,7 @@ function ComboBreakdown({
     total: number;
     isPartial: boolean;
   };
-  const byChar = useMemo(() => {
+  const { byChar, teamReactionLines } = useMemo(() => {
     // Cache per-formula crit ratio so each formula is only computed once
     const ratioCache = new Map<string, number>();
     const getRatio = (fKey: string): number => {
@@ -183,53 +183,68 @@ function ComboBreakdown({
     };
 
     const map = new Map<string, LineWithDamage[]>();
+    const rxLines: LineWithDamage[] = [];
     for (let i = 0; i < activeLines.length; i++) {
       const line = activeLines[i];
       const dmg = lineDamages[i];
       if (!dmg) continue;
       const ratio = getRatio(`${line.charId}.${line.formulaId}`);
-      const arr = map.get(line.charId) ?? [];
-      arr.push({
+      const entry: LineWithDamage = {
         line,
         perHit: dmg.perHit * ratio,
         total: dmg.total * ratio,
         isPartial: hasPartialReaction(line),
-      });
-      map.set(line.charId, arr);
+      };
+      if (line.formulaId.startsWith("rx-")) {
+        rxLines.push(entry);
+      } else {
+        const arr = map.get(line.charId) ?? [];
+        arr.push(entry);
+        map.set(line.charId, arr);
+      }
     }
-    return map;
+    return { byChar: map, teamReactionLines: rxLines };
   }, [activeLines, lineDamages, critMode, displayResult?.partsByFormula]);
 
   // Per-character damage totals and max line proportion for color scaling
-  const { charDamageMap, totalLineDamage, maxLineProportion } = useMemo(() => {
-    const map: Record<string, number> = {};
-    let total = 0;
-    let maxProp = 0;
-    for (const [charId, lines] of byChar) {
-      const charTotal = lines.reduce((sum, l) => sum + l.total, 0);
-      map[charId] = charTotal;
-      total += charTotal;
-    }
-    if (total > 0) {
-      for (const lines of byChar.values()) {
-        for (const l of lines) {
+  const { charDamageMap, totalLineDamage, maxLineProportion, teamRxTotal } =
+    useMemo(() => {
+      const map: Record<string, number> = {};
+      let total = 0;
+      let maxProp = 0;
+      for (const [charId, lines] of byChar) {
+        const charTotal = lines.reduce((sum, l) => sum + l.total, 0);
+        map[charId] = charTotal;
+        total += charTotal;
+      }
+      const rxTotal = teamReactionLines.reduce((sum, l) => sum + l.total, 0);
+      total += rxTotal;
+      if (total > 0) {
+        for (const lines of byChar.values()) {
+          for (const l of lines) {
+            const prop = l.total / total;
+            if (prop > maxProp) maxProp = prop;
+          }
+        }
+        for (const l of teamReactionLines) {
           const prop = l.total / total;
           if (prop > maxProp) maxProp = prop;
         }
       }
-    }
-    return {
-      charDamageMap: map,
-      totalLineDamage: total,
-      maxLineProportion: maxProp,
-    };
-  }, [byChar]);
+      return {
+        charDamageMap: map,
+        totalLineDamage: total,
+        maxLineProportion: maxProp,
+        teamRxTotal: rxTotal,
+      };
+    }, [byChar, teamReactionLines]);
 
   // Whether any visible line has partial reaction settings
   const anyPartial = useMemo(
     () =>
-      Array.from(byChar.values()).some((arr) => arr.some((l) => l.isPartial)),
-    [byChar]
+      Array.from(byChar.values()).some((arr) => arr.some((l) => l.isPartial)) ||
+      teamReactionLines.some((l) => l.isPartial),
+    [byChar, teamReactionLines]
   );
 
   // Maintain team character order
@@ -572,6 +587,123 @@ function ComboBreakdown({
                   })}
                 </div>
 
+                {/* Team Reactions section */}
+                {teamReactionLines.length > 0 && (
+                  <div className="rounded-lg border border-border/30 bg-black/5 overflow-hidden">
+                    <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-border/20 bg-black/10">
+                      <span className="text-xs md:text-sm font-bold text-foreground/80">
+                        {t.ui("teamComp.teamReactions")}
+                        {totalLineDamage > 0 && teamRxTotal > 0 && (
+                          <span
+                            className={cn(
+                              "text-xs md:text-sm font-mono ml-1",
+                              (() => {
+                                const pct =
+                                  (teamRxTotal / totalLineDamage) * 100;
+                                if (pct >= 50)
+                                  return "font-bold text-foreground";
+                                if (pct >= 20)
+                                  return "font-semibold text-foreground/80";
+                                return "font-normal text-foreground/60";
+                              })()
+                            )}
+                          >
+                            (
+                            {((teamRxTotal / totalLineDamage) * 100).toFixed(0)}
+                            %)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="p-1 flex flex-wrap gap-x-4 lg:gap-x-6 gap-y-0">
+                      {teamReactionLines.map(
+                        ({ line, perHit, total, isPartial }, idx) => {
+                          const label = rxFormulaIds[line.formulaId];
+                          return (
+                            <div
+                              key={idx}
+                              className="flex flex-col gap-0.5 px-1 py-0.5 md:py-1"
+                            >
+                              <button
+                                type="button"
+                                className="flex items-center gap-1 min-w-0 text-xs md:text-sm lg:text-xs xl:text-sm font-semibold text-foreground hover:text-primary transition-colors cursor-pointer"
+                                onClick={() =>
+                                  setFocusedLine({
+                                    charId: line.charId,
+                                    formulaId: line.formulaId,
+                                  })
+                                }
+                              >
+                                {charactersById[line.charId] && (
+                                  <img
+                                    src={getAssetUrl(
+                                      charactersById[line.charId]!.imagePath
+                                    )}
+                                    alt={line.charId}
+                                    className="w-4 h-4 md:w-5 md:h-5 object-contain rounded-full bg-secondary/40 shrink-0"
+                                  />
+                                )}
+                                <span className="border-b border-current truncate">
+                                  {label
+                                    ? t.resolveLabel(label)
+                                    : line.formulaId}
+                                </span>
+                                {isPartial && (
+                                  <span
+                                    className="text-amber-400 text-xl font-bold leading-none shrink-0"
+                                    title={t.ui("teamComp.partialReactionNote")}
+                                  >
+                                    *
+                                  </span>
+                                )}
+                                <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                              </button>
+                              <div className="flex items-baseline gap-1 text-sm md:text-base font-mono tabular-nums">
+                                <span
+                                  className="text-foreground/80"
+                                  style={{
+                                    color: (() => {
+                                      if (
+                                        totalLineDamage <= 0 ||
+                                        maxLineProportion <= 0
+                                      )
+                                        return undefined;
+                                      const pct =
+                                        (total / totalLineDamage) * 100;
+                                      if (pct < 5) return undefined;
+                                      const maxPct = maxLineProportion * 100;
+                                      const ratio = Math.min(
+                                        1,
+                                        (pct - 5) / Math.max(1, maxPct - 5)
+                                      );
+                                      const hue = 45 - 20 * ratio;
+                                      const sat = 60 + 35 * ratio;
+                                      const lum = 75 - 12 * ratio;
+                                      return `hsl(${hue}, ${sat}%, ${lum}%)`;
+                                    })(),
+                                  }}
+                                >
+                                  {fmtDamage(perHit)}
+                                </span>
+                                {line.count > 1 && (
+                                  <>
+                                    <span className="text-muted-foreground">
+                                      ×
+                                    </span>
+                                    <span className="text-muted-foreground">
+                                      {line.count}
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Partial reaction footnote */}
                 {anyPartial && (
                   <p className="text-xs text-amber-400/80 px-1">
@@ -584,6 +716,174 @@ function ComboBreakdown({
           </CollapsibleContent>
         </div>
       </Collapsible>
+    </div>
+  );
+}
+
+/** Single-mode result view: StatSheetPanel + FormulaBreakdown + BuffLedger. */
+function SingleResultView({
+  displayResult,
+  resolvedFormula,
+  teamBuild,
+  team,
+  artifactsByChar,
+  calcContext,
+  critMode,
+  setCritMode,
+  isMobile,
+  t,
+  failReasons,
+  frozenCharIds,
+  onArtifactSwap,
+  onFreezeChar,
+  onUnfreezeChar,
+  forceReusedCharIds,
+}: {
+  displayResult: DisplayResult;
+  resolvedFormula: { charId: string; formulaId: string };
+  teamBuild: TeamBuild;
+  team: Team;
+  artifactsByChar: Record<string, Record<string, ArtifactData>>;
+  calcContext: CalcContext;
+  critMode: CritMode;
+  setCritMode: (mode: CritMode) => void;
+  isMobile: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+  failReasons?: Record<string, OptFailReason>;
+  frozenCharIds?: Set<string>;
+  onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
+  onFreezeChar?: (charId: string) => void;
+  onUnfreezeChar?: (charId: string) => void;
+  forceReusedCharIds?: Set<string>;
+}) {
+  const formulaKey = `${resolvedFormula.charId}.${resolvedFormula.formulaId}`;
+  const parts = displayResult.partsByFormula[formulaKey];
+
+  const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
+  const rxFormulaIds = useMemo(
+    () => teamBuild.getReactionFormulaIds(),
+    [teamBuild]
+  );
+
+  const totalDamage = parts
+    ? parts.reduce(
+        (sum, p) => sum + adjustPartDamage(p, critMode) * (p.hits ?? 1),
+        0
+      )
+    : 0;
+
+  const [expanded, setExpanded] = useSessionState("singleExpanded", true);
+
+  return (
+    <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
+      {displayResult && (
+        <StatSheetPanel
+          result={displayResult}
+          team={team}
+          artifactsByChar={artifactsByChar}
+          targetCharId={resolvedFormula.charId}
+          highlightedStat={null}
+          onStatHover={() => {}}
+          t={t}
+          failReasons={failReasons}
+          frozenCharIds={frozenCharIds}
+          onArtifactSwap={onArtifactSwap}
+          onFreezeChar={onFreezeChar}
+          onUnfreezeChar={onUnfreezeChar}
+          forceReusedCharIds={forceReusedCharIds}
+        />
+      )}
+
+      {parts && parts.length > 0 ? (
+        <div className="space-y-1 md:space-y-2">
+          <Collapsible open={expanded} onOpenChange={setExpanded}>
+            <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
+              {/* Total damage — clickable to toggle breakdown */}
+              <div className="flex flex-col items-center justify-center">
+                <CollapsibleTrigger asChild>
+                  <div
+                    className={cn(
+                      "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
+                      "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2",
+                      "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
+                      "hover:bg-primary/15"
+                    )}
+                  >
+                    <div className="flex items-center gap-0">
+                      <CritModeDropdown
+                        critMode={critMode}
+                        setCritMode={setCritMode}
+                        isMobile={isMobile}
+                        {...getCritDisableFlags(parts)}
+                        t={t}
+                      />
+                      <div className="text-primary font-semibold tracking-wide whitespace-nowrap leading-none text-xs md:text-sm">
+                        {t.ui("teamComp.totalDamage")}
+                      </div>
+                    </div>
+                    <div
+                      className="text-foreground font-[math] font-black drop-shadow-sm text-2xl md:text-3xl xl:text-4xl select-text cursor-text"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {fmtDamage(totalDamage)}
+                    </div>
+                    <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
+                      {expanded
+                        ? t.ui("teamComp.collapseFormula")
+                        : t.ui("teamComp.expandFormula")}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "w-4 h-4 text-muted-foreground transition-transform shrink-0",
+                        expanded && "rotate-180"
+                      )}
+                    />
+                  </div>
+                </CollapsibleTrigger>
+              </div>
+
+              <CollapsibleContent>
+                <FormulaBreakdown
+                  parts={parts}
+                  highlightedStat={null}
+                  critMode={critMode}
+                  t={t}
+                  buffs={displayResult.buffs}
+                  defaultActivation={displayResult.buffActivation}
+                  formulaKey={formulaKey}
+                />
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
+        </div>
+      ) : (
+        <div className="text-muted-foreground py-6 text-center text-sm">
+          {t.ui("teamComp.emptyDamageMsg")}
+        </div>
+      )}
+
+      {displayResult && (
+        <BuffLedger
+          buffs={displayResult.buffs}
+          team={team}
+          t={t}
+          formulas={
+            parts
+              ? [
+                  {
+                    formulaKey,
+                    parts,
+                    defaultActivation: displayResult.buffActivation,
+                    formulaLabel:
+                      allFormulaIds[resolvedFormula.charId]?.[
+                        resolvedFormula.formulaId
+                      ] ?? rxFormulaIds[resolvedFormula.formulaId],
+                  },
+                ]
+              : undefined
+          }
+        />
+      )}
     </div>
   );
 }
@@ -1264,23 +1564,41 @@ export function DamageCard({
             <EnemyLevelInput {...ctxProps} />
             <EnemyResInput {...ctxProps} />
           </div>
-          {currentDisplayResult && comboLines && teamBuild ? (
-            <ComboResultView
-              displayResult={currentDisplayResult}
-              comboLines={comboLines}
-              comboId={comboId}
-              teamBuild={teamBuild}
-              team={effectiveTeam}
-              artifactsByChar={equippedArtifactsByChar}
-              calcContext={activeContext}
-              critMode={critMode}
-              setCritMode={setCritMode}
-              isMobile={isMobile}
-              t={t}
-              frozenCharIds={currentTabFrozenCharIds}
-              onFreezeChar={onFreezeCharFromCurrent}
-              onUnfreezeChar={onUnfreezeCharFromCurrent}
-            />
+          {currentDisplayResult && teamBuild ? (
+            formulaMode === "single" && resolvedFormula ? (
+              <SingleResultView
+                displayResult={currentDisplayResult}
+                resolvedFormula={resolvedFormula}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={equippedArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+                frozenCharIds={currentTabFrozenCharIds}
+                onFreezeChar={onFreezeCharFromCurrent}
+                onUnfreezeChar={onUnfreezeCharFromCurrent}
+              />
+            ) : comboLines ? (
+              <ComboResultView
+                displayResult={currentDisplayResult}
+                comboLines={comboLines}
+                comboId={comboId}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={equippedArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+                frozenCharIds={currentTabFrozenCharIds}
+                onFreezeChar={onFreezeCharFromCurrent}
+                onUnfreezeChar={onUnfreezeCharFromCurrent}
+              />
+            ) : null
           ) : (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
@@ -1584,29 +1902,51 @@ export function DamageCard({
             {/* Results — only when all characters are resolved */}
             {!hasActiveFormula ? null : allCharsResolved &&
               optimizedDisplayResult &&
-              comboLines &&
               teamBuild ? (
-              <ComboResultView
-                displayResult={optimizedDisplayResult}
-                comboLines={comboLines}
-                comboId={comboId}
-                teamBuild={teamBuild}
-                team={effectiveTeam}
-                artifactsByChar={optimizedArtifactsByChar}
-                calcContext={activeContext}
-                critMode={critMode}
-                setCritMode={setCritMode}
-                isMobile={isMobile}
-                t={t}
-                failReasons={
-                  teamResult?.done ? teamResult.failReasons : undefined
-                }
-                frozenCharIds={frozenCharIds}
-                onArtifactSwap={onArtifactSwap}
-                onFreezeChar={onFreezeChar}
-                onUnfreezeChar={onUnfreezeChar}
-                forceReusedCharIds={forceReusedCharIds}
-              />
+              formulaMode === "single" && resolvedFormula ? (
+                <SingleResultView
+                  displayResult={optimizedDisplayResult}
+                  resolvedFormula={resolvedFormula}
+                  teamBuild={teamBuild}
+                  team={effectiveTeam}
+                  artifactsByChar={optimizedArtifactsByChar}
+                  calcContext={activeContext}
+                  critMode={critMode}
+                  setCritMode={setCritMode}
+                  isMobile={isMobile}
+                  t={t}
+                  failReasons={
+                    teamResult?.done ? teamResult.failReasons : undefined
+                  }
+                  frozenCharIds={frozenCharIds}
+                  onArtifactSwap={onArtifactSwap}
+                  onFreezeChar={onFreezeChar}
+                  onUnfreezeChar={onUnfreezeChar}
+                  forceReusedCharIds={forceReusedCharIds}
+                />
+              ) : comboLines ? (
+                <ComboResultView
+                  displayResult={optimizedDisplayResult}
+                  comboLines={comboLines}
+                  comboId={comboId}
+                  teamBuild={teamBuild}
+                  team={effectiveTeam}
+                  artifactsByChar={optimizedArtifactsByChar}
+                  calcContext={activeContext}
+                  critMode={critMode}
+                  setCritMode={setCritMode}
+                  isMobile={isMobile}
+                  t={t}
+                  failReasons={
+                    teamResult?.done ? teamResult.failReasons : undefined
+                  }
+                  frozenCharIds={frozenCharIds}
+                  onArtifactSwap={onArtifactSwap}
+                  onFreezeChar={onFreezeChar}
+                  onUnfreezeChar={onUnfreezeChar}
+                  forceReusedCharIds={forceReusedCharIds}
+                />
+              ) : null
             ) : allCharsResolved && !isComputing ? (
               <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                 <Swords className="w-8 h-8 opacity-15" />
@@ -1694,20 +2034,35 @@ export function DamageCard({
           )}
 
           {/* Results */}
-          {genDisplayResult && comboLines && teamBuild ? (
-            <ComboResultView
-              displayResult={genDisplayResult}
-              comboLines={comboLines}
-              comboId={comboId}
-              teamBuild={teamBuild}
-              team={effectiveTeam}
-              artifactsByChar={genArtifactsByChar}
-              calcContext={activeContext}
-              critMode={critMode}
-              setCritMode={setCritMode}
-              isMobile={isMobile}
-              t={t}
-            />
+          {genDisplayResult && teamBuild ? (
+            formulaMode === "single" && resolvedFormula ? (
+              <SingleResultView
+                displayResult={genDisplayResult}
+                resolvedFormula={resolvedFormula}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={genArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+              />
+            ) : comboLines ? (
+              <ComboResultView
+                displayResult={genDisplayResult}
+                comboLines={comboLines}
+                comboId={comboId}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={genArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+              />
+            ) : null
           ) : null}
         </CardContent>
       )}

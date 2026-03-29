@@ -50,8 +50,8 @@ interface TeamRosterCardProps {
   team: Team;
   updateTeam: (id: string, patch: Partial<Team>) => void;
   accountData: AccountData | null;
-  characterStats: Record<string, CharacterStats> | null;
-  weaponStats: Record<string, WeaponStats> | null;
+  characterStats: Record<string, CharacterStats>;
+  weaponStats: Record<string, WeaponStats>;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
   frozenCharIds?: Set<string>;
@@ -187,6 +187,8 @@ export function TeamRosterCard({
 
   // Sync effective option values back to team.opts so the calculation library
   // always receives the same value that the UI dropdown displays.
+  // Note: This component only renders when gameStats are ready (gated by parent),
+  // so TeamMeta always has valid element/region/faction data here.
   useEffect(() => {
     const entityIds: string[] = [...charIds];
     for (let i = 0; i < team.characters.length; i++) {

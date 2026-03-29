@@ -3347,7 +3347,8 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd"
+            "cd",
+            "def%"
           ],
           "substats": [
             "cd",
@@ -3497,6 +3498,7 @@
         },
         "goblet": {
           "mainStats": [
+            "atk%",
             "elemental%"
           ],
           "substats": [
@@ -3513,7 +3515,8 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd"
+            "cd",
+            "atk%"
           ],
           "substats": [
             "cd",

@@ -241,24 +241,24 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     };
   }, [stopTeamOpt]);
 
-  const configs = useMemo(
-    () => buildTeamConfigs(effectiveTeam, accountData),
-    [effectiveTeam, accountData]
-  );
+  const configs = useMemo(() => {
+    const c = buildTeamConfigs(effectiveTeam, accountData);
+    return c;
+  }, [effectiveTeam, accountData]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: characterStats/weaponStats are intentional invalidation triggers — TeamBuild reads them indirectly via global registries
   const { teamBuild, buildError } = useMemo(() => {
-    if (!gameStatsReady) return { teamBuild: null, buildError: null };
+    if (!gameStatsReady) {
+      return { teamBuild: null, buildError: null };
+    }
     try {
-      return {
-        teamBuild: new TeamBuild(
-          configs,
-          team.opts || {},
-          team.enemyAura,
-          team.extraBuffs
-        ),
-        buildError: null,
-      };
+      const tb = new TeamBuild(
+        configs,
+        team.opts || {},
+        team.enemyAura,
+        team.extraBuffs
+      );
+      return { teamBuild: tb, buildError: null };
     } catch (e: unknown) {
       console.error("Failed to construct TeamBuild:", e);
       return {
@@ -571,13 +571,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         formulaOverrides[formulaKey] = comboStoreOverrides[key];
       }
     }
-    return buildBuffOverrides(
+    const r = buildBuffOverrides(
       activeLines,
       teamBuild,
       artifactSheets,
       displayContext,
       Object.keys(formulaOverrides).length > 0 ? formulaOverrides : undefined
     );
+    return r;
   }, [
     displayCombo,
     combo.id,
@@ -589,17 +590,15 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // ─── Damage Calculations (always via combo path) ───
 
-  const currentDisplayResult = useMemo(
-    () =>
-      calcComboResults(
-        teamBuild,
-        displayCombo,
-        artifactSheets,
-        displayContext,
-        buffOverrides
-      ),
-    [teamBuild, displayCombo, artifactSheets, displayContext, buffOverrides]
-  );
+  const currentDisplayResult = useMemo(() => {
+    return calcComboResults(
+      teamBuild,
+      displayCombo,
+      artifactSheets,
+      displayContext,
+      buffOverrides
+    );
+  }, [teamBuild, displayCombo, artifactSheets, displayContext, buffOverrides]);
 
   const minErRaw =
     (resolvedFormula && team.minEr?.[resolvedFormula.charId]) ?? 1.0;
@@ -1185,19 +1184,22 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         </h2>
       </div>
 
-      {/* Card 1 — Team Roster */}
-      <TeamRosterCard
-        team={team}
-        updateTeam={updateTeam}
-        accountData={accountData}
-        characterStats={characterStats}
-        weaponStats={weaponStats}
-        isMobile={isMobile}
-        t={t}
-        frozenCharIds={frozenCharIdSet}
-        ignoreArtifactSets={ignoreArtifactSets}
-        onIgnoreArtifactSetsChange={setIgnoreArtifactSets}
-      />
+      {/* Card 1 — Team Roster (only rendered when gameStats are ready,
+           so TeamMeta always has valid element/region/faction data) */}
+      {gameStatsReady && (
+        <TeamRosterCard
+          team={team}
+          updateTeam={updateTeam}
+          accountData={accountData}
+          characterStats={characterStats!}
+          weaponStats={weaponStats!}
+          isMobile={isMobile}
+          t={t}
+          frozenCharIds={frozenCharIdSet}
+          ignoreArtifactSets={ignoreArtifactSets}
+          onIgnoreArtifactSetsChange={setIgnoreArtifactSets}
+        />
+      )}
 
       {/* Card 2 — Formula Selection */}
       <FormulaSelectorCard

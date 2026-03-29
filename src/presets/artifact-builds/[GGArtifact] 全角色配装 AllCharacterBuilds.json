@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1773675315302",
+  "id": "export-1774805047983",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -53,8 +53,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "FeFhg8O": {
-      "id": "FeFhg8O",
+    "FeFhfum": {
+      "id": "FeFhfum",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -80,7 +80,7 @@
       "kOverride": 3,
       "characterId": "ineffa",
       "styles": ["off-field"],
-      "roles": ["support", "sustain", "dps"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1278,11 +1278,19 @@
         {
           "stat": "geo%",
           "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
         }
       ],
       "circletWeights": [
         {
           "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
           "weight": 100
         }
       ],
@@ -1706,8 +1714,8 @@
       ],
       "normalizer": 0.7390989829074122
     },
-    "Ihqg4Pu": {
-      "id": "Ihqg4Pu",
+    "Ihqg4AG": {
+      "id": "Ihqg4AG",
       "characterId": "columbina",
       "name": "",
       "visible": true,
@@ -1732,7 +1740,7 @@
       ],
       "artifactSet": "silken_moons_serenade",
       "kOverride": 3,
-      "roles": ["support", "dps"],
+      "roles": ["support"],
       "styles": ["off-field"],
       "source": "preset",
       "sandsWeights": [
@@ -1758,6 +1766,10 @@
         },
         {
           "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
           "weight": 100
         }
       ],
@@ -2131,6 +2143,10 @@
       "circletWeights": [
         {
           "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
           "weight": 100
         }
       ],
@@ -3913,8 +3929,8 @@
       ],
       "normalizer": 0.6587132530636342
     },
-    "8xrST3e": {
-      "id": "8xrST3e",
+    "8xrSQNm": {
+      "id": "8xrSQNm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3938,12 +3954,16 @@
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "nahida",
-      "styles": ["off-field", "on-field"],
-      "roles": ["support", "dps"],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
           "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
           "weight": 100
         }
       ],
@@ -5737,59 +5757,6 @@
         }
       ],
       "normalizer": 0.7871273198117978
-    },
-    "37JY26m": {
-      "id": "37JY26m",
-      "name": "",
-      "visible": false,
-      "composition": "4pc",
-      "substats": [
-        {
-          "stat": "em",
-          "weight": 100
-        },
-        {
-          "stat": "cr",
-          "weight": 100
-        },
-        {
-          "stat": "cd",
-          "weight": 100
-        },
-        {
-          "stat": "er",
-          "weight": 50
-        }
-      ],
-      "artifactSet": "viridescent_venerer",
-      "characterId": "kaedehara_kazuha",
-      "styles": ["on-field"],
-      "roles": ["dps"],
-      "source": "preset",
-      "minCons": 6,
-      "sandsWeights": [
-        {
-          "stat": "em",
-          "weight": 100
-        }
-      ],
-      "gobletWeights": [
-        {
-          "stat": "em",
-          "weight": 100
-        }
-      ],
-      "circletWeights": [
-        {
-          "stat": "em",
-          "weight": 100
-        },
-        {
-          "stat": "cr",
-          "weight": 100
-        }
-      ],
-      "normalizer": 0.6708741658099044
     },
     "xcrqdu": {
       "id": "xcrqdu",
@@ -7999,7 +7966,7 @@
     }
   },
   "characterBuilds": {
-    "ineffa": ["FeFi23e", "FeFhg8O", "FeFbZ18", "FeFQ6rm"],
+    "ineffa": ["FeFi23e", "FeFhfum", "FeFbZ18", "FeFQ6rm"],
     "citlali": ["EB7C1KG", "EB6yOLm", "EB7C1Te"],
     "arlecchino": ["CRMdXqu"],
     "clorinde": ["CaggW4u"],
@@ -8019,7 +7986,7 @@
     "charlotte": ["BYQzdRG"],
     "lynette": ["AYHvhPG", "AYHvhPH"],
     "lauma": ["FnZe87m", "FnZkdAG", "FnZkCDG", "FnZe8H8"],
-    "columbina": ["Ihqg4Pu", "IhqgSqO"],
+    "columbina": ["Ihqg4AG", "IhqgSqO"],
     "illuga": ["I-Sm0jO", "IyzxbmG"],
     "durin": ["GMpiOrm", "GMpxGle"],
     "flins": ["G4Bq8Zu"],
@@ -8049,7 +8016,7 @@
     "cyno": ["8fDMpcO"],
     "wanderer": ["9NncRhO", "9NnU2jm"],
     "alhaitham": ["9gPhdMO"],
-    "nahida": ["8xrST3e", "8xrSq-u"],
+    "nahida": ["8xrSQNm", "8xrSq-u"],
     "dehya": ["9z1jNP8", "9z1n-ym", "9z1cA7G"],
     "yaoyao": ["9X5eJt0"],
     "faruzan": ["9ETNJ0e"],
@@ -8077,7 +8044,7 @@
     "yun_jin": ["e-eIXm", "dnM9om", "e-gCcG"],
     "yoimiya": ["2FRItMu", "2FRCOKO"],
     "kamisato_ayaka": ["4aRtNc0", "4aRxcbm"],
-    "kaedehara_kazuha": ["37JY4fG", "37JY26m"],
+    "kaedehara_kazuha": ["37JY4fG"],
     "eula": ["xcrqdu"],
     "diona": ["6KCVIaG"],
     "yanfei": ["3PxdDeO"],
@@ -8241,7 +8208,7 @@
     "expandCritCirclet": true,
     "mergeAlgorithm": "smartMerge",
     "normalizeFlatStats": true,
-    "substatWeightThreshold": 70,
+    "substatWeightThreshold": 60,
     "mustPresentWeightThreshold": 90
   }
 }

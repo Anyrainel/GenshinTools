@@ -236,7 +236,6 @@ export function CharacterDetailPanel({
                       key={skill.name || i}
                       skill={skill}
                       characterId={characterId}
-                      skillIndex={i}
                     />
                   ))}
                 </KitSection>

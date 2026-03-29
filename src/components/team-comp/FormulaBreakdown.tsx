@@ -1,4 +1,5 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/constants";
 import {
   fmtDamage,
   fmtPercent,
@@ -12,7 +13,7 @@ import type {
   ResolvedBuff,
   StatKey,
 } from "@/lib/team-comp/types";
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import type React from "react";
 import { PartBuffDialog } from "./PartBuffDialog";
 
@@ -199,6 +200,25 @@ const ELEMENTAL_KEYS = [
   "geo%",
   "phys%",
 ];
+
+/** Render a lunar rank weight as a proper fraction (stacked numerator/denominator). */
+function RankWeight({ w }: { w: number }) {
+  if (w === 1)
+    return <span className="font-[math] font-bold text-primary">1</span>;
+  const [num, den] =
+    w === 0.5
+      ? [1, 2]
+      : Math.abs(w - 1 / 12) < 0.001
+        ? [1, 12]
+        : [Math.round(w * 100), 100];
+  return (
+    <span className="inline-flex flex-col items-center font-[math] font-bold text-primary leading-none">
+      <span className="text-[10px] md:text-xs">{num}</span>
+      <span className="w-full border-t border-current" />
+      <span className="text-[10px] md:text-xs">{den}</span>
+    </span>
+  );
+}
 
 // ─── Zones ───
 
@@ -785,16 +805,28 @@ function CatalyzeEq({ p, hl, critMode, t }: RendererProps) {
 function TransformEq({ p, hl, critMode, t }: RendererProps) {
   const levelMult = p.params.levelCoeff || 0;
   const reactBase = p.params.reactionCoeff || 0;
+  const baseDmg = levelMult * reactBase;
 
   return (
     <>
-      <CoeffZone
-        coeff={reactBase}
-        label={p.tag?.reaction ? t.reaction(p.tag.reaction) : undefined}
-        t={t}
+      <MathZone
+        label={t.formula("BaseMultZone")}
+        value={fmtDamage(baseDmg)}
+        mathLine={
+          <span className="flex items-center">
+            <MathVar
+              val={reactBase}
+              label={
+                p.tag?.reaction
+                  ? t.reaction(p.tag.reaction)
+                  : t.formula("Coeff")
+              }
+            />
+            <MathOp char="×" />
+            <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
+          </span>
+        }
       />
-      <Op />
-      <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
       <Op />
       <ReactionBonusZone p={p} hl={hl} t={t} />
       <Op />
@@ -818,13 +850,24 @@ function LunarEq({ p, hl, critMode, t }: RendererProps) {
 
   return (
     <>
-      <CoeffZone
-        coeff={reactBase}
-        label={p.tag?.reaction ? t.reaction(p.tag.reaction) : undefined}
-        t={t}
+      <MathZone
+        label={t.formula("BaseMultZone")}
+        value={fmtDamage(baseDmg)}
+        mathLine={
+          <span className="flex items-center">
+            <MathVar
+              val={reactBase}
+              label={
+                p.tag?.reaction
+                  ? t.reaction(p.tag.reaction)
+                  : t.formula("Coeff")
+              }
+            />
+            <MathOp char="×" />
+            <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
+          </span>
+        }
       />
-      <Op />
-      <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
       {bdp ? (
         <>
           <Op />
@@ -1019,8 +1062,34 @@ export function FormulaBreakdown({
         {parts.map((p, idx) => {
           const Renderer = RENDERERS[p.template];
           const displayDamage = adjustPartDamage(p, critMode);
+          const rankWeight = p.params.rankWeight;
+          const contributorChar = p.contributorCharId
+            ? charactersById[p.contributorCharId]
+            : undefined;
           return (
             <div key={idx} className="flex items-center pt-2">
+              {rankWeight != null && (
+                <>
+                  <MathZone
+                    label={
+                      contributorChar ? t.character(p.contributorCharId!) : ""
+                    }
+                    mathLine={
+                      <span className="flex items-center gap-1">
+                        {contributorChar && (
+                          <img
+                            src={getAssetUrl(contributorChar.imagePath)}
+                            alt={p.contributorCharId!}
+                            className="w-4 h-4 md:w-5 md:h-5 object-contain rounded-full bg-secondary/40 shrink-0"
+                          />
+                        )}
+                        <RankWeight w={rankWeight} />
+                      </span>
+                    }
+                  />
+                  <Op />
+                </>
+              )}
               <Renderer p={p} hl={highlightedStat} critMode={critMode} t={t} />
               <div className="flex px-1 md:px-2 shrink-0 h-10 md:h-16 items-center">
                 <Op char="=" />

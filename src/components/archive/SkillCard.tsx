@@ -15,33 +15,38 @@ import {
   LightweightSelectValue,
 } from "@/components/ui/lightweight-select";
 
-const TALENT_SLOTS: ("A" | "E" | "Q")[] = ["A", "E", "Q"];
+const TALENT_SLOTS = ["A", "E", "S", "Q"] as const;
+type TalentSlot = (typeof TALENT_SLOTS)[number];
+
+/** Derive talent slot from skill name prefix (e.g. "E. Skill Name" → "E"). */
+function inferTalentSlot(skillName: string): TalentSlot {
+  const match = skillName.match(/^([AESQ])\.\s/);
+  return (match?.[1] as TalentSlot) ?? "A";
+}
 
 function getDefaultLevels(
   characterId: string,
-  skillIndex: number
+  talentSlot: TalentSlot
 ): [SkillLevel, SkillLevel] {
   const info = charInfo[characterId];
-  const talent = TALENT_SLOTS[skillIndex] ?? "A";
-  const buffed = info && (info.c3Talent === talent || info.c5Talent === talent);
+  const buffed =
+    info && (info.c3Talent === talentSlot || info.c5Talent === talentSlot);
   return buffed ? ["10", "13"] : ["6", "10"];
 }
 
 interface SkillCardProps {
   skill: CharacterSkill;
   characterId: string;
-  skillIndex: number;
 }
 
-export function SkillCard({ skill, characterId, skillIndex }: SkillCardProps) {
+export function SkillCard({ skill, characterId }: SkillCardProps) {
+  const talentSlot = inferTalentSlot(skill.name);
   const defaultLevels = useMemo(
-    () => getDefaultLevels(characterId, skillIndex),
-    [characterId, skillIndex]
+    () => getDefaultLevels(characterId, talentSlot),
+    [characterId, talentSlot]
   );
   const [expanded, setExpanded] = useState(true);
   const [levels, setLevels] = useState<[SkillLevel, SkillLevel]>(defaultLevels);
-
-  const talentSlot = TALENT_SLOTS[skillIndex] ?? "A";
   const talentParams = useMemo(() => {
     const stats = getCharacterStatsSync();
     return stats?.[characterId]?.talent?.[talentSlot] ?? null;

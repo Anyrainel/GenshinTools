@@ -17,9 +17,9 @@
  *   --seed N         Override PRNG seed (default: 0xDEADBEEF)
  *
  * Usage:
- *   npm run gen-bench -- run
- *   npm run gen-bench -- run --update
- *   npm run gen-bench -- run --filter "Hu Tao"
+ *   npm run regtest -- run
+ *   npm run regtest -- run --update
+ *   npm run regtest -- run --filter "Hu Tao"
  */
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
