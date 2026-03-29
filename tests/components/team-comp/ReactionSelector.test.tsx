@@ -168,10 +168,10 @@ describe("ReactionSelector — visibility", () => {
         charId="hu_tao"
       />
     );
-    // Should show circled indices for each part
-    expect(screen.getByText("①")).toBeDefined();
-    expect(screen.getByText("②")).toBeDefined();
-    expect(screen.getByText("③")).toBeDefined();
+    // Should show checkboxes and scaling labels for each part
+    expect(screen.getByText(/120%/)).toBeDefined();
+    expect(screen.getByText(/130%/)).toBeDefined();
+    expect(screen.getByText(/150%/)).toBeDefined();
   });
 
   it("shows scaling labels for each part", () => {

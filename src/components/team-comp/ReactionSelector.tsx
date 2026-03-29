@@ -83,6 +83,10 @@ interface ReactionSelectorProps {
   charId: string;
   /** Whether to show in compact/inline mode (for combo lines) */
   compact?: boolean;
+  /** Hide the gate pills and only show per-part controls (for combo accordion) */
+  hideGate?: boolean;
+  /** When true, show controls but disable all interaction (read-only preview). */
+  disabled?: boolean;
 }
 
 // ─── Component ───
@@ -95,6 +99,8 @@ export function ReactionSelector({
   teamMeta,
   charId,
   compact = false,
+  hideGate = false,
+  disabled = false,
 }: ReactionSelectorProps) {
   const { t } = useLanguage();
 
@@ -148,9 +154,12 @@ export function ReactionSelector({
 
   const currentGate = reactionOverride.reaction ?? "none";
 
-  // Show per-part controls when gate is active AND there are multiple parts
+  // Show per-part controls when gate is active.
+  // In hideGate mode (combo accordion), always show even for single-part formulas.
   const showPerPart =
-    !compact && currentGate !== "none" && formulaEntry.parts.length > 1;
+    !compact &&
+    currentGate !== "none" &&
+    (hideGate || formulaEntry.parts.length > 1);
 
   // --- Handlers ---
 
@@ -206,44 +215,49 @@ export function ReactionSelector({
 
   // --- Render ---
 
+  const singlePart = formulaEntry.parts.length <= 1;
+
   return (
     <div className={cn("flex flex-col", compact ? "gap-0.5" : "gap-1.5")}>
       {/* Gate pills: segmented control for selecting the reaction */}
-      <div
-        className={cn(
-          "flex flex-wrap items-center",
-          compact ? "gap-0.5" : "gap-1"
-        )}
-      >
-        {eligible
-          .filter((reaction) => isReactionAvailable(reaction))
-          .map((reaction) => {
-            const isActive = reaction === currentGate;
+      {!hideGate && (
+        <div
+          className={cn(
+            "flex flex-wrap items-center",
+            compact ? "gap-0.5" : "gap-1"
+          )}
+        >
+          {eligible
+            .filter((reaction) => isReactionAvailable(reaction))
+            .map((reaction) => {
+              const isActive = reaction === currentGate;
 
-            return (
-              <Button
-                key={reaction}
-                type="button"
-                variant={isActive ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleGateChange(reaction)}
-                className={cn(
-                  "transition-colors",
-                  compact
-                    ? "h-6 px-2 text-[11px] rounded"
-                    : "h-7 px-2.5 text-xs rounded-md",
-                  isActive && "shadow-sm"
-                )}
-              >
-                {t.reaction(reaction)}
-              </Button>
-            );
-          })}
-      </div>
+              return (
+                <Button
+                  key={reaction}
+                  type="button"
+                  variant={isActive ? "default" : "outline"}
+                  size="sm"
+                  disabled={disabled}
+                  onClick={() => handleGateChange(reaction)}
+                  className={cn(
+                    "transition-colors",
+                    compact
+                      ? "h-6 px-2 text-[11px] rounded"
+                      : "h-7 px-2.5 text-xs rounded-md",
+                    isActive && "shadow-sm"
+                  )}
+                >
+                  {t.reaction(reaction)}
+                </Button>
+              );
+            })}
+        </div>
+      )}
 
       {/* Per-part controls: checkbox + label + hit count dropdown */}
       {showPerPart && (
-        <div className="flex flex-col gap-1 pl-1 pt-0.5">
+        <div className="flex flex-col gap-1 pt-0.5">
           {formulaEntry.parts.map((part, idx) => {
             // For multi-element chars, check if this part's element supports the gate reaction
             const partCanReact = isMultiElement
@@ -262,63 +276,65 @@ export function ReactionSelector({
               : 0;
 
             return (
-              <div key={idx} className="flex items-center gap-1.5">
-                {/* Checkbox */}
-                <button
-                  type="button"
-                  onClick={() => handlePartToggle(idx, !isChecked)}
-                  disabled={!partCanReact}
-                  className={cn(
-                    "w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors",
-                    !partCanReact
-                      ? "border-border/60 bg-background opacity-30 cursor-not-allowed"
-                      : isChecked
-                        ? "bg-primary border-primary text-primary-foreground"
-                        : "border-border/60 bg-background hover:border-border"
-                  )}
-                >
-                  {isChecked && (
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                      <path
-                        d="M2 5L4 7L8 3"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  )}
-                </button>
+              <div key={idx} className="flex flex-wrap items-center gap-1.5">
+                {/* Checkbox — hidden for single-part formulas (always enabled) */}
+                {!singlePart && (
+                  <button
+                    type="button"
+                    onClick={() => handlePartToggle(idx, !isChecked)}
+                    disabled={disabled || !partCanReact}
+                    className={cn(
+                      "w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors",
+                      !partCanReact
+                        ? "border-border/60 bg-background opacity-30 cursor-not-allowed"
+                        : isChecked
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "border-border/60 bg-background hover:border-border"
+                    )}
+                  >
+                    {isChecked && (
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 10 10"
+                        fill="none"
+                      >
+                        <path
+                          d="M2 5L4 7L8 3"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                )}
 
-                {/* Circled index */}
-                <span className="text-xs text-foreground/70 font-medium shrink-0">
-                  {circledIndex(idx)}
-                </span>
-
-                {/* Ability type */}
+                {/* Ability type + scaling label (no gap between them) */}
                 <span
                   className={cn(
-                    "text-xs font-semibold shrink-0",
-                    isChecked ? "text-foreground/70" : "text-muted-foreground"
+                    "text-xs shrink-0",
+                    isChecked ? "text-foreground" : "text-muted-foreground"
                   )}
                 >
-                  {t.ability(part.formula.tag.ability)}:
-                </span>
-
-                {/* Scaling label */}
-                <span
-                  className={cn(
-                    "text-xs font-mono tabular-nums truncate",
-                    isChecked ? "text-foreground/80" : "text-muted-foreground"
-                  )}
-                >
-                  {partLabel(part, t)}
+                  <span className="font-semibold">
+                    {t.ability(part.formula.tag.ability)}:
+                  </span>{" "}
+                  <span className="font-mono tabular-nums">
+                    {partLabel(part, t)}
+                  </span>
                 </span>
 
                 {/* Hit count dropdown — only for multi-hit parts */}
                 {totalHits > 1 && (
                   <>
-                    <span className="text-muted-foreground text-xs shrink-0">
+                    <span
+                      className={cn(
+                        "text-xs shrink-0",
+                        isChecked ? "text-foreground" : "text-muted-foreground"
+                      )}
+                    >
                       ×
                     </span>
                     <Select
@@ -326,7 +342,7 @@ export function ReactionSelector({
                       onValueChange={(val) =>
                         handlePartHitsChange(idx, Number(val))
                       }
-                      disabled={!isChecked}
+                      disabled={disabled || !isChecked}
                     >
                       <SelectTrigger
                         className={cn(
