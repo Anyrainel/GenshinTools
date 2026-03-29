@@ -583,6 +583,38 @@ describe("migrateTeamStore", () => {
     expect(line1.reaction).toBeUndefined();
   });
 
+  it("migrates v10 → v11: drops activeTeamId", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          selectedCombo: null,
+          formulaMode: "combo",
+        }),
+      ],
+      activeTeamId: "team-123",
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 10);
+    // activeTeamId is set to undefined (removed from persisted state)
+    expect((result as Record<string, unknown>).activeTeamId).toBeUndefined();
+    // Verify teams are untouched
+    expect(result.teams).toHaveLength(1);
+    expect(result.teams[0].id).toBe("team-1");
+  });
+
+  it("migrates v10 → v11: handles missing activeTeamId gracefully", () => {
+    const state = {
+      teams: [],
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 10);
+    expect((result as Record<string, unknown>).activeTeamId).toBeUndefined();
+  });
+
   it("full migration from v0 applies all steps", () => {
     const state = {
       teams: [

@@ -1,5 +1,5 @@
 import type { ArtifactData, Slot } from "@/data/types";
-import { useFreezeStore } from "@/stores/useFreezeStore";
+import { migrateFreezeStore, useFreezeStore } from "@/stores/useFreezeStore";
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -393,5 +393,70 @@ describe("useFreezeStore", () => {
       } as ReturnType<typeof useFreezeStore.getState>);
       expect(useFreezeStore.getState().reuseMode).toBe("none");
     });
+  });
+});
+
+describe("migrateFreezeStore", () => {
+  it("migrates v3 → v4: adds frozenArtifactIds", () => {
+    const oldState = {
+      frozenTeams: {},
+      reuseMode: "none",
+    };
+    const result = migrateFreezeStore(oldState, 3);
+    expect(result.frozenArtifactIds).toEqual([]);
+  });
+
+  it("migrates v3 → v4: preserves existing frozenArtifactIds", () => {
+    const oldState = {
+      frozenTeams: {},
+      reuseMode: "sameChar",
+      frozenArtifactIds: ["art-1", "art-2"],
+    };
+    const result = migrateFreezeStore(oldState, 3);
+    expect(result.frozenArtifactIds).toEqual(["art-1", "art-2"]);
+  });
+
+  it("migrates v2 → v4: allowSameCharReuse + frozenArtifactIds", () => {
+    const oldState = {
+      frozenTeams: {},
+      allowSameCharReuse: false,
+    };
+    const result = migrateFreezeStore(oldState, 2);
+    expect(result.reuseMode).toBe("none");
+    expect(result.frozenArtifactIds).toEqual([]);
+  });
+
+  it("full migration from v0 applies all steps", () => {
+    const oldState = {
+      frozenTeams: {
+        "team-1": {
+          artifactsByChar: {
+            hu_tao: {
+              flower: {
+                id: "a1",
+                setKey: "test",
+                slotKey: "flower",
+                level: 20,
+                rarity: 5,
+                mainStatKey: "hp",
+                lock: false,
+                substats: {},
+              },
+              plume: null,
+              sands: null,
+              goblet: null,
+              circlet: null,
+            },
+          },
+        },
+      },
+    };
+    const result = migrateFreezeStore(oldState, 0);
+    // v0→v1: frozenCharIds derived from artifactsByChar keys
+    expect(result.frozenTeams["team-1"].frozenCharIds).toEqual(["hu_tao"]);
+    // v1→v2→v3: reuseMode defaults to sameChar
+    expect(result.reuseMode).toBe("sameChar");
+    // v3→v4: frozenArtifactIds added
+    expect(result.frozenArtifactIds).toEqual([]);
   });
 });

@@ -65,6 +65,54 @@ function collectCharArtifactIds(
   return ids;
 }
 
+/**
+ * Migrate persisted FreezeState from an older version to the current format.
+ * Exported for testability — called by zustand persist's `migrate` option.
+ */
+export function migrateFreezeStore(
+  persisted: unknown,
+  version: number
+): FreezeState {
+  const state = persisted as Record<string, unknown>;
+  // v0 → v1: { artifactIds, artifactsByChar } → { frozenCharIds, artifactsByChar }
+  if (version < 1) {
+    const ft = (state.frozenTeams ?? {}) as Record<
+      string,
+      {
+        artifactIds?: string[];
+        frozenCharIds?: string[];
+        artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
+      }
+    >;
+    for (const entry of Object.values(ft)) {
+      if (!entry.frozenCharIds) {
+        entry.frozenCharIds = Object.keys(entry.artifactsByChar);
+        entry.artifactIds = undefined;
+      }
+    }
+  }
+  // v1 → v2: add allowSameCharReuse (default true)
+  if (version < 2) {
+    if (!("allowSameCharReuse" in state)) {
+      (state as Record<string, unknown>).allowSameCharReuse = true;
+    }
+  }
+  // v2 → v3: allowSameCharReuse → reuseMode
+  if (version < 3) {
+    const legacy = state as Record<string, unknown>;
+    legacy.reuseMode =
+      legacy.allowSameCharReuse === false ? "none" : "sameChar";
+    legacy.allowSameCharReuse = undefined;
+  }
+  // v3 → v4: add frozenArtifactIds
+  if (version < 4) {
+    if (!Array.isArray(state.frozenArtifactIds)) {
+      state.frozenArtifactIds = [];
+    }
+  }
+  return state as unknown as FreezeState;
+}
+
 export const useFreezeStore = create<FreezeState>()(
   persist(
     (set, get) => ({
@@ -179,49 +227,7 @@ export const useFreezeStore = create<FreezeState>()(
     {
       name: "frozen-teams-storage",
       version: 4,
-      migrate: (persisted: unknown, version: number) => {
-        const state = persisted as Record<string, unknown>;
-        // v0 → v1: { artifactIds, artifactsByChar } → { frozenCharIds, artifactsByChar }
-        if (version < 1) {
-          const ft = (state.frozenTeams ?? {}) as Record<
-            string,
-            {
-              artifactIds?: string[];
-              frozenCharIds?: string[];
-              artifactsByChar: Record<
-                string,
-                Record<Slot, ArtifactData | null>
-              >;
-            }
-          >;
-          for (const entry of Object.values(ft)) {
-            if (!entry.frozenCharIds) {
-              entry.frozenCharIds = Object.keys(entry.artifactsByChar);
-              entry.artifactIds = undefined;
-            }
-          }
-        }
-        // v1 → v2: add allowSameCharReuse (default true)
-        if (version < 2) {
-          if (!("allowSameCharReuse" in state)) {
-            (state as Record<string, unknown>).allowSameCharReuse = true;
-          }
-        }
-        // v2 → v3: allowSameCharReuse → reuseMode
-        if (version < 3) {
-          const legacy = state as Record<string, unknown>;
-          legacy.reuseMode =
-            legacy.allowSameCharReuse === false ? "none" : "sameChar";
-          legacy.allowSameCharReuse = undefined;
-        }
-        // v3 → v4: add frozenArtifactIds
-        if (version < 4) {
-          if (!Array.isArray(state.frozenArtifactIds)) {
-            state.frozenArtifactIds = [];
-          }
-        }
-        return state as unknown as FreezeState;
-      },
+      migrate: migrateFreezeStore,
       partialize: (state) => ({
         frozenTeams: state.frozenTeams,
         reuseMode: state.reuseMode,
