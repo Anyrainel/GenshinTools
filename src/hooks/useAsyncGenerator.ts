@@ -18,7 +18,9 @@ export function useAsyncGenerator(): AsyncGeneratorState {
   const [isComputing, setIsComputing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const activeGenerator = useRef<AsyncGenerator<GeneratorResult> | null>(null);
+  const activeGenerator = useRef<AsyncGenerator<GeneratorResult, void> | null>(
+    null
+  );
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export function useAsyncGenerator(): AsyncGeneratorState {
 
   const stop = useCallback(() => {
     if (activeGenerator.current) {
-      activeGenerator.current.return(undefined as unknown as GeneratorResult);
+      activeGenerator.current.return(undefined);
       activeGenerator.current = null;
     }
     setIsComputing(false);

@@ -35,7 +35,7 @@ interface WeaponSlotProps {
   weaponId: string | null;
   onUpdate: (index: number, val: string) => void;
   onClear: (index: number) => void;
-  filter: (item: unknown) => boolean;
+  filter: (item: WeaponResource) => boolean;
   isAddSlot?: boolean;
   size?: "md" | "lg" | "xl";
 }
@@ -80,7 +80,7 @@ const CompactAddWeapon = memo(
   }: {
     index: number;
     onUpdate: (index: number, val: string) => void;
-    filter: (item: unknown) => boolean;
+    filter: (item: WeaponResource) => boolean;
   }) => {
     const [isAdding, setIsAdding] = useState(false);
 
@@ -203,8 +203,7 @@ function CharacterBuildCardComponent({
     [character, characterStats]
   );
   const weaponFilter = useCallback(
-    (item: unknown) => {
-      const w = item as WeaponResource;
+    (w: WeaponResource) => {
       const weaponMeta = getWeaponDisplayMeta(w, weaponStats?.[w.id]);
       return (
         charMeta.weaponType == null || weaponMeta.type === charMeta.weaponType

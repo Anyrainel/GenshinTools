@@ -430,8 +430,7 @@ function CharConfigGroup({
 
   const makeFilter = useCallback(
     (targetRarity: number) => {
-      return (item: unknown) => {
-        const w = item as WeaponResource;
+      return (w: WeaponResource) => {
         if (!weaponStats) return w.rarity === targetRarity;
         const meta = getWeaponDisplayMeta(w, weaponStats[w.id]);
         if (meta.rarity !== targetRarity) return false;
@@ -444,8 +443,7 @@ function CharConfigGroup({
   );
 
   const filterLowStar = useMemo(() => {
-    return (item: unknown) => {
-      const w = item as WeaponResource;
+    return (w: WeaponResource) => {
       if (!weaponStats) return w.rarity === 3 || w.rarity === 4;
       const meta = getWeaponDisplayMeta(w, weaponStats[w.id]);
       if (meta.rarity !== 3 && meta.rarity !== 4) return false;

@@ -730,7 +730,7 @@ function findBestMainStatsWithSubs(
 
 export async function* runGenerator(
   opts: GeneratorOptions
-): AsyncGenerator<GeneratorResult> {
+): AsyncGenerator<GeneratorResult, void> {
   const { teamBuild, carryCharId, calcContext } = opts;
   const { combo, buffOverrides } = opts.formula;
   const budgetPreset = resolveSubstatBudgetPreset(

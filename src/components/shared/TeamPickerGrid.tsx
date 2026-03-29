@@ -3,7 +3,11 @@ import {
   ItemPicker,
 } from "@/components/shared/ItemPicker";
 import { charactersById, weaponsById } from "@/data/constants";
-import type { AccountData, WeaponResource } from "@/data/types";
+import type {
+  AccountData,
+  CharacterResource,
+  WeaponResource,
+} from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import {
   getCharacterDisplayMeta,
@@ -49,24 +53,20 @@ export function TeamPickerGrid({
   const gapClass = gap === "sm" ? "gap-x-2 gap-y-2" : "gap-3";
 
   const charFilter = useCallback(
-    (idx: number) => (item: unknown) => {
-      const c = item as { id: string };
+    (idx: number) => (c: CharacterResource) => {
       return !characters.some((otherId, j) => j !== idx && otherId === c.id);
     },
     [characters]
   );
 
   const weaponFilter = useCallback(
-    (idx: number) => (item: unknown) => {
+    (idx: number) => (w: WeaponResource) => {
       const charId = characters[idx];
       if (!charId) return true;
       const char = charactersById[charId];
       if (!char) return true;
       const charMeta = getCharacterDisplayMeta(char, characterStats?.[charId]);
-      const weaponMeta = getWeaponDisplayMeta(
-        item as WeaponResource,
-        weaponStats?.[(item as WeaponResource).id]
-      );
+      const weaponMeta = getWeaponDisplayMeta(w, weaponStats?.[w.id]);
       return (
         charMeta.weaponType == null || weaponMeta.type === charMeta.weaponType
       );

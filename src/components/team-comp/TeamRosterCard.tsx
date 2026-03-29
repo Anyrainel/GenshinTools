@@ -515,8 +515,7 @@ export function TeamRosterCard({
                       );
                       if (!meta.weaponType) return undefined;
                       const wType = meta.weaponType;
-                      return (item: unknown) => {
-                        const w = item as WeaponResource;
+                      return (w: WeaponResource) => {
                         const wMeta = getWeaponDisplayMeta(
                           w,
                           weaponStats?.[w.id]

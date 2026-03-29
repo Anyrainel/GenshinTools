@@ -24,7 +24,9 @@ export function useAsyncOptimizer(): AsyncOptimizerState {
   const [isComputing, setIsComputing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const activeGenerator = useRef<AsyncGenerator<TeamOptYield> | null>(null);
+  const activeGenerator = useRef<AsyncGenerator<TeamOptYield, void> | null>(
+    null
+  );
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export function useAsyncOptimizer(): AsyncOptimizerState {
 
   const stop = useCallback(() => {
     if (activeGenerator.current) {
-      activeGenerator.current.return(undefined as unknown as TeamOptYield);
+      activeGenerator.current.return(undefined);
       activeGenerator.current = null;
     }
     setIsComputing(false);

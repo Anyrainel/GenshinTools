@@ -74,13 +74,20 @@ export type ArtifactConfig =
 
 type ValueType<T> = T extends "artifact" ? ArtifactConfig : string;
 
+/** Maps an ItemPickerType to the resource type passed to filter callbacks. */
+export type ItemResourceType<T extends ItemPickerType> = T extends "character"
+  ? CharacterResource
+  : T extends "weapon"
+    ? WeaponResource
+    : ArtifactSetResource | ArtifactHalfSet;
+
 interface ItemPickerProps<T extends ItemPickerType> {
   type: T;
   value: ValueType<T> | null;
   onChange: (value: ValueType<T>) => void;
   onClear?: () => void;
   disabled?: boolean;
-  filter?: (item: unknown) => boolean;
+  filter?: (item: ItemResourceType<T>) => boolean;
   className?: string;
   tooltipSide?: "left" | "right";
   triggerSize?: ItemIconSize;
@@ -182,7 +189,7 @@ function ItemPickerComponent<T extends ItemPickerType>({
       value={value}
       onSelect={handleSelect as (val: ValueType<ItemPickerType>) => void}
       onClear={onClear ? handleClear : undefined}
-      filter={filter}
+      filter={filter as PickerContentProps["filter"]}
       menuSize={menuSize}
       tooltipSide={tooltipSide}
       isDesktop={isDesktop}

@@ -499,7 +499,7 @@ function buildHeuristicBaseSheets(
  */
 export async function* runTeamOptimization(
   opts: TeamOptimizerOptions
-): AsyncGenerator<TeamOptYield> {
+): AsyncGenerator<TeamOptYield, void> {
   const {
     teamBuild,
     carryCharId,
