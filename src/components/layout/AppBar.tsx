@@ -222,7 +222,7 @@ export function AppBar({
                     {t.ui("app.title")}
                   </SheetTitle>
                 </SheetHeader>
-                <nav className="flex flex-col gap-0.5 mt-4 overflow-y-auto flex-1">
+                <nav className="flex flex-col gap-1.5 mt-4 overflow-y-auto flex-1">
                   {navItems.map((item) => {
                     const isActive = location.pathname.startsWith(item.href);
                     const hasChildren =
@@ -230,7 +230,7 @@ export function AppBar({
 
                     if (hasChildren) {
                       return (
-                        <div key={item.href} className="space-y-1">
+                        <div key={item.href} className="space-y-0.5">
                           <Button
                             variant="ghost"
                             asChild
@@ -242,7 +242,7 @@ export function AppBar({
                           >
                             <Link to={item.href}>{item.label}</Link>
                           </Button>
-                          <div className="pl-2 space-y-1 border-l ml-2 border-border/50">
+                          <div className="pl-2 space-y-0 border-l ml-2 border-border/50">
                             {item.children?.map((child) => {
                               const isChildActive =
                                 location.pathname === item.href &&

@@ -15,7 +15,7 @@ import { type Slot, allSlots } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn } from "@/lib/utils";
-import { CircleAlert, Info, TriangleAlert } from "lucide-react";
+import { ArrowUpRight, CircleAlert, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -246,7 +246,7 @@ function NoBuildContent({ characterId }: { characterId: string }) {
 
       {/* Link to builds page */}
       <Link
-        to={`/artifact-filter?tab=configure&target=${characterId}`}
+        to={`/artifact-filter?char=${characterId}`}
         className="text-amber-400 hover:text-amber-300 underline text-sm"
       >
         {t.ui("accountData.viewBuilds")}
@@ -279,7 +279,7 @@ function ArtifactScoreContent({
             {t.ui("accountData.scoredUsing").replace("{0}", buildSetLabel)}
           </span>
           <Link
-            to={`/artifact-filter?tab=configure&target=${characterId}`}
+            to={`/artifact-filter?char=${characterId}`}
             className="text-amber-400 hover:text-amber-300 underline text-xs whitespace-nowrap ml-2"
           >
             {t.ui("accountData.viewBuilds")}
@@ -287,10 +287,17 @@ function ArtifactScoreContent({
         </div>
       )}
 
-      {/* Header: title + score summary */}
+      {/* Header: title + link + score summary */}
       <div className="flex justify-between items-end">
-        <span className="text-lg font-bold text-amber-200 uppercase tracking-wider">
+        <span className="text-lg font-bold text-amber-200 uppercase tracking-wider flex items-center gap-2">
           {t.ui("accountData.artifactScore")}
+          <Link
+            to={`/artifact-filter?char=${characterId}`}
+            className="text-xs font-normal normal-case tracking-normal text-amber-400 hover:text-amber-300 flex items-center gap-0.5"
+          >
+            {t.ui("accountData.viewBuilds")}
+            <ArrowUpRight className="w-3 h-3" />
+          </Link>
         </span>
         <div className="flex items-baseline gap-1 font-mono">
           <span className="text-2xl font-black text-amber-200">

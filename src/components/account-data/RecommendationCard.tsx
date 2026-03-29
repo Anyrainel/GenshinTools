@@ -19,8 +19,9 @@ import type { ArtifactData, CharacterData, Tier } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import type { Recommendation } from "@/lib/account-data/recommendationEngine";
-import { PartyPopper } from "lucide-react";
+import { ArrowUpRight, PartyPopper } from "lucide-react";
 import { memo } from "react";
+import { Link } from "react-router-dom";
 import { ActionRecommendationCard } from "./ActionRecommendationCard";
 
 interface RecommendationCardProps {
@@ -159,13 +160,18 @@ function RecommendationCardComponent({
             </div>
           </div>
 
-          {score && (
-            <ArtifactScoreHoverCard
-              score={score}
-              characterId={char.key}
-              className="shrink-0 self-end"
-            />
-          )}
+          <div className="shrink-0 flex flex-col items-end self-stretch">
+            <Link
+              to={`/artifact-filter?char=${char.key}`}
+              className="flex items-center gap-0.5 text-xs text-amber-400/60 hover:text-amber-400 transition-colors mb-auto -mt-1"
+            >
+              {t.ui("accountData.viewBuilds")}
+              <ArrowUpRight className="w-3 h-3" />
+            </Link>
+            {score && (
+              <ArtifactScoreHoverCard score={score} characterId={char.key} />
+            )}
+          </div>
         </div>
 
         {/* Recommendations */}
