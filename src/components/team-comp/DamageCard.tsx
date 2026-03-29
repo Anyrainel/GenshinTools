@@ -1,3 +1,5 @@
+import { ConnectionBadge } from "@/components/artifact-manager/ConnectionBadge";
+import { JobDialog } from "@/components/artifact-manager/JobDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -22,6 +24,9 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { AccountData, ArtifactData, Slot } from "@/data/types";
+import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
+import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
+import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
@@ -47,6 +52,7 @@ import type {
 import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
+import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { Team } from "@/stores/useTeamStore";
 import {
   AlertTriangle,
@@ -58,6 +64,7 @@ import {
   Eye,
   Flame,
   Loader2,
+  Monitor,
   Play,
   Snowflake,
   Swords,
@@ -1469,6 +1476,25 @@ export function DamageCard({
     "expected"
   );
 
+  // Artifact manager — equip frozen artifacts in-game
+  const [managerEnabled, setManagerEnabled] = useState(false);
+  const { connection } = useArtifactManagerConnection(managerEnabled);
+  const {
+    phase: jobPhase,
+    submit: submitEquipJob,
+    reset: resetJob,
+  } = useArtifactManagerJob();
+  const [jobDialogOpen, setJobDialogOpen] = useState(false);
+
+  const handleEquipInGame = useCallback(() => {
+    const frozenTeam = useFreezeStore.getState().frozenTeams[team.id];
+    if (!frozenTeam) return;
+    const instructions = buildEquipInstructions(frozenTeam.artifactsByChar);
+    if (instructions.length === 0) return;
+    setJobDialogOpen(true);
+    submitEquipJob(instructions);
+  }, [team.id, submitEquipJob]);
+
   // Keep progress bar visible after optimization completes, then fade + collapse
   const [showProgress, setShowProgress] = useState(false);
   const [progressFading, setProgressFading] = useState(false);
@@ -1718,6 +1744,50 @@ export function DamageCard({
                 </Button>
               )}
             </div>
+
+            {/* Artifact manager — equip frozen artifacts in-game */}
+            {isFrozen && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setManagerEnabled((v) => !v)}
+                  className={cn(
+                    "gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8",
+                    managerEnabled && "border-primary"
+                  )}
+                >
+                  <Monitor className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  Game Link
+                </Button>
+
+                {managerEnabled && (
+                  <>
+                    <ConnectionBadge connection={connection} />
+                    <Button
+                      size="sm"
+                      className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8"
+                      disabled={
+                        connection.status !== "connected" ||
+                        !connection.health.enabled ||
+                        !connection.health.gameAlive ||
+                        connection.health.busy
+                      }
+                      onClick={handleEquipInGame}
+                    >
+                      Equip in Game
+                    </Button>
+                  </>
+                )}
+              </div>
+            )}
+
+            <JobDialog
+              open={jobDialogOpen}
+              onOpenChange={setJobDialogOpen}
+              phase={jobPhase}
+              onReset={resetJob}
+            />
 
             {/* Empty state + preview (shown when not all chars resolved) */}
             {!isComputing && !allCharsResolved && !teamError && (
