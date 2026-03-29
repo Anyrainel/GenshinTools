@@ -101,6 +101,7 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
     handleGenerate: vi.fn(),
     genArtifactsByChar: {},
     genDisplayResult: null,
+    formulaMode: "combo",
     ...overrides,
   };
 }

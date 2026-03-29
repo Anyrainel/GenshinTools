@@ -58,6 +58,7 @@ import type {
   ComboFormula,
   ComboLine,
   I18nLabel,
+  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
@@ -135,6 +136,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { t } = useLanguage();
   const limitText = limitMap[t.lang];
   const [limitOpen, setLimitOpen] = useState(false);
+  const [expandedLine, setExpandedLine] = useState<{
+    charId: string;
+    formulaId: string;
+    reaction: string;
+  } | null>(null);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset expanded line when team changes
+  useEffect(() => setExpandedLine(null), [team.id]);
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
@@ -466,12 +474,87 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [comboLineMap, updateCombo]
   );
 
+  const formulaMode = team.formulaMode ?? "single";
+
+  const handleReactionChange = useCallback(
+    (
+      charId: string,
+      formulaId: string,
+      reaction: string,
+      override: ReactionOverride
+    ) => {
+      if (formulaMode === "single") {
+        // In single mode, persist per-part config to team.singleReaction
+        updateTeam(team.id, { singleReaction: override });
+        return;
+      }
+      const key = `${charId}.${formulaId}.${reaction}`;
+      const existing = comboLineMap.get(key);
+      if (existing) {
+        updateCombo((c) => ({
+          ...c,
+          lines: c.lines.map((l, i) =>
+            i === existing.lineIndex ? { ...l, reaction: override } : l
+          ),
+        }));
+      }
+    },
+    [formulaMode, comboLineMap, updateCombo, updateTeam, team.id]
+  );
+
+  const handleModeChange = useCallback(
+    (mode: "single" | "combo") => {
+      if (mode !== formulaMode) {
+        updateTeam(team.id, { formulaMode: mode });
+      }
+    },
+    [formulaMode, updateTeam, team.id]
+  );
+
+  const onSelectSingleFormula = useCallback(
+    (charId: string, formulaId: string, reaction: string) => {
+      const prev = team.selectedFormula;
+      const sameFormula =
+        prev?.charId === charId && prev?.formulaId === formulaId;
+      // Preserve existing per-part config when only switching the gate reaction
+      const prevReaction = sameFormula ? team.singleReaction : undefined;
+      const newReaction: ReactionOverride | undefined =
+        reaction === "none"
+          ? undefined
+          : {
+              ...prevReaction,
+              reaction: reaction as ReactionType,
+            };
+      updateTeam(team.id, {
+        selectedFormula: { charId, formulaId },
+        singleReaction: newReaction,
+      });
+    },
+    [updateTeam, team.id, team.selectedFormula, team.singleReaction]
+  );
+
   // ─── Display Combo ───
 
   const displayCombo = useMemo<ComboFormula>(() => {
+    if (formulaMode === "single") {
+      // Build a synthetic 1-line combo from the persisted single selection
+      const sel = team.selectedFormula;
+      if (!sel) return { ...combo, lines: [] };
+      return {
+        ...combo,
+        lines: [
+          {
+            charId: sel.charId,
+            formulaId: sel.formulaId,
+            count: 1,
+            reaction: team.singleReaction,
+          },
+        ],
+      };
+    }
     const activeLines = combo.lines.filter((l) => l.count > 0);
     return activeLines.length > 0 ? { ...combo, lines: activeLines } : combo;
-  }, [combo]);
+  }, [formulaMode, combo, team.selectedFormula, team.singleReaction]);
 
   // Build per-line PartialBuffInfo[] (defaults + user overrides)
   const buffOverrides = useMemo(() => {
@@ -1128,6 +1211,20 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         buildError={buildError}
         comboLineMap={comboLineMap}
         setComboLineCount={setComboLineCount}
+        expandedLine={expandedLine}
+        onExpandLine={(charId, formulaId, reaction) => {
+          setExpandedLine((prev) =>
+            prev?.charId === charId &&
+            prev?.formulaId === formulaId &&
+            prev?.reaction === reaction
+              ? null
+              : { charId, formulaId, reaction }
+          );
+        }}
+        onReactionChange={handleReactionChange}
+        formulaMode={formulaMode}
+        onModeChange={handleModeChange}
+        onSelectSingleFormula={onSelectSingleFormula}
         onResetCombo={() => {
           if (!teamBuild) return;
           const lines: ComboLine[] = [];
@@ -1243,6 +1340,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         t={t}
         equippedArtifactsByChar={equippedArtifactsByChar}
         currentDisplayResult={currentDisplayResult}
+        formulaMode={formulaMode}
         comboLines={displayCombo.lines}
         comboId={displayCombo.id}
         teamBuild={teamBuild}
@@ -1299,10 +1397,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           teamId={team.id}
           teamBuild={teamBuild}
           baseConfigs={configs}
-          formula={{
-            combo,
-            buffOverrides,
-          }}
+          templateCombo={combo}
           analysis={analyzerState}
           perChar={Object.fromEntries(
             effectiveTeam.characters

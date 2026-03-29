@@ -786,7 +786,8 @@ interface DamageCardProps {
   handleGenerate: () => void;
   genArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   genDisplayResult: DisplayResult | null | undefined;
-  // Combo mode
+  // Combo/single mode
+  formulaMode?: "single" | "combo";
   comboLines?: ComboLine[] | null;
   comboId?: string;
   teamBuild?: TeamBuild | null;
@@ -1138,6 +1139,7 @@ export function DamageCard({
   handleGenerate,
   genArtifactsByChar,
   genDisplayResult,
+  formulaMode,
   comboLines,
   comboId,
   teamBuild,
@@ -1282,7 +1284,13 @@ export function DamageCard({
           ) : (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
-              <p>{t.ui("teamComp.emptyComboMsg")}</p>
+              <p>
+                {t.ui(
+                  formulaMode === "single"
+                    ? "teamComp.emptyDamageMsg"
+                    : "teamComp.emptyComboMsg"
+                )}
+              </p>
             </div>
           )}
         </CardContent>
