@@ -54,8 +54,9 @@ describe("convertGOODToAccountData", () => {
       const hutao = data.characters.find((c) => c.key === "hu_tao");
       const flower = hutao?.artifacts?.flower;
       expect(flower?.substats).toBeDefined();
-      expect(flower?.substats?.cd).toBe(28.8);
-      expect(flower?.substats?.cr).toBe(6.6);
+      // Solver produces precise values; verify they round to display values
+      expect(Math.round(flower!.substats.cd! * 10) / 10).toBe(28.8);
+      expect(Math.round(flower!.substats.cr! * 10) / 10).toBe(6.6);
     });
 
     it("collects unassigned artifacts in extraArtifacts", () => {
@@ -638,6 +639,93 @@ describe("convertGOODToAccountData", () => {
       expect(result.characters.find((c) => c.key === "amber")).toBeUndefined();
       // Existing characters preserved
       expect(result.characters).toHaveLength(2);
+    });
+  });
+
+  describe("precise substats via solver", () => {
+    const makeGOOD = (artifacts: GOODData["artifacts"]): GOODData => ({
+      format: "GOOD",
+      version: 3,
+      source: "test",
+      artifacts,
+    });
+
+    it("solves pct substats to precise values on import", () => {
+      const data = makeGOOD([
+        {
+          setKey: "CrimsonWitchOfFlames",
+          slotKey: "flower",
+          level: 20,
+          rarity: 5,
+          mainStatKey: "hp",
+          location: "",
+          lock: false,
+          substats: [
+            { key: "critRate_", value: 10.5 },
+            { key: "critDMG_", value: 21.0 },
+            { key: "atk_", value: 5.8 },
+            { key: "eleMas", value: 23 },
+          ],
+          totalRolls: 9,
+        },
+      ]);
+
+      const result = convertGOODToAccountData(data);
+      const art = result.data.extraArtifacts[0];
+
+      // Pct stats should have precise values that round back to display
+      expect(art.substats.cr).toBeDefined();
+      expect(Math.round(art.substats.cr! * 10) / 10).toBe(10.5);
+      // Flat stat should remain integer
+      expect(art.substats.em).toBe(23);
+    });
+
+    it("skips solver when substats are already precise", () => {
+      const data = makeGOOD([
+        {
+          setKey: "CrimsonWitchOfFlames",
+          slotKey: "flower",
+          level: 20,
+          rarity: 5,
+          mainStatKey: "hp",
+          location: "",
+          lock: false,
+          substats: [
+            { key: "critRate_", value: 10.47 },
+            { key: "critDMG_", value: 21.01 },
+            { key: "atk_", value: 5.83 },
+            { key: "eleMas", value: 23 },
+          ],
+        },
+      ]);
+
+      const result = convertGOODToAccountData(data);
+      const art = result.data.extraArtifacts[0];
+
+      // Values should be preserved exactly
+      expect(art.substats.cr).toBe(10.47);
+      expect(art.substats.cd).toBe(21.01);
+    });
+
+    it("preserves display values when solver fails", () => {
+      const data = makeGOOD([
+        {
+          setKey: "CrimsonWitchOfFlames",
+          slotKey: "flower",
+          level: 20,
+          rarity: 5,
+          mainStatKey: "hp",
+          location: "",
+          lock: false,
+          substats: [{ key: "critRate_", value: 99.9 }],
+        },
+      ]);
+
+      const result = convertGOODToAccountData(data);
+      const art = result.data.extraArtifacts[0];
+
+      // Should keep original display value
+      expect(art.substats.cr).toBe(99.9);
     });
   });
 

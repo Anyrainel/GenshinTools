@@ -10,6 +10,7 @@ import type {
   SubStat,
   WeaponData,
 } from "@/data/types";
+import { solveArtifact } from "./artifactSolver";
 
 // --- Types from GOOD v3 (Genshin Open Object Description) ---
 
@@ -363,6 +364,21 @@ export const convertGOODToAccountData = (
             const key = statKeyMap[sub.key] as SubStat;
             if (key) {
               unactivatedSubstats[key] = sub.value;
+            }
+          }
+        }
+
+        // Solve for precise substat values
+        const solved = solveArtifact({
+          rarity: art.rarity as Rarity,
+          level: art.level,
+          substats,
+          totalRolls: art.totalRolls,
+        });
+        if (solved) {
+          for (const [k, v] of Object.entries(solved)) {
+            if (v !== undefined) {
+              substats[k as SubStat] = v;
             }
           }
         }
