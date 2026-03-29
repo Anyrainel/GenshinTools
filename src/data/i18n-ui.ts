@@ -920,10 +920,14 @@ export const i18nUiData = {
       en: "This character already has different frozen artifacts (e.g. from a previous optimization). Freezing will replace them with the currently equipped set.",
       zh: "该角色已有不同的冻结圣遗物（如来自之前的优化）。冻结将替换为当前装备的套装。",
     },
-    downloadAllFrozen: { en: "Download All Frozen", zh: "下载所有冻结" },
-    frozenExportFilename: {
-      en: "{0} Teams Optimized Export",
-      zh: "{0}队伍优化导出",
+    standaloneArtifacts: {
+      en: "Standalone Frozen Artifacts",
+      zh: "独立冻结圣遗物",
+    },
+    freezeArtifact: { en: "Freeze Artifact", zh: "冻结圣遗物" },
+    frozenEmpty: {
+      en: "No frozen teams or artifacts",
+      zh: "没有冻结的队伍或圣遗物",
     },
     characterScoreExportFilename: {
       en: "{0} Character Score Export",
