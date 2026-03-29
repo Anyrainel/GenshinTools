@@ -2,6 +2,8 @@ import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
 import { TriageCard } from "@/components/account-data/TriageCard";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { FilterChip } from "@/components/archive/FilterChip";
+import { ConnectionBadge } from "@/components/artifact-manager/ConnectionBadge";
+import { JobDialog } from "@/components/artifact-manager/JobDialog";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +18,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { allHalfSetIds, artifactIdToHalfSetId } from "@/data/constants";
+import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
+import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type FlexPattern,
@@ -23,6 +27,7 @@ import {
   type TriageSettings,
   runTriage,
 } from "@/lib/account-data/triage";
+import { buildTriageInstructions } from "@/lib/artifact-manager/instructions";
 import { TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useTriageStore } from "@/stores/useTriageStore";
@@ -34,6 +39,7 @@ import {
   ExternalLink,
   Lock,
   LockOpen,
+  Monitor,
   Puzzle,
   Settings,
   ShieldAlert,
@@ -242,6 +248,17 @@ export function TriageView() {
 
   const settings = useTriageStore((s) => s.settings);
   const setSettings = useTriageStore((s) => s.setSettings);
+
+  const [managerEnabled, setManagerEnabled] = useState(false);
+  const { connection, refresh: refreshConnection } =
+    useArtifactManagerConnection(managerEnabled);
+  const {
+    phase: jobPhase,
+    submit: submitJob,
+    reset: resetJob,
+  } = useArtifactManagerJob();
+  const [jobDialogOpen, setJobDialogOpen] = useState(false);
+
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const { gridRef, cols: gridCols } = useGridCols();
 
@@ -317,6 +334,14 @@ export function TriageView() {
       };
     return runTriage(accountData, deferredBuildGroups, deferredSettings);
   }, [accountData, deferredBuildGroups, deferredSettings]);
+
+  const handleApplyToGame = useCallback(() => {
+    if (!decisions || decisions.length === 0) return;
+    const instructions = buildTriageInstructions(decisions);
+    if (instructions.length === 0) return;
+    setJobDialogOpen(true);
+    submitJob(instructions);
+  }, [decisions, submitJob]);
 
   const tierRankMap: Record<string, number> = { P: 0, Q: 1, N: 2, T: 3 };
   const slotOrder: Record<string, number> = {
@@ -514,6 +539,38 @@ export function TriageView() {
             <p className="text-sm italic ml-auto bg-gradient-to-r from-amber-400 to-pink-400 bg-clip-text text-transparent">
               {t.ui("triage.autoLockWip")}
             </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setManagerEnabled((v) => !v);
+                  if (!managerEnabled) refreshConnection();
+                }}
+                className={cn(managerEnabled && "border-primary")}
+              >
+                <Monitor className="h-4 w-4 mr-1.5" />
+                Game Link
+              </Button>
+              {managerEnabled && (
+                <>
+                  <ConnectionBadge connection={connection} />
+                  <Button
+                    size="sm"
+                    disabled={
+                      connection.status !== "connected" ||
+                      (connection.status === "connected" &&
+                        (!connection.health.enabled ||
+                          !connection.health.gameAlive ||
+                          connection.health.busy))
+                    }
+                    onClick={handleApplyToGame}
+                  >
+                    Apply to Game
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm">
@@ -607,6 +664,12 @@ export function TriageView() {
             settings={settings}
             onSettingsChange={setSettings}
             t={t}
+          />
+          <JobDialog
+            open={jobDialogOpen}
+            onOpenChange={setJobDialogOpen}
+            phase={jobPhase}
+            onReset={resetJob}
           />
         </div>
       }
