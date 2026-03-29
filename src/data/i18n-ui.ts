@@ -9,6 +9,7 @@ export const i18nUiData = {
     active: { en: "Active", zh: "使用中" },
     home: { en: "Home", zh: "主页" },
     refresh: { en: "Refresh Page", zh: "刷新页面" },
+    loading: { en: "Loading...", zh: "加载中..." },
     error: { en: "Something went wrong", zh: "出错了" },
     errorMsg: {
       en: "An unexpected error occurred.",

@@ -71,7 +71,7 @@ interface InvestmentDetailProps {
   onBack: () => void;
 }
 
-// ─── Helpers (copied from AnalyzerDialog — will be deduplicated in Task 8) ───
+// ─── Helpers ───
 
 function getArtifactIconProps(bc: TeamSlotConfig): {
   artifactSetId?: string;
@@ -278,7 +278,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     );
   }, [team.characters, team.minEr, team.minCr]);
 
-  // ── State management (mirrors AnalyzerDialog) ──
+  // ── State management ──
   const storedConfigs = team.analyzerConfigs;
   const [charConfigs, setCharConfigs] = useState<AnalyzerCharConfig[]>(() =>
     configs.length > 0
