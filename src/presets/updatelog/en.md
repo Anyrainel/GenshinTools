@@ -4,6 +4,22 @@
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
 
+## 2025-03-29
+
+### features
+- Full talent level simulation: no longer forced to use Lv.10/13 data
+- Per-constellation combos: rotation formulas auto-adjust when constellation changes, showing which skills unlock at each constellation
+- All formulas now visible in the selector with constellation badges (e.g. C1, C2)
+- Analyzer combo tab: customize rotation composition and min-ER overrides per constellation
+- Skirk/Childe passive auto-activation: talent level buffs now apply correctly
+- Partial GOOD import: importing data only overrides sections present in the file, preserving existing inventory
+- 20+ new character formulas
+
+### fixes
+- Fixed archive talent display for Ayaka and Mona showing wrong values (sprint/burst param mismatch)
+- Fixed fusion reaction, lunar electro-charged, and lunar crystallize damage calculation and display
+- Fixed buff deduplication merging buffs incorrectly when they affect different stats
+
 ## 2025-03-26
 
 ### features
