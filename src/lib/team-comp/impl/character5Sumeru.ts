@@ -839,23 +839,20 @@ class Nilou extends CharacterBase {
           { formula: new DirectFormula(qHit2, qTag, "hp") },
         ],
       },
-      ...(isBountiful
-        ? {
-            "nilou-bountiful-core": {
-              label: { zh: "丰穰之核", en: "Bountiful Core DMG" },
-              parts: [
-                {
-                  formula: new TransformFormula(0, {
-                    element: "Dendro",
-                    ability: "special",
-                    reaction: "bloom",
-                  }),
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "nilou-bountiful-core": {
+        label: { zh: "丰穰之核", en: "Bountiful Core DMG" },
+        when: isBountiful,
+        parts: [
+          {
+            formula: new TransformFormula(0, {
+              element: "Dendro",
+              ability: "special",
+              reaction: "bloom",
+            }),
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 

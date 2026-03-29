@@ -24,7 +24,7 @@ const durinOption = {
     { value: "white", label: { zh: "白焰之龙", en: "White Flame" } },
     {
       value: "white-c4",
-      label: { zh: "白焰(无限层)", en: "White (unlimited)" },
+      label: { zh: "白焰之龙(无限层)", en: "White (unlimited)" },
       when: (tm) => (tm.constellations.durin ?? 0) >= 4,
     },
     { value: "dark", label: { zh: "黑蚀之龙", en: "Dark Decay" } },
@@ -686,7 +686,6 @@ class Diluc extends CharacterBase {
     const qExplosion = this.param("Q", 3);
     const highPlungeMult = 4.42; // Lv10 High Plunge DMG
 
-    const hasXianyun = this.teamMeta.characters.includes("xianyun");
     const pyroSkill = {
       element: "Pyro" as const,
       ability: "skill" as const,
@@ -721,25 +720,21 @@ class Diluc extends CharacterBase {
           },
         ],
       },
-      ...(hasXianyun
-        ? {
-            "diluc-plunge-xianyun": {
-              label: {
-                zh: "下落攻击",
-                en: "Plunge",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(highPlungeMult, {
-                    element: "Pyro",
-                    ability: "plunge",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "diluc-plunge": {
+        label: {
+          zh: "下落攻击",
+          en: "Plunge",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(highPlungeMult, {
+              element: "Pyro",
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
@@ -748,7 +743,7 @@ class Diluc extends CharacterBase {
     return [
       { id: "diluc-skill", count: 1 },
       { id: "diluc-burst", count: 1 },
-      { id: "diluc-plunge-xianyun", count: 3 },
+      { id: "diluc-plunge", count: 0 },
     ];
   }
 }

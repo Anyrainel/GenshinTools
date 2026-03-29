@@ -1,8 +1,13 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
-import { CharacterBase, RegisterCharacter } from "../damageModels";
+import {
+  CharacterBase,
+  RegisterCharacter,
+  resolveOption,
+} from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+import type { ComboDescriptor, ReactionType } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Fontaine Characters
@@ -213,36 +218,33 @@ class Emilie extends CharacterBase {
     ];
 
     return {
-      ...(hasPyro
-        ? {
-            "emilie-skill-burning": {
-              label: {
-                zh: "E伤害×28+清露×5",
-                en: "E Lv2 (×28) + Cleardew (×5)",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(lv2ShotMult, {
-                    element: "Dendro",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                  hits: 28,
-                  offField: true,
-                },
-                {
-                  formula: new DirectFormula(6.0, {
-                    element: "Dendro",
-                    ability: "special",
-                    reaction: "none",
-                  }),
-                  hits: 5,
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "emilie-skill-burning": {
+        label: {
+          zh: "E伤害×28+清露×5",
+          en: "E Lv2 (×28) + Cleardew (×5)",
+        },
+        when: hasPyro,
+        parts: [
+          {
+            formula: new DirectFormula(lv2ShotMult, {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 28,
+            offField: true,
+          },
+          {
+            formula: new DirectFormula(6.0, {
+              element: "Dendro",
+              ability: "special",
+              reaction: "none",
+            }),
+            hits: 5,
+            offField: true,
+          },
+        ],
+      },
       "emilie-burst-9hit": {
         label: { zh: "Q伤害×9", en: "Q (×9)" },
         parts: [
@@ -554,6 +556,13 @@ class Navia extends CharacterBase {
   // "200% of original" and "+45% per extra shard" modeled as baseDmg%/dmg% buffs above
   protected readonly formulaMap = (() => {
     const baseMult = this.param("E", 1);
+    const qSkillMult = this.param("Q", 1);
+    const qCannonMult = this.param("Q", 2);
+    const burstTag = {
+      element: "Geo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "navia-crystalshot": {
         label: { zh: "E伤害", en: "E" },
@@ -567,17 +576,53 @@ class Navia extends CharacterBase {
           },
         ],
       },
+      "navia-burst": {
+        label: { zh: "Q伤害", en: "Q" },
+        parts: [
+          {
+            formula: new DirectFormula(qSkillMult, burstTag),
+          },
+          {
+            formula: new DirectFormula(qCannonMult, burstTag),
+            hits: 4,
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: Q > teammates > 2[E combo] — 2 E charges per ~16.5s rotation (Geo carry, KQM)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "navia-crystalshot", count: 2 }];
+    return [
+      { id: "navia-burst", count: 1 },
+      { id: "navia-crystalshot", count: 2 },
+    ];
   }
 }
 
-@RegisterCharacter("furina")
+const furinaOption = {
+  label: { zh: "气氛值", en: "Fanfare" },
+  choices: [
+    {
+      value: "400",
+      label: { zh: "400层", en: "400" },
+      when: (tm: TeamMeta) => (tm.constellations.furina ?? 0) >= 1,
+    },
+    {
+      value: "350",
+      label: { zh: "350层", en: "350" },
+      when: (tm: TeamMeta) => (tm.constellations.furina ?? 0) >= 1,
+    },
+    { value: "300", label: { zh: "300层", en: "300" } },
+    { value: "250", label: { zh: "250层", en: "250" } },
+    { value: "200", label: { zh: "200层", en: "200" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("furina", furinaOption)
 class Furina extends CharacterBase {
+  private readonly o = resolveOption(furinaOption, this.option, this.teamMeta);
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2: Per 1000 Max HP → salon members DMG +0.7% (cap 28%)
@@ -592,16 +637,17 @@ class Furina extends CharacterBase {
       ),
       // Q: Let the People Rejoice — team DMG% based on Fanfare stacks
       // Per stack Lv10: 0.25%, Lv13 (C3+): 0.31%
-      // Max stacks: 300 (C1: 400).
-      // C0: starts at 0, ramps over 18s → ~250 avg stacks.
-      // C1: starts at 150 (instant), cap 400, healing bonus feedback → ~350 avg stacks.
+      // Max stacks: 300 (C1: 400). Default: max stacks for constellation.
       new StatBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "team" },
         (() => {
           const perStack = this.param("Q", 5);
-          const avgStacks = this.constellation >= 1 ? 350 : 250;
-          return [{ key: "dmg%", value: perStack * avgStacks }];
+          const cap = this.constellation >= 1 ? 400 : 300;
+          const picked = Number(this.o);
+          // Clamp: C0 can't exceed 300; nobody can exceed their cap
+          const stacks = Math.min(picked, cap);
+          return [{ key: "dmg%", value: perStack * stacks }];
         })()
       ),
       // C2: Fanfare overflow → HP% buff (0.35% per point, cap 140%)
@@ -733,6 +779,22 @@ class Furina extends CharacterBase {
           },
         ],
       },
+      "furina-c6-plunge": {
+        label: {
+          zh: "下落攻击",
+          en: "Plunge",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 11), {
+              element: "Hydro",
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
@@ -741,45 +803,57 @@ class Furina extends CharacterBase {
     return [
       { id: "furina-salon-total", count: 1 },
       { id: "furina-c6-normal", count: 1 },
+      { id: "furina-c6-plunge", count: 0 },
     ];
   }
 }
 
 @RegisterCharacter("neuvillette")
 class Neuvillette extends CharacterBase {
+  // P1 "Heir to the Ancient Sea's Authority": each independent reaction type
+  // grants 1 stack of Past Draconic Glories (max 3). Base/lunar variants share
+  // a slot (e.g. EC and Lunar-EC are the same reaction type).
+  // C1: +1 stack on swap-in (always active in rotation).
+  // 1 stack → 110% (+10%), 2 → 125% (+25%), 3 → 160% (+60%).
+  private readonly p1Stacks = (() => {
+    const P1_STACK_GROUPS: ReactionType[][] = [
+      ["vaporize"],
+      ["frozen"],
+      ["electroCharged", "lunarCharged"],
+      ["bloom", "lunarBloom"],
+      ["swirl"],
+      ["crystallize", "lunarCrystallize"],
+    ];
+    const reactionStacks = P1_STACK_GROUPS.filter((group) =>
+      group.some((r) => this.teamMeta.hasReaction(r))
+    ).length;
+    const c1Bonus = this.constellation >= 1 ? 1 : 0;
+    return Math.min(3, reactionStacks + c1Bonus);
+  })();
+
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
+    const stacks = this.p1Stacks;
 
-    const canP1React =
-      this.teamMeta.hasReaction("vaporize") ||
-      this.teamMeta.hasReaction("frozen") ||
-      this.teamMeta.hasReaction("electroCharged") ||
-      this.teamMeta.hasReaction("lunarCharged") ||
-      this.teamMeta.hasReaction("bloom") ||
-      this.teamMeta.hasReaction("lunarBloom") ||
-      this.teamMeta.hasReaction("swirl") ||
-      this.teamMeta.hasReaction("crystallize") ||
-      this.teamMeta.hasReaction("lunarCrystallize");
-
-    if (canP1React) {
-      // P1: 3 stacks Past Draconic Glories → Charged deals 160% original DMG (+60%)
-      // Triggers on: Vaporize, Frozen, EC, Lunar-Charged, Bloom, Lunar-Bloom,
-      //   Hydro Swirl, Hydro Crystallize, Lunar-Crystallize
+    if (stacks > 0) {
+      const P1_BASEDMG = [0, 0.1, 0.25, 0.6] as const;
+      // All reaction triggers shown in buff label for UI display
+      const p1Triggers: string[] = [
+        "vaporize",
+        "frozen",
+        "electroCharged",
+        "lunarCharged",
+        "bloom",
+        "lunarBloom",
+        "swirl",
+        "crystallize",
+        "lunarCrystallize",
+      ];
       buffs.push(
         new StatBuff(
-          cbs(this, "P1", [
-            "vaporize",
-            "frozen",
-            "electroCharged",
-            "lunarCharged",
-            "bloom",
-            "lunarBloom",
-            "swirl",
-            "crystallize",
-            "lunarCrystallize",
-          ]),
+          cbs(this, "P1", p1Triggers),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-          [{ key: "baseDmg%", value: 0.6 }]
+          [{ key: "baseDmg%", value: P1_BASEDMG[stacks] }]
         )
       );
     }
@@ -792,13 +866,13 @@ class Neuvillette extends CharacterBase {
       ])
     );
 
-    // C2: 3 stacks Past Draconic Glories → Charged CD +42% (14% × 3)
-    if (canP1React && this.constellation >= 2) {
+    // C2: each stack of Past Draconic Glories → Charged CD +14%, max 42%
+    if (stacks > 0 && this.constellation >= 2) {
       buffs.push(
         new StatBuff(
           cbs(this, "C2", []),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-          [{ key: "cd", value: 0.42 }]
+          [{ key: "cd", value: stacks * 0.14 }]
         )
       );
     }

@@ -516,21 +516,36 @@ class Baizhu extends CharacterBase {
   }
 }
 
-@RegisterCharacter("yelan")
+const yelanOption = {
+  label: { zh: "Q增伤比例", en: "Q Bonus %" },
+  choices: [
+    { value: "100", label: { zh: "100%", en: "100%" } },
+    { value: "80", label: { zh: "80%", en: "80%" } },
+    { value: "60", label: { zh: "60%", en: "60%" } },
+    { value: "50", label: { zh: "50%", en: "50%" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("yelan", yelanOption)
 class Yelan extends CharacterBase {
+  private readonly o = resolveOption(yelanOption, this.option, this.teamMeta);
   readonly buffs = (() => {
     const elements = new Set(Object.values(this.teamMeta.elements));
     const count = elements.size;
     const p1Bonus = count === 4 ? 0.3 : count * 0.06;
+
+    // P2 max DMG%: per-second increment × 14 ramp steps (Lv10: 3.5%×14 = 49%)
+    const maxDmgBonus = this.param("Q", 4) * 14;
+    const dmgBonus = maxDmgBonus * (Number(this.o) / 100);
 
     const buffs: StatBuff[] = [
       // P1: +6%/12%/18%/30% Max HP based on unique element count
       new StatBuff(cbs(this, "P1", ["A1"]), { receiver: "self" }, [
         { key: "hp%", value: p1Bonus },
       ]),
-      // P2: Q ramps DMG% for on-field, avg 25% (up to 50%)
+      // P2: Q ramps DMG% for on-field, scales with talent level and option tier
       new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "teamOnField" }, [
-        { key: "dmg%", value: 0.25 },
+        { key: "dmg%", value: dmgBonus },
       ]),
     ];
 
@@ -672,10 +687,10 @@ class Yelan extends CharacterBase {
 }
 
 const xiaoOption = {
-  label: { zh: "固有天赋2：E叠层数", en: "P2: E DMG Stacks" },
+  label: { zh: "E层数", en: "E Stacks" },
   choices: [
-    { value: "2", label: { zh: "2层", en: "2 stacks" } },
     { value: "3", label: { zh: "3层", en: "3 stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
   ] as const,
 } satisfies OptionDef;
 
@@ -797,27 +812,24 @@ class Zhongli extends CharacterBase {
           },
         ],
       },
-      ...(this.hasResonance
-        ? {
-            "zhongli-resonance": {
-              label: {
-                zh: "E共鸣",
-                en: "E Resonance",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    eResonanceMult,
-                    geoSkillTag,
-                    "atk",
-                    eHpExtra
-                  ),
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "zhongli-resonance": {
+        label: {
+          zh: "E共鸣",
+          en: "E Resonance",
+        },
+        when: this.hasResonance,
+        parts: [
+          {
+            formula: new DirectFormula(
+              eResonanceMult,
+              geoSkillTag,
+              "atk",
+              eHpExtra
+            ),
+            offField: true,
+          },
+        ],
+      },
       "zhongli-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
@@ -1108,6 +1120,18 @@ class Shenhe extends CharacterBase {
           },
         ],
       },
+      "shenhe-skill-hold": {
+        label: { zh: "E长按", en: "E Hold" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "shenhe-q-dot": {
         label: { zh: "Q持续伤害", en: "Q DoT" },
         parts: [
@@ -1125,12 +1149,27 @@ class Shenhe extends CharacterBase {
 
   // Rotation: E press > Q (Cryo buffer/support, minimal personal damage)
   protected override get comboDescriptor(): ComboDescriptor {
-    return [{ id: "shenhe-skill", count: 1 }];
+    return [
+      { id: "shenhe-skill", count: 1 },
+      { id: "shenhe-skill-hold", count: 0, bonus: [{ minC: 1, delta: 1 }] },
+    ];
   }
 }
 
-@RegisterCharacter("ganyu")
+const ganyuOption = {
+  label: { zh: "C4增伤", en: "C4 DMG Bonus" },
+  choices: [
+    { value: "25", label: { zh: "25%", en: "25%" } },
+    { value: "20", label: { zh: "20%", en: "20%" } },
+    { value: "15", label: { zh: "15%", en: "15%" } },
+    { value: "10", label: { zh: "10%", en: "10%" } },
+    { value: "5", label: { zh: "5%", en: "5%" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("ganyu", ganyuOption)
 class Ganyu extends CharacterBase {
+  private readonly o = resolveOption(ganyuOption, this.option, this.teamMeta);
   readonly buffs = [
     // P1: After Frostflake Arrow, next Frostflake +20% CR for 5s
     new StatBuff(
@@ -1153,11 +1192,10 @@ class Ganyu extends CharacterBase {
         ]
       : []),
     // C4: Opponents in Q field take increased DMG, ramps 5%→25%
-    // Average ≈ 15% over Q duration (enemy debuff, benefits whole team)
     ...(this.constellation >= 4
       ? [
           new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
-            { key: "dmg%", value: 0.15 },
+            { key: "dmg%", value: Number(this.o) / 100 },
           ]),
         ]
       : []),
@@ -1236,9 +1274,11 @@ class Keqing extends CharacterBase {
     const canC4ElectroReact =
       this.teamMeta.hasReaction("overloaded") ||
       this.teamMeta.hasReaction("electroCharged") ||
+      this.teamMeta.hasReaction("lunarCharged") ||
       this.teamMeta.hasReaction("superconduct") ||
       this.teamMeta.hasReaction("swirl") ||
       this.teamMeta.hasReaction("crystallize") ||
+      this.teamMeta.hasReaction("lunarCrystallize") ||
       this.teamMeta.hasReaction("quicken") ||
       this.teamMeta.hasReaction("aggravate") ||
       this.teamMeta.hasReaction("hyperbloom");
@@ -1250,9 +1290,11 @@ class Keqing extends CharacterBase {
           cbs(this, "C4", [
             "overloaded",
             "electroCharged",
+            "lunarCharged",
             "superconduct",
             "swirl",
             "crystallize",
+            "lunarCrystallize",
             "quicken",
             "aggravate",
             "hyperbloom",

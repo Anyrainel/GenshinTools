@@ -232,22 +232,19 @@ class Razor extends CharacterBase {
         ],
       } satisfies FormulaEntry,
       // P4 (Hexerei): Secret Rite lightning — 150% ATK Electro AoE, once per 1s on sigil overflow
-      ...(this.teamMeta.countByFaction("Hexerei") >= 2
-        ? {
-            "razor-p4-lightning": {
-              label: { zh: "P4秘仪落雷", en: "P4 Secret Rite Lightning" },
-              parts: [
-                {
-                  formula: new DirectFormula(1.5, {
-                    element: "Electro" as const,
-                    ability: "skill" as const,
-                    reaction: "none" as const,
-                  }),
-                },
-              ],
-            } satisfies FormulaEntry,
-          }
-        : {}),
+      "razor-p4-lightning": {
+        label: { zh: "P4秘仪落雷", en: "P4 Secret Rite Lightning" },
+        when: this.teamMeta.countByFaction("Hexerei") >= 2,
+        parts: [
+          {
+            formula: new DirectFormula(1.5, {
+              element: "Electro" as const,
+              ability: "skill" as const,
+              reaction: "none" as const,
+            }),
+          },
+        ],
+      } satisfies FormulaEntry,
     };
   })();
 

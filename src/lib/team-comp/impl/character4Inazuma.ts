@@ -218,23 +218,20 @@ class KukiShinobu extends CharacterBase {
           },
         ],
       },
-      ...(canHyperbloom
-        ? {
-            "shinobu-hyperbloom": {
-              label: { zh: "E超绽放", en: "E Hyperbloom" },
-              parts: [
-                {
-                  formula: new TransformFormula(0, {
-                    element: "Electro",
-                    ability: "skill",
-                    reaction: "hyperbloom",
-                  }),
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "shinobu-hyperbloom": {
+        label: { zh: "E超绽放", en: "E Hyperbloom" },
+        when: canHyperbloom,
+        parts: [
+          {
+            formula: new TransformFormula(0, {
+              element: "Electro",
+              ability: "skill",
+              reaction: "hyperbloom",
+            }),
+            offField: true,
+          },
+        ],
+      },
       // C4: Thundergrass Mark — 9.7% Max HP as Electro DMG
       "shinobu-c4-thundergrass": {
         label: { zh: "雷草印", en: "Thundergrass Mark" },

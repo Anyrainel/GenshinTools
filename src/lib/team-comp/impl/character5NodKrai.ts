@@ -489,19 +489,45 @@ class Nefer extends CharacterBase {
     const eAtkMult = this.param("E", 1);
     const eEmMult = this.param("E", 2);
     return {
-      ...(hasHydro
-        ? {
-            "nefer-phantasm": {
-              label: {
-                zh: "E重击",
-                en: "E CA",
+      "nefer-phantasm": {
+        label: {
+          zh: "E重击",
+          en: "E CA",
+        },
+        when: hasHydro,
+        parts: [
+          ...selfParts,
+          {
+            // Shade Hits 1+2 (same multiplier)
+            formula: new LunarDirectFormula(
+              shadeHit12Mult,
+              {
+                element: "Dendro",
+                ability: "charge",
+                reaction: "lunarBloom",
               },
-              parts: [
-                ...selfParts,
+              "em"
+            ),
+            hits: 2,
+          },
+          {
+            // Shade Hit 3
+            formula: new LunarDirectFormula(
+              shadeHit3Mult,
+              {
+                element: "Dendro",
+                ability: "charge",
+                reaction: "lunarBloom",
+              },
+              "em"
+            ),
+          },
+          // C6: Extra 120% EM LunarBloom hit at end of Phantasm Performance
+          ...(isC6
+            ? [
                 {
-                  // Shade Hits 1+2 (same multiplier)
                   formula: new LunarDirectFormula(
-                    shadeHit12Mult,
+                    1.2,
                     {
                       element: "Dendro",
                       ability: "charge",
@@ -509,40 +535,11 @@ class Nefer extends CharacterBase {
                     },
                     "em"
                   ),
-                  hits: 2,
                 },
-                {
-                  // Shade Hit 3
-                  formula: new LunarDirectFormula(
-                    shadeHit3Mult,
-                    {
-                      element: "Dendro",
-                      ability: "charge",
-                      reaction: "lunarBloom",
-                    },
-                    "em"
-                  ),
-                },
-                // C6: Extra 120% EM LunarBloom hit at end of Phantasm Performance
-                ...(isC6
-                  ? [
-                      {
-                        formula: new LunarDirectFormula(
-                          1.2,
-                          {
-                            element: "Dendro",
-                            ability: "charge",
-                            reaction: "lunarBloom",
-                          },
-                          "em"
-                        ),
-                      },
-                    ]
-                  : []),
-              ],
-            },
-          }
-        : {}),
+              ]
+            : []),
+        ],
+      },
       "nefer-skill": {
         label: { zh: "E", en: "E" },
         parts: [
@@ -932,37 +929,34 @@ class Lauma extends CharacterBase {
           },
         ],
       },
-      ...(hasNascentGleam && hasHydro
-        ? {
-            "lauma-hold": {
-              label: {
-                zh: "E长按",
-                en: "E Hold",
+      "lauma-hold": {
+        label: {
+          zh: "E长按",
+          en: "E Hold",
+        },
+        when: hasNascentGleam && hasHydro,
+        parts: [
+          {
+            formula: new DirectFormula(hold1Mult, {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+          {
+            // Per Verdant Dew (max 3 consumed) — multiplier-scaling single hit
+            formula: new LunarDirectFormula(
+              hold2Mult * 3,
+              {
+                element: "Dendro",
+                ability: "skill",
+                reaction: "lunarBloom",
               },
-              parts: [
-                {
-                  formula: new DirectFormula(hold1Mult, {
-                    element: "Dendro",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                },
-                {
-                  // Per Verdant Dew (max 3 consumed) — multiplier-scaling single hit
-                  formula: new LunarDirectFormula(
-                    hold2Mult * 3,
-                    {
-                      element: "Dendro",
-                      ability: "skill",
-                      reaction: "lunarBloom",
-                    },
-                    "em"
-                  ),
-                },
-              ],
-            },
-          }
-        : {}),
+              "em"
+            ),
+          },
+        ],
+      },
       "lauma-c6-normal": {
         label: {
           zh: "普攻",
@@ -1139,23 +1133,21 @@ class Ineffa extends CharacterBase {
       },
       // C6: After thundercloud lightning burst, 135% ATK Electro as Lunar-Charged DMG (once/3.5s)
       // Requires C1 Carrier Flow Composite (always available at C6) and thunderclouds (Hydro teammate)
-      ...(this.constellation >= 6 && hasHydro
-        ? {
-            "ineffa-c6-thundercloud": {
-              label: { zh: "雷暴云", en: "Thundercloud" },
-              parts: [
-                {
-                  formula: new LunarDirectFormula(1.35, {
-                    element: "Electro",
-                    ability: "skill",
-                    reaction: "lunarCharged",
-                  }),
-                  offField: true,
-                },
-              ],
-            },
-          }
-        : {}),
+      "ineffa-c6-thundercloud": {
+        label: { zh: "额外雷击", en: "C6 Extra Lightning" },
+        minC: 6,
+        when: hasHydro,
+        parts: [
+          {
+            formula: new LunarDirectFormula(1.35, {
+              element: "Electro",
+              ability: "skill",
+              reaction: "lunarCharged",
+            }),
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 }

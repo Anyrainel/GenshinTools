@@ -96,32 +96,29 @@ class YumemizukiMizuki extends CharacterBase {
     const canSwirl = this.teamMeta.hasReaction("swirl");
 
     return {
-      ...(canSwirl
-        ? {
-            "mizuki-skill-swirl": {
-              label: {
-                zh: "E伤害+扩散",
-                en: "E",
-              },
-              parts: [
-                {
-                  formula: new DirectFormula(eTickMult, {
-                    element: "Anemo",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                },
-                {
-                  formula: new TransformFormula(1.0, {
-                    element: "Anemo",
-                    ability: "skill",
-                    reaction: "swirl",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      "mizuki-skill-swirl": {
+        label: {
+          zh: "E伤害+扩散",
+          en: "E",
+        },
+        when: canSwirl,
+        parts: [
+          {
+            formula: new DirectFormula(eTickMult, {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new TransformFormula(1.0, {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "swirl",
+            }),
+          },
+        ],
+      },
     };
   })();
 }

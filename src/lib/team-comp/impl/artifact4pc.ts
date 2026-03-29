@@ -915,7 +915,11 @@ class NighttimeWhispers4pc extends ArtifactSetBase {
       [
         {
           key: "geo%",
-          value: this.teamMeta.hasReaction("crystallize") ? 0.5 : 0.2,
+          value:
+            this.teamMeta.hasReaction("crystallize") ||
+            this.teamMeta.hasReaction("lunarCrystallize")
+              ? 0.5
+              : 0.2,
         },
       ]
     ),

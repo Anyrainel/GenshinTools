@@ -1,4 +1,5 @@
 import { elements } from "@/data/types";
+import { ZERO_ENERGY_CHARS } from "../constants";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
@@ -10,9 +11,9 @@ import { allElementalDmg, r, wbs } from "../helpers";
 @RegisterWeapon("athame_artis")
 class AthameArtis extends WeaponBase {
   // Burst CD + Blade of the Daylight Hours: self ATK% + team ATK%
-  // Hexerei: Secret Rite (Columbina) increases Blade of the Daylight Hours by 75%
+  // Hexerei: Secret Rite (≥2 Hexerei faction) increases Blade of the Daylight Hours by 75%
   get buffs() {
-    const hexMult = this.teamMeta.characters.includes("columbina") ? 1.75 : 1;
+    const hexMult = this.teamMeta.countByFaction("Hexerei") >= 2 ? 1.75 : 1;
     return [
       new StatBuff(
         wbs(this),
@@ -372,7 +373,7 @@ class LightbearingMoonshard extends WeaponBase {
 
 @RegisterWeapon("azurelight")
 class Azurelight extends WeaponBase {
-  // Base ATK% after E; at 0 energy: additional ATK% + CD
+  // Base ATK% after E; at 0 energy (Skirk, Mavuika): additional ATK% + CD
   readonly buffs = [
     new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
       {
@@ -380,15 +381,19 @@ class Azurelight extends WeaponBase {
         value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
       },
     ]),
-    new StatBuff(wbs(this, ["E", "no-energy"]), { receiver: "self" }, [
-      {
-        key: "atk%",
-        value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-      },
-      {
-        key: "cd",
-        value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
-      },
-    ]),
+    ...(ZERO_ENERGY_CHARS.has(this.charId)
+      ? [
+          new StatBuff(wbs(this, ["E", "no-energy"]), { receiver: "self" }, [
+            {
+              key: "atk%",
+              value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+            },
+            {
+              key: "cd",
+              value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+            },
+          ]),
+        ]
+      : []),
   ];
 }

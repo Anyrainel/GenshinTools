@@ -220,59 +220,54 @@ class Skirk extends CharacterBase {
         ],
       },
       // C1: Each 虚境裂隙 absorbed → 晶刃 (500% ATK, Cryo, CA DMG)
-      ...(riftCount > 0
-        ? {
-            "skirk-c1-blade": {
-              label: {
-                zh: `晶刃×${riftCount}`,
-                en: `Crystal Blade ×${riftCount}`,
-              },
-              minC: 1,
-              parts: [
-                {
-                  formula: new DirectFormula(5.0, {
-                    element: "Cryo",
-                    ability: "charge",
-                    reaction: "none",
-                  }),
-                  hits: riftCount,
-                },
-              ],
-            },
-          }
-        : {}),
+      "skirk-c1-blade": {
+        label: {
+          zh: `晶刃×${riftCount || 1}`,
+          en: `Crystal Blade ×${riftCount || 1}`,
+        },
+        minC: 1,
+        when: riftCount > 0,
+        parts: [
+          {
+            formula: new DirectFormula(5.0, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "none",
+            }),
+            hits: riftCount || 1,
+          },
+        ],
+      },
       // C6 极恶技·斩: burst coordinated (750% ATK per stack)
-      ...(riftCount > 0
-        ? {
-            "skirk-c6-burst-coord": {
-              label: {
-                zh: `Q协同×${riftCount}`,
-                en: `Q Coord ×${riftCount}`,
-              },
-              minC: 6,
-              parts: [
-                {
-                  formula: new DirectFormula(7.5, cryoBurst),
-                  hits: riftCount,
-                },
-              ],
-            },
-            // C6: N3/N5 trigger → 3 coordinated attacks each, max 2 triggers per combo
-            "skirk-c6-normal-coord": {
-              label: {
-                zh: `普攻协同×${Math.min(riftCount, 2) * 3}`,
-                en: `NA Coord ×${Math.min(riftCount, 2) * 3}`,
-              },
-              minC: 6,
-              parts: [
-                {
-                  formula: new DirectFormula(1.8, cryoNormal),
-                  hits: Math.min(riftCount, 2) * 3,
-                },
-              ],
-            },
-          }
-        : {}),
+      "skirk-c6-burst-coord": {
+        label: {
+          zh: `Q协同×${riftCount || 1}`,
+          en: `Q Coord ×${riftCount || 1}`,
+        },
+        minC: 6,
+        when: riftCount > 0,
+        parts: [
+          {
+            formula: new DirectFormula(7.5, cryoBurst),
+            hits: riftCount || 1,
+          },
+        ],
+      },
+      // C6: N3/N5 trigger → 3 coordinated attacks each, max 2 triggers per combo
+      "skirk-c6-normal-coord": {
+        label: {
+          zh: `普攻协同×${Math.min(riftCount || 1, 2) * 3}`,
+          en: `NA Coord ×${Math.min(riftCount || 1, 2) * 3}`,
+        },
+        minC: 6,
+        when: riftCount > 0,
+        parts: [
+          {
+            formula: new DirectFormula(1.8, cryoNormal),
+            hits: Math.min(riftCount || 1, 2) * 3,
+          },
+        ],
+      },
     };
   })();
 

@@ -974,19 +974,16 @@ class Xilonen extends CharacterBase {
         ],
       },
       // Q extra beats: only when ≤1 converted sample
-      ...(this.convertedSamples <= 1
-        ? {
-            "xilonen-burst-beats": {
-              label: { zh: "Q额外节拍(×2)", en: "Q Extra Beats (×2)" },
-              parts: [
-                {
-                  formula: new DirectFormula(qBeatMult, qTag, "def"),
-                  hits: 2,
-                },
-              ],
-            },
-          }
-        : {}),
+      "xilonen-burst-beats": {
+        label: { zh: "Q额外节拍(×2)", en: "Q Extra Beats (×2)" },
+        when: this.convertedSamples <= 1,
+        parts: [
+          {
+            formula: new DirectFormula(qBeatMult, qTag, "def"),
+            hits: 2,
+          },
+        ],
+      },
     };
   })();
 
@@ -1036,62 +1033,43 @@ class Mualani extends CharacterBase {
     const biteMult =
       this.param("E", 1) + 3 * this.param("E", 2) + this.param("E", 3);
     const burstMult = this.param("Q", 1);
+    const biteTag = {
+      element: "Hydro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
     return {
-      "mualani-bite": {
-        label: { zh: "普攻", en: "NA" },
+      // C1+: Heavy bite with +66% HP baseDmg (C6 makes every bite heavy)
+      "mualani-bite-heavy": {
+        label: { zh: "普攻(强化)", en: "NA (Enhanced)" },
+        minC: 1,
         parts: [
           {
-            formula: new DirectFormula(
-              biteMult,
+            formula: new DirectFormula(biteMult, biteTag, "hp"),
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "C1", ["E"]),
               {
-                element: "Hydro",
-                ability: "normal",
-                reaction: "none",
+                receiver: "selfOnField",
+                filter: { abilities: ["normal"] },
               },
-              "hp"
+              [],
+              "hp",
+              "baseDmg",
+              0.66
             ),
-            // C1/C6: First Bite gets +66% HP baseDmg (baked into formula as bespokeBuff)
-            // C6 removes the once-per-blessing limit → every bite gets it
-            ...(this.constellation >= 1
-              ? {
-                  bespokeBuff: new ScalingBuff(
-                    cbs(this, "C1", ["E"]),
-                    {
-                      receiver: "selfOnField",
-                      filter: { abilities: ["normal"] },
-                    },
-                    [],
-                    "hp",
-                    "baseDmg",
-                    0.66
-                  ),
-                }
-              : {}),
           },
         ],
       },
-      // C1: Separate "Normal Bite" without C1 bonus (for subsequent bites in rotation)
-      // At C6 all bites get the bonus, so this is only needed at C1-C5
-      ...(this.constellation >= 1 && this.constellation < 6
-        ? {
-            "mualani-bite-normal": {
-              label: { zh: "普攻(后续)", en: "NA (Subsequent)" },
-              parts: [
-                {
-                  formula: new DirectFormula(
-                    biteMult,
-                    {
-                      element: "Hydro",
-                      ability: "normal",
-                      reaction: "none",
-                    },
-                    "hp"
-                  ),
-                },
-              ],
-            },
-          }
-        : {}),
+      // Normal bite (no C1 bonus). At C6 all bites are enhanced, so this is disabled.
+      "mualani-bite-normal": {
+        label: { zh: "普攻", en: "NA" },
+        when: this.constellation < 6,
+        parts: [
+          {
+            formula: new DirectFormula(biteMult, biteTag, "hp"),
+          },
+        ],
+      },
       "mualani-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
@@ -1112,9 +1090,25 @@ class Mualani extends CharacterBase {
   })();
 
   // Rotation: E combo (3 Surging Bites) > Q (~16s rotation, vape carry, KQM)
+  // C0: 3 normal bites. C1-C5: 1 heavy + 2 normal. C6: 3 heavy.
   protected override get comboDescriptor(): ComboDescriptor {
     return [
-      { id: "mualani-bite", count: 3 },
+      {
+        id: "mualani-bite-heavy",
+        count: 0,
+        bonus: [
+          { minC: 1, delta: 1 },
+          { minC: 6, delta: 2 },
+        ],
+      },
+      {
+        id: "mualani-bite-normal",
+        count: 3,
+        bonus: [
+          { minC: 1, delta: -1 },
+          { minC: 6, delta: -2 },
+        ],
+      },
       { id: "mualani-burst", count: 1 },
     ];
   }
