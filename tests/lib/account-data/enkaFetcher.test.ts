@@ -268,6 +268,96 @@ describe("enka", () => {
     });
 
     describe("artifact conversion", () => {
+      it("computes precise substat values from appendPropIdList", async () => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId: 10000046, // Hu Tao
+              propMap: { "4001": { ival: "90" } },
+              equipList: [
+                {
+                  itemId: 123456,
+                  reliquary: {
+                    level: 21,
+                    mainPropId: 14001,
+                    appendPropIdList: [
+                      501203,
+                      501204, // CR tier2 + tier3
+                      501221,
+                      501222,
+                      501223, // CD tier0 + tier1 + tier2
+                    ],
+                  },
+                  flat: {
+                    nameTextMapHash: "654321",
+                    setNameTextMapHash: "789",
+                    rankLevel: 5,
+                    itemType: "ITEM_RELIQUARY",
+                    icon: "UI_RelicIcon_15006_4",
+                    equipType: "EQUIP_BRACER",
+                    reliquarySubstats: [
+                      { appendPropId: 501201, statValue: 7.4 }, // CR rounded
+                      { appendPropId: 501221, statValue: 18.7 }, // CD rounded
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.artifacts!.length).toBe(1);
+        const artifact = result.artifacts![0];
+        expect(artifact.substats.length).toBe(2);
+        // Precise CR: tier2 (3.50) + tier3 (3.89) = 7.39
+        expect(artifact.substats[0].key).toBe("critRate_");
+        expect(artifact.substats[0].value).toBeCloseTo(7.39, 2);
+        // Precise CD: tier0 (5.44) + tier1 (6.22) + tier2 (6.99) = 18.65
+        expect(artifact.substats[1].key).toBe("critDMG_");
+        expect(artifact.substats[1].value).toBeCloseTo(18.65, 2);
+      });
+
+      it("falls back to flat.reliquarySubstats when appendPropIdList is missing", async () => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId: 10000046,
+              propMap: { "4001": { ival: "90" } },
+              equipList: [
+                {
+                  itemId: 123456,
+                  reliquary: {
+                    level: 21,
+                    mainPropId: 14001,
+                    // No appendPropIdList
+                  },
+                  flat: {
+                    nameTextMapHash: "654321",
+                    setNameTextMapHash: "789",
+                    rankLevel: 5,
+                    itemType: "ITEM_RELIQUARY",
+                    icon: "UI_RelicIcon_15006_4",
+                    equipType: "EQUIP_BRACER",
+                    reliquarySubstats: [
+                      { appendPropId: 501201, statValue: 7.4 },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.artifacts!.length).toBe(1);
+        const artifact = result.artifacts![0];
+        expect(artifact.substats[0].key).toBe("critRate_");
+        expect(artifact.substats[0].value).toBe(7.4); // Rounded, not precise
+      });
+
       it("correctly converts equipped artifacts with substats", async () => {
         const enkaData = createMinimalEnkaResponse({
           avatarInfoList: [

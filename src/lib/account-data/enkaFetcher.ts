@@ -1,4 +1,5 @@
 import { statIdMap } from "@/data/enkaIdMap";
+import artifactStatData from "@/data/game/artifact_stat.json";
 import type {
   ConversionWarning,
   GOODData,
@@ -7,6 +8,89 @@ import type {
   IGOODSubstat,
   IGOODWeapon,
 } from "./goodConversion";
+
+// --- Precise substat decoding from appendPropIdList ---
+
+const FLAT_STATS = new Set(["hp", "atk", "def", "eleMas"]);
+
+const goodToJsonKey: Record<string, string> = {
+  hp: "hp",
+  hp_: "hp%",
+  atk: "atk",
+  atk_: "atk%",
+  def: "def",
+  def_: "def%",
+  critRate_: "cr",
+  critDMG_: "cd",
+  enerRech_: "er",
+  eleMas: "em",
+};
+
+function toDisplay(goodKey: string, rawValue: number): number {
+  if (FLAT_STATS.has(goodKey)) return rawValue;
+  return Math.round(rawValue * 1e6) / 1e4;
+}
+
+/**
+ * Decode a single appendPropId into { statKey, tierValue } or null.
+ * The ID encodes: first digit = rarity (1-5), last digit = tier (1-4),
+ * middle digits = stat group.
+ */
+function decodeAppendPropId(
+  id: number
+): { statKey: string; displayValue: number } | null {
+  const statKey = statIdMap[String(id)];
+  if (!statKey) return null;
+
+  const tierIndex = (id % 10) - 1; // last digit 1-4 → index 0-3
+  if (tierIndex < 0 || tierIndex > 3) return null;
+
+  // Determine rarity from first digit
+  const idStr = String(id);
+  const firstDigit = Number(idStr[0]);
+  const rarityKey =
+    firstDigit === 5
+      ? "rarity5"
+      : firstDigit === 4
+        ? "rarity4"
+        : firstDigit === 3
+          ? "rarity4"
+          : null; // 3-star uses rarity4 tiers but with fewer; fall back
+  if (!rarityKey) return null;
+
+  const jsonKey = goodToJsonKey[statKey];
+  if (!jsonKey) return null;
+
+  const tiers = (
+    artifactStatData.subStats as Record<string, Record<string, number[]>>
+  )[rarityKey]?.[jsonKey];
+  if (!tiers || tierIndex >= tiers.length) return null;
+
+  return { statKey, displayValue: toDisplay(statKey, tiers[tierIndex]) };
+}
+
+/**
+ * Compute precise substat display values by summing decoded tier values
+ * from the appendPropIdList.
+ * Returns a Map<statKey, displayValue> or null if decoding fails.
+ */
+function computePreciseSubstats(
+  appendPropIdList: number[]
+): Map<string, number> | null {
+  const sums = new Map<string, number>();
+
+  for (const id of appendPropIdList) {
+    const decoded = decodeAppendPropId(id);
+    if (!decoded) return null; // If any ID fails, fall back entirely
+    const prev = sums.get(decoded.statKey) ?? 0;
+    sums.set(
+      decoded.statKey,
+      Math.round((prev + decoded.displayValue) * 100) / 100
+    );
+  }
+
+  return sums;
+}
 
 // --- Reverse ID maps (built lazily from game JSON data) ---
 
@@ -394,7 +478,24 @@ export async function convertEnkaToGOOD(
 
               const substats: IGOODSubstat[] = [];
 
-              if (flat.reliquarySubstats) {
+              // Try precise values from appendPropIdList first
+              const preciseMap = equip.reliquary.appendPropIdList
+                ? computePreciseSubstats(equip.reliquary.appendPropIdList)
+                : null;
+
+              if (preciseMap && flat.reliquarySubstats) {
+                // Use precise values, but preserve the stat order from flat
+                for (const sub of flat.reliquarySubstats) {
+                  const statKey = statIdMap[String(sub.appendPropId)];
+                  if (statKey) {
+                    substats.push({
+                      key: statKey as StatKey,
+                      value: preciseMap.get(statKey) ?? sub.statValue,
+                    });
+                  }
+                }
+              } else if (flat.reliquarySubstats) {
+                // Fallback: use rounded display values
                 for (const sub of flat.reliquarySubstats) {
                   const statKey = statIdMap[String(sub.appendPropId)];
                   if (statKey) {
