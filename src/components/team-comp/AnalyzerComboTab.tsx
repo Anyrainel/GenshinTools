@@ -266,42 +266,77 @@ function CharComboRow({
     );
   }, [comboOverrides, minErOverrides, charId]);
 
+  /**
+   * Change the count for a formula variant at a constellation, with auto-cascade:
+   * if all higher constellations had the same effective value as the old value,
+   * update them too.
+   *
+   * @param getDefault — returns the default count for a given constellation
+   *   (used to resolve effective values when no override exists)
+   */
   const handleCountChange = useCallback(
-    (constellation: number, lineKey: string, value: number | undefined) => {
+    (
+      constellation: number,
+      lineKey: string,
+      value: number | undefined,
+      getDefault: (c: number) => number
+    ) => {
       const prev = comboOverridesRef.current;
-      let next: ComboCountOverrides;
-      if (value == null) {
-        if (!prev[charId]?.[constellation]) return;
-        const { [lineKey]: _, ...rest } = prev[charId][constellation];
-        if (Object.keys(rest).length > 0) {
-          next = {
-            ...prev,
-            [charId]: { ...prev[charId], [constellation]: rest },
-          };
-        } else {
-          const { [constellation]: __, ...restC } = prev[charId];
-          if (Object.keys(restC).length > 0) {
-            next = { ...prev, [charId]: restC };
-          } else {
-            const { [charId]: ___, ...restChar } = prev;
-            next = restChar;
+      const effectiveAt = (c: number) =>
+        prev[charId]?.[c]?.[lineKey] ?? getDefault(c);
+      const oldValue = effectiveAt(constellation);
+
+      // Determine which higher constellations to cascade to:
+      // all C > edited C that currently have the same effective value as oldValue
+      const cascadeTargets: number[] = [];
+      for (const c of constellations) {
+        if (c <= constellation) continue;
+        if (c < startC || c > maxC) continue;
+        if (effectiveAt(c) !== oldValue) break; // stop at first divergence
+        cascadeTargets.push(c);
+      }
+
+      // Build the set of constellations to update
+      const targets = [constellation, ...cascadeTargets];
+
+      let next = { ...prev };
+      for (const c of targets) {
+        const newValue = value == null ? undefined : value;
+        if (newValue == null || newValue === getDefault(c)) {
+          // Clear override for this constellation + lineKey
+          if (next[charId]?.[c]?.[lineKey] != null) {
+            const { [lineKey]: _, ...rest } = next[charId][c];
+            if (Object.keys(rest).length > 0) {
+              next = {
+                ...next,
+                [charId]: { ...next[charId], [c]: rest },
+              };
+            } else {
+              const { [c]: __, ...restC } = next[charId];
+              if (Object.keys(restC).length > 0) {
+                next = { ...next, [charId]: restC };
+              } else {
+                const { [charId]: ___, ...restChar } = next;
+                next = restChar;
+              }
+            }
           }
-        }
-      } else {
-        next = {
-          ...prev,
-          [charId]: {
-            ...prev[charId],
-            [constellation]: {
-              ...prev[charId]?.[constellation],
-              [lineKey]: value,
+        } else {
+          next = {
+            ...next,
+            [charId]: {
+              ...next[charId],
+              [c]: {
+                ...next[charId]?.[c],
+                [lineKey]: newValue,
+              },
             },
-          },
-        };
+          };
+        }
       }
       onComboOverridesChange(next);
     },
-    [charId, onComboOverridesChange]
+    [charId, onComboOverridesChange, constellations, startC, maxC]
   );
 
   const handleMinErChange = useCallback(
@@ -509,20 +544,7 @@ function CharComboRow({
                       <span className="text-xs">{row.formulaId}</span>
                     )}
                   </td>
-                  {constellations.map((c) => {
-                    const inRange = c >= startC && c <= maxC;
-                    if (!inRange || c < row.minC) {
-                      return (
-                        <td
-                          key={c}
-                          className="text-center px-1 py-0.5 text-muted-foreground border border-border"
-                        >
-                          —
-                        </td>
-                      );
-                    }
-
-                    const descTotal = row.getDescriptorCount(c);
+                  {(() => {
                     const templateTotal = row.variants.reduce(
                       (s, v) => s + v.templateCount,
                       0
@@ -533,71 +555,95 @@ function CharComboRow({
                       (!row.variants[0]?.reactionType ||
                         row.variants[0]?.reactionType === "none");
 
-                    return (
-                      <td
-                        key={c}
-                        className="px-0.5 py-0.5 border border-border align-top"
-                      >
-                        <div className="flex flex-col gap-0.5">
-                          {row.variants.map((v) => {
-                            // Default count: distribute descriptor total
-                            // proportionally to template counts.
-                            // If no template lines, only "none" gets the count.
-                            const defaultCount =
-                              row.variants.length <= 1
-                                ? descTotal
-                                : templateTotal > 0
-                                  ? Math.round(
-                                      (v.templateCount / templateTotal) *
-                                        descTotal
-                                    )
-                                  : v.reactionType === "none"
-                                    ? descTotal
-                                    : 0;
-                            const override =
-                              comboOverrides[charId]?.[c]?.[v.lineKey];
-                            const isOverridden = override != null;
-                            const displayValue = isOverridden
-                              ? override
-                              : defaultCount;
+                    /** Compute default count for a variant at any constellation */
+                    const variantDefault = (
+                      v: (typeof row.variants)[number],
+                      c: number
+                    ) => {
+                      const desc = row.getDescriptorCount(c);
+                      return row.variants.length <= 1
+                        ? desc
+                        : templateTotal > 0
+                          ? Math.round((v.templateCount / templateTotal) * desc)
+                          : v.reactionType === "none"
+                            ? desc
+                            : 0;
+                    };
 
-                            return (
-                              <div
-                                key={v.lineKey}
-                                className="flex items-center gap-0.5 justify-center"
-                              >
-                                {/* Show reaction label only when multiple variants */}
-                                {!hasOnlyDirect && (
-                                  <span className="text-[10px] text-foreground/80 shrink-0 w-7 text-right truncate">
-                                    {v.reactionType
-                                      ? t.reaction(v.reactionType)
-                                      : t.reaction("none")}
-                                  </span>
-                                )}
-                                <NumericCell
-                                  value={displayValue}
-                                  defaultValue={defaultCount}
-                                  onCommit={(num) => {
-                                    if (num == null || num === defaultCount) {
-                                      handleCountChange(
-                                        c,
-                                        v.lineKey,
-                                        undefined
-                                      );
-                                    } else {
-                                      handleCountChange(c, v.lineKey, num);
-                                    }
-                                  }}
-                                  min={0}
-                                  small={hasMultipleVariants}
-                                />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </td>
-                    );
-                  })}
+                    return constellations.map((c) => {
+                      const inRange = c >= startC && c <= maxC;
+                      if (!inRange || c < row.minC) {
+                        return (
+                          <td
+                            key={c}
+                            className="text-center px-1 py-0.5 text-muted-foreground border border-border"
+                          >
+                            —
+                          </td>
+                        );
+                      }
+
+                      return (
+                        <td
+                          key={c}
+                          className="px-0.5 py-0.5 border border-border align-top"
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            {row.variants.map((v) => {
+                              const defaultCount = variantDefault(v, c);
+                              const getVariantDefault = (cc: number) =>
+                                variantDefault(v, cc);
+                              const override =
+                                comboOverrides[charId]?.[c]?.[v.lineKey];
+                              const isOverridden = override != null;
+                              const displayValue = isOverridden
+                                ? override
+                                : defaultCount;
+
+                              return (
+                                <div
+                                  key={v.lineKey}
+                                  className="flex items-center gap-0.5 justify-center"
+                                >
+                                  {/* Show reaction label only when multiple variants */}
+                                  {!hasOnlyDirect && (
+                                    <span className="text-[10px] text-foreground/80 shrink-0 w-7 text-right truncate">
+                                      {v.reactionType
+                                        ? t.reaction(v.reactionType)
+                                        : t.reaction("none")}
+                                    </span>
+                                  )}
+                                  <NumericCell
+                                    value={displayValue}
+                                    defaultValue={defaultCount}
+                                    onCommit={(num) => {
+                                      if (num == null || num === defaultCount) {
+                                        handleCountChange(
+                                          c,
+                                          v.lineKey,
+                                          undefined,
+                                          getVariantDefault
+                                        );
+                                      } else {
+                                        handleCountChange(
+                                          c,
+                                          v.lineKey,
+                                          num,
+                                          getVariantDefault
+                                        );
+                                      }
+                                    }}
+                                    min={0}
+                                    small={hasMultipleVariants}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </td>
+                      );
+                    });
+                  })()}
                 </tr>
               ))}
             </tbody>
