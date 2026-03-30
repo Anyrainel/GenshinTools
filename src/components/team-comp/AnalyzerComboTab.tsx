@@ -8,11 +8,9 @@ import type {
   MinErOverrides,
 } from "@/lib/team-comp/analyzer";
 import { comboLineKey } from "@/lib/team-comp/analyzer";
-import {
-  ELEMENT_ELIGIBLE_REACTIONS,
-  getFormulaReactions,
-} from "@/lib/team-comp/constants";
+import { getFormulaReactions } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
+import type { FormulaEntry } from "@/lib/team-comp/damageModels";
 import type {
   ComboFormula,
   I18nLabel,
@@ -26,6 +24,8 @@ import { RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormulaLabel } from "./FormulaLabel";
 import { ReactionPartControls } from "./ReactionPartControls";
+
+// ─── Public API ───
 
 interface AnalyzerComboTabProps {
   teamBuild: TeamBuild;
@@ -64,7 +64,6 @@ export function AnalyzerComboTab({
             templateCombo={templateCombo}
             comboOverrides={comboOverrides}
             minErOverrides={minErOverrides}
-            baseMinEr={1.0}
             onComboOverridesChange={onComboOverridesChange}
             onMinErOverridesChange={onMinErOverridesChange}
             onReactionChange={onReactionChange}
@@ -75,36 +74,33 @@ export function AnalyzerComboTab({
   );
 }
 
-// ─── Row data types ───
+// ─── Data model ───
 
-/** A variant within a formula row (one per reaction type). */
+/** One reaction variant of a formula (e.g. "Q Direct", "Q Melt"). */
 type Variant = {
+  /** Key for override storage, e.g. "burst" or "burst:melt" */
   lineKey: string;
-  reactionType: string | undefined;
-  reaction?: ReactionOverride;
-  templateCount: number;
+  /** "none" for direct, "melt"/"vaporize"/etc for reactions */
+  reactionType: ReactionType;
+  /** Default count at constellation c (from template proportions) */
+  getDefault: (c: number) => number;
+  /** The reaction override config (undefined for direct/"none") */
+  reaction: ReactionOverride | undefined;
+  /** FormulaEntry for per-part config (only set for non-direct variants) */
+  formulaEntry: FormulaEntry | undefined;
 };
 
-/** One formula row — may have multiple reaction variants. */
+/** One formula row with all its reaction variants. */
 type FormulaRow = {
   formulaId: string;
   label: I18nLabel | undefined;
   minC: number;
-  /** All reaction variants for this formula. */
   variants: Variant[];
-  /** Default total count per constellation (from descriptor). */
-  getDescriptorCount: (c: number) => number;
+  /** Whether to show reaction labels in cells (true when >1 variant) */
+  showLabels: boolean;
 };
 
-/** A formula with a non-direct reaction that needs a config panel. */
-type ReactionConfig = {
-  formulaId: string;
-  stableKey: string;
-  reactionType: string;
-  reaction: ReactionOverride;
-};
-
-// ─── Per-character row ───
+// ─── Per-character section ───
 
 function CharComboRow({
   charId,
@@ -113,7 +109,6 @@ function CharComboRow({
   templateCombo,
   comboOverrides,
   minErOverrides,
-  baseMinEr,
   onComboOverridesChange,
   onMinErOverridesChange,
   onReactionChange,
@@ -124,14 +119,12 @@ function CharComboRow({
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
-  baseMinEr: number;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
   onReactionChange: (stableKey: string, override: ReactionOverride) => void;
 }) {
   const { t } = useLanguage();
   const char = charactersById[charId];
-
   const comboOverridesRef = useRef(comboOverrides);
   comboOverridesRef.current = comboOverrides;
   const minErOverridesRef = useRef(minErOverrides);
@@ -139,14 +132,12 @@ function CharComboRow({
 
   const startC = config.startConstellation;
   const maxC = config.maxConstellation;
-  const is5Star = config.rarity >= 5;
-
   const constellations = useMemo(() => {
-    if (is5Star) return [0, 1, 2, 3, 4, 5, 6];
+    if (config.rarity >= 5) return [0, 1, 2, 3, 4, 5, 6];
     const cols: number[] = [];
     for (let c = startC; c <= maxC; c++) cols.push(c);
     return cols;
-  }, [is5Star, startC, maxC]);
+  }, [config.rarity, startC, maxC]);
 
   const descriptor = teamBuild.getComboDescriptor(charId);
   const allFormulas = teamBuild.getAllFormulaIds()[charId] ?? {};
@@ -159,45 +150,36 @@ function CharComboRow({
     return map;
   }, [constellations, descriptor]);
 
-  // Build formula rows (one per formula, with variants) and reaction configs.
-  // Variants come from element eligibility + team meta, NOT from template combo lines.
-  // Template lines only supply default counts per reaction variant.
-  const { formulaRows, reactionConfigs } = useMemo(() => {
+  // ─── Build formula rows ───
+  const formulaRows = useMemo(() => {
     const charElement = teamBuild.teamMeta.elements[charId];
     const hasReactionFn = (rx: ReactionType, id?: string) =>
       teamBuild.teamMeta.hasReaction(rx, id);
 
-    // Index template lines by formulaId → reactionType for count lookup
-    const templateCounts: Record<string, Record<string, number>> = {};
-    const templateReactions: Record<
+    // Index template lines: formulaId → reactionType → { count, reaction }
+    const templateIndex: Record<
       string,
-      Record<string, ReactionOverride>
+      Record<string, { count: number; reaction?: ReactionOverride }>
     > = {};
     for (const line of templateCombo.lines) {
       if (line.charId !== charId) continue;
       const rx = line.reaction?.reaction ?? "none";
-      if (!templateCounts[line.formulaId]) templateCounts[line.formulaId] = {};
-      templateCounts[line.formulaId][rx] =
-        (templateCounts[line.formulaId][rx] ?? 0) + line.count;
-      if (line.reaction) {
-        if (!templateReactions[line.formulaId])
-          templateReactions[line.formulaId] = {};
-        templateReactions[line.formulaId][rx] = line.reaction;
-      }
+      if (!templateIndex[line.formulaId]) templateIndex[line.formulaId] = {};
+      const byFormula = templateIndex[line.formulaId];
+      byFormula[rx] = {
+        count: (byFormula[rx]?.count ?? 0) + line.count,
+        reaction: line.reaction ?? byFormula[rx]?.reaction,
+      };
     }
 
     const rows: FormulaRow[] = [];
-    const rxConfigs: ReactionConfig[] = [];
     const seen = new Set<string>();
 
     for (const entry of descriptor) {
       if (seen.has(entry.id)) continue;
       seen.add(entry.id);
-      const formulaInfo = allFormulas[entry.id];
-      const label = formulaInfo?.label;
-      const minC = formulaInfo?.minC ?? 0;
 
-      // Derive available reactions from element eligibility
+      const formulaInfo = allFormulas[entry.id];
       const formulaEntry =
         teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(entry.id) ??
         null;
@@ -208,46 +190,48 @@ function CharComboRow({
         hasReactionFn
       );
 
-      // Build one variant per available reaction type
-      const variants: Variant[] = reactions.map((rx) => ({
-        lineKey: comboLineKey(
-          entry.id,
-          rx === "none" ? undefined : { reaction: rx }
-        ),
-        reactionType: rx,
-        templateCount: templateCounts[entry.id]?.[rx] ?? 0,
-        reaction:
-          rx === "none"
-            ? undefined
-            : (templateReactions[entry.id]?.[rx] ?? {
-                reaction: rx,
-              }),
-      }));
+      // Template counts for proportional distribution
+      const templateByRx = templateIndex[entry.id] ?? {};
+      const templateTotal = Object.values(templateByRx).reduce(
+        (s, t) => s + t.count,
+        0
+      );
+
+      const variants: Variant[] = reactions.map((rx) => {
+        const tmpl = templateByRx[rx];
+        const tmplCount = tmpl?.count ?? 0;
+        const isReaction = rx !== "none";
+
+        return {
+          lineKey: comboLineKey(
+            entry.id,
+            isReaction ? { reaction: rx } : undefined
+          ),
+          reactionType: rx,
+          getDefault: (c: number) => {
+            const desc = descriptorCounts[c]?.[entry.id] ?? 0;
+            if (reactions.length <= 1) return desc;
+            if (templateTotal > 0)
+              return Math.round((tmplCount / templateTotal) * desc);
+            return rx === "none" ? desc : 0;
+          },
+          reaction: isReaction
+            ? (tmpl?.reaction ?? { reaction: rx })
+            : undefined,
+          formulaEntry: isReaction ? (formulaEntry ?? undefined) : undefined,
+        };
+      });
 
       rows.push({
         formulaId: entry.id,
-        label,
-        minC,
+        label: formulaInfo?.label,
+        minC: formulaInfo?.minC ?? 0,
         variants,
-        getDescriptorCount: (c: number) => descriptorCounts[c]?.[entry.id] ?? 0,
+        showLabels: reactions.length > 1,
       });
-
-      // Collect non-direct reaction variants for config panels
-      for (const v of variants) {
-        if (v.reactionType && v.reactionType !== "none") {
-          rxConfigs.push({
-            formulaId: entry.id,
-            stableKey: `${charId}.${entry.id}`,
-            reactionType: v.reactionType,
-            reaction: v.reaction ?? {
-              reaction: v.reactionType as ReactionType,
-            },
-          });
-        }
-      }
     }
 
-    return { formulaRows: rows, reactionConfigs: rxConfigs };
+    return rows;
   }, [
     descriptor,
     allFormulas,
@@ -257,23 +241,15 @@ function CharComboRow({
     teamBuild,
   ]);
 
-  const hasOverrides = useMemo(() => {
-    const charOverrides = comboOverrides[charId];
-    const charMinErOverrides = minErOverrides[charId];
-    return (
-      (charOverrides && Object.keys(charOverrides).length > 0) ||
-      (charMinErOverrides && Object.keys(charMinErOverrides).length > 0)
-    );
-  }, [comboOverrides, minErOverrides, charId]);
+  // ─── Effective count at a constellation (override or default) ───
+  const effectiveCount = useCallback(
+    (v: Variant, c: number) =>
+      comboOverrides[charId]?.[c]?.[v.lineKey] ?? v.getDefault(c),
+    [comboOverrides, charId]
+  );
 
-  /**
-   * Change the count for a formula variant at a constellation, with auto-cascade:
-   * if all higher constellations had the same effective value as the old value,
-   * update them too.
-   *
-   * @param getDefault — returns the default count for a given constellation
-   *   (used to resolve effective values when no override exists)
-   */
+  // ─── Handlers ───
+
   const handleCountChange = useCallback(
     (
       constellation: number,
@@ -282,43 +258,32 @@ function CharComboRow({
       getDefault: (c: number) => number
     ) => {
       const prev = comboOverridesRef.current;
-      const effectiveAt = (c: number) =>
-        prev[charId]?.[c]?.[lineKey] ?? getDefault(c);
-      const oldValue = effectiveAt(constellation);
+      const eff = (c: number) => prev[charId]?.[c]?.[lineKey] ?? getDefault(c);
+      const oldValue = eff(constellation);
 
-      // Determine which higher constellations to cascade to:
-      // all C > edited C that currently have the same effective value as oldValue
-      const cascadeTargets: number[] = [];
+      // Cascade: update higher constellations that share the same old value
+      const targets = [constellation];
       for (const c of constellations) {
-        if (c <= constellation) continue;
-        if (c < startC || c > maxC) continue;
-        if (effectiveAt(c) !== oldValue) break; // stop at first divergence
-        cascadeTargets.push(c);
+        if (c <= constellation || c < startC || c > maxC) continue;
+        if (eff(c) !== oldValue) break;
+        targets.push(c);
       }
-
-      // Build the set of constellations to update
-      const targets = [constellation, ...cascadeTargets];
 
       let next = { ...prev };
       for (const c of targets) {
-        const newValue = value == null ? undefined : value;
-        if (newValue == null || newValue === getDefault(c)) {
-          // Clear override for this constellation + lineKey
+        const newVal = value == null ? undefined : value;
+        if (newVal == null || newVal === getDefault(c)) {
+          // Clear override
           if (next[charId]?.[c]?.[lineKey] != null) {
             const { [lineKey]: _, ...rest } = next[charId][c];
             if (Object.keys(rest).length > 0) {
-              next = {
-                ...next,
-                [charId]: { ...next[charId], [c]: rest },
-              };
+              next = { ...next, [charId]: { ...next[charId], [c]: rest } };
             } else {
               const { [c]: __, ...restC } = next[charId];
-              if (Object.keys(restC).length > 0) {
-                next = { ...next, [charId]: restC };
-              } else {
-                const { [charId]: ___, ...restChar } = next;
-                next = restChar;
-              }
+              next =
+                Object.keys(restC).length > 0
+                  ? { ...next, [charId]: restC }
+                  : (({ [charId]: ___, ...r }) => r)(next);
             }
           }
         } else {
@@ -326,10 +291,7 @@ function CharComboRow({
             ...next,
             [charId]: {
               ...next[charId],
-              [c]: {
-                ...next[charId]?.[c],
-                [lineKey]: newValue,
-              },
+              [c]: { ...next[charId]?.[c], [lineKey]: newVal },
             },
           };
         }
@@ -342,23 +304,20 @@ function CharComboRow({
   const handleMinErChange = useCallback(
     (constellation: number, value: number | undefined) => {
       const prev = minErOverridesRef.current;
-      let next: MinErOverrides;
       if (value == null) {
         if (!prev[charId]) return;
         const { [constellation]: _, ...rest } = prev[charId];
-        if (Object.keys(rest).length > 0) {
-          next = { ...prev, [charId]: rest };
-        } else {
-          const { [charId]: __, ...restChar } = prev;
-          next = restChar;
-        }
+        onMinErOverridesChange(
+          Object.keys(rest).length > 0
+            ? { ...prev, [charId]: rest }
+            : (({ [charId]: __, ...r }) => r)(prev)
+        );
       } else {
-        next = {
+        onMinErOverridesChange({
           ...prev,
           [charId]: { ...prev[charId], [constellation]: value },
-        };
+        });
       }
-      onMinErOverridesChange(next);
     },
     [charId, onMinErOverridesChange]
   );
@@ -370,73 +329,53 @@ function CharComboRow({
     onMinErOverridesChange(restMinEr);
   }, [charId, onComboOverridesChange, onMinErOverridesChange]);
 
-  // Filter reaction configs: only show if >0 count in any constellation
-  const activeReactionConfigs = useMemo(() => {
-    return reactionConfigs.filter((rc) => {
-      // Find the variant lineKey for this reaction
-      const row = formulaRows.find((r) => r.formulaId === rc.formulaId);
-      if (!row) return false;
-      const variant = row.variants.find(
-        (v) => v.reactionType === rc.reactionType
-      );
-      if (!variant) return false;
+  const hasOverrides = useMemo(() => {
+    return (
+      (comboOverrides[charId] &&
+        Object.keys(comboOverrides[charId]).length > 0) ||
+      (minErOverrides[charId] && Object.keys(minErOverrides[charId]).length > 0)
+    );
+  }, [comboOverrides, minErOverrides, charId]);
 
-      // Check if >0 count in any constellation
-      for (const c of constellations) {
-        if (c < startC || c > maxC) continue;
-        if (c < (row.minC ?? 0)) continue;
-        const override = comboOverrides[charId]?.[c]?.[variant.lineKey];
-        if (override != null) {
-          if (override > 0) return true;
-        } else {
-          // Compute default
-          const descTotal = row.getDescriptorCount(c);
-          const templateTotal = row.variants.reduce(
-            (s, v) => s + v.templateCount,
-            0
-          );
-          const defaultCount =
-            row.variants.length <= 1
-              ? descTotal
-              : templateTotal > 0
-                ? Math.round(
-                    (variant.templateCount / templateTotal) * descTotal
-                  )
-                : variant.reactionType === "none"
-                  ? descTotal
-                  : 0;
-          if (defaultCount > 0) return true;
+  // ─── Collect reaction variants that need config panels ───
+  // A non-direct variant needs a config panel if it has >0 count in any constellation.
+  const reactionPanels = useMemo(() => {
+    const panels: {
+      formulaId: string;
+      label: I18nLabel | undefined;
+      variant: Variant;
+    }[] = [];
+    for (const row of formulaRows) {
+      for (const v of row.variants) {
+        if (v.reactionType === "none" || !v.formulaEntry) continue;
+        const hasCount = constellations.some(
+          (c) =>
+            c >= startC &&
+            c <= maxC &&
+            c >= row.minC &&
+            effectiveCount(v, c) > 0
+        );
+        if (hasCount) {
+          panels.push({
+            formulaId: row.formulaId,
+            label: row.label,
+            variant: v,
+          });
         }
       }
-      return false;
-    });
-  }, [
-    reactionConfigs,
-    formulaRows,
-    constellations,
-    startC,
-    maxC,
-    comboOverrides,
-    charId,
-  ]);
-
-  // Also filter by element eligibility
-  const visibleReactionConfigs = useMemo(() => {
-    const charElement = teamBuild.teamMeta.elements[charId];
-    if (!charElement) return [];
-    const eligible =
-      ELEMENT_ELIGIBLE_REACTIONS[
-        charElement as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
-      ];
-    if (!eligible || eligible.length <= 1) return [];
-    return activeReactionConfigs;
-  }, [activeReactionConfigs, teamBuild.teamMeta.elements, charId]);
+    }
+    return panels;
+  }, [formulaRows, constellations, startC, maxC, effectiveCount]);
 
   if (formulaRows.length === 0) return null;
 
+  const baseMinEr = 1.0;
+  const baseErPct = Math.round(baseMinEr * 100);
+
+  // ─── Render ───
   return (
     <div className="flex flex-col rounded-lg bg-black/10 border border-border/30 p-1.5 gap-1.5 xl:p-2">
-      {/* Header: character avatar + name + reset */}
+      {/* Header */}
       <div className="flex items-center gap-1.5">
         {char && (
           <img
@@ -461,9 +400,9 @@ function CharComboRow({
         )}
       </div>
 
-      {/* Content: table + reaction configs side by side */}
+      {/* Table + config panels side by side */}
       <div className="flex flex-wrap items-start gap-2">
-        {/* Combo count table */}
+        {/* Count table */}
         <div className="overflow-x-auto">
           <table className="text-xs border-collapse">
             <thead>
@@ -486,8 +425,7 @@ function CharComboRow({
                   {t.ui("teamComp.analyzerMinEr")}
                 </td>
                 {constellations.map((c) => {
-                  const inRange = c >= startC && c <= maxC;
-                  if (!inRange) {
+                  if (c < startC || c > maxC) {
                     return (
                       <td
                         key={c}
@@ -497,28 +435,25 @@ function CharComboRow({
                       </td>
                     );
                   }
-                  const baseErPct = Math.round(baseMinEr * 100);
                   const override = minErOverrides[charId]?.[c];
-                  const isOverridden = override != null;
-                  const displayValue = isOverridden
-                    ? Math.round(override * 100)
-                    : baseErPct;
-
+                  const display =
+                    override != null ? Math.round(override * 100) : baseErPct;
                   return (
                     <td
                       key={c}
                       className="text-center px-0.5 py-0.5 border border-border"
                     >
                       <NumericCell
-                        value={displayValue}
+                        value={display}
                         defaultValue={baseErPct}
-                        onCommit={(num) => {
-                          if (num == null || num === baseErPct) {
-                            handleMinErChange(c, undefined);
-                          } else {
-                            handleMinErChange(c, num / 100);
-                          }
-                        }}
+                        onCommit={(num) =>
+                          handleMinErChange(
+                            c,
+                            num == null || num === baseErPct
+                              ? undefined
+                              : num / 100
+                          )
+                        }
                         min={100}
                         max={300}
                         suffix="%"
@@ -528,7 +463,8 @@ function CharComboRow({
                   );
                 })}
               </tr>
-              {/* Formula rows — one row per formula, cells contain stacked variants */}
+
+              {/* Formula rows */}
               {formulaRows.map((row) => (
                 <tr key={row.formulaId}>
                   <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
@@ -544,147 +480,90 @@ function CharComboRow({
                       <span className="text-xs">{row.formulaId}</span>
                     )}
                   </td>
-                  {(() => {
-                    const templateTotal = row.variants.reduce(
-                      (s, v) => s + v.templateCount,
-                      0
-                    );
-                    const hasMultipleVariants = row.variants.length > 1;
-                    const hasOnlyDirect =
-                      !hasMultipleVariants &&
-                      (!row.variants[0]?.reactionType ||
-                        row.variants[0]?.reactionType === "none");
-
-                    /** Compute default count for a variant at any constellation */
-                    const variantDefault = (
-                      v: (typeof row.variants)[number],
-                      c: number
-                    ) => {
-                      const desc = row.getDescriptorCount(c);
-                      return row.variants.length <= 1
-                        ? desc
-                        : templateTotal > 0
-                          ? Math.round((v.templateCount / templateTotal) * desc)
-                          : v.reactionType === "none"
-                            ? desc
-                            : 0;
-                    };
-
-                    return constellations.map((c) => {
-                      const inRange = c >= startC && c <= maxC;
-                      if (!inRange || c < row.minC) {
-                        return (
-                          <td
-                            key={c}
-                            className="text-center px-1 py-0.5 text-muted-foreground border border-border"
-                          >
-                            —
-                          </td>
-                        );
-                      }
-
+                  {constellations.map((c) => {
+                    if (c < startC || c > maxC || c < row.minC) {
                       return (
                         <td
                           key={c}
-                          className="px-0.5 py-0.5 border border-border align-top"
+                          className="text-center px-1 py-0.5 text-muted-foreground border border-border"
                         >
-                          <div className="flex flex-col gap-0.5">
-                            {row.variants.map((v) => {
-                              const defaultCount = variantDefault(v, c);
-                              const getVariantDefault = (cc: number) =>
-                                variantDefault(v, cc);
-                              const override =
-                                comboOverrides[charId]?.[c]?.[v.lineKey];
-                              const isOverridden = override != null;
-                              const displayValue = isOverridden
-                                ? override
-                                : defaultCount;
-
-                              return (
-                                <div
-                                  key={v.lineKey}
-                                  className="flex items-center gap-0.5 justify-center"
-                                >
-                                  {/* Show reaction label only when multiple variants */}
-                                  {!hasOnlyDirect && (
-                                    <span className="text-[10px] text-foreground/80 shrink-0 w-7 text-right truncate">
-                                      {v.reactionType
-                                        ? t.reaction(v.reactionType)
-                                        : t.reaction("none")}
-                                    </span>
-                                  )}
-                                  <NumericCell
-                                    value={displayValue}
-                                    defaultValue={defaultCount}
-                                    onCommit={(num) => {
-                                      if (num == null || num === defaultCount) {
-                                        handleCountChange(
-                                          c,
-                                          v.lineKey,
-                                          undefined,
-                                          getVariantDefault
-                                        );
-                                      } else {
-                                        handleCountChange(
-                                          c,
-                                          v.lineKey,
-                                          num,
-                                          getVariantDefault
-                                        );
-                                      }
-                                    }}
-                                    min={0}
-                                    small={hasMultipleVariants}
-                                  />
-                                </div>
-                              );
-                            })}
-                          </div>
+                          —
                         </td>
                       );
-                    });
-                  })()}
+                    }
+                    return (
+                      <td
+                        key={c}
+                        className="px-0.5 py-0.5 border border-border align-top"
+                      >
+                        <div className="flex flex-col gap-0.5">
+                          {row.variants.map((v) => {
+                            const def = v.getDefault(c);
+                            const val = effectiveCount(v, c);
+                            return (
+                              <div
+                                key={v.lineKey}
+                                className="flex items-center gap-0.5 justify-center"
+                              >
+                                {row.showLabels && (
+                                  <span className="text-[10px] text-foreground/80 shrink-0 w-7 text-right truncate">
+                                    {t.reaction(v.reactionType)}
+                                  </span>
+                                )}
+                                <NumericCell
+                                  value={val}
+                                  defaultValue={def}
+                                  onCommit={(num) =>
+                                    handleCountChange(
+                                      c,
+                                      v.lineKey,
+                                      num == null || num === def
+                                        ? undefined
+                                        : num,
+                                      v.getDefault
+                                    )
+                                  }
+                                  min={0}
+                                  small={row.showLabels}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Reaction config panels (right side) */}
-        {visibleReactionConfigs.length > 0 && (
+        {/* Reaction config panels */}
+        {reactionPanels.length > 0 && (
           <div className="flex flex-col gap-1.5 shrink-0">
-            {visibleReactionConfigs.map((rc) => {
-              const charBuild = teamBuild.charBuilds[charId];
-              const formulaEntry = charBuild?.charBase.getFormulaEntry(
-                rc.formulaId
-              );
-              if (!formulaEntry) return null;
-
-              return (
-                <div
-                  key={rc.stableKey}
-                  className="rounded border border-border bg-black/5 px-2 py-1.5 text-xs"
-                >
-                  <div className="font-medium mb-1">
-                    {allFormulas[rc.formulaId]?.label
-                      ? t.resolveLabel(allFormulas[rc.formulaId].label)
-                      : rc.formulaId}{" "}
-                    <span className="text-muted-foreground">
-                      [{t.reaction(rc.reactionType)}]
-                    </span>
-                  </div>
-                  <ReactionPartControls
-                    formulaEntry={formulaEntry}
-                    charId={charId}
-                    reactionType={rc.reactionType as ReactionType}
-                    reactionOverride={rc.reaction}
-                    onReactionChange={(override) =>
-                      onReactionChange(rc.stableKey, override)
-                    }
-                  />
+            {reactionPanels.map(({ formulaId, label, variant: v }) => (
+              <div
+                key={`${charId}.${formulaId}.${v.reactionType}`}
+                className="rounded border border-border bg-black/5 px-2 py-1.5 text-xs"
+              >
+                <div className="font-medium mb-1">
+                  {label ? t.resolveLabel(label) : formulaId}{" "}
+                  <span className="text-muted-foreground">
+                    [{t.reaction(v.reactionType)}]
+                  </span>
                 </div>
-              );
-            })}
+                <ReactionPartControls
+                  formulaEntry={v.formulaEntry!}
+                  charId={charId}
+                  reactionType={v.reactionType}
+                  reactionOverride={v.reaction ?? {}}
+                  onReactionChange={(override) =>
+                    onReactionChange(`${charId}.${formulaId}`, override)
+                  }
+                />
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -692,7 +571,7 @@ function CharComboRow({
   );
 }
 
-// ─── Numeric cell with local editing state ───
+// ─── Numeric cell ───
 
 function NumericCell({
   value,
