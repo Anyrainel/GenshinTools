@@ -168,6 +168,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
 
   // Re-reconcile when characters change
   const baseCharIds = configs.map((b) => b.charId).join(",");
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally keyed on serialized charIds to avoid spurious re-reconciliation
   useEffect(() => {
     setCharConfigs((prev) =>
       prev.length > 0

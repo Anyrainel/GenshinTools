@@ -15,7 +15,6 @@
  */
 
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
-import characterStatsJson from "@/data/game/character_stats.json";
 import {
   artifactHalfSets,
   artifacts,
@@ -23,6 +22,7 @@ import {
   weapons,
 } from "@/data/resources";
 import { toBase64 } from "@/lib/base64";
+import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
 
 // ── Index maps (built once at module load) ──
 
@@ -33,14 +33,23 @@ const halfSetToIdx = new Map(artifactHalfSets.map((h, i) => [h.id, i + 1]));
 
 // ── Sorting ──
 
-// Build release-date sort key: charId → negative timestamp so newer = smaller.
-const charReleaseSortKey = new Map<string, number>();
-for (const [id, stats] of Object.entries(
-  characterStatsJson as Record<string, { releaseDate?: string }>
-)) {
-  const d = stats.releaseDate ? new Date(stats.releaseDate).getTime() : 0;
-  // Negate so that newer dates produce smaller numbers (sort ascending = newest first)
-  charReleaseSortKey.set(id, d > 0 ? -d : 0);
+// Build release-date sort key lazily from the already-loaded character stats cache.
+// By the time teams are sorted, gameStatsLoader has always loaded character_stats.json.
+let charReleaseSortKey: Map<string, number> | null = null;
+
+function ensureSortKeys(): Map<string, number> {
+  if (charReleaseSortKey) return charReleaseSortKey;
+  charReleaseSortKey = new Map();
+  const stats = getCharacterStatsSync();
+  if (stats) {
+    for (const [id, entry] of Object.entries(stats)) {
+      const d = (entry as { releaseDate?: string }).releaseDate
+        ? new Date((entry as { releaseDate?: string }).releaseDate!).getTime()
+        : 0;
+      charReleaseSortKey.set(id, d > 0 ? -d : 0);
+    }
+  }
+  return charReleaseSortKey;
 }
 
 /**
@@ -50,7 +59,7 @@ for (const [id, stats] of Object.entries(
  */
 export function charSortKey(charId: string | null | undefined): number {
   if (!charId) return Number.MAX_SAFE_INTEGER;
-  return charReleaseSortKey.get(charId) ?? Number.MAX_SAFE_INTEGER - 1;
+  return ensureSortKeys().get(charId) ?? Number.MAX_SAFE_INTEGER - 1;
 }
 
 // ── Public API ──
