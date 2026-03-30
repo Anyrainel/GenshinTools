@@ -477,7 +477,6 @@ function CharComboRow({
                       <NumericCell
                         value={displayValue}
                         defaultValue={baseErPct}
-                        isOverridden={isOverridden}
                         onCommit={(num) => {
                           if (num == null || num === baseErPct) {
                             handleMinErChange(c, undefined);
@@ -569,7 +568,7 @@ function CharComboRow({
                               >
                                 {/* Show reaction label only when multiple variants */}
                                 {!hasOnlyDirect && (
-                                  <span className="text-[9px] text-foreground/80 shrink-0 w-7 text-right truncate">
+                                  <span className="text-[10px] text-foreground/80 shrink-0 w-7 text-right truncate">
                                     {v.reactionType
                                       ? t.reaction(v.reactionType)
                                       : t.reaction("none")}
@@ -578,7 +577,6 @@ function CharComboRow({
                                 <NumericCell
                                   value={displayValue}
                                   defaultValue={defaultCount}
-                                  isOverridden={isOverridden}
                                   onCommit={(num) => {
                                     if (num == null || num === defaultCount) {
                                       handleCountChange(
@@ -653,7 +651,6 @@ function CharComboRow({
 function NumericCell({
   value,
   defaultValue,
-  isOverridden,
   onCommit,
   min = 0,
   max,
@@ -662,7 +659,6 @@ function NumericCell({
 }: {
   value: number;
   defaultValue: number;
-  isOverridden: boolean;
   onCommit: (num: number | undefined) => void;
   min?: number;
   max?: number;
@@ -721,9 +717,8 @@ function NumericCell({
           }
         }}
         className={cn(
-          "h-6 text-center px-1",
-          small ? "w-10 text-[10px]" : "w-12 text-xs",
-          isOverridden && "ring-1 ring-amber-400"
+          "h-6 text-center px-0.5",
+          small ? "w-8 text-[10px]" : "w-12 text-xs"
         )}
       />
       {suffix && (
