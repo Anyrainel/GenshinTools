@@ -1,5 +1,5 @@
-import { InventoryView } from "@/components/account-data/InventoryView";
 import type { AccountData } from "@/data/types";
+import { InventoryView } from "@/pages/account-data/InventoryView";
 import { render, screen } from "../../utils/render";
 
 const mockData: AccountData = {

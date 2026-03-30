@@ -1,13 +1,13 @@
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
+import { ScoreChangeAnnouncement } from "@/components/account-data/ScoreChangeAnnouncement";
 import {
   CharacterView,
   type CharacterViewHandle,
-} from "@/components/account-data/CharacterView";
-import { EvaluationView } from "@/components/account-data/EvaluationView";
-import { InventoryView } from "@/components/account-data/InventoryView";
-import { RecommendationView } from "@/components/account-data/RecommendationView";
-import { ScoreChangeAnnouncement } from "@/components/account-data/ScoreChangeAnnouncement";
-import { TriageView } from "@/components/account-data/TriageView";
+} from "@/pages/account-data/CharacterView";
+import { EvaluationView } from "@/pages/account-data/EvaluationView";
+import { InventoryView } from "@/pages/account-data/InventoryView";
+import { RecommendationView } from "@/pages/account-data/RecommendationView";
+import { TriageView } from "@/pages/account-data/TriageView";
 
 import { AccountManagerDialog } from "@/components/account-data/AccountManagerDialog";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";

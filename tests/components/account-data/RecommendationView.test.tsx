@@ -1,4 +1,3 @@
-import { RecommendationView } from "@/components/account-data/RecommendationView";
 import type { SubStat } from "@/data/types";
 import type {
   ArtifactScoreResult,
@@ -6,6 +5,7 @@ import type {
   NormalizedScoreInfo,
   StatScoreBreakdown,
 } from "@/lib/account-data/artifactScore";
+import { RecommendationView } from "@/pages/account-data/RecommendationView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { render, screen } from "../../utils/render";

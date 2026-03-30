@@ -1,4 +1,4 @@
-import { CharacterView } from "@/components/account-data/CharacterView";
+import { CharacterView } from "@/pages/account-data/CharacterView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { render, screen } from "../../utils/render";
