@@ -72,13 +72,13 @@ function CharacterWeaponPanel({
       <div className="overflow-y-auto max-h-72 md:max-h-96">
         {rankings.map((entry, idx) => {
           const weapon = weaponsById[entry.weaponId];
-          const isBest = idx === 0;
+          const isTop = entry.percentOfBest >= 99;
           return (
             <div
               key={`${entry.weaponId}-${entry.refinement}`}
               className={cn(
                 "flex items-center gap-1.5 px-2 py-1 text-xs md:text-sm",
-                isBest
+                isTop
                   ? "bg-sky-900/30 border border-sky-600/30"
                   : "border border-transparent"
               )}
@@ -103,7 +103,7 @@ function CharacterWeaponPanel({
               <span
                 className={cn(
                   "w-14 text-right font-mono font-bold shrink-0",
-                  isBest ? "text-sky-300" : "text-foreground"
+                  isTop ? "text-sky-300" : "text-foreground"
                 )}
               >
                 {entry.percentOfBest.toFixed(1)}%
@@ -226,6 +226,8 @@ export function WeaponChoiceResultCard({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="7_5">7/5 (5/4★)</SelectItem>
+                <SelectItem value="7_6">7/6 (5/4★)</SelectItem>
                 <SelectItem value="8_6">8/6 (5/4★)</SelectItem>
                 <SelectItem value="8_7">8/7 (5/4★)</SelectItem>
                 <SelectItem value="9_7">9/7 (5/4★)</SelectItem>
