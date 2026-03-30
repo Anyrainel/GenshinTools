@@ -2,48 +2,44 @@
   Cache-Control: no-cache
   CDN-Cache-Control: max-age=60
 
-/assets/*.js
-  Cache-Control: public, max-age=3600
-  CDN-Cache-Control: public, max-age=3600
-
-/assets/*.css
-  Cache-Control: public, max-age=3600
-  CDN-Cache-Control: public, max-age=3600
-
-/assets/*.json
-  Cache-Control: public, max-age=86400
-  CDN-Cache-Control: public, max-age=3600
-
-/assets/home/*
-  Cache-Control: public, max-age=2592000
-  CDN-Cache-Control: public, max-age=2592000
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: public, max-age=31536000, immutable
 
 /artifact/*
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
 /character/*
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
 /element/*
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
 /enemy/*
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+  CDN-Cache-Control: public, max-age=2592000
+
+/food/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
 /weapon/*
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
 /weapontype/*
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+  CDN-Cache-Control: public, max-age=2592000
+
+/assets/home/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
 /*.svg
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
 /good/*
