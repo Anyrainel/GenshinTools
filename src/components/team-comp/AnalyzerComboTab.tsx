@@ -8,6 +8,7 @@ import type {
   MinErOverrides,
 } from "@/lib/team-comp/analyzer";
 import { comboLineKey } from "@/lib/team-comp/analyzer";
+import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type {
   ComboFormula,
@@ -491,6 +492,14 @@ function CharComboRow({
               );
               const charElement = teamBuild.teamMeta.elements[charId];
               if (!formulaEntry || !charElement) return null;
+
+              // Skip formulas where ReactionSelector would return null
+              // (Anemo/Geo/Physical only have "none", transformative reactions are baked-in)
+              const eligible =
+                ELEMENT_ELIGIBLE_REACTIONS[
+                  charElement as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+                ];
+              if (!eligible || eligible.length <= 1) return null;
 
               return (
                 <div
