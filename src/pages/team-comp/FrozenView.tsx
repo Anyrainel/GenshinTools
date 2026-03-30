@@ -504,10 +504,18 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
 
           {/* Empty state — only if no frozen teams AND no standalone section content */}
           {isEmpty && (
-            <div className="flex flex-col items-center justify-center min-h-[30vh] gap-3">
-              <Snowflake className="w-10 h-10 text-cyan-500/30" />
+            <div className="flex flex-col items-center text-center px-4 pt-8 sm:pt-16 pb-4 max-w-md mx-auto">
+              <div className="relative mb-5">
+                <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-xl" />
+                <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
+                  <Snowflake className="w-10 h-10 text-cyan-500 opacity-80" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {t.ui("teamComp.frozenEmptyTitle")}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                {t.ui("teamComp.frozenEmpty")}
+                {t.ui("teamComp.frozenEmptyDesc")}
               </p>
             </div>
           )}

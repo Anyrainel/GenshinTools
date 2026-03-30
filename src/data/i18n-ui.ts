@@ -655,16 +655,20 @@ export const i18nUiData = {
   },
   teamComp: {
     emptyTeamTitle: {
-      en: "Build your first team",
-      zh: "创建你的第一支队伍",
+      en: "Team Damage Calculator",
+      zh: "队伍伤害计算器",
     },
     emptyTeamDesc: {
-      en: "Pick 4 characters, assign weapons and artifacts, then calculate optimized damage.",
-      zh: "选择4个角色、分配武器和圣遗物，然后计算优化伤害。",
+      en: "Build teams, assign weapons and artifacts, and calculate optimized damage across rotations.",
+      zh: "组建队伍、分配武器和圣遗物，计算整个循环的优化伤害。",
     },
     emptyTeamOrImport: {
-      en: "Or import a community team preset to get started.",
-      zh: "或导入社区队伍预设以快速开始。",
+      en: "Load a community preset to get started instantly, or build your own from scratch.",
+      zh: "加载社区预设立即开始，或从头构建自己的队伍。",
+    },
+    emptyTeamCta: {
+      en: "Browse Presets & Import",
+      zh: "浏览预设与导入",
     },
     teamName: { en: "Team Name", zh: "队伍名称" },
     teamIndex: { en: "Team {0}", zh: "队伍 {0}" },
@@ -948,6 +952,14 @@ export const i18nUiData = {
     frozenEmpty: {
       en: "No frozen teams or artifacts",
       zh: "没有冻结的队伍或圣遗物",
+    },
+    frozenEmptyTitle: {
+      en: "Frozen Artifacts",
+      zh: "冻结圣遗物",
+    },
+    frozenEmptyDesc: {
+      en: "After running optimization in the Damage tab, freeze the results to lock in your best artifact assignments. Frozen artifacts appear here for review and export.",
+      zh: "在伤害页签中运行优化后，冻结结果以锁定最佳圣遗物分配。冻结的圣遗物会显示在此处供查看和导出。",
     },
     downloadAllFrozen: {
       en: "Download All Swaps Image",
