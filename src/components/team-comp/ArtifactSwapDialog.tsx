@@ -16,35 +16,15 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactHalfSetsById } from "@/data/constants";
-import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
+import {
+  artifactHalfSetsById,
+  getSortableStatsForSlot,
+} from "@/data/constants";
+import type { ArtifactData, Slot } from "@/data/types";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRightLeft, Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
-
-/** All stat keys that can appear on artifacts (main + sub, deduplicated) */
-const SORTABLE_STATS: (MainStat | SubStat)[] = [
-  "hp",
-  "atk",
-  "def",
-  "hp%",
-  "atk%",
-  "def%",
-  "em",
-  "er",
-  "cr",
-  "cd",
-  "pyro%",
-  "hydro%",
-  "anemo%",
-  "electro%",
-  "dendro%",
-  "cryo%",
-  "geo%",
-  "phys%",
-  "heal%",
-];
 
 interface ArtifactSwapDialogProps {
   open: boolean;
@@ -125,6 +105,8 @@ export function ArtifactSwapDialog({
     null,
   ]);
 
+  const sortableStats = useMemo(() => getSortableStatsForSlot(slot), [slot]);
+
   // Filter inventory to this slot, exclude current and team-used (frozen are kept for labeling)
   const { matchingRaw, otherRaw } = useMemo(() => {
     const forSlot = inventory.filter(
@@ -204,7 +186,7 @@ export function ArtifactSwapDialog({
       </div>
       {sortStats.map((currentVal, idx) => {
         const isEnabled = idx === 0 || sortStats[idx - 1] != null;
-        const availableStats = SORTABLE_STATS.filter(
+        const availableStats = sortableStats.filter(
           (s) => s === currentVal || !usedStats.has(s)
         );
         return (

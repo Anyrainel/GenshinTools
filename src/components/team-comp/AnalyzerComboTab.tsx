@@ -20,6 +20,7 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import { RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormulaLabel } from "./FormulaLabel";
+import { ReactionSelector } from "./ReactionSelector";
 
 interface AnalyzerComboTabProps {
   teamBuild: TeamBuild;
@@ -28,9 +29,9 @@ interface AnalyzerComboTabProps {
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
-  perChar?: Record<string, { minEr: number; minCr: number }>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
+  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
 }
 
 export function AnalyzerComboTab({
@@ -40,17 +41,17 @@ export function AnalyzerComboTab({
   templateCombo,
   comboOverrides,
   minErOverrides,
-  perChar,
   onComboOverridesChange,
   onMinErOverridesChange,
+  onReactionChange,
 }: AnalyzerComboTabProps) {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-1.5 lg:gap-2">
       {charConfigs.map((cfg) => {
         const bc = baseConfigs.find((b) => b.charId === cfg.charId);
         if (!bc) return null;
         return (
-          <CharComboGrid
+          <CharComboRow
             key={cfg.charId}
             charId={cfg.charId}
             config={cfg}
@@ -58,9 +59,10 @@ export function AnalyzerComboTab({
             templateCombo={templateCombo}
             comboOverrides={comboOverrides}
             minErOverrides={minErOverrides}
-            baseMinEr={perChar?.[cfg.charId]?.minEr ?? 1.0}
+            baseMinEr={1.0}
             onComboOverridesChange={onComboOverridesChange}
             onMinErOverridesChange={onMinErOverridesChange}
+            onReactionChange={onReactionChange}
           />
         );
       })}
@@ -70,28 +72,21 @@ export function AnalyzerComboTab({
 
 // ─── Row data types ───
 
-/** A reaction variant from the template combo for a given formulaId. */
-type ReactionVariant = {
-  lineKey: string; // comboLineKey: formulaId or formulaId:reactionType
-  reactionType: string | undefined;
-  templateCount: number;
-  reaction?: ReactionOverride; // full config for display
-};
-
-/** One row per formulaId from the descriptor. */
-type FormulaRow = {
+/** One displayable row — either a formula with no reaction variants, or one specific variant. */
+type DisplayRow = {
   formulaId: string;
   label: I18nLabel | undefined;
   minC: number;
-  /** Reaction variants from the template combo. Empty = no template lines for this formula. */
-  variants: ReactionVariant[];
-  /** Sum of template variant counts (for proportional distribution). */
-  templateTotal: number;
+  lineKey: string;
+  reactionType: string | undefined;
+  reaction?: ReactionOverride;
+  /** Default count getter per constellation. */
+  getDefault: (c: number) => number;
 };
 
-// ─── Per-character grid ───
+// ─── Per-character row ───
 
-function CharComboGrid({
+function CharComboRow({
   charId,
   config,
   teamBuild,
@@ -101,6 +96,7 @@ function CharComboGrid({
   baseMinEr,
   onComboOverridesChange,
   onMinErOverridesChange,
+  onReactionChange,
 }: {
   charId: string;
   config: AnalyzerCharConfig;
@@ -111,11 +107,11 @@ function CharComboGrid({
   baseMinEr: number;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
+  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
 }) {
   const { t } = useLanguage();
   const char = charactersById[charId];
 
-  // Use refs so callbacks always read the latest override state
   const comboOverridesRef = useRef(comboOverrides);
   comboOverridesRef.current = comboOverrides;
   const minErOverridesRef = useRef(minErOverrides);
@@ -123,18 +119,19 @@ function CharComboGrid({
 
   const startC = config.startConstellation;
   const maxC = config.maxConstellation;
+  const is5Star = config.rarity >= 5;
 
+  // Always show C0-C6 for 5-star characters so tables align vertically
   const constellations = useMemo(() => {
+    if (is5Star) return [0, 1, 2, 3, 4, 5, 6];
     const cols: number[] = [];
     for (let c = startC; c <= maxC; c++) cols.push(c);
     return cols;
-  }, [startC, maxC]);
+  }, [is5Star, startC, maxC]);
 
-  // Get combo descriptor and all formula info from character impl
   const descriptor = teamBuild.getComboDescriptor(charId);
   const allFormulas = teamBuild.getAllFormulaIds()[charId] ?? {};
 
-  // Compute descriptor counts per constellation
   const descriptorCounts = useMemo(() => {
     const map: Record<number, Record<string, number>> = {};
     for (const c of constellations) {
@@ -143,39 +140,103 @@ function CharComboGrid({
     return map;
   }, [constellations, descriptor]);
 
-  // Build formula rows from descriptor, attaching template combo variants
-  const formulaRows = useMemo<FormulaRow[]>(() => {
+  // Build flat display rows: one row per reaction variant (or one row for formulas with 0-1 variants)
+  const { displayRows, reactionConfigs } = useMemo(() => {
     // Collect template lines for this character, grouped by formulaId
-    const templateByFormula: Record<string, ReactionVariant[]> = {};
+    // Track per-formula variant index for stable keying
+    const variantCounters: Record<string, number> = {};
+    const templateByFormula: Record<
+      string,
+      {
+        lineKey: string;
+        stableKey: string; // charId.formulaId.variantIdx — stable across reaction changes
+        reactionType: string | undefined;
+        templateCount: number;
+        reaction?: ReactionOverride;
+      }[]
+    > = {};
     for (const line of templateCombo.lines) {
       if (line.charId !== charId) continue;
       if (!templateByFormula[line.formulaId])
         templateByFormula[line.formulaId] = [];
+      const variantIdx = variantCounters[line.formulaId] ?? 0;
+      variantCounters[line.formulaId] = variantIdx + 1;
       templateByFormula[line.formulaId].push({
         lineKey: comboLineKey(line.formulaId, line.reaction),
+        stableKey: `${charId}.${line.formulaId}.${variantIdx}`,
         reactionType: line.reaction?.reaction,
         templateCount: line.count,
         reaction: line.reaction,
       });
     }
 
-    // Walk descriptor entries in order
+    const rows: DisplayRow[] = [];
+    // One reaction config per unique formula (not per variant)
+    const rxConfigs: {
+      formulaId: string;
+      /** Stable key: charId.formulaId */
+      stableKey: string;
+      /** The current reaction override — taken from the first variant that has one */
+      reaction: ReactionOverride;
+    }[] = [];
     const seen = new Set<string>();
-    const rows: FormulaRow[] = [];
+    const rxSeen = new Set<string>();
+
     for (const entry of descriptor) {
       if (seen.has(entry.id)) continue;
       seen.add(entry.id);
       const variants = templateByFormula[entry.id] ?? [];
-      rows.push({
-        formulaId: entry.id,
-        label: allFormulas[entry.id]?.label,
-        minC: allFormulas[entry.id]?.minC ?? 0,
-        variants,
-        templateTotal: variants.reduce((s, v) => s + v.templateCount, 0),
-      });
+      const formulaInfo = allFormulas[entry.id];
+      const label = formulaInfo?.label;
+      const minC = formulaInfo?.minC ?? 0;
+      const templateTotal = variants.reduce((s, v) => s + v.templateCount, 0);
+
+      if (variants.length <= 1) {
+        const lineKey = variants[0]?.lineKey ?? entry.id;
+        rows.push({
+          formulaId: entry.id,
+          label,
+          minC,
+          lineKey,
+          reactionType: variants[0]?.reactionType,
+          reaction: variants[0]?.reaction,
+          getDefault: (c: number) => descriptorCounts[c]?.[entry.id] ?? 0,
+        });
+      } else {
+        for (const v of variants) {
+          rows.push({
+            formulaId: entry.id,
+            label,
+            minC,
+            lineKey: v.lineKey,
+            reactionType: v.reactionType,
+            reaction: v.reaction,
+            getDefault: (c: number) => {
+              const descTotal = descriptorCounts[c]?.[entry.id] ?? 0;
+              return templateTotal > 0
+                ? Math.round((v.templateCount / templateTotal) * descTotal)
+                : descTotal;
+            },
+          });
+        }
+      }
+
+      // One ReactionSelector per formula — pick the primary reaction from the first reacting variant
+      if (!rxSeen.has(entry.id) && variants.length > 0) {
+        rxSeen.add(entry.id);
+        const primaryVariant =
+          variants.find((v) => v.reactionType && v.reactionType !== "none") ??
+          variants[0];
+        rxConfigs.push({
+          formulaId: entry.id,
+          stableKey: `${charId}.${entry.id}`,
+          reaction: primaryVariant.reaction ?? {},
+        });
+      }
     }
-    return rows;
-  }, [descriptor, allFormulas, templateCombo.lines, charId]);
+
+    return { displayRows: rows, reactionConfigs: rxConfigs };
+  }, [descriptor, allFormulas, templateCombo.lines, charId, descriptorCounts]);
 
   const hasOverrides = useMemo(() => {
     const charOverrides = comboOverrides[charId];
@@ -255,26 +316,12 @@ function CharComboGrid({
     onMinErOverridesChange(restMinEr);
   }, [charId, onComboOverridesChange, onMinErOverridesChange]);
 
-  /** Default count for a variant at constellation c (proportional from descriptor). */
-  const getVariantDefault = useCallback(
-    (row: FormulaRow, variant: ReactionVariant, c: number): number => {
-      const descTotal = descriptorCounts[c]?.[row.formulaId] ?? 0;
-      if (row.templateTotal > 0) {
-        return Math.round(
-          (variant.templateCount / row.templateTotal) * descTotal
-        );
-      }
-      return descTotal;
-    },
-    [descriptorCounts]
-  );
-
-  if (formulaRows.length === 0) return null;
+  if (displayRows.length === 0) return null;
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      {/* Header: character name + reset */}
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col rounded-lg bg-black/10 border border-border/30 p-1.5 gap-1.5 xl:p-2">
+      {/* Header: character avatar + name + reset */}
+      <div className="flex items-center gap-1.5">
         {char && (
           <img
             src={getAssetUrl(char.imagePath)}
@@ -282,12 +329,14 @@ function CharComboGrid({
             className="w-5 h-5 rounded-full"
           />
         )}
-        <span className="text-sm font-medium">{t.character(charId)}</span>
+        <span className="font-bold text-foreground/90 truncate min-w-0 text-xs md:text-base lg:text-sm xl:text-base">
+          {t.character(charId)}
+        </span>
         {hasOverrides && (
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 px-1.5 text-xs"
+            className="h-6 px-1.5 text-xs ml-auto"
             onClick={handleReset}
           >
             <RotateCcw className="w-3 h-3 mr-1" />
@@ -296,63 +345,79 @@ function CharComboGrid({
         )}
       </div>
 
-      {/* Count grid */}
-      <div className="overflow-x-auto">
-        <table className="text-xs border-collapse mx-auto">
-          <thead>
-            <tr>
-              <th className="text-left pr-2 py-0.5 font-normal" />
-              {constellations.map((c) => (
-                <th
-                  key={c}
-                  className="text-center px-1 py-0.5 font-mono font-normal min-w-[2.5rem]"
-                >
-                  C{c}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {/* Min ER row (top) */}
-            <tr>
-              <td className="text-left pr-2 py-0.5 whitespace-nowrap text-xs font-semibold">
-                {t.ui("teamComp.analyzerMinEr")}
-              </td>
-              {constellations.map((c) => {
-                const baseErPct = Math.round(baseMinEr * 100);
-                const override = minErOverrides[charId]?.[c];
-                const isOverridden = override != null;
-                const displayValue = isOverridden
-                  ? Math.round(override * 100)
-                  : baseErPct;
+      {/* Content: table + reaction configs side by side */}
+      <div className="flex flex-wrap items-start gap-2">
+        {/* Combo count table */}
+        <div className="overflow-x-auto">
+          <table className="text-xs border-collapse">
+            <thead>
+              <tr>
+                <th className="text-left pr-1 py-0.5 font-normal border border-border whitespace-nowrap" />
+                {constellations.map((c) => (
+                  <th
+                    key={c}
+                    className="text-center px-1 py-0.5 font-normal w-[3.5rem] min-w-[3.5rem] border border-border"
+                  >
+                    {t.format("common.constellationFormat", c)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {/* Min ER row */}
+              <tr>
+                <td className="text-left pr-1 py-0.5 whitespace-nowrap text-xs font-semibold border border-border">
+                  {t.ui("teamComp.analyzerMinEr")}
+                </td>
+                {constellations.map((c) => {
+                  const inRange = c >= startC && c <= maxC;
+                  if (!inRange) {
+                    return (
+                      <td
+                        key={c}
+                        className="text-center px-1 py-0.5 text-muted-foreground border border-border"
+                      >
+                        —
+                      </td>
+                    );
+                  }
+                  const baseErPct = Math.round(baseMinEr * 100);
+                  const override = minErOverrides[charId]?.[c];
+                  const isOverridden = override != null;
+                  const displayValue = isOverridden
+                    ? Math.round(override * 100)
+                    : baseErPct;
 
-                return (
-                  <td key={c} className="text-center px-0.5 py-0.5">
-                    <NumericCell
-                      value={displayValue}
-                      defaultValue={baseErPct}
-                      isOverridden={isOverridden}
-                      onCommit={(num) => {
-                        if (num == null || num === baseErPct) {
-                          handleMinErChange(c, undefined);
-                        } else {
-                          handleMinErChange(c, num / 100);
-                        }
-                      }}
-                      min={100}
-                      max={300}
-                    />
-                  </td>
-                );
-              })}
-            </tr>
-            {formulaRows.map((row) => {
-              const hasVariants = row.variants.length > 1;
-
-              return (
-                <tr key={row.formulaId} className="align-top">
-                  <td className="text-left pr-2 py-0.5 whitespace-nowrap">
-                    <div className="flex flex-col gap-0.5">
+                  return (
+                    <td
+                      key={c}
+                      className="text-center px-0.5 py-0.5 border border-border"
+                    >
+                      <NumericCell
+                        value={displayValue}
+                        defaultValue={baseErPct}
+                        isOverridden={isOverridden}
+                        onCommit={(num) => {
+                          if (num == null || num === baseErPct) {
+                            handleMinErChange(c, undefined);
+                          } else {
+                            handleMinErChange(c, num / 100);
+                          }
+                        }}
+                        min={100}
+                        max={300}
+                        suffix="%"
+                        small
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+              {/* Formula/variant rows */}
+              {displayRows.map((row) => (
+                <tr key={row.lineKey}>
+                  <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
+                    <span className="flex items-baseline gap-1">
                       {row.label ? (
                         <FormulaLabel
                           label={row.label}
@@ -364,124 +429,95 @@ function CharComboGrid({
                       ) : (
                         <span className="text-xs">{row.formulaId}</span>
                       )}
-                      {/* Variant reaction labels (stacked beneath formula name) */}
-                      {hasVariants &&
-                        row.variants.map((v) => (
-                          <span
-                            key={v.lineKey}
-                            className="text-[10px] text-muted-foreground pl-1 leading-tight"
-                          >
-                            {v.reactionType
-                              ? t.reaction(v.reactionType)
-                              : t.reaction("none")}
-                          </span>
-                        ))}
-                    </div>
+                      {row.reactionType && (
+                        <span className="text-xs text-muted-foreground">
+                          ({t.reaction(row.reactionType)})
+                        </span>
+                      )}
+                    </span>
                   </td>
                   {constellations.map((c) => {
-                    const enabled = c >= row.minC;
-
-                    if (!enabled) {
+                    const inRange = c >= startC && c <= maxC;
+                    if (!inRange || c < row.minC) {
                       return (
                         <td
                           key={c}
-                          className="text-center px-1 py-0.5 text-muted-foreground"
+                          className="text-center px-1 py-0.5 text-muted-foreground border border-border"
                         >
                           —
                         </td>
                       );
                     }
 
-                    // No variants or single variant: single input using descriptor count
-                    if (row.variants.length <= 1) {
-                      const lineKey = row.variants[0]?.lineKey ?? row.formulaId;
-                      const defaultCount =
-                        descriptorCounts[c]?.[row.formulaId] ?? 0;
-                      const override = comboOverrides[charId]?.[c]?.[lineKey];
-                      const isOverridden = override != null;
-                      const displayValue = isOverridden
-                        ? override
-                        : defaultCount;
+                    const defaultCount = row.getDefault(c);
+                    const override = comboOverrides[charId]?.[c]?.[row.lineKey];
+                    const isOverridden = override != null;
+                    const displayValue = isOverridden ? override : defaultCount;
 
-                      return (
-                        <td key={c} className="text-center px-0.5 py-0.5">
-                          <NumericCell
-                            value={displayValue}
-                            defaultValue={defaultCount}
-                            isOverridden={isOverridden}
-                            onCommit={(num) => {
-                              if (num == null || num === defaultCount) {
-                                handleCountChange(c, lineKey, undefined);
-                              } else {
-                                handleCountChange(c, lineKey, num);
-                              }
-                            }}
-                            min={0}
-                          />
-                        </td>
-                      );
-                    }
-
-                    // Multiple variants: stacked inputs per reaction type
                     return (
-                      <td key={c} className="px-0.5 py-0.5">
-                        <div className="flex flex-col gap-0.5 items-center">
-                          {row.variants.map((v) => {
-                            const defaultCount = getVariantDefault(row, v, c);
-                            const override =
-                              comboOverrides[charId]?.[c]?.[v.lineKey];
-                            const isOverridden = override != null;
-                            const displayValue = isOverridden
-                              ? override
-                              : defaultCount;
-
-                            return (
-                              <NumericCell
-                                key={v.lineKey}
-                                value={displayValue}
-                                defaultValue={defaultCount}
-                                isOverridden={isOverridden}
-                                onCommit={(num) => {
-                                  if (num == null || num === defaultCount) {
-                                    handleCountChange(c, v.lineKey, undefined);
-                                  } else {
-                                    handleCountChange(c, v.lineKey, num);
-                                  }
-                                }}
-                                min={0}
-                              />
-                            );
-                          })}
-                        </div>
+                      <td
+                        key={c}
+                        className="text-center px-0.5 py-0.5 border border-border"
+                      >
+                        <NumericCell
+                          value={displayValue}
+                          defaultValue={defaultCount}
+                          isOverridden={isOverridden}
+                          onCommit={(num) => {
+                            if (num == null || num === defaultCount) {
+                              handleCountChange(c, row.lineKey, undefined);
+                            } else {
+                              handleCountChange(c, row.lineKey, num);
+                            }
+                          }}
+                          min={0}
+                        />
                       </td>
                     );
                   })}
                 </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Reaction config details (right side) */}
+        {reactionConfigs.length > 0 && (
+          <div className="flex flex-col gap-1.5 shrink-0">
+            {reactionConfigs.map((rc) => {
+              const charBuild = teamBuild.charBuilds[charId];
+              const formulaEntry = charBuild?.charBase.getFormulaEntry(
+                rc.formulaId
+              );
+              const charElement = teamBuild.teamMeta.elements[charId];
+              if (!formulaEntry || !charElement) return null;
+
+              return (
+                <div
+                  key={rc.stableKey}
+                  className="rounded border border-border bg-black/5 px-2 py-1.5 text-xs"
+                >
+                  <div className="font-medium mb-1">
+                    {allFormulas[rc.formulaId]?.label
+                      ? t.resolveLabel(allFormulas[rc.formulaId].label)
+                      : rc.formulaId}
+                  </div>
+                  <ReactionSelector
+                    formulaEntry={formulaEntry}
+                    element={charElement}
+                    reactionOverride={rc.reaction}
+                    onReactionChange={(override) =>
+                      onReactionChange(rc.stableKey, override)
+                    }
+                    teamMeta={teamBuild.teamMeta}
+                    charId={charId}
+                  />
+                </div>
               );
             })}
-          </tbody>
-        </table>
+          </div>
+        )}
       </div>
-
-      {/* Reaction override config cards (from template combo lines) */}
-      {formulaRows.some((r) =>
-        r.variants.some((v) => v.reaction?.reaction)
-      ) && (
-        <div className="flex flex-wrap justify-center gap-2 pt-1">
-          {formulaRows.flatMap((row) =>
-            row.variants
-              .filter((v) => v.reaction?.reaction)
-              .map((v) => (
-                <ReactionConfigCard
-                  key={v.lineKey}
-                  label={row.label}
-                  formulaId={row.formulaId}
-                  reaction={v.reaction!}
-                />
-              ))
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -495,20 +531,22 @@ function NumericCell({
   onCommit,
   min = 0,
   max,
+  suffix,
+  small,
 }: {
   value: number;
   defaultValue: number;
   isOverridden: boolean;
-  /** Called with parsed number on blur/enter, or undefined if empty (reset to default). */
   onCommit: (num: number | undefined) => void;
   min?: number;
   max?: number;
+  suffix?: string;
+  small?: boolean;
 }) {
   const [localValue, setLocalValue] = useState(String(value));
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Sync local value when the external value changes (and we're not mid-edit)
   useEffect(() => {
     if (!editing) setLocalValue(String(value));
   }, [value, editing]);
@@ -533,91 +571,38 @@ function NumericCell({
   }, [localValue, value, onCommit, min, max]);
 
   return (
-    <Input
-      ref={inputRef}
-      type="text"
-      inputMode="numeric"
-      value={editing ? localValue : String(value)}
-      onFocus={() => {
-        setEditing(true);
-        setLocalValue(String(value));
-      }}
-      onChange={(e) => setLocalValue(e.target.value)}
-      onBlur={commit}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          commit();
-          inputRef.current?.blur();
-        } else if (e.key === "Escape") {
-          setEditing(false);
+    <span className="inline-flex items-center gap-0.5">
+      <Input
+        ref={inputRef}
+        type="text"
+        inputMode="numeric"
+        value={editing ? localValue : String(value)}
+        onFocus={() => {
+          setEditing(true);
           setLocalValue(String(value));
-          inputRef.current?.blur();
-        }
-      }}
-      className={cn(
-        "h-6 w-12 text-xs text-center px-1 font-mono",
-        isOverridden && "ring-1 ring-amber-400"
+        }}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            commit();
+            inputRef.current?.blur();
+          } else if (e.key === "Escape") {
+            setEditing(false);
+            setLocalValue(String(value));
+            inputRef.current?.blur();
+          }
+        }}
+        className={cn(
+          "h-6 text-center px-1",
+          small ? "w-10 text-[10px]" : "w-12 text-xs",
+          isOverridden && "ring-1 ring-amber-400"
+        )}
+      />
+      {suffix && (
+        <span className="text-muted-foreground text-[10px]">{suffix}</span>
       )}
-    />
-  );
-}
-
-// ─── Reaction config card ───
-
-function ReactionConfigCard({
-  label,
-  formulaId,
-  reaction,
-}: {
-  label: I18nLabel | undefined;
-  formulaId: string;
-  reaction: ReactionOverride;
-}) {
-  const { t } = useLanguage();
-  const rx = reaction.reaction!;
-
-  // Collect per-part details
-  const partDetails: { index: number; text: string }[] = [];
-  if (reaction.partReactions) {
-    for (const [idx, rxType] of Object.entries(reaction.partReactions)) {
-      partDetails.push({
-        index: Number(idx),
-        text: t.reaction(rxType),
-      });
-    }
-  }
-  if (reaction.partHits) {
-    for (const [idx, hits] of Object.entries(reaction.partHits)) {
-      const i = Number(idx);
-      const existing = partDetails.find((d) => d.index === i);
-      if (existing) {
-        existing.text += ` ×${hits}`;
-      } else {
-        partDetails.push({ index: i, text: `×${hits}` });
-      }
-    }
-  }
-  partDetails.sort((a, b) => a.index - b.index);
-
-  return (
-    <div className="flex flex-col gap-0.5 rounded border border-border px-2 py-1 text-xs">
-      <div className="flex items-baseline gap-1">
-        <span className="font-medium">
-          {label ? t.resolveLabel(label) : formulaId}
-        </span>
-        <span className="text-muted-foreground">→</span>
-        <span>{t.reaction(rx)}</span>
-      </div>
-      {partDetails.length > 0 && (
-        <div className="text-muted-foreground">
-          {partDetails.map((d) => (
-            <span key={d.index} className="mr-2">
-              P{d.index + 1}: {d.text}
-            </span>
-          ))}
-        </div>
-      )}
-    </div>
+    </span>
   );
 }

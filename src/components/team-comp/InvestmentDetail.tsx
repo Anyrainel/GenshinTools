@@ -1,38 +1,12 @@
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { ItemIcon } from "@/components/shared/ItemIcon";
-import { ItemPicker } from "@/components/shared/ItemPicker";
-import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import type { ItemIconSize } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  LightweightSelect,
-  LightweightSelectContent,
-  LightweightSelectItem,
-  LightweightSelectTrigger,
-  LightweightSelectValue,
-} from "@/components/ui/lightweight-select";
-import { Progress } from "@/components/ui/progress";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/constants";
-import type { Rarity, WeaponResource } from "@/data/types";
+import type { Element, Rarity } from "@/data/types";
 import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useGameStats } from "@/hooks/useGameStats";
-import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/lib/gameStatsLoader";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type {
   AnalyzerCharConfig,
   AnalyzerOptions,
@@ -41,28 +15,24 @@ import type {
   StoredAnalyzerCharConfig,
 } from "@/lib/team-comp/analyzer";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
+import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import type {
   ComboFormula,
   ComboLine,
+  ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import { getAssetUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { Team } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import {
-  ArrowLeft,
-  ChevronDown,
-  Loader2,
-  Play,
-  TrendingUp,
-} from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnalyzerChart } from "./AnalyzerChart";
-import { AnalyzerComboTab } from "./AnalyzerComboTab";
-import { AnalyzerSequence } from "./AnalyzerSequence";
-import { AnalyzerTable } from "./AnalyzerTable";
+import { AnalyzerComboCard } from "./AnalyzerComboCard";
+import { AnalyzerConfigCard } from "./AnalyzerConfigCard";
+import type { AnalyzerCalcSettings } from "./AnalyzerResultCard";
+import { AnalyzerResultCard } from "./AnalyzerResultCard";
 
 // ─── Props ───
 
@@ -72,22 +42,6 @@ interface InvestmentDetailProps {
 }
 
 // ─── Helpers ───
-
-function getArtifactIconProps(bc: TeamSlotConfig): {
-  artifactSetId?: string;
-  halfSetIds?: [string | number, string | number];
-  imagePath?: string;
-} {
-  if (bc.artifactSetId) {
-    return { artifactSetId: bc.artifactSetId };
-  }
-  if (bc.artifactHalfSetIds.length >= 2) {
-    return {
-      halfSetIds: [bc.artifactHalfSetIds[0], bc.artifactHalfSetIds[1]],
-    };
-  }
-  return { imagePath: "" };
-}
 
 /** Re-reconcile already-expanded full configs when baseConfigs change (char added/removed/swapped). */
 function rereconcileConfigs(
@@ -212,6 +166,37 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   const accountData = activeAccount?.data || null;
   const { ready: gameStatsReady, characterStats, weaponStats } = useGameStats();
 
+  // 3-tier icon sizing matching TeamRosterCard
+  const isMobile = useMediaQuery("(max-width: 1023px)");
+  const isNarrow = useMediaQuery("(max-width: 559px)");
+  const charIconSize: ItemIconSize = isNarrow ? "sm" : isMobile ? "md" : "xl";
+  const subIconSize: ItemIconSize = isNarrow ? "xs" : isMobile ? "sm" : "lg";
+
+  // ── Analyzer-specific environment settings (independent from DamageView) ──
+  const localEnemyAura = team.analyzerEnemyAura;
+  const localExtraBuffs = team.analyzerExtraBuffs ?? [];
+
+  const setLocalEnemyAura = useCallback(
+    (el: Element | undefined) => {
+      updateTeam(team.id, { analyzerEnemyAura: el });
+    },
+    [team.id, updateTeam]
+  );
+
+  // Fake team-like object for ExtraBuffsPanel (it reads team.extraBuffs)
+  const envTeam = useMemo(
+    () => ({ ...team, extraBuffs: localExtraBuffs }),
+    [team, localExtraBuffs]
+  );
+  const updateEnvTeam = useCallback(
+    (_id: string, patch: Partial<Team>) => {
+      if (patch.extraBuffs !== undefined) {
+        updateTeam(team.id, { analyzerExtraBuffs: patch.extraBuffs ?? [] });
+      }
+    },
+    [team.id, updateTeam]
+  );
+
   // ── Compute baseConfigs ──
   const configs = useMemo(
     () => buildTeamConfigs(team, accountData),
@@ -226,8 +211,8 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       const tb = new TeamBuild(
         configs,
         team.opts || {},
-        team.enemyAura,
-        team.extraBuffs
+        localEnemyAura,
+        localExtraBuffs
       );
       return { teamBuild: tb, buildError: null };
     } catch (e) {
@@ -239,44 +224,84 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   }, [
     configs,
     team.opts,
-    team.enemyAura,
-    team.extraBuffs,
+    localEnemyAura,
+    localExtraBuffs,
     gameStatsReady,
     characterStats,
     weaponStats,
   ]);
 
   // ── Compute templateCombo ──
+  // Use the DamageView combo structure for counts, but strip reactions —
+  // the analyzer manages its own reactions via analyzerReactionOverrides.
   const templateCombo = useMemo<ComboFormula>(() => {
-    if (team.combos.length > 0) return team.combos[0];
-    const lines: ComboLine[] = [];
-    if (teamBuild) {
+    const sourceCombo =
+      team.combos.find((c) => c.id === team.selectedCombo) ?? team.combos[0];
+    let baseLines: ComboLine[];
+    if (sourceCombo) {
+      // Strip reactions from DamageView combo lines — only keep charId/formulaId/count
+      baseLines = sourceCombo.lines.map(({ charId, formulaId, count }) => ({
+        charId,
+        formulaId,
+        count,
+      }));
+    } else if (teamBuild) {
+      baseLines = [];
       for (const charId of team.characters) {
         if (!charId) continue;
         const combo = teamBuild.getCombo(charId);
         for (const [formulaId, count] of Object.entries(combo)) {
-          if (count > 0) lines.push({ charId, formulaId, count });
+          if (count > 0) baseLines.push({ charId, formulaId, count });
         }
+      }
+    } else {
+      baseLines = [];
+    }
+    // Merge lines with the same charId+formulaId (since stripping reactions may cause duplicates)
+    const merged = new Map<string, ComboLine>();
+    for (const line of baseLines) {
+      const key = `${line.charId}.${line.formulaId}`;
+      const existing = merged.get(key);
+      if (existing) {
+        existing.count += line.count;
+      } else {
+        merged.set(key, { ...line });
       }
     }
     return {
-      id: `combo-${Date.now()}`,
-      label: { en: "Rotation", zh: "循环" },
-      lines,
+      id: sourceCombo?.id ?? `combo-${Date.now()}`,
+      label: sourceCombo?.label ?? { en: "Rotation", zh: "循环" },
+      lines: Array.from(merged.values()),
     };
-  }, [team.combos, teamBuild, team.characters]);
+  }, [team.combos, team.selectedCombo, teamBuild, team.characters]);
 
-  // ── Compute perChar ──
-  const perChar = useMemo(() => {
-    return Object.fromEntries(
-      team.characters
-        .filter((c): c is string => c != null)
-        .map((cid) => [
-          cid,
-          { minEr: team.minEr?.[cid] ?? 1.0, minCr: team.minCr?.[cid] ?? 0 },
-        ])
-    );
-  }, [team.characters, team.minEr, team.minCr]);
+  // ── Analyzer-specific reaction overrides (persisted, independent from DamageView) ──
+  const reactionOverrides = team.analyzerReactionOverrides ?? {};
+
+  // Effective combo: templateCombo with analyzer reaction overrides applied.
+  // Override key is `charId.formulaId` — all lines for the same formula share one override.
+  const effectiveCombo = useMemo<ComboFormula>(() => {
+    if (Object.keys(reactionOverrides).length === 0) return templateCombo;
+    return {
+      ...templateCombo,
+      lines: templateCombo.lines.map((line) => {
+        const override = reactionOverrides[`${line.charId}.${line.formulaId}`];
+        return override ? { ...line, reaction: override } : line;
+      }),
+    };
+  }, [templateCombo, reactionOverrides]);
+
+  const handleReactionChange = useCallback(
+    (stableKey: string, override: ReactionOverride) => {
+      updateTeam(team.id, {
+        analyzerReactionOverrides: {
+          ...reactionOverrides,
+          [stableKey]: override,
+        },
+      });
+    },
+    [team.id, updateTeam, reactionOverrides]
+  );
 
   // ── State management ──
   const storedConfigs = team.analyzerConfigs;
@@ -412,66 +437,50 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     []
   );
 
-  const handleRun = useCallback(() => {
-    if (!teamBuild) return;
-    const opts: AnalyzerOptions = {
-      configs: charConfigs,
-      baseConfigs: configs,
+  const handleRun = useCallback(
+    (settings: AnalyzerCalcSettings) => {
+      if (!teamBuild) return;
+      const opts: AnalyzerOptions = {
+        configs: charConfigs,
+        baseConfigs: configs,
+        teamBuild,
+        templateCombo: effectiveCombo,
+        comboOverrides:
+          Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
+        minErOverrides:
+          Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
+        calcContext: settings.calcContext,
+        rollMultiplier: settings.rollMultiplier,
+        substatBudget: settings.substatBudget,
+      };
+      start(opts, !!result);
+    },
+    [
+      charConfigs,
+      configs,
+      result,
       teamBuild,
-      templateCombo,
-      comboOverrides:
-        Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
-      perChar,
-      minErOverrides:
-        Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
-    };
-    start(opts, !!result);
-  }, [
-    charConfigs,
-    configs,
-    result,
-    teamBuild,
-    templateCombo,
-    comboOverrides,
-    minErOverrides,
-    perChar,
-    start,
-  ]);
+      effectiveCombo,
+      comboOverrides,
+      minErOverrides,
+      start,
+    ]
+  );
 
-  // ── Result tab toggle ──
-  type ResultTab = "table" | "sequence";
-  const [resultTab, setResultTab] = useState<ResultTab>("table");
-  const [comboOpen, setComboOpen] = useState(true);
-
-  // Auto-scroll to chart on completion
-  const prevIsComputing = useRef(isComputing);
-  useEffect(() => {
-    if (prevIsComputing.current && !isComputing && result) {
-      // results just appeared — no tab switch needed since chart is always visible
-    }
-    prevIsComputing.current = isComputing;
-  }, [isComputing, result]);
-
-  const overallPct = progress ? Math.round(progress.overallProgress * 100) : 0;
-
-  // ── Header with back button + team name + character icons ──
+  // ── Header with back button + team name ──
   const headerContent = (
-    <div className="flex items-center gap-3">
-      <Button variant="ghost" size="icon" onClick={onBack}>
-        <ArrowLeft className="w-5 h-5" />
+    <div className="flex items-center gap-2 px-0.5 lg:px-1">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onBack}
+        className="shrink-0 h-10 w-10 -ml-2 hover:bg-white/10"
+      >
+        <ArrowLeft className="w-5 h-5 text-foreground/70" />
       </Button>
-      <TrendingUp className="w-5 h-5 text-primary" />
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
         {team.name || t.ui("teamComp.tabInvestment")}
       </h2>
-      <div className="flex items-center gap-1 ml-1">
-        {team.characters.map(
-          (charId, i) =>
-            charId && (
-              <ItemIcon key={`${charId}-${i}`} characterId={charId} size="xs" />
-            )
-        )}
-      </div>
     </div>
   );
 
@@ -509,512 +518,52 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
 
   return (
     <ScrollLayout header={headerContent}>
-      <div className="flex flex-col gap-4 py-3 px-1">
+      <div
+        className={cn(
+          "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+          "gap-1.5 lg:gap-2"
+        )}
+      >
         {/* 1. Character Config Card */}
-        <div className="rounded-lg border border-border bg-card p-3">
-          <h3 className="text-sm font-medium mb-2 text-muted-foreground">
-            {t.ui("teamComp.analyzer")}
-          </h3>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4">
-            {charConfigs.map((cfg) => {
-              const bc = configs.find((b) => b.charId === cfg.charId);
-              if (!bc) return null;
-              return (
-                <div
-                  key={cfg.charId}
-                  className="flex flex-col items-center gap-1 md:gap-1.5"
-                >
-                  <CharConfigGroup
-                    config={cfg}
-                    baseConfig={bc}
-                    onUpdateWeapon={updateWeapon}
-                  />
-                  <CharStartSelectors
-                    config={cfg}
-                    onUpdateStart={updateStartValues}
-                  />
-                  <CharMaxSelectors
-                    config={cfg}
-                    onUpdateMax={updateMaxValues}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <AnalyzerConfigCard
+          charConfigs={charConfigs}
+          configs={configs}
+          onUpdateWeapon={updateWeapon}
+          onUpdateStart={updateStartValues}
+          onUpdateMax={updateMaxValues}
+          charIconSize={charIconSize}
+          subIconSize={subIconSize}
+        />
 
         {/* 2. Combo Override Card (collapsible) */}
-        <Collapsible open={comboOpen} onOpenChange={setComboOpen}>
-          <div className="rounded-lg border border-border bg-card">
-            <CollapsibleTrigger asChild>
-              <button
-                type="button"
-                className="flex items-center gap-2 w-full p-3 text-left hover:bg-muted/30 rounded-t-lg transition-colors"
-              >
-                <ChevronDown
-                  className={`w-4 h-4 text-muted-foreground transition-transform ${comboOpen ? "" : "-rotate-90"}`}
-                />
-                <span className="text-sm font-medium">
-                  {t.ui("teamComp.analyzerCombo")}
-                </span>
-              </button>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <div className="px-3 pb-3">
-                <AnalyzerComboTab
-                  teamBuild={teamBuild}
-                  charConfigs={charConfigs}
-                  baseConfigs={configs}
-                  templateCombo={templateCombo}
-                  comboOverrides={comboOverrides}
-                  minErOverrides={minErOverrides}
-                  perChar={perChar}
-                  onComboOverridesChange={setComboOverrides}
-                  onMinErOverridesChange={setMinErOverrides}
-                />
-              </div>
-            </CollapsibleContent>
-          </div>
-        </Collapsible>
+        <AnalyzerComboCard
+          teamBuild={teamBuild}
+          charConfigs={charConfigs}
+          configs={configs}
+          templateCombo={effectiveCombo}
+          comboOverrides={comboOverrides}
+          minErOverrides={minErOverrides}
+          onComboOverridesChange={setComboOverrides}
+          onMinErOverridesChange={setMinErOverrides}
+          onReactionChange={handleReactionChange}
+          envTeam={envTeam}
+          updateEnvTeam={updateEnvTeam}
+          localEnemyAura={localEnemyAura}
+          onEnemyAuraChange={setLocalEnemyAura}
+          t={t}
+        />
 
-        {/* 3. Run Controls */}
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={isComputing ? stop : handleRun}
-            variant={isComputing ? "destructive" : "default"}
-            size="sm"
-            className="shrink-0"
-          >
-            {isComputing ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                {t.ui("common.stop")}
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 mr-1" />
-                {t.ui("teamComp.runAnalysis")}
-              </>
-            )}
-          </Button>
-
-          {isComputing && progress ? (
-            <div className="flex-1 space-y-1">
-              <Progress value={overallPct} className="h-2" />
-              <p className="text-xs text-muted-foreground">
-                {progress.phase === "phase1"
-                  ? t.ui("teamComp.analyzerPhase1")
-                  : progress.phase === "phase2"
-                    ? t.ui("teamComp.analyzerPhase2")
-                    : progress.phase === "phase3"
-                      ? t.ui("teamComp.analyzerPhase3")
-                      : ""}
-              </p>
-            </div>
-          ) : null}
-
-          {error && <p className="text-sm text-destructive">{error.message}</p>}
-        </div>
-
-        {/* 4. Chart (always visible) */}
-        <div className="rounded-lg border border-border bg-card p-3">
-          <h3 className="text-sm font-medium mb-2">
-            {t.ui("teamComp.analyzerChart")}
-          </h3>
-          {result ? (
-            <AnalyzerChart
-              result={result}
-              charIds={charConfigs.map((c) => c.charId)}
-            />
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-8">
-              {t.ui("teamComp.analyzerNoResults")}
-            </p>
-          )}
-        </div>
-
-        {/* 5. Table / Sequence Toggle */}
-        <div className="rounded-lg border border-border bg-card p-3">
-          <div className="flex items-center gap-1 mb-2">
-            <Button
-              variant={resultTab === "table" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setResultTab("table")}
-              className="text-xs h-7 px-2"
-            >
-              {t.ui("teamComp.analyzerTable")}
-            </Button>
-            <Button
-              variant={resultTab === "sequence" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setResultTab("sequence")}
-              className="text-xs h-7 px-2"
-            >
-              {t.ui("teamComp.analyzerSequence")}
-            </Button>
-          </div>
-
-          {result ? (
-            resultTab === "table" ? (
-              <AnalyzerTable
-                result={result}
-                charIds={charConfigs.map((c) => c.charId)}
-              />
-            ) : (
-              <AnalyzerSequence
-                result={result}
-                charIds={charConfigs.map((c) => c.charId)}
-              />
-            )
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-8">
-              {t.ui("teamComp.analyzerNoResults")}
-            </p>
-          )}
-        </div>
+        {/* 3. Results: settings + run button + chart + table/sequence */}
+        <AnalyzerResultCard
+          charConfigs={charConfigs}
+          isComputing={isComputing}
+          result={result}
+          progress={progress}
+          error={error}
+          onRun={handleRun}
+          onStop={stop}
+        />
       </div>
     </ScrollLayout>
-  );
-}
-
-// ─── Per-character group: [char] [artifact] [4★wep] [5★wep] ───
-
-function CharConfigGroup({
-  config,
-  baseConfig,
-  onUpdateWeapon,
-}: {
-  config: AnalyzerCharConfig;
-  baseConfig: TeamSlotConfig;
-  onUpdateWeapon: (
-    charId: string,
-    star: "4" | "5",
-    weaponId: string | null
-  ) => void;
-}) {
-  const { t } = useLanguage();
-  const { characterStats, weaponStats } = useGameStats();
-  const char = charactersById[config.charId];
-
-  const charWeaponType = useMemo(() => {
-    if (!char || !characterStats) return undefined;
-    return getCharacterDisplayMeta(char, characterStats[config.charId])
-      .weaponType;
-  }, [char, characterStats, config.charId]);
-
-  const makeFilter = useCallback(
-    (targetRarity: number) => {
-      return (w: WeaponResource) => {
-        if (!weaponStats) return w.rarity === targetRarity;
-        const meta = getWeaponDisplayMeta(w, weaponStats[w.id]);
-        if (meta.rarity !== targetRarity) return false;
-        if (charWeaponType && meta.type && meta.type !== charWeaponType)
-          return false;
-        return true;
-      };
-    },
-    [weaponStats, charWeaponType]
-  );
-
-  const filterLowStar = useMemo(() => {
-    return (w: WeaponResource) => {
-      if (!weaponStats) return w.rarity === 3 || w.rarity === 4;
-      const meta = getWeaponDisplayMeta(w, weaponStats[w.id]);
-      if (meta.rarity !== 3 && meta.rarity !== 4) return false;
-      if (charWeaponType && meta.type && meta.type !== charWeaponType)
-        return false;
-      return true;
-    };
-  }, [weaponStats, charWeaponType]);
-  const filter5Star = useMemo(() => makeFilter(5), [makeFilter]);
-  const artifactIcon = useMemo(
-    () => getArtifactIconProps(baseConfig),
-    [baseConfig]
-  );
-
-  const rosterWeapon = weaponsById[baseConfig.weaponId];
-  const rosterIs5Star = rosterWeapon?.rarity === 5;
-
-  const artifactTooltip = useMemo(() => {
-    if (baseConfig.artifactSetId) {
-      return <ArtifactTooltip setId={baseConfig.artifactSetId} />;
-    }
-    if (baseConfig.artifactHalfSetIds.length >= 2) {
-      return (
-        <MixedSetTooltip
-          id1={baseConfig.artifactHalfSetIds[0]}
-          id2={baseConfig.artifactHalfSetIds[1]}
-        />
-      );
-    }
-    return null;
-  }, [baseConfig.artifactSetId, baseConfig.artifactHalfSetIds]);
-
-  return (
-    <div className="flex items-end gap-0.5 md:gap-1">
-      {/* Character */}
-      <div className="flex flex-col items-center gap-1">
-        <span className="text-xs md:text-sm font-medium whitespace-nowrap">
-          {t.character(config.charId)}
-        </span>
-        {char && (
-          <Tooltip disableHoverableContent>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <ItemIcon characterId={config.charId} size="sm" />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="p-0 border-none bg-transparent shadow-none"
-            >
-              <CharacterTooltip characterId={config.charId} />
-            </TooltipContent>
-          </Tooltip>
-        )}
-      </div>
-      {/* Artifact */}
-      <Tooltip disableHoverableContent>
-        <TooltipTrigger asChild>
-          <span className="cursor-help">
-            <ItemIcon {...artifactIcon} size="xs" />
-          </span>
-        </TooltipTrigger>
-        {artifactTooltip && (
-          <TooltipContent
-            side="bottom"
-            className="p-0 border-none bg-transparent shadow-none"
-          >
-            {artifactTooltip}
-          </TooltipContent>
-        )}
-      </Tooltip>
-      {/* 3/4★ weapon */}
-      <div className="flex flex-col items-center gap-1">
-        <span className="text-xs md:text-sm">3/4★</span>
-        {!rosterIs5Star && rosterWeapon ? (
-          <Tooltip disableHoverableContent>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <ItemIcon weaponId={baseConfig.weaponId} size="xs" />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="p-0 border-none bg-transparent shadow-none"
-            >
-              <WeaponTooltip weaponId={baseConfig.weaponId} />
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <ItemPicker
-            type="weapon"
-            value={config.weapon4Star?.id ?? null}
-            onChange={(id) => onUpdateWeapon(config.charId, "4", id as string)}
-            onClear={() => onUpdateWeapon(config.charId, "4", null)}
-            filter={filterLowStar}
-            triggerSize="xs"
-            menuSize="sm"
-          />
-        )}
-      </div>
-      {/* 5★ weapon */}
-      <div className="flex flex-col items-center gap-1">
-        <span className="text-xs md:text-sm">5★</span>
-        {rosterIs5Star && rosterWeapon ? (
-          <Tooltip disableHoverableContent>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <ItemIcon weaponId={baseConfig.weaponId} size="xs" />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="p-0 border-none bg-transparent shadow-none"
-            >
-              <WeaponTooltip weaponId={baseConfig.weaponId} />
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <ItemPicker
-            type="weapon"
-            value={config.weapon5Star?.id ?? null}
-            onChange={(id) => onUpdateWeapon(config.charId, "5", id as string)}
-            onClear={() => onUpdateWeapon(config.charId, "5", null)}
-            filter={filter5Star}
-            triggerSize="xs"
-            menuSize="sm"
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Per-character start C/R selectors ───
-
-function CharStartSelectors({
-  config,
-  onUpdateStart,
-}: {
-  config: AnalyzerCharConfig;
-  onUpdateStart: (
-    charId: string,
-    field: "startConstellation" | "startRefinement",
-    value: number
-  ) => void;
-}) {
-  const { t } = useLanguage();
-  const is5Star = config.rarity >= 5;
-  const has5Wep = !!config.weapon5Star;
-  const hasBothWeps = !!config.weapon4Star && has5Wep;
-  const hasAnySelector = is5Star || has5Wep;
-
-  const weaponOptions = useMemo(() => {
-    if (!has5Wep) return null;
-    const opts: { value: string; label: string }[] = [];
-    if (hasBothWeps) {
-      opts.push({ value: "0", label: t.ui("teamComp.analyzerWeapon4StarR0") });
-    }
-    for (let r = 1; r <= 5; r++) {
-      opts.push({
-        value: String(r),
-        label: t.format("common.refinementFormat", r),
-      });
-    }
-    return opts;
-  }, [has5Wep, hasBothWeps, t]);
-
-  if (!hasAnySelector) return null;
-
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-        {t.ui("teamComp.analyzerMinConfig")}
-      </span>
-      {is5Star && (
-        <LightweightSelect
-          value={String(config.startConstellation)}
-          onValueChange={(v) =>
-            onUpdateStart(config.charId, "startConstellation", Number(v))
-          }
-        >
-          <LightweightSelectTrigger className="h-6 w-[3.5rem] text-xs font-mono px-1.5">
-            <LightweightSelectValue />
-          </LightweightSelectTrigger>
-          <LightweightSelectContent>
-            {Array.from({ length: 7 }, (_, i) => (
-              <LightweightSelectItem
-                key={i}
-                value={String(i)}
-                className="text-xs font-mono"
-              >
-                {t.format("common.constellationFormat", i)}
-              </LightweightSelectItem>
-            ))}
-          </LightweightSelectContent>
-        </LightweightSelect>
-      )}
-      {weaponOptions && (
-        <LightweightSelect
-          value={String(config.startRefinement)}
-          onValueChange={(v) =>
-            onUpdateStart(config.charId, "startRefinement", Number(v))
-          }
-        >
-          <LightweightSelectTrigger className="h-6 w-[5rem] text-xs font-mono px-1.5">
-            <LightweightSelectValue />
-          </LightweightSelectTrigger>
-          <LightweightSelectContent>
-            {weaponOptions.map((opt) => (
-              <LightweightSelectItem
-                key={opt.value}
-                value={opt.value}
-                className="text-xs font-mono"
-              >
-                {opt.label}
-              </LightweightSelectItem>
-            ))}
-          </LightweightSelectContent>
-        </LightweightSelect>
-      )}
-    </div>
-  );
-}
-
-// ─── Per-character max C/R selectors ───
-
-function CharMaxSelectors({
-  config,
-  onUpdateMax,
-}: {
-  config: AnalyzerCharConfig;
-  onUpdateMax: (
-    charId: string,
-    field: "maxConstellation" | "maxRefinement",
-    value: number
-  ) => void;
-}) {
-  const { t } = useLanguage();
-  const is5Star = config.rarity >= 5;
-  const has5Wep = !!config.weapon5Star;
-  const hasAnySelector = is5Star || has5Wep;
-
-  if (!hasAnySelector) return null;
-
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-        {t.ui("teamComp.analyzerMaxConfig")}
-      </span>
-      {is5Star && (
-        <LightweightSelect
-          value={String(config.maxConstellation)}
-          onValueChange={(v) =>
-            onUpdateMax(config.charId, "maxConstellation", Number(v))
-          }
-        >
-          <LightweightSelectTrigger className="h-6 w-[3.5rem] text-xs font-mono px-1.5">
-            <LightweightSelectValue />
-          </LightweightSelectTrigger>
-          <LightweightSelectContent>
-            {Array.from({ length: 7 }, (_, i) => (
-              <LightweightSelectItem
-                key={i}
-                value={String(i)}
-                className="text-xs font-mono"
-              >
-                {t.format("common.constellationFormat", i)}
-              </LightweightSelectItem>
-            ))}
-          </LightweightSelectContent>
-        </LightweightSelect>
-      )}
-      {has5Wep && (
-        <LightweightSelect
-          value={String(config.maxRefinement)}
-          onValueChange={(v) =>
-            onUpdateMax(config.charId, "maxRefinement", Number(v))
-          }
-        >
-          <LightweightSelectTrigger className="h-6 w-[5rem] text-xs font-mono px-1.5">
-            <LightweightSelectValue />
-          </LightweightSelectTrigger>
-          <LightweightSelectContent>
-            {Array.from({ length: 6 }, (_, i) => (
-              <LightweightSelectItem
-                key={i}
-                value={String(i)}
-                className="text-xs font-mono"
-              >
-                {i === 0
-                  ? t.ui("teamComp.noWeapon5Star")
-                  : t.format("common.refinementFormat", i)}
-              </LightweightSelectItem>
-            ))}
-          </LightweightSelectContent>
-        </LightweightSelect>
-      )}
-    </div>
   );
 }

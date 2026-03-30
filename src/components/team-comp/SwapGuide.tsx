@@ -82,6 +82,8 @@ type Props = {
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   accountData: AccountData | null;
   t: ReturnType<typeof useLanguage>["t"];
+  /** When true, skip the collapsible wrapper — content is always shown. */
+  alwaysOpen?: boolean;
 };
 
 export function SwapGuide({
@@ -90,6 +92,7 @@ export function SwapGuide({
   optimizedArtifactsByChar,
   accountData,
   t,
+  alwaysOpen,
 }: Props) {
   const [open, setOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
@@ -123,7 +126,76 @@ export function SwapGuide({
     return count;
   }, [team.characters, equippedArtifactsByChar, optimizedArtifactsByChar]);
 
-  if (changeCount === 0) return null;
+  if (changeCount === 0 && !alwaysOpen) return null;
+
+  const content = (
+    <div className="border-t border-border/10 bg-black/5">
+      {/* Download button — hidden when no changes */}
+      {changeCount > 0 && (
+        <div className="flex justify-end px-2 pt-1.5">
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:text-cyan-200 transition-colors"
+            title={t.ui("teamComp.downloadSwapGuide")}
+          >
+            <Download className="w-3 h-3" />
+            <span className="hidden md:inline">
+              {t.ui("teamComp.downloadSwapGuide")}
+            </span>
+          </button>
+        </div>
+      )}
+
+      {/* Hidden export container — icon headers + on-page slot rows */}
+      <div
+        style={{ position: "fixed", left: -9999, top: 0 }}
+        aria-hidden="true"
+      >
+        <div ref={exportRef} style={{ width: 1400 }}>
+          <div className="grid grid-cols-4 gap-px">
+            {team.characters.map((charId, i) => {
+              if (!charId) return <div key={i} />;
+              return (
+                <ExportColumn
+                  key={charId}
+                  charId={charId}
+                  team={team}
+                  equipped={equippedArtifactsByChar[charId] ?? {}}
+                  optimized={optimizedArtifactsByChar[charId] ?? {}}
+                  ownerMap={ownerMap}
+                  accountData={accountData}
+                  t={t}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* 2x2 on small screens, 4x1 on large — same as StatSheetPanel */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2 p-1 md:p-2">
+        {team.characters.map((charId, i) => {
+          if (!charId) return <div key={i} />;
+          const equipped = equippedArtifactsByChar[charId] ?? {};
+          const optimized = optimizedArtifactsByChar[charId] ?? {};
+
+          return (
+            <CharacterSwapColumn
+              key={charId}
+              charId={charId}
+              equipped={equipped}
+              optimized={optimized}
+              ownerMap={ownerMap}
+              t={t}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  if (alwaysOpen) return content;
 
   return (
     <Collapsible
@@ -149,70 +221,7 @@ export function SwapGuide({
         />
       </CollapsibleTrigger>
 
-      <CollapsibleContent>
-        <div className="border-t border-border/10 bg-black/5">
-          {/* Download button */}
-          <div className="flex justify-end px-2 pt-1.5">
-            <button
-              type="button"
-              onClick={handleDownload}
-              className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:text-cyan-200 transition-colors"
-              title={t.ui("teamComp.downloadSwapGuide")}
-            >
-              <Download className="w-3 h-3" />
-              <span className="hidden md:inline">
-                {t.ui("teamComp.downloadSwapGuide")}
-              </span>
-            </button>
-          </div>
-
-          {/* Hidden export container — icon headers + on-page slot rows */}
-          <div
-            style={{ position: "fixed", left: -9999, top: 0 }}
-            aria-hidden="true"
-          >
-            <div ref={exportRef} style={{ width: 1400 }}>
-              <div className="grid grid-cols-4 gap-px">
-                {team.characters.map((charId, i) => {
-                  if (!charId) return <div key={i} />;
-                  return (
-                    <ExportColumn
-                      key={charId}
-                      charId={charId}
-                      team={team}
-                      equipped={equippedArtifactsByChar[charId] ?? {}}
-                      optimized={optimizedArtifactsByChar[charId] ?? {}}
-                      ownerMap={ownerMap}
-                      accountData={accountData}
-                      t={t}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* 2x2 on small screens, 4x1 on large — same as StatSheetPanel */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2 p-1 md:p-2">
-            {team.characters.map((charId, i) => {
-              if (!charId) return <div key={i} />;
-              const equipped = equippedArtifactsByChar[charId] ?? {};
-              const optimized = optimizedArtifactsByChar[charId] ?? {};
-
-              return (
-                <CharacterSwapColumn
-                  key={charId}
-                  charId={charId}
-                  equipped={equipped}
-                  optimized={optimized}
-                  ownerMap={ownerMap}
-                  t={t}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </CollapsibleContent>
+      <CollapsibleContent>{content}</CollapsibleContent>
     </Collapsible>
   );
 }

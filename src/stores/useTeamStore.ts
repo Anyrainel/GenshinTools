@@ -202,6 +202,10 @@ export function migrateTeamStore(
     // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field
     (state as any).activeTeamId = undefined;
   }
+  if (version < 12) {
+    // v12: Add optional analyzerReactionOverrides, analyzerEnemyAura, analyzerExtraBuffs fields.
+    // No transformation needed — fields are optional and default to undefined.
+  }
   return state;
 }
 
@@ -275,6 +279,12 @@ export interface Team {
   analyzerComboOverrides?: ComboCountOverrides;
   /** Per-(charId, constellation) minEr overrides for the analyzer. */
   analyzerMinErOverrides?: MinErOverrides;
+  /** Per-formula reaction overrides for the analyzer (keyed by comboLineKey). Independent from DamageView combos. */
+  analyzerReactionOverrides?: Record<string, ReactionOverride>;
+  /** Analyzer-specific enemy aura. Independent from DamageView enemyAura. */
+  analyzerEnemyAura?: Element;
+  /** Analyzer-specific extra buffs. Independent from DamageView extraBuffs. */
+  analyzerExtraBuffs?: ExtraBuff[];
   /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
   extraBuffs?: ExtraBuff[];
 }
@@ -511,7 +521,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 11,
+      version: 12,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }

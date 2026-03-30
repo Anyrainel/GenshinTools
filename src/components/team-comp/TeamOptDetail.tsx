@@ -386,7 +386,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   // ─── Combo Management ───
 
   const combo = useMemo<ComboFormula>(() => {
-    if (team.combos.length > 0) return team.combos[0];
+    const selected =
+      team.combos.find((c) => c.id === team.selectedCombo) ?? team.combos[0];
+    if (selected) return selected;
     // Initialize from default combo data when no user combo exists
     const lines: ComboLine[] = [];
     if (teamBuild) {

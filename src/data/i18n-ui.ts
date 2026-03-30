@@ -122,6 +122,10 @@ export const i18nUiData = {
       en: "One-time import. No future updates unless manual re-import.",
       zh: "一次性导入。除非手动重新导入，否则不会有后续更新。",
     },
+    goodSplitFileHint: {
+      en: "Supports separate character, weapon, and artifact files.",
+      zh: "支持分别导入角色、武器和圣遗物文件。",
+    },
     goodFileButton: { en: "Import .json file", zh: "导入 .json 文件" },
     goodTitle: { en: "Full Data Import", zh: "完整数据导入" },
     recommended: { en: "Recommended", zh: "推荐" },
@@ -476,7 +480,7 @@ export const i18nUiData = {
     navAccountData: { en: "Account Data", zh: "账号数据" },
     navTierList: { en: "Tier List", zh: "榜单" },
     navArchive: { en: "Archive", zh: "图鉴" },
-    navTeamComp: { en: "DMG Optimizer", zh: "伤害优化" },
+    navTeamComp: { en: "Team DMG", zh: "队伍伤害" },
     heroDescription: {
       en: "Powerful utilities to optimize your builds and organize your roster.",
       zh: "强大实用的工具，助您优化配装、管理角色养成。",
@@ -659,6 +663,7 @@ export const i18nUiData = {
       zh: "或导入社区队伍预设以快速开始。",
     },
     teamName: { en: "Team Name", zh: "队伍名称" },
+    teamIndex: { en: "Team {0}", zh: "队伍 {0}" },
     weapon: { en: "Weapon", zh: "武器" },
     artifact: { en: "Artifact", zh: "圣遗物" },
     newTeamStart: { en: "New Team (Top)", zh: "新建队伍（顶部）" },
@@ -898,8 +903,8 @@ export const i18nUiData = {
     swapGuideChange: { en: "change", zh: "处变更" },
     swapGuideChanges: { en: "changes", zh: "处变更" },
     swapStatusInventory: { en: "Inventory", zh: "背包中" },
-    downloadSwapGuide: { en: "Download Swap Guide", zh: "下载换装指南" },
-    reuseLabel: { en: "Artifact freeze mode", zh: "圣遗物冻结模式" },
+    downloadSwapGuide: { en: "Download Swap Image", zh: "下载换装图片" },
+    reuseLabel: { en: "Artifact freeze mode:", zh: "圣遗物冻结模式:" },
     reuseNone: { en: "No sharing", zh: "不复用" },
     reuseSameChar: { en: "Same character", zh: "同角色允许复用" },
     reuseForce: { en: "Same char + set", zh: "同角色同套装强制复用" },
@@ -922,8 +927,8 @@ export const i18nUiData = {
       zh: "该角色已有不同的冻结圣遗物（如来自之前的优化）。冻结将替换为当前装备的套装。",
     },
     standaloneArtifacts: {
-      en: "Standalone Frozen Artifacts",
-      zh: "独立冻结圣遗物",
+      en: "Frozen Individual Artifacts (exclude from optimizer)",
+      zh: "冻结单个圣遗物（不参与优化）",
     },
     freezeArtifact: { en: "Freeze Artifact", zh: "冻结圣遗物" },
     freezeArtifactDesc: {
@@ -931,7 +936,7 @@ export const i18nUiData = {
       zh: "选择要冻结的圣遗物——冻结后优化器不会重新分配",
     },
     freezeSelected: { en: "Freeze Selected", zh: "冻结已选" },
-    freezeAllSlots: { en: "All Slots", zh: "所有位置" },
+    freezeNSelected: { en: "{0} selected", zh: "已选 {0} 个" },
     freezeNoArtifacts: {
       en: "No artifacts in your inventory",
       zh: "背包中没有圣遗物",
@@ -939,6 +944,14 @@ export const i18nUiData = {
     frozenEmpty: {
       en: "No frozen teams or artifacts",
       zh: "没有冻结的队伍或圣遗物",
+    },
+    downloadAllFrozen: {
+      en: "Download All Swaps Image",
+      zh: "下载所有换装图片",
+    },
+    frozenExportFilename: {
+      en: "{0} Teams Optimized Export",
+      zh: "{0}队伍优化导出",
     },
     characterScoreExportFilename: {
       en: "{0} Character Score Export",
@@ -1075,7 +1088,8 @@ export const i18nUiData = {
       en: "Reset to defaults",
       zh: "重置为默认值",
     },
-    tabFrozen: { en: "Frozen", zh: "冻结" },
+    tabDamage: { en: "DMG Optimizer", zh: "伤害优化" },
+    tabFrozen: { en: "Frozen Teams", zh: "冻结管理" },
     tabInvestment: { en: "Investment", zh: "补金分析" },
   },
   filters: {
@@ -1813,7 +1827,6 @@ export const i18nUiData = {
   manager: {
     title: { en: "Artifact Manager", zh: "圣遗物管理器" },
     applyToGame: { en: "Apply to Game", zh: "应用到游戏" },
-    equipInGame: { en: "Equip in Game", zh: "在游戏中装备" },
     port: { en: "Port", zh: "端口" },
     connect: { en: "Connect", zh: "连接" },
     ready: { en: "Ready", zh: "就绪" },

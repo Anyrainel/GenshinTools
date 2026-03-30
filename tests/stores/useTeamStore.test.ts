@@ -615,6 +615,30 @@ describe("migrateTeamStore", () => {
     expect((result as Record<string, unknown>).activeTeamId).toBeUndefined();
   });
 
+  it("migrates v11 → v12: analyzer env fields default to undefined (no-op)", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          selectedCombo: null,
+          formulaMode: "combo",
+        }),
+      ],
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 11);
+    const team = result.teams[0] as Team;
+
+    // New optional fields default to undefined
+    expect(team.analyzerReactionOverrides).toBeUndefined();
+    expect(team.analyzerEnemyAura).toBeUndefined();
+    expect(team.analyzerExtraBuffs).toBeUndefined();
+    // Existing data preserved
+    expect(team.id).toBe("team-1");
+  });
+
   it("full migration from v0 applies all steps", () => {
     const state = {
       teams: [
