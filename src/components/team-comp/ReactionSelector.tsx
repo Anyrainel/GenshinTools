@@ -1,11 +1,4 @@
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
@@ -19,6 +12,7 @@ import type {
   ReactionType,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
+import { ReactionPartControls } from "./ReactionPartControls";
 
 // ─── Constants ───
 
@@ -42,29 +36,6 @@ const LUNAR_REACTIONS = new Set<ReactionType>([
   "lunarBloom",
   "lunarCrystallize",
 ]);
-
-// ─── Helpers ───
-
-/** Circled number for part indices (①②③…). Falls back to (N) for > 20. */
-function circledIndex(i: number): string {
-  // Unicode circled digits ① = U+2460
-  if (i >= 0 && i < 20) return String.fromCodePoint(0x2460 + i);
-  return `(${i + 1})`;
-}
-
-/** Build a compact label from a formula part's scaling info: e.g. "230% ATK + 45% EM" */
-function partLabel(
-  part: FormulaEntry["parts"][number],
-  t: ReturnType<typeof useLanguage>["t"]
-): string {
-  const f = part.formula;
-  const pct = (v: number) => `${Math.round(v * 1000) / 10}%`;
-  let label = `${pct(f.talentMultiplier)} ${t.statShort(f.scalingKey)}`;
-  if (f.extraTerm) {
-    label += ` + ${pct(f.extraTerm.multiplier)} ${t.statShort(f.extraTerm.key)}`;
-  }
-  return label;
-}
 
 // ─── Props ───
 
@@ -141,8 +112,6 @@ export function ReactionSelector({
   }
 
   // Hide if only "none" remains after filtering by team availability.
-  // For multi-element chars, skip charId check since the converted elements
-  // already come from teammates — just verify the team can support the reaction.
   const availableReactions = eligible.filter(
     (r) =>
       r === "none" ||
@@ -173,40 +142,6 @@ export function ReactionSelector({
     });
   }
 
-  function handlePartToggle(partIndex: number, checked: boolean) {
-    const newPartReactions = { ...reactionOverride.partReactions };
-    const newPartHits = { ...reactionOverride.partHits };
-    if (checked) {
-      // Remove override → inherits gate (default = on)
-      delete newPartReactions[partIndex];
-    } else {
-      // Explicitly disable this part
-      newPartReactions[partIndex] = "none";
-      delete newPartHits[partIndex];
-    }
-    onReactionChange({
-      ...reactionOverride,
-      partReactions:
-        Object.keys(newPartReactions).length > 0 ? newPartReactions : undefined,
-      partHits: Object.keys(newPartHits).length > 0 ? newPartHits : undefined,
-    });
-  }
-
-  function handlePartHitsChange(partIndex: number, hits: number) {
-    const totalHits = formulaEntry.parts[partIndex].hits ?? 1;
-    const newPartHits = { ...reactionOverride.partHits };
-    if (hits >= totalHits) {
-      // All hits react → remove override (default)
-      delete newPartHits[partIndex];
-    } else {
-      newPartHits[partIndex] = hits;
-    }
-    onReactionChange({
-      ...reactionOverride,
-      partHits: Object.keys(newPartHits).length > 0 ? newPartHits : undefined,
-    });
-  }
-
   /** Is this reaction available given the current team composition? */
   function isReactionAvailable(reaction: ReactionType): boolean {
     if (reaction === "none") return true;
@@ -214,8 +149,6 @@ export function ReactionSelector({
   }
 
   // --- Render ---
-
-  const singlePart = formulaEntry.parts.length <= 1;
 
   return (
     <div className={cn("flex flex-col", compact ? "gap-0.5" : "gap-1.5")}>
@@ -255,123 +188,16 @@ export function ReactionSelector({
         </div>
       )}
 
-      {/* Per-part controls: checkbox + label + hit count dropdown */}
+      {/* Per-part controls */}
       {showPerPart && (
-        <div className="flex flex-col gap-1 pt-0.5">
-          {formulaEntry.parts.map((part, idx) => {
-            // For multi-element chars, check if this part's element supports the gate reaction
-            const partCanReact = isMultiElement
-              ? (
-                  ELEMENT_ELIGIBLE_REACTIONS[
-                    part.formula.tag
-                      .element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
-                  ] ?? []
-                ).includes(currentGate)
-              : true;
-            const isChecked =
-              partCanReact && reactionOverride.partReactions?.[idx] !== "none";
-            const totalHits = part.hits ?? 1;
-            const reactingHits = isChecked
-              ? (reactionOverride.partHits?.[idx] ?? totalHits)
-              : 0;
-
-            return (
-              <div key={idx} className="flex flex-wrap items-center gap-1.5">
-                {/* Checkbox — hidden for single-part formulas (always enabled) */}
-                {!singlePart && (
-                  <button
-                    type="button"
-                    onClick={() => handlePartToggle(idx, !isChecked)}
-                    disabled={disabled || !partCanReact}
-                    className={cn(
-                      "w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors",
-                      !partCanReact
-                        ? "border-border/60 bg-background opacity-30 cursor-not-allowed"
-                        : isChecked
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "border-border/60 bg-background hover:border-border"
-                    )}
-                  >
-                    {isChecked && (
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 10 10"
-                        fill="none"
-                      >
-                        <path
-                          d="M2 5L4 7L8 3"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                )}
-
-                {/* Ability type + scaling label (no gap between them) */}
-                <span
-                  className={cn(
-                    "text-xs shrink-0",
-                    isChecked ? "text-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  <span className="font-semibold">
-                    {t.ability(part.formula.tag.ability)}:
-                  </span>{" "}
-                  <span className="font-mono tabular-nums">
-                    {partLabel(part, t)}
-                  </span>
-                </span>
-
-                {/* Hit count dropdown — only for multi-hit parts */}
-                {totalHits > 1 && (
-                  <>
-                    <span
-                      className={cn(
-                        "text-xs shrink-0",
-                        isChecked ? "text-foreground" : "text-muted-foreground"
-                      )}
-                    >
-                      ×
-                    </span>
-                    <Select
-                      value={String(reactingHits)}
-                      onValueChange={(val) =>
-                        handlePartHitsChange(idx, Number(val))
-                      }
-                      disabled={disabled || !isChecked}
-                    >
-                      <SelectTrigger
-                        className={cn(
-                          "h-5 w-12 px-1.5 text-[11px] rounded border-border/30 bg-background/50 shrink-0",
-                          !isChecked && "opacity-40"
-                        )}
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: totalHits }, (_, i) => i + 1).map(
-                          (n) => (
-                            <SelectItem
-                              key={n}
-                              value={String(n)}
-                              className="text-xs"
-                            >
-                              {n}
-                            </SelectItem>
-                          )
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <ReactionPartControls
+          formulaEntry={formulaEntry}
+          charId={charId}
+          reactionType={currentGate}
+          reactionOverride={reactionOverride}
+          onReactionChange={onReactionChange}
+          disabled={disabled}
+        />
       )}
     </div>
   );

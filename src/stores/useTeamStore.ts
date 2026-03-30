@@ -279,7 +279,7 @@ export interface Team {
   analyzerComboOverrides?: ComboCountOverrides;
   /** Per-(charId, constellation) minEr overrides for the analyzer. */
   analyzerMinErOverrides?: MinErOverrides;
-  /** Per-formula reaction overrides for the analyzer (keyed by comboLineKey). Independent from DamageView combos. */
+  /** Per-formula reaction overrides for the analyzer (keyed by charId.formulaId). Independent from DamageView combos. */
   analyzerReactionOverrides?: Record<string, ReactionOverride>;
   /** Analyzer-specific enemy aura. Independent from DamageView enemyAura. */
   analyzerEnemyAura?: Element;

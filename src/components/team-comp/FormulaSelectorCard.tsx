@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
 import { FormulaLabel } from "./FormulaLabel";
-import { ReactionSelector } from "./ReactionSelector";
+import { ReactionPartControls } from "./ReactionPartControls";
 import {
   CARD_BODY_CLS,
   CARD_CLS,
@@ -371,12 +371,12 @@ export function FormulaSelectorCard({
                                 {/* Per-part config: only when a non-direct reaction is active */}
                                 {isSingleSelected &&
                                   activeRx !== "none" &&
-                                  formulaEntry &&
-                                  charElement && (
+                                  formulaEntry && (
                                     <div className="mt-1">
-                                      <ReactionSelector
+                                      <ReactionPartControls
                                         formulaEntry={formulaEntry}
-                                        element={charElement}
+                                        charId={cid}
+                                        reactionType={activeRx as ReactionType}
                                         reactionOverride={
                                           team.singleReaction ?? {}
                                         }
@@ -392,9 +392,6 @@ export function FormulaSelectorCard({
                                             }
                                           )
                                         }
-                                        teamMeta={teamBuild!.teamMeta}
-                                        charId={cid}
-                                        hideGate
                                       />
                                     </div>
                                   )}
@@ -594,7 +591,7 @@ export function FormulaSelectorCard({
                                             const expandedCount =
                                               expandedEntry?.line.count ?? 0;
                                             // Use stored override, or synthesize one with the reaction type
-                                            // so ReactionSelector shows per-part controls even at count 0.
+                                            // so per-part controls show even at count 0.
                                             const expandedOverride: ReactionOverride =
                                               expandedEntry?.line.reaction ?? {
                                                 reaction:
@@ -602,9 +599,12 @@ export function FormulaSelectorCard({
                                               };
                                             return (
                                               <div className="pt-1 pb-0.5">
-                                                <ReactionSelector
+                                                <ReactionPartControls
                                                   formulaEntry={formulaEntry}
-                                                  element={charElement}
+                                                  charId={cid}
+                                                  reactionType={
+                                                    expandedRx as ReactionType
+                                                  }
                                                   reactionOverride={
                                                     expandedOverride
                                                   }
@@ -622,9 +622,6 @@ export function FormulaSelectorCard({
                                                       }
                                                     )
                                                   }
-                                                  teamMeta={teamBuild!.teamMeta}
-                                                  charId={cid}
-                                                  hideGate
                                                   disabled={expandedCount <= 0}
                                                 />
                                               </div>
