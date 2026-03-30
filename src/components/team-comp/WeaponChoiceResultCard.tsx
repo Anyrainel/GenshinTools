@@ -53,6 +53,32 @@ interface WeaponChoiceResultCardProps {
 
 // ─── Per-character weapon ranking panel ───
 
+/** Compute how many top entries to highlight.
+ *  - All entries ≥99% baseline, capped at 5
+ *  - Exception: if #1 is a 5★ R5, extend highlight to include its R1 entry (even if >5) */
+function getHighlightCount(rankings: WeaponRanking[]): number {
+  if (rankings.length === 0) return 0;
+  // Count entries ≥99%
+  let count = 0;
+  for (const r of rankings) {
+    if (r.percentOfBest >= 99) count++;
+    else break; // sorted desc, so stop early
+  }
+  count = Math.min(count, 5);
+
+  // If #1 is a 5★ R5, extend to include its R1 version
+  const top = rankings[0];
+  const topRes = weaponsById[top.weaponId];
+  if (topRes?.rarity === 5 && top.refinement === 5) {
+    const r1Idx = rankings.findIndex(
+      (r) => r.weaponId === top.weaponId && r.refinement === 1
+    );
+    if (r1Idx >= 0) count = Math.max(count, r1Idx + 1);
+  }
+
+  return count;
+}
+
 function CharacterWeaponPanel({
   charId,
   rankings,
@@ -62,6 +88,7 @@ function CharacterWeaponPanel({
   rankings: WeaponRanking[];
   t: WeaponChoiceResultCardProps["t"];
 }) {
+  const highlightCount = getHighlightCount(rankings);
   return (
     <div className="flex flex-col rounded-md border border-border bg-background/30 overflow-hidden">
       <div className="px-2 py-1.5 border-b border-border bg-background/50">
@@ -72,7 +99,7 @@ function CharacterWeaponPanel({
       <div className="overflow-y-auto max-h-72 md:max-h-96">
         {rankings.map((entry, idx) => {
           const weapon = weaponsById[entry.weaponId];
-          const isTop = entry.percentOfBest >= 99;
+          const isTop = idx < highlightCount;
           return (
             <div
               key={`${entry.weaponId}-${entry.refinement}`}
