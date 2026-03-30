@@ -1,23 +1,18 @@
 /**
  * Batch AutoTune View
  *
- * Selection → Computing → Review flow.
+ * Selection -> Computing -> Review flow.
  * Runs AutoTune sequentially (one build at a time, parallel workers per team).
  * Results display in V2-style cards with shared AutoTuneResults sub-components.
  */
 
-import {
-  ComboTable,
-  MainStatColumn,
-  SubstatPills,
-} from "@/components/artifact-builds/AutoTuneResults";
-import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
+import { AutoTuneEmptyState } from "@/components/artifact-builds/AutoTuneEmptyState";
+import { AutoTuneResultCard } from "@/components/artifact-builds/AutoTuneResultCard";
+import { AutoTuneSelectionCard } from "@/components/artifact-builds/AutoTuneSelectionCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import type { AccountData, Build, BuildGroup, Element } from "@/data/types";
+import type { AccountData, Build, BuildGroup } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { WeightedFormula } from "@/lib/account-data/scoring/autoTune";
@@ -26,35 +21,23 @@ import type {
   AutoTuneOutput,
   AutoTuneTeamInput,
   AutoTuneTeamResult,
-  TeamBreakdown,
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
-import { ELEMENT_HEX, cn, getElementColor } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
-import {
-  Check,
-  ChevronDown,
-  ChevronUp,
-  ExternalLink,
-  Loader2,
-  Scale,
-} from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-
-// ── Constants ──
 
 // ── Types ──
 
 type EntryStatus = "idle" | "computing" | "done" | "applied";
 
-/** Filter mode: show only builds with matched teams, or all DPS builds */
 type ViewFilter = "available" | "all";
 
 type BuildEntry = {
@@ -64,7 +47,6 @@ type BuildEntry = {
   selected: boolean;
   status: EntryStatus;
   result: AutoTuneOutput | null;
-  /** Matching user teams for this build */
   teams: Team[];
 };
 
@@ -138,7 +120,7 @@ function runAutoTuneWorkers(
   });
 }
 
-// ── Build team inputs from user teams (matches AutoTuneDialog logic) ──
+// ── Build team inputs from user teams ──
 
 function buildTeamInputsFromUserTeams(
   teams: Team[],
@@ -158,7 +140,6 @@ function buildTeamInputsFromUserTeams(
       )
         continue;
       const opts = (team.opts ?? {}) as Record<string, string>;
-      // Build combo-based formulas from character's defaultCombo
       let formulas: WeightedFormula[] | undefined;
       try {
         const tb = new TeamBuild(configs, opts);
@@ -194,7 +175,6 @@ function buildTeamInputsFromUserTeams(
 
 // ── Collect DPS builds ──
 
-/** Filter user teams matching this build's character + artifact set (same logic as AutoTuneDialog) */
 function getMatchingTeams(
   allTeams: Team[],
   characterId: string,
@@ -205,7 +185,7 @@ function getMatchingTeams(
     if (charIdx === -1) return false;
 
     const teamArt = team.artifacts[charIdx];
-    if (!teamArt) return true; // no artifact configured = match
+    if (!teamArt) return true;
     if (build.composition === "4pc" && build.artifactSet) {
       if (teamArt.type === "4pc") return teamArt.setId === build.artifactSet;
       return true;
@@ -260,381 +240,6 @@ function collectEntries(
     return a.characterId.localeCompare(b.characterId);
   });
   return entries;
-}
-
-// ── Artifact set icon helper ──
-
-function ArtifactSetIcons({ build }: { build: Build }) {
-  if (build.composition === "4pc" && build.artifactSet) {
-    return <ItemIcon artifactSetId={build.artifactSet} size="xs" />;
-  }
-  if (
-    build.composition === "2pc+2pc" &&
-    build.halfSet1 != null &&
-    build.halfSet2 != null
-  ) {
-    return <ItemIcon halfSetIds={[build.halfSet1, build.halfSet2]} size="xs" />;
-  }
-  return null;
-}
-
-// ── Teams hover tooltip ──
-
-function TeamsTooltip({
-  teams,
-  characterId,
-  accountData,
-  t,
-}: {
-  teams: Team[];
-  characterId: string;
-  accountData: AccountData | null;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
-  if (teams.length === 0) return null;
-  return (
-    <div className="space-y-1.5 p-2">
-      {teams.map((team) => (
-        <AutoTuneTeamRow
-          key={team.id}
-          team={team}
-          characterId={characterId}
-          enabled={true}
-          onToggle={() => {}}
-          accountData={accountData}
-        />
-      ))}
-    </div>
-  );
-}
-
-// ── Selection card ──
-
-function SelectionCard({
-  entry,
-  onToggle,
-  element,
-  accountData,
-}: {
-  entry: BuildEntry;
-  onToggle: () => void;
-  element: string;
-  accountData: AccountData | null;
-}) {
-  const { t } = useLanguage();
-  const char = charactersById[entry.characterId];
-  const elHex = ELEMENT_HEX[element] || "#888";
-  const elColor = getElementColor(element as Element, "text");
-  const noTeams = entry.teams.length === 0;
-
-  return (
-    <div className="relative group">
-      <button
-        type="button"
-        tabIndex={noTeams ? -1 : 0}
-        onClick={noTeams ? undefined : onToggle}
-        disabled={noTeams}
-        className={cn(
-          "relative flex items-center gap-1.5 rounded-lg border text-left transition-all",
-          "w-full overflow-hidden p-1.5 pl-2",
-          noTeams
-            ? "border-transparent bg-muted/5 opacity-30 cursor-not-allowed"
-            : entry.selected
-              ? "border-border bg-gradient-card cursor-pointer"
-              : "border-transparent bg-muted/5 opacity-40 hover:opacity-65 cursor-pointer"
-        )}
-      >
-        {/* Element accent — left edge */}
-        <div
-          className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-lg"
-          style={{
-            background: entry.selected && !noTeams ? elHex : "transparent",
-          }}
-        />
-
-        {/* Selection indicator (visual only — outer button handles interaction) */}
-        <div
-          className={cn(
-            "grid place-content-center h-4 w-4 shrink-0 rounded-sm border shadow",
-            !noTeams && entry.selected
-              ? "border-primary bg-primary text-primary-foreground"
-              : "border-primary",
-            noTeams && "opacity-50"
-          )}
-        >
-          {!noTeams && entry.selected && <Check className="h-4 w-4" />}
-        </div>
-
-        {/* Character icon */}
-        {char && <ItemIcon characterId={entry.characterId} size="md" />}
-
-        {/* Right column: name top, artifact + team count bottom */}
-        <div className="min-w-0 flex flex-col gap-1 self-stretch py-0.5">
-          {/* Name */}
-          <span
-            className={cn(
-              "text-sm font-semibold truncate leading-none",
-              elColor
-            )}
-          >
-            {t.character(entry.characterId)}
-          </span>
-
-          {/* Artifact icons row */}
-          <div className="flex items-end mt-auto">
-            <ArtifactSetIcons build={entry.build} />
-          </div>
-        </div>
-      </button>
-
-      {/* Hover tooltip — teams */}
-      {entry.teams.length > 0 && (
-        <div
-          className={cn(
-            "absolute z-50 left-0 top-full mt-1",
-            "bg-popover border border-border rounded-lg shadow-xl",
-            "opacity-0 pointer-events-none scale-95 origin-top-left",
-            "group-hover:opacity-100 group-hover:pointer-events-auto group-hover:scale-100",
-            "transition-all duration-150"
-          )}
-        >
-          <TeamsTooltip
-            teams={entry.teams}
-            characterId={entry.characterId}
-            accountData={accountData}
-            t={t}
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Per-team result row: team grid + expandable combo table ──
-
-function TeamResultRow({
-  team,
-  characterId,
-  breakdown,
-  accountData,
-  t,
-}: {
-  team: Team | null;
-  characterId: string;
-  breakdown: TeamBreakdown;
-  accountData: AccountData | null;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const qualifying = breakdown.combos.filter((c) => c.damageRatio >= 0.96);
-
-  return (
-    <div className="border border-border/30 rounded-lg overflow-hidden">
-      <button
-        type="button"
-        className="flex items-center gap-3 w-full px-2.5 py-2 text-left hover:bg-muted/20 transition-colors"
-        onClick={() => setExpanded(!expanded)}
-      >
-        {/* Team grid or fallback label */}
-        {team ? (
-          <div className="flex-1 min-w-0 pointer-events-none">
-            <AutoTuneTeamRow
-              team={team}
-              characterId={characterId}
-              enabled={true}
-              onToggle={() => {}}
-              accountData={accountData}
-            />
-          </div>
-        ) : (
-          <span className="text-xs text-muted-foreground truncate flex-1">
-            {breakdown.label}
-          </span>
-        )}
-
-        {/* Info: formula counts + qualifying combo count */}
-        <div className="shrink-0 text-right space-y-0.5">
-          {breakdown.formulas
-            ?.filter((f) => f.count > 0)
-            .map((f) => (
-              <div key={f.formulaId} className="text-xs">
-                <span className="font-medium text-foreground md:text-sm">
-                  {f.label ? t.resolveLabel(f.label) : f.formulaId}
-                </span>{" "}
-                <span className="text-sm font-mono font-semibold text-foreground/70">
-                  ×{f.count}
-                </span>
-              </div>
-            ))}
-          <div className="text-xs text-muted-foreground">
-            {t.format(
-              "batchAutoTune.mainStatCombos",
-              qualifying.length,
-              qualifying.length !== 1 ? "s" : ""
-            )}
-          </div>
-        </div>
-
-        {expanded ? (
-          <ChevronUp className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-        ) : (
-          <ChevronDown className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-        )}
-      </button>
-
-      {expanded && qualifying.length > 0 && (
-        <div className="px-2.5 pb-2">
-          <ComboTable combos={qualifying} t={t} />
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── V2-style result card (reuses shared AutoTuneResults components) ──
-
-function ResultCard({
-  entry,
-  onApply,
-  onDismiss,
-  element,
-  accountData,
-}: {
-  entry: BuildEntry;
-  onApply: () => void;
-  onDismiss: () => void;
-  element: string;
-  accountData: AccountData | null;
-}) {
-  const { t } = useLanguage();
-  const char = charactersById[entry.characterId];
-  const elColor = getElementColor(element as Element, "text");
-  const elHex = ELEMENT_HEX[element] || "#888";
-  const result = entry.result;
-
-  // Computing — spinner placeholder card
-  if (entry.status === "computing") {
-    return (
-      <div className="bg-gradient-card border border-border/50 rounded-lg overflow-hidden">
-        <div
-          className="h-1"
-          style={{
-            background: `linear-gradient(90deg, ${elHex}, transparent)`,
-          }}
-        />
-        <div className="p-3 flex items-center gap-2">
-          {char && <ItemIcon characterId={entry.characterId} size="md" />}
-          <div className="min-w-0 flex-1">
-            <div className={cn("font-bold text-base truncate", elColor)}>
-              {t.character(entry.characterId)}
-            </div>
-            {entry.build.name && (
-              <div className="text-sm text-foreground/70">
-                {entry.build.name}
-              </div>
-            )}
-          </div>
-          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!result) return null;
-
-  const applied = entry.status === "applied";
-
-  return (
-    <div
-      className={cn(
-        "bg-gradient-card border rounded-lg overflow-hidden",
-        applied ? "border-green-500/40" : "border-border/50"
-      )}
-    >
-      {/* Element accent */}
-      <div
-        className="h-1"
-        style={{
-          background: `linear-gradient(90deg, ${elHex}, transparent)`,
-        }}
-      />
-
-      <div className="p-3 space-y-3">
-        {/* ── Header ── */}
-        <div className="flex items-center gap-2">
-          {char && <ItemIcon characterId={entry.characterId} size="md" />}
-          <div className="min-w-0 flex-1">
-            <div className={cn("font-bold text-base truncate", elColor)}>
-              {t.character(entry.characterId)}
-            </div>
-            {entry.build.name && (
-              <div className="text-sm text-foreground/70">
-                {entry.build.name}
-              </div>
-            )}
-          </div>
-          {applied ? (
-            <span className="flex items-center gap-1 text-xs text-green-400 font-medium">
-              <Check className="w-3.5 h-3.5" />
-              {t.ui("batchAutoTune.applied")}
-            </span>
-          ) : (
-            <div className="flex items-center gap-1.5">
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-7 text-xs"
-                onClick={onDismiss}
-              >
-                {t.ui("batchAutoTune.dismiss")}
-              </Button>
-              <Button size="sm" className="h-7 text-xs" onClick={onApply}>
-                {t.ui("batchAutoTune.apply")}
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* ── Main stat weights (3-col grid) ── */}
-        <div className="grid grid-cols-3 gap-2">
-          <MainStatColumn
-            label={t.slot("sands")}
-            weights={result.sandsWeights}
-            t={t}
-          />
-          <MainStatColumn
-            label={t.slot("goblet")}
-            weights={result.gobletWeights}
-            t={t}
-          />
-          <MainStatColumn
-            label={t.slot("circlet")}
-            weights={result.circletWeights}
-            t={t}
-          />
-        </div>
-
-        {/* ── Substat pills ── */}
-        <SubstatPills substats={result.substats} t={t} />
-
-        {/* ── Per-team breakdowns with icon grid ── */}
-        {result.teamBreakdowns.length > 0 && (
-          <div className="border-t border-white/10 pt-2 space-y-2">
-            {result.teamBreakdowns.map((tb) => (
-              <TeamResultRow
-                key={tb.teamIndex}
-                team={entry.teams[tb.teamIndex] ?? null}
-                characterId={entry.characterId}
-                breakdown={tb}
-                accountData={accountData}
-                t={t}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
 }
 
 // ── Main View ──
@@ -692,7 +297,6 @@ export function AutoTuneView() {
     setPhase("computing");
     setProgress({ done: 0, total: selectedIndices.length });
 
-    // Reset status
     setEntries((prev) =>
       prev.map((e) => ({
         ...e,
@@ -771,7 +375,6 @@ export function AutoTuneView() {
       const entry = entries[idx];
       if (!entry.result) return;
 
-      // Preserve existing ER weights — autotune ignores ER so we carry them over
       const oldErSands = entry.build.sandsWeights.find((w) => w.stat === "er");
       const oldErSub = entry.build.substats.find((s) => s.stat === "er");
 
@@ -828,70 +431,22 @@ export function AutoTuneView() {
   ).length;
   const unappliedCount = entries.filter((e) => e.status === "done").length;
 
-  // ── Loading ──
+  // ── Empty state ──
   if (entries.length === 0) {
-    const hasBuilds = groups.length > 0;
-    const hasTeams = allUserTeams.length > 0;
     return (
       <ScrollLayout>
-        <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
-          <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-              <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
-                <Scale className="w-12 h-12 text-primary opacity-80" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold tracking-tight text-foreground">
-                {t.ui("batchAutoTune.noBuildTitle")}
-              </h3>
-              <p className="text-muted-foreground text-base max-w-md mx-auto">
-                {t.ui("batchAutoTune.noBuildDesc")}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {!hasBuilds && (
-                <Button asChild variant="default" size="lg" className="gap-2">
-                  <Link to="/artifact-filter?tab=configure">
-                    <ExternalLink className="w-4 h-4" />
-                    {t.ui("evaluation.goToBuilds")}
-                  </Link>
-                </Button>
-              )}
-              {!hasTeams && (
-                <Button
-                  asChild
-                  variant={hasBuilds ? "default" : "outline"}
-                  size="lg"
-                  className="gap-2"
-                >
-                  <Link to="/team-comp">
-                    <ExternalLink className="w-4 h-4" />
-                    {t.ui("batchAutoTune.goToTeams")}
-                  </Link>
-                </Button>
-              )}
-              {hasBuilds && hasTeams && (
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="gap-2"
-                  onClick={() => setViewFilter("all")}
-                >
-                  {t.ui("batchAutoTune.allBuilds")}
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
+        <AutoTuneEmptyState
+          hasBuilds={groups.length > 0}
+          hasTeams={allUserTeams.length > 0}
+          onShowAll={() => setViewFilter("all")}
+        />
       </ScrollLayout>
     );
   }
 
   return (
     <ScrollLayout>
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="mb-4">
         <h2 className="text-xl font-bold">{t.ui("batchAutoTune.title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">
@@ -899,11 +454,10 @@ export function AutoTuneView() {
         </p>
       </div>
 
-      {/* ── Control bar ── */}
+      {/* Control bar */}
       <div className="flex items-center gap-3 mb-4 flex-wrap">
         {phase === "selection" && (
           <>
-            {/* View filter toggle */}
             <div className="flex rounded-lg border border-border overflow-hidden text-sm">
               <button
                 type="button"
@@ -992,7 +546,7 @@ export function AutoTuneView() {
         )}
       </div>
 
-      {/* ── Selection grid ── */}
+      {/* Selection grid */}
       {phase === "selection" && (
         <div
           className="grid gap-1.5"
@@ -1001,7 +555,7 @@ export function AutoTuneView() {
           }}
         >
           {entries.map((entry, idx) => (
-            <SelectionCard
+            <AutoTuneSelectionCard
               key={entry.buildId}
               entry={entry}
               onToggle={() => toggleEntry(idx)}
@@ -1012,7 +566,7 @@ export function AutoTuneView() {
         </div>
       )}
 
-      {/* ── Result grid ── */}
+      {/* Result grid */}
       {phase !== "selection" && (
         <div className="grid gap-2 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
           {entries
@@ -1026,7 +580,7 @@ export function AutoTuneView() {
             .map((entry) => {
               const idx = entries.indexOf(entry);
               return (
-                <ResultCard
+                <AutoTuneResultCard
                   key={entry.buildId}
                   entry={entry}
                   onApply={() => applyEntry(idx)}
