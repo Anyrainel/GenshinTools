@@ -10,8 +10,8 @@ interface FormulaLabelProps {
   formulaId?: string;
   charId?: string;
   teamBuild?: TeamBuild | null;
-  /** When true, skip the off-field suffix (e.g. for locked formulas). */
-  hideOffField?: boolean;
+  /** When true, mute the label text (constellation requirement not met). */
+  isLocked?: boolean;
   className?: string;
 }
 
@@ -25,24 +25,33 @@ export function FormulaLabel({
   formulaId,
   charId,
   teamBuild,
-  hideOffField,
+  isLocked,
   className,
 }: FormulaLabelProps) {
   const { t } = useLanguage();
 
   const offField =
-    !hideOffField && teamBuild && charId && formulaId
+    teamBuild && charId && formulaId
       ? offFieldStatus(teamBuild, charId, formulaId)
       : "none";
 
   return (
     <span className={cn("flex flex-wrap items-baseline gap-x-1", className)}>
       {minC > 0 && (
-        <span className="text-[10px] font-semibold text-amber-400 bg-amber-400/15 px-1 rounded shrink-0">
+        <span
+          className={cn(
+            "text-[10px] font-semibold px-1 rounded shrink-0",
+            isLocked
+              ? "text-amber-400/50 bg-amber-400/10"
+              : "text-amber-400 bg-amber-400/15"
+          )}
+        >
           {t.format("common.constellationFormat", minC)}
         </span>
       )}
-      <span className="truncate">{t.resolveLabel(label)}</span>
+      <span className={cn("truncate", isLocked && "text-muted-foreground")}>
+        {t.resolveLabel(label)}
+      </span>
       {offField !== "none" && (
         <span className="text-[0.85em] text-muted-foreground font-normal whitespace-nowrap">
           {t.ui(

@@ -6,9 +6,15 @@
  * evaluation via an async generator that yields progress updates.
  */
 
-import { weaponsById } from "@/data/constants";
-import type { Element } from "@/data/types";
+import {
+  artifactHalfSetsById,
+  artifactsById,
+  weaponsById,
+} from "@/data/constants";
+import type { Element, MainStat, Slot, SubStat } from "@/data/types";
+import { allSlots } from "@/data/types";
 import type { WeaponStatsMap } from "@/lib/gameStatsLoader";
+import { getRollValues } from "./constrainedGreedy";
 import { TeamBuild } from "./damageCalc";
 import type { StatSheet } from "./damageModels";
 import type { ExtraBuff } from "./extraBuffTypes";
@@ -138,6 +144,66 @@ function buildOverriddenConfigs(
 }
 
 /**
+ * Build perChar ER/CR thresholds from charConfigs for the generator.
+ */
+function buildPerChar(
+  charConfigs: WeaponChoiceCharConfig[]
+): Record<string, { minEr: number; minCr: number }> {
+  const perChar: Record<string, { minEr: number; minCr: number }> = {};
+  for (const cc of charConfigs) {
+    perChar[cc.charId] = { minEr: cc.minEr, minCr: cc.minCr };
+  }
+  return perChar;
+}
+
+/**
+ * Build setKeysByChar from charConfigs artifact configurations.
+ * Mirrors the logic in DamageDetail's generate handler.
+ */
+function buildSetKeysByChar(
+  charConfigs: WeaponChoiceCharConfig[]
+): Record<string, Record<Slot, string>> {
+  const setKeysByChar: Record<string, Record<Slot, string>> = {};
+  for (const cc of charConfigs) {
+    const ac = cc.artifactConfig;
+    if (!ac) continue;
+
+    if (ac.type === "4pc") {
+      const sk = ac.setId;
+      setKeysByChar[cc.charId] = {
+        flower: sk,
+        plume: sk,
+        sands: sk,
+        goblet: sk,
+        circlet: sk,
+      };
+    } else if (ac.type === "2pc+2pc") {
+      const hs1 = artifactHalfSetsById[String(ac.id1)];
+      const hs2 = artifactHalfSetsById[String(ac.id2)];
+      const sk1 =
+        hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
+        hs1?.setIds[0] ??
+        "generated";
+      const sk2 =
+        hs2?.setIds.find(
+          (id) => artifactsById[id]?.rarity === 5 && id !== sk1
+        ) ??
+        hs2?.setIds.find((id) => id !== sk1) ??
+        hs2?.setIds[0] ??
+        "generated";
+      setKeysByChar[cc.charId] = {
+        flower: sk1,
+        plume: sk1,
+        sands: sk1,
+        goblet: sk2,
+        circlet: sk2,
+      };
+    }
+  }
+  return setKeysByChar;
+}
+
+/**
  * Run the generator to completion and return the final result.
  * The generator yields intermediate results; we only need the final one.
  */
@@ -147,7 +213,9 @@ async function runGeneratorToCompletion(
   combo: ComboFormula,
   calcContext: CalcContext,
   rollMultiplier?: number,
-  substatBudget?: SubstatBudgetPreset
+  substatBudget?: SubstatBudgetPreset,
+  perChar?: Record<string, { minEr: number; minCr: number }>,
+  setKeysByChar?: Record<string, Record<Slot, string>>
 ): Promise<GeneratorResult | null> {
   let lastResult: GeneratorResult | null = null;
   const gen = runGenerator({
@@ -157,6 +225,8 @@ async function runGeneratorToCompletion(
     calcContext,
     rollMultiplier,
     substatBudget,
+    perChar,
+    setKeysByChar,
   });
 
   for await (const result of gen) {
@@ -215,6 +285,8 @@ async function computeForChar(
   extraBuffs: ExtraBuff[],
   rollMultiplier: number | undefined,
   substatBudget: SubstatBudgetPreset | undefined,
+  perChar: Record<string, { minEr: number; minCr: number }>,
+  setKeysByChar: Record<string, Record<Slot, string>>,
   onProgress: (weaponsDone: number, currentWeapon?: string) => void
 ): Promise<WeaponRanking[]> {
   const supportCharIds = charIds.filter((id) => id !== targetCharId);
@@ -228,7 +300,9 @@ async function computeForChar(
     combo,
     calcContext,
     rollMultiplier,
-    substatBudget
+    substatBudget,
+    perChar,
+    setKeysByChar
   );
 
   if (!rosterResult) return [];
@@ -265,7 +339,9 @@ async function computeForChar(
       combo,
       calcContext,
       rollMultiplier,
-      substatBudget
+      substatBudget,
+      perChar,
+      setKeysByChar
     );
 
     if (!weaponResult) {
@@ -287,11 +363,53 @@ async function computeForChar(
       calcContext
     );
 
+    // Extract artifact build summary for the target character
+    const arts = weaponResult.artifactsByChar[targetCharId];
+    let mainStats:
+      | { sands: MainStat; goblet: MainStat; circlet: MainStat }
+      | undefined;
+    let substatRolls: Partial<Record<SubStat, number>> | undefined;
+    let artifactSetIds: string[] | undefined;
+
+    if (arts) {
+      mainStats = {
+        sands: arts.sands?.mainStatKey ?? ("atk%" as MainStat),
+        goblet: arts.goblet?.mainStatKey ?? ("atk%" as MainStat),
+        circlet: arts.circlet?.mainStatKey ?? ("cr" as MainStat),
+      };
+      // Convert display-format substats to roll counts
+      const rarity = arts.flower?.rarity ?? 5;
+      const rv = getRollValues(rollMultiplier, (rarity === 4 ? 4 : 5) as 4 | 5);
+      const agg: Partial<Record<SubStat, number>> = {};
+      for (const slot of allSlots) {
+        const subs = arts[slot]?.substats;
+        if (!subs) continue;
+        for (const [stat, displayVal] of Object.entries(subs)) {
+          if (!displayVal) continue;
+          const rollVal = rv[stat as SubStat];
+          const rolls = rollVal > 0 ? displayVal / rollVal : 0;
+          agg[stat as SubStat] =
+            (agg[stat as SubStat] ?? 0) + Math.round(rolls * 10) / 10;
+        }
+      }
+      substatRolls = agg;
+      // Collect unique artifact set IDs
+      const setIds = new Set<string>();
+      for (const slot of allSlots) {
+        const sk = arts[slot]?.setKey;
+        if (sk && sk !== "generated") setIds.add(sk);
+      }
+      if (setIds.size > 0) artifactSetIds = [...setIds];
+    }
+
     rankings.push({
       weaponId,
       refinement,
       damage,
       percentOfBest: 0, // normalized after all weapons
+      mainStats,
+      substatRolls,
+      artifactSetIds,
     });
 
     weaponsDone++;
@@ -358,6 +476,10 @@ export async function* runWeaponChoice(
 
   // Apply char config overrides to base configs
   const configs = buildOverriddenConfigs(baseConfigs, charConfigs);
+
+  // Build generator-level params from char configs
+  const perChar = buildPerChar(charConfigs);
+  const setKeysByChar = buildSetKeysByChar(charConfigs);
 
   // Identify characters to evaluate
   const charIds = configs.map((c) => c.charId);
@@ -431,6 +553,8 @@ export async function* runWeaponChoice(
       extraBuffs ?? [],
       rollMultiplier,
       substatBudget,
+      perChar,
+      setKeysByChar,
       (weaponsDone, currentWeapon) => {
         perCharProgress[targetCharId].done = weaponsDone;
         perCharProgress[targetCharId].currentWeapon = currentWeapon;

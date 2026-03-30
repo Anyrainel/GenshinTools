@@ -141,7 +141,7 @@ export default function TeamCompPage() {
   if (activeTab === "investment") {
     return (
       <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
-        <InvestmentView />
+        <InvestmentView importRef={importRef} />
       </PageLayout>
     );
   }
@@ -149,7 +149,7 @@ export default function TeamCompPage() {
   if (activeTab === "weapon") {
     return (
       <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
-        <WeaponChoiceView />
+        <WeaponChoiceView importRef={importRef} />
       </PageLayout>
     );
   }

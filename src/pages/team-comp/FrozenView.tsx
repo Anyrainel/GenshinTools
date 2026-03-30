@@ -1,32 +1,19 @@
-import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { ExportBranding } from "@/components/shared/ExportBranding";
-import { ItemIcon } from "@/components/shared/ItemIcon";
 import { ArtifactFreezeDialog } from "@/components/team-comp/ArtifactFreezeDialog";
+import { FreezeControlBar } from "@/components/team-comp/FreezeControlBar";
+import { FrozenExportPanel } from "@/components/team-comp/FrozenExportPanel";
 import { FrozenTeamSection } from "@/components/team-comp/FrozenTeamSection";
-import {
-  ExportColumn,
-  buildArtifactOwnerMap,
-} from "@/components/team-comp/SwapGuide";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { StandaloneArtifactsCard } from "@/components/team-comp/StandaloneArtifactsCard";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactData, CharacterData, Slot } from "@/data/types";
+import type { ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { downloadElementAsImage } from "@/lib/downloadImage";
-import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Flame, Plus, Snowflake, X } from "lucide-react";
+import { Snowflake } from "lucide-react";
 import {
   forwardRef,
   useCallback,
@@ -367,118 +354,20 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
     return (
       <ScrollLayout>
         <div className="flex flex-col gap-4 py-2">
-          {/* Global freeze controls */}
-          <div className="flex items-center justify-center gap-3 px-1 py-0">
-            <div className="flex items-center gap-2">
-              <span className="text-sm md:text-base font-bold text-foreground whitespace-nowrap">
-                {t.ui("teamComp.reuseLabel")}
-              </span>
-              <Select
-                value={reuseMode}
-                onValueChange={(v) => setReuseMode(v as ArtifactReuseMode)}
-              >
-                <SelectTrigger className="w-auto text-sm md:text-base font-bold h-7 md:h-8 gap-1.5 px-3 border-primary/30 bg-primary/10 text-foreground ring-1 ring-primary/15 hover:bg-primary/15">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">
-                    {t.ui("teamComp.reuseNone")}
-                  </SelectItem>
-                  <SelectItem value="sameChar">
-                    {t.ui("teamComp.reuseSameChar")}
-                  </SelectItem>
-                  <SelectItem value="forceReuse">
-                    {t.ui("teamComp.reuseForce")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {hasActiveFrozen && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                onClick={handleClearAll}
-              >
-                <Flame className="w-3 h-3" />
-                <span>{t.ui("teamComp.unfreezeAll")}</span>
-              </Button>
-            )}
-            {hasPendingAnything && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-sm leading-none h-8 border-cyan-400/40 text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10"
-                onClick={handleRefreezeAll}
-              >
-                <Snowflake className="w-3 h-3" />
-                <span>{t.ui("teamComp.freezeTeam")}</span>
-              </Button>
-            )}
-          </div>
+          <FreezeControlBar
+            reuseMode={reuseMode}
+            onReuseModeChange={(v) => setReuseMode(v as ArtifactReuseMode)}
+            hasActiveFrozen={hasActiveFrozen}
+            hasPendingAnything={hasPendingAnything}
+            onClearAll={handleClearAll}
+            onRefreezeAll={handleRefreezeAll}
+          />
 
-          {/* Standalone frozen artifacts section */}
-          <div className="bg-black/15 border border-border rounded-lg overflow-hidden">
-            <div className="flex items-center gap-3 px-3 py-2.5 bg-black/20 border-b border-border">
-              <Snowflake className="w-4 h-4 text-cyan-400 shrink-0" />
-              <span className="font-bold text-sm text-foreground">
-                {t.ui("teamComp.standaloneArtifacts")}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setFreezeDialogOpen(true)}
-                className="ml-auto gap-1.5 font-bold text-xs h-7 px-3 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                {t.ui("teamComp.freezeArtifact")}
-              </Button>
-            </div>
-
-            {!hasStandaloneArtifacts && (
-              <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-                {t.ui("teamComp.frozenEmpty")}
-              </div>
-            )}
-
-            {/* Grid of standalone frozen artifacts */}
-            {displayStandaloneArtifacts.length > 0 && (
-              <div className="px-2 py-1 md:px-3 md:py-2 flex flex-wrap gap-3">
-                {displayStandaloneArtifacts.map(({ art, slot, isFrozen }) => (
-                  <div
-                    key={art.id}
-                    className="flex flex-col items-center gap-2"
-                  >
-                    <ArtifactDataHoverCard
-                      artifact={art}
-                      slot={slot}
-                      side="top"
-                    >
-                      <div className={cn(!isFrozen && "opacity-50")}>
-                        <ItemIcon
-                          artifactSetId={art.setKey}
-                          slot={slot}
-                          rarity={art.rarity}
-                          lock={art.lock}
-                          level={`+${art.level}`}
-                          badge={art.astralMark ? "⭐" : undefined}
-                          size="md"
-                        />
-                      </div>
-                    </ArtifactDataHoverCard>
-                    <button
-                      type="button"
-                      onClick={() => handleClearStandaloneArt(art.id)}
-                      className="flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold border border-red-400/30 text-red-400/70 hover:text-red-300 hover:border-red-400/60 hover:bg-red-500/15 transition-colors cursor-pointer"
-                    >
-                      <X className="w-2.5 h-2.5" />
-                      {t.ui("common.clear")}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <StandaloneArtifactsCard
+            artifacts={displayStandaloneArtifacts}
+            onFreezeClick={() => setFreezeDialogOpen(true)}
+            onClearArtifact={handleClearStandaloneArt}
+          />
 
           {/* Per-team frozen sections */}
           {frozenTeamEntries.map((entry) => (
@@ -502,7 +391,7 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
             />
           ))}
 
-          {/* Empty state — only if no frozen teams AND no standalone section content */}
+          {/* Empty state */}
           {isEmpty && (
             <div className="flex flex-col items-center text-center px-4 pt-8 sm:pt-16 pb-4 max-w-md mx-auto">
               <div className="relative mb-5">
@@ -521,68 +410,15 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
           )}
         </div>
 
-        {/* Hidden export container for download all frozen */}
-        {frozenTeamEntries.length > 0 && (
-          <div
-            style={{ position: "fixed", left: -9999, top: 0 }}
-            aria-hidden="true"
-          >
-            <div
-              ref={frozenExportRef}
-              className="p-1"
-              style={{ width: isXl ? 1400 : 700 }}
-            >
-              <ExportBranding />
-              {frozenTeamEntries.map((entry, i) => {
-                const ownerMap = buildArtifactOwnerMap(accountData);
-                const charIds = entry.team.characters.filter(
-                  (id): id is string => id != null
-                );
-                const optimizedArts =
-                  frozenTeams[entry.teamId]?.artifactsByChar ?? {};
-                return (
-                  <div key={entry.team.id}>
-                    {i > 0 && <div className="h-px bg-border/20" />}
-                    {entry.team.name && (
-                      <div className="text-center py-1.5 text-sm font-bold text-foreground/90 bg-black/20">
-                        {entry.team.name}
-                      </div>
-                    )}
-                    <div className="grid grid-cols-4 gap-px bg-border/10">
-                      {charIds.map((charId) => {
-                        const acctChar = accountData?.characters.find(
-                          (c: CharacterData) => c.key === charId
-                        );
-                        const equipped = (acctChar?.artifacts || {}) as Record<
-                          string,
-                          ArtifactData
-                        >;
-                        const optimizedRaw = optimizedArts[charId] ?? {};
-                        const optimized: Record<string, ArtifactData> = {};
-                        for (const [slot, art] of Object.entries(
-                          optimizedRaw
-                        )) {
-                          if (art) optimized[slot] = art;
-                        }
-                        return (
-                          <ExportColumn
-                            key={charId}
-                            charId={charId}
-                            team={entry.team}
-                            equipped={equipped}
-                            optimized={optimized}
-                            ownerMap={ownerMap}
-                            accountData={accountData}
-                            t={t}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        {hasFrozenTeams && (
+          <FrozenExportPanel
+            ref={frozenExportRef}
+            entries={frozenTeamEntries}
+            frozenTeams={frozenTeams}
+            accountData={accountData}
+            isXl={isXl}
+            t={t}
+          />
         )}
 
         <ArtifactFreezeDialog

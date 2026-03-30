@@ -28,6 +28,7 @@ import {
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer";
 import type { TeamSlotConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
+import { Users } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import {
   CARD_BODY_CLS,
@@ -94,7 +95,10 @@ export function AnalyzerConfigCard({
   return (
     <Card className={CARD_CLS}>
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
-        <span className={CARD_TITLE_CLS}>{t.ui("teamComp.teamRoster")}</span>
+        <span className={CARD_TITLE_CLS}>
+          <Users className="w-4 h-4 opacity-70" />
+          {t.ui("teamComp.teamRoster")}
+        </span>
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">

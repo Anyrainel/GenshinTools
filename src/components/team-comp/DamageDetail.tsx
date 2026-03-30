@@ -1,4 +1,5 @@
 import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   AlertDialog,
@@ -50,7 +51,7 @@ import {
   calcComboResults,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";
-import type { TeamOptDetailProps } from "@/lib/team-comp/teamOptUtils";
+import type { DamageDetailProps } from "@/lib/team-comp/teamOptUtils";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -130,7 +131,7 @@ function detectFrozenArtifactConflicts(
   return conflicts;
 }
 
-export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
+export function DamageDetail({ team, onBack }: DamageDetailProps) {
   const { t } = useLanguage();
   const limitText = limitMap[t.lang];
   const [limitOpen, setLimitOpen] = useState(false);
@@ -683,7 +684,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       );
     } catch (e) {
       console.warn(
-        "[TeamOptDetail] TeamBuild construction failed, using original:",
+        "[DamageDetail] TeamBuild construction failed, using original:",
         e
       );
       optTeamBuild = teamBuild;
@@ -1152,392 +1153,412 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       restoredArtifacts != null);
 
   return (
-    <div
-      className={cn(
-        "flex flex-col w-full animate-in fade-in duration-300 pb-12",
-        "gap-1.5 lg:gap-2"
-      )}
-    >
-      {/* ── Page Header ── */}
-      <div className="flex items-center gap-2 px-0.5 lg:px-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onBack}
-          className="shrink-0 h-10 w-10 -ml-2 hover:bg-white/10"
-        >
-          <ArrowLeft className="w-5 h-5 text-foreground/70" />
-        </Button>
-        <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
-          {team.name || t.ui("teamComp.teamOptimization")}
-          <span
-            className="inline-block ml-1.5 align-baseline cursor-pointer"
-            onClick={() => setLimitOpen(true)}
-            title={t.ui("calcLimitations.title")}
+    <ScrollLayout>
+      <div
+        className={cn(
+          "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+          "gap-1.5 lg:gap-2"
+        )}
+      >
+        {/* ── Page Header ── */}
+        <div className="flex items-center gap-2 px-0.5 lg:px-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onBack}
+            className="shrink-0 h-10 w-10 -ml-2 hover:bg-white/10"
           >
-            <Info className="w-5 h-5 text-primary" />
-          </span>
-        </h2>
-      </div>
+            <ArrowLeft className="w-5 h-5 text-foreground/70" />
+          </Button>
+          <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
+            {team.name || t.ui("teamComp.teamOptimization")}
+            <span
+              className="inline-block ml-1.5 align-baseline cursor-pointer"
+              onClick={() => setLimitOpen(true)}
+              title={t.ui("calcLimitations.title")}
+            >
+              <Info className="w-5 h-5 text-primary" />
+            </span>
+          </h2>
+        </div>
 
-      {/* Card 1 — Team Roster (only rendered when gameStats are ready,
+        {/* Card 1 — Team Roster (only rendered when gameStats are ready,
            so TeamMeta always has valid element/region/faction data) */}
-      {gameStatsReady && (
-        <TeamRosterCard
+        {gameStatsReady && (
+          <TeamRosterCard
+            team={team}
+            updateTeam={updateTeam}
+            accountData={accountData}
+            characterStats={characterStats!}
+            weaponStats={weaponStats!}
+            isMobile={isMobile}
+            t={t}
+            frozenCharIds={frozenCharIdSet}
+            ignoreArtifactSets={ignoreArtifactSets}
+            onIgnoreArtifactSetsChange={setIgnoreArtifactSets}
+          />
+        )}
+
+        {/* Card 2 — Formula Selection */}
+        <FormulaSelectorCard
           team={team}
+          effectiveTeam={effectiveTeam}
           updateTeam={updateTeam}
-          accountData={accountData}
-          characterStats={characterStats!}
-          weaponStats={weaponStats!}
+          allFormulas={allFormulas}
+          availableFormulas={availableFormulas}
+          displayFormulas={displayFormulas}
+          teamBuild={teamBuild}
+          buildError={buildError}
+          comboLineMap={comboLineMap}
+          setComboLineCount={setComboLineCount}
+          expandedLine={expandedLine}
+          onExpandLine={(charId, formulaId, reaction) => {
+            setExpandedLine((prev) =>
+              prev?.charId === charId &&
+              prev?.formulaId === formulaId &&
+              prev?.reaction === reaction
+                ? null
+                : { charId, formulaId, reaction }
+            );
+          }}
+          onReactionChange={handleReactionChange}
+          formulaMode={formulaMode}
+          onModeChange={handleModeChange}
+          onSelectSingleFormula={onSelectSingleFormula}
+          onResetCombo={() => {
+            if (!teamBuild) return;
+            const lines: ComboLine[] = [];
+            for (const charId of team.characters) {
+              if (!charId) continue;
+              const combo = teamBuild.getCombo(charId);
+              for (const [formulaId, count] of Object.entries(combo)) {
+                if (count > 0) {
+                  lines.push({ charId, formulaId, count });
+                }
+              }
+            }
+            updateTeam(team.id, {
+              combos: [{ id: combo.id, label: combo.label, lines }],
+            });
+          }}
           isMobile={isMobile}
           t={t}
-          frozenCharIds={frozenCharIdSet}
-          ignoreArtifactSets={ignoreArtifactSets}
-          onIgnoreArtifactSetsChange={setIgnoreArtifactSets}
         />
-      )}
 
-      {/* Card 2 — Formula Selection */}
-      <FormulaSelectorCard
-        team={team}
-        effectiveTeam={effectiveTeam}
-        updateTeam={updateTeam}
-        allFormulas={allFormulas}
-        availableFormulas={availableFormulas}
-        displayFormulas={displayFormulas}
-        teamBuild={teamBuild}
-        buildError={buildError}
-        comboLineMap={comboLineMap}
-        setComboLineCount={setComboLineCount}
-        expandedLine={expandedLine}
-        onExpandLine={(charId, formulaId, reaction) => {
-          setExpandedLine((prev) =>
-            prev?.charId === charId &&
-            prev?.formulaId === formulaId &&
-            prev?.reaction === reaction
-              ? null
-              : { charId, formulaId, reaction }
-          );
-        }}
-        onReactionChange={handleReactionChange}
-        formulaMode={formulaMode}
-        onModeChange={handleModeChange}
-        onSelectSingleFormula={onSelectSingleFormula}
-        onResetCombo={() => {
-          if (!teamBuild) return;
-          const lines: ComboLine[] = [];
-          for (const charId of team.characters) {
-            if (!charId) continue;
-            const combo = teamBuild.getCombo(charId);
-            for (const [formulaId, count] of Object.entries(combo)) {
-              if (count > 0) {
-                lines.push({ charId, formulaId, count });
+        {/* Card 3 — Equipment & Damage */}
+        <DamageCard
+          team={team}
+          effectiveTeam={effectiveTeam}
+          updateTeam={updateTeam}
+          resolvedFormula={resolvedFormula}
+          hasOptResult={hasOptResult}
+          allCharsResolved={allCharsResolved}
+          isFrozen={isFrozen}
+          isFullyFrozen={isFullyFrozen}
+          isPartiallyFrozen={isPartiallyFrozen}
+          frozenCharIds={frozenCharIdSet}
+          onFreezeAll={() => {
+            if (
+              !teamResult?.done &&
+              !isFrozen &&
+              !restoredArtifacts &&
+              !hasPreResolved
+            )
+              return;
+            // Freeze all chars with current view artifacts
+            // Skip only chars with nothing equipped
+            const byChar: Record<
+              string,
+              Record<Slot, ArtifactData | null>
+            > = {};
+            const freezableCharIds: string[] = [];
+            for (const [charId, arts] of Object.entries(
+              optimizedArtifactsByChar
+            )) {
+              if (!Object.values(arts).some(Boolean)) continue;
+              const charArts: Record<string, ArtifactData | null> = {};
+              for (const [slot, art] of Object.entries(arts)) {
+                if (art) {
+                  charArts[slot] = art as ArtifactData;
+                }
               }
+              byChar[charId] = charArts as Record<Slot, ArtifactData | null>;
+              freezableCharIds.push(charId);
             }
-          }
-          updateTeam(team.id, {
-            combos: [{ id: combo.id, label: combo.label, lines }],
-          });
-        }}
-        isMobile={isMobile}
-        t={t}
-      />
+            if (freezableCharIds.length === 0) return;
 
-      {/* Card 3 — Equipment & Damage */}
-      <DamageCard
-        team={team}
-        effectiveTeam={effectiveTeam}
-        updateTeam={updateTeam}
-        resolvedFormula={resolvedFormula}
-        hasOptResult={hasOptResult}
-        allCharsResolved={allCharsResolved}
-        isFrozen={isFrozen}
-        isFullyFrozen={isFullyFrozen}
-        isPartiallyFrozen={isPartiallyFrozen}
-        frozenCharIds={frozenCharIdSet}
-        onFreezeAll={() => {
-          if (
-            !teamResult?.done &&
-            !isFrozen &&
-            !restoredArtifacts &&
-            !hasPreResolved
-          )
-            return;
-          // Freeze all chars with current view artifacts
-          // Skip only chars with nothing equipped
-          const byChar: Record<string, Record<Slot, ArtifactData | null>> = {};
-          const freezableCharIds: string[] = [];
-          for (const [charId, arts] of Object.entries(
-            optimizedArtifactsByChar
-          )) {
-            if (!Object.values(arts).some(Boolean)) continue;
+            freezeCharacters(team.id, freezableCharIds, byChar);
+            setSwapOverrides({});
+          }}
+          onUnfreezeAll={
+            isFrozen
+              ? () => {
+                  // Snapshot current artifacts as restored before clearing freeze
+                  const snapshot: Record<
+                    string,
+                    Record<string, ArtifactData>
+                  > = {};
+                  for (const [charId, arts] of Object.entries(
+                    optimizedArtifactsByChar
+                  )) {
+                    if (Object.values(arts).some(Boolean)) {
+                      snapshot[charId] = { ...arts };
+                    }
+                  }
+                  setRestoredArtifacts(
+                    Object.keys(snapshot).length > 0 ? snapshot : null
+                  );
+                  unfreezeTeamAction(team.id);
+                }
+              : undefined
+          }
+          onFreezeChar={(charId: string) => {
+            // Freeze a single character using current view artifacts
+            const arts = optimizedArtifactsByChar[charId];
+            if (!arts || !Object.values(arts).some(Boolean)) return;
             const charArts: Record<string, ArtifactData | null> = {};
             for (const [slot, art] of Object.entries(arts)) {
-              if (art) {
-                charArts[slot] = art as ArtifactData;
-              }
+              if (art) charArts[slot] = art as ArtifactData;
             }
-            byChar[charId] = charArts as Record<Slot, ArtifactData | null>;
-            freezableCharIds.push(charId);
-          }
-          if (freezableCharIds.length === 0) return;
 
-          freezeCharacters(team.id, freezableCharIds, byChar);
-          setSwapOverrides({});
-        }}
-        onUnfreezeAll={
-          isFrozen
-            ? () => {
-                // Snapshot current artifacts as restored before clearing freeze
-                const snapshot: Record<
-                  string,
-                  Record<string, ArtifactData>
-                > = {};
-                for (const [charId, arts] of Object.entries(
-                  optimizedArtifactsByChar
-                )) {
-                  if (Object.values(arts).some(Boolean)) {
-                    snapshot[charId] = { ...arts };
-                  }
-                }
-                setRestoredArtifacts(
-                  Object.keys(snapshot).length > 0 ? snapshot : null
-                );
-                unfreezeTeamAction(team.id);
-              }
-            : undefined
-        }
-        onFreezeChar={(charId: string) => {
-          // Freeze a single character using current view artifacts
-          const arts = optimizedArtifactsByChar[charId];
-          if (!arts || !Object.values(arts).some(Boolean)) return;
-          const charArts: Record<string, ArtifactData | null> = {};
-          for (const [slot, art] of Object.entries(arts)) {
-            if (art) charArts[slot] = art as ArtifactData;
-          }
-
-          freezeCharacters(team.id, [charId], {
-            [charId]: charArts as Record<Slot, ArtifactData | null>,
-          });
-        }}
-        onUnfreezeChar={(charId: string) => {
-          // Capture ALL current artifacts so unfrozen chars keep their display
-          const snapshot: Record<string, Record<string, ArtifactData>> = {};
-          for (const [cid, arts] of Object.entries(optimizedArtifactsByChar)) {
-            if (Object.values(arts).some(Boolean)) {
-              snapshot[cid] = { ...arts };
-            }
-          }
-          setRestoredArtifacts(
-            Object.keys(snapshot).length > 0 ? snapshot : null
-          );
-          unfreezeCharacters(team.id, [charId]);
-        }}
-        isMobile={isMobile}
-        t={t}
-        equippedArtifactsByChar={equippedArtifactsByChar}
-        currentDisplayResult={currentDisplayResult}
-        formulaMode={formulaMode}
-        comboLines={displayCombo.lines}
-        comboId={displayCombo.id}
-        teamBuild={teamBuild}
-        accountData={accountData}
-        activeContext={activeContext}
-        isComputing={isComputing}
-        teamProgress={teamProgress}
-        teamResult={teamResult}
-        teamError={teamError}
-        handleOptimize={handleOptimize}
-        timeBudgetSec={timeBudgetSec}
-        onTimeBudgetChange={setTimeBudgetSec}
-        optimizedArtifactsByChar={optimizedArtifactsByChar}
-        optimizedDisplayResult={optimizedDisplayResult}
-        minErRaw={minErRaw}
-        genComputing={genComputing}
-        genResult={genResult}
-        genError={genError}
-        handleGenerate={handleGenerate}
-        genArtifactsByChar={genArtifactsByChar}
-        genDisplayResult={genDisplayResult}
-        onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
-        hasSwapOverrides={hasSwapOverrides}
-        onRestoreOriginal={hasSwapOverrides ? handleRestoreOriginal : undefined}
-        forceReusedCharIds={forceReusedCharIds}
-        onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
-        onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}
-        currentTabFrozenCharIds={currentTabFrozenCharIds}
-      />
-
-      {/* Artifact Swap Dialog */}
-      {swapTarget && (
-        <ArtifactSwapDialog
-          open={!!swapTarget}
-          onOpenChange={(open) => {
-            if (!open) setSwapTarget(null);
+            freezeCharacters(team.id, [charId], {
+              [charId]: charArts as Record<Slot, ArtifactData | null>,
+            });
           }}
-          currentArtifact={swapTarget.artifact}
-          slot={swapTarget.slot}
-          inventory={teamInventory.allArtifacts}
-          usedArtifactIds={usedArtifactIds}
-          frozenArtifactIds={teamInventory.frozenArtifactIds}
-          matchingSetIds={swapMatchingSetIds}
-          onSwap={handleSwapConfirm}
+          onUnfreezeChar={(charId: string) => {
+            // Capture ALL current artifacts so unfrozen chars keep their display
+            const snapshot: Record<string, Record<string, ArtifactData>> = {};
+            for (const [cid, arts] of Object.entries(
+              optimizedArtifactsByChar
+            )) {
+              if (Object.values(arts).some(Boolean)) {
+                snapshot[cid] = { ...arts };
+              }
+            }
+            setRestoredArtifacts(
+              Object.keys(snapshot).length > 0 ? snapshot : null
+            );
+            unfreezeCharacters(team.id, [charId]);
+          }}
+          isMobile={isMobile}
           t={t}
+          equippedArtifactsByChar={equippedArtifactsByChar}
+          currentDisplayResult={currentDisplayResult}
+          formulaMode={formulaMode}
+          comboLines={displayCombo.lines}
+          comboId={displayCombo.id}
+          teamBuild={teamBuild}
+          accountData={accountData}
+          activeContext={activeContext}
+          isComputing={isComputing}
+          teamProgress={teamProgress}
+          teamResult={teamResult}
+          teamError={teamError}
+          handleOptimize={handleOptimize}
+          timeBudgetSec={timeBudgetSec}
+          onTimeBudgetChange={setTimeBudgetSec}
+          optimizedArtifactsByChar={optimizedArtifactsByChar}
+          optimizedDisplayResult={optimizedDisplayResult}
+          minErRaw={minErRaw}
+          genComputing={genComputing}
+          genResult={genResult}
+          genError={genError}
+          handleGenerate={handleGenerate}
+          genArtifactsByChar={genArtifactsByChar}
+          genDisplayResult={genDisplayResult}
+          onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
+          hasSwapOverrides={hasSwapOverrides}
+          onRestoreOriginal={
+            hasSwapOverrides ? handleRestoreOriginal : undefined
+          }
+          forceReusedCharIds={forceReusedCharIds}
+          onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
+          onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}
+          currentTabFrozenCharIds={currentTabFrozenCharIds}
         />
-      )}
 
-      {/* Calculation Limitations Sheet */}
-      <Sheet open={limitOpen} onOpenChange={setLimitOpen}>
-        <SheetContent
-          side="right"
-          className="w-[min(85vw,400px)] md:w-[min(85vw,520px)] xl:w-[min(85vw,640px)] sm:max-w-none p-0 flex flex-col"
-        >
-          <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/40">
-            <SheetTitle className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-primary" />
-              {t.ui("calcLimitations.title")}
-            </SheetTitle>
-          </SheetHeader>
-          <ScrollArea className="flex-1">
-            <div className="px-5 py-4 space-y-3">
-              {limitText.split("\n").map((line, i) => {
-                const trimmed = line.trim();
-                if (!trimmed) return null;
-                const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
-                if (numMatch) {
-                  return (
-                    <div key={i} className="flex gap-2 text-sm leading-relaxed">
-                      <span className="text-muted-foreground shrink-0 font-mono">
-                        {numMatch[1]}.
-                      </span>
-                      <span className="text-foreground/80">{numMatch[2]}</span>
-                    </div>
-                  );
-                }
-                return (
-                  <p key={i} className="text-sm font-semibold text-foreground">
-                    {trimmed}
-                  </p>
-                );
-              })}
-            </div>
-          </ScrollArea>
-        </SheetContent>
-      </Sheet>
+        {/* Artifact Swap Dialog */}
+        {swapTarget && (
+          <ArtifactSwapDialog
+            open={!!swapTarget}
+            onOpenChange={(open) => {
+              if (!open) setSwapTarget(null);
+            }}
+            currentArtifact={swapTarget.artifact}
+            slot={swapTarget.slot}
+            inventory={teamInventory.allArtifacts}
+            usedArtifactIds={usedArtifactIds}
+            frozenArtifactIds={teamInventory.frozenArtifactIds}
+            matchingSetIds={swapMatchingSetIds}
+            onSwap={handleSwapConfirm}
+            t={t}
+          />
+        )}
 
-      {/* Freeze Conflict / Override Alert */}
-      <AlertDialog
-        open={pendingFreezeAction != null}
-        onOpenChange={(open) => {
-          if (!open) setPendingFreezeAction(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t.ui(
-                pendingFreezeAction?.reason === "override"
-                  ? "teamComp.freezeOverrideTitle"
-                  : "teamComp.freezeConflictTitle"
-              )}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t.ui(
-                pendingFreezeAction?.reason === "override"
-                  ? "teamComp.freezeOverrideDesc"
-                  : "teamComp.freezeConflictDesc"
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          {/* Override: show existing frozen artifacts */}
-          {pendingFreezeAction?.reason === "override" &&
-            pendingFreezeAction.existingArts && (
-              <div className="flex items-center justify-center gap-1 md:gap-1.5 py-2">
-                {allSlots.map((slot) => {
-                  const art = pendingFreezeAction.existingArts![slot];
-                  if (!art) {
+        {/* Calculation Limitations Sheet */}
+        <Sheet open={limitOpen} onOpenChange={setLimitOpen}>
+          <SheetContent
+            side="right"
+            className="w-[min(85vw,400px)] md:w-[min(85vw,520px)] xl:w-[min(85vw,640px)] sm:max-w-none p-0 flex flex-col"
+          >
+            <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/40">
+              <SheetTitle className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-primary" />
+                {t.ui("calcLimitations.title")}
+              </SheetTitle>
+            </SheetHeader>
+            <ScrollArea className="flex-1">
+              <div className="px-5 py-4 space-y-3">
+                {limitText.split("\n").map((line, i) => {
+                  const trimmed = line.trim();
+                  if (!trimmed) return null;
+                  const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
+                  if (numMatch) {
                     return (
-                      <div key={slot} className="w-10 h-10 md:w-12 md:h-12" />
+                      <div
+                        key={i}
+                        className="flex gap-2 text-sm leading-relaxed"
+                      >
+                        <span className="text-muted-foreground shrink-0 font-mono">
+                          {numMatch[1]}.
+                        </span>
+                        <span className="text-foreground/80">
+                          {numMatch[2]}
+                        </span>
+                      </div>
                     );
                   }
                   return (
-                    <ArtifactDataHoverCard
-                      key={slot}
-                      artifact={art}
-                      slot={slot}
-                      side="bottom"
+                    <p
+                      key={i}
+                      className="text-sm font-semibold text-foreground"
                     >
-                      <div className="cursor-help">
-                        <ItemIcon
-                          artifactSetId={art.setKey}
-                          slot={slot}
-                          rarity={art.rarity}
-                          level={`+${art.level}`}
-                          frozen
-                          size={isMobile ? "xs" : "sm"}
-                        />
-                      </div>
-                    </ArtifactDataHoverCard>
+                      {trimmed}
+                    </p>
                   );
                 })}
               </div>
-            )}
+            </ScrollArea>
+          </SheetContent>
+        </Sheet>
 
-          {/* Conflict: show each conflicting artifact with its owners */}
-          {pendingFreezeAction?.reason === "conflict" &&
-            pendingFreezeAction.conflicts &&
-            pendingFreezeAction.conflicts.length > 0 && (
-              <div className="flex flex-col items-center gap-1.5 md:gap-2 py-2">
-                {pendingFreezeAction.conflicts.map((c, i) => {
-                  return (
-                    <div key={i} className="flex items-center gap-1 md:gap-1.5">
-                      <ItemIcon
-                        characterId={c.charId}
-                        size={isMobile ? "xs" : "sm"}
-                      />
-                      <div className="w-4 md:w-6 border-t border-dashed border-border/40" />
+        {/* Freeze Conflict / Override Alert */}
+        <AlertDialog
+          open={pendingFreezeAction != null}
+          onOpenChange={(open) => {
+            if (!open) setPendingFreezeAction(null);
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {t.ui(
+                  pendingFreezeAction?.reason === "override"
+                    ? "teamComp.freezeOverrideTitle"
+                    : "teamComp.freezeConflictTitle"
+                )}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {t.ui(
+                  pendingFreezeAction?.reason === "override"
+                    ? "teamComp.freezeOverrideDesc"
+                    : "teamComp.freezeConflictDesc"
+                )}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            {/* Override: show existing frozen artifacts */}
+            {pendingFreezeAction?.reason === "override" &&
+              pendingFreezeAction.existingArts && (
+                <div className="flex items-center justify-center gap-1 md:gap-1.5 py-2">
+                  {allSlots.map((slot) => {
+                    const art = pendingFreezeAction.existingArts![slot];
+                    if (!art) {
+                      return (
+                        <div key={slot} className="w-10 h-10 md:w-12 md:h-12" />
+                      );
+                    }
+                    return (
                       <ArtifactDataHoverCard
-                        artifact={c.artifact}
-                        slot={c.artifact.slotKey}
+                        key={slot}
+                        artifact={art}
+                        slot={slot}
                         side="bottom"
                       >
                         <div className="cursor-help">
                           <ItemIcon
-                            artifactSetId={c.artifact.setKey}
-                            slot={c.artifact.slotKey}
-                            rarity={c.artifact.rarity}
-                            level={`+${c.artifact.level}`}
+                            artifactSetId={art.setKey}
+                            slot={slot}
+                            rarity={art.rarity}
+                            level={`+${art.level}`}
                             frozen
                             size={isMobile ? "xs" : "sm"}
                           />
                         </div>
                       </ArtifactDataHoverCard>
-                      <div className="w-4 md:w-6 border-t border-border/60" />
-                      <ItemIcon
-                        characterId={c.frozenCharId}
-                        frozen
-                        size={isMobile ? "xs" : "sm"}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
 
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                pendingFreezeAction?.action();
-                setPendingFreezeAction(null);
-              }}
-            >
-              {t.ui("teamComp.freezeConflictConfirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+            {/* Conflict: show each conflicting artifact with its owners */}
+            {pendingFreezeAction?.reason === "conflict" &&
+              pendingFreezeAction.conflicts &&
+              pendingFreezeAction.conflicts.length > 0 && (
+                <div className="flex flex-col items-center gap-1.5 md:gap-2 py-2">
+                  {pendingFreezeAction.conflicts.map((c, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className="flex items-center gap-1 md:gap-1.5"
+                      >
+                        <ItemIcon
+                          characterId={c.charId}
+                          size={isMobile ? "xs" : "sm"}
+                        />
+                        <div className="w-4 md:w-6 border-t border-dashed border-border/40" />
+                        <ArtifactDataHoverCard
+                          artifact={c.artifact}
+                          slot={c.artifact.slotKey}
+                          side="bottom"
+                        >
+                          <div className="cursor-help">
+                            <ItemIcon
+                              artifactSetId={c.artifact.setKey}
+                              slot={c.artifact.slotKey}
+                              rarity={c.artifact.rarity}
+                              level={`+${c.artifact.level}`}
+                              frozen
+                              size={isMobile ? "xs" : "sm"}
+                            />
+                          </div>
+                        </ArtifactDataHoverCard>
+                        <div className="w-4 md:w-6 border-t border-border/60" />
+                        <ItemIcon
+                          characterId={c.frozenCharId}
+                          frozen
+                          size={isMobile ? "xs" : "sm"}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  pendingFreezeAction?.action();
+                  setPendingFreezeAction(null);
+                }}
+              >
+                {t.ui("teamComp.freezeConflictConfirm")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </ScrollLayout>
   );
 }

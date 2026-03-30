@@ -20,7 +20,7 @@ import type {
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ListOrdered } from "lucide-react";
 import { useState } from "react";
 import { AnalyzerComboTab } from "./AnalyzerComboTab";
 import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
@@ -82,12 +82,13 @@ export function AnalyzerComboCard({
               type="button"
               className="flex items-center gap-2 w-full text-left"
             >
-              <ChevronDown
-                className={`w-4 h-4 text-primary-foreground/70 transition-transform ${comboOpen ? "" : "-rotate-90"}`}
-              />
               <span className={CARD_TITLE_CLS}>
+                <ListOrdered className="w-4 h-4 opacity-70" />
                 {t.ui("teamComp.analyzerCombo")}
               </span>
+              <ChevronDown
+                className={`w-4 h-4 ml-auto text-primary-foreground/70 transition-transform ${comboOpen ? "" : "-rotate-90"}`}
+              />
             </button>
           </CollapsibleTrigger>
         </CardHeader>

@@ -20,7 +20,7 @@ import type {
 } from "@/lib/team-comp/types";
 import type { Team, WeaponChoiceCharConfig } from "@/stores/useTeamStore";
 
-export interface TeamOptDetailProps {
+export interface DamageDetailProps {
   team: Team;
   onBack: () => void;
 }

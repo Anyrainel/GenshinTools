@@ -329,7 +329,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   const displayCombo = useMemo<ComboFormula>(() => {
     if (formulaMode === "single") {
       const sel = team.weaponChoiceSingleFormula;
-      if (!sel) return { ...combo, lines: [] };
+      if (!sel) return combo; // No single formula selected yet — use full rotation
       return {
         ...combo,
         lines: [
@@ -501,7 +501,6 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
           weaponStats={weaponStats ?? {}}
           isMobile={isMobile}
           t={t}
-          hideRefinement
         />
 
         {/* 2. Formula Selection Card */}

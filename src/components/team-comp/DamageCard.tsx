@@ -25,7 +25,6 @@ import type { AccountData, ArtifactData, Slot } from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
 import {
   aggregateComboFormulaDefaults,
@@ -72,6 +71,7 @@ import {
   adjustPartDamage,
   formulaCritRatio,
 } from "./FormulaBreakdown";
+import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
 import {
@@ -1130,7 +1130,7 @@ type CtxProps = {
 const LABEL_CLS =
   "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
 
-function EnemyLevelInput({
+function EnemyFields({
   team,
   activeContext,
   updateTeam,
@@ -1138,29 +1138,40 @@ function EnemyLevelInput({
   t,
 }: CtxProps) {
   return (
-    <div className="flex items-center gap-0.5 md:gap-1">
-      <span className={LABEL_CLS}>{t.ui("teamComp.enemyLevel")}</span>
-      <Input
-        type="text"
-        inputMode="numeric"
-        value={team.calcContext?.enemyLevel ?? ""}
-        placeholder="110"
-        onChange={(e) => {
-          const raw = e.target.value;
-          if (raw === "") {
-            const { enemyLevel: _, ...rest } = team.calcContext ?? {};
-            updateTeam(team.id, { calcContext: rest });
-            return;
-          }
-          const num = Number(raw);
-          if (!Number.isNaN(num))
-            updateTeam(team.id, {
-              calcContext: { ...team.calcContext, enemyLevel: num },
-            });
-        }}
-        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1"
-      />
-    </div>
+    <EnemyInputs
+      enemyLevel={team.calcContext?.enemyLevel ?? ""}
+      onEnemyLevelChange={(raw) => {
+        if (raw === "") {
+          const { enemyLevel: _, ...rest } = team.calcContext ?? {};
+          updateTeam(team.id, { calcContext: rest });
+          return;
+        }
+        const num = Number(raw);
+        if (!Number.isNaN(num))
+          updateTeam(team.id, {
+            calcContext: { ...team.calcContext, enemyLevel: num },
+          });
+      }}
+      enemyRes={
+        team.calcContext?.enemyRes != null
+          ? Math.round(team.calcContext.enemyRes * 100)
+          : ""
+      }
+      onEnemyResChange={(raw) => {
+        if (raw === "") {
+          const { enemyRes: _, ...rest } = team.calcContext ?? {};
+          updateTeam(team.id, { calcContext: rest });
+          return;
+        }
+        updateTeam(team.id, {
+          calcContext: {
+            ...team.calcContext,
+            enemyRes: (Number(raw) || 0) / 100,
+          },
+        });
+      }}
+      t={t}
+    />
   );
 }
 
@@ -1230,49 +1241,6 @@ function getCritDisableFlags(parts?: DisplayPart[]): {
   return { disableCrit, disableNoCrit };
 }
 
-function EnemyResInput({
-  team,
-  activeContext,
-  updateTeam,
-  isMobile,
-  t,
-}: CtxProps) {
-  return (
-    <div className="flex items-center gap-0.5 md:gap-1">
-      <span className={LABEL_CLS}>{t.ui("teamComp.enemyRes")}</span>
-      <div className="flex items-center gap-0">
-        <Input
-          type="number"
-          value={
-            team.calcContext?.enemyRes != null
-              ? Math.round(team.calcContext.enemyRes * 100)
-              : ""
-          }
-          placeholder="10"
-          onChange={(e) => {
-            const raw = e.target.value;
-            if (raw === "") {
-              const { enemyRes: _, ...rest } = team.calcContext ?? {};
-              updateTeam(team.id, { calcContext: rest });
-              return;
-            }
-            updateTeam(team.id, {
-              calcContext: {
-                ...team.calcContext,
-                enemyRes: (Number(raw) || 0) / 100,
-              },
-            });
-          }}
-          className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1"
-        />
-        <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
-          %
-        </span>
-      </div>
-    </div>
-  );
-}
-
 function CritRateTargetInput({
   team,
   activeContext,
@@ -1311,7 +1279,7 @@ function CritRateTargetInput({
   );
 }
 
-function RollMultSelect({
+function RollQualityFields({
   team,
   activeContext,
   updateTeam,
@@ -1319,63 +1287,23 @@ function RollMultSelect({
   t,
 }: CtxProps) {
   return (
-    <div className="flex items-center gap-0.5 md:gap-1">
-      <span className={LABEL_CLS}>{t.ui("teamComp.rollMultiplier")}</span>
-      <Select
-        value={String(activeContext.rollMultiplier ?? 0.85)}
-        onValueChange={(v) =>
-          updateTeam(team.id, {
-            calcContext: { ...team.calcContext, rollMultiplier: Number(v) },
-          })
-        }
-      >
-        <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-14 px-1 py-0 md:text-sm md:h-7 md:w-16 md:px-1.5">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {[0.7, 0.8, 0.85, 0.9, 1.0].map((v) => (
-            <SelectItem key={v} value={String(v)}>
-              {v}x
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
-function SubstatBudgetSelect({
-  team,
-  activeContext,
-  updateTeam,
-  isMobile,
-  t,
-}: CtxProps) {
-  const value = activeContext.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET;
-  return (
-    <div className="flex items-center gap-0.5 md:gap-1">
-      <span className={LABEL_CLS}>{t.ui("teamComp.substatBudget")}</span>
-      <Select
-        value={value}
-        onValueChange={(v) =>
-          updateTeam(team.id, {
-            calcContext: {
-              ...team.calcContext,
-              substatBudget: v as SubstatBudgetPreset,
-            },
-          })
-        }
-      >
-        <SelectTrigger className="font-bold border-border/20 bg-background/50 min-w-0 max-w-[9rem] text-xs h-6 px-1 py-0 md:text-sm md:h-7 md:max-w-[10rem] md:px-1.5">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="8_6">8/6 (5/4★)</SelectItem>
-          <SelectItem value="8_7">8/7 (5/4★)</SelectItem>
-          <SelectItem value="9_7">9/7 (5/4★)</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
+    <RollQualityInputs
+      rollMultiplier={activeContext.rollMultiplier ?? 0.85}
+      onRollMultiplierChange={(v) =>
+        updateTeam(team.id, {
+          calcContext: { ...team.calcContext, rollMultiplier: v },
+        })
+      }
+      substatBudget={
+        activeContext.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET
+      }
+      onSubstatBudgetChange={(v) =>
+        updateTeam(team.id, {
+          calcContext: { ...team.calcContext, substatBudget: v },
+        })
+      }
+      t={t}
+    />
   );
 }
 
@@ -1561,8 +1489,7 @@ export function DamageCard({
       {resultsTab === "current" && (
         <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
           <div className={CONTROLS_CLS}>
-            <EnemyLevelInput {...ctxProps} />
-            <EnemyResInput {...ctxProps} />
+            <EnemyFields {...ctxProps} />
           </div>
           {currentDisplayResult && teamBuild ? (
             formulaMode === "single" && resolvedFormula ? (
@@ -1635,8 +1562,7 @@ export function DamageCard({
 
           <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
             <div className={CONTROLS_CLS}>
-              <EnemyLevelInput {...ctxProps} />
-              <EnemyResInput {...ctxProps} />
+              <EnemyFields {...ctxProps} />
               <CritRateTargetInput {...ctxProps} />
               <div className="flex items-center gap-0.5 md:gap-1">
                 <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
@@ -1987,11 +1913,9 @@ export function DamageCard({
       {resultsTab === "generate" && (
         <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
           <div className={CONTROLS_CLS}>
-            <EnemyLevelInput {...ctxProps} />
-            <EnemyResInput {...ctxProps} />
+            <EnemyFields {...ctxProps} />
             <CritRateTargetInput {...ctxProps} />
-            <RollMultSelect {...ctxProps} />
-            <SubstatBudgetSelect {...ctxProps} />
+            <RollQualityFields {...ctxProps} />
             <ActionButton
               onClick={handleGenerate}
               disabled={genComputing || !hasActiveFormula}

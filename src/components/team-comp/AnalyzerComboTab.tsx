@@ -60,7 +60,7 @@ export function AnalyzerComboTab({
   onReactionChange,
 }: AnalyzerComboTabProps) {
   return (
-    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 lg:gap-x-5 lg:gap-y-3">
+    <div className="flex flex-wrap justify-center items-start gap-x-3 gap-y-2 lg:gap-x-5 lg:gap-y-3">
       {charConfigs.map((cfg) => {
         const bc = baseConfigs.find((b) => b.charId === cfg.charId);
         if (!bc) return null;

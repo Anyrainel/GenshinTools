@@ -314,7 +314,7 @@ export function FormulaSelectorCard({
                                     formulaId={formulaId}
                                     charId={cid}
                                     teamBuild={teamBuild}
-                                    hideOffField={isLocked}
+                                    isLocked={isLocked}
                                   />
                                 </button>
                                 {/* Reaction sub-buttons: shown when selected and has reactions */}
@@ -397,217 +397,229 @@ export function FormulaSelectorCard({
                                   formulaId={formulaId}
                                   charId={cid}
                                   teamBuild={teamBuild}
-                                  hideOffField={isLocked}
-                                  className="text-xs md:text-sm lg:text-xs xl:text-sm font-bold text-foreground"
+                                  isLocked={isLocked}
+                                  className={cn(
+                                    "text-xs md:text-sm lg:text-xs xl:text-sm font-bold",
+                                    isLocked
+                                      ? "text-muted-foreground"
+                                      : "text-foreground"
+                                  )}
                                 />
                               </div>
 
                               {/* Per-reaction count steppers */}
-                              {isLocked
-                                ? null
-                                : (() => {
-                                    // ── Combo mode: count steppers ──
-                                    // Find which reaction (if any) is expanded for this formula
-                                    const expandedRx =
-                                      expandedLine?.charId === cid &&
+                              {(() => {
+                                // ── Combo mode: count steppers ──
+                                // Find which reaction (if any) is expanded for this formula
+                                const expandedRx = isLocked
+                                  ? null
+                                  : expandedLine?.charId === cid &&
                                       expandedLine?.formulaId === formulaId
-                                        ? expandedLine.reaction
-                                        : null;
-                                    const expandedLineKey = expandedRx
-                                      ? `${cid}.${formulaId}.${expandedRx}`
-                                      : null;
+                                    ? expandedLine.reaction
+                                    : null;
+                                const expandedLineKey = expandedRx
+                                  ? `${cid}.${formulaId}.${expandedRx}`
+                                  : null;
 
-                                    return (
-                                      <div className="flex flex-col gap-y-1">
-                                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                                          {hasReactions ? (
-                                            reactions.map((rx) => {
-                                              const lineKey = `${cid}.${formulaId}.${rx}`;
-                                              const count =
-                                                comboLineMap.get(lineKey)?.line
-                                                  .count ?? 0;
-                                              const isExpanded =
-                                                expandedRx === rx;
-                                              const showChevron =
-                                                formulaEntry != null &&
-                                                rx !== "none";
-                                              return (
-                                                <div
-                                                  key={lineKey}
-                                                  className="flex items-center"
-                                                >
-                                                  {showChevron ? (
-                                                    <button
-                                                      type="button"
-                                                      className="w-4 h-4 flex items-center justify-center text-foreground hover:text-primary shrink-0"
-                                                      onClick={() =>
-                                                        onExpandLine(
-                                                          cid,
-                                                          formulaId,
-                                                          rx
-                                                        )
-                                                      }
-                                                    >
-                                                      {isExpanded ? (
-                                                        <ChevronDown className="w-3.5 h-3.5" />
-                                                      ) : (
-                                                        <ChevronRight className="w-3.5 h-3.5" />
-                                                      )}
-                                                    </button>
-                                                  ) : (
-                                                    <span className="w-4 shrink-0" />
-                                                  )}
-                                                  <span className="text-[10px] md:text-xs xl:text-sm font-semibold text-foreground/80">
-                                                    {t.reaction(rx)}
-                                                  </span>
-                                                  <button
-                                                    type="button"
-                                                    className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                                    disabled={count <= 0}
-                                                    onClick={() =>
-                                                      setComboLineCount(
-                                                        cid,
-                                                        formulaId,
-                                                        rx,
-                                                        Math.max(0, count - 1)
-                                                      )
-                                                    }
-                                                  >
-                                                    <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                                  </button>
-                                                  <span
-                                                    className={cn(
-                                                      "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
-                                                      count === 0 &&
-                                                        "text-muted-foreground"
-                                                    )}
-                                                  >
-                                                    {count}
-                                                  </span>
-                                                  <button
-                                                    type="button"
-                                                    className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                                    disabled={count >= 99}
-                                                    onClick={() =>
-                                                      setComboLineCount(
-                                                        cid,
-                                                        formulaId,
-                                                        rx,
-                                                        Math.min(99, count + 1)
-                                                      )
-                                                    }
-                                                  >
-                                                    <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                                  </button>
-                                                </div>
-                                              );
-                                            })
-                                          ) : (
-                                            <div className="flex items-center">
-                                              {(() => {
-                                                const c =
-                                                  comboLineMap.get(
-                                                    `${cid}.${formulaId}.none`
-                                                  )?.line.count ?? 0;
-                                                return (
-                                                  <>
-                                                    <button
-                                                      type="button"
-                                                      className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                                      disabled={c <= 0}
-                                                      onClick={() =>
-                                                        setComboLineCount(
-                                                          cid,
-                                                          formulaId,
-                                                          "none",
-                                                          Math.max(0, c - 1)
-                                                        )
-                                                      }
-                                                    >
-                                                      <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                                    </button>
-                                                    <span
-                                                      className={cn(
-                                                        "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
-                                                        c === 0 &&
-                                                          "text-muted-foreground"
-                                                      )}
-                                                    >
-                                                      {c}
-                                                    </span>
-                                                    <button
-                                                      type="button"
-                                                      className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                                      disabled={c >= 99}
-                                                      onClick={() =>
-                                                        setComboLineCount(
-                                                          cid,
-                                                          formulaId,
-                                                          "none",
-                                                          Math.min(99, c + 1)
-                                                        )
-                                                      }
-                                                    >
-                                                      <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                                    </button>
-                                                  </>
-                                                );
-                                              })()}
-                                            </div>
-                                          )}
-                                        </div>
-                                        {/* Expanded reaction config — rendered outside flex-wrap at full width */}
-                                        {expandedRx &&
-                                          expandedRx !== "none" &&
-                                          formulaEntry &&
-                                          charElement &&
-                                          (() => {
-                                            const expandedEntry =
-                                              comboLineMap.get(
-                                                expandedLineKey!
-                                              );
-                                            const expandedCount =
-                                              expandedEntry?.line.count ?? 0;
-                                            // Use stored override, or synthesize one with the reaction type
-                                            // so per-part controls show even at count 0.
-                                            const expandedOverride: ReactionOverride =
-                                              expandedEntry?.line.reaction ?? {
-                                                reaction:
-                                                  expandedRx as ReactionType,
-                                              };
-                                            return (
-                                              <div className="pt-1 pb-0.5">
-                                                <ReactionPartControls
-                                                  formulaEntry={formulaEntry}
-                                                  charId={cid}
-                                                  reactionType={
-                                                    expandedRx as ReactionType
-                                                  }
-                                                  reactionOverride={
-                                                    expandedOverride
-                                                  }
-                                                  onReactionChange={(
-                                                    override
-                                                  ) =>
-                                                    onReactionChange(
+                                return (
+                                  <div className="flex flex-col gap-y-1">
+                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                                      {hasReactions ? (
+                                        reactions.map((rx) => {
+                                          const lineKey = `${cid}.${formulaId}.${rx}`;
+                                          const count =
+                                            comboLineMap.get(lineKey)?.line
+                                              .count ?? 0;
+                                          const isExpanded = expandedRx === rx;
+                                          const showChevron =
+                                            formulaEntry != null &&
+                                            rx !== "none";
+                                          return (
+                                            <div
+                                              key={lineKey}
+                                              className="flex items-center"
+                                            >
+                                              {showChevron ? (
+                                                <button
+                                                  type="button"
+                                                  disabled={isLocked}
+                                                  className="w-4 h-4 flex items-center justify-center text-foreground hover:text-primary shrink-0 disabled:opacity-30 disabled:pointer-events-none"
+                                                  onClick={() =>
+                                                    onExpandLine(
                                                       cid,
                                                       formulaId,
-                                                      expandedRx,
-                                                      {
-                                                        ...override,
-                                                        reaction:
-                                                          expandedRx as ReactionType,
-                                                      }
+                                                      rx
                                                     )
                                                   }
-                                                  disabled={expandedCount <= 0}
-                                                />
-                                              </div>
+                                                >
+                                                  {isExpanded ? (
+                                                    <ChevronDown className="w-3.5 h-3.5" />
+                                                  ) : (
+                                                    <ChevronRight className="w-3.5 h-3.5" />
+                                                  )}
+                                                </button>
+                                              ) : (
+                                                <span className="w-4 shrink-0" />
+                                              )}
+                                              <span
+                                                className={cn(
+                                                  "text-[10px] md:text-xs xl:text-sm font-semibold",
+                                                  isLocked
+                                                    ? "text-muted-foreground"
+                                                    : "text-foreground/80"
+                                                )}
+                                              >
+                                                {t.reaction(rx)}
+                                              </span>
+                                              <button
+                                                type="button"
+                                                className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                disabled={
+                                                  isLocked || count <= 0
+                                                }
+                                                onClick={() =>
+                                                  setComboLineCount(
+                                                    cid,
+                                                    formulaId,
+                                                    rx,
+                                                    Math.max(0, count - 1)
+                                                  )
+                                                }
+                                              >
+                                                <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                              </button>
+                                              <span
+                                                className={cn(
+                                                  "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
+                                                  (isLocked || count === 0) &&
+                                                    "text-muted-foreground"
+                                                )}
+                                              >
+                                                {count}
+                                              </span>
+                                              <button
+                                                type="button"
+                                                className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                disabled={
+                                                  isLocked || count >= 99
+                                                }
+                                                onClick={() =>
+                                                  setComboLineCount(
+                                                    cid,
+                                                    formulaId,
+                                                    rx,
+                                                    Math.min(99, count + 1)
+                                                  )
+                                                }
+                                              >
+                                                <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                              </button>
+                                            </div>
+                                          );
+                                        })
+                                      ) : (
+                                        <div className="flex items-center">
+                                          {(() => {
+                                            const c =
+                                              comboLineMap.get(
+                                                `${cid}.${formulaId}.none`
+                                              )?.line.count ?? 0;
+                                            return (
+                                              <>
+                                                <button
+                                                  type="button"
+                                                  className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                  disabled={isLocked || c <= 0}
+                                                  onClick={() =>
+                                                    setComboLineCount(
+                                                      cid,
+                                                      formulaId,
+                                                      "none",
+                                                      Math.max(0, c - 1)
+                                                    )
+                                                  }
+                                                >
+                                                  <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                                </button>
+                                                <span
+                                                  className={cn(
+                                                    "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
+                                                    (isLocked || c === 0) &&
+                                                      "text-muted-foreground"
+                                                  )}
+                                                >
+                                                  {c}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                                  disabled={isLocked || c >= 99}
+                                                  onClick={() =>
+                                                    setComboLineCount(
+                                                      cid,
+                                                      formulaId,
+                                                      "none",
+                                                      Math.min(99, c + 1)
+                                                    )
+                                                  }
+                                                >
+                                                  <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                                </button>
+                                              </>
                                             );
                                           })()}
-                                      </div>
-                                    );
-                                  })()}
+                                        </div>
+                                      )}
+                                    </div>
+                                    {/* Expanded reaction config — rendered outside flex-wrap at full width */}
+                                    {expandedRx &&
+                                      expandedRx !== "none" &&
+                                      formulaEntry &&
+                                      charElement &&
+                                      (() => {
+                                        const expandedEntry = comboLineMap.get(
+                                          expandedLineKey!
+                                        );
+                                        const expandedCount =
+                                          expandedEntry?.line.count ?? 0;
+                                        // Use stored override, or synthesize one with the reaction type
+                                        // so per-part controls show even at count 0.
+                                        const expandedOverride: ReactionOverride =
+                                          expandedEntry?.line.reaction ?? {
+                                            reaction:
+                                              expandedRx as ReactionType,
+                                          };
+                                        return (
+                                          <div className="pt-1 pb-0.5">
+                                            <ReactionPartControls
+                                              formulaEntry={formulaEntry}
+                                              charId={cid}
+                                              reactionType={
+                                                expandedRx as ReactionType
+                                              }
+                                              reactionOverride={
+                                                expandedOverride
+                                              }
+                                              onReactionChange={(override) =>
+                                                onReactionChange(
+                                                  cid,
+                                                  formulaId,
+                                                  expandedRx,
+                                                  {
+                                                    ...override,
+                                                    reaction:
+                                                      expandedRx as ReactionType,
+                                                  }
+                                                )
+                                              }
+                                              disabled={expandedCount <= 0}
+                                            />
+                                          </div>
+                                        );
+                                      })()}
+                                  </div>
+                                );
+                              })()}
                             </div>
                           );
                         }

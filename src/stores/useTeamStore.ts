@@ -1,5 +1,11 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
-import type { ArtifactData, Element, ReactionType } from "@/data/types";
+import type {
+  ArtifactData,
+  Element,
+  MainStat,
+  ReactionType,
+  SubStat,
+} from "@/data/types";
 import type {
   ComboCountOverrides,
   MinErOverrides,
@@ -240,6 +246,12 @@ export interface WeaponRanking {
   refinement: number;
   damage: number;
   percentOfBest: number; // 0-100
+  /** Main stat choices for sands/goblet/circlet. */
+  mainStats?: { sands: MainStat; goblet: MainStat; circlet: MainStat };
+  /** Aggregated substat roll counts across all 5 artifact slots (number of rolls, not values). */
+  substatRolls?: Partial<Record<SubStat, number>>;
+  /** Artifact set IDs used (first set from flower). */
+  artifactSetIds?: string[];
 }
 
 export interface WeaponChoiceResult {
