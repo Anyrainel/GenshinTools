@@ -1,5 +1,9 @@
-import { applyJobResults } from "@/lib/artifact-manager/storeSync";
 import type { AccountData, ArtifactData } from "@/data/types";
+import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
+import {
+  applyJobResults,
+  replaceArtifactsFromSnapshot,
+} from "@/lib/artifact-manager/storeSync";
 import type {
   Instruction,
   InstructionResult,
@@ -20,10 +24,7 @@ function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   };
 }
 
-function makeInstruction(
-  id: string,
-  lock: boolean | null = true,
-): Instruction {
+function makeInstruction(id: string, lock: boolean | null = true): Instruction {
   return {
     id,
     target: {
@@ -40,7 +41,7 @@ function makeInstruction(
 
 function makeResult(
   id: string,
-  status: InstructionResult["status"] = "success",
+  status: InstructionResult["status"] = "success"
 ): InstructionResult {
   return { id, status };
 }
@@ -140,5 +141,143 @@ describe("applyJobResults", () => {
     expect(account.extraArtifacts[0].lock).toBe(false);
     // Updated has the new value
     expect(updated.extraArtifacts[0].lock).toBe(true);
+  });
+});
+
+function makeGOODArtifact(
+  overrides: Partial<IGOODArtifact> = {}
+): IGOODArtifact {
+  return {
+    setKey: "GladiatorsFinale",
+    slotKey: "flower",
+    level: 20,
+    rarity: 5,
+    mainStatKey: "hp",
+    location: "",
+    lock: true,
+    substats: [
+      { key: "critRate_", value: 3.9 },
+      { key: "critDMG_", value: 7.8 },
+    ],
+    ...overrides,
+  };
+}
+
+describe("replaceArtifactsFromSnapshot", () => {
+  it("converts GOOD artifacts to internal format and assigns to extraArtifacts", () => {
+    const account = makeAccount();
+    const snapshot = [makeGOODArtifact()];
+
+    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+
+    expect(updated.extraArtifacts).toHaveLength(1);
+    expect(updated.extraArtifacts[0].setKey).toBe("gladiators_finale");
+    expect(updated.extraArtifacts[0].slotKey).toBe("flower");
+    expect(updated.extraArtifacts[0].lock).toBe(true);
+    expect(updated.extraArtifacts[0].substats.cr).toBeDefined();
+    expect(updated.extraArtifacts[0].substats.cd).toBeDefined();
+  });
+
+  it("assigns artifacts to characters by location", () => {
+    const account = makeAccount({
+      characters: [
+        {
+          key: "raiden_shogun",
+          constellation: 0,
+          level: 90,
+          talent: { auto: 1, skill: 1, burst: 1 },
+          artifacts: {},
+        },
+      ],
+    });
+    const snapshot = [
+      makeGOODArtifact({ location: "RaidenShogun", slotKey: "flower" }),
+      makeGOODArtifact({ location: "", slotKey: "plume" }),
+    ];
+
+    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+
+    expect(updated.characters[0].artifacts.flower).toBeDefined();
+    expect(updated.characters[0].artifacts.flower!.setKey).toBe(
+      "gladiators_finale"
+    );
+    expect(updated.extraArtifacts).toHaveLength(1);
+    expect(updated.extraArtifacts[0].slotKey).toBe("plume");
+  });
+
+  it("clears old artifacts from characters before assigning new ones", () => {
+    const account = makeAccount({
+      characters: [
+        {
+          key: "raiden_shogun",
+          constellation: 0,
+          level: 90,
+          talent: { auto: 1, skill: 1, burst: 1 },
+          artifacts: {
+            flower: makeArtifact({ id: "old-flower" }),
+            plume: makeArtifact({ id: "old-plume", slotKey: "plume" }),
+          },
+        },
+      ],
+      extraArtifacts: [makeArtifact({ id: "old-extra" })],
+    });
+    // Snapshot only has one artifact for the character
+    const snapshot = [
+      makeGOODArtifact({
+        location: "RaidenShogun",
+        slotKey: "sands",
+        mainStatKey: "enerRech_",
+      }),
+    ];
+
+    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+
+    // Old artifacts should be gone, only new sands assigned
+    expect(updated.characters[0].artifacts.flower).toBeUndefined();
+    expect(updated.characters[0].artifacts.plume).toBeUndefined();
+    expect(updated.characters[0].artifacts.sands).toBeDefined();
+    expect(updated.extraArtifacts).toHaveLength(0);
+  });
+
+  it("preserves character and weapon data", () => {
+    const account = makeAccount({
+      characters: [
+        {
+          key: "raiden_shogun",
+          constellation: 2,
+          level: 90,
+          talent: { auto: 1, skill: 9, burst: 10 },
+          weapon: {
+            id: "w1",
+            key: "engulfing_lightning",
+            level: 90,
+            refinement: 1,
+          },
+          artifacts: {
+            flower: makeArtifact({ id: "old" }),
+          },
+        },
+      ],
+      extraWeapons: [{ id: "w2", key: "the_catch", level: 90, refinement: 5 }],
+    });
+
+    const updated = replaceArtifactsFromSnapshot(account, []);
+
+    expect(updated.characters[0].constellation).toBe(2);
+    expect(updated.characters[0].weapon?.key).toBe("engulfing_lightning");
+    expect(updated.extraWeapons).toHaveLength(1);
+  });
+
+  it("skips artifacts with unrecognized set keys", () => {
+    const account = makeAccount();
+    const snapshot = [
+      makeGOODArtifact({ setKey: "UnknownSetThatDoesNotExist" }),
+      makeGOODArtifact({ setKey: "EmblemOfSeveredFate" }),
+    ];
+
+    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+
+    expect(updated.extraArtifacts).toHaveLength(1);
+    expect(updated.extraArtifacts[0].setKey).toBe("emblem_of_severed_fate");
   });
 });

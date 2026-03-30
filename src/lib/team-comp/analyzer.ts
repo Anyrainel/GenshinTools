@@ -34,7 +34,10 @@ import type { OptionMap } from "./damageModels";
 import { StatSheet, TeamMeta } from "./damageModels";
 import type { GeneratorResult } from "./generator";
 import { runGenerator } from "./generator";
-import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "./substatBudget";
+import {
+  SUBSTAT_BUDGET_DEFAULT_PRESET,
+  type SubstatBudgetPreset,
+} from "./substatBudget";
 import type {
   CalcContext,
   ComboDescriptor,
@@ -154,17 +157,50 @@ export function comboLineKey(
   return `${formulaId}:${reaction.reaction}`;
 }
 
-/** Per-(charId, constellation) combo count overrides. Sparse — only non-default entries.
- *  Keyed by comboLineKey (formulaId or formulaId:reactionType). */
-export type ComboCountOverrides = Record<
-  string,
-  Record<number, Record<string, number>>
->;
-// charId → constellation → lineKey → count
+/** Flat sparse overrides for combo counts. Key = `charId|constellation|lineKey`. */
+export type ComboCountOverrides = Record<string, number>;
 
-/** Per-(charId, constellation) minEr overrides. Sparse — only non-default entries. */
-export type MinErOverrides = Record<string, Record<number, number>>;
-// charId → constellation → minEr (internal format, e.g. 1.6 = 160%)
+/** Flat sparse overrides for minEr. Key = `charId|constellation`. Value = internal format (e.g. 1.6 = 160%). */
+export type MinErOverrides = Record<string, number>;
+
+/** Build a flat key for combo count overrides. */
+export function comboOverrideKey(
+  charId: string,
+  constellation: number,
+  lineKey: string
+): string {
+  return `${charId}|${constellation}|${lineKey}`;
+}
+
+/** Build a flat key for minEr overrides. */
+export function minErOverrideKey(
+  charId: string,
+  constellation: number
+): string {
+  return `${charId}|${constellation}`;
+}
+
+/** Remove all entries for a given charId from a flat override record. */
+export function removeCharOverrides<T>(
+  overrides: Record<string, T>,
+  charId: string
+): Record<string, T> {
+  const prefix = `${charId}|`;
+  const result: Record<string, T> = {};
+  for (const [k, v] of Object.entries(overrides)) {
+    if (!k.startsWith(prefix)) result[k] = v;
+  }
+  return result;
+}
+
+/** Check if a flat override record has any entries for a given charId. */
+export function hasCharOverrides(
+  overrides: Record<string, unknown>,
+  charId: string
+): boolean {
+  const prefix = `${charId}|`;
+  return Object.keys(overrides).some((k) => k.startsWith(prefix));
+}
 
 export type AnalyzerOptions = {
   configs: AnalyzerCharConfig[];
@@ -178,6 +214,10 @@ export type AnalyzerOptions = {
   perChar?: Record<string, { minEr: number; minCr: number }>;
   /** Per-(charId, constellation) minEr overrides */
   minErOverrides?: MinErOverrides;
+  // Optional overrides for calc settings (defaults to hardcoded analyzer constants)
+  calcContext?: CalcContext;
+  rollMultiplier?: number;
+  substatBudget?: SubstatBudgetPreset;
 };
 
 // ─── Tier Snapshot IDs ───
@@ -548,8 +588,9 @@ export function deriveComboForAllocation(
     const constellation = allocation[charId]?.constellation ?? 0;
     const lk = comboLineKey(line.formulaId, line.reaction);
 
-    // Check user override (keyed by comboLineKey)
-    const overrideCount = comboOverrides?.[charId]?.[constellation]?.[lk];
+    // Check user override (flat key)
+    const overrideCount =
+      comboOverrides?.[comboOverrideKey(charId, constellation, lk)];
     if (overrideCount != null) {
       return { ...line, count: overrideCount };
     }
@@ -586,7 +627,9 @@ export function getEffectiveMinEr(
   minErOverrides?: MinErOverrides
 ): number {
   return (
-    minErOverrides?.[charId]?.[constellation] ?? perChar?.[charId]?.minEr ?? 1.0
+    minErOverrides?.[minErOverrideKey(charId, constellation)] ??
+    perChar?.[charId]?.minEr ??
+    1.0
   );
 }
 
@@ -763,7 +806,12 @@ async function runGeneration(
   combatOpts: OptionMap,
   enemyAura: Element | undefined,
   combo: ComboFormula,
-  perChar?: Record<string, { minEr: number; minCr: number }>
+  perChar?: Record<string, { minEr: number; minCr: number }>,
+  overrides?: {
+    calcContext?: CalcContext;
+    rollMultiplier?: number;
+    substatBudget?: SubstatBudgetPreset;
+  }
 ): Promise<Record<string, StatSheet>> {
   const configs = baseConfigs.map((bc) => {
     const inv = allocation[bc.charId];
@@ -777,12 +825,12 @@ async function runGeneration(
   for await (const result of runGenerator({
     teamBuild,
     carryCharId,
-    calcContext: ANALYZER_CALC_CONTEXT,
+    calcContext: overrides?.calcContext ?? ANALYZER_CALC_CONTEXT,
     formula: {
       combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
     },
-    rollMultiplier: ANALYZER_ROLL_MULT,
-    substatBudget: SUBSTAT_BUDGET_DEFAULT_PRESET,
+    rollMultiplier: overrides?.rollMultiplier ?? ANALYZER_ROLL_MULT,
+    substatBudget: overrides?.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET,
     perChar,
     ignoreArtifactSets: {},
   })) {
@@ -898,7 +946,12 @@ async function* computePhase1(
       combatOpts,
       enemyAura,
       derivedCombo,
-      effectivePerChar
+      effectivePerChar,
+      {
+        calcContext: opts.calcContext,
+        rollMultiplier: opts.rollMultiplier,
+        substatBudget: opts.substatBudget,
+      }
     );
 
     snapshotCache[snapshot.id] = result;
@@ -1044,7 +1097,7 @@ async function* computePhase2(
           combatOpts,
           enemyAura,
           activeCombo,
-          ANALYZER_CALC_CONTEXT,
+          opts.calcContext ?? ANALYZER_CALC_CONTEXT,
           charBuildCache,
           hasAnyStackLimited
         );
@@ -1203,7 +1256,7 @@ async function* computePhase3(
           combatOpts,
           enemyAura,
           activeCombo,
-          ANALYZER_CALC_CONTEXT,
+          opts.calcContext ?? ANALYZER_CALC_CONTEXT,
           charBuildCache,
           hasAnyStackLimited
         );

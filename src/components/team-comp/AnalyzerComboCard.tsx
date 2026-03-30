@@ -40,6 +40,7 @@ interface AnalyzerComboCardProps {
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
+  reactionOverrides: Record<string, ReactionOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
   onReactionChange: (stableKey: string, override: ReactionOverride) => void;
@@ -60,6 +61,7 @@ export function AnalyzerComboCard({
   templateCombo,
   comboOverrides,
   minErOverrides,
+  reactionOverrides,
   onComboOverridesChange,
   onMinErOverridesChange,
   onReactionChange,
@@ -91,7 +93,7 @@ export function AnalyzerComboCard({
         </CardHeader>
         <CollapsibleContent>
           <CardContent className={CARD_BODY_CLS}>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 items-center">
               {/* Environment settings */}
               <div className="flex items-center">
                 <ExtraBuffsPanel
@@ -110,6 +112,7 @@ export function AnalyzerComboCard({
                 templateCombo={templateCombo}
                 comboOverrides={comboOverrides}
                 minErOverrides={minErOverrides}
+                reactionOverrides={reactionOverrides}
                 onComboOverridesChange={onComboOverridesChange}
                 onMinErOverridesChange={onMinErOverridesChange}
                 onReactionChange={onReactionChange}

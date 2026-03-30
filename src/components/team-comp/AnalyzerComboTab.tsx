@@ -7,7 +7,13 @@ import type {
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer";
-import { comboLineKey } from "@/lib/team-comp/analyzer";
+import {
+  comboLineKey,
+  comboOverrideKey,
+  hasCharOverrides,
+  minErOverrideKey,
+  removeCharOverrides,
+} from "@/lib/team-comp/analyzer";
 import { getFormulaReactions } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { FormulaEntry } from "@/lib/team-comp/damageModels";
@@ -34,6 +40,8 @@ interface AnalyzerComboTabProps {
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
+  /** Stored reaction overrides keyed by "charId.formulaId" — read directly for config panels. */
+  reactionOverrides: Record<string, ReactionOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
   onReactionChange: (stableKey: string, override: ReactionOverride) => void;
@@ -46,12 +54,13 @@ export function AnalyzerComboTab({
   templateCombo,
   comboOverrides,
   minErOverrides,
+  reactionOverrides,
   onComboOverridesChange,
   onMinErOverridesChange,
   onReactionChange,
 }: AnalyzerComboTabProps) {
   return (
-    <div className="flex flex-col gap-1.5 lg:gap-2">
+    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 lg:gap-x-5 lg:gap-y-3">
       {charConfigs.map((cfg) => {
         const bc = baseConfigs.find((b) => b.charId === cfg.charId);
         if (!bc) return null;
@@ -64,6 +73,7 @@ export function AnalyzerComboTab({
             templateCombo={templateCombo}
             comboOverrides={comboOverrides}
             minErOverrides={minErOverrides}
+            reactionOverrides={reactionOverrides}
             onComboOverridesChange={onComboOverridesChange}
             onMinErOverridesChange={onMinErOverridesChange}
             onReactionChange={onReactionChange}
@@ -109,6 +119,7 @@ function CharComboRow({
   templateCombo,
   comboOverrides,
   minErOverrides,
+  reactionOverrides,
   onComboOverridesChange,
   onMinErOverridesChange,
   onReactionChange,
@@ -119,25 +130,25 @@ function CharComboRow({
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
+  reactionOverrides: Record<string, ReactionOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
   onReactionChange: (stableKey: string, override: ReactionOverride) => void;
 }) {
   const { t } = useLanguage();
   const char = charactersById[charId];
-  const comboOverridesRef = useRef(comboOverrides);
-  comboOverridesRef.current = comboOverrides;
-  const minErOverridesRef = useRef(minErOverrides);
-  minErOverridesRef.current = minErOverrides;
+  const comboRef = useRef(comboOverrides);
+  comboRef.current = comboOverrides;
+  const minErRef = useRef(minErOverrides);
+  minErRef.current = minErOverrides;
 
   const startC = config.startConstellation;
   const maxC = config.maxConstellation;
   const constellations = useMemo(() => {
-    if (config.rarity >= 5) return [0, 1, 2, 3, 4, 5, 6];
     const cols: number[] = [];
     for (let c = startC; c <= maxC; c++) cols.push(c);
     return cols;
-  }, [config.rarity, startC, maxC]);
+  }, [startC, maxC]);
 
   const descriptor = teamBuild.getComboDescriptor(charId);
   const allFormulas = teamBuild.getAllFormulaIds()[charId] ?? {};
@@ -210,9 +221,6 @@ function CharComboRow({
           reactionType: rx,
           getDefault: (c: number) => {
             const desc = descriptorCounts[c]?.[entry.id] ?? 0;
-            if (reactions.length <= 1) return desc;
-            if (templateTotal > 0)
-              return Math.round((tmplCount / templateTotal) * desc);
             return rx === "none" ? desc : 0;
           },
           reaction: isReaction
@@ -241,10 +249,10 @@ function CharComboRow({
     teamBuild,
   ]);
 
-  // ─── Effective count at a constellation (override or default) ───
+  // ─── Effective count (override or default) ───
   const effectiveCount = useCallback(
     (v: Variant, c: number) =>
-      comboOverrides[charId]?.[c]?.[v.lineKey] ?? v.getDefault(c),
+      comboOverrides[comboOverrideKey(charId, c, v.lineKey)] ?? v.getDefault(c),
     [comboOverrides, charId]
   );
 
@@ -257,8 +265,9 @@ function CharComboRow({
       value: number | undefined,
       getDefault: (c: number) => number
     ) => {
-      const prev = comboOverridesRef.current;
-      const eff = (c: number) => prev[charId]?.[c]?.[lineKey] ?? getDefault(c);
+      const prev = comboRef.current;
+      const eff = (c: number) =>
+        prev[comboOverrideKey(charId, c, lineKey)] ?? getDefault(c);
       const oldValue = eff(constellation);
 
       // Cascade: update higher constellations that share the same old value
@@ -269,31 +278,13 @@ function CharComboRow({
         targets.push(c);
       }
 
-      let next = { ...prev };
+      const next = { ...prev };
       for (const c of targets) {
-        const newVal = value == null ? undefined : value;
-        if (newVal == null || newVal === getDefault(c)) {
-          // Clear override
-          if (next[charId]?.[c]?.[lineKey] != null) {
-            const { [lineKey]: _, ...rest } = next[charId][c];
-            if (Object.keys(rest).length > 0) {
-              next = { ...next, [charId]: { ...next[charId], [c]: rest } };
-            } else {
-              const { [c]: __, ...restC } = next[charId];
-              next =
-                Object.keys(restC).length > 0
-                  ? { ...next, [charId]: restC }
-                  : (({ [charId]: ___, ...r }) => r)(next);
-            }
-          }
+        const key = comboOverrideKey(charId, c, lineKey);
+        if (value == null || value === getDefault(c)) {
+          delete next[key];
         } else {
-          next = {
-            ...next,
-            [charId]: {
-              ...next[charId],
-              [c]: { ...next[charId]?.[c], [lineKey]: newVal },
-            },
-          };
+          next[key] = value;
         }
       }
       onComboOverridesChange(next);
@@ -303,42 +294,30 @@ function CharComboRow({
 
   const handleMinErChange = useCallback(
     (constellation: number, value: number | undefined) => {
-      const prev = minErOverridesRef.current;
+      const prev = minErRef.current;
+      const key = minErOverrideKey(charId, constellation);
+      const next = { ...prev };
       if (value == null) {
-        if (!prev[charId]) return;
-        const { [constellation]: _, ...rest } = prev[charId];
-        onMinErOverridesChange(
-          Object.keys(rest).length > 0
-            ? { ...prev, [charId]: rest }
-            : (({ [charId]: __, ...r }) => r)(prev)
-        );
+        delete next[key];
       } else {
-        onMinErOverridesChange({
-          ...prev,
-          [charId]: { ...prev[charId], [constellation]: value },
-        });
+        next[key] = value;
       }
+      onMinErOverridesChange(next);
     },
     [charId, onMinErOverridesChange]
   );
 
   const handleReset = useCallback(() => {
-    const { [charId]: _, ...restCombo } = comboOverridesRef.current;
-    onComboOverridesChange(restCombo);
-    const { [charId]: __, ...restMinEr } = minErOverridesRef.current;
-    onMinErOverridesChange(restMinEr);
+    onComboOverridesChange(removeCharOverrides(comboRef.current, charId));
+    onMinErOverridesChange(removeCharOverrides(minErRef.current, charId));
   }, [charId, onComboOverridesChange, onMinErOverridesChange]);
 
-  const hasOverrides = useMemo(() => {
-    return (
-      (comboOverrides[charId] &&
-        Object.keys(comboOverrides[charId]).length > 0) ||
-      (minErOverrides[charId] && Object.keys(minErOverrides[charId]).length > 0)
-    );
-  }, [comboOverrides, minErOverrides, charId]);
+  const hasOverrides =
+    hasCharOverrides(comboOverrides, charId) ||
+    hasCharOverrides(minErOverrides, charId);
 
-  // ─── Collect reaction variants that need config panels ───
-  // A non-direct variant needs a config panel if it has >0 count in any constellation.
+  // ─── Reaction config panels ───
+  // Show for non-direct variants with >0 count in any active constellation.
   const reactionPanels = useMemo(() => {
     const panels: {
       formulaId: string;
@@ -374,7 +353,7 @@ function CharComboRow({
 
   // ─── Render ───
   return (
-    <div className="flex flex-col rounded-lg bg-black/10 border border-border/30 p-1.5 gap-1.5 xl:p-2">
+    <div className="flex flex-col rounded-lg bg-black/10 border border-sky-600/50 p-1.5 gap-1.5 xl:p-2">
       {/* Header */}
       <div className="flex items-center gap-1.5">
         {char && (
@@ -400,10 +379,10 @@ function CharComboRow({
         )}
       </div>
 
-      {/* Table + config panels side by side */}
-      <div className="flex flex-wrap items-start gap-2">
+      {/* Table + config panels: side by side at lg+, stacked below md */}
+      <div className="flex flex-col lg:flex-row items-start gap-2">
         {/* Count table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto shrink-0">
           <table className="text-xs border-collapse">
             <thead>
               <tr>
@@ -425,17 +404,7 @@ function CharComboRow({
                   {t.ui("teamComp.analyzerMinEr")}
                 </td>
                 {constellations.map((c) => {
-                  if (c < startC || c > maxC) {
-                    return (
-                      <td
-                        key={c}
-                        className="text-center px-1 py-0.5 text-muted-foreground border border-border"
-                      >
-                        —
-                      </td>
-                    );
-                  }
-                  const override = minErOverrides[charId]?.[c];
+                  const override = minErOverrides[minErOverrideKey(charId, c)];
                   const display =
                     override != null ? Math.round(override * 100) : baseErPct;
                   return (
@@ -481,7 +450,7 @@ function CharComboRow({
                     )}
                   </td>
                   {constellations.map((c) => {
-                    if (c < startC || c > maxC || c < row.minC) {
+                    if (c < row.minC) {
                       return (
                         <td
                           key={c}
@@ -541,29 +510,35 @@ function CharComboRow({
 
         {/* Reaction config panels */}
         {reactionPanels.length > 0 && (
-          <div className="flex flex-col gap-1.5 shrink-0">
-            {reactionPanels.map(({ formulaId, label, variant: v }) => (
-              <div
-                key={`${charId}.${formulaId}.${v.reactionType}`}
-                className="rounded border border-border bg-black/5 px-2 py-1.5 text-xs"
-              >
-                <div className="font-medium mb-1">
-                  {label ? t.resolveLabel(label) : formulaId}{" "}
-                  <span className="text-muted-foreground">
-                    [{t.reaction(v.reactionType)}]
-                  </span>
+          <div className="flex flex-wrap gap-1.5">
+            {reactionPanels.map(({ formulaId, label, variant: v }) => {
+              const stableKey = `${charId}.${formulaId}`;
+              const storedOverride = reactionOverrides[stableKey] ?? {
+                reaction: v.reactionType,
+              };
+              return (
+                <div
+                  key={`${stableKey}.${v.reactionType}`}
+                  className="rounded border border-border bg-black/5 px-2 py-1.5 text-xs"
+                >
+                  <div className="font-medium mb-1">
+                    {label ? t.resolveLabel(label) : formulaId}{" "}
+                    <span className="text-muted-foreground">
+                      [{t.reaction(v.reactionType)}]
+                    </span>
+                  </div>
+                  <ReactionPartControls
+                    formulaEntry={v.formulaEntry!}
+                    charId={charId}
+                    reactionType={v.reactionType}
+                    reactionOverride={storedOverride}
+                    onReactionChange={(override) =>
+                      onReactionChange(stableKey, override)
+                    }
+                  />
                 </div>
-                <ReactionPartControls
-                  formulaEntry={v.formulaEntry!}
-                  charId={charId}
-                  reactionType={v.reactionType}
-                  reactionOverride={v.reaction ?? {}}
-                  onReactionChange={(override) =>
-                    onReactionChange(`${charId}.${formulaId}`, override)
-                  }
-                />
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

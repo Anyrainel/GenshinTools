@@ -169,8 +169,21 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   // 3-tier icon sizing matching TeamRosterCard
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const isNarrow = useMediaQuery("(max-width: 559px)");
-  const charIconSize: ItemIconSize = isNarrow ? "sm" : isMobile ? "md" : "xl";
-  const subIconSize: ItemIconSize = isNarrow ? "xs" : isMobile ? "sm" : "lg";
+  const isLg = useMediaQuery("(max-width: 1279px)");
+  const charIconSize: ItemIconSize = isNarrow
+    ? "xs"
+    : isMobile
+      ? "xl"
+      : isLg
+        ? "md"
+        : "xl";
+  const subIconSize: ItemIconSize = isNarrow
+    ? "xs"
+    : isMobile
+      ? "lg"
+      : isLg
+        ? "sm"
+        : "lg";
 
   // ── Analyzer-specific environment settings (independent from DamageView) ──
   const localEnemyAura = team.analyzerEnemyAura;
@@ -543,6 +556,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
           templateCombo={effectiveCombo}
           comboOverrides={comboOverrides}
           minErOverrides={minErOverrides}
+          reactionOverrides={reactionOverrides}
           onComboOverridesChange={setComboOverrides}
           onMinErOverridesChange={setMinErOverrides}
           onReactionChange={handleReactionChange}

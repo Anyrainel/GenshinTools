@@ -65,6 +65,11 @@ export function ReactionPartControls({
 
   const isMultiElement = MULTI_ELEMENT_CHARS.has(charId);
   const singlePart = formulaEntry.parts.length <= 1;
+  const mixedElements =
+    formulaEntry.parts.length > 1 &&
+    !formulaEntry.parts.every(
+      (p) => p.formula.tag.element === formulaEntry.parts[0].formula.tag.element
+    );
 
   function handlePartToggle(partIndex: number, checked: boolean) {
     const newPartReactions = { ...reactionOverride.partReactions };
@@ -154,6 +159,7 @@ export function ReactionPartControls({
               )}
             >
               <span className="font-semibold">
+                {mixedElements && `${t.element(part.formula.tag.element)} `}
                 {t.ability(part.formula.tag.ability)}:
               </span>{" "}
               <span className="font-mono tabular-nums">

@@ -3,6 +3,7 @@ import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { InvestmentDetail } from "@/components/team-comp/InvestmentDetail";
 import { TeamCard } from "@/components/team-comp/TeamCard";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, elementResourcesByName } from "@/data/constants";
@@ -18,8 +19,9 @@ import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { ArrowUpDown, Bookmark, Search } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { TrendingUp } from "lucide-react";
+import { ArrowUpDown, Bookmark, Plus, Search } from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 const EMPTY_SET = new Set<string>();
 
@@ -35,6 +37,7 @@ export function InvestmentView() {
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const teams = useTeamStore((state) => state.teams);
+  const addTeam = useTeamStore((state) => state.addTeam);
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const activeInvestmentTeamId = useSessionNavStore(
     (s) => s.activeInvestmentTeamId
@@ -233,6 +236,19 @@ export function InvestmentView() {
   // Displayable regions (exclude "None")
   const displayRegions = useMemo(() => regions.filter((r) => r !== "None"), []);
 
+  const investmentLabel = t.ui("teamComp.tabInvestment");
+
+  const handleAddTeam = useCallback(
+    (position: "start" | "end") => {
+      addTeam(position);
+      scrollRef.current?.scrollTo({
+        top: position === "start" ? 0 : scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    },
+    [addTeam]
+  );
+
   // ── Detail view (when a team is selected) ──
   if (activeInvestmentTeamId) {
     const team = teams.find((tm) => tm.id === activeInvestmentTeamId);
@@ -337,6 +353,32 @@ export function InvestmentView() {
             >
               {t.ui("teamComp.sortByRelease")}
             </CategoryChip>
+
+            <div className="flex-1" />
+
+            {/* New team buttons */}
+            <div className="flex items-center gap-1 2xl:gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-sm leading-none h-8"
+                onClick={() => handleAddTeam("start")}
+              >
+                <Plus className="w-3 h-3" />
+                <span>{t.ui("teamComp.newTeamStart")}</span>
+                <span className="text-muted-foreground">↑</span>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="gap-1.5 text-sm leading-none h-8"
+                onClick={() => handleAddTeam("end")}
+              >
+                <Plus className="w-3 h-3" />
+                <span>{t.ui("teamComp.newTeamEnd")}</span>
+                <span className="opacity-60">↓</span>
+              </Button>
+            </div>
           </div>
         </div>
       }
@@ -367,6 +409,9 @@ export function InvestmentView() {
                   index={realIndex}
                   onUpdate={(patch) => updateTeam(team.id, patch)}
                   onSelect={() => setActiveInvestmentTeamId(team.id)}
+                  selectLabel={investmentLabel}
+                  selectIcon={TrendingUp}
+                  selectClassName="border-amber-600/50 bg-amber-700/40 text-amber-300 hover:bg-amber-700/60 hover:text-amber-200"
                   accountData={accountData}
                   allUnowned={allUnowned}
                   frozenCharIds={EMPTY_SET}

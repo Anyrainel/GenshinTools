@@ -44,8 +44,8 @@ export function AnalyzerChart({ result, charIds }: AnalyzerChartProps) {
   const fmtR = (n: number) => t.format("common.refinementFormat", n);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="w-full min-w-[500px] h-[280px]">
+    <div className="overflow-x-auto px-1">
+      <div className="w-full min-w-[480px] h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}

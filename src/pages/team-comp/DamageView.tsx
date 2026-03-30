@@ -6,13 +6,6 @@ import { TeamCard } from "@/components/team-comp/TeamCard";
 import { TeamOptDetail } from "@/components/team-comp/TeamOptDetail";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, elementResourcesByName } from "@/data/constants";
@@ -26,7 +19,6 @@ import { fuzzyMatch } from "@/lib/search";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import type { ArtifactReuseMode } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -35,7 +27,6 @@ import {
   ArrowUpDown,
   Bookmark,
   Download,
-  Flame,
   Plus,
   Search,
   Swords,
@@ -72,9 +63,6 @@ export function DamageView({ importRef }: DamageViewProps) {
   // Use targeted selectors — subscribing to the full store caused every
   // freeze mutation to re-render the entire page + recalculate filteredTeams.
   const frozenTeams = useFreezeStore((s) => s.frozenTeams);
-  const reuseMode = useFreezeStore((s) => s.reuseMode);
-  const setReuseMode = useFreezeStore((s) => s.setReuseMode);
-  const clearAllFrozen = useFreezeStore((s) => s.clearAll);
   const unfreezeTeam = useFreezeStore((s) => s.unfreezeTeam);
   const isFrozen = useFreezeStore((s) => s.isFrozen);
   const getFrozenCharIds = useFreezeStore((s) => s.getFrozenCharIds);
@@ -464,44 +452,6 @@ export function DamageView({ importRef }: DamageViewProps) {
               >
                 {t.ui("teamComp.sortByRelease")}
               </CategoryChip>
-
-              <div className="flex-1" />
-
-              {/* Center: Freeze controls */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs md:text-sm text-foreground/80 whitespace-nowrap">
-                  {t.ui("teamComp.reuseLabel")}
-                </span>
-                <Select
-                  value={reuseMode}
-                  onValueChange={(v) => setReuseMode(v as ArtifactReuseMode)}
-                >
-                  <SelectTrigger className="w-auto text-xs h-7 md:h-8 gap-1 px-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">
-                      {t.ui("teamComp.reuseNone")}
-                    </SelectItem>
-                    <SelectItem value="sameChar">
-                      {t.ui("teamComp.reuseSameChar")}
-                    </SelectItem>
-                    <SelectItem value="forceReuse">
-                      {t.ui("teamComp.reuseForce")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10 disabled:opacity-40 disabled:pointer-events-none"
-                onClick={() => clearAllFrozen()}
-                disabled={Object.keys(frozenTeams).length === 0}
-              >
-                <Flame className="w-3 h-3" />
-                <span>{t.ui("teamComp.unfreezeAll")}</span>
-              </Button>
 
               <div className="flex-1" />
 

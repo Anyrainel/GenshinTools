@@ -183,6 +183,7 @@ export function migrateTeamStore(
   }
   if (version < 10) {
     // v10: Add optional analyzerComboOverrides and analyzerMinErOverrides fields.
+    // Flat sparse records: key = "charId|constellation|lineKey" (combo) or "charId|constellation" (minEr).
     // No transformation needed — fields are optional and default to undefined.
   }
   if (version < 11) {
@@ -275,9 +276,9 @@ export interface Team {
   enemyAura?: Element;
   /** Per-character analyzer configs (alt weapon, start/max C/R). Roster weapon is derived at runtime. */
   analyzerConfigs?: StoredAnalyzerCharConfig[];
-  /** Per-(charId, constellation) combo count overrides for the analyzer. */
+  /** Flat sparse combo count overrides. Key = "charId|constellation|lineKey". */
   analyzerComboOverrides?: ComboCountOverrides;
-  /** Per-(charId, constellation) minEr overrides for the analyzer. */
+  /** Flat sparse minEr overrides. Key = "charId|constellation". Value in internal format (1.6 = 160%). */
   analyzerMinErOverrides?: MinErOverrides;
   /** Per-formula reaction overrides for the analyzer (keyed by charId.formulaId). Independent from DamageView combos. */
   analyzerReactionOverrides?: Record<string, ReactionOverride>;

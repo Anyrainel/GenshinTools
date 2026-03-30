@@ -443,11 +443,11 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
 
             {/* Grid of standalone frozen artifacts */}
             {displayStandaloneArtifacts.length > 0 && (
-              <div className="p-3 flex flex-wrap gap-3">
+              <div className="px-2 py-1 md:px-3 md:py-2 flex flex-wrap gap-3">
                 {displayStandaloneArtifacts.map(({ art, slot, isFrozen }) => (
                   <div
                     key={art.id}
-                    className="flex flex-col items-center gap-1.5"
+                    className="flex flex-col items-center gap-2"
                   >
                     <ArtifactDataHoverCard
                       artifact={art}

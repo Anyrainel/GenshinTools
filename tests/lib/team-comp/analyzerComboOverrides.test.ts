@@ -4,8 +4,10 @@ import {
   type TeamInvestment,
   buildEffectivePerChar,
   comboLineKey,
+  comboOverrideKey,
   deriveComboForAllocation,
   getEffectiveMinEr,
+  minErOverrideKey,
 } from "@/lib/team-comp/analyzer";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type {
@@ -71,6 +73,22 @@ describe("comboLineKey", () => {
       "burst:vaporize"
     );
     expect(comboLineKey("skill", { reaction: "melt" })).toBe("skill:melt");
+  });
+});
+
+// ─── comboOverrideKey / minErOverrideKey ───
+
+describe("override key builders", () => {
+  it("comboOverrideKey builds flat key", () => {
+    expect(comboOverrideKey("charA", 0, "burst")).toBe("charA|0|burst");
+    expect(comboOverrideKey("charA", 2, "burst:vaporize")).toBe(
+      "charA|2|burst:vaporize"
+    );
+  });
+
+  it("minErOverrideKey builds flat key", () => {
+    expect(minErOverrideKey("charA", 0)).toBe("charA|0");
+    expect(minErOverrideKey("charB", 6)).toBe("charB|6");
   });
 });
 
@@ -148,7 +166,7 @@ describe("deriveComboForAllocation", () => {
     ]);
     const allocation = makeAllocation({ charA: { constellation: 0 } });
     const overrides: ComboCountOverrides = {
-      charA: { 0: { burst: 99 } },
+      [comboOverrideKey("charA", 0, "burst")]: 99,
     };
 
     const result = deriveComboForAllocation(
@@ -171,7 +189,7 @@ describe("deriveComboForAllocation", () => {
     const combo = makeCombo([makeLine("charA", "burst", 5)]);
     const allocation = makeAllocation({ charA: { constellation: 0 } });
     const overrides: ComboCountOverrides = {
-      charA: { 0: { burst: 0 } },
+      [comboOverrideKey("charA", 0, "burst")]: 0,
     };
 
     const result = deriveComboForAllocation(
@@ -190,10 +208,8 @@ describe("deriveComboForAllocation", () => {
     });
     const combo = makeCombo([makeLine("charA", "burst", 3)]);
     const overrides: ComboCountOverrides = {
-      charA: {
-        0: { burst: 1 },
-        2: { burst: 10 },
-      },
+      [comboOverrideKey("charA", 0, "burst")]: 1,
+      [comboOverrideKey("charA", 2, "burst")]: 10,
     };
 
     // C0 → override = 1
@@ -233,11 +249,7 @@ describe("deriveComboForAllocation", () => {
       makeLine("charA", "burst", 3), // direct (no reaction)
     ]);
     const overrides: ComboCountOverrides = {
-      charA: {
-        0: {
-          "burst:vaporize": 8, // override only the vaporize line
-        },
-      },
+      [comboOverrideKey("charA", 0, "burst:vaporize")]: 8,
     };
     const allocation = makeAllocation({ charA: { constellation: 0 } });
 
@@ -282,7 +294,7 @@ describe("deriveComboForAllocation", () => {
       makeLine("charB", "skill", 4),
     ]);
     const overrides: ComboCountOverrides = {
-      charB: { 0: { skill: 2 } },
+      [comboOverrideKey("charB", 0, "skill")]: 2,
     };
     const allocation = makeAllocation({
       charA: { constellation: 0 },
@@ -313,12 +325,8 @@ describe("deriveComboForAllocation", () => {
     ]);
     // Grid stores per-variant overrides using comboLineKey
     const overrides: ComboCountOverrides = {
-      charA: {
-        0: {
-          "burst:vaporize": 5, // override vaporize variant
-          burst: 8, // override direct variant (lineKey = formulaId)
-        },
-      },
+      [comboOverrideKey("charA", 0, "burst:vaporize")]: 5,
+      [comboOverrideKey("charA", 0, "burst")]: 8,
     };
     const allocation = makeAllocation({ charA: { constellation: 0 } });
 
@@ -365,13 +373,18 @@ describe("getEffectiveMinEr", () => {
 
   it("per-constellation override takes priority over perChar", () => {
     const perChar = { charA: { minEr: 1.4, minCr: 0 } };
-    const overrides: MinErOverrides = { charA: { 0: 1.8 } };
+    const overrides: MinErOverrides = {
+      [minErOverrideKey("charA", 0)]: 1.8,
+    };
     expect(getEffectiveMinEr("charA", 0, perChar, overrides)).toBe(1.8);
   });
 
   it("different constellations can have different overrides", () => {
     const perChar = { charA: { minEr: 1.3, minCr: 0 } };
-    const overrides: MinErOverrides = { charA: { 0: 1.6, 2: 1.2 } };
+    const overrides: MinErOverrides = {
+      [minErOverrideKey("charA", 0)]: 1.6,
+      [minErOverrideKey("charA", 2)]: 1.2,
+    };
 
     expect(getEffectiveMinEr("charA", 0, perChar, overrides)).toBe(1.6);
     expect(getEffectiveMinEr("charA", 1, perChar, overrides)).toBe(1.3); // no override at C1
@@ -396,7 +409,7 @@ describe("buildEffectivePerChar", () => {
       charB: { minEr: 1.4, minCr: 0.3 },
     };
     const overrides: MinErOverrides = {
-      charA: { 2: 1.0 },
+      [minErOverrideKey("charA", 2)]: 1.0,
     };
     const allocation = makeAllocation({
       charA: { constellation: 2 },
@@ -414,7 +427,9 @@ describe("buildEffectivePerChar", () => {
   });
 
   it("returns 1.0 default for characters missing from perChar", () => {
-    const overrides: MinErOverrides = { charA: { 0: 1.5 } };
+    const overrides: MinErOverrides = {
+      [minErOverrideKey("charA", 0)]: 1.5,
+    };
     const allocation = makeAllocation({ charA: { constellation: 0 } });
 
     const result = buildEffectivePerChar(allocation, undefined, overrides)!;

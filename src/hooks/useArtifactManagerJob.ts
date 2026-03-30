@@ -1,10 +1,14 @@
 import {
   ArtifactManagerError,
+  fetchArtifacts,
   getResult,
   pollStatus,
   submitJob,
 } from "@/lib/artifact-manager/client";
-import { applyJobResults } from "@/lib/artifact-manager/storeSync";
+import {
+  applyJobResults,
+  replaceArtifactsFromSnapshot,
+} from "@/lib/artifact-manager/storeSync";
 import type { Instruction, ResultResponse } from "@/lib/artifact-manager/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -63,11 +67,24 @@ export function useArtifactManagerJob(port = 8765) {
           // Sync results to the account store
           const account = getActiveAccount(useAccountStore.getState());
           if (account) {
-            const updated = applyJobResults(
+            let updated = applyJobResults(
               account.data,
               instructionsRef.current,
               result.results
             );
+
+            // If no aborted items, the server did a full scan — fetch snapshot
+            if (result.summary.aborted === 0) {
+              try {
+                const snapshot = await fetchArtifacts(port);
+                if (snapshot && mountedRef.current) {
+                  updated = replaceArtifactsFromSnapshot(updated, snapshot);
+                }
+              } catch {
+                // Snapshot fetch failed — lock sync already applied above
+              }
+            }
+
             useAccountStore.getState().addOrUpdateAccount(account.id, {
               data: updated,
             });

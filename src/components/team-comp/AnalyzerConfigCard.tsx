@@ -94,7 +94,7 @@ export function AnalyzerConfigCard({
   return (
     <Card className={CARD_CLS}>
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
-        <span className={CARD_TITLE_CLS}>{t.ui("teamComp.analyzer")}</span>
+        <span className={CARD_TITLE_CLS}>{t.ui("teamComp.teamRoster")}</span>
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
@@ -204,10 +204,20 @@ function CharConfigGroup({
     return null;
   }, [baseConfig.artifactSetId, baseConfig.artifactHalfSetIds]);
 
+  const SIZE_TO_W: Record<string, string> = {
+    xs: "w-10",
+    sm: "w-12",
+    md: "w-14",
+    lg: "w-16",
+    xl: "w-20",
+  };
+  const charW = SIZE_TO_W[charIconSize] ?? "w-12";
+  const subW = SIZE_TO_W[subIconSize] ?? "w-10";
+
   return (
     <>
-      {/* Row 1: Icons — char + artifact + 3/4★ weapon + 5★ weapon */}
-      <div className="flex items-end gap-0.5 md:gap-1.5">
+      {/* Row 1: Icons — flat flex, uniform gaps */}
+      <div className="flex items-end gap-0.5 md:gap-1.5 lg:gap-0.5 2xl:gap-1.5">
         {char ? (
           <Tooltip disableHoverableContent>
             <TooltipTrigger asChild>
@@ -291,10 +301,34 @@ function CharConfigGroup({
           />
         )}
       </div>
-      {/* Row 2: Character name */}
-      <span className="font-bold text-foreground/90 truncate min-w-0 text-xs md:text-base lg:text-sm xl:text-base">
-        {t.character(config.charId)}
-      </span>
+      {/* Row 2: Name + labels, widths matching icon sizes */}
+      <div className="flex items-baseline gap-0.5 md:gap-1.5 lg:gap-0.5 2xl:gap-1.5">
+        <span
+          className={cn(
+            "shrink-0 font-bold text-foreground/90 whitespace-nowrap text-sm md:text-base lg:text-sm xl:text-base ml-2 xl:ml-3",
+            charW
+          )}
+        >
+          {t.character(config.charId)}
+        </span>
+        <span className={cn("shrink-0", subW)} />
+        <span
+          className={cn(
+            "shrink-0 text-center text-xs xl:text-sm font-bold text-foreground",
+            subW
+          )}
+        >
+          3/4★
+        </span>
+        <span
+          className={cn(
+            "shrink-0 text-center text-xs xl:text-sm font-bold text-foreground",
+            subW
+          )}
+        >
+          5★
+        </span>
+      </div>
     </>
   );
 }
@@ -336,12 +370,12 @@ function CharStartSelectors({
   if (!hasAnySelector) return null;
 
   return (
-    <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 lg:px-2 lg:py-1 w-full">
-      <div className="flex items-center gap-1">
-        <span className="text-[10px] md:text-xs lg:text-[11px] 2xl:text-xs font-bold text-foreground/70 whitespace-nowrap shrink-0">
+    <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 md:px-2 md:py-1 lg:px-1 lg:py-0.5 xl:px-2 xl:py-1 w-full">
+      <div className="flex items-center justify-center gap-1">
+        <span className="text-[10px] md:text-sm lg:text-xs xl:text-sm font-bold text-foreground/70 whitespace-nowrap shrink-0">
           {t.ui("teamComp.analyzerMinConfig")}
         </span>
-        <div className="flex items-center gap-1 flex-1 justify-end">
+        <div className="flex items-center gap-1">
           {is5Star && (
             <LightweightSelect
               value={String(config.startConstellation)}
@@ -349,7 +383,7 @@ function CharStartSelectors({
                 onUpdateStart(config.charId, "startConstellation", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-full bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -368,7 +402,7 @@ function CharStartSelectors({
                 onUpdateStart(config.charId, "startRefinement", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-full bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -407,12 +441,12 @@ function CharMaxSelectors({
   if (!hasAnySelector) return null;
 
   return (
-    <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 lg:px-2 lg:py-1 w-full">
-      <div className="flex items-center gap-1">
-        <span className="text-[10px] md:text-xs lg:text-[11px] 2xl:text-xs font-bold text-foreground/70 whitespace-nowrap shrink-0">
+    <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 md:px-2 md:py-1 lg:px-1 lg:py-0.5 xl:px-2 xl:py-1 w-full">
+      <div className="flex items-center justify-center gap-1">
+        <span className="text-[10px] md:text-sm lg:text-xs xl:text-sm font-bold text-foreground/70 whitespace-nowrap shrink-0">
           {t.ui("teamComp.analyzerMaxConfig")}
         </span>
-        <div className="flex items-center gap-1 flex-1 justify-end">
+        <div className="flex items-center gap-1">
           {is5Star && (
             <LightweightSelect
               value={String(config.maxConstellation)}
@@ -420,7 +454,7 @@ function CharMaxSelectors({
                 onUpdateMax(config.charId, "maxConstellation", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-full bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -439,7 +473,7 @@ function CharMaxSelectors({
                 onUpdateMax(config.charId, "maxRefinement", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-full bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>

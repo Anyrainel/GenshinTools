@@ -1425,8 +1425,6 @@ class Eula extends CharacterBase {
   })();
 }
 
-// ─── Varka ───────────────────────────────────────────────────
-
 @RegisterCharacter("varka")
 class Varka extends CharacterBase {
   /** Priority element from team: Pyro > Hydro > Electro > Cryo */
@@ -1463,7 +1461,6 @@ class Varka extends CharacterBase {
           0.25
         )
       );
-
       // P1 pair bonus: baseDmg% for Sturm und Drang attacks (NA/CA/Skill)
       // >=2 Anemo OR >=2 same PHEC → 140% (baseDmg% +0.4)
       // >=2 Anemo AND >=2 same PHEC → 220% (baseDmg% +1.2)
@@ -1486,7 +1483,6 @@ class Varka extends CharacterBase {
         );
       }
     }
-
     // P2: Wind's Vanguard — Azure Fang's Oath stacks, +7.5% DMG per stack, max 4
     // Assume max stacks in sustained Swirl rotation (Varka is Anemo DPS)
     if (this.teamMeta.hasReaction("swirl")) {
@@ -1501,7 +1497,6 @@ class Varka extends CharacterBase {
         )
       );
     }
-
     // C4: Swirl triggers 20% Anemo DMG bonus + corresponding element DMG bonus for all nearby party members
     // Swirl requires Anemo + one of {Pyro, Hydro, Electro, Cryo}; Varka is Anemo, so just needs a teammate
     if (this.constellation >= 4 && this.teamMeta.hasReaction("swirl")) {
@@ -1518,7 +1513,6 @@ class Varka extends CharacterBase {
         )
       );
     }
-
     // C6: Azure Fang's Oath stacks increase CRIT DMG by 20% per stack, max 4 = 80%
     if (this.constellation >= 6 && this.teamMeta.hasReaction("swirl")) {
       buffs.push(
@@ -1532,7 +1526,6 @@ class Varka extends CharacterBase {
         )
       );
     }
-
     return buffs;
   })();
 
@@ -1554,10 +1547,8 @@ class Varka extends CharacterBase {
     const el = this.priorityElement ?? ("Anemo" as Element);
     const rightEl = el;
 
-    // ── Normal E tap: enters Sturm und Drang (E talent param1) ──
     const eDmg = this.param("E", 1);
 
-    // ── Sturm und Drang Normal Attack multipliers (E talent) ──
     // Each stage has two values: right hand (priority element) + left hand (Anemo)
     const sudN1Right = this.param("E", 3);
     const sudN2Right = this.param("E", 5);
@@ -1569,19 +1560,15 @@ class Varka extends CharacterBase {
     const sudN5Right = this.param("E", 10);
     const sudN5Left = this.param("E", 11);
 
-    // ── Four Winds' Ascension multipliers (E talent) ──
     const fwRight = this.param("E", 14);
     const fwLeft = this.param("E", 15);
 
-    // ── Azure Devour multipliers (E talent) ──
     const azRight = this.param("E", 16);
     const azLeft = this.param("E", 17);
 
-    // ── Burst multipliers (Q talent) ──
     const q1 = this.param("Q", 1);
     const q2 = this.param("Q", 2);
 
-    // ── C2: extra 800% ATK Anemo AoE hit ──
     const c2Mult = 8.0;
 
     const normalTag = (element: Element | "Anemo") => ({
@@ -1620,13 +1607,11 @@ class Varka extends CharacterBase {
 
     const formulas: Record<string, FormulaEntry> = {};
 
-    // ── 0. Normal E tap: Anemo AoE entering Sturm und Drang ──
     formulas["varka-e"] = {
-      label: { zh: "E", en: "E" },
+      label: { zh: "E初始", en: "E Initial" },
       parts: [{ formula: new DirectFormula(eDmg, skillTag("Anemo")) }],
     };
 
-    // ── 1. Sturm und Drang Normal Attacks (5 stages combined) ──
     const naParts: { formula: DirectFormula; hits?: number }[] = [];
     const rTag = normalTag(rightEl);
     const aTag = normalTag("Anemo");
@@ -1672,7 +1657,6 @@ class Varka extends CharacterBase {
         })),
       };
 
-      // ── 3. Special CA: Azure Devour ──
       // "特殊重击" — classified as charge per S4 rule
       const azParts: { formula: DirectFormula; hits?: number }[] = [
         { formula: new DirectFormula(azRight, chargeTag(el)), hits: 2 },
@@ -1699,7 +1683,6 @@ class Varka extends CharacterBase {
       };
     }
 
-    // ── 4. Q: Northwind Avatar (2 hits) ──
     formulas["varka-burst"] = {
       label: { zh: "Q", en: "Q" },
       parts: [

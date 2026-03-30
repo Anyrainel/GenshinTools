@@ -1,4 +1,3 @@
-import { ArtifactManagerDialog } from "@/components/artifact-manager/ArtifactManagerDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -23,7 +22,6 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { AccountData, ArtifactData, Slot } from "@/data/types";
-import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
@@ -49,7 +47,6 @@ import type {
 import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
-import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { Team } from "@/stores/useTeamStore";
 import {
   AlertTriangle,
@@ -61,7 +58,6 @@ import {
   Eye,
   Flame,
   Loader2,
-  Monitor,
   Play,
   Snowflake,
   Swords,
@@ -1515,590 +1511,561 @@ export function DamageCard({
 
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
 
-  // Artifact manager integration
-  const [managerOpen, setManagerOpen] = useState(false);
-  const buildManagerInstructions = useCallback(() => {
-    const frozenTeam = useFreezeStore.getState().frozenTeams[team.id];
-    if (!frozenTeam) return [];
-    return buildEquipInstructions(frozenTeam.artifactsByChar);
-  }, [team.id]);
-
   return (
-    <>
-      <Card className={CARD_CLS}>
-        <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
-          <h3 className={CARD_TITLE_CLS}>
-            <span
-              data-tour-step-id="tod-damage"
-              className="inline-flex items-center gap-2"
-            >
-              <Eye className="w-4 h-4 opacity-70" />
-              <span>{t.ui("teamComp.equipAndDamage")}</span>
-            </span>
-          </h3>
-        </CardHeader>
+    <Card className={CARD_CLS}>
+      <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
+        <h3 className={CARD_TITLE_CLS}>
+          <span
+            data-tour-step-id="tod-damage"
+            className="inline-flex items-center gap-2"
+          >
+            <Eye className="w-4 h-4 opacity-70" />
+            <span>{t.ui("teamComp.equipAndDamage")}</span>
+          </span>
+        </h3>
+      </CardHeader>
 
-        {/* Radio-button selector */}
-        <OptionButtonRow>
-          {(
-            [
-              {
-                key: "current" as const,
-                label: "teamComp.tabCurrent" as const,
-                desc: "teamComp.tabCurrentDesc" as const,
-              },
-              {
-                key: "optimize" as const,
-                label: "teamComp.tabOptimize" as const,
-                desc: "teamComp.tabOptimizeDesc" as const,
-              },
-              {
-                key: "generate" as const,
-                label: "teamComp.tabGenerate" as const,
-                desc: "teamComp.tabGenerateDesc" as const,
-              },
-            ] as const
-          ).map(({ key, label, desc }) => (
-            <OptionButtonCell key={key}>
-              <OptionButton
-                selected={resultsTab === key}
-                onClick={() => setResultsTab(key)}
-                title={t.ui(label)}
-                subtitle={t.ui(desc)}
+      {/* Radio-button selector */}
+      <OptionButtonRow>
+        {(
+          [
+            {
+              key: "current" as const,
+              label: "teamComp.tabCurrent" as const,
+              desc: "teamComp.tabCurrentDesc" as const,
+            },
+            {
+              key: "optimize" as const,
+              label: "teamComp.tabOptimize" as const,
+              desc: "teamComp.tabOptimizeDesc" as const,
+            },
+            {
+              key: "generate" as const,
+              label: "teamComp.tabGenerate" as const,
+              desc: "teamComp.tabGenerateDesc" as const,
+            },
+          ] as const
+        ).map(({ key, label, desc }) => (
+          <OptionButtonCell key={key}>
+            <OptionButton
+              selected={resultsTab === key}
+              onClick={() => setResultsTab(key)}
+              title={t.ui(label)}
+              subtitle={t.ui(desc)}
+            />
+          </OptionButtonCell>
+        ))}
+      </OptionButtonRow>
+
+      {/* ── Content: Current Equipped ── */}
+      {resultsTab === "current" && (
+        <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
+          <div className={CONTROLS_CLS}>
+            <EnemyLevelInput {...ctxProps} />
+            <EnemyResInput {...ctxProps} />
+          </div>
+          {currentDisplayResult && teamBuild ? (
+            formulaMode === "single" && resolvedFormula ? (
+              <SingleResultView
+                displayResult={currentDisplayResult}
+                resolvedFormula={resolvedFormula}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={equippedArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+                frozenCharIds={currentTabFrozenCharIds}
+                onFreezeChar={onFreezeCharFromCurrent}
+                onUnfreezeChar={onUnfreezeCharFromCurrent}
               />
-            </OptionButtonCell>
-          ))}
-        </OptionButtonRow>
-
-        {/* ── Content: Current Equipped ── */}
-        {resultsTab === "current" && (
-          <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-            <div className={CONTROLS_CLS}>
-              <EnemyLevelInput {...ctxProps} />
-              <EnemyResInput {...ctxProps} />
+            ) : comboLines ? (
+              <ComboResultView
+                displayResult={currentDisplayResult}
+                comboLines={comboLines}
+                comboId={comboId}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={equippedArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+                frozenCharIds={currentTabFrozenCharIds}
+                onFreezeChar={onFreezeCharFromCurrent}
+                onUnfreezeChar={onUnfreezeCharFromCurrent}
+              />
+            ) : null
+          ) : (
+            <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+              <Swords className="w-8 h-8 opacity-15" />
+              <p>
+                {t.ui(
+                  formulaMode === "single"
+                    ? "teamComp.emptyDamageMsg"
+                    : "teamComp.emptyComboMsg"
+                )}
+              </p>
             </div>
-            {currentDisplayResult && teamBuild ? (
-              formulaMode === "single" && resolvedFormula ? (
-                <SingleResultView
-                  displayResult={currentDisplayResult}
-                  resolvedFormula={resolvedFormula}
-                  teamBuild={teamBuild}
-                  team={effectiveTeam}
-                  artifactsByChar={equippedArtifactsByChar}
-                  calcContext={activeContext}
-                  critMode={critMode}
-                  setCritMode={setCritMode}
-                  isMobile={isMobile}
-                  t={t}
-                  frozenCharIds={currentTabFrozenCharIds}
-                  onFreezeChar={onFreezeCharFromCurrent}
-                  onUnfreezeChar={onUnfreezeCharFromCurrent}
-                />
-              ) : comboLines ? (
-                <ComboResultView
-                  displayResult={currentDisplayResult}
-                  comboLines={comboLines}
-                  comboId={comboId}
-                  teamBuild={teamBuild}
-                  team={effectiveTeam}
-                  artifactsByChar={equippedArtifactsByChar}
-                  calcContext={activeContext}
-                  critMode={critMode}
-                  setCritMode={setCritMode}
-                  isMobile={isMobile}
-                  t={t}
-                  frozenCharIds={currentTabFrozenCharIds}
-                  onFreezeChar={onFreezeCharFromCurrent}
-                  onUnfreezeChar={onUnfreezeCharFromCurrent}
-                />
-              ) : null
-            ) : (
-              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                <Swords className="w-8 h-8 opacity-15" />
-                <p>
-                  {t.ui(
-                    formulaMode === "single"
-                      ? "teamComp.emptyDamageMsg"
-                      : "teamComp.emptyComboMsg"
-                  )}
-                </p>
+          )}
+        </CardContent>
+      )}
+
+      {/* ── Content: Optimize ── */}
+      {resultsTab === "optimize" && (
+        <>
+          {/* Inventory warning */}
+          {accountData &&
+            accountData.extraArtifacts.length === 0 &&
+            accountData.characters.length > 0 && (
+              <div className="flex items-center gap-2 px-4 md:px-6 py-2 bg-amber-500/10 border-b border-amber-500/20 text-amber-400 text-xs">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span>{t.ui("teamComp.inventoryWarning")}</span>
+                <Link
+                  to="/account-data"
+                  className="font-bold underline underline-offset-2 hover:text-amber-300 shrink-0"
+                >
+                  {t.ui("teamComp.inventoryWarningLink")}
+                </Link>
               </div>
             )}
-          </CardContent>
-        )}
 
-        {/* ── Content: Optimize ── */}
-        {resultsTab === "optimize" && (
-          <>
-            {/* Inventory warning */}
-            {accountData &&
-              accountData.extraArtifacts.length === 0 &&
-              accountData.characters.length > 0 && (
-                <div className="flex items-center gap-2 px-4 md:px-6 py-2 bg-amber-500/10 border-b border-amber-500/20 text-amber-400 text-xs">
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{t.ui("teamComp.inventoryWarning")}</span>
-                  <Link
-                    to="/account-data"
-                    className="font-bold underline underline-offset-2 hover:text-amber-300 shrink-0"
-                  >
-                    {t.ui("teamComp.inventoryWarningLink")}
-                  </Link>
-                </div>
-              )}
-
-            <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-              <div className={CONTROLS_CLS}>
-                <EnemyLevelInput {...ctxProps} />
-                <EnemyResInput {...ctxProps} />
-                <CritRateTargetInput {...ctxProps} />
-                <div className="flex items-center gap-0.5 md:gap-1">
-                  <span className={LABEL_CLS}>
-                    {t.ui("teamComp.timeBudget")}
-                  </span>
-                  <Select
-                    value={String(timeBudgetSec)}
-                    onValueChange={(v) => onTimeBudgetChange(Number(v))}
-                    disabled={isComputing}
-                  >
-                    <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-[52px] px-1 py-0 md:text-sm md:h-7 md:w-[60px] md:px-1.5">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="30">30s</SelectItem>
-                      <SelectItem value="60">60s</SelectItem>
-                      <SelectItem value="120">120s</SelectItem>
-                      <SelectItem value="240">240s</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <span
-                  title={
-                    isFullyFrozen
-                      ? t.ui("teamComp.frozenTooltip")
-                      : isPartiallyFrozen
-                        ? t.ui("teamComp.partialFrozenTip")
-                        : undefined
-                  }
-                >
-                  <ActionButton
-                    onClick={handleOptimize}
-                    disabled={isFullyFrozen || isComputing || !hasActiveFormula}
-                    computing={isComputing}
-                    labelIdle={
-                      isFullyFrozen
-                        ? t.ui("teamComp.frozenBadge")
-                        : isPartiallyFrozen
-                          ? t.ui("teamComp.optimizeRest")
-                          : t.ui("teamComp.tabOptimize")
-                    }
-                    labelBusy={t.ui("teamComp.optimizing")}
-                  />
-                </span>
-                {hasSwapOverrides && onRestoreOriginal && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onRestoreOriginal}
-                    className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:!bg-amber-500/15 hover:!text-amber-200 hover:ring-amber-400/40"
-                  >
-                    <Undo2 className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                    {t.ui("teamComp.swapRestore")}
-                  </Button>
-                )}
-                {onFreezeAll && !isFullyFrozen && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onFreezeAll}
-                    disabled={
-                      (!hasOptResult && !isPartiallyFrozen) ||
-                      (teamResult?.done && teamResult.bestDamage <= 0) ||
-                      !hasActiveFormula
-                    }
-                    className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
-                  >
-                    <Snowflake className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                    {t.ui("teamComp.freezeTeam")}
-                  </Button>
-                )}
-                {isFrozen && onUnfreezeAll && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onUnfreezeAll}
-                    className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
-                  >
-                    <Flame className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                    {t.ui("teamComp.unfreezeAll")}
-                  </Button>
-                )}
-                {isFrozen && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5"
-                    onClick={() => setManagerOpen(true)}
-                  >
-                    <Monitor className="h-4 w-4" />
-                    {t.ui("manager.equipInGame")}
-                  </Button>
-                )}
-              </div>
-
-              {/* Empty state + preview (shown when not all chars resolved) */}
-              {!isComputing && !allCharsResolved && !teamError && (
-                <div className="space-y-2">
-                  {/* Original empty state box */}
-                  {!hasOptResult && (
-                    <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                      <Swords className="w-8 h-8 opacity-15" />
-                      <p>{t.ui("teamComp.emptyOptMsg")}</p>
-                    </div>
-                  )}
-
-                  {/* Partial StatSheetPanel — preview mode, artifacts only */}
-                  {hasOptResult && (
-                    <StatSheetPanel
-                      team={effectiveTeam}
-                      artifactsByChar={optimizedArtifactsByChar}
-                      targetCharId=""
-                      highlightedStat={null}
-                      onStatHover={() => {}}
-                      t={t}
-                      frozenCharIds={frozenCharIds}
-                      forceReusedCharIds={forceReusedCharIds}
-                      onFreezeChar={onFreezeChar}
-                      onUnfreezeChar={onUnfreezeChar}
-                      preview
-                    />
-                  )}
-                </div>
-              )}
-
-              {/* Error state */}
-              {teamError && (
-                <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
-                  <span className="font-bold">{t.ui("teamComp.optError")}</span>{" "}
-                  {teamError.message}
-                </div>
-              )}
-
-              {/* Progress */}
-              {showProgress &&
-                (() => {
-                  // When done (lingering), snap to 100%
-                  const progressPct = !isComputing
-                    ? 100
-                    : Math.round((teamProgress?.overallProgress ?? 0) * 100);
-                  return (
-                    <div
-                      className="overflow-hidden"
-                      style={{
-                        maxHeight: progressCollapsing ? 0 : 500,
-                        marginTop: progressCollapsing ? 0 : undefined,
-                        marginBottom: progressCollapsing ? 0 : undefined,
-                        transition: progressCollapsing
-                          ? "max-height 0.5s ease, margin 0.5s ease"
-                          : undefined,
-                      }}
-                    >
-                      <div
-                        className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20"
-                        style={{
-                          opacity: progressFading ? 0 : 1,
-                          transition: "opacity 1.5s ease",
-                        }}
-                      >
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span className="font-semibold">
-                            {!isComputing
-                              ? `✓ ${t.ui("teamComp.optComplete")}`
-                              : teamProgress?.phase
-                                ? {
-                                    init: t.ui("teamComp.phaseInit"),
-                                    phase1: t.ui("teamComp.phasePerChar"),
-                                    phase2: t.ui("teamComp.phaseTeamAlloc"),
-                                    phase3: `${t.ui("teamComp.phaseTeamRefine")} — ${t.character(teamProgress.currentPassCharId)}`,
-                                  }[teamProgress.phase]
-                                : t.ui("teamComp.preparingOpt")}
-                          </span>
-                          <span className="font-mono font-bold">
-                            {progressPct}%
-                          </span>
-                        </div>
-                        <Progress
-                          value={progressPct}
-                          className="h-1.5 bg-black/40"
-                        />
-                        {/* Per-character substat weights (debug) */}
-                        {teamProgress?.passResults?.some(
-                          (pr) => pr.substatWeights
-                        ) && (
-                          <div className="space-y-1">
-                            {teamProgress.passResults
-                              .filter(
-                                (pr) =>
-                                  pr.substatWeights &&
-                                  Object.keys(pr.substatWeights).length > 0
-                              )
-                              .map((pr) => (
-                                <div
-                                  key={pr.charId}
-                                  className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground"
-                                >
-                                  <span className="font-semibold text-foreground/70 w-16 shrink-0 truncate">
-                                    {t.character(pr.charId)}
-                                  </span>
-                                  <span className="truncate">
-                                    {Object.entries(pr.substatWeights!)
-                                      .filter(([, v]) => Math.abs(v) > 0.01)
-                                      .sort(([, a], [, b]) => b - a)
-                                      .map(
-                                        ([k, v]) =>
-                                          `${t.statShort(k)}:${v.toFixed(1)}`
-                                      )
-                                      .join("  ")}
-                                  </span>
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                        {/* Per-character status badges — always visible during optimization */}
-                        <div className="flex flex-wrap gap-1.5">
-                          {effectiveTeam.characters
-                            .filter((id): id is string => id != null)
-                            .map((charId) => {
-                              const pr = teamProgress?.passResults.find(
-                                (r) => r.charId === charId
-                              );
-                              const liveDmg =
-                                teamProgress?.workerBestDamage?.[charId];
-                              if (pr) {
-                                // Completed
-                                return (
-                                  <span
-                                    key={charId}
-                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold"
-                                  >
-                                    <Check className="w-2.5 h-2.5" />
-                                    {t.character(charId)}
-                                    {pr.bestDamage > 0 && (
-                                      <span className="font-mono">
-                                        {Math.round(
-                                          pr.bestDamage
-                                        ).toLocaleString()}
-                                      </span>
-                                    )}
-                                  </span>
-                                );
-                              }
-                              if (liveDmg != null) {
-                                // In progress (worker running)
-                                return (
-                                  <span
-                                    key={charId}
-                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold"
-                                  >
-                                    <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                                    {t.character(charId)}
-                                    {liveDmg > 0 && (
-                                      <span className="font-mono">
-                                        {Math.round(liveDmg).toLocaleString()}
-                                      </span>
-                                    )}
-                                  </span>
-                                );
-                              }
-                              // Pending (not yet started)
-                              return (
-                                <span
-                                  key={charId}
-                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold"
-                                >
-                                  {t.character(charId)}
-                                </span>
-                              );
-                            })}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-              {/* Results — only when all characters are resolved */}
-              {!hasActiveFormula ? null : allCharsResolved &&
-                optimizedDisplayResult &&
-                teamBuild ? (
-                formulaMode === "single" && resolvedFormula ? (
-                  <SingleResultView
-                    displayResult={optimizedDisplayResult}
-                    resolvedFormula={resolvedFormula}
-                    teamBuild={teamBuild}
-                    team={effectiveTeam}
-                    artifactsByChar={optimizedArtifactsByChar}
-                    calcContext={activeContext}
-                    critMode={critMode}
-                    setCritMode={setCritMode}
-                    isMobile={isMobile}
-                    t={t}
-                    failReasons={
-                      teamResult?.done ? teamResult.failReasons : undefined
-                    }
-                    frozenCharIds={frozenCharIds}
-                    onArtifactSwap={onArtifactSwap}
-                    onFreezeChar={onFreezeChar}
-                    onUnfreezeChar={onUnfreezeChar}
-                    forceReusedCharIds={forceReusedCharIds}
-                  />
-                ) : comboLines ? (
-                  <ComboResultView
-                    displayResult={optimizedDisplayResult}
-                    comboLines={comboLines}
-                    comboId={comboId}
-                    teamBuild={teamBuild}
-                    team={effectiveTeam}
-                    artifactsByChar={optimizedArtifactsByChar}
-                    calcContext={activeContext}
-                    critMode={critMode}
-                    setCritMode={setCritMode}
-                    isMobile={isMobile}
-                    t={t}
-                    failReasons={
-                      teamResult?.done ? teamResult.failReasons : undefined
-                    }
-                    frozenCharIds={frozenCharIds}
-                    onArtifactSwap={onArtifactSwap}
-                    onFreezeChar={onFreezeChar}
-                    onUnfreezeChar={onUnfreezeChar}
-                    forceReusedCharIds={forceReusedCharIds}
-                  />
-                ) : null
-              ) : allCharsResolved && !isComputing ? (
-                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                  <Swords className="w-8 h-8 opacity-15" />
-                  <p>{t.ui("teamComp.emptyOptMsg")}</p>
-                </div>
-              ) : null}
-
-              {/* No results found */}
-              {hasActiveFormula &&
-                allCharsResolved &&
-                teamResult?.done &&
-                teamResult.bestDamage === 0 && (
-                  <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
-                    {t
-                      .ui("teamComp.noValidCombos")
-                      .replace("{0}", String(Math.round(minErRaw * 100)))}
-                  </div>
-                )}
-
-              {/* Swap Guide — diff view of optimized vs equipped */}
-              {hasActiveFormula &&
-                allCharsResolved &&
-                (teamResult?.done || hasOptResult) &&
-                teamResult?.bestDamage !== 0 && (
-                  <SwapGuide
-                    team={effectiveTeam}
-                    equippedArtifactsByChar={equippedArtifactsByChar}
-                    optimizedArtifactsByChar={optimizedArtifactsByChar}
-                    accountData={accountData}
-                    t={t}
-                  />
-                )}
-            </CardContent>
-          </>
-        )}
-
-        {/* ── Content: Generate (dev only) ── */}
-        {resultsTab === "generate" && (
           <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
             <div className={CONTROLS_CLS}>
               <EnemyLevelInput {...ctxProps} />
               <EnemyResInput {...ctxProps} />
               <CritRateTargetInput {...ctxProps} />
-              <RollMultSelect {...ctxProps} />
-              <SubstatBudgetSelect {...ctxProps} />
-              <ActionButton
-                onClick={handleGenerate}
-                disabled={genComputing || !hasActiveFormula}
-                computing={genComputing}
-                labelIdle={t.ui("teamComp.tabGenerate")}
-                labelBusy={t.ui("teamComp.generatingIdeal")}
-              />
+              <div className="flex items-center gap-0.5 md:gap-1">
+                <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
+                <Select
+                  value={String(timeBudgetSec)}
+                  onValueChange={(v) => onTimeBudgetChange(Number(v))}
+                  disabled={isComputing}
+                >
+                  <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-[52px] px-1 py-0 md:text-sm md:h-7 md:w-[60px] md:px-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30s</SelectItem>
+                    <SelectItem value="60">60s</SelectItem>
+                    <SelectItem value="120">120s</SelectItem>
+                    <SelectItem value="240">240s</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <span
+                title={
+                  isFullyFrozen
+                    ? t.ui("teamComp.frozenTooltip")
+                    : isPartiallyFrozen
+                      ? t.ui("teamComp.partialFrozenTip")
+                      : undefined
+                }
+              >
+                <ActionButton
+                  onClick={handleOptimize}
+                  disabled={isFullyFrozen || isComputing || !hasActiveFormula}
+                  computing={isComputing}
+                  labelIdle={
+                    isFullyFrozen
+                      ? t.ui("teamComp.frozenBadge")
+                      : isPartiallyFrozen
+                        ? t.ui("teamComp.optimizeRest")
+                        : t.ui("teamComp.tabOptimize")
+                  }
+                  labelBusy={t.ui("teamComp.optimizing")}
+                />
+              </span>
+              {hasSwapOverrides && onRestoreOriginal && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onRestoreOriginal}
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:!bg-amber-500/15 hover:!text-amber-200 hover:ring-amber-400/40"
+                >
+                  <Undo2 className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  {t.ui("teamComp.swapRestore")}
+                </Button>
+              )}
+              {onFreezeAll && !isFullyFrozen && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onFreezeAll}
+                  disabled={
+                    (!hasOptResult && !isPartiallyFrozen) ||
+                    (teamResult?.done && teamResult.bestDamage <= 0) ||
+                    !hasActiveFormula
+                  }
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
+                >
+                  <Snowflake className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  {t.ui("teamComp.freezeTeam")}
+                </Button>
+              )}
+              {isFrozen && onUnfreezeAll && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onUnfreezeAll}
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+                >
+                  <Flame className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  {t.ui("teamComp.unfreezeAll")}
+                </Button>
+              )}
             </div>
 
-            {/* Empty state */}
-            {!genComputing && !genResult?.done && !genError && (
-              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                <Swords className="w-8 h-8 opacity-15" />
-                <p>{t.ui("teamComp.idealEmptyMessage")}</p>
+            {/* Empty state + preview (shown when not all chars resolved) */}
+            {!isComputing && !allCharsResolved && !teamError && (
+              <div className="space-y-2">
+                {/* Original empty state box */}
+                {!hasOptResult && (
+                  <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                    <Swords className="w-8 h-8 opacity-15" />
+                    <p>{t.ui("teamComp.emptyOptMsg")}</p>
+                  </div>
+                )}
+
+                {/* Partial StatSheetPanel — preview mode, artifacts only */}
+                {hasOptResult && (
+                  <StatSheetPanel
+                    team={effectiveTeam}
+                    artifactsByChar={optimizedArtifactsByChar}
+                    targetCharId=""
+                    highlightedStat={null}
+                    onStatHover={() => {}}
+                    t={t}
+                    frozenCharIds={frozenCharIds}
+                    forceReusedCharIds={forceReusedCharIds}
+                    onFreezeChar={onFreezeChar}
+                    onUnfreezeChar={onUnfreezeChar}
+                    preview
+                  />
+                )}
               </div>
             )}
 
             {/* Error state */}
-            {genError && (
+            {teamError && (
               <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
                 <span className="font-bold">{t.ui("teamComp.optError")}</span>{" "}
-                {genError.message}
+                {teamError.message}
               </div>
             )}
 
             {/* Progress */}
-            {genComputing && genResult && (
-              <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="font-semibold">{genResult.phase}</span>
-                  <span className="font-mono font-bold">
-                    {Math.round(genResult.progress * 100)}%
-                  </span>
-                </div>
-                <Progress
-                  value={genResult.progress * 100}
-                  className="h-1.5 bg-black/40"
-                />
-              </div>
-            )}
+            {showProgress &&
+              (() => {
+                // When done (lingering), snap to 100%
+                const progressPct = !isComputing
+                  ? 100
+                  : Math.round((teamProgress?.overallProgress ?? 0) * 100);
+                return (
+                  <div
+                    className="overflow-hidden"
+                    style={{
+                      maxHeight: progressCollapsing ? 0 : 500,
+                      marginTop: progressCollapsing ? 0 : undefined,
+                      marginBottom: progressCollapsing ? 0 : undefined,
+                      transition: progressCollapsing
+                        ? "max-height 0.5s ease, margin 0.5s ease"
+                        : undefined,
+                    }}
+                  >
+                    <div
+                      className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20"
+                      style={{
+                        opacity: progressFading ? 0 : 1,
+                        transition: "opacity 1.5s ease",
+                      }}
+                    >
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="font-semibold">
+                          {!isComputing
+                            ? `✓ ${t.ui("teamComp.optComplete")}`
+                            : teamProgress?.phase
+                              ? {
+                                  init: t.ui("teamComp.phaseInit"),
+                                  phase1: t.ui("teamComp.phasePerChar"),
+                                  phase2: t.ui("teamComp.phaseTeamAlloc"),
+                                  phase3: `${t.ui("teamComp.phaseTeamRefine")} — ${t.character(teamProgress.currentPassCharId)}`,
+                                }[teamProgress.phase]
+                              : t.ui("teamComp.preparingOpt")}
+                        </span>
+                        <span className="font-mono font-bold">
+                          {progressPct}%
+                        </span>
+                      </div>
+                      <Progress
+                        value={progressPct}
+                        className="h-1.5 bg-black/40"
+                      />
+                      {/* Per-character substat weights (debug) */}
+                      {teamProgress?.passResults?.some(
+                        (pr) => pr.substatWeights
+                      ) && (
+                        <div className="space-y-1">
+                          {teamProgress.passResults
+                            .filter(
+                              (pr) =>
+                                pr.substatWeights &&
+                                Object.keys(pr.substatWeights).length > 0
+                            )
+                            .map((pr) => (
+                              <div
+                                key={pr.charId}
+                                className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground"
+                              >
+                                <span className="font-semibold text-foreground/70 w-16 shrink-0 truncate">
+                                  {t.character(pr.charId)}
+                                </span>
+                                <span className="truncate">
+                                  {Object.entries(pr.substatWeights!)
+                                    .filter(([, v]) => Math.abs(v) > 0.01)
+                                    .sort(([, a], [, b]) => b - a)
+                                    .map(
+                                      ([k, v]) =>
+                                        `${t.statShort(k)}:${v.toFixed(1)}`
+                                    )
+                                    .join("  ")}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                      {/* Per-character status badges — always visible during optimization */}
+                      <div className="flex flex-wrap gap-1.5">
+                        {effectiveTeam.characters
+                          .filter((id): id is string => id != null)
+                          .map((charId) => {
+                            const pr = teamProgress?.passResults.find(
+                              (r) => r.charId === charId
+                            );
+                            const liveDmg =
+                              teamProgress?.workerBestDamage?.[charId];
+                            if (pr) {
+                              // Completed
+                              return (
+                                <span
+                                  key={charId}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold"
+                                >
+                                  <Check className="w-2.5 h-2.5" />
+                                  {t.character(charId)}
+                                  {pr.bestDamage > 0 && (
+                                    <span className="font-mono">
+                                      {Math.round(
+                                        pr.bestDamage
+                                      ).toLocaleString()}
+                                    </span>
+                                  )}
+                                </span>
+                              );
+                            }
+                            if (liveDmg != null) {
+                              // In progress (worker running)
+                              return (
+                                <span
+                                  key={charId}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold"
+                                >
+                                  <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                                  {t.character(charId)}
+                                  {liveDmg > 0 && (
+                                    <span className="font-mono">
+                                      {Math.round(liveDmg).toLocaleString()}
+                                    </span>
+                                  )}
+                                </span>
+                              );
+                            }
+                            // Pending (not yet started)
+                            return (
+                              <span
+                                key={charId}
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold"
+                              >
+                                {t.character(charId)}
+                              </span>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
 
-            {/* Results */}
-            {genDisplayResult && teamBuild ? (
+            {/* Results — only when all characters are resolved */}
+            {!hasActiveFormula ? null : allCharsResolved &&
+              optimizedDisplayResult &&
+              teamBuild ? (
               formulaMode === "single" && resolvedFormula ? (
                 <SingleResultView
-                  displayResult={genDisplayResult}
+                  displayResult={optimizedDisplayResult}
                   resolvedFormula={resolvedFormula}
                   teamBuild={teamBuild}
                   team={effectiveTeam}
-                  artifactsByChar={genArtifactsByChar}
+                  artifactsByChar={optimizedArtifactsByChar}
                   calcContext={activeContext}
                   critMode={critMode}
                   setCritMode={setCritMode}
                   isMobile={isMobile}
                   t={t}
+                  failReasons={
+                    teamResult?.done ? teamResult.failReasons : undefined
+                  }
+                  frozenCharIds={frozenCharIds}
+                  onArtifactSwap={onArtifactSwap}
+                  onFreezeChar={onFreezeChar}
+                  onUnfreezeChar={onUnfreezeChar}
+                  forceReusedCharIds={forceReusedCharIds}
                 />
               ) : comboLines ? (
                 <ComboResultView
-                  displayResult={genDisplayResult}
+                  displayResult={optimizedDisplayResult}
                   comboLines={comboLines}
                   comboId={comboId}
                   teamBuild={teamBuild}
                   team={effectiveTeam}
-                  artifactsByChar={genArtifactsByChar}
+                  artifactsByChar={optimizedArtifactsByChar}
                   calcContext={activeContext}
                   critMode={critMode}
                   setCritMode={setCritMode}
                   isMobile={isMobile}
                   t={t}
+                  failReasons={
+                    teamResult?.done ? teamResult.failReasons : undefined
+                  }
+                  frozenCharIds={frozenCharIds}
+                  onArtifactSwap={onArtifactSwap}
+                  onFreezeChar={onFreezeChar}
+                  onUnfreezeChar={onUnfreezeChar}
+                  forceReusedCharIds={forceReusedCharIds}
                 />
               ) : null
+            ) : allCharsResolved && !isComputing ? (
+              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                <Swords className="w-8 h-8 opacity-15" />
+                <p>{t.ui("teamComp.emptyOptMsg")}</p>
+              </div>
             ) : null}
+
+            {/* No results found */}
+            {hasActiveFormula &&
+              allCharsResolved &&
+              teamResult?.done &&
+              teamResult.bestDamage === 0 && (
+                <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
+                  {t
+                    .ui("teamComp.noValidCombos")
+                    .replace("{0}", String(Math.round(minErRaw * 100)))}
+                </div>
+              )}
+
+            {/* Swap Guide — diff view of optimized vs equipped */}
+            {hasActiveFormula &&
+              allCharsResolved &&
+              (teamResult?.done || hasOptResult) &&
+              teamResult?.bestDamage !== 0 && (
+                <SwapGuide
+                  team={effectiveTeam}
+                  equippedArtifactsByChar={equippedArtifactsByChar}
+                  optimizedArtifactsByChar={optimizedArtifactsByChar}
+                  accountData={accountData}
+                  t={t}
+                />
+              )}
           </CardContent>
-        )}
-      </Card>
-      <ArtifactManagerDialog
-        open={managerOpen}
-        onOpenChange={setManagerOpen}
-        buildInstructions={buildManagerInstructions}
-        actionLabel={t.ui("manager.equipInGame")}
-      />
-    </>
+        </>
+      )}
+
+      {/* ── Content: Generate (dev only) ── */}
+      {resultsTab === "generate" && (
+        <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
+          <div className={CONTROLS_CLS}>
+            <EnemyLevelInput {...ctxProps} />
+            <EnemyResInput {...ctxProps} />
+            <CritRateTargetInput {...ctxProps} />
+            <RollMultSelect {...ctxProps} />
+            <SubstatBudgetSelect {...ctxProps} />
+            <ActionButton
+              onClick={handleGenerate}
+              disabled={genComputing || !hasActiveFormula}
+              computing={genComputing}
+              labelIdle={t.ui("teamComp.tabGenerate")}
+              labelBusy={t.ui("teamComp.generatingIdeal")}
+            />
+          </div>
+
+          {/* Empty state */}
+          {!genComputing && !genResult?.done && !genError && (
+            <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+              <Swords className="w-8 h-8 opacity-15" />
+              <p>{t.ui("teamComp.idealEmptyMessage")}</p>
+            </div>
+          )}
+
+          {/* Error state */}
+          {genError && (
+            <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
+              <span className="font-bold">{t.ui("teamComp.optError")}</span>{" "}
+              {genError.message}
+            </div>
+          )}
+
+          {/* Progress */}
+          {genComputing && genResult && (
+            <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span className="font-semibold">{genResult.phase}</span>
+                <span className="font-mono font-bold">
+                  {Math.round(genResult.progress * 100)}%
+                </span>
+              </div>
+              <Progress
+                value={genResult.progress * 100}
+                className="h-1.5 bg-black/40"
+              />
+            </div>
+          )}
+
+          {/* Results */}
+          {genDisplayResult && teamBuild ? (
+            formulaMode === "single" && resolvedFormula ? (
+              <SingleResultView
+                displayResult={genDisplayResult}
+                resolvedFormula={resolvedFormula}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={genArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+              />
+            ) : comboLines ? (
+              <ComboResultView
+                displayResult={genDisplayResult}
+                comboLines={comboLines}
+                comboId={comboId}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={genArtifactsByChar}
+                calcContext={activeContext}
+                critMode={critMode}
+                setCritMode={setCritMode}
+                isMobile={isMobile}
+                t={t}
+              />
+            ) : null
+          ) : null}
+        </CardContent>
+      )}
+    </Card>
   );
 }

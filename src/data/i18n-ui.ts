@@ -123,8 +123,8 @@ export const i18nUiData = {
       zh: "一次性导入。除非手动重新导入，否则不会有后续更新。",
     },
     goodSplitFileHint: {
-      en: "Supports separate character, weapon, and artifact files.",
-      zh: "支持分别导入角色、武器和圣遗物文件。",
+      en: "Now supports separate character, weapon, and artifact files!",
+      zh: "现支持分别导入角色、武器和圣遗物文件！",
     },
     goodFileButton: { en: "Import .json file", zh: "导入 .json 文件" },
     goodTitle: { en: "Full Data Import", zh: "完整数据导入" },
@@ -1032,9 +1032,17 @@ export const i18nUiData = {
       en: "Table",
       zh: "表格",
     },
+    analyzerTableDesc: {
+      en: "Compare all allocations",
+      zh: "对比所有配置",
+    },
     analyzerSequence: {
       en: "Path",
       zh: "路径",
+    },
+    analyzerSequenceDesc: {
+      en: "Optimal upgrade order",
+      zh: "最优升级顺序",
     },
     analyzerMinConfig: {
       en: "Min",

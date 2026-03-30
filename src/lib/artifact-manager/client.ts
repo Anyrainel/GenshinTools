@@ -1,3 +1,4 @@
+import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
 import type {
   HealthResponse,
   Instruction,
@@ -31,7 +32,7 @@ async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
 export class ArtifactManagerError extends Error {
   constructor(
     public readonly status: number,
-    public readonly body: string,
+    public readonly body: string
   ) {
     super(`Artifact Manager HTTP ${status}: ${body}`);
     this.name = "ArtifactManagerError";
@@ -44,7 +45,7 @@ export function checkHealth(port = DEFAULT_PORT): Promise<HealthResponse> {
 
 export function submitJob(
   instructions: Instruction[],
-  port = DEFAULT_PORT,
+  port = DEFAULT_PORT
 ): Promise<SubmitResponse> {
   return fetchJson<SubmitResponse>(`${baseUrl(port)}/manage`, {
     method: "POST",
@@ -59,4 +60,14 @@ export function pollStatus(port = DEFAULT_PORT): Promise<StatusResponse> {
 
 export function getResult(port = DEFAULT_PORT): Promise<ResultResponse> {
   return fetchJson<ResultResponse>(`${baseUrl(port)}/result`);
+}
+
+export function fetchArtifacts(
+  port = DEFAULT_PORT
+): Promise<IGOODArtifact[] | null> {
+  return fetchJson<IGOODArtifact[]>(`${baseUrl(port)}/artifacts`).catch((e) => {
+    // 404 = no scan data available yet
+    if (e instanceof ArtifactManagerError && e.status === 404) return null;
+    throw e;
+  });
 }

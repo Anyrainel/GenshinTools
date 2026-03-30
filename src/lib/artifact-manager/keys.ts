@@ -27,3 +27,22 @@ export function charIdToGOODKey(charId: string): string | undefined {
 export function artifactIdToGOODKey(setId: string): string | undefined {
   return artifactGOODKeys.get(setId);
 }
+
+// Reverse lookups: GOOD PascalCase → internal snake_case ID
+const goodKeyToChar = new Map<string, string>();
+for (const [id, goodKey] of charGOODKeys) {
+  goodKeyToChar.set(goodKey, id);
+}
+
+const goodKeyToArtifact = new Map<string, string>();
+for (const [id, goodKey] of artifactGOODKeys) {
+  goodKeyToArtifact.set(goodKey, id);
+}
+
+export function goodKeyToCharId(goodKey: string): string | undefined {
+  return goodKeyToChar.get(goodKey);
+}
+
+export function goodKeyToArtifactSetId(goodKey: string): string | undefined {
+  return goodKeyToArtifact.get(goodKey);
+}

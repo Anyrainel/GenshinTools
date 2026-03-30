@@ -35,6 +35,7 @@ import {
   Copy,
   Diamond,
   Flame,
+  type LucideIcon,
   MoreVertical,
   Sparkles,
   Swords,
@@ -70,6 +71,12 @@ interface TeamCardProps {
   onDelete?: () => void;
   onCopy?: () => void;
   onSelect?: () => void;
+  /** Override the default "伤害优化" label on the select button. */
+  selectLabel?: string;
+  /** Override the default icon on the select button. */
+  selectIcon?: LucideIcon;
+  /** Override the default className on the select button. */
+  selectClassName?: string;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
   isFrozen?: boolean;
@@ -97,6 +104,9 @@ export const TeamCard = memo(
     onDelete,
     onCopy,
     onSelect,
+    selectLabel,
+    selectIcon: SelectIcon,
+    selectClassName,
     onMoveUp,
     onMoveDown,
     isFrozen,
@@ -457,13 +467,18 @@ export const TeamCard = memo(
             variant="outline"
             className={cn(
               "font-semibold h-8 xl:h-9 gap-1.5 xl:gap-2 text-xs xl:text-sm",
-              isFrozen ? "flex-1" : "w-full"
+              isFrozen ? "flex-1" : "w-full",
+              selectClassName
             )}
             onClick={onSelect}
             disabled={!hasConfiguredMember}
           >
-            <Sparkles className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
-            <span>{t.ui("teamComp.teamOptimization")}</span>
+            {SelectIcon ? (
+              <SelectIcon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
+            ) : (
+              <Sparkles className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
+            )}
+            <span>{selectLabel ?? t.ui("teamComp.teamOptimization")}</span>
           </Button>
         </div>
       </div>

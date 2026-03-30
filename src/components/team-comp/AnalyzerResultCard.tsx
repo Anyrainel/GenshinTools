@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  OptionButton,
+  OptionButtonCell,
+  OptionButtonRow,
+} from "@/components/ui/option-button";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -219,30 +224,39 @@ export function AnalyzerResultCard({
             <AnalyzerChart result={result} charIds={charIds} />
 
             {/* Table / Sequence toggle */}
-            <div className="flex items-center gap-1 pt-2 border-t border-border/30">
-              <Button
-                variant={resultTab === "table" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setResultTab("table")}
-                className="text-xs h-7 px-2"
-              >
-                {t.ui("teamComp.analyzerTable")}
-              </Button>
-              <Button
-                variant={resultTab === "sequence" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setResultTab("sequence")}
-                className="text-xs h-7 px-2"
-              >
-                {t.ui("teamComp.analyzerSequence")}
-              </Button>
-            </div>
+            <OptionButtonRow className="px-0 pt-2">
+              {(
+                [
+                  {
+                    key: "table" as const,
+                    label: "teamComp.analyzerTable" as const,
+                    desc: "teamComp.analyzerTableDesc" as const,
+                  },
+                  {
+                    key: "sequence" as const,
+                    label: "teamComp.analyzerSequence" as const,
+                    desc: "teamComp.analyzerSequenceDesc" as const,
+                  },
+                ] as const
+              ).map(({ key, label, desc }) => (
+                <OptionButtonCell key={key}>
+                  <OptionButton
+                    selected={resultTab === key}
+                    onClick={() => setResultTab(key)}
+                    title={t.ui(label)}
+                    subtitle={t.ui(desc)}
+                  />
+                </OptionButtonCell>
+              ))}
+            </OptionButtonRow>
 
-            {resultTab === "table" ? (
-              <AnalyzerTable result={result} charIds={charIds} />
-            ) : (
-              <AnalyzerSequence result={result} charIds={charIds} />
-            )}
+            <div className="flex justify-center">
+              {resultTab === "table" ? (
+                <AnalyzerTable result={result} charIds={charIds} />
+              ) : (
+                <AnalyzerSequence result={result} charIds={charIds} />
+              )}
+            </div>
           </>
         ) : (
           <p className="text-sm text-muted-foreground text-center py-8">

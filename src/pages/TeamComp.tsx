@@ -17,12 +17,13 @@ import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Download, HelpCircle, Trash2, Upload } from "lucide-react";
+import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { DamageView } from "./team-comp/DamageView";
 import { FrozenView } from "./team-comp/FrozenView";
+import type { FrozenViewHandle } from "./team-comp/FrozenView";
 import { InvestmentView } from "./team-comp/InvestmentView";
 
 type TeamCompTab = "damage" | "frozen" | "investment";
@@ -56,6 +57,7 @@ export default function TeamCompPage() {
   const author = useTeamStore((state) => state.author);
   const description = useTeamStore((state) => state.description);
   const clearAllFrozen = useFreezeStore((s) => s.clearAll);
+  const frozenTeams = useFreezeStore((s) => s.frozenTeams);
   const clearTeams = useCallback(() => {
     clearAllFrozen();
     clearTeamsRaw();
@@ -64,6 +66,7 @@ export default function TeamCompPage() {
   const clearRef = useRef<ControlHandle>(null);
   const importRef = useRef<ControlHandle>(null);
   const exportRef = useRef<ControlHandle>(null);
+  const frozenViewRef = useRef<FrozenViewHandle>(null);
 
   // Preset options
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
@@ -105,9 +108,26 @@ export default function TeamCompPage() {
   };
 
   if (activeTab === "frozen") {
+    const hasFrozenTeams = Object.keys(frozenTeams).length > 0;
     return (
-      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
-        <FrozenView />
+      <PageLayout
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          hasFrozenTeams
+            ? [
+                {
+                  key: "download-frozen",
+                  icon: FileDown,
+                  label: t.ui("teamComp.downloadAllFrozen"),
+                  onTrigger: () => frozenViewRef.current?.downloadAllFrozen(),
+                },
+              ]
+            : []
+        }
+      >
+        <FrozenView ref={frozenViewRef} />
       </PageLayout>
     );
   }

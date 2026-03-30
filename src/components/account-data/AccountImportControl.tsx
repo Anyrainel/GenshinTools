@@ -270,7 +270,6 @@ export const AccountImportControl = forwardRef<
               ))}
             </div>
 
-            {/* Upload button */}
             <div className="mt-3 flex flex-col gap-1.5">
               <div className="flex flex-wrap items-center gap-2">
                 <input
@@ -308,6 +307,9 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.uidInvalid")}
                 </p>
               )}
+              <p className="text-xs text-sky-400 text-right">
+                {t.ui("import.goodSplitFileHint")}
+              </p>
             </div>
           </div>
 
