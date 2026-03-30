@@ -59,7 +59,7 @@ ELEMENT_ZH: dict[str, str] = {
 }
 
 # Characters whose element variants share a single portrait image.
-# All variants use imagePath="/character/{base_id}.png".
+# All variants use imagePath="/character/{base_id}.webp".
 # Sorted longest-first so "Manekina" matches before "Manekin".
 SHARED_IMAGE_PREFIXES: tuple[str, ...] = ("Manekina", "Manekin", "Traveler")
 
@@ -292,7 +292,9 @@ def process_characters(
             (p.lower() for p in SHARED_IMAGE_PREFIXES if en.name.startswith(p)),
             None,
         )
-        image_path = f"/character/{shared_base}.png" if shared_base else f"/character/{base_id}.png"
+        image_path = (
+            f"/character/{shared_base}.webp" if shared_base else f"/character/{base_id}.webp"
+        )
 
         if en.name in MULTI_ELEMENT_CHARACTERS:
             # Expand 1 wiki entry into 7 element variant entries
@@ -361,7 +363,7 @@ def process_artifacts(
         suffixes = {"flower": "", "plume": "2", "sands": "3", "goblet": "4", "circlet": "5"}
 
         for slot, suffix in suffixes.items():
-            image_paths[slot] = f"/artifact/{artifact_id}{suffix}.png"
+            image_paths[slot] = f"/artifact/{artifact_id}{suffix}.webp"
 
         output = ArtifactOutput(
             id=artifact_id,
@@ -441,7 +443,7 @@ def process_weapons(
             baseAtk=en.base_atk,
             secondaryStatValue=en.secondary_stat_value,
             imageUrl=en.image_url,
-            imagePath=f"/weapon/{weapon_id}.png",
+            imagePath=f"/weapon/{weapon_id}.webp",
         )
         final_weapons.append(output)
 
@@ -476,7 +478,7 @@ def process_enemies(
         output = EnemyOutput(
             id=enemy_id,
             type=en.enemy_type,
-            imagePath=f"/enemy/{enemy_id}.png",
+            imagePath=f"/enemy/{enemy_id}.webp",
         )
         final_enemies.append(output)
 
