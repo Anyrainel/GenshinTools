@@ -25,11 +25,17 @@ import { DamageView } from "./team-comp/DamageView";
 import { FrozenView } from "./team-comp/FrozenView";
 import type { FrozenViewHandle } from "./team-comp/FrozenView";
 import { InvestmentView } from "./team-comp/InvestmentView";
+import { WeaponChoiceView } from "./team-comp/WeaponChoiceView";
 
-type TeamCompTab = "damage" | "frozen" | "investment";
+type TeamCompTab = "damage" | "frozen" | "investment" | "weapon";
 
 function isValidTab(tab: string | null): tab is TeamCompTab {
-  return tab === "damage" || tab === "frozen" || tab === "investment";
+  return (
+    tab === "damage" ||
+    tab === "frozen" ||
+    tab === "investment" ||
+    tab === "weapon"
+  );
 }
 
 const presetModules = import.meta.glob<{ default: TeamCompData }>(
@@ -136,6 +142,14 @@ export default function TeamCompPage() {
     return (
       <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
         <InvestmentView />
+      </PageLayout>
+    );
+  }
+
+  if (activeTab === "weapon") {
+    return (
+      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+        <WeaponChoiceView />
       </PageLayout>
     );
   }

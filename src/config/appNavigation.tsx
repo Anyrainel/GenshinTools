@@ -100,6 +100,12 @@ export const getNavigationConfig = (
         value: "investment",
         icon: TrendingUp,
       },
+      {
+        label: t.ui("teamComp.tabWeaponChoice"),
+        href: "/team-comp?tab=weapon",
+        value: "weapon",
+        icon: Sword,
+      },
     ],
   },
   {
