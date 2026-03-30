@@ -196,6 +196,148 @@ function evaluateComboDamage(
   return compiled.evaluate(vars);
 }
 
+// ─── Per-character computation ───
+
+/**
+ * Compute weapon rankings for a single character.
+ * Runs independently so multiple characters can be evaluated in parallel.
+ */
+async function computeForChar(
+  targetCharId: string,
+  candidates: { weaponId: string; refinement: number }[],
+  configs: TeamSlotConfig[],
+  charIds: string[],
+  combo: ComboFormula,
+  calcContext: CalcContext,
+  weaponStats: WeaponStatsMap,
+  opts: Record<string, string>,
+  enemyAura: Element | undefined,
+  extraBuffs: ExtraBuff[],
+  rollMultiplier: number | undefined,
+  substatBudget: SubstatBudgetPreset | undefined,
+  onProgress: (weaponsDone: number, currentWeapon?: string) => void
+): Promise<WeaponRanking[]> {
+  const supportCharIds = charIds.filter((id) => id !== targetCharId);
+
+  // Step 1: Generate supporter artifacts once using the roster weapon
+  const rosterTeamBuild = new TeamBuild(configs, opts, enemyAura, extraBuffs);
+
+  const rosterResult = await runGeneratorToCompletion(
+    rosterTeamBuild,
+    targetCharId,
+    combo,
+    calcContext,
+    rollMultiplier,
+    substatBudget
+  );
+
+  if (!rosterResult) return [];
+
+  // Extract supporter sheets (fixed across weapon swaps)
+  const supporterSheets: Record<string, StatSheet> = {};
+  for (const sid of supportCharIds) {
+    if (rosterResult.sheetsByChar[sid]) {
+      supporterSheets[sid] = rosterResult.sheetsByChar[sid];
+    }
+  }
+
+  // Step 2: For each weapon candidate, generate artifacts and evaluate
+  const rankings: WeaponRanking[] = [];
+  let weaponsDone = 0;
+
+  for (const { weaponId, refinement } of candidates) {
+    onProgress(weaponsDone, weaponId);
+
+    const weaponConfigs = configs.map((c) =>
+      c.charId === targetCharId ? { ...c, weaponId, refinement } : c
+    );
+
+    const weaponTeamBuild = new TeamBuild(
+      weaponConfigs,
+      opts,
+      enemyAura,
+      extraBuffs
+    );
+
+    const weaponResult = await runGeneratorToCompletion(
+      weaponTeamBuild,
+      targetCharId,
+      combo,
+      calcContext,
+      rollMultiplier,
+      substatBudget
+    );
+
+    if (!weaponResult) {
+      weaponsDone++;
+      continue;
+    }
+
+    const combinedSheets: Record<string, StatSheet> = {
+      ...supporterSheets,
+    };
+    if (weaponResult.sheetsByChar[targetCharId]) {
+      combinedSheets[targetCharId] = weaponResult.sheetsByChar[targetCharId];
+    }
+
+    const damage = evaluateComboDamage(
+      weaponTeamBuild,
+      combo,
+      combinedSheets,
+      calcContext
+    );
+
+    rankings.push({
+      weaponId,
+      refinement,
+      damage,
+      percentOfBest: 0, // normalized after all weapons
+    });
+
+    weaponsDone++;
+  }
+
+  onProgress(weaponsDone);
+  return rankings;
+}
+
+/**
+ * Normalize rankings using community-standard baseline:
+ * Best among (4★ R5 / 5★ R1) = 100%. 5★ R5 can exceed 100%.
+ */
+function normalizeRankings(
+  rankings: WeaponRanking[],
+  weaponStats: WeaponStatsMap
+): void {
+  if (rankings.length === 0) return;
+
+  // Find baseline: best damage among 4★ R5 and 5★ R1 weapons
+  let baselineDamage = 0;
+  for (const r of rankings) {
+    const rarity =
+      weaponsById[r.weaponId]?.rarity ?? weaponStats[r.weaponId]?.rarity ?? 0;
+    const isBaseline =
+      (rarity <= 4 && r.refinement === 5) ||
+      (rarity === 5 && r.refinement === 1);
+    if (isBaseline && r.damage > baselineDamage) {
+      baselineDamage = r.damage;
+    }
+  }
+
+  // Fall back to absolute best if no baseline candidates exist (shouldn't happen)
+  if (baselineDamage <= 0) {
+    baselineDamage = Math.max(...rankings.map((r) => r.damage));
+  }
+
+  for (const r of rankings) {
+    r.percentOfBest =
+      baselineDamage > 0 ? (r.damage / baselineDamage) * 100 : 0;
+  }
+
+  // Sort by damage descending
+  rankings.sort((a, b) => b.damage - a.damage);
+}
+
 // ─── Main Generator ───
 
 export async function* runWeaponChoice(
@@ -216,7 +358,6 @@ export async function* runWeaponChoice(
 
   // Apply char config overrides to base configs
   const configs = buildOverriddenConfigs(baseConfigs, charConfigs);
-  const configMap = new Map(charConfigs.map((c) => [c.charId, c]));
 
   // Identify characters to evaluate
   const charIds = configs.map((c) => c.charId);
@@ -236,12 +377,6 @@ export async function* runWeaponChoice(
     totalWeapons += candidates.length;
   }
 
-  // Total work: for each character, we need to generate supporters once + 1 weapon eval each
-  // Progress: supporters generation + per-weapon generation
-  const totalChars = charIds.length;
-  const perCharacter: Record<string, WeaponRanking[]> = {};
-  let overallWeaponsDone = 0;
-
   // Yield initial progress
   yield {
     timestamp: Date.now(),
@@ -254,54 +389,81 @@ export async function* runWeaponChoice(
   };
   await yieldFrame();
 
-  // Process each character
-  for (let charIdx = 0; charIdx < charIds.length; charIdx++) {
-    const targetCharId = charIds[charIdx];
+  // Track per-character progress for merged reporting
+  const perCharProgress: Record<
+    string,
+    { done: number; total: number; currentWeapon?: string }
+  > = {};
+  const perCharacter: Record<string, WeaponRanking[]> = {};
+
+  // Pending progress updates queue — populated by parallel callbacks
+  let hasPendingProgress = false;
+
+  function getAggregatedProgress(): number {
+    let done = 0;
+    for (const p of Object.values(perCharProgress)) done += p.done;
+    return totalWeapons > 0 ? done / totalWeapons : 1;
+  }
+
+  // Launch all characters in parallel
+  const charPromises = charIds.map((targetCharId) => {
     const candidates = candidatesPerChar[targetCharId];
     if (!candidates || candidates.length === 0) {
-      // No compatible weapons for this character — skip gracefully
       perCharacter[targetCharId] = [];
-      continue;
+      return Promise.resolve();
     }
 
-    const targetConfig = configs.find((c) => c.charId === targetCharId)!;
-    const supportCharIds = charIds.filter((id) => id !== targetCharId);
+    perCharProgress[targetCharId] = {
+      done: 0,
+      total: candidates.length,
+    };
 
-    // Step 1: Generate supporter artifacts once using the roster weapon
-    // Build a TeamBuild with the roster weapon for this character
-    const rosterTeamBuild = new TeamBuild(
-      configs,
-      opts,
-      enemyAura,
-      extraBuffs ?? []
-    );
-
-    // Generate ideal artifacts with carry = targetCharId using roster weapon
-    // This gives us supporter stat sheets
-    const rosterResult = await runGeneratorToCompletion(
-      rosterTeamBuild,
+    return computeForChar(
       targetCharId,
+      candidates,
+      configs,
+      charIds,
       combo,
       calcContext,
+      weaponStats,
+      opts,
+      enemyAura,
+      extraBuffs ?? [],
       rollMultiplier,
-      substatBudget
-    );
-
-    if (!rosterResult) continue;
-
-    // Extract supporter sheets (these stay fixed across weapon swaps)
-    const supporterSheets: Record<string, StatSheet> = {};
-    for (const sid of supportCharIds) {
-      if (rosterResult.sheetsByChar[sid]) {
-        supporterSheets[sid] = rosterResult.sheetsByChar[sid];
+      substatBudget,
+      (weaponsDone, currentWeapon) => {
+        perCharProgress[targetCharId].done = weaponsDone;
+        perCharProgress[targetCharId].currentWeapon = currentWeapon;
+        hasPendingProgress = true;
       }
-    }
+    ).then((rankings) => {
+      normalizeRankings(rankings, weaponStats);
+      perCharacter[targetCharId] = rankings;
+    });
+  });
 
-    // Step 2: For each weapon candidate, generate artifacts for the target character and evaluate
-    const rankings: WeaponRanking[] = [];
+  // Poll for progress while characters compute in parallel
+  const allDone = Promise.all(charPromises);
+  let settled = false;
+  allDone.then(() => {
+    settled = true;
+  });
 
-    for (let wi = 0; wi < candidates.length; wi++) {
-      const { weaponId, refinement } = candidates[wi];
+  while (!settled) {
+    await yieldFrame();
+    if (hasPendingProgress || settled) {
+      hasPendingProgress = false;
+
+      // Find any currently active character for display
+      let currentChar: string | undefined;
+      let currentWeapon: string | undefined;
+      for (const [charId, prog] of Object.entries(perCharProgress)) {
+        if (prog.done < prog.total && prog.currentWeapon) {
+          currentChar = charId;
+          currentWeapon = prog.currentWeapon;
+          break;
+        }
+      }
 
       yield {
         timestamp: Date.now(),
@@ -309,94 +471,16 @@ export async function* runWeaponChoice(
         done: false,
         progress: {
           phase: "evaluating weapons",
-          overallProgress:
-            totalWeapons > 0 ? overallWeaponsDone / totalWeapons : 1,
-          currentChar: targetCharId,
-          currentWeapon: weaponId,
+          overallProgress: getAggregatedProgress(),
+          currentChar,
+          currentWeapon,
         },
       };
-      await yieldFrame();
-
-      // Build configs with this weapon for the target character
-      const weaponConfigs = configs.map((c) =>
-        c.charId === targetCharId ? { ...c, weaponId, refinement } : c
-      );
-
-      // Build TeamBuild with the candidate weapon
-      const weaponTeamBuild = new TeamBuild(
-        weaponConfigs,
-        opts,
-        enemyAura,
-        extraBuffs ?? []
-      );
-
-      // Generate ideal artifacts for the target character with this weapon
-      const weaponResult = await runGeneratorToCompletion(
-        weaponTeamBuild,
-        targetCharId,
-        combo,
-        calcContext,
-        rollMultiplier,
-        substatBudget
-      );
-
-      if (!weaponResult) {
-        overallWeaponsDone++;
-        continue;
-      }
-
-      // Combine: target char's sheet from weapon run + supporter sheets
-      const combinedSheets: Record<string, StatSheet> = {
-        ...supporterSheets,
-      };
-      if (weaponResult.sheetsByChar[targetCharId]) {
-        combinedSheets[targetCharId] = weaponResult.sheetsByChar[targetCharId];
-      }
-
-      // Evaluate combo damage
-      const damage = evaluateComboDamage(
-        weaponTeamBuild,
-        combo,
-        combinedSheets,
-        calcContext
-      );
-
-      rankings.push({
-        weaponId,
-        refinement,
-        damage,
-        percentOfBest: 0, // will be normalized after all weapons
-      });
-
-      overallWeaponsDone++;
     }
-
-    // Normalize percentOfBest
-    if (rankings.length > 0) {
-      const bestDamage = Math.max(...rankings.map((r) => r.damage));
-      for (const r of rankings) {
-        r.percentOfBest = bestDamage > 0 ? (r.damage / bestDamage) * 100 : 0;
-      }
-      // Sort by damage descending
-      rankings.sort((a, b) => b.damage - a.damage);
-    }
-
-    perCharacter[targetCharId] = rankings;
-
-    // Yield after each character is fully processed
-    yield {
-      timestamp: Date.now(),
-      perCharacter: { ...perCharacter },
-      done: false,
-      progress: {
-        phase: `completed ${targetCharId}`,
-        overallProgress:
-          totalWeapons > 0 ? overallWeaponsDone / totalWeapons : 1,
-        currentChar: targetCharId,
-      },
-    };
-    await yieldFrame();
   }
+
+  // Ensure all promises resolved (catches any errors)
+  await allDone;
 
   // Final result
   yield {
