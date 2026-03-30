@@ -240,7 +240,7 @@ export function InvestmentView() {
 
   const handleAddTeam = useCallback(
     (position: "start" | "end") => {
-      addTeam(position);
+      addTeam(undefined, position);
       scrollRef.current?.scrollTo({
         top: position === "start" ? 0 : scrollRef.current.scrollHeight,
         behavior: "smooth",

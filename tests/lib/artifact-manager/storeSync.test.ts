@@ -252,13 +252,16 @@ describe("replaceArtifactsFromSnapshot", () => {
             key: "engulfing_lightning",
             level: 90,
             refinement: 1,
+            lock: false,
           },
           artifacts: {
             flower: makeArtifact({ id: "old" }),
           },
         },
       ],
-      extraWeapons: [{ id: "w2", key: "the_catch", level: 90, refinement: 5 }],
+      extraWeapons: [
+        { id: "w2", key: "the_catch", level: 90, refinement: 5, lock: false },
+      ],
     });
 
     const updated = replaceArtifactsFromSnapshot(account, []);

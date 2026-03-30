@@ -1,5 +1,19 @@
 Read AGENTS.md for project context if needed.
 
+# Commands
+- `npm run dev` — Vite + Wrangler dev server (Cloudflare Functions proxy)
+- `npm run dev:vite` — Vite only (no Cloudflare Functions)
+- `npm run build` — Production build
+- `npm run lint` / `lint:fix` — Biome check / auto-fix
+- `npm run type-check` — TypeScript check (src + tests tsconfigs)
+- `npm run test` / `test:watch` — Vitest unit tests
+
+### Safe Variants (use these instead of piping)
+- `npm run type-check:head` / `lint:head` / `test:head` — First 20 lines. Pass `-- N` to change.
+- `npm run type-check:tail` / `lint:tail` / `test:tail` — Last 20 lines.
+- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 15 + last 15.
+- `npm run type-check:filter -- "Error"` / `lint:filter` / `test:filter` — Grep output.
+
 # UI Color Rules
 - NEVER use opacity modifiers on `text-muted-foreground` (e.g. `text-muted-foreground/50`, `/30`, `/70`). The token is already a muted color — adding opacity makes text unreadable.
 - Use `text-muted-foreground` only if the text is not important and you want most users to skip reading them.

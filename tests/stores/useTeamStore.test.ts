@@ -599,7 +599,9 @@ describe("migrateTeamStore", () => {
     };
     const result = migrateTeamStore(state, 10);
     // activeTeamId is set to undefined (removed from persisted state)
-    expect((result as Record<string, unknown>).activeTeamId).toBeUndefined();
+    expect(
+      (result as unknown as Record<string, unknown>).activeTeamId
+    ).toBeUndefined();
     // Verify teams are untouched
     expect(result.teams).toHaveLength(1);
     expect(result.teams[0].id).toBe("team-1");
@@ -612,7 +614,9 @@ describe("migrateTeamStore", () => {
       description: "",
     };
     const result = migrateTeamStore(state, 10);
-    expect((result as Record<string, unknown>).activeTeamId).toBeUndefined();
+    expect(
+      (result as unknown as Record<string, unknown>).activeTeamId
+    ).toBeUndefined();
   });
 
   it("migrates v11 → v12: analyzer env fields default to undefined (no-op)", () => {

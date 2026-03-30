@@ -196,6 +196,15 @@ function ConnectionStatus({
     );
   }
 
+  if (connection.status === "error") {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="h-2 w-2 rounded-full bg-destructive" />
+        <span className="text-sm text-destructive">{connection.message}</span>
+      </div>
+    );
+  }
+
   const h = connection.health;
   const isReady = h.enabled && h.gameAlive && !h.busy;
 

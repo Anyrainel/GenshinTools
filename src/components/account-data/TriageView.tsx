@@ -20,6 +20,7 @@ import { allHalfSetIds, artifactIdToHalfSetId } from "@/data/constants";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type FlexPattern,
+  type TriageDecision,
   type TriageSettings,
   runTriage,
 } from "@/lib/account-data/triage";

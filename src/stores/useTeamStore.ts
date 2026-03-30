@@ -18,6 +18,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
+import { useSessionNavStore } from "./useSessionNavStore";
 
 /**
  * Migrate persisted TeamState from an older version to the current format.
@@ -193,12 +194,7 @@ export function migrateTeamStore(
     const oldActiveTeamId = (state as any).activeTeamId;
     if (oldActiveTeamId) {
       // Seed session store with the old value (one-time transfer)
-      try {
-        const { useSessionNavStore } = require("./useSessionNavStore");
-        useSessionNavStore.getState().setActiveTeamId(oldActiveTeamId);
-      } catch {
-        // Session store may not be available during testing
-      }
+      useSessionNavStore.getState().setActiveTeamId(oldActiveTeamId);
     }
     // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field
     (state as any).activeTeamId = undefined;

@@ -2,7 +2,6 @@ import type {
   AccountData,
   ArtifactData,
   MainStat,
-  Rarity,
   Slot,
   SubStat,
 } from "@/data/types";
@@ -125,7 +124,7 @@ function convertGOODArtifact(
 
   // Solve for precise substat values
   const solved = solveArtifact({
-    rarity: art.rarity as Rarity,
+    rarity: art.rarity as 4 | 5,
     level: art.level,
     substats,
     totalRolls: art.totalRolls,
@@ -141,7 +140,7 @@ function convertGOODArtifact(
     setKey,
     slotKey,
     level: art.level,
-    rarity: art.rarity as Rarity,
+    rarity: art.rarity as 4 | 5,
     mainStatKey,
     lock: art.lock,
     substats,

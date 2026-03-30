@@ -13,7 +13,7 @@ const makeWeapon = (key: string, level = 90): WeaponData => ({
 
 const makeArtifact = (
   setKey: string,
-  slotKey = "flower" as const
+  slotKey: "flower" | "plume" | "sands" | "goblet" | "circlet" = "flower"
 ): ArtifactData => ({
   id: "artifact-0",
   setKey,

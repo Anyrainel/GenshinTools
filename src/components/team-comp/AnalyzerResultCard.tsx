@@ -15,7 +15,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer";
+import type {
+  AnalyzerCharConfig,
+  AnalyzerResult,
+} from "@/lib/team-comp/analyzer";
 import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
@@ -50,7 +53,7 @@ export interface AnalyzerCalcSettings {
 interface AnalyzerResultCardProps {
   charConfigs: AnalyzerCharConfig[];
   isComputing: boolean;
-  result: unknown;
+  result: AnalyzerResult | null;
   progress: { overallProgress: number; phase: string } | null;
   error: Error | null;
   onRun: (settings: AnalyzerCalcSettings) => void;

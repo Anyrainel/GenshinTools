@@ -370,7 +370,7 @@ export const convertGOODToAccountData = (
 
         // Solve for precise substat values
         const solved = solveArtifact({
-          rarity: art.rarity as Rarity,
+          rarity: art.rarity as 4 | 5,
           level: art.level,
           substats,
           totalRolls: art.totalRolls,
@@ -389,7 +389,7 @@ export const convertGOODToAccountData = (
             setKey,
             slotKey,
             level: art.level,
-            rarity: art.rarity as Rarity,
+            rarity: art.rarity as 4 | 5,
             mainStatKey,
             lock: art.lock,
             substats,
