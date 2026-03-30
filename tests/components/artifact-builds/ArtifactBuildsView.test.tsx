@@ -1,4 +1,4 @@
-import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsView";
+import { ArtifactBuildsView } from "@/pages/artifact-builds/ArtifactBuildsView";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { waitFor } from "@testing-library/react";
 import { render, screen } from "../../utils/render";

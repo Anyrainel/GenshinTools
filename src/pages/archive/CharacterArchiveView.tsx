@@ -1,3 +1,6 @@
+import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
+import { CharacterDetailPanel } from "@/components/archive/CharacterDetailPanel";
+import { FilterChip } from "@/components/archive/FilterChip";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -24,9 +27,6 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import { Book } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ArchiveToolbar } from "./ArchiveToolbar";
-import { CharacterDetailPanel } from "./CharacterDetailPanel";
-import { FilterChip } from "./FilterChip";
 
 interface CharacterListItemProps {
   character: CharacterResource;

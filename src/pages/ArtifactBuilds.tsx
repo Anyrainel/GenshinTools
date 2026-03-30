@@ -1,11 +1,11 @@
+import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
+import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import {
   ArtifactBuildsView,
   type ArtifactBuildsViewHandle,
-} from "@/components/artifact-builds/ArtifactBuildsView";
-import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
-import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
-import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
-import { WeightsView } from "@/components/artifact-builds/WeightsView";
+} from "@/pages/artifact-builds/ArtifactBuildsView";
+import { AutoTuneView } from "@/pages/artifact-builds/AutoTuneView";
+import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
 
 import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -280,7 +280,7 @@ export default function ArtifactBuildsPage() {
         </TabsContent>
 
         <TabsContent value="weights" className="mt-0 h-full">
-          <WeightsView />
+          <AutoTuneView />
         </TabsContent>
       </Tabs>
     </PageLayout>

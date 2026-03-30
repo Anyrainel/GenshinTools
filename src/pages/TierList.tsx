@@ -1,10 +1,10 @@
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { CharacterTierListView } from "@/components/tier-list/CharacterTierListView";
-import { WeaponTierListView } from "@/components/tier-list/WeaponTierListView";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { CharacterTierListView } from "@/pages/tier-list/CharacterTierListView";
+import { WeaponTierListView } from "@/pages/tier-list/WeaponTierListView";
 import { useTierStore } from "@/stores/useTierStore";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { useCallback, useMemo, useState } from "react";

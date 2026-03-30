@@ -1,3 +1,6 @@
+import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
+import { FilterChip } from "@/components/archive/FilterChip";
+import { WeaponCard } from "@/components/archive/WeaponCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -18,9 +21,6 @@ import { fuzzyMatch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
-import { ArchiveToolbar } from "./ArchiveToolbar";
-import { FilterChip } from "./FilterChip";
-import { WeaponCard } from "./WeaponCard";
 
 // ─── Filter Chips ─────────────────────────────────────────────────────────────
 

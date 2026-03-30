@@ -639,7 +639,7 @@ function ResultCard({
 
 // ── Main View ──
 
-export function WeightsView() {
+export function AutoTuneView() {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
   const groups = useAllResolvedBuilds();

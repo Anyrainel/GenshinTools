@@ -1,6 +1,6 @@
-import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
 import type { CharacterResource } from "@/data/types";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
+import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

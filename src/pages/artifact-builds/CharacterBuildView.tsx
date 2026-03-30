@@ -1,3 +1,7 @@
+import {
+  type BuildCardLayout,
+  CharacterBuildCard,
+} from "@/components/artifact-builds/CharacterBuildCard";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -11,7 +15,6 @@ import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDeferredValue, useEffect, useMemo, useRef } from "react";
-import { type BuildCardLayout, CharacterBuildCard } from "./CharacterBuildCard";
 
 interface CharacterBuildViewProps {
   /** When set, filters will be configured to show this character */

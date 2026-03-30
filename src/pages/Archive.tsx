@@ -1,10 +1,10 @@
-import { ArtifactArchiveView } from "@/components/archive/ArtifactArchiveView";
-import { BossArchiveView } from "@/components/archive/BossArchiveView";
-import { CharacterArchiveView } from "@/components/archive/CharacterArchiveView";
-import { WeaponArchiveView } from "@/components/archive/WeaponArchiveView";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ArtifactArchiveView } from "@/pages/archive/ArtifactArchiveView";
+import { BossArchiveView } from "@/pages/archive/BossArchiveView";
+import { CharacterArchiveView } from "@/pages/archive/CharacterArchiveView";
+import { WeaponArchiveView } from "@/pages/archive/WeaponArchiveView";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 

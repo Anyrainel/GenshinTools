@@ -1,3 +1,5 @@
+import { ArtifactCard } from "@/components/artifact-builds/ArtifactCard";
+import { ComputeSidebar } from "@/components/artifact-builds/ComputeSidebar";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { ExportBranding } from "@/components/shared/ExportBranding";
 import { Button } from "@/components/ui/button";
@@ -19,8 +21,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { ArtifactCard } from "./ArtifactCard";
-import { ComputeSidebar } from "./ComputeSidebar";
 
 interface ArtifactBuildsViewProps {
   onJumpToCharacter: (characterId: string) => void;

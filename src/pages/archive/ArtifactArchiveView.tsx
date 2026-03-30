@@ -1,3 +1,6 @@
+import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
+import { ArtifactCard } from "@/components/archive/ArtifactCard";
+import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -8,9 +11,6 @@ import {
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { fuzzyMatch } from "@/lib/search";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArchiveToolbar } from "./ArchiveToolbar";
-import { ArtifactCard } from "./ArtifactCard";
-import { FilterChip } from "./FilterChip";
 
 export function ArtifactArchiveView() {
   const { t } = useLanguage();

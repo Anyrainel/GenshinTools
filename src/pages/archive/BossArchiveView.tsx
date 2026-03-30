@@ -94,7 +94,7 @@ function BossIcon({
     </div>
   );
 }
-import { ArchiveToolbar } from "./ArchiveToolbar";
+import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
