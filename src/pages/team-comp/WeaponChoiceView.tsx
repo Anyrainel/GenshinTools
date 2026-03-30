@@ -2,6 +2,7 @@ import { CategoryChip } from "@/components/archive/CategoryChip";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { TeamCard } from "@/components/team-comp/TeamCard";
+import { WeaponChoiceDetail } from "@/components/team-comp/WeaponChoiceDetail";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -28,23 +29,6 @@ const EMPTY_SET = new Set<string>();
 /** Max card width drives auto-fit column sizing — compact on ≤lg, spacious on xl+ */
 const CARD_MAX_WIDTH = 320;
 const CARD_MAX_WIDTH_COMPACT = 284;
-
-// Temporary stub — will be replaced by WeaponChoiceDetail import in Task 7
-function WeaponChoiceDetailStub({
-  team,
-  onBack,
-}: { team: Team; onBack: () => void }) {
-  return (
-    <div className="p-4">
-      <button onClick={onBack} type="button" className="text-sm underline">
-        ← Back
-      </button>
-      <p className="mt-2">
-        WeaponChoiceDetail for {team.name || team.id} (coming in Task 7)
-      </p>
-    </div>
-  );
-}
 
 export function WeaponChoiceView() {
   const { t } = useLanguage();
@@ -275,7 +259,7 @@ export function WeaponChoiceView() {
     }
 
     return (
-      <WeaponChoiceDetailStub
+      <WeaponChoiceDetail
         team={team}
         onBack={() => setActiveWeaponChoiceTeamId(null)}
       />
