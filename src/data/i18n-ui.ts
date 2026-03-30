@@ -1163,12 +1163,12 @@ export const i18nUiData = {
     searchSets: { en: "Search Sets", zh: "搜索套装" },
     searchPlaceholder: { en: "Enter set name...", zh: "输入套装名称..." },
     noConfig: {
-      en: "No Artifact Set Found",
-      zh: "没有找到圣遗物套装",
+      en: "Artifact Set Filters",
+      zh: "圣遗物套装筛选",
     },
     noConfigDesc: {
-      en: "Configure builds for your characters first, then switch here to see which artifacts to keep or trash.",
-      zh: "请先为角色配置配装，然后切换到这里查看哪些圣遗物该保留或丢弃。",
+      en: "See which artifacts to keep or fodder based on your character builds. Configure builds in the Characters tab first, or import a community preset.",
+      zh: "根据角色配装方案查看哪些圣遗物该保留或分解。请先在角色标签页配置配装，或导入社区预设。",
     },
     noConfigCta: {
       en: "Go to Configure",
@@ -1608,12 +1608,12 @@ export const i18nUiData = {
       zh: "没有可调整的配装和配队。请先导入或创建配装和配队。",
     },
     noBuildTitle: {
-      en: "No DPS builds to tune",
-      zh: "没有可调整的 DPS 配装",
+      en: "Auto Tune Substat Weights",
+      zh: "自动调整副词条权重",
     },
     noBuildDesc: {
-      en: "AutoTune needs DPS builds paired with teams to generate optimal substat weights.",
-      zh: "自动调参需要已配对队伍的 DPS 配装来生成最优副词条权重。",
+      en: "Automatically compute optimal substat weights for each character based on their team and rotation. Requires character builds and at least one team.",
+      zh: "根据角色的队伍和循环自动计算最优副词条权重。需要角色配装和至少一支队伍。",
     },
     goToTeams: {
       en: "Create Teams",
