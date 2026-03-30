@@ -424,7 +424,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
               style={{ width: badgeSize, height: badgeSize, padding: 1 }}
             >
               <img
-                src={getAssetUrl(`element/${el}.png`)}
+                src={getAssetUrl(`element/${el}.webp`)}
                 className="w-full h-full object-contain"
                 alt={el}
                 draggable={false}

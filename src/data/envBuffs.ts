@@ -36,7 +36,7 @@ export const envBuffs: EnvBuff[] = [
     id: "gateau_debord",
     category: "food",
     foodSlot: 1,
-    imagePath: "/food/gateau_debord.png",
+    imagePath: "/food/gateau_debord.webp",
     stats: [
       { key: "atk", value: 384 },
       { key: "cr", value: 0.14 },
@@ -155,13 +155,13 @@ export const envBuffs: EnvBuff[] = [
   {
     id: "env_ichcahuipilli",
     category: "enemy",
-    imagePath: "/food/ichcahuipilli.png",
+    imagePath: "/food/ichcahuipilli.webp",
     stats: [{ key: "dmg%", value: 9.0 }],
   },
   {
     id: "env_radiant_moongecko_1",
     category: "enemy",
-    imagePath: "/food/radiant_moongecko.png",
+    imagePath: "/food/radiant_moongecko.webp",
     stats: [
       { key: "dmg%", value: -0.5 },
       { key: "heal%", value: -0.4 },
@@ -171,7 +171,7 @@ export const envBuffs: EnvBuff[] = [
   {
     id: "env_radiant_moongecko_2",
     category: "enemy",
-    imagePath: "/food/radiant_moongecko.png",
+    imagePath: "/food/radiant_moongecko.webp",
     stats: [
       { key: "dmg%", value: 0.5 },
       { key: "cr", value: 0.15 },

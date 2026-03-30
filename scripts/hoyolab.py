@@ -105,8 +105,14 @@ def generate_id(name: str) -> str:
     return re.sub(r"[^a-z0-9_]", "", name.lower().replace(" ", "_"))
 
 
-def download_image(url: str, filepath: str, skip_existing: bool = SKIP_EXISTING_IMAGES) -> bool:
-    """Download an image from URL to filepath"""
+def download_image(
+    url: str,
+    filepath: str,
+    skip_existing: bool = SKIP_EXISTING_IMAGES,
+    *,
+    lossless: bool = False,
+) -> bool:
+    """Download an image from URL and save as WebP"""
     if skip_existing and os.path.exists(filepath):
         return True
 
@@ -115,8 +121,13 @@ def download_image(url: str, filepath: str, skip_existing: bool = SKIP_EXISTING_
         response.raise_for_status()
 
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, "wb") as f:
-            f.write(response.content)
+
+        from io import BytesIO
+
+        from PIL import Image
+
+        img = Image.open(BytesIO(response.content))
+        img.save(filepath, "WEBP", quality=90, lossless=lossless)
         return True
     except Exception as e:
         tqdm.write(f"Failed to download image {url}: {e}")
@@ -132,7 +143,7 @@ class HoyolabAssetManager:
     ) -> bool:
         """Download character image"""
         id = override_id or generate_id(character.name)
-        filename = os.path.join(project_root, "public", "character", f"{id}.png")
+        filename = os.path.join(project_root, "public", "character", f"{id}.webp")
         return download_image(character.image_url, filename)
 
     @staticmethod
@@ -142,35 +153,35 @@ class HoyolabAssetManager:
         for slot, suffix in ARTIFACT_SUFFIX.items():
             url = artifact.image_urls.get(slot)
             if url:
-                filename = os.path.join(project_root, "public", "artifact", f"{id}{suffix}.png")
+                filename = os.path.join(project_root, "public", "artifact", f"{id}{suffix}.webp")
                 download_image(url, filename)
 
     @staticmethod
     def download_weapon_assets(weapon: WeaponSource, project_root: str) -> bool:
         """Download weapon image"""
         id = generate_id(weapon.name)
-        filename = os.path.join(project_root, "public", "weapon", f"{id}.png")
+        filename = os.path.join(project_root, "public", "weapon", f"{id}.webp")
         return download_image(weapon.image_url, filename)
 
     @staticmethod
     def download_enemy_assets(enemy: EnemySource, project_root: str) -> bool:
         """Download enemy image, named by wiki entry ID"""
-        filename = os.path.join(project_root, "public", "enemy", f"{enemy.entry_id}.png")
+        filename = os.path.join(project_root, "public", "enemy", f"{enemy.entry_id}.webp")
         return download_image(enemy.image_url, filename)
 
     @staticmethod
     def download_element_asset(element: ResourceOutput, project_root: str) -> bool:
         """Download element image"""
         id = generate_id(element.name)
-        filename = os.path.join(project_root, "public", "element", f"{id}.png")
-        return download_image(element.imageUrl, filename)
+        filename = os.path.join(project_root, "public", "element", f"{id}.webp")
+        return download_image(element.imageUrl, filename, lossless=True)
 
     @staticmethod
     def download_weapon_type_asset(weapon_type: ResourceOutput, project_root: str) -> bool:
         """Download weapon type image"""
         id = generate_id(weapon_type.name)
-        filename = os.path.join(project_root, "public", "weapontype", f"{id}.png")
-        return download_image(weapon_type.imageUrl, filename)
+        filename = os.path.join(project_root, "public", "weapontype", f"{id}.webp")
+        return download_image(weapon_type.imageUrl, filename, lossless=True)
 
 
 def extract_id_from_url(url: str) -> str:
@@ -773,7 +784,7 @@ class HoyolabScraper:
                             ResourceOutput(
                                 name=alt_text,
                                 imageUrl=clean_image_url(src_url),
-                                imagePath=f"/element/{alt_text.lower()}.png",
+                                imagePath=f"/element/{alt_text.lower()}.webp",
                             )
                         )
                     elif alt_text in VALID_WEAPONS:
@@ -781,7 +792,7 @@ class HoyolabScraper:
                             ResourceOutput(
                                 name=alt_text,
                                 imageUrl=clean_image_url(src_url),
-                                imagePath=f"/weapontype/{alt_text.lower()}.png",
+                                imagePath=f"/weapontype/{alt_text.lower()}.webp",
                             )
                         )
         except Exception as e:

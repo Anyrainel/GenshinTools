@@ -340,7 +340,7 @@ describe("extra buffs in DisplayResult", () => {
 describe("buffDisplayUtils for extraBuff source", () => {
   it("getSourceIcon returns imagePath from envBuffsById for known preset", () => {
     const icon = getSourceIcon({ type: "extra", id: "gateau_debord" });
-    expect(icon).toBe("/food/gateau_debord.png");
+    expect(icon).toBe("/food/gateau_debord.webp");
   });
 
   it("getSourceIcon returns undefined for unknown/custom id", () => {

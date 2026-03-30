@@ -74,7 +74,7 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
               <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
                 <img
                   src={getAssetUrl(
-                    `/element/${meta.element.toLowerCase()}.png`
+                    `/element/${meta.element.toLowerCase()}.webp`
                   )}
                   alt={meta.element}
                   className="w-4 h-4 object-contain"
@@ -86,7 +86,7 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
               <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
                 <img
                   src={getAssetUrl(
-                    `/weapontype/${meta.weaponType.toLowerCase()}.png`
+                    `/weapontype/${meta.weaponType.toLowerCase()}.webp`
                   )}
                   alt={meta.weaponType}
                   className="w-4 h-4 object-contain"

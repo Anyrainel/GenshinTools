@@ -205,7 +205,7 @@ function WeaponDetailDrawer({
               <span className="bg-secondary text-secondary-foreground px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5">
                 <img
                   src={getAssetUrl(
-                    `/weapontype/${weaponMeta.type.toLowerCase()}.png`
+                    `/weapontype/${weaponMeta.type.toLowerCase()}.webp`
                   )}
                   alt={weaponMeta.type}
                   className="w-4 h-4 object-contain"

@@ -267,7 +267,7 @@ const bossImageCache = new Map<number, string | null>();
 export function getBossImagePath(bossId: number): string | null {
   if (bossImageCache.has(bossId)) return bossImageCache.get(bossId)!;
   const enemyId = findEnemyId(bossId);
-  const path = enemyId ? `/enemy/${enemyId}.png` : null;
+  const path = enemyId ? `/enemy/${enemyId}.webp` : null;
   bossImageCache.set(bossId, path);
   return path;
 }

@@ -54,7 +54,7 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
               <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10 flex items-center gap-1">
                 <img
                   src={getAssetUrl(
-                    `/weapontype/${meta.type.toLowerCase()}.png`
+                    `/weapontype/${meta.type.toLowerCase()}.webp`
                   )}
                   alt={meta.type}
                   className="w-4 h-4 object-contain"
