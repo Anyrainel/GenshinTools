@@ -33,6 +33,7 @@ scripts/.char_review_output.txt
 playwright-report/
 test-results/
 blob-report/
+.playwright-mcp/
 
 # Wrangler (Cloudflare)
 .wrangler/
