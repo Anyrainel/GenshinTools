@@ -354,42 +354,48 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
     return (
       <ScrollLayout>
         <div className="flex flex-col gap-4 py-2">
-          <FreezeControlBar
-            reuseMode={reuseMode}
-            onReuseModeChange={(v) => setReuseMode(v as ArtifactReuseMode)}
-            hasActiveFrozen={hasActiveFrozen}
-            hasPendingAnything={hasPendingAnything}
-            onClearAll={handleClearAll}
-            onRefreezeAll={handleRefreezeAll}
-          />
+          {!isEmpty && (
+            <>
+              <FreezeControlBar
+                reuseMode={reuseMode}
+                onReuseModeChange={(v) => setReuseMode(v as ArtifactReuseMode)}
+                hasActiveFrozen={hasActiveFrozen}
+                hasPendingAnything={hasPendingAnything}
+                onClearAll={handleClearAll}
+                onRefreezeAll={handleRefreezeAll}
+              />
 
-          <StandaloneArtifactsCard
-            artifacts={displayStandaloneArtifacts}
-            onFreezeClick={() => setFreezeDialogOpen(true)}
-            onClearArtifact={handleClearStandaloneArt}
-          />
+              {accountData && (
+                <StandaloneArtifactsCard
+                  artifacts={displayStandaloneArtifacts}
+                  onFreezeClick={() => setFreezeDialogOpen(true)}
+                  onClearArtifact={handleClearStandaloneArt}
+                />
+              )}
 
-          {/* Per-team frozen sections */}
-          {frozenTeamEntries.map((entry) => (
-            <FrozenTeamSection
-              key={entry.teamId}
-              teamId={entry.teamId}
-              team={entry.team}
-              teamIndex={entry.teamIndex}
-              frozenCharIds={entry.frozenCharIds}
-              pendingRefreezeChars={entry.pendingRefreezeChars}
-              artifactsByChar={entry.artifactsByChar}
-              accountData={accountData}
-              onUnfreezeChar={(charId) =>
-                handleUnfreezeChar(entry.teamId, charId)
-              }
-              onRefreezeChar={(charId) =>
-                handleRefreezeChar(entry.teamId, charId)
-              }
-              onUnfreezeAll={() => handleUnfreezeTeam(entry.teamId)}
-              onRefreezeAll={() => handleRefreezeTeam(entry.teamId)}
-            />
-          ))}
+              {/* Per-team frozen sections */}
+              {frozenTeamEntries.map((entry) => (
+                <FrozenTeamSection
+                  key={entry.teamId}
+                  teamId={entry.teamId}
+                  team={entry.team}
+                  teamIndex={entry.teamIndex}
+                  frozenCharIds={entry.frozenCharIds}
+                  pendingRefreezeChars={entry.pendingRefreezeChars}
+                  artifactsByChar={entry.artifactsByChar}
+                  accountData={accountData}
+                  onUnfreezeChar={(charId) =>
+                    handleUnfreezeChar(entry.teamId, charId)
+                  }
+                  onRefreezeChar={(charId) =>
+                    handleRefreezeChar(entry.teamId, charId)
+                  }
+                  onUnfreezeAll={() => handleUnfreezeTeam(entry.teamId)}
+                  onRefreezeAll={() => handleRefreezeTeam(entry.teamId)}
+                />
+              ))}
+            </>
+          )}
 
           {/* Empty state */}
           {isEmpty && (

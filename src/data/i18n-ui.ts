@@ -220,12 +220,8 @@ export const i18nUiData = {
       zh: "角色配装与库存",
     },
     importPrompt: {
-      en: "View your characters, artifacts, and weapons — with build scoring and upgrade recommendations. Load a community preset to explore, or import your own data.",
-      zh: "查看你的角色、圣遗物和武器 — 包含配装评分和升级建议。加载社区预设来体验，或导入你自己的数据。",
-    },
-    importCta: {
-      en: "Load Preset or Import Data",
-      zh: "加载预设或导入数据",
+      en: "View your characters, artifacts, and weapons — with build scoring and upgrade recommendations. Import your data via Enka UID or a GOOD export file to get started.",
+      zh: "查看你的角色、圣遗物和武器 — 包含配装评分和升级建议。通过 Enka UID 或 GOOD 导出文件导入数据即可开始。",
     },
     enkaTitle: {
       en: "Enka UID",
@@ -665,10 +661,6 @@ export const i18nUiData = {
     emptyTeamOrImport: {
       en: "Load a community preset to get started instantly, or build your own from scratch.",
       zh: "加载社区预设立即开始，或从头构建自己的队伍。",
-    },
-    emptyTeamCta: {
-      en: "Browse Presets & Import",
-      zh: "浏览预设与导入",
     },
     teamName: { en: "Team Name", zh: "队伍名称" },
     teamIndex: { en: "Team {0}", zh: "队伍 {0}" },
@@ -1163,24 +1155,16 @@ export const i18nUiData = {
     searchSets: { en: "Search Sets", zh: "搜索套装" },
     searchPlaceholder: { en: "Enter set name...", zh: "输入套装名称..." },
     noConfig: {
-      en: "Artifact Set Filters",
-      zh: "圣遗物套装筛选",
+      en: "Artifact Build Presets",
+      zh: "圣遗物配装预设",
     },
     noConfigDesc: {
-      en: "See which artifacts to keep or fodder based on your character builds. Configure builds in the Characters tab first, or import a community preset.",
-      zh: "根据角色配装方案查看哪些圣遗物该保留或分解。请先在角色标签页配置配装，或导入社区预设。",
-    },
-    noConfigCta: {
-      en: "Go to Configure",
-      zh: "前往配置",
-    },
-    noConfigOrPreset: {
-      en: "Or import a community preset to get started in seconds.",
-      zh: "或者导入社区预设，几秒钟即可开始。",
+      en: "Define which artifact sets and stats each character needs. Import a community preset to get started quickly.",
+      zh: "定义每个角色需要的圣遗物套装和属性。导入社区预设即可快速开始。",
     },
     importPreset: {
-      en: "Import Presets",
-      zh: "导入预设",
+      en: "Browse Presets & Import",
+      zh: "浏览预设与导入",
     },
     mainStat: { en: "Main Stat", zh: "主词条" },
     subStat: { en: "Substat", zh: "副词条" },

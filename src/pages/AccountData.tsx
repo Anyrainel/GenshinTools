@@ -101,7 +101,7 @@ const NoDataPlaceholder = ({
           className="w-full gap-2 text-base shadow-lg shadow-primary/10"
         >
           <Download className="w-5 h-5" />
-          {t.ui("accountData.importCta")}
+          {t.ui("import.action")}
         </Button>
       </div>
 

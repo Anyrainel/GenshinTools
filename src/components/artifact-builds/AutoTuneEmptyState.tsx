@@ -47,7 +47,7 @@ export function AutoTuneEmptyState({
               size="lg"
               className="gap-2"
             >
-              <Link to="/team-comp">
+              <Link to="/team-comp?tab=damage">
                 <ExternalLink className="w-4 h-4" />
                 {t.ui("batchAutoTune.goToTeams")}
               </Link>

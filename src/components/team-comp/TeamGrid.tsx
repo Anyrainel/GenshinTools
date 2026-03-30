@@ -521,7 +521,7 @@ export function TeamGrid({
             <p className="text-sm text-muted-foreground mb-4">
               {t.ui("teamComp.emptyTeamDesc")}
             </p>
-            <p className="text-xs text-muted-foreground mb-3">
+            <p className="text-sm text-muted-foreground mb-3">
               {t.ui("teamComp.emptyTeamOrImport")}
             </p>
             <Button
@@ -531,7 +531,7 @@ export function TeamGrid({
               onClick={() => emptyState.importRef.current?.open()}
             >
               <Download className="w-5 h-5" />
-              {t.ui("teamComp.emptyTeamCta")}
+              {t.ui("computeFilters.importPreset")}
             </Button>
           </div>
         )}

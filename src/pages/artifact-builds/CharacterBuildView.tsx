@@ -1,3 +1,4 @@
+import { BuildsEmptyState } from "@/components/artifact-builds/BuildsEmptyState";
 import {
   type BuildCardLayout,
   CharacterBuildCard,
@@ -13,6 +14,8 @@ import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDeferredValue, useEffect, useMemo, useRef } from "react";
 
@@ -21,16 +24,25 @@ interface CharacterBuildViewProps {
   targetCharacterId?: string;
   /** Called when targetCharacterId has been processed, so parent can clear it */
   onTargetProcessed?: () => void;
+  /** Opens the import dialog (provided by parent page) */
+  onOpenImport?: () => void;
 }
 
 export function CharacterBuildView({
   targetCharacterId,
   onTargetProcessed,
+  onOpenImport,
 }: CharacterBuildViewProps) {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
   const mainScrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const hasAccountData = useAccountStore(
+    (s) => getActiveAccount(s)?.data != null
+  );
+  const hasAnyBuilds =
+    Object.keys(useBuildsStore((s) => s.characterToBuildIds)).length > 0;
 
   const {
     filters,
@@ -40,7 +52,7 @@ export function CharacterBuildView({
     tierAssignments,
     hasTierData,
     isCharacterOwned,
-  } = useCharacterFilters({ defaultOwnedOnly: true });
+  } = useCharacterFilters({ defaultOwnedOnly: hasAccountData });
 
   // When targetCharacterId is set, configure filters to show that character
   useEffect(() => {
@@ -93,6 +105,14 @@ export function CharacterBuildView({
 
   // Defer the list to allow UI to stay responsive
   const deferredCharacters = useDeferredValue(filteredAndSortedCharacters);
+
+  if (!hasAnyBuilds) {
+    return (
+      <div ref={containerRef} className="h-full">
+        <BuildsEmptyState onOpenImport={onOpenImport} />
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="h-full">

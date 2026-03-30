@@ -264,6 +264,7 @@ export default function ArtifactBuildsPage() {
           <CharacterBuildView
             targetCharacterId={targetCharacterId}
             onTargetProcessed={() => setTargetCharacterId(undefined)}
+            onOpenImport={() => importRef.current?.open()}
           />
         </TabsContent>
 
@@ -274,7 +275,6 @@ export default function ArtifactBuildsPage() {
               setTargetCharacterId(characterId);
               setActiveTab("configure");
             }}
-            onGoToConfigure={() => setActiveTab("configure")}
             onOpenImport={() => importRef.current?.open()}
           />
         </TabsContent>

@@ -1,8 +1,8 @@
 import { ArtifactCard } from "@/components/artifact-builds/ArtifactCard";
+import { BuildsEmptyState } from "@/components/artifact-builds/BuildsEmptyState";
 import { ComputeSidebar } from "@/components/artifact-builds/ComputeSidebar";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { ExportBranding } from "@/components/shared/ExportBranding";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifacts } from "@/data/resources";
 import type { ComputeOptions } from "@/data/types";
@@ -11,7 +11,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { ArrowRight, Download, Loader2, SlidersHorizontal } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   forwardRef,
   useCallback,
@@ -24,7 +24,6 @@ import {
 
 interface ArtifactBuildsViewProps {
   onJumpToCharacter: (characterId: string) => void;
-  onGoToConfigure?: () => void;
   onOpenImport?: () => void;
 }
 
@@ -35,10 +34,7 @@ export interface ArtifactBuildsViewHandle {
 export const ArtifactBuildsView = forwardRef<
   ArtifactBuildsViewHandle,
   ArtifactBuildsViewProps
->(function ArtifactBuildsView(
-  { onJumpToCharacter, onGoToConfigure, onOpenImport },
-  ref
-) {
+>(function ArtifactBuildsView({ onJumpToCharacter, onOpenImport }, ref) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Compute options from store
@@ -132,46 +128,7 @@ export const ArtifactBuildsView = forwardRef<
           )}
 
           {filteredSets.length === 0 && !isComputing ? (
-            <div className="flex flex-col items-center text-center py-16 px-4">
-              <div className="relative mb-6">
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-                <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
-                  <SlidersHorizontal className="w-10 h-10 text-primary opacity-80" />
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                {t.ui("computeFilters.noConfig")}
-              </h3>
-              <p className="text-sm text-muted-foreground max-w-sm mb-6">
-                {t.ui("computeFilters.noConfigDesc")}
-              </p>
-              <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-                {onGoToConfigure && (
-                  <Button
-                    onClick={onGoToConfigure}
-                    className="w-full gap-2 shadow-lg shadow-primary/10"
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                    {t.ui("computeFilters.noConfigCta")}
-                  </Button>
-                )}
-                {onOpenImport && (
-                  <>
-                    <p className="text-xs text-muted-foreground">
-                      {t.ui("computeFilters.noConfigOrPreset")}
-                    </p>
-                    <Button
-                      variant="outline"
-                      onClick={onOpenImport}
-                      className="w-full gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      {t.ui("computeFilters.importPreset")}
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
+            <BuildsEmptyState onOpenImport={onOpenImport} />
           ) : (
             filteredSets.map((set) => {
               const filter = artifactFilters.find((f) => f.setId === set.id);

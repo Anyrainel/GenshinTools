@@ -437,7 +437,9 @@ export function AutoTuneView() {
       <ScrollLayout>
         <AutoTuneEmptyState
           hasBuilds={groups.length > 0}
-          hasTeams={allUserTeams.length > 0}
+          hasTeams={allUserTeams.some((t) =>
+            t.characters.some((c) => c != null)
+          )}
           onShowAll={() => setViewFilter("all")}
         />
       </ScrollLayout>

@@ -49,6 +49,22 @@ vi.mock("@/components/artifact-builds/CharacterBuildCard", () => ({
   ),
 }));
 
+// Mock stores added by empty state feature
+vi.mock("@/stores/useAccountStore", () => ({
+  useAccountStore: vi.fn(() => null),
+  getActiveAccount: () => null,
+}));
+
+vi.mock("@/stores/useBuildsStore", () => ({
+  useBuildsStore: vi.fn(
+    () => ({ char1: ["b1"] }) // characterToBuildIds — non-empty so hasAnyBuilds = true
+  ),
+}));
+
+vi.mock("@/components/artifact-builds/BuildsEmptyState", () => ({
+  BuildsEmptyState: () => <div data-testid="builds-empty-state">Empty</div>,
+}));
+
 // Mock data
 vi.mock("@/data/constants", () => ({
   charactersById: {
