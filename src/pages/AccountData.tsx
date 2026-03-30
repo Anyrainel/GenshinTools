@@ -98,10 +98,10 @@ const NoDataPlaceholder = ({
         <Button
           onClick={onAction}
           size="lg"
-          className="w-full gap-2 text-base shadow-lg shadow-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full gap-2 text-base shadow-lg shadow-primary/10"
         >
           <Download className="w-5 h-5" />
-          {t.ui("import.action")}
+          {t.ui("accountData.importCta")}
         </Button>
       </div>
 

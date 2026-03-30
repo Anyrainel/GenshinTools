@@ -216,12 +216,16 @@ export const i18nUiData = {
     sameSet: { en: "Same Set", zh: "同套装" },
     allOther: { en: "All Other", zh: "其他套装" },
     noData: {
-      en: "No account data loaded.",
-      zh: "未加载账号数据。",
+      en: "Character Builds & Inventory",
+      zh: "角色配装与库存",
     },
     importPrompt: {
-      en: "Import your data to unlock character builds, artifact scoring, and inventory insights.",
-      zh: "导入数据以解锁角色配装、圣遗物评分和库存分析。",
+      en: "View your characters, artifacts, and weapons — with build scoring and upgrade recommendations. Load a community preset to explore, or import your own data.",
+      zh: "查看你的角色、圣遗物和武器 — 包含配装评分和升级建议。加载社区预设来体验，或导入你自己的数据。",
+    },
+    importCta: {
+      en: "Load Preset or Import Data",
+      zh: "加载预设或导入数据",
     },
     enkaTitle: {
       en: "Enka UID",
@@ -1110,6 +1114,12 @@ export const i18nUiData = {
     weaponChoiceConfig: { en: "Character Config", zh: "角色配置" },
     weaponChoiceBest: { en: "Best", zh: "最佳" },
     weaponChoiceResults: { en: "Weapon Choice Results", zh: "武器选择结果" },
+    weaponChoiceEmpty: {
+      en: "Click Run to analyze weapons",
+      zh: "点击运行以分析武器",
+    },
+    mainStats: { en: "Main Stats", zh: "主词条" },
+    substatAllocation: { en: "Substat Totals", zh: "副词条合计" },
     noCompatibleWeapons: {
       en: "No compatible weapons",
       zh: "无匹配武器",
