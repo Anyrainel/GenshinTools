@@ -8,7 +8,10 @@ import type {
   MinErOverrides,
 } from "@/lib/team-comp/analyzer";
 import { comboLineKey } from "@/lib/team-comp/analyzer";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
+import {
+  ELEMENT_ELIGIBLE_REACTIONS,
+  getFormulaReactions,
+} from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type {
   ComboFormula,
@@ -156,20 +159,31 @@ function CharComboRow({
     return map;
   }, [constellations, descriptor]);
 
-  // Build formula rows (one per formula, with variants) and reaction configs
+  // Build formula rows (one per formula, with variants) and reaction configs.
+  // Variants come from element eligibility + team meta, NOT from template combo lines.
+  // Template lines only supply default counts per reaction variant.
   const { formulaRows, reactionConfigs } = useMemo(() => {
-    // Group template lines by formulaId
-    const templateByFormula: Record<string, Variant[]> = {};
+    const charElement = teamBuild.teamMeta.elements[charId];
+    const hasReactionFn = (rx: ReactionType, id?: string) =>
+      teamBuild.teamMeta.hasReaction(rx, id);
+
+    // Index template lines by formulaId → reactionType for count lookup
+    const templateCounts: Record<string, Record<string, number>> = {};
+    const templateReactions: Record<
+      string,
+      Record<string, ReactionOverride>
+    > = {};
     for (const line of templateCombo.lines) {
       if (line.charId !== charId) continue;
-      if (!templateByFormula[line.formulaId])
-        templateByFormula[line.formulaId] = [];
-      templateByFormula[line.formulaId].push({
-        lineKey: comboLineKey(line.formulaId, line.reaction),
-        reactionType: line.reaction?.reaction,
-        templateCount: line.count,
-        reaction: line.reaction,
-      });
+      const rx = line.reaction?.reaction ?? "none";
+      if (!templateCounts[line.formulaId]) templateCounts[line.formulaId] = {};
+      templateCounts[line.formulaId][rx] =
+        (templateCounts[line.formulaId][rx] ?? 0) + line.count;
+      if (line.reaction) {
+        if (!templateReactions[line.formulaId])
+          templateReactions[line.formulaId] = {};
+        templateReactions[line.formulaId][rx] = line.reaction;
+      }
     }
 
     const rows: FormulaRow[] = [];
@@ -179,33 +193,47 @@ function CharComboRow({
     for (const entry of descriptor) {
       if (seen.has(entry.id)) continue;
       seen.add(entry.id);
-      const variants = templateByFormula[entry.id] ?? [];
       const formulaInfo = allFormulas[entry.id];
       const label = formulaInfo?.label;
       const minC = formulaInfo?.minC ?? 0;
 
-      // If no variants from template, create a single "none" variant
-      const effectiveVariants: Variant[] =
-        variants.length > 0
-          ? variants
-          : [
-              {
-                lineKey: entry.id,
-                reactionType: undefined,
-                templateCount: 0,
-              },
-            ];
+      // Derive available reactions from element eligibility
+      const formulaEntry =
+        teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(entry.id) ??
+        null;
+      const reactions = getFormulaReactions(
+        charId,
+        formulaEntry,
+        charElement,
+        hasReactionFn
+      );
+
+      // Build one variant per available reaction type
+      const variants: Variant[] = reactions.map((rx) => ({
+        lineKey: comboLineKey(
+          entry.id,
+          rx === "none" ? undefined : { reaction: rx }
+        ),
+        reactionType: rx,
+        templateCount: templateCounts[entry.id]?.[rx] ?? 0,
+        reaction:
+          rx === "none"
+            ? undefined
+            : (templateReactions[entry.id]?.[rx] ?? {
+                reaction: rx,
+              }),
+      }));
 
       rows.push({
         formulaId: entry.id,
         label,
         minC,
-        variants: effectiveVariants,
+        variants,
         getDescriptorCount: (c: number) => descriptorCounts[c]?.[entry.id] ?? 0,
       });
 
       // Collect non-direct reaction variants for config panels
-      for (const v of effectiveVariants) {
+      for (const v of variants) {
         if (v.reactionType && v.reactionType !== "none") {
           rxConfigs.push({
             formulaId: entry.id,
@@ -220,7 +248,14 @@ function CharComboRow({
     }
 
     return { formulaRows: rows, reactionConfigs: rxConfigs };
-  }, [descriptor, allFormulas, templateCombo.lines, charId, descriptorCounts]);
+  }, [
+    descriptor,
+    allFormulas,
+    templateCombo.lines,
+    charId,
+    descriptorCounts,
+    teamBuild,
+  ]);
 
   const hasOverrides = useMemo(() => {
     const charOverrides = comboOverrides[charId];
@@ -332,7 +367,9 @@ function CharComboRow({
                 ? Math.round(
                     (variant.templateCount / templateTotal) * descTotal
                   )
-                : descTotal;
+                : variant.reactionType === "none"
+                  ? descTotal
+                  : 0;
           if (defaultCount > 0) return true;
         }
       }
@@ -504,6 +541,9 @@ function CharComboRow({
                       >
                         <div className="flex flex-col gap-0.5">
                           {row.variants.map((v) => {
+                            // Default count: distribute descriptor total
+                            // proportionally to template counts.
+                            // If no template lines, only "none" gets the count.
                             const defaultCount =
                               row.variants.length <= 1
                                 ? descTotal
@@ -512,7 +552,9 @@ function CharComboRow({
                                       (v.templateCount / templateTotal) *
                                         descTotal
                                     )
-                                  : descTotal;
+                                  : v.reactionType === "none"
+                                    ? descTotal
+                                    : 0;
                             const override =
                               comboOverrides[charId]?.[c]?.[v.lineKey];
                             const isOverridden = override != null;
@@ -527,7 +569,7 @@ function CharComboRow({
                               >
                                 {/* Show reaction label only when multiple variants */}
                                 {!hasOnlyDirect && (
-                                  <span className="text-[9px] text-muted-foreground shrink-0 w-7 text-right truncate">
+                                  <span className="text-[9px] text-foreground/80 shrink-0 w-7 text-right truncate">
                                     {v.reactionType
                                       ? t.reaction(v.reactionType)
                                       : t.reaction("none")}

@@ -8,9 +8,8 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, ReactionType } from "@/data/types";
 import {
-  ELEMENT_ELIGIBLE_REACTIONS,
-  MULTI_ELEMENT_CHARS,
   REACTION_ELEMENT_REQUIREMENTS,
+  getFormulaReactions,
 } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type {
@@ -213,17 +212,15 @@ export function FormulaSelectorCard({
                 const unlockedFormulas = availableFormulas[cid];
                 const charElement = teamBuild?.teamMeta.elements[cid];
 
-                // Reactions
-                const isMultiElement = MULTI_ELEMENT_CHARS.has(cid);
-                const charEligible: ReactionType[] = charElement
-                  ? (ELEMENT_ELIGIBLE_REACTIONS[
-                      charElement as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
-                    ] ?? ["none"])
-                  : ["none"];
-                const charReactions = charEligible.filter(
-                  (rx) =>
-                    rx === "none" || teamBuild?.teamMeta.hasReaction(rx, cid)
-                ) as ReactionType[];
+                // Reactions (charReactions = element-level default, refined per-formula below)
+                const hasReactionFn = (rx: ReactionType, id?: string) =>
+                  teamBuild?.teamMeta.hasReaction(rx, id) ?? false;
+                const charReactions = getFormulaReactions(
+                  cid,
+                  null,
+                  charElement,
+                  hasReactionFn
+                );
 
                 if (!charFormulas) {
                   return (
@@ -258,38 +255,19 @@ export function FormulaSelectorCard({
                             team.selectedFormula?.formulaId === formulaId;
 
                           // Derive reactions for this formula
-                          const reactions: ReactionType[] = isLocked
-                            ? ["none"]
-                            : isMultiElement
-                              ? (() => {
-                                  const entry =
-                                    teamBuild?.charBuilds[
-                                      cid
-                                    ]?.charBase.getFormulaEntry(formulaId);
-                                  if (!entry) return charReactions;
-                                  const rxSet = new Set<ReactionType>(["none"]);
-                                  for (const part of entry.parts) {
-                                    const partEl = part.formula.tag.element;
-                                    const partEligible =
-                                      ELEMENT_ELIGIBLE_REACTIONS[
-                                        partEl as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
-                                      ];
-                                    if (partEligible)
-                                      for (const rx of partEligible)
-                                        rxSet.add(rx);
-                                  }
-                                  return Array.from(rxSet).filter(
-                                    (rx) =>
-                                      rx === "none" ||
-                                      teamBuild?.teamMeta.hasReaction(rx)
-                                  ) as ReactionType[];
-                                })()
-                              : charReactions;
-                          const hasReactions = reactions.length > 1;
                           const formulaEntry =
                             teamBuild?.charBuilds[
                               cid
                             ]?.charBase.getFormulaEntry(formulaId);
+                          const reactions: ReactionType[] = isLocked
+                            ? ["none"]
+                            : getFormulaReactions(
+                                cid,
+                                formulaEntry ?? null,
+                                charElement,
+                                hasReactionFn
+                              );
+                          const hasReactions = reactions.length > 1;
 
                           // ── Single mode: chip buttons ──
                           if (isSingle) {

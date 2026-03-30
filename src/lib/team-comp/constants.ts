@@ -117,6 +117,45 @@ export const ELEMENT_ELIGIBLE_REACTIONS: Record<
  */
 export const MULTI_ELEMENT_CHARS = new Set(["chasca", "varka"]);
 
+/**
+ * Derive the available reaction types for a specific formula, given
+ * team composition and element eligibility.
+ *
+ * Returns e.g. `["none", "melt"]` for a Pyro formula on a team with Cryo.
+ * Returns `["none"]` for Anemo/Geo/Physical or when team can't trigger reactions.
+ *
+ * Used by FormulaSelectorCard (combo/single mode) and AnalyzerComboTab.
+ */
+export function getFormulaReactions(
+  charId: string,
+  formulaEntry: { parts: { formula: { tag: { element: string } } }[] } | null,
+  charElement: string | undefined,
+  hasReaction: (reaction: ReactionType, charId?: string) => boolean
+): ReactionType[] {
+  if (!charElement) return ["none"];
+
+  const isMultiElement = MULTI_ELEMENT_CHARS.has(charId);
+
+  if (isMultiElement && formulaEntry) {
+    const rxSet = new Set<ReactionType>(["none"]);
+    for (const part of formulaEntry.parts) {
+      const partEl = part.formula.tag.element;
+      const partEligible =
+        ELEMENT_ELIGIBLE_REACTIONS[
+          partEl as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+        ];
+      if (partEligible) for (const rx of partEligible) rxSet.add(rx);
+    }
+    return Array.from(rxSet).filter((rx) => rx === "none" || hasReaction(rx));
+  }
+
+  const eligible: ReactionType[] = ELEMENT_ELIGIBLE_REACTIONS[
+    charElement as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+  ] ?? ["none"];
+
+  return eligible.filter((rx) => rx === "none" || hasReaction(rx, charId));
+}
+
 /** Characters who always have 0 energy during their damage window (e.g., energy consumed on burst cast). */
 export const ZERO_ENERGY_CHARS = new Set(["skirk", "mavuika"]);
 
