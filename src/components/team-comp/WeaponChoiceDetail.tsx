@@ -451,6 +451,17 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
     () => team.weaponChoiceResult ?? null
   );
 
+  // Clear stale results when team composition changes
+  const compositionKey = `${team.characters.join(",")}|${team.weapons.join(",")}`;
+  const prevCompositionKey = useRef(compositionKey);
+  useEffect(() => {
+    if (prevCompositionKey.current !== compositionKey) {
+      prevCompositionKey.current = compositionKey;
+      updateTeam(team.id, { weaponChoiceResult: null });
+      setDisplayResult(null);
+    }
+  }, [compositionKey, team.id, updateTeam]);
+
   // Update displayResult when computation yields
   useEffect(() => {
     if (computeResult) {

@@ -259,7 +259,7 @@ export function WeaponChoiceResultCard({
           <div className="space-y-1">
             <Progress value={0} className="h-2" />
             <p className="text-xs text-muted-foreground">
-              {t.ui("teamComp.computing")}
+              {t.ui("teamComp.weaponChoiceRunning")}
             </p>
           </div>
         )}
@@ -276,7 +276,23 @@ export function WeaponChoiceResultCard({
           >
             {charIds.map((charId) => {
               const rankings = result.perCharacter[charId];
-              if (!rankings?.length) return null;
+              if (!rankings || rankings.length === 0) {
+                return (
+                  <div
+                    key={charId}
+                    className="flex flex-col rounded-md border border-border bg-background/30 overflow-hidden"
+                  >
+                    <div className="px-2 py-1.5 border-b border-border bg-background/50">
+                      <span className="text-sm font-bold truncate">
+                        {t.character(charId)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground text-center py-4 px-2">
+                      {t.ui("teamComp.noCompatibleWeapons")}
+                    </p>
+                  </div>
+                );
+              }
               return (
                 <CharacterWeaponPanel
                   key={charId}

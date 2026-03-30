@@ -1109,6 +1109,11 @@ export const i18nUiData = {
     weaponChoiceRanking: { en: "Weapon Ranking", zh: "武器排名" },
     weaponChoiceConfig: { en: "Character Config", zh: "角色配置" },
     weaponChoiceBest: { en: "Best", zh: "最佳" },
+    weaponChoiceResults: { en: "Weapon Choice Results", zh: "武器选择结果" },
+    noCompatibleWeapons: {
+      en: "No compatible weapons",
+      zh: "无匹配武器",
+    },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },

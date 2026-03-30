@@ -258,7 +258,11 @@ export async function* runWeaponChoice(
   for (let charIdx = 0; charIdx < charIds.length; charIdx++) {
     const targetCharId = charIds[charIdx];
     const candidates = candidatesPerChar[targetCharId];
-    if (!candidates || candidates.length === 0) continue;
+    if (!candidates || candidates.length === 0) {
+      // No compatible weapons for this character — skip gracefully
+      perCharacter[targetCharId] = [];
+      continue;
+    }
 
     const targetConfig = configs.find((c) => c.charId === targetCharId)!;
     const supportCharIds = charIds.filter((id) => id !== targetCharId);
@@ -305,7 +309,8 @@ export async function* runWeaponChoice(
         done: false,
         progress: {
           phase: "evaluating weapons",
-          overallProgress: overallWeaponsDone / totalWeapons,
+          overallProgress:
+            totalWeapons > 0 ? overallWeaponsDone / totalWeapons : 1,
           currentChar: targetCharId,
           currentWeapon: weaponId,
         },
@@ -385,7 +390,8 @@ export async function* runWeaponChoice(
       done: false,
       progress: {
         phase: `completed ${targetCharId}`,
-        overallProgress: overallWeaponsDone / totalWeapons,
+        overallProgress:
+          totalWeapons > 0 ? overallWeaponsDone / totalWeapons : 1,
         currentChar: targetCharId,
       },
     };
