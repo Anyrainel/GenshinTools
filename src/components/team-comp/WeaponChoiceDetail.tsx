@@ -1,14 +1,16 @@
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
 import type { Element, ReactionType } from "@/data/types";
 import { useAsyncWeaponChoice } from "@/hooks/useAsyncWeaponChoice";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
-import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
+import {
+  buildTeamConfigs,
+  buildWeaponChoiceCharConfigs,
+} from "@/lib/team-comp/teamOptUtils";
 import type {
   ComboFormula,
   ComboLine,
@@ -18,16 +20,12 @@ import type {
 import type { WeaponChoiceOptions } from "@/lib/team-comp/weaponChoice";
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import type {
-  Team,
-  WeaponChoiceCharConfig,
-  WeaponChoiceResult,
-} from "@/stores/useTeamStore";
+import type { Team, WeaponChoiceResult } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
-import { WeaponChoiceConfigCard } from "./WeaponChoiceConfigCard";
+import { TeamRosterCard } from "./TeamRosterCard";
 import type { WeaponChoiceCalcSettings } from "./WeaponChoiceResultCard";
 import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
 
@@ -36,54 +34,6 @@ import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
 interface WeaponChoiceDetailProps {
   team: Team;
   onBack: () => void;
-}
-
-// ─── Helpers ───
-
-/** Build default WeaponChoiceCharConfigs from the team roster. */
-function buildDefaultCharConfigs(
-  team: Team,
-  accountData: { characters: { key: string; constellation: number }[] } | null
-): WeaponChoiceCharConfig[] {
-  const charIds = team.characters.filter((id): id is string => id != null);
-  return charIds.map((charId, i) => {
-    const acctChar = accountData?.characters.find((c) => c.key === charId);
-    const artifactDef = team.artifacts[i];
-    return {
-      charId,
-      level: 90,
-      constellation: acctChar?.constellation ?? 0,
-      talentLevels: [10, 10, 10],
-      artifactConfig: artifactDef ?? null,
-      minEr: 1,
-      minCr: 0,
-    };
-  });
-}
-
-/** Re-reconcile configs when characters change (add/remove/swap). */
-function rereconcileConfigs(
-  prev: WeaponChoiceCharConfig[],
-  team: Team,
-  accountData: { characters: { key: string; constellation: number }[] } | null
-): WeaponChoiceCharConfig[] {
-  const charIds = team.characters.filter((id): id is string => id != null);
-  const prevMap = new Map(prev.map((c) => [c.charId, c]));
-  return charIds.map((charId, i) => {
-    const existing = prevMap.get(charId);
-    if (existing) return existing;
-    const acctChar = accountData?.characters.find((c) => c.key === charId);
-    const artifactDef = team.artifacts[i];
-    return {
-      charId,
-      level: 90,
-      constellation: acctChar?.constellation ?? 0,
-      talentLevels: [10, 10, 10],
-      artifactConfig: artifactDef ?? null,
-      minEr: 1,
-      minCr: 0,
-    };
-  });
 }
 
 // ─── Main Component ───
@@ -156,42 +106,6 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
     characterStats,
     weaponStats,
   ]);
-
-  // ── CharConfig management ──
-  const [charConfigs, setCharConfigs] = useState<WeaponChoiceCharConfig[]>(
-    () => {
-      const stored = team.weaponChoiceConfigs;
-      if (stored && stored.length > 0) return stored;
-      return buildDefaultCharConfigs(team, accountData);
-    }
-  );
-
-  // Re-reconcile when characters change
-  const baseCharIds = configs.map((b) => b.charId).join(",");
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally keyed on serialized charIds to avoid spurious re-reconciliation
-  useEffect(() => {
-    setCharConfigs((prev) =>
-      prev.length > 0
-        ? rereconcileConfigs(prev, team, accountData)
-        : buildDefaultCharConfigs(team, accountData)
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseCharIds]);
-
-  // Persist charConfigs to store
-  useEffect(() => {
-    if (charConfigs.length === 0) return;
-    updateTeam(team.id, { weaponChoiceConfigs: charConfigs });
-  }, [charConfigs, team.id, updateTeam]);
-
-  const onUpdateConfig = useCallback(
-    (charId: string, patch: Partial<WeaponChoiceCharConfig>) => {
-      setCharConfigs((prev) =>
-        prev.map((c) => (c.charId === charId ? { ...c, ...patch } : c))
-      );
-    },
-    []
-  );
 
   // ── Formula management (weapon-choice-specific) ──
   const formulaMode =
@@ -487,6 +401,8 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   const handleRun = useCallback(
     (settings: WeaponChoiceCalcSettings) => {
       if (!teamBuild || !weaponStats) return;
+      // Derive charConfigs from team opts/minEr/minCr at computation time
+      const charConfigs = buildWeaponChoiceCharConfigs(team, accountData);
       const opts: WeaponChoiceOptions = {
         baseConfigs: configs,
         charConfigs,
@@ -505,9 +421,9 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
       teamBuild,
       weaponStats,
       configs,
-      charConfigs,
+      team,
+      accountData,
       displayCombo,
-      team.opts,
       localEnemyAura,
       localExtraBuffs,
       start,
@@ -576,13 +492,16 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
           "gap-1.5 lg:gap-2"
         )}
       >
-        {/* 1. Character Config Card */}
-        <WeaponChoiceConfigCard
+        {/* 1. Team Roster (refinement hidden — weapons are the test variable) */}
+        <TeamRosterCard
           team={team}
-          configs={charConfigs}
-          onUpdateConfig={onUpdateConfig}
+          updateTeam={updateTeam}
+          accountData={accountData}
           characterStats={characterStats ?? {}}
+          weaponStats={weaponStats ?? {}}
+          isMobile={isMobile}
           t={t}
+          hideRefinement
         />
 
         {/* 2. Formula Selection Card */}

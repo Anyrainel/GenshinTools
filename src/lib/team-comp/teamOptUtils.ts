@@ -18,7 +18,7 @@ import type {
   PartialBuffInfo,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import type { Team } from "@/stores/useTeamStore";
+import type { Team, WeaponChoiceCharConfig } from "@/stores/useTeamStore";
 
 export interface TeamOptDetailProps {
   team: Team;
@@ -194,6 +194,64 @@ export function buildTeamConfigs(
       artifactSetId,
       artifactHalfSetIds,
       talentLevels,
+    });
+  }
+  return configs;
+}
+
+/**
+ * Build WeaponChoiceCharConfig[] from the team's opts, minEr, minCr, and artifacts.
+ * This derives the same values that TeamRosterCard displays, so the weapon choice
+ * computation uses exactly what the user sees.
+ */
+export function buildWeaponChoiceCharConfigs(
+  team: Team,
+  accountData: AccountData | null
+): WeaponChoiceCharConfig[] {
+  const configs: WeaponChoiceCharConfig[] = [];
+  for (let i = 0; i < 4; i++) {
+    const charId = team.characters[i];
+    if (!charId) continue;
+
+    const acctChar = accountData?.characters.find((c) => c.key === charId);
+    const defaultLevel = acctChar
+      ? Number(getCharacterLevelTier(acctChar.level))
+      : 90;
+    const defaultConst = acctChar ? acctChar.constellation : 0;
+
+    const level =
+      team.opts?.[`${charId}.overrideLevel`] !== undefined
+        ? Number(team.opts[`${charId}.overrideLevel`])
+        : defaultLevel;
+    const constellation =
+      team.opts?.[`${charId}.overrideConstellation`] !== undefined
+        ? Number(team.opts[`${charId}.overrideConstellation`])
+        : defaultConst;
+
+    const baseTalent = acctChar?.talent ?? { auto: 10, skill: 10, burst: 10 };
+    const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
+    const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
+    const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
+    const talentLevels: [number, number, number] = [
+      overrideAuto !== undefined && overrideAuto !== ""
+        ? Number(overrideAuto)
+        : baseTalent.auto,
+      overrideSkill !== undefined && overrideSkill !== ""
+        ? Number(overrideSkill)
+        : baseTalent.skill,
+      overrideBurst !== undefined && overrideBurst !== ""
+        ? Number(overrideBurst)
+        : baseTalent.burst,
+    ];
+
+    configs.push({
+      charId,
+      level,
+      constellation,
+      talentLevels,
+      artifactConfig: team.artifacts[i] ?? null,
+      minEr: team.minEr?.[charId] ?? 1,
+      minCr: team.minCr?.[charId] ?? 0,
     });
   }
   return configs;

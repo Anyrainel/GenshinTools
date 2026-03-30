@@ -57,6 +57,8 @@ interface TeamRosterCardProps {
   frozenCharIds?: Set<string>;
   ignoreArtifactSets?: Record<string, boolean>;
   onIgnoreArtifactSetsChange?: (v: Record<string, boolean>) => void;
+  /** Hide the weapon refinement selector (e.g. in Weapon Choice mode where refinement is the test variable). */
+  hideRefinement?: boolean;
 }
 
 export function TeamRosterCard({
@@ -70,6 +72,7 @@ export function TeamRosterCard({
   frozenCharIds,
   ignoreArtifactSets,
   onIgnoreArtifactSetsChange,
+  hideRefinement,
 }: TeamRosterCardProps) {
   // 3-tier icon sizing: narrow (<560px) → mid (560-1023px) → desktop (≥1024px)
   const isNarrow = useMediaQuery("(max-width: 559px)");
@@ -673,7 +676,7 @@ export function TeamRosterCard({
                       </Select>
                     </div>
 
-                    {weaponId && (
+                    {weaponId && !hideRefinement && (
                       <div className="w-full shrink pl-0.5 border-l border-border/20">
                         <Select
                           value={String(weaponRefine)}
