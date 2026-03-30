@@ -4,8 +4,10 @@ import { persist } from "zustand/middleware";
 interface SessionNavState {
   activeTeamId: string | null;
   activeInvestmentTeamId: string | null;
+  activeWeaponChoiceTeamId: string | null;
   setActiveTeamId: (id: string | null) => void;
   setActiveInvestmentTeamId: (id: string | null) => void;
+  setActiveWeaponChoiceTeamId: (id: string | null) => void;
 }
 
 export const useSessionNavStore = create<SessionNavState>()(
@@ -13,8 +15,11 @@ export const useSessionNavStore = create<SessionNavState>()(
     (set) => ({
       activeTeamId: null,
       activeInvestmentTeamId: null,
+      activeWeaponChoiceTeamId: null,
       setActiveTeamId: (id) => set({ activeTeamId: id }),
       setActiveInvestmentTeamId: (id) => set({ activeInvestmentTeamId: id }),
+      setActiveWeaponChoiceTeamId: (id) =>
+        set({ activeWeaponChoiceTeamId: id }),
     }),
     {
       name: "session-nav-storage",

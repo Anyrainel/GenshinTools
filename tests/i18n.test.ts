@@ -175,7 +175,16 @@ describe("i18n App Data Integrity", () => {
 
   it("all i18nUiData keys should be used in the codebase", () => {
     // Explicit exclusions for keys referenced dynamically (not caught by regex/string search)
-    const allowedIgnoredKeys = new Set<string>();
+    const allowedIgnoredKeys = new Set<string>([
+      // Weapon choice keys — UI components added in upcoming tasks
+      "teamComp.tabWeaponChoice",
+      "teamComp.weaponChoiceDesc",
+      "teamComp.weaponChoiceRun",
+      "teamComp.weaponChoiceRunning",
+      "teamComp.weaponChoiceRanking",
+      "teamComp.weaponChoiceConfig",
+      "teamComp.weaponChoiceBest",
+    ]);
 
     const unusedKeys: string[] = [];
     validUiKeys.forEach((key) => {

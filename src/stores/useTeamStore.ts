@@ -235,6 +235,28 @@ export interface OptimizationResult {
   erTargets: Record<string, number>;
 }
 
+export interface WeaponRanking {
+  weaponId: string;
+  refinement: number;
+  damage: number;
+  percentOfBest: number; // 0-100
+}
+
+export interface WeaponChoiceResult {
+  timestamp: number;
+  perCharacter: Record<string, WeaponRanking[]>;
+}
+
+export interface WeaponChoiceCharConfig {
+  charId: string;
+  level: number; // default 90
+  constellation: number; // 0-6
+  talentLevels: [number, number, number]; // NA, E, Q
+  artifactConfig: ArtifactConfig | null; // 4pc or 2pc+2pc
+  minEr: number; // internal format, e.g. 1.6 = 160%
+  minCr: number; // internal format
+}
+
 /** Default values for team fields that may be missing from persisted data. */
 const DEFAULT_TEAM_FIELDS = {
   reactions: [] as ReactionType[],
@@ -282,6 +304,19 @@ export interface Team {
   analyzerEnemyAura?: Element;
   /** Analyzer-specific extra buffs. Independent from DamageView extraBuffs. */
   analyzerExtraBuffs?: ExtraBuff[];
+  /** Weapon choice per-character config overrides (level, constellation, talents, artifact sets). */
+  weaponChoiceConfigs?: WeaponChoiceCharConfig[];
+  /** Weapon choice formula mode. Independent from DamageView and Analyzer. */
+  weaponChoiceFormulaMode?: "single" | "combo";
+  weaponChoiceSelectedCombo?: string | null;
+  weaponChoiceSingleFormula?: { charId: string; formulaId: string } | null;
+  weaponChoiceSingleReaction?: ReactionOverride;
+  weaponChoiceCombos?: ComboFormula[];
+  weaponChoiceEnemyAura?: Element;
+  weaponChoiceExtraBuffs?: ExtraBuff[];
+  weaponChoiceCalcContext?: Partial<CalcContext>;
+  /** Persisted weapon choice results. Survives refresh. */
+  weaponChoiceResult?: WeaponChoiceResult | null;
   /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
   extraBuffs?: ExtraBuff[];
 }

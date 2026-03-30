@@ -1099,6 +1099,16 @@ export const i18nUiData = {
     tabDamage: { en: "DMG Optimizer", zh: "伤害优化" },
     tabFrozen: { en: "Frozen Teams", zh: "冻结管理" },
     tabInvestment: { en: "Investment", zh: "补金分析" },
+    tabWeaponChoice: { en: "Weapon Choice", zh: "武器选择" },
+    weaponChoiceDesc: {
+      en: "Select a team to compare weapons",
+      zh: "选择队伍来比较武器",
+    },
+    weaponChoiceRun: { en: "Run", zh: "运行" },
+    weaponChoiceRunning: { en: "Computing...", zh: "计算中..." },
+    weaponChoiceRanking: { en: "Weapon Ranking", zh: "武器排名" },
+    weaponChoiceConfig: { en: "Character Config", zh: "角色配置" },
+    weaponChoiceBest: { en: "Best", zh: "最佳" },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },
