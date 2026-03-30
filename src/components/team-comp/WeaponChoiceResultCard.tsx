@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { weaponsById } from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
@@ -91,7 +91,14 @@ function CharacterWeaponPanel({
   const highlightCount = getHighlightCount(rankings);
   return (
     <div className="flex flex-col rounded-md border border-border bg-background/30 overflow-hidden">
-      <div className="px-2 py-1.5 border-b border-border bg-background/50">
+      <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-border bg-background/50">
+        {charactersById[charId] && (
+          <img
+            src={getAssetUrl(charactersById[charId].imagePath)}
+            alt={t.character(charId)}
+            className="w-6 h-6 rounded-full shrink-0"
+          />
+        )}
         <span className="text-sm font-bold truncate">
           {t.character(charId)}
         </span>
