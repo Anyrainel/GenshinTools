@@ -87,11 +87,6 @@ export function TriageView({ onOpenImport }: TriageViewProps) {
     return runTriage(accountData, deferredBuildGroups, deferredSettings);
   }, [accountData, deferredBuildGroups, deferredSettings]);
 
-  const buildManagerInstructions = useCallback(
-    () => buildTriageInstructions(decisions),
-    [decisions]
-  );
-
   const tierRankMap: Record<string, number> = { P: 0, Q: 1, N: 2, T: 3 };
   const slotOrder: Record<string, number> = {
     flower: 0,
@@ -187,6 +182,19 @@ export function TriageView({ onOpenImport }: TriageViewProps) {
         )
       ),
     [decisions, hasSP, passesFilters, sortDecisions]
+  );
+
+  const lockArtifacts = useMemo(
+    () => recommendLock.map((d) => d.artifact),
+    [recommendLock]
+  );
+  const unlockArtifacts = useMemo(
+    () => recommendUnlock.map((d) => d.artifact),
+    [recommendUnlock]
+  );
+  const buildManagerInstructions = useCallback(
+    () => buildTriageInstructions(lockArtifacts, unlockArtifacts),
+    [lockArtifacts, unlockArtifacts]
   );
 
   const noChange = useMemo(() => {

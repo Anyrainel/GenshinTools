@@ -1,7 +1,6 @@
 import type { ArtifactData, Slot } from "@/data/types";
-import type { TriageDecision } from "@/lib/account-data/triage";
-import type { Instruction, InstructionTarget } from "./types";
 import { artifactIdToGOODKey, charIdToGOODKey } from "./keys";
+import type { Instruction, InstructionTarget } from "./types";
 
 function buildTarget(art: ArtifactData): InstructionTarget {
   const setKey = artifactIdToGOODKey(art.setKey);
@@ -22,23 +21,31 @@ function buildTarget(art: ArtifactData): InstructionTarget {
 }
 
 export function buildTriageInstructions(
-  decisions: TriageDecision[],
+  toLock: ArtifactData[],
+  toUnlock: ArtifactData[]
 ): Instruction[] {
   const instructions: Instruction[] = [];
-  for (const d of decisions) {
-    const wantLock = d.label === "lock";
-    if (d.artifact.lock === wantLock) continue;
+  for (const art of toLock) {
+    if (art.lock) continue;
     instructions.push({
-      id: d.artifact.id,
-      target: buildTarget(d.artifact),
-      changes: { lock: wantLock },
+      id: art.id,
+      target: buildTarget(art),
+      changes: { lock: true },
+    });
+  }
+  for (const art of toUnlock) {
+    if (!art.lock) continue;
+    instructions.push({
+      id: art.id,
+      target: buildTarget(art),
+      changes: { lock: false },
     });
   }
   return instructions;
 }
 
 export function buildEquipInstructions(
-  artifactsByChar: Record<string, Partial<Record<Slot, ArtifactData | null>>>,
+  artifactsByChar: Record<string, Partial<Record<Slot, ArtifactData | null>>>
 ): Instruction[] {
   const instructions: Instruction[] = [];
   for (const [charId, slots] of Object.entries(artifactsByChar)) {

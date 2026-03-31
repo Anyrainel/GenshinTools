@@ -1,8 +1,7 @@
 import type { ArtifactData, Slot } from "@/data/types";
-import type { TriageDecision } from "@/lib/account-data/triage";
 import {
-  buildTriageInstructions,
   buildEquipInstructions,
+  buildTriageInstructions,
 } from "@/lib/artifact-manager/instructions";
 import { describe, expect, it } from "vitest";
 
@@ -20,32 +19,18 @@ function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   };
 }
 
-function makeDecision(
-  overrides: Partial<TriageDecision> & { artifact: ArtifactData; label: "lock" | "unlock" },
-): TriageDecision {
-  return {
-    decidingResult: null,
-    allResults: [],
-    specialRules: [],
-    supplyDemand: null,
-    ...overrides,
-  };
-}
-
 describe("buildTriageInstructions", () => {
-  it("builds lock instruction when artifact is unlocked and decision is lock", () => {
+  it("builds lock instruction when artifact is unlocked and in toLock list", () => {
     const art = makeArtifact({ lock: false });
-    const decisions = [makeDecision({ artifact: art, label: "lock" })];
-    const result = buildTriageInstructions(decisions);
+    const result = buildTriageInstructions([art], []);
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("art-1");
     expect(result[0].changes).toEqual({ lock: true });
   });
 
-  it("builds unlock instruction when artifact is locked and decision is unlock", () => {
+  it("builds unlock instruction when artifact is locked and in toUnlock list", () => {
     const art = makeArtifact({ lock: true });
-    const decisions = [makeDecision({ artifact: art, label: "unlock" })];
-    const result = buildTriageInstructions(decisions);
+    const result = buildTriageInstructions([], [art]);
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("art-1");
     expect(result[0].changes).toEqual({ lock: false });
@@ -54,18 +39,13 @@ describe("buildTriageInstructions", () => {
   it("skips artifacts already in the desired lock state", () => {
     const locked = makeArtifact({ id: "a1", lock: true });
     const unlocked = makeArtifact({ id: "a2", lock: false });
-    const decisions = [
-      makeDecision({ artifact: locked, label: "lock" }),
-      makeDecision({ artifact: unlocked, label: "unlock" }),
-    ];
-    const result = buildTriageInstructions(decisions);
+    const result = buildTriageInstructions([locked], [unlocked]);
     expect(result).toHaveLength(0);
   });
 
   it("converts substats from Record to array format", () => {
     const art = makeArtifact({ substats: { cr: 3.89, cd: 7.77 } });
-    const decisions = [makeDecision({ artifact: art, label: "lock" })];
-    const result = buildTriageInstructions(decisions);
+    const result = buildTriageInstructions([art], []);
     expect(result[0].target.substats).toEqual([
       { key: "cr", value: 3.9 },
       { key: "cd", value: 7.8 },
@@ -74,9 +54,34 @@ describe("buildTriageInstructions", () => {
 
   it("converts setKey from internal to GOOD format", () => {
     const art = makeArtifact({ setKey: "gladiators_finale" });
-    const decisions = [makeDecision({ artifact: art, label: "lock" })];
-    const result = buildTriageInstructions(decisions);
+    const result = buildTriageInstructions([art], []);
     expect(result[0].target.setKey).toBe("GladiatorsFinale");
+  });
+
+  it("never sends unlock for toLock list or lock for toUnlock list", () => {
+    const a1 = makeArtifact({ id: "a1", lock: false });
+    const a2 = makeArtifact({ id: "a2", lock: true });
+    const result = buildTriageInstructions([a1], [a2]);
+    for (const inst of result) {
+      if (inst.id === "a1") expect(inst.changes.lock).toBe(true);
+      if (inst.id === "a2") expect(inst.changes.lock).toBe(false);
+    }
+    expect(result).toHaveLength(2);
+  });
+
+  it("handles both lists with multiple artifacts", () => {
+    const lock1 = makeArtifact({ id: "l1", lock: false });
+    const lock2 = makeArtifact({ id: "l2", lock: false });
+    const unlock1 = makeArtifact({ id: "u1", lock: true });
+    const result = buildTriageInstructions([lock1, lock2], [unlock1]);
+    expect(result).toHaveLength(3);
+    expect(result.filter((i) => i.changes.lock === true)).toHaveLength(2);
+    expect(result.filter((i) => i.changes.lock === false)).toHaveLength(1);
+  });
+
+  it("returns empty when both lists are empty", () => {
+    const result = buildTriageInstructions([], []);
+    expect(result).toHaveLength(0);
   });
 });
 
