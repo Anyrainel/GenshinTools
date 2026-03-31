@@ -11,6 +11,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { SortDirection } from "@/data/types";
+import { tiers } from "@/data/types";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
@@ -22,7 +24,13 @@ import {
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, Combine } from "lucide-react";
+import { useTierStore } from "@/stores/useTierStore";
+import {
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  Combine,
+  Minus,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 
 type SortDir = "asc" | "desc";
@@ -42,9 +50,13 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
   const scoreConfig = useArtifactScoreStore((s) => s.config);
 
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [tierSort, setTierSort] = useState<SortDirection>("off");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [ownedOnly, setOwnedOnly] = useState(true);
+
+  const tierAssignments = useTierStore((s) => s.tierAssignments);
+  const hasTierData = Object.keys(tierAssignments).length > 0;
 
   const ownedKeys = useMemo(
     () => new Set(accountData?.characters.map((c) => c.key) ?? []),
@@ -60,16 +72,62 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
       true
     );
 
-    // Apply sort direction
-    if (sortDir === "desc") {
-      groups.sort((a, b) => b.worstCompleteness - a.worstCompleteness);
-      for (const g of groups) {
-        g.evaluations.sort((a, b) => b.completeness - a.completeness);
+    // Helper: best tier index for an evaluation's characters (lower = better)
+    const bestTierIndex = (charIds: string[]): number => {
+      let best = tiers.length; // worse than any real tier
+      for (const id of charIds) {
+        const a = tierAssignments[id];
+        if (a) {
+          const idx = tiers.indexOf(a.tier);
+          if (idx !== -1 && idx < best) best = idx;
+        }
       }
+      return best;
+    };
+
+    // Sort evaluations within each group, then sort groups
+    for (const g of groups) {
+      g.evaluations.sort((a, b) => {
+        // Tier sort first (if enabled)
+        if (tierSort !== "off") {
+          const ta = bestTierIndex(a.evalBuild.characterIds);
+          const tb = bestTierIndex(b.evalBuild.characterIds);
+          if (ta !== tb) return tierSort === "asc" ? tb - ta : ta - tb;
+        }
+        // Then score sort
+        return sortDir === "desc"
+          ? b.completeness - a.completeness
+          : a.completeness - b.completeness;
+      });
+    }
+
+    // Sort groups by their first evaluation's order (representative)
+    if (tierSort !== "off") {
+      groups.sort((a, b) => {
+        const ta = bestTierIndex(
+          a.evaluations[0]?.evalBuild.characterIds ?? []
+        );
+        const tb = bestTierIndex(
+          b.evaluations[0]?.evalBuild.characterIds ?? []
+        );
+        if (ta !== tb) return tierSort === "asc" ? tb - ta : ta - tb;
+        return sortDir === "desc"
+          ? b.worstCompleteness - a.worstCompleteness
+          : a.worstCompleteness - b.worstCompleteness;
+      });
+    } else if (sortDir === "desc") {
+      groups.sort((a, b) => b.worstCompleteness - a.worstCompleteness);
     }
 
     return groups;
-  }, [buildGroups, accountData, scoreConfig.global, sortDir]);
+  }, [
+    buildGroups,
+    accountData,
+    scoreConfig.global,
+    sortDir,
+    tierSort,
+    tierAssignments,
+  ]);
 
   // Filter evaluations by role, tier, and ownership
   const filteredGroups = useMemo(() => {
@@ -204,7 +262,51 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
             </label>
           </span>
 
-          {/* Sort toggle */}
+          {/* Tier sort toggle — cycles off → desc → asc */}
+          {hasTierData ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1 px-2 text-sm text-foreground"
+              onClick={() =>
+                setTierSort((d) =>
+                  d === "off" ? "desc" : d === "desc" ? "asc" : "off"
+                )
+              }
+            >
+              {tierSort === "off" ? (
+                <Minus className="h-3.5 w-3.5" />
+              ) : tierSort === "desc" ? (
+                <ArrowDownWideNarrow className="h-3.5 w-3.5" />
+              ) : (
+                <ArrowUpNarrowWide className="h-3.5 w-3.5" />
+              )}
+              {tierSort === "off"
+                ? t.ui("evaluation.tierSortOff")
+                : tierSort === "desc"
+                  ? t.ui("evaluation.tierSortDesc")
+                  : t.ui("evaluation.tierSortAsc")}
+            </Button>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 gap-1 px-2 text-sm text-muted-foreground opacity-50 cursor-not-allowed"
+                  disabled
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                  {t.ui("evaluation.tierSortOff")}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t.ui("filters.tierSortDisabled")}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+
+          {/* Score sort toggle */}
           <Button
             variant="ghost"
             size="sm"
