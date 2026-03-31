@@ -5,8 +5,8 @@ import {
   replaceArtifactsFromSnapshot,
 } from "@/lib/artifact-manager/storeSync";
 import type {
-  Instruction,
   InstructionResult,
+  ManagePayload,
 } from "@/lib/artifact-manager/types";
 import { describe, expect, it } from "vitest";
 
@@ -24,18 +24,14 @@ function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   };
 }
 
-function makeInstruction(id: string, lock: boolean | null = true): Instruction {
+function makePayload(
+  lockIds: string[],
+  unlockIds: string[] = []
+): ManagePayload {
   return {
-    id,
-    target: {
-      setKey: "GladiatorsFinale",
-      slotKey: "flower",
-      rarity: 5,
-      level: 20,
-      mainStatKey: "hp",
-      substats: [],
-    },
-    changes: { lock },
+    request: { lock: [], unlock: [] },
+    lockIds,
+    unlockIds,
   };
 }
 
@@ -56,14 +52,14 @@ function makeAccount(overrides: Partial<AccountData> = {}): AccountData {
 }
 
 describe("applyJobResults", () => {
-  it("flips lock state for successful lock instructions on extraArtifacts", () => {
+  it("flips lock state for successful lock results on extraArtifacts", () => {
     const account = makeAccount({
       extraArtifacts: [makeArtifact({ id: "a1", lock: false })],
     });
-    const instructions = [makeInstruction("a1", true)];
-    const results = [makeResult("a1", "success")];
+    const payload = makePayload(["a1"]);
+    const results = [makeResult("lock:0", "success")];
 
-    const updated = applyJobResults(account, instructions, results);
+    const updated = applyJobResults(account, payload, results);
 
     expect(updated.extraArtifacts[0].lock).toBe(true);
   });
@@ -82,10 +78,10 @@ describe("applyJobResults", () => {
         },
       ],
     });
-    const instructions = [makeInstruction("eq1", false)];
-    const results = [makeResult("eq1", "success")];
+    const payload = makePayload([], ["eq1"]);
+    const results = [makeResult("unlock:0", "success")];
 
-    const updated = applyJobResults(account, instructions, results);
+    const updated = applyJobResults(account, payload, results);
 
     expect(updated.characters[0].artifacts.flower!.lock).toBe(false);
   });
@@ -94,10 +90,10 @@ describe("applyJobResults", () => {
     const account = makeAccount({
       extraArtifacts: [makeArtifact({ id: "a1", lock: false })],
     });
-    const instructions = [makeInstruction("a1", true)];
-    const results = [makeResult("a1", "not_found")];
+    const payload = makePayload(["a1"]);
+    const results = [makeResult("lock:0", "not_found")];
 
-    const updated = applyJobResults(account, instructions, results);
+    const updated = applyJobResults(account, payload, results);
 
     expect(updated.extraArtifacts[0].lock).toBe(false);
   });
@@ -106,10 +102,10 @@ describe("applyJobResults", () => {
     const account = makeAccount({
       extraArtifacts: [makeArtifact({ id: "a1", lock: false })],
     });
-    const instructions = [makeInstruction("a1", true)];
-    const results = [makeResult("a1", "already_correct")];
+    const payload = makePayload(["a1"]);
+    const results = [makeResult("lock:0", "already_correct")];
 
-    const updated = applyJobResults(account, instructions, results);
+    const updated = applyJobResults(account, payload, results);
 
     expect(updated.extraArtifacts[0].lock).toBe(true);
   });
@@ -118,10 +114,10 @@ describe("applyJobResults", () => {
     const account = makeAccount({
       extraArtifacts: [makeArtifact({ id: "a1", lock: false })],
     });
-    const instructions = [makeInstruction("a1", true)];
-    const results = [makeResult("a1", "not_found")];
+    const payload = makePayload(["a1"]);
+    const results = [makeResult("lock:0", "not_found")];
 
-    const updated = applyJobResults(account, instructions, results);
+    const updated = applyJobResults(account, payload, results);
 
     expect(updated).toBe(account); // same reference
   });
@@ -131,16 +127,35 @@ describe("applyJobResults", () => {
     const account = makeAccount({
       extraArtifacts: [original],
     });
-    const instructions = [makeInstruction("a1", true)];
-    const results = [makeResult("a1", "success")];
+    const payload = makePayload(["a1"]);
+    const results = [makeResult("lock:0", "success")];
 
-    const updated = applyJobResults(account, instructions, results);
+    const updated = applyJobResults(account, payload, results);
 
     // Original artifact unchanged
     expect(original.lock).toBe(false);
     expect(account.extraArtifacts[0].lock).toBe(false);
     // Updated has the new value
     expect(updated.extraArtifacts[0].lock).toBe(true);
+  });
+
+  it("handles mixed lock and unlock results", () => {
+    const account = makeAccount({
+      extraArtifacts: [
+        makeArtifact({ id: "a1", lock: false }),
+        makeArtifact({ id: "a2", lock: true }),
+      ],
+    });
+    const payload = makePayload(["a1"], ["a2"]);
+    const results = [
+      makeResult("lock:0", "success"),
+      makeResult("unlock:0", "success"),
+    ];
+
+    const updated = applyJobResults(account, payload, results);
+
+    expect(updated.extraArtifacts[0].lock).toBe(true);
+    expect(updated.extraArtifacts[1].lock).toBe(false);
   });
 });
 

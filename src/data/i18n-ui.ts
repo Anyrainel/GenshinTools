@@ -1863,10 +1863,9 @@ export const i18nUiData = {
       en: "Waiting for game interaction...",
       zh: "等待游戏交互...",
     },
-    allApplied: { en: "All changes applied", zh: "所有更改已应用" },
-    completedWithIssues: {
-      en: "Completed with issues",
-      zh: "完成但有问题",
+    completed: {
+      en: "{0} artifacts processed",
+      zh: "已处理 {0} 个圣遗物",
     },
     applied: { en: "Applied", zh: "已成功" },
     alreadyCorrect: { en: "Already correct", zh: "已正确" },
@@ -1883,6 +1882,18 @@ export const i18nUiData = {
     connectionDesc: {
       en: "Connect to the local artifact manager to apply changes in-game.",
       zh: "连接本地圣遗物管理器以在游戏中应用更改。",
+    },
+    setupStep1: {
+      en: "Download and open {0}",
+      zh: "下载并打开 {0}",
+    },
+    setupStep2: {
+      en: 'Go to the "Manager" tab',
+      zh: '切换到"管理器"标签页',
+    },
+    setupStep3: {
+      en: "Start the HTTP server",
+      zh: "启动HTTP服务器（注意使用相同端口）",
     },
   },
 };

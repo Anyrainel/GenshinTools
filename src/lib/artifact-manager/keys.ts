@@ -46,3 +46,30 @@ export function goodKeyToCharId(goodKey: string): string | undefined {
 export function goodKeyToArtifactSetId(goodKey: string): string | undefined {
   return goodKeyToArtifact.get(goodKey);
 }
+
+// Reverse stat key map: internal stat key → GOOD v3 stat key
+const reverseStatKeys: Record<string, string> = {
+  hp: "hp",
+  "hp%": "hp_",
+  atk: "atk",
+  "atk%": "atk_",
+  def: "def",
+  "def%": "def_",
+  em: "eleMas",
+  er: "enerRech_",
+  "heal%": "heal_",
+  cr: "critRate_",
+  cd: "critDMG_",
+  "phys%": "physical_dmg_",
+  "anemo%": "anemo_dmg_",
+  "geo%": "geo_dmg_",
+  "electro%": "electro_dmg_",
+  "hydro%": "hydro_dmg_",
+  "pyro%": "pyro_dmg_",
+  "cryo%": "cryo_dmg_",
+  "dendro%": "dendro_dmg_",
+};
+
+export function internalStatToGOODKey(stat: string): string | undefined {
+  return reverseStatKeys[stat];
+}

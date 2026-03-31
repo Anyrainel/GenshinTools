@@ -96,10 +96,7 @@ describe("ExportControl", () => {
     await screen.findByRole("dialog");
 
     await user.type(screen.getByLabelText(/author/i), "Test Author");
-    await user.type(
-      screen.getByLabelText(/description/i),
-      "Test Description"
-    );
+    await user.type(screen.getByLabelText(/description/i), "Test Description");
 
     const buttons = screen.getAllByRole("button");
     const exportButton = buttons.find((btn) =>

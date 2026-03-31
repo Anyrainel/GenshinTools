@@ -156,6 +156,75 @@ const slotKeyMap: Record<string, Slot> = {
   circlet: "circlet",
 };
 
+/**
+ * Convert a single IGOODArtifact to internal ArtifactData.
+ * Shared conversion logic used by both full GOOD import and snapshot sync.
+ * Returns null if the artifact has an unknown set, main stat, or slot.
+ */
+export function convertSingleArtifact(
+  art: IGOODArtifact,
+  id: string
+): ArtifactData | null {
+  const setKey = artifactMap.get(normalize(art.setKey));
+  if (!setKey) return null;
+  const mainStatKey = statKeyMap[art.mainStatKey] as MainStat | undefined;
+  const slotKey = slotKeyMap[art.slotKey];
+  if (!mainStatKey || !slotKey) return null;
+
+  const substats: Partial<Record<SubStat, number>> = {};
+  const initialValues: Partial<Record<SubStat, number>> = {};
+  let hasInitialValues = false;
+  for (const sub of art.substats) {
+    const key = statKeyMap[sub.key] as SubStat;
+    if (key) {
+      substats[key] = sub.value;
+      if (sub.initialValue !== undefined && sub.initialValue > 0) {
+        initialValues[key] = sub.initialValue;
+        hasInitialValues = true;
+      }
+    }
+  }
+
+  let unactivatedSubstats: Partial<Record<SubStat, number>> | undefined;
+  if (art.unactivatedSubstats && art.unactivatedSubstats.length > 0) {
+    unactivatedSubstats = {};
+    for (const sub of art.unactivatedSubstats) {
+      const key = statKeyMap[sub.key] as SubStat;
+      if (key) unactivatedSubstats[key] = sub.value;
+    }
+  }
+
+  const solved = solveArtifact({
+    rarity: art.rarity as 4 | 5,
+    level: art.level,
+    substats,
+    totalRolls: art.totalRolls,
+  });
+  if (solved) {
+    for (const [k, v] of Object.entries(solved)) {
+      if (v !== undefined) substats[k as SubStat] = v;
+    }
+  }
+
+  return {
+    id,
+    setKey,
+    slotKey,
+    level: art.level,
+    rarity: art.rarity as 4 | 5,
+    mainStatKey,
+    lock: art.lock,
+    substats,
+    ...(art.totalRolls !== undefined && { totalRolls: art.totalRolls }),
+    ...(art.astralMark !== undefined && { astralMark: art.astralMark }),
+    ...(art.elixirCrafted !== undefined && {
+      elixirCrafted: art.elixirCrafted,
+    }),
+    ...(unactivatedSubstats && { unactivatedSubstats }),
+    ...(hasInitialValues && { initialValues }),
+  };
+}
+
 // Multi-element characters: bare key -> default element fallback
 const MULTI_ELEMENT_DEFAULTS: Record<string, string> = {
   Traveler: "Pyro",
@@ -337,72 +406,12 @@ export const convertGOODToAccountData = (
           continue;
         }
 
-        const mainStatKey = statKeyMap[art.mainStatKey] as MainStat;
-        const slotKey = slotKeyMap[art.slotKey];
+        const artifactData = convertSingleArtifact(
+          art,
+          `artifact-${artifactIndex}`
+        );
 
-        // Convert substats array to Record (Map)
-        const substats: Partial<Record<SubStat, number>> = {};
-        const initialValues: Partial<Record<SubStat, number>> = {};
-        let hasInitialValues = false;
-        for (const sub of art.substats) {
-          const key = statKeyMap[sub.key] as SubStat;
-          if (key) {
-            substats[key] = sub.value;
-            if (sub.initialValue !== undefined && sub.initialValue > 0) {
-              // GOOD v3: extract initialValue if present
-              initialValues[key] = sub.initialValue;
-              hasInitialValues = true;
-            }
-          }
-        }
-
-        // Convert unactivatedSubstats array to Record (GOOD v3)
-        let unactivatedSubstats: Partial<Record<SubStat, number>> | undefined;
-        if (art.unactivatedSubstats && art.unactivatedSubstats.length > 0) {
-          unactivatedSubstats = {};
-          for (const sub of art.unactivatedSubstats) {
-            const key = statKeyMap[sub.key] as SubStat;
-            if (key) {
-              unactivatedSubstats[key] = sub.value;
-            }
-          }
-        }
-
-        // Solve for precise substat values
-        const solved = solveArtifact({
-          rarity: art.rarity as 4 | 5,
-          level: art.level,
-          substats,
-          totalRolls: art.totalRolls,
-        });
-        if (solved) {
-          for (const [k, v] of Object.entries(solved)) {
-            if (v !== undefined) {
-              substats[k as SubStat] = v;
-            }
-          }
-        }
-
-        if (mainStatKey && slotKey) {
-          const artifactData: ArtifactData = {
-            id: `artifact-${artifactIndex}`,
-            setKey,
-            slotKey,
-            level: art.level,
-            rarity: art.rarity as 4 | 5,
-            mainStatKey,
-            lock: art.lock,
-            substats,
-            // GOOD v3 fields (only include if present)
-            ...(art.totalRolls !== undefined && { totalRolls: art.totalRolls }),
-            ...(art.astralMark !== undefined && { astralMark: art.astralMark }),
-            ...(art.elixirCrafted !== undefined && {
-              elixirCrafted: art.elixirCrafted,
-            }),
-            ...(unactivatedSubstats && { unactivatedSubstats }),
-            ...(hasInitialValues && { initialValues }),
-          };
-
+        if (artifactData) {
           let assigned = false;
           if (art.location) {
             const charKey = resolveMultiElementKey(
@@ -413,7 +422,7 @@ export const convertGOODToAccountData = (
 
             if (locationId && charactersMap.has(locationId)) {
               const char = charactersMap.get(locationId)!;
-              char.artifacts[slotKey] = artifactData;
+              char.artifacts[artifactData.slotKey] = artifactData;
               assigned = true;
             }
           }

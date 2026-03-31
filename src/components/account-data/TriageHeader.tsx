@@ -17,7 +17,7 @@ import type {
   TriageDecision,
   TriageSettings,
 } from "@/lib/account-data/triage";
-import type { Instruction } from "@/lib/artifact-manager/types";
+import type { ManagePayload } from "@/lib/artifact-manager/types";
 import { TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
 import {
   ArrowDown,
@@ -69,7 +69,7 @@ export function TriageHeader({
   activeSortDim: SortDimension;
   activeSortDir: "asc" | "desc";
   onToggleSort: (dim: SortDimension) => void;
-  buildManagerInstructions: () => Instruction[];
+  buildManagerInstructions: () => ManagePayload;
 }) {
   const [flexOpen, setFlexOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);

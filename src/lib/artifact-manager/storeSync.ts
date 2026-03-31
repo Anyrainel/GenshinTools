@@ -1,37 +1,38 @@
-import type {
-  AccountData,
-  ArtifactData,
-  MainStat,
-  Slot,
-  SubStat,
-} from "@/data/types";
-import { solveArtifact } from "@/lib/account-data/artifactSolver";
-import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
-import { goodKeyToArtifactSetId, goodKeyToCharId } from "./keys";
-import type { Instruction, InstructionResult } from "./types";
+import type { AccountData, ArtifactData, Slot } from "@/data/types";
+import {
+  type IGOODArtifact,
+  convertSingleArtifact,
+} from "@/lib/account-data/goodConversion";
+import { goodKeyToCharId } from "./keys";
+import type { InstructionResult, ManagePayload } from "./types";
 
 const SYNC_STATUSES = new Set(["success", "already_correct"]);
 
 /**
  * Apply job results to account data, returning a new AccountData.
- * Only applies changes for instructions with success/already_correct status.
+ * Only applies changes for results with success/already_correct status.
+ * Maps positional result IDs (lock:0, unlock:1) back to internal artifact IDs.
  * Pure function — does not mutate inputs.
  */
 export function applyJobResults(
   account: AccountData,
-  instructions: Instruction[],
+  payload: ManagePayload,
   results: InstructionResult[]
 ): AccountData {
-  // Build lookup: instruction id → instruction for successful results
-  const lookup = new Map<string, Instruction>();
-  for (const inst of instructions) {
-    const res = results.find((r) => r.id === inst.id);
-    if (res && SYNC_STATUSES.has(res.status)) {
-      lookup.set(inst.id, inst);
+  // Build map: internal artifact ID → desired lock state
+  const changes = new Map<string, boolean>();
+  for (const result of results) {
+    if (!SYNC_STATUSES.has(result.status)) continue;
+    const [list, indexStr] = result.id.split(":");
+    const index = Number(indexStr);
+    if (list === "lock" && index < payload.lockIds.length) {
+      changes.set(payload.lockIds[index], true);
+    } else if (list === "unlock" && index < payload.unlockIds.length) {
+      changes.set(payload.unlockIds[index], false);
     }
   }
 
-  if (lookup.size === 0) return account;
+  if (changes.size === 0) return account;
 
   // Deep clone the parts we need to mutate
   const newCharacters = account.characters.map((c) => ({
@@ -59,13 +60,8 @@ export function applyJobResults(
     }
   }
 
-  for (const [id, instruction] of lookup) {
-    if (instruction.changes.lock != null) {
-      updateArtifact(id, (art) => ({
-        ...art,
-        lock: instruction.changes.lock!,
-      }));
-    }
+  for (const [id, lock] of changes) {
+    updateArtifact(id, (art) => ({ ...art, lock }));
   }
 
   return {
@@ -73,81 +69,6 @@ export function applyJobResults(
     characters: newCharacters,
     extraArtifacts: newExtra,
     extraWeapons: account.extraWeapons,
-  };
-}
-
-// GOOD stat key → internal key
-const statKeyMap: Record<string, string> = {
-  hp: "hp",
-  hp_: "hp%",
-  atk: "atk",
-  atk_: "atk%",
-  def: "def",
-  def_: "def%",
-  eleMas: "em",
-  enerRech_: "er",
-  heal_: "heal%",
-  critRate_: "cr",
-  critDMG_: "cd",
-  physical_dmg_: "phys%",
-  anemo_dmg_: "anemo%",
-  geo_dmg_: "geo%",
-  electro_dmg_: "electro%",
-  hydro_dmg_: "hydro%",
-  pyro_dmg_: "pyro%",
-  cryo_dmg_: "cryo%",
-  dendro_dmg_: "dendro%",
-};
-
-const slotKeyMap: Record<string, Slot> = {
-  flower: "flower",
-  plume: "plume",
-  sands: "sands",
-  goblet: "goblet",
-  circlet: "circlet",
-};
-
-function convertGOODArtifact(
-  art: IGOODArtifact,
-  index: number
-): ArtifactData | null {
-  const setKey = goodKeyToArtifactSetId(art.setKey);
-  const mainStatKey = statKeyMap[art.mainStatKey] as MainStat | undefined;
-  const slotKey = slotKeyMap[art.slotKey];
-  if (!setKey || !mainStatKey || !slotKey) return null;
-
-  const substats: Partial<Record<SubStat, number>> = {};
-  for (const sub of art.substats) {
-    const key = statKeyMap[sub.key] as SubStat;
-    if (key) substats[key] = sub.value;
-  }
-
-  // Solve for precise substat values
-  const solved = solveArtifact({
-    rarity: art.rarity as 4 | 5,
-    level: art.level,
-    substats,
-    totalRolls: art.totalRolls,
-  });
-  if (solved) {
-    for (const [k, v] of Object.entries(solved)) {
-      if (v !== undefined) substats[k as SubStat] = v;
-    }
-  }
-
-  return {
-    id: `artifact-${index}`,
-    setKey,
-    slotKey,
-    level: art.level,
-    rarity: art.rarity as 4 | 5,
-    mainStatKey,
-    lock: art.lock,
-    substats,
-    ...(art.astralMark !== undefined && { astralMark: art.astralMark }),
-    ...(art.elixirCrafted !== undefined && {
-      elixirCrafted: art.elixirCrafted,
-    }),
   };
 }
 
@@ -169,7 +90,7 @@ export function replaceArtifactsFromSnapshot(
   const extraArtifacts: ArtifactData[] = [];
 
   for (let i = 0; i < goodArtifacts.length; i++) {
-    const art = convertGOODArtifact(goodArtifacts[i], i);
+    const art = convertSingleArtifact(goodArtifacts[i], `artifact-${i}`);
     if (!art) continue;
 
     const location = goodArtifacts[i].location;

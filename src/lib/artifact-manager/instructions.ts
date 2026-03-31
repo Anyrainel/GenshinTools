@@ -1,64 +1,98 @@
-import type { ArtifactData, Slot } from "@/data/types";
-import { artifactIdToGOODKey, charIdToGOODKey } from "./keys";
-import type { Instruction, InstructionTarget } from "./types";
+import type { ArtifactData } from "@/data/types";
+import type {
+  IGOODArtifact,
+  IGOODSubstat,
+} from "@/lib/account-data/goodConversion";
+import {
+  artifactIdToGOODKey,
+  charIdToGOODKey,
+  internalStatToGOODKey,
+} from "./keys";
+import type { ManagePayload } from "./types";
 
-function buildTarget(art: ArtifactData): InstructionTarget {
+/**
+ * Convert internal ArtifactData to GOOD v3 format for the manage API.
+ * Includes all identity fields used for matching plus informational fields.
+ */
+export function toGOODArtifact(
+  art: ArtifactData,
+  locationCharId?: string
+): IGOODArtifact {
   const setKey = artifactIdToGOODKey(art.setKey);
   if (!setKey) {
     throw new Error(`Unknown artifact set: ${art.setKey}`);
   }
-  return {
+
+  const substats: IGOODSubstat[] = Object.entries(art.substats).map(
+    ([key, value]) => {
+      const goodKey = internalStatToGOODKey(key);
+      if (!goodKey) throw new Error(`Unknown stat key: ${key}`);
+      const sub: IGOODSubstat = {
+        key: goodKey,
+        value: Math.round(value * 10) / 10,
+      };
+      if (art.initialValues?.[key as keyof typeof art.initialValues] != null) {
+        sub.initialValue =
+          art.initialValues[key as keyof typeof art.initialValues];
+      }
+      return sub;
+    }
+  );
+
+  const mainStatKey = internalStatToGOODKey(art.mainStatKey);
+  if (!mainStatKey) throw new Error(`Unknown main stat: ${art.mainStatKey}`);
+
+  const location = locationCharId
+    ? (charIdToGOODKey(locationCharId) ?? "")
+    : "";
+
+  const good: IGOODArtifact = {
     setKey,
     slotKey: art.slotKey,
     rarity: art.rarity,
     level: art.level,
-    mainStatKey: art.mainStatKey,
-    substats: Object.entries(art.substats).map(([key, value]) => ({
-      key,
-      value: Math.round(value * 10) / 10,
-    })),
+    mainStatKey,
+    substats,
+    location,
+    lock: art.lock,
   };
+
+  if (art.totalRolls !== undefined) good.totalRolls = art.totalRolls;
+  if (art.astralMark !== undefined) good.astralMark = art.astralMark;
+  if (art.elixirCrafted !== undefined) good.elixirCrafted = art.elixirCrafted;
+
+  if (art.unactivatedSubstats) {
+    good.unactivatedSubstats = Object.entries(art.unactivatedSubstats).map(
+      ([key, value]) => {
+        const goodKey = internalStatToGOODKey(key);
+        if (!goodKey) throw new Error(`Unknown stat key: ${key}`);
+        return { key: goodKey, value };
+      }
+    );
+  }
+
+  return good;
 }
 
 export function buildTriageInstructions(
   toLock: ArtifactData[],
   toUnlock: ArtifactData[]
-): Instruction[] {
-  const instructions: Instruction[] = [];
+): ManagePayload {
+  const lock: IGOODArtifact[] = [];
+  const lockIds: string[] = [];
+  const unlock: IGOODArtifact[] = [];
+  const unlockIds: string[] = [];
+
   for (const art of toLock) {
     if (art.lock) continue;
-    instructions.push({
-      id: art.id,
-      target: buildTarget(art),
-      changes: { lock: true },
-    });
+    lock.push(toGOODArtifact(art));
+    lockIds.push(art.id);
   }
   for (const art of toUnlock) {
     if (!art.lock) continue;
-    instructions.push({
-      id: art.id,
-      target: buildTarget(art),
-      changes: { lock: false },
-    });
+    unlock.push(toGOODArtifact(art));
+    unlockIds.push(art.id);
   }
-  return instructions;
-}
 
-export function buildEquipInstructions(
-  artifactsByChar: Record<string, Partial<Record<Slot, ArtifactData | null>>>
-): Instruction[] {
-  const instructions: Instruction[] = [];
-  for (const [charId, slots] of Object.entries(artifactsByChar)) {
-    const charKey = charIdToGOODKey(charId);
-    if (!charKey) continue;
-    for (const art of Object.values(slots)) {
-      if (!art) continue;
-      instructions.push({
-        id: art.id,
-        target: buildTarget(art),
-        changes: { location: charKey },
-      });
-    }
-  }
-  return instructions;
+  return { request: { lock, unlock }, lockIds, unlockIds };
 }

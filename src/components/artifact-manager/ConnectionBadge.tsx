@@ -6,7 +6,10 @@ interface ConnectionBadgeProps {
   className?: string;
 }
 
-export function ConnectionBadge({ connection, className }: ConnectionBadgeProps) {
+export function ConnectionBadge({
+  connection,
+  className,
+}: ConnectionBadgeProps) {
   const isReady =
     connection.status === "connected" &&
     connection.health.enabled &&
@@ -20,9 +23,7 @@ export function ConnectionBadge({ connection, className }: ConnectionBadgeProps)
       connection.health.busy);
 
   return (
-    <span
-      className={cn("inline-flex items-center gap-1.5 text-xs", className)}
-    >
+    <span className={cn("inline-flex items-center gap-1.5 text-xs", className)}>
       <span
         className={cn(
           "h-2 w-2 rounded-full",
@@ -30,7 +31,7 @@ export function ConnectionBadge({ connection, className }: ConnectionBadgeProps)
             ? "bg-green-500"
             : isConnectedButBusy
               ? "bg-yellow-500"
-              : "bg-muted-foreground",
+              : "bg-muted-foreground"
         )}
       />
       {isReady

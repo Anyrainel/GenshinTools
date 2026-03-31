@@ -138,7 +138,7 @@ export function TriageSettingsPanel({
           value={settings.setSlotKeep}
           onChange={(v) => update("setSlotKeep", v)}
           min={1}
-          max={5}
+          max={7}
           step={1}
         />
         <SliderRow
@@ -146,7 +146,7 @@ export function TriageSettingsPanel({
           value={settings.neutralKeep}
           onChange={(v) => update("neutralKeep", v)}
           min={1}
-          max={5}
+          max={7}
           step={1}
         />
         <SliderRow
@@ -154,7 +154,7 @@ export function TriageSettingsPanel({
           value={settings.qualityMargin}
           onChange={(v) => update("qualityMargin", v)}
           min={1}
-          max={5}
+          max={7}
           step={1}
         />
       </div>

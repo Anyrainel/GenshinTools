@@ -1,6 +1,6 @@
 import {
-  charIdToGOODKey,
   artifactIdToGOODKey,
+  charIdToGOODKey,
 } from "@/lib/artifact-manager/keys";
 import { describe, expect, it } from "vitest";
 
@@ -37,13 +37,13 @@ describe("artifactIdToGOODKey", () => {
 
   it("capitalizes all words including 'of'", () => {
     expect(artifactIdToGOODKey("emblem_of_severed_fate")).toBe(
-      "EmblemOfSeveredFate",
+      "EmblemOfSeveredFate"
     );
   });
 
   it("converts artifact with multiple 'of' words", () => {
     expect(artifactIdToGOODKey("flower_of_paradise_lost")).toBe(
-      "FlowerOfParadiseLost",
+      "FlowerOfParadiseLost"
     );
   });
 

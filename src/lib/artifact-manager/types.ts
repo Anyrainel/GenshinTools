@@ -1,3 +1,5 @@
+import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
+
 // ---------- Health ----------
 export interface HealthResponse {
   status: string;
@@ -6,29 +8,23 @@ export interface HealthResponse {
   gameAlive: boolean;
 }
 
-// ---------- Submit ----------
-export interface InstructionTarget {
-  setKey: string; // GOOD v3 PascalCase
-  slotKey: string; // flower | plume | sands | goblet | circlet
-  rarity: number;
-  level: number;
-  mainStatKey: string;
-  substats: { key: string; value: number }[];
+// ---------- Manage ----------
+export interface ManageRequest {
+  lock: IGOODArtifact[];
+  unlock: IGOODArtifact[];
 }
 
-export interface InstructionChanges {
-  lock?: boolean | null;
-  location?: string | null; // GOOD character key, "" = unequip
-}
-
-export interface Instruction {
-  id: string;
-  target: InstructionTarget;
-  changes: InstructionChanges;
-}
-
-export interface SubmitRequest {
-  instructions: Instruction[];
+/**
+ * Payload returned by instruction builders.
+ * Contains both the API request body and internal artifact IDs
+ * for correlating positional results back to local data.
+ */
+export interface ManagePayload {
+  request: ManageRequest;
+  /** Internal artifact IDs, parallel to request.lock */
+  lockIds: string[];
+  /** Internal artifact IDs, parallel to request.unlock */
+  unlockIds: string[];
 }
 
 export interface SubmitResponse {
@@ -71,7 +67,6 @@ export type InstructionStatus =
 export interface InstructionResult {
   id: string;
   status: InstructionStatus;
-  detail?: string;
 }
 
 export interface ResultSummary {

@@ -9,7 +9,10 @@ import {
   applyJobResults,
   replaceArtifactsFromSnapshot,
 } from "@/lib/artifact-manager/storeSync";
-import type { Instruction, ResultResponse } from "@/lib/artifact-manager/types";
+import type {
+  ManagePayload,
+  ResultResponse,
+} from "@/lib/artifact-manager/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -25,7 +28,8 @@ const POLL_INTERVAL = 1000;
 
 export function useArtifactManagerJob(port = 8765) {
   const [phase, setPhase] = useState<JobPhase>({ type: "idle" });
-  const instructionsRef = useRef<Instruction[]>([]);
+  const payloadRef = useRef<ManagePayload | null>(null);
+  const jobIdRef = useRef<string | null>(null);
   const mountedRef = useRef(true);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -61,33 +65,72 @@ export function useArtifactManagerJob(port = 8765) {
           });
         } else if (status.state === "completed") {
           stopPolling();
-          const result = await getResult(port);
+
+          const jobId = jobIdRef.current;
+          if (!jobId) {
+            setPhase({ type: "error", message: "Lost job ID" });
+            return;
+          }
+
+          const result = await getResult(jobId, port);
           if (!mountedRef.current) return;
 
-          // Sync results to the account store
+          // Apply lock changes immediately
+          const payload = payloadRef.current;
           const account = getActiveAccount(useAccountStore.getState());
-          if (account) {
-            let updated = applyJobResults(
+          if (account && payload) {
+            const updated = applyJobResults(
               account.data,
-              instructionsRef.current,
+              payload,
               result.results
             );
-
-            // If no aborted items, the server did a full scan — fetch snapshot
-            if (result.summary.aborted === 0) {
-              try {
-                const snapshot = await fetchArtifacts(port);
-                if (snapshot && mountedRef.current) {
-                  updated = replaceArtifactsFromSnapshot(updated, snapshot);
-                }
-              } catch {
-                // Snapshot fetch failed — lock sync already applied above
-              }
-            }
-
             useAccountStore.getState().addOrUpdateAccount(account.id, {
               data: updated,
             });
+            console.log(
+              "[manager] Applied lock sync:",
+              result.results.length,
+              "results"
+            );
+          }
+
+          // Fetch and apply full artifact snapshot
+          if (result.summary.aborted === 0) {
+            try {
+              const snapshot = await fetchArtifacts(port);
+              if (snapshot && mountedRef.current) {
+                console.log(
+                  "[manager] Snapshot fetched:",
+                  snapshot.length,
+                  "artifacts,",
+                  snapshot.filter((a) => a.lock).length,
+                  "locked"
+                );
+                const freshAccount = getActiveAccount(
+                  useAccountStore.getState()
+                );
+                if (freshAccount) {
+                  const updated = replaceArtifactsFromSnapshot(
+                    freshAccount.data,
+                    snapshot
+                  );
+                  useAccountStore
+                    .getState()
+                    .addOrUpdateAccount(freshAccount.id, { data: updated });
+                  console.log(
+                    "[manager] Snapshot applied:",
+                    updated.extraArtifacts.length,
+                    "extra,",
+                    updated.characters.length,
+                    "characters"
+                  );
+                }
+              } else {
+                console.log("[manager] No snapshot available");
+              }
+            } catch (e) {
+              console.log("[manager] Snapshot fetch failed:", e);
+            }
           }
 
           setPhase({ type: "completed", result });
@@ -102,18 +145,21 @@ export function useArtifactManagerJob(port = 8765) {
         // Network error during polling — keep polling, server might recover
       }
     }, POLL_INTERVAL);
-  }, [stopPolling]);
+  }, [stopPolling, port]);
 
   const submit = useCallback(
-    async (instructions: Instruction[]) => {
-      if (instructions.length === 0) return;
+    async (payload: ManagePayload) => {
+      const total = payload.request.lock.length + payload.request.unlock.length;
+      if (total === 0) return;
 
-      instructionsRef.current = instructions;
+      payloadRef.current = payload;
+      jobIdRef.current = null;
       setPhase({ type: "submitting" });
 
       try {
-        const response = await submitJob(instructions, port);
+        const response = await submitJob(payload.request, port);
         if (!mountedRef.current) return;
+        jobIdRef.current = response.jobId;
         setPhase({ type: "submitted", jobId: response.jobId });
         startPolling();
       } catch (e) {
@@ -129,12 +175,13 @@ export function useArtifactManagerJob(port = 8765) {
         setPhase({ type: "error", message });
       }
     },
-    [startPolling]
+    [startPolling, port]
   );
 
   const reset = useCallback(() => {
     stopPolling();
-    instructionsRef.current = [];
+    payloadRef.current = null;
+    jobIdRef.current = null;
     setPhase({ type: "idle" });
   }, [stopPolling]);
 

@@ -353,6 +353,7 @@ export function runTriage(
           tb.hitTotal - ta.hitTotal ||
           (isInitial4Line(b.artifact) ? 1 : 0) -
             (isInitial4Line(a.artifact) ? 1 : 0) ||
+          skTiebreaker(a) - skTiebreaker(b) ||
           b.artifact.level - a.artifact.level
         );
       });
@@ -440,37 +441,6 @@ export function runTriage(
     }
   }
 
-  // --- Set+slot minimum keep ---
-  if (settings.setSlotKeep > 0) {
-    const setSlotGroups = new Map<string, PrelimResult[]>();
-    for (const p of prelims) {
-      const key = `${p.artifact.setKey}:${p.artifact.slotKey}`;
-      if (!setSlotGroups.has(key)) setSlotGroups.set(key, []);
-      setSlotGroups.get(key)!.push(p);
-    }
-    for (const group of setSlotGroups.values()) {
-      const locked = group.filter(
-        (p) => p.bestLabel === "lock" || p.artifact.lock
-      ).length;
-      if (locked >= settings.setSlotKeep) continue;
-
-      // Need to keep more — promote best unlocked ones
-      const unlocked = group
-        .filter((p) => p.bestLabel === "unlock" && !p.artifact.lock)
-        .sort(
-          (a, b) =>
-            tierRank(a.bestTier) - tierRank(b.bestTier) ||
-            b.artifact.level - a.artifact.level
-        );
-
-      const need = settings.setSlotKeep - locked;
-      for (let i = 0; i < Math.min(need, unlocked.length); i++) {
-        setLabel(unlocked[i], "lock", "SK");
-        unlocked[i].specialRules.push("SP6");
-      }
-    }
-  }
-
   // --- Special-rule lock promotion (SP1, SP7, SP5, FLEX) ---
   // These force lock without changing the tier determined by 4pc/2pc evaluation.
   for (const prelim of prelims) {
@@ -490,6 +460,41 @@ export function runTriage(
             ? "SP5"
             : "FLEX";
       setLabel(prelim, "lock", ruleId);
+    }
+  }
+
+  // --- Set+slot minimum keep ---
+  // Runs AFTER special-rule promotions so FLEX/SP-locked artifacts are counted.
+  if (settings.setSlotKeep > 0) {
+    const setSlotGroups = new Map<string, PrelimResult[]>();
+    for (const p of prelims) {
+      const key = `${p.artifact.setKey}:${p.artifact.slotKey}`;
+      if (!setSlotGroups.has(key)) setSlotGroups.set(key, []);
+      setSlotGroups.get(key)!.push(p);
+    }
+    for (const group of setSlotGroups.values()) {
+      const locked = group.filter(
+        (p) =>
+          p.bestLabel === "lock" ||
+          (p.artifact.lock && p.bestLabel !== "unlock")
+      ).length;
+      if (locked >= settings.setSlotKeep) continue;
+
+      // Need to keep more — promote best ones currently marked for unlock
+      const unlocked = group
+        .filter((p) => p.bestLabel === "unlock")
+        .sort(
+          (a, b) =>
+            tierRank(a.bestTier) - tierRank(b.bestTier) ||
+            skTiebreaker(a) - skTiebreaker(b) ||
+            b.artifact.level - a.artifact.level
+        );
+
+      const need = settings.setSlotKeep - locked;
+      for (let i = 0; i < Math.min(need, unlocked.length); i++) {
+        setLabel(unlocked[i], "lock", "SK");
+        unlocked[i].specialRules.push("SP6");
+      }
     }
   }
 
@@ -528,6 +533,35 @@ export function runTriage(
 
 function tierRank(t: QualityTier): number {
   return t === "P" ? 0 : t === "Q" ? 1 : t === "N" ? 2 : 3;
+}
+
+const ELEMENTAL_MAINS = new Set<string>([
+  "pyro%",
+  "hydro%",
+  "anemo%",
+  "electro%",
+  "dendro%",
+  "cryo%",
+  "geo%",
+]);
+
+/** Lower = better. Used as tiebreaker when SK-promoting same-tier artifacts. */
+function skTiebreaker(p: { artifact: ArtifactData }): number {
+  const a = p.artifact;
+  const subs = Object.keys(a.substats ?? {});
+  let score = 0;
+  // 4-line is best
+  if (!isInitial4Line(a)) score += 100;
+  // elemental main stat
+  if (!ELEMENTAL_MAINS.has(a.mainStatKey)) score += 50;
+  // desirable stats in main or subs
+  const hasStatInMainOrSubs = (stat: string) =>
+    a.mainStatKey === stat || subs.includes(stat);
+  if (!hasStatInMainOrSubs("er")) score += 25;
+  if (!hasStatInMainOrSubs("cr")) score += 12;
+  if (!hasStatInMainOrSubs("cd")) score += 6;
+  if (!hasStatInMainOrSubs("em")) score += 3;
+  return score;
 }
 
 function tierToLabel(t: QualityTier): TriageLabel {
