@@ -49,10 +49,12 @@ describe("RecommendationView", () => {
     useTierStore.getState().resetTierList();
   });
 
-  it("returns null when no account data", () => {
-    const { container } = render(<RecommendationView scores={{}} />);
+  it("shows empty state when no account data", () => {
+    render(<RecommendationView scores={{}} />);
 
-    expect(container.firstChild).toBeNull();
+    expect(
+      screen.getByText("Account Data & Builds Required")
+    ).toBeInTheDocument();
   });
 
   it("renders tier headings when account data exists", () => {

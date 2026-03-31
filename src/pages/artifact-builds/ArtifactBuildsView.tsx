@@ -50,6 +50,8 @@ export const ArtifactBuildsView = forwardRef<
   // Get data from resolved builds hook
   // This automatically handles union of Local and Preset builds
   const characterBuilds = useAllResolvedBuilds();
+  const hasAnyBuilds =
+    Object.keys(useBuildsStore((s) => s.characterToBuildIds)).length > 0;
 
   // Async compute with caching and cancellation
   const { results: artifactFilters, isComputing } = useAsyncCompute(
@@ -99,6 +101,10 @@ export const ArtifactBuildsView = forwardRef<
       });
     });
   }, [showExport, t]);
+
+  if (!hasAnyBuilds) {
+    return <BuildsEmptyState onOpenImport={onOpenImport} />;
+  }
 
   return (
     <SidebarLayout

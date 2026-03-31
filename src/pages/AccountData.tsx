@@ -13,6 +13,7 @@ import { AccountManagerDialog } from "@/components/account-data/AccountManagerDi
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -76,70 +77,46 @@ const NoDataPlaceholder = ({
   t: ReturnType<typeof useLanguage>["t"];
   onAction: () => void;
 }) => (
-  <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
-    <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
-      <div className="relative">
-        <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-        <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
-          <Database className="w-12 h-12 text-primary opacity-80" />
+  <EmptyState
+    icon={Database}
+    title={t.ui("accountData.noData")}
+    description={t.ui("accountData.importPrompt")}
+    action={{ label: t.ui("import.action"), icon: Download, onClick: onAction }}
+  >
+    {/* Import method hints */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md pt-2">
+      <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card/50 text-left">
+        <div className="rounded-md bg-primary/10 p-1.5 mt-0.5 shrink-0">
+          <Globe className="w-4 h-4 text-primary" />
+        </div>
+        <div className="space-y-0.5 min-w-0">
+          <span className="text-sm font-medium text-foreground">
+            {t.ui("accountData.enkaTitle")}
+          </span>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {t.ui("accountData.enkaDesc")}
+          </p>
         </div>
       </div>
-
-      <div className="space-y-2">
-        <h3 className="text-2xl font-bold tracking-tight text-foreground">
-          {t.ui("accountData.noData")}
-        </h3>
-        <p className="text-muted-foreground text-base max-w-md mx-auto">
-          {t.ui("accountData.importPrompt")}
-        </p>
-      </div>
-
-      <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-        <Button
-          onClick={onAction}
-          size="lg"
-          className="w-full gap-2 text-base shadow-lg shadow-primary/10"
-        >
-          <Download className="w-5 h-5" />
-          {t.ui("import.action")}
-        </Button>
-      </div>
-
-      {/* Import method hints */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md pt-2">
-        <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card/50 text-left">
-          <div className="rounded-md bg-primary/10 p-1.5 mt-0.5 shrink-0">
-            <Globe className="w-4 h-4 text-primary" />
-          </div>
-          <div className="space-y-0.5 min-w-0">
-            <span className="text-sm font-medium text-foreground">
-              {t.ui("accountData.enkaTitle")}
-            </span>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {t.ui("accountData.enkaDesc")}
-            </p>
-          </div>
+      <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card/50 text-left">
+        <div className="rounded-md bg-primary/10 p-1.5 mt-0.5 shrink-0">
+          <FileJson className="w-4 h-4 text-primary" />
         </div>
-        <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card/50 text-left">
-          <div className="rounded-md bg-primary/10 p-1.5 mt-0.5 shrink-0">
-            <FileJson className="w-4 h-4 text-primary" />
-          </div>
-          <div className="space-y-0.5 min-w-0">
-            <span className="text-sm font-medium text-foreground">
-              {t.ui("accountData.goodTitle")}
-            </span>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {t.ui("accountData.goodDesc")}
-            </p>
-          </div>
+        <div className="space-y-0.5 min-w-0">
+          <span className="text-sm font-medium text-foreground">
+            {t.ui("accountData.goodTitle")}
+          </span>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {t.ui("accountData.goodDesc")}
+          </p>
         </div>
       </div>
-
-      <p className="text-xs text-muted-foreground max-w-sm">
-        {t.ui("accountData.afterImportHint")}
-      </p>
     </div>
-  </div>
+
+    <p className="text-xs text-muted-foreground max-w-sm">
+      {t.ui("accountData.afterImportHint")}
+    </p>
+  </EmptyState>
 );
 
 export default function AccountDataPage() {
@@ -653,36 +630,18 @@ export default function AccountDataPage() {
         </TabsContent>
 
         <TabsContent value="recommendations" className="mt-0 h-full">
-          {accountData ? (
-            <RecommendationView scores={scores} />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
+          <RecommendationView
+            scores={scores}
+            onOpenImport={() => importRef.current?.open()}
+          />
         </TabsContent>
 
         <TabsContent value="evaluation" className="mt-0 h-full">
-          {accountData ? (
-            <EvaluationView />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
+          <EvaluationView onOpenImport={() => importRef.current?.open()} />
         </TabsContent>
 
         <TabsContent value="triage" className="mt-0 h-full">
-          {accountData ? (
-            <TriageView />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
+          <TriageView onOpenImport={() => importRef.current?.open()} />
         </TabsContent>
       </Tabs>
     </PageLayout>

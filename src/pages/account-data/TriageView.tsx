@@ -1,10 +1,10 @@
+import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import {
   type SortDimension,
   TriageHeader,
 } from "@/components/account-data/TriageHeader";
 import { TriageTabContent } from "@/components/account-data/TriageTabContent";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactIdToHalfSetId } from "@/data/constants";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
@@ -17,11 +17,13 @@ import {
 import { buildTriageInstructions } from "@/lib/artifact-manager/instructions";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useTriageStore } from "@/stores/useTriageStore";
-import { ExternalLink, ShieldAlert } from "lucide-react";
 import { useCallback, useDeferredValue, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 
-export function TriageView() {
+interface TriageViewProps {
+  onOpenImport?: () => void;
+}
+
+export function TriageView({ onOpenImport }: TriageViewProps) {
   const { t } = useLanguage();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data ?? null;
@@ -205,33 +207,16 @@ export function TriageView() {
     sortDecisions,
   ]);
 
-  if (!accountData || buildGroups.length === 0) {
+  const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
+
+  if (!accountData || !hasAnyBuilds) {
     return (
       <ScrollLayout>
-        <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
-          <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-              <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
-                <ShieldAlert className="w-12 h-12 text-primary opacity-80" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold tracking-tight text-foreground">
-                {t.ui("triage.noData")}
-              </h3>
-              <p className="text-muted-foreground text-base max-w-md mx-auto">
-                {t.ui("triage.noDataDesc")}
-              </p>
-            </div>
-            <Button asChild size="lg" className="gap-2">
-              <Link to="/artifact-filter">
-                <ExternalLink className="w-4 h-4" />
-                {t.ui("evaluation.goToBuilds")}
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <AccountDataNeedsBothState
+          needsAccountData={!accountData}
+          needsBuilds={!hasAnyBuilds}
+          onOpenImport={onOpenImport}
+        />
       </ScrollLayout>
     );
   }

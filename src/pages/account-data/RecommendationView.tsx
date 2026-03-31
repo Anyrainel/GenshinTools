@@ -1,3 +1,4 @@
+import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { RecommendationCard } from "@/components/account-data/RecommendationCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -13,6 +14,7 @@ import {
   tiers,
 } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   type Recommendation,
@@ -118,12 +120,18 @@ function ThresholdInput({
 
 interface RecommendationViewProps {
   scores: Record<string, ArtifactScoreResult | null>;
+  onOpenImport?: () => void;
 }
 
-export function RecommendationView({ scores }: RecommendationViewProps) {
+export function RecommendationView({
+  scores,
+  onOpenImport,
+}: RecommendationViewProps) {
   const { t } = useLanguage();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
+  const buildGroups = useAllResolvedBuilds();
+  const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const tierCustomization = useTierStore((s) => s.tierCustomization);
   const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
@@ -222,7 +230,17 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
   const isCompact = !isMd;
   const columnCount = is2xl ? 4 : isXl ? 3 : isLg ? 3 : isSm ? 2 : 1;
 
-  if (!accountData) return null;
+  if (!accountData || !hasAnyBuilds) {
+    return (
+      <ScrollLayout>
+        <AccountDataNeedsBothState
+          needsAccountData={!accountData}
+          needsBuilds={!hasAnyBuilds}
+          onOpenImport={onOpenImport}
+        />
+      </ScrollLayout>
+    );
+  }
 
   const hasAnyRecs =
     allRecs &&

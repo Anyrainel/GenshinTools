@@ -263,6 +263,14 @@ export const i18nUiData = {
     defaultAccount: { en: "Default Account", zh: "默认账号" },
     accounts: { en: "Accounts", zh: "账号管理" },
     account: { en: "Account", zh: "账号" },
+    needsBothTitle: {
+      en: "Account Data & Builds Required",
+      zh: "需要账号数据与配装方案",
+    },
+    needsBothDesc: {
+      en: "This feature analyzes your artifacts against your build configurations. Import your account data and set up builds to get started.",
+      zh: "此功能根据配装方案分析你的圣遗物。导入账号数据并配置配装方案即可开始。",
+    },
     noFilterMatch: {
       en: "No characters match your filters",
       zh: "没有角色匹配当前过滤条件",
@@ -1554,11 +1562,6 @@ export const i18nUiData = {
     title: { en: "Artifact Evaluation", zh: "圣遗物评估" },
     tabLabel: { en: "Set Evaluation", zh: "套装评估" },
     subtitle: { en: "{0} builds · Avg {1}%", zh: "{0} 个配装 · 均值 {1}%" },
-    noBuilds: { en: "No builds to evaluate", zh: "无配装可评估" },
-    noBuildsDesc: {
-      en: "Configure artifact builds to see how well your artifacts match each character's needs.",
-      zh: "配置圣遗物配装方案后可查看各角色的圣遗物匹配评估。",
-    },
     goToBuilds: {
       en: "Configure Builds",
       zh: "配置配装",
@@ -1659,14 +1662,6 @@ export const i18nUiData = {
     noRecommendations: {
       en: "No items in this category",
       zh: "此类别中没有圣遗物",
-    },
-    noData: {
-      en: "No builds configured",
-      zh: "未配置配装",
-    },
-    noDataDesc: {
-      en: "Configure artifact builds so triage can recommend which artifacts to lock, unlock, or fodder.",
-      zh: "配置圣遗物配装方案后，锁定分析可为你推荐锁定、解锁或分解的圣遗物。",
     },
     // Decision labels (lock / unlock)
     label: {

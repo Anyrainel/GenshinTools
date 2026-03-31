@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ExternalLink, Scale } from "lucide-react";
@@ -14,57 +15,49 @@ export function AutoTuneEmptyState({
 }) {
   const { t } = useLanguage();
 
+  // When both builds and teams exist but no DPS builds matched,
+  // show "Show All" as primary; otherwise direct to missing prerequisite
+  const primary = !hasBuilds
+    ? {
+        label: t.ui("evaluation.goToBuilds"),
+        icon: ExternalLink,
+        href: "/artifact-filter?tab=configure",
+      }
+    : !hasTeams
+      ? {
+          label: t.ui("batchAutoTune.goToTeams"),
+          icon: ExternalLink,
+          href: "/team-comp?tab=damage",
+        }
+      : undefined;
+
+  const secondary =
+    !hasBuilds && !hasTeams
+      ? {
+          label: t.ui("batchAutoTune.goToTeams"),
+          icon: ExternalLink,
+          href: "/team-comp?tab=damage",
+        }
+      : undefined;
+
   return (
-    <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
-      <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-          <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
-            <Scale className="w-12 h-12 text-primary opacity-80" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-2xl font-bold tracking-tight text-foreground">
-            {t.ui("batchAutoTune.noBuildTitle")}
-          </h3>
-          <p className="text-muted-foreground text-base max-w-md mx-auto">
-            {t.ui("batchAutoTune.noBuildDesc")}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          {!hasBuilds && (
-            <Button asChild variant="default" size="lg" className="gap-2">
-              <Link to="/artifact-filter?tab=configure">
-                <ExternalLink className="w-4 h-4" />
-                {t.ui("evaluation.goToBuilds")}
-              </Link>
-            </Button>
-          )}
-          {!hasTeams && (
-            <Button
-              asChild
-              variant={hasBuilds ? "default" : "outline"}
-              size="lg"
-              className="gap-2"
-            >
-              <Link to="/team-comp?tab=damage">
-                <ExternalLink className="w-4 h-4" />
-                {t.ui("batchAutoTune.goToTeams")}
-              </Link>
-            </Button>
-          )}
-          {hasBuilds && hasTeams && (
-            <Button
-              variant="outline"
-              size="lg"
-              className="gap-2"
-              onClick={onShowAll}
-            >
-              {t.ui("batchAutoTune.allBuilds")}
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
+    <EmptyState
+      icon={Scale}
+      title={t.ui("batchAutoTune.noBuildTitle")}
+      description={t.ui("batchAutoTune.noBuildDesc")}
+      action={primary}
+      secondaryAction={secondary}
+    >
+      {hasBuilds && hasTeams && (
+        <Button
+          variant="outline"
+          size="lg"
+          className="gap-2"
+          onClick={onShowAll}
+        >
+          {t.ui("batchAutoTune.allBuilds")}
+        </Button>
+      )}
+    </EmptyState>
   );
 }

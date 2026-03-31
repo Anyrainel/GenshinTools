@@ -2,6 +2,7 @@ import { CategoryChip } from "@/components/archive/CategoryChip";
 import { FilterChip } from "@/components/archive/FilterChip";
 import type { ControlHandle } from "@/components/layout/AppBar";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -508,32 +509,20 @@ export function TeamGrid({
       >
         {/* Empty state welcome — shown when all teams are unconfigured */}
         {showEmptyState && emptyState && (
-          <div className="flex flex-col items-center text-center px-4 pt-4 sm:pt-8 pb-4 max-w-md mx-auto">
-            <div className="relative mb-3 sm:mb-5">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-              <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
-                <Swords className="w-10 h-10 text-primary opacity-80" />
-              </div>
-            </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              {t.ui("teamComp.emptyTeamTitle")}
-            </h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              {t.ui("teamComp.emptyTeamDesc")}
-            </p>
-            <p className="text-sm text-muted-foreground mb-3">
+          <EmptyState
+            icon={Swords}
+            title={t.ui("teamComp.emptyTeamTitle")}
+            description={t.ui("teamComp.emptyTeamDesc")}
+            action={{
+              label: t.ui("computeFilters.importPreset"),
+              icon: Download,
+              onClick: () => emptyState.importRef.current?.open(),
+            }}
+          >
+            <p className="text-base text-muted-foreground -mt-2">
               {t.ui("teamComp.emptyTeamOrImport")}
             </p>
-            <Button
-              variant="outline"
-              size="lg"
-              className="gap-2 text-base px-6"
-              onClick={() => emptyState.importRef.current?.open()}
-            >
-              <Download className="w-5 h-5" />
-              {t.ui("computeFilters.importPreset")}
-            </Button>
-          </div>
+          </EmptyState>
         )}
         <div
           className={cn("grid gap-3 xl:gap-4 justify-center items-start")}

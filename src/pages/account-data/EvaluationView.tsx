@@ -1,3 +1,4 @@
+import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
@@ -21,25 +22,23 @@ import {
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import {
-  ArrowDownWideNarrow,
-  ArrowUpNarrowWide,
-  BarChart3,
-  Combine,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, Combine } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 
 type SortDir = "asc" | "desc";
 type RoleFilter = "all" | ArchetypeRole;
 type TierFilter = "all" | string; // tier id or "all"
 
-export function EvaluationView() {
+interface EvaluationViewProps {
+  onOpenImport?: () => void;
+}
+
+export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
   const { t } = useLanguage();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const buildGroups = useAllResolvedBuilds();
+  const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
   const scoreConfig = useArtifactScoreStore((s) => s.config);
 
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -112,35 +111,14 @@ export function EvaluationView() {
     };
   }, [setGroups]);
 
-  if (!accountData) return null;
-
-  if (setGroups.length === 0) {
+  if (!accountData || !hasAnyBuilds) {
     return (
       <ScrollLayout>
-        <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
-          <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
-              <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
-                <BarChart3 className="w-12 h-12 text-primary opacity-80" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold tracking-tight text-foreground">
-                {t.ui("evaluation.noBuilds")}
-              </h3>
-              <p className="text-muted-foreground text-base max-w-md mx-auto">
-                {t.ui("evaluation.noBuildsDesc")}
-              </p>
-            </div>
-            <Button asChild size="lg" className="gap-2">
-              <Link to="/artifact-filter">
-                <ExternalLink className="w-4 h-4" />
-                {t.ui("evaluation.goToBuilds")}
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <AccountDataNeedsBothState
+          needsAccountData={!accountData}
+          needsBuilds={!hasAnyBuilds}
+          onOpenImport={onOpenImport}
+        />
       </ScrollLayout>
     );
   }
