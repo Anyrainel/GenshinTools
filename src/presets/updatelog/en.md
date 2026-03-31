@@ -4,6 +4,22 @@
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
 
+## 2025-03-31
+
+### features
+- Weapon Choice: new tab ranking all compatible weapons by optimized rotation damage
+- Artifact Manager: send lock/unlock and equip instructions to the game via local agent
+- Precise substat import: Enka exact roll decoding and GOOD roll solver
+- Team Comp reorganized into Damage / Frozen / Investment tabs
+- Frozen Artifacts: dedicated tab with per-team sections and standalone freezing
+- Investment Analysis: full-page view replacing the old analyzer dialog
+- Evaluation page: sort characters by tier ranking
+- Improved empty states with preset-aware onboarding guidance
+
+### fixes
+- Fixed triage sending lock/unlock for protected artifacts
+- Fixed optimizer tiebreaker when multiple weapons compete for the same slot
+
 ## 2025-03-29
 
 ### features

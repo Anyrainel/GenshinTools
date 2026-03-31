@@ -1,3 +1,4 @@
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -14,12 +15,13 @@ import {
 } from "@/components/ui/hover-card";
 import { Progress } from "@/components/ui/progress";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById, charactersById, weaponsById } from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/constants";
 import type { SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
+import type { WeaponChoiceProgress } from "@/lib/team-comp/weaponChoice";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { WeaponChoiceResult, WeaponRanking } from "@/stores/useTeamStore";
 import { Loader2, Play } from "lucide-react";
@@ -61,6 +63,7 @@ interface WeaponChoiceResultCardProps {
   charIds: string[];
   isComputing: boolean;
   result: WeaponChoiceResult | null;
+  progress?: WeaponChoiceProgress;
   error: Error | null;
   onRun: (settings: WeaponChoiceCalcSettings) => void;
   onStop: () => void;
@@ -104,14 +107,7 @@ function WeaponDetailContent({
     <div className="space-y-2 text-xs">
       {/* Header: weapon + artifact set icons */}
       <div className="flex items-center gap-2">
-        {weapon && (
-          <img
-            src={getAssetUrl(weapon.imagePath)}
-            alt={t.weapon(entry.weaponId)}
-            className="w-8 h-8 object-cover shrink-0"
-            draggable={false}
-          />
-        )}
+        <ItemIcon weaponId={entry.weaponId} size="xs" className="shrink-0" />
         <div className="flex-1 min-w-0">
           <div className="font-bold text-sm">
             {t.weapon(entry.weaponId)} R{entry.refinement}
@@ -122,18 +118,9 @@ function WeaponDetailContent({
         </div>
         {entry.artifactSetIds && (
           <div className="flex gap-0.5 shrink-0">
-            {entry.artifactSetIds.map((setId) => {
-              const art = artifactsById[setId];
-              return art ? (
-                <img
-                  key={setId}
-                  src={getAssetUrl(art.imagePaths.flower)}
-                  alt={t.artifact(setId)}
-                  className="w-7 h-7 object-cover rounded"
-                  draggable={false}
-                />
-              ) : null;
-            })}
+            {entry.artifactSetIds.map((setId) => (
+              <ItemIcon key={setId} artifactSetId={setId} size="xs" />
+            ))}
           </div>
         )}
       </div>
@@ -164,7 +151,7 @@ function WeaponDetailContent({
                 <div className="text-[10px] text-muted-foreground">
                   {t.slot(slot)}
                 </div>
-                <div className="font-semibold">{t.stat(stat)}</div>
+                <div className="font-semibold">{t.statShort(stat)}</div>
               </div>
             ))}
           </div>
@@ -352,6 +339,7 @@ export function WeaponChoiceResultCard({
   charIds,
   isComputing,
   result,
+  progress,
   error,
   onRun,
   onStop,
@@ -432,9 +420,14 @@ export function WeaponChoiceResultCard({
         {/* Progress bar */}
         {isComputing && (
           <div className="space-y-1">
-            <Progress value={0} className="h-2" />
+            <Progress
+              value={Math.round((progress?.overallProgress ?? 0) * 100)}
+              className="h-2"
+            />
             <p className="text-xs text-muted-foreground">
-              {t.ui("teamComp.weaponChoiceRunning")}
+              {progress?.currentChar
+                ? `${t.character(progress.currentChar)}${progress.currentWeapon ? ` — ${t.weapon(progress.currentWeapon)}` : ""}`
+                : t.ui("teamComp.weaponChoiceRunning")}
             </p>
           </div>
         )}

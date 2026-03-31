@@ -539,6 +539,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
           charIds={charIds}
           isComputing={isComputing}
           result={displayResult}
+          progress={computeResult?.progress}
           error={error}
           onRun={handleRun}
           onStop={stop}
