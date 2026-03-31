@@ -11,13 +11,16 @@ describe("ArtifactBuildsView", () => {
     useBuildsStore.getState().clearAll();
   });
 
-  it("shows empty state when no builds configured", async () => {
+  it("shows empty state without sidebar when no builds configured", async () => {
     render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
     // Wait for async computation to settle
     await waitFor(() => {
       expect(screen.getByText("Artifact Build Presets")).toBeInTheDocument();
     });
+
+    // Sidebar filter button should not be present
+    expect(screen.queryByText("Filters")).not.toBeInTheDocument();
   });
 
   it("computes artifact filters from character builds", async () => {

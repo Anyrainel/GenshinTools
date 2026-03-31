@@ -1,6 +1,7 @@
 import type { CharacterResource } from "@/data/types";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
+import { useBuildsStore } from "@/stores/useBuildsStore";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -146,5 +147,16 @@ describe("CharacterBuildView", () => {
     render(<CharacterBuildView />);
 
     expect(screen.getByText("configure.noChars")).toBeInTheDocument();
+  });
+
+  it("shows BuildsEmptyState and no sidebar when no builds exist", () => {
+    // Override the store mock to return empty characterToBuildIds
+    vi.mocked(useBuildsStore).mockImplementation(() => ({}) as never);
+
+    render(<CharacterBuildView />);
+
+    // Should show the empty state, not the sidebar layout
+    expect(screen.getByTestId("builds-empty-state")).toBeInTheDocument();
+    expect(screen.queryByTestId("sidebar-layout")).toBeNull();
   });
 });
