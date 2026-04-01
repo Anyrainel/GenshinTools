@@ -1,4 +1,8 @@
-import { SECTION_COLORS, newsMap } from "@/components/shared/WhatsNew";
+import {
+  SECTION_COLORS,
+  newsMap,
+  openWhatsNew,
+} from "@/components/shared/WhatsNew";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -39,8 +43,9 @@ export default function NewsDialog({
   const handleViewHistory = () => {
     dismissNews(latestDate);
     onDismiss();
-    // Navigate to home — the WhatsNew sheet can be opened manually from there
     navigate("/");
+    // Give the home page time to mount WhatsNew before triggering
+    setTimeout(() => openWhatsNew(), 300);
   };
 
   if (!entry) return null;

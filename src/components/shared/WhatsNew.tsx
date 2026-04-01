@@ -13,6 +13,16 @@ import newsZhRaw from "@/presets/updatelog/zh.md?raw";
 import { Megaphone } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+// ── Programmatic opener ────────────────────────────────────────────────
+
+type OpenListener = () => void;
+let openListener: OpenListener | null = null;
+
+/** Call this from anywhere to open the WhatsNew sheet */
+export function openWhatsNew() {
+  openListener?.();
+}
+
 // ── News parser ────────────────────────────────────────────────────────
 
 export interface NewsSection {
@@ -273,6 +283,14 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const { t } = useLanguage();
   const news = useMemo(() => newsMap[t.lang], [t.lang]);
+
+  // Register this instance as the programmatic open target
+  useEffect(() => {
+    openListener = () => setOpen(true);
+    return () => {
+      openListener = null;
+    };
+  }, []);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const pacRef = useRef<HTMLButtonElement>(null);
