@@ -107,7 +107,7 @@ export default function WelcomeGuide({
                   "size-2 rounded-full transition-colors",
                   i === step
                     ? "bg-primary"
-                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    : "bg-border hover:bg-muted-foreground"
                 )}
               />
             ))}
@@ -241,7 +241,7 @@ function StepTeams({ t }: StepProps) {
               key={i}
               className="size-16 rounded-xl bg-muted/50 border-2 border-dashed border-border flex items-center justify-center"
             >
-              <Users className="size-6 text-muted-foreground/50" />
+              <Users className="size-6 text-muted-foreground" />
             </div>
           ))}
         </div>
