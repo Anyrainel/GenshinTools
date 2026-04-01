@@ -4,6 +4,7 @@ import {
   artifactHalfSetsById,
   artifactsById,
   charactersById,
+  isPctStat,
   weaponsById,
 } from "@/data/constants";
 import {
@@ -11,7 +12,9 @@ import {
   getWeaponStatsSync,
   preloadGameStats,
 } from "@/lib/gameStatsLoader";
+import { ScalingBuff, type StatBuff } from "@/lib/team-comp/damageBuffs";
 import {
+  StatSheet,
   TeamMeta,
   createArtifactHalfSet,
   createArtifactSet,
@@ -320,6 +323,93 @@ describe("Entity Instantiation", () => {
           throw new Error(
             `Scaling ER/CR buff violations:\n${violations.join("\n")}`
           );
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No character registered",
+          "No character stats for"
+        );
+      }
+    });
+  });
+
+  describe("Buff sanity: no percentage stat ≥ 1000%", () => {
+    // Generous stats for dynamic buff testing — deliberately high to catch uncapped issues
+    const generousStats = StatSheet.fromRaw({
+      "atk%": 1.5,
+      "hp%": 1.5,
+      "def%": 1.5,
+      em: 1200,
+      cr: 0.8,
+      cd: 2.0,
+      er: 2.0,
+    });
+    const PCT_THRESHOLD = 10.0; // 1000%
+
+    function checkBuffs(buffs: StatBuff[], selfStats: StatSheet): string[] {
+      const violations: string[] = [];
+      for (const buff of buffs) {
+        const label = `${buff.source.id} ${buff.source.origin ?? ""}`.trim();
+
+        for (const entry of buff.staticBuffs) {
+          if (isPctStat(entry.key) && Math.abs(entry.value) >= PCT_THRESHOLD) {
+            violations.push(
+              `${label}: ${entry.key} = ${(entry.value * 100).toFixed(1)}%`
+            );
+          }
+        }
+
+        if (buff instanceof ScalingBuff) {
+          if (
+            buff.cap !== undefined &&
+            isPctStat(buff.outputKey) &&
+            Math.abs(buff.cap) >= PCT_THRESHOLD
+          ) {
+            violations.push(
+              `${label} (cap): ${buff.outputKey} = ${(buff.cap * 100).toFixed(1)}%`
+            );
+          }
+          for (const entry of buff.dynamicBuffs(selfStats)) {
+            if (
+              isPctStat(entry.key) &&
+              Math.abs(entry.value) >= PCT_THRESHOLD
+            ) {
+              violations.push(
+                `${label} (dynamic): ${entry.key} = ${(entry.value * 100).toFixed(1)}%`
+              );
+            }
+          }
+        }
+      }
+      return violations;
+    }
+
+    it.each(presetCases)(
+      "%s > %s",
+      (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
+        try {
+          const team = new TeamMeta(characters, {}, artifactSets);
+          const char = createCharacter(charId, 100, 6, team, opts);
+          const violations = checkBuffs(char.buffs, generousStats);
+          if (violations.length > 0)
+            throw new Error(`Buff values ≥ 1000%:\n${violations.join("\n")}`);
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No character registered",
+            "No character stats for"
+          );
+        }
+      }
+    );
+
+    it.each(nonPresetCharIds)("%s", (charId) => {
+      try {
+        const team = new TeamMeta([charId]);
+        const char = createCharacter(charId, 100, 6, team);
+        const violations = checkBuffs(char.buffs, generousStats);
+        if (violations.length > 0)
+          throw new Error(`Buff values ≥ 1000%:\n${violations.join("\n")}`);
       } catch (e) {
         rethrowIfUnexpected(
           e,
