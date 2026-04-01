@@ -5,19 +5,24 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import {
   ArrowRight,
   Award,
+  Compass,
   Database,
   Filter,
   Sparkles,
   Sword,
   Users,
 } from "lucide-react";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 
+import { WelcomeGuideManual } from "@/components/greeting/WelcomeGuideManual";
+import type { ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { WhatsNew } from "@/components/shared/WhatsNew";
 
 export default function Home() {
   const { t } = useLanguage();
+  const guideRef = useRef<ControlHandle>(null);
 
   return (
     <PageLayout>
@@ -112,6 +117,16 @@ export default function Home() {
             <p className="text-xl text-foreground/70 font-light max-w-2xl mx-auto">
               {t.ui("app.heroDescription")}
             </p>
+            <div className="pt-2">
+              <Button
+                variant="outline"
+                className="gap-2 animate-shimmer bg-[length:200%_100%] bg-[linear-gradient(110deg,transparent_25%,hsl(var(--primary)/0.15)_50%,transparent_75%)] hover:bg-primary/10"
+                onClick={() => guideRef.current?.open()}
+              >
+                <Compass className="size-4" />
+                {t.ui("greeting.getStarted")}
+              </Button>
+            </div>
           </div>
 
           {/* Cards area — WhatsNew wraps cards to provide the pacman traversal boundary */}
@@ -208,6 +223,7 @@ export default function Home() {
           </footer>
         </div>
       </div>
+      <WelcomeGuideManual ref={guideRef} />
     </PageLayout>
   );
 }
