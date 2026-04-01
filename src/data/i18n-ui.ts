@@ -1620,6 +1620,119 @@ export const i18nUiData = {
     features: { en: "Features", zh: "新功能" },
     fixes: { en: "Fixes", zh: "修复" },
   },
+  greeting: {
+    welcomeTitle: {
+      en: "Welcome to GenshinTools",
+      zh: "欢迎来到 GenshinTools",
+    },
+    welcomeSubtitle: {
+      en: "Let's get you started in a few quick steps",
+      zh: "让我们用几个快速步骤帮你上手",
+    },
+    getStarted: { en: "Get Started", zh: "开始使用" },
+    // Step 1
+    importTitle: { en: "Import Your Data", zh: "导入你的数据" },
+    importDesc: {
+      en: "Bring in your characters, weapons, and artifacts using a scanner or your UID.",
+      zh: "使用扫描器或你的 UID 导入角色、武器和圣遗物。",
+    },
+    importGoodLabel: {
+      en: "Upload a GOOD JSON file from a scanner",
+      zh: "上传扫描器导出的 GOOD JSON 文件",
+    },
+    importUidLabel: {
+      en: "Or enter your Enka UID for a quick start",
+      zh: "或输入你的 Enka UID 快速开始",
+    },
+    importLater: {
+      en: "You can also do this later from the Account Data page.",
+      zh: "你也可以稍后在「账号数据」页面导入。",
+    },
+    openImport: { en: "Open Import Dialog", zh: "打开导入对话框" },
+    // Step 2
+    accountOverviewTitle: {
+      en: "Your Account at a Glance",
+      zh: "一览你的账号",
+    },
+    accountOverviewDesc: {
+      en: "Once imported, Account Data gives you a full picture of your roster.",
+      zh: "导入后，「账号数据」会给你完整的角色和圣遗物概览。",
+    },
+    previewCharacters: {
+      en: "See your progression and scores",
+      zh: "查看你的进度和评分",
+    },
+    previewInventory: {
+      en: "Browse and filter your artifacts",
+      zh: "浏览和筛选你的圣遗物",
+    },
+    previewRecommendations: {
+      en: "Know what to upgrade next",
+      zh: "了解下一步该提升什么",
+    },
+    previewEvaluation: {
+      en: "Compare builds across your roster",
+      zh: "对比全角色配装",
+    },
+    previewTriage: {
+      en: "Decide which artifacts to keep or fodder",
+      zh: "决定圣遗物的去留",
+    },
+    // Step 3
+    customizeTitle: { en: "Customize Your Builds", zh: "自定义配装" },
+    customizeDesc: {
+      en: "Personalizing builds unlocks the full power of your account data.",
+      zh: "自定义配装释放账号数据的全部潜力。",
+    },
+    customizeBenefitScoring: {
+      en: "Personalized artifact scoring",
+      zh: "个性化圣遗物评分",
+    },
+    customizeBenefitRecommendations: {
+      en: "Personalized upgrade recommendations",
+      zh: "个性化升级建议",
+    },
+    customizeBenefitLock: {
+      en: "Personalized artifact lock manager",
+      zh: "个性化圣遗物锁定管理",
+    },
+    // Step 4
+    teamsTitle: { en: "Build Your Teams", zh: "组建你的队伍" },
+    teamsDesc: {
+      en: "Create team compositions and import preset teams to get started quickly.",
+      zh: "创建队伍组合，也可导入预设队伍快速开始。",
+    },
+    // Step 5
+    teamsOverviewTitle: { en: "What Teams Unlock", zh: "队伍能做什么" },
+    teamsOverviewDesc: {
+      en: "Teams power the damage calculator and artifact optimization engine.",
+      zh: "队伍驱动伤害计算器和圣遗物优化引擎。",
+    },
+    previewDamage: { en: "Optimize rotation damage", zh: "优化循环伤害" },
+    previewFrozen: {
+      en: "Lock artifacts to specific teams",
+      zh: "锁定圣遗物到指定队伍",
+    },
+    previewInvestment: {
+      en: "Find the best upgrade path",
+      zh: "找到最佳升级路径",
+    },
+    previewWeapon: { en: "Compare weapon options", zh: "对比武器选项" },
+    // Step 6
+    helpTitle: { en: "Need Help?", zh: "需要帮助？" },
+    helpDesc: {
+      en: "Each page has a help guide in the menu. Look for the help option to learn page-specific features.",
+      zh: "每个页面的菜单中都有帮助指南。查找帮助选项以了解页面功能。",
+    },
+    helpMenuHint: {
+      en: "Open the ⋮ menu on any page and look for Help",
+      zh: "在任意页面打开 ⋮ 菜单，查找「帮助」",
+    },
+    letsGo: { en: "Let's Go!", zh: "出发！" },
+    // News dialog
+    newsTitle: { en: "What's New", zh: "最新更新" },
+    viewFullHistory: { en: "View Full History", zh: "查看完整历史" },
+  },
   calcLimitations: {
     title: { en: "Calculation Limitations", zh: "计算限制" },
   },
