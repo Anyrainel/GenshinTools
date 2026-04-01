@@ -1,3 +1,4 @@
+import { ArtifactManagerDialog } from "@/components/artifact-manager/ArtifactManagerDialog";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Collapsible,
@@ -18,6 +19,7 @@ import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
 } from "@/lib/account-data/scoring/utils";
+import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
@@ -28,6 +30,7 @@ import {
   Check,
   ChevronDown,
   Download,
+  Monitor,
   Package,
 } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -126,13 +129,31 @@ export function SwapGuide({
     return count;
   }, [team.characters, equippedArtifactsByChar, optimizedArtifactsByChar]);
 
+  const [equipDialogOpen, setEquipDialogOpen] = useState(false);
+
+  const buildEquipPayload = useCallback(
+    () => buildEquipInstructions(team, optimizedArtifactsByChar, accountData),
+    [team, optimizedArtifactsByChar, accountData]
+  );
+
   if (changeCount === 0 && !alwaysOpen) return null;
 
   const content = (
     <div className="border-t border-border/10 bg-black/5">
       {/* Download button — hidden when no changes */}
       {changeCount > 0 && (
-        <div className="flex justify-end px-2 pt-1.5">
+        <div className="flex justify-end gap-2 px-2 pt-1.5">
+          <button
+            type="button"
+            onClick={() => setEquipDialogOpen(true)}
+            className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:text-cyan-200 transition-colors"
+            title={t.ui("manager.equipToGame")}
+          >
+            <Monitor className="w-3 h-3" />
+            <span className="hidden md:inline">
+              {t.ui("manager.equipToGame")}
+            </span>
+          </button>
           <button
             type="button"
             onClick={handleDownload}
@@ -192,6 +213,12 @@ export function SwapGuide({
           );
         })}
       </div>
+      <ArtifactManagerDialog
+        open={equipDialogOpen}
+        onOpenChange={setEquipDialogOpen}
+        job={{ type: "equip", build: buildEquipPayload }}
+        actionLabel={t.ui("manager.equipToGame")}
+      />
     </div>
   );
 
