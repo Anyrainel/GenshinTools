@@ -1,14 +1,15 @@
-import type { ArtifactData } from "@/data/types";
+import type { AccountData, ArtifactData } from "@/data/types";
 import type {
   IGOODArtifact,
   IGOODSubstat,
 } from "@/lib/account-data/goodConversion";
+import type { Team } from "@/stores/useTeamStore";
 import {
   artifactIdToGOODKey,
   charIdToGOODKey,
   internalStatToGOODKey,
 } from "./keys";
-import type { ManagePayload } from "./types";
+import type { EquipPayload, ManagePayload } from "./types";
 
 /**
  * Convert internal ArtifactData to GOOD v3 format for the manage API.
@@ -95,4 +96,52 @@ export function buildTriageInstructions(
   }
 
   return { request: { lock, unlock }, lockIds, unlockIds };
+}
+
+/**
+ * Build equip instructions for a team's optimized artifacts.
+ * Sends ALL optimized artifacts — the API returns `already_correct`
+ * for ones that are already equipped on the target character.
+ */
+export function buildEquipInstructions(
+  team: Team,
+  optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>,
+  accountData: AccountData | null
+): EquipPayload {
+  // Build owner map: artifact ID → character ID currently wearing it
+  const ownerMap = new Map<string, string>();
+  if (accountData) {
+    for (const char of accountData.characters) {
+      for (const art of Object.values(char.artifacts)) {
+        if (art) ownerMap.set(art.id, char.key);
+      }
+    }
+  }
+
+  const equip: { artifact: IGOODArtifact; location: string }[] = [];
+  const artifactIds: string[] = [];
+  const swapMap = new Map<
+    string,
+    { fromChar: string | null; toChar: string }
+  >();
+
+  for (const charId of team.characters) {
+    if (!charId) continue;
+    const optimized = optimizedArtifactsByChar[charId];
+    if (!optimized) continue;
+
+    const targetGOODKey = charIdToGOODKey(charId);
+    if (!targetGOODKey) continue;
+
+    for (const art of Object.values(optimized)) {
+      const currentOwner = ownerMap.get(art.id) ?? null;
+      const good = toGOODArtifact(art, currentOwner ?? undefined);
+
+      equip.push({ artifact: good, location: targetGOODKey });
+      artifactIds.push(art.id);
+      swapMap.set(art.id, { fromChar: currentOwner, toChar: charId });
+    }
+  }
+
+  return { request: { equip }, artifactIds, swapMap };
 }
