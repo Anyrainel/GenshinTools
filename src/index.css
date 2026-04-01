@@ -160,25 +160,45 @@
 
 @keyframes text-shimmer {
   0% {
-    background-position: 200% center;
+    background-position: 100% center;
   }
   100% {
-    background-position: -200% center;
+    background-position: 0% center;
   }
 }
 
 .animate-text-shimmer {
   background: linear-gradient(
-    110deg,
-    hsl(var(--primary)) 30%,
-    hsl(45 80% 75%) 50%,
-    hsl(var(--primary)) 70%
+    90deg,
+    hsl(var(--foreground)) 0%,
+    hsl(var(--foreground)) 35%,
+    hsl(45 100% 70%) 42.5%,
+    hsl(45 100% 55%) 50%,
+    hsl(45 100% 70%) 57.5%,
+    hsl(var(--foreground)) 65%,
+    hsl(var(--foreground)) 100%
   );
-  background-size: 200% 100%;
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-color: hsl(var(--foreground));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: text-shimmer 3s ease-in-out infinite;
+  animation: text-shimmer 3s linear infinite;
+}
+
+/* Tab progress bar — fills left-to-right over the interval duration */
+@keyframes tab-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-tab-progress {
+  animation: tab-progress linear forwards;
 }
 
 /* ── Frozen card effects ── */

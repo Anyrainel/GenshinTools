@@ -1,189 +1,215 @@
+import { ActionRecommendationCard } from "@/components/account-data/ActionRecommendationCard";
+import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
+import { TriageCard } from "@/components/account-data/TriageCard";
+import { CharacterInfo } from "@/components/shared/CharacterInfo";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
-import { BarChart3, Box, Lightbulb, Lock, Users } from "lucide-react";
-import { useAutoRotate } from "./useAutoRotate";
+import { charactersById } from "@/data/constants";
+import { BarChart3, Box, Lightbulb, Lock, Monitor, Users } from "lucide-react";
+import { AnimatedTabPreview, type TabDef } from "./AnimatedTabPreview";
+import {
+  PREVIEW_ARTIFACT_LOOKUP,
+  PREVIEW_EVALUATION,
+  PREVIEW_RECOMMENDATIONS,
+  PREVIEW_TRIAGE_LOCK,
+  PREVIEW_TRIAGE_UNLOCK,
+} from "./previewData";
 
 type PreviewProps = { t: ReturnType<typeof useLanguage>["t"] };
 
-const tabs = [
-  {
-    icon: Users,
-    labelKey: "accountData.characters",
-    previewKey: "greeting.previewCharacters",
-  },
-  {
-    icon: Box,
-    labelKey: "accountData.inventory",
-    previewKey: "greeting.previewInventory",
-  },
-  {
-    icon: Lightbulb,
-    labelKey: "accountData.recommendations",
-    previewKey: "greeting.previewRecommendations",
-  },
-  {
-    icon: BarChart3,
-    labelKey: "evaluation.tabLabel",
-    previewKey: "greeting.previewEvaluation",
-  },
-  {
-    icon: Lock,
-    labelKey: "triage.tabLabel",
-    previewKey: "greeting.previewTriage",
-  },
-] as const;
+const tabs: TabDef[] = [
+  { icon: Users, labelKey: "accountData.characters" },
+  { icon: Box, labelKey: "accountData.inventory" },
+  { icon: Lightbulb, labelKey: "accountData.recommendations" },
+  { icon: BarChart3, labelKey: "evaluation.tabLabel" },
+  { icon: Lock, labelKey: "triage.tabLabel" },
+];
 
 export default function AccountDataPreview({ t }: PreviewProps) {
-  const { index, setIndex, onMouseEnter, onMouseLeave } = useAutoRotate(
-    tabs.length
-  );
-
   return (
-    <div
-      className="flex-1 rounded-lg border border-border overflow-hidden bg-card"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      {/* Tab bar */}
-      <div className="flex border-b border-border bg-muted/30 overflow-x-auto">
-        {tabs.map((tab, i) => (
-          <button
-            key={tab.labelKey}
-            type="button"
-            onClick={() => setIndex(i)}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-2 text-xs font-medium whitespace-nowrap transition-colors",
-              i === index
-                ? "text-primary border-b-2 border-primary"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <tab.icon className="size-3.5" />
-            {t.ui(tab.labelKey)}
-          </button>
-        ))}
+    <AnimatedTabPreview
+      tabs={tabs}
+      t={t}
+      panels={[
+        {
+          content: <CharactersContent t={t} />,
+          descKey: "greeting.previewCharacters",
+        },
+        {
+          content: <InventoryContent t={t} />,
+          descKey: "greeting.previewInventory",
+        },
+        {
+          content: <RecommendationsContent t={t} />,
+          descKey: "greeting.previewRecommendations",
+        },
+        {
+          content: <EvaluationContent t={t} />,
+          descKey: "greeting.previewEvaluation",
+        },
+        {
+          content: <TriageContent t={t} />,
+          descKey: "greeting.previewTriage",
+        },
+      ]}
+    />
+  );
+}
+
+/** Characters — ItemIcon + CharacterInfo + ArtifactScore */
+function CharactersContent({ t }: PreviewProps) {
+  const charInfo = charactersById.furina;
+  return (
+    <div className="flex items-center gap-3">
+      <ItemIcon characterId="furina" badge={1} level="Lv.90" size="sm" />
+
+      {/* CharacterInfo — scaled down to fit compactly */}
+      <div className="pointer-events-none min-w-0 flex-1 origin-left scale-[0.8]">
+        {charInfo && (
+          <CharacterInfo
+            character={charInfo}
+            showDate={false}
+            className="gap-0.5"
+            nameClassName="text-sm"
+          />
+        )}
       </div>
 
-      {/* Preview content */}
-      <div className="p-4 min-h-[120px] flex items-center">
-        <TabPreview tabIndex={index} t={t} />
+      {/* Score display — matches ArtifactScoreHoverCard trigger */}
+      <div className="flex flex-col items-end gap-0 shrink-0">
+        <div className="flex items-baseline gap-1">
+          <span className="text-foreground font-bold leading-none not-italic text-sm">
+            {t.ui("accountData.statCount")}
+          </span>
+          <span className="italic text-sky-300 tracking-tighter leading-none font-extrabold text-3xl pr-[2px]">
+            38.2
+          </span>
+        </div>
+        <div className="flex items-baseline gap-1">
+          <span className="text-foreground font-bold leading-none not-italic text-sm">
+            {t.ui("accountData.score")}
+          </span>
+          <span className="italic bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent tracking-tighter leading-none font-black text-3xl pr-[2px]">
+            268
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
-function TabPreview({
-  tabIndex,
-  t,
-}: { tabIndex: number; t: PreviewProps["t"] }) {
-  const tab = tabs[tabIndex];
-
-  // Characters tab: character icon + score badge mockup
-  if (tabIndex === 0) {
-    return (
-      <div className="flex items-center gap-4 w-full">
-        {/* Mock character icon */}
-        <div className="size-12 rounded-lg bg-gradient-to-br from-purple-500/30 to-purple-700/30 border border-purple-500/30 shrink-0" />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-2 mb-1">
-            <div className="h-3 w-20 rounded bg-foreground/20" />
-            <div className="flex items-baseline gap-1">
-              <span className="text-muted-foreground font-bold text-[10px]">
-                SCORE
-              </span>
-              <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent text-lg font-black italic">
-                87
-              </span>
-            </div>
-          </div>
-          {/* Progress bar */}
-          <div className="h-1.5 w-full bg-muted rounded-full">
-            <div className="h-full w-[87%] bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full" />
-          </div>
+/** Inventory — weapon + artifact ItemIcons with section labels */
+function InventoryContent({ t }: PreviewProps) {
+  return (
+    <div className="flex flex-col gap-2">
+      <div>
+        <span className="text-xs font-semibold text-foreground mb-1 block">
+          {t.ui("accountData.weapons")}
+        </span>
+        <div className="flex gap-1">
+          <ItemIcon weaponId="absolution" size="md" badge={1} />
+          <ItemIcon weaponId="the_black_sword" size="md" badge={5} lock />
+          <ItemIcon weaponId="favonius_sword" size="md" badge={3} />
+          <ItemIcon weaponId="azurelight" size="md" badge={1} />
+          <ItemIcon weaponId="lions_roar" size="md" badge={2} />
         </div>
-        <p className="text-xs text-muted-foreground shrink-0">
-          {t.ui(tab.previewKey)}
-        </p>
       </div>
-    );
-  }
-
-  // Inventory tab: artifact slot icons
-  if (tabIndex === 1) {
-    return (
-      <div className="flex items-center gap-4 w-full">
-        <div className="flex gap-1.5">
-          {Array.from({ length: 5 }, (_, i) => (
-            <div
-              key={i}
-              className="size-10 rounded-md bg-muted/80 border border-border"
-            />
-          ))}
+      <div>
+        <span className="text-xs font-semibold text-foreground mb-1 block">
+          {t.ui("accountData.artifacts")}
+        </span>
+        <div className="flex gap-1">
+          <ItemIcon
+            artifactSetId="obsidian_codex"
+            slot="flower"
+            size="md"
+            lock
+            badge="⭐"
+          />
+          <ItemIcon
+            artifactSetId="night_of_the_skys_unveiling"
+            slot="plume"
+            size="md"
+          />
+          <ItemIcon
+            artifactSetId="gladiators_finale"
+            slot="sands"
+            size="md"
+            lock
+          />
+          <ItemIcon
+            artifactSetId="emblem_of_severed_fate"
+            slot="goblet"
+            size="md"
+          />
+          <ItemIcon
+            artifactSetId="viridescent_venerer"
+            slot="circlet"
+            size="md"
+            badge="⭐"
+          />
         </div>
-        <p className="text-xs text-muted-foreground flex-1">
-          {t.ui(tab.previewKey)}
-        </p>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  // Recommendations tab: upgrade arrow + stat
-  if (tabIndex === 2) {
-    return (
-      <div className="flex items-center gap-4 w-full">
-        <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-          <Lightbulb className="size-5 text-emerald-400" />
-          <div className="text-sm font-medium text-emerald-300">+12.4%</div>
-        </div>
-        <p className="text-xs text-muted-foreground flex-1">
-          {t.ui(tab.previewKey)}
-        </p>
+/** Recommendations — real ActionRecommendationCard */
+function RecommendationsContent({ t }: PreviewProps) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-2 mb-2">
+        <ItemIcon characterId="mavuika" size="sm" />
+        <span className="text-sm font-semibold">{t.character("mavuika")}</span>
       </div>
-    );
-  }
-
-  // Evaluation tab: mini ranking bars
-  if (tabIndex === 3) {
-    return (
-      <div className="flex items-center gap-4 w-full">
-        <div className="space-y-1.5 w-32">
-          {[85, 72, 61].map((w, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <div className="size-4 rounded bg-muted/80 shrink-0" />
-              <div className="h-2 flex-1 bg-muted rounded-full">
-                <div
-                  className="h-full bg-primary/60 rounded-full"
-                  style={{ width: `${w}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-        <p className="text-xs text-muted-foreground flex-1">
-          {t.ui(tab.previewKey)}
-        </p>
+      <div className="pointer-events-none space-y-1.5">
+        {PREVIEW_RECOMMENDATIONS.map((rec) => (
+          <ActionRecommendationCard
+            key={rec.slot}
+            recommendation={rec}
+            artifactLookup={PREVIEW_ARTIFACT_LOOKUP}
+            inline
+          />
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  // Triage tab: lock/unlock icons
-  if (tabIndex === 4) {
-    return (
-      <div className="flex items-center gap-4 w-full">
-        <div className="flex gap-2">
-          <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-            <Lock className="size-4 text-emerald-400" />
-          </div>
-          <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-            <Lock className="size-4 text-amber-400" />
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground flex-1">
-          {t.ui(tab.previewKey)}
-        </p>
-      </div>
-    );
-  }
+/** Evaluation — real BuildEvaluationCard */
+function EvaluationContent({ t: _t }: PreviewProps) {
+  return (
+    <div className="pointer-events-none">
+      <BuildEvaluationCard evaluation={PREVIEW_EVALUATION} />
+    </div>
+  );
+}
 
-  return null;
+/** Triage — apply button + real TriageCards in collapsed state */
+function TriageContent({ t }: PreviewProps) {
+  return (
+    <div className="pointer-events-none space-y-1.5">
+      <Button
+        variant="outline"
+        size="sm"
+        className="gap-1.5 pointer-events-none"
+      >
+        <Monitor className="h-4 w-4" />
+        {t.ui("manager.applyToGame")}
+      </Button>
+      <TriageCard
+        decision={PREVIEW_TRIAGE_LOCK}
+        t={t}
+        expanded={false}
+        onToggle={() => {}}
+      />
+      <TriageCard
+        decision={PREVIEW_TRIAGE_UNLOCK}
+        t={t}
+        expanded={false}
+        onToggle={() => {}}
+      />
+    </div>
+  );
 }

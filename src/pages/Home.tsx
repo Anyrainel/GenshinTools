@@ -119,11 +119,12 @@ export default function Home() {
             </p>
             <div className="pt-2">
               <Button
-                variant="outline"
-                className="gap-2"
+                variant="default"
+                size="lg"
+                className="gap-2.5 bg-black hover:bg-black/80 text-lg px-6"
                 onClick={() => guideRef.current?.open()}
               >
-                <Compass className="size-4 text-primary" />
+                <Compass className="size-5 text-foreground" />
                 <span className="animate-text-shimmer">
                   {t.ui("greeting.getStarted")}
                 </span>

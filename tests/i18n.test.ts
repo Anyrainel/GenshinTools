@@ -184,13 +184,10 @@ describe("i18n App Data Integrity", () => {
       "teamComp.weaponChoiceRanking",
       "teamComp.weaponChoiceConfig",
       "teamComp.weaponChoiceBest",
-      // Greeting keys — reserved for future use
-      "greeting.welcomeTitle",
-      "greeting.welcomeSubtitle",
-      "greeting.openImport",
-      "greeting.accountOverviewTitle",
-      "greeting.customizeTitle",
-      "greeting.teamsTitle",
+      // Greeting keys — benefits labels used dynamically via tab icon+label pattern
+      "greeting.customizeBenefitScoring",
+      "greeting.customizeBenefitRecommendations",
+      "greeting.customizeBenefitLock",
     ]);
 
     const unusedKeys: string[] = [];

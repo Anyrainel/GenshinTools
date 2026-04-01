@@ -80,6 +80,7 @@ interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   rarity?: Rarity;
 
   // ── Add-on props ──
+  /** Top-left badge — a number (constellation count) or a single unicode character (e.g. "⭐"). NOT formatted strings like "C1". */
   badge?: string | number;
   lock?: boolean;
   elementBadge?: string;

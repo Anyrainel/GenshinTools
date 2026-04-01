@@ -302,7 +302,8 @@ function WeaponEntryRow({
   );
 }
 
-function CharacterWeaponPanel({
+/** Exported for reuse in preview components */
+export function CharacterWeaponPanel({
   charId,
   rankings,
   isMobile,
