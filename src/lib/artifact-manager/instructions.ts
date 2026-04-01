@@ -145,3 +145,62 @@ export function buildEquipInstructions(
 
   return { request: { equip }, artifactIds, swapMap };
 }
+
+/**
+ * Build equip instructions for multiple teams' optimized artifacts.
+ * Deduplicates: if the same artifact appears in multiple teams targeting the
+ * same character, only one instruction is emitted. If the same artifact targets
+ * different characters across teams, the last team wins (order-dependent).
+ */
+export function buildBatchEquipInstructions(
+  teams: {
+    team: Team;
+    optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
+  }[],
+  accountData: AccountData | null
+): EquipPayload {
+  // Build owner map
+  const ownerMap = new Map<string, string>();
+  if (accountData) {
+    for (const char of accountData.characters) {
+      for (const art of Object.values(char.artifacts)) {
+        if (art) ownerMap.set(art.id, char.key);
+      }
+    }
+  }
+
+  // Deduplicate: artId → { art, targetCharId }
+  const seen = new Map<string, { art: ArtifactData; targetCharId: string }>();
+
+  for (const { team, optimizedArtifactsByChar } of teams) {
+    for (const charId of team.characters) {
+      if (!charId) continue;
+      const optimized = optimizedArtifactsByChar[charId];
+      if (!optimized) continue;
+      for (const art of Object.values(optimized)) {
+        seen.set(art.id, { art, targetCharId: charId });
+      }
+    }
+  }
+
+  const equip: { artifact: IGOODArtifact; location: string }[] = [];
+  const artifactIds: string[] = [];
+  const swapMap = new Map<
+    string,
+    { fromChar: string | null; toChar: string }
+  >();
+
+  for (const [artId, { art, targetCharId }] of seen) {
+    const targetGOODKey = charIdToGOODKey(targetCharId);
+    if (!targetGOODKey) continue;
+
+    const currentOwner = ownerMap.get(artId) ?? null;
+    const good = toGOODArtifact(art, currentOwner ?? undefined);
+
+    equip.push({ artifact: good, location: targetGOODKey });
+    artifactIds.push(artId);
+    swapMap.set(artId, { fromChar: currentOwner, toChar: targetCharId });
+  }
+
+  return { request: { equip }, artifactIds, swapMap };
+}

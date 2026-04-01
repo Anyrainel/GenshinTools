@@ -1,3 +1,4 @@
+import { ArtifactManagerDialog } from "@/components/artifact-manager/ArtifactManagerDialog";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { ArtifactFreezeDialog } from "@/components/team-comp/ArtifactFreezeDialog";
@@ -9,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { buildBatchEquipInstructions } from "@/lib/artifact-manager/instructions";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
@@ -222,6 +224,8 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
       freezeArtifactStore,
     ]);
 
+    const [equipDialogOpen, setEquipDialogOpen] = useState(false);
+
     // ── Derived display data ──
 
     // Build team entries from snapshot + store state.
@@ -351,6 +355,14 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
       [frozenArtifactIds, frozenTeams]
     );
 
+    const buildBatchEquipPayload = useCallback(() => {
+      const teamInputs = frozenTeamEntries.map((entry) => ({
+        team: entry.team,
+        optimizedArtifactsByChar: entry.artifactsByChar,
+      }));
+      return buildBatchEquipInstructions(teamInputs, accountData);
+    }, [frozenTeamEntries, accountData]);
+
     return (
       <ScrollLayout>
         <div className="flex flex-col gap-4 py-2">
@@ -363,6 +375,7 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
                 hasPendingAnything={hasPendingAnything}
                 onClearAll={handleClearAll}
                 onRefreezeAll={handleRefreezeAll}
+                onEquipAll={() => setEquipDialogOpen(true)}
               />
 
               {accountData && (
@@ -423,6 +436,13 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
         <ArtifactFreezeDialog
           open={freezeDialogOpen}
           onOpenChange={setFreezeDialogOpen}
+        />
+
+        <ArtifactManagerDialog
+          open={equipDialogOpen}
+          onOpenChange={setEquipDialogOpen}
+          job={{ type: "equip", build: buildBatchEquipPayload }}
+          actionLabel={t.ui("manager.equipAll")}
         />
       </ScrollLayout>
     );

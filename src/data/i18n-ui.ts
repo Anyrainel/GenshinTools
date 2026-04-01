@@ -1968,6 +1968,7 @@ export const i18nUiData = {
     title: { en: "Artifact Manager", zh: "圣遗物管理器" },
     applyToGame: { en: "Apply to Game", zh: "应用到游戏" },
     equipToGame: { en: "Equip to Game", zh: "装备到游戏" },
+    equipAll: { en: "Equip All", zh: "全部装备" },
     port: { en: "Port", zh: "端口" },
     connect: { en: "Connect", zh: "连接" },
     ready: { en: "Ready", zh: "就绪" },

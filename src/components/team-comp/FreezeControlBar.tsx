@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactReuseMode } from "@/stores/useFreezeStore";
-import { Flame, Snowflake } from "lucide-react";
+import { Flame, Monitor, Snowflake } from "lucide-react";
 
 interface FreezeControlBarProps {
   reuseMode: ArtifactReuseMode;
@@ -17,6 +17,7 @@ interface FreezeControlBarProps {
   hasPendingAnything: boolean;
   onClearAll: () => void;
   onRefreezeAll: () => void;
+  onEquipAll?: () => void;
 }
 
 export function FreezeControlBar({
@@ -26,6 +27,7 @@ export function FreezeControlBar({
   hasPendingAnything,
   onClearAll,
   onRefreezeAll,
+  onEquipAll,
 }: FreezeControlBarProps) {
   const { t } = useLanguage();
 
@@ -73,6 +75,17 @@ export function FreezeControlBar({
         >
           <Snowflake className="w-3 h-3" />
           <span>{t.ui("teamComp.freezeTeam")}</span>
+        </Button>
+      )}
+      {onEquipAll && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-sm leading-none h-8 border-cyan-400/40 text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10"
+          onClick={onEquipAll}
+        >
+          <Monitor className="w-3 h-3" />
+          <span>{t.ui("manager.equipAll")}</span>
         </Button>
       )}
     </div>
