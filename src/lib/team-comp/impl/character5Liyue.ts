@@ -552,12 +552,12 @@ class Baizhu extends CharacterBase {
 }
 
 const yelanOption = {
-  label: { zh: "Q增伤比例", en: "Q Bonus %" },
+  label: { zh: "Q增伤", en: "Q DMG Bonus" },
   choices: [
-    { value: "100", label: { zh: "100%", en: "100%" } },
-    { value: "80", label: { zh: "80%", en: "80%" } },
-    { value: "60", label: { zh: "60%", en: "60%" } },
-    { value: "50", label: { zh: "50%", en: "50%" } },
+    { value: "50", label: { zh: "50%（满层）", en: "50% (max)" } },
+    { value: "40", label: { zh: "40%", en: "40%" } },
+    { value: "30", label: { zh: "30%", en: "30%" } },
+    { value: "25", label: { zh: "25%（均值）", en: "25% (avg)" } },
   ] as const,
 } satisfies OptionDef;
 
@@ -569,9 +569,8 @@ class Yelan extends CharacterBase {
     const count = elements.size;
     const p1Bonus = count === 4 ? 0.3 : count * 0.06;
 
-    // P2 max DMG%: per-second increment × 14 ramp steps (Lv10: 3.5%×14 = 49%)
-    const maxDmgBonus = this.param("Q", 4) * 14;
-    const dmgBonus = maxDmgBonus * (Number(this.o) / 100);
+    // P2: on-field DMG +1%, ramping +3.5%/s, max 50%. Option is the actual DMG% value.
+    const dmgBonus = Number(this.o) / 100;
 
     const buffs: StatBuff[] = [
       // P1: +6%/12%/18%/30% Max HP based on unique element count
