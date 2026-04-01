@@ -1,5 +1,6 @@
 import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
 import type {
+  EquipRequest,
   HealthResponse,
   ManageRequest,
   ResultResponse,
@@ -48,6 +49,17 @@ export function submitJob(
   port = DEFAULT_PORT
 ): Promise<SubmitResponse> {
   return fetchJson<SubmitResponse>(`${baseUrl(port)}/manage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export function submitEquipJob(
+  request: EquipRequest,
+  port = DEFAULT_PORT
+): Promise<SubmitResponse> {
+  return fetchJson<SubmitResponse>(`${baseUrl(port)}/equip`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),

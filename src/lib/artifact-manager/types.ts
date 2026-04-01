@@ -27,6 +27,33 @@ export interface ManagePayload {
   unlockIds: string[];
 }
 
+// ---------- Equip ----------
+export interface EquipInstruction {
+  artifact: IGOODArtifact;
+  /** GOOD v3 character key (e.g. "Furina"), or "" to unequip */
+  location: string;
+}
+
+export interface EquipRequest {
+  equip: EquipInstruction[];
+}
+
+/**
+ * Payload returned by equip instruction builders.
+ * Contains the API request body, internal artifact IDs for correlating
+ * positional results, and a swap map for post-job store sync.
+ */
+export interface EquipPayload {
+  request: EquipRequest;
+  /** Internal artifact IDs, parallel to request.equip */
+  artifactIds: string[];
+  /**
+   * Maps internal artifact ID → { fromChar (internal ID or null), toChar (internal ID) }.
+   * Used to apply implicit game swaps after successful equip.
+   */
+  swapMap: Map<string, { fromChar: string | null; toChar: string }>;
+}
+
 export interface SubmitResponse {
   jobId: string;
   total: number;
