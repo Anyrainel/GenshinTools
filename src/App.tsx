@@ -1,3 +1,4 @@
+import { GreetingGate } from "@/components/greeting/GreetingGate";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
 import { TourProvider } from "@/components/ui/tour";
@@ -47,6 +48,7 @@ function App() {
             </Suspense>
           </main>
           <Toaster />
+          <GreetingGate />
         </div>
       </TourProvider>
     </PageErrorBoundary>
