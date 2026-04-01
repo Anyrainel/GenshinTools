@@ -315,7 +315,6 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
         }
       }
       return result;
-      // biome-ignore lint/correctness/useExhaustiveDependencies: snapshotVersion invalidates when ref is mutated directly
     }, [accountArtifactsById, frozenArtIdSet, snapshotVersion]);
 
     // ── Download all frozen ──

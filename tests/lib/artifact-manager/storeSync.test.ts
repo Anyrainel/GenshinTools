@@ -1,10 +1,12 @@
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
 import {
+  applyEquipResults,
   applyJobResults,
   replaceArtifactsFromSnapshot,
 } from "@/lib/artifact-manager/storeSync";
 import type {
+  EquipPayload,
   InstructionResult,
   ManagePayload,
 } from "@/lib/artifact-manager/types";
@@ -297,5 +299,196 @@ describe("replaceArtifactsFromSnapshot", () => {
 
     expect(updated.extraArtifacts).toHaveLength(1);
     expect(updated.extraArtifacts[0].setKey).toBe("emblem_of_severed_fate");
+  });
+});
+
+function makeEquipPayload(
+  artifactIds: string[],
+  swapMap: Map<string, { fromChar: string | null; toChar: string }>
+): EquipPayload {
+  return {
+    request: { equip: [] },
+    artifactIds,
+    swapMap,
+  };
+}
+
+function makeChar(
+  key: string,
+  artifacts: Partial<Record<string, ArtifactData>> = {}
+) {
+  return {
+    key,
+    constellation: 0,
+    level: 90,
+    talent: { auto: 1, skill: 1, burst: 1 },
+    artifacts,
+  };
+}
+
+describe("applyEquipResults", () => {
+  it("moves artifact from one character to another on success", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "flower" });
+    const account = makeAccount({
+      characters: [
+        makeChar("Raiden", { flower: artA }),
+        makeChar("Furina", {}),
+      ],
+    });
+    const payload = makeEquipPayload(
+      ["artA"],
+      new Map([["artA", { fromChar: "Raiden", toChar: "Furina" }]])
+    );
+    const results = [makeResult("equip:0", "success")];
+
+    const updated = applyEquipResults(account, payload, results);
+
+    expect(updated.characters[1].artifacts.flower).toEqual(artA);
+    expect(updated.characters[0].artifacts.flower).toBeUndefined();
+  });
+
+  it("performs implicit swap when target character has artifact in same slot", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "flower" });
+    const artB = makeArtifact({ id: "artB", slotKey: "flower" });
+    const account = makeAccount({
+      characters: [
+        makeChar("Raiden", { flower: artA }),
+        makeChar("Furina", { flower: artB }),
+      ],
+    });
+    const payload = makeEquipPayload(
+      ["artA"],
+      new Map([["artA", { fromChar: "Raiden", toChar: "Furina" }]])
+    );
+    const results = [makeResult("equip:0", "success")];
+
+    const updated = applyEquipResults(account, payload, results);
+
+    expect(updated.characters[1].artifacts.flower).toEqual(artA);
+    expect(updated.characters[0].artifacts.flower).toEqual(artB);
+  });
+
+  it("moves artifact from inventory to character on success", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "plume" });
+    const account = makeAccount({
+      characters: [makeChar("Furina", {})],
+      extraArtifacts: [artA],
+    });
+    const payload = makeEquipPayload(
+      ["artA"],
+      new Map([["artA", { fromChar: null, toChar: "Furina" }]])
+    );
+    const results = [makeResult("equip:0", "success")];
+
+    const updated = applyEquipResults(account, payload, results);
+
+    expect(updated.characters[0].artifacts.plume).toEqual(artA);
+    expect(updated.extraArtifacts).toHaveLength(0);
+  });
+
+  it("skips not_found results", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "flower" });
+    const account = makeAccount({
+      extraArtifacts: [artA],
+    });
+    const payload = makeEquipPayload(
+      ["artA"],
+      new Map([["artA", { fromChar: null, toChar: "Furina" }]])
+    );
+    const results = [makeResult("equip:0", "not_found")];
+
+    const updated = applyEquipResults(account, payload, results);
+
+    expect(updated.extraArtifacts).toHaveLength(1);
+    expect(updated.extraArtifacts[0].id).toBe("artA");
+  });
+
+  it("skips already_correct results", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "flower" });
+    const account = makeAccount({
+      characters: [makeChar("Furina", { flower: artA })],
+    });
+    const payload = makeEquipPayload(
+      ["artA"],
+      new Map([["artA", { fromChar: "Furina", toChar: "Furina" }]])
+    );
+    const results = [makeResult("equip:0", "already_correct")];
+
+    const updated = applyEquipResults(account, payload, results);
+
+    expect(updated.characters[0].artifacts.flower).toEqual(artA);
+  });
+
+  it("does not mutate the input account", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "flower" });
+    const artB = makeArtifact({ id: "artB", slotKey: "flower" });
+    const account = makeAccount({
+      characters: [
+        makeChar("Raiden", { flower: artA }),
+        makeChar("Furina", { flower: artB }),
+      ],
+    });
+    const payload = makeEquipPayload(
+      ["artA"],
+      new Map([["artA", { fromChar: "Raiden", toChar: "Furina" }]])
+    );
+    const results = [makeResult("equip:0", "success")];
+
+    applyEquipResults(account, payload, results);
+
+    // Original account unchanged
+    expect(account.characters[0].artifacts.flower).toBe(artA);
+    expect(account.characters[1].artifacts.flower).toBe(artB);
+  });
+
+  it("handles multiple equip results across characters", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "flower" });
+    const artB = makeArtifact({ id: "artB", slotKey: "plume" });
+    const account = makeAccount({
+      characters: [
+        makeChar("Raiden", { flower: artA }),
+        makeChar("Furina", {}),
+        makeChar("Nahida", {}),
+      ],
+      extraArtifacts: [artB],
+    });
+    const payload = makeEquipPayload(
+      ["artA", "artB"],
+      new Map([
+        ["artA", { fromChar: "Raiden", toChar: "Furina" }],
+        ["artB", { fromChar: null, toChar: "Nahida" }],
+      ])
+    );
+    const results = [
+      makeResult("equip:0", "success"),
+      makeResult("equip:1", "success"),
+    ];
+
+    const updated = applyEquipResults(account, payload, results);
+
+    expect(updated.characters[0].artifacts.flower).toBeUndefined();
+    expect(updated.characters[1].artifacts.flower).toEqual(artA);
+    expect(updated.characters[2].artifacts.plume).toEqual(artB);
+    expect(updated.extraArtifacts).toHaveLength(0);
+  });
+
+  it("sends displaced artifact to extraArtifacts when source is inventory", () => {
+    const artA = makeArtifact({ id: "artA", slotKey: "flower" });
+    const artB = makeArtifact({ id: "artB", slotKey: "flower" });
+    const account = makeAccount({
+      characters: [makeChar("Furina", { flower: artB })],
+      extraArtifacts: [artA],
+    });
+    const payload = makeEquipPayload(
+      ["artA"],
+      new Map([["artA", { fromChar: null, toChar: "Furina" }]])
+    );
+    const results = [makeResult("equip:0", "success")];
+
+    const updated = applyEquipResults(account, payload, results);
+
+    expect(updated.characters[0].artifacts.flower).toEqual(artA);
+    expect(updated.extraArtifacts).toHaveLength(1);
+    expect(updated.extraArtifacts[0]).toEqual(artB);
   });
 });

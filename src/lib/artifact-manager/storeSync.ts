@@ -4,7 +4,7 @@ import {
   convertSingleArtifact,
 } from "@/lib/account-data/goodConversion";
 import { goodKeyToCharId } from "./keys";
-import type { InstructionResult, ManagePayload } from "./types";
+import type { EquipPayload, InstructionResult, ManagePayload } from "./types";
 
 const SYNC_STATUSES = new Set(["success", "already_correct"]);
 
@@ -109,5 +109,109 @@ export function replaceArtifactsFromSnapshot(
     ...account,
     characters,
     extraArtifacts,
+  };
+}
+
+/**
+ * Apply equip job results to account data, returning a new AccountData.
+ * Mimics the game's implicit swap behavior: when equipping artifact A onto
+ * character X in a slot that already has artifact B, B goes wherever A came from.
+ * Pure function — does not mutate inputs.
+ */
+export function applyEquipResults(
+  account: AccountData,
+  payload: EquipPayload,
+  results: InstructionResult[]
+): AccountData {
+  // Collect successful equip operations
+  const ops: {
+    artifactId: string;
+    fromChar: string | null;
+    toChar: string;
+  }[] = [];
+  for (const result of results) {
+    if (result.status !== "success") continue;
+    const [prefix, indexStr] = result.id.split(":");
+    if (prefix !== "equip") continue;
+    const index = Number(indexStr);
+    if (index >= payload.artifactIds.length) continue;
+    const artId = payload.artifactIds[index];
+    const swap = payload.swapMap.get(artId);
+    if (!swap) continue;
+    ops.push({
+      artifactId: artId,
+      fromChar: swap.fromChar,
+      toChar: swap.toChar,
+    });
+  }
+
+  if (ops.length === 0) return account;
+
+  // Deep clone characters and extraArtifacts
+  const newCharacters = account.characters.map((c) => ({
+    ...c,
+    artifacts: { ...c.artifacts } as Partial<Record<Slot, ArtifactData>>,
+  }));
+  const newExtra = [...account.extraArtifacts];
+  const charByKey = new Map(newCharacters.map((c) => [c.key, c]));
+
+  for (const op of ops) {
+    const toChar = charByKey.get(op.toChar);
+    if (!toChar) continue;
+
+    // Find the artifact being equipped
+    let artifact: ArtifactData | undefined;
+
+    // Check if it's on a character
+    if (op.fromChar) {
+      const fromChar = charByKey.get(op.fromChar);
+      if (fromChar) {
+        for (const [slot, art] of Object.entries(fromChar.artifacts)) {
+          if (art && art.id === op.artifactId) {
+            artifact = art;
+            delete fromChar.artifacts[slot as Slot];
+            break;
+          }
+        }
+      }
+    }
+
+    // Check extraArtifacts if not found on a character
+    if (!artifact) {
+      const idx = newExtra.findIndex((a) => a.id === op.artifactId);
+      if (idx !== -1) {
+        artifact = newExtra[idx];
+        newExtra.splice(idx, 1);
+      }
+    }
+
+    if (!artifact) continue;
+
+    const targetSlot = artifact.slotKey as Slot;
+
+    // Handle displacement: what's currently in the target slot?
+    const displaced = toChar.artifacts[targetSlot];
+    if (displaced) {
+      if (op.fromChar) {
+        const fromChar = charByKey.get(op.fromChar);
+        if (fromChar) {
+          fromChar.artifacts[targetSlot] = displaced;
+        } else {
+          newExtra.push(displaced);
+        }
+      } else {
+        newExtra.push(displaced);
+      }
+    }
+
+    // Place the artifact on the target character
+    toChar.artifacts[targetSlot] = artifact;
+  }
+
+  return {
+    ...account,
+    characters: newCharacters,
+    extraArtifacts: newExtra,
+    extraWeapons: account.extraWeapons,
   };
 }
