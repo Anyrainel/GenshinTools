@@ -215,7 +215,7 @@ export function TriageHeader({
       <ArtifactManagerDialog
         open={managerOpen}
         onOpenChange={setManagerOpen}
-        buildInstructions={buildManagerInstructions}
+        job={{ type: "manage", build: buildManagerInstructions }}
         actionLabel={t.ui("manager.applyToGame")}
       />
     </div>

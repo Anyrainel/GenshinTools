@@ -16,6 +16,7 @@ import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
 import { fetchArtifacts } from "@/lib/artifact-manager/client";
 import { replaceArtifactsFromSnapshot } from "@/lib/artifact-manager/storeSync";
 import type {
+  EquipPayload,
   InstructionStatus,
   ManagePayload,
   ResultResponse,
@@ -31,12 +32,14 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+export type ArtifactManagerJobConfig =
+  | { type: "manage"; build: () => ManagePayload }
+  | { type: "equip"; build: () => EquipPayload };
+
 interface ArtifactManagerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Build manage payload when user clicks the action button */
-  buildInstructions: () => ManagePayload;
-  /** Label for the action button, e.g. t.ui("manager.applyToGame") */
+  job: ArtifactManagerJobConfig;
   actionLabel: string;
 }
 
@@ -56,7 +59,7 @@ const STATUS_LABELS: Record<InstructionStatus, string> = {
 export function ArtifactManagerDialog({
   open,
   onOpenChange,
-  buildInstructions,
+  job,
   actionLabel,
 }: ArtifactManagerDialogProps) {
   const { t } = useLanguage();
@@ -98,12 +101,19 @@ export function ArtifactManagerDialog({
     phase.type === "running";
 
   const handleAction = useCallback(() => {
-    const payload = buildInstructions();
-    const total = payload.request.lock.length + payload.request.unlock.length;
-    if (total > 0) {
-      submit(payload);
+    if (job.type === "manage") {
+      const payload = job.build();
+      const total = payload.request.lock.length + payload.request.unlock.length;
+      if (total > 0) {
+        submit({ type: "manage", payload });
+      }
+    } else {
+      const payload = job.build();
+      if (payload.request.equip.length > 0) {
+        submit({ type: "equip", payload });
+      }
     }
-  }, [buildInstructions, submit]);
+  }, [job, submit]);
 
   // Temporary: fetch artifacts and update store directly
   const handleFetchAndSync = useCallback(async () => {
