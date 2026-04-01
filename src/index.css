@@ -158,17 +158,27 @@
   animation: card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@keyframes shimmer {
+@keyframes text-shimmer {
   0% {
-    background-position: 200% 0;
+    background-position: 200% center;
   }
   100% {
-    background-position: -200% 0;
+    background-position: -200% center;
   }
 }
 
-.animate-shimmer {
-  animation: shimmer 3s ease-in-out infinite;
+.animate-text-shimmer {
+  background: linear-gradient(
+    110deg,
+    hsl(var(--primary)) 30%,
+    hsl(45 80% 75%) 50%,
+    hsl(var(--primary)) 70%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-shimmer 3s ease-in-out infinite;
 }
 
 /* ── Frozen card effects ── */

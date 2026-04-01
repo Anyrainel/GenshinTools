@@ -120,11 +120,13 @@ export default function Home() {
             <div className="pt-2">
               <Button
                 variant="outline"
-                className="gap-2 animate-shimmer bg-[length:200%_100%] bg-[linear-gradient(110deg,transparent_25%,hsl(var(--primary)/0.15)_50%,transparent_75%)] hover:bg-primary/10"
+                className="gap-2"
                 onClick={() => guideRef.current?.open()}
               >
-                <Compass className="size-4" />
-                {t.ui("greeting.getStarted")}
+                <Compass className="size-4 text-primary" />
+                <span className="animate-text-shimmer">
+                  {t.ui("greeting.getStarted")}
+                </span>
               </Button>
             </div>
           </div>
