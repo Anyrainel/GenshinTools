@@ -15,22 +15,22 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ── News parser ────────────────────────────────────────────────────────
 
-interface NewsSection {
+export interface NewsSection {
   category: string;
   items: string[];
 }
 
-interface NewsEntry {
+export interface NewsEntry {
   date: string;
   sections: NewsSection[];
 }
 
-interface ParsedNews {
+export interface ParsedNews {
   roadmap: string[];
   entries: NewsEntry[];
 }
 
-function parseNews(raw: string): ParsedNews {
+export function parseNews(raw: string): ParsedNews {
   const result: ParsedNews = { roadmap: [], entries: [] };
   let current: NewsEntry | null = null;
   let sec: NewsSection | null = null;
@@ -73,12 +73,12 @@ function parseNews(raw: string): ParsedNews {
   return result;
 }
 
-const newsMap: Record<Language, ParsedNews> = {
+export const newsMap: Record<Language, ParsedNews> = {
   zh: parseNews(newsZhRaw),
   en: parseNews(newsEnRaw),
 };
 
-const SECTION_COLORS: Record<string, string> = {
+export const SECTION_COLORS: Record<string, string> = {
   features: "text-emerald-400",
   fixes: "text-amber-400",
   roadmap: "text-sky-400",
