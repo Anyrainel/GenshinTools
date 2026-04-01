@@ -1621,68 +1621,36 @@ export const i18nUiData = {
     fixes: { en: "Fixes", zh: "修复" },
   },
   greeting: {
-    welcomeTitle: {
-      en: "Welcome to GenshinTools",
-      zh: "欢迎来到 GenshinTools",
-    },
-    welcomeSubtitle: {
-      en: "Let's get you started in a few quick steps",
-      zh: "让我们用几个快速步骤帮你上手",
-    },
-    getStarted: { en: "Get Started", zh: "开始使用" },
-    // Step 1
-    importTitle: { en: "Import Your Data", zh: "导入你的数据" },
-    importDesc: {
-      en: "Bring in your characters, weapons, and artifacts using a scanner or your UID.",
-      zh: "使用扫描器或你的 UID 导入角色、武器和圣遗物。",
-    },
-    importGoodLabel: {
-      en: "Upload a GOOD JSON file from a scanner",
-      zh: "上传扫描器导出的 GOOD JSON 文件",
-    },
-    importUidLabel: {
-      en: "Or enter your Enka UID for a quick start",
-      zh: "或输入你的 Enka UID 快速开始",
-    },
-    importLater: {
-      en: "You can also do this later from the Account Data page.",
-      zh: "你也可以稍后在「账号数据」页面导入。",
-    },
-    openImport: { en: "Open Import Dialog", zh: "打开导入对话框" },
-    // Step 2
-    accountOverviewTitle: {
-      en: "Your Account at a Glance",
-      zh: "一览你的账号",
-    },
-    accountOverviewDesc: {
-      en: "Once imported, Account Data gives you a full picture of your roster.",
-      zh: "导入后，「账号数据」会给你完整的角色和圣遗物概览。",
+    getStarted: { en: "Get Started", zh: "使用教程" },
+    // Step 1: Account Data
+    step1ActionHint: {
+      en: "Use these buttons at the top of the Account Data page to manage accounts and import data. Supports GOOD scanner files or Enka UID.",
+      zh: "在「账号数据」页面顶部，用这两个按钮管理账号和导入数据。支持 GOOD 扫描器文件或 Enka UID。",
     },
     previewCharacters: {
-      en: "See your progression and scores",
-      zh: "查看你的进度和评分",
+      en: "View your character progression and scores",
+      zh: "查看你的角色练度和评分",
     },
     previewInventory: {
-      en: "Browse and filter your artifacts",
-      zh: "浏览和筛选你的圣遗物",
+      en: "Browse your weapons and artifacts",
+      zh: "浏览你的武器和圣遗物",
     },
     previewRecommendations: {
-      en: "Know what to upgrade next",
-      zh: "了解下一步该提升什么",
+      en: "Quickly see upgrade options per character, including embryo upgrade recommendations",
+      zh: "快速了解各角色的提分选项，包括胚子升级推荐",
     },
     previewEvaluation: {
-      en: "Compare builds across your roster",
-      zh: "对比全角色配装",
+      en: "Quickly check set reserves and weak spots",
+      zh: "快速查看套装的储备情况和短板",
     },
     previewTriage: {
-      en: "Decide which artifacts to keep or fodder",
-      zh: "决定圣遗物的去留",
+      en: "Auto-recommend artifact lock/unlock. Optional automated game operations (OCR)!",
+      zh: "自动推荐圣遗物锁定、解锁。可选自动化游戏操作（OCR）！",
     },
-    // Step 3
-    customizeTitle: { en: "Customize Your Builds", zh: "自定义配装" },
-    customizeDesc: {
-      en: "Personalizing builds unlocks the full power of your account data.",
-      zh: "自定义配装释放账号数据的全部潜力。",
+    // Step 2: Builds
+    step2BuildHint: {
+      en: "Customize build profiles for each character on the Builds page. The system will use your builds to calculate the following:",
+      zh: "在「配装」页面为每个角色自定义配装方案，系统会根据你的配装计算以下内容",
     },
     customizeBenefitScoring: {
       en: "Personalized artifact scoring",
@@ -1696,37 +1664,32 @@ export const i18nUiData = {
       en: "Personalized artifact lock manager",
       zh: "个性化圣遗物锁定管理",
     },
-    // Step 4
-    teamsTitle: { en: "Build Your Teams", zh: "组建你的队伍" },
-    teamsDesc: {
-      en: "Create team compositions and import preset teams to get started quickly.",
-      zh: "创建队伍组合，也可导入预设队伍快速开始。",
+    // Step 3: Teams
+    step3ActionHint: {
+      en: "Use these buttons at the top of the Team DMG page to import preset teams or create your own.",
+      zh: "在「队伍伤害」页面顶部，用这些按钮导入预设队伍或创建自己的队伍。",
     },
-    // Step 5
-    teamsOverviewTitle: { en: "What Teams Unlock", zh: "队伍能做什么" },
-    teamsOverviewDesc: {
-      en: "Teams power the damage calculator and artifact optimization engine.",
-      zh: "队伍驱动伤害计算器和圣遗物优化引擎。",
+    previewDamage: {
+      en: "View and optimize team damage",
+      zh: "查看并优化队伍伤害",
     },
-    previewDamage: { en: "Optimize rotation damage", zh: "优化循环伤害" },
     previewFrozen: {
-      en: "Lock artifacts to specific teams",
-      zh: "锁定圣遗物到指定队伍",
+      en: "Freeze artifacts for multi-team optimization. Download images or auto-apply to game!",
+      zh: "冻结圣遗物来完成多队伍优化，并且可以下载图片或自动应用到游戏中！",
     },
     previewInvestment: {
-      en: "Find the best upgrade path",
-      zh: "找到最佳升级路径",
+      en: "Find the constellation/refinement upgrade order that fits your budget",
+      zh: "找到符合你XP、预算的补金顺序",
     },
-    previewWeapon: { en: "Compare weapon options", zh: "对比武器选项" },
-    // Step 6
+    previewWeapon: {
+      en: "Compare damage ratios across all weapons",
+      zh: "对比全部武器的伤害比值",
+    },
+    // Step 4: Help
     helpTitle: { en: "Need Help?", zh: "需要帮助？" },
     helpDesc: {
       en: "Each page has a help guide in the menu. Look for the help option to learn page-specific features.",
       zh: "每个页面的菜单中都有帮助指南。查找帮助选项以了解页面功能。",
-    },
-    helpMenuHint: {
-      en: "Open the ⋮ menu on any page and look for Help",
-      zh: "在任意页面打开 ⋮ 菜单，查找「帮助」",
     },
     letsGo: { en: "Let's Go!", zh: "出发！" },
     // News dialog
@@ -1968,7 +1931,7 @@ export const i18nUiData = {
     title: { en: "Artifact Manager", zh: "圣遗物管理器" },
     applyToGame: { en: "Apply to Game", zh: "应用到游戏" },
     equipToGame: { en: "Equip to Game", zh: "装备到游戏" },
-    equipAll: { en: "Equip All", zh: "全部装备" },
+    equipAll: { en: "Equip All", zh: "全部装备到游戏" },
     port: { en: "Port", zh: "端口" },
     connect: { en: "Connect", zh: "连接" },
     ready: { en: "Ready", zh: "就绪" },

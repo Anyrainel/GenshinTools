@@ -81,7 +81,7 @@ export function FreezeControlBar({
         <Button
           variant="outline"
           size="sm"
-          className="gap-1.5 text-sm leading-none h-8 border-cyan-400/40 text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10"
+          className="gap-1.5 text-sm leading-none h-8"
           onClick={onEquipAll}
         >
           <Monitor className="w-3 h-3" />

@@ -146,7 +146,7 @@ export function SwapGuide({
           <button
             type="button"
             onClick={() => setEquipDialogOpen(true)}
-            className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:text-cyan-200 transition-colors"
+            className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
             title={t.ui("manager.equipToGame")}
           >
             <Monitor className="w-3 h-3" />
