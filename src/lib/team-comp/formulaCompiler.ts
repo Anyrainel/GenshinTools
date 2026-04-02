@@ -429,7 +429,7 @@ export function compileTeamDamage(
   // Uses onFieldCharId=null (nobody on-field) for correct off-field buff resolution
   let offFieldFormulaStats: ExprStats | undefined;
   let offFieldOptCtx: OptimizerContext | undefined;
-  if (entry.parts.some((p) => p.offField)) {
+  if (!reactionOverride?.forceOnField && entry.parts.some((p) => p.offField)) {
     offFieldOptCtx = teamBuild.createOptimizerContext(
       optCtx.baseSheets,
       [...optCtx.variableCharIds],
@@ -661,7 +661,10 @@ export function compileComboTeamDamage(
       // Uses onFieldCharId=null (nobody on-field) for correct off-field buff resolution
       let offFieldFormulaStats: ExprStats | undefined;
       let lineOffFieldOptCtx: OptimizerContext | undefined;
-      if (entry.parts.some((p) => p.offField)) {
+      if (
+        !effectiveReaction?.forceOnField &&
+        entry.parts.some((p) => p.offField)
+      ) {
         lineOffFieldOptCtx = teamBuild.createOptimizerContext(
           baseSheets,
           swapCharId,

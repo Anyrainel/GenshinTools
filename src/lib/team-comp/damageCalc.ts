@@ -555,10 +555,11 @@ export class CharBuild {
         offField,
       } = entry.parts[i];
       const h = totalHits ?? 1;
+      const effectiveOffField = offField && !reactionOverride?.forceOnField;
 
       // Use off-field stats when the part deals damage while the character is off-field
       const baseSelfStats =
-        offField && offFieldSelfPostStats
+        effectiveOffField && offFieldSelfPostStats
           ? offFieldSelfPostStats
           : selfPostStats;
 
@@ -583,7 +584,7 @@ export class CharBuild {
       if (!hasReaction || formula.tag.reaction !== "none") {
         const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
         dp.hits = h;
-        if (offField) dp.offField = true;
+        if (effectiveOffField) dp.offField = true;
         totalDamage += dp.damage * h;
         displayParts.push(dp);
         continue;
@@ -616,14 +617,14 @@ export class CharBuild {
           ctx
         );
         dp.hits = reactingHits;
-        if (offField) dp.offField = true;
+        if (effectiveOffField) dp.offField = true;
         totalDamage += dp.damage * reactingHits;
         displayParts.push(dp);
       }
       if (nonReactingHits > 0) {
         const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
         dp.hits = nonReactingHits;
-        if (offField) dp.offField = true;
+        if (effectiveOffField) dp.offField = true;
         totalDamage += dp.damage * nonReactingHits;
         displayParts.push(dp);
       }
@@ -1471,7 +1472,9 @@ export class TeamBuild {
     );
 
     // Compute off-field stats for display if the formula has off-field parts
-    const formulaHasOffField = entry?.parts.some((p) => p.offField) ?? false;
+    const formulaHasOffField =
+      !reactionOverride?.forceOnField &&
+      (entry?.parts.some((p) => p.offField) ?? false);
     const offFieldPostStats = formulaHasOffField
       ? this.getOffFieldPostStats(charId, artifactStats, ctx)
       : undefined;
@@ -2678,7 +2681,10 @@ export function evaluateCombo(
     // Normal character formula path
     // Compute off-field stats if the formula has off-field parts
     let offFieldTeamStats: Record<string, StatSheet> | undefined;
-    if (hasOffFieldParts(teamBuild, line.charId, line.formulaId)) {
+    if (
+      !line.reaction?.forceOnField &&
+      hasOffFieldParts(teamBuild, line.charId, line.formulaId)
+    ) {
       // Nobody on-field for off-field damage parts
       offFieldTeamStats = getStats(null);
     }
@@ -3066,7 +3072,9 @@ export function getComboDisplayResult(
 
     // Off-field stats (nobody on-field for off-field parts)
     const entry = build.charBase.getFormulaEntry(formulaId);
-    const formulaHasOffField = entry?.parts.some((p) => p.offField) ?? false;
+    const formulaHasOffField =
+      !effectiveReaction?.forceOnField &&
+      (entry?.parts.some((p) => p.offField) ?? false);
     let offFieldPostStats: StatSheet | undefined;
     if (formulaHasOffField) {
       offFieldPostStats = getStats(null)[charId];

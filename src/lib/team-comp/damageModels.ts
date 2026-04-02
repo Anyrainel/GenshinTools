@@ -1086,10 +1086,11 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
         offField,
       } = entry.parts[idx];
       const h = totalHits ?? 1;
+      const effectiveOffField = offField && !reactionOverride?.forceOnField;
 
       // Use off-field stats when the part deals damage while the character is off-field
       const baseSelfStats =
-        offField && offFieldSelfStats ? offFieldSelfStats : selfStats;
+        effectiveOffField && offFieldSelfStats ? offFieldSelfStats : selfStats;
 
       // Apply per-part stat overlay if present
       let bespokeOverlay: StatSheet | undefined;
@@ -1109,7 +1110,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
 
       // Pick the correct variants map for on/off-field
       const partVariants =
-        offField && offFieldVariants ? offFieldVariants : statsVariants;
+        effectiveOffField && offFieldVariants
+          ? offFieldVariants
+          : statsVariants;
 
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";

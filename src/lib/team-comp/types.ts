@@ -387,6 +387,7 @@ export type ReactionOverride = {
   reaction?: ReactionType; // gate reaction
   partReactions?: Record<number, ReactionType>; // per-part overrides (sparse: only non-default)
   partHits?: Record<number, number>; // per-part reacting hit count (for multi-hit parts)
+  forceOnField?: boolean; // treat off-field parts as on-field for stat computation
 };
 
 /** Resolve the effective reaction for a formula part given overrides.

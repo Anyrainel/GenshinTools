@@ -37,6 +37,7 @@ export const i18nUiData = {
     save: { en: "Save", zh: "保存" },
     offFieldSuffix: { en: "(off-field)", zh: "(后台)" },
     partialOffFieldSuffix: { en: "(partial off-field)", zh: "(部分后台)" },
+    forceOnField: { en: "Force on-field", zh: "强制前台" },
     damage: { en: "Damage", zh: "伤害" },
     stop: { en: "Stop", zh: "停止" },
     equip: { en: "Equip", zh: "装备" },
