@@ -181,8 +181,6 @@ describe("i18n App Data Integrity", () => {
       "teamComp.weaponChoiceDesc",
       "teamComp.weaponChoiceRun",
       "teamComp.weaponChoiceRunning",
-      // forceOnField — UI component added in upcoming task
-      "common.forceOnField",
       "teamComp.weaponChoiceRanking",
       "teamComp.weaponChoiceConfig",
       "teamComp.weaponChoiceBest",
