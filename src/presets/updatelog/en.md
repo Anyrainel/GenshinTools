@@ -4,6 +4,16 @@
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
 
+## 2025-04-02
+
+### features
+- Force On-Field toggle: override which character is treated as on-field in single and combo damage calculations
+- Welcome Guide: redesigned with interactive tab previews and polished copy for new users
+- Equip to Game: swap guide and freeze bar equip buttons now available to all users
+
+### fixes
+- Fixed Yelan Q DMG bonus values — now uses actual DMG% instead of incorrectly multiplied param
+
 ## 2025-03-31
 
 ### features
