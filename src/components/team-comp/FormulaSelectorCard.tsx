@@ -324,7 +324,7 @@ export function FormulaSelectorCard({
                                 {isSingleSelected &&
                                   !isLocked &&
                                   offField !== "none" && (
-                                    <label className="flex items-center gap-1 mt-0.5 ml-2 cursor-pointer">
+                                    <label className="flex items-center gap-1 mt-0.5 cursor-pointer">
                                       <input
                                         type="checkbox"
                                         checked={
@@ -456,7 +456,7 @@ export function FormulaSelectorCard({
                                         .reaction?.forceOnField
                                     : undefined;
                                   return (
-                                    <label className="flex items-center gap-1 ml-7 cursor-pointer">
+                                    <label className="flex items-center gap-1 cursor-pointer">
                                       <input
                                         type="checkbox"
                                         checked={!!currentForceOnField}
