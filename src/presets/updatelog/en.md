@@ -1,8 +1,7 @@
 ## roadmap
 - Ongoing: more damage formulas and customization options
-- P0: More useful upgrade and sub-stat reroll suggestions
-- P1: Better graduation celebration effects
-- P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
+- P0: More useful all character equipment and artifact upgrade suggestions
+- P2: Better graduation celebration effects
 
 ## 2025-04-02
 

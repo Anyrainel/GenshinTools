@@ -155,10 +155,10 @@ function BuildImportControlInner(
           {sortedOptions.length > 0 ? (
             <div className="grid gap-2 max-h-80 overflow-y-auto overflow-x-hidden pr-1">
               {sortedOptions.map((option) => (
-                <Button
+                <button
+                  type="button"
                   key={option.path}
-                  variant="outline"
-                  className="justify-between h-auto min-h-10 py-2"
+                  className="flex items-center justify-between h-auto min-h-10 py-2 px-3 rounded-md border-l-[3px] border-l-primary border border-border bg-gradient-card hover:bg-accent text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleSelectPreset(option)}
                   disabled={isBusy}
                 >
@@ -166,7 +166,7 @@ function BuildImportControlInner(
                     {option.label}
                   </span>
                   <Layers className="h-4 w-4 shrink-0 text-primary" />
-                </Button>
+                </button>
               ))}
             </div>
           ) : (
@@ -179,7 +179,7 @@ function BuildImportControlInner(
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 w-full relative overflow-hidden"
+              className="gap-2 w-full relative overflow-hidden border border-border"
               disabled={isBusy}
             >
               <Download className="w-4 h-4" />
