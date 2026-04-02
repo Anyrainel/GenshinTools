@@ -1,4 +1,9 @@
-import type { AccountData, ArtifactData, Slot } from "@/data/types";
+import type {
+  AccountData,
+  ArtifactData,
+  CharacterData,
+  Slot,
+} from "@/data/types";
 import {
   type IGOODArtifact,
   convertSingleArtifact,
@@ -7,6 +12,16 @@ import { goodKeyToCharId } from "./keys";
 import type { EquipPayload, InstructionResult, ManagePayload } from "./types";
 
 const SYNC_STATUSES = new Set(["success", "already_correct"]);
+
+function makeStubCharacter(key: string): CharacterData {
+  return {
+    key,
+    level: 90,
+    constellation: 0,
+    talent: { auto: 1, skill: 1, burst: 1 },
+    artifacts: {},
+  };
+}
 
 /**
  * Apply job results to account data, returning a new AccountData.
@@ -96,8 +111,14 @@ export function replaceArtifactsFromSnapshot(
     const location = goodArtifacts[i].location;
     if (location) {
       const charId = goodKeyToCharId(location);
-      const char = charId ? charByKey.get(charId) : undefined;
-      if (char) {
+      if (charId) {
+        let char = charByKey.get(charId);
+        if (!char) {
+          // Character not in account — create a stub so artifacts stay placed
+          char = makeStubCharacter(charId);
+          characters.push(char);
+          charByKey.set(charId, char);
+        }
         char.artifacts[art.slotKey] = art;
         continue;
       }

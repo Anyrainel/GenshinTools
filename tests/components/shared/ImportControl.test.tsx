@@ -113,7 +113,10 @@ describe("ImportControl", () => {
     await user.click(confirmButton!);
 
     expect(mockLoadPreset).toHaveBeenCalledWith("/presets/a.json");
-    expect(mockOnApply).toHaveBeenCalledWith({ data: "test" });
+    expect(mockOnApply).toHaveBeenCalledWith(
+      { data: "test" },
+      sampleOptions[0]
+    );
   });
 
   it("shows file import button when onLocalImport is provided", async () => {

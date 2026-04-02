@@ -288,6 +288,48 @@ describe("replaceArtifactsFromSnapshot", () => {
     expect(updated.extraWeapons).toHaveLength(1);
   });
 
+  it("creates stub character for artifacts equipped on unknown characters", () => {
+    const account = makeAccount({
+      characters: [
+        {
+          key: "raiden_shogun",
+          constellation: 0,
+          level: 90,
+          talent: { auto: 1, skill: 1, burst: 1 },
+          artifacts: {},
+        },
+      ],
+    });
+    // "Furina" maps to "furina" via goodKeyToCharId, but furina is not in account
+    const snapshot = [
+      makeGOODArtifact({ location: "Furina", slotKey: "flower" }),
+      makeGOODArtifact({ location: "Furina", slotKey: "plume" }),
+      makeGOODArtifact({
+        location: "RaidenShogun",
+        slotKey: "sands",
+        mainStatKey: "enerRech_",
+      }),
+    ];
+
+    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+
+    // Raiden preserved, Furina stub created
+    expect(updated.characters).toHaveLength(2);
+    const furina = updated.characters.find((c) => c.key === "furina");
+    expect(furina).toBeDefined();
+    expect(furina!.level).toBe(90);
+    expect(furina!.constellation).toBe(0);
+    expect(furina!.talent).toEqual({ auto: 1, skill: 1, burst: 1 });
+    expect(furina!.weapon).toBeUndefined();
+    expect(furina!.artifacts.flower).toBeDefined();
+    expect(furina!.artifacts.plume).toBeDefined();
+    // Raiden still gets her artifact
+    expect(
+      updated.characters.find((c) => c.key === "raiden_shogun")!.artifacts.sands
+    ).toBeDefined();
+    expect(updated.extraArtifacts).toHaveLength(0);
+  });
+
   it("skips artifacts with unrecognized set keys", () => {
     const account = makeAccount();
     const snapshot = [

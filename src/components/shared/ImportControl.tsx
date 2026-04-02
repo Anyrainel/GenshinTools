@@ -34,7 +34,7 @@ type ImportVariant = "default" | "tier-list" | "team-comp";
 interface ImportControlProps<T> {
   options: PresetOption[];
   loadPreset: (path: string) => Promise<T>;
-  onApply: (payload: T) => void;
+  onApply: (payload: T, preset?: PresetOption) => void;
   variant?: ImportVariant;
   onLocalImport?: (payload: T) => void;
 }
@@ -150,7 +150,7 @@ function ImportControlInner<T>(
     setErrorMessage(null);
     try {
       const payload = await loadPreset(selectedPreset.path);
-      onApply(payload);
+      onApply(payload, selectedPreset);
       handleConfirmChange(false);
     } catch (error) {
       console.error("Failed to load preset", error);

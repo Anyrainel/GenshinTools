@@ -1,4 +1,3 @@
-import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import {
   ArtifactBuildsView,
@@ -11,6 +10,7 @@ import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
+import { ImportControl } from "@/components/shared/ImportControl";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/appNavigation";
@@ -233,15 +233,16 @@ export default function ArtifactBuildsPage() {
       <BuildsDefaultPresetPrompt />
 
       {/* Control dialogs - render without triggers, opened via ref */}
-      <BuildImportControl
+      <ImportControl<BuildPayloadV5>
         ref={importRef}
         options={presetOptions}
         loadPreset={loadPreset}
-        onSubscribe={(id, payload) => {
-          subscribePreset(id, payload);
+        onApply={(payload, preset) => {
+          if (!preset) return;
+          subscribePreset(preset.path, payload);
           toast.success(t.ui("app.presetLoaded"));
         }}
-        onCopy={(payload) => {
+        onLocalImport={(payload) => {
           importBuilds(payload);
           toast.success(t.ui("app.imported"));
         }}

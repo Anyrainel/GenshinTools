@@ -108,21 +108,6 @@ export const i18nUiData = {
       en: "No presets found. Add preset JSON files to the presets folder.",
       zh: "未找到预设。请在 presets 文件夹中添加预设 JSON 文件。",
     },
-    fileTitle: { en: "Import File", zh: "导入文件" },
-    actionPrompt: {
-      en: "Choose how you want to import these builds:",
-      zh: "请选择导入方式：",
-    },
-    actionSubscribe: { en: "Subscribe", zh: "订阅" },
-    actionSubscribeDesc: {
-      en: "You will receive updates automatically. Your customizations will be saved alongside the preset.",
-      zh: "您将接收自动预设更新。您的自定义修改将作为增量保存。",
-    },
-    actionCopy: { en: "Copy to Local", zh: "复制到本地" },
-    actionCopyDesc: {
-      en: "One-time import. No future updates unless manual re-import.",
-      zh: "一次性导入。除非手动重新导入，否则不会有后续更新。",
-    },
     goodSplitFileHint: {
       en: "Now supports separate character, weapon, and artifact files!",
       zh: "现支持分别导入角色、武器和圣遗物文件！",
