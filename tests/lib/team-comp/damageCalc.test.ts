@@ -452,7 +452,12 @@ describe("isBuffApplicable — charId scoping", () => {
 
 // Import the side-effect barrel to register all characters, weapons, and artifacts
 import "@/lib/team-comp/index";
-import { TeamBuild, getComboDisplayResult } from "@/lib/team-comp/damageCalc";
+import {
+  TeamBuild,
+  getComboDisplayResult,
+  hasOffFieldParts,
+  offFieldStatus,
+} from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
@@ -1638,5 +1643,143 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
     for (const b of regularBuffs) {
       expect(b.bespokeLabel).toBeUndefined();
     }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// forceOnField override — off-field parts use on-field stats
+// ═══════════════════════════════════════════════════════════════
+
+describe("forceOnField override", () => {
+  // Team: Xiangling (has off-field formulas + teamOnField P2 ATK% buff)
+  // The P2 chili pepper buff is teamOnField → excluded from off-field stat sheets.
+  // With forceOnField, off-field parts use on-field stats → the buff applies.
+  const configs: TeamSlotConfig[] = [
+    {
+      charId: "xiangling",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "the_catch",
+      refinement: 5,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "bennett",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "sacrificial_sword",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+  };
+
+  const emptySheets: Record<string, StatSheet> = {
+    xiangling: new StatSheet([]),
+    bennett: new StatSheet([]),
+  };
+
+  const formulaKey = "xiangling.xiangling-pyronado-tick";
+
+  it("without forceOnField, off-field parts have dp.offField = true", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "xiangling",
+      "xiangling-pyronado-tick",
+      emptySheets,
+      ctx
+    );
+
+    const parts = display.partsByFormula[formulaKey] ?? [];
+    // Pyronado tick is a single off-field part
+    expect(parts.length).toBe(1);
+    expect(parts[0].offField).toBe(true);
+  });
+
+  it("with forceOnField, off-field parts do NOT have dp.offField = true", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "xiangling",
+      "xiangling-pyronado-tick",
+      emptySheets,
+      ctx,
+      { forceOnField: true }
+    );
+
+    const parts = display.partsByFormula[formulaKey] ?? [];
+    // With forceOnField, the part should not be marked offField
+    expect(parts.length).toBe(1);
+    expect(parts[0].offField).toBeFalsy();
+  });
+
+  it("offFieldStatus still reports based on formula definition, not override", () => {
+    const tb = new TeamBuild(configs);
+
+    // offFieldStatus checks the formula's intrinsic offField flags, not the override
+    const status = offFieldStatus(tb, "xiangling", "xiangling-pyronado-tick");
+    expect(status).toBe("full"); // all parts are offField
+
+    const guobaStatus = offFieldStatus(tb, "xiangling", "xiangling-guoba");
+    expect(guobaStatus).toBe("full"); // guoba is also fully off-field
+
+    // hasOffFieldParts should also report true regardless of override
+    expect(hasOffFieldParts(tb, "xiangling", "xiangling-pyronado-tick")).toBe(
+      true
+    );
+  });
+
+  it("pyronado-swing (on-field formula) reports offField status 'none'", () => {
+    const tb = new TeamBuild(configs);
+    const status = offFieldStatus(tb, "xiangling", "xiangling-pyronado-swing");
+    expect(status).toBe("none");
+    expect(hasOffFieldParts(tb, "xiangling", "xiangling-pyronado-swing")).toBe(
+      false
+    );
+  });
+
+  it("forceOnField produces higher damage when teamOnField buffs exist", () => {
+    const tb = new TeamBuild(configs);
+
+    const displayOff = tb.getDisplayResult(
+      "xiangling",
+      "xiangling-pyronado-tick",
+      emptySheets,
+      ctx
+    );
+
+    const displayOn = tb.getDisplayResult(
+      "xiangling",
+      "xiangling-pyronado-tick",
+      emptySheets,
+      ctx,
+      { forceOnField: true }
+    );
+
+    // Xiangling P2 (teamOnField) gives +10% ATK to on-field characters.
+    // With forceOnField, pyronado tick uses on-field stats which include this buff,
+    // so damage should be higher (or at least equal if no on-field-only buffs exist).
+    expect(displayOn.totalDamage).toBeGreaterThan(displayOff.totalDamage);
+  });
+
+  it("statSheets still contain both onField and offField entries", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "xiangling",
+      "xiangling-pyronado-tick",
+      emptySheets,
+      ctx,
+      { forceOnField: true }
+    );
+
+    // Even with forceOnField, the display should still report both stat sheets
+    expect(display.statSheets.xiangling).toBeDefined();
+    expect(display.statSheets.xiangling.onField).toBeDefined();
+    expect(display.statSheets.xiangling.offField).toBeDefined();
   });
 });
