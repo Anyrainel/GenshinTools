@@ -143,19 +143,17 @@ export function SwapGuide({
       {/* Download button — hidden when no changes */}
       {changeCount > 0 && (
         <div className="flex justify-end gap-2 px-2 pt-1.5">
-          {import.meta.env.DEV && (
-            <button
-              type="button"
-              onClick={() => setEquipDialogOpen(true)}
-              className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-              title={t.ui("manager.equipToGame")}
-            >
-              <Monitor className="w-3 h-3" />
-              <span className="hidden md:inline">
-                {t.ui("manager.equipToGame")}
-              </span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setEquipDialogOpen(true)}
+            className="flex items-center gap-1.5 text-[10px] md:text-xs font-medium px-2 py-1 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            title={t.ui("manager.equipToGame")}
+          >
+            <Monitor className="w-3 h-3" />
+            <span className="hidden md:inline">
+              {t.ui("manager.equipToGame")}
+            </span>
+          </button>
           <button
             type="button"
             onClick={handleDownload}

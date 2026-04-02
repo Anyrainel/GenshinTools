@@ -77,7 +77,7 @@ export function FreezeControlBar({
           <span>{t.ui("teamComp.freezeTeam")}</span>
         </Button>
       )}
-      {import.meta.env.DEV && onEquipAll && (
+      {onEquipAll && (
         <Button
           variant="outline"
           size="sm"
