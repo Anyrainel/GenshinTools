@@ -13,10 +13,6 @@ interface FormulaLabelProps {
   /** When true, mute the label text (constellation requirement not met). */
   isLocked?: boolean;
   className?: string;
-  /** Current forceOnField state (read from ReactionOverride). */
-  forceOnField?: boolean;
-  /** Callback to toggle forceOnField. Only rendered when provided and formula has offField parts. */
-  onForceOnFieldChange?: (forceOnField: boolean) => void;
 }
 
 /**
@@ -31,8 +27,6 @@ export function FormulaLabel({
   teamBuild,
   isLocked,
   className,
-  forceOnField: forceOnFieldProp,
-  onForceOnFieldChange,
 }: FormulaLabelProps) {
   const { t } = useLanguage();
 
@@ -66,22 +60,6 @@ export function FormulaLabel({
               : "common.partialOffFieldSuffix"
           )}
         </span>
-      )}
-      {offField !== "none" && onForceOnFieldChange && (
-        <label
-          className="flex items-center gap-1 cursor-pointer ml-0.5"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <input
-            type="checkbox"
-            checked={!!forceOnFieldProp}
-            onChange={(e) => onForceOnFieldChange(e.target.checked)}
-            className="accent-primary w-3 h-3"
-          />
-          <span className="text-[0.8em] text-muted-foreground font-normal whitespace-nowrap">
-            {t.ui("common.forceOnField")}
-          </span>
-        </label>
       )}
     </span>
   );

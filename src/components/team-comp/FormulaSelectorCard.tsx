@@ -11,7 +11,7 @@ import {
   REACTION_ELEMENT_REQUIREMENTS,
   getFormulaReactions,
 } from "@/lib/team-comp/constants";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { type TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import type {
   ComboLine,
   I18nLabel,
@@ -274,6 +274,9 @@ export function FormulaSelectorCard({
                             const activeRx = isSingleSelected
                               ? (team.singleReaction?.reaction ?? "none")
                               : "none";
+                            const offField = teamBuild
+                              ? offFieldStatus(teamBuild, cid, formulaId)
+                              : "none";
 
                             return (
                               <div key={formulaId} className="flex flex-col">
@@ -315,31 +318,40 @@ export function FormulaSelectorCard({
                                     charId={cid}
                                     teamBuild={teamBuild}
                                     isLocked={isLocked}
-                                    forceOnField={
-                                      isSingleSelected
-                                        ? team.singleReaction?.forceOnField
-                                        : undefined
-                                    }
-                                    onForceOnFieldChange={
-                                      isSingleSelected && !isLocked
-                                        ? (force) =>
-                                            onReactionChange(
-                                              cid,
-                                              formulaId,
-                                              activeRx,
-                                              {
-                                                ...(team.singleReaction ?? {}),
-                                                reaction:
-                                                  (activeRx as ReactionType) ||
-                                                  undefined,
-                                                forceOnField:
-                                                  force || undefined,
-                                              }
-                                            )
-                                        : undefined
-                                    }
                                   />
                                 </button>
+                                {/* Force on-field checkbox: shown when selected and formula has off-field parts */}
+                                {isSingleSelected &&
+                                  !isLocked &&
+                                  offField !== "none" && (
+                                    <label className="flex items-center gap-1 mt-0.5 ml-2 cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          !!team.singleReaction?.forceOnField
+                                        }
+                                        onChange={(e) =>
+                                          onReactionChange(
+                                            cid,
+                                            formulaId,
+                                            activeRx,
+                                            {
+                                              ...(team.singleReaction ?? {}),
+                                              reaction:
+                                                (activeRx as ReactionType) ||
+                                                undefined,
+                                              forceOnField:
+                                                e.target.checked || undefined,
+                                            }
+                                          )
+                                        }
+                                        className="accent-primary w-3 h-3"
+                                      />
+                                      <span className="text-xs text-muted-foreground">
+                                        {t.ui("common.forceOnField")}
+                                      </span>
+                                    </label>
+                                  )}
                                 {/* Reaction sub-buttons: shown when selected and has reactions */}
                                 {isSingleSelected && hasReactions && (
                                   <div className="mt-1 flex flex-wrap items-center gap-1">
@@ -414,8 +426,28 @@ export function FormulaSelectorCard({
                                     className="w-5 h-5 rounded-full bg-secondary/40 shrink-0"
                                   />
                                 )}
-                                {(() => {
-                                  // Read forceOnField from first combo line for this formula
+                                <FormulaLabel
+                                  label={label}
+                                  minC={minC}
+                                  formulaId={formulaId}
+                                  charId={cid}
+                                  teamBuild={teamBuild}
+                                  isLocked={isLocked}
+                                  className={cn(
+                                    "text-xs md:text-sm lg:text-xs xl:text-sm font-bold",
+                                    isLocked
+                                      ? "text-muted-foreground"
+                                      : "text-foreground"
+                                  )}
+                                />
+                              </div>
+                              {/* Force on-field checkbox for combo mode */}
+                              {!isLocked &&
+                                (() => {
+                                  const comboOffField = teamBuild
+                                    ? offFieldStatus(teamBuild, cid, formulaId)
+                                    : "none";
+                                  if (comboOffField === "none") return null;
                                   const firstLineKey = reactions
                                     .map((rx) => `${cid}.${formulaId}.${rx}`)
                                     .find((k) => comboLineMap.has(k));
@@ -423,52 +455,41 @@ export function FormulaSelectorCard({
                                     ? comboLineMap.get(firstLineKey)?.line
                                         .reaction?.forceOnField
                                     : undefined;
-
                                   return (
-                                    <FormulaLabel
-                                      label={label}
-                                      minC={minC}
-                                      formulaId={formulaId}
-                                      charId={cid}
-                                      teamBuild={teamBuild}
-                                      isLocked={isLocked}
-                                      className={cn(
-                                        "text-xs md:text-sm lg:text-xs xl:text-sm font-bold",
-                                        isLocked
-                                          ? "text-muted-foreground"
-                                          : "text-foreground"
-                                      )}
-                                      forceOnField={currentForceOnField}
-                                      onForceOnFieldChange={
-                                        !isLocked
-                                          ? (force) => {
-                                              for (const rx of reactions) {
-                                                const key = `${cid}.${formulaId}.${rx}`;
-                                                const existing =
-                                                  comboLineMap.get(key);
-                                                if (existing) {
-                                                  onReactionChange(
-                                                    cid,
-                                                    formulaId,
-                                                    rx,
-                                                    {
-                                                      ...(existing.line
-                                                        .reaction ?? {}),
-                                                      reaction:
-                                                        rx as ReactionType,
-                                                      forceOnField:
-                                                        force || undefined,
-                                                    }
-                                                  );
+                                    <label className="flex items-center gap-1 ml-7 cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={!!currentForceOnField}
+                                        onChange={(e) => {
+                                          for (const rx of reactions) {
+                                            const key = `${cid}.${formulaId}.${rx}`;
+                                            const existing =
+                                              comboLineMap.get(key);
+                                            if (existing) {
+                                              onReactionChange(
+                                                cid,
+                                                formulaId,
+                                                rx,
+                                                {
+                                                  ...(existing.line.reaction ??
+                                                    {}),
+                                                  reaction: rx as ReactionType,
+                                                  forceOnField:
+                                                    e.target.checked ||
+                                                    undefined,
                                                 }
-                                              }
+                                              );
                                             }
-                                          : undefined
-                                      }
-                                    />
+                                          }
+                                        }}
+                                        className="accent-primary w-3 h-3"
+                                      />
+                                      <span className="text-xs text-muted-foreground">
+                                        {t.ui("common.forceOnField")}
+                                      </span>
+                                    </label>
                                   );
                                 })()}
-                              </div>
 
                               {/* Per-reaction count steppers */}
                               {(() => {
