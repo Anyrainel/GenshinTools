@@ -315,6 +315,29 @@ export function FormulaSelectorCard({
                                     charId={cid}
                                     teamBuild={teamBuild}
                                     isLocked={isLocked}
+                                    forceOnField={
+                                      isSingleSelected
+                                        ? team.singleReaction?.forceOnField
+                                        : undefined
+                                    }
+                                    onForceOnFieldChange={
+                                      isSingleSelected && !isLocked
+                                        ? (force) =>
+                                            onReactionChange(
+                                              cid,
+                                              formulaId,
+                                              activeRx,
+                                              {
+                                                ...(team.singleReaction ?? {}),
+                                                reaction:
+                                                  (activeRx as ReactionType) ||
+                                                  undefined,
+                                                forceOnField:
+                                                  force || undefined,
+                                              }
+                                            )
+                                        : undefined
+                                    }
                                   />
                                 </button>
                                 {/* Reaction sub-buttons: shown when selected and has reactions */}
@@ -391,20 +414,60 @@ export function FormulaSelectorCard({
                                     className="w-5 h-5 rounded-full bg-secondary/40 shrink-0"
                                   />
                                 )}
-                                <FormulaLabel
-                                  label={label}
-                                  minC={minC}
-                                  formulaId={formulaId}
-                                  charId={cid}
-                                  teamBuild={teamBuild}
-                                  isLocked={isLocked}
-                                  className={cn(
-                                    "text-xs md:text-sm lg:text-xs xl:text-sm font-bold",
-                                    isLocked
-                                      ? "text-muted-foreground"
-                                      : "text-foreground"
-                                  )}
-                                />
+                                {(() => {
+                                  // Read forceOnField from first combo line for this formula
+                                  const firstLineKey = reactions
+                                    .map((rx) => `${cid}.${formulaId}.${rx}`)
+                                    .find((k) => comboLineMap.has(k));
+                                  const currentForceOnField = firstLineKey
+                                    ? comboLineMap.get(firstLineKey)?.line
+                                        .reaction?.forceOnField
+                                    : undefined;
+
+                                  return (
+                                    <FormulaLabel
+                                      label={label}
+                                      minC={minC}
+                                      formulaId={formulaId}
+                                      charId={cid}
+                                      teamBuild={teamBuild}
+                                      isLocked={isLocked}
+                                      className={cn(
+                                        "text-xs md:text-sm lg:text-xs xl:text-sm font-bold",
+                                        isLocked
+                                          ? "text-muted-foreground"
+                                          : "text-foreground"
+                                      )}
+                                      forceOnField={currentForceOnField}
+                                      onForceOnFieldChange={
+                                        !isLocked
+                                          ? (force) => {
+                                              for (const rx of reactions) {
+                                                const key = `${cid}.${formulaId}.${rx}`;
+                                                const existing =
+                                                  comboLineMap.get(key);
+                                                if (existing) {
+                                                  onReactionChange(
+                                                    cid,
+                                                    formulaId,
+                                                    rx,
+                                                    {
+                                                      ...(existing.line
+                                                        .reaction ?? {}),
+                                                      reaction:
+                                                        rx as ReactionType,
+                                                      forceOnField:
+                                                        force || undefined,
+                                                    }
+                                                  );
+                                                }
+                                              }
+                                            }
+                                          : undefined
+                                      }
+                                    />
+                                  );
+                                })()}
                               </div>
 
                               {/* Per-reaction count steppers */}
