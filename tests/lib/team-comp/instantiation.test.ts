@@ -12,7 +12,11 @@ import {
   getWeaponStatsSync,
   preloadGameStats,
 } from "@/lib/gameStatsLoader";
-import { ScalingBuff, type StatBuff } from "@/lib/team-comp/damageBuffs";
+import {
+  ScalingBuff,
+  type StatBuff,
+  getBuffInstanceKey,
+} from "@/lib/team-comp/damageBuffs";
 import {
   StatSheet,
   TeamMeta,
@@ -37,6 +41,26 @@ function rethrowIfUnexpected(e: unknown, ...skipPhrases: string[]): void {
   ) {
     throw e;
   }
+}
+
+function findDuplicateBuffKeys(
+  buffs: StatBuff[],
+  providerCharId: string
+): string[] {
+  const seen = new Map<string, StatBuff>();
+  const duplicates: string[] = [];
+  for (const buff of buffs) {
+    const key = getBuffInstanceKey(buff, providerCharId);
+    const existing = seen.get(key);
+    if (existing) {
+      duplicates.push(
+        `${providerCharId}: ${buff.source.id} ${buff.source.origin ?? ""} collides with ${existing.source.id} ${existing.source.origin ?? ""}`
+      );
+      continue;
+    }
+    seen.set(key, buff);
+  }
+  return duplicates;
 }
 
 // ─── Preset team data ───
@@ -273,6 +297,57 @@ describe("Entity Instantiation", () => {
           "No character registered",
           "No character stats for"
         );
+      }
+    });
+  });
+
+  describe("Buff identity keys are unique per provider", () => {
+    it.each(Object.keys(charactersById))("character %s", (charId) => {
+      try {
+        const team = new TeamMeta([charId]);
+        const char = createCharacter(charId, 100, 6, team);
+        expect(findDuplicateBuffKeys(char.buffs, charId)).toEqual([]);
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No character registered",
+          "No character stats for"
+        );
+      }
+    });
+
+    it.each(Object.keys(weaponsById))("weapon %s", (weaponId) => {
+      try {
+        const team = new TeamMeta(["amber"]);
+        const weapon = createWeapon(weaponId, 5, "amber", team);
+        expect(findDuplicateBuffKeys(weapon.buffs, "amber")).toEqual([]);
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No weapon registered",
+          "No weapon stats for",
+          "No L90 weapon stats for"
+        );
+      }
+    });
+
+    it.each(Object.keys(artifactsById))("artifact set %s", (artifactId) => {
+      try {
+        const team = new TeamMeta(["amber"]);
+        const artifactSet = createArtifactSet(artifactId, "amber", team);
+        expect(findDuplicateBuffKeys(artifactSet.buffs, "amber")).toEqual([]);
+      } catch (e) {
+        rethrowIfUnexpected(e, "No artifact set registered");
+      }
+    });
+
+    it.each(Object.keys(artifactHalfSetsById))("artifact half-set %s", (id) => {
+      try {
+        const team = new TeamMeta(["amber"]);
+        const halfSet = createArtifactHalfSet(id, "amber", team);
+        expect(findDuplicateBuffKeys(halfSet.buffs, "amber")).toEqual([]);
+      } catch (e) {
+        rethrowIfUnexpected(e, "No artifact half-set registered");
       }
     });
   });

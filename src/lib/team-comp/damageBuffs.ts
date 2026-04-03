@@ -303,6 +303,50 @@ export class StatBuff {
       this.dynamicBuffs === StatBuff.prototype.dynamicBuffs
     );
   }
+
+  protected get identityExtra(): string {
+    return "";
+  }
+
+  get identityShapeKey(): string {
+    const sourceKey = [
+      this.source.type,
+      this.source.id,
+      this.source.origin ?? "",
+      this.source.internalKey ?? "",
+      this.source.noStackId ?? "",
+      this.source.maxStacks != null ? String(this.source.maxStacks) : "",
+      this.source.element ?? "",
+      (this.source.triggers ?? []).join(","),
+    ].join("\u0000");
+
+    const filter = this.target.filter;
+    const targetKey = [
+      this.target.receiver,
+      this.target.charId ?? "",
+      (this.target.regions ?? []).join(","),
+      (this.target.factions ?? []).join(","),
+      (filter?.abilities ?? []).join(","),
+      (filter?.elements ?? []).join(","),
+      (filter?.reactions ?? []).join(","),
+    ].join("\u0000");
+
+    const staticKey = this.staticBuffs
+      .map((entry) => `${entry.key}:${entry.value}`)
+      .join("\u0001");
+
+    const kind = this.constructor.name || "StatBuff";
+    return [sourceKey, targetKey, staticKey, kind, this.identityExtra].join(
+      "\u0002"
+    );
+  }
+}
+
+export function getBuffInstanceKey(
+  buff: StatBuff,
+  providerCharId?: string
+): string {
+  return `${providerCharId ?? ""}\u0003${buff.identityShapeKey}`;
 }
 
 /**
@@ -346,6 +390,16 @@ export class ScalingBuff extends StatBuff {
     }
     return [{ key: this.outputKey, expr: simplify(result) }];
   }
+
+  protected override get identityExtra(): string {
+    return [
+      this.inputKey,
+      this.outputKey,
+      String(this.scale),
+      this.cap != null ? String(this.cap) : "",
+      this.threshold != null ? String(this.threshold) : "",
+    ].join("\u0000");
+  }
 }
 
 /**
@@ -385,6 +439,16 @@ export class CrossScalingBuff extends StatBuff {
     }
     const result = E.mul(a, selfStats.get(this.statB, null));
     return [{ key: this.outputKey, expr: simplify(result) }];
+  }
+
+  protected override get identityExtra(): string {
+    return [
+      this.statA,
+      String(this.scaleA),
+      this.capA != null ? String(this.capA) : "",
+      this.statB,
+      this.outputKey,
+    ].join("\u0000");
   }
 }
 

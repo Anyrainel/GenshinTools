@@ -17,7 +17,11 @@
 import type { ArtifactData, MainStat } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
-import { CrossScalingBuff, ScalingBuff } from "./damageBuffs";
+import {
+  CrossScalingBuff,
+  ScalingBuff,
+  getBuffInstanceKey,
+} from "./damageBuffs";
 import {
   type OptimizerContext,
   type TeamBuild,
@@ -40,7 +44,7 @@ import type {
   ReactionType,
   StatKey,
 } from "./types";
-import { buffSourceKey, exclusionKey, resolvePartReaction } from "./types";
+import { exclusionKey, resolvePartReaction } from "./types";
 
 // ─── Public Interface ───
 
@@ -168,7 +172,7 @@ function buildPostExprStatsForContext(
 }
 
 /**
- * Build postExprStats excluding certain buffs (identified by buffSourceKey).
+ * Build postExprStats excluding certain buffs (identified by canonical buff keys).
  * Used to pre-build stat variants for interval-based blending in the compiler.
  */
 function buildPostExprStatsExcluding(
@@ -249,7 +253,7 @@ function buildPostExprStatsExcluding(
     variableCharIds,
     supportPreStats,
     variableBaselines
-  ).filter((b) => !excludeKeys.has(buffSourceKey(b.source)));
+  ).filter((b) => !excludeKeys.has(b.buffKey));
 
   const postExprStats = applyDynamicBuffExprs(
     exprStatsMap,
@@ -798,6 +802,7 @@ interface DynamicBuffExpr {
   target: StatBuff["target"];
   providerCharId: string;
   source: StatBuff["source"];
+  buffKey: string;
 }
 
 function collectDynamicBuffExprs(
@@ -837,6 +842,7 @@ function collectDynamicBuffExprs(
           target: buff.target,
           providerCharId,
           source: buff.source,
+          buffKey: getBuffInstanceKey(buff, providerCharId),
         });
       }
     } else if (buff instanceof CrossScalingBuff) {
@@ -847,6 +853,7 @@ function collectDynamicBuffExprs(
           target: buff.target,
           providerCharId,
           source: buff.source,
+          buffKey: getBuffInstanceKey(buff, providerCharId),
         });
       }
     } else if (buff.dynamicBuffsExprTeam) {
@@ -862,6 +869,7 @@ function collectDynamicBuffExprs(
           target: buff.target,
           providerCharId,
           source: buff.source,
+          buffKey: getBuffInstanceKey(buff, providerCharId),
         });
       }
     } else if (buff.dynamicBuffs !== StatBuff.prototype.dynamicBuffs) {
@@ -877,6 +885,7 @@ function collectDynamicBuffExprs(
           target: buff.target,
           providerCharId,
           source: buff.source,
+          buffKey: getBuffInstanceKey(buff, providerCharId),
         });
       }
     }

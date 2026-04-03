@@ -13,6 +13,7 @@ import { describe, expect, it } from "vitest";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import "@/lib/team-comp/index";
 
+import { getBuffInstanceKey } from "@/lib/team-comp/damageBuffs";
 import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
@@ -30,7 +31,7 @@ import type {
   TeamOptimizerOptions,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import { buffSourceKey, singleFormulaCombo } from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/team-comp/types";
 import {
   drain,
   emptySheets,
@@ -89,15 +90,20 @@ const DILUC_TEAM: TeamSlotConfig[] = [
   },
 ];
 
-// Bennett Q buff key: "character:bennett:Q"
-const BENNETT_Q_KEY = buffSourceKey({
-  type: "character",
-  id: "bennett",
-  origin: "Q",
-});
-
 function makeDilucTeamBuild(): TeamBuild {
   return new TeamBuild(DILUC_TEAM);
+}
+
+function getBennettQKey(tb: TeamBuild): string {
+  const match = tb.allStaticBuffs.find(
+    (b) =>
+      b.providerCharId === "bennett" &&
+      b.buff.source.type === "character" &&
+      b.buff.source.id === "bennett" &&
+      b.buff.source.origin === "Q"
+  );
+  expect(match).toBeDefined();
+  return getBuffInstanceKey(match!.buff, match!.providerCharId);
 }
 
 // ─── 1. computePartialBuffSpecs ─────────────────────────────────────────────
@@ -140,7 +146,7 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
 
     // Override with full hits = no partial activation
     const overrides: BuffActivationMap = {
-      [BENNETT_Q_KEY]: { 0: totalHits },
+      [getBennettQKey(tb)]: { 0: totalHits },
     };
 
     const specs = tb.computePartialBuffSpecs(
@@ -166,7 +172,7 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
 
     // Disable Bennett Q on part 0
     const overrides: BuffActivationMap = {
-      [BENNETT_Q_KEY]: { 0: 0 },
+      [getBennettQKey(tb)]: { 0: 0 },
     };
 
     const specs = tb.computePartialBuffSpecs(
@@ -206,9 +212,9 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
     // Override: disable Bennett Q on all parts
     const entry = tb.charBuilds.diluc.charBase.getFormulaEntry(formulaId);
     const overrides: BuffActivationMap = {};
-    overrides[BENNETT_Q_KEY] = {};
+    overrides[getBennettQKey(tb)] = {};
     for (let i = 0; i < entry!.parts.length; i++) {
-      overrides[BENNETT_Q_KEY][i] = 0;
+      overrides[getBennettQKey(tb)][i] = 0;
     }
 
     const withOverrides = tb.getDisplayResult(
@@ -242,9 +248,9 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
 
     // Fully disabled
     const fullOff: BuffActivationMap = {};
-    fullOff[BENNETT_Q_KEY] = {};
+    fullOff[getBennettQKey(tb)] = {};
     for (let i = 0; i < entry!.parts.length; i++) {
-      fullOff[BENNETT_Q_KEY][i] = 0;
+      fullOff[getBennettQKey(tb)][i] = 0;
     }
     const dmgOff = tb.getDisplayResult(
       "diluc",
@@ -257,7 +263,7 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
 
     // Partially disabled: only part 0 unbuffed
     const partial: BuffActivationMap = {
-      [BENNETT_Q_KEY]: { 0: 0 },
+      [getBennettQKey(tb)]: { 0: 0 },
     };
     const dmgPartial = tb.getDisplayResult(
       "diluc",
@@ -284,7 +290,7 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
     );
 
     const overrides: BuffActivationMap = {
-      [BENNETT_Q_KEY]: { 0: 0 },
+      [getBennettQKey(tb)]: { 0: 0 },
     };
 
     const result = tb.getDisplayResult(
@@ -304,7 +310,7 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
     expect(part0.partialBuffs).toBeDefined();
     expect(part0.partialBuffs!.length).toBeGreaterThan(0);
     const annotation = part0.partialBuffs!.find(
-      (pb) => pb.buffKey === BENNETT_Q_KEY
+      (pb) => pb.buffKey === getBennettQKey(tb)
     );
     expect(annotation).toBeDefined();
     expect(annotation!.activatedHits).toBe(0);
@@ -321,7 +327,7 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
     );
 
     const overrides: BuffActivationMap = {
-      [BENNETT_Q_KEY]: { 0: 0 },
+      [getBennettQKey(tb)]: { 0: 0 },
     };
 
     const result = tb.getDisplayResult(
@@ -334,7 +340,7 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
     );
 
     expect(result.buffActivation).toBeDefined();
-    expect(result.buffActivation![BENNETT_Q_KEY]).toBeDefined();
+    expect(result.buffActivation![getBennettQKey(tb)]).toBeDefined();
   });
 });
 
@@ -378,9 +384,9 @@ describe("compileTeamDamage with partialBuffs (hot path)", () => {
         const entry =
           tb.charBuilds[carryId].charBase.getFormulaEntry(formulaId);
         const overrides: BuffActivationMap = {};
-        overrides[BENNETT_Q_KEY] = {};
+        overrides[getBennettQKey(tb)] = {};
         for (let i = 0; i < entry!.parts.length; i++) {
-          overrides[BENNETT_Q_KEY][i] = 0;
+          overrides[getBennettQKey(tb)][i] = 0;
         }
         return overrides;
       })()
@@ -430,7 +436,7 @@ describe("compileTeamDamage with partialBuffs (hot path)", () => {
 
     // Disable Bennett Q on part 0 only
     const overrides: BuffActivationMap = {
-      [BENNETT_Q_KEY]: { 0: 0 },
+      [getBennettQKey(tb)]: { 0: 0 },
     };
 
     // Cold path
@@ -508,9 +514,9 @@ describe("runTeamOptimization with partialBuffs", () => {
         const entry =
           tb.charBuilds[carryId].charBase.getFormulaEntry(formulaId);
         const overrides: BuffActivationMap = {};
-        overrides[BENNETT_Q_KEY] = {};
+        overrides[getBennettQKey(tb)] = {};
         for (let i = 0; i < entry!.parts.length; i++) {
-          overrides[BENNETT_Q_KEY][i] = 0;
+          overrides[getBennettQKey(tb)][i] = 0;
         }
         return overrides;
       })()
@@ -619,7 +625,7 @@ describe("runTeamOptimization with partialBuffs", () => {
         buffOverrides: {
           0: [
             {
-              buffKey: "character:bennett:Q",
+              buffKey: getBennettQKey(tb),
               partActivation: { 0: 0 },
             },
           ],
@@ -715,9 +721,9 @@ describe("compileComboTeamDamage with buffOverrides", () => {
         const entry =
           tb.charBuilds[carryId].charBase.getFormulaEntry(dilucFormula);
         const overrides: BuffActivationMap = {};
-        overrides[BENNETT_Q_KEY] = {};
+        overrides[getBennettQKey(tb)] = {};
         for (let i = 0; i < entry!.parts.length; i++) {
-          overrides[BENNETT_Q_KEY][i] = 0;
+          overrides[getBennettQKey(tb)][i] = 0;
         }
         return overrides;
       })()

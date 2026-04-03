@@ -34,7 +34,6 @@ import type {
   ResolvedBuff,
   ResolvedStatEntry,
 } from "@/lib/team-comp/types";
-import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { Settings2 } from "lucide-react";
@@ -53,7 +52,7 @@ export type BuffLedgerFormula = {
   formulaLabel?: Record<string, string>;
   /**
    * Per-buff part applicability resolved for THIS formula.
-   * Maps buffSourceKey → activePartIndices (undefined = all parts).
+   * Maps buff instance keys → activePartIndices (undefined = all parts).
    * When set, FormulaBlock uses this instead of buff.activePartIndices
    * (which is only valid for the formula it was resolved against).
    */
@@ -73,7 +72,7 @@ export function buildBuffApplicability(
   const map: Record<string, number[] | undefined> = {};
   for (const b of buffs) {
     if (b.active && !b.bespokeLabel) {
-      map[buffSourceKey(b.source)] = b.activePartIndices;
+      map[b.buffKey] = b.activePartIndices;
     }
   }
   return map;
@@ -265,7 +264,7 @@ function CharTab({
 export function BuffDialog({ buff, formulas, t }: Props) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const bKey = buffSourceKey(buff.source);
+  const bKey = buff.buffKey;
   const name = getSourceName(buff.source, t);
 
   // Group applicable formulas by character (using per-formula applicability)

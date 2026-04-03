@@ -62,6 +62,12 @@ export type BuffSource = {
     | "extra";
   /** Provider ID from resources.ts */
   id: string;
+  /**
+   * Optional explicit discriminator for cases where one source emits multiple
+   * structurally similar buffs that still need distinct internal identity.
+   * Does not affect display naming.
+   */
+  internalKey?: string;
   /** Kit origin: C0–C6, A, E, Q, P1–P4, R1–R5 */
   origin?: string;
   /** Trigger conditions: ["low-hp"], ["bloom"], ["shielded"], etc. */
@@ -84,7 +90,8 @@ export type BuffActivationMap = Record<string, Record<number, number>>;
 
 /** Canonical key for a BuffSource, used in BuffActivationMap and override store. */
 export function buffSourceKey(source: BuffSource): string {
-  return `${source.type}:${source.id}:${source.origin ?? ""}`;
+  const base = `${source.type}:${source.id}:${source.origin ?? ""}`;
+  return source.internalKey ? `${base}:${source.internalKey}` : base;
 }
 
 /**
@@ -278,6 +285,8 @@ export type ResolvedStatEntry = StatEntry & {
 
 /** A single buff, pre-resolved for display. */
 export type ResolvedBuff = {
+  /** Canonical buff-instance key used by overrides, blending, and BuffLedger UI. */
+  buffKey: string;
   source: BuffSource;
   /**
    * The ID of the character who provided this buff.

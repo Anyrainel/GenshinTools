@@ -8,7 +8,7 @@
  * value via the UI (sliders/toggles), even exceeding maxStacks.
  */
 
-import type { StatBuff } from "./damageBuffs";
+import { type StatBuff, getBuffInstanceKey } from "./damageBuffs";
 import type { FormulaPart } from "./damageModels";
 import type { StatSheet } from "./damageModels";
 import type {
@@ -18,12 +18,13 @@ import type {
   PartialBuffInfo,
   ReactionOverride,
 } from "./types";
-import { buffSourceKey, exclusionKey } from "./types";
+import { exclusionKey } from "./types";
 
 export type { PartialBuffInfo } from "./types";
 
 export type StackLimitedBuffInfo = {
   source: BuffSource;
+  buffKey: string;
   maxStacks: number;
 };
 
@@ -55,7 +56,7 @@ export function computeDefaultActivation(
   const activation: BuffActivationMap = {};
 
   for (const buffInfo of stackLimitedBuffs) {
-    const bKey = buffSourceKey(buffInfo.source);
+    const bKey = buffInfo.buffKey;
     const partAlloc: Record<number, number> = {};
 
     const sansBuff = sansBuffStats?.get(bKey);
@@ -220,7 +221,7 @@ export function buildPartialBuffInfos(
   const result: PartialBuffInfo[] = [];
 
   for (const buffInfo of stackLimitedBuffs) {
-    const bKey = buffSourceKey(buffInfo.source);
+    const bKey = buffInfo.buffKey;
     const partMap = activation[bKey];
     if (!partMap) continue;
 
@@ -275,7 +276,7 @@ export function buildUserOverrideInfos(
     const match = allStaticBuffs.find((b) => {
       if (b.providerCharId === "resonance" || b.providerCharId === "extra")
         return false;
-      return buffSourceKey(b.buff.source) === bKey;
+      return getBuffInstanceKey(b.buff, b.providerCharId) === bKey;
     });
     if (!match) continue;
 
@@ -320,6 +321,7 @@ export function collectStackLimitedBuffs(
 
     result.push({
       source: buff.source,
+      buffKey: getBuffInstanceKey(buff, providerCharId),
       maxStacks: buff.source.maxStacks,
     });
   }
@@ -364,7 +366,7 @@ export function computeComboDefaultActivation(
   const result: BuffActivationMap[] = lines.map(() => ({}));
 
   for (const buffInfo of stackLimitedBuffs) {
-    const bKey = buffSourceKey(buffInfo.source);
+    const bKey = buffInfo.buffKey;
 
     // Compute marginal gain per hit for each (line, part) across the combo
     type VirtualPart = {

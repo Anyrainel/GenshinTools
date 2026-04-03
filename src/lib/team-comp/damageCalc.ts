@@ -5,6 +5,7 @@ import {
   ScalingBuff,
   assertNoDuplicateStatKeys,
   deduplicateBuffs,
+  getBuffInstanceKey,
 } from "./damageBuffs";
 import {
   type ArtifactHalfSetBase,
@@ -57,7 +58,6 @@ import type {
   TeamSlotConfig,
 } from "./types";
 import {
-  buffSourceKey,
   exclusionKey,
   filterMatchesTag,
   isFieldDependentReceiver,
@@ -143,7 +143,12 @@ export class TeamResonance {
           [{ key: "dmg%", value: 0.15 }]
         ),
         new StatBuff(
-          { type: "teamResonance", id: "geo", triggers: ["damage"] },
+          {
+            type: "teamResonance",
+            id: "geo",
+            internalKey: "res-shred",
+            triggers: ["damage"],
+          },
           { receiver: "team", filter: { elements: ["Geo"] } },
           [{ key: "resReduction%", value: 0.2 }]
         )
@@ -154,7 +159,7 @@ export class TeamResonance {
     if ((elemCounts.get("Dendro") ?? 0) >= 2) {
       buffs.push(
         new StatBuff(
-          { type: "teamResonance", id: "dendro" },
+          { type: "teamResonance", id: "dendro", internalKey: "base-em" },
           { receiver: "team" },
           [{ key: "em", value: 50 }]
         )
@@ -170,6 +175,7 @@ export class TeamResonance {
             {
               type: "teamResonance",
               id: "dendro",
+              internalKey: "reaction-em-30",
               triggers: ["burning", "quicken", "bloom", "lunarBloom"],
             },
             { receiver: "team" },
@@ -188,6 +194,7 @@ export class TeamResonance {
             {
               type: "teamResonance",
               id: "dendro",
+              internalKey: "reaction-em-20",
               triggers: ["aggravate", "spread", "hyperbloom", "burgeon"],
             },
             { receiver: "team" },
@@ -225,7 +232,7 @@ export type OptimizerContext = {
   /** Which character is on-field. null = nobody (off-field damage context). */
   onFieldCharId: string | null;
   ctx?: CalcContext;
-  targetDependent: Record<string, StatBuff[]>;
+  targetDependent: Record<string, ProvidedStaticBuff[]>;
   /** Pre-computed stats for non-variable characters (artifact sheets baked in). */
   supportPreStats: Record<string, StatSheet>;
   charBuildOrder: [string, CharBuild][];
@@ -422,12 +429,12 @@ export class CharBuild {
    */
   getPreStats(
     artifactStats: StatSheet,
-    targetDependentBuffs: StatBuff[]
+    targetDependentBuffs: ProvidedStaticBuff[]
   ): StatSheet {
     const merged = this.innerStatSheet.merge(artifactStats);
     if (targetDependentBuffs.length === 0) return merged;
     const applicable = deduplicateBuffs(
-      targetDependentBuffs,
+      targetDependentBuffs.map((b) => b.buff),
       (b) => b.staticBuffs
     );
     return merged.apply(applicable);
@@ -439,7 +446,7 @@ export class CharBuild {
    */
   getPreStatsExcluding(
     artifactStats: StatSheet,
-    targetDependentBuffs: StatBuff[],
+    targetDependentBuffs: ProvidedStaticBuff[],
     allStaticBuffs: ProvidedStaticBuff[],
     excludeKeys: Set<string>,
     selfCharId: string,
@@ -449,7 +456,8 @@ export class CharBuild {
     // Re-apply target-independent static buffs excluding the specified buff keys
     let applicable = allStaticBuffs
       .filter((b) => {
-        if (excludeKeys.has(buffSourceKey(b.buff.source))) return false;
+        if (excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId)))
+          return false;
         return isBuffApplicable(
           b.buff,
           b.providerCharId,
@@ -469,10 +477,13 @@ export class CharBuild {
     // Apply target-dependent buffs (also excluding)
     if (targetDependentBuffs.length > 0) {
       const filteredTD = targetDependentBuffs.filter(
-        (b) => !excludeKeys.has(buffSourceKey(b.source))
+        (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
       );
       if (filteredTD.length > 0) {
-        const deduped = deduplicateBuffs(filteredTD, (b) => b.staticBuffs);
+        const deduped = deduplicateBuffs(
+          filteredTD.map((b) => b.buff),
+          (b) => b.staticBuffs
+        );
         sheet = sheet.apply(deduped);
       }
     }
@@ -943,20 +954,18 @@ export class TeamBuild {
    */
   private getFieldDependentBuffs(
     onFieldCharId: string | null
-  ): Record<string, StatBuff[]> {
-    const result: Record<string, StatBuff[]> = {};
+  ): Record<string, ProvidedStaticBuff[]> {
+    const result: Record<string, ProvidedStaticBuff[]> = {};
     for (const charId of Object.keys(this.charBuilds)) {
-      result[charId] = this.allStaticBuffs
-        .filter((b) => {
-          if (!isFieldDependentReceiver(b.buff.target.receiver)) return false;
-          return this.isBuffApplicableForChar(
-            b.buff,
-            b.providerCharId,
-            charId,
-            charId === onFieldCharId
-          );
-        })
-        .map((b) => b.buff);
+      result[charId] = this.allStaticBuffs.filter((b) => {
+        if (!isFieldDependentReceiver(b.buff.target.receiver)) return false;
+        return this.isBuffApplicableForChar(
+          b.buff,
+          b.providerCharId,
+          charId,
+          charId === onFieldCharId
+        );
+      });
     }
     return result;
   }
@@ -1165,7 +1174,7 @@ export class TeamBuild {
     );
   }
 
-  /** Like collectDynamicBuffs but skips buffs with matching source keys. */
+  /** Like collectDynamicBuffs but skips buffs with matching canonical buff keys. */
   private collectDynamicBuffsExcluding(
     preStats: Record<string, StatSheet>,
     teamPreStatsArr: StatSheet[],
@@ -1175,7 +1184,7 @@ export class TeamBuild {
     for (const { buff, providerCharId } of this.allStaticBuffs) {
       if (providerCharId === "resonance" || providerCharId === "extra")
         continue;
-      if (excludeKeys.has(buffSourceKey(buff.source))) continue;
+      if (excludeKeys.has(getBuffInstanceKey(buff, providerCharId))) continue;
       const ownerStats = preStats[providerCharId]!;
       const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
       if (entries.length > 0) {
@@ -1281,7 +1290,7 @@ export class TeamBuild {
    */
   private buildPreStatsFromBuilds(
     artifactStats: Record<string, StatSheet>,
-    fieldDependent: Record<string, StatBuff[]>
+    fieldDependent: Record<string, ProvidedStaticBuff[]>
   ): Record<string, StatSheet> {
     const preStats: Record<string, StatSheet> = {};
     for (const [id, build] of Object.entries(this.charBuilds)) {
@@ -1296,7 +1305,7 @@ export class TeamBuild {
   /**
    * Build sans-buff stat maps for stack-limited greedy allocation.
    * For each stack-limited buff, computes team stats with that buff excluded.
-   * Returns { onField, offField? } maps keyed by buff source key.
+   * Returns { onField, offField? } maps keyed by canonical buff key.
    */
   private buildSansBuffStats(
     stackLimited: ReturnType<typeof collectStackLimitedBuffs>,
@@ -1310,7 +1319,7 @@ export class TeamBuild {
   } {
     const sansBuffStats = new Map<string, StatSheet>();
     for (const buffInfo of stackLimited) {
-      const bKey = buffSourceKey(buffInfo.source);
+      const bKey = buffInfo.buffKey;
       const excluded = this.getTeamStatsExcluding(
         artifactStats,
         charId,
@@ -1323,7 +1332,7 @@ export class TeamBuild {
     if (offFieldPostStats) {
       offFieldSansBuffStats = new Map();
       for (const buffInfo of stackLimited) {
-        const bKey = buffSourceKey(buffInfo.source);
+        const bKey = buffInfo.buffKey;
         const excluded = this.getTeamStatsExcluding(
           artifactStats,
           null,
@@ -2039,6 +2048,7 @@ export class TeamBuild {
       }
 
       result.push({
+        buffKey: getBuffInstanceKey(buff, ownerId),
         source: buff.source,
         providerCharId: ownerId,
         target: buff.target,
@@ -2088,6 +2098,7 @@ export class TeamBuild {
         }
       }
       result.push({
+        buffKey: getBuffInstanceKey(buff),
         source: buff.source,
         target: buff.target,
         active,
@@ -2105,6 +2116,7 @@ export class TeamBuild {
       // charId filter gates applicability
       if (buff.target.charId && buff.target.charId !== onFieldCharId) {
         result.push({
+          buffKey: getBuffInstanceKey(buff, "extra"),
           source: buff.source,
           target: buff.target,
           active: false,
@@ -2151,6 +2163,7 @@ export class TeamBuild {
         }
       }
       result.push({
+        buffKey: getBuffInstanceKey(buff, "extra"),
         source: buff.source,
         target: buff.target,
         active,
@@ -2187,6 +2200,7 @@ export class TeamBuild {
         }
 
         result.push({
+          buffKey: getBuffInstanceKey(buff, onFieldCharId),
           source: buff.source,
           providerCharId: onFieldCharId,
           target: buff.target,
@@ -2946,13 +2960,12 @@ export function getComboDisplayResult(
       );
 
       for (const buff of dr.buffs) {
-        const buffKey = `${buff.source.type}:${buff.source.id}:${buff.source.origin ?? ""}:${buff.providerCharId ?? ""}:${buff.target.receiver}`;
-        const existing = buffMap.get(buffKey);
+        const existing = buffMap.get(buff.buffKey);
         if (!existing) {
-          buffMap.set(buffKey, buff);
+          buffMap.set(buff.buffKey, buff);
         } else if (buff.active && !existing.active) {
           // Upgrade to active
-          buffMap.set(buffKey, buff);
+          buffMap.set(buff.buffKey, buff);
         }
       }
     } catch (e) {

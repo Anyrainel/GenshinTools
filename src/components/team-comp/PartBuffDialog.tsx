@@ -32,7 +32,6 @@ import type {
   ResolvedStatEntry,
   StatKey,
 } from "@/lib/team-comp/types";
-import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { Settings2 } from "lucide-react";
@@ -136,7 +135,7 @@ function PartTab({
           className="rounded-lg border border-emerald-600/50 xl:grid xl:grid-cols-2 xl:gap-x-2"
         >
           {group.buffs.map((buff, bi) => {
-            const bKey = buffSourceKey(buff.source);
+            const bKey = buff.buffKey;
             // Cap slider range for stack-limited buffs
             const effectiveMax =
               buff.source.maxStacks != null

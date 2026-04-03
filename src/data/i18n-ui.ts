@@ -1962,5 +1962,9 @@ export const i18nUiData = {
       en: "Start the HTTP server",
       zh: "启动HTTP服务器（注意使用相同端口）",
     },
+    setupStep4: {
+      en: "Ensure the game client is set to Simplified Chinese",
+      zh: "确保游戏客户端语言设置为简体中文",
+    },
   },
 };

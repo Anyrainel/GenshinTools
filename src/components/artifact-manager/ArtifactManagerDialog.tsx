@@ -444,6 +444,7 @@ function SetupInstructions({ t }: { t: ReturnType<typeof useLanguage>["t"] }) {
         </li>
         <li>{t.ui("manager.setupStep2")}</li>
         <li>{t.ui("manager.setupStep3")}</li>
+        <li>{t.ui("manager.setupStep4")}</li>
       </ol>
     </div>
   );

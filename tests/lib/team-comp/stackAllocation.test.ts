@@ -42,13 +42,15 @@ function makeParts(
 
 // Helper: create a stack-limited buff info
 function makeBuffInfo(maxStacks: number, origin = "C2"): StackLimitedBuffInfo {
+  const source = {
+    type: "character" as const,
+    id: "escoffier",
+    origin,
+    maxStacks,
+  };
   return {
-    source: {
-      type: "character",
-      id: "escoffier",
-      origin,
-      maxStacks,
-    },
+    source,
+    buffKey: buffSourceKey(source),
     maxStacks,
   };
 }
@@ -68,7 +70,7 @@ function makeSansBuffStats(
   };
   const result = new Map<string, StatSheet>();
   for (let i = 0; i < buffs.length; i++) {
-    const bKey = buffSourceKey(buffs[i].source);
+    const bKey = buffs[i].buffKey;
     let sans = postStats;
     for (const entry of removals[i]) {
       sans = sans.merge(
