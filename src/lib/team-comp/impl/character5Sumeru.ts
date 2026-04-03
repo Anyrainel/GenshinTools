@@ -483,7 +483,7 @@ class Nahida extends CharacterBase {
       200
     ),
     // C2: Quicken → DEF -30% for 8s
-    ...(this.constellation >= 2
+    ...(this.constellation >= 2 && this.teamMeta.hasReaction("quicken")
       ? [
           new StatBuff(
             cbs(this, "C2", ["E", "quicken"]),

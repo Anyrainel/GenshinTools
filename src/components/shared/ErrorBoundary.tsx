@@ -17,6 +17,103 @@ function isChunkLoadError(error?: Error): boolean {
   );
 }
 
+function extractModuleUrl(message: string): string | null {
+  const match = message.match(/https?:\/\/\S+|\/assets\/\S+/);
+  return match?.[0] ?? null;
+}
+
+function getCauseChain(error?: Error): string[] {
+  const causes: string[] = [];
+  const seen = new Set<unknown>();
+  let current: unknown = error;
+
+  while (
+    current &&
+    typeof current === "object" &&
+    "cause" in current &&
+    !seen.has(current)
+  ) {
+    seen.add(current);
+    current = (current as { cause?: unknown }).cause;
+    if (!current) break;
+    if (current instanceof Error) {
+      causes.push(`${current.name}: ${current.message}`);
+      continue;
+    }
+    causes.push(String(current));
+  }
+
+  return causes;
+}
+
+function formatPerformanceEntry(entry: PerformanceResourceTiming): string {
+  const responseStatus =
+    typeof (entry as PerformanceResourceTiming & { responseStatus?: unknown })
+      .responseStatus === "number"
+      ? String(
+          (entry as PerformanceResourceTiming & { responseStatus: number })
+            .responseStatus
+        )
+      : "n/a";
+
+  const source = entry.name.split("/").pop() || entry.name;
+  return `${source} [${entry.initiatorType || "unknown"} status=${responseStatus} duration=${Math.round(entry.duration)}ms transfer=${entry.transferSize}]`;
+}
+
+function getRelatedResourceEntries(moduleUrl: string | null): string[] {
+  if (typeof performance === "undefined") return [];
+
+  const entries = performance.getEntriesByType(
+    "resource"
+  ) as PerformanceResourceTiming[];
+  if (entries.length === 0) return [];
+
+  const moduleName = moduleUrl?.split("/").pop() ?? null;
+  const filtered = entries.filter((entry) => {
+    if (moduleName && entry.name.includes(moduleName)) return true;
+    return (
+      entry.name.includes("/assets/") &&
+      (entry.initiatorType === "script" ||
+        entry.initiatorType === "link" ||
+        entry.initiatorType === "css")
+    );
+  });
+
+  return filtered.slice(-6).map(formatPerformanceEntry);
+}
+
+function getChunkDebugMessage(error?: Error): string {
+  if (!error) return "Unknown chunk loading error.";
+
+  const lines = [`${error.name || "Error"}: ${error.message}`];
+  const moduleUrl = extractModuleUrl(error.message || "");
+  const causes = getCauseChain(error);
+  const relatedEntries = getRelatedResourceEntries(moduleUrl);
+
+  if (moduleUrl) {
+    lines.push(`Imported module: ${moduleUrl}`);
+    lines.push(
+      "Note: this URL is the lazy import target and may not be the exact dependency that failed."
+    );
+  }
+
+  if (causes.length > 0) {
+    lines.push(`Cause chain: ${causes.join(" -> ")}`);
+  }
+
+  lines.push(
+    `Route: ${window.location.pathname}${window.location.search}${window.location.hash}`
+  );
+  lines.push(`Online: ${navigator.onLine ? "yes" : "no"}`);
+
+  if (relatedEntries.length > 0) {
+    lines.push("Recent asset requests:");
+    lines.push(...relatedEntries.map((entry) => `- ${entry}`));
+  }
+
+  return lines.join("\n");
+}
+
 interface Props {
   children: ReactNode;
   onClearData?: () => void;
@@ -33,6 +130,7 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
+  debugMessage?: string;
 }
 
 export class ErrorBoundary extends React.Component<Props, State> {
@@ -41,10 +139,24 @@ export class ErrorBoundary extends React.Component<Props, State> {
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return {
+      hasError: true,
+      error,
+      debugMessage: isChunkLoadError(error)
+        ? getChunkDebugMessage(error)
+        : undefined,
+    };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    if (isChunkLoadError(error)) {
+      console.error("Chunk load error diagnostics:", {
+        error,
+        componentStack: errorInfo.componentStack,
+        debugMessage: getChunkDebugMessage(error),
+      });
+      return;
+    }
     console.error("Uncaught error:", error, errorInfo);
   }
 
@@ -59,10 +171,43 @@ export class ErrorBoundary extends React.Component<Props, State> {
     window.location.reload();
   };
 
-  /** Cache-busting reload: appends a unique query param so the browser fetches a fresh index.html. */
-  private handleCacheBustReload = () => {
+  /** Cache-busting reload with best-effort client cache cleanup. */
+  private handleCacheBustReload = async () => {
     const url = new URL(window.location.href);
     url.searchParams.set("_r", String(Date.now()));
+
+    try {
+      if ("caches" in window) {
+        const cacheKeys = await window.caches.keys();
+        await Promise.all(cacheKeys.map((key) => window.caches.delete(key)));
+      }
+    } catch (error) {
+      console.warn("Failed to clear CacheStorage before reload:", error);
+    }
+
+    try {
+      if ("serviceWorker" in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(
+          registrations.map((registration) => registration.unregister())
+        );
+      }
+    } catch (error) {
+      console.warn(
+        "Failed to unregister service workers before reload:",
+        error
+      );
+    }
+
+    try {
+      await fetch(url.toString(), {
+        cache: "reload",
+        credentials: "same-origin",
+      });
+    } catch (error) {
+      console.warn("Failed to prefetch fresh document before reload:", error);
+    }
+
     window.location.replace(url.toString());
   };
 
@@ -117,6 +262,18 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   {this.props.chunkErrorMsg ||
                     "This usually means the app was updated. A cache-busting reload should fix it."}
                 </p>
+              )}
+              {isChunkError && this.state.debugMessage && (
+                <div
+                  className={cn(
+                    "text-muted-foreground whitespace-pre-wrap overflow-y-auto w-full text-left bg-background/50 rounded-md border border-border/50 font-mono",
+                    isSection
+                      ? "text-[10px] max-h-40 p-2"
+                      : "text-xs max-h-56 p-3"
+                  )}
+                >
+                  {this.state.debugMessage}
+                </div>
               )}
             </div>
 

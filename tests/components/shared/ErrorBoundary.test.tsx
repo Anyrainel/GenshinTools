@@ -3,6 +3,7 @@ import {
   PageErrorBoundary,
   SectionErrorBoundary,
 } from "@/components/shared/ErrorBoundary";
+import { waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
@@ -12,6 +13,12 @@ function ThrowingChild({ shouldThrow }: { shouldThrow: boolean }) {
     throw new Error("Test explosion");
   }
   return <div>All good</div>;
+}
+
+function ThrowChunkError(): never {
+  throw new Error(
+    "Failed to fetch dynamically imported module: https://ggartifact.com/assets/AccountData-D-Gd3Mry.js"
+  );
 }
 
 // Suppress React's noisy error boundary console output during tests
@@ -141,6 +148,77 @@ describe("ErrorBoundary", () => {
     expect(
       screen.getByRole("button", { name: /Return to Home/i })
     ).toBeInTheDocument();
+  });
+
+  it("shows chunk diagnostics for lazy import failures", () => {
+    render(
+      <ErrorBoundary>
+        <ThrowChunkError />
+      </ErrorBoundary>
+    );
+
+    expect(
+      screen.getAllByText(/Imported module:/i, { exact: false }).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/may not be the exact dependency that failed/i, {
+        exact: false,
+      }).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByRole("button", { name: /^Reload$/i })
+    ).toBeInTheDocument();
+  });
+
+  it("performs cache-busting recovery steps when reload is clicked", async () => {
+    const user = userEvent.setup();
+    const replaceMock = vi.fn();
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null));
+    const deleteMock = vi.fn().mockResolvedValue(true);
+    const unregisterMock = vi.fn().mockResolvedValue(true);
+
+    vi.stubGlobal("fetch", fetchMock);
+    Object.defineProperty(window, "caches", {
+      value: {
+        keys: vi.fn().mockResolvedValue(["asset-cache"]),
+        delete: deleteMock,
+      },
+      configurable: true,
+    });
+    Object.defineProperty(navigator, "serviceWorker", {
+      value: {
+        getRegistrations: vi
+          .fn()
+          .mockResolvedValue([{ unregister: unregisterMock }]),
+      },
+      configurable: true,
+    });
+    Object.defineProperty(window, "location", {
+      value: {
+        ...window.location,
+        href: "https://ggartifact.com/#/account-data/characters",
+        replace: replaceMock,
+      },
+      writable: true,
+      configurable: true,
+    });
+
+    render(
+      <ErrorBoundary>
+        <ThrowChunkError />
+      </ErrorBoundary>
+    );
+
+    await user.click(screen.getByRole("button", { name: /^Reload$/i }));
+
+    await waitFor(() => {
+      expect(deleteMock).toHaveBeenCalledWith("asset-cache");
+      expect(unregisterMock).toHaveBeenCalledOnce();
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(replaceMock).toHaveBeenCalledOnce();
+    });
+
+    expect(String(replaceMock.mock.calls[0][0])).toContain("_r=");
   });
 });
 

@@ -123,7 +123,7 @@ export class TeamResonance {
     if ((elemCounts.get("Cryo") ?? 0) >= 2) {
       buffs.push(
         new StatBuff(
-          { type: "teamResonance", id: "cryo" },
+          { type: "teamResonance", id: "cryo", triggers: ["frozen", "cryo"] },
           { receiver: "team" },
           [{ key: "cr", value: 0.15 }]
         )
@@ -134,12 +134,16 @@ export class TeamResonance {
     if ((elemCounts.get("Geo") ?? 0) >= 2) {
       buffs.push(
         new StatBuff(
-          { type: "teamResonance", id: "geo" },
+          {
+            type: "teamResonance",
+            id: "geo",
+            triggers: ["shielded", "lunarCrystallize"],
+          },
           { receiver: "team" },
           [{ key: "dmg%", value: 0.15 }]
         ),
         new StatBuff(
-          { type: "teamResonance", id: "geo" },
+          { type: "teamResonance", id: "geo", triggers: ["damage"] },
           { receiver: "team", filter: { elements: ["Geo"] } },
           [{ key: "resReduction%", value: 0.2 }]
         )
@@ -148,14 +152,30 @@ export class TeamResonance {
 
     // Dendro 2+: EM +50 (base), +30 after Burning/Quicken/Bloom/LunarBloom, +20 after Aggravate/Spread/Hyperbloom/Burgeon (assume active: total EM +100)
     if ((elemCounts.get("Dendro") ?? 0) >= 2) {
-      let emBonus = 50;
+      buffs.push(
+        new StatBuff(
+          { type: "teamResonance", id: "dendro" },
+          { receiver: "team" },
+          [{ key: "em", value: 50 }]
+        )
+      );
       if (
         teamMeta.hasReaction("burning") ||
         teamMeta.hasReaction("quicken") ||
         teamMeta.hasReaction("bloom") ||
         teamMeta.hasReaction("lunarBloom")
       ) {
-        emBonus += 30;
+        buffs.push(
+          new StatBuff(
+            {
+              type: "teamResonance",
+              id: "dendro",
+              triggers: ["burning", "quicken", "bloom", "lunarBloom"],
+            },
+            { receiver: "team" },
+            [{ key: "em", value: 30 }]
+          )
+        );
       }
       if (
         teamMeta.hasReaction("aggravate") ||
@@ -163,16 +183,18 @@ export class TeamResonance {
         teamMeta.hasReaction("hyperbloom") ||
         teamMeta.hasReaction("burgeon")
       ) {
-        emBonus += 20;
+        buffs.push(
+          new StatBuff(
+            {
+              type: "teamResonance",
+              id: "dendro",
+              triggers: ["aggravate", "spread", "hyperbloom", "burgeon"],
+            },
+            { receiver: "team" },
+            [{ key: "em", value: 20 }]
+          )
+        );
       }
-
-      buffs.push(
-        new StatBuff(
-          { type: "teamResonance", id: "dendro" },
-          { receiver: "team" },
-          [{ key: "em", value: emBonus }]
-        )
-      );
     }
 
     // 4 unique elements: All Elemental RES +15%, Physical RES +15% (defensive, out of scope)
