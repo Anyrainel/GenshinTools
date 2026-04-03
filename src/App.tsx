@@ -38,12 +38,23 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/account-data" element={<AccountDataPage />} />
                 <Route
+                  path="/account-data/:tab"
+                  element={<AccountDataPage />}
+                />
+                <Route
                   path="/artifact-filter"
                   element={<ArtifactBuildsPage />}
                 />
+                <Route
+                  path="/artifact-filter/:tab"
+                  element={<ArtifactBuildsPage />}
+                />
                 <Route path="/tier-list" element={<TierListPage />} />
+                <Route path="/tier-list/:tab" element={<TierListPage />} />
                 <Route path="/archive" element={<ArchivePage />} />
+                <Route path="/archive/:tab" element={<ArchivePage />} />
                 <Route path="/team-comp" element={<TeamCompPage />} />
+                <Route path="/team-comp/:tab" element={<TeamCompPage />} />
               </Routes>
             </Suspense>
           </main>

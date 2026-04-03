@@ -3,12 +3,12 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { CharacterTierListView } from "@/pages/tier-list/CharacterTierListView";
 import { WeaponTierListView } from "@/pages/tier-list/WeaponTierListView";
 import { useTierStore } from "@/stores/useTierStore";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { useCallback, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 type TierListTab = "characters" | "weapons";
 
@@ -16,18 +16,16 @@ const isValidTab = (tab: string | null): tab is TierListTab =>
   tab === "characters" || tab === "weapons";
 
 export default function TierListPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const rawTab = searchParams.get("tab");
-  const activeTab: TierListTab = isValidTab(rawTab) ? rawTab : "characters";
+  const { activeTab, setActiveTab } = useCanonicalTabRoute({
+    basePath: "/tier-list",
+    defaultTab: "characters",
+    isValidTab,
+  });
 
   const { t } = useLanguage();
 
   // Actions are pushed up from the active view component
   const [actions, setActions] = useState<ActionConfig[]>([]);
-
-  const setActiveTab = (tab: string) => {
-    setSearchParams({ tab }, { replace: true });
-  };
 
   const handleActions = useCallback((newActions: ActionConfig[]) => {
     setActions(newActions);

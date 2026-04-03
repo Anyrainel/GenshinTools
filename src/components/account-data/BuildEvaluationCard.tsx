@@ -89,7 +89,7 @@ function BuildEvaluationCardComponent({
               <Tooltip key={charId}>
                 <TooltipTrigger asChild>
                   <Link
-                    to={`/artifact-filter?tab=configure&char=${charId}`}
+                    to={`/artifact-filter/configure?char=${charId}`}
                     className="hover:ring-1 hover:ring-white/40 rounded-full transition-shadow"
                   >
                     <img

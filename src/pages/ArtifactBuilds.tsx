@@ -23,6 +23,7 @@ import type {
   PresetOption,
 } from "@/data/types";
 
+import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
@@ -39,6 +40,11 @@ import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+
+const isValidArtifactBuildsTab = (
+  tab: string | null
+): tab is "configure" | "filters" | "weights" =>
+  tab === "configure" || tab === "filters" || tab === "weights";
 
 const presetModules = import.meta.glob<{ default: BuildPayload }>(
   "@/presets/artifact-builds/*.json",
@@ -57,30 +63,29 @@ export default function ArtifactBuildsPage() {
   const exportRef = useRef<ControlHandle>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get("tab") || "configure";
+  const { activeTab, setActiveTab } = useCanonicalTabRoute({
+    basePath: "/artifact-filter",
+    defaultTab: "configure",
+    isValidTab: isValidArtifactBuildsTab,
+    preserveSearchOnTabChange: true,
+  });
 
-  const setActiveTab = (tab: string) => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set("tab", tab);
-      return newParams;
-    });
-  };
-
-  // Support deep-linking to a character via ?char=<id> (e.g. from evaluation page)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally run only on mount
   useEffect(() => {
     const charParam = searchParams.get("char");
-    if (charParam) {
-      setTargetCharacterId(charParam);
-      setSearchParams((prev) => {
-        const newParams = new URLSearchParams(prev);
-        newParams.delete("char");
-        newParams.set("tab", "configure");
-        return newParams;
-      });
+    if (!charParam) return;
+
+    setTargetCharacterId(charParam);
+    if (activeTab !== "configure") {
+      setActiveTab("configure");
+      return;
     }
-  }, []);
+
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.delete("char");
+      return newParams;
+    });
+  }, [activeTab, searchParams, setActiveTab, setSearchParams]);
 
   // Start tour on first visit (after a short delay for page to render)
   useEffect(() => {

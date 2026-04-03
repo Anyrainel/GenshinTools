@@ -35,7 +35,7 @@ export function AccountDataNeedsBothState({
         ? {
             label: t.ui("evaluation.goToBuilds"),
             icon: ExternalLink,
-            href: "/artifact-filter",
+            href: "/artifact-filter/configure",
           }
         : undefined;
 
@@ -45,7 +45,7 @@ export function AccountDataNeedsBothState({
       ? {
           label: t.ui("evaluation.goToBuilds"),
           icon: ExternalLink,
-          href: "/artifact-filter",
+          href: "/artifact-filter/configure",
         }
       : undefined;
 

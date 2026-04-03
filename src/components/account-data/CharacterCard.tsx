@@ -102,7 +102,7 @@ function CharacterCardComponent({
           className={cn("flex items-center", isVeryNarrow ? "gap-2" : "gap-3")}
         >
           {/* Character Icon — links to archive */}
-          <Link to={`/archive?tab=characters&character=${char.key}`}>
+          <Link to={`/archive/characters?character=${char.key}`}>
             <ItemIcon
               characterId={char.key}
               badge={char.constellation}

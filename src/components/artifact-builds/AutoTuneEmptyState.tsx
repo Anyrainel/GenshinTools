@@ -21,13 +21,13 @@ export function AutoTuneEmptyState({
     ? {
         label: t.ui("evaluation.goToBuilds"),
         icon: ExternalLink,
-        href: "/artifact-filter?tab=configure",
+        href: "/artifact-filter/configure",
       }
     : !hasTeams
       ? {
           label: t.ui("batchAutoTune.goToTeams"),
           icon: ExternalLink,
-          href: "/team-comp?tab=damage",
+          href: "/team-comp/damage",
         }
       : undefined;
 
@@ -36,7 +36,7 @@ export function AutoTuneEmptyState({
       ? {
           label: t.ui("batchAutoTune.goToTeams"),
           icon: ExternalLink,
-          href: "/team-comp?tab=damage",
+          href: "/team-comp/damage",
         }
       : undefined;
 

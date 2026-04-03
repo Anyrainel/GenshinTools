@@ -246,7 +246,7 @@ function NoBuildContent({ characterId }: { characterId: string }) {
 
       {/* Link to builds page */}
       <Link
-        to={`/artifact-filter?char=${characterId}`}
+        to={`/artifact-filter/configure?char=${characterId}`}
         className="text-amber-400 hover:text-amber-300 underline text-sm"
       >
         {t.ui("accountData.viewBuilds")}
@@ -279,7 +279,7 @@ function ArtifactScoreContent({
             {t.ui("accountData.scoredUsing").replace("{0}", buildSetLabel)}
           </span>
           <Link
-            to={`/artifact-filter?char=${characterId}`}
+            to={`/artifact-filter/configure?char=${characterId}`}
             className="text-amber-400 hover:text-amber-300 underline text-xs whitespace-nowrap ml-2"
           >
             {t.ui("accountData.viewBuilds")}
@@ -292,7 +292,7 @@ function ArtifactScoreContent({
         <span className="text-lg font-bold text-amber-200 uppercase tracking-wider flex items-center gap-2">
           {t.ui("accountData.artifactScore")}
           <Link
-            to={`/artifact-filter?char=${characterId}`}
+            to={`/artifact-filter/configure?char=${characterId}`}
             className="text-xs font-normal normal-case tracking-normal text-amber-400 hover:text-amber-300 flex items-center gap-0.5"
           >
             {t.ui("accountData.viewBuilds")}

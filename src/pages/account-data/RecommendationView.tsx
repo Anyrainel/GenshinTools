@@ -433,7 +433,7 @@ export function RecommendationView({
                   {t.ui("accountData.insights.poolInfo")}
                 </div>
                 <Button asChild variant="outline">
-                  <Link to="/tier-list">
+                  <Link to="/tier-list/characters">
                     {t.ui("accountData.insights.goToTierList")}
                   </Link>
                 </Button>

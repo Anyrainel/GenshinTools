@@ -124,7 +124,7 @@ function LinkedAccountSection({ character }: { character: CharacterResource }) {
           {t.ui("app.navAccountData")}
         </h3>
         {!charData && (
-          <Link to="/account-data">
+          <Link to="/account-data/characters">
             <Button variant="ghost" size="sm" className="gap-1.5 text-xs h-7">
               {t.ui("archive.goToAccountData")}
               <ChevronRight className="h-3 w-3" />

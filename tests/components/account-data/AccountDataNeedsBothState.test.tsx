@@ -30,7 +30,7 @@ describe("AccountDataNeedsBothState", () => {
     );
 
     const link = screen.getByRole("link", { name: /Configure Builds/ });
-    expect(link).toHaveAttribute("href", "/artifact-filter");
+    expect(link).toHaveAttribute("href", "/artifact-filter/configure");
 
     // Import button should not show
     expect(

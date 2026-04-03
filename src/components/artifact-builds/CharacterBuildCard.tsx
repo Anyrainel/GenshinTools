@@ -298,7 +298,7 @@ function CharacterBuildCardComponent({
             isVeryNarrow ? "gap-2" : "gap-3 md:gap-4"
           )}
         >
-          <Link to={`/archive?tab=characters&character=${character.id}`}>
+          <Link to={`/archive/characters?character=${character.id}`}>
             <ItemIcon characterId={character.id} size={iconSize} />
           </Link>
 

@@ -8,6 +8,7 @@ import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { useTour } from "@/components/ui/tour";
 import type { PresetOption } from "@/data/types";
+import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
@@ -19,7 +20,6 @@ import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { DamageView } from "./team-comp/DamageView";
 import { FrozenView } from "./team-comp/FrozenView";
@@ -45,12 +45,11 @@ const presetModules = import.meta.glob<{ default: TeamCompData }>(
 
 export default function TeamCompPage() {
   const { t } = useLanguage();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const rawTab = searchParams.get("tab");
-  const activeTab: TeamCompTab = isValidTab(rawTab) ? rawTab : "damage";
-  const setActiveTab = (tab: string) => {
-    setSearchParams({ tab }, { replace: true });
-  };
+  const { activeTab, setActiveTab } = useCanonicalTabRoute({
+    basePath: "/team-comp",
+    defaultTab: "damage",
+    isValidTab,
+  });
   const tabs = useMemo(() => getTabsForRoute(t, "/team-comp"), [t]);
   const tour = useTour();
   const teams = useTeamStore((state) => state.teams);

@@ -162,7 +162,7 @@ function RecommendationCardComponent({
 
           <div className="shrink-0 flex flex-col items-end self-stretch">
             <Link
-              to={`/artifact-filter?char=${char.key}`}
+              to={`/artifact-filter/configure?char=${char.key}`}
               className="flex items-center gap-0.5 text-xs text-amber-400/60 hover:text-amber-400 transition-colors mb-auto -mt-1"
             >
               {t.ui("accountData.viewBuilds")}

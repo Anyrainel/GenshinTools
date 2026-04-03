@@ -12,7 +12,7 @@ describe("AutoTuneEmptyState", () => {
     );
 
     const link = screen.getByRole("link", { name: /Configure Builds/ });
-    expect(link).toHaveAttribute("href", "/artifact-filter?tab=configure");
+    expect(link).toHaveAttribute("href", "/artifact-filter/configure");
 
     // Should not show "Show All" button
     expect(screen.queryByText("All DPS Builds")).toBeNull();
@@ -28,7 +28,7 @@ describe("AutoTuneEmptyState", () => {
     );
 
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/team-comp?tab=damage");
+    expect(link).toHaveAttribute("href", "/team-comp/damage");
   });
 
   it("shows both links when neither builds nor teams exist", () => {
@@ -42,8 +42,8 @@ describe("AutoTuneEmptyState", () => {
 
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(2);
-    expect(links[0]).toHaveAttribute("href", "/artifact-filter?tab=configure");
-    expect(links[1]).toHaveAttribute("href", "/team-comp?tab=damage");
+    expect(links[0]).toHaveAttribute("href", "/artifact-filter/configure");
+    expect(links[1]).toHaveAttribute("href", "/team-comp/damage");
   });
 
   it("shows 'Show All' button when builds and teams both exist", () => {

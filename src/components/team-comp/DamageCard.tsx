@@ -1552,7 +1552,7 @@ export function DamageCard({
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
                 <span>{t.ui("teamComp.inventoryWarning")}</span>
                 <Link
-                  to="/account-data"
+                  to="/account-data/inventory"
                   className="font-bold underline underline-offset-2 hover:text-amber-300 shrink-0"
                 >
                   {t.ui("teamComp.inventoryWarningLink")}

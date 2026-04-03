@@ -227,6 +227,7 @@ export function AppBar({
                     const isActive = location.pathname.startsWith(item.href);
                     const hasChildren =
                       item.children && item.children.length > 0;
+                    const targetHref = item.children?.[0]?.href ?? item.href;
 
                     if (hasChildren) {
                       return (
@@ -238,15 +239,16 @@ export function AppBar({
                               "justify-start gap-2 h-9 text-sm font-semibold w-full pt-1.5 pb-2.5",
                               isActive && "text-primary"
                             )}
-                            onClick={(e) => handleLinkClick(e, item.href)}
+                            onClick={(e) => handleLinkClick(e, targetHref)}
                           >
-                            <Link to={item.href}>{item.label}</Link>
+                            <Link to={targetHref}>{item.label}</Link>
                           </Button>
                           <div className="pl-2 space-y-0 border-l ml-2 border-border/50">
                             {item.children?.map((child) => {
                               const isChildActive =
-                                location.pathname === item.href &&
-                                activeTab === child.value;
+                                location.pathname === child.href ||
+                                (location.pathname === item.href &&
+                                  activeTab === child.value);
                               return (
                                 <Button
                                   key={child.href}
@@ -316,6 +318,7 @@ export function AppBar({
             <div className="hidden 2xl:flex items-center gap-2">
               {navItems.map((item) => {
                 const isActive = location.pathname.startsWith(item.href);
+                const targetHref = item.children?.[0]?.href ?? item.href;
                 return (
                   <Button
                     key={item.href}
@@ -326,9 +329,9 @@ export function AppBar({
                       isActive &&
                         "bg-primary/10 text-primary hover:bg-primary/20"
                     )}
-                    onClick={(e) => handleLinkClick(e, item.href)}
+                    onClick={(e) => handleLinkClick(e, targetHref)}
                   >
-                    <Link to={item.href}>{item.label}</Link>
+                    <Link to={targetHref}>{item.label}</Link>
                   </Button>
                 );
               })}

@@ -21,6 +21,7 @@ import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, Build } from "@/data/types";
+import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type ArtifactScoreResult,
@@ -69,6 +70,20 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+
+const isValidAccountDataTab = (
+  tab: string | null
+): tab is
+  | "characters"
+  | "inventory"
+  | "recommendations"
+  | "evaluation"
+  | "triage" =>
+  tab === "characters" ||
+  tab === "inventory" ||
+  tab === "recommendations" ||
+  tab === "evaluation" ||
+  tab === "triage";
 
 const NoDataPlaceholder = ({
   t,
@@ -123,20 +138,17 @@ export default function AccountDataPage() {
   const { t } = useLanguage();
   const tour = useTour();
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get("tab") || "characters";
+  const { activeTab, setActiveTab } = useCanonicalTabRoute({
+    basePath: "/account-data",
+    defaultTab: "characters",
+    isValidTab: isValidAccountDataTab,
+    preserveSearchOnTabChange: true,
+  });
   const [isEditMode, setIsEditMode] = useState(false);
 
   // Control refs for ref-based dialog pattern
   const importRef = useRef<ControlHandle>(null);
   const characterViewRef = useRef<CharacterViewHandle>(null);
-
-  const setActiveTab = (tab: string) => {
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.set("tab", tab);
-      return newParams;
-    });
-  };
 
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const clearAccounts = useAccountStore((s) => s.clearAccounts);
