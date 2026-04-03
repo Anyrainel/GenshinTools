@@ -456,7 +456,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   if (!gameStatsReady) {
     return (
       <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center min-h-[40vh] text-muted-foreground">
+        <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" />
           {t.ui("common.loading")}
         </div>
@@ -467,7 +467,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   if (buildError) {
     return (
       <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center min-h-[40vh] text-destructive">
+        <div className="flex items-center justify-center pt-16 md:pt-24 text-destructive">
           {buildError}
         </div>
       </ScrollLayout>
@@ -477,7 +477,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   if (!teamBuild || configs.length === 0) {
     return (
       <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center min-h-[40vh] text-muted-foreground">
+        <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
           {t.ui("teamComp.analyzerDesc")}
         </div>
       </ScrollLayout>

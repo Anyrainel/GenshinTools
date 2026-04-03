@@ -501,11 +501,7 @@ export function TeamGrid({
       }
     >
       <div
-        className={cn(
-          "py-2",
-          showEmptyState &&
-            "min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center"
-        )}
+        className={cn("py-2", showEmptyState && "flex flex-col items-center")}
       >
         {/* Empty state welcome — shown when all teams are unconfigured */}
         {showEmptyState && emptyState && (
