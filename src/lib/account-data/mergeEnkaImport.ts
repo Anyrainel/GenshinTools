@@ -1,44 +1,59 @@
-import type { AccountData, ArtifactData } from "@/data/types";
+import type { AccountData, ArtifactData, SubStat } from "@/data/types";
+import { solveArtifact } from "./artifactSolver";
 
 /**
  * Deterministic fingerprint for artifact identity (setKey, slot, level, mainStat, substats, etc.).
  * Used to dedupe identical artifacts when merging UID imports with existing inventory.
  */
 export function artifactFingerprint(art: ArtifactData): string {
-  const substatsStr = Object.keys(art.substats ?? {})
+  const normalized = normalizeArtifactIdentity(art);
+  const substatsStr = Object.keys(normalized.substats)
     .sort()
-    .map((k) => `${k}:${(art.substats as Record<string, number>)[k]}`)
+    .map((k) => `${k}:${normalized.substats[k as SubStat]}`)
     .join(",");
-  const unactivatedStr = art.unactivatedSubstats
-    ? Object.keys(art.unactivatedSubstats)
-        .sort()
-        .map(
-          (k) =>
-            `u_${k}:${(art.unactivatedSubstats as Record<string, number>)[k]}`
-        )
-        .join(",")
-    : "";
-  const initialStr = art.initialValues
-    ? Object.keys(art.initialValues)
-        .sort()
-        .map(
-          (k) => `i_${k}:${(art.initialValues as Record<string, number>)[k]}`
-        )
-        .join(",")
-    : "";
   return [
-    art.setKey,
-    art.slotKey,
-    art.level,
-    art.rarity,
-    art.mainStatKey,
+    normalized.setKey,
+    normalized.slotKey,
+    normalized.level,
+    normalized.rarity,
+    normalized.mainStatKey,
     substatsStr,
-    art.totalRolls ?? "",
-    art.astralMark ?? false,
-    art.elixirCrafted ?? false,
-    unactivatedStr,
-    initialStr,
+    normalized.totalRolls ?? "",
+    normalized.elixirCrafted ? "1" : "0",
   ].join("|");
+}
+
+function normalizeArtifactIdentity(art: ArtifactData): {
+  setKey: string;
+  slotKey: ArtifactData["slotKey"];
+  level: number;
+  rarity: number;
+  mainStatKey: ArtifactData["mainStatKey"];
+  substats: Partial<Record<SubStat, number>>;
+  totalRolls?: number;
+  elixirCrafted: boolean;
+} {
+  const rarity = art.rarity;
+  const solved =
+    rarity === 4 || rarity === 5
+      ? solveArtifact({
+          rarity,
+          level: art.level,
+          substats: art.substats,
+          totalRolls: art.totalRolls,
+        })
+      : null;
+
+  return {
+    setKey: art.setKey,
+    slotKey: art.slotKey,
+    level: art.level,
+    rarity: art.rarity,
+    mainStatKey: art.mainStatKey,
+    substats: solved ?? art.substats,
+    totalRolls: art.totalRolls,
+    elixirCrafted: art.elixirCrafted ?? false,
+  };
 }
 
 /**

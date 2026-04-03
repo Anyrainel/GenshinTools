@@ -18,6 +18,12 @@ describe("artifactFingerprint", () => {
     expect(artifactFingerprint(a)).toBe(artifactFingerprint(b));
   });
 
+  it("ignores mutable metadata like astralMark during fingerprinting", () => {
+    const a = createArtifactData({ astralMark: false });
+    const b = createArtifactData({ astralMark: true });
+    expect(artifactFingerprint(a)).toBe(artifactFingerprint(b));
+  });
+
   it("returns different string when setKey differs", () => {
     const a = createArtifactData({ setKey: "crimson_witch_of_flames" });
     const b = createArtifactData({ setKey: "emblem_of_severed_fate" });
@@ -67,14 +73,20 @@ describe("artifactFingerprint", () => {
     expect(artifactFingerprint(a)).not.toBe(artifactFingerprint(c));
   });
 
-  it("includes optional unactivatedSubstats and initialValues in fingerprint", () => {
-    const a = createArtifactData({ unactivatedSubstats: { def: 19 } });
-    const b = createArtifactData({});
+  it("includes immutable elixirCrafted in fingerprint", () => {
+    const a = createArtifactData({ elixirCrafted: true });
+    const b = createArtifactData({ elixirCrafted: false });
     expect(artifactFingerprint(a)).not.toBe(artifactFingerprint(b));
+  });
 
-    const c = createArtifactData({ initialValues: { cr: 2.7 } });
-    const d = createArtifactData({});
-    expect(artifactFingerprint(c)).not.toBe(artifactFingerprint(d));
+  it("normalizes rounded incoming substats through the solver before fingerprinting", () => {
+    const precise = createArtifactData({
+      substats: { cr: 10.5, cd: 20.98, em: 23, atk: 35 },
+    });
+    const rounded = createArtifactData({
+      substats: { cr: 10.5, cd: 21.0, em: 23, atk: 35 },
+    });
+    expect(artifactFingerprint(precise)).toBe(artifactFingerprint(rounded));
   });
 });
 
@@ -376,5 +388,38 @@ describe("mergeEnkaImportWithInventory", () => {
     const merged = mergeEnkaImportWithInventory(previous, newData);
     expect(merged).toHaveLength(1);
     expect(artifactFingerprint(merged[0]!)).toBe(artifactFingerprint(hutaoOld));
+  });
+
+  it("does not duplicate when previous precise values match a rounded UID import artifact", () => {
+    const previousEquip = createArtifactData({
+      id: "old",
+      substats: { cr: 10.5, cd: 20.98, em: 23, atk: 35 },
+    });
+    const previous = createAccountData({
+      characters: [
+        {
+          ...createCharacterData({ key: "hu_tao" }),
+          artifacts: { flower: previousEquip },
+        },
+      ],
+      extraArtifacts: [],
+    });
+    const newData = createAccountData({
+      characters: [
+        {
+          ...createCharacterData({ key: "hu_tao" }),
+          artifacts: {
+            flower: createArtifactData({
+              id: "new",
+              substats: { cr: 10.5, cd: 21.0, em: 23, atk: 35 },
+            }),
+          },
+        },
+      ],
+      extraArtifacts: [],
+    });
+
+    const merged = mergeEnkaImportWithInventory(previous, newData);
+    expect(merged).toHaveLength(0);
   });
 });
