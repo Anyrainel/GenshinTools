@@ -68,7 +68,6 @@ import {
   type OptimizerContext,
   TeamBuild,
   evaluateCombo,
-  hasOffFieldParts,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
@@ -86,6 +85,7 @@ import type {
   StatKey,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/team-comp/types";
 import type { CharOptConfig } from "@/lib/team-comp/types";
 
 import {
@@ -317,43 +317,19 @@ function evaluateAssignment(
       artifactStats[cid] = StatSheet.fromArtifacts(pieces);
     }
 
-    // Combo mode: use evaluateCombo directly
-    if (combo) {
-      return evaluateCombo(teamBuild, combo, artifactStats, calcContext)
-        .totalDamage;
+    // Always use evaluateCombo for consistency with the optimizer/runner path
+    const effectiveCombo = combo ?? singleFormulaCombo(carryCharId, formulaId);
+
+    // Validate formula exists before evaluating (evaluateCombo silently
+    // returns 0 for missing formulas instead of throwing)
+    if (!combo) {
+      const allFormulas = teamBuild.getFormulaIds();
+      const charFormulas = allFormulas[carryCharId];
+      if (!charFormulas?.[formulaId]) return null;
     }
 
-    // Single-formula mode: use getDamageResult
-    const postStats = teamBuild.getTeamStats(
-      artifactStats,
-      carryCharId,
-      calcContext
-    );
-
-    // Compute off-field stats if the formula has off-field parts
-    let offFieldStats: Record<string, StatSheet> | undefined;
-    if (hasOffFieldParts(teamBuild, carryCharId, formulaId)) {
-      const otherCharId = Object.keys(teamBuild.charBuilds).find(
-        (id) => id !== carryCharId
-      );
-      if (otherCharId) {
-        offFieldStats = teamBuild.getTeamStats(
-          artifactStats,
-          otherCharId,
-          calcContext
-        );
-      }
-    }
-
-    const dmg = teamBuild.getDamageResult(
-      carryCharId,
-      formulaId,
-      postStats,
-      calcContext,
-      undefined,
-      offFieldStats
-    );
-    return dmg.totalDamage;
+    return evaluateCombo(teamBuild, effectiveCombo, artifactStats, calcContext)
+      .totalDamage;
   } catch {
     return null;
   }

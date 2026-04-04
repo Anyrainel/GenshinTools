@@ -194,7 +194,7 @@ function CharacterCardComponent({
       {/* Artifact Sets Row */}
       <div
         className={cn(
-          "bg-black/20 border-b border-border/20 flex min-h-[56px] items-center",
+          "bg-black/20 border-b border-border/20 flex min-h-[56px] items-center overflow-hidden",
           isVeryNarrow ? "px-1.5 gap-x-2" : "px-4 gap-x-4"
         )}
       >

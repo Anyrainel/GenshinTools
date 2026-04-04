@@ -1300,6 +1300,14 @@ export async function* runTeamOptimization(
     for (const charId of allCharIds) {
       const charConfig = effectivePerChar[charId];
       if (!charConfig) continue;
+      // Skip constraint checks for characters with no artifacts assigned.
+      // Characters with 0 topK results (e.g. all-filtered) have no artifacts
+      // in Phase 2 assignments — checking them would reject every candidate.
+      // Phase 3 handles their assignment with proper constraint enforcement.
+      const hasArtifacts =
+        artifactsByChar[charId] &&
+        Object.values(artifactsByChar[charId]).some((a) => a != null);
+      if (!hasArtifacts) continue;
       if (charConfig.minEr > 0) {
         const er = teamStats[charId]?.get("er", null) ?? 0;
         if (er < charConfig.minEr - 1e-6) return false;
@@ -1467,9 +1475,19 @@ export async function* runTeamOptimization(
             ? performance.now() + perCharDeadlineMs
             : undefined;
 
+          // Relax ER/CR constraints for the secondary character in Phase 2b.
+          // The partition search needs to explore the artifact space without
+          // being blocked by constraints that Phase 3 will enforce later.
+          // Without this, characters sharing a set with tight ER requirements
+          // get "all-filtered" because B&B can't meet ER with the remaining pieces.
+          const relaxedConfig = {
+            ...secondConfig,
+            minEr: 0,
+            minCr: 0,
+          };
           const altResult = runCharacterBnB(
             secondId,
-            secondConfig,
+            relaxedConfig,
             effectiveTeamBuild,
             carryCharId,
             getCharInventory(secondId),
