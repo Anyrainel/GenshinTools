@@ -430,3 +430,6 @@ export const useTierStore = create<TierListState>()(
     }
   )
 );
+
+// Auto-switch tier list when active account changes
+import("@/lib/tierListAutoSwitch");
