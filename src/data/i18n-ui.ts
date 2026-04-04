@@ -1990,4 +1990,13 @@ export const i18nUiData = {
       zh: "确保游戏客户端语言设置为简体中文",
     },
   },
+  tierList: {
+    manageLists: { en: "Manage Tier Lists", zh: "管理排行榜" },
+    manageListsDesc: {
+      en: "Switch between tier lists or create new ones.",
+      zh: "切换排行榜或创建新的排行榜。",
+    },
+    linkedAccount: { en: "Account:", zh: "账号：" },
+    createNew: { en: "Create New Tier List", zh: "创建新排行榜" },
+  },
 };
