@@ -213,6 +213,18 @@ class Emilie extends CharacterBase {
     ];
 
     return {
+      "emilie-skill-cast": {
+        label: { zh: "E释放伤害", en: "E Cast DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "emilie-skill-burning": {
         label: {
           zh: "E伤害×28+清露×5",
@@ -265,6 +277,7 @@ class Emilie extends CharacterBase {
   // Rotation: E + Q (off-field Dendro sub-DPS in Burning teams); formulas bake in hit counts
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "emilie-skill-cast", count: 1 },
       { id: "emilie-skill-burning", count: 1 },
       { id: "emilie-burst-9hit", count: 1 },
       { id: "emilie-c6-normal", count: 1 },
@@ -334,10 +347,28 @@ class Sigewinne extends CharacterBase {
     return buffs;
   })();
 
+  // E: Bolstering Bubblebalm — 5 bounces (C1: 8 bounces), HP scaling
   // Q: Super Saturated Syringing Lv10: 21.2% HP, Lv13 (C5+): 25.0% HP
   protected readonly formulaMap = (() => {
     const qMult = this.param("Q", 1);
+    const eBounces = this.constellation >= 1 ? 8 : 5;
     return {
+      "sigewinne-skill": {
+        label: {
+          zh: `E伤害×${eBounces}`,
+          en: `E (×${eBounces})`,
+        },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("E", 1),
+              { element: "Hydro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+            hits: eBounces,
+          },
+        ],
+      },
       "sigewinne-burst": {
         label: { zh: "Q伤害×6", en: "Q (×6)" },
         parts: [
@@ -371,6 +402,7 @@ class Sigewinne extends CharacterBase {
   // Rotation: E + Q (Hydro healer/support); Q used to fill downtime
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "sigewinne-skill", count: 1 },
       { id: "sigewinne-burst", count: 1 },
       { id: "sigewinne-burst-c4", count: 1 },
     ];
@@ -722,6 +754,14 @@ class Furina extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      "furina-skill-bubble": {
+        label: { zh: "E泡沫伤害", en: "E Bubble DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), hydroTag, "hp"),
+          },
+        ],
+      },
       "furina-salon-total": {
         label: {
           zh: "E×32",
@@ -742,6 +782,18 @@ class Furina extends CharacterBase {
             formula: new DirectFormula(this.param("E", 5), hydroTag, "hp"),
             hits: 5,
             offField: true,
+          },
+        ],
+      },
+      "furina-burst": {
+        label: { zh: "Q伤害", en: "Q DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
           },
         ],
       },
@@ -788,7 +840,9 @@ class Furina extends CharacterBase {
   // Rotation: E + Q then swap off (off-field support); salon formula bakes in 32 hits
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "furina-skill-bubble", count: 1 },
       { id: "furina-salon-total", count: 1 },
+      { id: "furina-burst", count: 1 },
       { id: "furina-c6-normal", count: 1 },
       { id: "furina-c6-plunge", count: 0 },
     ];
@@ -878,6 +932,16 @@ class Neuvillette extends CharacterBase {
       ability: "charge" as const,
       reaction: "none" as const,
     };
+    const hydroSkillTag = {
+      element: "Hydro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const hydroBurstTag = {
+      element: "Hydro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "neuvillette-judgment": {
         label: { zh: "重击×8", en: "CA (×8)" },
@@ -885,6 +949,26 @@ class Neuvillette extends CharacterBase {
           {
             formula: new DirectFormula(this.param("A", 5), chargeTag, "hp"),
             hits: 8,
+          },
+        ],
+      },
+      "neuvillette-skill": {
+        label: { zh: "E伤害", en: "E DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), hydroSkillTag, "hp"),
+          },
+        ],
+      },
+      "neuvillette-burst": {
+        label: { zh: "Q伤害", en: "Q DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), hydroBurstTag, "hp"),
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 2), hydroBurstTag, "hp"),
+            hits: 2,
           },
         ],
       },
@@ -910,6 +994,8 @@ class Neuvillette extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "neuvillette-judgment", count: 3 },
+      { id: "neuvillette-skill", count: 3 },
+      { id: "neuvillette-burst", count: 1 },
       { id: "neuvillette-c6-currents", count: 3 },
     ];
   }
@@ -1149,6 +1235,25 @@ class Lyney extends CharacterBase {
           },
         ],
       },
+      "lyney-burst": {
+        label: { zh: "Q伤害", en: "Q DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), {
+              element: "Pyro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 2), {
+              element: "Pyro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "lyney-c6-strike": {
         label: { zh: "礼花重奏", en: "Strike Reprised" },
         minC: 6,
@@ -1172,6 +1277,7 @@ class Lyney extends CharacterBase {
       { id: "lyney-prop", count: 3 },
       { id: "lyney-strike", count: 3 },
       { id: "lyney-skill-max", count: 1 },
+      { id: "lyney-burst", count: 1 },
       { id: "lyney-c6-strike", count: 3 },
     ];
   }

@@ -405,6 +405,12 @@ class Collei extends CharacterBase {
           { formula: new DirectFormula(0.4, dendroSkill), offField: true },
         ],
       },
+      // C6: Mini Cuilein-Anbar — 200% ATK Dendro DMG on Floral Ring hit (once per E)
+      "collei-c6-mini": {
+        label: { zh: "C6迷你柯里安巴", en: "C6 Mini Cuilein-Anbar" },
+        minC: 6,
+        parts: [{ formula: new DirectFormula(2.0, dendroSkill) }],
+      },
       // Q: Trump-Card Kitty — Explosion DMG
       "collei-burst-explosion": {
         label: { zh: "Q爆发", en: "Q Explosion" },
@@ -429,6 +435,7 @@ class Collei extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "collei-skill", count: 2 },
+      { id: "collei-c6-mini", count: 1 },
       { id: "collei-sprout", count: 0 },
       { id: "collei-burst-explosion", count: 1 },
       { id: "collei-burst-leap", count: 9 },

@@ -89,6 +89,7 @@ class YumemizukiMizuki extends CharacterBase {
   // Q initial + ~6 snack explosions during drift
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "mizuki-skill-initial", count: 1 },
       { id: "mizuki-burst-initial", count: 1 },
       { id: "mizuki-burst-drop", count: 6 },
       { id: "mizuki-skill-swirl", count: 6 },
@@ -104,6 +105,18 @@ class YumemizukiMizuki extends CharacterBase {
     };
 
     return {
+      "mizuki-skill-initial": {
+        label: { zh: "E释放伤害", en: "E Cast DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 4), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "mizuki-burst-initial": {
         label: { zh: "Q初始伤害", en: "Q Initial" },
         parts: [{ formula: new DirectFormula(this.param("Q", 1), anemoBurst) }],
@@ -753,11 +766,11 @@ class KamisatoAyato extends CharacterBase {
 
   readonly buffs = (() => {
     const ibuffs: StatBuff[] = [
-      // Q: Normal ATK DMG +20% for characters in field
+      // Q: Normal ATK DMG bonus for characters in field (talent-level-dependent)
       new StatBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "teamOnField", filter: { abilities: ["normal"] } },
-        [{ key: "dmg%", value: 0.2 }]
+        [{ key: "dmg%", value: this.param("Q", 2) }]
       ),
     ];
     // C1: Shunsuiken DMG +40% against enemies with HP ≤ 50%
@@ -795,6 +808,7 @@ class KamisatoAyato extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "ayato-shunsuiken", count: 1 },
+      { id: "ayato-illusion", count: 1 },
       { id: "ayato-bloomwater", count: 1 },
       { id: "ayato-c6-strikes", count: 1 },
     ];
@@ -866,6 +880,19 @@ class KamisatoAyato extends CharacterBase {
               reaction: "none",
             }),
             hits: 30,
+          },
+        ],
+      },
+      // E Water Illusion DMG (E param6)
+      "ayato-illusion": {
+        label: { zh: "E水影伤害", en: "E Water Illusion" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 6), {
+              element: "Hydro",
+              ability: "skill",
+              reaction: "none",
+            }),
           },
         ],
       },
@@ -964,6 +991,7 @@ class SangonomiyaKokomi extends CharacterBase {
   // Rotation: E > supports > Q N3×5 + Charged×3 + jellyfish ticks (on-field during Q, ~3 fish procs at C1)
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "kokomi-burst", count: 1 },
       { id: "kokomi-normal", count: 5 },
       { id: "kokomi-charged", count: 3 },
       { id: "kokomi-jellyfish", count: 1 },
@@ -978,6 +1006,19 @@ class SangonomiyaKokomi extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      // Q initial hit (Q param1, HP scaling)
+      "kokomi-burst": {
+        label: { zh: "Q伤害", en: "Q DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
       // Normal Attack 3-hit chain (A param1/2/3)
       "kokomi-normal": {
         label: { zh: "普攻三段", en: "Normal ATK (N3)" },
@@ -1128,6 +1169,18 @@ class KaedeharaKazuha extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(this.param("E", 1), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "kazuha-skill-hold": {
+        label: { zh: "E(长按)", en: "E (Hold)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 3), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",

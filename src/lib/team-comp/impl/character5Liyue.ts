@@ -392,7 +392,12 @@ class Xianyun extends CharacterBase {
       },
       "xianyun-q-starwicker": {
         label: { zh: "Q竹星伤害", en: "Q Starwicker DMG" },
-        parts: [{ formula: new DirectFormula(this.param("Q", 2), burstTag) }],
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), burstTag),
+            offField: true,
+          },
+        ],
       },
     };
   })();
@@ -802,6 +807,18 @@ class Zhongli extends CharacterBase {
     new StatBuff(cbs(this, "E", ["E"]), { receiver: "team" }, [
       { key: "resReduction%", value: 0.2 },
     ]),
+    // P2: Dominance of Earth — Normal/Charged/Plunge DMG +1.39% Max HP as baseDmg
+    new ScalingBuff(
+      cbs(this, "P2"),
+      {
+        receiver: "selfOnField",
+        filter: { abilities: ["normal", "charge", "plunge"] },
+      },
+      [],
+      "hp",
+      "baseDmg",
+      0.0139
+    ),
   ];
 
   protected readonly formulaMap = (() => {

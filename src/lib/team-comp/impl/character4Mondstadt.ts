@@ -261,8 +261,24 @@ class Razor extends CharacterBase {
   }
 }
 
-@RegisterCharacter("diona")
+const dionaOption = {
+  label: { zh: "场上角色血量（6命）", en: "On-field HP (C6)" },
+  choices: [
+    {
+      value: "above50",
+      label: { zh: "HP>50% (EM+200)", en: "HP>50% (EM+200)" },
+    },
+    {
+      value: "below50",
+      label: { zh: "HP≤50% (治疗加成)", en: "HP≤50% (Heal bonus)" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("diona", dionaOption)
 class Diona extends CharacterBase {
+  private readonly hpState = resolveOption(dionaOption, this.option);
+
   readonly buffs = [
     // C2: Icy Paws DMG +15%
     // Diona is typically off-field; "self" ensures the buff always applies to her skill
@@ -275,8 +291,8 @@ class Diona extends CharacterBase {
           ),
         ]
       : []),
-    // C6: In Q field, HP > 50% → EM +200 (assume active)
-    ...(this.constellation >= 6
+    // C6: In Q field, HP > 50% → EM +200; HP ≤ 50% → Incoming Healing +30% (skip non-damage stat)
+    ...(this.constellation >= 6 && this.hpState === "above50"
       ? [
           new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
             { key: "em", value: 200 },
@@ -502,7 +518,8 @@ class Rosaria extends CharacterBase {
   readonly buffs = [
     // P1: E back-stab → self CRIT Rate +12% for 5s (assume always active, peak model)
     // ZH: 噬罪的告解从技能目标的背后攻击时，罗莎莉亚的暴击率提升12%，持续5秒。
-    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
+    // No on-field restriction — "self" so off-field Q Ice Lance DoT also benefits.
+    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "self" }, [
       { key: "cr", value: 0.12 },
     ]),
     // P2: Q → other party members CR = 15% of Rosaria's CR (cap 15%)

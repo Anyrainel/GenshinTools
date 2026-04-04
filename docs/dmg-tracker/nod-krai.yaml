@@ -75,17 +75,16 @@
   created: "2026-03-29"
   resolved: "2026-03-29"
 
-- id: lauma-e-press-missing
-  entity: lauma
-  rule: S8b
-  status: completed
-  category: missing-formula
+- id: aino-q-p1-hit-count
+  entity: aino
+  rule: S8
+  status: open
+  category: approximation
   summary: >
-    E press (Tap) damage formula missing. The E talent has a "Press DMG" row at param1
-    (218.9% ATK at Lv10) with no corresponding formula in formulaMap. Only Hold E and
-    Frostgrove Sanctuary DoT are modeled.
-  detail: >
-    Added DirectFormula using this.param('E', 1) with Dendro/skill/none tag
-    as "lauma-press" entry in formulaMap.
+    Q water ball hit count hardcoded to 14 regardless of P1 Ascendant Gleam enhancement.
+    P1 states "fire water balls more frequently" under Ascendant Gleam, which increases
+    the hit count beyond 14 over the 14s duration. Current model underestimates Q damage
+    for Moonsign teams.
+  detail: ""
   created: "2026-04-04"
-  resolved: "2026-04-04"
+  resolved: null

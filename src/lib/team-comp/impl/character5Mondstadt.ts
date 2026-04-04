@@ -245,8 +245,31 @@ class Durin extends CharacterBase {
     const whiteTotalTicks = 20;
     const darkTotalTicks = 16;
 
+    const skillTag = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const skillEntries = {
+      // E: Confirmation of Purity (param1) — single AoE hit
+      "durin-skill-purity": {
+        label: { zh: "E白化之是", en: "E Purity" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), skillTag) }],
+      } as FormulaEntry,
+      // E: Denial of Darkness (param2+param3+param4) — 3 consecutive hits
+      "durin-skill-darkness": {
+        label: { zh: "E黑度之否", en: "E Darkness" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 2), skillTag) },
+          { formula: new DirectFormula(this.param("E", 3), skillTag) },
+          { formula: new DirectFormula(this.param("E", 4), skillTag) },
+        ],
+      } as FormulaEntry,
+    };
+
     if (isWhite) {
       return {
+        ...skillEntries,
         "durin-burst-white": {
           label: { zh: "Q初段+龙息×20", en: "Q Initial+Breath×20" },
           parts: [
@@ -340,6 +363,7 @@ class Durin extends CharacterBase {
       }
 
       return {
+        ...skillEntries,
         "durin-burst-dark": {
           label: { zh: "Q初段+龙息×16", en: "Q Initial+Breath×16" },
           parts,
@@ -349,6 +373,7 @@ class Durin extends CharacterBase {
 
     // Dark mode without C1: just P2 stacks on first 10 ticks
     return {
+      ...skillEntries,
       "durin-burst-dark": {
         label: { zh: "Q初段+龙息×16", en: "Q Initial+Breath×16" },
         parts: [
@@ -481,10 +506,11 @@ class Albedo extends CharacterBase {
             ),
           ]
         : []),
-      // C6: In Solar Isotoma with Crystallize shield (or Moondrifts), DMG +17%
-      // Crystallize shield is produced by Geo reactions; gated on hasShielder() as proxy
-      // (Moondrifts branch requires Nod-Krai characters, modeled separately as TODO)
-      ...(this.constellation >= 6 && this.teamMeta.hasShielder()
+      // C6: In Solar Isotoma with Crystallize shield or Moondrifts, DMG +17%
+      // Crystallize shield via hasShielder(); Moondrifts via lunarCrystallize reaction
+      ...(this.constellation >= 6 &&
+      (this.teamMeta.hasShielder() ||
+        this.teamMeta.hasReaction("lunarCrystallize"))
         ? [
             new StatBuff(cbs(this, "C6", ["E"]), { receiver: "teamOnField" }, [
               { key: "dmg%", value: 0.17 },
@@ -526,8 +552,21 @@ class Albedo extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     return {
+      // E placement DMG (param1, ATK-scaled)
+      "albedo-skill-placement": {
+        label: { zh: "E设置", en: "E Placement" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Geo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "albedo-blossom": {
-        label: { zh: "E伤害", en: "E" },
+        label: { zh: "E刹那之花", en: "E Blossom" },
         parts: [
           {
             formula: new DirectFormula(
@@ -686,10 +725,17 @@ class Diluc extends CharacterBase {
         ],
       },
       "diluc-burst": {
-        label: { zh: "Q斩击+爆炸", en: "Q Slash + Explosion" },
+        label: { zh: "Q斩击+DoT+爆炸", en: "Q Slash+DoT+Explosion" },
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 1), {
+              element: "Pyro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -849,9 +895,31 @@ class Mona extends CharacterBase {
     return buffs;
   })();
 
+  // E: Mirror Reflection of Doom — DoT (param1) + Explosion (param2)
   // Q: Bubble explosion — Q param2
   protected readonly formulaMap = (() => {
     return {
+      "mona-skill": {
+        label: { zh: "E幻愿", en: "E Phantom" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Hydro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            offField: true,
+          },
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Hydro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            offField: true,
+          },
+        ],
+      },
       "mona-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
@@ -924,10 +992,17 @@ class Jean extends CharacterBase {
         ],
       },
       "jean-burst": {
-        label: { zh: "Q伤害", en: "Q" },
+        label: { zh: "Q爆发+出入领域", en: "Q Burst + Field DMG" },
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 1), {
+              element: "Anemo",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -1116,16 +1191,31 @@ class Venti extends CharacterBase {
           },
         ],
       },
-      // C2: Wherever a Breeze Blows — press E deals 300% of original DMG
-      "venti-c2-skill": {
+      // E Press DMG (param1) — C2 "Wherever a Breeze Blows" baseDmg% +2.0 applied via buff
+      "venti-skill": {
         label: {
-          zh: "E伤害",
-          en: "E",
+          zh: "E点按",
+          en: "E Press",
         },
-        minC: 2,
         parts: [
           {
             formula: new DirectFormula(this.param("E", 1), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      // E Hold DMG (param3)
+      "venti-skill-hold": {
+        label: {
+          zh: "E长按",
+          en: "E Hold",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 3), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",
@@ -1141,7 +1231,7 @@ class Venti extends CharacterBase {
     return [
       { id: "venti-windsunder", count: 1 },
       { id: "venti-burst-total", count: 1 },
-      { id: "venti-c2-skill", count: 1 },
+      { id: "venti-skill", count: 1 },
     ];
   }
 }
@@ -1204,6 +1294,27 @@ class Klee extends CharacterBase {
   // Charged ATK: A param4 (talent-level-dependent)
   protected readonly formulaMap = (() => {
     return {
+      "klee-skill": {
+        label: { zh: "E弹跳+诡雷", en: "E Bounce + Mine" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 3,
+          },
+          {
+            formula: new DirectFormula(this.param("E", 4), {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 8,
+          },
+        ],
+      },
       "klee-charged": {
         label: { zh: "重击", en: "CA" },
         parts: [
@@ -1213,6 +1324,20 @@ class Klee extends CharacterBase {
               ability: "charge",
               reaction: "none",
             }),
+          },
+        ],
+      },
+      // Q: Sparks 'n' Splash — continuous Pyro DMG (Q param1)
+      "klee-burst": {
+        label: { zh: "Q轰轰火花", en: "Q Sparks" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), {
+              element: "Pyro",
+              ability: "burst",
+              reaction: "none",
+            }),
+            offField: true,
           },
         ],
       },

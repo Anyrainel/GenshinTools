@@ -93,6 +93,19 @@ class Varesa extends CharacterBase {
           },
         ],
       },
+      // Q Fiery Passion Flying Kick (param2): enhanced Q kick, rarely used since Apex Drive
+      "varesa-fp-kick": {
+        label: { zh: "Q飞踢(激情)", en: "Q FP Flying Kick" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "varesa-plunge": {
         label: { zh: "下落(高空)", en: "Plunge (High)" },
         parts: [
@@ -446,6 +459,7 @@ class Mavuika extends CharacterBase {
           { key: "baseAtk", value: 200 },
         ])
       );
+      // C2 Ring form: nearby enemy DEF -20% — approximation: always active
       buffs.push(
         new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
           { key: "defReduction%", value: 0.2 },
@@ -566,6 +580,33 @@ class Mavuika extends CharacterBase {
               ability: "charge",
               reaction: "none",
             }),
+          },
+        ],
+      },
+      // E initial Skill DMG (param1): one-time Pyro hit on E cast
+      "mavuika-e-cast": {
+        label: { zh: "E释放", en: "E Cast" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      // E Ring of Searing Radiance (Tap form): off-field periodic Pyro DMG at 2s intervals
+      "mavuika-ring": {
+        label: { zh: "E焚曜之环", en: "E Ring" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            offField: true,
           },
         ],
       },
@@ -721,6 +762,19 @@ class Chasca extends CharacterBase {
         : [];
 
     return {
+      // E Resonance DMG (param1): one-time Anemo Skill hit on E cast
+      "chasca-e-resonance": {
+        label: { zh: "E共鸣", en: "E Resonance" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "chasca-shining-volley": {
         label: {
           zh: "E一轮6枚",
@@ -972,6 +1026,19 @@ class Xilonen extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      // E Rush DMG (param1): one-time Geo Skill hit on E cast, DEF-scaled
+      "xilonen-e-rush": {
+        label: { zh: "E突进", en: "E Rush" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("E", 1),
+              { element: "Geo", ability: "skill", reaction: "none" },
+              "def"
+            ),
+          },
+        ],
+      },
       "xilonen-normal": {
         label: {
           zh: "E普攻4段",
@@ -990,6 +1057,19 @@ class Xilonen extends CharacterBase {
           },
           {
             formula: new DirectFormula(this.param("A", 13), nTag, "def"),
+          },
+        ],
+      },
+      // Q initial Skill DMG (param1): one-time Geo Burst hit, DEF-scaled
+      "xilonen-q-initial": {
+        label: { zh: "Q伤害", en: "Q Initial" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Geo", ability: "burst", reaction: "none" },
+              "def"
+            ),
           },
         ],
       },
@@ -1174,16 +1254,7 @@ class Kinich extends CharacterBase {
     ];
 
     // C2: First Scalespiker Cannon after entering Nightsoul's Blessing +100% DMG
-    // We model this as always applying to the Scalespiker (peak damage)
-    if (this.constellation >= 2) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C2", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-          [{ key: "dmg%", value: 1.0 }]
-        )
-      );
-    }
+    // Modeled via bespokeBuff on separate first-cannon formula entry (see formulaMap).
 
     // C4: Hail to the Almighty Dragonlord Q DMG +70%
     if (this.constellation >= 4) {
@@ -1206,6 +1277,66 @@ class Kinich extends CharacterBase {
   //     because those buffs are scoped to ability:"skill" which the bounce also uses.
   protected readonly formulaMap = (() => {
     return {
+      // Loop Shot: 2 hits per loop (param1 ×2), Dendro Skill DMG
+      "kinich-loop": {
+        label: { zh: "E环绕射击", en: "E Loop Shot" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 2,
+          },
+        ],
+      },
+      // C2: First Scalespiker Cannon gets +100% DMG via bespokeBuff
+      ...(this.constellation >= 2
+        ? {
+            "kinich-cannon-first": {
+              label: { zh: "E首发", en: "E First" },
+              minC: 2 as const,
+              parts: [
+                {
+                  formula: new DirectFormula(this.param("E", 2), {
+                    element: "Dendro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                  bespokeBuff: new StatBuff(
+                    cbs(this, "C2", ["E"]),
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["skill"] },
+                    },
+                    [{ key: "dmg%", value: 1.0 }]
+                  ),
+                },
+                // C6 bounce: 700% ATK, also gets C2 buff (inherits bespokeBuff scope)
+                ...(this.constellation >= 6
+                  ? [
+                      {
+                        formula: new DirectFormula(7.0, {
+                          element: "Dendro",
+                          ability: "skill",
+                          reaction: "none",
+                        }),
+                        bespokeBuff: new StatBuff(
+                          cbs(this, "C2", ["E"]),
+                          {
+                            receiver: "selfOnField",
+                            filter: { abilities: ["skill"] },
+                          },
+                          [{ key: "dmg%", value: 1.0 }]
+                        ),
+                      },
+                    ]
+                  : []),
+              ],
+            } satisfies FormulaEntry,
+          }
+        : {}),
       "kinich-cannon": {
         label: { zh: "E伤害", en: "E" },
         parts: [
@@ -1256,9 +1387,15 @@ class Kinich extends CharacterBase {
   })();
 
   // Rotation: shE Q 5[N2 shE] — ~4 Scalespiker Cannons + Q (Burning carry, KQM)
+  // C2: first cannon gets +100% DMG via separate formula entry
   protected override get comboDescriptor(): ComboDescriptor {
     return [
-      { id: "kinich-cannon", count: 4 },
+      ...(this.constellation >= 2
+        ? [
+            { id: "kinich-cannon-first", count: 1 },
+            { id: "kinich-cannon", count: 3 },
+          ]
+        : [{ id: "kinich-cannon", count: 4 }]),
       { id: "kinich-burst", count: 1 },
     ];
   }

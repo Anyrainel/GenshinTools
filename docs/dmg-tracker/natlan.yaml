@@ -81,89 +81,103 @@
 - id: mavuika-ring-formula
   entity: mavuika
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E Ring of Searing Radiance (Tap form) off-field periodic damage formula
     missing. Fires at 2s intervals (param2 = 230.4% at Lv10); significant
     off-field DPS for support playstyle.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('E', 2) with Pyro/skill/none tag
+    and offField: true. Formula ID: mavuika-ring.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: mavuika-e-cast-formula
   entity: mavuika
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E initial Skill DMG (param1 = 133.9% at Lv10) has no formula entry.
     One-time cast hit when activating All-Fire Armaments.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Pyro/skill/none tag.
+    Formula ID: mavuika-e-cast.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: kinich-loop-shot-formula
   entity: kinich
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E Loop Shot formula missing. Each loop fires 2 hits (param1 x2) as Skill
     DMG. Multiple loops are used per Scalespiker cycle, contributing meaningful
     rotation DPS.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Dendro/skill/none tag
+    and hits: 2. Formula ID: kinich-loop.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: varesa-fp-kick-formula
   entity: varesa
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     Q Fiery Passion Flying Kick (param2 = 1035.4% at Lv10) has no formula
     entry. Distinct from non-FP kick (param1) and Volcano Kablam (param5).
     Rarely used in practice since Apex Drive replaces Q with Kablam.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('Q', 2) with Electro/burst/none tag.
+    Formula ID: varesa-fp-kick.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: chasca-e-resonance-formula
   entity: chasca
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E Resonance DMG (param1) on initial cast has no formula entry. One-time
     Anemo hit when activating Spirit Reins.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Anemo/skill/none tag.
+    Formula ID: chasca-e-resonance.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: xilonen-e-rush-formula
   entity: xilonen
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E Rush DMG (param1 = 322.6% DEF at Lv10) has no formula entry. One-time
     Geo hit on E cast.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Geo/skill/none tag and
+    scalingKey 'def'. Formula ID: xilonen-e-rush.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: xilonen-q-initial-formula
   entity: xilonen
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     Q initial Skill DMG (param1) has no formula entry. Only Q Extra Beats
     are modeled. The initial Q hit is a distinct burst damage instance.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('Q', 1) with Geo/burst/none tag and
+    scalingKey 'def'. Formula ID: xilonen-q-initial.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: iansan-q-atk-scaling-option
   entity: iansan
@@ -185,4 +199,38 @@
     gameplay specifics. The approximation is acceptable.
   created: "2026-03-28"
   resolved: "2026-03-28"
+
+- id: kinich-c2-first-cannon-only
+  entity: kinich
+  rule: S6
+  status: completed
+  category: bug
+  summary: >
+    C2 +100% DMG buff is applied to all Scalespiker Cannon shots via a global
+    StatBuff, but game text specifies it only applies to the first Scalespiker
+    Cannon after entering Nightsoul's Blessing. With combo count: 4, this
+    over-counts C2 DMG by ~3x.
+  detail: >
+    Removed global C2 dmg% StatBuff. Added separate kinich-cannon-first formula
+    entry with bespokeBuff for C2 +100% dmg%. Combo descriptor now uses 1x
+    first + 3x normal cannon at C2+.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: mavuika-c2-ring-def-reduction
+  entity: mavuika
+  rule: S6
+  status: completed
+  category: approximation
+  summary: >
+    C2 DEF reduction (-20%) is modeled as always-active, but game text restricts
+    it to Ring of Searing Radiance form only. During Flamestrider/Q rotation, the
+    Ring is not present so the DEF reduction should not apply to Mavuika's own
+    damage. Currently overcounts Mavuika's personal DPS at C2+.
+  detail: >
+    Changed C2 DEF reduction receiver from "team" to "other". Ring follows the
+    active teammate (not Mavuika), so it only buffs teammates' damage. Mavuika's
+    own Flamestrider/Q rotation is no longer overcounted.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
 

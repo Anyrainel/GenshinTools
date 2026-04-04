@@ -12,7 +12,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "type-check": "tsc -b --noEmit && tsc --project tsconfig.test.json --noEmit",
-    "test": "vitest run",
+    "test": "vitest run && npm run regtest -- run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",

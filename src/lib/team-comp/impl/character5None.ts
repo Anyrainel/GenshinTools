@@ -495,6 +495,8 @@ class TravelerGeo extends CharacterBase {
             ability: "skill",
             reaction: "none",
           }),
+          // C2: Meteorite explosion deals additional Geo DMG equal to Starfell Sword DMG
+          hits: this.constellation >= 2 ? 2 : 1,
         },
       ],
     },
@@ -764,6 +766,19 @@ class TravelerHydro extends CharacterBase {
           },
         ],
       },
+      // E Spiritbreath Thorn (Pneuma-aligned Hydro DMG, fires after Torrent Surge)
+      "traveler-hydro-thorn": {
+        label: { zh: "E灵息之刺", en: "E Spiritbreath Thorn" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 3), {
+              element: "Hydro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "traveler-hydro-burst": {
         label: { zh: "Q伤害×4", en: "Q (×4)" },
         parts: [
@@ -785,6 +800,7 @@ class TravelerHydro extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "traveler-hydro-skill", count: 2 },
+      { id: "traveler-hydro-thorn", count: 2 },
       { id: "traveler-hydro-burst", count: 1 },
     ];
   }

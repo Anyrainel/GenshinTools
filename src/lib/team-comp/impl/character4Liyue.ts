@@ -826,26 +826,36 @@ class Beidou extends CharacterBase {
       ability: "skill" as const,
       reaction: "none" as const,
     };
+    const electroBurstTag = {
+      element: "Electro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "beidou-skill-counter": {
         label: { zh: "E(满格反击)", en: "E Full Counter" },
         parts: [
-          { formula: new DirectFormula(this.param("E", 3), electroSkillTag) },
           {
-            formula: new DirectFormula(this.param("E", 4), electroSkillTag),
-            hits: 2,
+            formula: new DirectFormula(
+              this.param("E", 3) + 2 * this.param("E", 4),
+              electroSkillTag
+            ),
+          },
+        ],
+      },
+      "beidou-burst-initial": {
+        label: { zh: "Q技能伤害", en: "Q Skill DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), electroBurstTag),
           },
         ],
       },
       "beidou-burst-lightning": {
-        label: { zh: "Q伤害", en: "Q" },
+        label: { zh: "Q闪雷", en: "Q Lightning" },
         parts: [
           {
-            formula: new DirectFormula(this.param("Q", 2), {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("Q", 2), electroBurstTag),
             offField: true,
           },
         ],
@@ -857,6 +867,7 @@ class Beidou extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "beidou-skill-counter", count: 1 },
+      { id: "beidou-burst-initial", count: 1 },
       { id: "beidou-burst-lightning", count: 10 },
     ];
   }

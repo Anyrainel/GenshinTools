@@ -47,114 +47,181 @@
 - id: diluc-q-dot-missing
   entity: diluc
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     Q Phoenix DoT (param2) is not modeled. The burst has three distinct damage
     rows (Slashing, DoT, Explosion) but only Slashing and Explosion have formula
     parts. The DoT hits enemies along the Phoenix flight path.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('Q', 2) with Pyro/burst/none tag
+    as a new part in diluc-burst. Updated label to include DoT.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: klee-e-missing
   entity: klee
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E Jumpy Dumpty bounce DMG (param1) and Mine DMG (param4) have no formula
     entries. Both are distinct damage instances in the 5-star E talent table.
-  detail: ""
+  detail: >
+    Added klee-skill formula with two parts: bounce DMG (param1, 3 hits)
+    and mine DMG (param4, 8 hits), both Pyro/skill/none.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: klee-q-missing
   entity: klee
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     Q Sparks 'n' Splash DMG (param1) has no formula entry. This is a distinct
     damage instance in the 5-star Q talent table (continuous Pyro DMG).
-  detail: ""
+  detail: >
+    Added klee-burst formula with DirectFormula using this.param('Q', 1),
+    Pyro/burst/none tag, offField: true.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: jean-q-field-dmg-missing
   entity: jean
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     Q Dandelion Field entering/exiting DMG (param2) has no formula part. The
     burst talent table lists this as a distinct Anemo damage instance separate
     from the initial burst DMG.
-  detail: ""
+  detail: >
+    Added DirectFormula using this.param('Q', 2) with Anemo/burst/none tag
+    as a second part in jean-burst. Updated label to reflect field DMG.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: mona-e-missing
   entity: mona
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E Mirror Reflection of Doom has two damage instances — phantom DoT (param1)
     and explosion DMG (param2) — neither is modeled in formulaMap.
-  detail: ""
+  detail: >
+    Added mona-skill formula with two parts: DoT (param1) and explosion
+    (param2), both Hydro/skill/none with offField: true.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: venti-e-c0-missing
   entity: venti
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E press DMG formula (venti-c2-skill) is gated behind minC:2, so C0-C1
     Venti has no E damage formula at all. The E press (param1) is a standard
     5-star skill damage instance that should exist unconditionally.
-  detail: ""
+  detail: >
+    Renamed venti-c2-skill to venti-skill and removed minC:2 gate. The C2
+    baseDmg% +2.0 buff already applies via the existing buff entry, so C2+
+    users still get the 300% multiplier automatically.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: durin-e-missing
   entity: durin
   rule: S8b
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     E Transmutation damage instances have no formula entries. Confirmation of
     Purity (param1) and Denial of Darkness (param2+param3+param4) are distinct
     5-star skill damage instances that should be modeled.
-  detail: ""
+  detail: >
+    Added durin-skill-purity (param1, single hit) and durin-skill-darkness
+    (param2+param3+param4, 3 consecutive hits), both Pyro/skill/none.
+    Spread into all formulaMap return paths (white, dark-C1, dark-noC1).
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: diona-c6-hp-option
   entity: diona
   rule: S6
-  status: open
+  status: completed
   category: bug
   summary: >
     C6 EM +200 buff is conditional on character HP > 50% but is implemented
     as always-active without an OptionMap. Per S6, HP-state conditions require
     OptionMap with explicit tiers.
-  detail: ""
+  detail: >
+    Added dionaOption OptionDef with above50/below50 choices. C6 EM +200
+    buff now gated behind hpState === "above50". Default is above50 (EM active).
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
 
 - id: albedo-c6-lunar-crystallize
   entity: albedo
   rule: S10
-  status: open
+  status: completed
   category: bug
   summary: >
     C6 DMG +17% uses hasShielder() as proxy for Crystallize shield but does
     not check for lunarCrystallize (Moondrift). On Moonsign teams without a
     traditional shielder, the buff incorrectly deactivates even though
     Moondrifts satisfy the "阳华领域中存在月笼" condition.
-  detail: ""
+  detail: >
+    Added hasReaction("lunarCrystallize") as an alternative condition
+    alongside hasShielder() using OR logic.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-04"
+
+- id: rosaria-p1-receiver
+  entity: rosaria
+  rule: U1
+  status: completed
+  category: bug
+  summary: >
+    P1 CR +12% buff uses receiver "selfOnField" but game text has no on-field
+    restriction ("罗莎莉亚的暴击率提升12%"). Should be "self" so Rosaria's
+    off-field Q Ice Lance DoT also benefits from the CRIT Rate increase.
+  detail: >
+    Changed P1 buff receiver from "selfOnField" to "self".
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: albedo-e-placement-missing
+  entity: albedo
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Solar Isotoma placement DMG (param1, ATK-scaled) has no formula entry.
+    The E talent table has two distinct damage rows — placement DMG (param1,
+    ATK-scaled) and Transient Blossom DMG (param2, DEF-scaled) — but only the
+    Blossom is modeled.
+  detail: >
+    Added albedo-skill-placement formula with DirectFormula using
+    this.param('E', 1), Geo/skill/none tag, ATK-scaled (default).
+    Renamed existing E label to "E刹那之花" for clarity.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: venti-e-hold-missing
+  entity: venti
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Hold DMG (param3) has no formula entry. The E talent table lists both
+    Press DMG (param1) and Hold DMG (param3) as distinct damage instances with
+    different multipliers. Only the press version exists (gated behind C2).
+  detail: >
+    Added venti-skill-hold formula with DirectFormula using
+    this.param('E', 3), Anemo/skill/none tag. Updated press label
+    to "E点按" and hold label to "E长按" for distinction.
+  created: "2026-04-04"
+  resolved: "2026-04-04"

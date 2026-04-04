@@ -28,15 +28,3 @@
     Negligible impact; not worth adding a formula for.
   created: "2026-03-28"
   resolved: "2026-03-29"
-
-- id: "tartaglia-burst-ranged-missing"
-  entity: "tartaglia"
-  rule: "S8b"
-  status: completed
-  category: "missing-formula"
-  summary: "Q Ranged Stance (Flash of Havoc) damage ({param3}) has no formula. This is a distinct 5★ Q damage instance — per S8b all Q damage rows must be modeled."
-  detail: >
-    Added DirectFormula using this.param('Q', 3) with Hydro/burst/none tag
-    as "tartaglia-burst-ranged" entry in formulaMap.
-  created: "2026-04-04"
-  resolved: "2026-04-04"

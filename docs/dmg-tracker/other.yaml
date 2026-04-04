@@ -92,35 +92,6 @@
   created: "2026-03-29"
   resolved: "2026-03-29"
 
-- id: traveler-electro-e-pickup-receiver
-  entity: traveler_electro
-  rule: U1
-  status: completed
-  category: bug
-  summary: >
-    E Abundance Amulet ER buff and P2 ScalingBuff use receiver "team" instead of
-    "teamOnField". Abundance Amulets are special objects that only the on-field
-    character can pick up.
-  detail: >
-    Changed receiver from "team" to "teamOnField" on both the E StatBuff
-    (ER bonus) and the P2 ScalingBuff (10% of Traveler ER).
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: traveler-dendro-q-explosion
-  entity: traveler_dendro
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    Q Lea Lotus Lamp Explosion DMG (param2, Pyro transfiguration) has no formula
-    entry. This is a distinct damage instance in the 5-star Q talent table.
-  detail: >
-    Added DirectFormula using this.param('Q', 2) with Dendro/burst/none tag
-    as "traveler-dendro-burst-explosion" entry, gated on Pyro teammate presence.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
 - id: aloy-p2-ramp-hardcoded
   entity: aloy
   rule: S12
@@ -130,5 +101,34 @@
     P2 Cryo DMG Bonus ramps from 0% to 35% over 10s during Rushing Ice but is
     hardcoded to the maximum 35%. No OptionMap or amortized average is used.
   detail: aloy is not a popular character, not worth implementing the extra OptionMap.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: traveler-geo-c2-meteorite-explosion
+  entity: traveler_geo
+  rule: S9
+  status: completed
+  category: bug
+  summary: >
+    C2 meteorite explosion (deals additional Geo DMG equal to Starfell Sword damage)
+    is not modeled. At C2+, the E effectively deals double damage but no constellation
+    handling exists.
+  detail: >
+    Added hits: 2 at C2+ to traveler-geo-skill formula part (hits: this.constellation >= 2 ? 2 : 1).
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: traveler-hydro-e-spiritbreath-thorn
+  entity: traveler_hydro
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Spiritbreath Thorn DMG (Pneuma-aligned Hydro, param3) has no formula entry.
+    This is a distinct damage instance in the 5-star E talent table that fires at
+    intervals after Torrent Surge.
+  detail: >
+    Added "traveler-hydro-thorn" DirectFormula using this.param('E', 3) with
+    Hydro/skill/none tag. Added to combo with count 2 (one per E cast).
   created: "2026-04-04"
   resolved: "2026-04-04"

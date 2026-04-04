@@ -931,6 +931,16 @@ class Nilou extends CharacterBase {
           },
         ],
       },
+      // E Whirling Steps: initial + 1st + 2nd + Water Wheel (all HP% scaling, Skill DMG)
+      "nilou-e-whirl": {
+        label: { zh: "E旋舞步", en: "E Whirling Steps" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), eTag, "hp") },
+          { formula: new DirectFormula(this.param("E", 2), eTag, "hp") },
+          { formula: new DirectFormula(this.param("E", 3), eTag, "hp") },
+          { formula: new DirectFormula(this.param("E", 5), eTag, "hp") },
+        ],
+      },
       "nilou-burst": {
         label: { zh: "Q 2段", en: "Q 2-hit" },
         parts: [
