@@ -1998,5 +1998,12 @@ export const i18nUiData = {
     },
     linkedAccount: { en: "Account:", zh: "账号：" },
     createNew: { en: "Create New Tier List", zh: "创建新排行榜" },
+    importChoice: { en: "Import Tier List", zh: "导入排行榜" },
+    importChoiceDesc: {
+      en: "Override the current tier list or create a new one?",
+      zh: "覆盖当前排行榜还是创建新的？",
+    },
+    importOverride: { en: "Override Current", zh: "覆盖当前" },
+    importCreateNew: { en: "Create New", zh: "创建新的" },
   },
 };

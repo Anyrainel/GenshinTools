@@ -9,6 +9,16 @@ import { TierListManagerDialog } from "@/components/tier-list/TierListManagerDia
 import { TierTable } from "@/components/tier-list/TierTable";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -150,29 +160,63 @@ export function CharacterTierListView({
     return loadPresetPayload(presetModules, path);
   }, []);
 
-  const handleImport = (importedData: TierListData) => {
-    // Normalize imported data assignments using generateId
+  const [pendingImportData, setPendingImportData] =
+    useState<TierListData | null>(null);
+
+  const normalizeImportData = (importedData: TierListData): TierListData => {
     const normalizedAssignments: TierAssignment = {};
     if (importedData.tierAssignments) {
       for (const [key, value] of Object.entries(importedData.tierAssignments)) {
         if (charactersById[key]) {
           normalizedAssignments[key] = value;
         } else {
-          // Try to generate ID from the key (assuming it's an English name)
           const generatedId = generateId(key);
           if (charactersById[generatedId]) {
             normalizedAssignments[generatedId] = value;
           }
         }
       }
-      importedData.tierAssignments = normalizedAssignments;
     }
+    return { ...importedData, tierAssignments: normalizedAssignments };
+  };
 
+  const handleImport = (importedData: TierListData) => {
+    const normalized = normalizeImportData(importedData);
+    const listCount = Object.keys(useTierStore.getState().tierLists).length;
+    if (listCount > 1) {
+      setPendingImportData(normalized);
+    } else {
+      loadTierListData({
+        tierAssignments: normalized.tierAssignments,
+        tierCustomization: normalized.tierCustomization,
+        customTitle: normalized.customTitle || "",
+      });
+      toast.success(t.ui("messages.tierListLoaded"));
+    }
+  };
+
+  const handleImportOverride = () => {
+    if (!pendingImportData) return;
     loadTierListData({
-      tierAssignments: importedData.tierAssignments,
-      tierCustomization: importedData.tierCustomization,
-      customTitle: importedData.customTitle || "",
+      tierAssignments: pendingImportData.tierAssignments,
+      tierCustomization: pendingImportData.tierCustomization,
+      customTitle: pendingImportData.customTitle || "",
     });
+    setPendingImportData(null);
+    toast.success(t.ui("messages.tierListLoaded"));
+  };
+
+  const handleImportCreateNew = () => {
+    if (!pendingImportData) return;
+    useTierStore
+      .getState()
+      .createTierList(pendingImportData.customTitle || undefined);
+    useTierStore.getState().loadTierListData({
+      tierAssignments: pendingImportData.tierAssignments,
+      tierCustomization: pendingImportData.tierCustomization,
+      customTitle: pendingImportData.customTitle || "",
+    });
+    setPendingImportData(null);
     toast.success(t.ui("messages.tierListLoaded"));
   };
 
@@ -520,6 +564,29 @@ export function CharacterTierListView({
         isOpen={isManagerDialogOpen}
         onClose={() => setIsManagerDialogOpen(false)}
       />
+
+      <AlertDialog
+        open={!!pendingImportData}
+        onOpenChange={(open) => !open && setPendingImportData(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t.ui("tierList.importChoice")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.ui("tierList.importChoiceDesc")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleImportOverride}>
+              {t.ui("tierList.importOverride")}
+            </AlertDialogAction>
+            <AlertDialogAction onClick={handleImportCreateNew}>
+              {t.ui("tierList.importCreateNew")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
