@@ -49,7 +49,7 @@ export function FormulaLabel({
           {t.format("common.constellationFormat", minC)}
         </span>
       )}
-      <span className={cn("truncate", isLocked && "text-muted-foreground")}>
+      <span className={cn("break-words", isLocked && "text-muted-foreground")}>
         {t.resolveLabel(label)}
       </span>
       {offField !== "none" && (

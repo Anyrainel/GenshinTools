@@ -65,7 +65,22 @@ class Varesa extends CharacterBase {
     const kickMult = this.param("Q", 1);
     const naMult = this.param("A", 16);
     const qMult = this.param("Q", 5);
+    const eMult = this.param("E", 1);
+    const eFPMult = this.param("E", 2);
+    const electroSkill = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     return {
+      "varesa-e": {
+        label: { zh: "E初始", en: "E Initial" },
+        parts: [{ formula: new DirectFormula(eMult, electroSkill) }],
+      },
+      "varesa-e-fp": {
+        label: { zh: "E后续", en: "E Following" },
+        parts: [{ formula: new DirectFormula(eFPMult, electroSkill) }],
+      },
       "varesa-kick": {
         label: { zh: "Q飞踢", en: "Q Flying Kick" },
         parts: [

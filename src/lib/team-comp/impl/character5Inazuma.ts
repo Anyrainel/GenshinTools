@@ -671,9 +671,15 @@ class KamisatoAyaka extends CharacterBase {
   protected readonly formulaMap = (() => {
     const cutMult = this.param("Q", 1);
     const bloomMult = this.param("Q", 2);
+    const eMult = this.param("E", 1);
     const cryoNormal = {
       element: "Cryo" as const,
       ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const cryoSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
       reaction: "none" as const,
     };
     const cryoBurst = {
@@ -682,21 +688,28 @@ class KamisatoAyaka extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      "ayaka-skill": {
+        label: { zh: "E", en: "E" },
+        parts: [{ formula: new DirectFormula(eMult, cryoSkill) }],
+      },
       "ayaka-normal": {
         label: { zh: "普攻（5段）", en: "Normal (5-hit)" },
         parts: [
-          { formula: new DirectFormula(0.904, cryoNormal) },
-          { formula: new DirectFormula(0.962, cryoNormal) },
-          { formula: new DirectFormula(1.238, cryoNormal) },
-          { formula: new DirectFormula(0.448, cryoNormal), hits: 3 },
-          { formula: new DirectFormula(1.545, cryoNormal) },
+          { formula: new DirectFormula(this.param("A", 1), cryoNormal) },
+          { formula: new DirectFormula(this.param("A", 2), cryoNormal) },
+          { formula: new DirectFormula(this.param("A", 3), cryoNormal) },
+          {
+            formula: new DirectFormula(this.param("A", 4), cryoNormal),
+            hits: 3,
+          },
+          { formula: new DirectFormula(this.param("A", 7), cryoNormal) },
         ],
       },
       "ayaka-charged": {
         label: { zh: "重击×3", en: "CA (×3)" },
         parts: [
           {
-            formula: new DirectFormula(1.09, {
+            formula: new DirectFormula(this.param("A", 8), {
               element: "Cryo",
               ability: "charge",
               reaction: "none",

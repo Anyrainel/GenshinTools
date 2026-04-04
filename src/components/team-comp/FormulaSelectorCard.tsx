@@ -724,7 +724,10 @@ export function FormulaSelectorCard({
 
                 return (
                   <div className="rounded-lg border border-border bg-black/5 overflow-hidden">
-                    <div className="px-2 py-1 flex flex-wrap items-start justify-center gap-x-4 lg:gap-x-6 2xl:gap-x-8 gap-y-1">
+                    <div className="px-2 pt-1 text-[11px] md:text-xs font-semibold text-muted-foreground">
+                      {t.ui("teamComp.transformativeReactionDmg")}
+                    </div>
+                    <div className="px-2 pb-1 flex flex-wrap items-start justify-center gap-x-4 lg:gap-x-6 2xl:gap-x-8 gap-y-1">
                       {rxEntries.map(([formulaId, label]) => {
                         const eligible =
                           teamBuild.reactionProvider.getEligibleCharacters(
