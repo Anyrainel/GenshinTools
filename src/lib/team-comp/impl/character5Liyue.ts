@@ -134,26 +134,11 @@ class Zibai extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    // Normal Attacks in Phase Shift (DEF Scaled, plain DirectFormula)
-    // Lv10: 101.8%/93.8%/62.2%×2/156.9%, Lv13 (C3+): 120.2%/110.7%/73.5%×2/185.3%
-    const n1 = this.param("E", 6);
-    const n2 = this.param("E", 7);
-    const n3 = this.param("E", 8); // x2
-    const n4 = this.param("E", 10);
-    // N4 Gleam: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
-    // Lv10: 53% DEF, Lv13: 62.6% DEF — directCoeff (×1.6 for lunarCrystallize) applied internally
-    const n4GleamTalent = this.param("E", 3);
-
     const steed1 = this.param("E", 1);
     // Steed 2nd: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
     // P1 (+60% DEF) and C2 (+550% DEF) are ScalingBuffs above, not baked in here
     // Lv10: 253.7% DEF, Lv13: 299.6% DEF — directCoeff (×1.6) applied internally
     const steed2Talent = this.param("E", 2);
-
-    const q1 = this.param("Q", 1);
-    // Q 2nd: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
-    // Lv10: 319.9% DEF, Lv13: 377.7% DEF — directCoeff (×1.6) applied internally
-    const q2Talent = this.param("Q", 2);
 
     // Moonsign: Ascendant Gleam (满辉) requires 2+ Moonsign faction members
     const hasAscendantGleam = this.teamMeta.countByFaction("Moonsign") >= 2;
@@ -169,21 +154,21 @@ class Zibai extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              n1,
+              this.param("E", 6),
               { element: "Geo", ability: "normal", reaction: "none" },
               "def"
             ),
           },
           {
             formula: new DirectFormula(
-              n2,
+              this.param("E", 7),
               { element: "Geo", ability: "normal", reaction: "none" },
               "def"
             ),
           },
           {
             formula: new DirectFormula(
-              n3,
+              this.param("E", 8),
               { element: "Geo", ability: "normal", reaction: "none" },
               "def"
             ),
@@ -191,7 +176,7 @@ class Zibai extends CharacterBase {
           },
           {
             formula: new DirectFormula(
-              n4,
+              this.param("E", 10),
               { element: "Geo", ability: "normal", reaction: "none" },
               "def"
             ),
@@ -202,7 +187,7 @@ class Zibai extends CharacterBase {
                   // N4 Gleam: "视为月结晶反应伤害" → LunarDirectFormula
                   // C4 Scattermoon Splendor (+150% baseDmg%) applied via StatBuff above
                   formula: new LunarDirectFormula(
-                    n4GleamTalent,
+                    this.param("E", 3),
                     {
                       element: "Geo",
                       ability: "normal",
@@ -280,7 +265,7 @@ class Zibai extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              q1,
+              this.param("Q", 1),
               { element: "Geo", ability: "burst", reaction: "none" },
               "def"
             ),
@@ -288,7 +273,7 @@ class Zibai extends CharacterBase {
           {
             // Q 2nd is Lunar-Crystallize DMG → LunarDirectFormula
             formula: new LunarDirectFormula(
-              q2Talent,
+              this.param("Q", 2),
               {
                 element: "Geo",
                 ability: "burst",
@@ -379,7 +364,6 @@ class Xianyun extends CharacterBase {
   // E Driftcloud Wave 3-Skyladder (Lv10): 607.7%
   // E Driftcloud Wave 3-Skyladder (Lv13 C5+): 717.4%
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 4);
     const burstTag = {
       element: "Anemo" as const,
       ability: "burst" as const,
@@ -393,7 +377,7 @@ class Xianyun extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 4), {
               element: "Anemo",
               // Driftcloud Wave is considered Plunging Attack DMG
               ability: "plunge",
@@ -491,16 +475,12 @@ class Baizhu extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // E Gossamer Sprite DMG: Lv10 142.6%, Lv13 (C3+) 168.3%
-    const eMult = this.param("E", 1);
-    // Q Spiritvein DMG: Lv10 174.7%, Lv13 (C3+) 206.3%
-    const qMult = this.param("Q", 7);
     return {
       "baizhu-skill": {
         label: { zh: "E 游丝徵灵", en: "E Gossamer Sprite" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Dendro",
               ability: "skill",
               reaction: "none",
@@ -514,7 +494,7 @@ class Baizhu extends CharacterBase {
         label: { zh: "Q 灵气脉", en: "Q Spiritvein" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 7), {
               element: "Dendro",
               ability: "burst",
               reaction: "none",
@@ -602,7 +582,6 @@ class Yelan extends CharacterBase {
     const barbMult = this.param("A", 7);
     const c6BarbMult = barbMult * 1.56;
 
-    const eMult = this.param("E", 1);
     const qThrowMult = this.param("Q", 2);
 
     const formulas: Record<string, FormulaEntry> = {
@@ -611,7 +590,7 @@ class Yelan extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              eMult,
+              this.param("E", 1),
               { element: "Hydro", ability: "skill", reaction: "none" },
               "hp"
             ),
@@ -826,16 +805,8 @@ class Zhongli extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // E levels: Hold DMG / Stele creation / Resonance (Lv10 / Lv13)
-    const eHoldMult = this.param("E", 4);
-    const eSteleMult = this.param("E", 1);
-    const eResonanceMult = this.param("E", 2);
-    const qMult = this.param("Q", 1);
-
     // P2: Dominance of Earth — E-type (Hold/Stele/Resonance) extra HP term (1.9% Max HP)
     const eHpExtra = { key: "hp" as const, multiplier: 0.019 };
-    // P2: Dominance of Earth — Q DMG extra HP term (33% Max HP)
-    const qHpExtra = { key: "hp" as const, multiplier: 0.33 };
 
     const geoSkillTag = {
       element: "Geo" as const,
@@ -849,12 +820,17 @@ class Zhongli extends CharacterBase {
         parts: [
           {
             // Hold AoE Geo DMG
-            formula: new DirectFormula(eHoldMult, geoSkillTag, "atk", eHpExtra),
+            formula: new DirectFormula(
+              this.param("E", 4),
+              geoSkillTag,
+              "atk",
+              eHpExtra
+            ),
           },
           {
             // Stone Stele creation AoE Geo DMG
             formula: new DirectFormula(
-              eSteleMult,
+              this.param("E", 1),
               geoSkillTag,
               "atk",
               eHpExtra
@@ -871,7 +847,7 @@ class Zhongli extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              eResonanceMult,
+              this.param("E", 2),
               geoSkillTag,
               "atk",
               eHpExtra
@@ -885,10 +861,10 @@ class Zhongli extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              qMult,
+              this.param("Q", 1),
               { element: "Geo", ability: "burst", reaction: "none" },
               "atk",
-              qHpExtra
+              { key: "hp" as const, multiplier: 0.33 }
             ),
           },
         ],
@@ -988,35 +964,35 @@ class HuTao extends CharacterBase {
   protected readonly formulaMap = (() => {
     const isLowHP = this.hpState === "low" || this.hpState === "1";
 
-    const bbMult = this.param("E", 3);
     // C2: Blood Blossom DMG += 10% Max HP at time of application
     const bbExtra =
       this.constellation >= 2
         ? { key: "hp" as const, multiplier: 0.1 }
         : undefined;
 
-    const qMult = this.param("Q", isLowHP ? 2 : 1);
-
-    const pyroTag = {
-      element: "Pyro" as const,
-      ability: "charge" as const,
-      reaction: "none" as const,
-    };
-    const pyroSkillTag = {
-      element: "Pyro" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
     return {
       "hutao-charged": {
         label: { zh: "E重击", en: "E CA" },
-        parts: [{ formula: new DirectFormula(this.param("A", 8), pyroTag) }],
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 8), {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
       },
       "hutao-blood-blossom": {
         label: { zh: "E血梅香(单次)", en: "E Blood Blossom (x1)" },
         parts: [
           {
-            formula: new DirectFormula(bbMult, pyroSkillTag, "atk", bbExtra),
+            formula: new DirectFormula(
+              this.param("E", 3),
+              { element: "Pyro", ability: "skill", reaction: "none" },
+              "atk",
+              bbExtra
+            ),
             offField: true,
           },
         ],
@@ -1026,7 +1002,7 @@ class HuTao extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", isLowHP ? 2 : 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -1154,15 +1130,12 @@ class Shenhe extends CharacterBase {
 
   // E Press: Lv10 251%, Lv13 (C3+) 296%
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    // Q DoT: Lv10 59.6%, Lv13 (C5+) 70.4%
-    const qDotMult = this.param("Q", 3);
     return {
       "shenhe-skill": {
         label: { zh: "E点按", en: "E Spring Spirit Press" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Cryo",
               ability: "skill",
               reaction: "none",
@@ -1186,7 +1159,7 @@ class Shenhe extends CharacterBase {
         label: { zh: "Q持续伤害", en: "Q DoT" },
         parts: [
           {
-            formula: new DirectFormula(qDotMult, {
+            formula: new DirectFormula(this.param("Q", 3), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -1371,13 +1344,6 @@ class Keqing extends CharacterBase {
   // Charged ATK: Lv10 152%+170% = 322% (no constellation boost)
   // Q: Lv10 initial 158% + 8×43.2% + final 340%, Lv13 (C3+) 187% + 8×51% + 401%
   protected readonly formulaMap = (() => {
-    // E Slashing DMG: Lv10 302%, Lv13 (C3+) 357%
-    const eSlash = this.param("E", 2);
-    // E Thunderclap Slash: Lv10 151.2%, Lv13 (C3+) 178.5%
-    const eThunderclap = this.param("E", 3);
-    const qInitial = this.param("Q", 1);
-    const qSlash = this.param("Q", 2);
-    const qFinal = this.param("Q", 3);
     const electroSkillTag = {
       element: "Electro" as const,
       ability: "skill" as const,
@@ -1392,9 +1358,9 @@ class Keqing extends CharacterBase {
       "keqing-skill": {
         label: { zh: "E 星斗归位", en: "E Stellar Restoration" },
         parts: [
-          { formula: new DirectFormula(eSlash, electroSkillTag) },
+          { formula: new DirectFormula(this.param("E", 2), electroSkillTag) },
           {
-            formula: new DirectFormula(eThunderclap, electroSkillTag),
+            formula: new DirectFormula(this.param("E", 3), electroSkillTag),
             hits: 2,
           },
         ],
@@ -1421,9 +1387,12 @@ class Keqing extends CharacterBase {
       "keqing-burst": {
         label: { zh: "Q 全10段", en: "Q 10 hits" },
         parts: [
-          { formula: new DirectFormula(qInitial, electroBurstTag) },
-          { formula: new DirectFormula(qSlash, electroBurstTag), hits: 8 },
-          { formula: new DirectFormula(qFinal, electroBurstTag) },
+          { formula: new DirectFormula(this.param("Q", 1), electroBurstTag) },
+          {
+            formula: new DirectFormula(this.param("Q", 2), electroBurstTag),
+            hits: 8,
+          },
+          { formula: new DirectFormula(this.param("Q", 3), electroBurstTag) },
         ],
       },
     };
@@ -1462,15 +1431,12 @@ class Qiqi extends CharacterBase {
     // E Herald of Frost DMG: Lv10 64.8%, Lv13 (C5+ upgrades E): 76.5%
     // ~8 hits over 15s duration
     // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
-    const eHeraldMult = this.param("E", 5);
-    // Q Skill DMG: Lv10 513%, Lv13 (C3+) 605%
-    const qMult = this.param("Q", 3);
     return {
       "qiqi-skill-hit": {
         label: { zh: "E伤害×8", en: "E (×8)" },
         parts: [
           {
-            formula: new DirectFormula(eHeraldMult, {
+            formula: new DirectFormula(this.param("E", 5), {
               element: "Cryo",
               ability: "skill",
               reaction: "none",
@@ -1484,7 +1450,7 @@ class Qiqi extends CharacterBase {
         label: { zh: "Q伤害", en: "Q DMG" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 3), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",

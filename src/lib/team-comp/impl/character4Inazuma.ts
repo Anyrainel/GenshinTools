@@ -111,7 +111,6 @@ class ShikanoinHeizou extends CharacterBase {
   protected readonly formulaMap = (() => {
     const eMult =
       this.param("E", 1) + 4 * this.param("E", 2) + this.param("E", 3);
-    const qMult = this.param("Q", 1);
     return {
       "heizou-skill": {
         label: { zh: "E(正论)", en: "E (Full Conviction)" },
@@ -129,7 +128,7 @@ class ShikanoinHeizou extends CharacterBase {
         label: { zh: "Q", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -196,7 +195,6 @@ class KukiShinobu extends CharacterBase {
   // Q: Single hit param1 % HP
   // HP ≥ 50%: normal duration → 7 hits; HP ≤ 50%: extended duration → 12 hits
   protected readonly formulaMap = (() => {
-    const qHitMult = this.param("Q", 1);
     const qHits = this.hpState === "high" ? 7 : 12;
     const canHyperbloom = this.teamMeta.hasReaction("hyperbloom");
     return {
@@ -205,7 +203,7 @@ class KukiShinobu extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              qHitMult,
+              this.param("Q", 1),
               {
                 element: "Electro",
                 ability: "burst",
@@ -287,22 +285,23 @@ class Sayu extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const anemoSkill = {
-      element: "Anemo" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
     const anemoBurst = {
       element: "Anemo" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    // Muji-Muji Daruma DMG: Q param4
-    const darumaScaling = this.param("Q", 4);
     return {
       "sayu-e-kick": {
         label: { zh: "E舞踢", en: "E Kick" },
-        parts: [{ formula: new DirectFormula(this.param("E", 4), anemoSkill) }],
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 4), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
       },
       "sayu-q-initial": {
         label: { zh: "Q初击", en: "Q Initial" },
@@ -312,7 +311,7 @@ class Sayu extends CharacterBase {
         label: { zh: "Q达摩", en: "Q Daruma" },
         parts: [
           {
-            formula: new DirectFormula(darumaScaling, anemoBurst),
+            formula: new DirectFormula(this.param("Q", 4), anemoBurst),
             offField: true,
           },
         ],
@@ -346,25 +345,22 @@ class Thoma extends CharacterBase {
   }
 
   // Q Fiery Collapse: Q param2 ATK + 2.2% HP (P2)
-  protected readonly formulaMap = (() => {
-    const qMult = this.param("Q", 2);
-    return {
-      "thoma-burst-collapse": {
-        label: { zh: "Q崩破", en: "Q Collapse" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              qMult,
-              { element: "Pyro", ability: "burst", reaction: "none" },
-              "atk",
-              { key: "hp", multiplier: 0.022 }
-            ),
-            offField: true,
-          },
-        ],
-      },
-    };
-  })();
+  protected readonly formulaMap = {
+    "thoma-burst-collapse": {
+      label: { zh: "Q崩破", en: "Q Collapse" },
+      parts: [
+        {
+          formula: new DirectFormula(
+            this.param("Q", 2),
+            { element: "Pyro", ability: "burst", reaction: "none" },
+            "atk",
+            { key: "hp", multiplier: 0.022 }
+          ),
+          offField: true,
+        },
+      ],
+    },
+  };
 }
 
 @RegisterCharacter("gorou")
@@ -374,10 +370,9 @@ class Gorou extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
     // E/Q: flat DEF — E param2
-    const defFlat = this.param("E", 2);
     buffs.push(
       new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "teamOnField" }, [
-        { key: "def", value: defFlat },
+        { key: "def", value: this.param("E", 2) },
       ])
     );
     // E/Q: 3+ Geo → Geo DMG bonus (E param3)
@@ -420,22 +415,10 @@ class Gorou extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
-    const ccMult = this.param("Q", 2);
-    const eTag = {
-      element: "Geo" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
     const qTag = {
       element: "Geo" as const,
       ability: "burst" as const,
       reaction: "none" as const,
-    };
-    const eBespokeTarget = {
-      receiver: "selfOnField" as const,
-      filter: { abilities: ["skill" as const] },
     };
     const qBespokeTarget = {
       receiver: "selfOnField" as const,
@@ -446,10 +429,17 @@ class Gorou extends CharacterBase {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, eTag),
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Geo",
+              ability: "skill",
+              reaction: "none",
+            }),
             bespokeBuff: new ScalingBuff(
               cbs(this, "P2", ["E"]),
-              eBespokeTarget,
+              {
+                receiver: "selfOnField" as const,
+                filter: { abilities: ["skill" as const] },
+              },
               [],
               "def",
               "baseDmg",
@@ -459,10 +449,10 @@ class Gorou extends CharacterBase {
         ],
       },
       "gorou-burst": {
-        label: { zh: "Q+结晶崩塌", en: "Q + Crystal Collapse" },
+        label: { zh: "Q+结晶���塌", en: "Q + Crystal Collapse" },
         parts: [
           {
-            formula: new DirectFormula(qMult, qTag, "def"),
+            formula: new DirectFormula(this.param("Q", 1), qTag, "def"),
             bespokeBuff: new ScalingBuff(
               cbs(this, "P2", ["Q"]),
               qBespokeTarget,
@@ -473,7 +463,7 @@ class Gorou extends CharacterBase {
             ),
           },
           {
-            formula: new DirectFormula(ccMult, qTag, "def"),
+            formula: new DirectFormula(this.param("Q", 2), qTag, "def"),
             bespokeBuff: new ScalingBuff(
               cbs(this, "P2", ["Q"]),
               qBespokeTarget,
@@ -524,16 +514,13 @@ class KujouSara extends CharacterBase {
 
   // E Ambush: E param1; Q Titanbreaker: Q param1 + Stormcluster Q param2 (C4: 6×)
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const titanMult = this.param("Q", 1);
-    const clusterMult = this.param("Q", 2);
     const clusterCount = this.constellation >= 4 ? 6 : 4;
     return {
       "sara-skill": {
         label: { zh: "E伏伤害", en: "E Ambush" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Electro",
               ability: "skill",
               reaction: "none",
@@ -548,14 +535,14 @@ class KujouSara extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(titanMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Electro",
               ability: "burst",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(clusterMult, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Electro",
               ability: "burst",
               reaction: "none",

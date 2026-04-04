@@ -307,7 +307,7 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.uidInvalid")}
                 </p>
               )}
-              <p className="text-xs text-sky-400 text-right">
+              <p className="text-xs text-sky-600 text-right">
                 {t.ui("import.goodSplitFileHint")}
               </p>
             </div>
@@ -361,7 +361,7 @@ export const AccountImportControl = forwardRef<
                   variant="secondary"
                   onClick={handleUidImport}
                   disabled={!uidInput || !isValidUid(uidInput) || isBusy}
-                  className="flex-grow sm:flex-1 lg:ml-6"
+                  className="flex-grow sm:flex-1 lg:ml-6 border-2 border-primary bg-primary/15 text-foreground font-semibold"
                 >
                   {isBusy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -375,6 +375,26 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.uidInvalid")}
                 </p>
               )}
+              <p className="text-xs text-sky-600 text-right">
+                {t
+                  .ui("import.enkaStatusHint")
+                  .split(/\{link\}|\{\/link\}/)
+                  .map((part, i) =>
+                    i === 1 ? (
+                      <a
+                        key={i}
+                        href="https://status.enka.network/"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline text-sky-300 hover:text-sky-200"
+                      >
+                        {part}
+                      </a>
+                    ) : (
+                      <Fragment key={i}>{part}</Fragment>
+                    )
+                  )}
+              </p>
             </div>
           </div>
         </div>

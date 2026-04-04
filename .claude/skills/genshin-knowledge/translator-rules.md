@@ -189,7 +189,9 @@ For every formula in `formulaMap`, verify the correct class. Wrong class = **[BU
 
 **Exception — multiplier-scaling talents:** When a talent defines its multiplier as "X% **per** Y" (e.g., "273.6% EM per Verdant Dew"), the count scales a single hit's multiplier — use `talentMultiplier: X * count` without `hits`. Only use `hits` or separate parts when the talent table lists N distinct damage instances (N rows or "×N" notation for repeated strikes).
 
-**Not a hit count change — multiple charges:** When a constellation or passive grants additional *charges* (use counts) for a skill (e.g., "初始拥有2次可用次数" → C1 adds a third charge), this does **not** increase the hit count of a single use. Each use still deals the same number of hits. Multiple charges allow more frequent rotations, which is a rotation-level concern — **do not** multiply `hits` by the number of charges.
+**Not a hit count change — multiple charges:** When a character's elemental skill has multiple charges (base or granted by constellation/passive, e.g., "初始拥有2次可用次数"), this does **not** increase the hit count of a single use. Each use still deals the same number of hits — the player must press E separately for each charge. Multiple charges should be reflected in `comboDescriptor` by setting the formula's count to the number of charges (e.g., `{ id: "sucrose-skill", count: 1, ifC1: { count: 2 } }`) so the rotation correctly models using the skill multiple times.
+
+- **[BUG]** if a multi-charge skill has `hits` multiplied by the number of charges, or if a single formula uses multiple parts to represent separate charge uses. Each charge is a distinct player action — model it via `comboDescriptor` count, not `hits` or extra parts.
 
 ### S4. `AbilityType` on `DamageTag`
 
@@ -277,6 +279,27 @@ This does NOT apply to transformative, lunar, or other inherent reaction damage.
 
 - **[BUG]** if separate `formulaMap` entries exist for the same attack with different amplifying/catalyze reactions (e.g., `"hutao-charge-vape"` and `"hutao-charge-melt"` as two entries).
 - **[BUG]** if inherent reaction damage (hyperbloom, swirl, lunar, etc.) is missing its own formula entry because it was conflated with "no separate reaction variants."
+
+### S8b. 5★ E/Q Formula Completeness
+
+For **5★ characters**, every distinct damage instance described in the E (Elemental Skill) and Q (Elemental Burst) talent text must have a corresponding formula part in `formulaMap`. This is stricter than S8's general coverage check — S8 flags missing formulas only when they're rotation-significant, but for 5★ E/Q abilities, all damage parts should be modeled regardless of rotation contribution.
+
+Normal Attack (A) formulas are welcome but not required by this rule — many 5★ characters don't use normal attacks as a meaningful damage source (off-field supports, characters whose E overrides A multipliers, on-field DPS that don't rely on normal attacks). Use S8's general coverage judgment for A.
+
+**What counts as a "distinct damage instance":** Each row in the talent detail table that shows a damage multiplier (`{paramN:P}` or `{paramN:F1P}`) is a damage instance. Multiple hits from the same action at the same multiplier use `hits: N` on a single part.
+
+**How to assemble formulas:** Formulas should be organized at the granularity of **user actions during combat** — not one formula per damage row. For example:
+- A skill that deals an initial hit + creates a turret with periodic ticks → two formulas: "E Cast" and "E Turret" (or one formula with on-field cast part + off-field tick parts)
+- A burst with a slash + bloom → one formula with two parts
+- A normal attack sequence (N1–N5) → one formula with 5 parts
+- A skill with tap and hold modes dealing different damage → two formulas: "E Tap" and "E Hold"
+- A character with a state-change E that has an initial E and a follow-up E → two formulas (like Varesa's "E Initial" and "E Following")
+
+**Exception — non-damaging components:** Skip rows that are clearly non-damage (duration, stamina cost, CD, energy cost, Nightsoul point limits). These have format codes like `{paramN:F1}s` or `{paramN:I}` (no `P` suffix) and label text containing 持续时间, 冷却时间, 体力消耗, 元素能量, 夜魂值上限.
+
+**4★ characters** are exempt from this rule — their E/Q damage is often negligible in their support role, so S8's general coverage check is sufficient.
+
+- **[BUG]** if a 5★ character's E or Q talent has damage multiplier rows with no corresponding formula part anywhere in `formulaMap`.
 
 ### S9. Constellation Enhancements: Buff vs. New Formula
 

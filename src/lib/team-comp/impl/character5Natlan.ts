@@ -62,11 +62,7 @@ class Varesa extends CharacterBase {
   // Volcano Kablam (Lv10): 724.8%
   // Volcano Kablam (Lv13 C3+): 855.6%
   protected readonly formulaMap = (() => {
-    const kickMult = this.param("Q", 1);
     const naMult = this.param("A", 16);
-    const qMult = this.param("Q", 5);
-    const eMult = this.param("E", 1);
-    const eFPMult = this.param("E", 2);
     const electroSkill = {
       element: "Electro" as const,
       ability: "skill" as const,
@@ -75,17 +71,21 @@ class Varesa extends CharacterBase {
     return {
       "varesa-e": {
         label: { zh: "E初始", en: "E Initial" },
-        parts: [{ formula: new DirectFormula(eMult, electroSkill) }],
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), electroSkill) },
+        ],
       },
       "varesa-e-fp": {
         label: { zh: "E后续", en: "E Following" },
-        parts: [{ formula: new DirectFormula(eFPMult, electroSkill) }],
+        parts: [
+          { formula: new DirectFormula(this.param("E", 2), electroSkill) },
+        ],
       },
       "varesa-kick": {
         label: { zh: "Q飞踢", en: "Q Flying Kick" },
         parts: [
           {
-            formula: new DirectFormula(kickMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Electro",
               ability: "burst",
               reaction: "none",
@@ -143,7 +143,7 @@ class Varesa extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 5), {
               element: "Electro",
               // Note: Considered Plunge DMG in-game, so use ability: "plunge"
               ability: "plunge",
@@ -303,16 +303,10 @@ class Citlali extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // E Frostfall Storm: Lv10 30.6%, Lv13 (C3+) 36.2%
-    const eStormMult = this.param("E", 5);
     // Frostfall Storm ticks (1/s): C0-C3 ~12s, C4-C5 ~16s (C4 skull
     // returns 16 Nightsoul pts every 8s), C6 20s (storm never stops)
     const eHits =
       this.constellation >= 6 ? 20 : this.constellation >= 4 ? 16 : 12;
-    // Q Ice Storm: Lv10 967.7%, Lv13 (C5+) 1142.4%
-    const qMult = this.param("Q", 1);
-    // Q Spiritvessel Skull (guaranteed, 1 per target): Lv10 241.9%, Lv13 (C5+) 285.6%
-    const qSkullMult = this.param("Q", 2);
     const skillTag = {
       element: "Cryo" as const,
       ability: "skill" as const,
@@ -323,8 +317,6 @@ class Citlali extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    // E Obsidian Tzitzimitl initial hit: Lv10 131.3%, Lv13 (C3+) 155%
-    const eInitMult = this.param("E", 1);
     const c4Skulls = this.constellation >= 6 ? 3 : 2;
     return {
       "citlali-e-total": {
@@ -333,9 +325,9 @@ class Citlali extends CharacterBase {
           en: `E + Storm ×${eHits}`,
         },
         parts: [
-          { formula: new DirectFormula(eInitMult, skillTag) },
+          { formula: new DirectFormula(this.param("E", 1), skillTag) },
           {
-            formula: new DirectFormula(eStormMult, skillTag),
+            formula: new DirectFormula(this.param("E", 5), skillTag),
             hits: eHits,
             offField: true,
           },
@@ -360,7 +352,7 @@ class Citlali extends CharacterBase {
         label: { zh: "Q+骷髅爆炸", en: "Q + Skull" },
         parts: [
           {
-            formula: new DirectFormula(qMult, burstTag),
+            formula: new DirectFormula(this.param("Q", 1), burstTag),
             // P2: Ice Storm only — +1200% EM as baseDmg (Skull does NOT get this)
             bespokeBuff: new ScalingBuff(
               cbs(this, "P2", ["Q"]),
@@ -372,7 +364,7 @@ class Citlali extends CharacterBase {
             ),
           },
           {
-            formula: new DirectFormula(qSkullMult, burstTag),
+            formula: new DirectFormula(this.param("Q", 2), burstTag),
             offField: true,
           },
         ],
@@ -506,11 +498,8 @@ class Mavuika extends CharacterBase {
   // Q Sunfell Slice: Lv10 800.6%, Lv13 (C3+) 945.2%
   // FS and C2 ATK bonuses are applied as baseDmg ScalingBuffs (see buffs above)
   protected readonly formulaMap = (() => {
-    const sunfellMult = this.param("Q", 1);
-    const n1Mult = this.param("E", 4);
     // CA: Cyclic (Lv10 195.5%, Lv13 236.9%) + Final (Lv10 272%, Lv13 329.6%)
     const caCyclicMult = this.param("E", 10);
-    const caFinalMult = this.param("E", 11);
     const sprintMult = this.param("E", 9);
 
     return {
@@ -518,7 +507,7 @@ class Mavuika extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(sunfellMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -530,7 +519,7 @@ class Mavuika extends CharacterBase {
         label: { zh: "Q后 AZS", en: "Post-Q N1+CA+Sprint" },
         parts: [
           {
-            formula: new DirectFormula(n1Mult, {
+            formula: new DirectFormula(this.param("E", 4), {
               element: "Pyro",
               ability: "normal",
               reaction: "none",
@@ -572,7 +561,7 @@ class Mavuika extends CharacterBase {
             hits: 3,
           },
           {
-            formula: new DirectFormula(caFinalMult, {
+            formula: new DirectFormula(this.param("E", 11), {
               element: "Pyro",
               ability: "charge",
               reaction: "none",
@@ -654,8 +643,6 @@ class Chasca extends CharacterBase {
     const qMult = this.param("Q", 3);
     // Q Soulseeker Shell: Lv10 186.1%, Lv13 (C5+) 219.7%
     const qNormMult = this.param("Q", 2);
-    // Q Galesplitting: Lv10 158.4%, Lv13 (C5+) 187%
-    const qInitMult = this.param("Q", 1);
     const qRadiantCount = this.eligibleTypes === 0 ? 0 : this.eligibleTypes * 2;
     const qNormalCount = 6 - qRadiantCount;
 
@@ -771,7 +758,7 @@ class Chasca extends CharacterBase {
         },
         parts: [
           // Galesplitting initial hit: always Anemo
-          { formula: new DirectFormula(qInitMult, anemoBurstTag) },
+          { formula: new DirectFormula(this.param("Q", 1), anemoBurstTag) },
           // Unconverted Soulseeker Shells: Anemo
           ...Array(qNormalCount)
             .fill(0)
@@ -984,12 +971,6 @@ class Xilonen extends CharacterBase {
       ability: "normal" as const,
       reaction: "none" as const,
     };
-    const qTag = {
-      element: "Geo" as const,
-      ability: "burst" as const,
-      reaction: "none" as const,
-    };
-    const qBeatMult = this.param("Q", 5);
     return {
       "xilonen-normal": {
         label: {
@@ -1018,7 +999,11 @@ class Xilonen extends CharacterBase {
         when: this.convertedSamples <= 1,
         parts: [
           {
-            formula: new DirectFormula(qBeatMult, qTag, "def"),
+            formula: new DirectFormula(
+              this.param("Q", 5),
+              { element: "Geo", ability: "burst", reaction: "none" },
+              "def"
+            ),
             hits: 2,
           },
         ],
@@ -1071,7 +1056,6 @@ class Mualani extends CharacterBase {
   protected readonly formulaMap = (() => {
     const biteMult =
       this.param("E", 1) + 3 * this.param("E", 2) + this.param("E", 3);
-    const burstMult = this.param("Q", 1);
     const biteTag = {
       element: "Hydro" as const,
       ability: "normal" as const,
@@ -1114,7 +1098,7 @@ class Mualani extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              burstMult,
+              this.param("Q", 1),
               {
                 element: "Hydro",
                 ability: "burst",
@@ -1221,43 +1205,43 @@ class Kinich extends CharacterBase {
   //     700% ATK Dendro Skill DMG — inherits P2 baseDmg and C2 dmg% buffs automatically
   //     because those buffs are scoped to ability:"skill" which the bounce also uses.
   protected readonly formulaMap = (() => {
-    const cannonMult = this.param("E", 2);
-    const qInit = this.param("Q", 1);
-    const qBreath = this.param("Q", 2);
-    // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
-    const c6BouncePart = {
-      formula: new DirectFormula(7.0, {
-        element: "Dendro",
-        ability: "skill",
-        reaction: "none",
-      }),
-    };
     return {
       "kinich-cannon": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(cannonMult, {
+            formula: new DirectFormula(this.param("E", 2), {
               element: "Dendro",
               ability: "skill",
               reaction: "none",
             }),
           },
-          ...(this.constellation >= 6 ? [c6BouncePart] : []),
+          // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
+          ...(this.constellation >= 6
+            ? [
+                {
+                  formula: new DirectFormula(7.0, {
+                    element: "Dendro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                },
+              ]
+            : []),
         ],
       },
       "kinich-burst": {
         label: { zh: "Q 1斩+5龙息", en: "Q 1 Slash + 5 Breaths" },
         parts: [
           {
-            formula: new DirectFormula(qInit, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Dendro",
               ability: "burst",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(qBreath, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Dendro",
               ability: "burst",
               reaction: "none",

@@ -21,7 +21,6 @@ import type { ComboDescriptor } from "../types";
 @RegisterCharacter("yumemizuki_mizuki")
 class YumemizukiMizuki extends CharacterBase {
   readonly buffs = (() => {
-    const eReactDmg = this.param("E", 2);
     const buffs: StatBuff[] = [
       // E: Dreamdrifter — increases team Swirl DMG by 0.45% per EM (lv10) / 0.54% (lv13, C3+)
       new ScalingBuff(
@@ -30,7 +29,7 @@ class YumemizukiMizuki extends CharacterBase {
         [],
         "em",
         "reactionDmg%",
-        eReactDmg
+        this.param("E", 2)
       ),
       // P2: EM +100 when teammates hit with Pyro/Hydro/Cryo/Electro
       new StatBuff(cbs(this, "P2", ["A4", "E"]), { receiver: "self" }, [
@@ -97,10 +96,7 @@ class YumemizukiMizuki extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const eTickMult = this.param("E", 1);
     const canSwirl = this.teamMeta.hasReaction("swirl");
-    const qInitialMult = this.param("Q", 1);
-    const qDropMult = this.param("Q", 2);
     const anemoBurst = {
       element: "Anemo" as const,
       ability: "burst" as const,
@@ -110,13 +106,13 @@ class YumemizukiMizuki extends CharacterBase {
     return {
       "mizuki-burst-initial": {
         label: { zh: "Q初始伤害", en: "Q Initial" },
-        parts: [{ formula: new DirectFormula(qInitialMult, anemoBurst) }],
+        parts: [{ formula: new DirectFormula(this.param("Q", 1), anemoBurst) }],
       },
       "mizuki-burst-drop": {
         label: { zh: "Q竹星爆炸", en: "Q Drop Explosion" },
         parts: [
           {
-            formula: new DirectFormula(qDropMult, anemoBurst),
+            formula: new DirectFormula(this.param("Q", 2), anemoBurst),
             offField: true,
           },
         ],
@@ -129,7 +125,7 @@ class YumemizukiMizuki extends CharacterBase {
         when: canSwirl,
         parts: [
           {
-            formula: new DirectFormula(eTickMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",
@@ -181,9 +177,6 @@ class Chiori extends CharacterBase {
     // Tamoto: E param1 ATK + E param2 DEF
     const tAtk = this.param("E", 1);
     const tDef = this.param("E", 2);
-    // Upward Sweep / P1 coordinated: E param5 ATK + E param6 DEF
-    const sweepAtk = this.param("E", 5);
-    const sweepDef = this.param("E", 6);
     // C2/C4 Kinu: 170% of Tamoto DMG (baked into multiplier)
     const kinuAtk = tAtk * 1.7;
     const kinuDef = tDef * 1.7;
@@ -231,9 +224,10 @@ class Chiori extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(sweepAtk, geoSkill, "atk", {
+            // Upward Sweep / P1 coordinated: E param5 ATK + E param6 DEF
+            formula: new DirectFormula(this.param("E", 5), geoSkill, "atk", {
               key: "def",
-              multiplier: sweepDef,
+              multiplier: this.param("E", 6),
             }),
             hits: 3, // 1 sweep + 2 P1 coordinated
           },
@@ -345,7 +339,7 @@ class Chiori extends CharacterBase {
             : []),
         ],
       },
-      // C6: Geo-infused normal combo — N1 97.7%, N2 92.6%, N3 60.1%×2, N4 148.5%
+      // C6: Geo-infused normal combo — N1–N4 (A param1–param5)
       "chiori-na": {
         label: {
           zh: "普攻（4段）",
@@ -353,10 +347,15 @@ class Chiori extends CharacterBase {
         },
         minC: 6,
         parts: [
-          { formula: new DirectFormula(0.977, geoNormal) },
-          { formula: new DirectFormula(0.926, geoNormal) },
-          { formula: new DirectFormula(0.601, geoNormal), hits: 2 },
-          { formula: new DirectFormula(1.485, geoNormal) },
+          { formula: new DirectFormula(this.param("A", 1), geoNormal) },
+          { formula: new DirectFormula(this.param("A", 2), geoNormal) },
+          {
+            formula: new DirectFormula(this.param("A", 3), geoNormal),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 4), geoNormal),
+          },
+          { formula: new DirectFormula(this.param("A", 5), geoNormal) },
         ],
       },
     };
@@ -435,21 +434,10 @@ class RaidenShogun extends CharacterBase {
   // Q initial slash: Q param1 + Q param2 × 60 resolve
   // Q Charged ATK (Musou Isshin): Q param11 + Q param12, resolve Q param3 × 60 per hit
   protected readonly formulaMap = (() => {
-    const initialMult = this.param("Q", 1) + this.param("Q", 2) * 60;
     const chargeResolve = this.param("Q", 3) * 60;
-    // Charged ATK: hit1 + resolve, hit2 + resolve
-    const chargeHit1 = this.param("Q", 11);
-    const chargeHit2 = this.param("Q", 12);
     const electroBurst = {
       element: "Electro" as const,
       ability: "burst" as const,
-      reaction: "none" as const,
-    };
-    // E coordinated attack: E param2, every 0.9s over 25s ≈ 27 hits
-    const coordMult = this.param("E", 2);
-    const electroSkill = {
-      element: "Electro" as const,
-      ability: "skill" as const,
       reaction: "none" as const,
     };
     return {
@@ -460,7 +448,12 @@ class RaidenShogun extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(coordMult, electroSkill),
+            // E coordinated attack: E param2, every 0.9s over 25s ≈ 27 hits
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
             hits: 27,
             offField: true,
           },
@@ -473,7 +466,10 @@ class RaidenShogun extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(initialMult, electroBurst),
+            formula: new DirectFormula(
+              this.param("Q", 1) + this.param("Q", 2) * 60,
+              electroBurst
+            ),
           },
         ],
       },
@@ -486,14 +482,14 @@ class RaidenShogun extends CharacterBase {
           {
             // Charged hit 1: base% + resolve bonus (Lv10: 109.9% + 78.6%@60stacks)
             formula: new DirectFormula(
-              chargeHit1 + chargeResolve,
+              this.param("Q", 11) + chargeResolve,
               electroBurst
             ),
           },
           {
             // Charged hit 2: base% + resolve bonus (Lv10: 132.7% + 78.6%@60stacks)
             formula: new DirectFormula(
-              chargeHit2 + chargeResolve,
+              this.param("Q", 12) + chargeResolve,
               electroBurst
             ),
           },
@@ -576,17 +572,18 @@ class AratakiItto extends CharacterBase {
       ability: "charge" as const,
       reaction: "none" as const,
     };
-    const geoSkill = {
-      element: "Geo" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
-    // E (Ushi): E param1
-    const ushiMult = this.param("E", 1);
     return {
       "itto-ushi": {
         label: { zh: "E阿丑", en: "E Ushi" },
-        parts: [{ formula: new DirectFormula(ushiMult, geoSkill) }],
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Geo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
       },
       "itto-kesagiri": {
         label: {
@@ -671,15 +668,9 @@ class KamisatoAyaka extends CharacterBase {
   protected readonly formulaMap = (() => {
     const cutMult = this.param("Q", 1);
     const bloomMult = this.param("Q", 2);
-    const eMult = this.param("E", 1);
     const cryoNormal = {
       element: "Cryo" as const,
       ability: "normal" as const,
-      reaction: "none" as const,
-    };
-    const cryoSkill = {
-      element: "Cryo" as const,
-      ability: "skill" as const,
       reaction: "none" as const,
     };
     const cryoBurst = {
@@ -690,7 +681,15 @@ class KamisatoAyaka extends CharacterBase {
     return {
       "ayaka-skill": {
         label: { zh: "E", en: "E" },
-        parts: [{ formula: new DirectFormula(eMult, cryoSkill) }],
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
       },
       "ayaka-normal": {
         label: { zh: "普攻（5段）", en: "Normal (5-hit)" },
@@ -808,12 +807,8 @@ class KamisatoAyato extends CharacterBase {
   // Namisen per hit: 4 stacks × 1.11% HP (C2: 5 stacks)
   // Q Bloomwater: Lv10 119.6%, Lv13 (C5+) 141.2%, ~30 hits over 18s
   protected readonly formulaMap = (() => {
-    const n1Mult = this.param("E", 1);
-    const n2Mult = this.param("E", 2);
-    const n3Mult = this.param("E", 3);
     const stacks = this.constellation >= 2 ? 5 : 4;
-    const namisenPerHit = this.param("E", 5);
-    const hpPerHit = stacks * namisenPerHit;
+    const hpPerHit = stacks * this.param("E", 5);
     const qMult = this.param("Q", 1);
     const hydroTag = {
       element: "Hydro" as const,
@@ -825,21 +820,21 @@ class KamisatoAyato extends CharacterBase {
         label: { zh: "E瞬水剑×16", en: "E Shunsuiken (×16)" },
         parts: [
           {
-            formula: new DirectFormula(n1Mult, hydroTag, "atk", {
+            formula: new DirectFormula(this.param("E", 1), hydroTag, "atk", {
               key: "hp",
               multiplier: hpPerHit,
             }),
             hits: 6,
           },
           {
-            formula: new DirectFormula(n2Mult, hydroTag, "atk", {
+            formula: new DirectFormula(this.param("E", 2), hydroTag, "atk", {
               key: "hp",
               multiplier: hpPerHit,
             }),
             hits: 5,
           },
           {
-            formula: new DirectFormula(n3Mult, hydroTag, "atk", {
+            formula: new DirectFormula(this.param("E", 3), hydroTag, "atk", {
               key: "hp",
               multiplier: hpPerHit,
             }),
@@ -1117,7 +1112,6 @@ class KaedeharaKazuha extends CharacterBase {
   // E press: E param1; Q slash: Q param1; Q DoT: Q param2; Q absorption: Q param3
   // High Plunge: A param12
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
     const highPlunge = this.param("A", 12);
     const qSlash = this.param("Q", 1);
     const qDot = this.param("Q", 2);
@@ -1133,7 +1127,7 @@ class KaedeharaKazuha extends CharacterBase {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",
@@ -1300,12 +1294,11 @@ class Yoimiya extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    // Per-hit NA multipliers at Lv10
-    const n1 = 0.636; // ×2
-    const n2 = 1.22;
-    const n3 = 1.586;
-    const n4 = 0.828; // ×2
-    const n5 = 1.889;
+    const n1 = this.param("A", 1);
+    const n2 = this.param("A", 2);
+    const n3 = this.param("A", 3);
+    const n4 = this.param("A", 4);
+    const n5 = this.param("A", 5);
 
     const eMult = this.param("E", 4);
 
@@ -1426,22 +1419,20 @@ class YaeMiko extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // C2 raises Sakura from Level 3 to Level 4 → param3 vs param4
-    const eMult =
-      this.constellation >= 2 ? this.param("E", 4) : this.param("E", 3);
-
-    const qInitialMult = this.param("Q", 1);
-    const qThunderboltMult = this.param("Q", 2);
-
+    const electroBurst = {
+      element: "Electro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "yae_miko-skill": {
         label: { zh: "E(单次)", en: "E (×1)" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
-              element: "Electro",
-              ability: "skill",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.constellation >= 2 ? this.param("E", 4) : this.param("E", 3),
+              { element: "Electro", ability: "skill", reaction: "none" }
+            ),
             offField: true,
           },
         ],
@@ -1450,18 +1441,10 @@ class YaeMiko extends CharacterBase {
         label: { zh: "Q 1段+3落雷", en: "Q Hit + 3 Thunderbolts" },
         parts: [
           {
-            formula: new DirectFormula(qInitialMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("Q", 1), electroBurst),
           },
           {
-            formula: new DirectFormula(qThunderboltMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("Q", 2), electroBurst),
             hits: 3,
           },
         ],

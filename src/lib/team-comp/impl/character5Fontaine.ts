@@ -68,9 +68,6 @@ class Escoffier extends CharacterBase {
   // E param1: Skill DMG, E param2: Parfait DMG
   // Skirk P3 E+1 handled by CharacterBase._effectiveLevels
   protected readonly formulaMap = (() => {
-    const skillCastMult = this.param("E", 1);
-    const parfaitMult = this.param("E", 2);
-    const qMult = this.param("Q", 1);
     const skillTag = {
       element: "Cryo" as const,
       ability: "skill" as const,
@@ -84,10 +81,10 @@ class Escoffier extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(skillCastMult, skillTag),
+            formula: new DirectFormula(this.param("E", 1), skillTag),
           },
           {
-            formula: new DirectFormula(parfaitMult, skillTag),
+            formula: new DirectFormula(this.param("E", 2), skillTag),
             hits: 21,
             offField: true,
           },
@@ -97,7 +94,7 @@ class Escoffier extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -201,8 +198,6 @@ class Emilie extends CharacterBase {
   // P1 Cleardew Cologne: 600% ATK (not skill DMG), fires every 2 scent collections
   // Q Lv3 Case: 391.0% (Lv10), 461.6% (Lv13 C5+), ~4 drops over 2.8s
   protected readonly formulaMap = (() => {
-    const lv2ShotMult = this.param("E", 3);
-    const qMult = this.param("Q", 1);
     const hasPyro = this.teamMeta.countByElement("Pyro") > 0;
 
     const normalTag = {
@@ -226,7 +221,7 @@ class Emilie extends CharacterBase {
         when: hasPyro,
         parts: [
           {
-            formula: new DirectFormula(lv2ShotMult, {
+            formula: new DirectFormula(this.param("E", 3), {
               element: "Dendro",
               ability: "skill",
               reaction: "none",
@@ -249,7 +244,7 @@ class Emilie extends CharacterBase {
         label: { zh: "Q伤害×9", en: "Q (×9)" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Dendro",
               ability: "burst",
               reaction: "none",
@@ -426,39 +421,37 @@ class Clorinde extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Q Last Lightfall: param1 ×5
-    const qMult = this.param("Q", 1);
-    // Swift Hunt rotation: 3× piercing shot (E param2) + Impale Pact (E param7 ×3)
-    const swiftMult = this.param("E", 2);
-    const impaleMult = this.param("E", 7);
-
     const normalBaseTag = {
       element: "Electro" as const,
       ability: "normal" as const,
       reaction: "none" as const,
     };
 
-    const normalParts = [
-      { formula: new DirectFormula(swiftMult, normalBaseTag), hits: 3 },
-      { formula: new DirectFormula(impaleMult, normalBaseTag), hits: 3 },
-      ...(this.constellation >= 1
-        ? [{ formula: new DirectFormula(0.3, normalBaseTag), hits: 2 }]
-        : []),
-      ...(this.constellation >= 6
-        ? [{ formula: new DirectFormula(2.0, normalBaseTag), hits: 1 }]
-        : []),
-    ];
-
     return {
       "clorinde-normal": {
         label: { zh: "E普攻", en: "E Normal" },
-        parts: normalParts,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), normalBaseTag),
+            hits: 3,
+          },
+          {
+            formula: new DirectFormula(this.param("E", 7), normalBaseTag),
+            hits: 3,
+          },
+          ...(this.constellation >= 1
+            ? [{ formula: new DirectFormula(0.3, normalBaseTag), hits: 2 }]
+            : []),
+          ...(this.constellation >= 6
+            ? [{ formula: new DirectFormula(2.0, normalBaseTag), hits: 1 }]
+            : []),
+        ],
       },
       "clorinde-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Electro",
               ability: "burst",
               reaction: "none",
@@ -555,9 +548,6 @@ class Navia extends CharacterBase {
   // E (6 shrapnel): Lv10 710.6%, Lv13 (C3+) 839.0%
   // "200% of original" and "+45% per extra shard" modeled as baseDmg%/dmg% buffs above
   protected readonly formulaMap = (() => {
-    const baseMult = this.param("E", 1);
-    const qSkillMult = this.param("Q", 1);
-    const qCannonMult = this.param("Q", 2);
     const burstTag = {
       element: "Geo" as const,
       ability: "burst" as const,
@@ -568,7 +558,7 @@ class Navia extends CharacterBase {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(baseMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Geo",
               ability: "skill",
               reaction: "none",
@@ -580,10 +570,10 @@ class Navia extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qSkillMult, burstTag),
+            formula: new DirectFormula(this.param("Q", 1), burstTag),
           },
           {
-            formula: new DirectFormula(qCannonMult, burstTag),
+            formula: new DirectFormula(this.param("Q", 2), burstTag),
             hits: 4,
             offField: true,
           },
@@ -716,9 +706,6 @@ class Furina extends CharacterBase {
   // ×1.4 power bonus (4 healthy members) → baseDmg% +0.4 (in buffs above)
   // Salon member multipliers — Skirk P3 E+1 handled by CharacterBase._effectiveLevels
   protected readonly formulaMap = (() => {
-    const usherMult = this.param("E", 3);
-    const chevalmarinMult = this.param("E", 4);
-    const crabalettaMult = this.param("E", 5);
     const hydroTag = {
       element: "Hydro" as const,
       ability: "skill" as const,
@@ -742,17 +729,17 @@ class Furina extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(chevalmarinMult, hydroTag, "hp"),
+            formula: new DirectFormula(this.param("E", 4), hydroTag, "hp"),
             hits: 18,
             offField: true,
           },
           {
-            formula: new DirectFormula(usherMult, hydroTag, "hp"),
+            formula: new DirectFormula(this.param("E", 3), hydroTag, "hp"),
             hits: 9,
             offField: true,
           },
           {
-            formula: new DirectFormula(crabalettaMult, hydroTag, "hp"),
+            formula: new DirectFormula(this.param("E", 5), hydroTag, "hp"),
             hits: 5,
             offField: true,
           },
@@ -886,7 +873,6 @@ class Neuvillette extends CharacterBase {
   //     counts as Equitable Judgment DMG (ability: "charge"). Base duration 3s;
   //     absorbing 3 droplets from E extends to 6s → 3 firings × 2 currents = 6 hits.
   protected readonly formulaMap = (() => {
-    const tickMult = this.param("A", 5);
     const chargeTag = {
       element: "Hydro" as const,
       ability: "charge" as const,
@@ -897,7 +883,7 @@ class Neuvillette extends CharacterBase {
         label: { zh: "重击×8", en: "CA (×8)" },
         parts: [
           {
-            formula: new DirectFormula(tickMult, chargeTag, "hp"),
+            formula: new DirectFormula(this.param("A", 5), chargeTag, "hp"),
             hits: 8,
           },
         ],
@@ -1004,15 +990,7 @@ class Wriothesley extends CharacterBase {
   // Q Burst (Lv10): 5 × 228.96% + Surging Blade 76.32%
   // Q Burst (Lv13 C5+): 5 × 270.30% + Surging Blade 90.10%
   protected readonly formulaMap = (() => {
-    const n1 = this.param("A", 1);
-    const n2 = this.param("A", 2);
-    const n3 = this.param("A", 3);
-    const n4 = this.param("A", 4);
-    const n5 = this.param("A", 6);
-    const cMult = this.param("A", 7);
     const cHits = this.constellation >= 6 ? 2 : 1; // C6: additional icicle at 100% base DMG
-    const qHitMult = this.param("Q", 1);
-    const qBladeMult = this.param("Q", 2);
 
     const normalTag = {
       element: "Cryo" as const,
@@ -1027,18 +1005,21 @@ class Wriothesley extends CharacterBase {
           en: "Normal (5-hit)",
         },
         parts: [
-          { formula: new DirectFormula(n1, normalTag) },
-          { formula: new DirectFormula(n2, normalTag) },
-          { formula: new DirectFormula(n3, normalTag) },
-          { formula: new DirectFormula(n4, normalTag), hits: 2 },
-          { formula: new DirectFormula(n5, normalTag) },
+          { formula: new DirectFormula(this.param("A", 1), normalTag) },
+          { formula: new DirectFormula(this.param("A", 2), normalTag) },
+          { formula: new DirectFormula(this.param("A", 3), normalTag) },
+          {
+            formula: new DirectFormula(this.param("A", 4), normalTag),
+            hits: 2,
+          },
+          { formula: new DirectFormula(this.param("A", 6), normalTag) },
         ],
       },
       "wriothesley-charge": {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(cMult, {
+            formula: new DirectFormula(this.param("A", 7), {
               element: "Cryo",
               ability: "charge",
               reaction: "none",
@@ -1051,7 +1032,7 @@ class Wriothesley extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qHitMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -1059,7 +1040,7 @@ class Wriothesley extends CharacterBase {
             hits: 5,
           },
           {
-            formula: new DirectFormula(qBladeMult, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -1115,7 +1096,6 @@ class Lyney extends CharacterBase {
 
   // Prop Arrow: Lv10 311.0%, Lv13 (C3+) 367.2% (C3 boosts Normal talent)
   protected readonly formulaMap = (() => {
-    const propMult = this.param("A", 11);
     const strikeMult = this.param("A", 15);
     // P1: Perilous Performance → Pyrotechnic Strike gains flat baseDmg = 80% ATK
     const p1Buff = new ScalingBuff(
@@ -1126,17 +1106,13 @@ class Lyney extends CharacterBase {
       "baseDmg",
       0.8
     );
-    // E has no constellation level boost (C3=Normal, C5=Q)
-    const eMult = this.param("E", 1) + this.param("E", 2) * 5;
-
-    const c6StrikeMult = strikeMult * 0.8;
 
     return {
       "lyney-prop": {
         label: { zh: "重击伤害", en: "CA Prop Arrow" },
         parts: [
           {
-            formula: new DirectFormula(propMult, {
+            formula: new DirectFormula(this.param("A", 11), {
               element: "Pyro",
               ability: "charge",
               reaction: "none",
@@ -1161,11 +1137,15 @@ class Lyney extends CharacterBase {
         label: { zh: "E(满层)", en: "E (Max Stacks)" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
-              element: "Pyro",
-              ability: "skill",
-              reaction: "none",
-            }),
+            // E has no constellation level boost (C3=Normal, C5=Q)
+            formula: new DirectFormula(
+              this.param("E", 1) + this.param("E", 2) * 5,
+              {
+                element: "Pyro",
+                ability: "skill",
+                reaction: "none",
+              }
+            ),
           },
         ],
       },
@@ -1174,7 +1154,7 @@ class Lyney extends CharacterBase {
         minC: 6,
         parts: [
           {
-            formula: new DirectFormula(c6StrikeMult, {
+            formula: new DirectFormula(strikeMult * 0.8, {
               element: "Pyro",
               ability: "charge",
               reaction: "none",

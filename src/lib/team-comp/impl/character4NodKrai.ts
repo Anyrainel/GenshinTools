@@ -150,22 +150,16 @@ class Illuga extends CharacterBase {
   // C2: Aedon summon per 7 Nightingale's Song stacks consumed
   // 400% EM + 200% DEF, Geo Burst DMG
   protected readonly formulaMap = (() => {
-    const ePressEmMult = this.param("E", 1);
-    const ePressDefMult = this.param("E", 2);
-    const eHoldEmMult = this.param("E", 3);
-    const eHoldDefMult = this.param("E", 4);
-    const qEmMult = this.param("Q", 1);
-    const qDefMult = this.param("Q", 2);
     return {
       "illuga-skill-press": {
         label: { zh: "E点按", en: "E Press" },
         parts: [
           {
             formula: new DirectFormula(
-              ePressEmMult,
+              this.param("E", 1),
               { element: "Geo", ability: "skill", reaction: "none" },
               "em",
-              { key: "def", multiplier: ePressDefMult }
+              { key: "def", multiplier: this.param("E", 2) }
             ),
           },
         ],
@@ -175,10 +169,10 @@ class Illuga extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              eHoldEmMult,
+              this.param("E", 3),
               { element: "Geo", ability: "skill", reaction: "none" },
               "em",
-              { key: "def", multiplier: eHoldDefMult }
+              { key: "def", multiplier: this.param("E", 4) }
             ),
           },
         ],
@@ -188,10 +182,10 @@ class Illuga extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              qEmMult,
+              this.param("Q", 1),
               { element: "Geo", ability: "burst", reaction: "none" },
               "em",
-              { key: "def", multiplier: qDefMult }
+              { key: "def", multiplier: this.param("Q", 2) }
             ),
           },
         ],
@@ -304,22 +298,19 @@ class Aino extends CharacterBase {
   // Q: Water Ball DMG Lv10: 36.2%, Lv13 (C3+): 42.7%
   // ~14 hits over 14s duration
   protected readonly formulaMap = (() => {
-    const eStage1 = this.param("E", 1);
-    const eStage2 = this.param("E", 2);
-    const qMult = this.param("Q", 1);
     return {
       "aino-skill": {
         label: { zh: "E伤害", en: "E DMG" },
         parts: [
           {
-            formula: new DirectFormula(eStage1, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Hydro",
               ability: "skill",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(eStage2, {
+            formula: new DirectFormula(this.param("E", 2), {
               element: "Hydro",
               ability: "skill",
               reaction: "none",
@@ -331,7 +322,7 @@ class Aino extends CharacterBase {
         label: { zh: "Q×14", en: "Q ×14" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Hydro",
               ability: "burst",
               reaction: "none",

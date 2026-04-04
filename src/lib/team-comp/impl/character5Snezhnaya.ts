@@ -324,19 +324,12 @@ class Arlecchino extends CharacterBase {
       this.param("A", 6),
     ];
     const initialBol = Number.parseInt(this.initialBolStr) / 100;
-    const baseMasque = this.param("A", 12);
-    const masqueScale = this.constellation >= 1 ? baseMasque + 1.0 : baseMasque;
-
-    const qMult = this.param("Q", 1);
+    const masqueScale =
+      this.constellation >= 1 ? this.param("A", 12) + 1.0 : this.param("A", 12);
 
     const normalBaseTag = {
       element: "Pyro" as const,
       ability: "normal" as const,
-      reaction: "none" as const,
-    };
-    const burstBaseTag = {
-      element: "Pyro" as const,
-      ability: "burst" as const,
       reaction: "none" as const,
     };
 
@@ -363,8 +356,8 @@ class Arlecchino extends CharacterBase {
         parts: [
           {
             formula: new ArlecchinoBurstFormula(
-              qMult,
-              burstBaseTag,
+              this.param("Q", 1),
+              { element: "Pyro", ability: "burst", reaction: "none" },
               initialBol,
               this.constellation >= 6
             ),
@@ -421,14 +414,6 @@ class Tartaglia extends CharacterBase {
   // Burst Melee (Lv10): 835.0%
   // Burst Melee (Lv13 C5+): 986.0%
   protected readonly formulaMap = (() => {
-    const [n1, n2, n3] = [
-      this.param("E", 2),
-      this.param("E", 3),
-      this.param("E", 4),
-    ];
-    const [ca1, ca2] = [this.param("E", 9), this.param("E", 10)];
-    const qMult = this.param("Q", 1);
-    const blastMult = this.param("Q", 2);
     const meleeNormalTag = {
       element: "Hydro" as const,
       ability: "normal" as const,
@@ -444,17 +429,15 @@ class Tartaglia extends CharacterBase {
       ability: "skill" as const,
       reaction: "none" as const,
     };
-    const riptideSlashMult = this.param("E", 11);
-    const stanceChangeMult = this.param("E", 1);
     return {
       "tartaglia-melee-combo": {
         label: { zh: "E普攻+重击", en: "E Melee N3C Combo" },
         parts: [
-          { formula: new DirectFormula(n1, meleeNormalTag) },
-          { formula: new DirectFormula(n2, meleeNormalTag) },
-          { formula: new DirectFormula(n3, meleeNormalTag) },
-          { formula: new DirectFormula(ca1, meleeChargeTag) },
-          { formula: new DirectFormula(ca2, meleeChargeTag) },
+          { formula: new DirectFormula(this.param("E", 2), meleeNormalTag) },
+          { formula: new DirectFormula(this.param("E", 3), meleeNormalTag) },
+          { formula: new DirectFormula(this.param("E", 4), meleeNormalTag) },
+          { formula: new DirectFormula(this.param("E", 9), meleeChargeTag) },
+          { formula: new DirectFormula(this.param("E", 10), meleeChargeTag) },
         ],
       },
       "tartaglia-burst-melee": {
@@ -464,14 +447,14 @@ class Tartaglia extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Hydro",
               ability: "burst",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(blastMult, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Hydro",
               ability: "burst",
               reaction: "none",
@@ -482,13 +465,13 @@ class Tartaglia extends CharacterBase {
       "tartaglia-riptide-slash": {
         label: { zh: "断流·斩", en: "Riptide Slash" },
         parts: [
-          { formula: new DirectFormula(riptideSlashMult, meleeSkillTag) },
+          { formula: new DirectFormula(this.param("E", 11), meleeSkillTag) },
         ],
       },
       "tartaglia-stance-change": {
         label: { zh: "E状态激发", en: "E Stance Change" },
         parts: [
-          { formula: new DirectFormula(stanceChangeMult, meleeSkillTag) },
+          { formula: new DirectFormula(this.param("E", 1), meleeSkillTag) },
         ],
       },
     };

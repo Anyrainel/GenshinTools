@@ -50,9 +50,6 @@ class Ifa extends CharacterBase {
   // Q Skill DMG: Lv10 915.3%, Lv13 (C5+) 1080.5%
   // Q Sedation Mark DMG: Lv10 196.1%, Lv13 (C5+) 231.5% per mark (up to 4)
   protected readonly formulaMap = (() => {
-    const qMult = this.param("Q", 1);
-    const markMult = this.param("Q", 2);
-
     // Sedation Marks: one per unique team element (Pyro/Hydro/Cryo/Electro)
     const markElements: ElementalOrPhysical[] = [];
     for (const [id, el] of Object.entries(this.teamMeta.elements)) {
@@ -65,6 +62,7 @@ class Ifa extends CharacterBase {
         markElements.push(el);
     }
 
+    const markMult = this.param("Q", 2);
     const markParts = markElements.map((el) => ({
       formula: new DirectFormula(markMult, {
         element: el,
@@ -81,7 +79,7 @@ class Ifa extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -155,14 +153,12 @@ class Iansan extends CharacterBase {
   // E: Lv10 515.5%, Lv13 (C3+) 608.6%
   // Q: Lv10 774.7%, Lv13 (C5+) 914.6%
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
     return {
       "iansan-skill": {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Electro",
               ability: "skill",
               reaction: "none",
@@ -174,7 +170,7 @@ class Iansan extends CharacterBase {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Electro",
               ability: "burst",
               reaction: "none",
@@ -267,23 +263,16 @@ class Ororon extends CharacterBase {
   // Q: Lv10 313.9%, Lv13 (C3+) 370.6%
   // Q Soundwave: Lv10 59.8%, Lv13 (C3+) 70.5%
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
-    const soundwaveMult = this.param("Q", 2);
-
     // P1 Hypersense: 160% ATK Electro, ability: "special" (no damage tag per KQM)
     // C1 +50% dmg% is handled via StatBuff above, not baked here
     const hypersenseBase = 1.6;
-
-    // C6: Q-triggered Hypersense — baseDmg%+1.0 applied via StatBuff above
-    const c6QHypersense = hypersenseBase;
 
     return {
       "ororon-skill": {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Electro",
               ability: "skill",
               reaction: "none",
@@ -295,7 +284,7 @@ class Ororon extends CharacterBase {
         label: { zh: "Q", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Electro",
               ability: "burst",
               reaction: "none",
@@ -305,7 +294,7 @@ class Ororon extends CharacterBase {
           ...(this.constellation >= 6
             ? [
                 {
-                  formula: new DirectFormula(c6QHypersense, {
+                  formula: new DirectFormula(hypersenseBase, {
                     element: "Electro",
                     ability: "special",
                     reaction: "none",
@@ -320,7 +309,7 @@ class Ororon extends CharacterBase {
         label: { zh: "音波", en: "Soundwave" },
         parts: [
           {
-            formula: new DirectFormula(soundwaveMult, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Electro",
               ability: "burst",
               reaction: "none",
@@ -394,15 +383,13 @@ class Kachina extends CharacterBase {
   // Turbo Twirly Independent: Lv10 114.8% DEF, Lv13 (C3+) 135.5% DEF
   // Q: Lv10 692.6% DEF, Lv13 (C5+) 817.7% DEF
   protected readonly formulaMap = (() => {
-    const independentMult = this.param("E", 2);
-    const qMult = this.param("Q", 1);
     return {
       "kachina-twirly": {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(
-              independentMult,
+              this.param("E", 2),
               {
                 element: "Geo",
                 ability: "skill",
@@ -419,7 +406,7 @@ class Kachina extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              qMult,
+              this.param("Q", 1),
               {
                 element: "Geo",
                 ability: "burst",

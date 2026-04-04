@@ -165,12 +165,6 @@ class Skirk extends CharacterBase {
     const riftCount = this.riftCount;
     const n1 = this.param("E", 1);
     const n2 = this.param("E", 2);
-    const n3 = this.param("E", 3); // ×2 hits (param3 === param4)
-    const n4 = this.param("E", 5); // ×2 hits (param5 === param6)
-    const n5 = this.param("E", 7);
-    const caHit = this.param("E", 8); // ×3 hits
-    const qSlash = this.param("Q", 1);
-    const qFinal = this.param("Q", 2);
     const cryoNormal = {
       element: "Cryo" as const,
       ability: "normal" as const,
@@ -187,9 +181,15 @@ class Skirk extends CharacterBase {
         parts: [
           { formula: new DirectFormula(n1, cryoNormal) },
           { formula: new DirectFormula(n2, cryoNormal) },
-          { formula: new DirectFormula(n3, cryoNormal), hits: 2 },
-          { formula: new DirectFormula(n4, cryoNormal), hits: 2 },
-          { formula: new DirectFormula(n5, cryoNormal) },
+          {
+            formula: new DirectFormula(this.param("E", 3), cryoNormal),
+            hits: 2,
+          },
+          {
+            formula: new DirectFormula(this.param("E", 5), cryoNormal),
+            hits: 2,
+          },
+          { formula: new DirectFormula(this.param("E", 7), cryoNormal) },
         ],
       },
       "skirk-e-normal-2": {
@@ -203,7 +203,7 @@ class Skirk extends CharacterBase {
         label: { zh: "EQ后 重击", en: "E+Q CA" },
         parts: [
           {
-            formula: new DirectFormula(caHit, {
+            formula: new DirectFormula(this.param("E", 8), {
               element: "Cryo",
               ability: "charge",
               reaction: "none",
@@ -215,8 +215,11 @@ class Skirk extends CharacterBase {
       "skirk-burst": {
         label: { zh: "满蛇谋 Q", en: "Full Subtlety Q" },
         parts: [
-          { formula: new DirectFormula(qSlash, cryoBurst), hits: 5 },
-          { formula: new DirectFormula(qFinal, cryoBurst) },
+          {
+            formula: new DirectFormula(this.param("Q", 1), cryoBurst),
+            hits: 5,
+          },
+          { formula: new DirectFormula(this.param("Q", 2), cryoBurst) },
         ],
       },
       // C1: Each 虚境裂隙 absorbed → 晶刃 (500% ATK, Cryo, CA DMG)
@@ -308,7 +311,7 @@ class Aloy extends CharacterBase {
       label: { zh: "Q伤害", en: "Q" },
       parts: [
         {
-          formula: new DirectFormula(6.47, {
+          formula: new DirectFormula(this.param("Q", 1), {
             element: "Cryo",
             ability: "burst",
             reaction: "none",
@@ -383,10 +386,6 @@ class TravelerAnemo extends CharacterBase {
   // Q Gust Surge: 8 ticks Anemo + 8 ticks absorbed element
   // param1: Tornado DMG, param2: Additional Elemental DMG
   protected readonly formulaMap = (() => {
-    const eCutPress = this.param("E", 1);
-    const eStormPress = this.param("E", 3);
-    const eCutHold = this.param("E", 2);
-    const eStormHold = this.param("E", 4);
     const qTick = this.param("Q", 1);
     const absorbTick = this.param("Q", 2);
     const anemoSkill = {
@@ -404,15 +403,15 @@ class TravelerAnemo extends CharacterBase {
       "traveler-anemo-skill-press": {
         label: { zh: "E点按", en: "E Press" },
         parts: [
-          { formula: new DirectFormula(eCutPress, anemoSkill) },
-          { formula: new DirectFormula(eStormPress, anemoSkill) },
+          { formula: new DirectFormula(this.param("E", 1), anemoSkill) },
+          { formula: new DirectFormula(this.param("E", 3), anemoSkill) },
         ],
       },
       "traveler-anemo-skill-hold": {
         label: { zh: "E长按", en: "E Hold" },
         parts: [
-          { formula: new DirectFormula(eCutHold, anemoSkill) },
-          { formula: new DirectFormula(eStormHold, anemoSkill) },
+          { formula: new DirectFormula(this.param("E", 2), anemoSkill) },
+          { formula: new DirectFormula(this.param("E", 4), anemoSkill) },
         ],
       },
       "traveler-anemo-burst": {
@@ -486,40 +485,36 @@ class TravelerGeo extends CharacterBase {
 
   // E Starfell Sword: 446% Geo DMG (Lv10), 527% (Lv13 C5+)
   // Q Wake of Earth: 266% per shockwave x 4 (Lv10), 314% x 4 (Lv13 C3+)
-  protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 5.27 : 4.46;
-    const qTick = this.constellation >= 3 ? 3.14 : 2.66;
-    return {
-      "traveler-geo-skill": {
-        label: { zh: "E伤害", en: "E" },
-        parts: [
-          {
-            formula: new DirectFormula(eMult, {
-              element: "Geo",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "traveler-geo-burst": {
-        label: {
-          zh: "Q伤害×4",
-          en: "Q (×4)",
+  protected readonly formulaMap = {
+    "traveler-geo-skill": {
+      label: { zh: "E伤害", en: "E" },
+      parts: [
+        {
+          formula: new DirectFormula(this.param("E", 1), {
+            element: "Geo",
+            ability: "skill",
+            reaction: "none",
+          }),
         },
-        parts: [
-          {
-            formula: new DirectFormula(qTick, {
-              element: "Geo",
-              ability: "burst",
-              reaction: "none",
-            }),
-            hits: 4,
-          },
-        ],
+      ],
+    },
+    "traveler-geo-burst": {
+      label: {
+        zh: "Q伤害×4",
+        en: "Q (×4)",
       },
-    };
-  })();
+      parts: [
+        {
+          formula: new DirectFormula(this.param("Q", 1), {
+            element: "Geo",
+            ability: "burst",
+            reaction: "none",
+          }),
+          hits: 4,
+        },
+      ],
+    },
+  };
 
   // Rotation: 3×E > Q (Geo sub-DPS, 6s CD with P1)
   protected override get comboDescriptor(): ComboDescriptor {
@@ -569,9 +564,6 @@ class TravelerElectro extends CharacterBase {
   // Q Bellowing Thunder: 205.9% initial + 59% per Falling Thunder x 12 (Lv10)
   // Q (C3+, Lv13): 243.1% initial + 69.7% x 12
   protected readonly formulaMap = (() => {
-    const eHit = this.constellation >= 5 ? 1.67 : 1.42;
-    const qInitial = this.constellation >= 3 ? 2.431 : 2.059;
-    const qTick = this.constellation >= 3 ? 0.697 : 0.59;
     const electroBurst = {
       element: "Electro" as const,
       ability: "burst" as const,
@@ -582,7 +574,7 @@ class TravelerElectro extends CharacterBase {
         label: { zh: "E伤害×3", en: "E (×3)" },
         parts: [
           {
-            formula: new DirectFormula(eHit, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Electro",
               ability: "skill",
               reaction: "none",
@@ -597,9 +589,9 @@ class TravelerElectro extends CharacterBase {
           en: "Q (×12)",
         },
         parts: [
-          { formula: new DirectFormula(qInitial, electroBurst) },
+          { formula: new DirectFormula(this.param("Q", 1), electroBurst) },
           {
-            formula: new DirectFormula(qTick, electroBurst),
+            formula: new DirectFormula(this.param("Q", 2), electroBurst),
             hits: 12,
             offField: true,
           },
@@ -683,14 +675,12 @@ class TravelerDendro extends CharacterBase {
   // E Razorgrass Blade: 415% Dendro (Lv10), 490% (Lv13 C3+)
   // Q Lea Lotus Lamp: 144.3% per tick x 12 (Lv10), 170.3% x 12 (Lv13 C5+)
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 4.9 : 4.15;
-    const qTick = this.constellation >= 5 ? 1.703 : 1.443;
     return {
       "traveler-dendro-skill": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Dendro",
               ability: "skill",
               reaction: "none",
@@ -705,7 +695,7 @@ class TravelerDendro extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qTick, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Dendro",
               ability: "burst",
               reaction: "none",
@@ -740,8 +730,6 @@ class TravelerHydro extends CharacterBase {
   // E Aquacrest Saber (Torrent Surge): 340.7% Hydro (Lv10), 402.2% (Lv13 C3+)
   // Q Rising Waters: 183.4% per tick x 4 (Lv10), 216.5% x 4 (Lv13 C5+)
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 4.022 : 3.407;
-    const qTick = this.constellation >= 5 ? 2.165 : 1.834;
     return {
       "traveler-hydro-skill": {
         label: {
@@ -750,7 +738,7 @@ class TravelerHydro extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 2), {
               element: "Hydro",
               ability: "skill",
               reaction: "none",
@@ -762,7 +750,7 @@ class TravelerHydro extends CharacterBase {
         label: { zh: "Q伤害×4", en: "Q (×4)" },
         parts: [
           {
-            formula: new DirectFormula(qTick, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Hydro",
               ability: "burst",
               reaction: "none",
@@ -842,8 +830,6 @@ class TravelerPyro extends CharacterBase {
   // E Flowfire Blade (Blazing Threshold): 50.5% per tick x 12 (Lv10), 59.7% x 12 (Lv13 C3+)
   // Q Plains Scorcher: 769% Nightsoul-Pyro (Lv10), 907.8% (Lv13 C5+)
   protected readonly formulaMap = (() => {
-    const eTick = this.constellation >= 3 ? 0.597 : 0.505;
-    const qMult = this.constellation >= 5 ? 9.078 : 7.69;
     return {
       "traveler-pyro-skill": {
         label: {
@@ -852,7 +838,7 @@ class TravelerPyro extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(eTick, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
@@ -866,7 +852,7 @@ class TravelerPyro extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -886,7 +872,10 @@ class TravelerPyro extends CharacterBase {
   }
 }
 
-function manekinFormulas(element: Element) {
+function manekinFormulas(
+  param: (skill: "A" | "E" | "Q", paramIndex: number) => number,
+  element: Element
+) {
   // All 14 variants (7 elements × 2 genders) share an identical kit:
   // - No constellations
   // - P2: Off-field ER regen (utility, no damage)
@@ -894,18 +883,18 @@ function manekinFormulas(element: Element) {
   const tag = (ability: "skill" | "burst") =>
     ({ element, ability, reaction: "none" as const }) as const;
   return {
-    // - E: 241.9% single hit of own element (2 charges)
+    // - E: single hit of own element (2 charges)
     "manekin-skill": {
       label: { zh: "E伤害", en: "E" },
-      parts: [{ formula: new DirectFormula(2.419, tag("skill")) }],
+      parts: [{ formula: new DirectFormula(param("E", 1), tag("skill")) }],
     },
-    // - Q: 583.2% summon hit + 50.4% per trespass (0.5s ICD, 8s duration → 16 ticks)
+    // - Q: summon hit + trespass per tick (0.5s ICD, 8s duration → 16 ticks)
     "manekin-burst": {
       label: { zh: "Q生成+踏入×16", en: "Q Summon + Trespass×16" },
       parts: [
-        { formula: new DirectFormula(5.832, tag("burst")) },
+        { formula: new DirectFormula(param("Q", 1), tag("burst")) },
         {
-          formula: new DirectFormula(0.504, tag("burst")),
+          formula: new DirectFormula(param("Q", 2), tag("burst")),
           hits: 16,
         },
       ],
@@ -930,7 +919,10 @@ const manekinDefaultRotation: ComboDescriptor = [
 @RegisterCharacter("manekin_anemo")
 class ManekinAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Anemo");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Anemo"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -939,7 +931,10 @@ class ManekinAnemo extends CharacterBase {
 @RegisterCharacter("manekin_cryo")
 class ManekinCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Cryo");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Cryo"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -948,7 +943,10 @@ class ManekinCryo extends CharacterBase {
 @RegisterCharacter("manekin_dendro")
 class ManekinDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Dendro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Dendro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -957,7 +955,10 @@ class ManekinDendro extends CharacterBase {
 @RegisterCharacter("manekin_electro")
 class ManekinElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Electro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Electro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -966,7 +967,7 @@ class ManekinElectro extends CharacterBase {
 @RegisterCharacter("manekin_geo")
 class ManekinGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Geo");
+  protected readonly formulaMap = manekinFormulas(this.param.bind(this), "Geo");
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -975,7 +976,10 @@ class ManekinGeo extends CharacterBase {
 @RegisterCharacter("manekin_hydro")
 class ManekinHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Hydro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Hydro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -984,7 +988,10 @@ class ManekinHydro extends CharacterBase {
 @RegisterCharacter("manekin_pyro")
 class ManekinPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Pyro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Pyro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -993,7 +1000,10 @@ class ManekinPyro extends CharacterBase {
 @RegisterCharacter("manekina_anemo")
 class ManekinaAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Anemo");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Anemo"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -1002,7 +1012,10 @@ class ManekinaAnemo extends CharacterBase {
 @RegisterCharacter("manekina_cryo")
 class ManekinaCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Cryo");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Cryo"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -1011,7 +1024,10 @@ class ManekinaCryo extends CharacterBase {
 @RegisterCharacter("manekina_dendro")
 class ManekinaDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Dendro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Dendro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -1020,7 +1036,10 @@ class ManekinaDendro extends CharacterBase {
 @RegisterCharacter("manekina_electro")
 class ManekinaElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Electro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Electro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -1029,7 +1048,7 @@ class ManekinaElectro extends CharacterBase {
 @RegisterCharacter("manekina_geo")
 class ManekinaGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Geo");
+  protected readonly formulaMap = manekinFormulas(this.param.bind(this), "Geo");
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -1038,7 +1057,10 @@ class ManekinaGeo extends CharacterBase {
 @RegisterCharacter("manekina_hydro")
 class ManekinaHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Hydro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Hydro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }
@@ -1047,7 +1069,10 @@ class ManekinaHydro extends CharacterBase {
 @RegisterCharacter("manekina_pyro")
 class ManekinaPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas("Pyro");
+  protected readonly formulaMap = manekinFormulas(
+    this.param.bind(this),
+    "Pyro"
+  );
   protected override get comboDescriptor(): ComboDescriptor {
     return manekinDefaultRotation;
   }

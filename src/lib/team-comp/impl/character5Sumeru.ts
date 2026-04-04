@@ -77,17 +77,6 @@ class Dehya extends CharacterBase {
   // Fist Lv10: 177.7% ATK + 3.05% HP, Lv13 (C3+): 209.7% ATK + 3.60% HP
   // Drive Lv10: 250.7% ATK + 4.30% HP, Lv13 (C3+): 296.0% ATK + 5.07% HP
   protected readonly formulaMap = (() => {
-    const fieldAtk = this.param("E", 3);
-    const fieldHp = this.param("E", 4);
-    const fistAtk = this.param("Q", 1);
-    const fistHp = this.param("Q", 2);
-    const driveAtk = this.param("Q", 3);
-    const driveHp = this.param("Q", 4);
-    const eTag = {
-      element: "Pyro" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
     const qTag = {
       element: "Pyro" as const,
       ability: "burst" as const,
@@ -98,10 +87,12 @@ class Dehya extends CharacterBase {
         label: { zh: "E净世焚火", en: "E Molten Inferno" },
         parts: [
           {
-            formula: new DirectFormula(fieldAtk, eTag, "atk", {
-              key: "hp",
-              multiplier: fieldHp,
-            }),
+            formula: new DirectFormula(
+              this.param("E", 3),
+              { element: "Pyro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "hp", multiplier: this.param("E", 4) }
+            ),
             hits: 4,
             offField: true,
           },
@@ -114,16 +105,16 @@ class Dehya extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(fistAtk, qTag, "atk", {
+            formula: new DirectFormula(this.param("Q", 1), qTag, "atk", {
               key: "hp",
-              multiplier: fistHp,
+              multiplier: this.param("Q", 2),
             }),
             hits: 10,
           },
           {
-            formula: new DirectFormula(driveAtk, qTag, "atk", {
+            formula: new DirectFormula(this.param("Q", 3), qTag, "atk", {
               key: "hp",
-              multiplier: driveHp,
+              multiplier: this.param("Q", 4),
             }),
           },
         ],
@@ -187,39 +178,32 @@ class Alhaitham extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // 3-Mirror Projection per hit
-    const projAtk = this.param("E", 8);
-    const projEm = this.param("E", 9);
-    // Burst single-instance, with 3 mirrors consumed = 10 hits
-    const burstAtk = this.param("Q", 1);
-    const burstEm = this.param("Q", 2);
-    const projTag = {
-      element: "Dendro" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
     return {
+      // 3-Mirror Projection per hit
       "alhaitham-projection": {
         label: { zh: "E伤害(3镜)", en: "E (3 Mirrors)" },
         parts: [
           {
-            formula: new DirectFormula(projAtk, projTag, "atk", {
-              key: "em",
-              multiplier: projEm,
-            }),
+            formula: new DirectFormula(
+              this.param("E", 8),
+              { element: "Dendro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("E", 9) }
+            ),
             hits: 3,
           },
         ],
       },
+      // Burst single-instance, with 3 mirrors consumed = 10 hits
       "alhaitham-burst": {
         label: { zh: "Q×10 3镜", en: "Q ×10 (3 Mirrors)" },
         parts: [
           {
             formula: new DirectFormula(
-              burstAtk,
+              this.param("Q", 1),
               { element: "Dendro", ability: "burst", reaction: "none" },
               "atk",
-              { key: "em", multiplier: burstEm }
+              { key: "em", multiplier: this.param("Q", 2) }
             ),
             hits: 10,
           },
@@ -311,9 +295,6 @@ class Wanderer extends CharacterBase {
   // E Hover CA: CA multiplier with E baseDmg% buff (Kuugo: Toufukai)
   // Q Burst (Lv10): 265.0%×5, (Lv13 C3+): 312.8%×5
   protected readonly formulaMap = (() => {
-    const normalEBaseDmg = this.param("E", 2) - 1.0;
-    const chargeEBaseDmg = this.param("E", 3) - 1.0;
-    const qMult = this.param("Q", 1);
     const normalTag = {
       element: "Anemo" as const,
       ability: "normal" as const,
@@ -322,7 +303,7 @@ class Wanderer extends CharacterBase {
     const normalBespoke = new StatBuff(
       cbs(this, "E", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-      [{ key: "baseDmg%", value: normalEBaseDmg }]
+      [{ key: "baseDmg%", value: this.param("E", 2) - 1.0 }]
     );
 
     return {
@@ -356,7 +337,7 @@ class Wanderer extends CharacterBase {
             bespokeBuff: new StatBuff(
               cbs(this, "E", ["E"]),
               { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-              [{ key: "baseDmg%", value: chargeEBaseDmg }]
+              [{ key: "baseDmg%", value: this.param("E", 3) - 1.0 }]
             ),
           },
         ],
@@ -382,7 +363,7 @@ class Wanderer extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -554,18 +535,16 @@ class Nahida extends CharacterBase {
 
   // Tri-Karma Purification DMG
   protected readonly formulaMap = (() => {
-    const atkMult = this.param("E", 3);
-    const emMult = this.param("E", 4);
     return {
       "nahida-karma": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(
-              atkMult,
+              this.param("E", 3),
               { element: "Dendro", ability: "skill", reaction: "none" },
               "atk",
-              { key: "em", multiplier: emMult }
+              { key: "em", multiplier: this.param("E", 4) }
             ),
             offField: true,
           },
@@ -640,15 +619,6 @@ class Cyno extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Burst N1-N5 combo (5 distinct multipliers, N4 hits twice = 6 total hits)
-    const n1 = this.param("Q", 1);
-    const n2 = this.param("Q", 2);
-    const n3 = this.param("Q", 3);
-    const n4 = this.param("Q", 4);
-    const n5 = this.param("Q", 6);
-    // Mortuary Rite
-    const eMult = this.param("E", 2);
-
     const normalBaseTag = {
       element: "Electro" as const,
       ability: "normal" as const,
@@ -661,22 +631,27 @@ class Cyno extends CharacterBase {
     };
 
     return {
+      // Burst N1-N5 combo (5 distinct multipliers, N4 hits twice = 6 total hits)
       "cyno-combo": {
         label: { zh: "Q普攻+E", en: "Q Normal+E" },
         parts: [
           {
-            formula: new DirectFormula(n1, normalBaseTag),
+            formula: new DirectFormula(this.param("Q", 1), normalBaseTag),
           },
-          { formula: new DirectFormula(n2, normalBaseTag) },
+          { formula: new DirectFormula(this.param("Q", 2), normalBaseTag) },
           {
-            formula: new DirectFormula(n3, normalBaseTag),
-          },
-          { formula: new DirectFormula(n4, normalBaseTag), hits: 2 },
-          {
-            formula: new DirectFormula(n5, normalBaseTag),
+            formula: new DirectFormula(this.param("Q", 3), normalBaseTag),
           },
           {
-            formula: new DirectFormula(eMult, eBaseTag),
+            formula: new DirectFormula(this.param("Q", 4), normalBaseTag),
+            hits: 2,
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 6), normalBaseTag),
+          },
+          {
+            // Mortuary Rite
+            formula: new DirectFormula(this.param("E", 2), eBaseTag),
             // P1: Judication +35% DMG applies only to Mortuary Rite, not Duststalker Bolts
             bespokeBuff: new StatBuff(
               cbs(this, "P1", ["E"]),
@@ -836,8 +811,6 @@ class Nilou extends CharacterBase {
 
   // Q: Lv10 Skill DMG 33.2% HP + Lingering Aeon 40.6% HP, Lv13 (C3+) 39.2% + 47.9%
   protected readonly formulaMap = (() => {
-    const qHit1 = this.param("Q", 1);
-    const qHit2 = this.param("Q", 2);
     const elements = Object.values(this.teamMeta.elements);
     const allDendroHydro = elements.every(
       (e) => e === "Dendro" || e === "Hydro"
@@ -857,21 +830,16 @@ class Nilou extends CharacterBase {
       reaction: "none" as const,
     };
 
-    // E Sword Dance: initial + 1st + 2nd + Luminous Illusion (all HP% scaling, Skill DMG)
-    const eInit = this.param("E", 1);
-    const e1 = this.param("E", 6);
-    const e2 = this.param("E", 7);
-    const eLumin = this.param("E", 4);
-
     return {
+      // E Sword Dance: initial + 1st + 2nd + Luminous Illusion (all HP% scaling, Skill DMG)
       "nilou-e-dance": {
         label: { zh: "E剑舞步", en: "E Sword Dance" },
         parts: [
-          { formula: new DirectFormula(eInit, eTag, "hp") },
-          { formula: new DirectFormula(e1, eTag, "hp") },
-          { formula: new DirectFormula(e2, eTag, "hp") },
+          { formula: new DirectFormula(this.param("E", 1), eTag, "hp") },
+          { formula: new DirectFormula(this.param("E", 6), eTag, "hp") },
+          { formula: new DirectFormula(this.param("E", 7), eTag, "hp") },
           {
-            formula: new DirectFormula(eLumin, eTag, "hp"),
+            formula: new DirectFormula(this.param("E", 4), eTag, "hp"),
             // C1: Luminous Illusion DMG +65% (baseDmg% — confirmed by KQM TCL,
             // same wording pattern as Xingqiu C4 "造成的伤害提升")
             ...(this.constellation >= 1
@@ -889,8 +857,8 @@ class Nilou extends CharacterBase {
       "nilou-burst": {
         label: { zh: "Q 2段", en: "Q 2-hit" },
         parts: [
-          { formula: new DirectFormula(qHit1, qTag, "hp") },
-          { formula: new DirectFormula(qHit2, qTag, "hp") },
+          { formula: new DirectFormula(this.param("Q", 1), qTag, "hp") },
+          { formula: new DirectFormula(this.param("Q", 2), qTag, "hp") },
         ],
       },
       "nilou-bountiful-core": {
@@ -1003,9 +971,6 @@ class Tighnari extends CharacterBase {
       reaction: "none" as const,
     };
 
-    const tangleMult = this.param("Q", 1);
-    const secondaryMult = this.param("Q", 2);
-
     return {
       "tighnari-charge": {
         label: { zh: "重击花筥箭", en: "CA Wreath+Clusterbloom" },
@@ -1026,8 +991,8 @@ class Tighnari extends CharacterBase {
           en: "Q ×12",
         },
         parts: [
-          { formula: new DirectFormula(tangleMult, burstTag), hits: 6 },
-          { formula: new DirectFormula(secondaryMult, burstTag), hits: 6 },
+          { formula: new DirectFormula(this.param("Q", 1), burstTag), hits: 6 },
+          { formula: new DirectFormula(this.param("Q", 2), burstTag), hits: 6 },
         ],
       },
     };

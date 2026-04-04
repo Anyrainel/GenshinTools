@@ -40,14 +40,12 @@ class Dahlia extends CharacterBase {
   // E: Sacramental Shower — param1
   // Q: Radiant Psalter — param1
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
     return {
       "dahlia-skill": {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Hydro",
               ability: "skill",
               reaction: "none",
@@ -59,7 +57,7 @@ class Dahlia extends CharacterBase {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Hydro",
               ability: "burst",
               reaction: "none",
@@ -330,10 +328,6 @@ class Noelle extends CharacterBase {
 
   // Q-infused Normal Attack 4-hit string (Geo infusion during Q)
   protected readonly formulaMap = (() => {
-    const n1 = this.param("A", 1);
-    const n2 = this.param("A", 2);
-    const n3 = this.param("A", 3);
-    const n4 = this.param("A", 4);
     const geoNormal = {
       element: "Geo" as const,
       ability: "normal" as const,
@@ -343,10 +337,10 @@ class Noelle extends CharacterBase {
       "noelle-na": {
         label: { zh: "Q普攻（4段）", en: "Q Normal (4-hit)" },
         parts: [
-          { formula: new DirectFormula(n1, geoNormal) },
-          { formula: new DirectFormula(n2, geoNormal) },
-          { formula: new DirectFormula(n3, geoNormal) },
-          { formula: new DirectFormula(n4, geoNormal) },
+          { formula: new DirectFormula(this.param("A", 1), geoNormal) },
+          { formula: new DirectFormula(this.param("A", 2), geoNormal) },
+          { formula: new DirectFormula(this.param("A", 3), geoNormal) },
+          { formula: new DirectFormula(this.param("A", 4), geoNormal) },
         ],
       },
     };
@@ -407,15 +401,12 @@ class Fischl extends CharacterBase {
   // E: Oz tick DMG — param1
   // C6 extends Oz duration by 2s (10s → 12s), so 12 hits instead of 10
   protected readonly formulaMap = (() => {
-    const ozTickMult = this.param("E", 1);
     const ozHits = this.constellation >= 6 ? 12 : 10;
     const tag = {
       element: "Electro" as const,
       ability: "skill" as const,
       reaction: "none" as const,
     };
-    // Q: Falling Thunder DMG — param1
-    const qFallingMult = this.param("Q", 1);
     const burstTag = {
       element: "Electro" as const,
       ability: "burst" as const,
@@ -426,7 +417,7 @@ class Fischl extends CharacterBase {
         label: { zh: "E奥兹连击", en: "E Oz Combo" },
         parts: [
           {
-            formula: new DirectFormula(ozTickMult, tag),
+            formula: new DirectFormula(this.param("E", 1), tag),
             hits: ozHits,
             offField: true,
           },
@@ -464,7 +455,7 @@ class Fischl extends CharacterBase {
         label: { zh: "Q落雷", en: "Q Falling Thunder" },
         parts: [
           {
-            formula: new DirectFormula(qFallingMult, burstTag),
+            formula: new DirectFormula(this.param("Q", 1), burstTag),
           },
           // C4: Q activation deals 222% ATK as Electro DMG
           ...(this.constellation >= 4
@@ -554,9 +545,6 @@ class Rosaria extends CharacterBase {
   // Q param1 + Q param2; Q ice lance tick: Q param3
   // KQM: 2s tick interval → 4 ticks (8s) / 6 ticks (C2, 12s)
   protected readonly formulaMap = (() => {
-    const init1 = this.param("Q", 1);
-    const init2 = this.param("Q", 2);
-    const tickMult = this.param("Q", 3);
     const tickCount = this.constellation >= 2 ? 6 : 4;
     const cryoBurst = {
       element: "Cryo" as const,
@@ -570,10 +558,10 @@ class Rosaria extends CharacterBase {
           en: `Q Initial + Lance ×${tickCount}`,
         },
         parts: [
-          { formula: new DirectFormula(init1, cryoBurst) },
-          { formula: new DirectFormula(init2, cryoBurst) },
+          { formula: new DirectFormula(this.param("Q", 1), cryoBurst) },
+          { formula: new DirectFormula(this.param("Q", 2), cryoBurst) },
           {
-            formula: new DirectFormula(tickMult, cryoBurst),
+            formula: new DirectFormula(this.param("Q", 3), cryoBurst),
             hits: tickCount,
             offField: true,
           },
@@ -682,14 +670,12 @@ class Sucrose extends CharacterBase {
   // E: param1
   // Q DoT: param1
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
     return {
       "sucrose-skill": {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",
@@ -701,7 +687,7 @@ class Sucrose extends CharacterBase {
         label: { zh: "Q持续", en: "Q DoT" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -756,21 +742,16 @@ class Bennett extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // E tap: param1
-    const eMult = this.param("E", 1);
-    // Q: Skill DMG — param1
-    const qMult = this.param("Q", 1);
-    const pyroTag = {
-      element: "Pyro" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
     return {
       "bennett-skill": {
         label: { zh: "E点按", en: "E Skill (Tap)" },
         parts: [
           {
-            formula: new DirectFormula(eMult, pyroTag),
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
           },
         ],
       },
@@ -778,7 +759,7 @@ class Bennett extends CharacterBase {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -822,13 +803,8 @@ class Amber extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // E: Baron Bunny explosion — E param2
-    // C2: Manual detonation deals 200% additional DMG (fixed, not talent-scaled)
-    const eExplosionMult = this.param("E", 2);
     // C4: Adds 1 additional charge → 2 uses per rotation
     const eCount = this.constellation >= 4 ? 2 : 1;
-    // Q Fiery Rain per wave — Q param1, 18 waves
-    const qWaveMult = this.param("Q", 1);
     return {
       "amber-skill": {
         label: {
@@ -837,7 +813,7 @@ class Amber extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(eExplosionMult, {
+            formula: new DirectFormula(this.param("E", 2), {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
@@ -863,7 +839,7 @@ class Amber extends CharacterBase {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
-            formula: new DirectFormula(qWaveMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -906,15 +882,13 @@ class Kaeya extends CharacterBase {
   // Q icicle: param1
   // KQM data: ~13 total hits (C0, 3 icicles stationary), ~17 hits (C6, 4 icicles)
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
     const qHits = this.constellation >= 6 ? 17 : 13;
     return {
       "kaeya-skill": {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Cryo",
               ability: "skill",
               reaction: "none",
@@ -929,7 +903,7 @@ class Kaeya extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -964,15 +938,13 @@ class Lisa extends CharacterBase {
   // Q discharge: Q param1, ~30 discharges over 15s
   // C4: each discharge fires 1-3 bolts (avg 2) → 60 hits
   protected readonly formulaMap = (() => {
-    const eHoldMult = this.param("E", 4);
-    const qDischargeMult = this.param("Q", 1);
     const qHitCount = this.constellation >= 4 ? 60 : 30;
     return {
       "lisa-hold": {
         label: { zh: "E长按(三层)", en: "E Hold (3 stacks)" },
         parts: [
           {
-            formula: new DirectFormula(eHoldMult, {
+            formula: new DirectFormula(this.param("E", 4), {
               element: "Electro",
               ability: "skill",
               reaction: "none",
@@ -987,7 +959,7 @@ class Lisa extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qDischargeMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Electro",
               ability: "burst",
               reaction: "none",

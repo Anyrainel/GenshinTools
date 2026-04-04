@@ -203,17 +203,13 @@ class Columbina extends CharacterBase {
       eInterferenceReaction = "lunarCrystallize";
     }
 
-    // E initial hit
-    const eInitialMult = this.param("E", 1);
-    // Q burst hit
-    const qBurstMult = this.param("Q", 1);
     return {
       "columbina-skill-initial": {
         label: { zh: "E初始", en: "E Initial" },
         parts: [
           {
             formula: new DirectFormula(
-              eInitialMult,
+              this.param("E", 1),
               { element: "Hydro", ability: "skill", reaction: "none" },
               "hp"
             ),
@@ -225,7 +221,7 @@ class Columbina extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              qBurstMult,
+              this.param("Q", 1),
               { element: "Hydro", ability: "burst", reaction: "none" },
               "hp"
             ),
@@ -468,12 +464,6 @@ class Nefer extends CharacterBase {
   protected readonly formulaMap = (() => {
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     const isC6 = this.constellation >= 6;
-    const shadeHit12Mult = this.param("E", 9);
-    const shadeHit3Mult = this.param("E", 11);
-    const q1AtkMult = this.param("Q", 1);
-    const q1EmMult = this.param("Q", 2);
-    const q2AtkMult = this.param("Q", 3);
-    const q2EmMult = this.param("Q", 4);
     // Self hit parts depend on C6 (Hit 2 converts to LunarBloom)
     const selfParts: FormulaPart[] = isC6
       ? [
@@ -519,8 +509,6 @@ class Nefer extends CharacterBase {
             ),
           },
         ];
-    const eAtkMult = this.param("E", 1);
-    const eEmMult = this.param("E", 2);
     return {
       "nefer-phantasm": {
         label: {
@@ -533,7 +521,7 @@ class Nefer extends CharacterBase {
           {
             // Shade Hits 1+2 (same multiplier)
             formula: new LunarDirectFormula(
-              shadeHit12Mult,
+              this.param("E", 9),
               {
                 element: "Dendro",
                 ability: "charge",
@@ -546,7 +534,7 @@ class Nefer extends CharacterBase {
           {
             // Shade Hit 3
             formula: new LunarDirectFormula(
-              shadeHit3Mult,
+              this.param("E", 11),
               {
                 element: "Dendro",
                 ability: "charge",
@@ -578,10 +566,10 @@ class Nefer extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              eAtkMult,
+              this.param("E", 1),
               { element: "Dendro", ability: "skill", reaction: "none" },
               "atk",
-              { key: "em", multiplier: eEmMult }
+              { key: "em", multiplier: this.param("E", 2) }
             ),
           },
         ],
@@ -591,18 +579,18 @@ class Nefer extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              q1AtkMult,
+              this.param("Q", 1),
               { element: "Dendro", ability: "burst", reaction: "none" },
               "atk",
-              { key: "em", multiplier: q1EmMult }
+              { key: "em", multiplier: this.param("Q", 2) }
             ),
           },
           {
             formula: new DirectFormula(
-              q2AtkMult,
+              this.param("Q", 3),
               { element: "Dendro", ability: "burst", reaction: "none" },
               "atk",
-              { key: "em", multiplier: q2EmMult }
+              { key: "em", multiplier: this.param("Q", 4) }
             ),
           },
         ],
@@ -711,38 +699,15 @@ class Flins extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const spearstormMult = this.param("E", 7);
-    const qInitMult = this.param("Q", 1);
-    // LunarDirectFormula passes raw game% — directCoeff (×3 for lunarCharged) applied internally
-    const qMidMult = this.param("Q", 2);
-    const qFinalMult = this.param("Q", 3);
-    const tsMainMult = this.param("Q", 6);
-    const tsExtraMult = this.param("Q", 7);
     const isAscendantGleam = this.teamMeta.countByFaction("Moonsign") >= 2;
     // Moonsign Ascendant Gleam + thunderclouds (from prior lunarCharged) for extra Q/TS hits
     const hasExtraHits =
       isAscendantGleam && this.teamMeta.hasReaction("lunarCharged");
-    const skillTag = {
-      element: "Electro" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
-    const burstTag = {
-      element: "Electro" as const,
-      ability: "burst" as const,
-      reaction: "none" as const,
-    };
     const lunarTag = {
       element: "Electro" as const,
       ability: "burst" as const,
       reaction: "lunarCharged" as const,
     };
-    // E-enhanced Normal Attack multipliers (E talent table)
-    const n1 = this.param("E", 1);
-    const n2 = this.param("E", 2);
-    const n3 = this.param("E", 3);
-    const n4 = this.param("E", 4); // ×2
-    const n5 = this.param("E", 5);
     const normalTag = {
       element: "Electro" as const,
       ability: "normal" as const,
@@ -754,11 +719,14 @@ class Flins extends CharacterBase {
       "flins-normal": {
         label: { zh: "E普攻（5段）", en: "Normal (5-hit, E)" },
         parts: [
-          { formula: new DirectFormula(n1, normalTag) },
-          { formula: new DirectFormula(n2, normalTag) },
-          { formula: new DirectFormula(n3, normalTag) },
-          { formula: new DirectFormula(n4, normalTag), hits: 2 },
-          { formula: new DirectFormula(n5, normalTag) },
+          { formula: new DirectFormula(this.param("E", 1), normalTag) },
+          { formula: new DirectFormula(this.param("E", 2), normalTag) },
+          { formula: new DirectFormula(this.param("E", 3), normalTag) },
+          {
+            formula: new DirectFormula(this.param("E", 4), normalTag),
+            hits: 2,
+          },
+          { formula: new DirectFormula(this.param("E", 5), normalTag) },
         ],
       },
       "flins-spearstorm": {
@@ -767,7 +735,13 @@ class Flins extends CharacterBase {
           en: "E Spearstorm",
         },
         parts: [
-          { formula: new DirectFormula(spearstormMult, skillTag) },
+          {
+            formula: new DirectFormula(this.param("E", 7), {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
           // C2: After E, next Normal Attack deals bonus 50% ATK lunarCharged hit (once per E)
           ...(this.constellation >= 2 &&
           this.teamMeta.hasReaction("lunarCharged")
@@ -786,9 +760,13 @@ class Flins extends CharacterBase {
       "flins-thunderous": {
         label: { zh: "Q雷霆交响", en: "Q Thunderous Symphony" },
         parts: [
-          { formula: new LunarDirectFormula(tsMainMult, lunarTag) },
+          { formula: new LunarDirectFormula(this.param("Q", 6), lunarTag) },
           ...(hasExtraHits
-            ? [{ formula: new LunarDirectFormula(tsExtraMult, lunarTag) }]
+            ? [
+                {
+                  formula: new LunarDirectFormula(this.param("Q", 7), lunarTag),
+                },
+              ]
             : []),
         ],
       },
@@ -796,14 +774,20 @@ class Flins extends CharacterBase {
         label: { zh: "Q满能量", en: "Q Full Energy" },
         parts: [
           // Initial Electro DMG (regular, not lunar)
-          { formula: new DirectFormula(qInitMult, burstTag) },
+          {
+            formula: new DirectFormula(this.param("Q", 1), {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
           // Middle phase Lunar-Charged hits
           {
-            formula: new LunarDirectFormula(qMidMult, lunarTag),
+            formula: new LunarDirectFormula(this.param("Q", 2), lunarTag),
             hits: qMidHits,
           },
           // Final phase Lunar-Charged hit
-          { formula: new LunarDirectFormula(qFinalMult, lunarTag) },
+          { formula: new LunarDirectFormula(this.param("Q", 3), lunarTag) },
         ],
       },
     };
@@ -938,11 +922,6 @@ class Lauma extends CharacterBase {
   // E press: Lv10 218.9%, Lv13 (C5+) 258.4%
   // Frostgrove Sanctuary: Lv10 172.8% ATK + 345.6% EM, Lv13 (C5+) 204.0% ATK + 408.0% EM
   protected readonly formulaMap = (() => {
-    const sanctAtkMult = this.param("E", 4);
-    const sanctEmMult = this.param("E", 5);
-
-    const hold1Mult = this.param("E", 2);
-    const hold2Mult = this.param("E", 3);
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     const hasNascentGleam = this.teamMeta.countByFaction("Moonsign") >= 1;
 
@@ -953,10 +932,10 @@ class Lauma extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              sanctAtkMult,
+              this.param("E", 4),
               { element: "Dendro", ability: "skill", reaction: "none" },
               "atk",
-              { key: "em", multiplier: sanctEmMult }
+              { key: "em", multiplier: this.param("E", 5) }
             ),
             offField: true,
           },
@@ -970,7 +949,7 @@ class Lauma extends CharacterBase {
         when: hasNascentGleam && hasHydro,
         parts: [
           {
-            formula: new DirectFormula(hold1Mult, {
+            formula: new DirectFormula(this.param("E", 2), {
               element: "Dendro",
               ability: "skill",
               reaction: "none",
@@ -979,7 +958,7 @@ class Lauma extends CharacterBase {
           {
             // Per Verdant Dew (max 3 consumed) — multiplier-scaling single hit
             formula: new LunarDirectFormula(
-              hold2Mult * 3,
+              this.param("E", 3) * 3,
               {
                 element: "Dendro",
                 ability: "skill",
@@ -1098,16 +1077,13 @@ class Ineffa extends CharacterBase {
   // P1: If thunderclouds nearby (from lunarCharged), each discharge also does 65% ATK lunarCharged hit
   // Q: Lv10 1218.2%, Lv13 (C5+) 1438.2%
   protected readonly formulaMap = (() => {
-    const eInitialMult = this.param("E", 1);
-    const dischargeMult = this.param("E", 4);
-    const qMult = this.param("Q", 1);
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     return {
       "ineffa-skill-initial": {
         label: { zh: "E初始", en: "E Initial" },
         parts: [
           {
-            formula: new DirectFormula(eInitialMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Electro",
               ability: "skill",
               reaction: "none",
@@ -1119,7 +1095,7 @@ class Ineffa extends CharacterBase {
         label: { zh: "E×10", en: "E×10" },
         parts: [
           {
-            formula: new DirectFormula(dischargeMult, {
+            formula: new DirectFormula(this.param("E", 4), {
               element: "Electro",
               ability: "skill",
               reaction: "none",
@@ -1151,7 +1127,7 @@ class Ineffa extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Electro",
               ability: "burst",
               reaction: "none",

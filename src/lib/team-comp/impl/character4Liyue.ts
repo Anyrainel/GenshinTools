@@ -70,8 +70,6 @@ class LanYan extends CharacterBase {
   // C1 adds a second Feathermoon Ring, doubling hits. C6 grants an extra E charge.
   // Q: Lv10 433.9% ×3 hits, Lv13 (C5+) 512.3% ×3 hits
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
     // C1: 2 charges of E, but each cast still hit 1 time
     // E: propagate to 2 additional targets, but we simulate single target damage, so hit is 1
     return {
@@ -79,7 +77,7 @@ class LanYan extends CharacterBase {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",
@@ -92,7 +90,7 @@ class LanYan extends CharacterBase {
         label: { zh: "Q伤害×3", en: "Q (×3)" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -162,14 +160,12 @@ class Gaming extends CharacterBase {
   // E Charmed Cloudstrider: Lv10 414.7%, Lv13 (C3+) 489.6% (Pyro plunge)
   // Q Man Chai Smash: Lv10 666.7%, Lv13 (C5+) 787.1% (Pyro burst)
   protected readonly formulaMap = (() => {
-    const plungeMult = this.param("E", 1);
-    const manchaiMult = this.param("Q", 1);
     return {
       "gaming-cloudstrider": {
         label: { zh: "下落", en: "Plunge" },
         parts: [
           {
-            formula: new DirectFormula(plungeMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Pyro",
               ability: "plunge",
               reaction: "none",
@@ -181,7 +177,7 @@ class Gaming extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(manchaiMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -330,14 +326,6 @@ class Xiangling extends CharacterBase {
   // Pyronado tick: 202% (Lv10) / 238% (Lv13)
   // C0-C3 Duration 10s: ~10 ticks; C4+ Duration 14s: ~14 ticks
   protected readonly formulaMap = (() => {
-    const swing1 = this.param("Q", 1);
-    const swing2 = this.param("Q", 2);
-    const swing3 = this.param("Q", 3);
-    const tickMult = this.param("Q", 4);
-
-    // E Guoba Flame DMG: Lv10 200%, Lv13 (C3+) 236%
-    const guobaMult = this.param("E", 1);
-
     const pyroTag = {
       element: "Pyro" as const,
       ability: "burst" as const,
@@ -349,7 +337,7 @@ class Xiangling extends CharacterBase {
         label: { zh: "E 锅巴喷火", en: "E Guoba Flame" },
         parts: [
           {
-            formula: new DirectFormula(guobaMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
@@ -361,16 +349,16 @@ class Xiangling extends CharacterBase {
       "xiangling-pyronado-swing": {
         label: { zh: "Q 三段挥舞", en: "Q Swings" },
         parts: [
-          { formula: new DirectFormula(swing1, pyroTag) },
-          { formula: new DirectFormula(swing2, pyroTag) },
-          { formula: new DirectFormula(swing3, pyroTag) },
+          { formula: new DirectFormula(this.param("Q", 1), pyroTag) },
+          { formula: new DirectFormula(this.param("Q", 2), pyroTag) },
+          { formula: new DirectFormula(this.param("Q", 3), pyroTag) },
         ],
       },
       "xiangling-pyronado-tick": {
         label: { zh: "Q 旋火轮", en: "Q Pyronado" },
         parts: [
           {
-            formula: new DirectFormula(tickMult, pyroTag),
+            formula: new DirectFormula(this.param("Q", 4), pyroTag),
             offField: true,
           },
         ],
@@ -433,8 +421,6 @@ class Chongyun extends CharacterBase {
   protected readonly formulaMap = (() => {
     // E: Lv10 310%, Lv13 (C5+) 366%
     const eMult = this.param("E", 1);
-    // Q: 3 blades (C6: 4), Lv10 256% each, Lv13 (C3+) 303%
-    const qMult = this.param("Q", 1);
     const blades = this.constellation >= 6 ? 4 : 3;
     return {
       "chongyun-skill": {
@@ -482,7 +468,7 @@ class Chongyun extends CharacterBase {
         label: { zh: "Q伤害×3", en: "Q (×3/4)" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -559,8 +545,6 @@ class Xinyan extends CharacterBase {
   // CA Cyclic DMG Lv10: 123.6%
   // Q Skill DMG Lv10: 613%, Lv13 (C5+): 724%
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
     const caMult = this.param("A", 5);
 
     // C6: CA gains ATK equal to 50% of DEF
@@ -574,7 +558,7 @@ class Xinyan extends CharacterBase {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
@@ -599,7 +583,7 @@ class Xinyan extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Physical",
               ability: "burst",
               reaction: "none",
@@ -661,11 +645,6 @@ class Xingqiu extends CharacterBase {
   // Raincutter Sword Rain DMG (Lv10): 97.7%
   // Raincutter Sword Rain DMG (Lv13 C3+): 115.3%
   protected readonly formulaMap = (() => {
-    const eHit1 = this.param("E", 1);
-    const eHit2 = this.param("E", 2);
-
-    const qMult = this.param("Q", 1);
-
     const hydroSkillTag = {
       element: "Hydro" as const,
       ability: "skill" as const,
@@ -676,15 +655,15 @@ class Xingqiu extends CharacterBase {
       "xingqiu-skill": {
         label: { zh: "E伤害", en: "E (2 hits)" },
         parts: [
-          { formula: new DirectFormula(eHit1, hydroSkillTag) },
-          { formula: new DirectFormula(eHit2, hydroSkillTag) },
+          { formula: new DirectFormula(this.param("E", 1), hydroSkillTag) },
+          { formula: new DirectFormula(this.param("E", 2), hydroSkillTag) },
         ],
       },
       "xingqiu-burst-tick": {
         label: { zh: "Q伤害(单次)", en: "Q (×1)" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Hydro",
               ability: "burst",
               reaction: "none",
@@ -753,10 +732,6 @@ class Yanfei extends CharacterBase {
   // Q Lv10: 328%, Lv13 (C5+): 388%
   // CA Max Seals Lv10: 245% (3 seals), 273% (4 seals)
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
-    const caMult = this.param("A", this.constellation >= 6 ? 8 : 7);
-
     return {
       "yanfei-charge": {
         label: {
@@ -765,11 +740,14 @@ class Yanfei extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(caMult, {
-              element: "Pyro",
-              ability: "charge",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("A", this.constellation >= 6 ? 8 : 7),
+              {
+                element: "Pyro",
+                ability: "charge",
+                reaction: "none",
+              }
+            ),
           },
           // P2: CA CRIT hit deals extra 80% ATK as CA DMG
           {
@@ -785,7 +763,7 @@ class Yanfei extends CharacterBase {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
@@ -797,7 +775,7 @@ class Yanfei extends CharacterBase {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -843,12 +821,6 @@ class Beidou extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Q Lightning DMG: Lv10 173%, Lv13 (C5+) 204%
-    const qMult = this.param("Q", 2);
-    // E Max-Counter: Base + 2×(DMG Bonus on Hit Taken)
-    // Lv10: Base 218.88%, Hit Bonus 288%; Lv13 (C3+): Base 258.4%, Hit Bonus 340%
-    const eBaseMult = this.param("E", 3);
-    const eHitBonusMult = this.param("E", 4);
     const electroSkillTag = {
       element: "Electro" as const,
       ability: "skill" as const,
@@ -858,9 +830,9 @@ class Beidou extends CharacterBase {
       "beidou-skill-counter": {
         label: { zh: "E(满格反击)", en: "E Full Counter" },
         parts: [
-          { formula: new DirectFormula(eBaseMult, electroSkillTag) },
+          { formula: new DirectFormula(this.param("E", 3), electroSkillTag) },
           {
-            formula: new DirectFormula(eHitBonusMult, electroSkillTag),
+            formula: new DirectFormula(this.param("E", 4), electroSkillTag),
             hits: 2,
           },
         ],
@@ -869,7 +841,7 @@ class Beidou extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Electro",
               ability: "burst",
               reaction: "none",
@@ -904,14 +876,12 @@ class Ningguang extends CharacterBase {
   // E: Lv10 415%, Lv13 (C5+) 490%
   // Q: 12 gems Lv10 157%×12 = 1884%, Lv13 (C3+) 185%×12 = 2220%
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 2);
-    const qGemMult = this.param("Q", 1);
     return {
       "ningguang-skill": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 2), {
               element: "Geo",
               ability: "skill",
               reaction: "none",
@@ -923,7 +893,7 @@ class Ningguang extends CharacterBase {
         label: { zh: "Q伤害×12", en: "Q (×12)" },
         parts: [
           {
-            formula: new DirectFormula(qGemMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Geo",
               ability: "burst",
               reaction: "none",
@@ -1016,19 +986,13 @@ class YunJin extends CharacterBase {
   // E Charge 2 DMG Lv10: 671.0% DEF, Lv13: 792.2% DEF
   // Q Skill DMG Lv10: 439%, Lv13: 518%
   protected readonly formulaMap = (() => {
-    const ePressMult = this.param("E", 3);
-    const eCharge1Mult = this.param("E", 4);
-    const eCharge2Mult = this.param("E", 5);
-
-    const qMult = this.param("Q", 1);
-
     return {
       "yun_jin-skill-press": {
         label: { zh: "E点按", en: "E Tap" },
         parts: [
           {
             formula: new DirectFormula(
-              ePressMult,
+              this.param("E", 3),
               { element: "Geo", ability: "skill", reaction: "none" },
               "def"
             ),
@@ -1040,7 +1004,7 @@ class YunJin extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              eCharge1Mult,
+              this.param("E", 4),
               { element: "Geo", ability: "skill", reaction: "none" },
               "def"
             ),
@@ -1052,7 +1016,7 @@ class YunJin extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              eCharge2Mult,
+              this.param("E", 5),
               { element: "Geo", ability: "skill", reaction: "none" },
               "def"
             ),
@@ -1064,7 +1028,7 @@ class YunJin extends CharacterBase {
         parts: [
           {
             // Q Initial hit is ATK scaled
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Geo",
               ability: "burst",
               reaction: "none",

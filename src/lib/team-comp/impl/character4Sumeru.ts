@@ -32,20 +32,16 @@ class Sethos extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    const atkMult = this.param("A", 7);
-    const emMult = this.param("A", 8);
-    // Q Dusk Bolt: DMG increase based on EM, considered Charged ATK DMG
-    const duskBoltEmMult = this.param("Q", 1);
     return {
       "sethos-shadowpiercer": {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
             formula: new DirectFormula(
-              atkMult,
+              this.param("A", 7),
               { element: "Electro", ability: "charge", reaction: "none" },
               "atk",
-              { key: "em", multiplier: emMult }
+              { key: "em", multiplier: this.param("A", 8) }
             ),
             // P2: EM × 700% → baseDmg for Shadowpiercing Shot only
             // "4枚贯影箭命中敌人后" → removed after 4 hits.
@@ -68,8 +64,9 @@ class Sethos extends CharacterBase {
         label: { zh: "Q瞑弦矢", en: "Q Dusk Bolt" },
         parts: [
           {
+            // Q Dusk Bolt: DMG increase based on EM, considered Charged ATK DMG
             formula: new DirectFormula(
-              duskBoltEmMult,
+              this.param("Q", 1),
               { element: "Electro", ability: "charge", reaction: "none" },
               "em"
             ),
@@ -218,8 +215,6 @@ class Faruzan extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    const vortexMult = this.param("E", 2);
-    const polyhedronMult = this.param("E", 1);
     const eTag = {
       element: "Anemo" as const,
       ability: "skill" as const,
@@ -230,7 +225,7 @@ class Faruzan extends CharacterBase {
         label: { zh: "E风压坍陷风涡", en: "E Collapse Vortex" },
         parts: [
           {
-            formula: new DirectFormula(vortexMult, eTag),
+            formula: new DirectFormula(this.param("E", 2), eTag),
           },
         ],
       },
@@ -238,7 +233,7 @@ class Faruzan extends CharacterBase {
         label: { zh: "E多方面体", en: "E Polyhedron" },
         parts: [
           {
-            formula: new DirectFormula(polyhedronMult, eTag),
+            formula: new DirectFormula(this.param("E", 1), eTag),
           },
         ],
       },

@@ -592,10 +592,13 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
                         print(f"  ZH: {strip_html(zh_eff)}")
 
     if impl:
+        n_lines = impl["end_line"] - impl["start_line"] + 1
+        impl_path = f"src/lib/team-comp/impl/{impl['filename']}"
         print(f"{'─' * 50}")
-        print(f"  IMPL: {impl['filename']} L{impl['start_line']}–L{impl['end_line']}")
-        print("─" * 50)
-        print(impl["code"])
+        print(
+            f"  IMPL found ({n_lines} lines): {impl_path} L{impl['start_line']}–L{impl['end_line']}"
+        )
+        print(f"  → Read this file at offset {impl['start_line']} limit {n_lines} to view the code")
     else:
         print("  [No implementation found in TS]")
 

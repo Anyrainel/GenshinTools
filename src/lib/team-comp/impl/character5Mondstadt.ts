@@ -204,13 +204,6 @@ class Durin extends CharacterBase {
     const { isWhite, isC4Form } = this;
     // Q initial — 3 separate hits with different multipliers, must NOT be summed (S3)
     // White: Q param1 + param2 + param3; Dark: Q param4 + param5 + param6
-    const qW1 = this.param("Q", 1);
-    const qW2 = this.param("Q", 2);
-    const qW3 = this.param("Q", 3);
-    const qD1 = this.param("Q", 4);
-    const qD2 = this.param("Q", 5);
-    const qD3 = this.param("Q", 6);
-
     // Dragon ticks (White): Q param7, 20 ticks over 20s (1s interval)
     // Dragon ticks (Dark): Q param8, 16 ticks over 20s (1.25s interval)
     const dragonWhiteMult = this.param("Q", 7);
@@ -257,9 +250,9 @@ class Durin extends CharacterBase {
         "durin-burst-white": {
           label: { zh: "Q初段+龙息×20", en: "Q Initial+Breath×20" },
           parts: [
-            { formula: new DirectFormula(qW1, burstTag) },
-            { formula: new DirectFormula(qW2, burstTag) },
-            { formula: new DirectFormula(qW3, burstTag) },
+            { formula: new DirectFormula(this.param("Q", 1), burstTag) },
+            { formula: new DirectFormula(this.param("Q", 2), burstTag) },
+            { formula: new DirectFormula(this.param("Q", 3), burstTag) },
             {
               formula: new DirectFormula(dragonWhiteMult, burstTag),
               hits: p2Stacks,
@@ -286,9 +279,9 @@ class Durin extends CharacterBase {
       const unbuffedTicks = darkTotalTicks - c1DarkTriggers;
 
       const parts: FormulaEntry["parts"] = [
-        { formula: new DirectFormula(qD1, burstTag) },
-        { formula: new DirectFormula(qD2, burstTag) },
-        { formula: new DirectFormula(qD3, burstTag) },
+        { formula: new DirectFormula(this.param("Q", 4), burstTag) },
+        { formula: new DirectFormula(this.param("Q", 5), burstTag) },
+        { formula: new DirectFormula(this.param("Q", 6), burstTag) },
       ];
 
       // Ticks with both P2 and C1 buffs
@@ -359,9 +352,9 @@ class Durin extends CharacterBase {
       "durin-burst-dark": {
         label: { zh: "Q初段+龙息×16", en: "Q Initial+Breath×16" },
         parts: [
-          { formula: new DirectFormula(qD1, burstTag) },
-          { formula: new DirectFormula(qD2, burstTag) },
-          { formula: new DirectFormula(qD3, burstTag) },
+          { formula: new DirectFormula(this.param("Q", 4), burstTag) },
+          { formula: new DirectFormula(this.param("Q", 5), burstTag) },
+          { formula: new DirectFormula(this.param("Q", 6), burstTag) },
           {
             formula: new DirectFormula(dragonDarkMult, burstTag),
             hits: p2Stacks,
@@ -532,19 +525,13 @@ class Albedo extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    // Transient Blossom — E param2 (DEF-scaled)
-    const blossomMult = this.param("E", 2);
-    // Burst DMG — Q param1
-    const burstMult = this.param("Q", 1);
-    // Fatal Blossom DMG per blossom — Q param2, 7 blossoms
-    const fatalMult = this.param("Q", 2);
     return {
       "albedo-blossom": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(
-              blossomMult,
+              this.param("E", 2),
               { element: "Geo", ability: "skill", reaction: "none" },
               "def"
             ),
@@ -556,14 +543,14 @@ class Albedo extends CharacterBase {
         label: { zh: "Q爆发+生灭之花×7", en: "Q + Fatal Blossom ×7" },
         parts: [
           {
-            formula: new DirectFormula(burstMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Geo",
               ability: "burst",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(fatalMult, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Geo",
               ability: "burst",
               reaction: "none",
@@ -668,15 +655,6 @@ class Diluc extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    // E: 3 separate hits with different multipliers — must NOT be summed (S3)
-    // E param1, param2, param3
-    const e1 = this.param("E", 1);
-    const e2 = this.param("E", 2);
-    const e3 = this.param("E", 3);
-    const qSlash = this.param("Q", 1);
-    const qExplosion = this.param("Q", 3);
-    const highPlungeMult = this.param("A", 11); // High Plunge DMG
-
     const pyroSkill = {
       element: "Pyro" as const,
       ability: "skill" as const,
@@ -696,23 +674,29 @@ class Diluc extends CharacterBase {
       "diluc-skill": {
         label: { zh: "E三段", en: "E (3 hits)" },
         parts: [
-          { formula: new DirectFormula(e1, pyroSkill) },
-          { formula: new DirectFormula(e2, pyroSkill), bespokeBuff: c4Bespoke },
-          { formula: new DirectFormula(e3, pyroSkill), bespokeBuff: c4Bespoke },
+          { formula: new DirectFormula(this.param("E", 1), pyroSkill) },
+          {
+            formula: new DirectFormula(this.param("E", 2), pyroSkill),
+            bespokeBuff: c4Bespoke,
+          },
+          {
+            formula: new DirectFormula(this.param("E", 3), pyroSkill),
+            bespokeBuff: c4Bespoke,
+          },
         ],
       },
       "diluc-burst": {
         label: { zh: "Q斩击+爆炸", en: "Q Slash + Explosion" },
         parts: [
           {
-            formula: new DirectFormula(qSlash, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
             }),
           },
           {
-            formula: new DirectFormula(qExplosion, {
+            formula: new DirectFormula(this.param("Q", 3), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -727,7 +711,7 @@ class Diluc extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(highPlungeMult, {
+            formula: new DirectFormula(this.param("A", 11), {
               element: "Pyro",
               ability: "plunge",
               reaction: "none",
@@ -867,13 +851,12 @@ class Mona extends CharacterBase {
 
   // Q: Bubble explosion — Q param2
   protected readonly formulaMap = (() => {
-    const qMult = this.param("Q", 2);
     return {
       "mona-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 2), {
               element: "Hydro",
               ability: "burst",
               reaction: "none",
@@ -927,14 +910,12 @@ class Jean extends CharacterBase {
   // E: param1
   // Q: param1
   protected readonly formulaMap = (() => {
-    const eMult = this.param("E", 1);
-    const qMult = this.param("Q", 1);
     return {
       "jean-skill": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",
@@ -946,7 +927,7 @@ class Jean extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -1064,8 +1045,6 @@ class Venti extends CharacterBase {
   // Q DoT: param1, 20 ticks
   // E Press: param1
   protected readonly formulaMap = (() => {
-    const qTickMult = this.param("Q", 1);
-    const ePressMult = this.param("E", 1);
     // NA per-hit multipliers (A param1–param6), each × windsunder scaling (A param12)
     // Must NOT sum different multipliers into one part (S3)
     // N1: param1×2, N2: param2, N3: param3, N4: param4×2, N5: param5, N6: param6
@@ -1127,7 +1106,7 @@ class Venti extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qTickMult, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
@@ -1146,7 +1125,7 @@ class Venti extends CharacterBase {
         minC: 2,
         parts: [
           {
-            formula: new DirectFormula(ePressMult, {
+            formula: new DirectFormula(this.param("E", 1), {
               element: "Anemo",
               ability: "skill",
               reaction: "none",
@@ -1224,13 +1203,12 @@ class Klee extends CharacterBase {
 
   // Charged ATK: A param4 (talent-level-dependent)
   protected readonly formulaMap = (() => {
-    const chargedMult = this.param("A", 4);
     return {
       "klee-charged": {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(chargedMult, {
+            formula: new DirectFormula(this.param("A", 4), {
               element: "Pyro",
               ability: "charge",
               reaction: "none",
@@ -1351,9 +1329,6 @@ class Eula extends CharacterBase {
   // Typical stacks: C0-C5 ~13, C6 ~20
   // P1 Shattered Lightfall: 50% of Lightfall base DMG (on hold E consuming 2 Grimheart)
   protected readonly formulaMap = (() => {
-    const tapMult = this.param("E", 1);
-    const holdMult = this.param("E", 2);
-    const icewhirlMult = this.param("E", 3);
     const qInitialMult = this.param("Q", 1);
     const baseMult = this.param("Q", 2);
     const stackMult = this.param("Q", 3);
@@ -1373,7 +1348,7 @@ class Eula extends CharacterBase {
     return {
       "eula-skill-tap": {
         label: { zh: "E短按", en: "E Tap" },
-        parts: [{ formula: new DirectFormula(tapMult, cryoSkill) }],
+        parts: [{ formula: new DirectFormula(this.param("E", 1), cryoSkill) }],
       },
       "eula-skill-hold": {
         label: {
@@ -1381,9 +1356,9 @@ class Eula extends CharacterBase {
           en: "E Hold + P1 Shattered",
         },
         parts: [
-          { formula: new DirectFormula(holdMult, cryoSkill) },
+          { formula: new DirectFormula(this.param("E", 2), cryoSkill) },
           {
-            formula: new DirectFormula(icewhirlMult, cryoSkill),
+            formula: new DirectFormula(this.param("E", 3), cryoSkill),
             hits: 2,
           },
           { formula: new DirectFormula(baseMult * 0.5, physBurst) },
@@ -1566,9 +1541,6 @@ class Varka extends CharacterBase {
     const azRight = this.param("E", 16);
     const azLeft = this.param("E", 17);
 
-    const q1 = this.param("Q", 1);
-    const q2 = this.param("Q", 2);
-
     const c2Mult = 8.0;
 
     const normalTag = (element: Element | "Anemo") => ({
@@ -1686,8 +1658,8 @@ class Varka extends CharacterBase {
     formulas["varka-burst"] = {
       label: { zh: "Q", en: "Q" },
       parts: [
-        { formula: new DirectFormula(q1, burstTag(el)) },
-        { formula: new DirectFormula(q2, burstTag("Anemo")) },
+        { formula: new DirectFormula(this.param("Q", 1), burstTag(el)) },
+        { formula: new DirectFormula(this.param("Q", 2), burstTag("Anemo")) },
       ],
     };
 
