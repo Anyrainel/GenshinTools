@@ -449,7 +449,7 @@ class Gorou extends CharacterBase {
         ],
       },
       "gorou-burst": {
-        label: { zh: "Q+结晶���塌", en: "Q + Crystal Collapse" },
+        label: { zh: "Q+岩晶崩破", en: "Q + Crystal Collapse" },
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 1), qTag, "def"),

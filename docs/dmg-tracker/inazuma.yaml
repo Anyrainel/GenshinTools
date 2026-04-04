@@ -62,6 +62,23 @@
   created: "2026-04-04"
   resolved: null
 
+- id: kokomi-p2-hp-scaling
+  entity: sangonomiya_kokomi
+  rule: S8
+  status: wont-do
+  category: bug
+  summary: >
+    P2 (Song of Pearls) heal% bonus was incorrectly applied as baseDmg% instead of
+    as an HP multiplier additive with Q's HP scaling. Fixed to use CrossScalingBuff
+    so total NA baseDmg from HP = HP × (Q_param + heal% × 0.15).
+  detail: >
+    Was implemented as ScalingBuff(heal% → baseDmg%, 0.15) which treats the bonus as
+    a percentage of base damage. The correct mechanic is that heal% × 0.15 becomes an
+    additional HP multiplier additive with Q's param4/param5. Changed to CrossScalingBuff
+    (heal% × 0.15 × HP → baseDmg) for NA and CA separately.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
 - id: sayu-c2-kick-dmg
   entity: sayu
   rule: S6

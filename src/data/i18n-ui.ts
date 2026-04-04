@@ -1611,8 +1611,8 @@ export const i18nUiData = {
       zh: "自动调整副词条权重",
     },
     noBuildDesc: {
-      en: "Automatically compute optimal substat weights for each character based on their team and rotation. Requires character builds and at least one team.",
-      zh: "根据角色的队伍和循环自动计算最优副词条权重。需要角色配装和至少一支队伍。",
+      en: "Automatically compute optimal substat weights for each character based on their team and rotation. Requires DPS builds and teams with matching artifact sets.",
+      zh: "根据角色的队伍和循环自动计算最优副词条权重。需要输出配装和使用相同圣遗物套装的队伍。",
     },
     goToTeams: {
       en: "Create Teams",

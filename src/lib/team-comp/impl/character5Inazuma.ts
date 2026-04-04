@@ -1,4 +1,4 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
+import { CrossScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   DirectFormula,
   LunarFormula,
@@ -936,17 +936,34 @@ class SangonomiyaKokomi extends CharacterBase {
       { key: "cr", value: -1.0 },
       { key: "heal%", value: 0.25 },
     ]),
-    // P2 (Song of Pearls): During Q, 15% of heal% → Normal/Charged DMG baseDmg%
-    new ScalingBuff(
+    // P2 (Song of Pearls): During Q, heal% × 0.15 × HP → baseDmg for Normal/Charged.
+    // This multiplier applies to HP (not as baseDmg%), additive with Q's HP scaling
+    // multipliers. Total NA baseDmg from HP = HP × (Q_param4 + heal% × 0.15).
+    new CrossScalingBuff(
       cbs(this, "P2", ["Q"]),
       {
         receiver: "selfOnField",
-        filter: { abilities: ["normal", "charge"] },
+        filter: { abilities: ["normal"] },
       },
       [],
       "heal%",
-      "baseDmg%",
-      0.15
+      0.15,
+      undefined,
+      "hp",
+      "baseDmg"
+    ),
+    new CrossScalingBuff(
+      cbs(this, "P2", ["Q"]),
+      {
+        receiver: "selfOnField",
+        filter: { abilities: ["charge"] },
+      },
+      [],
+      "heal%",
+      0.15,
+      undefined,
+      "hp",
+      "baseDmg"
     ),
     // Q: Nereid's Ascension — HP → baseDmg for Normal Attacks (Q param4)
     new ScalingBuff(
