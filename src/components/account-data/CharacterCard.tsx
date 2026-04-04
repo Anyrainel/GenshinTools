@@ -194,26 +194,27 @@ function CharacterCardComponent({
       {/* Artifact Sets Row */}
       <div
         className={cn(
-          "bg-black/20 border-b border-border/20 flex flex-wrap gap-y-2 min-h-[56px] items-center justify-between",
-          isVeryNarrow ? "px-1.5 gap-x-2" : "px-4 gap-x-6"
+          "bg-black/20 border-b border-border/20 flex min-h-[56px] items-center",
+          isVeryNarrow ? "px-1.5 gap-x-2" : "px-4 gap-x-4"
         )}
       >
-        <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
+        <div className="flex flex-1 min-w-0 items-center gap-x-4">
           {activeSets.length > 0 ? (
             activeSets.map(([setKey, count]) => (
               <Tooltip key={setKey}>
-                <TooltipTrigger className="flex items-center gap-2 cursor-help">
+                <TooltipTrigger className="flex flex-1 min-w-0 items-center gap-2 cursor-help">
                   <ItemIcon
                     artifactSetId={setKey}
                     size={isVeryNarrow ? "sm" : "md"}
+                    className="shrink-0"
                   />
-                  <div className="flex flex-col items-start">
+                  <div className="flex flex-col items-start min-w-0">
                     {/* Hide set name in compact mode for 2-piece sets to save space */}
                     {(!isVeryNarrow || count >= 4) && (
                       <span
                         className={cn(
-                          "font-semibold text-gray-200 leading-tight block truncate",
-                          isVeryNarrow ? "text-xs max-w-[160px]" : "text-base"
+                          "font-semibold text-gray-200 leading-tight block truncate max-w-full",
+                          isVeryNarrow ? "text-xs" : "text-base"
                         )}
                       >
                         {t.artifact(setKey)}

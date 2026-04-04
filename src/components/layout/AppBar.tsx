@@ -202,11 +202,7 @@ export function AppBar({
             {/* Mobile Menu */}
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="2xl:hidden -ml-2"
-                >
+                <Button variant="ghost" size="icon" className="xl:hidden -ml-2">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Menu</span>
                 </Button>
@@ -315,7 +311,7 @@ export function AppBar({
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden 2xl:flex items-center gap-2">
+            <div className="hidden xl:flex items-center gap-2">
               {navItems.map((item) => {
                 const isActive = location.pathname.startsWith(item.href);
                 const targetHref = item.children?.[0]?.href ?? item.href;
