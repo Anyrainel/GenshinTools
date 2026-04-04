@@ -6,19 +6,34 @@ import {
   type TierAssignment,
   tiers,
 } from "@/data/types";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
+import { fuzzyMatch } from "@/lib/search";
 
 type OwnershipCheck = (id: string) => boolean;
 
+/** Resolve a character name from the provided name map, falling back to id. */
+function getCharName(
+  id: string,
+  nameResolver?: (id: string) => string
+): string {
+  return nameResolver ? nameResolver(id) : id;
+}
+
 /**
- * Check if a character matches the given filters.
+ * Check if a character matches the given filters (including text search).
  * Uses character_stats when characterStatsMap is provided (element, weaponType, region, releaseDate, rarity).
  */
 function matchesFilters(
   character: CharacterResource,
   filters: CharacterFilters,
-  options?: { isOwned?: OwnershipCheck; characterStatsMap?: CharacterStatsMap }
+  options?: {
+    isOwned?: OwnershipCheck;
+    characterStatsMap?: CharacterStatsMap;
+    nameResolver?: (id: string) => string;
+    searchableProperties?: (id: string) => string[];
+  }
 ): boolean {
   const stats = options?.characterStatsMap?.[character.id];
   const meta = getCharacterDisplayMeta(character, stats);
@@ -51,6 +66,19 @@ function matchesFilters(
   if (filters.rarities.length > 0 && !filters.rarities.includes(meta.rarity)) {
     return false;
   }
+
+  // Text search: fuzzy match against character name + id + searchable properties
+  if (filters.searchQuery) {
+    const query = filters.searchQuery;
+    const name = getCharName(character.id, options?.nameResolver);
+    if (fuzzyMatch(query, name)) return true;
+    if (fuzzyMatch(query, character.id)) return true;
+    // Match against additional properties (element, weapon type, region)
+    const extra = options?.searchableProperties?.(character.id) ?? [];
+    if (extra.some((prop) => fuzzyMatch(query, prop))) return true;
+    return false;
+  }
+
   return true;
 }
 
@@ -61,7 +89,8 @@ function matchesFilters(
 function createSortComparator(
   filters: CharacterFilters,
   tierAssignments?: TierAssignment,
-  characterStatsMap?: CharacterStatsMap
+  characterStatsMap?: CharacterStatsMap,
+  scores?: Record<string, ArtifactScoreResult | null>
 ): (a: CharacterResource, b: CharacterResource) => number {
   return (a, b) => {
     if (filters.tierSort !== "off" && tierAssignments) {
@@ -85,7 +114,16 @@ function createSortComparator(
       const timeB = dateB
         ? new Date(dateB).getTime()
         : Number.POSITIVE_INFINITY;
-      return filters.releaseSort === "asc" ? timeA - timeB : timeB - timeA;
+      const cmp = filters.releaseSort === "asc" ? timeA - timeB : timeB - timeA;
+      if (cmp !== 0) return cmp;
+    }
+
+    if (filters.scoreSort !== "off" && scores) {
+      const scoreA = scores[a.id]?.normalized.normalizedScore ?? -1;
+      const scoreB = scores[b.id]?.normalized.normalizedScore ?? -1;
+      if (scoreA !== scoreB) {
+        return filters.scoreSort === "asc" ? scoreA - scoreB : scoreB - scoreA;
+      }
     }
 
     return 0;
@@ -96,6 +134,9 @@ export type FilterAndSortCharactersOptions = {
   tierAssignments?: TierAssignment;
   isOwned?: OwnershipCheck;
   characterStatsMap?: CharacterStatsMap;
+  scores?: Record<string, ArtifactScoreResult | null>;
+  nameResolver?: (id: string) => string;
+  searchableProperties?: (id: string) => string[];
 };
 
 /**
@@ -111,13 +152,16 @@ export function filterAndSortCharacters(
     matchesFilters(c, filters, {
       isOwned: options?.isOwned,
       characterStatsMap: options?.characterStatsMap,
+      nameResolver: options?.nameResolver,
+      searchableProperties: options?.searchableProperties,
     })
   );
   return [...filtered].sort(
     createSortComparator(
       filters,
       options?.tierAssignments,
-      options?.characterStatsMap
+      options?.characterStatsMap,
+      options?.scores
     )
   );
 }
@@ -138,6 +182,8 @@ export function filterAndSortCharacterData(
       matchesFilters(character, filters, {
         isOwned: options?.isOwned,
         characterStatsMap: options?.characterStatsMap,
+        nameResolver: options?.nameResolver,
+        searchableProperties: options?.searchableProperties,
       })
     );
   });
@@ -145,7 +191,8 @@ export function filterAndSortCharacterData(
   const comparator = createSortComparator(
     filters,
     options?.tierAssignments,
-    options?.characterStatsMap
+    options?.characterStatsMap,
+    options?.scores
   );
   return [...filtered].sort((a, b) => {
     const charA = charactersById[a.key];
@@ -177,6 +224,8 @@ export const defaultCharacterFilters: CharacterFilters = {
   rarities: [],
   tierSort: "off",
   releaseSort: "desc",
+  scoreSort: "off",
+  searchQuery: "",
   ownedOnly: false,
   showManekin: false,
 };

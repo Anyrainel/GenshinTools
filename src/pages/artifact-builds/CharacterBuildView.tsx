@@ -12,12 +12,19 @@ import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useDeferredValue, useEffect, useMemo, useRef } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 
 interface CharacterBuildViewProps {
   /** When set, filters will be configured to show this character */
@@ -54,6 +61,26 @@ export function CharacterBuildView({
     isCharacterOwned,
   } = useCharacterFilters({ defaultOwnedOnly: hasAccountData });
 
+  const activeAccount = useAccountStore(getActiveAccount);
+  const scores: Record<string, ArtifactScoreResult | null> =
+    activeAccount?.scores ?? {};
+  const hasScoreData = Object.keys(scores).length > 0;
+
+  const nameResolver = useCallback((id: string) => t.character(id), [t]);
+  const searchableProperties = useCallback(
+    (id: string) => {
+      const stats = characterStats?.[id];
+      const char = charactersById[id];
+      if (!char) return [];
+      const meta = getCharacterDisplayMeta(char, stats);
+      const props: string[] = [];
+      if (meta.element) props.push(t.element(meta.element));
+      if (meta.region) props.push(t.region(meta.region));
+      return props;
+    },
+    [characterStats, t]
+  );
+
   // When targetCharacterId is set, configure filters to show that character
   useEffect(() => {
     if (!targetCharacterId) return;
@@ -75,6 +102,7 @@ export function CharacterBuildView({
       regions: meta.region != null ? [meta.region] : [],
       ownedOnly: false,
       showManekin: targetCharacterId.startsWith("manekin"),
+      searchQuery: "",
     });
 
     onTargetProcessed?.();
@@ -99,8 +127,19 @@ export function CharacterBuildView({
         tierAssignments,
         isOwned: isCharacterOwned,
         characterStatsMap: characterStats ?? undefined,
+        scores,
+        nameResolver,
+        searchableProperties,
       }),
-    [filters, tierAssignments, isCharacterOwned, characterStats]
+    [
+      filters,
+      tierAssignments,
+      isCharacterOwned,
+      characterStats,
+      scores,
+      nameResolver,
+      searchableProperties,
+    ]
   );
 
   // Defer the list to allow UI to stay responsive
@@ -122,6 +161,7 @@ export function CharacterBuildView({
             filters={filters}
             onFiltersChange={handleFiltersChange}
             hasTierData={hasTierData}
+            hasScoreData={hasScoreData}
           />
         }
         triggerLabel={t.ui("filters.title")}

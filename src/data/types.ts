@@ -517,6 +517,8 @@ export interface CharacterFilters {
   rarities: Rarity[];
   tierSort: SortDirection;
   releaseSort: SortDirection;
+  scoreSort: SortDirection;
+  searchQuery: string;
   ownedOnly: boolean;
   showManekin: boolean;
 }

@@ -8,6 +8,7 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { ExportBranding } from "@/components/shared/ExportBranding";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/constants";
 import type { AccountData, CharacterData } from "@/data/types";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
@@ -15,6 +16,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { downloadElementAsImage } from "@/lib/downloadImage";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
@@ -77,6 +79,23 @@ export const CharacterView = forwardRef<
   // Edit mode
   const [editingChar, setEditingChar] = useState<CharacterData | null>(null);
 
+  const nameResolver = useCallback((id: string) => t.character(id), [t]);
+  const searchableProperties = useCallback(
+    (id: string) => {
+      const stats = characterStats?.[id];
+      const char = charactersById[id];
+      if (!char) return [];
+      const meta = getCharacterDisplayMeta(char, stats);
+      const props: string[] = [];
+      if (meta.element) props.push(t.element(meta.element));
+      if (meta.region) props.push(t.region(meta.region));
+      return props;
+    },
+    [characterStats, t]
+  );
+
+  const hasScoreData = Object.keys(scores).length > 0;
+
   // Filter and sort account characters using shared utility
   const filteredCharacters = useMemo(() => {
     if (!accountData) return [];
@@ -84,8 +103,20 @@ export const CharacterView = forwardRef<
       tierAssignments,
       isOwned: isCharacterOwned,
       characterStatsMap: characterStats ?? undefined,
+      scores,
+      nameResolver,
+      searchableProperties,
     });
-  }, [accountData, filters, tierAssignments, isCharacterOwned, characterStats]);
+  }, [
+    accountData,
+    filters,
+    tierAssignments,
+    isCharacterOwned,
+    characterStats,
+    scores,
+    nameResolver,
+    searchableProperties,
+  ]);
 
   const handleSaveEdit = useCallback(
     (newData: AccountData) => {
@@ -151,6 +182,7 @@ export const CharacterView = forwardRef<
           filters={filters}
           onFiltersChange={handleFiltersChange}
           hasTierData={hasTierData}
+          hasScoreData={hasScoreData}
         />
       }
       triggerLabel={t.ui("filters.title")}
@@ -178,6 +210,7 @@ export const CharacterView = forwardRef<
                     rarities: [],
                     ownedOnly: false,
                     showManekin: false,
+                    searchQuery: "",
                   })
                 }
                 className="text-primary hover:underline underline-offset-4 font-medium"

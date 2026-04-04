@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 interface CharacterSortPreferences {
   tierSort: SortDirection;
   releaseSort: SortDirection;
+  scoreSort: SortDirection;
 }
 
 interface PreferencesState {
@@ -17,6 +18,7 @@ interface PreferencesState {
 const defaultCharacterSort: CharacterSortPreferences = {
   tierSort: "desc",
   releaseSort: "desc",
+  scoreSort: "off",
 };
 
 export const usePreferencesStore = create<PreferencesState>()(

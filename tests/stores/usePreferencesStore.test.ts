@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 beforeEach(() => {
   usePreferencesStore.setState({
-    characterSort: { tierSort: "desc", releaseSort: "desc" },
+    characterSort: { tierSort: "desc", releaseSort: "desc", scoreSort: "off" },
   });
 });
 

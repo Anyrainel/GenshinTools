@@ -157,6 +157,10 @@ export const i18nUiData = {
       en: "UID must be 9–10 digits",
       zh: "UID 须为 9–10 位数字",
     },
+    enkaStatusHint: {
+      en: "Problems with import? Check {link}Enka status{/link}.",
+      zh: "导入遇到问题？查看 {link}Enka 状态{/link}。",
+    },
   },
   export: {
     action: { en: "Export", zh: "导出" },
@@ -984,6 +988,10 @@ export const i18nUiData = {
     rxTrigger: { en: "Trigger", zh: "触发" },
     rxOnField: { en: "On-field", zh: "战场" },
     teamReactions: { en: "Team Reactions", zh: "队伍反应" },
+    transformativeReactionDmg: {
+      en: "Transformative Reaction Damage",
+      zh: "聚变反应伤害",
+    },
     extraBuffs: { en: "Environment", zh: "环境设置" },
     extraBuffsFood: { en: "Food", zh: "料理" },
     extraBuffsEnv: { en: "Environment", zh: "环境" },
@@ -1129,6 +1137,12 @@ export const i18nUiData = {
     sort: { en: "Sort", zh: "排序" },
     sortByTier: { en: "Tier", zh: "评级" },
     sortByReleaseDate: { en: "Release Date", zh: "发布日期" },
+    sortByScore: { en: "Art. Score", zh: "圣遗物评分" },
+    scoreSortDisabled: {
+      en: "Import your data first to sort by score",
+      zh: "请先导入数据以按评分排序",
+    },
+    searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
     sortOff: { en: "Off", zh: "关" },
     sortAsc: { en: "Asc", zh: "升" },
     sortDesc: { en: "Desc", zh: "降" },

@@ -30,6 +30,7 @@ export function useCharacterFilters({
     rarities: defaultCharacterFilters.rarities,
     ownedOnly: defaultOwnedOnly,
     showManekin: defaultCharacterFilters.showManekin,
+    searchQuery: defaultCharacterFilters.searchQuery,
   });
 
   // Ownership check callback
@@ -45,6 +46,7 @@ export function useCharacterFilters({
       ...checkboxFilters,
       tierSort: hasTierData ? characterSort.tierSort : "off",
       releaseSort: characterSort.releaseSort,
+      scoreSort: characterSort.scoreSort,
     }),
     [checkboxFilters, characterSort, hasTierData]
   );
@@ -60,6 +62,7 @@ export function useCharacterFilters({
         rarities: newFilters.rarities,
         ownedOnly: newFilters.ownedOnly,
         showManekin: newFilters.showManekin,
+        searchQuery: newFilters.searchQuery,
       });
 
       // Update sort preferences (persisted state)
@@ -71,15 +74,24 @@ export function useCharacterFilters({
         newFilters.releaseSort !== filters.releaseSort
           ? newFilters.releaseSort
           : undefined;
+      const newScoreSort =
+        newFilters.scoreSort !== filters.scoreSort
+          ? newFilters.scoreSort
+          : undefined;
 
-      if (newTierSort !== undefined || newReleaseSort !== undefined) {
+      if (
+        newTierSort !== undefined ||
+        newReleaseSort !== undefined ||
+        newScoreSort !== undefined
+      ) {
         setCharacterSort({
           ...(newTierSort !== undefined && { tierSort: newTierSort }),
           ...(newReleaseSort !== undefined && { releaseSort: newReleaseSort }),
+          ...(newScoreSort !== undefined && { scoreSort: newScoreSort }),
         });
       }
     },
-    [filters.tierSort, filters.releaseSort, setCharacterSort]
+    [filters.tierSort, filters.releaseSort, filters.scoreSort, setCharacterSort]
   );
 
   const activeFilterCount = [
