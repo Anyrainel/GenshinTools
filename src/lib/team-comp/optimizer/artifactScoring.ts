@@ -98,7 +98,13 @@ export function computeWeightScore(
       ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }
       : baseWeights;
   let score = scoreSlot(art, weights, globalConfig);
-  if (buildMatch) {
+  const hasMainStatBuild =
+    buildMatch &&
+    Array.isArray(
+      (buildMatch as BuildMatchResult & { build?: { substats?: unknown } })
+        .build?.substats
+    );
+  if (hasMainStatBuild) {
     const rec = getTargetMainStatsForSlot(art.slotKey, buildMatch.build);
     if (rec.has(art.mainStatKey)) {
       let mainScore = scoreMainStat(

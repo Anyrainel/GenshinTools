@@ -36,26 +36,6 @@
   created: "2026-03-28"
   resolved: "2026-03-29"
 
-- id: emerald-orb-missing-lunar-reactions
-  entity: emerald_orb
-  rule: U5
-  status: completed
-  category: bug
-  summary: >
-    Game text lists 月感电 (LunarCharged) and 月绽放 (LunarBloom) as triggering
-    reactions, but the canReact check only tests electroCharged, frozen, bloom,
-    and Anemo+Hydro swirl. Missing hasReaction("lunarCharged") and
-    hasReaction("lunarBloom") checks causes the ATK% buff to not activate for
-    teams that can only trigger the lunar variants.
-  detail: >
-    LUNAR_SUPERSEDES makes hasReaction("electroCharged") return false when
-    lunarCharged is possible, and hasReaction("bloom") return false when
-    lunarBloom is possible. Added lunarCharged and lunarBloom checks to
-    the canReact guard. Also updated translator-rules.md S10 to document
-    lunar superseding so triage/review agents catch this pattern.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
-
 - id: calamity-queller-consummation-ramp
   entity: calamity_queller
   rule: U4
@@ -96,21 +76,6 @@
     approximation. Royal weapons are 4-star Starglitter Exchange weapons widely
     regarded as suboptimal choices. Adding OptionMap for a low-priority weapon
     series with a niche stacking mechanic is not worth the complexity.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
-
-- id: sapwood-blade-receiver
-  entity: sapwood_blade
-  rule: U1
-  status: completed
-  category: bug
-  summary: >
-    Leaf of Consciousness is a special pickup object. Receiver should be
-    "teamOnField" (any on-field character can pick it up), not "self".
-    Same issue as forest_regalia which was already fixed.
-  detail: >
-    Changed receiver from "self" to "teamOnField". noStackId was already
-    present as "leaf-of-consciousness-em".
   created: "2026-03-29"
   resolved: "2026-03-29"
 
@@ -187,38 +152,5 @@
     inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
     average for these low-priority 4-star Starglitter Exchange weapons.
     Not worth OptionMap complexity.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
-
-- id: astral-vulture-swirl-unconditional
-  entity: astral_vultures_crimson_plumage
-  rule: U5
-  status: completed
-  category: bug
-  summary: >
-    ATK% buff ("after triggering Swirl") is unconditionally active. Per S6,
-    reaction-triggered buffs must be gated on hasReaction("swirl", this.charId).
-    Non-Anemo wielders or teams without a reactive element would incorrectly
-    receive the ATK% bonus.
-  detail: >
-    Added hasReaction("swirl", this.charId) guard around the ATK% StatBuff.
-    Non-Anemo wielders and mono-Anemo teams no longer receive the bonus.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
-
-- id: snare-hook-reaction-unconditional
-  entity: snare_hook
-  rule: U5
-  status: completed
-  category: bug
-  summary: >
-    EM buff ("after triggering elemental reaction") is unconditionally active.
-    Per S6, reaction-triggered buffs should be gated on a hasReaction check.
-    Teams with no reactive element pairs would incorrectly receive the EM bonus.
-  detail: >
-    Added canReact guard checking 11 representative reactions (vaporize, melt,
-    overloaded, electroCharged, superconduct, frozen, bloom, burning, quicken,
-    swirl, crystallize) with this.charId. EM buff now returns empty if the
-    wielder cannot trigger any reaction.
   created: "2026-03-29"
   resolved: "2026-03-29"

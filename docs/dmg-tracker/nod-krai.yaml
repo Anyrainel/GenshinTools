@@ -74,23 +74,3 @@
     the Geo tier is correct and intentional.
   created: "2026-03-29"
   resolved: "2026-03-29"
-  created: "2026-03-29"
-  resolved: "2026-03-29"
-
-- id: columbina-c4-always-active
-  entity: columbina
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    C4 Gravity Interference HP-based baseDmg bonus is modeled as always-active on all
-    interference hits, but game text limits it to once per 15s. With ~6-8s between
-    interferences, roughly half should receive the C4 bonus. Current implementation
-    overcounts C4 contribution by ~30-50%.
-  detail: >
-    Split interference into two formula entries: columbina-skill-interference (unbuffed)
-    and columbina-skill-interference-c4 (with bespokeBuff for C4 HP→baseDmg). Combo
-    descriptor allocates 1 C4-buffed interference at C4+, reducing unbuffed count by 1.
-    Self buff cannot use maxStacks per design rules.
-  created: "2026-03-29"
-  resolved: "2026-03-29"

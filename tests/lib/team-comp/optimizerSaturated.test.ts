@@ -236,4 +236,100 @@ describe("Saturated character handling", () => {
     // Hu Tao should have positive damage
     expect(result!.bestDamage).toBeGreaterThan(0);
   });
+
+  it("does not mark constrained saturated supports as saturated", async () => {
+    const erSupportInventory: ArtifactData[] = [
+      ...makeFullSet("crimson_witch_of_flames"),
+      makeArt("flower", "gladiators_finale", {
+        substats: { er: 25.9, hp: 239, atk: 14, cr: 3.9 },
+      }),
+      makeArt("plume", "gladiators_finale", {
+        substats: { er: 25.9, hp: 239, atk: 14, cr: 3.9 },
+      }),
+      makeArt("sands", "gladiators_finale", {
+        mainStatKey: "er",
+        substats: { er: 19.4, hp: 239, atk: 14, cr: 3.9 },
+      }),
+      makeArt("goblet", "gladiators_finale", {
+        mainStatKey: "hp%",
+        substats: { er: 25.9, hp: 239, atk: 14, cr: 3.9 },
+      }),
+      makeArt("circlet", "gladiators_finale", {
+        mainStatKey: "heal%",
+        substats: { er: 25.9, hp: 239, atk: 14, cr: 3.9 },
+      }),
+    ];
+
+    const trace: unknown[] = [];
+    (
+      globalThis as typeof globalThis & {
+        __TEAM_OPT_TRACE__?: (event: unknown) => void;
+      }
+    ).__TEAM_OPT_TRACE__ = (event) => {
+      trace.push(event);
+    };
+
+    try {
+      const gen = runTeamOptimization({
+        teamBuild,
+        carryCharId: "hu_tao",
+        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        inventory: erSupportInventory,
+        calcContext: { enemyLevel: 90, enemyRes: 10 },
+        globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
+        baseSheets,
+        perChar: {
+          hu_tao: {
+            minEr: 0,
+            minCr: 0,
+            artifactSetId: "crimson_witch_of_flames",
+            artifactHalfSetIds: ["pyro%-15"],
+          },
+          bennett: {
+            minEr: 2.0,
+            minCr: 0,
+          },
+        },
+      });
+
+      let result: Awaited<ReturnType<typeof gen.next>>["value"] | undefined;
+      for await (const yielded of gen) {
+        result = yielded;
+      }
+
+      expect(result).toBeDefined();
+      expect(result!.done).toBe(true);
+      if (!result!.done) return;
+
+      const phase1 = trace.find(
+        (
+          event
+        ): event is {
+          phase: "phase1";
+          saturatedCharIds: string[];
+          topKCounts: Record<string, number>;
+        } =>
+          typeof event === "object" &&
+          event !== null &&
+          "phase" in event &&
+          event.phase === "phase1"
+      );
+
+      expect(phase1).toBeDefined();
+      expect(phase1!.saturatedCharIds).not.toContain("bennett");
+      expect(phase1!.topKCounts.bennett).toBeGreaterThan(0);
+      expect(result!.failReasons.bennett).toBeUndefined();
+
+      const bennettPieces = allSlots
+        .map((s) => result!.bestArtifactsByChar.bennett[s])
+        .filter(Boolean) as ArtifactData[];
+      expect(bennettPieces.length).toBe(5);
+    } finally {
+      (
+        globalThis as typeof globalThis & {
+          __TEAM_OPT_TRACE__?: (event: unknown) => void;
+        }
+      ).__TEAM_OPT_TRACE__ = undefined;
+    }
+  });
 });

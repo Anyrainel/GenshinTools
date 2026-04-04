@@ -191,6 +191,13 @@ type RunComparison =
   | { status: "matched_best"; damage: number; bestDamage: number }
   | { status: "regression"; damage: number; bestDamage: number; pct: number }
   | { status: "no_solutions"; damage: number }
+  | { status: "infeasible"; damage: number; violations: ConstraintViolation[] }
+  | {
+      status: "damage_mismatch";
+      damage: number;
+      reportedDamage: number;
+      delta: number;
+    }
   | { status: "error"; message: string };
 
 /** Pre-resolved problem config cached by `refresh`. */
@@ -1190,11 +1197,16 @@ async function cmdRun(opts: {
   let noSolutions = 0;
   let errors = 0;
   let constraintFails = 0;
+  let damageMismatches = 0;
   const regList: {
     key: string;
     comp: RunComparison & { status: "regression" };
   }[] = [];
   const constraintFailList: { key: string; formulaId: string }[] = [];
+  const damageMismatchList: {
+    key: string;
+    comp: RunComparison & { status: "damage_mismatch" };
+  }[] = [];
   const newBestList: {
     key: string;
     comp: RunComparison & { status: "new_best" };
@@ -1215,11 +1227,59 @@ async function cmdRun(opts: {
       return;
     }
 
+    const authoritativeDamage = evaluateAssignment(
+      team,
+      formulaId,
+      result.artifactAssignment,
+      accountData,
+      inventory,
+      resolveCombo(formulaId, team)
+    );
+    if (authoritativeDamage == null) {
+      errors++;
+      console.log(
+        `  ${C.red}[ERR]${C.reset} ${ri + 1}/${problemsToRun.length} ${team.characters.filter(Boolean).join("/")} → ${formulaId}: failed to re-evaluate returned assignment`
+      );
+      return;
+    }
+
+    const violations = checkConstraints(
+      team,
+      result.artifactAssignment,
+      accountData,
+      inventory
+    );
+    if (violations.length > 0) {
+      constraintFails++;
+      constraintFailList.push({ key, formulaId });
+      console.log(
+        `  ${C.red}INF${C.reset} ${ri + 1}/${problemsToRun.length} ${C.bold}${team.characters.filter(Boolean).join("/")}${C.reset} → ${formulaId} ` +
+          `(${result.optimizeTimeSec.toFixed(1)}s) ${C.cyan}${fmt(authoritativeDamage)}${C.reset} ${C.red}INFEASIBLE${C.reset}`
+      );
+      logConstraintViolations(violations, "    ");
+      return;
+    }
+
+    const damageDelta = authoritativeDamage - result.optimizedDamage;
+    const hasDamageMismatch = Math.abs(damageDelta) > 0.5;
+    if (hasDamageMismatch) {
+      damageMismatches++;
+      damageMismatchList.push({
+        key,
+        comp: {
+          status: "damage_mismatch",
+          damage: authoritativeDamage,
+          reportedDamage: result.optimizedDamage,
+          delta: damageDelta,
+        },
+      });
+    }
+
     const problem = store.problems[key];
     let comp: RunComparison;
 
     if (!problem || problem.solutions.length === 0) {
-      comp = { status: "no_solutions", damage: result.optimizedDamage };
+      comp = { status: "no_solutions", damage: authoritativeDamage };
     } else {
       const { bestDamage } = findBestSolution(
         problem,
@@ -1229,20 +1289,20 @@ async function cmdRun(opts: {
       );
 
       if (bestDamage <= 0) {
-        comp = { status: "no_solutions", damage: result.optimizedDamage };
-      } else if (result.optimizedDamage > bestDamage + 0.5) {
-        comp = { status: "new_best", damage: result.optimizedDamage };
-      } else if (result.optimizedDamage >= bestDamage - 0.5) {
+        comp = { status: "no_solutions", damage: authoritativeDamage };
+      } else if (authoritativeDamage > bestDamage + 0.5) {
+        comp = { status: "new_best", damage: authoritativeDamage };
+      } else if (authoritativeDamage >= bestDamage - 0.5) {
         comp = {
           status: "matched_best",
-          damage: result.optimizedDamage,
+          damage: authoritativeDamage,
           bestDamage,
         };
       } else {
-        const pct = ((result.optimizedDamage - bestDamage) / bestDamage) * 100;
+        const pct = ((authoritativeDamage - bestDamage) / bestDamage) * 100;
         comp = {
           status: "regression",
-          damage: result.optimizedDamage,
+          damage: authoritativeDamage,
           bestDamage,
           pct,
         };
@@ -1250,8 +1310,9 @@ async function cmdRun(opts: {
     }
 
     const charNames = team.characters.filter(Boolean).join("/");
-    const statusIcon =
-      comp.status === "new_best"
+    const statusIcon = hasDamageMismatch
+      ? `${C.red}!${C.reset}`
+      : comp.status === "new_best"
         ? `${C.green}*${C.reset}`
         : comp.status === "matched_best"
           ? `${C.green}ok${C.reset}`
@@ -1280,10 +1341,15 @@ async function cmdRun(opts: {
       const ratio = result.optimizeTimeSec / bestTime;
       extraInfo += ` ${C.yellow}${ratio.toFixed(1)}x slower${C.reset}`;
     }
+    if (hasDamageMismatch) {
+      extraInfo +=
+        ` ${C.red}DMG MISMATCH${C.reset}` +
+        ` ${C.dim}[reported ${fmt(result.optimizedDamage)}, recalculated ${fmt(authoritativeDamage)}, delta ${damageDelta >= 0 ? "+" : ""}${fmt(damageDelta)}]${C.reset}`;
+    }
 
     console.log(
       `  ${statusIcon} ${ri + 1}/${problemsToRun.length} ${C.bold}${charNames}${C.reset} → ${formulaId} ` +
-        `(${timeStr}) ${C.cyan}${fmt(result.optimizedDamage)}${C.reset}${extraInfo}`
+        `(${timeStr}) ${C.cyan}${fmt(authoritativeDamage)}${C.reset}${extraInfo}`
     );
 
     switch (comp.status) {
@@ -1310,7 +1376,7 @@ async function cmdRun(opts: {
       team,
       formulaId,
       result.artifactAssignment,
-      result.optimizedDamage,
+      authoritativeDamage,
       opts.algo,
       accountData,
       inventory,
@@ -1394,6 +1460,21 @@ async function cmdRun(opts: {
         opts.maxArtsPerSlot || undefined,
         resolveCombo(problem.formulaId, team)
       );
+      const retryDamage = evaluateAssignment(
+        team,
+        problem.formulaId,
+        retryResult.artifactAssignment,
+        accountData,
+        inventory,
+        resolveCombo(problem.formulaId, team)
+      );
+      if (retryDamage == null) {
+        console.log(
+          `  ${C.red}[ERR]${C.reset} ${key} → failed to re-evaluate returned assignment`
+        );
+        confirmedRegs.push(reg);
+        continue;
+      }
 
       const { bestDamage } = findBestSolution(
         problem,
@@ -1401,9 +1482,9 @@ async function cmdRun(opts: {
         accountData,
         inventory
       );
-      if (retryResult.optimizedDamage >= bestDamage - 0.5) {
+      if (retryDamage >= bestDamage - 0.5) {
         console.log(
-          `  ${C.green}ok${C.reset} ${key} → ${fmt(retryResult.optimizedDamage)} ` +
+          `  ${C.green}ok${C.reset} ${key} → ${fmt(retryDamage)} ` +
             `(was ${fmt(reg.comp.damage)}, recovered in ${retryResult.optimizeTimeSec.toFixed(1)}s)`
         );
         matched++;
@@ -1415,7 +1496,7 @@ async function cmdRun(opts: {
           team,
           problem.formulaId,
           retryResult.artifactAssignment,
-          retryResult.optimizedDamage,
+          retryDamage,
           opts.algo,
           accountData,
           inventory,
@@ -1424,9 +1505,9 @@ async function cmdRun(opts: {
         if (storeResult.constraintViolations.length > 0) {
           logConstraintViolations(storeResult.constraintViolations);
         }
-      } else if (retryResult.optimizedDamage > bestDamage) {
+      } else if (retryDamage > bestDamage) {
         console.log(
-          `  ${C.green}*${C.reset} ${key} → ${fmt(retryResult.optimizedDamage)} ${C.green}NEW BEST${C.reset}`
+          `  ${C.green}*${C.reset} ${key} → ${fmt(retryDamage)} ${C.green}NEW BEST${C.reset}`
         );
         newBests++;
         regressions--;
@@ -1434,7 +1515,7 @@ async function cmdRun(opts: {
           key,
           comp: {
             status: "new_best" as const,
-            damage: retryResult.optimizedDamage,
+            damage: retryDamage,
           },
         });
 
@@ -1444,7 +1525,7 @@ async function cmdRun(opts: {
           team,
           problem.formulaId,
           retryResult.artifactAssignment,
-          retryResult.optimizedDamage,
+          retryDamage,
           opts.algo,
           accountData,
           inventory,
@@ -1454,17 +1535,16 @@ async function cmdRun(opts: {
           logConstraintViolations(storeResult.constraintViolations);
         }
       } else {
-        const pct =
-          ((retryResult.optimizedDamage - bestDamage) / bestDamage) * 100;
+        const pct = ((retryDamage - bestDamage) / bestDamage) * 100;
         console.log(
-          `  ${C.red}X${C.reset} ${key} → ${fmt(retryResult.optimizedDamage)} ` +
+          `  ${C.red}X${C.reset} ${key} → ${fmt(retryDamage)} ` +
             `(${pct.toFixed(2)}% vs best ${fmt(bestDamage)}, confirmed)`
         );
         confirmedRegs.push({
           key,
           comp: {
             status: "regression" as const,
-            damage: retryResult.optimizedDamage,
+            damage: retryDamage,
             bestDamage,
             pct,
           },
@@ -1503,6 +1583,21 @@ async function cmdRun(opts: {
         opts.maxArtsPerSlot || undefined,
         resolveCombo(cf.formulaId, team)
       );
+      const retryDamage = evaluateAssignment(
+        team,
+        cf.formulaId,
+        retryResult.artifactAssignment,
+        accountData,
+        inventory,
+        resolveCombo(cf.formulaId, team)
+      );
+      if (retryDamage == null) {
+        console.log(
+          `  ${C.red}[ERR]${C.reset} ${cf.key} → failed to re-evaluate returned assignment`
+        );
+        stillFailing.push(cf);
+        continue;
+      }
 
       const storeResult = tryStoreSolution(
         store,
@@ -1510,17 +1605,21 @@ async function cmdRun(opts: {
         team,
         cf.formulaId,
         retryResult.artifactAssignment,
-        retryResult.optimizedDamage,
+        retryDamage,
         opts.algo,
         accountData,
         inventory,
         { solveTimeSec: retryResult.optimizeTimeSec }
       );
 
-      const charNames = team.characters.filter(Boolean).join("/");
       if (storeResult.constraintViolations.length === 0) {
+        const damageDelta = retryDamage - retryResult.optimizedDamage;
+        const mismatchInfo =
+          Math.abs(damageDelta) > 0.5
+            ? ` ${C.red}DMG MISMATCH${C.reset}${C.dim}[reported ${fmt(retryResult.optimizedDamage)}, recalculated ${fmt(retryDamage)}, delta ${damageDelta >= 0 ? "+" : ""}${fmt(damageDelta)}]${C.reset}`
+            : "";
         console.log(
-          `  ${C.green}ok${C.reset} ${cf.key} → ${fmt(retryResult.optimizedDamage)} (constraint recovered in ${retryResult.optimizeTimeSec.toFixed(1)}s)`
+          `  ${C.green}ok${C.reset} ${cf.key} → ${fmt(retryDamage)} (constraint recovered in ${retryResult.optimizeTimeSec.toFixed(1)}s)${mismatchInfo}`
         );
         constraintFails--;
       } else {
@@ -1549,6 +1648,9 @@ async function cmdRun(opts: {
   console.log(
     `  Constraint fails: ${constraintFails > 0 ? C.red : ""}${constraintFails}${constraintFails > 0 ? C.reset : ""}`
   );
+  console.log(
+    `  Damage mismatches: ${damageMismatches > 0 ? C.red : ""}${damageMismatches}${damageMismatches > 0 ? C.reset : ""}`
+  );
 
   if (regList.length > 0) {
     console.log(`\n  ${C.red}REGRESSIONS:${C.reset}`);
@@ -1566,9 +1668,33 @@ async function cmdRun(opts: {
     }
   }
 
-  if (regressions > 0) {
+  if (damageMismatchList.length > 0) {
+    console.log(`\n  ${C.red}DAMAGE MISMATCHES:${C.reset}`);
+    for (const { key, comp } of damageMismatchList) {
+      console.log(
+        `    ${key}: reported ${fmt(comp.reportedDamage)} vs recalculated ${fmt(comp.damage)} ` +
+          `(${comp.delta >= 0 ? "+" : ""}${fmt(comp.delta)})`
+      );
+    }
+  }
+
+  if (
+    regressions > 0 ||
+    constraintFails > 0 ||
+    damageMismatches > 0 ||
+    errors > 0
+  ) {
+    const failureParts: string[] = [];
+    if (regressions > 0) failureParts.push(`${regressions} regression(s)`);
+    if (constraintFails > 0) {
+      failureParts.push(`${constraintFails} infeasible result(s)`);
+    }
+    if (damageMismatches > 0) {
+      failureParts.push(`${damageMismatches} damage mismatch(es)`);
+    }
+    if (errors > 0) failureParts.push(`${errors} error(s)`);
     console.log(
-      `\n${C.red}FAIL: ${regressions} regression(s) detected${C.reset}`
+      `\n${C.red}FAIL: ${failureParts.join(", ")} detected${C.reset}`
     );
     stopLogFile();
     process.exit(1);
@@ -1777,6 +1903,7 @@ async function cmdEnrich(opts: {
   let added = 0;
   let duplicates = 0;
   let constraintFails = 0;
+  let damageMismatches = 0;
   let errors = 0;
 
   function processEnrichResult(
@@ -1807,13 +1934,35 @@ async function cmdEnrich(opts: {
       return;
     }
 
+    const authoritativeDamage = evaluateAssignment(
+      team,
+      formulaId,
+      result.artifactAssignment,
+      accountData,
+      inventory,
+      resolveCombo(formulaId, team)
+    );
+    if (authoritativeDamage == null) {
+      errors++;
+      console.log(
+        `  ${C.red}[ERR]${C.reset} ${i + 1}/${toRun.length} ${charNames} → ${formulaId}: failed to re-evaluate returned assignment`
+      );
+      return;
+    }
+
+    const damageDelta = authoritativeDamage - result.optimizedDamage;
+    const hasDamageMismatch = Math.abs(damageDelta) > 0.5;
+    if (hasDamageMismatch) {
+      damageMismatches++;
+    }
+
     const storeResult = tryStoreSolution(
       store,
       key,
       team,
       formulaId,
       result.artifactAssignment,
-      result.optimizedDamage,
+      authoritativeDamage,
       opts.algo,
       accountData,
       inventory
@@ -1822,13 +1971,17 @@ async function cmdEnrich(opts: {
     if (storeResult.constraintViolations.length > 0) {
       constraintFails++;
       console.log(
-        `  ${C.red}[CONSTRAINT]${C.reset} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(result.optimizedDamage)}${C.reset}`
+        `  ${C.red}[CONSTRAINT]${C.reset} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(authoritativeDamage)}${C.reset}`
       );
       logConstraintViolations(storeResult.constraintViolations, "    ");
     } else if (storeResult.duplicate) {
       duplicates++;
       console.log(
-        `  ${C.dim}[DUP]${C.reset} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(result.optimizedDamage)}${C.reset}`
+        `  ${C.dim}[DUP]${C.reset} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(authoritativeDamage)}${C.reset}${
+          hasDamageMismatch
+            ? ` ${C.red}DMG MISMATCH${C.reset}${C.dim}[reported ${fmt(result.optimizedDamage)}, recalculated ${fmt(authoritativeDamage)}, delta ${damageDelta >= 0 ? "+" : ""}${fmt(damageDelta)}]${C.reset}`
+            : ""
+        }`
       );
     } else if (storeResult.stored) {
       added++;
@@ -1836,10 +1989,14 @@ async function cmdEnrich(opts: {
       const bestDmg = Math.max(
         ...problem.solutions.map((s) => s.recordedDamage)
       );
-      const isNewBest = result.optimizedDamage >= bestDmg - 0.5;
+      const isNewBest = authoritativeDamage >= bestDmg - 0.5;
       const icon = isNewBest ? `${C.green}*${C.reset}` : `${C.cyan}+${C.reset}`;
       console.log(
-        `  ${icon} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(result.optimizedDamage)}${C.reset}${isNewBest ? ` ${C.green}NEW BEST${C.reset}` : ""}`
+        `  ${icon} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(authoritativeDamage)}${C.reset}${isNewBest ? ` ${C.green}NEW BEST${C.reset}` : ""}${
+          hasDamageMismatch
+            ? ` ${C.red}DMG MISMATCH${C.reset}${C.dim}[reported ${fmt(result.optimizedDamage)}, recalculated ${fmt(authoritativeDamage)}, delta ${damageDelta >= 0 ? "+" : ""}${fmt(damageDelta)}]${C.reset}`
+            : ""
+        }`
       );
     }
   }
@@ -1884,7 +2041,8 @@ async function cmdEnrich(opts: {
   saveStore(store);
   console.log(
     `\n${C.green}Enriched: ${added} new solutions${C.reset} (${duplicates} duplicates, ${errors} errors` +
-      `${constraintFails > 0 ? `, ${C.red}${constraintFails} constraint violations rejected${C.reset}` : ""})`
+      `${constraintFails > 0 ? `, ${C.red}${constraintFails} constraint violations rejected${C.reset}` : ""}` +
+      `${damageMismatches > 0 ? `, ${C.red}${damageMismatches} damage mismatches${C.reset}` : ""})`
   );
   stopLogFile();
 }
@@ -2070,13 +2228,33 @@ async function cmdCompare(opts: {
         continue;
       }
 
+      const authoritativeDamage = evaluateAssignment(
+        team,
+        problem.formulaId,
+        result.artifactAssignment,
+        accountData,
+        inventory,
+        resolveCombo(problem.formulaId, team)
+      );
+      if (authoritativeDamage == null) {
+        console.log(
+          `  ${C.red}Failed to re-evaluate returned assignment${C.reset}`
+        );
+        continue;
+      }
+
       currentAssignment = result.artifactAssignment;
-      currentDamage = result.optimizedDamage;
+      currentDamage = authoritativeDamage;
 
       const pct = ((currentDamage - bestDamage) / bestDamage) * 100;
       const color = currentDamage >= bestDamage - 0.5 ? C.green : C.red;
+      const damageDelta = authoritativeDamage - result.optimizedDamage;
+      const mismatchInfo =
+        Math.abs(damageDelta) > 0.5
+          ? ` ${C.red}DMG MISMATCH${C.reset}${C.dim}[reported ${fmt(result.optimizedDamage)}, recalculated ${fmt(authoritativeDamage)}, delta ${damageDelta >= 0 ? "+" : ""}${fmt(damageDelta)}]${C.reset}`
+          : "";
       console.log(
-        `  ${C.bold}Current ${opts.algo.toUpperCase()}:${C.reset} ${color}${fmt(currentDamage)}${C.reset} (${pct >= 0 ? "+" : ""}${pct.toFixed(3)}%)`
+        `  ${C.bold}Current ${opts.algo.toUpperCase()}:${C.reset} ${color}${fmt(currentDamage)}${C.reset} (${pct >= 0 ? "+" : ""}${pct.toFixed(3)}%)${mismatchInfo}`
       );
     } else {
       if (problem.solutions.length < 2) {

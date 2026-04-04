@@ -45110,6 +45110,41 @@
           "recordedDamage": 581708.2785766909,
           "foundAt": "2026-03-25T21:56:09.377Z",
           "algorithm": "astar"
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayato": {
+              "flower": "artifact-94",
+              "plume": "artifact-223",
+              "sands": "artifact-96",
+              "goblet": "artifact-175",
+              "circlet": "artifact-697"
+            },
+            "nahida": {
+              "flower": "artifact-459",
+              "plume": "artifact-1424",
+              "sands": "artifact-405",
+              "goblet": "artifact-246",
+              "circlet": "artifact-1621"
+            },
+            "kuki_shinobu": {
+              "flower": "artifact-313",
+              "plume": "artifact-307",
+              "sands": "artifact-308",
+              "goblet": "artifact-286",
+              "circlet": "artifact-285"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-363",
+              "plume": "artifact-429",
+              "sands": "artifact-52",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            }
+          },
+          "recordedDamage": 602376.1226610211,
+          "foundAt": "2026-04-03T18:38:33.156Z",
+          "algorithm": "v2"
         }
       ]
     },
@@ -45194,6 +45229,41 @@
           "recordedDamage": 376103.23537026474,
           "foundAt": "2026-03-25T21:55:58.921Z",
           "algorithm": "astar"
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayato": {
+              "flower": "artifact-94",
+              "plume": "artifact-223",
+              "sands": "artifact-212",
+              "goblet": "artifact-1062",
+              "circlet": "artifact-93"
+            },
+            "nahida": {
+              "flower": "artifact-459",
+              "plume": "artifact-1424",
+              "sands": "artifact-405",
+              "goblet": "artifact-246",
+              "circlet": "artifact-1621"
+            },
+            "kuki_shinobu": {
+              "flower": "artifact-313",
+              "plume": "artifact-307",
+              "sands": "artifact-308",
+              "goblet": "artifact-286",
+              "circlet": "artifact-285"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-363",
+              "plume": "artifact-429",
+              "sands": "artifact-52",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            }
+          },
+          "recordedDamage": 407618.6492258617,
+          "foundAt": "2026-04-03T18:38:53.226Z",
+          "algorithm": "v2"
         }
       ]
     },
@@ -45278,6 +45348,41 @@
           "recordedDamage": 404015.97945509304,
           "foundAt": "2026-03-25T21:56:04.329Z",
           "algorithm": "astar"
+        },
+        {
+          "artifactAssignment": {
+            "kamisato_ayato": {
+              "flower": "artifact-94",
+              "plume": "artifact-223",
+              "sands": "artifact-212",
+              "goblet": "artifact-1062",
+              "circlet": "artifact-93"
+            },
+            "nahida": {
+              "flower": "artifact-459",
+              "plume": "artifact-1424",
+              "sands": "artifact-405",
+              "goblet": "artifact-246",
+              "circlet": "artifact-1621"
+            },
+            "kuki_shinobu": {
+              "flower": "artifact-313",
+              "plume": "artifact-307",
+              "sands": "artifact-308",
+              "goblet": "artifact-286",
+              "circlet": "artifact-285"
+            },
+            "kaedehara_kazuha": {
+              "flower": "artifact-363",
+              "plume": "artifact-429",
+              "sands": "artifact-52",
+              "goblet": "artifact-361",
+              "circlet": "artifact-425"
+            }
+          },
+          "recordedDamage": 407618.6492258617,
+          "foundAt": "2026-04-03T18:38:55.588Z",
+          "algorithm": "v2"
         }
       ]
     },

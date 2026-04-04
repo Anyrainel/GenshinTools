@@ -44,6 +44,39 @@ import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
+type TeamOptTraceEvent =
+  | {
+      phase: "phase1";
+      charIds: string[];
+      saturatedCharIds: string[];
+      topKCounts: Record<string, number>;
+      failReasons: Record<string, string>;
+    }
+  | {
+      phase: "phase2";
+      allocatableChars: string[];
+      candidateCount: number;
+      bestAllocationChars: string[];
+      bestScore: number | null;
+    }
+  | {
+      phase: "final-constraints";
+      stats: Record<string, { er: number; cr: number }>;
+      failReasons: Record<string, string>;
+      emptyChars: string[];
+    };
+
+function emitTeamOptTrace(event: TeamOptTraceEvent): void {
+  const traceSink = (
+    globalThis as typeof globalThis & {
+      __TEAM_OPT_TRACE__?: (event: TeamOptTraceEvent) => void;
+    }
+  ).__TEAM_OPT_TRACE__;
+  if (typeof traceSink === "function") {
+    traceSink(event);
+  }
+}
+
 // ─── Constants & Dynamic Hyperparameters ───
 
 /**
@@ -165,6 +198,10 @@ function findBestTeamAllocation(
 
       if (level === ordered.length) {
         const teamDamage = teamEvalFn(assignment);
+        if (!Number.isFinite(teamDamage)) {
+          teamEvals++;
+          return;
+        }
         teamEvals++;
         insertCandidate(assignment, teamDamage);
         return;
@@ -575,8 +612,12 @@ export async function* runTeamOptimization(
             Object.values(charDeltas).some((v) => v !== undefined && v > 0);
           if (hasNonZero) continue;
 
-          // Substats don't matter. Check if artifact set bonus affects damage.
           const charPerConf = perChar[cid];
+          if ((charPerConf?.minEr ?? 0) > 0 || (charPerConf?.minCr ?? 0) > 0) {
+            continue;
+          }
+
+          // Substats don't matter. Check if artifact set bonus affects damage.
           const hasSetConfig =
             !!charPerConf?.artifactSetId ||
             (charPerConf?.artifactHalfSetIds?.length ?? 0) > 0;
@@ -1049,6 +1090,18 @@ export async function* runTeamOptimization(
     }
   }
 
+  emitTeamOptTrace({
+    phase: "phase1",
+    charIds: allCharIds,
+    saturatedCharIds: [...saturatedCharIds],
+    topKCounts: Object.fromEntries(
+      allCharIds.map((cid) => [cid, topKByChar[cid]?.length ?? 0])
+    ),
+    failReasons: Object.fromEntries(
+      Object.entries(failReasons).map(([cid, reason]) => [cid, reason.kind])
+    ),
+  });
+
   // Yield: Phase 1 complete
   yield {
     currentPass: "support",
@@ -1220,7 +1273,49 @@ export async function* runTeamOptimization(
     calcContext
   );
   const compiledTeamVars = new Float64Array(compiledTeamEval.numVars);
+  const buildArtifactsByCharFromAssignment = (
+    assignment: Record<string, TopKEntry>
+  ): Record<string, Record<Slot, ArtifactData | null>> => {
+    const artifactsByChar: Record<
+      string,
+      Record<Slot, ArtifactData | null>
+    > = {};
+    for (const charId of allCharIds) {
+      const entry = assignment[charId] ?? topKByChar[charId]?.[0];
+      artifactsByChar[charId] = entry
+        ? artsTupleToRecord(entry.artifacts)
+        : { ...emptyArtifacts };
+    }
+    return artifactsByChar;
+  };
+  const teamArtifactsMeetConstraints = (
+    artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
+  ): boolean => {
+    const statSheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
+    const teamStats = effectiveTeamBuild.getTeamStats(
+      statSheets,
+      carryCharId,
+      calcContext
+    );
+    for (const charId of allCharIds) {
+      const charConfig = effectivePerChar[charId];
+      if (!charConfig) continue;
+      if (charConfig.minEr > 0) {
+        const er = teamStats[charId]?.get("er", null) ?? 0;
+        if (er < charConfig.minEr - 1e-6) return false;
+      }
+      if (charConfig.minCr > 0) {
+        const cr = teamStats[charId]?.get("cr", null) ?? 0;
+        if (cr < charConfig.minCr - 1e-6) return false;
+      }
+    }
+    return true;
+  };
   const teamEvalFn: TeamEvalFn = (assignment) => {
+    const artifactsByChar = buildArtifactsByCharFromAssignment(assignment);
+    if (!teamArtifactsMeetConstraints(artifactsByChar)) {
+      return Number.NEGATIVE_INFINITY;
+    }
     compiledTeamVars.fill(0);
     for (const charId of allCharIds) {
       const entry = assignment[charId] ?? topKByChar[charId]?.[0];
@@ -1307,7 +1402,9 @@ export async function* runTeamOptimization(
 
     if (Object.keys(seqAssignment).length === allocatableChars.length) {
       const seqScore = teamEvalFn(seqAssignment);
-      candidates = [{ assignment: { ...seqAssignment }, score: seqScore }];
+      if (Number.isFinite(seqScore)) {
+        candidates = [{ assignment: { ...seqAssignment }, score: seqScore }];
+      }
     }
   }
 
@@ -1432,7 +1529,10 @@ export async function* runTeamOptimization(
 
           // Evaluate full team damage
           const teamDamage = teamEvalFn(assignment);
-          if (candidates.length === 0 || teamDamage > candidates[0].score) {
+          if (
+            Number.isFinite(teamDamage) &&
+            (candidates.length === 0 || teamDamage > candidates[0].score)
+          ) {
             candidates = [{ assignment: { ...assignment }, score: teamDamage }];
           }
         }
@@ -1443,6 +1543,13 @@ export async function* runTeamOptimization(
   // Candidates are already scored by actual team damage — take the best.
   const bestAllocation: Record<string, TopKEntry> | null =
     candidates.length > 0 ? candidates[0].assignment : null;
+  emitTeamOptTrace({
+    phase: "phase2",
+    allocatableChars,
+    candidateCount: candidates.length,
+    bestAllocationChars: bestAllocation ? Object.keys(bestAllocation) : [],
+    bestScore: candidates.length > 0 ? candidates[0].score : null,
+  });
 
   // Build final artifact assignment from best full-team-evaluated allocation.
   // When bestAllocation is missing (DFS exhausted) or doesn't cover a
@@ -1543,6 +1650,7 @@ export async function* runTeamOptimization(
     const currentTeamDamage = (() => {
       const sheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
       try {
+        if (!teamArtifactsMeetConstraints(bestArtifactsByChar)) return 0;
         return evaluateCombo(effectiveTeamBuild, combo, sheets, calcContext)
           .totalDamage;
       } catch {
@@ -1801,6 +1909,7 @@ export async function* runTeamOptimization(
       );
       let tentativeDamage: number;
       try {
+        if (!teamArtifactsMeetConstraints(tentativeArts)) continue;
         tentativeDamage = evaluateCombo(
           effectiveTeamBuild,
           combo,
@@ -2206,6 +2315,24 @@ export async function* runTeamOptimization(
         buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar)
       );
     }
+    emitTeamOptTrace({
+      phase: "final-constraints",
+      stats: Object.fromEntries(
+        allCharIds.map((charId) => [
+          charId,
+          {
+            er: validationStats[charId]?.get("er", null) ?? 0,
+            cr: validationStats[charId]?.get("cr", null) ?? 0,
+          },
+        ])
+      ),
+      failReasons: Object.fromEntries(
+        Object.entries(failReasons).map(([cid, reason]) => [cid, reason.kind])
+      ),
+      emptyChars: allCharIds.filter((charId) =>
+        allSlots.every((slot) => bestArtifactsByChar[charId]?.[slot] == null)
+      ),
+    });
   }
 
   const resultBase = {
