@@ -377,7 +377,9 @@ def cmd_detail(char_id: str, detail_spec: str) -> None:
         print(f"  {en_name} ({zh_name}): {rendered}")
 
 
-def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
+def print_char_kit(
+    en_kit: dict[str, Any], zh_kit: dict[str, Any], *, zh_only: bool = False
+) -> None:
     en_skills = en_kit.get("skills", [])
     zh_skills = zh_kit.get("skills", [])
     tags = ["A", "E", "Q"]
@@ -389,8 +391,12 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
 
         name_en = en_s.get("name", "")
         name_zh = zh_s["name"] if zh_s else ""
-        print(f"\n[{tag}] {name_en}  |  {name_zh}")
-        print(f"  EN: {strip_html(en_s.get('descHtml', ''))}")
+        if zh_only:
+            print(f"\n[{tag}] {name_zh}")
+        else:
+            print(f"\n[{tag}] {name_en}  |  {name_zh}")
+        if not zh_only:
+            print(f"  EN: {strip_html(en_s.get('descHtml', ''))}")
         if zh_s:
             print(f"  ZH: {strip_html(zh_s.get('descHtml', ''))}")
 
@@ -399,10 +405,13 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
         for j, row in enumerate(en_details):
             if not row or len(row) < 2:
                 continue
-            en_name = row[0]
             template = row[1]
             zh_name = zh_details[j][0] if j < len(zh_details) and zh_details[j] else ""
-            print(f"  {en_name} ({zh_name}): {template}")
+            if zh_only:
+                print(f"  {zh_name}: {template}")
+            else:
+                en_name = row[0]
+                print(f"  {en_name} ({zh_name}): {template}")
 
     en_passives = en_kit.get("passives", [])
     zh_passives = zh_kit.get("passives", [])
@@ -413,8 +422,11 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
         if any(kw in zh_desc for kw in _SKIP_PASSIVE_KEYWORDS):
             print(f"\n[P{i + 1}] (non-combat)")
             continue
-        print(f"\n[P{i + 1}] {en_p.get('name', '')}  |  {zh_p['name'] if zh_p else ''}")
-        print(f"  EN: {strip_html(en_p.get('descHtml', ''))}")
+        if zh_only:
+            print(f"\n[P{i + 1}] {zh_p['name'] if zh_p else ''}")
+        else:
+            print(f"\n[P{i + 1}] {en_p.get('name', '')}  |  {zh_p['name'] if zh_p else ''}")
+            print(f"  EN: {strip_html(en_p.get('descHtml', ''))}")
         if zh_p:
             print(f"  ZH: {zh_desc}")
 
@@ -423,8 +435,11 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
     for i in range(len(en_cons)):
         en_c = en_cons[i]
         zh_c = zh_cons[i] if i < len(zh_cons) else None
-        print(f"\n[C{i + 1}] {en_c.get('name', '')}  |  {zh_c['name'] if zh_c else ''}")
-        print(f"  EN: {strip_html(en_c.get('descHtml', ''))}")
+        if zh_only:
+            print(f"\n[C{i + 1}] {zh_c['name'] if zh_c else ''}")
+        else:
+            print(f"\n[C{i + 1}] {en_c.get('name', '')}  |  {zh_c['name'] if zh_c else ''}")
+            print(f"  EN: {strip_html(en_c.get('descHtml', ''))}")
         if zh_c:
             print(f"  ZH: {strip_html(zh_c.get('descHtml', ''))}")
 
@@ -443,16 +458,20 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
             groups[desc].append(entry.get("name", ""))
 
         for desc in order:
-            names_en = " / ".join(groups[desc])
             zh_entry = zh_by_desc.get(desc)
-            names_zh = zh_entry["name"] if zh_entry else ""
-            print(f"\n[G] {names_en}  |  {names_zh}")
-            print(f"  EN: {strip_html(desc)}")
+            if zh_only:
+                names_zh = zh_entry["name"] if zh_entry else ""
+                print(f"\n[G] {names_zh}")
+            else:
+                names_en = " / ".join(groups[desc])
+                names_zh = zh_entry["name"] if zh_entry else ""
+                print(f"\n[G] {names_en}  |  {names_zh}")
+                print(f"  EN: {strip_html(desc)}")
             if zh_entry:
                 print(f"  ZH: {strip_html(zh_entry.get('descHtml', ''))}")
 
 
-def cmd_show(mode: Mode, entity_id: str) -> None:
+def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
     resources = load_resources(mode)
     i18n = load_i18n_names(mode)
     impls = scan_impls(mode)
@@ -468,9 +487,12 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
     print(f"{'═' * 80}")
 
     if mode == "C":
-        name_en = i18n_data.get("en", entity_id)
         name_zh = i18n_data.get("zh", entity_id)
-        print(f"  [CHAR] {entity_id}  |  {name_en}  |  {name_zh}")
+        if zh_only:
+            print(f"  [CHAR] {entity_id}  |  {name_zh}")
+        else:
+            name_en = i18n_data.get("en", entity_id)
+            print(f"  [CHAR] {entity_id}  |  {name_en}  |  {name_zh}")
         print(f"  {meta.get('rarity')}★ {meta.get('element')} - {meta.get('region')}")
 
         req_formulas = load_required_formulas()
@@ -481,12 +503,15 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
         print("═" * 80)
 
         en_kit, zh_kit = load_char_kits(entity_id)
-        print_char_kit(en_kit, zh_kit)
+        print_char_kit(en_kit, zh_kit, zh_only=zh_only)
 
     elif mode == "W":
-        name_en = i18n_data.get("name", {}).get("en", entity_id)
         name_zh = i18n_data.get("name", {}).get("zh", entity_id)
-        print(f"  [WEAP] {entity_id}  |  {name_en}  |  {name_zh}")
+        if zh_only:
+            print(f"  [WEAP] {entity_id}  |  {name_zh}")
+        else:
+            name_en = i18n_data.get("name", {}).get("en", entity_id)
+            print(f"  [WEAP] {entity_id}  |  {name_en}  |  {name_zh}")
         print(f"  {meta.get('rarity')}★ {meta.get('type')}")
         print("═" * 80)
 
@@ -494,6 +519,8 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
         game_dir = DATA / "game"
         effect_texts: dict[str, str] = {}
         for lang in ("en", "zh"):
+            if zh_only and lang == "en":
+                continue
             wp = game_dir / f"weapon_{lang}.json"
             if not wp.exists():
                 effect_texts[lang] = ""
@@ -518,7 +545,8 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
                 effect_texts[lang] = tpl
 
         print("[Effect]")
-        print(f"  EN: {strip_html(effect_texts.get('en', ''))}")
+        if not zh_only:
+            print(f"  EN: {strip_html(effect_texts.get('en', ''))}")
         print(f"  ZH: {strip_html(effect_texts.get('zh', ''))}")
 
     elif mode == "A":
@@ -526,18 +554,24 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
             print(f"  [ARTI] {entity_id}  |  HalfSet 2pc")
             print("═" * 80)
             print("[2pc]")
-            print(f"  EN: {strip_html(i18n_data.get('en', ''))}")
+            if not zh_only:
+                print(f"  EN: {strip_html(i18n_data.get('en', ''))}")
             print(f"  ZH: {strip_html(i18n_data.get('zh', ''))}")
         else:
-            name_en = i18n_data.get("en", entity_id)
             name_zh = i18n_data.get("zh", entity_id)
-            print(f"  [ARTI] {entity_id}  |  {name_en}  |  {name_zh}")
+            if zh_only:
+                print(f"  [ARTI] {entity_id}  |  {name_zh}")
+            else:
+                name_en = i18n_data.get("en", entity_id)
+                print(f"  [ARTI] {entity_id}  |  {name_en}  |  {name_zh}")
             print(f"  {meta.get('rarity')}★")
             print("═" * 80)
 
             game_dir = DATA / "game"
             art_effects: dict[str, dict[str, str]] = {"en": {}, "zh": {}}
             for lang in ("en", "zh"):
+                if zh_only and lang == "en":
+                    continue
                 ap = game_dir / f"artifact_{lang}.json"
                 if ap.exists():
                     game_artifacts = json.loads(ap.read_text("utf-8"))
@@ -552,7 +586,7 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
                 zh_eff = art_effects["zh"].get(key, "")
                 if en_eff or zh_eff:
                     print(f"[{pc}pc]")
-                    if en_eff:
+                    if en_eff and not zh_only:
                         print(f"  EN: {strip_html(en_eff)}")
                     if zh_eff:
                         print(f"  ZH: {strip_html(zh_eff)}")
@@ -839,6 +873,8 @@ Commands:
                         Dumps output to scripts/data/<id>.txt
     --detail=<XN>       Instead of dumping, print skill X at level N to stdout.
                         X = A/E/Q, N = 6–15. Example: --detail=E14, --detail=A11
+  showzh <C|W|A> <id>  Like show, but Chinese-only (no English text). Saves tokens.
+                        Dumps output to scripts/data/<id>.txt
   list <C|W|A>        List all registered IDs grouped by categories.
   check [C|W|A]       Find missing and misplaced implementations.
                         If no mode is provided, checks all modes.
@@ -849,7 +885,9 @@ Commands:
 
 def main() -> None:
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("command", nargs="?", choices=["show", "list", "check", "excel", "help"])
+    parser.add_argument(
+        "command", nargs="?", choices=["show", "showzh", "list", "check", "excel", "help"]
+    )
     parser.add_argument("args", nargs=argparse.REMAINDER)
 
     parsed = parser.parse_args()
@@ -893,6 +931,22 @@ def main() -> None:
                 with FileWriter(output_file):
                     cmd_show(mode, eid)
                 print(f"Output saved to {output_file}")
+
+        elif cmd == "showzh":
+            if len(args) < 2:
+                print("Usage: impl_audit.py showzh <C|W|A> <id>")
+                sys.exit(1)
+            mode_str = args[0].upper()
+            eid = args[1]
+            if mode_str not in ("C", "W", "A"):
+                print("Invalid mode. Use C, W, or A.")
+                sys.exit(1)
+            mode = cast(Mode, mode_str)
+            DATA_DIR.mkdir(parents=True, exist_ok=True)
+            output_file = DATA_DIR / f"{eid}.txt"
+            with FileWriter(output_file):
+                cmd_show(mode, eid, zh_only=True)
+            print(f"Output saved to {output_file}")
 
         elif cmd == "list":
             if not args:

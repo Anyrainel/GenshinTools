@@ -1,6 +1,6 @@
 ---
 name: dmg-agents
-description: Launch damage calculator agents (review, triage, implement, excel). Use when the user asks to review, audit, triage, implement, or cross-validate damage formulas or buff implementations.
+description: Launch damage calculator agents (review, triage, implement, excel, cleanup). Use when the user asks to review, audit, triage, implement, cross-validate, or clean up damage formulas or buff implementations.
 ---
 
 # Damage Agent Dispatch
@@ -67,6 +67,19 @@ Scope format: `C <region>` (characters only — the Excel calculator has no weap
 
 **Note:** Different regions can run in parallel (they write to separate tracker files). Excel cross-validation appends to the same tracker files as review/kqm — avoid running excel + review on the same region simultaneously.
 
+### dmg-cleanup — Fix hardcoded multipliers & inline unnecessary locals
+
+Scans implementations for: (1) hardcoded numeric multipliers that should use `this.param()`, (2) single-use local variables for `this.param()` or `DamageTag` objects that should be inlined. **Modifies code directly.**
+
+**Launch:** Agent tool, `subagent_type: "general-purpose"`, prompt:
+```
+Read `.claude/agents/dmg-cleanup.md` and follow its instructions. Scope: C mondstadt
+```
+
+Scope format: `C <region>`, `W <type>`, or `A`
+
+**Note:** This agent modifies implementation files. Don't run it in parallel with review or implement on the same scope.
+
 ## Scopes
 
 | Entity | Regions / types |
@@ -82,6 +95,7 @@ Each agent has significant startup overhead (reading 3-4 reference docs). **Don'
 - **review**: 1 per scope (each is a full audit of every entity — inherently large).
 - **triage**: **Always 1 agent with all scopes combined.** Triage decisions benefit from cross-scope consistency (e.g., applying the same wont-do threshold everywhere). Pass all scopes in a single comma-separated list (e.g., `Scopes: mondstadt, liyue, inazuma, sumeru, fontaine, natlan, nod-krai, snezhnaya, other, weapons, artifacts`).
 - **implement**: Combine small scopes. 1–3 agents depending on total item count.
+- **cleanup**: 1 per scope. Lightweight per entity (just code style), but touches every entity.
 - **excel**: 1 per scope is fine (each does substantial per-entity work).
 
 ## Parallelization
