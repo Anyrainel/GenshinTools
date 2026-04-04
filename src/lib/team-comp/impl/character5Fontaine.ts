@@ -411,21 +411,33 @@ class Sigewinne extends CharacterBase {
 
 @RegisterCharacter("clorinde")
 class Clorinde extends CharacterBase {
+  private readonly hasElectroReaction =
+    this.teamMeta.hasReaction("overloaded") ||
+    this.teamMeta.hasReaction("electroCharged") ||
+    this.teamMeta.hasReaction("superconduct") ||
+    this.teamMeta.hasReaction("aggravate") ||
+    this.teamMeta.hasReaction("lunarCharged");
+
   readonly buffs = [
     // P1: After Electro-related reaction, +20% ATK (C2: 30%) × 3 stacks as baseDmg
     // on Normal ATK and Q Electro DMG; max increase 1800 (C2: 2700)
-    new ScalingBuff(
-      cbs(this, "P1", ["elemental-reaction"]),
-      {
-        receiver: "selfOnField",
-        filter: { abilities: ["normal", "burst"], elements: ["Electro"] },
-      },
-      [],
-      "atk",
-      "baseDmg",
-      this.constellation >= 2 ? 0.9 : 0.6,
-      this.constellation >= 2 ? 2700 : 1800
-    ),
+    // Requires team to be able to trigger an Electro-related reaction
+    ...(this.hasElectroReaction
+      ? [
+          new ScalingBuff(
+            cbs(this, "P1", ["elemental-reaction"]),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["normal", "burst"], elements: ["Electro"] },
+            },
+            [],
+            "atk",
+            "baseDmg",
+            this.constellation >= 2 ? 0.9 : 0.6,
+            this.constellation >= 2 ? 2700 : 1800
+          ),
+        ]
+      : []),
     // P2: BoL ≥100% + changes → CR +10% × 2 stacks = +20%
     // Game text: "克洛琳德的暴击率提升" — generic personal buff, lasts 15s
     new StatBuff(cbs(this, "P2", ["E"]), { receiver: "self" }, [

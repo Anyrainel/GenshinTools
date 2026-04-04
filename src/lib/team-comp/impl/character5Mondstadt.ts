@@ -473,12 +473,15 @@ class Albedo extends CharacterBase {
         0.12
       ),
       // P4 (Hexerei): After Silver Isotoma, Hexerei members DMG +10% per 1000 DEF (cap 30%)
-      // Receiver "team" is an approximation; faction-scoped receivers are not supported.
       ...(isHexerei
         ? [
             new ScalingBuff(
               cbs(this, "P4", ["E"]),
-              { receiver: "team", filter: { abilities: [...allAbilities] } },
+              {
+                receiver: "team",
+                factions: ["Hexerei"],
+                filter: { abilities: [...allAbilities] },
+              },
               [],
               "def",
               "dmg%",
@@ -800,6 +803,7 @@ class Mona extends CharacterBase {
       // C1: Hydro reaction effects +15% (EC, Lunar-Charged, Vaporize, Hydro Swirl, Lunar-Crystallize)
       // "When any of your own party members hits an opponent affected by an Omen" → team-wide
       // Off-field party members get 160% of the bonus (24% instead of 15%), modeled as base 15% + extra 9%
+      // Swirl is filtered to Hydro element only ("水元素扩散反应")
       ...(this.constellation >= 1
         ? [
             new StatBuff(
@@ -811,9 +815,19 @@ class Mona extends CharacterBase {
                     "electroCharged",
                     "lunarCharged",
                     "vaporize",
-                    "swirl",
                     "lunarCrystallize",
                   ],
+                },
+              },
+              [{ key: "reactionDmg%", value: 0.15 }]
+            ),
+            new StatBuff(
+              cbs(this, "C1", ["Q"]),
+              {
+                receiver: "team",
+                filter: {
+                  reactions: ["swirl"],
+                  elements: ["Hydro"],
                 },
               },
               [{ key: "reactionDmg%", value: 0.15 }]
@@ -828,9 +842,19 @@ class Mona extends CharacterBase {
                     "electroCharged",
                     "lunarCharged",
                     "vaporize",
-                    "swirl",
                     "lunarCrystallize",
                   ],
+                },
+              },
+              [{ key: "reactionDmg%", value: 0.09 }]
+            ),
+            new StatBuff(
+              cbs(this, "C1", ["Q"]),
+              {
+                receiver: "otherOffField",
+                filter: {
+                  reactions: ["swirl"],
+                  elements: ["Hydro"],
                 },
               },
               [{ key: "reactionDmg%", value: 0.09 }]
@@ -846,7 +870,7 @@ class Mona extends CharacterBase {
           ]
         : []),
       // C4: Omen targets +15% CR (all party members attacking affected opponents)
-      // C4 also: Hexerei party members gain +15% CD (approximated as team since faction-scoped not supported)
+      // C4 also: Hexerei party members gain +15% CD
       ...(this.constellation >= 4
         ? [
             new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
@@ -854,9 +878,11 @@ class Mona extends CharacterBase {
             ]),
             ...(isHexerei
               ? [
-                  new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
-                    { key: "cd", value: 0.15 },
-                  ]),
+                  new StatBuff(
+                    cbs(this, "C4", ["Q"]),
+                    { receiver: "team", factions: ["Hexerei"] },
+                    [{ key: "cd", value: 0.15 }]
+                  ),
                 ]
               : []),
           ]
@@ -1361,6 +1387,7 @@ class Klee extends CharacterBase {
         ],
       },
       // C4: Sparkly Explosion — 555% ATK Pyro burst explosion when leaving field during Q
+      // On-field bonus: +100% DMG when Klee is on-field (peak-damage: always on-field during Q)
       "klee-c4-explosion": {
         label: { zh: "爆炸", en: "Explosion" },
         minC: 4,
@@ -1371,6 +1398,11 @@ class Klee extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            bespokeBuff: new StatBuff(
+              cbs(this, "C4", ["Q"]),
+              { receiver: "selfOnField" },
+              [{ key: "dmg%", value: 1.0 }]
+            ),
           },
         ],
       },

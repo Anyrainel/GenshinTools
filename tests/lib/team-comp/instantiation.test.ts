@@ -54,7 +54,7 @@ function findDuplicateBuffKeys(
     const existing = seen.get(key);
     if (existing) {
       duplicates.push(
-        `${providerCharId}: ${buff.source.id} ${buff.source.origin ?? ""} collides with ${existing.source.id} ${existing.source.origin ?? ""}`
+        `${providerCharId}: ${buff.source.id} ${buff.source.origin ?? ""} collides with ${existing.source.id} ${existing.source.origin ?? ""} (hint: use internalKey to differentiate)`
       );
       continue;
     }

@@ -630,7 +630,7 @@ class Sucrose extends CharacterBase {
       );
     }
     // C6: Q Elemental Absorption → Team +20% DMG Bonus for the absorbed element
-    // + Hexerei characters gain additional +8.57142% (approximated as "team", faction filter not supported)
+    // + Hexerei characters gain additional +8.57142%
     // Absorption can only be Pyro/Hydro/Cryo/Electro; model for each present in team
     if (this.constellation >= 6 && presentAbsorbElements.length > 0) {
       buffs.push(
@@ -653,6 +653,7 @@ class Sucrose extends CharacterBase {
             cbs(this, "C6", ["Q"]),
             {
               receiver: "team",
+              factions: ["Hexerei"],
               filter: {
                 elements: [
                   ...presentAbsorbElements,
@@ -667,7 +668,6 @@ class Sucrose extends CharacterBase {
     if (isHexerei) {
       // P4 (Hexerei): E → team DMG +5.71428%; Q → Hexerei team DMG +7.14285%
       // Both buffs are approximated as unfiltered dmg% (all ability types covered by text)
-      // The Q buff is scoped to Hexerei — approximated as "team" (faction filter not supported)
       buffs.push(
         new StatBuff(
           cbs(this, "P4", ["E"]),
@@ -676,7 +676,11 @@ class Sucrose extends CharacterBase {
         ),
         new StatBuff(
           cbs(this, "P4", ["Q"]),
-          { receiver: "team", filter: { abilities: [...allAbilities] } },
+          {
+            receiver: "team",
+            factions: ["Hexerei"],
+            filter: { abilities: [...allAbilities] },
+          },
           [{ key: "dmg%", value: 0.0714285 }]
         )
       );
@@ -820,13 +824,11 @@ class Amber extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // C4: Adds 1 additional charge → 2 uses per rotation
-    const eCount = this.constellation >= 4 ? 2 : 1;
     return {
       "amber-skill": {
         label: {
-          zh: `E爆炸×${eCount}`,
-          en: `E Explosion ×${eCount}`,
+          zh: "E爆炸",
+          en: "E Explosion",
         },
         parts: [
           {
@@ -835,7 +837,6 @@ class Amber extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
-            hits: eCount,
           },
           // C2: Manual detonation adds 200% ATK as additional explosion DMG
           ...(this.constellation >= 2
@@ -846,7 +847,6 @@ class Amber extends CharacterBase {
                     ability: "skill",
                     reaction: "none",
                   }),
-                  hits: eCount,
                 },
               ]
             : []),
@@ -869,9 +869,10 @@ class Amber extends CharacterBase {
   })();
 
   // Rotation: E (Baron Bunny) + Q (18 waves baked in)
+  // C4: Adds 1 additional E charge → count 2
   protected override get comboDescriptor(): ComboDescriptor {
     return [
-      { id: "amber-skill", count: 1 },
+      { id: "amber-skill", count: 1, bonus: [{ minC: 4, delta: 1 }] },
       { id: "amber-burst", count: 1 },
     ];
   }

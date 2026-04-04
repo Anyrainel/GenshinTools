@@ -78,13 +78,31 @@
 - id: aino-q-p1-hit-count
   entity: aino
   rule: S8
-  status: open
+  status: completed
   category: approximation
   summary: >
     Q water ball hit count hardcoded to 14 regardless of P1 Ascendant Gleam enhancement.
     P1 states "fire water balls more frequently" under Ascendant Gleam, which increases
     the hit count beyond 14 over the 14s duration. Current model underestimates Q damage
     for Moonsign teams.
-  detail: ""
+  detail: >
+    Added Ascendant Gleam (>=2 Moonsign) conditional: 20 hits when enhanced,
+    14 hits otherwise. Formula label dynamically reflects the hit count.
+    20 hits estimated from ~0.7s interval over 14s duration.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: lauma-c6-sanctuary-pale-hymn
+  entity: lauma
+  rule: U8b
+  status: wont-do
+  category: engine-gap
+  summary: >
+    C6 Frostgrove Sanctuary extra LunarBloom hits (8 per duration) should not consume
+    Pale Hymn stacks per game text ("不会消耗「苍色祷歌」"), but the engine's maxStacks
+    mechanism has no way to exempt specific formula parts from consuming stacks. These
+    8 hits currently consume from the shared 36-stack Pale Hymn pool, potentially
+    over-depleting stacks meant for other team reactions.
+  detail: given lauma DPS is a niche, this is not a priority.
   created: "2026-04-04"
   resolved: null

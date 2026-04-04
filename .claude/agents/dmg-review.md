@@ -61,7 +61,7 @@ Read the output file `scripts/data/<id>.txt`. This contains game text (i18n) and
 - Characters (`C`): apply all rules — Universal (U-series) and Character-only (S-series).
 - Weapons (`W`) and Artifacts (`A`): apply Universal rules only (U-series).
 
-**d) Review each buff and formula against applicable rules.** For each item:
+**d) Review each buff and formula against applicable rules.** Classify each item but **only record issues** — do not write down items that pass:
 
 - **[BUG]** — violates a rule and the fix is **mechanically determined**: a rule's table or definition maps the game text to exactly one correct value, with no interpretive judgment required. Create a tracker item with category `bug` so it can be fixed later.
 
@@ -69,13 +69,13 @@ Read the output file `scripts/data/<id>.txt`. This contains game text (i18n) and
 
 - **[ISSUE]** — the issue falls under the "When to Create a Tracker Item" appendix in `translator-rules.md`, or a rule is violated but the correct fix requires judgment (multiple plausible interpretations, unclear game text, or the fix depends on context not available in the `show` output). Create a tracker item.
 
-- **[OK]** — correct. One short note.
+- **Correct** — no action needed. Do NOT write [OK] rows — move on silently. Only count the item for the per-entity tally.
 
 **e) Validate resolved tracker items.** For each `wont-do` or `completed` item belonging to this entity, check the current implementation against the item's `summary`:
 
-- **Fix confirmed** — the issue described in `summary` no longer exists in the implementation (formula added, bug fixed, approximation corrected). **Delete the item from the YAML.** Record as `[CLEANED]` in the summary table.
-- **Fix incorrect or incomplete** — the item is marked `completed` but the implementation still has the problem described in `summary`, or the fix introduced a new issue. **Change status back to `open`**, clear the `resolved` date, and update `detail` explaining what's still wrong. Record as `[REOPENED]` in the summary table.
-- **Wont-do still valid** — the `wont-do` rationale still holds and the issue hasn't changed. Leave as-is (don't include in the summary table).
+- **Fix confirmed** — the issue described in `summary` no longer exists in the implementation (formula added, bug fixed, approximation corrected). **Delete the item from the YAML.** Record as `[CLEANED]` in the entity summary.
+- **Fix incorrect or incomplete** — the item is marked `completed` but the implementation still has the problem described in `summary`, or the fix introduced a new issue. **Change status back to `open`**, clear the `resolved` date, and update `detail` explaining what's still wrong. Record as `[REOPENED]` in the entity summary.
+- **Wont-do still valid** — the `wont-do` rationale still holds and the issue hasn't changed. Leave as-is (don't include in the entity summary).
 
 Every `completed` item MUST be either cleaned or reopened — never left as `completed`.
 
@@ -108,19 +108,25 @@ The `id` must be unique within the file. Check the existing items before choosin
 
 ### Step 5: Summary
 
-Output a summary for each entity reviewed:
+**Issues-only format** — do not list items that passed review. This keeps the summary compact and focused on actionable findings.
+
+For entities with **zero issues and zero cleaned/reopened items**, output a single line:
 
 ```markdown
-## {Entity Name} ({entity_id})
+**{entity_id}** — clean ({N} buffs, {M} formulas checked)
+```
 
-| Item | Rule | Finding | Notes |
-|---|---|---|---|
-| E passive buff | U1 | [BUG] | receiver should be "selfOnField", created tracker item |
-| Q damage formula | S1 | [OK] | DirectFormula, Pyro/burst/none |
-| C2 proc | S8 | [ISSUE] | Created tracker item: kazuha-c2-proc |
-| C6 coordinated | — | [CLEANED] | wont-do item removed: formula was since implemented |
+For entities with issues or tracker changes, output:
 
-Issues found: N
+```markdown
+## {entity_id}
+
+- [BUG] E passive buff (U1): receiver should be "selfOnField". Tracker: {entity}-e-receiver
+- [ISSUE] C2 proc (S8): unclear hit count for coordinated attack. Tracker: {entity}-c2-proc
+- [CLEANED] C6 coordinated: wont-do item removed — formula was since implemented
+- [REOPENED] Q formula: marked completed but multiplier still hardcoded
+
+Checked: {N} buffs, {M} formulas. Issues: {K}
 ```
 
 At the end, output a scope summary:
@@ -129,6 +135,8 @@ At the end, output a scope summary:
 ## Scope Summary: {scope}
 
 - Entities reviewed: N
+- Entities clean: N
+- Entities with issues: N (list IDs)
 - Entities skipped (no implementation): N (list IDs)
 - New tracker items created: N
 - Stale tracker items cleaned: N

@@ -370,6 +370,18 @@ class Xianyun extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      "xianyun-skyladder": {
+        label: { zh: "E步天梯", en: "E Skyladder" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "xianyun-driftcloud": {
         label: {
           zh: "E下落×3",
@@ -380,6 +392,19 @@ class Xianyun extends CharacterBase {
             formula: new DirectFormula(this.param("E", 4), {
               element: "Anemo",
               // Driftcloud Wave is considered Plunging Attack DMG
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      // Minimal 1-step E: Skyladder only (no Driftcloud), lowest multiplier, fastest cast
+      "xianyun-driftcloud-1step": {
+        label: { zh: "E下落×1", en: "E Driftcloud ×1" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Anemo",
               ability: "plunge",
               reaction: "none",
             }),
@@ -1061,9 +1086,54 @@ class Shenhe extends CharacterBase {
     // E: Icy Quill — ATK-based flat DMG added to Cryo hits
     // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
     // Quota: press 5 / hold 7 per character (stacks counted independently).
+    // C1+ "both" mode: press+hold grant separate quills (5+7=12 total).
     // C6: Normal+Charged don't consume → effectively unlimited.
-    ...Object.keys(this.teamMeta.elements).map(
-      (charId) =>
+    ...Object.keys(this.teamMeta.elements).flatMap((charId) => {
+      const quillTarget = {
+        receiver: "team" as const,
+        charId,
+        filter: {
+          elements: ["Cryo" as const],
+          abilities: [
+            "normal" as const,
+            "charge" as const,
+            "plunge" as const,
+            "skill" as const,
+            "burst" as const,
+          ],
+        },
+      };
+      const scale = this.param("E", 3);
+      if (this.eType === "both") {
+        // Separate press (5 stacks) and hold (7 stacks) buffs
+        return [
+          new ScalingBuff(
+            {
+              ...cbs(this, "E", ["E"]),
+              internalKey: "press",
+              ...(this.constellation < 6 && { maxStacks: 5 }),
+            },
+            quillTarget,
+            [],
+            "atk",
+            "baseDmg",
+            scale
+          ),
+          new ScalingBuff(
+            {
+              ...cbs(this, "E", ["E"]),
+              internalKey: "hold",
+              ...(this.constellation < 6 && { maxStacks: 7 }),
+            },
+            quillTarget,
+            [],
+            "atk",
+            "baseDmg",
+            scale
+          ),
+        ];
+      }
+      return [
         new ScalingBuff(
           {
             ...cbs(this, "E", ["E"]),
@@ -1071,20 +1141,14 @@ class Shenhe extends CharacterBase {
               maxStacks: this.eType === "press" ? 5 : 7,
             }),
           },
-          {
-            receiver: "team",
-            charId,
-            filter: {
-              elements: ["Cryo"],
-              abilities: ["normal", "charge", "plunge", "skill", "burst"],
-            },
-          },
+          quillTarget,
           [],
           "atk",
           "baseDmg",
-          this.param("E", 3)
-        )
-    ),
+          scale
+        ),
+      ];
+    }),
     // P1: Q field → on-field Cryo DMG +15% ("冰元素伤害加成提高15%")
     new StatBuff(
       cbs(this, "P1", ["Q"]),
@@ -1288,11 +1352,21 @@ class Ganyu extends CharacterBase {
         label: { zh: "E技能伤害", en: "E Skill DMG" },
         parts: [
           {
+            // Initial dash damage
             formula: new DirectFormula(this.param("E", 2), {
               element: "Cryo",
               ability: "skill",
               reaction: "none",
             }),
+          },
+          {
+            // Ice Lotus bloom on expiry (same multiplier, off-field)
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+            offField: true,
           },
         ],
       },

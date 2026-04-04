@@ -185,6 +185,7 @@ class Varesa extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "varesa-kick", count: 1 },
+      { id: "varesa-e-fp", count: 4 },
       ...(this.constellation >= 4
         ? [
             { id: "varesa-plunge-c4", count: 1 },
@@ -459,12 +460,29 @@ class Mavuika extends CharacterBase {
           { key: "baseAtk", value: 200 },
         ])
       );
-      // C2 Ring form: nearby enemy DEF -20% — approximation: always active
-      buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
-          { key: "defReduction%", value: 0.2 },
-        ])
-      );
+      // C2 Ring form: nearby enemy DEF -20% (Ring form only).
+      // C6 adds Scorching Ring DEF -20% (Flamestrider form only).
+      // At C6, both forms have 20% shred — model as team-wide.
+      // Below C6, only Ring form applies: use selfOffField + other to exclude
+      // Mavuika's own on-field Flamestrider damage from the shred.
+      if (this.constellation >= 6) {
+        buffs.push(
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+            { key: "defReduction%", value: 0.2 },
+          ])
+        );
+      } else {
+        buffs.push(
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOffField" }, [
+            { key: "defReduction%", value: 0.2 },
+          ])
+        );
+        buffs.push(
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "other" }, [
+            { key: "defReduction%", value: 0.2 },
+          ])
+        );
+      }
       buffs.push(
         new ScalingBuff(
           cbs(this, "C2", ["E"]),
@@ -497,14 +515,7 @@ class Mavuika extends CharacterBase {
       );
     }
 
-    // C6: Flamestrider summons Scorching Ring → nearby enemy DEF -20%
-    if (this.constellation >= 6) {
-      buffs.push(
-        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
-          { key: "defReduction%", value: 0.2 },
-        ])
-      );
-    }
+    // C6 Scorching Ring DEF -20% is merged into C2 block above (team-wide at C6)
 
     return buffs;
   })();
@@ -602,6 +613,34 @@ class Mavuika extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(this.param("E", 2), {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            offField: true,
+          },
+        ],
+      },
+      // E Flamestrider Plunge DMG (param12): plunge during Flamestrider mode
+      "mavuika-fs-plunge": {
+        label: { zh: "驰轮车下落", en: "Flamestrider Plunge" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 12), {
+              element: "Pyro",
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      // C6: Ring hit → Flamestrider crash (200% ATK Pyro DMG per Ring attack, off-field)
+      "mavuika-c6-crash": {
+        label: { zh: "C6环撞击", en: "C6 Ring Crash" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(2.0, {
               element: "Pyro",
               ability: "skill",
               reaction: "none",

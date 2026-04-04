@@ -296,8 +296,11 @@ class Aino extends CharacterBase {
   // Stage 1: Lv10 118.1%, Lv13 (C5+) 139.4%
   // Stage 2: Lv10 339.8%, Lv13 (C5+) 401.2%
   // Q: Water Ball DMG Lv10: 36.2%, Lv13 (C3+): 42.7%
-  // ~14 hits over 14s duration
+  // ~14 hits over 14s duration; P1 Ascendant Gleam fires more frequently → ~20 hits
+  private readonly isAscendantGleam =
+    this.teamMeta.countByFaction("Moonsign") >= 2;
   protected readonly formulaMap = (() => {
+    const qHits = this.isAscendantGleam ? 20 : 14;
     return {
       "aino-skill": {
         label: { zh: "E伤害", en: "E DMG" },
@@ -319,7 +322,10 @@ class Aino extends CharacterBase {
         ],
       },
       "aino-burst-total": {
-        label: { zh: "Q×14", en: "Q ×14" },
+        label: {
+          zh: `Q×${qHits}`,
+          en: `Q ×${qHits}`,
+        },
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 1), {
@@ -327,7 +333,7 @@ class Aino extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            hits: 14,
+            hits: qHits,
             offField: true,
           },
         ],

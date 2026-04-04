@@ -440,6 +440,15 @@ class Tartaglia extends CharacterBase {
           { formula: new DirectFormula(this.param("E", 10), meleeChargeTag) },
         ],
       },
+      "tartaglia-melee-n4n5n6": {
+        label: { zh: "E近战N4+N5+N6", en: "E Melee N4+N5+N6" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 5), meleeNormalTag) },
+          { formula: new DirectFormula(this.param("E", 6), meleeNormalTag) },
+          { formula: new DirectFormula(this.param("E", 7), meleeNormalTag) },
+          { formula: new DirectFormula(this.param("E", 8), meleeNormalTag) },
+        ],
+      },
       "tartaglia-burst-melee": {
         label: {
           zh: "Q斩击+断流爆发",

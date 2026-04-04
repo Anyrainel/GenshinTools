@@ -438,6 +438,7 @@ class RaidenShogun extends CharacterBase {
   // Rotation: E > supports > Q 3[N3C] N1C (~20s, hypercarry)
   protected override get comboDescriptor(): ComboDescriptor {
     return [
+      { id: "raiden-e-cast", count: 1 },
       { id: "raiden-coordinated", count: 1 },
       { id: "raiden-initial", count: 1 },
       { id: "raiden-charge", count: 3 },
@@ -454,6 +455,21 @@ class RaidenShogun extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      "raiden-e-cast": {
+        label: {
+          zh: "E释放伤害",
+          en: "E Cast",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "raiden-coordinated": {
         label: {
           zh: "E协同攻击×27",

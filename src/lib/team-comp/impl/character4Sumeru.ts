@@ -92,6 +92,14 @@ class Kaveh extends CharacterBase {
     new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "selfOnField" }, [
       { key: "em", value: 100 },
     ]),
+    // C1: After E, heal% +25% for 3s
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(cbs(this, "C1", ["E"]), { receiver: "self" }, [
+            { key: "heal%", value: 0.25 },
+          ]),
+        ]
+      : []),
     // C2: Normal ATK SPD +15%
     ...(this.constellation >= 2
       ? [

@@ -27,33 +27,3 @@
     the change back to baseDmg%.
   created: "2026-03-29"
   resolved: "2026-03-29"
-
-- id: nilou-whirling-steps-missing
-  entity: nilou
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    E Whirling Steps path (params 2, 3, 5) has no formulas. Only the Sword Dance
-    path is modeled. Whirling Steps creates Tranquility Aura and deals Hydro DMG
-    with different HP% multipliers.
-  detail: >
-    Added "nilou-e-whirl" formula with 4 parts: initial (param1), 1st hit (param2),
-    2nd hit (param3), and Water Wheel (param5), all HP-scaled DirectFormula with
-    Hydro/skill/none tag.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: collei-c6-mini-cuilein
-  entity: collei
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C6 miniature Cuilein-Anbar dealing 200% ATK as Dendro DMG on Floral Ring hit
-    has no formula. Triggers once per E cast, considered a meaningful C6 damage proc.
-  detail: >
-    Added "collei-c6-mini" DirectFormula(2.0, Dendro/skill/none) with minC: 6.
-    Added to combo with count 1.
-  created: "2026-04-04"
-  resolved: "2026-04-04"

@@ -351,6 +351,14 @@ class TravelerAnemo extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P3 cross-resonance: all elements Traveler has resonated with
       ...travelerP3Buffs(this),
+      // C2: Energy Recharge +16%
+      ...(this.constellation >= 2
+        ? [
+            new StatBuff(cbs(this, "C2", ["passive"]), { receiver: "self" }, [
+              { key: "er", value: 0.16 },
+            ]),
+          ]
+        : []),
       // C6: Enemies hit by Gust Surge have Anemo RES -20%
       ...(this.constellation >= 6
         ? [
@@ -473,10 +481,10 @@ class TravelerGeo extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff>[] = [
     // P3 cross-resonance: all elements Traveler has resonated with
     ...travelerP3Buffs(this),
-    // C1: Inside Wake of Earth, party CRIT Rate +10%
+    // C1: Inside Wake of Earth, party CRIT Rate +10% (on-field only, requires proximity)
     ...(this.constellation >= 1
       ? [
-          new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "teamOnField" }, [
             { key: "cr", value: 0.1 },
           ]),
         ]
@@ -617,13 +625,25 @@ class TravelerElectro extends CharacterBase {
 // P2: Every point of Traveler's EM -> E DMG +0.15%, Q DMG +0.1%
 // P3 cross-resonance: Dendro resonance -> self +60 EM
 // C6: Lotuslight Transfiguration → +12% DMG for corresponding element
-@RegisterCharacter("traveler_dendro")
+const travelerDendroOption = {
+  label: { zh: "莲光遍照", en: "Lotuslight" },
+  choices: [
+    { value: "60", label: { zh: "满层+60", en: "Max +60 EM" } },
+    { value: "30", label: { zh: "均值+30", en: "Avg +30 EM" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("traveler_dendro", travelerDendroOption)
 class TravelerDendro extends CharacterBase {
+  private readonly lotusEM = Number.parseInt(
+    resolveOption(travelerDendroOption, this.option)
+  );
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P1: Lea Lotus Lamp - Overflowing Lotuslight (max 10 stacks) -> on-field char +60 EM
+      // P1: Lea Lotus Lamp - Overflowing Lotuslight (max 10 stacks) -> on-field char EM
+      // Ramps +6 EM/s over 10s; option selects max (60) or average (30)
       new StatBuff(cbs(this, "P1", ["Q"]), { receiver: "teamOnField" }, [
-        { key: "em", value: 60 },
+        { key: "em", value: this.lotusEM },
       ]),
       // P2: Verdant Luxury — Traveler's own EM boosts E DMG by 0.15% per EM point
       new ScalingBuff(

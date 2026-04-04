@@ -127,7 +127,9 @@ class Iansan extends CharacterBase {
         [],
         "atk",
         "atk",
-        this.nightsoulLevel === "high" ? 0.27 : 0.135,
+        this.nightsoulLevel === "high"
+          ? this.param("Q", 2)
+          : this.param("Q", 3) * 27,
         this.param("Q", 4)
       ),
     ];

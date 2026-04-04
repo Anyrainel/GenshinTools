@@ -191,6 +191,9 @@ function validateStatBuff(
         );
       }
       for (const dim of c.forbidsDims ?? []) {
+        // Swirl reactions may use elements filter to differentiate (e.g. Hydro Swirl vs Pyro Swirl)
+        if (dim === "elements" && filter?.reactions?.includes("swirl" as never))
+          continue;
         if (filter?.[dim]) {
           throw new Error(
             `${label} ${key} is not expected to have a ${dim} filter. Ask for review for this case.`

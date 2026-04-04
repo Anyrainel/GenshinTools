@@ -39,6 +39,26 @@ Map every buff's game text to the correct receiver. Wrong receiver = **[BUG]**:
 
 In both cases, loop over `this.teamMeta.elements` and emit one buff per teammate.
 
+**`BuffTarget.factions` / `BuffTarget.regions` — faction/region-scoped buffs:** When game text restricts a buff to characters of a specific faction or region (e.g., "月兆角色" = Moonsign characters, "魔导角色" = Hexerei characters, "纳塔角色" = Natlan characters), use the `factions` or `regions` array on `BuffTarget` to scope the buff. This is **not** an engine gap — the engine filters recipients by faction/region at buff application time.
+
+```ts
+// Jahoda C6: "月兆角色的暴击率提升5%，暴击伤害提升40%" — Moonsign characters only
+new StatBuff(
+  cbs(this, "C6", ["E"]),
+  { receiver: "team", factions: ["Moonsign"] },
+  [{ key: "cr", value: 0.05 }, { key: "cd", value: 0.4 }]
+)
+
+// Hypothetical: "附近的魔导角色攻击力提升20%" — Hexerei characters only
+new StatBuff(
+  cbs(this, "P4", ["Q"]),
+  { receiver: "team", factions: ["Hexerei"] },
+  [{ key: "atk%", value: 0.2 }]
+)
+```
+
+- **[BUG]** if a faction/region-restricted buff uses plain `receiver: "team"` without `factions`/`regions`, causing non-qualifying teammates to incorrectly receive the buff.
+
 ### U2. `noStackId` on Weapon & Artifact Buffs
 
 Characters never need `noStackId` (they appear at most once per team).
@@ -396,7 +416,7 @@ with `offField: true`:
 
 When the review agent encounters an issue it cannot resolve by applying the rules above, it creates a tracker item (status: `open`) in the appropriate `docs/dmg-tracker/*.yaml` file. Be precise about the category:
 
-- **`engine-gap`**: per-hit sequence tracking, faction/element-scoped receivers, talent-level-based buff scaling, weak-spot damage, bond-of-life mechanics
+- **`engine-gap`**: weak-spot damage, bond-of-life mechanics
 - **`needs-data`**: missing talent data, unknown hit counts, unverified timing
 - **`missing-formula`**: significant formula absent from `formulaMap` but too complex for inline fix during review
 - **`approximation`**: current implementation approximates and the correct approach needs research

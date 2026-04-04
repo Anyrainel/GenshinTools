@@ -104,31 +104,17 @@
   created: "2026-04-04"
   resolved: "2026-04-04"
 
-- id: traveler-geo-c2-meteorite-explosion
-  entity: traveler_geo
-  rule: S9
+- id: traveler-dendro-p1-em-ramp
+  entity: traveler_dendro
+  rule: S12
   status: completed
-  category: bug
+  category: approximation
   summary: >
-    C2 meteorite explosion (deals additional Geo DMG equal to Starfell Sword damage)
-    is not modeled. At C2+, the E effectively deals double damage but no constellation
-    handling exists.
+    P1 Overflowing Lotuslight EM buff ramps +6 EM/s over 10s (max +60 EM) but is
+    hardcoded to the maximum 60 EM. No OptionMap or amortized average is used.
   detail: >
-    Added hits: 2 at C2+ to traveler-geo-skill formula part (hits: this.constellation >= 2 ? 2 : 1).
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: traveler-hydro-e-spiritbreath-thorn
-  entity: traveler_hydro
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    E Spiritbreath Thorn DMG (Pneuma-aligned Hydro, param3) has no formula entry.
-    This is a distinct damage instance in the 5-star E talent table that fires at
-    intervals after Torrent Surge.
-  detail: >
-    Added "traveler-hydro-thorn" DirectFormula using this.param('E', 3) with
-    Hydro/skill/none tag. Added to combo with count 2 (one per E cast).
+    Added OptionMap with two choices: "Max +60 EM" (default, full stacks) and
+    "Avg +30 EM" (average ramp over duration). P1 buff now uses resolved option
+    value instead of hardcoded 60.
   created: "2026-04-04"
   resolved: "2026-04-04"

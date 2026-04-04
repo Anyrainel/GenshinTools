@@ -49,76 +49,42 @@
   created: "2026-03-28"
   resolved: "2026-03-29"
 
-- id: ayato-q-normal-dmg-hardcoded
-  entity: kamisato_ayato
-  rule: S5
-  status: completed
+- id: kokomi-jellyfish-offfield-q
+  entity: sangonomiya_kokomi
+  rule: S13
+  status: wont-do
   category: bug
   summary: >
-    Q Normal Attack DMG Bonus is hardcoded to 0.2 instead of this.param("Q", 2).
-    The value is talent-level-dependent (11% at Lv1, 20% at Lv10) and uses {param2:F1P}
-    in the game text template.
-  detail: >
-    Changed hardcoded 0.2 to this.param('Q', 2) in Q Normal ATK DMG bonus StatBuff.
+    Bake-Kurage formula has offField: true, but during Q rotation Kokomi is on-field.
+    The Q Kurage DMG bonus (ScalingBuff with selfOnField + skill filter) won't apply
+    to the off-field-flagged jellyfish formula, under-reporting Q-buffed jellyfish damage.
+  detail: we have a force onField feature, if users would actually use the damage from the jellyfish, they can force it.
   created: "2026-04-04"
-  resolved: "2026-04-04"
+  resolved: null
 
-- id: kokomi-q-initial-hit
-  entity: sangonomiya_kokomi
-  rule: S8b
-  status: completed
-  category: missing-formula
+- id: sayu-c2-kick-dmg
+  entity: sayu
+  rule: S6
+  status: open
+  category: bug
   summary: >
-    Missing Q Nereid's Ascension initial hit formula. Q param1 deals AoE Hydro DMG
-    based on Max HP (18.7% at Lv10). Per S8b, all 5-star E/Q damage instances should
-    have corresponding formula parts.
-  detail: >
-    Added DirectFormula for Q initial hit using this.param('Q', 1) with
-    Hydro/burst/none HP-scaling. Updated combo descriptor.
+    C2 Whirlwind Kick hold DMG bonus (+66%) is not modeled. This is an unconditional
+    buff at max stacks (10s hold = 20×0.5s = 20 increments, capped at 66%) that should
+    apply as a dmg% StatBuff with filter abilities: ["skill"] when constellation >= 2.
+  detail: ""
   created: "2026-04-04"
-  resolved: "2026-04-04"
+  resolved: null
 
-- id: mizuki-e-initial-hit
-  entity: yumemizuki_mizuki
-  rule: S8b
-  status: completed
-  category: missing-formula
+- id: itto-c6-combo-count
+  entity: arataki_itto
+  rule: S12
+  status: open
+  category: approximation
   summary: >
-    Missing E initial Skill DMG (param4) formula. Entering Dreamdrifter deals 1 instance
-    of AoE Anemo DMG (E param4). Only the continuous attack DMG (param1) is modeled.
-    Per S8b, all 5-star E damage instances should have corresponding formula parts.
-  detail: >
-    Added DirectFormula for E initial hit using this.param('E', 4) with
-    Anemo/skill/none. Updated combo descriptor.
+    C6 50% chance to not consume Superlative Superstrength is modeled as 8 combo slashes
+    (doubled from 4). Expected value with 5 stacks is ~10 slashes (5/0.5). Current value
+    of 8 underestimates by ~20%.
+  detail: ""
   created: "2026-04-04"
-  resolved: "2026-04-04"
+  resolved: null
 
-- id: ayato-e-water-illusion
-  entity: kamisato_ayato
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    Missing E Water Illusion DMG (param6) formula. The watery illusion explodes dealing
-    AoE Hydro DMG (200.6% at Lv10). Per S8b, all 5-star E damage instances should have
-    corresponding formula parts.
-  detail: >
-    Added DirectFormula for E Water Illusion using this.param('E', 6) with
-    Hydro/skill/none. Updated combo descriptor.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: kazuha-e-hold
-  entity: kaedehara_kazuha
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    Missing E Hold variant formula. Only E Press (param1, 346% at Lv10) is modeled.
-    E Hold (param3, 469% at Lv10) is a distinct damage mode with different multiplier
-    and cooldown. Per S8b, both E modes should have corresponding formulas.
-  detail: >
-    Added DirectFormula for E Hold using this.param('E', 3) with Anemo/skill/none.
-    Not added to default combo (rotation uses E Press).
-  created: "2026-04-04"
-  resolved: "2026-04-04"

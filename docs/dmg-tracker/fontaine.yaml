@@ -35,90 +35,15 @@
   created: "2026-03-28"
   resolved: "2026-03-29"
 
-- id: "neuvillette-e-q-formulas"
-  entity: "neuvillette"
-  rule: "S8b"
-  status: completed
-  category: "missing-formula"
-  summary: >
-    5-star E Skill DMG (23.16% HP at Lv10) and Q initial DMG (40.06% HP) + Q Waterfall DMG
-    (16.39% HP × 2) have no formula entries. S8b requires all 5-star E/Q damage instances to
-    be modeled.
-  detail: >
-    Added DirectFormula for E using this.param('E', 1) with Hydro/skill/none HP-scaling,
-    and Q with this.param('Q', 1) initial hit + this.param('Q', 2) ×2 waterfall hits,
-    both Hydro/burst/none HP-scaling. Updated combo descriptor.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: "lyney-q-formula"
-  entity: "lyney"
-  rule: "S8b"
-  status: completed
-  category: "missing-formula"
-  summary: >
-    5-star Q has two damage instances (Grin-Malkin Cat DMG param1=277.2% and Explosive Firework
-    DMG param2=745.2% at Lv10) with no formula entries. The Firework DMG is substantial.
-  detail: >
-    Added DirectFormula for Q with this.param('Q', 1) Grin-Malkin Cat DMG and
-    this.param('Q', 2) Explosive Firework DMG, both Pyro/burst/none. Updated combo.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: "furina-q-formula"
+- id: "furina-c2-hp-approx"
   entity: "furina"
-  rule: "S8b"
-  status: completed
-  category: "missing-formula"
+  rule: "S12"
+  status: wont-do
+  category: "approximation"
   summary: >
-    5-star Q initial DMG (20.5% Max HP at Lv10) has no formula entry. S8b requires all 5-star
-    E/Q damage instances to be modeled.
-  detail: >
-    Added DirectFormula for Q using this.param('Q', 1) with Hydro/burst/none HP-scaling.
-    Updated combo descriptor.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: "sigewinne-e-formula"
-  entity: "sigewinne"
-  rule: "S8b"
-  status: completed
-  category: "missing-formula"
-  summary: >
-    5-star E Bolstering Bubblebalm DMG (4.1% Max HP × 5 bounces at Lv10, C1: 8 bounces) has
-    no formula entry. S8b requires all 5-star E/Q damage instances to be modeled.
-  detail: >
-    Added DirectFormula for E using this.param('E', 1) with Hydro/skill/none HP-scaling,
-    5 hits at C0, 8 hits at C1+. Updated combo descriptor.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: "emilie-e-cast-formula"
-  entity: "emilie"
-  rule: "S8b"
-  status: completed
-  category: "missing-formula"
-  summary: >
-    5-star E initial cast DMG (param1=84.7% at Lv10) is not included in any formula entry.
-    The existing E formula only models Lv2 Case ticks and Cleardew Cologne. S8b requires all
-    5-star E damage instances to be modeled.
-  detail: >
-    Added DirectFormula for E cast using this.param('E', 1) with Dendro/skill/none.
-    Updated combo descriptor.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: "furina-e-bubble-formula"
-  entity: "furina"
-  rule: "S8b"
-  status: completed
-  category: "missing-formula"
-  summary: >
-    5-star E Ousia Bubble DMG (param1=14.2% Max HP at Lv10) has no formula entry. The existing
-    E formula only models salon member periodic attacks. S8b requires all 5-star E/Q damage
-    instances to be modeled.
-  detail: >
-    Added DirectFormula for E Bubble using this.param('E', 1) with Hydro/skill/none
-    HP-scaling. Updated combo descriptor.
+    C2 HP% bonus is hardcoded to max (140%) but ramps with Fanfare overflow above cap.
+    Since the entity already uses OptionMap for Fanfare stacks, forced averaging is acceptable
+    but should be documented.
+  detail: acknowledge the problem, will tackle this later.
   created: "2026-04-04"
   resolved: "2026-04-04"
