@@ -407,6 +407,15 @@ export const i18nUiData = {
     willSwap: { en: "Will swap", zh: "将交换" },
     createNew: { en: "Create New", zh: "新建" },
     editMode: { en: "Edit", zh: "编辑" },
+    unactivated: { en: "Unactivated", zh: "未激活" },
+    invalidSubstat: {
+      en: "Invalid substat value: {0}",
+      zh: "副属性数值无效：{0}",
+    },
+    invalidRollCombination: {
+      en: "Substat values don't form a valid roll combination",
+      zh: "副属性数值无法构成有效的强化组合",
+    },
   },
   scoreExplanation: {
     title: { en: "Artifact Score Calculation", zh: "圣遗物评分计算逻辑" },

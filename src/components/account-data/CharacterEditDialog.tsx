@@ -1,6 +1,7 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   ResponsiveDialog,
@@ -36,12 +37,15 @@ import type {
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
+import { validateAndSolveArtifact } from "@/lib/account-data/artifactValidation";
 import {
+  activateUnactivatedSubstat,
   changeWeapon,
   createAndEquipArtifact,
   deleteArtifact,
   equipArtifactFromInventory,
   getInventoryArtifactsForSlot,
+  stripIncompleteNewArtifacts,
   swapArtifactWithCharacter,
   unequipArtifact,
   unequipWeapon,
@@ -61,7 +65,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type React from "react";
-import { forwardRef, useCallback, useMemo, useState } from "react";
+import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
 import { ArtifactDataHoverCard } from "./ArtifactDataHoverCard";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -112,6 +116,7 @@ export function CharacterEditDialog({
     new Set()
   );
   const [initialActiveSlot, setInitialActiveSlot] = useState<Slot | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const char = useMemo(
     () => data.characters.find((c) => c.key === initialChar.key) ?? initialChar,
@@ -127,33 +132,12 @@ export function CharacterEditDialog({
         setView({ kind: "overview" });
         setNewlyCreatedIds(new Set());
         setInitialActiveSlot(null);
-      } else {
-        let finalData = data;
-        if (newlyCreatedIds.size > 0 && finalData !== initialData) {
-          finalData = JSON.parse(JSON.stringify(data));
-          for (const c of finalData.characters) {
-            for (const slot of Object.keys(c.artifacts) as Slot[]) {
-              const art = c.artifacts[slot];
-              if (art && newlyCreatedIds.has(art.id)) {
-                const subCount = Object.keys(art.substats).length;
-                const hasMainDupe = Object.keys(art.substats).includes(
-                  art.mainStatKey
-                );
-                // An artifact is legal if it has exactly 4 substats without duplicates of the main stat
-                if (subCount < 4 || hasMainDupe) {
-                  delete c.artifacts[slot];
-                }
-              }
-            }
-          }
-        }
-        if (JSON.stringify(finalData) !== JSON.stringify(initialData)) {
-          onSave(finalData);
-        }
+        setSaveError(null);
       }
+      // Closing via X / backdrop discards changes (same as Cancel)
       onOpenChange(open);
     },
-    [initialData, data, newlyCreatedIds, onSave, onOpenChange]
+    [initialData, onOpenChange]
   );
 
   // ── Mutators ──
@@ -266,21 +250,60 @@ export function CharacterEditDialog({
   const handleUpdateArtifact = useCallback(
     (slot: Slot, updates: Parameters<typeof updateArtifactStats>[3]) => {
       setData((d) => updateArtifactStats(d, char.key, slot, updates));
+      setSaveError(null);
     },
     [char.key]
   );
 
   const handleCloseAndSave = useCallback(() => {
+    const finalData = stripIncompleteNewArtifacts(data, newlyCreatedIds);
+
+    // Run solver validation on all modified artifacts
+    let solvedData = finalData;
+    for (const c of finalData.characters) {
+      const initialChar = initialData.characters.find((ic) => ic.key === c.key);
+      for (const slot of Object.keys(c.artifacts) as Slot[]) {
+        const art = c.artifacts[slot];
+        if (!art) continue;
+        const initialArt = initialChar?.artifacts[slot];
+        if (initialArt && JSON.stringify(art) === JSON.stringify(initialArt))
+          continue;
+
+        const result = validateAndSolveArtifact(art);
+        if ("error" in result) {
+          const errorKey = result.error;
+          if (errorKey.startsWith("charEdit.invalidSubstat:")) {
+            const stats = errorKey
+              .split(":")[1]
+              .split(",")
+              .map((s) => t.stat(s))
+              .join(", ");
+            setSaveError(t.format("charEdit.invalidSubstat", stats));
+          } else {
+            setSaveError(t.ui(errorKey as Parameters<typeof t.ui>[0]));
+          }
+          return;
+        }
+        // Apply solved precise values
+        if (solvedData === finalData) {
+          solvedData = JSON.parse(JSON.stringify(finalData));
+        }
+        const solvedChar = solvedData.characters.find((sc) => sc.key === c.key);
+        if (solvedChar) {
+          solvedChar.artifacts[slot] = result.solved;
+        }
+      }
+    }
+
+    if (JSON.stringify(solvedData) !== JSON.stringify(initialData)) {
+      onSave(solvedData);
+    }
     onOpenChange(false);
-  }, [onOpenChange]);
+  }, [data, initialData, newlyCreatedIds, onSave, onOpenChange, t]);
 
   const handleCloseAndCancel = useCallback(() => {
-    setData(initialData);
-    setNewlyCreatedIds(new Set());
-    setInitialActiveSlot(null);
-    // Use setTimeout so the state change commits before handleOpenChange checks diffs
-    setTimeout(() => onOpenChange(false), 0);
-  }, [initialData, onOpenChange]);
+    onOpenChange(false);
+  }, [onOpenChange]);
 
   if (!charInfo) return null;
 
@@ -356,6 +379,7 @@ export function CharacterEditDialog({
               }
               onSave={handleCloseAndSave}
               onCancel={handleCloseAndCancel}
+              saveError={saveError}
             />
           )}
           {view.kind === "weapon-pick" && (
@@ -414,6 +438,7 @@ function OverviewPanel({
   onPickArtifact,
   onSave,
   onCancel,
+  saveError,
 }: {
   char: CharacterData;
   t: ReturnType<typeof useLanguage>["t"];
@@ -433,7 +458,12 @@ function OverviewPanel({
     updates: Partial<
       Pick<
         ArtifactData,
-        "level" | "rarity" | "mainStatKey" | "substats" | "lock"
+        | "level"
+        | "rarity"
+        | "mainStatKey"
+        | "substats"
+        | "lock"
+        | "unactivatedSubstats"
       >
     >
   ) => void;
@@ -442,6 +472,7 @@ function OverviewPanel({
   onPickArtifact: (slot: Slot, mode: "equip" | "create") => void;
   onSave: () => void;
   onCancel: () => void;
+  saveError: string | null;
 }) {
   const [activeSlot, setActiveSlot] = useState<Slot | null>(initialActiveSlot);
 
@@ -678,13 +709,18 @@ function OverviewPanel({
       </div>
 
       {/* ── Row 5: Save/Cancel ── */}
-      <div className="flex justify-end gap-3 pt-4">
-        <Button variant="outline" onClick={onCancel}>
-          {t.ui("common.cancel")}
-        </Button>
-        <Button variant="default" onClick={onSave}>
-          {t.ui("common.save")}
-        </Button>
+      <div className="space-y-2 pt-4">
+        {saveError && (
+          <p className="text-sm text-destructive text-right">{saveError}</p>
+        )}
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={onCancel}>
+            {t.ui("common.cancel")}
+          </Button>
+          <Button variant="default" onClick={onSave}>
+            {t.ui("common.save")}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -710,7 +746,12 @@ function ArtifactEditor({
     u: Partial<
       Pick<
         ArtifactData,
-        "level" | "rarity" | "mainStatKey" | "substats" | "lock"
+        | "level"
+        | "rarity"
+        | "mainStatKey"
+        | "substats"
+        | "lock"
+        | "unactivatedSubstats"
       >
     >
   ) => void;
@@ -719,6 +760,21 @@ function ArtifactEditor({
   const art = char.artifacts[slot];
   const validMainStats = mainStatsForSlot(slot);
   const isFixedMainStat = slot === "flower" || slot === "plume";
+
+  // Track which substat keys are "original" (read-only key + not deletable).
+  // Newly-added substats (not in lockedKeys) get an editable key selector + delete.
+  const lockedKeysRef = useRef<ReadonlySet<string>>(new Set());
+  const prevArtRef = useRef<{ id?: string; isNew: boolean }>({ isNew: true });
+  if (art) {
+    const artChanged = art.id !== prevArtRef.current.id;
+    const savedNew = prevArtRef.current.isNew && !isNew;
+    if (artChanged || savedNew) {
+      lockedKeysRef.current = isNew
+        ? new Set()
+        : new Set(Object.keys(art.substats));
+      prevArtRef.current = { id: art.id, isNew };
+    }
+  }
 
   if (!art) {
     return (
@@ -750,9 +806,15 @@ function ArtifactEditor({
     );
   }
 
-  const subCount = Object.keys(art.substats).length;
-  const hasMainDupe = Object.keys(art.substats).includes(art.mainStatKey);
-  const isLegal = subCount === 4 && !hasMainDupe;
+  const activatedCount = Object.keys(art.substats).length;
+  const unactivatedCount = Object.keys(art.unactivatedSubstats ?? {}).length;
+  const totalCount = activatedCount + unactivatedCount;
+  const allKeys = [
+    ...Object.keys(art.substats),
+    ...Object.keys(art.unactivatedSubstats ?? {}),
+  ];
+  const hasMainDupe = allKeys.includes(art.mainStatKey);
+  const isLegal = totalCount === 4 && !hasMainDupe;
 
   return (
     <div className="space-y-5">
@@ -809,18 +871,65 @@ function ArtifactEditor({
           <NumberInput
             value={art.level}
             min={0}
-            max={20}
-            onChange={(v) => onUpdate({ level: v })}
+            max={
+              art.rarity === 5
+                ? 20
+                : art.rarity === 4
+                  ? 16
+                  : art.rarity === 3
+                    ? 12
+                    : 4
+            }
+            onChange={(v) => {
+              const wasBelow4 = art.level < 4;
+              const isNow4Plus = v >= 4;
+              if (
+                wasBelow4 &&
+                isNow4Plus &&
+                art.rarity === 5 &&
+                art.unactivatedSubstats
+              ) {
+                const entries = Object.entries(art.unactivatedSubstats);
+                if (entries.length > 0) {
+                  const newSubstats = { ...art.substats };
+                  for (const [key, val] of entries) {
+                    if (val !== undefined)
+                      (newSubstats as Record<string, number>)[key] = val;
+                  }
+                  onUpdate({
+                    level: v,
+                    substats: newSubstats as typeof art.substats,
+                    unactivatedSubstats: {},
+                  });
+                  return;
+                }
+              }
+              onUpdate({ level: v });
+            }}
           />
         </div>
       </div>
 
       <SubstatsEditor
         substats={art.substats}
+        unactivatedSubstat={
+          art.unactivatedSubstats
+            ? ((Object.entries(art.unactivatedSubstats)[0] as
+                | [SubStat, number]
+                | undefined) ?? null)
+            : null
+        }
+        mainStatKey={art.mainStatKey}
+        rarity={art.rarity}
+        level={art.level}
         maxCount={4}
         isNew={isNew}
+        lockedKeys={lockedKeysRef.current}
         t={t}
         onChange={(s) => onUpdate({ substats: s })}
+        onChangeUnactivated={(u) =>
+          onUpdate({ unactivatedSubstats: u ? { [u[0]]: u[1] } : {} })
+        }
       />
 
       {isNew && (
@@ -842,94 +951,240 @@ function ArtifactEditor({
 
 function SubstatsEditor({
   substats,
+  unactivatedSubstat,
+  mainStatKey,
+  rarity,
+  level,
   maxCount,
   isNew,
+  lockedKeys,
   t,
   onChange,
+  onChangeUnactivated,
 }: {
   substats: Partial<Record<SubStat, number>>;
+  unactivatedSubstat: [SubStat, number] | null;
+  mainStatKey: string;
+  rarity: number;
+  level: number;
   maxCount: number;
   isNew: boolean;
+  lockedKeys: ReadonlySet<string>;
   t: ReturnType<typeof useLanguage>["t"];
   onChange: (s: Partial<Record<SubStat, number>>) => void;
+  onChangeUnactivated: (u: [SubStat, number] | null) => void;
 }) {
   const entries = Object.entries(substats) as [SubStat, number][];
   const usedKeys = new Set(entries.map(([k]) => k));
-  const canAdd = isNew && entries.length < maxCount;
+  if (unactivatedSubstat) usedKeys.add(unactivatedSubstat[0]);
+
+  const totalCount = entries.length + (unactivatedSubstat ? 1 : 0);
+  const canAdd = totalCount < maxCount;
+
+  // For 5★ lv0-3: the 4th substat can be toggled unactivated
+  const show4thToggle = rarity === 5 && level < 4;
 
   return (
     <div className="space-y-3 pt-5 border-t border-border/40">
       <FieldLabel>{t.ui("charEdit.substats")}</FieldLabel>
       <div className="space-y-2.5">
-        {entries.map(([key, value]) => (
-          <div key={key} className="flex gap-2 items-center">
-            {isNew ? (
-              <Select
-                value={key}
-                onValueChange={(v) => {
-                  const next: Partial<Record<SubStat, number>> = {};
-                  for (const [k, val] of entries) {
-                    next[k === key ? (v as SubStat) : k] = val;
-                  }
-                  onChange(next);
-                }}
-              >
-                <SelectTrigger className="flex-1 h-9 lg:h-10 font-medium text-xs lg:text-sm px-2.5 bg-background/50">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ALL_SUBSTATS.filter(
-                    (s) => s === key || !usedKeys.has(s)
-                  ).map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {t.stat(s)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="flex-1 h-9 lg:h-10 flex items-center px-3 rounded-md border border-input bg-muted/40 text-xs lg:text-sm font-medium text-muted-foreground shadow-sm truncate">
-                {t.stat(key as SubStat)}
-              </div>
-            )}
-            <NumberInput
+        {entries.map(([key, value], idx) => {
+          const isEditable = isNew || !lockedKeys.has(key);
+          // Show unactivated toggle on 4th activated row for 5★ lv0-3
+          const is4thRow = idx === 3;
+          const showToggle = show4thToggle && is4thRow;
+          return (
+            <SubstatRow
+              key={key}
+              statKey={key}
               value={value}
-              min={0}
-              max={999}
-              step={isPctStat(key) ? 0.1 : 1}
-              onChange={(v) => onChange({ ...substats, [key]: v })}
-              className="w-24 lg:w-32 text-right pr-3"
+              isEditable={isEditable}
+              usedKeys={usedKeys}
+              mainStatKey={mainStatKey}
+              t={t}
+              dimmed={false}
+              onChangeKey={(v) => {
+                const next: Partial<Record<SubStat, number>> = {};
+                for (const [k, val] of entries) {
+                  next[k === key ? (v as SubStat) : k] = val;
+                }
+                onChange(next);
+              }}
+              onChangeValue={(v) => onChange({ ...substats, [key]: v })}
+              onDelete={() => {
+                const next = { ...substats };
+                delete next[key];
+                onChange(next);
+              }}
+              isUnactivated={false}
+              showUnactivatedToggle={showToggle}
+              onToggleUnactivated={
+                showToggle
+                  ? () => {
+                      // Move from activated to unactivated
+                      const next = { ...substats };
+                      delete next[key];
+                      onChange(next);
+                      onChangeUnactivated([key, value]);
+                    }
+                  : undefined
+              }
             />
-            {isNew && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 lg:h-10 lg:w-10 text-muted-foreground hover:text-destructive shrink-0"
-                onClick={() => {
-                  const next = { ...substats };
-                  delete next[key];
-                  onChange(next);
-                }}
-                title={t.ui("common.delete")}
-              >
-                <Trash2 className="w-4 h-4 lg:w-5 lg:h-5" />
-              </Button>
-            )}
-          </div>
-        ))}
+          );
+        })}
+
+        {/* Unactivated 4th substat row for 5★ lv0-3 */}
+        {unactivatedSubstat && (
+          <SubstatRow
+            statKey={unactivatedSubstat[0]}
+            value={unactivatedSubstat[1]}
+            isEditable={true}
+            usedKeys={usedKeys}
+            mainStatKey={mainStatKey}
+            t={t}
+            dimmed={true}
+            onChangeKey={(v) =>
+              onChangeUnactivated([v as SubStat, unactivatedSubstat[1]])
+            }
+            onChangeValue={(v) =>
+              onChangeUnactivated([unactivatedSubstat[0], v])
+            }
+            onDelete={() => onChangeUnactivated(null)}
+            isUnactivated={true}
+            showUnactivatedToggle={true}
+            onToggleUnactivated={() => {
+              // Move from unactivated to activated
+              onChangeUnactivated(null);
+              onChange({
+                ...substats,
+                [unactivatedSubstat[0]]: unactivatedSubstat[1],
+              });
+            }}
+          />
+        )}
       </div>
+
       {canAdd && (
         <Button
           variant="ghost"
           size="sm"
           className="mt-1 text-muted-foreground hover:text-foreground px-2 lg:h-9 lg:px-4 lg:text-sm"
           onClick={() => {
-            const available = ALL_SUBSTATS.find((s) => !usedKeys.has(s));
-            if (available) onChange({ ...substats, [available]: 0 });
+            const available = ALL_SUBSTATS.find(
+              (s) => !usedKeys.has(s) && s !== mainStatKey
+            );
+            if (!available) return;
+
+            // If this is the 4th substat on a 5★ lv0-3, add as unactivated
+            if (show4thToggle && entries.length === 3 && !unactivatedSubstat) {
+              onChangeUnactivated([available, 0]);
+            } else {
+              onChange({ ...substats, [available]: 0 });
+            }
           }}
         >
           <Plus className="w-4 h-4 lg:w-5 lg:h-5 mr-1.5" />
           {t.ui("charEdit.addSubstat")}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+/** A single substat row with key select, value input, and optional unactivated toggle. */
+function SubstatRow({
+  statKey,
+  value,
+  isEditable,
+  usedKeys,
+  mainStatKey,
+  t,
+  dimmed,
+  onChangeKey,
+  onChangeValue,
+  onDelete,
+  isUnactivated,
+  showUnactivatedToggle,
+  onToggleUnactivated,
+}: {
+  statKey: SubStat;
+  value: number;
+  isEditable: boolean;
+  usedKeys: Set<SubStat>;
+  mainStatKey: string;
+  t: ReturnType<typeof useLanguage>["t"];
+  dimmed: boolean;
+  onChangeKey: (key: string) => void;
+  onChangeValue: (value: number) => void;
+  onDelete: () => void;
+  /** Whether this substat is currently unactivated */
+  isUnactivated: boolean;
+  /** Whether to show the unactivated checkbox */
+  showUnactivatedToggle: boolean;
+  onToggleUnactivated?: () => void;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex gap-2 items-center",
+        dimmed &&
+          "opacity-60 border border-dashed border-border rounded-lg p-1.5"
+      )}
+    >
+      {isEditable ? (
+        <Select value={statKey} onValueChange={onChangeKey}>
+          <SelectTrigger className="w-auto h-9 lg:h-10 font-medium text-xs lg:text-sm px-2.5 bg-background/50">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {ALL_SUBSTATS.filter(
+              (s) => s === statKey || (!usedKeys.has(s) && s !== mainStatKey)
+            ).map((s) => (
+              <SelectItem key={s} value={s}>
+                {t.stat(s)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : (
+        <div className="h-9 lg:h-10 flex items-center px-3 rounded-md border border-input bg-muted/40 text-xs lg:text-sm font-medium text-muted-foreground shadow-sm">
+          {t.stat(statKey)}
+        </div>
+      )}
+      {showUnactivatedToggle && (
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Checkbox
+            id={`unactivated-${statKey}`}
+            checked={isUnactivated}
+            onCheckedChange={() => onToggleUnactivated?.()}
+          />
+          {/* biome-ignore lint/a11y/noLabelWithoutControl: htmlFor targets Radix Checkbox */}
+          <label
+            htmlFor={`unactivated-${statKey}`}
+            className="text-xs text-muted-foreground select-none cursor-pointer"
+          >
+            {t.ui("charEdit.unactivated")}
+          </label>
+        </div>
+      )}
+      <div className="flex-1" />
+      <NumberInput
+        value={value}
+        min={0}
+        max={999}
+        step={isPctStat(statKey) ? 0.1 : 1}
+        onChange={onChangeValue}
+        className="w-24 lg:w-32 text-right pr-3"
+      />
+      {isEditable && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 lg:h-10 lg:w-10 text-muted-foreground hover:text-destructive shrink-0"
+          onClick={onDelete}
+          title={t.ui("common.delete")}
+        >
+          <Trash2 className="w-4 h-4 lg:w-5 lg:h-5" />
         </Button>
       )}
     </div>

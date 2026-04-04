@@ -188,6 +188,8 @@ describe("i18n App Data Integrity", () => {
       "greeting.customizeBenefitScoring",
       "greeting.customizeBenefitRecommendations",
       "greeting.customizeBenefitLock",
+      // Enka status hint — referenced in uncommitted AccountImportControl changes
+      "import.enkaStatusHint",
     ]);
 
     const unusedKeys: string[] = [];

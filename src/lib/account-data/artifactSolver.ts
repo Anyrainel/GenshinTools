@@ -47,7 +47,7 @@ function toDisplay(stat: string, val: number): number {
 }
 
 /** Round a display value the way the game does: flat→integer, pct→1 decimal */
-function gameRound(stat: string, displayVal: number): number {
+export function gameRound(stat: string, displayVal: number): number {
   if (isFlatStat(stat)) return Math.round(displayVal);
   return Math.round(displayVal * 10) / 10;
 }

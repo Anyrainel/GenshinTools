@@ -247,7 +247,15 @@ export function updateArtifactStats(
   charKey: string,
   slot: Slot,
   updates: Partial<
-    Pick<ArtifactData, "level" | "rarity" | "mainStatKey" | "substats" | "lock">
+    Pick<
+      ArtifactData,
+      | "level"
+      | "rarity"
+      | "mainStatKey"
+      | "substats"
+      | "lock"
+      | "unactivatedSubstats"
+    >
   >
 ): AccountData {
   const result = cloneData(data);
@@ -262,7 +270,33 @@ export function updateArtifactStats(
   if (updates.mainStatKey !== undefined) art.mainStatKey = updates.mainStatKey;
   if (updates.substats !== undefined) art.substats = updates.substats;
   if (updates.lock !== undefined) art.lock = updates.lock;
+  if (updates.unactivatedSubstats !== undefined)
+    art.unactivatedSubstats = updates.unactivatedSubstats;
 
+  return result;
+}
+
+/** Move entries from unactivatedSubstats into substats and delete the field */
+export function activateUnactivatedSubstat(
+  data: AccountData,
+  charKey: string,
+  slot: Slot
+): AccountData {
+  const result = cloneData(data);
+  const char = findCharByKey(result, charKey);
+  if (!char) return result;
+
+  const art = char.artifacts[slot];
+  if (!art?.unactivatedSubstats) return result;
+
+  const unactivated = art.unactivatedSubstats;
+  if (Object.keys(unactivated).length === 0) {
+    art.unactivatedSubstats = undefined;
+    return result;
+  }
+
+  Object.assign(art.substats, unactivated);
+  art.unactivatedSubstats = undefined;
   return result;
 }
 
@@ -316,6 +350,42 @@ export function deleteInventoryArtifact(
   result.extraArtifacts = result.extraArtifacts.filter(
     (a) => a.id !== artifactId
   );
+  return result;
+}
+
+// ─── Save validation ──────────────────────────────────────────────────────────
+
+/**
+ * Strip incomplete newly-created artifacts before persisting.
+ * A newly-created artifact is "incomplete" if it has fewer than 4 substats
+ * or has a substat that duplicates its main stat.
+ */
+export function stripIncompleteNewArtifacts(
+  data: AccountData,
+  newlyCreatedIds: ReadonlySet<string>
+): AccountData {
+  if (newlyCreatedIds.size === 0) return data;
+  const result = cloneData(data);
+  for (const c of result.characters) {
+    for (const slot of Object.keys(c.artifacts) as Slot[]) {
+      const art = c.artifacts[slot];
+      if (art && newlyCreatedIds.has(art.id)) {
+        const activatedCount = Object.keys(art.substats).length;
+        const unactivatedCount = Object.keys(
+          art.unactivatedSubstats ?? {}
+        ).length;
+        const totalCount = activatedCount + unactivatedCount;
+        const allKeys = [
+          ...Object.keys(art.substats),
+          ...Object.keys(art.unactivatedSubstats ?? {}),
+        ];
+        const hasMainDupe = allKeys.includes(art.mainStatKey);
+        if (totalCount < 4 || hasMainDupe) {
+          delete c.artifacts[slot];
+        }
+      }
+    }
+  }
   return result;
 }
 
