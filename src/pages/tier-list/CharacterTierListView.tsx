@@ -5,6 +5,7 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
+import { TierListManagerDialog } from "@/components/tier-list/TierListManagerDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
@@ -41,6 +42,7 @@ import { useIsOwned } from "@/hooks/useOwnership";
 import { getElementColor } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
 import {
+  ArrowLeftRight,
   Download,
   FileDown,
   HelpCircle,
@@ -117,6 +119,7 @@ export function CharacterTierListView({
   const exportRef = useRef<ControlHandle>(null);
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
+  const [isManagerDialogOpen, setIsManagerDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
     () => getCachedPresetMetadata(presetModules) ?? []
   );
@@ -430,18 +433,31 @@ export function CharacterTierListView({
       <WideLayout
         title={customTitle || t.ui("app.tierListTitle")}
         actions={
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setIsCustomizeDialogOpen(true)}
-            className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
-            data-tour-step-id="tl-customize"
-          >
-            <Wrench className="w-4 h-4" />
-            <span className="hidden sm:inline">
-              {t.ui("buttons.customize")}
-            </span>
-          </Button>
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsCustomizeDialogOpen(true)}
+              className="gap-2 bg-yellow-700 hover:bg-yellow-800 text-white"
+              data-tour-step-id="tl-customize"
+            >
+              <Wrench className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {t.ui("buttons.customize")}
+              </span>
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsManagerDialogOpen(true)}
+              className="gap-2 bg-teal-700 hover:bg-teal-800 text-white"
+            >
+              <ArrowLeftRight className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {t.ui("tierList.manageLists")}
+              </span>
+            </Button>
+          </>
         }
         filters={filterGroups}
       >
@@ -498,6 +514,11 @@ export function CharacterTierListView({
         onSave={handleTierCustomizationSave}
         initialCustomization={tierCustomization}
         initialCustomTitle={customTitle}
+      />
+
+      <TierListManagerDialog
+        isOpen={isManagerDialogOpen}
+        onClose={() => setIsManagerDialogOpen(false)}
       />
     </>
   );

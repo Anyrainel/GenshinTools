@@ -7,6 +7,7 @@ export const i18nUiData = {
     clearTeams: { en: "Clear Teams", zh: "清除队伍" },
     clearTierList: { en: "Clear Tier List", zh: "清除排行" },
     active: { en: "Active", zh: "使用中" },
+    none: { en: "None", zh: "无" },
     home: { en: "Home", zh: "主页" },
     refresh: { en: "Refresh Page", zh: "刷新页面" },
     loading: { en: "Loading...", zh: "加载中..." },
@@ -683,7 +684,6 @@ export const i18nUiData = {
     sortByRelease: { en: "By Release Date", zh: "按发布日期" },
     unfreezeTeam: { en: "Thaw Team", zh: "解冻队伍" },
     enemyAura: { en: "Enemy Element:", zh: "敌方元素:" },
-    enemyAuraNone: { en: "None", zh: "无" },
     reactions: { en: "Reactions", zh: "元素反应" },
     teamOptimization: { en: "Damage Optimization", zh: "伤害优化" },
     teamRoster: { en: "Team Roster", zh: "队伍成员" },
@@ -1991,7 +1991,7 @@ export const i18nUiData = {
     },
   },
   tierList: {
-    manageLists: { en: "Manage Tier Lists", zh: "管理排行榜" },
+    manageLists: { en: "Switch List", zh: "切换榜单" },
     manageListsDesc: {
       en: "Switch between tier lists or create new ones.",
       zh: "切换排行榜或创建新的排行榜。",

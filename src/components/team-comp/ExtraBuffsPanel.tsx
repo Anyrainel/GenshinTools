@@ -272,7 +272,7 @@ export function ExtraBuffsPanel({
                       : "border-border/30 bg-black/5 hover:bg-black/10"
                   )}
                 >
-                  {t.ui("teamComp.enemyAuraNone")}
+                  {t.ui("common.none")}
                 </button>
                 {elements.map((el) => (
                   <button

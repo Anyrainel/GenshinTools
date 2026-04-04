@@ -211,7 +211,7 @@ export function TierListManagerDialog({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">
-                        {t.ui("teamComp.enemyAuraNone")}
+                        {t.ui("computeFilters.any")}
                       </SelectItem>
                       {Object.values(accounts).map((acc) => {
                         const linkedTo = linkedAccountIds.get(acc.id);
