@@ -926,7 +926,18 @@ class Lauma extends CharacterBase {
     const hasNascentGleam = this.teamMeta.countByFaction("Moonsign") >= 1;
 
     return {
-      // E press damage is insignificant, players usually use long press E
+      "lauma-press": {
+        label: { zh: "E点按", en: "E Press" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "lauma-sanctuary": {
         label: { zh: "E持续(单次)", en: "E DoT (×1)" },
         parts: [

@@ -534,13 +534,14 @@ class TravelerGeo extends CharacterBase {
 class TravelerElectro extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
     // E: Abundance Amulets grant ER bonus to absorbing characters (E param4)
-    new StatBuff(cbs(this, "E", ["E"]), { receiver: "team" }, [
+    // Amulets are pickup objects — only the on-field character can absorb them
+    new StatBuff(cbs(this, "E", ["E"]), { receiver: "teamOnField" }, [
       { key: "er", value: this.param("E", 4) },
     ]),
     // P2: Increases amulet ER bonus by 10% of Traveler's ER
     new ScalingBuff(
       cbs(this, "P2", ["E"]),
-      { receiver: "team" },
+      { receiver: "teamOnField" },
       [],
       "er",
       "er",
@@ -701,6 +702,23 @@ class TravelerDendro extends CharacterBase {
               reaction: "none",
             }),
             hits: 12,
+            offField: true,
+          },
+        ],
+      },
+      "traveler-dendro-burst-explosion": {
+        label: {
+          zh: "Q火幻变爆发",
+          en: "Q Pyro Explosion",
+        },
+        when: this.teamMeta.countByElement("Pyro") > 0,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), {
+              element: "Dendro",
+              ability: "burst",
+              reaction: "none",
+            }),
             offField: true,
           },
         ],

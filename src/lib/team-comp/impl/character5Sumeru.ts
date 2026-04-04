@@ -71,18 +71,36 @@ class Dehya extends CharacterBase {
     return buffs;
   })();
 
-  // E Molten Inferno: Field DMG (coordinated attack) ~4 hits over 12s
-  // Lv10: 108.4% ATK + 1.86% HP, Lv13 (C5+): 127.9% ATK + 2.19% HP
-  // Q Leonine Bite: Flame-Mane's Fist ×10 + Incineration Drive ×1 (dual ATK+HP scaling)
-  // Fist Lv10: 177.7% ATK + 3.05% HP, Lv13 (C3+): 209.7% ATK + 3.60% HP
-  // Drive Lv10: 250.7% ATK + 4.30% HP, Lv13 (C3+): 296.0% ATK + 5.07% HP
   protected readonly formulaMap = (() => {
+    const eTag = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     const qTag = {
       element: "Pyro" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
     return {
+      // E Indomitable Flame DMG (first cast)
+      "dehya-indomitable": {
+        label: { zh: "E净焰昂藏", en: "E Indomitable Flame" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), eTag),
+          },
+        ],
+      },
+      // E Ranging Flame DMG (second cast leap)
+      "dehya-ranging": {
+        label: { zh: "E剑域炽焰", en: "E Ranging Flame" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), eTag),
+          },
+        ],
+      },
       "dehya-molten-inferno": {
         label: { zh: "E净世焚火", en: "E Molten Inferno" },
         parts: [
@@ -179,6 +197,20 @@ class Alhaitham extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     return {
+      // E Rush Attack DMG (initial dash hit)
+      "alhaitham-rush": {
+        label: { zh: "E突进", en: "E Rush" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("E", 1),
+              { element: "Dendro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("E", 2) }
+            ),
+          },
+        ],
+      },
       // 3-Mirror Projection per hit
       "alhaitham-projection": {
         label: { zh: "E伤害(3镜)", en: "E (3 Mirrors)" },
@@ -307,6 +339,19 @@ class Wanderer extends CharacterBase {
     );
 
     return {
+      // E Skill DMG (AoE Anemo on entering Windfavored)
+      "wanderer-skill": {
+        label: { zh: "E技能伤害", en: "E Skill" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "wanderer-normal": {
         label: { zh: "普攻（3段）", en: "Kuugo: Fushoudan (N3)" },
         parts: [
@@ -533,9 +578,32 @@ class Nahida extends CharacterBase {
       : []),
   ];
 
-  // Tri-Karma Purification DMG
   protected readonly formulaMap = (() => {
+    const eTag = {
+      element: "Dendro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     return {
+      // E Press DMG (initial cast)
+      "nahida-press": {
+        label: { zh: "E点按", en: "E Press" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), eTag),
+          },
+        ],
+      },
+      // E Hold DMG (aiming mode release)
+      "nahida-hold": {
+        label: { zh: "E长按", en: "E Hold" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), eTag),
+          },
+        ],
+      },
+      // Tri-Karma Purification DMG
       "nahida-karma": {
         label: { zh: "E伤害", en: "E" },
         parts: [
@@ -631,6 +699,15 @@ class Cyno extends CharacterBase {
     };
 
     return {
+      // Base E Skill DMG (non-Q swift thrust)
+      "cyno-base-e": {
+        label: { zh: "E技能伤害", en: "E Skill" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), eBaseTag),
+          },
+        ],
+      },
       // Burst N1-N5 combo (5 distinct multipliers, N4 hits twice = 6 total hits)
       "cyno-combo": {
         label: { zh: "Q普攻+E", en: "Q Normal+E" },
@@ -972,6 +1049,19 @@ class Tighnari extends CharacterBase {
     };
 
     return {
+      // E Vijnana Stormheart DMG (AoE Dendro on cast)
+      "tighnari-skill": {
+        label: { zh: "E技能伤害", en: "E Skill" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "tighnari-charge": {
         label: { zh: "重击花筥箭", en: "CA Wreath+Clusterbloom" },
         parts: [

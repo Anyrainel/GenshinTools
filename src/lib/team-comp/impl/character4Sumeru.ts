@@ -282,8 +282,48 @@ class Layla extends CharacterBase {
     return buffs;
   })();
 
-  // Pure shielder — no damage formulas modeled
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = (() => {
+    return {
+      // E Shooting Star DMG (off-field homing projectiles, 4 per wave)
+      // P2: +1.5% Max HP as flat baseDmg on Shooting Stars
+      "layla-shooting-star": {
+        label: { zh: "E飞星", en: "E Shooting Star" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 4,
+            offField: true,
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2", []),
+              { receiver: "self", filter: { abilities: ["skill"] } },
+              [],
+              "hp",
+              "baseDmg",
+              0.015
+            ),
+          },
+        ],
+      },
+      // Q Starlight Slug DMG (off-field burst projectiles)
+      "layla-starlight-slug": {
+        label: { zh: "Q星光弹", en: "Q Starlight Slug" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Cryo", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+            offField: true,
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("candace")

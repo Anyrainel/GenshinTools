@@ -34,3 +34,65 @@
     capture Charlotte's damage contribution.
   created: "2026-03-28"
   resolved: "2026-03-29"
+
+- id: "neuvillette-e-q-formulas"
+  entity: "neuvillette"
+  rule: "S8b"
+  status: open
+  category: "missing-formula"
+  summary: >
+    5-star E Skill DMG (23.16% HP at Lv10) and Q initial DMG (40.06% HP) + Q Waterfall DMG
+    (16.39% HP × 2) have no formula entries. S8b requires all 5-star E/Q damage instances to
+    be modeled.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: "lyney-q-formula"
+  entity: "lyney"
+  rule: "S8b"
+  status: open
+  category: "missing-formula"
+  summary: >
+    5-star Q has two damage instances (Grin-Malkin Cat DMG param1=277.2% and Explosive Firework
+    DMG param2=745.2% at Lv10) with no formula entries. The Firework DMG is substantial.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: "furina-q-formula"
+  entity: "furina"
+  rule: "S8b"
+  status: open
+  category: "missing-formula"
+  summary: >
+    5-star Q initial DMG (20.5% Max HP at Lv10) has no formula entry. S8b requires all 5-star
+    E/Q damage instances to be modeled.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: "sigewinne-e-formula"
+  entity: "sigewinne"
+  rule: "S8b"
+  status: open
+  category: "missing-formula"
+  summary: >
+    5-star E Bolstering Bubblebalm DMG (4.1% Max HP × 5 bounces at Lv10, C1: 8 bounces) has
+    no formula entry. S8b requires all 5-star E/Q damage instances to be modeled.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: "emilie-e-cast-formula"
+  entity: "emilie"
+  rule: "S8b"
+  status: open
+  category: "missing-formula"
+  summary: >
+    5-star E initial cast DMG (param1=84.7% at Lv10) is not included in any formula entry.
+    The existing E formula only models Lv2 Case ticks and Cleardew Cologne. S8b requires all
+    5-star E damage instances to be modeled.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null

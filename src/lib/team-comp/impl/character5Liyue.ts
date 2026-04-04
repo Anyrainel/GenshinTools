@@ -1110,11 +1110,11 @@ class Shenhe extends CharacterBase {
             [{ key: "dmg%", value: 0.15 }]
           ),
         ]),
-    // Q: Enemies in field lose 15% Cryo RES and Physical RES
+    // Q: Enemies in field lose Cryo RES and Physical RES (talent-level-dependent: 6% at Lv1, 15% at Lv10)
     new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { elements: ["Cryo", "Physical"] } },
-      [{ key: "resReduction%", value: 0.15 }]
+      [{ key: "resReduction%", value: this.param("Q", 2) }]
     ),
     // C2: Q field → Cryo CD +15%
     ...(this.constellation >= 2
@@ -1150,6 +1150,18 @@ class Shenhe extends CharacterBase {
             formula: new DirectFormula(this.param("E", 2), {
               element: "Cryo",
               ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "shenhe-q-initial": {
+        label: { zh: "Q技能伤害", en: "Q Skill DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), {
+              element: "Cryo",
+              ability: "burst",
               reaction: "none",
             }),
           },
@@ -1255,6 +1267,18 @@ class Ganyu extends CharacterBase {
           },
         ],
       },
+      "ganyu-skill": {
+        label: { zh: "E技能伤害", en: "E Skill DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "ganyu-q-shard": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
@@ -1355,10 +1379,25 @@ class Keqing extends CharacterBase {
       reaction: "none" as const,
     };
     return {
-      "keqing-skill": {
-        label: { zh: "E 星斗归位", en: "E Stellar Restoration" },
+      "keqing-stiletto": {
+        label: { zh: "E雷楔", en: "E Stiletto" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), electroSkillTag) },
+        ],
+      },
+      "keqing-skill-slash": {
+        label: { zh: "E斩击", en: "E Slash (re-cast)" },
         parts: [
           { formula: new DirectFormula(this.param("E", 2), electroSkillTag) },
+          // C1: 50% ATK Electro DMG at blink start and terminus (2 hits)
+          ...(this.constellation >= 1
+            ? [{ formula: new DirectFormula(0.5, electroSkillTag), hits: 2 }]
+            : []),
+        ],
+      },
+      "keqing-skill-thunderclap": {
+        label: { zh: "E雷暴连斩", en: "E Thunderclap Slash" },
+        parts: [
           {
             formula: new DirectFormula(this.param("E", 3), electroSkillTag),
             hits: 2,
@@ -1398,10 +1437,11 @@ class Keqing extends CharacterBase {
     };
   })();
 
-  // Rotation: E > Q > 5×N1C (Electro aggravate carry)
+  // Rotation: E stiletto > E slash (re-cast) > Q > 5×N1C (Electro aggravate carry)
   protected override get comboDescriptor(): ComboDescriptor {
     return [
-      { id: "keqing-skill", count: 1 },
+      { id: "keqing-stiletto", count: 1 },
+      { id: "keqing-skill-slash", count: 1 },
       { id: "keqing-charged", count: 5 },
       { id: "keqing-burst", count: 1 },
     ];
@@ -1433,15 +1473,22 @@ class Qiqi extends CharacterBase {
     // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
     return {
       "qiqi-skill-hit": {
-        label: { zh: "E伤害×8", en: "E (×8)" },
+        label: { zh: "E初始+鬼差×9", en: "E Initial + Herald ×9" },
         parts: [
+          {
+            formula: new DirectFormula(this.param("E", 8), {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
           {
             formula: new DirectFormula(this.param("E", 5), {
               element: "Cryo",
               ability: "skill",
               reaction: "none",
             }),
-            hits: 8,
+            hits: 9,
             offField: true,
           },
         ],

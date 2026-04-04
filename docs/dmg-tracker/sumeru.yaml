@@ -23,8 +23,108 @@
     which maps to dmg% (damage bonus zone), not baseDmg% (talent multiplier zone).
   detail: >
     baseDmg% is correct. The wording "[attack]造成的伤害提升X%" is confirmed by
-    KQM TCL as Base DMG Multiplier (baseDmg%), not DMG Bonus (dmg%). Same pattern
-    as Xingqiu C4 "画雨笼山造成的伤害提升50%" which is verified baseDmg%. Reverted
+    KQM TCL as Base DMG Multiplier (baseDmg%), not DMG Bonus (dmg%). Reverted
     the change back to baseDmg%.
   created: "2026-03-29"
   resolved: "2026-03-29"
+
+- id: alhaitham-e-rush-missing
+  entity: alhaitham
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Rush Attack DMG ({param1} ATK + {param2} EM) has no formula. This is the
+    initial hit when Alhaitham dashes forward on E cast.
+  detail: >
+    Added DirectFormula using this.param('E', 1) ATK + this.param('E', 2) EM
+    with Dendro/skill/none tag as "alhaitham-rush" entry.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: dehya-e-cast-missing
+  entity: dehya
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Indomitable Flame DMG ({param1}) and Ranging Flame DMG ({param2}) have no
+    formulas. Only the off-field coordinated Field DMG is modeled.
+  detail: >
+    Added two DirectFormula entries: "dehya-indomitable" using this.param('E', 1)
+    and "dehya-ranging" using this.param('E', 2), both Pyro/skill/none.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: nahida-e-press-hold-missing
+  entity: nahida
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Press DMG ({param1}) and Hold DMG ({param2}) have no formulas. Only
+    Tri-Karma Purification is modeled.
+  detail: >
+    Added two DirectFormula entries: "nahida-press" using this.param('E', 1) and
+    "nahida-hold" using this.param('E', 2), both Dendro/skill/none.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: tighnari-e-skill-missing
+  entity: tighnari
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Vijnana Stormheart DMG ({param1}) has no formula. This is the AoE Dendro
+    hit on E cast.
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Dendro/skill/none tag
+    as "tighnari-skill" entry.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: cyno-base-e-missing
+  entity: cyno
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    Base E Skill DMG ({param1}, non-Q swift thrust) has no formula. Only the
+    Mortuary Rite (Q-state E) is modeled.
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Electro/skill/none tag
+    as "cyno-base-e" entry.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: wanderer-e-cast-missing
+  entity: wanderer
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E cast Skill DMG ({param1}) has no formula. This is the AoE Anemo hit when
+    entering Windfavored state.
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Anemo/skill/none tag
+    as "wanderer-skill" entry.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: layla-shooting-star-missing
+  entity: layla
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    E Shooting Star DMG and Q Starlight Slug DMG have no formulas. C6 buffs both
+    by 40%, and P2 adds HP-based flat damage to Shooting Stars, indicating these
+    are intended to be meaningful damage sources.
+  detail: >
+    Added "layla-shooting-star" with DirectFormula(this.param('E', 2),
+    Cryo/skill/none) hits:4 offField:true with P2 ScalingBuff (hp->baseDmg 0.015)
+    as bespokeBuff. Added "layla-starlight-slug" with DirectFormula(this.param('Q', 1),
+    Cryo/burst/none, hp) offField:true.
+  created: "2026-04-04"
+  resolved: "2026-04-04"

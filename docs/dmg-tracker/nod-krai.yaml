@@ -74,3 +74,18 @@
     the Geo tier is correct and intentional.
   created: "2026-03-29"
   resolved: "2026-03-29"
+
+- id: lauma-e-press-missing
+  entity: lauma
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E press (Tap) damage formula missing. The E talent has a "Press DMG" row at param1
+    (218.9% ATK at Lv10) with no corresponding formula in formulaMap. Only Hold E and
+    Frostgrove Sanctuary DoT are modeled.
+  detail: >
+    Added DirectFormula using this.param('E', 1) with Dendro/skill/none tag
+    as "lauma-press" entry in formulaMap.
+  created: "2026-04-04"
+  resolved: "2026-04-04"

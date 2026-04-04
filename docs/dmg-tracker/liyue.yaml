@@ -83,7 +83,7 @@
   detail: >
     baizhu is a healer, keeping active character above 50% HP is very common and easy.
   created: "2026-03-28"
-  resolved: null
+  resolved: "2026-03-28"
 
 - id: lan_yan-p1-absorption-dead
   entity: lan_yan
@@ -103,4 +103,105 @@
     dead-code baseDmg% buffs are harmless since no absorbed-element formula activates them.
   created: "2026-03-28"
   resolved: "2026-03-29"
+
+- id: shenhe-q-res-hardcoded
+  entity: shenhe
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    Q RES Decrease uses hardcoded 0.15 instead of this.param("Q", 2). The value is
+    talent-level-dependent: 6% at Lv1, 15% at Lv10.
+  detail: >
+    Replaced hardcoded 0.15 with this.param("Q", 2) for talent-level-dependent
+    RES reduction in Q buff.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: shenhe-q-initial-missing
+  entity: shenhe
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    Q initial hit (Skill DMG {param1:P}, 181% at Lv10) has no formula part. Only the
+    DoT is modeled.
+  detail: >
+    Added shenhe-q-initial formula entry with DirectFormula using this.param("Q", 1),
+    Cryo/burst/none tag.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: ganyu-e-missing
+  entity: ganyu
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Trail of the Qilin damage (Skill DMG {param2:P}, 238% at Lv10) has no formula.
+    Only the Frostflake Arrow and Q formulas exist.
+  detail: >
+    Added ganyu-skill formula entry with DirectFormula using this.param("E", 2),
+    Cryo/skill/none tag.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: keqing-e-stiletto-missing
+  entity: keqing
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Lightning Stiletto initial throw (param1, 90.7% at Lv10) has no formula part in
+    keqing-skill. Only the slashing and thunderclap follow-ups are modeled.
+  detail: >
+    Added keqing-stiletto formula entry with DirectFormula using this.param("E", 1),
+    Electro/skill/none tag.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: keqing-e-exclusive-paths
+  entity: keqing
+  rule: S8b
+  status: completed
+  category: bug
+  summary: >
+    keqing-skill combines mutually exclusive paths: slashing (re-cast E, param2) and
+    thunderclap (charged on stiletto, param3×2) into one formula, overcounting E damage.
+    These should be separate formula entries.
+  detail: >
+    Split keqing-skill into keqing-skill-slash (param2, re-cast path) and
+    keqing-skill-thunderclap (param3 x2, charged-on-stiletto path). Updated combo
+    to use stiletto + slash path as default rotation.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: keqing-c1-blink-missing
+  entity: keqing
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    C1 adds 50% ATK Electro DMG at the blink start and terminus points. Not modeled
+    as a formula part for E re-cast.
+  detail: >
+    Added C1 blink damage (50% ATK x2 hits) as constellation-gated formula parts
+    in keqing-skill-slash entry.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: qiqi-e-initial-missing
+  entity: qiqi
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E initial Skill DMG ({param8:P}, 173% at Lv10) has no formula part. Only the Herald
+    of Frost periodic hits are modeled. Should be modeled as a combined formula (one initial hit + 9 offField hits).
+  detail: >
+    Added initial hit part using this.param("E", 8) to qiqi-skill-hit formula.
+    Updated Herald hits from 8 to 9 per KQM data. Label updated to reflect
+    combined formula.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
 

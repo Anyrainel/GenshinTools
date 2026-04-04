@@ -78,6 +78,93 @@
   created: "2026-03-28"
   resolved: "2026-03-28"
 
+- id: mavuika-ring-formula
+  entity: mavuika
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E Ring of Searing Radiance (Tap form) off-field periodic damage formula
+    missing. Fires at 2s intervals (param2 = 230.4% at Lv10); significant
+    off-field DPS for support playstyle.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: mavuika-e-cast-formula
+  entity: mavuika
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E initial Skill DMG (param1 = 133.9% at Lv10) has no formula entry.
+    One-time cast hit when activating All-Fire Armaments.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: kinich-loop-shot-formula
+  entity: kinich
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E Loop Shot formula missing. Each loop fires 2 hits (param1 x2) as Skill
+    DMG. Multiple loops are used per Scalespiker cycle, contributing meaningful
+    rotation DPS.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: varesa-fp-kick-formula
+  entity: varesa
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    Q Fiery Passion Flying Kick (param2 = 1035.4% at Lv10) has no formula
+    entry. Distinct from non-FP kick (param1) and Volcano Kablam (param5).
+    Rarely used in practice since Apex Drive replaces Q with Kablam.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: chasca-e-resonance-formula
+  entity: chasca
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E Resonance DMG (param1) on initial cast has no formula entry. One-time
+    Anemo hit when activating Spirit Reins.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: xilonen-e-rush-formula
+  entity: xilonen
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E Rush DMG (param1 = 322.6% DEF at Lv10) has no formula entry. One-time
+    Geo hit on E cast.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: xilonen-q-initial-formula
+  entity: xilonen
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    Q initial Skill DMG (param1) has no formula entry. Only Q Extra Beats
+    are modeled. The initial Q hit is a distinct burst damage instance.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
 - id: iansan-q-atk-scaling-option
   entity: iansan
   rule: S12

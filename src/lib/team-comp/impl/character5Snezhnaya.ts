@@ -462,6 +462,18 @@ class Tartaglia extends CharacterBase {
           },
         ],
       },
+      "tartaglia-burst-ranged": {
+        label: { zh: "Q远程", en: "Q Ranged" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 3), {
+              element: "Hydro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "tartaglia-riptide-slash": {
         label: { zh: "断流·斩", en: "Riptide Slash" },
         parts: [

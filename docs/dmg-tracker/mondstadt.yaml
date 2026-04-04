@@ -43,3 +43,118 @@
     meaningfully affect team DPS calculations.
   created: "2026-03-29"
   resolved: "2026-03-29"
+
+- id: diluc-q-dot-missing
+  entity: diluc
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    Q Phoenix DoT (param2) is not modeled. The burst has three distinct damage
+    rows (Slashing, DoT, Explosion) but only Slashing and Explosion have formula
+    parts. The DoT hits enemies along the Phoenix flight path.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: klee-e-missing
+  entity: klee
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E Jumpy Dumpty bounce DMG (param1) and Mine DMG (param4) have no formula
+    entries. Both are distinct damage instances in the 5-star E talent table.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: klee-q-missing
+  entity: klee
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    Q Sparks 'n' Splash DMG (param1) has no formula entry. This is a distinct
+    damage instance in the 5-star Q talent table (continuous Pyro DMG).
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: jean-q-field-dmg-missing
+  entity: jean
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    Q Dandelion Field entering/exiting DMG (param2) has no formula part. The
+    burst talent table lists this as a distinct Anemo damage instance separate
+    from the initial burst DMG.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: mona-e-missing
+  entity: mona
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E Mirror Reflection of Doom has two damage instances — phantom DoT (param1)
+    and explosion DMG (param2) — neither is modeled in formulaMap.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: venti-e-c0-missing
+  entity: venti
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E press DMG formula (venti-c2-skill) is gated behind minC:2, so C0-C1
+    Venti has no E damage formula at all. The E press (param1) is a standard
+    5-star skill damage instance that should exist unconditionally.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: durin-e-missing
+  entity: durin
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    E Transmutation damage instances have no formula entries. Confirmation of
+    Purity (param1) and Denial of Darkness (param2+param3+param4) are distinct
+    5-star skill damage instances that should be modeled.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: diona-c6-hp-option
+  entity: diona
+  rule: S6
+  status: open
+  category: bug
+  summary: >
+    C6 EM +200 buff is conditional on character HP > 50% but is implemented
+    as always-active without an OptionMap. Per S6, HP-state conditions require
+    OptionMap with explicit tiers.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: albedo-c6-lunar-crystallize
+  entity: albedo
+  rule: S10
+  status: open
+  category: bug
+  summary: >
+    C6 DMG +17% uses hasShielder() as proxy for Crystallize shield but does
+    not check for lunarCrystallize (Moondrift). On Moonsign teams without a
+    traditional shielder, the buff incorrectly deactivates even though
+    Moondrifts satisfy the "阳华领域中存在月笼" condition.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null

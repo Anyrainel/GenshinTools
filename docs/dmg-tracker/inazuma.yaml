@@ -48,3 +48,29 @@
     direct damage contributes well under 5% of rotation DPS. Not worth implementing.
   created: "2026-03-28"
   resolved: "2026-03-29"
+
+- id: ayato-q-normal-dmg-hardcoded
+  entity: kamisato_ayato
+  rule: S5
+  status: open
+  category: bug
+  summary: >
+    Q Normal Attack DMG Bonus is hardcoded to 0.2 instead of this.param("Q", 2).
+    The value is talent-level-dependent (11% at Lv1, 20% at Lv10) and uses {param2:F1P}
+    in the game text template.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
+
+- id: kokomi-q-initial-hit
+  entity: sangonomiya_kokomi
+  rule: S8b
+  status: open
+  category: missing-formula
+  summary: >
+    Missing Q Nereid's Ascension initial hit formula. Q param1 deals AoE Hydro DMG
+    based on Max HP (18.7% at Lv10). Per S8b, all 5-star E/Q damage instances should
+    have corresponding formula parts.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null
