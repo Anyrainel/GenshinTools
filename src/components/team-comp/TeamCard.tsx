@@ -35,6 +35,7 @@ import {
   Copy,
   Diamond,
   Flame,
+  GripVertical,
   type LucideIcon,
   MoreVertical,
   Sparkles,
@@ -87,6 +88,8 @@ interface TeamCardProps {
   onUnfreeze?: () => void;
   accountData?: AccountData | null;
   allUnowned?: boolean;
+  /** When provided, renders a drag handle instead of the index number. Pass useSortable listeners. */
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 function setsEqual(a?: Set<string>, b?: Set<string>): boolean {
@@ -117,6 +120,7 @@ export const TeamCard = memo(
     onUnfreeze,
     accountData,
     allUnowned,
+    dragHandleProps,
   }: TeamCardProps) {
     const { t } = useLanguage();
     const { characterStats, weaponStats } = useGameStats();
@@ -159,9 +163,18 @@ export const TeamCard = memo(
       >
         {/* Header: Index + Reaction tags + Name + Context menu */}
         <div className="flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 pt-2 xl:pt-3 pb-0.5 xl:pb-1">
-          <span className="text-[11px] xl:text-xs font-bold text-muted-foreground select-none w-4 xl:w-5 text-center shrink-0">
-            {index + 1}
-          </span>
+          {dragHandleProps ? (
+            <div
+              {...dragHandleProps}
+              className="text-muted-foreground w-4 xl:w-5 shrink-0 flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
+            >
+              <GripVertical className="w-3.5 h-3.5" />
+            </div>
+          ) : (
+            <span className="text-[11px] xl:text-xs font-bold text-muted-foreground select-none w-4 xl:w-5 text-center shrink-0">
+              {index + 1}
+            </span>
+          )}
           <LightweightMultiSelect
             options={reactionOptions}
             value={team.reactions}
@@ -493,5 +506,6 @@ export const TeamCard = memo(
     prev.totalCharCount === next.totalCharCount &&
     setsEqual(prev.frozenCharIds, next.frozenCharIds) &&
     prev.accountData === next.accountData &&
-    prev.allUnowned === next.allUnowned
+    prev.allUnowned === next.allUnowned &&
+    prev.dragHandleProps === next.dragHandleProps
 );

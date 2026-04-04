@@ -369,6 +369,12 @@ interface TeamState {
   deleteTeam: (id: string) => void;
   copyTeam: (id: string) => void;
   moveTeam: (id: string, direction: "up" | "down") => void;
+  /** Move team relative to an anchor team. Used by drag-and-drop. */
+  moveTeamRelative: (
+    id: string,
+    anchorId: string,
+    position: "before" | "after"
+  ) => void;
   clearTeams: () => void;
   setMetadata: (author: string, description: string) => void;
   importTeams: (data: TeamCompData) => void;
@@ -445,6 +451,21 @@ export const useTeamStore = create<TeamState>()(
           const temp = state.teams[index];
           state.teams[index] = state.teams[targetIndex];
           state.teams[targetIndex] = temp;
+        });
+      },
+
+      moveTeamRelative: (id, anchorId, position) => {
+        set((state) => {
+          if (id === anchorId) return;
+          const idx = state.teams.findIndex((t) => t.id === id);
+          if (idx === -1) return;
+          // Remove the team first
+          const [team] = state.teams.splice(idx, 1);
+          // Find anchor after removal (index may have shifted)
+          const anchorIdx = state.teams.findIndex((t) => t.id === anchorId);
+          if (anchorIdx === -1) return;
+          const insertIdx = position === "after" ? anchorIdx + 1 : anchorIdx;
+          state.teams.splice(insertIdx, 0, team);
         });
       },
 

@@ -23,6 +23,23 @@ import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { Team } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
+import {
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowUpDown,
@@ -32,11 +49,57 @@ import {
   Search,
   Swords,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const EMPTY_SET = new Set<string>();
 const CARD_MAX_WIDTH = 320;
 const CARD_MAX_WIDTH_COMPACT = 284;
+
+// ── Sortable wrapper for each team card slot ──
+
+function SortableTeamSlot({
+  id,
+  isVisible,
+  order,
+  disabled,
+  children,
+}: {
+  id: string;
+  isVisible: boolean;
+  order: number | undefined;
+  disabled: boolean;
+  children: (
+    dragHandleProps: React.HTMLAttributes<HTMLElement> | undefined
+  ) => React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id,
+    disabled: disabled || !isVisible,
+  });
+
+  const style: React.CSSProperties = isVisible
+    ? {
+        order,
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 100 : undefined,
+      }
+    : { display: "none" };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes}>
+      {children(!disabled && isVisible ? listeners : undefined)}
+    </div>
+  );
+}
 
 export interface TeamGridProps {
   /** Session navigation: which team is currently open in detail view */
@@ -80,6 +143,7 @@ export function TeamGrid({
   const deleteTeam = useTeamStore((s) => s.deleteTeam);
   const copyTeam = useTeamStore((s) => s.copyTeam);
   const moveTeam = useTeamStore((s) => s.moveTeam);
+  const moveTeamRelative = useTeamStore((s) => s.moveTeamRelative);
 
   // Use targeted selectors — subscribing to the full store caused every
   // freeze mutation to re-render the entire page + recalculate filteredTeams.
@@ -123,7 +187,7 @@ export function TeamGrid({
   const [searchQuery, setSearchQuery] = useState("");
   const [elementFilter, setElementFilter] = useState<Element[]>([]);
   const [regionFilter, setRegionFilter] = useState<Region[]>([]);
-  const [ownedOnlyFilter, setOwnedOnlyFilter] = useState(false);
+  const [ownedOnlyFilter, setOwnedOnlyFilter] = useState(hasAccountData);
   const [teamSort, setTeamSort] = useState<TeamSort>("default");
   const toggleSort = (s: TeamSort) =>
     setTeamSort((prev) => (prev === s ? "default" : s));
@@ -344,6 +408,48 @@ export function TeamGrid({
     return map;
   }, [filteredTeams]);
 
+  // ── Drag-and-drop ──
+  const dndEnabled = teamSort === "default";
+
+  const filteredTeamIds = useMemo(
+    () => filteredTeams.map((t) => t.id),
+    [filteredTeams]
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
+
+      const oldIdx = filteredTeams.findIndex((t) => t.id === active.id);
+      const newIdx = filteredTeams.findIndex((t) => t.id === over.id);
+      if (oldIdx === -1 || newIdx === -1 || oldIdx === newIdx) return;
+
+      // Compute new filtered order after the move
+      const newOrder = [...filteredTeams];
+      const [moved] = newOrder.splice(oldIdx, 1);
+      newOrder.splice(newIdx, 0, moved);
+
+      // Anchor the moved team relative to its new neighbor in the real array
+      if (newIdx > 0) {
+        moveTeamRelative(String(active.id), newOrder[newIdx - 1].id, "after");
+      } else if (newOrder.length > 1) {
+        moveTeamRelative(String(active.id), newOrder[1].id, "before");
+      }
+    },
+    [filteredTeams, moveTeamRelative]
+  );
+
   // Displayable regions (exclude "None")
   const displayRegions = useMemo(() => regions.filter((r) => r !== "None"), []);
 
@@ -520,65 +626,84 @@ export function TeamGrid({
             </p>
           </EmptyState>
         )}
-        <div
-          className={cn("grid gap-3 xl:gap-4 justify-center items-start")}
-          style={{
-            gridTemplateColumns: `repeat(auto-fill, minmax(${cardMinWidth}px, max-content))`,
-          }}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          {/* Render ALL teams — hidden ones use display:none + CSS order for sort.
-              This avoids destroying/recreating 30+ cards when toggling filters. */}
-          {teams.map((team, realIndex) => {
-            const order = filteredTeamOrder.get(team.id);
-            const isVisible = order !== undefined;
-            const freeze = teamFreezeMap?.get(team.id);
-            const ownership = teamOwnershipMap.get(team.id);
-            const allUnowned =
-              hasAccountData &&
-              !!ownership &&
-              ownership.filledCount > 0 &&
-              ownership.ownedCount === 0;
-            return (
-              <div
-                key={team.id}
-                style={isVisible ? { order } : { display: "none" }}
-              >
-                <TeamCard
-                  team={team}
-                  index={realIndex}
-                  onUpdate={(patch) => updateTeam(team.id, patch)}
-                  onDelete={() => {
-                    if (enableFreeze) unfreezeTeam(team.id);
-                    deleteTeam(team.id);
-                  }}
-                  onCopy={() => copyTeam(team.id)}
-                  onSelect={() => setActiveTeamId(team.id)}
-                  onMoveUp={
-                    realIndex > 0 ? () => moveTeam(team.id, "up") : undefined
-                  }
-                  onMoveDown={
-                    realIndex < teams.length - 1
-                      ? () => moveTeam(team.id, "down")
-                      : undefined
-                  }
-                  selectLabel={selectLabel}
-                  selectIcon={selectIcon}
-                  selectClassName={selectClassName}
-                  isFrozen={freeze?.isFrozen ?? false}
-                  isFullyFrozen={freeze?.isFullyFrozen ?? false}
-                  frozenCount={freeze?.frozenCount ?? 0}
-                  totalCharCount={freeze?.totalCharCount ?? 0}
-                  frozenCharIds={freeze?.frozenCharIds ?? EMPTY_SET}
-                  onUnfreeze={
-                    enableFreeze ? () => unfreezeTeam(team.id) : undefined
-                  }
-                  accountData={accountData}
-                  allUnowned={allUnowned}
-                />
-              </div>
-            );
-          })}
-        </div>
+          <SortableContext
+            items={filteredTeamIds}
+            strategy={rectSortingStrategy}
+          >
+            <div
+              className={cn("grid gap-3 xl:gap-4 justify-center items-start")}
+              style={{
+                gridTemplateColumns: `repeat(auto-fill, minmax(${cardMinWidth}px, max-content))`,
+              }}
+            >
+              {/* Render ALL teams — hidden ones use display:none + CSS order for sort.
+                  This avoids destroying/recreating 30+ cards when toggling filters. */}
+              {teams.map((team, realIndex) => {
+                const order = filteredTeamOrder.get(team.id);
+                const isVisible = order !== undefined;
+                const freeze = teamFreezeMap?.get(team.id);
+                const ownership = teamOwnershipMap.get(team.id);
+                const allUnowned =
+                  hasAccountData &&
+                  !!ownership &&
+                  ownership.filledCount > 0 &&
+                  ownership.ownedCount === 0;
+                return (
+                  <SortableTeamSlot
+                    key={team.id}
+                    id={team.id}
+                    isVisible={isVisible}
+                    order={order}
+                    disabled={!dndEnabled}
+                  >
+                    {(dragHandleProps) => (
+                      <TeamCard
+                        team={team}
+                        index={realIndex}
+                        onUpdate={(patch) => updateTeam(team.id, patch)}
+                        onDelete={() => {
+                          if (enableFreeze) unfreezeTeam(team.id);
+                          deleteTeam(team.id);
+                        }}
+                        onCopy={() => copyTeam(team.id)}
+                        onSelect={() => setActiveTeamId(team.id)}
+                        onMoveUp={
+                          realIndex > 0
+                            ? () => moveTeam(team.id, "up")
+                            : undefined
+                        }
+                        onMoveDown={
+                          realIndex < teams.length - 1
+                            ? () => moveTeam(team.id, "down")
+                            : undefined
+                        }
+                        selectLabel={selectLabel}
+                        selectIcon={selectIcon}
+                        selectClassName={selectClassName}
+                        isFrozen={freeze?.isFrozen ?? false}
+                        isFullyFrozen={freeze?.isFullyFrozen ?? false}
+                        frozenCount={freeze?.frozenCount ?? 0}
+                        totalCharCount={freeze?.totalCharCount ?? 0}
+                        frozenCharIds={freeze?.frozenCharIds ?? EMPTY_SET}
+                        onUnfreeze={
+                          enableFreeze ? () => unfreezeTeam(team.id) : undefined
+                        }
+                        accountData={accountData}
+                        allUnowned={allUnowned}
+                        dragHandleProps={dragHandleProps}
+                      />
+                    )}
+                  </SortableTeamSlot>
+                );
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       </div>
     </ScrollLayout>
   );

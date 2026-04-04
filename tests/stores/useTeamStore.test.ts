@@ -233,6 +233,59 @@ describe("useTeamStore", () => {
     });
   });
 
+  describe("moveTeamRelative", () => {
+    it("moves team after an anchor", async () => {
+      const idA = useTeamStore.getState().addTeam({ name: "A" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      useTeamStore.getState().addTeam({ name: "B" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const idC = useTeamStore.getState().addTeam({ name: "C" });
+
+      // Move C after A → [A, C, B]
+      useTeamStore.getState().moveTeamRelative(idC, idA, "after");
+
+      const names = useTeamStore.getState().teams.map((t) => t.name);
+      expect(names).toEqual(["A", "C", "B"]);
+    });
+
+    it("moves team before an anchor", async () => {
+      useTeamStore.getState().addTeam({ name: "A" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const idB = useTeamStore.getState().addTeam({ name: "B" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const idC = useTeamStore.getState().addTeam({ name: "C" });
+
+      // Move C before B → [A, C, B]
+      useTeamStore.getState().moveTeamRelative(idC, idB, "before");
+
+      const names = useTeamStore.getState().teams.map((t) => t.name);
+      expect(names).toEqual(["A", "C", "B"]);
+    });
+
+    it("moves team before the first item", async () => {
+      const idA = useTeamStore.getState().addTeam({ name: "A" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      useTeamStore.getState().addTeam({ name: "B" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const idC = useTeamStore.getState().addTeam({ name: "C" });
+
+      // Move C before A → [C, A, B]
+      useTeamStore.getState().moveTeamRelative(idC, idA, "before");
+
+      const names = useTeamStore.getState().teams.map((t) => t.name);
+      expect(names).toEqual(["C", "A", "B"]);
+    });
+
+    it("does nothing when id equals anchorId", () => {
+      const idA = useTeamStore.getState().addTeam({ name: "A" });
+
+      useTeamStore.getState().moveTeamRelative(idA, idA, "after");
+
+      expect(useTeamStore.getState().teams.length).toBe(1);
+      expect(useTeamStore.getState().teams[0].name).toBe("A");
+    });
+  });
+
   describe("clearTeams", () => {
     it("removes all teams", async () => {
       useTeamStore.getState().addTeam();
