@@ -154,3 +154,31 @@
     Not worth OptionMap complexity.
   created: "2026-03-29"
   resolved: "2026-03-29"
+
+- id: snare-hook-missing-lunar-reactions
+  entity: snare_hook
+  rule: S10
+  status: completed
+  category: bug
+  summary: >
+    Snare Hook's reaction check is missing lunar reaction variants (lunarCharged,
+    lunarBloom, lunarCrystallize). On Moonsign teams, hasReaction() for the base
+    reactions returns false when the lunar variant supersedes, causing the EM buff
+    to incorrectly deactivate.
+  detail: >
+    Added lunarCharged, lunarBloom, and lunarCrystallize to the hasReaction() check
+    in Snare Hook's buffs getter.
+  created: "2026-04-04"
+  resolved: "2026-04-04"
+
+- id: prized-isshin-blade-proc-dmg
+  entity: prized_isshin_blade
+  rule: U9
+  status: open
+  category: engine-gap
+  summary: >
+    Accursed Spirit proc (180% ATK AoE, every 8s on Normal/Charged/Plunge hit) has no formula.
+    The engine does not support weapon-owned damage formulas, so the proc cannot be modeled.
+  detail: ""
+  created: "2026-04-04"
+  resolved: null

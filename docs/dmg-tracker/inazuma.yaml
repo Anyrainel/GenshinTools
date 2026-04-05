@@ -105,3 +105,17 @@
   created: "2026-04-04"
   resolved: null
 
+- id: ayaka-c6-always-active
+  entity: kamisato_ayaka
+  rule: U8b
+  status: open
+  category: approximation
+  summary: >
+    C6 Usurahi Butou (+298% Charged ATK DMG) is modeled as always-active on all charged
+    attacks. In practice it applies to only ~1 CA per 10s (cleared 0.5s after hit, timer
+    restarts). With 3 CAs in combo (~20s rotation), 2 of 3 CAs are over-buffed. Should
+    use bespokeBuff or separate buffed/unbuffed CA formulas per U8b.
+  detail: ""
+  created: "2026-04-05"
+  resolved: null
+
