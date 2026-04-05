@@ -47,6 +47,11 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
             <span className="mx-2 text-yellow-400 text-base align-middle">
               {"★".repeat(meta.rarity)}
             </span>
+            {weapon.imagePath.startsWith("/beta/") && (
+              <span className="ml-1 text-[10px] font-semibold bg-amber-600/50 text-white px-1.5 py-0.5 rounded align-middle leading-none">
+                BETA
+              </span>
+            )}
           </h3>
 
           <div className="flex flex-wrap items-center gap-2 text-xs text-white/95 font-medium">

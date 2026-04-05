@@ -68,6 +68,11 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
             <span className="mx-2 text-yellow-400 text-sm">
               {"★".repeat(meta.rarity)}
             </span>
+            {character.imagePath.startsWith("/beta/") && (
+              <span className="ml-1 text-[10px] font-semibold bg-amber-600/50 text-white px-1.5 py-0.5 rounded align-middle leading-none">
+                BETA
+              </span>
+            )}
           </h3>
           <div className="flex items-center gap-2 text-xs text-white/90 font-medium flex-wrap">
             {meta.element != null && (
