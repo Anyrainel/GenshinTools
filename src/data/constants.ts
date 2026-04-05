@@ -12,9 +12,17 @@ import {
 import { betaCharacters, betaWeapons } from "./resources_beta";
 
 const allCharacters = betaEnabled()
-  ? [...betaCharacters, ...characters]
+  ? [
+      ...betaCharacters,
+      ...characters.filter((c) => !betaCharacters.some((b) => b.id === c.id)),
+    ]
   : characters;
-const allWeapons = betaEnabled() ? [...betaWeapons, ...weapons] : weapons;
+const allWeapons = betaEnabled()
+  ? [
+      ...betaWeapons,
+      ...weapons.filter((w) => !betaWeapons.some((b) => b.id === w.id)),
+    ]
+  : weapons;
 
 import type {
   ArtifactHalfSet,

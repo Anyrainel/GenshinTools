@@ -99,6 +99,29 @@ WEAPON_TYPE_MAP: dict[str, str] = {
 # Map known association IDs to region names. The lunaris charlist entries
 # sometimes include an "associationType" field with values like
 # ASSOC_TYPE_MONDSTADT, etc.
+# Ascension stats that are percentages (need "%" suffix in output).
+# Only "em" (Elemental Mastery) is a flat stat.
+PERCENT_ASCENSION_STATS: set[str] = {
+    "cr",
+    "cd",
+    "atk%",
+    "hp%",
+    "def%",
+    "er",
+    "heal%",
+    "phys%",
+    "pyro%",
+    "hydro%",
+    "electro%",
+    "cryo%",
+    "anemo%",
+    "geo%",
+    "dendro%",
+}
+
+# IDs to skip in unreleased detection (not beta content)
+SKIP_DERIVED_IDS: set[str] = {"traveler"}
+
 ASSOCIATION_REGION_MAP: dict[str, str] = {
     "ASSOC_TYPE_MONDSTADT": "Mondstadt",
     "ASSOC_TYPE_LIYUE": "Liyue",
@@ -204,11 +227,23 @@ def find_unreleased_characters(
 ) -> list[tuple[str, str, dict]]:
     """Returns list of (numeric_id, derived_id, meta) for unreleased characters."""
     unreleased = []
+    seen_ids: set[str] = set()
     for num_id, meta in charlist.items():
         en_name = meta.get("enName", "")
         if not en_name:
             continue
+        # Skip characters with no/unknown element (dummy/incomplete entries like Manekin)
+        element = meta.get("element")
+        if not element or element == "Unknown":
+            continue
         derived = derive_id(en_name)
+        # Skip known non-beta IDs (e.g. traveler variants)
+        if derived in SKIP_DERIVED_IDS:
+            continue
+        # Deduplicate by derived ID (e.g. multiple traveler variants)
+        if derived in seen_ids:
+            continue
+        seen_ids.add(derived)
         if derived not in existing_ids:
             unreleased.append((num_id, derived, meta))
     return unreleased
@@ -219,11 +254,16 @@ def find_unreleased_weapons(
 ) -> list[tuple[str, str, dict]]:
     """Returns list of (numeric_id, derived_id, meta) for unreleased weapons."""
     unreleased = []
+    seen_ids: set[str] = set()
     for num_id, meta in weaponlist.items():
         en_name = meta.get("enName", "")
         if not en_name:
             continue
         derived = derive_id(en_name)
+        # Deduplicate by derived ID
+        if derived in seen_ids:
+            continue
+        seen_ids.add(derived)
         if derived not in existing_ids:
             unreleased.append((num_id, derived, meta))
     return unreleased
@@ -279,11 +319,10 @@ def _parse_char_stats(
         }
         if asc_stat_raw in attr and asc_stat:
             val = attr[asc_stat_raw]
-            if isinstance(val, (int, float)):
-                is_pct = "%" in asc_stat_raw or asc_stat.endswith("%")
-                stats[asc_stat] = f"{val:g}%" if is_pct else f"{val:g}"
-            else:
-                stats[asc_stat] = str(val)
+            is_pct = asc_stat in PERCENT_ASCENSION_STATS
+            # Value may be numeric or string; normalize to string
+            val_str = f"{val:g}" if isinstance(val, (int, float)) else str(val).rstrip("%")
+            stats[asc_stat] = f"{val_str}%" if is_pct else val_str
         if "em" not in stats:
             stats["em"] = "0"
         levels_data[str(target)] = stats
@@ -493,7 +532,7 @@ def scrape_character(
         "element": element,
         "weaponType": weapon_type,
         "region": region,
-        "releaseDate": None,
+        "releaseDate": "",
         "levels": levels_data,
     }
     if talent_data:

@@ -268,3 +268,52 @@ class SkywardHarp extends WeaponBase {
     ]),
   ];
 }
+
+@RegisterWeapon("golden_frostbound_oath")
+class GoldenFrostboundOath extends WeaponBase {
+  readonly buffs = [
+    // DEF% increase
+    new StatBuff(wbs(this), { receiver: "self" }, [
+      {
+        key: "def%",
+        value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+      },
+    ]),
+    // Frost Fae's Favor (self buff on E/LC hit): Geo DMG
+    new StatBuff(wbs(this, ["E", "lunarCrystallize"]), { receiver: "self" }, [
+      {
+        key: "geo%",
+        value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+      },
+    ]),
+    // Frost Fae's Favor (self buff on E/LC hit): Lunar-Crystallize Reaction DMG
+    new StatBuff(
+      wbs(this, ["E", "lunarCrystallize"]),
+      { receiver: "self", filter: { reactions: ["lunarCrystallize"] } },
+      [
+        {
+          key: "reactionDmg%",
+          value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+        },
+      ]
+    ),
+    // Frost Fae's Mischief (team buff when Moondrift near): Geo DMG
+    new StatBuff(wbs(this, ["lunarCrystallize"]), { receiver: "other" }, [
+      {
+        key: "geo%",
+        value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+      },
+    ]),
+    // Frost Fae's Mischief (team buff when Moondrift near): Lunar-Crystallize Reaction DMG
+    new StatBuff(
+      wbs(this, ["lunarCrystallize"]),
+      { receiver: "other", filter: { reactions: ["lunarCrystallize"] } },
+      [
+        {
+          key: "reactionDmg%",
+          value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+        },
+      ]
+    ),
+  ];
+}

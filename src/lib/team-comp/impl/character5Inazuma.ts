@@ -407,7 +407,7 @@ class RaidenShogun extends CharacterBase {
             [
               {
                 key: "dmg%",
-                value: this.param("E", 4) * this.teamMeta.energies[charId],
+                value: this.param("E", 3) * this.teamMeta.energies[charId],
               },
             ]
           )

@@ -33,6 +33,7 @@ export const charInfo: Record<string, CharacterInfo> = {
   kuki_shinobu: { energy: 60, healerC: 0, c3Talent: "E", c5Talent: "Q" },
   lan_yan: { energy: 60, shielderC: 0, c3Talent: "E", c5Talent: "Q" },
   layla: { energy: 40, shielderC: 0, c3Talent: "E", c5Talent: "Q" },
+  linnea: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Moonsign" },
   lisa: { energy: 80, c3Talent: "Q", c5Talent: "E" },
   lynette: { energy: 70, c3Talent: "Q", c5Talent: "E" },
   mika: { energy: 70, healerC: 0, c3Talent: "Q", c5Talent: "E" },
