@@ -440,6 +440,229 @@ describe("validateStatFilter", () => {
   });
 });
 
+describe("StatSheet baseDmg% multiplicative aggregation", () => {
+  const skillTag = {
+    element: "Pyro" as const,
+    ability: "skill" as const,
+    reaction: "none" as const,
+  };
+  const burstTag = {
+    element: "Pyro" as const,
+    ability: "burst" as const,
+    reaction: "none" as const,
+  };
+  const normalTag = {
+    element: "Pyro" as const,
+    ability: "normal" as const,
+    reaction: "none" as const,
+  };
+
+  it("single baseDmg% entry works like before", () => {
+    const sheet = new StatSheet([{ key: "baseDmg%", value: 0.5 }]);
+    expect(sheet.get("baseDmg%", normalTag)).toBeCloseTo(0.5);
+    expect(sheet.getRaw("baseDmg%")).toBeCloseTo(0.5);
+  });
+
+  it("multiple universal baseDmg% entries are multiplicative", () => {
+    const sheet = new StatSheet([
+      { key: "baseDmg%", value: 0.5 },
+      { key: "baseDmg%", value: 0.3 },
+    ]);
+    // (1+0.5) × (1+0.3) − 1 = 0.95
+    expect(sheet.get("baseDmg%", normalTag)).toBeCloseTo(0.95);
+    expect(sheet.getRaw("baseDmg%")).toBeCloseTo(0.95);
+  });
+
+  it("three universal baseDmg% entries multiply correctly", () => {
+    const sheet = new StatSheet([
+      { key: "baseDmg%", value: 1.0 },
+      { key: "baseDmg%", value: 0.5 },
+      { key: "baseDmg%", value: 0.2 },
+    ]);
+    // (1+1.0) × (1+0.5) × (1+0.2) − 1 = 2×1.5×1.2 − 1 = 2.6
+    expect(sheet.get("baseDmg%", normalTag)).toBeCloseTo(2.6);
+  });
+
+  it("conditioned baseDmg% (via buff filter) is multiplicative with universal", () => {
+    const sheet = new StatSheet([{ key: "baseDmg%", value: 0.5 }]);
+    const buff = new StatBuff(
+      { type: "character", id: "test", origin: "E" },
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [{ key: "baseDmg%", value: 0.4 }]
+    );
+    const applied = sheet.apply([buff]);
+
+    // Skill tag: universal(0.5) × filtered(0.4) = (1.5)(1.4) − 1 = 1.1
+    expect(applied.get("baseDmg%", skillTag)).toBeCloseTo(1.1);
+    // Non-matching tag: only universal = 0.5
+    expect(applied.get("baseDmg%", normalTag)).toBeCloseTo(0.5);
+    // Null tag: only universal = 0.5
+    expect(applied.get("baseDmg%", null)).toBeCloseTo(0.5);
+  });
+
+  it("multiple conditioned baseDmg% buffs with same filter multiply together", () => {
+    const sheet = new StatSheet([]);
+    const buffs = [
+      new StatBuff(
+        { type: "character", id: "a", origin: "E" },
+        { receiver: "self", filter: { abilities: ["skill"] } },
+        [{ key: "baseDmg%", value: 0.5 }]
+      ),
+      new StatBuff(
+        { type: "weapon", id: "b", origin: "R1" },
+        { receiver: "self", filter: { abilities: ["skill"] } },
+        [{ key: "baseDmg%", value: 0.3 }]
+      ),
+    ];
+    const applied = sheet.apply(buffs);
+
+    // Same filter → same filterKey → multiplicative: (1.5)(1.3) − 1 = 0.95
+    expect(applied.get("baseDmg%", skillTag)).toBeCloseTo(0.95);
+    // Non-matching tag: 0
+    expect(applied.get("baseDmg%", normalTag)).toBe(0);
+  });
+
+  it("conditioned baseDmg% with different filters multiply across filterKeys", () => {
+    const sheet = new StatSheet([]);
+    const buffs = [
+      new StatBuff(
+        { type: "character", id: "a", origin: "E" },
+        { receiver: "self", filter: { abilities: ["skill"] } },
+        [{ key: "baseDmg%", value: 0.5 }]
+      ),
+      new StatBuff(
+        { type: "weapon", id: "b", origin: "R1" },
+        { receiver: "self", filter: { elements: ["Pyro"] } },
+        [{ key: "baseDmg%", value: 0.3 }]
+      ),
+    ];
+    const applied = sheet.apply(buffs);
+
+    // Pyro skill: both match → (1.5)(1.3) − 1 = 0.95
+    expect(applied.get("baseDmg%", skillTag)).toBeCloseTo(0.95);
+    // Pyro normal: only element filter matches → 0.3
+    expect(applied.get("baseDmg%", normalTag)).toBeCloseTo(0.3);
+  });
+
+  it("merge() is multiplicative for baseDmg%", () => {
+    const a = new StatSheet([{ key: "baseDmg%", value: 0.5 }]);
+    const b = new StatSheet([{ key: "baseDmg%", value: 0.3 }]);
+    const merged = a.merge(b);
+
+    // (1.5)(1.3) − 1 = 0.95
+    expect(merged.get("baseDmg%", normalTag)).toBeCloseTo(0.95);
+  });
+
+  it("merge() is multiplicative across filtered baseDmg% from both sheets", () => {
+    const a = StatSheet.fromEntries([{ key: "baseDmg%", value: 0.5 }], {
+      abilities: ["skill"],
+    });
+    const b = new StatSheet([{ key: "baseDmg%", value: 0.3 }]);
+    const merged = a.merge(b);
+
+    // Skill: universal(0.3) × filtered(0.5) = (1.3)(1.5) − 1 = 0.95
+    expect(merged.get("baseDmg%", skillTag)).toBeCloseTo(0.95);
+    // Normal: only universal = 0.3
+    expect(merged.get("baseDmg%", normalTag)).toBeCloseTo(0.3);
+  });
+
+  it("bespokeBuff baseDmg% merges multiplicatively with existing baseDmg%", () => {
+    // Simulate: base stats have a universal baseDmg% from some buff
+    const baseStats = new StatSheet([
+      { key: "baseDmg%", value: 0.5 },
+      { key: "baseAtk", value: 800 },
+    ]);
+
+    // Bespoke buff adds a skill-scoped baseDmg%
+    // (This mirrors how FormulaPart.bespokeBuff creates an overlay via fromEntries + merge)
+    const bespokeOverlay = StatSheet.fromEntries(
+      [{ key: "baseDmg%", value: 1.0 }],
+      { abilities: ["skill"] }
+    );
+    const stats = baseStats.merge(bespokeOverlay);
+
+    // Skill: universal(0.5) × filtered(1.0) = (1.5)(2.0) − 1 = 2.0
+    expect(stats.get("baseDmg%", skillTag)).toBeCloseTo(2.0);
+    // Non-skill: only universal = 0.5
+    expect(stats.get("baseDmg%", normalTag)).toBeCloseTo(0.5);
+  });
+
+  it("bespokeBuff baseDmg% merges multiplicatively with universal + other buff baseDmg%", () => {
+    // Global buff adds universal baseDmg%
+    const base = new StatSheet([{ key: "baseDmg%", value: 0.4 }]);
+    // Another buff adds skill-scoped baseDmg%
+    const buff = new StatBuff(
+      { type: "character", id: "x", origin: "P1" },
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [{ key: "baseDmg%", value: 0.35 }]
+    );
+    const applied = base.apply([buff]);
+
+    // Bespoke overlay adds skill-scoped baseDmg%
+    const bespokeOverlay = StatSheet.fromEntries(
+      [{ key: "baseDmg%", value: 1.0 }],
+      { abilities: ["skill"] }
+    );
+    const stats = applied.merge(bespokeOverlay);
+
+    // Skill: universal(0.4) × skill-filter((1+0.35)(1+1.0)−1 = 1.7) = (1.4)(2.7) − 1 = 2.78
+    expect(stats.get("baseDmg%", skillTag)).toBeCloseTo(2.78);
+    // Non-skill: only universal = 0.4
+    expect(stats.get("baseDmg%", normalTag)).toBeCloseTo(0.4);
+  });
+
+  it("withDelta is multiplicative for baseDmg%", () => {
+    const sheet = new StatSheet([{ key: "baseDmg%", value: 0.5 }]);
+    const bumped = sheet.withDelta("baseDmg%", 0.3);
+    // (1.5)(1.3) − 1 = 0.95
+    expect(bumped.get("baseDmg%", normalTag)).toBeCloseTo(0.95);
+    // Original unchanged
+    expect(sheet.get("baseDmg%", normalTag)).toBeCloseTo(0.5);
+  });
+
+  it("reactionBaseDmg% remains additive (not affected by multiplicative rule)", () => {
+    const sheet = new StatSheet([
+      { key: "reactionBaseDmg%", value: 0.5 },
+      { key: "reactionBaseDmg%", value: 0.3 },
+    ]);
+    // Additive: 0.5 + 0.3 = 0.8
+    expect(sheet.get("reactionBaseDmg%", normalTag)).toBeCloseTo(0.8);
+  });
+
+  it("dump() yields the accumulated multiplicative value", () => {
+    const sheet = new StatSheet([
+      { key: "baseDmg%", value: 0.5 },
+      { key: "baseDmg%", value: 0.3 },
+    ]);
+    const entries = [...sheet.dump()];
+    const bdEntry = entries.find((e) => e.key === "baseDmg%");
+    expect(bdEntry).toBeDefined();
+    // Stored value is the product: (1.5)(1.3) − 1 = 0.95
+    expect(bdEntry!.value).toBeCloseTo(0.95);
+  });
+
+  it("fromDump round-trips correctly for baseDmg%", () => {
+    const original = new StatSheet([
+      { key: "baseDmg%", value: 0.5 },
+      { key: "baseDmg%", value: 0.3 },
+    ]);
+    const dumped = original.toSerializable();
+    const restored = StatSheet.fromDump(dumped);
+
+    // fromDump receives the already-accumulated value (0.95), stored as-is
+    expect(restored.get("baseDmg%", normalTag)).toBeCloseTo(0.95);
+  });
+
+  it("zero-value baseDmg% acts as identity (no effect)", () => {
+    const sheet = new StatSheet([
+      { key: "baseDmg%", value: 0.5 },
+      { key: "baseDmg%", value: 0 },
+    ]);
+    // (1+0.5)(1+0) − 1 = 0.5
+    expect(sheet.get("baseDmg%", normalTag)).toBeCloseTo(0.5);
+  });
+});
+
 describe("resolveOption", () => {
   const testOption = {
     label: { zh: "测试", en: "Test" },

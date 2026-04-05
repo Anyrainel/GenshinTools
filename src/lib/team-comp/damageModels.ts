@@ -93,6 +93,31 @@ const SCALED_PERCENT_KEYS = new Set<string>(
   Object.keys(SCALED_STAT_BASES).map((k) => `${k}%`)
 );
 
+/**
+ * Stat keys that aggregate multiplicatively: each contribution `v` represents
+ * a `(1+v)×` multiplier, and the combined result is `∏(1+vᵢ) − 1`.
+ *
+ * Within a single filterKey the values are accumulated as `(1+a)(1+b)−1`.
+ * Across filterKeys in `get()`, each filterKey's accumulated value is
+ * multiplied together the same way.
+ */
+const MULTIPLICATIVE_KEYS = new Set<StatKey>(["baseDmg%"]);
+
+/** Accumulate a value into a bucket entry, respecting multiplicative keys. */
+function accumulate(
+  bucket: Map<string, number>,
+  fk: string,
+  value: number,
+  key: StatKey
+): void {
+  if (MULTIPLICATIVE_KEYS.has(key)) {
+    const prev = bucket.get(fk) ?? 0;
+    bucket.set(fk, (1 + prev) * (1 + value) - 1);
+  } else {
+    bucket.set(fk, (bucket.get(fk) ?? 0) + value);
+  }
+}
+
 /** Per-element/Physical DMG keys normalized to dmg% + element filter. */
 const ELEMENTAL_DMG_KEY_TO_ELEMENT: Partial<
   Record<StatKey, ElementalOrPhysical>
@@ -212,7 +237,7 @@ export class StatSheet {
         bucket = new Map();
         this.data.set(storeKey, bucket);
       }
-      bucket.set(fk, (bucket.get(fk) ?? 0) + storeValue);
+      accumulate(bucket, fk, storeValue, storeKey);
     }
   }
 
@@ -344,6 +369,17 @@ export class StatSheet {
     let value = bucket.get(EMPTY_FILTER_KEY) ?? 0;
 
     if (tag) {
+      if (MULTIPLICATIVE_KEYS.has(key)) {
+        // Multiplicative: combine across filterKeys as (1+a)(1+b)−1
+        let product = 1 + value;
+        for (const [fk, fv] of bucket) {
+          if (fk === EMPTY_FILTER_KEY) continue;
+          if (filterMatchesTag(deserializeFilter(fk), tag)) {
+            product *= 1 + fv;
+          }
+        }
+        return product - 1;
+      }
       for (const [fk, fv] of bucket) {
         if (fk === EMPTY_FILTER_KEY) continue;
         if (filterMatchesTag(deserializeFilter(fk), tag)) {
@@ -358,7 +394,7 @@ export class StatSheet {
     return this.data.get(key)?.get(EMPTY_FILTER_KEY) ?? 0;
   }
 
-  /** Create a new StatSheet by merging this with another (additive, both levels). */
+  /** Create a new StatSheet by merging this with another. */
   merge(other: StatSheet): StatSheet {
     const merged = new Map<StatKey, Map<string, number>>();
     // Copy this
@@ -373,7 +409,7 @@ export class StatSheet {
         merged.set(key, target);
       }
       for (const [fk, fv] of bucket) {
-        target.set(fk, (target.get(fk) ?? 0) + fv);
+        accumulate(target, fk, fv, key);
       }
     }
     return StatSheet.fromData(merged);
@@ -398,7 +434,7 @@ export class StatSheet {
           target = new Map();
           merged.set(storeKey, target);
         }
-        target.set(fk, (target.get(fk) ?? 0) + storeValue);
+        accumulate(target, fk, storeValue, storeKey);
       }
     }
     return StatSheet.fromData(merged);
@@ -497,7 +533,7 @@ export class StatSheet {
         bucket = new Map();
         data.set(key, bucket);
       }
-      bucket.set(filterKey, (bucket.get(filterKey) ?? 0) + value);
+      accumulate(bucket, filterKey, value, key);
     }
     return StatSheet.fromData(data);
   }
@@ -607,7 +643,7 @@ export class StatSheet {
       bucket = new Map();
       cloned.set(key, bucket);
     }
-    bucket.set(EMPTY_FILTER_KEY, (bucket.get(EMPTY_FILTER_KEY) ?? 0) + delta);
+    accumulate(bucket, EMPTY_FILTER_KEY, delta, key);
     return StatSheet.fromData(cloned);
   }
 }
