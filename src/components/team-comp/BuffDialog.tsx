@@ -453,7 +453,9 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                   ))}
                   {buff.source.maxStacks != null && (
                     <span className="text-[11px] md:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded">
-                      {t.format("teamComp.nStacks", buff.source.maxStacks)}
+                      {buff.bespokeLabel
+                        ? t.format("teamComp.nTimes", 1)
+                        : t.format("teamComp.nStacks", buff.source.maxStacks)}
                     </span>
                   )}
                   {(() => {

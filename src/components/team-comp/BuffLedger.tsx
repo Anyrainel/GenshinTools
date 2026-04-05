@@ -162,7 +162,9 @@ function BuffChip({
                 <span className="ml-auto flex items-center gap-1">
                   {source.maxStacks != null && (
                     <span className="text-[11px] lg:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded">
-                      {t.format("teamComp.nStacks", source.maxStacks)}
+                      {buff.bespokeLabel
+                        ? t.format("teamComp.nTimes", 1)
+                        : t.format("teamComp.nStacks", source.maxStacks)}
                     </span>
                   )}
                   {active &&

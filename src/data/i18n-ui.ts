@@ -726,6 +726,7 @@ export const i18nUiData = {
     showAllBuffs: { en: "Show all buffs", zh: "显示所有效果" },
     teamResonance: { en: "Team Resonance & Environment", zh: "队伍共鸣与环境" },
     nStacks: { en: "{0} stacks", zh: "{0}层" },
+    nTimes: { en: "{0} time", zh: "{0}次" },
     noBuffsOriginate: { en: "No buffs originating", zh: "未提供 Buff 效果" },
     receiverSelf: { en: "Self", zh: "自身" },
     receiverSelfOnField: { en: "Self (On-Field)", zh: "自身-前台" },
@@ -745,7 +746,14 @@ export const i18nUiData = {
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     critRateTarget: { en: "CR Target", zh: "最高暴击（凹分）" },
-    tierPool: { en: "Tier", zh: "等级" },
+    tierPool: {
+      en: "Avoid stealing from higher tiers",
+      zh: "避免抢高评级角色",
+    },
+    erOverSet: {
+      en: "Prioritize ER over set",
+      zh: "充能不够时放弃套装",
+    },
     dpsSeconds: { en: "s", zh: "秒" },
     rollMultiplier: { en: "Roll Growth", zh: "词条成长" },
     substatBudget: {
@@ -801,10 +809,6 @@ export const i18nUiData = {
       zh: "正在准备优化器…",
     },
     optError: { en: "Optimization Error:", zh: "优化错误：" },
-    ignoreSets: {
-      en: "Ignore sets when Min. ER/CR cannot be met",
-      zh: "充能、暴击无法达到要求时忽略套装",
-    },
     expandFormula: { en: "Expand", zh: "展开" },
     collapseFormula: { en: "Collapse", zh: "收起" },
     backToCombo: { en: "Back to combo", zh: "返回连招" },
@@ -913,7 +917,9 @@ export const i18nUiData = {
     reuseNone: { en: "No sharing", zh: "不复用" },
     reuseSameChar: { en: "Same character", zh: "同角色允许复用" },
     reuseForce: { en: "Same char + set", zh: "同角色同套装强制复用" },
-    forceReusedBadge: { en: "Reused", zh: "已复用" },
+    reuseBadgeLocked: { en: "Force reuse({0}/{1})", zh: "强制复用({0}/{1})" },
+    reuseBadgeShared: { en: "Allow reuse({0}/{1})", zh: "允许复用({0}/{1})" },
+    vsEquipped: { en: "vs equipped", zh: "对比装备" },
     freezeConflictTitle: {
       en: "Duplicate artifacts detected",
       zh: "检测到重复圣遗物",
