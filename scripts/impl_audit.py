@@ -17,8 +17,16 @@ DATA = SRC / "data"
 IMPL_DIR = SRC / "lib/team-comp/impl"
 
 GAME_DIR = DATA / "game"
-CHAR_EN_PATHS = [GAME_DIR / "character_4_en.json", GAME_DIR / "character_5_en.json"]
-CHAR_ZH_PATHS = [GAME_DIR / "character_4_zh.json", GAME_DIR / "character_5_zh.json"]
+CHAR_EN_PATHS = [
+    GAME_DIR / "character_4_en.json",
+    GAME_DIR / "character_5_en.json",
+    GAME_DIR / "character_beta_en.json",
+]
+CHAR_ZH_PATHS = [
+    GAME_DIR / "character_4_zh.json",
+    GAME_DIR / "character_5_zh.json",
+    GAME_DIR / "character_beta_zh.json",
+]
 DATA_DIR = ROOT / "scripts" / "data"
 
 
@@ -109,7 +117,9 @@ _CHAR_STATS_CACHE: dict[str, Any] | None = None
 _WEAPON_STATS_CACHE: dict[str, Any] | None = None
 
 CHAR_STATS_PATH = DATA / "game" / "character_stats.json"
+CHAR_BETA_STATS_PATH = DATA / "game" / "character_beta_stats.json"
 WEAPON_STATS_PATH = DATA / "game" / "weapon_stats.json"
+WEAPON_BETA_STATS_PATH = DATA / "game" / "weapon_beta_stats.json"
 
 
 def get_extracted_data() -> dict[str, Any]:
@@ -122,20 +132,22 @@ def get_extracted_data() -> dict[str, Any]:
 def get_char_stats() -> dict[str, Any]:
     global _CHAR_STATS_CACHE
     if _CHAR_STATS_CACHE is None:
+        _CHAR_STATS_CACHE = {}
         if CHAR_STATS_PATH.exists():
             _CHAR_STATS_CACHE = json.loads(CHAR_STATS_PATH.read_text("utf-8"))
-        else:
-            _CHAR_STATS_CACHE = {}
+        if CHAR_BETA_STATS_PATH.exists():
+            _CHAR_STATS_CACHE.update(json.loads(CHAR_BETA_STATS_PATH.read_text("utf-8")))
     return _CHAR_STATS_CACHE
 
 
 def get_weapon_stats() -> dict[str, Any]:
     global _WEAPON_STATS_CACHE
     if _WEAPON_STATS_CACHE is None:
+        _WEAPON_STATS_CACHE = {}
         if WEAPON_STATS_PATH.exists():
             _WEAPON_STATS_CACHE = json.loads(WEAPON_STATS_PATH.read_text("utf-8"))
-        else:
-            _WEAPON_STATS_CACHE = {}
+        if WEAPON_BETA_STATS_PATH.exists():
+            _WEAPON_STATS_CACHE.update(json.loads(WEAPON_BETA_STATS_PATH.read_text("utf-8")))
     return _WEAPON_STATS_CACHE
 
 
@@ -521,11 +533,11 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
         for lang in ("en", "zh"):
             if zh_only and lang == "en":
                 continue
-            wp = game_dir / f"weapon_{lang}.json"
-            if not wp.exists():
-                effect_texts[lang] = ""
-                continue
-            game_weapons = json.loads(wp.read_text("utf-8"))
+            game_weapons: dict[str, Any] = {}
+            for suffix in (lang, f"beta_{lang}"):
+                wp = game_dir / f"weapon_{suffix}.json"
+                if wp.exists():
+                    game_weapons.update(json.loads(wp.read_text("utf-8")))
             entry = game_weapons.get(entity_id, {})
             tpl = entry.get("descHtmlTpl", "")
             refinements: list[list[str]] = entry.get("refinements", [])

@@ -17,6 +17,7 @@ import type {
   CharacterSkill,
   Language,
 } from "../data/types";
+import { betaEnabled } from "../lib/betaFlag";
 import { loadCharacterKits } from "../lib/characterKitLoader";
 
 // Per-language JSON shape for weapon/artifact game data
@@ -169,7 +170,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const artifactLoader = artifactModules[artifactPath];
 
     if (weaponLoader) {
-      weaponLoader().then((mod) => setWeaponData(mod.default));
+      const betaWeaponPath = `../data/game/weapon_beta_${language}.json`;
+      const betaWeaponLoader = betaEnabled()
+        ? weaponModules[betaWeaponPath]
+        : null;
+
+      if (betaWeaponLoader) {
+        Promise.all([weaponLoader(), betaWeaponLoader()]).then(
+          ([baseMod, betaMod]) =>
+            setWeaponData({ ...baseMod.default, ...betaMod.default })
+        );
+      } else {
+        weaponLoader().then((mod) => setWeaponData(mod.default));
+      }
     }
     if (artifactLoader) {
       artifactLoader().then((mod) => setArtifactData(mod.default));

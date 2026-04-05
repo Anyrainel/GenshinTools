@@ -4,7 +4,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 GAME_DIR = ROOT / "src" / "data" / "game"
-CHAR_ZH_PATHS = [GAME_DIR / "character_4_zh.json", GAME_DIR / "character_5_zh.json"]
+CHAR_ZH_PATHS = [
+    GAME_DIR / "character_4_zh.json",
+    GAME_DIR / "character_5_zh.json",
+    GAME_DIR / "character_beta_zh.json",
+]
 
 
 def main():

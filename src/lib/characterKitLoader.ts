@@ -5,6 +5,7 @@ import type {
   CharacterSkillDetail,
   Language,
 } from "@/data/types";
+import { betaEnabled } from "@/lib/betaFlag";
 
 // Raw JSON shape before transformation
 type RawSkill = {
@@ -81,6 +82,15 @@ export function loadCharacterKits(
     return Promise.reject(
       new Error(`Missing character kit bundle(s) for: ${lang}`)
     );
+  }
+
+  // Conditionally add beta character kit loader
+  if (betaEnabled()) {
+    const betaPath = `../data/game/character_beta_${lang}.json`;
+    const betaLoader = modules[betaPath];
+    if (betaLoader) {
+      loaders.push(betaLoader);
+    }
   }
 
   const promise = Promise.all(loaders.map((loader) => loader!())).then(

@@ -1,3 +1,4 @@
+import { betaEnabled } from "@/lib/betaFlag";
 import type { CharacterStatsMap, WeaponStatsMap } from "@/lib/gameStatsLoader";
 import artifactStatData from "./game/artifact_stat.json";
 import {
@@ -8,6 +9,13 @@ import {
   weaponTypeResources as weaponResources,
   weapons,
 } from "./resources";
+import { betaCharacters, betaWeapons } from "./resources_beta";
+
+const allCharacters = betaEnabled()
+  ? [...betaCharacters, ...characters]
+  : characters;
+const allWeapons = betaEnabled() ? [...betaWeapons, ...weapons] : weapons;
+
 import type {
   ArtifactHalfSet,
   ArtifactSetResource,
@@ -291,7 +299,7 @@ const freezeRecord = <MapType extends Record<PropertyKey, unknown>>(
 
 export const charactersById = freezeRecord(
   createRecord<CharacterResource, CharacterResource["id"]>(
-    characters,
+    allCharacters,
     (character) => character.id
   )
 );
@@ -305,7 +313,7 @@ export const artifactsById = freezeRecord(
 
 export const weaponsById = freezeRecord(
   createRecord<WeaponResource, WeaponResource["id"]>(
-    weapons,
+    allWeapons,
     (weapon) => weapon.id
   )
 );
@@ -398,7 +406,7 @@ export function getSortedCharacters(
   characterStats: CharacterStatsMap | null,
   tierAssignments?: TierAssignment | null
 ): CharacterResource[] {
-  const list = [...characters];
+  const list = [...allCharacters];
   if (!characterStats) return list;
   return list.sort((a, b) => {
     // 1. Tier rank (S=0, A=1, …, Pool=5, unassigned=last)
@@ -425,7 +433,7 @@ export function getSortedCharacters(
   });
 }
 
-export const sortedWeapons = sortItemsByRarityDesc(weapons);
+export const sortedWeapons = sortItemsByRarityDesc(allWeapons);
 export const sortedArtifacts = sortItemsByRarityDesc(artifacts);
 
 /** Unique weapon secondary stats from weapon_stats (L90), sorted. */

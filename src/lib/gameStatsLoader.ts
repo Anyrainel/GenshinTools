@@ -13,6 +13,7 @@ import type {
   WeaponResource,
   WeaponType,
 } from "@/data/types";
+import { betaEnabled } from "@/lib/betaFlag";
 import type { StatEntry } from "@/lib/team-comp/types";
 
 // ─── JSON shapes (match character_stats.json / weapon_stats.json) ───
@@ -64,12 +65,22 @@ let weaponStatsPromise: Promise<WeaponStatsMap> | null = null;
 export function getCharacterStats(): Promise<CharacterStatsMap> {
   if (characterStatsCache) return Promise.resolve(characterStatsCache);
   if (!characterStatsPromise) {
-    characterStatsPromise = import("@/data/game/character_stats.json").then(
-      (m) => {
-        characterStatsCache = m.default as CharacterStatsMap;
-        return characterStatsCache;
-      }
-    );
+    const loaders: Promise<CharacterStatsMap>[] = [
+      import("@/data/game/character_stats.json").then(
+        (m) => m.default as CharacterStatsMap
+      ),
+    ];
+    if (betaEnabled()) {
+      loaders.push(
+        import("@/data/game/character_beta_stats.json").then(
+          (m) => m.default as CharacterStatsMap
+        )
+      );
+    }
+    characterStatsPromise = Promise.all(loaders).then(([base, beta]) => {
+      characterStatsCache = beta ? { ...base, ...beta } : base;
+      return characterStatsCache;
+    });
   }
   return characterStatsPromise;
 }
@@ -77,8 +88,20 @@ export function getCharacterStats(): Promise<CharacterStatsMap> {
 export function getWeaponStats(): Promise<WeaponStatsMap> {
   if (weaponStatsCache) return Promise.resolve(weaponStatsCache);
   if (!weaponStatsPromise) {
-    weaponStatsPromise = import("@/data/game/weapon_stats.json").then((m) => {
-      weaponStatsCache = m.default as WeaponStatsMap;
+    const loaders: Promise<WeaponStatsMap>[] = [
+      import("@/data/game/weapon_stats.json").then(
+        (m) => m.default as WeaponStatsMap
+      ),
+    ];
+    if (betaEnabled()) {
+      loaders.push(
+        import("@/data/game/weapon_beta_stats.json").then(
+          (m) => m.default as WeaponStatsMap
+        )
+      );
+    }
+    weaponStatsPromise = Promise.all(loaders).then(([base, beta]) => {
+      weaponStatsCache = beta ? { ...base, ...beta } : base;
       return weaponStatsCache;
     });
   }
