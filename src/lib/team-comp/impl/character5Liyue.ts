@@ -221,42 +221,19 @@ class Zibai extends CharacterBase {
               },
               "def"
             ),
-          },
-        ],
-      },
-      "zibai-steed-c1": {
-        label: {
-          zh: "E (首次)",
-          en: "E (First)",
-        },
-        minC: 1,
-        parts: [
-          {
-            formula: new DirectFormula(
-              steed1,
-              { element: "Geo", ability: "skill", reaction: "none" },
-              "def"
-            ),
-          },
-          {
             // C1: first Steed's 2nd-hit LC reactionDmg% +220%
-            formula: new LunarDirectFormula(
-              steed2Talent,
-              {
-                element: "Geo",
-                ability: "skill",
-                reaction: "lunarCrystallize",
-              },
-              "def"
-            ),
-            bespokeBuff: new StatBuff(
-              cbs(this, "C1", ["E"]),
-              {
-                receiver: "selfOnField",
-                filter: { reactions: ["lunarCrystallize"] },
-              },
-              [{ key: "reactionDmg%", value: 2.2 }]
-            ),
+            ...(this.constellation >= 1
+              ? {
+                  bespokeBuff: new StatBuff(
+                    { ...cbs(this, "C1", ["E"]), maxStacks: 1 },
+                    {
+                      receiver: "selfOnField",
+                      filter: { reactions: ["lunarCrystallize"] },
+                    },
+                    [{ key: "reactionDmg%", value: 2.2 }]
+                  ),
+                }
+              : {}),
           },
         ],
       },
@@ -291,8 +268,7 @@ class Zibai extends CharacterBase {
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "zibai-e-combo", count: 3 },
-      { id: "zibai-steed", count: 3 },
-      { id: "zibai-steed-c1", count: 1 },
+      { id: "zibai-steed", count: 4 },
       { id: "zibai-burst", count: 1 },
     ];
   }
