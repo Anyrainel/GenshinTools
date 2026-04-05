@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { i18nAppData } from "../data/i18n-app";
+import { i18nBetaData } from "../data/i18n-beta";
 import { i18nGameData } from "../data/i18n-game";
 import { i18nUiData } from "../data/i18n-ui";
 import type {
@@ -224,7 +225,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         string,
         Record<string, string>
       >;
-      return chars[characterId]?.[language] || characterId;
+      const betaChars = i18nBetaData.characters as Record<
+        string,
+        Record<string, string>
+      >;
+      return (
+        chars[characterId]?.[language] ||
+        betaChars[characterId]?.[language] ||
+        characterId
+      );
     },
     [language]
   );
@@ -455,7 +464,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         string,
         Record<string, string>
       >;
-      return weapons[weaponId]?.[language] || weaponId;
+      const betaWeapons = i18nBetaData.weapons as Record<
+        string,
+        Record<string, string>
+      >;
+      return (
+        weapons[weaponId]?.[language] ||
+        betaWeapons[weaponId]?.[language] ||
+        weaponId
+      );
     },
     [language]
   );
