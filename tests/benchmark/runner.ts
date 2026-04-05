@@ -457,7 +457,8 @@ export async function runOptimizerOnTeam(
   perCharDeadlineMs?: number,
   formulaIdOverride?: string,
   maxArtsPerSlot?: number,
-  comboOverride?: ComboFormula
+  comboOverride?: ComboFormula,
+  useLagrangianAlloc?: boolean
 ): Promise<TeamResult> {
   const carryCharId = team.characters[0]!;
   const charIds = team.characters.filter((c): c is string => !!c);
@@ -537,6 +538,7 @@ export async function runOptimizerOnTeam(
         : {}),
       ...(perCharDeadlineMs ? { perCharDeadlineMs } : {}),
       ...(maxArtsPerSlot ? { maxArtsPerSlot } : {}),
+      ...(useLagrangianAlloc ? { useLagrangianAlloc } : {}),
     };
 
     const algoFns: Record<string, typeof runV2> = {

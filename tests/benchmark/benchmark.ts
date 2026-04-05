@@ -650,7 +650,8 @@ async function runParallel(
   workerCount: number,
   maxArtsPerSlot: number,
   diag: boolean,
-  onResult: (taskIdx: number, result: TeamResult) => void
+  onResult: (taskIdx: number, result: TeamResult) => void,
+  lagrangian?: boolean
 ): Promise<TeamResult[]> {
   const cp = await import("node:child_process");
   const workerScript = fileURLToPath(new URL("./worker.ts", import.meta.url));
@@ -679,6 +680,7 @@ async function runParallel(
           formulaIdOverride: formulaId,
           combo,
           teamIdx: idx,
+          lagrangian: lagrangian || undefined,
         });
       }
     }
@@ -1063,6 +1065,7 @@ async function cmdRun(opts: {
   parallel: number;
   maxArtsPerSlot: number;
   diag: boolean;
+  lagrangian: boolean;
 }): Promise<void> {
   const logPath = startLogFile("run");
   console.log(`Log file: ${logPath}`);
@@ -1384,7 +1387,8 @@ async function cmdRun(opts: {
       (idx, result) => {
         const { key, team, formulaId } = problemsToRun[idx];
         processResult(idx, key, team, formulaId, result);
-      }
+      },
+      opts.lagrangian || undefined
     );
   } else {
     // Sequential execution
@@ -1399,7 +1403,8 @@ async function cmdRun(opts: {
         opts.algo !== "v1" ? (opts.timeoutSec * 1000) / 4 : undefined,
         formulaId,
         opts.maxArtsPerSlot || undefined,
-        combo
+        combo,
+        opts.lagrangian || undefined
       );
       processResult(ri, key, team, formulaId, result);
     }
@@ -1434,7 +1439,8 @@ async function cmdRun(opts: {
         opts.algo !== "v1" ? (retryTimeout * 1000) / 4 : undefined,
         problem.formulaId,
         opts.maxArtsPerSlot || undefined,
-        resolveCombo(problem.formulaId, team)
+        resolveCombo(problem.formulaId, team),
+        opts.lagrangian || undefined
       );
       const retryDamage = evaluateAssignment(
         team,
@@ -1557,7 +1563,8 @@ async function cmdRun(opts: {
         opts.algo !== "v1" ? (retryTimeout * 1000) / 4 : undefined,
         cf.formulaId,
         opts.maxArtsPerSlot || undefined,
-        resolveCombo(cf.formulaId, team)
+        resolveCombo(cf.formulaId, team),
+        opts.lagrangian || undefined
       );
       const retryDamage = evaluateAssignment(
         team,
@@ -3403,6 +3410,7 @@ async function main(): Promise<void> {
             ),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),
+        lagrangian: args.includes("--lagrangian"),
       });
       break;
     }

@@ -25,6 +25,7 @@ interface RunMessage {
   formulaIdOverride?: string;
   combo?: ComboFormula;
   teamIdx: number;
+  lagrangian?: boolean;
 }
 
 // Account file passed as first CLI argument by the parent
@@ -61,7 +62,8 @@ process.on("message", async (msg: RunMessage) => {
         msg.perCharMs,
         msg.formulaIdOverride,
         msg.maxArtsPerSlot,
-        msg.combo
+        msg.combo,
+        msg.lagrangian
       );
       process.send!({
         type: "result",
