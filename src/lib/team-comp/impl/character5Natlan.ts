@@ -1293,7 +1293,7 @@ class Kinich extends CharacterBase {
     ];
 
     // C2: First Scalespiker Cannon after entering Nightsoul's Blessing +100% DMG
-    // Modeled via bespokeBuff on separate first-cannon formula entry (see formulaMap).
+    // Modeled via bespokeBuff with maxStacks: 1 on kinich-cannon (see formulaMap).
 
     // C4: Hail to the Almighty Dragonlord Q DMG +70%
     if (this.constellation >= 4) {
@@ -1330,52 +1330,6 @@ class Kinich extends CharacterBase {
           },
         ],
       },
-      // C2: First Scalespiker Cannon gets +100% DMG via bespokeBuff
-      ...(this.constellation >= 2
-        ? {
-            "kinich-cannon-first": {
-              label: { zh: "E首发", en: "E First" },
-              minC: 2 as const,
-              parts: [
-                {
-                  formula: new DirectFormula(this.param("E", 2), {
-                    element: "Dendro",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                  bespokeBuff: new StatBuff(
-                    cbs(this, "C2", ["E"]),
-                    {
-                      receiver: "selfOnField",
-                      filter: { abilities: ["skill"] },
-                    },
-                    [{ key: "dmg%", value: 1.0 }]
-                  ),
-                },
-                // C6 bounce: 700% ATK, also gets C2 buff (inherits bespokeBuff scope)
-                ...(this.constellation >= 6
-                  ? [
-                      {
-                        formula: new DirectFormula(7.0, {
-                          element: "Dendro",
-                          ability: "skill",
-                          reaction: "none",
-                        }),
-                        bespokeBuff: new StatBuff(
-                          cbs(this, "C2", ["E"]),
-                          {
-                            receiver: "selfOnField",
-                            filter: { abilities: ["skill"] },
-                          },
-                          [{ key: "dmg%", value: 1.0 }]
-                        ),
-                      },
-                    ]
-                  : []),
-              ],
-            } satisfies FormulaEntry,
-          }
-        : {}),
       "kinich-cannon": {
         label: { zh: "E伤害", en: "E" },
         parts: [
@@ -1385,6 +1339,18 @@ class Kinich extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
+            ...(this.constellation >= 2
+              ? {
+                  bespokeBuff: new StatBuff(
+                    { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["skill"] },
+                    },
+                    [{ key: "dmg%", value: 1.0 }]
+                  ),
+                }
+              : {}),
           },
           // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
           ...(this.constellation >= 6
@@ -1395,6 +1361,18 @@ class Kinich extends CharacterBase {
                     ability: "skill",
                     reaction: "none",
                   }),
+                  ...(this.constellation >= 2
+                    ? {
+                        bespokeBuff: new StatBuff(
+                          { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
+                          {
+                            receiver: "selfOnField",
+                            filter: { abilities: ["skill"] },
+                          },
+                          [{ key: "dmg%", value: 1.0 }]
+                        ),
+                      }
+                    : {}),
                 },
               ]
             : []),
@@ -1426,15 +1404,10 @@ class Kinich extends CharacterBase {
   })();
 
   // Rotation: shE Q 5[N2 shE] — ~4 Scalespiker Cannons + Q (Burning carry, KQM)
-  // C2: first cannon gets +100% DMG via separate formula entry
+  // C2: first cannon gets +100% DMG via bespokeBuff with maxStacks: 1
   protected override get comboDescriptor(): ComboDescriptor {
     return [
-      ...(this.constellation >= 2
-        ? [
-            { id: "kinich-cannon-first", count: 1 },
-            { id: "kinich-cannon", count: 3 },
-          ]
-        : [{ id: "kinich-cannon", count: 4 }]),
+      { id: "kinich-cannon", count: 4 },
       { id: "kinich-burst", count: 1 },
     ];
   }
