@@ -91,6 +91,15 @@ function emitTeamOptTrace(event: TeamOptTraceEvent): void {
  * Game limit: 2400 artifacts max. Typical: 1000-2000.
  * Per-set max observed: ~300 pieces. Per-set-slot max: ~60.
  */
+/** Check if two Sets share any common element. */
+function hasIntersection(a: Set<string>, b: Set<string>): boolean {
+  const [smaller, larger] = a.size <= b.size ? [a, b] : [b, a];
+  for (const id of smaller) {
+    if (larger.has(id)) return true;
+  }
+  return false;
+}
+
 function computeHyperparams(inventorySize: number): {
   topK: number;
   maxTeamSearch: number;
@@ -2057,6 +2066,341 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
+  // Phase 3b: Pair-wise Perturbation
+  //
+  // Phase 3 coordinate descent converges to a local optimum where no
+  // single-character swap improves team damage. But simultaneously
+  // changing two characters' artifacts can escape this local optimum.
+  //
+  // For each pair of non-saturated characters: clear both their
+  // artifacts, re-run B&B for each in sequence (giving access to a
+  // larger artifact pool), then check if team damage improved.
+  // If any pair improves, restart Phase 3 for one more convergence pass.
+  // ════════════════════════════════════════════════════════════════════
+
+  if (phase3Chars.length >= 2) {
+    // Set-aware evaluation: detects actual equipped artifact sets and
+    // rebuilds TeamBuild if they differ from configured sets.
+    // This is critical because ~30K+ of team damage can come from set bonuses
+    // that only appear when artifacts happen to form 2pc/4pc.
+    const evalWithSetDetection = (
+      artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
+    ): number => {
+      const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
+      try {
+        if (!teamArtifactsMeetConstraints(artifactsByChar)) return 0;
+        // Detect actual equipped sets
+        let evalTB = effectiveTeamBuild;
+        let needsRebuild = false;
+        const testPerChar = { ...effectivePerChar };
+        for (const cid of allCharIds) {
+          const arts = artifactsByChar[cid];
+          if (!arts) continue;
+          const pieces = allSlots
+            .map((s) => arts[s])
+            .filter((a): a is ArtifactData => a != null);
+          if (pieces.length === 0) continue;
+          const detected = detectEquippedSets(pieces);
+          const epc = testPerChar[cid];
+          if (!epc) continue;
+          const currentSetId = epc.artifactSetId ?? null;
+          const currentHalfIds = epc.artifactHalfSetIds ?? [];
+          const detectedSetId = detected.artifactSetId;
+          const detectedHalfIds = detected.artifactHalfSetIds;
+          if (
+            detectedSetId !== currentSetId ||
+            detectedHalfIds.length !== currentHalfIds.length ||
+            [...detectedHalfIds].sort().join(",") !==
+              [...currentHalfIds].sort().join(",")
+          ) {
+            testPerChar[cid] = {
+              ...epc,
+              artifactSetId: detectedSetId,
+              artifactHalfSetIds: detectedHalfIds,
+            };
+            needsRebuild = true;
+          }
+        }
+        if (needsRebuild) {
+          const newConfigs = teamBuild.configs.map((c) => {
+            const epc = testPerChar[c.charId];
+            if (epc) {
+              return {
+                ...c,
+                artifactSetId: epc.artifactSetId ?? null,
+                artifactHalfSetIds: epc.artifactHalfSetIds ?? [],
+              };
+            }
+            return c;
+          });
+          evalTB = new TeamBuild(
+            newConfigs,
+            teamBuild.combatOpts,
+            teamBuild.enemyAura,
+            teamBuild.extraBuffs
+          );
+        }
+        return evaluateCombo(evalTB, combo, sheets, calcContext).totalDamage;
+      } catch {
+        return 0;
+      }
+    };
+
+    const prePerturbDamage = evalWithSetDetection(bestArtifactsByChar);
+
+    let perturbationImproved = false;
+
+    // Collect artifacts used by each non-phase3 character (fixed allocation)
+    const fixedCharIds = allCharIds.filter((id) => !phase3Chars.includes(id));
+    const fixedArtIds = new Set<string>();
+    for (const cid of fixedCharIds) {
+      const arts = bestArtifactsByChar[cid];
+      if (!arts) continue;
+      for (const s of allSlots) {
+        const a = arts[s];
+        if (a) fixedArtIds.add(a.id);
+      }
+    }
+
+    // Build base sheets with fixed characters' artifacts baked in
+    const perturbBaseSheets: Record<string, StatSheet> = { ...baseSheets };
+    for (const cid of fixedCharIds) {
+      const arts = bestArtifactsByChar[cid];
+      if (!arts) continue;
+      const pieces = allSlots
+        .map((s) => arts[s])
+        .filter((a): a is ArtifactData => a != null);
+      if (pieces.length > 0) {
+        perturbBaseSheets[cid] = StatSheet.fromArtifacts(pieces);
+      }
+    }
+
+    // Only include characters that have top-K entries (characters with
+    // empty top-K can't participate in DFS-based re-allocation)
+    const perturbChars = phase3Chars.filter(
+      (cid) => (topKByChar[cid]?.length ?? 0) > 0
+    );
+
+    // For each pair: filter top-K lists to exclude fixed artifacts,
+    // then run Phase 2 DFS on just the pair to find the best
+    // non-conflicting allocation among top-K entries.
+    // After finding a candidate, validate no duplicate artifacts with
+    // other perturbChars before accepting.
+    for (let pi = 0; pi < perturbChars.length && !perturbationImproved; pi++) {
+      for (
+        let pj = pi + 1;
+        pj < perturbChars.length && !perturbationImproved;
+        pj++
+      ) {
+        if (teamDeadlineMs && performance.now() >= teamDeadlineMs - 500) break;
+
+        const charA = perturbChars[pi];
+        const charB = perturbChars[pj];
+
+        // Collect artifact IDs used by other perturbChars (not in this pair)
+        const otherPerturbArtIds = new Set<string>();
+        for (const otherId of perturbChars) {
+          if (otherId === charA || otherId === charB) continue;
+          const arts = bestArtifactsByChar[otherId];
+          if (!arts) continue;
+          for (const s of allSlots) {
+            const a = arts[s];
+            if (a) otherPerturbArtIds.add(a.id);
+          }
+        }
+
+        // Filter top-K entries: only exclude fixed (non-phase3) artifacts
+        const pairTopK: Record<string, TopKEntry[]> = {};
+        for (const cid of [charA, charB]) {
+          pairTopK[cid] = (topKByChar[cid] ?? []).filter(
+            (entry) => !hasIntersection(entry.artifactIds, fixedArtIds)
+          );
+        }
+
+        // Run Phase 2 DFS on just this pair
+        const pairEvalFn: TeamEvalFn = (assignment) => {
+          const testArts = { ...bestArtifactsByChar };
+          for (const [cid, entry] of Object.entries(assignment)) {
+            testArts[cid] = artsTupleToRecord(entry.artifacts as ArtifactTuple);
+          }
+          const dmg = evalWithSetDetection(testArts);
+          return dmg > 0 ? dmg : Number.NEGATIVE_INFINITY;
+        };
+
+        const pairResult = findBestTeamAllocation(
+          [charA, charB],
+          pairTopK,
+          MAX_TEAM_SEARCH,
+          pairEvalFn
+        );
+
+        // Accept best candidate that doesn't duplicate artifacts with other perturbChars
+        for (const candidate of pairResult.candidates) {
+          if (candidate.score <= prePerturbDamage + 0.5) break;
+
+          // Check for duplicates with other perturbChars
+          let hasDupes = false;
+          for (const entry of Object.values(candidate.assignment)) {
+            for (const artId of entry.artifactIds) {
+              if (otherPerturbArtIds.has(artId)) {
+                hasDupes = true;
+                break;
+              }
+            }
+            if (hasDupes) break;
+          }
+          if (hasDupes) continue;
+
+          for (const [cid, entry] of Object.entries(candidate.assignment)) {
+            bestArtifactsByChar[cid] = artsTupleToRecord(
+              entry.artifacts as ArtifactTuple
+            );
+          }
+          perturbationImproved = true;
+          break;
+        }
+      }
+    }
+
+    // Also try all-3+ characters if there are 3+ perturbChars
+    if (!perturbationImproved && perturbChars.length >= 3) {
+      if (!teamDeadlineMs || performance.now() < teamDeadlineMs - 500) {
+        const allTopK: Record<string, TopKEntry[]> = {};
+        for (const cid of perturbChars) {
+          allTopK[cid] = (topKByChar[cid] ?? []).filter(
+            (entry) => !hasIntersection(entry.artifactIds, fixedArtIds)
+          );
+        }
+
+        const allEvalFn: TeamEvalFn = (assignment) => {
+          const testArts = { ...bestArtifactsByChar };
+          for (const [cid, entry] of Object.entries(assignment)) {
+            testArts[cid] = artsTupleToRecord(entry.artifacts as ArtifactTuple);
+          }
+          const dmg = evalWithSetDetection(testArts);
+          return dmg > 0 ? dmg : Number.NEGATIVE_INFINITY;
+        };
+
+        const allResult = findBestTeamAllocation(
+          perturbChars,
+          allTopK,
+          MAX_TEAM_SEARCH,
+          allEvalFn
+        );
+
+        if (
+          allResult.candidates.length > 0 &&
+          allResult.candidates[0].score > prePerturbDamage + 0.5
+        ) {
+          const bestCandidate = allResult.candidates[0];
+          for (const [cid, entry] of Object.entries(bestCandidate.assignment)) {
+            bestArtifactsByChar[cid] = artsTupleToRecord(
+              entry.artifacts as ArtifactTuple
+            );
+          }
+          perturbationImproved = true;
+        }
+      }
+    }
+
+    // If perturbation found improvement, run one more Phase 3 convergence pass
+    if (perturbationImproved) {
+      for (let round = 0; round < MAX_PHASE3_ROUNDS; round++) {
+        if (teamDeadlineMs && teamDeadlineMs - performance.now() < 1000) break;
+
+        const currentTeamDamage = (() => {
+          const sheets = buildSheetsFromArtifacts(
+            baseSheets,
+            bestArtifactsByChar
+          );
+          try {
+            if (!teamArtifactsMeetConstraints(bestArtifactsByChar)) return 0;
+            return evaluateCombo(effectiveTeamBuild, combo, sheets, calcContext)
+              .totalDamage;
+          } catch {
+            return 0;
+          }
+        })();
+
+        // Sequential B&B for each Phase 3 character
+        let roundImproved = false;
+        for (const charId of phase3Chars) {
+          if (teamDeadlineMs && performance.now() >= teamDeadlineMs - 500)
+            break;
+
+          const charConfig = effectivePerChar[charId]!;
+          const refinedBaseSheets: Record<string, StatSheet> = {
+            ...baseSheets,
+          };
+          const excludedIdSet = new Set<string>();
+
+          for (const otherId of allCharIds) {
+            if (otherId === charId) continue;
+            const otherArts = bestArtifactsByChar[otherId];
+            if (!otherArts) continue;
+            const pieces = allSlots
+              .map((s) => otherArts[s])
+              .filter((a): a is ArtifactData => a != null);
+            if (pieces.length > 0) {
+              refinedBaseSheets[otherId] = StatSheet.fromArtifacts(pieces);
+            }
+            for (const art of pieces) excludedIdSet.add(art.id);
+          }
+
+          const budgetMs = perCharDeadlineMs ? perCharDeadlineMs * 0.5 : 5000;
+          const reoptResult = runCharacterBnB(
+            charId,
+            charConfig,
+            effectiveTeamBuild,
+            carryCharId,
+            getCharInventory(charId),
+            globalConfig,
+            refinedBaseSheets,
+            calcContext,
+            excludedIdSet,
+            combo,
+            TOP_K,
+            performance.now() + budgetMs,
+            undefined,
+            maxArtsPerSlot ?? 0,
+            undefined,
+            buffOverrides
+          );
+
+          if (
+            reoptResult.collector.best &&
+            reoptResult.collector.best.damage > currentTeamDamage
+          ) {
+            const newArts = artsTupleToRecord(
+              reoptResult.collector.best.artifacts as ArtifactTuple
+            );
+            const testArts = { ...bestArtifactsByChar, [charId]: newArts };
+            const testSheets = buildSheetsFromArtifacts(baseSheets, testArts);
+            let newTeamDamage: number;
+            try {
+              if (!teamArtifactsMeetConstraints(testArts)) continue;
+              newTeamDamage = evaluateCombo(
+                effectiveTeamBuild,
+                combo,
+                testSheets,
+                calcContext
+              ).totalDamage;
+            } catch {
+              continue;
+            }
+            if (newTeamDamage > currentTeamDamage + 0.5) {
+              bestArtifactsByChar[charId] = newArts;
+              roundImproved = true;
+            }
+          }
+        }
+
+        if (!roundImproved) break;
+      }
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════
   // Heuristic Fill for Saturated & Failed Characters
   //
   // Saturated characters' artifacts don't affect team damage, so B&B
@@ -2396,6 +2740,131 @@ export async function* runTeamOptimization(
   }
 
   if (setsChanged) effectiveTeamBuild = rebuildTeamBuild();
+
+  // ── Post-fill coordinate descent ──
+  // Now that heuristic-filled characters have their final artifacts,
+  // do one more coordinate descent pass to check if any character's
+  // allocation can be improved in this final eval context.
+  // This catches cases where Phase 3 evaluated without context from
+  // characters that were empty during Phase 3 but now have artifacts.
+  if (phase3Chars.length > 0) {
+    // Set-aware evaluation matching the final output pipeline
+    const postFillEval = (): number => {
+      const sheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
+      try {
+        // Detect sets for accurate eval
+        let evalTB = effectiveTeamBuild;
+        let needsRebuild = false;
+        const testPerChar = { ...effectivePerChar };
+        for (const cid of allCharIds) {
+          const arts = bestArtifactsByChar[cid];
+          if (!arts) continue;
+          const pieces = allSlots
+            .map((s) => arts[s])
+            .filter((a): a is ArtifactData => a != null);
+          if (pieces.length === 0) continue;
+          const detected = detectEquippedSets(pieces);
+          const epc = testPerChar[cid];
+          if (!epc) continue;
+          if (
+            detected.artifactSetId !== (epc.artifactSetId ?? null) ||
+            detected.artifactHalfSetIds.length !==
+              (epc.artifactHalfSetIds ?? []).length ||
+            [...detected.artifactHalfSetIds].sort().join(",") !==
+              [...(epc.artifactHalfSetIds ?? [])].sort().join(",")
+          ) {
+            testPerChar[cid] = {
+              ...epc,
+              artifactSetId: detected.artifactSetId,
+              artifactHalfSetIds: detected.artifactHalfSetIds,
+            };
+            needsRebuild = true;
+          }
+        }
+        if (needsRebuild) {
+          const newConfigs = teamBuild.configs.map((c) => {
+            const epc = testPerChar[c.charId];
+            return epc
+              ? {
+                  ...c,
+                  artifactSetId: epc.artifactSetId ?? null,
+                  artifactHalfSetIds: epc.artifactHalfSetIds ?? [],
+                }
+              : c;
+          });
+          evalTB = new TeamBuild(
+            newConfigs,
+            teamBuild.combatOpts,
+            teamBuild.enemyAura,
+            teamBuild.extraBuffs
+          );
+        }
+        return evaluateCombo(evalTB, combo, sheets, calcContext, buffOverrides)
+          .totalDamage;
+      } catch {
+        return 0;
+      }
+    };
+
+    // Build set of all artifact IDs used by non-phase3 chars (fixed)
+    const fixedIds = new Set<string>();
+    for (const cid of allCharIds) {
+      if (phase3Chars.includes(cid)) continue;
+      const arts = bestArtifactsByChar[cid];
+      if (!arts) continue;
+      for (const s of allSlots) {
+        const a = arts[s];
+        if (a) fixedIds.add(a.id);
+      }
+    }
+
+    let currentDamage = postFillEval();
+    let improved = true;
+    while (improved) {
+      improved = false;
+      for (const charId of phase3Chars) {
+        const entries = topKByChar[charId] ?? [];
+        if (entries.length <= 1) continue;
+        let saved = bestArtifactsByChar[charId];
+        for (const entry of entries) {
+          const candidate = artsTupleToRecord(entry.artifacts);
+          // Check no conflicts with fixed chars or other phase3 chars
+          let conflict = false;
+          for (const slot of allSlots) {
+            const a = candidate[slot];
+            if (!a) continue;
+            if (fixedIds.has(a.id)) {
+              conflict = true;
+              break;
+            }
+            for (const otherId of phase3Chars) {
+              if (otherId === charId) continue;
+              const otherArts = bestArtifactsByChar[otherId];
+              if (!otherArts) continue;
+              for (const os of allSlots) {
+                if (otherArts[os]?.id === a.id) {
+                  conflict = true;
+                  break;
+                }
+              }
+              if (conflict) break;
+            }
+            if (conflict) break;
+          }
+          if (conflict) continue;
+          bestArtifactsByChar[charId] = candidate;
+          const damage = postFillEval();
+          if (damage > currentDamage + 0.5) {
+            currentDamage = damage;
+            saved = candidate;
+            improved = true;
+          } else {
+            bestArtifactsByChar[charId] = saved;
+          }
+        }
+      }
+    }
+  }
 
   const finalSheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
 
