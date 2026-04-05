@@ -37,7 +37,10 @@ class SnareHook extends WeaponBase {
       this.teamMeta.hasReaction("burning", cid) ||
       this.teamMeta.hasReaction("quicken", cid) ||
       this.teamMeta.hasReaction("swirl", cid) ||
-      this.teamMeta.hasReaction("crystallize", cid);
+      this.teamMeta.hasReaction("crystallize", cid) ||
+      this.teamMeta.hasReaction("lunarCharged", cid) ||
+      this.teamMeta.hasReaction("lunarBloom", cid) ||
+      this.teamMeta.hasReaction("lunarCrystallize", cid);
     if (!canReact) return [];
     const mult = this.teamMeta.countByFaction("Moonsign") >= 2 ? 2 : 1;
     return [

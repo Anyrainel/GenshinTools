@@ -1,9 +1,11 @@
-import { StatBuff } from "../damageBuffs";
+import type { Faction } from "@/data/types";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
   type DamageFormula,
   DirectFormula,
+  LunarDirectFormula,
   LunarFormula,
   TransformFormula,
 } from "../damageFormulas";
@@ -493,6 +495,192 @@ class Tartaglia extends CharacterBase {
         label: { zh: "E状态激发", en: "E Stance Change" },
         parts: [
           { formula: new DirectFormula(this.param("E", 1), meleeSkillTag) },
+        ],
+      },
+    };
+  })();
+}
+
+@RegisterCharacter("linnea")
+class Linnea extends CharacterBase {
+  private readonly isAscendantGleam =
+    this.teamMeta.countByFaction("Moonsign") >= 2;
+
+  readonly buffs = [
+    // P3 (Moonsign Benediction): Per 100 DEF → +0.7% Lunar-Crystallize reactionBaseDmg%, cap 14%
+    new ScalingBuff(
+      cbs(this, "P3", ["passive"]),
+      { receiver: "team", filter: { reactions: ["lunarCrystallize"] } },
+      [],
+      "def",
+      "reactionBaseDmg%",
+      0.00007,
+      0.14
+    ),
+    // P1 (Field Observation Notes): When Lumi on field, nearby enemy Geo RES -15%; Ascendant Gleam: total -30%
+    new StatBuff(
+      cbs(this, "P1", ["E"]),
+      { receiver: "team", filter: { elements: ["Geo"] } },
+      [{ key: "resReduction%", value: this.isAscendantGleam ? 0.3 : 0.15 }]
+    ),
+    // P2 (Universal Naturalist Archive): EM = 5% DEF
+    // Moonsign active → that character gets EM; non-Moonsign active → Linnea gets EM
+    new ScalingBuff(
+      cbs(this, "P2", ["passive"]),
+      { receiver: "teamOnField", factions: ["Moonsign" as Faction] },
+      [],
+      "def",
+      "em",
+      0.05
+    ),
+    new ScalingBuff(
+      cbs(this, "P2", ["passive"]),
+      { receiver: "selfOffField" },
+      [],
+      "def",
+      "em",
+      0.05
+    ),
+    // C1: Field Catalog — team LC reaction hits gain +75% DEF baseDmg (stacks replenish, assume unlimited)
+    // C6 enhances: 1.5x DMG → 112.5% DEF per hit
+    ...(this.constellation >= 1
+      ? [
+          new ScalingBuff(
+            cbs(this, this.constellation >= 6 ? "C6" : "C1", ["E"]),
+            { receiver: "team", filter: { reactions: ["lunarCrystallize"] } },
+            [],
+            "def",
+            "baseDmg",
+            this.constellation >= 6 ? 0.75 * 1.5 : 0.75
+          ),
+        ]
+      : []),
+    // C2: Within 8s after Moondrift Harmony, Hydro+Geo party members gain +40% CRIT DMG
+    ...(() => {
+      if (this.constellation < 2) return [];
+      const buffs: StatBuff[] = [];
+      for (const [cid, el] of Object.entries(this.teamMeta.elements)) {
+        if (el === "Hydro" || el === "Geo") {
+          buffs.push(
+            new StatBuff(
+              cbs(this, "C2", ["E"]),
+              { receiver: "team", charId: cid },
+              [{ key: "cd", value: 0.4 }]
+            )
+          );
+        }
+      }
+      return buffs;
+    })(),
+    // C2: Million Ton Crush CRIT DMG +150% — applied via bespokeBuff on the formula part
+    // C4: Within 5s after Moondrift Harmony, Linnea and active character DEF +25%
+    // "Linnea and active character" → self + onField
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["E"]), { receiver: "self" }, [
+            { key: "def%", value: 0.25 },
+          ]),
+          new StatBuff(cbs(this, "C4", ["E"]), { receiver: "teamOnField" }, [
+            { key: "def%", value: 0.25 },
+          ]),
+        ]
+      : []),
+    // C6: Lunar-Crystallize DMG elevated 25% (requires Ascendant Gleam)
+    ...(this.constellation >= 6 && this.isAscendantGleam
+      ? [
+          new StatBuff(
+            cbs(this, "C6", []),
+            { receiver: "team", filter: { reactions: ["lunarCrystallize"] } },
+            [{ key: "elevated%", value: 0.25 }]
+          ),
+        ]
+      : []),
+  ];
+
+  // Rotation: E > Q > swap; off-field support. Lumi attacks ~5 instances, 1 Million Ton, 1 Overdrive.
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "linnea-pound", count: 5 },
+      { id: "linnea-million-ton", count: 1 },
+      { id: "linnea-overdrive", count: 1 },
+    ];
+  }
+
+  protected readonly formulaMap = (() => {
+    // Lumi Pound-Pound Pummeler: param1 (DEF-scaled)
+    const poundMult = this.param("E", 1);
+    // Lumi Heavy Overdrive Hammer: param2 (DEF-scaled)
+    const overdriveMult = this.param("E", 2);
+    // Lumi Million Ton Crush: param3 (DEF-scaled, Lunar-Crystallize Reaction DMG)
+    const millionTonMult = this.param("E", 3);
+
+    return {
+      "linnea-pound": {
+        label: { zh: "E锤击 (×1)", en: "E Pound (×1)" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              poundMult,
+              { element: "Geo", ability: "skill", reaction: "none" },
+              "def"
+            ),
+            hits: 2,
+            offField: true,
+          },
+        ],
+      },
+      "linnea-million-ton": {
+        label: { zh: "E百万吨", en: "E Million Ton" },
+        parts: [
+          {
+            formula: new LunarDirectFormula(
+              millionTonMult,
+              {
+                element: "Geo",
+                ability: "skill",
+                reaction: "lunarCrystallize",
+              },
+              "def"
+            ),
+            // C1: Million Ton consumes 5 stacks → +150% DEF baseDmg per stack (C6: ×1.5)
+            // C2: Million Ton Crush CRIT DMG +150%
+            ...(() => {
+              const hasC1 = this.constellation >= 1;
+              const hasC2 = this.constellation >= 2;
+              if (!hasC1 && !hasC2) return {};
+              const isC6 = this.constellation >= 6;
+              const perStack = isC6 ? 1.5 * 1.5 : 1.5;
+              const stats = hasC2 ? [{ key: "cd" as const, value: 1.5 }] : [];
+              return {
+                bespokeBuff: new ScalingBuff(
+                  cbs(this, hasC1 ? "C1" : "C2", ["E"]),
+                  { receiver: "self" },
+                  stats,
+                  "def",
+                  "baseDmg",
+                  hasC1 ? perStack * 5 : 0
+                ),
+              };
+            })(),
+            offField: true,
+          },
+        ],
+      },
+      "linnea-overdrive": {
+        label: { zh: "E重锤", en: "E Overdrive" },
+        parts: [
+          {
+            formula: new LunarDirectFormula(
+              overdriveMult,
+              {
+                element: "Geo",
+                ability: "skill",
+                reaction: "lunarCrystallize",
+              },
+              "def"
+            ),
+            offField: true,
+          },
         ],
       },
     };

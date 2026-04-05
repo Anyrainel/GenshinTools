@@ -776,8 +776,8 @@ class Furina extends CharacterBase {
       },
       "furina-salon-total": {
         label: {
-          zh: "E×32",
-          en: "E (×32)",
+          zh: "E ×(18+9+5)",
+          en: "E ×(18+9+5)",
         },
         parts: [
           {

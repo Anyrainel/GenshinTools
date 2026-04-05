@@ -94,6 +94,27 @@ const KEY_CONSTRAINTS: Partial<Record<StatKey, KeyConstraint>> = {
 };
 
 /**
+ * Per-key allowlist for constraint violations that are intentional.
+ * Key: `${charOrWeaponId}/${origin}`, Value: set of constraint descriptions to skip.
+ *
+ * Example: Mavuika C2 uses defReduction% with selfOffField/other receivers
+ * (below C6) to model Ring-form-only DEF shred without affecting her own
+ * on-field Flamestrider damage.
+ */
+const CONSTRAINT_ALLOWLIST: Record<string, Set<string>> = {
+  "mavuika/C2": new Set(["defReduction%:requiresReceiver"]),
+};
+
+function isAllowlisted(
+  source: BuffSource,
+  key: StatKey,
+  constraint: string
+): boolean {
+  const id = `${source.id}/${source.origin ?? ""}`;
+  return CONSTRAINT_ALLOWLIST[id]?.has(`${key}:${constraint}`) ?? false;
+}
+
+/**
  * Validates a StatEntry[] against their shared BuffTarget and BuffSource.
  * Checks for:
  *  - duplicate keys
@@ -101,10 +122,9 @@ const KEY_CONSTRAINTS: Partial<Record<StatKey, KeyConstraint>> = {
  *  - key/receiver constraints from KEY_CONSTRAINTS
  *  - special-cased rules (e.g. elevated% must only scope to lunar reactions)
  *
- * Called from the StatBuff constructor, so all violations surface at
- * construction time and are caught by entity instantiation tests.
+ * Exported for use in tests. Not called in the production StatBuff constructor.
  */
-function validateStatBuff(
+export function validateStatBuff(
   entries: StatEntry[],
   target: BuffTarget,
   source: BuffSource
@@ -175,7 +195,11 @@ function validateStatBuff(
   for (const { key } of entries) {
     const c = KEY_CONSTRAINTS[key];
     if (c) {
-      if (c.requiresReceiver && target.receiver !== c.requiresReceiver) {
+      if (
+        c.requiresReceiver &&
+        target.receiver !== c.requiresReceiver &&
+        !isAllowlisted(source, key, "requiresReceiver")
+      ) {
         throw new Error(
           `${label} ${key} must use receiver "${c.requiresReceiver}". Ask for review for this case.`
         );
@@ -224,7 +248,7 @@ function validateStatBuff(
   }
 }
 
-function validateOrigin(source: BuffSource): void {
+export function validateOrigin(source: BuffSource): void {
   if (source.type === "extra") return;
   if (source.type === "character" || source.type === "weapon") {
     if (!source.origin) {
@@ -268,10 +292,7 @@ export class StatBuff {
     readonly source: BuffSource,
     readonly target: BuffTarget,
     readonly staticBuffs: StatEntry[]
-  ) {
-    validateOrigin(source);
-    validateStatBuff(staticBuffs, target, source);
-  }
+  ) {}
 
   /**
    * Stat contributions that depend on resolved stats.
@@ -369,7 +390,6 @@ export class ScalingBuff extends StatBuff {
     readonly threshold?: number
   ) {
     super(source, target, staticBuffs);
-    validateStatBuff([{ key: outputKey, value: 0 }], target, source);
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
@@ -424,7 +444,6 @@ export class CrossScalingBuff extends StatBuff {
     readonly outputKey: StatKey
   ) {
     super(source, target, staticBuffs);
-    validateStatBuff([{ key: outputKey, value: 0 }], target, source);
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {

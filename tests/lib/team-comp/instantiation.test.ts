@@ -13,9 +13,12 @@ import {
   preloadGameStats,
 } from "@/lib/gameStatsLoader";
 import {
+  CrossScalingBuff,
   ScalingBuff,
   type StatBuff,
   getBuffInstanceKey,
+  validateOrigin,
+  validateStatBuff,
 } from "@/lib/team-comp/damageBuffs";
 import {
   StatSheet,
@@ -186,13 +189,41 @@ describe("Preset Validation", () => {
 });
 
 describe("Entity Instantiation", () => {
-  describe("Characters (preset teams)", () => {
-    it.each(presetCases)(
-      "%s > %s",
-      (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
+  describe.each([2, 6] as const)(
+    "Characters C%i (preset teams)",
+    (constellation) => {
+      it.each(presetCases)(
+        "%s > %s",
+        (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
+          try {
+            const team = new TeamMeta(characters, {}, artifactSets);
+            const char = createCharacter(
+              charId,
+              100,
+              constellation,
+              team,
+              opts
+            );
+            char.buffs;
+          } catch (e) {
+            rethrowIfUnexpected(
+              e,
+              "No character registered",
+              "No character stats for"
+            );
+          }
+        }
+      );
+    }
+  );
+
+  describe.each([2, 6] as const)(
+    "Characters C%i (no preset)",
+    (constellation) => {
+      it.each(nonPresetCharIds)("%s", (charId) => {
         try {
-          const team = new TeamMeta(characters, {}, artifactSets);
-          const char = createCharacter(charId, 100, 6, team, opts);
+          const team = new TeamMeta([charId]);
+          const char = createCharacter(charId, 100, constellation, team);
           char.buffs;
         } catch (e) {
           rethrowIfUnexpected(
@@ -201,25 +232,9 @@ describe("Entity Instantiation", () => {
             "No character stats for"
           );
         }
-      }
-    );
-  });
-
-  describe("Characters (no preset)", () => {
-    it.each(nonPresetCharIds)("%s", (charId) => {
-      try {
-        const team = new TeamMeta([charId]);
-        const char = createCharacter(charId, 100, 6, team);
-        char.buffs;
-      } catch (e) {
-        rethrowIfUnexpected(
-          e,
-          "No character registered",
-          "No character stats for"
-        );
-      }
-    });
-  });
+      });
+    }
+  );
 
   describe("Characters with options", () => {
     const cases = Object.keys(charactersById).flatMap((charId) => {
@@ -570,6 +585,74 @@ describe("Entity Instantiation", () => {
         halfSet.buffs;
       } catch (e) {
         rethrowIfUnexpected(e, "No artifact half-set registered");
+      }
+    });
+  });
+
+  describe("Buff static validation", () => {
+    function validateAllBuffs(buffs: StatBuff[]): string[] {
+      const errors: string[] = [];
+      for (const buff of buffs) {
+        try {
+          validateOrigin(buff.source);
+          validateStatBuff(buff.staticBuffs, buff.target, buff.source);
+        } catch (e) {
+          if (e instanceof Error) errors.push(e.message);
+        }
+        // ScalingBuff / CrossScalingBuff: also validate the dynamic outputKey
+        if (buff instanceof ScalingBuff || buff instanceof CrossScalingBuff) {
+          try {
+            validateStatBuff(
+              [{ key: buff.outputKey, value: 0 }],
+              buff.target,
+              buff.source
+            );
+          } catch (e) {
+            if (e instanceof Error) errors.push(e.message);
+          }
+        }
+      }
+      return errors;
+    }
+
+    describe.each([2, 6] as const)("Characters C%i", (constellation) => {
+      it.each(Object.keys(charactersById))("%s", (charId) => {
+        try {
+          const team = new TeamMeta([charId]);
+          const char = createCharacter(charId, 100, constellation, team);
+          expect(validateAllBuffs(char.buffs)).toEqual([]);
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No character registered",
+            "No character stats for"
+          );
+        }
+      });
+    });
+
+    it.each(Object.keys(weaponsById))("weapon %s", (weaponId) => {
+      try {
+        const team = new TeamMeta(["amber"]);
+        const weapon = createWeapon(weaponId, 5, "amber", team);
+        expect(validateAllBuffs(weapon.buffs)).toEqual([]);
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No weapon registered",
+          "No weapon stats for",
+          "No L90 weapon stats for"
+        );
+      }
+    });
+
+    it.each(Object.keys(artifactsById))("artifact set %s", (artifactId) => {
+      try {
+        const team = new TeamMeta(["amber"]);
+        const artifactSet = createArtifactSet(artifactId, "amber", team);
+        expect(validateAllBuffs(artifactSet.buffs)).toEqual([]);
+      } catch (e) {
+        rethrowIfUnexpected(e, "No artifact set registered");
       }
     });
   });

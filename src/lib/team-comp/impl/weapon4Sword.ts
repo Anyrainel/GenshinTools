@@ -401,6 +401,17 @@ class AmenomaKageuchi extends WeaponBase {
   readonly buffs = [];
 }
 
+@RegisterWeapon("prized_isshin_blade")
+class PrizedIsshinBlade extends WeaponBase {
+  // -50% all DMG (permanent). Proc DMG (180% ATK AoE, 8s CD) not modeled — engine gap: no weapon formula support.
+  // HP restore (100% ATK) skipped per U9.
+  readonly buffs = [
+    new StatBuff(wbs(this), { receiver: "self" }, [
+      { key: "dmg%", value: -0.5 },
+    ]),
+  ];
+}
+
 @RegisterWeapon("lions_roar")
 class LionsRoar extends WeaponBase {
   // Conditional: enemy affected by Pyro/Electro
