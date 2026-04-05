@@ -1162,34 +1162,30 @@ class Mualani extends CharacterBase {
       reaction: "none" as const,
     };
     return {
-      // C1+: Heavy bite with +66% HP baseDmg (C6 makes every bite heavy)
-      "mualani-bite-heavy": {
-        label: { zh: "普攻(强化)", en: "NA (Enhanced)" },
-        minC: 1,
-        parts: [
-          {
-            formula: new DirectFormula(biteMult, biteTag, "hp"),
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "C1", ["E"]),
-              {
-                receiver: "selfOnField",
-                filter: { abilities: ["normal"] },
-              },
-              [],
-              "hp",
-              "baseDmg",
-              0.66
-            ),
-          },
-        ],
-      },
-      // Normal bite (no C1 bonus). At C6 all bites are enhanced, so this is disabled.
-      "mualani-bite-normal": {
+      "mualani-bite": {
         label: { zh: "普攻", en: "NA" },
-        when: this.constellation < 6,
         parts: [
           {
             formula: new DirectFormula(biteMult, biteTag, "hp"),
+            ...(this.constellation >= 1
+              ? {
+                  bespokeBuff: new ScalingBuff(
+                    {
+                      ...cbs(this, "C1", ["E"]),
+                      // C1-C5: 1 heavy out of 3 bites. C6: all bites heavy (no stack limit).
+                      maxStacks: this.constellation >= 6 ? undefined : 1,
+                    },
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["normal"] },
+                    },
+                    [],
+                    "hp",
+                    "baseDmg",
+                    0.66
+                  ),
+                }
+              : {}),
           },
         ],
       },
@@ -1216,22 +1212,7 @@ class Mualani extends CharacterBase {
   // C0: 3 normal bites. C1-C5: 1 heavy + 2 normal. C6: 3 heavy.
   protected override get comboDescriptor(): ComboDescriptor {
     return [
-      {
-        id: "mualani-bite-heavy",
-        count: 0,
-        bonus: [
-          { minC: 1, delta: 1 },
-          { minC: 6, delta: 2 },
-        ],
-      },
-      {
-        id: "mualani-bite-normal",
-        count: 3,
-        bonus: [
-          { minC: 1, delta: -1 },
-          { minC: 6, delta: -2 },
-        ],
-      },
+      { id: "mualani-bite", count: 3 },
       { id: "mualani-burst", count: 1 },
     ];
   }
