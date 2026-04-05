@@ -483,6 +483,42 @@
           "foundAt": "2026-03-23T07:22:14.027Z",
           "algorithm": "v2",
           "solveTimeSec": 14.671449799999998
+        },
+        {
+          "artifactAssignment": {
+            "varka": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-1572"
+            },
+            "durin": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1910"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            },
+            "venti": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1394",
+              "circlet": "artifact-15"
+            }
+          },
+          "recordedDamage": 557558.8155284298,
+          "foundAt": "2026-04-05T00:47:45.976Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.5822183000000005
         }
       ]
     },
@@ -687,7 +723,7 @@
               "circlet": "artifact-949"
             }
           },
-          "recordedDamage": 1282782.8028827254,
+          "recordedDamage": 1715321.413356209,
           "foundAt": "2026-03-23T06:00:26.950Z",
           "algorithm": "v2",
           "solveTimeSec": 28.4919989
@@ -723,7 +759,7 @@
               "circlet": "artifact-949"
             }
           },
-          "recordedDamage": 1295185.430150847,
+          "recordedDamage": 1728135.3721122814,
           "foundAt": "2026-03-23T07:10:47.021Z",
           "algorithm": "v2",
           "solveTimeSec": 25.979619800000002
@@ -759,10 +795,46 @@
               "circlet": "artifact-215"
             }
           },
-          "recordedDamage": 1294973.1894418825,
+          "recordedDamage": 1736313.9482682338,
           "foundAt": "2026-04-04T15:42:35.483Z",
           "algorithm": "v2",
           "solveTimeSec": 5.7327141
+        },
+        {
+          "artifactAssignment": {
+            "zibai": {
+              "flower": "artifact-1665",
+              "plume": "artifact-1014",
+              "sands": "artifact-1344",
+              "goblet": "artifact-1641",
+              "circlet": "artifact-1129"
+            },
+            "illuga": {
+              "flower": "artifact-266",
+              "plume": "artifact-1280",
+              "sands": "artifact-1134",
+              "goblet": "artifact-1403",
+              "circlet": "artifact-1305"
+            },
+            "gorou": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "columbina": {
+              "flower": "artifact-3",
+              "plume": "artifact-1729",
+              "sands": "artifact-1561",
+              "goblet": "artifact-1581",
+              "circlet": "artifact-215"
+            }
+          },
+          "recordedDamage": 1736313.9482682338,
+          "foundAt": "2026-04-05T17:00:07.918Z",
+          "algorithm": "v2",
+          "solveTimeSec": 6.5408346
         }
       ]
     },
@@ -1859,6 +1931,42 @@
           "foundAt": "2026-03-23T07:24:36.547Z",
           "algorithm": "v2",
           "solveTimeSec": 5.955641800000012
+        },
+        {
+          "artifactAssignment": {
+            "venti": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-697"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-0",
+              "circlet": "artifact-1572"
+            },
+            "faruzan": {
+              "flower": "artifact-3",
+              "plume": "artifact-38",
+              "sands": "artifact-758",
+              "goblet": "artifact-684",
+              "circlet": "artifact-889"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 2042563.9599129478,
+          "foundAt": "2026-04-05T01:01:08.405Z",
+          "algorithm": "v2",
+          "solveTimeSec": 0.7390537000000477
         }
       ]
     },
@@ -2052,6 +2160,42 @@
           "foundAt": "2026-04-04T15:44:58.039Z",
           "algorithm": "v2",
           "solveTimeSec": 5.798762500000012
+        },
+        {
+          "artifactAssignment": {
+            "venti": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1613"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-0",
+              "circlet": "artifact-1572"
+            },
+            "faruzan": {
+              "flower": "artifact-3",
+              "plume": "artifact-38",
+              "sands": "artifact-758",
+              "goblet": "artifact-684",
+              "circlet": "artifact-889"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 797461.9992967938,
+          "foundAt": "2026-04-05T01:01:11.011Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.6016922000000484
         }
       ]
     },
@@ -3275,7 +3419,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 581707.4426370586,
+          "recordedDamage": 801632.069748816,
           "foundAt": "2026-03-23T06:00:39.366Z",
           "algorithm": "v2",
           "solveTimeSec": 7.842469499999999
@@ -3311,7 +3455,7 @@
               "circlet": "artifact-379"
             }
           },
-          "recordedDamage": 583429.4241793565,
+          "recordedDamage": 803350.3425959622,
           "foundAt": "2026-03-23T07:10:56.213Z",
           "algorithm": "v2",
           "solveTimeSec": 4.104372100000001
@@ -3347,7 +3491,7 @@
               "circlet": "artifact-1657"
             }
           },
-          "recordedDamage": 583429.4241793565,
+          "recordedDamage": 803350.3425959622,
           "foundAt": "2026-03-23T07:22:44.654Z",
           "algorithm": "v2",
           "solveTimeSec": 9.224615399999996
@@ -3383,7 +3527,7 @@
               "circlet": "artifact-215"
             }
           },
-          "recordedDamage": 584169.3900430046,
+          "recordedDamage": 802246.5200571911,
           "foundAt": "2026-03-29T17:01:48.131Z",
           "algorithm": "v2",
           "solveTimeSec": 0.6691883000000003
@@ -3419,7 +3563,7 @@
               "circlet": "artifact-215"
             }
           },
-          "recordedDamage": 584048.800642557,
+          "recordedDamage": 802246.5200571911,
           "foundAt": "2026-04-04T15:42:54.280Z",
           "algorithm": "v2",
           "solveTimeSec": 3.8247440999999998
@@ -3627,7 +3771,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T04:24:25.903Z",
           "algorithm": "v2"
         },
@@ -3662,7 +3806,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T05:19:07.550Z",
           "algorithm": "v2"
         },
@@ -3697,7 +3841,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T12:59:51.307Z",
           "algorithm": "v2",
           "solveTimeSec": 15.172251600000003
@@ -3733,7 +3877,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T13:16:39.860Z",
           "algorithm": "v2",
           "solveTimeSec": 14.661169300000001
@@ -3769,7 +3913,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T13:48:15.370Z",
           "algorithm": "v2",
           "solveTimeSec": 14.085392
@@ -3805,7 +3949,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T13:52:40.136Z",
           "algorithm": "v2",
           "solveTimeSec": 14.022726299999999
@@ -3841,7 +3985,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T14:32:31.446Z",
           "algorithm": "v2",
           "solveTimeSec": 34.83199460000001
@@ -3877,7 +4021,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-22T16:01:24.183Z",
           "algorithm": "v2",
           "solveTimeSec": 37.76832780000003
@@ -3913,7 +4057,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T05:00:20.600Z",
           "algorithm": "v2",
           "solveTimeSec": 13.729104199999998
@@ -3949,7 +4093,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T06:00:48.182Z",
           "algorithm": "v2",
           "solveTimeSec": 19.888608400000003
@@ -3985,7 +4129,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T06:03:56.920Z",
           "algorithm": "v2",
           "solveTimeSec": 13.212246500000001
@@ -4021,7 +4165,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T06:10:11.516Z",
           "algorithm": "v2",
           "solveTimeSec": 13.419635300000001
@@ -4057,7 +4201,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T06:30:45.436Z",
           "algorithm": "v2",
           "solveTimeSec": 11.258795199999998
@@ -4093,7 +4237,7 @@
               "circlet": "artifact-647"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T07:16:10.946Z",
           "algorithm": "v2",
           "solveTimeSec": 13.359749600000002
@@ -4129,7 +4273,7 @@
               "circlet": "artifact-618"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T07:22:47.087Z",
           "algorithm": "v2",
           "solveTimeSec": 15.602732099999997
@@ -4165,7 +4309,7 @@
               "circlet": "artifact-189"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-23T16:20:53.495Z",
           "algorithm": "v2",
           "solveTimeSec": 1.7520755999999997
@@ -4201,7 +4345,7 @@
               "circlet": "artifact-187"
             }
           },
-          "recordedDamage": 747297.9521647678,
+          "recordedDamage": 982615.8655031456,
           "foundAt": "2026-03-23T17:42:20.425Z",
           "algorithm": "astar"
         },
@@ -4236,7 +4380,7 @@
               "circlet": "artifact-187"
             }
           },
-          "recordedDamage": 809321.0322794088,
+          "recordedDamage": 1063518.4099251106,
           "foundAt": "2026-03-25T21:18:48.508Z",
           "algorithm": "monaV2"
         },
@@ -4271,7 +4415,7 @@
               "circlet": "artifact-889"
             }
           },
-          "recordedDamage": 809616.3023224704,
+          "recordedDamage": 1060504.5727983676,
           "foundAt": "2026-03-29T17:01:48.615Z",
           "algorithm": "v2",
           "solveTimeSec": 1.3005968000000003
@@ -4307,7 +4451,7 @@
               "circlet": "artifact-889"
             }
           },
-          "recordedDamage": 809608.1431398311,
+          "recordedDamage": 1060504.5727983676,
           "foundAt": "2026-04-03T08:09:06.185Z",
           "algorithm": "v2",
           "solveTimeSec": 1.3088063
@@ -5891,255 +6035,12 @@
               "goblet": "artifact-246",
               "circlet": "artifact-680"
             },
-            "mavuika": {
-              "flower": "artifact-713",
-              "plume": "artifact-1729",
-              "sands": "artifact-780",
-              "goblet": "artifact-847",
-              "circlet": "artifact-701"
-            },
             "xilonen": {
               "flower": "artifact-1605",
               "plume": "artifact-1995",
               "sands": "artifact-1571",
               "goblet": "artifact-1574",
               "circlet": "artifact-909"
-            }
-          },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-22T04:25:25.497Z",
-          "algorithm": "v2"
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-246",
-              "circlet": "artifact-680"
-            },
-            "mavuika": {
-              "flower": "artifact-713",
-              "plume": "artifact-370",
-              "sands": "artifact-846",
-              "goblet": "artifact-847",
-              "circlet": "artifact-701"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-909"
-            }
-          },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-22T11:42:12.312Z",
-          "algorithm": "astar"
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-748",
-              "circlet": "artifact-680"
-            },
-            "mavuika": {
-              "flower": "artifact-713",
-              "plume": "artifact-1729",
-              "sands": "artifact-780",
-              "goblet": "artifact-847",
-              "circlet": "artifact-701"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-909"
-            }
-          },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-22T14:34:46.773Z",
-          "algorithm": "v2",
-          "solveTimeSec": 31.79481
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-246",
-              "circlet": "artifact-680"
-            },
-            "mavuika": {
-              "flower": "artifact-713",
-              "plume": "artifact-1729",
-              "sands": "artifact-780",
-              "goblet": "artifact-847",
-              "circlet": "artifact-701"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1464",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-949"
-            }
-          },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-22T15:33:42.315Z",
-          "algorithm": "v2",
-          "solveTimeSec": 52.92336170000001
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-748",
-              "circlet": "artifact-680"
-            },
-            "mavuika": {
-              "flower": "artifact-1080",
-              "plume": "artifact-854",
-              "sands": "artifact-780",
-              "goblet": "artifact-847",
-              "circlet": "artifact-701"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-909"
-            }
-          },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-22T16:04:48.570Z",
-          "algorithm": "v2",
-          "solveTimeSec": 59.576904500000005
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-246",
-              "circlet": "artifact-680"
-            },
-            "mavuika": {
-              "flower": "artifact-1080",
-              "plume": "artifact-854",
-              "sands": "artifact-780",
-              "goblet": "artifact-847",
-              "circlet": "artifact-701"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1464",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-949"
-            }
-          },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-22T16:46:37.594Z",
-          "algorithm": "v2",
-          "solveTimeSec": 53.553860999999976
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-246",
-              "circlet": "artifact-680"
-            },
-            "mavuika": {
-              "flower": "artifact-1080",
-              "plume": "artifact-854",
-              "sands": "artifact-780",
-              "goblet": "artifact-847",
-              "circlet": "artifact-701"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-909"
-            }
-          },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-23T05:01:03.454Z",
-          "algorithm": "v2",
-          "solveTimeSec": 29.379100600000005
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-246",
-              "circlet": "artifact-680"
             },
             "mavuika": {
               "flower": "artifact-1080",
@@ -6147,19 +6048,12 @@
               "sands": "artifact-204",
               "goblet": "artifact-869",
               "circlet": "artifact-1041"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-909"
             }
           },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-23T07:11:36.799Z",
+          "recordedDamage": 1104116.701665792,
+          "foundAt": "2026-03-29T17:01:50.960Z",
           "algorithm": "v2",
-          "solveTimeSec": 24.3006875
+          "solveTimeSec": 0.6796082000000006
         },
         {
           "artifactAssignment": {
@@ -6174,15 +6068,15 @@
               "flower": "artifact-844",
               "plume": "artifact-911",
               "sands": "artifact-1046",
-              "goblet": "artifact-748",
+              "goblet": "artifact-246",
               "circlet": "artifact-680"
             },
             "mavuika": {
-              "flower": "artifact-1080",
-              "plume": "artifact-854",
-              "sands": "artifact-846",
-              "goblet": "artifact-737",
-              "circlet": "artifact-701"
+              "flower": "artifact-363",
+              "plume": "artifact-687",
+              "sands": "artifact-780",
+              "goblet": "artifact-847",
+              "circlet": "artifact-779"
             },
             "xilonen": {
               "flower": "artifact-1605",
@@ -6192,44 +6086,10 @@
               "circlet": "artifact-909"
             }
           },
-          "recordedDamage": 1246086.6735523434,
-          "foundAt": "2026-03-25T21:21:40.675Z",
-          "algorithm": "monaV2"
-        },
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-737",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-266",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-685",
-              "circlet": "artifact-735"
-            },
-            "mavuika": {
-              "flower": "artifact-3",
-              "plume": "artifact-854",
-              "sands": "artifact-846",
-              "goblet": "artifact-847",
-              "circlet": "artifact-1079"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-110",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-949"
-            }
-          },
-          "recordedDamage": 1160252.9073791043,
-          "foundAt": "2026-03-25T21:49:33.829Z",
-          "algorithm": "astar"
+          "recordedDamage": 1104116.701665792,
+          "foundAt": "2026-04-04T15:43:16.689Z",
+          "algorithm": "v2",
+          "solveTimeSec": 7.705486199999999
         }
       ]
     },
@@ -9043,7 +8903,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 697801.603132353,
+          "recordedDamage": 1007935.6489689545,
           "foundAt": "2026-03-22T16:04:09.737Z",
           "algorithm": "v2",
           "solveTimeSec": 29.824256899999977
@@ -9079,7 +8939,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 697968.7103857783,
+          "recordedDamage": 1008177.026112791,
           "foundAt": "2026-03-23T05:00:50.192Z",
           "algorithm": "v2",
           "solveTimeSec": 18.474691999999994
@@ -9115,7 +8975,7 @@
               "circlet": "artifact-126"
             }
           },
-          "recordedDamage": 697968.7103857783,
+          "recordedDamage": 1008177.026112791,
           "foundAt": "2026-03-23T07:11:28.181Z",
           "algorithm": "v2",
           "solveTimeSec": 16.32176720000001
@@ -9151,7 +9011,7 @@
               "circlet": "artifact-232"
             }
           },
-          "recordedDamage": 697801.603132353,
+          "recordedDamage": 1007935.6489689545,
           "foundAt": "2026-03-23T07:23:18.100Z",
           "algorithm": "v2",
           "solveTimeSec": 14.885506400000006
@@ -9187,7 +9047,7 @@
               "circlet": "artifact-1648"
             }
           },
-          "recordedDamage": 697968.7103857783,
+          "recordedDamage": 1008177.026112791,
           "foundAt": "2026-03-23T07:25:13.857Z",
           "algorithm": "v2",
           "solveTimeSec": 4.798352699999988
@@ -9223,7 +9083,7 @@
               "circlet": "artifact-232"
             }
           },
-          "recordedDamage": 697968.7103857783,
+          "recordedDamage": 1008177.026112791,
           "foundAt": "2026-03-23T07:27:56.221Z",
           "algorithm": "v2",
           "solveTimeSec": 20.096584800000006
@@ -9259,7 +9119,7 @@
               "circlet": "artifact-1501"
             }
           },
-          "recordedDamage": 697968.7103857783,
+          "recordedDamage": 1008177.026112791,
           "foundAt": "2026-03-25T21:22:08.476Z",
           "algorithm": "monaV2"
         },
@@ -9294,7 +9154,7 @@
               "circlet": "artifact-215"
             }
           },
-          "recordedDamage": 697968.7103857783,
+          "recordedDamage": 1008177.026112791,
           "foundAt": "2026-04-03T08:09:08.058Z",
           "algorithm": "v2",
           "solveTimeSec": 0.6212007999999997
@@ -9330,7 +9190,7 @@
               "circlet": "artifact-1501"
             }
           },
-          "recordedDamage": 735811.9559030592,
+          "recordedDamage": 1006729.4654402682,
           "foundAt": "2026-04-04T15:43:13.075Z",
           "algorithm": "v2",
           "solveTimeSec": 5.817643800000005
@@ -31204,6 +31064,42 @@
           "foundAt": "2026-04-04T15:44:24.713Z",
           "algorithm": "v2",
           "solveTimeSec": 5.924811600000001
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-549",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-557",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-743",
+              "sands": "artifact-646",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "xingqiu": {
+              "flower": "artifact-66",
+              "plume": "artifact-130",
+              "sands": "artifact-151",
+              "goblet": "artifact-271",
+              "circlet": "artifact-1189"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 137077.24709393593,
+          "foundAt": "2026-04-05T00:58:09.937Z",
+          "algorithm": "v2",
+          "solveTimeSec": 3.120821099999943
         }
       ]
     },
@@ -31466,6 +31362,42 @@
           "foundAt": "2026-04-04T15:44:24.924Z",
           "algorithm": "v2",
           "solveTimeSec": 6.011770399999994
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-549",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-557",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-743",
+              "sands": "artifact-646",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "xingqiu": {
+              "flower": "artifact-66",
+              "plume": "artifact-130",
+              "sands": "artifact-151",
+              "goblet": "artifact-271",
+              "circlet": "artifact-1189"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 227454.1601298607,
+          "foundAt": "2026-04-05T00:58:13.078Z",
+          "algorithm": "v2",
+          "solveTimeSec": 3.1344954000000143
         }
       ]
     },
@@ -31728,6 +31660,42 @@
           "foundAt": "2026-04-04T15:44:24.985Z",
           "algorithm": "v2",
           "solveTimeSec": 5.874467699999994
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-549",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-557",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-1228",
+              "plume": "artifact-743",
+              "sands": "artifact-646",
+              "goblet": "artifact-742",
+              "circlet": "artifact-990"
+            },
+            "xingqiu": {
+              "flower": "artifact-66",
+              "plume": "artifact-130",
+              "sands": "artifact-151",
+              "goblet": "artifact-271",
+              "circlet": "artifact-1189"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 79246.86466082095,
+          "foundAt": "2026-04-05T00:58:16.190Z",
+          "algorithm": "v2",
+          "solveTimeSec": 3.1057097999999534
         }
       ]
     },
@@ -36712,6 +36680,42 @@
           "foundAt": "2026-04-04T16:29:28.185Z",
           "algorithm": "v2",
           "solveTimeSec": 1.3997891
+        },
+        {
+          "artifactAssignment": {
+            "razor": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-557",
+              "circlet": "artifact-1572"
+            },
+            "fischl": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-291",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-399"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            },
+            "chevreuse": {
+              "flower": "artifact-1080",
+              "plume": "artifact-633",
+              "sands": "artifact-204",
+              "goblet": "artifact-635",
+              "circlet": "artifact-215"
+            }
+          },
+          "recordedDamage": 217197.45304333523,
+          "foundAt": "2026-04-04T17:49:54.614Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.4060697
         }
       ]
     },
@@ -40572,6 +40576,42 @@
           "foundAt": "2026-04-04T16:33:37.273Z",
           "algorithm": "v2",
           "solveTimeSec": 3.5456359999999987
+        },
+        {
+          "artifactAssignment": {
+            "razor": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-557",
+              "circlet": "artifact-1572"
+            },
+            "fischl": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-291",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-399"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            },
+            "chevreuse": {
+              "flower": "artifact-1080",
+              "plume": "artifact-633",
+              "sands": "artifact-204",
+              "goblet": "artifact-635",
+              "circlet": "artifact-215"
+            }
+          },
+          "recordedDamage": 34388.59672571879,
+          "foundAt": "2026-04-04T17:49:55.936Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.3178436000000002
         }
       ]
     },
@@ -44513,7 +44553,7 @@
               "circlet": "artifact-398"
             }
           },
-          "recordedDamage": 12192009.185985692,
+          "recordedDamage": 14121884.132437548,
           "foundAt": "2026-03-25T20:47:27.485Z",
           "algorithm": "v2",
           "solveTimeSec": 2.7245824
@@ -44563,7 +44603,7 @@
               "circlet": "artifact-949"
             }
           },
-          "recordedDamage": 7890686.501384496,
+          "recordedDamage": 9541718.751337582,
           "foundAt": "2026-03-25T20:47:26.740Z",
           "algorithm": "v2",
           "solveTimeSec": 1.9464997999999998
@@ -44599,10 +44639,46 @@
               "circlet": "artifact-215"
             }
           },
-          "recordedDamage": 7881920.191134828,
+          "recordedDamage": 9545497.962525694,
           "foundAt": "2026-04-04T15:42:36.270Z",
           "algorithm": "v2",
           "solveTimeSec": 6.4501596
+        },
+        {
+          "artifactAssignment": {
+            "zibai": {
+              "flower": "artifact-1184",
+              "plume": "artifact-1547",
+              "sands": "artifact-1344",
+              "goblet": "artifact-504",
+              "circlet": "artifact-1238"
+            },
+            "illuga": {
+              "flower": "artifact-266",
+              "plume": "artifact-1280",
+              "sands": "artifact-1134",
+              "goblet": "artifact-1403",
+              "circlet": "artifact-1305"
+            },
+            "gorou": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1464",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-949"
+            },
+            "columbina": {
+              "flower": "artifact-3",
+              "plume": "artifact-1729",
+              "sands": "artifact-1561",
+              "goblet": "artifact-1581",
+              "circlet": "artifact-215"
+            }
+          },
+          "recordedDamage": 9541847.046034645,
+          "foundAt": "2026-04-05T17:21:50.817Z",
+          "algorithm": "v2",
+          "solveTimeSec": 21.6470373
         }
       ]
     },
@@ -44649,7 +44725,7 @@
               "circlet": "artifact-1579"
             }
           },
-          "recordedDamage": 42743927.33455781,
+          "recordedDamage": 41356788.756419964,
           "foundAt": "2026-03-25T20:47:29.576Z",
           "algorithm": "v2",
           "solveTimeSec": 3.7342054
@@ -44685,7 +44761,7 @@
               "circlet": "artifact-1579"
             }
           },
-          "recordedDamage": 38661186.130270995,
+          "recordedDamage": 37385453.810815126,
           "foundAt": "2026-03-25T21:17:32.001Z",
           "algorithm": "monaV2"
         }
@@ -44734,7 +44810,7 @@
               "circlet": "artifact-1614"
             }
           },
-          "recordedDamage": 7099652.388367638,
+          "recordedDamage": 7009311.750670905,
           "foundAt": "2026-03-25T20:47:29.505Z",
           "algorithm": "v2",
           "solveTimeSec": 3.3057002000000004
@@ -45187,6 +45263,78 @@
           "foundAt": "2026-04-03T08:09:06.329Z",
           "algorithm": "v2",
           "solveTimeSec": 1.5067201
+        },
+        {
+          "artifactAssignment": {
+            "ifa": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-929",
+              "goblet": "artifact-1382",
+              "circlet": "artifact-398"
+            },
+            "ororon": {
+              "flower": "artifact-673",
+              "plume": "artifact-854",
+              "sands": "artifact-1078",
+              "goblet": "artifact-175",
+              "circlet": "artifact-779"
+            },
+            "furina": {
+              "flower": "artifact-1035",
+              "plume": "artifact-1085",
+              "sands": "artifact-780",
+              "goblet": "artifact-500",
+              "circlet": "artifact-587"
+            },
+            "fischl": {
+              "flower": "artifact-496",
+              "plume": "artifact-855",
+              "sands": "artifact-470",
+              "goblet": "artifact-694",
+              "circlet": "artifact-479"
+            }
+          },
+          "recordedDamage": 2228676.983533722,
+          "foundAt": "2026-04-05T00:30:23.063Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.1644513
+        },
+        {
+          "artifactAssignment": {
+            "ifa": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-929",
+              "goblet": "artifact-1382",
+              "circlet": "artifact-398"
+            },
+            "ororon": {
+              "flower": "artifact-673",
+              "plume": "artifact-854",
+              "sands": "artifact-1078",
+              "goblet": "artifact-175",
+              "circlet": "artifact-779"
+            },
+            "furina": {
+              "flower": "artifact-1035",
+              "plume": "artifact-1085",
+              "sands": "artifact-780",
+              "goblet": "artifact-500",
+              "circlet": "artifact-587"
+            },
+            "fischl": {
+              "flower": "artifact-623",
+              "plume": "artifact-483",
+              "sands": "artifact-470",
+              "goblet": "artifact-694",
+              "circlet": "artifact-531"
+            }
+          },
+          "recordedDamage": 2213649.7905987403,
+          "foundAt": "2026-04-05T00:37:50.459Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.1941583
         }
       ]
     },
@@ -45233,7 +45381,7 @@
               "circlet": "artifact-187"
             }
           },
-          "recordedDamage": 7043782.022114517,
+          "recordedDamage": 7298039.380163299,
           "foundAt": "2026-03-25T20:47:30.321Z",
           "algorithm": "v2",
           "solveTimeSec": 2.4140311
@@ -45269,7 +45417,7 @@
               "circlet": "artifact-187"
             }
           },
-          "recordedDamage": 7038282.977338669,
+          "recordedDamage": 7292540.33538745,
           "foundAt": "2026-03-25T22:34:04.207Z",
           "algorithm": "v2",
           "solveTimeSec": 16.648857800000005
@@ -45319,7 +45467,7 @@
               "circlet": "artifact-1657"
             }
           },
-          "recordedDamage": 5095089.299346647,
+          "recordedDamage": 5315069.248361165,
           "foundAt": "2026-03-25T20:47:29.835Z",
           "algorithm": "v2",
           "solveTimeSec": 1.6063306000000002
@@ -45355,7 +45503,7 @@
               "circlet": "artifact-215"
             }
           },
-          "recordedDamage": 5099203.608235938,
+          "recordedDamage": 5317401.327650571,
           "foundAt": "2026-03-29T17:01:49.570Z",
           "algorithm": "v2",
           "solveTimeSec": 1.8210964000000003
@@ -45903,7 +46051,7 @@
               "circlet": "artifact-396"
             }
           },
-          "recordedDamage": 6307638.686278373,
+          "recordedDamage": 6577973.283363281,
           "foundAt": "2026-03-25T20:47:31.427Z",
           "algorithm": "v2",
           "solveTimeSec": 1.0502770999999993
@@ -45939,7 +46087,7 @@
               "circlet": "artifact-237"
             }
           },
-          "recordedDamage": 6069019.5231730305,
+          "recordedDamage": 6373669.885496095,
           "foundAt": "2026-03-25T21:22:27.681Z",
           "algorithm": "monaV2"
         }
@@ -45988,7 +46136,7 @@
               "circlet": "artifact-909"
             }
           },
-          "recordedDamage": 4193771.4242728665,
+          "recordedDamage": 7488390.281473559,
           "foundAt": "2026-03-25T20:47:32.334Z",
           "algorithm": "v2",
           "solveTimeSec": 1.6567436000000006
@@ -46024,7 +46172,7 @@
               "circlet": "artifact-909"
             }
           },
-          "recordedDamage": 4124198.3819389404,
+          "recordedDamage": 7219558.860361007,
           "foundAt": "2026-03-25T21:22:18.489Z",
           "algorithm": "monaV2"
         },
@@ -46059,7 +46207,7 @@
               "circlet": "artifact-909"
             }
           },
-          "recordedDamage": 4196582.644535741,
+          "recordedDamage": 7482243.719585508,
           "foundAt": "2026-03-29T17:01:52.230Z",
           "algorithm": "v2",
           "solveTimeSec": 1.8248527000000003
@@ -46109,7 +46257,7 @@
               "circlet": "artifact-735"
             }
           },
-          "recordedDamage": 6166779.58498945,
+          "recordedDamage": 6093679.520982391,
           "foundAt": "2026-03-25T20:47:33.401Z",
           "algorithm": "v2",
           "solveTimeSec": 2.524365999999999
@@ -47142,7 +47290,7 @@
               "circlet": "artifact-189"
             }
           },
-          "recordedDamage": 5969977.971084645,
+          "recordedDamage": 5903473.32615384,
           "foundAt": "2026-03-25T20:47:36.198Z",
           "algorithm": "v2",
           "solveTimeSec": 3.4158125
@@ -47178,7 +47326,7 @@
               "circlet": "artifact-189"
             }
           },
-          "recordedDamage": 5632878.081098149,
+          "recordedDamage": 5577337.081846649,
           "foundAt": "2026-03-25T21:23:53.663Z",
           "algorithm": "monaV2"
         },
@@ -47213,7 +47361,7 @@
               "circlet": "artifact-155"
             }
           },
-          "recordedDamage": 5664640.650942878,
+          "recordedDamage": 5598136.006012073,
           "foundAt": "2026-03-25T23:51:40.518Z",
           "algorithm": "v1",
           "solveTimeSec": 41.77609729999997
@@ -48380,7 +48528,7 @@
               "circlet": "artifact-399"
             }
           },
-          "recordedDamage": 1226775.1554993002,
+          "recordedDamage": 1240700.2696706546,
           "foundAt": "2026-03-25T20:47:36.183Z",
           "algorithm": "v2",
           "solveTimeSec": 0.43364589999999953
@@ -48416,7 +48564,7 @@
               "circlet": "artifact-215"
             }
           },
-          "recordedDamage": 1249871.703573589,
+          "recordedDamage": 1266859.121253334,
           "foundAt": "2026-03-29T17:01:57.012Z",
           "algorithm": "v2",
           "solveTimeSec": 0.7390438999999988
@@ -48456,6 +48604,42 @@
           "foundAt": "2026-04-04T16:32:43.337Z",
           "algorithm": "v2",
           "solveTimeSec": 5.5120546000000035
+        },
+        {
+          "artifactAssignment": {
+            "nilou": {
+              "flower": "artifact-418",
+              "plume": "artifact-327",
+              "sands": "artifact-807",
+              "goblet": "artifact-775",
+              "circlet": "artifact-436"
+            },
+            "lauma": {
+              "flower": "artifact-252",
+              "plume": "artifact-225",
+              "sands": "artifact-780",
+              "goblet": "artifact-246",
+              "circlet": "artifact-396"
+            },
+            "sangonomiya_kokomi": {
+              "flower": "artifact-281",
+              "plume": "artifact-307",
+              "sands": "artifact-291",
+              "goblet": "artifact-414",
+              "circlet": "artifact-309"
+            },
+            "nahida": {
+              "flower": "artifact-243",
+              "plume": "artifact-1729",
+              "sands": "artifact-204",
+              "goblet": "artifact-241",
+              "circlet": "artifact-215"
+            }
+          },
+          "recordedDamage": 1285690.8538136499,
+          "foundAt": "2026-04-05T18:47:05.997Z",
+          "algorithm": "v2",
+          "solveTimeSec": 34.05522899999999
         }
       ]
     },
@@ -48577,6 +48761,42 @@
           "foundAt": "2026-04-04T16:46:47.216Z",
           "algorithm": "v2",
           "solveTimeSec": 6.905608900000007
+        },
+        {
+          "artifactAssignment": {
+            "cyno": {
+              "flower": "artifact-1228",
+              "plume": "artifact-231",
+              "sands": "artifact-229",
+              "goblet": "artifact-365",
+              "circlet": "artifact-394"
+            },
+            "baizhu": {
+              "flower": "artifact-249",
+              "plume": "artifact-407",
+              "sands": "artifact-405",
+              "goblet": "artifact-348",
+              "circlet": "artifact-707"
+            },
+            "nahida": {
+              "flower": "artifact-252",
+              "plume": "artifact-225",
+              "sands": "artifact-780",
+              "goblet": "artifact-246",
+              "circlet": "artifact-396"
+            },
+            "fischl": {
+              "flower": "artifact-496",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-790",
+              "circlet": "artifact-479"
+            }
+          },
+          "recordedDamage": 1676644.155658803,
+          "foundAt": "2026-04-05T00:56:31.537Z",
+          "algorithm": "v2",
+          "solveTimeSec": 3.2950335999999663
         }
       ]
     },
@@ -48698,6 +48918,42 @@
           "foundAt": "2026-04-03T08:09:15.496Z",
           "algorithm": "v2",
           "solveTimeSec": 1.3051687
+        },
+        {
+          "artifactAssignment": {
+            "tighnari": {
+              "flower": "artifact-393",
+              "plume": "artifact-354",
+              "sands": "artifact-236",
+              "goblet": "artifact-890",
+              "circlet": "artifact-394"
+            },
+            "yae_miko": {
+              "flower": "artifact-496",
+              "plume": "artifact-1085",
+              "sands": "artifact-164",
+              "goblet": "artifact-500",
+              "circlet": "artifact-531"
+            },
+            "zhongli": {
+              "flower": "artifact-729",
+              "plume": "artifact-727",
+              "sands": "artifact-14",
+              "goblet": "artifact-684",
+              "circlet": "artifact-37"
+            },
+            "fischl": {
+              "flower": "artifact-1035",
+              "plume": "artifact-855",
+              "sands": "artifact-470",
+              "goblet": "artifact-694",
+              "circlet": "artifact-479"
+            }
+          },
+          "recordedDamage": 945923.5809732517,
+          "foundAt": "2026-04-05T00:30:34.038Z",
+          "algorithm": "v2",
+          "solveTimeSec": 1.9702886
         }
       ]
     },
@@ -49428,7 +49684,7 @@
               "circlet": "artifact-187"
             }
           },
-          "recordedDamage": 4359191.030397813,
+          "recordedDamage": 4320552.046179369,
           "foundAt": "2026-03-25T20:47:37.476Z",
           "algorithm": "v2",
           "solveTimeSec": 1.0003563000000013
@@ -49464,7 +49720,7 @@
               "circlet": "artifact-69"
             }
           },
-          "recordedDamage": 4359191.030397813,
+          "recordedDamage": 4320552.046179369,
           "foundAt": "2026-04-04T15:44:19.103Z",
           "algorithm": "v2",
           "solveTimeSec": 5.350989700000006
@@ -49638,6 +49894,42 @@
           "recordedDamage": 837138.2628003287,
           "foundAt": "2026-03-25T21:27:00.196Z",
           "algorithm": "monaV2"
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-66",
+              "plume": "artifact-823",
+              "sands": "artifact-164",
+              "goblet": "artifact-134",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-549",
+              "plume": "artifact-743",
+              "sands": "artifact-550",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "xingqiu": {
+              "flower": "artifact-992",
+              "plume": "artifact-570",
+              "sands": "artifact-995",
+              "goblet": "artifact-271",
+              "circlet": "artifact-494"
+            },
+            "bennett": {
+              "flower": "artifact-23",
+              "plume": "artifact-17",
+              "sands": "artifact-375",
+              "goblet": "artifact-359",
+              "circlet": "artifact-1657"
+            }
+          },
+          "recordedDamage": 1023178.2106019097,
+          "foundAt": "2026-04-05T18:21:22.775Z",
+          "algorithm": "v2",
+          "solveTimeSec": 7.369265399999975
         }
       ]
     },
@@ -51520,6 +51812,42 @@
           "foundAt": "2026-04-04T15:42:35.402Z",
           "algorithm": "v2",
           "solveTimeSec": 5.986178799999999
+        },
+        {
+          "artifactAssignment": {
+            "varka": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "durin": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-1910"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            },
+            "venti": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1394",
+              "circlet": "artifact-15"
+            }
+          },
+          "recordedDamage": 883537.1220478317,
+          "foundAt": "2026-04-05T00:47:35.385Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.4738478
         }
       ]
     },
@@ -51570,6 +51898,42 @@
           "foundAt": "2026-03-27T19:16:00.847Z",
           "algorithm": "v2",
           "solveTimeSec": 1.0150624
+        },
+        {
+          "artifactAssignment": {
+            "varka": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
+            },
+            "durin": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-1910"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            },
+            "venti": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1394",
+              "circlet": "artifact-15"
+            }
+          },
+          "recordedDamage": 2020660.779885189,
+          "foundAt": "2026-04-05T00:47:40.702Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.7650644000000004
         }
       ]
     },
@@ -51616,96 +51980,46 @@
               "circlet": "artifact-882"
             }
           },
-          "recordedDamage": 2034378.016897204,
+          "recordedDamage": 2711171.6297525205,
           "foundAt": "2026-03-27T19:16:00.844Z",
           "algorithm": "v2",
           "solveTimeSec": 1.0114443
-        }
-      ]
-    },
-    "AIi0v8DW89Hm0vGHWf::mualani-bite-normal": {
-      "teamId": "AIi0v8DW89Hm0vGHWf",
-      "teamName": "mualani/citlali/mavuika/xilonen",
-      "characters": [
-        "mualani",
-        "citlali",
-        "mavuika",
-        "xilonen"
-      ],
-      "carryCharId": "mualani",
-      "formulaId": "mualani-bite-normal",
-      "solutions": [
-        {
-          "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
-            },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-246",
-              "circlet": "artifact-680"
-            },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-909"
-            },
-            "mavuika": {
-              "flower": "artifact-1080",
-              "plume": "artifact-1729",
-              "sands": "artifact-204",
-              "goblet": "artifact-869",
-              "circlet": "artifact-1041"
-            }
-          },
-          "recordedDamage": 672254.3389087511,
-          "foundAt": "2026-03-29T17:01:50.960Z",
-          "algorithm": "v2",
-          "solveTimeSec": 0.6796082000000006
         },
         {
           "artifactAssignment": {
-            "mualani": {
-              "flower": "artifact-1709",
-              "plume": "artifact-752",
-              "sands": "artifact-681",
-              "goblet": "artifact-338",
-              "circlet": "artifact-934"
+            "varka": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1572"
             },
-            "citlali": {
-              "flower": "artifact-844",
-              "plume": "artifact-911",
-              "sands": "artifact-1046",
-              "goblet": "artifact-246",
-              "circlet": "artifact-680"
+            "durin": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-1910"
             },
-            "mavuika": {
-              "flower": "artifact-363",
-              "plume": "artifact-687",
-              "sands": "artifact-780",
-              "goblet": "artifact-847",
-              "circlet": "artifact-779"
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
             },
-            "xilonen": {
-              "flower": "artifact-1605",
-              "plume": "artifact-1995",
-              "sands": "artifact-1571",
-              "goblet": "artifact-1574",
-              "circlet": "artifact-909"
+            "venti": {
+              "flower": "artifact-1308",
+              "plume": "artifact-360",
+              "sands": "artifact-1369",
+              "goblet": "artifact-1394",
+              "circlet": "artifact-15"
             }
           },
-          "recordedDamage": 672254.3389087511,
-          "foundAt": "2026-04-04T15:43:16.689Z",
+          "recordedDamage": 2842481.451951347,
+          "foundAt": "2026-04-05T00:47:43.376Z",
           "algorithm": "v2",
-          "solveTimeSec": 7.705486199999999
+          "solveTimeSec": 2.667211699999999
         }
       ]
     },
@@ -53476,6 +53790,78 @@
           "foundAt": "2026-04-04T16:31:26.887Z",
           "algorithm": "v2",
           "solveTimeSec": 6.837452400000002
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-963",
+              "plume": "artifact-924",
+              "sands": "artifact-921",
+              "goblet": "artifact-260",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-911",
+              "sands": "artifact-896",
+              "goblet": "artifact-790",
+              "circlet": "artifact-898"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-262",
+              "circlet": "artifact-1105"
+            },
+            "chevreuse": {
+              "flower": "artifact-1080",
+              "plume": "artifact-633",
+              "sands": "artifact-204",
+              "goblet": "artifact-635",
+              "circlet": "artifact-215"
+            }
+          },
+          "recordedDamage": 37500.6843173785,
+          "foundAt": "2026-04-05T17:01:37.800Z",
+          "algorithm": "v2",
+          "solveTimeSec": 15.898979099999996
+        },
+        {
+          "artifactAssignment": {
+            "varesa": {
+              "flower": "artifact-963",
+              "plume": "artifact-985",
+              "sands": "artifact-921",
+              "goblet": "artifact-260",
+              "circlet": "artifact-1191"
+            },
+            "iansan": {
+              "flower": "artifact-919",
+              "plume": "artifact-855",
+              "sands": "artifact-715",
+              "goblet": "artifact-790",
+              "circlet": "artifact-735"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-262",
+              "circlet": "artifact-1105"
+            },
+            "chevreuse": {
+              "flower": "artifact-1080",
+              "plume": "artifact-633",
+              "sands": "artifact-204",
+              "goblet": "artifact-635",
+              "circlet": "artifact-215"
+            }
+          },
+          "recordedDamage": 37539.6771014466,
+          "foundAt": "2026-04-05T18:30:44.260Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.4249588
         }
       ]
     },
@@ -55034,6 +55420,42 @@
           "foundAt": "2026-04-04T15:44:24.296Z",
           "algorithm": "v2",
           "solveTimeSec": 5.78216339999999
+        },
+        {
+          "artifactAssignment": {
+            "raiden_shogun": {
+              "flower": "artifact-66",
+              "plume": "artifact-823",
+              "sands": "artifact-550",
+              "goblet": "artifact-557",
+              "circlet": "artifact-63"
+            },
+            "xiangling": {
+              "flower": "artifact-600",
+              "plume": "artifact-743",
+              "sands": "artifact-646",
+              "goblet": "artifact-559",
+              "circlet": "artifact-990"
+            },
+            "xingqiu": {
+              "flower": "artifact-549",
+              "plume": "artifact-483",
+              "sands": "artifact-151",
+              "goblet": "artifact-742",
+              "circlet": "artifact-215"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 20237.46648839193,
+          "foundAt": "2026-04-05T00:58:06.809Z",
+          "algorithm": "v2",
+          "solveTimeSec": 3.225718200000003
         }
       ]
     },
@@ -55484,6 +55906,42 @@
           "foundAt": "2026-04-04T15:44:52.233Z",
           "algorithm": "v2",
           "solveTimeSec": 7.223923399999999
+        },
+        {
+          "artifactAssignment": {
+            "klee": {
+              "flower": "artifact-3",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1567",
+              "circlet": "artifact-1572"
+            },
+            "durin": {
+              "flower": "artifact-1080",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-1910"
+            },
+            "chevreuse": {
+              "flower": "artifact-380",
+              "plume": "artifact-561",
+              "sands": "artifact-1009",
+              "goblet": "artifact-315",
+              "circlet": "artifact-1315"
+            },
+            "fischl": {
+              "flower": "artifact-1228",
+              "plume": "artifact-1704",
+              "sands": "artifact-892",
+              "goblet": "artifact-890",
+              "circlet": "artifact-617"
+            }
+          },
+          "recordedDamage": 24106.5050314305,
+          "foundAt": "2026-04-05T01:00:34.916Z",
+          "algorithm": "v2",
+          "solveTimeSec": 3.140084900000016
         }
       ]
     },
@@ -55634,6 +56092,42 @@
           "foundAt": "2026-04-04T15:44:57.547Z",
           "algorithm": "v2",
           "solveTimeSec": 4.355112900000007
+        },
+        {
+          "artifactAssignment": {
+            "venti": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-990"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-0",
+              "circlet": "artifact-1572"
+            },
+            "faruzan": {
+              "flower": "artifact-3",
+              "plume": "artifact-38",
+              "sands": "artifact-758",
+              "goblet": "artifact-684",
+              "circlet": "artifact-889"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 1151429.757840765,
+          "foundAt": "2026-04-05T01:01:13.104Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.089658599999966
         }
       ]
     },
@@ -55684,6 +56178,42 @@
           "foundAt": "2026-04-04T15:44:57.950Z",
           "algorithm": "v2",
           "solveTimeSec": 4.290569699999993
+        },
+        {
+          "artifactAssignment": {
+            "venti": {
+              "flower": "artifact-1589",
+              "plume": "artifact-1568",
+              "sands": "artifact-1580",
+              "goblet": "artifact-1566",
+              "circlet": "artifact-990"
+            },
+            "durin": {
+              "flower": "artifact-1595",
+              "plume": "artifact-1627",
+              "sands": "artifact-204",
+              "goblet": "artifact-0",
+              "circlet": "artifact-1572"
+            },
+            "faruzan": {
+              "flower": "artifact-3",
+              "plume": "artifact-38",
+              "sands": "artifact-758",
+              "goblet": "artifact-684",
+              "circlet": "artifact-889"
+            },
+            "bennett": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-797"
+            }
+          },
+          "recordedDamage": 1574913.5482917777,
+          "foundAt": "2026-04-05T01:01:15.250Z",
+          "algorithm": "v2",
+          "solveTimeSec": 2.1427680999999867
         }
       ]
     }
