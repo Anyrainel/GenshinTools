@@ -106,6 +106,7 @@ class Varesa extends CharacterBase {
           },
         ],
       },
+      // C4: Diligent Refinement — first plunge after Q gets +500% ATK as baseDmg (cap 20000)
       "varesa-plunge": {
         label: { zh: "下落(高空)", en: "Plunge (High)" },
         parts: [
@@ -115,25 +116,10 @@ class Varesa extends CharacterBase {
               ability: "plunge",
               reaction: "none",
             }),
-          },
-        ],
-      },
-      // C4: Diligent Refinement — first plunge after Q gets +500% ATK as baseDmg (cap 20000)
-      // Separated from varesa-plunge because the buff is consumed after one ground impact hit.
-      ...(this.constellation >= 4
-        ? {
-            "varesa-plunge-c4": {
-              label: { zh: "C4下落(高空)", en: "C4 Plunge (High)" },
-              minC: 4 as const,
-              parts: [
-                {
-                  formula: new DirectFormula(naMult, {
-                    element: "Electro",
-                    ability: "plunge",
-                    reaction: "none",
-                  }),
+            ...(this.constellation >= 4
+              ? {
                   bespokeBuff: new ScalingBuff(
-                    cbs(this, "C4", ["Q"]),
+                    { ...cbs(this, "C4", ["Q"]), maxStacks: 1 },
                     {
                       receiver: "selfOnField",
                       filter: { abilities: ["plunge"] },
@@ -144,11 +130,11 @@ class Varesa extends CharacterBase {
                     5.0,
                     20000
                   ),
-                },
-              ],
-            } satisfies FormulaEntry,
-          }
-        : {}),
+                }
+              : {}),
+          },
+        ],
+      },
       "varesa-kablam": {
         label: {
           zh: "Q下落",
@@ -186,12 +172,7 @@ class Varesa extends CharacterBase {
     return [
       { id: "varesa-kick", count: 1 },
       { id: "varesa-e-fp", count: 4 },
-      ...(this.constellation >= 4
-        ? [
-            { id: "varesa-plunge-c4", count: 1 },
-            { id: "varesa-plunge", count: 3 },
-          ]
-        : [{ id: "varesa-plunge", count: 4 }]),
+      { id: "varesa-plunge", count: 4 },
       { id: "varesa-kablam", count: 2 },
     ];
   }
