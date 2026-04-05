@@ -404,13 +404,17 @@ describe("CharCrErSettings", () => {
       xingqiu: { tier: "A", position: 1 },
     };
     render(<TestCharCrErSettings tierAssignments={tierAssignments} />);
-    // Should show "Tier" labels for both characters
-    expect(screen.getAllByText("Tier").length).toBe(2);
+    // Should show tier labels for both characters
+    expect(screen.getAllByText("Avoid stealing from higher tiers").length).toBe(
+      2
+    );
   });
 
   it("does not show Tier checkbox when no tierAssignments", () => {
     render(<TestCharCrErSettings />);
-    // Without tierAssignments, no Tier labels should appear
-    expect(screen.queryByText("Tier")).not.toBeInTheDocument();
+    // Without tierAssignments, no tier labels should appear
+    expect(
+      screen.queryByText("Avoid stealing from higher tiers")
+    ).not.toBeInTheDocument();
   });
 });

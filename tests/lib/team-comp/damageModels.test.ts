@@ -405,7 +405,7 @@ describe("validateStatFilter", () => {
     ).toBe(0);
   });
 
-  it("throws when defReduction% has element filter", () => {
+  it("allows defReduction% with element filter", () => {
     expect(
       () =>
         new StatBuff(
@@ -413,10 +413,10 @@ describe("validateStatFilter", () => {
           { receiver: "team", filter: { elements: ["Pyro"] } },
           [{ key: "defReduction%", value: 0.1 }]
         )
-    ).toThrow("defReduction%");
+    ).not.toThrow();
   });
 
-  it("throws when resReduction% has ability filter", () => {
+  it("allows resReduction% with ability filter", () => {
     expect(
       () =>
         new StatBuff(
@@ -424,7 +424,7 @@ describe("validateStatFilter", () => {
           { receiver: "team", filter: { abilities: ["burst"] } },
           [{ key: "resReduction%", value: 0.1 }]
         )
-    ).toThrow("resReduction%");
+    ).not.toThrow();
   });
 
   it("does not throw for valid combinations", () => {

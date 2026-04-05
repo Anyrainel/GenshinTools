@@ -1077,7 +1077,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   ): DamageResult {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
-    const parts: { damage: number; hits: number }[] = [];
+    const parts: DamageResult["parts"] = [];
     for (let idx = 0; idx < entry.parts.length; idx++) {
       const {
         formula,
@@ -1086,6 +1086,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
         offField,
       } = entry.parts[idx];
       const h = totalHits ?? 1;
+      const bespokeMaxStacks = bespokeBuff?.source.maxStacks;
       const effectiveOffField = offField && !reactionOverride?.forceOnField;
 
       // Use off-field stats when the part deals damage while the character is off-field
@@ -1120,19 +1121,39 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       // Skip reaction override if the formula already has a built-in reaction
       // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
       if (!hasReaction || formula.tag.reaction !== "none") {
-        parts.push(
-          this._calcPartBlended(
+        const buffedResult = this._calcPartBlended(
+          formula,
+          stats,
+          ctx,
+          h,
+          idx,
+          h,
+          partialBuffs,
+          partVariants,
+          bespokeOverlay
+        );
+        if (bespokeMaxStacks != null) {
+          const unbuffedResult = this._calcPartBlended(
             formula,
-            stats,
+            baseSelfStats,
             ctx,
             h,
             idx,
             h,
             partialBuffs,
             partVariants,
-            bespokeOverlay
-          )
-        );
+            undefined
+          );
+          parts.push({
+            ...buffedResult,
+            bespokeInfo: {
+              unbuffedDamage: unbuffedResult.damage,
+              maxStacks: bespokeMaxStacks,
+            },
+          });
+        } else {
+          parts.push(buffedResult);
+        }
         continue;
       }
 
@@ -1158,34 +1179,74 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           targetReaction !== formula.tag.reaction
             ? createReactionVariant(formula, targetReaction)
             : formula;
-        parts.push(
-          this._calcPartBlended(
+        const buffedResult = this._calcPartBlended(
+          effectiveFormula,
+          stats,
+          ctx,
+          reactingHits,
+          idx,
+          h,
+          partialBuffs,
+          partVariants,
+          bespokeOverlay
+        );
+        if (bespokeMaxStacks != null) {
+          const unbuffedResult = this._calcPartBlended(
             effectiveFormula,
-            stats,
+            baseSelfStats,
             ctx,
             reactingHits,
             idx,
             h,
             partialBuffs,
             partVariants,
-            bespokeOverlay
-          )
-        );
+            undefined
+          );
+          parts.push({
+            ...buffedResult,
+            bespokeInfo: {
+              unbuffedDamage: unbuffedResult.damage,
+              maxStacks: bespokeMaxStacks,
+            },
+          });
+        } else {
+          parts.push(buffedResult);
+        }
       }
       if (nonReactingHits > 0) {
-        parts.push(
-          this._calcPartBlended(
+        const buffedResult = this._calcPartBlended(
+          formula,
+          stats,
+          ctx,
+          nonReactingHits,
+          idx,
+          h,
+          partialBuffs,
+          partVariants,
+          bespokeOverlay
+        );
+        if (bespokeMaxStacks != null) {
+          const unbuffedResult = this._calcPartBlended(
             formula,
-            stats,
+            baseSelfStats,
             ctx,
             nonReactingHits,
             idx,
             h,
             partialBuffs,
             partVariants,
-            bespokeOverlay
-          )
-        );
+            undefined
+          );
+          parts.push({
+            ...buffedResult,
+            bespokeInfo: {
+              unbuffedDamage: unbuffedResult.damage,
+              maxStacks: bespokeMaxStacks,
+            },
+          });
+        } else {
+          parts.push(buffedResult);
+        }
       }
     }
     const totalDamage = parts.reduce(

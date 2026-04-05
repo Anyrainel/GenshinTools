@@ -2778,9 +2778,25 @@ export function evaluateCombo(
       lineVariants,
       lineOffFieldVariants
     );
+
+    // Adjust for bespokeBuff maxStacks across combo repetitions
+    let total = result.totalDamage * line.count;
+    for (const part of result.parts) {
+      if (part.bespokeInfo) {
+        const totalHits = part.hits * line.count;
+        const buffedHits = Math.min(part.bespokeInfo.maxStacks, totalHits);
+        const unbuffedHits = totalHits - buffedHits;
+        // Correct: naive total assumed all hits buffed; replace with blended
+        total -= part.damage * part.hits * line.count;
+        total +=
+          part.damage * buffedHits +
+          part.bespokeInfo.unbuffedDamage * unbuffedHits;
+      }
+    }
+
     return {
       perHit: result.totalDamage,
-      total: result.totalDamage * line.count,
+      total,
     };
   });
 

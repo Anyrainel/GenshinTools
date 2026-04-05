@@ -225,8 +225,18 @@ export type I18nLabel = { zh: string; en: string };
 
 /** Aggregated result for a formulaId — may combine multiple formulas with hit counts. */
 export type DamageResult = {
-  parts: { damage: number; hits: number }[];
-  /** Σ(damage × hits) */
+  parts: {
+    damage: number;
+    hits: number;
+    /** Present when this part has a bespokeBuff with maxStacks. */
+    bespokeInfo?: {
+      /** Per-hit damage WITHOUT the bespokeBuff applied. */
+      unbuffedDamage: number;
+      /** The maxStacks value from bespokeBuff.source. */
+      maxStacks: number;
+    };
+  }[];
+  /** Σ(damage × hits) — per-invocation total (all hits assume buffed when bespokeBuff present). */
   totalDamage: number;
 };
 
