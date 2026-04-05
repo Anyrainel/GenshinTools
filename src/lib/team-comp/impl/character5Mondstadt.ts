@@ -1557,8 +1557,25 @@ class Eula extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("varka")
+const varkaOption = {
+  label: { zh: "C1首次强化", en: "C1 Enhancement" },
+  choices: [
+    {
+      value: "ca-first",
+      label: { zh: "特殊重击优先", en: "Special CA First" },
+    },
+    {
+      value: "e-first",
+      label: { zh: "特殊E优先", en: "Special E First" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("varka", varkaOption)
 class Varka extends CharacterBase {
+  private readonly c1Target =
+    this.constellation >= 1 ? resolveOption(varkaOption, this.option) : null;
+
   /** Priority element from team: Pyro > Hydro > Electro > Cryo */
   private readonly priorityElement: Element | null = (() => {
     const teamEls = Object.values(this.teamMeta.elements);
@@ -1573,7 +1590,7 @@ class Varka extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     // C1: Lyrical Libation — first Four Winds or Azure Devour deals 200% original DMG
-    // Modeled via bespokeBuff on dedicated C1 formula entries (not a global buff)
+    // Modeled via OptionMap (c1Target) + bespokeBuff with maxStacks on base formulas
 
     // P1: Dawn Wind's March — per 1000 ATK, +10% Anemo DMG + priority element DMG, cap 25%
     // Only activates when PHEC characters are in the team (i.e., priorityElement exists)
@@ -1665,10 +1682,8 @@ class Varka extends CharacterBase {
     return [
       { id: "varka-e", count: 1 },
       { id: "varka-normal", count: 2 },
-      { id: "varka-c1-special-e", count: 1 },
-      { id: "varka-special-e", count: 2 },
+      { id: "varka-special-e", count: 3 },
       { id: "varka-special-ca", count: 0, bonus: [{ minC: 6, delta: 3 }] },
-      { id: "varka-c1-special-ca", count: 0 },
       { id: "varka-burst", count: 0 },
     ];
   }
@@ -1721,19 +1736,6 @@ class Varka extends CharacterBase {
       reaction: "none" as const,
     });
 
-    // C1 bespokeBuff: +100% baseDmg% (200% original DMG, consumed on first special E or CA)
-    const c1Buff =
-      this.constellation >= 1
-        ? new StatBuff(
-            cbs(this, "C1", ["E"]),
-            {
-              receiver: "selfOnField",
-              filter: { abilities: ["skill", "charge"] },
-            },
-            [{ key: "baseDmg%", value: 1.0 }]
-          )
-        : null;
-
     const formulas: Record<string, FormulaEntry> = {};
 
     formulas["varka-e"] = {
@@ -1773,16 +1775,20 @@ class Varka extends CharacterBase {
       }
       formulas["varka-special-e"] = {
         label: { zh: "特殊E", en: "Special E" },
-        parts: fwParts,
-      };
-
-      // C1 Special E: first use deals 200% original DMG
-      formulas["varka-c1-special-e"] = {
-        label: { zh: "特殊E", en: "Special E" },
-        minC: 1,
         parts: fwParts.map((p) => ({
           ...p,
-          bespokeBuff: c1Buff ?? undefined,
+          ...(this.c1Target === "e-first"
+            ? {
+                bespokeBuff: new StatBuff(
+                  { ...cbs(this, "C1", ["E"]), maxStacks: 1 },
+                  {
+                    receiver: "selfOnField",
+                    filter: { abilities: ["skill", "charge"] },
+                  },
+                  [{ key: "baseDmg%", value: 1.0 }]
+                ),
+              }
+            : {}),
         })),
       };
 
@@ -1798,16 +1804,20 @@ class Varka extends CharacterBase {
       }
       formulas["varka-special-ca"] = {
         label: { zh: "E后特殊重击", en: "E Special CA" },
-        parts: azParts,
-      };
-
-      // C1 Special CA: first use deals 200% original DMG
-      formulas["varka-c1-special-ca"] = {
-        label: { zh: "特殊重击", en: "Special CA" },
-        minC: 1,
         parts: azParts.map((p) => ({
           ...p,
-          bespokeBuff: c1Buff ?? undefined,
+          ...(this.c1Target === "ca-first"
+            ? {
+                bespokeBuff: new StatBuff(
+                  { ...cbs(this, "C1", ["E"]), maxStacks: 1 },
+                  {
+                    receiver: "selfOnField",
+                    filter: { abilities: ["skill", "charge"] },
+                  },
+                  [{ key: "baseDmg%", value: 1.0 }]
+                ),
+              }
+            : {}),
         })),
       };
     }
