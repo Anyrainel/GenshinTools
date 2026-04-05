@@ -1,32 +1,97 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface SessionNavState {
+export type ViewId = "damage" | "investment" | "weaponChoice";
+export type TeamSort = "default" | "tier" | "release";
+
+interface ViewSettings {
   activeTeamId: string | null;
-  activeInvestmentTeamId: string | null;
-  activeWeaponChoiceTeamId: string | null;
-  setActiveTeamId: (id: string | null) => void;
-  setActiveInvestmentTeamId: (id: string | null) => void;
-  setActiveWeaponChoiceTeamId: (id: string | null) => void;
+  ownedOnly: boolean | null; // null = use default (hasAccountData)
+  teamSort: TeamSort;
 }
+
+interface SessionNavState {
+  viewSettings: Record<ViewId, ViewSettings>;
+  setActiveTeamId: (viewId: ViewId, id: string | null) => void;
+  setViewOwnedOnly: (viewId: ViewId, value: boolean) => void;
+  setViewTeamSort: (viewId: ViewId, value: TeamSort) => void;
+}
+
+const defaultViewSettings: ViewSettings = {
+  activeTeamId: null,
+  ownedOnly: null,
+  teamSort: "default",
+};
 
 export const useSessionNavStore = create<SessionNavState>()(
   persist(
     (set) => ({
-      activeTeamId: null,
-      activeInvestmentTeamId: null,
-      activeWeaponChoiceTeamId: null,
-      setActiveTeamId: (id) => set({ activeTeamId: id }),
-      setActiveInvestmentTeamId: (id) => set({ activeInvestmentTeamId: id }),
-      setActiveWeaponChoiceTeamId: (id) =>
-        set({ activeWeaponChoiceTeamId: id }),
+      viewSettings: {
+        damage: { ...defaultViewSettings },
+        investment: { ...defaultViewSettings },
+        weaponChoice: { ...defaultViewSettings },
+      },
+      setActiveTeamId: (viewId, id) =>
+        set((s) => ({
+          viewSettings: {
+            ...s.viewSettings,
+            [viewId]: { ...s.viewSettings[viewId], activeTeamId: id },
+          },
+        })),
+      setViewOwnedOnly: (viewId, value) =>
+        set((s) => ({
+          viewSettings: {
+            ...s.viewSettings,
+            [viewId]: { ...s.viewSettings[viewId], ownedOnly: value },
+          },
+        })),
+      setViewTeamSort: (viewId, value) =>
+        set((s) => ({
+          viewSettings: {
+            ...s.viewSettings,
+            [viewId]: { ...s.viewSettings[viewId], teamSort: value },
+          },
+        })),
     }),
     {
       name: "session-nav-storage",
       storage: {
         getItem: (name) => {
           const str = sessionStorage.getItem(name);
-          return str ? JSON.parse(str) : null;
+          if (!str) return null;
+          const parsed = JSON.parse(str);
+          // Migrate from old flat fields to unified viewSettings
+          if (parsed?.state) {
+            const s = parsed.state;
+            if (!s.viewSettings) {
+              s.viewSettings = {
+                damage: {
+                  ...defaultViewSettings,
+                  activeTeamId: s.activeTeamId ?? null,
+                },
+                investment: {
+                  ...defaultViewSettings,
+                  activeTeamId: s.activeInvestmentTeamId ?? null,
+                },
+                weaponChoice: {
+                  ...defaultViewSettings,
+                  activeTeamId: s.activeWeaponChoiceTeamId ?? null,
+                },
+              };
+              // Clean up old fields
+              s.activeTeamId = undefined;
+              s.activeInvestmentTeamId = undefined;
+              s.activeWeaponChoiceTeamId = undefined;
+            }
+            // Ensure all views have all fields (in case new fields were added)
+            for (const viewId of ["damage", "investment", "weaponChoice"]) {
+              s.viewSettings[viewId] = {
+                ...defaultViewSettings,
+                ...s.viewSettings[viewId],
+              };
+            }
+          }
+          return parsed;
         },
         setItem: (name, value) => {
           sessionStorage.setItem(name, JSON.stringify(value));

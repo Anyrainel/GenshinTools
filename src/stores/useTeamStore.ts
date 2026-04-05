@@ -24,7 +24,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
-import { useSessionNavStore } from "./useSessionNavStore";
 
 /**
  * Migrate persisted TeamState from an older version to the current format.
@@ -194,14 +193,7 @@ export function migrateTeamStore(
     // No transformation needed — fields are optional and default to undefined.
   }
   if (version < 11) {
-    // v11: activeTeamId moved to sessionStorage-backed useSessionNavStore.
-    // Transfer the value for the current session, then drop it from persisted state.
-    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field
-    const oldActiveTeamId = (state as any).activeTeamId;
-    if (oldActiveTeamId) {
-      // Seed session store with the old value (one-time transfer)
-      useSessionNavStore.getState().setActiveTeamId(oldActiveTeamId);
-    }
+    // v11: activeTeamId removed from persisted team store (now in sessionStorage).
     // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field
     (state as any).activeTeamId = undefined;
   }
@@ -335,6 +327,8 @@ export interface Team {
   tierAwarePool?: Record<string, boolean>;
   /** Per-character CR mode: "min" = minCr constraint, "target" = critRateTarget buff */
   crMode?: Record<string, "min" | "target">;
+  /** Per-character toggle to ignore artifact sets when ER/CR can't be met */
+  ignoreArtifactSets?: Record<string, boolean>;
 }
 
 /** Exported artifact — `type` discriminator omitted since field names differ. */
