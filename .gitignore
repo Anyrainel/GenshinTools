@@ -44,7 +44,7 @@ blob-report/
 .superpowers/
 
 # Worktrees
-beta/
+/beta/
 
 coverage/
 temp/

@@ -43,7 +43,7 @@ BETA_WEAPON_ZH_PATH = DATA_DIR / "weapon_beta_zh.json"
 BETA_WEAPON_STATS_PATH = DATA_DIR / "weapon_beta_stats.json"
 
 API_BASE = "https://api.lunaris.moe/data"
-STATIC_BASE = "https://api.lunaris.moe/static/img"
+ASSETS_BASE = "https://api.lunaris.moe/data/assets"
 
 # ---------------------------------------------------------------------------
 # Mappings
@@ -121,6 +121,11 @@ PERCENT_ASCENSION_STATS: set[str] = {
 
 # IDs to skip in unreleased detection (not beta content)
 SKIP_DERIVED_IDS: set[str] = {"traveler"}
+
+# Manual overrides for data the API doesn't provide or gets wrong
+REGION_OVERRIDES: dict[str, str] = {
+    "linnea": "Snezhnaya",
+}
 
 ASSOCIATION_REGION_MAP: dict[str, str] = {
     "ASSOC_TYPE_MONDSTADT": "Mondstadt",
@@ -407,10 +412,10 @@ def scrape_character(
     char_id_num: str,
     version: str,
     region: str,
-) -> tuple[str, dict, dict, dict]:
+) -> tuple[str, dict, dict, dict, str]:
     """
     Fetch character data from lunaris API.
-    Returns (char_id, en_data, zh_data, stats_data).
+    Returns (char_id, en_data, zh_data, stats_data, icon_name).
     """
     en_data_raw = fetch_json(f"{API_BASE}/{version}/en/char/{char_id_num}.json")
     zh_data_raw = fetch_json(f"{API_BASE}/{version}/chs/char/{char_id_num}.json")
@@ -538,7 +543,8 @@ def scrape_character(
     if talent_data:
         stats_out["talent"] = talent_data
 
-    return char_id, en_out, zh_out, stats_out
+    icon_name = en_data_raw.get("icons", {}).get("forward", "")
+    return char_id, en_out, zh_out, stats_out, icon_name
 
 
 # ---------------------------------------------------------------------------
@@ -592,10 +598,10 @@ def _templatize_weapon_desc(all_descs: dict[str, str]) -> tuple[str, list[list[s
 def scrape_weapon(
     weapon_id_num: str,
     version: str,
-) -> tuple[str, dict, dict, dict]:
+) -> tuple[str, dict, dict, dict, str]:
     """
     Fetch weapon data from lunaris API.
-    Returns (weapon_id, en_data, zh_data, stats_data).
+    Returns (weapon_id, en_data, zh_data, stats_data, icon_name).
     """
     en_data_raw = fetch_json(f"{API_BASE}/{version}/en/weapon/{weapon_id_num}.json")
     zh_data_raw = fetch_json(f"{API_BASE}/{version}/chs/weapon/{weapon_id_num}.json")
@@ -663,7 +669,8 @@ def scrape_weapon(
         },
     }
 
-    return weapon_id, en_out, zh_out, stats_out
+    icon_name = en_data_raw.get("weaponIcon", "")
+    return weapon_id, en_out, zh_out, stats_out, icon_name
 
 
 # ---------------------------------------------------------------------------
@@ -791,18 +798,21 @@ def main() -> None:
     if unreleased_chars:
         print("\n--- Scraping unreleased characters ---")
         for num_id, _derived_id, meta in unreleased_chars:
-            region = detect_region(meta)
+            region = REGION_OVERRIDES.get(_derived_id, detect_region(meta))
             try:
-                char_id, en_out, zh_out, stats_out = scrape_character(num_id, version, region)
+                char_id, en_out, zh_out, stats_out, icon_name = scrape_character(
+                    num_id, version, region
+                )
                 char_en_data[char_id] = en_out
                 char_zh_data[char_id] = zh_out
                 char_stats_data[char_id] = stats_out
                 char_resources.append((char_id, stats_out["rarity"]))
 
                 # Download icon
-                icon_url = f"{STATIC_BASE}/character/{num_id}.webp"
-                icon_dest = ICON_DIR_CHAR / f"{char_id}.webp"
-                download_icon(icon_url, icon_dest)
+                if icon_name:
+                    icon_url = f"{ASSETS_BASE}/avataricon/{icon_name}.webp"
+                    icon_dest = ICON_DIR_CHAR / f"{char_id}.webp"
+                    download_icon(icon_url, icon_dest)
 
             except requests.HTTPError as e:
                 print(f"    ERROR fetching {num_id}: {e}")
@@ -819,16 +829,17 @@ def main() -> None:
         print("\n--- Scraping unreleased weapons ---")
         for num_id, _derived_id, _meta in unreleased_weapons:
             try:
-                weapon_id, en_out, zh_out, stats_out = scrape_weapon(num_id, version)
+                weapon_id, en_out, zh_out, stats_out, icon_name = scrape_weapon(num_id, version)
                 weapon_en_data[weapon_id] = en_out
                 weapon_zh_data[weapon_id] = zh_out
                 weapon_stats_data[weapon_id] = stats_out
                 weapon_resources.append((weapon_id, stats_out["rarity"]))
 
                 # Download icon
-                icon_url = f"{STATIC_BASE}/weapon/{num_id}.webp"
-                icon_dest = ICON_DIR_WEAPON / f"{weapon_id}.webp"
-                download_icon(icon_url, icon_dest)
+                if icon_name:
+                    icon_url = f"{ASSETS_BASE}/weaponicon/{icon_name}.webp"
+                    icon_dest = ICON_DIR_WEAPON / f"{weapon_id}.webp"
+                    download_icon(icon_url, icon_dest)
 
             except requests.HTTPError as e:
                 print(f"    ERROR fetching {num_id}: {e}")
