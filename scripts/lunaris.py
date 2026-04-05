@@ -347,52 +347,155 @@ def _parse_char_stats(
     return levels_data, asc_stat
 
 
-def _parse_multiplier_value(val: str) -> float:
-    """Parse a multiplier string like '66.5%' to float 0.665, or '40' to 40.0."""
-    val = val.strip()
-    if val.endswith("%"):
-        try:
-            return round(float(val[:-1]) / 100, 6)
-        except ValueError:
-            return 0.0
-    try:
-        return float(val)
-    except ValueError:
-        return 0.0
+def _detect_format(num_str: str, is_pct: bool) -> str:
+    """Detect the param format code from a rendered number string.
 
-
-def _multipliers_to_talent_array(multipliers: dict[str, list[str]]) -> list[list[float]]:
+    Format codes match impl_audit.py's _format_value():
+      I    — integer
+      F1   — 1 decimal float
+      F2   — 2 decimal float
+      P    — percentage, 0 decimals
+      F1P  — percentage, 1 decimal
+      F2P  — percentage, 2 decimal
     """
-    Convert lunaris multipliers to talent array format.
-    Input: {label: [lv1_str, lv2_str, ...lv15_str]}
-    Output: [[param1_lv1, param2_lv1, ...], [param1_lv2, param2_lv2, ...], ...]
+    if is_pct:
+        if "." not in num_str:
+            return "P"
+        decimals = len(num_str.split(".")[1])
+        return "F2P" if decimals >= 2 else "F1P"
+    if "." not in num_str:
+        return "I"
+    decimals = len(num_str.split(".")[1])
+    return "F2" if decimals >= 2 else "F1"
+
+
+def _parse_number(num_str: str, is_pct: bool) -> float:
+    """Parse a number string to float, converting percentage to decimal."""
+    val = float(num_str)
+    if is_pct:
+        val = round(val / 100, 6)
+    return val
+
+
+_NUMBER_RE = re.compile(r"(\d+(?:\.\d+)?)(%?)")
+
+
+def _extract_numbers(value_str: str) -> list[tuple[float, str]]:
+    """Extract all numeric values and their format codes from a rendered string.
+
+    Returns list of (float_value, format_code) tuples.
+    """
+    results = []
+    for m in _NUMBER_RE.finditer(value_str):
+        num_str, pct = m.group(1), m.group(2)
+        is_pct = pct == "%"
+        fmt = _detect_format(num_str, is_pct)
+        val = _parse_number(num_str, is_pct)
+        results.append((val, fmt))
+    return results
+
+
+def _build_template(value_str: str, param_start: int) -> tuple[str, int]:
+    """Replace numeric values in a string with {paramN:FORMAT} templates.
+
+    Returns (template_string, next_param_index).
+    """
+    idx = param_start
+    parts = []
+    last_end = 0
+    for m in _NUMBER_RE.finditer(value_str):
+        parts.append(value_str[last_end : m.start()])
+        num_str, pct = m.group(1), m.group(2)
+        is_pct = pct == "%"
+        fmt = _detect_format(num_str, is_pct)
+        parts.append(f"{{param{idx}:{fmt}}}")
+        idx += 1
+        last_end = m.end()
+    parts.append(value_str[last_end:])
+    return "".join(parts), idx
+
+
+def _is_constant_across_levels(multipliers_values: list[str], num_index: int) -> bool:
+    """Check if the Nth numeric value in a detail row is constant across all levels."""
+    values: set[str] = set()
+    for val_str in multipliers_values:
+        nums = list(_NUMBER_RE.finditer(val_str))
+        if num_index < len(nums):
+            values.add(nums[num_index].group(0))
+    return len(values) <= 1
+
+
+def _multipliers_to_talent_and_details(
+    multipliers: dict[str, list[str]],
+) -> tuple[list[list[float]], list[list[str]]]:
+    """Convert lunaris multipliers to both talent array and templated details.
+
+    Only values that vary across talent levels become params. Constant values
+    (like CD, duration, energy cost, or hit counts) are kept as literals.
+
+    Returns:
+      talent: [[param1_lv1, param2_lv1, ...], ...] (15 levels)
+      details: [[label, template_str], ...] matching official format
     """
     if not multipliers:
-        return []
+        return [], []
 
     labels = list(multipliers.keys())
     n_levels = max(len(vals) for vals in multipliers.values()) if multipliers else 0
 
+    # First pass: determine which numbers vary across levels and assign params
+    details: list[list[str]] = []
+    # Track which (label_idx, num_idx) positions become params
+    param_positions: list[tuple[int, int]] = []  # (label_idx, num_index_in_row)
+    param_idx = 1  # 1-based
+
+    for label_idx, label in enumerate(labels):
+        vals = multipliers[label]
+        if not vals:
+            details.append([label, ""])
+            continue
+
+        # Find all numbers in the first level's string
+        nums = list(_NUMBER_RE.finditer(vals[0]))
+        template_parts = []
+        last_end = 0
+
+        for num_i, m in enumerate(nums):
+            template_parts.append(vals[0][last_end : m.start()])
+            num_str, pct = m.group(1), m.group(2)
+            is_pct = pct == "%"
+
+            if _is_constant_across_levels(vals, num_i):
+                # Keep literal — don't create a param
+                template_parts.append(m.group(0))
+            else:
+                # Create a param
+                fmt = _detect_format(num_str, is_pct)
+                template_parts.append(f"{{param{param_idx}:{fmt}}}")
+                param_positions.append((label_idx, num_i))
+                param_idx += 1
+
+            last_end = m.end()
+
+        template_parts.append(vals[0][last_end:])
+        details.append([label, "".join(template_parts)])
+
+    total_params = param_idx - 1
+
+    # Second pass: extract numeric values for all levels (only for param positions)
     talent: list[list[float]] = []
     for lv_idx in range(n_levels):
-        row: list[float] = []
-        for label in labels:
+        row: list[float] = [0.0] * total_params
+        for p_i, (label_idx, num_i) in enumerate(param_positions):
+            label = labels[label_idx]
             vals = multipliers[label]
             if lv_idx < len(vals):
-                row.append(_parse_multiplier_value(vals[lv_idx]))
-            else:
-                row.append(0.0)
+                extracted = _extract_numbers(vals[lv_idx])
+                if num_i < len(extracted):
+                    row[p_i] = round(extracted[num_i][0], 6)
         talent.append(row)
 
-    return talent
-
-
-def _multipliers_to_details(multipliers: dict[str, list[str]]) -> list[list[str]]:
-    """Convert lunaris multipliers dict to our details format: [[label, lv1, lv2, ...], ...]."""
-    details: list[list[str]] = []
-    for label, values in multipliers.items():
-        details.append([label] + values)
-    return details
+    return talent, details
 
 
 def _build_glossary(hyperlinks: list[dict]) -> list[dict] | None:
@@ -456,33 +559,38 @@ def scrape_character(
     skill_prefixes = ["Normal Attack: ", "E. ", "Q. "]
     talent_keys = ["A", "E", "Q"]
 
-    def _build_skills(skills_raw: dict) -> list[dict]:
-        skills = []
-        for key, prefix in zip(skill_keys, skill_prefixes, strict=False):
-            if key not in skills_raw:
-                continue
-            s = skills_raw[key]
-            name = s.get("name", "")
-            skills.append(
+    # Build skills and talent arrays together (templates + param extraction)
+    talent_data: dict[str, list[list[float]]] = {}
+    en_skills: list[dict] = []
+    zh_skills: list[dict] = []
+
+    for key, prefix, tk in zip(skill_keys, skill_prefixes, talent_keys, strict=False):
+        # Build talent array and EN templates from EN multipliers
+        en_s = en_skills_raw.get(key)
+        if en_s:
+            en_mult = en_s.get("multipliers", {})
+            talent_arr, en_details = _multipliers_to_talent_and_details(en_mult)
+            if talent_arr:
+                talent_data[tk] = talent_arr
+            en_skills.append(
                 {
-                    "name": f"{prefix}{name}",
-                    "descHtml": _format_desc(s.get("description", "")),
-                    "details": _multipliers_to_details(s.get("multipliers", {})),
+                    "name": f"{prefix}{en_s.get('name', '')}",
+                    "descHtml": _format_desc(en_s.get("description", "")),
+                    "details": en_details,
                 }
             )
-        return skills
-
-    en_skills = _build_skills(en_skills_raw)
-    zh_skills = _build_skills(zh_skills_raw)
-
-    # Talent multiplier arrays for stats
-    talent_data: dict[str, list[list[float]]] = {}
-    for key, tk in zip(skill_keys, talent_keys, strict=False):
-        if key in en_skills_raw:
-            multipliers = en_skills_raw[key].get("multipliers", {})
-            arr = _multipliers_to_talent_array(multipliers)
-            if arr:
-                talent_data[tk] = arr
+        # Build ZH templates from ZH multipliers
+        zh_s = zh_skills_raw.get(key)
+        if zh_s:
+            zh_mult = zh_s.get("multipliers", {})
+            _, zh_details = _multipliers_to_talent_and_details(zh_mult)
+            zh_skills.append(
+                {
+                    "name": f"{prefix}{zh_s.get('name', '')}",
+                    "descHtml": _format_desc(zh_s.get("description", "")),
+                    "details": zh_details,
+                }
+            )
 
     # Passives
     def _build_passives(data_raw: dict) -> list[dict]:

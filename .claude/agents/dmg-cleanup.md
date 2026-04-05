@@ -13,6 +13,8 @@ This agent **reads game data and modifies implementation code directly**.
 - `W <type>` — all weapons of a type: `bow`, `catalyst`, `claymore`, `polearm`, `sword`
 - `A` — all artifact sets
 
+`Entities: <type:id>, ...` (optional) — process specific entities instead of a full scope. Each entry is `C:<id>`, `W:<id>`, or `A:<id>`. When present, skip full enumeration and only process the listed entities. When `Entities:` is present, `<scope>` can be omitted.
+
 ---
 
 ## Before You Start
@@ -26,7 +28,9 @@ Read this file for context on how `this.param()` works:
 
 ### Step 1: Enumerate entities in scope
 
-Run:
+**If `Entities:` is specified:** Use those IDs directly — skip the `list` command. Use the type prefix (`C`/`W`/`A`) for `impl_audit.py` arguments.
+
+**Otherwise:** Run:
 ```bash
 uv run --project scripts/pyproject.toml scripts/impl_audit.py list <C|W|A>
 ```

@@ -9,6 +9,20 @@ Audit all damage implementations within a scope. Create tracker items for issues
 - `W <type>` — all weapons of a type: `bow`, `catalyst`, `claymore`, `polearm`, `sword`
 - `A` — all artifact sets
 
+`Entities: <type:id>, ...` (optional) — review specific entities instead of a full scope. Each entry is `C:<id>`, `W:<id>`, or `A:<id>`. Examples:
+- `Entities: C:linnea` — one character
+- `Entities: C:linnea, W:golden_frostbound_oath` — mixed types in one agent
+- `Entities: W:staff_of_homa, W:primordial_jade_winged_spear` — multiple weapons
+
+When `Entities:` is specified, skip the `list` enumeration (Step 1) and use these IDs directly. The type prefix determines the `impl_audit.py` type argument (`C`/`W`/`A`) and the tracker file:
+- `C:id` → tracker file from `impl_audit.py show C <id>` output (region in stats JSON)
+- `W:id` → `docs/dmg-tracker/weapons.yaml`
+- `A:id` → `docs/dmg-tracker/artifacts.yaml`
+
+For characters, determine the tracker file by running `impl_audit.py show C <id>` and reading the region from the output, then use `docs/dmg-tracker/{region}.yaml`.
+
+When `Entities:` is present, `<scope>` can be omitted.
+
 ---
 
 ## Before You Start
@@ -26,7 +40,9 @@ Read these files (you need all of them throughout the review):
 
 ### Step 1: Enumerate entities in scope
 
-Run:
+**If `Entities:` is specified:** Use those IDs directly — skip the `list` command. For each entity, use the type prefix to determine `impl_audit.py` arguments and tracker file (see Arguments section).
+
+**Otherwise:** Run:
 ```bash
 uv run --project scripts/pyproject.toml scripts/impl_audit.py list <C|W|A>
 ```

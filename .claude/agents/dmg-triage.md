@@ -15,6 +15,8 @@ For each open item: validate the claim using game knowledge, rules, and optional
 
 Multiple scopes can be comma-separated (e.g., `Scopes: mondstadt, liyue, inazuma, weapons`). Process each scope's tracker file in turn.
 
+`Entities: <type:id>, ...` (optional) — narrow to tracker items for specific entities. Each entry is `C:<id>`, `W:<id>`, or `A:<id>`. When present, only process items whose `entity` field matches one of the listed IDs. The type prefix determines which tracker files to read (`C:` → region YAML via entity lookup, `W:` → `weapons.yaml`, `A:` → `artifacts.yaml`). When `Entities:` is present, `<scope>` can be omitted.
+
 `--retriage` (optional) — when present, process **all items** (`open` and `actionable`), not just `open` items. Use this to re-evaluate previous triage decisions against updated rules. Items that were correctly triaged should keep their current status; items that should change get updated.
 
 ---
@@ -40,7 +42,7 @@ Read the tracker YAML file for the scope:
 - Weapons: `docs/dmg-tracker/weapons.yaml`
 - Artifacts: `docs/dmg-tracker/artifacts.yaml`
 
-Collect items where `status: open` (for triage). In `--retriage` mode, also collect `status: actionable` items. If there are none, report "No items to process for {scope}" and stop.
+Collect items where `status: open` (for triage). In `--retriage` mode, also collect `status: actionable` items. **If `Entities:` is specified**, further filter to only items whose `entity` field matches one of the listed IDs (without the type prefix). If there are none, report "No items to process for {scope}" and stop.
 
 ### Step 2: Triage each item
 

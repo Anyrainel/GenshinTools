@@ -136,7 +136,9 @@ def get_char_stats() -> dict[str, Any]:
         if CHAR_STATS_PATH.exists():
             _CHAR_STATS_CACHE = json.loads(CHAR_STATS_PATH.read_text("utf-8"))
         if CHAR_BETA_STATS_PATH.exists():
-            _CHAR_STATS_CACHE.update(json.loads(CHAR_BETA_STATS_PATH.read_text("utf-8")))
+            beta = json.loads(CHAR_BETA_STATS_PATH.read_text("utf-8"))
+            for k, v in beta.items():
+                _CHAR_STATS_CACHE.setdefault(k, v)
     return _CHAR_STATS_CACHE
 
 
@@ -147,7 +149,9 @@ def get_weapon_stats() -> dict[str, Any]:
         if WEAPON_STATS_PATH.exists():
             _WEAPON_STATS_CACHE = json.loads(WEAPON_STATS_PATH.read_text("utf-8"))
         if WEAPON_BETA_STATS_PATH.exists():
-            _WEAPON_STATS_CACHE.update(json.loads(WEAPON_BETA_STATS_PATH.read_text("utf-8")))
+            beta = json.loads(WEAPON_BETA_STATS_PATH.read_text("utf-8"))
+            for k, v in beta.items():
+                _WEAPON_STATS_CACHE.setdefault(k, v)
     return _WEAPON_STATS_CACHE
 
 
@@ -213,10 +217,16 @@ def _load_merged_char_kits() -> tuple[dict[str, Any], dict[str, Any]]:
     zh_all: dict[str, Any] = {}
     for p in CHAR_EN_PATHS:
         if p.exists():
-            en_all.update(json.loads(p.read_text("utf-8")))
+            data = json.loads(p.read_text("utf-8"))
+            # Official files come first; beta files come last — use setdefault
+            # so official entries are never overwritten by beta duplicates
+            for k, v in data.items():
+                en_all.setdefault(k, v)
     for p in CHAR_ZH_PATHS:
         if p.exists():
-            zh_all.update(json.loads(p.read_text("utf-8")))
+            data = json.loads(p.read_text("utf-8"))
+            for k, v in data.items():
+                zh_all.setdefault(k, v)
     return en_all, zh_all
 
 
@@ -537,7 +547,9 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
             for suffix in (lang, f"beta_{lang}"):
                 wp = game_dir / f"weapon_{suffix}.json"
                 if wp.exists():
-                    game_weapons.update(json.loads(wp.read_text("utf-8")))
+                    data = json.loads(wp.read_text("utf-8"))
+                    for k, v in data.items():
+                        game_weapons.setdefault(k, v)
             entry = game_weapons.get(entity_id, {})
             tpl = entry.get("descHtmlTpl", "")
             refinements: list[list[str]] = entry.get("refinements", [])

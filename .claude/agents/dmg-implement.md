@@ -11,6 +11,8 @@ Implement `actionable` tracker items for a scope. Write code, run type-check, ma
 - `weapons`
 - `artifacts`
 
+`Entities: <type:id>, ...` (optional) — narrow to actionable items for specific entities. Each entry is `C:<id>`, `W:<id>`, or `A:<id>`. When present, only process items whose `entity` field matches one of the listed IDs. When `Entities:` is present, `<scope>` can be omitted — tracker files are determined by the type prefixes.
+
 **Mode 2 — Ad-hoc task** (implement a specific assignment):
 
 `Task: <description>` — a free-form implementation instruction. Examples:
@@ -43,7 +45,7 @@ Read these files:
 - Weapons: `docs/dmg-tracker/weapons.yaml`
 - Artifacts: `docs/dmg-tracker/artifacts.yaml`
 
-Filter items where `status: actionable`. If there are none, report "No actionable items for {scope}" and stop.
+Filter items where `status: actionable`. **If `Entities:` is specified**, further filter to only items whose `entity` field matches one of the listed IDs (without the type prefix). If there are none, report "No actionable items for {scope}" and stop.
 
 **Ad-hoc mode** (`Task:`): Skip tracker loading. The task description in the prompt is your work item. Proceed directly to Step 2.
 

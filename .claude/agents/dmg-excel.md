@@ -9,6 +9,8 @@ Cross-validate a character's damage implementation against the Excel community d
 
 Only characters are supported (the Excel calculator has no weapon/artifact logic).
 
+`Entities: C:<id1>, C:<id2>, ...` (optional) — review specific characters instead of a full scope. When present, skip full enumeration. Determine tracker file by reading the character's region from the `show` output. When `Entities:` is present, `<scope>` can be omitted.
+
 ---
 
 ## Before You Start
@@ -83,7 +85,9 @@ Key vocabulary:
 
 ### Step 1: Enumerate entities in scope
 
-Run:
+**If `Entities:` is specified:** Use those IDs directly — skip the `list` command. Determine the tracker file by reading the character's region from the `show` output.
+
+**Otherwise:** Run:
 ```bash
 uv run --project scripts/pyproject.toml scripts/impl_audit.py list C
 ```
