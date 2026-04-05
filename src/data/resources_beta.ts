@@ -3,17 +3,9 @@
 import type { CharacterResource, WeaponResource } from "./types";
 
 export const betaCharacters: CharacterResource[] = [
-  { id: "linnea", rarity: 5, imagePath: "/beta/character/linnea.webp" },
+  {"id":"linnea","rarity":5,"imagePath":"/beta/character/linnea.webp"},
 ];
 export const betaWeapons: WeaponResource[] = [
-  {
-    id: "prized_isshin_blade",
-    rarity: 4,
-    imagePath: "/beta/weapon/prized_isshin_blade.webp",
-  },
-  {
-    id: "golden_frostbound_oath",
-    rarity: 5,
-    imagePath: "/beta/weapon/golden_frostbound_oath.webp",
-  },
+  {"id":"prized_isshin_blade","rarity":4,"imagePath":"/beta/weapon/prized_isshin_blade.webp"},
+  {"id":"golden_frostbound_oath","rarity":5,"imagePath":"/beta/weapon/golden_frostbound_oath.webp"},
 ];

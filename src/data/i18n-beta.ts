@@ -3,16 +3,10 @@
 
 export const i18nBetaData = {
   characters: {
-    linnea: { en: "Linnea", zh: "\u8389\u5948\u5a05" },
+    "linnea": { en: "Linnea", zh: "\u8389\u5948\u5a05" },
   },
   weapons: {
-    golden_frostbound_oath: {
-      en: "Golden Frostbound Oath",
-      zh: "\u971c\u7ed3\u7684\u8a93\u91d1\u679d",
-    },
-    prized_isshin_blade: {
-      en: "Prized Isshin Blade",
-      zh: "\u300c\u4e00\u5fc3\u4f20\u300d\u540d\u5200",
-    },
+    "golden_frostbound_oath": { en: "Golden Frostbound Oath", zh: "\u971c\u7ed3\u7684\u8a93\u91d1\u679d" },
+    "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "\u300c\u4e00\u5fc3\u4f20\u300d\u540d\u5200" },
   },
 };
