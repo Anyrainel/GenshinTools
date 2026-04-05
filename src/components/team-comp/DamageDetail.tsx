@@ -75,6 +75,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
+import type { ReuseEntry } from "./StatSheetPanel";
 import { TeamRosterCard } from "./TeamRosterCard";
 
 // getReactionKey removed — reaction config lives on combo lines
@@ -183,6 +184,19 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     () => new Set([...frozenCharIdSet, ...forceReusedCharIds]),
     [frozenCharIdSet, forceReusedCharIds]
   );
+  // Per-character reuse info: "locked" (force-reused) or "shared" (pool expansion)
+  const reuseInfo = useMemo(() => {
+    const map = new Map<string, ReuseEntry>();
+    for (const [cid, arts] of Object.entries(
+      teamInventory.perCharExtraArtifacts
+    )) {
+      map.set(cid, {
+        mode: forceReusedCharIds.has(cid) ? "locked" : "shared",
+        extraIds: new Set(arts.map((a) => a.id)),
+      });
+    }
+    return map;
+  }, [teamInventory.perCharExtraArtifacts, forceReusedCharIds]);
 
   // Pending freeze action — held while the conflict/override alert dialog is open
   const [pendingFreezeAction, setPendingFreezeAction] = useState<{
@@ -204,9 +218,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   const { characterStats, weaponStats, ready: gameStatsReady } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
 
-  const [ignoreArtifactSets, setIgnoreArtifactSets] = useState<
-    Record<string, boolean>
-  >({});
+  const ignoreArtifactSets = team.ignoreArtifactSets;
 
   const optimizerBuildMatchByChar = useMemo(() => {
     if (!accountData) return {};
@@ -1229,8 +1241,6 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
             isMobile={isMobile}
             t={t}
             frozenCharIds={frozenCharIdSet}
-            ignoreArtifactSets={ignoreArtifactSets}
-            onIgnoreArtifactSetsChange={setIgnoreArtifactSets}
           />
         )}
 
@@ -1407,6 +1417,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
             hasSwapOverrides ? handleRestoreOriginal : undefined
           }
           forceReusedCharIds={forceReusedCharIds}
+          reuseInfo={reuseInfo}
           tierAssignments={tierAssignments}
           onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
           onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}

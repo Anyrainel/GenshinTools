@@ -53,7 +53,9 @@ export default function TeamCompPage() {
   const tabs = useMemo(() => getTabsForRoute(t, "/team-comp"), [t]);
   const tour = useTour();
   const teams = useTeamStore((state) => state.teams);
-  const activeTeamId = useSessionNavStore((s) => s.activeTeamId);
+  const activeTeamId = useSessionNavStore(
+    (s) => s.viewSettings.damage.activeTeamId
+  );
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const importTeams = useTeamStore((state) => state.importTeams);
@@ -157,7 +159,7 @@ export default function TeamCompPage() {
   if (activeTeamId) {
     const activeTeam = teams.find((t) => t.id === activeTeamId);
     if (!activeTeam) {
-      setTimeout(() => setActiveTeamId(null), 0);
+      setTimeout(() => setActiveTeamId("damage", null), 0);
       return null;
     }
     const clearActiveTeam = () => {

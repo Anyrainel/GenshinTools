@@ -11,15 +11,16 @@ interface InvestmentViewProps {
 
 export function InvestmentView({ importRef }: InvestmentViewProps) {
   const { t } = useLanguage();
-  const activeTeamId = useSessionNavStore((s) => s.activeInvestmentTeamId);
-  const setActiveTeamId = useSessionNavStore(
-    (s) => s.setActiveInvestmentTeamId
+  const activeTeamId = useSessionNavStore(
+    (s) => s.viewSettings.investment.activeTeamId
   );
+  const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
 
   return (
     <TeamGrid
+      viewId="investment"
       activeTeamId={activeTeamId}
-      setActiveTeamId={setActiveTeamId}
+      setActiveTeamId={(id) => setActiveTeamId("investment", id)}
       renderDetail={(team, onBack) => (
         <InvestmentDetail team={team} onBack={onBack} />
       )}

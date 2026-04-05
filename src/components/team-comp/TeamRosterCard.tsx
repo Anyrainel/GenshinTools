@@ -1,6 +1,5 @@
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -54,8 +53,6 @@ interface TeamRosterCardProps {
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
   frozenCharIds?: Set<string>;
-  ignoreArtifactSets?: Record<string, boolean>;
-  onIgnoreArtifactSetsChange?: (v: Record<string, boolean>) => void;
 }
 
 export function TeamRosterCard({
@@ -67,8 +64,6 @@ export function TeamRosterCard({
   isMobile,
   t,
   frozenCharIds,
-  ignoreArtifactSets,
-  onIgnoreArtifactSetsChange,
 }: TeamRosterCardProps) {
   // 3-tier icon sizing: narrow (<560px) → mid (560-1023px) → desktop (≥1024px)
   const isNarrow = useMediaQuery("(max-width: 559px)");
@@ -697,43 +692,6 @@ export function TeamRosterCard({
                       renderOption(artSetId, "artifact")}
                   </div>
                 )}
-
-                {/* Ignore artifact sets checkbox */}
-                {(() => {
-                  const hasSet =
-                    artConfig?.type === "4pc" || artConfig?.type === "2pc+2pc";
-                  const erPct = Math.round((team.minEr?.[charId] ?? 1.0) * 100);
-                  const crPct = Math.round((team.minCr?.[charId] ?? 0) * 100);
-                  const hasFavonius =
-                    team.weapons[i]?.startsWith("favonius_") ?? false;
-                  const showCheckbox =
-                    hasSet &&
-                    onIgnoreArtifactSetsChange &&
-                    (erPct > 160 || (hasFavonius && crPct > 40));
-                  if (!showCheckbox) return null;
-                  const cbId = `ignore-sets-${charId}`;
-                  return (
-                    <label
-                      htmlFor={cbId}
-                      className="flex items-center gap-1 mt-auto pt-1 cursor-pointer select-none ml-1 xl:ml-2"
-                    >
-                      <Checkbox
-                        id={cbId}
-                        checked={ignoreArtifactSets?.[charId] ?? false}
-                        onCheckedChange={(v) =>
-                          onIgnoreArtifactSetsChange({
-                            ...ignoreArtifactSets,
-                            [charId]: v === true,
-                          })
-                        }
-                        className="h-3.5 w-3.5"
-                      />
-                      <span className="font-medium text-foreground/50 text-[10px] md:text-xs lg:text-[11px] xl:text-xs">
-                        {t.ui("teamComp.ignoreSets")}
-                      </span>
-                    </label>
-                  );
-                })()}
               </div>
             );
           })}

@@ -20,6 +20,8 @@ import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
+import type { TeamSort } from "@/stores/useSessionNavStore";
+import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import type { Team } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -102,6 +104,8 @@ function SortableTeamSlot({
 }
 
 export interface TeamGridProps {
+  /** Identifies which view this grid belongs to (for per-view session settings) */
+  viewId: import("@/stores/useSessionNavStore").ViewId;
   /** Session navigation: which team is currently open in detail view */
   activeTeamId: string | null;
   setActiveTeamId: (id: string | null) => void;
@@ -120,6 +124,7 @@ export interface TeamGridProps {
 }
 
 export function TeamGrid({
+  viewId,
   activeTeamId,
   setActiveTeamId,
   renderDetail,
@@ -182,15 +187,20 @@ export function TeamGrid({
     return map;
   }, []);
 
-  // Filters & sort
-  type TeamSort = "default" | "tier" | "release";
+  // Filters & sort (ownedOnly + teamSort persisted per-view in sessionStorage)
+  const viewSettings = useSessionNavStore((s) => s.viewSettings[viewId]);
+  const setViewOwnedOnly = useSessionNavStore((s) => s.setViewOwnedOnly);
+  const setViewTeamSort = useSessionNavStore((s) => s.setViewTeamSort);
+  const ownedOnlyFilter =
+    viewSettings.ownedOnly === null ? hasAccountData : viewSettings.ownedOnly;
+  const setOwnedOnlyFilter = (v: boolean) => setViewOwnedOnly(viewId, v);
+  const teamSort = viewSettings.teamSort;
+  const toggleSort = (s: TeamSort) =>
+    setViewTeamSort(viewId, teamSort === s ? "default" : s);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [elementFilter, setElementFilter] = useState<Element[]>([]);
   const [regionFilter, setRegionFilter] = useState<Region[]>([]);
-  const [ownedOnlyFilter, setOwnedOnlyFilter] = useState(hasAccountData);
-  const [teamSort, setTeamSort] = useState<TeamSort>("default");
-  const toggleSort = (s: TeamSort) =>
-    setTeamSort((prev) => (prev === s ? "default" : s));
 
   const toggleElement = (el: Element) =>
     setElementFilter((prev) =>
@@ -548,7 +558,7 @@ export function TeamGrid({
               {hasAccountData && (
                 <CategoryChip
                   active={ownedOnlyFilter}
-                  onClick={() => setOwnedOnlyFilter((v) => !v)}
+                  onClick={() => setOwnedOnlyFilter(!ownedOnlyFilter)}
                   color="amber"
                   activeIcon={Bookmark}
                   inactiveIcon={Bookmark}

@@ -24,9 +24,15 @@ import {
   ChevronUp,
   Flame,
   Link2,
+  Lock,
   Snowflake,
 } from "lucide-react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
+
+export type ReuseEntry = {
+  mode: "shared" | "locked";
+  extraIds: Set<string>;
+};
 
 type HlKey = StatKey | "charLevel";
 type HighlightedStat = { key: HlKey; charId: string } | null;
@@ -54,6 +60,8 @@ type Props = {
   onUnfreezeChar?: (charId: string) => void;
   /** Characters whose artifacts are force-reused */
   forceReusedCharIds?: Set<string>;
+  /** Per-character reuse info: "locked" (force-reused) or "shared" (pool expansion) */
+  reuseInfo?: Map<string, ReuseEntry>;
   /** Preview mode — hides idle/combat/marginal tabs */
   preview?: boolean;
 };
@@ -290,6 +298,7 @@ export function StatSheetPanel({
   onFreezeChar,
   onUnfreezeChar,
   forceReusedCharIds,
+  reuseInfo,
   preview,
 }: Props) {
   // Per-character open view: null = collapsed
@@ -393,7 +402,39 @@ export function StatSheetPanel({
               )}
               <span className="flex-1" />
 
-              {/* Freeze / force-reuse button hierarchy */}
+              {/* Reuse mode badge (separate from freeze/thaw) */}
+              {(() => {
+                const reuseEntry = reuseInfo?.get(charId);
+                if (!reuseEntry) return null;
+                const totalSlots = 5;
+                const reusedCount =
+                  reuseEntry.mode === "locked"
+                    ? totalSlots
+                    : Object.values(artifactsObj).filter(
+                        (a) => a && reuseEntry.extraIds.has(a.id)
+                      ).length;
+                const label = t
+                  .ui(
+                    reuseEntry.mode === "locked"
+                      ? "teamComp.reuseBadgeLocked"
+                      : "teamComp.reuseBadgeShared"
+                  )
+                  .replace("{0}", String(reusedCount))
+                  .replace("{1}", String(totalSlots));
+                return reuseEntry.mode === "locked" ? (
+                  <span className="flex items-center gap-0.5 h-5 md:h-6 px-1 md:px-1.5 rounded-md text-[10px] md:text-xs font-bold border border-amber-400/30 bg-amber-500/8 text-amber-400 whitespace-nowrap select-none">
+                    <Lock className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
+                    {label}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-0.5 h-5 md:h-6 px-1 md:px-1.5 rounded-md text-[10px] md:text-xs font-bold border border-cyan-400/30 bg-cyan-500/8 text-cyan-400 whitespace-nowrap select-none">
+                    <Link2 className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
+                    {label}
+                  </span>
+                );
+              })()}
+
+              {/* Freeze / thaw button — always shown */}
               {isFrozen && onUnfreezeChar ? (
                 <button
                   type="button"
@@ -403,11 +444,6 @@ export function StatSheetPanel({
                   <Flame className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
                   {t.ui("teamComp.unfreezeChar")}
                 </button>
-              ) : forceReusedCharIds?.has(charId) ? (
-                <span className="flex items-center gap-0.5 md:gap-1 h-5 md:h-6 px-1.5 md:px-2.5 rounded-md text-[10px] md:text-xs font-bold border border-cyan-400/30 bg-cyan-500/8 text-cyan-400 whitespace-nowrap select-none">
-                  <Link2 className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
-                  {t.ui("teamComp.forceReusedBadge")}
-                </span>
               ) : onFreezeChar && hasArtifacts ? (
                 <button
                   type="button"

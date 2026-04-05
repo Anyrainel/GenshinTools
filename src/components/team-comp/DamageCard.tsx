@@ -81,7 +81,7 @@ import {
   EnemyInputs,
   RollQualityInputs,
 } from "./GeneratorControls";
-import { StatSheetPanel } from "./StatSheetPanel";
+import { type ReuseEntry, StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
 import {
   CARD_BODY_CLS,
@@ -319,8 +319,23 @@ function ComboBreakdown({
     <div className="space-y-1 md:space-y-2">
       <Collapsible open={expanded} onOpenChange={setExpanded}>
         <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
-          {/* Total damage — clickable to toggle breakdown */}
-          <div className="flex flex-col items-center justify-center">
+          {/* Total damage row: comparison | card | DPS */}
+          <div className="flex items-center justify-center gap-2 md:gap-3">
+            {/* Comparison — left of the card */}
+            {currentTotal != null && currentTotal > 0 && (
+              <div className="flex flex-col items-center shrink-0">
+                <span className="text-muted-foreground text-[9px] md:text-[10px] leading-none">
+                  {t.ui("teamComp.vsEquipped")}
+                </span>
+                <ComparisonLabel
+                  currentTotal={currentTotal}
+                  optimizedTotal={totalLineDamage}
+                  isMobile={isMobile}
+                />
+              </div>
+            )}
+
+            {/* Total damage card — clickable to toggle breakdown */}
             <CollapsibleTrigger asChild>
               <div
                 className={cn(
@@ -330,13 +345,6 @@ function ComboBreakdown({
                   "hover:bg-primary/15"
                 )}
               >
-                {currentTotal != null && currentTotal > 0 && (
-                  <ComparisonLabel
-                    currentTotal={currentTotal}
-                    optimizedTotal={totalLineDamage}
-                    isMobile={isMobile}
-                  />
-                )}
                 <div className="flex items-center gap-0">
                   <CritModeDropdown
                     critMode={critMode}
@@ -356,15 +364,6 @@ function ComboBreakdown({
                 >
                   {fmtDamage(totalLineDamage)}
                 </div>
-                {dpsSeconds != null && setDpsSeconds && (
-                  <DpsDisplay
-                    totalDamage={totalLineDamage}
-                    dpsSeconds={dpsSeconds}
-                    setDpsSeconds={setDpsSeconds}
-                    isMobile={isMobile}
-                    t={t}
-                  />
-                )}
                 <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
                   {expanded
                     ? t.ui("teamComp.collapseFormula")
@@ -378,6 +377,17 @@ function ComboBreakdown({
                 />
               </div>
             </CollapsibleTrigger>
+
+            {/* DPS calculator — right of the card */}
+            {dpsSeconds != null && setDpsSeconds && (
+              <DpsDisplay
+                totalDamage={totalLineDamage}
+                dpsSeconds={dpsSeconds}
+                setDpsSeconds={setDpsSeconds}
+                isMobile={isMobile}
+                t={t}
+              />
+            )}
           </div>
 
           {/* Below total: either combo grid or focused formula breakdown */}
@@ -769,6 +779,7 @@ function SingleResultView({
   onFreezeChar,
   onUnfreezeChar,
   forceReusedCharIds,
+  reuseInfo,
   currentTotal,
   dpsSeconds,
   setDpsSeconds,
@@ -789,6 +800,7 @@ function SingleResultView({
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
   forceReusedCharIds?: Set<string>;
+  reuseInfo?: Map<string, ReuseEntry>;
   currentTotal?: number;
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
@@ -828,6 +840,7 @@ function SingleResultView({
           onFreezeChar={onFreezeChar}
           onUnfreezeChar={onUnfreezeChar}
           forceReusedCharIds={forceReusedCharIds}
+          reuseInfo={reuseInfo}
         />
       )}
 
@@ -835,8 +848,23 @@ function SingleResultView({
         <div className="space-y-1 md:space-y-2">
           <Collapsible open={expanded} onOpenChange={setExpanded}>
             <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
-              {/* Total damage — clickable to toggle breakdown */}
-              <div className="flex flex-col items-center justify-center">
+              {/* Total damage row: comparison | card | DPS */}
+              <div className="flex items-center justify-center gap-2 md:gap-3">
+                {/* Comparison — left of the card */}
+                {currentTotal != null && currentTotal > 0 && (
+                  <div className="flex flex-col items-center shrink-0">
+                    <span className="text-muted-foreground text-[9px] md:text-[10px] leading-none">
+                      {t.ui("teamComp.vsEquipped")}
+                    </span>
+                    <ComparisonLabel
+                      currentTotal={currentTotal}
+                      optimizedTotal={totalDamage}
+                      isMobile={isMobile}
+                    />
+                  </div>
+                )}
+
+                {/* Total damage card — clickable to toggle breakdown */}
                 <CollapsibleTrigger asChild>
                   <div
                     className={cn(
@@ -846,13 +874,6 @@ function SingleResultView({
                       "hover:bg-primary/15"
                     )}
                   >
-                    {currentTotal != null && currentTotal > 0 && (
-                      <ComparisonLabel
-                        currentTotal={currentTotal}
-                        optimizedTotal={totalDamage}
-                        isMobile={isMobile}
-                      />
-                    )}
                     <div className="flex items-center gap-0">
                       <CritModeDropdown
                         critMode={critMode}
@@ -871,15 +892,6 @@ function SingleResultView({
                     >
                       {fmtDamage(totalDamage)}
                     </div>
-                    {dpsSeconds != null && setDpsSeconds && (
-                      <DpsDisplay
-                        totalDamage={totalDamage}
-                        dpsSeconds={dpsSeconds}
-                        setDpsSeconds={setDpsSeconds}
-                        isMobile={isMobile}
-                        t={t}
-                      />
-                    )}
                     <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
                       {expanded
                         ? t.ui("teamComp.collapseFormula")
@@ -893,6 +905,17 @@ function SingleResultView({
                     />
                   </div>
                 </CollapsibleTrigger>
+
+                {/* DPS calculator — right of the card */}
+                {dpsSeconds != null && setDpsSeconds && (
+                  <DpsDisplay
+                    totalDamage={totalDamage}
+                    dpsSeconds={dpsSeconds}
+                    setDpsSeconds={setDpsSeconds}
+                    isMobile={isMobile}
+                    t={t}
+                  />
+                )}
               </div>
 
               <CollapsibleContent>
@@ -960,6 +983,7 @@ function ComboResultView({
   onFreezeChar,
   onUnfreezeChar,
   forceReusedCharIds,
+  reuseInfo,
   currentTotal,
   dpsSeconds,
   setDpsSeconds,
@@ -981,6 +1005,7 @@ function ComboResultView({
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
   forceReusedCharIds?: Set<string>;
+  reuseInfo?: Map<string, ReuseEntry>;
   currentTotal?: number;
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
@@ -1082,6 +1107,7 @@ function ComboResultView({
           onFreezeChar={onFreezeChar}
           onUnfreezeChar={onUnfreezeChar}
           forceReusedCharIds={forceReusedCharIds}
+          reuseInfo={reuseInfo}
         />
       )}
       <ComboBreakdown
@@ -1171,6 +1197,8 @@ interface DamageCardProps {
   onRestoreOriginal?: () => void;
   // Force reuse
   forceReusedCharIds?: Set<string>;
+  /** Per-character reuse info: "locked" (force-reused) or "shared" (pool expansion) */
+  reuseInfo?: Map<string, ReuseEntry>;
   /** Freeze a character's equipped artifacts from the current tab */
   onFreezeCharFromCurrent?: (charId: string) => void;
   /** Unfreeze from the current tab — clears optimize-tab cache */
@@ -1326,6 +1354,9 @@ function DpsDisplay({
       className="flex items-center gap-1 shrink-0"
       onClick={(e) => e.stopPropagation()}
     >
+      <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
+        DPS
+      </span>
       <Input
         type="text"
         inputMode="numeric"
@@ -1488,6 +1519,7 @@ export function DamageCard({
   hasSwapOverrides,
   onRestoreOriginal,
   forceReusedCharIds,
+  reuseInfo,
   onFreezeCharFromCurrent,
   onUnfreezeCharFromCurrent,
   currentTabFrozenCharIds,
@@ -1790,6 +1822,7 @@ export function DamageCard({
                     t={t}
                     frozenCharIds={frozenCharIds}
                     forceReusedCharIds={forceReusedCharIds}
+                    reuseInfo={reuseInfo}
                     onFreezeChar={onFreezeChar}
                     onUnfreezeChar={onUnfreezeChar}
                     preview
@@ -1972,6 +2005,7 @@ export function DamageCard({
                   onFreezeChar={onFreezeChar}
                   onUnfreezeChar={onUnfreezeChar}
                   forceReusedCharIds={forceReusedCharIds}
+                  reuseInfo={reuseInfo}
                   currentTotal={currentTotal}
                   dpsSeconds={dpsSeconds}
                   setDpsSeconds={setDpsSeconds}
@@ -1997,6 +2031,7 @@ export function DamageCard({
                   onFreezeChar={onFreezeChar}
                   onUnfreezeChar={onUnfreezeChar}
                   forceReusedCharIds={forceReusedCharIds}
+                  reuseInfo={reuseInfo}
                   currentTotal={currentTotal}
                   dpsSeconds={dpsSeconds}
                   setDpsSeconds={setDpsSeconds}

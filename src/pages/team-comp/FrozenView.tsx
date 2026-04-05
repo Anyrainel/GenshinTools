@@ -363,54 +363,15 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
       return buildBatchEquipInstructions(teamInputs, accountData);
     }, [frozenTeamEntries, accountData]);
 
+    // Show controls when there's meaningful context (account + teams),
+    // even if nothing is frozen yet, so users can configure reuse mode
+    // and freeze standalone artifacts from the start.
+    const hasContext = !!accountData && teams.length > 0;
+
     return (
       <ScrollLayout>
         <div className="flex flex-col gap-4 py-2">
-          {!isEmpty && (
-            <>
-              <FreezeControlBar
-                reuseMode={reuseMode}
-                onReuseModeChange={(v) => setReuseMode(v as ArtifactReuseMode)}
-                hasActiveFrozen={hasActiveFrozen}
-                hasPendingAnything={hasPendingAnything}
-                onClearAll={handleClearAll}
-                onRefreezeAll={handleRefreezeAll}
-                onEquipAll={() => setEquipDialogOpen(true)}
-              />
-
-              {accountData && (
-                <StandaloneArtifactsCard
-                  artifacts={displayStandaloneArtifacts}
-                  onFreezeClick={() => setFreezeDialogOpen(true)}
-                  onClearArtifact={handleClearStandaloneArt}
-                />
-              )}
-
-              {/* Per-team frozen sections */}
-              {frozenTeamEntries.map((entry) => (
-                <FrozenTeamSection
-                  key={entry.teamId}
-                  teamId={entry.teamId}
-                  team={entry.team}
-                  teamIndex={entry.teamIndex}
-                  frozenCharIds={entry.frozenCharIds}
-                  pendingRefreezeChars={entry.pendingRefreezeChars}
-                  artifactsByChar={entry.artifactsByChar}
-                  accountData={accountData}
-                  onUnfreezeChar={(charId) =>
-                    handleUnfreezeChar(entry.teamId, charId)
-                  }
-                  onRefreezeChar={(charId) =>
-                    handleRefreezeChar(entry.teamId, charId)
-                  }
-                  onUnfreezeAll={() => handleUnfreezeTeam(entry.teamId)}
-                  onRefreezeAll={() => handleRefreezeTeam(entry.teamId)}
-                />
-              ))}
-            </>
-          )}
-
-          {/* Empty state */}
+          {/* Empty state — above controls so it introduces the feature */}
           {isEmpty && (
             <EmptyState
               icon={Snowflake}
@@ -420,6 +381,51 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
               description={t.ui("teamComp.frozenEmptyDesc")}
             />
           )}
+
+          {(hasContext || !isEmpty) && (
+            <FreezeControlBar
+              reuseMode={reuseMode}
+              onReuseModeChange={(v) => setReuseMode(v as ArtifactReuseMode)}
+              hasActiveFrozen={hasActiveFrozen}
+              hasPendingAnything={hasPendingAnything}
+              onClearAll={handleClearAll}
+              onRefreezeAll={handleRefreezeAll}
+              onEquipAll={
+                hasFrozenTeams ? () => setEquipDialogOpen(true) : undefined
+              }
+            />
+          )}
+
+          {(hasContext || !isEmpty) && accountData && (
+            <StandaloneArtifactsCard
+              artifacts={displayStandaloneArtifacts}
+              onFreezeClick={() => setFreezeDialogOpen(true)}
+              onClearArtifact={handleClearStandaloneArt}
+            />
+          )}
+
+          {/* Per-team frozen sections */}
+          {!isEmpty &&
+            frozenTeamEntries.map((entry) => (
+              <FrozenTeamSection
+                key={entry.teamId}
+                teamId={entry.teamId}
+                team={entry.team}
+                teamIndex={entry.teamIndex}
+                frozenCharIds={entry.frozenCharIds}
+                pendingRefreezeChars={entry.pendingRefreezeChars}
+                artifactsByChar={entry.artifactsByChar}
+                accountData={accountData}
+                onUnfreezeChar={(charId) =>
+                  handleUnfreezeChar(entry.teamId, charId)
+                }
+                onRefreezeChar={(charId) =>
+                  handleRefreezeChar(entry.teamId, charId)
+                }
+                onUnfreezeAll={() => handleUnfreezeTeam(entry.teamId)}
+                onRefreezeAll={() => handleRefreezeTeam(entry.teamId)}
+              />
+            ))}
         </div>
 
         {hasFrozenTeams && (

@@ -9,13 +9,16 @@ interface DamageViewProps {
 }
 
 export function DamageView({ importRef }: DamageViewProps) {
-  const activeTeamId = useSessionNavStore((s) => s.activeTeamId);
+  const activeTeamId = useSessionNavStore(
+    (s) => s.viewSettings.damage.activeTeamId
+  );
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
 
   return (
     <TeamGrid
+      viewId="damage"
       activeTeamId={activeTeamId}
-      setActiveTeamId={setActiveTeamId}
+      setActiveTeamId={(id) => setActiveTeamId("damage", id)}
       renderDetail={(team, onBack) => (
         <DamageDetail team={team} onBack={onBack} />
       )}

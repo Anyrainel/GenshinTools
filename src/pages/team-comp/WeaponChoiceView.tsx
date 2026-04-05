@@ -11,15 +11,16 @@ interface WeaponChoiceViewProps {
 
 export function WeaponChoiceView({ importRef }: WeaponChoiceViewProps) {
   const { t } = useLanguage();
-  const activeTeamId = useSessionNavStore((s) => s.activeWeaponChoiceTeamId);
-  const setActiveTeamId = useSessionNavStore(
-    (s) => s.setActiveWeaponChoiceTeamId
+  const activeTeamId = useSessionNavStore(
+    (s) => s.viewSettings.weaponChoice.activeTeamId
   );
+  const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
 
   return (
     <TeamGrid
+      viewId="weaponChoice"
       activeTeamId={activeTeamId}
-      setActiveTeamId={setActiveTeamId}
+      setActiveTeamId={(id) => setActiveTeamId("weaponChoice", id)}
       renderDetail={(team, onBack) => (
         <WeaponChoiceDetail team={team} onBack={onBack} />
       )}

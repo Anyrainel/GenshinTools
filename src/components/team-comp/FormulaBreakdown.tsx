@@ -69,7 +69,7 @@ function MathZone({
       </div>
 
       {mathLine && (
-        <div className="font-[math] text-[10px] md:text-base font-semibold flex items-center justify-center whitespace-nowrap pb-0.5 md:pb-1.5">
+        <div className="font-[math] text-[10px] md:text-base font-semibold flex items-center justify-center whitespace-nowrap pb-1 md:pb-2">
           {mathLine}
         </div>
       )}
