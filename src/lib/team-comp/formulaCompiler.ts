@@ -743,9 +743,10 @@ export function compileComboTeamDamage(
         offFieldFormulaStats,
         lineBuffs,
         lineExprVariants,
-        lineOffFieldVariants
+        lineOffFieldVariants,
+        line.count
       );
-      allPartExprs.push(E.mul(lineExpr, E.const(line.count)));
+      allPartExprs.push(lineExpr);
     }
   }
 
@@ -1044,7 +1045,8 @@ function buildTotalDamageExpr(
   offFieldFormulaStats?: ExprStats,
   partialBuffs?: PartialBuffInfo[],
   statsVariants?: Map<string, ExprStats>,
-  offFieldVariants?: Map<string, ExprStats>
+  offFieldVariants?: Map<string, ExprStats>,
+  comboCount = 1
 ): Expr {
   const partExprs: Expr[] = [];
 
@@ -1096,6 +1098,8 @@ function buildTotalDamageExpr(
       return activated !== undefined && activated < h;
     });
 
+    const bespokeMax = bespokeBuff?.source.maxStacks;
+
     if (!hasReaction || formula.tag.reaction !== "none") {
       // No reaction override or formula has built-in reaction
       if (partPartials && partPartials.length > 0) {
@@ -1106,15 +1110,35 @@ function buildTotalDamageExpr(
           stats,
           charBase,
           ctx,
-          h,
+          h * comboCount,
           idx,
           partPartials,
           baseVariants,
           bespokeBuff
         );
+      } else if (bespokeMax != null) {
+        const totalHitsAll = h * comboCount;
+        const buffedHits = Math.min(bespokeMax, totalHitsAll);
+        const unbuffedHits = totalHitsAll - buffedHits;
+        const buffedExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
+        if (unbuffedHits > 0) {
+          const unbuffedExpr = formula.buildExpr(
+            baseStats,
+            charBase.charLevel,
+            ctx
+          );
+          partExprs.push(
+            E.add(
+              E.mul(buffedExpr, E.const(buffedHits)),
+              E.mul(unbuffedExpr, E.const(unbuffedHits))
+            )
+          );
+        } else {
+          partExprs.push(E.mul(buffedExpr, E.const(totalHitsAll)));
+        }
       } else {
         const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-        partExprs.push(E.mul(partExpr, E.const(h)));
+        partExprs.push(E.mul(partExpr, E.const(h * comboCount)));
       }
       continue;
     }
@@ -1148,19 +1172,43 @@ function buildTotalDamageExpr(
           stats,
           charBase,
           ctx,
-          reactingHits,
+          reactingHits * comboCount,
           idx,
           partPartials,
           baseVariants,
           bespokeBuff
         );
+      } else if (bespokeMax != null) {
+        const totalReacting = reactingHits * comboCount;
+        const buffed = Math.min(bespokeMax, totalReacting);
+        const unbuffed = totalReacting - buffed;
+        const buffedExpr = effectiveFormula.buildExpr(
+          stats,
+          charBase.charLevel,
+          ctx
+        );
+        if (unbuffed > 0) {
+          const unbuffedExpr = effectiveFormula.buildExpr(
+            baseStats,
+            charBase.charLevel,
+            ctx
+          );
+          partExprs.push(
+            E.add(
+              E.mul(buffedExpr, E.const(buffed)),
+              E.mul(unbuffedExpr, E.const(unbuffed))
+            )
+          );
+        } else {
+          partExprs.push(E.mul(buffedExpr, E.const(totalReacting)));
+        }
       } else {
         const partExpr = effectiveFormula.buildExpr(
           stats,
           charBase.charLevel,
           ctx
         );
-        partExprs.push(E.mul(partExpr, E.const(reactingHits)));
+        partExprs.push(E.mul(partExpr, E.const(reactingHits * comboCount)));
       }
     }
     if (nonReactingHits > 0) {
@@ -1171,15 +1219,35 @@ function buildTotalDamageExpr(
           stats,
           charBase,
           ctx,
-          nonReactingHits,
+          nonReactingHits * comboCount,
           idx,
           partPartials,
           baseVariants,
           bespokeBuff
         );
+      } else if (bespokeMax != null) {
+        const totalNonReacting = nonReactingHits * comboCount;
+        const buffed = Math.min(bespokeMax, totalNonReacting);
+        const unbuffed = totalNonReacting - buffed;
+        const buffedExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
+        if (unbuffed > 0) {
+          const unbuffedExpr = formula.buildExpr(
+            baseStats,
+            charBase.charLevel,
+            ctx
+          );
+          partExprs.push(
+            E.add(
+              E.mul(buffedExpr, E.const(buffed)),
+              E.mul(unbuffedExpr, E.const(unbuffed))
+            )
+          );
+        } else {
+          partExprs.push(E.mul(buffedExpr, E.const(totalNonReacting)));
+        }
       } else {
         const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-        partExprs.push(E.mul(partExpr, E.const(nonReactingHits)));
+        partExprs.push(E.mul(partExpr, E.const(nonReactingHits * comboCount)));
       }
     }
   }
