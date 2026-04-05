@@ -91,12 +91,10 @@ describe("TeamRosterCard", () => {
     expect(screen.getByText("Xingqiu")).toBeInTheDocument();
   });
 
-  it("renders Min. CR and Min. ER labels for each character", () => {
+  it("does not render Min. CR / Min. ER labels (moved to DamageCard)", () => {
     render(<TestRoster {...defaultProps()} />);
-    const crLabels = screen.getAllByText("Min. CR");
-    const erLabels = screen.getAllByText("Min. ER");
-    expect(crLabels.length).toBe(2);
-    expect(erLabels.length).toBe(2);
+    expect(screen.queryAllByText("Min. CR")).toHaveLength(0);
+    expect(screen.queryAllByText("Min. ER")).toHaveLength(0);
   });
 
   it("shows level selector defaulting to Lv. 90", () => {

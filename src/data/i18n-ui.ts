@@ -744,11 +744,9 @@ export const i18nUiData = {
     },
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
-    critRateTarget: { en: "DPS CR Target", zh: "(凹分)主C暴击目标" },
-    critRateTargetTip: {
-      en: "Adds a (100−x)% CR buff to the main DPS during calculation. In rotation mode, any character with a damage formula is treated as main DPS.",
-      zh: "计算时会给主C添加一个(100-x)%的暴击率buff。循环模式下带有伤害公式的角色均视为主C。",
-    },
+    critRateTarget: { en: "CR Target", zh: "最高暴击（凹分）" },
+    tierPool: { en: "Tier", zh: "等级" },
+    dpsSeconds: { en: "s", zh: "秒" },
     rollMultiplier: { en: "Roll Growth", zh: "词条成长" },
     substatBudget: {
       en: "Rolls Count",
@@ -1064,12 +1062,12 @@ export const i18nUiData = {
       zh: "最优升级顺序",
     },
     analyzerMinConfig: {
-      en: "Min",
-      zh: "最低",
+      en: "Min Config",
+      zh: "最低配置",
     },
     analyzerMaxConfig: {
-      en: "Max",
-      zh: "最高",
+      en: "Max Config",
+      zh: "最高配置",
     },
     analyzerWeapon4StarR0: {
       en: "3/4★R5",

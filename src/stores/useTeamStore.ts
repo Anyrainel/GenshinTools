@@ -331,6 +331,10 @@ export interface Team {
   weaponChoiceResult?: WeaponChoiceResult | null;
   /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
   extraBuffs?: ExtraBuff[];
+  /** Per-character toggle to exclude artifacts equipped by higher-tier characters */
+  tierAwarePool?: Record<string, boolean>;
+  /** Per-character CR mode: "min" = minCr constraint, "target" = critRateTarget buff */
+  crMode?: Record<string, "min" | "target">;
 }
 
 /** Exported artifact — `type` discriminator omitted since field names differ. */

@@ -1,7 +1,6 @@
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -132,7 +131,7 @@ export function TeamRosterCard({
               value={value}
               onValueChange={(v) => handleOptionChange(entityId, v)}
             >
-              <LightweightSelectTrigger className="font-bold [&>span]:text-center [&>span]:w-full bg-black/20 border-border/30 w-24 md:w-32 lg:w-28 xl:w-36 h-6 xl:h-8 text-[10px] md:text-sm lg:text-[11px] xl:text-sm">
+              <LightweightSelectTrigger className="font-bold [&>span]:text-center [&>span]:w-full bg-white/5 border-border/30 w-24 md:w-32 lg:w-28 xl:w-36 h-6 xl:h-8 text-[10px] md:text-sm lg:text-[11px] xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -542,89 +541,11 @@ export function TeamRosterCard({
                   />
                 </div>
 
-                {/* Row 2: Name + Min. CR / Min. ER */}
+                {/* Row 2: Name */}
                 <div className="flex items-center flex-wrap gap-1">
                   <span className="font-bold text-foreground/90 truncate min-w-0 text-xs md:text-base lg:text-sm xl:text-base">
                     {t.character(charId)}
                   </span>
-                  <div className="flex-1" />
-                  <div className="flex items-center flex-wrap gap-0.5">
-                    <div className="flex items-center bg-secondary/60 rounded-md border border-border/30 gap-0.5 px-1 py-0.5 lg:py-1.5 xl:px-1.5">
-                      <span className="font-bold text-foreground/70 text-[10px] md:text-xs lg:text-[11px] 2xl:text-xs">
-                        {t.ui("teamComp.minCr")}
-                      </span>
-                      <Input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="--"
-                        value={
-                          team.minCr?.[charId] != null
-                            ? String(Math.round(team.minCr[charId] * 100))
-                            : ""
-                        }
-                        onChange={(e) => {
-                          const raw = e.target.value.trim();
-                          if (raw === "") {
-                            const next = { ...(team.minCr ?? {}) };
-                            delete next[charId];
-                            updateTeam(team.id, { minCr: next });
-                            return;
-                          }
-                          const val = Number(raw) / 100;
-                          if (!Number.isNaN(val)) {
-                            updateTeam(team.id, {
-                              minCr: {
-                                ...(team.minCr ?? {}),
-                                [charId]: Math.max(0, Math.min(1, val)),
-                              },
-                            });
-                          }
-                        }}
-                        className="text-center font-bold bg-black/20 rounded border border-border/20 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm"
-                      />
-                      <span className="font-bold text-muted-foreground -ml-0.5 text-[10px] lg:text-xs">
-                        %
-                      </span>
-                    </div>
-                    <div className="flex items-center bg-secondary/60 rounded-md border border-border/30 gap-0.5 px-1 py-0.5 lg:py-1.5 xl:px-1.5">
-                      <span className="font-bold text-foreground/70 text-[10px] md:text-xs lg:text-[11px] 2xl:text-xs">
-                        {t.ui("teamComp.minEr")}
-                      </span>
-                      <Input
-                        type="number"
-                        min={100}
-                        max={400}
-                        step={5}
-                        value={
-                          team.minEr[charId] != null
-                            ? Math.round(team.minEr[charId] * 100)
-                            : ""
-                        }
-                        placeholder="100"
-                        onChange={(e) => {
-                          const raw = e.target.value;
-                          if (raw === "") {
-                            const { [charId]: _, ...rest } = team.minEr;
-                            updateTeam(team.id, { minEr: rest });
-                            return;
-                          }
-                          const val = Number(raw) / 100;
-                          if (!Number.isNaN(val)) {
-                            updateTeam(team.id, {
-                              minEr: {
-                                ...team.minEr,
-                                [charId]: val,
-                              },
-                            });
-                          }
-                        }}
-                        className="text-center font-bold bg-black/20 rounded border border-border/20 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm"
-                      />
-                      <span className="font-bold text-muted-foreground -ml-0.5 text-[10px] lg:text-xs">
-                        %
-                      </span>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Rows 3-4: Level/Constellation/Refinement + Talent overrides */}
@@ -637,7 +558,7 @@ export function TeamRosterCard({
                           handleOptionChange(`${charId}.overrideLevel`, v)
                         }
                       >
-                        <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                        <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -660,7 +581,7 @@ export function TeamRosterCard({
                           )
                         }
                       >
-                        <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                        <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -684,7 +605,7 @@ export function TeamRosterCard({
                             )
                           }
                         >
-                          <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                          <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -699,7 +620,7 @@ export function TeamRosterCard({
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between gap-1 border-t border-border/20 pt-0.5">
+                  <div className="flex items-center justify-between gap-1 border-t border-border/20 pt-0.5 md:pt-1">
                     {(
                       [
                         [
@@ -742,7 +663,7 @@ export function TeamRosterCard({
                           value={String(value)}
                           onValueChange={(v) => handleOptionChange(optKey, v)}
                         >
-                          <SelectTrigger className="w-full bg-black/20 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                          <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                             <SelectValue>
                               {t.resolveLabel(label)}:{" "}
                               {value + (hasBonus ? 3 : 0)}

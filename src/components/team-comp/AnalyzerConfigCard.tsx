@@ -387,7 +387,7 @@ function CharStartSelectors({
                 onUpdateStart(config.charId, "startConstellation", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
+              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -406,7 +406,7 @@ function CharStartSelectors({
                 onUpdateStart(config.charId, "startRefinement", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
+              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -458,7 +458,7 @@ function CharMaxSelectors({
                 onUpdateMax(config.charId, "maxConstellation", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
+              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -477,7 +477,7 @@ function CharMaxSelectors({
                 onUpdateMax(config.charId, "maxRefinement", Number(v))
               }
             >
-              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-black/20 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
+              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>

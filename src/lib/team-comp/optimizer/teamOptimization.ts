@@ -42,6 +42,7 @@ import {
 } from "./artifactScoring";
 import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
+import { runLagrangianAllocation } from "./lagrangianAlloc";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
 type TeamOptTraceEvent =
@@ -549,13 +550,21 @@ export async function* runTeamOptimization(
     teamDeadlineMs,
     maxArtsPerSlot,
     perCharExtraArtifacts,
+    perCharExcludedArtifactIds,
+    useLagrangianAlloc,
   } = opts;
   const { combo, buffOverrides } = opts.formula;
 
-  /** Get the inventory for a specific character, merging per-char extras. */
+  /** Get the inventory for a specific character, merging per-char extras and filtering per-char exclusions. */
   const getCharInventory = (charId: string): ArtifactData[] => {
     const extras = perCharExtraArtifacts?.[charId];
-    return extras?.length ? [...inventory, ...extras] : inventory;
+    let pool = extras?.length ? [...inventory, ...extras] : inventory;
+    const excluded = perCharExcludedArtifactIds?.[charId];
+    if (excluded?.length) {
+      const excludeSet = new Set(excluded);
+      pool = pool.filter((a) => !excludeSet.has(a.id));
+    }
+    return pool;
   };
 
   // ── Dynamic hyperparameters based on inventory size ──
@@ -698,6 +707,9 @@ export async function* runTeamOptimization(
   const INIT_WEIGHT = 0.1;
   const PHASE1_WEIGHT = 0.3;
   const PHASE2_WEIGHT = 0.2;
+  // Lagrangian is additive — doesn't steal from Phase 3.
+  // Its iterations are cheap (re-ranking, no B&B), so the extra time is negligible.
+  const LAGRANGIAN_WEIGHT = useLagrangianAlloc ? 0.05 : 0;
   const PHASE3_WEIGHT = 0.4;
   const totalPhases = allCharIds.length + 1; // kept for passIndex display
 
@@ -1615,6 +1627,96 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
+  // Phase 2.5: Lagrangian Relaxation for Shared-Set Conflicts
+  //
+  // When enabled, runs Lagrangian pricing iterations on the Phase 1
+  // top-K results to find better conflict-free allocations than Phase 2
+  // DFS could explore. Particularly effective when 2+ characters share
+  // the same 4pc set and Phase 2's width-30 DFS misses the optimal
+  // partition.
+  // ════════════════════════════════════════════════════════════════════
+
+  // Only run Lagrangian when Phase 2 assigned artifacts to ALL allocatable
+  // characters. When some characters are empty, heuristic fill + set detection
+  // produces better results than Lagrangian's top-K-based greedy.
+  const allCharsHavePhase2Arts = allocatableChars.every((cid) => {
+    const arts = bestArtifactsByChar[cid];
+    return arts && allSlots.some((s) => arts[s] != null);
+  });
+
+  if (
+    useLagrangianAlloc &&
+    allocatableChars.length >= 2 &&
+    allCharsHavePhase2Arts
+  ) {
+    // Compute current Phase 2 best damage for baseline
+    const phase2Sheets = buildSheetsFromArtifacts(
+      baseSheets,
+      bestArtifactsByChar
+    );
+    let phase2Damage: number;
+    try {
+      phase2Damage = teamArtifactsMeetConstraints(bestArtifactsByChar)
+        ? evaluateCombo(effectiveTeamBuild, combo, phase2Sheets, calcContext)
+            .totalDamage
+        : 0;
+    } catch {
+      phase2Damage = 0;
+    }
+
+    // Lagrangian iterations are cheap (re-ranking + greedy assignment, no B&B).
+    // Use a small fixed budget so Phase 3 keeps nearly all its time.
+    const LAGRANGIAN_BUDGET_MS = 500;
+    const lagrangianDeadline = teamDeadlineMs
+      ? Math.min(performance.now() + LAGRANGIAN_BUDGET_MS, teamDeadlineMs)
+      : performance.now() + LAGRANGIAN_BUDGET_MS;
+
+    // Build priority order: carries first, then by Phase 1 damage
+    const lagrangianPriority = [...allocatableChars].sort((a, b) => {
+      const aIsCarry = carryCharIds.includes(a);
+      const bIsCarry = carryCharIds.includes(b);
+      if (aIsCarry !== bIsCarry) return aIsCarry ? -1 : 1;
+      const aDmg = topKByChar[a]?.[0]?.damage ?? 0;
+      const bDmg = topKByChar[b]?.[0]?.damage ?? 0;
+      return bDmg - aDmg;
+    });
+
+    // Evaluation function: constraint-aware team damage
+    const lagrangianEval = (
+      artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
+    ): number => {
+      if (!teamArtifactsMeetConstraints(artifactsByChar)) {
+        return Number.NEGATIVE_INFINITY;
+      }
+      const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
+      try {
+        return evaluateCombo(effectiveTeamBuild, combo, sheets, calcContext)
+          .totalDamage;
+      } catch {
+        return 0;
+      }
+    };
+
+    const lagResult = runLagrangianAllocation({
+      charIds: allocatableChars,
+      topKByChar,
+      currentBestDamage: phase2Damage,
+      currentBestArtifacts: bestArtifactsByChar,
+      evalTeamDamage: lagrangianEval,
+      deadline: lagrangianDeadline,
+      charPriorityOrder: lagrangianPriority,
+    });
+
+    if (lagResult.improved) {
+      for (const charId of allocatableChars) {
+        if (lagResult.bestArtifactsByChar[charId]) {
+          bestArtifactsByChar[charId] = lagResult.bestArtifactsByChar[charId];
+        }
+      }
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════
   // Phase 3: Parallel Best-First Team Refinement
   //
   // Run ALL non-saturated characters' B&B in parallel via web workers.
@@ -1657,6 +1759,7 @@ export async function* runTeamOptimization(
         INIT_WEIGHT +
         PHASE1_WEIGHT +
         PHASE2_WEIGHT +
+        LAGRANGIAN_WEIGHT +
         PHASE3_WEIGHT * (round / MAX_PHASE3_ROUNDS),
       phase: "phase3",
       passResults: [...passResults],
@@ -1998,6 +2101,7 @@ export async function* runTeamOptimization(
 
     for (const charId of heuristicOrder) {
       const charConfig = effectivePerChar[charId]!;
+      const charPool = getCharInventory(charId);
 
       const is4pc = !!charConfig.artifactSetId;
       const is2pc =
@@ -2027,7 +2131,7 @@ export async function* runTeamOptimization(
         const setId = charConfig.artifactSetId!;
         const onSetCounts = allSlots.map(
           (slot) =>
-            inventory.filter(
+            charPool.filter(
               (a) =>
                 a.slotKey === slot &&
                 a.setKey === setId &&
@@ -2054,7 +2158,7 @@ export async function* runTeamOptimization(
             for (let si = 0; si < 5; si++) {
               const slot = allSlots[si];
               const isOnSet = si !== fi;
-              const candidates = inventory.filter(
+              const candidates = charPool.filter(
                 (a) =>
                   a.slotKey === slot &&
                   !assignedIds.has(a.id) &&
@@ -2090,7 +2194,7 @@ export async function* runTeamOptimization(
         let h2Count = 0;
         for (let i = 0; i < 5; i++) {
           if (h1Count < 2) {
-            const hasH1 = inventory.some(
+            const hasH1 = charPool.some(
               (a) =>
                 a.slotKey === allSlots[i] &&
                 h1Sets.has(a.setKey) &&
@@ -2103,7 +2207,7 @@ export async function* runTeamOptimization(
             }
           }
           if (h2Count < 2) {
-            const hasH2 = inventory.some(
+            const hasH2 = charPool.some(
               (a) =>
                 a.slotKey === allSlots[i] &&
                 h2Sets.has(a.setKey) &&
@@ -2121,7 +2225,7 @@ export async function* runTeamOptimization(
         const slot = allSlots[si];
         const requiredSetOrHalf = slotSetAssignment[si];
 
-        let candidates = inventory.filter(
+        let candidates = charPool.filter(
           (a) =>
             a.slotKey === slot && !assignedIds.has(a.id) && !pickedIds.has(a.id)
         );
@@ -2222,7 +2326,7 @@ export async function* runTeamOptimization(
               const slot = allSlots[si];
               const curSlotEr = getArtifactEr(picked[slot]);
               const curSlotCr = getArtifactCr(picked[slot]);
-              const candidates = inventory.filter(
+              const candidates = charPool.filter(
                 (a) =>
                   a.slotKey === slot &&
                   !assignedIds.has(a.id) &&

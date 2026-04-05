@@ -991,7 +991,14 @@ export class TeamBuild {
         this.teamMeta.factions[id]
       );
     }
-    if (ctx?.critRateTarget != null) {
+    if (ctx?.perCharCrTarget) {
+      for (const [id, target] of Object.entries(ctx.perCharCrTarget)) {
+        if (postStats[id]) {
+          const crDelta = (100 - target) / 100;
+          postStats[id] = postStats[id]!.withDelta("cr", crDelta);
+        }
+      }
+    } else if (ctx?.critRateTarget != null) {
       const crDelta = (100 - ctx.critRateTarget) / 100;
       for (const id of Object.keys(postStats)) {
         postStats[id] = postStats[id]!.withDelta("cr", crDelta);

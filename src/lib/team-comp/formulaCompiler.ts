@@ -159,7 +159,16 @@ function buildPostExprStatsForContext(
     optCtx
   );
 
-  if (calcContext.critRateTarget != null) {
+  if (calcContext.perCharCrTarget) {
+    for (const [id, target] of Object.entries(calcContext.perCharCrTarget)) {
+      if (postExprStats[id]) {
+        const crDelta = (100 - target) / 100;
+        postExprStats[id] = postExprStats[id].withMergedConst([
+          { key: "cr", value: crDelta },
+        ]);
+      }
+    }
+  } else if (calcContext.critRateTarget != null) {
     const crDelta = (100 - calcContext.critRateTarget) / 100;
     for (const id of Object.keys(postExprStats)) {
       postExprStats[id] = postExprStats[id].withMergedConst([
@@ -263,7 +272,16 @@ function buildPostExprStatsExcluding(
     optCtx
   );
 
-  if (calcContext.critRateTarget != null) {
+  if (calcContext.perCharCrTarget) {
+    for (const [id, target] of Object.entries(calcContext.perCharCrTarget)) {
+      if (postExprStats[id]) {
+        const crDelta = (100 - target) / 100;
+        postExprStats[id] = postExprStats[id].withMergedConst([
+          { key: "cr", value: crDelta },
+        ]);
+      }
+    }
+  } else if (calcContext.critRateTarget != null) {
     const crDelta = (100 - calcContext.critRateTarget) / 100;
     for (const id of Object.keys(postExprStats)) {
       postExprStats[id] = postExprStats[id].withMergedConst([

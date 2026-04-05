@@ -2148,3 +2148,400 @@ describe("multi-char variable compilation parity", () => {
   testMultiChar("eula team", EULA_TEAM);
   testMultiChar("clorinde team", CLORINDE_TEAM);
 });
+
+// ═══════════════════════════════════════════════════════════════
+// perCharCrTarget — compiled path parity with damageCalc path
+// ═══════════════════════════════════════════════════════════════
+
+describe("compileTeamDamage — perCharCrTarget", () => {
+  const rv = getRollValues();
+
+  it("perCharCrTarget applies CR delta only to specified char (compiled matches standard)", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const carryId = "diluc";
+    const formulaId = getFirstFormulaId(tb, carryId);
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    for (let trial = 0; trial < 20; trial++) {
+      const sheets: Record<string, StatSheet> = {};
+      for (const cid of charIds) {
+        sheets[cid] = buildSheetFromMainAndSubs(
+          randomMainStats(),
+          randomSubRolls(),
+          rv
+        );
+      }
+
+      // perCharCrTarget only on diluc (target=70 → crDelta=0.3)
+      const ctx: CalcContext = {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        perCharCrTarget: { diluc: 70 },
+      };
+
+      // Standard path
+      const teamStats = tb.getTeamStats(sheets, carryId, ctx);
+      const offFieldTeamStats = hasOffFieldParts(tb, carryId, formulaId)
+        ? tb.getTeamStats(sheets, charIds.find((id) => id !== carryId)!, ctx)
+        : undefined;
+      const oldDamage = tb.getDamageResult(
+        carryId,
+        formulaId,
+        teamStats,
+        ctx,
+        undefined,
+        offFieldTeamStats
+      ).totalDamage;
+
+      // Compiled path
+      const optCtx = tb.createOptimizerContext(sheets, carryId, carryId, ctx);
+      const compiled = compileTeamDamage(tb, carryId, formulaId, ctx, optCtx);
+      const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === carryId);
+      const vars = new Float64Array(compiled.numVars);
+      vars.fill(0);
+      fillVarsFromSheet(sheets[carryId], compiled.varMapping, charIdx, vars);
+      const newDamage = compiled.evaluate(vars);
+
+      const relErr =
+        oldDamage === 0
+          ? newDamage === 0
+            ? 0
+            : Number.POSITIVE_INFINITY
+          : Math.abs(newDamage - oldDamage) / Math.abs(oldDamage);
+      expect(relErr).toBeLessThan(1e-6);
+    }
+  });
+
+  it("perCharCrTarget takes priority over global critRateTarget (compiled path)", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const carryId = "diluc";
+    const formulaId = getFirstFormulaId(tb, carryId);
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    const sheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) {
+      sheets[cid] = buildSheetFromMainAndSubs(
+        randomMainStats(),
+        randomSubRolls(),
+        rv
+      );
+    }
+
+    // Context with both global and per-char
+    const ctxBoth: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      critRateTarget: 80,
+      perCharCrTarget: { diluc: 60 },
+    };
+
+    // Context with only per-char (should produce same result as ctxBoth
+    // since perCharCrTarget takes priority)
+    const ctxPerCharOnly: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      perCharCrTarget: { diluc: 60 },
+    };
+
+    const optCtxBoth = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxBoth
+    );
+    const compiledBoth = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxBoth,
+      optCtxBoth
+    );
+    const charIdxBoth = optCtxBoth.charBuildOrder.findIndex(
+      ([id]) => id === carryId
+    );
+    const varsBoth = new Float64Array(compiledBoth.numVars);
+    varsBoth.fill(0);
+    fillVarsFromSheet(
+      sheets[carryId],
+      compiledBoth.varMapping,
+      charIdxBoth,
+      varsBoth
+    );
+    const dmgBoth = compiledBoth.evaluate(varsBoth);
+
+    const optCtxPer = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxPerCharOnly
+    );
+    const compiledPer = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxPerCharOnly,
+      optCtxPer
+    );
+    const charIdxPer = optCtxPer.charBuildOrder.findIndex(
+      ([id]) => id === carryId
+    );
+    const varsPer = new Float64Array(compiledPer.numVars);
+    varsPer.fill(0);
+    fillVarsFromSheet(
+      sheets[carryId],
+      compiledPer.varMapping,
+      charIdxPer,
+      varsPer
+    );
+    const dmgPer = compiledPer.evaluate(varsPer);
+
+    // Both should produce identical damage since perCharCrTarget overrides global
+    expect(dmgBoth).toBeCloseTo(dmgPer, 6);
+  });
+
+  it("falls back to global critRateTarget when perCharCrTarget is undefined", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const carryId = "diluc";
+    const formulaId = getFirstFormulaId(tb, carryId);
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    const sheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) {
+      sheets[cid] = buildSheetFromMainAndSubs(
+        randomMainStats(),
+        randomSubRolls(),
+        rv
+      );
+    }
+
+    // No CR target at all
+    const ctxNone: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+    // Global CR target
+    const ctxGlobal: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      critRateTarget: 75,
+    };
+
+    const optNone = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxNone
+    );
+    const compiledNone = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxNone,
+      optNone
+    );
+    const idxNone = optNone.charBuildOrder.findIndex(([id]) => id === carryId);
+    const varsNone = new Float64Array(compiledNone.numVars);
+    varsNone.fill(0);
+    fillVarsFromSheet(
+      sheets[carryId],
+      compiledNone.varMapping,
+      idxNone,
+      varsNone
+    );
+    const dmgNone = compiledNone.evaluate(varsNone);
+
+    const optGlobal = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxGlobal
+    );
+    const compiledGlobal = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxGlobal,
+      optGlobal
+    );
+    const idxGlobal = optGlobal.charBuildOrder.findIndex(
+      ([id]) => id === carryId
+    );
+    const varsGlobal = new Float64Array(compiledGlobal.numVars);
+    varsGlobal.fill(0);
+    fillVarsFromSheet(
+      sheets[carryId],
+      compiledGlobal.varMapping,
+      idxGlobal,
+      varsGlobal
+    );
+    const dmgGlobal = compiledGlobal.evaluate(varsGlobal);
+
+    // Global CR target should change the result compared to no target
+    // (adding CR delta increases expected crit value, changing damage)
+    expect(dmgNone).not.toBeCloseTo(dmgGlobal, 2);
+  });
+
+  it("perCharCrTarget=100 means crDelta=0 (no change from baseline)", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const carryId = "diluc";
+    const formulaId = getFirstFormulaId(tb, carryId);
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    const sheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) {
+      sheets[cid] = buildSheetFromMainAndSubs(
+        randomMainStats(),
+        randomSubRolls(),
+        rv
+      );
+    }
+
+    // No CR target
+    const ctxNone: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+    // perCharCrTarget=100 → crDelta=0, should be identical to no target
+    const ctxTarget100: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      perCharCrTarget: { diluc: 100 },
+    };
+
+    const optNone = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxNone
+    );
+    const compiledNone = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxNone,
+      optNone
+    );
+    const idxNone = optNone.charBuildOrder.findIndex(([id]) => id === carryId);
+    const varsNone = new Float64Array(compiledNone.numVars);
+    varsNone.fill(0);
+    fillVarsFromSheet(
+      sheets[carryId],
+      compiledNone.varMapping,
+      idxNone,
+      varsNone
+    );
+    const dmgNone = compiledNone.evaluate(varsNone);
+
+    const opt100 = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxTarget100
+    );
+    const compiled100 = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxTarget100,
+      opt100
+    );
+    const idx100 = opt100.charBuildOrder.findIndex(([id]) => id === carryId);
+    const vars100 = new Float64Array(compiled100.numVars);
+    vars100.fill(0);
+    fillVarsFromSheet(sheets[carryId], compiled100.varMapping, idx100, vars100);
+    const dmg100 = compiled100.evaluate(vars100);
+
+    // crDelta=0 should produce identical damage
+    expect(dmg100).toBeCloseTo(dmgNone, 6);
+  });
+
+  it("perCharCrTarget=0 means crDelta=1 (full buff)", () => {
+    const tb = new TeamBuild(DILUC_TEAM);
+    const carryId = "diluc";
+    const formulaId = getFirstFormulaId(tb, carryId);
+    const charIds = DILUC_TEAM.map((c) => c.charId);
+
+    const sheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) {
+      sheets[cid] = buildSheetFromMainAndSubs(
+        randomMainStats(),
+        randomSubRolls(),
+        rv
+      );
+    }
+
+    const ctxNone: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+    const ctxTarget0: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      perCharCrTarget: { diluc: 0 },
+    };
+
+    // Standard path comparison: verify compiled and standard match for target=0
+    const teamStats = tb.getTeamStats(sheets, carryId, ctxTarget0);
+    const offFieldTeamStats = hasOffFieldParts(tb, carryId, formulaId)
+      ? tb.getTeamStats(
+          sheets,
+          charIds.find((id) => id !== carryId)!,
+          ctxTarget0
+        )
+      : undefined;
+    const stdDamage = tb.getDamageResult(
+      carryId,
+      formulaId,
+      teamStats,
+      ctxTarget0,
+      undefined,
+      offFieldTeamStats
+    ).totalDamage;
+
+    const opt0 = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxTarget0
+    );
+    const compiled0 = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxTarget0,
+      opt0
+    );
+    const idx0 = opt0.charBuildOrder.findIndex(([id]) => id === carryId);
+    const vars0 = new Float64Array(compiled0.numVars);
+    vars0.fill(0);
+    fillVarsFromSheet(sheets[carryId], compiled0.varMapping, idx0, vars0);
+    const compiledDamage = compiled0.evaluate(vars0);
+
+    // Compiled must match standard
+    const relErr =
+      stdDamage === 0
+        ? compiledDamage === 0
+          ? 0
+          : Number.POSITIVE_INFINITY
+        : Math.abs(compiledDamage - stdDamage) / Math.abs(stdDamage);
+    expect(relErr).toBeLessThan(1e-6);
+
+    // And damage with target=0 should differ from no target (crDelta=1 is a big buff)
+    const optNone = tb.createOptimizerContext(
+      sheets,
+      carryId,
+      carryId,
+      ctxNone
+    );
+    const compiledNone = compileTeamDamage(
+      tb,
+      carryId,
+      formulaId,
+      ctxNone,
+      optNone
+    );
+    const idxNone = optNone.charBuildOrder.findIndex(([id]) => id === carryId);
+    const varsNone = new Float64Array(compiledNone.numVars);
+    varsNone.fill(0);
+    fillVarsFromSheet(
+      sheets[carryId],
+      compiledNone.varMapping,
+      idxNone,
+      varsNone
+    );
+    const dmgNone = compiledNone.evaluate(varsNone);
+
+    expect(compiledDamage).not.toBeCloseTo(dmgNone, 2);
+  });
+});

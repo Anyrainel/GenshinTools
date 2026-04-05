@@ -1,5 +1,11 @@
-import { DamageCard } from "@/components/team-comp/DamageCard";
+import {
+  ComparisonLabel,
+  DamageCard,
+  DpsDisplay,
+} from "@/components/team-comp/DamageCard";
+import { CharCrErSettings } from "@/components/team-comp/GeneratorControls";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { TierAssignment } from "@/data/types";
 import type { CalcContext, DisplayResult } from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
 import userEvent from "@testing-library/user-event";
@@ -249,5 +255,162 @@ describe("DamageCard", () => {
     expect(
       screen.getByText(/Only equipped artifacts detected/i)
     ).toBeInTheDocument();
+  });
+});
+
+// ─── ComparisonLabel ───
+
+describe("ComparisonLabel", () => {
+  it("renders nothing when currentTotal is 0", () => {
+    const { container } = render(
+      <ComparisonLabel
+        currentTotal={0}
+        optimizedTotal={50000}
+        isMobile={false}
+      />
+    );
+    expect(container.innerHTML).toBe("");
+  });
+
+  it("renders nothing when optimizedTotal is 0", () => {
+    const { container } = render(
+      <ComparisonLabel
+        currentTotal={50000}
+        optimizedTotal={0}
+        isMobile={false}
+      />
+    );
+    expect(container.innerHTML).toBe("");
+  });
+
+  it("shows positive percentage in green when optimized > current", () => {
+    render(
+      <ComparisonLabel
+        currentTotal={40000}
+        optimizedTotal={50000}
+        isMobile={false}
+      />
+    );
+    const label = screen.getByText("+25.0%");
+    expect(label).toBeInTheDocument();
+    expect(label.className).toContain("text-green-400");
+  });
+
+  it("shows negative percentage in red when optimized < current", () => {
+    render(
+      <ComparisonLabel
+        currentTotal={50000}
+        optimizedTotal={40000}
+        isMobile={false}
+      />
+    );
+    const label = screen.getByText("-20.0%");
+    expect(label).toBeInTheDocument();
+    expect(label.className).toContain("text-red-400");
+  });
+
+  it("shows +0.0% when values are equal", () => {
+    render(
+      <ComparisonLabel
+        currentTotal={50000}
+        optimizedTotal={50000}
+        isMobile={false}
+      />
+    );
+    const label = screen.getByText("+0.0%");
+    expect(label).toBeInTheDocument();
+    expect(label.className).toContain("text-green-400");
+  });
+});
+
+// ─── DpsDisplay ───
+
+function TestDpsDisplay(props: Partial<ComponentProps<typeof DpsDisplay>>) {
+  const { t } = useLanguage();
+  return (
+    <DpsDisplay
+      totalDamage={100000}
+      dpsSeconds=""
+      setDpsSeconds={vi.fn()}
+      isMobile={false}
+      t={t}
+      {...props}
+    />
+  );
+}
+
+describe("DpsDisplay", () => {
+  it("renders seconds input", () => {
+    render(<TestDpsDisplay />);
+    // The input should exist with placeholder "—"
+    const input = screen.getByPlaceholderText("—");
+    expect(input).toBeInTheDocument();
+  });
+
+  it("shows dmg/s calculation when seconds is filled", () => {
+    render(<TestDpsDisplay totalDamage={100000} dpsSeconds="10" />);
+    // 100000 / 10 = 10000 → formatted as "10,000"
+    expect(screen.getByText(/10,000/)).toBeInTheDocument();
+  });
+
+  it("shows nothing for dmg/s when seconds is empty", () => {
+    render(<TestDpsDisplay totalDamage={100000} dpsSeconds="" />);
+    // Should not have the "= X/s" text
+    expect(screen.queryByText(/=/)).not.toBeInTheDocument();
+  });
+});
+
+// ─── CharCrErSettings ───
+
+function TestCharCrErSettings(
+  props: Partial<ComponentProps<typeof CharCrErSettings>> & {
+    team?: Team;
+  }
+) {
+  const { t } = useLanguage();
+  return (
+    <CharCrErSettings
+      team={props.team ?? mockTeam}
+      updateTeam={props.updateTeam ?? vi.fn()}
+      tierAssignments={props.tierAssignments}
+      t={t}
+    />
+  );
+}
+
+describe("CharCrErSettings", () => {
+  it("renders a row for each character in the team", () => {
+    render(<TestCharCrErSettings />);
+    // mockTeam has hu_tao and xingqiu (2 non-null characters) — shown as icons only
+    expect(screen.getByAltText("Hu Tao")).toBeInTheDocument();
+    expect(screen.getByAltText("Xingqiu")).toBeInTheDocument();
+  });
+
+  it("shows CR mode selector", () => {
+    render(<TestCharCrErSettings />);
+    // Default CR mode is "min" → should display "Min. CR" for each character
+    expect(screen.getAllByText("Min. CR").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("shows ER input", () => {
+    render(<TestCharCrErSettings />);
+    // Should have "Min. ER" labels for each character
+    expect(screen.getAllByText("Min. ER").length).toBe(2);
+  });
+
+  it("shows Tier checkbox when character has tier assignment", () => {
+    const tierAssignments: TierAssignment = {
+      hu_tao: { tier: "S", position: 0 },
+      xingqiu: { tier: "A", position: 1 },
+    };
+    render(<TestCharCrErSettings tierAssignments={tierAssignments} />);
+    // Should show "Tier" labels for both characters
+    expect(screen.getAllByText("Tier").length).toBe(2);
+  });
+
+  it("does not show Tier checkbox when no tierAssignments", () => {
+    render(<TestCharCrErSettings />);
+    // Without tierAssignments, no Tier labels should appear
+    expect(screen.queryByText("Tier")).not.toBeInTheDocument();
   });
 });

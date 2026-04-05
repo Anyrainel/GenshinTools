@@ -23,10 +23,18 @@ import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
 import type { WeaponChoiceProgress } from "@/lib/team-comp/weaponChoice";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type { WeaponChoiceResult, WeaponRanking } from "@/stores/useTeamStore";
+import type {
+  Team,
+  WeaponChoiceResult,
+  WeaponRanking,
+} from "@/stores/useTeamStore";
 import { Loader2, Play } from "lucide-react";
 import { useCallback, useState } from "react";
-import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
+import {
+  CharCrErSettings,
+  EnemyInputs,
+  RollQualityInputs,
+} from "./GeneratorControls";
 import {
   CARD_BODY_CLS,
   CARD_CLS,
@@ -60,6 +68,8 @@ export interface WeaponChoiceCalcSettings {
 }
 
 interface WeaponChoiceResultCardProps {
+  team: Team;
+  updateTeam: (id: string, patch: Partial<Team>) => void;
   charIds: string[];
   isComputing: boolean;
   result: WeaponChoiceResult | null;
@@ -337,6 +347,8 @@ export function CharacterWeaponPanel({
 // ─── Main Card ───
 
 export function WeaponChoiceResultCard({
+  team,
+  updateTeam,
   charIds,
   isComputing,
   result,
@@ -380,6 +392,9 @@ export function WeaponChoiceResultCard({
         </span>
       </CardHeader>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
+        {/* Per-character CR/ER settings */}
+        <CharCrErSettings team={team} updateTeam={updateTeam} t={t} />
+
         {/* Settings row */}
         <div className={CONTROLS_CLS}>
           <EnemyInputs

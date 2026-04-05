@@ -1783,3 +1783,160 @@ describe("forceOnField override", () => {
     expect(display.statSheets.xiangling.offField).toBeDefined();
   });
 });
+
+// ═══════════════════════════════════════════════════════════════
+// perCharCrTarget — per-character crit rate targeting in getTeamStats
+// ═══════════════════════════════════════════════════════════════
+
+describe("perCharCrTarget in getTeamStats", () => {
+  // Diluc (Pyro), Mona (Hydro), Jean (Anemo), Eula (Cryo)
+  const configs: TeamSlotConfig[] = [
+    {
+      charId: "diluc",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "wolfs_gravestone",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "mona",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "skyward_blade",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "jean",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "aquila_favonia",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "eula",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "skyward_pride",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+
+  const sheets: Record<string, StatSheet> = {
+    diluc: new StatSheet([]),
+    mona: new StatSheet([]),
+    jean: new StatSheet([]),
+    eula: new StatSheet([]),
+  };
+
+  it("perCharCrTarget applies CR delta only to specified characters", () => {
+    const tb = new TeamBuild(configs);
+
+    // Get baseline stats without any CR target
+    const baseStats = tb.getTeamStats(sheets, "diluc");
+    const baseDilucCr = baseStats.diluc!.get("cr", null);
+    const baseMonaCr = baseStats.mona!.get("cr", null);
+
+    // Apply perCharCrTarget only to diluc (target=70 → crDelta=0.3)
+    const ctxPerChar: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      perCharCrTarget: { diluc: 70 },
+    };
+    const targetedStats = tb.getTeamStats(sheets, "diluc", ctxPerChar);
+
+    // Diluc's CR should increase by 0.3 (= (100-70)/100)
+    expect(targetedStats.diluc!.get("cr", null)).toBeCloseTo(
+      baseDilucCr + 0.3,
+      6
+    );
+    // Mona's CR should remain unchanged
+    expect(targetedStats.mona!.get("cr", null)).toBeCloseTo(baseMonaCr, 6);
+  });
+
+  it("perCharCrTarget takes priority over global critRateTarget", () => {
+    const tb = new TeamBuild(configs);
+
+    // Context with both global and per-char CR targets
+    const ctxBoth: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      critRateTarget: 80, // global: crDelta=0.2 for all
+      perCharCrTarget: { diluc: 60 }, // per-char: crDelta=0.4 for diluc only
+    };
+    const stats = ctxBoth.perCharCrTarget
+      ? tb.getTeamStats(sheets, "diluc", ctxBoth)
+      : undefined;
+
+    // Get baseline (no CR target)
+    const baseStats = tb.getTeamStats(sheets, "diluc");
+    const baseDilucCr = baseStats.diluc!.get("cr", null);
+    const baseMonaCr = baseStats.mona!.get("cr", null);
+
+    // Since perCharCrTarget is present, global critRateTarget should be ignored
+    // Only diluc gets crDelta=0.4, mona gets nothing
+    expect(stats!.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr + 0.4, 6);
+    expect(stats!.mona!.get("cr", null)).toBeCloseTo(baseMonaCr, 6);
+  });
+
+  it("falls back to global critRateTarget when perCharCrTarget is undefined", () => {
+    const tb = new TeamBuild(configs);
+
+    const baseStats = tb.getTeamStats(sheets, "diluc");
+    const baseDilucCr = baseStats.diluc!.get("cr", null);
+    const baseMonaCr = baseStats.mona!.get("cr", null);
+
+    // Context with only global CR target (crDelta = (100-80)/100 = 0.2)
+    const ctxGlobal: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      critRateTarget: 80,
+    };
+    const stats = tb.getTeamStats(sheets, "diluc", ctxGlobal);
+
+    // Global target applies to ALL characters
+    expect(stats.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr + 0.2, 6);
+    expect(stats.mona!.get("cr", null)).toBeCloseTo(baseMonaCr + 0.2, 6);
+  });
+
+  it("perCharCrTarget with value 100 means crDelta=0 (no change)", () => {
+    const tb = new TeamBuild(configs);
+
+    const baseStats = tb.getTeamStats(sheets, "diluc");
+    const baseDilucCr = baseStats.diluc!.get("cr", null);
+
+    const ctxTarget100: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      perCharCrTarget: { diluc: 100 },
+    };
+    const stats = tb.getTeamStats(sheets, "diluc", ctxTarget100);
+
+    // crDelta = (100 - 100) / 100 = 0 → no change
+    expect(stats.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr, 6);
+  });
+
+  it("perCharCrTarget with value 0 means crDelta=1 (full buff)", () => {
+    const tb = new TeamBuild(configs);
+
+    const baseStats = tb.getTeamStats(sheets, "diluc");
+    const baseDilucCr = baseStats.diluc!.get("cr", null);
+
+    const ctxTarget0: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      perCharCrTarget: { diluc: 0 },
+    };
+    const stats = tb.getTeamStats(sheets, "diluc", ctxTarget0);
+
+    // crDelta = (100 - 0) / 100 = 1.0 → full CR buff
+    expect(stats.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr + 1.0, 6);
+  });
+});

@@ -536,6 +536,8 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
 
         {/* 3. Results Card */}
         <WeaponChoiceResultCard
+          team={team}
+          updateTeam={updateTeam}
           charIds={charIds}
           isComputing={isComputing}
           result={displayResult}

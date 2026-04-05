@@ -49,6 +49,7 @@ import {
   buildBuffOverrides,
   buildTeamConfigs,
   calcComboResults,
+  getHigherTierEquippedArtifactIds,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";
 import type { DamageDetailProps } from "@/lib/team-comp/teamOptUtils";
@@ -68,6 +69,7 @@ import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
+import { useTierStore } from "@/stores/useTierStore";
 import { ArrowLeft, Info } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
@@ -147,6 +149,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   const accountData = activeAccount?.data || null;
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
+  const tierAssignments = useTierStore((s) => s.tierAssignments);
   // Use targeted selectors — subscribing to the full store caused re-renders
   // on ANY freeze mutation (other teams, reuseMode changes, etc.).
   const frozenEntry = useFreezeStore((s) => s.frozenTeams[team.id]);
@@ -321,7 +324,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       if (match) result.add(cid);
     }
     return result;
-  }, [frozenEntry, team.id, equippedArtifactsByChar]);
+  }, [frozenEntry, equippedArtifactsByChar]);
 
   const validCharIds = Object.keys(availableFormulas);
 
@@ -360,17 +363,32 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   }, [team.selectedFormula, allFormulas]);
 
   const activeContext = useMemo<CalcContext>(() => {
+    // Build per-character CR targets from characters using "target" crMode
+    let perCharCrTarget: Record<string, number> | undefined;
+    if (team.crMode) {
+      for (const [cid, mode] of Object.entries(team.crMode)) {
+        if (mode === "target" && team.minCr?.[cid] != null) {
+          if (!perCharCrTarget) perCharCrTarget = {};
+          perCharCrTarget[cid] = Math.round(team.minCr[cid] * 100);
+        }
+      }
+    }
     return {
       enemyLevel: team.calcContext?.enemyLevel ?? 110,
       enemyRes: team.calcContext?.enemyRes ?? 0.1,
       critRateTarget: team.calcContext?.critRateTarget,
+      perCharCrTarget,
       rollMultiplier: team.calcContext?.rollMultiplier,
       substatBudget: team.calcContext?.substatBudget,
     };
-  }, [team.calcContext]);
+  }, [team.calcContext, team.crMode, team.minCr]);
 
   const displayContext = useMemo<CalcContext>(
-    () => ({ ...activeContext, critRateTarget: undefined }),
+    () => ({
+      ...activeContext,
+      critRateTarget: undefined,
+      perCharCrTarget: undefined,
+    }),
     [activeContext]
   );
 
@@ -408,7 +426,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       label: { en: "Rotation", zh: "循环" },
       lines,
     };
-  }, [team.combos, teamBuild, team.characters]);
+  }, [team.combos, team.selectedCombo, teamBuild, team.characters]);
 
   const comboLineMap = useMemo(() => {
     const map = new Map<string, { lineIndex: number; line: ComboLine }>();
@@ -655,7 +673,8 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
       perChar[cid] = {
         minEr: team.minEr?.[cid] ?? 1.0,
-        minCr: team.minCr?.[cid] ?? 0,
+        // Characters with crMode "target" have their CR value in perCharCrTarget, so minCr = 0
+        minCr: team.crMode?.[cid] === "target" ? 0 : (team.minCr?.[cid] ?? 0),
         buildMatch: bm ?? undefined,
         artifactSetId: goalSetId,
         artifactHalfSetIds: goalHalfSetIds,
@@ -715,6 +734,23 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       lines: combo.lines.filter((l) => l.count > 0),
     };
 
+    // Build per-char excluded artifact IDs for tier-aware pool
+    let perCharExcludedArtifactIds: Record<string, string[]> | undefined;
+    if (team.tierAwarePool && accountData) {
+      for (const cid of Object.keys(perChar)) {
+        if (!team.tierAwarePool[cid]) continue;
+        const excluded = getHigherTierEquippedArtifactIds(
+          cid,
+          tierAssignments,
+          accountData
+        );
+        if (excluded.size > 0) {
+          if (!perCharExcludedArtifactIds) perCharExcludedArtifactIds = {};
+          perCharExcludedArtifactIds[cid] = [...excluded];
+        }
+      }
+    }
+
     startTeamOpt({
       teamBuild: optTeamBuild,
       carryCharId,
@@ -730,6 +766,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       teamDeadlineMs: performance.now() + timeBudgetSec * 1000,
       ignoreArtifactSets,
       perCharExtraArtifacts: teamInventory.perCharExtraArtifacts,
+      perCharExcludedArtifactIds,
     });
   };
 
@@ -817,12 +854,10 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     teamProgress,
     equippedArtifactsByChar,
     frozenEntry,
-    team.id,
     swapOverrides,
     restoredArtifacts,
     teamInventory.forceReuseChars,
     forceReusedCharIds,
-    frozenCharIdSet,
   ]);
 
   const optArtifactSheets = useMemo(
@@ -962,7 +997,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       if (!cid) continue;
       genPerChar[cid] = {
         minEr: team.minEr?.[cid] ?? 1.0,
-        minCr: team.minCr?.[cid] ?? 0,
+        minCr: team.crMode?.[cid] === "target" ? 0 : (team.minCr?.[cid] ?? 0),
       };
     }
 
@@ -1372,6 +1407,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
             hasSwapOverrides ? handleRestoreOriginal : undefined
           }
           forceReusedCharIds={forceReusedCharIds}
+          tierAssignments={tierAssignments}
           onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
           onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}
           currentTabFrozenCharIds={currentTabFrozenCharIds}

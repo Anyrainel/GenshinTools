@@ -1,6 +1,11 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import { artifactIdToHalfSetId } from "@/data/constants";
-import type { AccountData, ArtifactData, Slot } from "@/data/types";
+import type {
+  AccountData,
+  ArtifactData,
+  Slot,
+  TierAssignment,
+} from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import {
@@ -419,4 +424,35 @@ export function aggregateComboFormulaDefaults(
   }
 
   return result;
+}
+
+/**
+ * Collect artifact IDs equipped by characters in higher tiers than the given character.
+ * Used for tier-aware pool exclusion in the optimizer.
+ *
+ * Tier order (highest to lowest): S, A, B, C, D, Pool.
+ * Characters without a tier assignment are treated as "Pool" (lowest tier).
+ */
+export function getHigherTierEquippedArtifactIds(
+  charId: string,
+  tierAssignments: TierAssignment,
+  accountData: AccountData
+): Set<string> {
+  const tierOrder: readonly string[] = ["S", "A", "B", "C", "D", "Pool"];
+  const charTier = tierAssignments[charId]?.tier ?? "Pool";
+  const charTierIdx = tierOrder.indexOf(charTier);
+
+  const excludedIds = new Set<string>();
+  for (const c of accountData.characters) {
+    if (c.key === charId) continue;
+    const otherTier = tierAssignments[c.key]?.tier ?? "Pool";
+    const otherIdx = tierOrder.indexOf(otherTier);
+    // Lower index = higher tier. Only exclude if strictly higher.
+    if (otherIdx < charTierIdx) {
+      for (const art of Object.values(c.artifacts ?? {})) {
+        if (art?.id) excludedIds.add(art.id);
+      }
+    }
+  }
+  return excludedIds;
 }

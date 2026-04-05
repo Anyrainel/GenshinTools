@@ -379,6 +379,7 @@ export type CalcContext = {
   enemyLevel: number;
   enemyRes: number;
   critRateTarget?: number; // 0–100 integer; undefined = disabled
+  perCharCrTarget?: Record<string, number>; // charId → 0-100 integer; per-char CR targets
   rollMultiplier?: number; // generator only; 0.7–1.0, default 0.85
   /** Generator only; per-slot substat roll totals; default 8_6 */
   substatBudget?: SubstatBudgetPreset;
@@ -616,4 +617,8 @@ export interface TeamOptimizerOptions {
   maxArtsPerSlot?: number;
   /** Extra artifacts available only to specific characters (e.g. same-char frozen reuse) */
   perCharExtraArtifacts?: Record<string, ArtifactData[]>;
+  /** Artifact IDs to exclude from the pool per character (e.g. tier-aware exclusion) */
+  perCharExcludedArtifactIds?: Record<string, string[]>;
+  /** Enable Lagrangian relaxation for shared-set artifact allocation (Phase 2.5). */
+  useLagrangianAlloc?: boolean;
 }

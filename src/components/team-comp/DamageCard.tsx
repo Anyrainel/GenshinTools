@@ -21,7 +21,12 @@ import {
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type { AccountData, ArtifactData, Slot } from "@/data/types";
+import type {
+  AccountData,
+  ArtifactData,
+  Slot,
+  TierAssignment,
+} from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
@@ -71,7 +76,11 @@ import {
   adjustPartDamage,
   formulaCritRatio,
 } from "./FormulaBreakdown";
-import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
+import {
+  CharCrErSettings,
+  EnemyInputs,
+  RollQualityInputs,
+} from "./GeneratorControls";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
 import {
@@ -134,6 +143,9 @@ function ComboBreakdown({
   t,
   artifactsByChar,
   calcContext,
+  currentTotal,
+  dpsSeconds,
+  setDpsSeconds,
 }: {
   team: Team;
   lineDamages: { perHit: number; total: number }[];
@@ -149,6 +161,9 @@ function ComboBreakdown({
   t: ReturnType<typeof useLanguage>["t"];
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   calcContext: CalcContext;
+  currentTotal?: number;
+  dpsSeconds?: string;
+  setDpsSeconds?: (v: string) => void;
 }) {
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
   const rxFormulaIds = useMemo(
@@ -309,12 +324,19 @@ function ComboBreakdown({
             <CollapsibleTrigger asChild>
               <div
                 className={cn(
-                  "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
+                  "flex items-center justify-center flex-wrap rounded-xl transition-colors cursor-pointer select-none",
                   "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2",
                   "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                   "hover:bg-primary/15"
                 )}
               >
+                {currentTotal != null && currentTotal > 0 && (
+                  <ComparisonLabel
+                    currentTotal={currentTotal}
+                    optimizedTotal={totalLineDamage}
+                    isMobile={isMobile}
+                  />
+                )}
                 <div className="flex items-center gap-0">
                   <CritModeDropdown
                     critMode={critMode}
@@ -334,6 +356,15 @@ function ComboBreakdown({
                 >
                   {fmtDamage(totalLineDamage)}
                 </div>
+                {dpsSeconds != null && setDpsSeconds && (
+                  <DpsDisplay
+                    totalDamage={totalLineDamage}
+                    dpsSeconds={dpsSeconds}
+                    setDpsSeconds={setDpsSeconds}
+                    isMobile={isMobile}
+                    t={t}
+                  />
+                )}
                 <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
                   {expanded
                     ? t.ui("teamComp.collapseFormula")
@@ -738,6 +769,9 @@ function SingleResultView({
   onFreezeChar,
   onUnfreezeChar,
   forceReusedCharIds,
+  currentTotal,
+  dpsSeconds,
+  setDpsSeconds,
 }: {
   displayResult: DisplayResult;
   resolvedFormula: { charId: string; formulaId: string };
@@ -755,6 +789,9 @@ function SingleResultView({
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
   forceReusedCharIds?: Set<string>;
+  currentTotal?: number;
+  dpsSeconds?: string;
+  setDpsSeconds?: (v: string) => void;
 }) {
   const formulaKey = `${resolvedFormula.charId}.${resolvedFormula.formulaId}`;
   const parts = displayResult.partsByFormula[formulaKey];
@@ -803,12 +840,19 @@ function SingleResultView({
                 <CollapsibleTrigger asChild>
                   <div
                     className={cn(
-                      "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
+                      "flex items-center justify-center flex-wrap rounded-xl transition-colors cursor-pointer select-none",
                       "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2",
                       "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                       "hover:bg-primary/15"
                     )}
                   >
+                    {currentTotal != null && currentTotal > 0 && (
+                      <ComparisonLabel
+                        currentTotal={currentTotal}
+                        optimizedTotal={totalDamage}
+                        isMobile={isMobile}
+                      />
+                    )}
                     <div className="flex items-center gap-0">
                       <CritModeDropdown
                         critMode={critMode}
@@ -827,6 +871,15 @@ function SingleResultView({
                     >
                       {fmtDamage(totalDamage)}
                     </div>
+                    {dpsSeconds != null && setDpsSeconds && (
+                      <DpsDisplay
+                        totalDamage={totalDamage}
+                        dpsSeconds={dpsSeconds}
+                        setDpsSeconds={setDpsSeconds}
+                        isMobile={isMobile}
+                        t={t}
+                      />
+                    )}
                     <span className="text-muted-foreground whitespace-nowrap text-[10px] md:text-xs ml-0.5 md:ml-1.5">
                       {expanded
                         ? t.ui("teamComp.collapseFormula")
@@ -907,6 +960,9 @@ function ComboResultView({
   onFreezeChar,
   onUnfreezeChar,
   forceReusedCharIds,
+  currentTotal,
+  dpsSeconds,
+  setDpsSeconds,
 }: {
   displayResult: DisplayResult;
   comboLines: ComboLine[];
@@ -925,6 +981,9 @@ function ComboResultView({
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
   forceReusedCharIds?: Set<string>;
+  currentTotal?: number;
+  dpsSeconds?: string;
+  setDpsSeconds?: (v: string) => void;
 }) {
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
   const rxFormulaIds = useMemo(
@@ -1041,6 +1100,9 @@ function ComboResultView({
         )}
         isMobile={isMobile}
         t={t}
+        currentTotal={currentTotal}
+        dpsSeconds={dpsSeconds}
+        setDpsSeconds={setDpsSeconds}
         artifactsByChar={artifactsByChar}
         calcContext={calcContext}
       />
@@ -1115,6 +1177,8 @@ interface DamageCardProps {
   onUnfreezeCharFromCurrent?: (charId: string) => void;
   /** Frozen char IDs for the current tab (value-equivalence: only chars whose equipped arts match frozen) */
   currentTabFrozenCharIds?: Set<string>;
+  // Tier-aware pool
+  tierAssignments?: TierAssignment;
 }
 
 // ─── Shared inline control helpers ───
@@ -1241,41 +1305,80 @@ function getCritDisableFlags(parts?: DisplayPart[]): {
   return { disableCrit, disableNoCrit };
 }
 
-function CritRateTargetInput({
-  team,
-  activeContext,
-  updateTeam,
+/** Inline DPS calculator: seconds input + dmg/s display. */
+function DpsDisplay({
+  totalDamage,
+  dpsSeconds,
+  setDpsSeconds,
   isMobile,
   t,
-}: CtxProps) {
+}: {
+  totalDamage: number;
+  dpsSeconds: string;
+  setDpsSeconds: (v: string) => void;
+  isMobile: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const sec = Number(dpsSeconds);
+  const hasDps = dpsSeconds !== "" && sec > 0 && totalDamage > 0;
   return (
-    <div className="flex items-center gap-0.5 md:gap-1 shrink-0">
-      <span className={LABEL_CLS} title={t.ui("teamComp.critRateTargetTip")}>
-        {t.ui("teamComp.critRateTarget")}
-      </span>
+    <div
+      className="flex items-center gap-1 shrink-0"
+      onClick={(e) => e.stopPropagation()}
+    >
       <Input
         type="text"
         inputMode="numeric"
-        value={activeContext.critRateTarget ?? ""}
+        value={dpsSeconds}
         placeholder="—"
         onChange={(e) => {
           const raw = e.target.value.trim();
-          updateTeam(team.id, {
-            calcContext: {
-              ...team.calcContext,
-              critRateTarget:
-                raw === ""
-                  ? undefined
-                  : Math.max(1, Math.min(100, Math.round(Number(raw) || 0))),
-            },
-          });
+          if (raw === "" || /^\d*\.?\d*$/.test(raw)) setDpsSeconds(raw);
         }}
-        className="text-center font-bold border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1"
+        className={cn(
+          "text-center font-bold border-border/20 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+          isMobile
+            ? "text-[10px] h-5 w-7 px-0.5 py-0"
+            : "text-xs h-6 w-9 px-0.5 py-0"
+        )}
       />
-      <span className="font-bold text-muted-foreground text-[10px] md:text-xs -ml-0.5 md:-ml-1">
-        %
+      <span className="font-bold text-muted-foreground text-[10px] md:text-xs -ml-0.5">
+        {t.ui("teamComp.dpsSeconds")}
       </span>
+      {hasDps && (
+        <span className="font-[math] font-bold text-foreground/80 text-xs md:text-sm whitespace-nowrap ml-0.5">
+          = {fmtDamage(totalDamage / sec)}/{t.ui("teamComp.dpsSeconds")}
+        </span>
+      )}
     </div>
+  );
+}
+
+/** Comparison label showing % improvement from current to optimized. */
+function ComparisonLabel({
+  currentTotal,
+  optimizedTotal,
+  isMobile,
+}: {
+  currentTotal: number;
+  optimizedTotal: number;
+  isMobile: boolean;
+}) {
+  if (currentTotal <= 0 || optimizedTotal <= 0) return null;
+  const pct = ((optimizedTotal - currentTotal) / currentTotal) * 100;
+  const sign = pct >= 0 ? "+" : "";
+  const color = pct >= 0 ? "text-green-400" : "text-red-400";
+  return (
+    <span
+      className={cn(
+        "font-bold whitespace-nowrap shrink-0",
+        color,
+        isMobile ? "text-[10px]" : "text-xs"
+      )}
+    >
+      {sign}
+      {pct.toFixed(1)}%
+    </span>
   );
 }
 
@@ -1388,6 +1491,7 @@ export function DamageCard({
   onFreezeCharFromCurrent,
   onUnfreezeCharFromCurrent,
   currentTabFrozenCharIds,
+  tierAssignments,
 }: DamageCardProps) {
   const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
@@ -1438,6 +1542,14 @@ export function DamageCard({
   const ctxProps: CtxProps = { team, activeContext, updateTeam, isMobile, t };
 
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
+
+  // DPS calculator state (per-session)
+  const [dpsSeconds, setDpsSeconds] = useSessionState("dpsSeconds", "");
+
+  // Current tab's total damage for comparison in optimize tab
+  const currentTotal = useMemo(() => {
+    return currentDisplayResult?.totalDamage ?? 0;
+  }, [currentDisplayResult]);
 
   return (
     <Card className={CARD_CLS}>
@@ -1507,6 +1619,8 @@ export function DamageCard({
                 frozenCharIds={currentTabFrozenCharIds}
                 onFreezeChar={onFreezeCharFromCurrent}
                 onUnfreezeChar={onUnfreezeCharFromCurrent}
+                dpsSeconds={dpsSeconds}
+                setDpsSeconds={setDpsSeconds}
               />
             ) : comboLines ? (
               <ComboResultView
@@ -1524,6 +1638,8 @@ export function DamageCard({
                 frozenCharIds={currentTabFrozenCharIds}
                 onFreezeChar={onFreezeCharFromCurrent}
                 onUnfreezeChar={onUnfreezeCharFromCurrent}
+                dpsSeconds={dpsSeconds}
+                setDpsSeconds={setDpsSeconds}
               />
             ) : null
           ) : (
@@ -1561,9 +1677,16 @@ export function DamageCard({
             )}
 
           <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
+            {/* Per-character optimizer settings (CR/ER/Tier) */}
+            <CharCrErSettings
+              team={team}
+              updateTeam={updateTeam}
+              tierAssignments={tierAssignments}
+              t={t}
+            />
+
             <div className={CONTROLS_CLS}>
               <EnemyFields {...ctxProps} />
-              <CritRateTargetInput {...ctxProps} />
               <div className="flex items-center gap-0.5 md:gap-1">
                 <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
                 <Select
@@ -1571,7 +1694,7 @@ export function DamageCard({
                   onValueChange={(v) => onTimeBudgetChange(Number(v))}
                   disabled={isComputing}
                 >
-                  <SelectTrigger className="font-bold border-border/20 bg-background/50 text-xs h-6 w-[52px] px-1 py-0 md:text-sm md:h-7 md:w-[60px] md:px-1.5">
+                  <SelectTrigger className="font-bold border-border/20 bg-white/5 text-xs h-6 w-[52px] px-1 py-0 md:text-sm md:h-7 md:w-[60px] md:px-1.5">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1849,6 +1972,9 @@ export function DamageCard({
                   onFreezeChar={onFreezeChar}
                   onUnfreezeChar={onUnfreezeChar}
                   forceReusedCharIds={forceReusedCharIds}
+                  currentTotal={currentTotal}
+                  dpsSeconds={dpsSeconds}
+                  setDpsSeconds={setDpsSeconds}
                 />
               ) : comboLines ? (
                 <ComboResultView
@@ -1871,6 +1997,9 @@ export function DamageCard({
                   onFreezeChar={onFreezeChar}
                   onUnfreezeChar={onUnfreezeChar}
                   forceReusedCharIds={forceReusedCharIds}
+                  currentTotal={currentTotal}
+                  dpsSeconds={dpsSeconds}
+                  setDpsSeconds={setDpsSeconds}
                 />
               ) : null
             ) : allCharsResolved && !isComputing ? (
@@ -1912,9 +2041,9 @@ export function DamageCard({
       {/* ── Content: Generate (dev only) ── */}
       {resultsTab === "generate" && (
         <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
+          <CharCrErSettings team={team} updateTeam={updateTeam} t={t} />
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
-            <CritRateTargetInput {...ctxProps} />
             <RollQualityFields {...ctxProps} />
             <ActionButton
               onClick={handleGenerate}
@@ -1971,6 +2100,8 @@ export function DamageCard({
                 setCritMode={setCritMode}
                 isMobile={isMobile}
                 t={t}
+                dpsSeconds={dpsSeconds}
+                setDpsSeconds={setDpsSeconds}
               />
             ) : comboLines ? (
               <ComboResultView
@@ -1985,6 +2116,8 @@ export function DamageCard({
                 setCritMode={setCritMode}
                 isMobile={isMobile}
                 t={t}
+                dpsSeconds={dpsSeconds}
+                setDpsSeconds={setDpsSeconds}
               />
             ) : null
           ) : null}
@@ -1993,3 +2126,6 @@ export function DamageCard({
     </Card>
   );
 }
+
+/** @internal — exported for unit tests only */
+export { ComparisonLabel, DpsDisplay };
