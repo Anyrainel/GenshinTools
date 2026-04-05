@@ -135,8 +135,7 @@ class Columbina extends CharacterBase {
       }
     }
 
-    // C4: HP%-based baseDmg on dominant Lunar reaction — once per 15s, modeled via
-    // separate formula entry with bespokeBuff (self buff cannot use maxStacks)
+    // C4: HP%-based baseDmg on dominant Lunar reaction — once per 15s, modeled via bespokeBuff maxStacks
 
     // C6: +80% CD for elements involved in the dominant Lunar reaction
     // "依据参与反应的元素类型，使队伍中的所有角色造成的对应元素类型伤害的暴击伤害提升80%"
