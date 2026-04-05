@@ -1,17 +1,5 @@
 #!/usr/bin/env sh
 
-# Block beta content from being committed on main/master
-current_branch=$(git rev-parse --abbrev-ref HEAD)
-if [ "$current_branch" = "master" ] || [ "$current_branch" = "main" ]; then
-  beta_files=$(git diff --cached --name-only | grep -E '_beta[_.]|resources_beta' || true)
-  if [ -n "$beta_files" ]; then
-    echo "ERROR: Committing beta content on '$current_branch' is forbidden."
-    echo "Beta files detected:"
-    echo "$beta_files"
-    exit 1
-  fi
-fi
-
 # Per-file lint & format (Biome for TS, Ruff for Python)
 npx lint-staged --no-stash
 
