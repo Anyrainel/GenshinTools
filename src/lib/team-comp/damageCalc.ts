@@ -612,14 +612,42 @@ export class CharBuild {
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
+      const bespokeMax = bespokeBuff?.source.maxStacks;
+
       // Skip reaction override if the formula already has a built-in reaction
       // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
       if (!hasReaction || formula.tag.reaction !== "none") {
-        const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
-        dp.hits = h;
-        if (effectiveOffField) dp.offField = true;
-        totalDamage += dp.damage * h;
-        displayParts.push(dp);
+        if (bespokeMax != null && bespokeMax < h) {
+          // Buffed hits
+          const dpBuffed = formula.displayFull(
+            stats,
+            this.charBase.charLevel,
+            ctx
+          );
+          dpBuffed.hits = bespokeMax;
+          dpBuffed.sourcePartIndex = i;
+          if (effectiveOffField) dpBuffed.offField = true;
+          totalDamage += dpBuffed.damage * bespokeMax;
+          displayParts.push(dpBuffed);
+          // Unbuffed hits
+          const dpUnbuffed = formula.displayFull(
+            baseSelfStats,
+            this.charBase.charLevel,
+            ctx
+          );
+          dpUnbuffed.hits = h - bespokeMax;
+          dpUnbuffed.sourcePartIndex = i;
+          if (effectiveOffField) dpUnbuffed.offField = true;
+          totalDamage += dpUnbuffed.damage * (h - bespokeMax);
+          displayParts.push(dpUnbuffed);
+        } else {
+          const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
+          dp.hits = h;
+          dp.sourcePartIndex = i;
+          if (effectiveOffField) dp.offField = true;
+          totalDamage += dp.damage * h;
+          displayParts.push(dp);
+        }
         continue;
       }
 
@@ -639,27 +667,92 @@ export class CharBuild {
           : 0;
       const nonReactingHits = h - reactingHits;
 
+      // Distribute bespoke maxStacks across reacting then non-reacting hits
+      let bespokeRemaining =
+        bespokeMax != null && bespokeMax < h ? bespokeMax : undefined;
+
       if (reactingHits > 0) {
         const effectiveFormula =
           targetReaction !== formula.tag.reaction
             ? createReactionVariant(formula, targetReaction)
             : formula;
-        const dp = effectiveFormula.displayFull(
-          stats,
-          this.charBase.charLevel,
-          ctx
-        );
-        dp.hits = reactingHits;
-        if (effectiveOffField) dp.offField = true;
-        totalDamage += dp.damage * reactingHits;
-        displayParts.push(dp);
+        if (bespokeRemaining != null) {
+          const buffedRx = Math.min(bespokeRemaining, reactingHits);
+          const unbuffedRx = reactingHits - buffedRx;
+          bespokeRemaining -= buffedRx;
+          if (buffedRx > 0) {
+            const dpB = effectiveFormula.displayFull(
+              stats,
+              this.charBase.charLevel,
+              ctx
+            );
+            dpB.hits = buffedRx;
+            dpB.sourcePartIndex = i;
+            if (effectiveOffField) dpB.offField = true;
+            totalDamage += dpB.damage * buffedRx;
+            displayParts.push(dpB);
+          }
+          if (unbuffedRx > 0) {
+            const dpU = effectiveFormula.displayFull(
+              baseSelfStats,
+              this.charBase.charLevel,
+              ctx
+            );
+            dpU.hits = unbuffedRx;
+            dpU.sourcePartIndex = i;
+            if (effectiveOffField) dpU.offField = true;
+            totalDamage += dpU.damage * unbuffedRx;
+            displayParts.push(dpU);
+          }
+        } else {
+          const dp = effectiveFormula.displayFull(
+            stats,
+            this.charBase.charLevel,
+            ctx
+          );
+          dp.hits = reactingHits;
+          dp.sourcePartIndex = i;
+          if (effectiveOffField) dp.offField = true;
+          totalDamage += dp.damage * reactingHits;
+          displayParts.push(dp);
+        }
       }
       if (nonReactingHits > 0) {
-        const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
-        dp.hits = nonReactingHits;
-        if (effectiveOffField) dp.offField = true;
-        totalDamage += dp.damage * nonReactingHits;
-        displayParts.push(dp);
+        if (bespokeRemaining != null) {
+          const buffedNr = Math.min(bespokeRemaining, nonReactingHits);
+          const unbuffedNr = nonReactingHits - buffedNr;
+          if (buffedNr > 0) {
+            const dpB = formula.displayFull(
+              stats,
+              this.charBase.charLevel,
+              ctx
+            );
+            dpB.hits = buffedNr;
+            dpB.sourcePartIndex = i;
+            if (effectiveOffField) dpB.offField = true;
+            totalDamage += dpB.damage * buffedNr;
+            displayParts.push(dpB);
+          }
+          if (unbuffedNr > 0) {
+            const dpU = formula.displayFull(
+              baseSelfStats,
+              this.charBase.charLevel,
+              ctx
+            );
+            dpU.hits = unbuffedNr;
+            dpU.sourcePartIndex = i;
+            if (effectiveOffField) dpU.offField = true;
+            totalDamage += dpU.damage * unbuffedNr;
+            displayParts.push(dpU);
+          }
+        } else {
+          const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
+          dp.hits = nonReactingHits;
+          dp.sourcePartIndex = i;
+          if (effectiveOffField) dp.offField = true;
+          totalDamage += dp.damage * nonReactingHits;
+          displayParts.push(dp);
+        }
       }
     }
     return { parts: displayParts, totalDamage };
@@ -1628,21 +1721,22 @@ export class TeamBuild {
         // Rebuild display parts with 1st-hit stats: exclude only buffs
         // with 0 activation (never applied), keep blended average damage.
         for (let i = 0; i < parts.length; i++) {
-          if (!blended.partDamages[i]) continue;
+          const eidx = parts[i].sourcePartIndex ?? i;
+          if (!blended.partDamages[eidx]) continue;
 
           // Collect buffs with 0 activation on this part (never applied)
           const zeroBuffKeys = new Set<string>();
-          if (i < entry.parts.length) {
-            const h = entry.parts[i].hits ?? 1;
+          if (eidx < entry.parts.length) {
+            const h = entry.parts[eidx].hits ?? 1;
             for (const info of allInfos) {
-              if ((info.partActivation[i] ?? h) === 0) {
+              if ((info.partActivation[eidx] ?? h) === 0) {
                 zeroBuffKeys.add(info.buffKey);
               }
             }
           }
 
-          if (zeroBuffKeys.size > 0 && i < entry.parts.length) {
-            const { formula, offField, bespokeBuff } = entry.parts[i];
+          if (zeroBuffKeys.size > 0 && eidx < entry.parts.length) {
+            const { formula, offField, bespokeBuff } = entry.parts[eidx];
             const eKey = exclusionKey(zeroBuffKeys);
             const baseVariant =
               offField && offFieldVariantsMap
@@ -1668,14 +1762,14 @@ export class TeamBuild {
               ...rebuilt,
               hits: parts[i].hits,
               offField: parts[i].offField,
-              damage: blended.partDamages[i].damage,
-              sourcePartIndex: i,
+              damage: blended.partDamages[eidx].damage,
+              sourcePartIndex: eidx,
             };
           } else {
             parts[i] = {
               ...parts[i],
-              damage: blended.partDamages[i].damage,
-              sourcePartIndex: i,
+              damage: blended.partDamages[eidx].damage,
+              sourcePartIndex: eidx,
             };
           }
         }
@@ -3225,20 +3319,21 @@ export function getComboDisplayResult(
 
         // Rebuild display parts with 1st-hit stats (exclude 0-activation buffs)
         for (let i = 0; i < parts.length; i++) {
-          if (!blended.partDamages[i]) continue;
+          const eidx = parts[i].sourcePartIndex ?? i;
+          if (!blended.partDamages[eidx]) continue;
 
           const zeroBuffKeys = new Set<string>();
-          if (i < entry.parts.length) {
-            const h = entry.parts[i].hits ?? 1;
+          if (eidx < entry.parts.length) {
+            const h = entry.parts[eidx].hits ?? 1;
             for (const info of aggregatedInfos) {
-              if ((info.partActivation[i] ?? h) === 0) {
+              if ((info.partActivation[eidx] ?? h) === 0) {
                 zeroBuffKeys.add(info.buffKey);
               }
             }
           }
 
-          if (zeroBuffKeys.size > 0 && i < entry.parts.length) {
-            const { formula, offField, bespokeBuff } = entry.parts[i];
+          if (zeroBuffKeys.size > 0 && eidx < entry.parts.length) {
+            const { formula, offField, bespokeBuff } = entry.parts[eidx];
             const eKey = exclusionKey(zeroBuffKeys);
             const baseVariant =
               offField && offFieldVariants
@@ -3264,14 +3359,14 @@ export function getComboDisplayResult(
               ...rebuilt,
               hits: parts[i].hits,
               offField: parts[i].offField,
-              damage: blended.partDamages[i].damage,
-              sourcePartIndex: i,
+              damage: blended.partDamages[eidx].damage,
+              sourcePartIndex: eidx,
             };
           } else {
             parts[i] = {
               ...parts[i],
-              damage: blended.partDamages[i].damage,
-              sourcePartIndex: i,
+              damage: blended.partDamages[eidx].damage,
+              sourcePartIndex: eidx,
             };
           }
         }
@@ -3297,6 +3392,44 @@ export function getComboDisplayResult(
               parts[pidx] = { ...parts[pidx], sourcePartIndex: pidx };
             }
           }
+        }
+      }
+    }
+
+    // Combo-scoped bespoke maxStack split: re-split display parts based on
+    // maxStacks vs partHits × totalComboCount (stacks don't reset per invocation)
+    if (entry) {
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const dp = parts[i];
+        const eidx = dp.sourcePartIndex;
+        if (eidx == null || eidx >= entry.parts.length) continue;
+        const { bespokeBuff } = entry.parts[eidx];
+        const bespokeMax = bespokeBuff?.source.maxStacks;
+        const partHits = entry.parts[eidx].hits ?? 1;
+        const comboTotalHits = partHits * totalComboCount;
+        if (bespokeMax == null || bespokeMax >= comboTotalHits) continue;
+        // Determine buffed fraction across the whole combo for this entry part
+        const buffedFrac = bespokeMax / comboTotalHits;
+        const dpHits = dp.hits ?? 1;
+        const buffedHits = Math.round(dpHits * buffedFrac * 1000) / 1000;
+        const unbuffedHits = dpHits - buffedHits;
+        if (buffedHits > 0 && unbuffedHits > 0) {
+          const { formula, offField } = entry.parts[eidx];
+          const baseSelfStats =
+            offField && offFieldPostStats
+              ? offFieldPostStats
+              : postStats[charId]!;
+          // Unbuffed part (without bespoke overlay)
+          const dpUnbuffed = formula.displayFull(
+            baseSelfStats,
+            build.charBase.charLevel,
+            ctx
+          );
+          dpUnbuffed.hits = unbuffedHits;
+          dpUnbuffed.sourcePartIndex = eidx;
+          if (dp.offField) dpUnbuffed.offField = true;
+          // Replace current part with buffed portion and insert unbuffed after
+          parts.splice(i, 1, { ...dp, hits: buffedHits }, dpUnbuffed);
         }
       }
     }
