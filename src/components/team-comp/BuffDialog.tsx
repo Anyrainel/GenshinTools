@@ -215,15 +215,14 @@ function FormulaBlock({
                 </span>
               </div>
             )}
-            {!isDefault && (
-              <button
-                type="button"
-                className="text-[10px] md:text-xs text-primary hover:text-primary/80 shrink-0"
-                onClick={() => storeClearHits(storeKey, bKey, partIndex)}
-              >
-                {t.ui("common.reset")}
-              </button>
-            )}
+            <button
+              type="button"
+              disabled={isDefault}
+              className="text-[10px] md:text-xs text-primary hover:text-primary/80 shrink-0 disabled:opacity-30 disabled:cursor-default disabled:hover:text-primary"
+              onClick={() => storeClearHits(storeKey, bKey, partIndex)}
+            >
+              {t.ui("common.reset")}
+            </button>
           </div>
         );
       })}
