@@ -139,21 +139,21 @@ export const characters: CharacterResource[] = [
 ];
 
 export const elementResources: ElementResource[] = [
-  {"name": "Pyro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/ac3123b42bf631685287e76c8c834a6c_564491877314389852.webp", "imagePath": "/element/pyro.webp"},
-  {"name": "Hydro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/f54c8f0dae23fced358c28126f220a11_8997562060019157249.webp", "imagePath": "/element/hydro.webp"},
-  {"name": "Dendro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/bda7c6cf71ea059c6abc086405a7cdd5_1717146848708050949.webp", "imagePath": "/element/dendro.webp"},
-  {"name": "Electro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/16d344b6abbc369a2db9d46d6f31305b_7144738962629629573.webp", "imagePath": "/element/electro.webp"},
-  {"name": "Anemo", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/6b5c0d861fd1b4791bd602d3e7296598_8700657350379813969.webp", "imagePath": "/element/anemo.webp"},
-  {"name": "Cryo", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/157c22f5fd473d3c1684c6ee981540b6_1601711336893201442.webp", "imagePath": "/element/cryo.webp"},
-  {"name": "Geo", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/9c4cd6e14b87fc262cca36e6d0e9bdb0_1526899214861833594.webp", "imagePath": "/element/geo.webp"}
+  {"name": "Pyro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/ac3123b42bf631685287e76c8c834a6c_564491877314389852.png", "imagePath": "/element/pyro.webp"},
+  {"name": "Hydro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/f54c8f0dae23fced358c28126f220a11_8997562060019157249.png", "imagePath": "/element/hydro.webp"},
+  {"name": "Dendro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/bda7c6cf71ea059c6abc086405a7cdd5_1717146848708050949.png", "imagePath": "/element/dendro.webp"},
+  {"name": "Electro", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/16d344b6abbc369a2db9d46d6f31305b_7144738962629629573.png", "imagePath": "/element/electro.webp"},
+  {"name": "Anemo", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/6b5c0d861fd1b4791bd602d3e7296598_8700657350379813969.png", "imagePath": "/element/anemo.webp"},
+  {"name": "Cryo", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/157c22f5fd473d3c1684c6ee981540b6_1601711336893201442.png", "imagePath": "/element/cryo.webp"},
+  {"name": "Geo", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/9c4cd6e14b87fc262cca36e6d0e9bdb0_1526899214861833594.png", "imagePath": "/element/geo.webp"}
 ];
 
 export const weaponTypeResources: WeaponTypeResource[] = [
-  {"name": "Sword", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/eb8602badf0ade7c03650a440d188ce1_4346782947893420142.webp", "imagePath": "/weapontype/sword.webp"},
-  {"name": "Claymore", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/4b65ed8d8fd30705265fa10ee65c8b61_7363045695641018717.webp", "imagePath": "/weapontype/claymore.webp"},
-  {"name": "Bow", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/e38debacfd0147020895322333ea9d2a_4867338674175003782.webp", "imagePath": "/weapontype/bow.webp"},
-  {"name": "Catalyst", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/91c80bbf63e574fc6d6b1cb8563cf8e3_5665224225336557820.webp", "imagePath": "/weapontype/catalyst.webp"},
-  {"name": "Polearm", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/9c0f0c167f2753035b78c0aed9f01b9f_3170160339356492715.webp", "imagePath": "/weapontype/polearm.webp"}
+  {"name": "Sword", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/eb8602badf0ade7c03650a440d188ce1_4346782947893420142.png", "imagePath": "/weapontype/sword.webp"},
+  {"name": "Claymore", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/4b65ed8d8fd30705265fa10ee65c8b61_7363045695641018717.png", "imagePath": "/weapontype/claymore.webp"},
+  {"name": "Bow", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/e38debacfd0147020895322333ea9d2a_4867338674175003782.png", "imagePath": "/weapontype/bow.webp"},
+  {"name": "Catalyst", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/91c80bbf63e574fc6d6b1cb8563cf8e3_5665224225336557820.png", "imagePath": "/weapontype/catalyst.webp"},
+  {"name": "Polearm", "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/9c0f0c167f2753035b78c0aed9f01b9f_3170160339356492715.png", "imagePath": "/weapontype/polearm.webp"}
 ];
 
 export const artifacts: ArtifactSetResource[] = [
@@ -238,6 +238,7 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
 ];
 
 export const weapons: WeaponResource[] = [
+  {"id":"golden_frostbound_oath","rarity":5,"imagePath":"/weapon/golden_frostbound_oath.webp"},
   {"id": "gest_of_the_mighty_wolf", "rarity": 5, "imagePath": "/weapon/gest_of_the_mighty_wolf.webp"},
   {"id": "nocturnes_curtain_call", "rarity": 5, "imagePath": "/weapon/nocturnes_curtain_call.webp"},
   {"id": "lightbearing_moonshard", "rarity": 5, "imagePath": "/weapon/lightbearing_moonshard.webp"},

@@ -607,6 +607,14 @@
       "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
+  "golden_frostbound_oath": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
+    }
+  },
   "hakushin_ring": {
     "rarity": 4,
     "type": "Catalyst",

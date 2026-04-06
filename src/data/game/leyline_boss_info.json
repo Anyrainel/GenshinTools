@@ -3,1088 +3,241 @@
     {
       "id": 10011,
       "tiers": {
-        "1": {"id": 1001041,"level": 40,"hp": 59206,"atk": 3900,"def": 695},
-        "2": {"id": 1001041,"level": 70,"hp": 308664,"atk": 9942,"def": 845},
-        "3": {"id": 1001041,"level": 90,"hp": 781142,"atk": 18592,"def": 945},
-        "4": {"id": 1001051,"level": 100,"hp": 8231755,"atk": 24046,"def": 995},
-        "5": {"id": 1001061,"level": 105,"hp": 10975928,"atk": 26590,"def": 1020},
-        "6": {"id": 1001061,"level": 110,"hp": 13641165,"atk": 28723,"def": 1045}
+        "1": {"id": 1001041,"level": 40},
+        "2": {"id": 1001041,"level": 70},
+        "3": {"id": 1001041,"level": 90},
+        "4": {"id": 1001051,"level": 100},
+        "5": {"id": 1001061,"level": 105},
+        "6": {"id": 1001061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_Narcissusborn_AbsorbLogic",
-          "states": [
-            {
-              "state": "Monster_Narcissusborn_EnlargeEnhance",
-              "res_delta": {"physical": 0.45,"pyro": 0.45,"hydro": 0.45,"electro": 0.45,"dendro": 0.45,"anemo": 0.45,"geo": 0.45,"cryo": 0.45}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Narcissusborn.json",
-          "params": {
-            "Narcissusborn_fadeOutTimeDynamic": 1.0,
-            "sub_hurt_delta_positive_hard": 0.45
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10012,
       "tiers": {
-        "1": {"id": 1001042,"level": 40,"hp": 72662,"atk": 3120,"def": 695},
-        "2": {"id": 1001042,"level": 70,"hp": 378816,"atk": 7954,"def": 845},
-        "3": {"id": 1001042,"level": 90,"hp": 958674,"atk": 14873,"def": 945},
-        "4": {"id": 1001052,"level": 100,"hp": 10102610,"atk": 19237,"def": 995},
-        "5": {"id": 1001062,"level": 105,"hp": 13470464,"atk": 21272,"def": 1020},
-        "6": {"id": 1001062,"level": 110,"hp": 16741431,"atk": 22978,"def": 1045}
+        "1": {"id": 1001042,"level": 40},
+        "2": {"id": 1001042,"level": 70},
+        "3": {"id": 1001042,"level": 90},
+        "4": {"id": 1001052,"level": 100},
+        "5": {"id": 1001062,"level": 105},
+        "6": {"id": 1001062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_LavaTitan_StateControl_LeyLineChallengeV57",
-          "states": [
-            {
-              "state": "Stage1_SubHurtDelta_LeyLineChallenge",
-              "res_delta": {"physical": 1.9,"pyro": 1.9,"hydro": 1.9,"electro": 1.9,"dendro": 1.9,"anemo": 1.9,"geo": 1.9,"cryo": 1.9}
-            },
-            {
-              "state": "Stage2_SubHurtDelta_LeyLineChallenge",
-              "res_delta": {"physical": 0.35,"pyro": 1.9,"hydro": 0.35,"electro": 0.35,"dendro": 0.35,"anemo": 0.35,"geo": 0.35,"cryo": 0.35}
-            }
-          ],
-          "file": "ConfigAbility_Monster_LavaTitan.json"
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10013,
       "tiers": {
-        "1": {"id": 1001043,"level": 40,"hp": 58130,"atk": 3120,"def": 695},
-        "2": {"id": 1001043,"level": 70,"hp": 303052,"atk": 7954,"def": 845},
-        "3": {"id": 1001043,"level": 90,"hp": 766939,"atk": 14873,"def": 945},
-        "4": {"id": 1001053,"level": 100,"hp": 8082088,"atk": 19237,"def": 995},
-        "5": {"id": 1001063,"level": 105,"hp": 10776368,"atk": 21272,"def": 1020},
-        "6": {"id": 1001063,"level": 110,"hp": 13393143,"atk": 22978,"def": 1045}
+        "1": {"id": 1001043,"level": 40},
+        "2": {"id": 1001043,"level": 70},
+        "3": {"id": 1001043,"level": 90},
+        "4": {"id": 1001053,"level": 100},
+        "5": {"id": 1001063,"level": 105},
+        "6": {"id": 1001063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_DragonCollar_ShieldManager",
-          "states": [
-            {
-              "state": "StageChange_ExtraSubHurt",
-              "res_delta": {"physical": 2.0,"pyro": 2.0,"hydro": 2.0,"electro": 2.0,"dendro": 2.0,"anemo": 2.0,"geo": 2.0,"cryo": 2.0}
-            },
-            {
-              "state": "NormalSubHurt",
-              "res_delta": {"physical": 0.7,"pyro": 0.7,"hydro": 0.7,"electro": 0.7,"dendro": 0.7,"anemo": 0.7,"geo": 0.7,"cryo": 0.7}
-            },
-            {
-              "state": "BonusSubHurt",
-              "res_delta": {"physical": 0.0,"pyro": 0.0,"hydro": 0.0,"electro": 0.0,"dendro": 0.0,"anemo": 0.0,"geo": 0.0,"cryo": 0.0}
-            },
-            {
-              "state": "StatueMode",
-              "res_delta": {"physical": 3.0,"pyro": 3.0,"hydro": 3.0,"electro": 3.0,"dendro": 3.0,"anemo": 3.0,"geo": 3.0,"cryo": 3.0}
-            },
-            {
-              "state": "SubHurtLevel0",
-              "res_delta": {"physical": 2.0,"pyro": 2.0,"hydro": 2.0,"electro": 2.0,"dendro": 2.0,"anemo": 2.0,"geo": 2.0,"cryo": 2.0}
-            },
-            {
-              "state": "SubHurtLevel1",
-              "res_delta": {"physical": 0.4,"pyro": 0.4,"hydro": 0.4,"electro": 0.4,"dendro": 0.4,"anemo": 0.4,"geo": 0.4,"cryo": 0.4}
-            },
-            {
-              "state": "SubHurtLevel2",
-              "res_delta": {"physical": -0.1,"pyro": -0.1,"hydro": -0.1,"electro": -0.1,"dendro": -0.1,"anemo": -0.1,"geo": -0.1},
-              "signals": [
-                "LeyLineChallenge_MonsterLevelHigh"
-              ]
-            },
-            {
-              "state": "SubHurtLevel3",
-              "res_delta": {"physical": -0.1,"pyro": -0.1,"hydro": -0.1,"electro": -0.1,"dendro": -0.1,"anemo": -0.1,"geo": -0.1},
-              "signals": [
-                "LeyLineChallenge_MonsterLevelHigh"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_DragonCollar.json",
-          "params": {
-            "sub_hurt_delta_positive_before_battle": 3.0,
-            "sub_hurt_delta_positive_inbattle_lv0": 2.0,
-            "sub_hurt_delta_positive_inbattle_lv1": 0.4,
-            "sub_hurt_delta_positive_inbattle_lv2": -0.1,
-            "sub_hurt_delta_positive_inbattle_lv3": -0.1,
-            "sub_hurt_delta_positive_inbattle_icebonus_lv2lv3": -0.4,
-            "sub_hurt_delta_positive_inbattle_IceBonus": 0.0,
-            "InCombatNormal_SubHurtDelta": 0.7,
-            "InCombatBonus_SubHurtDelta": 0.0,
-            "ChargeBarInitialValue": 32.0,
-            "RotateTime": 35.0,
-            "FollowCD": 3.0,
-            "AtkInterval": 0.5,
-            "FollowSpeed1": 2.0,
-            "FollowSpeed2": 4.0,
-            "FollowSpeed3": 6.0,
-            "FollowSpeed4": 10.0
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10021,
       "tiers": {
-        "1": {"id": 1002041,"level": 40,"hp": 43059,"atk": 2340,"def": 695},
-        "2": {"id": 1002041,"level": 70,"hp": 224483,"atk": 5965,"def": 845},
-        "3": {"id": 1002041,"level": 90,"hp": 568103,"atk": 11155,"def": 945},
-        "4": {"id": 1002051,"level": 100,"hp": 5986729,"atk": 14427,"def": 995},
-        "5": {"id": 1002061,"level": 105,"hp": 7982496,"atk": 15954,"def": 1020},
-        "6": {"id": 1002061,"level": 110,"hp": 9920844,"atk": 17234,"def": 1045}
+        "1": {"id": 1002041,"level": 40},
+        "2": {"id": 1002041,"level": 70},
+        "3": {"id": 1002041,"level": 90},
+        "4": {"id": 1002051,"level": 100},
+        "5": {"id": 1002061,"level": 105},
+        "6": {"id": 1002061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_Fungus_Raptor_01_StateManager",
-          "states": [
-            {
-              "state": "FaintManager",
-              "res_delta": {"physical": -0.25,"pyro": -0.25,"hydro": -0.25,"electro": -0.25,"dendro": -0.25,"anemo": -0.25,"geo": -0.25,"cryo": -0.25}
-            },
-            {
-              "state": "Faint02Manager",
-              "res_delta": {"physical": -0.25,"pyro": -0.25,"hydro": -0.25,"electro": -0.25,"dendro": -0.25,"anemo": -0.25,"geo": -0.25,"cryo": -0.25}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Fungus_Raptor_01.json"
-        },
-        {
-          "ability": "Monster_Fungus_Raptor_BossEvent_StateManager",
-          "states": [
-            {
-              "state": "Prop_Stun_State",
-              "res_delta": {"physical": -0.3,"pyro": -0.3,"hydro": -0.3,"electro": -0.3,"dendro": -0.3,"anemo": -0.3,"geo": -0.3,"cryo": -0.3}
-            },
-            {
-              "state": "DendroSkin",
-              "res_delta": {"physical": 0.0,"pyro": 0.0,"hydro": 0.0,"electro": 0.0,"dendro": 0.0,"anemo": 0.0,"geo": 0.0,"cryo": 0.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Fungus_Raptor_BossEvent.json",
-          "params": {
-            "electric_charge": 2.0,
-            "overdose_charge": 15.0,
-            "overdose_attenuation_timer": 3.0,
-            "overdose_attenuation_ratio": 0.2,
-            "charge_global_adjust": 1.0,
-            "stun_time": 16.0,
-            "sub_hurt_delta": -0.3,
-            "dendro_skin_sub_hurt_delta": 0.0,
-            "dendro_skin_sub_hurt_delta_grass": 0.0,
-            "cache_element": 250.0
-          }
-        },
-        {
-          "ability": "Monster_Fungus_Raptor_BossEvent_RopeBoundLogic",
-          "states": [
-            {
-              "state": "RopeBound_State_VFX",
-              "res_delta": {"physical": -0.15,"pyro": -0.15,"hydro": -0.15,"electro": -0.15,"dendro": -0.15,"anemo": -0.15,"geo": -0.15,"cryo": -0.15}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Fungus_Raptor_BossEvent.json",
-          "params": {
-            "electric_charge": 2.0,
-            "overdose_charge": 15.0,
-            "overdose_attenuation_timer": 3.0,
-            "overdose_attenuation_ratio": 0.2,
-            "charge_global_adjust": 1.0,
-            "stun_time": 16.0,
-            "sub_hurt_delta": -0.3,
-            "dendro_skin_sub_hurt_delta": 0.0,
-            "dendro_skin_sub_hurt_delta_grass": 0.0,
-            "cache_element": 250.0
-          }
-        },
-        {
-          "ability": "Monster_Gargoyle_Fafnir_MotionPose",
-          "states": [
-            {
-              "state": "UNIQUE_Gargoyle_Fafnir_Elite_Air_Shield_Level02",
-              "res_delta": {"physical": 1.0,"pyro": 1.0,"hydro": 1.0,"electro": 1.0,"dendro": 1.0,"anemo": 1.0,"geo": 1.0,"cryo": 1.0},
-              "signals": [
-                "AirWeakTrigger",
-                "UNIQUE_Gargoyle_Fafnir_Elite_Air_Shield_Level02",
-                "_AIRSHIELDSTATE_"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        },
-        {
-          "ability": "Monster_Gargoyle_Fafnir_PoseElement_Begin",
-          "states": [
-            {
-              "state": "Pose_Element_Fire",
-              "res_delta": {"pyro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Water",
-              "res_delta": {"hydro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Grass",
-              "res_delta": {"dendro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Electric",
-              "res_delta": {"electro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Ice",
-              "res_delta": {"cryo": 0.6}
-            },
-            {
-              "state": "Pose_Element_Wind",
-              "res_delta": {"anemo": 0.6}
-            },
-            {
-              "state": "Pose_Element_Rock",
-              "res_delta": {"geo": 0.6}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        },
-        {
-          "ability": "Monster_Gargoyle_Fafnir_Alert",
-          "states": [
-            {
-              "state": "Gargoyle_Fafnir_SubHurt",
-              "res_delta": {"physical": 1.0,"pyro": 1.0,"hydro": 1.0,"electro": 1.0,"dendro": 1.0,"anemo": 1.0,"geo": 1.0,"cryo": 1.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        },
-        {
-          "ability": "Monster_Gargoyle_Fafnir_PoseElement_Begin_LeylineChallenge",
-          "states": [
-            {
-              "state": "Monster_ElementAtk_Change_HighSubHurt",
-              "res_delta": {"physical": 2.0,"pyro": 2.0,"hydro": 2.0,"electro": 2.0,"dendro": 2.0,"anemo": 2.0,"geo": 2.0,"cryo": 2.0}
-            },
-            {
-              "state": "Pose_Element_Fire",
-              "res_delta": {"pyro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Water",
-              "res_delta": {"hydro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Grass",
-              "res_delta": {"dendro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Electric",
-              "res_delta": {"electro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Ice",
-              "res_delta": {"cryo": 2.0}
-            },
-            {
-              "state": "Pose_Element_Wind",
-              "res_delta": {"anemo": 2.0}
-            },
-            {
-              "state": "Pose_Element_Rock",
-              "res_delta": {"geo": 2.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        },
-        {
-          "ability": "Monster_Dendrite_SubHurtDeltaManager",
-          "states": [
-            {
-              "state": "NormalSubHurt_LeyLineChallenge",
-              "res_delta": {"physical": 0.0,"pyro": 0.0,"hydro": 0.0,"electro": 0.0,"dendro": 0.0,"anemo": 0.0,"geo": 0.0,"cryo": 0.0}
-            },
-            {
-              "state": "BonusSubHurt_LeyLineChallenge",
-              "res_delta": {"physical": -0.25,"pyro": -0.25,"hydro": -0.25,"electro": -0.25,"dendro": -0.25,"anemo": -0.25,"geo": -0.25,"cryo": -0.25}
-            },
-            {
-              "state": "NormalSubHurt",
-              "res_delta": {"physical": 0.1,"pyro": 0.1,"hydro": 0.1,"electro": 0.1,"dendro": 0.1,"anemo": 0.1,"geo": 0.1,"cryo": 0.1}
-            },
-            {
-              "state": "BonusSubHurt",
-              "res_delta": {"physical": -0.25,"pyro": -0.25,"hydro": -0.25,"electro": -0.25,"dendro": -0.25,"anemo": -0.25,"geo": -0.25,"cryo": -0.25}
-            },
-            {
-              "state": "NormalSubHurt_Dungeon",
-              "res_delta": {"physical": 0.6,"pyro": 0.6,"hydro": 0.6,"electro": 0.6,"dendro": 0.6,"anemo": 0.6,"geo": 0.6,"cryo": 0.6}
-            },
-            {
-              "state": "BonusSubHurt_Dungeon",
-              "res_delta": {"physical": 0.25,"pyro": 0.25,"hydro": 0.25,"electro": 0.25,"dendro": 0.25,"anemo": 0.25,"geo": 0.25,"cryo": 0.25}
-            },
-            {
-              "state": "WeakSubHurtExtra",
-              "res_delta": {"physical": -0.35,"pyro": -0.35,"hydro": -0.35,"electro": -0.35,"dendro": -0.35,"anemo": -0.35,"geo": -0.35,"cryo": -0.35}
-            }
-          ],
-          "file": "ConfigAbility_Monster_TheAbyss_Dendrite_01.json",
-          "params": {
-            "InCombatNormal_SubHurtDelta": 0.1,
-            "InCombatBonus_SubHurtDelta": -0.25,
-            "InCombatNormal_SubHurtDelta_Dungeon": 0.6,
-            "InCombatBonus_SubHurtDelta_Dungeon": 0.25,
-            "InCombatWeak_SubHurtDelta_Extra": -0.35,
-            "LeyLineChallenge_NormalSubHurtDelta": 0.0,
-            "LeyLineChallenge_BonusSubHurtDelta": -0.25,
-            "AbyssShieldValue": 72.0,
-            "EnhanceCD": 12.0,
-            "BlinkCD": 15.0,
-            "GargoyleElement": 0.0,
-            "sub_hurt_delta_positive_before_battle": 3.0
-          }
-        },
-        {
-          "ability": "Monster_Dendrite_Alert",
-          "states": [
-            {
-              "state": "StatueMode",
-              "res_delta": {"physical": 3.0,"pyro": 3.0,"hydro": 3.0,"electro": 3.0,"dendro": 3.0,"anemo": 3.0,"geo": 3.0,"cryo": 3.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_TheAbyss_Dendrite_01.json",
-          "params": {
-            "InCombatNormal_SubHurtDelta": 0.1,
-            "InCombatBonus_SubHurtDelta": -0.25,
-            "InCombatNormal_SubHurtDelta_Dungeon": 0.6,
-            "InCombatBonus_SubHurtDelta_Dungeon": 0.25,
-            "InCombatWeak_SubHurtDelta_Extra": -0.35,
-            "LeyLineChallenge_NormalSubHurtDelta": 0.0,
-            "LeyLineChallenge_BonusSubHurtDelta": -0.25,
-            "AbyssShieldValue": 72.0,
-            "EnhanceCD": 12.0,
-            "BlinkCD": 15.0,
-            "GargoyleElement": 0.0,
-            "sub_hurt_delta_positive_before_battle": 3.0
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10022,
       "tiers": {
-        "1": {"id": 1002042,"level": 40,"hp": 118412,"atk": 4290,"def": 695},
-        "2": {"id": 1002042,"level": 70,"hp": 617329,"atk": 10936,"def": 845},
-        "3": {"id": 1002042,"level": 90,"hp": 1562284,"atk": 20451,"def": 945},
-        "4": {"id": 1002052,"level": 100,"hp": 16463510,"atk": 26450,"def": 995},
-        "5": {"id": 1002062,"level": 105,"hp": 21951864,"atk": 29249,"def": 1020},
-        "6": {"id": 1002062,"level": 110,"hp": 27282321,"atk": 31595,"def": 1045}
-      },
-      "res": {"physical": 50,"pyro": 10,"hydro": 10,"electro": 70,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+        "1": {"id": 1002042,"level": 40},
+        "2": {"id": 1002042,"level": 70},
+        "3": {"id": 1002042,"level": 90},
+        "4": {"id": 1002052,"level": 100},
+        "5": {"id": 1002062,"level": 105},
+        "6": {"id": 1002062,"level": 110}
+      }
     },
     {
       "id": 10023,
       "tiers": {
-        "1": {"id": 1002043,"level": 40,"hp": 226059,"atk": 3900,"def": 695},
-        "2": {"id": 1002043,"level": 70,"hp": 1178537,"atk": 9942,"def": 845},
-        "3": {"id": 1002043,"level": 90,"hp": 2982542,"atk": 18592,"def": 945},
-        "4": {"id": 1002053,"level": 100,"hp": 31430336,"atk": 24046,"def": 995},
-        "5": {"id": 1002063,"level": 105,"hp": 41908096,"atk": 26590,"def": 1020},
-        "6": {"id": 1002063,"level": 110,"hp": 52084440,"atk": 28723,"def": 1045}
+        "1": {"id": 1002043,"level": 40},
+        "2": {"id": 1002043,"level": 70},
+        "3": {"id": 1002043,"level": 90},
+        "4": {"id": 1002053,"level": 100},
+        "5": {"id": 1002063,"level": 105},
+        "6": {"id": 1002063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_Mascot_Tenoyollotzin_Weak",
-          "states": [
-            {
-              "state": "Weak_Handler",
-              "res_delta": {"physical": -1.0,"pyro": -1.0,"hydro": -1.0,"electro": -1.0,"dendro": -1.0,"anemo": -1.0,"geo": -1.0,"cryo": -1.0},
-              "signals": [
-                "WeakASTrigger",
-                "WeakState"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_Mascot_Tenoyollotzin.json",
-          "params": {
-            "ShieldReductionFactor": 1.0,
-            "SubHurtDelta": -1.0,
-            "EntityConfigID": 1.0,
-            "HPRatio": 0.0,
-            "AtkRatio": 0.0,
-            "ReactionUp": 1.5
-          }
-        },
-        {
-          "ability": "Monster_Mascot_Tenoyollotzin_Hat_Initial",
-          "states": [
-            {
-              "state": "Mascot_Tenoyollotzin_Hat_LanV6Battle_HitDitect",
-              "value_delta": {
-                "hp_ratio": 0.0,
-                "atk_ratio": 0.0
-              }
-            }
-          ],
-          "file": "ConfigAbility_Monster_Mascot_Tenoyollotzin.json",
-          "params": {
-            "ShieldReductionFactor": 1.0,
-            "SubHurtDelta": -1.0,
-            "EntityConfigID": 1.0,
-            "HPRatio": 0.0,
-            "AtkRatio": 0.0,
-            "ReactionUp": 1.5
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10031,
       "tiers": {
-        "1": {"id": 1003041,"level": 40,"hp": 45750,"atk": 2340,"def": 695},
-        "2": {"id": 1003041,"level": 70,"hp": 238513,"atk": 5965,"def": 845},
-        "3": {"id": 1003041,"level": 90,"hp": 603610,"atk": 11155,"def": 945},
-        "4": {"id": 1003051,"level": 100,"hp": 6360900,"atk": 14427,"def": 995},
-        "5": {"id": 1003061,"level": 105,"hp": 8481400,"atk": 15954,"def": 1020},
-        "6": {"id": 1003061,"level": 110,"hp": 10540899,"atk": 17234,"def": 1045}
+        "1": {"id": 1003041,"level": 40},
+        "2": {"id": 1003041,"level": 70},
+        "3": {"id": 1003041,"level": 90},
+        "4": {"id": 1003051,"level": 100},
+        "5": {"id": 1003061,"level": 105},
+        "6": {"id": 1003061,"level": 110}
       },
-      "res": {"physical": 70,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_Gargoyle_Fafnir_MotionPose",
-          "states": [
-            {
-              "state": "UNIQUE_Gargoyle_Fafnir_Elite_Air_Shield_Level02",
-              "res_delta": {"physical": 1.0,"pyro": 1.0,"hydro": 1.0,"electro": 1.0,"dendro": 1.0,"anemo": 1.0,"geo": 1.0,"cryo": 1.0},
-              "signals": [
-                "AirWeakTrigger",
-                "UNIQUE_Gargoyle_Fafnir_Elite_Air_Shield_Level02",
-                "_AIRSHIELDSTATE_"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        },
-        {
-          "ability": "Monster_Gargoyle_Fafnir_PoseElement_Begin",
-          "states": [
-            {
-              "state": "Pose_Element_Fire",
-              "res_delta": {"pyro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Water",
-              "res_delta": {"hydro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Grass",
-              "res_delta": {"dendro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Electric",
-              "res_delta": {"electro": 0.6}
-            },
-            {
-              "state": "Pose_Element_Ice",
-              "res_delta": {"cryo": 0.6}
-            },
-            {
-              "state": "Pose_Element_Wind",
-              "res_delta": {"anemo": 0.6}
-            },
-            {
-              "state": "Pose_Element_Rock",
-              "res_delta": {"geo": 0.6}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        },
-        {
-          "ability": "Monster_Gargoyle_Fafnir_Alert",
-          "states": [
-            {
-              "state": "Gargoyle_Fafnir_SubHurt",
-              "res_delta": {"physical": 1.0,"pyro": 1.0,"hydro": 1.0,"electro": 1.0,"dendro": 1.0,"anemo": 1.0,"geo": 1.0,"cryo": 1.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        },
-        {
-          "ability": "Monster_Gargoyle_Fafnir_PoseElement_Begin_LeylineChallenge",
-          "states": [
-            {
-              "state": "Monster_ElementAtk_Change_HighSubHurt",
-              "res_delta": {"physical": 2.0,"pyro": 2.0,"hydro": 2.0,"electro": 2.0,"dendro": 2.0,"anemo": 2.0,"geo": 2.0,"cryo": 2.0}
-            },
-            {
-              "state": "Pose_Element_Fire",
-              "res_delta": {"pyro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Water",
-              "res_delta": {"hydro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Grass",
-              "res_delta": {"dendro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Electric",
-              "res_delta": {"electro": 2.0}
-            },
-            {
-              "state": "Pose_Element_Ice",
-              "res_delta": {"cryo": 2.0}
-            },
-            {
-              "state": "Pose_Element_Wind",
-              "res_delta": {"anemo": 2.0}
-            },
-            {
-              "state": "Pose_Element_Rock",
-              "res_delta": {"geo": 2.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gargoyle_Fafnir.json"
-        }
-      ]
+      "res": {"physical": 70,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10032,
       "tiers": {
-        "1": {"id": 1003042,"level": 40,"hp": 283113,"atk": 3120,"def": 695},
-        "2": {"id": 1003042,"level": 70,"hp": 1475977,"atk": 7954,"def": 845},
-        "3": {"id": 1003042,"level": 90,"hp": 3735278,"atk": 14873,"def": 945},
-        "4": {"id": 1003052,"level": 100,"hp": 39362750,"atk": 19237,"def": 995},
-        "5": {"id": 1003062,"level": 105,"hp": 52484904,"atk": 21272,"def": 1020},
-        "6": {"id": 1003062,"level": 110,"hp": 65229552,"atk": 22978,"def": 1045}
+        "1": {"id": 1003042,"level": 40},
+        "2": {"id": 1003042,"level": 70},
+        "3": {"id": 1003042,"level": 90},
+        "4": {"id": 1003052,"level": 100},
+        "5": {"id": 1003062,"level": 105},
+        "6": {"id": 1003062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "FauneAbyssale_HermitCrab_Mature_Born",
-          "states": [
-            {
-              "state": "Monster_FauneAbyssale_HermitCrab_Mature_Core_Detect",
-              "res_delta": {"physical": 0.6,"pyro": 0.6,"hydro": 0.6,"electro": 0.6,"dendro": 0.6,"anemo": 0.6,"geo": 0.6,"cryo": 0.6},
-              "signals": [
-                "Monster_FauneAbyssale_HermitCrab_Mature_Core_Breaking",
-                "Monster_FauneAbyssale_HermitCrab_Mature_Core_Detect"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_FauneAbyssale_HermitCrab.json",
-          "params": {
-            "sub_hurt_delta_positive": 0.6,
-            "element_shield_max_durability": 270.0,
-            "cache_element": 0.0
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10033,
       "tiers": {
-        "1": {"id": 1003043,"level": 40,"hp": 11841,"atk": 1560,"def": 695},
-        "2": {"id": 1003043,"level": 70,"hp": 61733,"atk": 3977,"def": 845},
-        "3": {"id": 1003043,"level": 90,"hp": 156228,"atk": 7437,"def": 945},
-        "4": {"id": 1003053,"level": 100,"hp": 1646351,"atk": 9618,"def": 995},
-        "5": {"id": 1003063,"level": 105,"hp": 2195184,"atk": 10636,"def": 1020},
-        "6": {"id": 1003063,"level": 110,"hp": 2728233,"atk": 11489,"def": 1045}
+        "1": {"id": 1003043,"level": 40},
+        "2": {"id": 1003043,"level": 70},
+        "3": {"id": 1003043,"level": 90},
+        "4": {"id": 1003053,"level": 100},
+        "5": {"id": 1003063,"level": 105},
+        "6": {"id": 1003063,"level": 110}
       },
-      "res": {"physical": -20,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_Oprichnik_LanceArquebus_WQLogic",
-          "states": [
-            {
-              "state": "Attack05RunResistance",
-              "res_delta": {"physical": 1.9,"pyro": 1.9,"hydro": 1.9,"electro": 1.9,"dendro": 1.9,"anemo": 1.9,"geo": 1.9,"cryo": 1.9}
-            },
-            {
-              "state": "Attack05WeakSubHurt",
-              "res_delta": {"physical": -0.5,"pyro": -0.5,"hydro": -0.5,"electro": -0.5,"dendro": -0.5,"anemo": -0.5,"geo": -0.5,"cryo": -0.5},
-              "signals": [
-                "LeyLineChallenge_MonsterLevelHigh",
-                "_CAN_OPEN_SHIELD",
-                "_Monster_LeyLineChallenge_LevelLow",
-                "_OPEN_SHIELD_TIMES"
-              ]
-            },
-            {
-              "state": "BonusSubHurt",
-              "res_delta": {"electro": -0.6}
-            },
-            {
-              "state": "Monster_Subhurt_Thunder_LeylineChallenge",
-              "res_delta": {"physical": 0.6,"pyro": 0.6,"hydro": 0.6,"dendro": 0.6,"anemo": 0.6,"geo": 0.6,"cryo": 0.6}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Human_Oprichnik.json",
-          "params": {
-            "sub_hurt_delta_negative": -0.5,
-            "sub_hurt_delta_negativeelectric": -0.6,
-            "ShieldMaxHPRatio": 0.03,
-            "RecoverMaxHPRatio": 0.001
-          }
-        },
-        {
-          "ability": "Monster_Human_Oprichnik_PulseSignaler_PowerAttack",
-          "states": [
-            {
-              "state": "UNIQUE_Oprichnik_HealAndEnhance",
-              "value_delta": {
-                "atk_ratio": 0.2
-              }
-            }
-          ],
-          "file": "ConfigAbility_Monster_Human_Oprichnik_Gun_AxeGun.json"
-        }
-      ]
+      "res": {"physical": -20,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10041,
       "tiers": {
-        "1": {"id": 1004041,"level": 40,"hp": 59206,"atk": 3120,"def": 695},
-        "2": {"id": 1004041,"level": 70,"hp": 308664,"atk": 7954,"def": 845},
-        "3": {"id": 1004041,"level": 90,"hp": 781142,"atk": 14873,"def": 945},
-        "4": {"id": 1004051,"level": 100,"hp": 8231755,"atk": 19237,"def": 995},
-        "5": {"id": 1004061,"level": 105,"hp": 10975928,"atk": 21272,"def": 1020},
-        "6": {"id": 1004061,"level": 110,"hp": 13641165,"atk": 22978,"def": 1045}
+        "1": {"id": 1004041,"level": 40},
+        "2": {"id": 1004041,"level": 70},
+        "3": {"id": 1004041,"level": 90},
+        "4": {"id": 1004051,"level": 100},
+        "5": {"id": 1004061,"level": 105},
+        "6": {"id": 1004061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_HerraFrost_StageControl",
-          "states": [
-            {
-              "state": "UNIQUE_Monster_HerraFrost_Stage2",
-              "res_delta": {"physical": 1.2,"pyro": 1.2,"hydro": 1.2,"electro": 1.2,"dendro": 1.2,"anemo": 1.2,"geo": 1.2,"cryo": 1.2},
-              "signals": [
-                "LeyLineChallenge_MonsterLevelHigh"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_HerraFrost_01.json",
-          "params": {
-            "Monster_HerraFrost_ChargeBarRatio": 1.0
-          }
-        },
-        {
-          "ability": "Monster_HerraFrost_Alert",
-          "states": [
-            {
-              "state": "Monster_HerraFrost_Alert",
-              "res_delta": {"physical": 2.0,"pyro": 2.0,"hydro": 2.0,"electro": 2.0,"dendro": 2.0,"anemo": 2.0,"geo": 2.0,"cryo": 2.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_HerraFrost_01.json",
-          "params": {
-            "Monster_HerraFrost_ChargeBarRatio": 1.0
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10042,
       "tiers": {
-        "1": {"id": 1004042,"level": 40,"hp": 121103,"atk": 4290,"def": 695},
-        "2": {"id": 1004042,"level": 70,"hp": 631359,"atk": 10936,"def": 845},
-        "3": {"id": 1004042,"level": 90,"hp": 1597790,"atk": 20451,"def": 945},
-        "4": {"id": 1004052,"level": 100,"hp": 16837681,"atk": 26450,"def": 995},
-        "5": {"id": 1004062,"level": 105,"hp": 22450768,"atk": 29249,"def": 1020},
-        "6": {"id": 1004062,"level": 110,"hp": 27902376,"atk": 31595,"def": 1045}
+        "1": {"id": 1004042,"level": 40},
+        "2": {"id": 1004042,"level": 70},
+        "3": {"id": 1004042,"level": 90},
+        "4": {"id": 1004052,"level": 100},
+        "5": {"id": 1004062,"level": 105},
+        "6": {"id": 1004062,"level": 110}
       },
       "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10043,
       "tiers": {
-        "1": {"id": 1004043,"level": 40,"hp": 21529,"atk": 1872,"def": 695},
-        "2": {"id": 1004043,"level": 70,"hp": 112242,"atk": 4772,"def": 845},
-        "3": {"id": 1004043,"level": 90,"hp": 284052,"atk": 8924,"def": 945},
-        "4": {"id": 1004053,"level": 100,"hp": 2993368,"atk": 11542,"def": 995},
-        "5": {"id": 1004063,"level": 105,"hp": 3991248,"atk": 12763,"def": 1020},
-        "6": {"id": 1004063,"level": 110,"hp": 4960422,"atk": 13787,"def": 1045}
+        "1": {"id": 1004043,"level": 40},
+        "2": {"id": 1004043,"level": 70},
+        "3": {"id": 1004043,"level": 90},
+        "4": {"id": 1004053,"level": 100},
+        "5": {"id": 1004063,"level": 105},
+        "6": {"id": 1004063,"level": 110}
       },
       "res": {"physical": -20,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 50}
     },
     {
       "id": 10051,
       "tiers": {
-        "1": {"id": 1005041,"level": 40,"hp": 26912,"atk": 3120,"def": 695},
-        "2": {"id": 1005041,"level": 70,"hp": 140302,"atk": 7954,"def": 845},
-        "3": {"id": 1005041,"level": 90,"hp": 355064,"atk": 14873,"def": 945},
-        "4": {"id": 1005051,"level": 100,"hp": 3741703,"atk": 19237,"def": 995},
-        "5": {"id": 1005061,"level": 105,"hp": 4989056,"atk": 21272,"def": 1020},
-        "6": {"id": 1005061,"level": 110,"hp": 6200532,"atk": 22978,"def": 1045}
+        "1": {"id": 1005041,"level": 40},
+        "2": {"id": 1005041,"level": 70},
+        "3": {"id": 1005041,"level": 90},
+        "4": {"id": 1005051,"level": 100},
+        "5": {"id": 1005061,"level": 105},
+        "6": {"id": 1005061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_Invoker_Archdeacon_01_Alert",
-          "states": [
-            {
-              "state": "Monster_Invoker_Archdeacon_01_AlertSubHurtDown",
-              "res_delta": {"physical": 2.0,"pyro": 2.0,"hydro": 2.0,"electro": 2.0,"dendro": 2.0,"anemo": 2.0,"geo": 2.0,"cryo": 2.0}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Invoker_Archdeacon_01.json",
-          "params": {
-            "WeakDuration": 10.5,
-            "ShieldElement1": 300.0,
-            "ShieldElement2": 200.0,
-            "RotateTime": 0.0,
-            "WeakRecoverShieldTime": 12.55,
-            "ElementDurability": 50.0,
-            "DamageRatio": 2.0,
-            "Avatar_MaxHp": 0.0,
-            "Monster_Max_Attack": 0.0
-          }
-        },
-        {
-          "ability": "Monster_Invoker_Archdeacon_Release_OverCharge",
-          "states": [
-            {
-              "state": "Monster_Invoker_Archdeacon_OverCharge_EffControl",
-              "res_delta": {"physical": 2.0,"pyro": 2.0,"hydro": 2.0,"electro": 2.0,"dendro": 2.0,"anemo": 2.0,"geo": 2.0,"cryo": 2.0},
-              "signals": [
-                "_SHIELD_STATE"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_Invoker_Archdeacon_01.json",
-          "params": {
-            "WeakDuration": 10.5,
-            "ShieldElement1": 300.0,
-            "ShieldElement2": 200.0,
-            "RotateTime": 0.0,
-            "WeakRecoverShieldTime": 12.55,
-            "ElementDurability": 50.0,
-            "DamageRatio": 2.0,
-            "Avatar_MaxHp": 0.0,
-            "Monster_Max_Attack": 0.0
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10052,
       "tiers": {
-        "1": {"id": 1005042,"level": 40,"hp": 7266,"atk": 1053,"def": 695},
-        "2": {"id": 1005042,"level": 70,"hp": 37882,"atk": 2684,"def": 845},
-        "3": {"id": 1005042,"level": 90,"hp": 95867,"atk": 5020,"def": 945},
-        "4": {"id": 1005052,"level": 100,"hp": 1010261,"atk": 6492,"def": 995},
-        "5": {"id": 1005062,"level": 105,"hp": 1347048,"atk": 7179,"def": 1020},
-        "6": {"id": 1005062,"level": 110,"hp": 1674144,"atk": 7755,"def": 1045}
+        "1": {"id": 1005042,"level": 40},
+        "2": {"id": 1005042,"level": 70},
+        "3": {"id": 1005042,"level": 90},
+        "4": {"id": 1005052,"level": 100},
+        "5": {"id": 1005062,"level": 105},
+        "6": {"id": 1005062,"level": 110}
       },
       "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 50}
     },
     {
       "id": 10053,
       "tiers": {
-        "1": {"id": 1005043,"level": 40,"hp": 42252,"atk": 3510,"def": 695},
-        "2": {"id": 1005043,"level": 70,"hp": 220274,"atk": 8948,"def": 845},
-        "3": {"id": 1005043,"level": 90,"hp": 557451,"atk": 16733,"def": 945},
-        "4": {"id": 1005053,"level": 100,"hp": 5874477,"atk": 21641,"def": 995},
-        "5": {"id": 1005063,"level": 105,"hp": 7832824,"atk": 23931,"def": 1020},
-        "6": {"id": 1005063,"level": 110,"hp": 9734832,"atk": 25850,"def": 1045}
+        "1": {"id": 1005043,"level": 40},
+        "2": {"id": 1005043,"level": 70},
+        "3": {"id": 1005043,"level": 90},
+        "4": {"id": 1005053,"level": 100},
+        "5": {"id": 1005063,"level": 105},
+        "6": {"id": 1005063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 70,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_MachinaIustitia_Gravitas_Create_ZeroGravitasZone_LeylineChallenge",
-          "states": [
-            {
-              "state": "ZeroGravitasZone_Gravitas_Avatar_AltitudeBuff",
-              "value_delta": {
-                "atk_ratio": 0.0
-              }
-            }
-          ],
-          "file": "ConfigAbility_Monster_Machinalustitia_Gravitas_01.json",
-          "params": {
-            "frocehppercent": 0.7,
-            "Remove_Debuff_Stack_Value": 1.0,
-            "ZeroGravitasZone_Buff_Duration": 1.5,
-            "ZeroGravitasZone_Altitude_Buff_Value": 6.0,
-            "ZeroGravitasZone_Range": 23.0,
-            "Detector_Height": 3.0,
-            "Pneuma_Timer": 30.0,
-            "Normal_Timer": 16.0,
-            "ImpactAttack_StackInterval": 5.0,
-            "TrippleImpactAttack_Damage": 1.2
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 70,"cryo": 10}
     },
     {
       "id": 10061,
       "tiers": {
-        "1": {"id": 1006041,"level": 40,"hp": 72662,"atk": 2340,"def": 695},
-        "2": {"id": 1006041,"level": 70,"hp": 378816,"atk": 5965,"def": 845},
-        "3": {"id": 1006041,"level": 90,"hp": 958674,"atk": 11155,"def": 945},
-        "4": {"id": 1006051,"level": 100,"hp": 10102610,"atk": 14427,"def": 995},
-        "5": {"id": 1006061,"level": 105,"hp": 13470464,"atk": 15954,"def": 1020},
-        "6": {"id": 1006061,"level": 110,"hp": 16741431,"atk": 17234,"def": 1045}
+        "1": {"id": 1006041,"level": 40},
+        "2": {"id": 1006041,"level": 70},
+        "3": {"id": 1006041,"level": 90},
+        "4": {"id": 1006051,"level": 100},
+        "5": {"id": 1006061,"level": 105},
+        "6": {"id": 1006061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Lloigor_Primo_StateManager",
-          "states": [
-            {
-              "state": "Modifier_WeakProp",
-              "res_delta": {"physical": -0.7,"pyro": -0.7,"hydro": -0.7,"electro": -0.7,"dendro": -0.7,"anemo": -0.7,"geo": -0.7,"cryo": -0.7}
-            }
-          ],
-          "file": "ConfigAbility_Monster_Lloigor.json",
-          "params": {
-            "ShieldDuration": 14.5
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10063,
       "tiers": {
-        "1": {"id": 1006043,"level": 40,"hp": 32294,"atk": 3510,"def": 695},
-        "2": {"id": 1006043,"level": 70,"hp": 168362,"atk": 8948,"def": 845},
-        "3": {"id": 1006043,"level": 90,"hp": 426077,"atk": 16733,"def": 945},
-        "4": {"id": 1006053,"level": 100,"hp": 4490045,"atk": 21641,"def": 995},
-        "5": {"id": 1006063,"level": 105,"hp": 5986872,"atk": 23931,"def": 1020},
-        "6": {"id": 1006063,"level": 110,"hp": 7440633,"atk": 25850,"def": 1045}
+        "1": {"id": 1006043,"level": 40},
+        "2": {"id": 1006043,"level": 70},
+        "3": {"id": 1006043,"level": 90},
+        "4": {"id": 1006053,"level": 100},
+        "5": {"id": 1006063,"level": 105},
+        "6": {"id": 1006063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 60,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "affixes": [
-        {
-          "id": 61701,
-          "ability_names": [
-            "FauneAbyssale_HermitCrab_Primo_Hard"
-          ],
-          "affix": "熔岩蟹深渊词缀",
-          "comment": "熔岩蟹深渊词缀"
-        }
-      ],
-      "abilities": [
-        {
-          "ability": "FauneAbyssale_HermitCrab_Primo_Hard",
-          "states": [
-            {
-              "state": "FauneAbyssale_HermitCrab_Core_Sub_Hurt_Hard",
-              "res_delta": {"physical": 0.8,"pyro": 0.8,"hydro": 0.8,"electro": 0.8,"dendro": 0.8,"anemo": 0.8,"geo": 0.8,"cryo": 0.8}
-            },
-            {
-              "state": "UNIQUE_FauneAbyssale_HermitCrab_Primo_AtkUp",
-              "value_delta": {
-                "atk_ratio": 0.33
-              }
-            }
-          ],
-          "affix_id": 61701,
-          "file": "ConfigAbility_Monster_FauneAbyssale_HermitCrab_Primo.json",
-          "params": {
-            "sub_hurt_delta_positive_hard": 0.8,
-            "add_attack_delta_positive_hard": 0.33,
-            "sub_hurt_delta_positive": 0.6,
-            "DurabilityRatio_LeyLineChallenge": 0.2,
-            "explode_attack_cd": 45.0,
-            "ShieldDurability_LeyLineChallenge": 1600.0
-          }
-        },
-        {
-          "ability": "FauneAbyssale_HermitCrab_Primo_Born",
-          "states": [
-            {
-              "state": "UNIQUE_FauneAbyssale_HermitCrab_Core_Sub_Hurt",
-              "res_delta": {"physical": 0.6,"pyro": 0.6,"hydro": 0.6,"electro": 0.6,"dendro": 0.6,"anemo": 0.6,"geo": 0.6,"cryo": 0.6}
-            },
-            {
-              "state": "FauneAbyssale_HermitCrab_Core_Sub_Hurt_Hard",
-              "res_delta": {"physical": 0.8,"pyro": 0.8,"hydro": 0.8,"electro": 0.8,"dendro": 0.8,"anemo": 0.8,"geo": 0.8,"cryo": 0.8}
-            }
-          ],
-          "file": "ConfigAbility_Monster_FauneAbyssale_HermitCrab_Primo.json",
-          "params": {
-            "sub_hurt_delta_positive_hard": 0.8,
-            "add_attack_delta_positive_hard": 0.33,
-            "sub_hurt_delta_positive": 0.6,
-            "DurabilityRatio_LeyLineChallenge": 0.2,
-            "explode_attack_cd": 45.0,
-            "ShieldDurability_LeyLineChallenge": 1600.0
-          }
-        },
-        {
-          "ability": "FauneAbyssale_HermitCrab_Primo_Born_LeyLineChallenge",
-          "states": [
-            {
-              "state": "FauneAbyssale_HermitCrab_Core_Sub_Hurt_Hard_LeyLineChallenge",
-              "res_delta": {"physical": 1.5,"pyro": 1.5,"hydro": 1.5,"electro": 1.5,"dendro": 1.5,"anemo": 1.5,"geo": 1.5,"cryo": 1.5}
-            }
-          ],
-          "file": "ConfigAbility_Monster_FauneAbyssale_HermitCrab_Primo.json",
-          "params": {
-            "sub_hurt_delta_positive_hard": 0.8,
-            "add_attack_delta_positive_hard": 0.33,
-            "sub_hurt_delta_positive": 0.6,
-            "DurabilityRatio_LeyLineChallenge": 0.2,
-            "explode_attack_cd": 45.0,
-            "ShieldDurability_LeyLineChallenge": 1600.0
-          }
-        },
-        {
-          "ability": "Monster_HermitCrab_Primo_02_FireEnhanceMode",
-          "states": [
-            {
-              "state": "Monster_HermitCrab_Primo_02_FireModeDuration",
-              "value_delta": {
-                "atk_ratio": 0.8
-              },
-              "signals": [
-                "Eff_Monster_FauneAbyssale_HermitCrab_Primo_PowerUpClawL_01",
-                "Eff_Monster_FauneAbyssale_HermitCrab_Primo_PowerUpClawL_02",
-                "Eff_Monster_FauneAbyssale_HermitCrab_Primo_PowerUpClawR_01",
-                "Eff_Monster_FauneAbyssale_HermitCrab_Primo_PowerUpClawR_02"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_FauneAbyssale_HermitCrab_Primo_02.json",
-          "params": {
-            "DecreaseShieldValue": 0.0,
-            "MaxShield": 0.0,
-            "RecoverShieldValue": 0.0,
-            "ShieldRatio": 1.0,
-            "sub_hurt_delta_positive": 0.6,
-            "sub_hurt_delta_positive_hard": 0.8
-          }
-        },
-        {
-          "ability": "Monster_FauneAbyssale_HermitCrab_Primo_Core_BossRushV52",
-          "states": [
-            {
-              "state": "Monster_HermitCrab_Primo_02_CoreShield_SubHurtDuration",
-              "res_delta": {"physical": 1.2,"pyro": 1.2,"hydro": 1.2,"electro": 1.2,"dendro": 1.2,"anemo": 1.2,"geo": 1.2,"cryo": 1.2}
-            }
-          ],
-          "file": "ConfigAbility_Monster_FauneAbyssale_HermitCrab_Primo_02.json",
-          "params": {
-            "DecreaseShieldValue": 0.0,
-            "MaxShield": 0.0,
-            "RecoverShieldValue": 0.0,
-            "ShieldRatio": 1.0,
-            "sub_hurt_delta_positive": 0.6,
-            "sub_hurt_delta_positive_hard": 0.8
-          }
-        },
-        {
-          "ability": "FauneAbyssale_HermitCrab_Primo_Born_BossRushV52",
-          "states": [
-            {
-              "state": "UNIQUE_FauneAbyssale_HermitCrab_Core_Sub_Hurt_BossRush",
-              "res_delta": {"physical": 0.6,"pyro": 0.6,"hydro": 0.6,"electro": 0.6,"dendro": 0.6,"anemo": 0.6,"geo": 0.6,"cryo": 0.6}
-            },
-            {
-              "state": "FauneAbyssale_HermitCrab_Core_Sub_Hurt_Hard",
-              "res_delta": {"physical": 0.8,"pyro": 0.8,"hydro": 0.8,"electro": 0.8,"dendro": 0.8,"anemo": 0.8,"geo": 0.8,"cryo": 0.8}
-            }
-          ],
-          "file": "ConfigAbility_Monster_FauneAbyssale_HermitCrab_Primo_02.json",
-          "params": {
-            "DecreaseShieldValue": 0.0,
-            "MaxShield": 0.0,
-            "RecoverShieldValue": 0.0,
-            "ShieldRatio": 1.0,
-            "sub_hurt_delta_positive": 0.6,
-            "sub_hurt_delta_positive_hard": 0.8
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 60,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10071,
       "tiers": {
-        "1": {"id": 1007041,"level": 40,"hp": 172236,"atk": 4680,"def": 695},
-        "2": {"id": 1007041,"level": 70,"hp": 897933,"atk": 11930,"def": 845},
-        "3": {"id": 1007041,"level": 90,"hp": 2272413,"atk": 22310,"def": 945},
-        "4": {"id": 1007051,"level": 100,"hp": 23946923,"atk": 28855,"def": 995},
-        "5": {"id": 1007061,"level": 105,"hp": 31929976,"atk": 31908,"def": 1020},
-        "6": {"id": 1007061,"level": 110,"hp": 39683385,"atk": 34467,"def": 1045}
+        "1": {"id": 1007041,"level": 40},
+        "2": {"id": 1007041,"level": 70},
+        "3": {"id": 1007041,"level": 90},
+        "4": {"id": 1007051,"level": 100},
+        "5": {"id": 1007061,"level": 105},
+        "6": {"id": 1007061,"level": 110}
       },
       "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 135,"anemo": 10,"geo": 10,"cryo": 10}
     },
     {
       "id": 10072,
       "tiers": {
-        "1": {"id": 1007042,"level": 40,"hp": 72662,"atk": 2340,"def": 695},
-        "2": {"id": 1007042,"level": 70,"hp": 378816,"atk": 5965,"def": 845},
-        "3": {"id": 1007042,"level": 90,"hp": 958674,"atk": 11155,"def": 945},
-        "4": {"id": 1007052,"level": 100,"hp": 10102610,"atk": 14427,"def": 995},
-        "5": {"id": 1007062,"level": 105,"hp": 13470464,"atk": 15954,"def": 1020},
-        "6": {"id": 1007062,"level": 110,"hp": 16741431,"atk": 17234,"def": 1045}
+        "1": {"id": 1007042,"level": 40},
+        "2": {"id": 1007042,"level": 70},
+        "3": {"id": 1007042,"level": 90},
+        "4": {"id": 1007052,"level": 100},
+        "5": {"id": 1007062,"level": 105},
+        "6": {"id": 1007062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10},
-      "abilities": [
-        {
-          "ability": "Monster_Gastrobot_Pose",
-          "states": [
-            {
-              "state": "Gastrobot_Decrease_ThunderSubHurt",
-              "res_delta": {"electro": -0.6}
-            },
-            {
-              "state": "UNIQUE_Gastrobot_Pose_Enhanced_Shield",
-              "res_delta": {"physical": 0.7,"pyro": 0.7,"hydro": 0.7,"electro": 0.7,"dendro": 0.7,"anemo": 0.7,"geo": 0.7,"cryo": 0.7},
-              "signals": [
-                "_ABILITY_Gastrobot_ShieldBreak_"
-              ]
-            },
-            {
-              "state": "UNIQUE_Gastrobot_Pose_Enhanced_Shield_Abyss",
-              "res_delta": {"physical": 1.4,"pyro": 1.4,"hydro": 1.4,"electro": 1.4,"dendro": 1.4,"anemo": 1.4,"geo": 1.4,"cryo": 1.4},
-              "signals": [
-                "GastrobotAddHurbAbyss",
-                "LeyLineChallenge_MonsterLevelHigh",
-                "UNIQUE_Gastrobot_Pose_Enhanced_CountDown_Abyss",
-                "_ABILITY_Gastrobot_ShieldBreak_"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gastrobot.json",
-          "params": {
-            "GastrobotAddHurb": 0.7,
-            "GastrobotAddHurbAbyss": 1.4,
-            "WeakSubdHurt": -0.6
-          }
-        },
-        {
-          "ability": "Monster_Gastrobot_Weak",
-          "states": [
-            {
-              "state": "Gastrobot_Weak_SubHurt",
-              "res_delta": {"physical": -0.6,"pyro": -0.6,"hydro": -0.6,"electro": -0.6,"dendro": -0.6,"anemo": -0.6,"geo": -0.6,"cryo": -0.6},
-              "signals": [
-                "Eff_Monster_Gastrobot_Weak_Electric",
-                "WeakSubdHurt"
-              ]
-            }
-          ],
-          "file": "ConfigAbility_Monster_Gastrobot.json",
-          "params": {
-            "GastrobotAddHurb": 0.7,
-            "GastrobotAddHurbAbyss": 1.4,
-            "WeakSubdHurt": -0.6
-          }
-        }
-      ]
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+    },
+    {
+      "id": 10081,
+      "tiers": {
+        "1": {"id": 1008041,"level": 40},
+        "2": {"id": 1008041,"level": 70},
+        "3": {"id": 1008041,"level": 90},
+        "4": {"id": 1008051,"level": 100},
+        "5": {"id": 1008061,"level": 105},
+        "6": {"id": 1008061,"level": 110}
+      },
+      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 70,"cryo": 10}
     }
   ],
   "schedules": [
@@ -1129,166 +282,12 @@
       "open": "2026-03-04 10:00:00",
       "close": "2026-04-15 09:59:59",
       "boss_ids": [10071,10072,10013]
+    },
+    {
+      "id": 5269008,
+      "open": "2026-04-15 10:00:00",
+      "close": "2026-05-27 09:59:59",
+      "boss_ids": [10081,10021,10041]
     }
-  ],
-  "meta": {
-    "source": "anime_game_data",
-    "schedules": 7,
-    "bosses": 57,
-    "tier_revise_levels": {
-      "1": 39,
-      "2": 69,
-      "3": 89,
-      "4": 99,
-      "5": 104,
-      "6": 109
-    },
-    "stats_notes": {
-      "resistance": "Derived from MonsterExcelConfigData *SubHurt fields as percentages.",
-      "base_stats_by_tier": "Derived from MonsterExcelConfigData base stats scaled by MonsterCurveExcelConfigData at Ley Line revise levels.",
-      "base_stats_by_level": "Reference level samples aligned with public enemy database layouts (1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 100).",
-      "challenge_hp": "Derived from LeyLineDifficultyExcelConfigData buff index plus MonsterAffix_LeyLineChallenge_PropertyUp* HP ratios. Tiers with buff index 0 are treated as base HP because no low-tier HP-ratio Ley Line affix was found in the current AGD payload.",
-      "runtime": "Derived from BinOutput monster / monster-ability / gadget configs. State filter: schema-driven (ConfigAbility KCLPEAJEKLC/ANHLKCDABOL=180 or IFDAGBHNLAA branches), not string match. When an ability has no Ley Line branches, all its states are included.",
-      "affix_catalog": "All affixes from MonsterExcelConfigData.affix for Ley Line boss monster_ids. Includes id, affix, comment, ability_names. Not filtered by Ley Line keywords."
-    },
-    "affix_hp_bonus_percent": [
-      {
-        "affix": "PropertyUp1",
-        "id": 1542,
-        "hp_bonus_percent": 400
-      },
-      {
-        "affix": "PropertyUp2",
-        "id": 1543,
-        "hp_bonus_percent": 500
-      },
-      {
-        "affix": "PropertyUp3",
-        "id": 1544,
-        "hp_bonus_percent": 600
-      },
-      {
-        "affix": "PropertyUp4",
-        "id": 1545,
-        "hp_bonus_percent": 700
-      },
-      {
-        "affix": "PropertyUp5",
-        "id": 1546,
-        "hp_bonus_percent": 800
-      },
-      {
-        "affix": "PropertyUp6",
-        "id": 1547,
-        "hp_bonus_percent": 900
-      },
-      {
-        "affix": "PropertyUp7",
-        "id": 1548,
-        "hp_bonus_percent": 1000
-      },
-      {
-        "affix": "PropertyUp8",
-        "id": 1549,
-        "hp_bonus_percent": 2000
-      },
-      {
-        "affix": "PropertyUp9",
-        "id": 1550,
-        "hp_bonus_percent": 3000
-      },
-      {
-        "affix": "PropertyUp10",
-        "id": 1551,
-        "hp_bonus_percent": 4000
-      },
-      {
-        "affix": "PropertyUp11",
-        "id": 1552,
-        "hp_bonus_percent": 5000
-      }
-    ],
-    "difficulty_monster_buff_index": {
-      "1": 0,
-      "2": 0,
-      "3": 0,
-      "4": 3,
-      "5": 4,
-      "6": 5
-    },
-    "challenge_hp_multiplier_by_tier": {
-      "1": 1.0,
-      "2": 1.0,
-      "3": 1.0,
-      "4": 7.0,
-      "5": 8.0,
-      "6": 9.0
-    },
-    "affix_catalog": [
-      {
-        "id": 2101,
-        "ability_names": [
-          "MonsterAffix_LocalLegendTag"
-        ],
-        "affix": "地方传奇标记",
-        "comment": "地方传奇标记"
-      },
-      {
-        "id": 5487,
-        "ability_names": [
-          "Monster_Common_FrequencyShieldLabel_AbyssShield"
-        ],
-        "affix": "怪物专用-次数盾标记-深渊次数盾",
-        "comment": "所有怪物使用深渊次数盾必须挂载"
-      },
-      {
-        "id": 21001,
-        "ability_names": [
-          "Monster_Invoker_Archdeacon_01_Born_Fire_Thunder_Ice"
-        ],
-        "affix": "深渊法师（火雷冰）",
-        "comment": "深渊法师（火雷冰）"
-      },
-      {
-        "id": 30803,
-        "ability_names": [
-          "Monster_Fatuimecha_KuuvahkiType_North"
-        ],
-        "affix": "铁皮机器-N-红",
-        "comment": "铁皮机器-N-红"
-      },
-      {
-        "id": 30805,
-        "ability_names": [
-          "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
-        ],
-        "affix": "铁皮机器-磁单极",
-        "comment": "铁皮机器-磁单极"
-      },
-      {
-        "id": 30813,
-        "ability_names": [
-          "Monster_Fatuimecha_SquadAI_Tank3"
-        ],
-        "affix": "铁皮集群-坦克3",
-        "comment": "铁皮集群-坦克3"
-      },
-      {
-        "id": 40601,
-        "ability_names": [
-          "Monster_MachinaIustitia_Pneuma"
-        ],
-        "affix": "正义机器-荒",
-        "comment": "正义机器-荒性词缀"
-      },
-      {
-        "id": 40603,
-        "ability_names": [
-          "Monster_MachinaIustitia_Coil_01"
-        ],
-        "affix": "正义机器-天线",
-        "comment": "正义机器-天线词缀"
-      }
-    ]
-  }
+  ]
 }

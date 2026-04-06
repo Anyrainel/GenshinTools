@@ -935,6 +935,18 @@
       ["15.5%", "15.5%"]
     ]
   },
+  "golden_frostbound_oath": {
+    "id": "15516",
+    "name": "Golden Frostbound Oath",
+    "descHtmlTpl": "Increase DEF by <span style=\"color: #99FFFFFF;\">{0}</span>. When the equipping character's Elemental Skill or Lunar-Crystallize attacks hit opponents, gain the Frost Fae's Favor effect for 6s: Geo DMG inflicted by the equipping character increases by <span style=\"color: #99FFFFFF;\">{1}</span>, Lunar-Crystallize Reaction DMG increases by <span style=\"color: #99FFFFFF;\">{2}</span>. While this effect is active, if there are Moondrifts near the equipping character, all other nearby party members will gain the Frost Fae's Mischief effect: Geo DMG dealt increases by <span style=\"color: #99FFFFFF;\">{3}</span> and Lunar-Crystallize Reaction DMG increases by <span style=\"color: #99FFFFFF;\">{4}</span>. This effect can be triggered even when the equipping character is off-field.",
+    "refinements": [
+      ["16%", "40%", "40%", "20%", "20%"],
+      ["20%", "50%", "50%", "25%", "25%"],
+      ["24%", "60%", "60%", "30%", "30%"],
+      ["28%", "70%", "70%", "35%", "35%"],
+      ["32%", "80%", "80%", "40%", "40%"]
+    ]
+  },
   "hakushin_ring": {
     "id": "14414",
     "name": "Hakushin Ring",

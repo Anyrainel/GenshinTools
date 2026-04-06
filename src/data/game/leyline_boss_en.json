@@ -1124,13 +1124,19 @@
           "detail": "When battle begins, the Nemesis enters the Agglomerated State, during which <color=#FFD780FF>all RES is greatly increased</color>. While in this state, the Nemesis's Agglomeration Energy is constantly consumed. Dealing <color=#FFD780FF>Pyro or Electro</color> DMG to the Nemesis drains this energy more quickly. When its Agglomeration Energy is fully depleted, the Nemesis unleashes Sporebloom and switches to the Split State."
         },
         {
+          "tiers": [1, 2, 3, 4],
+          "title": "Split State",
+          "short": "When this Nemesis enters the Split State, it splits into a large number of spores. When these spores take damage, a certain percentage of the total damage is also dealt to the Nemesis. In this case, if the number of spores on the field falls below a certain number, the Nemesis will enter the Brittle Agglomerated State, during which <color=#FFD780FF>all RES is greatly reduced</color> and its combat abilities are diminished. Additionally, if all spores generated in the Split State are defeated, the Nemesis will exit the Split State early and go into the Brittle Agglomerated State instead.",
+          "detail": "When this Nemesis enters the Split State, it splits into a large number of spores. When these spores take damage, a certain percentage of the total damage is also dealt to the Nemesis. After remaining in the Split State for a period of time, the Nemesis will return to the Agglomerated State. In this case, if the number of spores on the field falls below a certain number, the Nemesis will enter the Brittle Agglomerated State, during which <color=#FFD780FF>all RES is greatly reduced</color> and its combat abilities are diminished. Additionally, if all spores generated in the Split State are defeated, the Nemesis will exit the Split State early and go into the Brittle Agglomerated State instead."
+        },
+        {
           "tiers": [5, 6],
           "title": "Powerful Agglomerated State",
           "short": "Affected by the Ley Line disturbance, this Nemesis starts in the Agglomerated State, which comes with <color=#FFD780FF>extremely high RES</color>. After some time, the Nemesis then switches to the Split State. Deal <color=#FFD780FF>Pyro or Electro DMG to this Nemesis</color> to speed up this switch.",
           "detail": "Affected by the Ley Line disturbance, when battle begins, this Nemesis enters the Agglomerated State, during which <color=#FFD780FF>all RES is dramatically increased</color>. While in this state, the Nemesis's Agglomeration Energy is constantly consumed. Dealing <color=#FFD780FF>Pyro or Electro</color> DMG to the Nemesis drains this energy more quickly. When its Agglomeration Energy is fully depleted, the Nemesis unleashes Sporebloom and switches to the Split State."
         },
         {
-          "tiers": [1, 2, 3, 4, 5, 6],
+          "tiers": [5, 6],
           "title": "Split State",
           "short": "When this Nemesis enters the Split State, it splits into a large number of spores. When these spores take damage, a certain percentage of the total damage is also dealt to the Nemesis. In this case, if the number of spores on the field falls below a certain number, the Nemesis will enter the Brittle Agglomerated State, during which <color=#FFD780FF>all RES is greatly reduced</color> and its combat abilities are diminished. Additionally, if all spores generated in the Split State are defeated, the Nemesis will exit the Split State early and go into the Brittle Agglomerated State instead.",
           "detail": "When this Nemesis enters the Split State, it splits into a large number of spores. When these spores take damage, a certain percentage of the total damage is also dealt to the Nemesis. After remaining in the Split State for a period of time, the Nemesis will return to the Agglomerated State. In this case, if the number of spores on the field falls below a certain number, the Nemesis will enter the Brittle Agglomerated State, during which <color=#FFD780FF>all RES is greatly reduced</color> and its combat abilities are diminished. Additionally, if all spores generated in Split State are defeated, the Nemesis will exit the Split State early and go into the Brittle Agglomerated State instead."
@@ -1222,6 +1228,76 @@
           "name": "Knuckle Duckle"
         }
       ]
+    },
+    {
+      "id": 10081,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1008041,
+          "name": "Radiant Moongecko: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1008051,
+          "name": "Radiant Moongecko: Immovable"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1008061,
+          "name": "Radiant Moongecko: Entangled Fangs"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Cryo Characters | Healing Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Radiant Cocoon",
+          "short": "When battle begins, the Nemesis's Geo RES increases, and they also apply Radiant Cocoon to characters. Characters afflicted by Radiant Cocoon <color=#FFD780FF>deal less DMG and receive less healing</color>. Afflicted characters break free from the cocoon when <color=#FFD780FF>their HP is restored to full through healing</color>. Once any character in the party breaks free, the Nemesis loses the Geo RES granted by Radiant Cocoon.",
+          "detail": "After battle begins, the Nemesis harnesses Geo to apply Radiant Cocoon to characters and increase its own Geo RES. Characters afflicted by Radiant Cocoon <color=#FFD780FF>deal less DMG and receive less healing</color>. <color=#FFD780FF>When a character's HP is restored to full through healing</color>, they break free from the cocoon and gain the Disentangled effect, which boosts their abilities for a short time. Once any character in the party successfully breaks free, the Nemesis loses the Geo RES granted by Radiant Cocoon."
+        },
+        {
+          "tiers": [1, 2, 3],
+          "title": "Voidstep Reverberation",
+          "short": "During battle, the Nemesis leaves a Moonstone Anchor in its place before leaping to higher ground to prepare an attack. Some time later, it unleashes a large and powerful AoE strike. Use <color=#FFD780FF>methods suited to dealing with Geo</color> to deal damage to the Moonstone Anchor. Destroying it interrupts the skill's charge-up and deals massive DMG to the Nemesis. The more DMG the Moonstone Anchor takes during the preparation phase, the greater the DMG dealt to the Nemesis when the Moonstone Anchor is destroyed.",
+          "detail": "During battle, the Nemesis leaves a Moonstone Anchor in its place before leaping to higher ground to prepare for Voidstep Reverberation. Some time later, it unleashes a large and powerful AoE strike. Use <color=#FFD780FF>methods suited to dealing with Geo</color> to break through the multiple Geo ward layers on the Moonstone Anchor. Destroying the Moonstone Anchor interrupts the skill's charge-up and deals massive DMG to the Nemesis. The more DMG the Moonstone Anchor takes during the preparation phase, the greater the DMG dealt to the Nemesis when the Moonstone Anchor is destroyed."
+        },
+        {
+          "tiers": [4],
+          "title": "Voidstep Reverberation",
+          "short": "After the battle begins, the Nemesis leaves a Moonstone Anchor in its place before leaping to higher ground to prepare an attack. Some time later, it unleashes a large and powerful AoE strike. Use <color=#FFD780FF>methods suited to dealing with Geo</color> to deal damage to the Moonstone Anchor. Destroying it interrupts the skill's charge-up and deals massive DMG to the Nemesis. The more DMG the Moonstone Anchor takes during the preparation phase, the greater the DMG dealt to the Nemesis when the Moonstone Anchor is destroyed.",
+          "detail": "After the battle begins, the Nemesis leaves a Moonstone Anchor in its place before leaping to higher ground to prepare for Voidstep Reverberation. Some time later, it unleashes a large and powerful AoE strike. Use <color=#FFD780FF>methods suited to dealing with Geo</color> to break through the multiple Geo ward layers on the Moonstone Anchor. Destroying the Moonstone Anchor interrupts the skill's charge-up and deals massive DMG to the Nemesis. The more DMG the Moonstone Anchor takes during the preparation phase, the greater the DMG dealt to the Nemesis when the Moonstone Anchor is destroyed."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Vagrant Reverberation",
+          "short": "After the battle begins, the Nemesis leaves a Moonstone Anchor in its place before leaping to higher ground to prepare an attack. Some time later, it unleashes a large and powerful AoE strike. Use <color=#FFD780FF>methods suited to dealing with Geo</color> to deal damage to the Moonstone Anchor. Destroying it interrupts the skill's charge-up and deals massive DMG to the Nemesis. The more DMG the Moonstone Anchor takes during the preparation phase, the greater the DMG dealt to the Nemesis when the Moonstone Anchor is destroyed. Due to the effects of the Ley Line disturbance, using <color=#FFD780FF>Geo</color> attacks against the Moonstone Anchor further increases the DMG dealt to the Nemesis.",
+          "detail": "After the battle begins, the Nemesis leaves a Moonstone Anchor in its place before leaping to higher ground to prepare for Vagrant Reverberation. Some time later, it unleashes a large and powerful AoE strike. Use <color=#FFD780FF> methods suited to dealing with Geo</color> to break through the multiple Geo ward layers on the Moonstone Anchor. Destroying it interrupts the skill's charge-up and deals massive DMG to the Nemesis. The more DMG the Moonstone Anchor takes during the preparation phase, the greater the DMG dealt to the Nemesis when the Moonstone Anchor is destroyed. Due to the effects of the Ley Line disturbance, using <color=#FFD780FF>Geo</color> attacks against the Moonstone Anchor further increases the DMG dealt to the Nemesis."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Unshakable Rock",
+          "short": "Due to the effects of the Ley Line disturbance, the Moonstone Anchor's multi-layered Geo Ward becomes more resilient.",
+          "detail": "Due to the effects of the Ley Line disturbance, the Moonstone Anchor's multi-layered Geo Ward becomes more resilient."
+        },
+        {
+          "tiers": [4, 5, 6],
+          "title": "Radiant Cocoon",
+          "short": "During battle, the Nemesis's Geo RES increases, and they also apply Radiant Cocoon to characters. Characters afflicted by Radiant Cocoon <color=#FFD780FF>deal less DMG and receive less healing</color>. Afflicted characters break free from the cocoon when <color=#FFD780FF>their HP is restored to full through healing</color>. Once any character in the party breaks free, the Nemesis loses the Geo RES granted by Radiant Cocoon.",
+          "detail": "During battle, the Nemesis harnesses Geo to apply Radiant Cocoon to characters and increase its own Geo RES. Characters afflicted by Radiant Cocoon <color=#FFD780FF>deal less DMG and receive less healing</color>. <color=#FFD780FF>When a character's HP is restored to full through healing</color>, they break free from the cocoon and gain the Disentangled effect, which boosts their abilities for a short time. Once any character in the party successfully breaks free, the Nemesis loses the Geo RES granted by Radiant Cocoon."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 63021,
+          "name": "Radiant Moongecko"
+        }
+      ]
     }
   ],
   "schedules": [
@@ -1252,6 +1328,10 @@
     {
       "id": 5269007,
       "name": "Crush and Obliterate"
+    },
+    {
+      "id": 5269008,
+      "name": "Battle of Shattered Jade"
     }
   ]
 }

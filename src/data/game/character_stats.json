@@ -433,11 +433,11 @@
     "energy": [
       {
         "source": "ElementalArt_DropBall",
-        "particles": 4
+        "particles": 3
       },
       {
         "source": "ElementalArt_DropBall",
-        "particles": 3
+        "particles": 4
       }
     ]
   },
@@ -728,10 +728,6 @@
       {
         "source": "Ball",
         "particles": 2
-      },
-      {
-        "source": "Ball",
-        "particles": 1
       },
       {
         "source": "Ball",
@@ -1193,11 +1189,11 @@
     "energy": [
       {
         "source": "ElementalArt_DropBall",
-        "particles": 2
+        "particles": 1
       },
       {
         "source": "ElementalArt_DropBall",
-        "particles": 1
+        "particles": 2
       }
     ]
   },
@@ -1562,11 +1558,11 @@
     "energy": [
       {
         "source": "DropBall",
-        "particles": 2
+        "particles": 1
       },
       {
         "source": "DropBall",
-        "particles": 1
+        "particles": 2
       }
     ]
   },
@@ -1640,10 +1636,6 @@
       {
         "source": "ElementalArt_DropBall",
         "particles": 3
-      },
-      {
-        "source": "ElementalArt_DropBall",
-        "particles": 1
       },
       {
         "source": "ElementalArt_DropBall",
@@ -2167,10 +2159,6 @@
       {
         "source": "Ball",
         "particles": 1
-      },
-      {
-        "source": "Ball",
-        "particles": 1
       }
     ]
   },
@@ -2316,14 +2304,6 @@
     "energy": [
       {
         "source": "ElementalArt_Click_DropBall",
-        "particles": 1
-      },
-      {
-        "source": "ElementalArt_Click_DropBall",
-        "particles": 1
-      },
-      {
-        "source": "ElementalArt_Burst_DropBall",
         "particles": 1
       },
       {
@@ -2848,10 +2828,6 @@
       {
         "source": "Ball",
         "particles": 2
-      },
-      {
-        "source": "Ball",
-        "particles": 2
       }
     ]
   },
@@ -3147,11 +3123,11 @@
     "energy": [
       {
         "source": "DropBall",
-        "particles": 5
+        "particles": 4
       },
       {
         "source": "DropBall",
-        "particles": 4
+        "particles": 5
       }
     ]
   },
@@ -3224,11 +3200,11 @@
     "energy": [
       {
         "source": "ElementalArt_DropBall",
-        "particles": 5
+        "particles": 4
       },
       {
         "source": "ElementalArt_DropBall",
-        "particles": 4
+        "particles": 5
       }
     ]
   },
@@ -3773,10 +3749,6 @@
       {
         "source": "DropBall_Base",
         "particles": 1
-      },
-      {
-        "source": "DropBall_Base",
-        "particles": 1
       }
     ]
   },
@@ -3847,10 +3819,6 @@
       ]
     },
     "energy": [
-      {
-        "source": "Ball",
-        "particles": 1
-      },
       {
         "source": "Ball",
         "particles": 1
@@ -4231,14 +4199,6 @@
       {
         "source": "Jumping_Drug_ElementBall",
         "particles": 4
-      },
-      {
-        "source": "Jumping_Drug_ElementBall",
-        "particles": 4
-      },
-      {
-        "source": "Jumping_Drug_ElementBall",
-        "particles": 4
       }
     ]
   },
@@ -4530,11 +4490,11 @@
     "energy": [
       {
         "source": "ElementalArt_DropBall",
-        "particles": 2
+        "particles": 1
       },
       {
         "source": "ElementalArt_DropBall",
-        "particles": 1
+        "particles": 2
       }
     ]
   },
@@ -4610,18 +4570,77 @@
         "particles": 1
       },
       {
-        "source": "UNIQUE_Ball_1",
-        "particles": 1
-      },
-      {
-        "source": "UNIQUE_Ball_2",
-        "particles": 1
-      },
-      {
         "source": "UNIQUE_Ball_2",
         "particles": 1
       }
     ]
+  },
+  "linnea": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Bow",
+    "region": "Nod-Krai",
+    "releaseDate": "2026-04-07",
+    "levels": {
+      "70": {"baseHp": "8040", "baseAtk": "117", "baseDef": "737", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "9199", "baseAtk": "133", "baseDef": "843", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "9895", "baseAtk": "144", "baseDef": "907", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "10246", "baseAtk": "160", "baseDef": "939", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "10598", "baseAtk": "176", "baseDef": "971", "em": "0", "cr": "19.2%"}
+    },
+    "talent": {
+      "A": [
+        [0.589969, 0.511519, 0.816312, 0.4386, 1.24, 0.568288, 1.136335, 1.419344],
+        [0.637989, 0.553155, 0.882756, 0.4743, 1.333, 0.614544, 1.228828, 1.534872],
+        [0.68601, 0.59479, 0.9492, 0.51, 1.426, 0.6608, 1.32132, 1.6504],
+        [0.754611, 0.654269, 1.04412, 0.561, 1.55, 0.72688, 1.453452, 1.81544],
+        [0.802632, 0.695904, 1.110564, 0.5967, 1.643, 0.773136, 1.545944, 1.930968],
+        [0.857513, 0.743488, 1.1865, 0.6375, 1.736, 0.826, 1.65165, 2.063],
+        [0.932974, 0.808914, 1.290912, 0.6936, 1.86, 0.898688, 1.796995, 2.244544],
+        [1.008435, 0.874341, 1.395324, 0.7497, 1.984, 0.971376, 1.94234, 2.426088],
+        [1.083896, 0.939768, 1.499736, 0.8058, 2.108, 1.044064, 2.087686, 2.607632],
+        [1.166217, 1.011143, 1.61364, 0.867, 2.232, 1.12336, 2.246244, 2.80568],
+        [1.248538, 1.082518, 1.727544, 0.9282, 2.356, 1.202656, 2.404802, 3.003728],
+        [1.330859, 1.153893, 1.841448, 0.9894, 2.48, 1.281952, 2.563361, 3.201776],
+        [1.413181, 1.225267, 1.955352, 1.0506, 2.635, 1.361248, 2.721919, 3.399824],
+        [1.495502, 1.296642, 2.069256, 1.1118, 2.79, 1.440544, 2.880478, 3.597872],
+        [1.577823, 1.368017, 2.18316, 1.173, 2.945, 1.51984, 3.039036, 3.79592]
+      ],
+      "E": [
+        [0.96, 1.0, 4.0, 25.0, 18.0],
+        [1.032, 1.075, 4.3, 25.0, 18.0],
+        [1.104, 1.15, 4.6, 25.0, 18.0],
+        [1.2, 1.25, 5.0, 25.0, 18.0],
+        [1.272, 1.325, 5.3, 25.0, 18.0],
+        [1.344, 1.4, 5.6, 25.0, 18.0],
+        [1.44, 1.5, 6.0, 25.0, 18.0],
+        [1.536, 1.6, 6.4, 25.0, 18.0],
+        [1.632, 1.7, 6.8, 25.0, 18.0],
+        [1.728, 1.8, 7.2, 25.0, 18.0],
+        [1.824, 1.9, 7.6, 25.0, 18.0],
+        [1.92, 2.0, 8.0, 25.0, 18.0],
+        [2.04, 2.125, 8.5, 25.0, 18.0],
+        [2.16, 2.25, 9.0, 25.0, 18.0],
+        [2.28, 2.375, 9.5, 25.0, 18.0]
+      ],
+      "Q": [
+        [770.3755, 1.6, 154.0751, 0.32, 12.0, 15.0, 60.0],
+        [847.42377, 1.72, 169.48476, 0.344, 12.0, 15.0, 60.0],
+        [930.8927, 1.84, 186.17854, 0.368, 12.0, 15.0, 60.0],
+        [1020.78235, 2.0, 204.15646, 0.4, 12.0, 15.0, 60.0],
+        [1117.0927, 2.12, 223.41853, 0.424, 12.0, 15.0, 60.0],
+        [1219.8236, 2.24, 243.96474, 0.448, 12.0, 15.0, 60.0],
+        [1328.9753, 2.4, 265.79507, 0.48, 12.0, 15.0, 60.0],
+        [1444.5477, 2.56, 288.90955, 0.512, 12.0, 15.0, 60.0],
+        [1566.5408, 2.72, 313.30817, 0.544, 12.0, 15.0, 60.0],
+        [1694.9546, 2.88, 338.9909, 0.576, 12.0, 15.0, 60.0],
+        [1829.7891, 3.04, 365.9578, 0.608, 12.0, 15.0, 60.0],
+        [1971.0442, 3.2, 394.20883, 0.64, 12.0, 15.0, 60.0],
+        [2118.72, 3.4, 423.744, 0.68, 12.0, 15.0, 60.0],
+        [2272.8164, 3.6, 454.5633, 0.72, 12.0, 15.0, 60.0],
+        [2433.3337, 3.8, 486.66675, 0.76, 12.0, 15.0, 60.0]
+      ]
+    }
   },
   "lisa": {
     "rarity": 4,
@@ -6101,11 +6120,11 @@
     "energy": [
       {
         "source": "ElementalArt_ElementalBall",
-        "particles": 5
+        "particles": 4
       },
       {
         "source": "ElementalArt_ElementalBall",
-        "particles": 4
+        "particles": 5
       }
     ]
   },
@@ -6328,11 +6347,11 @@
     "energy": [
       {
         "source": "ElementalArt_DropBall",
-        "particles": 2
+        "particles": 3
       },
       {
         "source": "ElementalArt_DropBall",
-        "particles": 3
+        "particles": 2
       }
     ]
   },
@@ -6476,10 +6495,6 @@
       ]
     },
     "energy": [
-      {
-        "source": "Water_ElemBall_1",
-        "particles": 1
-      },
       {
         "source": "Water_ElemBall_1",
         "particles": 1
@@ -7375,14 +7390,6 @@
       {
         "source": "ElementalArt_ElementalBall",
         "particles": 2
-      },
-      {
-        "source": "ElementalArt_ElementalBall",
-        "particles": 1
-      },
-      {
-        "source": "ElementalArt_ElementalBall",
-        "particles": 1
       },
       {
         "source": "ElementalArt_ElementalBall",
@@ -9563,10 +9570,6 @@
       {
         "source": "ElementalArt_ElementalBall",
         "particles": 2
-      },
-      {
-        "source": "ElementalArt_ElementalBall",
-        "particles": 1
       },
       {
         "source": "ElementalArt_ElementalBall",
