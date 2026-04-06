@@ -140,7 +140,7 @@ export function TriageCard({
               >
                 {setName}
               </span>
-              {dr?.tier && <TierBadge tier={dr.tier} t={t} />}
+              {dr?.tier && !isProtected && <TierBadge tier={dr.tier} t={t} />}
             </div>
             {/* Row 2: slot · mainstat */}
             <div className="text-xs text-muted-foreground">

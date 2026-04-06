@@ -50,20 +50,20 @@ const TABS = [
     isProtected: false,
   },
   {
-    value: "protected",
-    labelKey: "triage.noActionNeeded",
-    descKey: "triage.noActionDesc",
-    icon: ShieldAlert,
-    color: "amber",
-    isProtected: true,
-  },
-  {
     value: "nochange",
     labelKey: "triage.noChange",
     descKey: "triage.noChangeDesc",
     icon: CheckCircle2,
     color: "slate",
     isProtected: false,
+  },
+  {
+    value: "protected",
+    labelKey: "triage.noActionNeeded",
+    descKey: "triage.noActionDesc",
+    icon: ShieldAlert,
+    color: "amber",
+    isProtected: true,
   },
 ] as const;
 
