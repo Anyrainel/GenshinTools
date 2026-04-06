@@ -31,10 +31,21 @@ import type {
 
 // ─── Types ───
 
+export interface CharProgress {
+  charId: string;
+  done: number;
+  total: number;
+  currentWeapon?: string;
+}
+
 export interface WeaponChoiceProgress {
   phase: string;
   overallProgress: number;
+  /** Per-character progress for parallel display */
+  chars?: CharProgress[];
+  /** @deprecated use chars instead */
   currentChar?: string;
+  /** @deprecated use chars instead */
   currentWeapon?: string;
 }
 
@@ -489,14 +500,11 @@ export async function* runWeaponChoice(
     string,
     { weaponId: string; refinement: number }[]
   > = {};
-  let totalWeapons = 0;
-
   for (const config of configs) {
     const ws = weaponStats[config.weaponId];
     if (!ws) continue;
     const candidates = getWeaponCandidates(ws.type, weaponStats);
     candidatesPerChar[config.charId] = candidates;
-    totalWeapons += candidates.length;
   }
 
   // Yield initial progress
@@ -522,9 +530,11 @@ export async function* runWeaponChoice(
   let hasPendingProgress = false;
 
   function getAggregatedProgress(): number {
-    let done = 0;
-    for (const p of Object.values(perCharProgress)) done += p.done;
-    return totalWeapons > 0 ? done / totalWeapons : 1;
+    const entries = Object.values(perCharProgress);
+    if (entries.length === 0) return 1;
+    let sum = 0;
+    for (const p of entries) sum += p.total > 0 ? p.done / p.total : 1;
+    return sum / entries.length;
   }
 
   // Launch all characters in parallel
@@ -578,16 +588,14 @@ export async function* runWeaponChoice(
     if (hasPendingProgress || settled) {
       hasPendingProgress = false;
 
-      // Find any currently active character for display
-      let currentChar: string | undefined;
-      let currentWeapon: string | undefined;
-      for (const [charId, prog] of Object.entries(perCharProgress)) {
-        if (prog.done < prog.total && prog.currentWeapon) {
-          currentChar = charId;
-          currentWeapon = prog.currentWeapon;
-          break;
-        }
-      }
+      const chars: CharProgress[] = Object.entries(perCharProgress).map(
+        ([charId, p]) => ({
+          charId,
+          done: p.done,
+          total: p.total,
+          currentWeapon: p.done < p.total ? p.currentWeapon : undefined,
+        })
+      );
 
       yield {
         timestamp: Date.now(),
@@ -596,8 +604,7 @@ export async function* runWeaponChoice(
         progress: {
           phase: "evaluating weapons",
           overallProgress: getAggregatedProgress(),
-          currentChar,
-          currentWeapon,
+          chars,
         },
       };
     }

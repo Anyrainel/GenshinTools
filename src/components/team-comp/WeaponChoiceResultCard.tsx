@@ -433,18 +433,70 @@ export function WeaponChoiceResultCard({
           </Button>
         </div>
 
-        {/* Progress bar */}
+        {/* Progress chips with ring spinners */}
         {isComputing && (
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Progress
               value={Math.round((progress?.overallProgress ?? 0) * 100)}
               className="h-2"
             />
-            <p className="text-xs text-muted-foreground">
-              {progress?.currentChar
-                ? `${t.character(progress.currentChar)}${progress.currentWeapon ? ` — ${t.weapon(progress.currentWeapon)}` : ""}`
-                : t.ui("teamComp.weaponChoiceRunning")}
-            </p>
+            {progress?.chars && progress.chars.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {progress.chars.map((cp) => {
+                  const pct = cp.total > 0 ? cp.done / cp.total : 1;
+                  const isDone = pct >= 1;
+                  const weapon = cp.currentWeapon
+                    ? ` - ${t.weapon(cp.currentWeapon)}`
+                    : "";
+                  const r = 7;
+                  const circ = 2 * Math.PI * r;
+                  const offset = circ * (1 - pct);
+                  return (
+                    <span
+                      key={cp.charId}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs ${isDone ? "border-border text-muted-foreground" : "border-primary/30 text-foreground"}`}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 18 18"
+                        className="shrink-0"
+                      >
+                        <circle
+                          cx="9"
+                          cy="9"
+                          r={r}
+                          fill="none"
+                          strokeWidth="2.5"
+                          className="stroke-muted"
+                        />
+                        <circle
+                          cx="9"
+                          cy="9"
+                          r={r}
+                          fill="none"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          className={
+                            isDone
+                              ? "stroke-muted-foreground"
+                              : "stroke-primary"
+                          }
+                          strokeDasharray={circ}
+                          strokeDashoffset={offset}
+                          transform="rotate(-90 9 9)"
+                        />
+                      </svg>
+                      {t.character(cp.charId)} {Math.round(pct * 100)}%{weapon}
+                    </span>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {t.ui("teamComp.weaponChoiceRunning")}
+              </p>
+            )}
           </div>
         )}
 
