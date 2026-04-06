@@ -919,7 +919,11 @@ export const i18nUiData = {
     reuseForce: { en: "Same char + set", zh: "同角色同套装强制复用" },
     reuseBadgeLocked: { en: "Force reuse({0}/{1})", zh: "强制复用({0}/{1})" },
     reuseBadgeShared: { en: "Allow reuse({0}/{1})", zh: "允许复用({0}/{1})" },
-    vsEquipped: { en: "vs equipped", zh: "对比装备" },
+    vsEquipped: { en: "vs current equip", zh: "对比当前已装备" },
+    vsEquippedCaveat: { en: "* current", zh: "* 当前" },
+    caveatDiffSet: { en: "different sets", zh: "套装不同" },
+    caveatCrUnmet: { en: "crit unmet", zh: "暴击不符合要求" },
+    caveatErUnmet: { en: "ER unmet", zh: "充能不符合要求" },
     freezeConflictTitle: {
       en: "Duplicate artifacts detected",
       zh: "检测到重复圣遗物",

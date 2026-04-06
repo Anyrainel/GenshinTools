@@ -260,66 +260,78 @@ describe("DamageCard", () => {
 
 // ─── ComparisonLabel ───
 
+function TestComparisonLabel(
+  props: Partial<ComponentProps<typeof ComparisonLabel>>
+) {
+  const { t } = useLanguage();
+  return (
+    <ComparisonLabel
+      currentTotal={50000}
+      optimizedTotal={50000}
+      isMobile={false}
+      t={t}
+      {...props}
+    />
+  );
+}
+
 describe("ComparisonLabel", () => {
   it("renders nothing when currentTotal is 0", () => {
     const { container } = render(
-      <ComparisonLabel
-        currentTotal={0}
-        optimizedTotal={50000}
-        isMobile={false}
-      />
+      <TestComparisonLabel currentTotal={0} optimizedTotal={50000} />
     );
     expect(container.innerHTML).toBe("");
   });
 
   it("renders nothing when optimizedTotal is 0", () => {
     const { container } = render(
-      <ComparisonLabel
-        currentTotal={50000}
-        optimizedTotal={0}
-        isMobile={false}
-      />
+      <TestComparisonLabel currentTotal={50000} optimizedTotal={0} />
     );
     expect(container.innerHTML).toBe("");
   });
 
   it("shows positive percentage in green when optimized > current", () => {
-    render(
-      <ComparisonLabel
-        currentTotal={40000}
-        optimizedTotal={50000}
-        isMobile={false}
-      />
-    );
+    render(<TestComparisonLabel currentTotal={40000} optimizedTotal={50000} />);
     const label = screen.getByText("+25.0%");
     expect(label).toBeInTheDocument();
     expect(label.className).toContain("text-green-400");
   });
 
   it("shows negative percentage in red when optimized < current", () => {
-    render(
-      <ComparisonLabel
-        currentTotal={50000}
-        optimizedTotal={40000}
-        isMobile={false}
-      />
-    );
+    render(<TestComparisonLabel currentTotal={50000} optimizedTotal={40000} />);
     const label = screen.getByText("-20.0%");
     expect(label).toBeInTheDocument();
     expect(label.className).toContain("text-red-400");
   });
 
   it("shows +0.0% when values are equal", () => {
-    render(
-      <ComparisonLabel
-        currentTotal={50000}
-        optimizedTotal={50000}
-        isMobile={false}
-      />
-    );
+    render(<TestComparisonLabel currentTotal={50000} optimizedTotal={50000} />);
     const label = screen.getByText("+0.0%");
     expect(label).toBeInTheDocument();
     expect(label.className).toContain("text-green-400");
+  });
+
+  it("shows asterisk and caveat line when caveats are provided", () => {
+    render(
+      <TestComparisonLabel
+        currentTotal={40000}
+        optimizedTotal={50000}
+        caveats={["套装不同", "暴击不符合要求"]}
+      />
+    );
+    // Caveat line with joined items (includes asterisk prefix)
+    expect(screen.getByText(/套装不同，暴击不符合要求/)).toBeInTheDocument();
+  });
+
+  it("does not show asterisk when caveats is empty", () => {
+    const { container } = render(
+      <TestComparisonLabel
+        currentTotal={40000}
+        optimizedTotal={50000}
+        caveats={[]}
+      />
+    );
+    expect(container.textContent).not.toContain("*");
   });
 });
 

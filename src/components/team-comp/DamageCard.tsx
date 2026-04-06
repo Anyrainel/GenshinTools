@@ -144,6 +144,7 @@ function ComboBreakdown({
   artifactsByChar,
   calcContext,
   currentTotal,
+  currentCaveats,
   dpsSeconds,
   setDpsSeconds,
 }: {
@@ -162,6 +163,7 @@ function ComboBreakdown({
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   calcContext: CalcContext;
   currentTotal?: number;
+  currentCaveats?: string[];
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
 }) {
@@ -320,27 +322,26 @@ function ComboBreakdown({
       <Collapsible open={expanded} onOpenChange={setExpanded}>
         <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
           {/* Total damage row: comparison | card | DPS */}
-          <div className="flex items-center justify-center gap-2 md:gap-3">
-            {/* Comparison — left of the card */}
-            {currentTotal != null && currentTotal > 0 && (
-              <div className="flex flex-col items-center shrink-0">
-                <span className="text-muted-foreground text-[9px] md:text-[10px] leading-none">
-                  {t.ui("teamComp.vsEquipped")}
-                </span>
+          <div className="flex items-center justify-center">
+            {/* Left wing — comparison */}
+            <div className="flex-1 flex justify-end items-center">
+              {currentTotal != null && currentTotal > 0 && (
                 <ComparisonLabel
                   currentTotal={currentTotal}
                   optimizedTotal={totalLineDamage}
                   isMobile={isMobile}
+                  t={t}
+                  caveats={currentCaveats}
                 />
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Total damage card — clickable to toggle breakdown */}
             <CollapsibleTrigger asChild>
               <div
                 className={cn(
                   "flex items-center justify-center flex-wrap rounded-xl transition-colors cursor-pointer select-none",
-                  "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2",
+                  "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2 mx-2 md:mx-3",
                   "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                   "hover:bg-primary/15"
                 )}
@@ -378,16 +379,18 @@ function ComboBreakdown({
               </div>
             </CollapsibleTrigger>
 
-            {/* DPS calculator — right of the card */}
-            {dpsSeconds != null && setDpsSeconds && (
-              <DpsDisplay
-                totalDamage={totalLineDamage}
-                dpsSeconds={dpsSeconds}
-                setDpsSeconds={setDpsSeconds}
-                isMobile={isMobile}
-                t={t}
-              />
-            )}
+            {/* Right wing — DPS calculator */}
+            <div className="flex-1 flex justify-start items-center">
+              {dpsSeconds != null && setDpsSeconds && (
+                <DpsDisplay
+                  totalDamage={totalLineDamage}
+                  dpsSeconds={dpsSeconds}
+                  setDpsSeconds={setDpsSeconds}
+                  isMobile={isMobile}
+                  t={t}
+                />
+              )}
+            </div>
           </div>
 
           {/* Below total: either combo grid or focused formula breakdown */}
@@ -781,6 +784,7 @@ function SingleResultView({
   forceReusedCharIds,
   reuseInfo,
   currentTotal,
+  currentCaveats,
   dpsSeconds,
   setDpsSeconds,
 }: {
@@ -802,6 +806,7 @@ function SingleResultView({
   forceReusedCharIds?: Set<string>;
   reuseInfo?: Map<string, ReuseEntry>;
   currentTotal?: number;
+  currentCaveats?: string[];
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
 }) {
@@ -849,27 +854,26 @@ function SingleResultView({
           <Collapsible open={expanded} onOpenChange={setExpanded}>
             <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
               {/* Total damage row: comparison | card | DPS */}
-              <div className="flex items-center justify-center gap-2 md:gap-3">
-                {/* Comparison — left of the card */}
-                {currentTotal != null && currentTotal > 0 && (
-                  <div className="flex flex-col items-center shrink-0">
-                    <span className="text-muted-foreground text-[9px] md:text-[10px] leading-none">
-                      {t.ui("teamComp.vsEquipped")}
-                    </span>
+              <div className="flex items-center justify-center">
+                {/* Left wing — comparison */}
+                <div className="flex-1 flex justify-end items-center">
+                  {currentTotal != null && currentTotal > 0 && (
                     <ComparisonLabel
                       currentTotal={currentTotal}
                       optimizedTotal={totalDamage}
                       isMobile={isMobile}
+                      t={t}
+                      caveats={currentCaveats}
                     />
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Total damage card — clickable to toggle breakdown */}
                 <CollapsibleTrigger asChild>
                   <div
                     className={cn(
                       "flex items-center justify-center flex-wrap rounded-xl transition-colors cursor-pointer select-none",
-                      "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2",
+                      "gap-1.5 md:gap-2.5 px-2 md:px-4 py-1.5 md:py-2 mx-2 md:mx-3",
                       "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                       "hover:bg-primary/15"
                     )}
@@ -906,16 +910,18 @@ function SingleResultView({
                   </div>
                 </CollapsibleTrigger>
 
-                {/* DPS calculator — right of the card */}
-                {dpsSeconds != null && setDpsSeconds && (
-                  <DpsDisplay
-                    totalDamage={totalDamage}
-                    dpsSeconds={dpsSeconds}
-                    setDpsSeconds={setDpsSeconds}
-                    isMobile={isMobile}
-                    t={t}
-                  />
-                )}
+                {/* Right wing — DPS calculator */}
+                <div className="flex-1 flex justify-start items-center">
+                  {dpsSeconds != null && setDpsSeconds && (
+                    <DpsDisplay
+                      totalDamage={totalDamage}
+                      dpsSeconds={dpsSeconds}
+                      setDpsSeconds={setDpsSeconds}
+                      isMobile={isMobile}
+                      t={t}
+                    />
+                  )}
+                </div>
               </div>
 
               <CollapsibleContent>
@@ -985,6 +991,7 @@ function ComboResultView({
   forceReusedCharIds,
   reuseInfo,
   currentTotal,
+  currentCaveats,
   dpsSeconds,
   setDpsSeconds,
 }: {
@@ -1007,6 +1014,7 @@ function ComboResultView({
   forceReusedCharIds?: Set<string>;
   reuseInfo?: Map<string, ReuseEntry>;
   currentTotal?: number;
+  currentCaveats?: string[];
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
 }) {
@@ -1127,6 +1135,7 @@ function ComboResultView({
         isMobile={isMobile}
         t={t}
         currentTotal={currentTotal}
+        currentCaveats={currentCaveats}
         dpsSeconds={dpsSeconds}
         setDpsSeconds={setDpsSeconds}
         artifactsByChar={artifactsByChar}
@@ -1349,14 +1358,13 @@ function DpsDisplay({
 }) {
   const sec = Number(dpsSeconds);
   const hasDps = dpsSeconds !== "" && sec > 0 && totalDamage > 0;
+  const textCls = isMobile ? "text-xs" : "text-sm";
   return (
     <div
-      className="flex items-center gap-1 shrink-0"
+      className={cn("flex items-baseline gap-1 shrink-0", textCls)}
       onClick={(e) => e.stopPropagation()}
     >
-      <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
-        DPS
-      </span>
+      <span className="font-bold text-muted-foreground">DPS</span>
       <Input
         type="text"
         inputMode="numeric"
@@ -1367,19 +1375,30 @@ function DpsDisplay({
           if (raw === "" || /^\d*\.?\d*$/.test(raw)) setDpsSeconds(raw);
         }}
         className={cn(
-          "text-center font-bold border-border/20 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+          "text-center font-bold border-border/30 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
           isMobile
-            ? "text-[10px] h-5 w-7 px-0.5 py-0"
-            : "text-xs h-6 w-9 px-0.5 py-0"
+            ? "text-xs h-5 w-7 px-0.5 py-0"
+            : "text-sm h-7 w-10 px-0.5 py-0"
         )}
       />
-      <span className="font-bold text-muted-foreground text-[10px] md:text-xs -ml-0.5">
+      <span className="text-muted-foreground">
         {t.ui("teamComp.dpsSeconds")}
       </span>
       {hasDps && (
-        <span className="font-[math] font-bold text-foreground/80 text-xs md:text-sm whitespace-nowrap ml-0.5">
-          = {fmtDamage(totalDamage / sec)}/{t.ui("teamComp.dpsSeconds")}
-        </span>
+        <>
+          <span className="text-muted-foreground">=</span>
+          <span
+            className={cn(
+              "font-[math] font-bold text-foreground whitespace-nowrap",
+              isMobile ? "text-sm" : "text-base"
+            )}
+          >
+            {fmtDamage(totalDamage / sec)}
+          </span>
+          <span className="text-muted-foreground">
+            /{t.ui("teamComp.dpsSeconds")}
+          </span>
+        </>
       )}
     </div>
   );
@@ -1390,26 +1409,54 @@ function ComparisonLabel({
   currentTotal,
   optimizedTotal,
   isMobile,
+  t,
+  caveats,
 }: {
   currentTotal: number;
   optimizedTotal: number;
   isMobile: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+  caveats?: string[];
 }) {
   if (currentTotal <= 0 || optimizedTotal <= 0) return null;
   const pct = ((optimizedTotal - currentTotal) / currentTotal) * 100;
   const sign = pct >= 0 ? "+" : "";
-  const color = pct >= 0 ? "text-green-400" : "text-red-400";
+  const hasCaveats = caveats && caveats.length > 0;
   return (
-    <span
-      className={cn(
-        "font-bold whitespace-nowrap shrink-0",
-        color,
-        isMobile ? "text-[10px]" : "text-xs"
+    <div className="flex flex-col items-end shrink-0">
+      <span
+        className={cn(
+          "whitespace-nowrap text-right",
+          isMobile ? "text-xs" : "text-sm"
+        )}
+      >
+        <span className="text-muted-foreground">
+          {t.ui("teamComp.vsEquipped")}
+          {hasCaveats ? "*" : ""}
+        </span>
+        <span className="text-muted-foreground">: </span>
+        <span
+          className={cn(
+            "font-bold",
+            pct >= 0 ? "text-green-400" : "text-red-400"
+          )}
+        >
+          {sign}
+          {pct.toFixed(1)}%
+        </span>
+      </span>
+      {hasCaveats && (
+        <span
+          className={cn(
+            "text-muted-foreground text-right whitespace-nowrap",
+            isMobile ? "text-[10px]" : "text-xs"
+          )}
+        >
+          {t.ui("teamComp.vsEquippedCaveat")}
+          {caveats.join("，")}
+        </span>
       )}
-    >
-      {sign}
-      {pct.toFixed(1)}%
-    </span>
+    </div>
   );
 }
 
@@ -1582,6 +1629,64 @@ export function DamageCard({
   const currentTotal = useMemo(() => {
     return currentDisplayResult?.totalDamage ?? 0;
   }, [currentDisplayResult]);
+
+  // Caveats: which optimizer constraints the current equipment violates
+  const currentCaveats = useMemo(() => {
+    if (!currentDisplayResult) return [];
+    const caveats: string[] = [];
+    let setMismatch = false;
+    let erUnmet = false;
+    let crUnmet = false;
+    for (let i = 0; i < effectiveTeam.characters.length; i++) {
+      const charId = effectiveTeam.characters[i];
+      if (!charId) continue;
+      // Set check
+      const reqSet = effectiveTeam.artifacts[i];
+      if (reqSet && !setMismatch) {
+        const equipped = equippedArtifactsByChar[charId];
+        if (equipped) {
+          const setCounts = new Map<string, number>();
+          for (const art of Object.values(equipped)) {
+            if (art?.setKey)
+              setCounts.set(art.setKey, (setCounts.get(art.setKey) ?? 0) + 1);
+          }
+          if (reqSet.type === "4pc") {
+            if ((setCounts.get(reqSet.setId) ?? 0) < 4) setMismatch = true;
+          } else {
+            const id1 = String(reqSet.id1);
+            const id2 = String(reqSet.id2);
+            if (id1 === id2) {
+              if ((setCounts.get(id1) ?? 0) < 4) setMismatch = true;
+            } else {
+              if (
+                (setCounts.get(id1) ?? 0) < 2 ||
+                (setCounts.get(id2) ?? 0) < 2
+              )
+                setMismatch = true;
+            }
+          }
+        }
+      }
+      // ER check
+      const minEr = effectiveTeam.minEr[charId];
+      if (minEr && minEr > 1) {
+        const sheets = currentDisplayResult.statSheets[charId];
+        const currentEr = sheets?.onField.get("er", null) ?? 1;
+        if (currentEr < minEr) erUnmet = true;
+      }
+      // CR check
+      const minCr = effectiveTeam.minCr?.[charId];
+      if (minCr && minCr > 0) {
+        const sheets = currentDisplayResult.statSheets[charId];
+        const currentCr = sheets?.onField.get("cr", null) ?? 0;
+        if (currentCr < minCr) crUnmet = true;
+      }
+    }
+    if (setMismatch) caveats.push(t.ui("teamComp.caveatDiffSet"));
+    if (crUnmet) caveats.push(t.ui("teamComp.caveatCrUnmet"));
+    if (erUnmet) caveats.push(t.ui("teamComp.caveatErUnmet"));
+    return caveats;
+  }, [currentDisplayResult, effectiveTeam, equippedArtifactsByChar, t]);
 
   return (
     <Card className={CARD_CLS}>
@@ -2007,6 +2112,7 @@ export function DamageCard({
                   forceReusedCharIds={forceReusedCharIds}
                   reuseInfo={reuseInfo}
                   currentTotal={currentTotal}
+                  currentCaveats={currentCaveats}
                   dpsSeconds={dpsSeconds}
                   setDpsSeconds={setDpsSeconds}
                 />
@@ -2033,6 +2139,7 @@ export function DamageCard({
                   forceReusedCharIds={forceReusedCharIds}
                   reuseInfo={reuseInfo}
                   currentTotal={currentTotal}
+                  currentCaveats={currentCaveats}
                   dpsSeconds={dpsSeconds}
                   setDpsSeconds={setDpsSeconds}
                 />
@@ -2135,6 +2242,8 @@ export function DamageCard({
                 setCritMode={setCritMode}
                 isMobile={isMobile}
                 t={t}
+                currentTotal={currentTotal}
+                currentCaveats={currentCaveats}
                 dpsSeconds={dpsSeconds}
                 setDpsSeconds={setDpsSeconds}
               />
@@ -2151,6 +2260,8 @@ export function DamageCard({
                 setCritMode={setCritMode}
                 isMobile={isMobile}
                 t={t}
+                currentTotal={currentTotal}
+                currentCaveats={currentCaveats}
                 dpsSeconds={dpsSeconds}
                 setDpsSeconds={setDpsSeconds}
               />
