@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-04-04T15:38:17.912Z",
+  "generatedAt": "2026-04-06T01:55:12.940Z",
   "teams": {
     "W408g301RCS53VAWT": {
       "teamName": "varka / durin / bennett / venti",
@@ -30,75 +30,67 @@
           "minCr": 0.05
         }
       },
-      "damage": 32380460.1214,
+      "damage": 23269604.2145,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 789926.8837,
-            "total": 1579853.7674
+            "perHit": 786891.7309,
+            "total": 1573783.4617
           },
           {
-            "perHit": 1760435.4871,
-            "total": 3520870.9742
+            "perHit": 1734854.9005,
+            "total": 3469709.8009
           },
           {
-            "perHit": 1797776.2478,
-            "total": 3595552.4956
+            "perHit": 1789017.9471,
+            "total": 3578035.8941
           },
           {
-            "perHit": 2574833.9177,
-            "total": 5149667.8353
+            "perHit": 3639359.7328,
+            "total": 5161193.263
           },
           {
-            "perHit": 1899878.7373,
-            "total": 3799757.4746
+            "perHit": 479241.4407,
+            "total": 958482.8814
           },
           {
-            "perHit": 2697134.3937,
-            "total": 5394268.7875
+            "perHit": 50469.9314,
+            "total": 100939.8628
           },
           {
-            "perHit": 483483.0544,
-            "total": 966966.1087
+            "perHit": 90845.8765,
+            "total": 181691.753
           },
           {
-            "perHit": 44989.875,
-            "total": 89979.75
+            "perHit": 1324056.5834,
+            "total": 2648113.1667
           },
           {
-            "perHit": 80981.775,
-            "total": 161963.55
+            "perHit": 56985.6281,
+            "total": 113971.2563
           },
           {
-            "perHit": 1212272.9047,
-            "total": 2424545.8094
+            "perHit": 89800.4121,
+            "total": 179600.8241
           },
           {
-            "perHit": 58038.4893,
-            "total": 116076.9786
-          },
-          {
-            "perHit": 90853.2732,
-            "total": 181706.5465
-          },
-          {
-            "perHit": 1088236.8781,
-            "total": 2176473.7561
+            "perHit": 1044313.189,
+            "total": 2088626.378
           },
           {
             "perHit": 320554.0918,
             "total": 641108.1835
           },
           {
-            "perHit": 546018.3532,
-            "total": 1092036.7065
+            "perHit": 544188.1995,
+            "total": 1088376.399
           },
           {
-            "perHit": 744815.6987,
-            "total": 1489631.3974
+            "perHit": 742985.545,
+            "total": 1485971.09
           }
         ],
-        "totalDamage": 32380460.1214
+        "totalDamage": 23269604.2145
       },
       "artifacts": {
         "varka": {
@@ -158,8 +150,8 @@
             "substats": {
               "er": 27.53,
               "cr": 3.31,
-              "atk%": 4.96,
-              "cd": 6.6
+              "cd": 6.6,
+              "atk%": 4.96
             }
           },
           "plume": {
@@ -167,17 +159,17 @@
             "mainStat": "atk",
             "substats": {
               "er": 27.53,
-              "atk%": 4.96,
+              "cr": 3.31,
               "cd": 6.6,
-              "cr": 3.31
+              "atk%": 4.96
             }
           },
           "sands": {
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 13.22,
-              "cd": 13.21,
+              "cd": 19.81,
+              "cr": 9.92,
               "atk": 16.54,
               "hp%": 4.96
             }
@@ -186,18 +178,18 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 13.22,
-              "cd": 13.21,
+              "cd": 19.81,
+              "cr": 9.92,
               "atk": 16.54,
               "hp%": 4.96
             }
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "atk%",
+            "mainStat": "cr",
             "substats": {
-              "cr": 13.22,
-              "cd": 13.21,
+              "cd": 33.02,
+              "atk%": 4.96,
               "atk": 16.54,
               "hp%": 4.96
             }
@@ -319,8 +311,8 @@
         "durin": {
           "hp": 4780,
           "er": 0.5505,
-          "cr": 0.4627,
-          "cd": 0.5284,
+          "cr": 0.5754,
+          "cd": 0.8587,
           "atk": 361
         },
         "bennett": {
@@ -338,232 +330,228 @@
         }
       },
       "display": {
-        "totalDamage": 32380460.1214,
+        "totalDamage": 23269604.2145,
         "partsByFormula": {
           "varka.varka-e": [
             {
-              "damage": 789926.8837,
+              "damage": 786891.7309,
               "template": "direct"
             }
           ],
           "varka.varka-normal": [
             {
-              "damage": 249882.6925,
+              "damage": 247194.6975,
               "template": "direct"
             },
             {
-              "damage": 108731.4624,
+              "damage": 106043.4674,
               "template": "direct"
             },
             {
-              "damage": 201795.884,
+              "damage": 198760.7312,
               "template": "direct"
             },
             {
-              "damage": 137484.5603,
+              "damage": 134796.5652,
               "template": "direct"
             },
             {
-              "damage": 262090.8608,
+              "damage": 259055.708,
               "template": "direct"
             },
             {
-              "damage": 215750.8006,
+              "damage": 213062.8055,
               "template": "direct"
             },
             {
-              "damage": 145292.4952,
+              "damage": 142257.3423,
               "template": "direct"
             },
             {
-              "damage": 264484.1441,
+              "damage": 261796.1491,
               "template": "direct"
             },
             {
-              "damage": 174922.5871,
+              "damage": 171887.4343,
               "template": "direct"
             }
           ],
           "varka.varka-special-e": [
             {
-              "damage": 451642.9452,
+              "damage": 448954.9502,
               "template": "direct"
             },
             {
-              "damage": 288715.9203,
+              "damage": 285680.7675,
               "template": "direct"
             },
             {
-              "damage": 1057417.3822,
-              "template": "direct"
-            }
-          ],
-          "varka.varka-c1-special-e": [
-            {
-              "damage": 644624.0731,
-              "template": "direct"
-            },
-            {
-              "damage": 406049.3136,
-              "template": "direct"
-            },
-            {
-              "damage": 1524160.5309,
+              "damage": 1054382.2294,
               "template": "direct"
             }
           ],
           "varka.varka-special-ca": [
             {
-              "damage": 253180.6966,
-              "template": "direct",
-              "hits": 2
-            },
-            {
-              "damage": 168049.981,
-              "template": "direct",
-              "hits": 2
-            },
-            {
-              "damage": 1057417.3822,
+              "damage": 476588.9342,
               "template": "direct"
-            }
-          ],
-          "varka.varka-c1-special-ca": [
-            {
-              "damage": 355951.7114,
-              "template": "direct",
-              "hits": 2
             },
             {
-              "damage": 230535.22,
-              "template": "direct",
-              "hits": 2
+              "damage": 250492.7015,
+              "template": "direct"
             },
             {
-              "damage": 1524160.5309,
+              "damage": 250492.7015,
+              "template": "direct"
+            },
+            {
+              "damage": 250492.7015,
+              "template": "direct"
+            },
+            {
+              "damage": 302482.354,
+              "template": "direct"
+            },
+            {
+              "damage": 165014.8281,
+              "template": "direct"
+            },
+            {
+              "damage": 165014.8281,
+              "template": "direct"
+            },
+            {
+              "damage": 165014.8281,
+              "template": "direct"
+            },
+            {
+              "damage": 2081217.1565,
+              "template": "direct"
+            },
+            {
+              "damage": 1054382.2294,
               "template": "direct"
             }
           ],
           "varka.varka-burst": [
             {
-              "damage": 293873.2405,
+              "damage": 291883.7941,
               "template": "direct"
             },
             {
-              "damage": 189609.8139,
+              "damage": 187357.6466,
               "template": "direct"
             }
           ],
           "durin.durin-skill-purity": [
             {
-              "damage": 44989.875,
+              "damage": 50469.9314,
               "template": "direct"
             }
           ],
           "durin.durin-skill-darkness": [
             {
-              "damage": 30777.1645,
+              "damage": 34526.0212,
               "template": "direct"
             },
             {
-              "damage": 22665.3537,
+              "damage": 25426.1397,
               "template": "direct"
             },
             {
-              "damage": 27539.2568,
+              "damage": 30893.7156,
               "template": "direct"
             }
           ],
           "durin.durin-burst-white": [
             {
-              "damage": 76313.1386,
+              "damage": 84966.7907,
               "template": "direct"
             },
             {
-              "damage": 61840.8419,
+              "damage": 68853.3845,
               "template": "direct"
             },
             {
-              "damage": 71745.6407,
+              "damage": 79881.354,
               "template": "direct"
             },
             {
-              "damage": 63787.3908,
+              "damage": 69386.2307,
               "template": "direct",
               "hits": 10
             },
             {
-              "damage": 36449.9376,
+              "damage": 39649.2747,
               "template": "direct",
               "hits": 10
             }
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 58038.4893,
+              "damage": 56985.6281,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 90853.2732,
+              "damage": 89800.4121,
               "template": "direct"
             }
           ],
           "venti.venti-windsunder": [
             {
-              "damage": 48642.687,
+              "damage": 46812.5333,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 84196.8276,
+              "damage": 82366.6739,
               "template": "direct"
             },
             {
-              "damage": 96048.2078,
+              "damage": 94218.0541,
               "template": "direct"
             },
             {
-              "damage": 57053.3439,
+              "damage": 55223.1902,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 93499.5239,
+              "damage": 91669.3702,
               "template": "direct"
             },
             {
-              "damage": 123573.9941,
+              "damage": 121743.8404,
               "template": "direct"
             },
             {
-              "damage": 24481.1634,
+              "damage": 22651.0097,
               "template": "direct",
               "hits": 4
             },
             {
-              "damage": 31591.9916,
+              "damage": 29761.8379,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 33962.2676,
+              "damage": 32132.1139,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 26163.2948,
+              "damage": 24333.1411,
               "template": "direct",
               "hits": 4
             },
             {
-              "damage": 33452.5308,
+              "damage": 31622.3771,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 39467.4249,
+              "damage": 37637.2712,
               "template": "direct",
               "hits": 2
             }
@@ -577,13 +565,13 @@
           ],
           "venti.venti-skill": [
             {
-              "damage": 546018.3532,
+              "damage": 544188.1995,
               "template": "direct"
             }
           ],
           "venti.venti-skill-hold": [
             {
-              "damage": 744815.6987,
+              "damage": 742985.545,
               "template": "direct"
             }
           ]
@@ -710,7 +698,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2600.7956
+                "value": 2342.6799
               }
             ],
             "providerCharId": "durin"
@@ -724,7 +712,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2600.7956
+                "value": 2342.6799
               }
             ],
             "providerCharId": "durin"
@@ -738,7 +726,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2600.7956
+                "value": 2342.6799
               }
             ],
             "providerCharId": "durin"
@@ -1121,24 +1109,24 @@
           },
           "durin": {
             "onField": {
-              "cd": 1.4124,
-              "cr": 0.8437,
+              "cd": 1.7426,
+              "cr": 0.9564,
               "er": 1.5505,
               "dmg%": 0.5,
               "defReduction%": 0.3,
               "em": 200,
               "hp": 20072,
-              "atk": 5513,
+              "atk": 5083,
               "def": 881
             },
             "offField": {
-              "cd": 1.4124,
-              "cr": 0.8437,
+              "cd": 1.7426,
+              "cr": 0.9564,
               "er": 1.5505,
               "defReduction%": 0.3,
               "em": 200,
               "hp": 20072,
-              "atk": 4335,
+              "atk": 3904,
               "def": 881
             }
           },
@@ -1202,7 +1190,7 @@
               "cd": 3.1902,
               "er": 1.4404,
               "dmg%": 2.62,
-              "baseDmg": 2600.7956,
+              "baseDmg": 2342.6799,
               "baseDmg%": 1.2,
               "defReduction%": 0.3,
               "resReduction%": 0.79,
@@ -1224,12 +1212,12 @@
           },
           "durin": {
             "onField": {
-              "atk": 5513,
+              "atk": 5083,
               "hp": 20072,
               "def": 881,
               "em": 200,
-              "cr": 0.8437,
-              "cd": 1.7324,
+              "cr": 0.9564,
+              "cd": 2.0626,
               "er": 1.5505,
               "dmg%": 1.75,
               "defReduction%": 0.3,
@@ -1237,12 +1225,12 @@
               "resReduction%": 0.55
             },
             "offField": {
-              "atk": 4335,
+              "atk": 3904,
               "hp": 20072,
               "def": 881,
               "em": 200,
-              "cr": 0.8437,
-              "cd": 1.7324,
+              "cr": 0.9564,
+              "cd": 2.0626,
               "er": 1.5505,
               "dmg%": 1.1,
               "defReduction%": 0.3,
@@ -1260,7 +1248,7 @@
               "cd": 1.4907,
               "er": 2.2584,
               "dmg%": 1.816,
-              "baseDmg": 2600.7956,
+              "baseDmg": 2342.6799,
               "defReduction%": 0.3,
               "resReduction%": 0.55,
               "atkSpd%": 0.1
@@ -1289,7 +1277,7 @@
               "cd": 2.1605,
               "er": 1.871,
               "dmg%": 1.916,
-              "baseDmg": 2600.7956,
+              "baseDmg": 2342.6799,
               "baseDmg%": 2,
               "defReduction%": 0.3,
               "resReduction%": 0.79
@@ -1311,27 +1299,27 @@
         },
         "marginalGains": {
           "varka": {
-            "atk": 0.0023,
-            "atk%": 0.0072,
-            "cd": 0.0118
+            "atk": 0.002,
+            "atk%": 0.0061,
+            "cd": 0.0101
           },
           "durin": {
-            "atk": 0.0006,
-            "atk%": 0.0019,
-            "cr": 0.0019,
-            "cd": 0.0019
+            "atk": 0.0009,
+            "atk%": 0.0026,
+            "cr": 0.0029,
+            "cd": 0.0027
           },
           "bennett": {
             "atk": 0,
             "atk%": 0.0001,
-            "cr": 0.0002,
-            "cd": 0.0002
+            "cr": 0.0003,
+            "cd": 0.0003
           },
           "venti": {
-            "atk": 0.0006,
-            "atk%": 0.0016,
-            "cr": 0.0013,
-            "cd": 0.0035
+            "atk": 0.0008,
+            "atk%": 0.0023,
+            "cr": 0.0017,
+            "cd": 0.0047
           }
         },
         "levelUpGains": {}
@@ -1370,7 +1358,7 @@
           "minCr": 0.37
         }
       },
-      "damage": 8383473.0364,
+      "damage": 5908213.7293,
       "comboResult": {
         "lineDamages": [
           {
@@ -1378,12 +1366,8 @@
             "total": 930601.7995
           },
           {
-            "perHit": 944747.1846,
-            "total": 1889494.3692
-          },
-          {
             "perHit": 1305581.6571,
-            "total": 2611163.3143
+            "total": 2250328.8418
           },
           {
             "perHit": 944748.4916,
@@ -1406,28 +1390,24 @@
             "total": 12262.9737
           },
           {
-            "perHit": 32746.0708,
-            "total": 65492.1415
+            "perHit": 33074.2825,
+            "total": 66148.5649
           },
           {
-            "perHit": 63141.945,
-            "total": 126283.8901
+            "perHit": 63774.8126,
+            "total": 127549.6252
           },
           {
-            "perHit": 62535.0727,
-            "total": 125070.1453
+            "perHit": 62180.2082,
+            "total": 124360.4165
           },
           {
-            "perHit": 95057.1869,
-            "total": 190114.3739
+            "perHit": 128552.1327,
+            "total": 222385.8682
           },
           {
-            "perHit": 129390.9304,
-            "total": 258781.8608
-          },
-          {
-            "perHit": 18331.5324,
-            "total": 36663.0649
+            "perHit": 18515.2682,
+            "total": 37030.5363
           },
           {
             "perHit": 10426.5607,
@@ -1438,7 +1418,7 @@
             "total": 27957.6453
           }
         ],
-        "totalDamage": 8383473.0364
+        "totalDamage": 5908213.7293
       },
       "artifacts": {
         "zibai": {
@@ -1559,20 +1539,20 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "cr": 9.92,
-              "hp%": 14.87,
-              "cd": 6.6,
-              "em": 19.82
+              "er": 27.53,
+              "hp%": 4.96,
+              "cr": 3.31,
+              "cd": 6.6
             }
           },
           "sands": {
             "setKey": "generated",
-            "mainStat": "er",
+            "mainStat": "hp%",
             "substats": {
-              "cr": 9.92,
-              "hp%": 14.87,
-              "em": 19.82,
-              "cd": 6.6
+              "er": 27.53,
+              "cr": 3.31,
+              "cd": 6.6,
+              "em": 19.82
             }
           },
           "goblet": {
@@ -1580,16 +1560,16 @@
             "mainStat": "hp%",
             "substats": {
               "cr": 16.53,
-              "em": 19.82,
               "cd": 6.6,
+              "em": 19.82,
               "hp": 253.94
             }
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "hp%",
+            "mainStat": "cr",
             "substats": {
-              "cr": 16.53,
+              "hp%": 24.77,
               "cd": 6.6,
               "em": 19.82,
               "hp": 253.94
@@ -1665,11 +1645,11 @@
         },
         "columbina": {
           "hp": 5288,
-          "er": 0.7933,
-          "cr": 0.5619,
+          "er": 0.8258,
+          "cr": 0.5754,
           "cd": 0.3303,
           "atk": 311,
-          "em": 79
+          "em": 59
         },
         "gorou": {
           "hp": 4780,
@@ -1681,7 +1661,7 @@
         }
       },
       "display": {
-        "totalDamage": 8383473.0364,
+        "totalDamage": 5908213.7293,
         "partsByFormula": {
           "zibai.zibai-e-combo": [
             {
@@ -1712,17 +1692,11 @@
               "template": "direct"
             },
             {
-              "damage": 903895.0031,
+              "damage": 1264729.4756,
               "template": "lunarDirect"
-            }
-          ],
-          "zibai.zibai-steed-c1": [
-            {
-              "damage": 40852.1816,
-              "template": "direct"
             },
             {
-              "damage": 1264729.4756,
+              "damage": 903895.0031,
               "template": "lunarDirect"
             }
           ],
@@ -1762,40 +1736,38 @@
           ],
           "columbina.columbina-skill-initial": [
             {
-              "damage": 32746.0708,
+              "damage": 33074.2825,
               "template": "direct"
             }
           ],
           "columbina.columbina-burst": [
             {
-              "damage": 63141.945,
+              "damage": 63774.8126,
               "template": "direct"
             }
           ],
           "columbina.columbina-charge": [
             {
-              "damage": 20845.0242,
+              "damage": 20726.7361,
               "template": "lunarDirect",
               "hits": 3
             }
           ],
           "columbina.columbina-skill-interference": [
             {
-              "damage": 19011.4374,
+              "damage": 25710.4265,
               "template": "lunarDirect",
-              "hits": 5
-            }
-          ],
-          "columbina.columbina-skill-interference-c4": [
+              "hits": 2.5
+            },
             {
-              "damage": 25878.1861,
+              "damage": 18766.7471,
               "template": "lunarDirect",
-              "hits": 5
+              "hits": 2.5
             }
           ],
           "columbina.columbina-ripple": [
             {
-              "damage": 18331.5324,
+              "damage": 18515.2682,
               "template": "direct"
             }
           ],
@@ -2386,21 +2358,21 @@
           },
           "columbina": {
             "onField": {
-              "cr": 0.9539,
+              "cr": 0.9674,
               "cd": 1.7123,
-              "er": 1.7933,
+              "er": 1.8258,
               "dmg%": 0.15,
-              "em": 347,
+              "em": 328,
               "hp": 53749,
               "atk": 970,
               "def": 1328
             },
             "offField": {
-              "cr": 0.9539,
+              "cr": 0.9674,
               "cd": 1.7123,
-              "er": 1.7933,
+              "er": 1.8258,
               "dmg%": 0.15,
-              "em": 159,
+              "em": 139,
               "hp": 53749,
               "atk": 970,
               "def": 690
@@ -2492,10 +2464,10 @@
               "atk": 970,
               "hp": 53749,
               "def": 1328,
-              "em": 347,
-              "cr": 0.9539,
+              "em": 328,
+              "cr": 0.9674,
               "cd": 2.5123,
-              "er": 1.7933,
+              "er": 1.8258,
               "dmg%": 0.15,
               "reactionBaseDmg%": 0.07,
               "elevated%": 0.2,
@@ -2506,10 +2478,10 @@
               "atk": 970,
               "hp": 53749,
               "def": 690,
-              "em": 159,
-              "cr": 0.9539,
+              "em": 139,
+              "cr": 0.9674,
               "cd": 2.5123,
-              "er": 1.7933,
+              "er": 1.8258,
               "dmg%": 0.15,
               "reactionBaseDmg%": 0.07,
               "elevated%": 0.2,
@@ -2545,33 +2517,33 @@
         },
         "marginalGains": {
           "zibai": {
-            "def": 0.0041,
-            "def%": 0.0131,
-            "em": 0.0061,
-            "cr": 0.0225,
-            "cd": 0.014
+            "def": 0.004,
+            "def%": 0.0128,
+            "em": 0.0064,
+            "cr": 0.0221,
+            "cd": 0.0138
           },
           "illuga": {
-            "def": 0.0001,
-            "def%": 0.0004,
-            "em": 0.0012,
-            "cr": 0.0006,
-            "cd": 0.0006
+            "def": 0.0002,
+            "def%": 0.0005,
+            "em": 0.0014,
+            "cr": 0.0009,
+            "cd": 0.0008
           },
           "columbina": {
             "hp": 0.0008,
-            "hp%": 0.0023,
-            "em": 0.0013,
+            "hp%": 0.0024,
+            "em": 0.0011,
             "cr": 0.0025,
-            "cd": 0.0014
+            "cd": 0.0015
           },
           "gorou": {
             "atk": 0,
             "atk%": 0,
             "def": 0.0004,
-            "def%": 0.0008,
-            "cr": 0.0001,
-            "cd": 0.0001
+            "def%": 0.0009,
+            "cr": 0.0002,
+            "cd": 0.0002
           }
         },
         "levelUpGains": {}
@@ -2614,12 +2586,12 @@
           "minCr": 0.43
         }
       },
-      "damage": 18712281.995,
+      "damage": 16175789.4958,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 2566930.7228,
-            "total": 5133861.4455
+            "perHit": 2524230.9928,
+            "total": 5048461.9857
           },
           {
             "perHit": 22830.6614,
@@ -2638,40 +2610,36 @@
             "total": 155439.0357
           },
           {
-            "perHit": 758572.8902,
-            "total": 1517145.7804
+            "perHit": 732470.8644,
+            "total": 1464941.7287
           },
           {
-            "perHit": 1279274.0604,
-            "total": 2558548.1208
-          },
-          {
-            "perHit": 1347745.1983,
-            "total": 2695490.3966
+            "perHit": 1304241.8219,
+            "total": 2540012.5059
           },
           {
             "perHit": 22563.731,
             "total": 45127.462
           },
           {
-            "perHit": 5480.2913,
-            "total": 10960.5825
+            "perHit": 6211.045,
+            "total": 12422.09
           },
           {
-            "perHit": 16634.1177,
-            "total": 33268.2354
+            "perHit": 18205.0836,
+            "total": 36410.1672
           },
           {
-            "perHit": 746850.4217,
-            "total": 1493700.8434
+            "perHit": 799269.5697,
+            "total": 1598539.1395
           },
           {
-            "perHit": 163654.8718,
-            "total": 327309.7435
+            "perHit": 174948.9924,
+            "total": 349897.9848
           },
           {
-            "perHit": 1400862.7772,
-            "total": 2801725.5545
+            "perHit": 1492416.3009,
+            "total": 2984832.6018
           },
           {
             "perHit": 65720.6461,
@@ -2690,7 +2658,7 @@
             "total": 116386.1322
           }
         ],
-        "totalDamage": 18712281.995
+        "totalDamage": 16175789.4958
       },
       "artifacts": {
         "nefer": {
@@ -2803,8 +2771,8 @@
             "mainStat": "hp",
             "substats": {
               "er": 27.53,
-              "cr": 3.31,
               "em": 19.82,
+              "cr": 3.31,
               "cd": 6.6
             }
           },
@@ -2840,9 +2808,9 @@
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "em",
+            "mainStat": "cr",
             "substats": {
-              "cr": 16.53,
+              "em": 99.08,
               "cd": 6.6,
               "atk%": 4.96,
               "atk": 16.54
@@ -2920,8 +2888,8 @@
         "lauma": {
           "hp": 4780,
           "er": 0.8258,
-          "cr": 0.4297,
-          "em": 599,
+          "em": 512,
+          "cr": 0.5754,
           "cd": 0.3303,
           "atk": 344
         },
@@ -2935,7 +2903,7 @@
         }
       },
       "display": {
-        "totalDamage": 18712281.995,
+        "totalDamage": 16175789.4958,
         "partsByFormula": {
           "nefer.nefer-phantasm": [
             {
@@ -2943,20 +2911,20 @@
               "template": "direct"
             },
             {
-              "damage": 332378.8563,
+              "damage": 323838.9103,
               "template": "lunarDirect"
             },
             {
-              "damage": 563840.5358,
+              "damage": 555300.5898,
               "template": "lunarDirect",
               "hits": 2
             },
             {
-              "damage": 696104.3527,
+              "damage": 687564.4067,
               "template": "lunarDirect"
             },
             {
-              "damage": 400455.8208,
+              "damage": 391915.8749,
               "template": "lunarDirect"
             }
           ],
@@ -2990,23 +2958,21 @@
           ],
           "columbina.columbina-charge": [
             {
-              "damage": 252857.6301,
+              "damage": 244156.9548,
               "template": "lunarDirect",
               "hits": 3
             }
           ],
           "columbina.columbina-skill-interference": [
             {
-              "damage": 255854.8121,
+              "damage": 260848.3644,
               "template": "lunarDirect",
-              "hits": 5
-            }
-          ],
-          "columbina.columbina-skill-interference-c4": [
+              "hits": 2.5
+            },
             {
-              "damage": 269549.0397,
+              "damage": 247154.1368,
               "template": "lunarDirect",
-              "hits": 5
+              "hits": 2.5
             }
           ],
           "columbina.columbina-ripple": [
@@ -3017,35 +2983,35 @@
           ],
           "lauma.lauma-press": [
             {
-              "damage": 5480.2913,
+              "damage": 6211.045,
               "template": "direct"
             }
           ],
           "lauma.lauma-sanctuary": [
             {
-              "damage": 16634.1177,
+              "damage": 18205.0836,
               "template": "direct"
             }
           ],
           "lauma.lauma-hold": [
             {
-              "damage": 7124.3786,
+              "damage": 8074.3585,
               "template": "direct"
             },
             {
-              "damage": 739726.043,
+              "damage": 791195.2112,
               "template": "lunarDirect"
             }
           ],
           "lauma.lauma-c6-normal": [
             {
-              "damage": 163654.8718,
+              "damage": 174948.9924,
               "template": "lunarDirect"
             }
           ],
           "lauma.lauma-c6-sanctuary": [
             {
-              "damage": 175107.8472,
+              "damage": 186552.0376,
               "template": "lunarDirect",
               "hits": 8
             }
@@ -3447,7 +3413,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 13948.5713
+                "value": 13185.998
               }
             ],
             "providerCharId": "lauma"
@@ -3773,8 +3739,8 @@
           },
           "lauma": {
             "onField": {
-              "em": 2053,
-              "cr": 0.4797,
+              "em": 1965,
+              "cr": 0.6254,
               "cd": 0.8303,
               "er": 1.8258,
               "hp": 19044,
@@ -3782,8 +3748,8 @@
               "def": 716
             },
             "offField": {
-              "em": 1885,
-              "cr": 0.4797,
+              "em": 1797,
+              "cr": 0.6254,
               "cd": 0.8303,
               "er": 1.8258,
               "hp": 19044,
@@ -3823,7 +3789,7 @@
               "cd": 3.8805,
               "er": 1.6606,
               "dmg%": 2.45,
-              "baseDmg": 14916.6251,
+              "baseDmg": 14154.0518,
               "baseDmg%": 0.4,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.6,
@@ -3840,7 +3806,7 @@
               "cr": 0.8846,
               "cd": 3.8805,
               "er": 1.6606,
-              "baseDmg": 13948.5713,
+              "baseDmg": 13185.998,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.6,
               "reactionDmg%": 2.05,
@@ -3858,7 +3824,7 @@
               "cr": 0.9013,
               "cd": 3.0407,
               "er": 2.0685,
-              "baseDmg": 13948.5713,
+              "baseDmg": 13185.998,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.45,
               "reactionDmg%": 2.05,
@@ -3874,7 +3840,7 @@
               "cr": 0.9013,
               "cd": 3.0407,
               "er": 2.0685,
-              "baseDmg": 13948.5713,
+              "baseDmg": 13185.998,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.45,
               "reactionDmg%": 2.05,
@@ -3888,12 +3854,12 @@
               "atk": 1325,
               "hp": 19044,
               "def": 716,
-              "em": 2053,
-              "cr": 0.4797,
+              "em": 1965,
+              "cr": 0.6254,
               "cd": 1.6303,
               "er": 1.8258,
               "dmg%": 0.32,
-              "baseDmg": 13948.5713,
+              "baseDmg": 13185.998,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.45,
               "reactionDmg%": 2.05,
@@ -3905,12 +3871,12 @@
               "atk": 1325,
               "hp": 19044,
               "def": 716,
-              "em": 1885,
-              "cr": 0.4797,
+              "em": 1797,
+              "cr": 0.6254,
               "cd": 1.6303,
               "er": 1.8258,
               "dmg%": 0.32,
-              "baseDmg": 13948.5713,
+              "baseDmg": 13185.998,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.45,
               "reactionDmg%": 2.05,
@@ -3929,7 +3895,7 @@
               "cd": 2.1642,
               "er": 1.9359,
               "dmg%": 0.5,
-              "baseDmg": 17434.3549,
+              "baseDmg": 16481.2126,
               "reactionDmg%": 6.1234,
               "resReduction%": 0.89
             },
@@ -3941,7 +3907,7 @@
               "cr": 0.8127,
               "cd": 2.1642,
               "er": 1.9359,
-              "baseDmg": 17434.3549,
+              "baseDmg": 16481.2126,
               "reactionDmg%": 6.1234,
               "resReduction%": 0.89
             }
@@ -3949,31 +3915,31 @@
         },
         "marginalGains": {
           "nefer": {
-            "atk": 0.0002,
-            "atk%": 0.0007,
-            "em": 0.0035,
-            "cr": 0.0053,
-            "cd": 0.0044
+            "atk": 0.0003,
+            "atk%": 0.0008,
+            "em": 0.0041,
+            "cr": 0.0061,
+            "cd": 0.005
           },
           "columbina": {
-            "hp": 0.001,
-            "hp%": 0.0032,
-            "em": 0.0011,
-            "cr": 0.0004,
-            "cd": 0.0045
+            "hp": 0.0009,
+            "hp%": 0.0026,
+            "em": 0.0007,
+            "cr": 0.0005,
+            "cd": 0.0032
           },
           "lauma": {
             "atk": 0,
             "atk%": 0.0001,
-            "em": 0.0069,
-            "cr": 0.0073,
-            "cd": 0.0046
+            "em": 0.0072,
+            "cr": 0.008,
+            "cd": 0.0063
           },
           "nilou": {
             "hp": 0.0005,
-            "hp%": 0.0015,
+            "hp%": 0.0017,
             "em": 0,
-            "cr": 0.0007,
+            "cr": 0.0009,
             "cd": 0.0006
           }
         },
@@ -4013,7 +3979,7 @@
           "minCr": 0.48
         }
       },
-      "damage": 9685115.6903,
+      "damage": 9419249.1727,
       "comboResult": {
         "lineDamages": [
           {
@@ -4021,40 +3987,36 @@
             "total": 78796.3031
           },
           {
-            "perHit": 156379.3901,
-            "total": 312758.7801
+            "perHit": 156496.4811,
+            "total": 312992.9623
           },
           {
-            "perHit": 1025339.6305,
-            "total": 2050679.2609
+            "perHit": 1026212.446,
+            "total": 2052424.892
           },
           {
-            "perHit": 1090736.3284,
-            "total": 2181472.6569
+            "perHit": 1091641.4705,
+            "total": 2183282.941
           },
           {
-            "perHit": 39131.2082,
-            "total": 78262.4164
+            "perHit": 39672.8775,
+            "total": 79345.7549
           },
           {
-            "perHit": 75453.9564,
-            "total": 150907.9129
+            "perHit": 76498.4192,
+            "total": 152996.8385
           },
           {
-            "perHit": 84028.7012,
-            "total": 168057.4025
+            "perHit": 84385.4398,
+            "total": 168770.8796
           },
           {
-            "perHit": 117203.3011,
-            "total": 234406.6022
+            "perHit": 155907.7769,
+            "total": 272406.4526
           },
           {
-            "perHit": 156074.3345,
-            "total": 312148.669
-          },
-          {
-            "perHit": 21905.9874,
-            "total": 43811.9747
+            "perHit": 22209.2185,
+            "total": 44418.437
           },
           {
             "perHit": 10317.114,
@@ -4081,7 +4043,7 @@
             "total": 5239.3697
           }
         ],
-        "totalDamage": 9685115.6903
+        "totalDamage": 9419249.1727
       },
       "artifacts": {
         "flins": {
@@ -4149,19 +4111,19 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "cr": 9.92,
-              "hp%": 14.87,
-              "em": 19.82,
-              "cd": 6.6
+              "cr": 6.61,
+              "hp%": 19.82,
+              "cd": 6.6,
+              "em": 19.82
             }
           },
           "sands": {
             "setKey": "generated",
             "mainStat": "hp%",
             "substats": {
-              "cr": 9.92,
-              "em": 39.63,
+              "cr": 13.22,
               "cd": 13.21,
+              "em": 19.82,
               "hp": 253.94
             }
           },
@@ -4298,7 +4260,7 @@
           "hp": 5542,
           "er": 0.2202,
           "cd": 0.5284,
-          "em": 119,
+          "em": 99,
           "atk": 311,
           "cr": 0.6085
         },
@@ -4320,7 +4282,7 @@
         }
       },
       "display": {
-        "totalDamage": 9685115.6903,
+        "totalDamage": 9419249.1727,
         "partsByFormula": {
           "flins.flins-normal": [
             {
@@ -4351,17 +4313,17 @@
               "template": "direct"
             },
             {
-              "damage": 137552.6727,
+              "damage": 137669.7637,
               "template": "lunarDirect"
             }
           ],
           "flins.flins-thunderous": [
             {
-              "damage": 417730.9606,
+              "damage": 418086.5521,
               "template": "lunarDirect"
             },
             {
-              "damage": 607608.6699,
+              "damage": 608125.8939,
               "template": "lunarDirect"
             }
           ],
@@ -4371,51 +4333,49 @@
               "template": "direct"
             },
             {
-              "damage": 94938.8547,
+              "damage": 95019.6709,
               "template": "lunarDirect",
               "hits": 4
             },
             {
-              "damage": 683559.7536,
+              "damage": 684141.6307,
               "template": "lunarDirect"
             }
           ],
           "columbina.columbina-skill-initial": [
             {
-              "damage": 39131.2082,
+              "damage": 39672.8775,
               "template": "direct"
             }
           ],
           "columbina.columbina-burst": [
             {
-              "damage": 75453.9564,
+              "damage": 76498.4192,
               "template": "direct"
             }
           ],
           "columbina.columbina-charge": [
             {
-              "damage": 28009.5671,
+              "damage": 28128.4799,
               "template": "lunarDirect",
               "hits": 3
             }
           ],
           "columbina.columbina-skill-interference": [
             {
-              "damage": 23440.6602,
+              "damage": 31181.5554,
               "template": "lunarDirect",
-              "hits": 5
-            }
-          ],
-          "columbina.columbina-skill-interference-c4": [
+              "hits": 2.5
+            },
             {
-              "damage": 31214.8669,
+              "damage": 23299.7351,
               "template": "lunarDirect",
-              "hits": 5
+              "hits": 2.5
             }
           ],
           "columbina.columbina-ripple": [
             {
-              "damage": 21905.9874,
+              "damage": 22209.2185,
               "template": "direct"
             }
           ],
@@ -4644,7 +4604,7 @@
             "entries": [
               {
                 "key": "em",
-                "value": 197.1993
+                "value": 199.9291
               }
             ],
             "providerCharId": "columbina"
@@ -4867,7 +4827,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1408.5668
+                "value": 1428.0647
               }
             ],
             "providerCharId": "columbina"
@@ -4879,7 +4839,7 @@
               "cd": 1.7042,
               "cr": 0.7998,
               "er": 1.7707,
-              "em": 815,
+              "em": 817,
               "hp": 18159,
               "atk": 3340,
               "def": 866
@@ -4899,8 +4859,8 @@
               "cr": 1.0005,
               "cd": 1.9104,
               "er": 1.2202,
-              "em": 654,
-              "hp": 56343,
+              "em": 637,
+              "hp": 57123,
               "atk": 1286,
               "def": 552
             },
@@ -4908,8 +4868,8 @@
               "cr": 1.0005,
               "cd": 1.9104,
               "er": 1.2202,
-              "em": 281,
-              "hp": 56343,
+              "em": 261,
+              "hp": 57123,
               "atk": 970,
               "def": 552
             }
@@ -4919,7 +4879,7 @@
               "cr": 0.8835,
               "cd": 1.8225,
               "er": 1.6606,
-              "em": 624,
+              "em": 627,
               "hp": 18290,
               "atk": 3421,
               "def": 887
@@ -4941,7 +4901,7 @@
               "er": 1.8258,
               "hp": 18142,
               "atk": 1374,
-              "em": 933,
+              "em": 936,
               "def": 752
             },
             "offField": {
@@ -4961,7 +4921,7 @@
               "atk": 3340,
               "hp": 18159,
               "def": 866,
-              "em": 815,
+              "em": 817,
               "cr": 0.7998,
               "cd": 1.7042,
               "er": 1.7707,
@@ -4989,9 +4949,9 @@
           "columbina": {
             "onField": {
               "atk": 1286,
-              "hp": 56343,
+              "hp": 57123,
               "def": 552,
-              "em": 654,
+              "em": 637,
               "cr": 1.0005,
               "cd": 2.7104,
               "er": 1.2202,
@@ -5003,9 +4963,9 @@
             },
             "offField": {
               "atk": 970,
-              "hp": 56343,
+              "hp": 57123,
               "def": 552,
-              "em": 281,
+              "em": 261,
               "cr": 1.0005,
               "cd": 2.7104,
               "er": 1.2202,
@@ -5021,7 +4981,7 @@
               "atk": 3421,
               "hp": 18290,
               "def": 887,
-              "em": 624,
+              "em": 627,
               "cr": 0.8835,
               "cd": 1.8225,
               "er": 1.6606,
@@ -5051,7 +5011,7 @@
               "atk": 1374,
               "hp": 18142,
               "def": 752,
-              "em": 933,
+              "em": 936,
               "cr": 0.5458,
               "cd": 0.7642,
               "er": 1.8258,
@@ -5072,28 +5032,28 @@
         "marginalGains": {
           "flins": {
             "atk": 0.0024,
-            "atk%": 0.0078,
-            "em": 0.0028,
-            "cr": 0.0114,
-            "cd": 0.0107
+            "atk%": 0.0081,
+            "em": 0.0029,
+            "cr": 0.0117,
+            "cd": 0.011
           },
           "columbina": {
-            "hp": 0.0006,
-            "hp%": 0.0018,
-            "em": 0.0011,
-            "cd": 0.0015
+            "hp": 0.0005,
+            "hp%": 0.0015,
+            "em": 0.0007,
+            "cd": 0.0011
           },
           "ineffa": {
-            "atk": 0.0027,
-            "atk%": 0.0082,
-            "em": 0.004,
-            "cr": 0.0097,
-            "cd": 0.0094
+            "atk": 0.0028,
+            "atk%": 0.0084,
+            "em": 0.0041,
+            "cr": 0.0099,
+            "cd": 0.0096
           },
           "sucrose": {
             "atk": 0,
             "atk%": 0,
-            "em": 0.0026,
+            "em": 0.0025,
             "cr": 0,
             "cd": 0
           }
@@ -5128,16 +5088,16 @@
           "minCr": 0.08
         }
       },
-      "damage": 37784621.7604,
+      "damage": 38321376.2214,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 2480228.2962,
-            "total": 4960456.5925
+            "perHit": 2622157.6618,
+            "total": 5244315.3235
           },
           {
-            "perHit": 786751.6785,
-            "total": 1573503.3571
+            "perHit": 833819.2567,
+            "total": 1667638.5135
           },
           {
             "perHit": 488445.4874,
@@ -5156,8 +5116,8 @@
             "total": 5855294.5265
           },
           {
-            "perHit": 1619153.6429,
-            "total": 3238307.2858
+            "perHit": 1698533.9297,
+            "total": 3397067.8594
           },
           {
             "perHit": 1099742.3735,
@@ -5200,7 +5160,7 @@
             "total": 462949.4313
           }
         ],
-        "totalDamage": 37784621.7604
+        "totalDamage": 38321376.2214
       },
       "artifacts": {
         "skirk": {
@@ -5442,39 +5402,39 @@
         }
       },
       "display": {
-        "totalDamage": 37784621.7604,
+        "totalDamage": 38321376.2214,
         "partsByFormula": {
           "skirk.skirk-e-normal": [
             {
-              "damage": 407920.9193,
+              "damage": 432668.0545,
               "template": "direct"
             },
             {
-              "damage": 378830.7592,
+              "damage": 401151.2022,
               "template": "direct"
             },
             {
-              "damage": 280387.0866,
+              "damage": 294495.389,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 291143.435,
+              "damage": 306149.0287,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 550415.5746,
+              "damage": 587049.5696,
               "template": "direct"
             }
           ],
           "skirk.skirk-e-normal-2": [
             {
-              "damage": 407920.9193,
+              "damage": 432668.0545,
               "template": "direct"
             },
             {
-              "damage": 378830.7592,
+              "damage": 401151.2022,
               "template": "direct"
             }
           ],
@@ -5512,7 +5472,7 @@
           ],
           "skirk.skirk-c6-normal-coord": [
             {
-              "damage": 269858.9405,
+              "damage": 283088.9883,
               "template": "direct",
               "hits": 6
             }
@@ -6179,7 +6139,7 @@
               "er": 1.9359,
               "dmg%": 2.586,
               "baseDmg": 64771.5075,
-              "baseDmg%": 0.93,
+              "baseDmg%": 1.091,
               "resReduction%": 0.55
             },
             "offField": {
@@ -6276,9 +6236,9 @@
         "marginalGains": {
           "skirk": {
             "atk": 0.0016,
-            "atk%": 0.0052,
-            "cr": 0.0178,
-            "cd": 0.0119
+            "atk%": 0.0053,
+            "cr": 0.0179,
+            "cd": 0.012
           },
           "escoffier": {
             "atk": 0.0009,
@@ -6299,7 +6259,7 @@
             "atk": 0,
             "atk%": 0.0001,
             "cr": 0.0033,
-            "cd": 0.0035
+            "cd": 0.0034
           }
         },
         "levelUpGains": {}
@@ -6342,16 +6302,16 @@
           "minCr": 0.02
         }
       },
-      "damage": 46007276.9791,
+      "damage": 46582298.4263,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 3206660.5829,
-            "total": 6413321.1658
+            "perHit": 3358708.5585,
+            "total": 6717417.1169
           },
           {
-            "perHit": 999872.8366,
-            "total": 1999745.6733
+            "perHit": 1050296.0169,
+            "total": 2100592.0337
           },
           {
             "perHit": 758814.9438,
@@ -6370,8 +6330,8 @@
             "total": 6650461.8566
           },
           {
-            "perHit": 2205681.5679,
-            "total": 4411363.1359
+            "perHit": 2290721.1357,
+            "total": 4581442.2715
           },
           {
             "perHit": 2457212.0972,
@@ -6422,7 +6382,7 @@
             "total": 86258.7046
           }
         ],
-        "totalDamage": 46007276.9791
+        "totalDamage": 46582298.4263
       },
       "artifacts": {
         "skirk": {
@@ -6665,39 +6625,39 @@
         }
       },
       "display": {
-        "totalDamage": 46007276.9791,
+        "totalDamage": 46582298.4263,
         "partsByFormula": {
           "skirk.skirk-e-normal": [
             {
-              "damage": 515518.4649,
+              "damage": 542029.9045,
               "template": "direct"
             },
             {
-              "damage": 484354.3718,
+              "damage": 508266.1124,
               "template": "direct"
             },
             {
-              "damage": 378892.3268,
+              "damage": 394006.4564,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 390415.5306,
+              "damage": 406490.9223,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 668172.0315,
+              "damage": 707417.7842,
               "template": "direct"
             }
           ],
           "skirk.skirk-e-normal-2": [
             {
-              "damage": 515518.4649,
+              "damage": 542029.9045,
               "template": "direct"
             },
             {
-              "damage": 484354.3718,
+              "damage": 508266.1124,
               "template": "direct"
             }
           ],
@@ -6735,7 +6695,7 @@
           ],
           "skirk.skirk-c6-normal-coord": [
             {
-              "damage": 367613.5947,
+              "damage": 381786.856,
               "template": "direct",
               "hits": 6
             }
@@ -7459,7 +7419,7 @@
               "er": 1.7157,
               "dmg%": 2.326,
               "baseDmg": 74052.8324,
-              "baseDmg%": 0.93,
+              "baseDmg%": 1.091,
               "resReduction%": 0.7
             },
             "offField": {
@@ -7559,7 +7519,7 @@
           "escoffier": {
             "atk": 0.0008,
             "atk%": 0.0024,
-            "cr": 0.0039,
+            "cr": 0.0038,
             "cd": 0.0032
           },
           "furina": {
@@ -7613,16 +7573,16 @@
           "minCr": 0.27
         }
       },
-      "damage": 49994591.2832,
+      "damage": 50698861.1289,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 3033830.3804,
-            "total": 6067660.7608
+            "perHit": 3220054.3983,
+            "total": 6440108.7967
           },
           {
-            "perHit": 969302.5741,
-            "total": 1938605.1482
+            "perHit": 1031059.4452,
+            "total": 2062118.8903
           },
           {
             "perHit": 546405.1918,
@@ -7641,8 +7601,8 @@
             "total": 7476962.6726
           },
           {
-            "perHit": 1935516.4309,
-            "total": 3871032.8617
+            "perHit": 2039670.4647,
+            "total": 4079340.9295
           },
           {
             "perHit": 1155424.7251,
@@ -7697,7 +7657,7 @@
             "total": 1395340.5828
           }
         ],
-        "totalDamage": 49994591.2832
+        "totalDamage": 50698861.1289
       },
       "artifacts": {
         "skirk": {
@@ -7940,39 +7900,39 @@
         }
       },
       "display": {
-        "totalDamage": 49994591.2832,
+        "totalDamage": 50698861.1289,
         "partsByFormula": {
           "skirk.skirk-e-normal": [
             {
-              "damage": 503735.7326,
+              "damage": 536206.1867,
               "template": "direct"
             },
             {
-              "damage": 465566.8415,
+              "damage": 494853.2585,
               "template": "direct"
             },
             {
-              "damage": 336399.9408,
+              "damage": 354911.2951,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 350513.2317,
+              "damage": 370201.9124,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 690701.4612,
+              "damage": 738768.5382,
               "template": "direct"
             }
           ],
           "skirk.skirk-e-normal-2": [
             {
-              "damage": 503735.7326,
+              "damage": 536206.1867,
               "template": "direct"
             },
             {
-              "damage": 465566.8415,
+              "damage": 494853.2585,
               "template": "direct"
             }
           ],
@@ -8010,7 +7970,7 @@
           ],
           "skirk.skirk-c6-normal-coord": [
             {
-              "damage": 322586.0718,
+              "damage": 339945.0775,
               "template": "direct",
               "hits": 6
             }
@@ -8706,7 +8666,7 @@
               "er": 1.2753,
               "dmg%": 2.4294,
               "baseDmg": 61983.716,
-              "baseDmg%": 0.93,
+              "baseDmg%": 1.091,
               "defReduction%": 0.3,
               "resReduction%": 0.55
             },
@@ -8804,18 +8764,18 @@
         },
         "marginalGains": {
           "skirk": {
-            "atk": 0.0015,
-            "atk%": 0.0051,
-            "cd": 0.01
+            "atk": 0.0016,
+            "atk%": 0.0052,
+            "cd": 0.0101
           },
           "escoffier": {
             "atk": 0.0011,
             "atk%": 0.0035,
             "cr": 0.0023,
-            "cd": 0.0015
+            "cd": 0.0014
           },
           "furina": {
-            "hp": 0.0004,
+            "hp": 0.0003,
             "hp%": 0.0011,
             "atk": 0,
             "atk%": 0.0001,
@@ -8823,12 +8783,12 @@
             "cd": 0.0019
           },
           "kamisato_ayaka": {
-            "atk": 0.0006,
+            "atk": 0.0005,
             "atk%": 0.0016,
             "def": 0.001,
             "def%": 0.0026,
             "cr": 0.0044,
-            "cd": 0.0036
+            "cd": 0.0035
           }
         },
         "levelUpGains": {}
@@ -9730,36 +9690,32 @@
           "minCr": 0.05
         }
       },
-      "damage": 9397484.4699,
+      "damage": 8124380.6003,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 20878.6279,
-            "total": 41757.2558
+            "perHit": 20849.3078,
+            "total": 41698.6156
           },
           {
-            "perHit": 29826.6113,
-            "total": 59653.2226
+            "perHit": 29784.7255,
+            "total": 59569.4509
           },
           {
-            "perHit": 167512.9732,
-            "total": 335025.9463
+            "perHit": 168660.6365,
+            "total": 337321.273
           },
           {
-            "perHit": 279188.2886,
-            "total": 558376.5772
+            "perHit": 281101.0608,
+            "total": 562202.1216
           },
           {
-            "perHit": 532240.8376,
-            "total": 1064481.6752
+            "perHit": 700359.9516,
+            "total": 1225515.3297
           },
           {
-            "perHit": 709809.2922,
-            "total": 1419618.5845
-          },
-          {
-            "perHit": 769854.984,
-            "total": 1539709.9679
+            "perHit": 759606.2846,
+            "total": 1519212.5693
           },
           {
             "perHit": 60220.4965,
@@ -9814,7 +9770,7 @@
             "total": 512784.951
           }
         ],
-        "totalDamage": 9397484.4699
+        "totalDamage": 8124380.6003
       },
       "artifacts": {
         "varesa": {
@@ -9834,8 +9790,8 @@
             "substats": {
               "er": 27.53,
               "cd": 6.6,
-              "cr": 3.31,
-              "atk%": 4.96
+              "atk%": 4.96,
+              "cr": 3.31
             }
           },
           "sands": {
@@ -9843,8 +9799,8 @@
             "mainStat": "atk%",
             "substats": {
               "er": 22.02,
-              "cr": 3.31,
-              "cd": 13.21,
+              "cr": 6.61,
+              "cd": 6.6,
               "atk": 16.54
             }
           },
@@ -10021,8 +9977,8 @@
         "varesa": {
           "hp": 4780,
           "er": 0.7707,
-          "cr": 0.5754,
-          "cd": 0.6605,
+          "cr": 0.6084,
+          "cd": 0.5944,
           "atk": 361
         },
         "iansan": {
@@ -10048,47 +10004,45 @@
         }
       },
       "display": {
-        "totalDamage": 9397484.4699,
+        "totalDamage": 8124380.6003,
         "partsByFormula": {
           "varesa.varesa-e": [
             {
-              "damage": 20878.6279,
+              "damage": 20849.3078,
               "template": "direct"
             }
           ],
           "varesa.varesa-e-fp": [
             {
-              "damage": 29826.6113,
+              "damage": 29784.7255,
               "template": "direct"
             }
           ],
           "varesa.varesa-kick": [
             {
-              "damage": 167512.9732,
+              "damage": 168660.6365,
               "template": "direct"
             }
           ],
           "varesa.varesa-fp-kick": [
             {
-              "damage": 279188.2886,
+              "damage": 281101.0608,
               "template": "direct"
             }
           ],
           "varesa.varesa-plunge": [
             {
-              "damage": 532240.8376,
+              "damage": 700359.9516,
               "template": "direct"
-            }
-          ],
-          "varesa.varesa-plunge-c4": [
+            },
             {
-              "damage": 709809.2922,
+              "damage": 525155.3781,
               "template": "direct"
             }
           ],
           "varesa.varesa-kablam": [
             {
-              "damage": 769854.984,
+              "damage": 759606.2846,
               "template": "direct"
             }
           ],
@@ -10585,8 +10539,8 @@
         "detailStats": {
           "varesa": {
             "onField": {
-              "cr": 0.8174,
-              "cd": 1.6015,
+              "cr": 0.8505,
+              "cd": 1.5355,
               "er": 1.7707,
               "dmg%": 1.49,
               "hp": 19056,
@@ -10594,8 +10548,8 @@
               "def": 837
             },
             "offField": {
-              "cr": 0.8174,
-              "cd": 1.6015,
+              "cr": 0.8505,
+              "cd": 1.5355,
               "er": 1.7707,
               "dmg%": 1.24,
               "hp": 19056,
@@ -10674,8 +10628,8 @@
               "atk": 5197,
               "hp": 19056,
               "def": 837,
-              "cr": 1.0174,
-              "cd": 3.9615,
+              "cr": 1.0504,
+              "cd": 3.8955,
               "er": 1.7707,
               "dmg%": 3.076,
               "baseDmg": 25161.4482
@@ -10684,8 +10638,8 @@
               "atk": 4054,
               "hp": 19056,
               "def": 837,
-              "cr": 0.9174,
-              "cd": 2.9615,
+              "cr": 0.9504,
+              "cd": 2.8955,
               "er": 1.7707,
               "dmg%": 2.826
             }
@@ -10761,30 +10715,30 @@
         },
         "marginalGains": {
           "varesa": {
-            "atk": 0.0013,
-            "atk%": 0.0042,
-            "cr": 0.0027,
-            "cd": 0.0077
+            "atk": 0.0012,
+            "atk%": 0.0038,
+            "cr": 0.003,
+            "cd": 0.0069
           },
           "iansan": {
-            "atk": 0.0001,
-            "atk%": 0.0004,
-            "cr": 0.0008,
-            "cd": 0.0008
+            "atk": 0.0002,
+            "atk%": 0.0005,
+            "cr": 0.001,
+            "cd": 0.001
           },
           "xianyun": {
             "atk": 0.0006,
-            "atk%": 0.0021,
-            "cr": 0.0016,
-            "cd": 0.0017
+            "atk%": 0.0019,
+            "cr": 0.0019,
+            "cd": 0.0019
           },
           "furina": {
-            "hp": 0.0015,
-            "hp%": 0.0047,
+            "hp": 0.0017,
+            "hp%": 0.0054,
             "atk": 0.0001,
-            "atk%": 0.0003,
-            "cr": 0.0081,
-            "cd": 0.0081
+            "atk%": 0.0004,
+            "cr": 0.0094,
+            "cd": 0.0094
           }
         },
         "levelUpGains": {}
@@ -10823,7 +10777,7 @@
           "minCr": 0.32
         }
       },
-      "damage": 5084869.8506,
+      "damage": 4284150.1616,
       "comboResult": {
         "lineDamages": [
           {
@@ -10843,12 +10797,8 @@
             "total": 770844.9226
           },
           {
-            "perHit": 335433.8251,
-            "total": 670867.6503
-          },
-          {
             "perHit": 465285.8639,
-            "total": 930571.7277
+            "total": 800719.689
           },
           {
             "perHit": 594523.5322,
@@ -10895,7 +10845,7 @@
             "total": 136045.0807
           }
         ],
-        "totalDamage": 5084869.8506
+        "totalDamage": 4284150.1616
       },
       "artifacts": {
         "varesa": {
@@ -11130,7 +11080,7 @@
         }
       },
       "display": {
-        "totalDamage": 5084869.8506,
+        "totalDamage": 4284150.1616,
         "partsByFormula": {
           "varesa.varesa-e": [
             {
@@ -11158,13 +11108,11 @@
           ],
           "varesa.varesa-plunge": [
             {
-              "damage": 335433.8251,
-              "template": "direct"
-            }
-          ],
-          "varesa.varesa-plunge-c4": [
-            {
               "damage": 465285.8639,
+              "template": "direct"
+            },
+            {
+              "damage": 335433.8251,
               "template": "direct"
             }
           ],
@@ -11736,29 +11684,29 @@
         "marginalGains": {
           "varesa": {
             "atk": 0.002,
-            "atk%": 0.0067,
-            "cr": 0.0197,
-            "cd": 0.0119
+            "atk%": 0.0066,
+            "cr": 0.0188,
+            "cd": 0.0117
           },
           "iansan": {
             "atk": 0.0003,
-            "atk%": 0.0008,
-            "cr": 0.002,
-            "cd": 0.0021
+            "atk%": 0.0009,
+            "cr": 0.0024,
+            "cd": 0.0025
           },
           "chevreuse": {
             "hp": 0,
             "hp%": 0,
-            "atk": 0.0002,
-            "atk%": 0.0005,
-            "cr": 0.001,
-            "cd": 0.0011
+            "atk": 0.0003,
+            "atk%": 0.0006,
+            "cr": 0.0012,
+            "cd": 0.0013
           },
           "bennett": {
             "atk": 0.0002,
-            "atk%": 0.0004,
-            "cr": 0.001,
-            "cd": 0.001
+            "atk%": 0.0005,
+            "cr": 0.0011,
+            "cd": 0.0012
           }
         },
         "levelUpGains": {}
@@ -18049,40 +17997,36 @@
           "minCr": 0.28
         }
       },
-      "damage": 13590370.3871,
+      "damage": 11069521.8295,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 447479.0827,
-            "total": 894958.1655
+            "perHit": 442972.1378,
+            "total": 885944.2755
           },
           {
-            "perHit": 1492840.4472,
-            "total": 2985680.8944
+            "perHit": 1486909.9567,
+            "total": 2616904.4174
           },
           {
-            "perHit": 1134501.4056,
-            "total": 2269002.8112
+            "perHit": 568178.9436,
+            "total": 1136357.8871
           },
           {
-            "perHit": 580031.487,
-            "total": 1160062.9741
+            "perHit": 32241.177,
+            "total": 64482.3541
           },
           {
-            "perHit": 27892.8876,
-            "total": 55785.7753
+            "perHit": 58034.1187,
+            "total": 116068.2373
           },
           {
-            "perHit": 50207.1977,
-            "total": 100414.3955
+            "perHit": 942752.3477,
+            "total": 1885504.6954
           },
           {
-            "perHit": 871727.6114,
-            "total": 1743455.2228
-          },
-          {
-            "perHit": 33815.2521,
-            "total": 67630.5041
+            "perHit": 32370.1776,
+            "total": 64740.3552
           },
           {
             "perHit": 1175330.8111,
@@ -18093,19 +18037,19 @@
             "total": 1134284.9372
           },
           {
-            "perHit": 320629.2337,
-            "total": 641258.4675
+            "perHit": 315258.8861,
+            "total": 630517.7722
           },
           {
-            "perHit": 36249.0186,
-            "total": 72498.0372
+            "perHit": 35469.1832,
+            "total": 70938.3665
           },
           {
-            "perHit": 57338.2901,
-            "total": 114676.5802
+            "perHit": 56558.4547,
+            "total": 113116.9094
           }
         ],
-        "totalDamage": 13590370.3871
+        "totalDamage": 11069521.8295
       },
       "artifacts": {
         "kinich": {
@@ -18114,8 +18058,8 @@
             "mainStat": "hp",
             "substats": {
               "er": 22.02,
-              "cr": 3.31,
-              "cd": 13.21,
+              "cr": 6.61,
+              "cd": 6.6,
               "atk%": 4.96
             }
           },
@@ -18133,8 +18077,8 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 16.53,
-              "cd": 6.6,
+              "cr": 13.22,
+              "cd": 13.21,
               "atk": 16.54,
               "hp%": 4.96
             }
@@ -18176,8 +18120,8 @@
             "mainStat": "atk",
             "substats": {
               "er": 11.01,
-              "cr": 9.92,
-              "cd": 13.21,
+              "cr": 13.22,
+              "cd": 6.6,
               "atk%": 4.96
             }
           },
@@ -18185,20 +18129,20 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cd": 33.02,
-              "cr": 3.31,
+              "cd": 19.81,
+              "cr": 9.92,
               "atk": 16.54,
               "hp%": 4.96
             }
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "atk%",
+            "mainStat": "pyro%",
             "substats": {
-              "cd": 13.21,
-              "cr": 13.22,
-              "atk": 16.54,
-              "hp%": 4.96
+              "cd": 33.02,
+              "atk%": 4.96,
+              "cr": 3.31,
+              "atk": 16.54
             }
           },
           "circlet": {
@@ -18328,8 +18272,8 @@
         "durin": {
           "hp": 4780,
           "er": 0.3854,
-          "cr": 0.6084,
-          "cd": 0.9908,
+          "cr": 0.6085,
+          "cd": 0.9907,
           "atk": 361
         },
         "emilie": {
@@ -18347,93 +18291,91 @@
         }
       },
       "display": {
-        "totalDamage": 13590370.3871,
+        "totalDamage": 11069521.8295,
         "partsByFormula": {
           "kinich.kinich-loop": [
             {
-              "damage": 223739.5414,
+              "damage": 221486.0689,
               "template": "direct",
               "hits": 2
             }
           ],
-          "kinich.kinich-cannon-first": [
-            {
-              "damage": 925777.7031,
-              "template": "direct"
-            },
-            {
-              "damage": 567062.7441,
-              "template": "direct"
-            }
-          ],
           "kinich.kinich-cannon": [
             {
-              "damage": 703555.4988,
+              "damage": 922812.4579,
               "template": "direct"
             },
             {
-              "damage": 430945.9068,
+              "damage": 701302.0263,
+              "template": "direct"
+            },
+            {
+              "damage": 564097.4988,
+              "template": "direct"
+            },
+            {
+              "damage": 428692.4343,
               "template": "direct"
             }
           ],
           "kinich.kinich-burst": [
             {
-              "damage": 104049.6855,
+              "damage": 102074.2615,
               "template": "direct"
             },
             {
-              "damage": 95196.3603,
+              "damage": 93220.9364,
               "template": "direct",
               "hits": 5
             }
           ],
           "durin.durin-skill-purity": [
             {
-              "damage": 27892.8876,
+              "damage": 32241.177,
               "template": "direct"
             }
           ],
           "durin.durin-skill-darkness": [
             {
-              "damage": 19081.2709,
+              "damage": 22055.8961,
               "template": "direct"
             },
             {
-              "damage": 14052.0987,
+              "damage": 16242.7142,
               "template": "direct"
             },
             {
-              "damage": 17073.8282,
+              "damage": 19735.5084,
               "template": "direct"
             }
           ],
           "durin.durin-burst-white": [
             {
-              "damage": 49682.8671,
+              "damage": 54960.3029,
               "template": "direct"
             },
             {
-              "damage": 40260.8304,
+              "damage": 44537.4345,
               "template": "direct"
             },
             {
-              "damage": 46709.2456,
+              "damage": 51670.8161,
               "template": "direct"
             },
             {
-              "damage": 46777.4789,
+              "damage": 50373.5142,
               "template": "direct",
               "hits": 10
             },
             {
-              "damage": 26729.9879,
+              "damage": 28784.8652,
               "template": "direct",
               "hits": 10
             }
           ],
           "emilie.emilie-skill-cast": [
             {
-              "damage": 33815.2521,
+              "damage": 32370.1776,
               "template": "direct"
             }
           ],
@@ -18458,31 +18400,31 @@
           ],
           "emilie.emilie-c6-normal": [
             {
-              "damage": 76589.1013,
+              "damage": 75246.5143,
               "template": "direct"
             },
             {
-              "damage": 75032.8886,
+              "damage": 73690.3017,
               "template": "direct"
             },
             {
-              "damage": 81148.9284,
+              "damage": 79806.3415,
               "template": "direct"
             },
             {
-              "damage": 87858.3154,
+              "damage": 86515.7285,
               "template": "direct"
             }
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 36249.0186,
+              "damage": 35469.1832,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 57338.2901,
+              "damage": 56558.4547,
               "template": "direct"
             }
           ]
@@ -18595,7 +18537,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1908.8199
+                "value": 1650.7042
               }
             ],
             "providerCharId": "durin"
@@ -18609,7 +18551,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1908.8199
+                "value": 1650.7042
               }
             ],
             "providerCharId": "durin"
@@ -18623,7 +18565,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1908.8199
+                "value": 1650.7042
               }
             ],
             "providerCharId": "durin"
@@ -18960,23 +18902,23 @@
           },
           "durin": {
             "onField": {
-              "cd": 1.8748,
+              "cd": 1.8747,
               "cr": 0.9895,
               "er": 1.3854,
               "em": 80,
               "defReduction%": 0.3,
-              "hp": 20072,
-              "atk": 4360,
+              "hp": 19412,
+              "atk": 3930,
               "def": 881
             },
             "offField": {
-              "cd": 1.8748,
+              "cd": 1.8747,
               "cr": 0.9895,
               "er": 1.3854,
               "em": 80,
               "defReduction%": 0.3,
-              "hp": 20072,
-              "atk": 3181,
+              "hp": 19412,
+              "atk": 2751,
               "def": 881
             }
           },
@@ -19040,7 +18982,7 @@
               "cd": 2.5445,
               "er": 1.2202,
               "dmg%": 2.866,
-              "baseDmg": 20631.8061,
+              "baseDmg": 20373.6904,
               "defReduction%": 0.3,
               "resReduction%": 0.8
             },
@@ -19059,27 +19001,27 @@
           },
           "durin": {
             "onField": {
-              "atk": 4360,
-              "hp": 20072,
+              "atk": 3930,
+              "hp": 19412,
               "def": 881,
               "em": 80,
               "cr": 0.9895,
-              "cd": 2.1948,
+              "cd": 2.1947,
               "er": 1.3854,
-              "dmg%": 1.05,
+              "dmg%": 1.516,
               "defReduction%": 0.3,
               "defIgnore%": 0.3,
               "resReduction%": 0.2
             },
             "offField": {
-              "atk": 3181,
-              "hp": 20072,
+              "atk": 2751,
+              "hp": 19412,
               "def": 881,
               "em": 80,
               "cr": 0.9895,
-              "cd": 2.1948,
+              "cd": 2.1947,
               "er": 1.3854,
-              "dmg%": 0.9,
+              "dmg%": 1.366,
               "defReduction%": 0.3,
               "defIgnore%": 0.3,
               "resReduction%": 0.2
@@ -19095,7 +19037,7 @@
               "cd": 1.7426,
               "er": 2.2337,
               "dmg%": 1.82,
-              "baseDmg": 10760.6217,
+              "baseDmg": 10502.506,
               "defReduction%": 0.3,
               "resReduction%": 0.8
             },
@@ -19122,7 +19064,7 @@
               "cd": 1.6228,
               "er": 1.818,
               "dmg%": 1.116,
-              "baseDmg": 1908.8199,
+              "baseDmg": 1650.7042,
               "defReduction%": 0.3,
               "resReduction%": 0.2,
               "atkSpd%": 0.1
@@ -19144,28 +19086,28 @@
         },
         "marginalGains": {
           "kinich": {
-            "atk": 0.0023,
-            "atk%": 0.0079,
+            "atk": 0.0018,
+            "atk%": 0.0062,
             "cr": 0.0001,
-            "cd": 0.0106
+            "cd": 0.0086
           },
           "durin": {
-            "atk": 0.0009,
-            "atk%": 0.0027,
-            "cr": 0.001,
-            "cd": 0.0029
+            "atk": 0.0013,
+            "atk%": 0.0039,
+            "cr": 0.0014,
+            "cd": 0.0039
           },
           "emilie": {
-            "atk": 0.0018,
-            "atk%": 0.0056,
-            "cr": 0.007,
-            "cd": 0.0071
+            "atk": 0.0023,
+            "atk%": 0.0069,
+            "cr": 0.0085,
+            "cd": 0.0087
           },
           "bennett": {
             "atk": 0.0001,
-            "atk%": 0.0001,
-            "cr": 0.0003,
-            "cd": 0.0003
+            "atk%": 0.0002,
+            "cr": 0.0004,
+            "cd": 0.0004
           }
         },
         "levelUpGains": {}
@@ -19515,7 +19457,7 @@
       "display": {
         "totalDamage": 12226248.6937,
         "partsByFormula": {
-          "mualani.mualani-bite-heavy": [
+          "mualani.mualani-bite": [
             {
               "damage": 773605.9475,
               "template": "direct"
@@ -20536,7 +20478,7 @@
           "minCr": 0.04
         }
       },
-      "damage": 6684354.4328,
+      "damage": 6431358.338,
       "comboResult": {
         "lineDamages": [
           {
@@ -20548,28 +20490,24 @@
             "total": 1089164.5092
           },
           {
-            "perHit": 69620.3677,
-            "total": 139240.7355
+            "perHit": 78789.1794,
+            "total": 157578.3588
           },
           {
-            "perHit": 134244.0584,
-            "total": 268488.1167
+            "perHit": 151923.633,
+            "total": 303847.266
           },
           {
-            "perHit": 142604.101,
-            "total": 285208.202
+            "perHit": 129046.4757,
+            "total": 258092.9514
           },
           {
-            "perHit": 108952.7083,
-            "total": 217905.4166
+            "perHit": 131926.5695,
+            "total": 227826.8599
           },
           {
-            "perHit": 149882.3098,
-            "total": 299764.6195
-          },
-          {
-            "perHit": 38974.0815,
-            "total": 77948.1629
+            "perHit": 44106.8612,
+            "total": 88213.7224
           },
           {
             "perHit": 9323.0671,
@@ -20600,7 +20538,7 @@
             "total": 129408.809
           }
         ],
-        "totalDamage": 6684354.4328
+        "totalDamage": 6431358.338
       },
       "artifacts": {
         "clorinde": {
@@ -20660,48 +20598,48 @@
             "setKey": "generated",
             "mainStat": "hp",
             "substats": {
-              "er": 11.01,
+              "er": 27.53,
               "cr": 3.31,
-              "cd": 19.81,
-              "hp%": 9.91
+              "cd": 6.6,
+              "hp%": 4.96
             }
           },
           "plume": {
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "cr": 9.92,
-              "hp%": 9.91,
-              "cd": 13.21,
+              "er": 27.53,
+              "cd": 6.6,
+              "hp%": 4.96,
               "em": 19.82
             }
           },
           "sands": {
             "setKey": "generated",
-            "mainStat": "er",
+            "mainStat": "hp%",
             "substats": {
+              "er": 11.01,
               "cr": 9.92,
               "cd": 13.21,
-              "hp%": 9.91,
               "em": 19.82
             }
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "hp%",
+            "mainStat": "hydro%",
             "substats": {
-              "cr": 6.61,
-              "cd": 26.42,
-              "em": 19.82,
-              "hp": 253.94
+              "cr": 16.53,
+              "cd": 6.6,
+              "hp%": 4.96,
+              "em": 19.82
             }
           },
           "circlet": {
             "setKey": "generated",
             "mainStat": "cr",
             "substats": {
-              "cd": 19.81,
-              "hp%": 14.87,
+              "cd": 33.02,
+              "hp%": 4.96,
               "em": 19.82,
               "hp": 253.94
             }
@@ -20821,10 +20759,10 @@
           "atk": 361
         },
         "columbina": {
-          "hp": 5288,
-          "er": 0.6281,
-          "cr": 0.6085,
-          "cd": 0.9247,
+          "hp": 5034,
+          "er": 0.6606,
+          "cr": 0.6084,
+          "cd": 0.6605,
           "atk": 311,
           "em": 79
         },
@@ -20846,7 +20784,7 @@
         }
       },
       "display": {
-        "totalDamage": 6684354.4328,
+        "totalDamage": 6431358.338,
         "partsByFormula": {
           "clorinde.clorinde-normal": [
             {
@@ -20878,40 +20816,38 @@
           ],
           "columbina.columbina-skill-initial": [
             {
-              "damage": 69620.3677,
+              "damage": 78789.1794,
               "template": "direct"
             }
           ],
           "columbina.columbina-burst": [
             {
-              "damage": 134244.0584,
+              "damage": 151923.633,
               "template": "direct"
             }
           ],
           "columbina.columbina-charge": [
             {
-              "damage": 47534.7003,
+              "damage": 43015.4919,
               "template": "lunarDirect",
               "hits": 3
             }
           ],
           "columbina.columbina-skill-interference": [
             {
-              "damage": 21790.5417,
+              "damage": 26385.3139,
               "template": "lunarDirect",
-              "hits": 5
-            }
-          ],
-          "columbina.columbina-skill-interference-c4": [
+              "hits": 2.5
+            },
             {
-              "damage": 29976.462,
+              "damage": 19180.0581,
               "template": "lunarDirect",
-              "hits": 5
+              "hits": 2.5
             }
           ],
           "columbina.columbina-ripple": [
             {
-              "damage": 38974.0815,
+              "damage": 44106.8612,
               "template": "direct"
             }
           ],
@@ -21138,7 +21074,7 @@
             "entries": [
               {
                 "key": "em",
-                "value": 192.6994
+                "value": 178.1621
               }
             ],
             "providerCharId": "columbina"
@@ -21501,7 +21437,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1376.4243
+                "value": 1272.5862
               }
             ],
             "providerCharId": "columbina"
@@ -21516,7 +21452,7 @@
               "dmg%": 0.96,
               "hp": 21407,
               "atk": 2838,
-              "em": 348,
+              "em": 333,
               "def": 840
             },
             "offField": {
@@ -21531,19 +21467,19 @@
           },
           "columbina": {
             "onField": {
-              "cr": 1.0005,
-              "cd": 2.3067,
-              "er": 1.6281,
-              "hp": 55057,
+              "cr": 1.0004,
+              "cd": 2.0425,
+              "er": 1.6606,
+              "hp": 50903,
               "atk": 970,
-              "em": 427,
+              "em": 412,
               "def": 552
             },
             "offField": {
-              "cr": 1.0005,
-              "cd": 2.3067,
-              "er": 1.6281,
-              "hp": 55057,
+              "cr": 1.0004,
+              "cd": 2.0425,
+              "er": 1.6606,
+              "hp": 50903,
               "atk": 970,
               "em": 79,
               "def": 552
@@ -21556,7 +21492,7 @@
               "er": 2.4539,
               "hp": 18290,
               "atk": 2581,
-              "em": 407,
+              "em": 392,
               "def": 887
             },
             "offField": {
@@ -21578,7 +21514,7 @@
               "hp": 18067,
               "atk": 1321,
               "def": 5134,
-              "em": 348
+              "em": 333
             },
             "offField": {
               "cr": 0.5458,
@@ -21597,7 +21533,7 @@
               "atk": 2838,
               "hp": 21407,
               "def": 840,
-              "em": 348,
+              "em": 333,
               "cr": 1.0183,
               "cd": 3.1639,
               "er": 1.2202,
@@ -21619,13 +21555,13 @@
           "columbina": {
             "onField": {
               "atk": 970,
-              "hp": 55057,
+              "hp": 50903,
               "def": 552,
-              "em": 427,
-              "cr": 1.0005,
-              "cd": 3.1067,
-              "er": 1.6281,
-              "dmg%": 0.512,
+              "em": 412,
+              "cr": 1.0004,
+              "cd": 2.8425,
+              "er": 1.6606,
+              "dmg%": 0.978,
               "baseDmg": 3337.0337,
               "reactionBaseDmg%": 0.07,
               "elevated%": 0.2,
@@ -21635,13 +21571,13 @@
             },
             "offField": {
               "atk": 970,
-              "hp": 55057,
+              "hp": 50903,
               "def": 552,
               "em": 79,
-              "cr": 1.0005,
-              "cd": 3.1067,
-              "er": 1.6281,
-              "dmg%": 0.512,
+              "cr": 1.0004,
+              "cd": 2.8425,
+              "er": 1.6606,
+              "dmg%": 0.978,
               "reactionBaseDmg%": 0.07,
               "elevated%": 0.2,
               "reactionDmg%": 0.85,
@@ -21654,7 +21590,7 @@
               "atk": 2581,
               "hp": 18290,
               "def": 887,
-              "em": 407,
+              "em": 392,
               "cr": 0.7513,
               "cd": 1.6904,
               "er": 2.4539,
@@ -21684,7 +21620,7 @@
               "atk": 1321,
               "hp": 18067,
               "def": 5134,
-              "em": 348,
+              "em": 333,
               "cr": 0.5458,
               "cd": 0.9624,
               "er": 1.0551,
@@ -21706,28 +21642,28 @@
         },
         "marginalGains": {
           "clorinde": {
-            "atk": 0.0014,
-            "atk%": 0.0045,
-            "cd": 0.0046
+            "atk": 0.0015,
+            "atk%": 0.0047,
+            "cd": 0.0048
           },
           "columbina": {
-            "hp": 0.0008,
-            "hp%": 0.0025,
-            "em": 0.0021,
-            "cd": 0.0026
+            "hp": 0.0007,
+            "hp%": 0.0022,
+            "em": 0.0011,
+            "cd": 0.0024
           },
           "ineffa": {
-            "atk": 0.0029,
-            "atk%": 0.0089,
-            "em": 0.0047,
-            "cr": 0.0103,
-            "cd": 0.0092
+            "atk": 0.0031,
+            "atk%": 0.0093,
+            "em": 0.0049,
+            "cr": 0.0107,
+            "cd": 0.0095
           },
           "xilonen": {
-            "def": 0.0006,
-            "def%": 0.002,
-            "cr": 0.002,
-            "cd": 0.0023
+            "def": 0.0007,
+            "def%": 0.0021,
+            "cr": 0.0021,
+            "cd": 0.0024
           }
         },
         "levelUpGains": {}
@@ -31185,7 +31121,7 @@
           "minCr": 0.31
         }
       },
-      "damage": 11358790.6998,
+      "damage": 11129114.296,
       "comboResult": {
         "lineDamages": [
           {
@@ -31209,12 +31145,8 @@
             "total": 210148.3625
           },
           {
-            "perHit": 94114.6148,
-            "total": 188229.2297
-          },
-          {
             "perHit": 135561.789,
-            "total": 271123.5781
+            "total": 229676.4039
           },
           {
             "perHit": 58255.2141,
@@ -31257,7 +31189,7 @@
             "total": 393243.019
           }
         ],
-        "totalDamage": 11358790.6998
+        "totalDamage": 11129114.296
       },
       "artifacts": {
         "navia": {
@@ -31501,7 +31433,7 @@
         }
       },
       "display": {
-        "totalDamage": 11358790.6998,
+        "totalDamage": 11129114.296,
         "partsByFormula": {
           "navia.navia-crystalshot": [
             {
@@ -31541,16 +31473,14 @@
           ],
           "columbina.columbina-skill-interference": [
             {
-              "damage": 18822.923,
-              "template": "lunarDirect",
-              "hits": 5
-            }
-          ],
-          "columbina.columbina-skill-interference-c4": [
-            {
               "damage": 27112.3578,
               "template": "lunarDirect",
-              "hits": 5
+              "hits": 2.5
+            },
+            {
+              "damage": 18822.923,
+              "template": "lunarDirect",
+              "hits": 2.5
             }
           ],
           "columbina.columbina-ripple": [
@@ -32429,27 +32359,27 @@
             "atk": 0.0007,
             "atk%": 0.0022,
             "cr": 0.0006,
-            "cd": 0.0022
+            "cd": 0.0023
           },
           "columbina": {
-            "hp": 0.0005,
-            "hp%": 0.0016,
-            "em": 0.0013,
-            "cd": 0.0017
+            "hp": 0.0004,
+            "hp%": 0.0013,
+            "em": 0.0008,
+            "cd": 0.0015
           },
           "xilonen": {
             "def": 0.0008,
-            "def%": 0.0025,
-            "cr": 0.0038,
-            "cd": 0.0038
+            "def%": 0.0026,
+            "cr": 0.0039,
+            "cd": 0.0039
           },
           "furina": {
             "hp": 0.002,
-            "hp%": 0.0064,
+            "hp%": 0.0065,
             "atk": 0.0001,
             "atk%": 0.0003,
-            "cr": 0.0143,
-            "cd": 0.0098
+            "cr": 0.0146,
+            "cd": 0.01
           }
         },
         "levelUpGains": {}
@@ -44151,7 +44081,7 @@
           "minCr": 0.48
         }
       },
-      "damage": 4544257.222,
+      "damage": 4608719.8736,
       "comboResult": {
         "lineDamages": [
           {
@@ -44159,8 +44089,8 @@
             "total": 103808.1776
           },
           {
-            "perHit": 322232.9229,
-            "total": 644465.8459
+            "perHit": 354464.2488,
+            "total": 708928.4975
           },
           {
             "perHit": 83225.0305,
@@ -44203,7 +44133,7 @@
             "total": 98197.2709
           }
         ],
-        "totalDamage": 4544257.222
+        "totalDamage": 4608719.8736
       },
       "artifacts": {
         "wanderer": {
@@ -44445,7 +44375,7 @@
         }
       },
       "display": {
-        "totalDamage": 4544257.222,
+        "totalDamage": 4608719.8736,
         "partsByFormula": {
           "wanderer.wanderer-skill": [
             {
@@ -44455,15 +44385,15 @@
           ],
           "wanderer.wanderer-normal": [
             {
-              "damage": 93780.1568,
+              "damage": 103450.7648,
               "template": "direct"
             },
             {
-              "damage": 89513.4189,
+              "damage": 98663.5813,
               "template": "direct"
             },
             {
-              "damage": 69469.6736,
+              "damage": 76174.9513,
               "template": "direct",
               "hits": 2
             }
@@ -45145,25 +45075,25 @@
         },
         "marginalGains": {
           "wanderer": {
-            "atk": 0.0017,
-            "atk%": 0.0056,
+            "atk": 0.0018,
+            "atk%": 0.0057,
             "cr": 0.0058,
-            "cd": 0.0119
+            "cd": 0.0121
           },
           "durin": {
-            "atk": 0.0024,
-            "atk%": 0.0073,
-            "cr": 0.0086,
-            "cd": 0.0084
+            "atk": 0.0023,
+            "atk%": 0.0072,
+            "cr": 0.0085,
+            "cd": 0.0083
           },
           "faruzan": {
             "atk": 0.0001,
             "atk%": 0.0003,
-            "cr": 0.0009,
+            "cr": 0.0008,
             "cd": 0.0008
           },
           "bennett": {
-            "atk": 0.0002,
+            "atk": 0.0001,
             "atk%": 0.0004,
             "cr": 0.0008,
             "cd": 0.0008
@@ -45205,7 +45135,7 @@
           "minCr": 0.22
         }
       },
-      "damage": 3535188.8953,
+      "damage": 3553691.6327,
       "comboResult": {
         "lineDamages": [
           {
@@ -45265,12 +45195,12 @@
             "total": 28913.7358
           },
           {
-            "perHit": 29243.3688,
-            "total": 58486.7377
+            "perHit": 36262.7623,
+            "total": 72525.5246
           },
           {
-            "perHit": 15417.9489,
-            "total": 30835.8978
+            "perHit": 17649.9241,
+            "total": 35299.8483
           },
           {
             "perHit": 24610.7437,
@@ -45281,7 +45211,7 @@
             "total": 39189.1242
           }
         ],
-        "totalDamage": 3535188.8953
+        "totalDamage": 3553691.6327
       },
       "artifacts": {
         "nilou": {
@@ -45522,7 +45452,7 @@
         }
       },
       "display": {
-        "totalDamage": 3535188.8953,
+        "totalDamage": 3553691.6327,
         "partsByFormula": {
           "nilou.nilou-e-dance": [
             {
@@ -45644,21 +45574,21 @@
           ],
           "sangonomiya_kokomi.kokomi-normal": [
             {
-              "damage": 9489.7793,
+              "damage": 11838.9028,
               "template": "direct"
             },
             {
-              "damage": 9212.5679,
+              "damage": 11571.7111,
               "template": "direct"
             },
             {
-              "damage": 10541.0216,
+              "damage": 12852.1484,
               "template": "direct"
             }
           ],
           "sangonomiya_kokomi.kokomi-charged": [
             {
-              "damage": 15417.9489,
+              "damage": 17649.9241,
               "template": "direct"
             }
           ],
@@ -46097,8 +46027,22 @@
             },
             "entries": [
               {
-                "key": "baseDmg%",
-                "value": 0.0375
+                "key": "baseDmg",
+                "value": 1800.0475
+              }
+            ],
+            "providerCharId": "sangonomiya_kokomi"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "sangonomiya_kokomi",
+              "origin": "P2"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1800.0475
               }
             ],
             "providerCharId": "sangonomiya_kokomi"
@@ -46382,8 +46326,7 @@
               "er": 1,
               "heal%": 0.25,
               "dmg%": 1.154,
-              "baseDmg": 7238.4471,
-              "baseDmg%": 0.0375,
+              "baseDmg": 8711.7499,
               "resReduction%": 0.69,
               "atkSpd%": 0.1
             },
@@ -46407,25 +46350,25 @@
             "hp%": 0.0034,
             "em": 0.0003,
             "cr": 0.0034,
-            "cd": 0.0036
+            "cd": 0.0035
           },
           "lauma": {
             "atk": 0.0001,
             "atk%": 0.0003,
             "em": 0.0091,
-            "cr": 0.0139,
-            "cd": 0.0141
+            "cr": 0.0138,
+            "cd": 0.014
           },
           "nahida": {
             "atk": 0.0006,
-            "atk%": 0.0018,
+            "atk%": 0.0017,
             "em": 0.0019,
             "cr": 0.0034,
             "cd": 0.003
           },
           "sangonomiya_kokomi": {
             "hp": 0.0002,
-            "hp%": 0.0005,
+            "hp%": 0.0006,
             "atk": 0.0002,
             "atk%": 0.0005
           }
@@ -51835,7 +51778,7 @@
           "minCr": 0.01
         }
       },
-      "damage": 11260422.6438,
+      "damage": 10993950.4202,
       "comboResult": {
         "lineDamages": [
           {
@@ -51867,12 +51810,8 @@
             "total": 209061.9495
           },
           {
-            "perHit": 108571.4036,
-            "total": 217142.8071
-          },
-          {
             "perHit": 157900.82,
-            "total": 315801.64
+            "total": 266472.2236
           },
           {
             "perHit": 87451.7674,
@@ -51911,7 +51850,7 @@
             "total": 512382.5752
           }
         ],
-        "totalDamage": 11260422.6438
+        "totalDamage": 10993950.4202
       },
       "artifacts": {
         "raiden_shogun": {
@@ -52155,7 +52094,7 @@
         }
       },
       "display": {
-        "totalDamage": 11260422.6438,
+        "totalDamage": 10993950.4202,
         "partsByFormula": {
           "raiden_shogun.raiden-e-cast": [
             {
@@ -52207,16 +52146,14 @@
           ],
           "columbina.columbina-skill-interference": [
             {
-              "damage": 21714.2807,
-              "template": "lunarDirect",
-              "hits": 5
-            }
-          ],
-          "columbina.columbina-skill-interference-c4": [
-            {
               "damage": 31580.164,
               "template": "lunarDirect",
-              "hits": 5
+              "hits": 2.5
+            },
+            {
+              "damage": 21714.2807,
+              "template": "lunarDirect",
+              "hits": 2.5
             }
           ],
           "columbina.columbina-ripple": [
@@ -53112,30 +53049,30 @@
         "marginalGains": {
           "raiden_shogun": {
             "atk": 0.0008,
-            "atk%": 0.0023,
+            "atk%": 0.0024,
             "er": 0.0011,
             "em": 0.0027,
-            "cd": 0.0033
+            "cd": 0.0034
           },
           "columbina": {
             "hp": 0.0006,
-            "hp%": 0.002,
-            "em": 0.0016,
-            "cd": 0.0022
+            "hp%": 0.0017,
+            "em": 0.001,
+            "cd": 0.002
           },
           "xilonen": {
             "def": 0.0005,
-            "def%": 0.0015,
-            "cr": 0.0015,
+            "def%": 0.0016,
+            "cr": 0.0016,
             "cd": 0.0016
           },
           "furina": {
             "hp": 0.0022,
-            "hp%": 0.007,
+            "hp%": 0.0072,
             "atk": 0.0002,
             "atk%": 0.0004,
-            "cr": 0.0075,
-            "cd": 0.0125
+            "cr": 0.0076,
+            "cd": 0.0128
           }
         },
         "levelUpGains": {}
