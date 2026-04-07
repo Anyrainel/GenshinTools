@@ -1,0 +1,8 @@
+# Missing hashed bundle assets must 404, not fall back to index.html.
+# Otherwise a stale tab requesting an old hash receives HTML and the
+# browser refuses it with a strict-MIME error (blank screen).
+/assets/*  /assets/:splat  404
+
+# SPA fallback: any other unknown path renders the app shell so that
+# deep links, refreshes, and typos all hit the client-side router.
+/*         /index.html     200
