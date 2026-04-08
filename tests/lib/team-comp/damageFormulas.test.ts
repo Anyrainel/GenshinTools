@@ -230,7 +230,7 @@ describe("LunarFormula", () => {
     expect(dp.template).toBe("lunar");
     expect(dp.scalingKeys).toEqual([]);
     expect(dp.scalingMulti).toEqual([]);
-    expect(dp.params.reactionCoeff).toBeCloseTo(1.8);
+    expect(dp.params.reactionCoeff).toBeCloseTo(3);
     expect(dp.params.emCoeff).toBe(6);
     expect(dp.statValues.em).toBe(400);
     expect(dp.statValues.cr).toBeCloseTo(0.5);

@@ -18,6 +18,7 @@
 ### fixes
 - Improved page cache settings
 - Fixed Kokomi P2 heal% conversion multiplier, Pyro Traveler plunge formula, and other issues
+- Update Lunar Reactions coefficients
 
 ## 2025-04-02
 

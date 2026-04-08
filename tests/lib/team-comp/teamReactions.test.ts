@@ -495,11 +495,11 @@ describe("TeamReactionProvider — multi-contributor", () => {
     expect(MULTI_CONTRIBUTOR_REACTIONS.has("lunarBloom")).toBe(false);
   });
 
-  it("LUNAR_RANK_WEIGHTS are [1, 0.5, 1/12, 1/12]", () => {
-    expect(LUNAR_RANK_WEIGHTS[0]).toBe(1);
-    expect(LUNAR_RANK_WEIGHTS[1]).toBe(0.5);
-    expect(LUNAR_RANK_WEIGHTS[2]).toBeCloseTo(1 / 12);
-    expect(LUNAR_RANK_WEIGHTS[3]).toBeCloseTo(1 / 12);
+  it("LUNAR_RANK_WEIGHTS are [0.6, 0.3, 0.05, 0.05]", () => {
+    expect(LUNAR_RANK_WEIGHTS[0]).toBe(0.6);
+    expect(LUNAR_RANK_WEIGHTS[1]).toBe(0.3);
+    expect(LUNAR_RANK_WEIGHTS[2]).toBeCloseTo(0.05);
+    expect(LUNAR_RANK_WEIGHTS[3]).toBeCloseTo(0.05);
   });
 });
 
@@ -624,9 +624,9 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
     );
     expect(display.contributors).toHaveLength(4);
     expect(display.totalDamage).toBeGreaterThan(0);
-    // Rank 1 should have weight 1
+    // Rank 1 should have weight 0.6
     expect(display.contributors[0].rank).toBe(1);
-    expect(display.contributors[0].weight).toBe(1);
+    expect(display.contributors[0].weight).toBe(0.6);
     // Sorted descending by damage
     expect(display.contributors[0].damage).toBeGreaterThanOrEqual(
       display.contributors[1].damage

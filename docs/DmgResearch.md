@@ -158,7 +158,7 @@ FinalDmg = LevelMult
 - **Crit Zone**: `CritMult` (Natively 1.0. If `reactionCr` / `reactionCd` exist, evaluates based on the expected value curve).
 
 ### 3.5 Lunar Reactions — Reaction-Based (Multi-Contributor)
-Applies to `lunarCharged` (ReactionCoeff 1.8) and `lunarCrystallize` (ReactionCoeff 0.96). Ignores the **Def Zone**. Evaluated in two steps.
+Applies to `lunarCharged` (ReactionCoeff 3) and `lunarCrystallize` (ReactionCoeff 1.6). Ignores the **Def Zone**. Evaluated in two steps.
 
 **Step 1: Individual Contributor Damage**
 ```text
@@ -179,7 +179,7 @@ IndividualDmg = [LevelMult × (1 + baseDmg%)]
 
 **Step 2: Combine Ranked Outputs**
 Combines the top individual damage packets:
-`FinalDmg = (Rank 1 Dmg) + (1/2 × Rank 2 Dmg) + (1/12 × Rank 3 Dmg) + (1/12 × Rank 4 Dmg)`
+`FinalDmg = (0.6 × Rank1) + (0.3 × Rank2) + (0.05 × Rank3) + (0.05 × Rank4)`
 
 ### 3.6 Lunar Reactions — Direct (Single Ability)
 Character abilities that scale and deal Lunar DMG without needing an elemental reaction trigger (mostly `lunarBloom`, but also trailing `lunarCrystallize` or inline `lunarCharged`). Ignores the **Def Zone**.

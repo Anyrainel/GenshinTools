@@ -120,7 +120,7 @@ FinalDmg = ReactionCoeff × LevelMult × (1 + TransformEmBonus% + reactionDmg%) 
 Coefficients: Burning 0.25, Swirl 0.6, Superconduct 1.5, ElectroCharged 2.0, Bloom 2.0, Overloaded 2.75, Burgeon/Hyperbloom 3.0, Shatter 3.0.
 
 ### 3.5 Lunar Reaction (Multi-Contributor)
-Applies to `lunarCharged` (1.8) and `lunarCrystallize` (0.96). **No Def Zone.**
+Applies to `lunarCharged` (3) and `lunarCrystallize` (1.6). **No Def Zone.**
 
 **Per-contributor:**
 ```
@@ -128,7 +128,7 @@ IndividualDmg = ReactionCoeff × LevelMult × (1 + baseDmg%) × (1 + reactionBas
               × (1 + LunarEmBonus% + reactionDmg%) × CritMult × ResMult × ElevateMult
 ```
 
-**Combined:** `(Rank1) + (½ × Rank2) + (1/12 × Rank3) + (1/12 × Rank4)`
+**Combined:** `(0.6 × Rank1) + (0.3 × Rank2) + (0.05 × Rank3) + (0.05 × Rank4)`
 
 ### 3.6 Lunar Direct (Single Ability)
 Character abilities that deal Lunar DMG without a reaction trigger. **No Def Zone.**

@@ -848,6 +848,8 @@ export class TeamBuild {
   readonly enemyAura?: Element;
   /** Extra buffs (food/env/status/custom) applied to stat sheets. */
   readonly extraBuffs: ExtraBuff[];
+  /** Enemy context used for baseline lunar rank computation. */
+  readonly baselineCtx: CalcContext;
 
   constructor(
     configs: TeamSlotConfig[],
@@ -863,12 +865,22 @@ export class TeamBuild {
      * (Other characters' constellations in the original TeamMeta are irrelevant
      * because no implementation checks cross-character constellation/refinement.)
      */
-    cachedCharBuilds?: Record<string, CharBuild>
+    cachedCharBuilds?: Record<string, CharBuild>,
+    /**
+     * Enemy context used for baseline lunar rank computation. Only the
+     * relative damage between contributors matters for ranking, but using
+     * the caller's actual ctx keeps results consistent across paths.
+     */
+    baselineCtx?: Partial<CalcContext>
   ) {
     this.configs = configs;
     this.combatOpts = combatOpts;
     this.enemyAura = enemyAura;
     this.extraBuffs = extraBuffs;
+    this.baselineCtx = {
+      enemyLevel: baselineCtx?.enemyLevel ?? 110,
+      enemyRes: baselineCtx?.enemyRes ?? 0.1,
+    };
     const charIds = configs.map((c) => c.charId);
     const constellations: Record<string, number> = {};
     const artifactSets: Record<string, string> = {};
@@ -958,8 +970,7 @@ export class TeamBuild {
   /**
    * Compute rank weights for multi-contributor lunar reactions from baseline
    * stats (base + weapon + static buffs, no artifacts). This determines
-   * a fixed ranking [1x, 0.5x, 1/12x, 1/12x] that both the compiled and
-   * interpreted paths use consistently.
+   * a fixed ranking that both the compiled and interpreted paths use consistently.
    */
   private computeBaselineLunarRanks(configs: TeamSlotConfig[]): void {
     const rxFormulas = this.reactionProvider.getFormulaIds();
@@ -981,10 +992,7 @@ export class TeamBuild {
       for (const config of configs) {
         const stats = baselineStats[config.charId];
         if (!stats) continue;
-        const damage = formula.calc(stats, config.charLevel, {
-          enemyLevel: 90,
-          enemyRes: 0.1,
-        });
+        const damage = formula.calc(stats, config.charLevel, this.baselineCtx);
         contributions.push({ charId: config.charId, damage });
       }
 

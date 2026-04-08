@@ -53,19 +53,7 @@ const CATALYZE_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
 // ─── Lunar Reaction Coefficients (reaction-based variant) ───
 
 const LUNAR_REACTION_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
-  lunarCharged: 1.8,
-  lunarCrystallize: 0.96,
-  lunarBloom: 2.0,
-};
-
-/**
- * DirectCoeff for character abilities dealing Lunar DMG.
- * lunarCharged: ×3 (inline multiplier to talent scaling)
- * lunarCrystallize: ×1.6 (trailing multiplier)
- * lunarBloom: 1.0 (no extra coefficient — talent multiplier already accounts for it)
- */
-const LUNAR_DIRECT_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
-  lunarCharged: 3.0,
+  lunarCharged: 3,
   lunarCrystallize: 1.6,
   lunarBloom: 1.0,
 };
@@ -1000,7 +988,7 @@ export class LunarDirectFormula extends DamageFormula {
   }
 
   protected override validateReaction(): void {
-    if (!(this.tag.reaction in LUNAR_DIRECT_COEFFICIENTS)) {
+    if (!(this.tag.reaction in LUNAR_REACTION_COEFFICIENTS)) {
       throw new Error(
         `LunarDirectFormula requires a lunar reaction, got "${this.tag.reaction}"`
       );
@@ -1021,7 +1009,7 @@ export class LunarDirectFormula extends DamageFormula {
         )
       );
     }
-    const directCoeff = LUNAR_DIRECT_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+    const directCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
 
     const em = stats.get("em", this.tag);
     const emBonus = E.div(E.mul(E.const(6), em), E.add(E.const(2000), em));
@@ -1054,7 +1042,7 @@ export class LunarDirectFormula extends DamageFormula {
       scalingDmg +=
         stats.get(this.extraTerm.key, this.tag) * this.extraTerm.multiplier;
     }
-    const directCoeff = LUNAR_DIRECT_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+    const directCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
 
     const em = stats.get("em", this.tag);
     const emBonus = (6 * em) / (2000 + em);
@@ -1078,7 +1066,7 @@ export class LunarDirectFormula extends DamageFormula {
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
     const { keys, multi } = this.getScalingInfo();
-    const directCoeff = LUNAR_DIRECT_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+    const directCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
 
     const em = stats.get("em", this.tag);
     const emCoeff = 6;

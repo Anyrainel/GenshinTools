@@ -270,7 +270,9 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
         configs,
         team.opts || {},
         team.enemyAura,
-        team.extraBuffs
+        team.extraBuffs,
+        undefined,
+        team.calcContext
       );
       return { teamBuild: tb, buildError: null };
     } catch (e: unknown) {

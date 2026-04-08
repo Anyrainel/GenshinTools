@@ -201,23 +201,9 @@ const ELEMENTAL_KEYS = [
   "phys%",
 ];
 
-/** Render a lunar rank weight as a proper fraction (stacked numerator/denominator). */
+/** Render a lunar rank weight as a plain number. */
 function RankWeight({ w }: { w: number }) {
-  if (w === 1)
-    return <span className="font-[math] font-bold text-primary">1</span>;
-  const [num, den] =
-    w === 0.5
-      ? [1, 2]
-      : Math.abs(w - 1 / 12) < 0.001
-        ? [1, 12]
-        : [Math.round(w * 100), 100];
-  return (
-    <span className="inline-flex flex-col items-center font-[math] font-bold text-primary leading-none">
-      <span className="text-[10px] md:text-xs">{num}</span>
-      <span className="w-full border-t border-current" />
-      <span className="text-[10px] md:text-xs">{den}</span>
-    </span>
-  );
+  return <span className="font-[math] font-bold text-primary">{w}</span>;
 }
 
 // ─── Zones ───
