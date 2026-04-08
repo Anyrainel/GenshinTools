@@ -83,7 +83,11 @@ export type TriageDecision = {
 // Settings
 // ---------------------------------------------------------------------------
 
+export type TriageMode = "strict" | "loose";
+
 export type TriageSettings = {
+  /** Triage strictness mode. Loose mode uses looser per-tier probability thresholds. */
+  triageMode: TriageMode;
   mainStatThreshold: number; // default 90 (weight 0-100 scale)
   optionalSubThreshold: number; // default 50 (weight 0-100 scale)
   neutralKeep: number; // default 2
@@ -94,6 +98,12 @@ export type TriageSettings = {
   erHoardingAllEnabled: boolean; // default false (all sets, not just support)
   doubleCritLockEnabled: boolean; // default true
   levelProtection: number; // default 12 (artifacts >= this level are protected)
+  /**
+   * When true, high-level artifacts (≥ levelProtection) are NOT auto-protected;
+   * they go through normal triage and, if rejected, are re-evaluated by the
+   * strategic value pass (concentrated-stat rule etc.). Default false.
+   */
+  strategicHighLevelEvaluation: boolean;
   equippedProtection: boolean; // default true
   disabledFlexPatterns: string[];
   enabledFlexPatterns: string[];

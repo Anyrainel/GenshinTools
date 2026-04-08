@@ -725,6 +725,85 @@ function getIdealMainStat(slot: Slot, evalBuild: EvalBuild): MainStat {
 }
 
 // ---------------------------------------------------------------------------
+// 4b. Build selection by account constellation
+// ---------------------------------------------------------------------------
+
+/**
+ * Key identifying a "build slot" for a character: composition + set-identity + role.
+ * Within a character, multiple builds sharing this key are alternatives
+ * differentiated by minCons — only the highest one ≤ charCons should be used.
+ */
+function buildSlotKey(build: Build): string | null {
+  const role = getArchetypeRole(build);
+  if (build.composition === "4pc") {
+    if (!build.artifactSet) return null;
+    return `4pc:${build.artifactSet}:${role}`;
+  }
+  if (build.composition === "2pc+2pc") {
+    if (build.halfSet1 == null || build.halfSet2 == null) return null;
+    const pair = [String(build.halfSet1), String(build.halfSet2)]
+      .sort()
+      .join("+");
+    return `2+2:${pair}:${role}`;
+  }
+  return null;
+}
+
+/**
+ * For each character, collapse builds that target the same (composition, set,
+ * role) slot down to a single build: the one with the highest `minCons` that
+ * is still ≤ the character's current constellation. Unowned characters are
+ * treated as C0.
+ */
+export function selectActiveBuildsForAccount(
+  buildGroups: BuildGroup[],
+  accountData: AccountData
+): BuildGroup[] {
+  const consByChar = new Map<string, number>();
+  for (const c of accountData.characters) {
+    consByChar.set(c.key, c.constellation);
+  }
+
+  const out: BuildGroup[] = [];
+  for (const group of buildGroups) {
+    const charCons = consByChar.get(group.characterId) ?? 0;
+    const bestBySlot = new Map<string, Build>();
+    const unslotted: Build[] = [];
+
+    for (const build of group.builds) {
+      const slotKey = buildSlotKey(build);
+      if (slotKey == null) {
+        unslotted.push(build);
+        continue;
+      }
+      const minCons = build.minCons ?? 0;
+      if (minCons > charCons) continue;
+      const current = bestBySlot.get(slotKey);
+      const currentCons = current ? (current.minCons ?? 0) : -1;
+      if (minCons > currentCons) bestBySlot.set(slotKey, build);
+    }
+
+    out.push({
+      ...group,
+      builds: [...unslotted, ...bestBySlot.values()],
+    });
+  }
+  return out;
+}
+
+/**
+ * Drop build groups for characters the account does not own. Used by resource
+ * suggestions so we never recommend spending on characters you don't have.
+ */
+export function filterOwnedBuildGroups(
+  buildGroups: BuildGroup[],
+  accountData: AccountData
+): BuildGroup[] {
+  const owned = new Set(accountData.characters.map((c) => c.key));
+  return buildGroups.filter((g) => owned.has(g.characterId));
+}
+
+// ---------------------------------------------------------------------------
 // 5. Evaluate all builds, grouped by artifact set
 // ---------------------------------------------------------------------------
 

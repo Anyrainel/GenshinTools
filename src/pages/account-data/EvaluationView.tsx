@@ -1,5 +1,6 @@
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
+import { ResourceSuggestionsPanel } from "@/components/account-data/ResourceSuggestionsPanel";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -19,11 +20,15 @@ import {
   COMPLETION_TIERS,
   type SetGroup,
   evaluateAllBuilds,
+  filterOwnedBuildGroups,
   getTier,
+  selectActiveBuildsForAccount,
 } from "@/lib/account-data/buildEvaluation";
+import { generateResourceSuggestions } from "@/lib/account-data/resourceRecommendations";
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { useResourceRecStore } from "@/stores/useResourceRecStore";
 import { useTierStore } from "@/stores/useTierStore";
 import {
   ArrowDownWideNarrow,
@@ -57,16 +62,23 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
 
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
+  const recThresholds = useResourceRecStore((s) => s.thresholds);
+  const recMinScoreDiff = useResourceRecStore((s) => s.minScoreDiff);
 
   const ownedKeys = useMemo(
     () => new Set(accountData?.characters.map((c) => c.key) ?? []),
     [accountData]
   );
 
+  const activeBuildGroups = useMemo(() => {
+    if (!accountData) return [];
+    return selectActiveBuildsForAccount(buildGroups, accountData);
+  }, [buildGroups, accountData]);
+
   const setGroups = useMemo(() => {
     if (!accountData) return [];
     const groups = evaluateAllBuilds(
-      buildGroups,
+      activeBuildGroups,
       accountData,
       scoreConfig.global,
       true
@@ -121,7 +133,7 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
 
     return groups;
   }, [
-    buildGroups,
+    activeBuildGroups,
     accountData,
     scoreConfig.global,
     sortDir,
@@ -148,6 +160,34 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
       }))
       .filter((g) => g.evaluations.length > 0);
   }, [setGroups, roleFilter, tierFilter, ownedOnly, ownedKeys]);
+
+  const resourceSuggestions = useMemo(() => {
+    if (!accountData) return [];
+    // Resource suggestions always restrict to owned characters — no point
+    // recommending elixirs for characters you don't have.
+    const ownedGroups = filterOwnedBuildGroups(activeBuildGroups, accountData);
+    const ownedSetGroups = evaluateAllBuilds(
+      ownedGroups,
+      accountData,
+      scoreConfig.global,
+      true
+    );
+    return generateResourceSuggestions(
+      ownedSetGroups,
+      accountData,
+      tierAssignments,
+      recThresholds,
+      recMinScoreDiff,
+      scoreConfig.global
+    );
+  }, [
+    activeBuildGroups,
+    accountData,
+    tierAssignments,
+    recThresholds,
+    recMinScoreDiff,
+    scoreConfig.global,
+  ]);
 
   // Aggregate stats (from unfiltered data) — must be above early returns
   const { tierCounts, avgCompleteness, totalBuilds } = useMemo(() => {
@@ -326,6 +366,7 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
       }
       bodyClassName="space-y-4"
     >
+      <ResourceSuggestionsPanel suggestions={resourceSuggestions} />
       {/* Set Groups */}
       {filteredGroups.map((group) => (
         <SetGroupSection key={group.artifactSet} group={group} />

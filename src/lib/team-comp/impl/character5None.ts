@@ -914,6 +914,23 @@ class TravelerPyro extends CharacterBase {
           },
         ],
       },
+      // Plunge (High): param11. Element is Physical normally, but C6 converts
+      // NA/CA/Plunge to Pyro during Nightsoul's Blessing.
+      "traveler-pyro-plunge": {
+        label: {
+          zh: "下落攻击(高空)",
+          en: "Plunge (High)",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 11), {
+              element: this.constellation >= 6 ? "Pyro" : "Physical",
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 

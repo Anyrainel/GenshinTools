@@ -11,6 +11,7 @@ import { getEligibleSetsForHalfSet } from "./demandExtractor";
 import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { isInitial4Line } from "./is4L";
 import { extractRules } from "./ruleBuilder";
+import { runStrategicRules } from "./strategicValue";
 import { type TierResult, evaluateTier } from "./tierEvaluator";
 import type {
   DemandSource,
@@ -500,12 +501,28 @@ export function runTriage(
 
   // Post-checks: SP3 (level protection), SP4 (equipped) — tag only, no label change.
   // These are "protected" artifacts handled by the UI (shown in protected zone).
+  //
+  // Strategic evaluation: when strategicHighLevelEvaluation is enabled,
+  //   - SP3 is NOT added (so high-level artifacts flow through the normal
+  //     recommendation buckets).
+  //   - For any high-level artifact currently marked unlock, run the
+  //     strategic value rules. If a rule fires, promote to lock with a
+  //     "SV" (strategic value) ruleId + reason code stored on specialRules.
   for (const prelim of prelims) {
-    if (
+    const isHighLevel =
       settings.levelProtection > 0 &&
-      prelim.artifact.level >= settings.levelProtection
-    ) {
-      prelim.specialRules.push("SP3");
+      prelim.artifact.level >= settings.levelProtection;
+
+    if (isHighLevel) {
+      if (!settings.strategicHighLevelEvaluation) {
+        prelim.specialRules.push("SP3");
+      } else if (prelim.bestLabel === "unlock") {
+        const result = runStrategicRules(prelim.artifact);
+        if (result.kept) {
+          setLabel(prelim, "lock", "SV");
+          prelim.specialRules.push(`SV:${result.reason}`);
+        }
+      }
     }
 
     if (settings.equippedProtection && prelim.equippedOn) {

@@ -146,8 +146,8 @@ export const i18nUiData = {
       zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。确保你打开了角色详情！（不支持B服）",
     },
     uidPlaceholder: {
-      en: "Enter UID (e.g. 800000000)",
-      zh: "输入 UID (如 100000000)",
+      en: "UID (e.g. 800000000)",
+      zh: "UID (如 100000000)",
     },
     optionalUid: { en: "Optional UID", zh: "UID（选填）" },
     uidRequired: {
@@ -161,6 +161,80 @@ export const i18nUiData = {
     enkaStatusHint: {
       en: "Problems with import? Check {link}Enka status{/link}.",
       zh: "导入遇到问题？查看 {link}Enka 状态{/link}。",
+    },
+    hoyolabTitle: {
+      en: "HoYoLAB / 米游社 Import",
+      zh: "米游社 / HoYoLAB 导入",
+    },
+    hoyolabDescription: {
+      en: "Fetch your full character roster (all owned characters with equipped gear) using your HoYoLAB or 米游社 account cookie.",
+      zh: "使用你的米游社 / HoYoLAB 账号 Cookie 获取所有已拥有角色及其装备。",
+    },
+    hoyolabRegionOs: { en: "HoYoLAB (Global)", zh: "HoYoLAB（国际服）" },
+    hoyolabRegionCn: {
+      en: "米游社 (CN / Bilibili)",
+      zh: "米游社（国服 / B 服）",
+    },
+    hoyolabMissingCookie: {
+      en: "Paste your HoYoLAB / 米游社 cookie first.",
+      zh: "请先粘贴你的 HoYoLAB / 米游社 Cookie。",
+    },
+    hoyolabPrivacyNote: {
+      en: "Cookies are stored locally in your browser and only sent to our proxy to sign the request. Never persisted server-side.",
+      zh: "Cookie 仅保存在你的浏览器本地，仅在签名请求时发送到我们的代理服务，服务端不会存储。",
+    },
+    hoyolabGuideTitle: {
+      en: "How to get your HoYoLAB / 米游社 cookie",
+      zh: "如何获取 HoYoLAB / 米游社 Cookie",
+    },
+    hoyolabGuideIntro: {
+      en: "Follow these steps in a desktop browser. The cookie authenticates you — treat it like a password and never share it.",
+      zh: "请在桌面浏览器中按以下步骤操作。Cookie 相当于你的登录凭证，请像密码一样妥善保管，切勿分享。",
+    },
+    hoyolabGuideStepOsTitle: {
+      en: "Global (HoYoLAB)",
+      zh: "国际服（HoYoLAB）",
+    },
+    hoyolabHowTo: { en: "How to get cookie", zh: "如何获取 Cookie" },
+    hoyolabGuideStepOs1: {
+      en: "Open https://www.hoyolab.com in a desktop browser and log in to the account that owns your Genshin UID.",
+      zh: "在桌面浏览器中打开 https://www.hoyolab.com 并登录你的 Genshin 账号。",
+    },
+    hoyolabGuideStepOs2: {
+      en: "Press F12 → Application (Chrome/Edge) or Storage (Firefox) → Cookies → https://www.hoyolab.com.",
+      zh: "按 F12 → Application（Chrome/Edge）或 存储（Firefox）→ Cookies → https://www.hoyolab.com。",
+    },
+    hoyolabGuideStepOs3: {
+      en: "Find the rows named ltuid_v2 and ltoken_v2.",
+      zh: "找到名为 ltuid_v2 和 ltoken_v2 的两行。",
+    },
+    hoyolabGuideStepOs4: {
+      en: "Copy each value into the matching field in this dialog.",
+      zh: "分别将两个值粘贴到此对话框中对应的输入框。",
+    },
+    hoyolabGuideStepCnTitle: {
+      en: "CN / Bilibili (米游社)",
+      zh: "国服 / B 服（米游社）",
+    },
+    hoyolabGuideStepCn1: {
+      en: "Open https://www.miyoushe.com in a desktop browser and log in to the account that owns your Genshin UID.",
+      zh: "在桌面浏览器中打开 https://www.miyoushe.com 并登录你的原神账号。",
+    },
+    hoyolabGuideStepCn2: {
+      en: "Press F12 → Application (Chrome/Edge) or Storage (Firefox) → Cookies → https://www.miyoushe.com.",
+      zh: "按 F12 → Application（Chrome/Edge）或 存储（Firefox）→ Cookies → https://www.miyoushe.com。",
+    },
+    hoyolabGuideStepCn3: {
+      en: "Find the rows named account_id and cookie_token.",
+      zh: "找到名为 account_id 和 cookie_token 的两行。",
+    },
+    hoyolabGuideStepCn4: {
+      en: "Paste each value into the matching field in this dialog.",
+      zh: "把两个值分别粘贴到此对话框中对应的输入框。",
+    },
+    hoyolabGuideSecurity: {
+      en: "Never paste your cookie into untrusted sites. You can log out on the HoYoLAB website to invalidate it at any time.",
+      zh: "切勿将 Cookie 粘贴到不受信任的网站。你可以随时在 HoYoLAB 网站退出登录以使其失效。",
     },
   },
   export: {
@@ -1590,6 +1664,20 @@ export const i18nUiData = {
     tierSortAsc: { en: "Char tier ↑", zh: "角色评级排序 升序" },
     all: { en: "All", zh: "全部" },
     ownedOnly: { en: "Owned characters", zh: "仅已拥有角色" },
+    resourceSuggestions: { en: "Resource Suggestions", zh: "资源使用建议" },
+    suggestCraft: { en: "Craft", zh: "合成" },
+    suggestReroll: { en: "Reroll", zh: "重铸" },
+    tierThresholds: { en: "Completeness goal", zh: "完成度目标" },
+    minScoreDiff: { en: "Min score gain", zh: "最低分数收益" },
+    gainLabel: { en: "Avg. Gain", zh: "平均收益" },
+    sanctifyingElixir: { en: "Sanctifying Elixir", zh: "祝圣之霜" },
+    dustOfEnlightenment: { en: "Dust of Enlightenment", zh: "启圣之尘" },
+    pUpgradeLabel: { en: "P(upgrade)", zh: "升级概率" },
+    reassess: { en: "Re-assess", zh: "重新评估" },
+    noSuggestions: {
+      en: "No suggestions — all builds meet their tier threshold.",
+      zh: "暂无建议 — 所有配装已达到各自评级的阈值。",
+    },
   },
   v2Weights: {},
   batchAutoTune: {
@@ -1847,9 +1935,25 @@ export const i18nUiData = {
       en: "Double crit lock (4-liner + CR+CD)",
       zh: "双暴锁定（4初始+暴击+暴伤）",
     },
+    triageMode: {
+      en: "Loose mode",
+      zh: "宽松模式",
+    },
+    triageModeHint: {
+      en: "Keeps more artifacts (looser tier thresholds)",
+      zh: "保留更多圣遗物（品质阈值放宽）",
+    },
     levelProtection: {
       en: "Level protection",
       zh: "等级保护",
+    },
+    strategicHighLevel: {
+      en: "Strategically evaluate leveled artifacts",
+      zh: "策略评估高等级圣遗物",
+    },
+    strategicHighLevelHint: {
+      en: "High-level artifacts are re-evaluated individually instead of auto-protected",
+      zh: "高等级圣遗物将单独评估而非自动保护",
     },
     equippedProtect: {
       en: "Equipped protection",

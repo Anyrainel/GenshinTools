@@ -105,9 +105,31 @@ export function TriageSettingsPanel({
           checked={settings.equippedProtection}
           onChange={(v) => update("equippedProtection", v)}
         />
+        <div className="space-y-1">
+          <SwitchRow
+            id="strategicHighLevelEvaluation"
+            label={t.ui("triage.strategicHighLevel")}
+            checked={settings.strategicHighLevelEvaluation}
+            onChange={(v) => update("strategicHighLevelEvaluation", v)}
+          />
+          <p className="text-xs text-muted-foreground">
+            {t.ui("triage.strategicHighLevelHint")}
+          </p>
+        </div>
       </div>
       <div className="border-t border-border pt-3 space-y-3">
         <SectionHeading>{t.ui("triage.settingsThreshold")}</SectionHeading>
+        <div className="space-y-1">
+          <SwitchRow
+            id="triageMode"
+            label={t.ui("triage.triageMode")}
+            checked={settings.triageMode === "loose"}
+            onChange={(v) => update("triageMode", v ? "loose" : "strict")}
+          />
+          <p className="text-xs text-muted-foreground">
+            {t.ui("triage.triageModeHint")}
+          </p>
+        </div>
         <SliderRow
           label={t.ui("triage.mainStatThreshold")}
           value={settings.mainStatThreshold}

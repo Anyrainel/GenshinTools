@@ -34,6 +34,7 @@ const TestWrapper = ({
       ref={ref}
       onLocalImport={onLocalImport}
       onUidImport={onUidImport}
+      onHoyolabImport={async () => {}}
     />
   );
 };
@@ -72,14 +73,17 @@ describe("AccountImportControl", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByPlaceholderText("import.uidPlaceholder")
-      ).toBeInTheDocument();
+        screen.getAllByPlaceholderText("import.uidPlaceholder").length
+      ).toBeGreaterThan(0);
     });
 
-    const input = screen.getByPlaceholderText("import.uidPlaceholder");
+    // First UID input belongs to the Enka/GOOD card; second belongs to hoyolab.
+    const input = screen.getAllByPlaceholderText("import.uidPlaceholder")[0];
     await userEvent.type(input, "123456789");
 
-    const importBtn = screen.getByRole("button", { name: "import.action" });
+    const importBtn = screen.getAllByRole("button", {
+      name: "import.action",
+    })[0];
     await userEvent.click(importBtn);
 
     expect(onUidImport).toHaveBeenCalledWith("123456789", false); // Default clearData is false
@@ -91,14 +95,17 @@ describe("AccountImportControl", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByPlaceholderText("import.uidPlaceholder")
-      ).toBeInTheDocument();
+        screen.getAllByPlaceholderText("import.uidPlaceholder").length
+      ).toBeGreaterThan(0);
     });
 
-    const input = screen.getByPlaceholderText("import.uidPlaceholder");
+    // First UID input belongs to the Enka/GOOD card; second belongs to hoyolab.
+    const input = screen.getAllByPlaceholderText("import.uidPlaceholder")[0];
     await userEvent.type(input, "123456789");
 
-    const importBtn = screen.getByRole("button", { name: "import.action" });
+    const importBtn = screen.getAllByRole("button", {
+      name: "import.action",
+    })[0];
     await userEvent.click(importBtn);
 
     await waitFor(() => {

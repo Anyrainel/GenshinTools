@@ -1,6 +1,7 @@
 import type { TriageSettings } from "./types";
 
 export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
+  triageMode: "strict",
   mainStatThreshold: 90,
   optionalSubThreshold: 50,
   neutralKeep: 3,
@@ -11,6 +12,7 @@ export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   erHoardingAllEnabled: false,
   doubleCritLockEnabled: true,
   levelProtection: 12,
+  strategicHighLevelEvaluation: false,
   equippedProtection: true,
   disabledFlexPatterns: [],
   enabledFlexPatterns: [],

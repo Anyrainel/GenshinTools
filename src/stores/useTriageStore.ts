@@ -23,16 +23,29 @@ export const useTriageStore = create<TriageState>()(
     }),
     {
       name: "triage-settings",
-      version: 1,
+      version: 3,
       migrate: (persisted: unknown, version: number) => {
         const state = persisted as Record<string, unknown>;
+        const settings = (state.settings ?? {}) as Record<string, unknown>;
         // v0 → v1: add customFlexInputs
         if (version < 1) {
-          const settings = (state.settings ?? {}) as Record<string, unknown>;
           if (!settings.customFlexInputs) {
             settings.customFlexInputs = [];
           }
         }
+        // v1 → v2: add triageMode (default "strict" preserves existing behavior)
+        if (version < 2) {
+          if (!settings.triageMode) {
+            settings.triageMode = "strict";
+          }
+        }
+        // v2 → v3: add strategicHighLevelEvaluation (default off preserves behavior)
+        if (version < 3) {
+          if (settings.strategicHighLevelEvaluation == null) {
+            settings.strategicHighLevelEvaluation = false;
+          }
+        }
+        state.settings = settings;
         return state as unknown as Partial<TriageState>;
       },
       partialize: (state) => ({

@@ -117,4 +117,22 @@ describe("getTier", () => {
     expect(getTier(0.2, "flower")).toBe("N"); // <= 0.20
     expect(getTier(0.201, "flower")).toBe("T");
   });
+
+  it("loose mode uses 2x thresholds — promotes artifacts one tier looser", () => {
+    // A rarity of 0.08 is T in strict (> 0.04 quality cap on flower) but Q in loose (<= 0.08).
+    expect(getTier(0.08, "flower", "strict")).toBe("N");
+    expect(getTier(0.08, "flower", "loose")).toBe("Q");
+
+    // A rarity of 0.3 is T on flower in strict (> 0.2) but N in loose (<= 0.4).
+    expect(getTier(0.3, "flower", "strict")).toBe("T");
+    expect(getTier(0.3, "flower", "loose")).toBe("N");
+
+    // Sands: 0.03 is T strict (> 0.02) but Q loose (<= 0.04).
+    expect(getTier(0.03, "sands", "strict")).toBe("N");
+    expect(getTier(0.03, "sands", "loose")).toBe("Q");
+  });
+
+  it("strict mode is the default when mode argument is omitted", () => {
+    expect(getTier(0.3, "flower")).toBe(getTier(0.3, "flower", "strict"));
+  });
 });

@@ -42,6 +42,10 @@ import {
 } from "@/lib/account-data/goodConversion";
 import type { ConversionWarning } from "@/lib/account-data/goodConversion";
 import {
+  convertHoyolabToGOOD,
+  fetchHoyolabData,
+} from "@/lib/account-data/hoyolabFetcher";
+import {
   type PendingImport,
   routeLocalImport,
   routeResolveImport,
@@ -385,6 +389,49 @@ export default function AccountDataPage() {
     }
   };
 
+  const handleHoyolabImport = async (
+    uid: string,
+    cookie: string,
+    clearBeforeImport: boolean
+  ) => {
+    try {
+      const fetched = await fetchHoyolabData(uid, cookie);
+      const hoyoResult = convertHoyolabToGOOD(fetched);
+      const result = convertGOODToAccountData(hoyoResult.data);
+
+      const allWarnings = [...hoyoResult.warnings, ...result.warnings];
+      showConversionWarnings({ ...result, warnings: allWarnings });
+
+      const currentAccounts = useAccountStore.getState().accounts;
+      const routing = routeUidImport(
+        currentAccounts,
+        uid,
+        result.data,
+        "",
+        clearBeforeImport,
+        mergeAccountData
+      );
+
+      if (routing.kind === "direct") {
+        addOrUpdateAccount(routing.id, {
+          data: routing.data,
+          name: routing.name,
+        });
+        setActiveAccount(routing.activeId);
+        toast.success(t.ui("accountData.importSuccess"));
+      } else {
+        setPendingImport(routing.pendingImport);
+        setIsAccountManagerOpen(true);
+      }
+    } catch (error: unknown) {
+      console.error("HoYoLAB Import failed", error);
+      const message =
+        error instanceof Error ? error.message : t.ui("import.fileLoadError");
+      toast.error(message);
+      throw error;
+    }
+  };
+
   const handleResolveImport = (
     action: "overwrite" | "merge" | "create",
     targetId: string,
@@ -523,6 +570,7 @@ export default function AccountDataPage() {
         ref={importRef}
         onLocalImport={handleLocalImport}
         onUidImport={handleUidImport}
+        onHoyolabImport={handleHoyolabImport}
         initialUid={lastUid}
       />
       <AccountManagerDialog

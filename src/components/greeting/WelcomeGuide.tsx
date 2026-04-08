@@ -23,7 +23,6 @@ import {
   Star,
   Upload,
   Users,
-  X,
 } from "lucide-react";
 import { Suspense, lazy, useState } from "react";
 
@@ -61,16 +60,6 @@ export default function WelcomeGuide({
   return (
     <ResponsiveDialog open onOpenChange={(open) => !open && handleClose()}>
       <ResponsiveDialogContent className="max-w-3xl p-0 gap-0">
-        {/* Close button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-3 right-3 z-10 size-7"
-          onClick={handleClose}
-        >
-          <X className="size-4" />
-        </Button>
-
         {/* Content area */}
         <div className="px-6 pt-6 pb-4 flex flex-col overflow-y-auto max-h-[80vh]">
           {step === 0 && (

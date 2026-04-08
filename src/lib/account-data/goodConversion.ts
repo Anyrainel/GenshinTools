@@ -1,4 +1,5 @@
 import { artifactsById } from "@/data/constants";
+import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 import type {
   AccountData,
@@ -110,12 +111,22 @@ const ARTIFACT_SKIP_SET = new Set([
 ]);
 
 // Build Reverse Maps
+// Build reverse (normalized-name -> id) maps from beta first, then overlay
+// released game data so released entries win on name collisions. This lets
+// GOOD import resolve beta-only entries (e.g. weapons released in-game but not
+// yet promoted from i18n-beta.ts to i18n-game.ts).
 const charMap = new Map<string, string>();
+for (const [id, data] of Object.entries(i18nBetaData.characters)) {
+  charMap.set(normalize(data.en), id);
+}
 for (const [id, data] of Object.entries(i18nGameData.characters)) {
   charMap.set(normalize(data.en), id);
 }
 
 const weaponMap = new Map<string, string>();
+for (const [id, data] of Object.entries(i18nBetaData.weapons)) {
+  weaponMap.set(normalize(data.en), id);
+}
 for (const [id, data] of Object.entries(i18nGameData.weapons)) {
   weaponMap.set(normalize(data.en), id);
 }

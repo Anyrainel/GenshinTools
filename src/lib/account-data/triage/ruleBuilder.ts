@@ -131,7 +131,13 @@ function buildToRules(
       );
       for (const mainStat of acceptedMain) {
         const fillers = deriveFillers(desired, slot, mainStat);
-        const tierEntry = lookupTierEntry(slot, mainStat, desired, fillers);
+        const tierEntry = lookupTierEntry(
+          slot,
+          mainStat,
+          desired,
+          fillers,
+          settings.triageMode
+        );
 
         rules.push({
           characterId,

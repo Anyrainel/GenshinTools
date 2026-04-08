@@ -25,9 +25,23 @@ export const SUB_WEIGHTS: Record<SubStat, number> = {
 
 export const P4L = 0.3; // Inflated from true 20% to prevent 4L cheaply jumping tiers
 
+export type TriageMode = "strict" | "loose";
+
+/**
+ * Strict mode: existing (historical) thresholds.
+ * Loose mode: 2x each threshold as a starting point — keeps roughly twice as
+ * many artifacts. Values are hardcoded and can be tuned independently per
+ * tier and per slot class.
+ */
 const TIER_THRESHOLDS = {
-  flowerFeather: { premium: 0.01, quality: 0.04, neutral: 0.2 },
-  sandsGobletCirclet: { premium: 0.005, quality: 0.02, neutral: 0.1 },
+  strict: {
+    flowerFeather: { premium: 0.01, quality: 0.04, neutral: 0.2 },
+    sandsGobletCirclet: { premium: 0.005, quality: 0.02, neutral: 0.1 },
+  },
+  loose: {
+    flowerFeather: { premium: 0.02, quality: 0.08, neutral: 0.4 },
+    sandsGobletCirclet: { premium: 0.01, quality: 0.04, neutral: 0.2 },
+  },
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -124,14 +138,19 @@ export function pJoint(
 // Tier assignment
 // ---------------------------------------------------------------------------
 
-function getThresholds(slot: Slot) {
+function getThresholds(slot: Slot, mode: TriageMode) {
+  const set = TIER_THRESHOLDS[mode];
   return slot === "flower" || slot === "plume"
-    ? TIER_THRESHOLDS.flowerFeather
-    : TIER_THRESHOLDS.sandsGobletCirclet;
+    ? set.flowerFeather
+    : set.sandsGobletCirclet;
 }
 
-export function getTier(rarity: number, slot: Slot): QualityTier {
-  const t = getThresholds(slot);
+export function getTier(
+  rarity: number,
+  slot: Slot,
+  mode: TriageMode = "strict"
+): QualityTier {
+  const t = getThresholds(slot, mode);
   if (rarity <= t.premium) return "P";
   if (rarity <= t.quality) return "Q";
   if (rarity <= t.neutral) return "N";

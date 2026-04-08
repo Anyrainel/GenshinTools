@@ -4,7 +4,7 @@
  */
 
 import type { MainStat, Slot, SubStat } from "@/data/types";
-import { P4L, SUB_WEIGHTS, getTier, pJoint } from "./tierMath";
+import { P4L, SUB_WEIGHTS, type TriageMode, getTier, pJoint } from "./tierMath";
 import type { DemandTierEntry, TierCondition } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -116,7 +116,8 @@ function computeConditionRows(
   remaining: string[],
   fillers: string[],
   mainProb: number,
-  slot: Slot
+  slot: Slot,
+  mode: TriageMode
 ): TierCondition[] {
   const subN = remaining.length;
   if (subN === 0) return [];
@@ -132,7 +133,7 @@ function computeConditionRows(
   // hit>=0: rare main stat fallback
   {
     const e2e = mainProb;
-    const tier = getTier(e2e, slot);
+    const tier = getTier(e2e, slot, mode);
     if (tier !== "T") {
       rows.push({ k: 0, crcd: false, is4L: false, fill: false, tier, e2e });
     }
@@ -168,7 +169,7 @@ function computeConditionRows(
           if (p <= 0) continue;
 
           const e2e = fourL ? mainProb * P4L * p : mainProb * p;
-          const tier = getTier(e2e, slot);
+          const tier = getTier(e2e, slot, mode);
           const key = `${+crcd},${+fourL},${+fill}`;
           comboTier.set(key, tier);
           comboData.push({
@@ -235,9 +236,10 @@ export function lookupTierEntry(
   slot: Slot,
   mainStat: MainStat,
   desired: SubStat[],
-  fillers: SubStat[]
+  fillers: SubStat[],
+  mode: TriageMode = "strict"
 ): DemandTierEntry {
-  const key = structuralKey(slot, mainStat, desired, fillers);
+  const key = `${mode}|${structuralKey(slot, mainStat, desired, fillers)}`;
   const cached = cache.get(key);
   if (cached) return cached;
 
@@ -255,7 +257,8 @@ export function lookupTierEntry(
     remaining,
     effectiveFillers,
     mainProb,
-    slot
+    slot,
+    mode
   );
 
   const hasCrCd =
