@@ -155,16 +155,21 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // Preload character kit bundle for the current language
+  // Preload character kit bundle for the current language.
+  // Skipped under vitest: the async setState fires after render and pollutes
+  // every component test with act(...) warnings. Tests don't rely on kit data.
+  const isTestEnv = import.meta.env.MODE === "test";
   const [kitData, setKitData] = useState<Record<string, CharacterKit>>({});
   useEffect(() => {
+    if (isTestEnv) return;
     loadCharacterKits(language).then(setKitData);
-  }, [language]);
+  }, [language, isTestEnv]);
 
   // Preload weapon & artifact game data for the current language
   const [weaponData, setWeaponData] = useState<WeaponGameData>({});
   const [artifactData, setArtifactData] = useState<ArtifactGameData>({});
   useEffect(() => {
+    if (isTestEnv) return;
     const weaponPath = `../data/game/weapon_${language}.json`;
     const artifactPath = `../data/game/artifact_${language}.json`;
     const weaponLoader = weaponModules[weaponPath];
@@ -188,7 +193,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (artifactLoader) {
       artifactLoader().then((mod) => setArtifactData(mod.default));
     }
-  }, [language]);
+  }, [language, isTestEnv]);
 
   const getCharacterKit = useCallback(
     (characterId: string): CharacterKit | null => kitData[characterId] ?? null,

@@ -1,6 +1,7 @@
 import { CharacterBuildCard } from "@/components/artifact-builds/CharacterBuildCard";
 import type { CharacterResource } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
+import { act } from "react";
 import { render, screen } from "../../utils/render";
 
 const mockCharacter: CharacterResource = {
@@ -64,9 +65,11 @@ describe("CharacterBuildCard", () => {
     // It is hidden, so NO buttons visible (CardContent is hidden)
     expect(screen.queryByText(/Restore/i)).not.toBeInTheDocument();
 
-    // Now unhide via store (simulate user clicking eye icon, effectively)
-    // Actually just update store directly
-    useBuildsStore.getState().toggleCharacterHidden("hu_tao");
+    // Now unhide via store (simulate user clicking eye icon, effectively).
+    // Wrap in act() because the store update triggers a React re-render.
+    act(() => {
+      useBuildsStore.getState().toggleCharacterHidden("hu_tao");
+    });
 
     // Re-render to see update
     rerender(<CharacterBuildCard character={mockCharacter} />);
