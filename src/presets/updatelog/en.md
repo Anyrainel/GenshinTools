@@ -3,6 +3,22 @@
 - P0: More useful all character equipment and artifact upgrade suggestions
 - P2: Better graduation celebration effects
 
+## 2026-04-08
+
+### features
+- 6.5 update: added Linnea and her signature weapon
+- HoYoLAB / 米游社 cookie import: fetch your full character roster (all owned characters with equipped gear) using your account cookie
+- Sanctifying Elixir / Sanctifying Unction usage recommendations (in the set evaluation page)
+- Multi-instance tier lists, with auto-switch to the paired account
+- Side-by-side comparison of optimized vs. currently-equipped damage
+- Team Grid: drag-and-drop reordering
+- Lock Helper: new option to evaluate high-level artifacts (logic under testing)
+- Several characters' constellation effects that add a one-time damage bonus are now implemented as buffs instead of standalone formulas
+
+### fixes
+- Improved page cache settings
+- Fixed Kokomi P2 heal% conversion multiplier, Pyro Traveler plunge formula, and other issues
+
 ## 2025-04-02
 
 ### features
