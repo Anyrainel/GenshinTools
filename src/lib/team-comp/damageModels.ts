@@ -27,7 +27,6 @@ import {
 } from "./constants";
 import type { DamageFormula } from "./damageFormulas";
 import { createReactionVariant } from "./damageFormulas";
-import { DEBUG_CROSSPATH } from "./debugFlags";
 import { isPartOffField } from "./reactionResolve";
 import type {
   BuffSource,
@@ -103,7 +102,7 @@ const SCALED_PERCENT_KEYS = new Set<string>(
  * Across filterKeys in `get()`, each filterKey's accumulated value is
  * multiplied together the same way.
  */
-const MULTIPLICATIVE_KEYS = new Set<StatKey>(["baseDmg%"]);
+export const MULTIPLICATIVE_KEYS = new Set<StatKey>(["baseDmg%"]);
 
 /** Accumulate a value into a bucket entry, respecting multiplicative keys. */
 function accumulate(
@@ -1369,30 +1368,13 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       } else {
         const eKey = exclusionKey(excludeSet);
         const variant = statsVariants?.get(eKey) ?? baseStats;
-        if (DEBUG_CROSSPATH) {
-          const vBd = variant.get("baseDmg%", formula.tag);
-          // biome-ignore lint/suspicious/noConsoleLog: debug
-          console.log(
-            `[CALC.var]    part=${partIdx} eKey=${eKey} variant.bd%=${vBd.toFixed(4)}`
-          );
-        }
         intervalStats =
           bespokeActive && bespokeOverlay
             ? variant.merge(bespokeOverlay)
             : variant;
       }
 
-      const hitDmg = formula.calc(intervalStats, this.charLevel, ctx);
-      if (DEBUG_CROSSPATH) {
-        const tag = formula.tag;
-        const bd = intervalStats.get("baseDmg%", tag);
-        const dmgPct = intervalStats.get("dmg%", tag);
-        // biome-ignore lint/suspicious/noConsoleLog: debug
-        console.log(
-          `[CALC]    part=${partIdx} int=[${start},${end}] w=${width} bespoke=${bespokeActive} excl=${excludeSet.size} bd%=${bd.toFixed(4)} dmg%=${dmgPct.toFixed(4)} hit=${hitDmg.toFixed(2)}`
-        );
-      }
-      total += width * hitDmg;
+      total += width * formula.calc(intervalStats, this.charLevel, ctx);
     }
     return { damage: total / hits, hits };
   }

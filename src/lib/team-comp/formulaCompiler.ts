@@ -31,7 +31,6 @@ import {
 import { createReactionVariant } from "./damageFormulas";
 import type { CharacterBase, FormulaPart } from "./damageModels";
 import { StatBuff, StatSheet } from "./damageModels";
-import { DEBUG_CROSSPATH } from "./debugFlags";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
 import { isPartOffField } from "./reactionResolve";
@@ -1194,22 +1193,6 @@ function emitBlendedPartExprs(
     return activated < totalHits;
   });
 
-  if (DEBUG_CROSSPATH) {
-    const tag = formula.tag;
-    const baseBd = simplify(baseStats.get("baseDmg%", tag)) as {
-      tag: string;
-      value?: number;
-    };
-    const wbBd = simplify(withBespoke.get("baseDmg%", tag)) as {
-      tag: string;
-      value?: number;
-    };
-    // biome-ignore lint/suspicious/noConsoleLog: debug
-    console.log(
-      `[COMPILE.pre] part=${partIdx} tag.el=${tag.element} tag.ab=${tag.ability} baseStats.bd%=${baseBd.value ?? baseBd.tag} withBespoke.bd%=${wbBd.value ?? wbBd.tag} bespokeEntries=${JSON.stringify(bespokeEntries?.map((e) => ({ k: e.key, v: (e.expr as { value?: number }).value ?? "<expr>" })))} filter=${JSON.stringify(bespokeBuff?.target.filter)}`
-    );
-  }
-
   // Fast path: uniform across all hits
   if (affecting.length === 0 && bespokeCutoff === totalHits) {
     const expr = formula.buildExpr(withBespoke, charBase.charLevel, ctx);
@@ -1243,23 +1226,11 @@ function emitBlendedPartExprs(
     const bespokeActive = end <= bespokeCutoff;
 
     let intervalStats: ExprStats;
-    let _variantBd = -1;
     if (excludeSet.size === 0) {
       intervalStats = bespokeActive ? withBespoke : baseStats;
     } else {
       const eKey = exclusionKey(excludeSet);
       const variant = statsVariants?.get(eKey) ?? baseStats;
-      if (DEBUG_CROSSPATH) {
-        const vBd = simplify(variant.get("baseDmg%", formula.tag)) as {
-          tag: string;
-          value?: number;
-        };
-        _variantBd = vBd.value ?? -999;
-        // biome-ignore lint/suspicious/noConsoleLog: debug
-        console.log(
-          `[COMPILE.var] part=${partIdx} eKey=${eKey} variant.bd%=${vBd.value ?? vBd.tag}`
-        );
-      }
       intervalStats =
         bespokeActive && bespokeEntries && bespokeBuff
           ? mergeBespokeEntries(
@@ -1269,21 +1240,7 @@ function emitBlendedPartExprs(
             )
           : variant;
     }
-    void _variantBd;
-
     const expr = formula.buildExpr(intervalStats, charBase.charLevel, ctx);
-    if (DEBUG_CROSSPATH) {
-      const tag = formula.tag;
-      const bd = intervalStats.get("baseDmg%", tag);
-      const dmgPct = intervalStats.get("dmg%", tag);
-      const bdSimp = simplify(bd) as { tag: string; value?: number };
-      const dpSimp = simplify(dmgPct) as { tag: string; value?: number };
-      const exprSimp = simplify(expr) as { tag: string; value?: number };
-      // biome-ignore lint/suspicious/noConsoleLog: debug
-      console.log(
-        `[COMPILE] part=${partIdx} int=[${cutpoints[i]},${end}] w=${width} bespoke=${bespokeActive} excl=${excludeSet.size} bd%=${bdSimp.value ?? bdSimp.tag} dmg%=${dpSimp.value ?? dpSimp.tag} expr=${exprSimp.value ?? exprSimp.tag}`
-      );
-    }
     partExprs.push(E.mul(expr, E.const(width)));
   }
 }

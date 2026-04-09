@@ -2916,31 +2916,9 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
           paths,
           `team=[${configs.map((c) => c.charId).join(",")}] ` +
             `${pair.charId}/${pair.formulaId} ` +
-            `rxo=${JSON.stringify(reactionOverride ?? null)} ` +
-            `dist=${JSON.stringify(dist)} ` +
-            `opts=${JSON.stringify(combatOpts)}`
+            `rxo=${JSON.stringify(reactionOverride ?? null)}`
         );
-        if (msg && errors.length < 15) {
-          errors.push(msg);
-          if (errors.length === 1) {
-            // Re-run under DEBUG_CROSSPATH to print interval-level breakdown
-            process.env.DEBUG_CROSSPATH = "1";
-            // biome-ignore lint/suspicious/noConsoleLog: debug
-            console.log(`\n===== DEBUG RE-RUN =====\n${msg}\n`);
-            try {
-              evalAllPaths(
-                tb,
-                pair.charId,
-                pair.formulaId,
-                sheets,
-                ctx,
-                reactionOverride,
-                dist
-              );
-            } catch {}
-            delete process.env.DEBUG_CROSSPATH;
-          }
-        }
+        if (msg && errors.length < 15) errors.push(msg);
       } catch {
         // Skip trials that throw (feature-gated formulas / invalid combos)
       }

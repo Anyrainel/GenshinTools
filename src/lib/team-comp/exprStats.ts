@@ -8,7 +8,7 @@
  * E.add(E.const(baseline), E.var(idx)). For fixed stats, returns E.const(value).
  */
 
-import { StatSheet } from "./damageModels";
+import { MULTIPLICATIVE_KEYS, StatSheet } from "./damageModels";
 import { E, type Expr, simplify } from "./expr";
 import type {
   DamageTag,
@@ -181,6 +181,65 @@ export class ExprStats {
     const universal = this.getUniversalExpr(key);
 
     if (!tag) return universal;
+
+    if (MULTIPLICATIVE_KEYS.has(key)) {
+      // Multiplicative semantics: each filterKey's contributions form a
+      // factor (1+p), and the total is ∏(1+p)−1. Mirrors StatSheet.get().
+      const factors: Expr[] = [E.add(E.const(1), universal)];
+      // Group tagged baseline + variable + exprOverride contributions per filterKey
+      const perFk = new Map<string, Expr[]>();
+      for (const entry of this.baseline.dump()) {
+        if (entry.key !== key || entry.filterKey === "") continue;
+        const filter = StatSheet.parseFilterKey(entry.filterKey);
+        if (!filterMatchesTag(filter, tag)) continue;
+        const vKey = `${key}:${entry.filterKey}`;
+        const arr = perFk.get(entry.filterKey) ?? [];
+        if (this.variableKeys.has(vKey)) {
+          const idx = this.varMapping.register(
+            this.charIdx,
+            key,
+            entry.filterKey
+          );
+          arr.push(
+            entry.value === 0
+              ? E.var(idx, `${key}[${entry.filterKey}]`)
+              : E.add(
+                  E.const(entry.value),
+                  E.var(idx, `${key}[${entry.filterKey}]`)
+                )
+          );
+        } else {
+          if (entry.value !== 0) arr.push(E.const(entry.value));
+        }
+        perFk.set(entry.filterKey, arr);
+      }
+      // Variable keys not in baseline
+      for (const vKeyStr of this.variableKeys) {
+        if (!vKeyStr.startsWith(`${key}:`)) continue;
+        const fk = vKeyStr.slice(key.length + 1);
+        if (fk === "") continue;
+        if (perFk.has(fk)) continue;
+        const filter = StatSheet.parseFilterKey(fk);
+        if (!filterMatchesTag(filter, tag)) continue;
+        const idx = this.varMapping.register(this.charIdx, key, fk);
+        perFk.set(fk, [E.var(idx, `${key}[${fk}]`)]);
+      }
+      for (const ov of this.exprOverrides) {
+        if (ov.key !== key || ov.filterKey === "") continue;
+        const filter = StatSheet.parseFilterKey(ov.filterKey);
+        if (!filterMatchesTag(filter, tag)) continue;
+        const arr = perFk.get(ov.filterKey) ?? [];
+        arr.push(ov.expr);
+        perFk.set(ov.filterKey, arr);
+      }
+      for (const arr of perFk.values()) {
+        if (arr.length === 0) continue;
+        const sum = arr.length === 1 ? arr[0] : E.add(...arr);
+        factors.push(E.add(E.const(1), sum));
+      }
+      if (factors.length === 1) return simplify(E.add(factors[0], E.const(-1)));
+      return simplify(E.add(E.mul(...factors), E.const(-1)));
+    }
 
     // Add tagged contributions from baseline
     const taggedConst = this.getTaggedConstValue(key, tag);
