@@ -459,6 +459,7 @@ import {
   offFieldStatus,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import { compileTeamDamage } from "@/lib/team-comp/formulaCompiler";
 import type {
   CalcContext,
   ComboFormula,
@@ -1930,6 +1931,463 @@ describe("forceOnField override", () => {
         isActiveOnPart0(offBuff!),
         `[baseline] ${probe.label} must NOT be active on pyronado-tick part 0`
       ).toBe(false);
+    }
+  });
+
+  // Exact repro of a bug report: Linnea + Illuga + Columbina + Gorou team,
+  // million ton on Linnea with forceOnField should pick up Illuga Q/P2,
+  // Columbina C2, and Gorou E teamOnField buffs.
+  it("linnea million-ton forceOnField applies nod-krai teamOnField buffs", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+      },
+      {
+        charId: "gorou",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "favonius_warbow",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+    ];
+
+    const sheets: Record<string, StatSheet> = {
+      linnea: new StatSheet([]),
+      illuga: new StatSheet([]),
+      columbina: new StatSheet([]),
+      gorou: new StatSheet([]),
+    };
+
+    // Columbina needs "lunarCrystallize" combat option to emit her C2 teamOnField.
+    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+
+    const displayOn = tb.getDisplayResult(
+      "linnea",
+      "linnea-million-ton",
+      sheets,
+      ctx,
+      { forceOnField: true }
+    );
+
+    const isActiveOnPart0 = (buff: (typeof displayOn.buffs)[number]) =>
+      buff.active &&
+      (buff.activePartIndices === undefined ||
+        buff.activePartIndices.includes(0));
+
+    const probes = [
+      { label: "Columbina C2 teamOnField", id: "columbina", origin: "C2" },
+      { label: "Illuga Q teamOnField", id: "illuga", origin: "Q" },
+      { label: "Illuga P2 teamOnField", id: "illuga", origin: "P2" },
+      { label: "Gorou E teamOnField", id: "gorou", origin: "E" },
+    ];
+
+    for (const probe of probes) {
+      const matches = displayOn.buffs.filter(
+        (b) =>
+          b.source.type === "character" &&
+          b.source.id === probe.id &&
+          b.source.origin === probe.origin &&
+          b.target.receiver === "teamOnField"
+      );
+      expect(
+        matches.length,
+        `${probe.label}: expected buff to exist`
+      ).toBeGreaterThan(0);
+      const anyActive = matches.some(isActiveOnPart0);
+      expect(
+        anyActive,
+        `${probe.label}: expected at least one variant active on million-ton part 0 under forceOnField`
+      ).toBe(true);
+    }
+  });
+
+  // Cross-path consistency: display, calc, and compile paths must all agree
+  // on the total damage for Linnea's Million Ton under forceOnField. If any
+  // path fails to apply the nod-krai teamOnField buffs, its damage will drop
+  // below the others and this test will catch it.
+  it("linnea million-ton forceOnField: display/calc/compile paths produce identical damage", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+      },
+      {
+        charId: "gorou",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "favonius_warbow",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+    ];
+
+    const sheets: Record<string, StatSheet> = {
+      linnea: new StatSheet([]),
+      illuga: new StatSheet([]),
+      columbina: new StatSheet([]),
+      gorou: new StatSheet([]),
+    };
+
+    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+    const reactionOverride = { forceOnField: true };
+
+    // Path 1: display (getDisplayResult — the cold path the damage card uses)
+    const displayResult = tb.getDisplayResult(
+      "linnea",
+      "linnea-million-ton",
+      sheets,
+      ctx,
+      reactionOverride
+    );
+    const displayDamage = displayResult.totalDamage;
+
+    // Path 2: calc (getDamageResult — the tight loop the optimizer's cold path uses).
+    // Feed it the same resolved on-field stat sheet the display path computed so we
+    // isolate getDamageResult itself from stat-resolution differences.
+    const onFieldStats = displayResult.statSheets.linnea.onField;
+    const calcResult = tb.getDamageResult(
+      "linnea",
+      "linnea-million-ton",
+      { ...sheets, linnea: onFieldStats },
+      ctx,
+      reactionOverride
+    );
+    const calcDamage = calcResult.totalDamage;
+
+    // Path 3: compile (compileTeamDamage — the optimizer's B&B hot path)
+    const optCtx = tb.createOptimizerContext(sheets, "linnea", "linnea", ctx);
+    const compiled = compileTeamDamage(
+      tb,
+      "linnea",
+      "linnea-million-ton",
+      ctx,
+      optCtx,
+      reactionOverride
+    );
+    const compileDamage = compiled.evaluate(new Float64Array(compiled.numVars));
+
+    // All three must agree (small tolerance for floating-point drift across paths)
+    expect(displayDamage).toBeGreaterThan(0);
+    const rel = (a: number, b: number) => Math.abs(a - b) / Math.max(a, b);
+    expect(
+      rel(displayDamage, calcDamage),
+      `display=${displayDamage} calc=${calcDamage}`
+    ).toBeLessThan(1e-6);
+    expect(
+      rel(displayDamage, compileDamage),
+      `display=${displayDamage} compile=${compileDamage}`
+    ).toBeLessThan(1e-6);
+  });
+
+  // Legacy per-path "damage increases with forceOnField" sanity checks kept
+  // in case the cross-check test is updated.
+  it("linnea million-ton forceOnField increases damage via calc path (getDamageResult)", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+      },
+      {
+        charId: "gorou",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "favonius_warbow",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+    ];
+
+    const sheets: Record<string, StatSheet> = {
+      linnea: new StatSheet([]),
+      illuga: new StatSheet([]),
+      columbina: new StatSheet([]),
+      gorou: new StatSheet([]),
+    };
+
+    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+
+    // getDamageResult needs teamStats resolved by the full pipeline.
+    // Use getDisplayResult to obtain the resolved stat sheets for both modes,
+    // then feed them into getDamageResult directly so we exercise the calc
+    // path (not the display pipeline) for the final numeric comparison.
+    const drOff = tb.getDisplayResult(
+      "linnea",
+      "linnea-million-ton",
+      sheets,
+      ctx
+    );
+    const drOn = tb.getDisplayResult(
+      "linnea",
+      "linnea-million-ton",
+      sheets,
+      ctx,
+      { forceOnField: true }
+    );
+
+    const calcOff = tb.getDamageResult(
+      "linnea",
+      "linnea-million-ton",
+      drOff.statSheets.linnea.onField
+        ? { ...sheets, linnea: drOff.statSheets.linnea.onField }
+        : sheets,
+      ctx,
+      undefined,
+      drOff.statSheets.linnea.offField
+        ? { ...sheets, linnea: drOff.statSheets.linnea.offField }
+        : undefined
+    );
+    const calcOn = tb.getDamageResult(
+      "linnea",
+      "linnea-million-ton",
+      drOn.statSheets.linnea.onField
+        ? { ...sheets, linnea: drOn.statSheets.linnea.onField }
+        : sheets,
+      ctx,
+      { forceOnField: true }
+    );
+
+    expect(calcOn.totalDamage).toBeGreaterThan(calcOff.totalDamage);
+  });
+
+  it("linnea million-ton forceOnField increases damage via compile path (compileTeamDamage)", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+      },
+      {
+        charId: "gorou",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "favonius_warbow",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+    ];
+
+    const sheets: Record<string, StatSheet> = {
+      linnea: new StatSheet([]),
+      illuga: new StatSheet([]),
+      columbina: new StatSheet([]),
+      gorou: new StatSheet([]),
+    };
+
+    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+
+    const optCtx = tb.createOptimizerContext(sheets, "linnea", "linnea", ctx);
+
+    const compiledOff = compileTeamDamage(
+      tb,
+      "linnea",
+      "linnea-million-ton",
+      ctx,
+      optCtx
+    );
+    const compiledOn = compileTeamDamage(
+      tb,
+      "linnea",
+      "linnea-million-ton",
+      ctx,
+      optCtx,
+      { forceOnField: true }
+    );
+
+    const varsOff = new Float64Array(compiledOff.numVars);
+    const varsOn = new Float64Array(compiledOn.numVars);
+    const dmgOff = compiledOff.evaluate(varsOff);
+    const dmgOn = compiledOn.evaluate(varsOn);
+
+    expect(dmgOn).toBeGreaterThan(dmgOff);
+  });
+
+  // Regression for the UI path: getComboDisplayResult used to discard
+  // per-line reactionOverride when collecting the combined buff list, so the
+  // damage-card chips showed teamOnField buffs as inactive for a forceOnField
+  // off-field formula part even though the numeric damage was correct.
+  it("getComboDisplayResult exposes teamOnField buffs as active for forceOnField lines", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+      },
+      {
+        charId: "gorou",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "favonius_warbow",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+    ];
+
+    const sheets: Record<string, StatSheet> = {
+      linnea: new StatSheet([]),
+      illuga: new StatSheet([]),
+      columbina: new StatSheet([]),
+      gorou: new StatSheet([]),
+    };
+
+    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+
+    const combo: ComboFormula = {
+      id: "test-combo",
+      label: { zh: "测试", en: "Test" },
+      lines: [
+        {
+          charId: "linnea",
+          formulaId: "linnea-million-ton",
+          count: 1,
+          reaction: { forceOnField: true },
+        },
+      ],
+    };
+
+    const result = getComboDisplayResult(tb, combo, sheets, ctx);
+
+    const probes = [
+      { label: "Columbina C2 teamOnField", id: "columbina", origin: "C2" },
+      { label: "Illuga Q teamOnField", id: "illuga", origin: "Q" },
+      { label: "Illuga P2 teamOnField", id: "illuga", origin: "P2" },
+      { label: "Gorou E teamOnField", id: "gorou", origin: "E" },
+    ];
+    for (const probe of probes) {
+      const matches = result.buffs.filter(
+        (b) =>
+          b.source.type === "character" &&
+          b.source.id === probe.id &&
+          b.source.origin === probe.origin &&
+          b.target.receiver === "teamOnField"
+      );
+      expect(
+        matches.length,
+        `${probe.label}: expected at least one buff entry`
+      ).toBeGreaterThan(0);
+      expect(
+        matches.some((b) => b.active),
+        `${probe.label}: expected at least one variant marked active in combo displayResult`
+      ).toBe(true);
     }
   });
 

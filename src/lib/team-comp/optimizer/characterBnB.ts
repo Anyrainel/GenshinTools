@@ -380,20 +380,19 @@ export function runCharacterBnB(
     marginalVars
   );
 
-  // Compute midpoint marginal-gain weights for carry characters.
-  // Used for initial artifact ranking (hill-climb warm-start). After the warm-start
-  // finds a good solution, we recompute marginals at that solution's operating point
-  // and re-sort artifacts before the full DFS — this gives more accurate diminishing
-  // returns (e.g., ER on high-ER Raiden) than the synthetic midpoint.
-  let marginals: MarginalWeights | null = null;
-  if (combo.lines.some((l) => l.charId === swapCharId && l.count > 0)) {
-    marginals = computeMarginalWeights(
-      marginalEvalFn,
-      swapCharId,
-      baseSheets,
-      charConfig.buildMatch // use original buildMatch for marginal computation (damage-based)
-    );
-  }
+  // Compute midpoint marginal-gain weights for the swap char. Always run this
+  // — even for support characters with no own combo lines, since they can
+  // contribute to teammates' damage via stat-scaling team buffs (e.g. Illuga's
+  // em → baseDmg ScalingBuff for Linnea's lunar crystallize). The compiled
+  // damage expression is the source of truth: if the swap char doesn't appear
+  // in it, marginal weights will be all-zero and the downstream all-zero
+  // fallback handles ranking.
+  const marginals: MarginalWeights | null = computeMarginalWeights(
+    marginalEvalFn,
+    swapCharId,
+    baseSheets,
+    charConfig.buildMatch // use original buildMatch for marginal computation (damage-based)
+  );
 
   // ── Constraints: single source of truth for ER/CR checking ──
   const constraints = new ConstraintChecker(

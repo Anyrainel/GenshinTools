@@ -291,11 +291,15 @@ function findBestMainStats(
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
   let bestDamage = -1;
+  // Neutral default used only when no main stat combination distinguishes
+  // itself (i.e. compiled damage is constant in this char's vars). Picks
+  // stats that don't coincidentally look like an "atk DPS" recommendation,
+  // so a meaningless result doesn't masquerade as an optimized build.
   let bestMainStats: Record<Slot, MainStat> = {
     flower: "hp",
     plume: "atk",
-    sands: "atk%",
-    goblet: "atk%",
+    sands: "er",
+    goblet: "hp%",
     circlet: "cr",
   };
 
@@ -677,11 +681,15 @@ function findBestMainStatsWithSubs(
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
   let bestDamage = -1;
+  // Neutral default used only when no main stat combination distinguishes
+  // itself (i.e. compiled damage is constant in this char's vars). Picks
+  // stats that don't coincidentally look like an "atk DPS" recommendation,
+  // so a meaningless result doesn't masquerade as an optimized build.
   let bestMainStats: Record<Slot, MainStat> = {
     flower: "hp",
     plume: "atk",
-    sands: "atk%",
-    goblet: "atk%",
+    sands: "er",
+    goblet: "hp%",
     circlet: "cr",
   };
 

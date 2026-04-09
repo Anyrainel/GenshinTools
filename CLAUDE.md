@@ -19,6 +19,12 @@ Read AGENTS.md for project context if needed.
 - Use `text-muted-foreground` only if the text is not important and you want most users to skip reading them.
 - Same applies to `border-muted-foreground/` — use `border-border` or `border-muted-foreground` without opacity.
 
+# i18n setup context
+This project uses custom i18n setup for zh and en 2 languages, with a mixure of strategies:
+1. `src/data/i18n-game.ts` contains auto generated translations for in-game entities. i18n-beta.ts is the add-on file for in-game entities that are in the beta (unreleased) data.
+2. `src/data/game/*_zh.ts` and `src/data/game/*_en.ts` contains auto generated json files for long text for in-game data.
+3. `src/data/i18n-ui.ts` contains 
+
 # Store refactor rules
 Whenever a new feature requires incompatible changes to a store's data structure, always document the changes in the code during implementation. Always remember to add proper migration logic with respect to the current origin version (treat pending changes and local only commits as the same version), and add migration test to ensure old format can migrate to new data format.
 It would be a good habit to version the store data so there is an easier way to check for migration logic.

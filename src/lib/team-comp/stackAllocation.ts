@@ -8,9 +8,11 @@
  * value via the UI (sliders/toggles), even exceeding maxStacks.
  */
 
+import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import { type StatBuff, getBuffInstanceKey } from "./damageBuffs";
-import type { FormulaPart } from "./damageModels";
-import type { StatSheet } from "./damageModels";
+import { createReactionVariant } from "./damageFormulas";
+import type { DamageFormula, FormulaPart } from "./damageModels";
+import { StatSheet } from "./damageModels";
 import type {
   BuffActivationMap,
   BuffSource,
@@ -18,7 +20,7 @@ import type {
   PartialBuffInfo,
   ReactionOverride,
 } from "./types";
-import { exclusionKey } from "./types";
+import { exclusionKey, resolvePartReaction } from "./types";
 
 export type { PartialBuffInfo } from "./types";
 
@@ -141,65 +143,132 @@ export function computeBlendedDamage(
   charLevel: number,
   ctx: CalcContext,
   offFieldPostStats?: StatSheet,
-  offFieldVariants?: Map<string, StatSheet>
+  offFieldVariants?: Map<string, StatSheet>,
+  reactionOverride?: ReactionOverride
 ): { totalDamage: number; partDamages: { damage: number; hits: number }[] } {
   const partDamages: { damage: number; hits: number }[] = [];
   let totalDamage = 0;
 
   for (let idx = 0; idx < parts.length; idx++) {
-    const { formula, hits: totalHits, offField } = parts[idx];
+    const { formula, hits: totalHits, offField, bespokeBuff } = parts[idx];
     const h = totalHits ?? 1;
 
-    const defaultStats =
-      offField && offFieldPostStats ? offFieldPostStats : postStats;
+    const effectiveOffField = offField && !reactionOverride?.forceOnField;
+    const baseStats =
+      effectiveOffField && offFieldPostStats ? offFieldPostStats : postStats;
     const variants =
-      offField && offFieldVariants ? offFieldVariants : statsVariants;
+      effectiveOffField && offFieldVariants ? offFieldVariants : statsVariants;
 
-    // Collect partial buffs affecting this part
-    const affecting = partialBuffs.filter((pb) => {
-      const activated = pb.partActivation[idx] ?? h;
-      return activated < h;
-    });
+    // Bespoke overlay + hit-count cutoff. Bespoke applies to hits
+    // [0, bespokeCutoff); remaining hits use baseStats. Mirrors
+    // getDisplayParts' split so all 3 paths agree.
+    const bespokeOverlay = bespokeBuff
+      ? StatSheet.fromEntries(
+          [
+            ...bespokeBuff.staticBuffs,
+            ...bespokeBuff.dynamicBuffs(baseStats, []),
+          ],
+          bespokeBuff.target.filter
+        )
+      : undefined;
+    const bespokeMax = bespokeBuff?.source.maxStacks;
+    const bespokeCutoff =
+      bespokeOverlay && bespokeMax != null && bespokeMax < h ? bespokeMax : h;
+    const withBespoke = bespokeOverlay
+      ? baseStats.merge(bespokeOverlay)
+      : baseStats;
 
-    if (affecting.length === 0) {
-      // Fully buffed on all hits
-      const dmg = formula.calc(defaultStats, charLevel, ctx);
-      partDamages.push({ damage: dmg, hits: h });
-      totalDamage += dmg * h;
-      continue;
-    }
+    // Inner helper: blend `subHits` of `subFormula` with scaled activations.
+    // Used once for non-reacting and once (with reaction variant) for reacting
+    // sub-parts so reaction overrides mirror getDamageResult/compile exactly.
+    const blendSub = (subFormula: DamageFormula, subHits: number): number => {
+      if (subHits <= 0) return 0;
+      const scale = subHits / h;
+      const subBespokeCutoff =
+        bespokeOverlay && bespokeMax != null && bespokeMax * scale < subHits
+          ? bespokeMax * scale
+          : subHits;
 
-    // Build interval cutpoints from activation counts
-    const cutpointSet = new Set<number>([0, h]);
-    for (const pb of affecting) {
-      const activated = pb.partActivation[idx] ?? h;
-      if (activated > 0 && activated < h) cutpointSet.add(activated);
-    }
-    const cutpoints = [...cutpointSet].sort((a, b) => a - b);
+      // Partials affecting this sub-part (activation scaled)
+      const affecting = partialBuffs.filter((pb) => {
+        const activated = (pb.partActivation[idx] ?? h) * scale;
+        return activated < subHits;
+      });
 
-    // Sum damage across intervals
-    let partTotal = 0;
-    for (let i = 0; i < cutpoints.length - 1; i++) {
-      const start = cutpoints[i];
-      const end = cutpoints[i + 1];
-      const width = end - start;
-      if (width <= 0) continue;
-
-      // Determine which buffs are inactive in interval (start, end]
-      // A buff is active iff activatedHits >= end
-      const excludeSet = new Set<string>();
-      for (const pb of affecting) {
-        const activated = pb.partActivation[idx] ?? h;
-        if (activated < end) {
-          excludeSet.add(pb.buffKey);
-        }
+      if (affecting.length === 0 && subBespokeCutoff === subHits) {
+        return subFormula.calc(withBespoke, charLevel, ctx) * subHits;
       }
 
-      const eKey = exclusionKey(excludeSet);
-      const intervalStats = variants.get(eKey) ?? defaultStats;
+      const cutpointSet = new Set<number>([0, subHits]);
+      if (subBespokeCutoff < subHits) cutpointSet.add(subBespokeCutoff);
+      for (const pb of affecting) {
+        const activated = (pb.partActivation[idx] ?? h) * scale;
+        if (activated > 0 && activated < subHits) cutpointSet.add(activated);
+      }
+      const cutpoints = [...cutpointSet].sort((a, b) => a - b);
 
-      const dmg = formula.calc(intervalStats, charLevel, ctx);
-      partTotal += width * dmg;
+      let sum = 0;
+      for (let i = 0; i < cutpoints.length - 1; i++) {
+        const start = cutpoints[i];
+        const end = cutpoints[i + 1];
+        const width = end - start;
+        if (width <= 0) continue;
+
+        const excludeSet = new Set<string>();
+        for (const pb of affecting) {
+          const activated = (pb.partActivation[idx] ?? h) * scale;
+          if (activated < end) excludeSet.add(pb.buffKey);
+        }
+
+        const bespokeActive = end <= subBespokeCutoff;
+
+        let intervalStats: StatSheet;
+        if (excludeSet.size === 0) {
+          intervalStats = bespokeActive ? withBespoke : baseStats;
+        } else {
+          const variant = variants.get(exclusionKey(excludeSet)) ?? baseStats;
+          intervalStats =
+            bespokeActive && bespokeOverlay
+              ? variant.merge(bespokeOverlay)
+              : variant;
+        }
+
+        sum += width * subFormula.calc(intervalStats, charLevel, ctx);
+      }
+      return sum;
+    };
+
+    // Apply reaction override: split into reacting/non-reacting hits.
+    const hasReaction =
+      reactionOverride?.reaction && reactionOverride.reaction !== "none";
+    let partTotal = 0;
+    if (!hasReaction || formula.tag.reaction !== "none") {
+      partTotal = blendSub(formula, h);
+    } else {
+      const partEligible =
+        ELEMENT_ELIGIBLE_REACTIONS[
+          formula.tag.element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+        ];
+      const targetReaction = resolvePartReaction(
+        reactionOverride,
+        idx,
+        partEligible
+      );
+      const reactingHits =
+        targetReaction !== "none"
+          ? Math.min(reactionOverride.partHits?.[idx] ?? h, h)
+          : 0;
+      const nonReactingHits = h - reactingHits;
+      if (reactingHits > 0) {
+        const effectiveFormula =
+          targetReaction !== formula.tag.reaction
+            ? createReactionVariant(formula, targetReaction)
+            : formula;
+        partTotal += blendSub(effectiveFormula, reactingHits);
+      }
+      if (nonReactingHits > 0) {
+        partTotal += blendSub(formula, nonReactingHits);
+      }
     }
 
     partDamages.push({ damage: partTotal / h, hits: h });

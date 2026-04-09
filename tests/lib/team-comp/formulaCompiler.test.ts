@@ -827,6 +827,48 @@ const EULA_TEAM: TeamSlotConfig[] = [
   },
 ];
 
+// Lunar-reaction team with Nod-Krai faction buffs — exercises lunarCrystallize
+// reactions, teamOnField buffs gated on factions, and forceOnField overrides on
+// an off-field carry formula (Linnea's Million Ton).
+const LINNEA_TEAM: TeamSlotConfig[] = [
+  {
+    charId: "linnea",
+    charLevel: 90,
+    constellation: 6,
+    weaponId: "lightbearing_moonshard",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: ["def%-30", "def%-30"],
+  },
+  {
+    charId: "illuga",
+    charLevel: 90,
+    constellation: 6,
+    weaponId: "the_widsith",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: ["em-80", "em-80"],
+  },
+  {
+    charId: "columbina",
+    charLevel: 90,
+    constellation: 6,
+    weaponId: "a_thousand_floating_dreams",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: ["hp%-20", "hp%-20"],
+  },
+  {
+    charId: "gorou",
+    charLevel: 90,
+    constellation: 6,
+    weaponId: "favonius_warbow",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: ["def%-30", "def%-30"],
+  },
+];
+
 const CLORINDE_TEAM: TeamSlotConfig[] = [
   {
     charId: "clorinde",
@@ -956,6 +998,7 @@ describe("compileTeamDamage full pipeline fuzz", () => {
   fuzzTeam("chasca team (carry swap)", CHASCA_TEAM);
   fuzzTeam("eula team (carry swap)", EULA_TEAM);
   fuzzTeam("clorinde team (carry swap)", CLORINDE_TEAM);
+  fuzzTeam("linnea team (carry swap)", LINNEA_TEAM);
 
   // Support swap tests: optimize support artifacts while measuring carry damage
   fuzzTeam("varka team (venti swap)", VARKA_TEAM, "venti");
@@ -1237,6 +1280,7 @@ describe("compileComboTeamDamage fuzz", () => {
   fuzzComboTeam("chasca team", CHASCA_TEAM);
   fuzzComboTeam("eula team", EULA_TEAM);
   fuzzComboTeam("clorinde team", CLORINDE_TEAM);
+  fuzzComboTeam("linnea team", LINNEA_TEAM);
 
   it("combo with reaction on line matches evaluateCombo", () => {
     const tb = new TeamBuild(DILUC_TEAM);
@@ -2545,3 +2589,499 @@ describe("compileTeamDamage — perCharCrTarget", () => {
     expect(compiledDamage).not.toBeCloseTo(dmgNone, 2);
   });
 });
+
+// ═══════════════════════════════════════════════════════════════
+// Cross-path fuzz: display vs calc vs compile
+// ──────────────────────────────────────────────────────────────
+// Randomizes inputs across EVERY available dimension and asserts
+// that all three lib evaluation paths produce identical damage:
+//   1. getDisplayResult   (UI / damage card cold path)
+//   2. getDamageResult    (optimizer cold path)
+//   3. compileTeamDamage  (optimizer B&B hot path)
+//
+// Dimensions varied per trial:
+//   • team composition (fixed set + random team generator)
+//   • carry character (any position, not just slot 0)
+//   • carry formula (any formula from the carry, not just the first)
+//   • reactionOverride (undefined / forceOnField on off-field formulas)
+//   • combat options (every char/weapon/artifactSet with an OptionDef
+//     gets a random enabled-or-disabled choice — resolveOption falls
+//     back gracefully so invalid picks won't crash)
+//   • constellation, weapon, refinement, artifact set (random team path)
+//   • enemy level / enemy res / crit mode (random per trial)
+// ═══════════════════════════════════════════════════════════════
+
+import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
+import { getBuffInstanceKey } from "@/lib/team-comp/damageBuffs";
+import { getComboDisplayResult } from "@/lib/team-comp/damageCalc";
+import { type OptionMap, getEntityOption } from "@/lib/team-comp/damageModels";
+import type { PartialBuffInfo } from "@/lib/team-comp/stackAllocation";
+import { buildStatVariants } from "@/lib/team-comp/stackAllocation";
+import type { ReactionOverride } from "@/lib/team-comp/types";
+
+describe("cross-path fuzz (display vs calc vs compile)", () => {
+  const rv = getRollValues();
+
+  /** Random enabled OR disabled option value (to exercise resolveOption fallback). */
+  function pickRandomOptionValue(entityId: string): string | undefined {
+    const def = getEntityOption(entityId);
+    if (!def) return undefined;
+    const choice = def.choices[Math.floor(Math.random() * def.choices.length)];
+    return choice.value;
+  }
+
+  /** Assemble a random combat-opts map covering every char/weapon/artifact with options. */
+  function buildRandomCombatOpts(configs: TeamSlotConfig[]): OptionMap {
+    const opts: OptionMap = {};
+    for (const cfg of configs) {
+      const cv = pickRandomOptionValue(cfg.charId);
+      if (cv !== undefined) opts[cfg.charId] = cv;
+      const wv = pickRandomOptionValue(cfg.weaponId);
+      if (wv !== undefined) opts[cfg.weaponId] = wv;
+      if (cfg.artifactSetId) {
+        const av = pickRandomOptionValue(cfg.artifactSetId);
+        if (av !== undefined) opts[cfg.artifactSetId] = av;
+      }
+    }
+    return opts;
+  }
+
+  /** Random CalcContext (enemy level, res, optional crit target). */
+  function randomCtx(): CalcContext {
+    return {
+      enemyLevel: 70 + Math.floor(Math.random() * 40), // 70..109
+      enemyRes: Math.random() * 0.5, // 0..0.5
+    };
+  }
+
+  /** All (charId, formulaId) pairs in the team, including reaction formulas. */
+  function listAllFormulas(
+    tb: TeamBuild
+  ): { charId: string; formulaId: string }[] {
+    const pairs: { charId: string; formulaId: string }[] = [];
+    const all = tb.getFormulaIds();
+    for (const [cid, fmap] of Object.entries(all)) {
+      for (const fid of Object.keys(fmap)) {
+        pairs.push({ charId: cid, formulaId: fid });
+      }
+    }
+    return pairs;
+  }
+
+  /** Roll a reactionOverride covering: reaction (amp/catalyze) when eligible,
+   *  forceOnField (when formula has off-field parts), partHits overrides, and
+   *  any combination thereof. */
+  function randomReactionOverride(
+    tb: TeamBuild,
+    charId: string,
+    formulaId: string
+  ): ReactionOverride | undefined {
+    const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+    if (!entry) return undefined;
+    const override: ReactionOverride = {};
+
+    // Reaction: pick a random element-eligible reaction for the first part.
+    const firstPartElement = entry.parts[0]?.formula.tag.element as
+      | keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+      | undefined;
+    if (firstPartElement && Math.random() < 0.5) {
+      const eligible = ELEMENT_ELIGIBLE_REACTIONS[firstPartElement];
+      if (eligible && eligible.length > 1) {
+        override.reaction =
+          eligible[Math.floor(Math.random() * eligible.length)];
+      }
+    }
+
+    // forceOnField when formula has any off-field parts.
+    if (entry.parts.some((p) => p.offField) && Math.random() < 0.5) {
+      override.forceOnField = true;
+    }
+
+    // Per-part reacting hit count override: sparse random subset.
+    if (override.reaction && override.reaction !== "none") {
+      const partHits: Record<number, number> = {};
+      for (let i = 0; i < entry.parts.length; i++) {
+        if (Math.random() < 0.3) {
+          const h = entry.parts[i].hits ?? 1;
+          partHits[i] = Math.floor(Math.random() * (h + 1));
+        }
+      }
+      if (Object.keys(partHits).length > 0) override.partHits = partHits;
+    }
+
+    return Object.keys(override).length > 0 ? override : undefined;
+  }
+
+  /** Synthesize a random PartialBuffInfo[] covering every static buff in
+   *  the team. For each buff, each part gets a random activation in
+   *  [0..hits]. No applicability filtering — paths ignore buffs that
+   *  don't apply, so this purely stresses the blending machinery with
+   *  arbitrary distributions. "No need to actually distribute the stacks." */
+  function randomPartialBuffs(
+    tb: TeamBuild,
+    charId: string,
+    formulaId: string
+  ): PartialBuffInfo[] {
+    const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+    if (!entry) return [];
+    const infos: PartialBuffInfo[] = [];
+    for (const { buff, providerCharId } of tb.allStaticBuffs) {
+      if (providerCharId === "resonance" || providerCharId === "extra")
+        continue;
+      // 60% chance to include each buff as a partial-buff override
+      if (Math.random() > 0.6) continue;
+      const buffKey = getBuffInstanceKey(buff, providerCharId);
+      const partActivation: Record<number, number> = {};
+      for (let i = 0; i < entry.parts.length; i++) {
+        const h = entry.parts[i].hits ?? 1;
+        // 50% fully active, otherwise random 0..h
+        if (Math.random() < 0.5) continue;
+        partActivation[i] = Math.floor(Math.random() * (h + 1));
+      }
+      if (Object.keys(partActivation).length > 0) {
+        infos.push({ buffKey, partActivation });
+      }
+    }
+    return infos;
+  }
+
+  type Paths = { display: number; calc: number; compile: number };
+
+  /** Run all three paths and return damages. Throws on path failure.
+   *  The caller supplies a distribution — same distribution is fed to
+   *  all three paths so any divergence is a real path-level bug. */
+  function evalAllPaths(
+    tb: TeamBuild,
+    charId: string,
+    formulaId: string,
+    sheets: Record<string, StatSheet>,
+    ctx: CalcContext,
+    reactionOverride: ReactionOverride | undefined,
+    dist: PartialBuffInfo[]
+  ): Paths {
+    // Path 1: display — pass the distribution to skip internal blending
+    const dr = tb.getDisplayResult(
+      charId,
+      formulaId,
+      sheets,
+      ctx,
+      reactionOverride,
+      undefined,
+      dist
+    );
+
+    // Path 2: calc — getDamageResult with externally-resolved post-stats.
+    // When a distribution is supplied, we must also supply statsVariants
+    // (and offFieldVariants) per exclusion set, mirroring what
+    // getDisplayResult builds internally.
+    const teamStats = tb.getTeamStats(sheets, charId, ctx);
+    const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId)!;
+    const hasOff =
+      !reactionOverride?.forceOnField &&
+      (entry?.parts.some((p) => p.offField) ?? false);
+    const offFieldTeamStats = hasOff
+      ? tb.getTeamStats(sheets, null, ctx)
+      : undefined;
+    const statsVariants =
+      dist.length > 0
+        ? buildStatVariants(
+            dist,
+            entry.parts,
+            (excludeSet) =>
+              tb.getTeamStatsExcluding(sheets, charId, ctx, excludeSet)[charId]!
+          )
+        : undefined;
+    const offFieldVariants =
+      dist.length > 0 && hasOff
+        ? buildStatVariants(
+            dist,
+            entry.parts,
+            (excludeSet) =>
+              tb.getTeamStatsExcluding(sheets, null, ctx, excludeSet)[charId]!
+          )
+        : undefined;
+    const calcDmg = tb.getDamageResult(
+      charId,
+      formulaId,
+      teamStats,
+      ctx,
+      reactionOverride,
+      offFieldTeamStats,
+      dist,
+      statsVariants,
+      offFieldVariants
+    ).totalDamage;
+
+    // Path 3: compile
+    const optCtx = tb.createOptimizerContext(sheets, charId, charId, ctx);
+    const compiled = compileTeamDamage(
+      tb,
+      charId,
+      formulaId,
+      ctx,
+      optCtx,
+      reactionOverride,
+      undefined,
+      undefined,
+      undefined,
+      dist
+    );
+    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === charId);
+    const vars = new Float64Array(compiled.numVars);
+    vars.fill(0);
+    if (charIdx >= 0) {
+      fillVarsFromSheet(sheets[charId], compiled.varMapping, charIdx, vars);
+    }
+    const compileDmg = compiled.evaluate(vars);
+
+    return { display: dr.totalDamage, calc: calcDmg, compile: compileDmg };
+  }
+
+  function relErr(a: number, b: number): number {
+    const ref = Math.max(Math.abs(a), Math.abs(b));
+    if (ref === 0) return 0;
+    return Math.abs(a - b) / ref;
+  }
+
+  function checkPaths(
+    p: Paths,
+    label: string,
+    tolerance = 1e-6
+  ): string | null {
+    const dc = relErr(p.display, p.calc);
+    const dComp = relErr(p.display, p.compile);
+    if (dc > tolerance || dComp > tolerance) {
+      return (
+        `${label}: display=${p.display.toFixed(4)} ` +
+        `calc=${p.calc.toFixed(4)} (relErr=${(dc * 100).toFixed(6)}%) ` +
+        `compile=${p.compile.toFixed(4)} (relErr=${(dComp * 100).toFixed(6)}%)`
+      );
+    }
+    return null;
+  }
+
+  // ── Single-formula cross-path fuzzer ──
+  it("random teams: cross-path agreement (single formula)", () => {
+    const errors: string[] = [];
+    let trials = 0;
+
+    for (let attempt = 0; attempt < 600 && trials < 300; attempt++) {
+      const configs = tryRandomTeam();
+      if (!configs) continue;
+
+      const combatOpts = buildRandomCombatOpts(configs);
+      let tb: TeamBuild;
+      try {
+        tb = new TeamBuild(configs, combatOpts);
+      } catch {
+        continue;
+      }
+
+      const pairs = listAllFormulas(tb).filter(
+        (p) => !p.formulaId.startsWith("rx-")
+      );
+      if (pairs.length === 0) continue;
+
+      const pair = pairs[Math.floor(Math.random() * pairs.length)];
+      const reactionOverride = randomReactionOverride(
+        tb,
+        pair.charId,
+        pair.formulaId
+      );
+
+      const sheets: Record<string, StatSheet> = {};
+      for (const cfg of configs) {
+        sheets[cfg.charId] = buildSheetFromMainAndSubs(
+          randomMainStats(),
+          randomSubRolls(),
+          rv
+        );
+      }
+
+      const ctx = randomCtx();
+
+      try {
+        const dist = randomPartialBuffs(tb, pair.charId, pair.formulaId);
+        const paths = evalAllPaths(
+          tb,
+          pair.charId,
+          pair.formulaId,
+          sheets,
+          ctx,
+          reactionOverride,
+          dist
+        );
+        trials++;
+        const msg = checkPaths(
+          paths,
+          `team=[${configs.map((c) => c.charId).join(",")}] ` +
+            `${pair.charId}/${pair.formulaId} ` +
+            `rxo=${JSON.stringify(reactionOverride ?? null)} ` +
+            `dist=${JSON.stringify(dist)} ` +
+            `opts=${JSON.stringify(combatOpts)}`
+        );
+        if (msg && errors.length < 15) errors.push(msg);
+      } catch {
+        // Skip trials that throw (feature-gated formulas / invalid combos)
+      }
+    }
+
+    if (errors.length > 0) {
+      throw new Error(
+        `${errors.length} random-team cross-path mismatches ` +
+          `(trials=${trials}):\n${errors.join("\n")}`
+      );
+    }
+    expect(trials).toBeGreaterThan(100);
+  });
+
+  // ── Random-team combo fuzzer ──
+  // Builds a random 1–3 line combo from a random team's formulas, each line
+  // with a random forceOnField toggle. Cross-checks getComboDisplayResult
+  // against evaluateCombo (the two cold-path combo entry points).
+  it("random teams: combo display vs evaluateCombo agreement", () => {
+    const errors: string[] = [];
+    let trials = 0;
+
+    for (let attempt = 0; attempt < 400 && trials < 150; attempt++) {
+      const configs = tryRandomTeam();
+      if (!configs) continue;
+
+      const combatOpts = buildRandomCombatOpts(configs);
+      let tb: TeamBuild;
+      try {
+        tb = new TeamBuild(configs, combatOpts);
+      } catch {
+        continue;
+      }
+
+      const pairs = listAllFormulas(tb).filter(
+        (p) => !p.formulaId.startsWith("rx-")
+      );
+      if (pairs.length === 0) continue;
+
+      const shuffled = [...pairs].sort(() => Math.random() - 0.5);
+      const lineCount =
+        1 + Math.floor(Math.random() * Math.min(3, shuffled.length));
+      const lines = shuffled.slice(0, lineCount).map((p) => {
+        const entry = tb.charBuilds[p.charId]?.charBase.getFormulaEntry(
+          p.formulaId
+        );
+        const hasOff = entry?.parts.some((pt) => pt.offField) ?? false;
+        const reaction: ReactionOverride | undefined =
+          hasOff && Math.random() < 0.5 ? { forceOnField: true } : undefined;
+        return {
+          charId: p.charId,
+          formulaId: p.formulaId,
+          count: 1 + Math.floor(Math.random() * 3),
+          reaction,
+        };
+      });
+
+      const combo: ComboFormula = {
+        id: "cross-fuzz",
+        label: { zh: "测试", en: "test" },
+        lines,
+      };
+
+      const sheets: Record<string, StatSheet> = {};
+      for (const cfg of configs) {
+        sheets[cfg.charId] = buildSheetFromMainAndSubs(
+          randomMainStats(),
+          randomSubRolls(),
+          rv
+        );
+      }
+
+      const ctx = randomCtx();
+
+      // Randomize per-line buff stack overrides so all combo paths see
+      // the same arbitrary distribution.
+      const buffOverrides: Record<number, PartialBuffInfo[]> = {};
+      for (let i = 0; i < lines.length; i++) {
+        const d = randomPartialBuffs(tb, lines[i].charId, lines[i].formulaId);
+        if (d.length > 0) buffOverrides[i] = d;
+      }
+
+      try {
+        const comboDr = getComboDisplayResult(
+          tb,
+          combo,
+          sheets,
+          ctx,
+          buffOverrides
+        );
+        const evaled = evaluateCombo(tb, combo, sheets, ctx, buffOverrides);
+        trials++;
+        const dc = relErr(comboDr.totalDamage, evaled.totalDamage);
+        if (dc > 1e-6 && errors.length < 15) {
+          errors.push(
+            `team=[${configs.map((c) => c.charId).join(",")}] ` +
+              `display=${comboDr.totalDamage.toFixed(4)} ` +
+              `evaluateCombo=${evaled.totalDamage.toFixed(4)} ` +
+              `relErr=${(dc * 100).toFixed(6)}% ` +
+              `lines=${lines
+                .map(
+                  (l) =>
+                    `${l.charId}/${l.formulaId}×${l.count}(force=${l.reaction?.forceOnField ?? false})`
+                )
+                .join(",")}`
+          );
+        }
+      } catch {
+        // Skip trials that throw
+      }
+    }
+
+    if (errors.length > 0) {
+      throw new Error(
+        `${errors.length} combo cross-path mismatches (trials=${trials}):\n${errors.join("\n")}`
+      );
+    }
+    expect(trials).toBeGreaterThan(50);
+  });
+});
+
+// tryRandomTeam is defined inside the "random team fuzz" describe block above.
+// Re-export via a local helper for the cross-path fuzz suite.
+function tryRandomTeam(): TeamSlotConfig[] | null {
+  const charStats = getCharacterStatsSync()!;
+  const weaponStats = getWeaponStatsSync()!;
+
+  const weaponsByType: Record<string, string[]> = {};
+  for (const w of weapons) {
+    const stats = weaponStats[w.id];
+    if (!stats) continue;
+    const t = stats.type;
+    if (!weaponsByType[t]) weaponsByType[t] = [];
+    weaponsByType[t].push(w.id);
+  }
+
+  const fiveStarArtifacts = artifacts
+    .filter((a) => a.rarity === 5)
+    .map((a) => a.id);
+
+  const shuffled = [...characters].sort(() => Math.random() - 0.5);
+  const picked: TeamSlotConfig[] = [];
+  for (const c of shuffled) {
+    if (picked.length >= 4) break;
+    if (picked.some((p) => p.charId === c.id)) continue;
+    const stats = charStats[c.id];
+    if (!stats) continue;
+    const compatible = weaponsByType[stats.weaponType];
+    if (!compatible || compatible.length === 0) continue;
+    picked.push({
+      charId: c.id,
+      charLevel: 90,
+      constellation: Math.floor(Math.random() * 7),
+      weaponId: compatible[Math.floor(Math.random() * compatible.length)],
+      refinement: Math.floor(Math.random() * 5) + 1,
+      // Always a 4pc 5-star set (all slots same set). We only need to
+      // fuzz 4pc — 2+2 is easier and rarely catches path divergence.
+      artifactSetId:
+        fiveStarArtifacts[Math.floor(Math.random() * fiveStarArtifacts.length)],
+      artifactHalfSetIds: [],
+    });
+  }
+  return picked.length >= 4 ? picked : null;
+}

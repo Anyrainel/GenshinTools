@@ -92,10 +92,10 @@ export function computeWeightScore(
   globalConfig: GlobalStatWeights,
   crDiscount: number
 ): number {
-  const baseWeights = buildMatch?.statWeights ?? { cr: 100, cd: 100 };
+  const baseWeights = buildMatch?.statWeights ?? {};
   const weights =
-    crDiscount < 1
-      ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }
+    crDiscount < 1 && baseWeights.cr
+      ? { ...baseWeights, cr: baseWeights.cr * crDiscount }
       : baseWeights;
   let score = scoreSlot(art, weights, globalConfig);
   const hasMainStatBuild =

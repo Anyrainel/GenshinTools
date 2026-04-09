@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-04-09T10:37:58.930Z",
+  "generatedAt": "2026-04-09T12:41:06.476Z",
   "teams": {
     "W808g3W1RCW53VB0T": {
       "teamName": "varka / durin / bennett / venti",
@@ -30,7 +30,7 @@
           "minCr": 0.05
         }
       },
-      "damage": 23269604.2145,
+      "damage": 23087822.3353,
       "comboResult": {
         "lineDamages": [
           {
@@ -46,8 +46,8 @@
             "total": 3578035.8941
           },
           {
-            "perHit": 3639359.7328,
-            "total": 5161193.263
+            "perHit": 3275795.9743,
+            "total": 4979411.3837
           },
           {
             "perHit": 479241.4407,
@@ -90,7 +90,7 @@
             "total": 1485971.09
           }
         ],
-        "totalDamage": 23269604.2145
+        "totalDamage": 23087822.3353
       },
       "artifacts": {
         "varka": {
@@ -330,7 +330,7 @@
         }
       },
       "display": {
-        "totalDamage": 23269604.2145,
+        "totalDamage": 23087822.3353,
         "partsByFormula": {
           "varka.varka-e": [
             {
@@ -1305,7 +1305,7 @@
           },
           "durin": {
             "atk": 0.0009,
-            "atk%": 0.0026,
+            "atk%": 0.0027,
             "cr": 0.0029,
             "cd": 0.0027
           },
@@ -1319,7 +1319,7 @@
             "atk": 0.0008,
             "atk%": 0.0023,
             "cr": 0.0017,
-            "cd": 0.0047
+            "cd": 0.0048
           }
         },
         "levelUpGains": {}

@@ -1055,91 +1055,31 @@ function buildTotalDamageExpr(
     const h = totalHits ?? 1;
 
     // Use off-field stats when the part deals damage while the character is off-field
+    const effectiveOffField = offField && !reactionOverride?.forceOnField;
     const baseStats =
-      offField && offFieldFormulaStats ? offFieldFormulaStats : formulaStats;
+      effectiveOffField && offFieldFormulaStats
+        ? offFieldFormulaStats
+        : formulaStats;
     const baseVariants =
-      offField && offFieldVariants ? offFieldVariants : statsVariants;
-
-    // Apply bespoke buff overlay
-    let stats = baseStats;
-    if (bespokeBuff) {
-      // Merge static entries from bespoke buff
-      stats = stats.withMergedConst(
-        bespokeBuff.staticBuffs,
-        bespokeBuff.target.filter
-      );
-      // Apply bespoke dynamic buffs
-      if (
-        bespokeBuff instanceof ScalingBuff ||
-        bespokeBuff instanceof CrossScalingBuff
-      ) {
-        for (const { key, expr } of bespokeBuff.dynamicBuffsExpr(stats)) {
-          if (expr.tag === "const") {
-            stats = stats.withMergedConst(
-              [{ key, value: expr.value }],
-              bespokeBuff.target.filter
-            );
-          } else {
-            stats = stats.withMergedExpr(
-              [{ key, expr }],
-              bespokeBuff.target.filter
-            );
-          }
-        }
-      }
-    }
+      effectiveOffField && offFieldVariants ? offFieldVariants : statsVariants;
 
     const hasReaction =
       reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
-    // Collect partial buffs affecting this part
-    const partPartials = partialBuffs?.filter((pb) => {
-      const activated = pb.partActivation[idx];
-      return activated !== undefined && activated < h;
-    });
-
-    const bespokeMax = bespokeBuff?.source.maxStacks;
-
     if (!hasReaction || formula.tag.reaction !== "none") {
-      // No reaction override or formula has built-in reaction
-      if (partPartials && partPartials.length > 0) {
-        // Build blended expression for partial buff activation
-        emitBlendedPartExprs(
-          partExprs,
-          formula,
-          stats,
-          charBase,
-          ctx,
-          h * comboCount,
-          idx,
-          partPartials,
-          baseVariants,
-          bespokeBuff
-        );
-      } else if (bespokeMax != null) {
-        const totalHitsAll = h * comboCount;
-        const buffedHits = Math.min(bespokeMax, totalHitsAll);
-        const unbuffedHits = totalHitsAll - buffedHits;
-        const buffedExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-        if (unbuffedHits > 0) {
-          const unbuffedExpr = formula.buildExpr(
-            baseStats,
-            charBase.charLevel,
-            ctx
-          );
-          partExprs.push(
-            E.add(
-              E.mul(buffedExpr, E.const(buffedHits)),
-              E.mul(unbuffedExpr, E.const(unbuffedHits))
-            )
-          );
-        } else {
-          partExprs.push(E.mul(buffedExpr, E.const(totalHitsAll)));
-        }
-      } else {
-        const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-        partExprs.push(E.mul(partExpr, E.const(h * comboCount)));
-      }
+      emitBlendedPartExprs(
+        partExprs,
+        formula,
+        baseStats,
+        charBase,
+        ctx,
+        h * comboCount,
+        h * comboCount,
+        idx,
+        partialBuffs,
+        baseVariants,
+        bespokeBuff
+      );
       continue;
     }
 
@@ -1165,90 +1105,34 @@ function buildTotalDamageExpr(
         targetReaction !== formula.tag.reaction
           ? createReactionVariant(formula, targetReaction)
           : formula;
-      if (partPartials && partPartials.length > 0) {
-        emitBlendedPartExprs(
-          partExprs,
-          effectiveFormula,
-          stats,
-          charBase,
-          ctx,
-          reactingHits * comboCount,
-          idx,
-          partPartials,
-          baseVariants,
-          bespokeBuff
-        );
-      } else if (bespokeMax != null) {
-        const totalReacting = reactingHits * comboCount;
-        const buffed = Math.min(bespokeMax, totalReacting);
-        const unbuffed = totalReacting - buffed;
-        const buffedExpr = effectiveFormula.buildExpr(
-          stats,
-          charBase.charLevel,
-          ctx
-        );
-        if (unbuffed > 0) {
-          const unbuffedExpr = effectiveFormula.buildExpr(
-            baseStats,
-            charBase.charLevel,
-            ctx
-          );
-          partExprs.push(
-            E.add(
-              E.mul(buffedExpr, E.const(buffed)),
-              E.mul(unbuffedExpr, E.const(unbuffed))
-            )
-          );
-        } else {
-          partExprs.push(E.mul(buffedExpr, E.const(totalReacting)));
-        }
-      } else {
-        const partExpr = effectiveFormula.buildExpr(
-          stats,
-          charBase.charLevel,
-          ctx
-        );
-        partExprs.push(E.mul(partExpr, E.const(reactingHits * comboCount)));
-      }
+      emitBlendedPartExprs(
+        partExprs,
+        effectiveFormula,
+        baseStats,
+        charBase,
+        ctx,
+        reactingHits * comboCount,
+        h * comboCount,
+        idx,
+        partialBuffs,
+        baseVariants,
+        bespokeBuff
+      );
     }
     if (nonReactingHits > 0) {
-      if (partPartials && partPartials.length > 0) {
-        emitBlendedPartExprs(
-          partExprs,
-          formula,
-          stats,
-          charBase,
-          ctx,
-          nonReactingHits * comboCount,
-          idx,
-          partPartials,
-          baseVariants,
-          bespokeBuff
-        );
-      } else if (bespokeMax != null) {
-        const totalNonReacting = nonReactingHits * comboCount;
-        const buffed = Math.min(bespokeMax, totalNonReacting);
-        const unbuffed = totalNonReacting - buffed;
-        const buffedExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-        if (unbuffed > 0) {
-          const unbuffedExpr = formula.buildExpr(
-            baseStats,
-            charBase.charLevel,
-            ctx
-          );
-          partExprs.push(
-            E.add(
-              E.mul(buffedExpr, E.const(buffed)),
-              E.mul(unbuffedExpr, E.const(unbuffed))
-            )
-          );
-        } else {
-          partExprs.push(E.mul(buffedExpr, E.const(totalNonReacting)));
-        }
-      } else {
-        const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-        partExprs.push(E.mul(partExpr, E.const(nonReactingHits * comboCount)));
-      }
+      emitBlendedPartExprs(
+        partExprs,
+        formula,
+        baseStats,
+        charBase,
+        ctx,
+        nonReactingHits * comboCount,
+        h * comboCount,
+        idx,
+        partialBuffs,
+        baseVariants,
+        bespokeBuff
+      );
     }
   }
 
@@ -1275,31 +1159,53 @@ function emitBlendedPartExprs(
     buildExpr: (stats: ExprStats, charLevel: number, ctx: CalcContext) => Expr;
     tag: DamageTag;
   },
-  defaultStats: ExprStats,
+  baseStats: ExprStats,
   charBase: CharacterBase,
   ctx: CalcContext,
   totalHits: number,
+  originalPartHits: number,
   partIdx: number,
-  partials: PartialBuffInfo[],
+  partials: PartialBuffInfo[] | undefined,
   statsVariants?: Map<string, ExprStats>,
   bespokeBuff?: StatBuff
 ): void {
-  // Collect affecting partials
-  const affecting = partials.filter((pb) => {
-    const activated = pb.partActivation[partIdx] ?? totalHits;
+  // Scale activation counts for reaction sub-parts: partialBuffs are stored
+  // per full part (originalPartHits), but this call may evaluate only a
+  // sub-slice (reacting or non-reacting). Mirrors _calcPartBlended.
+  const scale = totalHits / originalPartHits;
+  const bespokeMax = bespokeBuff?.source.maxStacks;
+  const scaledBespokeMax = bespokeMax != null ? bespokeMax * scale : undefined;
+  const bespokeCutoff =
+    bespokeBuff && scaledBespokeMax != null && scaledBespokeMax < totalHits
+      ? scaledBespokeMax
+      : totalHits;
+  // Compute bespoke entries ONCE against baseStats so dynamic scaling
+  // (e.g. EM → baseDmg) uses full base values, matching display/calc semantics.
+  const bespokeEntries = bespokeBuff
+    ? captureBespokeEntries(baseStats, bespokeBuff)
+    : undefined;
+  const withBespoke = bespokeEntries
+    ? mergeBespokeEntries(baseStats, bespokeEntries, bespokeBuff!.target.filter)
+    : baseStats;
+
+  // Collect affecting partials (activations compared in the scaled sub-part frame)
+  const affecting = (partials ?? []).filter((pb) => {
+    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
     return activated < totalHits;
   });
 
-  if (affecting.length === 0) {
-    const expr = formula.buildExpr(defaultStats, charBase.charLevel, ctx);
+  // Fast path: uniform across all hits
+  if (affecting.length === 0 && bespokeCutoff === totalHits) {
+    const expr = formula.buildExpr(withBespoke, charBase.charLevel, ctx);
     partExprs.push(E.mul(expr, E.const(totalHits)));
     return;
   }
 
-  // Build interval cutpoints from activation counts
+  // Build interval cutpoints from activation counts and bespoke cutoff
   const cutpointSet = new Set<number>([0, totalHits]);
+  if (bespokeCutoff < totalHits) cutpointSet.add(bespokeCutoff);
   for (const pb of affecting) {
-    const activated = pb.partActivation[partIdx] ?? totalHits;
+    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
     if (activated > 0 && activated < totalHits) cutpointSet.add(activated);
   }
   const cutpoints = [...cutpointSet].sort((a, b) => a - b);
@@ -1313,29 +1219,77 @@ function emitBlendedPartExprs(
     // Determine which buffs are inactive in this interval
     const excludeSet = new Set<string>();
     for (const pb of affecting) {
-      const activated = pb.partActivation[partIdx] ?? totalHits;
+      const activated =
+        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
       if (activated < end) excludeSet.add(pb.buffKey);
     }
 
-    // Look up pre-built variant or use default stats
+    const bespokeActive = end <= bespokeCutoff;
+
     let intervalStats: ExprStats;
     if (excludeSet.size === 0) {
-      intervalStats = defaultStats;
+      intervalStats = bespokeActive ? withBespoke : baseStats;
     } else {
       const eKey = exclusionKey(excludeSet);
-      const variant = statsVariants?.get(eKey);
-      if (variant) {
-        // Apply bespoke buff overlay on top of the variant
-        intervalStats = applyBespokeOverlay(variant, bespokeBuff);
-      } else {
-        // Fallback: use default stats (shouldn't happen if variants were pre-built correctly)
-        intervalStats = defaultStats;
-      }
+      const variant = statsVariants?.get(eKey) ?? baseStats;
+      intervalStats =
+        bespokeActive && bespokeEntries && bespokeBuff
+          ? mergeBespokeEntries(
+              variant,
+              bespokeEntries,
+              bespokeBuff.target.filter
+            )
+          : variant;
     }
 
     const expr = formula.buildExpr(intervalStats, charBase.charLevel, ctx);
     partExprs.push(E.mul(expr, E.const(width)));
   }
+}
+
+/**
+ * Capture a bespoke buff's static + dynamic entries as (key, expr) pairs,
+ * with dynamic scaling evaluated ONCE against the given baseStats. This
+ * matches display/calc semantics where per-part bespoke overlays are built
+ * from the character's base stats (not per-interval variant stats).
+ */
+function captureBespokeEntries(
+  baseStats: ExprStats,
+  bespokeBuff: StatBuff
+): { key: StatKey; expr: Expr }[] {
+  const entries: { key: StatKey; expr: Expr }[] = [];
+  for (const { key, value } of bespokeBuff.staticBuffs) {
+    entries.push({ key, expr: E.const(value) });
+  }
+  if (
+    bespokeBuff instanceof ScalingBuff ||
+    bespokeBuff instanceof CrossScalingBuff
+  ) {
+    // Evaluate dynamic scaling against baseStats (pre-overlay). Static entries
+    // would only affect dynamic scaling if the buff scales off the same key
+    // it writes to — uncommon, and display path also doesn't feed statics back.
+    for (const { key, expr } of bespokeBuff.dynamicBuffsExpr(baseStats)) {
+      entries.push({ key, expr });
+    }
+  }
+  return entries;
+}
+
+/** Merge pre-captured bespoke entries into any ExprStats. */
+function mergeBespokeEntries(
+  stats: ExprStats,
+  entries: { key: StatKey; expr: Expr }[],
+  filter: StatBuff["target"]["filter"]
+): ExprStats {
+  let result = stats;
+  for (const { key, expr } of entries) {
+    if (expr.tag === "const") {
+      result = result.withMergedConst([{ key, value: expr.value }], filter);
+    } else {
+      result = result.withMergedExpr([{ key, expr }], filter);
+    }
+  }
+  return result;
 }
 
 /** Apply bespoke buff overlay to ExprStats (static + dynamic parts). */

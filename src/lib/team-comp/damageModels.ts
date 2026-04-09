@@ -1131,7 +1131,6 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
 
       // Apply per-part stat overlay if present
       let bespokeOverlay: StatSheet | undefined;
-      let stats: StatSheet;
       if (bespokeBuff) {
         bespokeOverlay = StatSheet.fromEntries(
           [
@@ -1140,9 +1139,6 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           ],
           bespokeBuff.target.filter
         );
-        stats = baseSelfStats.merge(bespokeOverlay);
-      } else {
-        stats = baseSelfStats;
       }
 
       // Pick the correct variants map for on/off-field
@@ -1159,14 +1155,15 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       if (!hasReaction || formula.tag.reaction !== "none") {
         const buffedResult = this._calcPartBlended(
           formula,
-          stats,
+          baseSelfStats,
           ctx,
           h,
           idx,
           h,
           partialBuffs,
           partVariants,
-          bespokeOverlay
+          bespokeOverlay,
+          bespokeMaxStacks
         );
         if (bespokeMaxStacks != null) {
           const unbuffedResult = this._calcPartBlended(
@@ -1217,14 +1214,15 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             : formula;
         const buffedResult = this._calcPartBlended(
           effectiveFormula,
-          stats,
+          baseSelfStats,
           ctx,
           reactingHits,
           idx,
           h,
           partialBuffs,
           partVariants,
-          bespokeOverlay
+          bespokeOverlay,
+          bespokeMaxStacks
         );
         if (bespokeMaxStacks != null) {
           const unbuffedResult = this._calcPartBlended(
@@ -1252,14 +1250,15 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       if (nonReactingHits > 0) {
         const buffedResult = this._calcPartBlended(
           formula,
-          stats,
+          baseSelfStats,
           ctx,
           nonReactingHits,
           idx,
           h,
           partialBuffs,
           partVariants,
-          bespokeOverlay
+          bespokeOverlay,
+          bespokeMaxStacks
         );
         if (bespokeMaxStacks != null) {
           const unbuffedResult = this._calcPartBlended(
@@ -1304,33 +1303,45 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
    */
   private _calcPartBlended(
     formula: DamageFormula,
-    stats: StatSheet,
+    baseStats: StatSheet,
     ctx: CalcContext,
     hits: number,
     partIdx: number,
     originalPartHits: number,
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
-    bespokeOverlay?: StatSheet
+    bespokeOverlay?: StatSheet,
+    bespokeMax?: number
   ): { damage: number; hits: number } {
-    if (!partialBuffs || partialBuffs.length === 0) {
-      return { damage: formula.calc(stats, this.charLevel, ctx), hits };
-    }
+    // Bespoke hit cutoff: applies to hits [0, bespokeCutoff); the rest
+    // fall back to baseStats. Matches getDisplayParts' split semantics.
+    const bespokeCutoff =
+      bespokeOverlay && bespokeMax != null && bespokeMax < hits
+        ? bespokeMax
+        : hits;
+    const withBespoke = bespokeOverlay
+      ? baseStats.merge(bespokeOverlay)
+      : baseStats;
 
     // Scale activation proportionally for sub-parts (reacting/non-reacting split)
     const scale = hits / originalPartHits;
-    const affecting = partialBuffs.filter((pb) => {
+    const affecting = (partialBuffs ?? []).filter((pb) => {
       const activated =
         (pb.partActivation[partIdx] ?? originalPartHits) * scale;
       return activated < hits;
     });
 
-    if (affecting.length === 0) {
-      return { damage: formula.calc(stats, this.charLevel, ctx), hits };
+    // Fast path: uniform damage across all hits
+    if (affecting.length === 0 && bespokeCutoff === hits) {
+      return {
+        damage: formula.calc(withBespoke, this.charLevel, ctx),
+        hits,
+      };
     }
 
     // Build interval cutpoints
     const cutpointSet = new Set<number>([0, hits]);
+    if (bespokeCutoff < hits) cutpointSet.add(bespokeCutoff);
     for (const pb of affecting) {
       const activated =
         (pb.partActivation[partIdx] ?? originalPartHits) * scale;
@@ -1345,27 +1356,25 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       const width = end - start;
       if (width <= 0) continue;
 
-      // Determine which buffs are inactive in this interval
       const excludeSet = new Set<string>();
       for (const pb of affecting) {
         const activated =
           (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-        if (activated < end) {
-          excludeSet.add(pb.buffKey);
-        }
+        if (activated < end) excludeSet.add(pb.buffKey);
       }
 
-      // Look up pre-built variant; apply bespoke overlay if needed
+      const bespokeActive = end <= bespokeCutoff;
+
       let intervalStats: StatSheet;
-      if (excludeSet.size > 0 && statsVariants) {
+      if (excludeSet.size === 0) {
+        intervalStats = bespokeActive ? withBespoke : baseStats;
+      } else {
         const eKey = exclusionKey(excludeSet);
-        const variant = statsVariants.get(eKey) ?? stats;
+        const variant = statsVariants?.get(eKey) ?? baseStats;
         intervalStats =
-          variant !== stats && bespokeOverlay
+          bespokeActive && bespokeOverlay
             ? variant.merge(bespokeOverlay)
             : variant;
-      } else {
-        intervalStats = stats;
       }
 
       total += width * formula.calc(intervalStats, this.charLevel, ctx);

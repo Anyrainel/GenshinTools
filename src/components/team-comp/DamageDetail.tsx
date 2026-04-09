@@ -1015,9 +1015,12 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       };
     }
 
+    // Use displayCombo so single-formula mode picks up the persisted single
+    // selection + singleReaction (including forceOnField). In combo mode this
+    // is equivalent to filtering combo.lines by count > 0.
     const genCombo: ComboFormula = {
-      ...combo,
-      lines: combo.lines.filter((l) => l.count > 0),
+      ...displayCombo,
+      lines: displayCombo.lines.filter((l) => l.count > 0),
     };
 
     startGenerator({

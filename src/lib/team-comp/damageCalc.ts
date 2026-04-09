@@ -1580,7 +1580,8 @@ export class TeamBuild {
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
-    userBuffOverrides?: BuffActivationMap
+    userBuffOverrides?: BuffActivationMap,
+    externalPartialBuffs?: PartialBuffInfo[]
   ): DisplayResult {
     const build = this.charBuilds[charId];
     if (!build) throw new Error(`No CharBuild for character: ${charId}`);
@@ -1630,11 +1631,17 @@ export class TeamBuild {
     const fullBuffDamage = totalDamage;
 
     // ── Stack allocation + buff activation ──
-    const stackLimited = collectStackLimitedBuffs(
-      this.allStaticBuffs,
-      preStats,
-      teamPreStatsArr
-    );
+    // When `externalPartialBuffs` is provided, the caller is supplying the
+    // distribution directly (used by tests to compare all 3 paths under the
+    // same stack allocation). Skip internal compute in that case.
+    const useExternal = externalPartialBuffs !== undefined;
+    const stackLimited = useExternal
+      ? []
+      : collectStackLimitedBuffs(
+          this.allStaticBuffs,
+          preStats,
+          teamPreStatsArr
+        );
     let buffActivation: BuffActivationMap | undefined;
 
     if (entry) {
@@ -1671,7 +1678,7 @@ export class TeamBuild {
       }
 
       // 3. Merge user overrides on top
-      if (userBuffOverrides) {
+      if (!useExternal && userBuffOverrides) {
         TeamBuild.mergeActivationOverrides(mergedActivation, userBuffOverrides);
       }
 
@@ -1680,16 +1687,19 @@ export class TeamBuild {
         stackLimited.length > 0
           ? buildPartialBuffInfos(mergedActivation, stackLimited, entry.parts)
           : [];
-      const userInfos = userBuffOverrides
-        ? buildUserOverrideInfos(
-            userBuffOverrides,
-            this.allStaticBuffs,
-            entry.parts,
-            (buff, providerId) =>
-              this.isBuffApplicableForChar(buff, providerId, charId, true)
-          )
-        : [];
-      const allInfos = [...stackInfos, ...userInfos];
+      const userInfos =
+        !useExternal && userBuffOverrides
+          ? buildUserOverrideInfos(
+              userBuffOverrides,
+              this.allStaticBuffs,
+              entry.parts,
+              (buff, providerId) =>
+                this.isBuffApplicableForChar(buff, providerId, charId, true)
+            )
+          : [];
+      const allInfos = useExternal
+        ? externalPartialBuffs!
+        : [...stackInfos, ...userInfos];
 
       if (allInfos.length > 0) {
         buffActivation = mergedActivation;
@@ -1723,7 +1733,8 @@ export class TeamBuild {
           build.charBase.charLevel,
           ctx,
           offFieldPostStats,
-          offFieldVariantsMap
+          offFieldVariantsMap,
+          reactionOverride
         );
         totalDamage = blended.totalDamage;
         // Rebuild display parts with 1st-hit stats: exclude only buffs
@@ -3080,11 +3091,16 @@ export function getComboDisplayResult(
     seenFormulas.add(fKey);
 
     try {
+      // Pass the line's reaction override (including forceOnField) so that
+      // on-field-receiver buffs correctly resolve as active for off-field
+      // formula parts the user has forced on-field. Without this, the UI's
+      // buff chip list ignores forceOnField entirely.
       const dr = teamBuild.getDisplayResult(
         line.charId,
         line.formulaId,
         artifactStats,
-        ctx
+        ctx,
+        line.reaction
       );
 
       for (const buff of dr.buffs) {
