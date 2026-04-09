@@ -203,13 +203,15 @@ describe("filterAndSortCharacters", () => {
 
   // ── ownedOnly filter ──
 
-  it("excludes unreleased characters when ownedOnly is true", () => {
+  it("includes unreleased characters when ownedOnly is true and they are owned", () => {
+    // Ownership is the source of truth — if the user owns an unreleased
+    // character (e.g. just released from beta), they should still show up.
     const result = filterAndSortCharacters(
       mockCharacters,
       { ...defaultCharacterFilters, ownedOnly: true },
       { ...options, isOwned: () => true }
     );
-    expect(result.find((c) => c.id === "unreleased")).toBeUndefined();
+    expect(result.find((c) => c.id === "unreleased")).toBeDefined();
   });
 
   it("excludes unowned characters when ownedOnly is true", () => {

@@ -4,29 +4,43 @@ import { BossGrid, BossListPanel } from "@/components/archive/BossListPanel";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getCurrentSchedule, schedules } from "@/data/leylineBoss";
+import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { Skull } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export function BossArchiveView() {
   const { t } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = useArchiveSessionStore((s) => s.bossSearch);
+  const setSearchQuery = useArchiveSessionStore((s) => s.setBossSearch);
+  const selectedBossId = useArchiveSessionStore((s) => s.selectedBossId);
+  const setSelectedBossId = useArchiveSessionStore((s) => s.setSelectedBossId);
 
-  const [selectedBossId, setSelectedBossId] = useState<number | null>(() => {
+  // Default to a boss from the current rotation only on the very first mount
+  // of the session (when nothing has been selected yet). Subsequent nulls —
+  // e.g. from the mobile "Back" button — must not be re-seeded.
+  const didSeed = useRef(false);
+  useEffect(() => {
+    if (didSeed.current) return;
+    didSeed.current = true;
+    if (selectedBossId != null) return;
     const current = getCurrentSchedule();
-    return (
+    const fallback =
       current?.boss_ids[0] ??
       schedules[schedules.length - 1]?.boss_ids[0] ??
-      null
-    );
-  });
+      null;
+    if (fallback != null) setSelectedBossId(fallback);
+  }, [selectedBossId, setSelectedBossId]);
 
-  const handleSelect = useCallback((id: number) => {
-    setSelectedBossId(id);
-  }, []);
+  const handleSelect = useCallback(
+    (id: number) => {
+      setSelectedBossId(id);
+    },
+    [setSelectedBossId]
+  );
 
   const handleBack = useCallback(() => {
     setSelectedBossId(null);
-  }, []);
+  }, [setSelectedBossId]);
 
   const toolbar = (
     <ArchiveToolbar

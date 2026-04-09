@@ -334,7 +334,8 @@
             "cr",
             "atk%",
             "hp%",
-            "er"
+            "er",
+            "def%"
           ],
           "mustPresent": [
             "cd",
@@ -345,14 +346,16 @@
         "sands": {
           "mainStats": [
             "atk%",
-            "hp%"
+            "hp%",
+            "def%"
           ],
           "substats": [
             "cd",
             "cr",
             "atk%",
             "hp%",
-            "er"
+            "er",
+            "def%"
           ],
           "mustPresent": [
             "cd",
@@ -363,14 +366,16 @@
         "goblet": {
           "mainStats": [
             "atk%",
-            "hp%"
+            "hp%",
+            "def%"
           ],
           "substats": [
             "cd",
             "cr",
             "atk%",
             "hp%",
-            "er"
+            "er",
+            "def%"
           ],
           "mustPresent": [
             "cd",
@@ -381,14 +386,16 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd"
+            "cd",
+            "def%"
           ],
           "substats": [
             "cd",
             "cr",
             "atk%",
             "hp%",
-            "er"
+            "er",
+            "def%"
           ],
           "mustPresent": [
             "cd",
@@ -404,6 +411,11 @@
           },
           {
             "characterId": "ineffa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "linnea",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           }
@@ -2631,6 +2643,7 @@
         },
         "goblet": {
           "mainStats": [
+            "def%",
             "elemental%"
           ],
           "substats": [
@@ -2648,7 +2661,8 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd"
+            "cd",
+            "def%"
           ],
           "substats": [
             "cd",
@@ -2675,6 +2689,11 @@
           },
           {
             "characterId": "chiori",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "linnea",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           },

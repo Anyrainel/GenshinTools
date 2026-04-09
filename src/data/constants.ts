@@ -11,16 +11,19 @@ import {
 } from "./resources";
 import { betaCharacters, betaWeapons } from "./resources_beta";
 
+// Released data always wins over beta data: once an entry is promoted to the
+// released resources, its beta counterpart is considered stale. Only beta
+// entries without a released equivalent are merged in when beta is enabled.
 const allCharacters = betaEnabled()
   ? [
-      ...betaCharacters,
-      ...characters.filter((c) => !betaCharacters.some((b) => b.id === c.id)),
+      ...characters,
+      ...betaCharacters.filter((b) => !characters.some((c) => c.id === b.id)),
     ]
   : characters;
 const allWeapons = betaEnabled()
   ? [
-      ...betaWeapons,
-      ...weapons.filter((w) => !betaWeapons.some((b) => b.id === w.id)),
+      ...weapons,
+      ...betaWeapons.filter((b) => !weapons.some((w) => w.id === b.id)),
     ]
   : weapons;
 

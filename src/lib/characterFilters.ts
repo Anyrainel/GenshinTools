@@ -42,8 +42,10 @@ function matchesFilters(
     return false;
   }
   if (filters.ownedOnly) {
-    if (!meta.releaseDate) return false;
-    if (options?.isOwned && !options.isOwned(character.id)) return false;
+    // Ownership is the source of truth: if the user owns the character
+    // (e.g. just released from beta), they should show up regardless of
+    // whether our local stats metadata has a releaseDate yet.
+    if (!options?.isOwned?.(character.id)) return false;
   }
   if (
     filters.elements.length > 0 &&

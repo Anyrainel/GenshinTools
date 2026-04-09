@@ -1,7 +1,7 @@
 {
   "teams": [
     {
-      "id": "W408g301RCS53VAWT",
+      "id": "W808g3W1RCW53VB0T",
       "name": "",
       "characters": ["varka", "durin", "bennett", "venti"],
       "weapons": [
@@ -27,7 +27,33 @@
       "reactions": ["swirl"]
     },
     {
-      "id": "10C0W74031G80K150f",
+      "id": "10G0W20Wm0ua0OA1W2",
+      "name": "",
+      "characters": ["zibai", "linnea", "illuga", "columbina"],
+      "weapons": [
+        "lightbearing_moonshard",
+        "golden_frostbound_oath",
+        "favonius_lance",
+        "nocturnes_curtain_call"
+      ],
+      "artifacts": [
+        {
+          "setId": "night_of_the_skys_unveiling"
+        },
+        {
+          "setId": "husk_of_opulent_dreams"
+        },
+        {
+          "setId": "silken_moons_serenade"
+        },
+        {
+          "setId": "aubade_of_morningstar_and_moon"
+        }
+      ],
+      "reactions": ["lunarCrystallize"]
+    },
+    {
+      "id": "10G0W74W31GC0K15Wf",
       "name": "",
       "characters": ["zibai", "illuga", "columbina", "gorou"],
       "weapons": [
@@ -53,7 +79,7 @@
       "reactions": ["lunarCrystallize"]
     },
     {
-      "id": "5WS0WA1036Gm2YMh0f",
+      "id": "5WW0WA1W36Gq2YMhWf",
       "name": "",
       "characters": ["nefer", "columbina", "lauma", "nilou"],
       "weapons": [
@@ -79,7 +105,7 @@
       "reactions": ["lunarBloom"]
     },
     {
-      "id": "5me0WA1036XG0JH3WT",
+      "id": "5mi0WA1W36XK0JH40T",
       "name": "",
       "characters": ["flins", "columbina", "ineffa", "sucrose"],
       "weapons": [
@@ -105,7 +131,7 @@
       "reactions": ["lunarCharged"]
     },
     {
-      "id": "71K0eyBWe91i11l8Wn",
+      "id": "71O0eyC0e91m11l90n",
       "name": "",
       "characters": ["skirk", "escoffier", "citlali", "furina"],
       "weapons": [
@@ -131,7 +157,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "71K0eyBW8Dv46BJS0e",
+      "id": "71O0eyC08Dv86BJSWe",
       "name": "",
       "characters": ["skirk", "escoffier", "furina", "shenhe"],
       "weapons": [
@@ -157,7 +183,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "71K0eyBW8Dv46BCHWe",
+      "id": "71O0eyC08Dv86BCI0e",
       "name": "",
       "characters": ["skirk", "escoffier", "furina", "kamisato_ayaka"],
       "weapons": [
@@ -183,7 +209,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "7He3fFAW7DpW1h1YWD",
+      "id": "7Hi3fFB07Dpa1h1Z0D",
       "name": "",
       "characters": ["ifa", "ororon", "furina", "fischl"],
       "weapons": [
@@ -208,7 +234,7 @@
       ]
     },
     {
-      "id": "81W0m_Y08CpI49l8Wn",
+      "id": "81a0m_YW8CpM49l90n",
       "name": "",
       "characters": ["varesa", "iansan", "xianyun", "furina"],
       "weapons": [
@@ -234,7 +260,7 @@
       ]
     },
     {
-      "id": "81W0m_Y08D381RPZWe",
+      "id": "81a0m_YW8D3C1RPa0e",
       "name": "",
       "characters": ["varesa", "iansan", "chevreuse", "bennett"],
       "weapons": [
@@ -260,7 +286,7 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "9Hm0v8DW8A2C5BX8WT",
+      "id": "9Hq0v8E08A2G5BX90T",
       "name": "",
       "characters": ["mavuika", "citlali", "xilonen", "kaedehara_kazuha"],
       "weapons": [
@@ -286,7 +312,7 @@
       "reactions": ["melt"]
     },
     {
-      "id": "9Hm0v8DW8A2C5BOv0e",
+      "id": "9Hq0v8E08A2G5BOvWe",
       "name": "",
       "characters": ["mavuika", "citlali", "xilonen", "bennett"],
       "weapons": [
@@ -312,7 +338,7 @@
       "reactions": ["melt"]
     },
     {
-      "id": "9Xq0v8DW8A2C5BPZWe",
+      "id": "9Xu0v8E08A2G5BPa0e",
       "name": "",
       "characters": ["chasca", "citlali", "xilonen", "bennett"],
       "weapons": [
@@ -338,7 +364,7 @@
       "reactions": ["melt"]
     },
     {
-      "id": "9Xq0v8DW8DrO6BPZWe",
+      "id": "9Xu0v8E08DrS6BPa0e",
       "name": "",
       "characters": ["chasca", "citlali", "furina", "bennett"],
       "weapons": [
@@ -364,7 +390,7 @@
       "reactions": ["melt", "vaporize"]
     },
     {
-      "id": "9Xq0vAE08DrO6BOv0e",
+      "id": "9Xu0vAEW8DrS6BOvWe",
       "name": "",
       "characters": ["chasca", "mavuika", "furina", "bennett"],
       "weapons": [
@@ -390,7 +416,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "Aom0ug30eB2q1BPZWK",
+      "id": "Aoq0ug3WeB2u1BPa0K",
       "name": "",
       "characters": ["kinich", "durin", "emilie", "bennett"],
       "weapons": [
@@ -416,7 +442,7 @@
       "reactions": ["burning"]
     },
     {
-      "id": "AIi0v8DW89Hm0vGHWf",
+      "id": "AIm0v8E089Hq0vGI0f",
       "name": "",
       "characters": ["mualani", "citlali", "mavuika", "xilonen"],
       "weapons": [
@@ -442,7 +468,7 @@
       "reactions": ["melt", "vaporize"]
     },
     {
-      "id": "Boy1GA1026XG0PGHW8",
+      "id": "Bp01GA1W26XK0PGI08",
       "name": "",
       "characters": ["clorinde", "columbina", "ineffa", "xilonen"],
       "weapons": [
@@ -468,7 +494,7 @@
       "reactions": ["lunarCharged"]
     },
     {
-      "id": "Boy1Gg30eD38131AWn",
+      "id": "Bp01Gg3WeD3C131B0n",
       "name": "",
       "characters": ["clorinde", "durin", "chevreuse", "fischl"],
       "weapons": [
@@ -494,7 +520,7 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "Boy1IGfWKS943h1YWD",
+      "id": "Bp01IGg0KS983h1Z0D",
       "name": "",
       "characters": ["clorinde", "nahida", "kaedehara_kazuha", "fischl"],
       "weapons": [
@@ -520,7 +546,7 @@
       "reactions": ["aggravate"]
     },
     {
-      "id": "BM04IGfWKMBO6B1YWD",
+      "id": "BM44IGg0KMBS6B1Z0D",
       "name": "",
       "characters": ["sethos", "nahida", "zhongli", "fischl"],
       "weapons": [
@@ -546,7 +572,7 @@
       "reactions": ["aggravate"]
     },
     {
-      "id": "C341H8DW8A2C5BOv0e",
+      "id": "C381H8E08A2G5BOvWe",
       "name": "",
       "characters": ["arlecchino", "citlali", "xilonen", "bennett"],
       "weapons": [
@@ -572,7 +598,7 @@
       "reactions": ["melt"]
     },
     {
-      "id": "C341HGHW8KcC3pOv0e",
+      "id": "C381HGI08KcG3pOvWe",
       "name": "",
       "characters": ["arlecchino", "xilonen", "yelan", "bennett"],
       "weapons": [
@@ -598,7 +624,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "C341Hkh0nKcC3pOv0e",
+      "id": "C381HkhWnKcG3pOvWe",
       "name": "",
       "characters": ["arlecchino", "furina", "yelan", "bennett"],
       "weapons": [
@@ -624,7 +650,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "CJC61GHW8Dv41i150m",
+      "id": "CJG61GI08Dv81i15Wm",
       "name": "",
       "characters": ["chiori", "xilonen", "furina", "gorou"],
       "weapons": [
@@ -649,7 +675,7 @@
       ]
     },
     {
-      "id": "Ceu3vcQ0TDpW1hOv0e",
+      "id": "Cey3vcQWTDpa1hOvWe",
       "name": "",
       "characters": ["gaming", "xianyun", "furina", "bennett"],
       "weapons": [
@@ -675,7 +701,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "CnY49l8WDHee6BPZWe",
+      "id": "Cnc49l90DHei6BPa0e",
       "name": "",
       "characters": ["xianyun", "furina", "faruzan", "bennett"],
       "weapons": [
@@ -701,7 +727,7 @@
       ]
     },
     {
-      "id": "DJO1WA103A2C11kS0n",
+      "id": "DJS1WA1W3A2G11kSWn",
       "name": "",
       "characters": ["navia", "columbina", "xilonen", "furina"],
       "weapons": [
@@ -727,7 +753,7 @@
       "reactions": ["lunarCrystallize"]
     },
     {
-      "id": "DJO1XGHW8DpW1hOv0e",
+      "id": "DJS1XGI08Dpa1hOvWe",
       "name": "",
       "characters": ["navia", "xilonen", "furina", "bennett"],
       "weapons": [
@@ -752,7 +778,7 @@
       ]
     },
     {
-      "id": "DpW0mg30e91i11cQGX",
+      "id": "Dpa0mg3We91m11cQmX",
       "name": "",
       "characters": ["furina", "durin", "citlali", "xianyun"],
       "weapons": [
@@ -779,7 +805,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "EJa1mg301QRW5BPZWe",
+      "id": "EJe1mg3W1QRa5BPa0e",
       "name": "",
       "characters": ["wriothesley", "durin", "shenhe", "bennett"],
       "weapons": [
@@ -805,7 +831,7 @@
       "reactions": ["melt"]
     },
     {
-      "id": "EJa1nGHW8DpW1hJS0e",
+      "id": "EJe1nGI08Dpa1hJSWe",
       "name": "",
       "characters": ["wriothesley", "xilonen", "furina", "shenhe"],
       "weapons": [
@@ -831,7 +857,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "E3e1n8DW8A2C61kS0D",
+      "id": "E3i1n8E08A2G61kSWD",
       "name": "",
       "characters": ["neuvillette", "citlali", "xilonen", "furina"],
       "weapons": [
@@ -856,7 +882,7 @@
       ]
     },
     {
-      "id": "E3e1nGHW8DpW1hX8WT",
+      "id": "E3i1nGI08Dpa1hX90T",
       "name": "",
       "characters": ["neuvillette", "xilonen", "furina", "kaedehara_kazuha"],
       "weapons": [
@@ -881,7 +907,7 @@
       ]
     },
     {
-      "id": "Ewe6OyBWeDpW1hJS0e",
+      "id": "Ewi6OyC0eDpa1hJSWe",
       "name": "",
       "characters": ["freminet", "escoffier", "furina", "shenhe"],
       "weapons": [
@@ -907,7 +933,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "F4i1mg301D1S531AWn",
+      "id": "F4m1mg3W1D1W531B0n",
       "name": "",
       "characters": ["lyney", "durin", "chevreuse", "fischl"],
       "weapons": [
@@ -933,7 +959,7 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "G4y2YGfWKKP42I_EWU",
+      "id": "G502YGg0KKP82I_F0U",
       "name": "",
       "characters": ["kaveh", "nahida", "kuki_shinobu", "xingqiu"],
       "weapons": [
@@ -959,7 +985,7 @@
       "reactions": ["hyperbloom"]
     },
     {
-      "id": "Gr02QGfWKKLK2I_D0f",
+      "id": "Gr42QGg0KKLO2I_DWf",
       "name": "",
       "characters": ["alhaitham", "nahida", "kuki_shinobu", "xingqiu"],
       "weapons": [
@@ -985,7 +1011,7 @@
       "reactions": ["hyperbloom"]
     },
     {
-      "id": "HL428g301Hee6BPZWe",
+      "id": "HL828g3W1Hei6BPa0e",
       "name": "",
       "characters": ["wanderer", "durin", "faruzan", "bennett"],
       "weapons": [
@@ -1010,7 +1036,7 @@
       ]
     },
     {
-      "id": "IrQX0o60KI5C2RRBWI",
+      "id": "IrUX0o6WKI5G2RRC0I",
       "name": "",
       "characters": ["nilou", "lauma", "nahida", "sangonomiya_kokomi"],
       "weapons": [
@@ -1037,7 +1063,7 @@
       "reactions": ["bloom"]
     },
     {
-      "id": "IbS2P-cWKI5C2Z1YWD",
+      "id": "IbW2P-d0KI5G2Z1Z0D",
       "name": "",
       "characters": ["cyno", "baizhu", "nahida", "fischl"],
       "weapons": [
@@ -1063,7 +1089,7 @@
       "reactions": ["aggravate"]
     },
     {
-      "id": "Js02RzE0DMBO6B1YWD",
+      "id": "Js42RzEWDMBS6B1Z0D",
       "name": "",
       "characters": ["tighnari", "yae_miko", "zhongli", "fischl"],
       "weapons": [
@@ -1089,7 +1115,7 @@
       "reactions": ["spread"]
     },
     {
-      "id": "PwS4YGfWKKLK2JX8WT",
+      "id": "PwW4YGg0KKLO2JX90T",
       "name": "",
       "characters": [
         "kamisato_ayato",
@@ -1120,7 +1146,7 @@
       "reactions": ["hyperbloom"]
     },
     {
-      "id": "Ody61GHW8DpW1i150e",
+      "id": "Oe061GI08Dpa1i15We",
       "name": "",
       "characters": ["arataki_itto", "xilonen", "furina", "gorou"],
       "weapons": [
@@ -1145,7 +1171,7 @@
       ]
     },
     {
-      "id": "Ody61GHW8Ltu0B33WU",
+      "id": "Oe061GI08Lty0B340U",
       "name": "",
       "characters": ["arataki_itto", "xilonen", "albedo", "mona"],
       "weapons": [
@@ -1170,7 +1196,7 @@
       ]
     },
     {
-      "id": "LLS3mA102A2C11l8Wn",
+      "id": "LLW3mA1W2A2G11l90n",
       "name": "",
       "characters": ["raiden_shogun", "columbina", "xilonen", "furina"],
       "weapons": [
@@ -1196,7 +1222,7 @@
       "reactions": ["lunarCharged"]
     },
     {
-      "id": "LOy3q5AWUS943hOv0e",
+      "id": "LP03q5B0US983hOvWe",
       "name": "",
       "characters": [
         "raiden_shogun",
@@ -1226,7 +1252,7 @@
       ]
     },
     {
-      "id": "LOy3of7WUNve3pOv0e",
+      "id": "LP03of80UNvi3pOvWe",
       "name": "",
       "characters": ["raiden_shogun", "xiangling", "xingqiu", "bennett"],
       "weapons": [
@@ -1252,7 +1278,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "Tcy2n8DW8A2C5C340m",
+      "id": "Td02n8E08A2G5C34Wm",
       "name": "",
       "characters": ["yoimiya", "citlali", "xilonen", "yun_jin"],
       "weapons": [
@@ -1278,7 +1304,7 @@
       "reactions": ["melt"]
     },
     {
-      "id": "PdG6OyBW8Dv46BJS0e",
+      "id": "PdK6OyC08Dv86BJSWe",
       "name": "",
       "characters": ["kamisato_ayaka", "escoffier", "furina", "shenhe"],
       "weapons": [
@@ -1304,7 +1330,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "Vwe3XkS0DGeW52h7WU",
+      "id": "Vwi3XkSWDGea52h80U",
       "name": "",
       "characters": ["eula", "furina", "mika", "raiden_shogun"],
       "weapons": [
@@ -1330,7 +1356,7 @@
       "reactions": ["superconduct"]
     },
     {
-      "id": "PBO3v8DW8Dum1gb50U",
+      "id": "PBS3v8E08Duq1gb5WU",
       "name": "",
       "characters": ["hu_tao", "citlali", "furina", "yelan"],
       "weapons": [
@@ -1361,7 +1387,7 @@
       }
     },
     {
-      "id": "PBO3vGHW8DpW1g_D0U",
+      "id": "PBS3vGI08Dpa1g_DWU",
       "name": "",
       "characters": ["hu_tao", "xilonen", "furina", "xingqiu"],
       "weapons": [
@@ -1387,7 +1413,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "Kyq2vcQ0TDpW1gD50T",
+      "id": "Kyu2vcQWTDpa1gD5WT",
       "name": "",
       "characters": ["xiao", "xianyun", "furina", "faruzan"],
       "weapons": [
@@ -1412,7 +1438,7 @@
       ]
     },
     {
-      "id": "QcC6PkS0DQRW53VAWT",
+      "id": "QcG6PkSWDQRa53VB0T",
       "name": "",
       "characters": ["ganyu", "furina", "shenhe", "venti"],
       "weapons": [
@@ -1438,7 +1464,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "NDS4ZX8WTL8y3pOv0e",
+      "id": "NDW4ZX90TL903pOvWe",
       "name": "",
       "characters": ["tartaglia", "kaedehara_kazuha", "xiangling", "bennett"],
       "weapons": [
@@ -1464,7 +1490,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "UtG5wGfWKS943h1YWD",
+      "id": "UtK5wGg0KS983h1Z0D",
       "name": "",
       "characters": ["keqing", "nahida", "kaedehara_kazuha", "fischl"],
       "weapons": [
@@ -1490,7 +1516,7 @@
       "reactions": ["aggravate"]
     },
     {
-      "id": "UPm08g301D38531AWn",
+      "id": "UPq08g3W1D3C531B0n",
       "name": "",
       "characters": ["klee", "durin", "chevreuse", "fischl"],
       "weapons": [
@@ -1516,7 +1542,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "UJa09GHW8DpW1gk_0m",
+      "id": "UJe09GI08Dpa1gk_Wm",
       "name": "",
       "characters": ["klee", "xilonen", "furina", "albedo"],
       "weapons": [
@@ -1542,7 +1568,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "Ndy62k_0mOOS3pPZWe",
+      "id": "Ne062k_WmOOW3pPa0e",
       "name": "",
       "characters": ["noelle", "albedo", "mona", "bennett"],
       "weapons": [
@@ -1567,7 +1593,7 @@
       ]
     },
     {
-      "id": "LW409eP0BO0G0BPZWe",
+      "id": "LW809ePWBO0K0BPa0e",
       "name": "",
       "characters": ["razor", "chevreuse", "fischl", "bennett"],
       "weapons": [
@@ -1593,7 +1619,7 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "RmG08g301Hee6BPZWe",
+      "id": "RmK08g3W1Hei6BPa0e",
       "name": "",
       "characters": ["venti", "durin", "faruzan", "bennett"],
       "weapons": [

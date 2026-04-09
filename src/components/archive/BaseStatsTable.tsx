@@ -1,31 +1,75 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { BaseStat } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
+import {
+  CHARACTER_LEVEL_TIERS,
+  type CharacterLevelStats,
+  type CharacterLevelTier,
+} from "@/lib/gameStatsLoader";
 
 const BASE_STAT_KEYS = ["baseHp", "baseAtk", "baseDef", "em"] as const;
+
+const TIER_LABEL_KEYS = {
+  "70": "archive.lv70",
+  "80": "archive.lv80",
+  "90": "archive.lv90",
+  "95": "archive.lv95",
+  "100": "archive.lv100",
+} as const satisfies Record<CharacterLevelTier, string>;
+
+/** Treat a string stat value like "0", "0%", "0.0" as zero for display purposes. */
+function isZeroStat(raw: string | undefined): boolean {
+  if (raw == null) return true;
+  const n = Number.parseFloat(raw);
+  return Number.isFinite(n) && n === 0;
+}
 
 export function BaseStatsTable({ characterId }: { characterId: string }) {
   const { t } = useLanguage();
   const { characterStats, ready } = useGameStats();
   const entry = ready && characterStats ? characterStats[characterId] : null;
-  const stats = entry
-    ? { Lv90: entry.levels["90"] ?? {}, Lv100: entry.levels["100"] ?? {} }
-    : null;
-  if (!stats) return null;
+  if (!entry) return null;
 
-  const ascensionStat = Object.keys(stats.Lv90).find(
-    (k) => !BASE_STAT_KEYS.includes(k as (typeof BASE_STAT_KEYS)[number])
-  ) as BaseStat | undefined;
+  // Collect every tier that actually has data for this character. Keeps the
+  // canonical order (70, 80, 90, 95, 100) from CHARACTER_LEVEL_TIERS.
+  const tierRows: {
+    key: CharacterLevelTier;
+    label: string;
+    stats: CharacterLevelStats;
+  }[] = [];
+  for (const tier of CHARACTER_LEVEL_TIERS) {
+    if (tier === "95") continue; // Skip Lv95 — redundant with Lv90/Lv100.
+    const lvStats = entry.levels[tier];
+    if (lvStats && Object.keys(lvStats).length > 0) {
+      tierRows.push({
+        key: tier,
+        label: t.ui(TIER_LABEL_KEYS[tier]),
+        stats: lvStats,
+      });
+    }
+  }
+  if (tierRows.length === 0) return null;
 
-  const allKeys = [
-    ...BASE_STAT_KEYS,
+  // Ascension stat: any key that isn't one of the four core base stats.
+  const ascensionStat = tierRows
+    .flatMap((row) => Object.keys(row.stats))
+    .find(
+      (k) => !BASE_STAT_KEYS.includes(k as (typeof BASE_STAT_KEYS)[number])
+    ) as BaseStat | undefined;
+
+  // Drop "em" from the display when it's zero across every tier — some
+  // characters simply don't gain EM from leveling and the column is noise.
+  const includeEm = tierRows.some((row) => !isZeroStat(row.stats.em));
+
+  const allKeys: BaseStat[] = [
+    "baseHp",
+    "baseAtk",
+    "baseDef",
+    ...(includeEm ? (["em"] as const) : []),
     ...(ascensionStat ? [ascensionStat] : []),
   ];
 
-  const levels = [
-    { key: "Lv90" as const, label: t.ui("archive.lv90") },
-    { key: "Lv100" as const, label: t.ui("archive.lv100") },
-  ];
+  const levels = tierRows;
 
   return (
     <>
@@ -53,7 +97,7 @@ export function BaseStatsTable({ characterId }: { characterId: string }) {
                     key={lv.key}
                     className="py-0.5 text-right tabular-nums font-medium w-16"
                   >
-                    {stats[lv.key][key] ?? "—"}
+                    {lv.stats[key] ?? "—"}
                   </td>
                 ))}
               </tr>
@@ -94,7 +138,7 @@ export function BaseStatsTable({ characterId }: { characterId: string }) {
                     key={key}
                     className="py-0.5 text-right tabular-nums font-medium px-2 whitespace-nowrap"
                   >
-                    {stats[lv.key][key] ?? "—"}
+                    {lv.stats[key] ?? "—"}
                   </td>
                 ))}
               </tr>

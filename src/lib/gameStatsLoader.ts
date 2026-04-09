@@ -78,7 +78,8 @@ export function getCharacterStats(): Promise<CharacterStatsMap> {
       );
     }
     characterStatsPromise = Promise.all(loaders).then(([base, beta]) => {
-      characterStatsCache = beta ? { ...base, ...beta } : base;
+      // Released stats win over beta stats when the same id exists in both.
+      characterStatsCache = beta ? { ...beta, ...base } : base;
       return characterStatsCache;
     });
   }
@@ -101,7 +102,8 @@ export function getWeaponStats(): Promise<WeaponStatsMap> {
       );
     }
     weaponStatsPromise = Promise.all(loaders).then(([base, beta]) => {
-      weaponStatsCache = beta ? { ...base, ...beta } : base;
+      // Released stats win over beta stats when the same id exists in both.
+      weaponStatsCache = beta ? { ...beta, ...base } : base;
       return weaponStatsCache;
     });
   }

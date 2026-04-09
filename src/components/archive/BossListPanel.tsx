@@ -7,6 +7,7 @@ import {
   getBossImagePath,
   getBossInfo,
   getCurrentSchedule,
+  getScheduleActiveDates,
   getScheduleName,
   schedules,
 } from "@/data/leylineBoss";
@@ -45,8 +46,8 @@ export function BossListPanel({
       {reversedSchedules.map((schedule) => {
         const isCurrent = currentSchedule?.id === schedule.id;
         const scheduleName = boss.scheduleName(schedule.id);
-        const openDate = new Date(schedule.open);
-        const closeDate = new Date(schedule.close);
+        const { open: openDate, close: closeDate } =
+          getScheduleActiveDates(schedule);
         const dateStr = `${t.shortDate(openDate)} – ${t.shortDate(closeDate)}`;
 
         const matchingBossIds = schedule.boss_ids.filter((bossId) =>
@@ -120,8 +121,8 @@ export function BossGrid({
       {reversedSchedules.map((schedule) => {
         const isCurrent = currentSchedule?.id === schedule.id;
         const scheduleName = boss.scheduleName(schedule.id);
-        const openDate = new Date(schedule.open);
-        const closeDate = new Date(schedule.close);
+        const { open: openDate, close: closeDate } =
+          getScheduleActiveDates(schedule);
         const dateStr = `${t.shortDate(openDate)} – ${t.shortDate(closeDate)}`;
 
         const matchingBossIds = schedule.boss_ids.filter((bossId) =>

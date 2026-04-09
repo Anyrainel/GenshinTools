@@ -24,9 +24,9 @@ import { useIsOwned } from "@/hooks/useOwnership";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { Book } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 interface CharacterListItemProps {
   character: CharacterResource;
@@ -279,9 +279,10 @@ export function CharacterArchiveView() {
     });
   }, [characterStats]);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [searchParams, setSearchParams] = useSearchParams();
-  const selectedId = searchParams.get("character");
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = useArchiveSessionStore((s) => s.characterSearch);
+  const setSearchQuery = useArchiveSessionStore((s) => s.setCharacterSearch);
+  const selectedId = useArchiveSessionStore((s) => s.selectedCharacterId);
+  const setSelectedId = useArchiveSessionStore((s) => s.setSelectedCharacterId);
   const [elementFilter, setElementFilter] = useState<Element[]>([]);
   const [weaponTypeFilter, setWeaponTypeFilter] = useState<WeaponType[]>([]);
   const [rarityFilter, setRarityFilter] = useState<Rarity[]>([]);
@@ -336,43 +337,38 @@ export function CharacterArchiveView() {
 
   const handleSelect = useCallback(
     (id: string) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          next.set("character", id);
-          return next;
-        },
-        { replace: true }
-      );
+      setSelectedId(id);
     },
-    [setSearchParams]
+    [setSelectedId]
   );
 
   const handleBack = useCallback(() => {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev);
-        next.delete("character");
-        return next;
-      },
-      { replace: true }
-    );
-  }, [setSearchParams]);
+    setSelectedId(null);
+  }, [setSelectedId]);
 
-  // Auto-select first released character on desktop if none selected
+  // On desktop, if the session has no selection yet, seed with the first
+  // released character. Only runs once per mount so that clearing the
+  // selection (e.g. via mobile "Back") doesn't immediately re-seed.
+  const didSeedRef = useMemo(() => ({ current: false }), []);
   useEffect(() => {
-    if (
-      isDesktop &&
-      !selectedId &&
-      characterStats &&
-      filteredCharacters.length > 0
-    ) {
-      const firstReleased = filteredCharacters.find(
-        (c) => characterStats[c.id]?.releaseDate
-      );
-      handleSelect((firstReleased ?? filteredCharacters[0]).id);
+    if (didSeedRef.current) return;
+    if (!isDesktop || !characterStats || filteredCharacters.length === 0) {
+      return;
     }
-  }, [isDesktop, selectedId, filteredCharacters, characterStats, handleSelect]);
+    didSeedRef.current = true;
+    if (selectedId) return;
+    const firstReleased = filteredCharacters.find(
+      (c) => characterStats[c.id]?.releaseDate
+    );
+    setSelectedId((firstReleased ?? filteredCharacters[0]).id);
+  }, [
+    isDesktop,
+    selectedId,
+    filteredCharacters,
+    characterStats,
+    setSelectedId,
+    didSeedRef,
+  ]);
 
   const toggleElement = (el: Element) => {
     setElementFilter((prev) =>

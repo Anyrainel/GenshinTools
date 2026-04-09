@@ -19,6 +19,7 @@ import { useGameStats } from "@/hooks/useGameStats";
 import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 import { fuzzyMatch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -185,7 +186,8 @@ export function WeaponArchiveView() {
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
     [weaponStats]
   );
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = useArchiveSessionStore((s) => s.weaponSearch);
+  const setSearchQuery = useArchiveSessionStore((s) => s.setWeaponSearch);
   const [weaponTypeFilter, setWeaponTypeFilter] = useState<WeaponType[]>([]);
   const [rarityFilter, setRarityFilter] = useState<Rarity[]>([]);
   const [secondaryStatFilter, setSecondaryStatFilter] = useState<MainStat[]>(

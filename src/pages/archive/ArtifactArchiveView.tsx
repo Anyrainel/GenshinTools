@@ -10,11 +10,13 @@ import {
 } from "@/data/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { fuzzyMatch } from "@/lib/search";
+import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export function ArtifactArchiveView() {
   const { t } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = useArchiveSessionStore((s) => s.artifactSearch);
+  const setSearchQuery = useArchiveSessionStore((s) => s.setArtifactSearch);
   const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(
     () => new Set()
   );

@@ -84,12 +84,14 @@ export function loadCharacterKits(
     );
   }
 
-  // Conditionally add beta character kit loader
+  // Conditionally add beta character kit loader. Beta is placed FIRST so that
+  // released data (loaded after) overrides any stale beta entries for the
+  // same id. Only beta-only ids survive the subsequent merge.
   if (betaEnabled()) {
     const betaPath = `../data/game/character_beta_${lang}.json`;
     const betaLoader = modules[betaPath];
     if (betaLoader) {
-      loaders.push(betaLoader);
+      loaders.unshift(betaLoader);
     }
   }
 

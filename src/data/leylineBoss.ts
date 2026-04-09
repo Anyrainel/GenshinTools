@@ -207,13 +207,53 @@ export function computeStateRes(
   return result;
 }
 
-/** Get current schedule based on today's date */
+/**
+ * Parse a schedule timestamp ("YYYY-MM-DD HH:MM:SS") as Asia/Shanghai time
+ * (UTC+8, which is where Genshin's version/season boundaries are anchored).
+ * Using `new Date(raw)` directly is unreliable: the space-separated format is
+ * implementation-defined, and when it is accepted it's interpreted as local
+ * time, so players outside UTC+8 see the "Live" label applied to the wrong
+ * rotation around the boundary.
+ */
+function parseScheduleTimestamp(raw: string): Date {
+  return new Date(`${raw.replace(" ", "T")}+08:00`);
+}
+
+/**
+ * The raw `close` timestamps in leyline_boss_info.json span the entire
+ * version window, but Stygian Onslaught actually goes dark roughly 8 days
+ * before the next rotation opens (maintenance + pre-version gap). Shorten
+ * the effective active window so "Live" is only reported when the boss is
+ * actually available in-game.
+ */
+const EMPTY_TAIL_MS = 8 * 24 * 60 * 60 * 1000;
+
+/** Effective start/end of a schedule's "live" window, in epoch ms. */
+export function getScheduleActiveWindow(s: BossSchedule): {
+  openMs: number;
+  closeMs: number;
+} {
+  const openMs = parseScheduleTimestamp(s.open).getTime();
+  const rawCloseMs = parseScheduleTimestamp(s.close).getTime();
+  const closeMs = Math.max(openMs, rawCloseMs - EMPTY_TAIL_MS);
+  return { openMs, closeMs };
+}
+
+/** Effective open/close Date objects, matching the active-window shift. */
+export function getScheduleActiveDates(s: BossSchedule): {
+  open: Date;
+  close: Date;
+} {
+  const { openMs, closeMs } = getScheduleActiveWindow(s);
+  return { open: new Date(openMs), close: new Date(closeMs) };
+}
+
+/** Get current schedule based on today's date, or undefined if no boss is live. */
 export function getCurrentSchedule(): BossSchedule | undefined {
-  const now = new Date();
+  const now = Date.now();
   return schedules.find((s) => {
-    const open = new Date(s.open);
-    const close = new Date(s.close);
-    return now >= open && now <= close;
+    const { openMs, closeMs } = getScheduleActiveWindow(s);
+    return now >= openMs && now <= closeMs;
   });
 }
 

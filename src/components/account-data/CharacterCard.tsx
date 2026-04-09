@@ -1,6 +1,7 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Card, CardContent } from "@/components/ui/card";
@@ -102,14 +103,24 @@ function CharacterCardComponent({
           className={cn("flex items-center", isVeryNarrow ? "gap-2" : "gap-3")}
         >
           {/* Character Icon — links to archive */}
-          <Link to={`/archive/characters?character=${char.key}`}>
-            <ItemIcon
-              characterId={char.key}
-              badge={char.constellation}
-              level={`Lv. ${char.level}`}
-              size={isVeryNarrow ? "md" : "lg"}
-            />
-          </Link>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link to={`/archive/characters?character=${char.key}`}>
+                <ItemIcon
+                  characterId={char.key}
+                  badge={char.constellation}
+                  level={`Lv. ${char.level}`}
+                  size={isVeryNarrow ? "md" : "lg"}
+                />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              className="p-0 border-none bg-transparent"
+            >
+              <CharacterTooltip characterId={char.key} />
+            </TooltipContent>
+          </Tooltip>
 
           {/* Info */}
           <div className="flex-1 min-w-0">

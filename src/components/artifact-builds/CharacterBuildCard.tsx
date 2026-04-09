@@ -1,4 +1,5 @@
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import {
@@ -13,6 +14,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Build, CharacterResource } from "@/data/types";
 import type { WeaponResource } from "@/data/types";
@@ -290,9 +296,19 @@ function CharacterBuildCardComponent({
             isVeryNarrow ? "gap-2" : "gap-3 md:gap-4"
           )}
         >
-          <Link to={`/archive/characters?character=${character.id}`}>
-            <ItemIcon characterId={character.id} size={iconSize} />
-          </Link>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link to={`/archive/characters?character=${character.id}`}>
+                <ItemIcon characterId={character.id} size={iconSize} />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              className="p-0 border-none bg-transparent"
+            >
+              <CharacterTooltip characterId={character.id} />
+            </TooltipContent>
+          </Tooltip>
 
           <div className="flex-1 flex items-center justify-between gap-4">
             <CharacterInfo

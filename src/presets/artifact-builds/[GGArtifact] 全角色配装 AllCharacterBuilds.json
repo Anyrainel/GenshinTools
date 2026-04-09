@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1774805047983",
+  "id": "export-1775695652997",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -7963,6 +7963,100 @@
         }
       ],
       "normalizer": 0.696594696824573
+    },
+    "JH4aonO": {
+      "id": "JH4aonO",
+      "characterId": "linnea",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0,
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
+      "artifactSet": "husk_of_opulent_dreams"
+    },
+    "JH4sLqO": {
+      "id": "JH4sLqO",
+      "characterId": "linnea",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0,
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
+      "artifactSet": "aubade_of_morningstar_and_moon"
     }
   },
   "characterBuilds": {
@@ -8077,7 +8171,8 @@
     "diluc": ["6AuViOO"],
     "razor": ["6vSw03O"],
     "chongyun": ["6TWYFrm"],
-    "varka": ["J7mpj3O"]
+    "varka": ["J7mpj3O"],
+    "linnea": ["JH4aonO", "JH4sLqO"]
   },
   "characterWeapons": {
     "ineffa": ["fractured_halo"],
@@ -8201,7 +8296,8 @@
     "diluc": ["wolfs_gravestone", "beacon_of_the_reed_sea"],
     "razor": ["serpent_spine"],
     "chongyun": ["favonius_greatsword"],
-    "varka": ["gest_of_the_mighty_wolf"]
+    "varka": ["gest_of_the_mighty_wolf"],
+    "linnea": ["golden_frostbound_oath"]
   },
   "computeOptions": {
     "expandElementalGoblet": true,
