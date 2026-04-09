@@ -90,6 +90,12 @@ export function TriageSettingsPanel({
     <div className="space-y-4 w-72">
       <div className="space-y-3">
         <SectionHeading>{t.ui("triage.settingsProtection")}</SectionHeading>
+        <SwitchRow
+          id="highLevelProtection"
+          label={t.ui("triage.highLevelProtection")}
+          checked={settings.highLevelProtection}
+          onChange={(v) => update("highLevelProtection", v)}
+        />
         <SliderRow
           label={t.ui("triage.levelProtection")}
           value={settings.levelProtection}
@@ -105,17 +111,6 @@ export function TriageSettingsPanel({
           checked={settings.equippedProtection}
           onChange={(v) => update("equippedProtection", v)}
         />
-        <div className="space-y-1">
-          <SwitchRow
-            id="strategicHighLevelEvaluation"
-            label={t.ui("triage.strategicHighLevel")}
-            checked={settings.strategicHighLevelEvaluation}
-            onChange={(v) => update("strategicHighLevelEvaluation", v)}
-          />
-          <p className="text-xs text-muted-foreground">
-            {t.ui("triage.strategicHighLevelHint")}
-          </p>
-        </div>
       </div>
       <div className="border-t border-border pt-3 space-y-3">
         <SectionHeading>{t.ui("triage.settingsThreshold")}</SectionHeading>

@@ -1490,6 +1490,7 @@ export const i18nUiData = {
     includeRarity3: { en: "3★", zh: "3★" },
 
     help: { en: "Help", zh: "帮助" },
+    showTour: { en: "Show tour", zh: "查看引导" },
   },
   resetConfirmDialog: {
     title: { en: "Reset Tier List", zh: "重置榜单" },
@@ -1923,7 +1924,7 @@ export const i18nUiData = {
       zh: "双暴锁定（4初始+暴击+暴伤）",
     },
     triageMode: {
-      en: "Loose mode",
+      en: "Relaxed mode",
       zh: "宽松模式",
     },
     triageModeHint: {
@@ -1931,20 +1932,16 @@ export const i18nUiData = {
       zh: "保留更多圣遗物（品质阈值放宽）",
     },
     levelProtection: {
-      en: "Level protection",
-      zh: "等级保护",
+      en: "High-level threshold",
+      zh: "高等级阈值",
     },
-    strategicHighLevel: {
-      en: "Strategically evaluate leveled artifacts",
-      zh: "策略评估高等级圣遗物",
-    },
-    strategicHighLevelHint: {
-      en: "High-level artifacts are re-evaluated individually instead of auto-protected",
-      zh: "高等级圣遗物将单独评估而非自动保护",
+    highLevelProtection: {
+      en: "Protect high-level",
+      zh: "保护高等级",
     },
     equippedProtect: {
-      en: "Equipped protection",
-      zh: "已装备保护",
+      en: "Protect equipped",
+      zh: "保护已装备",
     },
     filterByHalfSet: { en: "Filter by 2pc set:", zh: "按2件套过滤:" },
     rulePrefixFlex: { en: "Off-piece", zh: "散件" },
@@ -1957,16 +1954,16 @@ export const i18nUiData = {
       },
       howTitle: { en: "How it decides", zh: "决策方式" },
       howMatch: {
-        en: "Match artifacts to builds by set, slot, and main stat",
-        zh: "按套装、部位、主词条匹配圣遗物与配装",
+        en: "Match artifacts to builds by set, slot, and main stat. Each build has a few substats it cares about (core stats).",
+        zh: "先按套装、部位、主词条把圣遗物匹配到可能的配装；每个配装有它在意的几条副词条（核心词条）。",
       },
       howRarity: {
-        en: "Score substat hits as a rarity — rarer combos rank higher",
-        zh: "将命中的副词条换算为稀有度——越稀有排名越高",
+        en: "Probability = chance that a random artifact of the same set, slot, and main stat has no fewer core-stat hits than this one. Lower probability → rarer.",
+        zh: "概率 = 随便抓一件同套、同部位、同主词条的圣遗物，其核心词条命中数不少于当前这件的概率；概率越低 → 越稀有。",
       },
       howFactors: {
-        en: "Bonuses: CR+CD pair, 4 initial substats, useful minor stat when all core stats hit",
-        zh: "加分项：双暴、初始4词条、核心全中时带实用小词条",
+        en: "If this artifact has CR+CD together, 4 initial substats, or all core stats hit plus a useful minor stat, those conditions are added to the probability (harder to match → lower probability).",
+        zh: "若这件同时带暴击和暴伤 / 初始 4 条副词条 / 核心全中且多出一条实用小词条，则在概率上再附加这些条件（越难满足，概率越低）。",
       },
       tierTitle: { en: "Rarity tiers", zh: "稀有度档位" },
       badgeAlwaysLock: { en: "Always lock", zh: "无条件锁定" },
@@ -1988,6 +1985,10 @@ export const i18nUiData = {
       tierFodder: {
         en: "Everything else — Always fodder.",
         zh: "其余全部 — 无条件分解。",
+      },
+      tierLooseNote: {
+        en: "doubles every threshold above (e.g. Solid becomes ≤8% / ≤4%).",
+        zh: "将上述所有阈值翻倍（例如精良档变为 ≤8% / ≤4%）。",
       },
       supplyTitle: { en: "Supply & demand", zh: "供需机制" },
       supplyOver: { en: "Plenty of pieces", zh: "供给充足" },
@@ -2013,6 +2014,14 @@ export const i18nUiData = {
       spProtect: {
         en: "Protection rules (no suggestions)",
         zh: "保护规则（不提供建议）",
+      },
+      spHighLevelOff: {
+        en: "When high-level protection is off",
+        zh: "关闭高等级保护后",
+      },
+      spHighLevelOffDetail: {
+        en: "Leveled artifacts run through normal triage. Any that would be unlocked are re-checked by a strategic-value pass and kept if ≥60% of their upgrade rolls (rolls beyond the initial one-per-substat, min. 3 upgrades) fall into one category: CR+CD, ER, EM, ATK%, HP%, or DEF%.",
+        zh: "已升级的圣遗物将走一遍正常评级。本应被淘汰的，会由策略价值规则再判定一次：若其升级词条（即每个副词条初始 1 次以外的后续强化，至少 3 次）中 ≥60% 集中在单一类别（双暴合并、充能、精通、攻击%、生命%、防御%），则予以保留。",
       },
     },
     flexDialogDesc: {

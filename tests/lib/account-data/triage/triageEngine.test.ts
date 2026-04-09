@@ -218,9 +218,9 @@ describe("runTriage", () => {
     expect(decisions[0].specialRules).toContain("SP3");
   });
 
-  it("strategicHighLevelEvaluation: high-level non-equipped artifact is not SP3-protected", () => {
+  it("highLevelProtection off: high-level non-equipped artifact is not SP3-protected", () => {
     // Non-equipped high-level artifact should flow through normal triage when
-    // strategic evaluation is on. Equipped ones still get SP4 as usual.
+    // high-level protection is off. Equipped ones still get SP4 as usual.
     const art = makeArt({ level: 16 });
     const account = makeAccount([], [art]);
     const { decisions } = runTriage(
@@ -230,7 +230,7 @@ describe("runTriage", () => {
         ...SETTINGS,
         ownedOnly: false,
         levelProtection: 12,
-        strategicHighLevelEvaluation: true,
+        highLevelProtection: false,
       }
     );
     expect(decisions[0].specialRules).not.toContain("SP3");

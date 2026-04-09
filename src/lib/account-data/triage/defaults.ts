@@ -12,7 +12,7 @@ export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   erHoardingAllEnabled: false,
   doubleCritLockEnabled: true,
   levelProtection: 12,
-  strategicHighLevelEvaluation: false,
+  highLevelProtection: true,
   equippedProtection: true,
   disabledFlexPatterns: [],
   enabledFlexPatterns: [],

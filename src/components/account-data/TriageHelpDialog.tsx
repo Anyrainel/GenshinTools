@@ -79,10 +79,10 @@ export function TriageHelpDialog({
         <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
           {/* How it decides */}
           <section>
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
+            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-1.5">
               {t.ui("triage.help.howTitle")}
             </h4>
-            <ul className="space-y-0.5 text-sm list-disc list-outside ml-4">
+            <ul className="space-y-0.5 text-xs text-foreground/80 list-disc list-outside ml-4">
               <li>{t.ui("triage.help.howMatch")}</li>
               <li>{t.ui("triage.help.howRarity")}</li>
               <li>{t.ui("triage.help.howFactors")}</li>
@@ -91,7 +91,7 @@ export function TriageHelpDialog({
 
           {/* Rarity tiers */}
           <section>
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">
               {t.ui("triage.help.tierTitle")}
             </h4>
             <div className="space-y-1">
@@ -122,11 +122,17 @@ export function TriageHelpDialog({
                 </div>
               ))}
             </div>
+            <p className="text-xs text-foreground/80 mt-2">
+              <span className="font-semibold text-foreground">
+                {t.ui("triage.triageMode")}
+              </span>{" "}
+              {t.ui("triage.help.tierLooseNote")}
+            </p>
           </section>
 
           {/* Supply & demand — visual bar diagram */}
           <section>
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">
               {t.ui("triage.help.supplyTitle")}
             </h4>
             <div className="space-y-1 text-[10px] font-medium leading-none">
@@ -202,7 +208,7 @@ export function TriageHelpDialog({
 
           {/* Exceptions */}
           <section>
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">
               {t.ui("triage.help.spTitle")}
             </h4>
             <div className="space-y-1.5">
@@ -249,6 +255,12 @@ export function TriageHelpDialog({
                     </span>
                   ))}
                 </div>
+                <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                  <span className="font-medium text-foreground/80">
+                    {t.ui("triage.help.spHighLevelOff")}:
+                  </span>{" "}
+                  {t.ui("triage.help.spHighLevelOffDetail")}
+                </p>
               </div>
             </div>
           </section>

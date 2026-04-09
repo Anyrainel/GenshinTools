@@ -99,11 +99,12 @@ export type TriageSettings = {
   doubleCritLockEnabled: boolean; // default true
   levelProtection: number; // default 12 (artifacts >= this level are protected)
   /**
-   * When true, high-level artifacts (≥ levelProtection) are NOT auto-protected;
-   * they go through normal triage and, if rejected, are re-evaluated by the
-   * strategic value pass (concentrated-stat rule etc.). Default false.
+   * When true, high-level artifacts (≥ levelProtection) are auto-protected
+   * (SP3). When false, they flow through normal triage and, if rejected, are
+   * re-evaluated by the strategic value pass (concentrated-stat rule etc.).
+   * Default true.
    */
-  strategicHighLevelEvaluation: boolean;
+  highLevelProtection: boolean;
   equippedProtection: boolean; // default true
   disabledFlexPatterns: string[];
   enabledFlexPatterns: string[];

@@ -29,7 +29,7 @@ function artifactWithRolls(
 }
 
 describe("concentratedStatRule", () => {
-  it("fires when ≥70% of rolls are crit (CR+CD combined)", () => {
+  it("fires when ≥60% of rolls are crit (CR+CD combined)", () => {
     const art = artifactWithRolls({ cr: 4, cd: 4, atk: 1, hp: 1 });
     const r = concentratedStatRule(art);
     expect(r).toEqual({ kept: true, reason: "concentrated-crit" });
@@ -62,13 +62,13 @@ describe("concentratedStatRule", () => {
     expect(concentratedStatRule(art).kept).toBe(false);
   });
 
-  it("does NOT fire below minimum total rolls", () => {
-    // Only 3 total rolls — below MIN_TOTAL_ROLLS=6 even though 100% crit.
+  it("does NOT fire below minimum upgrade rolls", () => {
+    // 3 total rolls on one stat = 2 upgrade rolls, below MIN_UPGRADE_ROLLS=3.
     const art = artifactWithRolls({ cr: 3 });
     expect(concentratedStatRule(art).kept).toBe(false);
   });
 
-  it("CR alone at 70% of total fires concentrated-crit", () => {
+  it("CR alone dominating fires concentrated-crit", () => {
     const art = artifactWithRolls({ cr: 7, atk: 1, hp: 1, def: 1 });
     expect(concentratedStatRule(art)).toEqual({
       kept: true,

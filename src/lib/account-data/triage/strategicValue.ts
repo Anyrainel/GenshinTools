@@ -1,7 +1,7 @@
 /**
  * Strategic value pass for high-level artifacts.
  *
- * When `strategicHighLevelEvaluation` is enabled, artifacts at or above
+ * When `highLevelProtection` is disabled, artifacts at or above
  * `levelProtection` that fail normal triage are re-evaluated by a list of
  * rules. If any rule fires, the artifact is kept with a reason code.
  *
@@ -49,13 +49,17 @@ const CATEGORIES: { reason: StrategicReason; stats: SubStat[] }[] = [
   { reason: "concentrated-def%", stats: ["def%"] },
 ];
 
-/** Minimum total rolls (across all substats) for the rule to consider firing.
- * A freshly-lv8 artifact with 4 starting rolls should not qualify on a single
- * lucky roll; we require enough upgrade signal to be meaningful. */
-const MIN_TOTAL_ROLLS = 6;
+/** Minimum upgrade rolls (total rolls minus initial one-per-substat) required
+ * for the rule to consider firing. We don't evaluate artifacts that have
+ * barely been upgraded — the concentration signal needs to come from real
+ * upgrade decisions, not from the initial substat assignment. */
+const MIN_UPGRADE_ROLLS = 3;
 
-/** Fraction of total rolls that must fall into a single category. */
-const CONCENTRATION_THRESHOLD = 0.7;
+/** Fraction of upgrade rolls that must fall into a single category. Each
+ * substat contributes one "initial" roll regardless of allocation, so we
+ * subtract those before computing concentration — otherwise a 4-sub artifact
+ * maxes out around 66% even in the most extreme CR/CD-stacked case. */
+const CONCENTRATION_THRESHOLD = 0.6;
 
 /** Convert a substat's accumulated value into an estimated roll count using
  * the average roll value for its rarity. Returns 0 for missing substats. */
@@ -94,15 +98,21 @@ function rollCountsByStat(artifact: ArtifactData): {
   return { total, perStat };
 }
 
-/** Concentrated-stat rule: fires if ≥70% of rolls fell into one category. */
+/** Concentrated-stat rule: fires if ≥60% of upgrade rolls landed in one
+ * category. Upgrade rolls = total rolls − number of distinct substats. */
 export const concentratedStatRule: StrategicRule = (artifact) => {
   const { total, perStat } = rollCountsByStat(artifact);
-  if (total < MIN_TOTAL_ROLLS) return { kept: false };
+  const numSubs = Object.values(perStat).filter((n) => (n ?? 0) > 0).length;
+  const upgradeTotal = Math.max(0, total - numSubs);
+  if (upgradeTotal < MIN_UPGRADE_ROLLS) return { kept: false };
 
   for (const { reason, stats } of CATEGORIES) {
     let sum = 0;
-    for (const s of stats) sum += perStat[s] ?? 0;
-    if (sum / total >= CONCENTRATION_THRESHOLD) {
+    for (const s of stats) {
+      const n = perStat[s] ?? 0;
+      if (n > 0) sum += n - 1; // strip the initial roll
+    }
+    if (sum / upgradeTotal >= CONCENTRATION_THRESHOLD) {
       return { kept: true, reason };
     }
   }

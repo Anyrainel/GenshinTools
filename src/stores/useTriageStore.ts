@@ -23,7 +23,7 @@ export const useTriageStore = create<TriageState>()(
     }),
     {
       name: "triage-settings",
-      version: 3,
+      version: 4,
       migrate: (persisted: unknown, version: number) => {
         const state = persisted as Record<string, unknown>;
         const settings = (state.settings ?? {}) as Record<string, unknown>;
@@ -44,6 +44,13 @@ export const useTriageStore = create<TriageState>()(
           if (settings.strategicHighLevelEvaluation == null) {
             settings.strategicHighLevelEvaluation = false;
           }
+        }
+        // v3 → v4: rename strategicHighLevelEvaluation → highLevelProtection
+        // and flip its meaning (protection = !evaluation).
+        if (version < 4) {
+          const prev = settings.strategicHighLevelEvaluation;
+          settings.highLevelProtection = prev == null ? true : !prev;
+          settings.strategicHighLevelEvaluation = undefined;
         }
         state.settings = settings;
         return state as unknown as Partial<TriageState>;
