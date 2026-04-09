@@ -19,7 +19,14 @@
  */
 
 import type { SetConfig, SubStat } from "../../data/types";
-import { SLOT_KEYS, bestTwoPartition, mergeConfigGroup } from "./mergeUtils";
+import { computeSlotChances } from "./artifactChance";
+import { bruteForcePartition } from "./bruteForcePartition";
+import {
+  SLOT_KEYS,
+  bestKPartition,
+  bestTwoPartition,
+  mergeConfigGroup,
+} from "./mergeUtils";
 
 // ── Constants ───────────────────────────────────────────────────────────
 
@@ -47,8 +54,52 @@ const SCALING_STATS: ReadonlySet<SubStat> = new Set([
  */
 const SCALING_PRIORITY: readonly SubStat[] = ["atk%", "def%", "hp%", "em"];
 
-/** Max non-CR+CD config slots. */
-const CONFIG_BUDGET = 2;
+/** Max non-CR+CD config slots (in-game loadout allows 3). */
+const CONFIG_BUDGET = 3;
+
+/**
+ * Quality tolerance when comparing the archetype-based split against the
+ * brute-force partition. If the two are within this much worst-slot pass
+ * chance of each other, we prefer the archetype split (its group labels
+ * are more meaningful to the user).
+ */
+const BRUTE_PREFERENCE_THRESHOLD = 0.005;
+
+// ── Quality scoring ─────────────────────────────────────────────────────
+
+function worstSlotPassChance(config: SetConfig): number {
+  const chances = computeSlotChances(config);
+  return Math.max(...SLOT_KEYS.map((s) => chances[s]));
+}
+
+/** Max worst-slot pass chance across all groups (lower = tighter filter). */
+function scoreCandidate(groups: SetConfig[]): number {
+  let m = 0;
+  for (const g of groups) {
+    const p = worstSlotPassChance(g);
+    if (p > m) m = p;
+  }
+  return m;
+}
+
+/**
+ * Pick the better of two partition candidates.
+ * Primary: lower worst-slot pass chance (tighter filter) wins.
+ * Within BRUTE_PREFERENCE_THRESHOLD, prefer the archetype split when it
+ * also has ≤ the count of the brute-force candidate (to keep domain-aware
+ * labels); otherwise prefer fewer configs.
+ */
+function pickBetter(smart: SetConfig[], brute: SetConfig[]): SetConfig[] {
+  const smartScore = scoreCandidate(smart);
+  const bruteScore = scoreCandidate(brute);
+
+  if (smartScore < bruteScore - BRUTE_PREFERENCE_THRESHOLD) return smart;
+  if (bruteScore < smartScore - BRUTE_PREFERENCE_THRESHOLD) return brute;
+
+  // Roughly equal quality — prefer fewer configs, then smart on a tie.
+  if (brute.length < smart.length) return brute;
+  return smart;
+}
 
 // ── Classification ──────────────────────────────────────────────────────
 
@@ -93,39 +144,81 @@ function mergeErGroup(configs: SetConfig[]): SetConfig {
 }
 
 /**
- * Priority split: partition ER+scaling archetypes into 2 configs.
+ * Priority split: partition ER+scaling archetypes into up to `budget` configs.
  *
  * Primary split: by CR presence (CR archetypes share a stat, form natural group).
- * Fallback: isolate highest-priority scaling stat, merge the rest.
+ * If `budget` exceeds the CR/non-CR split, further isolate highest-priority
+ * scaling stats from the larger side.
+ * Fallback (all-CR or no-CR): isolate top-(budget-1) by SCALING_PRIORITY, merge
+ * the rest into the final slot.
  */
 function prioritySplit(
-  archetypes: Map<SubStat, SetConfig>
-): [SetConfig, SetConfig] {
+  archetypes: Map<SubStat, SetConfig>,
+  budget: number
+): SetConfig[] {
+  if (archetypes.size <= budget) {
+    return [...archetypes.values()];
+  }
+
+  const byPriority = (a: SubStat, b: SubStat) =>
+    SCALING_PRIORITY.indexOf(a) - SCALING_PRIORITY.indexOf(b);
+
   const withCr: SubStat[] = [];
   const withoutCr: SubStat[] = [];
   for (const [stat, config] of archetypes) {
-    if (config.flowerPlume.substats.includes("cr")) {
-      withCr.push(stat);
-    } else {
-      withoutCr.push(stat);
-    }
+    if (config.flowerPlume.substats.includes("cr")) withCr.push(stat);
+    else withoutCr.push(stat);
   }
+  withCr.sort(byPriority);
+  withoutCr.sort(byPriority);
 
-  // CR creates a natural 2-way split
+  // CR creates a natural split when both sides are populated.
   if (withCr.length > 0 && withoutCr.length > 0) {
-    return [
-      mergeErGroup(withCr.map((s) => archetypes.get(s)!)),
-      mergeErGroup(withoutCr.map((s) => archetypes.get(s)!)),
-    ];
+    const result: SetConfig[] = [];
+    // Give each side an initial slot.
+    let crSlots = 1;
+    let ncSlots = 1;
+    // Distribute remaining budget to the larger side(s) by priority isolation.
+    let remaining = budget - 2;
+    while (
+      remaining > 0 &&
+      (crSlots < withCr.length || ncSlots < withoutCr.length)
+    ) {
+      // Prefer splitting the side with more archetypes left to merge.
+      const crLeft = withCr.length - crSlots;
+      const ncLeft = withoutCr.length - ncSlots;
+      if (crLeft >= ncLeft && crLeft > 0) crSlots++;
+      else if (ncLeft > 0) ncSlots++;
+      else break;
+      remaining--;
+    }
+    result.push(...isolateByPriority(withCr, crSlots, archetypes));
+    result.push(...isolateByPriority(withoutCr, ncSlots, archetypes));
+    return result;
   }
 
-  // All have CR or none: isolate by priority ordering
-  const sorted = [...archetypes.keys()].sort(
-    (a, b) => SCALING_PRIORITY.indexOf(a) - SCALING_PRIORITY.indexOf(b)
-  );
-  const tightConfig = archetypes.get(sorted[0])!;
-  const restConfigs = sorted.slice(1).map((s) => archetypes.get(s)!);
-  return [tightConfig, mergeErGroup(restConfigs)];
+  // All have CR or none: pure priority ordering.
+  const sorted = [...archetypes.keys()].sort(byPriority);
+  return isolateByPriority(sorted, budget, archetypes);
+}
+
+/**
+ * Isolate the top-(slots-1) priority archetypes into their own configs and
+ * merge the rest into a single tail config. If `stats.length <= slots`, each
+ * archetype gets its own config.
+ */
+function isolateByPriority(
+  stats: SubStat[],
+  slots: number,
+  archetypes: Map<SubStat, SetConfig>
+): SetConfig[] {
+  if (stats.length === 0 || slots <= 0) return [];
+  if (stats.length <= slots) {
+    return stats.map((s) => archetypes.get(s)!);
+  }
+  const isolated = stats.slice(0, slots - 1).map((s) => archetypes.get(s)!);
+  const tail = stats.slice(slots - 1).map((s) => archetypes.get(s)!);
+  return [...isolated, mergeErGroup(tail)];
 }
 
 // ── "Other" partition ───────────────────────────────────────────────────
@@ -144,17 +237,28 @@ function partitionRemainder(configs: SetConfig[], slots: number): SetConfig[] {
     return configs;
   }
 
-  // slots === 2: try all 2-way partitions with shared stat constraint
-  const best = bestTwoPartition(configs, (a, b) => {
-    if (a.flowerPlume.mustPresent.length === 0) return null;
-    if (b.flowerPlume.mustPresent.length === 0) return null;
-    return Math.max(
-      a.flowerPlume.substats.length,
-      b.flowerPlume.substats.length
-    );
-  });
+  // slots ≥ 2: enumerate K-partitions with the shared-stat constraint.
+  // Score: minimise the max flower/plume substat pool size across groups
+  // (tighter pool = better filter). Reject any partition where a group
+  // lost its mustPresent anchor.
+  const evaluator = (groups: SetConfig[]): number | null => {
+    let maxPool = 0;
+    for (const g of groups) {
+      if (g.flowerPlume.mustPresent.length === 0) return null;
+      if (g.flowerPlume.substats.length > maxPool) {
+        maxPool = g.flowerPlume.substats.length;
+      }
+    }
+    return maxPool;
+  };
 
-  return best ? [...best] : configs;
+  if (slots === 2) {
+    const best = bestTwoPartition(configs, (a, b) => evaluator([a, b]));
+    return best ? [...best] : configs;
+  }
+
+  const best = bestKPartition(configs, slots, evaluator);
+  return best ?? configs;
 }
 
 // ── Main algorithm ──────────────────────────────────────────────────────
@@ -167,6 +271,16 @@ function partitionRemainder(configs: SetConfig[], slots: number): SetConfig[] {
 export function smartMerge(configs: SetConfig[]): SetConfig[] {
   if (configs.length <= 1) return configs;
 
+  const archetypeResult = smartMergeArchetypeOnly(configs);
+  // Always compute the brute-force-optimal candidate and pick whichever
+  // gives a tighter filter. Preset inputs are small (n ≤ 7), so this is
+  // cheap. The archetype split wins on ties because its groupings carry
+  // domain-meaningful labels for the user.
+  const bruteResult = bruteForcePartition(configs);
+  return pickBetter(archetypeResult, bruteResult);
+}
+
+function smartMergeArchetypeOnly(configs: SetConfig[]): SetConfig[] {
   // === Classify into ER+scaling archetypes vs other ===
   const erGroups = new Map<SubStat, SetConfig[]>();
   const otherConfigs: SetConfig[] = [];
@@ -195,21 +309,29 @@ export function smartMerge(configs: SetConfig[]): SetConfig[] {
     return [...mergedEr.values(), ...otherConfigs];
   }
 
-  // === ER+scaling ≥ 3: special handling ===
-  if (mergedEr.size >= 3) {
-    if (otherConfigs.length === 0) {
-      // All ER+scaling → priority split into 2 configs
-      return [...prioritySplit(mergedEr)];
-    }
-    // Mixed: merge all ER into 1 config, remaining slots for other
-    const erConfig = mergeErGroup([...mergedEr.values()]);
-    const slotsLeft = CONFIG_BUDGET - 1;
-    return [erConfig, ...partitionRemainder(otherConfigs, slotsLeft)];
+  // === ER+scaling archetypes exceed (or fill) the budget ===
+  // Decide how to split budget between ER slots and "other" slots.
+  //
+  // Strategy:
+  // - If otherConfigs is empty, give all CONFIG_BUDGET slots to ER via
+  //   prioritySplit.
+  // - Otherwise, reserve at least 1 slot for "other" (collapsed via
+  //   partitionRemainder) and give the remainder to ER. If ER fits in
+  //   fewer slots than available, hand the leftover budget back to
+  //   "other" so distinct non-ER archetypes can each breathe.
+  if (mergedEr.size >= CONFIG_BUDGET && otherConfigs.length === 0) {
+    return prioritySplit(mergedEr, CONFIG_BUDGET);
   }
 
-  // === Fallback: ER archetypes ≤ 2 but total > budget ===
-  // Combine ER and other, partition into available slots
-  const erConfigs = [...mergedEr.values()];
-  const allConfigs = [...erConfigs, ...otherConfigs];
-  return partitionRemainder(allConfigs, CONFIG_BUDGET);
+  if (mergedEr.size >= 1 && otherConfigs.length >= 1) {
+    // Balance: ER gets at most (BUDGET - 1) slots if it needs them;
+    // "other" gets the rest (minimum 1).
+    const erNeeded = Math.min(mergedEr.size, CONFIG_BUDGET - 1);
+    const otherSlots = CONFIG_BUDGET - erNeeded;
+    const erConfigs = prioritySplit(mergedEr, erNeeded);
+    return [...erConfigs, ...partitionRemainder(otherConfigs, otherSlots)];
+  }
+
+  // === Fallback: all "other" (no ER archetypes) but total > budget ===
+  return partitionRemainder(otherConfigs, CONFIG_BUDGET);
 }

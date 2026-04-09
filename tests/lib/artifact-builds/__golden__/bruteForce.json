@@ -683,58 +683,55 @@
           "substats": [
             "hp%",
             "er",
-            "em"
+            "hp"
           ],
           "mustPresent": [
             "hp%"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": [
             "hp%",
-            "em",
             "er"
           ],
           "substats": [
             "hp%",
             "er",
-            "em"
+            "hp"
           ],
           "mustPresent": [
             "hp%"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": [
-            "hp%",
-            "em"
+            "hp%"
           ],
           "substats": [
             "hp%",
             "er",
-            "em"
+            "hp"
           ],
           "mustPresent": [
             "hp%"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": [
-            "hp%",
-            "em"
+            "hp%"
           ],
           "substats": [
             "hp%",
             "er",
-            "em"
+            "hp"
           ],
           "mustPresent": [
             "hp%"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -760,11 +757,11 @@
           "substats": [
             "em",
             "er",
-            "cd",
-            "cr"
+            "hp%"
           ],
           "mustPresent": [
-            "em"
+            "em",
+            "er"
           ],
           "minStatCount": 2
         },
@@ -776,11 +773,11 @@
           "substats": [
             "em",
             "er",
-            "cd",
-            "cr"
+            "hp%"
           ],
           "mustPresent": [
-            "em"
+            "em",
+            "er"
           ],
           "minStatCount": 2
         },
@@ -791,11 +788,11 @@
           "substats": [
             "em",
             "er",
-            "cd",
-            "cr"
+            "hp%"
           ],
           "mustPresent": [
-            "em"
+            "em",
+            "er"
           ],
           "minStatCount": 2
         },
@@ -806,13 +803,81 @@
           "substats": [
             "em",
             "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "baizhu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "lauma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "em",
             "cd",
             "cr"
           ],
           "mustPresent": [
             "em"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -1234,58 +1299,55 @@
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": [
-            "def%",
             "er"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": [
-            "atk%",
-            "def%"
+            "atk%"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": [
             "cr",
-            "def%",
             "heal%"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -1295,16 +1357,6 @@
           },
           {
             "characterId": "ganyu",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "xinyan",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "yun_jin",
             "hasPerfectMerge": true,
             "has4pcBuild": false
           }
@@ -1378,6 +1430,79 @@
           },
           {
             "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
             "hasPerfectMerge": true,
             "has4pcBuild": false
           }
@@ -1590,81 +1715,6 @@
           "mainStats": [],
           "substats": [
             "em",
-            "er",
-            "cr"
-          ],
-          "mustPresent": [
-            "em"
-          ],
-          "minStatCount": 2
-        },
-        "sands": {
-          "mainStats": [
-            "em",
-            "er"
-          ],
-          "substats": [
-            "em",
-            "er",
-            "cr"
-          ],
-          "mustPresent": [
-            "em"
-          ],
-          "minStatCount": 2
-        },
-        "goblet": {
-          "mainStats": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er",
-            "cr"
-          ],
-          "mustPresent": [
-            "em"
-          ],
-          "minStatCount": 2
-        },
-        "circlet": {
-          "mainStats": [
-            "cr",
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er",
-            "cr"
-          ],
-          "mustPresent": [
-            "em"
-          ],
-          "minStatCount": 2
-        },
-        "servedCharacters": [
-          {
-            "characterId": "illuga",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "kaveh",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
-          {
-            "characterId": "thoma",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          }
-        ]
-      },
-      {
-        "flowerPlume": {
-          "mainStats": [],
-          "substats": [
-            "em",
             "hp%",
             "hp"
           ],
@@ -1727,6 +1777,139 @@
           },
           {
             "characterId": "sangonomiya_kokomi",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "kaveh",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           }
@@ -2578,12 +2761,83 @@
         "flowerPlume": {
           "mainStats": [],
           "substats": [
-            "em",
+            "def%",
             "er",
-            "cr",
-            "def%"
+            "cr"
           ],
           "mustPresent": [
+            "def%"
+          ],
+          "minStatCount": 1
+        },
+        "sands": {
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
+          "minStatCount": 1
+        },
+        "goblet": {
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
+          "minStatCount": 1
+        },
+        "circlet": {
+          "mainStats": [
+            "cr",
+            "cd",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
+          "minStatCount": 1
+        },
+        "servedCharacters": [
+          {
+            "characterId": "gorou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "xilonen",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
             "er"
           ],
           "minStatCount": 2
@@ -2596,26 +2850,25 @@
           "substats": [
             "em",
             "er",
-            "cr",
-            "def%"
+            "cr"
           ],
           "mustPresent": [
+            "em",
             "er"
           ],
           "minStatCount": 2
         },
         "goblet": {
           "mainStats": [
-            "def%",
             "em"
           ],
           "substats": [
             "em",
             "er",
-            "cr",
-            "def%"
+            "cr"
           ],
           "mustPresent": [
+            "em",
             "er"
           ],
           "minStatCount": 2
@@ -2623,16 +2876,15 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd",
             "em"
           ],
           "substats": [
             "em",
             "er",
-            "cr",
-            "def%"
+            "cr"
           ],
           "mustPresent": [
+            "em",
             "er"
           ],
           "minStatCount": 2
@@ -2640,11 +2892,6 @@
         "servedCharacters": [
           {
             "characterId": "aino",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
-          {
-            "characterId": "gorou",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           },
@@ -2659,56 +2906,56 @@
         "flowerPlume": {
           "mainStats": [],
           "substats": [
-            "def%",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
             "hp%"
           ],
-          "mustPresent": [],
-          "minStatCount": 1
+          "minStatCount": 2
         },
         "sands": {
           "mainStats": [
-            "hp%",
-            "def%"
-          ],
-          "substats": [
-            "def%",
             "hp%"
           ],
-          "mustPresent": [],
-          "minStatCount": 1
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
+          "minStatCount": 2
         },
         "goblet": {
           "mainStats": [
-            "hp%",
-            "def%"
-          ],
-          "substats": [
-            "def%",
             "hp%"
           ],
-          "mustPresent": [],
-          "minStatCount": 1
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
+          "minStatCount": 2
         },
         "circlet": {
           "mainStats": [
-            "hp%",
-            "def%"
-          ],
-          "substats": [
-            "def%",
             "hp%"
           ],
-          "mustPresent": [],
-          "minStatCount": 1
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
+          "minStatCount": 2
         },
         "servedCharacters": [
           {
             "characterId": "nilou",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
-          {
-            "characterId": "xilonen",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           }
@@ -3317,12 +3564,13 @@
           "substats": [
             "hp%",
             "er",
-            "atk%"
+            "hp"
           ],
           "mustPresent": [
+            "hp%",
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": [
@@ -3332,53 +3580,48 @@
           "substats": [
             "hp%",
             "er",
-            "atk%"
+            "hp"
           ],
           "mustPresent": [
+            "hp%",
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": [
-            "atk%",
-            "hp%",
-            "elemental%"
+            "hp%"
           ],
           "substats": [
             "hp%",
             "er",
-            "atk%"
+            "hp"
           ],
           "mustPresent": [
+            "hp%",
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": [
             "cr",
             "cd",
-            "atk%",
             "hp%",
             "heal%"
           ],
           "substats": [
             "hp%",
             "er",
-            "atk%"
+            "hp"
           ],
           "mustPresent": [
+            "hp%",
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
-          {
-            "characterId": "amber",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
           {
             "characterId": "bennett",
             "hasPerfectMerge": true,
@@ -3413,11 +3656,6 @@
             "characterId": "mika",
             "hasPerfectMerge": true,
             "has4pcBuild": true
-          },
-          {
-            "characterId": "shenhe",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
           }
         ]
       },
@@ -3425,12 +3663,12 @@
         "flowerPlume": {
           "mainStats": [],
           "substats": [
+            "atk%",
             "er",
-            "cr",
-            "atk%"
+            "cr"
           ],
           "mustPresent": [
-            "cr"
+            "er"
           ],
           "minStatCount": 2
         },
@@ -3439,47 +3677,49 @@
             "er"
           ],
           "substats": [
+            "atk%",
             "er",
-            "cr",
-            "atk%"
+            "cr"
           ],
           "mustPresent": [
-            "cr"
+            "er"
           ],
           "minStatCount": 2
         },
         "goblet": {
           "mainStats": [
-            "atk%"
+            "atk%",
+            "elemental%"
           ],
           "substats": [
+            "atk%",
             "er",
-            "cr",
-            "atk%"
+            "cr"
           ],
           "mustPresent": [
-            "cr"
+            "er"
           ],
           "minStatCount": 2
         },
         "circlet": {
           "mainStats": [
             "cr",
-            "cd"
-          ],
-          "substats": [
-            "er",
-            "cr",
+            "cd",
             "atk%"
           ],
-          "mustPresent": [
+          "substats": [
+            "atk%",
+            "er",
             "cr"
+          ],
+          "mustPresent": [
+            "er"
           ],
           "minStatCount": 2
         },
         "servedCharacters": [
           {
-            "characterId": "chongyun",
+            "characterId": "amber",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           },
@@ -3489,7 +3729,76 @@
             "has4pcBuild": true
           },
           {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
             "characterId": "tartaglia",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "er"
+          ],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "chongyun",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           }
@@ -4017,58 +4326,55 @@
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": [
-            "def%",
             "er"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": [
-            "atk%",
-            "def%"
+            "atk%"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": [
             "cr",
-            "def%",
             "heal%"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -4078,16 +4384,6 @@
           },
           {
             "characterId": "ganyu",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "xinyan",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "yun_jin",
             "hasPerfectMerge": true,
             "has4pcBuild": false
           }
@@ -4165,6 +4461,79 @@
             "has4pcBuild": false
           }
         ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
       }
     ]
   },
@@ -4175,67 +4544,66 @@
         "flowerPlume": {
           "mainStats": [],
           "substats": [
-            "em",
             "er",
-            "cd",
+            "atk%",
             "cr",
-            "atk%"
+            "def%"
           ],
-          "mustPresent": [],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
           "mainStats": [
             "atk%",
-            "em",
+            "def%",
             "er"
           ],
           "substats": [
-            "em",
             "er",
-            "cd",
+            "atk%",
             "cr",
-            "atk%"
+            "def%"
           ],
-          "mustPresent": [],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
           "mainStats": [
             "atk%",
-            "em"
+            "def%"
           ],
           "substats": [
-            "em",
             "er",
-            "cd",
+            "atk%",
             "cr",
-            "atk%"
+            "def%"
           ],
-          "mustPresent": [],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
           "mainStats": [
             "atk%",
-            "em"
+            "def%"
           ],
           "substats": [
-            "em",
             "er",
-            "cd",
+            "atk%",
             "cr",
-            "atk%"
+            "def%"
           ],
-          "mustPresent": [],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
-          {
-            "characterId": "citlali",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
           {
             "characterId": "escoffier",
             "hasPerfectMerge": true,
@@ -4243,6 +4611,79 @@
           },
           {
             "characterId": "iansan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kachina",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "em",
+            "er",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "citlali",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           }
@@ -4253,26 +4694,25 @@
           "mainStats": [],
           "substats": [
             "def%",
-            "er"
+            "def"
           ],
           "mustPresent": [
             "def%"
           ],
-          "minStatCount": 1
+          "minStatCount": 2
         },
         "sands": {
           "mainStats": [
-            "def%",
-            "er"
+            "def%"
           ],
           "substats": [
             "def%",
-            "er"
+            "def"
           ],
           "mustPresent": [
             "def%"
           ],
-          "minStatCount": 1
+          "minStatCount": 2
         },
         "goblet": {
           "mainStats": [
@@ -4280,12 +4720,12 @@
           ],
           "substats": [
             "def%",
-            "er"
+            "def"
           ],
           "mustPresent": [
             "def%"
           ],
-          "minStatCount": 1
+          "minStatCount": 2
         },
         "circlet": {
           "mainStats": [
@@ -4293,19 +4733,14 @@
           ],
           "substats": [
             "def%",
-            "er"
+            "def"
           ],
           "mustPresent": [
             "def%"
           ],
-          "minStatCount": 1
+          "minStatCount": 2
         },
         "servedCharacters": [
-          {
-            "characterId": "kachina",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
           {
             "characterId": "xilonen",
             "hasPerfectMerge": true,
@@ -4554,10 +4989,9 @@
         "flowerPlume": {
           "mainStats": [],
           "substats": [
-            "em",
+            "atk%",
             "er",
-            "cr",
-            "hp%"
+            "em"
           ],
           "mustPresent": [
             "er"
@@ -4566,15 +5000,14 @@
         },
         "sands": {
           "mainStats": [
-            "hp%",
+            "atk%",
             "em",
             "er"
           ],
           "substats": [
-            "em",
+            "atk%",
             "er",
-            "cr",
-            "hp%"
+            "em"
           ],
           "mustPresent": [
             "er"
@@ -4583,14 +5016,13 @@
         },
         "goblet": {
           "mainStats": [
-            "hp%",
+            "atk%",
             "em"
           ],
           "substats": [
-            "em",
+            "atk%",
             "er",
-            "cr",
-            "hp%"
+            "em"
           ],
           "mustPresent": [
             "er"
@@ -4600,15 +5032,14 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd",
-            "hp%",
-            "em"
+            "atk%",
+            "em",
+            "heal%"
           ],
           "substats": [
-            "em",
+            "atk%",
             "er",
-            "cr",
-            "hp%"
+            "em"
           ],
           "mustPresent": [
             "er"
@@ -4621,90 +5052,6 @@
             "hasPerfectMerge": true,
             "has4pcBuild": true
           },
-          {
-            "characterId": "candace",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "illuga",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
-          {
-            "characterId": "lauma",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
-          {
-            "characterId": "thoma",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          }
-        ]
-      },
-      {
-        "flowerPlume": {
-          "mainStats": [],
-          "substats": [
-            "atk%",
-            "er",
-            "def%"
-          ],
-          "mustPresent": [
-            "er"
-          ],
-          "minStatCount": 2
-        },
-        "sands": {
-          "mainStats": [
-            "atk%",
-            "def%",
-            "er"
-          ],
-          "substats": [
-            "atk%",
-            "er",
-            "def%"
-          ],
-          "mustPresent": [
-            "er"
-          ],
-          "minStatCount": 2
-        },
-        "goblet": {
-          "mainStats": [
-            "atk%",
-            "def%"
-          ],
-          "substats": [
-            "atk%",
-            "er",
-            "def%"
-          ],
-          "mustPresent": [
-            "er"
-          ],
-          "minStatCount": 2
-        },
-        "circlet": {
-          "mainStats": [
-            "cr",
-            "atk%",
-            "def%",
-            "heal%"
-          ],
-          "substats": [
-            "atk%",
-            "er",
-            "def%"
-          ],
-          "mustPresent": [
-            "er"
-          ],
-          "minStatCount": 2
-        },
-        "servedCharacters": [
           {
             "characterId": "charlotte",
             "hasPerfectMerge": true,
@@ -4719,6 +5066,153 @@
             "characterId": "jahoda",
             "hasPerfectMerge": true,
             "has4pcBuild": true
+          },
+          {
+            "characterId": "lauma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "cr",
+            "cd",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "hp%",
+            "er",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": [
+            "hp%",
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
           },
           {
             "characterId": "xinyan",
@@ -5166,58 +5660,55 @@
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": [
-            "def%",
             "er"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": [
-            "atk%",
-            "def%"
+            "atk%"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": [
             "cr",
-            "def%",
             "heal%"
           ],
           "substats": [
             "atk%",
             "er",
-            "def%"
+            "atk"
           ],
           "mustPresent": [
             "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -5227,16 +5718,6 @@
           },
           {
             "characterId": "ganyu",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "xinyan",
-            "hasPerfectMerge": true,
-            "has4pcBuild": false
-          },
-          {
-            "characterId": "yun_jin",
             "hasPerfectMerge": true,
             "has4pcBuild": false
           }
@@ -5310,6 +5791,79 @@
           },
           {
             "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
             "hasPerfectMerge": true,
             "has4pcBuild": false
           }
@@ -5783,59 +6337,60 @@
           "substats": [
             "atk%",
             "er",
-            "em"
+            "atk"
           ],
           "mustPresent": [
-            "atk%"
+            "atk%",
+            "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": [
             "atk%",
-            "em",
             "er"
           ],
           "substats": [
             "atk%",
             "er",
-            "em"
+            "atk"
           ],
           "mustPresent": [
-            "atk%"
+            "atk%",
+            "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": [
-            "atk%",
-            "em"
+            "atk%"
           ],
           "substats": [
             "atk%",
             "er",
-            "em"
+            "atk"
           ],
           "mustPresent": [
-            "atk%"
+            "atk%",
+            "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": [
             "atk%",
-            "em",
             "heal%"
           ],
           "substats": [
             "atk%",
             "er",
-            "em"
+            "atk"
           ],
           "mustPresent": [
-            "atk%"
+            "atk%",
+            "er"
           ],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -5852,7 +6407,68 @@
             "characterId": "lan_yan",
             "hasPerfectMerge": true,
             "has4pcBuild": true
-          },
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "atk%",
+            "em"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "em",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
           {
             "characterId": "sayu",
             "hasPerfectMerge": true,

@@ -272,8 +272,9 @@ describe("algorithm-specific behaviors", () => {
         makeConfig(["er", "atk%", "cr", "cd"], ["er", "atk%"], 3, "a"),
         makeConfig(["er", "hp%", "cr", "cd"], ["er", "hp%"], 3, "b"),
         makeConfig(["er", "def%", "cr", "cd"], ["er", "def%"], 3, "c"),
+        makeConfig(["er", "em", "cr", "cd"], ["er", "em"], 3, "d"),
       ]);
-      expect(result.length).toBeLessThanOrEqual(2);
+      expect(result.length).toBeLessThanOrEqual(3);
     });
   });
 

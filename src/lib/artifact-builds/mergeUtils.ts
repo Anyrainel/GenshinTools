@@ -152,41 +152,76 @@ export function coalesceByFingerprint(configs: SetConfig[]): SetConfig[] {
   return [...groups.values()];
 }
 
-// ── 2-Partition Enumeration ─────────────────────────────────────────────
+// ── K-Partition Enumeration ─────────────────────────────────────────────
 
 /**
- * Enumerate all 2-way splits of `configs` (item 0 always in group A).
- * For each split, merge both groups and call `evaluate(a, b)`.
+ * Enumerate all ways to partition `configs` into exactly `k` non-empty
+ * groups (Stirling-2 enumeration with canonical-label symmetry breaking:
+ * item 0 always in group 0, and item i can only open a new group labelled
+ * max(seen)+1).
+ *
+ * For each partition, merge each group and call `evaluate(groups)`.
  * `evaluate` returns a numeric score (lower = better) or null to skip.
- * Returns the best-scoring pair, or null if all partitions were skipped.
+ * Returns the best-scoring group list, or null if all partitions were skipped.
+ */
+export function bestKPartition(
+  configs: SetConfig[],
+  k: number,
+  evaluate: (groups: SetConfig[]) => number | null
+): SetConfig[] | null {
+  const n = configs.length;
+  if (k <= 0 || n < k) return null;
+
+  const labels = new Array<number>(n).fill(0);
+  let best: SetConfig[] | null = null;
+  let bestScore = Number.POSITIVE_INFINITY;
+
+  const recurse = (i: number, maxSeen: number): void => {
+    if (i === n) {
+      // Require exactly k groups
+      if (maxSeen + 1 !== k) return;
+      const groupIdx: number[][] = Array.from({ length: k }, () => []);
+      for (let j = 0; j < n; j++) groupIdx[labels[j]].push(j);
+      const groups = groupIdx.map((idxs) =>
+        mergeConfigGroup(idxs.map((ii) => configs[ii]))
+      );
+      const score = evaluate(groups);
+      if (score !== null && score < bestScore) {
+        bestScore = score;
+        best = groups;
+      }
+      return;
+    }
+    // Prune: remaining items must be able to fill remaining groups.
+    const remaining = n - i;
+    const needed = k - 1 - maxSeen;
+    const hi = Math.min(maxSeen + 1, k - 1);
+    // Must leave at least `needed` slots for new groups among remaining items.
+    const lo = Math.max(0, needed > remaining - 1 ? hi : 0);
+    for (let g = lo; g <= hi; g++) {
+      labels[i] = g;
+      recurse(i + 1, Math.max(maxSeen, g));
+    }
+  };
+
+  // Canonical labelling: pin item 0 to group 0.
+  labels[0] = 0;
+  recurse(1, 0);
+  return best;
+}
+
+/**
+ * Backwards-compat wrapper: 2-partition using the generic K-partition
+ * enumerator. The evaluator still takes (a, b) for convenience.
  */
 export function bestTwoPartition(
   configs: SetConfig[],
   evaluate: (a: SetConfig, b: SetConfig) => number | null
 ): [SetConfig, SetConfig] | null {
-  const n = configs.length;
-  let best: [SetConfig, SetConfig] | null = null;
-  let bestScore = Number.POSITIVE_INFINITY;
-
-  const limit = 1 << (n - 1);
-  for (let mask = 1; mask < limit; mask++) {
-    const aIdx: number[] = [0];
-    const bIdx: number[] = [];
-    for (let i = 1; i < n; i++) {
-      if (mask & (1 << (i - 1))) bIdx.push(i);
-      else aIdx.push(i);
-    }
-
-    const a = mergeConfigGroup(aIdx.map((i) => configs[i]));
-    const b = mergeConfigGroup(bIdx.map((i) => configs[i]));
-    const score = evaluate(a, b);
-    if (score !== null && score < bestScore) {
-      bestScore = score;
-      best = [a, b];
-    }
-  }
-
-  return best;
+  const result = bestKPartition(configs, 2, (groups) =>
+    evaluate(groups[0], groups[1])
+  );
+  return result ? [result[0], result[1]] : null;
 }
 
 // ── Substat Normalization ───────────────────────────────────────────────

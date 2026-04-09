@@ -64,22 +64,22 @@ describe("bruteForcePartition", () => {
     expect(result.length).toBeLessThanOrEqual(2);
   });
 
-  it("result length never exceeds min(input.length, 2)", () => {
+  it("result length never exceeds min(input.length, 3)", () => {
     const a = makeConfig(["cr", "cd", "atk%", "er"], ["cr", "cd"], 3, "a");
     const b = makeConfig(["cr", "cd", "atk%", "em"], ["cr", "cd"], 3, "b");
     const result = bruteForcePartition([a, b]);
     expect(result.length).toBeLessThanOrEqual(2);
-    expect(result.length).toBeLessThanOrEqual(2); // algorithm caps at 2-partition
   });
 
-  it("output never exceeds 2 configs", () => {
+  it("output never exceeds 3 configs (in-game loadout cap)", () => {
     const configs = [
       makeConfig(["cr", "cd", "atk%"], ["cr"], 2, "a"),
       makeConfig(["cr", "cd", "hp%"], ["cr"], 2, "b"),
       makeConfig(["cr", "cd", "def%"], ["cr"], 2, "c"),
+      makeConfig(["cr", "cd", "em"], ["cr"], 2, "d"),
     ];
     const result = bruteForcePartition(configs);
-    expect(result.length).toBeLessThanOrEqual(2);
+    expect(result.length).toBeLessThanOrEqual(3);
   });
 });
 
