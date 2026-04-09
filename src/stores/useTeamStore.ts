@@ -308,17 +308,16 @@ export interface Team {
   analyzerEnemyAura?: Element;
   /** Analyzer-specific extra buffs. Independent from DamageView extraBuffs. */
   analyzerExtraBuffs?: ExtraBuff[];
-  /** Weapon choice per-character config overrides (level, constellation, talents, artifact sets). */
-  weaponChoiceConfigs?: WeaponChoiceCharConfig[];
-  /** Weapon choice formula mode. Independent from DamageView and Analyzer. */
-  weaponChoiceFormulaMode?: "single" | "combo";
-  weaponChoiceSelectedCombo?: string | null;
-  weaponChoiceSingleFormula?: { charId: string; formulaId: string } | null;
-  weaponChoiceSingleReaction?: ReactionOverride;
-  weaponChoiceCombos?: ComboFormula[];
+  /**
+   * Weapon choice environment-only settings. Formula selection, combos,
+   * selectedCombo, formulaMode, singleReaction, and per-character overrides
+   * (level/C/R/talents) are unified with the Damage tab — see
+   * `getEffectiveCombo(team)` and `buildWeaponChoiceCharConfigs`. Only enemy
+   * aura and extra buffs remain weapon-choice-local because the user may want
+   * to probe a different environment without mutating their damage setup.
+   */
   weaponChoiceEnemyAura?: Element;
   weaponChoiceExtraBuffs?: ExtraBuff[];
-  weaponChoiceCalcContext?: Partial<CalcContext>;
   /** Persisted weapon choice results. Survives refresh. */
   weaponChoiceResult?: WeaponChoiceResult | null;
   /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
