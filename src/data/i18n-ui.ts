@@ -378,7 +378,7 @@ export const i18nUiData = {
     flatAtk: { en: "Flat ATK", zh: "小攻击" },
     flatHp: { en: "Flat HP", zh: "小生命" },
     flatDef: { en: "Flat DEF", zh: "小防御" },
-    wrongMainStat: { en: "Ineffective main stat", zh: "无效主属性" },
+    wrongMainStat: { en: "Ineffective main stat", zh: "非主流属性" },
     subStatScore: { en: "Sub", zh: "副词条" },
     mainStatContrib: { en: "Main", zh: "主属性" },
     subStatContrib: { en: "Sub", zh: "副属性" },

@@ -454,7 +454,7 @@ export function CharacterTierListView({
         onExport={handleExport}
         variant="tier-list"
         defaultAuthor={author}
-        defaultDescription={description}
+        defaultDescription={description || customTitle}
       />
       <ClearAllControl
         ref={clearRef}

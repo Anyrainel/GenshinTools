@@ -37,7 +37,16 @@ function resolveIds(
   preset: BuildPayloadV5 | null,
   charId: string
 ): string[] {
-  return characterToBuildIds[charId] ?? preset?.characterBuilds[charId] ?? [];
+  const local = characterToBuildIds[charId];
+  const presetIds = preset?.characterBuilds[charId] ?? [];
+  if (!local) return presetIds;
+  // Append preset build IDs that aren't already tracked locally. This ensures
+  // that builds added to a subscribed preset after subscription time become
+  // visible without requiring the user to re-import the preset.
+  if (presetIds.length === 0) return local;
+  const localSet = new Set(local);
+  const added = presetIds.filter((id) => !localSet.has(id));
+  return added.length === 0 ? local : [...local, ...added];
 }
 
 export function useResolvedBuilds(characterId: string): Build[] {

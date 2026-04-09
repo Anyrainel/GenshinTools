@@ -1059,12 +1059,27 @@ class Xilonen extends CharacterBase {
           },
         ],
       },
+      "xilonen-normal-2": {
+        label: {
+          zh: "E普攻2段",
+          en: "E-NA2 (Blade Roller)",
+        },
+        minC: 0,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 10), nTag, "def"),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 11), nTag, "def"),
+          },
+        ],
+      },
       "xilonen-normal": {
         label: {
           zh: "E普攻4段",
-          en: "N4 (Blade Roller)",
+          en: "E-NA4 (Blade Roller)",
         },
-        minC: 6,
+        minC: 0,
         parts: [
           {
             formula: new DirectFormula(this.param("A", 10), nTag, "def"),
@@ -1082,7 +1097,7 @@ class Xilonen extends CharacterBase {
       },
       // Q initial Skill DMG (param1): one-time Geo Burst hit, DEF-scaled
       "xilonen-q-initial": {
-        label: { zh: "Q伤害", en: "Q Initial" },
+        label: { zh: "Q初始", en: "Q Initial" },
         parts: [
           {
             formula: new DirectFormula(
@@ -1114,8 +1129,8 @@ class Xilonen extends CharacterBase {
   // Rotation: C6 on-field DPS 3×N4; mono-Geo Q extra beats once (KQM)
   protected override get comboDescriptor(): ComboDescriptor {
     return [
-      { id: "xilonen-normal", count: 3 },
-      { id: "xilonen-burst-beats", count: 1 },
+      { id: "xilonen-normal-2", count: 1 },
+      { id: "xilonen-e-rush", count: 1 },
     ];
   }
 }
@@ -1163,7 +1178,7 @@ class Mualani extends CharacterBase {
     };
     return {
       "mualani-bite": {
-        label: { zh: "普攻", en: "NA" },
+        label: { zh: "E撕咬（3层）", en: "E Bite(3 stacks)" },
         parts: [
           {
             formula: new DirectFormula(biteMult, biteTag, "hp"),
@@ -1190,7 +1205,7 @@ class Mualani extends CharacterBase {
         ],
       },
       "mualani-burst": {
-        label: { zh: "Q伤害", en: "Q" },
+        label: { zh: "Q", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(
@@ -1293,7 +1308,7 @@ class Kinich extends CharacterBase {
         ],
       },
       "kinich-cannon": {
-        label: { zh: "E伤害", en: "E" },
+        label: { zh: "E炮击", en: "E Cannon" },
         parts: [
           {
             formula: new DirectFormula(this.param("E", 2), {
@@ -1341,7 +1356,7 @@ class Kinich extends CharacterBase {
         ],
       },
       "kinich-burst": {
-        label: { zh: "Q 1斩+5龙息", en: "Q 1 Slash + 5 Breaths" },
+        label: { zh: "Q+5龙息", en: "Q + 5 Breaths" },
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 1), {

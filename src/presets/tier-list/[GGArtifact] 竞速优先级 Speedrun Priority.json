@@ -38,7 +38,7 @@
     },
     "neuvillette": {
       "tier": "C",
-      "position": 4
+      "position": 2
     },
     "nilou": {
       "tier": "A",
@@ -46,11 +46,11 @@
     },
     "yelan": {
       "tier": "C",
-      "position": 11
+      "position": 8
     },
     "aino": {
       "tier": "D",
-      "position": 8
+      "position": 10
     },
     "mona": {
       "tier": "B",
@@ -70,11 +70,11 @@
     },
     "clorinde": {
       "tier": "C",
-      "position": 12
+      "position": 9
     },
     "raiden_shogun": {
       "tier": "C",
-      "position": 13
+      "position": 10
     },
     "iansan": {
       "tier": "B",
@@ -82,19 +82,19 @@
     },
     "ororon": {
       "tier": "D",
-      "position": 0
+      "position": 1
     },
     "kuki_shinobu": {
       "tier": "D",
-      "position": 3
+      "position": 5
     },
     "kujou_sara": {
       "tier": "C",
-      "position": 14
+      "position": 11
     },
     "fischl": {
       "tier": "A",
-      "position": 9
+      "position": 8
     },
     "skirk": {
       "tier": "S",
@@ -102,19 +102,19 @@
     },
     "escoffier": {
       "tier": "A",
-      "position": 7
+      "position": 6
     },
     "citlali": {
       "tier": "A",
-      "position": 6
+      "position": 5
     },
     "wriothesley": {
       "tier": "C",
-      "position": 15
+      "position": 12
     },
     "shenhe": {
       "tier": "A",
-      "position": 10
+      "position": 9
     },
     "kamisato_ayaka": {
       "tier": "B",
@@ -126,7 +126,7 @@
     },
     "diona": {
       "tier": "D",
-      "position": 0
+      "position": 2
     },
     "chasca": {
       "tier": "S",
@@ -134,7 +134,7 @@
     },
     "xianyun": {
       "tier": "A",
-      "position": 8
+      "position": 7
     },
     "kaedehara_kazuha": {
       "tier": "B",
@@ -142,7 +142,7 @@
     },
     "venti": {
       "tier": "A",
-      "position": 14
+      "position": 12
     },
     "faruzan": {
       "tier": "B",
@@ -154,51 +154,51 @@
     },
     "xilonen": {
       "tier": "A",
-      "position": 12
+      "position": 10
     },
     "chiori": {
       "tier": "C",
-      "position": 5
+      "position": 3
     },
     "navia": {
       "tier": "C",
-      "position": 7
+      "position": 5
     },
     "albedo": {
       "tier": "C",
-      "position": 6
+      "position": 4
     },
     "zhongli": {
       "tier": "D",
-      "position": 4
+      "position": 6
     },
     "yun_jin": {
       "tier": "D",
-      "position": 5
+      "position": 7
     },
     "gorou": {
       "tier": "B",
       "position": 8
     },
     "lauma": {
-      "tier": "A",
-      "position": 5
+      "tier": "S",
+      "position": 9
     },
     "kinich": {
-      "tier": "S",
-      "position": 8
+      "tier": "A",
+      "position": 13
     },
     "emilie": {
       "tier": "A",
-      "position": 15
+      "position": 14
     },
     "alhaitham": {
       "tier": "C",
-      "position": 3
+      "position": 1
     },
     "yaoyao": {
-      "tier": "D",
-      "position": 10
+      "tier": "C",
+      "position": 18
     },
     "flins": {
       "tier": "S",
@@ -214,11 +214,11 @@
     },
     "lan_yan": {
       "tier": "D",
-      "position": 1
+      "position": 4
     },
     "baizhu": {
-      "tier": "D",
-      "position": 9
+      "tier": "C",
+      "position": 17
     },
     "nahida": {
       "tier": "B",
@@ -226,11 +226,11 @@
     },
     "jean": {
       "tier": "D",
-      "position": 0
+      "position": 3
     },
     "wanderer": {
       "tier": "C",
-      "position": 9
+      "position": 6
     },
     "columbina": {
       "tier": "A",
@@ -242,35 +242,95 @@
     },
     "illuga": {
       "tier": "A",
-      "position": 13
+      "position": 11
     },
     "tartaglia": {
       "tier": "D",
-      "position": 7
+      "position": 9
     },
     "xiangling": {
       "tier": "C",
-      "position": 16
+      "position": 13
     },
     "lyney": {
       "tier": "C",
-      "position": 10
+      "position": 7
     },
     "kachina": {
       "tier": "D",
-      "position": 6
+      "position": 8
     },
     "traveler_geo": {
       "tier": "D",
-      "position": 16
+      "position": 13
     },
     "varka": {
-      "tier": "C",
-      "position": 17
+      "tier": "A",
+      "position": 15
     },
     "linnea": {
-      "tier": "A",
-      "position": 11
+      "tier": "S",
+      "position": 8
+    },
+    "yae_miko": {
+      "tier": "D",
+      "position": 15
+    },
+    "kamisato_ayato": {
+      "tier": "D",
+      "position": 14
+    },
+    "hu_tao": {
+      "tier": "C",
+      "position": 14
+    },
+    "eula": {
+      "tier": "C",
+      "position": 15
+    },
+    "mika": {
+      "tier": "D",
+      "position": 16
+    },
+    "charlotte": {
+      "tier": "D",
+      "position": 17
+    },
+    "layla": {
+      "tier": "D",
+      "position": 18
+    },
+    "yoimiya": {
+      "tier": "D",
+      "position": 19
+    },
+    "thoma": {
+      "tier": "D",
+      "position": 20
+    },
+    "sangonomiya_kokomi": {
+      "tier": "D",
+      "position": 21
+    },
+    "xiao": {
+      "tier": "C",
+      "position": 16
+    },
+    "yumemizuki_mizuki": {
+      "tier": "D",
+      "position": 22
+    },
+    "arataki_itto": {
+      "tier": "D",
+      "position": 23
+    },
+    "tighnari": {
+      "tier": "D",
+      "position": 24
+    },
+    "kirara": {
+      "tier": "D",
+      "position": 25
     }
   },
   "tierCustomization": {
@@ -287,11 +347,11 @@
       "displayName": "C: 备选主副C"
     },
     "D": {
-      "displayName": "D: 工具人",
+      "displayName": "D: 工具人/凑数",
       "hidden": false
     }
   },
-  "customTitle": "竞速优先级",
+  "customTitle": "竞速优先级 Speedrun Priority",
   "author": "GGArtifact",
   "description": "竞速优先级 Speedrun Priority"
 }

@@ -374,7 +374,7 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
         onExport={handleExport}
         variant="tier-list"
         defaultAuthor={author}
-        defaultDescription={description}
+        defaultDescription={description || customTitle}
       />
       <ClearAllControl
         ref={clearRef}
