@@ -4,11 +4,9 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 describe("BuildCard", () => {
-  const mockOnDelete = vi.fn();
   const mockOnDuplicate = vi.fn();
 
   beforeEach(() => {
-    mockOnDelete.mockClear();
     mockOnDuplicate.mockClear();
     useBuildsStore.getState().clearAll();
     useBuildsStore.getState().newBuild("hu_tao");
@@ -34,7 +32,6 @@ describe("BuildCard", () => {
       <BuildCard
         buildId={buildId}
         build={build}
-        onDelete={mockOnDelete}
         onDuplicate={mockOnDuplicate}
         element="Pyro"
       />

@@ -188,7 +188,6 @@ function CharacterBuildCardComponent({
 
   const newBuild = useBuildsStore((state) => state.newBuild);
   const copyBuild = useBuildsStore((state) => state.copyBuild);
-  const removeBuild = useBuildsStore((state) => state.removeBuild);
   const restoreCharacter = useBuildsStore((state) => state.restoreCharacter);
 
   const [confirmRestore, setConfirmRestore] = useState(false);
@@ -258,13 +257,6 @@ function CharacterBuildCardComponent({
   const handleAddBuild = useCallback(() => {
     newBuild(character.id);
   }, [newBuild, character.id]);
-
-  const handleDeleteBuild = useCallback(
-    (buildId: string) => {
-      removeBuild(character.id, buildId);
-    },
-    [removeBuild, character.id]
-  );
 
   const handleDuplicateBuild = useCallback(
     (buildId: string, build: Build) => {
@@ -395,33 +387,18 @@ function CharacterBuildCardComponent({
               </div>
             ) : (
               <>
-                {builds.map((build, index) => {
-                  // Memoize inline callbacks to prevent BuildCard re-renders
-                  const handleDelete = () => handleDeleteBuild(build.id);
-                  const handleDuplicate = () =>
-                    handleDuplicateBuild(build.id, build);
-
-                  return (
-                    <BuildCard
-                      key={build.id}
-                      build={build}
-                      buildId={build.id}
-                      onDelete={handleDelete}
-                      onDuplicate={handleDuplicate}
-                      onMoveUp={
-                        index > 0
-                          ? () => handleMoveBuild(build.id, "up")
-                          : undefined
-                      }
-                      onMoveDown={
-                        index < builds.length - 1
-                          ? () => handleMoveBuild(build.id, "down")
-                          : undefined
-                      }
-                      element={charMeta.element ?? "Pyro"}
-                    />
-                  );
-                })}
+                {builds.map((build, index) => (
+                  <BuildCard
+                    key={build.id}
+                    build={build}
+                    buildId={build.id}
+                    onDuplicate={handleDuplicateBuild}
+                    onMove={handleMoveBuild}
+                    canMoveUp={index > 0}
+                    canMoveDown={index < builds.length - 1}
+                    element={charMeta.element ?? "Pyro"}
+                  />
+                ))}
               </>
             )}
           </div>

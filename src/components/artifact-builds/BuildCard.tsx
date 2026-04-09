@@ -113,20 +113,20 @@ const CONS_COLORS: Record<BuildConstellation, string> = {
 interface BuildCardProps {
   build: Build;
   buildId: string;
-  onDelete: () => void;
-  onDuplicate: () => void;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
+  onDuplicate: (buildId: string, build: Build) => void;
+  onMove?: (buildId: string, direction: "up" | "down") => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
   element: Element;
 }
 
 function BuildCardComponent({
   build,
   buildId,
-  onDelete,
   onDuplicate,
-  onMoveUp,
-  onMoveDown,
+  onMove,
+  canMoveUp,
+  canMoveDown,
   element,
 }: BuildCardProps) {
   const { t } = useLanguage();
@@ -426,18 +426,28 @@ function BuildCardComponent({
                         : t.ui("buildCard.customBuild") || "Custom Build"}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={onDuplicate}>
+                  <DropdownMenuItem onClick={() => onDuplicate(buildId, build)}>
                     <Copy className="mr-2 h-4 w-4" />
                     <span>{t.ui("common.duplicate") || "Duplicate"}</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onMoveUp} disabled={!onMoveUp}>
-                    <ArrowUp className="mr-2 h-4 w-4" />
-                    <span>{t.ui("common.moveUp")}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onMoveDown} disabled={!onMoveDown}>
-                    <ArrowDown className="mr-2 h-4 w-4" />
-                    <span>{t.ui("common.moveDown")}</span>
-                  </DropdownMenuItem>
+                  {onMove && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => onMove(buildId, "up")}
+                        disabled={!canMoveUp}
+                      >
+                        <ArrowUp className="mr-2 h-4 w-4" />
+                        <span>{t.ui("common.moveUp")}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => onMove(buildId, "down")}
+                        disabled={!canMoveDown}
+                      >
+                        <ArrowDown className="mr-2 h-4 w-4" />
+                        <span>{t.ui("common.moveDown")}</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
 
                   {isMobile && currentRoles.includes("dps") && (
                     <DropdownMenuItem onClick={() => setAutoTuneOpen(true)}>
@@ -683,63 +693,6 @@ function ValidationPopover({
   );
 }
 
-/**
- * All Build keys checked in the memo comparator below.
- * When adding a field to Build, add it here and to the comparator — the
- * `satisfies` check will fail at compile time if a key is missing.
- */
-const _BUILD_MEMO_KEYS = [
-  "id",
-  "source",
-  "characterId",
-  "visible",
-  "styles",
-  "roles",
-  "minCons",
-  "name",
-  "composition",
-  "artifactSet",
-  "halfSet1",
-  "halfSet2",
-  "substats",
-  "sandsWeights",
-  "gobletWeights",
-  "circletWeights",
-  "normalizer",
-] as const satisfies readonly (keyof Build)[];
-
-// Compile-time: ensures every Build key is listed above
-type _AssertExhaustive = Exclude<
-  keyof Build,
-  (typeof _BUILD_MEMO_KEYS)[number]
-> extends never
-  ? true
-  : {
-      error: "BuildCard memo comparator is missing Build keys";
-      missing: Exclude<keyof Build, (typeof _BUILD_MEMO_KEYS)[number]>;
-    };
-const _exhaustiveCheck: _AssertExhaustive = true;
-
-export const BuildCard = memo(BuildCardComponent, (prevProps, nextProps) => {
-  return (
-    prevProps.buildId === nextProps.buildId &&
-    prevProps.element === nextProps.element &&
-    (prevProps.build === nextProps.build ||
-      (prevProps.build.id === nextProps.build.id &&
-        prevProps.build.name === nextProps.build.name &&
-        prevProps.build.visible === nextProps.build.visible &&
-        prevProps.build.source === nextProps.build.source &&
-        prevProps.build.normalizer === nextProps.build.normalizer &&
-        prevProps.build.composition === nextProps.build.composition &&
-        prevProps.build.artifactSet === nextProps.build.artifactSet &&
-        prevProps.build.halfSet1 === nextProps.build.halfSet1 &&
-        prevProps.build.halfSet2 === nextProps.build.halfSet2 &&
-        prevProps.build.minCons === nextProps.build.minCons &&
-        prevProps.build.substats === nextProps.build.substats &&
-        prevProps.build.sandsWeights === nextProps.build.sandsWeights &&
-        prevProps.build.gobletWeights === nextProps.build.gobletWeights &&
-        prevProps.build.circletWeights === nextProps.build.circletWeights)) &&
-    prevProps.onMoveUp === nextProps.onMoveUp &&
-    prevProps.onMoveDown === nextProps.onMoveDown
-  );
-});
+// Relies on reference-stable Build objects from useResolvedBuilds and stable
+// callbacks from the parent — default shallow compare is sufficient.
+export const BuildCard = memo(BuildCardComponent);

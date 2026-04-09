@@ -235,20 +235,4 @@ function WeightedStatSelectComponent({
   );
 }
 
-export const WeightedStatSelect = memo(
-  WeightedStatSelectComponent,
-  (prev, next) => {
-    return (
-      prev.values.length === next.values.length &&
-      prev.values.every(
-        (v, i) =>
-          v.stat === next.values[i].stat && v.weight === next.values[i].weight
-      ) &&
-      prev.options === next.options &&
-      prev.maxLength === next.maxLength &&
-      prev.label === next.label &&
-      prev.compact === next.compact &&
-      prev.weightPresets === next.weightPresets
-    );
-  }
-);
+export const WeightedStatSelect = memo(WeightedStatSelectComponent);

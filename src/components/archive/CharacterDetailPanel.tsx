@@ -60,7 +60,6 @@ function LinkedBuildSection({
   const { t } = useLanguage();
   const builds = useResolvedBuilds(character.id);
   const newBuild = useBuildsStore((state) => state.newBuild);
-  const removeBuild = useBuildsStore((state) => state.removeBuild);
   const copyBuild = useBuildsStore((state) => state.copyBuild);
 
   return (
@@ -86,8 +85,7 @@ function LinkedBuildSection({
               key={build.id}
               build={build}
               buildId={build.id}
-              onDelete={() => removeBuild(character.id, build.id)}
-              onDuplicate={() => copyBuild(character.id, build.id)}
+              onDuplicate={(id) => copyBuild(character.id, id)}
               element={
                 getCharacterDisplayMeta(
                   character,

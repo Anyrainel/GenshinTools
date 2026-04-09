@@ -202,14 +202,4 @@ function StatSelectComponent({
   );
 }
 
-export const StatSelect = memo(StatSelectComponent, (prev, next) => {
-  // Custom equality: only re-render if values, options, or maxLength changed
-  return (
-    prev.values.length === next.values.length &&
-    prev.values.every((v, i) => v === next.values[i]) &&
-    prev.options === next.options &&
-    prev.maxLength === next.maxLength &&
-    prev.compact === next.compact &&
-    prev.label === next.label
-  );
-});
+export const StatSelect = memo(StatSelectComponent);

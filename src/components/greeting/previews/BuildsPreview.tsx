@@ -34,7 +34,6 @@ export default function BuildsPreview({ t }: PreviewProps) {
         <BuildCard
           build={PREVIEW_BUILD}
           buildId="preview-zibai"
-          onDelete={() => {}}
           onDuplicate={() => {}}
           element="Geo"
         />

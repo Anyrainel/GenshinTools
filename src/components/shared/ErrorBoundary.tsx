@@ -299,15 +299,17 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   {this.props.clearLabel || "Clear Page Data"}
                 </Button>
               )}
-              <Button
-                onClick={this.handleRefresh}
-                variant="secondary"
-                size={isSection ? "sm" : "default"}
-                className="w-full gap-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                {this.props.refreshLabel || "Refresh Page"}
-              </Button>
+              {!isChunkError && (
+                <Button
+                  onClick={this.handleRefresh}
+                  variant="secondary"
+                  size={isSection ? "sm" : "default"}
+                  className="w-full gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  {this.props.refreshLabel || "Refresh Page"}
+                </Button>
+              )}
               {(!isSection || !this.props.onClearData) && (
                 <Button
                   onClick={this.handleHome}
