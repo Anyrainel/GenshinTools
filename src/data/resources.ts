@@ -238,7 +238,7 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
 ];
 
 export const weapons: WeaponResource[] = [
-  {"id":"golden_frostbound_oath","rarity":5,"imagePath":"/weapon/golden_frostbound_oath.webp"},
+  {"id": "golden_frostbound_oath", "rarity": 5, "imagePath": "/weapon/golden_frostbound_oath.webp"},
   {"id": "gest_of_the_mighty_wolf", "rarity": 5, "imagePath": "/weapon/gest_of_the_mighty_wolf.webp"},
   {"id": "nocturnes_curtain_call", "rarity": 5, "imagePath": "/weapon/nocturnes_curtain_call.webp"},
   {"id": "lightbearing_moonshard", "rarity": 5, "imagePath": "/weapon/lightbearing_moonshard.webp"},
@@ -462,6 +462,10 @@ export const weapons: WeaponResource[] = [
 ];
 
 export const enemies: EnemyResource[] = [
+  {"id": "10555", "type": "", "imagePath": "/enemy/10555.webp"},
+  {"id": "10554", "type": "", "imagePath": "/enemy/10554.webp"},
+  {"id": "10553", "type": "", "imagePath": "/enemy/10553.webp"},
+  {"id": "10552", "type": "", "imagePath": "/enemy/10552.webp"},
   {"id": "9478", "type": "beast", "imagePath": "/enemy/9478.webp"},
   {"id": "9266", "type": "legend", "imagePath": "/enemy/9266.webp"},
   {"id": "9265", "type": "legend", "imagePath": "/enemy/9265.webp"},

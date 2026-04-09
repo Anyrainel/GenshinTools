@@ -190,6 +190,7 @@ export const i18nGameData = {
     "blizzard_strayer": { "en": "Blizzard Strayer", "zh": "冰风迷途的勇士" }
   },
   "weapons": {
+    "golden_frostbound_oath": { "en": "Golden Frostbound Oath", "zh": "霜结的誓金枝" },
     "gest_of_the_mighty_wolf": { "en": "Gest of the Mighty Wolf", "zh": "狼的武功歌" },
     "nocturnes_curtain_call": { "en": "Nocturne's Curtain Call", "zh": "帷间夜曲" },
     "lightbearing_moonshard": { "en": "Lightbearing Moonshard", "zh": "朏魄含光" },
@@ -438,6 +439,10 @@ export const i18nGameData = {
     "plunge-dmg%-25": { "en": "Plunging Attack DMG +25%", "zh": "下落攻击造成的伤害提升25%" }
   },
   "enemies": {
+    "10555": { "en": "Maha Vasudevayaputra", "zh": "「摩诃婆苏提婆耶弗太子」" },
+    "10554": { "en": "Churldric", "zh": "丘尔德里克" },
+    "10553": { "en": "Watcher: Fallen Vigil", "zh": "守望者·堕天" },
+    "10552": { "en": "Domain Keeper", "zh": "辖域守护者" },
     "9478": { "en": "Radiant Moongecko", "zh": "蕴光月守宫" },
     "9266": { "en": "Hexadecatonic Mandragora", "zh": "十六倍曼陀草" },
     "9265": { "en": "Hiljetta", "zh": "海捷德" },
