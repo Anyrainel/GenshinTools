@@ -309,16 +309,11 @@ export interface Team {
   /** Analyzer-specific extra buffs. Independent from DamageView extraBuffs. */
   analyzerExtraBuffs?: ExtraBuff[];
   /**
-   * Weapon choice environment-only settings. Formula selection, combos,
-   * selectedCombo, formulaMode, singleReaction, and per-character overrides
-   * (level/C/R/talents) are unified with the Damage tab — see
-   * `getEffectiveCombo(team)` and `buildWeaponChoiceCharConfigs`. Only enemy
-   * aura and extra buffs remain weapon-choice-local because the user may want
-   * to probe a different environment without mutating their damage setup.
+   * Persisted weapon choice computation cache. This is a result cache, not
+   * user configuration — kept here so results survive navigation/refresh.
+   * There is no analogous Damage-tab cache (Damage results are recomputed
+   * synchronously per render), so this field has no duplicate to unify with.
    */
-  weaponChoiceEnemyAura?: Element;
-  weaponChoiceExtraBuffs?: ExtraBuff[];
-  /** Persisted weapon choice results. Survives refresh. */
   weaponChoiceResult?: WeaponChoiceResult | null;
   /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
   extraBuffs?: ExtraBuff[];

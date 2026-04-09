@@ -47,29 +47,13 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   const { ready: gameStatsReady, characterStats, weaponStats } = useGameStats();
   const isMobile = useMediaQuery("(max-width: 1023px)");
 
-  // ── Weapon-choice-specific environment settings ──
-  const localEnemyAura = team.weaponChoiceEnemyAura;
-  const localExtraBuffs = team.weaponChoiceExtraBuffs ?? [];
+  // ── Environment settings (unified with Damage tab) ──
+  const localEnemyAura = team.enemyAura;
+  const localExtraBuffs = team.extraBuffs ?? [];
 
   const setLocalEnemyAura = useCallback(
     (el: Element | undefined) => {
-      updateTeam(team.id, { weaponChoiceEnemyAura: el });
-    },
-    [team.id, updateTeam]
-  );
-
-  // Fake team-like object for ExtraBuffsPanel (it reads team.extraBuffs)
-  const envTeam = useMemo(
-    () => ({ ...team, extraBuffs: localExtraBuffs }),
-    [team, localExtraBuffs]
-  );
-  const updateEnvTeam = useCallback(
-    (_id: string, patch: Partial<Team>) => {
-      if (patch.extraBuffs !== undefined) {
-        updateTeam(team.id, {
-          weaponChoiceExtraBuffs: patch.extraBuffs ?? [],
-        });
-      }
+      updateTeam(team.id, { enemyAura: el });
     },
     [team.id, updateTeam]
   );
@@ -483,8 +467,8 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
         {/* 2. Formula Selection Card */}
         <FormulaSelectorCard
           team={team}
-          effectiveTeam={envTeam}
-          updateTeam={updateEnvTeam}
+          effectiveTeam={team}
+          updateTeam={updateTeam}
           allFormulas={allFormulas}
           availableFormulas={availableFormulas}
           displayFormulas={displayFormulas}
