@@ -1,3 +1,13 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -42,6 +52,7 @@ export function TierListManagerDialog({
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -180,9 +191,7 @@ export function TierListManagerDialog({
                           className="h-8 w-8 text-destructive hover:bg-destructive/10"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm(t.ui("common.confirmDelete"))) {
-                              deleteTierList(tl.id);
-                            }
+                            setDeleteTargetId(tl.id);
                           }}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -248,6 +257,33 @@ export function TierListManagerDialog({
           </div>
         </div>
       </ResponsiveDialogContent>
+      <AlertDialog
+        open={deleteTargetId !== null}
+        onOpenChange={(v) => !v && setDeleteTargetId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t.ui("common.deleteTitle") || "Delete?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.ui("common.confirmDelete")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteTargetId !== null) deleteTierList(deleteTargetId);
+                setDeleteTargetId(null);
+              }}
+            >
+              {t.ui("common.delete") || "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ResponsiveDialog>
   );
 }

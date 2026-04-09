@@ -1,3 +1,13 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -41,6 +51,7 @@ export function AccountManagerDialog({
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editUid, setEditUid] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const isValidUid = (uid: string) => /^\d{9,10}$/.test(uid.trim());
 
@@ -275,9 +286,7 @@ export function AccountManagerDialog({
                         className="h-8 w-8 text-destructive hover:bg-destructive/10"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(t.ui("common.confirmDelete"))) {
-                            deleteAccount(acc.id);
-                          }
+                          setDeleteTargetId(acc.id);
                         }}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -379,6 +388,33 @@ export function AccountManagerDialog({
           </div>
         )}
       </ResponsiveDialogContent>
+      <AlertDialog
+        open={!!deleteTargetId}
+        onOpenChange={(v) => !v && setDeleteTargetId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t.ui("common.deleteTitle") || "Delete?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.ui("common.confirmDelete")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteTargetId) deleteAccount(deleteTargetId);
+                setDeleteTargetId(null);
+              }}
+            >
+              {t.ui("common.delete") || "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ResponsiveDialog>
   );
 }
