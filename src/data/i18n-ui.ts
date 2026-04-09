@@ -1490,7 +1490,6 @@ export const i18nUiData = {
     includeRarity3: { en: "3★", zh: "3★" },
 
     help: { en: "Help", zh: "帮助" },
-    showTour: { en: "Show tour", zh: "查看引导" },
   },
   resetConfirmDialog: {
     title: { en: "Reset Tier List", zh: "重置榜单" },

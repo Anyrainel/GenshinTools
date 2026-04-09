@@ -21,9 +21,10 @@ import { useCallback, useDeferredValue, useMemo, useState } from "react";
 
 interface TriageViewProps {
   onOpenImport?: () => void;
+  onShowTour?: () => void;
 }
 
-export function TriageView({ onOpenImport }: TriageViewProps) {
+export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data ?? null;
@@ -224,6 +225,7 @@ export function TriageView({ onOpenImport }: TriageViewProps) {
           needsAccountData={!accountData}
           needsBuilds={!hasAnyBuilds}
           onOpenImport={onOpenImport}
+          onShowTour={onShowTour}
         />
       </ScrollLayout>
     );

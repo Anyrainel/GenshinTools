@@ -33,12 +33,15 @@ interface CharacterBuildViewProps {
   onTargetProcessed?: () => void;
   /** Opens the import dialog (provided by parent page) */
   onOpenImport?: () => void;
+  /** Starts the page tour (provided by parent page) */
+  onShowTour?: () => void;
 }
 
 export function CharacterBuildView({
   targetCharacterId,
   onTargetProcessed,
   onOpenImport,
+  onShowTour,
 }: CharacterBuildViewProps) {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
@@ -148,7 +151,7 @@ export function CharacterBuildView({
   if (!hasAnyBuilds) {
     return (
       <div ref={containerRef} className="h-full">
-        <BuildsEmptyState onOpenImport={onOpenImport} />
+        <BuildsEmptyState onOpenImport={onOpenImport} onShowTour={onShowTour} />
       </div>
     );
   }

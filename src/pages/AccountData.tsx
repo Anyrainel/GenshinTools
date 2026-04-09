@@ -55,7 +55,6 @@ import {
   mergeAccountData,
   mergePartialAccountData,
 } from "@/lib/account-data/mergeAccountData";
-import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
@@ -92,15 +91,22 @@ const isValidAccountDataTab = (
 const NoDataPlaceholder = ({
   t,
   onAction,
+  onShowTour,
 }: {
   t: ReturnType<typeof useLanguage>["t"];
   onAction: () => void;
+  onShowTour: () => void;
 }) => (
   <EmptyState
     icon={Database}
     title={t.ui("accountData.noData")}
     description={t.ui("accountData.importPrompt")}
     action={{ label: t.ui("import.action"), icon: Download, onClick: onAction }}
+    helpAction={{
+      label: t.ui("buttons.help"),
+      icon: HelpCircle,
+      onClick: onShowTour,
+    }}
   >
     {/* Import method hints */}
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md pt-2">
@@ -173,16 +179,6 @@ export default function AccountDataPage() {
   );
   const [isAccountManagerOpen, setIsAccountManagerOpen] = useState(false);
 
-  // Start tour on first visit (after a short delay for page to render)
-  useEffect(() => {
-    if (!isTourCompleted("account-data") && activeTab === "characters") {
-      const timer = setTimeout(() => {
-        tour.start("account-data");
-        markTourCompleted("account-data");
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [tour, activeTab]);
   const scoreConfig = useArtifactScoreStore((s) => s.config);
   const buildsMap = useBuildsStore((s) => s.builds);
   const characterToBuildIds = useBuildsStore((s) => s.characterToBuildIds);
@@ -658,6 +654,7 @@ export default function AccountDataPage() {
             <NoDataPlaceholder
               t={t}
               onAction={() => importRef.current?.open()}
+              onShowTour={() => tour.start("account-data")}
             />
           )}
         </TabsContent>
@@ -685,6 +682,7 @@ export default function AccountDataPage() {
             <NoDataPlaceholder
               t={t}
               onAction={() => importRef.current?.open()}
+              onShowTour={() => tour.start("account-data")}
             />
           )}
         </TabsContent>
@@ -693,15 +691,22 @@ export default function AccountDataPage() {
           <RecommendationView
             scores={scores}
             onOpenImport={() => importRef.current?.open()}
+            onShowTour={() => tour.start("account-data")}
           />
         </TabsContent>
 
         <TabsContent value="evaluation" className="mt-0 h-full">
-          <EvaluationView onOpenImport={() => importRef.current?.open()} />
+          <EvaluationView
+            onOpenImport={() => importRef.current?.open()}
+            onShowTour={() => tour.start("account-data")}
+          />
         </TabsContent>
 
         <TabsContent value="triage" className="mt-0 h-full">
-          <TriageView onOpenImport={() => importRef.current?.open()} />
+          <TriageView
+            onOpenImport={() => importRef.current?.open()}
+            onShowTour={() => tour.start("account-data")}
+          />
         </TabsContent>
       </Tabs>
     </PageLayout>

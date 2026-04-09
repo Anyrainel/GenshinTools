@@ -1,6 +1,6 @@
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Download, ExternalLink, SearchCheck } from "lucide-react";
+import { Download, ExternalLink, HelpCircle, SearchCheck } from "lucide-react";
 
 interface AccountDataNeedsBothStateProps {
   /** Whether account data is missing (shows import account button) */
@@ -9,6 +9,8 @@ interface AccountDataNeedsBothStateProps {
   needsBuilds: boolean;
   /** Opens the account import dialog */
   onOpenImport?: () => void;
+  /** Starts the account-data tour */
+  onShowTour?: () => void;
 }
 
 /**
@@ -20,6 +22,7 @@ export function AccountDataNeedsBothState({
   needsAccountData,
   needsBuilds,
   onOpenImport,
+  onShowTour,
 }: AccountDataNeedsBothStateProps) {
   const { t } = useLanguage();
 
@@ -56,6 +59,15 @@ export function AccountDataNeedsBothState({
       description={t.ui("accountData.needsBothDesc")}
       action={primary}
       secondaryAction={secondary}
+      helpAction={
+        onShowTour
+          ? {
+              label: t.ui("buttons.help"),
+              icon: HelpCircle,
+              onClick: onShowTour,
+            }
+          : undefined
+      }
     />
   );
 }

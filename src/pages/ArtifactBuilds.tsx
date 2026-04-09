@@ -34,7 +34,6 @@ import {
   getCachedPresetMetadata,
   loadPresetMetadata,
 } from "@/lib/presetLoader";
-import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -86,17 +85,6 @@ export default function ArtifactBuildsPage() {
       return newParams;
     });
   }, [activeTab, searchParams, setActiveTab, setSearchParams]);
-
-  // Start tour on first visit (after a short delay for page to render)
-  useEffect(() => {
-    if (!isTourCompleted("artifact-filter") && activeTab === "configure") {
-      const timer = setTimeout(() => {
-        tour.start("artifact-filter");
-        markTourCompleted("artifact-filter");
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [tour, activeTab]);
 
   const importBuilds = useBuildsStore((state) => state.importBuilds);
   const subscribePreset = useBuildsStore((state) => state.subscribePreset);
@@ -271,6 +259,7 @@ export default function ArtifactBuildsPage() {
             targetCharacterId={targetCharacterId}
             onTargetProcessed={() => setTargetCharacterId(undefined)}
             onOpenImport={() => importRef.current?.open()}
+            onShowTour={() => tour.start("artifact-filter")}
           />
         </TabsContent>
 

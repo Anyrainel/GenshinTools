@@ -22,7 +22,7 @@
     },
     "klee": {
       "tier": "A",
-      "position": 13
+      "position": 15
     },
     "chevreuse": {
       "tier": "B",
@@ -42,7 +42,7 @@
     },
     "mualani": {
       "tier": "S",
-      "position": 3
+      "position": 4
     },
     "sigewinne": {
       "tier": "B",
@@ -90,7 +90,7 @@
     },
     "varesa": {
       "tier": "S",
-      "position": 1
+      "position": 2
     },
     "clorinde": {
       "tier": "A",
@@ -126,15 +126,15 @@
     },
     "skirk": {
       "tier": "S",
-      "position": 2
+      "position": 3
     },
     "escoffier": {
       "tier": "A",
-      "position": 10
+      "position": 11
     },
     "citlali": {
       "tier": "A",
-      "position": 9
+      "position": 10
     },
     "wriothesley": {
       "tier": "C",
@@ -146,11 +146,11 @@
     },
     "kamisato_ayaka": {
       "tier": "B",
-      "position": 16
+      "position": 17
     },
     "ganyu": {
       "tier": "B",
-      "position": 14
+      "position": 15
     },
     "charlotte": {
       "tier": "D",
@@ -166,11 +166,11 @@
     },
     "chasca": {
       "tier": "S",
-      "position": 4
+      "position": 5
     },
     "xianyun": {
       "tier": "A",
-      "position": 11
+      "position": 12
     },
     "kaedehara_kazuha": {
       "tier": "B",
@@ -178,7 +178,7 @@
     },
     "venti": {
       "tier": "A",
-      "position": 16
+      "position": 17
     },
     "faruzan": {
       "tier": "B",
@@ -190,11 +190,11 @@
     },
     "xilonen": {
       "tier": "A",
-      "position": 12
+      "position": 14
     },
     "chiori": {
       "tier": "A",
-      "position": 15
+      "position": 16
     },
     "navia": {
       "tier": "C",
@@ -205,7 +205,7 @@
       "position": 6
     },
     "albedo": {
-      "tier": "A",
+      "tier": "B",
       "position": 14
     },
     "zhongli": {
@@ -221,16 +221,16 @@
       "position": 13
     },
     "lauma": {
-      "tier": "A",
-      "position": 7
+      "tier": "S",
+      "position": 9
     },
     "kinich": {
-      "tier": "S",
-      "position": 7
+      "tier": "A",
+      "position": 8
     },
     "emilie": {
       "tier": "A",
-      "position": 8
+      "position": 9
     },
     "alhaitham": {
       "tier": "C",
@@ -246,7 +246,7 @@
     },
     "flins": {
       "tier": "S",
-      "position": 5
+      "position": 1
     },
     "nefer": {
       "tier": "S",
@@ -274,7 +274,7 @@
     },
     "nahida": {
       "tier": "B",
-      "position": 15
+      "position": 16
     },
     "jean": {
       "tier": "D",
@@ -294,7 +294,7 @@
     },
     "zibai": {
       "tier": "S",
-      "position": 8
+      "position": 7
     },
     "illuga": {
       "tier": "B",
@@ -302,7 +302,7 @@
     },
     "varka": {
       "tier": "S",
-      "position": 9
+      "position": 8
     },
     "tartaglia": {
       "tier": "D",
@@ -315,6 +315,10 @@
     "beidou": {
       "tier": "D",
       "position": 19
+    },
+    "linnea": {
+      "tier": "S",
+      "position": 10
     }
   },
   "tierCustomization": {

@@ -46,7 +46,6 @@ import {
   loadPresetMetadata,
   loadPresetPayload,
 } from "@/lib/presetLoader";
-import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 
 import { useIsOwned } from "@/hooks/useOwnership";
 import { getElementColor } from "@/lib/utils";
@@ -140,17 +139,6 @@ export function CharacterTierListView({
 
   // Ownership check callback
   const isOwned = useIsOwned();
-
-  // Start tour on first visit (after a short delay for page to render)
-  useEffect(() => {
-    if (!isTourCompleted("tier-list")) {
-      const timer = setTimeout(() => {
-        tour.start("tier-list");
-        markTourCompleted("tier-list");
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [tour]);
 
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);

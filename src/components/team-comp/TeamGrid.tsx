@@ -16,7 +16,6 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { fuzzyMatch } from "@/lib/search";
-import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
@@ -47,6 +46,7 @@ import {
   ArrowUpDown,
   Bookmark,
   Download,
+  HelpCircle,
   Plus,
   Search,
   Swords,
@@ -163,17 +163,6 @@ export function TeamGrid({
   useEffect(() => {
     if (emptyState && teams.length === 0) addTeam();
   }, [emptyState, teams.length, addTeam]);
-
-  // Start tour on first visit (after a short delay for page to render)
-  useEffect(() => {
-    if (enableTour && !isTourCompleted("team-comp") && !activeTeamId) {
-      const timer = setTimeout(() => {
-        tour.start("team-comp");
-        markTourCompleted("team-comp");
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [enableTour, tour, activeTeamId]);
 
   // Ownership
   const isOwned = useIsOwned();
@@ -630,6 +619,15 @@ export function TeamGrid({
               icon: Download,
               onClick: () => emptyState.importRef.current?.open(),
             }}
+            helpAction={
+              enableTour
+                ? {
+                    label: t.ui("buttons.help"),
+                    icon: HelpCircle,
+                    onClick: () => tour.start("team-comp"),
+                  }
+                : undefined
+            }
           >
             <p className="text-base text-muted-foreground -mt-2">
               {t.ui("teamComp.emptyTeamOrImport")}

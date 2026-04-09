@@ -121,11 +121,13 @@ function ThresholdInput({
 interface RecommendationViewProps {
   scores: Record<string, ArtifactScoreResult | null>;
   onOpenImport?: () => void;
+  onShowTour?: () => void;
 }
 
 export function RecommendationView({
   scores,
   onOpenImport,
+  onShowTour,
 }: RecommendationViewProps) {
   const { t } = useLanguage();
   const activeAccount = useAccountStore(getActiveAccount);
@@ -237,6 +239,7 @@ export function RecommendationView({
           needsAccountData={!accountData}
           needsBuilds={!hasAnyBuilds}
           onOpenImport={onOpenImport}
+          onShowTour={onShowTour}
         />
       </ScrollLayout>
     );

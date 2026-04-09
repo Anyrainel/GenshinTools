@@ -24,6 +24,8 @@ interface EmptyStateProps {
   action?: EmptyStateCta;
   /** Secondary (outline) call-to-action button */
   secondaryAction?: EmptyStateCta;
+  /** Outline button rendered before the primary action (e.g. Help) */
+  helpAction?: EmptyStateCta;
   /** Extra content rendered below the standard layout */
   children?: ReactNode;
 }
@@ -69,6 +71,7 @@ export function EmptyState({
   description,
   action,
   secondaryAction,
+  helpAction,
   children,
 }: EmptyStateProps) {
   return (
@@ -97,8 +100,9 @@ export function EmptyState({
         </div>
 
         {/* CTAs */}
-        {(action || secondaryAction) && (
+        {(action || secondaryAction || helpAction) && (
           <div className="flex flex-col sm:flex-row items-center gap-3">
+            {helpAction && <CtaButton cta={helpAction} variant="outline" />}
             {action && <CtaButton cta={action} variant="default" />}
             {secondaryAction && (
               <CtaButton cta={secondaryAction} variant="outline" />

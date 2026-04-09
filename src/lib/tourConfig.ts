@@ -158,26 +158,3 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
     ],
   },
 ];
-
-/** localStorage keys for tracking tour completion */
-export const TOUR_STORAGE_KEYS = {
-  "artifact-filter": "tour-artifact-filter-completed",
-  "tier-list": "tour-tier-list-completed",
-  "team-comp": "tour-team-comp-completed",
-  "team-opt-detail": "tour-team-opt-detail-completed",
-  "account-data": "tour-account-data-completed",
-} as const;
-
-/** Check if a tour has been completed */
-export function isTourCompleted(
-  tourId: keyof typeof TOUR_STORAGE_KEYS
-): boolean {
-  return localStorage.getItem(TOUR_STORAGE_KEYS[tourId]) === "true";
-}
-
-/** Mark a tour as completed */
-export function markTourCompleted(
-  tourId: keyof typeof TOUR_STORAGE_KEYS
-): void {
-  localStorage.setItem(TOUR_STORAGE_KEYS[tourId], "true");
-}

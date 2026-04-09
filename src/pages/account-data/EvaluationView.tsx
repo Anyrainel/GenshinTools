@@ -44,9 +44,13 @@ type TierFilter = "all" | string; // tier id or "all"
 
 interface EvaluationViewProps {
   onOpenImport?: () => void;
+  onShowTour?: () => void;
 }
 
-export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
+export function EvaluationView({
+  onOpenImport,
+  onShowTour,
+}: EvaluationViewProps) {
   const { t } = useLanguage();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
@@ -216,6 +220,7 @@ export function EvaluationView({ onOpenImport }: EvaluationViewProps) {
           needsAccountData={!accountData}
           needsBuilds={!hasAnyBuilds}
           onOpenImport={onOpenImport}
+          onShowTour={onShowTour}
         />
       </ScrollLayout>
     );
