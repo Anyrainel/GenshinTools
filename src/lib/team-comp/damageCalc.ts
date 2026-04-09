@@ -1806,7 +1806,10 @@ export class TeamBuild {
 
     // ── Buff resolution ──
     const partReadKeys = parts.map((p) => p.readKeys);
-    const partOffField = entry?.parts.map((p) => p.offField ?? false) ?? [];
+    const partOffField =
+      entry?.parts.map(
+        (p) => (p.offField ?? false) && !reactionOverride?.forceOnField
+      ) ?? [];
     const buffs = this.resolveBuffs(
       charId,
       preStats,

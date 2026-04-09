@@ -180,7 +180,8 @@ export const i18nAppData = {
     special: { en: "Special", zh: "特殊" },
   },
   factions: {
-    Hexerei: { en: "Hexerei", zh: "六翮" },
+    Hexerei: { en: "Hexerei", zh: "魔导" },
+    Moonsign: { en: "Moonsign", zh: "月兆" },
     None: { en: "None", zh: "无" },
   },
   slots: {

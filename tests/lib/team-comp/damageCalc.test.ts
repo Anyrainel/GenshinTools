@@ -1767,6 +1767,172 @@ describe("forceOnField override", () => {
     expect(displayOn.totalDamage).toBeGreaterThan(displayOff.totalDamage);
   });
 
+  // Regression guard: when forceOnField is set on an off-field formula part, the
+  // buff field-context filter (damageCalc.ts ~line 1809) must also flip the part's
+  // partOffField flag. Otherwise on-field-receiver buffs (selfOnField, teamOnField,
+  // otherOnField) stay filtered out even though stat sheets were already swapped.
+  it("forceOnField lets selfOnField/teamOnField/otherOnField buffs apply to an off-field part", () => {
+    // Team: Xiangling + Bennett + Fischl + Sucrose.
+    // - Xiangling equips Vermillion Hereafter 4pc → selfOnField ATK% from self.
+    // - Xiangling P2 → teamOnField ATK% from self (already covered above, double-checked here).
+    // - Bennett Q → teamOnField flat ATK from other.
+    // - Fischl + Sucrose are both Hexerei → Fischl P4 fires (team has Pyro+Electro → overloaded)
+    //   emitting an otherOnField ATK% buff that targets the active non-Fischl teammate.
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "xiangling",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "the_catch",
+        refinement: 5,
+        artifactSetId: "vermillion_hereafter",
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "bennett",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "sacrificial_sword",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "fischl",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "the_stringless",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "sucrose",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+
+    const sheets: Record<string, StatSheet> = {
+      xiangling: new StatSheet([]),
+      bennett: new StatSheet([]),
+      fischl: new StatSheet([]),
+      sucrose: new StatSheet([]),
+    };
+
+    const tb = new TeamBuild(team);
+
+    const matches = (
+      buff: (typeof display.buffs)[number],
+      pred: {
+        type?: string;
+        id?: string;
+        origin?: string;
+        receiver?: string;
+      }
+    ) =>
+      (pred.type === undefined || buff.source.type === pred.type) &&
+      (pred.id === undefined || buff.source.id === pred.id) &&
+      (pred.origin === undefined || buff.source.origin === pred.origin) &&
+      (pred.receiver === undefined || buff.target.receiver === pred.receiver);
+
+    const isActiveOnPart0 = (buff: (typeof display.buffs)[number]) =>
+      buff.active &&
+      (buff.activePartIndices === undefined ||
+        buff.activePartIndices.includes(0));
+
+    // Without forceOnField, pyronado-tick is off-field → on-field-receiver buffs
+    // must be filtered out for part 0.
+    const displayOff = tb.getDisplayResult(
+      "xiangling",
+      "xiangling-pyronado-tick",
+      sheets,
+      ctx
+    );
+    // With forceOnField, the part should pick up every on-field-receiver buff.
+    const displayOn = tb.getDisplayResult(
+      "xiangling",
+      "xiangling-pyronado-tick",
+      sheets,
+      ctx,
+      { forceOnField: true }
+    );
+
+    // Alias so the closure above type-checks against the same shape in both calls.
+    const display = displayOn;
+    void display;
+
+    const probes: {
+      label: string;
+      pred: Parameters<typeof matches>[1];
+    }[] = [
+      {
+        label: "Xiangling P2 (teamOnField from self)",
+        pred: {
+          type: "character",
+          id: "xiangling",
+          origin: "P2",
+          receiver: "teamOnField",
+        },
+      },
+      {
+        label: "Bennett Q (teamOnField from other)",
+        pred: {
+          type: "character",
+          id: "bennett",
+          origin: "Q",
+          receiver: "teamOnField",
+        },
+      },
+      {
+        label: "Vermillion Hereafter 4pc (selfOnField from self)",
+        pred: {
+          type: "artifactSet",
+          id: "vermillion_hereafter",
+          receiver: "selfOnField",
+        },
+      },
+      {
+        label: "Fischl P4 (otherOnField from other)",
+        pred: {
+          type: "character",
+          id: "fischl",
+          receiver: "otherOnField",
+        },
+      },
+    ];
+
+    for (const probe of probes) {
+      const onBuff = displayOn.buffs.find((b) => matches(b, probe.pred));
+      const offBuff = displayOff.buffs.find((b) => matches(b, probe.pred));
+
+      // Both runs must know about the buff — otherwise the test is selecting
+      // the wrong team/setup and wouldn't prove anything.
+      expect(
+        onBuff,
+        `[forceOnField] expected buff to exist: ${probe.label}`
+      ).toBeDefined();
+      expect(
+        offBuff,
+        `[baseline] expected buff to exist: ${probe.label}`
+      ).toBeDefined();
+
+      // Active for part 0 only when forced on-field.
+      expect(
+        isActiveOnPart0(onBuff!),
+        `[forceOnField] ${probe.label} should be active on pyronado-tick part 0`
+      ).toBe(true);
+      expect(
+        isActiveOnPart0(offBuff!),
+        `[baseline] ${probe.label} must NOT be active on pyronado-tick part 0`
+      ).toBe(false);
+    }
+  });
+
   it("statSheets still contain both onField and offField entries", () => {
     const tb = new TeamBuild(configs);
     const display = tb.getDisplayResult(

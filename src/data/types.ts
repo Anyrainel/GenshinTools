@@ -170,7 +170,8 @@ export type EnemyType =
   | "elemental"
   | "abyss"
   | "beast"
-  | "legend";
+  | "legend"
+  | ""; // "" = uncategorized (auto-imported from hoyolab, type not yet classified)
 
 export type EnemyResource = {
   id: string;
