@@ -472,6 +472,7 @@ def main():
         args.artifact = True
         args.enemy = True
         args.enka = False
+        args.good_keys = True
 
     print("=== Genshin Impact Data Scraper ===")
     print(

@@ -54,3 +54,13 @@
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=604800
   Access-Control-Allow-Origin: *
+
+/good/mappings.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=3600
+  CDN-Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+
+/good/data_cache.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=3600
+  CDN-Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
