@@ -263,14 +263,12 @@ async function main() {
     console.log(
       `\n${C.green}${C.bold}PASS: All results match golden file.${C.reset}`
     );
-  } else {
-    console.log(
-      `\n${C.yellow}${C.bold}WARN: Diffs found but no damage regressions.${C.reset}`
-    );
-    console.log("Run with --update to accept these changes.");
+    process.exit(0);
   }
 
-  process.exit(0);
+  console.log(`\n${C.red}${C.bold}FAIL: Diffs found vs golden file.${C.reset}`);
+  console.log("Run with --update to accept these changes.");
+  process.exit(1);
 }
 
 main().catch((e) => {
