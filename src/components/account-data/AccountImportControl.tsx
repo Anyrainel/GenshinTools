@@ -64,6 +64,10 @@ const PROXY_TOOLS = [
     label: "GOODScanner.exe",
     url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe",
   },
+  {
+    label: "data_cache.json",
+    url: "/good/data_cache.json",
+  },
 ] as const;
 
 /**
@@ -325,6 +329,7 @@ export const AccountImportControl = forwardRef<
                     href={tool.url}
                     target="_blank"
                     rel="noreferrer"
+                    download={tool.label}
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
                       "text-xs font-medium",
@@ -602,7 +607,7 @@ export const AccountImportControl = forwardRef<
                   )}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs italic text-muted-foreground">
                 {t.ui("import.hoyolabPrivacyNote")}
               </p>
             </div>
@@ -630,6 +635,30 @@ export const AccountImportControl = forwardRef<
           </ResponsiveDialogHeader>
 
           <div className="flex flex-col gap-4 pt-1 text-sm">
+            <div className="inline-flex self-start rounded-md border border-input overflow-hidden">
+              {(["os", "cn"] as const).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => {
+                    setHoyolabRegion(r);
+                    localStorage.setItem("gg_hoyolab_region", r);
+                  }}
+                  className={cn(
+                    "px-3 h-9 text-xs font-medium transition-colors",
+                    hoyolabRegion === r
+                      ? "bg-primary/15 text-foreground"
+                      : "bg-transparent text-muted-foreground hover:bg-muted/60"
+                  )}
+                >
+                  {t.ui(
+                    r === "os"
+                      ? "import.hoyolabRegionOs"
+                      : "import.hoyolabRegionCn"
+                  )}
+                </button>
+              ))}
+            </div>
             <section>
               <h4 className="font-semibold text-foreground mb-1.5">
                 {t.ui(
@@ -639,27 +668,37 @@ export const AccountImportControl = forwardRef<
                 )}
               </h4>
               <ol className="list-decimal pl-5 space-y-1 text-foreground/90">
-                {hoyolabRegion === "os" ? (
-                  <>
-                    <li>{t.ui("import.hoyolabGuideStepOs1")}</li>
-                    <li>{t.ui("import.hoyolabGuideStepOs2")}</li>
-                    <li>{t.ui("import.hoyolabGuideStepOs3")}</li>
-                    <li>{t.ui("import.hoyolabGuideStepOs4")}</li>
-                  </>
-                ) : (
-                  <>
-                    <li>{t.ui("import.hoyolabGuideStepCn1")}</li>
-                    <li>{t.ui("import.hoyolabGuideStepCn2")}</li>
-                    <li>{t.ui("import.hoyolabGuideStepCn3")}</li>
-                    <li>{t.ui("import.hoyolabGuideStepCn4")}</li>
-                  </>
-                )}
+                {(() => {
+                  const site =
+                    hoyolabRegion === "os"
+                      ? "https://www.hoyolab.com"
+                      : "https://www.miyoushe.com";
+                  const [f1, f2] =
+                    hoyolabRegion === "os"
+                      ? ["ltuid_v2", "ltoken_v2"]
+                      : ["account_id", "cookie_token"];
+                  return (
+                    <>
+                      <li>{t.format("import.hoyolabGuideStep1", site)}</li>
+                      <li>{t.format("import.hoyolabGuideStep2", site)}</li>
+                      <li>{t.format("import.hoyolabGuideStep3", f1, f2)}</li>
+                      <li>{t.ui("import.hoyolabGuideStep4")}</li>
+                    </>
+                  );
+                })()}
               </ol>
             </section>
 
             <div className="flex items-start gap-2 text-xs px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-md text-yellow-600 dark:text-yellow-400">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{t.ui("import.hoyolabGuideSecurity")}</span>
+              <span>
+                {t.format(
+                  "import.hoyolabGuideSecurity",
+                  hoyolabRegion === "os"
+                    ? "https://www.hoyolab.com"
+                    : "https://www.miyoushe.com"
+                )}
+              </span>
             </div>
 
             <div className="flex justify-end">

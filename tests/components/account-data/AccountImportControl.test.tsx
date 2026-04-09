@@ -11,6 +11,8 @@ vi.mock("@/contexts/LanguageContext", () => ({
   useLanguage: () => ({
     t: {
       ui: (key: string) => key,
+      format: (key: string, ...args: unknown[]) =>
+        args.length ? `${key}(${args.join(",")})` : key,
     },
   }),
 }));

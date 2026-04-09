@@ -146,8 +146,8 @@ export const i18nUiData = {
       zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。确保你打开了角色详情！（不支持B服）",
     },
     uidPlaceholder: {
-      en: "UID (e.g. 800000000)",
-      zh: "UID (如 100000000)",
+      en: "UID (required)",
+      zh: "UID (必填)",
     },
     optionalUid: { en: "Optional UID", zh: "UID（选填）" },
     uidRequired: {
@@ -195,46 +195,30 @@ export const i18nUiData = {
       en: "Global (HoYoLAB)",
       zh: "国际服（HoYoLAB）",
     },
-    hoyolabHowTo: { en: "How to get cookie", zh: "如何获取 Cookie" },
-    hoyolabGuideStepOs1: {
-      en: "Open https://www.hoyolab.com in a desktop browser and log in to the account that owns your Genshin UID.",
-      zh: "在桌面浏览器中打开 https://www.hoyolab.com 并登录你的 Genshin 账号。",
-    },
-    hoyolabGuideStepOs2: {
-      en: "Press F12 → Application (Chrome/Edge) or Storage (Firefox) → Cookies → https://www.hoyolab.com.",
-      zh: "按 F12 → Application（Chrome/Edge）或 存储（Firefox）→ Cookies → https://www.hoyolab.com。",
-    },
-    hoyolabGuideStepOs3: {
-      en: "Find the rows named ltuid_v2 and ltoken_v2.",
-      zh: "找到名为 ltuid_v2 和 ltoken_v2 的两行。",
-    },
-    hoyolabGuideStepOs4: {
-      en: "Copy each value into the matching field in this dialog.",
-      zh: "分别将两个值粘贴到此对话框中对应的输入框。",
-    },
     hoyolabGuideStepCnTitle: {
       en: "CN / Bilibili (米游社)",
       zh: "国服 / B 服（米游社）",
     },
-    hoyolabGuideStepCn1: {
-      en: "Open https://www.miyoushe.com in a desktop browser and log in to the account that owns your Genshin UID.",
-      zh: "在桌面浏览器中打开 https://www.miyoushe.com 并登录你的原神账号。",
+    hoyolabHowTo: { en: "How to get cookie", zh: "如何获取 Cookie" },
+    hoyolabGuideStep1: {
+      en: "Open {0} in a desktop browser and log in to your account.",
+      zh: "在桌面浏览器中打开 {0} 并登录你的账号。",
     },
-    hoyolabGuideStepCn2: {
-      en: "Press F12 → Application (Chrome/Edge) or Storage (Firefox) → Cookies → https://www.miyoushe.com.",
-      zh: "按 F12 → Application（Chrome/Edge）或 存储（Firefox）→ Cookies → https://www.miyoushe.com。",
+    hoyolabGuideStep2: {
+      en: "Press F12 → Application (Chrome/Edge) or Storage (Firefox) → Cookies → {0}.",
+      zh: "按 F12 → Application（Chrome/Edge）或 存储（Firefox）→ Cookies → {0}。",
     },
-    hoyolabGuideStepCn3: {
-      en: "Find the rows named account_id and cookie_token.",
-      zh: "找到名为 account_id 和 cookie_token 的两行。",
+    hoyolabGuideStep3: {
+      en: "Find the rows named {0} and {1}.",
+      zh: "找到名为 {0} 和 {1} 的两行。",
     },
-    hoyolabGuideStepCn4: {
-      en: "Paste each value into the matching field in this dialog.",
-      zh: "把两个值分别粘贴到此对话框中对应的输入框。",
+    hoyolabGuideStep4: {
+      en: "Copy each value into the matching field in this dialog.",
+      zh: "分别将两个值粘贴到导入对话框中对应的位置。",
     },
     hoyolabGuideSecurity: {
-      en: "Never paste your cookie into untrusted sites. You can log out on the HoYoLAB website to invalidate it at any time.",
-      zh: "切勿将 Cookie 粘贴到不受信任的网站。你可以随时在 HoYoLAB 网站退出登录以使其失效。",
+      en: "Never paste your cookie into untrusted sites. You can log out on {0} to invalidate it at any time.",
+      zh: "切勿将 Cookie 粘贴到不受信任的网站。你可以随时在 {0} 退出登录以使其失效。",
     },
   },
   export: {
