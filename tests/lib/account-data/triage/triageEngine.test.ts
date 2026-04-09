@@ -630,6 +630,163 @@ describe("runTriage", () => {
     expect(decisions[0].label).toBe("unlock");
   });
 
+  // ---------------------------------------------------------------------------
+  // Idempotency: applying recommendations and re-running produces no new actions
+  // ---------------------------------------------------------------------------
+
+  it("idempotency: re-running after applying SK locks yields no new recs", () => {
+    // 3 trash flowers in test_set, setSlotKeep=2 → SK promotes 2 to lock.
+    // Simulate "apply": flip artifact.lock on the SK-picked ones.
+    // Re-run: recommendLock should be empty AND recommendUnlock should be empty
+    // (the formerly-SK artifacts should still be satisfied/kept).
+    const arts = Array.from({ length: 3 }, (_, i) =>
+      makeArt({
+        substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
+        level: 4 - i, // distinct for sort stability
+      })
+    );
+    const accountBefore = makeAccount([{ key: "char_a" }], arts);
+    const opts: TriageSettings = {
+      ...SETTINGS,
+      setSlotKeep: 2,
+      neutralKeep: 0,
+      doubleCritLockEnabled: false,
+    };
+    const r1 = runTriage(
+      accountBefore,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      opts
+    );
+    const lockRecs = r1.decisions.filter(
+      (d) => d.label === "lock" && !d.artifact.lock
+    );
+    const unlockRecs = r1.decisions.filter(
+      (d) => d.label === "unlock" && d.artifact.lock
+    );
+    expect(lockRecs).toHaveLength(2);
+    expect(unlockRecs).toHaveLength(0);
+
+    // Apply: mutate lock state per recommendations
+    const applied = arts.map((a) =>
+      lockRecs.some((d) => d.artifact.id === a.id) ? { ...a, lock: true } : a
+    );
+    const accountAfter = makeAccount([{ key: "char_a" }], applied);
+    const r2 = runTriage(
+      accountAfter,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      opts
+    );
+    const lockRecs2 = r2.decisions.filter(
+      (d) => d.label === "lock" && !d.artifact.lock
+    );
+    const unlockRecs2 = r2.decisions.filter(
+      (d) => d.label === "unlock" && d.artifact.lock
+    );
+    expect(lockRecs2).toHaveLength(0);
+    expect(unlockRecs2).toHaveLength(0);
+  });
+
+  it("SK prefers already-externally-locked artifacts when filling the floor", () => {
+    // 3 trash flowers: one externally locked, two not. setSlotKeep=1.
+    // SK should promote the externally-locked one (stability), not pick a fresh
+    // artifact and leave the user's lock flagged for unlock.
+    const lockedTrash = makeArt({
+      lock: true,
+      substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
+      level: 0, // lowest level, would lose sort tiebreak without external-lock prefer
+    });
+    const freshA = makeArt({
+      substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
+      level: 20,
+    });
+    const freshB = makeArt({
+      substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
+      level: 16,
+    });
+    const account = makeAccount(
+      [{ key: "char_a" }],
+      [lockedTrash, freshA, freshB]
+    );
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        setSlotKeep: 1,
+        neutralKeep: 0,
+        doubleCritLockEnabled: false,
+      }
+    );
+    const byId = (id: string) => decisions.find((d) => d.artifact.id === id)!;
+    expect(byId(lockedTrash.id).label).toBe("lock");
+    expect(byId(lockedTrash.id).decidingResult?.ruleId).toBe("SK");
+    expect(byId(freshA.id).label).toBe("unlock");
+    expect(byId(freshB.id).label).toBe("unlock");
+  });
+
+  // ---------------------------------------------------------------------------
+  // Rule-tiebreak determinism: artifact's chosen group should not depend on
+  // input rule order.
+  // ---------------------------------------------------------------------------
+
+  it("matched rules are tiebroken by embryoKey (not input order)", () => {
+    // Two characters with identical builds → two rules that produce different
+    // embryoKeys (differ only by characterId in demand bookkeeping, but the
+    // rule embryoKey itself is the same). Use distinct desired-substat orders
+    // to get distinct embryoKeys while both matching the artifact at same tier.
+    const art = makeArt({
+      substats: { cr: 1, cd: 1, "atk%": 1, er: 1 },
+    });
+    const buildA = makeBuild({
+      id: "bA",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 100 },
+        { stat: "atk%", weight: 100 },
+        { stat: "er", weight: 60 },
+      ],
+    });
+    const buildB = makeBuild({
+      id: "bB",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 100 },
+        { stat: "atk%", weight: 100 },
+        { stat: "er", weight: 60 },
+      ],
+    });
+    const account1 = makeAccount(
+      [{ key: "char_a" }, { key: "char_b" }],
+      [{ ...art, id: "same_art" }]
+    );
+    const account2 = makeAccount(
+      [{ key: "char_a" }, { key: "char_b" }],
+      [{ ...art, id: "same_art" }]
+    );
+    const r1 = runTriage(
+      account1,
+      [
+        { characterId: "char_a", builds: [buildA] },
+        { characterId: "char_b", builds: [buildB] },
+      ],
+      SETTINGS
+    );
+    // Reversed input order
+    const r2 = runTriage(
+      account2,
+      [
+        { characterId: "char_b", builds: [buildB] },
+        { characterId: "char_a", builds: [buildA] },
+      ],
+      SETTINGS
+    );
+    // The artifact's decidingResult embryoKey should be identical regardless
+    // of build-group input order.
+    expect(r1.decisions[0].decidingResult?.embryo?.embryoKey).toBe(
+      r2.decisions[0].decidingResult?.embryo?.embryoKey
+    );
+  });
+
   it("custom patterns matching an official key are deduplicated (official wins)", () => {
     // flower hp cr+cd+atk%+atk is a curated pattern
     const account = makeAccount([], [makeArt({})]);

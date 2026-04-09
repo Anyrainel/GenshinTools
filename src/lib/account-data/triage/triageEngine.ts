@@ -7,6 +7,7 @@ import type {
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
+import { getSubstatAvgRoll } from "@/lib/account-data/scoring/utils";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";
 import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { isInitial4Line } from "./is4L";
@@ -197,12 +198,20 @@ export function runTriage(
     }
 
     // --- Classify & evaluate against rules ---
-    const matchedRules = rules.filter(
-      (r) =>
-        r.slot === artifact.slotKey &&
-        r.mainStat === artifact.mainStatKey &&
-        matchesSet(r, artifact.setKey)
-    );
+    // Sort matched rules deterministically by embryo key so an artifact's
+    // assigned group is stable across runs regardless of build/rule ordering.
+    const matchedRules = rules
+      .filter(
+        (r) =>
+          r.slot === artifact.slotKey &&
+          r.mainStat === artifact.mainStatKey &&
+          matchesSet(r, artifact.setKey)
+      )
+      .sort((a, b) => {
+        const ka = makeEmbryoKey(a.demandSource, a.slot, a.mainStat, a.desired);
+        const kb = makeEmbryoKey(b.demandSource, b.slot, b.mainStat, b.desired);
+        return ka.localeCompare(kb);
+      });
 
     let bestTier: QualityTier = "T";
     let bestTierResult: TierResult | null = null;
@@ -268,9 +277,12 @@ export function runTriage(
       break;
     }
 
-    // Sort embryo results best-first
+    // Sort embryo results best-first; tiebreak by embryoKey so the
+    // chosen group is deterministic.
     embryoResults.sort(
-      (a, b) => tierRank(a.tier ?? "T") - tierRank(b.tier ?? "T")
+      (a, b) =>
+        tierRank(a.tier ?? "T") - tierRank(b.tier ?? "T") ||
+        (a.embryo.embryoKey ?? "").localeCompare(b.embryo.embryoKey ?? "")
     );
 
     const bestEmbryoResult = embryoResults[0] ?? null;
@@ -339,8 +351,8 @@ export function runTriage(
     const premiumCount = premium.length;
     const qualityCount = quality.length;
 
-    if (premiumCount + qualityCount < demand) {
-      // Under-supply: lock P, Q, and best N
+    if (premiumCount + qualityCount < demand + settings.qualityMargin) {
+      // Under-supply (including the margin buffer): lock P, Q, and best N
       for (const p of premium) setLabel(p, "lock", "TP");
       for (const p of quality) setLabel(p, "lock", "TQ");
 
@@ -355,6 +367,7 @@ export function runTriage(
           (isInitial4Line(b.artifact) ? 1 : 0) -
             (isInitial4Line(a.artifact) ? 1 : 0) ||
           skTiebreaker(a) - skTiebreaker(b) ||
+          rollCount(b.artifact) - rollCount(a.artifact) ||
           b.artifact.level - a.artifact.level
         );
       });
@@ -377,12 +390,18 @@ export function runTriage(
         demand + settings.qualityMargin - premiumCount,
         0
       );
-      // Sort quality by tier result quality
+      // Sort quality by tier result quality, then roll count as a
+      // deterministic intrinsic tiebreaker.
       quality.sort((a, b) => {
         const ta = a.bestTierResult;
         const tb = b.bestTierResult;
         if (!ta || !tb) return 0;
-        return tb.hitCount - ta.hitCount || tb.hitTotal - ta.hitTotal;
+        return (
+          tb.hitCount - ta.hitCount ||
+          tb.hitTotal - ta.hitTotal ||
+          rollCount(b.artifact) - rollCount(a.artifact) ||
+          b.artifact.level - a.artifact.level
+        );
       });
       for (let i = 0; i < quality.length; i++) {
         if (i < qualityCap) {
@@ -466,6 +485,14 @@ export function runTriage(
 
   // --- Set+slot minimum keep ---
   // Runs AFTER special-rule promotions so FLEX/SP-locked artifacts are counted.
+  //
+  // Stability: when we need to fill the floor, prefer artifacts that are
+  // already externally locked. Otherwise, rerunning triage right after
+  // applying a previous "lock these" recommendation would leave those
+  // externally-locked items with bestLabel="unlock" (because tier
+  // classification doesn't know about artifact.lock), producing a spurious
+  // "unlock these" recommendation AND a fresh "lock these" pick for the
+  // same floor.
   if (settings.setSlotKeep > 0) {
     const setSlotGroups = new Map<string, PrelimResult[]>();
     for (const p of prelims) {
@@ -474,27 +501,27 @@ export function runTriage(
       setSlotGroups.get(key)!.push(p);
     }
     for (const group of setSlotGroups.values()) {
-      const locked = group.filter(
-        (p) =>
-          p.bestLabel === "lock" ||
-          (p.artifact.lock && p.bestLabel !== "unlock")
-      ).length;
-      if (locked >= settings.setSlotKeep) continue;
+      const want = Math.min(settings.setSlotKeep, group.length);
+      const algoLocked = group.filter((p) => p.bestLabel === "lock").length;
+      const need = want - algoLocked;
+      if (need <= 0) continue;
 
-      // Need to keep more — promote best ones currently marked for unlock
-      const unlocked = group
-        .filter((p) => p.bestLabel === "unlock")
+      // Candidates: anything not already locked by the algorithm. Sort
+      // externally-locked first (for stability), then by tier/intrinsics.
+      const candidates = group
+        .filter((p) => p.bestLabel !== "lock")
         .sort(
           (a, b) =>
+            (b.artifact.lock ? 1 : 0) - (a.artifact.lock ? 1 : 0) ||
             tierRank(a.bestTier) - tierRank(b.bestTier) ||
             skTiebreaker(a) - skTiebreaker(b) ||
+            rollCount(b.artifact) - rollCount(a.artifact) ||
             b.artifact.level - a.artifact.level
         );
 
-      const need = settings.setSlotKeep - locked;
-      for (let i = 0; i < Math.min(need, unlocked.length); i++) {
-        setLabel(unlocked[i], "lock", "SK");
-        unlocked[i].specialRules.push("SP6");
+      for (let i = 0; i < Math.min(need, candidates.length); i++) {
+        setLabel(candidates[i], "lock", "SK");
+        candidates[i].specialRules.push("SP6");
       }
     }
   }
@@ -560,6 +587,22 @@ const ELEMENTAL_MAINS = new Set<string>([
   "cryo%",
   "geo%",
 ]);
+
+/**
+ * Intrinsic roll-count tiebreaker: sum of each substat's value normalized
+ * by its average roll. Higher = more "roll mass" on the artifact. Used as
+ * a deterministic fine-grained tiebreaker between otherwise tied artifacts.
+ */
+function rollCount(a: ArtifactData): number {
+  const rarity = a.rarity === 4 ? 4 : 5;
+  let total = 0;
+  for (const [stat, val] of Object.entries(a.substats ?? {})) {
+    if (typeof val !== "number") continue;
+    const avg = getSubstatAvgRoll(stat as SubStat, rarity);
+    if (avg > 0) total += val / avg;
+  }
+  return total;
+}
 
 /** Lower = better. Used as tiebreaker when SK-promoting same-tier artifacts. */
 function skTiebreaker(p: { artifact: ArtifactData }): number {
