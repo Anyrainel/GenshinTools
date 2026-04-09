@@ -45,6 +45,7 @@ import {
 } from "@/lib/account-data/artifactScore";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import { getEffectiveCombo } from "@/lib/team-comp/effectiveCombo";
 import {
   buildBuffOverrides,
   buildTeamConfigs,
@@ -567,27 +568,26 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   );
 
   // ─── Display Combo ───
+  // Unified projection: damage-calc consumers must read this, NEVER raw
+  // `combo` or `team.singleReaction`. See src/lib/team-comp/effectiveCombo.ts.
 
-  const displayCombo = useMemo<ComboFormula>(() => {
-    if (formulaMode === "single") {
-      // Build a synthetic 1-line combo from the persisted single selection
-      const sel = team.selectedFormula;
-      if (!sel) return { ...combo, lines: [] };
-      return {
-        ...combo,
-        lines: [
-          {
-            charId: sel.charId,
-            formulaId: sel.formulaId,
-            count: 1,
-            reaction: team.singleReaction,
-          },
-        ],
-      };
-    }
-    const activeLines = combo.lines.filter((l) => l.count > 0);
-    return activeLines.length > 0 ? { ...combo, lines: activeLines } : combo;
-  }, [formulaMode, combo, team.selectedFormula, team.singleReaction]);
+  const displayCombo = useMemo<ComboFormula>(
+    () =>
+      getEffectiveCombo({
+        formulaMode,
+        selectedFormula: team.selectedFormula,
+        singleReaction: team.singleReaction,
+        combos: team.combos,
+        selectedCombo: team.selectedCombo,
+      }),
+    [
+      formulaMode,
+      team.selectedFormula,
+      team.singleReaction,
+      team.combos,
+      team.selectedCombo,
+    ]
+  );
 
   // Build per-line PartialBuffInfo[] (defaults + user overrides)
   const buffOverrides = useMemo(() => {
@@ -663,7 +663,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     // In combo mode, pick the first combo character as the nominal carry
     const carryCharId =
       resolvedFormula?.charId ??
-      combo.lines.find((l) => l.count > 0)?.charId ??
+      displayCombo.lines.find((l) => l.count > 0)?.charId ??
       effectiveTeam.characters.find((c): c is string => c != null)!;
     const formulaId = resolvedFormula?.formulaId ?? "";
 
@@ -743,10 +743,9 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
         .filter(Boolean) as ArtifactData[];
       optBaseSheets[cid] = StatSheet.fromArtifacts(pieces);
     }
-    const optCombo: ComboFormula = {
-      ...combo,
-      lines: combo.lines.filter((l) => l.count > 0),
-    };
+    // Unified path: optimizer must see the same ComboFormula as the display.
+    // displayCombo is already filtered (count > 0) by getEffectiveCombo.
+    const optCombo: ComboFormula = displayCombo;
 
     // Build per-char excluded artifact IDs for tier-aware pool
     let perCharExcludedArtifactIds: Record<string, string[]> | undefined;
@@ -1001,7 +1000,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     // In combo mode, pick the first combo character as the nominal carry
     const carryCharId =
       resolvedFormula?.charId ??
-      combo.lines.find((l) => l.count > 0)?.charId ??
+      displayCombo.lines.find((l) => l.count > 0)?.charId ??
       effectiveTeam.characters.find((c): c is string => c != null)!;
     const genFormulaId = resolvedFormula?.formulaId ?? "";
 
@@ -1015,13 +1014,9 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       };
     }
 
-    // Use displayCombo so single-formula mode picks up the persisted single
-    // selection + singleReaction (including forceOnField). In combo mode this
-    // is equivalent to filtering combo.lines by count > 0.
-    const genCombo: ComboFormula = {
-      ...displayCombo,
-      lines: displayCombo.lines.filter((l) => l.count > 0),
-    };
+    // Unified path: generator sees the same ComboFormula as the display.
+    // displayCombo is already filtered (count > 0) by getEffectiveCombo.
+    const genCombo: ComboFormula = displayCombo;
 
     startGenerator({
       teamBuild,
