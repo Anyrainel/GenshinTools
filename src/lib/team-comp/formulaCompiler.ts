@@ -31,6 +31,7 @@ import {
 import { createReactionVariant } from "./damageFormulas";
 import type { CharacterBase, FormulaPart } from "./damageModels";
 import { StatBuff, StatSheet } from "./damageModels";
+import { DEBUG_CROSSPATH } from "./debugFlags";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
 import { isPartOffField } from "./reactionResolve";
@@ -1193,7 +1194,7 @@ function emitBlendedPartExprs(
     return activated < totalHits;
   });
 
-  if (process.env.DEBUG_CROSSPATH) {
+  if (DEBUG_CROSSPATH) {
     const tag = formula.tag;
     const baseBd = simplify(baseStats.get("baseDmg%", tag)) as {
       tag: string;
@@ -1248,7 +1249,7 @@ function emitBlendedPartExprs(
     } else {
       const eKey = exclusionKey(excludeSet);
       const variant = statsVariants?.get(eKey) ?? baseStats;
-      if (process.env.DEBUG_CROSSPATH) {
+      if (DEBUG_CROSSPATH) {
         const vBd = simplify(variant.get("baseDmg%", formula.tag)) as {
           tag: string;
           value?: number;
@@ -1271,7 +1272,7 @@ function emitBlendedPartExprs(
     void _variantBd;
 
     const expr = formula.buildExpr(intervalStats, charBase.charLevel, ctx);
-    if (process.env.DEBUG_CROSSPATH) {
+    if (DEBUG_CROSSPATH) {
       const tag = formula.tag;
       const bd = intervalStats.get("baseDmg%", tag);
       const dmgPct = intervalStats.get("dmg%", tag);

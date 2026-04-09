@@ -27,6 +27,7 @@ import {
 } from "./constants";
 import type { DamageFormula } from "./damageFormulas";
 import { createReactionVariant } from "./damageFormulas";
+import { DEBUG_CROSSPATH } from "./debugFlags";
 import { isPartOffField } from "./reactionResolve";
 import type {
   BuffSource,
@@ -1368,7 +1369,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       } else {
         const eKey = exclusionKey(excludeSet);
         const variant = statsVariants?.get(eKey) ?? baseStats;
-        if (process.env.DEBUG_CROSSPATH) {
+        if (DEBUG_CROSSPATH) {
           const vBd = variant.get("baseDmg%", formula.tag);
           // biome-ignore lint/suspicious/noConsoleLog: debug
           console.log(
@@ -1382,7 +1383,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       }
 
       const hitDmg = formula.calc(intervalStats, this.charLevel, ctx);
-      if (process.env.DEBUG_CROSSPATH) {
+      if (DEBUG_CROSSPATH) {
         const tag = formula.tag;
         const bd = intervalStats.get("baseDmg%", tag);
         const dmgPct = intervalStats.get("dmg%", tag);
