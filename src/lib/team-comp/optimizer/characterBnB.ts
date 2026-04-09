@@ -387,7 +387,7 @@ export function runCharacterBnB(
   // damage expression is the source of truth: if the swap char doesn't appear
   // in it, marginal weights will be all-zero and the downstream all-zero
   // fallback handles ranking.
-  const marginals: MarginalWeights | null = computeMarginalWeights(
+  const marginals: MarginalWeights = computeMarginalWeights(
     marginalEvalFn,
     swapCharId,
     baseSheets,
@@ -434,18 +434,16 @@ export function runCharacterBnB(
           mainStatMismatches: [],
         };
       }
-      if (effectiveMarginals) {
-        const boostedSub = boostWeightsForConstraints(
-          constraints,
-          effectiveMarginals.substatWeights,
-          maxWeight
-        );
-        if (boostedSub) {
-          effectiveMarginals = {
-            ...effectiveMarginals,
-            substatWeights: boostedSub,
-          };
-        }
+      const boostedSub = boostWeightsForConstraints(
+        constraints,
+        effectiveMarginals.substatWeights,
+        maxWeight
+      );
+      if (boostedSub) {
+        effectiveMarginals = {
+          ...effectiveMarginals,
+          substatWeights: boostedSub,
+        };
       }
     }
   }
@@ -457,8 +455,7 @@ export function runCharacterBnB(
   {
     const allZero = (w: Record<string, number>) =>
       !Object.values(w).some((v) => v > 0);
-    const marginalZero =
-      !effectiveMarginals || allZero(effectiveMarginals.substatWeights);
+    const marginalZero = allZero(effectiveMarginals.substatWeights);
     const buildZero =
       !effectiveBuildMatch?.statWeights ||
       allZero(effectiveBuildMatch.statWeights as Record<string, number>);
@@ -774,40 +771,38 @@ export function runCharacterBnB(
         effectiveBuildMatch,
         StatSheet.fromArtifacts(warmArts)
       );
-      if (warmMarginals) {
-        // Force full marginal substat weights for the re-sort
-        const fullMarginals: MarginalWeights = {
-          ...warmMarginals,
-          hasMainStatDisagreement: true,
-        };
-        const marginalSortFn = (a: ArtifactData, b: ArtifactData) =>
-          computeMarginalScore(
-            b,
-            effectiveBuildMatch,
-            globalConfig,
-            crDiscount,
-            fullMarginals
-          ) -
-          computeMarginalScore(
-            a,
-            effectiveBuildMatch,
-            globalConfig,
-            crDiscount,
-            fullMarginals
-          );
+      // Force full marginal substat weights for the re-sort
+      const fullMarginals: MarginalWeights = {
+        ...warmMarginals,
+        hasMainStatDisagreement: true,
+      };
+      const marginalSortFn = (a: ArtifactData, b: ArtifactData) =>
+        computeMarginalScore(
+          b,
+          effectiveBuildMatch,
+          globalConfig,
+          crDiscount,
+          fullMarginals
+        ) -
+        computeMarginalScore(
+          a,
+          effectiveBuildMatch,
+          globalConfig,
+          crDiscount,
+          fullMarginals
+        );
 
-        // Re-sort → run HC2 into separate collector → restore original order
-        hc2Collector = new TopKCollector(topK);
-        const savedCollector = ctx.collector;
-        ctx.collector = hc2Collector;
-        const topTasks = [...tasks]
-          .sort((a, b) => b.upperBound - a.upperBound)
-          .slice(0, HC2_MAX_PATTERNS);
-        withResortedSlotData(slotData, marginalSortFn, () => {
-          hillClimbWarmStart(topTasks, HC2_MAX_PATTERNS);
-        });
-        ctx.collector = savedCollector;
-      }
+      // Re-sort → run HC2 into separate collector → restore original order
+      hc2Collector = new TopKCollector(topK);
+      const savedCollector = ctx.collector;
+      ctx.collector = hc2Collector;
+      const topTasks = [...tasks]
+        .sort((a, b) => b.upperBound - a.upperBound)
+        .slice(0, HC2_MAX_PATTERNS);
+      withResortedSlotData(slotData, marginalSortFn, () => {
+        hillClimbWarmStart(topTasks, HC2_MAX_PATTERNS);
+      });
+      ctx.collector = savedCollector;
     }
 
     // Sort by upper bound descending — explore most promising patterns first
@@ -983,24 +978,12 @@ export function runCharacterBnB(
       ({ kind: "all-filtered", combinationsTotal: ctx.evaluations } as const);
   }
 
-  // Return marginal weights (carry) or buildMatch statWeights (support) for debug display
-  const returnWeights =
-    effectiveMarginals ??
-    (effectiveBuildMatch?.statWeights
-      ? {
-          substatWeights: effectiveBuildMatch.statWeights as Record<
-            string,
-            number
-          >,
-          mainStatMarginals: {},
-          hasMainStatDisagreement: false,
-        }
-      : null);
+  // Return marginal weights (always non-null post-refactor)
   return {
     collector,
     evaluations: ctx.evaluations,
     failReason,
-    marginalWeights: returnWeights,
+    marginalWeights: effectiveMarginals,
     usedFallbackWeights,
   };
 }

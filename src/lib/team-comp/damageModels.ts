@@ -27,6 +27,7 @@ import {
 } from "./constants";
 import type { DamageFormula } from "./damageFormulas";
 import { createReactionVariant } from "./damageFormulas";
+import { isPartOffField } from "./reactionResolve";
 import type {
   BuffSource,
   BuffTarget,
@@ -1115,15 +1116,11 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const parts: DamageResult["parts"] = [];
     for (let idx = 0; idx < entry.parts.length; idx++) {
-      const {
-        formula,
-        hits: totalHits,
-        bespokeBuff,
-        offField,
-      } = entry.parts[idx];
+      const part = entry.parts[idx];
+      const { formula, hits: totalHits, bespokeBuff } = part;
       const h = totalHits ?? 1;
       const bespokeMaxStacks = bespokeBuff?.source.maxStacks;
-      const effectiveOffField = offField && !reactionOverride?.forceOnField;
+      const effectiveOffField = isPartOffField(part, reactionOverride);
 
       // Use off-field stats when the part deals damage while the character is off-field
       const baseSelfStats =
@@ -1371,13 +1368,30 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       } else {
         const eKey = exclusionKey(excludeSet);
         const variant = statsVariants?.get(eKey) ?? baseStats;
+        if (process.env.DEBUG_CROSSPATH) {
+          const vBd = variant.get("baseDmg%", formula.tag);
+          // biome-ignore lint/suspicious/noConsoleLog: debug
+          console.log(
+            `[CALC.var]    part=${partIdx} eKey=${eKey} variant.bd%=${vBd.toFixed(4)}`
+          );
+        }
         intervalStats =
           bespokeActive && bespokeOverlay
             ? variant.merge(bespokeOverlay)
             : variant;
       }
 
-      total += width * formula.calc(intervalStats, this.charLevel, ctx);
+      const hitDmg = formula.calc(intervalStats, this.charLevel, ctx);
+      if (process.env.DEBUG_CROSSPATH) {
+        const tag = formula.tag;
+        const bd = intervalStats.get("baseDmg%", tag);
+        const dmgPct = intervalStats.get("dmg%", tag);
+        // biome-ignore lint/suspicious/noConsoleLog: debug
+        console.log(
+          `[CALC]    part=${partIdx} int=[${start},${end}] w=${width} bespoke=${bespokeActive} excl=${excludeSet.size} bd%=${bd.toFixed(4)} dmg%=${dmgPct.toFixed(4)} hit=${hitDmg.toFixed(2)}`
+        );
+      }
+      total += width * hitDmg;
     }
     return { damage: total / hits, hits };
   }

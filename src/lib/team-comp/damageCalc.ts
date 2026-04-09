@@ -24,6 +24,7 @@ import {
 
 import type { OptionMap } from "./damageModels";
 import { computeSubstatMarginals } from "./marginalGains";
+import { isPartOffField } from "./reactionResolve";
 import {
   type ComboLineContext,
   buildPartialBuffInfos,
@@ -581,14 +582,10 @@ export class CharBuild {
     const displayParts: DisplayPart[] = [];
     let totalDamage = 0;
     for (let i = 0; i < entry.parts.length; i++) {
-      const {
-        formula,
-        hits: totalHits,
-        bespokeBuff,
-        offField,
-      } = entry.parts[i];
+      const part = entry.parts[i];
+      const { formula, hits: totalHits, bespokeBuff } = part;
       const h = totalHits ?? 1;
-      const effectiveOffField = offField && !reactionOverride?.forceOnField;
+      const effectiveOffField = isPartOffField(part, reactionOverride);
 
       // Use off-field stats when the part deals damage while the character is off-field
       const baseSelfStats =
@@ -1613,8 +1610,7 @@ export class TeamBuild {
 
     // Compute off-field stats for display if the formula has off-field parts
     const formulaHasOffField =
-      !reactionOverride?.forceOnField &&
-      (entry?.parts.some((p) => p.offField) ?? false);
+      entry?.parts.some((p) => isPartOffField(p, reactionOverride)) ?? false;
     const offFieldPostStats = formulaHasOffField
       ? this.getOffFieldPostStats(charId, artifactStats, ctx)
       : undefined;
@@ -1818,9 +1814,7 @@ export class TeamBuild {
     // ── Buff resolution ──
     const partReadKeys = parts.map((p) => p.readKeys);
     const partOffField =
-      entry?.parts.map(
-        (p) => (p.offField ?? false) && !reactionOverride?.forceOnField
-      ) ?? [];
+      entry?.parts.map((p) => isPartOffField(p, reactionOverride)) ?? [];
     const buffs = this.resolveBuffs(
       charId,
       preStats,
@@ -2841,8 +2835,8 @@ export function evaluateCombo(
     // Compute off-field stats if the formula has off-field parts
     let offFieldTeamStats: Record<string, StatSheet> | undefined;
     if (
-      !line.reaction?.forceOnField &&
-      hasOffFieldParts(teamBuild, line.charId, line.formulaId)
+      hasOffFieldParts(teamBuild, line.charId, line.formulaId) &&
+      !line.reaction?.forceOnField
     ) {
       // Nobody on-field for off-field damage parts
       offFieldTeamStats = getStats(null);
@@ -3252,8 +3246,7 @@ export function getComboDisplayResult(
     // Off-field stats (nobody on-field for off-field parts)
     const entry = build.charBase.getFormulaEntry(formulaId);
     const formulaHasOffField =
-      !effectiveReaction?.forceOnField &&
-      (entry?.parts.some((p) => p.offField) ?? false);
+      entry?.parts.some((p) => isPartOffField(p, effectiveReaction)) ?? false;
     let offFieldPostStats: StatSheet | undefined;
     if (formulaHasOffField) {
       offFieldPostStats = getStats(null)[charId];

@@ -102,7 +102,7 @@ export interface CharacterBnBResult {
   collector: TopKCollectorLike;
   evaluations: number;
   failReason?: OptFailReason;
-  marginalWeights?: MarginalWeights | null;
+  marginalWeights?: MarginalWeights;
   /** True when all marginal + buildMatch weights were zero and fallback weights were injected. */
   usedFallbackWeights?: boolean;
 }

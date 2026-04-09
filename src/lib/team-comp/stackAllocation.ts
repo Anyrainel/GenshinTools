@@ -13,6 +13,7 @@ import { type StatBuff, getBuffInstanceKey } from "./damageBuffs";
 import { createReactionVariant } from "./damageFormulas";
 import type { DamageFormula, FormulaPart } from "./damageModels";
 import { StatSheet } from "./damageModels";
+import { isPartOffField } from "./reactionResolve";
 import type {
   BuffActivationMap,
   BuffSource,
@@ -150,10 +151,11 @@ export function computeBlendedDamage(
   let totalDamage = 0;
 
   for (let idx = 0; idx < parts.length; idx++) {
-    const { formula, hits: totalHits, offField, bespokeBuff } = parts[idx];
+    const part = parts[idx];
+    const { formula, hits: totalHits, bespokeBuff } = part;
     const h = totalHits ?? 1;
 
-    const effectiveOffField = offField && !reactionOverride?.forceOnField;
+    const effectiveOffField = isPartOffField(part, reactionOverride);
     const baseStats =
       effectiveOffField && offFieldPostStats ? offFieldPostStats : postStats;
     const variants =
@@ -195,6 +197,16 @@ export function computeBlendedDamage(
         return activated < subHits;
       });
 
+      if (process.env.DEBUG_CROSSPATH) {
+        const tag = subFormula.tag;
+        const baseBd = baseStats.get("baseDmg%", tag);
+        const wbBd = withBespoke.get("baseDmg%", tag);
+        // biome-ignore lint/suspicious/noConsoleLog: debug
+        console.log(
+          `[DISPLAY.pre] part=${idx} tag.el=${tag.element} tag.ab=${tag.ability} baseStats.bd%=${baseBd} withBespoke.bd%=${wbBd} bespokeOverlayBd%=${bespokeOverlay?.get("baseDmg%", tag) ?? "none"}`
+        );
+      }
+
       if (affecting.length === 0 && subBespokeCutoff === subHits) {
         return subFormula.calc(withBespoke, charLevel, ctx) * subHits;
       }
@@ -233,7 +245,17 @@ export function computeBlendedDamage(
               : variant;
         }
 
-        sum += width * subFormula.calc(intervalStats, charLevel, ctx);
+        const hitDmg = subFormula.calc(intervalStats, charLevel, ctx);
+        if (process.env.DEBUG_CROSSPATH) {
+          const tag = subFormula.tag;
+          const bd = intervalStats.get("baseDmg%", tag);
+          const dmgPct = intervalStats.get("dmg%", tag);
+          // biome-ignore lint/suspicious/noConsoleLog: debug
+          console.log(
+            `[DISPLAY] part=${idx} int=[${start},${end}] w=${width} bespoke=${bespokeActive} excl=${excludeSet.size} bd%=${bd.toFixed(4)} dmg%=${dmgPct.toFixed(4)} hit=${hitDmg.toFixed(2)}`
+          );
+        }
+        sum += width * hitDmg;
       }
       return sum;
     };

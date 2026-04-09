@@ -47,7 +47,12 @@ export function computeMarginalWeights(
   baseSheets: Record<string, StatSheet>,
   buildMatch: BuildMatchResult | null | undefined,
   operatingPointSheet?: StatSheet
-): MarginalWeights | null {
+): MarginalWeights {
+  const zeroWeights = (): MarginalWeights => ({
+    substatWeights: Object.fromEntries(MARGINAL_SUBSTATS.map((s) => [s, 0])),
+    mainStatMarginals: {},
+    hasMainStatDisagreement: false,
+  });
   // Operating point: use provided sheet (e.g. from warm-start) or synthetic midpoint
   let baseSheet: StatSheet;
   if (operatingPointSheet) {
@@ -75,7 +80,7 @@ export function computeMarginalWeights(
 
   // Baseline damage at the operating point
   const baseDamage = evalDamageFn(sheets);
-  if (baseDamage <= 0) return null;
+  if (baseDamage <= 0) return zeroWeights();
 
   // Substat marginals via shared loop (returns absolute deltas)
   const rawDeltas = computeSubstatMarginals(evalDamageFn, sheets, baseDamage, [
