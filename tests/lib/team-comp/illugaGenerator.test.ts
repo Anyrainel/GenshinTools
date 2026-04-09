@@ -1,7 +1,6 @@
 /**
- * UI-faithful generator test: mimics the exact path that DamageDetail.tsx
- * handleGenerate uses, so we can reproduce and fix the "Illuga gets geo%
- * goblet for Linnea's lunar-crystallize million-ton" bug from the dev server.
+ * Regression test for the "Illuga gets geo% goblet for Linnea's
+ * lunar-crystallize million-ton" bug from the dev server.
  *
  * Team: Linnea (carry) + Illuga + Columbina + Gorou.
  * Combo: linnea-million-ton (lunar crystallize) with forceOnField = true.
@@ -67,12 +66,11 @@ function configs(): TeamSlotConfig[] {
   ];
 }
 
-describe("illuga generator UI-faithful", () => {
+describe("illuga generator", () => {
   it("picks em goblet for illuga when linnea's million-ton has forceOnField=true", async () => {
     const tb = new TeamBuild(configs());
 
-    // Mimic DamageDetail.tsx handleGenerate combo construction:
-    // a single combo line with reaction.forceOnField=true.
+    // Single combo line with reaction.forceOnField=true.
     const lines: ComboLine[] = [
       {
         charId: "linnea",
