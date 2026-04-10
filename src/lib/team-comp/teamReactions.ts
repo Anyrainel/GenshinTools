@@ -350,7 +350,7 @@ export class TeamReactionProvider {
   }
 
   /** Whether Columbina is on the team (P2: ×4/3 reaction triggers). */
-  private readonly hasColumbina: boolean;
+  readonly hasColumbina: boolean;
 
   /** Cached reaction combo descriptor (built once). */
   private cachedDescriptor: ReactionComboEntry[] | undefined;

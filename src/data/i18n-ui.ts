@@ -1184,6 +1184,8 @@ export const i18nUiData = {
       en: "Reset to defaults",
       zh: "重置为默认值",
     },
+    analyzerCount: { en: "Count", zh: "次数" },
+    eligible: { en: "Eligible", zh: "参与" },
     tabDamage: { en: "DMG Optimizer", zh: "伤害优化" },
     tabFrozen: { en: "Frozen Teams", zh: "冻结管理" },
     tabInvestment: { en: "Investment", zh: "补金分析" },

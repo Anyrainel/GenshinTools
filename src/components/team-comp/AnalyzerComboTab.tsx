@@ -17,6 +17,8 @@ import {
 import { getFormulaReactions } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { FormulaEntry } from "@/lib/team-comp/damageModels";
+import type { ReactionComboEntry } from "@/lib/team-comp/teamReactions";
+import { resolveReactionComboEntries } from "@/lib/team-comp/teamReactions";
 import type {
   ComboFormula,
   I18nLabel,
@@ -59,6 +61,8 @@ export function AnalyzerComboTab({
   onMinErOverridesChange,
   onReactionChange,
 }: AnalyzerComboTabProps) {
+  const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
+
   return (
     <div className="flex flex-wrap justify-center items-start gap-x-3 gap-y-2 lg:gap-x-5 lg:gap-y-3">
       {charConfigs.map((cfg) => {
@@ -77,9 +81,17 @@ export function AnalyzerComboTab({
             onComboOverridesChange={onComboOverridesChange}
             onMinErOverridesChange={onMinErOverridesChange}
             onReactionChange={onReactionChange}
+            rxDescriptor={rxDescriptor}
           />
         );
       })}
+      {rxDescriptor.length > 0 && (
+        <ReactionComboTable
+          teamBuild={teamBuild}
+          baseConfigs={baseConfigs}
+          rxDescriptor={rxDescriptor}
+        />
+      )}
     </div>
   );
 }
@@ -123,6 +135,7 @@ function CharComboRow({
   onComboOverridesChange,
   onMinErOverridesChange,
   onReactionChange,
+  rxDescriptor,
 }: {
   charId: string;
   config: AnalyzerCharConfig;
@@ -134,6 +147,7 @@ function CharComboRow({
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
   onReactionChange: (stableKey: string, override: ReactionOverride) => void;
+  rxDescriptor: ReactionComboEntry[];
 }) {
   const { t } = useLanguage();
   const char = charactersById[charId];
@@ -152,6 +166,31 @@ function CharComboRow({
 
   const descriptor = teamBuild.getComboDescriptor(charId);
   const allFormulas = teamBuild.getAllFormulaIds()[charId] ?? {};
+
+  // Rx- entries where this character gates a constellation delta
+  const charRxEntries = useMemo(() => {
+    return rxDescriptor.filter((entry) =>
+      entry.bonus.some((b) => b.charId === charId)
+    );
+  }, [rxDescriptor, charId]);
+
+  // Resolve rx- counts at each constellation (this char varies, others at base)
+  const rxCountsByC = useMemo(() => {
+    const baseConstellations: Record<string, number> = {};
+    for (const cfg of teamBuild.configs) {
+      baseConstellations[cfg.charId] =
+        teamBuild.charBuilds[cfg.charId]?.charBase.constellation ?? 0;
+    }
+    const map: Record<number, Record<string, number>> = {};
+    for (const c of constellations) {
+      map[c] = resolveReactionComboEntries(
+        rxDescriptor,
+        { ...baseConstellations, [charId]: c },
+        teamBuild.reactionProvider.hasColumbina
+      );
+    }
+    return map;
+  }, [constellations, rxDescriptor, charId, teamBuild]);
 
   const descriptorCounts = useMemo(() => {
     const map: Record<number, Record<string, number>> = {};
@@ -504,6 +543,31 @@ function CharComboRow({
                   })}
                 </tr>
               ))}
+
+              {/* Rx- rows: reaction entries gated by this character's constellation */}
+              {charRxEntries.map((entry) => {
+                const rxType = entry.id.replace("rx-", "") as ReactionType;
+                return (
+                  <tr key={entry.id} className="bg-purple-500/5">
+                    <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
+                      <span className="text-xs text-purple-300">
+                        {t.reaction(rxType)}
+                      </span>
+                    </td>
+                    {constellations.map((c) => {
+                      const count = rxCountsByC[c]?.[entry.id] ?? 0;
+                      return (
+                        <td
+                          key={c}
+                          className="text-center px-1 py-0.5 border border-border text-xs text-purple-300"
+                        >
+                          {count}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -625,5 +689,108 @@ function NumericCell({
         <span className="text-muted-foreground text-[10px]">{suffix}</span>
       )}
     </span>
+  );
+}
+
+// ─── Team Reaction Combo Table ───
+
+function ReactionComboTable({
+  teamBuild,
+  baseConfigs,
+  rxDescriptor,
+}: {
+  teamBuild: TeamBuild;
+  baseConfigs: TeamSlotConfig[];
+  rxDescriptor: ReactionComboEntry[];
+}) {
+  const { t } = useLanguage();
+  const rp = teamBuild.reactionProvider;
+
+  // Resolve base counts (at construction-time constellations)
+  const baseCounts = rp.getReactionComboCounts();
+
+  return (
+    <div className="flex flex-col rounded-lg bg-black/10 border border-purple-600/50 p-1.5 gap-1.5 xl:p-2">
+      <span className="font-bold text-foreground/90 text-xs md:text-base lg:text-sm xl:text-base">
+        {t.ui("teamComp.teamReactions")}
+      </span>
+      <div className="overflow-x-auto shrink-0">
+        <table className="text-xs border-collapse">
+          <thead>
+            <tr>
+              <th className="text-left pr-1 py-0.5 font-normal border border-border whitespace-nowrap" />
+              {baseConfigs.map((cfg) => {
+                const char = charactersById[cfg.charId];
+                return (
+                  <th
+                    key={cfg.charId}
+                    className="text-center px-1 py-0.5 font-normal border border-border"
+                  >
+                    <div className="flex items-center gap-1 justify-center">
+                      {char && (
+                        <img
+                          src={getAssetUrl(char.imagePath)}
+                          alt={cfg.charId}
+                          className="w-4 h-4 rounded-full"
+                        />
+                      )}
+                      <span className="text-[10px] truncate max-w-[4rem]">
+                        {t.character(cfg.charId)}
+                      </span>
+                    </div>
+                  </th>
+                );
+              })}
+              <th className="text-center px-1 py-0.5 font-normal border border-border whitespace-nowrap">
+                {t.ui("teamComp.analyzerCount")}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rxDescriptor.map((entry) => {
+              const rxType = entry.id.replace("rx-", "") as ReactionType;
+              const onFieldCharId = rp.guessOnFieldChar(entry.id);
+              const eligible = rp.getEligibleCharacters(entry.id);
+              const count = baseCounts[entry.id] ?? 0;
+              return (
+                <tr key={entry.id}>
+                  <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
+                    <span className="text-xs text-purple-300">
+                      {t.reaction(rxType)}
+                    </span>
+                  </td>
+                  {baseConfigs.map((cfg) => {
+                    const isOnField = cfg.charId === onFieldCharId;
+                    const isEligible = eligible.includes(cfg.charId);
+                    return (
+                      <td
+                        key={cfg.charId}
+                        className={cn(
+                          "text-center px-1 py-0.5 border border-border text-[10px]",
+                          isOnField
+                            ? "text-purple-300 font-semibold"
+                            : isEligible
+                              ? "text-foreground/60"
+                              : "text-muted-foreground"
+                        )}
+                      >
+                        {isOnField
+                          ? t.ui("teamComp.onField")
+                          : isEligible
+                            ? t.ui("teamComp.eligible")
+                            : "—"}
+                      </td>
+                    );
+                  })}
+                  <td className="text-center px-1 py-0.5 border border-border text-xs text-purple-300 font-semibold">
+                    {count}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
