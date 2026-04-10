@@ -2443,7 +2443,7 @@ describe("forceOnField override", () => {
 
     const tb = new TeamBuild(team, { linnea: "tap" });
     const combo = tb.getCombo("linnea");
-    expect(combo).toEqual({ "linnea-pound": 5, "linnea-overdrive": 5 });
+    expect(combo).toEqual({ "linnea-pound": 4, "linnea-overdrive": 4 });
   });
 
   it("linnea tap combo without LC has pound only", () => {
@@ -2470,7 +2470,7 @@ describe("forceOnField override", () => {
 
     const tb = new TeamBuild(team, { linnea: "tap" });
     const combo = tb.getCombo("linnea");
-    expect(combo).toEqual({ "linnea-pound": 10 });
+    expect(combo).toEqual({ "linnea-pound": 8 });
   });
 
   it("linnea continuous-tap combo has million-ton + pound", () => {
@@ -2499,7 +2499,7 @@ describe("forceOnField override", () => {
     const combo = tb.getCombo("linnea");
     expect(combo).toEqual({
       "linnea-million-ton": 1,
-      "linnea-pound": 5,
+      "linnea-pound": 4,
     });
   });
 

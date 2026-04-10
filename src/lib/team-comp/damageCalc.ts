@@ -984,9 +984,11 @@ export class TeamBuild {
       if (!entry) continue;
       const formula = entry.parts[0].formula;
 
-      // Evaluate each character's baseline damage
+      // Evaluate each eligible character's baseline damage
+      const eligible = this.reactionProvider.getEligibleCharacters(formulaId);
       const contributions: { charId: string; damage: number }[] = [];
       for (const config of configs) {
+        if (!eligible.includes(config.charId)) continue;
         const stats = baselineStats[config.charId];
         if (!stats) continue;
         const damage = formula.calc(stats, config.charLevel, this.baselineCtx);

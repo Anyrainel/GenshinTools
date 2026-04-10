@@ -85,6 +85,15 @@ export const MULTI_CONTRIBUTOR_REACTIONS: ReadonlySet<ReactionType> = new Set([
   "lunarCrystallize",
 ]);
 
+/** Elements that contribute damage to each lunar reaction type. */
+const LUNAR_CONTRIBUTING_ELEMENTS: Partial<
+  Record<ReactionType, readonly Element[]>
+> = {
+  lunarCharged: ["Electro", "Hydro"],
+  lunarCrystallize: ["Geo", "Hydro"],
+  lunarBloom: ["Dendro", "Hydro"],
+};
+
 /** Rank weights: [Rank1, Rank2, Rank3, Rank4]. */
 export const LUNAR_RANK_WEIGHTS = [0.6, 0.3, 0.05, 0.05] as const;
 
@@ -186,8 +195,13 @@ export class TeamReactionProvider {
       this.formulas[id] = { label, parts: [{ formula }] };
 
       if (MULTI_CONTRIBUTOR_REACTIONS.has(reaction)) {
-        // All team members contribute — any can be "on-field"
-        this.eligibleChars[id] = configs.map((c) => c.charId);
+        // Only characters with contributing elements are eligible
+        const elements = LUNAR_CONTRIBUTING_ELEMENTS[reaction] ?? [];
+        this.eligibleChars[id] = configs
+          .filter((c) =>
+            elements.includes(teamMeta.elements[c.charId] as Element)
+          )
+          .map((c) => c.charId);
       } else {
         this.eligibleChars[id] = this.findEligibleChars(
           reaction,
@@ -317,9 +331,11 @@ export class TeamReactionProvider {
     const formula = entry.parts[0].formula;
     const precomputedWeights = this.rankWeights[formulaId];
 
-    // Compute each character's individual contribution
+    // Compute each eligible character's individual contribution
+    const eligible = this.eligibleChars[formulaId] ?? [];
     const contributions: { charId: string; damage: number }[] = [];
     for (const config of this.configs) {
+      if (!eligible.includes(config.charId)) continue;
       const stats = teamStats[config.charId];
       if (!stats) continue;
       const damage = formula.calc(stats, config.charLevel, ctx);
@@ -368,8 +384,10 @@ export class TeamReactionProvider {
     const formula = entry.parts[0].formula;
     const precomputedWeights = this.rankWeights[formulaId];
 
+    const eligible = this.eligibleChars[formulaId] ?? [];
     const contributions: { charId: string; damage: number }[] = [];
     for (const config of this.configs) {
+      if (!eligible.includes(config.charId)) continue;
       const stats = teamStats[config.charId];
       if (!stats) continue;
       const damage = formula.calc(stats, config.charLevel, ctx);

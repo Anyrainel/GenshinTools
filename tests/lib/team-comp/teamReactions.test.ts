@@ -581,15 +581,22 @@ describe("TeamReactionProvider — lunar reactions", () => {
     expect(rxFormulas["rx-bloom"]).toBeDefined();
   });
 
-  it("multi-contributor eligible chars include all team members", () => {
+  it("multi-contributor eligible chars are filtered to contributing elements", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const eligible =
+    // LCh: Electro + Hydro only → columbina (Hydro) + flins (Electro)
+    const eligibleLCh =
       tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
-    expect(eligible).toHaveLength(4);
-    expect(eligible).toContain("columbina");
-    expect(eligible).toContain("flins");
-    expect(eligible).toContain("zibai");
-    expect(eligible).toContain("nahida");
+    expect(eligibleLCh).toHaveLength(2);
+    expect(eligibleLCh).toContain("columbina");
+    expect(eligibleLCh).toContain("flins");
+
+    // LCr: Geo + Hydro only → columbina (Hydro) + zibai (Geo)
+    const eligibleLCr = tb.reactionProvider.getEligibleCharacters(
+      "rx-lunarCrystallize"
+    );
+    expect(eligibleLCr).toHaveLength(2);
+    expect(eligibleLCr).toContain("columbina");
+    expect(eligibleLCr).toContain("zibai");
   });
 });
 
@@ -622,15 +629,14 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
       teamStats,
       CTX
     );
-    expect(display.contributors).toHaveLength(4);
+    // Only Electro + Hydro chars contribute to LCh
+    expect(display.contributors).toHaveLength(2);
     expect(display.totalDamage).toBeGreaterThan(0);
-    // Rank 1 should have weight 0.6
+    // Rank 1 should have weight 0.6 (highest weight first)
     expect(display.contributors[0].rank).toBe(1);
     expect(display.contributors[0].weight).toBe(0.6);
-    // Sorted descending by damage
-    expect(display.contributors[0].damage).toBeGreaterThanOrEqual(
-      display.contributors[1].damage
-    );
+    expect(display.contributors[1].rank).toBe(2);
+    expect(display.contributors[1].weight).toBe(0.3);
   });
 
   it("multi-contributor total matches manual rank-weighted sum", () => {

@@ -397,16 +397,17 @@ export function compileTeamDamage(
     if (rp.isMultiContributor(formulaId)) {
       // Use pre-computed rank weights from TeamBuild baseline estimation
       const rankWeights = rp.getRankWeights(formulaId);
+      const eligible = rp.getEligibleCharacters(formulaId);
       const charExprs: Expr[] = [];
       for (const cfg of teamBuild.configs) {
+        if (!eligible.includes(cfg.charId)) continue;
         const charStats = postExprStats[cfg.charId];
         if (!charStats) continue;
         const weight = rankWeights?.get(cfg.charId);
         // Fall back to average weight if no pre-computed ranks
         const w =
           weight ??
-          LUNAR_RANK_WEIGHTS.reduce((a, b) => a + b, 0) /
-            teamBuild.configs.length;
+          LUNAR_RANK_WEIGHTS.reduce((a, b) => a + b, 0) / eligible.length;
         if (w === 0) continue;
         charExprs.push(
           E.mul(
@@ -631,14 +632,16 @@ export function compileComboTeamDamage(
         if (rp.isMultiContributor(line.formulaId)) {
           // Use pre-computed rank weights from TeamBuild baseline estimation
           const rankWeights = rp.getRankWeights(line.formulaId);
+          const eligible = rp.getEligibleCharacters(line.formulaId);
           const charExprs: Expr[] = [];
           for (const cfg of configs) {
+            if (!eligible.includes(cfg.charId)) continue;
             const charStats = postExprStats[cfg.charId];
             if (!charStats) continue;
             const weight = rankWeights?.get(cfg.charId);
             const w =
               weight ??
-              LUNAR_RANK_WEIGHTS.reduce((a, b) => a + b, 0) / configs.length;
+              LUNAR_RANK_WEIGHTS.reduce((a, b) => a + b, 0) / eligible.length;
             if (w === 0) continue;
             charExprs.push(
               E.mul(
