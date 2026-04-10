@@ -492,14 +492,17 @@ describe("rxDeltaOverrideKey", () => {
 describe("deriveComboForAllocation — rx- handling", () => {
   it("expands a single rx- template line into per-character lines", () => {
     const rxDescriptor: ReactionComboEntry[] = [
-      { id: "rx-lunarCrystallize", count: 15, bonus: [] },
+      {
+        id: "rx-lunarCrystallize",
+        total: 15,
+        eligible: ["linnea", "columbina"],
+        onFieldCharId: "linnea",
+        bonus: [],
+      },
     ];
     const teamBuild = mockTeamBuild(
       {},
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "linnea",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "linnea" }
     );
     const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
     const allocation = makeAllocation({
@@ -509,25 +512,27 @@ describe("deriveComboForAllocation — rx- handling", () => {
 
     const result = deriveComboForAllocation(allocation, combo, teamBuild);
 
-    // On-field char (linnea) gets full count, columbina gets 0 (filtered out)
     const rxLines = result.lines.filter(
       (l) => l.formulaId === "rx-lunarCrystallize"
     );
-    expect(rxLines).toHaveLength(1);
-    expect(rxLines[0].charId).toBe("linnea");
-    expect(rxLines[0].count).toBe(15);
+    expect(rxLines).toHaveLength(2);
+    expect(rxLines.find((l) => l.charId === "linnea")!.count).toBe(14);
+    expect(rxLines.find((l) => l.charId === "columbina")!.count).toBe(1);
   });
 
-  it("default: on-field char gets full count, others get 0 (filtered)", () => {
+  it("default: per-character counts from descriptor", () => {
     const rxDescriptor: ReactionComboEntry[] = [
-      { id: "rx-lunarCharged", count: 9, bonus: [] },
+      {
+        id: "rx-lunarCharged",
+        total: 9,
+        eligible: ["flins", "columbina", "zibai"],
+        onFieldCharId: "flins",
+        bonus: [],
+      },
     ];
     const teamBuild = mockTeamBuild(
       {},
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "flins",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
     const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
     const allocation = makeAllocation({
@@ -541,22 +546,25 @@ describe("deriveComboForAllocation — rx- handling", () => {
     const rxLines = result.lines.filter(
       (l) => l.formulaId === "rx-lunarCharged"
     );
-    // Only flins (on-field) should appear, others filtered (count=0)
-    expect(rxLines).toHaveLength(1);
-    expect(rxLines[0].charId).toBe("flins");
-    expect(rxLines[0].count).toBe(9);
+    expect(rxLines).toHaveLength(3);
+    expect(rxLines.find((l) => l.charId === "flins")!.count).toBe(7);
+    expect(rxLines.find((l) => l.charId === "columbina")!.count).toBe(1);
+    expect(rxLines.find((l) => l.charId === "zibai")!.count).toBe(1);
   });
 
   it("rxCharOverrideKey redistributes counts across characters", () => {
     const rxDescriptor: ReactionComboEntry[] = [
-      { id: "rx-lunarCharged", count: 9, bonus: [] },
+      {
+        id: "rx-lunarCharged",
+        total: 9,
+        eligible: ["flins", "columbina"],
+        onFieldCharId: "flins",
+        bonus: [],
+      },
     ];
     const teamBuild = mockTeamBuild(
       {},
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "flins",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
     const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
     const allocation = makeAllocation({
@@ -579,26 +587,23 @@ describe("deriveComboForAllocation — rx- handling", () => {
       (l) => l.formulaId === "rx-lunarCharged"
     );
     expect(rxLines).toHaveLength(2);
-    const flinsLine = rxLines.find((l) => l.charId === "flins");
-    const colLine = rxLines.find((l) => l.charId === "columbina");
-    expect(flinsLine!.count).toBe(5);
-    expect(colLine!.count).toBe(4);
+    expect(rxLines.find((l) => l.charId === "flins")!.count).toBe(5);
+    expect(rxLines.find((l) => l.charId === "columbina")!.count).toBe(4);
   });
 
   it("rxDeltaOverrideKey changes the delta value", () => {
     const rxDescriptor: ReactionComboEntry[] = [
       {
         id: "rx-lunarCrystallize",
-        count: 15,
+        total: 15,
+        eligible: ["linnea"],
+        onFieldCharId: "linnea",
         bonus: [{ charId: "linnea", minC: 2, delta: 12 }],
       },
     ];
     const teamBuild = mockTeamBuild(
       {},
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "linnea",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "linnea" }
     );
     const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
     const allocation = makeAllocation({
@@ -628,16 +633,15 @@ describe("deriveComboForAllocation — rx- handling", () => {
     const rxDescriptor: ReactionComboEntry[] = [
       {
         id: "rx-lunarCrystallize",
-        count: 15,
+        total: 15,
+        eligible: ["linnea"],
+        onFieldCharId: "linnea",
         bonus: [{ charId: "linnea", minC: 2, delta: 12 }],
       },
     ];
     const teamBuild = mockTeamBuild(
       {},
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "linnea",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "linnea" }
     );
     const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
 
@@ -661,7 +665,7 @@ describe("deriveComboForAllocation — rx- handling", () => {
       resultC1.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
     ).toBe(15);
 
-    // C2: delta kicks in
+    // C2: delta kicks in → 15 + 12 = 27
     const resultC2 = deriveComboForAllocation(
       makeAllocation({ linnea: { constellation: 2 } }),
       combo,
@@ -669,52 +673,57 @@ describe("deriveComboForAllocation — rx- handling", () => {
     );
     expect(
       resultC2.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
-    ).toBe(27); // 15 + 12
+    ).toBe(27);
   });
 
-  it("zero-count characters are filtered out (no combo line emitted)", () => {
+  it("non-eligible characters are filtered out (no combo line emitted)", () => {
     const rxDescriptor: ReactionComboEntry[] = [
-      { id: "rx-lunarCharged", count: 9, bonus: [] },
+      {
+        id: "rx-lunarCharged",
+        total: 9,
+        eligible: ["flins", "zibai"],
+        onFieldCharId: "flins",
+        bonus: [],
+      },
     ];
     const teamBuild = mockTeamBuild(
       {},
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "flins",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
     const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
     const allocation = makeAllocation({
       flins: { constellation: 0 },
-      columbina: { constellation: 0 },
       zibai: { constellation: 0 },
+      pyroChar: { constellation: 0 },
     });
 
     const result = deriveComboForAllocation(allocation, combo, teamBuild);
 
-    // columbina and zibai have count=0 (not on-field) → should be filtered out
     const rxLines = result.lines.filter(
       (l) => l.formulaId === "rx-lunarCharged"
     );
     for (const line of rxLines) {
       expect(line.count).toBeGreaterThan(0);
     }
-    // Only flins should be present
-    const charIds = rxLines.map((l) => l.charId);
-    expect(charIds).not.toContain("columbina");
-    expect(charIds).not.toContain("zibai");
+    // flins gets 8, zibai gets 1, pyroChar not in descriptor → filtered
+    expect(rxLines.find((l) => l.charId === "flins")!.count).toBe(8);
+    expect(rxLines.find((l) => l.charId === "zibai")!.count).toBe(1);
+    expect(rxLines.map((l) => l.charId)).not.toContain("pyroChar");
   });
 
   it("rx- lines mixed with regular lines", () => {
     const rxDescriptor: ReactionComboEntry[] = [
-      { id: "rx-lunarCharged", count: 9, bonus: [] },
+      {
+        id: "rx-lunarCharged",
+        total: 9,
+        eligible: ["charA"],
+        onFieldCharId: "charA",
+        bonus: [],
+      },
     ];
     const teamBuild = mockTeamBuild(
       { charA: [{ id: "burst", count: 5 }] },
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "charA",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "charA" }
     );
     const combo = makeCombo([
       makeLine("charA", "burst", 3),
@@ -727,12 +736,10 @@ describe("deriveComboForAllocation — rx- handling", () => {
 
     const result = deriveComboForAllocation(allocation, combo, teamBuild);
 
-    // Regular line uses descriptor
     const burstLine = result.lines.find((l) => l.formulaId === "burst");
     expect(burstLine).toBeDefined();
     expect(burstLine!.count).toBe(5);
 
-    // rx- line expanded: charA (on-field) gets 9, charB gets 0 (filtered)
     const rxLines = result.lines.filter(
       (l) => l.formulaId === "rx-lunarCharged"
     );
@@ -743,16 +750,18 @@ describe("deriveComboForAllocation — rx- handling", () => {
 
   it("duplicate rx- template lines are deduplicated (only first emits)", () => {
     const rxDescriptor: ReactionComboEntry[] = [
-      { id: "rx-lunarCharged", count: 9, bonus: [] },
+      {
+        id: "rx-lunarCharged",
+        total: 9,
+        eligible: ["flins"],
+        onFieldCharId: "flins",
+        bonus: [],
+      },
     ];
     const teamBuild = mockTeamBuild(
       {},
-      {
-        rxDescriptor,
-        guessOnFieldChar: () => "flins",
-      }
+      { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
-    // Template has the same rx- line twice
     const combo = makeCombo([
       makeLine("flins", "rx-lunarCharged", 9),
       makeLine("flins", "rx-lunarCharged", 9),
@@ -766,7 +775,6 @@ describe("deriveComboForAllocation — rx- handling", () => {
     const rxLines = result.lines.filter(
       (l) => l.formulaId === "rx-lunarCharged"
     );
-    // Only one set of lines should be emitted (deduplicated)
     expect(rxLines).toHaveLength(1);
     expect(rxLines[0].count).toBe(9);
   });

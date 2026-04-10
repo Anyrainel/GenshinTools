@@ -445,6 +445,13 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     };
   }, [team.combos, team.selectedCombo, teamBuild, team.characters]);
 
+  // Persist the default combo to the store so getEffectiveCombo can find it
+  useEffect(() => {
+    if (team.combos.length === 0 && combo.lines.length > 0) {
+      updateTeam(team.id, { combos: [combo] });
+    }
+  }, [team.combos.length, combo, updateTeam, team.id]);
+
   const comboLineMap = useMemo(() => {
     const map = new Map<string, { lineIndex: number; line: ComboLine }>();
     for (let i = 0; i < combo.lines.length; i++) {

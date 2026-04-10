@@ -85,15 +85,6 @@ export const MULTI_CONTRIBUTOR_REACTIONS: ReadonlySet<ReactionType> = new Set([
   "lunarCrystallize",
 ]);
 
-/** Elements that contribute damage to each lunar reaction type. */
-const LUNAR_CONTRIBUTING_ELEMENTS: Partial<
-  Record<ReactionType, readonly Element[]>
-> = {
-  lunarCharged: ["Electro", "Hydro"],
-  lunarCrystallize: ["Geo", "Hydro"],
-  lunarBloom: ["Dendro", "Hydro"],
-};
-
 /** Rank weights: [Rank1, Rank2, Rank3, Rank4]. */
 export const LUNAR_RANK_WEIGHTS = [0.6, 0.3, 0.05, 0.05] as const;
 
@@ -107,29 +98,48 @@ export type ReactionComboDelta = {
   delta: number;
 };
 
-/** One reaction formula's base count + character-specific constellation deltas. */
+/** One reaction formula's combo descriptor.
+ *  `total` is the base trigger count (with Columbina ×4/3 baked in).
+ *  `eligible` lists participating charIds in team-slot order.
+ *  `onFieldCharId` receives the remainder after giving 1 to each other eligible.
+ *  `bonus` lists constellation-gated additive deltas to the total. */
 export type ReactionComboEntry = {
   id: string;
-  count: number;
+  total: number;
+  eligible: string[];
+  onFieldCharId: string;
   bonus: ReactionComboDelta[];
 };
 
-/** Resolve reaction combo entries into { formulaId → count },
- *  applying constellation-gated bonuses. Columbina modifier is already
- *  baked into the descriptor values by getReactionComboDescriptor(). */
+/** Resolve reaction combo entries into { formulaId → { charId → count } }.
+ *  Adds active constellation bonuses to the total, then distributes:
+ *  on-field char gets remainder, every other eligible char gets 1 (0 if total ≤ 0). */
 export function resolveReactionComboEntries(
   entries: ReactionComboEntry[],
   constellations: Record<string, number>
-): Record<string, number> {
-  const counts: Record<string, number> = {};
+): Record<string, Record<string, number>> {
+  const result: Record<string, Record<string, number>> = {};
   for (const entry of entries) {
-    let count = entry.count;
+    let total = entry.total;
     for (const b of entry.bonus) {
-      if ((constellations[b.charId] ?? 0) >= b.minC) count += b.delta;
+      if ((constellations[b.charId] ?? 0) >= b.minC) {
+        total += b.delta;
+      }
     }
-    counts[entry.id] = count;
+    const perChar: Record<string, number> = {};
+    if (total > 0) {
+      for (const charId of entry.eligible) {
+        perChar[charId] =
+          charId === entry.onFieldCharId
+            ? Math.max(0, total - (entry.eligible.length - 1))
+            : 1;
+      }
+    } else {
+      for (const charId of entry.eligible) perChar[charId] = 0;
+    }
+    result[entry.id] = perChar;
   }
-  return counts;
+  return result;
 }
 
 // ─── TeamReactionProvider ───
@@ -230,20 +240,10 @@ export class TeamReactionProvider {
       });
       this.formulas[id] = { label, parts: [{ formula }] };
 
-      if (MULTI_CONTRIBUTOR_REACTIONS.has(reaction)) {
-        // Only characters with contributing elements are eligible
-        const elements = LUNAR_CONTRIBUTING_ELEMENTS[reaction] ?? [];
-        this.eligibleChars[id] = configs
-          .filter((c) =>
-            elements.includes(teamMeta.elements[c.charId] as Element)
-          )
-          .map((c) => c.charId);
-      } else {
-        this.eligibleChars[id] = this.findEligibleChars(
-          reaction,
-          teamElementChars
-        );
-      }
+      this.eligibleChars[id] = this.findEligibleChars(
+        reaction,
+        teamElementChars
+      );
     }
 
     // Swirl special case: one formula per swirled element on the team
@@ -269,7 +269,7 @@ export class TeamReactionProvider {
     }
   }
 
-  /** Find eligible trigger characters, filtering out those with their own reaction formula. */
+  /** Find eligible trigger characters in team-slot order. */
   private findEligibleChars(
     reaction: ReactionType,
     teamElementChars: Map<Element, string[]>
@@ -277,13 +277,13 @@ export class TeamReactionProvider {
     const triggerElements = REACTION_TRIGGER_ELEMENTS[reaction];
     if (!triggerElements) return [];
 
-    const charIds: string[] = [];
+    const eligible = new Set<string>();
     for (const el of triggerElements) {
       const chars = teamElementChars.get(el);
-      if (chars) charIds.push(...chars);
+      if (chars) for (const c of chars) eligible.add(c);
     }
-    // Deduplicate (in case of multi-element overlap)
-    return [...new Set(charIds)];
+    // Return in team-slot order (configs order)
+    return this.configs.map((c) => c.charId).filter((id) => eligible.has(id));
   }
 
   // ─── Public API ───
@@ -385,7 +385,7 @@ export class TeamReactionProvider {
       ? (n: number) => Math.round((n * 4) / 3)
       : (n: number) => n;
 
-    for (const [id, count] of Object.entries(baseCounts)) {
+    for (const [id, baseTotal] of Object.entries(baseCounts)) {
       const bonus: ReactionComboDelta[] = [];
 
       // Linnea C2: extra LCr from Moondrift on Overdrive/Million Ton
@@ -399,30 +399,32 @@ export class TeamReactionProvider {
         });
       }
 
-      entries.push({ id, count: col(count), bonus });
+      const eligible = this.eligibleChars[id] ?? [];
+      const onFieldCharId = this.guessOnFieldChar(id) ?? eligible[0] ?? "";
+
+      entries.push({
+        id,
+        total: col(baseTotal),
+        eligible,
+        onFieldCharId,
+        bonus,
+      });
     }
 
     this.cachedDescriptor = entries;
     return entries;
   }
 
-  /** Resolve reaction combo counts at specific constellations. */
-  resolveReactionComboCounts(
-    constellations: Record<string, number>
-  ): Record<string, number> {
-    return resolveReactionComboEntries(
-      this.getReactionComboDescriptor(),
-      constellations
-    );
-  }
-
-  /** Heuristic reaction combo counts using construction-time constellations. */
-  getReactionComboCounts(): Record<string, number> {
+  /** Resolved per-character reaction combo counts at construction-time constellations. */
+  getReactionComboCounts(): Record<string, Record<string, number>> {
     const constellations: Record<string, number> = {};
     for (const c of this.configs) {
       constellations[c.charId] = this.charBases[c.charId]?.constellation ?? 0;
     }
-    return this.resolveReactionComboCounts(constellations);
+    return resolveReactionComboEntries(
+      this.getReactionComboDescriptor(),
+      constellations
+    );
   }
 
   /**
@@ -445,8 +447,35 @@ export class TeamReactionProvider {
   }
 
   /**
+   * Compute per-character damage contributions for a multi-contributor formula.
+   * Returns eligible characters' raw damage values (unsorted).
+   */
+  private computeContributions(
+    formulaId: string,
+    teamStats: Record<string, StatSheet>,
+    ctx: CalcContext
+  ): { charId: string; damage: number }[] {
+    const entry = this.formulas[formulaId];
+    if (!entry) return [];
+
+    const formula = entry.parts[0].formula;
+    const eligible = this.eligibleChars[formulaId] ?? [];
+    const contributions: { charId: string; damage: number }[] = [];
+    for (const config of this.configs) {
+      if (!eligible.includes(config.charId)) continue;
+      const stats = teamStats[config.charId];
+      if (!stats) continue;
+      contributions.push({
+        charId: config.charId,
+        damage: formula.calc(stats, config.charLevel, ctx),
+      });
+    }
+    return contributions;
+  }
+
+  /**
    * Evaluate multi-contributor lunar reaction.
-   * All 4 characters contribute; sorted by damage descending, then weighted by rank.
+   * All eligible characters contribute; sorted by damage descending, then weighted by rank.
    */
   getMultiContributorResult(
     formulaId: string,
@@ -454,24 +483,11 @@ export class TeamReactionProvider {
     teamStats: Record<string, StatSheet>,
     ctx: CalcContext
   ): DamageResult {
-    const entry = this.formulas[formulaId];
-    if (!entry) return { parts: [], totalDamage: 0 };
+    const contributions = this.computeContributions(formulaId, teamStats, ctx);
+    if (contributions.length === 0) return { parts: [], totalDamage: 0 };
 
-    const formula = entry.parts[0].formula;
     const precomputedWeights = this.rankWeights[formulaId];
 
-    // Compute each eligible character's individual contribution
-    const eligible = this.eligibleChars[formulaId] ?? [];
-    const contributions: { charId: string; damage: number }[] = [];
-    for (const config of this.configs) {
-      if (!eligible.includes(config.charId)) continue;
-      const stats = teamStats[config.charId];
-      if (!stats) continue;
-      const damage = formula.calc(stats, config.charLevel, ctx);
-      contributions.push({ charId: config.charId, damage });
-    }
-
-    // Use pre-computed rank weights if available, otherwise sort dynamically
     let totalDamage: number;
     if (precomputedWeights) {
       totalDamage = contributions.reduce(
@@ -507,34 +523,21 @@ export class TeamReactionProvider {
     }[];
     totalDamage: number;
   } {
-    const entry = this.formulas[formulaId];
-    if (!entry) return { contributors: [], totalDamage: 0 };
+    const contributions = this.computeContributions(formulaId, teamStats, ctx);
+    if (contributions.length === 0) return { contributors: [], totalDamage: 0 };
 
-    const formula = entry.parts[0].formula;
     const precomputedWeights = this.rankWeights[formulaId];
-
-    const eligible = this.eligibleChars[formulaId] ?? [];
-    const contributions: { charId: string; damage: number }[] = [];
-    for (const config of this.configs) {
-      if (!eligible.includes(config.charId)) continue;
-      const stats = teamStats[config.charId];
-      if (!stats) continue;
-      const damage = formula.calc(stats, config.charLevel, ctx);
-      contributions.push({ charId: config.charId, damage });
-    }
-
-    // Sort by pre-computed rank order if available, otherwise by damage
     if (precomputedWeights) {
+      // Sort by weight descending (highest rank first)
       contributions.sort(
         (a, b) =>
-          (precomputedWeights.get(a.charId) ?? 0) -
-          (precomputedWeights.get(b.charId) ?? 0)
+          (precomputedWeights.get(b.charId) ?? 0) -
+          (precomputedWeights.get(a.charId) ?? 0)
       );
-      // Reverse: highest weight (rank 1 = 1.0) first
-      contributions.reverse();
     } else {
       contributions.sort((a, b) => b.damage - a.damage);
     }
+
     const ranked = contributions.map((c, i) => ({
       charId: c.charId,
       rank: i + 1,

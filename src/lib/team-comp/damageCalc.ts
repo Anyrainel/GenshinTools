@@ -1543,26 +1543,14 @@ export class TeamBuild {
 
   /** Reaction combo as ComboLine[], ready to append to default combo. */
   getReactionComboLines(): ComboLine[] {
-    const counts = this.reactionProvider.getReactionComboCounts();
+    const resolved = this.reactionProvider.getReactionComboCounts();
     const lines: ComboLine[] = [];
-    for (const [formulaId, count] of Object.entries(counts)) {
-      if (count <= 0) continue;
-      const charId = this.reactionProvider.guessOnFieldChar(formulaId);
-      if (!charId) continue;
-      lines.push({ charId, formulaId, count });
+    for (const [formulaId, perChar] of Object.entries(resolved)) {
+      for (const [charId, count] of Object.entries(perChar)) {
+        if (count > 0) lines.push({ charId, formulaId, count });
+      }
     }
     return lines;
-  }
-
-  /** Resolve reaction combo counts at a given allocation's constellation set. */
-  resolveReactionComboForAllocation(
-    allocation: Record<string, { constellation: number }>
-  ): Record<string, number> {
-    const constellations: Record<string, number> = {};
-    for (const [charId, inv] of Object.entries(allocation)) {
-      constellations[charId] = inv.constellation;
-    }
-    return this.reactionProvider.resolveReactionComboCounts(constellations);
   }
 
   /** Evaluate a specific character's damage formula with the given team stats */

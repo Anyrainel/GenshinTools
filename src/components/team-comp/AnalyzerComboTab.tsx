@@ -19,7 +19,10 @@ import {
 import { getFormulaReactions } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { FormulaEntry } from "@/lib/team-comp/damageModels";
-import type { ReactionComboEntry } from "@/lib/team-comp/teamReactions";
+import {
+  type ReactionComboEntry,
+  resolveReactionComboEntries,
+} from "@/lib/team-comp/teamReactions";
 import type {
   ComboFormula,
   I18nLabel,
@@ -216,67 +219,22 @@ function CharComboRow({
       };
     }
 
-    const rows: FormulaRow[] = [];
+    // Collect all formula IDs: descriptor entries first (preserving order), then remaining
+    const allFormulaIds: string[] = [];
     const seen = new Set<string>();
-
     for (const entry of descriptor) {
       if (seen.has(entry.id)) continue;
       seen.add(entry.id);
-
-      const formulaInfo = allFormulas[entry.id];
-      const formulaEntry =
-        teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(entry.id) ??
-        null;
-      const reactions = getFormulaReactions(
-        charId,
-        formulaEntry,
-        charElement,
-        hasReactionFn
-      );
-
-      // Template counts for proportional distribution
-      const templateByRx = templateIndex[entry.id] ?? {};
-      const templateTotal = Object.values(templateByRx).reduce(
-        (s, t) => s + t.count,
-        0
-      );
-
-      const variants: Variant[] = reactions.map((rx) => {
-        const tmpl = templateByRx[rx];
-        const tmplCount = tmpl?.count ?? 0;
-        const isReaction = rx !== "none";
-
-        return {
-          lineKey: comboLineKey(
-            entry.id,
-            isReaction ? { reaction: rx } : undefined
-          ),
-          reactionType: rx,
-          getDefault: (c: number) => {
-            const desc = descriptorCounts[c]?.[entry.id] ?? 0;
-            return rx === "none" ? desc : 0;
-          },
-          reaction: isReaction
-            ? (tmpl?.reaction ?? { reaction: rx })
-            : undefined,
-          formulaEntry: isReaction ? (formulaEntry ?? undefined) : undefined,
-        };
-      });
-
-      rows.push({
-        formulaId: entry.id,
-        label: formulaInfo?.label,
-        minC: formulaInfo?.minC ?? 0,
-        variants,
-        showLabels: reactions.length > 1,
-      });
+      allFormulaIds.push(entry.id);
     }
-
-    // Add formulas not in the combo descriptor (default count = 0)
-    for (const [formulaId, formulaInfo] of Object.entries(allFormulas)) {
+    for (const formulaId of Object.keys(allFormulas)) {
       if (seen.has(formulaId)) continue;
       seen.add(formulaId);
+      allFormulaIds.push(formulaId);
+    }
 
+    return allFormulaIds.map((formulaId) => {
+      const formulaInfo = allFormulas[formulaId];
       const formulaEntry =
         teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
         null;
@@ -286,8 +244,10 @@ function CharComboRow({
         charElement,
         hasReactionFn
       );
+      const templateByRx = templateIndex[formulaId] ?? {};
 
       const variants: Variant[] = reactions.map((rx) => {
+        const tmpl = templateByRx[rx];
         const isReaction = rx !== "none";
         return {
           lineKey: comboLineKey(
@@ -295,22 +255,25 @@ function CharComboRow({
             isReaction ? { reaction: rx } : undefined
           ),
           reactionType: rx,
-          getDefault: (_c: number) => 0,
-          reaction: isReaction ? { reaction: rx } : undefined,
+          getDefault: (c: number) => {
+            const desc = descriptorCounts[c]?.[formulaId] ?? 0;
+            return rx === "none" ? desc : 0;
+          },
+          reaction: isReaction
+            ? (tmpl?.reaction ?? { reaction: rx })
+            : undefined,
           formulaEntry: isReaction ? (formulaEntry ?? undefined) : undefined,
         };
       });
 
-      rows.push({
+      return {
         formulaId,
         label: formulaInfo?.label,
         minC: formulaInfo?.minC ?? 0,
         variants,
         showLabels: reactions.length > 1,
-      });
-    }
-
-    return rows;
+      };
+    });
   }, [
     descriptor,
     allFormulas,
@@ -777,6 +740,13 @@ function ReactionComboTable({
     return map;
   }, [rxDescriptor]);
 
+  // Resolved per-char counts at base constellations
+  const resolvedCounts = useMemo(() => {
+    const constellations: Record<string, number> = {};
+    for (const c of baseConfigs) constellations[c.charId] = c.constellation;
+    return resolveReactionComboEntries(rxDescriptor, constellations);
+  }, [rxDescriptor, baseConfigs]);
+
   const formulaEntries = useMemo(
     () => Object.entries(rxFormulas),
     [rxFormulas]
@@ -823,11 +793,6 @@ function ReactionComboTable({
                 isMulti ? "teamComp.rxOnField" : "teamComp.rxTrigger"
               );
               const descriptorEntry = descriptorByFormula[formulaId];
-              // For formulas with a descriptor entry, on-field char gets base count
-              // For non-descriptor formulas, all default to 0
-              const onFieldCharId = isMulti
-                ? rp.guessOnFieldChar(formulaId)
-                : undefined;
               const eligible = rp.getEligibleCharacters(formulaId);
 
               return (
@@ -845,14 +810,9 @@ function ReactionComboTable({
                       cfg.charId,
                       formulaId
                     );
-                    // Default: descriptor on-field char gets base count;
-                    // non-multi first eligible gets 0 (user fills in);
-                    // non-eligible chars always 0
-                    let defaultCount = 0;
-                    if (descriptorEntry && cfg.charId === onFieldCharId) {
-                      defaultCount = descriptorEntry.count;
-                    }
                     const isEligible = eligible.includes(cfg.charId);
+                    const defaultCount =
+                      resolvedCounts[formulaId]?.[cfg.charId] ?? 0;
                     const effectiveCount =
                       comboOverrides[overrideKey] ?? defaultCount;
                     return (

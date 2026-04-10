@@ -609,34 +609,47 @@ export function deriveComboForAllocation(
   const rxCharCounts: Record<string, Record<string, number>> = {};
   for (const formulaId of allRxFormulaIds) {
     const entry = rxDescriptorMap[formulaId];
-    const isMulti = teamBuild.reactionProvider.isMultiContributor(formulaId);
-    const onFieldChar = isMulti
-      ? teamBuild.reactionProvider.guessOnFieldChar(formulaId)
-      : undefined;
-    const perChar: Record<string, number> = {};
+    if (!entry) {
+      rxCharCounts[formulaId] = {};
+      continue;
+    }
 
-    for (const charId of Object.keys(allocation)) {
-      // Descriptor formulas: on-field char gets base count; others: all default 0
-      const defaultBase = entry && charId === onFieldChar ? entry.count : 0;
-      let charCount =
-        comboOverrides?.[rxCharOverrideKey(charId, formulaId)] ?? defaultBase;
+    // Check if any per-char overrides exist for this formula
+    const hasCharOverride = entry.eligible.some(
+      (c) => comboOverrides?.[rxCharOverrideKey(c, formulaId)] != null
+    );
 
-      // Add constellation-gated deltas for this character (descriptor only)
-      if (entry) {
-        for (const b of entry.bonus) {
-          if (b.charId !== charId) continue;
-          const delta =
-            comboOverrides?.[rxDeltaOverrideKey(b.charId, formulaId)] ??
-            b.delta;
-          if ((allocation[b.charId]?.constellation ?? 0) >= b.minC) {
-            charCount += delta;
-          }
+    if (hasCharOverride) {
+      // User has overridden per-char counts — use directly
+      const perChar: Record<string, number> = {};
+      for (const charId of entry.eligible) {
+        const override = comboOverrides?.[rxCharOverrideKey(charId, formulaId)];
+        perChar[charId] = override ?? 0;
+      }
+      rxCharCounts[formulaId] = perChar;
+    } else {
+      // Resolve from descriptor: base total + active deltas → distribute
+      let total = entry.total;
+      for (const b of entry.bonus) {
+        const delta =
+          comboOverrides?.[rxDeltaOverrideKey(b.charId, formulaId)] ?? b.delta;
+        if ((allocation[b.charId]?.constellation ?? 0) >= b.minC) {
+          total += delta;
         }
       }
-
-      perChar[charId] = charCount;
+      const perChar: Record<string, number> = {};
+      if (total > 0) {
+        for (const charId of entry.eligible) {
+          perChar[charId] =
+            charId === entry.onFieldCharId
+              ? Math.max(0, total - (entry.eligible.length - 1))
+              : 1;
+        }
+      } else {
+        for (const charId of entry.eligible) perChar[charId] = 0;
+      }
+      rxCharCounts[formulaId] = perChar;
     }
-    rxCharCounts[formulaId] = perChar;
   }
 
   // Build new lines from template, adjusting counts
