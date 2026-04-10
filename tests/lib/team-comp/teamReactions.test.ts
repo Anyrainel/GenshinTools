@@ -922,3 +922,338 @@ describe("TeamReactionProvider — compiler path", () => {
     expect(relErr).toBeLessThan(1e-6);
   });
 });
+
+// ═══════════════════════════════════════════════════════════════
+// Reaction combo counts
+// ═══════════════════════════════════════════════════════════════
+
+// LCr only team: Linnea (Geo) + Columbina (Hydro)
+const LCR_ONLY: TeamSlotConfig[] = [
+  {
+    charId: "linnea",
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "lightbearing_moonshard",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: [],
+  },
+  {
+    charId: "columbina",
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "a_thousand_floating_dreams",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: [],
+  },
+];
+
+// LCh only team: Flins (Electro) + Xingqiu (Hydro)
+const LCH_ONLY: TeamSlotConfig[] = [
+  {
+    charId: "flins",
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "staff_of_homa",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: [],
+  },
+  {
+    charId: "xingqiu",
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "mistsplitter_reforged",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: [],
+  },
+];
+
+describe("reaction combo counts", () => {
+  it("LCr only → base 15, with Columbina → 20", () => {
+    // LCR_ONLY has Columbina → 15 * 4/3 = 20
+    const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    expect(counts["rx-lunarCrystallize"]).toBe(20);
+    expect(counts["rx-lunarCharged"]).toBeUndefined();
+  });
+
+  it("LCh only → 9", () => {
+    const tb = new TeamBuild(LCH_ONLY);
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    expect(counts["rx-lunarCharged"]).toBe(9);
+    expect(counts["rx-lunarCrystallize"]).toBeUndefined();
+  });
+
+  it("LCh + LCr → LCh=9, LCr=0", () => {
+    // LUNAR_TEAM has Columbina(Hydro), Flins(Electro), Zibai(Geo), Nahida(Dendro)
+    // This gives LCh, LCr, and LB (Hydro+Dendro)
+    // That's all 3 → both 0
+    // We need a team with LCh+LCr but no LB: need Electro+Hydro+Geo, no Dendro
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "flins",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "staff_of_homa",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "zibai",
+        charLevel: 80,
+        constellation: 0,
+        weaponId: "mistsplitter_reforged",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team);
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    // With Columbina: round(9 * 4/3) = 12, round(0 * 4/3) = 0
+    expect(counts["rx-lunarCharged"]).toBe(12);
+    expect(counts["rx-lunarCrystallize"]).toBe(0);
+  });
+
+  it("All 3 lunar → LCh=0, LCr=0", () => {
+    // LUNAR_TEAM: Columbina(Hydro) + Flins(Electro) + Zibai(Geo) + Nahida(Dendro)
+    // → LCh (Electro+Hydro), LCr (Geo+Hydro), LB (Dendro+Hydro)
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    expect(counts["rx-lunarCharged"]).toBe(0);
+    expect(counts["rx-lunarCrystallize"]).toBe(0);
+  });
+
+  it("LCr only without Columbina → base 15", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "mistsplitter_reforged",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    expect(counts["rx-lunarCrystallize"]).toBe(15);
+  });
+
+  it("Linnea C2 tap → +12 LCr", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 2,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "mistsplitter_reforged",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    // LCr only, no Columbina: base 15 + 12 = 27
+    expect(counts["rx-lunarCrystallize"]).toBe(27);
+  });
+
+  it("Linnea C2 continuous → +3 LCr", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 2,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "mistsplitter_reforged",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team, { linnea: "continuous" });
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    // LCr only, no Columbina: base 15 + 3 = 18
+    expect(counts["rx-lunarCrystallize"]).toBe(18);
+  });
+
+  it("Linnea C2 tap + Columbina → (15 + 12) × 4/3 = 36", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 2,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    // (15 + 12) * 4/3 = 36
+    expect(counts["rx-lunarCrystallize"]).toBe(36);
+  });
+
+  it("Linnea C2 continuous + Columbina → (15 + 3) × 4/3 = 24", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 2,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team, { linnea: "continuous" });
+    const counts = tb.reactionProvider.getReactionComboCounts();
+    expect(counts["rx-lunarCrystallize"]).toBe(24);
+  });
+});
+
+describe("guessOnFieldChar", () => {
+  it("prefers flins over other chars for LCh", () => {
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const onField = tb.reactionProvider.guessOnFieldChar("rx-lunarCharged");
+    expect(onField).toBe("flins");
+  });
+
+  it("prefers zibai over linnea for LCr", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "zibai",
+        charLevel: 80,
+        constellation: 0,
+        weaponId: "mistsplitter_reforged",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team);
+    const onField = tb.reactionProvider.guessOnFieldChar("rx-lunarCrystallize");
+    expect(onField).toBe("zibai");
+  });
+
+  it("falls back to first eligible element char", () => {
+    const tb = new TeamBuild(LCH_ONLY);
+    // No priority chars on team → falls back to first eligible (flins = Electro)
+    const onField = tb.reactionProvider.guessOnFieldChar("rx-lunarCharged");
+    expect(onField).toBe("flins");
+  });
+});
+
+describe("getReactionComboLines", () => {
+  it("produces ComboLine[] for LCr team", () => {
+    const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
+    const lines = tb.getReactionComboLines();
+    expect(lines.length).toBe(1);
+    expect(lines[0].formulaId).toBe("rx-lunarCrystallize");
+    expect(lines[0].count).toBe(20); // 15 * 4/3 with Columbina
+  });
+
+  it("omits zero-count lines", () => {
+    // All 3 lunar → both 0 → no lines
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const lines = tb.getReactionComboLines();
+    expect(lines.length).toBe(0);
+  });
+});
+
+describe("evaluateCombo integration with rx- lines", () => {
+  it("combo with rx- lines produces nonzero reaction damage", () => {
+    const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
+    const charIds = LCR_ONLY.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+
+    const rxLines = tb.getReactionComboLines();
+    expect(rxLines.length).toBeGreaterThan(0);
+
+    const combo: ComboFormula = {
+      id: "test",
+      label: { zh: "测试", en: "test" },
+      lines: rxLines,
+    };
+
+    const result = evaluateCombo(tb, combo, sheets, CTX);
+    expect(result.totalDamage).toBeGreaterThan(0);
+  });
+});
