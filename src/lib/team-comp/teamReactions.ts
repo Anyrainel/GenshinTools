@@ -296,6 +296,66 @@ export class TeamReactionProvider {
     return this.formulas[formulaId];
   }
 
+  /** Guess the on-field character for a reaction combo line.
+   *  Priority: best on-field damage dealer for the rotation. */
+  guessOnFieldChar(formulaId: string): string | undefined {
+    const eligible = this.eligibleChars[formulaId] ?? [];
+    const priority = ["flins", "zibai", "ineffa", "linnea", "columbina"];
+    for (const charId of priority) {
+      if (eligible.includes(charId)) return charId;
+    }
+    // Fallback: first eligible char
+    return eligible[0] ?? this.configs[0]?.charId;
+  }
+
+  /** Heuristic reaction combo counts for the default rotation. */
+  getReactionComboCounts(): Record<string, number> {
+    const hasLCh = "rx-lunarCharged" in this.formulas;
+    const hasLCr = "rx-lunarCrystallize" in this.formulas;
+    const hasLB = this.teamMeta.hasReaction("lunarBloom");
+
+    const counts: Record<string, number> = {};
+    const lunarCount = +hasLCh + +hasLCr + +hasLB;
+
+    if (lunarCount >= 3) {
+      if (hasLCh) counts["rx-lunarCharged"] = 0;
+      if (hasLCr) counts["rx-lunarCrystallize"] = 0;
+    } else if (lunarCount === 1) {
+      if (hasLCh) counts["rx-lunarCharged"] = 9;
+      if (hasLCr) counts["rx-lunarCrystallize"] = 15;
+    } else {
+      // lunarCount === 2
+      if (hasLCh && hasLCr) {
+        counts["rx-lunarCharged"] = 9;
+        counts["rx-lunarCrystallize"] = 0;
+      } else if (hasLCr && hasLB) {
+        counts["rx-lunarCrystallize"] = 3;
+      } else if (hasLCh && hasLB) {
+        counts["rx-lunarCharged"] = 3;
+      }
+    }
+
+    // Linnea C2: extra LCr from Moondrift on Overdrive/Million Ton
+    if (hasLCr) {
+      const linnea = this.charBases.linnea;
+      if (linnea && linnea.constellation >= 2) {
+        const linneaCombo = linnea.combo;
+        const isTap = "linnea-overdrive" in linneaCombo;
+        counts["rx-lunarCrystallize"] =
+          (counts["rx-lunarCrystallize"] ?? 0) + (isTap ? 12 : 3);
+      }
+    }
+
+    // Columbina P2: 33% more triggers (applied to ALL counts including increments)
+    if (this.configs.some((c) => c.charId === "columbina")) {
+      for (const key of Object.keys(counts)) {
+        counts[key] = Math.round((counts[key] * 4) / 3);
+      }
+    }
+
+    return counts;
+  }
+
   /**
    * Evaluate single-contributor reaction (transformative).
    * The trigger character's stats and level are used.
