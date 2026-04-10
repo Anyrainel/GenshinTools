@@ -435,6 +435,8 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
           }
         }
       }
+      // Append team reaction combo entries (LCh, LCr)
+      lines.push(...teamBuild.getReactionComboLines());
     }
     return {
       id: `combo-${Date.now()}`,
@@ -1282,6 +1284,8 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
                 }
               }
             }
+            // Append team reaction combo entries (LCh, LCr)
+            lines.push(...teamBuild.getReactionComboLines());
             updateTeam(team.id, {
               combos: [{ id: combo.id, label: combo.label, lines }],
             });
