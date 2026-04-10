@@ -13,12 +13,13 @@ import {
   hasCharOverrides,
   minErOverrideKey,
   removeCharOverrides,
+  rxCharOverrideKey,
+  rxDeltaOverrideKey,
 } from "@/lib/team-comp/analyzer";
 import { getFormulaReactions } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { FormulaEntry } from "@/lib/team-comp/damageModels";
 import type { ReactionComboEntry } from "@/lib/team-comp/teamReactions";
-import { resolveReactionComboEntries } from "@/lib/team-comp/teamReactions";
 import type {
   ComboFormula,
   I18nLabel,
@@ -90,6 +91,8 @@ export function AnalyzerComboTab({
           teamBuild={teamBuild}
           baseConfigs={baseConfigs}
           rxDescriptor={rxDescriptor}
+          comboOverrides={comboOverrides}
+          onComboOverridesChange={onComboOverridesChange}
         />
       )}
     </div>
@@ -167,30 +170,19 @@ function CharComboRow({
   const descriptor = teamBuild.getComboDescriptor(charId);
   const allFormulas = teamBuild.getAllFormulaIds()[charId] ?? {};
 
-  // Rx- entries where this character gates a constellation delta
-  const charRxEntries = useMemo(() => {
-    return rxDescriptor.filter((entry) =>
-      entry.bonus.some((b) => b.charId === charId)
-    );
+  // Rx- deltas gated by this character's constellation
+  const charRxDeltas = useMemo(() => {
+    const result: { entry: ReactionComboEntry; minC: number; delta: number }[] =
+      [];
+    for (const entry of rxDescriptor) {
+      for (const b of entry.bonus) {
+        if (b.charId === charId) {
+          result.push({ entry, minC: b.minC, delta: b.delta });
+        }
+      }
+    }
+    return result;
   }, [rxDescriptor, charId]);
-
-  // Resolve rx- counts at each constellation (this char varies, others at base)
-  const rxCountsByC = useMemo(() => {
-    const baseConstellations: Record<string, number> = {};
-    for (const cfg of teamBuild.configs) {
-      baseConstellations[cfg.charId] =
-        teamBuild.charBuilds[cfg.charId]?.charBase.constellation ?? 0;
-    }
-    const map: Record<number, Record<string, number>> = {};
-    for (const c of constellations) {
-      map[c] = resolveReactionComboEntries(
-        rxDescriptor,
-        { ...baseConstellations, [charId]: c },
-        teamBuild.reactionProvider.hasColumbina
-      );
-    }
-    return map;
-  }, [constellations, rxDescriptor, charId, teamBuild]);
 
   const descriptorCounts = useMemo(() => {
     const map: Record<number, Record<string, number>> = {};
@@ -544,24 +536,51 @@ function CharComboRow({
                 </tr>
               ))}
 
-              {/* Rx- rows: reaction entries gated by this character's constellation */}
-              {charRxEntries.map((entry) => {
+              {/* Rx- delta rows: this character's constellation-gated delta */}
+              {charRxDeltas.map(({ entry, minC, delta }) => {
                 const rxType = entry.id.replace("rx-", "") as ReactionType;
+                const overrideKey = rxDeltaOverrideKey(charId, entry.id);
+                const effectiveDelta = comboOverrides[overrideKey] ?? delta;
                 return (
                   <tr key={entry.id} className="bg-purple-500/5">
                     <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
                       <span className="text-xs text-purple-300">
-                        {t.reaction(rxType)}
+                        {t.reaction(rxType)}{" "}
+                        <span className="text-[10px] text-muted-foreground">
+                          Δ
+                        </span>
                       </span>
                     </td>
                     {constellations.map((c) => {
-                      const count = rxCountsByC[c]?.[entry.id] ?? 0;
+                      if (c < minC) {
+                        return (
+                          <td
+                            key={c}
+                            className="text-center px-1 py-0.5 text-muted-foreground border border-border"
+                          >
+                            —
+                          </td>
+                        );
+                      }
                       return (
                         <td
                           key={c}
-                          className="text-center px-1 py-0.5 border border-border text-xs text-purple-300"
+                          className="px-0.5 py-0.5 border border-border"
                         >
-                          {count}
+                          <NumericCell
+                            value={effectiveDelta}
+                            defaultValue={delta}
+                            onCommit={(num) => {
+                              const next = { ...comboOverrides };
+                              if (num == null || num === delta) {
+                                delete next[overrideKey];
+                              } else {
+                                next[overrideKey] = num;
+                              }
+                              onComboOverridesChange(next);
+                            }}
+                            min={0}
+                          />
                         </td>
                       );
                     })}
@@ -698,16 +717,17 @@ function ReactionComboTable({
   teamBuild,
   baseConfigs,
   rxDescriptor,
+  comboOverrides,
+  onComboOverridesChange,
 }: {
   teamBuild: TeamBuild;
   baseConfigs: TeamSlotConfig[];
   rxDescriptor: ReactionComboEntry[];
+  comboOverrides: ComboCountOverrides;
+  onComboOverridesChange: (overrides: ComboCountOverrides) => void;
 }) {
   const { t } = useLanguage();
   const rp = teamBuild.reactionProvider;
-
-  // Resolve base counts (at construction-time constellations)
-  const baseCounts = rp.getReactionComboCounts();
 
   return (
     <div className="flex flex-col rounded-lg bg-black/10 border border-purple-600/50 p-1.5 gap-1.5 xl:p-2">
@@ -741,17 +761,12 @@ function ReactionComboTable({
                   </th>
                 );
               })}
-              <th className="text-center px-1 py-0.5 font-normal border border-border whitespace-nowrap">
-                {t.ui("teamComp.analyzerCount")}
-              </th>
             </tr>
           </thead>
           <tbody>
             {rxDescriptor.map((entry) => {
               const rxType = entry.id.replace("rx-", "") as ReactionType;
               const onFieldCharId = rp.guessOnFieldChar(entry.id);
-              const eligible = rp.getEligibleCharacters(entry.id);
-              const count = baseCounts[entry.id] ?? 0;
               return (
                 <tr key={entry.id}>
                   <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
@@ -760,31 +775,33 @@ function ReactionComboTable({
                     </span>
                   </td>
                   {baseConfigs.map((cfg) => {
-                    const isOnField = cfg.charId === onFieldCharId;
-                    const isEligible = eligible.includes(cfg.charId);
+                    const overrideKey = rxCharOverrideKey(cfg.charId, entry.id);
+                    const defaultCount =
+                      cfg.charId === onFieldCharId ? entry.count : 0;
+                    const effectiveCount =
+                      comboOverrides[overrideKey] ?? defaultCount;
                     return (
                       <td
                         key={cfg.charId}
-                        className={cn(
-                          "text-center px-1 py-0.5 border border-border text-[10px]",
-                          isOnField
-                            ? "text-purple-300 font-semibold"
-                            : isEligible
-                              ? "text-foreground/60"
-                              : "text-muted-foreground"
-                        )}
+                        className="px-0.5 py-0.5 border border-border"
                       >
-                        {isOnField
-                          ? t.ui("teamComp.onField")
-                          : isEligible
-                            ? t.ui("teamComp.eligible")
-                            : "—"}
+                        <NumericCell
+                          value={effectiveCount}
+                          defaultValue={defaultCount}
+                          onCommit={(num) => {
+                            const next = { ...comboOverrides };
+                            if (num == null || num === defaultCount) {
+                              delete next[overrideKey];
+                            } else {
+                              next[overrideKey] = num;
+                            }
+                            onComboOverridesChange(next);
+                          }}
+                          min={0}
+                        />
                       </td>
                     );
                   })}
-                  <td className="text-center px-1 py-0.5 border border-border text-xs text-purple-300 font-semibold">
-                    {count}
-                  </td>
                 </tr>
               );
             })}

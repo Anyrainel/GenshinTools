@@ -180,6 +180,18 @@ export function minErOverrideKey(
   return `${charId}|${constellation}`;
 }
 
+/** Key for overriding a character's base count for a reaction combo entry.
+ *  Format: `_rx-char|{charId}|{formulaId}` — how many procs with this char on-field/triggering. */
+export function rxCharOverrideKey(charId: string, formulaId: string): string {
+  return `_rx-char|${charId}|${formulaId}`;
+}
+
+/** Key for overriding a character's constellation-gated delta for a reaction.
+ *  Format: `_rx-delta|{charId}|{formulaId}` */
+export function rxDeltaOverrideKey(charId: string, formulaId: string): string {
+  return `_rx-delta|${charId}|${formulaId}`;
+}
+
 /** Remove all entries for a given charId from a flat override record. */
 export function removeCharOverrides<T>(
   overrides: Record<string, T>,
@@ -582,16 +594,50 @@ export function deriveComboForAllocation(
       (templateTotals[line.charId][line.formulaId] ?? 0) + line.count;
   }
 
-  // Resolve rx- counts for this allocation's constellation set
-  const rxCounts = teamBuild.resolveReactionComboForAllocation(allocation);
+  // Resolve per-character rx- counts: charBase + charDelta, with override support
+  const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
+  const hasColumbina = teamBuild.reactionProvider.hasColumbina;
+  // Per-character counts keyed by `${charId}|${formulaId}` → count
+  const rxCharCounts: Record<string, Record<string, number>> = {};
+  for (const entry of rxDescriptor) {
+    const onFieldChar = teamBuild.reactionProvider.guessOnFieldChar(entry.id);
+    const perChar: Record<string, number> = {};
+
+    for (const charId of Object.keys(allocation)) {
+      // Base allocation: override or default (on-field char gets full count)
+      let charCount =
+        comboOverrides?.[rxCharOverrideKey(charId, entry.id)] ??
+        (charId === onFieldChar ? entry.count : 0);
+
+      // Add constellation-gated deltas for this character
+      for (const b of entry.bonus) {
+        if (b.charId !== charId) continue;
+        const delta =
+          comboOverrides?.[rxDeltaOverrideKey(b.charId, entry.id)] ?? b.delta;
+        if ((allocation[b.charId]?.constellation ?? 0) >= b.minC) {
+          charCount += delta;
+        }
+      }
+
+      if (hasColumbina) charCount = Math.round((charCount * 4) / 3);
+      perChar[charId] = charCount;
+    }
+    rxCharCounts[entry.id] = perChar;
+  }
 
   // Build new lines from template, adjusting counts
-  const lines: ComboLine[] = templateCombo.lines.map((line) => {
-    // Reaction combo lines: use allocation-adjusted counts
+  const rxLinesHandled = new Set<string>();
+  const lines: ComboLine[] = templateCombo.lines.flatMap((line) => {
+    // Reaction combo lines: expand to per-character lines
     if (line.formulaId.startsWith("rx-")) {
-      const rxCount = rxCounts[line.formulaId];
-      if (rxCount != null) return { ...line, count: rxCount };
-      return line;
+      // Only emit once per formulaId (template may have one line, we expand to many)
+      if (rxLinesHandled.has(line.formulaId)) return [];
+      rxLinesHandled.add(line.formulaId);
+      const perChar = rxCharCounts[line.formulaId];
+      if (!perChar) return [line];
+      return Object.entries(perChar)
+        .filter(([, count]) => count > 0)
+        .map(([charId, count]) => ({ ...line, charId, count }));
     }
 
     const charId = line.charId;
