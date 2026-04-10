@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { charInfo } from "@/data/charInfo";
 import {
   getCharacterLevelTier,
   getNextLevelTier,
@@ -1482,25 +1483,19 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
       raidenEBuffs.map((b) => [b.target.charId, b])
     );
 
-    // Raiden: 90 energy → 0.3% × 90 = 27%
-    expect(byCharId.raiden_shogun).toBeDefined();
-    expect(byCharId.raiden_shogun!.staticEntries[0]!.value).toBeCloseTo(
-      0.003 * 90
-    );
-
-    // Bennett: 60 energy → 0.3% × 60 = 18%
-    expect(byCharId.bennett).toBeDefined();
-    expect(byCharId.bennett!.staticEntries[0]!.value).toBeCloseTo(0.003 * 60);
-
-    // Xingqiu: 80 energy → 0.3% × 80 = 24%
-    expect(byCharId.xingqiu).toBeDefined();
-    expect(byCharId.xingqiu!.staticEntries[0]!.value).toBeCloseTo(0.003 * 80);
-
-    // Kazuha: 60 energy → 0.3% × 60 = 18%
-    expect(byCharId.kaedehara_kazuha).toBeDefined();
-    expect(byCharId.kaedehara_kazuha!.staticEntries[0]!.value).toBeCloseTo(
-      0.003 * 60
-    );
+    // Each character's buff value = 0.3% × their energy cost
+    for (const cid of [
+      "raiden_shogun",
+      "bennett",
+      "xingqiu",
+      "kaedehara_kazuha",
+    ] as const) {
+      const energy = charInfo[cid].energy;
+      expect(byCharId[cid]).toBeDefined();
+      expect(byCharId[cid]!.staticEntries[0]!.value).toBeCloseTo(
+        0.003 * energy
+      );
+    }
   });
 
   it("only the matching charId buff is active for a given calc target", () => {
