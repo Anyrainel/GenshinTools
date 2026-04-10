@@ -28,6 +28,9 @@ function mockTeamBuild(
     getComboDescriptor(charId: string): ComboDescriptor {
       return descriptors[charId] ?? [];
     },
+    resolveReactionComboForAllocation(): Record<string, number> {
+      return {};
+    },
   } as unknown as TeamBuild;
 }
 

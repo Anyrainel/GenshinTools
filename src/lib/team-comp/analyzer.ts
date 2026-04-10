@@ -582,8 +582,18 @@ export function deriveComboForAllocation(
       (templateTotals[line.charId][line.formulaId] ?? 0) + line.count;
   }
 
+  // Resolve rx- counts for this allocation's constellation set
+  const rxCounts = teamBuild.resolveReactionComboForAllocation(allocation);
+
   // Build new lines from template, adjusting counts
   const lines: ComboLine[] = templateCombo.lines.map((line) => {
+    // Reaction combo lines: use allocation-adjusted counts
+    if (line.formulaId.startsWith("rx-")) {
+      const rxCount = rxCounts[line.formulaId];
+      if (rxCount != null) return { ...line, count: rxCount };
+      return line;
+    }
+
     const charId = line.charId;
     const constellation = allocation[charId]?.constellation ?? 0;
     const lk = comboLineKey(line.formulaId, line.reaction);
