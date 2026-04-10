@@ -2417,7 +2417,34 @@ describe("forceOnField override", () => {
     expect(display.statSheets.xiangling.offField).toBeDefined();
   });
 
-  it("linnea tap combo has super-cycle only", () => {
+  it("linnea tap combo with LC has pound + overdrive", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "a_thousand_floating_dreams",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+      },
+    ];
+
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const combo = tb.getCombo("linnea");
+    expect(combo).toEqual({ "linnea-pound": 5, "linnea-overdrive": 5 });
+  });
+
+  it("linnea tap combo without LC has pound only", () => {
     const team: TeamSlotConfig[] = [
       {
         charId: "linnea",
@@ -2441,10 +2468,10 @@ describe("forceOnField override", () => {
 
     const tb = new TeamBuild(team, { linnea: "tap" });
     const combo = tb.getCombo("linnea");
-    expect(combo).toEqual({ "linnea-super-cycle": 5 });
+    expect(combo).toEqual({ "linnea-pound": 10 });
   });
 
-  it("linnea continuous-tap combo has million-ton + standard-pound", () => {
+  it("linnea continuous-tap combo has million-ton + pound", () => {
     const team: TeamSlotConfig[] = [
       {
         charId: "linnea",
@@ -2456,13 +2483,13 @@ describe("forceOnField override", () => {
         artifactHalfSetIds: ["def%-30", "def%-30"],
       },
       {
-        charId: "illuga",
+        charId: "columbina",
         charLevel: 90,
         constellation: 0,
-        weaponId: "the_widsith",
+        weaponId: "a_thousand_floating_dreams",
         refinement: 1,
         artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
       },
     ];
 
@@ -2470,11 +2497,11 @@ describe("forceOnField override", () => {
     const combo = tb.getCombo("linnea");
     expect(combo).toEqual({
       "linnea-million-ton": 1,
-      "linnea-standard-pound": 5,
+      "linnea-pound": 5,
     });
   });
 
-  it("linnea C2 ascendant gleam adds moondrift harmony parts to super-cycle", () => {
+  it("linnea C2 ascendant gleam adds moondrift harmony parts to overdrive", () => {
     const team: TeamSlotConfig[] = [
       {
         charId: "linnea",
@@ -2486,34 +2513,34 @@ describe("forceOnField override", () => {
         artifactHalfSetIds: ["def%-30", "def%-30"],
       },
       {
-        charId: "illuga",
+        charId: "columbina",
         charLevel: 90,
         constellation: 0,
-        weaponId: "the_widsith",
+        weaponId: "a_thousand_floating_dreams",
         refinement: 1,
         artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
       },
     ];
 
     const tb = new TeamBuild(team, { linnea: "tap" });
     const sheets: Record<string, StatSheet> = {
       linnea: new StatSheet([]),
-      illuga: new StatSheet([]),
+      columbina: new StatSheet([]),
     };
 
     const display = tb.getDisplayResult(
       "linnea",
-      "linnea-super-cycle",
+      "linnea-overdrive",
       sheets,
       ctx
     );
-    // 3 parts: Pound (Geo), Overdrive (LC), Moondrift Harmony (LC)
-    const parts = display.partsByFormula["linnea.linnea-super-cycle"] ?? [];
-    expect(parts.length).toBe(3);
+    // 2 parts: Overdrive (LC) + Moondrift Harmony (LC)
+    const parts = display.partsByFormula["linnea.linnea-overdrive"] ?? [];
+    expect(parts.length).toBe(2);
   });
 
-  it("linnea C0 super-cycle has no moondrift harmony part", () => {
+  it("linnea C0 overdrive has no moondrift harmony part", () => {
     const team: TeamSlotConfig[] = [
       {
         charId: "linnea",
@@ -2525,31 +2552,31 @@ describe("forceOnField override", () => {
         artifactHalfSetIds: ["def%-30", "def%-30"],
       },
       {
-        charId: "illuga",
+        charId: "columbina",
         charLevel: 90,
         constellation: 0,
-        weaponId: "the_widsith",
+        weaponId: "a_thousand_floating_dreams",
         refinement: 1,
         artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactHalfSetIds: ["hp%-20", "hp%-20"],
       },
     ];
 
     const tb = new TeamBuild(team, { linnea: "tap" });
     const sheets: Record<string, StatSheet> = {
       linnea: new StatSheet([]),
-      illuga: new StatSheet([]),
+      columbina: new StatSheet([]),
     };
 
     const display = tb.getDisplayResult(
       "linnea",
-      "linnea-super-cycle",
+      "linnea-overdrive",
       sheets,
       ctx
     );
-    // 2 parts only: Pound (Geo), Overdrive (LC)
-    const parts = display.partsByFormula["linnea.linnea-super-cycle"] ?? [];
-    expect(parts.length).toBe(2);
+    // 1 part only: Overdrive (LC)
+    const parts = display.partsByFormula["linnea.linnea-overdrive"] ?? [];
+    expect(parts.length).toBe(1);
   });
 });
 

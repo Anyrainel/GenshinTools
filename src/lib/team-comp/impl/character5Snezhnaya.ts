@@ -610,15 +610,21 @@ class Linnea extends CharacterBase {
       : []),
   ];
 
-  // Tap: Super Power Form — alternates Pound + Overdrive (if Moondrifts)
-  // Continuous Tap: Ultimate Power → Standard — Million Ton then slower Pounds
+  // Tap: Super Power Form — Pound only (no Moondrifts) or Pound + Overdrive (with Moondrifts)
+  // Continuous Tap: Million Ton (on-field) then Standard Pounds
   protected override get comboDescriptor(): ComboDescriptor {
+    const hasLC = this.teamMeta.hasReaction("lunarCrystallize");
     if (this.lumiMode === "tap") {
-      return [{ id: "linnea-super-cycle", count: 5 }];
+      return hasLC
+        ? [
+            { id: "linnea-pound", count: 5 },
+            { id: "linnea-overdrive", count: 5 },
+          ]
+        : [{ id: "linnea-pound", count: 10 }];
     }
     return [
       { id: "linnea-million-ton", count: 1 },
-      { id: "linnea-standard-pound", count: 5 },
+      { id: "linnea-pound", count: 5 },
     ];
   }
 
@@ -638,82 +644,82 @@ class Linnea extends CharacterBase {
       reaction: "lunarCrystallize" as const,
     };
 
+    const millionTonBespoke = (() => {
+      const hasC1 = this.constellation >= 1;
+      const hasC2 = this.constellation >= 2;
+      if (!hasC1 && !hasC2) return {};
+      const isC6 = this.constellation >= 6;
+      // General C1 buff gives 0.75 (C6: 1.125) DEF baseDmg to all LC hits.
+      // Million Ton gets 5 stacks × 1.5 (C6: 2.25) DEF each.
+      // Bespoke = total − general (since general already applies).
+      const generalScale = isC6 ? 0.75 * 1.5 : 0.75;
+      const perStack = isC6 ? 1.5 * 1.5 : 1.5;
+      const bespokeScale = perStack * 5 - generalScale;
+      const stats = hasC2 ? [{ key: "cd" as const, value: 1.5 }] : [];
+      return {
+        bespokeBuff: new ScalingBuff(
+          cbs(this, hasC1 ? "C1" : "C2", ["E"]),
+          { receiver: "self" },
+          stats,
+          "def",
+          "baseDmg",
+          hasC1 ? bespokeScale : 0
+        ),
+      };
+    })();
+
+    const c2MoondriftPart =
+      this.constellation >= 2 && this.isAscendantGleam
+        ? [{ formula: new LunarFormula(0, lcSkillTag), offField: true }]
+        : [];
+
     return {
-      // ── Tap (Super Power Form): one repeating cycle ──
-      "linnea-super-cycle": {
-        label: { zh: "E超厉害 (锤+重锤)", en: "E Super (Pound+OD)" },
+      // ── 捶捶乱打 (Pound-Pound Pummeler): 2× Geo hits, shared by both modes ──
+      "linnea-pound": {
+        label: { zh: "捶捶乱打", en: "Pound-Pound Pummeler" },
         parts: [
           {
             formula: new DirectFormula(poundMult, geoSkillTag, "def"),
             hits: 2,
             offField: true,
           },
+        ],
+      },
+      // ── 加力重锤 (Heavy Overdrive Hammer): LC hit, Tap mode with Moondrifts ──
+      "linnea-overdrive": {
+        label: { zh: "加力重锤", en: "Heavy Overdrive Hammer" },
+        parts: [
           {
             formula: new LunarDirectFormula(overdriveMult, lcSkillTag, "def"),
             offField: true,
           },
-          // C2 Ascendant Gleam: Overdrive triggers Moondrift Harmony (pure LC reaction DMG)
-          ...(this.constellation >= 2 && this.isAscendantGleam
-            ? [
-                {
-                  formula: new LunarFormula(0, lcSkillTag),
-                  offField: true,
-                },
-              ]
-            : []),
+          // C2 Ascendant Gleam: Overdrive triggers Moondrift Harmony
+          ...c2MoondriftPart,
         ],
       },
-      // ── Continuous Tap (Ultimate Power): front-loaded Million Ton ──
+      // ── 百万吨重锤 (Million Ton Crush): on-field, Continuous Tap mode ──
       "linnea-million-ton": {
-        label: { zh: "E百万吨", en: "E Million Ton" },
+        label: { zh: "百万吨重锤", en: "Million Ton Crush" },
         parts: [
           {
             formula: new LunarDirectFormula(millionTonMult, lcSkillTag, "def"),
-            ...(() => {
-              const hasC1 = this.constellation >= 1;
-              const hasC2 = this.constellation >= 2;
-              if (!hasC1 && !hasC2) return {};
-              const isC6 = this.constellation >= 6;
-              // General C1 buff gives 0.75 (C6: 1.125) DEF baseDmg to all LC hits.
-              // Million Ton gets 5 stacks × 1.5 (C6: 2.25) DEF each.
-              // Bespoke = total − general (since general already applies).
-              const generalScale = isC6 ? 0.75 * 1.5 : 0.75;
-              const perStack = isC6 ? 1.5 * 1.5 : 1.5;
-              const bespokeScale = perStack * 5 - generalScale;
-              const stats = hasC2 ? [{ key: "cd" as const, value: 1.5 }] : [];
-              return {
-                bespokeBuff: new ScalingBuff(
-                  cbs(this, hasC1 ? "C1" : "C2", ["E"]),
-                  { receiver: "self" },
-                  stats,
-                  "def",
-                  "baseDmg",
-                  hasC1 ? bespokeScale : 0
-                ),
-              };
-            })(),
-            offField: true,
+            ...millionTonBespoke,
           },
-          // C2 Ascendant Gleam: Million Ton triggers Moondrift Harmony (pure LC reaction DMG)
-          ...(this.constellation >= 2 && this.isAscendantGleam
-            ? [
-                {
-                  formula: new LunarFormula(0, lcSkillTag),
-                  offField: true,
-                },
-              ]
-            : []),
+          // C2 Ascendant Gleam: Million Ton triggers Moondrift Harmony
+          ...c2MoondriftPart,
         ],
       },
-      // ── Continuous Tap (Standard Power): slower Pounds after Million Ton ──
-      "linnea-standard-pound": {
-        label: { zh: "E普通厉害 (锤)", en: "E Standard (Pound)" },
+      // ── 百万吨重锤 off-field variant ──
+      "linnea-million-ton-offfield": {
+        label: { zh: "百万吨重锤 (速切)", en: "Million Ton (quick)" },
         parts: [
           {
-            formula: new DirectFormula(poundMult, geoSkillTag, "def"),
-            hits: 2,
+            formula: new LunarDirectFormula(millionTonMult, lcSkillTag, "def"),
+            ...millionTonBespoke,
             offField: true,
           },
+          // C2 Ascendant Gleam: Million Ton triggers Moondrift Harmony
+          ...c2MoondriftPart,
         ],
       },
     };
