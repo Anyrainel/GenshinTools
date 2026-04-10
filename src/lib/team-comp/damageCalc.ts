@@ -1541,6 +1541,49 @@ export class TeamBuild {
     return this.charBuilds[charId]?.charBase.rawComboDescriptor ?? [];
   }
 
+  /** Reaction combo as ComboLine[], ready to append to default combo. */
+  getReactionComboLines(): ComboLine[] {
+    const counts = this.reactionProvider.getReactionComboCounts();
+    const lines: ComboLine[] = [];
+    for (const [formulaId, count] of Object.entries(counts)) {
+      if (count <= 0) continue;
+      const charId = this.reactionProvider.guessOnFieldChar(formulaId);
+      if (!charId) continue;
+      lines.push({ charId, formulaId, count });
+    }
+    return lines;
+  }
+
+  /** Resolve reaction combo counts for a given allocation (constellation set).
+   *  Re-evaluates Linnea C2 increment at allocation constellations. */
+  resolveReactionComboForAllocation(
+    allocation: Record<string, { constellation: number }>
+  ): Record<string, number> {
+    const base = this.reactionProvider.getReactionComboCounts();
+
+    // Adjust for Linnea constellation difference
+    const linneaBuild = this.charBuilds.linnea;
+    if (linneaBuild && "rx-lunarCrystallize" in base) {
+      const linneaConstruction = linneaBuild.charBase.constellation;
+      const linneaAlloc = allocation.linnea?.constellation ?? 0;
+      if (linneaConstruction !== linneaAlloc) {
+        const linneaCombo = linneaBuild.charBase.combo;
+        const isTap = "linnea-overdrive" in linneaCombo;
+        const delta = isTap ? 12 : 3;
+        const c2Active = linneaAlloc >= 2;
+        const c2WasActive = linneaConstruction >= 2;
+        if (c2Active !== c2WasActive) {
+          const hasColumbina = "columbina" in this.charBuilds;
+          const adjust = hasColumbina ? Math.round((delta * 4) / 3) : delta;
+          base["rx-lunarCrystallize"] =
+            (base["rx-lunarCrystallize"] ?? 0) + (c2Active ? adjust : -adjust);
+        }
+      }
+    }
+
+    return base;
+  }
+
   /** Evaluate a specific character's damage formula with the given team stats */
   getDamageResult(
     charId: string,
