@@ -594,20 +594,19 @@ export function deriveComboForAllocation(
       (templateTotals[line.charId][line.formulaId] ?? 0) + line.count;
   }
 
-  // Resolve per-character rx- counts: charBase + charDelta, with override support
+  // Resolve per-character rx- counts: charBase + charDelta, with override support.
+  // Descriptor values already include Columbina modifier — use directly.
   const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
-  const hasColumbina = teamBuild.reactionProvider.hasColumbina;
-  // Per-character counts keyed by `${charId}|${formulaId}` → count
+  // Per-character counts keyed by formulaId → { charId → count }
   const rxCharCounts: Record<string, Record<string, number>> = {};
   for (const entry of rxDescriptor) {
     const onFieldChar = teamBuild.reactionProvider.guessOnFieldChar(entry.id);
     const perChar: Record<string, number> = {};
 
     for (const charId of Object.keys(allocation)) {
-      // Base allocation: override or default (on-field char gets full count)
+      const defaultBase = charId === onFieldChar ? entry.count : 0;
       let charCount =
-        comboOverrides?.[rxCharOverrideKey(charId, entry.id)] ??
-        (charId === onFieldChar ? entry.count : 0);
+        comboOverrides?.[rxCharOverrideKey(charId, entry.id)] ?? defaultBase;
 
       // Add constellation-gated deltas for this character
       for (const b of entry.bonus) {
@@ -619,7 +618,6 @@ export function deriveComboForAllocation(
         }
       }
 
-      if (hasColumbina) charCount = Math.round((charCount * 4) / 3);
       perChar[charId] = charCount;
     }
     rxCharCounts[entry.id] = perChar;

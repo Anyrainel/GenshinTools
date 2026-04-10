@@ -115,11 +115,11 @@ export type ReactionComboEntry = {
 };
 
 /** Resolve reaction combo entries into { formulaId → count },
- *  applying constellation-gated bonuses and optional Columbina modifier. */
+ *  applying constellation-gated bonuses. Columbina modifier is already
+ *  baked into the descriptor values by getReactionComboDescriptor(). */
 export function resolveReactionComboEntries(
   entries: ReactionComboEntry[],
-  constellations: Record<string, number>,
-  hasColumbina: boolean
+  constellations: Record<string, number>
 ): Record<string, number> {
   const counts: Record<string, number> = {};
   for (const entry of entries) {
@@ -128,11 +128,6 @@ export function resolveReactionComboEntries(
       if ((constellations[b.charId] ?? 0) >= b.minC) count += b.delta;
     }
     counts[entry.id] = count;
-  }
-  if (hasColumbina) {
-    for (const key of Object.keys(counts)) {
-      counts[key] = Math.round((counts[key] * 4) / 3);
-    }
   }
   return counts;
 }
@@ -350,7 +345,7 @@ export class TeamReactionProvider {
   }
 
   /** Whether Columbina is on the team (P2: ×4/3 reaction triggers). */
-  readonly hasColumbina: boolean;
+  private readonly hasColumbina: boolean;
 
   /** Cached reaction combo descriptor (built once). */
   private cachedDescriptor: ReactionComboEntry[] | undefined;
@@ -385,6 +380,11 @@ export class TeamReactionProvider {
       }
     }
 
+    // Columbina P2: ×4/3 baked into all values so downstream never needs to know
+    const col = this.hasColumbina
+      ? (n: number) => Math.round((n * 4) / 3)
+      : (n: number) => n;
+
     for (const [id, count] of Object.entries(baseCounts)) {
       const bonus: ReactionComboDelta[] = [];
 
@@ -392,10 +392,14 @@ export class TeamReactionProvider {
       if (id === "rx-lunarCrystallize" && this.charBases.linnea) {
         const linneaCombo = this.charBases.linnea.combo;
         const isTap = "linnea-overdrive" in linneaCombo;
-        bonus.push({ charId: "linnea", minC: 2, delta: isTap ? 12 : 3 });
+        bonus.push({
+          charId: "linnea",
+          minC: 2,
+          delta: col(isTap ? 12 : 3),
+        });
       }
 
-      entries.push({ id, count, bonus });
+      entries.push({ id, count: col(count), bonus });
     }
 
     this.cachedDescriptor = entries;
@@ -408,8 +412,7 @@ export class TeamReactionProvider {
   ): Record<string, number> {
     return resolveReactionComboEntries(
       this.getReactionComboDescriptor(),
-      constellations,
-      this.hasColumbina
+      constellations
     );
   }
 
