@@ -1,0 +1,118 @@
+{
+  "cyno": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 3,
+      "target": "partyOthers",
+      "minC": 4,
+      "procs": 5,
+      "conditionEn": "during Q, on electro reaction",
+      "conditionZh": ""
+    }
+  ],
+  "dehya": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 1.5,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 0.2,
+      "procs": 10
+    }
+  ],
+  "dori": [
+    {
+      "source": "Q",
+      "action": "Q",
+      "target": "active",
+      "minC": 0,
+      "conditionEn": "per tick during Q, 2s interval",
+      "conditionZh": "Q持续期间每2秒恢复",
+      "param": {
+        "source": "Q",
+        "index": 4,
+        "multiplier": 1
+      },
+      "note": "per tick, 2s interval, ~6 ticks over 12s duration"
+    },
+    {
+      "source": "P2",
+      "action": "E",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "erScale": {
+        "per100": 5.0,
+        "max": 15.0
+      }
+    }
+  ],
+  "faruzan": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "+0.5 per additional enemy hit, max 4",
+      "conditionZh": "",
+      "note": "+0.5 per additional enemy hit, max 4"
+    }
+  ],
+  "layla": [
+    {
+      "source": "C2",
+      "action": "periodicE",
+      "amount": 1,
+      "target": "self",
+      "minC": 2,
+      "procs": 4
+    }
+  ],
+  "nilou": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 15,
+      "target": "self",
+      "minC": 4
+    }
+  ],
+  "sethos": [
+    {
+      "source": "E",
+      "action": "E",
+      "amount": 12,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "on triggering electro reaction",
+      "conditionZh": ""
+    },
+    {
+      "source": "C6",
+      "action": "ChargeA",
+      "amount": 20,
+      "target": "self",
+      "minC": 6,
+      "cooldown": 15,
+      "conditionEn": "refunds P1 energy cost",
+      "conditionZh": "",
+      "note": "refunds P1 energy cost, amount depends on energy consumed (max 20)"
+    }
+  ],
+  "wanderer": [
+    {
+      "source": "P1",
+      "action": "A",
+      "amount": 0.8,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 0.2,
+      "conditionEn": "during E, requires electro absorption",
+      "conditionZh": "",
+      "procs": 25
+    }
+  ]
+}

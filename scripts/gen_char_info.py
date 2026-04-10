@@ -1,5 +1,6 @@
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -9,6 +10,77 @@ CHAR_ZH_PATHS = [
     GAME_DIR / "character_5_zh.json",
     GAME_DIR / "character_beta_zh.json",
 ]
+CHAR_STATS_PATHS = [
+    GAME_DIR / "character_stats.json",
+    GAME_DIR / "character_beta_stats.json",
+]
+
+
+def load_talent_data() -> dict:
+    """Load talent parameter data from character_stats.json files."""
+    talent_data = {}
+    for path in CHAR_STATS_PATHS:
+        if path.exists():
+            with open(path, encoding="utf-8") as f:
+                stats = json.load(f)
+            for char_id, entry in stats.items():
+                if char_id not in talent_data:
+                    talent = entry.get("talent", {})
+                    q_data = talent.get("Q")
+                    if q_data:
+                        talent_data[char_id] = q_data
+    return talent_data
+
+
+def resolve_burst_cost(raw_value: str, char_id: str, talent_data: dict) -> int:
+    """Resolve burst cost from a raw detail value.
+
+    raw_value can be:
+    - A template like '{param7:I}' → extract param index, look up in talent data
+    - A plain number like '60' → use directly
+    """
+    raw_value = str(raw_value).strip()
+
+    # Check for template pattern: {paramN:...}
+    m = re.match(r"\{param(\d+):[^}]+\}", raw_value)
+    if m:
+        param_index = int(m.group(1))  # 1-based
+        q_levels = talent_data.get(char_id)
+        if not q_levels:
+            print(
+                f"WARNING: {char_id}: no Q talent data to resolve {{param{param_index}}}",
+                file=sys.stderr,
+            )
+            return 0
+
+        # Resolve from first level, assert consistent across all levels
+        zero_idx = param_index - 1
+        if zero_idx < 0 or zero_idx >= len(q_levels[0]):
+            print(
+                f"WARNING: {char_id}: param{param_index} out of bounds "
+                f"(Q has {len(q_levels[0])} params)",
+                file=sys.stderr,
+            )
+            return 0
+
+        burst_cost = int(q_levels[0][zero_idx])
+
+        # Assert all levels have the same burst cost
+        for level_idx, level_row in enumerate(q_levels):
+            if zero_idx < len(level_row) and int(level_row[zero_idx]) != burst_cost:
+                print(
+                    f"WARNING: {char_id}: burst cost differs at level {level_idx}: "
+                    f"{int(level_row[zero_idx])} vs {burst_cost}",
+                    file=sys.stderr,
+                )
+
+        return burst_cost
+
+    # Plain number (e.g., beta characters with resolved values)
+    try:
+        return int(re.sub(r"[^0-9]", "", raw_value))
+    except ValueError:
+        return 0
 
 
 def main():
@@ -17,6 +89,8 @@ def main():
         if path.exists():
             with open(path, encoding="utf-8") as f:
                 data.update(json.load(f))
+
+    talent_data = load_talent_data()
 
     # Dictionary mapping char_id to the minimum constellation required to become a healer
     explicit_healers = {
@@ -77,11 +151,8 @@ def main():
         skills = char_data.get("skills", [])
         for skill in skills:
             for detail in skill.get("details", []):
-                if "元素能量" in detail[0]:
-                    try:
-                        energy = int(re.sub(r"[^0-9]", "", str(detail[1])))
-                    except ValueError:
-                        pass
+                if detail[0] == "元素能量":
+                    energy = resolve_burst_cost(detail[1], char_id, talent_data)
 
         constellations = char_data.get("constellations", [])
         c3_talent = "Q"

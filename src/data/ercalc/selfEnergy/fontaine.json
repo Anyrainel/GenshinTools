@@ -1,0 +1,84 @@
+{
+  "charlotte": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "procs": 5,
+      "conditionEn": "hits enemy marked by E, per 20s window",
+      "conditionZh": "",
+      "note": "per 20s window"
+    }
+  ],
+  "chevreuse": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 6,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 10,
+      "conditionEn": "on Overloaded by on-field character (not Chevreuse), requires P1",
+      "conditionZh": ""
+    }
+  ],
+  "escoffier": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "procs": 7,
+      "conditionEn": "probability equals crit rate, during P1 healing ticks after Q",
+      "conditionZh": "",
+      "note": "probability equals crit rate"
+    }
+  ],
+  "freminet": [
+    {
+      "source": "C2",
+      "action": "E",
+      "amount": 2,
+      "target": "self",
+      "minC": 2,
+      "conditionEn": "on High Pressure Smash; 3 energy if rank 4",
+      "conditionZh": ""
+    }
+  ],
+  "furina": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 5
+    }
+  ],
+  "lyney": [
+    {
+      "source": "P1",
+      "action": "ChargeA",
+      "amount": 3,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "when HP consumed by Prop Arrow shot",
+      "conditionZh": ""
+    }
+  ],
+  "navia": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 9,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "3 energy per Crystal Shrapnel consumed, max 9 (3 shards)",
+      "conditionZh": "",
+      "note": "3 energy per Crystal Shrapnel consumed, max 9 (3 shards)"
+    }
+  ]
+}

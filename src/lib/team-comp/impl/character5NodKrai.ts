@@ -195,30 +195,6 @@ class Columbina extends CharacterBase {
     }
 
     return {
-      "columbina-skill-initial": {
-        label: { zh: "E初始", en: "E Initial" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              this.param("E", 1),
-              { element: "Hydro", ability: "skill", reaction: "none" },
-              "hp"
-            ),
-          },
-        ],
-      },
-      "columbina-burst": {
-        label: { zh: "Q", en: "Q" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              this.param("Q", 1),
-              { element: "Hydro", ability: "burst", reaction: "none" },
-              "hp"
-            ),
-          },
-        ],
-      },
       "columbina-charge": {
         label: { zh: "重击", en: "CA" },
         parts: [
@@ -232,8 +208,20 @@ class Columbina extends CharacterBase {
           },
         ],
       },
+      "columbina-skill-initial": {
+        label: { zh: "E初始", en: "E Initial" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("E", 1),
+              { element: "Hydro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
       "columbina-skill-interference": {
-        label: { zh: "E干涉", en: "E Interference" },
+        label: { zh: "E引力干涉", en: "E Interference" },
         parts: [
           {
             formula: new LunarDirectFormula(
@@ -279,7 +267,7 @@ class Columbina extends CharacterBase {
       },
       // Gravity Ripple continuous Hydro DMG: Lv10 16.8% HP, Lv13 (C3+) 19.9% HP per tick
       "columbina-ripple": {
-        label: { zh: "E涟漪 (x1)", en: "E Ripple (×1)" },
+        label: { zh: "E引力涟漪", en: "E Ripple" },
         parts: [
           {
             formula: new DirectFormula(
@@ -288,6 +276,18 @@ class Columbina extends CharacterBase {
               "hp"
             ),
             offField: true,
+          },
+        ],
+      },
+      "columbina-burst": {
+        label: { zh: "Q", en: "Q" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
           },
         ],
       },

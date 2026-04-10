@@ -1,0 +1,34 @@
+{
+  "arlecchino": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 15,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 10,
+      "conditionEn": "on successful blood debt directive recollection",
+      "conditionZh": ""
+    }
+  ],
+  "tartaglia": [
+    {
+      "source": "Q",
+      "action": "Q",
+      "amount": 20,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "ranged burst only",
+      "conditionZh": ""
+    },
+    {
+      "source": "C2",
+      "action": "A",
+      "amount": 4,
+      "target": "self",
+      "minC": 2,
+      "conditionEn": "on defeating enemy with Riptide",
+      "conditionZh": ""
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "arataki_itto": [
+    {
+      "source": "C2",
+      "action": "Q",
+      "amount": 6,
+      "target": "self",
+      "minC": 2,
+      "procs": 3,
+      "conditionEn": "per Geo character in party, max 18",
+      "conditionZh": ""
+    }
+  ],
+  "kaedehara_kazuha": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 3,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "energy < 45, press E",
+      "conditionZh": ""
+    },
+    {
+      "source": "C4",
+      "action": "holdE",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "energy < 45, hold E",
+      "conditionZh": ""
+    }
+  ],
+  "kamisato_ayato": [
+    {
+      "source": "P2",
+      "action": "E",
+      "amount": 2,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 1,
+      "conditionEn": "off-field, energy < 40, 2/s passive",
+      "conditionZh": ""
+    }
+  ],
+  "kujou_sara": [
+    {
+      "source": "P2",
+      "action": "E",
+      "amount": 1.2,
+      "target": "party",
+      "minC": 0,
+      "erScale": {
+        "per100": 1.2
+      },
+      "cooldown": 3
+    }
+  ],
+  "raiden_shogun": [
+    {
+      "source": "Q",
+      "action": "Q",
+      "target": "party",
+      "minC": 0,
+      "procs": 5,
+      "cooldown": 1,
+      "param": {
+        "source": "Q",
+        "index": 17,
+        "multiplier": 1
+      },
+      "conditionEn": "per hit during Q musou isshin, max 5 procs",
+      "conditionZh": "Q梦想一心状态下每次命中恢复，至多5次"
+    }
+  ],
+  "sangonomiya_kokomi": [
+    {
+      "source": "C4",
+      "action": "A",
+      "amount": 0.8,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 0.2,
+      "conditionEn": "during Q",
+      "conditionZh": "",
+      "procs": 15
+    }
+  ],
+  "sayu": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 1.2,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 2,
+      "conditionEn": "on swirl reaction while on-field",
+      "conditionZh": ""
+    }
+  ],
+  "shikanoin_heizou": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 9,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "first 聚風真眼 burst gives 9, each additional gives 1.5, max 13.5 total",
+      "conditionZh": "",
+      "note": "first 聚風真眼 burst gives 9, each additional gives 1.5, max 13.5 total"
+    }
+  ],
+  "thoma": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 4
+    }
+  ],
+  "yae_miko": [
+    {
+      "source": "C1",
+      "action": "Q",
+      "amount": 8,
+      "target": "self",
+      "minC": 1,
+      "procs": 3
+    }
+  ],
+  "yumemizuki_mizuki": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "procs": 4
+    }
+  ]
+}

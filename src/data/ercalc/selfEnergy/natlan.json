@@ -1,0 +1,140 @@
+{
+  "chasca": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 1.5,
+      "target": "self",
+      "minC": 4,
+      "procs": 6
+    }
+  ],
+  "citlali": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 8,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 8
+    }
+  ],
+  "iansan": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 15,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 18,
+      "conditionEn": "during nightsoul state, per 6 nightsoul consumed",
+      "conditionZh": "",
+      "note": "per 6 nightsoul consumed"
+    }
+  ],
+  "ifa": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 6,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 8
+    }
+  ],
+  "kachina": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 3,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 5,
+      "conditionEn": "on crystallize shard pickup or Lunar Crystallize",
+      "conditionZh": ""
+    }
+  ],
+  "kinich": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 2.8
+    }
+  ],
+  "mualani": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 8,
+      "target": "self",
+      "minC": 4,
+      "procs": 2,
+      "conditionEn": "on pufferball pickup, requires P1",
+      "conditionZh": ""
+    }
+  ],
+  "ororon": [
+    {
+      "source": "P2",
+      "action": "A",
+      "amount": 3,
+      "target": "active",
+      "minC": 0,
+      "procs": 3,
+      "cooldown": 1,
+      "conditionEn": "after E hits enemy, on NA/CA/plunge hit within 15s",
+      "conditionZh": ""
+    },
+    {
+      "source": "P2",
+      "action": "A",
+      "amount": 3,
+      "target": "self",
+      "minC": 0,
+      "procs": 3,
+      "cooldown": 1,
+      "conditionEn": "after E hits enemy, on active char NA/CA/plunge hit within 15s, Ororon off-field",
+      "conditionZh": ""
+    },
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 8,
+      "target": "self",
+      "minC": 4
+    }
+  ],
+  "varesa": [
+    {
+      "source": "C2",
+      "action": "PlungeA",
+      "amount": 11.5,
+      "target": "self",
+      "minC": 2
+    },
+    {
+      "source": "C6",
+      "action": "PlungeA",
+      "amount": 30,
+      "target": "self",
+      "minC": 6,
+      "conditionEn": "on entering extreme drive state",
+      "conditionZh": "",
+      "note": "on entering extreme drive state"
+    }
+  ],
+  "xilonen": [
+    {
+      "source": "C2",
+      "action": "E",
+      "amount": 25,
+      "target": "party",
+      "minC": 2,
+      "conditionEn": "electro party members only, on source sample activation",
+      "conditionZh": ""
+    }
+  ]
+}

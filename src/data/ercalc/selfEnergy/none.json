@@ -1,0 +1,84 @@
+{
+  "traveler_dendro": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 3.5,
+      "target": "self",
+      "minC": 1
+    }
+  ],
+  "traveler_electro": [
+    {
+      "source": "E",
+      "action": "E",
+      "amount": 4,
+      "target": "active",
+      "minC": 0,
+      "procs": 2,
+      "conditionEn": "per amulet pickup;",
+      "conditionZh": ""
+    },
+    {
+      "source": "Q",
+      "action": "A",
+      "amount": 1,
+      "target": "active",
+      "minC": 0,
+      "cooldown": 0.5,
+      "conditionEn": "per lightning strike during Q;",
+      "conditionZh": ""
+    },
+    {
+      "source": "C6",
+      "action": "A",
+      "amount": 1,
+      "target": "active",
+      "minC": 6,
+      "conditionEn": "every 3rd lightning strike during Q",
+      "conditionZh": ""
+    }
+  ],
+  "traveler_geo": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "procs": 5
+    }
+  ],
+  "traveler_hydro": [
+    {
+      "source": "C1",
+      "action": "holdE",
+      "amount": 2,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "per dewdrop pickup; requires P1",
+      "conditionZh": ""
+    }
+  ],
+  "traveler_pyro": [
+    {
+      "source": "P2",
+      "action": "periodicE",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 12,
+      "conditionEn": "on-field character triggers pyro reaction in domain",
+      "conditionZh": ""
+    },
+    {
+      "source": "P2",
+      "action": "periodicE",
+      "amount": 4,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "party triggers Nightsoul Burst",
+      "conditionZh": ""
+    }
+  ]
+}

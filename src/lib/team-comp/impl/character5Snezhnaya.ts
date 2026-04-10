@@ -616,14 +616,14 @@ class Linnea extends CharacterBase {
     if (this.lumiMode === "tap") {
       return hasLC
         ? [
-            { id: "linnea-pound", count: 5 },
-            { id: "linnea-overdrive", count: 5 },
+            { id: "linnea-pound", count: 4 },
+            { id: "linnea-overdrive", count: 4 },
           ]
-        : [{ id: "linnea-pound", count: 10 }];
+        : [{ id: "linnea-pound", count: 8 }];
     }
     return [
       { id: "linnea-million-ton", count: 1 },
-      { id: "linnea-pound", count: 5 },
+      { id: "linnea-pound", count: 4 },
     ];
   }
 

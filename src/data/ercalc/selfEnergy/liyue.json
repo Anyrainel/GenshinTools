@@ -1,0 +1,65 @@
+{
+  "chongyun": [
+    {
+      "source": "C4",
+      "action": "A",
+      "amount": 1,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 2,
+      "conditionEn": "hit cryo-affected enemy",
+      "conditionZh": ""
+    }
+  ],
+  "gaming": [
+    {
+      "source": "C4",
+      "action": "PlungeA",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 0.2
+    }
+  ],
+  "ganyu": [
+    {
+      "source": "C1",
+      "action": "ChargeA",
+      "amount": 2,
+      "target": "self",
+      "minC": 1
+    }
+  ],
+  "qiqi": [
+    {
+      "source": "C1",
+      "action": "periodicE",
+      "amount": 2,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "hit enemy marked by Q",
+      "conditionZh": ""
+    }
+  ],
+  "xingqiu": [
+    {
+      "source": "C6",
+      "action": "A",
+      "amount": 3,
+      "target": "self",
+      "minC": 6,
+      "conditionEn": "during Q, every 3rd rain sword wave",
+      "conditionZh": ""
+    }
+  ],
+  "yaoyao": [
+    {
+      "source": "C2",
+      "action": "Q",
+      "amount": 3,
+      "target": "self",
+      "minC": 2,
+      "cooldown": 0.8
+    }
+  ]
+}

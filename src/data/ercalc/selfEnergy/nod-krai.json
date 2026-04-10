@@ -1,0 +1,91 @@
+{
+  "aino": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 10,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 10
+    }
+  ],
+  "columbina": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 6,
+      "target": "active",
+      "minC": 1,
+      "cooldown": 15,
+      "conditionEn": "moon-electro dominant during gravity interference",
+      "conditionZh": "",
+      "note": "moon-electro dominant during gravity interference"
+    },
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 15
+    }
+  ],
+  "flins": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 8,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 5.5,
+      "conditionEn": "party triggers moon-electro reaction",
+      "conditionZh": ""
+    }
+  ],
+  "illuga": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 12,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 15,
+      "conditionEn": "Illuga on-field triggers geo-related reaction",
+      "conditionZh": "",
+      "note": "Illuga must be on-field"
+    }
+  ],
+  "ineffa": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 5,
+      "target": "party",
+      "minC": 4,
+      "cooldown": 4,
+      "conditionEn": "party triggers moon-electro reaction",
+      "conditionZh": ""
+    }
+  ],
+  "jahoda": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "Q cat helper triggers elemental conversion",
+      "conditionZh": ""
+    }
+  ],
+  "lauma": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 5
+    }
+  ]
+}

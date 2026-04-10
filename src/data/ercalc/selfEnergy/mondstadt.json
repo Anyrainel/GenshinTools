@@ -1,0 +1,189 @@
+{
+  "albedo": [
+    {
+      "source": "C1",
+      "action": "periodicE",
+      "amount": 1.2,
+      "target": "self",
+      "minC": 1
+    }
+  ],
+  "barbara": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 1,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 10
+    },
+    {
+      "source": "C4",
+      "action": "ChargeA",
+      "amount": 1,
+      "target": "self",
+      "minC": 4,
+      "procs": 5
+    }
+  ],
+  "dahlia": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 2.5,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "during Q, per 祝颂 stack gained",
+      "conditionZh": ""
+    }
+  ],
+  "diona": [
+    {
+      "source": "C1",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "on Q effect end",
+      "conditionZh": ""
+    }
+  ],
+  "durin": [
+    {
+      "source": "E",
+      "action": "E",
+      "target": "self",
+      "minC": 0,
+      "param": {
+        "source": "E",
+        "index": 5,
+        "multiplier": 1
+      }
+    }
+  ],
+  "jean": [
+    {
+      "source": "P2",
+      "action": "Q",
+      "percentRefund": 20,
+      "target": "self",
+      "minC": 0
+    }
+  ],
+  "kaeya": [
+    {
+      "source": "C6",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 6
+    }
+  ],
+  "klee": [
+    {
+      "source": "P2",
+      "action": "ChargeA",
+      "amount": 2,
+      "target": "party",
+      "minC": 0,
+      "conditionEn": "on crit",
+      "conditionZh": ""
+    },
+    {
+      "source": "C6",
+      "action": "Q",
+      "amount": 3,
+      "target": "partyOthers",
+      "minC": 6,
+      "cooldown": 3,
+      "conditionEn": "during Q",
+      "conditionZh": ""
+    }
+  ],
+  "lisa": [
+    {
+      "source": "C1",
+      "action": "holdE",
+      "amount": 2,
+      "target": "self",
+      "minC": 1,
+      "procs": 5
+    }
+  ],
+  "mika": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 3,
+      "target": "self",
+      "minC": 4,
+      "procs": 5,
+      "conditionEn": "when Q's 鹰翎 heals a party member",
+      "conditionZh": ""
+    }
+  ],
+  "razor": [
+    {
+      "source": "E",
+      "action": "holdE",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "procs": 3,
+      "conditionEn": "per Electro Sigil absorbed",
+      "conditionZh": ""
+    },
+    {
+      "source": "E",
+      "action": "Q",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "procs": 3,
+      "conditionEn": "per Electro Sigil consumed on Q cast",
+      "conditionZh": ""
+    },
+    {
+      "source": "P4",
+      "action": "E",
+      "amount": 7,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 1,
+      "conditionEn": "during Q, on Electro Sigil overflow (requires 魔導 with 2+ 魔導 characters)",
+      "conditionZh": "",
+      "note": "requires 魔導 setup with 2+ 魔導 characters"
+    }
+  ],
+  "rosaria": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "on crit, max 1 per E",
+      "conditionZh": ""
+    }
+  ],
+  "venti": [
+    {
+      "source": "P2",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "on Q effect end",
+      "conditionZh": ""
+    },
+    {
+      "source": "P2",
+      "action": "Q",
+      "amount": 15,
+      "target": "party",
+      "minC": 0,
+      "conditionEn": "on Q effect end, only for characters matching absorbed element",
+      "conditionZh": ""
+    }
+  ]
+}
