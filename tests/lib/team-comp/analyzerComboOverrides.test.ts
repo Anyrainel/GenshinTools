@@ -8,8 +8,11 @@ import {
   deriveComboForAllocation,
   getEffectiveMinEr,
   minErOverrideKey,
+  rxCharOverrideKey,
+  rxDeltaOverrideKey,
 } from "@/lib/team-comp/analyzer";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
+import type { ReactionComboEntry } from "@/lib/team-comp/teamReactions";
 import type {
   ComboDescriptor,
   ComboFormula,
@@ -22,16 +25,28 @@ import { describe, expect, it } from "vitest";
 
 /** Create a minimal mock TeamBuild that returns given descriptors per character. */
 function mockTeamBuild(
-  descriptors: Record<string, ComboDescriptor>
+  descriptors: Record<string, ComboDescriptor>,
+  rxOpts?: {
+    rxDescriptor?: ReactionComboEntry[];
+    guessOnFieldChar?: (formulaId: string) => string | undefined;
+  }
 ): TeamBuild {
   return {
     getComboDescriptor(charId: string): ComboDescriptor {
       return descriptors[charId] ?? [];
     },
     reactionProvider: {
-      getReactionComboDescriptor: () => [],
+      getReactionComboDescriptor: () => rxOpts?.rxDescriptor ?? [],
       hasColumbina: false,
-      guessOnFieldChar: () => undefined,
+      guessOnFieldChar: rxOpts?.guessOnFieldChar ?? (() => undefined),
+      getFormulaIds: () => {
+        const ids: Record<string, { en: string; zh: string }> = {};
+        for (const e of rxOpts?.rxDescriptor ?? []) {
+          ids[e.id] = { en: e.id, zh: e.id };
+        }
+        return ids;
+      },
+      isMultiContributor: () => true,
     },
   } as unknown as TeamBuild;
 }
@@ -441,5 +456,318 @@ describe("buildEffectivePerChar", () => {
 
     expect(result.charA.minEr).toBe(1.5);
     expect(result.charA.minCr).toBe(0);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Analyzer override keys — rxCharOverrideKey / rxDeltaOverrideKey
+// ═══════════════════════════════════════════════════════════════
+
+describe("rxCharOverrideKey", () => {
+  it("builds _rx-char|{charId}|{formulaId} format", () => {
+    expect(rxCharOverrideKey("flins", "rx-lunarCharged")).toBe(
+      "_rx-char|flins|rx-lunarCharged"
+    );
+    expect(rxCharOverrideKey("linnea", "rx-lunarCrystallize")).toBe(
+      "_rx-char|linnea|rx-lunarCrystallize"
+    );
+  });
+});
+
+describe("rxDeltaOverrideKey", () => {
+  it("builds _rx-delta|{charId}|{formulaId} format", () => {
+    expect(rxDeltaOverrideKey("linnea", "rx-lunarCrystallize")).toBe(
+      "_rx-delta|linnea|rx-lunarCrystallize"
+    );
+    expect(rxDeltaOverrideKey("zibai", "rx-lunarCharged")).toBe(
+      "_rx-delta|zibai|rx-lunarCharged"
+    );
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// deriveComboForAllocation — rx- line expansion
+// ═══════════════════════════════════════════════════════════════
+
+describe("deriveComboForAllocation — rx- handling", () => {
+  it("expands a single rx- template line into per-character lines", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      { id: "rx-lunarCrystallize", count: 15, bonus: [] },
+    ];
+    const teamBuild = mockTeamBuild(
+      {},
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "linnea",
+      }
+    );
+    const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
+    const allocation = makeAllocation({
+      linnea: { constellation: 0 },
+      columbina: { constellation: 0 },
+    });
+
+    const result = deriveComboForAllocation(allocation, combo, teamBuild);
+
+    // On-field char (linnea) gets full count, columbina gets 0 (filtered out)
+    const rxLines = result.lines.filter(
+      (l) => l.formulaId === "rx-lunarCrystallize"
+    );
+    expect(rxLines).toHaveLength(1);
+    expect(rxLines[0].charId).toBe("linnea");
+    expect(rxLines[0].count).toBe(15);
+  });
+
+  it("default: on-field char gets full count, others get 0 (filtered)", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      { id: "rx-lunarCharged", count: 9, bonus: [] },
+    ];
+    const teamBuild = mockTeamBuild(
+      {},
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "flins",
+      }
+    );
+    const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
+    const allocation = makeAllocation({
+      flins: { constellation: 0 },
+      columbina: { constellation: 0 },
+      zibai: { constellation: 0 },
+    });
+
+    const result = deriveComboForAllocation(allocation, combo, teamBuild);
+
+    const rxLines = result.lines.filter(
+      (l) => l.formulaId === "rx-lunarCharged"
+    );
+    // Only flins (on-field) should appear, others filtered (count=0)
+    expect(rxLines).toHaveLength(1);
+    expect(rxLines[0].charId).toBe("flins");
+    expect(rxLines[0].count).toBe(9);
+  });
+
+  it("rxCharOverrideKey redistributes counts across characters", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      { id: "rx-lunarCharged", count: 9, bonus: [] },
+    ];
+    const teamBuild = mockTeamBuild(
+      {},
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "flins",
+      }
+    );
+    const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
+    const allocation = makeAllocation({
+      flins: { constellation: 0 },
+      columbina: { constellation: 0 },
+    });
+    const overrides: ComboCountOverrides = {
+      [rxCharOverrideKey("flins", "rx-lunarCharged")]: 5,
+      [rxCharOverrideKey("columbina", "rx-lunarCharged")]: 4,
+    };
+
+    const result = deriveComboForAllocation(
+      allocation,
+      combo,
+      teamBuild,
+      overrides
+    );
+
+    const rxLines = result.lines.filter(
+      (l) => l.formulaId === "rx-lunarCharged"
+    );
+    expect(rxLines).toHaveLength(2);
+    const flinsLine = rxLines.find((l) => l.charId === "flins");
+    const colLine = rxLines.find((l) => l.charId === "columbina");
+    expect(flinsLine!.count).toBe(5);
+    expect(colLine!.count).toBe(4);
+  });
+
+  it("rxDeltaOverrideKey changes the delta value", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      {
+        id: "rx-lunarCrystallize",
+        count: 15,
+        bonus: [{ charId: "linnea", minC: 2, delta: 12 }],
+      },
+    ];
+    const teamBuild = mockTeamBuild(
+      {},
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "linnea",
+      }
+    );
+    const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
+    const allocation = makeAllocation({
+      linnea: { constellation: 2 },
+    });
+    // Override delta from 12 to 20
+    const overrides: ComboCountOverrides = {
+      [rxDeltaOverrideKey("linnea", "rx-lunarCrystallize")]: 20,
+    };
+
+    const result = deriveComboForAllocation(
+      allocation,
+      combo,
+      teamBuild,
+      overrides
+    );
+
+    const rxLines = result.lines.filter(
+      (l) => l.formulaId === "rx-lunarCrystallize"
+    );
+    expect(rxLines).toHaveLength(1);
+    // base 15 + overridden delta 20 = 35
+    expect(rxLines[0].count).toBe(35);
+  });
+
+  it("constellation gating: delta only applies when char meets minC", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      {
+        id: "rx-lunarCrystallize",
+        count: 15,
+        bonus: [{ charId: "linnea", minC: 2, delta: 12 }],
+      },
+    ];
+    const teamBuild = mockTeamBuild(
+      {},
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "linnea",
+      }
+    );
+    const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
+
+    // C0: delta not applied
+    const resultC0 = deriveComboForAllocation(
+      makeAllocation({ linnea: { constellation: 0 } }),
+      combo,
+      teamBuild
+    );
+    expect(
+      resultC0.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
+    ).toBe(15);
+
+    // C1: still not enough
+    const resultC1 = deriveComboForAllocation(
+      makeAllocation({ linnea: { constellation: 1 } }),
+      combo,
+      teamBuild
+    );
+    expect(
+      resultC1.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
+    ).toBe(15);
+
+    // C2: delta kicks in
+    const resultC2 = deriveComboForAllocation(
+      makeAllocation({ linnea: { constellation: 2 } }),
+      combo,
+      teamBuild
+    );
+    expect(
+      resultC2.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
+    ).toBe(27); // 15 + 12
+  });
+
+  it("zero-count characters are filtered out (no combo line emitted)", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      { id: "rx-lunarCharged", count: 9, bonus: [] },
+    ];
+    const teamBuild = mockTeamBuild(
+      {},
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "flins",
+      }
+    );
+    const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
+    const allocation = makeAllocation({
+      flins: { constellation: 0 },
+      columbina: { constellation: 0 },
+      zibai: { constellation: 0 },
+    });
+
+    const result = deriveComboForAllocation(allocation, combo, teamBuild);
+
+    // columbina and zibai have count=0 (not on-field) → should be filtered out
+    const rxLines = result.lines.filter(
+      (l) => l.formulaId === "rx-lunarCharged"
+    );
+    for (const line of rxLines) {
+      expect(line.count).toBeGreaterThan(0);
+    }
+    // Only flins should be present
+    const charIds = rxLines.map((l) => l.charId);
+    expect(charIds).not.toContain("columbina");
+    expect(charIds).not.toContain("zibai");
+  });
+
+  it("rx- lines mixed with regular lines", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      { id: "rx-lunarCharged", count: 9, bonus: [] },
+    ];
+    const teamBuild = mockTeamBuild(
+      { charA: [{ id: "burst", count: 5 }] },
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "charA",
+      }
+    );
+    const combo = makeCombo([
+      makeLine("charA", "burst", 3),
+      makeLine("charA", "rx-lunarCharged", 9),
+    ]);
+    const allocation = makeAllocation({
+      charA: { constellation: 0 },
+      charB: { constellation: 0 },
+    });
+
+    const result = deriveComboForAllocation(allocation, combo, teamBuild);
+
+    // Regular line uses descriptor
+    const burstLine = result.lines.find((l) => l.formulaId === "burst");
+    expect(burstLine).toBeDefined();
+    expect(burstLine!.count).toBe(5);
+
+    // rx- line expanded: charA (on-field) gets 9, charB gets 0 (filtered)
+    const rxLines = result.lines.filter(
+      (l) => l.formulaId === "rx-lunarCharged"
+    );
+    expect(rxLines).toHaveLength(1);
+    expect(rxLines[0].charId).toBe("charA");
+    expect(rxLines[0].count).toBe(9);
+  });
+
+  it("duplicate rx- template lines are deduplicated (only first emits)", () => {
+    const rxDescriptor: ReactionComboEntry[] = [
+      { id: "rx-lunarCharged", count: 9, bonus: [] },
+    ];
+    const teamBuild = mockTeamBuild(
+      {},
+      {
+        rxDescriptor,
+        guessOnFieldChar: () => "flins",
+      }
+    );
+    // Template has the same rx- line twice
+    const combo = makeCombo([
+      makeLine("flins", "rx-lunarCharged", 9),
+      makeLine("flins", "rx-lunarCharged", 9),
+    ]);
+    const allocation = makeAllocation({
+      flins: { constellation: 0 },
+    });
+
+    const result = deriveComboForAllocation(allocation, combo, teamBuild);
+
+    const rxLines = result.lines.filter(
+      (l) => l.formulaId === "rx-lunarCharged"
+    );
+    // Only one set of lines should be emitted (deduplicated)
+    expect(rxLines).toHaveLength(1);
+    expect(rxLines[0].count).toBe(9);
   });
 });

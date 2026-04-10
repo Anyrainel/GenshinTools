@@ -63,6 +63,8 @@ export function AnalyzerComboTab({
   onReactionChange,
 }: AnalyzerComboTabProps) {
   const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
+  const rxFormulas = teamBuild.reactionProvider.getFormulaIds();
+  const hasRxFormulas = Object.keys(rxFormulas).length > 0;
 
   return (
     <div className="flex flex-wrap justify-center items-start gap-x-3 gap-y-2 lg:gap-x-5 lg:gap-y-3">
@@ -86,7 +88,7 @@ export function AnalyzerComboTab({
           />
         );
       })}
-      {rxDescriptor.length > 0 && (
+      {hasRxFormulas && (
         <ReactionComboTable
           teamBuild={teamBuild}
           baseConfigs={baseConfigs}
@@ -263,6 +265,44 @@ function CharComboRow({
 
       rows.push({
         formulaId: entry.id,
+        label: formulaInfo?.label,
+        minC: formulaInfo?.minC ?? 0,
+        variants,
+        showLabels: reactions.length > 1,
+      });
+    }
+
+    // Add formulas not in the combo descriptor (default count = 0)
+    for (const [formulaId, formulaInfo] of Object.entries(allFormulas)) {
+      if (seen.has(formulaId)) continue;
+      seen.add(formulaId);
+
+      const formulaEntry =
+        teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
+        null;
+      const reactions = getFormulaReactions(
+        charId,
+        formulaEntry,
+        charElement,
+        hasReactionFn
+      );
+
+      const variants: Variant[] = reactions.map((rx) => {
+        const isReaction = rx !== "none";
+        return {
+          lineKey: comboLineKey(
+            formulaId,
+            isReaction ? { reaction: rx } : undefined
+          ),
+          reactionType: rx,
+          getDefault: (_c: number) => 0,
+          reaction: isReaction ? { reaction: rx } : undefined,
+          formulaEntry: isReaction ? (formulaEntry ?? undefined) : undefined,
+        };
+      });
+
+      rows.push({
+        formulaId,
         label: formulaInfo?.label,
         minC: formulaInfo?.minC ?? 0,
         variants,
@@ -729,6 +769,19 @@ function ReactionComboTable({
   const { t } = useLanguage();
   const rp = teamBuild.reactionProvider;
 
+  // All reaction formulas on the team, with descriptor base counts merged in
+  const rxFormulas = rp.getFormulaIds();
+  const descriptorByFormula = useMemo(() => {
+    const map: Record<string, ReactionComboEntry> = {};
+    for (const entry of rxDescriptor) map[entry.id] = entry;
+    return map;
+  }, [rxDescriptor]);
+
+  const formulaEntries = useMemo(
+    () => Object.entries(rxFormulas),
+    [rxFormulas]
+  );
+
   return (
     <div className="flex flex-col rounded-lg bg-black/10 border border-purple-600/50 p-1.5 gap-1.5 xl:p-2">
       <span className="font-bold text-foreground/90 text-xs md:text-base lg:text-sm xl:text-base">
@@ -764,20 +817,42 @@ function ReactionComboTable({
             </tr>
           </thead>
           <tbody>
-            {rxDescriptor.map((entry) => {
-              const rxType = entry.id.replace("rx-", "") as ReactionType;
-              const onFieldCharId = rp.guessOnFieldChar(entry.id);
+            {formulaEntries.map(([formulaId, label]) => {
+              const isMulti = rp.isMultiContributor(formulaId);
+              const roleLabel = t.ui(
+                isMulti ? "teamComp.rxOnField" : "teamComp.rxTrigger"
+              );
+              const descriptorEntry = descriptorByFormula[formulaId];
+              // For formulas with a descriptor entry, on-field char gets base count
+              // For non-descriptor formulas, all default to 0
+              const onFieldCharId = isMulti
+                ? rp.guessOnFieldChar(formulaId)
+                : undefined;
+              const eligible = rp.getEligibleCharacters(formulaId);
+
               return (
-                <tr key={entry.id}>
+                <tr key={formulaId}>
                   <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
                     <span className="text-xs text-purple-300">
-                      {t.reaction(rxType)}
+                      {t.resolveLabel(label)}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground ml-0.5">
+                      ({roleLabel})
                     </span>
                   </td>
                   {baseConfigs.map((cfg) => {
-                    const overrideKey = rxCharOverrideKey(cfg.charId, entry.id);
-                    const defaultCount =
-                      cfg.charId === onFieldCharId ? entry.count : 0;
+                    const overrideKey = rxCharOverrideKey(
+                      cfg.charId,
+                      formulaId
+                    );
+                    // Default: descriptor on-field char gets base count;
+                    // non-multi first eligible gets 0 (user fills in);
+                    // non-eligible chars always 0
+                    let defaultCount = 0;
+                    if (descriptorEntry && cfg.charId === onFieldCharId) {
+                      defaultCount = descriptorEntry.count;
+                    }
+                    const isEligible = eligible.includes(cfg.charId);
                     const effectiveCount =
                       comboOverrides[overrideKey] ?? defaultCount;
                     return (
@@ -785,20 +860,26 @@ function ReactionComboTable({
                         key={cfg.charId}
                         className="px-0.5 py-0.5 border border-border"
                       >
-                        <NumericCell
-                          value={effectiveCount}
-                          defaultValue={defaultCount}
-                          onCommit={(num) => {
-                            const next = { ...comboOverrides };
-                            if (num == null || num === defaultCount) {
-                              delete next[overrideKey];
-                            } else {
-                              next[overrideKey] = num;
-                            }
-                            onComboOverridesChange(next);
-                          }}
-                          min={0}
-                        />
+                        {isEligible ? (
+                          <NumericCell
+                            value={effectiveCount}
+                            defaultValue={defaultCount}
+                            onCommit={(num) => {
+                              const next = { ...comboOverrides };
+                              if (num == null || num === defaultCount) {
+                                delete next[overrideKey];
+                              } else {
+                                next[overrideKey] = num;
+                              }
+                              onComboOverridesChange(next);
+                            }}
+                            min={0}
+                          />
+                        ) : (
+                          <span className="flex justify-center text-muted-foreground">
+                            —
+                          </span>
+                        )}
                       </td>
                     );
                   })}

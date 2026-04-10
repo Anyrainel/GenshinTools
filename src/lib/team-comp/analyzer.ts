@@ -597,30 +597,46 @@ export function deriveComboForAllocation(
   // Resolve per-character rx- counts: charBase + charDelta, with override support.
   // Descriptor values already include Columbina modifier — use directly.
   const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
+  const rxDescriptorMap: Record<string, (typeof rxDescriptor)[number]> = {};
+  for (const entry of rxDescriptor) rxDescriptorMap[entry.id] = entry;
+
+  // All rx- formula IDs on the team (descriptor + non-descriptor)
+  const allRxFormulaIds = Object.keys(
+    teamBuild.reactionProvider.getFormulaIds()
+  );
+
   // Per-character counts keyed by formulaId → { charId → count }
   const rxCharCounts: Record<string, Record<string, number>> = {};
-  for (const entry of rxDescriptor) {
-    const onFieldChar = teamBuild.reactionProvider.guessOnFieldChar(entry.id);
+  for (const formulaId of allRxFormulaIds) {
+    const entry = rxDescriptorMap[formulaId];
+    const isMulti = teamBuild.reactionProvider.isMultiContributor(formulaId);
+    const onFieldChar = isMulti
+      ? teamBuild.reactionProvider.guessOnFieldChar(formulaId)
+      : undefined;
     const perChar: Record<string, number> = {};
 
     for (const charId of Object.keys(allocation)) {
-      const defaultBase = charId === onFieldChar ? entry.count : 0;
+      // Descriptor formulas: on-field char gets base count; others: all default 0
+      const defaultBase = entry && charId === onFieldChar ? entry.count : 0;
       let charCount =
-        comboOverrides?.[rxCharOverrideKey(charId, entry.id)] ?? defaultBase;
+        comboOverrides?.[rxCharOverrideKey(charId, formulaId)] ?? defaultBase;
 
-      // Add constellation-gated deltas for this character
-      for (const b of entry.bonus) {
-        if (b.charId !== charId) continue;
-        const delta =
-          comboOverrides?.[rxDeltaOverrideKey(b.charId, entry.id)] ?? b.delta;
-        if ((allocation[b.charId]?.constellation ?? 0) >= b.minC) {
-          charCount += delta;
+      // Add constellation-gated deltas for this character (descriptor only)
+      if (entry) {
+        for (const b of entry.bonus) {
+          if (b.charId !== charId) continue;
+          const delta =
+            comboOverrides?.[rxDeltaOverrideKey(b.charId, formulaId)] ??
+            b.delta;
+          if ((allocation[b.charId]?.constellation ?? 0) >= b.minC) {
+            charCount += delta;
+          }
         }
       }
 
       perChar[charId] = charCount;
     }
-    rxCharCounts[entry.id] = perChar;
+    rxCharCounts[formulaId] = perChar;
   }
 
   // Build new lines from template, adjusting counts
@@ -665,6 +681,16 @@ export function deriveComboForAllocation(
     // Fall through to template count
     return line;
   });
+
+  // Append rx- formulas not in the template (user-added via overrides)
+  for (const formulaId of allRxFormulaIds) {
+    if (rxLinesHandled.has(formulaId)) continue;
+    const perChar = rxCharCounts[formulaId];
+    if (!perChar) continue;
+    for (const [charId, count] of Object.entries(perChar)) {
+      if (count > 0) lines.push({ charId, formulaId, count });
+    }
+  }
 
   return { ...templateCombo, lines };
 }
