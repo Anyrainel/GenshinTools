@@ -1980,7 +1980,10 @@ describe("forceOnField override", () => {
     };
 
     // Columbina needs "lunarCrystallize" combat option to emit her C2 teamOnField.
-    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+    const tb = new TeamBuild(team, {
+      columbina: "lunarCrystallize",
+      linnea: "continuous",
+    });
 
     const displayOn = tb.getDisplayResult(
       "linnea",
@@ -2073,7 +2076,10 @@ describe("forceOnField override", () => {
       gorou: new StatSheet([]),
     };
 
-    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+    const tb = new TeamBuild(team, {
+      columbina: "lunarCrystallize",
+      linnea: "continuous",
+    });
     const reactionOverride = { forceOnField: true };
 
     // Path 1: display (getDisplayResult — the cold path the damage card uses)
@@ -2173,7 +2179,10 @@ describe("forceOnField override", () => {
       gorou: new StatSheet([]),
     };
 
-    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+    const tb = new TeamBuild(team, {
+      columbina: "lunarCrystallize",
+      linnea: "continuous",
+    });
 
     // getDamageResult needs teamStats resolved by the full pipeline.
     // Use getDisplayResult to obtain the resolved stat sheets for both modes,
@@ -2265,7 +2274,10 @@ describe("forceOnField override", () => {
       gorou: new StatSheet([]),
     };
 
-    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+    const tb = new TeamBuild(team, {
+      columbina: "lunarCrystallize",
+      linnea: "continuous",
+    });
 
     const optCtx = tb.createOptimizerContext(sheets, "linnea", "linnea", ctx);
 
@@ -2344,7 +2356,10 @@ describe("forceOnField override", () => {
       gorou: new StatSheet([]),
     };
 
-    const tb = new TeamBuild(team, { columbina: "lunarCrystallize" });
+    const tb = new TeamBuild(team, {
+      columbina: "lunarCrystallize",
+      linnea: "continuous",
+    });
 
     const combo: ComboFormula = {
       id: "test-combo",
@@ -2400,6 +2415,141 @@ describe("forceOnField override", () => {
     expect(display.statSheets.xiangling).toBeDefined();
     expect(display.statSheets.xiangling.onField).toBeDefined();
     expect(display.statSheets.xiangling.offField).toBeDefined();
+  });
+
+  it("linnea tap combo has super-cycle only", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+    ];
+
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const combo = tb.getCombo("linnea");
+    expect(combo).toEqual({ "linnea-super-cycle": 5 });
+  });
+
+  it("linnea continuous-tap combo has million-ton + standard-pound", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+    ];
+
+    const tb = new TeamBuild(team, { linnea: "continuous" });
+    const combo = tb.getCombo("linnea");
+    expect(combo).toEqual({
+      "linnea-million-ton": 1,
+      "linnea-standard-pound": 5,
+    });
+  });
+
+  it("linnea C2 ascendant gleam adds moondrift harmony parts to super-cycle", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 2,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+    ];
+
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const sheets: Record<string, StatSheet> = {
+      linnea: new StatSheet([]),
+      illuga: new StatSheet([]),
+    };
+
+    const display = tb.getDisplayResult(
+      "linnea",
+      "linnea-super-cycle",
+      sheets,
+      ctx
+    );
+    // 3 parts: Pound (Geo), Overdrive (LC), Moondrift Harmony (LC)
+    const parts = display.partsByFormula["linnea.linnea-super-cycle"] ?? [];
+    expect(parts.length).toBe(3);
+  });
+
+  it("linnea C0 super-cycle has no moondrift harmony part", () => {
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "linnea",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "lightbearing_moonshard",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["def%-30", "def%-30"],
+      },
+      {
+        charId: "illuga",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "the_widsith",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: ["em-80", "em-80"],
+      },
+    ];
+
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const sheets: Record<string, StatSheet> = {
+      linnea: new StatSheet([]),
+      illuga: new StatSheet([]),
+    };
+
+    const display = tb.getDisplayResult(
+      "linnea",
+      "linnea-super-cycle",
+      sheets,
+      ctx
+    );
+    // 2 parts only: Pound (Geo), Overdrive (LC)
+    const parts = display.partsByFormula["linnea.linnea-super-cycle"] ?? [];
+    expect(parts.length).toBe(2);
   });
 });
 
