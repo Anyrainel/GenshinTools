@@ -6,7 +6,6 @@ import {
   type DamageFormula,
   DirectFormula,
   LunarDirectFormula,
-  LunarFormula,
   TransformFormula,
 } from "../damageFormulas";
 import {
@@ -668,15 +667,10 @@ class Linnea extends CharacterBase {
       };
     })();
 
-    const c2MoondriftPart =
-      this.constellation >= 2 && this.isAscendantGleam
-        ? [{ formula: new LunarFormula(0, lcSkillTag), offField: true }]
-        : [];
-
     return {
       // ── 捶捶乱打 (Pound-Pound Pummeler): 2× Geo hits, shared by both modes ──
       "linnea-pound": {
-        label: { zh: "捶捶乱打", en: "Pound-Pound Pummeler" },
+        label: { zh: "E捶捶乱打", en: "Pound-Pound Pummeler" },
         parts: [
           {
             formula: new DirectFormula(poundMult, geoSkillTag, "def"),
@@ -687,39 +681,35 @@ class Linnea extends CharacterBase {
       },
       // ── 加力重锤 (Heavy Overdrive Hammer): LC hit, Tap mode with Moondrifts ──
       "linnea-overdrive": {
-        label: { zh: "加力重锤", en: "Heavy Overdrive Hammer" },
+        label: { zh: "E加力重锤", en: "Heavy Overdrive Hammer" },
         parts: [
           {
             formula: new LunarDirectFormula(overdriveMult, lcSkillTag, "def"),
             offField: true,
           },
-          // C2 Ascendant Gleam: Overdrive triggers Moondrift Harmony
-          ...c2MoondriftPart,
         ],
       },
       // ── 百万吨重锤 (Million Ton Crush): on-field, Continuous Tap mode ──
+      // C2 Ascendant Gleam: Overdrive/Million Ton triggers Moondrift Harmony —
+      // this is a team-level rx-lunarCrystallize event, added via combo lines.
       "linnea-million-ton": {
-        label: { zh: "百万吨重锤", en: "Million Ton Crush" },
+        label: { zh: "E百万吨重锤", en: "Million Ton Crush" },
         parts: [
           {
             formula: new LunarDirectFormula(millionTonMult, lcSkillTag, "def"),
             ...millionTonBespoke,
           },
-          // C2 Ascendant Gleam: Million Ton triggers Moondrift Harmony
-          ...c2MoondriftPart,
         ],
       },
       // ── 百万吨重锤 off-field variant ──
       "linnea-million-ton-offfield": {
-        label: { zh: "百万吨重锤 (速切)", en: "Million Ton (quick)" },
+        label: { zh: "E百万吨重锤速切", en: "Million Ton quick" },
         parts: [
           {
             formula: new LunarDirectFormula(millionTonMult, lcSkillTag, "def"),
             ...millionTonBespoke,
             offField: true,
           },
-          // C2 Ascendant Gleam: Million Ton triggers Moondrift Harmony
-          ...c2MoondriftPart,
         ],
       },
     };

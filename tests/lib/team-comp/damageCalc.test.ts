@@ -2224,10 +2224,12 @@ describe("forceOnField override", () => {
       { forceOnField: true }
     );
 
-    expect(calcOn.totalDamage).toBeGreaterThan(calcOff.totalDamage);
+    // linnea-million-ton is on-field by default, so forceOnField has no effect.
+    // Both paths should produce the same damage.
+    expect(calcOn.totalDamage).toBe(calcOff.totalDamage);
   });
 
-  it("linnea million-ton forceOnField increases damage via compile path (compileTeamDamage)", () => {
+  it("linnea million-ton-offfield forceOnField increases damage via compile path (compileTeamDamage)", () => {
     const team: TeamSlotConfig[] = [
       {
         charId: "linnea",
@@ -2284,14 +2286,14 @@ describe("forceOnField override", () => {
     const compiledOff = compileTeamDamage(
       tb,
       "linnea",
-      "linnea-million-ton",
+      "linnea-million-ton-offfield",
       ctx,
       optCtx
     );
     const compiledOn = compileTeamDamage(
       tb,
       "linnea",
-      "linnea-million-ton",
+      "linnea-million-ton-offfield",
       ctx,
       optCtx,
       { forceOnField: true }
@@ -2501,83 +2503,9 @@ describe("forceOnField override", () => {
     });
   });
 
-  it("linnea C2 ascendant gleam adds moondrift harmony parts to overdrive", () => {
-    const team: TeamSlotConfig[] = [
-      {
-        charId: "linnea",
-        charLevel: 90,
-        constellation: 2,
-        weaponId: "lightbearing_moonshard",
-        refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
-      },
-      {
-        charId: "columbina",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "a_thousand_floating_dreams",
-        refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
-      },
-    ];
-
-    const tb = new TeamBuild(team, { linnea: "tap" });
-    const sheets: Record<string, StatSheet> = {
-      linnea: new StatSheet([]),
-      columbina: new StatSheet([]),
-    };
-
-    const display = tb.getDisplayResult(
-      "linnea",
-      "linnea-overdrive",
-      sheets,
-      ctx
-    );
-    // 2 parts: Overdrive (LC) + Moondrift Harmony (LC)
-    const parts = display.partsByFormula["linnea.linnea-overdrive"] ?? [];
-    expect(parts.length).toBe(2);
-  });
-
-  it("linnea C0 overdrive has no moondrift harmony part", () => {
-    const team: TeamSlotConfig[] = [
-      {
-        charId: "linnea",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "lightbearing_moonshard",
-        refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
-      },
-      {
-        charId: "columbina",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "a_thousand_floating_dreams",
-        refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
-      },
-    ];
-
-    const tb = new TeamBuild(team, { linnea: "tap" });
-    const sheets: Record<string, StatSheet> = {
-      linnea: new StatSheet([]),
-      columbina: new StatSheet([]),
-    };
-
-    const display = tb.getDisplayResult(
-      "linnea",
-      "linnea-overdrive",
-      sheets,
-      ctx
-    );
-    // 1 part only: Overdrive (LC)
-    const parts = display.partsByFormula["linnea.linnea-overdrive"] ?? [];
-    expect(parts.length).toBe(1);
-  });
+  // TODO: C2 Ascendant Gleam triggers Moondrift Harmony (rx-lunarCrystallize)
+  // on Overdrive/Million Ton hits. This is a multi-contributor team reaction —
+  // needs reaction combo system to model correctly (not character formula parts).
 });
 
 // ═══════════════════════════════════════════════════════════════
