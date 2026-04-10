@@ -136,10 +136,12 @@ Symmetric reactions are listed under both trigger directions.
 
 ## Part 3: Regional Mechanics
 
-### Nightsoul's Blessing (Natlan)
-- Any **Natlan** character can enter Nightsoul's Blessing (a combat state that enhances abilities)
-- Checked via region = "Natlan"; not element-dependent
-- Many Natlan character buffs and passives are conditional on Nightsoul's Blessing being active
+### Nightsoul's Blessing (Nightsoul Faction)
+- Characters with the **Nightsoul** faction can enter Nightsoul's Blessing (a combat state that enhances abilities)
+- Nightsoul faction includes all Natlan characters + Traveler (Pyro) — detected via "夜魂" keyword in character kit data
+- Checked via `faction === "Nightsoul"` (NOT region); some effects like Chain Breaker genuinely check "纳塔角色" (Natlan region) — those stay as `region === "Natlan"`
+- Many Nightsoul character buffs and passives are conditional on Nightsoul's Blessing being active
+- Trigger strings use capitalized `"Nightsoul"` and `"Nightsoul Burst"` for i18n display
 
 ### Moonsign Gleam
 - **Nascent Gleam (初辉)**: Active when exactly **1** Moonsign faction member is in the party

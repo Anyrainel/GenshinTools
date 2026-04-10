@@ -35,7 +35,7 @@ class Varesa extends CharacterBase {
       1.8
     ),
     // P2: Nightsoul Burst → Varesa's ATK +35% (max 2 stacks = 70%)
-    new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [
+    new StatBuff(cbs(this, "P2", ["Nightsoul Burst"]), { receiver: "self" }, [
       { key: "atk%", value: 0.7 },
     ]),
     // C6: Plunge and Burst → CR +10%, CD +100%
@@ -381,7 +381,7 @@ class Mavuika extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P1: After nearby party member triggers Nightsoul Burst, Mavuika's ATK +30%
-      new StatBuff(cbs(this, "P1", ["nightsoul-burst"]), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P1", ["Nightsoul Burst"]), { receiver: "self" }, [
         { key: "atk%", value: 0.3 },
       ]),
       // P2 "Kiongozi": After Q, on-field DMG +0.2% per Spirit (max 200 = 40%)
@@ -887,7 +887,7 @@ class Xilonen extends CharacterBase {
 
     // P2: Nightsoul Burst → Xilonen's DEF +20% (personal buff, works off-field)
     buffs.push(
-      new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P2", ["Nightsoul Burst"]), { receiver: "self" }, [
         { key: "def%", value: 0.2 },
       ])
     );
@@ -1143,7 +1143,7 @@ class Mualani extends CharacterBase {
       // Assume max 3 stacks (easy to maintain with a Natlan team triggering Nightsoul Burst)
       // → +45% Max HP added to Q base damage as a ScalingBuff
       new ScalingBuff(
-        cbs(this, "P2", ["nightsoul-burst"]),
+        cbs(this, "P2", ["Nightsoul Burst"]),
         { receiver: "selfOnField", filter: { abilities: ["burst"] } },
         [],
         "hp",
@@ -1240,7 +1240,7 @@ class Kinich extends CharacterBase {
       // P2: After Nightsoul Burst, Hunter's Experience ×2 → +640% ATK as baseDmg to Scalespiker
       // We model the ATK scaling as a ScalingBuff applied to self Skill
       new ScalingBuff(
-        cbs(this, "P2", ["nightsoul-burst"]),
+        cbs(this, "P2", ["Nightsoul Burst"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         [],
         "atk",

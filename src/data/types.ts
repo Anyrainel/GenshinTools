@@ -51,7 +51,7 @@ export const regions: Region[] = [
   "None",
 ];
 
-export type Faction = "Hexerei" | "Moonsign" | "None";
+export type Faction = "Hexerei" | "Moonsign" | "Nightsoul" | "None";
 
 export type MainStatSlot = "sands" | "goblet" | "circlet";
 export const mainStatSlots: MainStatSlot[] = ["sands", "goblet", "circlet"];

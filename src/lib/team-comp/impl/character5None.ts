@@ -853,7 +853,7 @@ class TravelerPyro extends CharacterBase {
           ]),
           new StatBuff(
             cbs(this, "C1", ["E"]),
-            { receiver: "teamOnField", regions: ["Natlan"] },
+            { receiver: "teamOnField", factions: ["Nightsoul"] },
             [{ key: "dmg%", value: 0.09 }]
           ),
         ]

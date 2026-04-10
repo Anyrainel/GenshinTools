@@ -148,12 +148,15 @@ def main():
         plain_all_texts = re.sub(r"<[^>]+>", "", json.dumps(char_data, ensure_ascii=False))
         is_hexerei = "将成为魔导角色" in plain_all_texts
         is_moonsign = "月兆将会上升一级" in plain_all_texts
+        is_nightsoul = "夜魂" in plain_all_texts
 
         faction = None
         if is_hexerei:
             faction = "Hexerei"
         elif is_moonsign:
             faction = "Moonsign"
+        elif is_nightsoul:
+            faction = "Nightsoul"
 
         output.append(
             {

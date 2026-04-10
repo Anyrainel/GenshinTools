@@ -9,10 +9,10 @@ import { r, wbs } from "../helpers";
 
 @RegisterWeapon("a_thousand_blazing_suns")
 class AThousandBlazingSuns extends WeaponBase {
-  // Scorching Brilliance (E/Q triggers), +75% if wielder is a Natlan character
+  // Scorching Brilliance (E/Q triggers), +75% if wielder is in Nightsoul's Blessing
   get buffs() {
-    const isNatlan = this.teamMeta.regions[this.charId] === "Natlan";
-    const mult = isNatlan ? 1.75 : 1;
+    const isNightsoul = this.teamMeta.factions[this.charId] === "Nightsoul";
+    const mult = isNightsoul ? 1.75 : 1;
     return [
       new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
         {

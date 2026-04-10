@@ -39,7 +39,14 @@ Map every buff's game text to the correct receiver. Wrong receiver = **[BUG]**:
 
 In both cases, loop over `this.teamMeta.elements` and emit one buff per teammate.
 
-**`BuffTarget.factions` / `BuffTarget.regions` — faction/region-scoped buffs:** When game text restricts a buff to characters of a specific faction or region (e.g., "月兆角色" = Moonsign characters, "魔导角色" = Hexerei characters, "纳塔角色" = Natlan characters), use the `factions` or `regions` array on `BuffTarget` to scope the buff. This is **not** an engine gap — the engine filters recipients by faction/region at buff application time.
+**`BuffTarget.factions` / `BuffTarget.regions` — faction/region-scoped buffs:** When game text restricts a buff to characters of a specific faction or region, use the `factions` or `regions` array on `BuffTarget` to scope the buff. This is **not** an engine gap — the engine filters recipients by faction/region at buff application time.
+
+Available factions: `"Hexerei"`, `"Moonsign"`, `"Nightsoul"`, `"None"`.
+
+Key distinction — **Nightsoul faction vs Natlan region**:
+- "夜魂加持" (Nightsoul's Blessing), "夜魂值" (Nightsoul points), "夜魂迸发" (Nightsoul Burst) → use `factions: ["Nightsoul"]`
+- "纳塔角色" (Natlan character) → use `regions: ["Natlan"]` (genuinely region-based, e.g., Chain Breaker)
+- Nightsoul faction = all Natlan characters + Traveler (Pyro). The gen script detects "夜魂" keyword in character kit data.
 
 ```ts
 // Jahoda C6: "月兆角色的暴击率提升5%，暴击伤害提升40%" — Moonsign characters only
@@ -49,15 +56,20 @@ new StatBuff(
   [{ key: "cr", value: 0.05 }, { key: "cd", value: 0.4 }]
 )
 
-// Hypothetical: "附近的魔导角色攻击力提升20%" — Hexerei characters only
+// Nightsoul-conditional buff: "处于夜魂加持状态下时" — Nightsoul faction only
+// Use capitalized trigger "Nightsoul" for i18n display
 new StatBuff(
-  cbs(this, "P4", ["Q"]),
-  { receiver: "team", factions: ["Hexerei"] },
-  [{ key: "atk%", value: 0.2 }]
+  { type: "artifactSet", id: this.artifactSetId, triggers: ["Nightsoul"] },
+  { receiver: "selfOnField" },
+  [{ key: "cr", value: 0.4 }]
 )
+
+// Chain Breaker: "纳塔角色" — genuinely Natlan region, NOT Nightsoul
+const isNatlan = this.teamMeta.regions[id] === "Natlan";
 ```
 
 - **[BUG]** if a faction/region-restricted buff uses plain `receiver: "team"` without `factions`/`regions`, causing non-qualifying teammates to incorrectly receive the buff.
+- **[BUG]** if a Nightsoul-conditional effect checks `region === "Natlan"` instead of `faction === "Nightsoul"` — Traveler (Pyro) has Nightsoul but is not from Natlan.
 
 ### U2. `noStackId` on Weapon & Artifact Buffs
 

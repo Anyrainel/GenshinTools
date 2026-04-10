@@ -34,7 +34,7 @@ class Ifa extends CharacterBase {
       [{ key: "reactionDmg%", value: this.rescueEssentials * 0.002 }]
     ),
     // P2: When nearby party members trigger Nightsoul Bursts, Ifa's EM +80
-    new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [
+    new StatBuff(cbs(this, "P2", ["Nightsoul Burst"]), { receiver: "self" }, [
       { key: "em", value: 80 },
     ]),
     // C4: After Q, self EM +100
@@ -356,7 +356,7 @@ class Kachina extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P1: After nearby party members trigger a Nightsoul Burst, Kachina's Geo DMG +20%
-      new StatBuff(cbs(this, "P1", ["nightsoul-burst"]), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P1", ["Nightsoul Burst"]), { receiver: "self" }, [
         { key: "geo%", value: 0.2 },
       ]),
       // P2: Turbo Twirly's DMG is increased by 20% of Kachina's DEF

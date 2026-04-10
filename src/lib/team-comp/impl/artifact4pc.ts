@@ -942,17 +942,17 @@ class NighttimeWhispers4pc extends ArtifactSetBase {
 @RegisterArtifactSet("obsidian_codex")
 class ObsidianCodex4pc extends ArtifactSetBase {
   // 2pc: Nightsoul's Blessing + on-field → DMG +15% (via halfSetId)
-  // 4pc: After consuming 1 Nightsoul point on-field (Natlan), CR +40%
+  // 4pc: After consuming 1 Nightsoul point on-field, CR +40%
   readonly halfSetId = "nightsoul-dmg%-15";
   readonly stats: StatEntry[] = [];
   readonly buffs =
-    this.teamMeta.regions[this.charId] === "Natlan"
+    this.teamMeta.factions[this.charId] === "Nightsoul"
       ? [
           new StatBuff(
             {
               type: "artifactSet",
               id: this.artifactSetId,
-              triggers: ["nightsoul"],
+              triggers: ["Nightsoul"],
             },
             { receiver: "selfOnField" },
             [{ key: "cr", value: 0.4 }]
@@ -973,8 +973,8 @@ class ScrollOfTheHero4pc extends ArtifactSetBase {
   constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
     super(artifactSetId, charId, teamMeta);
 
-    // Natlan characters can trigger Nightsoul → 40% total, others → 12%
-    const bonus = teamMeta.regions[charId] === "Natlan" ? 0.4 : 0.12;
+    // Nightsoul characters can trigger Nightsoul Burst → 40% total, others → 12%
+    const bonus = teamMeta.factions[charId] === "Nightsoul" ? 0.4 : 0.12;
 
     const wearerElement = teamMeta.elements[charId];
     if (wearerElement === undefined) {

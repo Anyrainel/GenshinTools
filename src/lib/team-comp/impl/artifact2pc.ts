@@ -205,13 +205,13 @@ class NightsoulDmg2pc extends ArtifactHalfSetBase {
   // Sets: Obsidian Codex
   readonly stats: StatEntry[] = [];
   readonly buffs =
-    this.teamMeta.regions[this.charId] === "Natlan"
+    this.teamMeta.factions[this.charId] === "Nightsoul"
       ? [
           new StatBuff(
             {
               type: "artifactHalfSet",
               id: this.artifactHalfSetId,
-              triggers: ["nightsoul"],
+              triggers: ["Nightsoul"],
             },
             { receiver: "selfOnField" },
             [{ key: "dmg%", value: 0.15 }]
