@@ -97,6 +97,46 @@ const LUNAR_CONTRIBUTING_ELEMENTS: Partial<
 /** Rank weights: [Rank1, Rank2, Rank3, Rank4]. */
 export const LUNAR_RANK_WEIGHTS = [0.6, 0.3, 0.05, 0.05] as const;
 
+// ─── Reaction Combo Descriptor ───
+
+/** Constellation-gated additive delta for a reaction combo entry,
+ *  tagged with the character whose constellation gates it. */
+export type ReactionComboDelta = {
+  charId: string;
+  minC: number;
+  delta: number;
+};
+
+/** One reaction formula's base count + character-specific constellation deltas. */
+export type ReactionComboEntry = {
+  id: string;
+  count: number;
+  bonus: ReactionComboDelta[];
+};
+
+/** Resolve reaction combo entries into { formulaId → count },
+ *  applying constellation-gated bonuses and optional Columbina modifier. */
+export function resolveReactionComboEntries(
+  entries: ReactionComboEntry[],
+  constellations: Record<string, number>,
+  hasColumbina: boolean
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const entry of entries) {
+    let count = entry.count;
+    for (const b of entry.bonus) {
+      if ((constellations[b.charId] ?? 0) >= b.minC) count += b.delta;
+    }
+    counts[entry.id] = count;
+  }
+  if (hasColumbina) {
+    for (const key of Object.keys(counts)) {
+      counts[key] = Math.round((counts[key] * 4) / 3);
+    }
+  }
+  return counts;
+}
+
 // ─── TeamReactionProvider ───
 
 export class TeamReactionProvider {
@@ -125,6 +165,7 @@ export class TeamReactionProvider {
     for (const c of configs) {
       this.charLevels[c.charId] = c.charLevel;
     }
+    this.hasColumbina = configs.some((c) => c.charId === "columbina");
 
     // Collect team element info
     const teamElementChars = new Map<Element, string[]>();
@@ -308,52 +349,77 @@ export class TeamReactionProvider {
     return eligible[0] ?? this.configs[0]?.charId;
   }
 
-  /** Heuristic reaction combo counts for the default rotation. */
-  getReactionComboCounts(): Record<string, number> {
+  /** Whether Columbina is on the team (P2: ×4/3 reaction triggers). */
+  private readonly hasColumbina: boolean;
+
+  /** Cached reaction combo descriptor (built once). */
+  private cachedDescriptor: ReactionComboEntry[] | undefined;
+
+  /** Reaction combo descriptor: base counts + character-gated deltas. */
+  getReactionComboDescriptor(): ReactionComboEntry[] {
+    if (this.cachedDescriptor) return this.cachedDescriptor;
+
     const hasLCh = "rx-lunarCharged" in this.formulas;
     const hasLCr = "rx-lunarCrystallize" in this.formulas;
     const hasLB = this.teamMeta.hasReaction("lunarBloom");
 
-    const counts: Record<string, number> = {};
+    const entries: ReactionComboEntry[] = [];
     const lunarCount = +hasLCh + +hasLCr + +hasLB;
 
+    // Base counts from lunar reaction heuristics
+    const baseCounts: Record<string, number> = {};
     if (lunarCount >= 3) {
-      if (hasLCh) counts["rx-lunarCharged"] = 0;
-      if (hasLCr) counts["rx-lunarCrystallize"] = 0;
+      if (hasLCh) baseCounts["rx-lunarCharged"] = 0;
+      if (hasLCr) baseCounts["rx-lunarCrystallize"] = 0;
     } else if (lunarCount === 1) {
-      if (hasLCh) counts["rx-lunarCharged"] = 9;
-      if (hasLCr) counts["rx-lunarCrystallize"] = 15;
+      if (hasLCh) baseCounts["rx-lunarCharged"] = 9;
+      if (hasLCr) baseCounts["rx-lunarCrystallize"] = 15;
     } else {
-      // lunarCount === 2
       if (hasLCh && hasLCr) {
-        counts["rx-lunarCharged"] = 9;
-        counts["rx-lunarCrystallize"] = 0;
+        baseCounts["rx-lunarCharged"] = 9;
+        baseCounts["rx-lunarCrystallize"] = 0;
       } else if (hasLCr && hasLB) {
-        counts["rx-lunarCrystallize"] = 3;
+        baseCounts["rx-lunarCrystallize"] = 3;
       } else if (hasLCh && hasLB) {
-        counts["rx-lunarCharged"] = 3;
+        baseCounts["rx-lunarCharged"] = 3;
       }
     }
 
-    // Linnea C2: extra LCr from Moondrift on Overdrive/Million Ton
-    if (hasLCr) {
-      const linnea = this.charBases.linnea;
-      if (linnea && linnea.constellation >= 2) {
-        const linneaCombo = linnea.combo;
+    for (const [id, count] of Object.entries(baseCounts)) {
+      const bonus: ReactionComboDelta[] = [];
+
+      // Linnea C2: extra LCr from Moondrift on Overdrive/Million Ton
+      if (id === "rx-lunarCrystallize" && this.charBases.linnea) {
+        const linneaCombo = this.charBases.linnea.combo;
         const isTap = "linnea-overdrive" in linneaCombo;
-        counts["rx-lunarCrystallize"] =
-          (counts["rx-lunarCrystallize"] ?? 0) + (isTap ? 12 : 3);
+        bonus.push({ charId: "linnea", minC: 2, delta: isTap ? 12 : 3 });
       }
+
+      entries.push({ id, count, bonus });
     }
 
-    // Columbina P2: 33% more triggers (applied to ALL counts including increments)
-    if (this.configs.some((c) => c.charId === "columbina")) {
-      for (const key of Object.keys(counts)) {
-        counts[key] = Math.round((counts[key] * 4) / 3);
-      }
-    }
+    this.cachedDescriptor = entries;
+    return entries;
+  }
 
-    return counts;
+  /** Resolve reaction combo counts at specific constellations. */
+  resolveReactionComboCounts(
+    constellations: Record<string, number>
+  ): Record<string, number> {
+    return resolveReactionComboEntries(
+      this.getReactionComboDescriptor(),
+      constellations,
+      this.hasColumbina
+    );
+  }
+
+  /** Heuristic reaction combo counts using construction-time constellations. */
+  getReactionComboCounts(): Record<string, number> {
+    const constellations: Record<string, number> = {};
+    for (const c of this.configs) {
+      constellations[c.charId] = this.charBases[c.charId]?.constellation ?? 0;
+    }
+    return this.resolveReactionComboCounts(constellations);
   }
 
   /**

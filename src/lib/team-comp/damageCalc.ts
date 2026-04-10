@@ -1554,34 +1554,15 @@ export class TeamBuild {
     return lines;
   }
 
-  /** Resolve reaction combo counts for a given allocation (constellation set).
-   *  Re-evaluates Linnea C2 increment at allocation constellations. */
+  /** Resolve reaction combo counts at a given allocation's constellation set. */
   resolveReactionComboForAllocation(
     allocation: Record<string, { constellation: number }>
   ): Record<string, number> {
-    const base = this.reactionProvider.getReactionComboCounts();
-
-    // Adjust for Linnea constellation difference
-    const linneaBuild = this.charBuilds.linnea;
-    if (linneaBuild && "rx-lunarCrystallize" in base) {
-      const linneaConstruction = linneaBuild.charBase.constellation;
-      const linneaAlloc = allocation.linnea?.constellation ?? 0;
-      if (linneaConstruction !== linneaAlloc) {
-        const linneaCombo = linneaBuild.charBase.combo;
-        const isTap = "linnea-overdrive" in linneaCombo;
-        const delta = isTap ? 12 : 3;
-        const c2Active = linneaAlloc >= 2;
-        const c2WasActive = linneaConstruction >= 2;
-        if (c2Active !== c2WasActive) {
-          const hasColumbina = "columbina" in this.charBuilds;
-          const adjust = hasColumbina ? Math.round((delta * 4) / 3) : delta;
-          base["rx-lunarCrystallize"] =
-            (base["rx-lunarCrystallize"] ?? 0) + (c2Active ? adjust : -adjust);
-        }
-      }
+    const constellations: Record<string, number> = {};
+    for (const [charId, inv] of Object.entries(allocation)) {
+      constellations[charId] = inv.constellation;
     }
-
-    return base;
+    return this.reactionProvider.resolveReactionComboCounts(constellations);
   }
 
   /** Evaluate a specific character's damage formula with the given team stats */
