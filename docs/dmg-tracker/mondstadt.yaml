@@ -21,81 +21,18 @@
   created: "2026-03-28"
   resolved: "2026-03-29"
 
-- id: mona-c1-swirl-scope
-  entity: mona
-  rule: U5
+- id: varka-c1-maxstacks-self
+  entity: varka
+  rule: U8b
   status: completed
-  category: engine-gap
+  category: bug
   summary: >
-    C1 reactionDmg% filter uses generic "swirl", but game text specifies
-    "水元素扩散反应" (Hydro Swirl) only. The ReactionType enum has no
-    element-specific Swirl variants, so all Swirl DMG is boosted instead
-    of just Hydro Swirl.
+    C1 bespokeBuff on special E formula uses maxStacks: 1 with receiver
+    "selfOnField", violating U8b (self buffs must never use maxStacks). The C1
+    enhances the entire first Four Winds / Azure Devour cast to 200% original DMG,
+    but maxStacks: 1 limits the buff to only the first hit of the multi-part formula.
   detail: >
-    Split C1 swirl buff into separate StatBuff with filter { reactions: ["swirl"],
-    elements: ["Hydro"] } so only Hydro Swirl is boosted. Applied to both base
-    (team) and off-field enhancement (otherOffField) buffs.
-  created: "2026-03-29"
-  resolved: "2026-04-04"
-
-- id: sucrose-p4-hexerei-faction
-  entity: sucrose
-  rule: U1
-  status: completed
-  category: engine-gap
-  summary: >
-    P4 Hexerei Secret Rite Q buff (7.14285% DMG) targets Hexerei party members only
-    ("队伍中附近的魔导角色"), but implementation uses receiver "team" because
-    faction-scoped receivers are not supported. Non-Hexerei teammates incorrectly
-    receive the buff.
-  detail: >
-    Added factions: ["Hexerei"] to the P4 Q buff BuffTarget so only Hexerei
-    party members receive the 7.14285% DMG bonus.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: sucrose-c6-hexerei-faction
-  entity: sucrose
-  rule: U1
-  status: completed
-  category: engine-gap
-  summary: >
-    C6 Hexerei extra elemental DMG bonus (8.57142%) targets Hexerei party members
-    only ("队伍中附近的魔导角色"), but implementation uses receiver "team" because
-    faction-scoped receivers are not supported.
-  detail: >
-    Added factions: ["Hexerei"] to the C6 Hexerei extra DMG buff BuffTarget so
-    only Hexerei party members receive the additional 8.57142% elemental DMG bonus.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: albedo-p4-hexerei-faction
-  entity: albedo
-  rule: U1
-  status: completed
-  category: engine-gap
-  summary: >
-    P4 Hexerei Secret Rite Silver Isotoma DEF-scaling DMG buff (10% per 1000 DEF,
-    cap 30%) targets Hexerei party members only ("队伍中附近的魔导角色"), but
-    implementation uses receiver "team" because faction-scoped receivers are not
-    supported.
-  detail: >
-    Added factions: ["Hexerei"] to the P4 Hexerei Silver Isotoma ScalingBuff
-    BuffTarget so only Hexerei party members receive the DEF-scaling DMG bonus.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
-
-- id: mona-c4-hexerei-faction
-  entity: mona
-  rule: U1
-  status: completed
-  category: engine-gap
-  summary: >
-    C4 Hexerei party members gain +15% CRIT DMG ("队伍中所有魔导角色"), but
-    implementation uses receiver "team" because faction-scoped receivers are not
-    supported. Non-Hexerei teammates incorrectly receive the CRIT DMG bonus.
-  detail: >
-    Added factions: ["Hexerei"] to the C4 Hexerei CD buff BuffTarget so only
-    Hexerei party members receive the +15% CRIT DMG bonus.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
+    Removed maxStacks: 1 from both C1 bespokeBuffs (special E and special CA).
+    BespokeBuff applies to all parts of the formula entry naturally.
+  created: "2026-04-10"
+  resolved: "2026-04-10"

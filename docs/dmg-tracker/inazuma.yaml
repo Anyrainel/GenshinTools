@@ -60,62 +60,89 @@
     to the off-field-flagged jellyfish formula, under-reporting Q-buffed jellyfish damage.
   detail: we have a force onField feature, if users would actually use the damage from the jellyfish, they can force it.
   created: "2026-04-04"
-  resolved: null
-
-- id: kokomi-p2-hp-scaling
-  entity: sangonomiya_kokomi
-  rule: S8
-  status: wont-do
-  category: bug
-  summary: >
-    P2 (Song of Pearls) heal% bonus was incorrectly applied as baseDmg% instead of
-    as an HP multiplier additive with Q's HP scaling. Fixed to use CrossScalingBuff
-    so total NA baseDmg from HP = HP × (Q_param + heal% × 0.15).
-  detail: >
-    Was implemented as ScalingBuff(heal% → baseDmg%, 0.15) which treats the bonus as
-    a percentage of base damage. The correct mechanic is that heal% × 0.15 becomes an
-    additional HP multiplier additive with Q's param4/param5. Changed to CrossScalingBuff
-    (heal% × 0.15 × HP → baseDmg) for NA and CA separately.
-  created: "2026-04-04"
   resolved: "2026-04-04"
 
 - id: sayu-c2-kick-dmg
   entity: sayu
   rule: S6
-  status: open
+  status: wont-do
   category: bug
   summary: >
     C2 Whirlwind Kick hold DMG bonus (+66%) is not modeled. This is an unconditional
     buff at max stacks (10s hold = 20×0.5s = 20 increments, capped at 66%) that should
     apply as a dmg% StatBuff with filter abilities: ["skill"] when constellation >= 2.
-  detail: ""
+  detail: >
+    Sayu is a 4-star Anemo healer/support whose value lies in VV shred, healing,
+    and P1 swirl-triggered heals. Her E hold Whirlwind Kick damage is a negligible
+    portion of team DPS even with C2's +66% bonus. The missing buff affects only
+    one hit per E hold cast. In any team composition, Sayu's personal damage
+    contributes well under 5% of team DPS. Not worth implementing for a healer
+    support character.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-10"
 
 - id: itto-c6-combo-count
   entity: arataki_itto
   rule: S12
-  status: open
+  status: completed
   category: approximation
   summary: >
     C6 50% chance to not consume Superlative Superstrength is modeled as 8 combo slashes
     (doubled from 4). Expected value with 5 stacks is ~10 slashes (5/0.5). Current value
     of 8 underestimates by ~20%.
-  detail: ""
+  detail: >
+    Updated C6 combo count from 8 to 10 to match expected value of geometric
+    distribution (5 stacks / 0.5 probability = 10 slashes).
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-10"
 
 - id: ayaka-c6-always-active
   entity: kamisato_ayaka
   rule: U8b
-  status: open
+  status: completed
   category: approximation
   summary: >
     C6 Usurahi Butou (+298% Charged ATK DMG) is modeled as always-active on all charged
     attacks. In practice it applies to only ~1 CA per 10s (cleared 0.5s after hit, timer
     restarts). With 3 CAs in combo (~20s rotation), 2 of 3 CAs are over-buffed. Should
     use bespokeBuff or separate buffed/unbuffed CA formulas per U8b.
-  detail: ""
+  detail: >
+    Removed always-active C6 StatBuff. Added separate ayaka-charged-c6 formula entry
+    with bespokeBuff (+298% dmg%). Combo descriptor uses 1 buffed CA + 2 unbuffed CAs
+    at C6, 3 unbuffed CAs otherwise.
   created: "2026-04-05"
-  resolved: null
+  resolved: "2026-04-10"
+
+- id: kazuha-plunge-c0
+  entity: kaedehara_kazuha
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E-triggered Midare Ranzan plunge formula is gated behind minC: 6 (kazuha-plunge-c6),
+    but the plunge is Kazuha's primary personal damage source at all constellations. The
+    E talent converts plunge to Anemo DMG at C0+. Should have a plunge formula without minC.
+  detail: >
+    Renamed kazuha-plunge-c6 to kazuha-plunge and removed minC: 6. Also renamed
+    absorbed-element plunge variants (kazuha-plunge-c6-{el} → kazuha-plunge-{el})
+    and removed their minC. Updated combo descriptor to use new formula IDs with
+    P1 absorbed element plunge when available.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
+
+- id: raiden-q-normal-missing
+  entity: raiden_shogun
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    Q Musou Isshin normal attack formulas (N1-N5, Q params 5-10) are not modeled. Only
+    the initial slash and charged attacks exist. In a typical N3C rotation, 9 normal hits
+    contribute meaningful damage. All 5-star Q damage parts should be modeled per S8b.
+  detail: >
+    Added raiden-normal formula entry with N1-N3 parts (Q params 5-7), each with
+    60 resolve bonus. Added to combo descriptor with count: 3 for 3×N3C rotation.
+    All parts use Electro/burst tag.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
 

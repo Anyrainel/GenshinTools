@@ -93,25 +93,44 @@
 - id: linnea-c1-c6-maxstacks
   entity: linnea
   rule: U8b
-  status: open
+  status: completed
   category: bug
   summary: >
     C1 Field Catalog team ScalingBuff has maxStacks=13 at C6, but C6 doubles stack consumption
     (2 per regular LC hit instead of 1). After million-ton consumes 10 stacks (5 events × 2),
     only 8 remain for regular hits = 4 buffed hits, not 13.
-  detail: ""
+  detail: >
+    Added maxStacks to C1 ScalingBuff: 13 at C0-C5 (18 total - 5 million-ton),
+    4 at C6 (18 - 10 million-ton = 8 remaining / 2 per hit). Million-ton bespoke
+    is per-formula so no maxStacks needed.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-10"
+
+- id: linnea-file-placement
+  entity: linnea
+  rule: U8
+  status: completed
+  category: bug
+  summary: >
+    Linnea (5★ Nod-Krai) is registered in character5Snezhnaya.ts instead of
+    character5NodKrai.ts. File placement must match rarity and region.
+  detail: >
+    Moved Linnea class (including linneaOption) from character5Snezhnaya.ts to
+    character5NodKrai.ts. All imports were already present in the target file.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
 
 - id: varesa-fp-kick-c4-missing
   entity: varesa
   rule: S9
-  status: open
+  status: completed
   category: bug
   summary: >
     C4 clause 2 (+100% DMG when in Fiery Passion or Apex Drive) is applied as bespokeBuff on
     varesa-kablam but missing from varesa-fp-kick. The FP Flying Kick is used during Fiery Passion,
     so C4's burst DMG increase should apply to it as well.
-  detail: ""
+  detail: >
+    Added C4 +100% dmg% bespokeBuff to varesa-fp-kick, matching the existing one
+    on varesa-kablam. Gated on constellation >= 4, filter: burst ability.
   created: "2026-04-05"
-  resolved: null
+  resolved: "2026-04-10"

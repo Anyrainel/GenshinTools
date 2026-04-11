@@ -33,8 +33,11 @@ class FlameforgedInsight extends WeaponBase {
   get buffs() {
     const canTrigger =
       this.teamMeta.hasReaction("electroCharged", this.charId) ||
+      this.teamMeta.hasReaction("lunarCharged", this.charId) ||
       this.teamMeta.hasReaction("bloom", this.charId) ||
-      this.teamMeta.hasReaction("crystallize", this.charId);
+      this.teamMeta.hasReaction("lunarBloom", this.charId) ||
+      this.teamMeta.hasReaction("crystallize", this.charId) ||
+      this.teamMeta.hasReaction("lunarCrystallize", this.charId);
 
     if (!canTrigger) return [];
     return [

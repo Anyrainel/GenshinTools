@@ -52,7 +52,7 @@ class LumidouceElegy extends WeaponBase {
 class BloodsoakedRuins extends WeaponBase {
   get buffs() {
     const buffs: StatBuff[] = [];
-    if (this.teamMeta.hasReaction("electroCharged", this.charId)) {
+    if (this.teamMeta.hasReaction("lunarCharged", this.charId)) {
       buffs.push(
         new StatBuff(
           wbs(this, ["Q", "electroCharged"]),

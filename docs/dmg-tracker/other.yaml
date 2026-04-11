@@ -104,17 +104,17 @@
   created: "2026-04-04"
   resolved: "2026-04-04"
 
-- id: traveler-dendro-p1-em-ramp
-  entity: traveler_dendro
-  rule: S12
+- id: traveler-pyro-c1-nightsoul-double-count
+  entity: traveler_pyro
+  rule: U1
   status: completed
-  category: approximation
+  category: bug
   summary: >
-    P1 Overflowing Lotuslight EM buff ramps +6 EM/s over 10s (max +60 EM) but is
-    hardcoded to the maximum 60 EM. No OptionMap or amortized average is used.
+    C1 Nightsoul's Blessing +9% DMG buff is double-counted for Traveler Pyro.
+    Both a selfOnField +9% and a teamOnField factions:Nightsoul +9% are emitted,
+    but Traveler Pyro is in the Nightsoul faction, so they receive +18% instead of +9%.
   detail: >
-    Added OptionMap with two choices: "Max +60 EM" (default, full stacks) and
-    "Avg +30 EM" (average ramp over duration). P1 buff now uses resolved option
-    value instead of hardcoded 60.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
+    Removed duplicate selfOnField +9% dmg% buff. The teamOnField factions:Nightsoul
+    +9% buff already covers Traveler Pyro since they are in the Nightsoul faction.
+  created: "2026-04-10"
+  resolved: "2026-04-10"

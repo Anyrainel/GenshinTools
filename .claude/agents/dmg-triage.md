@@ -48,42 +48,27 @@ Collect items where `status: open` (for triage). In `--retriage` mode, also coll
 
 For each open item:
 
-**a) Understand the claim.** Read the item's `summary`, `rule`, and `category`. The summary describes the discrepancy the review agent found between game text and implementation. You do not need to verify this by reading code — trust the review agent's description.
+**a) Read the claim.** Read the item's `summary`, `rule`, and `category`. Trust the review agent's description of the discrepancy.
 
-**b) Load game text.** Run `impl_audit.py` to get the entity's official game text:
+**b) Quick credibility check.** Most review agent tickets are credible — the review agent already verified game text. Ask yourself:
+- Does the summary make sense on its face? (clear rule, clear discrepancy)
+- Is the category straightforward? (`bug` with a clear rule violation, `missing-formula` for a 5-star ability)
+
+**If the ticket looks credible and the fix is obvious → skip to step (d) and classify immediately.** Don't load game text or validate rule citations for clear-cut items.
+
+**c) Deep research (only when needed).** Load game text and validate **only** when:
+- The summary is confusing or self-contradictory
+- You're unsure whether the rule was correctly applied
+- The item is an `approximation` or `engine-gap` where the right approach isn't obvious
+- You need specific talent parameter values to write the `detail` for an actionable item
+
 ```bash
 uv run --project scripts/pyproject.toml scripts/impl_audit.py show <C|W|A> <entity>
 ```
-Read `scripts/data/<entity>.txt` — use **only the game text sections** (talent descriptions, passives, constellations) to understand what the game says. If the item references specific talent levels:
-```bash
-uv run --project scripts/pyproject.toml scripts/impl_audit.py show C <entity> --detail=<XN>
-```
 
-**c) Validate the rule citation.** Check whether the review agent's `rule` field is consistent with the actual rule in `translator-rules.md`. If the rule was misapplied (e.g., the game text actually supports the current behavior), note this.
+KQM consultation (`WebSearch`/`WebFetch`) is similarly optional — only for ambiguous significance questions.
 
-**d) Make the call.** Decide based on:
-
-- **Is the review agent right?** Does the game text actually say what the review agent claims? Sometimes game text is ambiguous or uses non-standard wording (especially early characters).
-- **Is this a deliberate simplification?** Some approximations are standard practice (e.g., assuming max stacks for easy-to-maintain buffs per S6, peak damage assumptions for weapons).
-- **Is this significant?** For missing formulas, does the ability contribute meaningful DPS? For wrong values, how large is the error?
-- **Is there a gameplay reason?** Some conditions are assumed active because they're trivially met in practice. KQM consultation (Step 2e) can help assess this.
-
-**e) KQM consultation (optional, for ambiguous items).**
-
-When significance or mechanics are unclear from game text alone:
-
-```
-WebSearch: site:keqingmains.com {character English name} guide
-```
-
-Use `WebFetch` on the most relevant result to look for:
-- Whether the ability appears in recommended rotations
-- Frame data, hit counts, or DPS contribution estimates
-- Mechanic clarifications (snapshotting, ICD, special interactions)
-
-**Game text is always authoritative over KQM.** Use KQM only to assess significance or clarify ambiguous mechanics.
-
-**f) Apply decision by category:**
+**d) Make the call.** Apply decision by category:
 
 #### `bug`
 The review agent found a mechanical rule violation. Assess whether the rule was correctly applied and the game text supports the claim.

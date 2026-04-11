@@ -155,30 +155,108 @@
   created: "2026-03-29"
   resolved: "2026-03-29"
 
-- id: snare-hook-missing-lunar-reactions
-  entity: snare_hook
-  rule: S10
-  status: completed
-  category: bug
-  summary: >
-    Snare Hook's reaction check is missing lunar reaction variants (lunarCharged,
-    lunarBloom, lunarCrystallize). On Moonsign teams, hasReaction() for the base
-    reactions returns false when the lunar variant supersedes, causing the EM buff
-    to incorrectly deactivate.
-  detail: >
-    Added lunarCharged, lunarBloom, and lunarCrystallize to the hasReaction() check
-    in Snare Hook's buffs getter.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
 
 - id: prized-isshin-blade-proc-dmg
   entity: prized_isshin_blade
   rule: U9
-  status: open
+  status: wont-do
   category: engine-gap
   summary: >
     Accursed Spirit proc (180% ATK AoE, every 8s on Normal/Charged/Plunge hit) has no formula.
     The engine does not support weapon-owned damage formulas, so the proc cannot be modeled.
-  detail: ""
+  detail: >
+    The engine has no mechanism for weapon-owned damage formulas. Weapons can
+    provide stat buffs but cannot register their own formulaMap entries. This is
+    a genuine engine gap requiring a new subsystem for weapon proc damage.
+    Additionally, Prized Isshin Blade is a 4-star weapon with a -50% wielder DMG
+    penalty, making it a niche choice. The 180% ATK proc every 8s is minor
+    relative to character ability damage. Not worth engine changes for this case.
   created: "2026-04-04"
-  resolved: null
+  resolved: "2026-04-10"
+
+- id: flameforged-insight-missing-lunar-reactions
+  entity: flameforged_insight
+  rule: S10
+  status: completed
+  category: bug
+  summary: >
+    Flameforged Insight's reaction check is missing lunar reaction variants (lunarCharged,
+    lunarBloom, lunarCrystallize). The game text explicitly lists all six reactions including
+    lunar variants, but hasReaction() only checks the three base reactions. On Moonsign teams
+    where lunar reactions supersede base reactions, the EM buff incorrectly deactivates.
+  detail: >
+    Added lunarCharged, lunarBloom, and lunarCrystallize to the canTrigger
+    reaction gate in weapon4Claymore.ts, matching all six reactions listed
+    in the game text.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
+
+- id: verdict-missing-lunar-crystallize
+  entity: verdict
+  rule: S10
+  status: completed
+  category: bug
+  summary: >
+    Verdict's Seal condition only checks hasReaction("crystallize") but the game text
+    explicitly includes "触发月结晶反应" (Lunar-Crystallize). On Moonsign teams where
+    the only Geo+element source is Hydro+Geo, crystallize is superseded by lunarCrystallize
+    and hasReaction("crystallize") returns false, causing the Skill DMG buff to deactivate.
+  detail: >
+    Added hasReaction("lunarCrystallize") as an OR condition to the Seal
+    gate in weapon5Claymore.ts, so the Skill DMG buff activates on both
+    crystallize and lunarCrystallize teams.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
+
+- id: bloodsoaked-ruins-wrong-reaction-gate
+  entity: bloodsoaked_ruins
+  rule: S10
+  status: completed
+  category: bug
+  summary: >
+    Bloodsoaked Ruins gates buffs on hasReaction("electroCharged") but all its buffs
+    target lunarCharged damage. When lunarCharged supersedes electroCharged (Moonsign
+    teams), hasReaction("electroCharged") returns false and the buffs are never created.
+    Should use hasReaction("lunarCharged") instead.
+  detail: >
+    Changed the reaction gate from hasReaction("electroCharged") to
+    hasReaction("lunarCharged") in weapon5Polearm.ts. The buff filters
+    already correctly targeted lunarCharged reactions.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
+
+- id: royal-longsword-stack-approx
+  entity: royal_longsword
+  rule: S12
+  status: wont-do
+  category: approximation
+  summary: >
+    Royal Longsword CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
+    The effective stack count depends on the character's CRIT Rate, which cannot
+    be determined at construction time. No OptionMap or documentation of the
+    forced average exists.
+  detail: >
+    Same rationale as royal-greatsword-stack-approx. Royal weapons are not
+    time-ramping buffs — the CRIT-reset mechanic makes effective stacks
+    inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
+    average for these low-priority 4-star Starglitter Exchange weapons.
+    Not worth OptionMap complexity.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
+
+- id: golden-frostbound-oath-mischief-unconditional
+  entity: golden_frostbound_oath
+  rule: U1
+  status: completed
+  category: bug
+  summary: >
+    Frost Fae's Mischief (other Geo DMG% + LC reactionDmg%) is always active
+    regardless of team composition. The buff requires Moondrifts near the wielder,
+    which only exist when lunarCrystallize has been triggered. On teams without
+    Hydro+Geo+5-star Moonsign, the buff incorrectly applies to all other party members.
+  detail: >
+    Converted readonly buffs to a getter and gated the Frost Fae's Mischief
+    buffs (other Geo DMG% + LC reactionDmg%) behind
+    hasReaction("lunarCrystallize") in weapon5Bow.ts.
+  created: "2026-04-10"
+  resolved: "2026-04-10"

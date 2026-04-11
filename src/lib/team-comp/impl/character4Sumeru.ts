@@ -13,10 +13,10 @@ class Sethos extends CharacterBase {
   readonly buffs = [
     // P2: EM × 700% → baseDmg for Shadowpiercing Shot only (applied via bespokeBuff)
     // C1: Shadowpiercing Shot CR +15% (applied via bespokeBuff, not here — see formulaMap)
-    // C2: Self Electro DMG +30% (2 stacks × 15%)
+    // C2: Self Electro DMG +30% (2 stacks × 15%), no on-field restriction
     ...(this.constellation >= 2
       ? [
-          new StatBuff(cbs(this, "C2", []), { receiver: "selfOnField" }, [
+          new StatBuff(cbs(this, "C2", []), { receiver: "self" }, [
             { key: "electro%", value: 0.3 },
           ]),
         ]

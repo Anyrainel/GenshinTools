@@ -100,7 +100,10 @@ class Verdict extends WeaponBase {
         { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
       ]),
     ];
-    if (this.teamMeta.hasReaction("crystallize")) {
+    if (
+      this.teamMeta.hasReaction("crystallize") ||
+      this.teamMeta.hasReaction("lunarCrystallize")
+    ) {
       buffs.push(
         new StatBuff(
           wbs(this, ["crystallize"]),

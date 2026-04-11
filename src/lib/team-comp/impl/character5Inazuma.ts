@@ -441,6 +441,7 @@ class RaidenShogun extends CharacterBase {
       { id: "raiden-e-cast", count: 1 },
       { id: "raiden-coordinated", count: 1 },
       { id: "raiden-initial", count: 1 },
+      { id: "raiden-normal", count: 3 },
       { id: "raiden-charge", count: 3 },
     ];
   }
@@ -497,6 +498,35 @@ class RaidenShogun extends CharacterBase {
           {
             formula: new DirectFormula(
               this.param("Q", 1) + this.param("Q", 2) * 60,
+              electroBurst
+            ),
+          },
+        ],
+      },
+      "raiden-normal": {
+        label: {
+          zh: "Q普攻(N1-N3)",
+          en: "Q Normal N1-N3",
+        },
+        parts: [
+          {
+            // N1: param5 + resolve bonus
+            formula: new DirectFormula(
+              this.param("Q", 5) + chargeResolve,
+              electroBurst
+            ),
+          },
+          {
+            // N2: param6 + resolve bonus
+            formula: new DirectFormula(
+              this.param("Q", 6) + chargeResolve,
+              electroBurst
+            ),
+          },
+          {
+            // N3: param7 + resolve bonus
+            formula: new DirectFormula(
+              this.param("Q", 7) + chargeResolve,
               electroBurst
             ),
           },
@@ -592,10 +622,10 @@ class AratakiItto extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Arataki Kesagiri: combo slashes + 1 final slash
-    // C6: Ushi assists each slash → doubles combo count from 4 to 8
+    // C6: 50% chance to not consume stacks → expected slashes = 5/0.5 = 10 (geometric distribution)
     const comboMult = this.param("A", 6);
     const finalMult = this.param("A", 7);
-    const comboCount = this.constellation >= 6 ? 8 : 4;
+    const comboCount = this.constellation >= 6 ? 10 : 4;
     const geoCharge = {
       element: "Geo" as const,
       ability: "charge" as const,
@@ -670,23 +700,19 @@ class KamisatoAyaka extends CharacterBase {
           ]),
         ]
       : []),
-    // C6: Charged ATK DMG +298% every 10s
-    ...(this.constellation >= 6
-      ? [
-          new StatBuff(
-            cbs(this, "C6", []),
-            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-            [{ key: "dmg%", value: 2.98 }]
-          ),
-        ]
-      : []),
+    // C6: Charged ATK DMG +298% every 10s — applied via bespokeBuff on buffed CA formula
   ];
 
   // Rotation: D E Q N1C > 2[N2C] (freeze carry, ~20s)
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "ayaka-normal", count: 1 },
-      { id: "ayaka-charged", count: 3 },
+      ...(this.constellation >= 6
+        ? [
+            { id: "ayaka-charged-c6", count: 1 },
+            { id: "ayaka-charged", count: 2 },
+          ]
+        : [{ id: "ayaka-charged", count: 3 }]),
       { id: "ayaka-burst", count: 1 },
     ];
   }
@@ -743,6 +769,26 @@ class KamisatoAyaka extends CharacterBase {
               reaction: "none",
             }),
             hits: 3,
+          },
+        ],
+      },
+      // C6: Usurahi Butou — 1 CA per 10s gets +298% DMG
+      "ayaka-charged-c6": {
+        label: { zh: "重击(C6)", en: "CA (C6)" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 8), {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "none",
+            }),
+            hits: 3,
+            bespokeBuff: new StatBuff(
+              cbs(this, "C6", []),
+              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+              [{ key: "dmg%", value: 2.98 }]
+            ),
           },
         ],
       },
@@ -1176,9 +1222,12 @@ class KaedeharaKazuha extends CharacterBase {
     const burstId = absorbedEl
       ? `kazuha-burst-${absorbedEl.toLowerCase()}`
       : "kazuha-burst";
+    const plungeId = absorbedEl
+      ? `kazuha-plunge-${absorbedEl.toLowerCase()}`
+      : "kazuha-plunge";
     return [
       { id: "kazuha-skill", count: 2 },
-      { id: "kazuha-plunge-c6", count: 2 },
+      { id: plungeId, count: 2 },
       { id: burstId, count: 1 },
     ];
   }
@@ -1221,9 +1270,9 @@ class KaedeharaKazuha extends CharacterBase {
           },
         ],
       },
-      "kazuha-plunge-c6": {
+      // Midare Ranzan plunge: available at C0 via E (converts plunge to Anemo)
+      "kazuha-plunge": {
         label: { zh: "下落", en: "Plunge" },
-        minC: 6,
         parts: [
           {
             formula: new DirectFormula(highPlunge, {
@@ -1256,12 +1305,11 @@ class KaedeharaKazuha extends CharacterBase {
     // P1 Soumon Swordsmanship: absorbed-element 200% ATK plunge hit
     for (const el of absorbElements) {
       if (!teamEls.has(el)) continue;
-      formulas[`kazuha-plunge-c6-${el.toLowerCase()}`] = {
+      formulas[`kazuha-plunge-${el.toLowerCase()}`] = {
         label: {
           zh: `下落+吸收(${el})`,
           en: `Plunge + Absorbed (${el})`,
         },
-        minC: 6,
         parts: [
           {
             formula: new DirectFormula(highPlunge, {

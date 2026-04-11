@@ -20,20 +20,44 @@ import type { ComboDescriptor, ElementalOrPhysical, StatKey } from "../types";
 // 5★ Natlan Characters
 // ═══════════════════════════════════════════════════════════════
 
-@RegisterCharacter("varesa")
+// Varesa rotation state machine (user-approved):
+// E→逐击tap(=CA)→PA is always a bundled sequence. NS limit=40, E+20, PA+25.
+// After first eaa: NS=45→cap 40→enters 炽热激情(FP). FP plunge consumes all NS.
+//
+// C0: eaa → EAAq repeat (1 normal + 1 FP cycle, sQ after FP plunge enters 极限驱动)
+// C2: eaaq → EAAq repeat (C2: every PA→极限驱动, so sQ available after normal PA too)
+// C6: EAAq ×4 repeat (C6: E restores NS to max→always FP, +30 energy on 极限驱动)
+//
+// P1 (虹色坠击): gained from E, consumed on plunge hit. Since E→CA→PA is bundled,
+// every PA has P1 active. C0: +50% ATK non-FP / +180% ATK in FP. C1+: always +180%.
+// C1 also grants 虹色坠击 from sQ itself → sQ gets P1 +180% at C1+.
+//
+// C4: Full Q from normal state → 精進勇猛 (+500% ATK on next plunge, cap 20000).
+//     sQ from 极限驱动 → this Q +100% DMG. Both modeled via bespokeBuff.
+//
+// OptionMap: skip-q (default) vs full-q. Full Q is often skipped for DPS (long animation).
+
+const varesaOption = {
+  label: { zh: "使用Q开场", en: "Open with full Q" },
+  choices: [
+    {
+      value: "skip-q",
+      label: { zh: "不使用", en: "Skip" },
+    },
+    {
+      value: "full-q",
+      label: { zh: "使用Q", en: "Use Q" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("varesa", varesaOption)
 class Varesa extends CharacterBase {
+  private readonly useFullQ =
+    resolveOption(varesaOption, this.option) === "full-q";
+
   readonly buffs = [
-    // P1: Fiery Passion Tag-Team Triple Jump → Plunge ground impact +180% ATK
-    // Consumed after 1 plunge hit per E, but rotation is E→plunge so every plunge has P1.
-    // Modeled as always-active self buff (no maxStacks on self buffs).
-    new ScalingBuff(
-      cbs(this, "P1", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
-      [],
-      "atk",
-      "baseDmg",
-      1.8
-    ),
+    // P1 is modeled per-formula via bespokeBuff (value differs by FP state and constellation)
     // P2: Nightsoul Burst → Varesa's ATK +35% (max 2 stacks = 70%)
     new StatBuff(cbs(this, "P2", ["Nightsoul Burst"]), { receiver: "self" }, [
       { key: "atk%", value: 0.7 },
@@ -56,106 +80,137 @@ class Varesa extends CharacterBase {
       : []),
   ];
 
-  // Flying Kick (Lv10): 621.2%  |  (Lv13 C3+): 733.4%
-  // Fiery Passion High Plunge (Lv10): 552.0%
-  // Fiery Passion High Plunge (Lv13 C5+): 669.0%
-  // Volcano Kablam (Lv10): 724.8%
-  // Volcano Kablam (Lv13 C3+): 855.6%
   protected readonly formulaMap = (() => {
-    const naMult = this.param("A", 16);
+    const c = this.constellation;
     const electroSkill = {
       element: "Electro" as const,
       ability: "skill" as const,
       reaction: "none" as const,
     };
+    const electroCharge = {
+      element: "Electro" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const electroPlunge = {
+      element: "Electro" as const,
+      ability: "plunge" as const,
+      reaction: "none" as const,
+    };
+    const electroBurst = {
+      element: "Electro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    const plungeFilter = {
+      receiver: "selfOnField" as const,
+      filter: { abilities: ["plunge" as const] },
+    };
+
+    // P1 bespokeBuff helper: ATK → baseDmg on plunge
+    const p1 = (value: number) =>
+      new ScalingBuff(
+        cbs(this, "P1", ["E"]),
+        plungeFilter,
+        [],
+        "atk",
+        "baseDmg",
+        value
+      );
+
+    // P1 + C4 combined bespokeBuff: P1 scaling + C4 dmg% as static buff
+    const p1WithC4 = (p1Value: number) =>
+      new ScalingBuff(
+        cbs(this, "P1/C4", ["E", "Q"]),
+        plungeFilter,
+        [{ key: "dmg%", value: 1.0 }],
+        "atk",
+        "baseDmg",
+        p1Value
+      );
+
+    // C4 精進勇猛: +500% ATK baseDmg on first plunge after full Q (cap 20000, rarely hit)
+    // Only active when full-q option is chosen (Q cast from normal state)
+    const c4DiligentRefinement =
+      c >= 4 && this.useFullQ
+        ? new ScalingBuff(
+            { ...cbs(this, "C4", ["Q"]), maxStacks: 1 },
+            plungeFilter,
+            [],
+            "atk",
+            "baseDmg",
+            5.0
+          )
+        : undefined;
+
     return {
+      // ── E ──
       "varesa-e": {
-        label: { zh: "E初始", en: "E Initial" },
+        label: { zh: "E", en: "E" },
         parts: [
           { formula: new DirectFormula(this.param("E", 1), electroSkill) },
         ],
       },
       "varesa-e-fp": {
-        label: { zh: "E后续", en: "E Following" },
+        label: { zh: "E(激情)", en: "E (FP)" },
         parts: [
           { formula: new DirectFormula(this.param("E", 2), electroSkill) },
         ],
       },
-      "varesa-kick": {
+      // ── CA (逐击 follow-up, triggered by tap after E) ──
+      "varesa-ca": {
+        label: { zh: "重击(逐击)", en: "CA (Follow-Up)" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 4), electroCharge) },
+        ],
+      },
+      "varesa-ca-fp": {
+        label: { zh: "重击(激情)", en: "CA (FP)" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 12), electroCharge) },
+        ],
+      },
+      // ── Plunge ──
+      // P1: +50% ATK at C0, +180% ATK at C1+ (user-approved)
+      "varesa-pa": {
+        label: { zh: "下落", en: "Plunge" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 8), electroPlunge),
+            bespokeBuff: p1(c >= 1 ? 1.8 : 0.5),
+          },
+        ],
+      },
+      // FP plunge always gets P1 +180%. C4 精進勇猛 lands on first pa-fp when full-q.
+      "varesa-pa-fp": {
+        label: { zh: "下落(激情)", en: "Plunge (FP)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 16), electroPlunge),
+            bespokeBuff: c4DiligentRefinement ?? p1(1.8),
+          },
+        ],
+      },
+      // ── Q (full burst) ──
+      "varesa-q": {
         label: { zh: "Q飞踢", en: "Q Flying Kick" },
         parts: [
-          {
-            formula: new DirectFormula(this.param("Q", 1), {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(this.param("Q", 1), electroBurst) },
         ],
       },
-      // Q Fiery Passion Flying Kick (param2): enhanced Q kick, rarely used since Apex Drive
-      "varesa-fp-kick": {
-        label: { zh: "Q飞踢(激情)", en: "Q FP Flying Kick" },
+      "varesa-q-fp": {
+        label: { zh: "Q飞踢(激情)", en: "Q FP Kick" },
         parts: [
           {
-            formula: new DirectFormula(this.param("Q", 2), {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      // C4: Diligent Refinement — first plunge after Q gets +500% ATK as baseDmg (cap 20000)
-      "varesa-plunge": {
-        label: { zh: "下落(高空)", en: "Plunge (High)" },
-        parts: [
-          {
-            formula: new DirectFormula(naMult, {
-              element: "Electro",
-              ability: "plunge",
-              reaction: "none",
-            }),
-            ...(this.constellation >= 4
-              ? {
-                  bespokeBuff: new ScalingBuff(
-                    { ...cbs(this, "C4", ["Q"]), maxStacks: 1 },
-                    {
-                      receiver: "selfOnField",
-                      filter: { abilities: ["plunge"] },
-                    },
-                    [],
-                    "atk",
-                    "baseDmg",
-                    5.0,
-                    20000
-                  ),
-                }
-              : {}),
-          },
-        ],
-      },
-      "varesa-kablam": {
-        label: {
-          zh: "Q下落",
-          en: "Q Volcano Kablam",
-        },
-        parts: [
-          {
-            formula: new DirectFormula(this.param("Q", 5), {
-              element: "Electro",
-              // Note: Considered Plunge DMG in-game, so use ability: "plunge"
-              ability: "plunge",
-              reaction: "none",
-            }),
-            // C4: Fiery Passion/Apex Drive active → this Q instance +100% DMG
-            ...(this.constellation >= 4
+            formula: new DirectFormula(this.param("Q", 2), electroBurst),
+            // C4: cast from FP/Apex Drive → +100% DMG
+            ...(c >= 4
               ? {
                   bespokeBuff: new StatBuff(
                     cbs(this, "C4", ["Q"]),
                     {
                       receiver: "selfOnField",
-                      filter: { abilities: ["plunge"] },
+                      filter: { abilities: ["burst"] },
                     },
                     [{ key: "dmg%", value: 1.0 }]
                   ),
@@ -164,17 +219,79 @@ class Varesa extends CharacterBase {
           },
         ],
       },
+      // ── sQ (大火山崩落, 视为下落攻击伤害) ──
+      "varesa-sq": {
+        label: { zh: "大火山崩落", en: "Volcano Kablam" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 5), electroPlunge),
+            // C1+: P1 applies to sQ (C1 grants 虹色坠击 from sQ itself)
+            // C4+: sQ cast from 极限驱动 → +100% DMG
+            // Combined via ScalingBuff staticBuffs when both active (user-approved)
+            bespokeBuff:
+              c >= 4 && c >= 1
+                ? p1WithC4(1.8)
+                : c >= 4
+                  ? new StatBuff(cbs(this, "C4", ["Q"]), plungeFilter, [
+                      { key: "dmg%", value: 1.0 },
+                    ])
+                  : c >= 1
+                    ? p1(1.8)
+                    : undefined,
+          },
+        ],
+      },
     };
   })();
 
-  // Rotation: Q > ECP ×4 + sQ ×2 (~20s, plunge carry, KQM)
+  // Rotation varies by constellation (user-approved):
+  // C0: eaa, EAAq — 1 normal cycle + 1 FP cycle + 1 sQ
+  // C2: eaaq, EAAq — C2 every PA→极限驱動, sQ after each PA
+  // C6: EAAq ×4 — always FP, sQ after every PA
   protected override get comboDescriptor(): ComboDescriptor {
-    return [
-      { id: "varesa-kick", count: 1 },
-      { id: "varesa-e-fp", count: 4 },
-      { id: "varesa-plunge", count: 4 },
-      { id: "varesa-kablam", count: 2 },
-    ];
+    const c = this.constellation;
+    const combo: ComboDescriptor = [];
+
+    if (this.useFullQ) {
+      // Full Q from normal state (C4: grants 精進勇猛 for first plunge)
+      combo.push({ id: "varesa-q", count: 1 });
+    }
+
+    // 4 total E/CA/PA per rotation at all constellations (2 charges + cooldown).
+    // Split between normal/FP varies; sQ count varies. (user-approved)
+    if (c >= 6) {
+      // C6: EAAq ×4 (always FP, E restores NS to max)
+      combo.push(
+        { id: "varesa-e-fp", count: 4 },
+        { id: "varesa-ca-fp", count: 4 },
+        { id: "varesa-pa-fp", count: 4 },
+        { id: "varesa-sq", count: 4 }
+      );
+    } else if (c >= 2) {
+      // C2: (eaaq + EAAq) ×2 — every PA→极限驱動, sQ after each
+      combo.push(
+        { id: "varesa-e", count: 2 },
+        { id: "varesa-ca", count: 2 },
+        { id: "varesa-pa", count: 2 },
+        { id: "varesa-e-fp", count: 2 },
+        { id: "varesa-ca-fp", count: 2 },
+        { id: "varesa-pa-fp", count: 2 },
+        { id: "varesa-sq", count: 4 }
+      );
+    } else {
+      // C0-C1: (eaa + EAAq) ×2 — sQ only after FP plunge→极限驱動
+      combo.push(
+        { id: "varesa-e", count: 2 },
+        { id: "varesa-ca", count: 2 },
+        { id: "varesa-pa", count: 2 },
+        { id: "varesa-e-fp", count: 2 },
+        { id: "varesa-ca-fp", count: 2 },
+        { id: "varesa-pa-fp", count: 2 },
+        { id: "varesa-sq", count: 2 }
+      );
+    }
+
+    return combo;
   }
 }
 
@@ -575,6 +692,47 @@ class Mavuika extends CharacterBase {
           },
         ],
       },
+      // Flamestrider N1-N5 full chain (E params 4-8)
+      "mavuika-fs-normal": {
+        label: { zh: "驰轮车N1-N5", en: "Flamestrider N1-N5" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 4), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("E", 5), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("E", 6), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("E", 7), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("E", 8), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       // E initial Skill DMG (param1): one-time Pyro hit on E cast
       "mavuika-e-cast": {
         label: { zh: "E释放", en: "E Cast" },
@@ -672,13 +830,18 @@ class Chasca extends CharacterBase {
     return [...eligible].slice(0, 3);
   })();
   private readonly eligibleTypes = this.eligibleElements.length;
+  // P1 stacks: C2 adds +1 stack on swap-in, capped at 3
+  private readonly p1Stacks = Math.min(
+    this.eligibleTypes + (this.constellation >= 2 ? 1 : 0),
+    3
+  );
   readonly buffs = [
-    // P1: Per eligible element type, Shining Shell DMG bonus (non-linear)
-    // 1 type → +15%, 2 → +35%, 3 → +65%
+    // P1: Per eligible element type (+ C2 bonus), Shining Shell DMG bonus (non-linear)
+    // 1 stack → +15%, 2 → +35%, 3 → +65%
     new StatBuff(
       cbs(this, "P1", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      [{ key: "dmg%", value: [0, 0.15, 0.35, 0.65][this.eligibleTypes] }]
+      [{ key: "dmg%", value: [0, 0.15, 0.35, 0.65][this.p1Stacks] }]
     ),
     // C6: After Spiritbinding Conversion, Shining Shell CD +120%
     ...(this.constellation >= 6

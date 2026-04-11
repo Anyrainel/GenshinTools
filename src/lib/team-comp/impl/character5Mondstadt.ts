@@ -1590,7 +1590,9 @@ class Varka extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     // C1: Lyrical Libation — first Four Winds or Azure Devour deals 200% original DMG
-    // Modeled via OptionMap (c1Target) + bespokeBuff with maxStacks on base formulas
+    // Modeled via OptionMap (c1Target) + bespokeBuff with maxStacks on base formulas.
+    // bespokeBuff is per-part, so maxStacks = part's own hits to buff one full cast
+    // without carrying over to subsequent combo casts. (user-approved)
 
     // P1: Dawn Wind's March — per 1000 ATK, +10% Anemo DMG + priority element DMG, cap 25%
     // Only activates when PHEC characters are in the team (i.e., priorityElement exists)
@@ -1780,7 +1782,10 @@ class Varka extends CharacterBase {
           ...(this.c1Target === "e-first"
             ? {
                 bespokeBuff: new StatBuff(
-                  { ...cbs(this, "C1", ["E"]), maxStacks: 1 },
+                  {
+                    ...cbs(this, "C1", ["E"]),
+                    maxStacks: p.hits ?? 1,
+                  },
                   {
                     receiver: "selfOnField",
                     filter: { abilities: ["skill", "charge"] },
@@ -1809,7 +1814,10 @@ class Varka extends CharacterBase {
           ...(this.c1Target === "ca-first"
             ? {
                 bespokeBuff: new StatBuff(
-                  { ...cbs(this, "C1", ["E"]), maxStacks: 1 },
+                  {
+                    ...cbs(this, "C1", ["E"]),
+                    maxStacks: p.hits ?? 1,
+                  },
                   {
                     receiver: "selfOnField",
                     filter: { abilities: ["skill", "charge"] },

@@ -27,3 +27,38 @@
     the change back to baseDmg%.
   created: "2026-03-29"
   resolved: "2026-03-29"
+
+- id: sethos-c2-receiver
+  entity: sethos
+  rule: U1
+  status: completed
+  category: bug
+  summary: >
+    C2 Electro DMG Bonus +30% uses receiver "selfOnField" but game text
+    "赛索斯的雷元素伤害加成提升15%" has no on-field restriction. Should be "self".
+  detail: >
+    Changed C2 Electro DMG buff receiver from "selfOnField" to "self" to match
+    game text which has no on-field restriction.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
+
+- id: sethos-dusk-bolt-missing-atk
+  entity: sethos
+  rule: S2
+  status: open
+  category: approximation
+  summary: >
+    Q Dusk Bolt formula uses scalingKey "em" only, but Dusk Bolts are converted
+    Normal Attacks whose damage should include Normal ATK multiplier × ATK plus
+    Q EM-based increase. The ATK-scaling component is missing.
+  detail: >
+    Game text says "Normal Attacks will be converted into Dusk Bolts" with "DMG
+    increased based on Elemental Mastery." The Q talent table only shows "Dusk Bolt
+    DMG Increase: {param1:F1P} Elemental Mastery" — no ATK scaling row. This is
+    ambiguous: it could mean (a) Dusk Bolts replace normal attacks entirely with
+    pure EM scaling, or (b) Dusk Bolts add EM-based flat damage on top of normal
+    attack ATK scaling. KQM or in-game testing needed to confirm which model is
+    correct. If the current EM-only model matches in-game damage, the S2 flag is
+    a false positive.
+  created: "2026-04-10"
+  resolved: null

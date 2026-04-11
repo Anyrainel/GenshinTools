@@ -103,7 +103,7 @@
 - id: varesa-c4-diligent-refinement-always-on
   entity: varesa
   rule: S6
-  status: open
+  status: completed
   category: approximation
   summary: >
     C4 Diligent Refinement (+500% ATK baseDmg, cap 20000) is modeled as an always-on
@@ -112,28 +112,12 @@
     the modeled rotation opens with Q, immediately entering Fiery Passion, so the
     buff's activation condition is never met in the standard rotation and should not
     apply.
-  detail: ""
-  created: "2026-04-05"
-  resolved: null
-
-- id: mavuika-c2-ring-def-reduction
-  entity: mavuika
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    C2 DEF reduction (-20%) is modeled as always-active with receiver "team",
-    but game text restricts it to Ring of Searing Radiance form only. At C6,
-    both C2 Ring DEF shred and C6 Scorching Ring DEF shred are always-active,
-    doubling to 40% instead of the correct 20% (mode-exclusive).
   detail: >
-    C2 below C6: split into selfOffField + other (20% each), so Ring form
-    off-field damage and all teammates get the shred, but Mavuika's own
-    on-field Flamestrider damage does not. At C6: merged into single team
-    20% buff since both forms provide DEF shred. Removed separate C6 DEF
-    shred buff to prevent double-counting.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
+    Removed C4 Diligent Refinement bespokeBuff from varesa-plunge. Standard rotation
+    uses Q which immediately enters Fiery Passion, so the "neither FP nor AD" condition
+    is never met.
+  created: "2026-04-05"
+  resolved: "2026-04-10"
 
 - id: chasca-e-tap-missing
   entity: chasca
@@ -147,3 +131,36 @@
   detail: nobody use this tap damage, we always hold.
   created: "2026-04-04"
   resolved: "2026-04-04"
+
+- id: chasca-p1-c2-stack-count
+  entity: chasca
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    P1 Spirit of the Radiant Shadow stack count does not account for C2's +1 stack
+    on swap-in. With C2 and 1-2 eligible element types, the DMG bonus is
+    undervalued (e.g., 2 types gives 35% instead of correct 65%).
+  detail: >
+    Added p1Stacks field that adds +1 at C2 and caps at 3. P1 DMG bonus now uses
+    p1Stacks instead of raw eligibleTypes for the lookup table.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
+
+- id: mavuika-fs-n2n5-missing
+  entity: mavuika
+  rule: S8b
+  status: completed
+  category: missing-formula
+  summary: >
+    E Flamestrider Normal Attack N2-N5 (params 5-8) have no formula parts in
+    formulaMap. S8b requires all 5-star E damage instances to be covered. A
+    full N1-N5 chain formula entry should exist alongside the existing N1-only
+    combo formulas.
+  detail: >
+    Added mavuika-fs-normal formula entry with N1-N5 parts (E params 4-8),
+    all Pyro/normal. Existing combo formulas (mavuika-combo, mavuika-szszzp)
+    retained for rotation modeling. Sprint and CA already covered by existing
+    formulas.
+  created: "2026-04-10"
+  resolved: "2026-04-10"
