@@ -11,10 +11,18 @@ import {
   type FormulaEntry,
   type OptionDef,
   RegisterCharacter,
+  type StatSheet,
   resolveOption,
 } from "../damageModels";
+import type { Expr } from "../expr";
+import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type { ComboDescriptor, ElementalOrPhysical, StatKey } from "../types";
+import type {
+  ComboDescriptor,
+  ElementalOrPhysical,
+  StatEntry,
+  StatKey,
+} from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -129,17 +137,18 @@ class Varesa extends CharacterBase {
         p1Value
       );
 
-    // C4 精進勇猛: +500% ATK baseDmg on first plunge after full Q (cap 20000, rarely hit)
+    // C4 精進勇猛: +500% ATK baseDmg on first plunge after full Q (cap 20000)
     // Only active when full-q option is chosen (Q cast from normal state)
-    const c4DiligentRefinement =
+    const c4DR =
       c >= 4 && this.useFullQ
         ? new ScalingBuff(
-            { ...cbs(this, "C4", ["Q"]), maxStacks: 1 },
+            cbs(this, "C4", ["Q"]),
             plungeFilter,
             [],
             "atk",
             "baseDmg",
-            5.0
+            5.0,
+            20000
           )
         : undefined;
 
@@ -181,16 +190,59 @@ class Varesa extends CharacterBase {
           },
         ],
       },
-      // FP plunge always gets P1 +180%. C4 精進勇猛 lands on first pa-fp when full-q.
+      // FP plunge always gets P1 +180%.
       "varesa-pa-fp": {
         label: { zh: "下落(激情)", en: "Plunge (FP)" },
         parts: [
           {
             formula: new DirectFormula(this.param("A", 16), electroPlunge),
-            bespokeBuff: c4DiligentRefinement ?? p1(1.8),
+            bespokeBuff: p1(1.8),
           },
         ],
       },
+      // C4+fullQ: first FP plunge also gets 精進勇猛 (+500% ATK baseDmg, cap 20000).
+      // Split into separate formula so remaining pa-fp hits keep P1 without C4.
+      ...(c4DR
+        ? {
+            "varesa-pa-fp-c4": {
+              label: { zh: "下落(精進)", en: "Plunge (C4 DR)" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    this.param("A", 16),
+                    electroPlunge
+                  ),
+                  // Combine P1 + C4 DR via anonymous subclass (both ATK→baseDmg,
+                  // separate caps). (user-approved)
+                  bespokeBuff: new (class extends ScalingBuff {
+                    private readonly c4 = c4DR!;
+                    override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
+                      return [
+                        ...super.dynamicBuffs(selfStats),
+                        ...this.c4.dynamicBuffs(selfStats),
+                      ];
+                    }
+                    override dynamicBuffsExpr(
+                      selfStats: ExprStats
+                    ): { key: StatKey; expr: Expr }[] {
+                      return [
+                        ...super.dynamicBuffsExpr(selfStats),
+                        ...this.c4.dynamicBuffsExpr(selfStats),
+                      ];
+                    }
+                  })(
+                    cbs(this, "P1/C4", ["E", "Q"]),
+                    plungeFilter,
+                    [],
+                    "atk",
+                    "baseDmg",
+                    1.8
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
       // ── Q (full burst) ──
       "varesa-q": {
         label: { zh: "Q飞踢", en: "Q Flying Kick" },
@@ -259,12 +311,16 @@ class Varesa extends CharacterBase {
 
     // 4 total E/CA/PA per rotation at all constellations (2 charges + cooldown).
     // Split between normal/FP varies; sQ count varies. (user-approved)
+    // c4DR is truthy when C4+ and full-q option → 1 pa-fp hit becomes pa-fp-c4
+    const hasC4DR = c >= 4 && this.useFullQ;
+
     if (c >= 6) {
       // C6: EAAq ×4 (always FP, E restores NS to max)
       combo.push(
         { id: "varesa-e-fp", count: 4 },
         { id: "varesa-ca-fp", count: 4 },
-        { id: "varesa-pa-fp", count: 4 },
+        { id: "varesa-pa-fp", count: hasC4DR ? 3 : 4 },
+        ...(hasC4DR ? [{ id: "varesa-pa-fp-c4", count: 1 }] : []),
         { id: "varesa-sq", count: 4 }
       );
     } else if (c >= 2) {
@@ -275,11 +331,13 @@ class Varesa extends CharacterBase {
         { id: "varesa-pa", count: 2 },
         { id: "varesa-e-fp", count: 2 },
         { id: "varesa-ca-fp", count: 2 },
-        { id: "varesa-pa-fp", count: 2 },
+        { id: "varesa-pa-fp", count: hasC4DR ? 1 : 2 },
+        ...(hasC4DR ? [{ id: "varesa-pa-fp-c4", count: 1 }] : []),
         { id: "varesa-sq", count: 4 }
       );
     } else {
       // C0-C1: (eaa + EAAq) ×2 — sQ only after FP plunge→极限驱動
+      // C4 not possible here (c < 2 means c < 4)
       combo.push(
         { id: "varesa-e", count: 2 },
         { id: "varesa-ca", count: 2 },

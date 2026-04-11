@@ -100,24 +100,6 @@
   created: "2026-03-28"
   resolved: "2026-03-28"
 
-- id: varesa-c4-diligent-refinement-always-on
-  entity: varesa
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    C4 Diligent Refinement (+500% ATK baseDmg, cap 20000) is modeled as an always-on
-    bespokeBuff (maxStacks 1) on varesa-plunge. Per game text, Diligent Refinement is
-    only granted when Varesa uses Q without Fiery Passion and without Apex Drive — but
-    the modeled rotation opens with Q, immediately entering Fiery Passion, so the
-    buff's activation condition is never met in the standard rotation and should not
-    apply.
-  detail: >
-    Removed C4 Diligent Refinement bespokeBuff from varesa-plunge. Standard rotation
-    uses Q which immediately enters Fiery Passion, so the "neither FP nor AD" condition
-    is never met.
-  created: "2026-04-05"
-  resolved: "2026-04-10"
 
 - id: chasca-e-tap-missing
   entity: chasca
@@ -164,3 +146,28 @@
     formulas.
   created: "2026-04-10"
   resolved: "2026-04-10"
+
+- id: varesa-pa-fp-missing-p1-with-c4
+  entity: varesa
+  rule: U4
+  status: open
+  category: bug
+  summary: >
+    varesa-pa-fp at C4+fullQ uses c4DiligentRefinement as bespokeBuff, which replaces
+    P1's +180% ATK baseDmg entirely. The first FP plunge should receive both P1 and C4
+    DR (like varesa-sq uses p1WithC4 to combine them).
+  detail: ""
+  created: "2026-04-11"
+  resolved: null
+
+- id: varesa-c4-dr-missing-cap
+  entity: varesa
+  rule: S7
+  status: open
+  category: bug
+  summary: >
+    C4 Diligent Refinement ScalingBuff is missing cap parameter. Game text says
+    "至多通过这种方式提升20000" (max 20000). Should be ScalingBuff(..., 5.0, 20000).
+  detail: ""
+  created: "2026-04-11"
+  resolved: null
