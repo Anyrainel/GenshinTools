@@ -23,6 +23,7 @@ import type {
 } from "@/lib/artifact-manager/types";
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { remapFreezeStoreForImport } from "@/stores/useFreezeStore";
 import {
   CheckCircle2,
   Download,
@@ -125,7 +126,11 @@ export function ArtifactManagerDialog({
       }
       const account = getActiveAccount(useAccountStore.getState());
       if (account) {
-        const updated = replaceArtifactsFromSnapshot(account.data, snapshot);
+        const { data: updated, artifactIdMap } = replaceArtifactsFromSnapshot(
+          account.data,
+          snapshot
+        );
+        remapFreezeStoreForImport(artifactIdMap);
         useAccountStore.getState().addOrUpdateAccount(account.id, {
           data: updated,
         });

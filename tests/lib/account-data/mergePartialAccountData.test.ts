@@ -70,7 +70,11 @@ describe("mergePartialAccountData", () => {
       artifacts: false,
     };
 
-    const result = mergePartialAccountData(existing, incoming, sections);
+    const { data: result } = mergePartialAccountData(
+      existing,
+      incoming,
+      sections
+    );
 
     // Character stats updated
     const hutao = result.characters.find((c) => c.key === "HuTao")!;
@@ -114,7 +118,11 @@ describe("mergePartialAccountData", () => {
       artifacts: false,
     };
 
-    const result = mergePartialAccountData(existing, incoming, sections);
+    const { data: result } = mergePartialAccountData(
+      existing,
+      incoming,
+      sections
+    );
 
     // Character stats preserved from existing
     const hutao = result.characters.find((c) => c.key === "HuTao")!;
@@ -163,7 +171,11 @@ describe("mergePartialAccountData", () => {
       artifacts: true,
     };
 
-    const result = mergePartialAccountData(existing, incoming, sections);
+    const { data: result } = mergePartialAccountData(
+      existing,
+      incoming,
+      sections
+    );
 
     // Character stats preserved from existing
     const hutao = result.characters.find((c) => c.key === "HuTao")!;
@@ -209,7 +221,11 @@ describe("mergePartialAccountData", () => {
       artifacts: true,
     };
 
-    const result = mergePartialAccountData(existing, incoming, sections);
+    const { data: result } = mergePartialAccountData(
+      existing,
+      incoming,
+      sections
+    );
 
     // Full replace — only incoming data
     expect(result.characters).toHaveLength(1);

@@ -487,7 +487,7 @@ describe("convertGOODToAccountData", () => {
         extraWeapons: [],
       };
 
-      const result = mergePartialAccountData(existing, incoming, {
+      const { data: result } = mergePartialAccountData(existing, incoming, {
         characters: true,
         weapons: false,
         artifacts: false,
@@ -529,7 +529,7 @@ describe("convertGOODToAccountData", () => {
         extraWeapons: [],
       };
 
-      const result = mergePartialAccountData(existing, incoming, {
+      const { data: result } = mergePartialAccountData(existing, incoming, {
         characters: false,
         weapons: true,
         artifacts: false,
@@ -572,7 +572,7 @@ describe("convertGOODToAccountData", () => {
         extraWeapons: [],
       };
 
-      const result = mergePartialAccountData(existing, incoming, {
+      const { data: result } = mergePartialAccountData(existing, incoming, {
         characters: false,
         weapons: false,
         artifacts: true,
@@ -604,7 +604,7 @@ describe("convertGOODToAccountData", () => {
         extraWeapons: [],
       };
 
-      const result = mergePartialAccountData(existing, incoming, {
+      const { data: result } = mergePartialAccountData(existing, incoming, {
         characters: true,
         weapons: true,
         artifacts: true,
@@ -629,7 +629,7 @@ describe("convertGOODToAccountData", () => {
         extraWeapons: [],
       };
 
-      const result = mergePartialAccountData(existing, incoming, {
+      const { data: result } = mergePartialAccountData(existing, incoming, {
         characters: false,
         weapons: true,
         artifacts: false,

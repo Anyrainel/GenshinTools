@@ -8,6 +8,7 @@ import {
   type IGOODArtifact,
   convertSingleArtifact,
 } from "@/lib/account-data/goodConversion";
+import type { MergeResult } from "@/lib/account-data/mergeAccountData";
 import { goodKeyToCharId } from "./keys";
 import type { EquipPayload, InstructionResult, ManagePayload } from "./types";
 
@@ -91,11 +92,25 @@ export function applyJobResults(
  * Replace all artifacts in account data from a full GOOD v3 snapshot.
  * Characters and weapons are preserved; only artifact slots and extraArtifacts
  * are rebuilt from the snapshot.
+ *
+ * Returns a MergeResult with the old→new artifact ID mapping so that
+ * downstream stores (e.g. freeze store) can update their references.
  */
 export function replaceArtifactsFromSnapshot(
   account: AccountData,
   goodArtifacts: IGOODArtifact[]
-): AccountData {
+): MergeResult {
+  // Collect all existing artifact IDs before replacement
+  const oldArtifactIds: string[] = [];
+  for (const c of account.characters) {
+    for (const art of Object.values(c.artifacts)) {
+      if (art) oldArtifactIds.push(art.id);
+    }
+  }
+  for (const art of account.extraArtifacts) {
+    oldArtifactIds.push(art.id);
+  }
+
   // Clear all artifact slots on characters, keeping everything else
   const characters = account.characters.map((c) => ({
     ...c,
@@ -126,10 +141,21 @@ export function replaceArtifactsFromSnapshot(
     extraArtifacts.push(art);
   }
 
+  // Full replacement creates entirely new IDs — all old IDs are orphaned.
+  // We can't build a meaningful old→new map (artifacts may have changed),
+  // so we signal "all old IDs are gone" by mapping every old ID to empty string.
+  const artifactIdMap = new Map<string, string>();
+  for (const oldId of oldArtifactIds) {
+    artifactIdMap.set(oldId, "");
+  }
+
   return {
-    ...account,
-    characters,
-    extraArtifacts,
+    data: {
+      ...account,
+      characters,
+      extraArtifacts,
+    },
+    artifactIdMap,
   };
 }
 

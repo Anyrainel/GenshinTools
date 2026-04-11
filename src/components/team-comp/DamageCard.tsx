@@ -2170,9 +2170,10 @@ export function DamageCard({
                 </div>
               )}
 
-            {/* Swap Guide — diff view of optimized vs equipped */}
+            {/* Swap Guide — diff view of optimized vs equipped (hidden while optimizer is running) */}
             {hasActiveFormula &&
               allCharsResolved &&
+              !isComputing &&
               (teamResult?.done || hasOptResult) &&
               teamResult?.bestDamage !== 0 && (
                 <SwapGuide

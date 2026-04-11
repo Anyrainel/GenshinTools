@@ -7,6 +7,13 @@ import type {
 import type { PresentSections } from "./goodConversion";
 import { mergeEnkaImportWithInventory } from "./mergeEnkaImport";
 
+/** Result of any data operation that reassigns artifact IDs. */
+export interface MergeResult {
+  data: AccountData;
+  /** Maps old artifact IDs → new artifact IDs. Empty when no reassignment occurred. */
+  artifactIdMap: Map<string, string>;
+}
+
 const getMaxIds = (data: AccountData) => {
   let maxA = -1;
   let maxW = -1;
@@ -40,11 +47,17 @@ const getMaxIds = (data: AccountData) => {
   return { maxA, maxW };
 };
 
-const reassignIds = (
+/**
+ * Reassign all artifact and weapon IDs to sequential values.
+ * Returns a map of old artifact ID → new artifact ID for downstream consumers
+ * (e.g. freeze store) to update their references.
+ */
+export const reassignIds = (
   data: AccountData,
   startArtifactId: number,
   startWeaponId: number
-) => {
+): Map<string, string> => {
+  const artifactIdMap = new Map<string, string>();
   let aId = startArtifactId;
   let wId = startWeaponId;
 
@@ -53,18 +66,28 @@ const reassignIds = (
       keyof typeof char.artifacts
     >) {
       const art = char.artifacts[slot];
-      if (art) art.id = `artifact-${aId++}`;
+      if (art) {
+        const oldId = art.id;
+        const newId = `artifact-${aId++}`;
+        if (oldId !== newId) artifactIdMap.set(oldId, newId);
+        art.id = newId;
+      }
     }
     if (char.weapon) {
       char.weapon.id = `weapon-${wId++}`;
     }
   }
   for (const art of data.extraArtifacts) {
-    art.id = `artifact-${aId++}`;
+    const oldId = art.id;
+    const newId = `artifact-${aId++}`;
+    if (oldId !== newId) artifactIdMap.set(oldId, newId);
+    art.id = newId;
   }
   for (const wp of data.extraWeapons) {
     wp.id = `weapon-${wId++}`;
   }
+
+  return artifactIdMap;
 };
 
 /**
@@ -77,9 +100,9 @@ export function mergePartialAccountData(
   existing: AccountData,
   incoming: AccountData,
   sections: PresentSections
-): AccountData {
+): MergeResult {
   if (sections.characters && sections.weapons && sections.artifacts) {
-    return incoming;
+    return { data: incoming, artifactIdMap: new Map() };
   }
 
   const incomingCharMap = new Map(incoming.characters.map((c) => [c.key, c]));
@@ -116,14 +139,14 @@ export function mergePartialAccountData(
       ? incoming.extraWeapons
       : existing.extraWeapons,
   };
-  reassignIds(result, 0, 0);
-  return result;
+  const artifactIdMap = reassignIds(result, 0, 0);
+  return { data: result, artifactIdMap };
 }
 
 export function mergeAccountData(
   oldData: AccountData,
   newData: AccountData
-): AccountData {
+): MergeResult {
   const { maxA, maxW } = getMaxIds(oldData);
   reassignIds(newData, maxA + 1, maxW + 1);
 
@@ -143,6 +166,6 @@ export function mergeAccountData(
     extraArtifacts: mergedExtraArtifacts,
     extraWeapons: oldData.extraWeapons,
   };
-  reassignIds(mergedData, 0, 0);
-  return mergedData;
+  const artifactIdMap = reassignIds(mergedData, 0, 0);
+  return { data: mergedData, artifactIdMap };
 }

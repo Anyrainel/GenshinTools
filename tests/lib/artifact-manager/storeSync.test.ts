@@ -185,7 +185,7 @@ describe("replaceArtifactsFromSnapshot", () => {
     const account = makeAccount();
     const snapshot = [makeGOODArtifact()];
 
-    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
 
     expect(updated.extraArtifacts).toHaveLength(1);
     expect(updated.extraArtifacts[0].setKey).toBe("gladiators_finale");
@@ -212,7 +212,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       makeGOODArtifact({ location: "", slotKey: "plume" }),
     ];
 
-    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
 
     expect(updated.characters[0].artifacts.flower).toBeDefined();
     expect(updated.characters[0].artifacts.flower!.setKey).toBe(
@@ -247,7 +247,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       }),
     ];
 
-    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
 
     // Old artifacts should be gone, only new sands assigned
     expect(updated.characters[0].artifacts.flower).toBeUndefined();
@@ -281,7 +281,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       ],
     });
 
-    const updated = replaceArtifactsFromSnapshot(account, []);
+    const { data: updated } = replaceArtifactsFromSnapshot(account, []);
 
     expect(updated.characters[0].constellation).toBe(2);
     expect(updated.characters[0].weapon?.key).toBe("engulfing_lightning");
@@ -311,7 +311,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       }),
     ];
 
-    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
 
     // Raiden preserved, Furina stub created
     expect(updated.characters).toHaveLength(2);
@@ -337,7 +337,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       makeGOODArtifact({ setKey: "EmblemOfSeveredFate" }),
     ];
 
-    const updated = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
 
     expect(updated.extraArtifacts).toHaveLength(1);
     expect(updated.extraArtifacts[0].setKey).toBe("emblem_of_severed_fate");

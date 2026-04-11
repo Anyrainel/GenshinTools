@@ -430,7 +430,7 @@ describe("Integration: Account Data Page Flow", () => {
     it("GOOD → UID: upserts characters and weapons, deduplicates artifacts", () => {
       const goodResult = convertGOODToAccountData(goodDataA).data;
       const uidResult = convertGOODToAccountData(uidDataB).data;
-      const merged = mergeAccountData(goodResult, uidResult);
+      const { data: merged } = mergeAccountData(goodResult, uidResult);
 
       // HuTao updated to UID's details (C2, talent 10/10/10)
       const huTao = merged.characters.find((c) => c.key === "hu_tao");
@@ -478,7 +478,7 @@ describe("Integration: Account Data Page Flow", () => {
     it("UID → UID: upserts character details, moves old artifacts to inventory", () => {
       const firstUid = convertGOODToAccountData(uidDataA).data;
       const secondUid = convertGOODToAccountData(uidDataB).data;
-      const merged = mergeAccountData(firstUid, secondUid);
+      const { data: merged } = mergeAccountData(firstUid, secondUid);
 
       // HuTao updated from C1 to C2
       const huTao = merged.characters.find((c) => c.key === "hu_tao");

@@ -18,6 +18,7 @@ import type {
   SubmitResponse,
 } from "@/lib/artifact-manager/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { remapFreezeStoreForImport } from "@/stores/useFreezeStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type JobPhase =
@@ -92,10 +93,9 @@ export function useArtifactManagerJob(port = 8765) {
             );
             const freshAccount = getActiveAccount(useAccountStore.getState());
             if (freshAccount) {
-              const updated = replaceArtifactsFromSnapshot(
-                freshAccount.data,
-                snapshot
-              );
+              const { data: updated, artifactIdMap } =
+                replaceArtifactsFromSnapshot(freshAccount.data, snapshot);
+              remapFreezeStoreForImport(artifactIdMap);
               useAccountStore
                 .getState()
                 .addOrUpdateAccount(freshAccount.id, { data: updated });

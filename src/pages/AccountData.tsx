@@ -58,6 +58,7 @@ import {
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
+import { remapFreezeStoreForImport } from "@/stores/useFreezeStore";
 import {
   AlertTriangle,
   Database,
@@ -303,12 +304,15 @@ export default function AccountDataPage() {
 
       // Merge with existing data for absent sections
       let importData = result.data;
+      let partialMergeMap: Map<string, string> | undefined;
       if (isPartial && existingData) {
-        importData = mergePartialAccountData(
+        const mergeResult = mergePartialAccountData(
           existingData,
           result.data,
           presentSections
         );
+        importData = mergeResult.data;
+        partialMergeMap = mergeResult.artifactIdMap;
       }
 
       const routing = routeLocalImport(
@@ -319,6 +323,7 @@ export default function AccountDataPage() {
       );
 
       if (routing.kind === "direct") {
+        remapFreezeStoreForImport(partialMergeMap);
         addOrUpdateAccount(routing.id, {
           data: routing.data,
           name: routing.name,
@@ -356,16 +361,22 @@ export default function AccountDataPage() {
 
       // Read fresh state to avoid stale closure
       const currentAccounts = useAccountStore.getState().accounts;
+      let uidMergeMap: Map<string, string> | undefined;
       const routing = routeUidImport(
         currentAccounts,
         uid,
         result.data,
         nickname,
         clearBeforeImport,
-        mergeAccountData
+        (old, incoming) => {
+          const r = mergeAccountData(old, incoming);
+          uidMergeMap = r.artifactIdMap;
+          return r.data;
+        }
       );
 
       if (routing.kind === "direct") {
+        remapFreezeStoreForImport(uidMergeMap);
         addOrUpdateAccount(routing.id, {
           data: routing.data,
           name: routing.name,
@@ -399,16 +410,22 @@ export default function AccountDataPage() {
       showConversionWarnings({ ...result, warnings: allWarnings });
 
       const currentAccounts = useAccountStore.getState().accounts;
+      let hoyoMergeMap: Map<string, string> | undefined;
       const routing = routeUidImport(
         currentAccounts,
         uid,
         result.data,
         "",
         clearBeforeImport,
-        mergeAccountData
+        (old, incoming) => {
+          const r = mergeAccountData(old, incoming);
+          hoyoMergeMap = r.artifactIdMap;
+          return r.data;
+        }
       );
 
       if (routing.kind === "direct") {
+        remapFreezeStoreForImport(hoyoMergeMap);
         addOrUpdateAccount(routing.id, {
           data: routing.data,
           name: routing.name,
@@ -441,6 +458,7 @@ export default function AccountDataPage() {
     // For partial GOOD imports via dialog, re-convert with the target's
     // existing characters so location resolution works, then merge.
     let effectivePending = pendingImport;
+    let resolveArtifactIdMap: Map<string, string> | undefined;
     if (
       pendingImport.rawGOOD &&
       pendingImport.presentSections &&
@@ -452,13 +470,15 @@ export default function AccountDataPage() {
           pendingImport.rawGOOD,
           existingData.characters
         );
+        const partialResult = mergePartialAccountData(
+          existingData,
+          reConverted.data,
+          pendingImport.presentSections
+        );
+        resolveArtifactIdMap = partialResult.artifactIdMap;
         effectivePending = {
           ...pendingImport,
-          data: mergePartialAccountData(
-            existingData,
-            reConverted.data,
-            pendingImport.presentSections
-          ),
+          data: partialResult.data,
         };
       }
     }
@@ -469,7 +489,11 @@ export default function AccountDataPage() {
       action,
       targetId,
       renamedName,
-      mergeAccountData
+      (old, incoming) => {
+        const r = mergeAccountData(old, incoming);
+        resolveArtifactIdMap = r.artifactIdMap;
+        return r.data;
+      }
     );
 
     if (result.kind === "account_not_found") {
@@ -480,6 +504,7 @@ export default function AccountDataPage() {
       return;
     }
 
+    remapFreezeStoreForImport(resolveArtifactIdMap);
     addOrUpdateAccount(result.id, {
       data: result.data,
       ...(result.name ? { name: result.name } : {}),
