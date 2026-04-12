@@ -2,6 +2,51 @@
 
 > System design for calculating ER requirements given a team and its rotation.
 
+## Implementation Status (April 2026)
+
+### Implemented (52 tests)
+- Core ER calculation with three modes (zero-energy-start, full-energy-repeat, zero-energy-repeat)
+- Timeline-based simulation with next-action absorber rule
+- **periodicE backward absorption**: periodic particles go to whoever is currently on-field (backward lookup)
+- Particle RNG modes (min/expected/max) with UI toggle
+- Per-action energy breakdown (bindingEvents) with grouped display and ER formula derivation
+- Binding Q identification (which Q determines the ER requirement) with thick yellow ring highlight
+- Self-energy from 69 characters — **action-conditional** (only triggers when the required action is in timeline)
+- ER-scaling energy support (Sara P2, Dori P2)
+- **Action-conditional party energy**: Raiden Q energy only applies if Raiden bursts; Sara P2 only if Sara uses E
+- **Action-conditional weapon energy**: Prototype Amber only on burst; Kitain only on skill
+- **Action-conditional artifact energy**: Exile 4pc only when wielder bursts
+- Weapon energy effects (Favonius ×5, Prototype Amber, Amenoma, Kitain, Katsuragikiri, Prototype Starglitter)
+- Artifact energy effects (Exile 4pc, Scholar 4pc)
+- Enemy particle presets (None/Low/Medium/High) with named labels
+- Wait-block auto-optimizer (greedy: insert waits, remove waits, swap E↔Q)
+- Team preset rotations (6: National, Raiden National, Fav National, Mono Geo, Freeze, Hu Tao Double Hydro)
+- Weapon selector on team cards with localized names
+- UI: gradient card system (9 themes), side-by-side layout (XL+), absorber arrows (→avatar), expandable breakdown panel with grouped events (×count), ER formula derivation, bottleneck indicator, copy results, color-coded action palette, team change auto-cleanup
+
+### Not Yet Implemented
+- Particle linkage arrows between timeline rows (design doc Section 12.2-12.3) — replaced with inline absorber arrows
+- Multi-row timeline visualization (one row per character)
+- "Apply to Min ER" button connecting to team-comp store
+- Integration with team-comp store for importing existing teams
+- URL sharing for configurations
+- gcsim CLI validation for accuracy cross-checking (plan documented in docs/er-calc-gcsim-validation.md)
+- ~7 newer weapons with energy effects not yet modeled
+
+### Deviations from Design
+- periodicE absorption uses **backward** lookup (who is on-field) instead of forward (next action). More accurate for off-field generators.
+- All energy effects are **action-conditional**: self-energy, party energy, weapon energy, and artifact energy only trigger when the relevant action is present in the timeline. This prevents phantom energy contributions.
+- The doubled timeline `[T,T]` hack is used for FE-repeat wrap-around instead of modular indexing.
+- Self-energy is distributed evenly across Q windows (approximation for multi-Q rotations).
+- Normal attack energy generation is approximated at ~2.5 particle energy per NA/CA/PA action (based on gcsim's 14% proc rate × 3 hits × 6 energy per Clear orb). Distributed to all team members (on-field 1.0×, off-field 0.6×).
+- Particle travel time is approximated via the absorber rule rather than frame-precise timing.
+
+### gcsim Comparison (from source code analysis)
+Our calculator matches gcsim's core formula: `ER = (burstCost - flatEnergy) / rawParticles × 100`.
+Key differences: gcsim uses Monte Carlo simulation with frame-precise timing, particle travel delay (100 frames), probabilistic particle generation, and NA energy. Our deterministic model trades precision for speed and interpretability. Expected deviation: 5-15% for well-structured rotations.
+
+---
+
 ## Table of Contents
 
 1. [Overview](#1-overview)

@@ -14,6 +14,7 @@ const ArtifactBuildsPage = lazy(() => import("./pages/ArtifactBuilds"));
 const TeamCompPage = lazy(() => import("./pages/TeamComp"));
 const TierListPage = lazy(() => import("./pages/TierList"));
 const ArchivePage = lazy(() => import("./pages/Archive"));
+const ERCalcPage = lazy(() => import("./pages/ERCalc"));
 
 function App() {
   const location = useLocation();
@@ -55,6 +56,9 @@ function App() {
                 <Route path="/archive/:tab" element={<ArchivePage />} />
                 <Route path="/team-comp" element={<TeamCompPage />} />
                 <Route path="/team-comp/:tab" element={<TeamCompPage />} />
+                {import.meta.env.DEV && (
+                  <Route path="/er-calc" element={<ERCalcPage />} />
+                )}
               </Routes>
             </Suspense>
           </main>

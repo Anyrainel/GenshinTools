@@ -1,0 +1,931 @@
+{
+  "aino": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 10,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 10
+    }
+  ],
+  "albedo": [
+    {
+      "source": "C1",
+      "action": "periodicE",
+      "amount": 1.2,
+      "target": "self",
+      "minC": 1
+    }
+  ],
+  "arataki_itto": [
+    {
+      "source": "C2",
+      "action": "Q",
+      "amount": 6,
+      "target": "self",
+      "minC": 2,
+      "procs": 3,
+      "conditionEn": "per Geo character in party, max 18",
+      "conditionZh": ""
+    }
+  ],
+  "arlecchino": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 15,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 10,
+      "conditionEn": "on successful blood debt directive recollection",
+      "conditionZh": ""
+    }
+  ],
+  "barbara": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 1,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 10
+    },
+    {
+      "source": "C4",
+      "action": "ChargeA",
+      "amount": 1,
+      "target": "self",
+      "minC": 4,
+      "procs": 5
+    }
+  ],
+  "charlotte": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "procs": 5,
+      "conditionEn": "hits enemy marked by E, per 20s window",
+      "conditionZh": "",
+      "note": "per 20s window"
+    }
+  ],
+  "chasca": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 1.5,
+      "target": "self",
+      "minC": 4,
+      "procs": 6
+    }
+  ],
+  "chevreuse": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 6,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 10,
+      "conditionEn": "on Overloaded by on-field character (not Chevreuse), requires P1",
+      "conditionZh": ""
+    }
+  ],
+  "chongyun": [
+    {
+      "source": "C4",
+      "action": "A",
+      "amount": 1,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 2,
+      "conditionEn": "hit cryo-affected enemy",
+      "conditionZh": ""
+    }
+  ],
+  "citlali": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 8,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 8
+    }
+  ],
+  "columbina": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 6,
+      "target": "active",
+      "minC": 1,
+      "cooldown": 15,
+      "conditionEn": "moon-electro dominant during gravity interference",
+      "conditionZh": "",
+      "note": "moon-electro dominant during gravity interference"
+    },
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 15
+    }
+  ],
+  "cyno": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 3,
+      "target": "partyOthers",
+      "minC": 4,
+      "procs": 5,
+      "conditionEn": "during Q, on electro reaction",
+      "conditionZh": ""
+    }
+  ],
+  "dahlia": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 2.5,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "during Q, per 祝颂 stack gained",
+      "conditionZh": ""
+    }
+  ],
+  "dehya": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 1.5,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 0.2,
+      "procs": 10
+    }
+  ],
+  "diona": [
+    {
+      "source": "C1",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "on Q effect end",
+      "conditionZh": ""
+    }
+  ],
+  "dori": [
+    {
+      "source": "Q",
+      "action": "Q",
+      "target": "active",
+      "minC": 0,
+      "conditionEn": "per tick during Q, 2s interval",
+      "conditionZh": "Q持续期间每2秒恢复",
+      "param": {
+        "source": "Q",
+        "index": 4,
+        "multiplier": 1
+      },
+      "note": "per tick, 2s interval, ~6 ticks over 12s duration"
+    },
+    {
+      "source": "P2",
+      "action": "E",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "erScale": {
+        "per100": 5,
+        "max": 15
+      }
+    }
+  ],
+  "durin": [
+    {
+      "source": "E",
+      "action": "E",
+      "target": "self",
+      "minC": 0,
+      "param": {
+        "source": "E",
+        "index": 5,
+        "multiplier": 1
+      }
+    }
+  ],
+  "escoffier": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "procs": 7,
+      "conditionEn": "probability equals crit rate, during P1 healing ticks after Q",
+      "conditionZh": "",
+      "note": "probability equals crit rate"
+    }
+  ],
+  "faruzan": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "+0.5 per additional enemy hit, max 4",
+      "conditionZh": "",
+      "note": "+0.5 per additional enemy hit, max 4"
+    }
+  ],
+  "flins": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 8,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 5.5,
+      "conditionEn": "party triggers moon-electro reaction",
+      "conditionZh": ""
+    }
+  ],
+  "freminet": [
+    {
+      "source": "C2",
+      "action": "E",
+      "amount": 2,
+      "target": "self",
+      "minC": 2,
+      "conditionEn": "on High Pressure Smash; 3 energy if rank 4",
+      "conditionZh": ""
+    }
+  ],
+  "furina": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 5
+    }
+  ],
+  "gaming": [
+    {
+      "source": "C4",
+      "action": "PlungeA",
+      "amount": 2,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 0.2
+    }
+  ],
+  "ganyu": [
+    {
+      "source": "C1",
+      "action": "ChargeA",
+      "amount": 2,
+      "target": "self",
+      "minC": 1
+    }
+  ],
+  "iansan": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 15,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 18,
+      "conditionEn": "during nightsoul state, per 6 nightsoul consumed",
+      "conditionZh": "",
+      "note": "per 6 nightsoul consumed"
+    }
+  ],
+  "ifa": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 6,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 8
+    }
+  ],
+  "illuga": [
+    {
+      "source": "C1",
+      "action": "A",
+      "amount": 12,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 15,
+      "conditionEn": "Illuga on-field triggers geo-related reaction",
+      "conditionZh": "",
+      "note": "Illuga must be on-field"
+    }
+  ],
+  "ineffa": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 5,
+      "target": "party",
+      "minC": 4,
+      "cooldown": 4,
+      "conditionEn": "party triggers moon-electro reaction",
+      "conditionZh": ""
+    }
+  ],
+  "jahoda": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "Q cat helper triggers elemental conversion",
+      "conditionZh": ""
+    }
+  ],
+  "jean": [
+    {
+      "source": "P2",
+      "action": "Q",
+      "percentRefund": 20,
+      "target": "self",
+      "minC": 0
+    }
+  ],
+  "kachina": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 3,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 5,
+      "conditionEn": "on crystallize shard pickup or Lunar Crystallize",
+      "conditionZh": ""
+    }
+  ],
+  "kaedehara_kazuha": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 3,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "energy < 45, press E",
+      "conditionZh": ""
+    },
+    {
+      "source": "C4",
+      "action": "holdE",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "energy < 45, hold E",
+      "conditionZh": ""
+    }
+  ],
+  "kaeya": [
+    {
+      "source": "C6",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 6
+    }
+  ],
+  "kamisato_ayato": [
+    {
+      "source": "P2",
+      "action": "E",
+      "amount": 2,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 1,
+      "conditionEn": "off-field, energy < 40, 2/s passive",
+      "conditionZh": ""
+    }
+  ],
+  "kinich": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 2.8
+    }
+  ],
+  "klee": [
+    {
+      "source": "P2",
+      "action": "ChargeA",
+      "amount": 2,
+      "target": "party",
+      "minC": 0,
+      "conditionEn": "on crit",
+      "conditionZh": ""
+    },
+    {
+      "source": "C6",
+      "action": "Q",
+      "amount": 3,
+      "target": "partyOthers",
+      "minC": 6,
+      "cooldown": 3,
+      "conditionEn": "during Q",
+      "conditionZh": ""
+    }
+  ],
+  "kujou_sara": [
+    {
+      "source": "P2",
+      "action": "E",
+      "amount": 1.2,
+      "target": "party",
+      "minC": 0,
+      "erScale": {
+        "per100": 1.2
+      },
+      "cooldown": 3
+    }
+  ],
+  "lauma": [
+    {
+      "source": "C4",
+      "action": "periodicE",
+      "amount": 4,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 5
+    }
+  ],
+  "layla": [
+    {
+      "source": "C2",
+      "action": "periodicE",
+      "amount": 1,
+      "target": "self",
+      "minC": 2,
+      "procs": 4
+    }
+  ],
+  "lisa": [
+    {
+      "source": "C1",
+      "action": "holdE",
+      "amount": 2,
+      "target": "self",
+      "minC": 1,
+      "procs": 5
+    }
+  ],
+  "lyney": [
+    {
+      "source": "P1",
+      "action": "ChargeA",
+      "amount": 3,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "when HP consumed by Prop Arrow shot",
+      "conditionZh": ""
+    }
+  ],
+  "mika": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 3,
+      "target": "self",
+      "minC": 4,
+      "procs": 5,
+      "conditionEn": "when Q's 鹰翎 heals a party member",
+      "conditionZh": ""
+    }
+  ],
+  "mualani": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 8,
+      "target": "self",
+      "minC": 4,
+      "procs": 2,
+      "conditionEn": "on pufferball pickup, requires P1",
+      "conditionZh": ""
+    }
+  ],
+  "navia": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 9,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "3 energy per Crystal Shrapnel consumed, max 9 (3 shards)",
+      "conditionZh": "",
+      "note": "3 energy per Crystal Shrapnel consumed, max 9 (3 shards)"
+    }
+  ],
+  "nilou": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 15,
+      "target": "self",
+      "minC": 4
+    }
+  ],
+  "ororon": [
+    {
+      "source": "P2",
+      "action": "A",
+      "amount": 3,
+      "target": "active",
+      "minC": 0,
+      "procs": 3,
+      "cooldown": 1,
+      "conditionEn": "after E hits enemy, on NA/CA/plunge hit within 15s",
+      "conditionZh": ""
+    },
+    {
+      "source": "P2",
+      "action": "A",
+      "amount": 3,
+      "target": "self",
+      "minC": 0,
+      "procs": 3,
+      "cooldown": 1,
+      "conditionEn": "after E hits enemy, on active char NA/CA/plunge hit within 15s, Ororon off-field",
+      "conditionZh": ""
+    },
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 8,
+      "target": "self",
+      "minC": 4
+    }
+  ],
+  "qiqi": [
+    {
+      "source": "C1",
+      "action": "periodicE",
+      "amount": 2,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "hit enemy marked by Q",
+      "conditionZh": ""
+    }
+  ],
+  "raiden_shogun": [
+    {
+      "source": "Q",
+      "action": "Q",
+      "target": "party",
+      "minC": 0,
+      "procs": 5,
+      "cooldown": 1,
+      "param": {
+        "source": "Q",
+        "index": 17,
+        "multiplier": 1
+      },
+      "conditionEn": "per hit during Q musou isshin, max 5 procs",
+      "conditionZh": "Q梦想一心状态下每次命中恢复，至多5次"
+    }
+  ],
+  "razor": [
+    {
+      "source": "E",
+      "action": "holdE",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "procs": 3,
+      "conditionEn": "per Electro Sigil absorbed",
+      "conditionZh": ""
+    },
+    {
+      "source": "E",
+      "action": "Q",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "procs": 3,
+      "conditionEn": "per Electro Sigil consumed on Q cast",
+      "conditionZh": ""
+    },
+    {
+      "source": "P4",
+      "action": "E",
+      "amount": 7,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 1,
+      "conditionEn": "during Q, on Electro Sigil overflow (requires 魔導 with 2+ 魔導 characters)",
+      "conditionZh": "",
+      "note": "requires 魔導 setup with 2+ 魔導 characters"
+    }
+  ],
+  "rosaria": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "on crit, max 1 per E",
+      "conditionZh": ""
+    }
+  ],
+  "sangonomiya_kokomi": [
+    {
+      "source": "C4",
+      "action": "A",
+      "amount": 0.8,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 0.2,
+      "conditionEn": "during Q",
+      "conditionZh": "",
+      "procs": 15
+    }
+  ],
+  "sayu": [
+    {
+      "source": "C4",
+      "action": "E",
+      "amount": 1.2,
+      "target": "self",
+      "minC": 4,
+      "cooldown": 2,
+      "conditionEn": "on swirl reaction while on-field",
+      "conditionZh": ""
+    }
+  ],
+  "sethos": [
+    {
+      "source": "E",
+      "action": "E",
+      "amount": 12,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "on triggering electro reaction",
+      "conditionZh": ""
+    },
+    {
+      "source": "C6",
+      "action": "ChargeA",
+      "amount": 20,
+      "target": "self",
+      "minC": 6,
+      "cooldown": 15,
+      "conditionEn": "refunds P1 energy cost",
+      "conditionZh": "",
+      "note": "refunds P1 energy cost, amount depends on energy consumed (max 20)"
+    }
+  ],
+  "shikanoin_heizou": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 9,
+      "target": "self",
+      "minC": 4,
+      "conditionEn": "first 聚風真眼 burst gives 9, each additional gives 1.5, max 13.5 total",
+      "conditionZh": "",
+      "note": "first 聚風真眼 burst gives 9, each additional gives 1.5, max 13.5 total"
+    }
+  ],
+  "tartaglia": [
+    {
+      "source": "Q",
+      "action": "Q",
+      "amount": 20,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "ranged burst only",
+      "conditionZh": ""
+    },
+    {
+      "source": "C2",
+      "action": "A",
+      "amount": 4,
+      "target": "self",
+      "minC": 2,
+      "conditionEn": "on defeating enemy with Riptide",
+      "conditionZh": ""
+    }
+  ],
+  "thoma": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 4
+    }
+  ],
+  "traveler_dendro": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 3.5,
+      "target": "self",
+      "minC": 1
+    }
+  ],
+  "traveler_electro": [
+    {
+      "source": "E",
+      "action": "E",
+      "amount": 4,
+      "target": "active",
+      "minC": 0,
+      "procs": 2,
+      "conditionEn": "per amulet pickup;",
+      "conditionZh": ""
+    },
+    {
+      "source": "Q",
+      "action": "A",
+      "amount": 1,
+      "target": "active",
+      "minC": 0,
+      "cooldown": 0.5,
+      "conditionEn": "per lightning strike during Q;",
+      "conditionZh": ""
+    },
+    {
+      "source": "C6",
+      "action": "A",
+      "amount": 1,
+      "target": "active",
+      "minC": 6,
+      "conditionEn": "every 3rd lightning strike during Q",
+      "conditionZh": ""
+    }
+  ],
+  "traveler_geo": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "procs": 5
+    }
+  ],
+  "traveler_hydro": [
+    {
+      "source": "C1",
+      "action": "holdE",
+      "amount": 2,
+      "target": "self",
+      "minC": 1,
+      "conditionEn": "per dewdrop pickup; requires P1",
+      "conditionZh": ""
+    }
+  ],
+  "traveler_pyro": [
+    {
+      "source": "P2",
+      "action": "periodicE",
+      "amount": 5,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 12,
+      "conditionEn": "on-field character triggers pyro reaction in domain",
+      "conditionZh": ""
+    },
+    {
+      "source": "P2",
+      "action": "periodicE",
+      "amount": 4,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "party triggers Nightsoul Burst",
+      "conditionZh": ""
+    }
+  ],
+  "varesa": [
+    {
+      "source": "C2",
+      "action": "PlungeA",
+      "amount": 11.5,
+      "target": "self",
+      "minC": 2
+    },
+    {
+      "source": "C6",
+      "action": "PlungeA",
+      "amount": 30,
+      "target": "self",
+      "minC": 6,
+      "conditionEn": "on entering extreme drive state",
+      "conditionZh": "",
+      "note": "on entering extreme drive state"
+    }
+  ],
+  "venti": [
+    {
+      "source": "P2",
+      "action": "Q",
+      "amount": 15,
+      "target": "self",
+      "minC": 0,
+      "conditionEn": "on Q effect end",
+      "conditionZh": ""
+    },
+    {
+      "source": "P2",
+      "action": "Q",
+      "amount": 15,
+      "target": "party",
+      "minC": 0,
+      "conditionEn": "on Q effect end, only for characters matching absorbed element",
+      "conditionZh": ""
+    }
+  ],
+  "wanderer": [
+    {
+      "source": "P1",
+      "action": "A",
+      "amount": 0.8,
+      "target": "self",
+      "minC": 0,
+      "cooldown": 0.2,
+      "conditionEn": "during E, requires electro absorption",
+      "conditionZh": "",
+      "procs": 25
+    }
+  ],
+  "xilonen": [
+    {
+      "source": "C2",
+      "action": "E",
+      "amount": 25,
+      "target": "party",
+      "minC": 2,
+      "conditionEn": "electro party members only, on source sample activation",
+      "conditionZh": ""
+    }
+  ],
+  "xingqiu": [
+    {
+      "source": "C6",
+      "action": "A",
+      "amount": 3,
+      "target": "self",
+      "minC": 6,
+      "conditionEn": "during Q, every 3rd rain sword wave",
+      "conditionZh": ""
+    }
+  ],
+  "yae_miko": [
+    {
+      "source": "C1",
+      "action": "Q",
+      "amount": 8,
+      "target": "self",
+      "minC": 1,
+      "procs": 3
+    }
+  ],
+  "yaoyao": [
+    {
+      "source": "C2",
+      "action": "Q",
+      "amount": 3,
+      "target": "self",
+      "minC": 2,
+      "cooldown": 0.8
+    }
+  ],
+  "yumemizuki_mizuki": [
+    {
+      "source": "C4",
+      "action": "Q",
+      "amount": 5,
+      "target": "self",
+      "minC": 4,
+      "procs": 4
+    }
+  ]
+}

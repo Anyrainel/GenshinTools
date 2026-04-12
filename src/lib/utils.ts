@@ -83,9 +83,30 @@ const ELEMENT_COLORS = {
     Geo: "text-element-geo",
     Dendro: "text-element-dendro",
   },
+  border: {
+    Pyro: "border-element-pyro/40",
+    Hydro: "border-element-hydro/40",
+    Electro: "border-element-electro/40",
+    Cryo: "border-element-cryo/40",
+    Anemo: "border-element-anemo/40",
+    Geo: "border-element-geo/40",
+    Dendro: "border-element-dendro/40",
+  },
+  bgSubtle: {
+    Pyro: "bg-element-pyro/20",
+    Hydro: "bg-element-hydro/20",
+    Electro: "bg-element-electro/20",
+    Cryo: "bg-element-cryo/20",
+    Anemo: "bg-element-anemo/20",
+    Geo: "bg-element-geo/20",
+    Dendro: "bg-element-dendro/20",
+  },
 } as const;
 
-export function getElementColor(element: Element, type: "bg" | "text"): string {
+export function getElementColor(
+  element: Element,
+  type: "bg" | "text" | "border" | "bgSubtle"
+): string {
   return ELEMENT_COLORS[type][element] || "";
 }
 

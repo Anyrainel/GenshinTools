@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1775695652997",
+  "id": "export-1775858686525",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -585,12 +585,12 @@
       "source": "preset",
       "sandsWeights": [
         {
-          "stat": "em",
+          "stat": "hp%",
           "weight": 100
         },
         {
-          "stat": "hp%",
-          "weight": 100
+          "stat": "em",
+          "weight": 90
         }
       ],
       "gobletWeights": [
@@ -607,6 +607,10 @@
         {
           "stat": "cd",
           "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 95
         }
       ],
       "normalizer": 0.663524326045901
@@ -1807,6 +1811,10 @@
         {
           "stat": "hp%",
           "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
         }
       ],
       "gobletWeights": [
@@ -1823,9 +1831,14 @@
         {
           "stat": "cd",
           "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
         }
       ],
-      "normalizer": 0.6587132530636342
+      "normalizer": 0.6587132530636342,
+      "source": "preset"
     },
     "I-Sm0jO": {
       "id": "I-Sm0jO",
@@ -7976,12 +7989,12 @@
           "weight": 100
         },
         {
-          "stat": "cd",
+          "stat": "def%",
           "weight": 100
         },
         {
-          "stat": "def%",
-          "weight": 100
+          "stat": "cd",
+          "weight": 90
         }
       ],
       "sandsWeights": [
@@ -8009,7 +8022,8 @@
       "normalizer": 0,
       "styles": ["off-field"],
       "roles": ["dps", "support"],
-      "artifactSet": "husk_of_opulent_dreams"
+      "artifactSet": "husk_of_opulent_dreams",
+      "source": "preset"
     },
     "JH4sLqO": {
       "id": "JH4sLqO",
@@ -8023,12 +8037,12 @@
           "weight": 100
         },
         {
-          "stat": "cd",
+          "stat": "def%",
           "weight": 100
         },
         {
-          "stat": "def%",
-          "weight": 100
+          "stat": "cd",
+          "weight": 90
         }
       ],
       "sandsWeights": [
@@ -8056,7 +8070,8 @@
       "normalizer": 0,
       "styles": ["off-field"],
       "roles": ["dps", "support"],
-      "artifactSet": "aubade_of_morningstar_and_moon"
+      "artifactSet": "aubade_of_morningstar_and_moon",
+      "source": "preset"
     }
   },
   "characterBuilds": {
