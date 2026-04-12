@@ -1,5 +1,6 @@
 import { characters } from "@/data/resources";
-import { useAccountStore } from "@/stores/useAccountStore";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 
 /** Character IDs that are always owned (Traveler, Manekin, Manekina variants). */
 const ALWAYS_OWNED_CHARACTER_IDS = new Set(
@@ -15,10 +16,7 @@ import { useCallback, useMemo } from "react";
  * A weapon is owned if it's equipped on any character or in extraWeapons.
  */
 export function useIsOwned() {
-  const accountData = useAccountStore((s) => {
-    const acc = s.activeAccountId ? s.accounts[s.activeAccountId] : null;
-    return acc?.data ?? null;
-  });
+  const accountData = useActiveAccountData();
 
   const { ownedCharacters, ownedWeapons } = useMemo(() => {
     if (!accountData) return { ownedCharacters: null, ownedWeapons: null };
@@ -55,8 +53,9 @@ export function useIsOwned() {
  */
 export function useConstellation(characterId: string): number {
   return useAccountStore((s) => {
-    const acc = s.activeAccountId ? s.accounts[s.activeAccountId] : null;
-    const char = acc?.data.characters.find((c) => c.key === characterId);
+    const char = getActiveAccount(s)?.data.characters.find(
+      (c) => c.key === characterId
+    );
     return char?.constellation ?? 0;
   });
 }
@@ -67,7 +66,7 @@ export function useConstellation(characterId: string): number {
  */
 export function useRefinement(weaponId: string): number {
   return useAccountStore((s) => {
-    const acc = s.activeAccountId ? s.accounts[s.activeAccountId] : null;
+    const acc = getActiveAccount(s);
     if (!acc) return 1;
     let best = 0;
     for (const c of acc.data.characters) {
@@ -89,7 +88,7 @@ export function useRefinement(weaponId: string): number {
  */
 export function useHasAccountData(): boolean {
   return useAccountStore((s) => {
-    const acc = s.activeAccountId ? s.accounts[s.activeAccountId] : null;
+    const acc = getActiveAccount(s);
     return acc != null && acc.data.characters.length > 0;
   });
 }

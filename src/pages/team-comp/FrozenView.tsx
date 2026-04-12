@@ -9,10 +9,10 @@ import { StandaloneArtifactsCard } from "@/components/team-comp/StandaloneArtifa
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { buildBatchEquipInstructions } from "@/lib/artifact-manager/instructions";
 import { downloadElementAsImage } from "@/lib/downloadImage";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -71,8 +71,7 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
     const setReuseMode = useFreezeStore((s) => s.setReuseMode);
     const clearAllFrozen = useFreezeStore((s) => s.clearAll);
     const teams = useTeamStore((s) => s.teams);
-    const activeAccount = useAccountStore(getActiveAccount);
-    const accountData = activeAccount?.data || null;
+    const accountData = useActiveAccountData();
     const [freezeDialogOpen, setFreezeDialogOpen] = useState(false);
     const frozenExportRef = useRef<HTMLDivElement>(null);
     const isXl = useMediaQuery("(min-width: 1280px)");

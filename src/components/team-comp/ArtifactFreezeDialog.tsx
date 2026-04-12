@@ -18,9 +18,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { getSortableStatsForSlot } from "@/data/constants";
 import type { AccountData, ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getRarityColor } from "@/lib/utils";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -76,8 +76,7 @@ export function ArtifactFreezeDialog({
   onOpenChange,
 }: ArtifactFreezeDialogProps) {
   const { t } = useLanguage();
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const frozenArtifactIds = useFreezeStore((s) => s.frozenArtifactIds);
   const getFrozenArtifactIds = useFreezeStore((s) => s.getFrozenArtifactIds);
   const freezeArtifact = useFreezeStore((s) => s.freezeArtifact);

@@ -4,6 +4,11 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
@@ -13,6 +18,7 @@ import {
   type LuckExpectation,
   tiers,
 } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
@@ -22,7 +28,6 @@ import {
   generateAllRecommendations,
 } from "@/lib/account-data/recommendationEngine";
 import { cn } from "@/lib/utils";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";
 import {
@@ -130,8 +135,7 @@ export function RecommendationView({
   onShowTour,
 }: RecommendationViewProps) {
   const { t } = useLanguage();
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const buildGroups = useAllResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
   const tierAssignments = useTierStore((s) => s.tierAssignments);
@@ -256,9 +260,36 @@ export function RecommendationView({
       {/* Investment threshold controls */}
       <Card className="bg-gradient-card shrink-0">
         <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 p-4">
-          <CardTitle className="text-lg font-bold text-white pr-2 lg:pr-4 xl:pr-6">
-            {t.ui("accountData.investmentLevel.label")}
-          </CardTitle>
+          <div className="flex items-center gap-2 pr-2 lg:pr-4 xl:pr-6">
+            <CardTitle className="text-lg font-bold text-white">
+              {t.ui("accountData.investmentLevel.label")}
+            </CardTitle>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                side="bottom"
+                align="start"
+                className="w-80 space-y-2 text-sm"
+              >
+                <p className="font-semibold text-foreground">
+                  {t.ui("accountData.howItWorks.title")}
+                </p>
+                <ul className="space-y-1.5 text-muted-foreground list-disc pl-4">
+                  <li>{t.ui("accountData.howItWorks.step1")}</li>
+                  <li>{t.ui("accountData.howItWorks.step2")}</li>
+                  <li>{t.ui("accountData.howItWorks.step3")}</li>
+                  <li>{t.ui("accountData.howItWorks.step4")}</li>
+                </ul>
+              </PopoverContent>
+            </Popover>
+          </div>
           {(
             [
               {
@@ -452,6 +483,28 @@ export function RecommendationView({
           </div>
         );
       })()}
+
+      {/* Hint: recommendations are quick suggestions */}
+      <p className="text-xs text-muted-foreground text-center pb-2">
+        {t
+          .ui("accountData.hint")
+          .split("{0}")
+          .map((part, i, arr) =>
+            i < arr.length - 1 ? (
+              <span key={i}>
+                {part}
+                <Link
+                  to="/team-comp/damage"
+                  className="underline text-foreground hover:text-primary"
+                >
+                  {t.ui("accountData.hintDamageLink")}
+                </Link>
+              </span>
+            ) : (
+              <span key={i}>{part}</span>
+            )
+          )}
+      </p>
     </ScrollLayout>
   );
 }

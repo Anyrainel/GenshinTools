@@ -1,7 +1,7 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import type { ArtifactData, CharacterData, Slot } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { frozenArtifactsMatchConfig } from "@/lib/team-comp/teamOptUtils";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -135,8 +135,7 @@ export function computeTeamInventory(
  * Guards against using frozen artifacts across all optimizer features.
  */
 export function useTeamInventory(teamId: string): TeamInventory {
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const frozenTeams = useFreezeStore((s) => s.frozenTeams);
   const reuseMode = useFreezeStore((s) => s.reuseMode);
   const standaloneFrozenIds = useFreezeStore((s) => s.frozenArtifactIds);

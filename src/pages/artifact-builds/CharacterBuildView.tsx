@@ -8,6 +8,10 @@ import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSideb
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import { characters } from "@/data/resources";
+import {
+  useActiveAccountData,
+  useActiveAccountScores,
+} from "@/hooks/useActiveAccount";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
@@ -16,7 +20,6 @@ import { useIsOwned } from "@/hooks/useOwnership";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -50,9 +53,8 @@ export function CharacterBuildView({
   const mainScrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const hasAccountData = useAccountStore(
-    (s) => getActiveAccount(s)?.data != null
-  );
+  const activeAccountData = useActiveAccountData();
+  const hasAccountData = activeAccountData != null;
   const hasAnyBuilds =
     Object.keys(useBuildsStore((s) => s.characterToBuildIds)).length > 0;
 
@@ -72,9 +74,7 @@ export function CharacterBuildView({
     activeFilterCount,
   } = useCharacterFilters({ defaultOwnedOnly: hasAccountData, hasTierData });
 
-  const activeAccount = useAccountStore(getActiveAccount);
-  const scores: Record<string, ArtifactScoreResult | null> =
-    activeAccount?.scores ?? {};
+  const scores = useActiveAccountScores();
   const hasScoreData = Object.keys(scores).length > 0;
 
   const nameResolver = useCallback((id: string) => t.character(id), [t]);

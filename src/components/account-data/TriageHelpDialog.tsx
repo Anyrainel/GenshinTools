@@ -5,7 +5,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
-import type { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
 import { Lock, ShieldAlert, Zap } from "lucide-react";
 
@@ -21,12 +21,11 @@ const TIER_COLOR = TRIAGE_TIER_COLORS.text;
 export function TriageHelpDialog({
   open,
   onOpenChange,
-  t,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   const tiers = [
     {
       tier: "P" as const,

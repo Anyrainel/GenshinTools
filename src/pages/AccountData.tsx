@@ -21,6 +21,7 @@ import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, Build } from "@/data/types";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
@@ -56,7 +57,7 @@ import {
   mergePartialAccountData,
 } from "@/lib/account-data/mergeAccountData";
 import { applyAccountImport } from "@/stores/applyAccountImport";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import {
@@ -167,7 +168,7 @@ export default function AccountDataPage() {
   const promoteToUid = useAccountStore((s) => s.promoteToUid);
   const mergeScores = useAccountStore((s) => s.mergeScores);
   const staleScoreCharIds = useAccountStore((s) => s.staleScoreCharIds);
-  const activeAccount = useAccountStore(getActiveAccount);
+  const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data || null;
   const scores = activeAccount?.scores || {};
   // id IS the uid for non-default profiles

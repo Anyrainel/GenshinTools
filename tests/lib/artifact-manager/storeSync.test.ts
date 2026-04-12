@@ -3,7 +3,7 @@ import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
 import {
   applyEquipResults,
   applyJobResults,
-  replaceArtifactsFromSnapshot,
+  rebuildAccountFromSnapshot,
 } from "@/lib/artifact-manager/storeSync";
 import type {
   EquipPayload,
@@ -180,12 +180,12 @@ function makeGOODArtifact(
   };
 }
 
-describe("replaceArtifactsFromSnapshot", () => {
+describe("rebuildAccountFromSnapshot", () => {
   it("converts GOOD artifacts to internal format and assigns to extraArtifacts", () => {
     const account = makeAccount();
     const snapshot = [makeGOODArtifact()];
 
-    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = rebuildAccountFromSnapshot(account, snapshot);
 
     expect(updated.extraArtifacts).toHaveLength(1);
     expect(updated.extraArtifacts[0].setKey).toBe("gladiators_finale");
@@ -212,7 +212,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       makeGOODArtifact({ location: "", slotKey: "plume" }),
     ];
 
-    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = rebuildAccountFromSnapshot(account, snapshot);
 
     expect(updated.characters[0].artifacts.flower).toBeDefined();
     expect(updated.characters[0].artifacts.flower!.setKey).toBe(
@@ -247,7 +247,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       }),
     ];
 
-    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = rebuildAccountFromSnapshot(account, snapshot);
 
     // Old artifacts should be gone, only new sands assigned
     expect(updated.characters[0].artifacts.flower).toBeUndefined();
@@ -281,7 +281,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       ],
     });
 
-    const { data: updated } = replaceArtifactsFromSnapshot(account, []);
+    const { data: updated } = rebuildAccountFromSnapshot(account, []);
 
     expect(updated.characters[0].constellation).toBe(2);
     expect(updated.characters[0].weapon?.key).toBe("engulfing_lightning");
@@ -311,7 +311,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       }),
     ];
 
-    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = rebuildAccountFromSnapshot(account, snapshot);
 
     // Raiden preserved, Furina stub created
     expect(updated.characters).toHaveLength(2);
@@ -337,7 +337,7 @@ describe("replaceArtifactsFromSnapshot", () => {
       makeGOODArtifact({ setKey: "EmblemOfSeveredFate" }),
     ];
 
-    const { data: updated } = replaceArtifactsFromSnapshot(account, snapshot);
+    const { data: updated } = rebuildAccountFromSnapshot(account, snapshot);
 
     expect(updated.extraArtifacts).toHaveLength(1);
     expect(updated.extraArtifacts[0].setKey).toBe("emblem_of_severed_fate");

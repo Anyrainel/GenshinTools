@@ -10,6 +10,7 @@ import { ExportBranding } from "@/components/shared/ExportBranding";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { AccountData, CharacterData } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -18,7 +19,7 @@ import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
@@ -46,8 +47,7 @@ export const CharacterView = forwardRef<
 >(function CharacterView({ scores, isEditMode = false }, ref) {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
 

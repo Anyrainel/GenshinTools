@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type {
   AccountData,
@@ -453,7 +453,6 @@ function ComboBreakdown({
                   parts={focusedFormulaParts}
                   highlightedStat={null}
                   critMode={critMode}
-                  t={t}
                   buffs={displayResult.buffs}
                   defaultActivation={
                     focusedComboActivation ?? displayResult.buffActivation
@@ -929,7 +928,6 @@ function SingleResultView({
                   parts={parts}
                   highlightedStat={null}
                   critMode={critMode}
-                  t={t}
                   buffs={displayResult.buffs}
                   defaultActivation={displayResult.buffActivation}
                   formulaKey={formulaKey}
@@ -1166,7 +1164,6 @@ interface DamageCardProps {
   updateTeam: (id: string, patch: Partial<Team>) => void;
   resolvedFormula: { charId: string; formulaId: string } | null;
   isMobile: boolean;
-  t: ReturnType<typeof useLanguage>["t"];
   // Current equipped
   equippedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   currentDisplayResult: DisplayResult | null | undefined;
@@ -1534,7 +1531,6 @@ export function DamageCard({
   updateTeam,
   resolvedFormula,
   isMobile,
-  t,
   equippedArtifactsByChar,
   currentDisplayResult,
   accountData,
@@ -1579,6 +1575,7 @@ export function DamageCard({
   currentTabFrozenCharIds,
   tierAssignments,
 }: DamageCardProps) {
+  const { t } = useLanguage();
   const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
   >("resultsTab", "current");

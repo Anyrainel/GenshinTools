@@ -200,13 +200,11 @@ function TriageContent({ t }: PreviewProps) {
       </Button>
       <TriageCard
         decision={PREVIEW_TRIAGE_LOCK}
-        t={t}
         expanded={false}
         onToggle={() => {}}
       />
       <TriageCard
         decision={PREVIEW_TRIAGE_UNLOCK}
-        t={t}
         expanded={false}
         onToggle={() => {}}
       />

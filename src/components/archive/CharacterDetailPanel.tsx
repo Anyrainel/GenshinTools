@@ -13,7 +13,7 @@ import { useConstellation, useIsOwned } from "@/hooks/useOwnership";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn } from "@/lib/utils";
-import { useAccountStore } from "@/stores/useAccountStore";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Bookmark, ChevronRight, Info, Plus } from "lucide-react";
 import { useMemo } from "react";
@@ -104,14 +104,10 @@ function LinkedBuildSection({
 
 function LinkedAccountSection({ character }: { character: CharacterResource }) {
   const { t } = useLanguage();
-  const accountData = useAccountStore((state) => {
-    const activeId = state.activeAccountId;
-    return activeId ? state.accounts[activeId]?.data : undefined;
-  });
-  const scores = useAccountStore((state) => {
-    const activeId = state.activeAccountId;
-    return activeId ? state.accounts[activeId]?.scores : {};
-  });
+  const accountData = useAccountStore(
+    (s) => getActiveAccount(s)?.data ?? undefined
+  );
+  const scores = useAccountStore((s) => getActiveAccount(s)?.scores ?? {});
 
   const charData = accountData?.characters.find((c) => c.key === character.id);
 

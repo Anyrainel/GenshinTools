@@ -14,7 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
 import { fetchArtifacts } from "@/lib/artifact-manager/client";
-import { replaceArtifactsFromSnapshot } from "@/lib/artifact-manager/storeSync";
+import { rebuildAccountFromSnapshot } from "@/lib/artifact-manager/storeSync";
 import type {
   EquipPayload,
   InstructionStatus,
@@ -126,7 +126,7 @@ export function ArtifactManagerDialog({
       }
       const account = getActiveAccount(useAccountStore.getState());
       if (account) {
-        const { data: updated, artifactIdMap } = replaceArtifactsFromSnapshot(
+        const { data: updated, artifactIdMap } = rebuildAccountFromSnapshot(
           account.data,
           snapshot
         );

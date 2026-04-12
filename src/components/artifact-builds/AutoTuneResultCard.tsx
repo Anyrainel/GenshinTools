@@ -34,14 +34,13 @@ function TeamResultRow({
   characterId,
   breakdown,
   accountData,
-  t,
 }: {
   team: Team | null;
   characterId: string;
   breakdown: TeamBreakdown;
   accountData: AccountData | null;
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
   const qualifying = breakdown.combos.filter((c) => c.damageRatio >= 0.96);
 
@@ -99,7 +98,7 @@ function TeamResultRow({
 
       {expanded && qualifying.length > 0 && (
         <div className="px-2.5 pb-2">
-          <ComboTable combos={qualifying} t={t} />
+          <ComboTable combos={qualifying} />
         </div>
       )}
     </div>
@@ -213,22 +212,19 @@ export function AutoTuneResultCard({
           <MainStatColumn
             label={t.slot("sands")}
             weights={result.sandsWeights}
-            t={t}
           />
           <MainStatColumn
             label={t.slot("goblet")}
             weights={result.gobletWeights}
-            t={t}
           />
           <MainStatColumn
             label={t.slot("circlet")}
             weights={result.circletWeights}
-            t={t}
           />
         </div>
 
         {/* Substat pills */}
-        <SubstatPills substats={result.substats} t={t} />
+        <SubstatPills substats={result.substats} />
 
         {/* Per-team breakdowns */}
         {result.teamBreakdowns.length > 0 && (
@@ -240,7 +236,6 @@ export function AutoTuneResultCard({
                 characterId={entry.characterId}
                 breakdown={tb}
                 accountData={accountData}
-                t={t}
               />
             ))}
           </div>

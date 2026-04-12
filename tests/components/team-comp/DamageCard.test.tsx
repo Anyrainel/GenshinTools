@@ -73,11 +73,10 @@ function makeDisplayResult(overrides?: Partial<DisplayResult>): DisplayResult {
   } as DisplayResult;
 }
 
-type CardProps = Omit<ComponentProps<typeof DamageCard>, "t">;
+type CardProps = ComponentProps<typeof DamageCard>;
 
 function TestCard(props: CardProps) {
-  const { t } = useLanguage();
-  return <DamageCard {...props} t={t} />;
+  return <DamageCard {...props} />;
 }
 
 function defaultProps(overrides: Partial<CardProps> = {}): CardProps {

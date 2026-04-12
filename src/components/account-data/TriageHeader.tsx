@@ -203,14 +203,13 @@ export function TriageHeader({
           </FilterChip>
         ))}
       </div>
-      <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} t={t} />
+      <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
       <FlexPatternDialog
         open={flexOpen}
         onOpenChange={setFlexOpen}
         flexPatterns={flexPatterns}
         settings={settings}
         onSettingsChange={onSettingsChange}
-        t={t}
       />
       <ArtifactManagerDialog
         open={managerOpen}

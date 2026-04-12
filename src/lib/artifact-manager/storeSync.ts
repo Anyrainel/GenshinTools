@@ -96,7 +96,7 @@ export function applyJobResults(
  * Returns a MergeResult with the old→new artifact ID mapping so that
  * downstream stores (e.g. freeze store) can update their references.
  */
-export function replaceArtifactsFromSnapshot(
+export function rebuildAccountFromSnapshot(
   account: AccountData,
   goodArtifacts: IGOODArtifact[]
 ): MergeResult {

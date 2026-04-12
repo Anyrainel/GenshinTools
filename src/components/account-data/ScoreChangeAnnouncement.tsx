@@ -8,7 +8,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useEffect, useState } from "react";
 
 const DISMISS_KEY = "score-v1-300-announced";
@@ -69,13 +69,13 @@ function ScoreChangeDialog({
  */
 export function ScoreChangeAnnouncement() {
   const [open, setOpen] = useState(false);
-  const activeAccount = useAccountStore(getActiveAccount);
+  const accountData = useActiveAccountData();
 
   useEffect(() => {
-    if (!activeAccount?.data?.characters?.length) return;
+    if (!accountData?.characters?.length) return;
     if (localStorage.getItem(DISMISS_KEY)) return;
     setOpen(true);
-  }, [activeAccount]);
+  }, [accountData]);
 
   const handleClose = () => {
     localStorage.setItem(DISMISS_KEY, "1");

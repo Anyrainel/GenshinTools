@@ -2,6 +2,7 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Element, ReactionType } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncWeaponChoice } from "@/hooks/useAsyncWeaponChoice";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -20,7 +21,6 @@ import type {
 } from "@/lib/team-comp/types";
 import type { WeaponChoiceOptions } from "@/lib/team-comp/weaponChoice";
 import { cn } from "@/lib/utils";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { Team, WeaponChoiceResult } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -42,8 +42,7 @@ interface WeaponChoiceDetailProps {
 export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   const { t } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const { ready: gameStatsReady, characterStats, weaponStats } = useGameStats();
   const isMobile = useMediaQuery("(max-width: 1023px)");
 

@@ -15,6 +15,10 @@ Full audit of the GenshinTools codebase for major abstraction problems that caus
 | 4.2 | Migrate `halfSet1`/`halfSet2` from `number\|string` to `string` only | ~`types.ts`, ~`ItemIcon.tsx`, ~`ItemPicker.tsx`, ~`buildUtils.ts`, ~`buildEvaluation.ts`, ~`buildOptimizer.ts`, ~`AutoTuneDialog.tsx`, ~`AutoTuneView.tsx`, ~`buildMigration.ts`, + test updates |
 | 3.4 | Clean up `useCharacterFilters` return value — remove tier/ownership passthrough | ~`useCharacterFilters.ts`, ~`CharacterBuildView.tsx`, ~`CharacterView.tsx` |
 | 2.7 | Document error handling conventions in CLAUDE.md | ~`CLAUDE.md` (formalized existing patterns rather than forcing new Result type) |
+| 1.1 | `useActiveAccountData()` / `useActiveAccount()` / `useActiveAccountScores()` hooks | +`src/hooks/useActiveAccount.ts`, ~15 files updated to use hooks instead of `useAccountStore(getActiveAccount)` + `?.data \|\| null` boilerplate |
+| 1.2 | Replace raw internal map accesses with existing selectors | ~`useOwnership.ts` (4 sites → `getActiveAccount`), ~`CharacterDetailPanel.tsx` (2 sites → `getActiveAccount`) |
+| 2.5 | Rename `replaceArtifactsFromSnapshot` → `rebuildAccountFromSnapshot` | ~`storeSync.ts`, ~`useArtifactManagerJob.ts`, ~`ArtifactManagerDialog.tsx`, ~`data-mutation-map.md`, + test updates |
+| 3.6 | Remove unnecessary `t` prop drilling — components now call `useLanguage()` directly | ~`FormulaBreakdown.tsx`, ~`DamageCard.tsx`, ~`TriageCard.tsx`, ~`TriageHelpDialog.tsx`, ~`FlexPatternDialog.tsx`, ~`AutoTuneResults.tsx`, ~`AutoTuneResultCard.tsx`, + caller updates |
 
 ## Deferred Refactors
 
@@ -22,20 +26,21 @@ Full audit of the GenshinTools codebase for major abstraction problems that caus
 |---|-------|-----------------|
 | 4.1 | Build composition discriminated union | Schema migration required — changes data shape for all builds |
 | 3.2/3.3 | DamageCard/DamageDetail splitting | Massive component refactor (~800 LOC), risk of breaking UI |
-| 1.1 | `useActiveAccountData()` hook | Low-risk but touches 14+ files — better as a separate PR |
-| 1.2 | Raw internal maps exposed to consumers | 20+ call sites, medium effort |
 | 1.4 | Derived state invalidation architecture | Requires rethinking cross-store coordination |
-| 2.4 | Substat iteration utility | 4+ call sites with subtle null-checking semantic differences |
-| 2.5 | Rename `replaceArtifactsFromSnapshot` | Breaking change to public API |
-| 2.6 | MergeResult wrapper inconsistency | `mergeEnkaImportWithInventory` returns plain array vs `MergeResult` |
 | 3.5 | useTeamInventory splitting into focused hooks | 10+ consumers |
-| 3.6 | `t` prop drilling through non-consuming components | Widespread but low-risk pattern |
 | 3.8 | useAnalyzer fragile string cache key | 120 LOC of manual serialization |
 | 4.3 | Typed store migrations | Retrofit per-version types on existing `any` migrations |
-| 4.4 | null/undefined consistency | Codebase-wide convention change |
 | 4.5 | Type assertions without validation (`as Slot`) | Add type guards, use `allSlots` for iteration |
 | 4.6 | Untyped buff origins and triggers | Template literal types for `KitOrigin`, `BuffTrigger` |
 | 4.7 | `number\|string` for form inputs | Separate form state types from internal state types |
+
+## Rejected Refactors
+
+| # | Issue | Reason Rejected |
+|---|-------|-----------------|
+| 2.4 | Substat iteration utility | Different null-checking semantics are intentional per domain (optimizer skips 0, scoring includes 0). Abstraction would hide correct behavior. |
+| 2.6 | MergeResult wrapper inconsistency | `mergeEnkaImportWithInventory` is an internal helper only called by `mergeAccountData` which handles ID reassignment — plain array return is intentional. |
+| 4.4 | null/undefined consistency | `== null` checks already handle both cases correctly everywhere. halfSet was fixed in 4.2. High churn, no actual bugs. |
 
 ---
 

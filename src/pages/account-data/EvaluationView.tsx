@@ -14,6 +14,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SortDirection } from "@/data/types";
 import { tiers } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
@@ -26,7 +27,6 @@ import {
 } from "@/lib/account-data/buildEvaluation";
 import { generateResourceSuggestions } from "@/lib/account-data/resourceRecommendations";
 import { cn } from "@/lib/utils";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -52,8 +52,7 @@ export function EvaluationView({
   onShowTour,
 }: EvaluationViewProps) {
   const { t } = useLanguage();
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const buildGroups = useAllResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
   const scoreConfig = useArtifactScoreStore((s) => s.config);

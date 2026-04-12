@@ -1,4 +1,4 @@
-import type { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import {
   fmtDamage,
@@ -23,7 +23,6 @@ type Props = {
   parts: DisplayPart[];
   highlightedStat: HlKey;
   critMode: CritMode;
-  t: ReturnType<typeof useLanguage>["t"];
   /** All resolved buffs for this formula (used by per-part buff dialog). */
   buffs?: ResolvedBuff[];
   /** Default activation from greedy stack allocation. */
@@ -1035,13 +1034,13 @@ export function FormulaBreakdown({
   parts,
   highlightedStat,
   critMode,
-  t,
   buffs,
   defaultActivation,
   formulaKey,
   comboCount,
   comboKey,
 }: Props) {
+  const { t } = useLanguage();
   return (
     <div className="w-full overflow-x-auto pt-2 px-1">
       <div className="w-max mx-auto flex flex-col items-center md:gap-1">

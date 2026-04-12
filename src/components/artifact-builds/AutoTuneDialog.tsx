@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, Build, Element } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import type { AutoTuneWorkerResponse } from "@/lib/account-data/scoring/autoTune.worker";
 import type {
   AutoTuneOutput,
@@ -20,7 +21,6 @@ import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import { TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { Loader2, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
@@ -128,7 +128,7 @@ export function AutoTuneDialog({
   const { t } = useLanguage();
   const teams = useTeamStore((s) => s.teams);
   const addTeam = useTeamStore((s) => s.addTeam);
-  const accountData = useAccountStore((s) => getActiveAccount(s)?.data ?? null);
+  const accountData = useActiveAccountData();
 
   // Filter teams: must contain this character AND match build's artifact set
   const relevantTeams = useMemo(() => {

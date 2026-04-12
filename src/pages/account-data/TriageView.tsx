@@ -7,6 +7,7 @@ import { TriageTabContent } from "@/components/account-data/TriageTabContent";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactIdToHalfSetId } from "@/data/constants";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type FlexPattern,
@@ -15,7 +16,6 @@ import {
   runTriage,
 } from "@/lib/account-data/triage";
 import { buildTriageInstructions } from "@/lib/artifact-manager/instructions";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useTriageStore } from "@/stores/useTriageStore";
 import { useCallback, useDeferredValue, useMemo, useState } from "react";
 
@@ -26,8 +26,7 @@ interface TriageViewProps {
 
 export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data ?? null;
+  const accountData = useActiveAccountData();
   const buildGroups = useAllResolvedBuilds();
 
   const settings = useTriageStore((s) => s.settings);

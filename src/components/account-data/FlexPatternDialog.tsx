@@ -15,7 +15,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { Switch } from "@/components/ui/switch";
-import type { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { statPools } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
@@ -35,15 +35,14 @@ export function FlexPatternDialog({
   flexPatterns,
   settings,
   onSettingsChange,
-  t,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   flexPatterns: FlexPattern[];
   settings: TriageSettings;
   onSettingsChange: (s: TriageSettings) => void;
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   const isPatternEnabled = (fp: FlexPattern) =>
     fp.defaultOff
       ? settings.enabledFlexPatterns.includes(fp.key)
@@ -197,7 +196,6 @@ export function FlexPatternDialog({
             onSettingsChange={onSettingsChange}
             officialKeys={officialKeys}
             customPatterns={customPatterns}
-            t={t}
           />
 
           {/* Built-in patterns section */}
@@ -262,14 +260,13 @@ function CustomFlexAddForm({
   onSettingsChange,
   officialKeys,
   customPatterns,
-  t,
 }: {
   settings: TriageSettings;
   onSettingsChange: (s: TriageSettings) => void;
   officialKeys: Set<string>;
   customPatterns: FlexPattern[];
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   const [slot, setSlot] = useState<Slot>("flower");
   const [mainStat, setMainStat] = useState<MainStat>("hp");
   const [subs, setSubs] = useState<string[]>([""]);

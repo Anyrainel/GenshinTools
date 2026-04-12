@@ -13,6 +13,7 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, Build, BuildGroup } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { WeightedFormula } from "@/lib/account-data/scoring/autoTune";
@@ -27,7 +28,6 @@ import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import { cn } from "@/lib/utils";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { Loader2 } from "lucide-react";
@@ -247,7 +247,7 @@ export function AutoTuneView() {
   const groups = useAllResolvedBuilds();
   const setBuild = useBuildsStore((s) => s.setBuild);
   const allUserTeams = useTeamStore((s) => s.teams);
-  const accountData = useAccountStore((s) => getActiveAccount(s)?.data ?? null);
+  const accountData = useActiveAccountData();
 
   const [entries, setEntries] = useState<BuildEntry[]>([]);
   const [phase, setPhase] = useState<Phase>("selection");

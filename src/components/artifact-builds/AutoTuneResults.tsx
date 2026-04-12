@@ -135,17 +135,14 @@ export function AutoTuneResults({ result }: AutoTuneResultsProps) {
           <MainStatColumn
             label={t.slot("sands")}
             weights={result.sandsWeights}
-            t={t}
           />
           <MainStatColumn
             label={t.slot("goblet")}
             weights={result.gobletWeights}
-            t={t}
           />
           <MainStatColumn
             label={t.slot("circlet")}
             weights={result.circletWeights}
-            t={t}
           />
         </div>
       </section>
@@ -155,7 +152,7 @@ export function AutoTuneResults({ result }: AutoTuneResultsProps) {
         <h4 className="text-sm font-medium mb-2">
           {t.ui("buildCard.autoTuneSubstats")}
         </h4>
-        <SubstatPills substats={result.substats} t={t} />
+        <SubstatPills substats={result.substats} />
       </section>
 
       {/* Per-Team Breakdown */}
@@ -166,7 +163,7 @@ export function AutoTuneResults({ result }: AutoTuneResultsProps) {
           </h4>
           <div className="space-y-1">
             {result.teamBreakdowns.map((tb) => (
-              <TeamBreakdownSection key={tb.teamIndex} breakdown={tb} t={t} />
+              <TeamBreakdownSection key={tb.teamIndex} breakdown={tb} />
             ))}
           </div>
         </section>
@@ -178,12 +175,11 @@ export function AutoTuneResults({ result }: AutoTuneResultsProps) {
 function MainStatColumn({
   label,
   weights,
-  t,
 }: {
   label: string;
   weights: { stat: string; weight: number }[];
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   return (
     <div className="rounded bg-muted/30 px-2 py-1.5">
       <span className="text-xs font-medium block mb-1.5">{label}</span>
@@ -211,11 +207,10 @@ function MainStatColumn({
 
 function SubstatPills({
   substats,
-  t,
 }: {
   substats: { stat: string; weight: number }[];
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-wrap gap-1.5">
       {substats.map(({ stat, weight }) => {
@@ -257,11 +252,10 @@ function formatRolls(
 /** Reusable combo table: header + qualifying combo rows */
 function ComboTable({
   combos,
-  t,
 }: {
   combos: ComboBreakdown[];
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   return (
     <table className="w-full text-xs">
       <thead>
@@ -279,7 +273,7 @@ function ComboTable({
       </thead>
       <tbody>
         {combos.map((combo, i) => (
-          <ComboRow key={i} combo={combo} t={t} />
+          <ComboRow key={i} combo={combo} />
         ))}
       </tbody>
     </table>
@@ -288,10 +282,8 @@ function ComboTable({
 
 function TeamBreakdownSection({
   breakdown,
-  t,
 }: {
   breakdown: TeamBreakdown;
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -318,7 +310,7 @@ function TeamBreakdownSection({
       </button>
       {expanded && (
         <div className="px-2 pb-2">
-          <ComboTable combos={qualifying} t={t} />
+          <ComboTable combos={qualifying} />
         </div>
       )}
     </div>
@@ -327,11 +319,10 @@ function TeamBreakdownSection({
 
 function ComboRow({
   combo,
-  t,
 }: {
   combo: ComboBreakdown;
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const { t } = useLanguage();
   return (
     <tr className="border-b border-border/10 last:border-0">
       <td className="py-1 whitespace-nowrap">

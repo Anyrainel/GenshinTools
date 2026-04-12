@@ -159,7 +159,6 @@ export function TriageTabContent({
                   <TriageCard
                     key={d.artifact.id}
                     decision={d}
-                    t={t}
                     expanded={isRowExpanded(value, i)}
                     onToggle={() => toggleRow(value, i)}
                     isProtected={isProtected}

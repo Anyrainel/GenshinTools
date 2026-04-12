@@ -33,6 +33,7 @@ import type {
   Slot,
 } from "@/data/types";
 import { allSlots } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
@@ -65,7 +66,7 @@ import type {
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
@@ -147,8 +148,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: reset expanded line when team changes
   useEffect(() => setExpandedLine(null), [team.id]);
   const isMobile = useMediaQuery("(max-width: 1023px)");
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
   const tierAssignments = useTierStore((s) => s.tierAssignments);
@@ -1397,7 +1397,6 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
             unfreezeCharacters(team.id, [charId]);
           }}
           isMobile={isMobile}
-          t={t}
           equippedArtifactsByChar={equippedArtifactsByChar}
           currentDisplayResult={currentDisplayResult}
           formulaMode={formulaMode}

@@ -9,7 +9,7 @@ import {
   mergeAccountData,
   mergePartialAccountData,
 } from "@/lib/account-data/mergeAccountData";
-import { replaceArtifactsFromSnapshot } from "@/lib/artifact-manager/storeSync";
+import { rebuildAccountFromSnapshot } from "@/lib/artifact-manager/storeSync";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {
   collectAllArtifactIds,
@@ -667,7 +667,7 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     expect(team).toBeDefined();
   });
 
-  it("replaceArtifactsFromSnapshot clears all frozen state (full replacement)", () => {
+  it("rebuildAccountFromSnapshot clears all frozen state (full replacement)", () => {
     const existing: AccountData = {
       characters: [
         {
@@ -700,7 +700,7 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     });
 
     // Scanner snapshot replaces everything
-    const { data: updated, artifactIdMap } = replaceArtifactsFromSnapshot(
+    const { data: updated, artifactIdMap } = rebuildAccountFromSnapshot(
       existing,
       [
         {

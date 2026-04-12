@@ -50,10 +50,10 @@ vi.mock("@/components/artifact-builds/CharacterBuildCard", () => ({
   ),
 }));
 
-// Mock stores added by empty state feature
-vi.mock("@/stores/useAccountStore", () => ({
-  useAccountStore: vi.fn(() => null),
-  getActiveAccount: () => null,
+// Mock account hooks
+vi.mock("@/hooks/useActiveAccount", () => ({
+  useActiveAccountData: () => null,
+  useActiveAccountScores: () => ({}),
 }));
 
 vi.mock("@/stores/useBuildsStore", () => ({

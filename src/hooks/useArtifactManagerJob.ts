@@ -9,7 +9,7 @@ import {
 import {
   applyEquipResults,
   applyJobResults,
-  replaceArtifactsFromSnapshot,
+  rebuildAccountFromSnapshot,
 } from "@/lib/artifact-manager/storeSync";
 import type {
   EquipPayload,
@@ -94,7 +94,7 @@ export function useArtifactManagerJob(port = 8765) {
             const freshAccount = getActiveAccount(useAccountStore.getState());
             if (freshAccount) {
               const { data: updated, artifactIdMap } =
-                replaceArtifactsFromSnapshot(freshAccount.data, snapshot);
+                rebuildAccountFromSnapshot(freshAccount.data, snapshot);
               applyAccountImport({
                 accountId: freshAccount.id,
                 data: updated,

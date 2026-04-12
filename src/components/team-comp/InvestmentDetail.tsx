@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/constants";
 import type { Element, Rarity } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -24,7 +25,6 @@ import type {
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import type { Team } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -162,8 +162,7 @@ function buildDefaultCharConfigs(
 export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   const { t } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
-  const activeAccount = useAccountStore(getActiveAccount);
-  const accountData = activeAccount?.data || null;
+  const accountData = useActiveAccountData();
   const { ready: gameStatsReady, characterStats, weaponStats } = useGameStats();
 
   // 3-tier icon sizing matching TeamRosterCard

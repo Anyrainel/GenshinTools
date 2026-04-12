@@ -2,7 +2,7 @@ import { ArtifactStatList } from "@/components/account-data/ArtifactStatList";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import type { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { TriageDecision, TriageLabel } from "@/lib/account-data/triage";
 import { cn, getRarityColor, getTriageTierColor } from "@/lib/utils";
 import { ChevronDown, ChevronUp, Info, ShieldAlert } from "lucide-react";
@@ -74,7 +74,8 @@ function spName(sp: string, t: T): string {
 // Tier Badge
 // ---------------------------------------------------------------------------
 
-function TierBadge({ tier, t }: { tier: string; t: T }) {
+function TierBadge({ tier }: { tier: string }) {
+  const { t } = useLanguage();
   return (
     <span
       className={cn(
@@ -98,17 +99,16 @@ const LABEL_BADGE_COLOR: Record<TriageLabel, string> = {
 
 export function TriageCard({
   decision,
-  t,
   expanded,
   onToggle,
   isProtected,
 }: {
   decision: TriageDecision;
-  t: T;
   expanded: boolean;
   onToggle: () => void;
   isProtected?: boolean;
 }) {
+  const { t } = useLanguage();
   const { artifact } = decision;
   const setName = t.artifact(artifact.setKey);
   const dr = decision.decidingResult;
@@ -140,7 +140,7 @@ export function TriageCard({
               >
                 {setName}
               </span>
-              {dr?.tier && !isProtected && <TierBadge tier={dr.tier} t={t} />}
+              {dr?.tier && !isProtected && <TierBadge tier={dr.tier} />}
             </div>
             {/* Row 2: slot · mainstat */}
             <div className="text-xs text-muted-foreground">
@@ -283,7 +283,7 @@ export function TriageCard({
                               : "text-muted-foreground"
                           )}
                         >
-                          {r.tier && <TierBadge tier={r.tier} t={t} />}
+                          {r.tier && <TierBadge tier={r.tier} />}
                           <span className="truncate">{char}</span>
                           <span className="text-muted-foreground">
                             {prefix}
