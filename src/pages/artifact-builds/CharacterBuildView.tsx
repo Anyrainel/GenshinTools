@@ -12,11 +12,13 @@ import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsOwned } from "@/hooks/useOwnership";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
+import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   useCallback,
@@ -54,15 +56,21 @@ export function CharacterBuildView({
   const hasAnyBuilds =
     Object.keys(useBuildsStore((s) => s.characterToBuildIds)).length > 0;
 
+  const tierAssignments = useTierStore((state) => state.tierAssignments);
+  const hasTierData = Object.keys(tierAssignments).length > 0;
+
+  const isOwned = useIsOwned();
+  const isCharacterOwned = useCallback(
+    (id: string) => isOwned("character", id),
+    [isOwned]
+  );
+
   const {
     filters,
     handleFiltersChange,
     setCheckboxFilters,
     activeFilterCount,
-    tierAssignments,
-    hasTierData,
-    isCharacterOwned,
-  } = useCharacterFilters({ defaultOwnedOnly: hasAccountData });
+  } = useCharacterFilters({ defaultOwnedOnly: hasAccountData, hasTierData });
 
   const activeAccount = useAccountStore(getActiveAccount);
   const scores: Record<string, ArtifactScoreResult | null> =

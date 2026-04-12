@@ -277,8 +277,8 @@ export function collectEvalBuilds(
         build.halfSet1 != null &&
         build.halfSet2 != null
       ) {
-        const hs1 = artifactHalfSetsById[String(build.halfSet1)];
-        const hs2 = artifactHalfSetsById[String(build.halfSet2)];
+        const hs1 = artifactHalfSetsById[build.halfSet1];
+        const hs2 = artifactHalfSetsById[build.halfSet2];
         if (!hs1 || !hs2) continue;
 
         // Filter to rarity 5 sets only
@@ -291,9 +291,7 @@ export function collectEvalBuilds(
         if (set1Ids.length === 0 || set2Ids.length === 0) continue;
 
         // Canonical pair key: sorted half-set IDs so (A,B) == (B,A)
-        const pairKey = [String(build.halfSet1), String(build.halfSet2)]
-          .sort()
-          .join("+");
+        const pairKey = [build.halfSet1, build.halfSet2].sort().join("+");
         const key = makeDedupKey(pairKey, "2+2", build, role);
         const existing = map.get(key);
         if (existing) {
@@ -309,8 +307,8 @@ export function collectEvalBuilds(
               group.characterId,
               scaling,
               role,
-              String(build.halfSet1),
-              String(build.halfSet2),
+              build.halfSet1,
+              build.halfSet2,
               set1Ids,
               set2Ids
             )
@@ -741,9 +739,7 @@ function buildSlotKey(build: Build): string | null {
   }
   if (build.composition === "2pc+2pc") {
     if (build.halfSet1 == null || build.halfSet2 == null) return null;
-    const pair = [String(build.halfSet1), String(build.halfSet2)]
-      .sort()
-      .join("+");
+    const pair = [build.halfSet1!, build.halfSet2!].sort().join("+");
     return `2+2:${pair}:${role}`;
   }
   return null;

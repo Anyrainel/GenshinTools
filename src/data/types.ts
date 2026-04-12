@@ -311,8 +311,8 @@ export type Build = {
   name: string;
   composition: "4pc" | "2pc+2pc";
   artifactSet?: string; // for 4pc
-  halfSet1?: number | string; // for 2pc+2pc - ID (legacy number or new string)
-  halfSet2?: number | string; // for 2pc+2pc - ID (legacy number or new string)
+  halfSet1?: string; // for 2pc+2pc - ID
+  halfSet2?: string; // for 2pc+2pc - ID
   substats: WeightedSubStat[];
 
   /** Per-main-stat weights (populated by auto-tune or migration). */

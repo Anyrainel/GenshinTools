@@ -55,10 +55,10 @@ import {
   mergeAccountData,
   mergePartialAccountData,
 } from "@/lib/account-data/mergeAccountData";
+import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { remapFreezeStoreForImport } from "@/stores/useFreezeStore";
 import {
   AlertTriangle,
   Database,
@@ -164,7 +164,6 @@ export default function AccountDataPage() {
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const clearAccounts = useAccountStore((s) => s.clearAccounts);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
-  const setActiveAccount = useAccountStore((s) => s.setActiveAccount);
   const promoteToUid = useAccountStore((s) => s.promoteToUid);
   const mergeScores = useAccountStore((s) => s.mergeScores);
   const staleScoreCharIds = useAccountStore((s) => s.staleScoreCharIds);
@@ -323,12 +322,13 @@ export default function AccountDataPage() {
       );
 
       if (routing.kind === "direct") {
-        remapFreezeStoreForImport(partialMergeMap);
-        addOrUpdateAccount(routing.id, {
+        applyAccountImport({
+          accountId: routing.id,
           data: routing.data,
           name: routing.name,
+          setAsActive: routing.activeId,
+          artifactIdMap: partialMergeMap,
         });
-        setActiveAccount(routing.activeId);
         toast.success(t.ui("accountData.importSuccess"));
       } else {
         // Dialog path — store raw GOOD for re-conversion at resolution time
@@ -376,12 +376,13 @@ export default function AccountDataPage() {
       );
 
       if (routing.kind === "direct") {
-        remapFreezeStoreForImport(uidMergeMap);
-        addOrUpdateAccount(routing.id, {
+        applyAccountImport({
+          accountId: routing.id,
           data: routing.data,
           name: routing.name,
+          setAsActive: routing.activeId,
+          artifactIdMap: uidMergeMap,
         });
-        setActiveAccount(routing.activeId);
         toast.success(t.ui("accountData.importSuccess"));
       } else {
         setPendingImport(routing.pendingImport);
@@ -425,12 +426,13 @@ export default function AccountDataPage() {
       );
 
       if (routing.kind === "direct") {
-        remapFreezeStoreForImport(hoyoMergeMap);
-        addOrUpdateAccount(routing.id, {
+        applyAccountImport({
+          accountId: routing.id,
           data: routing.data,
           name: routing.name,
+          setAsActive: routing.activeId,
+          artifactIdMap: hoyoMergeMap,
         });
-        setActiveAccount(routing.activeId);
         toast.success(t.ui("accountData.importSuccess"));
       } else {
         setPendingImport(routing.pendingImport);
@@ -504,15 +506,16 @@ export default function AccountDataPage() {
       return;
     }
 
-    remapFreezeStoreForImport(resolveArtifactIdMap);
-    addOrUpdateAccount(result.id, {
+    applyAccountImport({
+      accountId: result.id,
       data: result.data,
-      ...(result.name ? { name: result.name } : {}),
+      name: result.name || undefined,
+      setAsActive: result.activeId,
+      artifactIdMap: resolveArtifactIdMap,
     });
     if (result.promoteToId) {
       promoteToUid(result.id, result.promoteToId);
     }
-    setActiveAccount(result.activeId);
 
     toast.success(t.ui("accountData.importSuccess"));
     setPendingImport(null);

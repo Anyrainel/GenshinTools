@@ -657,10 +657,12 @@ describe("useBuildsStore", () => {
       // Set 2pc+2pc first
       useBuildsStore.getState().setBuild(buildId, {
         composition: "2pc+2pc",
-        halfSet1: 1,
-        halfSet2: 2,
+        halfSet1: "cryo%-15",
+        halfSet2: "hp%-20",
       });
-      expect(useBuildsStore.getState().getBuild(buildId)?.halfSet1).toBe(1);
+      expect(useBuildsStore.getState().getBuild(buildId)?.halfSet1).toBe(
+        "cryo%-15"
+      );
 
       // Switch to 4pc — should clear halfSet fields
       useBuildsStore
@@ -690,8 +692,8 @@ describe("useBuildsStore", () => {
       // Switch to 2pc+2pc — should clear artifactSet
       useBuildsStore.getState().setBuild(buildId, {
         composition: "2pc+2pc",
-        halfSet1: 1,
-        halfSet2: 2,
+        halfSet1: "cryo%-15",
+        halfSet2: "hp%-20",
       });
 
       const build = useBuildsStore.getState().getBuild(buildId);

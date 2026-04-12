@@ -148,7 +148,13 @@ export function migrateBuild(build: Build): void {
     build.substats = [];
   }
 
-  build.halfSet1 = normalizeHalfSetId(build.halfSet1);
-  build.halfSet2 = normalizeHalfSetId(build.halfSet2);
+  // Cast: persisted data may still contain legacy numeric IDs even though
+  // the Build type now declares halfSet1/halfSet2 as string-only.
+  build.halfSet1 = normalizeHalfSetId(
+    build.halfSet1 as number | string | undefined
+  );
+  build.halfSet2 = normalizeHalfSetId(
+    build.halfSet2 as number | string | undefined
+  );
   migrateWeightsAndNormalizer(build);
 }

@@ -20,10 +20,29 @@ Read AGENTS.md for project context if needed.
 - Same applies to `border-muted-foreground/` — use `border-border` or `border-muted-foreground` without opacity.
 
 # i18n setup context
-This project uses custom i18n setup for zh and en 2 languages, with a mixure of strategies:
+This project uses custom i18n setup for zh and en 2 languages, with a mixture of strategies:
 1. `src/data/i18n-game.ts` contains auto generated translations for in-game entities. i18n-beta.ts is the add-on file for in-game entities that are in the beta (unreleased) data.
 2. `src/data/game/*_zh.ts` and `src/data/game/*_en.ts` contains auto generated json files for long text for in-game data.
-3. `src/data/i18n-ui.ts` contains 
+3. `src/data/i18n-ui.ts` contains UI string translations as `{ en: "...", zh: "..." }` objects, organized by feature section.
+
+# i18n writing rules
+- **Write for real players, not developers.** Every string must read naturally to a Genshin player. If you wouldn't say it in conversation, don't put it in the UI.
+- **Chinese must be real Chinese, not abbreviated code-speak.** "等待" not "等", "长按E" not "长E", "持续产球" not "周E". Abbreviations are fine only when they're actual player community shorthand (e.g. 普攻, 重击, 下落).
+- **English must be real words.** "Hold E" not "hE", "Wait" not "W", "Plunge" not "PA". Use Genshin's official English terminology when it exists (Normal Attack, Charged Attack, Elemental Skill, Elemental Burst).
+- **Space-constrained labels** (e.g. timeline action blocks) can use shorter forms but must still be recognizable: "Hold E", "Tick E", "NA", "CA" are acceptable. Single-letter gibberish is not.
+- **Inline i18n** (`language === "zh" ? "中文" : "English"`) is acceptable for small isolated features, but prefer adding entries to `i18n-ui.ts` for strings that appear in multiple places or are part of a larger feature.
+
+# Data mutation map
+Read `docs/data-mutation-map.md` before modifying any store, data import path, or artifact operation. It maps entities to their mutation surfaces, cross-store invariants, and enforcement mechanisms.
+
+# Error handling conventions
+Library code (`src/lib/`) follows these patterns by domain:
+- **Unrecoverable / data structure invalid** → `throw new Error("descriptive message")`. Caught at UI boundary with `toast.error()`.
+- **Entity not found / infeasible** → `return null`. Caller checks before use. Used in solvers, constraint checkers, optional lookups.
+- **Partial success (import/conversion)** → Return `{ data, warnings: ConversionWarning[] }`. Caller shows warning count toast, continues with partial data.
+- **Stateful errors with context** → Discriminated union (e.g. `{ solved: T } | { error: string }`). Caller pattern-matches on discriminant.
+
+Do NOT introduce a generic `Result<T>` type. The above patterns are sufficient for each domain.
 
 # Store refactor rules
 Whenever a new feature requires incompatible changes to a store's data structure, always document the changes in the code during implementation. Always remember to add proper migration logic with respect to the current origin version (treat pending changes and local only commits as the same version), and add migration test to ensure old format can migrate to new data format.

@@ -1,10 +1,6 @@
-import type {
-  AccountData,
-  ArtifactData,
-  CharacterData,
-  WeaponData,
-} from "@/data/types";
+import type { AccountData, CharacterData } from "@/data/types";
 import type { PresentSections } from "./goodConversion";
+import { getMaxIds } from "./idUtils";
 import { mergeEnkaImportWithInventory } from "./mergeEnkaImport";
 
 /** Result of any data operation that reassigns artifact IDs. */
@@ -13,39 +9,6 @@ export interface MergeResult {
   /** Maps old artifact IDs → new artifact IDs. Empty when no reassignment occurred. */
   artifactIdMap: Map<string, string>;
 }
-
-const getMaxIds = (data: AccountData) => {
-  let maxA = -1;
-  let maxW = -1;
-  const parse = (id: string, prefix: string) => {
-    const num = Number.parseInt(id.replace(prefix, ""), 10);
-    return Number.isNaN(num) ? -1 : num;
-  };
-
-  const checkA = (art: ArtifactData) => {
-    const val = parse(art.id, "artifact-");
-    if (val > maxA) maxA = val;
-  };
-  const checkW = (wp: WeaponData) => {
-    const val = parse(wp.id, "weapon-");
-    if (val > maxW) maxW = val;
-  };
-
-  for (const c of data.characters) {
-    for (const a of Object.values(c.artifacts)) {
-      if (a) checkA(a);
-    }
-    if (c.weapon) checkW(c.weapon);
-  }
-  for (const art of data.extraArtifacts) {
-    checkA(art);
-  }
-  for (const wp of data.extraWeapons) {
-    checkW(wp);
-  }
-
-  return { maxA, maxW };
-};
 
 /**
  * Reassign all artifact and weapon IDs to sequential values.

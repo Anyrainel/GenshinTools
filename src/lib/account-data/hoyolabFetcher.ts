@@ -1,4 +1,9 @@
-import { i18nGameData } from "@/data/i18n-game";
+import {
+  gameOnlyArtifactNameMap,
+  gameOnlyCharNameMap,
+  gameOnlyWeaponNameMap,
+  normalizeEntityName as normalize,
+} from "./entityMaps";
 import type {
   ConversionWarning,
   GOODData,
@@ -162,32 +167,6 @@ const SLOT_BY_POS: Record<number, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Name → internal key reverse maps (lazy, reused across imports)
-// ---------------------------------------------------------------------------
-
-const normalize = (s: string) => s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-
-let charNameToKey: Map<string, string> | null = null;
-let weaponNameToKey: Map<string, string> | null = null;
-let artifactSetNameToKey: Map<string, string> | null = null;
-
-function ensureNameMaps(): void {
-  if (charNameToKey) return;
-  charNameToKey = new Map();
-  for (const [key, entry] of Object.entries(i18nGameData.characters)) {
-    charNameToKey.set(normalize(entry.en), key);
-  }
-  weaponNameToKey = new Map();
-  for (const [key, entry] of Object.entries(i18nGameData.weapons)) {
-    weaponNameToKey.set(normalize(entry.en), key);
-  }
-  artifactSetNameToKey = new Map();
-  for (const [key, entry] of Object.entries(i18nGameData.artifacts)) {
-    artifactSetNameToKey.set(normalize(entry.en), key);
-  }
-}
-
-// ---------------------------------------------------------------------------
 // Low-level fetch through the signed proxy
 // ---------------------------------------------------------------------------
 
@@ -306,8 +285,6 @@ function parseStatValue(value: string): number {
 export function convertHoyolabToGOOD(
   fetched: HoyolabFetchResult
 ): HoyolabConversionResult {
-  ensureNameMaps();
-
   const characters: IGOODCharacter[] = [];
   const weapons: IGOODWeapon[] = [];
   const artifacts: IGOODArtifact[] = [];
@@ -323,7 +300,7 @@ export function convertHoyolabToGOOD(
 
   for (const entry of fetched.characters) {
     const charName = entry.base.name;
-    const charKey = charNameToKey!.get(normalize(charName));
+    const charKey = gameOnlyCharNameMap.get(normalize(charName));
     if (!charKey) {
       warn("character", charName);
       continue;
@@ -349,7 +326,7 @@ export function convertHoyolabToGOOD(
     });
 
     // Weapon
-    const weaponKey = weaponNameToKey!.get(normalize(entry.weapon.name));
+    const weaponKey = gameOnlyWeaponNameMap.get(normalize(entry.weapon.name));
     if (weaponKey) {
       weapons.push({
         key: weaponKey,
@@ -367,7 +344,7 @@ export function convertHoyolabToGOOD(
     for (const relic of entry.relics) {
       const slotKey = SLOT_BY_POS[relic.pos];
       if (!slotKey) continue;
-      const setKey = artifactSetNameToKey!.get(normalize(relic.set.name));
+      const setKey = gameOnlyArtifactNameMap.get(normalize(relic.set.name));
       if (!setKey) {
         warn("artifact", relic.set.name);
         continue;

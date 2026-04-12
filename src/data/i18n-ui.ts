@@ -449,6 +449,33 @@ export const i18nUiData = {
     investmentLevel: {
       label: { en: "Min. Score Diff", zh: "推荐时最低分差" },
     },
+    howItWorks: {
+      title: { en: "How Recommendations Work", zh: "推荐机制说明" },
+      step1: {
+        en: "Each character's artifacts are scored based on how well their substats match the build's stat priorities.",
+        zh: "每个角色的圣遗物根据副属性与配装需求的匹配程度进行评分。",
+      },
+      step2: {
+        en: "The optimizer searches your entire inventory for artifact combinations that could improve the build — including swapping pieces between characters.",
+        zh: "优化器会搜索你整个背包中的圣遗物组合，寻找能提升配装的方案 — 包括在角色之间调换圣遗物。",
+      },
+      step3: {
+        en: 'Only changes that improve the score by at least the "Min. Score Diff" threshold you set above are shown as recommendations.',
+        zh: "只有分数提升达到你设置的「最低分差」阈值的变更才会显示为推荐。",
+      },
+      step4: {
+        en: '"Farm" suggestions estimate what you could gain from new artifact drops, based on the Roll Value Expectation setting per tier.',
+        zh: "「刷取」建议基于每层的词条期望设置，估算新圣遗物掉落带来的提升。",
+      },
+    },
+    hint: {
+      en: "These are quick suggestions based on artifact scoring. For precise team damage optimization, use the {0} tab.",
+      zh: "以上为基于圣遗物评分的快速建议。如需精确的队伍伤害优化，请使用{0}。",
+    },
+    hintDamageLink: {
+      en: "Damage",
+      zh: "伤害计算",
+    },
   },
   charEdit: {
     description: { en: "Edit character data", zh: "编辑角色数据" },
@@ -545,6 +572,7 @@ export const i18nUiData = {
     navArtifactFilter: { en: "Builds", zh: "配装" },
     navAccountData: { en: "Account Data", zh: "账号数据" },
     navTierList: { en: "Tier List", zh: "榜单" },
+    navERCalc: { en: "ER Calc", zh: "充能计算" },
     navArchive: { en: "Archive", zh: "图鉴" },
     navTeamComp: { en: "Team DMG", zh: "队伍伤害" },
     heroDescription: {
@@ -2112,5 +2140,34 @@ export const i18nUiData = {
     },
     importOverride: { en: "Override Current", zh: "覆盖当前" },
     importCreateNew: { en: "Create New", zh: "创建新的" },
+  },
+  erCalc: {
+    presetTeams: { en: "Presets", zh: "预设队伍" },
+    noMatchingTeamFound: {
+      en: "No matching team found in Team DMG",
+      zh: "未找到匹配的队伍配置",
+    },
+    erRequirements: { en: "ER Requirements", zh: "充能需求" },
+    copyResults: { en: "Copy results", zh: "复制结果" },
+    applyToTeamMinER: { en: "Apply to team Min ER", zh: "应用到队伍最低ER" },
+    copied: { en: "Copied", zh: "已复制" },
+    teamBottleneck: { en: "Team bottleneck", zh: "团队瓶颈" },
+    energyWindowBreakdown: {
+      en: "Energy window breakdown (particle energy at 100% ER)",
+      zh: "充能窗口详情 (100% ER 下的粒子能量)",
+    },
+    bindingModeStart: { en: "start", zh: "启动" },
+    bindingModeRepeat: { en: "repeat", zh: "循环" },
+    onFieldLabel: { en: "on-field", zh: "前台" },
+    offFieldLabel: { en: "off-field", zh: "后台" },
+    flatEnergy: { en: "Flat energy", zh: "固定充能" },
+    totalCost: { en: "Total / Cost", zh: "总计 / 需求" },
+    actionsLabel: { en: "actions", zh: "个动作" },
+    addActionsBelow: {
+      en: "Add actions using buttons below",
+      zh: "使用下方按钮添加动作",
+    },
+    addCharacter: { en: "Add character", zh: "添加角色" },
+    noWeapon: { en: "No weapon", zh: "无武器" },
   },
 };

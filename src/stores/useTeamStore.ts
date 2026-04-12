@@ -355,6 +355,9 @@ interface TeamState {
   author: string;
   description: string;
 
+  // Selectors
+  getTeamById: (id: string) => Team | undefined;
+
   // Actions
   addTeam: (initialData?: Partial<Team>, position?: "start" | "end") => string;
   updateTeam: (id: string, patch: Partial<Team>) => void;
@@ -379,6 +382,8 @@ export const useTeamStore = create<TeamState>()(
       teams: [],
       author: "",
       description: "",
+
+      getTeamById: (id) => get().teams.find((t) => t.id === id),
 
       addTeam: (initialData, position = "end") => {
         const id = `team-${Date.now()}`;

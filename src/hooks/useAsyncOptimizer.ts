@@ -5,7 +5,8 @@ import type {
   TeamOptimizerOptions,
 } from "@/lib/team-comp/optimizer";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
+import { useAsyncComputation } from "./useAsyncComputation";
 
 export interface AsyncOptimizerState {
   progress: TeamOptimizationProgress | null;
@@ -20,64 +21,30 @@ export function useAsyncOptimizer(): AsyncOptimizerState {
   const [progress, setProgress] = useState<TeamOptimizationProgress | null>(
     null
   );
-  const [result, setResult] = useState<TeamOptimizationResult | null>(null);
-  const [isComputing, setIsComputing] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
 
-  const activeGenerator = useRef<AsyncGenerator<TeamOptYield, void> | null>(
-    null
-  );
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-      stop();
-    };
-  }, []);
-
-  const stop = useCallback(() => {
-    if (activeGenerator.current) {
-      activeGenerator.current.return(undefined);
-      activeGenerator.current = null;
-    }
-    setIsComputing(false);
-  }, []);
-
-  const start = useCallback(
-    async (opts: TeamOptimizerOptions) => {
-      stop();
-      setProgress(null);
-      setResult(null);
-      setError(null);
-      setIsComputing(true);
-
-      try {
-        const gen = runTeamOptimization(opts);
-        activeGenerator.current = gen;
-
-        for await (const yielded of gen) {
-          if (!isMounted.current) break;
-          if (yielded.done) {
-            setResult(yielded);
-          } else {
-            setProgress(yielded);
-          }
-        }
-      } catch (err) {
-        if (isMounted.current) {
-          setError(err instanceof Error ? err : new Error(String(err)));
-        }
-      } finally {
-        if (isMounted.current) {
-          setIsComputing(false);
-          activeGenerator.current = null;
-        }
+  const onYield = useCallback(
+    (
+      yielded: TeamOptYield,
+      setResult: (result: TeamOptimizationResult) => void
+    ) => {
+      if (yielded.done) {
+        setResult(yielded);
+      } else {
+        setProgress(yielded);
       }
     },
-    [stop]
+    []
   );
+
+  const onStart = useCallback(() => {
+    setProgress(null);
+  }, []);
+
+  const { result, isComputing, error, start, stop } = useAsyncComputation<
+    TeamOptYield,
+    TeamOptimizationResult,
+    TeamOptimizerOptions
+  >(runTeamOptimization, onYield, onStart);
 
   return { progress, result, isComputing, error, start, stop };
 }

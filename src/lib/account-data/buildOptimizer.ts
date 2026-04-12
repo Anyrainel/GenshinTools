@@ -25,8 +25,8 @@ export interface BuildOptimizerConfig {
   setConstraint: {
     composition: "4pc" | "2pc+2pc";
     artifactSet?: string;
-    halfSet1?: number | string;
-    halfSet2?: number | string;
+    halfSet1?: string;
+    halfSet2?: string;
   };
   topN?: number;
 }
@@ -221,15 +221,13 @@ export function optimizeBuild(
           );
         } else if (setConstraint.halfSet1 != null) {
           filtered = filtered.filter(
-            (c) =>
-              artifactIdToHalfSetId[c.setKey] === String(setConstraint.halfSet1)
+            (c) => artifactIdToHalfSetId[c.setKey] === setConstraint.halfSet1
           );
         }
       } else if (setRequirement === "set2") {
         if (setConstraint.halfSet2 != null) {
           filtered = filtered.filter(
-            (c) =>
-              artifactIdToHalfSetId[c.setKey] === String(setConstraint.halfSet2)
+            (c) => artifactIdToHalfSetId[c.setKey] === setConstraint.halfSet2
           );
         }
       }

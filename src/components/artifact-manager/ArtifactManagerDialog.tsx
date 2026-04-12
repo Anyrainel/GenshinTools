@@ -22,8 +22,8 @@ import type {
   ResultResponse,
 } from "@/lib/artifact-manager/types";
 import { cn } from "@/lib/utils";
+import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import { remapFreezeStoreForImport } from "@/stores/useFreezeStore";
 import {
   CheckCircle2,
   Download,
@@ -130,9 +130,10 @@ export function ArtifactManagerDialog({
           account.data,
           snapshot
         );
-        remapFreezeStoreForImport(artifactIdMap);
-        useAccountStore.getState().addOrUpdateAccount(account.id, {
+        applyAccountImport({
+          accountId: account.id,
           data: updated,
+          artifactIdMap,
         });
         console.log(`Synced ${snapshot.length} artifacts from scanner`);
       }

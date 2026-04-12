@@ -74,8 +74,8 @@ describe("computeFilters (async pipeline)", () => {
             createBuild({
               composition: "2pc+2pc",
               artifactSet: undefined,
-              halfSet1: 1, // Some half set ID
-              halfSet2: 2,
+              halfSet1: "cryo%-15",
+              halfSet2: "hp%-20",
             }),
           ],
         }),

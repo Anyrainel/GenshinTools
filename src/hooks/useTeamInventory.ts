@@ -140,7 +140,7 @@ export function useTeamInventory(teamId: string): TeamInventory {
   const frozenTeams = useFreezeStore((s) => s.frozenTeams);
   const reuseMode = useFreezeStore((s) => s.reuseMode);
   const standaloneFrozenIds = useFreezeStore((s) => s.frozenArtifactIds);
-  const team = useTeamStore((s) => s.teams.find((t) => t.id === teamId));
+  const team = useTeamStore((s) => s.getTeamById(teamId));
   const teamCharacters = team?.characters;
   const teamArtifacts = team?.artifacts;
 

@@ -145,11 +145,8 @@ export function AutoTuneDialog({
       }
       if (build.composition === "2pc+2pc" && build.halfSet1 && build.halfSet2) {
         if (teamArt.type === "2pc+2pc") {
-          const buildIds = [
-            String(build.halfSet1),
-            String(build.halfSet2),
-          ].sort();
-          const teamIds = [String(teamArt.id1), String(teamArt.id2)].sort();
+          const buildIds = [build.halfSet1, build.halfSet2].sort();
+          const teamIds = [teamArt.id1, teamArt.id2].sort();
           return buildIds[0] === teamIds[0] && buildIds[1] === teamIds[1];
         }
         return true;

@@ -112,8 +112,8 @@ const getArtifactCode = (build: Build): number => {
   }
 
   if (build.composition === "2pc+2pc") {
-    const h1 = String(build.halfSet1 ?? "");
-    const h2 = String(build.halfSet2 ?? "");
+    const h1 = build.halfSet1 ?? "";
+    const h2 = build.halfSet2 ?? "";
     const sorted = [h1, h2].sort();
     // Deterministic hash from string pair
     const hash = (s: string) => {

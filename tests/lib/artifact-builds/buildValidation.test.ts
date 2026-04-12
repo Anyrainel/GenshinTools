@@ -78,7 +78,7 @@ describe("getBuildValidationErrors", () => {
       ...validBuild,
       composition: "2pc+2pc",
       artifactSet: undefined,
-      halfSet1: 1,
+      halfSet1: "cryo%-15",
       halfSet2: undefined,
     });
     expect(errors).toContain("buildCard.missing2pc");
@@ -90,8 +90,8 @@ describe("getBuildValidationErrors", () => {
       ...validBuild,
       composition: "2pc+2pc",
       artifactSet: undefined,
-      halfSet1: 999,
-      halfSet2: 999,
+      halfSet1: "nonexistent-999",
+      halfSet2: "nonexistent-999",
     });
     expect(errors).toContain("buildCard.notEnough2pc");
   });

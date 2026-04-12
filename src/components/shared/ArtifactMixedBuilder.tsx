@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
 interface ArtifactMixedBuilderProps {
-  mixedSlot1: string | number | null;
-  mixedSlot2: string | number | null;
+  mixedSlot1: string | null;
+  mixedSlot2: string | null;
   pickingSlot: 1 | 2 | null;
   setPickingSlot: (slot: 1 | 2 | null) => void;
   isMixedComplete: boolean;

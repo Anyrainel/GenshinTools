@@ -70,7 +70,7 @@ type ItemPickerType = "character" | "weapon" | "artifact";
 
 export type ArtifactConfig =
   | { type: "4pc"; setId: string }
-  | { type: "2pc+2pc"; id1: string | number; id2: string | number };
+  | { type: "2pc+2pc"; id1: string; id2: string };
 
 type ValueType<T> = T extends "artifact" ? ArtifactConfig : string;
 
@@ -487,10 +487,7 @@ function PickerContent({
   const [artifactTab, setArtifactTab] = useState(initialTab);
 
   // Helper to extract 2pc IDs
-  const getInitialMixedSlots = (): [
-    string | number | null,
-    string | number | null,
-  ] => {
+  const getInitialMixedSlots = (): [string | null, string | null] => {
     if (
       type === "artifact" &&
       value &&
@@ -505,12 +502,8 @@ function PickerContent({
 
   const [initialSlot1, initialSlot2] = getInitialMixedSlots();
 
-  const [mixedSlot1, setMixedSlot1] = useState<string | number | null>(
-    initialSlot1
-  );
-  const [mixedSlot2, setMixedSlot2] = useState<string | number | null>(
-    initialSlot2
-  );
+  const [mixedSlot1, setMixedSlot1] = useState<string | null>(initialSlot1);
+  const [mixedSlot2, setMixedSlot2] = useState<string | null>(initialSlot2);
   const [pickingSlot, setPickingSlot] = useState<1 | 2 | null>(null);
 
   // Unified Item Mapping (use stats-based rarity when from stats list)
@@ -653,7 +646,7 @@ function PickerContent({
   ]);
 
   // Handler for artifact 2pc selection
-  const handleHalfSetSelect = (halfId: string | number) => {
+  const handleHalfSetSelect = (halfId: string) => {
     if (pickingSlot === 1) {
       setMixedSlot1(halfId);
     } else if (pickingSlot === 2) {
@@ -706,7 +699,7 @@ function PickerContent({
       return (
         <div
           key={item.id}
-          onClick={() => handleHalfSetSelect(item.id)}
+          onClick={() => handleHalfSetSelect(item.id as string)}
           className={cn(
             "flex items-center gap-3 p-2 rounded-lg border border-border bg-card hover:bg-accent/50 cursor-pointer transition-colors",
             isSelected && "ring-2 ring-primary"

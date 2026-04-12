@@ -347,7 +347,8 @@
           "mainStats": [
             "atk%",
             "hp%",
-            "def%"
+            "def%",
+            "er"
           ],
           "substats": [
             "cd",
@@ -387,6 +388,7 @@
           "mainStats": [
             "cr",
             "cd",
+            "hp%",
             "def%"
           ],
           "substats": [
@@ -4042,7 +4044,8 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd"
+            "cd",
+            "hp%"
           ],
           "substats": [
             "cd",

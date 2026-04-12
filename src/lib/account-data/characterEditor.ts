@@ -4,48 +4,7 @@ import type {
   CharacterData,
   Slot,
 } from "@/data/types";
-
-// ─── ID generation ────────────────────────────────────────────────────────────
-
-function getMaxIds(data: AccountData) {
-  let maxA = -1;
-  let maxW = -1;
-  const parse = (id: string, prefix: string) => {
-    const num = Number.parseInt(id.replace(prefix, ""), 10);
-    return Number.isNaN(num) ? -1 : num;
-  };
-
-  for (const c of data.characters) {
-    for (const a of Object.values(c.artifacts)) {
-      if (a) {
-        const val = parse(a.id, "artifact-");
-        if (val > maxA) maxA = val;
-      }
-    }
-    if (c.weapon) {
-      const val = parse(c.weapon.id, "weapon-");
-      if (val > maxW) maxW = val;
-    }
-  }
-  for (const art of data.extraArtifacts) {
-    const val = parse(art.id, "artifact-");
-    if (val > maxA) maxA = val;
-  }
-  for (const wp of data.extraWeapons) {
-    const val = parse(wp.id, "weapon-");
-    if (val > maxW) maxW = val;
-  }
-
-  return { maxA, maxW };
-}
-
-function nextArtifactId(data: AccountData): string {
-  return `artifact-${getMaxIds(data).maxA + 1}`;
-}
-
-function nextWeaponId(data: AccountData): string {
-  return `weapon-${getMaxIds(data).maxW + 1}`;
-}
+import { nextArtifactId, nextWeaponId } from "./idUtils";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

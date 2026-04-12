@@ -16,8 +16,8 @@ import { forwardRef } from "react";
  * Throws if a same-ID half-set maps to fewer than 2 five-star artifact sets.
  */
 export function resolveHalfSetIcons(
-  id1: string | number,
-  id2: string | number
+  id1: string,
+  id2: string
 ): [string, string] {
   const hs1 = artifactHalfSetsById[id1];
   const hs2 = artifactHalfSetsById[id2];
@@ -26,7 +26,7 @@ export function resolveHalfSetIcons(
     .map((id) => artifactsById[id])
     .find((a) => a?.rarity === 5);
 
-  if (String(id1) !== String(id2)) {
+  if (id1 !== id2) {
     const art2 = hs2?.setIds
       .map((id) => artifactsById[id])
       .find((a) => a?.rarity === 5);
@@ -67,7 +67,7 @@ interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   /** Artifact set ID — resolves imagePath (flower by default, or specific slot), rarity */
   artifactSetId?: string;
   /** Two half-set IDs for 2pc+2pc — resolves two distinct flower imagePaths */
-  halfSetIds?: [string | number, string | number];
+  halfSetIds?: [string, string];
   /** Artifact slot — with artifactSetId, resolves that slot's image instead of flower */
   slot?: Slot;
 

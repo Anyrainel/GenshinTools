@@ -13,11 +13,13 @@ import type { AccountData, CharacterData } from "@/data/types";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsOwned } from "@/hooks/useOwnership";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   forwardRef,
@@ -48,15 +50,22 @@ export const CharacterView = forwardRef<
   const accountData = activeAccount?.data || null;
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
+
+  const tierAssignments = useTierStore((state) => state.tierAssignments);
+  const hasTierData = Object.keys(tierAssignments).length > 0;
+
+  const isOwned = useIsOwned();
+  const isCharacterOwned = useCallback(
+    (id: string) => isOwned("character", id),
+    [isOwned]
+  );
+
   const {
     filters,
     handleFiltersChange,
     setCheckboxFilters,
     activeFilterCount,
-    tierAssignments,
-    hasTierData,
-    isCharacterOwned,
-  } = useCharacterFilters({ defaultOwnedOnly: false });
+  } = useCharacterFilters({ defaultOwnedOnly: false, hasTierData });
 
   // 640px is a safe breakpoint where 35rem (560px) fits comfortably with margins
   const isSmallScreen = useMediaQuery("(max-width: 640px)");

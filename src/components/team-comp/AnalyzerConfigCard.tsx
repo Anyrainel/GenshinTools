@@ -41,7 +41,7 @@ import {
 
 function getArtifactIconProps(bc: TeamSlotConfig): {
   artifactSetId?: string;
-  halfSetIds?: [string | number, string | number];
+  halfSetIds?: [string, string];
   imagePath?: string;
 } {
   if (bc.artifactSetId) {

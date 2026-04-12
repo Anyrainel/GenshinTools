@@ -1,21 +1,19 @@
 import type { CharacterFilters } from "@/data/types";
-import { useIsOwned } from "@/hooks/useOwnership";
 import { defaultCharacterFilters } from "@/lib/characterFilters";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
-import { useTierStore } from "@/stores/useTierStore";
 import { useCallback, useMemo, useState } from "react";
 
 interface UseCharacterFiltersOptions {
   /** Default value for ownedOnly filter. CharacterView uses false, CharacterBuildView uses true. */
   defaultOwnedOnly?: boolean;
+  /** Whether tier data is available — gates the tierSort filter. */
+  hasTierData?: boolean;
 }
 
 export function useCharacterFilters({
   defaultOwnedOnly = false,
+  hasTierData = false,
 }: UseCharacterFiltersOptions = {}) {
-  const tierAssignments = useTierStore((state) => state.tierAssignments);
-  const hasTierData = Object.keys(tierAssignments).length > 0;
-
   // Get persisted sort preferences
   const characterSort = usePreferencesStore((state) => state.characterSort);
   const setCharacterSort = usePreferencesStore(
@@ -32,13 +30,6 @@ export function useCharacterFilters({
     showManekin: defaultCharacterFilters.showManekin,
     searchQuery: defaultCharacterFilters.searchQuery,
   });
-
-  // Ownership check callback
-  const isOwned = useIsOwned();
-  const isCharacterOwned = useCallback(
-    (id: string) => isOwned("character", id),
-    [isOwned]
-  );
 
   // Combine local checkbox state with persisted sort preferences
   const filters: CharacterFilters = useMemo(
@@ -106,8 +97,5 @@ export function useCharacterFilters({
     handleFiltersChange,
     setCheckboxFilters,
     activeFilterCount,
-    tierAssignments,
-    hasTierData,
-    isCharacterOwned,
   };
 }
