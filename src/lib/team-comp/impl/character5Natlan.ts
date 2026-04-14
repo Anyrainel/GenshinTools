@@ -567,33 +567,8 @@ class Mavuika extends CharacterBase {
           value: this.constellation >= 4 ? 0.5 : 0.4,
         },
       ]),
-      // Q: FS bonus to Sunfell Slice (200 × param3 ATK, scales with Q talent)
-      new ScalingBuff(
-        cbs(this, "Q", ["Q"]),
-        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-        [],
-        "atk",
-        "baseDmg",
-        200 * this.param("Q", 3)
-      ),
-      // Q: FS bonus to Flamestrider Normal Attacks (200 × param4 ATK)
-      new ScalingBuff(
-        cbs(this, "Q", ["Q"]),
-        { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-        [],
-        "atk",
-        "baseDmg",
-        200 * this.param("Q", 4)
-      ),
-      // Q: FS bonus to Flamestrider Charged Attacks (200 × param5 ATK)
-      new ScalingBuff(
-        cbs(this, "Q", ["Q"]),
-        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        [],
-        "atk",
-        "baseDmg",
-        200 * this.param("Q", 5)
-      ),
+      // Q: FS bonus to Sunfell/Normal/Charged are merged into formulaMap
+      // multipliers (not ScalingBuff) so they use final ATK, not preStats ATK.
     ];
 
     // C1: Mavuika's ATK +40% after gaining Fighting Spirit
@@ -639,36 +614,8 @@ class Mavuika extends CharacterBase {
           ])
         );
       }
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C2", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-          [],
-          "atk",
-          "baseDmg",
-          0.6
-        )
-      );
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C2", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-          [],
-          "atk",
-          "baseDmg",
-          0.9
-        )
-      );
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C2", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-          [],
-          "atk",
-          "baseDmg",
-          1.2
-        )
-      );
+      // C2 FS bonus to Normal/Charged/Sunfell merged into formulaMap multipliers
+      // (same reason as FS bonus above — must use final ATK, not preStats ATK)
     }
 
     // C6 Scorching Ring DEF -20% is merged into C2 block above (team-wide at C6)
@@ -677,10 +624,20 @@ class Mavuika extends CharacterBase {
   })();
 
   // Q Sunfell Slice: Lv10 800.6%, Lv13 (C3+) 945.2%
-  // FS and C2 ATK bonuses are applied as baseDmg ScalingBuffs (see buffs above)
+  // FS and C2 ATK bonuses are merged into formula multipliers so they scale
+  // with final ATK (postStats) rather than preStats ATK.
   protected readonly formulaMap = (() => {
+    // FS bonus per ability: 200 × param × ATK (merged into talent multiplier)
+    const fsBurst = 200 * this.param("Q", 3);
+    const fsNormal = 200 * this.param("Q", 4);
+    const fsCharge = 200 * this.param("Q", 5);
+    // C2: additional ATK% bonus for Flamestrider attacks
+    const c2Burst = this.constellation >= 2 ? 1.2 : 0;
+    const c2Normal = this.constellation >= 2 ? 0.6 : 0;
+    const c2Charge = this.constellation >= 2 ? 0.9 : 0;
+
     // CA: Cyclic (Lv10 195.5%, Lv13 236.9%) + Final (Lv10 272%, Lv13 329.6%)
-    const caCyclicMult = this.param("E", 10);
+    const caCyclicMult = this.param("E", 10) + fsCharge + c2Charge;
     const sprintMult = this.param("E", 9);
 
     return {
@@ -688,7 +645,7 @@ class Mavuika extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(this.param("Q", 1), {
+            formula: new DirectFormula(this.param("Q", 1) + fsBurst + c2Burst, {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -700,11 +657,14 @@ class Mavuika extends CharacterBase {
         label: { zh: "Q后 AZS", en: "Post-Q N1+CA+Sprint" },
         parts: [
           {
-            formula: new DirectFormula(this.param("E", 4), {
-              element: "Pyro",
-              ability: "normal",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("E", 4) + fsNormal + c2Normal,
+              {
+                element: "Pyro",
+                ability: "normal",
+                reaction: "none",
+              }
+            ),
           },
           {
             formula: new DirectFormula(caCyclicMult, {
@@ -742,11 +702,14 @@ class Mavuika extends CharacterBase {
             hits: 3,
           },
           {
-            formula: new DirectFormula(this.param("E", 11), {
-              element: "Pyro",
-              ability: "charge",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("E", 11) + fsCharge + c2Charge,
+              {
+                element: "Pyro",
+                ability: "charge",
+                reaction: "none",
+              }
+            ),
           },
         ],
       },
@@ -755,39 +718,34 @@ class Mavuika extends CharacterBase {
         label: { zh: "驰轮车N1-N5", en: "Flamestrider N1-N5" },
         parts: [
           {
-            formula: new DirectFormula(this.param("E", 4), {
-              element: "Pyro",
-              ability: "normal",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("E", 4) + fsNormal + c2Normal,
+              { element: "Pyro", ability: "normal", reaction: "none" }
+            ),
           },
           {
-            formula: new DirectFormula(this.param("E", 5), {
-              element: "Pyro",
-              ability: "normal",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("E", 5) + fsNormal + c2Normal,
+              { element: "Pyro", ability: "normal", reaction: "none" }
+            ),
           },
           {
-            formula: new DirectFormula(this.param("E", 6), {
-              element: "Pyro",
-              ability: "normal",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("E", 6) + fsNormal + c2Normal,
+              { element: "Pyro", ability: "normal", reaction: "none" }
+            ),
           },
           {
-            formula: new DirectFormula(this.param("E", 7), {
-              element: "Pyro",
-              ability: "normal",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("E", 7) + fsNormal + c2Normal,
+              { element: "Pyro", ability: "normal", reaction: "none" }
+            ),
           },
           {
-            formula: new DirectFormula(this.param("E", 8), {
-              element: "Pyro",
-              ability: "normal",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(
+              this.param("E", 8) + fsNormal + c2Normal,
+              { element: "Pyro", ability: "normal", reaction: "none" }
+            ),
           },
         ],
       },

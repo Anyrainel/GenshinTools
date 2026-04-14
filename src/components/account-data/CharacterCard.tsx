@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo as charInfoData } from "@/data/charInfo";
-import { charactersById, weaponsById } from "@/data/constants";
+import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { CharacterData, MainStatSlot, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { Pencil, Sword } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
@@ -288,6 +288,10 @@ function CharacterCardComponent({
                 (m) => m.slot === (slot as MainStatSlot)
               );
 
+            // Resolve artifact set icon for background watermark
+            const setResource = art ? artifactsById[art.setKey] : undefined;
+            const slotIconPath = setResource?.imagePaths[slot as Slot];
+
             const content = (
               <div
                 className={cn(
@@ -307,6 +311,9 @@ function CharacterCardComponent({
                       artifactScore?.substatScore.slotMaxSubScores[slot as Slot]
                     }
                     isMainStatWrong={isMainStatWrong ?? undefined}
+                    watermarkSrc={
+                      slotIconPath ? getAssetUrl(slotIconPath) : undefined
+                    }
                     compact={isArtifactCompact}
                   />
                 ) : (

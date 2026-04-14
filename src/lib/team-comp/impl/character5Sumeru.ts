@@ -1,13 +1,10 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff, TeamAggregationBuff } from "../damageBuffs";
 import { DirectFormula, TransformFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { resolveOption } from "../damageModels";
 import type { OptionDef } from "../damageModels";
-import type { StatSheet } from "../damageModels";
-import { E, type Expr, simplify } from "../expr";
-import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type { ComboDescriptor, StatEntry, StatKey } from "../types";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Sumeru Characters
@@ -460,31 +457,16 @@ class Nahida extends CharacterBase {
   readonly buffs = [
     // P1: Q field grants EM = highest party EM × 25% (cap 250)
     // "依据队伍中元素精通最高的角色的元素精通数值的25%，提高领域内当前场上角色的元素精通"
-    new (class extends StatBuff {
-      override dynamicBuffs(
-        _selfStats: StatSheet,
-        teamStats: StatSheet[]
-      ): StatEntry[] {
-        const maxEm = Math.max(...teamStats.map((s) => s.get("em", null)));
-        return [{ key: "em", value: Math.min(maxEm * 0.25, 250) }];
-      }
-      override dynamicBuffsExprTeam(
-        _selfStats: ExprStats,
-        teamExprStats: ExprStats[]
-      ): { key: StatKey; expr: Expr }[] {
-        // max(team_em_1, ..., team_em_n) × 0.25, capped at 250
-        let maxEm: Expr = teamExprStats[0]!.get("em", null);
-        for (let i = 1; i < teamExprStats.length; i++) {
-          maxEm = E.max(maxEm, teamExprStats[i]!.get("em", null));
-        }
-        return [
-          {
-            key: "em",
-            expr: simplify(E.min(E.mul(maxEm, E.const(0.25)), E.const(250))),
-          },
-        ];
-      }
-    })(cbs(this, "P1", ["Q"]), { receiver: "teamOnField" }, []),
+    new TeamAggregationBuff(
+      cbs(this, "P1", ["Q"]),
+      { receiver: "teamOnField" },
+      [],
+      "em",
+      "em",
+      0.25,
+      250,
+      "max"
+    ),
     // P2: EM above 200 → Tri-Karma DMG +0.1%/EM (cap 80%)
     // Tri-Karma fires off-field, so use "self" not "selfOnField"
     new ScalingBuff(

@@ -100,9 +100,9 @@ describe("StatDisplay", () => {
       <StatDisplay artifact={mockArtifact} scoreResult={mockScoreResult} />
     );
 
-    // Weighted stats have text-gray-200, unweighted have text-muted-foreground
-    const grayStats = container.querySelectorAll(".text-gray-200");
-    expect(grayStats.length).toBeGreaterThan(0);
+    // Weighted stats have text-foreground, unweighted have text-gray-400
+    const foregroundStats = container.querySelectorAll(".text-foreground");
+    expect(foregroundStats.length).toBeGreaterThan(0);
   });
 
   it("renders progress indicator when score data provided", () => {

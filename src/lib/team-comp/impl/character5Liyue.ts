@@ -1,4 +1,4 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
+import { DynamicCapScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   DirectFormula,
   LunarDirectFormula,
@@ -11,11 +11,9 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
-import type { OptionDef, StatSheet } from "../damageModels";
-import { E, type Expr, simplify } from "../expr";
-import type { ExprStats } from "../exprStats";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ComboDescriptor, StatEntry, StatKey } from "../types";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Liyue Characters
@@ -933,24 +931,15 @@ class HuTao extends CharacterBase {
       // E: Guide to Afterlife — HP → ATK conversion
       // Lv10: 6.26% HP, Lv13 (C3+): 7.15% HP
       // Cap: "不能超过胡桃基础攻击力的400%" → min(rate * hp, baseAtk * 4)
-      new (class extends ScalingBuff {
-        override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
-          const raw = selfStats.get("hp", null) * this.scale;
-          const cap = selfStats.get("baseAtk", null) * 4;
-          return [{ key: "atk", value: Math.min(raw, cap) }];
-        }
-        dynamicBuffsExpr(selfStats: ExprStats): { key: StatKey; expr: Expr }[] {
-          const raw = E.mul(selfStats.get("hp", null), E.const(this.scale));
-          const cap = E.mul(selfStats.get("baseAtk", null), E.const(4));
-          return [{ key: "atk", expr: simplify(E.min(raw, cap)) }];
-        }
-      })(
+      new DynamicCapScalingBuff(
         cbs(this, "E", ["E"]),
         { receiver: "selfOnField" },
         [],
         "hp",
         "atk",
-        this.param("E", 2)
+        this.param("E", 2),
+        "baseAtk",
+        4
       ),
     ];
 

@@ -433,6 +433,129 @@ export class ScalingBuff extends StatBuff {
 }
 
 /**
+ * ScalingBuff where the cap is computed from another stat:
+ *   output = min(input × scale, capKey × capScale)
+ * Use for patterns like "X% of HP as ATK, cannot exceed baseAtk × 4" (Hu Tao).
+ */
+export class DynamicCapScalingBuff extends ScalingBuff {
+  constructor(
+    source: BuffSource,
+    target: BuffTarget,
+    staticBuffs: StatEntry[],
+    inputKey: StatKey,
+    outputKey: StatKey,
+    scale: number,
+    readonly capKey: StatKey,
+    readonly capScale: number
+  ) {
+    super(source, target, staticBuffs, inputKey, outputKey, scale);
+  }
+
+  override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
+    const raw = selfStats.get(this.inputKey, null) * this.scale;
+    const cap = selfStats.get(this.capKey, null) * this.capScale;
+    return [{ key: this.outputKey, value: Math.min(raw, cap) }];
+  }
+
+  override dynamicBuffsExpr(
+    selfStats: ExprStats
+  ): { key: StatKey; expr: Expr }[] {
+    const raw = E.mul(selfStats.get(this.inputKey, null), E.const(this.scale));
+    const cap = E.mul(selfStats.get(this.capKey, null), E.const(this.capScale));
+    return [{ key: this.outputKey, expr: simplify(E.min(raw, cap)) }];
+  }
+
+  protected override get identityExtra(): string {
+    return [
+      this.inputKey,
+      this.outputKey,
+      String(this.scale),
+      this.capKey,
+      String(this.capScale),
+    ].join("\u0000");
+  }
+}
+
+/**
+ * Buff that aggregates a stat across team members (max/min/sum),
+ * scales it, and outputs to another stat with an optional cap.
+ * Use for patterns like "highest party EM × 25%, cap 250" (Nahida P1).
+ */
+export class TeamAggregationBuff extends StatBuff {
+  constructor(
+    source: BuffSource,
+    target: BuffTarget,
+    staticBuffs: StatEntry[],
+    readonly inputKey: StatKey,
+    readonly outputKey: StatKey,
+    readonly scale: number,
+    readonly cap: number | undefined,
+    readonly aggregation: "max" | "min" | "sum"
+  ) {
+    super(source, target, staticBuffs);
+  }
+
+  private aggregate(values: number[]): number {
+    switch (this.aggregation) {
+      case "max":
+        return Math.max(...values);
+      case "min":
+        return Math.min(...values);
+      case "sum":
+        return values.reduce((a, b) => a + b, 0);
+    }
+  }
+
+  override dynamicBuffs(
+    _selfStats: StatSheet,
+    teamStats: StatSheet[]
+  ): StatEntry[] {
+    const agg = this.aggregate(
+      teamStats.map((s) => s.get(this.inputKey, null))
+    );
+    const raw = agg * this.scale;
+    const value = this.cap !== undefined ? Math.min(raw, this.cap) : raw;
+    return [{ key: this.outputKey, value }];
+  }
+
+  override dynamicBuffsExprTeam(
+    _selfStats: ExprStats,
+    teamExprStats: ExprStats[]
+  ): { key: StatKey; expr: Expr }[] {
+    let agg: Expr = teamExprStats[0]!.get(this.inputKey, null);
+    for (let i = 1; i < teamExprStats.length; i++) {
+      const next = teamExprStats[i]!.get(this.inputKey, null);
+      switch (this.aggregation) {
+        case "max":
+          agg = E.max(agg, next);
+          break;
+        case "min":
+          agg = E.min(agg, next);
+          break;
+        case "sum":
+          agg = E.add(agg, next);
+          break;
+      }
+    }
+    let result: Expr = E.mul(agg, E.const(this.scale));
+    if (this.cap !== undefined) {
+      result = E.min(result, E.const(this.cap));
+    }
+    return [{ key: this.outputKey, expr: simplify(result) }];
+  }
+
+  protected override get identityExtra(): string {
+    return [
+      this.inputKey,
+      this.outputKey,
+      String(this.scale),
+      this.cap != null ? String(this.cap) : "",
+      this.aggregation,
+    ].join("\u0000");
+  }
+}
+
+/**
  * Buff that scales an output stat from two input stats (self):
  *   output = min(statA × scaleA, capA) × statB
  * Use when one stat's contribution is capped before multiplying by another

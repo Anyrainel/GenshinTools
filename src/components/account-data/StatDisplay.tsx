@@ -11,6 +11,7 @@ interface StatDisplayProps {
   slotSubScore?: number;
   slotMaxSubScore?: number;
   isMainStatWrong?: boolean;
+  watermarkSrc?: string;
 }
 
 export function StatDisplay({
@@ -19,6 +20,7 @@ export function StatDisplay({
   slotSubScore,
   slotMaxSubScore,
   isMainStatWrong,
+  watermarkSrc,
   compact = false,
 }: StatDisplayProps & { compact?: boolean }) {
   const { t } = useLanguage();
@@ -37,9 +39,9 @@ export function StatDisplay({
       <div
         key={statKey}
         className={cn(
-          "flex justify-between items-center",
+          "relative z-10 flex justify-between items-center",
           compact ? "text-xs" : "text-sm",
-          weight > 0 ? "text-gray-200" : "text-muted-foreground"
+          weight > 0 ? "text-foreground" : "text-gray-400"
         )}
       >
         <span className="flex-1 whitespace-nowrap overflow-hidden">
@@ -79,7 +81,18 @@ export function StatDisplay({
         </div>
       </div>
       {/* Substats */}
-      <div className="space-y-0.5">
+      <div className="relative overflow-hidden space-y-0.5">
+        {watermarkSrc && (
+          <img
+            src={watermarkSrc}
+            alt=""
+            aria-hidden
+            className={cn(
+              "pointer-events-none absolute inset-0 m-auto select-none brightness-[0.3] blur-[1px]",
+              compact ? "w-16 h-16" : "w-20 h-20"
+            )}
+          />
+        )}
         {Object.entries(artifact.substats ?? {}).map(([key, val]) => {
           const weight =
             scoreResult?.substatScore.statScores[key as SubStat]?.weight || 0;

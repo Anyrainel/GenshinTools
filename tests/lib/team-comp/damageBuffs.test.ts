@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { deduplicateBuffs } from "@/lib/team-comp/damageBuffs";
+import {
+  DynamicCapScalingBuff,
+  TeamAggregationBuff,
+  deduplicateBuffs,
+} from "@/lib/team-comp/damageBuffs";
 import { ScalingBuff, StatBuff, StatSheet } from "@/lib/team-comp/damageModels";
 
 describe("StatBuff", () => {
@@ -147,6 +151,80 @@ describe("ScalingBuff with threshold (ER scaling)", () => {
     // ER over base: 5.0 - 1.0 = 4.0
     // Raw ATK% = 4.0 × 0.28 = 1.12, capped to 0.80
     expect(dynamic[0]!.value).toBeCloseTo(0.8);
+  });
+});
+
+describe("DynamicCapScalingBuff", () => {
+  it("caps output at capKey × capScale", () => {
+    const buff = new DynamicCapScalingBuff(
+      { type: "character", id: "hutao", origin: "E" },
+      { receiver: "selfOnField" },
+      [],
+      "hp",
+      "atk",
+      0.0626,
+      "baseAtk",
+      4
+    );
+    // baseAtk=100, hp=30000 → raw = 1878, cap = 400 → clamped to 400
+    const stats = StatSheet.fromRaw({ baseAtk: 100, hp: 30000 });
+    expect(buff.dynamicBuffs(stats)).toEqual([{ key: "atk", value: 400 }]);
+  });
+
+  it("does not cap when raw is below cap", () => {
+    const buff = new DynamicCapScalingBuff(
+      { type: "character", id: "hutao", origin: "E" },
+      { receiver: "selfOnField" },
+      [],
+      "hp",
+      "atk",
+      0.01,
+      "baseAtk",
+      4
+    );
+    // baseAtk=200, hp=5000 → raw = 50, cap = 800 → unclamped 50
+    const stats = StatSheet.fromRaw({ baseAtk: 200, hp: 5000 });
+    expect(buff.dynamicBuffs(stats)).toEqual([{ key: "atk", value: 50 }]);
+  });
+});
+
+describe("TeamAggregationBuff", () => {
+  it("takes max EM across team, scales and caps", () => {
+    const buff = new TeamAggregationBuff(
+      { type: "character", id: "nahida", origin: "P1" },
+      { receiver: "teamOnField" },
+      [],
+      "em",
+      "em",
+      0.25,
+      250,
+      "max"
+    );
+    const team = [
+      StatSheet.fromRaw({ em: 800 }),
+      StatSheet.fromRaw({ em: 200 }),
+      StatSheet.fromRaw({ em: 500 }),
+    ];
+    expect(buff.dynamicBuffs(StatSheet.fromRaw({}), team)).toEqual([
+      { key: "em", value: 200 },
+    ]);
+  });
+
+  it("respects cap", () => {
+    const buff = new TeamAggregationBuff(
+      { type: "character", id: "nahida", origin: "P1" },
+      { receiver: "teamOnField" },
+      [],
+      "em",
+      "em",
+      0.25,
+      250,
+      "max"
+    );
+    const team = [StatSheet.fromRaw({ em: 1200 })];
+    expect(buff.dynamicBuffs(StatSheet.fromRaw({}), team)).toEqual([
+      { key: "em", value: 250 },
+    ]);
   });
 });
 

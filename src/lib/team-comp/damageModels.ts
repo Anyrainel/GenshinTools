@@ -76,7 +76,12 @@ export type FormulaEntry = {
 import { filterMatchesTag, resolvePartReaction } from "./types";
 
 // Re-export buff and formula classes for convenient single-module imports
-export { StatBuff, ScalingBuff } from "./damageBuffs";
+export {
+  StatBuff,
+  ScalingBuff,
+  DynamicCapScalingBuff,
+  TeamAggregationBuff,
+} from "./damageBuffs";
 export {
   DamageFormula,
   DirectFormula,
@@ -188,7 +193,7 @@ function serializeFilter(
 }
 
 /** Append a field-state tag to an existing filter key. */
-function appendFieldState(filterKey: string, fs: FieldState): string {
+export function appendFieldState(filterKey: string, fs: FieldState): string {
   return filterKey === EMPTY_FILTER_KEY ? `f:${fs}` : `${filterKey}|f:${fs}`;
 }
 
@@ -327,11 +332,16 @@ export class StatSheet {
   /** Create a StatSheet from entries scoped to a DamageTagFilter. */
   static fromEntries(
     entries: StatEntry[],
-    filter?: DamageTagFilter
+    filter?: DamageTagFilter,
+    fieldState?: FieldState
   ): StatSheet {
     return new StatSheet(
       entries,
-      filter ? serializeFilter(filter) : EMPTY_FILTER_KEY
+      filter
+        ? serializeFilter(filter, fieldState)
+        : fieldState
+          ? `f:${fieldState}`
+          : EMPTY_FILTER_KEY
     );
   }
 

@@ -1295,24 +1295,24 @@ export const i18nUiData = {
       zh: "暴力合并",
     },
     algorithmBruteForceDesc: {
-      en: "Exhaustive search and merge builds to find the 2 configs with highest recall.",
-      zh: "穷举搜索并合并配装，找到召回率最高的2个配置。",
+      en: "Exhaustive search and merge builds to find the 3 configs with highest recall.",
+      zh: "穷举搜索并合并配装，找到召回率最高的3个配置。",
     },
     algorithmGreedyMerge: {
       en: "Greedy Merge",
       zh: "贪心合并",
     },
     algorithmGreedyMergeDesc: {
-      en: "Merge builds greedily (one by one) using heuristic rules. May produce more than 2 configs.",
-      zh: "贪婪地逐个合并配装(借助一些启发式规则)。可能产生超过2个配置。",
+      en: "Merge builds greedily (one by one) using heuristic rules. May produce more than 3 configs.",
+      zh: "贪婪地逐个合并配装(借助一些启发式规则)。可能产生超过3个配置。",
     },
     algorithmSmartMerge: {
       en: "Smart Merge (Recommended)",
       zh: "智能合并（推荐）",
     },
     algorithmSmartMergeDesc: {
-      en: "Groups builds by DPS and Support builds, then merge builds down to 2 configs.",
-      zh: "按不同输出和辅助配装类型分组，然后合并到2个配置中。",
+      en: "Groups builds by DPS and Support builds, then merge builds down to 3 configs.",
+      zh: "按不同输出和辅助配装类型分组，然后合并到3个配置中。",
     },
     normalizeFlatStats: {
       en: "Optimize flat stats (add flat HP/ATK/DEF to 2 substats only configs)",

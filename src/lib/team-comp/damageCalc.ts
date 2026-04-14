@@ -322,6 +322,15 @@ export type OptimizerContext = {
   charBuildOrder: [string, CharBuild][];
   /** Original artifact stat sheets (needed for off-field stat recomputation). */
   baseSheets: Record<string, StatSheet>;
+  /**
+   * When set, this is a unified context: supportPreStats contain both on/off
+   * field entries tagged with f:on/f:off. Use ExprStats.withFieldState() to
+   * get per-part views instead of building separate off-field contexts.
+   */
+  unifiedFieldDep?: Record<
+    string,
+    { onField: ProvidedStaticBuff[]; offField: ProvidedStaticBuff[] }
+  >;
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -545,6 +554,63 @@ export class CharBuild {
     if (offFieldBuffs.length > 0) {
       const deduped = deduplicateBuffs(
         offFieldBuffs.map((b) => b.buff),
+        (b) => b.staticBuffs
+      );
+      sheet = sheet.apply(deduped, "off");
+    }
+    return sheet;
+  }
+
+  /**
+   * Rebuild unified pre-stats from Phase 1 baseline, excluding buffs with matching keys.
+   * Field-dependent buffs are tagged with f:on/f:off.
+   */
+  getUnifiedPreStatsExcluding(
+    artifactStats: StatSheet,
+    onFieldBuffs: ProvidedStaticBuff[],
+    offFieldBuffs: ProvidedStaticBuff[],
+    allStaticBuffs: ProvidedStaticBuff[],
+    excludeKeys: Set<string>,
+    selfCharId: string,
+    selfRegion?: Region,
+    selfFaction?: Faction
+  ): StatSheet {
+    // Re-apply target-independent static buffs excluding the specified buff keys
+    let applicable = allStaticBuffs
+      .filter((b) => {
+        if (excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId)))
+          return false;
+        return isBuffApplicable(
+          b.buff,
+          b.providerCharId,
+          selfCharId,
+          null,
+          selfRegion,
+          selfFaction
+        );
+      })
+      .map((b) => b.buff);
+    applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
+    let sheet = this.baseStatSheet.apply(applicable);
+    sheet = sheet.merge(artifactStats);
+
+    // Apply field-dependent buffs with tags (excluding excluded)
+    const filteredOn = onFieldBuffs.filter(
+      (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
+    );
+    if (filteredOn.length > 0) {
+      const deduped = deduplicateBuffs(
+        filteredOn.map((b) => b.buff),
+        (b) => b.staticBuffs
+      );
+      sheet = sheet.apply(deduped, "on");
+    }
+    const filteredOff = offFieldBuffs.filter(
+      (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
+    );
+    if (filteredOff.length > 0) {
+      const deduped = deduplicateBuffs(
+        filteredOff.map((b) => b.buff),
         (b) => b.staticBuffs
       );
       sheet = sheet.apply(deduped, "off");
@@ -1761,6 +1827,61 @@ export class TeamBuild {
   }
 
   /**
+   * Create a unified optimizer context where supportPreStats contain both
+   * on-field and off-field entries tagged with f:on/f:off. Eliminates the
+   * need for separate off-field optimizer contexts per formula.
+   *
+   * @param onFieldCharId Still needed for provider field-state during dynamic
+   *   buff expression evaluation (ScalingBuff reads from provider's resolved stats).
+   */
+  createUnifiedOptimizerContext(
+    baseSheets: Record<string, StatSheet>,
+    swapCharId: string | string[],
+    onFieldCharId: string | null,
+    ctx?: CalcContext
+  ): OptimizerContext {
+    const variableCharIds = Array.isArray(swapCharId)
+      ? new Set(swapCharId)
+      : new Set([swapCharId]);
+    const primarySwapCharId = Array.isArray(swapCharId)
+      ? swapCharId[0]
+      : swapCharId;
+
+    const unifiedFieldDep = this.getUnifiedFieldDependentBuffs();
+
+    // Flatten for legacy targetDependent compat (on-field view)
+    const targetDependent: Record<string, ProvidedStaticBuff[]> = {};
+    for (const [id, dep] of Object.entries(unifiedFieldDep)) {
+      targetDependent[id] = [...dep.onField, ...dep.offField];
+    }
+
+    // Build unified supportPreStats for non-variable characters
+    const supportPreStats: Record<string, StatSheet> = {};
+    const charBuildOrder = Object.entries(this.charBuilds);
+    for (const [id, build] of charBuildOrder) {
+      if (!variableCharIds.has(id)) {
+        supportPreStats[id] = build.getUnifiedPreStats(
+          baseSheets[id] ?? new StatSheet([]),
+          unifiedFieldDep[id]!.onField,
+          unifiedFieldDep[id]!.offField
+        );
+      }
+    }
+
+    return {
+      swapCharId: primarySwapCharId,
+      variableCharIds,
+      onFieldCharId,
+      ctx,
+      targetDependent,
+      supportPreStats,
+      charBuildOrder,
+      baseSheets,
+      unifiedFieldDep,
+    };
+  }
+
+  /**
    * Fast getTeamStats using a precomputed OptimizerContext.
    * Only recomputes preStats for swapCharId; reuses cached support preStats.
    * Produces identical FP results to getTeamStats.
@@ -1940,17 +2061,15 @@ export class TeamBuild {
 
   /**
    * Compute off-field post-stats for a character's formula.
-   * When a getStats cache function is provided, extracts the off-field view
-   * from it. Otherwise falls back to a fresh getTeamStatsUnified call.
+   * Uses unified sheets with the formula owner on-field, then extracts
+   * the off-field view. This ensures provider field-state is correct
+   * (matches the compiler's unified approach).
    */
   private getOffFieldPostStats(
     charId: string,
     artifactStats: Record<string, StatSheet>,
-    ctx: CalcContext,
-    getStats?: (onFieldCharId: string | null) => Record<string, StatSheet>
+    ctx: CalcContext | undefined
   ): StatSheet | undefined {
-    if (getStats) return getStats(null)[charId];
-    // Build unified sheets with the formula owner on-field, then extract off-field view
     const unified = this.getTeamStatsUnified(artifactStats, charId, ctx);
     return unified[charId]?.withFieldState("off");
   }
@@ -3146,7 +3265,7 @@ export class TeamBuild {
       const linePostStats = teamStats[line.charId]!;
 
       const offFieldPostStats = entry.parts.some((p) => p.offField)
-        ? this.getOffFieldPostStats(line.charId, sheets, ctx, getStats)
+        ? this.getOffFieldPostStats(line.charId, sheets, ctx)
         : undefined;
 
       // Pre-build sans-buff stats for each stack-limited buff on this line
@@ -3260,16 +3379,27 @@ export function evaluateCombo(
     return charFormulas?.[line.formulaId];
   });
 
-  // Cache stat resolution per unique on-field character (null = nobody on-field)
-  const statsCache = new Map<string | null, Record<string, StatSheet>>();
-  const getStats = (onFieldCharId: string | null) => {
-    if (!statsCache.has(onFieldCharId)) {
-      statsCache.set(
+  // Cache unified stat resolution per on-field character.
+  // Returns resolved views: each character gets on/off field view based on actual field state.
+  const unifiedCache = new Map<string, Record<string, StatSheet>>();
+  const getUnifiedStats = (onFieldCharId: string) => {
+    if (!unifiedCache.has(onFieldCharId)) {
+      unifiedCache.set(
         onFieldCharId,
-        teamBuild.getTeamStats(artifactStats, onFieldCharId, ctx)
+        teamBuild.getTeamStatsUnified(artifactStats, onFieldCharId, ctx)
       );
     }
-    return statsCache.get(onFieldCharId)!;
+    return unifiedCache.get(onFieldCharId)!;
+  };
+  const getStats = (onFieldCharId: string) => {
+    const unified = getUnifiedStats(onFieldCharId);
+    const viewed: Record<string, StatSheet> = {};
+    for (const [id, sheet] of Object.entries(unified)) {
+      viewed[id] = sheet.withFieldState(
+        isOnField(id, onFieldCharId) ? "on" : "off"
+      );
+    }
+    return viewed;
   };
 
   const lineDamages = validLines.map((line, lineIdx) => {
@@ -3302,14 +3432,18 @@ export function evaluateCombo(
     }
 
     // Normal character formula path
-    // Two-sheet pattern: off-field parts use null (nobody on-field, since
-    // we don't know who is on-field during off-field damage)
+    // Unified approach: off-field parts use the same unified sheet as on-field,
+    // viewed through withFieldState("off") to get correct off-field stats.
     let offFieldTeamStats: Record<string, StatSheet> | undefined;
     if (
       hasOffFieldParts(teamBuild, line.charId, line.formulaId) &&
       !line.reaction?.forceOnField
     ) {
-      offFieldTeamStats = getStats(null);
+      const unified = getUnifiedStats(line.charId);
+      offFieldTeamStats = {};
+      for (const [id, sheet] of Object.entries(unified)) {
+        offFieldTeamStats[id] = sheet.withFieldState("off");
+      }
     }
 
     const effectiveReaction = line.reaction;

@@ -8,7 +8,11 @@
  * E.add(E.const(baseline), E.var(idx)). For fixed stats, returns E.const(value).
  */
 
-import { MULTIPLICATIVE_KEYS, StatSheet } from "./damageModels";
+import {
+  MULTIPLICATIVE_KEYS,
+  StatSheet,
+  appendFieldState,
+} from "./damageModels";
 import { E, type Expr, simplify } from "./expr";
 import type {
   DamageTag,
@@ -373,9 +377,10 @@ export class ExprStats {
    */
   withMergedConst(
     entries: { key: StatKey; value: number }[],
-    filter?: DamageTagFilter
+    filter?: DamageTagFilter,
+    fieldState?: FieldState
   ): ExprStats {
-    const extra = StatSheet.fromEntries(entries, filter);
+    const extra = StatSheet.fromEntries(entries, filter, fieldState);
     return new ExprStats(
       this.baseline.merge(extra),
       this.charIdx,
@@ -392,7 +397,8 @@ export class ExprStats {
    */
   withMergedExpr(
     entries: { key: StatKey; expr: Expr }[],
-    filter?: DamageTagFilter
+    filter?: DamageTagFilter,
+    fieldState?: FieldState
   ): ExprStats {
     const newOverrides = [...this.exprOverrides];
     for (const e of entries) {
@@ -403,13 +409,16 @@ export class ExprStats {
           ...filter,
           elements: [element],
         };
+        let fk = serializeFilter(mergedFilter);
+        if (fieldState) fk = appendFieldState(fk, fieldState);
         newOverrides.push({
           key: "dmg%" as StatKey,
-          filterKey: serializeFilter(mergedFilter),
+          filterKey: fk,
           expr: e.expr,
         });
       } else {
-        const filterKey = filter ? serializeFilter(filter) : "";
+        let filterKey = filter ? serializeFilter(filter) : "";
+        if (fieldState) filterKey = appendFieldState(filterKey, fieldState);
         newOverrides.push({ key: e.key, filterKey, expr: e.expr });
       }
     }
