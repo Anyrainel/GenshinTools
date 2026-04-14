@@ -510,12 +510,28 @@ export function compileTeamDamage(
   const simplified = simplify(damageExpr);
   const evaluate = compileExpr(simplified);
 
-  // Compile ER/CR constraint expressions
+  // Compile ER/CR constraint expressions.
+  // ER/CR matter when the constrained character is on-field (casting skill/burst),
+  // so build their stats with themselves on-field, not the formula owner.
   let evaluateEr: ((vars: Float64Array) => number) | undefined;
   let evaluateCr: ((vars: Float64Array) => number) | undefined;
 
-  if (erCheckCharId) {
-    const erStats = postExprStats[erCheckCharId];
+  if (erCheckCharId && (minEr ?? 0) + (minCr ?? 0) > 0) {
+    const erCrStats =
+      erCheckCharId === optCtx.onFieldCharId
+        ? postExprStats
+        : buildPostExprStatsForContext(
+            teamBuild,
+            teamBuild.createOptimizerContext(
+              optCtx.baseSheets,
+              [...optCtx.variableCharIds],
+              erCheckCharId,
+              calcContext
+            ),
+            varMapping,
+            calcContext
+          );
+    const erStats = erCrStats[erCheckCharId];
     if (erStats) {
       if (minEr && minEr > 0) {
         const erExpr = simplify(
@@ -601,10 +617,6 @@ export function compileComboTeamDamage(
   const varMapping = new VarMapping();
   const allPartExprs: Expr[] = [];
   const configs = teamBuild.configs;
-  // Capture any postExprStats for ER/CR constraint compilation (ER/CR is not
-  // on-field-dependent, so any calcTarget's stats work for the constraint char)
-  let anyPostExprStats: Record<string, ExprStats> | undefined;
-
   // Each calc target (formula owner) is on-field when executing their formula
   for (const [onFieldCharId, lines] of linesByCalcTarget) {
     const optCtx = teamBuild.createOptimizerContext(
@@ -619,8 +631,6 @@ export function compileComboTeamDamage(
       varMapping,
       calcContext
     );
-    if (!anyPostExprStats) anyPostExprStats = postExprStats;
-
     for (const line of lines) {
       // Team reaction formula path: compile directly from reactionProvider
       if (line.formulaId.startsWith("rx-")) {
@@ -764,12 +774,26 @@ export function compileComboTeamDamage(
   const damageExpr = simplify(E.add(...allPartExprs));
   const evaluate = compileExpr(damageExpr);
 
-  // Compile ER/CR constraint expressions (same pattern as compileTeamDamage)
+  // Compile ER/CR constraint expressions.
+  // ER/CR matter when the constrained character is on-field (casting skill/burst),
+  // so build their stats with themselves on-field, not a formula owner.
   let evaluateEr: ((vars: Float64Array) => number) | undefined;
   let evaluateCr: ((vars: Float64Array) => number) | undefined;
 
-  if (erCheckCharId && anyPostExprStats) {
-    const erStats = anyPostExprStats[erCheckCharId];
+  if (erCheckCharId && (minEr ?? 0) + (minCr ?? 0) > 0) {
+    const erCrOptCtx = teamBuild.createOptimizerContext(
+      baseSheets,
+      swapCharId,
+      erCheckCharId,
+      calcContext
+    );
+    const erCrStats = buildPostExprStatsForContext(
+      teamBuild,
+      erCrOptCtx,
+      varMapping,
+      calcContext
+    );
+    const erStats = erCrStats[erCheckCharId];
     if (erStats) {
       if (minEr && minEr > 0) {
         const erExpr = simplify(
