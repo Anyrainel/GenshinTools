@@ -6,9 +6,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { cn } from "@/lib/utils";
 import { Filter, type LucideIcon } from "lucide-react";
-import { type RefObject, useState } from "react";
+import { type RefObject, useRef, useState } from "react";
 
 interface SidebarLayoutProps {
   sidebar: React.ReactNode;
@@ -18,9 +19,9 @@ interface SidebarLayoutProps {
   activeFilterCount?: number;
   children: React.ReactNode;
   /**
-   * Optional ref for the main scrollable content area.
-   * Pass this when using virtualization (e.g., @tanstack/react-virtual).
-   * If provided, the layout will forward this ref to the scroll container.
+   * Ref to the scrollable content area. Required when `contentScrollsInternally`
+   * is true so the layout can forward wheel events from margin areas.
+   * When `contentScrollsInternally` is false, the layout creates its own ref.
    */
   contentScrollRef?: RefObject<HTMLDivElement>;
   /**
@@ -36,8 +37,8 @@ interface SidebarLayoutProps {
  * Renders a sidebar on desktop (md+) and a Sheet trigger on mobile.
  * The sidebar is hidden on mobile and slides in from the left via Sheet.
  *
- * For virtualized content, use `contentScrollRef` to pass the scroll container ref,
- * or set `contentScrollsInternally={true}` when children handle their own scrolling.
+ * Automatically forwards wheel events from margin/padding areas to the
+ * main content scroll container.
  */
 export function SidebarLayout({
   sidebar,
@@ -49,9 +50,20 @@ export function SidebarLayout({
   contentScrollsInternally = false,
 }: SidebarLayoutProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const internalMainRef = useRef<HTMLDivElement>(null);
+
+  // Scroll target: external ref (virtualized children) or internal main ref
+  const scrollTarget = contentScrollsInternally
+    ? contentScrollRef
+    : internalMainRef;
+
+  // Forward wheel events from margin/padding areas to main content
+  useGlobalScroll(containerRef, scrollTarget);
 
   return (
     <div
+      ref={containerRef}
       className={cn(
         "h-full overflow-hidden flex flex-col lg:flex-row wide-container gap-2 lg:gap-3"
       )}
@@ -93,7 +105,7 @@ export function SidebarLayout({
           {children}
         </main>
       ) : (
-        <main ref={contentScrollRef} className="flex-1 min-w-0 overflow-y-auto">
+        <main ref={internalMainRef} className="flex-1 min-w-0 overflow-y-auto">
           {children}
         </main>
       )}

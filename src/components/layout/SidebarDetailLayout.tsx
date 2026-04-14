@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
 
 interface SidebarDetailLayoutProps {
   /** Fixed header content (e.g. toolbar / search bar) */
@@ -49,6 +51,11 @@ export function SidebarDetailLayout({
   banner,
 }: SidebarDetailLayoutProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  // Forward wheel events from gap/padding areas to main content (desktop only)
+  useGlobalScroll(containerRef, mainRef);
 
   // ── Mobile ──
   if (!isDesktop) {
@@ -84,6 +91,7 @@ export function SidebarDetailLayout({
   // ── Desktop ──
   return (
     <div
+      ref={containerRef}
       className={cn(
         "h-full overflow-hidden flex flex-col container mx-auto px-2 md:px-4",
         className
@@ -101,7 +109,9 @@ export function SidebarDetailLayout({
         >
           {sidebar}
         </aside>
-        <main className="flex-1 min-w-0 overflow-y-auto">{children}</main>
+        <main ref={mainRef} className="flex-1 min-w-0 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </div>
   );

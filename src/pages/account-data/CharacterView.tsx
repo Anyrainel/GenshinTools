@@ -135,6 +135,7 @@ export const CharacterView = forwardRef<
     [activeAccountId, addOrUpdateAccount]
   );
 
+  const mainScrollRef = useRef<HTMLDivElement>(null);
   const exportRef = useRef<HTMLDivElement>(null);
   const [showExport, setShowExport] = useState(false);
 
@@ -196,10 +197,11 @@ export const CharacterView = forwardRef<
       }
       triggerLabel={t.ui("filters.title")}
       activeFilterCount={activeFilterCount}
+      contentScrollRef={mainScrollRef}
       contentScrollsInternally
     >
       {filteredCharacters.length === 0 ? (
-        <div className="flex-1 overflow-y-auto">
+        <div ref={mainScrollRef} className="flex-1 overflow-y-auto">
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold text-foreground mb-2">
@@ -237,6 +239,7 @@ export const CharacterView = forwardRef<
           cardLayout={cardLayout}
           isSmallScreen={isSmallScreen}
           onEdit={setEditingChar}
+          scrollRef={mainScrollRef}
         />
       )}
 
@@ -299,6 +302,7 @@ interface VirtualGridProps {
   cardLayout: CardLayout;
   isSmallScreen: boolean;
   onEdit: (char: CharacterData) => void;
+  scrollRef: React.RefObject<HTMLDivElement>;
 }
 
 /** Card min-width in px — matches CSS minmax(32rem, 1fr) = 512px */
@@ -313,8 +317,8 @@ function VirtualizedCharacterGrid({
   cardLayout,
   isSmallScreen,
   onEdit,
+  scrollRef,
 }: VirtualGridProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const [numColumns, setNumColumns] = useState(() => {
     if (isSmallScreen) return 1;

@@ -14,7 +14,7 @@ import {
 } from "@/hooks/useActiveAccount";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
-import { useGlobalScroll } from "@/hooks/useGlobalScroll";
+
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
@@ -51,7 +51,6 @@ export function CharacterBuildView({
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
   const mainScrollRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const activeAccountData = useActiveAccountData();
   const hasAccountData = activeAccountData != null;
@@ -128,9 +127,6 @@ export function CharacterBuildView({
     [isMobile, isDesktop, isVeryNarrow]
   );
 
-  // Use custom hook for scroll forwarding from margin areas to main content
-  useGlobalScroll(containerRef, mainScrollRef);
-
   // Compute filtered characters
   const filteredAndSortedCharacters = useMemo(
     () =>
@@ -158,53 +154,49 @@ export function CharacterBuildView({
 
   if (!hasAnyBuilds) {
     return (
-      <div ref={containerRef} className="h-full">
-        <BuildsEmptyState onOpenImport={onOpenImport} onShowTour={onShowTour} />
-      </div>
+      <BuildsEmptyState onOpenImport={onOpenImport} onShowTour={onShowTour} />
     );
   }
 
   return (
-    <div ref={containerRef} className="h-full">
-      <SidebarLayout
-        sidebar={
-          <CharacterFilterSidebar
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-            hasTierData={hasTierData}
-            hasScoreData={hasScoreData}
-          />
-        }
-        triggerLabel={t.ui("filters.title")}
-        activeFilterCount={activeFilterCount}
-        contentScrollRef={mainScrollRef}
-        contentScrollsInternally
-      >
-        {deferredCharacters.length === 0 ? (
-          <div
-            ref={mainScrollRef}
-            className="flex-1 overflow-y-auto overflow-hidden"
-            style={{ scrollBehavior: "auto" }}
-          >
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                {t.ui("configure.noChars")}
-              </h3>
-              <p className="text-muted-foreground">
-                {t.ui("configure.noCharsDesc")}
-              </p>
-            </div>
+    <SidebarLayout
+      sidebar={
+        <CharacterFilterSidebar
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          hasTierData={hasTierData}
+          hasScoreData={hasScoreData}
+        />
+      }
+      triggerLabel={t.ui("filters.title")}
+      activeFilterCount={activeFilterCount}
+      contentScrollRef={mainScrollRef}
+      contentScrollsInternally
+    >
+      {deferredCharacters.length === 0 ? (
+        <div
+          ref={mainScrollRef}
+          className="flex-1 overflow-y-auto overflow-hidden"
+          style={{ scrollBehavior: "auto" }}
+        >
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              {t.ui("configure.noChars")}
+            </h3>
+            <p className="text-muted-foreground">
+              {t.ui("configure.noCharsDesc")}
+            </p>
           </div>
-        ) : (
-          <VirtualizedCharacterList
-            characters={deferredCharacters}
-            scrollRef={mainScrollRef}
-            layout={buildCardLayout}
-          />
-        )}
-      </SidebarLayout>
-    </div>
+        </div>
+      ) : (
+        <VirtualizedCharacterList
+          characters={deferredCharacters}
+          scrollRef={mainScrollRef}
+          layout={buildCardLayout}
+        />
+      )}
+    </SidebarLayout>
   );
 }
 

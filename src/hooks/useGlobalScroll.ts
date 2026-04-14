@@ -14,12 +14,12 @@ import { type RefObject, useEffect } from "react";
  */
 export function useGlobalScroll(
   containerRef: RefObject<HTMLElement>,
-  mainScrollRef: RefObject<HTMLElement>,
+  mainScrollRef: RefObject<HTMLElement> | undefined,
   sidebarSelector = "aside"
 ) {
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (!containerRef.current || !mainScrollRef.current) return;
+      if (!containerRef.current || !mainScrollRef?.current) return;
 
       const target = e.target as HTMLElement;
 
