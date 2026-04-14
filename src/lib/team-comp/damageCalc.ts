@@ -1063,8 +1063,18 @@ export class TeamBuild {
   ): boolean {
     for (const cid of Object.keys(this.charBuilds)) {
       if (
-        this.isBuffApplicableForChar(buff, providerCharId, cid, true) ||
-        this.isBuffApplicableForChar(buff, providerCharId, cid, false)
+        this.isBuffApplicableForChar(
+          buff,
+          providerCharId,
+          cid,
+          true /* on-field */
+        ) ||
+        this.isBuffApplicableForChar(
+          buff,
+          providerCharId,
+          cid,
+          false /* off-field */
+        )
       )
         return true;
     }
@@ -1074,10 +1084,12 @@ export class TeamBuild {
   /**
    * Collect field-dependent static buffs for each character.
    *
-   * Field state per character via isOnField(charId, onFieldCharId).
-   * When onFieldCharId is null, everyone is off-field → off-field receivers
-   * apply. Formula evaluation later selects on-field vs off-field sheet per
-   * part via isPartOffField.
+   * Char-level field state: each character is classified on/off via
+   * isOnField(charId, onFieldCharId). This runs before formula parts exist,
+   * so part-level field status is unavailable. The two-sheet pattern
+   * (on-field sheet + off-field sheet) is built by calling this twice
+   * (once with onFieldCharId=charId, once with null), and formula evaluation
+   * selects the correct sheet per part via isPartOffField.
    */
   private getFieldDependentBuffs(
     onFieldCharId: string | null
@@ -1099,7 +1111,8 @@ export class TeamBuild {
 
   /**
    * Build post-stats for all team members: apply dynamic buffs + critRateTarget.
-   * Extracts the repeated phase-4/5 pattern from getTeamStats and variants.
+   * Char-level field state: same rationale as getFieldDependentBuffs — runs
+   * before formula parts exist, uses onFieldCharId for per-character on/off.
    */
   private buildTeamPostStats(
     preStats: Record<string, StatSheet>,
@@ -1517,7 +1530,8 @@ export class TeamBuild {
 
   /**
    * Compute off-field post-stats for a character's formula.
-   * Uses onFieldCharId=null so nobody is on-field (correct for off-field damage).
+   * Uses onFieldCharId=null: for off-field damage parts we genuinely don't
+   * know who is on-field, so everyone is treated as off-field.
    */
   private getOffFieldPostStats(
     charId: string,
@@ -2040,8 +2054,9 @@ export class TeamBuild {
     for (const { buff, providerCharId } of charBuffEntries) {
       if (!(buff instanceof ScalingBuff)) continue;
       // Only care about scaling buffs whose output reaches the calc target.
-      // Both field states: formula may have on-field and off-field parts that
-      // use different stat sheets. Layer 2.5 narrows per-part.
+      // Check both field states (true = on-field, false = off-field) because
+      // the formula may mix on-field and off-field parts. Layer 2.5 narrows
+      // per-part later.
       if (
         onFieldCharId == null ||
         !(
@@ -2049,13 +2064,13 @@ export class TeamBuild {
             buff,
             providerCharId,
             onFieldCharId,
-            true
+            true /* on-field */
           ) ||
           this.isBuffApplicableForChar(
             buff,
             providerCharId,
             onFieldCharId,
-            false
+            false /* off-field */
           )
         )
       )
@@ -2108,16 +2123,22 @@ export class TeamBuild {
           const effectiveKeys = new Set<StatKey>();
 
           // Check if this buff directly affects the calc target's stat sheet.
-          // Both field states: formula may mix on-field and off-field parts.
-          // Layer 2.5 narrows per-part.
+          // Check both field states (true = on-field, false = off-field)
+          // because the formula may mix on-field and off-field parts.
+          // Layer 2.5 narrows per-part later.
           const reachesCalcTarget =
             onFieldCharId != null &&
-            (this.isBuffApplicableForChar(buff, ownerId, onFieldCharId, true) ||
+            (this.isBuffApplicableForChar(
+              buff,
+              ownerId,
+              onFieldCharId,
+              true /* on-field */
+            ) ||
               this.isBuffApplicableForChar(
                 buff,
                 ownerId,
                 onFieldCharId,
-                false
+                false /* off-field */
               ));
           if (reachesCalcTarget) {
             for (const k of rawOutputKeys) effectiveKeys.add(k);
@@ -2126,11 +2147,21 @@ export class TeamBuild {
           // Check indirect path via scaling bridge for all characters
           // the buff applies to (including calc target — their stats may
           // also feed their own scaling buffs).
-          // Both field states per character: same reason as above.
+          // Check both field states per character (same rationale as above).
           for (const cid of Object.keys(this.charBuilds)) {
             const buffApplies =
-              this.isBuffApplicableForChar(buff, ownerId, cid, true) ||
-              this.isBuffApplicableForChar(buff, ownerId, cid, false);
+              this.isBuffApplicableForChar(
+                buff,
+                ownerId,
+                cid,
+                true /* on-field */
+              ) ||
+              this.isBuffApplicableForChar(
+                buff,
+                ownerId,
+                cid,
+                false /* off-field */
+              );
             if (!buffApplies) continue;
             for (const outKey of rawOutputKeys) {
               const bridged = scalingBridge.get(`${cid}\0${outKey}`);
@@ -2357,8 +2388,7 @@ export class TeamBuild {
 
   /**
    * Compute marginal damage gains for +1 avg substat roll.
-   * Delegates to the shared computeSubstatMarginals loop and converts
-   * absolute deltas to relative gains.
+   * onFieldCharId is the formula owner — they are on-field when executing.
    */
   private computeMarginalGainsUnified(
     onFieldCharId: string,
@@ -2827,6 +2857,7 @@ export function evaluateCombo(
   };
 
   const lineDamages = validLines.map((line, lineIdx) => {
+    // On-field stats: the formula character is on-field when executing
     const teamStats = getStats(line.charId);
 
     // Team reaction path: route rx-* formulas to reactionProvider
@@ -2855,13 +2886,13 @@ export function evaluateCombo(
     }
 
     // Normal character formula path
-    // Compute off-field stats if the formula has off-field parts
+    // Two-sheet pattern: off-field parts use null (nobody on-field, since
+    // we don't know who is on-field during off-field damage)
     let offFieldTeamStats: Record<string, StatSheet> | undefined;
     if (
       hasOffFieldParts(teamBuild, line.charId, line.formulaId) &&
       !line.reaction?.forceOnField
     ) {
-      // Nobody on-field for off-field damage parts
       offFieldTeamStats = getStats(null);
     }
 

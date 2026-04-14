@@ -605,6 +605,7 @@ export function compileComboTeamDamage(
   // on-field-dependent, so any calcTarget's stats work for the constraint char)
   let anyPostExprStats: Record<string, ExprStats> | undefined;
 
+  // Each calc target (formula owner) is on-field when executing their formula
   for (const [onFieldCharId, lines] of linesByCalcTarget) {
     const optCtx = teamBuild.createOptimizerContext(
       baseSheets,
@@ -997,9 +998,10 @@ function applyDynamicBuffExprs(
   for (const [id] of optCtx.charBuildOrder) {
     let stats = preExprStats[id]!;
 
-    // Filter applicable dynamic buffs for this character.
-    // The compiler later selects on-field vs off-field ExprStats per
-    // formula part via isPartOffField.
+    // Char-level field state: each character is classified on/off via
+    // isOnField(id, optCtx.onFieldCharId). Part-level field status is
+    // unavailable here; the compiler selects on-field vs off-field
+    // ExprStats per formula part via isPartOffField later.
     const applicable = dynamicBuffExprs.filter((dbExpr) =>
       isBuffApplicable(
         { target: dbExpr.target, source: dbExpr.source } as StatBuff,
