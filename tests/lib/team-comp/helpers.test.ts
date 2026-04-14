@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  allElementalDmg,
+  ALL_ELEMENTAL_FILTER,
   getReactionAuraElements,
   r,
 } from "@/lib/team-comp/helpers";
@@ -24,26 +24,21 @@ describe("r() — refinement value picker", () => {
   });
 });
 
-describe("allElementalDmg", () => {
-  it("produces 7 entries for all elements", () => {
-    const entries = allElementalDmg(0.15);
-    expect(entries).toHaveLength(7);
-    expect(entries.every((e) => e.value === 0.15)).toBe(true);
+describe("ALL_ELEMENTAL_FILTER", () => {
+  it("contains all 7 elements sorted alphabetically", () => {
+    expect(ALL_ELEMENTAL_FILTER.elements).toEqual([
+      "Anemo",
+      "Cryo",
+      "Dendro",
+      "Electro",
+      "Geo",
+      "Hydro",
+      "Pyro",
+    ]);
   });
 
-  it("includes all 7 element DMG keys", () => {
-    const keys = allElementalDmg(0).map((e) => e.key);
-    expect(keys).toEqual(
-      expect.arrayContaining([
-        "pyro%",
-        "hydro%",
-        "electro%",
-        "cryo%",
-        "anemo%",
-        "geo%",
-        "dendro%",
-      ])
-    );
+  it("does not include Physical", () => {
+    expect(ALL_ELEMENTAL_FILTER.elements).not.toContain("Physical");
   });
 });
 

@@ -1,7 +1,7 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import type { OptionDef } from "../damageModels";
-import { allElementalDmg, r, wbs } from "../helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
 import type { StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
@@ -130,10 +130,17 @@ class RangeGauge extends WeaponBase {
           key: "atk%",
           value: 3 * r(this.refinement, [0.03, 0.04, 0.05, 0.06, 0.07]),
         },
-        ...allElementalDmg(
-          3 * r(this.refinement, [0.07, 0.085, 0.1, 0.115, 0.13])
-        ),
       ]),
+      new StatBuff(
+        wbs(this, ["healed"]),
+        { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+        [
+          {
+            key: "dmg%",
+            value: 3 * r(this.refinement, [0.07, 0.085, 0.1, 0.115, 0.13]),
+          },
+        ]
+      ),
     ];
   }
 }

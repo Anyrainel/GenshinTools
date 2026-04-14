@@ -1,7 +1,7 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import type { OptionDef } from "../damageModels";
-import { allElementalDmg, r, wbs } from "../helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
 
 // ══════════════════════════
 // 5★ Polearms
@@ -226,8 +226,17 @@ class PrimordialJadeWingedSpear extends WeaponBase {
 class CalamityQueller extends WeaponBase {
   // Elemental DMG + 6-stack Consummation (off-field doubled)
   readonly buffs = [
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
     new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
-      ...allElementalDmg(r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])),
       {
         key: "atk%",
         value: 6 * 2 * r(this.refinement, [0.032, 0.04, 0.048, 0.056, 0.064]),

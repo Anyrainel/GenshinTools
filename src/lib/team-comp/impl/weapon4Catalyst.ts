@@ -1,7 +1,7 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import type { OptionDef } from "../damageModels";
-import { allElementalDmg, r, wbs } from "../helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
 import type { ElementalOrPhysical } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
@@ -166,9 +166,11 @@ class TheWidsith extends WeaponBase {
     }
     if (this.o === "aria") {
       return [
-        new StatBuff(wbs(this, ["swap-in"]), { receiver: "selfOnField" }, [
-          ...allElementalDmg(dmgBase),
-        ]),
+        new StatBuff(
+          wbs(this, ["swap-in"]),
+          { receiver: "selfOnField", filter: ALL_ELEMENTAL_FILTER },
+          [{ key: "dmg%", value: dmgBase }]
+        ),
       ];
     }
     if (this.o === "interlude") {
@@ -183,9 +185,13 @@ class TheWidsith extends WeaponBase {
     return [
       new StatBuff(wbs(this, ["swap-in"]), { receiver: "selfOnField" }, [
         { key: "atk%", value: atkBase / 3 },
-        ...allElementalDmg(dmgBase / 3),
         { key: "em", value: emBase / 3 },
       ]),
+      new StatBuff(
+        wbs(this, ["swap-in"]),
+        { receiver: "selfOnField", filter: ALL_ELEMENTAL_FILTER },
+        [{ key: "dmg%", value: dmgBase / 3 }]
+      ),
     ];
   }
 }
@@ -207,11 +213,15 @@ class FlowingPurity extends WeaponBase {
   readonly buffs = [
     new StatBuff(
       wbs(this, ["E"]),
-      { receiver: "self" },
-      allElementalDmg(
-        r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]) +
-          r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])
-      )
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value:
+            r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]) +
+            r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
     ),
   ];
 }
@@ -416,8 +426,13 @@ class MappaMare extends WeaponBase {
   readonly buffs = [
     new StatBuff(
       wbs(this, ["elemental-reaction"]),
-      { receiver: "self" },
-      allElementalDmg(2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]))
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]
     ),
   ];
 }

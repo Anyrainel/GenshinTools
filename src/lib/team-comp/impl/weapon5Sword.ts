@@ -2,7 +2,7 @@ import { elements } from "@/data/types";
 import { ZERO_ENERGY_CHARS } from "../constants";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
-import { allElementalDmg, r, wbs } from "../helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
 
 // ══════════════════════════
 // 5★ Swords
@@ -91,11 +91,18 @@ class PeakPatrolSong extends WeaponBase {
         key: "def%",
         value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
       },
-      // 2-stack self all-elemental DMG: 2 x 10%/12.5%/15%/17.5%/20%
-      ...allElementalDmg(
-        2 * r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2])
-      ),
     ]),
+    // 2-stack self all-elemental DMG: 2 x 10%/12.5%/15%/17.5%/20%
+    new StatBuff(
+      wbs(this, ["on-hit"]),
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
+        },
+      ]
+    ),
     // Team all-elemental DMG from DEF; cap: 25.6%/32%/38.4%/44.8%/51.2%
     // noStackId required for team receiver on a weapon buff (U2)
     new ScalingBuff(
@@ -116,11 +123,15 @@ class MistsplitterReforged extends WeaponBase {
   readonly buffs = [
     new StatBuff(
       wbs(this),
-      { receiver: "self" },
-      allElementalDmg(
-        r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
-          r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56])
-      )
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value:
+            r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
+            r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
+        },
+      ]
     ),
   ];
 }
@@ -155,9 +166,16 @@ class LightOfFoliarIncision extends WeaponBase {
 class HaranGeppakuFutsu extends WeaponBase {
   // All-elemental DMG + 2-stack Wavespike Normal Attack DMG% (filter: normal)
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      ...allElementalDmg(r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])),
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
     new StatBuff(
       wbs(this, ["E"]),
       { receiver: "self", filter: { abilities: ["normal"] } },

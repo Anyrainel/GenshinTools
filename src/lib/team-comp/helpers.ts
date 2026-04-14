@@ -1,6 +1,6 @@
 import type { Element } from "@/data/types";
 
-import type { BuffSource, StatEntry, StatKey } from "./types";
+import type { BuffSource, DamageTagFilter, StatEntry, StatKey } from "./types";
 
 /** Pick a refinement-scaled value (R1–R5, 1-indexed refinement). */
 export function r(
@@ -34,20 +34,10 @@ export function cbs(
   return { type: "character", id: self.charId, triggers, origin };
 }
 
-const ELEMENT_DMG_KEYS: StatKey[] = [
-  "pyro%",
-  "hydro%",
-  "electro%",
-  "cryo%",
-  "anemo%",
-  "geo%",
-  "dendro%",
-];
-
-/** Expand "All Elemental DMG Bonus" into 7 individual element DMG entries. */
-export function allElementalDmg(value: number): StatEntry[] {
-  return ELEMENT_DMG_KEYS.map((key) => ({ key, value }));
-}
+/** Filter matching all 7 elements (not Physical). Use with `dmg%` entries. */
+export const ALL_ELEMENTAL_FILTER: DamageTagFilter = {
+  elements: ["Anemo", "Cryo", "Dendro", "Electro", "Geo", "Hydro", "Pyro"],
+};
 
 // ─── Reaction Proc Table (for Scroll of the Hero of Cinder City) ───
 // Maps a proc element to the attach elements it reacts with.

@@ -1,6 +1,6 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
-import { allElementalDmg, r, wbs } from "../helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
 
 // ══════════════════════════
 // 5★ Bows
@@ -208,8 +208,13 @@ class HuntersPath extends WeaponBase {
   readonly buffs = [
     new StatBuff(
       wbs(this),
-      { receiver: "self" },
-      allElementalDmg(r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]))
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
     ),
     new ScalingBuff(
       wbs(this, ["charge"]),

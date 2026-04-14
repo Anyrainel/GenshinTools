@@ -1,6 +1,6 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
-import { allElementalDmg, r, wbs } from "../helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
 
 // ══════════════════════════
 // 5★ Catalysts
@@ -312,9 +312,16 @@ class KagurasVerity extends WeaponBase {
         },
       ]
     ),
-    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
-      ...allElementalDmg(r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])),
-    ]),
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -374,8 +381,13 @@ class LostPrayerToTheSacredWinds extends WeaponBase {
   readonly buffs = [
     new StatBuff(
       wbs(this, ["on-field"]),
-      { receiver: "selfOnField" },
-      allElementalDmg(4 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]))
+      { receiver: "selfOnField", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: 4 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]
     ),
   ];
 }
@@ -385,8 +397,13 @@ class SkywardAtlas extends WeaponBase {
   readonly buffs = [
     new StatBuff(
       wbs(this),
-      { receiver: "self" },
-      allElementalDmg(r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]))
+      { receiver: "self", filter: ALL_ELEMENTAL_FILTER },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
     ),
   ];
 }
