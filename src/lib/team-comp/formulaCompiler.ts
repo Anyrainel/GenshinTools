@@ -45,7 +45,7 @@ import type {
   ReactionType,
   StatKey,
 } from "./types";
-import { exclusionKey, resolvePartReaction } from "./types";
+import { exclusionKey, isOnField, resolvePartReaction } from "./types";
 
 // ─── Public Interface ───
 
@@ -997,14 +997,15 @@ function applyDynamicBuffExprs(
   for (const [id] of optCtx.charBuildOrder) {
     let stats = preExprStats[id]!;
 
-    // Filter applicable dynamic buffs for this character — reuse the standard isBuffApplicable
+    // Filter applicable dynamic buffs for this character.
+    // The compiler later selects on-field vs off-field ExprStats per
+    // formula part via isPartOffField.
     const applicable = dynamicBuffExprs.filter((dbExpr) =>
       isBuffApplicable(
-        // Wrap as a minimal StatBuff-like object for isBuffApplicable
         { target: dbExpr.target, source: dbExpr.source } as StatBuff,
         dbExpr.providerCharId,
         id,
-        id === optCtx.onFieldCharId,
+        isOnField(id, optCtx.onFieldCharId),
         teamBuild.teamMeta.regions[id],
         teamBuild.teamMeta.factions[id]
       )

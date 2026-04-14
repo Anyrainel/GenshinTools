@@ -134,6 +134,24 @@ export function isFieldDependentReceiver(r: BuffReceiverType): boolean {
   return r !== "self" && r !== "other" && r !== "team";
 }
 
+/**
+ * Is this character on-field in the given field configuration?
+ * When nobody is specified as on-field (null), everyone is off-field.
+ */
+export function isOnField(
+  charId: string,
+  onFieldCharId: string | null
+): boolean {
+  return onFieldCharId !== null && charId === onFieldCharId;
+}
+
+/** Extract the field requirement from a receiver type. null = field-independent. */
+export function fieldReq(r: BuffReceiverType): "on" | "off" | null {
+  if (r.endsWith("OnField")) return "on";
+  if (r.endsWith("OffField")) return "off";
+  return null;
+}
+
 export type AbilityType =
   | "normal"
   | "charge"
