@@ -14,6 +14,7 @@ import type {
   DamageTag,
   DamageTagFilter,
   ElementalOrPhysical,
+  FieldState,
   StatKey,
 } from "./types";
 import { filterMatchesTag } from "./types";
@@ -418,6 +419,33 @@ export class ExprStats {
       this.varMapping,
       this.variableKeys,
       newOverrides
+    );
+  }
+
+  /**
+   * Create a field-state view of this ExprStats.
+   * The baseline StatSheet is pinned to the field state (filtering tagged entries),
+   * and exprOverrides with non-matching field tags are excluded.
+   */
+  withFieldState(fs: FieldState): ExprStats {
+    // Filter exprOverrides to only those visible in the given field state
+    const filteredOverrides = this.exprOverrides.filter((ov) => {
+      if (ov.filterKey === "") return true; // universal
+      // Check if the filterKey contains a field-state tag
+      const parts = ov.filterKey.split("|");
+      for (const p of parts) {
+        if (p === "f:on" && fs !== "on") return false;
+        if (p === "f:off" && fs !== "off") return false;
+      }
+      return true;
+    });
+
+    return new ExprStats(
+      this.baseline.withFieldState(fs),
+      this.charIdx,
+      this.varMapping,
+      this.variableKeys,
+      filteredOverrides
     );
   }
 }

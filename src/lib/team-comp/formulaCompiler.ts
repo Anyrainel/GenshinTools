@@ -45,7 +45,12 @@ import type {
   ReactionType,
   StatKey,
 } from "./types";
-import { exclusionKey, isOnField, resolvePartReaction } from "./types";
+import {
+  exclusionKey,
+  isFinalStatKey,
+  isOnField,
+  resolvePartReaction,
+} from "./types";
 
 // ─── Public Interface ───
 
@@ -144,19 +149,12 @@ function buildPostExprStatsForContext(
     }
   }
 
-  const dynamicBuffExprs = collectDynamicBuffExprs(
+  const postExprStats = collectAndApplyDynamicBuffExprsTwoPass(
     teamBuild,
     exprStatsMap,
     variableCharIds,
     supportPreStats,
-    variableBaselines
-  );
-
-  const postExprStats = applyDynamicBuffExprs(
-    exprStatsMap,
-    dynamicBuffExprs,
-    teamBuild,
-    variableCharIds,
+    variableBaselines,
     optCtx
   );
 
@@ -256,21 +254,15 @@ function buildPostExprStatsExcluding(
     }
   }
 
-  // Collect dynamic buff exprs, filtering out excluded buff keys
-  const dynamicBuffExprs = collectDynamicBuffExprs(
+  // Two-pass dynamic buff collection + application, with excluded keys
+  const postExprStats = collectAndApplyDynamicBuffExprsTwoPass(
     teamBuild,
     exprStatsMap,
     variableCharIds,
     supportPreStats,
-    variableBaselines
-  ).filter((b) => !excludeKeys.has(b.buffKey));
-
-  const postExprStats = applyDynamicBuffExprs(
-    exprStatsMap,
-    dynamicBuffExprs,
-    teamBuild,
-    variableCharIds,
-    optCtx
+    variableBaselines,
+    optCtx,
+    excludeKeys
   );
 
   if (calcContext.perCharCrTarget) {
@@ -634,21 +626,115 @@ interface DynamicBuffExpr {
   buffKey: string;
 }
 
-function collectDynamicBuffExprs(
+/**
+ * Whether a buff's dynamic output targets a final stat in the compiler path.
+ * Same logic as isDeferredFinalBuff in damageCalc.ts.
+ */
+function isCompilerDeferredFinalBuff(buff: StatBuff): boolean {
+  if (buff instanceof ScalingBuff) return isFinalStatKey(buff.outputKey);
+  if (buff instanceof CrossScalingBuff) return isFinalStatKey(buff.outputKey);
+  return false;
+}
+
+/**
+ * Collect dynamic buff exprs from a single buff, returning them as DynamicBuffExpr[].
+ */
+function collectSingleBuffExprs(
+  buff: StatBuff,
+  providerCharId: string,
+  exprStatsMap: Record<string, ExprStats>,
+  variableCharIds: Set<string>,
+  supportPreStats: Record<string, StatSheet>,
+  variableBaselines: Record<string, StatSheet>,
+  teamPreStatsArr: StatSheet[]
+): DynamicBuffExpr[] {
+  const ownerStats = exprStatsMap[providerCharId];
+  if (!ownerStats) return [];
+
+  const results: DynamicBuffExpr[] = [];
+  const buffKey = getBuffInstanceKey(buff, providerCharId);
+
+  if (buff instanceof ScalingBuff) {
+    for (const { key, expr } of buff.dynamicBuffsExpr(ownerStats)) {
+      results.push({
+        key,
+        expr,
+        target: buff.target,
+        providerCharId,
+        source: buff.source,
+        buffKey,
+      });
+    }
+  } else if (buff instanceof CrossScalingBuff) {
+    for (const { key, expr } of buff.dynamicBuffsExpr(ownerStats)) {
+      results.push({
+        key,
+        expr,
+        target: buff.target,
+        providerCharId,
+        source: buff.source,
+        buffKey,
+      });
+    }
+  } else if (buff.dynamicBuffsExprTeam) {
+    // Expr-aware team dynamic buff (e.g. Nahida P1)
+    const charIds = Object.keys(exprStatsMap);
+    const teamExprStatsArr = charIds.map((id) => exprStatsMap[id]!);
+    for (const { key, expr } of buff.dynamicBuffsExprTeam(
+      ownerStats,
+      teamExprStatsArr
+    )) {
+      results.push({
+        key,
+        expr,
+        target: buff.target,
+        providerCharId,
+        source: buff.source,
+        buffKey,
+      });
+    }
+  } else if (buff.dynamicBuffs !== StatBuff.prototype.dynamicBuffs) {
+    // Opaque dynamicBuffs override — fallback to numeric evaluation at baseline.
+    const firstVariableBaseline = Object.values(variableBaselines)[0];
+    const ownerSheet = variableCharIds.has(providerCharId)
+      ? variableBaselines[providerCharId]
+      : (supportPreStats[providerCharId] ?? firstVariableBaseline);
+    const entries = buff.dynamicBuffs(ownerSheet, teamPreStatsArr);
+    for (const { key, value } of entries) {
+      results.push({
+        key,
+        expr: E.const(value),
+        target: buff.target,
+        providerCharId,
+        source: buff.source,
+        buffKey,
+      });
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Two-pass dynamic buff collection + application for the compiler path.
+ *
+ * Pass 1: Collect sheet-stat dynamic buff exprs, apply them → midExprStats.
+ * Pass 2: Re-collect final-stat dynamic buff exprs using midExprStats, apply all → postExprStats.
+ */
+function collectAndApplyDynamicBuffExprsTwoPass(
   teamBuild: TeamBuild,
   exprStatsMap: Record<string, ExprStats>,
   variableCharIds: Set<string>,
   supportPreStats: Record<string, StatSheet>,
-  variableBaselines: Record<string, StatSheet>
-): DynamicBuffExpr[] {
-  const results: DynamicBuffExpr[] = [];
-
+  variableBaselines: Record<string, StatSheet>,
+  optCtx: OptimizerContext,
+  excludeKeys?: Set<string>
+): Record<string, ExprStats> {
   // Build teamPreStatsArr at baseline (variable chars use empty-sheet baselines,
   // non-variable chars use supportPreStats). Used for fallback numeric evaluation
   // of opaque dynamicBuffs (e.g. Nahida P1).
   const teamPreStatsArr: StatSheet[] = [];
   const charIds = Object.keys(exprStatsMap);
-  const firstVariableBaseline = Object.values(variableBaselines)[0];
   for (const id of charIds) {
     if (variableCharIds.has(id)) {
       teamPreStatsArr.push(variableBaselines[id]);
@@ -657,70 +743,73 @@ function collectDynamicBuffExprs(
     }
   }
 
+  const sheetBuffExprs: DynamicBuffExpr[] = [];
+  const deferredBuffs: { buff: StatBuff; providerCharId: string }[] = [];
+
   for (const { buff, providerCharId } of teamBuild.allStaticBuffs) {
     if (providerCharId === "resonance" || providerCharId === "extra") continue;
+    if (excludeKeys?.has(getBuffInstanceKey(buff, providerCharId))) continue;
 
-    const ownerStats = exprStatsMap[providerCharId];
-    if (!ownerStats) continue;
-
-    if (buff instanceof ScalingBuff) {
-      for (const { key, expr } of buff.dynamicBuffsExpr(ownerStats)) {
-        results.push({
-          key,
-          expr,
-          target: buff.target,
-          providerCharId,
-          source: buff.source,
-          buffKey: getBuffInstanceKey(buff, providerCharId),
-        });
-      }
-    } else if (buff instanceof CrossScalingBuff) {
-      for (const { key, expr } of buff.dynamicBuffsExpr(ownerStats)) {
-        results.push({
-          key,
-          expr,
-          target: buff.target,
-          providerCharId,
-          source: buff.source,
-          buffKey: getBuffInstanceKey(buff, providerCharId),
-        });
-      }
-    } else if (buff.dynamicBuffsExprTeam) {
-      // Expr-aware team dynamic buff (e.g. Nahida P1)
-      const teamExprStatsArr = charIds.map((id) => exprStatsMap[id]!);
-      for (const { key, expr } of buff.dynamicBuffsExprTeam(
-        ownerStats,
-        teamExprStatsArr
-      )) {
-        results.push({
-          key,
-          expr,
-          target: buff.target,
-          providerCharId,
-          source: buff.source,
-          buffKey: getBuffInstanceKey(buff, providerCharId),
-        });
-      }
-    } else if (buff.dynamicBuffs !== StatBuff.prototype.dynamicBuffs) {
-      // Opaque dynamicBuffs override — fallback to numeric evaluation at baseline.
-      const ownerSheet = variableCharIds.has(providerCharId)
-        ? variableBaselines[providerCharId]
-        : (supportPreStats[providerCharId] ?? firstVariableBaseline);
-      const entries = buff.dynamicBuffs(ownerSheet, teamPreStatsArr);
-      for (const { key, value } of entries) {
-        results.push({
-          key,
-          expr: E.const(value),
-          target: buff.target,
-          providerCharId,
-          source: buff.source,
-          buffKey: getBuffInstanceKey(buff, providerCharId),
-        });
-      }
+    if (isCompilerDeferredFinalBuff(buff)) {
+      deferredBuffs.push({ buff, providerCharId });
+      continue;
     }
+
+    const exprs = collectSingleBuffExprs(
+      buff,
+      providerCharId,
+      exprStatsMap,
+      variableCharIds,
+      supportPreStats,
+      variableBaselines,
+      teamPreStatsArr
+    );
+    sheetBuffExprs.push(...exprs);
   }
 
-  return results;
+  if (deferredBuffs.length === 0) {
+    // No final-stat buffs — single pass suffices.
+    return applyDynamicBuffExprs(
+      exprStatsMap,
+      sheetBuffExprs,
+      teamBuild,
+      variableCharIds,
+      optCtx
+    );
+  }
+
+  // Two-pass: apply sheet-stat exprs to get midExprStats, then re-collect
+  // final-stat exprs using midExprStats so they see dynamic sheet stats.
+  const midExprStats = applyDynamicBuffExprs(
+    exprStatsMap,
+    sheetBuffExprs,
+    teamBuild,
+    variableCharIds,
+    optCtx
+  );
+
+  const finalBuffExprs: DynamicBuffExpr[] = [];
+  for (const { buff, providerCharId } of deferredBuffs) {
+    const exprs = collectSingleBuffExprs(
+      buff,
+      providerCharId,
+      midExprStats,
+      variableCharIds,
+      supportPreStats,
+      variableBaselines,
+      teamPreStatsArr
+    );
+    finalBuffExprs.push(...exprs);
+  }
+
+  // Apply final-stat buffs on top of midExprStats
+  return applyDynamicBuffExprs(
+    midExprStats,
+    finalBuffExprs,
+    teamBuild,
+    variableCharIds,
+    optCtx
+  );
 }
 
 // ─── Apply Dynamic Buffs as Expr ───

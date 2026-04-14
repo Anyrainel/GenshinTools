@@ -38,6 +38,7 @@ import type {
   DamageTag,
   DamageTagFilter,
   ElementalOrPhysical,
+  FieldState,
   I18nLabel,
   PartialBuffInfo,
   ReactionOverride,
@@ -170,34 +171,72 @@ function normalizeEntry(
 const EMPTY_FILTER_KEY = "";
 
 /** Serialize a DamageTagFilter into a deterministic string key.
- *  Array fields are sorted to ensure equal filters produce the same key. */
-function serializeFilter(filter: DamageTagFilter): string {
+ *  Array fields are sorted to ensure equal filters produce the same key.
+ *  Field-state is appended as `f:on` or `f:off` when present. */
+function serializeFilter(
+  filter: DamageTagFilter,
+  fieldState?: FieldState
+): string {
   const parts: string[] = [];
   if (filter.abilities)
     parts.push(`a:${[...filter.abilities].sort().join(",")}`);
   if (filter.elements) parts.push(`e:${[...filter.elements].sort().join(",")}`);
   if (filter.reactions)
     parts.push(`r:${[...filter.reactions].sort().join(",")}`);
+  if (fieldState) parts.push(`f:${fieldState}`);
   return parts.length === 0 ? EMPTY_FILTER_KEY : parts.join("|");
+}
+
+/** Append a field-state tag to an existing filter key. */
+function appendFieldState(filterKey: string, fs: FieldState): string {
+  return filterKey === EMPTY_FILTER_KEY ? `f:${fs}` : `${filterKey}|f:${fs}`;
+}
+
+/** Extract the field-state from a filter key (if present). */
+function extractFieldStateFromKey(filterKey: string): {
+  damageFilterKey: string;
+  fieldState: FieldState | null;
+} {
+  if (filterKey === EMPTY_FILTER_KEY)
+    return { damageFilterKey: EMPTY_FILTER_KEY, fieldState: null };
+  const parts = filterKey.split("|");
+  let fieldState: FieldState | null = null;
+  const damageParts: string[] = [];
+  for (const p of parts) {
+    if (p === "f:on") fieldState = "on";
+    else if (p === "f:off") fieldState = "off";
+    else damageParts.push(p);
+  }
+  return {
+    damageFilterKey:
+      damageParts.length === 0 ? EMPTY_FILTER_KEY : damageParts.join("|"),
+    fieldState,
+  };
 }
 
 const filterCache = new Map<string, DamageTagFilter>();
 
 function deserializeFilter(key: string): DamageTagFilter {
-  const cached = filterCache.get(key);
+  // Strip field-state component before parsing damage filter
+  const { damageFilterKey } = extractFieldStateFromKey(key);
+  const effectiveKey = damageFilterKey;
+
+  const cached = filterCache.get(effectiveKey);
   if (cached) return cached;
 
   const filter: DamageTagFilter = {};
-  for (const part of key.split("|")) {
-    const [dim, vals] = part.split(":") as [string, string];
-    if (dim === "a")
-      filter.abilities = vals.split(",") as DamageTagFilter["abilities"];
-    if (dim === "e")
-      filter.elements = vals.split(",") as DamageTagFilter["elements"];
-    if (dim === "r")
-      filter.reactions = vals.split(",") as DamageTagFilter["reactions"];
+  if (effectiveKey !== EMPTY_FILTER_KEY) {
+    for (const part of effectiveKey.split("|")) {
+      const [dim, vals] = part.split(":") as [string, string];
+      if (dim === "a")
+        filter.abilities = vals.split(",") as DamageTagFilter["abilities"];
+      if (dim === "e")
+        filter.elements = vals.split(",") as DamageTagFilter["elements"];
+      if (dim === "r")
+        filter.reactions = vals.split(",") as DamageTagFilter["reactions"];
+    }
   }
-  filterCache.set(key, filter);
+  filterCache.set(effectiveKey, filter);
   return filter;
 }
 
@@ -223,9 +262,16 @@ function extractFilter(target: BuffTarget): DamageTagFilter {
  */
 export class StatSheet {
   private readonly data: Map<StatKey, Map<string, number>>;
+  /**
+   * Pinned field state for views. When set, `get()` only sees entries whose
+   * field-state tag matches (or has no field-state tag = universal).
+   * null = no field-state filtering (raw unified sheet or legacy single-field sheet).
+   */
+  private readonly _fieldState: FieldState | null;
 
   constructor(entries: StatEntry[], filterKey = EMPTY_FILTER_KEY) {
     this.data = new Map();
+    this._fieldState = null;
     const baseFilter = deserializeFilter(filterKey);
     for (const { key, value } of entries) {
       const {
@@ -243,12 +289,39 @@ export class StatSheet {
   }
 
   /** Construct from a tagged two-level map (internal use). */
-  private static fromData(data: Map<StatKey, Map<string, number>>): StatSheet {
+  private static fromData(
+    data: Map<StatKey, Map<string, number>>,
+    fieldState?: FieldState | null
+  ): StatSheet {
     const sheet = new StatSheet([]);
+    (sheet as unknown as { _fieldState: FieldState | null })._fieldState =
+      fieldState ?? null;
     for (const [key, bucket] of data) {
       sheet.data.set(key, new Map(bucket));
     }
     return sheet;
+  }
+
+  /**
+   * Create a lightweight view of this sheet pinned to a specific field state.
+   * The view shares the same underlying data — no copy is made.
+   *
+   * Entries with matching `f:on`/`f:off` tags and entries with no field tag
+   * (universal) are visible through the view. Entries with the opposite
+   * field tag are excluded.
+   */
+  withFieldState(fs: FieldState): StatSheet {
+    const view = new StatSheet([]);
+    // Share the data map directly (no copy) — the view is read-only
+    (view as unknown as { data: Map<StatKey, Map<string, number>> }).data =
+      this.data;
+    (view as unknown as { _fieldState: FieldState | null })._fieldState = fs;
+    return view;
+  }
+
+  /** The pinned field state of this sheet, or null if not field-filtered. */
+  get fieldState(): FieldState | null {
+    return this._fieldState;
   }
 
   /** Create a StatSheet from entries scoped to a DamageTagFilter. */
@@ -300,6 +373,18 @@ export class StatSheet {
     return new StatSheet(entries);
   }
 
+  /**
+   * Check if a filter key is visible through the current field-state view.
+   * Universal entries (no `f:` tag) are always visible.
+   * Field-tagged entries are visible only when their tag matches `_fieldState`.
+   */
+  private isFilterKeyVisible(fk: string): boolean {
+    if (this._fieldState === null) return true;
+    const { fieldState } = extractFieldStateFromKey(fk);
+    if (fieldState === null) return true; // universal
+    return fieldState === this._fieldState;
+  }
+
   /** Raw universal-only value for a key (no base×%+flat, no tagged entries). */
   getRaw(key: StatKey): number {
     return this.data.get(key)?.get(EMPTY_FILTER_KEY) ?? 0;
@@ -342,6 +427,7 @@ export class StatSheet {
           for (const [fk, fv] of pctBucket) {
             if (
               fk !== EMPTY_FILTER_KEY &&
+              this.isFilterKeyVisible(fk) &&
               filterMatchesTag(deserializeFilter(fk), tag)
             ) {
               pct += fv;
@@ -353,6 +439,7 @@ export class StatSheet {
           for (const [fk, fv] of flatBucket) {
             if (
               fk !== EMPTY_FILTER_KEY &&
+              this.isFilterKeyVisible(fk) &&
               filterMatchesTag(deserializeFilter(fk), tag)
             ) {
               flat += fv;
@@ -375,7 +462,10 @@ export class StatSheet {
         let product = 1 + value;
         for (const [fk, fv] of bucket) {
           if (fk === EMPTY_FILTER_KEY) continue;
-          if (filterMatchesTag(deserializeFilter(fk), tag)) {
+          if (
+            this.isFilterKeyVisible(fk) &&
+            filterMatchesTag(deserializeFilter(fk), tag)
+          ) {
             product *= 1 + fv;
           }
         }
@@ -383,7 +473,10 @@ export class StatSheet {
       }
       for (const [fk, fv] of bucket) {
         if (fk === EMPTY_FILTER_KEY) continue;
-        if (filterMatchesTag(deserializeFilter(fk), tag)) {
+        if (
+          this.isFilterKeyVisible(fk) &&
+          filterMatchesTag(deserializeFilter(fk), tag)
+        ) {
           value += fv;
         }
       }
@@ -391,8 +484,29 @@ export class StatSheet {
     return value;
   }
 
+  /**
+   * Get the universal value for a stat key, respecting field-state filtering.
+   * When _fieldState is set, sums the universal entry + any field-matching
+   * entries that have no ability/element/reaction filter (only `f:on`/`f:off`).
+   */
   private getUniversal(key: StatKey): number {
-    return this.data.get(key)?.get(EMPTY_FILTER_KEY) ?? 0;
+    const bucket = this.data.get(key);
+    if (!bucket) return 0;
+    let value = bucket.get(EMPTY_FILTER_KEY) ?? 0;
+    if (this._fieldState !== null) {
+      // Also include entries that are field-state-only (e.g. "f:on" with no other filter)
+      for (const [fk, fv] of bucket) {
+        if (fk === EMPTY_FILTER_KEY) continue;
+        const { damageFilterKey, fieldState } = extractFieldStateFromKey(fk);
+        if (
+          damageFilterKey === EMPTY_FILTER_KEY &&
+          fieldState === this._fieldState
+        ) {
+          value += fv;
+        }
+      }
+    }
+    return value;
   }
 
   /** Create a new StatSheet by merging this with another. */
@@ -416,8 +530,42 @@ export class StatSheet {
     return StatSheet.fromData(merged);
   }
 
-  /** Create a new StatSheet by applying buffs' static entries (with tag extraction). */
-  apply(buffs: StatBuff[]): StatSheet {
+  /**
+   * Create a new StatSheet by merging raw stat entries with an optional field-state tag.
+   * Used for applying dynamic buff results that are already evaluated to (key, value, filter).
+   */
+  mergeEntries(
+    entries: { key: StatKey; value: number; filter?: DamageTagFilter }[],
+    fieldState?: FieldState
+  ): StatSheet {
+    const merged = new Map<StatKey, Map<string, number>>();
+    for (const [key, bucket] of this.data) {
+      merged.set(key, new Map(bucket));
+    }
+    for (const { key, value, filter } of entries) {
+      const {
+        key: storeKey,
+        value: storeValue,
+        filterKey: fk,
+      } = normalizeEntry(key, value, filter ?? {});
+      const taggedFk = fieldState ? appendFieldState(fk, fieldState) : fk;
+      let target = merged.get(storeKey);
+      if (!target) {
+        target = new Map();
+        merged.set(storeKey, target);
+      }
+      accumulate(target, taggedFk, storeValue, storeKey);
+    }
+    return StatSheet.fromData(merged);
+  }
+
+  /**
+   * Create a new StatSheet by applying buffs' static entries (with tag extraction).
+   *
+   * When `fieldState` is provided, all entries are additionally tagged with
+   * `f:on` or `f:off`, making them visible only through a matching field-state view.
+   */
+  apply(buffs: StatBuff[], fieldState?: FieldState): StatSheet {
     const merged = new Map<StatKey, Map<string, number>>();
     for (const [key, bucket] of this.data) {
       merged.set(key, new Map(bucket));
@@ -430,22 +578,27 @@ export class StatSheet {
           value: storeValue,
           filterKey: fk,
         } = normalizeEntry(key, value, filter);
+        const taggedFk = fieldState ? appendFieldState(fk, fieldState) : fk;
         let target = merged.get(storeKey);
         if (!target) {
           target = new Map();
           merged.set(storeKey, target);
         }
-        accumulate(target, fk, storeValue, storeKey);
+        accumulate(target, taggedFk, storeValue, storeKey);
       }
     }
     return StatSheet.fromData(merged);
   }
 
-  /** Yield all (statKey, filterKey, value) triples. filterKey="" for universal. */
+  /**
+   * Yield all (statKey, filterKey, value) triples. filterKey="" for universal.
+   * When this sheet is a field-state view, only visible entries are yielded.
+   */
   *dump(): Iterable<{ key: StatKey; filterKey: string; value: number }> {
     for (const [key, bucket] of this.data) {
       for (const [fk, fv] of bucket) {
-        if (fv !== 0) yield { key, filterKey: fk, value: fv };
+        if (fv !== 0 && this.isFilterKeyVisible(fk))
+          yield { key, filterKey: fk, value: fv };
       }
     }
   }
@@ -467,7 +620,7 @@ export class StatSheet {
     const scaledFlat = new Set<string>(Object.keys(SCALED_STAT_BASES));
     const scaledBase = new Set<string>(Object.values(SCALED_STAT_BASES));
 
-    // Non-scaled stats: pass through
+    // Non-scaled stats: pass through (respecting field-state view)
     for (const [key, bucket] of this.data) {
       if (
         scaledFlat.has(key) ||
@@ -476,7 +629,8 @@ export class StatSheet {
       )
         continue;
       for (const [fk, fv] of bucket) {
-        if (fv !== 0) yield { key, filterKey: fk, value: fv };
+        if (fv !== 0 && this.isFilterKeyVisible(fk))
+          yield { key, filterKey: fk, value: fv };
       }
     }
 
@@ -502,10 +656,12 @@ export class StatSheet {
       const filterKeys = new Set<string>();
       if (pctBucket)
         for (const fk of pctBucket.keys())
-          if (fk !== EMPTY_FILTER_KEY) filterKeys.add(fk);
+          if (fk !== EMPTY_FILTER_KEY && this.isFilterKeyVisible(fk))
+            filterKeys.add(fk);
       if (flatBucket)
         for (const fk of flatBucket.keys())
-          if (fk !== EMPTY_FILTER_KEY) filterKeys.add(fk);
+          if (fk !== EMPTY_FILTER_KEY && this.isFilterKeyVisible(fk))
+            filterKeys.add(fk);
 
       for (const fk of filterKeys) {
         const fPct = pctBucket?.get(fk) ?? 0;

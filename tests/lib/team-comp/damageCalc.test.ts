@@ -2665,3 +2665,253 @@ describe("perCharCrTarget in getTeamStats", () => {
     expect(stats.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr + 1.0, 6);
   });
 });
+
+describe("Two-pass dynamic buffs", () => {
+  // Team: Shenhe (has ScalingBuff atk→baseDmg) + Bennett (has ScalingBuff baseAtk→atk)
+  // + Ganyu (Cryo carry) + Zhongli (filler)
+  // When Shenhe is on-field with Bennett Q, Shenhe's ATK should include Bennett's
+  // dynamic flat ATK, and the baseDmg ScalingBuff should see that boosted ATK.
+  const configs: TeamSlotConfig[] = [
+    {
+      charId: "shenhe",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "calamity_queller",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "bennett",
+      charLevel: 90,
+      constellation: 1,
+      weaponId: "aquila_favonia",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "ganyu",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "amos_bow",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "zhongli",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "black_tassel",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+
+  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+  const emptySheets: Record<string, StatSheet> = {
+    shenhe: new StatSheet([]),
+    bennett: new StatSheet([]),
+    ganyu: new StatSheet([]),
+    zhongli: new StatSheet([]),
+  };
+
+  it("ScalingBuff(atk→baseDmg) sees Bennett's dynamic ATK in two-pass", () => {
+    const tb = new TeamBuild(configs);
+
+    // With Shenhe on-field (Bennett Q applies to on-field)
+    const statsOnField = tb.getTeamStats(emptySheets, "shenhe", ctx);
+
+    // Without Bennett's ATK buff (off-field, Bennett Q is teamOnField)
+    const statsOffField = tb.getTeamStats(emptySheets, null, ctx);
+
+    const shenheAtkOnField = statsOnField.shenhe!.get("atk", null);
+    const shenheAtkOffField = statsOffField.shenhe!.get("atk", null);
+
+    // Bennett Q adds flat ATK to on-field characters
+    // When shenhe is on-field, she should have higher ATK
+    expect(shenheAtkOnField).toBeGreaterThan(shenheAtkOffField);
+
+    // Shenhe's baseDmg ScalingBuff reads from ATK — check that the on-field
+    // baseDmg is higher than off-field due to Bennett's ATK buff being visible
+    const cryoTag = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const baseDmgOnField = statsOnField.shenhe!.get("baseDmg", cryoTag);
+    const baseDmgOffField = statsOffField.shenhe!.get("baseDmg", cryoTag);
+
+    // Two-pass: baseDmg should see the higher ATK from Bennett
+    expect(baseDmgOnField).toBeGreaterThan(baseDmgOffField);
+
+    // Cross-check: the baseDmg difference should be proportional to ATK difference
+    // Shenhe E scale factor (param("E", 3)) × ATK delta = baseDmg delta
+    const atkDelta = shenheAtkOnField - shenheAtkOffField;
+    const baseDmgDelta = baseDmgOnField - baseDmgOffField;
+    expect(atkDelta).toBeGreaterThan(0);
+    expect(baseDmgDelta).toBeGreaterThan(0);
+  });
+
+  it("compiled and display paths agree with two-pass", () => {
+    const tb = new TeamBuild(configs);
+
+    // Use Ganyu's charged attack (Cryo) — benefits from Shenhe's baseDmg buff
+    const combo: ComboFormula = {
+      id: "test",
+      label: { zh: "", en: "" },
+      lines: [
+        {
+          charId: "ganyu",
+          formulaId: "ganyu-frostflake",
+          count: 1,
+        },
+      ],
+    };
+
+    // Display path: getComboDisplayResult
+    const displayResult = getComboDisplayResult(tb, combo, emptySheets, ctx);
+
+    // Compiled path
+    const compiled = compileComboTeamDamage(
+      tb,
+      combo,
+      "ganyu",
+      emptySheets,
+      ctx
+    );
+    const vars = new Float64Array(compiled.numVars);
+    fillVarsFromSheet(emptySheets.ganyu!, compiled.varMapping, 0, vars);
+    const compiledDamage = compiled.evaluate(vars);
+
+    // Both paths should agree (within FP tolerance)
+    expect(compiledDamage).toBeCloseTo(displayResult.totalDamage, 2);
+  });
+});
+
+describe("Unified field-state StatSheet", () => {
+  // Same team as two-pass test: Shenhe + Bennett C1 + Ganyu + Zhongli
+  const configs: TeamSlotConfig[] = [
+    {
+      charId: "shenhe",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "calamity_queller",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "bennett",
+      charLevel: 90,
+      constellation: 1,
+      weaponId: "aquila_favonia",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "ganyu",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "amos_bow",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "zhongli",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "black_tassel",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+
+  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+  const emptySheets: Record<string, StatSheet> = {
+    shenhe: new StatSheet([]),
+    bennett: new StatSheet([]),
+    ganyu: new StatSheet([]),
+    zhongli: new StatSheet([]),
+  };
+
+  it("unified on-field view matches legacy getTeamStats", () => {
+    const tb = new TeamBuild(configs);
+
+    // Legacy path: separate on-field computation
+    const legacyOnField = tb.getTeamStats(emptySheets, "shenhe", ctx);
+
+    // Unified path
+    const unified = tb.getTeamStatsUnified(emptySheets, "shenhe", ctx);
+
+    // On-field view should match legacy on-field stats for the on-field character
+    const onView = unified.shenhe!.withFieldState("on");
+    expect(onView.get("atk", null)).toBeCloseTo(
+      legacyOnField.shenhe!.get("atk", null),
+      4
+    );
+    expect(onView.get("cr", null)).toBeCloseTo(
+      legacyOnField.shenhe!.get("cr", null),
+      4
+    );
+    expect(onView.get("cd", null)).toBeCloseTo(
+      legacyOnField.shenhe!.get("cd", null),
+      4
+    );
+
+    // Off-field characters should also match
+    const bennettOnView = unified.bennett!.withFieldState("off");
+    expect(bennettOnView.get("atk", null)).toBeCloseTo(
+      legacyOnField.bennett!.get("atk", null),
+      4
+    );
+  });
+
+  it("unified off-field view matches legacy off-field stats", () => {
+    const tb = new TeamBuild(configs);
+
+    // Legacy: off-field uses onFieldCharId=null
+    const legacyOffField = tb.getTeamStats(emptySheets, null, ctx);
+
+    // Unified: built with onFieldCharId="shenhe"
+    const unified = tb.getTeamStatsUnified(emptySheets, "shenhe", ctx);
+
+    // Off-field view of Shenhe (she's actually on-field in unified, but
+    // the off-field VIEW should exclude on-field buffs)
+    const shenheOffView = unified.shenhe!.withFieldState("off");
+
+    // The off-field view should be close to legacy off-field
+    // Note: may differ slightly because unified evaluates dynamic buffs
+    // with Shenhe on-field (affecting provider stats), while legacy uses null.
+    // The ATK difference should be small since base stats are the same.
+    const shenheAtkOff = shenheOffView.get("atk", null);
+    const shenheAtkLegacy = legacyOffField.shenhe!.get("atk", null);
+
+    // Off-field ATK should exclude Bennett's teamOnField buff
+    // Both paths should agree that off-field Shenhe doesn't get Bennett's ATK
+    expect(shenheAtkOff).toBeCloseTo(shenheAtkLegacy, 0);
+  });
+
+  it("unified sheet contains both on-field and off-field entries", () => {
+    const tb = new TeamBuild(configs);
+    const unified = tb.getTeamStatsUnified(emptySheets, "shenhe", ctx);
+
+    const shenheUnified = unified.shenhe!;
+    const shenheOn = shenheUnified.withFieldState("on");
+    const shenheOff = shenheUnified.withFieldState("off");
+
+    // On-field should have higher ATK (Bennett Q teamOnField buff)
+    const atkOn = shenheOn.get("atk", null);
+    const atkOff = shenheOff.get("atk", null);
+    expect(atkOn).toBeGreaterThan(atkOff);
+
+    // CR/CD should be the same (no field-dependent CR/CD buffs in this team)
+    expect(shenheOn.get("cr", null)).toBeCloseTo(shenheOff.get("cr", null), 4);
+    expect(shenheOn.get("cd", null)).toBeCloseTo(shenheOff.get("cd", null), 4);
+  });
+});

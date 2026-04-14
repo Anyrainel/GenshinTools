@@ -2,6 +2,7 @@ import type { Element, Faction, Region } from "@/data/types";
 import { getNextLevelTier } from "@/lib/gameStatsLoader";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import {
+  CrossScalingBuff,
   ScalingBuff,
   assertNoDuplicateStatKeys,
   deduplicateBuffs,
@@ -59,10 +60,12 @@ import type {
   TeamSlotConfig,
 } from "./types";
 import {
+  type FieldState,
   exclusionKey,
   fieldReq,
   filterMatchesTag,
   isFieldDependentReceiver,
+  isFinalStatKey,
   isOnField,
   isSelfReceiver,
   resolvePartReaction,
@@ -221,6 +224,84 @@ type EvaluatedDynamicBuff = {
   providerCharId: string;
   entries: StatEntry[];
 };
+
+/**
+ * Whether a dynamic buff should be deferred to the second pass (final-stat pass).
+ * A buff is deferred if it's a ScalingBuff/CrossScalingBuff whose output key
+ * is a final stat AND whose input reads from sheet stats.
+ * This lets it see post-dynamic sheet stats (e.g. Bennett's ATK).
+ */
+function isDeferredFinalBuff(buff: StatBuff): boolean {
+  if (buff instanceof ScalingBuff) {
+    return isFinalStatKey(buff.outputKey);
+  }
+  if (buff instanceof CrossScalingBuff) {
+    return isFinalStatKey(buff.outputKey);
+  }
+  return false;
+}
+
+/**
+ * Two-pass dynamic buff evaluation.
+ *
+ * Pass 1: Evaluate sheet-stat dynamic buffs (ATK, EM, CR, etc.) from preStats.
+ * Pass 2: Build midStats (preStats + sheet-stat buffs), then evaluate final-stat
+ * dynamic buffs (baseDmg, dmg%, etc.) from midStats so they see Bennett's ATK, etc.
+ *
+ * @param buffSources  Iterable of (buff, providerCharId) pairs to evaluate.
+ * @param preStats     Per-character pre-stat sheets.
+ * @param buildMidStats  Function to apply sheet-stat buffs → midStats.
+ */
+function evaluateDynamicBuffsTwoPass(
+  buffSources: Iterable<{ buff: StatBuff; providerCharId: string }>,
+  preStats: Record<string, StatSheet>,
+  buildMidStats: (
+    sheetBuffs: EvaluatedDynamicBuff[]
+  ) => Record<string, StatSheet>
+): EvaluatedDynamicBuff[] {
+  const teamPreStatsArr = Object.values(preStats);
+  const sheetBuffs: EvaluatedDynamicBuff[] = [];
+  const finalBuffRefs: { buff: StatBuff; providerCharId: string }[] = [];
+
+  for (const { buff, providerCharId } of buffSources) {
+    if (providerCharId === "resonance" || providerCharId === "extra") continue;
+    if (isDeferredFinalBuff(buff)) {
+      finalBuffRefs.push({ buff, providerCharId });
+      continue;
+    }
+    const ownerStats = preStats[providerCharId]!;
+    const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+    assertNoDuplicateStatKeys(
+      entries,
+      `dynamicBuffs (source: ${buff.source.type}:${buff.source.id})`
+    );
+    if (entries.length > 0) {
+      sheetBuffs.push({ buff, source: buff.source, providerCharId, entries });
+    }
+  }
+
+  if (finalBuffRefs.length === 0) return sheetBuffs;
+
+  // Two-pass: build midStats by applying sheet-stat dynamic buffs,
+  // then re-evaluate final-stat buffs using midStats.
+  const midStats = buildMidStats(sheetBuffs);
+  const midStatsArr = Object.values(midStats);
+
+  const finalBuffs: EvaluatedDynamicBuff[] = [];
+  for (const { buff, providerCharId } of finalBuffRefs) {
+    const ownerStats = midStats[providerCharId]!;
+    const entries = buff.dynamicBuffs(ownerStats, midStatsArr);
+    assertNoDuplicateStatKeys(
+      entries,
+      `dynamicBuffs/final (source: ${buff.source.type}:${buff.source.id})`
+    );
+    if (entries.length > 0) {
+      finalBuffs.push({ buff, source: buff.source, providerCharId, entries });
+    }
+  }
+
+  return [...sheetBuffs, ...finalBuffs];
+}
 
 type ProvidedStaticBuff = {
   buff: StatBuff;
@@ -444,6 +525,34 @@ export class CharBuild {
   }
 
   /**
+   * Build a unified pre-stats sheet containing both on-field and off-field
+   * field-dependent buffs tagged with `f:on`/`f:off`. Universal buffs from
+   * innerStatSheet are included without field tags.
+   */
+  getUnifiedPreStats(
+    artifactStats: StatSheet,
+    onFieldBuffs: ProvidedStaticBuff[],
+    offFieldBuffs: ProvidedStaticBuff[]
+  ): StatSheet {
+    let sheet = this.innerStatSheet.merge(artifactStats);
+    if (onFieldBuffs.length > 0) {
+      const deduped = deduplicateBuffs(
+        onFieldBuffs.map((b) => b.buff),
+        (b) => b.staticBuffs
+      );
+      sheet = sheet.apply(deduped, "on");
+    }
+    if (offFieldBuffs.length > 0) {
+      const deduped = deduplicateBuffs(
+        offFieldBuffs.map((b) => b.buff),
+        (b) => b.staticBuffs
+      );
+      sheet = sheet.apply(deduped, "off");
+    }
+    return sheet;
+  }
+
+  /**
    * Rebuild pre-stats from Phase 1 baseline, excluding buffs with matching keys.
    * Used by the exclusion-based blending system to produce stat variants.
    */
@@ -522,6 +631,73 @@ export class CharBuild {
       (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
     );
     return selfPreStats.apply(mappedToStatic);
+  }
+
+  /**
+   * Apply dynamic buffs to unified pre-stats → unified post-stats.
+   * Categorizes buffs by field-state requirement and tags entries accordingly.
+   */
+  getUnifiedPostStats(
+    selfPreStats: StatSheet,
+    teamDynamicBuffs: EvaluatedDynamicBuff[],
+    selfCharId: string,
+    selfRegion?: Region,
+    selfFaction?: Faction
+  ): StatSheet {
+    // Partition dynamic buffs into universal, on-field, and off-field for this character
+    const universal: EvaluatedDynamicBuff[] = [];
+    const onField: EvaluatedDynamicBuff[] = [];
+    const offField: EvaluatedDynamicBuff[] = [];
+
+    for (const b of teamDynamicBuffs) {
+      const fr = fieldReq(b.buff.target.receiver);
+      // Use the matching field state to let the receiver rule pass
+      const effectiveFS: boolean | null =
+        fr === "on" ? true : fr === "off" ? false : null;
+      if (
+        !isBuffApplicable(
+          b.buff,
+          b.providerCharId,
+          selfCharId,
+          effectiveFS,
+          selfRegion,
+          selfFaction
+        )
+      )
+        continue;
+
+      if (fr === null) {
+        universal.push(b);
+      } else if (fr === "on") {
+        onField.push(b);
+      } else {
+        offField.push(b);
+      }
+    }
+
+    let sheet = selfPreStats;
+    if (universal.length > 0) {
+      const deduped = deduplicateBuffs(universal, (b) => b.entries);
+      const mapped = deduped.map(
+        (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
+      );
+      sheet = sheet.apply(mapped);
+    }
+    if (onField.length > 0) {
+      const deduped = deduplicateBuffs(onField, (b) => b.entries);
+      const mapped = deduped.map(
+        (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
+      );
+      sheet = sheet.apply(mapped, "on");
+    }
+    if (offField.length > 0) {
+      const deduped = deduplicateBuffs(offField, (b) => b.entries);
+      const mapped = deduped.map(
+        (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
+      );
+      sheet = sheet.apply(mapped, "off");
+    }
+    return sheet;
   }
 
   /**
@@ -1010,25 +1186,21 @@ export class TeamBuild {
    * Collect dynamic buffs from allStaticBuffs, evaluated against pre-stats.
    * Uses construction-time buff references for consistency with resolveBuffs.
    */
+  /**
+   * Collect dynamic buffs using two-pass evaluation.
+   * See evaluateDynamicBuffsTwoPass for the algorithm.
+   */
   private collectDynamicBuffs(
     preStats: Record<string, StatSheet>,
-    teamPreStatsArr: StatSheet[]
+    _teamPreStatsArr: StatSheet[],
+    onFieldCharId?: string | null
   ): EvaluatedDynamicBuff[] {
-    const results: EvaluatedDynamicBuff[] = [];
-    for (const { buff, providerCharId } of this.allStaticBuffs) {
-      if (providerCharId === "resonance" || providerCharId === "extra")
-        continue;
-      const ownerStats = preStats[providerCharId]!;
-      const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
-      assertNoDuplicateStatKeys(
-        entries,
-        `dynamicBuffs (source: ${buff.source.type}:${buff.source.id})`
-      );
-      if (entries.length > 0) {
-        results.push({ buff, source: buff.source, providerCharId, entries });
-      }
-    }
-    return results;
+    return evaluateDynamicBuffsTwoPass(
+      this.allStaticBuffs,
+      preStats,
+      (sheetBuffs) =>
+        this.buildTeamPostStatsRaw(preStats, sheetBuffs, onFieldCharId ?? null)
+    );
   }
 
   // ─── Centralized buff applicability helpers ──────────────────────────────
@@ -1110,6 +1282,62 @@ export class TeamBuild {
   }
 
   /**
+   * Collect field-dependent buffs grouped by field state per character.
+   * Returns { onField, offField } arrays for each character ID, independent
+   * of which specific character is on-field.
+   */
+  private getUnifiedFieldDependentBuffs(): Record<
+    string,
+    { onField: ProvidedStaticBuff[]; offField: ProvidedStaticBuff[] }
+  > {
+    const result: Record<
+      string,
+      { onField: ProvidedStaticBuff[]; offField: ProvidedStaticBuff[] }
+    > = {};
+    for (const charId of Object.keys(this.charBuilds)) {
+      const onField: ProvidedStaticBuff[] = [];
+      const offField: ProvidedStaticBuff[] = [];
+      for (const b of this.allStaticBuffs) {
+        if (!isFieldDependentReceiver(b.buff.target.receiver)) continue;
+        if (
+          this.isBuffApplicableForChar(b.buff, b.providerCharId, charId, true)
+        )
+          onField.push(b);
+        if (
+          this.isBuffApplicableForChar(b.buff, b.providerCharId, charId, false)
+        )
+          offField.push(b);
+      }
+      result[charId] = { onField, offField };
+    }
+    return result;
+  }
+
+  /**
+   * Apply dynamic buffs to preStats without critRateTarget adjustment.
+   * Used as the intermediate "midStats" step in two-pass dynamic buff evaluation,
+   * so that final-stat ScalingBuffs can see sheet-stat dynamic buffs (e.g. Bennett ATK).
+   */
+  private buildTeamPostStatsRaw(
+    preStats: Record<string, StatSheet>,
+    dynamicBuffs: EvaluatedDynamicBuff[],
+    onFieldCharId: string | null
+  ): Record<string, StatSheet> {
+    const result: Record<string, StatSheet> = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      result[id] = build.getPostStats(
+        preStats[id]!,
+        dynamicBuffs,
+        id,
+        isOnField(id, onFieldCharId),
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
+      );
+    }
+    return result;
+  }
+
+  /**
    * Build post-stats for all team members: apply dynamic buffs + critRateTarget.
    * Char-level field state: same rationale as getFieldDependentBuffs — runs
    * before formula parts exist, uses onFieldCharId for per-character on/off.
@@ -1127,6 +1355,62 @@ export class TeamBuild {
         dynamicBuffs,
         id,
         isOnField(id, onFieldCharId),
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
+      );
+    }
+    if (ctx?.perCharCrTarget) {
+      for (const [id, target] of Object.entries(ctx.perCharCrTarget)) {
+        if (postStats[id]) {
+          const crDelta = (100 - target) / 100;
+          postStats[id] = postStats[id]!.withDelta("cr", crDelta);
+        }
+      }
+    } else if (ctx?.critRateTarget != null) {
+      const crDelta = (100 - ctx.critRateTarget) / 100;
+      for (const id of Object.keys(postStats)) {
+        postStats[id] = postStats[id]!.withDelta("cr", crDelta);
+      }
+    }
+    return postStats;
+  }
+
+  /**
+   * Build unified post-stats: apply dynamic buffs with field-state tagging.
+   * No critRateTarget adjustment — used as midStats for two-pass evaluation.
+   */
+  private buildUnifiedTeamPostStatsRaw(
+    preStats: Record<string, StatSheet>,
+    dynamicBuffs: EvaluatedDynamicBuff[]
+  ): Record<string, StatSheet> {
+    const result: Record<string, StatSheet> = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      result[id] = build.getUnifiedPostStats(
+        preStats[id]!,
+        dynamicBuffs,
+        id,
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
+      );
+    }
+    return result;
+  }
+
+  /**
+   * Build unified post-stats with critRateTarget adjustment.
+   * Returns unified sheets — use `.withFieldState()` to get on/off views.
+   */
+  private buildUnifiedTeamPostStats(
+    preStats: Record<string, StatSheet>,
+    dynamicBuffs: EvaluatedDynamicBuff[],
+    ctx?: CalcContext
+  ): Record<string, StatSheet> {
+    const postStats: Record<string, StatSheet> = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      postStats[id] = build.getUnifiedPostStats(
+        preStats[id]!,
+        dynamicBuffs,
+        id,
         this.teamMeta.regions[id],
         this.teamMeta.factions[id]
       );
@@ -1175,72 +1459,107 @@ export class TeamBuild {
       return true;
     });
 
-    // Compute idle sheets for a given field state
-    const computeForField = (onField: boolean): Record<string, StatSheet> => {
-      // Phase 1: idle pre-stats per character
-      const idlePreStats: Record<string, StatSheet> = {};
-      for (const [charId, build] of Object.entries(this.charBuilds)) {
-        const applicable = idleBuffs
-          .filter(({ buff, providerCharId }) =>
+    // Phase 1: Build unified idle pre-stats per character
+    // Field-independent buffs are universal, field-dependent are tagged f:on/f:off
+    const idlePreStats: Record<string, StatSheet> = {};
+    for (const [charId, build] of Object.entries(this.charBuilds)) {
+      const universal: StatBuff[] = [];
+      const onFieldOnly: StatBuff[] = [];
+      const offFieldOnly: StatBuff[] = [];
+
+      for (const { buff, providerCharId } of idleBuffs) {
+        const fr = fieldReq(buff.target.receiver);
+        if (fr === null) {
+          // Field-independent: check once with null
+          if (
             isBuffApplicable(
               buff,
               providerCharId,
               charId,
-              onField,
+              null,
               this.teamMeta.regions[charId],
               this.teamMeta.factions[charId]
             )
           )
-          .map((b) => b.buff);
-        idlePreStats[charId] = build.getIdlePreStats(
-          artifactStats[charId] ?? new StatSheet([]),
-          applicable
-        );
-      }
-
-      // Phase 2: evaluate dynamic buffs from idle-eligible providers
-      const teamPreStatsArr = Object.values(idlePreStats);
-      const dynamicEntries: EvaluatedDynamicBuff[] = [];
-      for (const { buff, providerCharId } of idleBuffs) {
-        if (providerCharId === "resonance" || providerCharId === "extra")
-          continue;
-        const ownerStats = idlePreStats[providerCharId];
-        if (!ownerStats) continue;
-        const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
-        if (entries.length > 0) {
-          dynamicEntries.push({
-            buff,
-            source: buff.source,
-            providerCharId,
-            entries,
-          });
+            universal.push(buff);
+        } else {
+          // Check for matching field state
+          const effectiveFS = fr === "on";
+          if (
+            isBuffApplicable(
+              buff,
+              providerCharId,
+              charId,
+              effectiveFS,
+              this.teamMeta.regions[charId],
+              this.teamMeta.factions[charId]
+            )
+          ) {
+            if (fr === "on") onFieldOnly.push(buff);
+            else offFieldOnly.push(buff);
+          }
         }
       }
 
-      // Phase 3: apply dynamic buffs → idle post-stats
-      const result: Record<string, StatSheet> = {};
-      for (const [charId, build] of Object.entries(this.charBuilds)) {
-        result[charId] = build.getPostStats(
-          idlePreStats[charId]!,
-          dynamicEntries,
-          charId,
-          onField,
-          this.teamMeta.regions[charId],
-          this.teamMeta.factions[charId]
-        );
+      let sheet = build.getIdlePreStats(
+        artifactStats[charId] ?? new StatSheet([]),
+        universal
+      );
+      if (onFieldOnly.length > 0) {
+        const deduped = deduplicateBuffs(onFieldOnly, (b) => b.staticBuffs);
+        sheet = sheet.apply(deduped, "on");
       }
-      return result;
-    };
+      if (offFieldOnly.length > 0) {
+        const deduped = deduplicateBuffs(offFieldOnly, (b) => b.staticBuffs);
+        sheet = sheet.apply(deduped, "off");
+      }
+      idlePreStats[charId] = sheet;
+    }
 
-    const onFieldSheets = computeForField(true);
-    const offFieldSheets = computeForField(false);
+    // Phase 2: evaluate dynamic buffs from idle-eligible providers (two-pass)
+    // Use on-field views for provider stat reads (common idle display assumption)
+    const resolvedPreStats: Record<string, StatSheet> = {};
+    for (const id of Object.keys(idlePreStats)) {
+      resolvedPreStats[id] = idlePreStats[id]!.withFieldState("on");
+    }
+    const dynamicEntries = evaluateDynamicBuffsTwoPass(
+      idleBuffs,
+      resolvedPreStats,
+      (sheetBuffs) => {
+        const mid: Record<string, StatSheet> = {};
+        for (const [cid, build] of Object.entries(this.charBuilds)) {
+          mid[cid] = build.getPostStats(
+            resolvedPreStats[cid]!,
+            sheetBuffs,
+            cid,
+            true, // on-field for midStats provider reads
+            this.teamMeta.regions[cid],
+            this.teamMeta.factions[cid]
+          );
+        }
+        return mid;
+      }
+    );
 
+    // Phase 3: apply dynamic buffs → unified idle post-stats
+    const unifiedPostStats: Record<string, StatSheet> = {};
+    for (const [charId, build] of Object.entries(this.charBuilds)) {
+      unifiedPostStats[charId] = build.getUnifiedPostStats(
+        idlePreStats[charId]!,
+        dynamicEntries,
+        charId,
+        this.teamMeta.regions[charId],
+        this.teamMeta.factions[charId]
+      );
+    }
+
+    // Return on/off field views
     const result: Record<string, { onField: StatSheet; offField: StatSheet }> =
       {};
     for (const charId of Object.keys(this.charBuilds)) {
       result[charId] = {
-        onField: onFieldSheets[charId],
-        offField: offFieldSheets[charId],
+        onField: unifiedPostStats[charId]!.withFieldState("on"),
+        offField: unifiedPostStats[charId]!.withFieldState("off"),
       };
     }
     return result;
@@ -1267,7 +1586,11 @@ export class TeamBuild {
     );
 
     const teamPreStatsArr = Object.values(preStats);
-    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
+    const allDynamicBuffs = this.collectDynamicBuffs(
+      preStats,
+      teamPreStatsArr,
+      onFieldCharId
+    );
 
     return this.buildTeamPostStats(
       preStats,
@@ -1275,6 +1598,57 @@ export class TeamBuild {
       onFieldCharId,
       ctx
     );
+  }
+
+  /**
+   * Compute unified stat sheets for all team members.
+   * Returns sheets with both on-field and off-field entries tagged with
+   * `f:on`/`f:off`. Use `.withFieldState("on"/"off")` to get views.
+   *
+   * @param onFieldCharId Still needed to determine provider field state
+   *   for dynamic buff evaluation (ScalingBuff reads from provider's actual stats).
+   */
+  getTeamStatsUnified(
+    artifactStats: Record<string, StatSheet>,
+    onFieldCharId: string | null,
+    ctx?: CalcContext
+  ): Record<string, StatSheet> {
+    const fieldDep = this.getUnifiedFieldDependentBuffs();
+    const preStats: Record<string, StatSheet> = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      preStats[id] = build.getUnifiedPreStats(
+        artifactStats[id] ?? new StatSheet([]),
+        fieldDep[id]!.onField,
+        fieldDep[id]!.offField
+      );
+    }
+
+    // For dynamic buff evaluation, providers need a resolved view of their stats
+    // based on their actual field state (determined by onFieldCharId).
+    // Create resolved views for the two-pass evaluator.
+    const resolvedPreStats: Record<string, StatSheet> = {};
+    for (const id of Object.keys(preStats)) {
+      const fs: FieldState = isOnField(id, onFieldCharId) ? "on" : "off";
+      resolvedPreStats[id] = preStats[id]!.withFieldState(fs);
+    }
+
+    const teamPreStatsArr = Object.values(resolvedPreStats);
+
+    // Two-pass dynamic buff evaluation uses resolved preStats for provider reads.
+    // The midStats builder also needs to produce resolved stats (not unified)
+    // because ScalingBuff.dynamicBuffs() reads from the provider's actual field state.
+    const allDynamicBuffs = evaluateDynamicBuffsTwoPass(
+      this.allStaticBuffs,
+      resolvedPreStats,
+      (sheetBuffs) =>
+        this.buildTeamPostStatsRaw(
+          resolvedPreStats,
+          sheetBuffs,
+          onFieldCharId ?? null
+        )
+    );
+
+    return this.buildUnifiedTeamPostStats(preStats, allDynamicBuffs, ctx);
   }
 
   /**
@@ -1309,7 +1683,8 @@ export class TeamBuild {
     const allDynamicBuffs = this.collectDynamicBuffsExcluding(
       preStats,
       teamPreStatsArr,
-      excludeKeys
+      excludeKeys,
+      onFieldCharId
     );
 
     // Phase 4+5: Apply dynamic buffs → post-stats + critRateTarget
@@ -1324,21 +1699,18 @@ export class TeamBuild {
   /** Like collectDynamicBuffs but skips buffs with matching canonical buff keys. */
   private collectDynamicBuffsExcluding(
     preStats: Record<string, StatSheet>,
-    teamPreStatsArr: StatSheet[],
-    excludeKeys: Set<string>
+    _teamPreStatsArr: StatSheet[],
+    excludeKeys: Set<string>,
+    onFieldCharId: string | null
   ): EvaluatedDynamicBuff[] {
-    const results: EvaluatedDynamicBuff[] = [];
-    for (const { buff, providerCharId } of this.allStaticBuffs) {
-      if (providerCharId === "resonance" || providerCharId === "extra")
-        continue;
-      if (excludeKeys.has(getBuffInstanceKey(buff, providerCharId))) continue;
-      const ownerStats = preStats[providerCharId]!;
-      const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
-      if (entries.length > 0) {
-        results.push({ buff, source: buff.source, providerCharId, entries });
-      }
-    }
-    return results;
+    // Filter out excluded buffs before passing to two-pass evaluator
+    const filteredBuffs = this.allStaticBuffs.filter(
+      ({ buff, providerCharId }) =>
+        !excludeKeys.has(getBuffInstanceKey(buff, providerCharId))
+    );
+    return evaluateDynamicBuffsTwoPass(filteredBuffs, preStats, (sheetBuffs) =>
+      this.buildTeamPostStatsRaw(preStats, sheetBuffs, onFieldCharId)
+    );
   }
 
   /**
@@ -1418,7 +1790,11 @@ export class TeamBuild {
 
     // Dynamic buffs (must recompute — may depend on swapCharId's preStats)
     const teamPreStatsArr = Object.values(preStats);
-    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
+    const allDynamicBuffs = this.collectDynamicBuffs(
+      preStats,
+      teamPreStatsArr,
+      onFieldCharId
+    );
 
     // Post-stats + critRateTarget
     return this.buildTeamPostStats(
@@ -1508,30 +1884,64 @@ export class TeamBuild {
   }
 
   /**
-   * Create a cached getStats function for repeated team stat lookups
-   * keyed by on-field character ID. Reuses computations across calls.
+   * Create a cached getStats function that uses unified sheets internally.
+   * Returns per-character views (on/off) based on the requested onFieldCharId.
+   *
+   * Key optimization: off-field stats (onFieldCharId=null) are derived from
+   * the same unified sheet as the on-field stats, avoiding a second computation.
    */
   private createStatsCacheFn(
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
     seed?: Map<string | null, Record<string, StatSheet>>
   ): (onFieldCharId: string | null) => Record<string, StatSheet> {
-    const cache = seed ?? new Map<string | null, Record<string, StatSheet>>();
-    return (onFieldCharId: string | null) => {
-      if (!cache.has(onFieldCharId)) {
-        cache.set(
+    // Cache of unified sheets keyed by onFieldCharId
+    const unifiedCache = new Map<string | null, Record<string, StatSheet>>();
+    // Cache of viewed results for backward compat
+    const viewCache =
+      seed ?? new Map<string | null, Record<string, StatSheet>>();
+
+    const getUnified = (
+      onFieldCharId: string | null
+    ): Record<string, StatSheet> => {
+      if (!unifiedCache.has(onFieldCharId)) {
+        unifiedCache.set(
           onFieldCharId,
-          this.getTeamStats(artifactStats, onFieldCharId, ctx)
+          this.getTeamStatsUnified(artifactStats, onFieldCharId, ctx)
         );
       }
-      return cache.get(onFieldCharId)!;
+      return unifiedCache.get(onFieldCharId)!;
+    };
+
+    return (onFieldCharId: string | null) => {
+      if (!viewCache.has(onFieldCharId)) {
+        if (onFieldCharId === null) {
+          // Off-field: all characters get off-field views
+          const unified = getUnified(null);
+          const viewed: Record<string, StatSheet> = {};
+          for (const [id, sheet] of Object.entries(unified)) {
+            viewed[id] = sheet.withFieldState("off");
+          }
+          viewCache.set(null, viewed);
+        } else {
+          const unified = getUnified(onFieldCharId);
+          const viewed: Record<string, StatSheet> = {};
+          for (const [id, sheet] of Object.entries(unified)) {
+            viewed[id] = sheet.withFieldState(
+              isOnField(id, onFieldCharId) ? "on" : "off"
+            );
+          }
+          viewCache.set(onFieldCharId, viewed);
+        }
+      }
+      return viewCache.get(onFieldCharId)!;
     };
   }
 
   /**
    * Compute off-field post-stats for a character's formula.
-   * Uses onFieldCharId=null: for off-field damage parts we genuinely don't
-   * know who is on-field, so everyone is treated as off-field.
+   * When a getStats cache function is provided, extracts the off-field view
+   * from it. Otherwise falls back to a fresh getTeamStatsUnified call.
    */
   private getOffFieldPostStats(
     charId: string,
@@ -1540,7 +1950,9 @@ export class TeamBuild {
     getStats?: (onFieldCharId: string | null) => Record<string, StatSheet>
   ): StatSheet | undefined {
     if (getStats) return getStats(null)[charId];
-    return this.getTeamStats(artifactStats, null, ctx)[charId];
+    // Build unified sheets with the formula owner on-field, then extract off-field view
+    const unified = this.getTeamStatsUnified(artifactStats, charId, ctx);
+    return unified[charId]?.withFieldState("off");
   }
 
   /** All available formulas across all characters */
@@ -1646,7 +2058,11 @@ export class TeamBuild {
     );
 
     const teamPreStatsArr = Object.values(preStats);
-    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
+    const allDynamicBuffs = this.collectDynamicBuffs(
+      preStats,
+      teamPreStatsArr,
+      charId
+    );
 
     const postStats = this.buildTeamPostStats(
       preStats,

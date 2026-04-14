@@ -49,6 +49,32 @@ export type StatEntry = {
   value: number;
 };
 
+/**
+ * Stats that flow into the damage formula but never feed back into sheet stats.
+ * ScalingBuffs that output to these keys can safely read from post-sheet-dynamic
+ * stats (two-pass evaluation) without creating cycles.
+ */
+export const FINAL_STAT_KEYS: ReadonlySet<StatKey> = new Set([
+  "baseDmg",
+  "baseDmg%",
+  "dmg%",
+  "reactionDmg%",
+  "reactionBaseDmg%",
+  "elevated%",
+  "reactionCr",
+  "reactionCd",
+  "atkSpd%",
+  "defReduction%",
+  "defIgnore%",
+  "resReduction%",
+  "pneuma%",
+  "lunar%",
+]);
+
+export function isFinalStatKey(key: StatKey): boolean {
+  return FINAL_STAT_KEYS.has(key);
+}
+
 // ─── Buff System ───
 
 /** Display-only provenance. Does not affect calculation. */
@@ -110,6 +136,9 @@ export type PartialBuffInfo = {
 export function exclusionKey(excludeKeys: Set<string>): string {
   return [...excludeKeys].sort().join("|");
 }
+
+/** Character field state — "on" = on-field, "off" = off-field. */
+export type FieldState = "on" | "off";
 
 export type BuffReceiverType =
   | "self"

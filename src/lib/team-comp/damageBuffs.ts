@@ -4,6 +4,7 @@ import type { ExprStats } from "./exprStats";
 import {
   type BuffSource,
   type BuffTarget,
+  FINAL_STAT_KEYS,
   type StatEntry,
   type StatKey,
   isSelfReceiver,
@@ -390,6 +391,12 @@ export class ScalingBuff extends StatBuff {
     readonly threshold?: number
   ) {
     super(source, target, staticBuffs);
+    if (FINAL_STAT_KEYS.has(inputKey)) {
+      throw new Error(
+        `ScalingBuff inputKey "${inputKey}" is a final stat — final stats cannot be used ` +
+          `as scaling inputs (source: ${source.type}:${source.id}/${source.origin ?? ""})`
+      );
+    }
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
@@ -444,6 +451,18 @@ export class CrossScalingBuff extends StatBuff {
     readonly outputKey: StatKey
   ) {
     super(source, target, staticBuffs);
+    if (FINAL_STAT_KEYS.has(statA)) {
+      throw new Error(
+        `CrossScalingBuff statA "${statA}" is a final stat — final stats cannot be used ` +
+          `as scaling inputs (source: ${source.type}:${source.id}/${source.origin ?? ""})`
+      );
+    }
+    if (FINAL_STAT_KEYS.has(statB)) {
+      throw new Error(
+        `CrossScalingBuff statB "${statB}" is a final stat — final stats cannot be used ` +
+          `as scaling inputs (source: ${source.type}:${source.id}/${source.origin ?? ""})`
+      );
+    }
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
