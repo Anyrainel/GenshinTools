@@ -28,12 +28,14 @@ export interface ErCrGap {
 /**
  * Compute how much ER/CR the artifact set must contribute to meet the thresholds.
  * gap = max(0, minX - baselineX), where baseline is the character's stat with empty artifacts.
+ *
+ * Stats are computed with charId on-field: ER/CR matter when the character
+ * casts their skill/burst (= they are on-field at that moment).
  */
 export function computeErCrGap(
   teamBuild: TeamBuild,
   charId: string,
   baseSheets: Record<string, StatSheet>,
-  onFieldCharId: string,
   calcContext: CalcContext,
   minEr: number,
   minCr: number
@@ -41,7 +43,7 @@ export function computeErCrGap(
   if (minEr <= 0 && minCr <= 0) return { erGap: 0, crGap: 0 };
 
   const blSheets = { ...baseSheets, [charId]: new StatSheet([]) };
-  const blStats = teamBuild.getTeamStats(blSheets, onFieldCharId, calcContext);
+  const blStats = teamBuild.getTeamStats(blSheets, charId, calcContext);
   const baseEr = blStats[charId]?.get("er", null) ?? 0;
   const baseCr = blStats[charId]?.get("cr", null) ?? 0;
 

@@ -29,11 +29,15 @@ export class ConstraintChecker {
   readonly erGap: number;
   readonly crGap: number;
 
+  /**
+   * @param charId The character whose ER/CR is constrained. Stats are computed
+   *   with this character on-field: ER/CR matter when they cast their
+   *   skill/burst (= they are on-field at that moment).
+   */
   constructor(
     teamBuild: TeamBuild,
     charId: string,
     baseSheets: Record<string, StatSheet>,
-    onFieldCharId: string,
     calcContext: CalcContext,
     minEr: number,
     minCr: number
@@ -47,11 +51,7 @@ export class ConstraintChecker {
 
     if (this.active) {
       const blSheets = { ...baseSheets, [charId]: new StatSheet([]) };
-      const blStats = teamBuild.getTeamStats(
-        blSheets,
-        onFieldCharId,
-        calcContext
-      );
+      const blStats = teamBuild.getTeamStats(blSheets, charId, calcContext);
       const rawErFloor = this.hasEr
         ? (blStats[charId]?.get("er", null) ?? 0)
         : 0;

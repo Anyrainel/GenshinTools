@@ -803,7 +803,6 @@ export async function* runGenerator(
       teamBuild,
       cid,
       currentSheets,
-      carryCharId,
       calcContext,
       pc.minEr,
       pc.minCr

@@ -399,7 +399,6 @@ export function runCharacterBnB(
     teamBuild,
     charId,
     baseSheets,
-    carryCharId,
     calcContext,
     charConfig.minEr,
     charConfig.minCr

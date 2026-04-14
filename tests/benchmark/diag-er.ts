@@ -84,7 +84,6 @@ async function main() {
     teamBuild,
     constraintCharId,
     emptySheets,
-    carryCharId,
     calcContext,
     minEr,
     0

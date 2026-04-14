@@ -2624,7 +2624,6 @@ export async function* runTeamOptimization(
           effectiveTeamBuild,
           charId,
           baseSheets,
-          carryCharId,
           calcContext,
           minEr,
           minCr
