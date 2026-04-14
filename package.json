@@ -22,6 +22,8 @@
     "qa:dmg": "tsx --tsconfig tsconfig.scripts.json scripts/qa-dmg.ts",
     "benchmark": "tsx --tsconfig tsconfig.test.json tests/benchmark/benchmark.ts",
     "regtest": "tsx --tsconfig tsconfig.test.json tests/regression/generator-bench.ts",
+    "check:hoyolab": "node scripts/dev/check-hoyolab-version.js",
+    "check:hoyolab:fix": "node scripts/dev/check-hoyolab-version.js --fix",
     "// --- Safe / Piped Variants (Agent Helpers) ---": "",
     "type-check:filter": "node scripts/dev/run-filter.js type-check",
     "type-check:head": "node scripts/dev/run-head.js type-check",

@@ -27,7 +27,7 @@ const SALTS = {
 
 const APP_VERSION = {
   os: "1.5.0",
-  cn: "2.11.1",
+  cn: "2.99.1",
 } as const;
 
 const CORS_HEADERS: Record<string, string> = {
@@ -216,7 +216,7 @@ export const onRequest: PagesFunction<Env, "path"> = async (context) => {
         : "https://act.hoyolab.com",
     "User-Agent":
       region === "cn"
-        ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/2.11.1"
+        ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/2.99.1"
         : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
   };
 

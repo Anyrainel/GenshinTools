@@ -39,6 +39,10 @@ if [ "$has_ts" = true ]; then
   npm run test || exit 1
 fi
 
+# HoYoLAB / 米游社 API version check (non-blocking on network errors)
+echo "Checking HoYoLAB/米游社 API versions..."
+node scripts/dev/check-hoyolab-version.js || exit 1
+
 # Python checks
 if [ "$has_py" = true ]; then
   echo "Running ty check..."

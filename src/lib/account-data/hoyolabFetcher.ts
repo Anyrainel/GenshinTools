@@ -187,12 +187,20 @@ async function callProxy<T>(
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    throw new Error(`HoYoLAB proxy HTTP ${res.status}`);
+    const label = region === "cn" ? "米游社" : "HoYoLAB";
+    throw new Error(`${label} proxy HTTP ${res.status}`);
   }
   const envelope = (await res.json()) as HoyolabEnvelope<T>;
   if (envelope.retcode !== 0 || !envelope.data) {
+    const label = region === "cn" ? "米游社" : "HoYoLAB";
+    // 5003 = DS signature verification failed, usually means our app version
+    // or salt is outdated. Surface a helpful hint so users can report it.
+    const hint =
+      envelope.retcode === 5003
+        ? " (API version may be outdated — please report this issue)"
+        : "";
     throw new Error(
-      `HoYoLAB API error (${envelope.retcode}): ${envelope.message || "unknown"}`
+      `${label} API error (${envelope.retcode}): ${envelope.message || "unknown"}${hint}`
     );
   }
   return envelope.data;
