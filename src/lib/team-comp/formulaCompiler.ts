@@ -24,13 +24,14 @@ import {
 } from "./damageBuffs";
 import {
   type OptimizerContext,
+  type ProvidedStaticBuff,
   type TeamBuild,
   hasOffFieldParts,
   isBuffApplicable,
 } from "./damageCalc";
 import { createReactionVariant } from "./damageFormulas";
 import type { CharacterBase, FormulaPart } from "./damageModels";
-import { StatBuff, StatSheet } from "./damageModels";
+import { StatBuff, StatSheet, bespokeMaxStacks } from "./damageModels";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
 import { isPartOffField } from "./reactionResolve";
@@ -557,8 +558,8 @@ export function compileComboTeamDamage(
   const allPartExprs: Expr[] = [];
   const configs = teamBuild.configs;
   // Each calc target (formula owner) is on-field when executing their formula.
-  // Use unified optimizer context: single set of ExprStats per onFieldCharId
-  // containing both on/off field data, selected via withFieldState() per part.
+  // Build resolved ExprStats from unified OptCtx — on-field for main stats,
+  // off-field separately for off-field formula parts.
   for (const [onFieldCharId, lines] of linesByCalcTarget) {
     const optCtx = teamBuild.createUnifiedOptimizerContext(
       baseSheets,
@@ -566,12 +567,28 @@ export function compileComboTeamDamage(
       onFieldCharId,
       calcContext
     );
+    // On-field resolved ExprStats (each char at their actual field state)
     const postExprStats = buildUnifiedPostExprStatsForContext(
       teamBuild,
       optCtx,
       varMapping,
       calcContext
     );
+
+    // Build off-field ExprStats lazily (only if any line has off-field parts)
+    let offFieldExprStats: Record<string, ExprStats> | undefined;
+    const getOffFieldExprStats = () => {
+      if (!offFieldExprStats) {
+        offFieldExprStats = buildOffFieldPostExprStatsForContext(
+          teamBuild,
+          optCtx,
+          varMapping,
+          calcContext
+        );
+      }
+      return offFieldExprStats;
+    };
+
     for (const line of lines) {
       // Team reaction formula path: compile directly from reactionProvider
       if (line.formulaId.startsWith("rx-")) {
@@ -587,8 +604,8 @@ export function compileComboTeamDamage(
           const charExprs: Expr[] = [];
           for (const cfg of configs) {
             if (!eligible.includes(cfg.charId)) continue;
-            // Reaction formulas use on-field view (reactions trigger on-field)
-            const charStats = postExprStats[cfg.charId]?.withFieldState("on");
+            // Reaction formulas use on-field stats
+            const charStats = postExprStats[cfg.charId];
             if (!charStats) continue;
             const weight = rankWeights?.get(cfg.charId);
             const w =
@@ -607,8 +624,8 @@ export function compileComboTeamDamage(
             allPartExprs.push(lunarExpr);
           }
         } else {
-          // Reaction formulas use on-field view
-          const triggerStats = postExprStats[line.charId]?.withFieldState("on");
+          // Reaction formulas use on-field stats
+          const triggerStats = postExprStats[line.charId];
           if (!triggerStats) continue;
           const charLevel =
             configs.find((c) => c.charId === line.charId)?.charLevel ?? 90;
@@ -633,15 +650,13 @@ export function compileComboTeamDamage(
 
       const effectiveReaction = line.reaction;
 
-      // Unified ExprStats: contains both on/off field data.
-      // Create on-field and off-field views for formula parts.
-      const unifiedStats = postExprStats[line.charId]!;
-      const formulaStats = unifiedStats.withFieldState("on");
+      // On-field stats for the formula character
+      const formulaStats = postExprStats[line.charId]!;
       const hasOffField = entry.parts.some((p) =>
         isPartOffField(p, effectiveReaction)
       );
       const offFieldFormulaStats = hasOffField
-        ? unifiedStats.withFieldState("off")
+        ? getOffFieldExprStats()[line.charId]
         : undefined;
 
       // Look up by line index first (for per-line combo overrides), then formula key
@@ -650,11 +665,12 @@ export function compileComboTeamDamage(
       const lineBuffs =
         buffOverrides?.[`line:${lineIdx}`] ?? buffOverrides?.[lineKey];
 
-      // Pre-build unified ExprStats variants for partial buff blending
+      // Pre-build ExprStats variants for partial buff blending
       let lineExprVariants: Map<string, ExprStats> | undefined;
       let lineOffFieldVariants: Map<string, ExprStats> | undefined;
       if (lineBuffs && lineBuffs.length > 0) {
-        const unifiedVariants = buildUnifiedExprStatVariants(
+        // On-field variants
+        lineExprVariants = buildUnifiedExprStatVariants(
           lineBuffs,
           entry.parts,
           line.charId,
@@ -663,17 +679,18 @@ export function compileComboTeamDamage(
           varMapping,
           calcContext
         );
-        // Create on-field views for variants
-        lineExprVariants = new Map<string, ExprStats>();
-        for (const [key, stats] of unifiedVariants) {
-          lineExprVariants.set(key, stats.withFieldState("on"));
-        }
-        // Create off-field views for variants if needed
+        // Off-field variants if needed
         if (hasOffField) {
-          lineOffFieldVariants = new Map<string, ExprStats>();
-          for (const [key, stats] of unifiedVariants) {
-            lineOffFieldVariants.set(key, stats.withFieldState("off"));
-          }
+          const offFieldOptCtx = resolveOptCtxForFieldState(optCtx, "off");
+          lineOffFieldVariants = buildExprStatVariants(
+            lineBuffs,
+            entry.parts,
+            line.charId,
+            teamBuild,
+            offFieldOptCtx,
+            varMapping,
+            calcContext
+          );
         }
       }
 
@@ -713,20 +730,20 @@ export function compileComboTeamDamage(
 
   if (erCheckCharId && (minEr ?? 0) + (minCr ?? 0) > 0) {
     // ER/CR matter when the constrained character is on-field (casting skill/burst),
-    // so build stats with themselves on-field, then get on-field view.
+    // so build stats with themselves on-field.
     const erCrOptCtx = teamBuild.createUnifiedOptimizerContext(
       baseSheets,
       swapCharId,
       erCheckCharId,
       calcContext
     );
-    const erCrUnified = buildUnifiedPostExprStatsForContext(
+    const erCrResolved = buildUnifiedPostExprStatsForContext(
       teamBuild,
       erCrOptCtx,
       varMapping,
       calcContext
     );
-    const erStats = erCrUnified[erCheckCharId]?.withFieldState("on");
+    const erStats = erCrResolved[erCheckCharId];
     if (erStats) {
       if (minEr && minEr > 0) {
         const erExpr = simplify(
@@ -1350,7 +1367,7 @@ function buildTotalDamageExpr(
 
   for (let idx = 0; idx < parts.length; idx++) {
     const part = parts[idx];
-    const { formula, hits: totalHits, bespokeBuff } = part;
+    const { formula, hits: totalHits, bespokeBuffs } = part;
     const h = totalHits ?? 1;
 
     // Use off-field stats when the part deals damage while the character is off-field
@@ -1377,7 +1394,7 @@ function buildTotalDamageExpr(
         idx,
         partialBuffs,
         baseVariants,
-        bespokeBuff
+        bespokeBuffs
       );
       continue;
     }
@@ -1415,7 +1432,7 @@ function buildTotalDamageExpr(
         idx,
         partialBuffs,
         baseVariants,
-        bespokeBuff
+        bespokeBuffs
       );
     }
     if (nonReactingHits > 0) {
@@ -1430,7 +1447,7 @@ function buildTotalDamageExpr(
         idx,
         partialBuffs,
         baseVariants,
-        bespokeBuff
+        bespokeBuffs
       );
     }
   }
@@ -1466,25 +1483,27 @@ function emitBlendedPartExprs(
   partIdx: number,
   partials: PartialBuffInfo[] | undefined,
   statsVariants?: Map<string, ExprStats>,
-  bespokeBuff?: StatBuff
+  bespokeBuffs?: StatBuff[]
 ): void {
   // Scale activation counts for reaction sub-parts: partialBuffs are stored
   // per full part (originalPartHits), but this call may evaluate only a
   // sub-slice (reacting or non-reacting). Mirrors _calcPartBlended.
   const scale = totalHits / originalPartHits;
-  const bespokeMax = bespokeBuff?.source.maxStacks;
+  const bespokeMax = bespokeMaxStacks(bespokeBuffs);
   const scaledBespokeMax = bespokeMax != null ? bespokeMax * scale : undefined;
   const bespokeCutoff =
-    bespokeBuff && scaledBespokeMax != null && scaledBespokeMax < totalHits
+    bespokeBuffs?.length &&
+    scaledBespokeMax != null &&
+    scaledBespokeMax < totalHits
       ? scaledBespokeMax
       : totalHits;
   // Compute bespoke entries ONCE against baseStats so dynamic scaling
   // (e.g. EM → baseDmg) uses full base values, matching display/calc semantics.
-  const bespokeEntries = bespokeBuff
-    ? captureBespokeEntries(baseStats, bespokeBuff)
+  const bespokeEntries = bespokeBuffs?.length
+    ? captureBespokeEntries(baseStats, bespokeBuffs)
     : undefined;
   const withBespoke = bespokeEntries
-    ? mergeBespokeEntries(baseStats, bespokeEntries, bespokeBuff!.target.filter)
+    ? mergeBespokeEntriesAll(baseStats, bespokeEntries, bespokeBuffs!)
     : baseStats;
 
   // Collect affecting partials (activations compared in the scaled sub-part frame)
@@ -1532,12 +1551,8 @@ function emitBlendedPartExprs(
       const eKey = exclusionKey(excludeSet);
       const variant = statsVariants?.get(eKey) ?? baseStats;
       intervalStats =
-        bespokeActive && bespokeEntries && bespokeBuff
-          ? mergeBespokeEntries(
-              variant,
-              bespokeEntries,
-              bespokeBuff.target.filter
-            )
+        bespokeActive && bespokeEntries && bespokeBuffs
+          ? mergeBespokeEntriesAll(variant, bespokeEntries, bespokeBuffs)
           : variant;
     }
     const expr = formula.buildExpr(intervalStats, charBase.charLevel, ctx);
@@ -1553,34 +1568,39 @@ function emitBlendedPartExprs(
  */
 function captureBespokeEntries(
   baseStats: ExprStats,
-  bespokeBuff: StatBuff
-): { key: StatKey; expr: Expr }[] {
-  const entries: { key: StatKey; expr: Expr }[] = [];
-  for (const { key, value } of bespokeBuff.staticBuffs) {
-    entries.push({ key, expr: E.const(value) });
-  }
-  if (
-    bespokeBuff instanceof ScalingBuff ||
-    bespokeBuff instanceof CrossScalingBuff
-  ) {
-    // Evaluate dynamic scaling against baseStats (pre-overlay). Static entries
-    // would only affect dynamic scaling if the buff scales off the same key
-    // it writes to — uncommon, and display path also doesn't feed statics back.
-    for (const { key, expr } of bespokeBuff.dynamicBuffsExpr(baseStats)) {
-      entries.push({ key, expr });
+  bespokeBuffs: StatBuff[]
+): { key: StatKey; expr: Expr; filter?: StatBuff["target"]["filter"] }[] {
+  const entries: {
+    key: StatKey;
+    expr: Expr;
+    filter?: StatBuff["target"]["filter"];
+  }[] = [];
+  for (const bb of bespokeBuffs) {
+    const f = bb.target.filter;
+    for (const { key, value } of bb.staticBuffs) {
+      entries.push({ key, expr: E.const(value), filter: f });
+    }
+    if (bb instanceof ScalingBuff || bb instanceof CrossScalingBuff) {
+      for (const { key, expr } of bb.dynamicBuffsExpr(baseStats)) {
+        entries.push({ key, expr, filter: f });
+      }
     }
   }
   return entries;
 }
 
-/** Merge pre-captured bespoke entries into any ExprStats. */
-function mergeBespokeEntries(
+/** Merge pre-captured bespoke entries (with per-entry filters) into any ExprStats. */
+function mergeBespokeEntriesAll(
   stats: ExprStats,
-  entries: { key: StatKey; expr: Expr }[],
-  filter: StatBuff["target"]["filter"]
+  entries: {
+    key: StatKey;
+    expr: Expr;
+    filter?: StatBuff["target"]["filter"];
+  }[],
+  _bespokeBuffs: StatBuff[]
 ): ExprStats {
   let result = stats;
-  for (const { key, expr } of entries) {
+  for (const { key, expr, filter } of entries) {
     if (expr.tag === "const") {
       result = result.withMergedConst([{ key, value: expr.value }], filter);
     } else {
@@ -1590,33 +1610,27 @@ function mergeBespokeEntries(
   return result;
 }
 
-/** Apply bespoke buff overlay to ExprStats (static + dynamic parts). */
+/** Apply bespoke buff array overlay to ExprStats (static + dynamic parts). */
 function applyBespokeOverlay(
   stats: ExprStats,
-  bespokeBuff?: StatBuff
+  bespokeBuffs?: StatBuff[]
 ): ExprStats {
-  if (!bespokeBuff) return stats;
+  if (!bespokeBuffs?.length) return stats;
 
-  let result = stats.withMergedConst(
-    bespokeBuff.staticBuffs,
-    bespokeBuff.target.filter
-  );
+  let result = stats;
+  for (const bb of bespokeBuffs) {
+    result = result.withMergedConst(bb.staticBuffs, bb.target.filter);
 
-  if (
-    bespokeBuff instanceof ScalingBuff ||
-    bespokeBuff instanceof CrossScalingBuff
-  ) {
-    for (const { key, expr } of bespokeBuff.dynamicBuffsExpr(result)) {
-      if (expr.tag === "const") {
-        result = result.withMergedConst(
-          [{ key, value: expr.value }],
-          bespokeBuff.target.filter
-        );
-      } else {
-        result = result.withMergedExpr(
-          [{ key, expr }],
-          bespokeBuff.target.filter
-        );
+    if (bb instanceof ScalingBuff || bb instanceof CrossScalingBuff) {
+      for (const { key, expr } of bb.dynamicBuffsExpr(result)) {
+        if (expr.tag === "const") {
+          result = result.withMergedConst(
+            [{ key, value: expr.value }],
+            bb.target.filter
+          );
+        } else {
+          result = result.withMergedExpr([{ key, expr }], bb.target.filter);
+        }
       }
     }
   }

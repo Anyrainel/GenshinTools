@@ -354,16 +354,16 @@ class Wanderer extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(this.param("A", 1), normalTag),
-            bespokeBuff: normalBespoke,
+            bespokeBuffs: [normalBespoke],
           },
           {
             formula: new DirectFormula(this.param("A", 2), normalTag),
-            bespokeBuff: normalBespoke,
+            bespokeBuffs: [normalBespoke],
           },
           {
             formula: new DirectFormula(this.param("A", 3), normalTag),
             hits: 2,
-            bespokeBuff: normalBespoke,
+            bespokeBuffs: [normalBespoke],
           },
         ],
       },
@@ -376,11 +376,13 @@ class Wanderer extends CharacterBase {
               ability: "charge",
               reaction: "none",
             }),
-            bespokeBuff: new StatBuff(
-              cbs(this, "E", ["E"]),
-              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-              [{ key: "baseDmg%", value: this.param("E", 3) - 1.0 }]
-            ),
+            bespokeBuffs: [
+              new StatBuff(
+                cbs(this, "E", ["E"]),
+                { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+                [{ key: "baseDmg%", value: this.param("E", 3) - 1.0 }]
+              ),
+            ],
           },
         ],
       },
@@ -712,11 +714,13 @@ class Cyno extends CharacterBase {
             // Mortuary Rite
             formula: new DirectFormula(this.param("E", 2), eBaseTag),
             // P1: Judication +35% DMG applies only to Mortuary Rite, not Duststalker Bolts
-            bespokeBuff: new StatBuff(
-              cbs(this, "P1", ["E"]),
-              { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-              [{ key: "dmg%", value: 0.35 }]
-            ),
+            bespokeBuffs: [
+              new StatBuff(
+                cbs(this, "P1", ["E"]),
+                { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+                [{ key: "dmg%", value: 0.35 }]
+              ),
+            ],
           },
         ],
       },
@@ -729,17 +733,19 @@ class Cyno extends CharacterBase {
             formula: new DirectFormula(1.0, eBaseTag),
             hits: 3,
             // P2: Duststalker Bolt DMG += 250% EM as baseDmg
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2", ["E"]),
-              {
-                receiver: "selfOnField",
-                filter: { abilities: ["skill"] },
-              },
-              [],
-              "em",
-              "baseDmg",
-              2.5
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["E"]),
+                {
+                  receiver: "selfOnField",
+                  filter: { abilities: ["skill"] },
+                },
+                [],
+                "em",
+                "baseDmg",
+                2.5
+              ),
+            ],
           },
         ],
       },
@@ -753,17 +759,19 @@ class Cyno extends CharacterBase {
             formula: new DirectFormula(1.0, eBaseTag),
             hits: 5,
             // P2: Duststalker Bolt DMG += 250% EM as baseDmg
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2", ["E"]),
-              {
-                receiver: "selfOnField",
-                filter: { abilities: ["skill"] },
-              },
-              [],
-              "em",
-              "baseDmg",
-              2.5
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["E"]),
+                {
+                  receiver: "selfOnField",
+                  filter: { abilities: ["skill"] },
+                },
+                [],
+                "em",
+                "baseDmg",
+                2.5
+              ),
+            ],
           },
         ],
       },
@@ -903,11 +911,13 @@ class Nilou extends CharacterBase {
             // same wording pattern as Xingqiu C4 "造成的伤害提升")
             ...(this.constellation >= 1
               ? {
-                  bespokeBuff: new StatBuff(
-                    cbs(this, "C1", []),
-                    { receiver: "selfOnField" },
-                    [{ key: "baseDmg%", value: 0.65 }]
-                  ),
+                  bespokeBuffs: [
+                    new StatBuff(
+                      cbs(this, "C1", []),
+                      { receiver: "selfOnField" },
+                      [{ key: "baseDmg%", value: 0.65 }]
+                    ),
+                  ],
                 }
               : {}),
           },

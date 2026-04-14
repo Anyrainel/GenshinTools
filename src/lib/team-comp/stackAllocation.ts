@@ -12,7 +12,11 @@ import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import { type StatBuff, getBuffInstanceKey } from "./damageBuffs";
 import { createReactionVariant } from "./damageFormulas";
 import type { DamageFormula, FormulaPart } from "./damageModels";
-import { StatSheet } from "./damageModels";
+import {
+  type StatSheet,
+  bespokeMaxStacks,
+  buildBespokeOverlay,
+} from "./damageModels";
 import { isPartOffField } from "./reactionResolve";
 import type {
   BuffActivationMap,
@@ -152,7 +156,7 @@ export function computeBlendedDamage(
 
   for (let idx = 0; idx < parts.length; idx++) {
     const part = parts[idx];
-    const { formula, hits: totalHits, bespokeBuff } = part;
+    const { formula, hits: totalHits, bespokeBuffs } = part;
     const h = totalHits ?? 1;
 
     const effectiveOffField = isPartOffField(part, reactionOverride);
@@ -164,16 +168,10 @@ export function computeBlendedDamage(
     // Bespoke overlay + hit-count cutoff. Bespoke applies to hits
     // [0, bespokeCutoff); remaining hits use baseStats. Mirrors
     // getDisplayParts' split so all 3 paths agree.
-    const bespokeOverlay = bespokeBuff
-      ? StatSheet.fromEntries(
-          [
-            ...bespokeBuff.staticBuffs,
-            ...bespokeBuff.dynamicBuffs(baseStats, []),
-          ],
-          bespokeBuff.target.filter
-        )
+    const bespokeOverlay = bespokeBuffs?.length
+      ? buildBespokeOverlay(bespokeBuffs, baseStats, [])
       : undefined;
-    const bespokeMax = bespokeBuff?.source.maxStacks;
+    const bespokeMax = bespokeMaxStacks(bespokeBuffs);
     const bespokeCutoff =
       bespokeOverlay && bespokeMax != null && bespokeMax < h ? bespokeMax : h;
     const withBespoke = bespokeOverlay

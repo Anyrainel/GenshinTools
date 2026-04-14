@@ -16,6 +16,8 @@ import {
   StatSheet,
   TeamMeta,
   type WeaponBase,
+  bespokeMaxStacks,
+  buildBespokeOverlay,
   createArtifactHalfSet,
   createArtifactSet,
   createCharacter,
@@ -303,7 +305,7 @@ function evaluateDynamicBuffsTwoPass(
   return [...sheetBuffs, ...finalBuffs];
 }
 
-type ProvidedStaticBuff = {
+export type ProvidedStaticBuff = {
   buff: StatBuff;
   providerCharId: string;
 };
@@ -827,7 +829,7 @@ export class CharBuild {
     let totalDamage = 0;
     for (let i = 0; i < entry.parts.length; i++) {
       const part = entry.parts[i];
-      const { formula, hits: totalHits, bespokeBuff } = part;
+      const { formula, hits: totalHits, bespokeBuffs } = part;
       const h = totalHits ?? 1;
       const effectiveOffField = isPartOffField(part, reactionOverride);
 
@@ -838,22 +840,16 @@ export class CharBuild {
           : selfPostStats;
 
       // Apply per-part stat overlay if present
-      const stats = bespokeBuff
+      const stats = bespokeBuffs?.length
         ? baseSelfStats.merge(
-            StatSheet.fromEntries(
-              [
-                ...bespokeBuff.staticBuffs,
-                ...bespokeBuff.dynamicBuffs(baseSelfStats, []),
-              ],
-              bespokeBuff.target.filter
-            )
+            buildBespokeOverlay(bespokeBuffs, baseSelfStats, [])
           )
         : baseSelfStats;
 
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
-      const bespokeMax = bespokeBuff?.source.maxStacks;
+      const bespokeMax = bespokeMaxStacks(bespokeBuffs);
 
       // Skip reaction override if the formula already has a built-in reaction
       // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
@@ -2341,21 +2337,15 @@ export class TeamBuild {
           }
 
           if (zeroBuffKeys.size > 0 && eidx < entry.parts.length) {
-            const { formula, offField, bespokeBuff } = entry.parts[eidx];
+            const { formula, offField, bespokeBuffs } = entry.parts[eidx];
             const eKey = exclusionKey(zeroBuffKeys);
             const baseVariant =
               offField && offFieldVariantsMap
                 ? (offFieldVariantsMap.get(eKey) ?? offFieldPostStats!)
                 : (statsVariants.get(eKey) ?? postStats[charId]!);
-            const displayStats = bespokeBuff
+            const displayStats = bespokeBuffs?.length
               ? baseVariant.merge(
-                  StatSheet.fromEntries(
-                    [
-                      ...bespokeBuff.staticBuffs,
-                      ...bespokeBuff.dynamicBuffs(baseVariant, []),
-                    ],
-                    bespokeBuff.target.filter
-                  )
+                  buildBespokeOverlay(bespokeBuffs, baseVariant, [])
                 )
               : baseVariant;
             const rebuilt = formula.displayFull(
@@ -3957,21 +3947,15 @@ export function getComboDisplayResult(
           }
 
           if (zeroBuffKeys.size > 0 && eidx < entry.parts.length) {
-            const { formula, offField, bespokeBuff } = entry.parts[eidx];
+            const { formula, offField, bespokeBuffs } = entry.parts[eidx];
             const eKey = exclusionKey(zeroBuffKeys);
             const baseVariant =
               offField && offFieldVariants
                 ? (offFieldVariants.get(eKey) ?? offFieldPostStats!)
                 : (statsVariants.get(eKey) ?? postStats[charId]!);
-            const displayStats = bespokeBuff
+            const displayStats = bespokeBuffs?.length
               ? baseVariant.merge(
-                  StatSheet.fromEntries(
-                    [
-                      ...bespokeBuff.staticBuffs,
-                      ...bespokeBuff.dynamicBuffs(baseVariant, []),
-                    ],
-                    bespokeBuff.target.filter
-                  )
+                  buildBespokeOverlay(bespokeBuffs, baseVariant, [])
                 )
               : baseVariant;
             const rebuilt = formula.displayFull(
@@ -4027,8 +4011,8 @@ export function getComboDisplayResult(
         const dp = parts[i];
         const eidx = dp.sourcePartIndex;
         if (eidx == null || eidx >= entry.parts.length) continue;
-        const { bespokeBuff } = entry.parts[eidx];
-        const bespokeMax = bespokeBuff?.source.maxStacks;
+        const { bespokeBuffs } = entry.parts[eidx];
+        const bespokeMax = bespokeMaxStacks(bespokeBuffs);
         const partHits = entry.parts[eidx].hits ?? 1;
         const comboTotalHits = partHits * totalComboCount;
         if (bespokeMax == null || bespokeMax >= comboTotalHits) continue;

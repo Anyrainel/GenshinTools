@@ -222,14 +222,16 @@ class Zibai extends CharacterBase {
             // C1: first Steed's 2nd-hit LC reactionDmg% +220%
             ...(this.constellation >= 1
               ? {
-                  bespokeBuff: new StatBuff(
-                    { ...cbs(this, "C1", ["E"]), maxStacks: 1 },
-                    {
-                      receiver: "selfOnField",
-                      filter: { reactions: ["lunarCrystallize"] },
-                    },
-                    [{ key: "reactionDmg%", value: 2.2 }]
-                  ),
+                  bespokeBuffs: [
+                    new StatBuff(
+                      { ...cbs(this, "C1", ["E"]), maxStacks: 1 },
+                      {
+                        receiver: "selfOnField",
+                        filter: { reactions: ["lunarCrystallize"] },
+                      },
+                      [{ key: "reactionDmg%", value: 2.2 }]
+                    ),
+                  ],
                 }
               : {}),
           },

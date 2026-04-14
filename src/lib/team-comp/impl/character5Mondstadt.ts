@@ -5,14 +5,11 @@ import {
   CharacterBase,
   type FormulaEntry,
   RegisterCharacter,
-  type StatSheet,
   resolveOption,
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
-import { E, type Expr, simplify } from "../expr";
-import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type { ComboDescriptor, StatEntry, StatKey } from "../types";
+import type { ComboDescriptor } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Mondstadt Characters
@@ -280,7 +277,7 @@ class Durin extends CharacterBase {
               formula: new DirectFormula(dragonWhiteMult, burstTag),
               hits: p2Stacks,
               offField: true,
-              bespokeBuff: p2Buff,
+              bespokeBuffs: [p2Buff],
             },
             {
               formula: new DirectFormula(dragonWhiteMult, burstTag),
@@ -309,37 +306,11 @@ class Durin extends CharacterBase {
 
       // Ticks with both P2 and C1 buffs
       if (bothBuffedTicks > 0) {
-        // bespokeBuff only supports a single buff instance. Combine P2 + C1 via
-        // anonymous subclass that merges both dynamicBuffs and dynamicBuffsExpr.
-        const combinedBuff = new (class extends ScalingBuff {
-          private readonly p2 = p2Buff;
-          override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
-            return [
-              ...super.dynamicBuffs(selfStats),
-              ...this.p2.dynamicBuffs(selfStats),
-            ];
-          }
-          override dynamicBuffsExpr(
-            selfStats: ExprStats
-          ): { key: StatKey; expr: Expr }[] {
-            return [
-              ...super.dynamicBuffsExpr(selfStats),
-              ...this.p2.dynamicBuffsExpr(selfStats),
-            ];
-          }
-        })(
-          cbs(this, "C1/P2", ["Q"]),
-          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-          [],
-          "atk",
-          "baseDmg",
-          1.5
-        );
         parts.push({
           formula: new DirectFormula(dragonDarkMult, burstTag),
           hits: bothBuffedTicks,
           offField: true,
-          bespokeBuff: combinedBuff,
+          bespokeBuffs: [c1DarkBuff, p2Buff],
         });
       }
 
@@ -349,7 +320,7 @@ class Durin extends CharacterBase {
           formula: new DirectFormula(dragonDarkMult, burstTag),
           hits: c1OnlyTicks,
           offField: true,
-          bespokeBuff: c1DarkBuff,
+          bespokeBuffs: [c1DarkBuff],
         });
       }
 
@@ -384,7 +355,7 @@ class Durin extends CharacterBase {
             formula: new DirectFormula(dragonDarkMult, burstTag),
             hits: p2Stacks,
             offField: true,
-            bespokeBuff: p2Buff,
+            bespokeBuffs: [p2Buff],
           },
           {
             formula: new DirectFormula(dragonDarkMult, burstTag),
@@ -719,11 +690,11 @@ class Diluc extends CharacterBase {
           { formula: new DirectFormula(this.param("E", 1), pyroSkill) },
           {
             formula: new DirectFormula(this.param("E", 2), pyroSkill),
-            bespokeBuff: c4Bespoke,
+            bespokeBuffs: c4Bespoke ? [c4Bespoke] : undefined,
           },
           {
             formula: new DirectFormula(this.param("E", 3), pyroSkill),
-            bespokeBuff: c4Bespoke,
+            bespokeBuffs: c4Bespoke ? [c4Bespoke] : undefined,
           },
         ],
       },
@@ -1378,11 +1349,11 @@ class Klee extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            bespokeBuff: new StatBuff(
-              cbs(this, "C1", []),
-              { receiver: "selfOnField" },
-              [{ key: "baseDmg%", value: 0.2 }]
-            ),
+            bespokeBuffs: [
+              new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
+                { key: "baseDmg%", value: 0.2 },
+              ]),
+            ],
           },
         ],
       },
@@ -1398,11 +1369,13 @@ class Klee extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            bespokeBuff: new StatBuff(
-              cbs(this, "C4", ["Q"]),
-              { receiver: "selfOnField" },
-              [{ key: "dmg%", value: 1.0 }]
-            ),
+            bespokeBuffs: [
+              new StatBuff(
+                cbs(this, "C4", ["Q"]),
+                { receiver: "selfOnField" },
+                [{ key: "dmg%", value: 1.0 }]
+              ),
+            ],
           },
         ],
       },
@@ -1781,17 +1754,19 @@ class Varka extends CharacterBase {
           ...p,
           ...(this.c1Target === "e-first"
             ? {
-                bespokeBuff: new StatBuff(
-                  {
-                    ...cbs(this, "C1", ["E"]),
-                    maxStacks: p.hits ?? 1,
-                  },
-                  {
-                    receiver: "selfOnField",
-                    filter: { abilities: ["skill", "charge"] },
-                  },
-                  [{ key: "baseDmg%", value: 1.0 }]
-                ),
+                bespokeBuffs: [
+                  new StatBuff(
+                    {
+                      ...cbs(this, "C1", ["E"]),
+                      maxStacks: p.hits ?? 1,
+                    },
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["skill", "charge"] },
+                    },
+                    [{ key: "baseDmg%", value: 1.0 }]
+                  ),
+                ],
               }
             : {}),
         })),
@@ -1813,17 +1788,19 @@ class Varka extends CharacterBase {
           ...p,
           ...(this.c1Target === "ca-first"
             ? {
-                bespokeBuff: new StatBuff(
-                  {
-                    ...cbs(this, "C1", ["E"]),
-                    maxStacks: p.hits ?? 1,
-                  },
-                  {
-                    receiver: "selfOnField",
-                    filter: { abilities: ["skill", "charge"] },
-                  },
-                  [{ key: "baseDmg%", value: 1.0 }]
-                ),
+                bespokeBuffs: [
+                  new StatBuff(
+                    {
+                      ...cbs(this, "C1", ["E"]),
+                      maxStacks: p.hits ?? 1,
+                    },
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["skill", "charge"] },
+                    },
+                    [{ key: "baseDmg%", value: 1.0 }]
+                  ),
+                ],
               }
             : {}),
         })),

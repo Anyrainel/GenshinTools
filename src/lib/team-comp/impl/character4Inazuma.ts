@@ -434,17 +434,19 @@ class Gorou extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2", ["E"]),
-              {
-                receiver: "selfOnField" as const,
-                filter: { abilities: ["skill" as const] },
-              },
-              [],
-              "def",
-              "baseDmg",
-              1.56
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["E"]),
+                {
+                  receiver: "selfOnField" as const,
+                  filter: { abilities: ["skill" as const] },
+                },
+                [],
+                "def",
+                "baseDmg",
+                1.56
+              ),
+            ],
           },
         ],
       },
@@ -453,25 +455,29 @@ class Gorou extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 1), qTag, "def"),
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2", ["Q"]),
-              qBespokeTarget,
-              [],
-              "def",
-              "baseDmg",
-              0.156
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["Q"]),
+                qBespokeTarget,
+                [],
+                "def",
+                "baseDmg",
+                0.156
+              ),
+            ],
           },
           {
             formula: new DirectFormula(this.param("Q", 2), qTag, "def"),
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2", ["Q"]),
-              qBespokeTarget,
-              [],
-              "def",
-              "baseDmg",
-              0.156
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["Q"]),
+                qBespokeTarget,
+                [],
+                "def",
+                "baseDmg",
+                0.156
+              ),
+            ],
             offField: true,
           },
         ],

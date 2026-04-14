@@ -237,29 +237,34 @@ class Columbina extends CharacterBase {
             offField: true,
             ...(this.constellation >= 4 && this.o !== "none"
               ? {
-                  bespokeBuff: new ScalingBuff(
-                    { ...cbs(this, "C4", ["E"]), maxStacks: eInterferenceHits },
-                    {
-                      receiver: "selfOnField",
-                      filter: {
-                        abilities: ["skill"],
-                        reactions: [eInterferenceReaction],
+                  bespokeBuffs: [
+                    new ScalingBuff(
+                      {
+                        ...cbs(this, "C4", ["E"]),
+                        maxStacks: eInterferenceHits,
                       },
-                    },
-                    [],
-                    "hp",
-                    "baseDmg",
-                    {
-                      lunarCharged: 0.125,
-                      lunarBloom: 0.025,
-                      lunarCrystallize: 0.125,
-                    }[
-                      this.o as
-                        | "lunarCharged"
-                        | "lunarBloom"
-                        | "lunarCrystallize"
-                    ]
-                  ),
+                      {
+                        receiver: "selfOnField",
+                        filter: {
+                          abilities: ["skill"],
+                          reactions: [eInterferenceReaction],
+                        },
+                      },
+                      [],
+                      "hp",
+                      "baseDmg",
+                      {
+                        lunarCharged: 0.125,
+                        lunarBloom: 0.025,
+                        lunarCrystallize: 0.125,
+                      }[
+                        this.o as
+                          | "lunarCharged"
+                          | "lunarBloom"
+                          | "lunarCrystallize"
+                      ]
+                    ),
+                  ],
                 }
               : {}),
           },
@@ -1322,14 +1327,16 @@ class Linnea extends CharacterBase {
       const bespokeScale = perStack * 5 - generalScale;
       const stats = hasC2 ? [{ key: "cd" as const, value: 1.5 }] : [];
       return {
-        bespokeBuff: new ScalingBuff(
-          cbs(this, hasC1 ? "C1" : "C2", ["E"]),
-          { receiver: "self" },
-          stats,
-          "def",
-          "baseDmg",
-          hasC1 ? bespokeScale : 0
-        ),
+        bespokeBuffs: [
+          new ScalingBuff(
+            cbs(this, hasC1 ? "C1" : "C2", ["E"]),
+            { receiver: "self" },
+            stats,
+            "def",
+            "baseDmg",
+            hasC1 ? bespokeScale : 0
+          ),
+        ],
       };
     })();
 

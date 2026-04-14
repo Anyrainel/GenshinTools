@@ -53,9 +53,9 @@ import { exclusionKey, resolveComboDescriptor } from "./types";
 export type FormulaPart = {
   formula: DamageFormula;
   hits?: number;
-  /** Per-part buff applied only when computing this part (selfOnField scope).
+  /** Per-part buffs applied only when computing this part (selfOnField scope).
    *  Accepts any StatBuff subclass (StatBuff, ScalingBuff, CrossScalingBuff). */
-  bespokeBuff?: StatBuff;
+  bespokeBuffs?: StatBuff[];
   /** If true, damage is dealt while the character is off-field.
    *  On-field buffs (onField, selfOnField) will NOT apply. */
   offField?: boolean;
@@ -815,6 +815,37 @@ export class StatSheet {
   }
 }
 
+// ─── Bespoke Buff Helpers ───
+
+/** Build a merged overlay from an array of bespoke buffs. */
+export function buildBespokeOverlay(
+  bespokeBuffs: StatBuff[],
+  baseStats: StatSheet,
+  teamStats: StatSheet[]
+): StatSheet {
+  let overlay = StatSheet.fromEntries([]);
+  for (const bb of bespokeBuffs) {
+    overlay = overlay.merge(
+      StatSheet.fromEntries(
+        [...bb.staticBuffs, ...bb.dynamicBuffs(baseStats, teamStats)],
+        bb.target.filter
+      )
+    );
+  }
+  return overlay;
+}
+
+/** Extract maxStacks from bespoke buff array (first buff that has it). */
+export function bespokeMaxStacks(
+  bespokeBuffs: StatBuff[] | undefined
+): number | undefined {
+  if (!bespokeBuffs) return undefined;
+  for (const bb of bespokeBuffs) {
+    if (bb.source.maxStacks != null) return bb.source.maxStacks;
+  }
+  return undefined;
+}
+
 // ═══════════════════════════════════════════════════════════════
 // IStatProvider / IDamageProvider
 // ═══════════════════════════════════════════════════════════════
@@ -1254,12 +1285,14 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       [];
     for (const [id, entry] of Object.entries(this.formulaMap)) {
       for (const part of entry.parts) {
-        if (part.bespokeBuff) {
-          result.push({
-            formulaId: id,
-            label: entry.label,
-            buff: part.bespokeBuff,
-          });
+        if (part.bespokeBuffs) {
+          for (const buff of part.bespokeBuffs) {
+            result.push({
+              formulaId: id,
+              label: entry.label,
+              buff,
+            });
+          }
         }
       }
     }
@@ -1283,9 +1316,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     const parts: DamageResult["parts"] = [];
     for (let idx = 0; idx < entry.parts.length; idx++) {
       const part = entry.parts[idx];
-      const { formula, hits: totalHits, bespokeBuff } = part;
+      const { formula, hits: totalHits, bespokeBuffs } = part;
       const h = totalHits ?? 1;
-      const bespokeMaxStacks = bespokeBuff?.source.maxStacks;
+      const bespokeMax = bespokeMaxStacks(bespokeBuffs);
       const effectiveOffField = isPartOffField(part, reactionOverride);
 
       // Use off-field stats when the part deals damage while the character is off-field
@@ -1294,13 +1327,11 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
 
       // Apply per-part stat overlay if present
       let bespokeOverlay: StatSheet | undefined;
-      if (bespokeBuff) {
-        bespokeOverlay = StatSheet.fromEntries(
-          [
-            ...bespokeBuff.staticBuffs,
-            ...bespokeBuff.dynamicBuffs(baseSelfStats, teamStats),
-          ],
-          bespokeBuff.target.filter
+      if (bespokeBuffs?.length) {
+        bespokeOverlay = buildBespokeOverlay(
+          bespokeBuffs,
+          baseSelfStats,
+          teamStats
         );
       }
 
@@ -1326,9 +1357,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           partialBuffs,
           partVariants,
           bespokeOverlay,
-          bespokeMaxStacks
+          bespokeMax
         );
-        if (bespokeMaxStacks != null) {
+        if (bespokeMax != null) {
           const unbuffedResult = this._calcPartBlended(
             formula,
             baseSelfStats,
@@ -1344,7 +1375,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             ...buffedResult,
             bespokeInfo: {
               unbuffedDamage: unbuffedResult.damage,
-              maxStacks: bespokeMaxStacks,
+              maxStacks: bespokeMax,
             },
           });
         } else {
@@ -1385,9 +1416,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           partialBuffs,
           partVariants,
           bespokeOverlay,
-          bespokeMaxStacks
+          bespokeMax
         );
-        if (bespokeMaxStacks != null) {
+        if (bespokeMax != null) {
           const unbuffedResult = this._calcPartBlended(
             effectiveFormula,
             baseSelfStats,
@@ -1403,7 +1434,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             ...buffedResult,
             bespokeInfo: {
               unbuffedDamage: unbuffedResult.damage,
-              maxStacks: bespokeMaxStacks,
+              maxStacks: bespokeMax,
             },
           });
         } else {
@@ -1421,9 +1452,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           partialBuffs,
           partVariants,
           bespokeOverlay,
-          bespokeMaxStacks
+          bespokeMax
         );
-        if (bespokeMaxStacks != null) {
+        if (bespokeMax != null) {
           const unbuffedResult = this._calcPartBlended(
             formula,
             baseSelfStats,
@@ -1439,7 +1470,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             ...buffedResult,
             bespokeInfo: {
               unbuffedDamage: unbuffedResult.damage,
-              maxStacks: bespokeMaxStacks,
+              maxStacks: bespokeMax,
             },
           });
         } else {

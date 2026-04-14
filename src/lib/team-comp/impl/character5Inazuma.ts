@@ -784,11 +784,13 @@ class KamisatoAyaka extends CharacterBase {
               reaction: "none",
             }),
             hits: 3,
-            bespokeBuff: new StatBuff(
-              cbs(this, "C6", []),
-              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-              [{ key: "dmg%", value: 2.98 }]
-            ),
+            bespokeBuffs: [
+              new StatBuff(
+                cbs(this, "C6", []),
+                { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+                [{ key: "dmg%", value: 2.98 }]
+              ),
+            ],
           },
         ],
       },

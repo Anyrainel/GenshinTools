@@ -47,16 +47,18 @@ class Sethos extends CharacterBase {
             // "4枚贯影箭命中敌人后" → removed after 4 hits.
             // Self buff → modeled as formula nuance (formula already has ≤4 shots).
             // C1: Shadowpiercing Shot CR +15% (merged here to avoid leaking to Dusk Bolts)
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2/C1", ["charge"]),
-              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-              this.constellation >= 1
-                ? [{ key: "cr" as const, value: 0.15 }]
-                : [],
-              "em",
-              "baseDmg",
-              7.0
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2/C1", ["charge"]),
+                { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+                this.constellation >= 1
+                  ? [{ key: "cr" as const, value: 0.15 }]
+                  : [],
+                "em",
+                "baseDmg",
+                7.0
+              ),
+            ],
           },
         ],
       },
@@ -305,14 +307,16 @@ class Layla extends CharacterBase {
             }),
             hits: 4,
             offField: true,
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2", []),
-              { receiver: "self", filter: { abilities: ["skill"] } },
-              [],
-              "hp",
-              "baseDmg",
-              0.015
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", []),
+                { receiver: "self", filter: { abilities: ["skill"] } },
+                [],
+                "hp",
+                "baseDmg",
+                0.015
+              ),
+            ],
           },
         ],
       },

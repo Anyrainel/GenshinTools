@@ -11,18 +11,10 @@ import {
   type FormulaEntry,
   type OptionDef,
   RegisterCharacter,
-  type StatSheet,
   resolveOption,
 } from "../damageModels";
-import type { Expr } from "../expr";
-import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
-import type {
-  ComboDescriptor,
-  ElementalOrPhysical,
-  StatEntry,
-  StatKey,
-} from "../types";
+import type { ComboDescriptor, ElementalOrPhysical, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -186,7 +178,7 @@ class Varesa extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(this.param("A", 8), electroPlunge),
-            bespokeBuff: p1(c >= 1 ? 1.8 : 0.5),
+            bespokeBuffs: [p1(c >= 1 ? 1.8 : 0.5)],
           },
         ],
       },
@@ -196,7 +188,7 @@ class Varesa extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(this.param("A", 16), electroPlunge),
-            bespokeBuff: p1(1.8),
+            bespokeBuffs: [p1(1.8)],
           },
         ],
       },
@@ -212,32 +204,7 @@ class Varesa extends CharacterBase {
                     this.param("A", 16),
                     electroPlunge
                   ),
-                  // Combine P1 + C4 DR via anonymous subclass (both ATK→baseDmg,
-                  // separate caps). (user-approved)
-                  bespokeBuff: new (class extends ScalingBuff {
-                    private readonly c4 = c4DR!;
-                    override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
-                      return [
-                        ...super.dynamicBuffs(selfStats),
-                        ...this.c4.dynamicBuffs(selfStats),
-                      ];
-                    }
-                    override dynamicBuffsExpr(
-                      selfStats: ExprStats
-                    ): { key: StatKey; expr: Expr }[] {
-                      return [
-                        ...super.dynamicBuffsExpr(selfStats),
-                        ...this.c4.dynamicBuffsExpr(selfStats),
-                      ];
-                    }
-                  })(
-                    cbs(this, "P1/C4", ["E", "Q"]),
-                    plungeFilter,
-                    [],
-                    "atk",
-                    "baseDmg",
-                    1.8
-                  ),
+                  bespokeBuffs: [p1(1.8), c4DR!],
                 },
               ],
             },
@@ -258,14 +225,16 @@ class Varesa extends CharacterBase {
             // C4: cast from FP/Apex Drive → +100% DMG
             ...(c >= 4
               ? {
-                  bespokeBuff: new StatBuff(
-                    cbs(this, "C4", ["Q"]),
-                    {
-                      receiver: "selfOnField",
-                      filter: { abilities: ["burst"] },
-                    },
-                    [{ key: "dmg%", value: 1.0 }]
-                  ),
+                  bespokeBuffs: [
+                    new StatBuff(
+                      cbs(this, "C4", ["Q"]),
+                      {
+                        receiver: "selfOnField",
+                        filter: { abilities: ["burst"] },
+                      },
+                      [{ key: "dmg%", value: 1.0 }]
+                    ),
+                  ],
                 }
               : {}),
           },
@@ -280,15 +249,17 @@ class Varesa extends CharacterBase {
             // C1+: P1 applies to sQ (C1 grants 虹色坠击 from sQ itself)
             // C4+: sQ cast from 极限驱动 → +100% DMG
             // Combined via ScalingBuff staticBuffs when both active (user-approved)
-            bespokeBuff:
+            bespokeBuffs:
               c >= 4 && c >= 1
-                ? p1WithC4(1.8)
+                ? [p1WithC4(1.8)]
                 : c >= 4
-                  ? new StatBuff(cbs(this, "C4", ["Q"]), plungeFilter, [
-                      { key: "dmg%", value: 1.0 },
-                    ])
+                  ? [
+                      new StatBuff(cbs(this, "C4", ["Q"]), plungeFilter, [
+                        { key: "dmg%", value: 1.0 },
+                      ]),
+                    ]
                   : c >= 1
-                    ? p1(1.8)
+                    ? [p1(1.8)]
                     : undefined,
           },
         ],
@@ -524,14 +495,16 @@ class Citlali extends CharacterBase {
           {
             formula: new DirectFormula(this.param("Q", 1), burstTag),
             // P2: Ice Storm only — +1200% EM as baseDmg (Skull does NOT get this)
-            bespokeBuff: new ScalingBuff(
-              cbs(this, "P2", ["Q"]),
-              { receiver: "self", filter: { abilities: ["burst"] } },
-              [],
-              "em",
-              "baseDmg",
-              12.0
-            ),
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["Q"]),
+                { receiver: "self", filter: { abilities: ["burst"] } },
+                [],
+                "em",
+                "baseDmg",
+                12.0
+              ),
+            ],
           },
           {
             formula: new DirectFormula(this.param("Q", 2), burstTag),
@@ -1363,21 +1336,23 @@ class Mualani extends CharacterBase {
             formula: new DirectFormula(biteMult, biteTag, "hp"),
             ...(this.constellation >= 1
               ? {
-                  bespokeBuff: new ScalingBuff(
-                    {
-                      ...cbs(this, "C1", ["E"]),
-                      // C1-C5: 1 heavy out of 3 bites. C6: all bites heavy (no stack limit).
-                      maxStacks: this.constellation >= 6 ? undefined : 1,
-                    },
-                    {
-                      receiver: "selfOnField",
-                      filter: { abilities: ["normal"] },
-                    },
-                    [],
-                    "hp",
-                    "baseDmg",
-                    0.66
-                  ),
+                  bespokeBuffs: [
+                    new ScalingBuff(
+                      {
+                        ...cbs(this, "C1", ["E"]),
+                        // C1-C5: 1 heavy out of 3 bites. C6: all bites heavy (no stack limit).
+                        maxStacks: this.constellation >= 6 ? undefined : 1,
+                      },
+                      {
+                        receiver: "selfOnField",
+                        filter: { abilities: ["normal"] },
+                      },
+                      [],
+                      "hp",
+                      "baseDmg",
+                      0.66
+                    ),
+                  ],
                 }
               : {}),
           },
@@ -1497,14 +1472,16 @@ class Kinich extends CharacterBase {
             }),
             ...(this.constellation >= 2
               ? {
-                  bespokeBuff: new StatBuff(
-                    { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
-                    {
-                      receiver: "selfOnField",
-                      filter: { abilities: ["skill"] },
-                    },
-                    [{ key: "dmg%", value: 1.0 }]
-                  ),
+                  bespokeBuffs: [
+                    new StatBuff(
+                      { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
+                      {
+                        receiver: "selfOnField",
+                        filter: { abilities: ["skill"] },
+                      },
+                      [{ key: "dmg%", value: 1.0 }]
+                    ),
+                  ],
                 }
               : {}),
           },
@@ -1519,14 +1496,16 @@ class Kinich extends CharacterBase {
                   }),
                   ...(this.constellation >= 2
                     ? {
-                        bespokeBuff: new StatBuff(
-                          { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
-                          {
-                            receiver: "selfOnField",
-                            filter: { abilities: ["skill"] },
-                          },
-                          [{ key: "dmg%", value: 1.0 }]
-                        ),
+                        bespokeBuffs: [
+                          new StatBuff(
+                            { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
+                            {
+                              receiver: "selfOnField",
+                              filter: { abilities: ["skill"] },
+                            },
+                            [{ key: "dmg%", value: 1.0 }]
+                          ),
+                        ],
                       }
                     : {}),
                 },
