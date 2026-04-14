@@ -73,7 +73,6 @@ import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   type CompiledTeamDamage,
   compileComboTeamDamage,
-  compileTeamDamage,
   fillVarsFromArtifacts,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
@@ -2933,12 +2932,12 @@ async function cmdFuzz(opts: {
     // Compile AST
     let compiled: CompiledTeamDamage;
     try {
-      compiled = compileTeamDamage(
+      compiled = compileComboTeamDamage(
         teamBuild,
+        singleFormulaCombo(carryCharId, formulaId),
         carryCharId,
-        formulaId,
-        calcContext,
-        optCtx
+        baseSheets,
+        calcContext
       );
     } catch (e) {
       console.log(

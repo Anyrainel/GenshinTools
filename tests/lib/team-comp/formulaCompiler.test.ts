@@ -25,15 +25,15 @@ import { E, evaluate, simplify } from "@/lib/team-comp/expr";
 import { VarMapping, createExprStats } from "@/lib/team-comp/exprStats";
 import {
   compileComboTeamDamage,
-  compileTeamDamage,
   fillVarsFromArtifacts,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
-import type {
-  CalcContext,
-  ComboFormula,
-  StatKey,
-  TeamSlotConfig,
+import {
+  type CalcContext,
+  type ComboFormula,
+  type StatKey,
+  type TeamSlotConfig,
+  singleFormulaCombo,
 } from "@/lib/team-comp/types";
 import "@/lib/team-comp/index";
 import { getFirstFormulaId } from "../../fixtures/optimizerHelpers";
@@ -915,7 +915,7 @@ const FUZZ_CTX: CalcContext = {
 
 // ─── Single-formula compiled pipeline fuzz ───
 
-describe("compileTeamDamage full pipeline fuzz", () => {
+describe("compileComboTeamDamage full pipeline fuzz", () => {
   const rv = getRollValues();
 
   function fuzzTeam(
@@ -960,22 +960,14 @@ describe("compileTeamDamage full pipeline fuzz", () => {
         ).totalDamage;
 
         // New path: compile with one char as swap, rest as support
-        const optCtx = tb.createOptimizerContext(
+        const compiled = compileComboTeamDamage(
+          tb,
+          singleFormulaCombo(carryId, formulaId),
+          carryId,
           sheets,
-          carryId,
-          carryId,
           FUZZ_CTX
         );
-        const compiled = compileTeamDamage(
-          tb,
-          carryId,
-          formulaId,
-          FUZZ_CTX,
-          optCtx
-        );
-        const charIdx = optCtx.charBuildOrder.findIndex(
-          ([id]) => id === carryId
-        );
+        const charIdx = compiled.charIdxMap?.get(carryId) ?? 0;
         const vars = new Float64Array(compiled.numVars);
         vars.fill(0);
         fillVarsFromSheet(sheets[carryId], compiled.varMapping, charIdx, vars);
@@ -1024,20 +1016,14 @@ describe("compileTeamDamage full pipeline fuzz", () => {
 
       // Swap support (kazuha), carry damage
       const swapId = "kaedehara_kazuha";
-      const optCtx = tb.createOptimizerContext(
-        sheets,
+      const compiled = compileComboTeamDamage(
+        tb,
+        singleFormulaCombo(carryId, formulaId),
         swapId,
-        carryId,
+        sheets,
         FUZZ_CTX
       );
-      const compiled = compileTeamDamage(
-        tb,
-        carryId,
-        formulaId,
-        FUZZ_CTX,
-        optCtx
-      );
-      const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === swapId);
+      const charIdx = compiled.charIdxMap?.get(swapId) ?? 0;
       const vars = new Float64Array(compiled.numVars);
       vars.fill(0);
       fillVarsFromSheet(sheets[swapId], compiled.varMapping, charIdx, vars);
@@ -1122,22 +1108,14 @@ describe("compileTeamDamage full pipeline fuzz", () => {
           }
 
           // Compiled path
-          const optCtx = tb.createOptimizerContext(
-            sheets,
+          const compiled = compileComboTeamDamage(
+            tb,
+            singleFormulaCombo(triggerCharId, formulaId),
             swap,
-            triggerCharId,
+            sheets,
             FUZZ_CTX
           );
-          const compiled = compileTeamDamage(
-            tb,
-            triggerCharId,
-            formulaId,
-            FUZZ_CTX,
-            optCtx
-          );
-          const charIdx = optCtx.charBuildOrder.findIndex(
-            ([id]) => id === swap
-          );
+          const charIdx = compiled.charIdxMap?.get(swap) ?? 0;
           const vars = new Float64Array(compiled.numVars);
           vars.fill(0);
           fillVarsFromSheet(sheets[swap], compiled.varMapping, charIdx, vars);
@@ -1237,15 +1215,7 @@ describe("compileComboTeamDamage fuzz", () => {
             sheets,
             FUZZ_CTX
           );
-          const optCtx = tb.createOptimizerContext(
-            sheets,
-            swapCharId,
-            charIds[0],
-            FUZZ_CTX
-          );
-          const charIdx = optCtx.charBuildOrder.findIndex(
-            ([id]) => id === swapCharId
-          );
+          const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
           const vars = new Float64Array(compiled.numVars);
           vars.fill(0);
           fillVarsFromSheet(
@@ -1322,15 +1292,7 @@ describe("compileComboTeamDamage fuzz", () => {
         sheets,
         FUZZ_CTX
       );
-      const optCtx = tb.createOptimizerContext(
-        sheets,
-        swapCharId,
-        "diluc",
-        FUZZ_CTX
-      );
-      const charIdx = optCtx.charBuildOrder.findIndex(
-        ([id]) => id === swapCharId
-      );
+      const charIdx = compiled.charIdxMap?.get(swapCharId) ?? 0;
       const vars = new Float64Array(compiled.numVars);
       vars.fill(0);
       fillVarsFromSheet(sheets[swapCharId], compiled.varMapping, charIdx, vars);
@@ -1391,20 +1353,14 @@ describe("marginal gain parity (compiled vs standard)", () => {
           );
         }
 
-        const optCtx = tb.createOptimizerContext(
-          sheets,
+        const compiled = compileComboTeamDamage(
+          tb,
+          singleFormulaCombo(carryId, formulaId),
           swap,
-          carryId,
+          sheets,
           FUZZ_CTX
         );
-        const compiled = compileTeamDamage(
-          tb,
-          carryId,
-          formulaId,
-          FUZZ_CTX,
-          optCtx
-        );
-        const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === swap);
+        const charIdx = compiled.charIdxMap?.get(swap) ?? 0;
 
         // Evaluate base damage with both paths
         const baseVars = new Float64Array(compiled.numVars);
@@ -1627,22 +1583,14 @@ describe("random team fuzz (compiled vs standard)", () => {
             offFieldTeamStats
           ).totalDamage;
 
-          const optCtx = tb.createOptimizerContext(
+          const compiled = compileComboTeamDamage(
+            tb,
+            singleFormulaCombo(carryId, formulaId),
+            carryId,
             sheets,
-            carryId,
-            carryId,
             FUZZ_CTX
           );
-          const compiled = compileTeamDamage(
-            tb,
-            carryId,
-            formulaId,
-            FUZZ_CTX,
-            optCtx
-          );
-          const charIdx = optCtx.charBuildOrder.findIndex(
-            ([id]) => id === carryId
-          );
+          const charIdx = compiled.charIdxMap?.get(carryId) ?? 0;
           const vars = new Float64Array(compiled.numVars);
           fillVarsFromSheet(
             sheets[carryId],
@@ -1747,22 +1695,14 @@ describe("random team fuzz (compiled vs standard)", () => {
             offFieldTeamStats
           ).totalDamage;
 
-          const optCtx = tb.createOptimizerContext(
-            sheets,
+          const compiled = compileComboTeamDamage(
+            tb,
+            singleFormulaCombo(carryId, formulaId),
             swapId,
-            carryId,
+            sheets,
             FUZZ_CTX
           );
-          const compiled = compileTeamDamage(
-            tb,
-            carryId,
-            formulaId,
-            FUZZ_CTX,
-            optCtx
-          );
-          const charIdx = optCtx.charBuildOrder.findIndex(
-            ([id]) => id === swapId
-          );
+          const charIdx = compiled.charIdxMap?.get(swapId) ?? 0;
           const vars = new Float64Array(compiled.numVars);
           fillVarsFromSheet(sheets[swapId], compiled.varMapping, charIdx, vars);
           const newDamage = compiled.evaluate(vars);
@@ -1856,13 +1796,7 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
     expect(compiled.evaluateCr).toBeUndefined();
 
     // Fill vars from the high-ER sheet
-    const optCtx = tb.createOptimizerContext(
-      sheets,
-      "diluc",
-      "diluc",
-      FUZZ_CTX
-    );
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "diluc");
+    const charIdx = compiled.charIdxMap?.get("diluc") ?? 0;
     const vars = new Float64Array(compiled.numVars);
     fillVarsFromSheet(highErSheet, compiled.varMapping, charIdx, vars);
 
@@ -1957,13 +1891,7 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
       },
       rv
     );
-    const optCtx = tb.createOptimizerContext(
-      sheets,
-      "diluc",
-      "diluc",
-      FUZZ_CTX
-    );
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "diluc");
+    const charIdx = compiled.charIdxMap?.get("diluc") ?? 0;
     const vars2 = new Float64Array(compiled.numVars);
     fillVarsFromSheet(highCrSheet, compiled.varMapping, charIdx, vars2);
     const crValHigh = compiled.evaluateCr!(vars2);
@@ -2004,13 +1932,7 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
         0
       );
 
-      const optCtx = tb.createOptimizerContext(
-        sheets,
-        "diluc",
-        "diluc",
-        FUZZ_CTX
-      );
-      const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "diluc");
+      const charIdx = compiled.charIdxMap?.get("diluc") ?? 0;
       const vars = new Float64Array(compiled.numVars);
       fillVarsFromSheet(sheets.diluc, compiled.varMapping, charIdx, vars);
 
@@ -2073,15 +1995,7 @@ describe("single→combo normalization parity", () => {
           sheets,
           FUZZ_CTX
         );
-        const optCtx = tb.createOptimizerContext(
-          sheets,
-          carryId,
-          carryId,
-          FUZZ_CTX
-        );
-        const charIdx = optCtx.charBuildOrder.findIndex(
-          ([id]) => id === carryId
-        );
+        const charIdx = compiled.charIdxMap?.get(carryId) ?? 0;
         const vars = new Float64Array(compiled.numVars);
         fillVarsFromSheet(sheets[carryId], compiled.varMapping, charIdx, vars);
         const newDamage = compiled.evaluate(vars);
@@ -2197,7 +2111,7 @@ describe("multi-char variable compilation parity", () => {
 // perCharCrTarget — compiled path parity with damageCalc path
 // ═══════════════════════════════════════════════════════════════
 
-describe("compileTeamDamage — perCharCrTarget", () => {
+describe("compileComboTeamDamage — perCharCrTarget", () => {
   const rv = getRollValues();
 
   it("perCharCrTarget applies CR delta only to specified char (compiled matches standard)", () => {
@@ -2238,9 +2152,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
       ).totalDamage;
 
       // Compiled path
-      const optCtx = tb.createOptimizerContext(sheets, carryId, carryId, ctx);
-      const compiled = compileTeamDamage(tb, carryId, formulaId, ctx, optCtx);
-      const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === carryId);
+      const compiled = compileComboTeamDamage(
+        tb,
+        singleFormulaCombo(carryId, formulaId),
+        carryId,
+        sheets,
+        ctx
+      );
+      const charIdx = compiled.charIdxMap?.get(carryId) ?? 0;
       const vars = new Float64Array(compiled.numVars);
       vars.fill(0);
       fillVarsFromSheet(sheets[carryId], compiled.varMapping, charIdx, vars);
@@ -2287,22 +2206,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
       perCharCrTarget: { diluc: 60 },
     };
 
-    const optCtxBoth = tb.createOptimizerContext(
+    const compiledBoth = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxBoth
     );
-    const compiledBoth = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxBoth,
-      optCtxBoth
-    );
-    const charIdxBoth = optCtxBoth.charBuildOrder.findIndex(
-      ([id]) => id === carryId
-    );
+    const charIdxBoth = compiledBoth.charIdxMap?.get(carryId) ?? 0;
     const varsBoth = new Float64Array(compiledBoth.numVars);
     varsBoth.fill(0);
     fillVarsFromSheet(
@@ -2313,22 +2224,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
     );
     const dmgBoth = compiledBoth.evaluate(varsBoth);
 
-    const optCtxPer = tb.createOptimizerContext(
+    const compiledPer = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxPerCharOnly
     );
-    const compiledPer = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxPerCharOnly,
-      optCtxPer
-    );
-    const charIdxPer = optCtxPer.charBuildOrder.findIndex(
-      ([id]) => id === carryId
-    );
+    const charIdxPer = compiledPer.charIdxMap?.get(carryId) ?? 0;
     const varsPer = new Float64Array(compiledPer.numVars);
     varsPer.fill(0);
     fillVarsFromSheet(
@@ -2367,20 +2270,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
       critRateTarget: 75,
     };
 
-    const optNone = tb.createOptimizerContext(
+    const compiledNone = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxNone
     );
-    const compiledNone = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxNone,
-      optNone
-    );
-    const idxNone = optNone.charBuildOrder.findIndex(([id]) => id === carryId);
+    const idxNone = compiledNone.charIdxMap?.get(carryId) ?? 0;
     const varsNone = new Float64Array(compiledNone.numVars);
     varsNone.fill(0);
     fillVarsFromSheet(
@@ -2391,22 +2288,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
     );
     const dmgNone = compiledNone.evaluate(varsNone);
 
-    const optGlobal = tb.createOptimizerContext(
+    const compiledGlobal = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxGlobal
     );
-    const compiledGlobal = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxGlobal,
-      optGlobal
-    );
-    const idxGlobal = optGlobal.charBuildOrder.findIndex(
-      ([id]) => id === carryId
-    );
+    const idxGlobal = compiledGlobal.charIdxMap?.get(carryId) ?? 0;
     const varsGlobal = new Float64Array(compiledGlobal.numVars);
     varsGlobal.fill(0);
     fillVarsFromSheet(
@@ -2446,20 +2335,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
       perCharCrTarget: { diluc: 100 },
     };
 
-    const optNone = tb.createOptimizerContext(
+    const compiledNone = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxNone
     );
-    const compiledNone = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxNone,
-      optNone
-    );
-    const idxNone = optNone.charBuildOrder.findIndex(([id]) => id === carryId);
+    const idxNone = compiledNone.charIdxMap?.get(carryId) ?? 0;
     const varsNone = new Float64Array(compiledNone.numVars);
     varsNone.fill(0);
     fillVarsFromSheet(
@@ -2470,20 +2353,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
     );
     const dmgNone = compiledNone.evaluate(varsNone);
 
-    const opt100 = tb.createOptimizerContext(
+    const compiled100 = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxTarget100
     );
-    const compiled100 = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxTarget100,
-      opt100
-    );
-    const idx100 = opt100.charBuildOrder.findIndex(([id]) => id === carryId);
+    const idx100 = compiled100.charIdxMap?.get(carryId) ?? 0;
     const vars100 = new Float64Array(compiled100.numVars);
     vars100.fill(0);
     fillVarsFromSheet(sheets[carryId], compiled100.varMapping, idx100, vars100);
@@ -2533,20 +2410,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
       offFieldTeamStats
     ).totalDamage;
 
-    const opt0 = tb.createOptimizerContext(
+    const compiled0 = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxTarget0
     );
-    const compiled0 = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxTarget0,
-      opt0
-    );
-    const idx0 = opt0.charBuildOrder.findIndex(([id]) => id === carryId);
+    const idx0 = compiled0.charIdxMap?.get(carryId) ?? 0;
     const vars0 = new Float64Array(compiled0.numVars);
     vars0.fill(0);
     fillVarsFromSheet(sheets[carryId], compiled0.varMapping, idx0, vars0);
@@ -2562,20 +2433,14 @@ describe("compileTeamDamage — perCharCrTarget", () => {
     expect(relErr).toBeLessThan(1e-6);
 
     // And damage with target=0 should differ from no target (crDelta=1 is a big buff)
-    const optNone = tb.createOptimizerContext(
+    const compiledNone = compileComboTeamDamage(
+      tb,
+      singleFormulaCombo(carryId, formulaId),
+      carryId,
       sheets,
-      carryId,
-      carryId,
       ctxNone
     );
-    const compiledNone = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      ctxNone,
-      optNone
-    );
-    const idxNone = optNone.charBuildOrder.findIndex(([id]) => id === carryId);
+    const idxNone = compiledNone.charIdxMap?.get(carryId) ?? 0;
     const varsNone = new Float64Array(compiledNone.numVars);
     varsNone.fill(0);
     fillVarsFromSheet(
@@ -2597,7 +2462,7 @@ describe("compileTeamDamage — perCharCrTarget", () => {
 // that all three lib evaluation paths produce identical damage:
 //   1. getDisplayResult   (UI / damage card cold path)
 //   2. getDamageResult    (optimizer cold path)
-//   3. compileTeamDamage  (optimizer B&B hot path)
+//   3. compileComboTeamDamage  (optimizer B&B hot path)
 //
 // Dimensions varied per trial:
 //   • team composition (fixed set + random team generator)
@@ -2813,20 +2678,15 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     ).totalDamage;
 
     // Path 3: compile
-    const optCtx = tb.createOptimizerContext(sheets, charId, charId, ctx);
-    const compiled = compileTeamDamage(
+    const compiled = compileComboTeamDamage(
       tb,
+      singleFormulaCombo(charId, formulaId, reactionOverride ?? undefined),
       charId,
-      formulaId,
+      sheets,
       ctx,
-      optCtx,
-      reactionOverride,
-      undefined,
-      undefined,
-      undefined,
-      dist
+      dist.length > 0 ? { "line:0": dist } : undefined
     );
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === charId);
+    const charIdx = compiled.charIdxMap?.get(charId) ?? 0;
     const vars = new Float64Array(compiled.numVars);
     vars.fill(0);
     if (charIdx >= 0) {

@@ -3,7 +3,7 @@
  *
  * 1. computePartialBuffSpecs (TeamBuild method) — conversion from BuffActivationMap
  * 2. getDisplayResult with userBuffOverrides — cold path display
- * 3. compileTeamDamage with partialBuffs — hot path AST compiler
+ * 3. compileComboTeamDamage with partialBuffs — hot path AST compiler
  * 4. runTeamOptimization with partialBuffs — optimizer integration
  * 5. runGenerator (generate) — artifact generation flow
  * 6. Combo mode — compileComboTeamDamage with buffOverrides
@@ -18,7 +18,6 @@ import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   compileComboTeamDamage,
-  compileTeamDamage,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
 import { type GeneratorOptions, runGenerator } from "@/lib/team-comp/generator";
@@ -344,9 +343,9 @@ describe("getDisplayResult with userBuffOverrides (cold path)", () => {
   });
 });
 
-// ─── 3. compileTeamDamage with partialBuffs (hot path) ──────────────────────
+// ─── 3. compileComboTeamDamage with partialBuffs (hot path) ──────────────────
 
-describe("compileTeamDamage with partialBuffs (hot path)", () => {
+describe("compileComboTeamDamage with partialBuffs (hot path)", () => {
   it("compiled damage differs when partialBuffs reduce a buff", () => {
     const tb = makeDilucTeamBuild();
     const carryId = "diluc";
@@ -357,13 +356,18 @@ describe("compileTeamDamage with partialBuffs (hot path)", () => {
       "bennett",
       "kaedehara_kazuha"
     );
-
-    const optCtx = tb.createOptimizerContext(sheets, carryId, carryId, CTX);
+    const combo = singleFormulaCombo(carryId, formulaId);
 
     // Compile without partialBuffs
-    const compiledBase = compileTeamDamage(tb, carryId, formulaId, CTX, optCtx);
+    const compiledBase = compileComboTeamDamage(
+      tb,
+      combo,
+      carryId,
+      sheets,
+      CTX
+    );
     const varsBase = new Float64Array(compiledBase.numVars);
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === carryId);
+    const charIdx = compiledBase.charIdxMap?.get(carryId) ?? 0;
     fillVarsFromSheet(
       sheets[carryId],
       compiledBase.varMapping,
@@ -394,17 +398,13 @@ describe("compileTeamDamage with partialBuffs (hot path)", () => {
     expect(specs.length).toBeGreaterThan(0);
 
     // Compile with partialBuffs
-    const compiledPartial = compileTeamDamage(
+    const compiledPartial = compileComboTeamDamage(
       tb,
+      combo,
       carryId,
-      formulaId,
+      sheets,
       CTX,
-      optCtx,
-      undefined, // reactionOverride
-      undefined, // erCheckCharId
-      undefined, // minEr
-      undefined, // minCr
-      specs
+      { "line:0": specs }
     );
     const varsPartial = new Float64Array(compiledPartial.numVars);
     fillVarsFromSheet(
@@ -459,21 +459,12 @@ describe("compileTeamDamage with partialBuffs (hot path)", () => {
       undefined,
       overrides
     );
-    const optCtx = tb.createOptimizerContext(sheets, carryId, carryId, CTX);
-    const compiled = compileTeamDamage(
-      tb,
-      carryId,
-      formulaId,
-      CTX,
-      optCtx,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      specs
-    );
+    const combo = singleFormulaCombo(carryId, formulaId);
+    const compiled = compileComboTeamDamage(tb, combo, carryId, sheets, CTX, {
+      "line:0": specs,
+    });
     const vars = new Float64Array(compiled.numVars);
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === carryId);
+    const charIdx = compiled.charIdxMap?.get(carryId) ?? 0;
     fillVarsFromSheet(sheets[carryId], compiled.varMapping, charIdx, vars);
     const hotDamage = compiled.evaluate(vars);
 
@@ -525,22 +516,24 @@ describe("runTeamOptimization with partialBuffs", () => {
 
     // Verify the compiled expression with specs produces different damage
     // (this proves the optimizer's B&B scoring function uses partialBuffs)
-    const optCtx = tb.createOptimizerContext(sheets, carryId, carryId, CTX);
-    const compiledBase = compileTeamDamage(tb, carryId, formulaId, CTX, optCtx);
-    const compiledPartial = compileTeamDamage(
+    const combo = singleFormulaCombo(carryId, formulaId);
+    const compiledBase = compileComboTeamDamage(
       tb,
+      combo,
       carryId,
-      formulaId,
+      sheets,
+      CTX
+    );
+    const compiledPartial = compileComboTeamDamage(
+      tb,
+      combo,
+      carryId,
+      sheets,
       CTX,
-      optCtx,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      specs
+      { "line:0": specs }
     );
     const vars = new Float64Array(compiledBase.numVars);
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === carryId);
+    const charIdx = compiledBase.charIdxMap?.get(carryId) ?? 0;
     fillVarsFromSheet(sheets[carryId], compiledBase.varMapping, charIdx, vars);
     const dmgBase = compiledBase.evaluate(vars);
     const varsP = new Float64Array(compiledPartial.numVars);

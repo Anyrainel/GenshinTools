@@ -460,11 +460,15 @@ import {
   offFieldStatus,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import { compileTeamDamage } from "@/lib/team-comp/formulaCompiler";
-import type {
-  CalcContext,
-  ComboFormula,
-  TeamSlotConfig,
+import {
+  compileComboTeamDamage,
+  fillVarsFromSheet,
+} from "@/lib/team-comp/formulaCompiler";
+import {
+  type CalcContext,
+  type ComboFormula,
+  type TeamSlotConfig,
+  singleFormulaCombo,
 } from "@/lib/team-comp/types";
 
 describe("TeamBuild lifecycle", () => {
@@ -2105,15 +2109,13 @@ describe("forceOnField override", () => {
     );
     const calcDamage = calcResult.totalDamage;
 
-    // Path 3: compile (compileTeamDamage — the optimizer's B&B hot path)
-    const optCtx = tb.createOptimizerContext(sheets, "linnea", "linnea", ctx);
-    const compiled = compileTeamDamage(
+    // Path 3: compile (compileComboTeamDamage — the optimizer's B&B hot path)
+    const compiled = compileComboTeamDamage(
       tb,
+      singleFormulaCombo("linnea", "linnea-million-ton", reactionOverride),
       "linnea",
-      "linnea-million-ton",
-      ctx,
-      optCtx,
-      reactionOverride
+      sheets,
+      ctx
     );
     const compileDamage = compiled.evaluate(new Float64Array(compiled.numVars));
 
@@ -2229,7 +2231,7 @@ describe("forceOnField override", () => {
     expect(calcOn.totalDamage).toBe(calcOff.totalDamage);
   });
 
-  it("linnea million-ton-offfield forceOnField increases damage via compile path (compileTeamDamage)", () => {
+  it("linnea million-ton-offfield forceOnField increases damage via compile path", () => {
     const team: TeamSlotConfig[] = [
       {
         charId: "linnea",
@@ -2281,22 +2283,21 @@ describe("forceOnField override", () => {
       linnea: "continuous",
     });
 
-    const optCtx = tb.createOptimizerContext(sheets, "linnea", "linnea", ctx);
-
-    const compiledOff = compileTeamDamage(
+    const compiledOff = compileComboTeamDamage(
       tb,
+      singleFormulaCombo("linnea", "linnea-million-ton-offfield"),
       "linnea",
-      "linnea-million-ton-offfield",
-      ctx,
-      optCtx
+      sheets,
+      ctx
     );
-    const compiledOn = compileTeamDamage(
+    const compiledOn = compileComboTeamDamage(
       tb,
+      singleFormulaCombo("linnea", "linnea-million-ton-offfield", {
+        forceOnField: true,
+      }),
       "linnea",
-      "linnea-million-ton-offfield",
-      ctx,
-      optCtx,
-      { forceOnField: true }
+      sheets,
+      ctx
     );
 
     const varsOff = new Float64Array(compiledOff.numVars);

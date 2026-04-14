@@ -11,7 +11,6 @@ import {
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   compileComboTeamDamage,
-  compileTeamDamage,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
 import {
@@ -20,10 +19,11 @@ import {
   type ReactionComboEntry,
   resolveReactionComboEntries,
 } from "@/lib/team-comp/teamReactions";
-import type {
-  CalcContext,
-  ComboFormula,
-  TeamSlotConfig,
+import {
+  type CalcContext,
+  type ComboFormula,
+  type TeamSlotConfig,
+  singleFormulaCombo,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
@@ -818,23 +818,21 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
 });
 
 describe("TeamReactionProvider — compiler path", () => {
-  it("compileTeamDamage produces non-zero for rx- formula", () => {
+  it("compileComboTeamDamage produces non-zero for rx- formula", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
     const charIds = PYRO_ELECTRO_TEAM.map((c) => c.charId);
     const sheets = emptySheets(...charIds);
 
-    const optCtx = tb.createOptimizerContext(sheets, "fischl", "fischl", CTX);
-    const compiled = compileTeamDamage(
+    const compiled = compileComboTeamDamage(
       tb,
+      singleFormulaCombo("fischl", "rx-overloaded"),
       "fischl",
-      "rx-overloaded",
-      CTX,
-      optCtx
+      sheets,
+      CTX
     );
     const vars = new Float64Array(compiled.numVars);
     vars.fill(0);
-    // Fill swap char's vars from empty sheet
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "fischl");
+    const charIdx = compiled.charIdxMap?.get("fischl") ?? 0;
     fillVarsFromSheet(sheets.fischl, compiled.varMapping, charIdx, vars);
     const damage = compiled.evaluate(vars);
     expect(damage).toBeGreaterThan(0);
@@ -854,17 +852,16 @@ describe("TeamReactionProvider — compiler path", () => {
     const interpreted = evaluateCombo(tb, combo, sheets, CTX);
 
     // Compiled
-    const optCtx = tb.createOptimizerContext(sheets, "fischl", "fischl", CTX);
-    const compiled = compileTeamDamage(
+    const compiled = compileComboTeamDamage(
       tb,
+      singleFormulaCombo("fischl", "rx-overloaded"),
       "fischl",
-      "rx-overloaded",
-      CTX,
-      optCtx
+      sheets,
+      CTX
     );
     const vars = new Float64Array(compiled.numVars);
     vars.fill(0);
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === "fischl");
+    const charIdx = compiled.charIdxMap?.get("fischl") ?? 0;
     fillVarsFromSheet(sheets.fischl, compiled.varMapping, charIdx, vars);
     const compiledDamage = compiled.evaluate(vars);
 
