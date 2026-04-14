@@ -14,7 +14,12 @@ import {
   resolveOption,
 } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ComboDescriptor, ElementalOrPhysical, StatKey } from "../types";
+import type {
+  ComboDescriptor,
+  DamageTagFilter,
+  ElementalOrPhysical,
+  StatKey,
+} from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -1046,14 +1051,16 @@ class Xilonen extends CharacterBase {
 
     if (this.convertedSamples >= 2) {
       // ≥2 PHEC elements: RES shred for each PHEC element present in the team
-      for (const el of this.teamPHEC) {
+      if (this.teamPHEC.size > 0) {
         buffs.push(
           new StatBuff(
             cbs(this, "E", ["E"]),
             {
               receiver: "team",
               filter: {
-                elements: [el as "Pyro" | "Hydro" | "Cryo" | "Electro"],
+                elements: [
+                  ...this.teamPHEC,
+                ].sort() as DamageTagFilter["elements"],
               },
             },
             [{ key: "resReduction%", value: resValue }]
