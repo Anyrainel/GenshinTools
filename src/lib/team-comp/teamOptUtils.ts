@@ -390,6 +390,28 @@ export function buildBuffOverrides(
 }
 
 /**
+ * Extract per-formula user overrides from the flat combo override store
+ * for a given combo ID.
+ *
+ * Store keys have format "combo:{comboId}:{charId}.{formulaId}".
+ * Returns a map of formulaKey → BuffActivationMap, suitable for passing
+ * to buildBuffOverrides as `comboOverrides`.
+ */
+export function extractComboOverrides(
+  storeOverrides: Record<string, BuffActivationMap>,
+  comboId: string
+): Record<string, BuffActivationMap> | undefined {
+  const prefix = `combo:${comboId}:`;
+  const result: Record<string, BuffActivationMap> = {};
+  for (const key of Object.keys(storeOverrides)) {
+    if (key.startsWith(prefix)) {
+      result[key.slice(prefix.length)] = storeOverrides[key];
+    }
+  }
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+/**
  * Aggregate per-line per-cast combo defaults into a single per-formula
  * combo-total BuffActivationMap.
  *

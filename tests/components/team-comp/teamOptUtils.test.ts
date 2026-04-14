@@ -5,6 +5,7 @@ import {
   buildTeamConfigs,
   calcComboResults,
   detectEquippedSets,
+  extractComboOverrides,
   frozenArtifactsMatchConfig,
   setsMatch,
   toStatSheets,
@@ -596,5 +597,43 @@ describe("calcComboResults", () => {
       }
     );
     expect(result).toBeNull();
+  });
+});
+
+// ── extractComboOverrides ─────────────────────────────────────────────────
+
+describe("extractComboOverrides", () => {
+  it("extracts overrides matching the given combo ID", () => {
+    const store = {
+      "combo:abc:diluc.diluc-slash": { buffA: { 0: 3 } },
+      "combo:abc:xingqiu.xingqiu-rain": { buffB: { 1: 2 } },
+      "combo:other:diluc.diluc-slash": { buffC: { 0: 1 } },
+    };
+    const result = extractComboOverrides(store, "abc");
+    expect(result).toEqual({
+      "diluc.diluc-slash": { buffA: { 0: 3 } },
+      "xingqiu.xingqiu-rain": { buffB: { 1: 2 } },
+    });
+  });
+
+  it("returns undefined when no overrides match", () => {
+    const store = {
+      "combo:other:diluc.diluc-slash": { buffA: { 0: 1 } },
+    };
+    expect(extractComboOverrides(store, "abc")).toBeUndefined();
+  });
+
+  it("returns undefined for empty store", () => {
+    expect(extractComboOverrides({}, "abc")).toBeUndefined();
+  });
+
+  it("handles __single__ combo ID (single formula mode)", () => {
+    const store = {
+      "combo:__single__:diluc.diluc-slash": { buffA: { 0: 5 } },
+    };
+    const result = extractComboOverrides(store, "__single__");
+    expect(result).toEqual({
+      "diluc.diluc-slash": { buffA: { 0: 5 } },
+    });
   });
 });

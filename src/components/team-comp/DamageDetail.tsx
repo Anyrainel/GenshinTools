@@ -51,6 +51,7 @@ import {
   buildBuffOverrides,
   buildTeamConfigs,
   calcComboResults,
+  extractComboOverrides,
   getHigherTierEquippedArtifactIds,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";
@@ -604,26 +605,20 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     const activeLines = displayCombo.lines.filter((l) => l.count > 0);
     if (activeLines.length === 0) return undefined;
 
-    // Gather user overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
-    const formulaOverrides: Record<string, BuffActivationMap> = {};
-    for (const key of Object.keys(comboStoreOverrides)) {
-      const prefix = `combo:${combo.id}:`;
-      if (key.startsWith(prefix)) {
-        const formulaKey = key.slice(prefix.length);
-        formulaOverrides[formulaKey] = comboStoreOverrides[key];
-      }
-    }
+    const formulaOverrides = extractComboOverrides(
+      comboStoreOverrides,
+      displayCombo.id
+    );
     const r = buildBuffOverrides(
       activeLines,
       teamBuild,
       artifactSheets,
       displayContext,
-      Object.keys(formulaOverrides).length > 0 ? formulaOverrides : undefined
+      formulaOverrides
     );
     return r;
   }, [
     displayCombo,
-    combo.id,
     teamBuild,
     artifactSheets,
     displayContext,
