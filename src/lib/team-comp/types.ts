@@ -167,11 +167,8 @@ export function isFieldDependentReceiver(r: BuffReceiverType): boolean {
  * Is this character on-field in the given field configuration?
  * When nobody is specified as on-field (null), everyone is off-field.
  */
-export function isOnField(
-  charId: string,
-  onFieldCharId: string | null
-): boolean {
-  return onFieldCharId !== null && charId === onFieldCharId;
+export function isOnField(charId: string, onFieldCharId: string): boolean {
+  return charId === onFieldCharId;
 }
 
 /** Extract the field requirement from a receiver type. null = field-independent. */
@@ -338,6 +335,9 @@ export type DisplayPart = {
 export type ResolvedStatEntry = StatEntry & {
   cap?: number;
   inputKey?: StatKey;
+  /** When present, value varies across on-field contexts. Shows range in UI. */
+  minValue?: number;
+  maxValue?: number;
 };
 
 /** A single buff, pre-resolved for display. */
@@ -528,7 +528,7 @@ export function resolveComboDescriptor(
 // ─── Combo Formulas (Rotation Modeling) ───
 
 export type ComboLine = {
-  charId: string; // whose formula (also the on-field character)
+  charId: string; // whose formula (on-field for on-field parts only)
   formulaId: string; // which formula from that character
   count: number; // repetitions (e.g., 9)
   reaction?: ReactionOverride; // per-line reaction override

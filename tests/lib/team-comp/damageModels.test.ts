@@ -10,12 +10,14 @@ import {
   StatBuff,
   StatSheet,
   TeamMeta,
+  appendFieldState,
   createCharacter,
   createWeapon,
   getEntityOption,
   resolveOption,
 } from "@/lib/team-comp/damageModels";
 import type { OptionDef } from "@/lib/team-comp/damageModels";
+import type { DamageTag } from "@/lib/team-comp/types";
 
 // Side-effect barrel: register all characters, weapons, artifacts
 import "@/lib/team-comp/index";
@@ -145,6 +147,179 @@ describe("StatSheet", () => {
     expect(sheet.get("dmg%", pyroTag)).toBeCloseTo(0.288);
     expect(sheet.get("dmg%", hydroTag)).toBe(0);
     expect(sheet.getRaw("pyro%")).toBe(0);
+  });
+});
+
+describe("StatSheet field-state (withFieldState / mergeEntries)", () => {
+  const pyroTag: DamageTag = {
+    ability: "burst",
+    element: "Pyro",
+    reaction: "none",
+  };
+
+  it("withFieldState('on') includes universal + on-field entries, excludes off-field", () => {
+    // Build a unified sheet with universal, on-field, and off-field entries
+    const sheet = new StatSheet([{ key: "baseAtk", value: 100 }]);
+    const merged = sheet
+      .mergeEntries([{ key: "atk%", value: 0.3 }]) // universal atk%
+      .mergeEntries([{ key: "atk%", value: 0.2 }], "on") // on-field only
+      .mergeEntries([{ key: "atk%", value: 0.1 }], "off"); // off-field only
+
+    const onView = merged.withFieldState("on");
+    const offView = merged.withFieldState("off");
+
+    // on-field: base 100 × (1 + 0.3 + 0.2) = 150
+    expect(onView.get("atk", null)).toBeCloseTo(150);
+    // off-field: base 100 × (1 + 0.3 + 0.1) = 140
+    expect(offView.get("atk", null)).toBeCloseTo(140);
+    // no field state: base 100 × (1 + 0.3) = 130 (only universal)
+    expect(merged.get("atk", null)).toBeCloseTo(130);
+
+    // Scaled stat + tag: field-state-only entries must NOT be double-counted.
+    // getUniversal already includes them; the tag loop must skip field-state-only entries.
+    expect(onView.get("atk", pyroTag)).toBeCloseTo(150);
+    expect(offView.get("atk", pyroTag)).toBeCloseTo(140);
+  });
+
+  it("scaled stat with flat + pct field-state entries and tag — no double counting", () => {
+    // Simulates Bennett scenario: flat ATK on-field + baseAtk universal
+    const sheet = new StatSheet([
+      { key: "baseAtk", value: 800 },
+      { key: "atk%", value: 0.5 },
+    ])
+      .mergeEntries([{ key: "atk", value: 747 }], "on") // Bennett flat ATK on-field
+      .mergeEntries([{ key: "atk%", value: 0.15 }], "on"); // some on-field ATK% buff
+
+    const onView = sheet.withFieldState("on");
+    // ATK = 800 × (1 + 0.5 + 0.15) + 747 = 800 × 1.65 + 747 = 1320 + 747 = 2067
+    expect(onView.get("atk", null)).toBeCloseTo(2067);
+    // With tag: must be the SAME (no damage-dimension filtered ATK entries)
+    expect(onView.get("atk", pyroTag)).toBeCloseTo(2067);
+
+    const offView = sheet.withFieldState("off");
+    // Off-field: ATK = 800 × (1 + 0.5) + 0 = 1200
+    expect(offView.get("atk", null)).toBeCloseTo(1200);
+    expect(offView.get("atk", pyroTag)).toBeCloseTo(1200);
+  });
+
+  it("withFieldState filters field-tagged entries in non-scaled stats", () => {
+    const sheet = new StatSheet([])
+      .mergeEntries([{ key: "dmg%", value: 0.2 }]) // universal
+      .mergeEntries([{ key: "dmg%", value: 0.15 }], "on")
+      .mergeEntries([{ key: "dmg%", value: 0.05 }], "off");
+
+    const onView = sheet.withFieldState("on");
+    const offView = sheet.withFieldState("off");
+
+    // With a tag, field-state-only entries (f:on) match any damage tag
+    expect(onView.get("dmg%", pyroTag)).toBeCloseTo(0.35); // 0.2 + 0.15
+    expect(offView.get("dmg%", pyroTag)).toBeCloseTo(0.25); // 0.2 + 0.05
+    // With null tag: getUniversal includes field-state-only entries matching the view.
+    // Field-state entries are semantically universal within a resolved view.
+    expect(onView.get("dmg%", null)).toBeCloseTo(0.35); // 0.2 + 0.15
+    expect(offView.get("dmg%", null)).toBeCloseTo(0.25); // 0.2 + 0.05
+  });
+
+  it("field-state + damage tag filters combine correctly", () => {
+    // Entry with both field state AND damage tag filter via mergeEntries
+    const base = new StatSheet([])
+      .mergeEntries([{ key: "dmg%", value: 0.1 }]) // universal
+      .mergeEntries(
+        [{ key: "dmg%", value: 0.4, filter: { abilities: ["burst"] } }],
+        "on"
+      );
+
+    const onView = base.withFieldState("on");
+    const offView = base.withFieldState("off");
+
+    // on-field + burst tag → 0.1 (universal) + 0.4 (matches both field and tag)
+    expect(onView.get("dmg%", pyroTag)).toBeCloseTo(0.5);
+    // off-field + burst tag → 0.1 (universal) only (field state mismatch)
+    expect(offView.get("dmg%", pyroTag)).toBeCloseTo(0.1);
+    // on-field + null tag → 0.1 (universal) only (tag is null, skip tagged entries)
+    expect(onView.get("dmg%", null)).toBeCloseTo(0.1);
+  });
+
+  it("getRaw ignores field-state entirely", () => {
+    const sheet = new StatSheet([{ key: "atk%", value: 0.5 }]).mergeEntries(
+      [{ key: "atk%", value: 0.3 }],
+      "on"
+    );
+
+    // getRaw always returns EMPTY_FILTER_KEY only
+    expect(sheet.getRaw("atk%")).toBeCloseTo(0.5);
+    expect(sheet.withFieldState("on").getRaw("atk%")).toBeCloseTo(0.5);
+  });
+
+  it("mergeEntries with field state tags entries correctly", () => {
+    const sheet = new StatSheet([{ key: "baseAtk", value: 200 }])
+      .mergeEntries(
+        [
+          { key: "atk", value: 100 },
+          { key: "atk%", value: 0.5 },
+        ],
+        "on"
+      )
+      .mergeEntries([{ key: "atk", value: 50 }], "off");
+
+    const onView = sheet.withFieldState("on");
+    const offView = sheet.withFieldState("off");
+
+    // on: 200 × (1 + 0.5) + 100 = 400
+    expect(onView.get("atk", null)).toBeCloseTo(400);
+    // off: 200 × (1 + 0) + 50 = 250
+    expect(offView.get("atk", null)).toBeCloseTo(250);
+  });
+
+  it("merge preserves field-state tags from both sheets", () => {
+    const a = new StatSheet([{ key: "baseAtk", value: 100 }]).mergeEntries(
+      [{ key: "atk%", value: 0.2 }],
+      "on"
+    );
+    const b = new StatSheet([]).mergeEntries(
+      [{ key: "atk%", value: 0.1 }],
+      "off"
+    );
+    const merged = a.merge(b);
+
+    expect(merged.withFieldState("on").get("atk", null)).toBeCloseTo(120); // 100 × (1 + 0.2)
+    expect(merged.withFieldState("off").get("atk", null)).toBeCloseTo(110); // 100 × (1 + 0.1)
+  });
+
+  it("multiplicative stats respect field-state filtering", () => {
+    const sheet = new StatSheet([])
+      .mergeEntries([{ key: "baseDmg%", value: 0.5 }]) // universal
+      .mergeEntries([{ key: "baseDmg%", value: 0.3 }], "on")
+      .mergeEntries([{ key: "baseDmg%", value: 0.1 }], "off");
+
+    const onView = sheet.withFieldState("on");
+    const offView = sheet.withFieldState("off");
+
+    // baseDmg% is multiplicative across DIFFERENT filter keys, but field-state-only
+    // entries are additive within the universal pool (they're semantically universal
+    // in a resolved view). So on-field = 0.5 + 0.3 = 0.8, off-field = 0.5 + 0.1 = 0.6.
+    expect(onView.get("baseDmg%", pyroTag)).toBeCloseTo(0.8);
+    expect(offView.get("baseDmg%", pyroTag)).toBeCloseTo(0.6);
+  });
+
+  it("appendFieldState produces correct filter keys", () => {
+    expect(appendFieldState("", "on")).toBe("f:on");
+    expect(appendFieldState("", "off")).toBe("f:off");
+    expect(appendFieldState("a:burst", "on")).toBe("a:burst|f:on");
+    expect(appendFieldState("a:burst|e:Pyro", "off")).toBe(
+      "a:burst|e:Pyro|f:off"
+    );
+  });
+
+  it("withFieldState is a lightweight view (shares data)", () => {
+    const sheet = new StatSheet([
+      { key: "baseAtk", value: 100 },
+      { key: "atk%", value: 0.5 },
+    ]);
+    const view = sheet.withFieldState("on");
+    // Both should return the same values for universal entries
+    expect(view.get("atk", null)).toBeCloseTo(150);
+    expect(sheet.get("atk", null)).toBeCloseTo(150);
   });
 });
 

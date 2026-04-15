@@ -446,6 +446,8 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                       value: e.value,
                       inputKey: e.inputKey,
                       cap: e.cap,
+                      minValue: e.minValue,
+                      maxValue: e.maxValue,
                     })),
                   ].map((entry, i) => (
                     <StatEntryRow key={i} entry={entry} t={t} />

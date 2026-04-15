@@ -14,6 +14,7 @@
  *   --update         Overwrite golden file with new results
  *   --filter PAT     Filter teams by name (case-insensitive substring)
  *   --verbose        Print per-team progress
+ *   --quiet          Only print summary + regressions (used by npm run test)
  *   --seed N         Override PRNG seed (default: 0xDEADBEEF)
  *
  * Usage:
@@ -54,6 +55,7 @@ function parseArgs(): {
   update: boolean;
   filter: string | null;
   verbose: boolean;
+  quiet: boolean;
   seed: number;
 } {
   const args = process.argv.slice(2);
@@ -61,6 +63,7 @@ function parseArgs(): {
   let update = false;
   let filter: string | null = null;
   let verbose = false;
+  let quiet = false;
   let seed = PRNG_SEED;
 
   for (let i = 0; i < args.length; i++) {
@@ -73,12 +76,14 @@ function parseArgs(): {
       filter = args[++i];
     } else if (arg === "--verbose") {
       verbose = true;
+    } else if (arg === "--quiet") {
+      quiet = true;
     } else if (arg === "--seed" && i + 1 < args.length) {
       seed = Number.parseInt(args[++i], 10);
     }
   }
 
-  return { command, update, filter, verbose, seed };
+  return { command, update, filter, verbose, quiet, seed };
 }
 
 // ─── Main ────────────────────────────────────────────────────────────────────
@@ -221,9 +226,11 @@ async function main() {
     const teamName = newTeam?.teamName || oldTeam?.teamName || teamId;
 
     if (!oldTeam) {
-      console.log(
-        `${C.cyan}team "${teamName}" — NEW (not in golden file)${C.reset}`
-      );
+      if (!opts.quiet) {
+        console.log(
+          `${C.cyan}team "${teamName}" — NEW (not in golden file)${C.reset}`
+        );
+      }
       teamDiffs.set(teamId, [
         { path: "(new team)", old: undefined, new: "added" },
       ]);
@@ -231,9 +238,11 @@ async function main() {
     }
 
     if (!newTeam) {
-      console.log(
-        `${C.yellow}team "${teamName}" — REMOVED (in golden but not in current run)${C.reset}`
-      );
+      if (!opts.quiet) {
+        console.log(
+          `${C.yellow}team "${teamName}" — REMOVED (in golden but not in current run)${C.reset}`
+        );
+      }
       teamDiffs.set(teamId, [
         { path: "(removed team)", old: "present", new: undefined },
       ]);
@@ -243,7 +252,9 @@ async function main() {
     const diffs: DiffEntry[] = [];
     deepDiff(oldTeam, newTeam, "", diffs);
     teamDiffs.set(teamId, diffs);
-    console.log(formatTeamDiff(teamName, diffs));
+    if (!opts.quiet) {
+      console.log(formatTeamDiff(teamName, diffs));
+    }
   }
 
   console.log(formatSummary(allTeamIds.size, teamDiffs));

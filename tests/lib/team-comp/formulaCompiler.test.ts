@@ -28,6 +28,7 @@ import {
   fillVarsFromArtifacts,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
+import { defaultOnFieldCharId } from "@/lib/team-comp/reactionResolve";
 import {
   type CalcContext,
   type ComboFormula,
@@ -1151,8 +1152,7 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
 
 // ─── Combo formula compiled pipeline fuzz ───
 
-// TODO: two-pass evaluateCombo changes broke combo↔compiled parity — fix in formulaCompiler
-describe.skip("compileComboTeamDamage fuzz", () => {
+describe("compileComboTeamDamage fuzz", () => {
   const rv = getRollValues();
 
   /** Build a combo formula from all formulas of all characters + team reactions. */
@@ -1955,8 +1955,7 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
 // as a 1-line combo produces identical damage to the standard single-formula path.
 // ═══════════════════════════════════════════════════════════════
 
-// TODO: two-pass evaluateCombo changes broke combo↔compiled parity — fix in formulaCompiler
-describe.skip("single→combo normalization parity", () => {
+describe("single→combo normalization parity", () => {
   const rv = getRollValues();
 
   function testNormalization(label: string, configs: TeamSlotConfig[]) {
@@ -2028,8 +2027,7 @@ describe.skip("single→combo normalization parity", () => {
 // This is the core of the team allocation compiled evaluation.
 // ═══════════════════════════════════════════════════════════════
 
-// TODO: two-pass evaluateCombo changes broke combo↔compiled parity — fix in formulaCompiler
-describe.skip("multi-char variable compilation parity", () => {
+describe("multi-char variable compilation parity", () => {
   const rv = getRollValues();
 
   function buildFullCombo(tb: TeamBuild): ComboFormula {
@@ -2648,7 +2646,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       !reactionOverride?.forceOnField &&
       (entry?.parts.some((p) => p.offField) ?? false);
     const offFieldTeamStats = hasOff
-      ? tb.getTeamStats(sheets, null, ctx)
+      ? tb.getTeamStats(sheets, defaultOnFieldCharId(charId, tb.configs), ctx)
       : undefined;
     const statsVariants =
       dist.length > 0
@@ -2665,7 +2663,12 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
             dist,
             entry.parts,
             (excludeSet) =>
-              tb.getTeamStatsExcluding(sheets, null, ctx, excludeSet)[charId]!
+              tb.getTeamStatsExcluding(
+                sheets,
+                defaultOnFieldCharId(charId, tb.configs),
+                ctx,
+                excludeSet
+              )[charId]!
           )
         : undefined;
     const calcDmg = tb.getDamageResult(
@@ -2725,7 +2728,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
 
   // ── Single-formula cross-path fuzzer ──
   // TODO: two-pass evaluateCombo changes broke compile↔display parity — fix in formulaCompiler
-  it.skip("random teams: cross-path agreement (single formula)", () => {
+  it("random teams: cross-path agreement (single formula)", () => {
     const errors: string[] = [];
     let trials = 0;
 

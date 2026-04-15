@@ -181,7 +181,7 @@ describe("isBuffApplicable — buff routing", () => {
         isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao", false)
       ).toBe(true);
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao", null)
+        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao", true)
       ).toBe(true);
     });
   });
@@ -216,17 +216,6 @@ describe("isBuffApplicable — buff routing", () => {
           "xingqiu",
           "hu_tao",
           true
-        )
-      ).toBe(false);
-    });
-
-    it("is skipped during construction (selfIsOnField=null)", () => {
-      expect(
-        isBuffApplicable(
-          makeBuff("xingqiu", "selfOffField"),
-          "xingqiu",
-          "xingqiu",
-          null
         )
       ).toBe(false);
     });
@@ -265,17 +254,6 @@ describe("isBuffApplicable — buff routing", () => {
         )
       ).toBe(false);
     });
-
-    it("is skipped during construction (selfIsOnField=null)", () => {
-      expect(
-        isBuffApplicable(
-          makeBuff("hu_tao", "selfOnField"),
-          "hu_tao",
-          "hu_tao",
-          null
-        )
-      ).toBe(false);
-    });
   });
 
   describe('receiver: "teamOnField"', () => {
@@ -301,17 +279,6 @@ describe("isBuffApplicable — buff routing", () => {
         )
       ).toBe(false);
     });
-
-    it("is skipped during construction (selfIsOnField=null)", () => {
-      expect(
-        isBuffApplicable(
-          makeBuff("bennett", "teamOnField"),
-          "bennett",
-          "hu_tao",
-          null
-        )
-      ).toBe(false);
-    });
   });
 
   describe('receiver: "team"', () => {
@@ -328,7 +295,12 @@ describe("isBuffApplicable — buff routing", () => {
         )
       ).toBe(true);
       expect(
-        isBuffApplicable(makeBuff("zhongli", "team"), "zhongli", "hu_tao", null)
+        isBuffApplicable(
+          makeBuff("zhongli", "team"),
+          "zhongli",
+          "hu_tao",
+          false
+        )
       ).toBe(true);
     });
   });
@@ -593,6 +565,92 @@ describe("TeamBuild lifecycle", () => {
       // Mona also receives her own team buff (receiver: "team" applies to all)
       const monaDmg = statsWithDiluc.mona!.get("dmg%", null);
       expect(monaDmg).toBeGreaterThanOrEqual(0.6);
+    });
+  });
+
+  describe("getTeamStats field-state: Bennett team", () => {
+    // Bennett's Q gives teamOnField ATK buff — should only appear when on-field
+    const bennettConfigs: TeamSlotConfig[] = [
+      {
+        charId: "diluc",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "bennett",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "aquila_favonia",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const bennettTb = new TeamBuild(bennettConfigs);
+    const bennettEmpty: Record<string, StatSheet> = {
+      diluc: new StatSheet([]),
+      bennett: new StatSheet([]),
+    };
+
+    it("on-field Diluc gets Bennett's ATK buff, off-field doesn't", () => {
+      // With Diluc on-field, he receives Bennett's teamOnField ATK
+      const onFieldStats = bennettTb.getTeamStats(bennettEmpty, "diluc");
+      const dilucAtkOnField = onFieldStats.diluc!.get("atk", null);
+
+      // With Bennett on-field, Diluc is off-field and doesn't get teamOnField buff
+      const offFieldStats = bennettTb.getTeamStats(bennettEmpty, "bennett");
+      const dilucAtkOffField = offFieldStats.diluc!.get("atk", null);
+
+      // On-field ATK should be higher due to Bennett's buff
+      expect(dilucAtkOnField).toBeGreaterThan(dilucAtkOffField);
+    });
+
+    it("Bennett's own ATK differs between on-field and off-field", () => {
+      const statsWithBennett = bennettTb.getTeamStats(bennettEmpty, "bennett");
+      const bennettAtkOnField = statsWithBennett.bennett!.get("atk", null);
+
+      const statsWithDiluc = bennettTb.getTeamStats(bennettEmpty, "diluc");
+      const bennettAtkOffField = statsWithDiluc.bennett!.get("atk", null);
+
+      // When Bennett is on-field, he gets his own teamOnField ATK buff
+      // When Diluc is on-field, Bennett is off-field and doesn't get it
+      expect(bennettAtkOnField).toBeGreaterThan(bennettAtkOffField);
+    });
+
+    it("unified stats contain both on-field and off-field via withFieldState", () => {
+      const unified = bennettTb.getTeamStatsUnified(bennettEmpty, "diluc");
+      const dilucOn = unified.diluc!.withFieldState("on");
+      const dilucOff = unified.diluc!.withFieldState("off");
+      const dilucAtkOn = dilucOn.get("atk", null);
+      const dilucAtkOff = dilucOff.get("atk", null);
+
+      // On-field should have Bennett's buff, off-field shouldn't
+      expect(dilucAtkOn).toBeGreaterThan(dilucAtkOff);
+    });
+
+    it("unified withFieldState('on') matches legacy getTeamStats on-field", () => {
+      const legacyStats = bennettTb.getTeamStats(bennettEmpty, "diluc");
+      const unified = bennettTb.getTeamStatsUnified(bennettEmpty, "diluc");
+
+      const legacyAtk = legacyStats.diluc!.get("atk", null);
+      const unifiedAtk = unified.diluc!.withFieldState("on").get("atk", null);
+
+      expect(unifiedAtk).toBeCloseTo(legacyAtk, 2);
+    });
+
+    it("unified withFieldState('off') matches legacy getTeamStats off-field", () => {
+      // Off-field = getTeamStats with Bennett on-field (Diluc is off-field)
+      const legacyStats = bennettTb.getTeamStats(bennettEmpty, "bennett");
+      const unified = bennettTb.getTeamStatsUnified(bennettEmpty, "bennett");
+
+      const legacyAtk = legacyStats.diluc!.get("atk", null);
+      const unifiedAtk = unified.diluc!.withFieldState("off").get("atk", null);
+
+      expect(unifiedAtk).toBeCloseTo(legacyAtk, 2);
     });
   });
 
@@ -2724,8 +2782,8 @@ describe("Two-pass dynamic buffs", () => {
     // With Shenhe on-field (Bennett Q applies to on-field)
     const statsOnField = tb.getTeamStats(emptySheets, "shenhe", ctx);
 
-    // Without Bennett's ATK buff (off-field, Bennett Q is teamOnField)
-    const statsOffField = tb.getTeamStats(emptySheets, null, ctx);
+    // Without Bennett's ATK buff (Shenhe off-field, Bennett on-field)
+    const statsOffField = tb.getTeamStats(emptySheets, "bennett", ctx);
 
     const shenheAtkOnField = statsOnField.shenhe!.get("atk", null);
     const shenheAtkOffField = statsOffField.shenhe!.get("atk", null);
@@ -2876,8 +2934,8 @@ describe("Unified field-state StatSheet", () => {
   it("unified off-field view matches legacy off-field stats", () => {
     const tb = new TeamBuild(configs);
 
-    // Legacy: off-field uses onFieldCharId=null
-    const legacyOffField = tb.getTeamStats(emptySheets, null, ctx);
+    // Legacy: off-field uses Bennett as on-field (Shenhe is off-field)
+    const legacyOffField = tb.getTeamStats(emptySheets, "bennett", ctx);
 
     // Unified: built with onFieldCharId="shenhe"
     const unified = tb.getTeamStatsUnified(emptySheets, "shenhe", ctx);

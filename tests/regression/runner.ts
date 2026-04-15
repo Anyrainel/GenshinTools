@@ -838,8 +838,7 @@ export function formatSummary(
 ): string {
   let changedTeams = 0;
   let totalDiffs = 0;
-  let improved = 0;
-  let regressed = 0;
+  let damageChanges = 0;
 
   for (const [, diffs] of teamDiffs) {
     if (diffs.length > 0) {
@@ -847,10 +846,8 @@ export function formatSummary(
       totalDiffs += diffs.length;
       for (const d of diffs) {
         if (d.path === "damage" || d.path === "comboResult.totalDamage") {
-          if (d.pctChange != null) {
-            if (d.pctChange > 0) improved++;
-            else if (d.pctChange < 0) regressed++;
-          }
+          if (d.pctChange != null && Math.abs(d.pctChange) > 1e-6)
+            damageChanges++;
         }
       }
     }
@@ -860,9 +857,9 @@ export function formatSummary(
     "",
     `${C.bold}Summary:${C.reset} ${totalTeams} teams, ${changedTeams} with changes, ${totalDiffs} diffs total`,
   ];
-  if (improved > 0 || regressed > 0) {
+  if (damageChanges > 0) {
     lines.push(
-      `  Damage: ${C.green}${improved} improved${C.reset}, ${C.red}${regressed} regressed${C.reset}`
+      `  Damage: ${C.red}${damageChanges} changed${C.reset} (any change = regression)`
     );
   }
   return lines.join("\n");
@@ -872,7 +869,7 @@ export function hasRegressions(teamDiffs: Map<string, DiffEntry[]>): boolean {
   for (const [, diffs] of teamDiffs) {
     for (const d of diffs) {
       if (d.path === "damage" || d.path === "comboResult.totalDamage") {
-        if (d.pctChange != null && d.pctChange < -1e-6) return true;
+        if (d.pctChange != null && Math.abs(d.pctChange) > 1e-6) return true;
       }
     }
   }

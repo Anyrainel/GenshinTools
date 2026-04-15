@@ -1,19 +1,23 @@
-/
-  Cache-Control: no-cache, no-store, must-revalidate
-  Pragma: no-cache
-  Expires: 0
-  CDN-Cache-Control: max-age=60
+# === DEFAULT: no-cache for HTML / SPA routes ===
+# Catch-all must come first. More-specific rules below override it for
+# static assets. This ensures SPA-rewritten paths (/optimizer, /team-comp,
+# etc.) that serve index.html content get proper no-cache headers — the
+# old /index.html-only rule didn't cover rewritten paths.
+/*
+  Cache-Control: no-cache, must-revalidate
+  CDN-Cache-Control: no-store
+  X-Content-Type-Options: nosniff
 
-/index.html
-  Cache-Control: no-cache, no-store, must-revalidate
-  Pragma: no-cache
-  Expires: 0
-  CDN-Cache-Control: max-age=60
-
+# === HASHED BUILD ASSETS (Vite output) ===
+# Filename contains content hash — safe to cache forever.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
   CDN-Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
 
+# === STATIC GAME DATA (images, icons) ===
+# Unhashed but rarely change. 30-day browser cache + 1-day SWR.
+# CDN cache same duration — purged automatically on each Pages deploy.
 /artifact/*
   Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
@@ -50,6 +54,7 @@
   Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
+# === GOOD DATA (CORS-enabled exports) ===
 /good/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=604800

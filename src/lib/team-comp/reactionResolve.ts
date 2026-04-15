@@ -11,7 +11,7 @@
  */
 
 import type { FormulaPart } from "./damageModels";
-import type { ComboLine, ReactionOverride } from "./types";
+import type { ComboLine, ReactionOverride, TeamSlotConfig } from "./types";
 
 /**
  * Returns true when the (line-level) reaction config forces off-field parts
@@ -41,4 +41,39 @@ export function getLineReaction(
   line: ComboLine | undefined | null
 ): ReactionOverride | undefined {
   return line?.reaction;
+}
+
+/**
+ * The default on-field character to use when the formula owner is off-field.
+ * Returns the first team member that isn't the formula owner.
+ * This eliminates the concept of "nobody on-field" (null).
+ */
+export function defaultOnFieldCharId(
+  charId: string,
+  configs: TeamSlotConfig[]
+): string {
+  const other = configs.find((c) => c.charId !== charId);
+  // Single-character team: the only on-field option is the character itself.
+  return other ? other.charId : charId;
+}
+
+/**
+ * Precompute the on-field character ID for each formula part.
+ *
+ * - On-field parts → the formula owner is on-field (onFieldCharId = charId)
+ * - Off-field parts → use defaultOnFieldCharId (first other team member)
+ *
+ * This produces a deterministic array that can be used as
+ * `partOnFieldCharIds[partIdx]` without any further branching.
+ */
+export function resolvePartOnFieldCharIds(
+  parts: readonly (FormulaPart | { offField?: boolean })[],
+  charId: string,
+  configs: TeamSlotConfig[],
+  reaction?: ReactionOverride
+): string[] {
+  const defaultOther = defaultOnFieldCharId(charId, configs);
+  return parts.map((part) =>
+    isPartOffField(part, reaction) ? defaultOther : charId
+  );
 }

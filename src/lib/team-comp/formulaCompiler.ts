@@ -34,7 +34,7 @@ import type { CharacterBase, FormulaPart } from "./damageModels";
 import { StatBuff, StatSheet, bespokeMaxStacks } from "./damageModels";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
-import { isPartOffField } from "./reactionResolve";
+import { defaultOnFieldCharId, isPartOffField } from "./reactionResolve";
 import type { PartialBuffInfo } from "./stackAllocation";
 import { LUNAR_RANK_WEIGHTS } from "./teamReactions";
 import type {
@@ -45,11 +45,11 @@ import type {
   ReactionOverride,
   ReactionType,
   StatKey,
+  TeamSlotConfig,
 } from "./types";
 import {
   type FieldState,
   exclusionKey,
-  fieldReq,
   isFinalStatKey,
   isOnField,
   resolvePartReaction,
@@ -188,17 +188,29 @@ function buildPostExprStatsForContext(
  * `supportPreStats` from `unifiedFieldDep`.
  *
  * @param fs When "actual", each char uses their actual field state based on
- *   onFieldCharId. When "off", all chars are treated as off-field.
+ *   onFieldCharId. When "off", the formula owner is off-field and the first
+ *   other team member is on-field.
+ * @param configs Team configs, required when fs="off" to determine the
+ *   default on-field character.
  */
 function resolveOptCtxForFieldState(
   optCtx: OptimizerContext,
-  fs: "actual" | "off"
+  fs: "actual" | "off",
+  configs?: TeamSlotConfig[]
 ): OptimizerContext {
   const { charBuildOrder, unifiedFieldDep, baseSheets } = optCtx;
   if (!unifiedFieldDep)
     throw new Error("resolveOptCtxForFieldState requires unified OptCtx");
 
-  const onFieldCharId = fs === "actual" ? optCtx.onFieldCharId : null;
+  if (fs === "off" && !configs)
+    throw new Error(
+      "resolveOptCtxForFieldState requires configs when fs='off'"
+    );
+
+  const onFieldCharId =
+    fs === "actual"
+      ? optCtx.onFieldCharId
+      : defaultOnFieldCharId(optCtx.onFieldCharId, configs!);
 
   // Build resolved targetDependent + supportPreStats from unifiedFieldDep
   const targetDependent: Record<string, ProvidedStaticBuff[]> = {};
@@ -249,7 +261,10 @@ function buildUnifiedPostExprStatsForContext(
 
 /**
  * Build off-field-resolved postExprStats from a unified optimizer context.
- * All characters are treated as off-field.
+ *
+ * The formula character is off-field; the first other team member is on-field
+ * (matching `defaultOnFieldCharId` in the calc path). Each character gets
+ * field-dependent buffs based on their actual field state.
  */
 function buildOffFieldPostExprStatsForContext(
   teamBuild: TeamBuild,
@@ -257,19 +272,103 @@ function buildOffFieldPostExprStatsForContext(
   varMapping: VarMapping,
   calcContext: CalcContext
 ): Record<string, ExprStats> {
-  const resolvedCtx = resolveOptCtxForFieldState(optCtx, "off");
-  return buildPostExprStatsForContext(
-    teamBuild,
-    resolvedCtx,
-    varMapping,
-    calcContext
+  const { charBuildOrder, unifiedFieldDep, baseSheets, variableCharIds } =
+    optCtx;
+  if (!unifiedFieldDep)
+    throw new Error(
+      "buildOffFieldPostExprStatsForContext requires unified OptCtx"
+    );
+
+  // The formula owner (optCtx.onFieldCharId) is off-field for off-field parts.
+  // Determine who IS on-field: the first other team member.
+  const offFieldOnFieldCharId = defaultOnFieldCharId(
+    optCtx.onFieldCharId,
+    teamBuild.configs
   );
+
+  const emptySheet = new StatSheet([]);
+
+  // Each character gets field-dependent buffs based on their actual field state.
+  // The formula owner is off-field; the default-other is on-field.
+  const targetDependent: Record<string, ProvidedStaticBuff[]> = {};
+  const supportPreStats: Record<string, StatSheet> = {};
+  const variableBaselines: Record<string, StatSheet> = {};
+
+  for (const [id, build] of charBuildOrder) {
+    const dep = unifiedFieldDep[id]!;
+    const isOn = isOnField(id, offFieldOnFieldCharId);
+    const buffs = isOn ? dep.onField : dep.offField;
+    targetDependent[id] = buffs;
+
+    if (!variableCharIds.has(id)) {
+      supportPreStats[id] = build.getPreStats(
+        baseSheets[id] ?? new StatSheet([]),
+        buffs
+      );
+    } else {
+      variableBaselines[id] = build.getPreStats(emptySheet, buffs);
+    }
+  }
+
+  // Build receiver ExprStats with field-state-appropriate baselines
+  const exprStatsMap: Record<string, ExprStats> = {};
+  for (const [id] of charBuildOrder) {
+    if (variableCharIds.has(id)) {
+      const charIdx = charBuildOrder.findIndex(([cid]) => cid === id);
+      exprStatsMap[id] = createExprStats(
+        variableBaselines[id],
+        charIdx,
+        varMapping,
+        new Set(ARTIFACT_STAT_KEYS)
+      );
+    } else {
+      exprStatsMap[id] = createExprStats(
+        supportPreStats[id]!,
+        -1,
+        varMapping,
+        new Set()
+      );
+    }
+  }
+
+  // Two-pass dynamic buff collection with proper field state.
+  const receiverCtx: OptimizerContext = {
+    ...optCtx,
+    onFieldCharId: offFieldOnFieldCharId,
+    targetDependent,
+    supportPreStats,
+  };
+
+  const postExprStats = collectAndApplyDynamicBuffExprsTwoPass(
+    teamBuild,
+    exprStatsMap,
+    variableCharIds,
+    supportPreStats,
+    variableBaselines,
+    receiverCtx
+  );
+
+  if (calcContext.perCharCrTarget) {
+    for (const [id, target] of Object.entries(calcContext.perCharCrTarget)) {
+      if (postExprStats[id]) {
+        const crDelta = (100 - target) / 100;
+        postExprStats[id] = postExprStats[id].withMergedConst([
+          { key: "cr", value: crDelta },
+        ]);
+      }
+    }
+  } else if (calcContext.critRateTarget != null) {
+    const crDelta = (100 - calcContext.critRateTarget) / 100;
+    for (const id of Object.keys(postExprStats)) {
+      postExprStats[id] = postExprStats[id].withMergedConst([
+        { key: "cr", value: crDelta },
+      ]);
+    }
+  }
+
+  return postExprStats;
 }
 
-/**
- * Build unified postExprStats excluding certain buffs.
- * Used for partial buff variant building in the unified compiler path.
- */
 function buildUnifiedPostExprStatsExcluding(
   teamBuild: TeamBuild,
   optCtx: OptimizerContext,
@@ -451,8 +550,8 @@ function buildExprStatVariants(
 }
 
 /**
- * Build unified ExprStats variants for exclusion combinations.
- * Uses unified exclusion baselines so variants support withFieldState() views.
+ * Build field-state-tagged ExprStats variants for exclusion combinations.
+ * Returns unified ExprStats — callers use withFieldState() for per-part views.
  */
 function buildUnifiedExprStatVariants(
   partialBuffs: PartialBuffInfo[],
@@ -557,9 +656,9 @@ export function compileComboTeamDamage(
   const varMapping = new VarMapping();
   const allPartExprs: Expr[] = [];
   const configs = teamBuild.configs;
-  // Each calc target (formula owner) is on-field when executing their formula.
-  // Build resolved ExprStats from unified OptCtx — on-field for main stats,
-  // off-field separately for off-field formula parts.
+  // Each formula owner is on-field for their on-field parts.
+  // Build unified ExprStats with field-state tags; off-field parts use
+  // a separate off-field ExprStats built lazily per calc target.
   for (const [onFieldCharId, lines] of linesByCalcTarget) {
     const optCtx = teamBuild.createUnifiedOptimizerContext(
       baseSheets,
@@ -650,7 +749,7 @@ export function compileComboTeamDamage(
 
       const effectiveReaction = line.reaction;
 
-      // On-field stats for the formula character
+      // On-field stats for the formula character (from field-state view)
       const formulaStats = postExprStats[line.charId]!;
       const hasOffField = entry.parts.some((p) =>
         isPartOffField(p, effectiveReaction)
@@ -681,7 +780,11 @@ export function compileComboTeamDamage(
         );
         // Off-field variants if needed
         if (hasOffField) {
-          const offFieldOptCtx = resolveOptCtxForFieldState(optCtx, "off");
+          const offFieldOptCtx = resolveOptCtxForFieldState(
+            optCtx,
+            "off",
+            teamBuild.configs
+          );
           lineOffFieldVariants = buildExprStatVariants(
             lineBuffs,
             entry.parts,
@@ -901,8 +1004,20 @@ function collectAndApplyDynamicBuffExprsTwoPass(
   supportPreStats: Record<string, StatSheet>,
   variableBaselines: Record<string, StatSheet>,
   optCtx: OptimizerContext,
-  excludeKeys?: Set<string>
+  excludeKeys?: Set<string>,
+  /** Provider-resolved ExprStats for ScalingBuff evaluation. When provided,
+   *  collectSingleBuffExprs reads provider stats from this map instead of
+   *  exprStatsMap. Used by the off-field path where receiver baselines are
+   *  off-field but providers should see their actual field state. */
+  providerExprStats?: Record<string, ExprStats>,
+  providerSupportPreStats?: Record<string, StatSheet>,
+  providerVariableBaselines?: Record<string, StatSheet>
 ): Record<string, ExprStats> {
+  const effectiveProviderExpr = providerExprStats ?? exprStatsMap;
+  const effectiveProviderSupport = providerSupportPreStats ?? supportPreStats;
+  const effectiveProviderBaselines =
+    providerVariableBaselines ?? variableBaselines;
+
   // Build teamPreStatsArr at baseline (variable chars use empty-sheet baselines,
   // non-variable chars use supportPreStats). Used for fallback numeric evaluation
   // of opaque dynamicBuffs (e.g. Nahida P1).
@@ -910,9 +1025,11 @@ function collectAndApplyDynamicBuffExprsTwoPass(
   const charIds = Object.keys(exprStatsMap);
   for (const id of charIds) {
     if (variableCharIds.has(id)) {
-      teamPreStatsArr.push(variableBaselines[id]);
-    } else if (supportPreStats[id]) {
-      teamPreStatsArr.push(supportPreStats[id]);
+      teamPreStatsArr.push(
+        effectiveProviderBaselines[id] ?? variableBaselines[id]
+      );
+    } else if (effectiveProviderSupport[id]) {
+      teamPreStatsArr.push(effectiveProviderSupport[id]);
     }
   }
 
@@ -931,10 +1048,10 @@ function collectAndApplyDynamicBuffExprsTwoPass(
     const exprs = collectSingleBuffExprs(
       buff,
       providerCharId,
-      exprStatsMap,
+      effectiveProviderExpr,
       variableCharIds,
-      supportPreStats,
-      variableBaselines,
+      effectiveProviderSupport,
+      effectiveProviderBaselines,
       teamPreStatsArr
     );
     sheetBuffExprs.push(...exprs);
@@ -968,8 +1085,8 @@ function collectAndApplyDynamicBuffExprsTwoPass(
       providerCharId,
       midExprStats,
       variableCharIds,
-      supportPreStats,
-      variableBaselines,
+      effectiveProviderSupport,
+      effectiveProviderBaselines,
       teamPreStatsArr
     );
     finalBuffExprs.push(...exprs);
@@ -977,154 +1094,6 @@ function collectAndApplyDynamicBuffExprsTwoPass(
 
   // Apply final-stat buffs on top of midExprStats
   return applyDynamicBuffExprs(
-    midExprStats,
-    finalBuffExprs,
-    teamBuild,
-    variableCharIds,
-    optCtx
-  );
-}
-
-/**
- * Unified two-pass: collects + applies dynamic buff exprs with field-state tags.
- * Returns unified ExprStats containing both on/off field data.
- */
-/**
- * Resolve unified ExprStats/StatSheets to the provider's actual field state.
- * ScalingBuff.dynamicBuffsExpr() reads from the provider's stats — on a unified
- * ExprStats, get(key, null) only returns universal entries, missing f:on/f:off
- * contributions. We must resolve to the provider's actual field state first.
- */
-function resolveForProviders(
-  exprStatsMap: Record<string, ExprStats>,
-  supportPreStats: Record<string, StatSheet>,
-  variableBaselines: Record<string, StatSheet>,
-  variableCharIds: Set<string>,
-  onFieldCharId: string | null
-): {
-  resolvedExprStats: Record<string, ExprStats>;
-  resolvedSupportPreStats: Record<string, StatSheet>;
-  resolvedVariableBaselines: Record<string, StatSheet>;
-  resolvedTeamPreStatsArr: StatSheet[];
-} {
-  const resolvedExprStats: Record<string, ExprStats> = {};
-  const resolvedSupportPreStats: Record<string, StatSheet> = {};
-  const resolvedVariableBaselines: Record<string, StatSheet> = {};
-  const resolvedTeamPreStatsArr: StatSheet[] = [];
-
-  for (const id of Object.keys(exprStatsMap)) {
-    const fs = isOnField(id, onFieldCharId)
-      ? ("on" as const)
-      : ("off" as const);
-    resolvedExprStats[id] = exprStatsMap[id]!.withFieldState(fs);
-    if (variableCharIds.has(id)) {
-      resolvedVariableBaselines[id] = variableBaselines[id]!.withFieldState(fs);
-      resolvedTeamPreStatsArr.push(resolvedVariableBaselines[id]);
-    } else if (supportPreStats[id]) {
-      resolvedSupportPreStats[id] = supportPreStats[id]!.withFieldState(fs);
-      resolvedTeamPreStatsArr.push(resolvedSupportPreStats[id]);
-    }
-  }
-
-  return {
-    resolvedExprStats,
-    resolvedSupportPreStats,
-    resolvedVariableBaselines,
-    resolvedTeamPreStatsArr,
-  };
-}
-
-function collectAndApplyUnifiedDynamicBuffExprsTwoPass(
-  teamBuild: TeamBuild,
-  exprStatsMap: Record<string, ExprStats>,
-  variableCharIds: Set<string>,
-  supportPreStats: Record<string, StatSheet>,
-  variableBaselines: Record<string, StatSheet>,
-  optCtx: OptimizerContext,
-  excludeKeys?: Set<string>
-): Record<string, ExprStats> {
-  // Resolve unified stats to provider field states for ScalingBuff evaluation.
-  // Providers must see their actual on/off-field stats when computing buff values.
-  const {
-    resolvedExprStats,
-    resolvedSupportPreStats,
-    resolvedVariableBaselines,
-    resolvedTeamPreStatsArr,
-  } = resolveForProviders(
-    exprStatsMap,
-    supportPreStats,
-    variableBaselines,
-    variableCharIds,
-    optCtx.onFieldCharId
-  );
-
-  const sheetBuffExprs: DynamicBuffExpr[] = [];
-  const deferredBuffs: { buff: StatBuff; providerCharId: string }[] = [];
-
-  for (const { buff, providerCharId } of teamBuild.allStaticBuffs) {
-    if (providerCharId === "resonance" || providerCharId === "extra") continue;
-    if (excludeKeys?.has(getBuffInstanceKey(buff, providerCharId))) continue;
-
-    if (isCompilerDeferredFinalBuff(buff)) {
-      deferredBuffs.push({ buff, providerCharId });
-      continue;
-    }
-
-    const exprs = collectSingleBuffExprs(
-      buff,
-      providerCharId,
-      resolvedExprStats,
-      variableCharIds,
-      resolvedSupportPreStats,
-      resolvedVariableBaselines,
-      resolvedTeamPreStatsArr
-    );
-    sheetBuffExprs.push(...exprs);
-  }
-
-  if (deferredBuffs.length === 0) {
-    return applyUnifiedDynamicBuffExprs(
-      exprStatsMap,
-      sheetBuffExprs,
-      teamBuild,
-      variableCharIds,
-      optCtx
-    );
-  }
-
-  // Two-pass: apply sheet-stat exprs → midExprStats, then re-collect final-stat exprs
-  const midExprStats = applyUnifiedDynamicBuffExprs(
-    exprStatsMap,
-    sheetBuffExprs,
-    teamBuild,
-    variableCharIds,
-    optCtx
-  );
-
-  // Re-resolve for pass 2: providers now see midExprStats (with sheet buffs applied)
-  const midResolved = resolveForProviders(
-    midExprStats,
-    supportPreStats,
-    variableBaselines,
-    variableCharIds,
-    optCtx.onFieldCharId
-  );
-
-  const finalBuffExprs: DynamicBuffExpr[] = [];
-  for (const { buff, providerCharId } of deferredBuffs) {
-    const exprs = collectSingleBuffExprs(
-      buff,
-      providerCharId,
-      midResolved.resolvedExprStats,
-      variableCharIds,
-      midResolved.resolvedSupportPreStats,
-      midResolved.resolvedVariableBaselines,
-      midResolved.resolvedTeamPreStatsArr
-    );
-    finalBuffExprs.push(...exprs);
-  }
-
-  return applyUnifiedDynamicBuffExprs(
     midExprStats,
     finalBuffExprs,
     teamBuild,
@@ -1254,99 +1223,6 @@ function applyDynamicBuffExprs(
   }
 
   return result;
-}
-
-/**
- * Apply dynamic buff exprs with field-state tagging for unified ExprStats.
- * Instead of filtering buffs by isOnField, tags entries with f:on/f:off
- * based on receiver type. The resulting ExprStats contain both on-field
- * and off-field data — use withFieldState() to get per-part views.
- */
-function applyUnifiedDynamicBuffExprs(
-  preExprStats: Record<string, ExprStats>,
-  dynamicBuffExprs: DynamicBuffExpr[],
-  teamBuild: TeamBuild,
-  _variableCharIds: Set<string>,
-  optCtx: OptimizerContext
-): Record<string, ExprStats> {
-  const result: Record<string, ExprStats> = {};
-
-  for (const [id] of optCtx.charBuildOrder) {
-    let stats = preExprStats[id]!;
-
-    // Group buffs by field-state requirement for proper dedup per group
-    const universal: DynamicBuffExpr[] = [];
-    const onFieldOnly: DynamicBuffExpr[] = [];
-    const offFieldOnly: DynamicBuffExpr[] = [];
-
-    for (const dbExpr of dynamicBuffExprs) {
-      const fr = fieldReq(dbExpr.target.receiver);
-      if (fr === null) {
-        // Field-independent: check with null
-        if (
-          isBuffApplicable(
-            { target: dbExpr.target, source: dbExpr.source } as StatBuff,
-            dbExpr.providerCharId,
-            id,
-            null,
-            teamBuild.teamMeta.regions[id],
-            teamBuild.teamMeta.factions[id]
-          )
-        )
-          universal.push(dbExpr);
-      } else {
-        const effectiveFS = fr === "on";
-        if (
-          isBuffApplicable(
-            { target: dbExpr.target, source: dbExpr.source } as StatBuff,
-            dbExpr.providerCharId,
-            id,
-            effectiveFS,
-            teamBuild.teamMeta.regions[id],
-            teamBuild.teamMeta.factions[id]
-          )
-        ) {
-          if (fr === "on") onFieldOnly.push(dbExpr);
-          else offFieldOnly.push(dbExpr);
-        }
-      }
-    }
-
-    // Dedup + apply each group with appropriate field-state tag
-    for (const deduped of deduplicateDynamicBuffExprs(universal)) {
-      stats = applyOneBuffExpr(stats, deduped);
-    }
-    for (const deduped of deduplicateDynamicBuffExprs(onFieldOnly)) {
-      stats = applyOneBuffExpr(stats, deduped, "on");
-    }
-    for (const deduped of deduplicateDynamicBuffExprs(offFieldOnly)) {
-      stats = applyOneBuffExpr(stats, deduped, "off");
-    }
-
-    result[id] = stats;
-  }
-
-  return result;
-}
-
-/** Apply a single DynamicBuffExpr to stats with optional field-state tag. */
-function applyOneBuffExpr(
-  stats: ExprStats,
-  dbExpr: DynamicBuffExpr,
-  fieldState?: FieldState
-): ExprStats {
-  if (dbExpr.expr.tag === "const") {
-    return stats.withMergedConst(
-      [{ key: dbExpr.key, value: dbExpr.expr.value }],
-      dbExpr.target.filter,
-      fieldState
-    );
-  }
-  return stats.withMergedExpr(
-    [{ key: dbExpr.key, expr: dbExpr.expr }],
-    dbExpr.target.filter,
-    fieldState
-  );
 }
 
 // ─── Formula Expr Builder ───

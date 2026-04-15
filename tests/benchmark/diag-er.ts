@@ -17,6 +17,7 @@ import {
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
 import { ConstraintChecker } from "@/lib/team-comp/optimizer/constraintChecker";
+import { defaultOnFieldCharId } from "@/lib/team-comp/reactionResolve";
 import type {
   CalcContext,
   ComboFormula,
@@ -174,8 +175,13 @@ async function main() {
     console.log(`  ${cfg.charId}: ${(er * 100).toFixed(2)}%`);
   }
 
-  console.log("\n=== ER for all chars with null on-field ===");
-  const nullStats = teamBuild.getTeamStats(emptySheets, null, calcContext);
+  console.log("\n=== ER for all chars with default off-field ===");
+  const offFieldCharId = defaultOnFieldCharId(carryCharId, configs);
+  const nullStats = teamBuild.getTeamStats(
+    emptySheets,
+    offFieldCharId,
+    calcContext
+  );
   for (const cfg of configs) {
     const er = nullStats[cfg.charId]?.get("er", null) ?? 0;
     console.log(`  ${cfg.charId}: ${(er * 100).toFixed(2)}%`);

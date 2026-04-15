@@ -96,6 +96,21 @@ export function computeSubstatPreFill(
     circlet: {},
   };
 
+  // Each artifact must have exactly 4 distinct substats. Pre-fill must reserve
+  // 1 roll per unchosen substat so the greedy allocator can reach 4 distinct stats.
+  const MAX_SUBSTATS_PER_SLOT = 4;
+
+  /** Max pre-fill rolls for a slot given how many distinct stats are already chosen. */
+  const slotBudget = (slot: Slot): number => {
+    const numChosen = Object.keys(result[slot]).length;
+    const reserved = MAX_SUBSTATS_PER_SLOT - numChosen;
+    const usedRolls = Object.values(result[slot]).reduce(
+      (a, b) => a + (b ?? 0),
+      0
+    );
+    return maxRollsPerSlot - usedRolls - reserved;
+  };
+
   // Pre-fill ER
   if (erGapAfterMain > 0) {
     const erRollInternal = toInternal("er", rv.er);
@@ -105,7 +120,8 @@ export function computeSubstatPreFill(
     for (const slot of allSlots) {
       if (erNeeded <= 0) break;
       if ((mainStats[slot] as string) === "er") continue; // can't sub ER where ER is main
-      const rolls = Math.min(erNeeded, maxRollsPerStat);
+      const rolls = Math.min(erNeeded, maxRollsPerStat, slotBudget(slot));
+      if (rolls <= 0) continue;
       result[slot].er = rolls;
       erNeeded -= rolls;
     }
@@ -121,16 +137,7 @@ export function computeSubstatPreFill(
     for (const slot of allSlots) {
       if (crNeeded <= 0) break;
       if ((mainStats[slot] as string) === "cr") continue;
-      // Respect per-slot budget: maxRolls minus already-allocated ER rolls
-      const usedRolls = Object.values(result[slot]).reduce(
-        (a, b) => a + (b ?? 0),
-        0
-      );
-      const available = Math.min(
-        crNeeded,
-        maxRollsPerStat,
-        maxRollsPerSlot - usedRolls
-      );
+      const available = Math.min(crNeeded, maxRollsPerStat, slotBudget(slot));
       if (available <= 0) continue;
       result[slot].cr = available;
       crNeeded -= available;

@@ -139,14 +139,28 @@ function BuffChip({
                 </span>
               )}
               <div className="flex items-baseline gap-1">
-                <span
-                  className={cn(
-                    "font-mono font-bold text-xs md:text-sm",
-                    getValueColor(e.value)
-                  )}
-                >
-                  {fmtStat(e.key as StatKey, e.value, true)}
-                </span>
+                {isDyn &&
+                dynE.minValue !== undefined &&
+                dynE.maxValue !== undefined ? (
+                  <span
+                    className={cn(
+                      "font-mono font-bold text-xs md:text-sm",
+                      getValueColor(dynE.minValue)
+                    )}
+                  >
+                    {fmtStat(e.key as StatKey, dynE.minValue, true)}~
+                    {fmtStat(e.key as StatKey, dynE.maxValue, true)}
+                  </span>
+                ) : (
+                  <span
+                    className={cn(
+                      "font-mono font-bold text-xs md:text-sm",
+                      getValueColor(e.value)
+                    )}
+                  >
+                    {fmtStat(e.key as StatKey, e.value, true)}
+                  </span>
+                )}
                 {isDyn && dynE.cap !== undefined && (
                   <span
                     className={cn(

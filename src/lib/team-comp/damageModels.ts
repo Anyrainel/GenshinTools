@@ -197,6 +197,11 @@ export function appendFieldState(filterKey: string, fs: FieldState): string {
   return filterKey === EMPTY_FILTER_KEY ? `f:${fs}` : `${filterKey}|f:${fs}`;
 }
 
+/** Check if a filter key is field-state-only (f:on or f:off with no damage dimensions). */
+export function isFieldStateOnlyKey(filterKey: string): boolean {
+  return filterKey === "f:on" || filterKey === "f:off";
+}
+
 /** Extract the field-state from a filter key (if present). */
 function extractFieldStateFromKey(filterKey: string): {
   damageFilterKey: string;
@@ -395,6 +400,24 @@ export class StatSheet {
     return fieldState === this._fieldState;
   }
 
+  /**
+   * Return a deep copy of the internal data, filtered by the current
+   * field-state view. Mutation helpers (merge, apply, withDelta) must
+   * use this instead of copying `this.data` directly so that f:on/f:off
+   * entries that don't match the view are excluded from the result.
+   */
+  private cloneVisibleData(): Map<StatKey, Map<string, number>> {
+    const cloned = new Map<StatKey, Map<string, number>>();
+    for (const [key, bucket] of this.data) {
+      const filtered = new Map<string, number>();
+      for (const [fk, fv] of bucket) {
+        if (this.isFilterKeyVisible(fk)) filtered.set(fk, fv);
+      }
+      if (filtered.size > 0) cloned.set(key, filtered);
+    }
+    return cloned;
+  }
+
   /** Raw universal-only value for a key (no base×%+flat, no tagged entries). */
   getRaw(key: StatKey): number {
     return this.data.get(key)?.get(EMPTY_FILTER_KEY) ?? 0;
@@ -431,12 +454,16 @@ export class StatSheet {
       let pct = this.getUniversal(`${key}%` as StatKey);
       let flat = this.getUniversal(key);
       // Include tag-matching filtered contributions (e.g. Skirk C2: +70% ATK% for normal/charge)
+      // Skip field-state-only entries (f:on/f:off with no damage filter) — these are
+      // already included by getUniversal() above. Only entries with actual damage-dimension
+      // filters (ability, element, reaction) need to be added here.
       if (tag) {
         const pctBucket = this.data.get(`${key}%` as StatKey);
         if (pctBucket) {
           for (const [fk, fv] of pctBucket) {
             if (
               fk !== EMPTY_FILTER_KEY &&
+              !isFieldStateOnlyKey(fk) &&
               this.isFilterKeyVisible(fk) &&
               filterMatchesTag(deserializeFilter(fk), tag)
             ) {
@@ -449,6 +476,7 @@ export class StatSheet {
           for (const [fk, fv] of flatBucket) {
             if (
               fk !== EMPTY_FILTER_KEY &&
+              !isFieldStateOnlyKey(fk) &&
               this.isFilterKeyVisible(fk) &&
               filterMatchesTag(deserializeFilter(fk), tag)
             ) {
@@ -463,15 +491,19 @@ export class StatSheet {
     const bucket = this.data.get(key);
     if (!bucket) return 0;
 
-    // Always include universal
-    let value = bucket.get(EMPTY_FILTER_KEY) ?? 0;
+    // Universal value: includes EMPTY_FILTER_KEY + field-state-only entries
+    // (when _fieldState is set). This mirrors getUniversal() behavior —
+    // field-state-only entries are semantically universal within a field-state view.
+    let value = this.getUniversal(key);
 
     if (tag) {
       if (MULTIPLICATIVE_KEYS.has(key)) {
         // Multiplicative: combine across filterKeys as (1+a)(1+b)−1
+        // Skip field-state-only entries (already in universal value above).
         let product = 1 + value;
         for (const [fk, fv] of bucket) {
           if (fk === EMPTY_FILTER_KEY) continue;
+          if (isFieldStateOnlyKey(fk)) continue;
           if (
             this.isFilterKeyVisible(fk) &&
             filterMatchesTag(deserializeFilter(fk), tag)
@@ -481,8 +513,10 @@ export class StatSheet {
         }
         return product - 1;
       }
+      // Additive: skip field-state-only entries (already in universal value).
       for (const [fk, fv] of bucket) {
         if (fk === EMPTY_FILTER_KEY) continue;
+        if (isFieldStateOnlyKey(fk)) continue;
         if (
           this.isFilterKeyVisible(fk) &&
           filterMatchesTag(deserializeFilter(fk), tag)
@@ -498,8 +532,10 @@ export class StatSheet {
    * Get the universal value for a stat key, respecting field-state filtering.
    * When _fieldState is set, sums the universal entry + any field-matching
    * entries that have no ability/element/reaction filter (only `f:on`/`f:off`).
+   *
+   * Used by the scaled-stat formula (ATK/HP/DEF) as the base/pct/flat inputs.
    */
-  private getUniversal(key: StatKey): number {
+  getUniversal(key: StatKey): number {
     const bucket = this.data.get(key);
     if (!bucket) return 0;
     let value = bucket.get(EMPTY_FILTER_KEY) ?? 0;
@@ -521,13 +557,10 @@ export class StatSheet {
 
   /** Create a new StatSheet by merging this with another. */
   merge(other: StatSheet): StatSheet {
-    const merged = new Map<StatKey, Map<string, number>>();
-    // Copy this
-    for (const [key, bucket] of this.data) {
-      merged.set(key, new Map(bucket));
-    }
-    // Add other
-    for (const [key, bucket] of other.data) {
+    const merged = this.cloneVisibleData();
+    // Add other (respecting its field-state filter if it's a view)
+    const otherData = other.cloneVisibleData();
+    for (const [key, bucket] of otherData) {
       let target = merged.get(key);
       if (!target) {
         target = new Map();
@@ -548,10 +581,7 @@ export class StatSheet {
     entries: { key: StatKey; value: number; filter?: DamageTagFilter }[],
     fieldState?: FieldState
   ): StatSheet {
-    const merged = new Map<StatKey, Map<string, number>>();
-    for (const [key, bucket] of this.data) {
-      merged.set(key, new Map(bucket));
-    }
+    const merged = this.cloneVisibleData();
     for (const { key, value, filter } of entries) {
       const {
         key: storeKey,
@@ -576,10 +606,7 @@ export class StatSheet {
    * `f:on` or `f:off`, making them visible only through a matching field-state view.
    */
   apply(buffs: StatBuff[], fieldState?: FieldState): StatSheet {
-    const merged = new Map<StatKey, Map<string, number>>();
-    for (const [key, bucket] of this.data) {
-      merged.set(key, new Map(bucket));
-    }
+    const merged = this.cloneVisibleData();
     for (const buff of buffs) {
       const filter = extractFilter(buff.target);
       for (const { key, value } of buff.staticBuffs) {
@@ -801,10 +828,7 @@ export class StatSheet {
    * Immutable — does not modify the original.
    */
   withDelta(key: StatKey, delta: number): StatSheet {
-    const cloned = new Map<StatKey, Map<string, number>>();
-    for (const [k, bucket] of this.data) {
-      cloned.set(k, new Map(bucket));
-    }
+    const cloned = this.cloneVisibleData();
     let bucket = cloned.get(key);
     if (!bucket) {
       bucket = new Map();

@@ -159,6 +159,8 @@ function PartTab({
                 value: e.value,
                 inputKey: e.inputKey,
                 cap: e.cap,
+                minValue: e.minValue,
+                maxValue: e.maxValue,
               })),
             ];
 

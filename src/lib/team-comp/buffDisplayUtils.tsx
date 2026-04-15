@@ -127,6 +127,9 @@ export type StatEntryData = {
   value: number;
   inputKey?: StatKey;
   cap?: number;
+  /** When present, value varies across on-field contexts (combo mode). */
+  minValue?: number;
+  maxValue?: number;
 };
 
 /**
@@ -158,9 +161,18 @@ export function StatEntryRow({
           {t.statShort(entry.inputKey)}
         </span>
       )}
-      <span className={cn("font-mono font-bold", getValueColor(entry.value))}>
-        {fmtStat(entry.key as StatKey, entry.value, true)}
-      </span>
+      {entry.minValue !== undefined && entry.maxValue !== undefined ? (
+        <span
+          className={cn("font-mono font-bold", getValueColor(entry.minValue))}
+        >
+          {fmtStat(entry.key as StatKey, entry.minValue, true)}~
+          {fmtStat(entry.key as StatKey, entry.maxValue, true)}
+        </span>
+      ) : (
+        <span className={cn("font-mono font-bold", getValueColor(entry.value))}>
+          {fmtStat(entry.key as StatKey, entry.value, true)}
+        </span>
+      )}
       {entry.cap !== undefined && (
         <span
           className={cn("font-mono font-bold text-[10px]", VALUE_COLORS.cap)}
