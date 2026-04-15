@@ -883,13 +883,14 @@ class HoyolabScraper:
                         continue
 
                     # Extract enemy type from filter_values
-                    enemy_type = ""
+                    enemy_type: str = ""
                     filter_vals = entry.get("filter_values", {})
                     type_info = filter_vals.get("enemy_and_monster_type", {})
                     type_values = type_info.get("values", [])
                     if type_values:
                         raw_type = type_values[0]
-                        enemy_type = ENEMY_TYPE_MAP.get(raw_type, raw_type)
+                        if isinstance(raw_type, str):
+                            enemy_type = ENEMY_TYPE_MAP.get(raw_type, raw_type)
 
                     enemies.append(
                         EnemySource(

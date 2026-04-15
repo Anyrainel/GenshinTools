@@ -132,26 +132,28 @@ def get_extracted_data() -> dict[str, Any]:
 def get_char_stats() -> dict[str, Any]:
     global _CHAR_STATS_CACHE
     if _CHAR_STATS_CACHE is None:
-        _CHAR_STATS_CACHE = {}
+        cache: dict[str, Any] = {}
         if CHAR_STATS_PATH.exists():
-            _CHAR_STATS_CACHE = json.loads(CHAR_STATS_PATH.read_text("utf-8"))
+            cache = json.loads(CHAR_STATS_PATH.read_text("utf-8"))
         if CHAR_BETA_STATS_PATH.exists():
             beta = json.loads(CHAR_BETA_STATS_PATH.read_text("utf-8"))
             for k, v in beta.items():
-                _CHAR_STATS_CACHE.setdefault(k, v)
+                cache.setdefault(k, v)
+        _CHAR_STATS_CACHE = cache
     return _CHAR_STATS_CACHE
 
 
 def get_weapon_stats() -> dict[str, Any]:
     global _WEAPON_STATS_CACHE
     if _WEAPON_STATS_CACHE is None:
-        _WEAPON_STATS_CACHE = {}
+        cache: dict[str, Any] = {}
         if WEAPON_STATS_PATH.exists():
-            _WEAPON_STATS_CACHE = json.loads(WEAPON_STATS_PATH.read_text("utf-8"))
+            cache = json.loads(WEAPON_STATS_PATH.read_text("utf-8"))
         if WEAPON_BETA_STATS_PATH.exists():
             beta = json.loads(WEAPON_BETA_STATS_PATH.read_text("utf-8"))
             for k, v in beta.items():
-                _WEAPON_STATS_CACHE.setdefault(k, v)
+                cache.setdefault(k, v)
+        _WEAPON_STATS_CACHE = cache
     return _WEAPON_STATS_CACHE
 
 
@@ -633,7 +635,7 @@ def cmd_list(mode: Mode) -> None:
     if mode == "C":
         groups = defaultdict(list)
         for _, m in resources.items():
-            groups[f"{m.get('rarity')}★ {m.get('region')}"].append(m["id"])
+            groups[f"{m.get('rarity')}★ {m.get('region')}"].append(m.get("id", ""))
 
         for k in sorted(groups.keys()):
             print(f"== {k} ==")
@@ -644,9 +646,9 @@ def cmd_list(mode: Mode) -> None:
         for _, m in resources.items():
             rarity = m.get("rarity", 0)
             if rarity <= 3:
-                groups[f"{rarity}★"].append(m["id"])
+                groups[f"{rarity}★"].append(m.get("id", ""))
             else:
-                groups[f"{rarity}★ {m.get('type')}"].append(m["id"])
+                groups[f"{rarity}★ {m.get('type')}"].append(m.get("id", ""))
 
         for k in sorted(groups.keys()):
             print(f"== {k} ==")
@@ -656,9 +658,9 @@ def cmd_list(mode: Mode) -> None:
         groups = defaultdict(list)
         for _, m in resources.items():
             if m.get("isHalfSet"):
-                groups["Half Sets (2pc only)"].append(m["id"])
+                groups["Half Sets (2pc only)"].append(m.get("id", ""))
             else:
-                groups["Full Sets (4pc)"].append(m["id"])
+                groups["Full Sets (4pc)"].append(m.get("id", ""))
 
         for k in sorted(groups.keys(), reverse=True):  # Full before Half
             print(f"== {k} ==")

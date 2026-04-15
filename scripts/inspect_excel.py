@@ -75,6 +75,7 @@ def dump_sheet(path: str, sheet_name: str | None = None, max_rows: int = 200):
 
         cells = []
         for cell_f, cell_v in zip(row_f, row_v, strict=True):
+            assert cell_f.column is not None
             coord = f"{get_column_letter(cell_f.column)}{cell_f.row}"
             val_f = cell_f.value  # formula or literal
             val_v = cell_v.value  # computed value
@@ -111,6 +112,7 @@ def show_formulas(path: str, sheet_name: str | None = None):
         for row_f, row_v in zip(ws.iter_rows(), ws_data.iter_rows(), strict=True):
             for cell_f, cell_v in zip(row_f, row_v, strict=True):
                 if isinstance(cell_f.value, str) and cell_f.value.startswith("="):
+                    assert cell_f.column is not None
                     coord = f"{get_column_letter(cell_f.column)}{cell_f.row}"
                     print(f"  {coord}: {cell_f.value}  (= {cell_v.value})")
         print()
@@ -147,6 +149,7 @@ def cross_refs(path: str):
             for cell in row:
                 if isinstance(cell.value, str) and cell.value.startswith("="):
                     formula = cell.value
+                    assert cell.column is not None
                     coord = f"{get_column_letter(cell.column)}{cell.row}"
 
                     ext_matches = ext_ref_pat.findall(formula)
