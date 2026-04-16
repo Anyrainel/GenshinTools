@@ -1,5 +1,6 @@
 import type { Element } from "@/data/types";
 
+import { travelerP3Buff } from "../constants";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
@@ -327,21 +328,6 @@ class Aloy extends CharacterBase {
   }
 }
 
-// P3 cross-resonance: Traveler gains buffs for every element resonated with.
-// All damage-affecting stats; DEF (+20%) is skipped per U9 (defense stat).
-function travelerP3Buffs(self: CharacterBase): InstanceType<typeof StatBuff>[] {
-  const src = cbs(self, "P3", ["passive"]);
-  const tgt = { receiver: "self" as const };
-  return [
-    new StatBuff(src, tgt, [{ key: "cr", value: 0.1 }]), // Anemo
-    new StatBuff(src, tgt, [{ key: "er", value: 0.2 }]), // Electro
-    new StatBuff(src, tgt, [{ key: "em", value: 60 }]), // Dendro
-    new StatBuff(src, tgt, [{ key: "hp%", value: 0.2 }]), // Hydro
-    new StatBuff(src, tgt, [{ key: "atk%", value: 0.2 }]), // Pyro
-    new StatBuff(src, tgt, [{ key: "cd", value: 0.2 }]), // Cryo
-  ];
-}
-
 // Traveler (Anemo)
 // P3 cross-resonance: Anemo resonance -> self +10% CRIT Rate
 // C6: Enemies hit by Gust Surge have Anemo/absorbed element RES -20%
@@ -350,7 +336,7 @@ class TravelerAnemo extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P3 cross-resonance: all elements Traveler has resonated with
-      ...travelerP3Buffs(this),
+      travelerP3Buff(this),
       // C2: Energy Recharge +16%
       ...(this.constellation >= 2
         ? [
@@ -432,6 +418,56 @@ class TravelerAnemo extends CharacterBase {
           },
         ],
       },
+      // P3 special CA: Whirlwind (风旋) — consumes all Blade of the Dawn Breeze
+      // stacks. Two Anemo CA hits each +60% ATK, plus 1 Blade Wind per element
+      // (Pyro/Hydro/Cryo/Electro) at 50% ATK, each counted as CA DMG.
+      "traveler-anemo-blade-ca": {
+        label: { zh: "晨风之刃4层重击", en: "Dawn Breeze Blade CA" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 6) + 0.6, {
+              element: "Anemo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 7) + 0.6, {
+              element: "Anemo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(0.5, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(0.5, {
+              element: "Hydro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(0.5, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(0.5, {
+              element: "Electro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
     // Add absorbed-element variant formulas (S10 pattern)
     const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
@@ -480,7 +516,7 @@ class TravelerAnemo extends CharacterBase {
 class TravelerGeo extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff>[] = [
     // P3 cross-resonance: all elements Traveler has resonated with
-    ...travelerP3Buffs(this),
+    travelerP3Buff(this),
     // C1: Inside Wake of Earth, party CRIT Rate +10% (on-field only, requires proximity)
     ...(this.constellation >= 1
       ? [
@@ -524,6 +560,27 @@ class TravelerGeo extends CharacterBase {
         },
       ],
     },
+    // P3 special CA: Rockfell (岩坠) — consumes 3 Blade of Archaic Petra stacks.
+    // Two Geo CA hits each +120% ATK. Shield strength boost is utility, skipped.
+    "traveler-geo-blade-ca": {
+      label: { zh: "古岩之刃3层重击", en: "Archaic Petra Blade CA" },
+      parts: [
+        {
+          formula: new DirectFormula(this.param("A", 6) + 1.2, {
+            element: "Geo",
+            ability: "charge",
+            reaction: "none",
+          }),
+        },
+        {
+          formula: new DirectFormula(this.param("A", 7) + 1.2, {
+            element: "Geo",
+            ability: "charge",
+            reaction: "none",
+          }),
+        },
+      ],
+    },
   };
 
   // Rotation: 3×E > Q (Geo sub-DPS, 6s CD with P1)
@@ -558,7 +615,7 @@ class TravelerElectro extends CharacterBase {
       0.1
     ),
     // P3 cross-resonance: all elements Traveler has resonated with
-    ...travelerP3Buffs(this),
+    travelerP3Buff(this),
     // C2: Falling Thunder hits -> Electro RES -15% for 8s
     ...(this.constellation >= 2
       ? [
@@ -605,6 +662,35 @@ class TravelerElectro extends CharacterBase {
             formula: new DirectFormula(this.param("Q", 2), electroBurst),
             hits: 12,
             offField: true,
+          },
+        ],
+      },
+      // P3 special CA: Detonate (雷岚) — consumes 3 Blade of Resounding Thunder
+      // stacks. Two Electro CA hits each +100% ATK, plus a delayed 200% ATK
+      // lightning strike counted as CA DMG. Abundance Amulet is utility only.
+      "traveler-electro-blade-ca": {
+        label: { zh: "万雷之刃3层重击", en: "Thunder Blade CA" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 6) + 1.0, {
+              element: "Electro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 7) + 1.0, {
+              element: "Electro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(2.0, {
+              element: "Electro",
+              ability: "charge",
+              reaction: "none",
+            }),
           },
         ],
       },
@@ -664,7 +750,7 @@ class TravelerDendro extends CharacterBase {
         0.001
       ),
       // P3 cross-resonance: all elements Traveler has resonated with
-      ...travelerP3Buffs(this),
+      travelerP3Buff(this),
       // C6: Lotuslight Transfiguration → +12% DMG for corresponding element
       // Base Dendro (when no transfiguration occurs)
       ...(this.constellation >= 6
@@ -745,6 +831,36 @@ class TravelerDendro extends CharacterBase {
           },
         ],
       },
+      // P3 special CA: Verdessence (草惠) — consumes 3 Blade of Verdant Viridis
+      // stacks. Two Dendro CA hits each +80% ATK, plus 2 Vinecores that explode
+      // at 120% ATK each, counted as CA DMG.
+      "traveler-dendro-blade-ca": {
+        label: { zh: "兰草之刃3层重击", en: "Verdant Blade CA" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 6) + 0.8, {
+              element: "Dendro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 7) + 0.8, {
+              element: "Dendro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(1.2, {
+              element: "Dendro",
+              ability: "charge",
+              reaction: "none",
+            }),
+            hits: 2,
+          },
+        ],
+      },
     };
   })();
 
@@ -764,7 +880,7 @@ class TravelerDendro extends CharacterBase {
 class TravelerHydro extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff>[] = [
     // P3 cross-resonance: all elements Traveler has resonated with
-    ...travelerP3Buffs(this),
+    travelerP3Buff(this),
   ];
 
   // E Aquacrest Saber (Torrent Surge): 340.7% Hydro (Lv10), 402.2% (Lv13 C3+)
@@ -813,6 +929,29 @@ class TravelerHydro extends CharacterBase {
           },
         ],
       },
+      // P3 special CA: Tidebound (水狱) — consumes 3 Blade of Many Waters stacks.
+      // Two Hydro CA hits each +150% ATK. At HP ≥ 50% (assumed), consumes 10%
+      // max HP for an additional +100% ATK per hit (DMG branch). HP < 50% branch
+      // is pure healing, skipped.
+      "traveler-hydro-blade-ca": {
+        label: { zh: "众水之刃3层重击", en: "Many Waters Blade CA" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 6) + 1.5 + 1.0, {
+              element: "Hydro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 7) + 1.5 + 1.0, {
+              element: "Hydro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
@@ -835,7 +974,7 @@ class TravelerHydro extends CharacterBase {
 class TravelerPyro extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff>[] = [
     // P3 cross-resonance: all elements Traveler has resonated with
-    ...travelerP3Buffs(this),
+    travelerP3Buff(this),
     // C1: While Threshold active, on-field character deals +6% DMG
     ...(this.constellation >= 1
       ? [
@@ -923,6 +1062,28 @@ class TravelerPyro extends CharacterBase {
             formula: new DirectFormula(this.param("A", 11), {
               element: this.constellation >= 6 ? "Pyro" : "Physical",
               ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      // P3 special CA: Inferno (火噬) — consumes 2 Blade of the Sacred Flame
+      // stacks. Two Nightsoul-aligned Pyro CA hits each +200% ATK. Nightsoul
+      // property is handled by the existing C6 CD buff filter when applicable.
+      "traveler-pyro-blade-ca": {
+        label: { zh: "圣火之刃2层重击", en: "Sacred Flame Blade CA" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 6) + 2.0, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 7) + 2.0, {
+              element: "Pyro",
+              ability: "charge",
               reaction: "none",
             }),
           },
