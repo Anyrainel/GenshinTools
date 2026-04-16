@@ -241,6 +241,8 @@ export type CharacterInfo = {
   energy: number;
   healerC?: number; // min constellation starting from 0, omitted if none
   shielderC?: number; // min constellation starting from 0, omitted if none
+  /** Stat keys that scale this character's heal or shield output. */
+  supStat?: ("hp%" | "atk%" | "def%" | "em")[];
   c3Talent: "A" | "E" | "Q";
   c5Talent: "A" | "E" | "Q";
   faction?: Faction;
