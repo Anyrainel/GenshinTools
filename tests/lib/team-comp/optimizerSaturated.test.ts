@@ -332,4 +332,113 @@ describe("Saturated character handling", () => {
       ).__TEAM_OPT_TRACE__ = undefined;
     }
   });
+
+  it("saturated def%-scaling support prefers def% substats via supStat fallback", async () => {
+    // Swap Bennett → Gorou (supStat: ["def%"]). Gorou's buffs don't affect
+    // Hu Tao's pyro damage (geo-only DMG bonus; def% scaling is for Geo
+    // characters), so Gorou is saturated. Provide Gorou a choice between
+    // def%-heavy and hp%-heavy artifacts at equal levels — the supStat
+    // fallback should make def% pieces win.
+    const gorouConfigs: TeamSlotConfig[] = [
+      {
+        charId: "hu_tao",
+        charLevel: 90,
+        constellation: 1,
+        weaponId: "staff_of_homa",
+        refinement: 1,
+        artifactSetId: "crimson_witch_of_flames",
+        artifactHalfSetIds: ["pyro%-15"],
+      },
+      {
+        charId: "gorou",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "mistsplitter_reforged",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+
+    const gorouTeam = new TeamBuild(gorouConfigs);
+    const gorouFormulas = gorouTeam.getFormulaIds().hu_tao;
+    const gorouFormulaId = Object.keys(gorouFormulas)[0];
+
+    // Hu Tao gets her full crimson witch set. Gorou chooses between two
+    // candidate artifacts per slot (same set, same level) that differ only
+    // in which substat is large: def% vs hp%.
+    const makeSub = (
+      overrides: Partial<Record<string, number>>
+    ): Record<string, number> => ({
+      // Small neutral substats to avoid noise
+      er: 5.8,
+      atk: 20,
+      ...overrides,
+    });
+
+    const gorouInventory: ArtifactData[] = [
+      ...makeFullSet("crimson_witch_of_flames"),
+      // def%-heavy candidates (one per slot)
+      ...allSlots.map((slot) =>
+        makeArt(slot, "gladiators_finale", {
+          substats: makeSub({ "def%": 22 }),
+        })
+      ),
+      // hp%-heavy candidates (one per slot)
+      ...allSlots.map((slot) =>
+        makeArt(slot, "gladiators_finale", {
+          substats: makeSub({ "hp%": 22 }),
+        })
+      ),
+    ];
+
+    const gorouBaseSheets: Record<string, StatSheet> = {
+      hu_tao: new StatSheet([]),
+      gorou: new StatSheet([]),
+    };
+
+    const gen = runTeamOptimization({
+      teamBuild: gorouTeam,
+      carryCharId: "hu_tao",
+      formula: { combo: singleFormulaCombo("hu_tao", gorouFormulaId) },
+      inventory: gorouInventory,
+      calcContext: { enemyLevel: 90, enemyRes: 10 },
+      globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
+      baseSheets: gorouBaseSheets,
+      perChar: {
+        hu_tao: {
+          minEr: 0,
+          minCr: 0,
+          artifactSetId: "crimson_witch_of_flames",
+          artifactHalfSetIds: ["pyro%-15"],
+        },
+        gorou: {
+          minEr: 0,
+          minCr: 0,
+        },
+      },
+    });
+
+    let result: Awaited<ReturnType<typeof gen.next>>["value"] | undefined;
+    for await (const yielded of gen) {
+      result = yielded;
+    }
+
+    expect(result).toBeDefined();
+    expect(result!.done).toBe(true);
+    if (!result!.done) return;
+
+    const gorouPieces = allSlots
+      .map((s) => result!.bestArtifactsByChar.gorou?.[s])
+      .filter(Boolean) as ArtifactData[];
+    expect(gorouPieces.length).toBeGreaterThan(0);
+
+    const defPieces = gorouPieces.filter(
+      (a) => (a.substats?.["def%"] ?? 0) > 0
+    ).length;
+    const hpPieces = gorouPieces.filter(
+      (a) => (a.substats?.["hp%"] ?? 0) > 0
+    ).length;
+    expect(defPieces).toBeGreaterThan(hpPieces);
+  });
 });

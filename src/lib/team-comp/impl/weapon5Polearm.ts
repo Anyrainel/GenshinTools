@@ -269,3 +269,27 @@ class SkywardSpine extends WeaponBase {
     ]),
   ];
 }
+
+@RegisterWeapon("disaster_and_remorse")
+class DisasterAndRemorse extends WeaponBase {
+  // After E, wielder gains Unforgivable (NA/CA DMG+) and Irreparable (E/Q DMG+).
+  // Hexerei: Secret Rite (≥2 Hexerei) multiplies both bonuses by 1.75.
+  get buffs() {
+    const hexMult = this.teamMeta.countByFaction("Hexerei") >= 2 ? 1.75 : 1;
+    const dmgPct = r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) * hexMult;
+    return [
+      // Unforgivable: NA + CA DMG
+      new StatBuff(
+        wbs(this, ["E"]),
+        { receiver: "self", filter: { abilities: ["normal", "charge"] } },
+        [{ key: "dmg%", value: dmgPct }]
+      ),
+      // Irreparable: E + Q DMG
+      new StatBuff(
+        wbs(this, ["E"]),
+        { receiver: "self", filter: { abilities: ["skill", "burst"] } },
+        [{ key: "dmg%", value: dmgPct }]
+      ),
+    ];
+  }
+}

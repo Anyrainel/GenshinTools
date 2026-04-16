@@ -1067,12 +1067,21 @@ export class TeamMeta {
   }
 
   /**
-   * Compute passive talent level bonuses from teammates.
+   * Compute passive talent level bonuses.
    * - Tartaglia P3 "Master of Weaponry": +1 Normal Attack (A) for all party members (unconditional)
    * - Skirk P3 "Mutual Weapons Mentorship": +1 Skill (E) for all party members
    *   (only when all characters are Hydro or Cryo, with at least 1 of each)
+   * - Lohen P3 "When the Mood Strikes": +1 Skill (E) for Lohen himself while
+   *   High Spirits is active. Under the peak-damage model the 9s/15s window
+   *   is assumed to cover a typical post-E rotation.
+   *
+   * `targetCharId` scopes self-only bonuses. Team-wide bonuses ignore it.
    */
-  talentPassiveBonuses(): { A: number; E: number; Q: number } {
+  talentPassiveBonuses(targetCharId?: string): {
+    A: number;
+    E: number;
+    Q: number;
+  } {
     const bonus = { A: 0, E: 0, Q: 0 };
     if (this.characters.includes("tartaglia")) {
       bonus.A += 1;
@@ -1089,6 +1098,10 @@ export class TeamMeta {
       if (allHydroOrCryo && hasHydro && hasCryo) {
         bonus.E += 1;
       }
+    }
+    // Lohen P3: self-only +1 E (High Spirits) — applies only to Lohen himself.
+    if (targetCharId === "lohen" && this.characters.includes("lohen")) {
+      bonus.E += 1;
     }
     return bonus;
   }
@@ -1169,7 +1182,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     const info = charInfo[charId];
     const c3Bonus = this.constellation >= 3 && info ? 3 : 0;
     const c5Bonus = this.constellation >= 5 && info ? 3 : 0;
-    const passive = teamMeta.talentPassiveBonuses();
+    const passive = teamMeta.talentPassiveBonuses(charId);
     this._effectiveLevels = {
       A:
         base.auto +

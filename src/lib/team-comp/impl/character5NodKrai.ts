@@ -1388,3 +1388,201 @@ class Linnea extends CharacterBase {
     };
   })();
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Nicole — 5★ Pyro Catalyst (Hexerei)
+// ═══════════════════════════════════════════════════════════════
+// Modeling assumptions:
+// - E grants Grace of Kenosis → ATK + (ratio × Nicole.ATK), capped at 600.
+//   P1/P2 upgrade it to Guidance of Theosis (+300 ATK) — assume upgraded state
+//   under rotation (P2 triggers on any teammate elemental DMG; P1 triggers for
+//   Hexerei teammates or after 3s on-field).
+// - Q Arcane Projection: 5 triggers × (200% of triggering char's ATK), Pyro DMG
+//   tagged as triggering character (elemental type = theirs). We model these as
+//   separate Pyro coord formulas with hits scaled.
+// - C1: extra 600% ATK coord attack, once per 6s (≈1 trigger per rotation).
+// - C4 Pathfinder's Blessing: 70% of Nicole's ATK bonus baseDmg added to 8
+//   teammate hits (NA/CA/plunge/E/Q) per 17s. Modeled as a teammate-wide
+//   baseDmg buff at ~8 hits spread — implemented as always-on ScalingBuff from
+//   Nicole's ATK since per-hit stack allocation is complex.
+// - C6: Guidance of Theosis DMG ignores 40% DEF → implemented via defReduction%.
+@RegisterCharacter("nicole")
+class Nicole extends CharacterBase {
+  private readonly isHexereiActive =
+    this.teamMeta.countByFaction("Hexerei") >= 2;
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
+
+    // E Grace of Kenosis: ATK = ratio × Nicole.ATK (cap 600).
+    // Param4 is the ratio (15% ATK at Lv10), param5 is cap (600).
+    const kenosisRatio = this.param("E", 4);
+    const kenosisCap = this.param("E", 5);
+    buffs.push(
+      new ScalingBuff(
+        cbs(this, "E", ["E"]),
+        { receiver: "team" },
+        [],
+        "atk",
+        "atk",
+        kenosisRatio,
+        kenosisCap
+      )
+    );
+
+    // P1/P2: Guidance of Theosis upgrade → +300 ATK flat to teammates.
+    // C2 bumps the bonus to +600 (additional 300 from C2 per ZH, not counted
+    // toward cap). ZH says "额外提升300点攻击力" — favor ZH over EN ("240")
+    // per beta conflict rule.
+    const theosisBonus = this.constellation >= 2 ? 600 : 300;
+    buffs.push(
+      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
+        { key: "atk", value: theosisBonus },
+      ])
+    );
+
+    // C2: Guidance of Theosis reduces corresponding-element Elemental RES by 25%.
+    // We approximate by shredding every element present on the team (one instance per element).
+    if (this.constellation >= 2) {
+      const teamEls = Array.from(
+        new Set(
+          Object.values(this.teamMeta.elements).filter(
+            (e): e is Element => e !== undefined
+          )
+        )
+      );
+      for (const el of teamEls) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "team", filter: { elements: [el] } },
+            [{ key: "resReduction%", value: 0.25 }]
+          )
+        );
+      }
+    }
+
+    // C4 Pathfinder's Blessing: 70% Nicole ATK baseDmg on NA/CA/plunge/E/Q,
+    // consumed 8 times per character per 17s. Per U8b "Each character's
+    // Pathfinder's Blessing is counted independently" → emit one maxStacks:8
+    // buff per non-Nicole teammate so each has their own hit budget.
+    if (this.constellation >= 4) {
+      for (const cid of Object.keys(this.teamMeta.elements)) {
+        if (cid === this.charId) continue;
+        buffs.push(
+          new ScalingBuff(
+            { ...cbs(this, "C4", ["E"]), maxStacks: 8 },
+            {
+              receiver: "team",
+              charId: cid,
+              filter: {
+                abilities: ["normal", "charge", "plunge", "skill", "burst"],
+              },
+            },
+            [],
+            "atk",
+            "baseDmg",
+            0.7
+          )
+        );
+      }
+    }
+
+    // C6: Guidance of Theosis → team DMG ignores 40% DEF.
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
+          { key: "defReduction%", value: 0.4 },
+        ])
+      );
+    }
+
+    // Hexerei P4 is attached as a bespokeBuff on the Arcane Projection
+    // formula parts below (Q projection + C1 Unity), not a broad burst-
+    // ability buff — the +150% Nicole ATK baseDmg must not apply to
+    // nicole-burst (Q initial slash).
+
+    return buffs;
+  })();
+
+  // E: single Pyro skill hit (param1). Q: single Pyro burst hit (param1) plus 5
+  // Arcane Projection coord attacks (param2 = 200% of triggering char's ATK) per
+  // element present in the team, tagged as that element.
+  protected readonly formulaMap = (() => {
+    const pyroSkill = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const pyroBurst = {
+      element: "Pyro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    // Hexerei P4 +150% Nicole ATK baseDmg — attached only to Arcane Projection
+    // formula parts (Q projection and C1 Unity), NOT to the Q initial slash.
+    const p4HexereiBuff = this.isHexereiActive
+      ? new ScalingBuff(
+          cbs(this, "P4", ["Q"]),
+          { receiver: "selfOnField" },
+          [],
+          "atk",
+          "baseDmg",
+          1.5
+        )
+      : undefined;
+    const formulas: Record<string, FormulaEntry> = {
+      "nicole-skill": {
+        label: { zh: "E伤害", en: "E" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), pyroSkill) }],
+      },
+      "nicole-burst": {
+        label: { zh: "Q伤害", en: "Q" },
+        parts: [{ formula: new DirectFormula(this.param("Q", 1), pyroBurst) }],
+      },
+      // Q Arcane Projection: 5 triggers over Silent Contemplation. We can't
+      // reassign scaling to the triggering teammate, so we approximate the coord
+      // attacks as Nicole's own burst hits using her ATK and her burst element
+      // (Pyro). This conservatively undercounts teams where the triggering char
+      // has much higher ATK than Nicole, but captures the timing and hit count.
+      "nicole-q-coord": {
+        label: { zh: "Q奥迹造影×5", en: "Q Arcane Projection ×5" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), pyroBurst),
+            hits: 5,
+            // Coordinated attack: fires while a teammate is active during
+            // Silent Contemplation (Nicole is off-field).
+            offField: true,
+            ...(p4HexereiBuff ? { bespokeBuffs: [p4HexereiBuff] } : {}),
+          },
+        ],
+      },
+      // C1: extra 600% ATK coord hit, once per 6s (~1 per combo)
+      "nicole-c1-unity": {
+        label: { zh: "C1 合一造影", en: "C1 Arcane Projection: Unity" },
+        minC: 1,
+        parts: [
+          {
+            formula: new DirectFormula(6.0, pyroBurst),
+            // Coordinated attack fired on teammate hits — Nicole off-field.
+            offField: true,
+            ...(p4HexereiBuff ? { bespokeBuffs: [p4HexereiBuff] } : {}),
+          },
+        ],
+      },
+    };
+    return formulas;
+  })();
+
+  // Rotation: E (apply Kenosis → Theosis) → Q (enter Silent Contemplation) →
+  // coord attacks trigger on teammate hits.
+  protected override get comboDescriptor(): ComboDescriptor {
+    return [
+      { id: "nicole-skill", count: 1 },
+      { id: "nicole-burst", count: 1 },
+      { id: "nicole-q-coord", count: 1 },
+      { id: "nicole-c1-unity", count: 1 },
+    ];
+  }
+}

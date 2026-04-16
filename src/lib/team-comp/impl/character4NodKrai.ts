@@ -1,6 +1,11 @@
+import type { Element } from "@/data/types";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
-import { CharacterBase, RegisterCharacter } from "../damageModels";
+import {
+  CharacterBase,
+  type FormulaEntry,
+  RegisterCharacter,
+} from "../damageModels";
 import { cbs } from "../helpers";
 import type { AbilityType, ComboDescriptor } from "../types";
 
@@ -360,4 +365,257 @@ class Aino extends CharacterBase {
       },
     };
   })();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Prune — 4★ Anemo Catalyst (Hexerei)
+// ═══════════════════════════════════════════════════════════════
+// Modeling assumptions:
+// - Swirl triggers: E hitting a PHEC aura (Pyro/Hydro/Cryo/Electro) converts
+//   Banehunter Oathhammer to that element. We generate one converted-hammer
+//   formula per PHEC element present in the team; if none exist, the special E
+//   stays unavailable (the formula is gated by `when`).
+// - P1: during Q Hunter-Seeker, bell swirl summons a 150% ATK converted hammer.
+//   Modeled as a single coord hit per burst cycle per present PHEC element.
+// - P2 Tolling Rally: teammate DMG +0.01% per Prune ATK over 1000, cap 35%.
+//   Approximated as an always-on ScalingBuff once Prune is the sustained trigger.
+// - P4 Hexerei: Prune +45% ATK after any teammate reaction under Tolling Rally.
+//   Always-on under Hexerei active + any reaction available.
+// - C2: ramping ATK from 10% → 40% during Hunter-Seeker mode. Assumed capped.
+// - C4: ricochet adds a second converted-hammer hit at 80% ATK.
+// - C6: team +350 ATK after teammate reaction (always-on under sustain).
+@RegisterCharacter("prune")
+class Prune extends CharacterBase {
+  private readonly isHexereiActive =
+    this.teamMeta.countByFaction("Hexerei") >= 2;
+
+  // PHEC elements present in the team — each produces a converted-hammer variant.
+  private readonly phecPresent: Element[] = (() => {
+    const teamEls = new Set(
+      Object.values(this.teamMeta.elements).filter(
+        (e): e is Element => e !== undefined
+      )
+    );
+    const order: Element[] = ["Pyro", "Hydro", "Cryo", "Electro"];
+    return order.filter((el) => teamEls.has(el));
+  })();
+
+  private readonly canSwirl = this.teamMeta.hasReaction("swirl");
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
+
+    // P2 Tolling Rally: 0.01% DMG per Prune ATK above 1000, max 35%.
+    // Applies to NA/CA/plunge/E/Q of other teammates while under Tolling Rally.
+    // Capped by threshold + scale + cap parameters of ScalingBuff.
+    buffs.push(
+      new ScalingBuff(
+        cbs(this, "P2", ["E"]),
+        {
+          receiver: "other",
+          filter: {
+            abilities: ["normal", "charge", "plunge", "skill", "burst"],
+          },
+        },
+        [],
+        "atk",
+        "dmg%",
+        0.0001,
+        0.35,
+        1000
+      )
+    );
+
+    // C2: Hunt the Witch — Prune +10% ATK base + +5% per hit, cap 40%.
+    // Assume sustained max (40%) during Q Hunter-Seeker mode.
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
+          { key: "atk%", value: 0.4 },
+        ])
+      );
+    }
+
+    // Hexerei P4: after a Hexerei teammate under Tolling Rally triggers a
+    // reaction, Prune gains +45% ATK; if the reaction is a Swirl, that
+    // triggering Hexerei teammate also gains +20% ATK. Per U1 both bonuses
+    // must be scoped to factions:["Hexerei"] — non-Hexerei teammates cannot
+    // trigger the effect. Tolling Rally (P2) applies to all other party
+    // members under peak assumptions, so membership is implied once another
+    // Hexerei teammate exists.
+    if (this.isHexereiActive) {
+      const anyReaction =
+        this.teamMeta.hasReaction("swirl") ||
+        this.teamMeta.hasReaction("melt") ||
+        this.teamMeta.hasReaction("vaporize") ||
+        this.teamMeta.hasReaction("frozen") ||
+        this.teamMeta.hasReaction("superconduct") ||
+        this.teamMeta.hasReaction("electroCharged") ||
+        this.teamMeta.hasReaction("overloaded") ||
+        this.teamMeta.hasReaction("bloom") ||
+        this.teamMeta.hasReaction("hyperbloom") ||
+        this.teamMeta.hasReaction("burgeon") ||
+        this.teamMeta.hasReaction("aggravate") ||
+        this.teamMeta.hasReaction("spread") ||
+        this.teamMeta.hasReaction("burning");
+      if (anyReaction) {
+        buffs.push(
+          new StatBuff(cbs(this, "P4", ["E"]), { receiver: "self" }, [
+            { key: "atk%", value: 0.45 },
+          ])
+        );
+        // Swirl: the triggering Hexerei teammate also gains +20% ATK.
+        if (this.canSwirl) {
+          buffs.push(
+            new StatBuff(
+              cbs(this, "P4", ["swirl"]),
+              { receiver: "other", factions: ["Hexerei"] },
+              [{ key: "atk%", value: 0.2 }]
+            )
+          );
+        }
+      }
+    }
+
+    // C6: after a Tolling Rally teammate triggers a reaction, Prune + the
+    // currently active nearby Tolling-Rally teammate gain +350 flat ATK.
+    // Per U1, split self and otherOnField so off-field teammates without the
+    // Tolling Rally trigger context don't receive the buff. Tolling Rally
+    // (from P2) is applied to all non-Prune party members under peak
+    // assumptions, so no extra filter is needed on the otherOnField buff.
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+          { key: "atk", value: 350 },
+        ]),
+        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "otherOnField" }, [
+          { key: "atk", value: 350 },
+        ])
+      );
+    }
+
+    return buffs;
+  })();
+
+  // E param1: bell hit (301% Lv10). E param2: converted hammer (368%).
+  // Q param1: initial bell (174%). Q param2: Hunter-Seeker bell tick (126%).
+  // ~12s burst window, 4-hit approximation on the bell tick.
+  protected readonly formulaMap = (() => {
+    const anemoSkill = {
+      element: "Anemo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const anemoBurst = {
+      element: "Anemo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    const formulas: Record<string, FormulaEntry> = {
+      "prune-skill": {
+        label: { zh: "E伤害", en: "E" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), anemoSkill) }],
+      },
+      "prune-burst-initial": {
+        label: { zh: "Q生成", en: "Q Initial" },
+        parts: [{ formula: new DirectFormula(this.param("Q", 1), anemoBurst) }],
+      },
+      "prune-burst-bell": {
+        label: { zh: "Q诱巫饵铃", en: "Q Witchlure Bell Tick" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), anemoBurst),
+            offField: true,
+          },
+        ],
+      },
+    };
+
+    // Converted-hammer element: the actual absorbed element depends on in-game
+    // aura priority (Pyro > Hydro > Electro > Cryo) and enemy state at swirl
+    // time and cannot be determined from team composition alone. Per S10, we
+    // follow the Traveler Anemo Q pattern: emit one variant per PHEC element
+    // present in the team so the UI's formula selector lets the user compare
+    // which absorption is active. Keep rotation shape — only one swirl-
+    // converted hammer lands at a time.
+    for (const convertedEl of this.phecPresent) {
+      const suffix = convertedEl.toLowerCase();
+      // Special E — converted hammer at 368% (E param2) in this element.
+      formulas[`prune-special-e-${suffix}`] = {
+        label: {
+          zh: `特殊E(${convertedEl}转化)`,
+          en: `Special E (${convertedEl} converted)`,
+        },
+        when: this.canSwirl,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: convertedEl,
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      };
+      // C4 ricochet: 80% ATK in same converted element.
+      formulas[`prune-c4-ricochet-${suffix}`] = {
+        label: {
+          zh: `C4回弹(${convertedEl})`,
+          en: `C4 Ricochet (${convertedEl})`,
+        },
+        minC: 4,
+        when: this.canSwirl,
+        parts: [
+          {
+            formula: new DirectFormula(0.8, {
+              element: convertedEl,
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      };
+      // P1: Bell swirl summons 150% ATK converted hammer (Q-tagged).
+      formulas[`prune-p1-hammer-${suffix}`] = {
+        label: {
+          zh: `P1寻猎锤(${convertedEl})`,
+          en: `P1 Seeker Hammer (${convertedEl})`,
+        },
+        when: this.canSwirl,
+        parts: [
+          {
+            formula: new DirectFormula(1.5, {
+              element: convertedEl,
+              ability: "burst",
+              reaction: "none",
+            }),
+            offField: true,
+          },
+        ],
+      };
+    }
+
+    return formulas;
+  })();
+
+  // Rotation: E (trigger Swirl) → special E (converted hammer) → Q (off-field
+  // Hunter-Seeker bell) → periodic P1 hammer triggers on Swirl. Only one
+  // swirl-converted hammer lands per rotation, so the combo references the
+  // first PHEC element's variant (aura-priority order). The other per-element
+  // variants exist in formulaMap so the UI can compare absorption choices.
+  protected override get comboDescriptor(): ComboDescriptor {
+    const base: ComboDescriptor = [
+      { id: "prune-skill", count: 1 },
+      { id: "prune-burst-initial", count: 1 },
+      { id: "prune-burst-bell", count: 4 },
+    ];
+    const primary = this.phecPresent[0];
+    if (primary !== undefined) {
+      const suffix = primary.toLowerCase();
+      base.push({ id: `prune-special-e-${suffix}`, count: 1 });
+      base.push({ id: `prune-c4-ricochet-${suffix}`, count: 1 });
+      base.push({ id: `prune-p1-hammer-${suffix}`, count: 1 });
+    }
+    return base;
+  }
 }

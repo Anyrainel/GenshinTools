@@ -12,7 +12,7 @@ import "./impl/character4Fontaine";
 import "./impl/character4Natlan";
 import "./impl/character4NodKrai";
 // import "./impl/character4Snezhnaya"; // No such characters yet
-// import "./impl/character4None"; // No such characters yet
+import "./impl/character4None";
 
 import "./impl/character5Mondstadt";
 import "./impl/character5Liyue";

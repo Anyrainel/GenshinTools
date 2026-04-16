@@ -5,6 +5,7 @@
  * including set composition patterns, core DFS, and the runCharacterBnB entry point.
  */
 
+import { charInfo } from "@/data/charInfo";
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, MainStat } from "@/data/types";
 import { allSlots } from "@/data/types";
@@ -463,11 +464,25 @@ export function runCharacterBnB(
       const fallback: Record<string, number> = {};
       if (constraints.hasEr) fallback.er = 1;
       if (constraints.hasCr) fallback.cr = 1;
+      const supStat = charInfo[swapCharId]?.supStat;
+      if (supStat) {
+        // Healers/shielders generally want ER for burst uptime, even absent
+        // an explicit ER constraint.
+        fallback.er = 1;
+        for (const s of supStat) fallback[s] = 1;
+      }
       if (Object.keys(fallback).length === 0) {
         fallback.er = 1;
         fallback["hp%"] = 1;
         fallback["def%"] = 1;
       }
+      // Whenever a %-stat is in the fallback, include its flat counterpart
+      // too (flat substat rolls still contribute after conversion). Weight
+      // 0.3 reflects that flat substats are roughly 3× weaker per-roll than
+      // their % counterparts on a typical 90-level character.
+      if (fallback["atk%"]) fallback.atk = 0.3;
+      if (fallback["hp%"]) fallback.hp = 0.3;
+      if (fallback["def%"]) fallback.def = 0.3;
       effectiveBuildMatch = {
         build: {} as BuildMatchResult["build"],
         buildIndex: 0,

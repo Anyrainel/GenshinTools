@@ -1,4 +1,4 @@
-import type { Element } from "@/data/types";
+import { elements as ALL_ELEMENTS, type Element } from "@/data/types";
 
 import { PHEC_ELEMENTS } from "../constants";
 import {
@@ -1329,4 +1329,136 @@ class TheExile4pc extends ArtifactSetBase {
   readonly halfSetId = "er-20";
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[] = [];
+}
+
+@RegisterArtifactSet("disenchantment_in_deep_shadow")
+class DisenchantmentInDeepShadow4pc extends ArtifactSetBase {
+  // 2pc: ATK +18% (via halfSetId)
+  // 4pc: Superconduct DMG +40%; when attacking Superconducted opponents,
+  //      this attack's CRIT Rate +16%. The "all-new blessing" flavor text
+  //      has no mechanical effect.
+  // CR gate: active whenever team can trigger Superconduct (Cryo + Electro).
+  readonly halfSetId = "atk%-18";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] = [
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["on-reaction"],
+      },
+      { receiver: "self", filter: { reactions: ["superconduct"] } },
+      [{ key: "reactionDmg%", value: 0.4 }]
+    ),
+    ...(this.teamMeta.hasReaction("superconduct")
+      ? [
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["vs-superconduct"],
+            },
+            { receiver: "self" },
+            [{ key: "cr", value: 0.16 }]
+          ),
+        ]
+      : []),
+  ];
+}
+
+const heavensGiftOption = {
+  label: { zh: "凡世颂歌范围", en: "Mortal Hymn scope" },
+  choices: [
+    { value: "self", label: { zh: "仅场上角色", en: "Active char only" } },
+    { value: "team", label: { zh: "全队共享", en: "Share with team" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterArtifactSet("heavens_gift", heavensGiftOption)
+class HeavensGift4pc extends ArtifactSetBase {
+  // 2pc: Energy Recharge +20% (via halfSetId)
+  // 4pc: If equipping char has completed "Witch's Homework" (= Hexerei faction),
+  //      after E they gain "Light's Guidance" (20s): team gets +20% elemental DMG
+  //      of the equipping character's element. Effect triggers off-field.
+  //      When team has "Hexerei: Secret Rite" (≥2 Hexerei), upgrades to "Mortal Hymn":
+  //      bonus becomes +40% and also applies for the "current active party
+  //      member's" element as well (same-element bonuses don't stack).
+  //      Same-name artifact DMG bonuses do not stack (per-element noStackId).
+  //
+  // Modeling — per translator U-series, this time-limited post-skill buff that
+  // triggers every rotation is modeled as always-on. The base buff always
+  // covers the equipping character's element at the appropriate tier.
+  //
+  // Mortal Hymn's "active party member's element" clause depends on who is
+  // on-field at the moment of damage, which the team-comp model cannot
+  // determine globally. The OptionMap offers two modeling approaches:
+  //
+  //   "self" (default, realistic): for each OTHER team element present,
+  //     apply the +40% DMG bonus with receiver `otherOnField`, so it only
+  //     counts when that element's owner is the active on-field character.
+  //     This is an approximation — it implicitly assumes the on-field char
+  //     is the sole source of their own element (true in most team comps),
+  //     and excludes off-field damage from benefiting.
+  //
+  //   "team" (optimistic): apply the +40% team-wide to every other team
+  //     element. Useful when several characters share an element (the bonus
+  //     effectively applies continuously) or when off-field elemental damage
+  //     needs to benefit.
+  //
+  // noStackId uses `${artifactSetId}-${elem}` on every element-specific buff,
+  // so two Heaven's Gift equippers can't double-stack the same element but
+  // different elements remain independent.
+  private readonly o = resolveOption(heavensGiftOption, this.option);
+  readonly halfSetId = "er-20";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[];
+
+  constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
+    super(artifactSetId, charId, teamMeta);
+    const isHexerei = teamMeta.factions[charId] === "Hexerei";
+    const isSecretRite = teamMeta.countByFaction("Hexerei") >= 2;
+    const wielderElement = teamMeta.elements[charId];
+    if (!isHexerei || wielderElement === undefined) {
+      this.buffs = [];
+      return;
+    }
+    const value = isSecretRite ? 0.4 : 0.2;
+    const buffs: StatBuff[] = [
+      // Base buff: equipping char's element.
+      new StatBuff(
+        {
+          type: "artifactSet",
+          id: this.artifactSetId,
+          triggers: ["E"],
+          noStackId: `${this.artifactSetId}-${wielderElement}`,
+        },
+        { receiver: "team", filter: { elements: [wielderElement] } },
+        [{ key: "dmg%", value }]
+      ),
+    ];
+
+    // Mortal Hymn: add +40% bonus for every OTHER team element.
+    if (isSecretRite) {
+      const teamElementSet = new Set(Object.values(teamMeta.elements));
+      const otherElements: Element[] = ALL_ELEMENTS.filter(
+        (el) => teamElementSet.has(el) && el !== wielderElement
+      );
+      const receiver = this.o === "team" ? "team" : "otherOnField";
+      for (const elem of otherElements) {
+        buffs.push(
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["E"],
+              noStackId: `${this.artifactSetId}-${elem}`,
+            },
+            { receiver, filter: { elements: [elem] } },
+            [{ key: "dmg%", value: 0.4 }]
+          )
+        );
+      }
+    }
+    this.buffs = buffs;
+  }
 }

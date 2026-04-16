@@ -8,6 +8,7 @@
  * - runTeamOptimization async generator (main entry point)
  */
 
+import { charInfo } from "@/data/charInfo";
 import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
@@ -98,6 +99,27 @@ function hasIntersection(a: Set<string>, b: Set<string>): boolean {
     if (larger.has(id)) return true;
   }
   return false;
+}
+
+/**
+ * Fallback scoring weights for saturated characters with no build match.
+ * Always includes ER (healers/shielders need burst uptime); for characters
+ * with `supStat` (heal/shield scaling stats), also includes those keys so
+ * the greedy picker prefers artifacts whose substats scale their support
+ * output (e.g. Bennett→hp%, Gorou→def%). Flat counterparts are included at
+ * weight 0.3 since flat substats still contribute after conversion but are
+ * ~3× weaker per-roll than their % counterparts.
+ */
+function buildSupStatFallbackWeights(charId: string): Record<string, number> {
+  const weights: Record<string, number> = { er: 1 };
+  const supStat = charInfo[charId]?.supStat;
+  if (supStat) {
+    for (const s of supStat) weights[s] = 1;
+  }
+  if (weights["atk%"]) weights.atk = 0.3;
+  if (weights["hp%"]) weights.hp = 0.3;
+  if (weights["def%"]) weights.def = 0.3;
+  return weights;
 }
 
 function computeHyperparams(inventorySize: number): {
@@ -2594,10 +2616,11 @@ export async function* runTeamOptimization(
         if (candidates.length === 0) continue;
 
         // Score by build weights (no CR/CD fallback for saturated chars)
-        // Use ER as fallback weight if no build match exists
+        // Use ER (and supStat scaling keys for healers/shielders) as fallback
+        // weights if no build match exists.
         const fallbackWeights = buildMatch
           ? undefined
-          : ({ er: 100 } as Record<string, number>);
+          : buildSupStatFallbackWeights(charId);
         candidates.sort((a, b) => {
           const sa = buildMatch
             ? computeWeightScore(a, buildMatch, globalConfig, 1)

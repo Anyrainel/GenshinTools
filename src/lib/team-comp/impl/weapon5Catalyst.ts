@@ -479,6 +479,51 @@ class CashflowSupervision extends WeaponBase {
   ];
 }
 
+@RegisterWeapon("seven_edicts_of_dust_and_light")
+class SevenEdictsOfDustAndLight extends WeaponBase {
+  // Base ATK% (always).
+  // After creating a shield, "Pathfinder's Light" (20s): per 1000 ATK → active party
+  // member DMG +X%, capped. The wielder is off-field-eligible (shielder role).
+  // Hexerei: Secret Rite — off-field Hexerei teammates also gain 50% of the DMG increase.
+  get buffs() {
+    const atkPct = r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]);
+    const scale = r(this.refinement, [0.1, 0.13, 0.16, 0.19, 0.22]) / 1000;
+    const cap = r(this.refinement, [0.26, 0.34, 0.42, 0.5, 0.58]);
+    const buffs: StatBuff[] = [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        { key: "atk%", value: atkPct },
+      ]),
+      // Pathfinder's Light: on-field teammate (including wielder) DMG, scaling with
+      // wielder's ATK. Wielder provides the ATK so the buff is based on self stats.
+      new ScalingBuff(
+        wbs(this, ["shield"], "seven-edicts-pathfinders-light"),
+        { receiver: "teamOnField" },
+        [],
+        "atk",
+        "dmg%",
+        scale,
+        cap
+      ),
+    ];
+    // Hexerei: Secret Rite — off-field Hexerei party members (including the
+    // wielder themselves if Hexerei) gain half of the DMG buff.
+    if (this.teamMeta.countByFaction("Hexerei") >= 2) {
+      buffs.push(
+        new ScalingBuff(
+          wbs(this, ["shield"], "seven-edicts-pathfinders-light-hexerei"),
+          { receiver: "teamOffField", factions: ["Hexerei"] },
+          [],
+          "atk",
+          "dmg%",
+          scale * 0.5,
+          cap * 0.5
+        )
+      );
+    }
+    return buffs;
+  }
+}
+
 @RegisterWeapon("everlasting_moonglow")
 class EverlastingMoonglow extends WeaponBase {
   // Heal% + HP × scale → additive base DMG for Normal Attack
