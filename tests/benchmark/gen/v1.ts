@@ -812,6 +812,40 @@ export async function* runTeamOptimization(
               }
             }
 
+            // Check constraints before accepting this permutation
+            const expPermSheets = buildSheetsFromArtifacts(
+              baseSheets,
+              newPermArtifacts
+            );
+            const expPermStats = effectiveTeamBuild.getTeamStats(
+              expPermSheets,
+              carryCharId,
+              calcContext
+            );
+            let expConstraintsOk = true;
+            for (const cid of allCharIds) {
+              const cc = effectivePerChar[cid];
+              if (!cc) continue;
+              if (cc.minEr > 0) {
+                const er = expPermStats[cid]?.get("er", null) ?? 0;
+                if (er < cc.minEr - 1e-6) {
+                  expConstraintsOk = false;
+                  break;
+                }
+              }
+              if (cc.minCr > 0) {
+                const cr = expPermStats[cid]?.get("cr", null) ?? 0;
+                if (cr < cc.minCr - 1e-6) {
+                  expConstraintsOk = false;
+                  break;
+                }
+              }
+            }
+            if (!expConstraintsOk) {
+              if (teamDeadlineMs && performance.now() >= teamDeadlineMs) break;
+              continue;
+            }
+
             const permScore = computeFinalScore(
               effectiveTeamBuild,
               newPermArtifacts,
@@ -847,6 +881,40 @@ export async function* runTeamOptimization(
             ...emptyArtifacts,
           };
         }
+      }
+
+      // Check all characters meet ER/CR constraints before accepting this permutation
+      const permSheetsFinal = buildSheetsFromArtifacts(
+        baseSheets,
+        permArtifactsByChar
+      );
+      const permStats = effectiveTeamBuild.getTeamStats(
+        permSheetsFinal,
+        carryCharId,
+        calcContext
+      );
+      let permConstraintsOk = true;
+      for (const cid of allCharIds) {
+        const cc = effectivePerChar[cid];
+        if (!cc) continue;
+        if (cc.minEr > 0) {
+          const er = permStats[cid]?.get("er", null) ?? 0;
+          if (er < cc.minEr - 1e-6) {
+            permConstraintsOk = false;
+            break;
+          }
+        }
+        if (cc.minCr > 0) {
+          const cr = permStats[cid]?.get("cr", null) ?? 0;
+          if (cr < cc.minCr - 1e-6) {
+            permConstraintsOk = false;
+            break;
+          }
+        }
+      }
+      if (!permConstraintsOk) {
+        if (teamDeadlineMs && performance.now() >= teamDeadlineMs) break;
+        continue;
       }
 
       const permScore = computeFinalScore(
@@ -939,22 +1007,59 @@ export async function* runTeamOptimization(
     }
 
     if (lastResult) {
+      const prevCarryArts = bestR1ArtifactsByChar[charId];
       bestR1ArtifactsByChar[charId] = lastResult.bestArtifacts;
-      passResults.push({
-        passId: "carry-2",
-        charId,
-        bestDamage: lastResult.bestDamage,
-        bestArtifacts: lastResult.bestArtifacts,
-        failReason: lastResult.failReason,
-      });
 
-      // Lock this carry's new artifacts for subsequent carries
-      for (const id of collectArtifactIds(lastResult.bestArtifacts)) {
+      // Check if carry-2 broke team constraints (e.g. shifted team buffs
+      // causing support ER to drift below threshold). Revert if so.
+      const carry2Sheets = buildSheetsFromArtifacts(
+        baseSheets,
+        bestR1ArtifactsByChar
+      );
+      const carry2Stats = effectiveTeamBuild.getTeamStats(
+        carry2Sheets,
+        carryCharId,
+        calcContext
+      );
+      let carry2ConstraintsOk = true;
+      for (const cid of allCharIds) {
+        const cc = effectivePerChar[cid];
+        if (!cc) continue;
+        if (cc.minEr > 0) {
+          const er = carry2Stats[cid]?.get("er", null) ?? 0;
+          if (er < cc.minEr - 1e-6) {
+            carry2ConstraintsOk = false;
+            break;
+          }
+        }
+        if (cc.minCr > 0) {
+          const cr = carry2Stats[cid]?.get("cr", null) ?? 0;
+          if (cr < cc.minCr - 1e-6) {
+            carry2ConstraintsOk = false;
+            break;
+          }
+        }
+      }
+
+      if (!carry2ConstraintsOk) {
+        bestR1ArtifactsByChar[charId] = prevCarryArts;
+      } else {
+        passResults.push({
+          passId: "carry-2",
+          charId,
+          bestDamage: lastResult.bestDamage,
+          bestArtifacts: lastResult.bestArtifacts,
+          failReason: lastResult.failReason,
+        });
+      }
+
+      // Lock this carry's (possibly reverted) artifacts for subsequent carries
+      for (const id of collectArtifactIds(bestR1ArtifactsByChar[charId])) {
         carry2Excluded.add(id);
       }
 
       const pieces = allSlots
-        .map((s) => lastResult!.bestArtifacts[s])
+        .map((s) => bestR1ArtifactsByChar[charId][s])
         .filter((a): a is ArtifactData => a != null);
       currentSheets = {
         ...currentSheets,

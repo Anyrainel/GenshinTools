@@ -1371,6 +1371,28 @@ async function* runTeamOpt(
     }
   }
 
+  // Helper: check all characters' ER/CR constraints against given sheets
+  function checkAllConstraints(sheets: Record<string, StatSheet>): boolean {
+    const stats = effectiveTeamBuild.getTeamStats(
+      sheets,
+      carryCharId,
+      calcContext
+    );
+    for (const cid of allCharIds) {
+      const cc = effectivePerChar[cid];
+      if (!cc) continue;
+      if (cc.minEr > 0) {
+        const er = stats[cid]?.get("er", null) ?? 0;
+        if (er < cc.minEr - 1e-6) return false;
+      }
+      if (cc.minCr > 0) {
+        const cr = stats[cid]?.get("cr", null) ?? 0;
+        if (cr < cc.minCr - 1e-6) return false;
+      }
+    }
+    return true;
+  }
+
   // Re-evaluate top candidates with full team damage
   let bestAllocation: Record<string, TopKEntry> | null = null;
   let bestFullDamage = Number.NEGATIVE_INFINITY;
@@ -1391,6 +1413,10 @@ async function* runTeamOpt(
     }
 
     const sheets = buildSheetsFromArtifacts(baseSheets, candidateArts);
+
+    // Reject candidates that violate any character's ER/CR constraints
+    if (!checkAllConstraints(sheets)) continue;
+
     let damage: number;
     if (comboScoreFn) {
       damage = comboScoreFn(sheets, carryCharId);
@@ -1538,9 +1564,19 @@ async function* runTeamOpt(
       refineResult.collector.best &&
       refineResult.collector.best.damage > phase2Damage
     ) {
+      const prevCarryArts = bestArtifactsByChar[carryId];
       bestArtifactsByChar[carryId] = artsTupleToRecord(
         refineResult.collector.best.artifacts
       );
+      // Revert if carry re-opt broke team constraints (e.g. stole artifacts
+      // from supports that were needed to meet their ER requirements)
+      const phase3Sheets = buildSheetsFromArtifacts(
+        baseSheets,
+        bestArtifactsByChar
+      );
+      if (!checkAllConstraints(phase3Sheets)) {
+        bestArtifactsByChar[carryId] = prevCarryArts;
+      }
     }
   }
 
