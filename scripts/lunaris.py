@@ -12,7 +12,7 @@ Output files (under src/data/game/):
   character_beta_stats.json, character_beta_en.json, character_beta_zh.json
   weapon_beta_stats.json, weapon_beta_en.json, weapon_beta_zh.json
   src/data/resources_beta.ts
-  public/beta/character/{id}.webp, public/beta/weapon/{id}.webp
+  public/character/{id}.webp, public/weapon/{id}.webp (shared with released assets)
 """
 
 import argparse
@@ -29,8 +29,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "src" / "data" / "game"
 RESOURCES_BETA_PATH = PROJECT_ROOT / "src" / "data" / "resources_beta.ts"
 I18N_BETA_PATH = PROJECT_ROOT / "src" / "data" / "i18n-beta.ts"
-ICON_DIR_CHAR = PROJECT_ROOT / "public" / "beta" / "character"
-ICON_DIR_WEAPON = PROJECT_ROOT / "public" / "beta" / "weapon"
+ICON_DIR_CHAR = PROJECT_ROOT / "public" / "character"
+ICON_DIR_WEAPON = PROJECT_ROOT / "public" / "weapon"
 
 CHARACTER_STATS_PATH = DATA_DIR / "character_stats.json"
 WEAPON_STATS_PATH = DATA_DIR / "weapon_stats.json"
@@ -815,7 +815,7 @@ def generate_resources_beta_ts(
     for cid, rarity in characters:
         char_entries.append(
             json.dumps(
-                {"id": cid, "rarity": rarity, "imagePath": f"/beta/character/{cid}.webp"},
+                {"id": cid, "rarity": rarity, "imagePath": f"/character/{cid}.webp"},
                 ensure_ascii=False,
                 separators=(",", ":"),
             )
@@ -831,7 +831,7 @@ def generate_resources_beta_ts(
     for wid, rarity in weapons:
         weapon_entries.append(
             json.dumps(
-                {"id": wid, "rarity": rarity, "imagePath": f"/beta/weapon/{wid}.webp"},
+                {"id": wid, "rarity": rarity, "imagePath": f"/weapon/{wid}.webp"},
                 ensure_ascii=False,
                 separators=(",", ":"),
             )
@@ -859,20 +859,20 @@ def generate_i18n_beta_ts(
         "export const i18nBetaData = {",
         "  characters: {",
     ]
+
+    def _dump(s: str) -> str:
+        return json.dumps(s, ensure_ascii=False)
+
     for cid in sorted(char_en.keys()):
         en_name = char_en[cid].get("name", cid)
         zh_name = char_zh.get(cid, {}).get("name", en_name)
-        lines.append(
-            f"    {json.dumps(cid)}: {{ en: {json.dumps(en_name)}, zh: {json.dumps(zh_name)} }},"
-        )
+        lines.append(f"    {_dump(cid)}: {{ en: {_dump(en_name)}, zh: {_dump(zh_name)} }},")
     lines.append("  },")
     lines.append("  weapons: {")
     for wid in sorted(weapon_en.keys()):
         en_name = weapon_en[wid].get("name", wid)
         zh_name = weapon_zh.get(wid, {}).get("name", en_name)
-        lines.append(
-            f"    {json.dumps(wid)}: {{ en: {json.dumps(en_name)}, zh: {json.dumps(zh_name)} }},"
-        )
+        lines.append(f"    {_dump(wid)}: {{ en: {_dump(en_name)}, zh: {_dump(zh_name)} }},")
     lines.append("  },")
     lines.append("};")
     return "\n".join(lines) + "\n"

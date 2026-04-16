@@ -7856,11 +7856,11 @@
     "region": "None",
     "releaseDate": "2020-09-14",
     "levels": {
-      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
-      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
-      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
-      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
-      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+      "70": {"baseHp": "8935", "baseAtk": "184", "baseDef": "558", "em": "15", "atk%": "18.0%"},
+      "80": {"baseHp": "10172", "baseAtk": "208", "baseDef": "635", "em": "15", "atk%": "24.0%"},
+      "90": {"baseHp": "10925", "baseAtk": "222", "baseDef": "683", "em": "15", "atk%": "24.0%"},
+      "95": {"baseHp": "11301", "baseAtk": "249", "baseDef": "706", "em": "15", "atk%": "24.0%"},
+      "100": {"baseHp": "11677", "baseAtk": "277", "baseDef": "730", "em": "15", "atk%": "24.0%"}
     },
     "talent": {
       "A": [
@@ -7923,11 +7923,11 @@
     "region": "None",
     "releaseDate": "2020-09-14",
     "levels": {
-      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
-      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
-      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
-      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
-      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+      "70": {"baseHp": "8935", "baseAtk": "184", "baseDef": "558", "em": "15", "atk%": "18.0%"},
+      "80": {"baseHp": "10172", "baseAtk": "208", "baseDef": "635", "em": "15", "atk%": "24.0%"},
+      "90": {"baseHp": "10925", "baseAtk": "222", "baseDef": "683", "em": "15", "atk%": "24.0%"},
+      "95": {"baseHp": "11301", "baseAtk": "249", "baseDef": "706", "em": "15", "atk%": "24.0%"},
+      "100": {"baseHp": "11677", "baseAtk": "277", "baseDef": "730", "em": "15", "atk%": "24.0%"}
     },
     "talent": {
       "A": [
@@ -7990,11 +7990,11 @@
     "region": "None",
     "releaseDate": "2020-09-14",
     "levels": {
-      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
-      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
-      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
-      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
-      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+      "70": {"baseHp": "8935", "baseAtk": "184", "baseDef": "558", "em": "15", "atk%": "18.0%"},
+      "80": {"baseHp": "10172", "baseAtk": "208", "baseDef": "635", "em": "15", "atk%": "24.0%"},
+      "90": {"baseHp": "10925", "baseAtk": "222", "baseDef": "683", "em": "15", "atk%": "24.0%"},
+      "95": {"baseHp": "11301", "baseAtk": "249", "baseDef": "706", "em": "15", "atk%": "24.0%"},
+      "100": {"baseHp": "11677", "baseAtk": "277", "baseDef": "730", "em": "15", "atk%": "24.0%"}
     },
     "talent": {
       "A": [
@@ -8057,11 +8057,11 @@
     "region": "None",
     "releaseDate": "2020-09-14",
     "levels": {
-      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
-      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
-      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
-      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
-      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+      "70": {"baseHp": "8935", "baseAtk": "184", "baseDef": "558", "em": "15", "atk%": "18.0%"},
+      "80": {"baseHp": "10172", "baseAtk": "208", "baseDef": "635", "em": "15", "atk%": "24.0%"},
+      "90": {"baseHp": "10925", "baseAtk": "222", "baseDef": "683", "em": "15", "atk%": "24.0%"},
+      "95": {"baseHp": "11301", "baseAtk": "249", "baseDef": "706", "em": "15", "atk%": "24.0%"},
+      "100": {"baseHp": "11677", "baseAtk": "277", "baseDef": "730", "em": "15", "atk%": "24.0%"}
     },
     "talent": {
       "A": [
@@ -8124,11 +8124,11 @@
     "region": "None",
     "releaseDate": "2020-09-14",
     "levels": {
-      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
-      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
-      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
-      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
-      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+      "70": {"baseHp": "8935", "baseAtk": "184", "baseDef": "558", "em": "15", "atk%": "18.0%"},
+      "80": {"baseHp": "10172", "baseAtk": "208", "baseDef": "635", "em": "15", "atk%": "24.0%"},
+      "90": {"baseHp": "10925", "baseAtk": "222", "baseDef": "683", "em": "15", "atk%": "24.0%"},
+      "95": {"baseHp": "11301", "baseAtk": "249", "baseDef": "706", "em": "15", "atk%": "24.0%"},
+      "100": {"baseHp": "11677", "baseAtk": "277", "baseDef": "730", "em": "15", "atk%": "24.0%"}
     },
     "talent": {
       "A": [
@@ -8191,11 +8191,11 @@
     "region": "None",
     "releaseDate": "2020-09-14",
     "levels": {
-      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
-      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
-      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
-      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
-      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+      "70": {"baseHp": "8935", "baseAtk": "184", "baseDef": "558", "em": "15", "atk%": "18.0%"},
+      "80": {"baseHp": "10172", "baseAtk": "208", "baseDef": "635", "em": "15", "atk%": "24.0%"},
+      "90": {"baseHp": "10925", "baseAtk": "222", "baseDef": "683", "em": "15", "atk%": "24.0%"},
+      "95": {"baseHp": "11301", "baseAtk": "249", "baseDef": "706", "em": "15", "atk%": "24.0%"},
+      "100": {"baseHp": "11677", "baseAtk": "277", "baseDef": "730", "em": "15", "atk%": "24.0%"}
     },
     "talent": {
       "A": [
