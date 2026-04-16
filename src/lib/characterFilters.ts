@@ -107,6 +107,14 @@ function createSortComparator(
       }
     }
 
+    if (filters.scoreSort !== "off" && scores) {
+      const scoreA = scores[a.id]?.normalized.normalizedScore ?? -1;
+      const scoreB = scores[b.id]?.normalized.normalizedScore ?? -1;
+      if (scoreA !== scoreB) {
+        return filters.scoreSort === "asc" ? scoreA - scoreB : scoreB - scoreA;
+      }
+    }
+
     if (filters.releaseSort !== "off") {
       const dateA = characterStatsMap?.[a.id]?.releaseDate;
       const dateB = characterStatsMap?.[b.id]?.releaseDate;
@@ -118,14 +126,6 @@ function createSortComparator(
         : Number.POSITIVE_INFINITY;
       const cmp = filters.releaseSort === "asc" ? timeA - timeB : timeB - timeA;
       if (cmp !== 0) return cmp;
-    }
-
-    if (filters.scoreSort !== "off" && scores) {
-      const scoreA = scores[a.id]?.normalized.normalizedScore ?? -1;
-      const scoreB = scores[b.id]?.normalized.normalizedScore ?? -1;
-      if (scoreA !== scoreB) {
-        return filters.scoreSort === "asc" ? scoreA - scoreB : scoreB - scoreA;
-      }
     }
 
     return 0;

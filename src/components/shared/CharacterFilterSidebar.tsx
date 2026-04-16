@@ -99,7 +99,7 @@ export function CharacterFilterSidebar({
           onChange={(e) =>
             onFiltersChange({ ...filters, searchQuery: e.target.value })
           }
-          className="pl-8 pr-8 h-9 text-sm"
+          className="pl-8 pr-8 h-9 text-sm border-border"
         />
         {filters.searchQuery && (
           <button
@@ -144,15 +144,6 @@ export function CharacterFilterSidebar({
               }
               disabled={!hasTierData}
             />
-            <Label className="text-foreground text-sm font-medium">
-              {t.ui("filters.sortByReleaseDate")}
-            </Label>
-            <SortToggleGroup
-              value={filters.releaseSort}
-              onChange={(v: SortDirection) =>
-                onFiltersChange({ ...filters, releaseSort: v })
-              }
-            />
             {/* Score sort row */}
             {hasScoreData ? (
               <Label className="text-foreground text-sm font-medium">
@@ -177,6 +168,15 @@ export function CharacterFilterSidebar({
                 onFiltersChange({ ...filters, scoreSort: v })
               }
               disabled={!hasScoreData}
+            />
+            <Label className="text-foreground text-sm font-medium">
+              {t.ui("filters.sortByReleaseDate")}
+            </Label>
+            <SortToggleGroup
+              value={filters.releaseSort}
+              onChange={(v: SortDirection) =>
+                onFiltersChange({ ...filters, releaseSort: v })
+              }
             />
           </div>
         </div>
