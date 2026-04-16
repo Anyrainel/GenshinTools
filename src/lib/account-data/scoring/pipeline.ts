@@ -261,12 +261,12 @@ function runComboEnumerationPipeline(
         const comboLopsided =
           bestBalancedDmg !== null &&
           isLopsidedAllocation(tuneResult.rollAllocation);
-        // Cap at 1.0, then apply -2% penalty for lopsided combos
-        let normalizedDamage =
+        // Clamp to 1.0: lopsided combos whose raw damage exceeds the best
+        // balanced damage are capped at 100% rather than being penalized.
+        const normalizedDamage =
           bestFinalDmg > 0
             ? Math.min(tuneResult.finalDamage / bestFinalDmg, 1.0)
             : 0;
-        if (comboLopsided) normalizedDamage -= 0.02;
 
         comboBreakdowns.push({
           mainStats: { sands: combo.s, goblet: combo.g, circlet: combo.c },
@@ -382,9 +382,9 @@ export type ComboBreakdown = {
   mainStats: { sands: MainStat; goblet: MainStat; circlet: MainStat };
   rollAllocation: Record<SubStat, number>;
   damage: number;
-  /** Normalized damage ratio (0-1), with lopsided penalty already applied. */
+  /** Normalized damage ratio (0-1); lopsided combos are clamped to 1.0. */
   damageRatio: number;
-  /** True if this combo has lopsided allocation (max-2nd >= 15) and was penalized. */
+  /** True if this combo has lopsided allocation (max-2nd >= 15) and was clamped. */
   lopsided?: boolean;
 };
 
@@ -546,11 +546,12 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
     const comboLopsided =
       bestBalancedDmg !== null &&
       isLopsidedAllocation(tuneResult.rollAllocation);
-    let normalizedDamage =
+    // Clamp to 1.0: lopsided combos whose raw damage exceeds the best
+    // balanced damage are capped at 100% rather than being penalized.
+    const normalizedDamage =
       bestFinalDmg > 0
         ? Math.min(tuneResult.finalDamage / bestFinalDmg, 1.0)
         : 0;
-    if (comboLopsided) normalizedDamage -= 0.02;
     comboBreakdowns.push({
       mainStats: { sands: combo.s, goblet: combo.g, circlet: combo.c },
       rollAllocation: { ...tuneResult.rollAllocation },
@@ -717,7 +718,6 @@ function isLopsidedAllocation(
  * Combos with lopsided allocation (max - 2nd-max >= 15 rolls) are excluded from
  * the 100% baseline. The best balanced combo's damage becomes 100%.
  * All ratios are capped at 1.0 (no combo exceeds 100%).
- * Lopsided stats receive -2% on damage ratio (= -10 on weight scale) before 5x-4.
  * Results are sorted by weight descending.
  */
 function computeMainStatWeightsFromDamage(
@@ -726,11 +726,7 @@ function computeMainStatWeightsFromDamage(
   qualifying: ComboResult[]
 ): WeightedMainStat[] {
   // For each candidate stat, find the best combo (by damage, then cr/cd split).
-  // Also track whether that best combo is lopsided.
-  const bestPerStat: Record<
-    string,
-    { dmg: number; crCdDiff: number; lopsided: boolean }
-  > = {};
+  const bestPerStat: Record<string, { dmg: number; crCdDiff: number }> = {};
 
   for (const combo of qualifying) {
     const stat = combo[slot];
@@ -739,28 +735,26 @@ function computeMainStatWeightsFromDamage(
       (combo.tuneResult.rollAllocation.cr || 0) -
         (combo.tuneResult.rollAllocation.cd || 0)
     );
-    const comboLopsided = isLopsidedAllocation(combo.tuneResult.rollAllocation);
     const prev = bestPerStat[stat];
     if (
       !prev ||
       dmg > prev.dmg + 1e-6 ||
       (Math.abs(dmg - prev.dmg) <= 1e-6 && crCdDiff < prev.crCdDiff)
     ) {
-      bestPerStat[stat] = { dmg, crCdDiff, lopsided: comboLopsided };
+      bestPerStat[stat] = { dmg, crCdDiff };
     }
   }
 
-  // normalizedDamage already has: balanced baseline, cap at 1.0, and -2% lopsided
-  // penalty baked in. Just apply 5x-4 directly.
+  // normalizedDamage already has: balanced baseline and cap at 1.0 baked in.
+  // Just apply 5x-4 directly.
   const entries = Object.entries(bestPerStat).map(
-    ([stat, { dmg, crCdDiff, lopsided: isLopsided }]) => {
+    ([stat, { dmg, crCdDiff }]) => {
       const weight = Math.max(0, Math.round((5 * dmg - 4) * 100));
       return {
         stat: stat as MainStat,
         weight,
         crCdDiff,
         dmg,
-        penalty: isLopsided ? -2 : undefined,
       };
     }
   );
@@ -788,9 +782,5 @@ function computeMainStatWeightsFromDamage(
     return a.crCdDiff - b.crCdDiff;
   });
 
-  return entries.map(({ stat, weight, penalty }) => ({
-    stat,
-    weight,
-    ...(penalty !== undefined && { penalty }),
-  }));
+  return entries.map(({ stat, weight }) => ({ stat, weight }));
 }

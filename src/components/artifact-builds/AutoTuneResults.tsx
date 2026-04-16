@@ -346,7 +346,7 @@ function ComboRow({
         {combo.lopsided && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="text-red-400 ml-0.5 cursor-help">(-2)</span>
+              <span className="text-amber-400 ml-0.5 cursor-help">*</span>
             </TooltipTrigger>
             <TooltipContent className="max-w-64">
               {t.ui("buildCard.autoTuneLopsided")}

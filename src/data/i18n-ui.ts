@@ -1469,8 +1469,8 @@ export const i18nUiData = {
     autoTuneMainStats: { en: "Main Stat Weights", zh: "主词条权重" },
     autoTuneIdealRolls: { en: "Ideal Rolls", zh: "理想词条数" },
     autoTuneLopsided: {
-      en: "Lopsided allocation: the highest substat has ≥15 more rolls than the 2nd highest, suggesting this main stat forces an unbalanced build. −2% penalty applied.",
-      zh: "词条分配不均：最多的副词条比第二多的多出≥15条，说明该主词条迫使副词条严重倾斜。已扣除2%伤害惩罚。",
+      en: "Lopsided allocation: the highest substat has ≥15 more rolls than the 2nd highest, suggesting this main stat forces an unbalanced build. Damage ratio is clamped to 100% — the best balanced combo defines the baseline.",
+      zh: "词条分配不均：最多的副词条比第二多的多出≥15条，说明该主词条迫使副词条严重倾斜。伤害比例已限制在100%以内——以最佳均衡组合作为基准。",
     },
     autoTuneError: { en: "Calculation failed", zh: "计算失败" },
     autoTuneAddTeam: { en: "Add Team", zh: "添加队伍" },

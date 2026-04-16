@@ -42,7 +42,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 // Height model for masonry layout (measured px values)
-const CARD_GAP = 12; // gap-3
+const CARD_GAP = 16; // gap-4
 const HEIGHT = {
   compact: { empty: 146, base: 102, perRec: 83 },
   normal: { empty: 155, base: 111, perRec: 83 },
@@ -421,9 +421,9 @@ export function RecommendationView({
                 columnCount
               );
               return (
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                   {cols.map((col, i) => (
-                    <div key={i} className="flex-1 flex flex-col gap-3 min-w-0">
+                    <div key={i} className="flex-1 flex flex-col gap-4 min-w-0">
                       {col.map(({ char, scoreResult, recommendations }) => (
                         <RecommendationCard
                           key={char.key}

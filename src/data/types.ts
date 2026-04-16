@@ -298,8 +298,6 @@ export type WeightedMainStat = {
   weight: number; // 0-100
   /** CD-equivalent override (default = 62.1 for 5★). Populated by auto-tune for elemental DMG% goblets. */
   cdEquiv?: number;
-  /** Penalty applied due to lopsided allocation (e.g. -2). Shown in UI. */
-  penalty?: number;
 };
 
 export type Build = {
