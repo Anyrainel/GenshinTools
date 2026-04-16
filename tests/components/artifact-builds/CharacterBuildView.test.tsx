@@ -77,6 +77,15 @@ vi.mock("@/data/constants", () => ({
       region: "Mondstadt",
     },
   },
+  allCharacters: [
+    {
+      id: "char1",
+      element: "Pyro",
+      weaponType: "Sword",
+      rarity: 5,
+      region: "Mondstadt",
+    },
+  ],
 }));
 
 vi.mock("@/data/resources", () => ({

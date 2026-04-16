@@ -1,10 +1,10 @@
-import { characters } from "@/data/resources";
+import { allCharacters } from "@/data/constants";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 
 /** Character IDs that are always owned (Traveler, Manekin, Manekina variants). */
 const ALWAYS_OWNED_CHARACTER_IDS = new Set(
-  characters
+  allCharacters
     .filter((c) => /^(traveler|manekin|manekina)_/.test(c.id))
     .map((c) => c.id)
 );

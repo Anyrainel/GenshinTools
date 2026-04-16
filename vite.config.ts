@@ -46,6 +46,14 @@ export default defineConfig(({ mode }) => ({
   worker: {
     format: "es",
   },
+  build: {
+    // Beta game-data files (``*.json.gz``) must ship as standalone gzipped
+    // assets — never inlined as base64 data URIs in JS chunks. Inlining would
+    // force the runtime to decode a data: URL via fetch (which works) but it
+    // would also bloat the main JS bundle with opaque blobs on every build.
+    assetsInlineLimit: (filePath) =>
+      filePath.endsWith(".json.gz") ? false : undefined,
+  },
   server: {
     port: 5173,
     strictPort: true,

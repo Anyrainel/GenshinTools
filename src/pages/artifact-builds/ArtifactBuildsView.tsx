@@ -4,7 +4,7 @@ import { ComputeSidebar } from "@/components/artifact-builds/ComputeSidebar";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { ExportBranding } from "@/components/shared/ExportBranding";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifacts } from "@/data/resources";
+import { allArtifacts } from "@/data/constants";
 import type { ComputeOptions } from "@/data/types";
 import { useAsyncCompute } from "@/hooks/useAsyncCompute";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -60,7 +60,7 @@ export const ArtifactBuildsView = forwardRef<
   );
 
   const filteredSets = useMemo(() => {
-    return artifacts.filter((set) => {
+    return allArtifacts.filter((set) => {
       if (
         searchQuery &&
         !t.artifact(set.id).toLowerCase().includes(searchQuery.toLowerCase())

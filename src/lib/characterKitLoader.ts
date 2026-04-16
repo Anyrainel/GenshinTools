@@ -6,6 +6,7 @@ import type {
   Language,
 } from "@/data/types";
 import { betaEnabled } from "@/lib/betaFlag";
+import { fetchGzipJson } from "@/lib/gzipJson";
 
 // Raw JSON shape before transformation
 type RawSkill = {
@@ -33,6 +34,14 @@ const CHAR_RARITIES = ["4", "5"] as const;
 const modules = import.meta.glob<{ default: RawBundle }>(
   "../data/game/character_*_*.json",
   { eager: false }
+);
+
+// Beta character kits are gzipped (character_beta_*.json.gz) and loaded via URL
+// so their plaintext contents never hit the released JS bundle. The glob
+// resolves each matching file to a URL string at build time.
+const betaModules = import.meta.glob<string>(
+  "../data/game/character_beta_*.json.gz",
+  { eager: false, query: "?url", import: "default" }
 );
 
 /** Detail row: [label, template] — 2 columns. */
@@ -84,29 +93,40 @@ export function loadCharacterKits(
     );
   }
 
-  // Conditionally add beta character kit loader. Beta is placed FIRST so that
-  // released data (loaded after) overrides any stale beta entries for the
-  // same id. Only beta-only ids survive the subsequent merge.
-  if (betaEnabled()) {
-    const betaPath = `../data/game/character_beta_${lang}.json`;
-    const betaLoader = modules[betaPath];
-    if (betaLoader) {
-      loaders.unshift(betaLoader);
-    }
-  }
-
-  const promise = Promise.all(loaders.map((loader) => loader!())).then(
+  // Released kit bundles first; beta data (if enabled) is merged afterwards but
+  // with setdefault semantics so released entries always win.
+  const releasedPromise = Promise.all(loaders.map((loader) => loader!())).then(
     (mods) => {
       const raw: RawBundle = {};
       for (const mod of mods) {
         Object.assign(raw, mod.default);
       }
-      const transformed = transformBundle(raw);
-      cache.set(lang, transformed);
-      pending.delete(lang);
-      return transformed;
+      return raw;
     }
   );
+
+  let betaPromise: Promise<RawBundle> | null = null;
+  if (betaEnabled()) {
+    const betaPath = `../data/game/character_beta_${lang}.json.gz`;
+    const betaUrlLoader = betaModules[betaPath];
+    if (betaUrlLoader) {
+      betaPromise = betaUrlLoader().then((url) =>
+        fetchGzipJson<RawBundle>(url)
+      );
+    }
+  }
+
+  const promise = Promise.all([
+    releasedPromise,
+    betaPromise ?? Promise.resolve<RawBundle>({}),
+  ]).then(([released, beta]) => {
+    // Beta-only ids are added; released ids are preserved unchanged.
+    const raw: RawBundle = { ...beta, ...released };
+    const transformed = transformBundle(raw);
+    cache.set(lang, transformed);
+    pending.delete(lang);
+    return transformed;
+  });
 
   pending.set(lang, promise);
   return promise;

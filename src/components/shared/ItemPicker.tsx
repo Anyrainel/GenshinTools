@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
+  artifactHalfSets,
   artifactHalfSetsById,
   artifactsById,
   charactersById,
@@ -43,7 +44,6 @@ import {
   weaponResourcesByName,
   weaponsById,
 } from "@/data/constants";
-import { artifactHalfSets } from "@/data/resources";
 import type {
   ArtifactHalfSet,
   ArtifactSetResource,

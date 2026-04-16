@@ -14,6 +14,7 @@ import type {
   WeaponType,
 } from "@/data/types";
 import { betaEnabled } from "@/lib/betaFlag";
+import { fetchGzipJson } from "@/lib/gzipJson";
 import type { StatEntry } from "@/lib/team-comp/types";
 
 // ─── JSON shapes (match character_stats.json / weapon_stats.json) ───
@@ -72,8 +73,8 @@ export function getCharacterStats(): Promise<CharacterStatsMap> {
     ];
     if (betaEnabled()) {
       loaders.push(
-        import("@/data/game/character_beta_stats.json").then(
-          (m) => m.default as CharacterStatsMap
+        import("@/data/game/character_beta_stats.json.gz?url").then((m) =>
+          fetchGzipJson<CharacterStatsMap>(m.default)
         )
       );
     }
@@ -96,8 +97,8 @@ export function getWeaponStats(): Promise<WeaponStatsMap> {
     ];
     if (betaEnabled()) {
       loaders.push(
-        import("@/data/game/weapon_beta_stats.json").then(
-          (m) => m.default as WeaponStatsMap
+        import("@/data/game/weapon_beta_stats.json.gz?url").then((m) =>
+          fetchGzipJson<WeaponStatsMap>(m.default)
         )
       );
     }

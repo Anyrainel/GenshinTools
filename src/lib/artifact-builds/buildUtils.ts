@@ -1,5 +1,5 @@
+import { allArtifacts, allCharacters } from "@/data/constants";
 import { toBase64 } from "@/lib/base64";
-import { artifacts, characters } from "../../data/resources";
 import type {
   Build,
   BuildGroup,
@@ -97,16 +97,16 @@ const getRolesMask = (roles: string[] | undefined): number => {
 };
 
 const getCharacterIndex = (charId: string): number => {
-  const index = characters.findIndex((c) => c.id === charId);
+  const index = allCharacters.findIndex((c) => c.id === charId);
   if (index === -1) return 999;
-  return characters.length - index;
+  return allCharacters.length - index;
 };
 
 const getArtifactCode = (build: Build): number => {
   if (build.composition === "4pc") {
     const setId = build.artifactSet;
-    const index = artifacts.findIndex((a) => a.id === setId);
-    const revIndex = index === -1 ? 0 : artifacts.length - index;
+    const index = allArtifacts.findIndex((a) => a.id === setId);
+    const revIndex = index === -1 ? 0 : allArtifacts.length - index;
     // 4 + padded 4 digits
     return 40000 + revIndex;
   }

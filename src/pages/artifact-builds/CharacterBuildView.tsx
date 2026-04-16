@@ -6,8 +6,7 @@ import {
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import { characters } from "@/data/resources";
+import { allCharacters, charactersById } from "@/data/constants";
 import {
   useActiveAccountData,
   useActiveAccountScores,
@@ -130,7 +129,7 @@ export function CharacterBuildView({
   // Compute filtered characters
   const filteredAndSortedCharacters = useMemo(
     () =>
-      filterAndSortCharacters(characters, filters, {
+      filterAndSortCharacters(allCharacters, filters, {
         tierAssignments,
         isOwned: isCharacterOwned,
         characterStatsMap: characterStats ?? undefined,
@@ -201,7 +200,7 @@ export function CharacterBuildView({
 }
 
 interface CharacterListProps {
-  characters: typeof characters;
+  characters: typeof allCharacters;
   scrollRef: React.RefObject<HTMLDivElement>;
   layout: BuildCardLayout;
 }

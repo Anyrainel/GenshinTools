@@ -11,4 +11,9 @@ export const i18nBetaData = {
     "disaster_and_remorse": { en: "Disaster and Remorse", zh: "灾悔" },
     "seven_edicts_of_dust_and_light": { en: "Seven Edicts of Dust and Light", zh: "尘光七谕" },
   },
+  artifacts: {
+    "disenchantment_in_deep_shadow": { en: "Disenchantment in Deep Shadow", zh: "影中沉凝的幻灭" },
+    "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },
+    "heavens_gift": { en: "Heaven's Gift", zh: "天之美赐" },
+  },
 };

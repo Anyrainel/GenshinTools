@@ -7,10 +7,10 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
+  allCharacters,
   elementResourcesByName,
   weaponResourcesByName,
 } from "@/data/constants";
-import { characters } from "@/data/resources";
 import type {
   CharacterResource,
   Element,
@@ -254,7 +254,7 @@ export function CharacterArchiveView() {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
   const sortedCharacters = useMemo(() => {
-    const list = [...characters];
+    const list = [...allCharacters];
     if (!characterStats) return list;
     return list.sort((a, b) => {
       // Traveler at the end, manekin/manekina after traveler

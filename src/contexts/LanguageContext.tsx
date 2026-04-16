@@ -20,6 +20,7 @@ import type {
 } from "../data/types";
 import { betaEnabled } from "../lib/betaFlag";
 import { loadCharacterKits } from "../lib/characterKitLoader";
+import { fetchGzipJson } from "../lib/gzipJson";
 
 // Per-language JSON shape for weapon/artifact game data
 type WeaponGameEntry = {
@@ -59,6 +60,17 @@ const weaponModules = import.meta.glob<{ default: WeaponGameData }>(
 const artifactModules = import.meta.glob<{ default: ArtifactGameData }>(
   "../data/game/artifact_*.json",
   { eager: false }
+);
+// Beta weapon/artifact data is gzipped so its contents aren't indexed by
+// GitHub code search; resolved to a URL at build time and fetched+decompressed
+// at runtime.
+const betaWeaponModules = import.meta.glob<string>(
+  "../data/game/weapon_beta_*.json.gz",
+  { eager: false, query: "?url", import: "default" }
+);
+const betaArtifactModules = import.meta.glob<string>(
+  "../data/game/artifact_beta_*.json.gz",
+  { eager: false, query: "?url", import: "default" }
 );
 
 interface LanguageContextType {
@@ -176,22 +188,42 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const artifactLoader = artifactModules[artifactPath];
 
     if (weaponLoader) {
-      const betaWeaponPath = `../data/game/weapon_beta_${language}.json`;
-      const betaWeaponLoader = betaEnabled()
-        ? weaponModules[betaWeaponPath]
+      const betaWeaponPath = `../data/game/weapon_beta_${language}.json.gz`;
+      const betaWeaponUrlLoader = betaEnabled()
+        ? betaWeaponModules[betaWeaponPath]
         : null;
 
-      if (betaWeaponLoader) {
-        Promise.all([weaponLoader(), betaWeaponLoader()]).then(
-          ([baseMod, betaMod]) =>
-            setWeaponData({ ...baseMod.default, ...betaMod.default })
+      if (betaWeaponUrlLoader) {
+        Promise.all([
+          weaponLoader(),
+          betaWeaponUrlLoader().then((url) =>
+            fetchGzipJson<WeaponGameData>(url)
+          ),
+        ]).then(([baseMod, betaData]) =>
+          setWeaponData({ ...baseMod.default, ...betaData })
         );
       } else {
         weaponLoader().then((mod) => setWeaponData(mod.default));
       }
     }
     if (artifactLoader) {
-      artifactLoader().then((mod) => setArtifactData(mod.default));
+      const betaArtifactPath = `../data/game/artifact_beta_${language}.json.gz`;
+      const betaArtifactUrlLoader = betaEnabled()
+        ? betaArtifactModules[betaArtifactPath]
+        : null;
+
+      if (betaArtifactUrlLoader) {
+        Promise.all([
+          artifactLoader(),
+          betaArtifactUrlLoader().then((url) =>
+            fetchGzipJson<ArtifactGameData>(url)
+          ),
+        ]).then(([baseMod, betaData]) =>
+          setArtifactData({ ...baseMod.default, ...betaData })
+        );
+      } else {
+        artifactLoader().then((mod) => setArtifactData(mod.default));
+      }
     }
   }, [language, isTestEnv]);
 
@@ -249,7 +281,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         string,
         Record<string, string>
       >;
-      return arts[setId]?.[language] || setId;
+      const betaArts = i18nBetaData.artifacts as Record<
+        string,
+        Record<string, string>
+      >;
+      return arts[setId]?.[language] || betaArts[setId]?.[language] || setId;
     },
     [language]
   );

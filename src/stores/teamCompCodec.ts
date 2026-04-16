@@ -16,20 +16,26 @@
 
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import {
+  allArtifacts,
+  allCharacters,
+  allWeapons,
   artifactHalfSets,
-  artifacts,
-  characters,
-  weapons,
-} from "@/data/resources";
+} from "@/data/constants";
 import { toBase64 } from "@/lib/base64";
 import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
 
 // ── Index maps (built once at module load) ──
+// Indexes are 1-based, oldest entity = 1, newest = N. New entries (prepended
+// to the source lists) get N+1 without shifting existing indexes.
 
-const charToIdx = new Map(characters.map((c, i) => [c.id, i + 1]));
-const weaponToIdx = new Map(weapons.map((w, i) => [w.id, i + 1]));
-const artSetToIdx = new Map(artifacts.map((a, i) => [a.id, i + 1]));
-const halfSetToIdx = new Map(artifactHalfSets.map((h, i) => [h.id, i + 1]));
+const charToIdx = new Map(allCharacters.map((c, i, a) => [c.id, a.length - i]));
+const weaponToIdx = new Map(allWeapons.map((w, i, a) => [w.id, a.length - i]));
+const artSetToIdx = new Map(
+  allArtifacts.map((a, i, arr) => [a.id, arr.length - i])
+);
+const halfSetToIdx = new Map(
+  artifactHalfSets.map((h, i, a) => [h.id, a.length - i])
+);
 
 // ── Sorting ──
 

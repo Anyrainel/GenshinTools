@@ -9,23 +9,43 @@ import {
   weaponTypeResources as weaponResources,
   weapons,
 } from "./resources";
-import { betaCharacters, betaWeapons } from "./resources_beta";
+import { betaArtifacts, betaCharacters, betaWeapons } from "./resources_beta";
 
-// Released data always wins over beta data: once an entry is promoted to the
-// released resources, its beta counterpart is considered stale. Only beta
-// entries without a released equivalent are merged in when beta is enabled.
-const allCharacters = betaEnabled()
+// Beta-only entries are spliced in FIRST so stable rarity sorts rank them
+// above released same-rarity peers. Released wins on ID collision.
+export const allCharacters = betaEnabled()
   ? [
-      ...characters,
       ...betaCharacters.filter((b) => !characters.some((c) => c.id === b.id)),
+      ...characters,
     ]
   : characters;
-const allWeapons = betaEnabled()
+export const allWeapons = betaEnabled()
   ? [
-      ...weapons,
       ...betaWeapons.filter((b) => !weapons.some((w) => w.id === b.id)),
+      ...weapons,
     ]
   : weapons;
+// Beta artifact IDs that should render LAST within their rarity bucket, after
+// official sets — used for scrapped/never-released sets (e.g. Glacier and
+// Snowfield) so they don't push genuine upcoming sets down in the archive.
+const RENDER_LAST_BETA_ARTIFACT_IDS = new Set<string>([
+  "glacier_and_snowfield",
+]);
+export const allArtifacts = betaEnabled()
+  ? [
+      ...betaArtifacts.filter(
+        (b) =>
+          !RENDER_LAST_BETA_ARTIFACT_IDS.has(b.id) &&
+          !artifacts.some((a) => a.id === b.id)
+      ),
+      ...artifacts,
+      ...betaArtifacts.filter(
+        (b) =>
+          RENDER_LAST_BETA_ARTIFACT_IDS.has(b.id) &&
+          !artifacts.some((a) => a.id === b.id)
+      ),
+    ]
+  : artifacts;
 
 import type {
   ArtifactHalfSet,
@@ -317,7 +337,7 @@ export const charactersById = freezeRecord(
 
 export const artifactsById = freezeRecord(
   createRecord<ArtifactSetResource, ArtifactSetResource["id"]>(
-    artifacts,
+    allArtifacts,
     (artifact) => artifact.id
   )
 );
@@ -445,7 +465,9 @@ export function getSortedCharacters(
 }
 
 export const sortedWeapons = sortItemsByRarityDesc(allWeapons);
-export const sortedArtifacts = sortItemsByRarityDesc(artifacts);
+export const sortedArtifacts = sortItemsByRarityDesc(allArtifacts);
+
+export { artifactHalfSets } from "./resources";
 
 /** Unique weapon secondary stats from weapon_stats (L90), sorted. */
 export function getSortedWeaponSecondaryStats(
