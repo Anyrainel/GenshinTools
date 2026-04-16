@@ -188,14 +188,13 @@ function WeaponDetailDrawer({
               >
                 <Bookmark className={cn("h-4 w-4", owned && "fill-current")} />
                 <span className="text-xs font-medium">
-                  {owned ? t.ui("archive.owned") : t.ui("archive.notOwned")}
+                  {owned
+                    ? refinement > 1
+                      ? `${t.ui("archive.owned")} (${t.format("common.refinementFormat", refinement)})`
+                      : t.ui("archive.owned")
+                    : t.ui("archive.notOwned")}
                 </span>
               </span>
-              {owned && refinement > 1 && (
-                <span className="text-xs font-medium text-muted-foreground">
-                  {t.format("common.refinementFormat", refinement)}
-                </span>
-              )}
             </div>
           </div>
 

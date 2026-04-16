@@ -204,15 +204,12 @@ export function CharacterDetailPanel({
                     />
                     <span className="text-xs font-medium">
                       {effectiveOwned
-                        ? t.ui("archive.owned")
+                        ? constellation > 0
+                          ? `${t.ui("archive.owned")} (${t.format("common.constellationFormat", constellation)})`
+                          : t.ui("archive.owned")
                         : t.ui("archive.notOwned")}
                     </span>
                   </span>
-                  {effectiveOwned && constellation > 0 && (
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {t.format("common.constellationFormat", constellation)}
-                    </span>
-                  )}
                 </div>
               </CharacterInfo>
             </div>
