@@ -3,9 +3,15 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { TriageDecision, TriageLabel } from "@/lib/account-data/triage";
+import type { TriageDecision } from "@/lib/account-data/triage";
 import { cn, getRarityColor, getTriageTierColor } from "@/lib/utils";
 import { ChevronDown, ChevronUp, Info, ShieldAlert } from "lucide-react";
+
+export type TriageCardSection =
+  | "recommendLock"
+  | "recommendUnlock"
+  | "noChange"
+  | "protected";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -30,9 +36,12 @@ const TIER_KEY = {
   T: "triage.tier.T",
 } as const;
 
-const LABEL_KEY = {
-  lock: "triage.label.lock",
-  unlock: "triage.label.unlock",
+const CHIP_KEY = {
+  suggestLock: "triage.chip.suggestLock",
+  suggestUnlock: "triage.chip.suggestUnlock",
+  locked: "triage.chip.locked",
+  unlocked: "triage.chip.unlocked",
+  protected: "triage.chip.protected",
 } as const;
 
 const SP_KEY = {
@@ -88,10 +97,16 @@ function TierBadge({ tier }: { tier: string }) {
   );
 }
 
-const LABEL_BADGE_COLOR: Record<TriageLabel, string> = {
-  lock: "border-green-500/40 text-green-400",
-  unlock: "border-red-500/40 text-red-400",
-};
+// Chip color per section. Tabs 1-2 use saturated green/red for the
+// "suggest" recommendations; tab 3 uses a less saturated version for
+// status-only display; tab 4 uses a dimmed amber for the protected zone.
+const CHIP_COLOR = {
+  suggestLock: "border-green-500/40 text-green-400",
+  suggestUnlock: "border-red-500/40 text-red-400",
+  locked: "border-green-500/25 text-green-500/70",
+  unlocked: "border-red-500/25 text-red-500/70",
+  protected: "border-amber-500/25 text-amber-500/60",
+} as const;
 
 // ---------------------------------------------------------------------------
 // Triage Card
@@ -101,17 +116,29 @@ export function TriageCard({
   decision,
   expanded,
   onToggle,
-  isProtected,
+  section,
 }: {
   decision: TriageDecision;
   expanded: boolean;
   onToggle: () => void;
-  isProtected?: boolean;
+  section: TriageCardSection;
 }) {
   const { t } = useLanguage();
   const { artifact } = decision;
   const setName = t.artifact(artifact.setKey);
   const dr = decision.decidingResult;
+  const isProtected = section === "protected";
+
+  const chipKind: keyof typeof CHIP_COLOR =
+    section === "recommendLock"
+      ? "suggestLock"
+      : section === "recommendUnlock"
+        ? "suggestUnlock"
+        : section === "protected"
+          ? "protected"
+          : artifact.lock
+            ? "locked"
+            : "unlocked";
 
   return (
     <Card
@@ -177,18 +204,13 @@ export function TriageCard({
             })()}
           </div>
 
-          {/* Action badge (hidden for protected section) */}
-          {!isProtected && (
-            <Badge
-              variant="outline"
-              className={cn(
-                "shrink-0 text-xs",
-                LABEL_BADGE_COLOR[decision.label]
-              )}
-            >
-              {t.ui(LABEL_KEY[decision.label])}
-            </Badge>
-          )}
+          {/* Status/action chip (per section) */}
+          <Badge
+            variant="outline"
+            className={cn("shrink-0 text-xs", CHIP_COLOR[chipKind])}
+          >
+            {t.ui(CHIP_KEY[chipKind])}
+          </Badge>
 
           {expanded ? (
             <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" />

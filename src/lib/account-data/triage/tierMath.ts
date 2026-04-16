@@ -35,11 +35,11 @@ export type TriageMode = "strict" | "loose";
  */
 const TIER_THRESHOLDS = {
   strict: {
-    flowerFeather: { premium: 0.01, quality: 0.04, neutral: 0.2 },
+    flowerFeather: { premium: 0.01, quality: 0.04, neutral: 0.15 },
     sandsGobletCirclet: { premium: 0.005, quality: 0.02, neutral: 0.1 },
   },
   loose: {
-    flowerFeather: { premium: 0.02, quality: 0.08, neutral: 0.4 },
+    flowerFeather: { premium: 0.02, quality: 0.08, neutral: 0.25 },
     sandsGobletCirclet: { premium: 0.01, quality: 0.04, neutral: 0.2 },
   },
 } as const;

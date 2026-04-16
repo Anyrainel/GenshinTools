@@ -121,12 +121,6 @@ export function TriageHelpDialog({
                 </div>
               ))}
             </div>
-            <p className="text-xs text-foreground/80 mt-2">
-              <span className="font-semibold text-foreground">
-                {t.ui("triage.triageMode")}
-              </span>{" "}
-              {t.ui("triage.help.tierLooseNote")}
-            </p>
           </section>
 
           {/* Supply & demand — visual bar diagram */}

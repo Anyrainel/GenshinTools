@@ -202,11 +202,13 @@ function TriageContent({ t }: PreviewProps) {
         decision={PREVIEW_TRIAGE_LOCK}
         expanded={false}
         onToggle={() => {}}
+        section="recommendLock"
       />
       <TriageCard
         decision={PREVIEW_TRIAGE_UNLOCK}
         expanded={false}
         onToggle={() => {}}
+        section="recommendUnlock"
       />
     </div>
   );

@@ -625,8 +625,8 @@ export const i18nUiData = {
       zh: "有想法或建议？",
     },
     moreGuideline: {
-      en: "Join the Discord community! QQ Group: 1036645331",
-      zh: "加入 Discord 社区！QQ群：1036645331",
+      en: "Join the Discord community! QQ Group: 1093957900",
+      zh: "加入 Discord 社区！QQ群：1093957900",
     },
     ctaScoreArtifacts: { en: "Score My Artifacts", zh: "评估圣遗物" },
     ctaConfigureFilters: { en: "Compute Filters", zh: "计算过滤器" },
@@ -1867,6 +1867,14 @@ export const i18nUiData = {
       lock: { en: "Lock", zh: "锁定" },
       unlock: { en: "Unlock", zh: "解锁" },
     },
+    // Chip labels (shown on each TriageCard, per tab)
+    chip: {
+      suggestLock: { en: "Suggest Lock", zh: "建议锁定" },
+      suggestUnlock: { en: "Suggest Unlock", zh: "建议解锁" },
+      locked: { en: "Locked", zh: "已锁定" },
+      unlocked: { en: "Unlocked", zh: "已解锁" },
+      protected: { en: "Protected", zh: "保护中" },
+    },
     // Quality tier names
     tier: {
       P: { en: "Prime", zh: "极品" },
@@ -1998,24 +2006,20 @@ export const i18nUiData = {
       badgeOverSupply: { en: "Over-supply → unlock", zh: "供过于求 → 解锁" },
       badgeUnderSupply: { en: "Under-supply → lock", zh: "供不应求 → 锁定" },
       tierPrime: {
-        en: "Flower / Plume ≤ 1%  ·  Others ≤ 0.5% — Always locked.",
-        zh: "花/羽 ≤ 1%  ·  沙/杯/头 ≤ 0.5% — 无条件锁定。",
+        en: "Flower / Plume ≤ 1%  ·  Others ≤ 0.5%  (relaxed mode: 2% / 1%) — Always locked.",
+        zh: "花/羽 ≤ 1%  ·  沙/杯/头 ≤ 0.5%（宽松模式：2% / 1%）— 无条件锁定。",
       },
       tierSolid: {
-        en: "Flower / Plume ≤ 4%  ·  Others ≤ 2% — Locked unless you have too many.",
-        zh: "花/羽 ≤ 4%  ·  沙/杯/头 ≤ 2% — 默认锁定，供过于求时淘汰。",
+        en: "Flower / Plume ≤ 4%  ·  Others ≤ 2%  (relaxed mode: 8% / 4%) — Locked unless you have too many.",
+        zh: "花/羽 ≤ 4%  ·  沙/杯/头 ≤ 2%（宽松模式：8% / 4%）— 默认锁定，供过于求时淘汰。",
       },
       tierFiller: {
-        en: "Flower / Plume ≤ 20%  ·  Others ≤ 10% — Only kept when supply is short.",
-        zh: "花/羽 ≤ 20%  ·  沙/杯/头 ≤ 10% — 仅在供不应求时保留。",
+        en: "Flower / Plume ≤ 15%  ·  Others ≤ 10%  (relaxed mode: 25% / 20%) — Only kept when supply is short.",
+        zh: "花/羽 ≤ 15%  ·  沙/杯/头 ≤ 10%（宽松模式：25% / 20%）— 仅在供不应求时保留。",
       },
       tierFodder: {
         en: "Everything else — Always fodder.",
         zh: "其余全部 — 无条件分解。",
-      },
-      tierLooseNote: {
-        en: "doubles every threshold above (e.g. Solid becomes ≤8% / ≤4%).",
-        zh: "将上述所有阈值翻倍（例如精良档变为 ≤8% / ≤4%）。",
       },
       supplyTitle: { en: "Supply & demand", zh: "供需机制" },
       supplyOver: { en: "Plenty of pieces", zh: "供给充足" },

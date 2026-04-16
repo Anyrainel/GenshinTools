@@ -36,7 +36,9 @@ describe("evaluateTier", () => {
   it("returns T when no conditions match", () => {
     const rule = makeRule({
       desired: ["cr", "cd", "atk%"],
-      conditions: [{ k: 3, crcd: false, is4L: false, fill: false, tier: "P" }],
+      conditions: [
+        { k: 3, crcd: false, is4L: false, fill: false, tier: "P", rarity: 0 },
+      ],
     });
     const result = evaluateTier(["hp%", "def%", "er", "em"], false, rule);
     expect(result.tier).toBe("T");
@@ -48,9 +50,9 @@ describe("evaluateTier", () => {
     const rule = makeRule({
       desired: ["cr", "cd", "atk%"],
       conditions: [
-        { k: 3, crcd: false, is4L: false, fill: false, tier: "P" },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q" },
-        { k: 1, crcd: false, is4L: false, fill: false, tier: "N" },
+        { k: 3, crcd: false, is4L: false, fill: false, tier: "P", rarity: 0 },
+        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+        { k: 1, crcd: false, is4L: false, fill: false, tier: "N", rarity: 0 },
       ],
     });
     const result = evaluateTier(["cr", "cd", "er", "em"], false, rule);
@@ -62,8 +64,8 @@ describe("evaluateTier", () => {
     const rule = makeRule({
       desired: ["cr", "cd", "atk%"],
       conditions: [
-        { k: 2, crcd: true, is4L: false, fill: false, tier: "P" },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q" },
+        { k: 2, crcd: true, is4L: false, fill: false, tier: "P", rarity: 0 },
+        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
       ],
     });
     // Has cr+atk% but NOT cd → crcd fails, falls to Q
@@ -79,8 +81,8 @@ describe("evaluateTier", () => {
     const rule = makeRule({
       desired: ["cr", "cd"],
       conditions: [
-        { k: 2, crcd: false, is4L: true, fill: false, tier: "P" },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q" },
+        { k: 2, crcd: false, is4L: true, fill: false, tier: "P", rarity: 0 },
+        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
       ],
     });
     const r3L = evaluateTier(["cr", "cd", "er", "em"], false, rule);
@@ -96,8 +98,8 @@ describe("evaluateTier", () => {
       fillers: ["atk"],
       subN: 2,
       conditions: [
-        { k: 2, crcd: false, is4L: false, fill: true, tier: "P" },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q" },
+        { k: 2, crcd: false, is4L: false, fill: true, tier: "P", rarity: 0 },
+        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
       ],
     });
     // Has both desired but no filler → fill fails
@@ -115,7 +117,9 @@ describe("evaluateTier", () => {
     const rule = makeRule({
       desired: ["cr", "cd"],
       optional: ["atk%", "er"],
-      conditions: [{ k: 2, crcd: false, is4L: false, fill: false, tier: "Q" }],
+      conditions: [
+        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+      ],
     });
     const result = evaluateTier(["cr", "cd", "atk%", "em"], false, rule);
     expect(result.hitCount).toBe(2);
@@ -129,7 +133,9 @@ describe("evaluateTier", () => {
       optional: ["er"],
       fillers: ["atk"],
       subN: 2,
-      conditions: [{ k: 2, crcd: false, is4L: false, fill: false, tier: "Q" }],
+      conditions: [
+        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+      ],
     });
     const result = evaluateTier(["cr", "cd", "atk", "er"], false, rule);
     expect(result.hitCount).toBe(2);

@@ -1,4 +1,7 @@
-import { TriageCard } from "@/components/account-data/TriageCard";
+import {
+  TriageCard,
+  type TriageCardSection,
+} from "@/components/account-data/TriageCard";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
@@ -39,7 +42,7 @@ const TABS = [
     descKey: "triage.recommendLockDesc",
     icon: Lock,
     color: "green",
-    isProtected: false,
+    section: "recommendLock",
   },
   {
     value: "unlock",
@@ -47,7 +50,7 @@ const TABS = [
     descKey: "triage.recommendUnlockDesc",
     icon: LockOpen,
     color: "red",
-    isProtected: false,
+    section: "recommendUnlock",
   },
   {
     value: "nochange",
@@ -55,7 +58,7 @@ const TABS = [
     descKey: "triage.noChangeDesc",
     icon: CheckCircle2,
     color: "slate",
-    isProtected: false,
+    section: "noChange",
   },
   {
     value: "protected",
@@ -63,9 +66,16 @@ const TABS = [
     descKey: "triage.noActionDesc",
     icon: ShieldAlert,
     color: "amber",
-    isProtected: true,
+    section: "protected",
   },
-] as const;
+] as const satisfies readonly {
+  value: string;
+  labelKey: string;
+  descKey: string;
+  icon: typeof Lock;
+  color: string;
+  section: TriageCardSection;
+}[];
 
 const COLOR_CLASS = {
   green:
@@ -142,7 +152,7 @@ export function TriageTabContent({
           </TabsTrigger>
         ))}
       </TabsList>
-      {TABS.map(({ value, isProtected }) => {
+      {TABS.map(({ value, section }) => {
         const items = itemsMap[value];
         return (
           <TabsContent key={value} value={value}>
@@ -161,7 +171,7 @@ export function TriageTabContent({
                     decision={d}
                     expanded={isRowExpanded(value, i)}
                     onToggle={() => toggleRow(value, i)}
-                    isProtected={isProtected}
+                    section={section}
                   />
                 ))}
               </div>

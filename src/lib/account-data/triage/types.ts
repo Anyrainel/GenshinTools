@@ -121,6 +121,12 @@ export type TierCondition = {
   is4L: boolean; // require initial 4-line
   fill: boolean; // require ≥1 filler hit (only when k == subN)
   tier: Exclude<QualityTier, "T">;
+  /**
+   * End-to-end probability that a random artifact (same set/slot/main-stat
+   * scenario) would satisfy this condition. Lower = rarer = better. Used as
+   * the primary ranking signal within a tier.
+   */
+  rarity: number;
 };
 
 export type DemandTierEntry = {

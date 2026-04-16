@@ -356,21 +356,9 @@ export function runTriage(
       for (const p of premium) setLabel(p, "lock", "TP");
       for (const p of quality) setLabel(p, "lock", "TQ");
 
-      // Sort neutral by quality for best-N selection
-      neutral.sort((a, b) => {
-        const ta = a.bestTierResult;
-        const tb = b.bestTierResult;
-        if (!ta || !tb) return 0;
-        return (
-          tb.hitCount - ta.hitCount ||
-          tb.hitTotal - ta.hitTotal ||
-          (isInitial4Line(b.artifact) ? 1 : 0) -
-            (isInitial4Line(a.artifact) ? 1 : 0) ||
-          skTiebreaker(a) - skTiebreaker(b) ||
-          rollCount(b.artifact) - rollCount(a.artifact) ||
-          b.artifact.level - a.artifact.level
-        );
-      });
+      // Sort neutral by computed tier rarity (which already encodes is4L,
+      // crcd, hit count, fill), then tie-break by actual stat values.
+      neutral.sort(compareWithinTier);
 
       for (let i = 0; i < neutral.length; i++) {
         if (i < settings.neutralKeep) {
@@ -390,19 +378,9 @@ export function runTriage(
         demand + settings.qualityMargin - premiumCount,
         0
       );
-      // Sort quality by tier result quality, then roll count as a
-      // deterministic intrinsic tiebreaker.
-      quality.sort((a, b) => {
-        const ta = a.bestTierResult;
-        const tb = b.bestTierResult;
-        if (!ta || !tb) return 0;
-        return (
-          tb.hitCount - ta.hitCount ||
-          tb.hitTotal - ta.hitTotal ||
-          rollCount(b.artifact) - rollCount(a.artifact) ||
-          b.artifact.level - a.artifact.level
-        );
-      });
+      // Sort quality by computed tier rarity (encodes is4L, crcd, hit
+      // count, fill), then tie-break by actual stat values.
+      quality.sort(compareWithinTier);
       for (let i = 0; i < quality.length; i++) {
         if (i < qualityCap) {
           setLabel(quality[i], "lock", "TQ");
@@ -602,6 +580,62 @@ function rollCount(a: ArtifactData): number {
     if (avg > 0) total += val / avg;
   }
   return total;
+}
+
+/**
+ * Roll-count restricted to the given substats. Used to tie-break artifacts
+ * whose matched tier condition has the same rarity: the one with more "roll
+ * mass" on the demanded substats (core + optional) is preferred.
+ */
+function rollCountOn(a: ArtifactData, stats: SubStat[]): number {
+  const rarity = a.rarity === 4 ? 4 : 5;
+  let total = 0;
+  for (const stat of stats) {
+    const val = a.substats?.[stat];
+    if (typeof val !== "number") continue;
+    const avg = getSubstatAvgRoll(stat, rarity);
+    if (avg > 0) total += val / avg;
+  }
+  return total;
+}
+
+/**
+ * Primary within-tier rank for Q/N tiers. Sorts by the matched condition's
+ * computed rarity (ascending, rarer first) — this already accounts for k
+ * (hits), crcd, is4L, and fill — then tie-breaks by actual substat values:
+ * first on the demanded substats (core + optional), then total roll mass,
+ * then level.
+ *
+ * Returns negative if `a` is a "better keeper" than `b`.
+ */
+function compareWithinTier(
+  a: {
+    artifact: ArtifactData;
+    bestTierResult: TierResult | null;
+    bestResult: EmbryoResult | null;
+  },
+  b: {
+    artifact: ArtifactData;
+    bestTierResult: TierResult | null;
+    bestResult: EmbryoResult | null;
+  }
+): number {
+  const ra = a.bestTierResult?.matchedCondition?.rarity ?? 1;
+  const rb = b.bestTierResult?.matchedCondition?.rarity ?? 1;
+  if (ra !== rb) return ra - rb;
+
+  const demA = a.bestResult?.embryo?.demand;
+  const demB = b.bestResult?.embryo?.demand;
+  const subsA = demA ? [...demA.coreStats, ...demA.valuableStats] : [];
+  const subsB = demB ? [...demB.coreStats, ...demB.valuableStats] : [];
+  const relA = rollCountOn(a.artifact, subsA);
+  const relB = rollCountOn(b.artifact, subsB);
+  if (relA !== relB) return relB - relA;
+
+  return (
+    rollCount(b.artifact) - rollCount(a.artifact) ||
+    b.artifact.level - a.artifact.level
+  );
 }
 
 /** Lower = better. Used as tiebreaker when SK-promoting same-tier artifacts. */

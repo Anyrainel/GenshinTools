@@ -127,15 +127,21 @@ function computeConditionRows(
     subN >= 3 && remaining.includes("cr") && remaining.includes("cd");
   const crcdStats = ["cr", "cd"];
 
-  type RawRow = TierCondition & { e2e: number };
-  const rows: RawRow[] = [];
+  const rows: TierCondition[] = [];
 
   // hit>=0: rare main stat fallback
   {
     const e2e = mainProb;
     const tier = getTier(e2e, slot, mode);
     if (tier !== "T") {
-      rows.push({ k: 0, crcd: false, is4L: false, fill: false, tier, e2e });
+      rows.push({
+        k: 0,
+        crcd: false,
+        is4L: false,
+        fill: false,
+        tier,
+        rarity: e2e,
+      });
     }
   }
 
@@ -214,16 +220,14 @@ function computeConditionRows(
         is4L: fourL,
         fill,
         tier: combo.tier as Exclude<"T", string>,
-        e2e: combo.e2e,
+        rarity: combo.e2e,
       });
     }
   }
 
-  // Sort by rarity (ascending E2E = rarest first = best tier first)
-  rows.sort((a, b) => a.e2e - b.e2e);
-
-  // Return as TierCondition (drop e2e, it was only for sorting)
-  return rows.map(({ e2e: _, ...rest }) => rest as TierCondition);
+  // Sort by rarity ascending (rarest first = best tier first)
+  rows.sort((a, b) => a.rarity - b.rarity);
+  return rows;
 }
 
 // ---------------------------------------------------------------------------

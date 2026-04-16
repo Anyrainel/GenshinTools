@@ -111,21 +111,21 @@ describe("getTier", () => {
   });
 
   it("exact threshold boundaries", () => {
-    // flowerFeather: premium=0.01, quality=0.04, neutral=0.20
+    // flowerFeather: premium=0.01, quality=0.04, neutral=0.15
     expect(getTier(0.01, "flower")).toBe("P"); // <= 0.01
     expect(getTier(0.04, "flower")).toBe("Q"); // <= 0.04
-    expect(getTier(0.2, "flower")).toBe("N"); // <= 0.20
-    expect(getTier(0.201, "flower")).toBe("T");
+    expect(getTier(0.15, "flower")).toBe("N"); // <= 0.15
+    expect(getTier(0.151, "flower")).toBe("T");
   });
 
-  it("loose mode uses 2x thresholds — promotes artifacts one tier looser", () => {
-    // A rarity of 0.08 is T in strict (> 0.04 quality cap on flower) but Q in loose (<= 0.08).
+  it("loose mode uses looser thresholds — promotes artifacts one tier looser", () => {
+    // A rarity of 0.08 is N in strict (> 0.04 quality cap on flower) but Q in loose (<= 0.08).
     expect(getTier(0.08, "flower", "strict")).toBe("N");
     expect(getTier(0.08, "flower", "loose")).toBe("Q");
 
-    // A rarity of 0.3 is T on flower in strict (> 0.2) but N in loose (<= 0.4).
-    expect(getTier(0.3, "flower", "strict")).toBe("T");
-    expect(getTier(0.3, "flower", "loose")).toBe("N");
+    // A rarity of 0.2 is T on flower in strict (> 0.15) but N in loose (<= 0.25).
+    expect(getTier(0.2, "flower", "strict")).toBe("T");
+    expect(getTier(0.2, "flower", "loose")).toBe("N");
 
     // Sands: 0.03 is T strict (> 0.02) but Q loose (<= 0.04).
     expect(getTier(0.03, "sands", "strict")).toBe("N");
