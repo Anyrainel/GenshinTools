@@ -12,6 +12,9 @@ import sys
 from pathlib import Path
 from urllib.request import Request, urlopen
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from beta_files import read_beta_json  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT_PATH = ROOT / "src" / "data" / "ercalc" / "particles.json"
 
@@ -370,10 +373,14 @@ def main():
 
     # Fallback: supplement missing characters from character_stats.json
     char_stats_path = ROOT / "src" / "data" / "game" / "character_stats.json"
-    beta_stats_path = ROOT / "src" / "data" / "game" / "character_beta_stats.json"
+    beta_stats_path = ROOT / "src" / "data" / "game" / "character_beta_stats.json.gz"
     all_stats = {}
     for sp in [char_stats_path, beta_stats_path]:
-        if sp.exists():
+        if not sp.exists():
+            continue
+        if sp.suffix == ".gz":
+            all_stats.update(read_beta_json(sp))
+        else:
             with open(sp, encoding="utf-8") as f:
                 all_stats.update(json.load(f))
 

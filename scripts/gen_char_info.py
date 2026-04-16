@@ -3,17 +3,28 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from beta_files import read_beta_json  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 GAME_DIR = ROOT / "src" / "data" / "game"
 CHAR_ZH_PATHS = [
     GAME_DIR / "character_4_zh.json",
     GAME_DIR / "character_5_zh.json",
-    GAME_DIR / "character_beta_zh.json",
+    GAME_DIR / "character_beta_zh.json.gz",
 ]
 CHAR_STATS_PATHS = [
     GAME_DIR / "character_stats.json",
-    GAME_DIR / "character_beta_stats.json",
+    GAME_DIR / "character_beta_stats.json.gz",
 ]
+
+
+def _load_game_json(path: Path) -> dict:
+    """Read a JSON game-data file, transparently handling gzipped beta files."""
+    if path.suffix == ".gz":
+        return read_beta_json(path)
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
 
 def load_talent_data() -> dict:
@@ -21,8 +32,7 @@ def load_talent_data() -> dict:
     talent_data = {}
     for path in CHAR_STATS_PATHS:
         if path.exists():
-            with open(path, encoding="utf-8") as f:
-                stats = json.load(f)
+            stats = _load_game_json(path)
             for char_id, entry in stats.items():
                 if char_id not in talent_data:
                     talent = entry.get("talent", {})
@@ -373,8 +383,7 @@ def main():
     data = {}
     for path in CHAR_ZH_PATHS:
         if path.exists():
-            with open(path, encoding="utf-8") as f:
-                data.update(json.load(f))
+            data.update(_load_game_json(path))
 
     talent_data = load_talent_data()
 

@@ -9,6 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Literal, TypedDict, cast
 
+from beta_files import read_beta_json
 from ts_reader import load_ts_data
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,14 +21,29 @@ GAME_DIR = DATA / "game"
 CHAR_EN_PATHS = [
     GAME_DIR / "character_4_en.json",
     GAME_DIR / "character_5_en.json",
-    GAME_DIR / "character_beta_en.json",
+    GAME_DIR / "character_beta_en.json.gz",
 ]
 CHAR_ZH_PATHS = [
     GAME_DIR / "character_4_zh.json",
     GAME_DIR / "character_5_zh.json",
-    GAME_DIR / "character_beta_zh.json",
+    GAME_DIR / "character_beta_zh.json.gz",
+]
+WEAPON_ZH_PATHS = [
+    GAME_DIR / "weapon_zh.json",
+    GAME_DIR / "weapon_beta_zh.json.gz",
+]
+ARTIFACT_ZH_PATHS = [
+    GAME_DIR / "artifact_zh.json",
+    GAME_DIR / "artifact_beta_zh.json.gz",
 ]
 DATA_DIR = ROOT / "scripts" / "data"
+
+
+def _load_game_json(path: Path) -> dict:
+    """Read a JSON game-data file, transparently handling gzipped beta files."""
+    if path.suffix == ".gz":
+        return read_beta_json(path)
+    return json.loads(path.read_text("utf-8"))
 
 
 Mode = Literal["C", "W", "A"]
@@ -117,9 +133,9 @@ _CHAR_STATS_CACHE: dict[str, Any] | None = None
 _WEAPON_STATS_CACHE: dict[str, Any] | None = None
 
 CHAR_STATS_PATH = DATA / "game" / "character_stats.json"
-CHAR_BETA_STATS_PATH = DATA / "game" / "character_beta_stats.json"
+CHAR_BETA_STATS_PATH = DATA / "game" / "character_beta_stats.json.gz"
 WEAPON_STATS_PATH = DATA / "game" / "weapon_stats.json"
-WEAPON_BETA_STATS_PATH = DATA / "game" / "weapon_beta_stats.json"
+WEAPON_BETA_STATS_PATH = DATA / "game" / "weapon_beta_stats.json.gz"
 
 
 def get_extracted_data() -> dict[str, Any]:
@@ -134,10 +150,9 @@ def get_char_stats() -> dict[str, Any]:
     if _CHAR_STATS_CACHE is None:
         cache: dict[str, Any] = {}
         if CHAR_STATS_PATH.exists():
-            cache = json.loads(CHAR_STATS_PATH.read_text("utf-8"))
+            cache = _load_game_json(CHAR_STATS_PATH)
         if CHAR_BETA_STATS_PATH.exists():
-            beta = json.loads(CHAR_BETA_STATS_PATH.read_text("utf-8"))
-            for k, v in beta.items():
+            for k, v in _load_game_json(CHAR_BETA_STATS_PATH).items():
                 cache.setdefault(k, v)
         _CHAR_STATS_CACHE = cache
     return _CHAR_STATS_CACHE
@@ -148,10 +163,9 @@ def get_weapon_stats() -> dict[str, Any]:
     if _WEAPON_STATS_CACHE is None:
         cache: dict[str, Any] = {}
         if WEAPON_STATS_PATH.exists():
-            cache = json.loads(WEAPON_STATS_PATH.read_text("utf-8"))
+            cache = _load_game_json(WEAPON_STATS_PATH)
         if WEAPON_BETA_STATS_PATH.exists():
-            beta = json.loads(WEAPON_BETA_STATS_PATH.read_text("utf-8"))
-            for k, v in beta.items():
+            for k, v in _load_game_json(WEAPON_BETA_STATS_PATH).items():
                 cache.setdefault(k, v)
         _WEAPON_STATS_CACHE = cache
     return _WEAPON_STATS_CACHE
@@ -219,15 +233,13 @@ def _load_merged_char_kits() -> tuple[dict[str, Any], dict[str, Any]]:
     zh_all: dict[str, Any] = {}
     for p in CHAR_EN_PATHS:
         if p.exists():
-            data = json.loads(p.read_text("utf-8"))
             # Official files come first; beta files come last — use setdefault
             # so official entries are never overwritten by beta duplicates
-            for k, v in data.items():
+            for k, v in _load_game_json(p).items():
                 en_all.setdefault(k, v)
     for p in CHAR_ZH_PATHS:
         if p.exists():
-            data = json.loads(p.read_text("utf-8"))
-            for k, v in data.items():
+            for k, v in _load_game_json(p).items():
                 zh_all.setdefault(k, v)
     return en_all, zh_all
 
@@ -598,14 +610,21 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
             for lang in ("en", "zh"):
                 if zh_only and lang == "en":
                     continue
+                # Official entries take precedence; beta is fallback.
+                game_artifacts: dict[str, Any] = {}
                 ap = game_dir / f"artifact_{lang}.json"
                 if ap.exists():
-                    game_artifacts = json.loads(ap.read_text("utf-8"))
-                    entry = game_artifacts.get(entity_id, {})
-                    art_effects[lang] = {
-                        "effect2": entry.get("effect2", ""),
-                        "effect4": entry.get("effect4", ""),
-                    }
+                    for k, v in json.loads(ap.read_text("utf-8")).items():
+                        game_artifacts.setdefault(k, v)
+                bp = game_dir / f"artifact_beta_{lang}.json.gz"
+                if bp.exists():
+                    for k, v in _load_game_json(bp).items():
+                        game_artifacts.setdefault(k, v)
+                entry = game_artifacts.get(entity_id, {})
+                art_effects[lang] = {
+                    "effect2": entry.get("effect2", ""),
+                    "effect4": entry.get("effect4", ""),
+                }
 
             for pc, key in [(2, "effect2"), (4, "effect4")]:
                 en_eff = art_effects["en"].get(key, "")
@@ -631,6 +650,15 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
 
 def cmd_list(mode: Mode) -> None:
     resources = load_resources(mode)
+    beta_ids = _load_beta_ids(mode)
+
+    def _tag(eid: str) -> str:
+        """Suffix beta-only ids with '*' so reviewers can spot them at a glance."""
+        return f"{eid}*" if eid in beta_ids else eid
+
+    if beta_ids:
+        print("(* = unreleased / not in resources.ts)")
+        print()
 
     if mode == "C":
         groups = defaultdict(list)
@@ -639,7 +667,7 @@ def cmd_list(mode: Mode) -> None:
 
         for k in sorted(groups.keys()):
             print(f"== {k} ==")
-            print(", ".join(sorted(groups[k])))
+            print(", ".join(_tag(eid) for eid in sorted(groups[k])))
 
     elif mode == "W":
         groups = defaultdict(list)
@@ -652,7 +680,7 @@ def cmd_list(mode: Mode) -> None:
 
         for k in sorted(groups.keys()):
             print(f"== {k} ==")
-            print(", ".join(sorted(groups[k])))
+            print(", ".join(_tag(eid) for eid in sorted(groups[k])))
 
     elif mode == "A":
         groups = defaultdict(list)
@@ -664,7 +692,7 @@ def cmd_list(mode: Mode) -> None:
 
         for k in sorted(groups.keys(), reverse=True):  # Full before Half
             print(f"== {k} ==")
-            print(", ".join(sorted(groups[k])))
+            print(", ".join(_tag(eid) for eid in sorted(groups[k])))
 
 
 def fetch_check_results(
@@ -854,6 +882,132 @@ def cmd_excel(entity_id: str) -> None:
     print(block)
 
 
+_RELEASED_IDS_CACHE: dict[Mode, set[str]] | None = None
+
+
+def _released_ids() -> dict[Mode, set[str]]:
+    """Return the released-and-obtainable id sets parsed from resources.ts.
+
+    Reads resources.ts directly (not through load_ts_data) because that
+    helper merges beta entries into the lists, which would defeat the
+    "is this beta-only" check below.
+    """
+    global _RELEASED_IDS_CACHE
+    if _RELEASED_IDS_CACHE is None:
+        from ts_reader import extract_json_from_ts
+
+        content = (DATA / "resources.ts").read_text(encoding="utf-8")
+        _RELEASED_IDS_CACHE = {
+            "C": {c["id"] for c in extract_json_from_ts(content, "characters")},
+            "W": {w["id"] for w in extract_json_from_ts(content, "weapons")},
+            "A": {a["id"] for a in extract_json_from_ts(content, "artifacts")},
+        }
+    return _RELEASED_IDS_CACHE
+
+
+def _load_beta_ids(mode: Mode) -> set[str]:
+    """Return the set of entity IDs that need beta-style implementation work.
+
+    Unions every game-data JSON for the mode (released + beta) and excludes
+    IDs present in resources.ts. The status check is purely "is it in
+    resources?" — anything else is treated as unreleased and surfaces here
+    for implementation review, regardless of which JSON source carries its
+    data (truly-new beta entries scraped by lunaris, or older entries like
+    Glacier and Snowfield that already live in the offline-pipeline JSON).
+    """
+    paths = {"C": CHAR_ZH_PATHS, "W": WEAPON_ZH_PATHS, "A": ARTIFACT_ZH_PATHS}[mode]
+    all_ids: set[str] = set()
+    for p in paths:
+        if p.exists():
+            all_ids.update(_load_game_json(p).keys())
+    released = _released_ids()[mode]
+    return all_ids - released
+
+
+def cmd_beta(mode_filter: Mode | None = None) -> None:
+    """List characters, weapons, and artifacts that exist only in beta data files.
+
+    Shows ID, name, rarity, element/type, region, and implementation status.
+    Useful for finding entities that need implementation work.
+    """
+    modes: list[Mode] = ["C", "W", "A"] if mode_filter is None else [mode_filter]
+
+    any_found = False
+    for mode in modes:
+        beta_ids = _load_beta_ids(mode)
+        if not beta_ids:
+            continue
+        any_found = True
+
+        label = {"C": "Characters", "W": "Weapons", "A": "Artifacts"}[mode]
+        print(f"=== Beta {label} ({len(beta_ids)}) ===")
+
+        resources = load_resources(mode)
+        i18n = load_i18n_names(mode)
+        impls = scan_impls(mode)
+
+        for eid in sorted(beta_ids):
+            meta = resources.get(eid, cast(EntityMeta, {"id": eid}))
+            zh_entry = i18n.get(eid, {})
+            # i18n layout: flat {en, zh} for both characters and weapons
+            if isinstance(zh_entry, dict):
+                if isinstance(zh_entry.get("name"), dict):
+                    inner = zh_entry["name"]
+                else:
+                    inner = zh_entry
+                name_en = inner.get("en", eid)
+                name_zh = inner.get("zh", "")
+            else:
+                name_en = eid
+                name_zh = ""
+
+            rarity = meta.get("rarity", "?")
+            if mode == "C":
+                element = meta.get("element", "?")
+                region = meta.get("region", "?")
+                wtype = meta.get("weaponType", "?")
+                spec = f"{rarity}★ {element} {wtype} ({region})"
+            elif mode == "W":
+                wtype = meta.get("type", "?")
+                spec = f"{rarity}★ {wtype}"
+            else:  # A
+                spec = f"{rarity}★"
+
+            impl = impls.get(eid)
+            if impl:
+                impl_status = f"IMPL @ {impl['filename']} L{impl['start_line']}-L{impl['end_line']}"
+            else:
+                impl_status = "NO IMPL"
+
+            print(f"  {eid:<35s} | {name_en:<20s} | {name_zh:<10s} | {spec:<30s} | {impl_status}")
+        print()
+
+    if not any_found:
+        print("No beta-unique entities found.")
+
+
+def cmd_view(path_arg: str) -> None:
+    """Pretty-print the contents of a gzipped beta JSON file to stdout.
+
+    Accepts either an absolute path or a path relative to the project root
+    (e.g. ``src/data/game/character_beta_en.json.gz``).
+    """
+    candidate = Path(path_arg)
+    if not candidate.is_absolute():
+        candidate = ROOT / candidate
+    if not candidate.exists():
+        print(f"File not found: {candidate}", file=sys.stderr)
+        sys.exit(1)
+    if candidate.suffix != ".gz":
+        print(
+            f"Expected a .json.gz file; got {candidate.name}. Use a regular editor for plain JSON.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    data = read_beta_json(candidate)
+    print(json.dumps(data, ensure_ascii=False, indent=2))
+
+
 def cmd_excel_list() -> None:
     """List all Excel characters with matched project IDs."""
     all_names = _list_all_excel_chars()
@@ -907,6 +1061,14 @@ Commands:
   list <C|W|A>        List all registered IDs grouped by categories.
   check [C|W|A]       Find missing and misplaced implementations.
                         If no mode is provided, checks all modes.
+  beta [C|W|A]        List characters/weapons/artifacts that are unreleased
+                        (not in resources.ts) with metadata and implementation
+                        status. Covers both truly-new entries from lunaris and
+                        any older entries like Glacier and Snowfield that
+                        already carry data in the offline-pipeline JSON.
+                        If no mode is provided, lists all three.
+  view <path>         Pretty-print a gzipped beta JSON file (e.g.
+                        ``src/data/game/character_beta_en.json.gz``) to stdout.
   excel C <id>        Print Excel VBA damage logic for a character (to stdout).
   excel C --list      List all Excel characters with matched project IDs.
 """
@@ -915,7 +1077,9 @@ Commands:
 def main() -> None:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument(
-        "command", nargs="?", choices=["show", "showzh", "list", "check", "excel", "help"]
+        "command",
+        nargs="?",
+        choices=["show", "showzh", "list", "check", "beta", "view", "excel", "help"],
     )
     parser.add_argument("args", nargs=argparse.REMAINDER)
 
@@ -998,6 +1162,23 @@ def main() -> None:
                 cmd_excel_list()
             else:
                 cmd_excel(args[1])
+
+        elif cmd == "beta":
+            mode_filter: Mode | None = None
+            if args:
+                m = args[0].upper()
+                if m in ("C", "W", "A"):
+                    mode_filter = cast(Mode, m)
+                else:
+                    print("Invalid mode for beta. Use C, W, A, or leave empty.")
+                    sys.exit(1)
+            cmd_beta(mode_filter)
+
+        elif cmd == "view":
+            if not args:
+                print("Usage: impl_audit.py view <path-to-*.json.gz>")
+                sys.exit(1)
+            cmd_view(args[0])
 
         elif cmd == "check":
             modes: list[Mode] = ["C", "W", "A"]

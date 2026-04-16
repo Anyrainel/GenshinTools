@@ -257,7 +257,10 @@ def process_characters(
         en = m["en"]
         zh = m["zh"]
 
-        # Rarity fallback: check existing data before prompting
+        # Rarity fallback: reuse existing data when available; otherwise skip.
+        # Hoyolab tends to publish avatar icons for upcoming characters in EN
+        # data ahead of element/rarity, which would otherwise create orphan
+        # resource entries with rarity=0. Wait for the proper data instead.
         if en.rarity == 0:
             char_id = generate_id(en.name)
             existing_rarity = existing_characters.get(char_id, {}).get("rarity", 0)
@@ -266,20 +269,11 @@ def process_characters(
                 zh.rarity = existing_rarity
                 tqdm.write(f"Rarity 0 for {en.name}: reusing existing rarity={existing_rarity}")
             else:
-                print(f"\nWARNING: Rarity 0 detected for Character: {en.name} / {zh.name}")
-                print("No existing rarity found. Please enter manually.")
-                while True:
-                    try:
-                        val = input(f"Please enter actual rarity (4/5) for {en.name}: ").strip()
-                        rarity_int = int(val)
-                        if rarity_int in [4, 5]:
-                            en.rarity = rarity_int
-                            zh.rarity = rarity_int
-                            break
-                        else:
-                            print("Invalid rarity. Please enter 4 or 5.")
-                    except ValueError:
-                        print("Invalid number.")
+                tqdm.write(
+                    f"SKIP {en.name}: rarity unknown and no existing entry — likely an "
+                    "early avatar drop on Hoyolab; will be picked up next sync."
+                )
+                continue
 
         weapon = getattr(en, "weapon", "Sword")
         region = getattr(en, "region", "None")

@@ -64,12 +64,13 @@ def load_ts_data(project_root: str | Path) -> dict[str, Any]:
         for var in _RESOURCE_VARS:
             result[var] = extract_json_from_ts(content, var)
 
-    # Merge beta resources (appended to characters/weapons lists)
+    # Merge beta resources (appended to characters/weapons/artifacts lists)
     beta_path = data_dir / "resources_beta.ts"
     if beta_path.exists():
         beta_content = beta_path.read_text("utf-8")
         beta_chars = extract_json_from_ts(beta_content, "betaCharacters")
         beta_weapons = extract_json_from_ts(beta_content, "betaWeapons")
+        beta_artifacts = extract_json_from_ts(beta_content, "betaArtifacts")
         if beta_chars:
             existing_ids = {c["id"] for c in result.get("characters", [])}
             result.setdefault("characters", []).extend(
@@ -79,6 +80,11 @@ def load_ts_data(project_root: str | Path) -> dict[str, Any]:
             existing_ids = {w["id"] for w in result.get("weapons", [])}
             result.setdefault("weapons", []).extend(
                 w for w in beta_weapons if w["id"] not in existing_ids
+            )
+        if beta_artifacts:
+            existing_ids = {a["id"] for a in result.get("artifacts", [])}
+            result.setdefault("artifacts", []).extend(
+                a for a in beta_artifacts if a["id"] not in existing_ids
             )
 
     i18n_path = data_dir / "i18n-game.ts"
@@ -93,7 +99,7 @@ def load_ts_data(project_root: str | Path) -> dict[str, Any]:
         beta_i18n = extract_json_from_ts(beta_content, "i18nBetaData")
         if beta_i18n:
             i18n = result.setdefault("i18nGameData", {})
-            for section in ("characters", "weapons"):
+            for section in ("characters", "weapons", "artifacts"):
                 if section in beta_i18n:
                     existing = i18n.setdefault(section, {})
                     for k, v in beta_i18n[section].items():

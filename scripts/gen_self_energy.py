@@ -12,7 +12,11 @@ and determines the correct action association, amount, and nuances.
 
 import json
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from beta_files import read_beta_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 GAME_DIR = ROOT / "src" / "data" / "game"
@@ -20,14 +24,18 @@ GAME_DIR = ROOT / "src" / "data" / "game"
 CHAR_ZH_PATHS = [
     GAME_DIR / "character_4_zh.json",
     GAME_DIR / "character_5_zh.json",
-    GAME_DIR / "character_beta_zh.json",
+    GAME_DIR / "character_beta_zh.json.gz",
 ]
 
 
 def load_zh_data() -> dict:
     data = {}
     for path in CHAR_ZH_PATHS:
-        if path.exists():
+        if not path.exists():
+            continue
+        if path.suffix == ".gz":
+            data.update(read_beta_json(path))
+        else:
             with open(path, encoding="utf-8") as f:
                 data.update(json.load(f))
     return data
