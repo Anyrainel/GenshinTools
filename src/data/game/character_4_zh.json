@@ -4,7 +4,7 @@
     "name": "爱诺",
     "skills": [
       {
-        "name": "敲打修理法",
+        "name": "A. 敲打修理法",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -89,7 +89,7 @@
     "name": "安柏",
     "skills": [
       {
-        "name": "神射手",
+        "name": "A. 神射手",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，烈焰会在箭矢上持续积聚。聚满了烈焰的箭矢会造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -171,7 +171,7 @@
     "name": "芭芭拉",
     "skills": [
       {
-        "name": "水之浅唱",
+        "name": "A. 水之浅唱",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的水花攻击，造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂咏唱后，造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚水元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -252,7 +252,7 @@
     "name": "北斗",
     "skills": [
       {
-        "name": "征涛",
+        "name": "A. 征涛",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，快速进行连续的斩击。<br>重击结束时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -338,7 +338,7 @@
     "name": "班尼特",
     "skills": [
       {
-        "name": "好运剑",
+        "name": "A. 好运剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -423,7 +423,7 @@
     "name": "坎蒂丝",
     "skills": [
       {
-        "name": "流耀枪术·守势",
+        "name": "A. 流耀枪术·守势",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -508,7 +508,7 @@
     "name": "夏洛蒂",
     "skills": [
       {
-        "name": "冷色摄影律",
+        "name": "A. 冷色摄影律",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>以特制留影机「温亨廷先生」瞄准目标，进行至多三段的攻击，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂准备后，部署「温亨廷先生」，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚冰元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">始基力：芒性</span><br>每隔一段时间，夏洛蒂施放重击后，将降下穿透敌人的灵息之刺，造成具有芒性的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -599,7 +599,7 @@
     "name": "夏沃蕾",
     "skills": [
       {
-        "name": "线列枪刺·改",
+        "name": "A. 线列枪刺·改",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -684,7 +684,7 @@
     "name": "重云",
     "skills": [
       {
-        "name": "灭邪四式",
+        "name": "A. 灭邪四式",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -766,7 +766,7 @@
     "name": "柯莱",
     "skills": [
       {
-        "name": "祈颂射艺",
+        "name": "A. 祈颂射艺",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，草元素会凭附在箭矢上。聚满了草元素的箭矢会造成<span style=\"color: #99FF88FF;\">草元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -846,7 +846,7 @@
     "name": "塔利雅",
     "skills": [
       {
-        "name": "西风剑术·祭仪",
+        "name": "A. 西风剑术·祭仪",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -926,7 +926,7 @@
     "name": "迪奥娜",
     "skills": [
       {
-        "name": "猎人射术",
+        "name": "A. 猎人射术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，冰霜散发的寒气会凭附在箭矢上。聚满了寒气的箭矢会造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1011,7 +1011,7 @@
     "name": "多莉",
     "skills": [
       {
-        "name": "妙显剑舞·改",
+        "name": "A. 妙显剑舞·改",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1094,7 +1094,7 @@
     "name": "珐露珊",
     "skills": [
       {
-        "name": "迴身箭术",
+        "name": "A. 迴身箭术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，强风会在箭矢上持续积聚。聚满了强风之力的箭矢会造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，攻击下落路径上的敌人，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1179,7 +1179,7 @@
     "name": "菲谢尔",
     "skills": [
       {
-        "name": "罪灭之矢",
+        "name": "A. 罪灭之矢",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，幽夜净土的黯雷精灵会听从皇女的号令，凭附在她的雷影魔箭上。聚满了断罪之雷的魔箭会造成高额的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1264,7 +1264,7 @@
     "name": "菲米尼",
     "skills": [
       {
-        "name": "洑流剑",
+        "name": "A. 洑流剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1353,7 +1353,7 @@
     "name": "嘉明",
     "skills": [
       {
-        "name": "刃爪悬星",
+        "name": "A. 刃爪悬星",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1436,7 +1436,7 @@
     "name": "五郎",
     "skills": [
       {
-        "name": "呲牙裂扇箭",
+        "name": "A. 呲牙裂扇箭",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，岩晶会在箭矢上持续积聚。聚满了晶岩的箭矢会造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1519,7 +1519,7 @@
     "name": "伊安珊",
     "skills": [
       {
-        "name": "负重锥击",
+        "name": "A. 负重锥击",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。<br><br><span style=\"color: #FFD780FF;\">夜魂状态·雷霆飞缒</span><br>在夜魂加持状态下，伊安珊的重击将转为施展豪烈的「雷霆飞缒」，消耗一定体力向前方猛踏，造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1607,7 +1607,7 @@
     "name": "伊法",
     "skills": [
       {
-        "name": "祛风妙仪",
+        "name": "A. 祛风妙仪",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方射击，造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1708,7 +1708,7 @@
     "name": "叶洛亚",
     "skills": [
       {
-        "name": "守誓枪术",
+        "name": "A. 守誓枪术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1801,7 +1801,7 @@
     "name": "雅珂达",
     "skills": [
       {
-        "name": "见机行矢",
+        "name": "A. 见机行矢",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，强风会在箭矢上持续积聚。聚满了强风之力的箭矢会造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，攻击下落路径上的敌人，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1899,7 +1899,7 @@
     "name": "卡齐娜",
     "skills": [
       {
-        "name": "嵴之啮咬",
+        "name": "A. 嵴之啮咬",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -1984,7 +1984,7 @@
     "name": "凯亚",
     "skills": [
       {
-        "name": "仪典剑术",
+        "name": "A. 仪典剑术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2064,7 +2064,7 @@
     "name": "卡维",
     "skills": [
       {
-        "name": "旋规设矩",
+        "name": "A. 旋规设矩",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>驱动「梅赫拉克」，进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，快速进行连续的斩击。<br>重击结束时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2146,7 +2146,7 @@
     "name": "绮良良",
     "skills": [
       {
-        "name": "箱纸切削术",
+        "name": "A. 箱纸切削术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方挥出三次爪击。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2232,7 +2232,7 @@
     "name": "九条裟罗",
     "skills": [
       {
-        "name": "天狗传弓术",
+        "name": "A. 天狗传弓术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，雷霆的力量会汇聚到她的箭矢上。聚满了雷霆之力的箭矢在命中敌人时造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>处于「乌羽护持」状态下时，蓄力完成的箭矢会在命中时留下「乌羽」。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2314,7 +2314,7 @@
     "name": "久岐忍",
     "skills": [
       {
-        "name": "忍流飞刃斩",
+        "name": "A. 忍流飞刃斩",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2398,7 +2398,7 @@
     "name": "蓝砚",
     "skills": [
       {
-        "name": "玄鸾画水",
+        "name": "A. 玄鸾画水",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>挥舞翦月环，进行至多四段的攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，抛出手中的翦月环，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚风元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2478,7 +2478,7 @@
     "name": "莱依拉",
     "skills": [
       {
-        "name": "熠辉轨度剑",
+        "name": "A. 熠辉轨度剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2559,7 +2559,7 @@
     "name": "丽莎",
     "skills": [
       {
-        "name": "指尖雷暴",
+        "name": "A. 指尖雷暴",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的电击，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂咏唱后，造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚雷电的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2643,7 +2643,7 @@
     "name": "琳妮特",
     "skills": [
       {
-        "name": "迅捷礼刺剑",
+        "name": "A. 迅捷礼刺剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2729,7 +2729,7 @@
     "name": "米卡",
     "skills": [
       {
-        "name": "西风枪术·镝传",
+        "name": "A. 西风枪术·镝传",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>结合手弩与长枪，进行至多五段的连击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2815,7 +2815,7 @@
     "name": "凝光",
     "skills": [
       {
-        "name": "千金掷",
+        "name": "A. 千金掷",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>发射宝石，造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br>命中时，赋予凝光一枚星璇。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗体力，发射一颗巨型宝石，造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br>若凝光拥有星璇，施放重击时会将所有星璇一同发射，造成额外的伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚晶岩的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>。",
         "details": [
           ["普通攻击伤害", "{param1:F1P}"],
@@ -2892,7 +2892,7 @@
     "name": "诺艾尔",
     "skills": [
       {
-        "name": "西风剑术·女仆",
+        "name": "A. 西风剑术·女仆",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -2979,7 +2979,7 @@
     "name": "欧洛伦",
     "skills": [
       {
-        "name": "宿灵闪箭",
+        "name": "A. 宿灵闪箭",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，雷元素会凭附在箭矢上。聚满了雷元素的箭矢会造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3067,7 +3067,7 @@
     "name": "雷泽",
     "skills": [
       {
-        "name": "钢脊",
+        "name": "A. 钢脊",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3160,7 +3160,7 @@
     "name": "罗莎莉亚",
     "skills": [
       {
-        "name": "教会枪术",
+        "name": "A. 教会枪术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3241,7 +3241,7 @@
     "name": "早柚",
     "skills": [
       {
-        "name": "忍刀·终末番",
+        "name": "A. 忍刀·终末番",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3330,7 +3330,7 @@
     "name": "赛索斯",
     "skills": [
       {
-        "name": "王家苇箭术",
+        "name": "A. 王家苇箭术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，雷霆的力量会在箭矢上持续积聚，并随攻击发射出去。根据蓄力时间长短，能造成不同的效果：<br>·一段蓄力：射出附有雷元素的箭矢，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>；<br>·二段蓄力：发射能穿透敌人的<span style=\"color: #FFD780FF;\">贯影箭</span>，对路径上的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。贯影箭完成蓄力后，赛索斯将无法进行移动。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3410,7 +3410,7 @@
     "name": "鹿野院平藏",
     "skills": [
       {
-        "name": "不动流格斗术",
+        "name": "A. 不动流格斗术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>以强风加持的招式与敌人格斗，进行至多五段的攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，使出扬尘踢，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚强风的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3493,7 +3493,7 @@
     "name": "砂糖",
     "skills": [
       {
-        "name": "简式风灵作成",
+        "name": "A. 简式风灵作成",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的风灵攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂咏唱后，造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚风灵的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3577,7 +3577,7 @@
     "name": "托马",
     "skills": [
       {
-        "name": "迅破枪势",
+        "name": "A. 迅破枪势",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3662,7 +3662,7 @@
     "name": "香菱",
     "skills": [
       {
-        "name": "白案功夫",
+        "name": "A. 白案功夫",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3745,7 +3745,7 @@
     "name": "行秋",
     "skills": [
       {
-        "name": "古华剑法",
+        "name": "A. 古华剑法",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3827,7 +3827,7 @@
     "name": "辛焱",
     "skills": [
       {
-        "name": "炎舞",
+        "name": "A. 炎舞",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3914,7 +3914,7 @@
     "name": "烟绯",
     "skills": [
       {
-        "name": "火漆制印",
+        "name": "A. 火漆制印",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>连续发射火球，造成最多三段的<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br>普通攻击命中敌人时，会赋予烟绯一枚丹火印。初始最多持有三枚丹火印，每次触发都会刷新已有的丹火印持续时间。<br>每枚丹火印都会降低烟绯的体力消耗，并会在烟绯退场时消失。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗体力，短暂咏唱后，消耗所有的丹火印，在前方造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br>根据被消耗的丹火印数量，强化这次重击的范围与伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚火元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -3996,7 +3996,7 @@
     "name": "瑶瑶",
     "skills": [
       {
-        "name": "颠扑连环枪",
+        "name": "A. 颠扑连环枪",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],
@@ -4081,7 +4081,7 @@
     "name": "云堇",
     "skills": [
       {
-        "name": "拂云出手",
+        "name": "A. 拂云出手",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           ["一段伤害", "{param1:F1P}"],

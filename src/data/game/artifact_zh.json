@@ -251,41 +251,6 @@
     "effect2": "造成的物理伤害提高25%。",
     "effect4": "元素战技命中敌人后，攻击力提升9%。该效果持续7秒，至多叠加2层，每0.3秒至多触发一次。叠满2层时，2件套的效果提升100%。"
   },
-  "prayers_for_destiny": {
-    "id": "15010",
-    "name": "祭水之人",
-    "rarity": 4,
-    "effect2": "受到的水元素附着效果的持续时间减少40%。",
-    "effect4": ""
-  },
-  "prayers_for_illumination": {
-    "id": "15009",
-    "name": "祭火之人",
-    "rarity": 4,
-    "effect2": "受到的火元素附着效果的持续时间减少40%。",
-    "effect4": ""
-  },
-  "prayers_for_wisdom": {
-    "id": "15011",
-    "name": "祭雷之人",
-    "rarity": 4,
-    "effect2": "受到的雷元素附着效果的持续时间减少40%。",
-    "effect4": ""
-  },
-  "prayers_to_springtime": {
-    "id": "15013",
-    "name": "祭冰之人",
-    "rarity": 4,
-    "effect2": "受到的冰元素附着效果的持续时间减少40%。",
-    "effect4": ""
-  },
-  "prayers_to_the_firmament": {
-    "id": "15012",
-    "name": "祭风之人",
-    "rarity": 4,
-    "effect2": "受到的风元素附着效果的持续时间减少40%。",
-    "effect4": ""
-  },
   "resolution_of_sojourner": {
     "id": "10001",
     "name": "行者之心",
@@ -362,13 +327,6 @@
     "rarity": 5,
     "effect2": "雷元素抗性提高40%。",
     "effect4": "对处于雷元素影响下的敌人造成的伤害提升35%。"
-  },
-  "tiny_miracle": {
-    "id": "10004",
-    "name": "奇迹",
-    "rarity": 4,
-    "effect2": "所有元素抗性提高20%。",
-    "effect4": "受到某个元素类型的伤害后，相应的抗性提升30%，持续10秒。该效果每10秒只能触发一次。"
   },
   "unfinished_reverie": {
     "id": "15036",

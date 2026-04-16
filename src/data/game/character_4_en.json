@@ -4,7 +4,7 @@
     "name": "Aino",
     "skills": [
       {
-        "name": "Bish-Bash-Bosh Repair",
+        "name": "A. Bish-Bash-Bosh Repair",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -89,7 +89,7 @@
     "name": "Amber",
     "skills": [
       {
-        "name": "Sharpshooter",
+        "name": "A. Sharpshooter",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, flames will accumulate on the arrowhead. A fully charged flaming arrow will deal <span style=\"color: #FF9999FF;\">Pyro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -171,7 +171,7 @@
     "name": "Barbara",
     "skills": [
       {
-        "name": "Whisper of Water",
+        "name": "A. Whisper of Water",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 water splash attacks that deal <span style=\"color: #80C0FFFF;\">Hydro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to deal <span style=\"color: #80C0FFFF;\">AoE Hydro DMG</span> after a short casting time.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Gathering the might of Hydro, Barbara plunges towards the ground from mid-air, damaging all opponents in her path. Deals <span style=\"color: #80C0FFFF;\">AoE Hydro DMG</span> upon impact with the ground.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -252,7 +252,7 @@
     "name": "Beidou",
     "skills": [
       {
-        "name": "Oceanborne",
+        "name": "A. Oceanborne",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous slashes.<br>At the end of the sequence, performs a more powerful slash.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -338,7 +338,7 @@
     "name": "Bennett",
     "skills": [
       {
-        "name": "Strike of Fortune",
+        "name": "A. Strike of Fortune",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -423,7 +423,7 @@
     "name": "Candace",
     "skills": [
       {
-        "name": "Gleaming Spear - Guardian Stance",
+        "name": "A. Gleaming Spear - Guardian Stance",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -508,7 +508,7 @@
     "name": "Charlotte",
     "skills": [
       {
-        "name": "Cool-Color Capture",
+        "name": "A. Cool-Color Capture",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Taking aim at targets using Monsieur Verite, her custom Kamera, Charlotte performs up to 3 consecutive attacks, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a fixed amount of Stamina, and after a moment's preparation, will deploy Monsieur Verite to deal <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Gathering the power of Cryo, Charlotte plunges toward the ground, dealing DMG to all opponents in her path and dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> upon landing.<br><br><span style=\"color: #FFD780FF;\">Arkhe: Pneuma</span><br>At certain intervals, upon using a Charged Attack, Charlotte will cause a Spiritbreath Thorn to descend and pierce opponents, dealing Pneuma-aligned <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -599,7 +599,7 @@
     "name": "Chevreuse",
     "skills": [
       {
-        "name": "Line Bayonet Thrust EX",
+        "name": "A. Line Bayonet Thrust EX",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -684,7 +684,7 @@
     "name": "Chongyun",
     "skills": [
       {
-        "name": "Demonbane",
+        "name": "A. Demonbane",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -766,7 +766,7 @@
     "name": "Collei",
     "skills": [
       {
-        "name": "Supplicant's Bowmanship",
+        "name": "A. Supplicant's Bowmanship",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, Dendro energy will accumulate on the arrowhead. A fully charged arrow will deal <span style=\"color: #99FF88FF;\">Dendro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -846,7 +846,7 @@
     "name": "Dahlia",
     "skills": [
       {
-        "name": "Favonius Bladework - Ritual",
+        "name": "A. Favonius Bladework - Ritual",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -926,7 +926,7 @@
     "name": "Diona",
     "skills": [
       {
-        "name": "Kätzlein Style",
+        "name": "A. Kätzlein Style",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, biting frost will accumulate on the arrowhead. A fully charged frost arrow will deal <span style=\"color: #99FFFFFF;\">Cryo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1011,7 +1011,7 @@
     "name": "Dori",
     "skills": [
       {
-        "name": "Marvelous Sword-Dance (Modified)",
+        "name": "A. Marvelous Sword-Dance (Modified)",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1094,7 +1094,7 @@
     "name": "Faruzan",
     "skills": [
       {
-        "name": "Parthian Shot",
+        "name": "A. Parthian Shot",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, mighty winds will accumulate on the arrowhead. A fully charged wind arrow will deal <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, hitting opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1179,7 +1179,7 @@
     "name": "Fischl",
     "skills": [
       {
-        "name": "Bolts of Downfall",
+        "name": "A. Bolts of Downfall",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, the dark lightning spirits of Immernachtreich shall heed the call of their Prinzessin and indwell the enchanted arrowhead. When fully indwelt, the Rachsüchtig Blitz shall deal immense <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1264,7 +1264,7 @@
     "name": "Freminet",
     "skills": [
       {
-        "name": "Flowing Eddies",
+        "name": "A. Flowing Eddies",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1353,7 +1353,7 @@
     "name": "Gaming",
     "skills": [
       {
-        "name": "Stellar Rend",
+        "name": "A. Stellar Rend",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1436,7 +1436,7 @@
     "name": "Gorou",
     "skills": [
       {
-        "name": "Ripping Fang Fletching",
+        "name": "A. Ripping Fang Fletching",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, stone crystals will accumulate on the arrowhead. A fully charged crystalline arrow will deal <span style=\"color: #FFE699FF;\">Geo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1519,7 +1519,7 @@
     "name": "Iansan",
     "skills": [
       {
-        "name": "Weighted Spike",
+        "name": "A. Weighted Spike",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.<br><br><span style=\"color: #FFD780FF;\">Nightsoul State: Swift Stormflight</span><br>While in the Nightsoul's Blessing state: Iansan's Charged Attack will be transformed into the formidable Swift Stormflight, consuming a certain amount of Stamina to stomp fiercely down, dealing Nightsoul-aligned <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span>.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1607,7 +1607,7 @@
     "name": "Ifa",
     "skills": [
       {
-        "name": "Rite of Dispelling Winds",
+        "name": "A. Rite of Dispelling Winds",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 attacks, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina and fires off a shot, dealing <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges towards the ground from mid-air, damaging all opponents along the path. Deals <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> upon impact with the ground.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1708,7 +1708,7 @@
     "name": "Illuga",
     "skills": [
       {
-        "name": "Oathkeeper's Spear",
+        "name": "A. Oathkeeper's Spear",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1801,7 +1801,7 @@
     "name": "Jahoda",
     "skills": [
       {
-        "name": "Strike While the Arrow's Hot",
+        "name": "A. Strike While the Arrow's Hot",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, mighty winds will accumulate on the arrowhead. A fully charged wind arrow will deal <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, hitting opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1899,7 +1899,7 @@
     "name": "Kachina",
     "skills": [
       {
-        "name": "Cragbiter",
+        "name": "A. Cragbiter",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -1984,7 +1984,7 @@
     "name": "Kaeya",
     "skills": [
       {
-        "name": "Ceremonial Bladework",
+        "name": "A. Ceremonial Bladework",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2064,7 +2064,7 @@
     "name": "Kaveh",
     "skills": [
       {
-        "name": "Schematic Setup",
+        "name": "A. Schematic Setup",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Uses Mehrak to perform up to 4 consecutive attacks.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous slashes.<br>At the end of the sequence, performs a more powerful slash.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2146,7 +2146,7 @@
     "name": "Kirara",
     "skills": [
       {
-        "name": "Boxcutter",
+        "name": "A. Boxcutter",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 3 rapid claw strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2232,7 +2232,7 @@
     "name": "Kujou Sara",
     "skills": [
       {
-        "name": "Tengu Bowmanship",
+        "name": "A. Tengu Bowmanship",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, crackling lightning will accumulate on the arrowhead. An arrow fully charged with the storm's might will deal <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br>When in the Crowfeather Cover state, a fully-charged arrow will leave a Crowfeather behind after it hits.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2314,7 +2314,7 @@
     "name": "Kuki Shinobu",
     "skills": [
       {
-        "name": "Shinobu's Shadowsword",
+        "name": "A. Shinobu's Shadowsword",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2398,7 +2398,7 @@
     "name": "Lan Yan",
     "skills": [
       {
-        "name": "Black Pheasant Strides on Water",
+        "name": "A. Black Pheasant Strides on Water",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Wields her Feathermoon Rings to perform up to 4 attacks, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to throw out a Feathermoon Ring, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Gathers the power of Anemo and plunges towards the ground from mid-air, damaging all opponents in her path. Deals <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> upon impact with the ground.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2478,7 +2478,7 @@
     "name": "Layla",
     "skills": [
       {
-        "name": "Sword of the Radiant Path",
+        "name": "A. Sword of the Radiant Path",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2559,7 +2559,7 @@
     "name": "Lisa",
     "skills": [
       {
-        "name": "Lightning Touch",
+        "name": "A. Lightning Touch",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 lightning attacks that deal <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to deal <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> after a short casting time.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Gathering the might of Electro, Lisa plunges towards the ground from mid-air, damaging all opponents in her path. Deals <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> upon impact with the ground.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2643,7 +2643,7 @@
     "name": "Lynette",
     "skills": [
       {
-        "name": "Rapid Ritesword",
+        "name": "A. Rapid Ritesword",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2729,7 +2729,7 @@
     "name": "Mika",
     "skills": [
       {
-        "name": "Spear of Favonius - Arrow's Passage",
+        "name": "A. Spear of Favonius - Arrow's Passage",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive strikes using his crossbow and spear.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2815,7 +2815,7 @@
     "name": "Ningguang",
     "skills": [
       {
-        "name": "Sparkling Scatter",
+        "name": "A. Sparkling Scatter",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Shoots gems that deal <span style=\"color: #FFE699FF;\">Geo DMG</span>.<br>Upon hit, this grants Ningguang 1 Star Jade.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of stamina to fire off a giant gem that deals <span style=\"color: #FFE699FF;\">Geo DMG</span>.<br>If Ningguang has any Star Jades, unleashing a Charged Attack will cause the Star Jades to be fired at the enemy as well, dealing additional DMG.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Gathering the might of Geo, Ningguang plunges towards the ground from mid-air, damaging all opponents in her path. Deals <span style=\"color: #FFE699FF;\">AoE Geo DMG</span> upon impact with the ground.",
         "details": [
           ["Normal Attack DMG", "{param1:F1P}"],
@@ -2892,7 +2892,7 @@
     "name": "Noelle",
     "skills": [
       {
-        "name": "Favonius Bladework - Maid",
+        "name": "A. Favonius Bladework - Maid",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -2979,7 +2979,7 @@
     "name": "Ororon",
     "skills": [
       {
-        "name": "Spiritvessel Snapshot",
+        "name": "A. Spiritvessel Snapshot",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, Electro energy will accumulate on the arrowhead. A fully charged arrow will deal <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3067,7 +3067,7 @@
     "name": "Razor",
     "skills": [
       {
-        "name": "Steel Fang",
+        "name": "A. Steel Fang",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3160,7 +3160,7 @@
     "name": "Rosaria",
     "skills": [
       {
-        "name": "Spear of the Church",
+        "name": "A. Spear of the Church",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3241,7 +3241,7 @@
     "name": "Sayu",
     "skills": [
       {
-        "name": "Shuumatsuban Ninja Blade",
+        "name": "A. Shuumatsuban Ninja Blade",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3330,7 +3330,7 @@
     "name": "Sethos",
     "skills": [
       {
-        "name": "Royal Reed Archery",
+        "name": "A. Royal Reed Archery",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 3 consecutive shots with a bow.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Performs a more precise <span style=\"color: #FFD780FF;\">Aimed Shot</span> with increased DMG.<br>While aiming, the power of Electro will accumulate on the arrowhead before the arrow is fired. Has different effects based on how long the energy has been charged:<br>·Charge Level 1: Fires off an arrow carrying the power of lightning that deals <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br>·Charge Level 2: Fires off a <span style=\"color: #FFD780FF;\">Shadowpiercing Shot</span> which can pierce enemies, dealing <span style=\"color: #FFACFFFF;\">Electro DMG</span> to enemies along its path. After the Shadowpiercing Shot is fully charged, Sethos cannot move around.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Fires off a shower of arrows in mid-air before falling and striking the ground, dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3410,7 +3410,7 @@
     "name": "Shikanoin Heizou",
     "skills": [
       {
-        "name": "Fudou Style Martial Arts",
+        "name": "A. Fudou Style Martial Arts",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 fisticuffs empowered by a mighty wind, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina and performs a sweeping kick that deals <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Calling upon the surging wind, Heizou plunges towards the ground from mid-air, damaging all opponents in his path. Deals <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> upon impact with the ground.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3493,7 +3493,7 @@
     "name": "Sucrose",
     "skills": [
       {
-        "name": "Wind Spirit Creation",
+        "name": "A. Wind Spirit Creation",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 attacks using Wind Spirits, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina and deals <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> after a short casting time.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Calling upon the power of her Wind Spirits, Sucrose plunges towards the ground from mid-air, damaging all opponents in her path. Deals <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> upon impact with the ground.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3577,7 +3577,7 @@
     "name": "Thoma",
     "skills": [
       {
-        "name": "Swiftshatter Spear",
+        "name": "A. Swiftshatter Spear",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3662,7 +3662,7 @@
     "name": "Xiangling",
     "skills": [
       {
-        "name": "Dough-Fu",
+        "name": "A. Dough-Fu",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3745,7 +3745,7 @@
     "name": "Xingqiu",
     "skills": [
       {
-        "name": "Guhua Style",
+        "name": "A. Guhua Style",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3827,7 +3827,7 @@
     "name": "Xinyan",
     "skills": [
       {
-        "name": "Dance on Fire",
+        "name": "A. Dance on Fire",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Drains Stamina over time to perform continuous spinning attacks against all nearby opponents.<br>At the end of the sequence, performs a more powerful slash. <br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3914,7 +3914,7 @@
     "name": "Yanfei",
     "skills": [
       {
-        "name": "Seal of Approval",
+        "name": "A. Seal of Approval",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Shoots fireballs that deal up to three counts of <span style=\"color: #FF9999FF;\">Pyro DMG</span>.<br>When Yanfei's Normal Attacks hit enemies, they will grant her a single Scarlet Seal. Yanfei may possess a maximum of 3 Scarlet Seals, and each time this effect is triggered, the duration of currently possessed Scarlet Seals will refresh.<br>Each Scarlet Seal will decrease Yanfei's Stamina consumption and will disappear when she leaves the field.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes Stamina and all Scarlet Seals before dealing <span style=\"color: #FF9999FF;\">AoE Pyro DMG</span> to opponents after a short casting time.<br>This Charged Attack's AoE and DMG will increase according to the amount of Scarlet Seals consumed.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Gathering the power of Pyro, Yanfei plunges towards the ground from mid-air, damaging all opponents in her path. Deals <span style=\"color: #FF9999FF;\">AoE Pyro DMG</span> upon impact with the ground.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -3996,7 +3996,7 @@
     "name": "Yaoyao",
     "skills": [
       {
-        "name": "Toss 'N' Turn Spear",
+        "name": "A. Toss 'N' Turn Spear",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
@@ -4081,7 +4081,7 @@
     "name": "Yun Jin",
     "skills": [
       {
-        "name": "Cloud-Grazing Strike",
+        "name": "A. Cloud-Grazing Strike",
         "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive spear strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents along the way.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
         "details": [
           ["1-Hit DMG", "{param1:F1P}"],
