@@ -14,8 +14,6 @@
     Effects (1) and (3) are ~1.33x expected multipliers on Lunar reaction hit output.
     No existing stat key or buff mechanism models probabilistic extra hits on reaction
     instances. Would require new engine feature (reaction hit-count multiplier).
-  created: "2026-02-25"
-  resolved: "2026-03-14"
 
 - id: jahoda-excel-missing-eq-formulas
   entity: jahoda
@@ -36,8 +34,6 @@
     Even with P1 Pyro enhancement (robot at 130%), contribution stays well
     under 5% of team DPS. Meowballs (230.4% each, Ascendant Gleam only)
     add marginally but Jahoda is never the damage dealer. Not worth modeling.
-  created: "2026-03-22"
-  resolved: "2026-03-28"
 
 - id: illuga-q-shared-stack-pool
   entity: illuga
@@ -55,8 +51,6 @@
     combos where both tiers consume stacks simultaneously are extremely rare in realistic
     team compositions. The theoretical overcounting risk is marginal and does not justify
     engine changes. The current separate-pool modeling is an acceptable approximation.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: illuga-q-geo-tier-excludes-lc
   entity: illuga
@@ -72,8 +66,6 @@
     only the higher tier applies — pure Geo gets the lower Geo-tier bonus, LunarCrystallize
     gets the higher LC-tier bonus, but they do not stack. The reactions: ["none"] filter on
     the Geo tier is correct and intentional.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 - id: lauma-c6-sanctuary-pale-hymn
   entity: lauma
@@ -87,8 +79,6 @@
     8 hits currently consume from the shared 36-stack Pale Hymn pool, potentially
     over-depleting stacks meant for other team reactions.
   detail: given lauma DPS is a niche, this is not a priority.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
 
 - id: linnea-c1-c6-maxstacks
   entity: linnea
@@ -103,8 +93,6 @@
     Added maxStacks to C1 ScalingBuff: 13 at C0-C5 (18 total - 5 million-ton),
     4 at C6 (18 - 10 million-ton = 8 remaining / 2 per hit). Million-ton bespoke
     is per-formula so no maxStacks needed.
-  created: "2026-04-04"
-  resolved: "2026-04-10"
 
 - id: linnea-file-placement
   entity: linnea
@@ -117,8 +105,6 @@
   detail: >
     Moved Linnea class (including linneaOption) from character5Snezhnaya.ts to
     character5NodKrai.ts. All imports were already present in the target file.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: varesa-fp-kick-c4-missing
   entity: varesa
@@ -132,5 +118,3 @@
   detail: >
     Added C4 +100% dmg% bespokeBuff to varesa-fp-kick, matching the existing one
     on varesa-kablam. Gated on constellation >= 4, filter: burst ability.
-  created: "2026-04-05"
-  resolved: "2026-04-10"

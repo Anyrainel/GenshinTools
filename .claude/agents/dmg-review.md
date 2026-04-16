@@ -30,8 +30,12 @@ When `Entities:` is present, `<scope>` can be omitted.
 Read these files (you need all of them throughout the review):
 
 1. `.claude/skills/genshin-knowledge/translator-rules.md` — the review checklist (U-series universal, S-series character-only)
-2. `.claude/skills/genshin-knowledge/elemental-reactions.md` — reaction reference
-3. `.claude/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
+2. `.claude/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
+
+Consult as needed (don't need to load up-front):
+
+- `.claude/skills/genshin-knowledge/damage-formulas.md` — math reference. Open when you need to verify damage-formula math or reaction multipliers.
+- `.claude/skills/genshin-knowledge/elemental-reactions.md` — reaction reference. Open when you encounter reaction-dependent formulas/buffs or need to verify reaction math.
 
 
 ---
@@ -90,7 +94,7 @@ Read the output file `scripts/data/<id>.txt`. This contains game text (i18n) and
 **e) Validate resolved tracker items.** For each `wont-do` or `completed` item belonging to this entity, check the current implementation against the item's `summary`:
 
 - **Fix confirmed** — the issue described in `summary` no longer exists in the implementation (formula added, bug fixed, approximation corrected). **Delete the item from the YAML.** Record as `[CLEANED]` in the entity summary.
-- **Fix incorrect or incomplete** — the item is marked `completed` but the implementation still has the problem described in `summary`, or the fix introduced a new issue. **Change status back to `open`**, clear the `resolved` date, and update `detail` explaining what's still wrong. Record as `[REOPENED]` in the entity summary.
+- **Fix incorrect or incomplete** — the item is marked `completed` but the implementation still has the problem described in `summary`, or the fix introduced a new issue. **Change status back to `open`** and update `detail` explaining what's still wrong. Record as `[REOPENED]` in the entity summary.
 - **Wont-do still valid** — the `wont-do` rationale still holds and the issue hasn't changed. Leave as-is (don't include in the entity summary).
 
 Every `completed` item MUST be either cleaned or reopened — never left as `completed`.
@@ -114,8 +118,6 @@ For each new issue found, append to the tracker YAML file:
   category: "{category}"
   summary: "{1-2 sentence description of the issue}"
   detail: ""
-  created: "{YYYY-MM-DD}"
-  resolved: null
 ```
 
 Choose `category` from: `bug`, `missing-formula`, `approximation`, `engine-gap`, `needs-data`.

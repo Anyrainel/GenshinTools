@@ -14,8 +14,6 @@
     KQM guide confirms her personal damage is negligible and talent levels (except Q) are
     low priority. Even at C6 with Anemo infusion, her on-field DPS window is brief and
     contributes well under 5% of team DPS in any recommended rotation. Not worth modeling.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: "charlotte-e-mark-tick"
   entity: "charlotte"
@@ -32,8 +30,6 @@
     and personal damage is not her value. In a team context, ~585% ATK from mark ticks is
     well under 5% of team rotation DPS. The existing E Hold and Q formulas adequately
     capture Charlotte's damage contribution.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: "furina-c2-hp-approx"
   entity: "furina"
@@ -45,5 +41,3 @@
     Since the entity already uses OptionMap for Fanfare stacks, forced averaging is acceptable
     but should be documented.
   detail: acknowledge the problem, will tackle this later.
-  created: "2026-04-04"
-  resolved: "2026-04-04"

@@ -10,8 +10,6 @@
   detail: >
     Separate damage source with fixed damage based on healing accumulation. No formula
     created due to low utility from fixed (non-scalable) damage.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: defenders-will-4pc
   entity: defenders_will
@@ -23,6 +21,4 @@
   detail: >
     Added DefendersWill4pc class with halfSetId "def%-30" and empty buffs array.
     Defensive RES bonus is not damage-relevant per rule U9.
-  created: "2026-02-26"
-  resolved: "2026-02-26"
 

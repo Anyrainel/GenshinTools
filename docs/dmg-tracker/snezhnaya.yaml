@@ -11,8 +11,6 @@
     Arlecchino's Normal Attack-heavy rotation (3 full NA sequences at ~1500%+ ATK each,
     plus Q and E cleave), the spike adds ~26.7% to a single E cast, contributing well
     under 2% of total rotation DPS. Negligible impact; not worth modeling.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: "arlecchino-directive-periodic"
   entity: "arlecchino"
@@ -26,5 +24,3 @@
     Normal Attacks (~4500%+ ATK equivalent per rotation with Bond of Life scaling) plus
     Q and C2 Bloodfire. The directive's 114.4% contributes ~2% of total rotation DPS.
     Negligible impact; not worth adding a formula for.
-  created: "2026-03-28"
-  resolved: "2026-03-29"

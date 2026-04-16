@@ -12,8 +12,6 @@
     plus formula-level targeting filter). This is a 3-star weapon with a niche
     mechanic that cannot be generalized — no other weapon or character buff uses
     weak spot DMG as a stat. Not worth the engine complexity for a 3-star bow.
-  created: "2026-02-25"
-  resolved: "2026-02-26"
 
 
 - id: forest-regalia-pickup-gap
@@ -33,8 +31,6 @@
     the practical impact is minimal — the on-field character at the time of
     pickup gets the buff, which teamOnField models correctly in most rotations.
     Not worth engine changes for this case.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: calamity-queller-consummation-ramp
   entity: calamity_queller
@@ -55,8 +51,6 @@
     peak-damage model (S6), max stacks after a short ramp with no team
     dependency is an acceptable assumption. The approximation has negligible
     impact on practical damage calculations.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: royal-greatsword-stack-approx
   entity: royal_greatsword
@@ -76,8 +70,6 @@
     approximation. Royal weapons are 4-star Starglitter Exchange weapons widely
     regarded as suboptimal choices. Adding OptionMap for a low-priority weapon
     series with a niche stacking mechanic is not worth the complexity.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 - id: sapwood-blade-pickup-gap
   entity: sapwood_blade
@@ -95,8 +87,6 @@
     non-stacking buff, so the practical impact is minimal — the on-field
     character at pickup time gets the buff, which teamOnField models correctly
     in most rotations. Not worth engine changes for this case.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 - id: moonpiercer-pickup-gap
   entity: moonpiercer
@@ -114,8 +104,6 @@
     impact is minimal — the on-field character at pickup time gets the buff,
     which teamOnField models correctly in most rotations. Not worth engine
     changes for this case.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 - id: royal-spear-stack-approx
   entity: royal_spear
@@ -133,8 +121,6 @@
     inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
     average for these low-priority 4-star Starglitter Exchange weapons.
     Not worth OptionMap complexity.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 - id: royal-bow-stack-approx
   entity: royal_bow
@@ -152,8 +138,6 @@
     inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
     average for these low-priority 4-star Starglitter Exchange weapons.
     Not worth OptionMap complexity.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 
 - id: prized-isshin-blade-proc-dmg
@@ -171,8 +155,6 @@
     Additionally, Prized Isshin Blade is a 4-star weapon with a -50% wielder DMG
     penalty, making it a niche choice. The 180% ATK proc every 8s is minor
     relative to character ability damage. Not worth engine changes for this case.
-  created: "2026-04-04"
-  resolved: "2026-04-10"
 
 - id: flameforged-insight-missing-lunar-reactions
   entity: flameforged_insight
@@ -188,8 +170,6 @@
     Added lunarCharged, lunarBloom, and lunarCrystallize to the canTrigger
     reaction gate in weapon4Claymore.ts, matching all six reactions listed
     in the game text.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: verdict-missing-lunar-crystallize
   entity: verdict
@@ -205,8 +185,6 @@
     Added hasReaction("lunarCrystallize") as an OR condition to the Seal
     gate in weapon5Claymore.ts, so the Skill DMG buff activates on both
     crystallize and lunarCrystallize teams.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: bloodsoaked-ruins-wrong-reaction-gate
   entity: bloodsoaked_ruins
@@ -222,8 +200,6 @@
     Changed the reaction gate from hasReaction("electroCharged") to
     hasReaction("lunarCharged") in weapon5Polearm.ts. The buff filters
     already correctly targeted lunarCharged reactions.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: royal-longsword-stack-approx
   entity: royal_longsword
@@ -241,8 +217,6 @@
     inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
     average for these low-priority 4-star Starglitter Exchange weapons.
     Not worth OptionMap complexity.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: golden-frostbound-oath-mischief-unconditional
   entity: golden_frostbound_oath
@@ -258,5 +232,4 @@
     Converted readonly buffs to a getter and gated the Frost Fae's Mischief
     buffs (other Geo DMG% + LC reactionDmg%) behind
     hasReaction("lunarCrystallize") in weapon5Bow.ts.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
+

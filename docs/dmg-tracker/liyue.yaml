@@ -12,8 +12,6 @@
     or 2+ with P1), ticks intermittently over 12s — very low multiplier. Q Pyro DoT (72%/85%)
     lasts only 2s, negligible vs the 613% Physical burst hit. Both are periodic/minor procs,
     estimated <5% DPS contribution combined.
-  created: "2026-02-25"
-  resolved: "2026-02-26"
 
 - id: xiao-p1-ramp
   entity: xiao
@@ -24,8 +22,6 @@
     P1 ramp approximated as 15% average; true max 25% at 15s.
   detail: >
     Time-dependent ramp averaged for steady-state DPS calculation.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: shenhe-c4-skyfrost
   entity: shenhe
@@ -41,8 +37,6 @@
     counter. Shenhe's personal E damage is minor relative to her team buff value (she is a
     pure Cryo support), so even at max 50 stacks (+250% E DMG), the impact on total team DPS
     is negligible. Not worth the complexity for this use case.
-  created: "2026-03-22"
-  resolved: "2026-03-28"
 
 - id: xingqiu-c4-wrong-zone
   entity: xingqiu
@@ -55,8 +49,6 @@
   detail: >
     baseDmg% is intentional: early character wording uses 伤害提升 but in-game testing
     confirms baseDmg% behavior, not dmg%. Code comment added.
-  created: "2026-03-28"
-  resolved: "2026-03-28"
 
 - id: beidou-c4-proc
   entity: beidou
@@ -68,8 +60,6 @@
     Low priority since Beidou is primarily a Q sub-DPS.
   detail: >
     Being attacked is hard to reliably trigger in combat, and we usually ignore the effect.
-  created: "2026-03-28"
-  resolved: "2026-03-28"
 
 - id: baizhu-p1-hp-option
   entity: baizhu
@@ -82,8 +72,6 @@
     require an OptionMap with explicit HP tiers.
   detail: >
     baizhu is a healer, keeping active character above 50% HP is very common and easy.
-  created: "2026-03-28"
-  resolved: "2026-03-28"
 
 - id: lan_yan-p1-absorption-dead
   entity: lan_yan
@@ -101,6 +89,4 @@
     team element would produce incorrect results when multiple absorbable elements are
     present. Requires a user-selectable absorption element (engine feature). The existing
     dead-code baseDmg% buffs are harmless since no absorbed-element formula activates them.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 

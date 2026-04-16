@@ -9,9 +9,6 @@
   detail: >
     Known limitation. OptionMap candidate but low priority. Mid-combat stack counting
     not supported by current engine.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
-
 
 - id: aloy-e-freeze-bomb
   entity: aloy
@@ -26,8 +23,6 @@
     72% each with variable hit count (random scatter). Aloy is an extremely
     niche character with near-zero usage rate. Estimated <5% of any realistic
     team DPS contribution. Not worth modeling.
-  created: "2026-02-25"
-  resolved: "2026-02-26"
 
 - id: traveler-hydro-e-dewdrop
   entity: traveler_hydro
@@ -43,8 +38,6 @@
     character in place and is rarely used for damage. The E Torrent Surge
     (340.7%/402.2%) is already modeled. Estimated <5% of any team DPS
     contribution from Dewdrops.
-  created: "2026-02-25"
-  resolved: "2026-02-26"
 
 - id: traveler-p3-charged-attack
   entity: traveler_anemo
@@ -57,8 +50,6 @@
   detail: >
     Requires stack build-up from teammates. Applies to traveler_anemo, traveler_geo,
     traveler_electro, traveler_dendro, traveler_hydro, and traveler_pyro P3.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: traveler-electro-c6-world-shaker
   entity: traveler_electro
@@ -69,8 +60,6 @@
     C6 World-Shaker every 3rd Falling Thunder not modeled.
   detail: >
     Periodic proc requiring hit counting. Low DPS contribution.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: traveler-pyro-e-hold
   entity: traveler_pyro
@@ -89,8 +78,6 @@
     threshold. Additionally, tap mode (Blazing Threshold, proximity-based) is the more
     commonly used mode per standard rotations since hold mode requires the active character
     to hit enemies to trigger coordinated attacks, adding a gameplay dependency.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 - id: aloy-p2-ramp-hardcoded
   entity: aloy
@@ -101,20 +88,52 @@
     P2 Cryo DMG Bonus ramps from 0% to 35% over 10s during Rushing Ice but is
     hardcoded to the maximum 35%. No OptionMap or amortized average is used.
   detail: aloy is not a popular character, not worth implementing the extra OptionMap.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
 
-- id: traveler-pyro-c1-nightsoul-double-count
-  entity: traveler_pyro
-  rule: U1
-  status: completed
-  category: bug
+- id: nicole-q-projection-scaling-element
+  entity: nicole
+  rule: S10
+  status: wont-do
+  category: engine-gap
   summary: >
-    C1 Nightsoul's Blessing +9% DMG buff is double-counted for Traveler Pyro.
-    Both a selfOnField +9% and a teamOnField factions:Nightsoul +9% are emitted,
-    but Traveler Pyro is in the Nightsoul faction, so they receive +18% instead of +9%.
+    Q Arcane Projection (5×200% ATK) and C1 Unity (600% ATK) are tagged as
+    "coming from the triggering character" in game text, scaling with that
+    character's ATK and dealing their elemental type. The implementation
+    approximates both as Nicole's own Pyro burst hits scaling off Nicole's ATK.
+    This under-counts on teams where triggerers have higher ATK than Nicole
+    and misrepresents reaction/RES interactions for non-Pyro teams.
   detail: >
-    Removed duplicate selfOnField +9% dmg% buff. The teamOnField factions:Nightsoul
-    +9% buff already covers Traveler Pyro since they are in the Nightsoul faction.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
+    Genuine engine gap. The calculator's formula model assumes each formula is
+    owned by the provider character and scales with the provider's stats. Game
+    text "该伤害受益于该角色的攻击力，并视为由该角色造成的伤害" requires a
+    coord-attack formula whose scalingKey reads the active/triggering
+    teammate's ATK and whose DamageTag.element is set at runtime to each
+    teammate's element. No existing pattern expresses this: BuffTarget.charId
+    can route buffs per-teammate, but scaling a formula off a teammate's stat
+    would require a new stat-resolution pipeline (effectively running the
+    formula in each teammate's stat context). The "split into N formulas, one
+    per team element" workaround also fails because each formula would still
+    scale off Nicole's ATK, not the triggering character's — the underlying
+    damage would still be wrong. Classifying the current approximation as
+    Nicole-ATK Pyro damage is the least bad option available within the
+    engine; reaction and resist interactions for non-Pyro triggerers will be
+    incorrect, but the magnitude stays in the right ballpark when triggerers
+    have similar ATK to Nicole. Revisit only if a per-teammate-stat formula
+    subsystem is added.
+
+- id: prune-q-bell-hit-count
+  entity: prune
+  rule: S8
+  status: open
+  category: needs-data
+  summary: >
+    Q Witchlure Bell Hunter-Seeker tick count is estimated at 4 hits over the
+    12s burst duration (15s+ with C6). Game text specifies only "attacking
+    surrounding opponents at intervals" without a concrete tick rate; actual
+    interval requires in-game verification.
+  detail: >
+    Per S8, when a periodic proc's exact tick rate is unknown, a best-estimate
+    with a code comment is acceptable. The current 4 ticks / 12s (~3s interval)
+    estimate is consistent with comparable "summon bell/bird/hunter-seeker"
+    mechanics on existing characters (e.g., Yelan Exquisite Throw, Faruzan
+    Dazzling Polyhedron cadence). External sources (KQM, HHW, Wiki) do not
+    yet cover Prune as she is unreleased beta. Revisit only after official release.

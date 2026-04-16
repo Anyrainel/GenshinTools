@@ -10,8 +10,6 @@
   detail: >
     Reaction modeling for Shining Shells would require per-shell element tracking.
     Modeled without reactions for simplicity.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: mualani-shark-missile-falloff
   entity: mualani
@@ -23,8 +21,6 @@
   detail: >
     Multi-target damage falloff is scenario-dependent. Single-target modeling is
     the standard baseline.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: mavuika-p2-decaying-dmg
   entity: mavuika
@@ -35,8 +31,6 @@
     P2 decaying DMG% (without C4) not captured; peak 40% used.
   detail: >
     Time-dependent decay modeled at peak value for simplicity.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: ororon-q-soundwave-hits
   entity: ororon
@@ -57,8 +51,6 @@
     frame data to confirm exact hit count at C0 and C4. If 6 is correct for C0,
     the current combo is fine. C4 adjustment would require a constellation-gated
     combo count bonus.
-  created: "2026-03-21"
-  resolved: null
 
 - id: ifa-missing-e-tonicshot
   entity: ifa
@@ -75,8 +67,6 @@
     Even with multiple tonicshots per E window, Ifa's personal damage is negligible
     relative to team DPS (<5%). C6 adds a 50% chance extra shot at 120% ATK — still
     minor. Not worth implementing for a healer whose value is in buffs and utility.
-  created: "2026-03-28"
-  resolved: "2026-03-28"
 
 
 - id: iansan-q-atk-scaling-option
@@ -97,8 +87,6 @@
     rotations use high mode, (2) the low mode is a fallback the user explicitly
     selects, and (3) the actual value is movement-dependent and unknowable without
     gameplay specifics. The approximation is acceptable.
-  created: "2026-03-28"
-  resolved: "2026-03-28"
 
 
 - id: chasca-e-tap-missing
@@ -111,8 +99,6 @@
     distinct damage instance in the 5-star E talent (quick Anemo Normal
     Attack hit when tapping during Nightsoul's Blessing).
   detail: nobody use this tap damage, we always hold.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
 
 - id: chasca-p1-c2-stack-count
   entity: chasca
@@ -126,8 +112,6 @@
   detail: >
     Added p1Stacks field that adds +1 at C2 and caps at 3. P1 DMG bonus now uses
     p1Stacks instead of raw eligibleTypes for the lookup table.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: mavuika-fs-n2n5-missing
   entity: mavuika
@@ -144,8 +128,6 @@
     all Pyro/normal. Existing combo formulas (mavuika-combo, mavuika-szszzp)
     retained for rotation modeling. Sprint and CA already covered by existing
     formulas.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: varesa-pa-fp-missing-p1-with-c4
   entity: varesa
@@ -157,8 +139,6 @@
     P1's +180% ATK baseDmg entirely. The first FP plunge should receive both P1 and C4
     DR (like varesa-sq uses p1WithC4 to combine them).
   detail: ""
-  created: "2026-04-11"
-  resolved: null
 
 - id: varesa-c4-dr-missing-cap
   entity: varesa
@@ -169,5 +149,3 @@
     C4 Diligent Refinement ScalingBuff is missing cap parameter. Game text says
     "至多通过这种方式提升20000" (max 20000). Should be ScalingBuff(..., 5.0, 20000).
   detail: ""
-  created: "2026-04-11"
-  resolved: null

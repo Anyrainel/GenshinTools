@@ -111,7 +111,7 @@ All in `damageBuffs.ts`.
 
 **Anonymous subclass pattern** — for one-off dynamic buffs, extend `StatBuff` inline and override `dynamicBuffs()`.
 
-**maxStacks:** When present, the greedy allocator (`stackAllocation.ts`) distributes limited activations across formula parts to maximize damage. Self buffs must never use `maxStacks` — use separate formula entries or `bespokeBuff` instead. Per-character independent stacks: emit one buff per teammate with `charId`.
+**maxStacks:** When present, the greedy allocator (`stackAllocation.ts`) distributes limited activations across formula parts to maximize damage. Valid on any buff — team/other buffs, self buffs in the regular `buffs` array, or `bespokeBuffs` (per-FormulaPart). For "first cast only" self effects, prefer `bespokeBuffs` with `maxStacks` equal to the part's hit count, attached to every part of the affected formula — this scopes the budget to that specific cast. A regular self buff with `maxStacks` allocates the budget across the whole combo instead; use it when that matches the game text. Per-character independent stacks: emit one buff per teammate with `charId`.
 
 **noStackId:** When multiple buffs share the same `noStackId`, only the highest value applies per stat key. Used for weapon/artifact series that shouldn't stack (e.g., Millennial Movement).
 
@@ -144,7 +144,7 @@ All in `damageFormulas.ts`. Base class: `DamageFormula(talentMultiplier, tag, sc
 FormulaPart {
   formula: DamageFormula
   hits?: number          // Repeated hits with same multiplier (preserves per-hit baseDmg)
-  bespokeBuff?: StatBuff // Per-part buff, selfOnField scope only
+  bespokeBuffs?: StatBuff[] // Per-part buffs, selfOnField scope only
   offField?: boolean     // Damage dealt while off-field (on-field buffs excluded)
 }
 
@@ -156,7 +156,7 @@ FormulaEntry {
 }
 ```
 
-**bespokeBuff:** Only when a buff can't be scoped via normal `BuffTarget` filtering (e.g., one specific formula among several sharing the same ability type). Accepts any StatBuff subclass.
+**bespokeBuffs:** Only when a buff can't be scoped via normal `BuffTarget` filtering (e.g., one specific formula among several sharing the same ability type). Array — pass each per-part buff as an element. Accepts any StatBuff subclass.
 
 **Per-part reaction eligibility:** Resolved at calc time via `ELEMENT_ELIGIBLE_REACTIONS` (constants.ts) and `resolvePartReaction()` (types.ts). Not a field on FormulaPart — the UI's ReactionSelector manages per-part overrides via `ReactionOverride.partReactions`.
 

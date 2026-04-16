@@ -192,8 +192,6 @@ For each discrepancy that warrants investigation, append to the tracker YAML fil
     Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: {module name from header}).
     Excel formula: {relevant formula snippet from Modified Formulas}.
     TS implementation: {what TS currently does}.
-  created: "{YYYY-MM-DD}"
-  resolved: null
 ```
 
 **Rule mapping** — these map to the closest translator-rules.md rule, though the context here is Excel cross-validation rather than a standard review:

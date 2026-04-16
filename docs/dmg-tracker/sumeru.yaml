@@ -10,8 +10,6 @@
   detail: >
     No runbook formulas for Candace. C6-only coordinated attack for a niche
     support character. Periodic/minor proc, estimated <5% team DPS contribution.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
 
 - id: nilou-c1-dmg-zone
   entity: nilou
@@ -25,8 +23,6 @@
     baseDmg% is correct. The wording "[attack]造成的伤害提升X%" is confirmed by
     KQM TCL as Base DMG Multiplier (baseDmg%), not DMG Bonus (dmg%). Reverted
     the change back to baseDmg%.
-  created: "2026-03-29"
-  resolved: "2026-03-29"
 
 - id: sethos-c2-receiver
   entity: sethos
@@ -39,8 +35,6 @@
   detail: >
     Changed C2 Electro DMG buff receiver from "selfOnField" to "self" to match
     game text which has no on-field restriction.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: sethos-dusk-bolt-missing-atk
   entity: sethos
@@ -60,5 +54,3 @@
     attack ATK scaling. KQM or in-game testing needed to confirm which model is
     correct. If the current EM-only model matches in-game damage, the S2 flag is
     a false positive.
-  created: "2026-04-10"
-  resolved: null

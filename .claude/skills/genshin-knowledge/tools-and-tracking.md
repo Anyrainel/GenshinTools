@@ -20,6 +20,10 @@ uv run --project scripts/pyproject.toml scripts/impl_audit.py <command> [args]
 
 **`check [C|W|A]`** — Find missing implementations and misplaced files. Omit mode to check all three.
 
+**`beta [C|W]`** — List characters/weapons that exist only in beta data files (not yet in official `character_{4,5}_*.json` / `weapon_*.json`), with their metadata (rarity, element, region, type) and implementation status. Omit mode to list both. Use this to discover unreleased entities that still need damage implementations.
+
+**Beta EN/ZH conflicts**: beta translations are often inconsistent. When EN and ZH text disagree on a number (multiplier, %, scale, hit count), **favor ZH** — it is the source of truth during beta. Implement the ZH value; note the discrepancy in a comment or tracker item only if the magnitude is large enough to matter. External sources (KQM, HHW, Wiki) generally do not cover beta entities, so don't suggest consulting them.
+
 ---
 
 ## 2. Tracker Files
@@ -56,14 +60,11 @@ Each tracker file is a YAML list. Every item has these fields:
     Q absorbed-element slash/DoT damage not modeled.
     Low significance relative to swirl/team buff value.
   detail: ""                      # Context-dependent — see §6
-  created: "2026-02-24"           # YYYY-MM-DD when item was created
-  resolved: null                  # YYYY-MM-DD when completed/wont-do, null otherwise
 ```
 
 **Field constraints:**
 - `id` must be unique within its file. Use `{entity}-{2-3-word-desc}`.
 - `summary` must be self-contained: readable without looking at the code.
-- `resolved` must be set when status is `completed` or `wont-do`, null otherwise.
 
 ---
 
@@ -104,12 +105,12 @@ Re-open: any status → open (manual, when circumstances change)
 
 | From | To | Who | Required updates |
 |---|---|---|---|
-| *(new)* | `open` | Review agent | Set `id`, `entity`, `rule`, `category`, `summary`, `created` |
+| *(new)* | `open` | Review agent | Set `id`, `entity`, `rule`, `category`, `summary` |
 | `open` | `actionable` | Triage agent | Fill `detail` with implementation guidance |
-| `open` | `wont-do` | Triage agent | Fill `detail` with rationale, set `resolved` |
-| `actionable` | `completed` | Implement agent | Update `detail` with change summary, set `resolved` |
+| `open` | `wont-do` | Triage agent | Fill `detail` with rationale |
+| `actionable` | `completed` | Implement agent | Update `detail` with change summary |
 | `wont-do`/`completed` | *(deleted)* | Review agent | Remove item from YAML (issue no longer exists in implementation) |
-| any | `open` | Manual | Clear `resolved`, update `detail` |
+| any | `open` | Manual | Update `detail` |
 
 ---
 

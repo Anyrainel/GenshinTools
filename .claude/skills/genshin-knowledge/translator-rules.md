@@ -138,7 +138,7 @@ When game text specifies that a **team/other buff** can only trigger a limited n
 
 - **[BUG]** if a team/other buff with explicit activation count limit in game text is missing `maxStacks`. This causes the calculator to assume every hit receives the buff, over-counting damage significantly on multi-hit formulas.
 - **[BUG]** if `maxStacks` value doesn't match the game text count.
-- **[BUG]** if a **self buff** (`receiver: "self"` or `"selfOnField"`) has `maxStacks`. Self buffs must NEVER use `maxStacks` — instead model limited self-buff activations via formula nuances: separate formula entries for buffed/heavy hits vs normal/unbuffed hits, or `bespokeBuff` on the specific formula part. This gives users explicit control in combos.
+- **Pattern — "first cast only" self effects** (e.g., "the next Plunge Attack after E deals +X% DMG", "the first N hits of Q are buffed"): prefer `bespokeBuffs` on the targeted FormulaPart(s) with `maxStacks` equal to the part's hit count, attached to **every part** of the affected formula. This scopes the budget to that specific cast — every hit of the first cast is buffed and subsequent casts are not. A regular self-receiver buff with `maxStacks` is also valid, but its budget is distributed across the whole combo rather than a single cast; use that form only when the buff truly caps at N hits across the rotation regardless of which formula consumes them. The separate-formula pattern (buffed-first vs unbuffed-subsequent entries) is an alternate option when different hits have different multipliers.
 - **Not applicable** to buffs with stack-based magnitude (e.g., "each stack increases ATK by 5%, max 4 stacks") — those are modeled via the stack count in the stat value itself. `maxStacks` is specifically for *hit-count-limited activation* where the buff fires on the first N hits then stops.
 - **Not applicable** to self buffs that refresh on a timer (e.g., "once per 0.8s" during a burst duration) — if the refresh is fast enough to be effectively unlimited over a rotation, omit `maxStacks`.
 
@@ -165,8 +165,8 @@ for (const cid of Object.keys(this.teamMeta.elements)) {
   ));
 }
 
-// Self buff with limited hits: use separate formulas instead
-"char-heavy": { parts: [{ formula, bespokeBuff: new ScalingBuff(...) }] },
+// "First cast only" self effect: bespokeBuffs with maxStacks per part
+"char-heavy": { parts: [{ formula, bespokeBuffs: [new ScalingBuff({ ...src, maxStacks: hitCount }, ...)] }] },
 "char-normal": { parts: [{ formula }] },
 ```
 
@@ -321,7 +321,8 @@ Normal Attack (A) formulas are welcome but not required by this rule — many 5�
 **What counts as a "distinct damage instance":** Each row in the talent detail table that shows a damage multiplier (`{paramN:P}` or `{paramN:F1P}`) is a damage instance. Multiple hits from the same action at the same multiplier use `hits: N` on a single part.
 
 **How to assemble formulas:** Formulas should be organized at the granularity of **user actions during combat** — not one formula per damage row. For example:
-- A skill that deals an initial hit + creates a turret with periodic ticks → two formulas: "E Cast" and "E Turret" (or one formula with on-field cast part + off-field tick parts)
+- A skill that deals an initial hit + creates a turret with periodic ticks → two formulas: "E Cast" and "E Tick". Each formula gets its own `comboDescriptor` count (1 for the cast, N for the ticks). Do **not** combine cast + ticks into one formula with mixed parts.
+- A pure tick-based damage source (one tick number on a periodic timer, no initial hit) → prefer a **per-tick** formula (single part, no `hits`) and set the tick count via `comboDescriptor.count`. This keeps tick count easy to tune after gameplay observation. **Exception**: complex tick patterns (e.g., Furina's E Salon Members cycle through multiple tick variants per rotation) should stay as a single formula with the full pattern modeled via `hits`/parts.
 - A burst with a slash + bloom → one formula with two parts
 - A normal attack sequence (N1–N5) → one formula with 5 parts
 - A skill with tap and hold modes dealing different damage → two formulas: "E Tap" and "E Hold"

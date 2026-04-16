@@ -18,8 +18,6 @@
     until the buff is full. Hardcoding max is consistent with the S6 peak-damage
     model for trivially-met conditions. Additionally, C6 Mona is an extremely
     niche scenario with negligible user impact.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: varka-c1-maxstacks-self
   entity: varka
@@ -34,5 +32,3 @@
   detail: >
     Removed maxStacks: 1 from both C1 bespokeBuffs (special E and special CA).
     BespokeBuff applies to all parts of the formula entry naturally.
-  created: "2026-04-10"
-  resolved: "2026-04-10"

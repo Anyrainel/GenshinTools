@@ -119,7 +119,6 @@ The review agent found a mechanical rule violation. Assess whether the rule was 
     {Rationale: why the current behavior is acceptable despite the review
     agent's flag. E.g., deliberate simplification, ambiguous game text,
     standard gameplay assumption, negligible impact.}
-  resolved: "YYYY-MM-DD"
 ```
 
 **→ remains open (ambiguous):**

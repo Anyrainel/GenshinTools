@@ -11,8 +11,6 @@
     per-element formula variants — see Traveler Anemo Q implementation). However, Sayu
     is a healer support with minimal field time; E hold absorption ticks are negligible
     DPS contribution (<2%). Not worth implementing.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
 
 - id: heizou-q-windmuster-iris
   entity: shikanoin_heizou
@@ -28,8 +26,6 @@
     For single-target, this is ~1.2% of Heizou's total rotation DPS (2x E full
     conviction ~2600% + Q 566%). Even with 4 targets, it's ~4.6% per target.
     Below the 5% significance threshold. Not worth implementing.
-  created: "2026-03-28"
-  resolved: "2026-03-28"
 
 - id: shinobu-e-ring
   entity: kuki_shinobu
@@ -46,8 +42,6 @@
     P2's 25% EM->baseDmg per tick (at 800 EM = 200 flat per tick, 1600 total), this
     is negligible compared to 8 hyperbloom seeds at ~30k each (~240k total). The ring
     direct damage contributes well under 5% of rotation DPS. Not worth implementing.
-  created: "2026-03-28"
-  resolved: "2026-03-29"
 
 - id: kokomi-jellyfish-offfield-q
   entity: sangonomiya_kokomi
@@ -59,8 +53,6 @@
     The Q Kurage DMG bonus (ScalingBuff with selfOnField + skill filter) won't apply
     to the off-field-flagged jellyfish formula, under-reporting Q-buffed jellyfish damage.
   detail: we have a force onField feature, if users would actually use the damage from the jellyfish, they can force it.
-  created: "2026-04-04"
-  resolved: "2026-04-04"
 
 - id: sayu-c2-kick-dmg
   entity: sayu
@@ -78,8 +70,6 @@
     one hit per E hold cast. In any team composition, Sayu's personal damage
     contributes well under 5% of team DPS. Not worth implementing for a healer
     support character.
-  created: "2026-04-04"
-  resolved: "2026-04-10"
 
 - id: itto-c6-combo-count
   entity: arataki_itto
@@ -93,8 +83,6 @@
   detail: >
     Updated C6 combo count from 8 to 10 to match expected value of geometric
     distribution (5 stacks / 0.5 probability = 10 slashes).
-  created: "2026-04-04"
-  resolved: "2026-04-10"
 
 - id: ayaka-c6-always-active
   entity: kamisato_ayaka
@@ -110,8 +98,6 @@
     Removed always-active C6 StatBuff. Added separate ayaka-charged-c6 formula entry
     with bespokeBuff (+298% dmg%). Combo descriptor uses 1 buffed CA + 2 unbuffed CAs
     at C6, 3 unbuffed CAs otherwise.
-  created: "2026-04-05"
-  resolved: "2026-04-10"
 
 - id: kazuha-plunge-c0
   entity: kaedehara_kazuha
@@ -127,8 +113,6 @@
     absorbed-element plunge variants (kazuha-plunge-c6-{el} → kazuha-plunge-{el})
     and removed their minC. Updated combo descriptor to use new formula IDs with
     P1 absorbed element plunge when available.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
 - id: raiden-q-normal-missing
   entity: raiden_shogun
@@ -143,6 +127,4 @@
     Added raiden-normal formula entry with N1-N3 parts (Q params 5-7), each with
     60 resolve bonus. Added to combo descriptor with count: 3 for 3×N3C rotation.
     All parts use Electro/burst tag.
-  created: "2026-04-10"
-  resolved: "2026-04-10"
 
