@@ -34,3 +34,33 @@ export function setBetaEnabled(enabled: boolean): void {
     // ignore — no persistent storage available
   }
 }
+
+const MAGIC_ON = "开启测试模式";
+const MAGIC_OFF = "关闭测试模式";
+const REVERT_MS = 10_000;
+
+let pendingRevert: ReturnType<typeof setTimeout> | null = null;
+
+export function maybeHandleBetaMagic(value: string): boolean {
+  if (value === MAGIC_ON) {
+    if (betaEnabled() && pendingRevert === null) return true;
+    if (pendingRevert) clearTimeout(pendingRevert);
+    setBetaEnabled(true);
+    pendingRevert = setTimeout(() => {
+      setBetaEnabled(false);
+      pendingRevert = null;
+    }, REVERT_MS);
+    return true;
+  }
+  if (value === MAGIC_OFF) {
+    const wasOn = betaEnabled();
+    if (pendingRevert) {
+      clearTimeout(pendingRevert);
+      pendingRevert = null;
+    }
+    setBetaEnabled(false);
+    if (wasOn) window.location.reload();
+    return true;
+  }
+  return false;
+}

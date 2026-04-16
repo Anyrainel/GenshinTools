@@ -1,3 +1,4 @@
+import { maybeHandleBetaMagic } from "@/lib/betaFlag";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -31,10 +32,22 @@ export const useArchiveSessionStore = create<ArchiveSessionState>()(
       bossSearch: "",
       selectedCharacterId: null,
       selectedBossId: null,
-      setCharacterSearch: (v) => set({ characterSearch: v }),
-      setWeaponSearch: (v) => set({ weaponSearch: v }),
-      setArtifactSearch: (v) => set({ artifactSearch: v }),
-      setBossSearch: (v) => set({ bossSearch: v }),
+      setCharacterSearch: (v) => {
+        const consumed = maybeHandleBetaMagic(v);
+        set({ characterSearch: consumed ? "" : v });
+      },
+      setWeaponSearch: (v) => {
+        const consumed = maybeHandleBetaMagic(v);
+        set({ weaponSearch: consumed ? "" : v });
+      },
+      setArtifactSearch: (v) => {
+        const consumed = maybeHandleBetaMagic(v);
+        set({ artifactSearch: consumed ? "" : v });
+      },
+      setBossSearch: (v) => {
+        const consumed = maybeHandleBetaMagic(v);
+        set({ bossSearch: consumed ? "" : v });
+      },
       setSelectedCharacterId: (v) => set({ selectedCharacterId: v }),
       setSelectedBossId: (v) => set({ selectedBossId: v }),
     }),

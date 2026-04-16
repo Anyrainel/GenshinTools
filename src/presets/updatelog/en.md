@@ -3,6 +3,25 @@
 - P0: More useful all character equipment and artifact upgrade suggestions
 - P2: Better graduation celebration effects
 
+## 2026-04-16
+
+### features
+- Auto-populate lunar electro-charged and lunar crystallize trigger counts in formulas, for more accurate Investment Analysis
+- Once damage gains saturate, the optimizer now starts pursuing support sub-stats needed by shielders and healers
+- Lock Helper is now more stable — no longer swaps the set-fallback lock between different transitional builds across runs
+- Artifact filter merge algorithm now consolidates filters into up to 3 entries (6.5 raised the in-game cap)
+
+### fixes
+- Fixed frozen artifacts occasionally still being used by the optimizer
+- Fixed buffs that convert one stat into damage (e.g. Mavuika's burst Fighting Spirit, Citlali C1, Shenhe's Icy Quill) — now scaled off combat panel stats instead of base stats
+- Fixed passives/constellations of the form "X deals an additional Y% of the original damage" — now multiplicative instead of additive
+- Reworked several Varesa and Linnea formulas to better match practical rotations
+- Fixed Force On-Field calculation errors
+- Min ER / CR constraint: now uses on-field stats as the constraint target, and fixed cases where the constraint produced unqualified artifacts
+- Fixed off-field buff display issues, and fixed buff overrides not applying across different combo IDs
+- Fixed builds subscription not updating
+- Various character fixes and added a few less-common formulas
+
 ## 2026-04-08
 
 ### features

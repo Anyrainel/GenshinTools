@@ -10,6 +10,10 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { TierAssignment } from "@/data/types";
+import {
+  numericInputFilter,
+  useDeferredTextInput,
+} from "@/hooks/useDeferredTextInput";
 import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import { getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -40,6 +44,14 @@ export function EnemyInputs({
   onEnemyResChange,
   t,
 }: EnemyInputsProps) {
+  const lvl = useDeferredTextInput(
+    String(enemyLevel ?? ""),
+    onEnemyLevelChange,
+    { filter: numericInputFilter }
+  );
+  const res = useDeferredTextInput(String(enemyRes ?? ""), onEnemyResChange, {
+    filter: numericInputFilter,
+  });
   return (
     <>
       <div className="flex items-center gap-0.5 md:gap-1">
@@ -47,9 +59,11 @@ export function EnemyInputs({
         <Input
           type="text"
           inputMode="numeric"
-          value={enemyLevel}
+          value={lvl.value}
           placeholder="110"
-          onChange={(e) => onEnemyLevelChange(e.target.value)}
+          onChange={lvl.onChange}
+          onBlur={lvl.onBlur}
+          onKeyDown={lvl.onKeyDown}
           className={INPUT_CLS}
         />
       </div>
@@ -57,10 +71,13 @@ export function EnemyInputs({
         <span className={LABEL_CLS}>{t.ui("teamComp.enemyRes")}</span>
         <div className="flex items-center gap-0">
           <Input
-            type="number"
-            value={enemyRes}
+            type="text"
+            inputMode="numeric"
+            value={res.value}
             placeholder="10"
-            onChange={(e) => onEnemyResChange(e.target.value)}
+            onChange={res.onChange}
+            onBlur={res.onBlur}
+            onKeyDown={res.onKeyDown}
             className={`${INPUT_CLS} ${SPINNER_HIDE}`}
           />
           <span className="font-bold text-muted-foreground text-[10px] md:text-xs">
@@ -146,6 +163,32 @@ export function RollQualityInputs({
 const CHAR_INPUT_CLS =
   "text-center font-bold bg-white/5 rounded-md border border-border/20 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm";
 
+// Defers commit until blur/Enter so per-keystroke updateTeam calls don't
+// re-render the whole optimizer/generator results pipeline.
+function PctInput({
+  value,
+  onCommit,
+}: {
+  value: string;
+  onCommit: (raw: string) => void;
+}) {
+  const d = useDeferredTextInput(value, onCommit, {
+    filter: numericInputFilter,
+  });
+  return (
+    <Input
+      type="text"
+      inputMode="numeric"
+      placeholder="--"
+      value={d.value}
+      onChange={d.onChange}
+      onBlur={d.onBlur}
+      onKeyDown={d.onKeyDown}
+      className={CHAR_INPUT_CLS}
+    />
+  );
+}
+
 const CB_CLS = "flex items-center gap-0.5 cursor-pointer select-none";
 const CB_LABEL_CLS =
   "font-medium text-foreground/60 text-[10px] md:text-xs leading-tight";
@@ -214,17 +257,14 @@ export function CharCrErSettings({
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="--"
+                <PctInput
                   value={
                     team.minCr?.[charId] != null
                       ? String(Math.round(team.minCr[charId] * 100))
                       : ""
                   }
-                  onChange={(e) => {
-                    const raw = e.target.value.trim();
+                  onCommit={(rawIn) => {
+                    const raw = rawIn.trim();
                     if (raw === "") {
                       const next = { ...(team.minCr ?? {}) };
                       delete next[charId];
@@ -241,7 +281,6 @@ export function CharCrErSettings({
                       });
                     }
                   }}
-                  className={CHAR_INPUT_CLS}
                 />
                 <span className="font-bold text-foreground text-[10px] md:text-xs">
                   %
@@ -253,23 +292,19 @@ export function CharCrErSettings({
                 <span className="font-bold text-foreground text-[10px] md:text-xs mr-px">
                   {t.ui("teamComp.minEr")}
                 </span>
-                <Input
-                  type="text"
-                  inputMode="numeric"
+                <PctInput
                   value={
                     team.minEr[charId] != null
                       ? String(Math.round(team.minEr[charId] * 100))
                       : ""
                   }
-                  placeholder="--"
-                  onChange={(e) => {
-                    const raw = e.target.value.trim();
+                  onCommit={(rawIn) => {
+                    const raw = rawIn.trim();
                     if (raw === "") {
                       const { [charId]: _, ...rest } = team.minEr;
                       updateTeam(team.id, { minEr: rest });
                       return;
                     }
-                    if (!/^\d+$/.test(raw)) return;
                     const val = Number(raw) / 100;
                     if (!Number.isNaN(val)) {
                       updateTeam(team.id, {
@@ -277,7 +312,6 @@ export function CharCrErSettings({
                       });
                     }
                   }}
-                  className={CHAR_INPUT_CLS}
                 />
                 <span className="font-bold text-foreground text-[10px] md:text-xs">
                   %
