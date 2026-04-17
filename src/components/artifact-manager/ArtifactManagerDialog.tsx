@@ -13,8 +13,16 @@ import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
+import type { JobInput } from "@/hooks/useArtifactManagerJob";
+import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
 import { fetchArtifacts } from "@/lib/artifact-manager/client";
-import { rebuildAccountFromSnapshot } from "@/lib/artifact-manager/storeSync";
+import {
+  type JobAnalysis,
+  type SnapshotDiff,
+  analyzeManageResults,
+  computeSnapshotDiff,
+  rebuildAccountFromSnapshot,
+} from "@/lib/artifact-manager/storeSync";
 import type {
   EquipPayload,
   InstructionStatus,
@@ -116,7 +124,22 @@ export function ArtifactManagerDialog({
     }
   }, [job, submit]);
 
-  // Temporary: fetch artifacts and update store directly
+  const applySnapshot = useCallback((snapshot: IGOODArtifact[]) => {
+    const account = getActiveAccount(useAccountStore.getState());
+    if (account) {
+      const { data: updated, artifactIdMap } = rebuildAccountFromSnapshot(
+        account.data,
+        snapshot
+      );
+      applyAccountImport({
+        accountId: account.id,
+        data: updated,
+        artifactIdMap,
+      });
+      console.log(`Synced ${snapshot.length} artifacts from scanner`);
+    }
+  }, []);
+
   const handleFetchAndSync = useCallback(async () => {
     try {
       const snapshot = await fetchArtifacts(port);
@@ -124,30 +147,25 @@ export function ArtifactManagerDialog({
         console.warn("No snapshot available (404/503)");
         return;
       }
-      const account = getActiveAccount(useAccountStore.getState());
-      if (account) {
-        const { data: updated, artifactIdMap } = rebuildAccountFromSnapshot(
-          account.data,
-          snapshot
-        );
-        applyAccountImport({
-          accountId: account.id,
-          data: updated,
-          artifactIdMap,
-        });
-        console.log(`Synced ${snapshot.length} artifacts from scanner`);
-      }
+      applySnapshot(snapshot);
     } catch (e) {
       console.error("Failed to fetch artifacts:", e);
     }
-  }, [port]);
+  }, [port, applySnapshot]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (phase.type === "completed" || phase.type === "error") {
       reset();
     }
     onOpenChange(false);
-  };
+  }, [phase.type, reset, onOpenChange]);
+
+  const handleApplySnapshot = useCallback(() => {
+    if (phase.type === "completed" && phase.snapshot) {
+      applySnapshot(phase.snapshot);
+    }
+    handleClose();
+  }, [phase, applySnapshot, handleClose]);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -215,7 +233,14 @@ export function ArtifactManagerDialog({
           )}
 
           {phase.type === "completed" && (
-            <JobResultSummary result={phase.result} t={t} />
+            <JobResultSummary
+              result={phase.result}
+              input={phase.input}
+              snapshot={phase.snapshot}
+              t={t}
+              onApplySync={handleApplySnapshot}
+              onSkipSync={handleClose}
+            />
           )}
 
           {phase.type === "error" && (
@@ -232,15 +257,13 @@ export function ArtifactManagerDialog({
               <Button disabled={!isReady} onClick={handleAction}>
                 {actionLabel}
               </Button>
-              {import.meta.env.DEV && (
-                <Button
-                  variant="secondary"
-                  disabled={!isConnected}
-                  onClick={handleFetchAndSync}
-                >
-                  Sync artifacts
-                </Button>
-              )}
+              <Button
+                variant="secondary"
+                disabled={!isConnected}
+                onClick={handleFetchAndSync}
+              >
+                {t.ui("manager.syncArtifacts")}
+              </Button>
             </>
           )}
           <Button variant="outline" onClick={handleClose}>
@@ -310,12 +333,34 @@ function ConnectionStatus({
 
 function JobResultSummary({
   result,
+  input,
+  snapshot,
   t,
+  onApplySync,
+  onSkipSync,
 }: {
   result: ResultResponse;
+  input: JobInput;
+  snapshot: IGOODArtifact[] | null;
   t: ReturnType<typeof useLanguage>["t"];
+  onApplySync: () => void;
+  onSkipSync: () => void;
 }) {
   const { summary } = result;
+
+  // Compute analysis for manage jobs
+  const analysis: JobAnalysis | null =
+    input.type === "manage"
+      ? analyzeManageResults(input.payload, result.results)
+      : null;
+
+  // Compute snapshot diff if available
+  const diff: SnapshotDiff | null = (() => {
+    if (!snapshot) return null;
+    const account = getActiveAccount(useAccountStore.getState());
+    if (!account) return null;
+    return computeSnapshotDiff(account.data, snapshot);
+  })();
 
   return (
     <div className="space-y-3">
@@ -364,6 +409,33 @@ function JobResultSummary({
         )}
       </div>
 
+      {/* Discrepancy details for manage jobs */}
+      {analysis?.hasDiscrepancies && (
+        <div className="space-y-1 text-xs text-muted-foreground">
+          {analysis.notFoundCount > 0 && (
+            <p>
+              {t
+                .ui("manager.notFoundInfo")
+                .replace("{0}", String(analysis.notFoundCount))}
+            </p>
+          )}
+          {analysis.alreadyCorrectCount > 0 && (
+            <p>
+              {t
+                .ui("manager.alreadyCorrectInfo")
+                .replace("{0}", String(analysis.alreadyCorrectCount))}
+            </p>
+          )}
+          {analysis.errorCount > 0 && (
+            <p>
+              {t
+                .ui("manager.errorInfo")
+                .replace("{0}", String(analysis.errorCount))}
+            </p>
+          )}
+        </div>
+      )}
+
       {result.results.some(
         (r) => r.status !== "success" && r.status !== "already_correct"
       ) && (
@@ -384,6 +456,31 @@ function JobResultSummary({
               ))}
           </ul>
         </details>
+      )}
+
+      {/* Snapshot sync section */}
+      {diff && (
+        <div className="space-y-2 border-t pt-3">
+          <p className="text-sm font-medium">
+            {t.ui("manager.snapshotAvailable")}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {t
+              .ui("manager.snapshotDiff")
+              .replace("{0}", String(diff.snapshotCount))
+              .replace("{1}", String(diff.snapshotLocked))
+              .replace("{2}", String(diff.localCount))
+              .replace("{3}", String(diff.localLocked))}
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={onApplySync}>
+              {t.ui("manager.applyFullSync")}
+            </Button>
+            <Button size="sm" variant="outline" onClick={onSkipSync}>
+              {t.ui("manager.skipSync")}
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );

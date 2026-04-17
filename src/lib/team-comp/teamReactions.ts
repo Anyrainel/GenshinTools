@@ -111,14 +111,15 @@ export type ReactionComboEntry = {
   bonus: ReactionComboDelta[];
 };
 
-/** Resolve reaction combo entries into { formulaId → { charId → count } }.
- *  Adds active constellation bonuses to the total, then distributes:
- *  on-field char gets remainder, every other eligible char gets 1 (0 if total ≤ 0). */
+/** Resolve reaction combo entries into per-triggerer { formulaId → count }.
+ *  Adds active constellation bonuses to the total, distributes across eligible
+ *  characters (on-field char gets remainder, others get 1), and emits one entry
+ *  per triggerer with per-triggerer formula ID (e.g. rx-overloaded-amber). */
 export function resolveReactionComboEntries(
   entries: ReactionComboEntry[],
   constellations: Record<string, number>
-): Record<string, Record<string, number>> {
-  const result: Record<string, Record<string, number>> = {};
+): Record<string, number> {
+  const result: Record<string, number> = {};
   for (const entry of entries) {
     let total = entry.total;
     for (const b of entry.bonus) {
@@ -126,18 +127,15 @@ export function resolveReactionComboEntries(
         total += b.delta;
       }
     }
-    const perChar: Record<string, number> = {};
-    if (total > 0) {
-      for (const charId of entry.eligible) {
-        perChar[charId] =
-          charId === entry.onFieldCharId
+    for (const charId of entry.eligible) {
+      const count =
+        total > 0
+          ? charId === entry.onFieldCharId
             ? Math.max(0, total - (entry.eligible.length - 1))
-            : 1;
-      }
-    } else {
-      for (const charId of entry.eligible) perChar[charId] = 0;
+            : 1
+          : 0;
+      result[`${entry.id}-${charId}`] = count;
     }
-    result[entry.id] = perChar;
   }
   return result;
 }
@@ -145,21 +143,48 @@ export function resolveReactionComboEntries(
 // ─── TeamReactionProvider ───
 
 export class TeamReactionProvider {
-  /** Formula entries keyed by reaction formula ID (rx-{reaction}). */
+  /** Per-triggerer formula entries keyed by `rx-{reaction}-{charId}`. */
   private readonly formulas: Record<string, FormulaEntry> = {};
 
-  /** Eligible trigger characters per formula ID. */
-  private readonly eligibleChars: Record<string, string[]> = {};
+  /** Eligible trigger characters per base reaction ID (e.g. "rx-overloaded"). */
+  private readonly baseEligible: Record<string, string[]> = {};
+
+  /** Map per-triggerer formula ID → base reaction ID. */
+  private readonly baseIdFor: Record<string, string> = {};
+
+  /** Labels per base reaction ID (for UI grid display). */
+  private readonly baseLabels: Record<string, I18nLabel> = {};
 
   /** Config lookup for charLevel per charId. */
   private readonly charLevels: Record<string, number>;
 
   /**
    * Pre-computed rank weights for multi-contributor lunar formulas.
-   * Keyed by formula ID (e.g. "rx-lunarCharged"), value maps charId → weight.
+   * Keyed by base formula ID (e.g. "rx-lunarCharged"), value maps charId → weight.
    * Computed from baseline stats (no artifacts) during TeamBuild construction.
    */
   private rankWeights: Record<string, Map<string, number>> = {};
+
+  /** Register per-triggerer formula entries for a base reaction. */
+  private registerPerTriggerer(
+    baseId: string,
+    label: I18nLabel,
+    parts: FormulaPart[],
+    eligible: string[]
+  ): void {
+    this.baseEligible[baseId] = eligible;
+    this.baseLabels[baseId] = label;
+    for (const charId of eligible) {
+      const id = `${baseId}-${charId}`;
+      this.formulas[id] = {
+        label,
+        parts,
+        owner: "team",
+        statsCharId: charId,
+      };
+      this.baseIdFor[id] = baseId;
+    }
+  }
 
   constructor(
     private readonly teamMeta: TeamMeta,
@@ -181,10 +206,8 @@ export class TeamReactionProvider {
       teamElementChars.get(el)!.push(c.charId);
     }
 
-    // Generate transformative reaction formulas
+    // Generate transformative reaction formulas (per-triggerer)
     for (const reaction of TRANSFORMATIVE_REACTIONS) {
-      // lunarBloom has no separate formula — Dendro Cores deal the same bloom damage.
-      // Generate rx-bloom when either bloom or lunarBloom is possible.
       if (
         !teamMeta.hasReaction(reaction) &&
         !(reaction === "bloom" && teamMeta.hasReaction("lunarBloom"))
@@ -193,44 +216,38 @@ export class TeamReactionProvider {
       const element = REACTION_DAMAGE_ELEMENT[reaction];
       if (!element) continue;
 
-      const id = `rx-${reaction}`;
-      const label = REACTION_FORMULA_LABELS[reaction] ??
+      const baseId = `rx-${reaction}`;
+      let label = REACTION_FORMULA_LABELS[reaction] ??
         i18nAppData.reactions[reaction] ?? { en: reaction, zh: reaction };
       const formula = new TransformFormula(0, {
         element,
         ability: "special",
         reaction,
       });
-      this.formulas[id] = { label, parts: [{ formula }] };
-      this.eligibleChars[id] = this.findEligibleChars(
-        reaction,
-        teamElementChars
-      );
-    }
+      const eligible = this.findEligibleChars(reaction, teamElementChars);
 
-    // Nilou Bountiful Core upgrade: when Nilou is on an all-Hydro/Dendro team,
-    // upgrade rx-bloom label to "Bountiful Core" / "丰穰之核"
-    if (this.formulas["rx-bloom"]) {
-      const elements = configs.map((c) => teamMeta.elements[c.charId]);
-      const allDendroHydro = elements.every(
-        (e) => e === "Dendro" || e === "Hydro"
-      );
-      const hasNilou = configs.some((c) => c.charId === "nilou");
-      if (hasNilou && allDendroHydro) {
-        this.formulas["rx-bloom"].label = {
-          en: "Bountiful Core",
-          zh: "丰穰之核",
-        };
+      // Nilou Bountiful Core upgrade
+      if (
+        reaction === "bloom" &&
+        configs.some((c) => c.charId === "nilou") &&
+        configs.every((c) => {
+          const e = teamMeta.elements[c.charId];
+          return e === "Dendro" || e === "Hydro";
+        })
+      ) {
+        label = { en: "Bountiful Core", zh: "丰穰之核" };
       }
+
+      this.registerPerTriggerer(baseId, label, [{ formula }], eligible);
     }
 
-    // Generate lunar reaction formulas
+    // Generate lunar reaction formulas (per-triggerer, multi-contributor)
     for (const reaction of LUNAR_REACTIONS) {
       if (!teamMeta.hasReaction(reaction)) continue;
       const element = REACTION_DAMAGE_ELEMENT[reaction];
       if (!element) continue;
 
-      const id = `rx-${reaction}`;
+      const baseId = `rx-${reaction}`;
       const label = REACTION_FORMULA_LABELS[reaction] ??
         i18nAppData.reactions[reaction] ?? { en: reaction, zh: reaction };
       const formula = new LunarFormula(0, {
@@ -238,20 +255,17 @@ export class TeamReactionProvider {
         ability: "special",
         reaction,
       });
-      this.formulas[id] = { label, parts: [{ formula }] };
+      const eligible = this.findEligibleChars(reaction, teamElementChars);
 
-      this.eligibleChars[id] = this.findEligibleChars(
-        reaction,
-        teamElementChars
-      );
+      this.registerPerTriggerer(baseId, label, [{ formula }], eligible);
     }
 
-    // Swirl special case: one formula per swirled element on the team
+    // Swirl special case: one formula per swirled element, per-triggerer
     if (teamMeta.hasReaction("swirl")) {
       const anemoChars = teamElementChars.get("Anemo") ?? [];
       for (const swirlEl of PHEC_ELEMENTS) {
         if (!teamElementChars.has(swirlEl)) continue;
-        const id = `rx-swirl-${swirlEl}`;
+        const baseId = `rx-swirl-${swirlEl}`;
         const elLabel = i18nAppData.elements[swirlEl];
         const swirlBase = i18nAppData.reactions.swirl;
         const label: I18nLabel = {
@@ -263,8 +277,8 @@ export class TeamReactionProvider {
           ability: "special",
           reaction: "swirl",
         });
-        this.formulas[id] = { label, parts: [{ formula }] };
-        this.eligibleChars[id] = anemoChars;
+
+        this.registerPerTriggerer(baseId, label, [{ formula }], anemoChars);
       }
     }
   }
@@ -291,51 +305,65 @@ export class TeamReactionProvider {
   /**
    * Set pre-computed rank weights for a multi-contributor formula.
    * Called by TeamBuild after construction using baseline stats (no artifacts).
+   * Keyed by base reaction ID (e.g. "rx-lunarCharged").
    */
-  setRankWeights(formulaId: string, weights: Map<string, number>): void {
-    this.rankWeights[formulaId] = weights;
+  setRankWeights(baseFormulaId: string, weights: Map<string, number>): void {
+    this.rankWeights[baseFormulaId] = weights;
   }
 
   /**
-   * Get pre-computed rank weights for a multi-contributor formula.
+   * Get pre-computed rank weights for a formula (accepts per-triggerer or base ID).
    * Returns undefined if not pre-computed (falls back to dynamic ranking).
    */
   getRankWeights(formulaId: string): Map<string, number> | undefined {
-    return this.rankWeights[formulaId];
+    const base = this.baseIdFor[formulaId] ?? formulaId;
+    return this.rankWeights[base];
   }
 
-  /** All available reaction formula IDs with i18n labels. */
+  /** All per-triggerer reaction formula IDs with i18n labels. */
   getFormulaIds(): Record<string, I18nLabel> {
     const result: Record<string, I18nLabel> = {};
     for (const [id, entry] of Object.entries(this.formulas)) {
-      // Only include formulas that have at least one eligible trigger character
-      if ((this.eligibleChars[id]?.length ?? 0) > 0) {
-        result[id] = entry.label;
-      }
+      result[id] = entry.label;
     }
     return result;
   }
 
-  /** Which characters can trigger/be on-field for a given formula. */
+  /** Eligible trigger characters for a base reaction. */
   getEligibleCharacters(formulaId: string): string[] {
-    return this.eligibleChars[formulaId] ?? [];
+    const base = this.baseIdFor[formulaId] ?? formulaId;
+    return this.baseEligible[base] ?? [];
   }
 
   /** Is this a multi-contributor lunar formula? */
   isMultiContributor(formulaId: string): boolean {
-    const reaction = this.formulaIdToReaction(formulaId);
-    return reaction != null && MULTI_CONTRIBUTOR_REACTIONS.has(reaction);
+    const base = this.baseIdFor[formulaId] ?? formulaId;
+    const baseReaction = base.startsWith("rx-") ? base.slice(3) : undefined;
+    return (
+      baseReaction != null &&
+      MULTI_CONTRIBUTOR_REACTIONS.has(baseReaction as ReactionType)
+    );
   }
 
-  /** Get the FormulaEntry for a reaction formula ID. */
+  /** Get the FormulaEntry for a per-triggerer reaction formula ID. */
   getFormulaEntry(formulaId: string): FormulaEntry | undefined {
     return this.formulas[formulaId];
   }
 
-  /** Guess the on-field character for a reaction combo line.
+  /** Base reaction IDs that have formulas registered. */
+  getBaseReactionIds(): string[] {
+    return Object.keys(this.baseEligible);
+  }
+
+  /** Base reaction IDs with their i18n labels (for UI grid display). */
+  getBaseFormulaLabels(): Record<string, I18nLabel> {
+    return this.baseLabels;
+  }
+
+  /** Guess the on-field character for a base reaction.
    *  Priority: best on-field damage dealer for the rotation. */
-  guessOnFieldChar(formulaId: string): string | undefined {
-    const eligible = this.eligibleChars[formulaId] ?? [];
+  guessOnFieldChar(baseId: string): string | undefined {
+    const eligible = this.baseEligible[baseId] ?? [];
     const priority = ["flins", "zibai", "ineffa", "linnea", "columbina"];
     for (const charId of priority) {
       if (eligible.includes(charId)) return charId;
@@ -354,8 +382,8 @@ export class TeamReactionProvider {
   getReactionComboDescriptor(): ReactionComboEntry[] {
     if (this.cachedDescriptor) return this.cachedDescriptor;
 
-    const hasLCh = "rx-lunarCharged" in this.formulas;
-    const hasLCr = "rx-lunarCrystallize" in this.formulas;
+    const hasLCh = "rx-lunarCharged" in this.baseEligible;
+    const hasLCr = "rx-lunarCrystallize" in this.baseEligible;
     const hasLB = this.teamMeta.hasReaction("lunarBloom");
 
     const entries: ReactionComboEntry[] = [];
@@ -399,7 +427,7 @@ export class TeamReactionProvider {
         });
       }
 
-      const eligible = this.eligibleChars[id] ?? [];
+      const eligible = this.baseEligible[id] ?? [];
       const onFieldCharId = this.guessOnFieldChar(id) ?? eligible[0] ?? "";
 
       entries.push({
@@ -415,8 +443,8 @@ export class TeamReactionProvider {
     return entries;
   }
 
-  /** Resolved per-character reaction combo counts at construction-time constellations. */
-  getReactionComboCounts(): Record<string, Record<string, number>> {
+  /** Resolved per-triggerer reaction combo counts at construction-time constellations. */
+  getReactionComboCounts(): Record<string, number> {
     const constellations: Record<string, number> = {};
     for (const c of this.configs) {
       constellations[c.charId] = this.charBases[c.charId]?.constellation ?? 0;
@@ -449,6 +477,7 @@ export class TeamReactionProvider {
   /**
    * Compute per-character damage contributions for a multi-contributor formula.
    * Returns eligible characters' raw damage values (unsorted).
+   * Accepts per-triggerer formula IDs (reads multiContributors from entry).
    */
   private computeContributions(
     formulaId: string,
@@ -459,7 +488,8 @@ export class TeamReactionProvider {
     if (!entry) return [];
 
     const formula = entry.parts[0].formula;
-    const eligible = this.eligibleChars[formulaId] ?? [];
+    const base = this.baseIdFor[formulaId] ?? formulaId;
+    const eligible = this.baseEligible[base] ?? [];
     const contributions: { charId: string; damage: number }[] = [];
     for (const config of this.configs) {
       if (!eligible.includes(config.charId)) continue;
@@ -486,7 +516,7 @@ export class TeamReactionProvider {
     const contributions = this.computeContributions(formulaId, teamStats, ctx);
     if (contributions.length === 0) return { parts: [], totalDamage: 0 };
 
-    const precomputedWeights = this.rankWeights[formulaId];
+    const precomputedWeights = this.getRankWeights(formulaId);
 
     let totalDamage: number;
     if (precomputedWeights) {
@@ -526,7 +556,7 @@ export class TeamReactionProvider {
     const contributions = this.computeContributions(formulaId, teamStats, ctx);
     if (contributions.length === 0) return { contributors: [], totalDamage: 0 };
 
-    const precomputedWeights = this.rankWeights[formulaId];
+    const precomputedWeights = this.getRankWeights(formulaId);
     if (precomputedWeights) {
       // Sort by weight descending (highest rank first)
       contributions.sort(
@@ -551,12 +581,9 @@ export class TeamReactionProvider {
 
   // ─── Internal helpers ───
 
-  /** Extract the reaction type from a formula ID. */
-  private formulaIdToReaction(formulaId: string): ReactionType | undefined {
-    if (!formulaId.startsWith("rx-")) return undefined;
-    const rest = formulaId.slice(3);
-    // rx-swirl-Pyro → "swirl"
-    if (rest.startsWith("swirl-")) return "swirl";
-    return rest as ReactionType;
+  /** Get the base reaction ID from a per-triggerer formula ID.
+   *  e.g. "rx-overloaded-amber" → "rx-overloaded" */
+  getBaseId(formulaId: string): string | undefined {
+    return this.baseIdFor[formulaId];
   }
 }

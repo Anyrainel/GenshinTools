@@ -1,3 +1,4 @@
+import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
 import {
   ArtifactManagerError,
   fetchArtifacts,
@@ -9,7 +10,6 @@ import {
 import {
   applyEquipResults,
   applyJobResults,
-  rebuildAccountFromSnapshot,
 } from "@/lib/artifact-manager/storeSync";
 import type {
   EquipPayload,
@@ -17,7 +17,6 @@ import type {
   ResultResponse,
   SubmitResponse,
 } from "@/lib/artifact-manager/types";
-import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -26,7 +25,12 @@ export type JobPhase =
   | { type: "submitting" }
   | { type: "submitted"; jobId: string }
   | { type: "running"; jobId: string; completed: number; total: number }
-  | { type: "completed"; result: ResultResponse }
+  | {
+      type: "completed";
+      result: ResultResponse;
+      input: JobInput;
+      snapshot: IGOODArtifact[] | null;
+    }
   | { type: "error"; message: string };
 
 export type JobInput =
@@ -58,10 +62,11 @@ export function useArtifactManagerJob(port = 8765) {
   }, []);
 
   const applyManageSync = useCallback(
-    async (result: ResultResponse) => {
+    async (result: ResultResponse): Promise<IGOODArtifact[] | null> => {
       const input = jobInputRef.current;
-      if (input?.type !== "manage") return;
+      if (input?.type !== "manage") return null;
 
+      // Phase 1: apply lock state changes from job results
       const account = getActiveAccount(useAccountStore.getState());
       if (account) {
         const updated = applyJobResults(
@@ -79,7 +84,7 @@ export function useArtifactManagerJob(port = 8765) {
         );
       }
 
-      // Fetch and apply full artifact snapshot
+      // Phase 2: fetch snapshot but do NOT auto-apply — store for user confirmation
       if (result.summary.aborted === 0) {
         try {
           const snapshot = await fetchArtifacts(port);
@@ -91,30 +96,14 @@ export function useArtifactManagerJob(port = 8765) {
               snapshot.filter((a) => a.lock).length,
               "locked"
             );
-            const freshAccount = getActiveAccount(useAccountStore.getState());
-            if (freshAccount) {
-              const { data: updated, artifactIdMap } =
-                rebuildAccountFromSnapshot(freshAccount.data, snapshot);
-              applyAccountImport({
-                accountId: freshAccount.id,
-                data: updated,
-                artifactIdMap,
-              });
-              console.log(
-                "[manager] Snapshot applied:",
-                updated.extraArtifacts.length,
-                "extra,",
-                updated.characters.length,
-                "characters"
-              );
-            }
-          } else {
-            console.log("[manager] No snapshot available");
+            return snapshot;
           }
+          console.log("[manager] No snapshot available");
         } catch (e) {
           console.log("[manager] Snapshot fetch failed:", e);
         }
       }
+      return null;
     },
     [port]
   );
@@ -170,13 +159,19 @@ export function useArtifactManagerJob(port = 8765) {
           if (!mountedRef.current) return;
 
           const input = jobInputRef.current;
+          let snapshot: IGOODArtifact[] | null = null;
           if (input?.type === "manage") {
-            await applyManageSync(result);
+            snapshot = await applyManageSync(result);
           } else if (input?.type === "equip") {
             applyEquipSync(result);
           }
 
-          setPhase({ type: "completed", result });
+          setPhase({
+            type: "completed",
+            result,
+            input: input!,
+            snapshot,
+          });
         } else if (status.state === "idle") {
           stopPolling();
           setPhase({

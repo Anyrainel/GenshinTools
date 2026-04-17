@@ -1073,10 +1073,10 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
       if (rxIds.length === 0) return; // no reactions for this team
 
       for (const formulaId of rxIds) {
-        const eligible = tb.reactionProvider.getEligibleCharacters(formulaId);
-        if (eligible.length === 0) continue;
-        // Use first eligible char as trigger / on-field
-        const triggerCharId = eligible[0];
+        const rxEntry = tb.reactionProvider.getFormulaEntry(formulaId);
+        if (!rxEntry?.statsCharId) continue;
+        // Use the entry's statsCharId as trigger / on-field
+        const triggerCharId = rxEntry.statsCharId;
         const swap = swapCharId ?? triggerCharId;
 
         for (let trial = 0; trial < 20; trial++) {
@@ -1168,13 +1168,13 @@ describe("compileComboTeamDamage fuzz", () => {
         });
       }
     }
-    // Include team reaction formulas (rx-*)
+    // Include team reaction formulas (rx-*) — per-triggerer formula IDs
     const rxFormulas = tb.reactionProvider.getFormulaIds();
     for (const rxId of Object.keys(rxFormulas)) {
-      const eligible = tb.reactionProvider.getEligibleCharacters(rxId);
-      if (eligible.length > 0) {
+      const rxEntry = tb.reactionProvider.getFormulaEntry(rxId);
+      if (rxEntry?.statsCharId) {
         lines.push({
-          charId: eligible[0],
+          charId: rxEntry.statsCharId,
           formulaId: rxId,
           count: 1 + Math.floor(Math.random() * 3),
         });

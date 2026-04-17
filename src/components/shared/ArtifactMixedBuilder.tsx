@@ -28,13 +28,13 @@ export function ArtifactMixedBuilder({
         type="button"
         variant={pickingSlot === 1 ? "default" : "outline"}
         className={cn(
-          "flex-1 h-12 relative",
+          "flex-1 min-w-0 h-12 relative",
           !pickingSlot && mixedSlot1 && "border-primary/50"
         )}
         onClick={() => setPickingSlot(pickingSlot === 1 ? null : 1)}
       >
         {mixedSlot1 ? (
-          <span className="text-xs line-clamp-2 leading-tight">
+          <span className="text-xs line-clamp-2 leading-tight truncate">
             {t.artifactHalfSet(mixedSlot1)}
           </span>
         ) : (
@@ -44,19 +44,19 @@ export function ArtifactMixedBuilder({
         )}
       </Button>
 
-      <span className="text-muted-foreground font-bold">+</span>
+      <span className="text-muted-foreground font-bold shrink-0">+</span>
 
       <Button
         type="button"
         variant={pickingSlot === 2 ? "default" : "outline"}
         className={cn(
-          "flex-1 h-12 relative",
+          "flex-1 min-w-0 h-12 relative",
           !pickingSlot && mixedSlot2 && "border-primary/50"
         )}
         onClick={() => setPickingSlot(pickingSlot === 2 ? null : 2)}
       >
         {mixedSlot2 ? (
-          <span className="text-xs line-clamp-2 leading-tight">
+          <span className="text-xs line-clamp-2 leading-tight truncate">
             {t.artifactHalfSet(mixedSlot2)}
           </span>
         ) : (

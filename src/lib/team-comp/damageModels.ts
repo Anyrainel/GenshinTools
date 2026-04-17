@@ -65,6 +65,14 @@ export type FormulaPart = {
 export type FormulaEntry = {
   label: I18nLabel;
   parts: FormulaPart[];
+  /** Owner of this formula: a charId, or "team" for reaction formulas.
+   *  Populated by the engine during formulaIndex construction.
+   *  Undefined until the entry is registered in a formulaIndex. */
+  owner?: string;
+  /** Override for the character whose stats are used during evaluation.
+   *  When set, `line.charId` is resolved to this value instead of `owner`.
+   *  Used by cross-scaled formulas (Nicole projections, reaction triggerers). */
+  statsCharId?: string;
   /** Minimum constellation required (0-6). Omit or 0 = always available. */
   minC?: number;
   /** Additional availability condition (evaluated at construction time).
@@ -1297,9 +1305,19 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     return result;
   }
 
-  /** Public accessor for a single formula entry (used by display path). */
+  /** Public accessor for a single formula entry (used by display path).
+   *  Lazily enriches the entry with `owner = this.charId` on first access. */
   getFormulaEntry(formulaId: string): FormulaEntry | undefined {
-    return this.formulaMap[formulaId];
+    const entry = this.formulaMap[formulaId];
+    if (entry && !entry.owner) {
+      (entry as FormulaEntry).owner = this.charId;
+    }
+    return entry;
+  }
+
+  /** All formula entries in this character's formulaMap (for formulaIndex construction). */
+  get allFormulaEntries(): Record<string, FormulaEntry> {
+    return this.formulaMap;
   }
 
   /** Check if any formula in this character's formulaMap produces the given reaction. */
@@ -1346,10 +1364,13 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     offFieldSelfStats?: StatSheet,
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
-    offFieldVariants?: Map<string, StatSheet>
+    offFieldVariants?: Map<string, StatSheet>,
+    /** Override the character level used for DEF calculations (cross-scaled formulas). */
+    charLevelOverride?: number
   ): DamageResult {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
+    const effectiveLevel = charLevelOverride ?? this.charLevel;
     const parts: DamageResult["parts"] = [];
     for (let idx = 0; idx < entry.parts.length; idx++) {
       const part = entry.parts[idx];
@@ -1394,7 +1415,8 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           partialBuffs,
           partVariants,
           bespokeOverlay,
-          bespokeMax
+          bespokeMax,
+          effectiveLevel
         );
         if (bespokeMax != null) {
           const unbuffedResult = this._calcPartBlended(
@@ -1406,7 +1428,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             h,
             partialBuffs,
             partVariants,
-            undefined
+            undefined,
+            undefined,
+            effectiveLevel
           );
           parts.push({
             ...buffedResult,
@@ -1453,7 +1477,8 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           partialBuffs,
           partVariants,
           bespokeOverlay,
-          bespokeMax
+          bespokeMax,
+          effectiveLevel
         );
         if (bespokeMax != null) {
           const unbuffedResult = this._calcPartBlended(
@@ -1465,7 +1490,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             h,
             partialBuffs,
             partVariants,
-            undefined
+            undefined,
+            undefined,
+            effectiveLevel
           );
           parts.push({
             ...buffedResult,
@@ -1489,7 +1516,8 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           partialBuffs,
           partVariants,
           bespokeOverlay,
-          bespokeMax
+          bespokeMax,
+          effectiveLevel
         );
         if (bespokeMax != null) {
           const unbuffedResult = this._calcPartBlended(
@@ -1501,7 +1529,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             h,
             partialBuffs,
             partVariants,
-            undefined
+            undefined,
+            undefined,
+            effectiveLevel
           );
           parts.push({
             ...buffedResult,
@@ -1542,8 +1572,10 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
     bespokeOverlay?: StatSheet,
-    bespokeMax?: number
+    bespokeMax?: number,
+    charLevel?: number
   ): { damage: number; hits: number } {
+    const effectiveLevel = charLevel ?? this.charLevel;
     // Bespoke hit cutoff: applies to hits [0, bespokeCutoff); the rest
     // fall back to baseStats. Matches getDisplayParts' split semantics.
     const bespokeCutoff =
@@ -1565,7 +1597,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     // Fast path: uniform damage across all hits
     if (affecting.length === 0 && bespokeCutoff === hits) {
       return {
-        damage: formula.calc(withBespoke, this.charLevel, ctx),
+        damage: formula.calc(withBespoke, effectiveLevel, ctx),
         hits,
       };
     }
@@ -1608,7 +1640,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             : variant;
       }
 
-      total += width * formula.calc(intervalStats, this.charLevel, ctx);
+      total += width * formula.calc(intervalStats, effectiveLevel, ctx);
     }
     return { damage: total / hits, hits };
   }

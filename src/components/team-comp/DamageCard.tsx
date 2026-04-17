@@ -786,6 +786,7 @@ function SingleResultView({
   currentCaveats,
   dpsSeconds,
   setDpsSeconds,
+  comboId,
 }: {
   displayResult: DisplayResult;
   resolvedFormula: { charId: string; formulaId: string };
@@ -808,8 +809,16 @@ function SingleResultView({
   currentCaveats?: string[];
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
+  /**
+   * Synthetic combo id (e.g. "__single__") used to route buff-override writes
+   * to the same `comboOverrides` store slot that the damage-calc pipeline
+   * reads via `extractComboOverrides`. Without this, dialog writes land in a
+   * dead store slot and the UI toggle has no effect.
+   */
+  comboId?: string;
 }) {
   const formulaKey = `${resolvedFormula.charId}.${resolvedFormula.formulaId}`;
+  const comboKey = comboId ? `combo:${comboId}:${formulaKey}` : undefined;
   const parts = displayResult.partsByFormula[formulaKey];
 
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
@@ -931,6 +940,8 @@ function SingleResultView({
                   buffs={displayResult.buffs}
                   defaultActivation={displayResult.buffActivation}
                   formulaKey={formulaKey}
+                  comboKey={comboKey}
+                  comboCount={1}
                 />
               </CollapsibleContent>
             </div>
@@ -954,6 +965,8 @@ function SingleResultView({
                     formulaKey,
                     parts,
                     defaultActivation: displayResult.buffActivation,
+                    comboKey,
+                    comboCount: 1,
                     formulaLabel:
                       allFormulaIds[resolvedFormula.charId]?.[
                         resolvedFormula.formulaId
@@ -1762,6 +1775,7 @@ export function DamageCard({
                 onUnfreezeChar={onUnfreezeCharFromCurrent}
                 dpsSeconds={dpsSeconds}
                 setDpsSeconds={setDpsSeconds}
+                comboId={comboId}
               />
             ) : comboLines ? (
               <ComboResultView
@@ -2119,6 +2133,7 @@ export function DamageCard({
                   currentCaveats={currentCaveats}
                   dpsSeconds={dpsSeconds}
                   setDpsSeconds={setDpsSeconds}
+                  comboId={comboId}
                 />
               ) : comboLines ? (
                 <ComboResultView
@@ -2251,6 +2266,7 @@ export function DamageCard({
                 currentCaveats={currentCaveats}
                 dpsSeconds={dpsSeconds}
                 setDpsSeconds={setDpsSeconds}
+                comboId={comboId}
               />
             ) : comboLines ? (
               <ComboResultView

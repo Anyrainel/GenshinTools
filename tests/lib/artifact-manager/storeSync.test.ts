@@ -1,8 +1,10 @@
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
 import {
+  analyzeManageResults,
   applyEquipResults,
   applyJobResults,
+  computeSnapshotDiff,
   rebuildAccountFromSnapshot,
 } from "@/lib/artifact-manager/storeSync";
 import type {
@@ -532,5 +534,92 @@ describe("applyEquipResults", () => {
     expect(updated.characters[0].artifacts.flower).toEqual(artA);
     expect(updated.extraArtifacts).toHaveLength(1);
     expect(updated.extraArtifacts[0]).toEqual(artB);
+  });
+});
+
+describe("computeSnapshotDiff", () => {
+  it("counts artifacts and locked artifacts from both local and snapshot", () => {
+    const account = makeAccount({
+      characters: [
+        makeChar("Raiden", {
+          flower: makeArtifact({ id: "e1", lock: true }),
+          plume: makeArtifact({ id: "e2", slotKey: "plume", lock: false }),
+        }),
+      ],
+      extraArtifacts: [
+        makeArtifact({ id: "x1", lock: true }),
+        makeArtifact({ id: "x2", lock: false }),
+        makeArtifact({ id: "x3", lock: true }),
+      ],
+    });
+
+    const snapshot: IGOODArtifact[] = [
+      makeGOODArtifact({ lock: true }),
+      makeGOODArtifact({ lock: true }),
+      makeGOODArtifact({ lock: false }),
+      makeGOODArtifact({ lock: false }),
+    ];
+
+    const diff = computeSnapshotDiff(account, snapshot);
+
+    expect(diff.localCount).toBe(5);
+    expect(diff.localLocked).toBe(3);
+    expect(diff.snapshotCount).toBe(4);
+    expect(diff.snapshotLocked).toBe(2);
+  });
+
+  it("handles empty local and snapshot", () => {
+    const diff = computeSnapshotDiff(makeAccount(), []);
+    expect(diff.localCount).toBe(0);
+    expect(diff.snapshotCount).toBe(0);
+    expect(diff.localLocked).toBe(0);
+    expect(diff.snapshotLocked).toBe(0);
+  });
+});
+
+describe("analyzeManageResults", () => {
+  it("groups results by status", () => {
+    const payload = makePayload(["a1", "a2", "a3"], ["b1", "b2"]);
+    const results: InstructionResult[] = [
+      makeResult("lock:0", "success"),
+      makeResult("lock:1", "not_found"),
+      makeResult("lock:2", "already_correct"),
+      makeResult("unlock:0", "success"),
+      makeResult("unlock:1", "ui_error"),
+    ];
+
+    const analysis = analyzeManageResults(payload, results);
+
+    expect(analysis.successCount).toBe(2);
+    expect(analysis.alreadyCorrectCount).toBe(1);
+    expect(analysis.notFoundCount).toBe(1);
+    expect(analysis.errorCount).toBe(1);
+    expect(analysis.hasDiscrepancies).toBe(true);
+  });
+
+  it("returns hasDiscrepancies=false when all succeed", () => {
+    const payload = makePayload(["a1"], ["b1"]);
+    const results: InstructionResult[] = [
+      makeResult("lock:0", "success"),
+      makeResult("unlock:0", "success"),
+    ];
+
+    const analysis = analyzeManageResults(payload, results);
+
+    expect(analysis.successCount).toBe(2);
+    expect(analysis.hasDiscrepancies).toBe(false);
+  });
+
+  it("skips results with out-of-range indices", () => {
+    const payload = makePayload(["a1"]);
+    const results: InstructionResult[] = [
+      makeResult("lock:0", "success"),
+      makeResult("lock:5", "success"), // out of range
+      makeResult("unlock:0", "success"), // no unlock IDs
+    ];
+
+    const analysis = analyzeManageResults(payload, results);
+
+    expect(analysis.successCount).toBe(1);
   });
 });

@@ -151,9 +151,9 @@ export function TriageSettingsPanel({
       <div className="border-t border-border pt-3 space-y-3">
         <SectionHeading>{t.ui("triage.settingsKeepRules")}</SectionHeading>
         <SliderRow
-          label={t.ui("triage.setSlotKeep")}
-          value={settings.setSlotKeep}
-          onChange={(v) => update("setSlotKeep", v)}
+          label={t.ui("triage.qualityMargin")}
+          value={settings.qualityMargin}
+          onChange={(v) => update("qualityMargin", v)}
           min={1}
           max={7}
           step={1}
@@ -167,9 +167,9 @@ export function TriageSettingsPanel({
           step={1}
         />
         <SliderRow
-          label={t.ui("triage.qualityMargin")}
-          value={settings.qualityMargin}
-          onChange={(v) => update("qualityMargin", v)}
+          label={t.ui("triage.setSlotKeep")}
+          value={settings.setSlotKeep}
+          onChange={(v) => update("setSlotKeep", v)}
           min={1}
           max={7}
           step={1}

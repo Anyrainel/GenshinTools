@@ -71,17 +71,21 @@ export const ArtifactCard = memo(
                 <span className="text-amber-400 font-semibold px-2 py-0.5 bg-amber-400/10 rounded-md w-fit text-xs self-start">
                   {t.ui("accountData.twoPiece")}
                 </span>
-                <span className="text-muted-foreground leading-relaxed">
-                  {effects[0]}
-                </span>
+                <span
+                  className="text-muted-foreground leading-relaxed"
+                  // biome-ignore lint/security/noDangerouslySetInnerHtml: Artifact effect HTML from game data pipeline
+                  dangerouslySetInnerHTML={{ __html: effects[0] ?? "" }}
+                />
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-amber-400 font-semibold px-2 py-0.5 bg-amber-400/10 rounded-md w-fit text-xs self-start">
                   {t.ui("accountData.fourPiece")}
                 </span>
-                <span className="text-muted-foreground leading-relaxed">
-                  {effects[1]}
-                </span>
+                <span
+                  className="text-muted-foreground leading-relaxed"
+                  // biome-ignore lint/security/noDangerouslySetInnerHtml: Artifact effect HTML from game data pipeline
+                  dangerouslySetInnerHTML={{ __html: effects[1] ?? "" }}
+                />
               </div>
             </div>
 

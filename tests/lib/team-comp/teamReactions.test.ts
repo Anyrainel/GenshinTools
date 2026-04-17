@@ -37,6 +37,22 @@ function sumCounts(counts: Record<string, number>): number {
   return Object.values(counts).reduce((a, b) => a + b, 0);
 }
 
+/** Sum per-triggerer counts for a base reaction ID. */
+function sumBase(counts: Record<string, number>, baseId: string): number {
+  const prefix = `${baseId}-`;
+  let total = 0;
+  for (const [key, val] of Object.entries(counts)) {
+    if (key.startsWith(prefix)) total += val;
+  }
+  return total;
+}
+
+/** Check if a base reaction exists in per-triggerer counts. */
+function hasBase(counts: Record<string, number>, baseId: string): boolean {
+  const prefix = `${baseId}-`;
+  return Object.keys(counts).some((k) => k.startsWith(prefix));
+}
+
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
@@ -177,26 +193,26 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
 describe("TeamReactionProvider — formula generation", () => {
   it("generates overloaded for Pyro+Electro team", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-overloaded"]).toBeDefined();
     expect(rxFormulas["rx-overloaded"].en).toBe("Overloaded");
   });
 
   it("generates electroCharged for Hydro+Electro team", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-electroCharged"]).toBeDefined();
   });
 
   it("does NOT generate bloom when missing Dendro", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-bloom"]).toBeUndefined();
   });
 
   it("generates bloom for Dendro+Hydro+Electro team", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-bloom"]).toBeDefined();
   });
 
@@ -204,19 +220,19 @@ describe("TeamReactionProvider — formula generation", () => {
     // Kuki Shinobu's shinobu-hyperbloom has offField: true,
     // so she remains eligible → team rx-hyperbloom is generated
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-hyperbloom"]).toBeDefined();
   });
 
   it("does NOT generate burgeon when missing Pyro", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-burgeon"]).toBeUndefined();
   });
 
   it("does NOT generate superconduct when missing Cryo+Electro pair", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-superconduct"]).toBeUndefined();
   });
 });
@@ -224,7 +240,7 @@ describe("TeamReactionProvider — formula generation", () => {
 describe("TeamReactionProvider — swirl variants", () => {
   it("generates swirl variants for each reactive element on the team", () => {
     const tb = new TeamBuild(SWIRL_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     // Pyro from Bennett, Hydro from Xingqiu, Cryo from Ayaka
     expect(rxFormulas["rx-swirl-Pyro"]).toBeDefined();
     expect(rxFormulas["rx-swirl-Hydro"]).toBeDefined();
@@ -379,7 +395,7 @@ describe("TeamReactionProvider — character override filtering", () => {
 
   it("rx-bloom label upgrades to Bountiful Core for Nilou all-Hydro/Dendro team", () => {
     const tb = new TeamBuild(NILOU_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-bloom"]).toBeDefined();
     expect(rxFormulas["rx-bloom"].en).toBe("Bountiful Core");
     expect(rxFormulas["rx-bloom"].zh).toBe("丰穰之核");
@@ -387,7 +403,7 @@ describe("TeamReactionProvider — character override filtering", () => {
 
   it("rx-bloom label stays as Dendro Core for non-Nilou team", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-bloom"]).toBeDefined();
     expect(rxFormulas["rx-bloom"].en).toBe("Dendro Core");
   });
@@ -401,7 +417,7 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
     const result = tb.reactionProvider.getDamageResult(
-      "rx-overloaded",
+      "rx-overloaded-fischl",
       "fischl",
       teamStats.fischl!,
       CTX
@@ -418,7 +434,7 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const teamStats = tb.getTeamStats(sheets, "nahida", CTX);
 
     const result = tb.reactionProvider.getDamageResult(
-      "rx-bloom",
+      "rx-bloom-nahida",
       "nahida",
       teamStats.nahida!,
       CTX
@@ -439,7 +455,9 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
     const combo: ComboFormula = {
       id: "test",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: "fischl", formulaId: "rx-overloaded", count: 3 }],
+      lines: [
+        { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 3 },
+      ],
     };
 
     const result = evaluateCombo(tb, combo, sheets, CTX);
@@ -460,7 +478,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       label: { en: "Test", zh: "测试" },
       lines: [
         // This team has no Dendro, so bloom should be filtered
-        { charId: "hu_tao", formulaId: "rx-bloom", count: 1 },
+        { charId: "hu_tao", formulaId: "rx-bloom-hu_tao", count: 1 },
       ],
     };
 
@@ -483,7 +501,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       label: { en: "Test", zh: "测试" },
       lines: [
         { charId: "hu_tao", formulaId: firstFormulaId, count: 1 },
-        { charId: "fischl", formulaId: "rx-overloaded", count: 2 },
+        { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 2 },
       ],
     };
 
@@ -569,19 +587,19 @@ const LUNAR_TEAM: TeamSlotConfig[] = [
 describe("TeamReactionProvider — lunar reactions", () => {
   it("generates lunarCharged for Columbina+Flins team", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-lunarCharged"]).toBeDefined();
   });
 
   it("generates lunarCrystallize for Columbina+Zibai team", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-lunarCrystallize"]).toBeDefined();
   });
 
   it("does NOT generate lunarBloom (dendro core uses regular bloom formula)", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     expect(rxFormulas["rx-lunarBloom"]).toBeUndefined();
     // The team should get rx-bloom instead (standard dendro core)
     expect(rxFormulas["rx-bloom"]).toBeDefined();
@@ -614,7 +632,7 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
     const result = tb.reactionProvider.getMultiContributorResult(
-      "rx-lunarCharged",
+      "rx-lunarCharged-columbina",
       "columbina",
       teamStats,
       CTX
@@ -630,7 +648,7 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
     const display = tb.reactionProvider.getMultiContributorDisplay(
-      "rx-lunarCharged",
+      "rx-lunarCharged-columbina",
       "columbina",
       teamStats,
       CTX
@@ -652,7 +670,7 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
     const display = tb.reactionProvider.getMultiContributorDisplay(
-      "rx-lunarCharged",
+      "rx-lunarCharged-columbina",
       "columbina",
       teamStats,
       CTX
@@ -712,13 +730,13 @@ describe("TeamReactionProvider — different triggers produce different damage",
     const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
     const dmgHuTao = tb.reactionProvider.getDamageResult(
-      "rx-overloaded",
+      "rx-overloaded-hu_tao",
       "hu_tao",
       teamStats.hu_tao!,
       CTX
     ).totalDamage;
     const dmgFischl = tb.reactionProvider.getDamageResult(
-      "rx-overloaded",
+      "rx-overloaded-fischl",
       "fischl",
       teamStats.fischl!,
       CTX
@@ -739,7 +757,7 @@ describe("TeamReactionProvider — swirl damage evaluation", () => {
     const teamStats = tb.getTeamStats(sheets, "kaedehara_kazuha", CTX);
 
     const result = tb.reactionProvider.getDamageResult(
-      "rx-swirl-Pyro",
+      "rx-swirl-Pyro-kaedehara_kazuha",
       "kaedehara_kazuha",
       teamStats.kaedehara_kazuha!,
       CTX
@@ -749,8 +767,12 @@ describe("TeamReactionProvider — swirl damage evaluation", () => {
 
   it("different swirl elements use different damage elements", () => {
     const tb = new TeamBuild(SWIRL_TEAM);
-    const entryPyro = tb.reactionProvider.getFormulaEntry("rx-swirl-Pyro");
-    const entryHydro = tb.reactionProvider.getFormulaEntry("rx-swirl-Hydro");
+    const entryPyro = tb.reactionProvider.getFormulaEntry(
+      "rx-swirl-Pyro-kaedehara_kazuha"
+    );
+    const entryHydro = tb.reactionProvider.getFormulaEntry(
+      "rx-swirl-Hydro-kaedehara_kazuha"
+    );
     expect(entryPyro!.parts[0].formula.tag.element).toBe("Pyro");
     expect(entryHydro!.parts[0].formula.tag.element).toBe("Hydro");
   });
@@ -765,12 +787,14 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
     const combo: ComboFormula = {
       id: "test",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: "fischl", formulaId: "rx-overloaded", count: 2 }],
+      lines: [
+        { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 2 },
+      ],
     };
 
     const display = getComboDisplayResult(tb, combo, sheets, CTX);
     expect(display.totalDamage).toBeGreaterThan(0);
-    const parts = display.partsByFormula["fischl.rx-overloaded"];
+    const parts = display.partsByFormula["fischl.rx-overloaded-fischl"];
     expect(parts).toBeDefined();
     expect(parts.length).toBeGreaterThan(0);
   });
@@ -783,12 +807,18 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
     const combo: ComboFormula = {
       id: "test",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: "columbina", formulaId: "rx-lunarCharged", count: 1 }],
+      lines: [
+        {
+          charId: "columbina",
+          formulaId: "rx-lunarCharged-columbina",
+          count: 1,
+        },
+      ],
     };
 
     const display = getComboDisplayResult(tb, combo, sheets, CTX);
     expect(display.totalDamage).toBeGreaterThan(0);
-    const parts = display.partsByFormula["columbina.rx-lunarCharged"];
+    const parts = display.partsByFormula["columbina.rx-lunarCharged-columbina"];
     expect(parts).toBeDefined();
   });
 
@@ -805,7 +835,7 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
       label: { en: "Test", zh: "测试" },
       lines: [
         { charId: "hu_tao", formulaId: firstFormulaId, count: 1 },
-        { charId: "fischl", formulaId: "rx-overloaded", count: 3 },
+        { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 3 },
       ],
     };
 
@@ -813,7 +843,7 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
     expect(display.totalDamage).toBeGreaterThan(0);
     // Both formula keys should have display parts
     expect(display.partsByFormula[`hu_tao.${firstFormulaId}`]).toBeDefined();
-    expect(display.partsByFormula["fischl.rx-overloaded"]).toBeDefined();
+    expect(display.partsByFormula["fischl.rx-overloaded-fischl"]).toBeDefined();
   });
 });
 
@@ -825,7 +855,7 @@ describe("TeamReactionProvider — compiler path", () => {
 
     const compiled = compileComboTeamDamage(
       tb,
-      singleFormulaCombo("fischl", "rx-overloaded"),
+      singleFormulaCombo("fischl", "rx-overloaded-fischl"),
       "fischl",
       sheets,
       CTX
@@ -847,14 +877,16 @@ describe("TeamReactionProvider — compiler path", () => {
     const combo: ComboFormula = {
       id: "test",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: "fischl", formulaId: "rx-overloaded", count: 1 }],
+      lines: [
+        { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 1 },
+      ],
     };
     const interpreted = evaluateCombo(tb, combo, sheets, CTX);
 
     // Compiled
     const compiled = compileComboTeamDamage(
       tb,
-      singleFormulaCombo("fischl", "rx-overloaded"),
+      singleFormulaCombo("fischl", "rx-overloaded-fischl"),
       "fischl",
       sheets,
       CTX
@@ -884,7 +916,7 @@ describe("TeamReactionProvider — compiler path", () => {
       label: { en: "Test", zh: "测试" },
       lines: [
         { charId: "hu_tao", formulaId: firstFormulaId, count: 1 },
-        { charId: "fischl", formulaId: "rx-overloaded", count: 2 },
+        { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 2 },
       ],
     };
 
@@ -905,7 +937,9 @@ describe("TeamReactionProvider — compiler path", () => {
     const combo: ComboFormula = {
       id: "test",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: "fischl", formulaId: "rx-overloaded", count: 3 }],
+      lines: [
+        { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 3 },
+      ],
     };
 
     // Interpreted
@@ -979,15 +1013,15 @@ describe("reaction combo counts", () => {
     // LCR_ONLY has Columbina → 15 * 4/3 = 20
     const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
     const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(20);
-    expect(counts["rx-lunarCharged"]).toBeUndefined();
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(20);
+    expect(hasBase(counts, "rx-lunarCharged")).toBe(false);
   });
 
   it("LCh only → 9", () => {
     const tb = new TeamBuild(LCH_ONLY);
     const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumCounts(counts["rx-lunarCharged"])).toBe(9);
-    expect(counts["rx-lunarCrystallize"]).toBeUndefined();
+    expect(sumBase(counts, "rx-lunarCharged")).toBe(9);
+    expect(hasBase(counts, "rx-lunarCrystallize")).toBe(false);
   });
 
   it("LCh + LCr → LCh=9, LCr=0", () => {
@@ -1027,8 +1061,8 @@ describe("reaction combo counts", () => {
     const tb = new TeamBuild(team);
     const counts = tb.reactionProvider.getReactionComboCounts();
     // With Columbina: round(9 * 4/3) = 12, round(0 * 4/3) = 0
-    expect(sumCounts(counts["rx-lunarCharged"])).toBe(12);
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(0);
+    expect(sumBase(counts, "rx-lunarCharged")).toBe(12);
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(0);
   });
 
   it("All 3 lunar → LCh=0, LCr=0", () => {
@@ -1036,8 +1070,8 @@ describe("reaction combo counts", () => {
     // → LCh (Electro+Hydro), LCr (Geo+Hydro), LB (Dendro+Hydro)
     const tb = new TeamBuild(LUNAR_TEAM);
     const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumCounts(counts["rx-lunarCharged"])).toBe(0);
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(0);
+    expect(sumBase(counts, "rx-lunarCharged")).toBe(0);
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(0);
   });
 
   it("LCr only without Columbina → base 15", () => {
@@ -1063,7 +1097,7 @@ describe("reaction combo counts", () => {
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
     const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(15);
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(15);
   });
 
   it("Linnea C2 tap → +12 LCr", () => {
@@ -1090,7 +1124,7 @@ describe("reaction combo counts", () => {
     const tb = new TeamBuild(team, { linnea: "tap" });
     const counts = tb.reactionProvider.getReactionComboCounts();
     // LCr only, no Columbina: base 15 + 12 = 27
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(27);
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(27);
   });
 
   it("Linnea C2 continuous → +3 LCr", () => {
@@ -1117,7 +1151,7 @@ describe("reaction combo counts", () => {
     const tb = new TeamBuild(team, { linnea: "continuous" });
     const counts = tb.reactionProvider.getReactionComboCounts();
     // LCr only, no Columbina: base 15 + 3 = 18
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(18);
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(18);
   });
 
   it("Linnea C2 tap + Columbina → (15 + 12) × 4/3 = 36", () => {
@@ -1144,7 +1178,7 @@ describe("reaction combo counts", () => {
     const tb = new TeamBuild(team, { linnea: "tap" });
     const counts = tb.reactionProvider.getReactionComboCounts();
     // (15 + 12) * 4/3 = 36
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(36);
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(36);
   });
 
   it("Linnea C2 continuous + Columbina → (15 + 3) × 4/3 = 24", () => {
@@ -1170,7 +1204,7 @@ describe("reaction combo counts", () => {
     ];
     const tb = new TeamBuild(team, { linnea: "continuous" });
     const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumCounts(counts["rx-lunarCrystallize"])).toBe(24);
+    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(24);
   });
 });
 
@@ -1231,9 +1265,9 @@ describe("getReactionComboLines", () => {
     // Linnea (Geo) + Columbina (Hydro) both eligible for LCr
     // Total = 20 (15 * 4/3 with Columbina), distributed: on-field gets 19, other gets 1
     expect(lines.length).toBe(2);
-    expect(lines.every((l) => l.formulaId === "rx-lunarCrystallize")).toBe(
-      true
-    );
+    expect(
+      lines.every((l) => l.formulaId.startsWith("rx-lunarCrystallize-"))
+    ).toBe(true);
     expect(lines.reduce((s, l) => s + l.count, 0)).toBe(20);
     const onFieldLine = lines.find((l) => l.count > 1);
     expect(onFieldLine).toBeDefined();
@@ -1600,10 +1634,8 @@ describe("resolveReactionComboEntries", () => {
     ];
     const result = resolveReactionComboEntries(entries, { linnea: 6 });
     // total = 15 + 12 = 27, linnea gets 27 - 1 = 26, columbina gets 1
-    expect(result["rx-lunarCrystallize"]).toEqual({
-      linnea: 26,
-      columbina: 1,
-    });
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(26);
+    expect(result["rx-lunarCrystallize-columbina"]).toBe(1);
   });
 
   it("delta only activates when constellation >= minC", () => {
@@ -1617,10 +1649,10 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const resultC1 = resolveReactionComboEntries(entries, { linnea: 1 });
-    expect(resultC1["rx-lunarCrystallize"]).toEqual({ linnea: 15 });
+    expect(resultC1["rx-lunarCrystallize-linnea"]).toBe(15);
 
     const resultC2 = resolveReactionComboEntries(entries, { linnea: 2 });
-    expect(resultC2["rx-lunarCrystallize"]).toEqual({ linnea: 27 });
+    expect(resultC2["rx-lunarCrystallize-linnea"]).toBe(27);
   });
 
   it("missing constellation key defaults to 0", () => {
@@ -1634,7 +1666,7 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, {});
-    expect(result["rx-lunarCrystallize"]).toEqual({ linnea: 15 });
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(15);
   });
 
   it("multiple deltas from different characters", () => {
@@ -1655,22 +1687,18 @@ describe("resolveReactionComboEntries", () => {
       linnea: 2,
       zibai: 1,
     });
-    expect(result["rx-lunarCrystallize"]).toEqual({
-      linnea: 16,
-      zibai: 1,
-      columbina: 1,
-    });
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(16);
+    expect(result["rx-lunarCrystallize-zibai"]).toBe(1);
+    expect(result["rx-lunarCrystallize-columbina"]).toBe(1);
 
     // Only zibai active: total = 10 + 3 = 13, linnea = 13 - 2 = 11, others = 1
     const result2 = resolveReactionComboEntries(entries, {
       linnea: 0,
       zibai: 4,
     });
-    expect(result2["rx-lunarCrystallize"]).toEqual({
-      linnea: 11,
-      zibai: 1,
-      columbina: 1,
-    });
+    expect(result2["rx-lunarCrystallize-linnea"]).toBe(11);
+    expect(result2["rx-lunarCrystallize-zibai"]).toBe(1);
+    expect(result2["rx-lunarCrystallize-columbina"]).toBe(1);
   });
 
   it("handles multiple entries", () => {
@@ -1691,8 +1719,8 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, { linnea: 6 });
-    expect(result["rx-lunarCharged"]).toEqual({ flins: 9 });
-    expect(result["rx-lunarCrystallize"]).toEqual({ linnea: 12 });
+    expect(result["rx-lunarCharged-flins"]).toBe(9);
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(12);
   });
 
   it("empty entries returns empty object", () => {

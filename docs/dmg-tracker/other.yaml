@@ -92,33 +92,22 @@
 - id: nicole-q-projection-scaling-element
   entity: nicole
   rule: S10
-  status: wont-do
+  status: resolved
   category: engine-gap
   summary: >
-    Q Arcane Projection (5×200% ATK) and C1 Unity (600% ATK) are tagged as
-    "coming from the triggering character" in game text, scaling with that
-    character's ATK and dealing their elemental type. The implementation
-    approximates both as Nicole's own Pyro burst hits scaling off Nicole's ATK.
-    This under-counts on teams where triggerers have higher ATK than Nicole
-    and misrepresents reaction/RES interactions for non-Pyro teams.
+    Q Arcane Projection (5×200% ATK) and C1 Unity (600% ATK) now use
+    per-slot cross-scaled formulas. Each projection evaluates in the
+    triggering teammate's stat context (ATK, element, DMG%, crit, EM)
+    via FormulaEntry.statsCharId override.
   detail: >
-    Genuine engine gap. The calculator's formula model assumes each formula is
-    owned by the provider character and scales with the provider's stats. Game
-    text "该伤害受益于该角色的攻击力，并视为由该角色造成的伤害" requires a
-    coord-attack formula whose scalingKey reads the active/triggering
-    teammate's ATK and whose DamageTag.element is set at runtime to each
-    teammate's element. No existing pattern expresses this: BuffTarget.charId
-    can route buffs per-teammate, but scaling a formula off a teammate's stat
-    would require a new stat-resolution pipeline (effectively running the
-    formula in each teammate's stat context). The "split into N formulas, one
-    per team element" workaround also fails because each formula would still
-    scale off Nicole's ATK, not the triggering character's — the underlying
-    damage would still be wrong. Classifying the current approximation as
-    Nicole-ATK Pyro damage is the least bad option available within the
-    engine; reaction and resist interactions for non-Pyro triggerers will be
-    incorrect, but the magnitude stays in the right ballpark when triggerers
-    have similar ATK to Nicole. Revisit only if a per-teammate-stat formula
-    subsystem is added.
+    Resolved with the statsCharId engine pattern. Nicole's formulaMap
+    generates one Q projection + one C1 Unity entry per team slot, each
+    with statsCharId set to the slot occupant and DamageTag.element set
+    to the occupant's element. The formula lives in Nicole's charBase
+    (owner = "nicole") but evaluateCombo/compiler resolve stats from the
+    statsCharId character. P4 Hexerei buff routes to occupant via
+    { receiver: "team", charId: occupantId }. Game text citation:
+    "该伤害受益于该角色的攻击力，并视为由该角色造成的伤害".
 
 - id: prune-q-bell-hit-count
   entity: prune

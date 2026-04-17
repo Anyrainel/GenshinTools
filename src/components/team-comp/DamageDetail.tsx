@@ -409,13 +409,10 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   );
 
   // ─── Buff Overrides ───
+  // Damage calc always reads from comboOverrides — single mode uses a
+  // synthetic combo id "__single__". The old single-mode `overrides` slot
+  // has no consumers, so we no longer subscribe to it.
 
-  const formulaKey = resolvedFormula
-    ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
-    : undefined;
-  const userBuffOverrides = useBuffOverrideStore((s) =>
-    formulaKey ? s.overrides[formulaKey] : undefined
-  );
   const comboStoreOverrides = useBuffOverrideStore((s) => s.comboOverrides);
 
   // ─── Combo Management ───

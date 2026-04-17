@@ -26,7 +26,7 @@ import {
   createWeapon,
 } from "./damageModels";
 
-import type { OptionMap } from "./damageModels";
+import type { FormulaEntry, OptionMap } from "./damageModels";
 import { computeSubstatMarginals } from "./marginalGains";
 import {
   defaultOnFieldCharId,
@@ -809,7 +809,8 @@ export class CharBuild {
     offFieldSelfPostStats?: StatSheet,
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
-    offFieldVariants?: Map<string, StatSheet>
+    offFieldVariants?: Map<string, StatSheet>,
+    charLevelOverride?: number
   ): DamageResult {
     return this.charBase.getDamageResult(
       formulaId,
@@ -820,7 +821,8 @@ export class CharBuild {
       offFieldSelfPostStats,
       partialBuffs,
       statsVariants,
-      offFieldVariants
+      offFieldVariants,
+      charLevelOverride
     );
   }
 
@@ -1091,6 +1093,8 @@ export class TeamBuild {
   readonly extraBuffs: ExtraBuff[];
   /** Enemy context used for baseline lunar rank computation. */
   readonly baselineCtx: CalcContext;
+  /** Flat index of all formula entries (character + reaction), keyed by formula ID. */
+  readonly formulaIndex: Map<string, FormulaEntry>;
 
   constructor(
     configs: TeamSlotConfig[],
@@ -1206,6 +1210,23 @@ export class TeamBuild {
     // Pre-compute rank weights for multi-contributor lunar formulas
     // using baseline stats (no artifacts) so ranking is deterministic.
     this.computeBaselineLunarRanks(configs);
+
+    // Build flat formulaIndex: character formulas + reaction formulas
+    this.formulaIndex = new Map();
+    for (const [charId, build] of Object.entries(this.charBuilds)) {
+      for (const [fid, entry] of Object.entries(
+        build.charBase.allFormulaEntries
+      )) {
+        if (!entry.owner) entry.owner = charId;
+        this.formulaIndex.set(fid, entry);
+      }
+    }
+    for (const [fid, label] of Object.entries(
+      this.reactionProvider.getFormulaIds()
+    )) {
+      const entry = this.reactionProvider.getFormulaEntry(fid);
+      if (entry) this.formulaIndex.set(fid, entry);
+    }
   }
 
   /**
@@ -1214,7 +1235,6 @@ export class TeamBuild {
    * a fixed ranking that both the compiled and interpreted paths use consistently.
    */
   private computeBaselineLunarRanks(configs: TeamSlotConfig[]): void {
-    const rxFormulas = this.reactionProvider.getFormulaIds();
     const emptySheet = new StatSheet([]);
     const emptySheets: Record<string, StatSheet> = {};
     for (const c of configs) emptySheets[c.charId] = emptySheet;
@@ -1223,14 +1243,19 @@ export class TeamBuild {
     // relative ranking matters here, so the choice is arbitrary).
     const baselineStats = this.getTeamStats(emptySheets, configs[0].charId);
 
-    for (const formulaId of Object.keys(rxFormulas)) {
-      if (!this.reactionProvider.isMultiContributor(formulaId)) continue;
-      const entry = this.reactionProvider.getFormulaEntry(formulaId);
-      if (!entry) continue;
-      const formula = entry.parts[0].formula;
+    // Iterate base reaction IDs (not per-triggerer) to avoid duplicate computation
+    for (const baseId of this.reactionProvider.getBaseReactionIds()) {
+      // Pick any per-triggerer entry to get the formula
+      const eligible = this.reactionProvider.getEligibleCharacters(baseId);
+      if (eligible.length === 0) continue;
+      const sampleEntry = this.reactionProvider.getFormulaEntry(
+        `${baseId}-${eligible[0]}`
+      );
+      if (!sampleEntry) continue;
+      if (!this.reactionProvider.isMultiContributor(`${baseId}-${eligible[0]}`))
+        continue;
 
-      // Evaluate each eligible character's baseline damage
-      const eligible = this.reactionProvider.getEligibleCharacters(formulaId);
+      const formula = sampleEntry.parts[0].formula;
       const contributions: { charId: string; damage: number }[] = [];
       for (const config of configs) {
         if (!eligible.includes(config.charId)) continue;
@@ -1245,7 +1270,7 @@ export class TeamBuild {
       for (let i = 0; i < contributions.length; i++) {
         weights.set(contributions[i].charId, LUNAR_RANK_WEIGHTS[i] ?? 0);
       }
-      this.reactionProvider.setRankWeights(formulaId, weights);
+      this.reactionProvider.setRankWeights(baseId, weights);
     }
   }
 
@@ -1301,23 +1326,40 @@ export class TeamBuild {
     providerCharId: string
   ): boolean {
     for (const cid of Object.keys(this.charBuilds)) {
-      if (
-        this.isBuffApplicableForChar(
-          buff,
-          providerCharId,
-          cid,
-          true /* on-field */
-        ) ||
-        this.isBuffApplicableForChar(
-          buff,
-          providerCharId,
-          cid,
-          false /* off-field */
-        )
-      )
-        return true;
+      if (this.couldBuffApplyToChar(buff, providerCharId, cid)) return true;
     }
     return false;
+  }
+
+  /**
+   * Does this buff apply to a specific character in EITHER field state?
+   *
+   * Use this (not `isBuffApplicableForChar(..., true)`) whenever the caller
+   * only knows the carry/line char and does NOT know the field state of each
+   * formula part. Hardcoding `selfIsOnField=true` silently drops buffs whose
+   * receiver is selfOffField/otherOffField/teamOffField, even when the formula
+   * contains off-field parts that should receive them. Layer 2.5
+   * (fieldReq vs partOffField) narrows correctly per-part later.
+   */
+  private couldBuffApplyToChar(
+    buff: StatBuff,
+    providerCharId: string,
+    selfCharId: string
+  ): boolean {
+    return (
+      this.isBuffApplicableForChar(
+        buff,
+        providerCharId,
+        selfCharId,
+        true /* on-field */
+      ) ||
+      this.isBuffApplicableForChar(
+        buff,
+        providerCharId,
+        selfCharId,
+        false /* off-field */
+      )
+    );
   }
 
   /**
@@ -2101,19 +2143,24 @@ export class TeamBuild {
     return this.charBuilds[charId]?.charBase.rawComboDescriptor ?? [];
   }
 
-  /** Reaction combo as ComboLine[], ready to append to default combo. */
+  /** Reaction combo as ComboLine[], ready to append to default combo.
+   *  Each line uses a per-triggerer formula ID (e.g. rx-overloaded-amber)
+   *  with charId = statsCharId from the reaction entry. */
   getReactionComboLines(): ComboLine[] {
     const resolved = this.reactionProvider.getReactionComboCounts();
     const lines: ComboLine[] = [];
-    for (const [formulaId, perChar] of Object.entries(resolved)) {
-      for (const [charId, count] of Object.entries(perChar)) {
-        if (count > 0) lines.push({ charId, formulaId, count });
-      }
+    for (const [formulaId, count] of Object.entries(resolved)) {
+      if (count <= 0) continue;
+      const entry = this.reactionProvider.getFormulaEntry(formulaId);
+      const charId = entry?.statsCharId ?? "";
+      lines.push({ charId, formulaId, count });
     }
     return lines;
   }
 
-  /** Evaluate a specific character's damage formula with the given team stats */
+  /** Evaluate a specific character's damage formula with the given team stats.
+   *  For cross-scaled formulas (statsCharId override), pass the stats character
+   *  as charId and the formula owner as formulaOwnerCharId. */
   getDamageResult(
     charId: string,
     formulaId: string,
@@ -2123,11 +2170,18 @@ export class TeamBuild {
     offFieldTeamStats?: Record<string, StatSheet>,
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
-    offFieldVariants?: Map<string, StatSheet>
+    offFieldVariants?: Map<string, StatSheet>,
+    formulaOwnerCharId?: string
   ): DamageResult {
-    const build = this.charBuilds[charId];
-    if (!build) throw new Error(`No CharBuild for character: ${charId}`);
+    const ownerCharId = formulaOwnerCharId ?? charId;
+    const build = this.charBuilds[ownerCharId];
+    if (!build) throw new Error(`No CharBuild for character: ${ownerCharId}`);
     const teamStatsArr = Object.values(teamStats);
+    // Use stats from charId (the evaluating character) but formula from ownerCharId
+    const statsCharLevel =
+      ownerCharId !== charId
+        ? this.charBuilds[charId]?.charBase.charLevel
+        : undefined;
     return build.getDamageResult(
       formulaId,
       teamStats[charId]!,
@@ -2137,7 +2191,8 @@ export class TeamBuild {
       offFieldTeamStats?.[charId],
       partialBuffs,
       statsVariants,
-      offFieldVariants
+      offFieldVariants,
+      statsCharLevel
     );
   }
 
@@ -2193,6 +2248,8 @@ export class TeamBuild {
     );
 
     // ── Formula display ──
+    // Use build.charBase for the lookup — formulaIndex may have collisions
+    // when multiple characters share the same formula IDs (e.g. manekin dummies).
     const entry = build.charBase.getFormulaEntry(formulaId);
     const partTags: (DamageTag | undefined)[] =
       entry?.parts.map((p) => p.formula.tag) ?? [];
@@ -2310,7 +2367,7 @@ export class TeamBuild {
               this.allStaticBuffs,
               entry.parts,
               (buff, providerId) =>
-                this.isBuffApplicableForChar(buff, providerId, charId, true)
+                this.couldBuffApplyToChar(buff, providerId, charId)
             )
           : [];
       const allInfos = useExternal
@@ -3210,7 +3267,7 @@ export class TeamBuild {
           this.allStaticBuffs,
           entry.parts,
           (buff, providerId) =>
-            this.isBuffApplicableForChar(buff, providerId, carryCharId, true)
+            this.couldBuffApplyToChar(buff, providerId, carryCharId)
         )
       );
     }
@@ -3264,7 +3321,7 @@ export class TeamBuild {
             this.allStaticBuffs,
             entry.parts,
             (buff, providerId) =>
-              this.isBuffApplicableForChar(buff, providerId, lineCharId, true)
+              this.couldBuffApplyToChar(buff, providerId, lineCharId)
           )
         );
       }
@@ -3313,7 +3370,7 @@ export class TeamBuild {
   ): {
     defaultActivations: BuffActivationMap[];
     stackLimited: StackLimitedBuffInfo[];
-    lineEntries: (ReturnType<CharacterBase["getFormulaEntry"]> | null)[];
+    lineEntries: (FormulaEntry | null)[];
   } {
     // ── Collect stack-limited buffs ──
     // Field context doesn't matter here: collectStackLimitedBuffs only checks
@@ -3331,13 +3388,17 @@ export class TeamBuild {
     const getStats = this.createStatsCacheFn(sheets, ctx);
 
     const lineContexts: ComboLineContext[] = [];
-    const lineEntries: (ReturnType<CharacterBase["getFormulaEntry"]> | null)[] =
-      [];
+    const lineEntries: (FormulaEntry | null)[] = [];
 
     for (const line of activeLines) {
       const cb = this.charBuilds[line.charId];
-      const entry = cb?.charBase.getFormulaEntry(line.formulaId);
-      lineEntries.push(entry ?? null);
+      // Prefer charBase lookup to avoid formulaIndex collisions (e.g. manekin);
+      // fall back to formulaIndex for reaction/cross-scaled formulas.
+      const entry =
+        cb?.charBase.getFormulaEntry(line.formulaId) ??
+        this.formulaIndex.get(line.formulaId) ??
+        null;
+      lineEntries.push(entry);
       if (!entry || !cb) {
         lineContexts.push({
           parts: [],
@@ -3403,7 +3464,8 @@ export function hasOffFieldParts(
   formulaId: string
 ): boolean {
   const entry =
-    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
+    teamBuild.formulaIndex.get(formulaId);
   return entry?.parts.some((p) => p.offField) ?? false;
 }
 
@@ -3414,7 +3476,8 @@ export function offFieldStatus(
   formulaId: string
 ): "full" | "partial" | "none" {
   const entry =
-    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
+    teamBuild.formulaIndex.get(formulaId);
   if (!entry || entry.parts.length === 0) return "none";
   const offCount = entry.parts.filter((p) => p.offField).length;
   if (offCount === entry.parts.length) return "full";
@@ -3458,15 +3521,9 @@ export function evaluateCombo(
   externalStatsCache?: Map<string, Record<string, StatSheet>>
 ): ComboResult {
   // Skip lines with zero count or whose formula no longer exists (e.g. constellation lowered)
-  const allFormulas = teamBuild.getFormulaIds();
-  const reactionFormulas = teamBuild.reactionProvider.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
     if (line.count <= 0) return false;
-    if (line.formulaId.startsWith("rx-")) {
-      return reactionFormulas[line.formulaId] !== undefined;
-    }
-    const charFormulas = allFormulas[line.charId];
-    return charFormulas?.[line.formulaId];
+    return teamBuild.formulaIndex.has(line.formulaId);
   });
 
   // Cache resolved stat sheets per on-field character.
@@ -3485,8 +3542,19 @@ export function evaluateCombo(
   };
 
   const lineDamages = validLines.map((line, lineIdx) => {
-    // On-field context: formula owner is on-field for on-field parts.
-    const teamStats = getStats(line.charId);
+    // Prefer charBase lookup to avoid formulaIndex collisions (e.g. manekin);
+    // fall back to formulaIndex for reaction/cross-scaled formulas.
+    const cb = teamBuild.charBuilds[line.charId];
+    const entry =
+      cb?.charBase.getFormulaEntry(line.formulaId) ??
+      teamBuild.formulaIndex.get(line.formulaId);
+    // Resolve statsCharId: use line.charId (which may already be set correctly),
+    // or override from the entry's statsCharId if present.
+    const statsCharId = entry?.statsCharId ?? line.charId;
+    const ownerCharId = entry?.owner ?? line.charId;
+
+    // On-field context: stats char is on-field for on-field parts.
+    const teamStats = getStats(statsCharId);
 
     // Team reaction path: route rx-* formulas to reactionProvider
     if (line.formulaId.startsWith("rx-")) {
@@ -3495,15 +3563,15 @@ export function evaluateCombo(
       if (rp.isMultiContributor(line.formulaId)) {
         result = rp.getMultiContributorResult(
           line.formulaId,
-          line.charId,
+          statsCharId,
           teamStats,
           ctx
         );
       } else {
         result = rp.getDamageResult(
           line.formulaId,
-          line.charId,
-          teamStats[line.charId]!,
+          statsCharId,
+          teamStats[statsCharId]!,
           ctx
         );
       }
@@ -3513,15 +3581,12 @@ export function evaluateCombo(
       };
     }
 
-    // Normal character formula path
-    // Precompute per-part on-field char IDs once for this line.
-    const lineEntry = teamBuild.charBuilds[
-      line.charId
-    ]?.charBase.getFormulaEntry(line.formulaId);
+    // Character formula path (including cross-scaled like Nicole projections)
+    const lineEntry = entry;
     const partOnFieldCharIds = lineEntry
       ? resolvePartOnFieldCharIds(
           lineEntry.parts,
-          line.charId,
+          statsCharId,
           teamBuild.configs,
           line.reaction
         )
@@ -3529,7 +3594,7 @@ export function evaluateCombo(
 
     // Off-field context: needed when any part resolves to a different on-field char.
     const offFieldOnFieldCharId = partOnFieldCharIds.find(
-      (id) => id !== line.charId
+      (id) => id !== statsCharId
     );
     let offFieldTeamStats: Record<string, StatSheet> | undefined;
     if (offFieldOnFieldCharId) {
@@ -3549,10 +3614,10 @@ export function evaluateCombo(
         (excl) =>
           teamBuild.getTeamStatsExcluding(
             artifactStats,
-            line.charId,
+            statsCharId,
             ctx,
             excl
-          )[line.charId]!
+          )[statsCharId]!
       );
       if (offFieldTeamStats && offFieldOnFieldCharId) {
         lineOffFieldVariants = buildStatVariants(
@@ -3564,13 +3629,16 @@ export function evaluateCombo(
               offFieldOnFieldCharId,
               ctx,
               excl
-            )[line.charId]!
+            )[statsCharId]!
         );
       }
     }
 
+    // For cross-scaled formulas, pass ownerCharId so getDamageResult
+    // looks up the formula from the owner's charBase while using stats from statsCharId
+    const formulaOwner = ownerCharId !== statsCharId ? ownerCharId : undefined;
     const result = teamBuild.getDamageResult(
-      line.charId,
+      statsCharId,
       line.formulaId,
       teamStats,
       ctx,
@@ -3578,7 +3646,8 @@ export function evaluateCombo(
       offFieldTeamStats,
       lineInfos,
       lineVariants,
-      lineOffFieldVariants
+      lineOffFieldVariants,
+      formulaOwner
     );
 
     // Adjust for bespokeBuff maxStacks across combo repetitions
@@ -3709,7 +3778,9 @@ export function getComboDisplayResult(
     const formulaIds = teamBuild.getFormulaIds()[cid];
     if (formulaIds) {
       for (const fid of Object.keys(formulaIds)) {
-        const fEntry = teamBuild.charBuilds[cid]?.charBase.getFormulaEntry(fid);
+        const fEntry =
+          teamBuild.charBuilds[cid]?.charBase.getFormulaEntry(fid) ??
+          teamBuild.formulaIndex.get(fid);
         if (!fEntry) continue;
         for (const part of fEntry.parts) {
           const t = part.formula.tag;
@@ -3949,9 +4020,9 @@ export function getComboDisplayResult(
 
     const postStats = getStats(charId);
 
-    // ── Team reaction formulas: build display parts from reactionProvider ──
+    // ── Team reaction formulas: build display parts from formulaIndex ──
     if (formulaId.startsWith("rx-")) {
-      const rxEntry = teamBuild.reactionProvider.getFormulaEntry(formulaId);
+      const rxEntry = teamBuild.formulaIndex.get(formulaId);
       if (!rxEntry) continue;
       const formula = rxEntry.parts[0].formula;
       const charLevel =
@@ -4009,7 +4080,9 @@ export function getComboDisplayResult(
     const effectiveReaction = firstLine.reaction;
 
     // Off-field stats (first-other on-field for off-field parts)
-    const entry = build.charBase.getFormulaEntry(formulaId);
+    const entry =
+      build.charBase.getFormulaEntry(formulaId) ??
+      teamBuild.formulaIndex.get(formulaId);
     const formulaHasOffField =
       entry?.parts.some((p) => isPartOffField(p, effectiveReaction)) ?? false;
     let offFieldPostStats: StatSheet | undefined;

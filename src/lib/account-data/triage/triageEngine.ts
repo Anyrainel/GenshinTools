@@ -360,8 +360,13 @@ export function runTriage(
       // crcd, hit count, fill), then tie-break by actual stat values.
       neutral.sort(compareWithinTier);
 
+      // Cap neutral locks so total locked (P+Q+N) never exceeds demand+margin.
+      const shortfall =
+        demand + settings.qualityMargin - premiumCount - qualityCount;
+      const neutralCap = Math.min(shortfall, settings.neutralKeep);
+
       for (let i = 0; i < neutral.length; i++) {
-        if (i < settings.neutralKeep) {
+        if (i < neutralCap) {
           setLabel(neutral[i], "lock", "NK");
         } else {
           setLabel(neutral[i], "unlock", "TN");

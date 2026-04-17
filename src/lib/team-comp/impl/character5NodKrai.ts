@@ -1,3 +1,5 @@
+import { i18nBetaData } from "@/data/i18n-beta";
+import { i18nGameData } from "@/data/i18n-game";
 import type { Element, Faction } from "@/data/types";
 import { LUNAR_REACTIONS } from "../constants";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
@@ -1505,9 +1507,8 @@ class Nicole extends CharacterBase {
     return buffs;
   })();
 
-  // E: single Pyro skill hit (param1). Q: single Pyro burst hit (param1) plus 5
-  // Arcane Projection coord attacks (param2 = 200% of triggering char's ATK) per
-  // element present in the team, tagged as that element.
+  // E: single Pyro skill hit (param1). Q: single Pyro burst hit (param1) plus
+  // per-slot Arcane Projection coord attacks using each teammate's stats/element.
   protected readonly formulaMap = (() => {
     const pyroSkill = {
       element: "Pyro" as const,
@@ -1519,18 +1520,6 @@ class Nicole extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    // Hexerei P4 +150% Nicole ATK baseDmg — attached only to Arcane Projection
-    // formula parts (Q projection and C1 Unity), NOT to the Q initial slash.
-    const p4HexereiBuff = this.isHexereiActive
-      ? new ScalingBuff(
-          cbs(this, "P4", ["Q"]),
-          { receiver: "selfOnField" },
-          [],
-          "atk",
-          "baseDmg",
-          1.5
-        )
-      : undefined;
     const formulas: Record<string, FormulaEntry> = {
       "nicole-skill": {
         label: { zh: "E伤害", en: "E" },
@@ -1540,49 +1529,99 @@ class Nicole extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [{ formula: new DirectFormula(this.param("Q", 1), pyroBurst) }],
       },
-      // Q Arcane Projection: 5 triggers over Silent Contemplation. We can't
-      // reassign scaling to the triggering teammate, so we approximate the coord
-      // attacks as Nicole's own burst hits using her ATK and her burst element
-      // (Pyro). This conservatively undercounts teams where the triggering char
-      // has much higher ATK than Nicole, but captures the timing and hit count.
-      "nicole-q-coord": {
-        label: { zh: "Q奥迹造影×5", en: "Q Arcane Projection ×5" },
-        parts: [
-          {
-            formula: new DirectFormula(this.param("Q", 2), pyroBurst),
-            hits: 5,
-            // Coordinated attack: fires while a teammate is active during
-            // Silent Contemplation (Nicole is off-field).
-            offField: true,
-            ...(p4HexereiBuff ? { bespokeBuffs: [p4HexereiBuff] } : {}),
-          },
-        ],
-      },
-      // C1: extra 600% ATK coord hit, once per 6s (~1 per combo)
-      "nicole-c1-unity": {
-        label: { zh: "C1 合一造影", en: "C1 Arcane Projection: Unity" },
-        minC: 1,
-        parts: [
-          {
-            formula: new DirectFormula(6.0, pyroBurst),
-            // Coordinated attack fired on teammate hits — Nicole off-field.
-            offField: true,
-            ...(p4HexereiBuff ? { bespokeBuffs: [p4HexereiBuff] } : {}),
-          },
-        ],
-      },
     };
+
+    // Q Arcane Projection: 5 triggers × 200% of triggering char's ATK.
+    // Game text: "该伤害受益于该角色的攻击力,并视为由该角色造成的伤害"
+    // → Each projection evaluates with the triggering teammate's stats and element.
+    // Generate one formula per team slot with statsCharId override.
+    const projRatio = this.param("Q", 2);
+    const charNames = {
+      ...i18nGameData.characters,
+      ...i18nBetaData.characters,
+    } as Record<string, { en: string; zh: string }>;
+
+    for (
+      let slotIdx = 0;
+      slotIdx < this.teamMeta.characters.length;
+      slotIdx++
+    ) {
+      const occupantId = this.teamMeta.characters[slotIdx];
+      if (!occupantId) continue;
+
+      const occupantElement =
+        this.teamMeta.elements[occupantId] ?? ("Pyro" as Element);
+      const name = charNames[occupantId] ?? { en: occupantId, zh: occupantId };
+
+      const projTag = {
+        element: occupantElement,
+        ability: "burst" as const,
+        reaction: "none" as const,
+      };
+
+      // Hexerei P4 +150% Nicole ATK baseDmg — per-occupant bespoke buff.
+      // Target routes to the occupant's stat sheet via charId.
+      const p4Buff = this.isHexereiActive
+        ? new ScalingBuff(
+            cbs(this, "P4", ["Q"]),
+            { receiver: "team", charId: occupantId },
+            [],
+            "atk",
+            "baseDmg",
+            1.5
+          )
+        : undefined;
+
+      formulas[`nicole-q-proj-slot${slotIdx + 1}`] = {
+        label: {
+          zh: `Q奥迹造影·${name.zh}`,
+          en: `Q Arcane Projection (${name.en})`,
+        },
+        statsCharId: occupantId,
+        parts: [
+          {
+            formula: new DirectFormula(projRatio, projTag),
+            hits: 5,
+            // Projection triggers on the active (on-field) character.
+            offField: false,
+            ...(p4Buff ? { bespokeBuffs: [p4Buff] } : {}),
+          },
+        ],
+      };
+
+      if (this.constellation >= 1) {
+        formulas[`nicole-c1-unity-slot${slotIdx + 1}`] = {
+          label: {
+            zh: `C1 合一造影·${name.zh}`,
+            en: `C1 Unity (${name.en})`,
+          },
+          statsCharId: occupantId,
+          minC: 1,
+          parts: [
+            {
+              formula: new DirectFormula(6.0, projTag),
+              offField: false,
+              ...(p4Buff ? { bespokeBuffs: [p4Buff] } : {}),
+            },
+          ],
+        };
+      }
+    }
+
     return formulas;
   })();
 
   // Rotation: E (apply Kenosis → Theosis) → Q (enter Silent Contemplation) →
   // coord attacks trigger on teammate hits.
+  // Default combo uses slot 1 (always occupied — UI fills left-to-right).
   protected override get comboDescriptor(): ComboDescriptor {
     return [
       { id: "nicole-skill", count: 1 },
       { id: "nicole-burst", count: 1 },
-      { id: "nicole-q-coord", count: 1 },
-      { id: "nicole-c1-unity", count: 1 },
+      { id: "nicole-q-proj-slot1", count: 1 },
+      ...(this.constellation >= 1
+        ? [{ id: "nicole-c1-unity-slot1", count: 1 }]
+        : []),
     ];
   }
 }

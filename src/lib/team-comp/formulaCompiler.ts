@@ -30,7 +30,7 @@ import {
   isBuffApplicable,
 } from "./damageCalc";
 import { createReactionVariant } from "./damageFormulas";
-import type { CharacterBase, FormulaPart } from "./damageModels";
+import type { FormulaPart } from "./damageModels";
 import { StatBuff, StatSheet, bespokeMaxStacks } from "./damageModels";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
@@ -723,11 +723,12 @@ export function compileComboTeamDamage(
             allPartExprs.push(lunarExpr);
           }
         } else {
-          // Reaction formulas use on-field stats
-          const triggerStats = postExprStats[line.charId];
+          // Reaction formulas use on-field stats; prefer entry's statsCharId
+          const triggerCharId = rxEntry.statsCharId ?? line.charId;
+          const triggerStats = postExprStats[triggerCharId];
           if (!triggerStats) continue;
           const charLevel =
-            configs.find((c) => c.charId === line.charId)?.charLevel ?? 90;
+            configs.find((c) => c.charId === triggerCharId)?.charLevel ?? 90;
           const lineExpr = rxFormula.buildExpr(
             triggerStats,
             charLevel,
@@ -738,24 +739,27 @@ export function compileComboTeamDamage(
         continue;
       }
 
-      const formulaCharBuild = optCtx.charBuildOrder.find(
-        ([id]) => id === line.charId
-      )?.[1];
-      if (!formulaCharBuild) continue;
-
-      const charBase = formulaCharBuild.charBase;
-      const entry = charBase.getFormulaEntry(line.formulaId);
+      // Prefer charBase lookup to avoid formulaIndex collisions (e.g. manekin);
+      // fall back to formulaIndex for cross-scaled formulas.
+      const formulaCharBuild = teamBuild.charBuilds[line.charId];
+      const entry =
+        formulaCharBuild?.charBase.getFormulaEntry(line.formulaId) ??
+        teamBuild.formulaIndex.get(line.formulaId);
       if (!entry) continue;
 
       const effectiveReaction = line.reaction;
 
+      // Resolve the stats character: cross-scaled formulas (e.g. Nicole projection)
+      // evaluate with the statsCharId's stats instead of line.charId.
+      const statsCharId = entry.statsCharId ?? line.charId;
+
       // On-field stats for the formula character (from field-state view)
-      const formulaStats = postExprStats[line.charId]!;
+      const formulaStats = postExprStats[statsCharId]!;
       const hasOffField = entry.parts.some((p) =>
         isPartOffField(p, effectiveReaction)
       );
       const offFieldFormulaStats = hasOffField
-        ? getOffFieldExprStats()[line.charId]
+        ? getOffFieldExprStats()[statsCharId]
         : undefined;
 
       // Look up by line index first (for per-line combo overrides), then formula key
@@ -797,10 +801,13 @@ export function compileComboTeamDamage(
         }
       }
 
+      // Resolve charLevel: for cross-scaled formulas, use the stats char's level
+      const lineCharLevel =
+        configs.find((c) => c.charId === statsCharId)?.charLevel ?? 90;
       const lineExpr = buildTotalDamageExpr(
         entry.parts,
         formulaStats,
-        charBase,
+        lineCharLevel,
         calcContext,
         effectiveReaction,
         offFieldFormulaStats,
@@ -1230,7 +1237,7 @@ function applyDynamicBuffExprs(
 function buildTotalDamageExpr(
   parts: FormulaPart[],
   formulaStats: ExprStats,
-  charBase: CharacterBase,
+  charLevel: number,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   offFieldFormulaStats?: ExprStats,
@@ -1263,7 +1270,7 @@ function buildTotalDamageExpr(
         partExprs,
         formula,
         baseStats,
-        charBase,
+        charLevel,
         ctx,
         h * comboCount,
         h * comboCount,
@@ -1301,7 +1308,7 @@ function buildTotalDamageExpr(
         partExprs,
         effectiveFormula,
         baseStats,
-        charBase,
+        charLevel,
         ctx,
         reactingHits * comboCount,
         h * comboCount,
@@ -1316,7 +1323,7 @@ function buildTotalDamageExpr(
         partExprs,
         formula,
         baseStats,
-        charBase,
+        charLevel,
         ctx,
         nonReactingHits * comboCount,
         h * comboCount,
@@ -1352,7 +1359,7 @@ function emitBlendedPartExprs(
     tag: DamageTag;
   },
   baseStats: ExprStats,
-  charBase: CharacterBase,
+  charLevel: number,
   ctx: CalcContext,
   totalHits: number,
   originalPartHits: number,
@@ -1390,7 +1397,7 @@ function emitBlendedPartExprs(
 
   // Fast path: uniform across all hits
   if (affecting.length === 0 && bespokeCutoff === totalHits) {
-    const expr = formula.buildExpr(withBespoke, charBase.charLevel, ctx);
+    const expr = formula.buildExpr(withBespoke, charLevel, ctx);
     partExprs.push(E.mul(expr, E.const(totalHits)));
     return;
   }
@@ -1431,7 +1438,7 @@ function emitBlendedPartExprs(
           ? mergeBespokeEntriesAll(variant, bespokeEntries, bespokeBuffs)
           : variant;
     }
-    const expr = formula.buildExpr(intervalStats, charBase.charLevel, ctx);
+    const expr = formula.buildExpr(intervalStats, charLevel, ctx);
     partExprs.push(E.mul(expr, E.const(width)));
   }
 }

@@ -31,18 +31,34 @@ function mockTeamBuild(
     guessOnFieldChar?: (formulaId: string) => string | undefined;
   }
 ): TeamBuild {
+  const rxDesc = rxOpts?.rxDescriptor ?? [];
   return {
     getComboDescriptor(charId: string): ComboDescriptor {
       return descriptors[charId] ?? [];
     },
+    formulaIndex: new Map(
+      rxDesc.flatMap((e) =>
+        e.eligible.map(
+          (c) =>
+            [`${e.id}-${c}`, { statsCharId: c }] as [
+              string,
+              { statsCharId: string },
+            ]
+        )
+      )
+    ),
     reactionProvider: {
-      getReactionComboDescriptor: () => rxOpts?.rxDescriptor ?? [],
+      getReactionComboDescriptor: () => rxDesc,
       hasColumbina: false,
       guessOnFieldChar: rxOpts?.guessOnFieldChar ?? (() => undefined),
+      getBaseReactionIds: () => rxDesc.map((e) => e.id),
       getFormulaIds: () => {
         const ids: Record<string, { en: string; zh: string }> = {};
-        for (const e of rxOpts?.rxDescriptor ?? []) {
-          ids[e.id] = { en: e.id, zh: e.id };
+        for (const e of rxDesc) {
+          for (const c of e.eligible) {
+            const key = `${e.id}-${c}`;
+            ids[key] = { en: key, zh: key };
+          }
         }
         return ids;
       },
@@ -490,7 +506,7 @@ describe("rxDeltaOverrideKey", () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe("deriveComboForAllocation — rx- handling", () => {
-  it("expands a single rx- template line into per-character lines", () => {
+  it("resolves per-triggerer rx- template lines with correct counts", () => {
     const rxDescriptor: ReactionComboEntry[] = [
       {
         id: "rx-lunarCrystallize",
@@ -504,7 +520,10 @@ describe("deriveComboForAllocation — rx- handling", () => {
       {},
       { rxDescriptor, guessOnFieldChar: () => "linnea" }
     );
-    const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
+    const combo = makeCombo([
+      makeLine("linnea", "rx-lunarCrystallize-linnea", 15),
+      makeLine("columbina", "rx-lunarCrystallize-columbina", 1),
+    ]);
     const allocation = makeAllocation({
       linnea: { constellation: 0 },
       columbina: { constellation: 0 },
@@ -512,12 +531,14 @@ describe("deriveComboForAllocation — rx- handling", () => {
 
     const result = deriveComboForAllocation(allocation, combo, teamBuild);
 
-    const rxLines = result.lines.filter(
-      (l) => l.formulaId === "rx-lunarCrystallize"
-    );
-    expect(rxLines).toHaveLength(2);
-    expect(rxLines.find((l) => l.charId === "linnea")!.count).toBe(14);
-    expect(rxLines.find((l) => l.charId === "columbina")!.count).toBe(1);
+    expect(
+      result.lines.find((l) => l.formulaId === "rx-lunarCrystallize-linnea")!
+        .count
+    ).toBe(14);
+    expect(
+      result.lines.find((l) => l.formulaId === "rx-lunarCrystallize-columbina")!
+        .count
+    ).toBe(1);
   });
 
   it("default: per-character counts from descriptor", () => {
@@ -534,7 +555,11 @@ describe("deriveComboForAllocation — rx- handling", () => {
       {},
       { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
-    const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
+    const combo = makeCombo([
+      makeLine("flins", "rx-lunarCharged-flins", 7),
+      makeLine("columbina", "rx-lunarCharged-columbina", 1),
+      makeLine("zibai", "rx-lunarCharged-zibai", 1),
+    ]);
     const allocation = makeAllocation({
       flins: { constellation: 0 },
       columbina: { constellation: 0 },
@@ -543,13 +568,16 @@ describe("deriveComboForAllocation — rx- handling", () => {
 
     const result = deriveComboForAllocation(allocation, combo, teamBuild);
 
-    const rxLines = result.lines.filter(
-      (l) => l.formulaId === "rx-lunarCharged"
-    );
-    expect(rxLines).toHaveLength(3);
-    expect(rxLines.find((l) => l.charId === "flins")!.count).toBe(7);
-    expect(rxLines.find((l) => l.charId === "columbina")!.count).toBe(1);
-    expect(rxLines.find((l) => l.charId === "zibai")!.count).toBe(1);
+    expect(
+      result.lines.find((l) => l.formulaId === "rx-lunarCharged-flins")!.count
+    ).toBe(7);
+    expect(
+      result.lines.find((l) => l.formulaId === "rx-lunarCharged-columbina")!
+        .count
+    ).toBe(1);
+    expect(
+      result.lines.find((l) => l.formulaId === "rx-lunarCharged-zibai")!.count
+    ).toBe(1);
   });
 
   it("rxCharOverrideKey redistributes counts across characters", () => {
@@ -566,7 +594,10 @@ describe("deriveComboForAllocation — rx- handling", () => {
       {},
       { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
-    const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
+    const combo = makeCombo([
+      makeLine("flins", "rx-lunarCharged-flins", 8),
+      makeLine("columbina", "rx-lunarCharged-columbina", 1),
+    ]);
     const allocation = makeAllocation({
       flins: { constellation: 0 },
       columbina: { constellation: 0 },
@@ -583,12 +614,13 @@ describe("deriveComboForAllocation — rx- handling", () => {
       overrides
     );
 
-    const rxLines = result.lines.filter(
-      (l) => l.formulaId === "rx-lunarCharged"
-    );
-    expect(rxLines).toHaveLength(2);
-    expect(rxLines.find((l) => l.charId === "flins")!.count).toBe(5);
-    expect(rxLines.find((l) => l.charId === "columbina")!.count).toBe(4);
+    expect(
+      result.lines.find((l) => l.formulaId === "rx-lunarCharged-flins")!.count
+    ).toBe(5);
+    expect(
+      result.lines.find((l) => l.formulaId === "rx-lunarCharged-columbina")!
+        .count
+    ).toBe(4);
   });
 
   it("rxDeltaOverrideKey changes the delta value", () => {
@@ -605,7 +637,9 @@ describe("deriveComboForAllocation — rx- handling", () => {
       {},
       { rxDescriptor, guessOnFieldChar: () => "linnea" }
     );
-    const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
+    const combo = makeCombo([
+      makeLine("linnea", "rx-lunarCrystallize-linnea", 15),
+    ]);
     const allocation = makeAllocation({
       linnea: { constellation: 2 },
     });
@@ -621,8 +655,8 @@ describe("deriveComboForAllocation — rx- handling", () => {
       overrides
     );
 
-    const rxLines = result.lines.filter(
-      (l) => l.formulaId === "rx-lunarCrystallize"
+    const rxLines = result.lines.filter((l) =>
+      l.formulaId.startsWith("rx-lunarCrystallize")
     );
     expect(rxLines).toHaveLength(1);
     // base 15 + overridden delta 20 = 35
@@ -643,7 +677,9 @@ describe("deriveComboForAllocation — rx- handling", () => {
       {},
       { rxDescriptor, guessOnFieldChar: () => "linnea" }
     );
-    const combo = makeCombo([makeLine("linnea", "rx-lunarCrystallize", 15)]);
+    const combo = makeCombo([
+      makeLine("linnea", "rx-lunarCrystallize-linnea", 15),
+    ]);
 
     // C0: delta not applied
     const resultC0 = deriveComboForAllocation(
@@ -652,7 +688,8 @@ describe("deriveComboForAllocation — rx- handling", () => {
       teamBuild
     );
     expect(
-      resultC0.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
+      resultC0.lines.find((l) => l.formulaId === "rx-lunarCrystallize-linnea")!
+        .count
     ).toBe(15);
 
     // C1: still not enough
@@ -662,7 +699,8 @@ describe("deriveComboForAllocation — rx- handling", () => {
       teamBuild
     );
     expect(
-      resultC1.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
+      resultC1.lines.find((l) => l.formulaId === "rx-lunarCrystallize-linnea")!
+        .count
     ).toBe(15);
 
     // C2: delta kicks in → 15 + 12 = 27
@@ -672,7 +710,8 @@ describe("deriveComboForAllocation — rx- handling", () => {
       teamBuild
     );
     expect(
-      resultC2.lines.find((l) => l.formulaId === "rx-lunarCrystallize")!.count
+      resultC2.lines.find((l) => l.formulaId === "rx-lunarCrystallize-linnea")!
+        .count
     ).toBe(27);
   });
 
@@ -690,7 +729,11 @@ describe("deriveComboForAllocation — rx- handling", () => {
       {},
       { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
-    const combo = makeCombo([makeLine("flins", "rx-lunarCharged", 9)]);
+    // Template only has per-triggerer lines for eligible chars
+    const combo = makeCombo([
+      makeLine("flins", "rx-lunarCharged-flins", 8),
+      makeLine("zibai", "rx-lunarCharged-zibai", 1),
+    ]);
     const allocation = makeAllocation({
       flins: { constellation: 0 },
       zibai: { constellation: 0 },
@@ -699,15 +742,19 @@ describe("deriveComboForAllocation — rx- handling", () => {
 
     const result = deriveComboForAllocation(allocation, combo, teamBuild);
 
-    const rxLines = result.lines.filter(
-      (l) => l.formulaId === "rx-lunarCharged"
+    const rxLines = result.lines.filter((l) =>
+      l.formulaId.startsWith("rx-lunarCharged")
     );
     for (const line of rxLines) {
       expect(line.count).toBeGreaterThan(0);
     }
-    // flins gets 8, zibai gets 1, pyroChar not in descriptor → filtered
-    expect(rxLines.find((l) => l.charId === "flins")!.count).toBe(8);
-    expect(rxLines.find((l) => l.charId === "zibai")!.count).toBe(1);
+    // flins gets 8, zibai gets 1, pyroChar not in descriptor → no line
+    expect(
+      rxLines.find((l) => l.formulaId === "rx-lunarCharged-flins")!.count
+    ).toBe(8);
+    expect(
+      rxLines.find((l) => l.formulaId === "rx-lunarCharged-zibai")!.count
+    ).toBe(1);
     expect(rxLines.map((l) => l.charId)).not.toContain("pyroChar");
   });
 
@@ -727,7 +774,7 @@ describe("deriveComboForAllocation — rx- handling", () => {
     );
     const combo = makeCombo([
       makeLine("charA", "burst", 3),
-      makeLine("charA", "rx-lunarCharged", 9),
+      makeLine("charA", "rx-lunarCharged-charA", 9),
     ]);
     const allocation = makeAllocation({
       charA: { constellation: 0 },
@@ -741,7 +788,7 @@ describe("deriveComboForAllocation — rx- handling", () => {
     expect(burstLine!.count).toBe(5);
 
     const rxLines = result.lines.filter(
-      (l) => l.formulaId === "rx-lunarCharged"
+      (l) => l.formulaId === "rx-lunarCharged-charA"
     );
     expect(rxLines).toHaveLength(1);
     expect(rxLines[0].charId).toBe("charA");
@@ -763,8 +810,8 @@ describe("deriveComboForAllocation — rx- handling", () => {
       { rxDescriptor, guessOnFieldChar: () => "flins" }
     );
     const combo = makeCombo([
-      makeLine("flins", "rx-lunarCharged", 9),
-      makeLine("flins", "rx-lunarCharged", 9),
+      makeLine("flins", "rx-lunarCharged-flins", 9),
+      makeLine("flins", "rx-lunarCharged-flins", 9),
     ]);
     const allocation = makeAllocation({
       flins: { constellation: 0 },
@@ -773,9 +820,10 @@ describe("deriveComboForAllocation — rx- handling", () => {
     const result = deriveComboForAllocation(allocation, combo, teamBuild);
 
     const rxLines = result.lines.filter(
-      (l) => l.formulaId === "rx-lunarCharged"
+      (l) => l.formulaId === "rx-lunarCharged-flins"
     );
-    expect(rxLines).toHaveLength(1);
+    // Both lines get resolved count applied (9 each since only 1 eligible)
+    expect(rxLines).toHaveLength(2);
     expect(rxLines[0].count).toBe(9);
   });
 });

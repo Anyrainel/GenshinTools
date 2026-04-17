@@ -139,9 +139,66 @@ export default function TeamCompPage() {
     );
   }
 
+  // Shared dialogs — always mounted so import/export/clear refs stay live
+  // across tab switches (including the empty-state import button on
+  // Investment / Weapon Choice).
+  const teamControls = (
+    <>
+      <ImportControl<TeamCompData>
+        ref={importRef}
+        options={presetOptions}
+        loadPreset={loadPreset}
+        onApply={handleImport}
+        onLocalImport={handleImport}
+        variant="team-comp"
+      />
+      <ExportControl
+        ref={exportRef}
+        onExport={handleExport}
+        variant="team-comp"
+        defaultAuthor={author}
+        defaultDescription={description}
+      />
+      <ClearAllControl ref={clearRef} onConfirm={clearTeams} />
+    </>
+  );
+
+  // Shared action buttons for tabs that operate on the team list
+  // (damage grid, investment, weapon choice). Help is damage-only.
+  const teamDataActions = [
+    {
+      key: "import",
+      icon: Download,
+      label: t.ui("import.action"),
+      alwaysShow: true,
+      tourStepId: "tc-import",
+      onTrigger: () => importRef.current?.open(),
+    },
+    {
+      key: "export",
+      icon: Upload,
+      label: t.ui("export.action"),
+      onTrigger: () => exportRef.current?.open(),
+    },
+    {
+      key: "clear",
+      icon: Trash2,
+      label: t.ui("common.clear"),
+      onTrigger: () => clearRef.current?.open(),
+    },
+  ];
+
   if (activeTab === "investment") {
     return (
-      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+      <PageLayout
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onClearData={clearTeams}
+        clearLabel={t.ui("common.clearTeams")}
+        actions={teamDataActions}
+      >
+        {teamControls}
         <InvestmentView importRef={importRef} />
       </PageLayout>
     );
@@ -149,7 +206,15 @@ export default function TeamCompPage() {
 
   if (activeTab === "weapon") {
     return (
-      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+      <PageLayout
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onClearData={clearTeams}
+        clearLabel={t.ui("common.clearTeams")}
+        actions={teamDataActions}
+      >
+        {teamControls}
         <WeaponChoiceView importRef={importRef} />
       </PageLayout>
     );
@@ -203,26 +268,7 @@ export default function TeamCompPage() {
       onClearData={clearTeams}
       clearLabel={t.ui("common.clearTeams")}
       actions={[
-        {
-          key: "import",
-          icon: Download,
-          label: t.ui("import.action"),
-          alwaysShow: true,
-          tourStepId: "tc-import",
-          onTrigger: () => importRef.current?.open(),
-        },
-        {
-          key: "export",
-          icon: Upload,
-          label: t.ui("export.action"),
-          onTrigger: () => exportRef.current?.open(),
-        },
-        {
-          key: "clear",
-          icon: Trash2,
-          label: t.ui("common.clear"),
-          onTrigger: () => clearRef.current?.open(),
-        },
+        ...teamDataActions,
         {
           key: "help",
           icon: HelpCircle,
@@ -231,24 +277,7 @@ export default function TeamCompPage() {
         },
       ]}
     >
-      {/* Control dialogs - render without triggers, opened via ref */}
-      <ImportControl<TeamCompData>
-        ref={importRef}
-        options={presetOptions}
-        loadPreset={loadPreset}
-        onApply={handleImport}
-        onLocalImport={handleImport}
-        variant="team-comp"
-      />
-      <ExportControl
-        ref={exportRef}
-        onExport={handleExport}
-        variant="team-comp"
-        defaultAuthor={author}
-        defaultDescription={description}
-      />
-      <ClearAllControl ref={clearRef} onConfirm={clearTeams} />
-
+      {teamControls}
       <DamageView importRef={importRef} />
     </PageLayout>
   );

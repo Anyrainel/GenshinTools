@@ -100,6 +100,7 @@ function makeAccount(
 
 const SETTINGS: TriageSettings = {
   ...DEFAULT_TRIAGE_SETTINGS,
+  triageMode: "strict", // pin to strict for deterministic threshold tests
   levelProtection: 0, // disable for cleaner tests
   equippedProtection: false,
 };
@@ -412,6 +413,34 @@ describe("runTriage", () => {
       }
     );
     expect(r3.decisions.filter((d) => d.label === "lock")).toHaveLength(3);
+  });
+
+  it("neutralKeep: clamped by shortfall so total locked ≤ demand+margin", () => {
+    // demand = 1, qualityMargin = 0, P = 0, Q = 0 → shortfall = 1
+    // neutralKeep = 5 → neutralCap = min(1, 5) = 1
+    // 3 neutral artifacts → only 1 should lock
+    const build1 = makeBuild({ id: "b1" });
+    const neutralArts = Array.from({ length: 3 }, (_, i) =>
+      makeArt({
+        substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+        level: 20 - i,
+      })
+    );
+    const account = makeAccount([{ key: "char_a" }], neutralArts);
+    const r = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [build1] }],
+      {
+        ...SETTINGS,
+        neutralKeep: 5,
+        qualityMargin: 0,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+      }
+    );
+    const locked = r.decisions.filter((d) => d.label === "lock");
+    expect(locked).toHaveLength(1);
+    expect(locked[0].decidingResult?.ruleId).toBe("NK");
   });
 
   // ---------------------------------------------------------------------------

@@ -100,7 +100,10 @@ function FormulaBlock({
     formulaLabel,
     buffApplicability,
   } = formula;
-  const isCombo = comboCount != null && comboCount > 1 && comboKey;
+  // Route to comboOverrides whenever comboKey is provided. See PartBuffDialog
+  // for the same rationale: single-mode writes must land in comboOverrides
+  // (comboId="__single__") since the damage-calc path only reads from there.
+  const isCombo = comboKey != null;
   const overrides = useBuffOverrideStore((s) =>
     isCombo ? s.comboOverrides[comboKey] : s.overrides[formulaKey]
   );
@@ -153,7 +156,7 @@ function FormulaBlock({
         <span className="text-xs md:text-sm font-semibold text-foreground truncate">
           {formulaLabel ? t.resolveLabel(formulaLabel) : formulaKey}
         </span>
-        {isCombo && comboCount > 1 && (
+        {comboCount != null && comboCount > 1 && (
           <span className="text-[10px] md:text-xs font-bold text-primary bg-primary/10 px-1 rounded leading-none">
             ×{comboCount}
           </span>
@@ -163,7 +166,8 @@ function FormulaBlock({
       {/* Part rows */}
       {applicableParts.map(({ part, partIndex }) => {
         const hits = part.hits ?? 1;
-        const sliderMax = isCombo ? hits * comboCount : hits;
+        const sliderMax =
+          isCombo && comboCount != null ? hits * comboCount : hits;
         const effectiveMax =
           buff.source.maxStacks != null
             ? Math.min(sliderMax, buff.source.maxStacks)
@@ -309,9 +313,9 @@ export function BuffDialog({ buff, formulas, t }: Props) {
           const pi = f.parts[idx].sourcePartIndex ?? idx;
           if (indices !== undefined && !indices.includes(pi)) continue;
           const hits = f.parts[idx].hits ?? 1;
-          const isCombo =
-            f.comboCount != null && f.comboCount > 1 && f.comboKey;
-          const sliderMax = isCombo ? hits * f.comboCount! : hits;
+          const isCombo = f.comboKey != null;
+          const sliderMax =
+            isCombo && f.comboCount != null ? hits * f.comboCount : hits;
           const effectiveMax =
             buff.source.maxStacks != null
               ? Math.min(sliderMax, buff.source.maxStacks)
@@ -326,10 +330,7 @@ export function BuffDialog({ buff, formulas, t }: Props) {
   // Read all relevant overrides to determine if any hit is activated
   const allOverrides = useBuffOverrideStore((s) => {
     for (const { formula, partIndex, effectiveMax } of allApplicable) {
-      const isCombo =
-        formula.comboCount != null &&
-        formula.comboCount > 1 &&
-        formula.comboKey;
+      const isCombo = formula.comboKey != null;
       const storeKey = isCombo ? formula.comboKey! : formula.formulaKey;
       const map = isCombo ? s.comboOverrides[storeKey] : s.overrides[storeKey];
       const currentHits =
@@ -349,10 +350,7 @@ export function BuffDialog({ buff, formulas, t }: Props) {
 
   const handleToggleAll = useCallback(() => {
     for (const { formula, partIndex } of allApplicable) {
-      const isCombo =
-        formula.comboCount != null &&
-        formula.comboCount > 1 &&
-        formula.comboKey;
+      const isCombo = formula.comboKey != null;
       const storeKey = isCombo ? formula.comboKey! : formula.formulaKey;
       if (anyActivated) {
         // Disable all: set every part to 0

@@ -1932,20 +1932,20 @@ export const i18nUiData = {
       en: "Owned characters only",
       zh: "只考虑已拥有角色",
     },
-    neutralKeep: {
-      en: "Neutral keep per type",
-      zh: "过渡装保底数（低于需求时备用几个）",
-    },
     qualityMargin: {
-      en: "Quality surplus margin",
-      zh: "精良装余量数（超过需求后多留几个）",
+      en: "Demand margin (extra keep above demand)",
+      zh: "需求余量数（满足需求后多留几个备用）",
     },
-    sortByTier: { en: "Tier", zh: "品质" },
-    sortByName: { en: "Name", zh: "名称" },
+    neutralKeep: {
+      en: "Neutral backup cap (max backups when short)",
+      zh: "过渡保底数（即使需求不足时最多留几个过渡）",
+    },
     setSlotKeep: {
       en: "Min keep per set+slot",
       zh: "每套装每部位最少保留",
     },
+    sortByTier: { en: "Tier", zh: "品质" },
+    sortByName: { en: "Name", zh: "名称" },
     erHoarding: {
       en: "ER hoarding (4-liner + ER)",
       zh: "辅助套充能锁定（4初始+充能）",
@@ -2127,6 +2127,38 @@ export const i18nUiData = {
     setupStep4: {
       en: "Ensure the game client is set to Simplified Chinese",
       zh: "确保游戏客户端语言设置为简体中文",
+    },
+    syncArtifacts: {
+      en: "Sync from Scanner",
+      zh: "从扫描器同步",
+    },
+    snapshotAvailable: {
+      en: "Scanner data available",
+      zh: "扫描器数据可用",
+    },
+    snapshotDiff: {
+      en: "Scanner: {0} artifacts ({1} locked) — Local: {2} artifacts ({3} locked)",
+      zh: "扫描器：{0}个圣遗物（{1}个锁定）— 本地：{2}个（{3}个锁定）",
+    },
+    applyFullSync: {
+      en: "Apply full sync",
+      zh: "应用完整同步",
+    },
+    skipSync: {
+      en: "Skip sync",
+      zh: "跳过同步",
+    },
+    notFoundInfo: {
+      en: "{0} not found in game",
+      zh: "{0}个在游戏中未找到",
+    },
+    alreadyCorrectInfo: {
+      en: "{0} already correct — local data updated",
+      zh: "{0}个已为正确状态 — 已更新本地数据",
+    },
+    errorInfo: {
+      en: "{0} failed — unchanged",
+      zh: "{0}个失败 — 未更改",
     },
   },
   tierList: {

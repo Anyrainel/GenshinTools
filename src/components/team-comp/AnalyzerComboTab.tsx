@@ -732,15 +732,15 @@ function ReactionComboTable({
   const { t } = useLanguage();
   const rp = teamBuild.reactionProvider;
 
-  // All reaction formulas on the team, with descriptor base counts merged in
-  const rxFormulas = rp.getFormulaIds();
+  // Base reaction labels for grid rows (one row per base reaction)
+  const baseLabels = rp.getBaseFormulaLabels();
   const descriptorByFormula = useMemo(() => {
     const map: Record<string, ReactionComboEntry> = {};
     for (const entry of rxDescriptor) map[entry.id] = entry;
     return map;
   }, [rxDescriptor]);
 
-  // Resolved per-char counts at base constellations
+  // Resolved per-triggerer counts at base constellations
   const resolvedCounts = useMemo(() => {
     const constellations: Record<string, number> = {};
     for (const c of baseConfigs) constellations[c.charId] = c.constellation;
@@ -748,8 +748,8 @@ function ReactionComboTable({
   }, [rxDescriptor, baseConfigs]);
 
   const formulaEntries = useMemo(
-    () => Object.entries(rxFormulas),
-    [rxFormulas]
+    () => Object.entries(baseLabels),
+    [baseLabels]
   );
 
   return (
@@ -812,7 +812,7 @@ function ReactionComboTable({
                     );
                     const isEligible = eligible.includes(cfg.charId);
                     const defaultCount =
-                      resolvedCounts[formulaId]?.[cfg.charId] ?? 0;
+                      resolvedCounts[`${formulaId}-${cfg.charId}`] ?? 0;
                     const effectiveCount =
                       comboOverrides[overrideKey] ?? defaultCount;
                     return (

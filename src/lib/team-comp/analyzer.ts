@@ -594,77 +594,62 @@ export function deriveComboForAllocation(
       (templateTotals[line.charId][line.formulaId] ?? 0) + line.count;
   }
 
-  // Resolve per-character rx- counts: charBase + charDelta, with override support.
-  // Descriptor values already include Columbina modifier — use directly.
+  // Resolve per-triggerer rx- counts with override support.
+  // Template combo lines already have per-triggerer formula IDs (e.g. rx-overloaded-amber)
+  // with charId and default counts. We apply user overrides on top.
   const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
   const rxDescriptorMap: Record<string, (typeof rxDescriptor)[number]> = {};
   for (const entry of rxDescriptor) rxDescriptorMap[entry.id] = entry;
 
-  // All rx- formula IDs on the team (descriptor + non-descriptor)
-  const allRxFormulaIds = Object.keys(
-    teamBuild.reactionProvider.getFormulaIds()
-  );
+  // Pre-resolve per-triggerer counts from descriptors with overrides applied
+  const rxResolvedCounts: Record<string, number> = {};
+  for (const baseId of teamBuild.reactionProvider.getBaseReactionIds()) {
+    const entry = rxDescriptorMap[baseId];
+    if (!entry) continue;
 
-  // Per-character counts keyed by formulaId → { charId → count }
-  const rxCharCounts: Record<string, Record<string, number>> = {};
-  for (const formulaId of allRxFormulaIds) {
-    const entry = rxDescriptorMap[formulaId];
-    if (!entry) {
-      rxCharCounts[formulaId] = {};
-      continue;
-    }
-
-    // Check if any per-char overrides exist for this formula
+    // Check if any per-char overrides exist for this base reaction
     const hasCharOverride = entry.eligible.some(
-      (c) => comboOverrides?.[rxCharOverrideKey(c, formulaId)] != null
+      (c) => comboOverrides?.[rxCharOverrideKey(c, baseId)] != null
     );
 
     if (hasCharOverride) {
-      // User has overridden per-char counts — use directly
-      const perChar: Record<string, number> = {};
       for (const charId of entry.eligible) {
-        const override = comboOverrides?.[rxCharOverrideKey(charId, formulaId)];
-        perChar[charId] = override ?? 0;
+        const override = comboOverrides?.[rxCharOverrideKey(charId, baseId)];
+        rxResolvedCounts[`${baseId}-${charId}`] = override ?? 0;
       }
-      rxCharCounts[formulaId] = perChar;
     } else {
-      // Resolve from descriptor: base total + active deltas → distribute
       let total = entry.total;
       for (const b of entry.bonus) {
         const delta =
-          comboOverrides?.[rxDeltaOverrideKey(b.charId, formulaId)] ?? b.delta;
+          comboOverrides?.[rxDeltaOverrideKey(b.charId, baseId)] ?? b.delta;
         if ((allocation[b.charId]?.constellation ?? 0) >= b.minC) {
           total += delta;
         }
       }
-      const perChar: Record<string, number> = {};
       if (total > 0) {
         for (const charId of entry.eligible) {
-          perChar[charId] =
+          rxResolvedCounts[`${baseId}-${charId}`] =
             charId === entry.onFieldCharId
               ? Math.max(0, total - (entry.eligible.length - 1))
               : 1;
         }
       } else {
-        for (const charId of entry.eligible) perChar[charId] = 0;
+        for (const charId of entry.eligible) {
+          rxResolvedCounts[`${baseId}-${charId}`] = 0;
+        }
       }
-      rxCharCounts[formulaId] = perChar;
     }
   }
 
   // Build new lines from template, adjusting counts
-  const rxLinesHandled = new Set<string>();
   const lines: ComboLine[] = templateCombo.lines.flatMap((line) => {
-    // Reaction combo lines: expand to per-character lines
+    // Reaction combo lines: apply resolved count override
     if (line.formulaId.startsWith("rx-")) {
-      // Only emit once per formulaId (template may have one line, we expand to many)
-      if (rxLinesHandled.has(line.formulaId)) return [];
-      rxLinesHandled.add(line.formulaId);
-      const perChar = rxCharCounts[line.formulaId];
-      if (!perChar) return [line];
-      return Object.entries(perChar)
-        .filter(([, count]) => count > 0)
-        .map(([charId, count]) => ({ ...line, charId, count }));
+      const resolved = rxResolvedCounts[line.formulaId];
+      if (resolved != null) {
+        return resolved > 0 ? { ...line, count: resolved } : [];
+      }
+      return [line]; // no descriptor entry → keep template count
     }
 
     const charId = line.charId;
@@ -695,14 +680,15 @@ export function deriveComboForAllocation(
     return line;
   });
 
-  // Append rx- formulas not in the template (user-added via overrides)
-  for (const formulaId of allRxFormulaIds) {
-    if (rxLinesHandled.has(formulaId)) continue;
-    const perChar = rxCharCounts[formulaId];
-    if (!perChar) continue;
-    for (const [charId, count] of Object.entries(perChar)) {
-      if (count > 0) lines.push({ charId, formulaId, count });
-    }
+  // Append per-triggerer rx- formulas not in the template (user-added via overrides)
+  const rxInTemplate = new Set(
+    lines.filter((l) => l.formulaId.startsWith("rx-")).map((l) => l.formulaId)
+  );
+  for (const [formulaId, count] of Object.entries(rxResolvedCounts)) {
+    if (rxInTemplate.has(formulaId) || count <= 0) continue;
+    const entry = teamBuild.formulaIndex.get(formulaId);
+    const charId = entry?.statsCharId ?? "";
+    lines.push({ charId, formulaId, count });
   }
 
   return { ...templateCombo, lines };

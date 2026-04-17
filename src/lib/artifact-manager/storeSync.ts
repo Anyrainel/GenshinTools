@@ -262,3 +262,94 @@ export function applyEquipResults(
     extraWeapons: account.extraWeapons,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Snapshot diff — count-based summary for user confirmation
+// ---------------------------------------------------------------------------
+
+export interface SnapshotDiff {
+  localCount: number;
+  snapshotCount: number;
+  localLocked: number;
+  snapshotLocked: number;
+}
+
+export function computeSnapshotDiff(
+  account: AccountData,
+  snapshot: IGOODArtifact[]
+): SnapshotDiff {
+  let localCount = 0;
+  let localLocked = 0;
+  for (const c of account.characters) {
+    for (const art of Object.values(c.artifacts)) {
+      if (art) {
+        localCount++;
+        if (art.lock) localLocked++;
+      }
+    }
+  }
+  for (const art of account.extraArtifacts) {
+    localCount++;
+    if (art.lock) localLocked++;
+  }
+
+  const snapshotCount = snapshot.length;
+  const snapshotLocked = snapshot.filter((a) => a.lock).length;
+
+  return { localCount, snapshotCount, localLocked, snapshotLocked };
+}
+
+// ---------------------------------------------------------------------------
+// Job result analysis — groups results by status for UI display
+// ---------------------------------------------------------------------------
+
+export interface JobAnalysis {
+  successCount: number;
+  alreadyCorrectCount: number;
+  notFoundCount: number;
+  errorCount: number;
+  hasDiscrepancies: boolean;
+}
+
+export function analyzeManageResults(
+  payload: ManagePayload,
+  results: InstructionResult[]
+): JobAnalysis {
+  let successCount = 0;
+  let alreadyCorrectCount = 0;
+  let notFoundCount = 0;
+  let errorCount = 0;
+
+  for (const r of results) {
+    const [list, indexStr] = r.id.split(":");
+    const index = Number(indexStr);
+    // Validate this result maps to a real instruction
+    if (list === "lock" && index >= payload.lockIds.length) continue;
+    if (list === "unlock" && index >= payload.unlockIds.length) continue;
+    if (list !== "lock" && list !== "unlock") continue;
+
+    switch (r.status) {
+      case "success":
+        successCount++;
+        break;
+      case "already_correct":
+        alreadyCorrectCount++;
+        break;
+      case "not_found":
+        notFoundCount++;
+        break;
+      default:
+        errorCount++;
+        break;
+    }
+  }
+
+  return {
+    successCount,
+    alreadyCorrectCount,
+    notFoundCount,
+    errorCount,
+    hasDiscrepancies:
+      notFoundCount > 0 || alreadyCorrectCount > 0 || errorCount > 0,
+  };
+}

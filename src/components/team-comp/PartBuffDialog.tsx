@@ -78,8 +78,12 @@ function PartTab({
   comboKey?: string;
 }) {
   const hits = part.hits ?? 1;
-  const isCombo = comboCount != null && comboCount > 1 && comboKey;
-  const sliderMax = isCombo ? hits * comboCount : hits;
+  // Route to comboOverrides whenever comboKey is provided — the damage-calc
+  // path always reads from comboOverrides (single mode uses comboId
+  // "__single__" with comboCount=1). Gating on comboCount>1 leaves single-mode
+  // writes in a dead store slot.
+  const isCombo = comboKey != null;
+  const sliderMax = isCombo && comboCount != null ? hits * comboCount : hits;
   const overrides = useBuffOverrideStore((s) =>
     isCombo ? s.comboOverrides[comboKey] : s.overrides[formulaKey]
   );
@@ -293,7 +297,7 @@ export function PartBuffDialog({
 }: Props) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(initialTab);
-  const isCombo = comboCount != null && comboCount > 1 && comboKey;
+  const isCombo = comboKey != null;
   const overrides = useBuffOverrideStore((s) =>
     isCombo ? s.comboOverrides[comboKey] : s.overrides[formulaKey]
   );
