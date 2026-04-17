@@ -2,7 +2,7 @@ import {
   type WeaponChoiceOptions,
   type WeaponChoiceResult,
   runWeaponChoice,
-} from "@/lib/team-comp/weaponChoice";
+} from "@/lib/team-comp/analyzer/weaponChoice";
 import { useAsyncComputation } from "./useAsyncComputation";
 
 export interface AsyncWeaponChoiceState {

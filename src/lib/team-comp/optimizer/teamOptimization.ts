@@ -13,14 +13,14 @@ import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { scoreSlot } from "../../account-data/artifactScore";
-import { TeamBuild, evaluateCombo } from "../damageCalc";
-import { StatSheet } from "../damageModels";
+import { evaluateCombo } from "../calc/damageCalc";
 import {
   compileComboTeamDamage,
   fillVarsFromArtifacts,
-} from "../formulaCompiler";
-import { computeSubstatMarginals } from "../marginalGains";
-import type { BnBWorkerRequest, BnBWorkerResponse } from "../optimizer.worker";
+} from "../calc/formulaCompiler";
+import { computeSubstatMarginals } from "../calc/marginalGain";
+import { StatSheet } from "../calc/statSheet";
+import { TeamBuild } from "../calc/teamBuild";
 import { detectEquippedSets } from "../teamOptUtils";
 import type {
   CalcContext,
@@ -44,6 +44,7 @@ import {
 import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
 import { runLagrangianAllocation } from "./lagrangianAlloc";
+import type { BnBWorkerRequest, BnBWorkerResponse } from "./optimizer.worker";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
 type TeamOptTraceEvent =

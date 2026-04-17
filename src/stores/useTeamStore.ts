@@ -9,16 +9,16 @@ import type {
 import type {
   ComboCountOverrides,
   MinErOverrides,
-  StoredAnalyzerCharConfig,
-} from "@/lib/team-comp/analyzer";
-import type { OptionMap } from "@/lib/team-comp/damageModels";
-import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
+} from "@/lib/team-comp/analyzer/types";
+import type { StoredAnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
+import type { OptionMap } from "@/lib/team-comp/types";
+import type { ExtraBuff } from "@/lib/team-comp/types";
 import type {
   CalcContext,
   ComboFormula,
   ComboLine,
   DamageResult,
-  ReactionOverride,
+  FormulaOverride,
 } from "@/lib/team-comp/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -144,7 +144,7 @@ export function migrateTeamStore(
     // Merge reactionOverrides into combo lines, set formulaMode to "combo"
     // biome-ignore lint/suspicious/noExplicitAny: migration from legacy format
     state.teams = state.teams.map((t: any) => {
-      const overrides: Record<string, ReactionOverride> =
+      const overrides: Record<string, FormulaOverride> =
         t.reactionOverrides ?? {};
       const combos: ComboFormula[] = (t.combos ?? []).map(
         (combo: ComboFormula) => ({
@@ -154,30 +154,38 @@ export function migrateTeamStore(
             const singleOverride = overrides[key];
             if (!singleOverride) return line;
 
-            // Merge single-mode per-part config into the line's reaction
+            // Merge single-mode per-part config into the line's reaction.
+            // Old data used partReactions/partHits; normalize to rxnParts/rxnPartHits.
+            // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field names
+            const so = singleOverride as any;
+            const normalized: FormulaOverride = {
+              reaction: so.reaction,
+              rxnParts: so.rxnParts ?? so.partReactions,
+              rxnPartHits: so.rxnPartHits ?? so.partHits,
+            };
             let merged = line.reaction;
-            if (singleOverride && merged) {
+            if (normalized && merged) {
               merged = {
                 ...merged,
-                partReactions: {
-                  ...singleOverride.partReactions,
-                  ...merged.partReactions,
+                rxnParts: {
+                  ...normalized.rxnParts,
+                  ...merged.rxnParts,
                 },
-                partHits: {
-                  ...singleOverride.partHits,
-                  ...merged.partHits,
+                rxnPartHits: {
+                  ...normalized.rxnPartHits,
+                  ...merged.rxnPartHits,
                 },
               };
               // Clean up empty objects
+              if (merged.rxnParts && Object.keys(merged.rxnParts).length === 0)
+                merged.rxnParts = undefined;
               if (
-                merged.partReactions &&
-                Object.keys(merged.partReactions).length === 0
+                merged.rxnPartHits &&
+                Object.keys(merged.rxnPartHits).length === 0
               )
-                merged.partReactions = undefined;
-              if (merged.partHits && Object.keys(merged.partHits).length === 0)
-                merged.partHits = undefined;
-            } else if (singleOverride && !merged) {
-              merged = singleOverride;
+                merged.rxnPartHits = undefined;
+            } else if (normalized && !merged) {
+              merged = normalized;
             }
             return { ...line, reaction: merged };
           }),
@@ -285,7 +293,7 @@ export interface Team {
   minCr?: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;
   /** Reaction override for the selected single formula. Persisted independently from combo lines. */
-  singleReaction?: ReactionOverride;
+  singleReaction?: FormulaOverride;
   optimizationResult: OptimizationResult | null;
   calcContext?: Partial<CalcContext>;
   /** Formula mode: "single" evaluates one formula at a time, "combo" evaluates a full rotation. */
@@ -303,7 +311,7 @@ export interface Team {
   /** Flat sparse minEr overrides. Key = "charId|constellation". Value in internal format (1.6 = 160%). */
   analyzerMinErOverrides?: MinErOverrides;
   /** Per-formula reaction overrides for the analyzer (keyed by charId.formulaId). Independent from DamageView combos. */
-  analyzerReactionOverrides?: Record<string, ReactionOverride>;
+  analyzerReactionOverrides?: Record<string, FormulaOverride>;
   /** Analyzer-specific enemy aura. Independent from DamageView enemyAura. */
   analyzerEnemyAura?: Element;
   /** Analyzer-specific extra buffs. Independent from DamageView extraBuffs. */

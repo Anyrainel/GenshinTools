@@ -17,8 +17,9 @@ import type {
   AutoTuneTeamResult,
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
+import { offFieldStatus } from "@/lib/team-comp/calc/teamBuild";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
-import { TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";

@@ -1,13 +1,11 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef, TeamMeta } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor, ReactionType } from "../types";
+import { DirectFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { TeamMeta } from "../calc/teamMeta";
+import type { OptionDef } from "../types";
+import type { ComboTemplate, ReactionType } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Fontaine Characters
@@ -120,7 +118,7 @@ class Escoffier extends CharacterBase {
   })();
 
   // Rotation: E + Q (Cryo healer/support, off-field); formulas already bake in hit counts
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "escoffier-skill-parfait", count: 1 },
       { id: "escoffier-burst", count: 1 },
@@ -275,7 +273,7 @@ class Emilie extends CharacterBase {
   })();
 
   // Rotation: E + Q (off-field Dendro sub-DPS in Burning teams); formulas bake in hit counts
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "emilie-skill-cast", count: 1 },
       { id: "emilie-skill-burning", count: 1 },
@@ -400,7 +398,7 @@ class Sigewinne extends CharacterBase {
   })();
 
   // Rotation: E + Q (Hydro healer/support); Q used to fill downtime
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "sigewinne-skill", count: 1 },
       { id: "sigewinne-burst", count: 1 },
@@ -508,7 +506,7 @@ class Clorinde extends CharacterBase {
   })();
 
   // Rotation: Q > E 6[N3E] — 6 N3E cycles per E window + Q (Electro carry, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "clorinde-normal", count: 6 },
       { id: "clorinde-burst", count: 1 },
@@ -627,7 +625,7 @@ class Navia extends CharacterBase {
   })();
 
   // Rotation: Q > teammates > 2[E combo] — 2 E charges per ~16.5s rotation (Geo carry, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "navia-burst", count: 1 },
       { id: "navia-crystalshot", count: 2 },
@@ -850,7 +848,7 @@ class Furina extends CharacterBase {
   })();
 
   // Rotation: E + Q then swap off (off-field support); salon formula bakes in 32 hits
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "furina-skill-bubble", count: 1 },
       { id: "furina-salon-total", count: 1 },
@@ -1003,7 +1001,7 @@ class Neuvillette extends CharacterBase {
   })();
 
   // Rotation: E C E C Q > teammates > 2[C] — 3 CAs per rotation (Hydro carry, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "neuvillette-judgment", count: 3 },
       { id: "neuvillette-skill", count: 3 },
@@ -1150,7 +1148,7 @@ class Wriothesley extends CharacterBase {
   })();
 
   // Rotation: E 5[N3C] Q (every other rot) — ~3 normal combos + 5 CAs + Q (Cryo carry, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "wriothesley-normal", count: 3 },
       { id: "wriothesley-charge", count: 5 },
@@ -1284,7 +1282,7 @@ class Lyney extends CharacterBase {
   })();
 
   // Rotation: 3[CA] Q E — 3 Prop Arrows + 3 Strikes + E max stacks + Q (Pyro carry, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "lyney-prop", count: 3 },
       { id: "lyney-strike", count: 3 },

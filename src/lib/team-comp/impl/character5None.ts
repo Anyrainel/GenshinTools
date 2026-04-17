@@ -1,23 +1,21 @@
 import type { Element } from "@/data/types";
 
-import { travelerP3Buff } from "../constants";
-import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
   DirectFormula,
   LunarFormula,
   TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef, TeamMeta } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+} from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { TeamMeta } from "../calc/teamMeta";
+import type { FormulaEntry } from "../types";
+import type { OptionDef } from "../types";
+import type { ComboTemplate } from "../types";
+import { travelerP3Buff } from "./helpers";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ None Characters
@@ -276,7 +274,7 @@ class Skirk extends CharacterBase {
   })();
 
   // Rotation: tE > sQ (Extinction) > 4×N5D > 1 CA (rift absorb) > Q (Ruin) (freeze carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "skirk-e-normal", count: 4 },
       { id: "skirk-e-normal-2", count: 4 },
@@ -323,7 +321,7 @@ class Aloy extends CharacterBase {
   };
 
   // Rotation: E > Q (sub-DPS, minimal field time)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "aloy-burst", count: 1 }];
   }
 }
@@ -501,7 +499,7 @@ class TravelerAnemo extends CharacterBase {
   })();
 
   // Rotation: E (hold) > Q (Anemo support, quickswap)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "traveler-anemo-skill-hold", count: 1 },
       { id: "traveler-anemo-burst", count: 1 },
@@ -584,7 +582,7 @@ class TravelerGeo extends CharacterBase {
   };
 
   // Rotation: 3×E > Q (Geo sub-DPS, 6s CD with P1)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "traveler-geo-skill", count: 3 },
       { id: "traveler-geo-burst", count: 1 },
@@ -698,7 +696,7 @@ class TravelerElectro extends CharacterBase {
   })();
 
   // Rotation: E > Q (Electro battery/support, 13.5s CD)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "traveler-electro-skill", count: 1 },
       { id: "traveler-electro-burst", count: 1 },
@@ -865,7 +863,7 @@ class TravelerDendro extends CharacterBase {
   })();
 
   // Rotation: 2×E > Q (Dendro support, 8s CD)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "traveler-dendro-skill", count: 2 },
       { id: "traveler-dendro-burst", count: 1 },
@@ -956,7 +954,7 @@ class TravelerHydro extends CharacterBase {
   })();
 
   // Rotation: 2×E > Q (Hydro sub-DPS, 10s CD)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "traveler-hydro-skill", count: 2 },
       { id: "traveler-hydro-thorn", count: 2 },
@@ -1093,7 +1091,7 @@ class TravelerPyro extends CharacterBase {
   })();
 
   // Rotation: hE > Q > swap (off-field Pyro support)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "traveler-pyro-skill", count: 1 },
       { id: "traveler-pyro-burst", count: 1 },
@@ -1139,7 +1137,7 @@ function manekinFormulas(
 }
 
 // Manekin/Manekina rotation: 2×E (2 charges) > Q > swap (off-field support)
-const manekinDefaultRotation: ComboDescriptor = [
+const manekinDefaultRotation: ComboTemplate = [
   { id: "manekin-skill", count: 2 },
   { id: "manekin-burst", count: 1 },
   { id: "manekin-p1-explosion", count: 1 },
@@ -1152,7 +1150,7 @@ class ManekinAnemo extends CharacterBase {
     this.param.bind(this),
     "Anemo"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1164,7 +1162,7 @@ class ManekinCryo extends CharacterBase {
     this.param.bind(this),
     "Cryo"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1176,7 +1174,7 @@ class ManekinDendro extends CharacterBase {
     this.param.bind(this),
     "Dendro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1188,7 +1186,7 @@ class ManekinElectro extends CharacterBase {
     this.param.bind(this),
     "Electro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1197,7 +1195,7 @@ class ManekinElectro extends CharacterBase {
 class ManekinGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(this.param.bind(this), "Geo");
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1209,7 +1207,7 @@ class ManekinHydro extends CharacterBase {
     this.param.bind(this),
     "Hydro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1221,7 +1219,7 @@ class ManekinPyro extends CharacterBase {
     this.param.bind(this),
     "Pyro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1233,7 +1231,7 @@ class ManekinaAnemo extends CharacterBase {
     this.param.bind(this),
     "Anemo"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1245,7 +1243,7 @@ class ManekinaCryo extends CharacterBase {
     this.param.bind(this),
     "Cryo"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1257,7 +1255,7 @@ class ManekinaDendro extends CharacterBase {
     this.param.bind(this),
     "Dendro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1269,7 +1267,7 @@ class ManekinaElectro extends CharacterBase {
     this.param.bind(this),
     "Electro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1278,7 +1276,7 @@ class ManekinaElectro extends CharacterBase {
 class ManekinaGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(this.param.bind(this), "Geo");
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1290,7 +1288,7 @@ class ManekinaHydro extends CharacterBase {
     this.param.bind(this),
     "Hydro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }
@@ -1302,7 +1300,7 @@ class ManekinaPyro extends CharacterBase {
     this.param.bind(this),
     "Pyro"
   );
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return manekinDefaultRotation;
   }
 }

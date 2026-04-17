@@ -1,8 +1,6 @@
-import {
-  ArtifactHalfSetBase,
-  RegisterArtifactHalfSet,
-  StatBuff,
-} from "../damageModels";
+import { ArtifactHalfSetBase } from "../calc/implModel";
+import { RegisterArtifactHalfSet } from "../calc/registry";
+import { StatBuff } from "../calc/statBuff";
 import type { StatEntry } from "../types";
 
 // ═══════════════════════════════════════════════════════════════

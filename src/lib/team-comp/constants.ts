@@ -1,10 +1,6 @@
-import { charactersById } from "@/data/constants";
 import type { Element } from "@/data/types";
 
-import { StatBuff } from "./damageBuffs";
-import type { CharacterBase } from "./damageModels";
-import { cbs } from "./helpers";
-import type { LunarReactionType, ReactionType, StatEntry } from "./types";
+import type { LunarReactionType, ReactionType, StatKey } from "./types";
 
 // ─── Reaction Groups ───
 
@@ -163,34 +159,6 @@ export function getFormulaReactions(
 /** Characters who always have 0 energy during their damage window (e.g., energy consumed on burst cast). */
 export const ZERO_ENERGY_CHARS = new Set(["skirk", "mavuika"]);
 
-// ─── Traveler Cross-Resonance (glossary passive "buffs") ───
-
-/**
- * Every Traveler variant gains these stat bonuses on self for each element
- * they have resonated with. The six released elements are always active;
- * Cryo is gated on `traveler_cryo` existing in the character data — remove
- * the guard once the unit ships.
- */
-export const TRAVELER_RESONANCE_ENTRIES: StatEntry[] = [
-  { key: "cr", value: 0.1 }, // Anemo
-  { key: "def%", value: 0.2 }, // Geo
-  { key: "er", value: 0.2 }, // Electro
-  { key: "em", value: 60 }, // Dendro
-  { key: "hp%", value: 0.2 }, // Hydro
-  { key: "atk%", value: 0.2 }, // Pyro
-  ...(charactersById.traveler_cryo != null
-    ? [{ key: "cd" as const, value: 0.2 }] // Cryo
-    : []),
-];
-
-export function travelerP3Buff(self: CharacterBase): StatBuff {
-  return new StatBuff(
-    cbs(self, "P3", ["passive"]),
-    { receiver: "self" },
-    TRAVELER_RESONANCE_ENTRIES
-  );
-}
-
 /**
  * When a lunar reaction is possible, it supersedes the base reaction.
  * electroCharged/bloom: full supersede (identical element requirements).
@@ -214,4 +182,25 @@ export const LUNAR_SUPERSEDES: Partial<
     lunar: "lunarCrystallize",
     survivalElements: ["Pyro", "Electro", "Cryo"],
   },
-};
+}; // ─── All possible artifact stat keys ───
+/** Stats that can appear on artifacts (main + sub). */
+export const ARTIFACT_STAT_KEYS: StatKey[] = [
+  "hp",
+  "hp%",
+  "atk",
+  "atk%",
+  "def",
+  "def%",
+  "em",
+  "er",
+  "cr",
+  "cd",
+  "pyro%",
+  "hydro%",
+  "electro%",
+  "cryo%",
+  "dendro%",
+  "anemo%",
+  "geo%",
+  "phys%",
+];

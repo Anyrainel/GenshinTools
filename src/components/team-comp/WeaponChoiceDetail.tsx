@@ -6,20 +6,20 @@ import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncWeaponChoice } from "@/hooks/useAsyncWeaponChoice";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { getEffectiveCombo } from "@/lib/team-comp/effectiveCombo";
-import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
+import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { getEffectiveCombo } from "@/lib/team-comp/helpers";
 import {
   buildTeamConfigs,
   buildWeaponChoiceCharConfigs,
 } from "@/lib/team-comp/teamOptUtils";
+import type { ExtraBuff } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
   ComboLine,
+  FormulaOverride,
   I18nLabel,
-  ReactionOverride,
 } from "@/lib/team-comp/types";
-import type { WeaponChoiceOptions } from "@/lib/team-comp/weaponChoice";
 import { cn } from "@/lib/utils";
 import type { Team, WeaponChoiceResult } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -237,7 +237,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
       charId: string,
       formulaId: string,
       reaction: string,
-      override: ReactionOverride
+      override: FormulaOverride
     ) => {
       if (formulaMode === "single") {
         updateTeam(team.id, { singleReaction: override });
@@ -272,7 +272,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
       const sameFormula =
         prev?.charId === charId && prev?.formulaId === formulaId;
       const prevReaction = sameFormula ? team.singleReaction : undefined;
-      const newReaction: ReactionOverride | undefined =
+      const newReaction: FormulaOverride | undefined =
         reaction === "none"
           ? undefined
           : {

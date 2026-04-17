@@ -27,10 +27,11 @@ import type {
   Slot,
   TierAssignment,
 } from "@/data/types";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { fmtDamage } from "@/lib/team-comp/displayFormatters";
-import type { GeneratorResult } from "@/lib/team-comp/generator";
-import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { fmtDamage } from "@/lib/team-comp/displayFormatter";
+import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
+import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/generator/substatBudget";
+import { buffSourceKey } from "@/lib/team-comp/helpers";
 import {
   aggregateComboFormulaDefaults,
   toStatSheets,
@@ -48,7 +49,6 @@ import type {
   DisplayResult,
   StatKey,
 } from "@/lib/team-comp/types";
-import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -122,8 +122,8 @@ function hasPartialReaction(line: ComboLine): boolean {
   const ov = line.reaction;
   if (!ov) return false;
   return (
-    (ov.partReactions != null && Object.keys(ov.partReactions).length > 0) ||
-    (ov.partHits != null && Object.keys(ov.partHits).length > 0)
+    (ov.rxnParts != null && Object.keys(ov.rxnParts).length > 0) ||
+    (ov.rxnPartHits != null && Object.keys(ov.rxnPartHits).length > 0)
   );
 }
 

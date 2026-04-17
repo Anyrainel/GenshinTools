@@ -1,8 +1,9 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
-import { CharacterBase, RegisterCharacter } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+import { DirectFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Fontaine Characters
@@ -110,7 +111,7 @@ class Chevreuse extends CharacterBase {
   })();
 
   // Rotation: E press + Q (grenade + ~4 shells hitting single target); C2 chain once/10s
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "chevreuse-e-press", count: 1 },
       { id: "chevreuse-c2-chain", count: 1 },
@@ -207,7 +208,7 @@ class Charlotte extends CharacterBase {
   })();
 
   // Rotation: E hold + Q (initial + ~2 ticks during 4s field); C6 coord once/6s ≈ 3 per rotation
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "charlotte-e-hold", count: 1 },
       { id: "charlotte-q-initial", count: 1 },
@@ -310,7 +311,7 @@ class Freminet extends CharacterBase {
   })();
 
   // Rotation: EQ N2E 3[EN2E] — 4× Lv4 Shattering Pressure + Q (physical carry, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "freminet-shatter-lv4", count: 4 },
       { id: "freminet-burst", count: 1 },

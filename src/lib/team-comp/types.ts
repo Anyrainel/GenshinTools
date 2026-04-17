@@ -9,8 +9,15 @@ import type {
   SubStat,
 } from "@/data/types";
 
-import type { StatSheet } from "./damageModels";
-import type { SubstatBudgetPreset } from "./substatBudget";
+import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
+import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
+import type { CharBuild } from "./calc/charBuild";
+import type { DamageFormula } from "./calc/damageFormula";
+import type { StatBuff } from "./calc/statBuff";
+import type { StatSheet } from "./calc/statSheet";
+import type { TeamBuild } from "./calc/teamBuild";
+import type { TeamMeta } from "./calc/teamMeta";
+import type { SubstatBudgetPreset } from "./generator/substatBudget";
 
 /**
  * All stat keys the engine tracks.
@@ -71,10 +78,6 @@ export const FINAL_STAT_KEYS: ReadonlySet<StatKey> = new Set([
   "lunar%",
 ]);
 
-export function isFinalStatKey(key: StatKey): boolean {
-  return FINAL_STAT_KEYS.has(key);
-}
-
 // ─── Buff System ───
 
 /** Display-only provenance. Does not affect calculation. */
@@ -114,12 +117,6 @@ export type BuffSource = {
 /** buffKey → { partIndex → activatedHits } */
 export type BuffActivationMap = Record<string, Record<number, number>>;
 
-/** Canonical key for a BuffSource, used in BuffActivationMap and override store. */
-export function buffSourceKey(source: BuffSource): string {
-  const base = `${source.type}:${source.id}:${source.origin ?? ""}`;
-  return source.internalKey ? `${base}:${source.internalKey}` : base;
-}
-
 /**
  * Lightweight buff identification for interval-based blending.
  * Contains only the buff's identity and per-part activation counts.
@@ -131,11 +128,6 @@ export type PartialBuffInfo = {
   /** Part index → activated hits. Missing = fully active (no blending). */
   partActivation: Record<number, number>;
 };
-
-/** Build a deterministic cache key from a set of excluded buff keys. */
-export function exclusionKey(excludeKeys: Set<string>): string {
-  return [...excludeKeys].sort().join("|");
-}
 
 /** Character field state — "on" = on-field, "off" = off-field. */
 export type FieldState = "on" | "off";
@@ -150,33 +142,6 @@ export type BuffReceiverType =
   | "teamOnField"
   | "teamOffField"
   | "team";
-
-// ─── Receiver classification helpers ────────────────────────────────────────
-
-/** Receiver targets the provider's own stat sheet (vs. reaching other characters). */
-export function isSelfReceiver(r: BuffReceiverType): boolean {
-  return r === "self" || r === "selfOnField" || r === "selfOffField";
-}
-
-/** Receiver depends on field state (on-field / off-field) to resolve. */
-export function isFieldDependentReceiver(r: BuffReceiverType): boolean {
-  return r !== "self" && r !== "other" && r !== "team";
-}
-
-/**
- * Is this character on-field in the given field configuration?
- * When nobody is specified as on-field (null), everyone is off-field.
- */
-export function isOnField(charId: string, onFieldCharId: string): boolean {
-  return charId === onFieldCharId;
-}
-
-/** Extract the field requirement from a receiver type. null = field-independent. */
-export function fieldReq(r: BuffReceiverType): "on" | "off" | null {
-  if (r.endsWith("OnField")) return "on";
-  if (r.endsWith("OffField")) return "off";
-  return null;
-}
 
 export type AbilityType =
   | "normal"
@@ -253,6 +218,144 @@ export type BuffTarget = {
   factions?: Faction[];
   /** If set, buff only applies to the character with this ID. */
   charId?: string;
+};
+
+// ═══════════════════════════════════════════════════════════════
+// Combat Options (Schema-Driven)
+// ═══════════════════════════════════════════════════════════════
+/** A single selectable value in an OptionDef. */
+
+export type OptionEntry = {
+  value: string;
+  label: I18nLabel;
+  /** If provided, this choice is disabled when the predicate returns false. */
+  when?: (teamMeta: TeamMeta) => boolean;
+};
+/**
+ * Declarative option schema for a provider (character, weapon, or artifact set).
+ * Defines a single select control with labeled choices.
+ * UI renders as a toggle (2 choices) or dropdown (3+).
+ */
+
+export type OptionDef = {
+  label: I18nLabel;
+  choices: readonly OptionEntry[];
+};
+/**
+ * Infer the typed option value union from an `as const` OptionDef.
+ * Usage: `type DurinOption = InferOption<typeof durinOption>; // "dps" | "support"`
+ */
+
+export type InferOption<D extends OptionDef> = D["choices"][number]["value"];
+/**
+ * User-selected combat options, keyed by provider ID (charId or weaponId).
+ * Each value is the selected option string for that provider.
+ * Providers with no entry get `""` → falls back to first enabled choice via `resolveOption()`.
+ */
+
+export type OptionMap = Record<string, string>;
+
+/** A single formula with an optional hit count (defaults to 1). */
+export type FormulaPart = {
+  formula: DamageFormula;
+  hits?: number;
+  /** Per-part buffs applied only when computing this part (selfOnField scope).
+   *  Accepts any StatBuff subclass (StatBuff, ScalingBuff, CrossScalingBuff). */
+  bespokeBuffs?: StatBuff[];
+  /** If true, damage is dealt while the character is off-field.
+   *  On-field buffs (onField, selfOnField) will NOT apply. */
+  offField?: boolean;
+};
+/** Declarative entry in a character's formulaMap. */
+export type FormulaEntry = {
+  label: I18nLabel;
+  parts: FormulaPart[];
+  /** Owner of this formula: a charId, or "team" for reaction formulas.
+   *  Populated by the engine during formulaIndex construction.
+   *  Undefined until the entry is registered in a formulaIndex. */
+  owner?: string;
+  /** Override for the character whose stats are used during evaluation.
+   *  When set, `line.charId` is resolved to this value instead of `owner`.
+   *  Used by cross-scaled formulas (Nicole projections, reaction triggerers). */
+  statsCharId?: string;
+  /** Minimum constellation required (0-6). Omit or 0 = always available. */
+  minC?: number;
+  /** Additional availability condition (evaluated at construction time).
+   *  `false` = formula is disabled (shown in UI but greyed out, excluded from combo).
+   *  Omit or `true` = available (subject to minC check).
+   *  The full condition is: `constellation >= (minC ?? 0) && when !== false`. */
+  when?: boolean;
+};
+
+export type ProvidedStaticBuff = {
+  buff: StatBuff;
+  providerCharId: string;
+};
+/** Precomputed context for repeated optimizer evaluations. */
+
+export type OptimizerContext = {
+  swapCharId: string;
+  /** All character IDs whose artifact stats are variable (includes swapCharId). */
+  variableCharIds: Set<string>;
+  /** Which character is on-field. */
+  onFieldCharId: string;
+  ctx?: CalcContext;
+  targetDependent: Record<string, ProvidedStaticBuff[]>;
+  /** Pre-computed stats for non-variable characters (artifact sheets baked in). */
+  supportPreStats: Record<string, StatSheet>;
+  charBuildOrder: [string, CharBuild][];
+  /** Original artifact stat sheets (needed for off-field stat recomputation). */
+  baseSheets: Record<string, StatSheet>;
+  /**
+   * When set, this is a unified context: supportPreStats contain both on/off
+   * field entries tagged with f:on/f:off. Use ExprStats.withFieldState() to
+   * get per-part views instead of building separate off-field contexts.
+   */
+  unifiedFieldDep?: Record<
+    string,
+    { onField: ProvidedStaticBuff[]; offField: ProvidedStaticBuff[] }
+  >;
+};
+
+/**
+ * An extra buff applied by the user (food, environment, status, or custom).
+ * Stored on Team.extraBuffs, consumed by TeamBuild when constructing stat sheets.
+ */
+
+export type ExtraBuff = {
+  /** Unique instance ID for removal. */
+  id: string;
+  /** Links to an EnvBuff id for display; undefined for custom buffs. */
+  presetId?: string;
+  /** 'team' from team-wide, or a charId for per-character. */
+  target: "team" | string;
+  /** Stat contributions. Uses engine format: flat for hp/atk/def/em, fractional for %. */
+  stats: { key: StatKey; value: number }[];
+  /** Optional max stacks (for engine integration). */
+  maxStacks?: number;
+};
+
+// ─── Reaction Combo Descriptor ───
+/** Constellation-gated additive delta for a reaction combo entry,
+ *  tagged with the character whose constellation gates it. */
+
+export type ReactionComboDelta = {
+  charId: string;
+  minC: number;
+  delta: number;
+};
+/** One reaction formula's combo descriptor.
+ *  `total` is the base trigger count (with Columbina ×4/3 baked in).
+ *  `eligible` lists participating charIds in team-slot order.
+ *  `onFieldCharId` receives the remainder after giving 1 to each other eligible.
+ *  `bonus` lists constellation-gated additive deltas to the total. */
+
+export type ReactionComboEntry = {
+  id: string;
+  total: number;
+  eligible: string[];
+  onFieldCharId: string;
+  bonus: ReactionComboDelta[];
 };
 
 // ─── Reactions (re-exported from @/data/types — canonical definitions live there) ───
@@ -450,40 +553,18 @@ export type CalcContext = {
  *  partReactions stores explicit overrides (typically "none" to disable a part).
  *  partHits stores how many hits of a multi-hit part should react (rest use "none").
  */
-export type ReactionOverride = {
-  reaction?: ReactionType; // gate reaction
-  partReactions?: Record<number, ReactionType>; // per-part overrides (sparse: only non-default)
-  partHits?: Record<number, number>; // per-part reacting hit count (for multi-hit parts)
-  forceOnField?: boolean; // treat off-field parts as on-field for stat computation
+export type FormulaOverride = {
+  reaction?: ReactionType; // which reaction to override to
+  rxnParts?: Record<number, ReactionType>; // which parts get new reaction
+  rxnPartHits?: Record<number, number>; // which hits in said part get new reaction
+
+  forceOnField?: boolean; // force all off-field parts to be on-field (intentional playstyle change)
 };
-
-/** Resolve the effective reaction for a formula part given overrides.
- *  Default behavior: ALL parts inherit the gate reaction (if element-eligible).
- *  Parts can be explicitly turned off via partReactions[idx] = "none".
- */
-export function resolvePartReaction(
-  override: ReactionOverride | undefined,
-  partIndex: number,
-  eligibleReactions: ReactionType[] | undefined
-): ReactionType {
-  // No override → no reaction
-  if (!override?.reaction || override.reaction === "none") return "none";
-
-  // Per-part override takes priority (used to disable specific parts)
-  if (override.partReactions?.[partIndex] != null)
-    return override.partReactions[partIndex];
-
-  // Default: all parts inherit the gate if element-eligible
-  if (eligibleReactions?.includes(override.reaction)) return override.reaction;
-
-  // Element can't use this reaction at all
-  return "none";
-}
 
 // ─── Combo Descriptor ───
 
 /** A single entry in a ComboDescriptor — one formula's hit count in a rotation. */
-export type ComboEntry = {
+export type ComboTemplateEntry = {
   id: string;
   count: number;
   /** Constellation-dependent count adjustments, applied additively when met. */
@@ -502,28 +583,7 @@ export type ConstellationDelta = {
  * Declarative rotation descriptor — an ordered array of ComboEntry.
  * Resolved into a flat Record<string, number> by resolveComboDescriptor().
  */
-export type ComboDescriptor = ComboEntry[];
-
-/**
- * Resolve a ComboDescriptor into a flat { formulaId → count } map,
- * applying constellation-dependent bonuses.
- */
-export function resolveComboDescriptor(
-  descriptor: ComboDescriptor,
-  constellation: number
-): Record<string, number> {
-  const result: Record<string, number> = {};
-  for (const entry of descriptor) {
-    let count = entry.count;
-    if (entry.bonus) {
-      for (const b of entry.bonus) {
-        if (constellation >= b.minC) count += b.delta;
-      }
-    }
-    result[entry.id] = count;
-  }
-  return result;
-}
+export type ComboTemplate = ComboTemplateEntry[];
 
 // ─── Combo Formulas (Rotation Modeling) ───
 
@@ -531,7 +591,7 @@ export type ComboLine = {
   charId: string; // whose formula (on-field for on-field parts only)
   formulaId: string; // which formula from that character
   count: number; // repetitions (e.g., 9)
-  reaction?: ReactionOverride; // per-line reaction override
+  reaction?: FormulaOverride; // per-line reaction override
 };
 
 export type ComboFormula = {
@@ -539,19 +599,6 @@ export type ComboFormula = {
   label: I18nLabel; // user-given name
   lines: ComboLine[];
 };
-
-/** Wrap a single formula into a 1-line ComboFormula. */
-export function singleFormulaCombo(
-  charId: string,
-  formulaId: string,
-  reaction?: ReactionOverride
-): ComboFormula {
-  return {
-    id: "__single__",
-    label: { zh: "", en: "" },
-    lines: [{ charId, formulaId, count: 1, reaction }],
-  };
-}
 
 export type ComboResult = {
   lineDamages: { perHit: number; total: number }[];
@@ -588,10 +635,6 @@ export type TeamSlotConfig = {
 // (co-located with TeamMeta and resolveOption that consume them).
 
 // ─── Optimizer Types (shared across V1, V2, Mona, benchmark) ───
-
-import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
-import type { TeamBuild } from "./damageCalc";
 
 export type OptFailReason =
   | { kind: "empty-pool"; emptySlots: Slot[] }

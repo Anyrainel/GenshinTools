@@ -31,8 +31,10 @@ import {
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer";
 import type {
   CharOptConfig,
@@ -40,7 +42,6 @@ import type {
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import { singleFormulaCombo } from "@/lib/team-comp/types";
 import type {
   CalcContext,
   ComboFormula,

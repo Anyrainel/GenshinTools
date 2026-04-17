@@ -1,13 +1,10 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor, ElementalOrPhysical } from "../types";
+import { DirectFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { OptionDef } from "../types";
+import type { ComboTemplate, ElementalOrPhysical } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Natlan Characters
@@ -198,7 +195,7 @@ class Iansan extends CharacterBase {
   })();
 
   // Rotation: E > N1(Swift Stormflight) > Q (ATK support, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "iansan-skill", count: 1 },
       { id: "iansan-burst", count: 1 },
@@ -341,7 +338,7 @@ class Ororon extends CharacterBase {
   })();
 
   // Rotation: E Q N2 > swap (sub-DPS, Hypersense ×8 baked in, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "ororon-skill", count: 1 },
       { id: "ororon-burst", count: 1 },
@@ -443,7 +440,7 @@ class Kachina extends CharacterBase {
   })();
 
   // Rotation: E (Turbo Twirly independent ~6 hits over 12s) > Q (sub-DPS, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "kachina-twirly", count: 6 },
       { id: "kachina-burst", count: 1 },

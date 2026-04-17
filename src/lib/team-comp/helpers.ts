@@ -1,58 +1,72 @@
-import type { Element } from "@/data/types";
+import type { Team } from "@/stores/useTeamStore";
+import {
+  type BuffSource,
+  type ComboFormula,
+  type ComboLine,
+  FINAL_STAT_KEYS,
+  type StatKey,
+} from "./types";
 
-import type { BuffSource, DamageTagFilter, StatEntry, StatKey } from "./types";
-
-/** Pick a refinement-scaled value (R1–R5, 1-indexed refinement). */
-export function r(
-  refinement: number,
-  values: [number, number, number, number, number]
-): number {
-  return values[refinement - 1]!;
+/** Build a deterministic cache key from a set of excluded buff keys. */
+export function exclusionKey(excludeKeys: Set<string>): string {
+  return [...excludeKeys].sort().join("|");
 }
 
-/** Weapon buff source. */
-export function wbs(
-  self: { weaponId: string; refinement: number },
-  triggers?: string[],
-  noStackId?: string
-): BuffSource {
+/** Canonical key for a BuffSource, used in BuffActivationMap and override store. */
+export function buffSourceKey(source: BuffSource): string {
+  const base = `${source.type}:${source.id}:${source.origin ?? ""}`;
+  return source.internalKey ? `${base}:${source.internalKey}` : base;
+}
+
+export function isFinalStatKey(key: StatKey): boolean {
+  return FINAL_STAT_KEYS.has(key);
+}
+
+const EMPTY_LABEL = { en: "", zh: "" } as const;
+
+/**
+ * Returns the `ComboFormula` that damage-calc consumers should use.
+ *
+ * - Single mode: synthesizes a 1-line combo from `team.selectedFormula` +
+ *   `team.singleReaction`. If no formula is selected, returns an empty combo.
+ * - Combo mode: returns `team.combos[team.selectedCombo]` with `count <= 0`
+ *   lines filtered out.
+ */
+export function getEffectiveCombo(
+  team: Pick<
+    Team,
+    | "formulaMode"
+    | "selectedFormula"
+    | "singleReaction"
+    | "combos"
+    | "selectedCombo"
+  >
+): ComboFormula {
+  const mode = team.formulaMode ?? "single";
+
+  if (mode === "single") {
+    const sel = team.selectedFormula;
+    if (!sel) {
+      return { id: "__single_empty__", label: EMPTY_LABEL, lines: [] };
+    }
+    const line: ComboLine = {
+      charId: sel.charId,
+      formulaId: sel.formulaId,
+      count: 1,
+      reaction: team.singleReaction,
+    };
+    return { id: "__single__", label: EMPTY_LABEL, lines: [line] };
+  }
+
+  // combo mode
+  const selected =
+    (team.combos ?? []).find((c) => c.id === team.selectedCombo) ??
+    team.combos?.[0];
+  if (!selected) {
+    return { id: "__combo_empty__", label: EMPTY_LABEL, lines: [] };
+  }
   return {
-    type: "weapon",
-    id: self.weaponId,
-    triggers,
-    noStackId,
-    origin: `R${self.refinement}`,
+    ...selected,
+    lines: selected.lines.filter((l) => l.count > 0),
   };
-}
-
-/** Character buff source. */
-export function cbs(
-  self: { charId: string },
-  origin: string,
-  triggers?: string[]
-): BuffSource {
-  return { type: "character", id: self.charId, triggers, origin };
-}
-
-/** Filter matching all 7 elements (not Physical). Use with `dmg%` entries. */
-export const ALL_ELEMENTAL_FILTER: DamageTagFilter = {
-  elements: ["Anemo", "Cryo", "Dendro", "Electro", "Geo", "Hydro", "Pyro"],
-};
-
-// ─── Reaction Proc Table (for Scroll of the Hero of Cinder City) ───
-// Maps a proc element to the attach elements it reacts with.
-const REACTION_TO_AURA_ELEMENTS: Record<Element, readonly Element[]> = {
-  Pyro: ["Hydro", "Electro", "Cryo", "Dendro"],
-  Hydro: ["Pyro", "Electro", "Cryo", "Dendro"],
-  Electro: ["Pyro", "Hydro", "Cryo", "Dendro"],
-  Cryo: ["Pyro", "Hydro", "Electro"],
-  Dendro: ["Pyro", "Hydro", "Electro", "Cryo"],
-  Anemo: ["Pyro", "Hydro", "Electro", "Cryo"],
-  Geo: ["Pyro", "Hydro", "Electro", "Cryo"],
-};
-
-export function getReactionAuraElements(
-  triggerElement: Element
-): readonly Element[] {
-  return REACTION_TO_AURA_ELEMENTS[triggerElement];
 }

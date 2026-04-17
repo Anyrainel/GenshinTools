@@ -4,7 +4,7 @@ import {
   fmtDamage,
   fmtPercent,
   fmtStat,
-} from "@/lib/team-comp/displayFormatters";
+} from "@/lib/team-comp/displayFormatter";
 import type {
   BuffActivationMap,
   CritMode,

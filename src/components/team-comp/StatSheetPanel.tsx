@@ -6,8 +6,8 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { StatSheet } from "@/lib/team-comp/damageModels";
-import { fmtPercent, fmtStat } from "@/lib/team-comp/displayFormatters";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { fmtPercent, fmtStat } from "@/lib/team-comp/displayFormatter";
 import type { DisplayResult, StatKey } from "@/lib/team-comp/types";
 import { filterMatchesTag } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";

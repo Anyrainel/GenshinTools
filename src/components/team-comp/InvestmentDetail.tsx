@@ -8,20 +8,22 @@ import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import type { AnalyzerOptions } from "@/lib/team-comp/analyzer/types";
 import type {
-  AnalyzerCharConfig,
-  AnalyzerOptions,
   ComboCountOverrides,
   MinErOverrides,
+} from "@/lib/team-comp/analyzer/types";
+import type {
+  AnalyzerCharConfig,
   StoredAnalyzerCharConfig,
-} from "@/lib/team-comp/analyzer";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
+} from "@/lib/team-comp/analyzer/types";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
+import type { ExtraBuff } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
   ComboLine,
-  ReactionOverride,
+  FormulaOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
@@ -304,7 +306,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   }, [templateCombo, reactionOverrides]);
 
   const handleReactionChange = useCallback(
-    (stableKey: string, override: ReactionOverride) => {
+    (stableKey: string, override: FormulaOverride) => {
       updateTeam(team.id, {
         analyzerReactionOverrides: {
           ...reactionOverrides,

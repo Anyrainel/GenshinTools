@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import {
+  isAnalyzerResult,
+  runAnalysis,
+} from "@/lib/team-comp/analyzer/analyzer";
+import type { AnalyzerOptions } from "@/lib/team-comp/analyzer/types";
 import type {
-  AnalyzerOptions,
   AnalyzerProgress,
   AnalyzerResult,
-} from "@/lib/team-comp/analyzer";
-import { isAnalyzerResult, runAnalysis } from "@/lib/team-comp/analyzer";
+} from "@/lib/team-comp/analyzer/types";
 import { useAnalyzerCacheStore } from "@/stores/useAnalyzerCacheStore";
 
 /** Build a cache key from the analyzer options that affect the result. */
@@ -28,7 +31,7 @@ function buildCacheKey(opts: AnalyzerOptions): string {
     .map((l) => {
       const rx = l.reaction;
       const rxStr = rx
-        ? `${rx.reaction ?? ""}|${JSON.stringify(rx.partReactions ?? {})}|${JSON.stringify(rx.partHits ?? {})}`
+        ? `${rx.reaction ?? ""}|${JSON.stringify(rx.rxnParts ?? {})}|${JSON.stringify(rx.rxnPartHits ?? {})}`
         : "";
       return `${l.charId}:${l.formulaId}:${l.count}:${rxStr}`;
     })

@@ -1,8 +1,10 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
+import { WeaponBase } from "../calc/implModel";
+import { RegisterWeapon, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { OptionDef } from "../types";
 import type { StatKey } from "../types";
+import { ALL_ELEMENTAL_FILTER } from "./helpers";
+import { r, wbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Bows

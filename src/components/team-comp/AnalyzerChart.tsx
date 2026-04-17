@@ -1,6 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type { AnalyzerResult, AnalyzerStep } from "@/lib/team-comp/analyzer";
+import type {
+  AnalyzerResult,
+  AnalyzerStep,
+} from "@/lib/team-comp/analyzer/types";
 import { getAssetUrl } from "@/lib/utils";
 import { useMemo } from "react";
 import {

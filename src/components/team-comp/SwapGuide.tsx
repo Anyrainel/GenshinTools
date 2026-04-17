@@ -22,7 +22,7 @@ import {
 import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {

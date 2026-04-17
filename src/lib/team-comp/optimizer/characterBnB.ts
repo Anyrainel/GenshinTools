@@ -11,14 +11,14 @@ import type { ArtifactData, GlobalStatWeights, MainStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
-import type { TeamBuild } from "../damageCalc";
-import { StatSheet } from "../damageModels";
 import {
   buildArtifactVarLookup,
   compileComboTeamDamage,
   fillVarsFromRawStats,
   makeCompiledEvalDamage,
-} from "../formulaCompiler";
+} from "../calc/formulaCompiler";
+import { StatSheet } from "../calc/statSheet";
+import type { TeamBuild } from "../calc/teamBuild";
 import type {
   CalcContext,
   CharOptConfig,

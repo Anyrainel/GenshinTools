@@ -25,7 +25,7 @@ import type {
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";

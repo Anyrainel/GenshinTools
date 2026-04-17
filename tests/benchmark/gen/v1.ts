@@ -1,12 +1,10 @@
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
-import {
-  TeamBuild,
-  evaluateCombo,
-  hasOffFieldParts,
-} from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 /**
  * V1 Team Optimizer: Hill-Climbing with Greedy Allocation
  *
@@ -19,8 +17,8 @@ import type {
   CharOptConfig,
   ComboFormula,
   ComboResult,
+  FormulaOverride,
   PartialBuffInfo,
-  ReactionOverride,
   TeamOptPassId,
   TeamOptPassResult,
   TeamOptYield,
@@ -34,7 +32,7 @@ import {
   type OptimizationResult,
   type OptimizerOptions,
   runOptimization,
-} from "../../lib/team-comp/optimizerV1";
+} from "../../lib/team-comp/optimizer/optimizerV1";
 
 const warnedCalcErrors = new Set<string>();
 
@@ -108,7 +106,7 @@ function computeFinalScore(
   carryCharId: string,
   formulaId: string,
   calcContext: CalcContext,
-  reactionOverride: ReactionOverride | undefined,
+  reactionOverride: FormulaOverride | undefined,
   isComboMode: boolean,
   combo: ComboFormula | undefined,
   buffOverrides?: Record<number, PartialBuffInfo[]>

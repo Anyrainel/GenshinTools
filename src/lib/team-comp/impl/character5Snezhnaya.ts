@@ -1,27 +1,24 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
   type DamageFormula,
   DirectFormula,
   TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  RegisterCharacter,
-  type StatSheet,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { E, type Expr, simplify } from "../expr";
-import type { ExprStats } from "../exprStats";
-import { cbs } from "../helpers";
+} from "../calc/damageFormula";
+import { E, type Expr, simplify } from "../calc/expr";
+import type { ExprStatSheet } from "../calc/exprStatSheet";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { StatSheet } from "../calc/statSheet";
+import type { OptionDef } from "../types";
 import type {
   CalcContext,
-  ComboDescriptor,
+  ComboTemplate,
   DamageTag,
   DisplayPart,
 } from "../types";
+import { cbs } from "./helpers";
 
 class ArlecchinoNormalFormula extends DirectFormula {
   constructor(
@@ -49,7 +46,7 @@ class ArlecchinoNormalFormula extends DirectFormula {
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
   }
 
-  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+  protected override getBaseDmgExpr(stats: ExprStatSheet): Expr {
     const currentBol = this.getBol();
     const talentDmg = E.mul(
       stats.get(this.scalingKey, this.tag),
@@ -119,7 +116,7 @@ class ArlecchinoNormalAmplifyFormula extends AmplifyFormula {
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
   }
 
-  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+  protected override getBaseDmgExpr(stats: ExprStatSheet): Expr {
     const currentBol = this.getBol();
     const talentDmg = E.mul(
       stats.get(this.scalingKey, this.tag),
@@ -174,7 +171,7 @@ class ArlecchinoBurstFormula extends DirectFormula {
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
   }
 
-  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+  protected override getBaseDmgExpr(stats: ExprStatSheet): Expr {
     const talentDmg = E.mul(
       stats.get(this.scalingKey, this.tag),
       E.const(this.talentMultiplier)
@@ -236,7 +233,7 @@ class ArlecchinoBurstAmplifyFormula extends AmplifyFormula {
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
   }
 
-  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+  protected override getBaseDmgExpr(stats: ExprStatSheet): Expr {
     const talentDmg = E.mul(
       stats.get(this.scalingKey, this.tag),
       E.const(this.talentMultiplier)
@@ -304,7 +301,7 @@ class Arlecchino extends CharacterBase {
   ];
 
   // Rotation: E > teammates > C absorb > 6[N3D] > Q (KQM, ~20s carry window)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "arlecchino-normal", count: 3 },
       { id: "arlecchino-burst", count: 1 },
@@ -401,7 +398,7 @@ class Tartaglia extends CharacterBase {
   ];
 
   // Rotation: rQ > E > 4[N3C] (~9s melee, International team, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "tartaglia-melee-combo", count: 4 },
       { id: "tartaglia-burst-melee", count: 1 },

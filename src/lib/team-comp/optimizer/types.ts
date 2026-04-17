@@ -3,9 +3,12 @@
  */
 
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import type { TeamBuild } from "../damageCalc";
-import type { StatSheet } from "../damageModels";
-import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
+import type {
+  ArtifactVarLookup,
+  CompiledTeamDamage,
+} from "../calc/formulaCompiler";
+import type { StatSheet } from "../calc/statSheet";
+import type { TeamBuild } from "../calc/teamBuild";
 import type {
   CalcContext,
   CharOptConfig,

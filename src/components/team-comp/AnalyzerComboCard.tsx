@@ -7,15 +7,15 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { Element } from "@/data/types";
 import type {
-  AnalyzerCharConfig,
   ComboCountOverrides,
   MinErOverrides,
-} from "@/lib/team-comp/analyzer";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
+} from "@/lib/team-comp/analyzer/types";
+import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import type { ExtraBuff } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
-  ReactionOverride,
+  FormulaOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
@@ -40,10 +40,10 @@ interface AnalyzerComboCardProps {
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
-  reactionOverrides: Record<string, ReactionOverride>;
+  reactionOverrides: Record<string, FormulaOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
-  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
+  onReactionChange: (stableKey: string, override: FormulaOverride) => void;
   // Environment settings (local, not persisted)
   envTeam: Team;
   updateEnvTeam: (id: string, patch: Partial<Team>) => void;

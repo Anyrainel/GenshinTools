@@ -15,12 +15,13 @@
 
 import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
-import { type TeamBuild, hasOffFieldParts } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
+  FormulaOverride,
   OptFailReason,
-  ReactionOverride,
   StatKey,
   TeamOptYield,
   TeamOptimizerOptions,
@@ -116,7 +117,7 @@ interface MonaContext {
   erCheckCharId: string;
   minEr: number;
   minCr: number;
-  reactionOverride?: ReactionOverride;
+  reactionOverride?: FormulaOverride;
   scoreFn?: (
     sheets: Record<string, StatSheet>,
     onFieldCharId: string

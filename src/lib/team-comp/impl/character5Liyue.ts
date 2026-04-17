@@ -1,19 +1,16 @@
-import { DynamicCapScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   DirectFormula,
   LunarDirectFormula,
   LunarFormula,
   TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+} from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { DynamicCapScalingBuff, ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { FormulaEntry } from "../types";
+import type { OptionDef } from "../types";
+import type { ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Liyue Characters
@@ -265,7 +262,7 @@ class Zibai extends CharacterBase {
   })();
 
   // Rotation: E > 3×N4 combo > 3×Steed > Q (Geo carry, 15s Lunar Phase Shift)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "zibai-e-combo", count: 3 },
       { id: "zibai-steed", count: 4 },
@@ -404,7 +401,7 @@ class Xianyun extends CharacterBase {
   })();
 
   // Rotation: Q > E (3 Skyladders) > Driftcloud Wave (plunge support)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "xianyun-q-initial", count: 1 },
       { id: "xianyun-driftcloud", count: 1 },
@@ -529,7 +526,7 @@ class Baizhu extends CharacterBase {
 
   // Rotation: E > Q (Dendro healer/support)
   // Q Spiritvein triggers on shield refresh/break; ~3 hits as conservative estimate
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "baizhu-skill", count: 1 },
       { id: "baizhu-burst", count: 3 },
@@ -697,7 +694,7 @@ class Yelan extends CharacterBase {
   })();
 
   // Rotation: E > Q > ~15 throw procs (off-field Hydro sub-DPS, 1 proc/sec over 15s)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yelan-skill", count: 1 },
       { id: "yelan-burst-throw", count: 15 },
@@ -773,7 +770,7 @@ class Xiao extends CharacterBase {
   })();
 
   // Rotation: EE > Q > 11×high plunge (Anemo carry, ~15s Q window)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "xiao-skill", count: 2 },
       { id: "xiao-plunge-high", count: 11 },
@@ -891,7 +888,7 @@ class Zhongli extends CharacterBase {
   })();
 
   // Rotation: hE > Q > ~10 resonance ticks (shield support, 20s rotation)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "zhongli-hold", count: 1 },
       { id: "zhongli-resonance", count: 10 },
@@ -1023,7 +1020,7 @@ class HuTao extends CharacterBase {
   })();
 
   // Rotation: E > 9×N1C > Q (Pyro vape carry, 9s E window)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "hutao-charged", count: 9 },
       { id: "hutao-blood-blossom", count: 2 },
@@ -1232,7 +1229,7 @@ class Shenhe extends CharacterBase {
   })();
 
   // Rotation: E press > Q (Cryo buffer/support, minimal personal damage)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "shenhe-skill", count: 1 },
       { id: "shenhe-skill-hold", count: 0, bonus: [{ minC: 1, delta: 1 }] },
@@ -1358,7 +1355,7 @@ class Ganyu extends CharacterBase {
   })();
 
   // Rotation: 6×CA + Q (~10 shards over 15s, Cryo carry melt/freeze)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "ganyu-frostflake", count: 6 },
       { id: "ganyu-q-shard", count: 10 },
@@ -1496,7 +1493,7 @@ class Keqing extends CharacterBase {
   })();
 
   // Rotation: E stiletto > E slash (re-cast) > Q > 5×N1C (Electro aggravate carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "keqing-stiletto", count: 1 },
       { id: "keqing-skill-slash", count: 1 },
@@ -1567,7 +1564,7 @@ class Qiqi extends CharacterBase {
   })();
 
   // Rotation: E (healer, hits baked into E ×8)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "qiqi-skill-hit", count: 1 }];
   }
 }

@@ -26,6 +26,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { statPools } from "@/data/constants";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
+import { isPctStat } from "@/data/constants";
 import type {
   AccountData,
   ArtifactData,
@@ -53,7 +54,6 @@ import {
   updateCharacterStats,
   updateWeaponStats,
 } from "@/lib/account-data/characterEditor";
-import { isPctStat } from "@/lib/team-comp/displayFormatters";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
 import {

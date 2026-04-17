@@ -12,23 +12,23 @@
 
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import {
+  compileComboTeamDamage,
+  makeCompiledEvalDamage,
+} from "@/lib/team-comp/calc/formulaCompiler";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import {
   type DamageEvalFn,
   buildSheetFromMainAndSubs,
   constrainedGreedyAllocate,
   emptySubRolls,
   flattenAllocation,
   getRollValues,
-} from "@/lib/team-comp/constrainedGreedy";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
-import {
-  compileComboTeamDamage,
-  makeCompiledEvalDamage,
-} from "@/lib/team-comp/formulaCompiler";
+} from "@/lib/team-comp/generator/constrainedGreedy";
 import type {
   CalcContext,
   ComboFormula,
-  ReactionOverride,
+  FormulaOverride,
   StatKey,
 } from "@/lib/team-comp/types";
 import type { AutoTuneResult } from "./utils";
@@ -59,7 +59,7 @@ export const DEFAULT_CALC_CTX: CalcContext = {
 export type WeightedFormula = {
   formulaId: string;
   count: number;
-  reaction?: ReactionOverride;
+  reaction?: FormulaOverride;
 };
 
 /** Build a ComboFormula from WeightedFormula[] for a given DPS character. */
@@ -195,7 +195,7 @@ function computeMidpointWeights(
 /** Convert plain formula IDs to weighted formulas (count=1 each, optional shared reaction). */
 export function toWeightedFormulas(
   formulaIds: string[],
-  reaction?: ReactionOverride
+  reaction?: FormulaOverride
 ): WeightedFormula[] {
   return formulaIds.map((formulaId) => ({ formulaId, count: 1, reaction }));
 }

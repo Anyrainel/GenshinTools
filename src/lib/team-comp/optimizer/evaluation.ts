@@ -6,8 +6,11 @@
 
 import type { ArtifactData, MainStat } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
-import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
-import { fillVarsFromRawStats } from "../formulaCompiler";
+import type {
+  ArtifactVarLookup,
+  CompiledTeamDamage,
+} from "../calc/formulaCompiler";
+import { fillVarsFromRawStats } from "../calc/formulaCompiler";
 import type { StatKey } from "../types";
 
 // ─── Compiled Evaluation ───

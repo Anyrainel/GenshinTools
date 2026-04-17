@@ -27,11 +27,11 @@ import {
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
 import {
-  TeamMeta,
   getDefaultOptionValue,
-  getEntityOption,
+  getOptionDef,
   isChoiceEnabled,
-} from "@/lib/team-comp/damageModels";
+} from "@/lib/team-comp/calc/registry";
+import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -79,7 +79,7 @@ export function TeamRosterCard({
     entityId: string,
     type: "character" | "weapon" | "artifact"
   ) => {
-    const schema = getEntityOption(entityId);
+    const schema = getOptionDef(entityId);
     if (!schema) return null;
 
     const enabledChoices = schema.choices.filter((c) =>
@@ -187,15 +187,15 @@ export function TeamRosterCard({
     const entityIds: string[] = [...charIds];
     for (let i = 0; i < team.characters.length; i++) {
       const wid = team.weapons[i];
-      if (wid && getEntityOption(wid)) entityIds.push(wid);
+      if (wid && getOptionDef(wid)) entityIds.push(wid);
       const art = team.artifacts[i];
       const artSetId = art?.type === "4pc" ? art.setId : null;
-      if (artSetId && getEntityOption(artSetId)) entityIds.push(artSetId);
+      if (artSetId && getOptionDef(artSetId)) entityIds.push(artSetId);
     }
 
     const updates: Record<string, string> = {};
     for (const eid of entityIds) {
-      const schema = getEntityOption(eid);
+      const schema = getOptionDef(eid);
       if (!schema) continue;
       const enabledChoices = schema.choices.filter((c) =>
         isChoiceEnabled(c, teamMeta)
@@ -322,13 +322,13 @@ export function TeamRosterCard({
             const char = charactersById[charId];
             const weaponId = team.weapons[i];
             const weapon = weaponId ? weaponsById[weaponId] : null;
-            const charHasOption = getEntityOption(charId) != null;
+            const charHasOption = getOptionDef(charId) != null;
             const weaponHasOption =
-              weaponId != null && getEntityOption(weaponId) != null;
+              weaponId != null && getOptionDef(weaponId) != null;
             const artConfig = team.artifacts[i];
             const artSetId = artConfig?.type === "4pc" ? artConfig.setId : null;
             const artifactHasOption =
-              artSetId != null && getEntityOption(artSetId) != null;
+              artSetId != null && getOptionDef(artSetId) != null;
 
             const acctChar = accountData?.characters.find(
               (c: CharacterData) => c.key === charId

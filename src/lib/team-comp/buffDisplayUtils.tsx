@@ -12,7 +12,7 @@ import {
 } from "@/data/constants";
 import { envBuffsById } from "@/data/envBuffs";
 import type { Element } from "@/data/types";
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import type { BuffTarget, ResolvedBuff, StatKey } from "@/lib/team-comp/types";
 import { VALUE_COLORS, cn, getReceiverColor, getValueColor } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";

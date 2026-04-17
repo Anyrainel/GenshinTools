@@ -1,8 +1,8 @@
 import type {
   GeneratorOptions,
   GeneratorResult,
-} from "@/lib/team-comp/generator";
-import { runGenerator } from "@/lib/team-comp/generator";
+} from "@/lib/team-comp/generator/generator";
+import { runGenerator } from "@/lib/team-comp/generator/generator";
 import { useAsyncComputation } from "./useAsyncComputation";
 
 export interface AsyncGeneratorState {

@@ -4,7 +4,7 @@ import type {
   AnalyzerResult,
   CharInvestment,
   TeamInvestment,
-} from "@/lib/team-comp/analyzer";
+} from "@/lib/team-comp/analyzer/types";
 import { getAssetUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";

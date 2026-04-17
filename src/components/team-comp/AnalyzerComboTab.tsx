@@ -2,11 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type {
-  AnalyzerCharConfig,
-  ComboCountOverrides,
-  MinErOverrides,
-} from "@/lib/team-comp/analyzer";
 import {
   comboLineKey,
   comboOverrideKey,
@@ -15,22 +10,25 @@ import {
   removeCharOverrides,
   rxCharOverrideKey,
   rxDeltaOverrideKey,
-} from "@/lib/team-comp/analyzer";
+} from "@/lib/team-comp/analyzer/analyzer";
+import type {
+  ComboCountOverrides,
+  MinErOverrides,
+} from "@/lib/team-comp/analyzer/types";
+import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
+import { resolveComboDescriptor } from "@/lib/team-comp/calc/combo";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { resolveReactionComboEntries } from "@/lib/team-comp/calc/teamReaction";
 import { getFormulaReactions } from "@/lib/team-comp/constants";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import type { FormulaEntry } from "@/lib/team-comp/damageModels";
-import {
-  type ReactionComboEntry,
-  resolveReactionComboEntries,
-} from "@/lib/team-comp/teamReactions";
+import type { FormulaEntry } from "@/lib/team-comp/types";
+import type { ReactionComboEntry } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
+  FormulaOverride,
   I18nLabel,
-  ReactionOverride,
   ReactionType,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import { resolveComboDescriptor } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -47,10 +45,10 @@ interface AnalyzerComboTabProps {
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
   /** Stored reaction overrides keyed by "charId.formulaId" — read directly for config panels. */
-  reactionOverrides: Record<string, ReactionOverride>;
+  reactionOverrides: Record<string, FormulaOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
-  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
+  onReactionChange: (stableKey: string, override: FormulaOverride) => void;
 }
 
 export function AnalyzerComboTab({
@@ -115,7 +113,7 @@ type Variant = {
   /** Default count at constellation c (from template proportions) */
   getDefault: (c: number) => number;
   /** The reaction override config (undefined for direct/"none") */
-  reaction: ReactionOverride | undefined;
+  reaction: FormulaOverride | undefined;
   /** FormulaEntry for per-part config (only set for non-direct variants) */
   formulaEntry: FormulaEntry | undefined;
 };
@@ -151,10 +149,10 @@ function CharComboRow({
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
-  reactionOverrides: Record<string, ReactionOverride>;
+  reactionOverrides: Record<string, FormulaOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
-  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
+  onReactionChange: (stableKey: string, override: FormulaOverride) => void;
   rxDescriptor: ReactionComboEntry[];
 }) {
   const { t } = useLanguage();
@@ -206,7 +204,7 @@ function CharComboRow({
     // Index template lines: formulaId → reactionType → { count, reaction }
     const templateIndex: Record<
       string,
-      Record<string, { count: number; reaction?: ReactionOverride }>
+      Record<string, { count: number; reaction?: FormulaOverride }>
     > = {};
     for (const line of templateCombo.lines) {
       if (line.charId !== charId) continue;

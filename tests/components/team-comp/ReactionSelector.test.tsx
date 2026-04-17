@@ -4,10 +4,10 @@ import "@/lib/team-comp/index";
 import {
   DirectFormula,
   TransformFormula,
-} from "@/lib/team-comp/damageFormulas";
-import { TeamMeta } from "@/lib/team-comp/damageModels";
-import type { FormulaEntry } from "@/lib/team-comp/damageModels";
-import type { ReactionOverride } from "@/lib/team-comp/types";
+} from "@/lib/team-comp/calc/damageFormula";
+import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
+import type { FormulaEntry } from "@/lib/team-comp/types";
+import type { FormulaOverride } from "@/lib/team-comp/types";
 import { render, screen } from "../../utils/render";
 
 await preloadGameStats();
@@ -241,15 +241,15 @@ describe("ReactionSelector — visibility", () => {
 
 describe("ReactionSelector — callbacks", () => {
   it("gate change resets partReactions and partHits", () => {
-    let captured: ReactionOverride | null = null;
+    let captured: FormulaOverride | null = null;
     render(
       <ReactionSelector
         formulaEntry={pyro3Part}
         element="Pyro"
         reactionOverride={{
           reaction: "vaporize",
-          partReactions: { 1: "none" },
-          partHits: { 0: 1 },
+          rxnParts: { 1: "none" },
+          rxnPartHits: { 0: 1 },
         }}
         onReactionChange={(o) => {
           captured = o;
@@ -268,7 +268,7 @@ describe("ReactionSelector — callbacks", () => {
   });
 
   it("unchecking a part sets partReactions[idx] = 'none'", () => {
-    let captured: ReactionOverride | null = null;
+    let captured: FormulaOverride | null = null;
     render(
       <ReactionSelector
         formulaEntry={pyro3Part}
@@ -289,18 +289,18 @@ describe("ReactionSelector — callbacks", () => {
     // Click second checkbox to uncheck part 1
     checkboxes[1].click();
     expect(captured).not.toBeNull();
-    expect(captured!.partReactions).toEqual({ 1: "none" });
+    expect(captured!.rxnParts).toEqual({ 1: "none" });
   });
 
   it("re-checking a disabled part removes it from partReactions", () => {
-    let captured: ReactionOverride | null = null;
+    let captured: FormulaOverride | null = null;
     render(
       <ReactionSelector
         formulaEntry={pyro3Part}
         element="Pyro"
         reactionOverride={{
           reaction: "vaporize",
-          partReactions: { 1: "none" },
+          rxnParts: { 1: "none" },
         }}
         onReactionChange={(o) => {
           captured = o;
@@ -315,6 +315,6 @@ describe("ReactionSelector — callbacks", () => {
     // Part 1 is unchecked, click to re-check
     checkboxes[1].click();
     expect(captured).not.toBeNull();
-    expect(captured!.partReactions).toBeUndefined(); // empty → undefined
+    expect(captured!.rxnParts).toBeUndefined(); // empty → undefined
   });
 });

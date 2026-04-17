@@ -1,16 +1,13 @@
 import { elements as ALL_ELEMENTS, type Element } from "@/data/types";
 
+import { ArtifactSetBase } from "../calc/implModel";
+import { RegisterArtifactSet, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { TeamMeta } from "../calc/teamMeta";
 import { PHEC_ELEMENTS } from "../constants";
-import {
-  ArtifactSetBase,
-  RegisterArtifactSet,
-  ScalingBuff,
-  StatBuff,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef, TeamMeta } from "../damageModels";
-import { getReactionAuraElements } from "../helpers";
+import type { OptionDef } from "../types";
 import type { ElementalOrPhysical, StatEntry } from "../types";
+import { getReactionAuraElements } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // Artifact 4-Piece Set Bonuses

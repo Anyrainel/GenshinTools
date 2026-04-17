@@ -1,14 +1,11 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor, ElementalOrPhysical } from "../types";
+import { DirectFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { FormulaEntry } from "../types";
+import type { OptionDef } from "../types";
+import type { ComboTemplate, ElementalOrPhysical } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Mondstadt Characters
@@ -69,7 +66,7 @@ class Dahlia extends CharacterBase {
   })();
 
   // Rotation: EQ (shield/ATK SPD support)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "dahlia-skill", count: 1 },
       { id: "dahlia-burst", count: 1 },
@@ -252,7 +249,7 @@ class Razor extends CharacterBase {
   })();
 
   // Rotation: Q > 4×N4 combo (physical carry, ~15s burst window)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "razor-burst-na", count: 4 },
       { id: "razor-c6-lightning", count: 1 },
@@ -363,7 +360,7 @@ class Noelle extends CharacterBase {
   })();
 
   // Rotation: 4N during Q (on-field Geo carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "noelle-na", count: 4 }];
   }
 }
@@ -487,7 +484,7 @@ class Fischl extends CharacterBase {
   })();
 
   // Rotation: Q (falling thunder + C4 hit) + Oz duration (hits baked in)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "fischl-burst", count: 1 },
       { id: "fischl-oz-total", count: 1 },
@@ -588,7 +585,7 @@ class Rosaria extends CharacterBase {
   })();
 
   // Rotation: EQ (off-field Cryo sub-DPS, burst ticks baked in)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "rosaria-burst", count: 1 }];
   }
 }
@@ -721,7 +718,7 @@ class Sucrose extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (EM support/taser driver, C1 gives extra E charge)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "sucrose-skill", count: 2 },
       { id: "sucrose-burst", count: 1 },
@@ -792,7 +789,7 @@ class Bennett extends CharacterBase {
   })();
 
   // Rotation: E + Q (support, tap E has ~4s CD with P1)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "bennett-skill", count: 1 },
       { id: "bennett-burst", count: 1 },
@@ -870,7 +867,7 @@ class Amber extends CharacterBase {
 
   // Rotation: E (Baron Bunny) + Q (18 waves baked in)
   // C4: Adds 1 additional E charge → count 2
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "amber-skill", count: 1, bonus: [{ minC: 4, delta: 1 }] },
       { id: "amber-burst", count: 1 },
@@ -935,7 +932,7 @@ class Kaeya extends CharacterBase {
   })();
 
   // Rotation: E×3 + Q (quickswap Cryo sub-DPS, 6s E CD, burst hits baked in)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "kaeya-skill", count: 3 },
       { id: "kaeya-burst", count: 1 },
@@ -991,7 +988,7 @@ class Lisa extends CharacterBase {
   })();
 
   // Rotation: E hold (3 stacks) + Q (sub-DPS, burst hits baked in)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "lisa-hold", count: 1 },
       { id: "lisa-burst", count: 1 },

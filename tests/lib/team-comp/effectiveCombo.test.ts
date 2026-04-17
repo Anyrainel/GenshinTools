@@ -1,4 +1,4 @@
-import { getEffectiveCombo } from "@/lib/team-comp/effectiveCombo";
+import { getEffectiveCombo } from "@/lib/team-comp/helpers";
 import type { ComboFormula } from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
 import { describe, expect, it } from "vitest";

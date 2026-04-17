@@ -14,7 +14,7 @@ import {
   numericInputFilter,
   useDeferredTextInput,
 } from "@/hooks/useDeferredTextInput";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
+import type { SubstatBudgetPreset } from "@/lib/team-comp/generator/substatBudget";
 import { getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 

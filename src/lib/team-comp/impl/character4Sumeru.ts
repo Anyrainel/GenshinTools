@@ -1,8 +1,9 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula, TransformFormula } from "../damageFormulas";
-import { CharacterBase, RegisterCharacter } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+import { DirectFormula, TransformFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Sumeru Characters
@@ -79,7 +80,7 @@ class Sethos extends CharacterBase {
   })();
 
   // Rotation: C E 3[C] — 4 Shadowpiercing Shots per 15s cycle (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "sethos-shadowpiercer", count: 4 },
       { id: "sethos-dusk-bolt", count: 0 },
@@ -170,7 +171,7 @@ class Kaveh extends CharacterBase {
   })();
 
   // Rotation: Q E N# E N# E — on-field Bloom driver, ~5 cores detonated (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "kaveh-core", count: 5 },
       { id: "kaveh-c6-pairidaeza", count: 0 },
@@ -251,7 +252,7 @@ class Faruzan extends CharacterBase {
   })();
 
   // Rotation: E charged-shot Q — Anemo support, 1 vortex per rotation (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "faruzan-vortex", count: 1 }];
   }
 }
@@ -444,7 +445,7 @@ class Collei extends CharacterBase {
   })();
 
   // Rotation: E Q — off-field Dendro support, 2 E hits (throw+return) + 1 explosion + ~9 leaps per 12s
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "collei-skill", count: 2 },
       { id: "collei-c6-mini", count: 1 },

@@ -7,12 +7,12 @@ import {
   resolveWeaponStats,
 } from "@/lib/gameStatsLoader";
 import {
-  type OptionMap,
-  TeamMeta,
   createArtifactSet,
   createWeapon,
-  getEntityOption,
-} from "@/lib/team-comp/damageModels";
+  getOptionDef,
+} from "../team-comp/calc/registry";
+import { TeamMeta } from "../team-comp/calc/teamMeta";
+import type { OptionMap } from "../team-comp/types";
 import type { BuildMatchResult } from "./artifactScore";
 
 export interface CrBudgetResult {
@@ -79,7 +79,7 @@ export function computeCrBudget(
       );
 
       // Check if weapon has options — try all choices and take max CR
-      const optionDef = getEntityOption(char.weapon.key);
+      const optionDef = getOptionDef(char.weapon.key);
       if (optionDef) {
         let maxCr = 0;
         for (const choice of optionDef.choices) {
@@ -125,7 +125,7 @@ export function computeCrBudget(
         [char.key]: char.constellation,
       });
 
-      const optionDef = getEntityOption(build.artifactSet);
+      const optionDef = getOptionDef(build.artifactSet);
       if (optionDef) {
         let maxCr = 0;
         for (const choice of optionDef.choices) {

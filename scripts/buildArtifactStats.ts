@@ -7,7 +7,7 @@
  */
 
 import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import {
   AVG_SUBSTAT_ROLL,
   toInternal,

@@ -9,7 +9,7 @@ import {
   getSourceIcon,
   getSourceName,
 } from "@/lib/team-comp/buffDisplayUtils";
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import type {
   ResolvedBuff,
   ResolvedStatEntry,

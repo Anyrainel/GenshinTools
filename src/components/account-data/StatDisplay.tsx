@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData, SubStat } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getRarityColor } from "@/lib/utils";
 import { SlotProgressIndicator } from "./SlotProgressIndicator";
 

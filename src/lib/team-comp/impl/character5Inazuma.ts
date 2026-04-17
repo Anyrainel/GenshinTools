@@ -1,18 +1,15 @@
-import { CrossScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   DirectFormula,
   LunarFormula,
   TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+} from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { CrossScalingBuff, ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { FormulaEntry } from "../types";
+import type { OptionDef } from "../types";
+import type { ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Inazuma Characters
@@ -87,7 +84,7 @@ class YumemizukiMizuki extends CharacterBase {
 
   // Rotation: Q > E (Dreamdrifter ~10s with P1 extension); ~6 ticks during float
   // Q initial + ~6 snack explosions during drift
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "mizuki-skill-initial", count: 1 },
       { id: "mizuki-burst-initial", count: 1 },
@@ -177,7 +174,7 @@ class Chiori extends CharacterBase {
   ];
 
   // Rotation: EE (Tapestry swap) > Q; off-field Tamoto + Kinu procs per window
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "chiori-e-combo", count: 1 },
       { id: "chiori-burst", count: 1 },
@@ -436,7 +433,7 @@ class RaidenShogun extends CharacterBase {
   })();
 
   // Rotation: E > supports > Q 3[N3C] N1C (~20s, hypercarry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "raiden-e-cast", count: 1 },
       { id: "raiden-coordinated", count: 1 },
@@ -613,7 +610,7 @@ class AratakiItto extends CharacterBase {
   ];
 
   // Rotation: supports > Q > N1 E > 2×Kesagiri chain > E (Geo carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "itto-ushi", count: 1 },
       { id: "itto-kesagiri", count: 2 },
@@ -704,7 +701,7 @@ class KamisatoAyaka extends CharacterBase {
   ];
 
   // Rotation: D E Q N1C > 2[N2C] (freeze carry, ~20s)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "ayaka-normal", count: 1 },
       ...(this.constellation >= 6
@@ -869,7 +866,7 @@ class KamisatoAyato extends CharacterBase {
   })();
 
   // Rotation: Q > E (Shunsuiken ×16 baked) > swap (~20s, Hydro carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "ayato-shunsuiken", count: 1 },
       { id: "ayato-illusion", count: 1 },
@@ -1070,7 +1067,7 @@ class SangonomiyaKokomi extends CharacterBase {
   ];
 
   // Rotation: E > supports > Q N3×5 + Charged×3 + jellyfish ticks (on-field during Q, ~3 fish procs at C1)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "kokomi-burst", count: 1 },
       { id: "kokomi-normal", count: 5 },
@@ -1217,7 +1214,7 @@ class KaedeharaKazuha extends CharacterBase {
 
   // Rotation: E (plunge) > Q > E (plunge) (VV support, ~20s)
   // Use absorbed-element burst variant when an absorbable element is present
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
     const teamEls = new Set(Object.values(this.teamMeta.elements));
     const absorbedEl = absorbElements.find((el) => teamEls.has(el));
@@ -1419,7 +1416,7 @@ class Yoimiya extends CharacterBase {
   })();
 
   // Rotation: supports > E > 3×N1-N5 string (~20s, Pyro carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yoimiya-normal", count: 3 },
       { id: "yoimiya-c6-arrow", count: 0 },
@@ -1546,7 +1543,7 @@ class YaeMiko extends CharacterBase {
   })();
 
   // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + 1 burst per rotation
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yae_miko-skill", count: 15 },
       { id: "yae_miko-burst", count: 1 },

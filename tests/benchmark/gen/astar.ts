@@ -11,12 +11,12 @@
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import { allSlots } from "@/data/types";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import type { StatSheet } from "@/lib/team-comp/damageModels";
+import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
+  FormulaOverride,
   OptFailReason,
-  ReactionOverride,
   StatKey,
   TeamOptYield,
   TeamOptimizerOptions,
@@ -144,7 +144,7 @@ interface AStarContext {
   minCr: number;
   erFloor: number;
   crFloor: number;
-  reactionOverride?: ReactionOverride;
+  reactionOverride?: FormulaOverride;
   scoreFn?: (
     sheets: Record<string, StatSheet>,
     onFieldCharId: string

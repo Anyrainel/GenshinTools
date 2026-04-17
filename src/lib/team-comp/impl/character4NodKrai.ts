@@ -1,13 +1,11 @@
 import type { Element } from "@/data/types";
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-} from "../damageModels";
-import { cbs } from "../helpers";
-import type { AbilityType, ComboDescriptor } from "../types";
+import { DirectFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { FormulaEntry } from "../types";
+import type { AbilityType, ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 /** NA/CA/PA/E/Q — excludes "special" and "sprint" */
 const COMBAT_ABILITIES: AbilityType[] = [
@@ -141,7 +139,7 @@ class Illuga extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap (support buffer, C2 Aedon fires per 7 stacks; 21 base stacks ≈ 3 triggers)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "illuga-skill-press", count: 1 },
       { id: "illuga-burst", count: 1 },
@@ -289,7 +287,7 @@ class Aino extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap (off-field sub-DPS, Q 14 hits baked in)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "aino-skill", count: 1 },
       { id: "aino-burst-total", count: 1 },
@@ -603,8 +601,8 @@ class Prune extends CharacterBase {
   // swirl-converted hammer lands per rotation, so the combo references the
   // first PHEC element's variant (aura-priority order). The other per-element
   // variants exist in formulaMap so the UI can compare absorption choices.
-  protected override get comboDescriptor(): ComboDescriptor {
-    const base: ComboDescriptor = [
+  protected override get comboDescriptor(): ComboTemplate {
+    const base: ComboTemplate = [
       { id: "prune-skill", count: 1 },
       { id: "prune-burst-initial", count: 1 },
       { id: "prune-burst-bell", count: 4 },

@@ -10,8 +10,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   AnalyzerCharConfig,
   AnalyzerResult,
-} from "@/lib/team-comp/analyzer";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
+} from "@/lib/team-comp/analyzer/types";
+import type { SubstatBudgetPreset } from "@/lib/team-comp/generator/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { BarChart3, Loader2, Play } from "lucide-react";

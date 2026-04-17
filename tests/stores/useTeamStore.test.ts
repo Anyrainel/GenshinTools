@@ -628,8 +628,8 @@ describe("migrateTeamStore", () => {
     const line0 = team.combos[0].lines[0];
     expect(line0.reaction).toEqual({
       reaction: "vaporize",
-      partReactions: { 1: "none" },
-      partHits: { 0: 7 },
+      rxnParts: { 1: "none" },
+      rxnPartHits: { 0: 7 },
     });
     // xingqiu line should be unaffected (no override existed)
     const line1 = team.combos[0].lines[1];

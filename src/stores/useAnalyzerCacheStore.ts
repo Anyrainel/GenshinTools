@@ -1,4 +1,4 @@
-import type { AnalyzerResult } from "@/lib/team-comp/analyzer";
+import type { AnalyzerResult } from "@/lib/team-comp/analyzer/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

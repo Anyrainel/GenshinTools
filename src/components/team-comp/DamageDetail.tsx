@@ -44,9 +44,9 @@ import {
   type BuildMatchResult,
   matchBuild,
 } from "@/lib/account-data/artifactScore";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
-import { getEffectiveCombo } from "@/lib/team-comp/effectiveCombo";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { getEffectiveCombo } from "@/lib/team-comp/helpers";
 import {
   buildBuffOverrides,
   buildTeamConfigs,
@@ -61,8 +61,8 @@ import type {
   CalcContext,
   ComboFormula,
   ComboLine,
+  FormulaOverride,
   I18nLabel,
-  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
@@ -522,7 +522,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       charId: string,
       formulaId: string,
       reaction: string,
-      override: ReactionOverride
+      override: FormulaOverride
     ) => {
       if (formulaMode === "single") {
         // In single mode, persist per-part config to team.singleReaction
@@ -559,7 +559,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
         prev?.charId === charId && prev?.formulaId === formulaId;
       // Preserve existing per-part config when only switching the gate reaction
       const prevReaction = sameFormula ? team.singleReaction : undefined;
-      const newReaction: ReactionOverride | undefined =
+      const newReaction: FormulaOverride | undefined =
         reaction === "none"
           ? undefined
           : {

@@ -4,7 +4,7 @@ import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
 } from "@/lib/account-data/scoring/utils";
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getRarityColor } from "@/lib/utils";
 
 function getRollCount(statKey: SubStat, value: number, rarity: Rarity): number {

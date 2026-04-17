@@ -1,25 +1,22 @@
-import { LUNAR_REACTIONS } from "../constants";
-import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   DirectFormula,
   LunarFormula,
   TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  type OptionDef,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import { cbs } from "../helpers";
+} from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import { LUNAR_REACTIONS } from "../constants";
+import type { OptionDef } from "../types";
+import type { FormulaEntry } from "../types";
 import type {
-  ComboDescriptor,
+  ComboTemplate,
   DamageTagFilter,
   ElementalOrPhysical,
   StatKey,
 } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -276,9 +273,9 @@ class Varesa extends CharacterBase {
   // C0: eaa, EAAq — 1 normal cycle + 1 FP cycle + 1 sQ
   // C2: eaaq, EAAq — C2 every PA→极限驱動, sQ after each PA
   // C6: EAAq ×4 — always FP, sQ after every PA
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     const c = this.constellation;
-    const combo: ComboDescriptor = [];
+    const combo: ComboTemplate = [];
 
     if (this.useFullQ) {
       // Full Q from normal state (C4: grants 精進勇猛 for first plunge)
@@ -521,7 +518,7 @@ class Citlali extends CharacterBase {
   })();
 
   // Rotation: E Q > swap (off-field support, E total bakes in all hits, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "citlali-e-total", count: 1 },
       { id: "citlali-burst-total", count: 1 },
@@ -800,7 +797,7 @@ class Mavuika extends CharacterBase {
   })();
 
   // Rotation: Q (Sunfell) > SCSCC2 combo in 7s Crucible window (Melt carry, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "mavuika-sunfell", count: 1 },
       { id: "mavuika-szszzp", count: 1 },
@@ -1006,7 +1003,7 @@ class Chasca extends CharacterBase {
   })();
 
   // Rotation: E 4[C] (Q) + P2 proc (on-field carry, Q every ~2 rotations, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "chasca-shining-volley", count: 4 },
       { id: "chasca-p2-burning", count: 1 },
@@ -1286,7 +1283,7 @@ class Xilonen extends CharacterBase {
   })();
 
   // Rotation: C6 on-field DPS 3×N4; mono-Geo Q extra beats once (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "xilonen-normal-2", count: 1 },
       { id: "xilonen-e-rush", count: 1 },
@@ -1386,7 +1383,7 @@ class Mualani extends CharacterBase {
 
   // Rotation: E combo (3 Surging Bites) > Q (~16s rotation, vape carry, KQM)
   // C0: 3 normal bites. C1-C5: 1 heavy + 2 normal. C6: 3 heavy.
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "mualani-bite", count: 3 },
       { id: "mualani-burst", count: 1 },
@@ -1547,7 +1544,7 @@ class Kinich extends CharacterBase {
 
   // Rotation: shE Q 5[N2 shE] — ~4 Scalespiker Cannons + Q (Burning carry, KQM)
   // C2: first cannon gets +100% DMG via bespokeBuff with maxStacks: 1
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "kinich-cannon", count: 4 },
       { id: "kinich-burst", count: 1 },

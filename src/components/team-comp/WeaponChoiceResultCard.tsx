@@ -18,10 +18,10 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/constants";
 import type { SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { fmtDamage } from "@/lib/team-comp/displayFormatters";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
+import type { WeaponChoiceProgress } from "@/lib/team-comp/analyzer/weaponChoice";
+import { fmtDamage } from "@/lib/team-comp/displayFormatter";
+import type { SubstatBudgetPreset } from "@/lib/team-comp/generator/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
-import type { WeaponChoiceProgress } from "@/lib/team-comp/weaponChoice";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type {
   Team,

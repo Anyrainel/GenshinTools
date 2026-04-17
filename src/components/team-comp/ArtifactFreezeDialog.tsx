@@ -19,7 +19,7 @@ import { getSortableStatsForSlot } from "@/data/constants";
 import type { AccountData, ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getRarityColor } from "@/lib/utils";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { Check, Snowflake } from "lucide-react";

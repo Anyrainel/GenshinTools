@@ -10,8 +10,8 @@ import {
   ELEMENT_ELIGIBLE_REACTIONS,
   MULTI_ELEMENT_CHARS,
 } from "@/lib/team-comp/constants";
-import type { FormulaEntry } from "@/lib/team-comp/damageModels";
-import type { ReactionOverride, ReactionType } from "@/lib/team-comp/types";
+import type { FormulaEntry } from "@/lib/team-comp/types";
+import type { FormulaOverride, ReactionType } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 
 // ─── Helpers ───
@@ -40,9 +40,9 @@ export interface ReactionPartControlsProps {
   /** The gate reaction type (e.g. "melt", "vaporize"). */
   reactionType: ReactionType;
   /** Current reaction override state. */
-  reactionOverride: ReactionOverride;
+  reactionOverride: FormulaOverride;
   /** Callback when per-part config changes. */
-  onReactionChange: (override: ReactionOverride) => void;
+  onReactionChange: (override: FormulaOverride) => void;
   /** Disable all interaction (read-only preview). */
   disabled?: boolean;
 }
@@ -72,8 +72,8 @@ export function ReactionPartControls({
     );
 
   function handlePartToggle(partIndex: number, checked: boolean) {
-    const newPartReactions = { ...reactionOverride.partReactions };
-    const newPartHits = { ...reactionOverride.partHits };
+    const newPartReactions = { ...reactionOverride.rxnParts };
+    const newPartHits = { ...reactionOverride.rxnPartHits };
     if (checked) {
       delete newPartReactions[partIndex];
     } else {
@@ -82,15 +82,16 @@ export function ReactionPartControls({
     }
     onReactionChange({
       ...reactionOverride,
-      partReactions:
+      rxnParts:
         Object.keys(newPartReactions).length > 0 ? newPartReactions : undefined,
-      partHits: Object.keys(newPartHits).length > 0 ? newPartHits : undefined,
+      rxnPartHits:
+        Object.keys(newPartHits).length > 0 ? newPartHits : undefined,
     });
   }
 
   function handlePartHitsChange(partIndex: number, hits: number) {
     const totalHits = formulaEntry.parts[partIndex].hits ?? 1;
-    const newPartHits = { ...reactionOverride.partHits };
+    const newPartHits = { ...reactionOverride.rxnPartHits };
     if (hits >= totalHits) {
       delete newPartHits[partIndex];
     } else {
@@ -98,7 +99,8 @@ export function ReactionPartControls({
     }
     onReactionChange({
       ...reactionOverride,
-      partHits: Object.keys(newPartHits).length > 0 ? newPartHits : undefined,
+      rxnPartHits:
+        Object.keys(newPartHits).length > 0 ? newPartHits : undefined,
     });
   }
 
@@ -114,10 +116,10 @@ export function ReactionPartControls({
             ).includes(reactionType)
           : true;
         const isChecked =
-          partCanReact && reactionOverride.partReactions?.[idx] !== "none";
+          partCanReact && reactionOverride.rxnParts?.[idx] !== "none";
         const totalHits = part.hits ?? 1;
         const reactingHits = isChecked
-          ? (reactionOverride.partHits?.[idx] ?? totalHits)
+          ? (reactionOverride.rxnPartHits?.[idx] ?? totalHits)
           : 0;
 
         return (

@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
   MULTI_ELEMENT_CHARS,
 } from "@/lib/team-comp/constants";
-import type { TeamMeta } from "@/lib/team-comp/damageCalc";
-import type { FormulaEntry } from "@/lib/team-comp/damageModels";
+import type { FormulaEntry } from "@/lib/team-comp/types";
 import type {
   ElementalOrPhysical,
-  ReactionOverride,
+  FormulaOverride,
   ReactionType,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
@@ -45,9 +45,9 @@ interface ReactionSelectorProps {
   /** Element of the formula's character */
   element: ElementalOrPhysical;
   /** Current reaction override state */
-  reactionOverride: ReactionOverride;
+  reactionOverride: FormulaOverride;
   /** Callback when reaction override changes */
-  onReactionChange: (override: ReactionOverride) => void;
+  onReactionChange: (override: FormulaOverride) => void;
   /** TeamMeta for checking if reactions are available */
   teamMeta: TeamMeta;
   /** Character ID for team validation */
@@ -137,8 +137,8 @@ export function ReactionSelector({
     // When gate changes, reset per-part overrides.
     onReactionChange({
       reaction,
-      partReactions: undefined,
-      partHits: undefined,
+      rxnParts: undefined,
+      rxnPartHits: undefined,
     });
   }
 

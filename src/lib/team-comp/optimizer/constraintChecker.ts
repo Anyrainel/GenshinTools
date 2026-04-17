@@ -5,12 +5,12 @@
  * feasibility checks across DFS, evaluation, and team orchestration.
  */
 
-import { ScalingBuff } from "../damageBuffs";
-import type { TeamBuild } from "../damageCalc";
-import { StatSheet } from "../damageModels";
-import type { CompiledTeamDamage } from "../formulaCompiler";
+import { isSelfReceiver } from "../calc/fieldState";
+import type { CompiledTeamDamage } from "../calc/formulaCompiler";
+import { ScalingBuff } from "../calc/statBuff";
+import { StatSheet } from "../calc/statSheet";
+import type { TeamBuild } from "../calc/teamBuild";
 import type { CalcContext, OptFailReason, StatKey } from "../types";
-import { isSelfReceiver } from "../types";
 import { getArtifactCr, getArtifactEr } from "./artifactScoring";
 import type { ArtifactTuple, PreparedSlotData } from "./types";
 

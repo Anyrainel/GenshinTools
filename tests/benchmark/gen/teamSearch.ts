@@ -14,6 +14,7 @@
  */
 
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
+import { isPctStat } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import {
@@ -23,21 +24,18 @@ import {
   scoreMainStat,
   scoreSlot,
 } from "@/lib/account-data/artifactScore";
-import {
-  TeamBuild,
-  evaluateCombo,
-  hasOffFieldParts,
-} from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
-import { isPctStat } from "@/lib/team-comp/displayFormatters";
+import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import type {
   CalcContext,
   CharOptConfig,
   ComboResult,
   DamageResult,
+  FormulaOverride,
   OptFailReason,
-  ReactionOverride,
   StatKey,
   TeamOptPassId,
   TeamOptPassResult,
@@ -104,7 +102,7 @@ export interface PerCharSearchOpts {
   baseSheets: Record<string, StatSheet>;
   calcContext: CalcContext;
   excludedIds: Set<string> | undefined;
-  reactionOverride: ReactionOverride | undefined;
+  reactionOverride: FormulaOverride | undefined;
   scoreFn:
     | ((sheets: Record<string, StatSheet>, onFieldCharId: string) => number)
     | undefined;
@@ -285,7 +283,7 @@ export function evaluateBuild(
   erCheckCharId: string,
   minEr: number,
   minCr: number,
-  reactionOverride?: ReactionOverride,
+  reactionOverride?: FormulaOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): { damage: number; result: DamageResult | null } {
   const charSheet = StatSheet.fromArtifacts(pieces);
@@ -342,7 +340,7 @@ export function evaluateUpperBound(
   baseSheets: Record<string, StatSheet>,
   onFieldCharId: string,
   calcContext: CalcContext,
-  reactionOverride?: ReactionOverride,
+  reactionOverride?: FormulaOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): number {
   const realArts = realPieces.filter((a): a is ArtifactData => a != null);

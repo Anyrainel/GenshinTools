@@ -7,15 +7,16 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, ReactionType } from "@/data/types";
+import { offFieldStatus } from "@/lib/team-comp/calc/teamBuild";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
   REACTION_ELEMENT_REQUIREMENTS,
   getFormulaReactions,
 } from "@/lib/team-comp/constants";
-import { type TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import type {
   ComboLine,
+  FormulaOverride,
   I18nLabel,
-  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -105,7 +106,7 @@ interface FormulaSelectorCardProps {
     charId: string,
     formulaId: string,
     reaction: string,
-    override: ReactionOverride
+    override: FormulaOverride
   ) => void;
   /** Current formula mode: "single" or "combo". */
   formulaMode: "single" | "combo";
@@ -669,7 +670,7 @@ export function FormulaSelectorCard({
                                           expandedEntry?.line.count ?? 0;
                                         // Use stored override, or synthesize one with the reaction type
                                         // so per-part controls show even at count 0.
-                                        const expandedOverride: ReactionOverride =
+                                        const expandedOverride: FormulaOverride =
                                           expandedEntry?.line.reaction ?? {
                                             reaction:
                                               expandedRx as ReactionType,

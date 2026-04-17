@@ -1,10 +1,11 @@
-import { ScalingBuff, StatBuff, TeamAggregationBuff } from "../damageBuffs";
-import { DirectFormula, TransformFormula } from "../damageFormulas";
-import { CharacterBase, RegisterCharacter } from "../damageModels";
-import { resolveOption } from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+import { DirectFormula, TransformFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter } from "../calc/registry";
+import { resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff, TeamAggregationBuff } from "../calc/statBuff";
+import type { OptionDef } from "../types";
+import type { ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Sumeru Characters
@@ -138,7 +139,7 @@ class Dehya extends CharacterBase {
   })();
 
   // Rotation: E > teammates > E Q(10+1) — E field 1 activation, Q 1 activation (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "dehya-molten-inferno", count: 1 },
       { id: "dehya-burst-combo", count: 1 },
@@ -242,7 +243,7 @@ class Alhaitham extends CharacterBase {
   })();
 
   // Rotation: Q > N3D N3D N1E N3D N3CD N3D — ~7 Projection triggers + 1 Q (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "alhaitham-projection", count: 7 },
       { id: "alhaitham-burst", count: 1 },
@@ -420,7 +421,7 @@ class Wanderer extends CharacterBase {
   })();
 
   // Rotation: E > N2C ×5 > Q — hover carry with charged attacks (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "wanderer-normal", count: 5 },
       { id: "wanderer-charge", count: 5 },
@@ -624,7 +625,7 @@ class Nahida extends CharacterBase {
   })();
 
   // Rotation: E Q > off-field — ~8 Tri-Karma procs per 20s; C6 adds 6 Karmic Oblivion (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "nahida-karma", count: 8 },
       { id: "nahida-c6-karma", count: 1 },
@@ -779,7 +780,7 @@ class Cyno extends CharacterBase {
   })();
 
   // Rotation: EQ > E > 6[N4E] — 6 N5+E combos during burst (4TF, KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "cyno-combo", count: 6 },
       { id: "cyno-p1-bolts", count: 6 },
@@ -958,7 +959,7 @@ class Nilou extends CharacterBase {
   })();
 
   // Rotation: Q E E E E — off-field Bloom support, 1 Q + ~5 Bountiful Cores (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "nilou-e-dance", count: 0 },
       { id: "nilou-burst", count: 0 },
@@ -1091,7 +1092,7 @@ class Tighnari extends CharacterBase {
   })();
 
   // Rotation: E 3[CA] Q — quickswap Spread carry (KQM)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "tighnari-charge", count: 3 },
       { id: "tighnari-burst", count: 1 },

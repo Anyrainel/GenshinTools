@@ -1,13 +1,10 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor, StatKey } from "../types";
+import { DirectFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { OptionDef } from "../types";
+import type { ComboTemplate, StatKey } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Liyue Characters
@@ -103,7 +100,7 @@ class LanYan extends CharacterBase {
   })();
 
   // Rotation: E > Q (Anemo VV support)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "lanyan-skill", count: 1 },
       { id: "lanyan-burst", count: 1 },
@@ -189,7 +186,7 @@ class Gaming extends CharacterBase {
   })();
 
   // Rotation: Q > 5×E plunge (Pyro plunge carry, ~12s Q window)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "gaming-cloudstrider", count: 5 },
       { id: "gaming-burst-manchai", count: 1 },
@@ -282,7 +279,7 @@ class Yaoyao extends CharacterBase {
   })();
 
   // Rotation: E + Q (Dendro healer/support, minimal field time)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yaoyao-skill", count: 1 },
       { id: "yaoyao-burst", count: 1 },
@@ -368,7 +365,7 @@ class Xiangling extends CharacterBase {
 
   // Rotation: E > Q (off-field Pyronado sub-DPS)
   // C0-C3: ~10 ticks; C4+: ~14 ticks
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "xiangling-guoba", count: 4 },
       { id: "xiangling-pyronado-swing", count: 1 },
@@ -481,7 +478,7 @@ class Chongyun extends CharacterBase {
   })();
 
   // Rotation: E > Q (Cryo sub-DPS nuke, blades baked into Q)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "chongyun-skill", count: 1 },
       { id: "chongyun-p2", count: 1 },
@@ -595,7 +592,7 @@ class Xinyan extends CharacterBase {
   })();
 
   // Rotation: E > Q > 5×CA (physical carry with shield)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "xinyan-skill", count: 1 },
       { id: "xinyan-burst", count: 1 },
@@ -676,7 +673,7 @@ class Xingqiu extends CharacterBase {
   })();
 
   // Rotation: EQ > ~15 rain sword procs (off-field Hydro sub-DPS, 1 proc/sec over 15s Q)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "xingqiu-skill", count: 1 },
       { id: "xingqiu-burst-tick", count: 15 },
@@ -787,7 +784,7 @@ class Yanfei extends CharacterBase {
   })();
 
   // Rotation: E > Q > 6×N3C (Pyro on-field carry, vape)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yanfei-skill", count: 2 },
       { id: "yanfei-burst", count: 1 },
@@ -864,7 +861,7 @@ class Beidou extends CharacterBase {
   })();
 
   // Rotation: E counter > Q (~10 lightning discharges over 15s, 1/sec)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "beidou-skill-counter", count: 1 },
       { id: "beidou-burst-initial", count: 1 },
@@ -917,7 +914,7 @@ class Ningguang extends CharacterBase {
   })();
 
   // Rotation: E > Q (Geo burst DPS, gems baked into Q ×12)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "ningguang-skill", count: 2 },
       { id: "ningguang-burst", count: 1 },
@@ -1051,7 +1048,7 @@ class YunJin extends CharacterBase {
   })();
 
   // Rotation: E hold (max charge) > Q (Geo support, buffs normal attackers)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yun_jin-skill-charge2", count: 1 },
       { id: "yun_jin-burst", count: 1 },

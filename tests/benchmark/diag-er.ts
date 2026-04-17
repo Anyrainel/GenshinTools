@@ -10,14 +10,14 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { ArtifactData, Element } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+import { defaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/team-comp/formulaCompiler";
+} from "@/lib/team-comp/calc/formulaCompiler";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { ConstraintChecker } from "@/lib/team-comp/optimizer/constraintChecker";
-import { defaultOnFieldCharId } from "@/lib/team-comp/reactionResolve";
 import type {
   CalcContext,
   ComboFormula,

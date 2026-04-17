@@ -21,7 +21,7 @@ import {
   getSortableStatsForSlot,
 } from "@/data/constants";
 import type { ArtifactData, Slot } from "@/data/types";
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRightLeft, Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";

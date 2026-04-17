@@ -1,10 +1,10 @@
+import { isPctStat } from "@/data/constants";
 import {
   fmtDamage,
   fmtMult,
   fmtPercent,
   fmtStat,
-  isPctStat,
-} from "@/lib/team-comp/displayFormatters";
+} from "@/lib/team-comp/displayFormatter";
 import { describe, expect, it } from "vitest";
 
 describe("fmtStat", () => {

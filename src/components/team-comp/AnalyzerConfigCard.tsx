@@ -25,7 +25,7 @@ import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
-import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer";
+import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import type { TeamSlotConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { Users } from "lucide-react";

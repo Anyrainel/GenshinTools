@@ -1,4 +1,4 @@
-import { fmtStat } from "@/lib/team-comp/displayFormatters";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { describe, expect, it } from "vitest";
 
 describe("fmtStat flat stat rounding", () => {

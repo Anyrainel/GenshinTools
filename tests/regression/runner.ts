@@ -12,13 +12,15 @@ import { artifactHalfSetsById, artifactsById } from "@/data/constants";
 import type { ArtifactData, Element, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { TeamBuild, getComboDisplayResult } from "@/lib/team-comp/damageCalc";
-import type { StatSheet } from "@/lib/team-comp/damageModels";
+import { getComboDisplayResult } from "@/lib/team-comp/calc/damageCalc";
+import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
   type GeneratorOptions,
   type GeneratorResult,
   runGenerator,
-} from "@/lib/team-comp/generator";
+} from "@/lib/team-comp/generator/generator";
+import { buffSourceKey } from "@/lib/team-comp/helpers";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -29,7 +31,6 @@ import type {
   StatKey,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import { buffSourceKey } from "@/lib/team-comp/types";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -440,7 +441,7 @@ function serializeTeamResult(
   comboDefaults?: {
     perLine: BuffActivationMap[];
     stackLimited: import(
-      "@/lib/team-comp/stackAllocation"
+      "@/lib/team-comp/calc/stackAllocation"
     ).StackLimitedBuffInfo[];
   }
 ): GoldenTeamResult {

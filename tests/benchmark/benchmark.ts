@@ -60,31 +60,29 @@ import {
   scoreMainStat,
   scoreSlot,
 } from "@/lib/account-data/artifactScore";
-import {
-  buildSheetFromMainAndSubs,
-  getRollValues,
-} from "@/lib/team-comp/constrainedGreedy";
-import {
-  type OptimizerContext,
-  TeamBuild,
-  evaluateCombo,
-} from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
 import {
   type CompiledTeamDamage,
   compileComboTeamDamage,
   fillVarsFromArtifacts,
   fillVarsFromSheet,
-} from "@/lib/team-comp/formulaCompiler";
+} from "@/lib/team-comp/calc/formulaCompiler";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import {
+  buildSheetFromMainAndSubs,
+  getRollValues,
+} from "@/lib/team-comp/generator/constrainedGreedy";
 import { runCharacterBnB } from "@/lib/team-comp/optimizer";
 import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
+import type { OptimizerContext } from "@/lib/team-comp/types";
 import type {
   CalcContext,
   ComboFormula,
   StatKey,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import { singleFormulaCombo } from "@/lib/team-comp/types";
 import type { CharOptConfig } from "@/lib/team-comp/types";
 
 import {

@@ -16,9 +16,9 @@ import {
   type BuildMatchResult,
   getTargetMainStatsForSlot,
 } from "../../account-data/artifactScore";
-import type { DamageEvalFn } from "../constrainedGreedy";
-import { StatSheet } from "../damageModels";
-import { computeSubstatMarginals } from "../marginalGains";
+import { computeSubstatMarginals } from "../calc/marginalGain";
+import { StatSheet } from "../calc/statSheet";
+import type { DamageEvalFn } from "../generator/constrainedGreedy";
 import type { StatKey } from "../types";
 import type { MarginalWeights } from "./types";
 

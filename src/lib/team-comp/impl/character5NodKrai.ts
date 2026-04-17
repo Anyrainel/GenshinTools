@@ -1,8 +1,6 @@
 import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 import type { Element, Faction } from "@/data/types";
-import { LUNAR_REACTIONS } from "../constants";
-import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -10,17 +8,15 @@ import {
   LunarDirectFormula,
   LunarFormula,
   TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  type FormulaPart,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor, ReactionType } from "../types";
+} from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import { LUNAR_REACTIONS } from "../constants";
+import type { FormulaEntry, FormulaPart } from "../types";
+import type { OptionDef } from "../types";
+import type { ComboTemplate, ReactionType } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Nod-Krai Characters
@@ -161,7 +157,7 @@ class Columbina extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap; off-field enabler. Ripple ticks ~12 over 25s, ~2 Gravity Interferences, ~3 CAs if driving
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "columbina-skill-initial", count: 1 },
       { id: "columbina-burst", count: 1 },
@@ -437,7 +433,7 @@ class Nefer extends CharacterBase {
   // Lv13 (C5+): 1193.4% ATK + 2386.8% EM
 
   // Rotation: E > 3[CA] > E > 3[CA] > E > 3[CA] > Q (on-field Lunar-Bloom carry, 9 CAs, 3 E casts per rotation)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "nefer-skill", count: 3 },
       { id: "nefer-phantasm", count: 9 },
@@ -674,7 +670,7 @@ class Flins extends CharacterBase {
   //   Moonsign Ascendant Gleam adds 1 extra hit (187.1%/220.9%)
 
   // Rotation: E > E > sQ > N4D×2 > N2 > E > sQ > N4D > N5 (on-field carry, ~10s field time)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "flins-normal", count: 2 },
       { id: "flins-spearstorm", count: 2, bonus: [{ minC: 1, delta: 1 }] },
@@ -894,7 +890,7 @@ class Lauma extends CharacterBase {
   ];
 
   // Rotation: Hold E > Q > swap (off-field support). Sanctuary ticks every 2s for 15s ≈ 7 hits.
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "lauma-sanctuary", count: 7 },
       { id: "lauma-hold", count: 1 },
@@ -1059,7 +1055,7 @@ class Ineffa extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap (off-field sub-DPS). Birgitta 10 hits baked in formula. C6 triggers ~6 times over 20s.
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "ineffa-skill-initial", count: 1 },
       { id: "ineffa-birgitta", count: 1 },
@@ -1284,7 +1280,7 @@ class Linnea extends CharacterBase {
 
   // Tap: Super Power Form — Pound only (no Moondrifts) or Pound + Overdrive (with Moondrifts)
   // Continuous Tap: Million Ton (on-field) then Standard Pounds
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     const hasLC = this.teamMeta.hasReaction("lunarCrystallize");
     if (this.lumiMode === "tap") {
       return hasLC
@@ -1614,7 +1610,7 @@ class Nicole extends CharacterBase {
   // Rotation: E (apply Kenosis → Theosis) → Q (enter Silent Contemplation) →
   // coord attacks trigger on teammate hits.
   // Default combo uses slot 1 (always occupied — UI fills left-to-right).
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "nicole-skill", count: 1 },
       { id: "nicole-burst", count: 1 },

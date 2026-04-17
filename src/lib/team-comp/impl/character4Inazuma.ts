@@ -1,13 +1,10 @@
-import { CrossScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula, TransformFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+import { DirectFormula, TransformFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { CrossScalingBuff, ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { OptionDef } from "../types";
+import type { ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Inazuma Characters
@@ -42,7 +39,7 @@ class Kirara extends CharacterBase {
   ];
 
   // Rotation: E > swap > on-field NA triggers C4 every 3.8s (~5 procs per rotation)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "kirara-c4-steed", count: 5 }];
   }
 
@@ -99,7 +96,7 @@ class ShikanoinHeizou extends CharacterBase {
   ];
 
   // Rotation: swap-in > E (full conviction) > Q > swap out (driver sub-DPS)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "heizou-skill", count: 2 },
       { id: "heizou-burst", count: 1 },
@@ -184,7 +181,7 @@ class KukiShinobu extends CharacterBase {
   ];
 
   // Rotation: E (off-field ring) > Q > swap; hyperbloom ~8 seeds per rotation, C4 ~4 procs
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "shinobu-burst", count: 1 },
       { id: "shinobu-hyperbloom", count: 8 },
@@ -276,7 +273,7 @@ class Sayu extends CharacterBase {
   })();
 
   // Rotation: E (hold roll + kick) > Q > Daruma ~7 ticks (healer/swirl support)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "sayu-e-kick", count: 1 },
       { id: "sayu-q-initial", count: 1 },
@@ -340,7 +337,7 @@ class Thoma extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap; Fiery Collapse every 1s over 15s (C2: 18s)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "thoma-burst-collapse", count: 15 }];
   }
 
@@ -407,7 +404,7 @@ class Gorou extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap (Geo support, minimal field time)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "gorou-skill", count: 1 },
       { id: "gorou-burst", count: 1 },
@@ -511,7 +508,7 @@ class KujouSara extends CharacterBase {
   ];
 
   // Rotation: E (ATK buff + damage) > Q > swap (Electro support, buff bot)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "sara-skill", count: 1 },
       { id: "sara-burst", count: 1 },

@@ -1,4 +1,4 @@
-# Genshin Tools - Agent Context
+# Genshin Tools — Agent Context
 
 ## Overview
 
@@ -16,103 +16,30 @@ Hosted on **Cloudflare Pages** (`npm run build` → `dist/`).
 
 ---
 
-## ⚠️ Reusable Components — USE THESE, DON'T REBUILD
+## Commands
 
-Before building any UI, check this section. Re-inventing these is a common mistake.
+- `npm run dev` — Vite + Wrangler dev server (Cloudflare Functions proxy)
+- `npm run dev:vite` — Vite only (no Cloudflare Functions)
+- `npm run build` / `build:tauri` — Production build (Web / Tauri Desktop)
+- `npm run lint` / `lint:fix` — Biome check / auto-fix
+- `npm run type-check` — TypeScript check (src + tests tsconfigs)
+- `npm run test` / `test:watch` / `test:coverage` — Vitest unit tests
+- `npm run test:e2e` / `test:e2e:ui` — Playwright e2e tests
 
-### Game Item Display
+### Safe Variants (use these instead of piping)
 
-| Need | Component | Path | Key Props |
-|------|-----------|------|-----------|
-| Any game item icon (character, weapon, artifact) | `ItemIcon` | `shared/ItemIcon.tsx` | `imagePath`, `size` (xs/sm/md/lg/xl), `rarity` (1-5), `badge`, `level`, `elementBadge`, `lock`, `frozen`, `imagePath2` (for 2pc+2pc split) |
-| Artifact icon with data | `ArtifactIcon` | `shared/ArtifactIcon.tsx` | `artifact`, `artInfo`, `slot`, `size` |
-| Character name/element/rarity header | `CharacterInfo` | `shared/CharacterInfo.tsx` | `character`, `showDate?`, `children` |
-| Artifact stat breakdown | `StatDisplay` | `account-data/StatDisplay.tsx` | `artifact`, `scoreResult?`, `compact?` |
-| 5-slot artifact grid | `ArtifactSlotGrid` | `team-comp/ArtifactSlotGrid.tsx` | `charId`, `artifactsObj`, `onSwap?` |
-
-**Sizing:** Use exported `ICON_CONFIG` and `SIZE_CLASSES` from `ItemIcon.tsx` for consistent dimensions.
-
-### Pickers & Selectors
-
-| Need | Component | Path | Key Props |
-|------|-----------|------|-----------|
-| Pick a character, weapon, or artifact | `ItemPicker` | `shared/ItemPicker.tsx` | `type` ('character'/'weapon'/'artifact'), `value`, `onChange`, `filter?`, `triggerSize?`, `menuSize?`, `frozen?` |
-| 4-slot team picker (char+weapon+artifact) | `TeamPickerGrid` | `shared/TeamPickerGrid.tsx` | `characters`, `weapons`, `artifacts`, `onChange`, `accountData?` (auto-prefill), `frozenCharIds?` |
-| Stat multi-select | `StatSelect` | `artifact-builds/StatSelect.tsx` | `values`, `onValuesChange`, `options`, `maxLength`, `compact?` |
-| Stat multi-select with weights | `WeightedStatSelect` | `artifact-builds/WeightedStatSelect.tsx` | `values`, `options`, `maxLength`, `weightPresets?` |
-| Weight slider (0-100%) | `WeightPopover` | `shared/WeightPopover.tsx` | `value`, `onChange`, `label?` |
-| 2pc+2pc artifact builder | `ArtifactMixedBuilder` | `shared/ArtifactMixedBuilder.tsx` | `mixedSlot1`, `mixedSlot2`, `pickingSlot`, `confirmMixedSet` |
-
-`ItemPicker` is responsive: Popover on desktop, Drawer on mobile. It has built-in search, filter chips, tier sorting, and owned-only filter.
-
-### Tooltips & Preview Cards
-
-| Need | Component | Path | Props |
-|------|-----------|------|-------|
-| Character preview on hover | `CharacterTooltip` | `shared/CharacterTooltip.tsx` | `characterId` |
-| Weapon preview on hover | `WeaponTooltip` | `shared/WeaponTooltip.tsx` | `weaponId` |
-| Artifact set effects on hover | `ArtifactTooltip` | `shared/ArtifactTooltip.tsx` | `setId`, `hideFourPieceEffect?` |
-| 2pc+2pc set effects on hover | `MixedSetTooltip` | `shared/MixedSetTooltip.tsx` | `id1`, `id2` |
-| Artifact detail (hover + mobile drawer) | `ArtifactDataHoverCard` | `account-data/ArtifactDataHoverCard.tsx` | `artifact`, `slot`, `children` (trigger) |
-
-### Filter Panels
-
-| Need | Component | Path | Key Props |
-|------|-----------|------|-----------|
-| Full character filter panel | `CharacterFilterSidebar` | `shared/CharacterFilterSidebar.tsx` | `filters`, `onFiltersChange`, `hasTierData?` |
-| Tri-state sort toggle | `SortToggleGroup` | `shared/SortToggleGroup.tsx` | `value`, `onChange`, `label?` |
-
-`CharacterFilterSidebar` provides: owned-only, element, rarity, weapon type, region, tier/release sort.
-
-### Page Layouts
-
-| Need | Component | Path | Key Props |
-|------|-----------|------|-----------|
-| Standard page wrapper (AppBar + error boundary) | `PageLayout` | `layout/PageLayout.tsx` | AppBar props passthrough, `children` |
-| Content + sidebar (drawer on mobile) | `SidebarLayout` | `layout/SidebarLayout.tsx` | `sidebar`, `children`, `triggerIcon?` |
-| Sidebar + detail view (archive pattern) | `SidebarDetailLayout` | `layout/SidebarDetailLayout.tsx` | `sidebar`, `children`, `mobileGrid?`, `hasSelection`, `onBack` |
-| Dense tabular layout with filters | `WideLayout` | `layout/WideLayout.tsx` | `title`, `actions?`, `filters?` (FilterGroup[]), `children` |
-| Simple centered scroll container | `ScrollLayout` | `layout/ScrollLayout.tsx` | `children` |
-
-### Action Dialogs (Import/Export/Clear)
-
-All use the **ref handle pattern**: `useRef<ControlHandle>()` → `ref.current?.open()`.
-
-| Need | Component | Path | Key Props |
-|------|-----------|------|-----------|
-| Export with metadata | `ExportControl` | `shared/ExportControl.tsx` | `onExport(author, description)` |
-| Import from preset or file | `ImportControl` | `shared/ImportControl.tsx` | `options`, `loadPreset`, `onApply` |
-| Confirm-to-clear | `ClearAllControl` | `shared/ClearAllControl.tsx` | `onConfirm` |
-
-Wire these to AppBar via `actions` prop:
-```tsx
-const exportRef = useRef<ControlHandle>(null);
-<ExportControl ref={exportRef} onExport={handleExport} />
-<PageLayout actions={[
-  { key: "export", icon: Download, label: "Export", onTrigger: () => exportRef.current?.open() }
-]} />
-```
-
-### Tier List Rendering
-
-| Need | Component | Path | Key Props |
-|------|-----------|------|-----------|
-| Universal tier grid (3 responsive modes) | `TierLayout` | `tier-list/TierLayout.tsx` | `mode` ('compact'/'tablet'/'desktop'), `iconSize`, `allTiers`, `itemsPerTier`, `groups`, `getItemGroup`, `getItemName` |
-
-### Error Boundaries
-
-| Need | Component | Path |
-|------|-----------|------|
-| Full-page error | `PageErrorBoundary` | `shared/ErrorBoundary.tsx` |
-| Section-level error | `SectionErrorBoundary` | `shared/ErrorBoundary.tsx` |
+- `npm run type-check:head` / `lint:head` / `test:head` — First 20 lines. Pass `-- N` to change.
+- `npm run type-check:tail` / `lint:tail` / `test:tail` — Last 20 lines.
+- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 15 + last 15.
+- `npm run type-check:filter -- "Error"` / `lint:filter` / `test:filter` — Grep output.
 
 ---
 
 ## Styling Rules
 
 - Use `cn()` (from `lib/utils.ts`) to merge Tailwind classes. Never concatenate class strings manually.
-- **NEVER** use opacity on `text-muted-foreground` (e.g., `text-muted-foreground/50`). It's already muted — opacity makes text unreadable.
-- Same for `border-muted-foreground/` — use `border-border` or `border-muted-foreground` without opacity.
+- **NEVER** use opacity on `text-muted-foreground` (e.g., `text-muted-foreground/50`). It's already muted — opacity makes text unreadable. Same for `border-muted-foreground/` — use `border-border` or `border-muted-foreground` without opacity.
+- Use `text-muted-foreground` only for text that is not important and most users can skip.
 - Color helpers: `getRarityColor(rarity, "bg"|"text")`, `getElementColor(element, "bg"|"text")`, `getTierColor(tier, "bg"|"text")`.
 - Asset URLs: always use `getAssetUrl(path)` for images (handles Vite BASE_URL for GitHub Pages).
 - Theme: 9 palettes via `ThemeContext` + `themeGenerator.ts`. CSS variables applied at runtime.
@@ -131,11 +58,9 @@ const exportRef = useRef<ControlHandle>(null);
 
 ## Project Structure
 
-### Directory Map
-
 - `src/pages/` — Route-level page components (Home, AccountData, ArtifactBuilds, TierList, Archive, TeamComp)
 - `src/components/{domain}/` — Domain UI: `account-data`, `artifact-builds`, `tier-list`, `team-comp`, `archive`
-- `src/components/shared/` — Cross-domain reusable components (see table above)
+- `src/components/shared/` — Cross-domain reusable components (see `docs/agent-ui-components.md`)
 - `src/components/ui/` — shadcn/ui primitives + custom widgets (`tour`, `responsive-dialog`, `weighted-select`)
 - `src/components/layout/` — Layout shells (PageLayout, AppBar, SidebarLayout, etc.)
 - `src/stores/` — One Zustand store per domain (persist to `localStorage`)
@@ -163,89 +88,85 @@ Navigation config: `src/config/appNavigation.tsx`.
 
 ---
 
-## Data Flow
+## Domain References
 
-1. **Static game data** (`src/data/*.json`) is the immutable source of truth.
-2. **User data** enters via GOOD Format (JSON), Mona/yas Format (artifact-only JSON), Enka.Network (UID), or preset subscription → persists in `localStorage`.
-3. **Preset system**: presets in `src/presets/artifact-builds/` serve as the **Immutable Base**. They DO NOT exist in `useBuildsStore` directly.
-4. **Build Store (`useBuildsStore`)**: Contains **ONLY** User Overrides, Custom Builds, and Ordering. It is a Delta Store. **DO NOT** read `builds` directly for scoring.
-5. **Build Resolution**: `useResolvedBuilds` (single char) / `useAllResolvedBuilds` (all chars) are the **Single Source of Truth**. They merge Preset Base + Store Deltas.
-   - **Rule**: Always use these hooks to get builds. Never traverse `useBuildsStore.builds` or `presetRegistry` manually.
-6. **Merge → Filter pipeline**: `greedyMerge` / `smartMerge` → `computeFilters` → lock/trash scripts.
-7. **Zero `any`**: all external data must be typed and validated.
+- **Reusable UI Components** → `docs/agent-ui-components.md` — Read before building any UI.
+- **Data Flow & Domain Systems** → `docs/agent-domains.md` — Build evaluation, damage calc, data flow architecture.
+- **Data Mutation Map** → `docs/data-mutation-map.md` — Read before modifying any store, data import path, or artifact operation.
 
 ---
 
-## Key Domain Systems
-
-### Build Evaluation & Insight Engine (Account Data)
-
-`src/lib/account-data/`:
-- **Build Evaluation** (`buildEvaluation.ts`): Per-character archetype classification (DPS/Support), slot completion, efficiency tiers (S/A/B/C/F).
-- **Insight Engine** (`insightEngine.ts`): Generates actionable recommendations (EQUIP, SWAP, UPGRADE, REROLL, FARM, FIX_MAIN) with score differentials.
-- **Triage** (`triage/`): Probability-based artifact evaluation with P/Q/N/T tiers and special rules.
-- **AutoTune** (`scoring/autoTune.ts`): Generates stat weights via marginal damage analysis using real TeamBuild calculator.
-
-### Damage Calculation (Team Comp)
-
-`src/lib/team-comp/`:
-- **Character implementations** (`impl/`): 70+ characters with per-character formulas, buffs, and `defaultRotation` data.
-- **Damage formulas** (`damageFormulas.ts`): 6 formula types (Direct, Amplify, Catalyze, Transform, Lunar, LunarDirect).
-- **Buff system** (`damageBuffs.ts`): StatBuff, ScalingBuff, CrossScalingBuff with source tracking and buff validation.
-- **Stat resolution** (`damageModels.ts`): StatSheet (immutable two-level map), zone-based damage with DamageTagFilter scoping.
-- **Optimizer V2** (`optimizer/`): Branch-and-bound per-character → conflict-aware team DFS. Web Worker parallelization.
-- **Combo/Rotation** (`types.ts`): Multi-character rotation evaluation with per-line reaction overrides.
-
-### Cloudflare Functions (CORS Proxy)
-
-`functions/api/enka/[[path]].ts` — proxies `/api/enka/*` → `https://enka.network/api/*` for CORS. Frontend caller: `src/lib/account-data/enkaFetcher.ts`.
-
----
-
-## Localization
+## i18n
 
 - **`i18n-ui.ts`**: Static UI strings. **CRITICAL**: `t.ui()` calls MUST use string literals (e.g., `t.ui('common.save')`), never dynamically constructed keys. I18n tests enforce this.
 - **`i18n-app.ts`**: Dynamic terms via custom hooks on `t`, for enum concept labels. No tests.
 - **`i18n-game.ts`**: Game entity names, auto-generated by scrapers.
 - **Usage**: `const { t } = useLanguage()` → `t.ui("key")`, `t.character("id")`, `t.weaponEffect("id")`.
 
----
+### i18n Writing Rules
 
-## Commands
-
-- `npm run dev` — Vite + Wrangler dev server (Cloudflare Functions proxy)
-- `npm run dev:vite` — Vite only (no Cloudflare Functions)
-- `npm run build` / `build:tauri` — Production build (Web / Tauri Desktop)
-- `npm run lint` / `lint:fix` — Biome check / auto-fix
-- `npm run type-check` — TypeScript check (src + tests tsconfigs)
-- `npm run test` / `test:watch` / `test:coverage` — Vitest unit tests
-- `npm run test:e2e` / `test:e2e:ui` — Playwright e2e tests
-
-### Safe & Piped Variants (Agent Use)
-Agents must use these to avoid explicit pipe (`|`) or redirect (`2>&1`):
-- `npm run type-check:head` / `lint:head` / `test:head` — First 20 lines. Pass `-- N` to change.
-- `npm run type-check:tail` / `lint:tail` / `test:tail` — Last 20 lines.
-- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 15 + last 15.
-- `npm run type-check:filter -- "Error"` / `lint:filter -- "Pattern"` / `test:filter -- "Pattern"` — Grep output.
+- **Write for real players, not developers.** Every string must read naturally to a Genshin player.
+- **Chinese must be real Chinese, not abbreviated code-speak.** "等待" not "等", "长按E" not "长E", "持续产球" not "周E". Abbreviations are fine only when they're actual player community shorthand (e.g. 普攻, 重击, 下落).
+- **English must be real words.** "Hold E" not "hE", "Wait" not "W", "Plunge" not "PA". Use Genshin's official English terminology when it exists (Normal Attack, Charged Attack, Elemental Skill, Elemental Burst).
+- **Space-constrained labels** (e.g. timeline action blocks) can use shorter forms but must still be recognizable: "Hold E", "Tick E", "NA", "CA" are acceptable. Single-letter gibberish is not.
+- **Inline i18n** (`language === "zh" ? "中文" : "English"`) is acceptable for small isolated features, but prefer adding entries to `i18n-ui.ts` for strings that appear in multiple places or are part of a larger feature.
 
 ---
 
-## Development Rules
+## Error Handling Conventions
 
-### Architecture
-- **`SidebarLayout`**: Drawer on mobile, fixed sidebar on desktop (lg+). Standard for pages with filter panels.
-- **`AppBar`**: Sticky header. Actions via `ActionConfig[]`; dialog controls use ref forwarding (`useImperativeHandle`).
-- **Mobile first**: `Drawer` (vaul) for mobile, `Popover` for desktop. See `ItemPicker.tsx`.
+Library code (`src/lib/`) follows these patterns by domain:
+- **Unrecoverable / data structure invalid** → `throw new Error("descriptive message")`. Caught at UI boundary with `toast.error()`.
+- **Entity not found / infeasible** → `return null`. Caller checks before use. Used in solvers, constraint checkers, optional lookups.
+- **Partial success (import/conversion)** → Return `{ data, warnings: ConversionWarning[] }`. Caller shows warning count toast, continues with partial data.
+- **Stateful errors with context** → Discriminated union (e.g. `{ solved: T } | { error: string }`). Caller pattern-matches on discriminant.
 
-### Testing
+Do NOT introduce a generic `Result<T>` type. The above patterns are sufficient for each domain.
+
+---
+
+## Store Refactor Rules
+
+When a new feature requires incompatible changes to a store's data structure:
+1. **Document the old shape** in code comments at the migration site — the old data structure is no longer visible in the codebase, so without comments the migration code looks like it's coding against imagined interfaces.
+2. Always add proper migration logic with respect to the current origin version (treat pending changes and local-only commits as the same version).
+3. Version the store data so there is an easier way to check for migration logic.
+4. Add a migration test to ensure old format can migrate to the new format.
+
+When smooth auto-migration isn't possible, discuss options with the user before proceeding.
+
+---
+
+## Multi-Agent Environment
+
+Multiple agents may be working on this repo concurrently, sharing the same working tree and terminal. Key implications:
+- Files you didn't touch may appear staged or modified — that's another agent working, not a bug.
+- **Never** use destructive git commands (stash, reset --hard, restore, checkout --) that would wipe uncommitted work.
+- Race conditions on commits are acceptable — if extra files get pulled into your commit, that's fine. Losing pending work is never acceptable.
+- Don't use partial staging to isolate your files — pre-commit checks don't work with stash, and other agents may stage files between your commands.
+
+---
+
+## Commit Rules
+
+- When blocked by type errors or trivial test errors, even if unrelated, fix them so the commit can succeed. For complex problems, pause and ask the user.
+- All work goes to master branch unless specified. The beta branch is for local testing of unreleased characters/weapons, not for application features.
+
+---
+
+## Testing Rules
+
+- When running tests (npm run test, vitest or benchmark.ts), do not repeatedly run expensive full suites with grep. Instead, direct output to a file under `test-results/` and check the file content.
+- **Clean up `test-results/` files** once you no longer need to read them — don't pile up CLI output.
 - Unit tests in `tests/` mirror `src/`. Use `@/` path alias.
 - Store tests: use `useStore.getState()` to verify state after actions.
 
-### Terminal Hygiene
-- Avoid `|` pipe and `2>&1` / `>` redirection (triggers safety review).
-- Never inline Python/JS code in terminal commands. Write a temporary file under `temp/`, run it, then delete it.
+---
 
-### File Safety
+## Terminal & File Safety
+
+- Avoid `|` pipe and `2>&1` / `>` redirection (triggers safety review). Use the safe command variants above.
+- Never inline Python/JS code in terminal commands. Write a temporary file under `temp/`, run it, then delete it.
 - **Never run destructive scripts directly on source files.** Write output to `.new` or `.tmp` first, diff/inspect, then replace.
 - Before bulk file transformations, back up the target file.
 - Test regex patterns with dry-run (print matches only) before applying.

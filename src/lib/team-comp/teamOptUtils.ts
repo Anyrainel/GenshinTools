@@ -8,12 +8,8 @@ import type {
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
-import {
-  type TeamBuild,
-  getComboDisplayResult,
-} from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
-import { distributeComboHits } from "@/lib/team-comp/stackAllocation";
+import { getComboDisplayResult } from "@/lib/team-comp/calc/damageCalc";
+import { distributeComboHits } from "@/lib/team-comp/calc/stackAllocation";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -24,6 +20,8 @@ import type {
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import type { Team, WeaponChoiceCharConfig } from "@/stores/useTeamStore";
+import { StatSheet } from "./calc/statSheet";
+import type { TeamBuild } from "./calc/teamBuild";
 
 export interface DamageDetailProps {
   team: Team;

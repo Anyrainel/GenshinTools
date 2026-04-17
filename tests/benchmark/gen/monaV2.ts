@@ -21,12 +21,12 @@
 import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import { allSlots } from "@/data/types";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
+  FormulaOverride,
   OptFailReason,
-  ReactionOverride,
   StatKey,
   TeamOptYield,
   TeamOptimizerOptions,
@@ -56,7 +56,7 @@ import {
  * increases the target function output. Weight = 1.0 if yes, 0.0 if no.
  */
 function computeStatWeights(
-  teamBuild: import("@/lib/team-comp/damageCalc").TeamBuild,
+  teamBuild: import("@/lib/team-comp/calc/teamBuild").TeamBuild,
   swapCharId: string,
   formulaCharId: string,
   formulaId: string,
@@ -65,7 +65,7 @@ function computeStatWeights(
   calcContext: CalcContext,
   minEr: number,
   minCr: number,
-  reactionOverride?: ReactionOverride,
+  reactionOverride?: FormulaOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): Map<StatKey, number> {
   const weights = new Map<StatKey, number>();
@@ -323,7 +323,7 @@ interface V2Context {
   minCr: number;
   erFloor: number;
   crFloor: number;
-  reactionOverride?: ReactionOverride;
+  reactionOverride?: FormulaOverride;
   scoreFn?: (
     sheets: Record<string, StatSheet>,
     onFieldCharId: string

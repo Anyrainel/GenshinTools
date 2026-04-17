@@ -1,8 +1,10 @@
 import { elements } from "@/data/types";
+import { WeaponBase } from "../calc/implModel";
+import { RegisterWeapon } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
 import { ZERO_ENERGY_CHARS } from "../constants";
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { RegisterWeapon, WeaponBase } from "../damageModels";
-import { ALL_ELEMENTAL_FILTER, r, wbs } from "../helpers";
+import { ALL_ELEMENTAL_FILTER } from "./helpers";
+import { r, wbs } from "./helpers";
 
 // ══════════════════════════
 // 5★ Swords

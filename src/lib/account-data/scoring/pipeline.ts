@@ -26,14 +26,14 @@ import type {
   WeightedSubStat,
 } from "@/data/types";
 import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
+import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { MULTI_ELEMENT_CHARS } from "@/lib/team-comp/constants";
 import {
   buildSheetFromMainAndSubs,
   emptySubRolls,
   getRollValues,
-} from "@/lib/team-comp/constrainedGreedy";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
+} from "@/lib/team-comp/generator/constrainedGreedy";
 import type {
   CalcContext,
   I18nLabel,

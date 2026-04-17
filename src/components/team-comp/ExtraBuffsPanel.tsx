@@ -32,7 +32,7 @@ import {
 import { ENV_BUFF_TARGET_MODE, type EnvBuff, envBuffs } from "@/data/envBuffs";
 import type { Element } from "@/data/types";
 import { elements } from "@/data/types";
-import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
+import type { ExtraBuff } from "@/lib/team-comp/types";
 import type { StatKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl, getElementColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";

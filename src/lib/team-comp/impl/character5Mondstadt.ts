@@ -1,15 +1,12 @@
 import type { Element, ReactionType } from "@/data/types";
-import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
-import type { OptionDef } from "../damageModels";
-import { cbs } from "../helpers";
-import type { ComboDescriptor } from "../types";
+import { DirectFormula } from "../calc/damageFormula";
+import { CharacterBase } from "../calc/implModel";
+import { RegisterCharacter, resolveOption } from "../calc/registry";
+import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import type { FormulaEntry } from "../types";
+import type { OptionDef } from "../types";
+import type { ComboTemplate } from "../types";
+import { cbs } from "./helpers";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Mondstadt Characters
@@ -368,7 +365,7 @@ class Durin extends CharacterBase {
   })();
 
   // Rotation: E > Q (off-field burst DPS, 3 initial hits + dragon ticks baked in)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return this.isWhite
       ? [{ id: "durin-burst-white", count: 1 }]
       : [{ id: "durin-burst-dark", count: 1 }];
@@ -596,7 +593,7 @@ class Albedo extends CharacterBase {
   })();
 
   // Rotation: E (place isotoma) + ~5 blossom procs + Q (off-field sub-DPS)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "albedo-blossom", count: 5 },
       { id: "albedo-burst", count: 1 },
@@ -743,7 +740,7 @@ class Diluc extends CharacterBase {
   })();
 
   // Rotation: Q > N1E > N1E > N1E (vape carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "diluc-skill", count: 1 },
       { id: "diluc-burst", count: 1 },
@@ -934,7 +931,7 @@ class Mona extends CharacterBase {
   })();
 
   // Rotation: Q (omen support, bubble explosion)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "mona-burst", count: 1 }];
   }
 }
@@ -1011,7 +1008,7 @@ class Jean extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (Anemo support, 6s E CD)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "jean-skill", count: 1 },
       { id: "jean-burst", count: 1 },
@@ -1224,7 +1221,7 @@ class Venti extends CharacterBase {
   })();
 
   // Rotation: Q (burst ticks baked in) + 1 Windsunder NA string + C2 E
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "venti-windsunder", count: 1 },
       { id: "venti-burst-total", count: 1 },
@@ -1383,7 +1380,7 @@ class Klee extends CharacterBase {
   })();
 
   // Rotation: ~6 Charged Attacks per rotation (N1C or N2C combos during Q window)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [{ id: "klee-charged", count: 6 }];
   }
 }
@@ -1445,7 +1442,7 @@ class Eula extends CharacterBase {
   ];
 
   // Rotation: E tap + E hold + Q lightfall (physical carry)
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "eula-skill-tap", count: 1 },
       { id: "eula-skill-hold", count: 1 },
@@ -1653,7 +1650,7 @@ class Varka extends CharacterBase {
     return buffs;
   })();
 
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "varka-e", count: 1 },
       { id: "varka-normal", count: 2 },
@@ -2091,7 +2088,7 @@ class Lohen extends CharacterBase {
 
   // Rotation: E (enter Masterstroke) → build Joy with NA/CA → special E → Q.
   // ~2 cycles of (N5 + CA) fills Joy (100 pts). Keep NA heavy.
-  protected override get comboDescriptor(): ComboDescriptor {
+  protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "lohen-e-normal", count: 2 },
       { id: "lohen-e-charge", count: 1 },
