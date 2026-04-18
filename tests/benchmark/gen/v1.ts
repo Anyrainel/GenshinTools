@@ -10,11 +10,11 @@ import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
  */
 import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import type {
+  BuffActivationMap,
   CalcContext,
   CharOptConfig,
   ComboFormula,
   ComboResult,
-  PartialBuffInfo,
   ReactionOverride,
   TeamOptPassId,
   TeamOptPassResult,
@@ -103,7 +103,7 @@ function computeFinalScore(
   reactionOverride: ReactionOverride | undefined,
   isComboMode: boolean,
   combo: ComboFormula | undefined,
-  buffOverrides?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, BuffActivationMap>
 ): number {
   const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
   if (isComboMode && combo) {

@@ -18,7 +18,6 @@ import {
   compileComboTeamDamage,
   fillVarsFromSheet,
 } from "@/lib/team-comp/calc/formulaCompiler";
-import type { PartialBuffInfo } from "@/lib/team-comp/calc/stackAllocation";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
@@ -132,7 +131,7 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
       undefined,
       undefined
     );
-    expect(specs).toHaveLength(0);
+    expect(Object.keys(specs)).toHaveLength(0);
   });
 
   it("returns empty when overrides don't reduce any hits", () => {
@@ -162,10 +161,10 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
       undefined,
       overrides
     );
-    expect(specs).toHaveLength(0);
+    expect(Object.keys(specs)).toHaveLength(0);
   });
 
-  it("returns PartialBuffInfo when user override reduces hits on a part", () => {
+  it("returns activation when user override reduces hits on a part", () => {
     const tb = makeDilucTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = emptySheets(
@@ -176,8 +175,9 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
     );
 
     // Disable Bennett Q on part 0
+    const bennettKey = getBennettQKey(tb);
     const overrides: BuffActivationMap = {
-      [getBennettQKey(tb)]: { 0: 0 },
+      [bennettKey]: { 0: 0 },
     };
 
     const specs = tb.computePartialBuffSpecs(
@@ -189,12 +189,10 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
       overrides
     );
 
-    expect(specs.length).toBeGreaterThan(0);
-    const spec = specs[0];
-    // Should have a buffKey identifying the buff
-    expect(spec.buffKey).toBeTruthy();
-    // partActivation should show 0 for part 0
-    expect(spec.partActivation[0]).toBe(0);
+    expect(Object.keys(specs).length).toBeGreaterThan(0);
+    // Should contain the buff key with activation 0 for part 0
+    expect(specs[bennettKey]).toBeDefined();
+    expect(specs[bennettKey][0]).toBe(0);
   });
 });
 
@@ -382,7 +380,7 @@ describe("compileComboTeamDamage with partialBuffs (hot path)", () => {
     );
     const dmgBase = compiledBase.evaluate(varsBase);
 
-    // Build PartialBuffInfo that disables Bennett Q on all parts
+    // Build BuffActivationMap that disables Bennett Q on all parts
     const specs = tb.computePartialBuffSpecs(
       carryId,
       formulaId,
@@ -401,9 +399,9 @@ describe("compileComboTeamDamage with partialBuffs (hot path)", () => {
         return overrides;
       })()
     );
-    expect(specs.length).toBeGreaterThan(0);
+    expect(Object.keys(specs).length).toBeGreaterThan(0);
 
-    // Compile with partialBuffs
+    // Compile with buff activation
     const compiledPartial = compileComboTeamDamage(
       tb,
       combo,
@@ -500,7 +498,7 @@ describe("runTeamOptimization with partialBuffs", () => {
       "kaedehara_kazuha"
     );
 
-    // Build partialBuffs that disable Bennett Q
+    // Build activation that disables Bennett Q
     const specs = tb.computePartialBuffSpecs(
       carryId,
       formulaId,
@@ -518,10 +516,10 @@ describe("runTeamOptimization with partialBuffs", () => {
         return overrides;
       })()
     );
-    expect(specs.length).toBeGreaterThan(0);
+    expect(Object.keys(specs).length).toBeGreaterThan(0);
 
     // Verify the compiled expression with specs produces different damage
-    // (this proves the optimizer's B&B scoring function uses partialBuffs)
+    // (this proves the optimizer's B&B scoring function uses buff activation)
     const combo = singleFormulaCombo(carryId, formulaId);
     const compiledBase = compileComboTeamDamage(
       tb,
@@ -622,12 +620,9 @@ describe("runTeamOptimization with partialBuffs", () => {
       combo: {
         ...combo,
         buffOverrides: {
-          0: [
-            {
-              buffKey: getBennettQKey(tb),
-              partActivation: { 0: 0 },
-            },
-          ],
+          0: {
+            [getBennettQKey(tb)]: { 0: 0 },
+          },
         },
       },
       inventory,
@@ -728,7 +723,7 @@ describe("compileComboTeamDamage with buffOverrides", () => {
       })()
     );
 
-    if (dilucSpecs.length === 0) {
+    if (Object.keys(dilucSpecs).length === 0) {
       // Bennett Q may not be resolvable as a non-stack-limited override
       // with empty sheets. Skip assertion but ensure no crash.
       return;
@@ -736,7 +731,7 @@ describe("compileComboTeamDamage with buffOverrides", () => {
 
     // Key format for combo line: "diluc.dilucFormula" → index into combo lines
     const lineKey = `${carryId}.${dilucFormula}`;
-    const buffOverrides: Record<string, PartialBuffInfo[]> = {
+    const buffOverrides: Record<string, BuffActivationMap> = {
       [lineKey]: dilucSpecs,
     };
 

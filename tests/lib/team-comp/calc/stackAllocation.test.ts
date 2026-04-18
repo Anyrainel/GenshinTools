@@ -3,10 +3,8 @@ import { describe, expect, it } from "vitest";
 import { DirectFormula } from "@/lib/team-comp/calc/damageFormula";
 import {
   type ComboLineEval,
-  type FormulaEval,
-  type PartialBuffInfo,
+  type FormulaPartEval,
   type StackLimitedBuffInfo,
-  buildPartialBuffInfos,
   computeBlendedDamage,
   computeComboDefaultActivation,
   computeDefaultActivation,
@@ -16,6 +14,7 @@ import { exclusionKey } from "@/lib/team-comp/calc/stackAllocation";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { buffSourceKey } from "@/lib/team-comp/helpers";
 import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";
+import type { BuffActivationMap } from "@/lib/team-comp/types";
 import type { FormulaPart } from "@/lib/team-comp/types";
 import type { CalcContext, StatKey } from "@/lib/team-comp/types";
 
@@ -64,66 +63,35 @@ function makeBuffInfo(maxStacks: number, origin = "C2"): StackLimitedBuffInfo {
 }
 
 /**
- * Helper: build per-part sans-buff stats for computeDefaultActivation tests.
- * Removes the given entries from postStats to simulate excluding the buff.
- * Returns a Map<buffKey, StatSheet[]> where every part gets the same sans stats.
- */
-function makeSansBuffPartStats(
-  postStats: StatSheet,
-  buffs: StackLimitedBuffInfo[],
-  removals: { key: StatKey; value: number }[][],
-  partCount: number
-): Map<string, StatSheet[]> {
-  const filter = {
-    elements: ["Cryo" as const],
-    abilities: ["skill" as const],
-  };
-  const result = new Map<string, StatSheet[]>();
-  for (let i = 0; i < buffs.length; i++) {
-    const bKey = buffs[i].buffKey;
-    let sans = postStats;
-    for (const entry of removals[i]) {
-      sans = sans.merge(
-        StatSheet.fromEntries([{ key: entry.key, value: -entry.value }], filter)
-      );
-    }
-    result.set(bKey, Array(partCount).fill(sans));
-  }
-  return result;
-}
-
-/**
- * Helper: build FormulaEval[] and partHits[] from parts and postStats.
+ * Helper: build FormulaPartEval[] from parts and postStats.
  */
 function makePartEvals(
   parts: FormulaPart[],
   postStats: StatSheet,
   charLevel = 90
-): { partEvals: FormulaEval[]; partHits: number[] } {
-  const partEvals: FormulaEval[] = parts.map((p) => ({
+): FormulaPartEval[] {
+  return parts.map((p) => ({
     formula: p.formula,
     stats: postStats,
     charLevel,
+    hits: p.hits ?? 1,
   }));
-  const partHits = parts.map((p) => p.hits ?? 1);
-  return { partEvals, partHits };
 }
 
 /**
- * Helper: build FormulaEval[] with per-part stats (for off-field tests).
+ * Helper: build FormulaPartEval[] with per-part stats (for off-field tests).
  */
 function makePartEvalsWithStats(
   parts: FormulaPart[],
   statsPerPart: StatSheet[],
   charLevel = 90
-): { partEvals: FormulaEval[]; partHits: number[] } {
-  const partEvals: FormulaEval[] = parts.map((p, i) => ({
+): FormulaPartEval[] {
+  return parts.map((p, i) => ({
     formula: p.formula,
     stats: statsPerPart[i],
     charLevel,
+    hits: p.hits ?? 1,
   }));
-  const partHits = parts.map((p) => p.hits ?? 1);
-  return { partEvals, partHits };
 }
 
 /**
@@ -181,24 +149,12 @@ describe("computeDefaultActivation", () => {
     ]);
 
     const buff = makeBuffInfo(5);
-    const { partEvals, partHits } = makePartEvals(parts, postStats);
-    const sansBuffPartStats = makeSansBuffPartStats(
-      postStats,
-      [buff],
-      [[{ key: "baseDmg", value: 500 }]],
-      parts.length
-    );
-    const result = computeDefaultActivation(
-      partEvals,
-      partHits,
-      [buff],
-      ctx,
-      sansBuffPartStats
-    );
+    const partEvals = makePartEvals(parts, postStats);
+    const result = computeDefaultActivation(partEvals, [buff], ctx);
 
     const bKey = buffSourceKey(buff.source);
     expect(result[bKey]).toBeDefined();
-    // With 5 stacks: 2 to part 0 (highest marginal), 3 to part 1
+    // With 5 stacks: 2 to part 0 (highest multiplier), 3 to part 1
     expect(result[bKey]![0]).toBe(2);
     expect(result[bKey]![1]).toBe(3);
     // Part 2 gets nothing (explicit 0 so UI doesn't default to "fully active")
@@ -218,20 +174,8 @@ describe("computeDefaultActivation", () => {
 
     // 5 stacks for 5 total hits = fully active
     const buff = makeBuffInfo(5);
-    const { partEvals, partHits } = makePartEvals(parts, postStats);
-    const sansBuffPartStats = makeSansBuffPartStats(
-      postStats,
-      [buff],
-      [[{ key: "baseDmg", value: 500 }]],
-      parts.length
-    );
-    const result = computeDefaultActivation(
-      partEvals,
-      partHits,
-      [buff],
-      ctx,
-      sansBuffPartStats
-    );
+    const partEvals = makePartEvals(parts, postStats);
+    const result = computeDefaultActivation(partEvals, [buff], ctx);
 
     expect(Object.keys(result)).toHaveLength(0);
   });
@@ -245,20 +189,8 @@ describe("computeDefaultActivation", () => {
     ]);
 
     const buff = makeBuffInfo(5);
-    const { partEvals, partHits } = makePartEvals(parts, postStats);
-    const sansBuffPartStats = makeSansBuffPartStats(
-      postStats,
-      [buff],
-      [[{ key: "baseDmg", value: 500 }]],
-      parts.length
-    );
-    const result = computeDefaultActivation(
-      partEvals,
-      partHits,
-      [buff],
-      ctx,
-      sansBuffPartStats
-    );
+    const partEvals = makePartEvals(parts, postStats);
+    const result = computeDefaultActivation(partEvals, [buff], ctx);
 
     const bKey = buffSourceKey(buff.source);
     expect(result[bKey]![0]).toBe(5);
@@ -279,27 +211,15 @@ describe("computeDefaultActivation", () => {
     const buff1 = makeBuffInfo(5, "C2");
     const buff2 = makeBuffInfo(3, "C4");
 
-    const { partEvals, partHits } = makePartEvals(parts, postStats);
-    const sansBuffPartStats = makeSansBuffPartStats(
-      postStats,
-      [buff1, buff2],
-      [[{ key: "baseDmg", value: 300 }], [{ key: "dmg%", value: 0.2 }]],
-      parts.length
-    );
+    const partEvals = makePartEvals(parts, postStats);
 
-    const result = computeDefaultActivation(
-      partEvals,
-      partHits,
-      [buff1, buff2],
-      ctx,
-      sansBuffPartStats
-    );
+    const result = computeDefaultActivation(partEvals, [buff1, buff2], ctx);
 
     const bKey1 = buffSourceKey(buff1.source);
     const bKey2 = buffSourceKey(buff2.source);
     expect(result[bKey1]).toBeDefined();
     expect(result[bKey2]).toBeDefined();
-    // Both should prioritize part 0 (higher damage)
+    // Both should prioritize part 0 (higher multiplier)
     expect(result[bKey1]![0]).toBe(5);
     expect(result[bKey2]![0]).toBe(3);
   });
@@ -308,38 +228,13 @@ describe("computeDefaultActivation", () => {
     const parts = makeParts([{ multi: 2.0, hits: 5 }]);
     const postStats = new StatSheet([{ key: "baseAtk", value: 800 }]);
 
-    const { partEvals, partHits } = makePartEvals(parts, postStats);
-    const result = computeDefaultActivation(partEvals, partHits, [], ctx);
+    const partEvals = makePartEvals(parts, postStats);
+    const result = computeDefaultActivation(partEvals, [], ctx);
     expect(Object.keys(result)).toHaveLength(0);
   });
 });
 
-describe("buildPartialBuffInfos", () => {
-  it("fills 0 for parts not in greedy allocation (regression)", () => {
-    // 3 parts: part 0 (2 hits), part 1 (5 hits), part 2 (3 hits)
-    // Budget = 5, greedy gives { 0: 2, 1: 3 } — part 2 missing (= 0 stacks)
-    const parts = makeParts([
-      { multi: 3.0, hits: 2 },
-      { multi: 2.0, hits: 5 },
-      { multi: 1.0, hits: 3 },
-    ]);
-
-    const buff = makeBuffInfo(5);
-    const bKey = buffSourceKey(buff.source);
-
-    // Simulate greedy result: part 2 gets 0 (missing from map)
-    const activation = { [bKey]: { 0: 2, 1: 3 } };
-
-    const specs = buildPartialBuffInfos(activation, [buff], parts);
-    expect(specs).toHaveLength(1);
-
-    // Part 2 must have explicit 0, not be missing
-    expect(specs[0].partActivation[2]).toBe(0);
-    // Parts with stacks are preserved
-    expect(specs[0].partActivation[0]).toBe(2);
-    expect(specs[0].partActivation[1]).toBe(3);
-  });
-
+describe("unallocated parts in blended damage", () => {
   it("unallocated parts get 0 stacks in blended damage", () => {
     // Verify end-to-end: part with 0 stacks should get NO buff
     const parts = makeParts([
@@ -359,17 +254,15 @@ describe("buildPartialBuffInfos", () => {
       { key: "baseDmg", value: 500 },
     ]);
 
-    // Greedy gives all 3 stacks to part 0 (2 hits) + 1 to part 1
-    // But simulate: part 1 gets 0 stacks (missing from map)
-    const activation = { [bKey]: { 0: 2 } };
-    const specs = buildPartialBuffInfos(activation, [buff], parts);
+    // part 0 gets 2 stacks, part 1 gets 0 (missing from map = 0 activation)
+    const activation: BuffActivationMap = { [bKey]: { 0: 2, 1: 0 } };
 
     const variants = makeStatVariants(postStats, [
       { buffKey: bKey, entries: [{ key: "baseDmg", value: 500 }] },
     ]);
     const result = computeBlendedDamage(
       parts,
-      specs,
+      activation,
       postStats,
       variants,
       90,
@@ -401,10 +294,10 @@ describe("computeBlendedDamage", () => {
       { key: "baseDmg", value: 500 },
     ]);
 
-    // Empty partials = fully active, empty variants
+    // Empty activation = fully active, empty variants
     const result = computeBlendedDamage(
       parts,
-      [],
+      {},
       postStats,
       new Map(),
       90,
@@ -429,9 +322,8 @@ describe("computeBlendedDamage", () => {
     ]);
 
     const buffKey = "character:escoffier:C2";
-    const spec: PartialBuffInfo = {
-      buffKey,
-      partActivation: { 0: 5 }, // 5 out of 21 hits
+    const activation: BuffActivationMap = {
+      [buffKey]: { 0: 5 }, // 5 out of 21 hits
     };
 
     const variants = makeStatVariants(postStats, [
@@ -439,7 +331,7 @@ describe("computeBlendedDamage", () => {
     ]);
     const result = computeBlendedDamage(
       parts,
-      [spec],
+      activation,
       postStats,
       variants,
       90,
@@ -472,9 +364,8 @@ describe("computeBlendedDamage", () => {
     ]);
 
     const buffKey = "character:escoffier:C2";
-    const spec: PartialBuffInfo = {
-      buffKey,
-      partActivation: { 0: 5 },
+    const activation: BuffActivationMap = {
+      [buffKey]: { 0: 5 },
     };
 
     const variants = makeStatVariants(postStats, [
@@ -486,7 +377,7 @@ describe("computeBlendedDamage", () => {
 
     const blended = computeBlendedDamage(
       parts,
-      [spec],
+      activation,
       postStats,
       variants,
       90,
@@ -520,13 +411,9 @@ describe("computeBlendedDamage", () => {
     const buffKey1 = "character:escoffier:C2";
     const buffKey2 = "character:escoffier:C4";
 
-    const spec1: PartialBuffInfo = {
-      buffKey: buffKey1,
-      partActivation: { 0: 3 }, // active for first 3 hits
-    };
-    const spec2: PartialBuffInfo = {
-      buffKey: buffKey2,
-      partActivation: { 0: 2 }, // active for first 2 hits
+    const activation: BuffActivationMap = {
+      [buffKey1]: { 0: 3 }, // active for first 3 hits
+      [buffKey2]: { 0: 2 }, // active for first 2 hits
     };
 
     const variants = makeStatVariants(postStats, [
@@ -536,7 +423,7 @@ describe("computeBlendedDamage", () => {
 
     const result = computeBlendedDamage(
       parts,
-      [spec1, spec2],
+      activation,
       postStats,
       variants,
       90,
@@ -567,57 +454,29 @@ describe("computeComboDefaultActivation", () => {
     // Two lines: line 0 has high-damage formula (2 hits × 2 reps),
     // line 1 has low-damage formula (3 hits × 1 rep).
     // Budget = 5 stacks, total hits = 4 + 3 = 7.
-    // Should allocate to highest marginal gain first (line 0's formula).
+    // Should allocate to highest multiplier first (line 0's formula).
     const postStats = new StatSheet([
       { key: "baseAtk", value: 800 },
       { key: "baseDmg", value: 500 },
     ]);
-
-    const filter = {
-      elements: ["Cryo" as const],
-      abilities: ["skill" as const],
-    };
-    const sansStats = postStats.merge(
-      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
-    );
 
     const buff = makeBuffInfo(5);
     const bKey = buffSourceKey(buff.source);
 
     const parts0 = makeParts([{ multi: 3.0, hits: 2 }]);
     const parts1 = makeParts([{ multi: 1.0, hits: 3 }]);
-    const { partEvals: pe0, partHits: ph0 } = makePartEvals(parts0, postStats);
-    const { partEvals: pe1, partHits: ph1 } = makePartEvals(parts1, postStats);
+    const pe0 = makePartEvals(parts0, postStats);
+    const pe1 = makePartEvals(parts1, postStats);
 
     const lines: ComboLineEval[] = [
-      {
-        partEvals: pe0,
-        partHits: ph0,
-        lineCount: 2,
-        sansBuffPartStats: makeSansBuffPartStats(
-          postStats,
-          [buff],
-          [[{ key: "baseDmg", value: 500 }]],
-          parts0.length
-        ),
-      },
-      {
-        partEvals: pe1,
-        partHits: ph1,
-        lineCount: 1,
-        sansBuffPartStats: makeSansBuffPartStats(
-          postStats,
-          [buff],
-          [[{ key: "baseDmg", value: 500 }]],
-          parts1.length
-        ),
-      },
+      { partEvals: pe0, lineCount: 2 },
+      { partEvals: pe1, lineCount: 1 },
     ];
 
     const result = computeComboDefaultActivation(lines, [buff], ctx);
 
-    // Line 0: 2 hits × 2 reps = 4 available, high marginal → gets 4 stacks
-    // Line 1: 3 hits × 1 rep = 3 available, low marginal → gets remaining 1 stack
+    // Line 0: 2 hits × 2 reps = 4 available, high multiplier → gets 4 stacks
+    // Line 1: 3 hits × 1 rep = 3 available, low multiplier → gets remaining 1 stack
     // Per-cast: line 0 = 4/2 = 2 (full), line 1 = 1/1 = 1
     expect(result[0][bKey]![0]).toBe(2); // line 0, part 0: full (2 hits per cast)
     expect(result[1][bKey]![0]).toBe(1); // line 1, part 0: 1 out of 3 hits
@@ -634,21 +493,9 @@ describe("computeComboDefaultActivation", () => {
     const bKey = buffSourceKey(buff.source);
 
     const parts0 = makeParts([{ multi: 2.0, hits: 2 }]);
-    const { partEvals, partHits } = makePartEvals(parts0, postStats);
+    const partEvals = makePartEvals(parts0, postStats);
 
-    const lines: ComboLineEval[] = [
-      {
-        partEvals,
-        partHits,
-        lineCount: 1,
-        sansBuffPartStats: makeSansBuffPartStats(
-          postStats,
-          [buff],
-          [[{ key: "baseDmg", value: 500 }]],
-          parts0.length
-        ),
-      },
-    ];
+    const lines: ComboLineEval[] = [{ partEvals, lineCount: 1 }];
     const result = computeComboDefaultActivation(lines, [buff], ctx);
     // No entry: budget covers everything
     expect(result[0][bKey]).toBeUndefined();
@@ -657,15 +504,9 @@ describe("computeComboDefaultActivation", () => {
   it("returns empty maps when no stack-limited buffs", () => {
     const postStats = new StatSheet([{ key: "baseAtk", value: 800 }]);
     const parts0 = makeParts([{ multi: 2.0, hits: 3 }]);
-    const { partEvals, partHits } = makePartEvals(parts0, postStats);
+    const partEvals = makePartEvals(parts0, postStats);
 
-    const lines: ComboLineEval[] = [
-      {
-        partEvals,
-        partHits,
-        lineCount: 1,
-      },
-    ];
+    const lines: ComboLineEval[] = [{ partEvals, lineCount: 1 }];
     const result = computeComboDefaultActivation(lines, [], ctx);
     expect(result[0]).toEqual({});
   });
@@ -687,38 +528,18 @@ describe("computeComboDefaultActivation", () => {
       { multi: 2.0, hits: 5 },
       { multi: 0.5, hits: 5 },
     ]);
-    const { partEvals: pe0, partHits: ph0 } = makePartEvals(parts0, postStats);
-    const { partEvals: pe1, partHits: ph1 } = makePartEvals(parts1, postStats);
+    const pe0 = makePartEvals(parts0, postStats);
+    const pe1 = makePartEvals(parts1, postStats);
 
     // Two lines, each with 2 parts, budget = 3
     const lines: ComboLineEval[] = [
-      {
-        partEvals: pe0,
-        partHits: ph0,
-        lineCount: 1,
-        sansBuffPartStats: makeSansBuffPartStats(
-          postStats,
-          [buff],
-          [[{ key: "baseDmg", value: 500 }]],
-          parts0.length
-        ),
-      },
-      {
-        partEvals: pe1,
-        partHits: ph1,
-        lineCount: 1,
-        sansBuffPartStats: makeSansBuffPartStats(
-          postStats,
-          [buff],
-          [[{ key: "baseDmg", value: 500 }]],
-          parts1.length
-        ),
-      },
+      { partEvals: pe0, lineCount: 1 },
+      { partEvals: pe1, lineCount: 1 },
     ];
     const result = computeComboDefaultActivation(lines, [buff], ctx);
 
     // Budget = 3 out of 20 total hits.
-    // Highest marginal: line 0 part 0 (multi=3.0), gets min(3, 5) = 3
+    // Highest multiplier: line 0 part 0 (multi=3.0), gets min(3, 5) = 3
     // Remaining 0 for all others → explicit 0
     expect(result[0][bKey]![0]).toBe(3);
     expect(result[0][bKey]![1]).toBe(0);
@@ -830,11 +651,11 @@ describe("aggregateComboFormulaDefaults", () => {
 });
 
 describe("computeDefaultActivation — off-field parts", () => {
-  it("uses per-part stats for off-field parts in marginal gain computation", () => {
+  it("uses per-part stats for off-field parts in multiplier ranking", () => {
     // Part 0: on-field, high multi (2 hits)
     // Part 1: off-field, high multi (3 hits)
-    // Off-field stats have LOWER ATK, so part 1 has lower marginal gain
-    // Budget = 3 → should go to part 0 first (higher marginal), then part 1
+    // Off-field stats have LOWER ATK, so part 1 has lower multiplier
+    // Budget = 3 → should go to part 0 first (higher multiplier), then part 1
     const parts = makeParts([
       { multi: 2.0, hits: 2 },
       { multi: 2.0, hits: 3, offField: true },
@@ -845,7 +666,7 @@ describe("computeDefaultActivation — off-field parts", () => {
       { key: "baseDmg", value: 500 },
     ]);
 
-    // Off-field stats have lower ATK → lower marginal gain per hit
+    // Off-field stats have lower ATK → lower multiplier
     const offFieldPostStats = new StatSheet([
       { key: "baseAtk", value: 500 },
       { key: "baseDmg", value: 500 },
@@ -854,39 +675,16 @@ describe("computeDefaultActivation — off-field parts", () => {
     const buff = makeBuffInfo(3);
     const bKey = buffSourceKey(buff.source);
 
-    const filter = {
-      elements: ["Cryo" as const],
-      abilities: ["skill" as const],
-    };
-
-    // Sans-buff stats for on-field
-    const sansOnField = postStats.merge(
-      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
-    );
-    // Sans-buff stats for off-field
-    const sansOffField = offFieldPostStats.merge(
-      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
-    );
-
     // Per-part: part 0 uses on-field stats, part 1 uses off-field stats
-    const { partEvals, partHits } = makePartEvalsWithStats(parts, [
+    const partEvals = makePartEvalsWithStats(parts, [
       postStats,
       offFieldPostStats,
     ]);
-    const sansBuffPartStats = new Map<string, StatSheet[]>([
-      [bKey, [sansOnField, sansOffField]],
-    ]);
 
-    const result = computeDefaultActivation(
-      partEvals,
-      partHits,
-      [buff],
-      ctx,
-      sansBuffPartStats
-    );
+    const result = computeDefaultActivation(partEvals, [buff], ctx);
 
     expect(result[bKey]).toBeDefined();
-    // On-field part (baseAtk=1000) has higher marginal than off-field (baseAtk=500)
+    // On-field part (baseAtk=1000) has higher multiplier than off-field (baseAtk=500)
     // So part 0 gets full 2 stacks first, part 1 gets remaining 1
     expect(result[bKey]![0]).toBe(2);
     expect(result[bKey]![1]).toBe(1);
@@ -909,21 +707,9 @@ describe("computeDefaultActivation — off-field parts", () => {
     const bKey = buffSourceKey(buff.source);
 
     // All parts use the same stats (no off-field variant)
-    const { partEvals, partHits } = makePartEvals(parts, postStats);
-    const sansBuffPartStats = makeSansBuffPartStats(
-      postStats,
-      [buff],
-      [[{ key: "baseDmg", value: 500 }]],
-      parts.length
-    );
+    const partEvals = makePartEvals(parts, postStats);
 
-    const result = computeDefaultActivation(
-      partEvals,
-      partHits,
-      [buff],
-      ctx,
-      sansBuffPartStats
-    );
+    const result = computeDefaultActivation(partEvals, [buff], ctx);
 
     expect(result[bKey]).toBeDefined();
     // Both parts see the same stats (no off-field variant provided),

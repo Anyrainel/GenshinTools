@@ -10,7 +10,6 @@ import { preloadGameStats } from "@/lib/gameStatsLoader";
 import "@/lib/team-comp/index";
 
 import { getEffectiveCombo } from "@/lib/team-comp/calc/combo";
-import type { PartialBuffInfo } from "@/lib/team-comp/calc/stackAllocation";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
@@ -18,11 +17,11 @@ import {
   calcComboResults,
   extractComboOverrides,
 } from "@/lib/team-comp/teamOptUtils";
-import type { ReactionOverride } from "@/lib/team-comp/types";
 import type {
   BuffActivationMap,
   CalcContext,
   ComboFormula,
+  ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { emptySheets } from "../../../fixtures/optimizerHelpers";
@@ -158,8 +157,9 @@ describe("buffOverrides affect off-field parts", () => {
     for (let i = 0; i < entry!.parts.length; i++) {
       partActivation[i] = 0;
     }
-    const info: PartialBuffInfo = { buffKey: vvKey, partActivation };
-    const overrides: Record<number, PartialBuffInfo[]> = { 0: [info] };
+    const overrides: Record<number, BuffActivationMap> = {
+      0: { [vvKey]: partActivation },
+    };
 
     const withOverride = tb.getComboDamageResult(
       combo,
@@ -635,7 +635,7 @@ type TeamLike = {
 
 /**
  * UI damage-calc flow: mirror DamageDetail.tsx exactly. Reads overrides out
- * of the flat store, builds per-line PartialBuffInfo[], runs calcComboResults.
+ * of the flat store, builds per-line BuffActivationMap, runs calcComboResults.
  */
 function runUiFlow(
   tb: TeamBuild,

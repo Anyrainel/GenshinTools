@@ -2412,10 +2412,10 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 //   • enemy level / enemy res / crit mode (random per trial)
 
 import { getOptionDef } from "@/lib/team-comp/calc/registry";
-import type { PartialBuffInfo } from "@/lib/team-comp/calc/stackAllocation";
 import { buildStatVariants } from "@/lib/team-comp/calc/stackAllocation";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
+import type { BuffActivationMap } from "@/lib/team-comp/types";
 import type { OptionMap } from "@/lib/team-comp/types";
 import type { ReactionOverride } from "@/lib/team-comp/types";
 
@@ -2509,19 +2509,19 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     return Object.keys(override).length > 0 ? override : undefined;
   }
 
-  /** Synthesize a random PartialBuffInfo[] covering every static buff in
+  /** Synthesize a random BuffActivationMap covering every static buff in
    *  the team. For each buff, each part gets a random activation in
    *  [0..hits]. No applicability filtering — paths ignore buffs that
    *  don't apply, so this purely stresses the blending machinery with
-   *  arbitrary distributions. "No need to actually distribute the stacks." */
+   *  arbitrary distributions. */
   function randomPartialBuffs(
     tb: TeamBuild,
     charId: string,
     formulaId: string
-  ): PartialBuffInfo[] {
+  ): BuffActivationMap {
     const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
-    if (!entry) return [];
-    const infos: PartialBuffInfo[] = [];
+    if (!entry) return {};
+    const activation: BuffActivationMap = {};
     for (const { buff, providerCharId } of tb.allStaticBuffs) {
       if (providerCharId === "resonance" || providerCharId === "extra")
         continue;
@@ -2536,10 +2536,10 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
         partActivation[i] = Math.floor(Math.random() * (h + 1));
       }
       if (Object.keys(partActivation).length > 0) {
-        infos.push({ buffKey, partActivation });
+        activation[buffKey] = partActivation;
       }
     }
-    return infos;
+    return activation;
   }
 
   type Paths = { display: number; calc: number; compile: number };
@@ -2554,7 +2554,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     sheets: Record<string, StatSheet>,
     ctx: CalcContext,
     reactionOverride: ReactionOverride | undefined,
-    dist: PartialBuffInfo[],
+    dist: BuffActivationMap,
     forceOnField?: boolean
   ): Paths {
     // Path 1: display — pass the distribution to skip internal blending
@@ -2581,7 +2581,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       ? tb.getTeamStats(sheets, defaultOnFieldCharId(charId, tb.configs), ctx)
       : undefined;
     const statsVariants =
-      dist.length > 0
+      Object.keys(dist).length > 0
         ? buildStatVariants(
             dist,
             entry.parts,
@@ -2590,7 +2590,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
           )
         : undefined;
     const offFieldVariants =
-      dist.length > 0 && hasOff
+      Object.keys(dist).length > 0 && hasOff
         ? buildStatVariants(
             dist,
             entry.parts,
@@ -2629,7 +2629,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       charId,
       sheets,
       ctx,
-      dist.length > 0 ? { "line:0": dist } : undefined
+      Object.keys(dist).length > 0 ? { "line:0": dist } : undefined
     );
     const charIdx = compiled.charIdxMap?.get(charId) ?? 0;
     const vars = new Float64Array(compiled.numVars);
@@ -2808,10 +2808,10 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
 
       // Randomize per-line buff stack overrides so all combo paths see
       // the same arbitrary distribution.
-      const buffOverrides: Record<number, PartialBuffInfo[]> = {};
+      const buffOverrides: Record<number, BuffActivationMap> = {};
       for (let i = 0; i < lines.length; i++) {
         const d = randomPartialBuffs(tb, lines[i].charId, lines[i].formulaId);
-        if (d.length > 0) buffOverrides[i] = d;
+        if (Object.keys(d).length > 0) buffOverrides[i] = d;
       }
 
       try {
