@@ -779,6 +779,109 @@ describe("aggregateComboFormulaDefaults", () => {
   });
 });
 
+describe("computeDefaultActivation — off-field parts", () => {
+  it("uses offFieldPostStats for off-field parts in marginal gain computation", () => {
+    // Part 0: on-field, high multi (2 hits)
+    // Part 1: off-field, high multi (3 hits)
+    // Off-field stats have LOWER ATK, so part 1 has lower marginal gain
+    // Budget = 3 → should go to part 0 first (higher marginal), then part 1
+    const parts = makeParts([
+      { multi: 2.0, hits: 2 },
+      { multi: 2.0, hits: 3, offField: true },
+    ]);
+
+    const postStats = new StatSheet([
+      { key: "baseAtk", value: 1000 },
+      { key: "baseDmg", value: 500 },
+    ]);
+
+    // Off-field stats have lower ATK → lower marginal gain per hit
+    const offFieldPostStats = new StatSheet([
+      { key: "baseAtk", value: 500 },
+      { key: "baseDmg", value: 500 },
+    ]);
+
+    const buff = makeBuffInfo(3);
+    const bKey = buffSourceKey(buff.source);
+
+    const filter = {
+      elements: ["Cryo" as const],
+      abilities: ["skill" as const],
+    };
+
+    // Sans-buff stats for on-field
+    const sansOnField = postStats.merge(
+      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
+    );
+    // Sans-buff stats for off-field
+    const sansOffField = offFieldPostStats.merge(
+      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
+    );
+
+    const sansBuffStats = new Map([[bKey, sansOnField]]);
+    const offFieldSansBuffStats = new Map([[bKey, sansOffField]]);
+
+    const result = computeDefaultActivation(
+      parts,
+      [buff],
+      postStats,
+      90,
+      ctx,
+      undefined,
+      offFieldPostStats,
+      sansBuffStats,
+      offFieldSansBuffStats
+    );
+
+    expect(result[bKey]).toBeDefined();
+    // On-field part (baseAtk=1000) has higher marginal than off-field (baseAtk=500)
+    // So part 0 gets full 2 stacks first, part 1 gets remaining 1
+    expect(result[bKey]![0]).toBe(2);
+    expect(result[bKey]![1]).toBe(1);
+  });
+
+  it("falls back to on-field stats when offFieldPostStats not provided", () => {
+    // Even with offField: true, if no offFieldPostStats given, use postStats
+    const parts = makeParts([
+      { multi: 1.0, hits: 2 },
+      { multi: 3.0, hits: 2, offField: true },
+    ]);
+
+    const postStats = new StatSheet([
+      { key: "baseAtk", value: 800 },
+      { key: "baseDmg", value: 500 },
+    ]);
+
+    const buff = makeBuffInfo(3);
+    const bKey = buffSourceKey(buff.source);
+
+    const sansBuffStats = makeSansBuffStats(
+      postStats,
+      [buff],
+      [[{ key: "baseDmg", value: 500 }]]
+    );
+
+    // No offFieldPostStats or offFieldSansBuffStats provided
+    const result = computeDefaultActivation(
+      parts,
+      [buff],
+      postStats,
+      90,
+      ctx,
+      undefined,
+      undefined, // no offFieldPostStats
+      sansBuffStats
+      // no offFieldSansBuffStats
+    );
+
+    expect(result[bKey]).toBeDefined();
+    // Both parts see the same stats (no off-field variant provided),
+    // so the fallback path is exercised. Verify total allocated equals maxStacks.
+    const total = result[bKey]![0] + result[bKey]![1];
+    expect(total).toBe(3);
+  });
+});
+
 describe("buffSourceKey", () => {
   it("produces deterministic key", () => {
     const source = {

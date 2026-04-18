@@ -79,87 +79,15 @@ function buildPostExprStatsForContext(
   teamBuild: TeamBuild,
   optCtx: OptimizerContext,
   varMapping: VarMapping,
-  calcContext: CalcContext
-): Record<string, ExprStatSheet> {
-  const { variableCharIds, charBuildOrder, supportPreStats, targetDependent } =
-    optCtx;
-
-  const emptySheet = new StatSheet([]);
-
-  // Compute baselines (empty-sheet preStats) for all variable characters
-  const variableBaselines: Record<string, StatSheet> = {};
-  for (const varCharId of variableCharIds) {
-    const build = charBuildOrder.find(([id]) => id === varCharId)?.[1];
-    if (!build)
-      throw new Error(
-        `Variable character ${varCharId} not found in team build`
-      );
-    variableBaselines[varCharId] = build.getPreStats(
-      emptySheet,
-      targetDependent[varCharId] ?? []
-    );
-  }
-
-  const exprStatsMap: Record<string, ExprStatSheet> = {};
-  for (const [id] of charBuildOrder) {
-    if (variableCharIds.has(id)) {
-      const charIdx = charBuildOrder.findIndex(([cid]) => cid === id);
-      exprStatsMap[id] = createExprStats(
-        variableBaselines[id],
-        charIdx,
-        varMapping,
-        new Set(ARTIFACT_STAT_KEYS)
-      );
-    } else {
-      exprStatsMap[id] = createExprStats(
-        supportPreStats[id]!,
-        -1,
-        varMapping,
-        new Set()
-      );
-    }
-  }
-
-  const postExprStats = collectAndApplyDynamicBuffExprsTwoPass(
-    teamBuild,
-    exprStatsMap,
-    variableCharIds,
-    supportPreStats,
-    variableBaselines,
-    optCtx
-  );
-
-  if (calcContext.perCharCrTarget) {
-    for (const [id, target] of Object.entries(calcContext.perCharCrTarget)) {
-      if (postExprStats[id]) {
-        const crDelta = (100 - target) / 100;
-        postExprStats[id] = postExprStats[id].withMergedConst([
-          { key: "cr", value: crDelta },
-        ]);
-      }
-    }
-  }
-
-  return postExprStats;
-}
-
-/**
- * Build postExprStats excluding certain buffs (identified by canonical buff keys).
- * Used to pre-build stat variants for interval-based blending in the compiler.
- */
-function buildPostExprStatsExcluding(
-  teamBuild: TeamBuild,
-  optCtx: OptimizerContext,
-  varMapping: VarMapping,
   calcContext: CalcContext,
-  excludeKeys: Set<string>
+  excludeKeys?: Set<string>
 ): Record<string, ExprStatSheet> {
   const { variableCharIds, charBuildOrder, supportPreStats, targetDependent } =
     optCtx;
 
   const emptySheet = new StatSheet([]);
 
-  // Compute exclusion-aware baselines for variable characters
+  // Compute baselines for all variable characters
   const variableBaselines: Record<string, StatSheet> = {};
   for (const varCharId of variableCharIds) {
     const build = charBuildOrder.find(([id]) => id === varCharId)?.[1];
@@ -167,15 +95,17 @@ function buildPostExprStatsExcluding(
       throw new Error(
         `Variable character ${varCharId} not found in team build`
       );
-    variableBaselines[varCharId] = build.getPreStatsExcluding(
-      emptySheet,
-      targetDependent[varCharId] ?? [],
-      teamBuild.allStaticBuffs,
-      excludeKeys,
-      varCharId,
-      teamBuild.teamMeta.regions[varCharId],
-      teamBuild.teamMeta.factions[varCharId]
-    );
+    variableBaselines[varCharId] = excludeKeys
+      ? build.getPreStatsExcluding(
+          emptySheet,
+          targetDependent[varCharId] ?? [],
+          teamBuild.allStaticBuffs,
+          excludeKeys,
+          varCharId,
+          teamBuild.teamMeta.regions[varCharId],
+          teamBuild.teamMeta.factions[varCharId]
+        )
+      : build.getPreStats(emptySheet, targetDependent[varCharId] ?? []);
   }
 
   const exprStatsMap: Record<string, ExprStatSheet> = {};
@@ -188,8 +118,8 @@ function buildPostExprStatsExcluding(
         varMapping,
         new Set(ARTIFACT_STAT_KEYS)
       );
-    } else {
-      // Non-variable characters also need exclusion-aware preStats
+    } else if (excludeKeys) {
+      // Non-variable characters need exclusion-aware preStats
       const supportBuild = charBuildOrder.find(([cid]) => cid === id)?.[1];
       if (supportBuild) {
         const supportExcluded = supportBuild.getPreStatsExcluding(
@@ -215,10 +145,16 @@ function buildPostExprStatsExcluding(
           new Set()
         );
       }
+    } else {
+      exprStatsMap[id] = createExprStats(
+        supportPreStats[id]!,
+        -1,
+        varMapping,
+        new Set()
+      );
     }
   }
 
-  // Two-pass dynamic buff collection + application, with excluded keys
   const postExprStats = collectAndApplyDynamicBuffExprsTwoPass(
     teamBuild,
     exprStatsMap,
@@ -285,7 +221,7 @@ function buildExprStatVariants(
       const eKey = exclusionKey(excludeSet);
       if (seen.has(eKey)) continue;
       seen.add(eKey);
-      const excludedPostStats = buildPostExprStatsExcluding(
+      const excludedPostStats = buildPostExprStatsForContext(
         teamBuild,
         optCtx,
         varMapping,

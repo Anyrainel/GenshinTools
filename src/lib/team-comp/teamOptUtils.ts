@@ -1,5 +1,9 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
-import { artifactIdToHalfSetId } from "@/data/constants";
+import {
+  artifactHalfSetsById,
+  artifactIdToHalfSetId,
+  artifactsById,
+} from "@/data/constants";
 import type {
   AccountData,
   ArtifactData,
@@ -529,4 +533,52 @@ export function resolveBuildInfo(
       : defaultRefine;
   const artConfig = idx >= 0 ? team.artifacts[idx] : null;
   return { charLevel, charConst, weaponId, weaponRefine, artConfig };
+}
+
+/**
+ * Derive per-slot artifact set keys from a list of configs that describe
+ * 4pc or 2pc+2pc set assignments. Shared between generator and weapon choice.
+ */
+export function deriveSetKeysFromConfigs(
+  configs: {
+    charId: string;
+    artifactSetId?: string | null;
+    artifactHalfSetIds?: string[];
+  }[]
+): Record<string, Record<Slot, string>> {
+  const result: Record<string, Record<Slot, string>> = {};
+  for (const cfg of configs) {
+    if (cfg.artifactSetId) {
+      const sk = cfg.artifactSetId;
+      result[cfg.charId] = {
+        flower: sk,
+        plume: sk,
+        sands: sk,
+        goblet: sk,
+        circlet: sk,
+      };
+    } else if (cfg.artifactHalfSetIds && cfg.artifactHalfSetIds.length === 2) {
+      const hs1 = artifactHalfSetsById[cfg.artifactHalfSetIds[0]];
+      const hs2 = artifactHalfSetsById[cfg.artifactHalfSetIds[1]];
+      const sk1 =
+        hs1?.setIds.find((id: string) => artifactsById[id]?.rarity === 5) ??
+        hs1?.setIds[0] ??
+        "generated";
+      const sk2 =
+        hs2?.setIds.find(
+          (id: string) => artifactsById[id]?.rarity === 5 && id !== sk1
+        ) ??
+        hs2?.setIds.find((id: string) => id !== sk1) ??
+        hs2?.setIds[0] ??
+        "generated";
+      result[cfg.charId] = {
+        flower: sk1,
+        plume: sk1,
+        sands: sk1,
+        goblet: sk2,
+        circlet: sk2,
+      };
+    }
+  }
+  return result;
 }

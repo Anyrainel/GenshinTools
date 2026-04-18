@@ -6,11 +6,7 @@
  * evaluation via an async generator that yields progress updates.
  */
 
-import {
-  artifactHalfSetsById,
-  artifactsById,
-  weaponsById,
-} from "@/data/constants";
+import { weaponsById } from "@/data/constants";
 import type { Element, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { WeaponStatsMap } from "@/lib/gameStatsLoader";
@@ -23,6 +19,7 @@ import { TeamBuild } from "../calc/teamBuild";
 import { getRollValues } from "../generator/constrainedGreedy";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
+import { deriveSetKeysFromConfigs } from "../teamOptUtils";
 
 import type { ExtraBuff } from "../types";
 import type { CalcContext, ComboFormula, TeamSlotConfig } from "../types";
@@ -168,47 +165,23 @@ function buildPerChar(
  * Build setKeysByChar from charConfigs artifact configurations.
  * Mirrors the logic in DamageDetail's generate handler.
  */
-function buildSetKeysByChar(
+/** @internal Exported for testing only. */
+export function buildSetKeysByChar(
   charConfigs: WeaponChoiceCharConfig[]
 ): Record<string, Record<Slot, string>> {
-  const setKeysByChar: Record<string, Record<Slot, string>> = {};
-  for (const cc of charConfigs) {
-    const ac = cc.artifactConfig;
-    if (!ac) continue;
-
-    if (ac.type === "4pc") {
-      const sk = ac.setId;
-      setKeysByChar[cc.charId] = {
-        flower: sk,
-        plume: sk,
-        sands: sk,
-        goblet: sk,
-        circlet: sk,
-      };
-    } else if (ac.type === "2pc+2pc") {
-      const hs1 = artifactHalfSetsById[String(ac.id1)];
-      const hs2 = artifactHalfSetsById[String(ac.id2)];
-      const sk1 =
-        hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
-        hs1?.setIds[0] ??
-        "generated";
-      const sk2 =
-        hs2?.setIds.find(
-          (id) => artifactsById[id]?.rarity === 5 && id !== sk1
-        ) ??
-        hs2?.setIds.find((id) => id !== sk1) ??
-        hs2?.setIds[0] ??
-        "generated";
-      setKeysByChar[cc.charId] = {
-        flower: sk1,
-        plume: sk1,
-        sands: sk1,
-        goblet: sk2,
-        circlet: sk2,
-      };
-    }
-  }
-  return setKeysByChar;
+  return deriveSetKeysFromConfigs(
+    charConfigs
+      .filter((cc) => cc.artifactConfig != null)
+      .map((cc) => {
+        const ac = cc.artifactConfig!;
+        return ac.type === "4pc"
+          ? { charId: cc.charId, artifactSetId: ac.setId }
+          : {
+              charId: cc.charId,
+              artifactHalfSetIds: [String(ac.id1), String(ac.id2)],
+            };
+      })
+  );
 }
 
 /**

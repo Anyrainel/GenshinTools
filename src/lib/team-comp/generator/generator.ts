@@ -1,8 +1,4 @@
-import {
-  artifactHalfSetsById,
-  artifactsById,
-  statPools,
-} from "@/data/constants";
+import { artifactsById, statPools } from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 
@@ -22,6 +18,7 @@ import {
   erCrGapAfterMainStats,
   erMainStatInternal,
 } from "../optimizer/erCrConstraints";
+import { deriveSetKeysFromConfigs } from "../teamOptUtils";
 import type {
   CalcContext,
   ComboFormula,
@@ -218,46 +215,11 @@ function synthesizeArtifacts(
  *            slots 4-5 (goblet/circlet) → second half-set.
  * Falls back to "generated" if half-set lookup fails.
  */
-function deriveSetKeysByChar(
+/** @internal Exported for testing only. */
+export function deriveSetKeysByChar(
   teamBuild: TeamBuild
 ): Record<string, Record<Slot, string>> {
-  const result: Record<string, Record<Slot, string>> = {};
-  for (const cfg of teamBuild.configs) {
-    if (cfg.artifactSetId) {
-      // 4pc
-      result[cfg.charId] = {
-        flower: cfg.artifactSetId,
-        plume: cfg.artifactSetId,
-        sands: cfg.artifactSetId,
-        goblet: cfg.artifactSetId,
-        circlet: cfg.artifactSetId,
-      };
-    } else if (cfg.artifactHalfSetIds.length === 2) {
-      // 2+2pc: pick a concrete 5★ set from each half-set
-      const hs1 = artifactHalfSetsById[cfg.artifactHalfSetIds[0]];
-      const hs2 = artifactHalfSetsById[cfg.artifactHalfSetIds[1]];
-      const sk1 =
-        hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
-        hs1?.setIds[0] ??
-        "generated";
-      // For sk2, skip sk1 so both half-sets use distinct concrete sets
-      const sk2 =
-        hs2?.setIds.find(
-          (id) => artifactsById[id]?.rarity === 5 && id !== sk1
-        ) ??
-        hs2?.setIds.find((id) => id !== sk1) ??
-        hs2?.setIds[0] ??
-        "generated";
-      result[cfg.charId] = {
-        flower: sk1,
-        plume: sk1,
-        sands: sk1,
-        goblet: sk2,
-        circlet: sk2,
-      };
-    }
-  }
-  return result;
+  return deriveSetKeysFromConfigs(teamBuild.configs);
 }
 
 // ─── Phase 1: Find best main stats ───

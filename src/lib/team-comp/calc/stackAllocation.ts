@@ -37,6 +37,34 @@ export type StackLimitedBuffInfo = {
   maxStacks: number;
 };
 
+/** A single candidate for greedy stack allocation. */
+type GainEntry = {
+  idx: number;
+  marginalPerHit: number;
+  availableHits: number;
+};
+
+/**
+ * Core greedy allocation: sort by marginal gain descending, then assign stacks
+ * to the highest-gain entries until the budget is exhausted.
+ * Returns a map from entry index → assigned stacks.
+ */
+function greedyAllocate(
+  gains: GainEntry[],
+  maxStacks: number
+): Map<number, number> {
+  gains.sort((a, b) => b.marginalPerHit - a.marginalPerHit);
+  const alloc = new Map<number, number>();
+  let remaining = maxStacks;
+  for (const { idx, availableHits } of gains) {
+    if (remaining <= 0) break;
+    const assign = Math.min(remaining, availableHits);
+    alloc.set(idx, assign);
+    remaining -= assign;
+  }
+  return alloc;
+}
+
 /**
  * Compute default BuffActivationMap for all stack-limited buffs on a formula.
  *
@@ -75,12 +103,7 @@ export function computeDefaultActivation(
     if (!sansBuff) continue;
 
     // Compute marginal gain per hit for each part
-    type PartGain = {
-      partIndex: number;
-      marginalPerHit: number;
-      availableHits: number;
-    };
-    const gains: PartGain[] = [];
+    const gains: GainEntry[] = [];
 
     for (let idx = 0; idx < parts.length; idx++) {
       const { formula, hits: totalHits, offField } = parts[idx];
@@ -96,23 +119,16 @@ export function computeDefaultActivation(
       const marginalPerHit = dmgWith - dmgWithout;
 
       if (marginalPerHit > 0) {
-        gains.push({ partIndex: idx, marginalPerHit, availableHits: h });
+        gains.push({ idx, marginalPerHit, availableHits: h });
       }
     }
 
-    // Sort by marginal gain descending
-    gains.sort((a, b) => b.marginalPerHit - a.marginalPerHit);
-
-    // Greedy allocation
-    let remaining = buffInfo.maxStacks;
-    for (const { partIndex, availableHits } of gains) {
-      if (remaining <= 0) break;
-      const assign = Math.min(remaining, availableHits);
-      partAlloc[partIndex] = assign;
-      remaining -= assign;
+    const alloc = greedyAllocate(gains, buffInfo.maxStacks);
+    for (const [idx, assign] of alloc) {
+      partAlloc[idx] = assign;
     }
 
-    // Explicitly fill 0 for unallocated parts so downstream consumers
+    // Fill 0 for unallocated parts so downstream consumers
     // (e.g. PartBuffDialog) don't default to "fully active"
     for (let idx = 0; idx < parts.length; idx++) {
       if (!(idx in partAlloc)) {
@@ -491,13 +507,9 @@ export function computeComboDefaultActivation(
     const bKey = buffInfo.buffKey;
 
     // Compute marginal gain per hit for each (line, part) across the combo
-    type VirtualPart = {
-      lineIdx: number;
-      partIdx: number;
-      marginalPerHit: number;
-      availableHits: number; // part.hits × lineCount
-    };
-    const gains: VirtualPart[] = [];
+    // Encode (lineIdx, partIdx) as a flat index: lineIdx * maxParts + partIdx
+    const maxParts = Math.max(...lines.map((l) => l.parts.length), 1);
+    const gains: GainEntry[] = [];
     let totalHitsAllLines = 0;
 
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
@@ -533,8 +545,7 @@ export function computeComboDefaultActivation(
 
         if (marginalPerHit > 0) {
           gains.push({
-            lineIdx,
-            partIdx,
+            idx: lineIdx * maxParts + partIdx,
             marginalPerHit,
             availableHits: totalAvailable,
           });
@@ -542,19 +553,14 @@ export function computeComboDefaultActivation(
       }
     }
 
-    // Sort by marginal gain descending
-    gains.sort((a, b) => b.marginalPerHit - a.marginalPerHit);
-
-    // Greedy allocation across all combo lines
-    let remaining = buffInfo.maxStacks;
+    const alloc = greedyAllocate(gains, buffInfo.maxStacks);
     const linePartAlloc: Record<number, number>[] = lines.map(() => ({}));
 
-    for (const { lineIdx, partIdx, availableHits } of gains) {
-      if (remaining <= 0) break;
-      const assign = Math.min(remaining, availableHits);
+    for (const [flatIdx, assign] of alloc) {
+      const lineIdx = Math.floor(flatIdx / maxParts);
+      const partIdx = flatIdx % maxParts;
       // Convert to per-cast activation (divide by lineCount)
       linePartAlloc[lineIdx][partIdx] = assign / lines[lineIdx].lineCount;
-      remaining -= assign;
     }
 
     // Fill 0 for unallocated parts
