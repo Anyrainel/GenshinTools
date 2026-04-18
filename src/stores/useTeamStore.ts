@@ -19,7 +19,7 @@ import {
   type ComboLine,
   DEFAULT_CALC_CONTEXT,
   type DamageResult,
-  type FormulaOverride,
+  type ReactionOverride,
 } from "@/lib/team-comp/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -145,7 +145,7 @@ export function migrateTeamStore(
     // Merge reactionOverrides into combo lines, set formulaMode to "combo"
     // biome-ignore lint/suspicious/noExplicitAny: migration from legacy format
     state.teams = state.teams.map((t: any) => {
-      const overrides: Record<string, FormulaOverride> =
+      const overrides: Record<string, ReactionOverride> =
         t.reactionOverrides ?? {};
       const combos: ComboFormula[] = (t.combos ?? []).map(
         (combo: ComboFormula) => ({
@@ -159,7 +159,7 @@ export function migrateTeamStore(
             // Old data used partReactions/partHits; normalize to rxnParts/rxnPartHits.
             // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field names
             const so = singleOverride as any;
-            const normalized: FormulaOverride = {
+            const normalized: ReactionOverride = {
               reaction: so.reaction,
               rxnParts: so.rxnParts ?? so.partReactions,
               rxnPartHits: so.rxnPartHits ?? so.partHits,
@@ -393,7 +393,7 @@ export interface AnalyzerConfig {
   configs?: StoredAnalyzerCharConfig[];
   comboOverrides?: ComboCountOverrides;
   minErOverrides?: MinErOverrides;
-  reactionOverrides?: Record<string, FormulaOverride>;
+  reactionOverrides?: Record<string, ReactionOverride>;
   enemyAura?: Element;
   extraBuffs?: ExtraBuff[];
 }
@@ -426,7 +426,9 @@ export interface Team {
   // ─── Formula / combo ───
   selectedFormula: { charId: string; formulaId: string } | null;
   /** Reaction override for the selected single formula. Persisted independently from combo lines. */
-  singleReaction?: FormulaOverride;
+  singleReaction?: ReactionOverride;
+  /** Force on-field for the selected single formula. Persisted independently from combo lines. */
+  singleForceOnField?: boolean;
   /** Formula mode: "single" evaluates one formula at a time, "combo" evaluates a full rotation. */
   formulaMode: "single" | "combo";
   /** Active combo, null when no combo is configured. */

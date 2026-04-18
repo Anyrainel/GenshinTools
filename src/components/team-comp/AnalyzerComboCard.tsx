@@ -14,7 +14,7 @@ import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   ComboFormula,
-  FormulaOverride,
+  ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
@@ -37,10 +37,10 @@ interface AnalyzerComboCardProps {
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
-  reactionOverrides: Record<string, FormulaOverride>;
+  reactionOverrides: Record<string, ReactionOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
-  onReactionChange: (stableKey: string, override: FormulaOverride) => void;
+  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
   // Environment settings (local, not persisted)
   envTeam: Team;
   updateEnvTeam: (id: string, patch: Partial<Team>) => void;

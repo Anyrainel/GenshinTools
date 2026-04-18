@@ -23,7 +23,7 @@ import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import type {
   ComboFormula,
   ComboLine,
-  FormulaOverride,
+  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -194,7 +194,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   }, [templateCombo, reactionOverrides]);
 
   const handleReactionChange = useCallback(
-    (stableKey: string, override: FormulaOverride) => {
+    (stableKey: string, override: ReactionOverride) => {
       updateTeam(team.id, {
         analyzer: {
           ...analyzerRef.current,

@@ -200,7 +200,7 @@ async function runGeneratorToCompletion(
   const gen = runGenerator({
     teamBuild,
     carryCharId,
-    formula: { combo },
+    combo,
     calcContext,
     rollMultiplier: calcContext.rollMultiplier,
     substatBudget: calcContext.substatBudget,

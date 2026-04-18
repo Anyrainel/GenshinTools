@@ -25,7 +25,7 @@ import type {
   TeamSlotConfig,
 } from "../types";
 import { LunarFormula, TransformFormula } from "./damageFormula";
-import type { CharacterBase } from "./implModel";
+import type { CharacterBase, IFormulaProvider } from "./implModel";
 import type { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 
@@ -68,7 +68,7 @@ const REACTION_FORMULA_LABELS: Partial<Record<ReactionType, I18nLabel>> = {
   lunarCrystallize: { en: "Moondrift", zh: "月笼" },
 };
 
-/** Transformative reactions that TeamReactionProvider generates. */
+/** Transformative reactions that TeamReaction generates. */
 const TRANSFORMATIVE_REACTIONS: ReactionType[] = [
   "overloaded",
   "electroCharged",
@@ -117,9 +117,7 @@ export function resolveReactionComboEntries(
   return result;
 }
 
-// ─── TeamReactionProvider ───
-
-export class TeamReactionProvider {
+export class TeamReaction implements IFormulaProvider {
   /** Per-triggerer formula entries keyed by `rx-{reaction}-{charId}`. */
   private readonly formulas: Record<string, FormulaEntry> = {};
 
@@ -293,6 +291,11 @@ export class TeamReactionProvider {
   getRankWeights(formulaId: string): Map<string, number> | undefined {
     const base = this.baseIdFor[formulaId] ?? formulaId;
     return this.rankWeights[base];
+  }
+
+  /** IFormulaProvider — all per-triggerer reaction formula IDs with i18n labels. */
+  get formulaIds(): Record<string, I18nLabel> {
+    return this.getFormulaIds();
   }
 
   /** All per-triggerer reaction formula IDs with i18n labels. */

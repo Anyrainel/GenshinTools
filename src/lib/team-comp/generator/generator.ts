@@ -19,12 +19,7 @@ import {
   erMainStatInternal,
 } from "../optimizer/erCrConstraints";
 import { deriveSetKeysFromConfigs } from "../teamOptUtils";
-import type {
-  CalcContext,
-  ComboFormula,
-  FormulaContext,
-  PartialBuffInfo,
-} from "../types";
+import type { CalcContext, ComboFormula, PartialBuffInfo } from "../types";
 import {
   type FlexSlotConfig,
   buildSheetFromMainAndSubs,
@@ -44,7 +39,7 @@ export type { SubstatBudgetPreset } from "./substatBudget";
 export interface GeneratorOptions {
   teamBuild: TeamBuild;
   carryCharId: string;
-  formula: FormulaContext;
+  combo: ComboFormula;
   calcContext: CalcContext;
   /** Per-char, per-slot artifact set key for proper icon rendering */
   setKeysByChar?: Record<string, Record<Slot, string>>;
@@ -693,7 +688,8 @@ export async function* runGenerator(
   opts: GeneratorOptions
 ): AsyncGenerator<GeneratorResult, void> {
   const { teamBuild, carryCharId, calcContext } = opts;
-  const { combo, buffOverrides } = opts.formula;
+  const { combo } = opts;
+  const { buffOverrides } = combo;
   const budgetPreset = resolveSubstatBudgetPreset(
     opts.substatBudget,
     calcContext

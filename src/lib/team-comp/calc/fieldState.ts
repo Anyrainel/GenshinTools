@@ -1,27 +1,17 @@
 /**
  * Centralized helpers for resolving the effective off-field state of a
- * formula part given a per-line reaction config.
+ * formula part given a per-line config.
  *
- * `ComboLine.reaction` is the authoritative state for per-line reaction and
- * on/off-field behavior; this module is the single point where the
- * `forceOnField` flag is applied to a part's intrinsic `offField` bit.
+ * `ComboLine.forceOnField` is the authoritative flag for forcing off-field
+ * parts to be treated as on-field; this module is the single point where
+ * the flag is applied to a part's intrinsic `offField` bit.
  *
- * Using these helpers instead of ad-hoc `!reactionOverride?.forceOnField`
- * checks avoids missed sites when the semantics change.
+ * Using these helpers instead of ad-hoc boolean checks avoids missed sites
+ * when the semantics change.
  */
 
 import type { BuffReceiverType, FormulaPart } from "../types";
-import type { ComboLine, FormulaOverride, TeamSlotConfig } from "../types";
-
-/**
- * Returns true when the (line-level) reaction config forces off-field parts
- * to be treated as on-field for stat computation.
- */
-function isForcedOnField(
-  reactionOverride: FormulaOverride | undefined | null
-): boolean {
-  return !!reactionOverride?.forceOnField;
-}
+import type { ReactionOverride, TeamSlotConfig } from "../types";
 
 /**
  * Returns the effective off-field state of a formula part: its intrinsic
@@ -29,17 +19,17 @@ function isForcedOnField(
  */
 export function isPartOffField(
   part: FormulaPart | { offField?: boolean },
-  reactionOverride: FormulaOverride | undefined | null
+  forceOnField?: boolean
 ): boolean {
-  return !!part.offField && !reactionOverride?.forceOnField;
+  return !!part.offField && !forceOnField;
 }
 
 /**
  * Returns the gate reaction from a ComboLine (may be undefined/none).
  */
 function getLineReaction(
-  line: ComboLine | undefined | null
-): FormulaOverride | undefined {
+  line: { reaction?: ReactionOverride } | undefined | null
+): ReactionOverride | undefined {
   return line?.reaction;
 }
 
@@ -70,11 +60,11 @@ export function resolvePartOnFieldCharIds(
   parts: readonly (FormulaPart | { offField?: boolean })[],
   charId: string,
   configs: TeamSlotConfig[],
-  reaction?: FormulaOverride
+  forceOnField?: boolean
 ): string[] {
   const defaultOther = defaultOnFieldCharId(charId, configs);
   return parts.map((part) =>
-    isPartOffField(part, reaction) ? defaultOther : charId
+    isPartOffField(part, forceOnField) ? defaultOther : charId
   );
 }
 

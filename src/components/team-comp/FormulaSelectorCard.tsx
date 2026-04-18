@@ -14,8 +14,8 @@ import {
 } from "@/lib/team-comp/constants";
 import type {
   ComboLine,
-  FormulaOverride,
   I18nLabel,
+  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -105,7 +105,7 @@ interface FormulaSelectorCardProps {
     charId: string,
     formulaId: string,
     reaction: string,
-    override: FormulaOverride
+    override: ReactionOverride
   ) => void;
   /** Current formula mode: "single" or "combo". */
   formulaMode: "single" | "combo";
@@ -327,23 +327,12 @@ export function FormulaSelectorCard({
                                     <label className="flex items-center gap-1 mt-1 cursor-pointer">
                                       <input
                                         type="checkbox"
-                                        checked={
-                                          !!team.singleReaction?.forceOnField
-                                        }
+                                        checked={!!team.singleForceOnField}
                                         onChange={(e) =>
-                                          onReactionChange(
-                                            cid,
-                                            formulaId,
-                                            activeRx,
-                                            {
-                                              ...(team.singleReaction ?? {}),
-                                              reaction:
-                                                (activeRx as ReactionType) ||
-                                                undefined,
-                                              forceOnField:
-                                                e.target.checked || undefined,
-                                            }
-                                          )
+                                          updateTeam(team.id, {
+                                            singleForceOnField:
+                                              e.target.checked || undefined,
+                                          })
                                         }
                                         className="accent-primary w-3 h-3"
                                       />
@@ -453,7 +442,7 @@ export function FormulaSelectorCard({
                                     .find((k) => comboLineMap.has(k));
                                   const currentForceOnField = firstLineKey
                                     ? comboLineMap.get(firstLineKey)?.line
-                                        .reaction?.forceOnField
+                                        .forceOnField
                                     : undefined;
                                   return (
                                     <label className="flex items-center gap-1 cursor-pointer">
@@ -462,25 +451,29 @@ export function FormulaSelectorCard({
                                         type="checkbox"
                                         checked={!!currentForceOnField}
                                         onChange={(e) => {
-                                          for (const rx of reactions) {
-                                            const key = `${cid}.${formulaId}.${rx}`;
-                                            const existing =
-                                              comboLineMap.get(key);
-                                            if (existing) {
-                                              onReactionChange(
-                                                cid,
-                                                formulaId,
-                                                rx,
-                                                {
-                                                  ...(existing.line.reaction ??
-                                                    {}),
-                                                  reaction: rx as ReactionType,
-                                                  forceOnField:
-                                                    e.target.checked ||
-                                                    undefined,
+                                          const newForceOnField =
+                                            e.target.checked || undefined;
+                                          if (team.combo) {
+                                            const updatedLines =
+                                              team.combo.lines.map((l) => {
+                                                if (
+                                                  l.charId === cid &&
+                                                  l.formulaId === formulaId
+                                                ) {
+                                                  return {
+                                                    ...l,
+                                                    forceOnField:
+                                                      newForceOnField,
+                                                  };
                                                 }
-                                              );
-                                            }
+                                                return l;
+                                              });
+                                            updateTeam(team.id, {
+                                              combo: {
+                                                ...team.combo,
+                                                lines: updatedLines,
+                                              },
+                                            });
                                           }
                                         }}
                                         className="accent-primary w-3 h-3"
@@ -669,7 +662,7 @@ export function FormulaSelectorCard({
                                           expandedEntry?.line.count ?? 0;
                                         // Use stored override, or synthesize one with the reaction type
                                         // so per-part controls show even at count 0.
-                                        const expandedOverride: FormulaOverride =
+                                        const expandedOverride: ReactionOverride =
                                           expandedEntry?.line.reaction ?? {
                                             reaction:
                                               expandedRx as ReactionType,

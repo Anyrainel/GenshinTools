@@ -6,7 +6,7 @@ import type {
   I18nLabel,
 } from "../types";
 import type { CharBuild } from "./charBuild";
-import type { TeamReactionProvider } from "./teamReaction";
+import type { TeamReaction } from "./teamReaction";
 
 /**
  * Owns the flat formula index and formula-metadata queries for a team.
@@ -17,12 +17,12 @@ export class TeamFormulaCatalog {
   /** Flat index of all formula entries (character + reaction), keyed by formula ID. */
   readonly formulaIndex: Map<string, FormulaEntry>;
   /** Team reaction formula provider (transformative + lunar). */
-  readonly reactionProvider: TeamReactionProvider;
+  readonly reactionProvider: TeamReaction;
   private readonly charBuilds: Record<string, CharBuild>;
 
   constructor(
     charBuilds: Record<string, CharBuild>,
-    reactionProvider: TeamReactionProvider
+    reactionProvider: TeamReaction
   ) {
     this.charBuilds = charBuilds;
     this.reactionProvider = reactionProvider;

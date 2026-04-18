@@ -546,12 +546,10 @@ export const DEFAULT_CALC_CONTEXT: CalcContext = {
  *  partReactions stores explicit overrides (typically "none" to disable a part).
  *  partHits stores how many hits of a multi-hit part should react (rest use "none").
  */
-export type FormulaOverride = {
+export type ReactionOverride = {
   reaction?: ReactionType; // which reaction to override to
   rxnParts?: Record<number, ReactionType>; // which parts get new reaction
   rxnPartHits?: Record<number, number>; // which hits in said part get new reaction
-
-  forceOnField?: boolean; // force all off-field parts to be on-field (intentional playstyle change)
 };
 
 // ─── Combo Descriptor ───
@@ -584,28 +582,20 @@ export type ComboLine = {
   charId: string; // whose formula (on-field for on-field parts only)
   formulaId: string; // which formula from that character
   count: number; // repetitions (e.g., 9)
-  reaction?: FormulaOverride; // per-line reaction override
+  reaction?: ReactionOverride; // per-line reaction override
+  forceOnField?: boolean; // force all off-field parts to be on-field (intentional playstyle change)
 };
 
 export type ComboFormula = {
   id: string; // unique ID
   label: I18nLabel; // user-given name
   lines: ComboLine[];
+  buffOverrides?: Record<number, PartialBuffInfo[]>;
 };
 
 export type ComboResult = {
   lineDamages: { perHit: number; total: number }[];
   totalDamage: number;
-};
-
-/**
- * Bundled formula context: combo definition + per-formula reaction/buff overrides.
- * Always travels as a unit across optimizer, generator, analyzer, and display.
- * Reaction config lives directly on each ComboLine.reaction.
- */
-export type FormulaContext = {
-  combo: ComboFormula;
-  buffOverrides?: Record<number, PartialBuffInfo[]>;
 };
 
 // ─── Char Build Config ───
@@ -698,7 +688,7 @@ export interface CharOptConfig {
 export interface TeamOptimizerOptions {
   teamBuild: TeamBuild;
   carryCharId: string;
-  formula: FormulaContext;
+  combo: ComboFormula;
   inventory: ArtifactData[];
   calcContext: CalcContext;
   globalConfig: GlobalStatWeights;

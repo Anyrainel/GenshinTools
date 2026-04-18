@@ -3,8 +3,8 @@ import type {
   ComboFormula,
   ComboLine,
   ComboTemplate,
-  FormulaOverride,
   I18nLabel,
+  ReactionOverride,
   ReactionType,
 } from "../types";
 import type { TeamBuild } from "./teamBuild";
@@ -22,7 +22,11 @@ const EMPTY_LABEL = { en: "", zh: "" } as const;
 export function getEffectiveCombo(
   team: Pick<
     Team,
-    "formulaMode" | "selectedFormula" | "singleReaction" | "combo"
+    | "formulaMode"
+    | "selectedFormula"
+    | "singleReaction"
+    | "singleForceOnField"
+    | "combo"
   >
 ): ComboFormula {
   const mode = team.formulaMode ?? "single";
@@ -37,6 +41,7 @@ export function getEffectiveCombo(
       formulaId: sel.formulaId,
       count: 1,
       reaction: team.singleReaction,
+      forceOnField: team.singleForceOnField,
     };
     return { id: "__single__", label: EMPTY_LABEL, lines: [line] };
   }
@@ -77,12 +82,13 @@ export function resolveComboDescriptor(
 export function singleFormulaCombo(
   charId: string,
   formulaId: string,
-  reaction?: FormulaOverride
+  reaction?: ReactionOverride,
+  forceOnField?: boolean
 ): ComboFormula {
   return {
     id: "__single__",
     label: { zh: "", en: "" },
-    lines: [{ charId, formulaId, count: 1, reaction }],
+    lines: [{ charId, formulaId, count: 1, reaction, forceOnField }],
   };
 }
 /** Resolve the effective reaction for a formula part given overrides.
@@ -91,7 +97,7 @@ export function singleFormulaCombo(
  */
 
 export function resolvePartReaction(
-  override: FormulaOverride | undefined,
+  override: ReactionOverride | undefined,
   partIndex: number,
   eligibleReactions: ReactionType[] | undefined
 ): ReactionType {
@@ -244,7 +250,7 @@ export function withReactionOverride(
   charId: string,
   formulaId: string,
   reaction: string,
-  override: FormulaOverride
+  override: ReactionOverride
 ): ComboFormula {
   const key = `${charId}.${formulaId}.${reaction}`;
   const existing = lineMap.get(key);
@@ -263,16 +269,16 @@ export function buildSingleFormulaSelection(
   formulaId: string,
   reaction: string,
   currentFormula: { charId: string; formulaId: string } | undefined,
-  currentReaction: FormulaOverride | undefined
+  currentReaction: ReactionOverride | undefined
 ): {
   selectedFormula: { charId: string; formulaId: string };
-  singleReaction: FormulaOverride | undefined;
+  singleReaction: ReactionOverride | undefined;
 } {
   const sameFormula =
     currentFormula?.charId === charId &&
     currentFormula?.formulaId === formulaId;
   const prevReaction = sameFormula ? currentReaction : undefined;
-  const newReaction: FormulaOverride | undefined =
+  const newReaction: ReactionOverride | undefined =
     reaction === "none"
       ? undefined
       : { ...prevReaction, reaction: reaction as ReactionType };

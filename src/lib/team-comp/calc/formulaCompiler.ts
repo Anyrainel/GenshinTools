@@ -23,7 +23,7 @@ import type {
   CalcContext,
   ComboFormula,
   DamageTag,
-  FormulaOverride,
+  ReactionOverride,
   StatKey,
 } from "../types";
 import { resolvePartReaction } from "./combo";
@@ -394,7 +394,7 @@ export function compileComboTeamDamage(
       // On-field stats for the formula character (from field-state view)
       const formulaStats = postExprStats[statsCharId]!;
       const hasOffField = entry.parts.some((p) =>
-        isPartOffField(p, effectiveReaction)
+        isPartOffField(p, line.forceOnField)
       );
       const offFieldFormulaStats = hasOffField
         ? getOffFieldExprStats()[statsCharId]
@@ -457,7 +457,8 @@ export function compileComboTeamDamage(
         lineBuffs,
         lineExprVariants,
         lineOffFieldVariants,
-        line.count
+        line.count,
+        line.forceOnField
       );
       allPartExprs.push(lineExpr);
     }
@@ -882,12 +883,13 @@ function buildTotalDamageExpr(
   formulaStats: ExprStatSheet,
   charLevel: number,
   ctx: CalcContext,
-  reactionOverride?: FormulaOverride,
+  reactionOverride?: ReactionOverride,
   offFieldFormulaStats?: ExprStatSheet,
   partialBuffs?: PartialBuffInfo[],
   statsVariants?: Map<string, ExprStatSheet>,
   offFieldVariants?: Map<string, ExprStatSheet>,
-  comboCount = 1
+  comboCount = 1,
+  forceOnField?: boolean
 ): Expr {
   const partExprs: Expr[] = [];
 
@@ -897,7 +899,7 @@ function buildTotalDamageExpr(
     const h = totalHits ?? 1;
 
     // Use off-field stats when the part deals damage while the character is off-field
-    const effectiveOffField = isPartOffField(part, reactionOverride);
+    const effectiveOffField = isPartOffField(part, forceOnField);
     const baseStats =
       effectiveOffField && offFieldFormulaStats
         ? offFieldFormulaStats

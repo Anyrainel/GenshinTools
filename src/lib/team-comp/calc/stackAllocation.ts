@@ -14,8 +14,8 @@ import type {
   BuffActivationMap,
   BuffSource,
   CalcContext,
-  FormulaOverride,
   PartialBuffInfo,
+  ReactionOverride,
 } from "../types";
 import { resolvePartReaction } from "./combo";
 import { type DamageFormula, createReactionVariant } from "./damageFormula";
@@ -25,6 +25,16 @@ import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import type { StatSheet } from "./statSheet";
 
 export type { PartialBuffInfo } from "../types";
+
+/**
+ * Everything needed for one formula.calc() call — the resolved evaluation primitive.
+ * Stats are fully resolved for the correct onFieldCharId by the caller.
+ */
+export type FormulaEval = {
+  formula: DamageFormula;
+  stats: StatSheet;
+  charLevel: number;
+};
 
 /** Build a deterministic cache key from a set of excluded buff keys. */
 export function exclusionKey(excludeKeys: Set<string>): string {
@@ -73,20 +83,19 @@ function greedyAllocate(
  * 2. Sort parts by marginal gain descending
  * 3. Greedily assign stacks to highest-gain parts until budget exhausted
  *
- * @param sansBuffStats  Pre-built stats with each buff excluded (buffKey → StatSheet).
- *   Built by the caller via getTeamStatsExcluding.
- * @param offFieldSansBuffStats  Same for off-field context.
+ * @param partEvals    Pre-resolved evaluation data per part (formula, stats, charLevel).
+ *   Stats are already resolved for the correct onFieldCharId by the caller.
+ * @param partHits     Hit count per part (was `parts[i].hits ?? 1`).
+ * @param sansBuffPartStats  Map from buffKey → array of per-part StatSheets with
+ *   that buff excluded. `sansBuffPartStats.get(bKey)?.[i]` = stats for part i
+ *   with buff bKey excluded.
  */
 export function computeDefaultActivation(
-  parts: FormulaPart[],
+  partEvals: FormulaEval[],
+  partHits: number[],
   stackLimitedBuffs: StackLimitedBuffInfo[],
-  postStats: StatSheet,
-  charLevel: number,
   ctx: CalcContext,
-  reactionOverride?: FormulaOverride,
-  offFieldPostStats?: StatSheet,
-  sansBuffStats?: Map<string, StatSheet>,
-  offFieldSansBuffStats?: Map<string, StatSheet>
+  sansBuffPartStats?: Map<string, StatSheet[]>
 ): BuffActivationMap {
   if (stackLimitedBuffs.length === 0) return {};
 
@@ -96,25 +105,18 @@ export function computeDefaultActivation(
     const bKey = buffInfo.buffKey;
     const partAlloc: Record<number, number> = {};
 
-    const sansBuff = sansBuffStats?.get(bKey);
-    const sansBuffOffField = offFieldSansBuffStats?.get(bKey);
+    const sansArr = sansBuffPartStats?.get(bKey);
+    if (!sansArr) continue;
 
-    // If no sans-buff stats provided, skip this buff (caller must provide them)
-    if (!sansBuff) continue;
-
-    // Compute marginal gain per hit for each part
     const gains: GainEntry[] = [];
 
-    for (let idx = 0; idx < parts.length; idx++) {
-      const { formula, hits: totalHits, offField } = parts[idx];
-      const h = totalHits ?? 1;
+    for (let idx = 0; idx < partEvals.length; idx++) {
+      const { formula, stats, charLevel } = partEvals[idx];
+      const h = partHits[idx];
+      const statsWithout = sansArr[idx];
+      if (!statsWithout) continue;
 
-      const statsWithBuff =
-        offField && offFieldPostStats ? offFieldPostStats : postStats;
-      const statsWithout =
-        offField && sansBuffOffField ? sansBuffOffField : sansBuff;
-
-      const dmgWith = formula.calc(statsWithBuff, charLevel, ctx);
+      const dmgWith = formula.calc(stats, charLevel, ctx);
       const dmgWithout = formula.calc(statsWithout, charLevel, ctx);
       const marginalPerHit = dmgWith - dmgWithout;
 
@@ -130,14 +132,14 @@ export function computeDefaultActivation(
 
     // Fill 0 for unallocated parts so downstream consumers
     // (e.g. PartBuffDialog) don't default to "fully active"
-    for (let idx = 0; idx < parts.length; idx++) {
+    for (let idx = 0; idx < partEvals.length; idx++) {
       if (!(idx in partAlloc)) {
         partAlloc[idx] = 0;
       }
     }
 
     // Only add to activation if this buff doesn't cover all hits on all parts
-    const totalHits = parts.reduce((s, p) => s + (p.hits ?? 1), 0);
+    const totalHits = partHits.reduce((s, h) => s + h, 0);
     if (buffInfo.maxStacks < totalHits) {
       activation[bKey] = partAlloc;
     }
@@ -256,7 +258,8 @@ export function computeBlendedDamage(
   ctx: CalcContext,
   offFieldPostStats?: StatSheet,
   offFieldVariants?: Map<string, StatSheet>,
-  reactionOverride?: FormulaOverride
+  reactionOverride?: ReactionOverride,
+  forceOnField?: boolean
 ): { totalDamage: number; partDamages: { damage: number; hits: number }[] } {
   const partDamages: { damage: number; hits: number }[] = [];
   let totalDamage = 0;
@@ -266,7 +269,7 @@ export function computeBlendedDamage(
     const { formula, hits: totalHits, bespokeBuffs } = part;
     const h = totalHits ?? 1;
 
-    const effectiveOffField = isPartOffField(part, reactionOverride);
+    const effectiveOffField = isPartOffField(part, forceOnField);
     const baseStats =
       effectiveOffField && offFieldPostStats ? offFieldPostStats : postStats;
     const variants =
@@ -468,18 +471,13 @@ export function collectStackLimitedBuffs(
 }
 
 /**
- * Context for one combo line, used by combo-wide default activation.
+ * Pre-resolved evaluation data for one combo line, used by combo-wide allocation.
  */
-export type ComboLineContext = {
-  parts: FormulaPart[];
+export type ComboLineEval = {
+  partEvals: FormulaEval[];
+  partHits: number[];
   lineCount: number;
-  postStats: StatSheet;
-  charLevel: number;
-  offFieldPostStats?: StatSheet;
-  /** Pre-built sans-buff stats per buffKey (on-field). */
-  sansBuffStats?: Map<string, StatSheet>;
-  /** Pre-built sans-buff stats per buffKey (off-field). */
-  offFieldSansBuffStats?: Map<string, StatSheet>;
+  sansBuffPartStats?: Map<string, StatSheet[]>;
 };
 
 /**
@@ -495,7 +493,7 @@ export type ComboLineContext = {
  * Returns one BuffActivationMap per line (per-cast activation values).
  */
 export function computeComboDefaultActivation(
-  lines: ComboLineContext[],
+  lines: ComboLineEval[],
   stackLimitedBuffs: StackLimitedBuffInfo[],
   ctx: CalcContext
 ): BuffActivationMap[] {
@@ -508,38 +506,27 @@ export function computeComboDefaultActivation(
 
     // Compute marginal gain per hit for each (line, part) across the combo
     // Encode (lineIdx, partIdx) as a flat index: lineIdx * maxParts + partIdx
-    const maxParts = Math.max(...lines.map((l) => l.parts.length), 1);
+    const maxParts = Math.max(...lines.map((l) => l.partEvals.length), 1);
     const gains: GainEntry[] = [];
     let totalHitsAllLines = 0;
 
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-      const {
-        parts,
-        lineCount,
-        postStats,
-        charLevel,
-        offFieldPostStats,
-        sansBuffStats,
-        offFieldSansBuffStats,
-      } = lines[lineIdx];
+      const { partEvals, partHits, lineCount, sansBuffPartStats } =
+        lines[lineIdx];
 
-      const sansBuff = sansBuffStats?.get(bKey);
-      const sansBuffOffField = offFieldSansBuffStats?.get(bKey);
+      const sansArr = sansBuffPartStats?.get(bKey);
+      if (!sansArr) continue;
 
-      if (!sansBuff) continue;
-
-      for (let partIdx = 0; partIdx < parts.length; partIdx++) {
-        const { formula, hits: totalHits, offField } = parts[partIdx];
-        const h = totalHits ?? 1;
+      for (let partIdx = 0; partIdx < partEvals.length; partIdx++) {
+        const { formula, stats, charLevel } = partEvals[partIdx];
+        const h = partHits[partIdx];
         const totalAvailable = h * lineCount;
         totalHitsAllLines += totalAvailable;
 
-        const statsWithBuff =
-          offField && offFieldPostStats ? offFieldPostStats : postStats;
-        const statsWithout =
-          offField && sansBuffOffField ? sansBuffOffField : sansBuff;
+        const statsWithout = sansArr[partIdx];
+        if (!statsWithout) continue;
 
-        const dmgWith = formula.calc(statsWithBuff, charLevel, ctx);
+        const dmgWith = formula.calc(stats, charLevel, ctx);
         const dmgWithout = formula.calc(statsWithout, charLevel, ctx);
         const marginalPerHit = dmgWith - dmgWithout;
 
@@ -565,7 +552,11 @@ export function computeComboDefaultActivation(
 
     // Fill 0 for unallocated parts
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-      for (let partIdx = 0; partIdx < lines[lineIdx].parts.length; partIdx++) {
+      for (
+        let partIdx = 0;
+        partIdx < lines[lineIdx].partEvals.length;
+        partIdx++
+      ) {
         if (!(partIdx in linePartAlloc[lineIdx])) {
           linePartAlloc[lineIdx][partIdx] = 0;
         }

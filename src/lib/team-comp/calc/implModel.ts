@@ -4,34 +4,18 @@ import {
   resolveCharacterStats,
   resolveWeaponStats,
 } from "@/lib/gameStatsLoader";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
 import type { FormulaEntry } from "../types";
 import type {
-  BuffSource,
-  CalcContext,
   ComboTemplate,
   ComboTemplateEntry,
-  DamageResult,
   I18nLabel,
   OptionMap,
-  PartialBuffInfo,
-  ReactionOverride,
   ReactionType,
   StatEntry,
   TalentLevels,
 } from "../types";
 import { resolveComboDescriptor } from "./combo";
-import { resolvePartReaction } from "./combo";
-import type { DamageFormula } from "./damageFormula";
-import { createReactionVariant } from "./damageFormula";
-import { isPartOffField } from "./fieldState";
-import { blendSubPart } from "./stackAllocation";
 import type { StatBuff } from "./statBuff";
-import {
-  type StatSheet,
-  bespokeMaxStacks,
-  buildBespokeOverlay,
-} from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 
 /** Any entity that contributes stats and buffs to a build */
@@ -41,7 +25,7 @@ export abstract class IStatProvider {
 }
 
 /** An entity that owns damage formulas and exposes them for calc/display/compiler paths */
-abstract class IFormulaProvider {
+export abstract class IFormulaProvider {
   /** Public label map — derived from the internal formulaMap */
   abstract get formulaIds(): Record<string, I18nLabel>;
   /** Look up a formula entry by ID (used by all three damage paths) */
@@ -235,254 +219,6 @@ export abstract class CharacterBase implements IStatProvider, IFormulaProvider {
       }
     }
     return result;
-  }
-
-  /** Iterates the formulaMap entry's parts, calls .calc() on each, and aggregates. */
-  getDamageResult(
-    formulaId: string,
-    selfStats: StatSheet,
-    teamStats: StatSheet[],
-    ctx: CalcContext,
-    reactionOverride?: ReactionOverride,
-    offFieldSelfStats?: StatSheet,
-    partialBuffs?: PartialBuffInfo[],
-    statsVariants?: Map<string, StatSheet>,
-    offFieldVariants?: Map<string, StatSheet>,
-    /** Override the character level used for DEF calculations (cross-scaled formulas). */
-    charLevelOverride?: number,
-    forceOnField?: boolean
-  ): DamageResult {
-    const entry = this.formulaMap[formulaId];
-    if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
-    const effectiveLevel = charLevelOverride ?? this.charLevel;
-    const parts: DamageResult["parts"] = [];
-    for (let idx = 0; idx < entry.parts.length; idx++) {
-      const part = entry.parts[idx];
-      const { formula, hits: totalHits, bespokeBuffs } = part;
-      const h = totalHits ?? 1;
-      const bespokeMax = bespokeMaxStacks(bespokeBuffs);
-      const effectiveOffField = isPartOffField(part, forceOnField);
-
-      // Use off-field stats when the part deals damage while the character is off-field
-      const baseSelfStats =
-        effectiveOffField && offFieldSelfStats ? offFieldSelfStats : selfStats;
-
-      // Apply per-part stat overlay if present
-      let bespokeOverlay: StatSheet | undefined;
-      if (bespokeBuffs?.length) {
-        bespokeOverlay = buildBespokeOverlay(
-          bespokeBuffs,
-          baseSelfStats,
-          teamStats
-        );
-      }
-
-      // Pick the correct variants map for on/off-field
-      const partVariants =
-        effectiveOffField && offFieldVariants
-          ? offFieldVariants
-          : statsVariants;
-
-      const hasReaction =
-        reactionOverride?.reaction && reactionOverride.reaction !== "none";
-
-      // Skip reaction override if the formula already has a built-in reaction
-      // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
-      if (!hasReaction || formula.tag.reaction !== "none") {
-        const buffedResult = this._calcPartBlended(
-          formula,
-          baseSelfStats,
-          ctx,
-          h,
-          idx,
-          h,
-          partialBuffs,
-          partVariants,
-          bespokeOverlay,
-          bespokeMax,
-          effectiveLevel
-        );
-        if (bespokeMax != null) {
-          const unbuffedResult = this._calcPartBlended(
-            formula,
-            baseSelfStats,
-            ctx,
-            h,
-            idx,
-            h,
-            partialBuffs,
-            partVariants,
-            undefined,
-            undefined,
-            effectiveLevel
-          );
-          parts.push({
-            ...buffedResult,
-            bespokeInfo: {
-              unbuffedDamage: unbuffedResult.damage,
-              maxStacks: bespokeMax,
-            },
-          });
-        } else {
-          parts.push(buffedResult);
-        }
-        continue;
-      }
-
-      const partEligible =
-        ELEMENT_ELIGIBLE_REACTIONS[
-          formula.tag.element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
-        ];
-      const targetReaction = resolvePartReaction(
-        reactionOverride,
-        idx,
-        partEligible
-      );
-
-      // Determine how many hits react (partHits override, default = all)
-      const reactingHits =
-        targetReaction !== "none"
-          ? Math.min(reactionOverride.rxnPartHits?.[idx] ?? h, h)
-          : 0;
-      const nonReactingHits = h - reactingHits;
-
-      if (reactingHits > 0) {
-        const effectiveFormula =
-          targetReaction !== formula.tag.reaction
-            ? createReactionVariant(formula, targetReaction)
-            : formula;
-        const buffedResult = this._calcPartBlended(
-          effectiveFormula,
-          baseSelfStats,
-          ctx,
-          reactingHits,
-          idx,
-          h,
-          partialBuffs,
-          partVariants,
-          bespokeOverlay,
-          bespokeMax,
-          effectiveLevel
-        );
-        if (bespokeMax != null) {
-          const unbuffedResult = this._calcPartBlended(
-            effectiveFormula,
-            baseSelfStats,
-            ctx,
-            reactingHits,
-            idx,
-            h,
-            partialBuffs,
-            partVariants,
-            undefined,
-            undefined,
-            effectiveLevel
-          );
-          parts.push({
-            ...buffedResult,
-            bespokeInfo: {
-              unbuffedDamage: unbuffedResult.damage,
-              maxStacks: bespokeMax,
-            },
-          });
-        } else {
-          parts.push(buffedResult);
-        }
-      }
-      if (nonReactingHits > 0) {
-        const buffedResult = this._calcPartBlended(
-          formula,
-          baseSelfStats,
-          ctx,
-          nonReactingHits,
-          idx,
-          h,
-          partialBuffs,
-          partVariants,
-          bespokeOverlay,
-          bespokeMax,
-          effectiveLevel
-        );
-        if (bespokeMax != null) {
-          const unbuffedResult = this._calcPartBlended(
-            formula,
-            baseSelfStats,
-            ctx,
-            nonReactingHits,
-            idx,
-            h,
-            partialBuffs,
-            partVariants,
-            undefined,
-            undefined,
-            effectiveLevel
-          );
-          parts.push({
-            ...buffedResult,
-            bespokeInfo: {
-              unbuffedDamage: unbuffedResult.damage,
-              maxStacks: bespokeMax,
-            },
-          });
-        } else {
-          parts.push(buffedResult);
-        }
-      }
-    }
-    const totalDamage = parts.reduce(
-      (sum, { damage, hits }) => sum + damage * hits,
-      0
-    );
-    return { parts, totalDamage };
-  }
-
-  /**
-   * Compute blended damage for a sub-part (possibly a reaction split).
-   * If partialBuffs affect this part, uses interval-based blending.
-   * The activation is scaled proportionally when hits < originalPartHits
-   * (i.e., this is a reacting/non-reacting sub-part).
-   *
-   * @param statsVariants Pre-built stat sheets for each exclusion combination
-   *   (without bespoke buffs). When a variant is used, bespokeOverlay is
-   *   merged on top to restore bespoke buff contributions.
-   */
-  private _calcPartBlended(
-    formula: DamageFormula,
-    baseStats: StatSheet,
-    ctx: CalcContext,
-    hits: number,
-    partIdx: number,
-    originalPartHits: number,
-    partialBuffs?: PartialBuffInfo[],
-    statsVariants?: Map<string, StatSheet>,
-    bespokeOverlay?: StatSheet,
-    bespokeMax?: number,
-    charLevel?: number
-  ): { damage: number; hits: number } {
-    const effectiveLevel = charLevel ?? this.charLevel;
-    const bespokeCutoff =
-      bespokeOverlay && bespokeMax != null && bespokeMax < hits
-        ? bespokeMax
-        : hits;
-    const withBespoke = bespokeOverlay
-      ? baseStats.merge(bespokeOverlay)
-      : baseStats;
-
-    const total = blendSubPart(
-      formula,
-      baseStats,
-      withBespoke,
-      bespokeOverlay,
-      bespokeCutoff,
-      effectiveLevel,
-      ctx,
-      hits,
-      partIdx,
-      originalPartHits,
-      partialBuffs ?? [],
-      statsVariants
-    );
-    return { damage: total / hits, hits };
   }
 }
 

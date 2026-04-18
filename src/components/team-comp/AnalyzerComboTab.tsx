@@ -24,8 +24,8 @@ import type { FormulaEntry } from "@/lib/team-comp/types";
 import type { ReactionComboEntry } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
-  FormulaOverride,
   I18nLabel,
+  ReactionOverride,
   ReactionType,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
@@ -43,10 +43,10 @@ interface AnalyzerComboTabProps {
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
   /** Stored reaction overrides keyed by "charId.formulaId" — read directly for config panels. */
-  reactionOverrides: Record<string, FormulaOverride>;
+  reactionOverrides: Record<string, ReactionOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
-  onReactionChange: (stableKey: string, override: FormulaOverride) => void;
+  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
 }
 
 export function AnalyzerComboTab({
@@ -109,7 +109,7 @@ type Variant = {
   /** Default count at constellation c (from template proportions) */
   getDefault: (c: number) => number;
   /** The reaction override config (undefined for direct/"none") */
-  reaction: FormulaOverride | undefined;
+  reaction: ReactionOverride | undefined;
   /** FormulaEntry for per-part config (only set for non-direct variants) */
   formulaEntry: FormulaEntry | undefined;
 };
@@ -133,10 +133,10 @@ function CharComboRow({
   templateCombo: ComboFormula;
   comboOverrides: ComboCountOverrides;
   minErOverrides: MinErOverrides;
-  reactionOverrides: Record<string, FormulaOverride>;
+  reactionOverrides: Record<string, ReactionOverride>;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
-  onReactionChange: (stableKey: string, override: FormulaOverride) => void;
+  onReactionChange: (stableKey: string, override: ReactionOverride) => void;
   rxDescriptor: ReactionComboEntry[];
 }) {
   const { t } = useLanguage();
@@ -188,7 +188,7 @@ function CharComboRow({
     // Index template lines: formulaId → reactionType → { count, reaction }
     const templateIndex: Record<
       string,
-      Record<string, { count: number; reaction?: FormulaOverride }>
+      Record<string, { count: number; reaction?: ReactionOverride }>
     > = {};
     for (const line of templateCombo.lines) {
       if (line.charId !== charId) continue;

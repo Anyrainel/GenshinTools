@@ -257,13 +257,15 @@ export function ArtifactManagerDialog({
               <Button disabled={!isReady} onClick={handleAction}>
                 {actionLabel}
               </Button>
-              <Button
-                variant="secondary"
-                disabled={!isConnected}
-                onClick={handleFetchAndSync}
-              >
-                {t.ui("manager.syncArtifacts")}
-              </Button>
+              {import.meta.env.DEV && (
+                <Button
+                  variant="secondary"
+                  disabled={!isConnected}
+                  onClick={handleFetchAndSync}
+                >
+                  {t.ui("manager.syncArtifacts")}
+                </Button>
+              )}
             </>
           )}
           <Button variant="outline" onClick={handleClose}>

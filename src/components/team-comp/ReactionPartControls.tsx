@@ -11,7 +11,7 @@ import {
   MULTI_ELEMENT_CHARS,
 } from "@/lib/team-comp/constants";
 import type { FormulaEntry } from "@/lib/team-comp/types";
-import type { FormulaOverride, ReactionType } from "@/lib/team-comp/types";
+import type { ReactionOverride, ReactionType } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 
 /** Build a compact label from a formula part's scaling info: e.g. "230% ATK + 45% EM" */
@@ -36,9 +36,9 @@ export interface ReactionPartControlsProps {
   /** The gate reaction type (e.g. "melt", "vaporize"). */
   reactionType: ReactionType;
   /** Current reaction override state. */
-  reactionOverride: FormulaOverride;
+  reactionOverride: ReactionOverride;
   /** Callback when per-part config changes. */
-  onReactionChange: (override: FormulaOverride) => void;
+  onReactionChange: (override: ReactionOverride) => void;
   /** Disable all interaction (read-only preview). */
   disabled?: boolean;
 }

@@ -1069,12 +1069,12 @@ function ComboResultView({
         formulaId
       );
       // Per-formula buff resolution for correct part applicability.
-      // Pass through the combo line's reaction override so forceOnField is
-      // reflected in the buff applicability chips (otherwise on-field-only
-      // buffs appear "inactive" for a forced-on-field off-field part).
-      const lineReaction = activeLines.find(
+      // Pass through the combo line's forceOnField so it is reflected in
+      // the buff applicability chips (otherwise on-field-only buffs appear
+      // "inactive" for a forced-on-field off-field part).
+      const matchingLine = activeLines.find(
         (l) => l.charId === charId && l.formulaId === formulaId
-      )?.reaction;
+      );
       let buffApplicability: Record<string, number[] | undefined> | undefined;
       try {
         const resolvedBuffs = teamBuild.resolveFormulaBuffs(
@@ -1082,7 +1082,8 @@ function ComboResultView({
           formulaId,
           sheets,
           calcContext,
-          lineReaction
+          matchingLine?.reaction,
+          matchingLine?.forceOnField
         );
         buffApplicability = buildBuffApplicability(resolvedBuffs);
       } catch {

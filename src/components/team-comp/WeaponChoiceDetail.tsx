@@ -24,7 +24,7 @@ import {
 import type {
   ComboFormula,
   ComboLine,
-  FormulaOverride,
+  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team, WeaponChoiceResult } from "@/stores/useTeamStore";
@@ -154,7 +154,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
       charId: string,
       formulaId: string,
       reaction: string,
-      override: FormulaOverride
+      override: ReactionOverride
     ) => {
       if (formulaMode === "single") {
         updateTeam(team.id, { singleReaction: override });

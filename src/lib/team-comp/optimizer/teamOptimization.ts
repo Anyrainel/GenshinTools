@@ -567,7 +567,8 @@ export async function* runTeamOptimization(
     perCharExcludedArtifactIds,
     useLagrangianAlloc,
   } = opts;
-  const { combo, buffOverrides } = opts.formula;
+  const { combo } = opts;
+  const { buffOverrides } = combo;
 
   /** Get the inventory for a specific character, merging per-char extras and filtering per-char exclusions. */
   const getCharInventory = (charId: string): ArtifactData[] => {
@@ -617,7 +618,7 @@ export async function* runTeamOptimization(
     }
     try {
       const evalFn = (sheets: Record<string, StatSheet>) =>
-        teamBuild.evaluateCombo(combo, sheets, calcContext).totalDamage;
+        teamBuild.getComboDamageResult(combo, sheets, calcContext).totalDamage;
       const baseDamage = evalFn(emptySheets);
 
       if (baseDamage > 0) {
@@ -656,7 +657,7 @@ export async function* runTeamOptimization(
               teamBuild.enemyAura,
               teamBuild.extraBuffs
             );
-            const dmgNoSet = noSetTB.evaluateCombo(
+            const dmgNoSet = noSetTB.getComboDamageResult(
               combo,
               emptySheets,
               calcContext
@@ -1660,8 +1661,11 @@ export async function* runTeamOptimization(
     let phase2Damage: number;
     try {
       phase2Damage = teamArtifactsMeetConstraints(bestArtifactsByChar)
-        ? effectiveTeamBuild.evaluateCombo(combo, phase2Sheets, calcContext)
-            .totalDamage
+        ? effectiveTeamBuild.getComboDamageResult(
+            combo,
+            phase2Sheets,
+            calcContext
+          ).totalDamage
         : 0;
     } catch {
       phase2Damage = 0;
@@ -1693,8 +1697,11 @@ export async function* runTeamOptimization(
       }
       const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
       try {
-        return effectiveTeamBuild.evaluateCombo(combo, sheets, calcContext)
-          .totalDamage;
+        return effectiveTeamBuild.getComboDamageResult(
+          combo,
+          sheets,
+          calcContext
+        ).totalDamage;
       } catch {
         return 0;
       }
@@ -1773,8 +1780,11 @@ export async function* runTeamOptimization(
       const sheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
       try {
         if (!teamArtifactsMeetConstraints(bestArtifactsByChar)) return 0;
-        return effectiveTeamBuild.evaluateCombo(combo, sheets, calcContext)
-          .totalDamage;
+        return effectiveTeamBuild.getComboDamageResult(
+          combo,
+          sheets,
+          calcContext
+        ).totalDamage;
       } catch {
         return 0;
       }
@@ -1825,7 +1835,7 @@ export async function* runTeamOptimization(
       const evalSheets = { ...refinedBaseSheets, [charId]: charSheet };
       let currentDamage: number;
       try {
-        currentDamage = effectiveTeamBuild.evaluateCombo(
+        currentDamage = effectiveTeamBuild.getComboDamageResult(
           combo,
           evalSheets,
           calcContext,
@@ -2031,7 +2041,7 @@ export async function* runTeamOptimization(
       let tentativeDamage: number;
       try {
         if (!teamArtifactsMeetConstraints(tentativeArts)) continue;
-        tentativeDamage = effectiveTeamBuild.evaluateCombo(
+        tentativeDamage = effectiveTeamBuild.getComboDamageResult(
           combo,
           tentativeSheets,
           calcContext
@@ -2128,7 +2138,8 @@ export async function* runTeamOptimization(
             teamBuild.extraBuffs
           );
         }
-        return evalTB.evaluateCombo(combo, sheets, calcContext).totalDamage;
+        return evalTB.getComboDamageResult(combo, sheets, calcContext)
+          .totalDamage;
       } catch {
         return 0;
       }
@@ -2303,8 +2314,11 @@ export async function* runTeamOptimization(
           );
           try {
             if (!teamArtifactsMeetConstraints(bestArtifactsByChar)) return 0;
-            return effectiveTeamBuild.evaluateCombo(combo, sheets, calcContext)
-              .totalDamage;
+            return effectiveTeamBuild.getComboDamageResult(
+              combo,
+              sheets,
+              calcContext
+            ).totalDamage;
           } catch {
             return 0;
           }
@@ -2367,7 +2381,7 @@ export async function* runTeamOptimization(
             let newTeamDamage: number;
             try {
               if (!teamArtifactsMeetConstraints(testArts)) continue;
-              newTeamDamage = effectiveTeamBuild.evaluateCombo(
+              newTeamDamage = effectiveTeamBuild.getComboDamageResult(
                 combo,
                 testSheets,
                 calcContext
@@ -2782,8 +2796,12 @@ export async function* runTeamOptimization(
             teamBuild.extraBuffs
           );
         }
-        return evalTB.evaluateCombo(combo, sheets, calcContext, buffOverrides)
-          .totalDamage;
+        return evalTB.getComboDamageResult(
+          combo,
+          sheets,
+          calcContext,
+          buffOverrides
+        ).totalDamage;
       } catch {
         return 0;
       }
@@ -2920,7 +2938,7 @@ export async function* runTeamOptimization(
 
   let comboRes: ComboResult;
   try {
-    comboRes = effectiveTeamBuild.evaluateCombo(
+    comboRes = effectiveTeamBuild.getComboDamageResult(
       combo,
       finalSheets,
       calcContext,

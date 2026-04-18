@@ -13,6 +13,7 @@ import type {
 } from "../types";
 import { resolvePartReaction } from "./combo";
 import type { EvaluatedDynamicBuff } from "./damageCalc";
+import type { DamageFormula } from "./damageFormula";
 import { createReactionVariant } from "./damageFormula";
 import { isFieldDependentReceiver } from "./fieldState";
 import { isPartOffField } from "./fieldState";
@@ -28,6 +29,7 @@ import {
   createCharacter,
   createWeapon,
 } from "./registry";
+import { blendSubPart } from "./stackAllocation";
 import type { PartialBuffInfo } from "./stackAllocation";
 import {
   StatBuff,
@@ -311,6 +313,7 @@ export class CharBuild {
     return this.charBase.allFormulaIds;
   }
 
+  /** Iterates the formula entry's parts, calls .calc() on each, and aggregates. */
   getDamageResult(
     formulaId: string,
     selfPostStats: StatSheet,
@@ -324,19 +327,227 @@ export class CharBuild {
     charLevelOverride?: number,
     forceOnField?: boolean
   ): DamageResult {
-    return this.charBase.getDamageResult(
-      formulaId,
-      selfPostStats,
-      teamPostStats,
-      ctx,
-      reactionOverride,
-      offFieldSelfPostStats,
-      partialBuffs,
-      statsVariants,
-      offFieldVariants,
-      charLevelOverride,
-      forceOnField
+    const entry = this.charBase.getFormulaEntry(formulaId);
+    if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
+    const effectiveLevel = charLevelOverride ?? this.charBase.charLevel;
+    const parts: DamageResult["parts"] = [];
+    for (let idx = 0; idx < entry.parts.length; idx++) {
+      const part = entry.parts[idx];
+      const { formula, hits: totalHits, bespokeBuffs } = part;
+      const h = totalHits ?? 1;
+      const bespokeMax = bespokeMaxStacks(bespokeBuffs);
+      const effectiveOffField = isPartOffField(part, forceOnField);
+
+      const baseSelfStats =
+        effectiveOffField && offFieldSelfPostStats
+          ? offFieldSelfPostStats
+          : selfPostStats;
+
+      let bespokeOverlay: StatSheet | undefined;
+      if (bespokeBuffs?.length) {
+        bespokeOverlay = buildBespokeOverlay(
+          bespokeBuffs,
+          baseSelfStats,
+          teamPostStats
+        );
+      }
+
+      const partVariants =
+        effectiveOffField && offFieldVariants
+          ? offFieldVariants
+          : statsVariants;
+
+      const hasReaction =
+        reactionOverride?.reaction && reactionOverride.reaction !== "none";
+
+      if (!hasReaction || formula.tag.reaction !== "none") {
+        const buffedResult = this._calcPartBlended(
+          formula,
+          baseSelfStats,
+          ctx,
+          h,
+          idx,
+          h,
+          partialBuffs,
+          partVariants,
+          bespokeOverlay,
+          bespokeMax,
+          effectiveLevel
+        );
+        if (bespokeMax != null) {
+          const unbuffedResult = this._calcPartBlended(
+            formula,
+            baseSelfStats,
+            ctx,
+            h,
+            idx,
+            h,
+            partialBuffs,
+            partVariants,
+            undefined,
+            undefined,
+            effectiveLevel
+          );
+          parts.push({
+            ...buffedResult,
+            bespokeInfo: {
+              unbuffedDamage: unbuffedResult.damage,
+              maxStacks: bespokeMax,
+            },
+          });
+        } else {
+          parts.push(buffedResult);
+        }
+        continue;
+      }
+
+      const partEligible =
+        ELEMENT_ELIGIBLE_REACTIONS[
+          formula.tag.element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+        ];
+      const targetReaction = resolvePartReaction(
+        reactionOverride,
+        idx,
+        partEligible
+      );
+
+      const reactingHits =
+        targetReaction !== "none"
+          ? Math.min(reactionOverride.rxnPartHits?.[idx] ?? h, h)
+          : 0;
+      const nonReactingHits = h - reactingHits;
+
+      if (reactingHits > 0) {
+        const effectiveFormula =
+          targetReaction !== formula.tag.reaction
+            ? createReactionVariant(formula, targetReaction)
+            : formula;
+        const buffedResult = this._calcPartBlended(
+          effectiveFormula,
+          baseSelfStats,
+          ctx,
+          reactingHits,
+          idx,
+          h,
+          partialBuffs,
+          partVariants,
+          bespokeOverlay,
+          bespokeMax,
+          effectiveLevel
+        );
+        if (bespokeMax != null) {
+          const unbuffedResult = this._calcPartBlended(
+            effectiveFormula,
+            baseSelfStats,
+            ctx,
+            reactingHits,
+            idx,
+            h,
+            partialBuffs,
+            partVariants,
+            undefined,
+            undefined,
+            effectiveLevel
+          );
+          parts.push({
+            ...buffedResult,
+            bespokeInfo: {
+              unbuffedDamage: unbuffedResult.damage,
+              maxStacks: bespokeMax,
+            },
+          });
+        } else {
+          parts.push(buffedResult);
+        }
+      }
+      if (nonReactingHits > 0) {
+        const buffedResult = this._calcPartBlended(
+          formula,
+          baseSelfStats,
+          ctx,
+          nonReactingHits,
+          idx,
+          h,
+          partialBuffs,
+          partVariants,
+          bespokeOverlay,
+          bespokeMax,
+          effectiveLevel
+        );
+        if (bespokeMax != null) {
+          const unbuffedResult = this._calcPartBlended(
+            formula,
+            baseSelfStats,
+            ctx,
+            nonReactingHits,
+            idx,
+            h,
+            partialBuffs,
+            partVariants,
+            undefined,
+            undefined,
+            effectiveLevel
+          );
+          parts.push({
+            ...buffedResult,
+            bespokeInfo: {
+              unbuffedDamage: unbuffedResult.damage,
+              maxStacks: bespokeMax,
+            },
+          });
+        } else {
+          parts.push(buffedResult);
+        }
+      }
+    }
+    const totalDamage = parts.reduce(
+      (sum, { damage, hits }) => sum + damage * hits,
+      0
     );
+    return { parts, totalDamage };
+  }
+
+  /**
+   * Compute blended damage for a sub-part (possibly a reaction split).
+   * If partialBuffs affect this part, uses interval-based blending.
+   */
+  private _calcPartBlended(
+    formula: DamageFormula,
+    baseStats: StatSheet,
+    ctx: CalcContext,
+    hits: number,
+    partIdx: number,
+    originalPartHits: number,
+    partialBuffs?: PartialBuffInfo[],
+    statsVariants?: Map<string, StatSheet>,
+    bespokeOverlay?: StatSheet,
+    bespokeMax?: number,
+    charLevel?: number
+  ): { damage: number; hits: number } {
+    const effectiveLevel = charLevel ?? this.charBase.charLevel;
+    const bespokeCutoff =
+      bespokeOverlay && bespokeMax != null && bespokeMax < hits
+        ? bespokeMax
+        : hits;
+    const withBespoke = bespokeOverlay
+      ? baseStats.merge(bespokeOverlay)
+      : baseStats;
+
+    const total = blendSubPart(
+      formula,
+      baseStats,
+      withBespoke,
+      bespokeOverlay,
+      bespokeCutoff,
+      effectiveLevel,
+      ctx,
+      hits,
+      partIdx,
+      originalPartHits,
+      partialBuffs ?? [],
+      statsVariants
+    );
+    return { damage: total / hits, hits };
   }
 
   /** Cold path: produce structured display data for a formula. */

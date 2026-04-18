@@ -45,8 +45,8 @@ import type {
   CalcContext,
   ComboFormula,
   ComboLine,
-  FormulaOverride,
   PartialBuffInfo,
+  ReactionOverride,
   TeamSlotConfig,
 } from "../types";
 import type {
@@ -82,7 +82,7 @@ const ANALYZER_ROLL_MULT = 0.85;
 /** Stable key for a combo line: formulaId alone for direct, formulaId:reactionType for reactions. */
 export function comboLineKey(
   formulaId: string,
-  reaction?: FormulaOverride
+  reaction?: ReactionOverride
 ): string {
   if (!reaction?.reaction) return formulaId;
   return `${formulaId}:${reaction.reaction}`;
@@ -721,8 +721,12 @@ function evalWithCachedArtifacts(
       }
     }
 
-    return tb.evaluateCombo(validCombo, sheets, calcContext, buffOverrides)
-      .totalDamage;
+    return tb.getComboDamageResult(
+      validCombo,
+      sheets,
+      calcContext,
+      buffOverrides
+    ).totalDamage;
   } catch {
     return 0;
   }
@@ -788,9 +792,7 @@ async function runGeneration(
     teamBuild,
     carryCharId,
     calcContext: calcContext ?? ANALYZER_CALC_CONTEXT,
-    formula: {
-      combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
-    },
+    combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
     rollMultiplier: calcContext?.rollMultiplier ?? ANALYZER_ROLL_MULT,
     substatBudget: calcContext?.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET,
     perChar,

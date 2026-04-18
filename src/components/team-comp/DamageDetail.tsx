@@ -57,7 +57,7 @@ import type {
   CalcContext,
   ComboFormula,
   ComboLine,
-  FormulaOverride,
+  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
@@ -393,7 +393,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       charId: string,
       formulaId: string,
       reaction: string,
-      override: FormulaOverride
+      override: ReactionOverride
     ) => {
       if (formulaMode === "single") {
         updateTeam(team.id, { singleReaction: override });
@@ -447,9 +447,16 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
         formulaMode,
         selectedFormula: team.selectedFormula,
         singleReaction: team.singleReaction,
+        singleForceOnField: team.singleForceOnField,
         combo: team.combo,
       }),
-    [formulaMode, team.selectedFormula, team.singleReaction, team.combo]
+    [
+      formulaMode,
+      team.selectedFormula,
+      team.singleReaction,
+      team.singleForceOnField,
+      team.combo,
+    ]
   );
 
   // Build per-line PartialBuffInfo[] (defaults + user overrides)
@@ -625,8 +632,8 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     startTeamOpt({
       teamBuild: optTeamBuild,
       carryCharId,
-      formula: {
-        combo: optCombo,
+      combo: {
+        ...optCombo,
         buffOverrides,
       },
       inventory: teamInventory.availableArtifacts,
@@ -880,8 +887,8 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     startGenerator({
       teamBuild,
       carryCharId,
-      formula: {
-        combo: genCombo,
+      combo: {
+        ...genCombo,
         buffOverrides: buffOverrides,
       },
       calcContext: genContext,

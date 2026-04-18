@@ -9,7 +9,7 @@ import {
 import type { FormulaEntry } from "@/lib/team-comp/types";
 import type {
   ElementalOrPhysical,
-  FormulaOverride,
+  ReactionOverride,
   ReactionType,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
@@ -38,9 +38,9 @@ interface ReactionSelectorProps {
   /** Element of the formula's character */
   element: ElementalOrPhysical;
   /** Current reaction override state */
-  reactionOverride: FormulaOverride;
+  reactionOverride: ReactionOverride;
   /** Callback when reaction override changes */
-  onReactionChange: (override: FormulaOverride) => void;
+  onReactionChange: (override: ReactionOverride) => void;
   /** TeamMeta for checking if reactions are available */
   teamMeta: TeamMeta;
   /** Character ID for team validation */

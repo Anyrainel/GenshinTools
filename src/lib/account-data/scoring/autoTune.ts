@@ -28,7 +28,7 @@ import {
 import type {
   CalcContext,
   ComboFormula,
-  FormulaOverride,
+  ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
 import type { AutoTuneResult } from "./utils";
@@ -61,7 +61,7 @@ export const DEFAULT_CALC_CTX: CalcContext = {
 export type WeightedFormula = {
   formulaId: string;
   count: number;
-  reaction?: FormulaOverride;
+  reaction?: ReactionOverride;
 };
 
 /** Build a ComboFormula from WeightedFormula[] for a given DPS character. */
@@ -197,7 +197,7 @@ function computeMidpointWeights(
 /** Convert plain formula IDs to weighted formulas (count=1 each, optional shared reaction). */
 export function toWeightedFormulas(
   formulaIds: string[],
-  reaction?: FormulaOverride
+  reaction?: ReactionOverride
 ): WeightedFormula[] {
   return formulaIds.map((formulaId) => ({ formulaId, count: 1, reaction }));
 }
