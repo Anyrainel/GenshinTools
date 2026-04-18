@@ -16,7 +16,7 @@ import type {
 import { resolvePartReaction } from "./combo";
 import type { EvaluatedDynamicBuff } from "./damageCalc";
 import { createReactionVariant } from "./damageFormula";
-import { fieldReq, isFieldDependentReceiver } from "./fieldState";
+import { isFieldDependentReceiver } from "./fieldState";
 import { isPartOffField } from "./fieldState";
 import type {
   ArtifactHalfSetBase,
@@ -241,80 +241,6 @@ export class CharBuild {
   }
 
   /**
-   * Build a unified pre-stats sheet containing both on-field and off-field
-   * field-dependent buffs tagged with `f:on`/`f:off`. Universal buffs from
-   * innerStatSheet are included without field tags.
-   */
-  getUnifiedPreStats(
-    artifactStats: StatSheet,
-    onFieldBuffs: ProvidedStaticBuff[],
-    offFieldBuffs: ProvidedStaticBuff[]
-  ): StatSheet {
-    let sheet = this.innerStatSheet.merge(artifactStats);
-    if (onFieldBuffs.length > 0) {
-      const deduped = deduplicateBuffs(
-        onFieldBuffs.map((b) => b.buff),
-        (b) => b.staticBuffs
-      );
-      sheet = sheet.apply(deduped, "on");
-    }
-    if (offFieldBuffs.length > 0) {
-      const deduped = deduplicateBuffs(
-        offFieldBuffs.map((b) => b.buff),
-        (b) => b.staticBuffs
-      );
-      sheet = sheet.apply(deduped, "off");
-    }
-    return sheet;
-  }
-
-  /**
-   * Rebuild unified pre-stats from Phase 1 baseline, excluding buffs with matching keys.
-   * Field-dependent buffs are tagged with f:on/f:off.
-   */
-  getUnifiedPreStatsExcluding(
-    artifactStats: StatSheet,
-    onFieldBuffs: ProvidedStaticBuff[],
-    offFieldBuffs: ProvidedStaticBuff[],
-    allStaticBuffs: ProvidedStaticBuff[],
-    excludeKeys: Set<string>,
-    selfCharId: string,
-    selfRegion?: Region,
-    selfFaction?: Faction
-  ): StatSheet {
-    let sheet = this.rebuildBaseExcluding(
-      artifactStats,
-      allStaticBuffs,
-      excludeKeys,
-      selfCharId,
-      selfRegion,
-      selfFaction
-    );
-
-    const filteredOn = onFieldBuffs.filter(
-      (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
-    );
-    if (filteredOn.length > 0) {
-      const deduped = deduplicateBuffs(
-        filteredOn.map((b) => b.buff),
-        (b) => b.staticBuffs
-      );
-      sheet = sheet.apply(deduped, "on");
-    }
-    const filteredOff = offFieldBuffs.filter(
-      (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
-    );
-    if (filteredOff.length > 0) {
-      const deduped = deduplicateBuffs(
-        filteredOff.map((b) => b.buff),
-        (b) => b.staticBuffs
-      );
-      sheet = sheet.apply(deduped, "off");
-    }
-    return sheet;
-  }
-
-  /**
    * Rebuild pre-stats from Phase 1 baseline, excluding buffs with matching keys.
    * Used by the exclusion-based blending system to produce stat variants.
    */
@@ -411,73 +337,6 @@ export class CharBuild {
       (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
     );
     return selfPreStats.apply(mappedToStatic);
-  }
-
-  /**
-   * Apply dynamic buffs to unified pre-stats → unified post-stats.
-   * Categorizes buffs by field-state requirement and tags entries accordingly.
-   */
-  getUnifiedPostStats(
-    selfPreStats: StatSheet,
-    teamDynamicBuffs: EvaluatedDynamicBuff[],
-    selfCharId: string,
-    selfRegion?: Region,
-    selfFaction?: Faction
-  ): StatSheet {
-    // Partition dynamic buffs into universal, on-field, and off-field for this character
-    const universal: EvaluatedDynamicBuff[] = [];
-    const onField: EvaluatedDynamicBuff[] = [];
-    const offField: EvaluatedDynamicBuff[] = [];
-
-    for (const b of teamDynamicBuffs) {
-      const fr = fieldReq(b.buff.target.receiver);
-      // Use the matching field state to let the receiver rule pass.
-      // For field-independent buffs (fr === null), value doesn't matter.
-      const effectiveFS = fr === "on";
-      if (
-        !isBuffApplicable(
-          b.buff,
-          b.providerCharId,
-          selfCharId,
-          effectiveFS,
-          selfRegion,
-          selfFaction
-        )
-      )
-        continue;
-
-      if (fr === null) {
-        universal.push(b);
-      } else if (fr === "on") {
-        onField.push(b);
-      } else {
-        offField.push(b);
-      }
-    }
-
-    let sheet = selfPreStats;
-    if (universal.length > 0) {
-      const deduped = deduplicateBuffs(universal, (b) => b.entries);
-      const mapped = deduped.map(
-        (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
-      );
-      sheet = sheet.apply(mapped);
-    }
-    if (onField.length > 0) {
-      const deduped = deduplicateBuffs(onField, (b) => b.entries);
-      const mapped = deduped.map(
-        (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
-      );
-      sheet = sheet.apply(mapped, "on");
-    }
-    if (offField.length > 0) {
-      const deduped = deduplicateBuffs(offField, (b) => b.entries);
-      const mapped = deduped.map(
-        (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
-      );
-      sheet = sheet.apply(mapped, "off");
-    }
-    return sheet;
   }
 
   /**

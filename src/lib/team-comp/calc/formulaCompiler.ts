@@ -17,7 +17,7 @@
 import type { ArtifactData, MainStat } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import { ARTIFACT_STAT_KEYS, ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
-import type { OptimizerContext, ProvidedStaticBuff } from "../types";
+import type { OptimizerContext } from "../types";
 import type { FormulaPart } from "../types";
 import type {
   CalcContext,
@@ -25,7 +25,6 @@ import type {
   DamageTag,
   FormulaOverride,
   StatKey,
-  TeamSlotConfig,
 } from "../types";
 import { resolvePartReaction } from "./combo";
 import { isFinalStatKey } from "./damageCalc";
@@ -142,203 +141,6 @@ function buildPostExprStatsForContext(
   }
 
   return postExprStats;
-}
-
-/**
- * Resolve unified OptCtx field-dep info into a legacy-compatible resolved OptCtx
- * for a specific field state. This derives `targetDependent` and resolved
- * `supportPreStats` from `unifiedFieldDep`.
- *
- * @param fs When "actual", each char uses their actual field state based on
- *   onFieldCharId. When "off", the formula owner is off-field and the first
- *   other team member is on-field.
- * @param configs Team configs, required when fs="off" to determine the
- *   default on-field character.
- */
-function resolveOptCtxForFieldState(
-  optCtx: OptimizerContext,
-  fs: "actual" | "off",
-  configs?: TeamSlotConfig[]
-): OptimizerContext {
-  const { charBuildOrder, unifiedFieldDep, baseSheets } = optCtx;
-  if (!unifiedFieldDep)
-    throw new Error("resolveOptCtxForFieldState requires unified OptCtx");
-
-  if (fs === "off" && !configs)
-    throw new Error(
-      "resolveOptCtxForFieldState requires configs when fs='off'"
-    );
-
-  const onFieldCharId =
-    fs === "actual"
-      ? optCtx.onFieldCharId
-      : defaultOnFieldCharId(optCtx.onFieldCharId, configs!);
-
-  // Build resolved targetDependent + supportPreStats from unifiedFieldDep
-  const targetDependent: Record<string, ProvidedStaticBuff[]> = {};
-  const supportPreStats: Record<string, StatSheet> = {};
-
-  for (const [id, build] of charBuildOrder) {
-    const dep = unifiedFieldDep[id]!;
-    const isOn = isOnField(id, onFieldCharId);
-    const buffs = isOn ? dep.onField : dep.offField;
-    targetDependent[id] = buffs;
-
-    if (!optCtx.variableCharIds.has(id)) {
-      // Support character: resolve preStats with the appropriate buffs
-      supportPreStats[id] = build.getPreStats(
-        baseSheets[id] ?? new StatSheet([]),
-        buffs
-      );
-    }
-  }
-
-  return {
-    ...optCtx,
-    onFieldCharId,
-    targetDependent,
-    supportPreStats,
-  };
-}
-
-/**
- * Build resolved postExprStats from a unified optimizer context.
- * Resolves each character to their actual field state (on-field or off-field)
- * and uses the legacy ExprStats pipeline (no field-state tags in ExprStats).
- */
-function buildUnifiedPostExprStatsForContext(
-  teamBuild: TeamBuild,
-  optCtx: OptimizerContext,
-  varMapping: VarMapping,
-  calcContext: CalcContext
-): Record<string, ExprStatSheet> {
-  const resolvedCtx = resolveOptCtxForFieldState(optCtx, "actual");
-  return buildPostExprStatsForContext(
-    teamBuild,
-    resolvedCtx,
-    varMapping,
-    calcContext
-  );
-}
-
-/**
- * Build off-field-resolved postExprStats from a unified optimizer context.
- *
- * The formula character is off-field; the first other team member is on-field
- * (matching `defaultOnFieldCharId` in the calc path). Each character gets
- * field-dependent buffs based on their actual field state.
- */
-function buildOffFieldPostExprStatsForContext(
-  teamBuild: TeamBuild,
-  optCtx: OptimizerContext,
-  varMapping: VarMapping,
-  calcContext: CalcContext
-): Record<string, ExprStatSheet> {
-  const { charBuildOrder, unifiedFieldDep, baseSheets, variableCharIds } =
-    optCtx;
-  if (!unifiedFieldDep)
-    throw new Error(
-      "buildOffFieldPostExprStatsForContext requires unified OptCtx"
-    );
-
-  // The formula owner (optCtx.onFieldCharId) is off-field for off-field parts.
-  // Determine who IS on-field: the first other team member.
-  const offFieldOnFieldCharId = defaultOnFieldCharId(
-    optCtx.onFieldCharId,
-    teamBuild.configs
-  );
-
-  const emptySheet = new StatSheet([]);
-
-  // Each character gets field-dependent buffs based on their actual field state.
-  // The formula owner is off-field; the default-other is on-field.
-  const targetDependent: Record<string, ProvidedStaticBuff[]> = {};
-  const supportPreStats: Record<string, StatSheet> = {};
-  const variableBaselines: Record<string, StatSheet> = {};
-
-  for (const [id, build] of charBuildOrder) {
-    const dep = unifiedFieldDep[id]!;
-    const isOn = isOnField(id, offFieldOnFieldCharId);
-    const buffs = isOn ? dep.onField : dep.offField;
-    targetDependent[id] = buffs;
-
-    if (!variableCharIds.has(id)) {
-      supportPreStats[id] = build.getPreStats(
-        baseSheets[id] ?? new StatSheet([]),
-        buffs
-      );
-    } else {
-      variableBaselines[id] = build.getPreStats(emptySheet, buffs);
-    }
-  }
-
-  // Build receiver ExprStats with field-state-appropriate baselines
-  const exprStatsMap: Record<string, ExprStatSheet> = {};
-  for (const [id] of charBuildOrder) {
-    if (variableCharIds.has(id)) {
-      const charIdx = charBuildOrder.findIndex(([cid]) => cid === id);
-      exprStatsMap[id] = createExprStats(
-        variableBaselines[id],
-        charIdx,
-        varMapping,
-        new Set(ARTIFACT_STAT_KEYS)
-      );
-    } else {
-      exprStatsMap[id] = createExprStats(
-        supportPreStats[id]!,
-        -1,
-        varMapping,
-        new Set()
-      );
-    }
-  }
-
-  // Two-pass dynamic buff collection with proper field state.
-  const receiverCtx: OptimizerContext = {
-    ...optCtx,
-    onFieldCharId: offFieldOnFieldCharId,
-    targetDependent,
-    supportPreStats,
-  };
-
-  const postExprStats = collectAndApplyDynamicBuffExprsTwoPass(
-    teamBuild,
-    exprStatsMap,
-    variableCharIds,
-    supportPreStats,
-    variableBaselines,
-    receiverCtx
-  );
-
-  if (calcContext.perCharCrTarget) {
-    for (const [id, target] of Object.entries(calcContext.perCharCrTarget)) {
-      if (postExprStats[id]) {
-        const crDelta = (100 - target) / 100;
-        postExprStats[id] = postExprStats[id].withMergedConst([
-          { key: "cr", value: crDelta },
-        ]);
-      }
-    }
-  }
-
-  return postExprStats;
-}
-
-function buildUnifiedPostExprStatsExcluding(
-  teamBuild: TeamBuild,
-  optCtx: OptimizerContext,
-  varMapping: VarMapping,
-  calcContext: CalcContext,
-  excludeKeys: Set<string>
-): Record<string, ExprStatSheet> {
-  const resolvedCtx = resolveOptCtxForFieldState(optCtx, "actual");
-  return buildPostExprStatsExcluding(
-    teamBuild,
-    resolvedCtx,
-    varMapping,
-    calcContext,
-    excludeKeys
-  );
 }
 
 /**
@@ -498,62 +300,6 @@ function buildExprStatVariants(
 }
 
 /**
- * Build field-state-tagged ExprStats variants for exclusion combinations.
- * Returns unified ExprStats — callers use withFieldState() for per-part views.
- */
-function buildUnifiedExprStatVariants(
-  partialBuffs: PartialBuffInfo[],
-  parts: FormulaPart[],
-  formulaCharId: string,
-  teamBuild: TeamBuild,
-  optCtx: OptimizerContext,
-  varMapping: VarMapping,
-  calcContext: CalcContext
-): Map<string, ExprStatSheet> {
-  const variants = new Map<string, ExprStatSheet>();
-  const seen = new Set<string>();
-
-  for (let idx = 0; idx < parts.length; idx++) {
-    const h = parts[idx].hits ?? 1;
-    const affecting = partialBuffs.filter((pb) => {
-      const activated = pb.partActivation[idx] ?? h;
-      return activated < h;
-    });
-    if (affecting.length === 0) continue;
-
-    const cutpointSet = new Set<number>([0, h]);
-    for (const pb of affecting) {
-      const activated = pb.partActivation[idx] ?? h;
-      if (activated > 0 && activated < h) cutpointSet.add(activated);
-    }
-    const cutpoints = [...cutpointSet].sort((a, b) => a - b);
-
-    for (let i = 0; i < cutpoints.length - 1; i++) {
-      const end = cutpoints[i + 1];
-      const excludeSet = new Set<string>();
-      for (const pb of affecting) {
-        const activated = pb.partActivation[idx] ?? h;
-        if (activated < end) excludeSet.add(pb.buffKey);
-      }
-      if (excludeSet.size === 0) continue;
-      const eKey = exclusionKey(excludeSet);
-      if (seen.has(eKey)) continue;
-      seen.add(eKey);
-      const excludedPostStats = buildUnifiedPostExprStatsExcluding(
-        teamBuild,
-        optCtx,
-        varMapping,
-        calcContext,
-        excludeSet
-      );
-      variants.set(eKey, excludedPostStats[formulaCharId]!);
-    }
-  }
-
-  return variants;
-}
-
-/**
  * Compile a combo formula into a single optimized function.
  * Each combo line may have a different on-field character, so we build
  * separate postStats per unique on-field context, sharing a single VarMapping.
@@ -605,17 +351,15 @@ export function compileComboTeamDamage(
   const allPartExprs: Expr[] = [];
   const configs = teamBuild.configs;
   // Each formula owner is on-field for their on-field parts.
-  // Build unified ExprStats with field-state tags; off-field parts use
-  // a separate off-field ExprStats built lazily per calc target.
+  // Off-field parts use a separate optimizer context built lazily per calc target.
   for (const [onFieldCharId, lines] of linesByCalcTarget) {
-    const optCtx = teamBuild.createUnifiedOptimizerContext(
+    const optCtx = teamBuild.createOptimizerContext(
       baseSheets,
       swapCharId,
       onFieldCharId,
       calcContext
     );
-    // On-field resolved ExprStats (each char at their actual field state)
-    const postExprStats = buildUnifiedPostExprStatsForContext(
+    const postExprStats = buildPostExprStatsForContext(
       teamBuild,
       optCtx,
       varMapping,
@@ -626,9 +370,19 @@ export function compileComboTeamDamage(
     let offFieldExprStats: Record<string, ExprStatSheet> | undefined;
     const getOffFieldExprStats = () => {
       if (!offFieldExprStats) {
-        offFieldExprStats = buildOffFieldPostExprStatsForContext(
+        const offFieldOnFieldCharId = defaultOnFieldCharId(
+          onFieldCharId,
+          configs
+        );
+        const offOptCtx = teamBuild.createOptimizerContext(
+          baseSheets,
+          swapCharId,
+          offFieldOnFieldCharId,
+          calcContext
+        );
+        offFieldExprStats = buildPostExprStatsForContext(
           teamBuild,
-          optCtx,
+          offOptCtx,
           varMapping,
           calcContext
         );
@@ -721,7 +475,7 @@ export function compileComboTeamDamage(
       let lineOffFieldVariants: Map<string, ExprStatSheet> | undefined;
       if (lineBuffs && lineBuffs.length > 0) {
         // On-field variants
-        lineExprVariants = buildUnifiedExprStatVariants(
+        lineExprVariants = buildExprStatVariants(
           lineBuffs,
           entry.parts,
           line.charId,
@@ -732,10 +486,15 @@ export function compileComboTeamDamage(
         );
         // Off-field variants if needed
         if (hasOffField) {
-          const offFieldOptCtx = resolveOptCtxForFieldState(
-            optCtx,
-            "off",
-            teamBuild.configs
+          const offFieldOnFieldCharId = defaultOnFieldCharId(
+            onFieldCharId,
+            configs
+          );
+          const offFieldOptCtx = teamBuild.createOptimizerContext(
+            baseSheets,
+            swapCharId,
+            offFieldOnFieldCharId,
+            calcContext
           );
           lineOffFieldVariants = buildExprStatVariants(
             lineBuffs,
@@ -789,13 +548,13 @@ export function compileComboTeamDamage(
   if (erCheckCharId && (minEr ?? 0) + (minCr ?? 0) > 0) {
     // ER/CR matter when the constrained character is on-field (casting skill/burst),
     // so build stats with themselves on-field.
-    const erCrOptCtx = teamBuild.createUnifiedOptimizerContext(
+    const erCrOptCtx = teamBuild.createOptimizerContext(
       baseSheets,
       swapCharId,
       erCheckCharId,
       calcContext
     );
-    const erCrResolved = buildUnifiedPostExprStatsForContext(
+    const erCrResolved = buildPostExprStatsForContext(
       teamBuild,
       erCrOptCtx,
       varMapping,
@@ -821,7 +580,7 @@ export function compileComboTeamDamage(
   // Build charIdxMap for all variable characters
   const variableCharIds = Array.isArray(swapCharId) ? swapCharId : [swapCharId];
   const sampleCalcTarget = validLines[0]?.charId ?? variableCharIds[0];
-  const sampleOptCtx = teamBuild.createUnifiedOptimizerContext(
+  const sampleOptCtx = teamBuild.createOptimizerContext(
     baseSheets,
     swapCharId,
     sampleCalcTarget,

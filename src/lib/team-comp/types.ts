@@ -303,15 +303,6 @@ export type OptimizerContext = {
   charBuildOrder: [string, CharBuild][];
   /** Original artifact stat sheets (needed for off-field stat recomputation). */
   baseSheets: Record<string, StatSheet>;
-  /**
-   * When set, this is a unified context: supportPreStats contain both on/off
-   * field entries tagged with f:on/f:off. Use ExprStats.withFieldState() to
-   * get per-part views instead of building separate off-field contexts.
-   */
-  unifiedFieldDep?: Record<
-    string,
-    { onField: ProvidedStaticBuff[]; offField: ProvidedStaticBuff[] }
-  >;
 };
 
 /**
