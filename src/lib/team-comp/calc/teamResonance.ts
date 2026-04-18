@@ -1,7 +1,7 @@
 import type { Element } from "@/data/types";
-import type { StatEntry } from "../types";
+import type { BuffSource, BuffTarget, StatEntry } from "../types";
 import type { IStatProvider } from "./implModel";
-import { StatBuff } from "./statBuff";
+import { ScalingBuff, StatBuff } from "./statBuff";
 import type { TeamMeta } from "./teamMeta";
 
 // TeamResonance
@@ -132,9 +132,74 @@ export class TeamResonance implements IStatProvider {
       }
     }
 
+    // Superconduct: if team has both Cryo and Electro, -40% Physical RES
+    const teamElements = Object.values(teamMeta.elements).filter(
+      (el): el is Element => el !== undefined
+    );
+    if (teamElements.includes("Cryo") && teamElements.includes("Electro")) {
+      buffs.push(
+        new StatBuff(
+          { type: "teamResonance", id: "superconduct" },
+          { receiver: "team", filter: { elements: ["Physical" as const] } },
+          [{ key: "resReduction%", value: 0.4 }]
+        )
+      );
+    }
+
     // 4 unique elements: All Elemental RES +15%, Physical RES +15% (defensive, out of scope)
     // Electro 2+ and Anemo 2+: no directly modellable damage bonuses
     // (energy particles, stamina, movement speed, cooldown reduction are out of scope)
     this.buffs = buffs;
   }
+}
+
+/**
+ * Build gleam resonance buffs for a non-Moonsign character when the team
+ * has ≥2 Moonsign members. The scaling stat depends on the character's element.
+ * Returns empty array when the condition is not met.
+ */
+export function buildGleamResonanceBuffs(
+  charId: string,
+  teamMeta: TeamMeta
+): StatBuff[] {
+  if (
+    teamMeta.countByFaction("Moonsign") < 2 ||
+    teamMeta.factions[charId] === "Moonsign"
+  ) {
+    return [];
+  }
+
+  const el = teamMeta.elements[charId];
+  const src: BuffSource = {
+    type: "teamResonance",
+    id: "gleam",
+    noStackId: "nk_resonance_reaction_dmg",
+    element: el,
+  };
+  const tgt: BuffTarget = {
+    receiver: "team",
+    filter: {
+      reactions: ["lunarBloom", "lunarCharged", "lunarCrystallize"],
+    },
+  };
+
+  if (el === "Pyro" || el === "Electro" || el === "Cryo") {
+    return [
+      new ScalingBuff(src, tgt, [], "atk", "reactionDmg%", 0.00009, 0.36),
+    ];
+  }
+  if (el === "Hydro") {
+    return [
+      new ScalingBuff(src, tgt, [], "hp", "reactionDmg%", 0.000006, 0.36),
+    ];
+  }
+  if (el === "Geo") {
+    return [new ScalingBuff(src, tgt, [], "def", "reactionDmg%", 0.0001, 0.36)];
+  }
+  if (el === "Anemo" || el === "Dendro") {
+    return [
+      new ScalingBuff(src, tgt, [], "em", "reactionDmg%", 0.000225, 0.36),
+    ];
+  }
+  return [];
 }

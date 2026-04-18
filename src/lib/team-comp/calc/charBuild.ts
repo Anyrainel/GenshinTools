@@ -1,15 +1,13 @@
-import type { Element, Faction, Region } from "@/data/types";
+import type { Faction, Region } from "@/data/types";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
 import type {
-  BuffSource,
-  BuffTarget,
   CalcContext,
   DamageResult,
   DisplayPart,
-  FormulaOverride,
   I18nLabel,
   OptionMap,
   ProvidedStaticBuff,
+  ReactionOverride,
   StatEntry,
   TeamSlotConfig,
 } from "../types";
@@ -32,7 +30,6 @@ import {
 } from "./registry";
 import type { PartialBuffInfo } from "./stackAllocation";
 import {
-  ScalingBuff,
   StatBuff,
   deduplicateBuffs,
   getBuffInstanceKey,
@@ -41,6 +38,7 @@ import {
 import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
+import { buildGleamResonanceBuffs } from "./teamResonance";
 
 /**
  * Composes a single character's build:
@@ -104,58 +102,9 @@ export class CharBuild {
       ),
     ];
 
-    if (
-      teamMeta.countByFaction("Moonsign") >= 2 &&
-      teamMeta.factions[config.charId] !== "Moonsign"
-    ) {
-      const el = teamMeta.elements[config.charId];
-      const src: BuffSource = {
-        type: "teamResonance",
-        id: "gleam",
-        noStackId: "nk_resonance_reaction_dmg",
-        element: el,
-      };
-      const tgt: BuffTarget = {
-        receiver: "team",
-        filter: {
-          reactions: ["lunarBloom", "lunarCharged", "lunarCrystallize"],
-        },
-      };
-
-      if (el === "Pyro" || el === "Electro" || el === "Cryo") {
-        this.resonanceBuffs.push(
-          new ScalingBuff(src, tgt, [], "atk", "reactionDmg%", 0.00009, 0.36)
-        );
-      } else if (el === "Hydro") {
-        this.resonanceBuffs.push(
-          new ScalingBuff(src, tgt, [], "hp", "reactionDmg%", 0.000006, 0.36)
-        );
-      } else if (el === "Geo") {
-        this.resonanceBuffs.push(
-          new ScalingBuff(src, tgt, [], "def", "reactionDmg%", 0.0001, 0.36)
-        );
-      } else if (el === "Anemo" || el === "Dendro") {
-        this.resonanceBuffs.push(
-          new ScalingBuff(src, tgt, [], "em", "reactionDmg%", 0.000225, 0.36)
-        );
-      }
-    }
-
-    // Superconduct: if team has both Cryo and Electro, -40% Physical RES
-    const teamElements = Object.values(teamMeta.elements).filter(
-      (el): el is Element => el !== undefined
+    this.resonanceBuffs.push(
+      ...buildGleamResonanceBuffs(config.charId, teamMeta)
     );
-    const hasCryo = teamElements.includes("Cryo");
-    const hasElectro = teamElements.includes("Electro");
-    if (hasCryo && hasElectro) {
-      this.resonanceBuffs.push(
-        new StatBuff(
-          { type: "teamResonance", id: "superconduct" },
-          { receiver: "team", filter: { elements: ["Physical" as const] } },
-          [{ key: "resReduction%", value: 0.4 }]
-        )
-      );
-    }
 
     // Phase 1: Assemble base stats from character + weapon + artifact set 2pc bonuses
     const baseEntries: StatEntry[] = [
@@ -367,12 +316,13 @@ export class CharBuild {
     selfPostStats: StatSheet,
     teamPostStats: StatSheet[],
     ctx: CalcContext,
-    reactionOverride?: FormulaOverride,
+    reactionOverride?: ReactionOverride,
     offFieldSelfPostStats?: StatSheet,
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
     offFieldVariants?: Map<string, StatSheet>,
-    charLevelOverride?: number
+    charLevelOverride?: number,
+    forceOnField?: boolean
   ): DamageResult {
     return this.charBase.getDamageResult(
       formulaId,
@@ -384,7 +334,8 @@ export class CharBuild {
       partialBuffs,
       statsVariants,
       offFieldVariants,
-      charLevelOverride
+      charLevelOverride,
+      forceOnField
     );
   }
 
@@ -393,8 +344,9 @@ export class CharBuild {
     formulaId: string,
     selfPostStats: StatSheet,
     ctx: CalcContext,
-    reactionOverride?: FormulaOverride,
-    offFieldSelfPostStats?: StatSheet
+    reactionOverride?: ReactionOverride,
+    offFieldSelfPostStats?: StatSheet,
+    forceOnField?: boolean
   ): { parts: DisplayPart[]; totalDamage: number } {
     const entry = this.charBase.getFormulaEntry(formulaId);
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
@@ -404,7 +356,7 @@ export class CharBuild {
       const part = entry.parts[i];
       const { formula, hits: totalHits, bespokeBuffs } = part;
       const h = totalHits ?? 1;
-      const effectiveOffField = isPartOffField(part, reactionOverride);
+      const effectiveOffField = isPartOffField(part, forceOnField);
 
       // Use off-field stats when the part deals damage while the character is off-field
       const baseSelfStats =

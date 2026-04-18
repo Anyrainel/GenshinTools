@@ -40,28 +40,19 @@ export abstract class IStatProvider {
   abstract readonly buffs: StatBuff[];
 }
 
-/** An entity that can produce damage formulas */
-abstract class IDamageProvider {
+/** An entity that owns damage formulas and exposes them for calc/display/compiler paths */
+abstract class IFormulaProvider {
   /** Public label map — derived from the internal formulaMap */
   abstract get formulaIds(): Record<string, I18nLabel>;
-  abstract getDamageResult(
-    formulaId: string,
-    selfStats: StatSheet,
-    teamStats: StatSheet[],
-    ctx: CalcContext,
-    reactionOverride?: ReactionOverride,
-    offFieldSelfStats?: StatSheet,
-    partialBuffs?: PartialBuffInfo[],
-    statsVariants?: Map<string, StatSheet>,
-    offFieldVariants?: Map<string, StatSheet>
-  ): DamageResult;
+  /** Look up a formula entry by ID (used by all three damage paths) */
+  abstract getFormulaEntry(formulaId: string): FormulaEntry | undefined;
 }
 
 /**
  * Base class for character extensions.
  * Stats are auto-resolved from character_stats.json including baselines.
  */
-export abstract class CharacterBase implements IStatProvider, IDamageProvider {
+export abstract class CharacterBase implements IStatProvider, IFormulaProvider {
   /** Auto-resolved: base stats + baselines (5% CR, 50% CD, 100% ER) */
   readonly stats: StatEntry[];
 
@@ -258,7 +249,8 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     statsVariants?: Map<string, StatSheet>,
     offFieldVariants?: Map<string, StatSheet>,
     /** Override the character level used for DEF calculations (cross-scaled formulas). */
-    charLevelOverride?: number
+    charLevelOverride?: number,
+    forceOnField?: boolean
   ): DamageResult {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
@@ -269,7 +261,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       const { formula, hits: totalHits, bespokeBuffs } = part;
       const h = totalHits ?? 1;
       const bespokeMax = bespokeMaxStacks(bespokeBuffs);
-      const effectiveOffField = isPartOffField(part, reactionOverride);
+      const effectiveOffField = isPartOffField(part, forceOnField);
 
       // Use off-field stats when the part deals damage while the character is off-field
       const baseSelfStats =
