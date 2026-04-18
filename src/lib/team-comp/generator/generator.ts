@@ -19,7 +19,7 @@ import {
   erMainStatInternal,
 } from "../optimizer/erCrConstraints";
 import { deriveSetKeysFromConfigs } from "../teamOptUtils";
-import type { CalcContext, ComboFormula, PartialBuffInfo } from "../types";
+import type { BuffActivationMap, CalcContext, ComboFormula } from "../types";
 import {
   type FlexSlotConfig,
   buildSheetFromMainAndSubs,
@@ -123,7 +123,7 @@ function evaluateDamage(
   charId: string,
   combo: ComboFormula,
   ctx: CalcContext,
-  buffOverrides?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, BuffActivationMap>
 ): number {
   const { compiled, charIdx, vars } = compileEval(
     teamBuild,
@@ -148,7 +148,7 @@ function compileEval(
   combo: ComboFormula,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
-  comboBuffOverrides?: Record<string, PartialBuffInfo[]>
+  comboBuffOverrides?: Record<string, BuffActivationMap>
 ): {
   compiled: CompiledTeamDamage;
   charIdx: number;
@@ -360,7 +360,7 @@ function constraintAwareGenerate(
   rarity: 4 | 5,
   budgetPreset: SubstatBudgetPreset,
   flex?: FlexSlotConfig,
-  buffOverrides?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, BuffActivationMap>
 ): ConstraintAwareResult {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);

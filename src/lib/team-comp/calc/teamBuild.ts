@@ -41,10 +41,8 @@ import { computeSubstatMarginals } from "./marginalGain";
 import { exclusionKey } from "./stackAllocation";
 import {
   type ComboLineEval,
-  type FormulaEval,
-  type PartialBuffInfo,
+  type FormulaPartEval,
   type StackLimitedBuffInfo,
-  buildPartialBuffInfos,
   buildStatVariants,
   buildUserOverrideInfos,
   collectStackLimitedBuffs,
@@ -783,7 +781,7 @@ export class TeamBuild {
   }
 
   /**
-   * Build pre-resolved FormulaEval[] and per-buff sans-buff stats for a formula's parts.
+   * Build pre-resolved FormulaPartEval[] for a formula's parts.
    * Uses resolvePartOnFieldCharIds to determine the correct stats per part.
    */
   private buildPartEvals(
@@ -791,13 +789,8 @@ export class TeamBuild {
     entry: FormulaEntry,
     sheets: Record<string, StatSheet>,
     ctx: CalcContext,
-    forceOnField?: boolean,
-    stackLimited?: StackLimitedBuffInfo[]
-  ): {
-    partEvals: FormulaEval[];
-    partHits: number[];
-    sansBuffPartStats?: Map<string, StatSheet[]>;
-  } {
+    forceOnField?: boolean
+  ): FormulaPartEval[] {
     const charLevel = this.charBuilds[charId]!.charBase.charLevel;
     const onFieldCharIds = resolvePartOnFieldCharIds(
       entry.parts,
@@ -816,40 +809,12 @@ export class TeamBuild {
       return s;
     };
 
-    const partEvals: FormulaEval[] = entry.parts.map((part, i) => ({
+    return entry.parts.map((part, i) => ({
       formula: part.formula,
       stats: getStatsFor(onFieldCharIds[i])[charId]!,
       charLevel,
+      hits: part.hits ?? 1,
     }));
-
-    const partHits: number[] = entry.parts.map((p) => p.hits ?? 1);
-
-    let sansBuffPartStats: Map<string, StatSheet[]> | undefined;
-    if (stackLimited && stackLimited.length > 0) {
-      sansBuffPartStats = new Map();
-      const exclCache = new Map<string, Record<string, StatSheet>>();
-      for (const buffInfo of stackLimited) {
-        const bKey = buffInfo.buffKey;
-        const perPart: StatSheet[] = entry.parts.map((_, i) => {
-          const onFieldId = onFieldCharIds[i];
-          const cacheKey = `${onFieldId}|${bKey}`;
-          let excl = exclCache.get(cacheKey);
-          if (!excl) {
-            excl = this.getTeamStatsExcluding(
-              sheets,
-              onFieldId,
-              ctx,
-              new Set([bKey])
-            );
-            exclCache.set(cacheKey, excl);
-          }
-          return excl[charId]!;
-        });
-        sansBuffPartStats.set(bKey, perPart);
-      }
-    }
-
-    return { partEvals, partHits, sansBuffPartStats };
   }
 
   /**
@@ -934,8 +899,8 @@ export class TeamBuild {
     combo: ComboFormula,
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
-    /** Per-line PartialBuffInfo[], keyed by line index in validLines. */
-    buffOverrides?: Record<number, PartialBuffInfo[]>,
+    /** Per-line BuffActivationMap, keyed by line index in validLines. */
+    buffOverrides?: Record<number, BuffActivationMap>,
     /** Pre-seeded stats cache to avoid redundant getTeamStats calls. */
     externalStatsCache?: Map<string, Record<string, StatSheet>>
   ): ComboResult {
@@ -1018,7 +983,7 @@ export class TeamBuild {
       const lineInfos = buffOverrides?.[lineIdx];
       let lineVariants: Map<string, StatSheet> | undefined;
       let lineOffFieldVariants: Map<string, StatSheet> | undefined;
-      if (lineInfos && lineInfos.length > 0 && lineEntry) {
+      if (lineInfos && Object.keys(lineInfos).length > 0 && lineEntry) {
         lineVariants = buildStatVariants(
           lineInfos,
           lineEntry.parts,
@@ -1095,7 +1060,7 @@ export class TeamBuild {
     combo: ComboFormula,
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
-    buffOverrides?: Record<number, PartialBuffInfo[]>
+    buffOverrides?: Record<number, BuffActivationMap>
   ): DisplayResult {
     // Skip lines whose formula no longer exists
     const allFormulas = this.getFormulaIds();
@@ -1389,46 +1354,43 @@ export class TeamBuild {
         (sum, fl) => sum + fl.line.count,
         0
       );
-      const hasLinePartialBuffs = formulaLines.some(
-        (fl) => buffOverrides?.[fl.lineIdx]?.length
-      );
+      const hasLinePartialBuffs = formulaLines.some((fl) => {
+        const ov = buffOverrides?.[fl.lineIdx];
+        return ov && Object.keys(ov).length > 0;
+      });
 
       if (hasLinePartialBuffs && entry) {
         const buffAgg = new Map<string, Record<number, number>>();
         for (const fl of formulaLines) {
-          const lineInfos = buffOverrides?.[fl.lineIdx];
-          if (!lineInfos) continue;
-          for (const info of lineInfos) {
-            let agg = buffAgg.get(info.buffKey);
+          const lineActivation = buffOverrides?.[fl.lineIdx];
+          if (!lineActivation) continue;
+          for (const [buffKey, partMap] of Object.entries(lineActivation)) {
+            let agg = buffAgg.get(buffKey);
             if (!agg) {
               agg = {};
-              buffAgg.set(info.buffKey, agg);
+              buffAgg.set(buffKey, agg);
             }
-            for (const [pidxStr, activated] of Object.entries(
-              info.partActivation
-            )) {
+            for (const [pidxStr, activated] of Object.entries(partMap)) {
               const pidx = Number(pidxStr);
-              agg[pidx] = (agg[pidx] ?? 0) + activated * fl.line.count;
+              agg[pidx] =
+                (agg[pidx] ?? 0) + (activated as number) * fl.line.count;
             }
           }
         }
 
-        const aggregatedInfos: PartialBuffInfo[] = [];
+        const aggregatedActivation: BuffActivationMap = {};
         for (const [buffKey, partAgg] of buffAgg) {
           const perCastActivation: Record<number, number> = {};
           for (const [pidxStr, totalActivated] of Object.entries(partAgg)) {
             perCastActivation[Number(pidxStr)] =
               totalActivated / totalComboCount;
           }
-          aggregatedInfos.push({
-            buffKey,
-            partActivation: perCastActivation,
-          });
+          aggregatedActivation[buffKey] = perCastActivation;
         }
 
-        if (aggregatedInfos.length > 0) {
+        if (Object.keys(aggregatedActivation).length > 0) {
           const statsVariants = buildStatVariants(
-            aggregatedInfos,
+            aggregatedActivation,
             entry.parts,
             (excl) =>
               this.getTeamStatsExcluding(artifactStats, charId, ctx, excl)[
@@ -1439,7 +1401,7 @@ export class TeamBuild {
           if (offFieldPostStats) {
             const offOther = defaultOnFieldCharId(charId, this.configs);
             offFieldVariants = buildStatVariants(
-              aggregatedInfos,
+              aggregatedActivation,
               entry.parts,
               (excl) =>
                 this.getTeamStatsExcluding(artifactStats, offOther, ctx, excl)[
@@ -1450,7 +1412,7 @@ export class TeamBuild {
 
           const blended = computeBlendedDamage(
             entry.parts,
-            aggregatedInfos,
+            aggregatedActivation,
             postStats[charId]!,
             statsVariants,
             build.charBase.charLevel,
@@ -1466,9 +1428,11 @@ export class TeamBuild {
             const zeroBuffKeys = new Set<string>();
             if (eidx < entry.parts.length) {
               const h = entry.parts[eidx].hits ?? 1;
-              for (const info of aggregatedInfos) {
-                if ((info.partActivation[eidx] ?? h) === 0) {
-                  zeroBuffKeys.add(info.buffKey);
+              for (const [bKey, partMap] of Object.entries(
+                aggregatedActivation
+              )) {
+                if ((partMap[eidx] ?? h) === 0) {
+                  zeroBuffKeys.add(bKey);
                 }
               }
             }
@@ -1606,7 +1570,7 @@ export class TeamBuild {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     offFieldTeamStats?: Record<string, StatSheet>,
-    partialBuffs?: PartialBuffInfo[],
+    activation?: BuffActivationMap,
     statsVariants?: Map<string, StatSheet>,
     offFieldVariants?: Map<string, StatSheet>,
     formulaOwnerCharId?: string,
@@ -1628,7 +1592,7 @@ export class TeamBuild {
       ctx,
       reactionOverride,
       offFieldTeamStats?.[charId],
-      partialBuffs,
+      activation,
       statsVariants,
       offFieldVariants,
       statsCharLevel,
@@ -1776,7 +1740,7 @@ export class TeamBuild {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     userBuffOverrides?: BuffActivationMap,
-    externalPartialBuffs?: PartialBuffInfo[],
+    externalActivation?: BuffActivationMap,
     forceOnField?: boolean
   ): DisplayResult {
     const build = this.charBuilds[charId];
@@ -1860,7 +1824,7 @@ export class TeamBuild {
     // When `externalPartialBuffs` is provided, the caller is supplying the
     // distribution directly (used by tests to compare all 3 paths under the
     // same stack allocation). Skip internal compute in that case.
-    const useExternal = externalPartialBuffs !== undefined;
+    const useExternal = externalActivation !== undefined;
     const stackLimited = useExternal
       ? []
       : collectStackLimitedBuffs(
@@ -1874,20 +1838,17 @@ export class TeamBuild {
       // Greedy allocation for stack-limited buffs
       let mergedActivation: BuffActivationMap = {};
       if (stackLimited.length > 0) {
-        const { partEvals, partHits, sansBuffPartStats } = this.buildPartEvals(
+        const partEvals = this.buildPartEvals(
           charId,
           entry,
           artifactStats,
           ctx,
-          forceOnField,
-          stackLimited
+          forceOnField
         );
         const defaultActivation = computeDefaultActivation(
           partEvals,
-          partHits,
           stackLimited,
-          ctx,
-          sansBuffPartStats
+          ctx
         );
         mergedActivation = { ...defaultActivation };
       }
@@ -1897,31 +1858,27 @@ export class TeamBuild {
         TeamBuild.mergeActivationOverrides(mergedActivation, userBuffOverrides);
       }
 
-      // 4. Build PartialBuffInfo[] from both stack-limited and user-overridden buffs
-      const stackInfos =
-        stackLimited.length > 0
-          ? buildPartialBuffInfos(mergedActivation, stackLimited, entry.parts)
-          : [];
-      const userInfos =
-        !useExternal && userBuffOverrides
-          ? buildUserOverrideInfos(
-              userBuffOverrides,
-              this.allStaticBuffs,
-              entry.parts,
-              (buff, providerId) =>
-                this.couldBuffApplyToChar(buff, providerId, charId)
-            )
-          : [];
-      const allInfos = useExternal
-        ? externalPartialBuffs!
-        : [...stackInfos, ...userInfos];
+      // 4. Build unified BuffActivationMap from stack-limited + user-overridden buffs
+      let userActivation: BuffActivationMap = {};
+      if (!useExternal && userBuffOverrides) {
+        userActivation = buildUserOverrideInfos(
+          userBuffOverrides,
+          this.allStaticBuffs,
+          entry.parts,
+          (buff, providerId) =>
+            this.couldBuffApplyToChar(buff, providerId, charId)
+        );
+      }
+      const allActivation: BuffActivationMap = useExternal
+        ? externalActivation!
+        : { ...mergedActivation, ...userActivation };
 
-      if (allInfos.length > 0) {
+      if (Object.keys(allActivation).length > 0) {
         buffActivation = mergedActivation;
 
         // 5. Pre-build stat variants for all exclusion combinations
         const statsVariants = buildStatVariants(
-          allInfos,
+          allActivation,
           entry.parts,
           (excludeSet) =>
             this.getTeamStatsExcluding(artifactStats, charId, ctx, excludeSet)[
@@ -1932,7 +1889,7 @@ export class TeamBuild {
         if (offFieldPostStats) {
           const offOther = defaultOnFieldCharId(charId, this.configs);
           offFieldVariantsMap = buildStatVariants(
-            allInfos,
+            allActivation,
             entry.parts,
             (excludeSet) =>
               this.getTeamStatsExcluding(
@@ -1946,7 +1903,7 @@ export class TeamBuild {
 
         const blended = computeBlendedDamage(
           entry.parts,
-          allInfos,
+          allActivation,
           postStats[charId]!,
           statsVariants,
           build.charBase.charLevel,
@@ -1967,9 +1924,9 @@ export class TeamBuild {
           const zeroBuffKeys = new Set<string>();
           if (eidx < entry.parts.length) {
             const h = entry.parts[eidx].hits ?? 1;
-            for (const info of allInfos) {
-              if ((info.partActivation[eidx] ?? h) === 0) {
-                zeroBuffKeys.add(info.buffKey);
+            for (const [buffKey, partMap] of Object.entries(allActivation)) {
+              if ((partMap[eidx] ?? h) === 0) {
+                zeroBuffKeys.add(buffKey);
               }
             }
           }
@@ -2738,9 +2695,9 @@ export class TeamBuild {
   }
 
   /**
-   * Convert a BuffActivationMap (from the override store) into PartialBuffInfo[]
-   * suitable for the optimizer's AST compiler. Handles both stack-limited buffs
-   * (greedy allocation + user overrides) and non-stack-limited user overrides.
+   * Compute a merged BuffActivationMap for a single formula.
+   * Handles both stack-limited buffs (greedy allocation + user overrides)
+   * and non-stack-limited user overrides.
    */
   computePartialBuffSpecs(
     carryCharId: string,
@@ -2750,11 +2707,11 @@ export class TeamBuild {
     reactionOverride?: ReactionOverride,
     userOverrides?: BuffActivationMap,
     forceOnField?: boolean
-  ): PartialBuffInfo[] {
+  ): BuffActivationMap {
     const build = this.charBuilds[carryCharId];
-    if (!build) return [];
+    if (!build) return {};
     const entry = build.charBase.getFormulaEntry(formulaId);
-    if (!entry) return [];
+    if (!entry) return {};
 
     // Compute pre-stats for collectStackLimitedBuffs
     const fieldDependent = this.getFieldDependentBuffs(carryCharId);
@@ -2768,51 +2725,46 @@ export class TeamBuild {
       teamPreStatsArr
     );
 
-    const infos: PartialBuffInfo[] = [];
+    let activation: BuffActivationMap = {};
 
     if (stackLimited.length > 0) {
-      const { partEvals, partHits, sansBuffPartStats } = this.buildPartEvals(
+      const partEvals = this.buildPartEvals(
         carryCharId,
         entry,
         sheets,
         ctx,
-        forceOnField,
-        stackLimited
+        forceOnField
       );
 
       const defaultActivation = computeDefaultActivation(
         partEvals,
-        partHits,
         stackLimited,
-        ctx,
-        sansBuffPartStats
+        ctx
       );
       // Merge user overrides on top of greedy defaults
-      const merged: BuffActivationMap = { ...defaultActivation };
+      activation = { ...defaultActivation };
       if (userOverrides) {
-        TeamBuild.mergeActivationOverrides(merged, userOverrides);
+        TeamBuild.mergeActivationOverrides(activation, userOverrides);
       }
-      infos.push(...buildPartialBuffInfos(merged, stackLimited, entry.parts));
     }
 
     // Non-stack-limited user overrides
     if (userOverrides && Object.keys(userOverrides).length > 0) {
-      infos.push(
-        ...buildUserOverrideInfos(
-          userOverrides,
-          this.allStaticBuffs,
-          entry.parts,
-          (buff, providerId) =>
-            this.couldBuffApplyToChar(buff, providerId, carryCharId)
-        )
+      const userActivation = buildUserOverrideInfos(
+        userOverrides,
+        this.allStaticBuffs,
+        entry.parts,
+        (buff, providerId) =>
+          this.couldBuffApplyToChar(buff, providerId, carryCharId)
       );
+      activation = { ...activation, ...userActivation };
     }
 
-    return infos;
+    return activation;
   }
 
   /**
-   * Compute per-line PartialBuffInfo[] for a combo rotation.
+   * Compute per-line BuffActivationMap for a combo rotation.
    *
    * Shares the maxStack budget across ALL combo lines (unlike the per-formula
    * computePartialBuffSpecs which gives each formula the full budget).
@@ -2824,14 +2776,13 @@ export class TeamBuild {
     ctx: CalcContext,
     rxnOverrides?: Record<string, ReactionOverride>,
     perLineUserOverrides?: Map<number, BuffActivationMap>
-  ): Record<number, PartialBuffInfo[]> | undefined {
+  ): Record<number, BuffActivationMap> | undefined {
     if (activeLines.length === 0) return undefined;
 
     const { defaultActivations, stackLimited, lineEntries } =
       this.buildComboDefaults(activeLines, sheets, ctx);
 
-    // ── Merge defaults + user overrides → PartialBuffInfo[] per line ──
-    const result: Record<number, PartialBuffInfo[]> = {};
+    const result: Record<number, BuffActivationMap> = {};
 
     for (let lineIdx = 0; lineIdx < activeLines.length; lineIdx++) {
       const entry = lineEntries[lineIdx];
@@ -2843,27 +2794,27 @@ export class TeamBuild {
         TeamBuild.mergeActivationOverrides(merged, userOv);
       }
 
-      const infos: PartialBuffInfo[] = [];
+      let lineActivation: BuffActivationMap = {};
 
       if (stackLimited.length > 0) {
-        infos.push(...buildPartialBuffInfos(merged, stackLimited, entry.parts));
+        // merged already contains the stack-limited activation
+        lineActivation = { ...merged };
       }
 
       if (userOv && Object.keys(userOv).length > 0) {
         const lineCharId = activeLines[lineIdx].charId;
-        infos.push(
-          ...buildUserOverrideInfos(
-            userOv,
-            this.allStaticBuffs,
-            entry.parts,
-            (buff, providerId) =>
-              this.couldBuffApplyToChar(buff, providerId, lineCharId)
-          )
+        const userActivation = buildUserOverrideInfos(
+          userOv,
+          this.allStaticBuffs,
+          entry.parts,
+          (buff, providerId) =>
+            this.couldBuffApplyToChar(buff, providerId, lineCharId)
         );
+        lineActivation = { ...lineActivation, ...userActivation };
       }
 
-      if (infos.length > 0) {
-        result[lineIdx] = infos;
+      if (Object.keys(lineActivation).length > 0) {
+        result[lineIdx] = lineActivation;
       }
     }
 
@@ -2936,26 +2887,22 @@ export class TeamBuild {
       if (!entry || !cb) {
         lineContexts.push({
           partEvals: [],
-          partHits: [],
           lineCount: line.count,
         });
         continue;
       }
 
-      const { partEvals, partHits, sansBuffPartStats } = this.buildPartEvals(
+      const partEvals = this.buildPartEvals(
         line.charId,
         entry,
         sheets,
         ctx,
-        line.forceOnField,
-        stackLimited.length > 0 ? stackLimited : undefined
+        line.forceOnField
       );
 
       lineContexts.push({
         partEvals,
-        partHits,
         lineCount: line.count,
-        sansBuffPartStats,
       });
     }
 

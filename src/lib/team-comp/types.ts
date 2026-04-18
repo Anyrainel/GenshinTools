@@ -116,18 +116,6 @@ export type BuffSource = {
 /** buffKey → { partIndex → activatedHits } */
 export type BuffActivationMap = Record<string, Record<number, number>>;
 
-/**
- * Lightweight buff identification for interval-based blending.
- * Contains only the buff's identity and per-part activation counts.
- * Stat variants (with/without the buff) are pre-built by the caller.
- */
-export type PartialBuffInfo = {
-  /** Canonical key identifying the buff (from buffSourceKey). */
-  buffKey: string;
-  /** Part index → activated hits. Missing = fully active (no blending). */
-  partActivation: Record<number, number>;
-};
-
 /** Character field state — "on" = on-field, "off" = off-field. */
 export type FieldState = "on" | "off";
 
@@ -590,7 +578,7 @@ export type ComboFormula = {
   id: string; // unique ID
   label: I18nLabel; // user-given name
   lines: ComboLine[];
-  buffOverrides?: Record<number, PartialBuffInfo[]>;
+  buffOverrides?: Record<number, BuffActivationMap>;
 };
 
 export type ComboResult = {

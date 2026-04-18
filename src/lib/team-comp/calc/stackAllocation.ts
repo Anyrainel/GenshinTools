@@ -14,7 +14,6 @@ import type {
   BuffActivationMap,
   BuffSource,
   CalcContext,
-  PartialBuffInfo,
   ReactionOverride,
 } from "../types";
 import { resolvePartReaction } from "./combo";
@@ -24,16 +23,15 @@ import { type StatBuff, getBuffInstanceKey } from "./statBuff";
 import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import type { StatSheet } from "./statSheet";
 
-export type { PartialBuffInfo } from "../types";
-
 /**
  * Everything needed for one formula.calc() call — the resolved evaluation primitive.
  * Stats are fully resolved for the correct onFieldCharId by the caller.
  */
-export type FormulaEval = {
+export type FormulaPartEval = {
   formula: DamageFormula;
   stats: StatSheet;
   charLevel: number;
+  hits: number;
 };
 
 /** Build a deterministic cache key from a set of excluded buff keys. */
@@ -78,54 +76,42 @@ function greedyAllocate(
 /**
  * Compute default BuffActivationMap for all stack-limited buffs on a formula.
  *
- * Algorithm per buff (independent allocation):
- * 1. For each part, compute marginal damage gain per hit from this buff
- * 2. Sort parts by marginal gain descending
- * 3. Greedily assign stacks to highest-gain parts until budget exhausted
- *
- * @param partEvals    Pre-resolved evaluation data per part (formula, stats, charLevel).
- *   Stats are already resolved for the correct onFieldCharId by the caller.
- * @param partHits     Hit count per part (was `parts[i].hits ?? 1`).
- * @param sansBuffPartStats  Map from buffKey → array of per-part StatSheets with
- *   that buff excluded. `sansBuffPartStats.get(bKey)?.[i]` = stats for part i
- *   with buff bKey excluded.
+ * Ranks parts by baseDmg multiplier — since all stack-limited buffs are
+ * baseDmg buffs, the marginal gain per hit is proportional to this multiplier.
+ * Greedily assigns stacks to the highest-multiplier parts until the budget
+ * is exhausted.
  */
 export function computeDefaultActivation(
-  partEvals: FormulaEval[],
-  partHits: number[],
+  partEvals: FormulaPartEval[],
   stackLimitedBuffs: StackLimitedBuffInfo[],
-  ctx: CalcContext,
-  sansBuffPartStats?: Map<string, StatSheet[]>
+  ctx: CalcContext
 ): BuffActivationMap {
-  if (stackLimitedBuffs.length === 0) return {};
+  if (stackLimitedBuffs.length === 0 || partEvals.length === 0) return {};
+
+  // Rank parts by baseDmg multiplier — since all stack-limited buffs are
+  // baseDmg buffs, the marginal gain per hit is proportional to this multiplier.
+  const mults = partEvals.map(({ formula, stats, charLevel }) =>
+    formula.calcBaseDmgMult(stats, charLevel, ctx)
+  );
 
   const activation: BuffActivationMap = {};
 
   for (const buffInfo of stackLimitedBuffs) {
     const bKey = buffInfo.buffKey;
-    const partAlloc: Record<number, number> = {};
-
-    const sansArr = sansBuffPartStats?.get(bKey);
-    if (!sansArr) continue;
 
     const gains: GainEntry[] = [];
-
     for (let idx = 0; idx < partEvals.length; idx++) {
-      const { formula, stats, charLevel } = partEvals[idx];
-      const h = partHits[idx];
-      const statsWithout = sansArr[idx];
-      if (!statsWithout) continue;
-
-      const dmgWith = formula.calc(stats, charLevel, ctx);
-      const dmgWithout = formula.calc(statsWithout, charLevel, ctx);
-      const marginalPerHit = dmgWith - dmgWithout;
-
-      if (marginalPerHit > 0) {
-        gains.push({ idx, marginalPerHit, availableHits: h });
+      if (mults[idx] > 0) {
+        gains.push({
+          idx,
+          marginalPerHit: mults[idx],
+          availableHits: partEvals[idx].hits,
+        });
       }
     }
 
     const alloc = greedyAllocate(gains, buffInfo.maxStacks);
+    const partAlloc: Record<number, number> = {};
     for (const [idx, assign] of alloc) {
       partAlloc[idx] = assign;
     }
@@ -139,7 +125,7 @@ export function computeDefaultActivation(
     }
 
     // Only add to activation if this buff doesn't cover all hits on all parts
-    const totalHits = partHits.reduce((s, h) => s + h, 0);
+    const totalHits = partEvals.reduce((s, e) => s + e.hits, 0);
     if (buffInfo.maxStacks < totalHits) {
       activation[bKey] = partAlloc;
     }
@@ -178,17 +164,19 @@ export function blendSubPart(
   hits: number,
   partIdx: number,
   originalPartHits: number,
-  partialBuffs: PartialBuffInfo[],
+  activation: BuffActivationMap,
   statsVariants: Map<string, StatSheet> | undefined
 ): number {
   if (hits <= 0) return 0;
   const scale = hits / originalPartHits;
 
-  // Partials affecting this sub-part (activation scaled)
-  const affecting = partialBuffs.filter((pb) => {
-    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-    return activated < hits;
-  });
+  const affecting: { buffKey: string; activatedScaled: number }[] = [];
+  for (const [buffKey, partMap] of Object.entries(activation)) {
+    const activatedScaled = (partMap[partIdx] ?? originalPartHits) * scale;
+    if (activatedScaled < hits) {
+      affecting.push({ buffKey, activatedScaled });
+    }
+  }
 
   // Fast path: uniform damage across all hits
   if (affecting.length === 0 && subBespokeCutoff === hits) {
@@ -198,24 +186,21 @@ export function blendSubPart(
   // Build interval cutpoints
   const cutpointSet = new Set<number>([0, hits]);
   if (subBespokeCutoff < hits) cutpointSet.add(subBespokeCutoff);
-  for (const pb of affecting) {
-    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-    if (activated > 0 && activated < hits) cutpointSet.add(activated);
+  for (const { activatedScaled } of affecting) {
+    if (activatedScaled > 0 && activatedScaled < hits)
+      cutpointSet.add(activatedScaled);
   }
   const cutpoints = [...cutpointSet].sort((a, b) => a - b);
 
   let sum = 0;
   for (let i = 0; i < cutpoints.length - 1; i++) {
-    const start = cutpoints[i];
     const end = cutpoints[i + 1];
-    const width = end - start;
+    const width = end - cutpoints[i];
     if (width <= 0) continue;
 
     const excludeSet = new Set<string>();
-    for (const pb of affecting) {
-      const activated =
-        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-      if (activated < end) excludeSet.add(pb.buffKey);
+    for (const { buffKey, activatedScaled } of affecting) {
+      if (activatedScaled < end) excludeSet.add(buffKey);
     }
 
     const bespokeActive = end <= subBespokeCutoff;
@@ -251,7 +236,7 @@ export function blendSubPart(
  */
 export function computeBlendedDamage(
   parts: FormulaPart[],
-  partialBuffs: PartialBuffInfo[],
+  activation: BuffActivationMap,
   postStats: StatSheet,
   statsVariants: Map<string, StatSheet>,
   charLevel: number,
@@ -305,7 +290,7 @@ export function computeBlendedDamage(
         subHits,
         idx,
         h,
-        partialBuffs,
+        activation,
         variants
       );
     };
@@ -351,44 +336,7 @@ export function computeBlendedDamage(
 }
 
 /**
- * Build PartialBuffInfo[] from a BuffActivationMap and StackLimitedBuffInfo[].
- * Only includes buffs that have at least one partially-active part.
- */
-export function buildPartialBuffInfos(
-  activation: BuffActivationMap,
-  stackLimitedBuffs: StackLimitedBuffInfo[],
-  parts: FormulaPart[]
-): PartialBuffInfo[] {
-  const result: PartialBuffInfo[] = [];
-
-  for (const buffInfo of stackLimitedBuffs) {
-    const bKey = buffInfo.buffKey;
-    const partMap = activation[bKey];
-    if (!partMap) continue;
-
-    // For stack-limited buffs, missing part = 0 stacks (greedy didn't allocate).
-    // Normalize to explicit values so downstream consumers don't need to know.
-    const fullPartActivation: Record<number, number> = {};
-    let hasPartial = false;
-    for (let idx = 0; idx < parts.length; idx++) {
-      const h = parts[idx].hits ?? 1;
-      const activated = partMap[idx] ?? 0; // missing = 0 stacks from greedy
-      fullPartActivation[idx] = activated;
-      if (activated < h) hasPartial = true;
-    }
-    if (!hasPartial) continue;
-
-    result.push({
-      buffKey: bKey,
-      partActivation: fullPartActivation,
-    });
-  }
-
-  return result;
-}
-
-/**
- * Build PartialBuffInfo[] from user overrides for non-stack-limited buffs.
+ * Build BuffActivationMap from user overrides for non-stack-limited buffs.
  *
  * @param isApplicable Optional predicate to check whether a buff actually
  *   applies to the formula character. When provided, buffs that fail the
@@ -401,11 +349,10 @@ export function buildUserOverrideInfos(
   allStaticBuffs: { buff: StatBuff; providerCharId: string }[],
   parts: FormulaPart[],
   isApplicable?: (buff: StatBuff, providerCharId: string) => boolean
-): PartialBuffInfo[] {
-  const result: PartialBuffInfo[] = [];
+): BuffActivationMap {
+  const result: BuffActivationMap = {};
 
   for (const [bKey, partMap] of Object.entries(userOverrides)) {
-    // Check if any part is partially active
     const hasPartial = parts.some((p, idx) => {
       const h = p.hits ?? 1;
       const activated = partMap[idx];
@@ -413,7 +360,6 @@ export function buildUserOverrideInfos(
     });
     if (!hasPartial) continue;
 
-    // Find the matching buff in allStaticBuffs
     const match = allStaticBuffs.find((b) => {
       if (b.providerCharId === "resonance" || b.providerCharId === "extra")
         return false;
@@ -421,17 +367,12 @@ export function buildUserOverrideInfos(
     });
     if (!match) continue;
 
-    // Skip stack-limited buffs (already handled by buildPartialBuffInfos)
     if (match.buff.source.maxStacks != null) continue;
 
-    // Skip buffs that don't apply to the formula character
     if (isApplicable && !isApplicable(match.buff, match.providerCharId))
       continue;
 
-    result.push({
-      buffKey: bKey,
-      partActivation: partMap,
-    });
+    result[bKey] = partMap;
   }
 
   return result;
@@ -474,10 +415,8 @@ export function collectStackLimitedBuffs(
  * Pre-resolved evaluation data for one combo line, used by combo-wide allocation.
  */
 export type ComboLineEval = {
-  partEvals: FormulaEval[];
-  partHits: number[];
+  partEvals: FormulaPartEval[];
   lineCount: number;
-  sansBuffPartStats?: Map<string, StatSheet[]>;
 };
 
 /**
@@ -501,39 +440,33 @@ export function computeComboDefaultActivation(
 
   const result: BuffActivationMap[] = lines.map(() => ({}));
 
+  // Pre-compute multipliers for all parts across all lines
+  const lineMults = lines.map(({ partEvals }) =>
+    partEvals.map(({ formula, stats, charLevel }) =>
+      formula.calcBaseDmgMult(stats, charLevel, ctx)
+    )
+  );
+
   for (const buffInfo of stackLimitedBuffs) {
     const bKey = buffInfo.buffKey;
 
-    // Compute marginal gain per hit for each (line, part) across the combo
-    // Encode (lineIdx, partIdx) as a flat index: lineIdx * maxParts + partIdx
     const maxParts = Math.max(...lines.map((l) => l.partEvals.length), 1);
     const gains: GainEntry[] = [];
     let totalHitsAllLines = 0;
 
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-      const { partEvals, partHits, lineCount, sansBuffPartStats } =
-        lines[lineIdx];
-
-      const sansArr = sansBuffPartStats?.get(bKey);
-      if (!sansArr) continue;
+      const { partEvals, lineCount } = lines[lineIdx];
+      const mults = lineMults[lineIdx];
 
       for (let partIdx = 0; partIdx < partEvals.length; partIdx++) {
-        const { formula, stats, charLevel } = partEvals[partIdx];
-        const h = partHits[partIdx];
+        const h = partEvals[partIdx].hits;
         const totalAvailable = h * lineCount;
         totalHitsAllLines += totalAvailable;
 
-        const statsWithout = sansArr[partIdx];
-        if (!statsWithout) continue;
-
-        const dmgWith = formula.calc(stats, charLevel, ctx);
-        const dmgWithout = formula.calc(statsWithout, charLevel, ctx);
-        const marginalPerHit = dmgWith - dmgWithout;
-
-        if (marginalPerHit > 0) {
+        if (mults[partIdx] > 0) {
           gains.push({
             idx: lineIdx * maxParts + partIdx,
-            marginalPerHit,
+            marginalPerHit: mults[partIdx],
             availableHits: totalAvailable,
           });
         }
@@ -546,11 +479,9 @@ export function computeComboDefaultActivation(
     for (const [flatIdx, assign] of alloc) {
       const lineIdx = Math.floor(flatIdx / maxParts);
       const partIdx = flatIdx % maxParts;
-      // Convert to per-cast activation (divide by lineCount)
       linePartAlloc[lineIdx][partIdx] = assign / lines[lineIdx].lineCount;
     }
 
-    // Fill 0 for unallocated parts
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
       for (
         let partIdx = 0;
@@ -563,7 +494,6 @@ export function computeComboDefaultActivation(
       }
     }
 
-    // Only add if budget doesn't cover all hits
     if (buffInfo.maxStacks < totalHitsAllLines) {
       for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
         result[lineIdx][bKey] = linePartAlloc[lineIdx];
@@ -605,13 +535,13 @@ export function distributeComboHits(
 
 /**
  * Build pre-computed stat variants for all exclusion combinations needed
- * by a set of PartialBuffInfos across a formula's parts.
+ * by a BuffActivationMap across a formula's parts.
  *
  * Returns a Map from exclusionKey → StatSheet. The caller should provide
  * a function that builds stats for a given exclusion set.
  */
 export function buildStatVariants(
-  partialBuffs: PartialBuffInfo[],
+  activation: BuffActivationMap,
   parts: FormulaPart[],
   buildExcluded: (excludeKeys: Set<string>) => StatSheet
 ): Map<string, StatSheet> {
@@ -620,27 +550,24 @@ export function buildStatVariants(
 
   for (let idx = 0; idx < parts.length; idx++) {
     const h = parts[idx].hits ?? 1;
-    const affecting = partialBuffs.filter((pb) => {
-      const activated = pb.partActivation[idx] ?? h;
-      return activated < h;
-    });
+    const affecting: { buffKey: string; activated: number }[] = [];
+    for (const [buffKey, partMap] of Object.entries(activation)) {
+      const activated = partMap[idx] ?? h;
+      if (activated < h) affecting.push({ buffKey, activated });
+    }
     if (affecting.length === 0) continue;
 
-    // Build cutpoints for this part
     const cutpointSet = new Set<number>([0, h]);
-    for (const pb of affecting) {
-      const activated = pb.partActivation[idx] ?? h;
+    for (const { activated } of affecting) {
       if (activated > 0 && activated < h) cutpointSet.add(activated);
     }
     const cutpoints = [...cutpointSet].sort((a, b) => a - b);
 
-    // Collect all exclusion sets for this part's intervals
     for (let i = 0; i < cutpoints.length - 1; i++) {
       const end = cutpoints[i + 1];
       const excludeSet = new Set<string>();
-      for (const pb of affecting) {
-        const activated = pb.partActivation[idx] ?? h;
-        if (activated < end) excludeSet.add(pb.buffKey);
+      for (const { buffKey, activated } of affecting) {
+        if (activated < end) excludeSet.add(buffKey);
       }
       if (excludeSet.size === 0) continue;
       const eKey = exclusionKey(excludeSet);

@@ -20,11 +20,11 @@ import {
 import { StatSheet } from "../calc/statSheet";
 import type { TeamBuild } from "../calc/teamBuild";
 import type {
+  BuffActivationMap,
   CalcContext,
   CharOptConfig,
   ComboFormula,
   OptFailReason,
-  PartialBuffInfo,
 } from "../types";
 import {
   computeMarginalScore,
@@ -344,7 +344,7 @@ export function runCharacterBnB(
   warmStartThreshold?: number,
   maxArtsPerSlot = 0,
   onProgress?: (bestDamage: number, evaluations: number) => void,
-  buffOverrides?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, BuffActivationMap>
 ): CharacterBnBResult {
   const swapCharId = charId;
 
@@ -581,12 +581,12 @@ export function runCharacterBnB(
   }
 
   // Convert buffOverrides to the string-keyed format for the compiler
-  const buffOverridesStr: Record<string, PartialBuffInfo[]> | undefined =
+  const buffOverridesStr: Record<string, BuffActivationMap> | undefined =
     buffOverrides
       ? Object.fromEntries(
-          Object.entries(buffOverrides).map(([idx, buffs]) => [
+          Object.entries(buffOverrides).map(([idx, activation]) => [
             `line:${idx}`,
-            buffs,
+            activation,
           ])
         )
       : undefined;

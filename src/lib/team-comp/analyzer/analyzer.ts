@@ -42,10 +42,10 @@ import {
 } from "../generator/substatBudget";
 import type { OptionMap } from "../types";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboLine,
-  PartialBuffInfo,
   ReactionOverride,
   TeamSlotConfig,
 } from "../types";
@@ -706,7 +706,7 @@ function evalWithCachedArtifacts(
     });
     const validCombo = { ...combo, lines: validLines };
 
-    let buffOverrides: Record<number, PartialBuffInfo[]> | undefined;
+    let buffOverrides: Record<number, BuffActivationMap> | undefined;
     if (validLines.length > 0 && hasAnyStackLimited !== false) {
       // If hasAnyStackLimited is undefined (no pre-check), do the per-eval check
       const needCheck =

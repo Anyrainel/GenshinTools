@@ -12,11 +12,11 @@ import { TeamBuild } from "../calc/teamBuild";
 import type { OptionMap } from "../types";
 import type { ExtraBuff } from "../types";
 import type {
+  BuffActivationMap,
   CalcContext,
   CharOptConfig,
   ComboFormula,
   OptFailReason,
-  PartialBuffInfo,
   StatKey,
   TeamSlotConfig,
 } from "../types";
@@ -47,8 +47,8 @@ export type BnBWorkerRequest = {
   excludedIds?: string[];
   /** Combo formula (always present — single formula is pre-normalized to 1-line combo). */
   combo: ComboFormula;
-  /** Per-line PartialBuffInfo[] for combo mode. */
-  buffOverrides?: Record<number, PartialBuffInfo[]>;
+  /** Per-line BuffActivationMap for combo mode. */
+  buffOverrides?: Record<number, BuffActivationMap>;
   /** Extra buffs (food/env/status/custom) to apply to TeamBuild stat sheets. */
   extraBuffs?: ExtraBuff[];
 };

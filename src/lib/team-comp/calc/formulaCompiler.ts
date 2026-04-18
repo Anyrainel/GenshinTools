@@ -26,6 +26,7 @@ import type {
   ReactionOverride,
   StatKey,
 } from "../types";
+import type { BuffActivationMap } from "../types";
 import { resolvePartReaction } from "./combo";
 import { isFinalStatKey } from "./damageCalc";
 import { createReactionVariant } from "./damageFormula";
@@ -38,7 +39,6 @@ import {
 import { isOnField } from "./fieldState";
 import { defaultOnFieldCharId, isPartOffField } from "./fieldState";
 import { exclusionKey } from "./stackAllocation";
-import type { PartialBuffInfo } from "./stackAllocation";
 import { CrossScalingBuff, ScalingBuff, getBuffInstanceKey } from "./statBuff";
 import { isBuffApplicable } from "./statBuff";
 import { StatBuff } from "./statBuff";
@@ -180,11 +180,11 @@ function buildPostExprStatsForContext(
 }
 
 /**
- * Build ExprStats variants for all exclusion combinations needed by PartialBuffInfos.
+ * Build ExprStats variants for all exclusion combinations needed by a BuffActivationMap.
  * Returns a Map from exclusionKey → ExprStats for the formula character.
  */
 function buildExprStatVariants(
-  partialBuffs: PartialBuffInfo[],
+  activation: BuffActivationMap,
   parts: FormulaPart[],
   formulaCharId: string,
   teamBuild: TeamBuild,
@@ -197,15 +197,16 @@ function buildExprStatVariants(
 
   for (let idx = 0; idx < parts.length; idx++) {
     const h = parts[idx].hits ?? 1;
-    const affecting = partialBuffs.filter((pb) => {
-      const activated = pb.partActivation[idx] ?? h;
-      return activated < h;
-    });
+    // Collect buffs with partial activation on this part
+    const affecting: { buffKey: string; activated: number }[] = [];
+    for (const [buffKey, partMap] of Object.entries(activation)) {
+      const activated = partMap[idx] ?? h;
+      if (activated < h) affecting.push({ buffKey, activated });
+    }
     if (affecting.length === 0) continue;
 
     const cutpointSet = new Set<number>([0, h]);
-    for (const pb of affecting) {
-      const activated = pb.partActivation[idx] ?? h;
+    for (const { activated } of affecting) {
       if (activated > 0 && activated < h) cutpointSet.add(activated);
     }
     const cutpoints = [...cutpointSet].sort((a, b) => a - b);
@@ -213,9 +214,8 @@ function buildExprStatVariants(
     for (let i = 0; i < cutpoints.length - 1; i++) {
       const end = cutpoints[i + 1];
       const excludeSet = new Set<string>();
-      for (const pb of affecting) {
-        const activated = pb.partActivation[idx] ?? h;
-        if (activated < end) excludeSet.add(pb.buffKey);
+      for (const { buffKey, activated } of affecting) {
+        if (activated < end) excludeSet.add(buffKey);
       }
       if (excludeSet.size === 0) continue;
       const eKey = exclusionKey(excludeSet);
@@ -246,7 +246,7 @@ export function compileComboTeamDamage(
   swapCharId: string | string[],
   baseSheets: Record<string, StatSheet>,
   calcContext: CalcContext,
-  buffOverrides?: Record<string, PartialBuffInfo[]>,
+  buffOverrides?: Record<string, BuffActivationMap>,
   erCheckCharId?: string,
   minEr?: number,
   minCr?: number
@@ -409,7 +409,7 @@ export function compileComboTeamDamage(
       // Pre-build ExprStats variants for partial buff blending
       let lineExprVariants: Map<string, ExprStatSheet> | undefined;
       let lineOffFieldVariants: Map<string, ExprStatSheet> | undefined;
-      if (lineBuffs && lineBuffs.length > 0) {
+      if (lineBuffs && Object.keys(lineBuffs).length > 0) {
         // On-field variants
         lineExprVariants = buildExprStatVariants(
           lineBuffs,
@@ -885,7 +885,7 @@ function buildTotalDamageExpr(
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   offFieldFormulaStats?: ExprStatSheet,
-  partialBuffs?: PartialBuffInfo[],
+  activation?: BuffActivationMap,
   statsVariants?: Map<string, ExprStatSheet>,
   offFieldVariants?: Map<string, ExprStatSheet>,
   comboCount = 1,
@@ -920,7 +920,7 @@ function buildTotalDamageExpr(
         h * comboCount,
         h * comboCount,
         idx,
-        partialBuffs,
+        activation,
         baseVariants,
         bespokeBuffs
       );
@@ -958,7 +958,7 @@ function buildTotalDamageExpr(
         reactingHits * comboCount,
         h * comboCount,
         idx,
-        partialBuffs,
+        activation,
         baseVariants,
         bespokeBuffs
       );
@@ -973,7 +973,7 @@ function buildTotalDamageExpr(
         nonReactingHits * comboCount,
         h * comboCount,
         idx,
-        partialBuffs,
+        activation,
         baseVariants,
         bespokeBuffs
       );
@@ -1013,7 +1013,7 @@ function emitBlendedPartExprs(
   totalHits: number,
   originalPartHits: number,
   partIdx: number,
-  partials: PartialBuffInfo[] | undefined,
+  activation: BuffActivationMap | undefined,
   statsVariants?: Map<string, ExprStatSheet>,
   bespokeBuffs?: StatBuff[]
 ): void {
@@ -1039,10 +1039,13 @@ function emitBlendedPartExprs(
     : baseStats;
 
   // Collect affecting partials (activations compared in the scaled sub-part frame)
-  const affecting = (partials ?? []).filter((pb) => {
-    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-    return activated < totalHits;
-  });
+  const affecting: { buffKey: string; activated: number }[] = [];
+  if (activation) {
+    for (const [buffKey, partMap] of Object.entries(activation)) {
+      const activated = (partMap[partIdx] ?? originalPartHits) * scale;
+      if (activated < totalHits) affecting.push({ buffKey, activated });
+    }
+  }
 
   // Fast path: uniform across all hits
   if (affecting.length === 0 && bespokeCutoff === totalHits) {
@@ -1054,8 +1057,7 @@ function emitBlendedPartExprs(
   // Build interval cutpoints from activation counts and bespoke cutoff
   const cutpointSet = new Set<number>([0, totalHits]);
   if (bespokeCutoff < totalHits) cutpointSet.add(bespokeCutoff);
-  for (const pb of affecting) {
-    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
+  for (const { activated } of affecting) {
     if (activated > 0 && activated < totalHits) cutpointSet.add(activated);
   }
   const cutpoints = [...cutpointSet].sort((a, b) => a - b);
@@ -1068,10 +1070,8 @@ function emitBlendedPartExprs(
 
     // Determine which buffs are inactive in this interval
     const excludeSet = new Set<string>();
-    for (const pb of affecting) {
-      const activated =
-        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-      if (activated < end) excludeSet.add(pb.buffKey);
+    for (const { buffKey, activated } of affecting) {
+      if (activated < end) excludeSet.add(buffKey);
     }
 
     const bespokeActive = end <= bespokeCutoff;

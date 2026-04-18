@@ -19,7 +19,6 @@ import type {
   ComboFormula,
   ComboLine,
   DisplayResult,
-  PartialBuffInfo,
   TalentLevels,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
@@ -316,7 +315,7 @@ export function calcComboResults(
   combo: ComboFormula,
   sheets: Record<string, StatSheet>,
   context: CalcContext,
-  buffOverrides?: Record<number, PartialBuffInfo[]>
+  buffOverrides?: Record<number, BuffActivationMap>
 ): DisplayResult | null {
   if (!build) return null;
   const activeLines = combo.lines.filter((l) => l.count > 0);
@@ -331,7 +330,7 @@ export function calcComboResults(
 }
 
 /**
- * Build per-line PartialBuffInfo[] for a combo rotation.
+ * Build per-line BuffActivationMap for a combo rotation.
  *
  * Computes combo-wide default activation (sharing the maxStack budget across
  * ALL lines), then merges user overrides on top. This ensures stack-limited
@@ -350,7 +349,7 @@ export function buildBuffOverrides(
   sheets: Record<string, StatSheet>,
   ctx: CalcContext,
   comboOverrides?: Record<string, BuffActivationMap>
-): Record<number, PartialBuffInfo[]> | undefined {
+): Record<number, BuffActivationMap> | undefined {
   // ── Distribute user overrides across lines ──
   const perLineUserOverrides = new Map<number, BuffActivationMap>();
 

@@ -147,6 +147,25 @@ export abstract class DamageFormula {
 
   abstract calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number;
 
+  /**
+   * The multiplier applied to baseDmg — everything in the damage formula
+   * except baseDmg itself. Used by stack allocation ranking: since all
+   * stack-limited buffs are baseDmg buffs, ranking by this multiplier
+   * is equivalent to ranking by marginal damage gain.
+   */
+  calcBaseDmgMult(
+    stats: StatSheet,
+    charLevel: number,
+    ctx: CalcContext
+  ): number {
+    const dmgBonusMult = this.computeDmgBonusMult(stats);
+    const defMult = this.computeDefMult(stats, charLevel, ctx);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
+    const elevated = stats.get("elevated%", this.tag);
+    return dmgBonusMult * defMult * resMult * critMult * (1 + elevated);
+  }
+
   abstract display(
     stats: StatSheet,
     charLevel: number,
@@ -393,16 +412,7 @@ export class DirectFormula extends DamageFormula {
   }
 
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
-    const baseDmg = this.getBaseDmg(stats);
-    const dmgBonusMult = this.computeDmgBonusMult(stats);
-    const defMult = this.computeDefMult(stats, charLevel, ctx);
-    const resMult = this.computeResMult(stats, ctx);
-    const critMult = this.computeCritMult(stats, ctx);
-    const elevated = stats.get("elevated%", this.tag);
-
-    return (
-      baseDmg * dmgBonusMult * defMult * resMult * critMult * (1 + elevated)
-    );
+    return this.getBaseDmg(stats) * this.calcBaseDmgMult(stats, charLevel, ctx);
   }
 
   buildExpr(stats: ExprStatSheet, charLevel: number, ctx: CalcContext): Expr {

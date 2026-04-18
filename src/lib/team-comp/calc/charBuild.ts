@@ -11,6 +11,7 @@ import type {
   StatEntry,
   TeamSlotConfig,
 } from "../types";
+import type { BuffActivationMap } from "../types";
 import { resolvePartReaction } from "./combo";
 import type { EvaluatedDynamicBuff } from "./damageCalc";
 import type { DamageFormula } from "./damageFormula";
@@ -30,7 +31,6 @@ import {
   createWeapon,
 } from "./registry";
 import { blendSubPart } from "./stackAllocation";
-import type { PartialBuffInfo } from "./stackAllocation";
 import {
   StatBuff,
   deduplicateBuffs,
@@ -321,7 +321,7 @@ export class CharBuild {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     offFieldSelfPostStats?: StatSheet,
-    partialBuffs?: PartialBuffInfo[],
+    activation?: BuffActivationMap,
     statsVariants?: Map<string, StatSheet>,
     offFieldVariants?: Map<string, StatSheet>,
     charLevelOverride?: number,
@@ -368,7 +368,7 @@ export class CharBuild {
           h,
           idx,
           h,
-          partialBuffs,
+          activation,
           partVariants,
           bespokeOverlay,
           bespokeMax,
@@ -382,7 +382,7 @@ export class CharBuild {
             h,
             idx,
             h,
-            partialBuffs,
+            activation,
             partVariants,
             undefined,
             undefined,
@@ -429,7 +429,7 @@ export class CharBuild {
           reactingHits,
           idx,
           h,
-          partialBuffs,
+          activation,
           partVariants,
           bespokeOverlay,
           bespokeMax,
@@ -443,7 +443,7 @@ export class CharBuild {
             reactingHits,
             idx,
             h,
-            partialBuffs,
+            activation,
             partVariants,
             undefined,
             undefined,
@@ -468,7 +468,7 @@ export class CharBuild {
           nonReactingHits,
           idx,
           h,
-          partialBuffs,
+          activation,
           partVariants,
           bespokeOverlay,
           bespokeMax,
@@ -482,7 +482,7 @@ export class CharBuild {
             nonReactingHits,
             idx,
             h,
-            partialBuffs,
+            activation,
             partVariants,
             undefined,
             undefined,
@@ -509,7 +509,7 @@ export class CharBuild {
 
   /**
    * Compute blended damage for a sub-part (possibly a reaction split).
-   * If partialBuffs affect this part, uses interval-based blending.
+   * If activation affects this part, uses interval-based blending.
    */
   private _calcPartBlended(
     formula: DamageFormula,
@@ -518,7 +518,7 @@ export class CharBuild {
     hits: number,
     partIdx: number,
     originalPartHits: number,
-    partialBuffs?: PartialBuffInfo[],
+    activation?: BuffActivationMap,
     statsVariants?: Map<string, StatSheet>,
     bespokeOverlay?: StatSheet,
     bespokeMax?: number,
@@ -544,7 +544,7 @@ export class CharBuild {
       hits,
       partIdx,
       originalPartHits,
-      partialBuffs ?? [],
+      activation ?? {},
       statsVariants
     );
     return { damage: total / hits, hits };

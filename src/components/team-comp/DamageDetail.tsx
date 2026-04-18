@@ -459,7 +459,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     ]
   );
 
-  // Build per-line PartialBuffInfo[] (defaults + user overrides)
+  // Build per-line BuffActivationMap (defaults + user overrides)
   const buffOverrides = useMemo(() => {
     if (!teamBuild) return undefined;
     const activeLines = displayCombo.lines.filter((l) => l.count > 0);
