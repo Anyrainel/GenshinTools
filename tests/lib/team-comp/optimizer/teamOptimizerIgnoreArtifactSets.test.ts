@@ -143,7 +143,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -172,7 +172,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -205,7 +205,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -239,7 +239,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -277,7 +277,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -339,7 +339,7 @@ describe("runTeamOptimization — accidental set detection", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -386,7 +386,7 @@ describe("runTeamOptimization — accidental set detection", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -436,7 +436,7 @@ describe("runTeamOptimization — accidental set detection", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,

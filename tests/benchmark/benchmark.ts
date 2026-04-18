@@ -318,8 +318,11 @@ function evaluateAssignment(
       if (!charFormulas?.[formulaId]) return null;
     }
 
-    return teamBuild.evaluateCombo(effectiveCombo, artifactStats, calcContext)
-      .totalDamage;
+    return teamBuild.getComboDamageResult(
+      effectiveCombo,
+      artifactStats,
+      calcContext
+    ).totalDamage;
   } catch {
     return null;
   }
@@ -3233,7 +3236,7 @@ async function cmdFuzzCombo(opts: {
 
           // Old path: evaluateCombo
           const sheets = { ...baseSheets, [swapCharId]: swapSheet };
-          const oldDamage = teamBuild.evaluateCombo(
+          const oldDamage = teamBuild.getComboDamageResult(
             combo,
             sheets,
             team.calcContext

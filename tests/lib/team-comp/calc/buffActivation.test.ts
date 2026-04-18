@@ -565,8 +565,8 @@ describe("runTeamOptimization with partialBuffs", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: carryId,
-      formula: {
-        combo: singleFormulaCombo(carryId, formulaId),
+      combo: {
+        ...singleFormulaCombo(carryId, formulaId),
         buffOverrides: { 0: specs },
       },
       inventory,
@@ -619,8 +619,8 @@ describe("runTeamOptimization with partialBuffs", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: carryId,
-      formula: {
-        combo,
+      combo: {
+        ...combo,
         buffOverrides: {
           0: [
             {
@@ -655,7 +655,7 @@ describe("runGenerator with buff overrides", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: carryId,
-      formula: { combo: singleFormulaCombo(carryId, formulaId) },
+      combo: singleFormulaCombo(carryId, formulaId),
       calcContext: CTX,
     };
 
@@ -782,13 +782,13 @@ describe("compileComboTeamDamage with buffOverrides", () => {
     };
 
     // Baseline
-    const comboBase = tb.evaluateCombo(combo, sheets, CTX);
+    const comboBase = tb.getComboDamageResult(combo, sheets, CTX);
     expect(comboBase.totalDamage).toBeGreaterThan(0);
 
     // evaluateCombo does NOT accept user overrides directly (it uses
     // getDisplayResult internally for single-formula damage). This test
     // verifies the cold path still works and doesn't crash.
-    const comboResult = tb.evaluateCombo(combo, sheets, CTX);
+    const comboResult = tb.getComboDamageResult(combo, sheets, CTX);
     expect(comboResult.totalDamage).toBe(comboBase.totalDamage);
   });
 });

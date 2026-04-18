@@ -5,7 +5,11 @@ import { describe, expect, it } from "vitest";
 
 type TeamSlice = Pick<
   Team,
-  "formulaMode" | "selectedFormula" | "singleReaction" | "combo"
+  | "formulaMode"
+  | "selectedFormula"
+  | "singleReaction"
+  | "singleForceOnField"
+  | "combo"
 >;
 
 function makeTeam(overrides: Partial<TeamSlice>): TeamSlice {
@@ -13,6 +17,7 @@ function makeTeam(overrides: Partial<TeamSlice>): TeamSlice {
     formulaMode: "single",
     selectedFormula: null,
     singleReaction: undefined,
+    singleForceOnField: undefined,
     combo: null,
     ...overrides,
   };
@@ -57,13 +62,14 @@ describe("getEffectiveCombo", () => {
         makeTeam({
           formulaMode: "single",
           selectedFormula: { charId: "Xiangling", formulaId: "Q" },
-          singleReaction: { reaction: "vaporize", forceOnField: true },
+          singleReaction: { reaction: "vaporize" },
+          singleForceOnField: true,
         })
       );
       expect(result.lines[0].reaction).toEqual({
         reaction: "vaporize",
-        forceOnField: true,
       });
+      expect(result.lines[0].forceOnField).toBe(true);
     });
 
     it("preserves forceOnField=false on the synthesized line", () => {
@@ -71,13 +77,14 @@ describe("getEffectiveCombo", () => {
         makeTeam({
           formulaMode: "single",
           selectedFormula: { charId: "Xiangling", formulaId: "Q" },
-          singleReaction: { reaction: "vaporize", forceOnField: false },
+          singleReaction: { reaction: "vaporize" },
+          singleForceOnField: false,
         })
       );
       expect(result.lines[0].reaction).toEqual({
         reaction: "vaporize",
-        forceOnField: false,
       });
+      expect(result.lines[0].forceOnField).toBe(false);
     });
 
     it("ignores combo mode state when in single mode", () => {
@@ -169,7 +176,8 @@ describe("getEffectiveCombo", () => {
             charId: "A",
             formulaId: "f1",
             count: 1,
-            reaction: { reaction: "melt", forceOnField: true },
+            reaction: { reaction: "melt" },
+            forceOnField: true,
           },
         ],
       };
@@ -181,8 +189,8 @@ describe("getEffectiveCombo", () => {
       );
       expect(result.lines[0].reaction).toEqual({
         reaction: "melt",
-        forceOnField: true,
       });
+      expect(result.lines[0].forceOnField).toBe(true);
     });
   });
 

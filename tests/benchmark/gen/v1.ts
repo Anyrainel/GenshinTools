@@ -14,8 +14,8 @@ import type {
   CharOptConfig,
   ComboFormula,
   ComboResult,
-  FormulaOverride,
   PartialBuffInfo,
+  ReactionOverride,
   TeamOptPassId,
   TeamOptPassResult,
   TeamOptYield,
@@ -100,7 +100,7 @@ function computeFinalScore(
   carryCharId: string,
   formulaId: string,
   calcContext: CalcContext,
-  reactionOverride: FormulaOverride | undefined,
+  reactionOverride: ReactionOverride | undefined,
   isComboMode: boolean,
   combo: ComboFormula | undefined,
   buffOverrides?: Record<number, PartialBuffInfo[]>
@@ -108,8 +108,12 @@ function computeFinalScore(
   const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
   if (isComboMode && combo) {
     try {
-      return teamBuild.evaluateCombo(combo, sheets, calcContext, buffOverrides)
-        .totalDamage;
+      return teamBuild.getComboDamageResult(
+        combo,
+        sheets,
+        calcContext,
+        buffOverrides
+      ).totalDamage;
     } catch (e) {
       const key = `computeFinalScore:${carryCharId}`;
       if (!warnedCalcErrors.has(key)) {
@@ -158,9 +162,9 @@ export async function* runTeamOptimization(
     globalConfig,
     baseSheets,
     perChar,
-    formula,
+    combo,
   } = opts;
-  const { combo, buffOverrides } = formula;
+  const buffOverrides = combo.buffOverrides;
 
   const carryLine = combo.lines.find((l) => l.charId === carryCharId);
   const formulaId = carryLine?.formulaId ?? "";
@@ -173,7 +177,7 @@ export async function* runTeamOptimization(
   const comboScoreFn = isComboMode
     ? (sheets: Record<string, StatSheet>, _onFieldCharId: string): number => {
         try {
-          return teamBuild.evaluateCombo(
+          return teamBuild.getComboDamageResult(
             combo,
             sheets,
             calcContext,
@@ -268,8 +272,12 @@ export async function* runTeamOptimization(
             _onFieldCharId: string
           ): number => {
             try {
-              return tb.evaluateCombo(combo, sheets, calcContext, buffOverrides)
-                .totalDamage;
+              return tb.getComboDamageResult(
+                combo,
+                sheets,
+                calcContext,
+                buffOverrides
+              ).totalDamage;
             } catch (e) {
               const key = `passComboScoreFn:${carryCharId}`;
               if (!warnedCalcErrors.has(key)) {
@@ -1209,7 +1217,7 @@ export async function* runTeamOptimization(
 
   let comboRes: ComboResult;
   try {
-    comboRes = effectiveTeamBuild.evaluateCombo(
+    comboRes = effectiveTeamBuild.getComboDamageResult(
       combo,
       finalSheets,
       calcContext,

@@ -10,7 +10,7 @@ import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
-  FormulaOverride,
+  ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import "@/lib/team-comp/index";
@@ -64,7 +64,7 @@ describe("Mavuika melt Q damage investigation", () => {
     substatBudget: "8_6",
   };
 
-  const meltOverride: FormulaOverride = {
+  const meltOverride: ReactionOverride = {
     reaction: "melt",
   };
 

@@ -267,7 +267,7 @@ export async function runGeneratorForTeam(
     teamBuild,
     carryCharId,
     calcContext: DEFAULT_CALC_CONTEXT,
-    formula: { combo },
+    combo,
     perChar,
     setKeysByChar,
   };

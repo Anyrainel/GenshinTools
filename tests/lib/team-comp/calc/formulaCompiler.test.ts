@@ -1198,7 +1198,7 @@ describe("compileComboTeamDamage fuzz", () => {
           }
 
           // Old path
-          const oldDamage = tb.evaluateCombo(
+          const oldDamage = tb.getComboDamageResult(
             combo,
             sheets,
             FUZZ_CTX
@@ -1280,7 +1280,11 @@ describe("compileComboTeamDamage fuzz", () => {
       }
 
       const swapCharId = "diluc";
-      const oldDamage = tb.evaluateCombo(combo, sheets, FUZZ_CTX).totalDamage;
+      const oldDamage = tb.getComboDamageResult(
+        combo,
+        sheets,
+        FUZZ_CTX
+      ).totalDamage;
 
       const compiled = compileComboTeamDamage(
         tb,
@@ -1969,7 +1973,11 @@ describe("single→combo normalization parity", () => {
           label: { zh: "", en: "" },
           lines: [{ charId: carryId, formulaId, count: 1 }],
         };
-        const oldDamage = tb.evaluateCombo(combo, sheets, FUZZ_CTX).totalDamage;
+        const oldDamage = tb.getComboDamageResult(
+          combo,
+          sheets,
+          FUZZ_CTX
+        ).totalDamage;
 
         // Compiled combo path
         const compiled = compileComboTeamDamage(
@@ -2055,7 +2063,11 @@ describe("multi-char variable compilation parity", () => {
         }
 
         // Domain-object path
-        const oldDamage = tb.evaluateCombo(combo, sheets, FUZZ_CTX).totalDamage;
+        const oldDamage = tb.getComboDamageResult(
+          combo,
+          sheets,
+          FUZZ_CTX
+        ).totalDamage;
 
         // Compiled path: fill vars from each character's sheet
         const vars = new Float64Array(compiled.numVars);
@@ -2405,7 +2417,7 @@ import { buildStatVariants } from "@/lib/team-comp/calc/stackAllocation";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import type { OptionMap } from "@/lib/team-comp/types";
-import type { FormulaOverride } from "@/lib/team-comp/types";
+import type { ReactionOverride } from "@/lib/team-comp/types";
 
 describe("cross-path fuzz (display vs calc vs compile)", () => {
   const rv = getRollValues();
@@ -2465,10 +2477,10 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     tb: TeamBuild,
     charId: string,
     formulaId: string
-  ): FormulaOverride | undefined {
+  ): ReactionOverride | undefined {
     const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
     if (!entry) return undefined;
-    const override: FormulaOverride = {};
+    const override: ReactionOverride = {};
 
     // Reaction: pick a random element-eligible reaction for the first part.
     const firstPartElement = entry.parts[0]?.formula.tag.element as
@@ -2480,11 +2492,6 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
         override.reaction =
           eligible[Math.floor(Math.random() * eligible.length)];
       }
-    }
-
-    // forceOnField when formula has any off-field parts.
-    if (entry.parts.some((p) => p.offField) && Math.random() < 0.5) {
-      override.forceOnField = true;
     }
 
     // Per-part reacting hit count override: sparse random subset.
@@ -2546,8 +2553,9 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     formulaId: string,
     sheets: Record<string, StatSheet>,
     ctx: CalcContext,
-    reactionOverride: FormulaOverride | undefined,
-    dist: PartialBuffInfo[]
+    reactionOverride: ReactionOverride | undefined,
+    dist: PartialBuffInfo[],
+    forceOnField?: boolean
   ): Paths {
     // Path 1: display — pass the distribution to skip internal blending
     const dr = tb.getDisplayResult(
@@ -2557,7 +2565,8 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       ctx,
       reactionOverride,
       undefined,
-      dist
+      dist,
+      forceOnField
     );
 
     // Path 2: calc — getDamageResult with externally-resolved post-stats.
@@ -2567,8 +2576,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     const teamStats = tb.getTeamStats(sheets, charId, ctx);
     const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId)!;
     const hasOff =
-      !reactionOverride?.forceOnField &&
-      (entry?.parts.some((p) => p.offField) ?? false);
+      !forceOnField && (entry?.parts.some((p) => p.offField) ?? false);
     const offFieldTeamStats = hasOff
       ? tb.getTeamStats(sheets, defaultOnFieldCharId(charId, tb.configs), ctx)
       : undefined;
@@ -2604,13 +2612,20 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       offFieldTeamStats,
       dist,
       statsVariants,
-      offFieldVariants
+      offFieldVariants,
+      undefined,
+      forceOnField
     ).totalDamage;
 
     // Path 3: compile
     const compiled = compileComboTeamDamage(
       tb,
-      singleFormulaCombo(charId, formulaId, reactionOverride ?? undefined),
+      singleFormulaCombo(
+        charId,
+        formulaId,
+        reactionOverride ?? undefined,
+        forceOnField
+      ),
       charId,
       sheets,
       ctx,
@@ -2679,6 +2694,13 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
         pair.charId,
         pair.formulaId
       );
+      const entry = tb.charBuilds[pair.charId]?.charBase.getFormulaEntry(
+        pair.formulaId
+      );
+      const forceOnField =
+        entry?.parts.some((p) => p.offField) && Math.random() < 0.5
+          ? true
+          : undefined;
 
       const sheets: Record<string, StatSheet> = {};
       for (const cfg of configs) {
@@ -2700,7 +2722,8 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
           sheets,
           ctx,
           reactionOverride,
-          dist
+          dist,
+          forceOnField
         );
         trials++;
         const msg = checkPaths(
@@ -2757,13 +2780,12 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
           p.formulaId
         );
         const hasOff = entry?.parts.some((pt) => pt.offField) ?? false;
-        const reaction: FormulaOverride | undefined =
-          hasOff && Math.random() < 0.5 ? { forceOnField: true } : undefined;
+        const forceOnField = hasOff && Math.random() < 0.5 ? true : undefined;
         return {
           charId: p.charId,
           formulaId: p.formulaId,
           count: 1 + Math.floor(Math.random() * 3),
-          reaction,
+          forceOnField,
         };
       });
 
@@ -2799,7 +2821,12 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
           ctx,
           buffOverrides
         );
-        const evaled = tb.evaluateCombo(combo, sheets, ctx, buffOverrides);
+        const evaled = tb.getComboDamageResult(
+          combo,
+          sheets,
+          ctx,
+          buffOverrides
+        );
         trials++;
         const dc = relErr(comboDr.totalDamage, evaled.totalDamage);
         if (dc > 1e-6 && errors.length < 15) {
@@ -2811,7 +2838,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
               `lines=${lines
                 .map(
                   (l) =>
-                    `${l.charId}/${l.formulaId}×${l.count}(force=${l.reaction?.forceOnField ?? false})`
+                    `${l.charId}/${l.formulaId}×${l.count}(force=${l.forceOnField ?? false})`
                 )
                 .join(",")}`
           );

@@ -1,4 +1,5 @@
 import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { CharBuild } from "@/lib/team-comp/calc/charBuild";
 import { CharacterBase } from "@/lib/team-comp/calc/implModel";
 import {
   RegisterCharacter,
@@ -916,14 +917,25 @@ describe("CharacterBase via createCharacter", () => {
   });
 
   it("getDamageResult returns positive damage for known formula", () => {
-    const char = createCharacter("diluc", 90, 0, meta);
+    const build = new CharBuild(
+      {
+        charId: "diluc",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      meta
+    );
     const stats = new StatSheet([
       { key: "baseAtk", value: 800 },
       { key: "cr", value: 0.5 },
       { key: "cd", value: 1.0 },
     ]);
 
-    const result = char.getDamageResult("diluc-skill", stats, [stats], {
+    const result = build.getDamageResult("diluc-skill", stats, [stats], {
       enemyLevel: 100,
       enemyRes: 0.1,
       rollMultiplier: 0.85,

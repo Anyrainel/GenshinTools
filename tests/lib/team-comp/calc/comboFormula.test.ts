@@ -132,7 +132,7 @@ describe("evaluateCombo", () => {
       label: { zh: "测试", en: "Test" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
-    const comboResult = tb.evaluateCombo(combo, sheets, CTX);
+    const comboResult = tb.getComboDamageResult(combo, sheets, CTX);
 
     expect(comboResult.totalDamage).toBeCloseTo(singleResult.totalDamage, 2);
     expect(comboResult.lineDamages).toHaveLength(1);
@@ -161,7 +161,7 @@ describe("evaluateCombo", () => {
       ],
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.lineDamages).toHaveLength(2);
     const summed = result.lineDamages.reduce((s, l) => s + l.total, 0);
     expect(result.totalDamage).toBeCloseTo(summed, 2);
@@ -178,7 +178,7 @@ describe("evaluateCombo", () => {
       lines: [{ charId: "diluc", formulaId, count: 5 }],
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.lineDamages[0].total).toBeCloseTo(
       result.lineDamages[0].perHit * 5,
       2
@@ -199,7 +199,7 @@ describe("evaluateCombo", () => {
       ],
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     // count=0 line is dropped — only the count=1 line remains
     expect(result.lineDamages).toHaveLength(1);
     expect(result.lineDamages[0].total).toBeGreaterThan(0);
@@ -217,7 +217,7 @@ describe("evaluateCombo", () => {
       lines: [{ charId: "diluc", formulaId, count: 0 }],
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.totalDamage).toBe(0);
   });
 
@@ -232,7 +232,7 @@ describe("evaluateCombo", () => {
       label: { zh: "无反应", en: "No reaction" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
-    const resultNoRxn = tb.evaluateCombo(noRxn, sheets, CTX);
+    const resultNoRxn = tb.getComboDamageResult(noRxn, sheets, CTX);
 
     // With reaction set directly on the combo line
     const withRxn: ComboFormula = {
@@ -247,7 +247,7 @@ describe("evaluateCombo", () => {
         },
       ],
     };
-    const resultWithRxn = tb.evaluateCombo(withRxn, sheets, CTX);
+    const resultWithRxn = tb.getComboDamageResult(withRxn, sheets, CTX);
 
     expect(resultWithRxn.totalDamage).toBeGreaterThan(resultNoRxn.totalDamage);
   });
@@ -271,7 +271,7 @@ describe("evaluateCombo", () => {
       ],
     };
 
-    const resultNone = tb.evaluateCombo(combo, sheets, CTX);
+    const resultNone = tb.getComboDamageResult(combo, sheets, CTX);
 
     // Without any reaction
     const noRxnCombo: ComboFormula = {
@@ -279,7 +279,7 @@ describe("evaluateCombo", () => {
       label: { zh: "基线", en: "Baseline" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
-    const resultNoRxn = tb.evaluateCombo(noRxnCombo, sheets, CTX);
+    const resultNoRxn = tb.getComboDamageResult(noRxnCombo, sheets, CTX);
 
     // reaction: "none" should produce the same damage as no reaction set
     expect(resultNone.totalDamage).toBeCloseTo(resultNoRxn.totalDamage, 2);
@@ -318,7 +318,7 @@ describe("getComboDisplayResult", () => {
     };
 
     const displayResult = tb.getComboDisplayResult(combo, sheets, CTX);
-    const comboResult = tb.evaluateCombo(
+    const comboResult = tb.getComboDamageResult(
       { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
       sheets,
       CTX
@@ -401,7 +401,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo },
+      combo,
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -424,7 +424,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -458,7 +458,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo },
+      combo,
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -503,7 +503,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo },
+      combo,
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -537,7 +537,7 @@ describe("runTeamOptimization — combo mode", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo },
+      combo,
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -569,7 +569,7 @@ describe("runGenerator — combo mode", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo },
+      combo,
       calcContext: CTX,
     };
 
@@ -586,7 +586,7 @@ describe("runGenerator — combo mode", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
     };
 
@@ -615,7 +615,7 @@ describe("combo edge cases", () => {
     };
 
     // Non-existent character lines are silently skipped (only valid line evaluated)
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.lineDamages).toHaveLength(1);
     expect(result.totalDamage).toBeGreaterThanOrEqual(0);
   });
@@ -633,7 +633,7 @@ describe("combo edge cases", () => {
     };
 
     // Non-existent formula lines are silently skipped
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.lineDamages).toHaveLength(0);
     expect(result.totalDamage).toBe(0);
   });
@@ -651,7 +651,7 @@ describe("combo edge cases", () => {
     const opts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo },
+      combo,
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -703,7 +703,7 @@ describe("single↔combo normalization equivalence", () => {
     const singleOpts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -725,7 +725,7 @@ describe("single↔combo normalization equivalence", () => {
     };
     const comboOpts: TeamOptimizerOptions = {
       ...singleOpts,
-      formula: { combo },
+      combo,
     };
     const comboResults = await drain(runTeamOptimization(comboOpts));
     const comboFinal = comboResults[comboResults.length - 1];
@@ -775,7 +775,7 @@ describe("single↔combo normalization equivalence", () => {
     const lineRxnOpts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: comboWithLineRxn },
+      combo: comboWithLineRxn,
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
@@ -794,7 +794,7 @@ describe("single↔combo normalization equivalence", () => {
     const noRxnOpts: TeamOptimizerOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: comboNoRxn },
+      combo: comboNoRxn,
       inventory,
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,

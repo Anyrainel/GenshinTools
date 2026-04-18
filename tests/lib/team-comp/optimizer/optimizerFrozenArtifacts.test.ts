@@ -167,7 +167,7 @@ describe("optimizer frozen artifact protection", () => {
       runTeamOptimization({
         teamBuild: tb,
         carryCharId: "hu_tao",
-        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
         globalConfig: GLOBAL_CONFIG,
@@ -228,7 +228,7 @@ describe("optimizer frozen artifact protection", () => {
       runTeamOptimization({
         teamBuild: tb,
         carryCharId: "hu_tao",
-        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
         globalConfig: GLOBAL_CONFIG,
@@ -294,7 +294,7 @@ describe("optimizer frozen artifact protection", () => {
       runTeamOptimization({
         teamBuild: tb,
         carryCharId: "hu_tao",
-        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
         globalConfig: GLOBAL_CONFIG,
@@ -361,7 +361,7 @@ describe("optimizer frozen artifact protection", () => {
       runTeamOptimization({
         teamBuild: tb,
         carryCharId: "hu_tao",
-        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
         globalConfig: GLOBAL_CONFIG,
@@ -424,7 +424,7 @@ describe("optimizer frozen artifact protection", () => {
       runTeamOptimization({
         teamBuild: tb,
         carryCharId: "hu_tao",
-        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
         globalConfig: GLOBAL_CONFIG,
@@ -472,7 +472,7 @@ describe("optimizer frozen artifact protection", () => {
       runTeamOptimization({
         teamBuild: tb,
         carryCharId: "hu_tao",
-        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
         globalConfig: GLOBAL_CONFIG,

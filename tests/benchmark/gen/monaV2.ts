@@ -25,8 +25,8 @@ import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
-  FormulaOverride,
   OptFailReason,
+  ReactionOverride,
   StatKey,
   TeamOptYield,
   TeamOptimizerOptions,
@@ -63,7 +63,7 @@ function computeStatWeights(
   calcContext: CalcContext,
   minEr: number,
   minCr: number,
-  reactionOverride?: FormulaOverride,
+  reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): Map<StatKey, number> {
   const weights = new Map<StatKey, number>();
@@ -317,7 +317,7 @@ interface V2Context {
   minCr: number;
   erFloor: number;
   crFloor: number;
-  reactionOverride?: FormulaOverride;
+  reactionOverride?: ReactionOverride;
   scoreFn?: (
     sheets: Record<string, StatSheet>,
     onFieldCharId: string

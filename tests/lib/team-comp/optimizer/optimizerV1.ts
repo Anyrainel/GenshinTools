@@ -15,8 +15,8 @@ import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
   DamageResult,
-  FormulaOverride,
   OptFailReason,
+  ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
 
@@ -41,7 +41,7 @@ export interface OptimizerOptions {
   formulaCharId?: string; // Whose formula to evaluate
   erCheckCharId?: string; // Whose ER to check (default: swapCharId)
   excludedArtifactIds?: Set<string>; // Artifacts locked by prior passes
-  reactionOverride?: FormulaOverride;
+  reactionOverride?: ReactionOverride;
   altCount?: number; // Alternatives per slot in hill-climbing (default 7, use 5 on mobile)
   /** Absolute deadline (performance.now() ms). Hill-climbing exits early when reached. */
   deadlineMs?: number;
@@ -280,7 +280,7 @@ function computeMarginalGainsForOptimizer(
   currentArtifacts: ArtifactTuple,
   onFieldCharId: string,
   calcContext: CalcContext,
-  reactionOverride?: FormulaOverride,
+  reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): Partial<Record<StatKey, number>> {
   const currentSheet = StatSheet.fromArtifacts(currentArtifacts);
@@ -368,7 +368,7 @@ function evaluateBuild(
   erCheckCharId: string,
   minEr: number,
   minCr: number,
-  reactionOverride?: FormulaOverride,
+  reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): { damage: number; result: DamageResult | null } {
   const charSheet = StatSheet.fromArtifacts(pieces);
@@ -464,7 +464,7 @@ function buildSeedBuilds2pc(
   erCheckCharId: string,
   minEr: number,
   minCr: number,
-  reactionOverride?: FormulaOverride,
+  reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): ArtifactTuple[] {
   const [h1, h2] = artifactHalfSetIds;

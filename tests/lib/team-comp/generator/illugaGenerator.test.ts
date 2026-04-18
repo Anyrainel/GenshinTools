@@ -78,13 +78,14 @@ describe("illuga generator", () => {
   it("picks em goblet for illuga when linnea's million-ton has forceOnField=true", async () => {
     const tb = new TeamBuild(configs());
 
-    // Single combo line with reaction.forceOnField=true.
+    // Single combo line with forceOnField=true.
     const lines: ComboLine[] = [
       {
         charId: "linnea",
         formulaId: "linnea-million-ton",
         count: 1,
-        reaction: { reaction: "lunarCrystallize", forceOnField: true },
+        reaction: { reaction: "lunarCrystallize" },
+        forceOnField: true,
       },
     ];
     const combo: ComboFormula = {
@@ -104,7 +105,7 @@ describe("illuga generator", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "linnea",
-      formula: { combo },
+      combo,
       calcContext: CTX,
       perChar,
     };

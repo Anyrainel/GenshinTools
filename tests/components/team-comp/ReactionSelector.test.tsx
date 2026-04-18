@@ -7,7 +7,7 @@ import {
 } from "@/lib/team-comp/calc/damageFormula";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import type { FormulaEntry } from "@/lib/team-comp/types";
-import type { FormulaOverride } from "@/lib/team-comp/types";
+import type { ReactionOverride } from "@/lib/team-comp/types";
 import { render, screen } from "../../utils/render";
 
 await preloadGameStats();
@@ -241,7 +241,7 @@ describe("ReactionSelector — visibility", () => {
 
 describe("ReactionSelector — callbacks", () => {
   it("gate change resets partReactions and partHits", () => {
-    let captured: FormulaOverride | null = null;
+    let captured: ReactionOverride | null = null;
     render(
       <ReactionSelector
         formulaEntry={pyro3Part}
@@ -268,7 +268,7 @@ describe("ReactionSelector — callbacks", () => {
   });
 
   it("unchecking a part sets partReactions[idx] = 'none'", () => {
-    let captured: FormulaOverride | null = null;
+    let captured: ReactionOverride | null = null;
     render(
       <ReactionSelector
         formulaEntry={pyro3Part}
@@ -293,7 +293,7 @@ describe("ReactionSelector — callbacks", () => {
   });
 
   it("re-checking a disabled part removes it from partReactions", () => {
-    let captured: FormulaOverride | null = null;
+    let captured: ReactionOverride | null = null;
     render(
       <ReactionSelector
         formulaEntry={pyro3Part}

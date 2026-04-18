@@ -454,7 +454,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       ],
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.lineDamages).toHaveLength(1);
     expect(result.lineDamages[0].total).toBeCloseTo(
@@ -476,7 +476,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       ],
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.totalDamage).toBe(0);
     expect(result.lineDamages).toHaveLength(0);
   });
@@ -499,7 +499,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       ],
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.lineDamages).toHaveLength(2);
   });
@@ -871,7 +871,7 @@ describe("TeamReactionProvider — compiler path", () => {
         { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 1 },
       ],
     };
-    const interpreted = tb.evaluateCombo(combo, sheets, CTX);
+    const interpreted = tb.getComboDamageResult(combo, sheets, CTX);
 
     // Compiled
     const compiled = compileComboTeamDamage(
@@ -933,7 +933,7 @@ describe("TeamReactionProvider — compiler path", () => {
     };
 
     // Interpreted
-    const interpreted = tb.evaluateCombo(combo, sheets, CTX);
+    const interpreted = tb.getComboDamageResult(combo, sheets, CTX);
 
     // Compiled
     const compiled = compileComboTeamDamage(tb, combo, "fischl", sheets, CTX);
@@ -1285,7 +1285,7 @@ describe("evaluateCombo integration with rx- lines", () => {
       lines: rxLines,
     };
 
-    const result = tb.evaluateCombo(combo, sheets, CTX);
+    const result = tb.getComboDamageResult(combo, sheets, CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
   });
 });

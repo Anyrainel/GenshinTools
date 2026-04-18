@@ -14,8 +14,8 @@ import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
-  FormulaOverride,
   OptFailReason,
+  ReactionOverride,
   StatKey,
   TeamOptYield,
   TeamOptimizerOptions,
@@ -134,7 +134,7 @@ interface AStarContext {
   minCr: number;
   erFloor: number;
   crFloor: number;
-  reactionOverride?: FormulaOverride;
+  reactionOverride?: ReactionOverride;
   scoreFn?: (
     sheets: Record<string, StatSheet>,
     onFieldCharId: string

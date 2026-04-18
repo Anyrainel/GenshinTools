@@ -12,7 +12,7 @@ import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
   DisplayPart,
-  FormulaOverride,
+  ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 
@@ -43,14 +43,14 @@ describe("resolvePartReaction", () => {
   });
 
   it("all parts inherit gate by default (Pyro + vaporize)", () => {
-    const override: FormulaOverride = { reaction: "vaporize" };
+    const override: ReactionOverride = { reaction: "vaporize" };
     expect(resolvePartReaction(override, 0, pyroEligible)).toBe("vaporize");
     expect(resolvePartReaction(override, 1, pyroEligible)).toBe("vaporize");
     expect(resolvePartReaction(override, 5, pyroEligible)).toBe("vaporize");
   });
 
   it("per-part override to 'none' disables that part", () => {
-    const override: FormulaOverride = {
+    const override: ReactionOverride = {
       reaction: "vaporize",
       rxnParts: { 1: "none" },
     };
@@ -61,17 +61,17 @@ describe("resolvePartReaction", () => {
 
   it("element-ineligible reaction returns 'none' even with gate set", () => {
     // Geo can't vaporize
-    const override: FormulaOverride = { reaction: "vaporize" };
+    const override: ReactionOverride = { reaction: "vaporize" };
     expect(resolvePartReaction(override, 0, geoEligible)).toBe("none");
   });
 
   it("Electro part inherits aggravate gate", () => {
-    const override: FormulaOverride = { reaction: "aggravate" };
+    const override: ReactionOverride = { reaction: "aggravate" };
     expect(resolvePartReaction(override, 0, electroEligible)).toBe("aggravate");
   });
 
   it("Electro part does not inherit vaporize gate", () => {
-    const override: FormulaOverride = { reaction: "vaporize" };
+    const override: ReactionOverride = { reaction: "vaporize" };
     expect(resolvePartReaction(override, 0, electroEligible)).toBe("none");
   });
 });
@@ -454,7 +454,7 @@ describe("getDamageResult matches getDisplayResult total damage", () => {
 
   const tb = new TeamBuild(configs);
 
-  const overrides: [string, FormulaOverride][] = [
+  const overrides: [string, ReactionOverride][] = [
     ["no reaction", {}],
     ["full aggravate", { reaction: "aggravate" }],
     ["part 0 disabled", { reaction: "aggravate", rxnParts: { 0: "none" } }],
@@ -616,7 +616,7 @@ describe("multi-element character reaction overrides", () => {
   });
 
   it("display total matches getDamageResult total with vaporize", () => {
-    const override: FormulaOverride = { reaction: "vaporize" };
+    const override: ReactionOverride = { reaction: "vaporize" };
     const display = tb.getDisplayResult(
       "chasca",
       "chasca-shining-volley",

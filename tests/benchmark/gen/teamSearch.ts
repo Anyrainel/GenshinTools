@@ -32,8 +32,8 @@ import type {
   CharOptConfig,
   ComboResult,
   DamageResult,
-  FormulaOverride,
   OptFailReason,
+  ReactionOverride,
   StatKey,
   TeamOptPassId,
   TeamOptPassResult,
@@ -92,7 +92,7 @@ export interface PerCharSearchOpts {
   baseSheets: Record<string, StatSheet>;
   calcContext: CalcContext;
   excludedIds: Set<string> | undefined;
-  reactionOverride: FormulaOverride | undefined;
+  reactionOverride: ReactionOverride | undefined;
   scoreFn:
     | ((sheets: Record<string, StatSheet>, onFieldCharId: string) => number)
     | undefined;
@@ -265,7 +265,7 @@ export function evaluateBuild(
   erCheckCharId: string,
   minEr: number,
   minCr: number,
-  reactionOverride?: FormulaOverride,
+  reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): { damage: number; result: DamageResult | null } {
   const charSheet = StatSheet.fromArtifacts(pieces);
@@ -322,7 +322,7 @@ export function evaluateUpperBound(
   baseSheets: Record<string, StatSheet>,
   onFieldCharId: string,
   calcContext: CalcContext,
-  reactionOverride?: FormulaOverride,
+  reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, onFieldCharId: string) => number
 ): number {
   const realArts = realPieces.filter((a): a is ArtifactData => a != null);
@@ -910,10 +910,10 @@ async function* runTeamOpt(
     globalConfig,
     baseSheets,
     perChar,
-    formula,
+    combo,
     perCharDeadlineMs,
   } = opts;
-  const { combo, buffOverrides } = formula;
+  const buffOverrides = combo.buffOverrides;
 
   const carryLine = combo.lines.find((l) => l.charId === carryCharId);
   const formulaId = carryLine?.formulaId ?? "";
@@ -925,7 +925,7 @@ async function* runTeamOpt(
   const comboScoreFn = isComboMode
     ? (sheets: Record<string, StatSheet>, _onFieldCharId: string): number => {
         try {
-          return teamBuild.evaluateCombo(
+          return teamBuild.getComboDamageResult(
             combo,
             sheets,
             calcContext,
@@ -1674,7 +1674,7 @@ async function* runTeamOpt(
 
   let comboRes: ComboResult;
   try {
-    comboRes = effectiveTeamBuild.evaluateCombo(
+    comboRes = effectiveTeamBuild.getComboDamageResult(
       combo,
       finalSheets,
       calcContext,

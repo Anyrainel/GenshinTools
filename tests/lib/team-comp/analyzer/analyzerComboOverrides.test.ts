@@ -19,7 +19,7 @@ import type {
   ComboFormula,
   ComboLine,
   ComboTemplate,
-  FormulaOverride,
+  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
@@ -71,7 +71,7 @@ function makeLine(
   charId: string,
   formulaId: string,
   count: number,
-  reaction?: FormulaOverride
+  reaction?: ReactionOverride
 ): ComboLine {
   return { charId, formulaId, count, reaction };
 }
@@ -381,7 +381,7 @@ describe("deriveComboForAllocation", () => {
 
   it("preserves reaction overrides on the derived lines", () => {
     const teamBuild = mockTeamBuild({});
-    const reaction: FormulaOverride = {
+    const reaction: ReactionOverride = {
       reaction: "vaporize",
       rxnParts: { 0: "none" },
       rxnPartHits: { 1: 3 },

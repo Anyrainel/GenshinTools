@@ -91,7 +91,7 @@ describe("generator — 2+2pc set assignment", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
     };
 
@@ -123,7 +123,7 @@ describe("generator — 2+2pc set assignment", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
     };
 
@@ -155,7 +155,7 @@ describe("generator — 2+2pc set assignment", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
       setKeysByChar: {
         diluc: {
@@ -224,7 +224,7 @@ describe("generator — 2+2pc set assignment", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
     };
 
@@ -249,7 +249,7 @@ describe("generator — 2+2pc set assignment", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
       setKeysByChar: {}, // caller passes empty — should still derive from configs
     };
@@ -320,7 +320,7 @@ describe("generator — 4★ flex slot promotion", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
     };
 
@@ -367,7 +367,7 @@ describe("generator — 4★ flex slot promotion", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
     };
 
@@ -388,7 +388,7 @@ describe("generator — 4★ flex slot promotion", () => {
     const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
-      formula: { combo: singleFormulaCombo("diluc", formulaId) },
+      combo: singleFormulaCombo("diluc", formulaId),
       calcContext: CTX,
     };
 

@@ -1733,7 +1733,10 @@ describe("forceOnField override", () => {
       "xiangling-pyronado-tick",
       emptySheets,
       ctx,
-      { forceOnField: true }
+      undefined,
+      undefined,
+      undefined,
+      true
     );
 
     const parts = display.partsByFormula[formulaKey] ?? [];
@@ -1782,7 +1785,10 @@ describe("forceOnField override", () => {
       "xiangling-pyronado-tick",
       emptySheets,
       ctx,
-      { forceOnField: true }
+      undefined,
+      undefined,
+      undefined,
+      true
     );
 
     // Xiangling P2 (teamOnField) gives +10% ATK to on-field characters.
@@ -1883,7 +1889,10 @@ describe("forceOnField override", () => {
       "xiangling-pyronado-tick",
       sheets,
       ctx,
-      { forceOnField: true }
+      undefined,
+      undefined,
+      undefined,
+      true
     );
 
     // Alias so the closure above type-checks against the same shape in both calls.
@@ -2018,7 +2027,10 @@ describe("forceOnField override", () => {
       "linnea-million-ton",
       sheets,
       ctx,
-      { forceOnField: true }
+      undefined,
+      undefined,
+      undefined,
+      true
     );
 
     const isActiveOnPart0 = (buff: (typeof displayOn.buffs)[number]) =>
@@ -2108,7 +2120,7 @@ describe("forceOnField override", () => {
       columbina: "lunarCrystallize",
       linnea: "continuous",
     });
-    const reactionOverride = { forceOnField: true };
+    const forceOnField = true;
 
     // Path 1: display (getDisplayResult — the cold path the damage card uses)
     const displayResult = tb.getDisplayResult(
@@ -2116,7 +2128,10 @@ describe("forceOnField override", () => {
       "linnea-million-ton",
       sheets,
       ctx,
-      reactionOverride
+      undefined,
+      undefined,
+      undefined,
+      forceOnField
     );
     const displayDamage = displayResult.totalDamage;
 
@@ -2129,14 +2144,25 @@ describe("forceOnField override", () => {
       "linnea-million-ton",
       { ...sheets, linnea: onFieldStats },
       ctx,
-      reactionOverride
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      forceOnField
     );
     const calcDamage = calcResult.totalDamage;
 
     // Path 3: compile (compileComboTeamDamage — the optimizer's B&B hot path)
     const compiled = compileComboTeamDamage(
       tb,
-      singleFormulaCombo("linnea", "linnea-million-ton", reactionOverride),
+      singleFormulaCombo(
+        "linnea",
+        "linnea-million-ton",
+        undefined,
+        forceOnField
+      ),
       "linnea",
       sheets,
       ctx
@@ -2225,7 +2251,10 @@ describe("forceOnField override", () => {
       "linnea-million-ton",
       sheets,
       ctx,
-      { forceOnField: true }
+      undefined,
+      undefined,
+      undefined,
+      true
     );
 
     const calcOff = tb.getDamageResult(
@@ -2247,7 +2276,13 @@ describe("forceOnField override", () => {
         ? { ...sheets, linnea: drOn.statSheets.linnea.onField }
         : sheets,
       ctx,
-      { forceOnField: true }
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true
     );
 
     // linnea-million-ton is on-field by default, so forceOnField has no effect.
@@ -2316,9 +2351,12 @@ describe("forceOnField override", () => {
     );
     const compiledOn = compileComboTeamDamage(
       tb,
-      singleFormulaCombo("linnea", "linnea-million-ton-offfield", {
-        forceOnField: true,
-      }),
+      singleFormulaCombo(
+        "linnea",
+        "linnea-million-ton-offfield",
+        undefined,
+        true
+      ),
       "linnea",
       sheets,
       ctx
@@ -2396,7 +2434,7 @@ describe("forceOnField override", () => {
           charId: "linnea",
           formulaId: "linnea-million-ton",
           count: 1,
-          reaction: { forceOnField: true },
+          forceOnField: true,
         },
       ],
     };
@@ -2435,7 +2473,10 @@ describe("forceOnField override", () => {
       "xiangling-pyronado-tick",
       emptySheets,
       ctx,
-      { forceOnField: true }
+      undefined,
+      undefined,
+      undefined,
+      true
     );
 
     // Even with forceOnField, the display should still report both stat sheets

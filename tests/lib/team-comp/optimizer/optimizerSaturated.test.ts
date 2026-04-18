@@ -166,7 +166,7 @@ describe("Saturated character handling", () => {
     const gen = runTeamOptimization({
       teamBuild,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+      combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: {
         enemyLevel: 90,
@@ -281,7 +281,7 @@ describe("Saturated character handling", () => {
       const gen = runTeamOptimization({
         teamBuild,
         carryCharId: "hu_tao",
-        formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
+        combo: singleFormulaCombo("hu_tao", formulaId),
         inventory: erSupportInventory,
         calcContext: {
           enemyLevel: 90,
@@ -413,7 +413,7 @@ describe("Saturated character handling", () => {
     const gen = runTeamOptimization({
       teamBuild: gorouTeam,
       carryCharId: "hu_tao",
-      formula: { combo: singleFormulaCombo("hu_tao", gorouFormulaId) },
+      combo: singleFormulaCombo("hu_tao", gorouFormulaId),
       inventory: gorouInventory,
       calcContext: {
         enemyLevel: 90,

@@ -523,7 +523,7 @@ export async function runOptimizerOnTeam(
     const opts: TeamOptimizerOptions = {
       teamBuild,
       carryCharId,
-      formula: { combo },
+      combo,
       inventory,
       calcContext,
       globalConfig: DEFAULT_GLOBAL_CONFIG,
@@ -638,7 +638,7 @@ export async function runOptimizerOnTeam(
     for (const [formulaId, label] of formulaEntries) {
       try {
         const singleCombo = singleFormulaCombo(carryCharId, formulaId);
-        const comboRes = optTeamBuild.evaluateCombo(
+        const comboRes = optTeamBuild.getComboDamageResult(
           singleCombo,
           artifactStats,
           calcContext
