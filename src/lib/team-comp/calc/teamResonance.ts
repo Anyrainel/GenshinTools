@@ -1,4 +1,6 @@
 import type { Element } from "@/data/types";
+import type { StatEntry } from "../types";
+import type { IStatProvider } from "./implModel";
 import { StatBuff } from "./statBuff";
 import type { TeamMeta } from "./teamMeta";
 
@@ -9,7 +11,8 @@ import type { TeamMeta } from "./teamMeta";
  * or when all 4 characters have unique elements.
  */
 
-export class TeamResonance {
+export class TeamResonance implements IStatProvider {
+  readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[];
 
   constructor(teamMeta: TeamMeta) {

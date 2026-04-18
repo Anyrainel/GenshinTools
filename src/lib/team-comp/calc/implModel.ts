@@ -12,10 +12,10 @@ import type {
   ComboTemplate,
   ComboTemplateEntry,
   DamageResult,
-  FormulaOverride,
   I18nLabel,
   OptionMap,
   PartialBuffInfo,
+  ReactionOverride,
   ReactionType,
   StatEntry,
   TalentLevels,
@@ -35,10 +35,9 @@ import {
 import type { TeamMeta } from "./teamMeta";
 
 /** Any entity that contributes stats and buffs to a build */
-abstract class IStatProvider {
+export abstract class IStatProvider {
   abstract readonly stats: StatEntry[];
   abstract readonly buffs: StatBuff[];
-  abstract get src(): BuffSource;
 }
 
 /** An entity that can produce damage formulas */
@@ -50,7 +49,7 @@ abstract class IDamageProvider {
     selfStats: StatSheet,
     teamStats: StatSheet[],
     ctx: CalcContext,
-    reactionOverride?: FormulaOverride,
+    reactionOverride?: ReactionOverride,
     offFieldSelfStats?: StatSheet,
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
@@ -117,10 +116,6 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   protected talentLevel(ability: "auto" | "skill" | "burst"): number {
     const map = { auto: "A", skill: "E", burst: "Q" } as const;
     return this._effectiveLevels[map[ability]];
-  }
-
-  get src(): BuffSource {
-    return { type: "character", id: this.charId };
   }
 
   abstract readonly buffs: StatBuff[];
@@ -257,7 +252,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     selfStats: StatSheet,
     teamStats: StatSheet[],
     ctx: CalcContext,
-    reactionOverride?: FormulaOverride,
+    reactionOverride?: ReactionOverride,
     offFieldSelfStats?: StatSheet,
     partialBuffs?: PartialBuffInfo[],
     statsVariants?: Map<string, StatSheet>,
@@ -522,10 +517,6 @@ export abstract class WeaponBase implements IStatProvider {
   }
 
   abstract readonly buffs: StatBuff[];
-
-  get src(): BuffSource {
-    return { type: "weapon", id: this.weaponId };
-  }
 }
 
 /** Base class for 4-piece artifact set extensions (4pc bonus only) */
@@ -550,10 +541,6 @@ export abstract class ArtifactSetBase implements IStatProvider {
    * When non-null, CharBuild will automatically include the matching half-set.
    */
   readonly halfSetId: string | null = null;
-
-  get src(): BuffSource {
-    return { type: "artifactSet", id: this.artifactSetId };
-  }
 }
 
 /** Base class for 2-piece artifact set extensions */
@@ -566,8 +553,4 @@ export abstract class ArtifactHalfSetBase implements IStatProvider {
 
   abstract readonly stats: StatEntry[];
   abstract readonly buffs: StatBuff[];
-
-  get src(): BuffSource {
-    return { type: "artifactHalfSet", id: this.artifactHalfSetId };
-  }
 }
