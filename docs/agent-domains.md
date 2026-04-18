@@ -25,9 +25,9 @@ Also read `docs/data-mutation-map.md` before modifying any store, data import pa
 
 `src/lib/team-comp/`:
 - **Character implementations** (`impl/`): 70+ characters with per-character formulas, buffs, and `defaultRotation` data.
-- **Damage formulas** (`damageFormulas.ts`): 6 formula types (Direct, Amplify, Catalyze, Transform, Lunar, LunarDirect).
-- **Buff system** (`damageBuffs.ts`): StatBuff, ScalingBuff, CrossScalingBuff with source tracking and buff validation.
-- **Stat resolution** (`damageModels.ts`): StatSheet (immutable two-level map), zone-based damage with DamageTagFilter scoping.
+- **Damage formulas** (`calc/damageFormula.ts`): 6 formula types (Direct, Amplify, Catalyze, Transform, Lunar, LunarDirect).
+- **Buff system** (`calc/statBuff.ts`): StatBuff, ScalingBuff, CrossScalingBuff with source tracking and buff validation.
+- **Stat resolution** (`calc/statSheet.ts`): StatSheet (immutable two-level map), zone-based damage with DamageTagFilter scoping.
 - **Optimizer V2** (`optimizer/`): Branch-and-bound per-character → conflict-aware team DFS. Web Worker parallelization.
 - **Combo/Rotation** (`types.ts`): Multi-character rotation evaluation with per-line reaction overrides.
 

@@ -24,17 +24,17 @@
 
 ---
 
-## C. damageCalc.ts — Monolithic god classes
+## C. calc/ — Monolithic god classes
 
-10. **`CharBuild` is ~1000+ lines doing too much.** It constructs stat sheets, resolves formulas, applies buffs, evaluates damage, AND produces display results. It's both a builder and an evaluator. The stat construction path (for optimizer) and display path (for UI) are interleaved.
+10. **`CharBuild` (`calc/charBuild.ts`) is ~1000+ lines doing too much.** It constructs stat sheets, resolves formulas, applies buffs, evaluates damage, AND produces display results. It's both a builder and an evaluator. The stat construction path (for optimizer) and display path (for UI) are interleaved.
 
-11. **`TeamBuild` orchestrates everything with no sub-layers.** It owns `CharBuild[]`, handles resonance, manages combo evaluation, produces display results, AND is the entry point for the optimizer. There's no intermediate "team stats" vs "team damage" vs "team display" separation.
+11. **`TeamBuild` (`calc/teamBuild.ts`) orchestrates everything with no sub-layers.** It owns `CharBuild[]`, handles resonance, manages combo evaluation, produces display results, AND is the entry point for the optimizer. There's no intermediate "team stats" vs "team damage" vs "team display" separation.
 
-12. **Two damage evaluation paths with no shared interface.** `TeamBuild.evaluateCombo()` uses object-based `DamageFormula.evaluate()` (good for display). `formulaCompiler.ts` compiles to `Expr` trees over `Float64Array` (good for optimizer). Both compute the same thing but share almost no code. When a bug is fixed in one path, the other path may still be wrong.
+12. **Two damage evaluation paths with no shared interface.** `TeamBuild.evaluateCombo()` uses object-based `DamageFormula.evaluate()` (good for display). `calc/formulaCompiler.ts` compiles to `Expr` trees over `Float64Array` (good for optimizer). Both compute the same thing but share almost no code. When a bug is fixed in one path, the other path may still be wrong.
 
 ---
 
-## D. damageModels.ts — Leaky abstractions
+## D. calc/statSheet.ts & calc/implModel.ts — Leaky abstractions
 
 13. **`StatSheet` filter key serialization is part of the public API.** Filter keys like `"a:normal,charge|e:Pyro,Hydro|f:on"` are string-encoded `DamageTagFilter` values. Callers must understand this encoding to use `appendFieldState()`, `isFieldStateOnlyKey()`, etc. The serialization format leaks into every file that touches stats.
 
@@ -72,7 +72,7 @@
 
 ---
 
-## H. stackAllocation.ts — Hidden complexity
+## H. calc/stackAllocation.ts — Hidden complexity
 
 24. **Greedy stack allocation is tightly coupled to formula evaluation.** `computeDefaultActivation()` and `computeComboDefaultActivation()` directly call into damage evaluation to compute marginal gains. There's no pluggable gain function — the allocation algorithm is welded to the specific damage calc implementation.
 
@@ -100,8 +100,8 @@
 
 32. **No single source of truth for reaction metadata.** `REACTION_ELEMENT_REQUIREMENTS` in `constants.ts`, `MULTI_CONTRIBUTOR_REACTIONS` in `teamReactions.ts`, `ELEMENT_ELIGIBLE_REACTIONS` in `constants.ts`, `LUNAR_SUPERSEDES` in `constants.ts`, reaction aura/trigger pairs in `constants.ts`. Five separate constants across two files describing properties of the same entities.
 
-33. **Field state / on-field resolution scattered across files.** `isPartOffField()` in `reactionResolve.ts`, `isFieldDependentReceiver()` and `fieldReq()` in `types.ts`, `isForcedOnField()` in `reactionResolve.ts`, `offFieldStatus()` in `damageCalc.ts`, `appendFieldState()` in `damageModels.ts`. Six functions in four files all dealing with the same concept.
+33. **Field state / on-field resolution scattered across files.** `isPartOffField()` in `reactionResolve.ts`, `isFieldDependentReceiver()` and `fieldReq()` in `types.ts`, `isForcedOnField()` in `reactionResolve.ts`, `offFieldStatus()` as a `TeamBuild` instance method in `calc/teamBuild.ts`, `appendFieldState()` in `calc/fieldState.ts`. Six functions in four files all dealing with the same concept.
 
-34. **Buff applicability checked at three levels with no shared contract.** `filterMatchesTag()` in `types.ts` (tag-level), `StatBuff.match()` on subclasses (instance-level), `isBuffApplicable()` in `damageCalc.ts` (build-level). A new buff type must satisfy all three levels correctly, but there's no single validation function or test harness that checks all levels together.
+34. **Buff applicability checked at three levels with no shared contract.** `filterMatchesTag()` in `types.ts` (tag-level), `StatBuff.match()` on subclasses (instance-level), `isBuffApplicable()` in `calc/charBuild.ts` (build-level). A new buff type must satisfy all three levels correctly, but there's no single validation function or test harness that checks all levels together.
 
-35. **Display result construction is tangled with damage evaluation.** `getComboDisplayResult()` in `damageCalc.ts` produces `DisplayResult` by re-evaluating damage with display metadata collection. The display path can't be tested independently from the damage path, and display-only changes can break damage numbers.
+35. **Display result construction is tangled with damage evaluation.** `getComboDisplayResult()` in `calc/teamBuild.ts` produces `DisplayResult` by re-evaluating damage with display metadata collection. The display path can't be tested independently from the damage path, and display-only changes can break damage numbers.

@@ -191,7 +191,7 @@ Focus on artifact ranking and filtering:
 ## Important Rules
 
 1. **NEVER modify benchmark infrastructure** (`tests/benchmark/`)
-2. **NEVER modify damage calculation** (`damageCalc.ts`, `damageModels.ts`, `impl/`)
+2. **NEVER modify damage calculation** (`calc/damageCalc.ts`, `calc/charBuild.ts`, `calc/teamBuild.ts`, `calc/statSheet.ts`, `calc/implModel.ts`, `impl/`)
 3. **NEVER skip regressions** — a 0.5% regression on any problem means DISCARD
 4. **ALWAYS type-check before benchmarking**
 5. **ALWAYS log every experiment**, even crashes

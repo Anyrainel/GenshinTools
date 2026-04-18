@@ -1104,6 +1104,30 @@ export class TeamBuild {
     return this.reactionProvider.getFormulaIds();
   }
 
+  /** Collect unique DamageTags per character from all their formula entries. */
+  private collectCharFormulaTags(): Record<string, DamageTag[]> {
+    const charFormulaTags: Record<string, DamageTag[]> = {};
+    for (const [cid, cb] of Object.entries(this.charBuilds)) {
+      const tags: DamageTag[] = [];
+      const seen = new Set<string>();
+      for (const fid of Object.keys(cb.getFormulaIds())) {
+        const fEntry =
+          cb.charBase.getFormulaEntry(fid) ?? this.formulaIndex.get(fid);
+        if (!fEntry) continue;
+        for (const part of fEntry.parts) {
+          const t = part.formula.tag;
+          const key = `${t.element}|${t.ability}|${t.reaction}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            tags.push(t);
+          }
+        }
+      }
+      charFormulaTags[cid] = tags;
+    }
+    return charFormulaTags;
+  }
+
   /** Default combo counts for a character (from CharacterBase.combo). */
   getCombo(charId: string): Record<string, number> {
     return this.charBuilds[charId]?.charBase.combo ?? {};
@@ -1328,30 +1352,7 @@ export class TeamBuild {
       return statsCache.get(onFieldCharId)!;
     };
 
-    // ── Collect all formula tags per character ──
-    const charFormulaTags: Record<string, DamageTag[]> = {};
-    for (const cid of allCharIds) {
-      const tags: DamageTag[] = [];
-      const seen = new Set<string>();
-      const formulaIds = this.getFormulaIds()[cid];
-      if (formulaIds) {
-        for (const fid of Object.keys(formulaIds)) {
-          const fEntry =
-            this.charBuilds[cid]?.charBase.getFormulaEntry(fid) ??
-            this.formulaIndex.get(fid);
-          if (!fEntry) continue;
-          for (const part of fEntry.parts) {
-            const t = part.formula.tag;
-            const key = `${t.element}|${t.ability}|${t.reaction}`;
-            if (!seen.has(key)) {
-              seen.add(key);
-              tags.push(t);
-            }
-          }
-        }
-      }
-      charFormulaTags[cid] = tags;
-    }
+    const charFormulaTags = this.collectCharFormulaTags();
 
     // ── Raw StatSheets with on/off field contexts ──
     const statSheets: Record<
@@ -1489,47 +1490,28 @@ export class TeamBuild {
     const levelUpGains: Record<
       string,
       { gain: number; from: number; to: number }[]
-    > = {};
-    if (fullBuffBaseDamage > 0) {
-      const computeComboGain = (charId: string, targetLevel: number) => {
-        const tweakedConfigs = this.configs.map((c) =>
-          c.charId === charId ? { ...c, charLevel: targetLevel } : c
-        );
-        const tweakedTeam = new TeamBuild(
-          tweakedConfigs,
-          this.combatOpts,
-          this.enemyAura,
-          this.extraBuffs
-        );
-        const newResult = tweakedTeam.evaluateCombo(
-          { ...combo, lines: activeLines },
-          artifactStats,
-          ctx
-        );
-        return (
-          (newResult.totalDamage - fullBuffBaseDamage) / fullBuffBaseDamage
-        );
-      };
-
-      for (const config of this.configs) {
-        const nextLevel = getNextLevelTier(config.charLevel);
-        if (!nextLevel) continue;
-        const entries: { gain: number; from: number; to: number }[] = [];
-        const gain = computeComboGain(config.charId, nextLevel);
-        if (gain > 0) {
-          entries.push({ gain, from: config.charLevel, to: nextLevel });
-        }
-        if (config.charLevel === 90 && nextLevel < 100) {
-          const fullGain = computeComboGain(config.charId, 100);
-          if (fullGain > 0) {
-            entries.push({ gain: fullGain, from: config.charLevel, to: 100 });
-          }
-        }
-        if (entries.length > 0) {
-          levelUpGains[config.charId] = entries;
-        }
-      }
-    }
+    > =
+      fullBuffBaseDamage > 0
+        ? this.iterateLevelUpGains((charId, targetLevel) => {
+            const tweakedConfigs = this.configs.map((c) =>
+              c.charId === charId ? { ...c, charLevel: targetLevel } : c
+            );
+            const tweakedTeam = new TeamBuild(
+              tweakedConfigs,
+              this.combatOpts,
+              this.enemyAura,
+              this.extraBuffs
+            );
+            const newResult = tweakedTeam.evaluateCombo(
+              { ...combo, lines: activeLines },
+              artifactStats,
+              ctx
+            );
+            return (
+              (newResult.totalDamage - fullBuffBaseDamage) / fullBuffBaseDamage
+            );
+          })
+        : {};
 
     // ── Per-formula display parts ──
     const partsByFormula: Record<string, DisplayPart[]> = {};
@@ -1879,6 +1861,41 @@ export class TeamBuild {
   }
 
   /**
+   * Build off-field preStats (and optionally midStats) for ScalingBuff range display.
+   * Both resolveFormulaBuffs and getDisplayResult need these to show min~max values
+   * when a ScalingBuff provider has different stats on-field vs off-field.
+   */
+  private buildOffFieldContext(
+    charId: string,
+    artifactStats: Record<string, StatSheet>,
+    hasAnyFinalBuffs: boolean
+  ): {
+    offFieldPreStats: Record<string, StatSheet>;
+    offFieldMidStats: Record<string, StatSheet> | undefined;
+  } {
+    const offOther = defaultOnFieldCharId(charId, this.configs);
+    const offFieldDep = this.getFieldDependentBuffs(offOther);
+    const offFieldPreStats = this.buildPreStatsFromBuilds(
+      artifactStats,
+      offFieldDep
+    );
+    const offTeamArr = Object.values(offFieldPreStats);
+    const offDynamic = this.collectDynamicBuffs(
+      offFieldPreStats,
+      offTeamArr,
+      offOther
+    );
+    const offFieldMidStats = hasAnyFinalBuffs
+      ? this.buildTeamPostStats(
+          offFieldPreStats,
+          offDynamic.filter((b) => !isDeferredFinalBuff(b.buff)),
+          offOther
+        )
+      : undefined;
+    return { offFieldPreStats, offFieldMidStats };
+  }
+
+  /**
    * Lightweight buff resolution for a character's formula.
    * Returns ResolvedBuff[] without computing stack allocation, marginal gains,
    * level-up gains, or idle stats. Used by combo display and DamageCard buff
@@ -1927,29 +1944,11 @@ export class TeamBuild {
     // Off-field context for ScalingBuff range display
     const formulaHasOffField =
       entry?.parts.some((p) => isPartOffField(p, reactionOverride)) ?? false;
-    let offFieldPreStats: Record<string, StatSheet> | undefined;
-    let offFieldMidStats: Record<string, StatSheet> | undefined;
-    if (formulaHasOffField) {
-      const offOther = defaultOnFieldCharId(charId, this.configs);
-      const offFieldDep = this.getFieldDependentBuffs(offOther);
-      offFieldPreStats = this.buildPreStatsFromBuilds(
-        artifactStats,
-        offFieldDep
-      );
-      const offTeamArr = Object.values(offFieldPreStats);
-      const offDynamic = this.collectDynamicBuffs(
-        offFieldPreStats,
-        offTeamArr,
-        offOther
-      );
-      if (hasAnyFinalBuffs) {
-        offFieldMidStats = this.buildTeamPostStats(
-          offFieldPreStats,
-          offDynamic.filter((b) => !isDeferredFinalBuff(b.buff)),
-          offOther
-        );
-      }
-    }
+    const offFieldCtx = formulaHasOffField
+      ? this.buildOffFieldContext(charId, artifactStats, hasAnyFinalBuffs)
+      : undefined;
+    const offFieldPreStats = offFieldCtx?.offFieldPreStats;
+    const offFieldMidStats = offFieldCtx?.offFieldMidStats;
 
     // Compute display parts purely for readKeys (needed by resolveBuffs)
     const postStats = this.buildTeamPostStats(
@@ -2060,29 +2059,11 @@ export class TeamBuild {
     // When a ScalingBuff provider has different stats on-field vs off-field
     // (e.g., Shenhe's ATK differs with/without Bennett's teamOnField buff),
     // the buff value varies per part → show min~max in UI.
-    let offFieldPreStats: Record<string, StatSheet> | undefined;
-    let offFieldMidStats: Record<string, StatSheet> | undefined;
-    if (formulaHasOffField) {
-      const offOther = defaultOnFieldCharId(charId, this.configs);
-      const offFieldDep = this.getFieldDependentBuffs(offOther);
-      offFieldPreStats = this.buildPreStatsFromBuilds(
-        artifactStats,
-        offFieldDep
-      );
-      const offTeamArr = Object.values(offFieldPreStats);
-      const offDynamic = this.collectDynamicBuffs(
-        offFieldPreStats,
-        offTeamArr,
-        offOther
-      );
-      if (hasAnyFinalBuffs) {
-        offFieldMidStats = this.buildTeamPostStats(
-          offFieldPreStats,
-          offDynamic.filter((b) => !isDeferredFinalBuff(b.buff)),
-          offOther
-        );
-      }
-    }
+    const offFieldCtx = formulaHasOffField
+      ? this.buildOffFieldContext(charId, artifactStats, hasAnyFinalBuffs)
+      : undefined;
+    const offFieldPreStats = offFieldCtx?.offFieldPreStats;
+    const offFieldMidStats = offFieldCtx?.offFieldMidStats;
 
     let { parts, totalDamage } = build.getDisplayParts(
       formulaId,
@@ -2295,25 +2276,7 @@ export class TeamBuild {
       offFieldMidStats
     );
 
-    // ── Collect all formula tags per character ──
-    const charFormulaTags: Record<string, DamageTag[]> = {};
-    for (const [cid, cb] of Object.entries(this.charBuilds)) {
-      const tags: DamageTag[] = [];
-      const seen = new Set<string>();
-      for (const fid of Object.keys(cb.getFormulaIds())) {
-        const fEntry = cb.charBase.getFormulaEntry(fid);
-        if (!fEntry) continue;
-        for (const part of fEntry.parts) {
-          const t = part.formula.tag;
-          const key = `${t.element}|${t.ability}|${t.reaction}`;
-          if (!seen.has(key)) {
-            seen.add(key);
-            tags.push(t);
-          }
-        }
-      }
-      charFormulaTags[cid] = tags;
-    }
+    const charFormulaTags = this.collectCharFormulaTags();
 
     // ── Raw StatSheets with on/off field contexts ──
     const seedCache = new Map<string, Record<string, StatSheet>>();
@@ -2922,7 +2885,7 @@ export class TeamBuild {
   ): Record<string, { gain: number; from: number; to: number }[]> {
     if (baseDamage === 0) return {};
 
-    const computeGain = (charId: string, targetLevel: number) => {
+    return this.iterateLevelUpGains((charId, targetLevel) => {
       const tweakedConfigs = this.configs.map((c) =>
         c.charId === charId ? { ...c, charLevel: targetLevel } : c
       );
@@ -2954,8 +2917,17 @@ export class TeamBuild {
         offFieldTeamStats
       );
       return (tweakedResult.totalDamage - baseDamage) / baseDamage;
-    };
+    });
+  }
 
+  /**
+   * Shared iteration for level-up gain computation. For each team member,
+   * checks the next level tier and optionally the 90→100 jump, calling
+   * the provided gain function and collecting positive-gain entries.
+   */
+  private iterateLevelUpGains(
+    computeGain: (charId: string, targetLevel: number) => number
+  ): Record<string, { gain: number; from: number; to: number }[]> {
     const gains: Record<string, { gain: number; from: number; to: number }[]> =
       {};
     for (const config of this.configs) {
@@ -2967,7 +2939,6 @@ export class TeamBuild {
       if (gain > 0) {
         entries.push({ gain, from: config.charLevel, to: nextLevel });
       }
-      // For level 90, also show the full 90→100 gain
       if (config.charLevel === 90 && nextLevel < 100) {
         const fullGain = computeGain(config.charId, 100);
         if (fullGain > 0) {
@@ -2978,7 +2949,6 @@ export class TeamBuild {
         gains[config.charId] = entries;
       }
     }
-
     return gains;
   }
 

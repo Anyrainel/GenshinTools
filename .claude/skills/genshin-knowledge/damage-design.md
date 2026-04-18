@@ -7,15 +7,24 @@ Engine for computing Genshin Impact character damage with team buffs, reactions,
 | File | Purpose |
 |---|---|
 | `types.ts` | All shared types (StatKey, BuffTarget, DamageTag, ComboDescriptor, CalcContext, etc.) |
-| `damageModels.ts` | Base classes (CharacterBase, WeaponBase, ArtifactSetBase, ArtifactHalfSetBase), TeamMeta, StatSheet, registration decorators |
-| `damageFormulas.ts` | Formula classes (Direct, Amplify, Catalyze, Transform, Lunar, LunarDirect), factory methods |
-| `damageBuffs.ts` | Buff classes (StatBuff, ScalingBuff, CrossScalingBuff), dedup logic |
-| `damageCalc.ts` | Orchestration (TeamBuild, CharBuild, TeamResonance, evaluateCombo) |
 | `constants.ts` | Reaction tables, element sets, lunar superseding map |
 | `helpers.ts` | Convenience constructors (r, wbs, cbs, allElementalDmg, getReactionAuraElements) |
-| `stackAllocation.ts` | Greedy allocator for maxStacks-limited buffs |
-| `formulaCompiler.ts` | Expression compiler for optimizer (AST-based) |
-| `extraBuffTypes.ts` | User-added team buffs from UI |
+| `calc/implModel.ts` | Base classes (CharacterBase, WeaponBase, ArtifactSetBase, ArtifactHalfSetBase) |
+| `calc/statSheet.ts` | StatSheet (immutable stat aggregation with tagged storage) |
+| `calc/teamMeta.ts` | TeamMeta (team composition metadata and query helpers) |
+| `calc/registry.ts` | Registration decorators (@RegisterCharacter, @RegisterWeapon, etc.) |
+| `calc/fieldState.ts` | Field-state helpers (on-field/off-field resolution) |
+| `calc/damageFormula.ts` | Formula classes (Direct, Amplify, Catalyze, Transform, Lunar, LunarDirect), factory methods |
+| `calc/statBuff.ts` | Buff classes (StatBuff, ScalingBuff, CrossScalingBuff), dedup logic |
+| `calc/damageCalc.ts` | Dynamic buff evaluation helpers (two-pass evaluation, scaling annotation) |
+| `calc/charBuild.ts` | CharBuild (per-character stat resolution pipeline) |
+| `calc/teamBuild.ts` | TeamBuild (team orchestration, combo evaluation, display results) |
+| `calc/combo.ts` | Combo evaluation (evaluateCombo, evaluateComboLine) |
+| `calc/stackAllocation.ts` | Greedy allocator for maxStacks-limited buffs |
+| `calc/formulaCompiler.ts` | Expression compiler for optimizer (AST-based) |
+| `calc/formulaUtil.ts` | Formula utility helpers |
+| `calc/teamResonance.ts` | Team elemental resonance buffs |
+| `calc/teamReaction.ts` | Team reaction formula generation |
 | `impl/` | All character, weapon, artifact implementations |
 
 ---
@@ -101,7 +110,7 @@ Helpers: `cbs(self, origin, triggers?)` for characters, `wbs(self, triggers?, no
 
 ## 5. Buff Classes
 
-All in `damageBuffs.ts`.
+All in `calc/statBuff.ts`.
 
 | Class | Constructor extras (beyond source, target, staticBuffs) | Pattern |
 |---|---|---|
@@ -119,7 +128,7 @@ All in `damageBuffs.ts`.
 
 ## 6. Formula Classes
 
-All in `damageFormulas.ts`. Base class: `DamageFormula(talentMultiplier, tag, scalingKey?, extraTerm?)`.
+All in `calc/damageFormula.ts`. Base class: `DamageFormula(talentMultiplier, tag, scalingKey?, extraTerm?)`.
 
 | Class | Reaction types | Extends |
 |---|---|---|
@@ -179,7 +188,7 @@ Decorators: `@RegisterCharacter("id")`, `@RegisterWeapon("id")`, `@RegisterArtif
 
 ### OptionMap
 
-Declarative option schema with ordered choices. First choice = preferred default. `when?: (teamMeta) => boolean` gates choices behind team conditions. `resolveOption()` falls back to next enabled choice. See `damageModels.ts` for full types.
+Declarative option schema with ordered choices. First choice = preferred default. `when?: (teamMeta) => boolean` gates choices behind team conditions. `resolveOption()` falls back to next enabled choice. See `calc/implModel.ts` for full types.
 
 ### this.param()
 
@@ -233,7 +242,7 @@ ComboLine { charId, formulaId, count, reaction?: ReactionOverride }
 ReactionOverride { reaction?, partReactions?: Record<number, ReactionType>, partHits?: Record<number, number> }
 ```
 
-`evaluateCombo()` in damageCalc.ts evaluates a full rotation, caching team stats per on-field character.
+`evaluateCombo()` in `calc/combo.ts` evaluates a full rotation, caching team stats per on-field character.
 
 ---
 

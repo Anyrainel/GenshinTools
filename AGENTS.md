@@ -26,13 +26,6 @@ Hosted on **Cloudflare Pages** (`npm run build` → `dist/`).
 - `npm run test` / `test:watch` / `test:coverage` — Vitest unit tests
 - `npm run test:e2e` / `test:e2e:ui` — Playwright e2e tests
 
-### Safe Variants (use these instead of piping)
-
-- `npm run type-check:head` / `lint:head` / `test:head` — First 20 lines. Pass `-- N` to change.
-- `npm run type-check:tail` / `lint:tail` / `test:tail` — Last 20 lines.
-- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 15 + last 15.
-- `npm run type-check:filter -- "Error"` / `lint:filter` / `test:filter` — Grep output.
-
 ---
 
 ## Styling Rules
@@ -165,7 +158,6 @@ Multiple agents may be working on this repo concurrently, sharing the same worki
 
 ## Terminal & File Safety
 
-- Avoid `|` pipe and `2>&1` / `>` redirection (triggers safety review). Use the safe command variants above.
 - Never inline Python/JS code in terminal commands. Write a temporary file under `temp/`, run it, then delete it.
 - **Never run destructive scripts directly on source files.** Write output to `.new` or `.tmp` first, diff/inspect, then replace.
 - Before bulk file transformations, back up the target file.

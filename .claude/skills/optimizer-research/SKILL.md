@@ -102,8 +102,11 @@ The agent MAY modify:
 
 The agent MUST NOT modify:
 - `tests/benchmark/` — benchmark infrastructure is frozen
-- `src/lib/team-comp/damageCalc.ts` — damage calculation engine
-- `src/lib/team-comp/damageModels.ts` — stat/damage model definitions
+- `src/lib/team-comp/calc/damageCalc.ts` — damage calculation helpers
+- `src/lib/team-comp/calc/charBuild.ts` — per-character build pipeline
+- `src/lib/team-comp/calc/teamBuild.ts` — team orchestration engine
+- `src/lib/team-comp/calc/statSheet.ts` — stat sheet definitions
+- `src/lib/team-comp/calc/implModel.ts` — base model classes
 - `src/lib/team-comp/impl/` — character implementations
 - Any UI code
 
