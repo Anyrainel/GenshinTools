@@ -3,7 +3,6 @@ import { artifactIdToHalfSetId } from "@/data/constants";
 import type {
   AccountData,
   ArtifactData,
-  CharacterData,
   Slot,
   TierAssignment,
 } from "@/data/types";
@@ -17,6 +16,7 @@ import type {
   ComboLine,
   DisplayResult,
   PartialBuffInfo,
+  TalentLevels,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import type { Team, WeaponChoiceCharConfig } from "@/stores/useTeamStore";
@@ -103,6 +103,68 @@ export function setsMatch(
   return true;
 }
 
+interface CharBaseConfig {
+  charLevel: number;
+  constellation: number;
+  acctTalent: TalentLevels | undefined;
+}
+
+/**
+ * Resolve a character's level, constellation, and raw talent data from
+ * account data + team overrides.  Shared by buildTeamConfigs and
+ * buildWeaponChoiceCharConfigs.
+ */
+function resolveCharBaseConfig(
+  charId: string,
+  team: Team,
+  accountData: AccountData | null
+): CharBaseConfig {
+  const acctChar = accountData?.characters.find((c) => c.key === charId);
+  const defaultLevel = acctChar
+    ? Number(getCharacterLevelTier(acctChar.level))
+    : 90;
+  const defaultConst = acctChar ? acctChar.constellation : 0;
+
+  const charLevel =
+    team.opts?.[`${charId}.overrideLevel`] !== undefined
+      ? Number(team.opts[`${charId}.overrideLevel`])
+      : defaultLevel;
+  const constellation =
+    team.opts?.[`${charId}.overrideConstellation`] !== undefined
+      ? Number(team.opts[`${charId}.overrideConstellation`])
+      : defaultConst;
+
+  return { charLevel, constellation, acctTalent: acctChar?.talent };
+}
+
+/**
+ * Resolve talent-level overrides for a character.  Returns the merged talent
+ * levels when any override is present, or the provided fallback otherwise.
+ */
+function resolveTalentOverrides(
+  charId: string,
+  team: Team,
+  acctTalent: TalentLevels | undefined,
+  fallback: TalentLevels | undefined
+): TalentLevels | undefined {
+  const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
+  const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
+  const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
+  if (
+    overrideAuto === undefined &&
+    overrideSkill === undefined &&
+    overrideBurst === undefined
+  ) {
+    return fallback;
+  }
+  const base = acctTalent ?? { auto: 10, skill: 10, burst: 10 };
+  return {
+    auto: overrideAuto !== undefined ? Number(overrideAuto) : base.auto,
+    skill: overrideSkill !== undefined ? Number(overrideSkill) : base.skill,
+    burst: overrideBurst !== undefined ? Number(overrideBurst) : base.burst,
+  };
+}
+
 /**
  * Build TeamBuild configs using ACTUAL equipped artifact sets (for accurate
  * damage calc). Falls back to goal sets if no artifacts are equipped.
@@ -117,26 +179,15 @@ export function buildTeamConfigs(
     if (!charId) continue;
     if (!team.weapons[i]) continue; // wait for weapon to be selected
 
-    const acctChar = accountData?.characters.find((c) => c.key === charId);
-    const defaultLevel = acctChar
-      ? Number(getCharacterLevelTier(acctChar.level))
-      : 90;
-    const defaultConst = acctChar ? acctChar.constellation : 0;
-
-    const charLevel =
-      team.opts?.[`${charId}.overrideLevel`] !== undefined
-        ? Number(team.opts[`${charId}.overrideLevel`])
-        : defaultLevel;
-    const constellation =
-      team.opts?.[`${charId}.overrideConstellation`] !== undefined
-        ? Number(team.opts[`${charId}.overrideConstellation`])
-        : defaultConst;
+    const { charLevel, constellation, acctTalent } = resolveCharBaseConfig(
+      charId,
+      team,
+      accountData
+    );
 
     let defaultRefine = 1;
     const weaponId = team.weapons[i]!;
     if (weaponId && accountData) {
-      // Search all characters' equipped weapons and unequipped inventory
-      // for the highest refinement. Mirrors the override select's logic.
       const refinements: number[] = [];
       for (const c of accountData.characters) {
         if (c.weapon?.key === weaponId) refinements.push(c.weapon.refinement);
@@ -152,7 +203,6 @@ export function buildTeamConfigs(
         ? Number(team.opts[`${charId}.overrideRefinement`])
         : defaultRefine;
 
-    // Use the team roster's artifact set selection as the single source of truth.
     let artifactSetId: string | null = null;
     let artifactHalfSetIds: string[] = [];
 
@@ -165,23 +215,12 @@ export function buildTeamConfigs(
       }
     }
 
-    // Talent levels: start from account data, apply per-talent overrides
-    let talentLevels = acctChar?.talent;
-    const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
-    const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
-    const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
-    if (
-      overrideAuto !== undefined ||
-      overrideSkill !== undefined ||
-      overrideBurst !== undefined
-    ) {
-      const base = talentLevels ?? { auto: 10, skill: 10, burst: 10 };
-      talentLevels = {
-        auto: overrideAuto !== undefined ? Number(overrideAuto) : base.auto,
-        skill: overrideSkill !== undefined ? Number(overrideSkill) : base.skill,
-        burst: overrideBurst !== undefined ? Number(overrideBurst) : base.burst,
-      };
-    }
+    const talentLevels = resolveTalentOverrides(
+      charId,
+      team,
+      acctTalent,
+      acctTalent
+    );
 
     configs.push({
       charId,
@@ -211,22 +250,13 @@ export function buildWeaponChoiceCharConfigs(
     const charId = team.characters[i];
     if (!charId) continue;
 
-    const acctChar = accountData?.characters.find((c) => c.key === charId);
-    const defaultLevel = acctChar
-      ? Number(getCharacterLevelTier(acctChar.level))
-      : 90;
-    const defaultConst = acctChar ? acctChar.constellation : 0;
+    const { charLevel, constellation, acctTalent } = resolveCharBaseConfig(
+      charId,
+      team,
+      accountData
+    );
 
-    const level =
-      team.opts?.[`${charId}.overrideLevel`] !== undefined
-        ? Number(team.opts[`${charId}.overrideLevel`])
-        : defaultLevel;
-    const constellation =
-      team.opts?.[`${charId}.overrideConstellation`] !== undefined
-        ? Number(team.opts[`${charId}.overrideConstellation`])
-        : defaultConst;
-
-    const baseTalent = acctChar?.talent ?? { auto: 10, skill: 10, burst: 10 };
+    const baseTalent = acctTalent ?? { auto: 10, skill: 10, burst: 10 };
     const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
     const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
     const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
@@ -244,7 +274,7 @@ export function buildWeaponChoiceCharConfigs(
 
     configs.push({
       charId,
-      level,
+      level: charLevel,
       constellation,
       talentLevels,
       artifactConfig: team.artifacts[i] ?? null,
@@ -475,19 +505,11 @@ export function resolveBuildInfo(
   team: Team,
   accountData: AccountData | null
 ) {
-  const acctChar = accountData?.characters.find(
-    (c: CharacterData) => c.key === charId
+  const { charLevel, constellation: charConst } = resolveCharBaseConfig(
+    charId,
+    team,
+    accountData
   );
-  const charLevel =
-    team.opts?.[`${charId}.overrideLevel`] !== undefined
-      ? Number(team.opts[`${charId}.overrideLevel`])
-      : acctChar
-        ? Number(getCharacterLevelTier(acctChar.level))
-        : 90;
-  const charConst =
-    team.opts?.[`${charId}.overrideConstellation`] !== undefined
-      ? Number(team.opts[`${charId}.overrideConstellation`])
-      : (acctChar?.constellation ?? 0);
   const idx = team.characters.indexOf(charId);
   const weaponId = idx >= 0 ? team.weapons[idx] : null;
   let defaultRefine = 1;

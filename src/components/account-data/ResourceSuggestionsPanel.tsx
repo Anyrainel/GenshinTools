@@ -27,7 +27,7 @@ import {
   computeSuggestionPUpgrade,
   hashGlobalConfig,
   suggestionCacheKey,
-} from "@/lib/account-data/resourceRecommendations";
+} from "@/lib/account-data/resourceTips";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { usePUpgradeCacheStore } from "@/stores/usePUpgradeCacheStore";

@@ -17,7 +17,6 @@ import type {
   AutoTuneTeamResult,
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
-import { offFieldStatus } from "@/lib/team-comp/calc/teamBuild";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
@@ -215,7 +214,7 @@ export function AutoTuneDialog({
             formulas.push({
               formulaId: fid,
               label,
-              offField: offFieldStatus(tb, characterId, fid),
+              offField: tb.offFieldStatus(characterId, fid),
             });
           }
           combo = tb.getCombo(characterId);

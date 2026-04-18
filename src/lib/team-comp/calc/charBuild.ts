@@ -282,27 +282,15 @@ export class CharBuild {
     selfRegion?: Region,
     selfFaction?: Faction
   ): StatSheet {
-    // Re-apply target-independent static buffs excluding the specified buff keys
-    let applicable = allStaticBuffs
-      .filter((b) => {
-        if (excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId)))
-          return false;
-        if (isFieldDependentReceiver(b.buff.target.receiver)) return false;
-        return isBuffApplicable(
-          b.buff,
-          b.providerCharId,
-          selfCharId,
-          false,
-          selfRegion,
-          selfFaction
-        );
-      })
-      .map((b) => b.buff);
-    applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
-    let sheet = this.baseStatSheet.apply(applicable);
-    sheet = sheet.merge(artifactStats);
+    let sheet = this.rebuildBaseExcluding(
+      artifactStats,
+      allStaticBuffs,
+      excludeKeys,
+      selfCharId,
+      selfRegion,
+      selfFaction
+    );
 
-    // Apply field-dependent buffs with tags (excluding excluded)
     const filteredOn = onFieldBuffs.filter(
       (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
     );
@@ -339,7 +327,43 @@ export class CharBuild {
     selfRegion?: Region,
     selfFaction?: Faction
   ): StatSheet {
-    // Re-apply target-independent static buffs excluding the specified buff keys
+    let sheet = this.rebuildBaseExcluding(
+      artifactStats,
+      allStaticBuffs,
+      excludeKeys,
+      selfCharId,
+      selfRegion,
+      selfFaction
+    );
+
+    if (targetDependentBuffs.length > 0) {
+      const filteredTD = targetDependentBuffs.filter(
+        (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
+      );
+      if (filteredTD.length > 0) {
+        const deduped = deduplicateBuffs(
+          filteredTD.map((b) => b.buff),
+          (b) => b.staticBuffs
+        );
+        sheet = sheet.apply(deduped);
+      }
+    }
+
+    return sheet;
+  }
+
+  /**
+   * Shared base rebuild: re-apply target-independent static buffs (excluding
+   * specified keys) from Phase 1 baseline, then merge artifact stats.
+   */
+  private rebuildBaseExcluding(
+    artifactStats: StatSheet,
+    allStaticBuffs: ProvidedStaticBuff[],
+    excludeKeys: Set<string>,
+    selfCharId: string,
+    selfRegion?: Region,
+    selfFaction?: Faction
+  ): StatSheet {
     let applicable = allStaticBuffs
       .filter((b) => {
         if (excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId)))
@@ -356,26 +380,7 @@ export class CharBuild {
       })
       .map((b) => b.buff);
     applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
-    let sheet = this.baseStatSheet.apply(applicable);
-
-    // Merge artifact stats
-    sheet = sheet.merge(artifactStats);
-
-    // Apply target-dependent buffs (also excluding)
-    if (targetDependentBuffs.length > 0) {
-      const filteredTD = targetDependentBuffs.filter(
-        (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
-      );
-      if (filteredTD.length > 0) {
-        const deduped = deduplicateBuffs(
-          filteredTD.map((b) => b.buff),
-          (b) => b.staticBuffs
-        );
-        sheet = sheet.apply(deduped);
-      }
-    }
-
-    return sheet;
+    return this.baseStatSheet.apply(applicable).merge(artifactStats);
   }
 
   /**

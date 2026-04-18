@@ -8,7 +8,7 @@ import { evaluateAllBuilds } from "@/lib/account-data/buildEvaluation";
 import {
   DEFAULT_TIER_THRESHOLDS,
   generateResourceSuggestions,
-} from "@/lib/account-data/resourceRecommendations";
+} from "@/lib/account-data/resourceTips";
 
 const ZERO_MIN_DIFF = { S: 0, A: 0, B: 0, C: 0, D: 0, Pool: 0 } as const;
 import { describe, expect, it } from "vitest";

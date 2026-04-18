@@ -1,5 +1,5 @@
-import { ActionRecommendationCard } from "@/components/account-data/ActionRecommendationCard";
 import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
+import { ScoreUpActionCard } from "@/components/account-data/ScoreUpActionCard";
 import { TriageCard } from "@/components/account-data/TriageCard";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -165,7 +165,7 @@ function RecommendationsContent({ t }: PreviewProps) {
       </div>
       <div className="pointer-events-none space-y-1.5">
         {PREVIEW_RECOMMENDATIONS.map((rec) => (
-          <ActionRecommendationCard
+          <ScoreUpActionCard
             key={rec.slot}
             recommendation={rec}
             artifactLookup={PREVIEW_ARTIFACT_LOOKUP}

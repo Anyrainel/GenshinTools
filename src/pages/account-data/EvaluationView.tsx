@@ -25,7 +25,7 @@ import {
   getTier,
   selectActiveBuildsForAccount,
 } from "@/lib/account-data/buildEvaluation";
-import { generateResourceSuggestions } from "@/lib/account-data/resourceRecommendations";
+import { generateResourceSuggestions } from "@/lib/account-data/resourceTips";
 import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";

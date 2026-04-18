@@ -3,7 +3,7 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
-import type { Recommendation } from "@/lib/account-data/recommendationEngine";
+import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import { cn } from "@/lib/utils";
 import {
   ArrowBigUpDash,
@@ -18,8 +18,8 @@ import {
 } from "lucide-react";
 import { memo } from "react";
 
-interface ActionRecommendationCardProps {
-  recommendation: Recommendation;
+interface ScoreUpActionCardProps {
+  recommendation: ScoreUpAction;
   /** Lookup map to resolve artifact IDs to real artifact data */
   artifactLookup: Map<string, ArtifactData>;
   tierColor?: string;
@@ -64,12 +64,12 @@ function getBorderColor(scoreDiff: number): string {
   return "border-l-tier-pool";
 }
 
-function ActionRecommendationCardComponent({
+function ScoreUpActionCardComponent({
   recommendation: rec,
   artifactLookup,
   tierColor,
   inline,
-}: ActionRecommendationCardProps) {
+}: ScoreUpActionCardProps) {
   const { t } = useLanguage();
   const charInfo = charactersById[rec.characterId];
   if (!charInfo) return null;
@@ -286,4 +286,4 @@ function ActionRecommendationCardComponent({
   return cardContent;
 }
 
-export const ActionRecommendationCard = memo(ActionRecommendationCardComponent);
+export const ScoreUpActionCard = memo(ScoreUpActionCardComponent);

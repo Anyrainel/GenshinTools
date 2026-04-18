@@ -5,7 +5,7 @@
 
 import type { ArtifactData, Build, Slot } from "@/data/types";
 import type { BuildEvaluation } from "@/lib/account-data/buildEvaluation";
-import type { Recommendation } from "@/lib/account-data/recommendationEngine";
+import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import type { TriageDecision } from "@/lib/account-data/triage/types";
 import type { I18nLabel } from "@/lib/team-comp/types";
 import type { WeaponRanking } from "@/stores/useTeamStore";
@@ -35,7 +35,7 @@ function fakeArtifact(
 
 // ── Step 1 Tab 3: Recommendations ──
 
-export const PREVIEW_RECOMMENDATIONS: Recommendation[] = [
+export const PREVIEW_RECOMMENDATIONS: ScoreUpAction[] = [
   {
     actionType: "swap",
     characterId: "mavuika",

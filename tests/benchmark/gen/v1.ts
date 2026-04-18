@@ -2,7 +2,6 @@ import type { ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 /**
  * V1 Team Optimizer: Hill-Climbing with Greedy Allocation
  *
@@ -127,7 +126,7 @@ function computeFinalScore(
 
   // Compute off-field stats if the formula has off-field parts
   let offFieldStats: Record<string, StatSheet> | undefined;
-  if (hasOffFieldParts(teamBuild, carryCharId, formulaId)) {
+  if (teamBuild.hasOffFieldParts(carryCharId, formulaId)) {
     const otherCharId = Object.keys(teamBuild.charBuilds).find(
       (id) => id !== carryCharId
     );

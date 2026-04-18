@@ -17,7 +17,6 @@ import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
   FormulaOverride,
@@ -156,7 +155,7 @@ function checkHope(
   );
 
   let offFieldStats: Record<string, StatSheet> | undefined;
-  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
+  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
     const otherCharId = Object.keys(teamBuild.charBuilds).find(
       (id) => id !== formulaCharId
     );

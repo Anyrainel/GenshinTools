@@ -12,7 +12,6 @@ import {
 import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/account-data/scoring/utils";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
   DamageResult,
@@ -289,7 +288,7 @@ function computeMarginalGainsForOptimizer(
 
   // Check if we need off-field stats
   const needsOffField =
-    !scoreFn && hasOffFieldParts(teamBuild, formulaCharId, formulaId);
+    !scoreFn && teamBuild.hasOffFieldParts(formulaCharId, formulaId);
   const offFieldCalcTarget = needsOffField
     ? Object.keys(teamBuild.charBuilds).find((id) => id !== formulaCharId)
     : undefined;
@@ -396,7 +395,7 @@ function evaluateBuild(
 
   // Compute off-field stats if the formula has off-field parts
   let offFieldStats: Record<string, StatSheet> | undefined;
-  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
+  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
     const otherCharId = Object.keys(teamBuild.charBuilds).find(
       (id) => id !== formulaCharId
     );

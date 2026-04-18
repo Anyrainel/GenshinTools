@@ -1,5 +1,4 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { offFieldStatus } from "@/lib/team-comp/calc/teamBuild";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type { I18nLabel } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
@@ -32,7 +31,7 @@ export function FormulaLabel({
 
   const offField =
     teamBuild && charId && formulaId
-      ? offFieldStatus(teamBuild, charId, formulaId)
+      ? teamBuild.offFieldStatus(charId, formulaId)
       : "none";
 
   return (

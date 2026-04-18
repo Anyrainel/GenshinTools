@@ -26,7 +26,6 @@ import {
 } from "@/lib/account-data/artifactScore";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import type {
   CalcContext,
@@ -289,7 +288,7 @@ export function evaluateBuild(
     return { damage: scoreFn(updatedSheets, onFieldCharId), result: null };
 
   let offFieldStats: Record<string, StatSheet> | undefined;
-  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
+  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
     const otherCharId = Object.keys(teamBuild.charBuilds).find(
       (id) => id !== formulaCharId
     );
@@ -340,7 +339,7 @@ export function evaluateUpperBound(
   );
 
   let offFieldStats: Record<string, StatSheet> | undefined;
-  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
+  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
     const otherCharId = Object.keys(teamBuild.charBuilds).find(
       (id) => id !== formulaCharId
     );
@@ -1392,7 +1391,7 @@ async function* runTeamOpt(
           calcContext
         );
         let offFieldStats: Record<string, StatSheet> | undefined;
-        if (hasOffFieldParts(effectiveTeamBuild, carryCharId, formulaId)) {
+        if (effectiveTeamBuild.hasOffFieldParts(carryCharId, formulaId)) {
           const otherCharId = Object.keys(effectiveTeamBuild.charBuilds).find(
             (id) => id !== carryCharId
           );

@@ -9,7 +9,7 @@ import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
   type TierCompletenessThresholds,
-} from "@/lib/account-data/resourceRecommendations";
+} from "@/lib/account-data/resourceTips";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

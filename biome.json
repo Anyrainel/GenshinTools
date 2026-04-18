@@ -16,7 +16,7 @@
       },
       "complexity": {
         "noForEach": "warn",
-        "noExcessiveCognitiveComplexity": "warn",
+        "noExcessiveCognitiveComplexity": "off",
         "useSimplifiedLogicExpression": "off"
       },
       "a11y": {

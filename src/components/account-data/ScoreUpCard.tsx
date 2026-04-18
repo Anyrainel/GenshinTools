@@ -18,27 +18,27 @@ import {
 import type { ArtifactData, CharacterData, Tier } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
-import type { Recommendation } from "@/lib/account-data/recommendationEngine";
+import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import { ArrowUpRight, PartyPopper } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { ActionRecommendationCard } from "./ActionRecommendationCard";
+import { ScoreUpActionCard } from "./ScoreUpActionCard";
 
-interface RecommendationCardProps {
+interface ScoreUpCardProps {
   char: CharacterData;
   tier?: Tier;
-  recommendations?: Recommendation[];
+  recommendations?: ScoreUpAction[];
   score?: ArtifactScoreResult;
   artifactLookup: Map<string, ArtifactData>;
 }
 
-function RecommendationCardComponent({
+function ScoreUpCardComponent({
   char,
   tier,
   recommendations,
   score,
   artifactLookup,
-}: RecommendationCardProps) {
+}: ScoreUpCardProps) {
   const { t } = useLanguage();
   const isCompact = !useMediaQuery("(min-width: 768px)");
 
@@ -194,7 +194,7 @@ function RecommendationCardComponent({
             ) : (
               <div className="flex flex-col gap-2 pt-2 pb-3 px-3 border-t border-white/5">
                 {recs.map((rec) => (
-                  <ActionRecommendationCard
+                  <ScoreUpActionCard
                     key={`${rec.slot}-${rec.actionType}`}
                     recommendation={rec}
                     artifactLookup={artifactLookup}
@@ -210,4 +210,4 @@ function RecommendationCardComponent({
   );
 }
 
-export const RecommendationCard = memo(RecommendationCardComponent);
+export const ScoreUpCard = memo(ScoreUpCardComponent);

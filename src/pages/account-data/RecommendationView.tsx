@@ -1,5 +1,5 @@
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
-import { RecommendationCard } from "@/components/account-data/RecommendationCard";
+import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
@@ -23,10 +23,10 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
-  type Recommendation,
+  type ScoreUpAction,
   buildArtifactLookup,
   generateAllRecommendations,
-} from "@/lib/account-data/recommendationEngine";
+} from "@/lib/account-data/scoreUpEngine";
 import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -185,7 +185,7 @@ export function RecommendationView({
       {
         char: CharacterData;
         scoreResult: ArtifactScoreResult;
-        recommendations: Recommendation[];
+        recommendations: ScoreUpAction[];
       }[]
     > = {};
     for (const tier of tiers) {
@@ -200,7 +200,7 @@ export function RecommendationView({
       const tier = assignment ? assignment.tier : "Pool";
 
       const charRecs = allRecs.perCharacter[char.key];
-      const recommendations = charRecs?.recommendations ?? [];
+      const recommendations = charRecs?.actions ?? [];
 
       if (!byTier[tier]) {
         if (!byTier.Pool) byTier.Pool = [];
@@ -251,9 +251,7 @@ export function RecommendationView({
 
   const hasAnyRecs =
     allRecs &&
-    Object.values(allRecs.perCharacter).some(
-      (cr) => cr.recommendations.length > 0
-    );
+    Object.values(allRecs.perCharacter).some((cr) => cr.actions.length > 0);
 
   return (
     <ScrollLayout bodyClassName="space-y-4">
@@ -425,7 +423,7 @@ export function RecommendationView({
                   {cols.map((col, i) => (
                     <div key={i} className="flex-1 flex flex-col gap-4 min-w-0">
                       {col.map(({ char, scoreResult, recommendations }) => (
-                        <RecommendationCard
+                        <ScoreUpCard
                           key={char.key}
                           char={char}
                           tier={tier}

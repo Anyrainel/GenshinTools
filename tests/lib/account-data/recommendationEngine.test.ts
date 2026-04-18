@@ -11,7 +11,7 @@ import type {
 } from "@/lib/account-data/artifactScore";
 import type { BuildOptimizerResult } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
-import { generateRecommendations } from "@/lib/account-data/recommendationEngine";
+import { generateScoreUpActions } from "@/lib/account-data/scoreUpEngine";
 import { describe, expect, it } from "vitest";
 
 const testWeights: StatWeightMap = { cr: 100, cd: 100 };
@@ -167,7 +167,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -177,9 +177,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const swapRecs = result.recommendations.filter(
-        (r) => r.actionType === "swap"
-      );
+      const swapRecs = result.actions.filter((r) => r.actionType === "swap");
       expect(swapRecs).toHaveLength(1);
       expect(swapRecs[0].slot).toBe("flower");
     });
@@ -188,7 +186,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -198,9 +196,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const swapRecs = result.recommendations.filter(
-        (r) => r.actionType === "swap"
-      );
+      const swapRecs = result.actions.filter((r) => r.actionType === "swap");
       expect(swapRecs).toHaveLength(0);
     });
   });
@@ -211,7 +207,7 @@ describe("generateRecommendations — threshold filtering", () => {
         flower: emptyArtifact("flower", "current-flower"),
       });
       // source = "current" with same sourceArtifactId triggers upgrade-in-place path
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -226,7 +222,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const upgradeRecs = result.recommendations.filter(
+      const upgradeRecs = result.actions.filter(
         (r) => r.actionType === "upgrade"
       );
       expect(upgradeRecs).toHaveLength(1);
@@ -236,7 +232,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -251,7 +247,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const upgradeRecs = result.recommendations.filter(
+      const upgradeRecs = result.actions.filter(
         (r) => r.actionType === "upgrade"
       );
       expect(upgradeRecs).toHaveLength(0);
@@ -263,7 +259,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -273,7 +269,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const upgradeRecs = result.recommendations.filter(
+      const upgradeRecs = result.actions.filter(
         (r) => r.actionType === "upgrade"
       );
       expect(upgradeRecs).toHaveLength(1);
@@ -283,7 +279,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -293,7 +289,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const upgradeRecs = result.recommendations.filter(
+      const upgradeRecs = result.actions.filter(
         (r) => r.actionType === "upgrade"
       );
       expect(upgradeRecs).toHaveLength(0);
@@ -305,7 +301,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -315,7 +311,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const rerollRecs = result.recommendations.filter(
+      const rerollRecs = result.actions.filter(
         (r) => r.actionType === "reroll"
       );
       expect(rerollRecs).toHaveLength(1);
@@ -325,7 +321,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -335,7 +331,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const rerollRecs = result.recommendations.filter(
+      const rerollRecs = result.actions.filter(
         (r) => r.actionType === "reroll"
       );
       expect(rerollRecs).toHaveLength(0);
@@ -347,7 +343,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -357,9 +353,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const farmRecs = result.recommendations.filter(
-        (r) => r.actionType === "farm"
-      );
+      const farmRecs = result.actions.filter((r) => r.actionType === "farm");
       expect(farmRecs).toHaveLength(1);
     });
 
@@ -367,7 +361,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -377,9 +371,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const farmRecs = result.recommendations.filter(
-        (r) => r.actionType === "farm"
-      );
+      const farmRecs = result.actions.filter((r) => r.actionType === "farm");
       expect(farmRecs).toHaveLength(0);
     });
   });
@@ -388,7 +380,7 @@ describe("generateRecommendations — threshold filtering", () => {
     it("includes equip recommendation for small diff when no current artifact", () => {
       // No current artifact in flower slot → action is "equip", not "swap"
       const char = makeChar({});
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([{ slot: "flower", source: "swap", slotScore: 1 }]),
@@ -396,9 +388,7 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats,
         highThresholds
       );
-      const equipRecs = result.recommendations.filter(
-        (r) => r.actionType === "equip"
-      );
+      const equipRecs = result.actions.filter((r) => r.actionType === "equip");
       expect(equipRecs).toHaveLength(1);
     });
   });
@@ -408,7 +398,7 @@ describe("generateRecommendations — threshold filtering", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -418,14 +408,14 @@ describe("generateRecommendations — threshold filtering", () => {
         defaultTargetMainStats
         // no thresholds
       );
-      expect(result.recommendations).toHaveLength(1);
+      expect(result.actions).toHaveLength(1);
     });
 
     it("excludes recommendation when diff < 0.5", () => {
       const char = makeChar({
         flower: emptyArtifact("flower", "current-flower"),
       });
-      const result = generateRecommendations(
+      const result = generateScoreUpActions(
         char,
         makeBuildMatch(),
         makeOptimizerResult([
@@ -434,7 +424,7 @@ describe("generateRecommendations — threshold filtering", () => {
         testGlobalConfig,
         defaultTargetMainStats
       );
-      expect(result.recommendations).toHaveLength(0);
+      expect(result.actions).toHaveLength(0);
     });
   });
 });

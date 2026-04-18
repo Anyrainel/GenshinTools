@@ -433,10 +433,6 @@ import {
 } from "@/lib/team-comp/calc/formulaCompiler";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  hasOffFieldParts,
-  offFieldStatus,
-} from "@/lib/team-comp/calc/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
@@ -1782,23 +1778,23 @@ describe("forceOnField override", () => {
     const tb = new TeamBuild(configs);
 
     // offFieldStatus checks the formula's intrinsic offField flags, not the override
-    const status = offFieldStatus(tb, "xiangling", "xiangling-pyronado-tick");
+    const status = tb.offFieldStatus("xiangling", "xiangling-pyronado-tick");
     expect(status).toBe("full"); // all parts are offField
 
-    const guobaStatus = offFieldStatus(tb, "xiangling", "xiangling-guoba");
+    const guobaStatus = tb.offFieldStatus("xiangling", "xiangling-guoba");
     expect(guobaStatus).toBe("full"); // guoba is also fully off-field
 
     // hasOffFieldParts should also report true regardless of override
-    expect(hasOffFieldParts(tb, "xiangling", "xiangling-pyronado-tick")).toBe(
+    expect(tb.hasOffFieldParts("xiangling", "xiangling-pyronado-tick")).toBe(
       true
     );
   });
 
   it("pyronado-swing (on-field formula) reports offField status 'none'", () => {
     const tb = new TeamBuild(configs);
-    const status = offFieldStatus(tb, "xiangling", "xiangling-pyronado-swing");
+    const status = tb.offFieldStatus("xiangling", "xiangling-pyronado-swing");
     expect(status).toBe("none");
-    expect(hasOffFieldParts(tb, "xiangling", "xiangling-pyronado-swing")).toBe(
+    expect(tb.hasOffFieldParts("xiangling", "xiangling-pyronado-swing")).toBe(
       false
     );
   });

@@ -7,7 +7,6 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, ReactionType } from "@/data/types";
-import { offFieldStatus } from "@/lib/team-comp/calc/teamBuild";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
   REACTION_ELEMENT_REQUIREMENTS,
@@ -276,7 +275,7 @@ export function FormulaSelectorCard({
                               ? (team.singleReaction?.reaction ?? "none")
                               : "none";
                             const offField = teamBuild
-                              ? offFieldStatus(teamBuild, cid, formulaId)
+                              ? teamBuild.offFieldStatus(cid, formulaId)
                               : "none";
 
                             return (
@@ -446,7 +445,7 @@ export function FormulaSelectorCard({
                               {!isLocked &&
                                 (() => {
                                   const comboOffField = teamBuild
-                                    ? offFieldStatus(teamBuild, cid, formulaId)
+                                    ? teamBuild.offFieldStatus(cid, formulaId)
                                     : "none";
                                   if (comboOffField === "none") return null;
                                   const firstLineKey = reactions

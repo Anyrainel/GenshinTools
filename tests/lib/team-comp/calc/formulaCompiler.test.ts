@@ -23,7 +23,6 @@ import {
 import { CrossScalingBuff, ScalingBuff } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 import {
   buildSheetFromMainAndSubs,
   getRollValues,
@@ -943,7 +942,7 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
         const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
         // Compute off-field stats if the formula has off-field parts
         let offFieldTeamStats: Record<string, StatSheet> | undefined;
-        if (hasOffFieldParts(tb, carryId, formulaId)) {
+        if (tb.hasOffFieldParts(carryId, formulaId)) {
           const otherCharId = charIds.find((id) => id !== carryId);
           if (otherCharId) {
             offFieldTeamStats = tb.getTeamStats(sheets, otherCharId, FUZZ_CTX);
@@ -1031,7 +1030,7 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
       const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
       // Compute off-field stats if the formula has off-field parts
       let offFieldTeamStats2: Record<string, StatSheet> | undefined;
-      if (hasOffFieldParts(tb, carryId, formulaId)) {
+      if (tb.hasOffFieldParts(carryId, formulaId)) {
         const otherCharId = charIds.find((id) => id !== carryId);
         if (otherCharId) {
           offFieldTeamStats2 = tb.getTeamStats(sheets, otherCharId, FUZZ_CTX);
@@ -1365,7 +1364,7 @@ describe("marginal gain parity (compiled vs standard)", () => {
 
         const baseTeamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
         let offFieldBase: Record<string, StatSheet> | undefined;
-        if (hasOffFieldParts(tb, carryId, formulaId)) {
+        if (tb.hasOffFieldParts(carryId, formulaId)) {
           const oc = charIds.find((id) => id !== carryId);
           if (oc) offFieldBase = tb.getTeamStats(sheets, oc, FUZZ_CTX);
         }
@@ -1393,7 +1392,7 @@ describe("marginal gain parity (compiled vs standard)", () => {
             FUZZ_CTX
           );
           let offFieldBumped: Record<string, StatSheet> | undefined;
-          if (hasOffFieldParts(tb, carryId, formulaId)) {
+          if (tb.hasOffFieldParts(carryId, formulaId)) {
             const oc = charIds.find((id) => id !== carryId);
             if (oc)
               offFieldBumped = tb.getTeamStats(bumpedSheets, oc, FUZZ_CTX);
@@ -1558,7 +1557,7 @@ describe("random team fuzz (compiled vs standard)", () => {
           const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
           // Compute off-field stats if the formula has off-field parts
           let offFieldTeamStats: Record<string, StatSheet> | undefined;
-          if (hasOffFieldParts(tb, carryId, formulaId)) {
+          if (tb.hasOffFieldParts(carryId, formulaId)) {
             const otherCharId = charIds.find((id) => id !== carryId);
             if (otherCharId) {
               offFieldTeamStats = tb.getTeamStats(
@@ -1670,7 +1669,7 @@ describe("random team fuzz (compiled vs standard)", () => {
           const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
           // Compute off-field stats if the formula has off-field parts
           let offFieldTeamStats: Record<string, StatSheet> | undefined;
-          if (hasOffFieldParts(tb, carryId, formulaId)) {
+          if (tb.hasOffFieldParts(carryId, formulaId)) {
             const otherCharId = charIds.find((id) => id !== carryId);
             if (otherCharId) {
               offFieldTeamStats = tb.getTeamStats(
@@ -2117,7 +2116,7 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 
       // Standard path
       const teamStats = tb.getTeamStats(sheets, carryId, ctx);
-      const offFieldTeamStats = hasOffFieldParts(tb, carryId, formulaId)
+      const offFieldTeamStats = tb.hasOffFieldParts(carryId, formulaId)
         ? tb.getTeamStats(sheets, charIds.find((id) => id !== carryId)!, ctx)
         : undefined;
       const oldDamage = tb.getDamageResult(
@@ -2321,7 +2320,7 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 
     // Standard path comparison: verify compiled and standard match for target=0
     const teamStats = tb.getTeamStats(sheets, carryId, ctxTarget0);
-    const offFieldTeamStats = hasOffFieldParts(tb, carryId, formulaId)
+    const offFieldTeamStats = tb.hasOffFieldParts(carryId, formulaId)
       ? tb.getTeamStats(
           sheets,
           charIds.find((id) => id !== carryId)!,

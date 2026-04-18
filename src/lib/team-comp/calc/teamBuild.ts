@@ -98,6 +98,20 @@ function mergeBuffDynamicRange(
   widenDynamicRange(existing.dynamicEntries, incoming.dynamicEntries);
 }
 
+/** Mutate postStats in-place: apply per-character CR-target deltas when present. */
+function applyCrTargetDeltas(
+  postStats: Record<string, StatSheet>,
+  ctx?: CalcContext
+): void {
+  if (!ctx?.perCharCrTarget) return;
+  for (const [id, target] of Object.entries(ctx.perCharCrTarget)) {
+    if (postStats[id]) {
+      const crDelta = (100 - target) / 100;
+      postStats[id] = postStats[id]!.withDelta("cr", crDelta);
+    }
+  }
+}
+
 /**
  * Orchestrates the full team's damage calculation.
  * Owns the stat resolution pipeline across all 4 team members.
@@ -322,7 +336,7 @@ export class TeamBuild {
       this.allStaticBuffs,
       preStats,
       (sheetBuffs) =>
-        this.buildTeamPostStatsRaw(preStats, sheetBuffs, onFieldCharId)
+        this.buildTeamPostStats(preStats, sheetBuffs, onFieldCharId)
     );
   }
 
@@ -453,33 +467,11 @@ export class TeamBuild {
   }
 
   /**
-   * Apply dynamic buffs to preStats without CR-target adjustment.
-   * Used as the intermediate "midStats" step in two-pass dynamic buff evaluation,
-   * so that final-stat ScalingBuffs can see sheet-stat dynamic buffs (e.g. Bennett ATK).
-   */
-  private buildTeamPostStatsRaw(
-    preStats: Record<string, StatSheet>,
-    dynamicBuffs: EvaluatedDynamicBuff[],
-    onFieldCharId: string
-  ): Record<string, StatSheet> {
-    const result: Record<string, StatSheet> = {};
-    for (const [id, build] of Object.entries(this.charBuilds)) {
-      result[id] = build.getPostStats(
-        preStats[id]!,
-        dynamicBuffs,
-        id,
-        isOnField(id, onFieldCharId),
-        this.teamMeta.regions[id],
-        this.teamMeta.factions[id]
-      );
-    }
-    return result;
-  }
-
-  /**
-   * Build post-stats for all team members: apply dynamic buffs + perCharCrTarget.
-   * Char-level field state: same rationale as getFieldDependentBuffs — runs
-   * before formula parts exist, uses onFieldCharId for per-character on/off.
+   * Apply dynamic buffs to preStats for all team members.
+   * When `ctx.perCharCrTarget` is provided, applies CR-target delta adjustment.
+   * Without ctx, used as the intermediate "midStats" step in two-pass dynamic
+   * buff evaluation so that final-stat ScalingBuffs can see sheet-stat dynamic
+   * buffs (e.g. Bennett ATK).
    */
   private buildTeamPostStats(
     preStats: Record<string, StatSheet>,
@@ -498,40 +490,12 @@ export class TeamBuild {
         this.teamMeta.factions[id]
       );
     }
-    if (ctx?.perCharCrTarget) {
-      for (const [id, target] of Object.entries(ctx.perCharCrTarget)) {
-        if (postStats[id]) {
-          const crDelta = (100 - target) / 100;
-          postStats[id] = postStats[id]!.withDelta("cr", crDelta);
-        }
-      }
-    }
+    applyCrTargetDeltas(postStats, ctx);
     return postStats;
   }
 
   /**
-   * Build unified post-stats: apply dynamic buffs with field-state tagging.
-   * No perCharCrTarget adjustment — used as midStats for two-pass evaluation.
-   */
-  private buildUnifiedTeamPostStatsRaw(
-    preStats: Record<string, StatSheet>,
-    dynamicBuffs: EvaluatedDynamicBuff[]
-  ): Record<string, StatSheet> {
-    const result: Record<string, StatSheet> = {};
-    for (const [id, build] of Object.entries(this.charBuilds)) {
-      result[id] = build.getUnifiedPostStats(
-        preStats[id]!,
-        dynamicBuffs,
-        id,
-        this.teamMeta.regions[id],
-        this.teamMeta.factions[id]
-      );
-    }
-    return result;
-  }
-
-  /**
-   * Build unified post-stats with perCharCrTarget adjustment.
+   * Build unified post-stats with optional perCharCrTarget adjustment.
    * Returns unified sheets — use `.withFieldState()` to get on/off views.
    */
   private buildUnifiedTeamPostStats(
@@ -549,14 +513,7 @@ export class TeamBuild {
         this.teamMeta.factions[id]
       );
     }
-    if (ctx?.perCharCrTarget) {
-      for (const [id, target] of Object.entries(ctx.perCharCrTarget)) {
-        if (postStats[id]) {
-          const crDelta = (100 - target) / 100;
-          postStats[id] = postStats[id]!.withDelta("cr", crDelta);
-        }
-      }
-    }
+    applyCrTargetDeltas(postStats, ctx);
     return postStats;
   }
 
@@ -768,7 +725,7 @@ export class TeamBuild {
       this.allStaticBuffs,
       resolvedPreStats,
       (sheetBuffs) =>
-        this.buildTeamPostStatsRaw(resolvedPreStats, sheetBuffs, onFieldCharId)
+        this.buildTeamPostStats(resolvedPreStats, sheetBuffs, onFieldCharId)
     );
 
     return this.buildUnifiedTeamPostStats(preStats, allDynamicBuffs, ctx);
@@ -832,7 +789,7 @@ export class TeamBuild {
         !excludeKeys.has(getBuffInstanceKey(buff, providerCharId))
     );
     return evaluateDynamicBuffsTwoPass(filteredBuffs, preStats, (sheetBuffs) =>
-      this.buildTeamPostStatsRaw(preStats, sheetBuffs, onFieldCharId)
+      this.buildTeamPostStats(preStats, sheetBuffs, onFieldCharId)
     );
   }
 
@@ -1115,11 +1072,7 @@ export class TeamBuild {
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext | undefined
   ): StatSheet | undefined {
-    // Use the first other team member as on-field, matching evaluateCombo
-    // and the compile path's buildOffFieldPostExprStatsForContext.
-    const other = defaultOnFieldCharId(charId, this.configs);
-    const offFieldStats = this.getTeamStats(artifactStats, other, ctx);
-    return offFieldStats[charId];
+    return this.getOffFieldStats(artifactStats, charId, ctx)[charId];
   }
 
   /** All available formulas across all characters */
@@ -1960,7 +1913,7 @@ export class TeamBuild {
       isDeferredFinalBuff(b.buff)
     );
     const midStats = hasAnyFinalBuffs
-      ? this.buildTeamPostStatsRaw(
+      ? this.buildTeamPostStats(
           preStats,
           allDynamicBuffs.filter((b) => !isDeferredFinalBuff(b.buff)),
           charId
@@ -1990,7 +1943,7 @@ export class TeamBuild {
         offOther
       );
       if (hasAnyFinalBuffs) {
-        offFieldMidStats = this.buildTeamPostStatsRaw(
+        offFieldMidStats = this.buildTeamPostStats(
           offFieldPreStats,
           offDynamic.filter((b) => !isDeferredFinalBuff(b.buff)),
           offOther
@@ -2072,7 +2025,7 @@ export class TeamBuild {
       isDeferredFinalBuff(b.buff)
     );
     const midStats = hasAnyFinalBuffs
-      ? this.buildTeamPostStatsRaw(
+      ? this.buildTeamPostStats(
           preStats,
           allDynamicBuffs.filter((b) => !isDeferredFinalBuff(b.buff)),
           charId
@@ -2123,7 +2076,7 @@ export class TeamBuild {
         offOther
       );
       if (hasAnyFinalBuffs) {
-        offFieldMidStats = this.buildTeamPostStatsRaw(
+        offFieldMidStats = this.buildTeamPostStats(
           offFieldPreStats,
           offDynamic.filter((b) => !isDeferredFinalBuff(b.buff)),
           offOther
@@ -2986,8 +2939,7 @@ export class TeamBuild {
       );
       let offFieldTeamStats: Record<string, StatSheet> | undefined;
       if (hasOffField) {
-        offFieldTeamStats = getOffFieldStats(
-          tweakedTeam,
+        offFieldTeamStats = tweakedTeam.getOffFieldStats(
           artifactStats,
           onFieldCharId,
           ctx
@@ -3289,47 +3241,40 @@ export class TeamBuild {
 
     return { defaultActivations, stackLimited, lineEntries };
   }
-}
-// Off-Field Helpers
-/** Check if a formula has any off-field parts. */
 
-export function hasOffFieldParts(
-  teamBuild: TeamBuild,
-  charId: string,
-  formulaId: string
-): boolean {
-  const entry =
-    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
-    teamBuild.formulaIndex.get(formulaId);
-  return entry?.parts.some((p) => p.offField) ?? false;
-}
-/** Check off-field status of a formula's parts. */
+  /** Check if a formula has any off-field parts. */
+  hasOffFieldParts(charId: string, formulaId: string): boolean {
+    const entry =
+      this.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
+      this.formulaIndex.get(formulaId);
+    return entry?.parts.some((p) => p.offField) ?? false;
+  }
 
-export function offFieldStatus(
-  teamBuild: TeamBuild,
-  charId: string,
-  formulaId: string
-): "full" | "partial" | "none" {
-  const entry =
-    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
-    teamBuild.formulaIndex.get(formulaId);
-  if (!entry || entry.parts.length === 0) return "none";
-  const offCount = entry.parts.filter((p) => p.offField).length;
-  if (offCount === entry.parts.length) return "full";
-  if (offCount > 0) return "partial";
-  return "none";
-}
-/**
- * Compute off-field stats for a formula character.
- * Uses the first other team member as on-field, matching the compiler path.
- */
+  /** Check off-field status of a formula's parts. */
+  offFieldStatus(
+    charId: string,
+    formulaId: string
+  ): "full" | "partial" | "none" {
+    const entry =
+      this.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
+      this.formulaIndex.get(formulaId);
+    if (!entry || entry.parts.length === 0) return "none";
+    const offCount = entry.parts.filter((p) => p.offField).length;
+    if (offCount === entry.parts.length) return "full";
+    if (offCount > 0) return "partial";
+    return "none";
+  }
 
-export function getOffFieldStats(
-  teamBuild: TeamBuild,
-  artifactStats: Record<string, StatSheet>,
-  formulaCharId: string,
-  ctx: CalcContext
-): Record<string, StatSheet> {
-  const other = defaultOnFieldCharId(formulaCharId, teamBuild.configs);
-  return teamBuild.getTeamStats(artifactStats, other, ctx);
+  /**
+   * Compute off-field stats for a formula character.
+   * Uses the first other team member as on-field, matching the compiler path.
+   */
+  getOffFieldStats(
+    artifactStats: Record<string, StatSheet>,
+    formulaCharId: string,
+    ctx: CalcContext
+  ): Record<string, StatSheet> {
+    const other = defaultOnFieldCharId(formulaCharId, this.configs);
+    return this.getTeamStats(artifactStats, other, ctx);
+  }
 }

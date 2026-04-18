@@ -31,7 +31,7 @@ import { type CrBudgetResult, computeCrBudget } from "./crBudget";
 
 export type ActionType = "swap" | "upgrade" | "reroll" | "farm" | "equip";
 
-export interface Recommendation {
+export interface ScoreUpAction {
   actionType: ActionType;
   characterId: string;
   slot: Slot;
@@ -48,32 +48,32 @@ export interface Recommendation {
   donorCharacterId?: string;
 }
 
-export interface CharacterRecommendations {
+export interface CharacterActions {
   characterId: string;
-  recommendations: Recommendation[];
+  actions: ScoreUpAction[];
   optimizerResult: BuildOptimizerResult;
 }
 
-export interface AllRecommendations {
-  byActionType: Record<ActionType, Recommendation[]>;
-  perCharacter: Record<string, CharacterRecommendations>;
+export interface AllActions {
+  byActionType: Record<ActionType, ScoreUpAction[]>;
+  perCharacter: Record<string, CharacterActions>;
 }
 
 // ─── Recommendation Generation ───
 
 /** @internal — exported for testing */
-export function generateRecommendations(
+export function generateScoreUpActions(
   char: CharacterData,
   buildMatch: BuildMatchResult,
   optimizerResult: BuildOptimizerResult,
   globalConfig: GlobalStatWeights,
   targetMainStats: Record<Slot, Set<string>>,
   thresholds?: InvestmentThresholds
-): CharacterRecommendations {
-  const recommendations: Recommendation[] = [];
+): CharacterActions {
+  const actions: ScoreUpAction[] = [];
 
   if (optimizerResult.builds.length === 0) {
-    return { characterId: char.key, recommendations, optimizerResult };
+    return { characterId: char.key, actions: actions, optimizerResult };
   }
 
   const topBuild = optimizerResult.builds[0];
@@ -100,7 +100,7 @@ export function generateRecommendations(
         const diff = optimalScore - currentScore;
         const upgradeMin = thresholds?.upgrade ?? 1.0;
         if (diff >= upgradeMin) {
-          recommendations.push({
+          actions.push({
             actionType: "upgrade",
             characterId: char.key,
             slot,
@@ -156,7 +156,7 @@ export function generateRecommendations(
       if (slotScoreDiff < minDiff) continue;
     } else if (slotScoreDiff < 0.5) continue;
 
-    recommendations.push({
+    actions.push({
       actionType,
       characterId: char.key,
       slot,
@@ -172,9 +172,9 @@ export function generateRecommendations(
   }
 
   // Sort by slotScoreDiff desc
-  recommendations.sort((a, b) => b.slotScoreDiff - a.slotScoreDiff);
+  actions.sort((a, b) => b.slotScoreDiff - a.slotScoreDiff);
 
-  return { characterId: char.key, recommendations, optimizerResult };
+  return { characterId: char.key, actions: actions, optimizerResult };
 }
 
 // ─── Two-Pass Constrained Optimization ───
@@ -272,15 +272,15 @@ export function generateAllRecommendations(
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {},
   investmentThresholds?: InvestmentThresholds
-): AllRecommendations {
-  const byActionType: Record<ActionType, Recommendation[]> = {
+): AllActions {
+  const byActionType: Record<ActionType, ScoreUpAction[]> = {
     swap: [],
     upgrade: [],
     reroll: [],
     farm: [],
     equip: [],
   };
-  const perCharacter: Record<string, CharacterRecommendations> = {};
+  const perCharacter: Record<string, CharacterActions> = {};
 
   // Collect all artifacts for candidate pool
   const allArtifacts: (ArtifactData & { location?: string })[] = [
@@ -297,7 +297,7 @@ export function generateAllRecommendations(
     if (tier === "Pool") {
       perCharacter[char.key] = {
         characterId: char.key,
-        recommendations: [],
+        actions: [],
         optimizerResult: {
           builds: [],
           currentScore: 0,
@@ -312,7 +312,7 @@ export function generateAllRecommendations(
     if (!buildMatch) {
       perCharacter[char.key] = {
         characterId: char.key,
-        recommendations: [],
+        actions: [],
         optimizerResult: {
           builds: [],
           currentScore: 0,
@@ -388,7 +388,7 @@ export function generateAllRecommendations(
       : optimizeBuildWithCrCdExploration(baseConfig);
 
     // Phase 4: Generate Recommendations
-    const charRecs = generateRecommendations(
+    const charRecs = generateScoreUpActions(
       char,
       buildMatch,
       optimizerResult,
@@ -400,7 +400,7 @@ export function generateAllRecommendations(
     perCharacter[char.key] = charRecs;
 
     // Group by action type
-    for (const rec of charRecs.recommendations) {
+    for (const rec of charRecs.actions) {
       byActionType[rec.actionType].push(rec);
     }
   }
