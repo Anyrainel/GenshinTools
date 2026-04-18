@@ -6,7 +6,7 @@
  * - Marginal-based: uses damage-formula-derived marginal weights (context-aware)
  */
 
-import type { ArtifactData, GlobalStatWeights, SubStat } from "@/data/types";
+import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { toInternal } from "@/lib/account-data/scoring/utils";
 import {
@@ -18,8 +18,6 @@ import {
 } from "../../account-data/artifactScore";
 import type { StatKey } from "../types";
 import type { MarginalWeights, PreparedSlotData, SuperArtifact } from "./types";
-
-// ─── Constants ───
 
 /** After scoring & sorting, keep at most this many unleveled (level 0) artifacts per slot.
  *  Leveled artifacts are always retained regardless of rank. */

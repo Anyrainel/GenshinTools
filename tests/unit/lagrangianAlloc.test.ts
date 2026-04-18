@@ -6,8 +6,6 @@ import {
 import type { ArtifactTuple, TopKEntry } from "@/lib/team-comp/optimizer/types";
 import { describe, expect, it } from "vitest";
 
-// ─── Helpers ───
-
 function makeEntry(damage: number, ids: string[]): TopKEntry {
   return {
     damage,

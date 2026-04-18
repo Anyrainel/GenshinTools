@@ -235,8 +235,6 @@ export interface WeaponStat {
   statValue: number;
 }
 
-// ----------------------
-
 // Enka API endpoints with fallback strategy
 // Primary: Self-hosted Cloudflare Pages Function (works on ggartifact.com)
 // Fallback: corsproxy.io (for GitHub Pages or other deployments)

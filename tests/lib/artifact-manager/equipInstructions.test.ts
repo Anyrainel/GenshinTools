@@ -31,12 +31,16 @@ function makeTeam(charIds: (string | null)[]): Team {
     artifacts: [null, null, null, null],
     reactions: [],
     opts: {},
-    minEr: {},
+    calcContext: {
+      enemyLevel: 110,
+      enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
+    },
     selectedFormula: null,
     optimizationResult: null,
     formulaMode: "single",
-    combos: [],
-    selectedCombo: null,
+    combo: null,
   };
 }
 

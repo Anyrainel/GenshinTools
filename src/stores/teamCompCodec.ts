@@ -68,8 +68,6 @@ export function charSortKey(charId: string | null | undefined): number {
   return ensureSortKeys().get(charId) ?? Number.MAX_SAFE_INTEGER - 1;
 }
 
-// ── Public API ──
-
 const BITS_PER_MEMBER = 27n;
 
 /**

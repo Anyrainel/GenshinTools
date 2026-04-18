@@ -23,7 +23,7 @@ import { TeamBuild } from "../calc/teamBuild";
 import { getRollValues } from "../generator/constrainedGreedy";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
-import type { SubstatBudgetPreset } from "../generator/substatBudget";
+
 import type { ExtraBuff } from "../types";
 import type { CalcContext, ComboFormula, TeamSlotConfig } from "../types";
 
@@ -31,8 +31,6 @@ import type {
   WeaponChoiceCharConfig,
   WeaponRanking,
 } from "@/stores/useTeamStore";
-
-// ─── Types ───
 
 export interface CharProgress {
   charId: string;
@@ -64,15 +62,11 @@ export interface WeaponChoiceOptions {
   charConfigs: WeaponChoiceCharConfig[];
   combo: ComboFormula;
   calcContext: CalcContext;
-  rollMultiplier?: number;
-  substatBudget?: SubstatBudgetPreset;
   weaponStats: WeaponStatsMap;
   opts: Record<string, string>;
   enemyAura?: Element;
   extraBuffs?: ExtraBuff[];
 }
-
-// ─── Helpers ───
 
 function yieldFrame(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
@@ -226,8 +220,6 @@ async function runGeneratorToCompletion(
   carryCharId: string,
   combo: ComboFormula,
   calcContext: CalcContext,
-  rollMultiplier?: number,
-  substatBudget?: SubstatBudgetPreset,
   perChar?: Record<string, { minEr: number; minCr: number }>,
   setKeysByChar?: Record<string, Record<Slot, string>>
 ): Promise<GeneratorResult | null> {
@@ -237,8 +229,8 @@ async function runGeneratorToCompletion(
     carryCharId,
     formula: { combo },
     calcContext,
-    rollMultiplier,
-    substatBudget,
+    rollMultiplier: calcContext.rollMultiplier,
+    substatBudget: calcContext.substatBudget,
     perChar,
     setKeysByChar,
   });
@@ -297,8 +289,6 @@ async function computeForChar(
   opts: Record<string, string>,
   enemyAura: Element | undefined,
   extraBuffs: ExtraBuff[],
-  rollMultiplier: number | undefined,
-  substatBudget: SubstatBudgetPreset | undefined,
   perChar: Record<string, { minEr: number; minCr: number }>,
   setKeysByChar: Record<string, Record<Slot, string>>,
   onProgress: (weaponsDone: number, currentWeapon?: string) => void
@@ -313,8 +303,6 @@ async function computeForChar(
     targetCharId,
     combo,
     calcContext,
-    rollMultiplier,
-    substatBudget,
     perChar,
     setKeysByChar
   );
@@ -352,8 +340,6 @@ async function computeForChar(
       targetCharId,
       combo,
       calcContext,
-      rollMultiplier,
-      substatBudget,
       perChar,
       setKeysByChar
     );
@@ -393,7 +379,10 @@ async function computeForChar(
       };
       // Convert display-format substats to roll counts
       const rarity = arts.flower?.rarity ?? 5;
-      const rv = getRollValues(rollMultiplier, (rarity === 4 ? 4 : 5) as 4 | 5);
+      const rv = getRollValues(
+        calcContext.rollMultiplier,
+        (rarity === 4 ? 4 : 5) as 4 | 5
+      );
       const agg: Partial<Record<SubStat, number>> = {};
       for (const slot of allSlots) {
         const subs = arts[slot]?.substats;
@@ -480,8 +469,6 @@ export async function* runWeaponChoice(
     charConfigs,
     combo,
     calcContext,
-    rollMultiplier,
-    substatBudget,
     weaponStats,
     opts,
     enemyAura,
@@ -564,8 +551,6 @@ export async function* runWeaponChoice(
       opts,
       enemyAura,
       extraBuffs ?? [],
-      rollMultiplier,
-      substatBudget,
       perChar,
       setKeysByChar,
       (weaponsDone, currentWeapon) => {

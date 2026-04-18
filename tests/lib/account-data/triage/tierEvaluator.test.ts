@@ -1,7 +1,6 @@
 import type { SubStat } from "@/data/types";
 import { evaluateTier } from "@/lib/account-data/triage/tierEvaluator";
 import type {
-  DemandTierEntry,
   TierCondition,
   TriageRule,
 } from "@/lib/account-data/triage/types";

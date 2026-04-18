@@ -14,14 +14,12 @@ import { preloadGameStats } from "@/lib/gameStatsLoader";
 import "@/lib/team-comp/index";
 
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
 } from "@/lib/team-comp/calc/formulaCompiler";
 import type { PartialBuffInfo } from "@/lib/team-comp/calc/stackAllocation";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
   type GeneratorOptions,
@@ -40,7 +38,6 @@ import {
   emptySheets,
   getFirstFormulaId,
   makeArt,
-  makeBuildMatch,
 } from "../../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
@@ -51,7 +48,12 @@ function getOnlyParts(r: {
   return Object.values(r.partsByFormula)[0] ?? [];
 }
 
-const CTX: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+const CTX: CalcContext = {
+  enemyLevel: 100,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
+};
 
 // Diluc + XQ + Bennett + Kazuha — Bennett Q gives ATK buff to on-field carry
 const DILUC_TEAM: TeamSlotConfig[] = [
@@ -780,13 +782,13 @@ describe("compileComboTeamDamage with buffOverrides", () => {
     };
 
     // Baseline
-    const comboBase = evaluateCombo(tb, combo, sheets, CTX);
+    const comboBase = tb.evaluateCombo(combo, sheets, CTX);
     expect(comboBase.totalDamage).toBeGreaterThan(0);
 
     // evaluateCombo does NOT accept user overrides directly (it uses
     // getDisplayResult internally for single-formula damage). This test
     // verifies the cold path still works and doesn't crash.
-    const comboResult = evaluateCombo(tb, combo, sheets, CTX);
+    const comboResult = tb.evaluateCombo(combo, sheets, CTX);
     expect(comboResult.totalDamage).toBe(comboBase.totalDamage);
   });
 });

@@ -6,9 +6,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Inazuma Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("kirara")
 class Kirara extends CharacterBase {

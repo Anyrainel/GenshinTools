@@ -60,6 +60,8 @@ describe("Mavuika melt Q damage investigation", () => {
   const calcContext: CalcContext = {
     enemyLevel: 103,
     enemyRes: 10,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   const meltOverride: FormulaOverride = {
@@ -72,13 +74,17 @@ describe("Mavuika melt Q damage investigation", () => {
     const emptySheets: Record<string, StatSheet> = {};
     for (const c of configs) emptySheets[c.charId] = new StatSheet([]);
 
-    // Display path
-    const displayResult = teamBuild.getDisplayResult(
+    const combo = singleFormulaCombo(
       "mavuika",
       "mavuika-sunfell",
-      emptySheets,
-      calcContext,
       meltOverride
+    );
+
+    // Display path — combo-first API
+    const displayResult = teamBuild.getComboDisplayResult(
+      combo,
+      emptySheets,
+      calcContext
     );
 
     console.log("=== Display Result (no artifacts) ===");
@@ -138,7 +144,7 @@ describe("Mavuika melt Q damage investigation", () => {
     // Compiled formula
     const compiled = compileComboTeamDamage(
       teamBuild,
-      singleFormulaCombo("mavuika", "mavuika-sunfell", meltOverride),
+      combo,
       "mavuika",
       emptySheets,
       calcContext

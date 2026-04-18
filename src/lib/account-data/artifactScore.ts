@@ -24,9 +24,7 @@ import {
   getSubstatMaxRoll,
 } from "./scoring/utils";
 
-// ----------------------------------------------------------------------------
 // 1. Constants & Helpers
-// ----------------------------------------------------------------------------
 
 // Max CD roll value used as baseline for sub-score calculation
 const MAX_CD_ROLL_5STAR = getSubstatMaxRoll("cd", 5);
@@ -120,9 +118,7 @@ export interface ArtifactScoreResult {
   normalized: NormalizedScoreInfo;
 }
 
-// ----------------------------------------------------------------------------
 // 2. Stat Scoring
-// ----------------------------------------------------------------------------
 
 /**
  * Calculates the score for a single attribute.
@@ -230,9 +226,7 @@ export function calculateMaxSlotSubScore(
   return weightSum * maxCdRoll;
 }
 
-// ----------------------------------------------------------------------------
 // 3. Scoring Loop
-// ----------------------------------------------------------------------------
 
 /**
  * For DPS builds whose circlet recommends only one of CR/CD,
@@ -658,9 +652,7 @@ export function scoreWithBuilds(
   return { substatScore, buildMatch, normalized };
 }
 
-// ----------------------------------------------------------------------------
 // 4. Build Matching
-// ----------------------------------------------------------------------------
 
 /** Count how many equipped artifacts belong to a given artifact set (string ID). */
 function countSetPieces(

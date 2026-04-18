@@ -1,15 +1,13 @@
 import {
   AmplifyFormula,
-  CatalyzeFormula,
   type DamageFormula,
   DirectFormula,
-  TransformFormula,
 } from "../calc/damageFormula";
 import { E, type Expr, simplify } from "../calc/expr";
 import type { ExprStatSheet } from "../calc/exprStatSheet";
 import { CharacterBase } from "../calc/implModel";
 import { RegisterCharacter, resolveOption } from "../calc/registry";
-import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import { StatBuff } from "../calc/statBuff";
 import type { StatSheet } from "../calc/statSheet";
 import type { OptionDef } from "../types";
 import type {
@@ -265,9 +263,7 @@ class ArlecchinoBurstAmplifyFormula extends AmplifyFormula {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Snezhnaya Characters
-// ═══════════════════════════════════════════════════════════════
 
 const arlecchinoOption = {
   label: { zh: "初始生命之契", en: "Initial BoL" },

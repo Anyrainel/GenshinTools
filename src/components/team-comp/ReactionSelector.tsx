@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
+  LUNAR_REACTIONS,
   MULTI_ELEMENT_CHARS,
 } from "@/lib/team-comp/constants";
 import type { FormulaEntry } from "@/lib/team-comp/types";
@@ -13,8 +14,6 @@ import type {
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { ReactionPartControls } from "./ReactionPartControls";
-
-// ─── Constants ───
 
 /** Transformative reactions — formulas using these have their own baked-in reaction
  *  and should not show the reaction selector. */
@@ -31,13 +30,7 @@ const TRANSFORMATIVE_REACTIONS = new Set<ReactionType>([
 ]);
 
 /** Lunar reactions — same: baked-in, no selector. */
-const LUNAR_REACTIONS = new Set<ReactionType>([
-  "lunarCharged",
-  "lunarBloom",
-  "lunarCrystallize",
-]);
-
-// ─── Props ───
+const LUNAR_REACTIONS_SET = new Set<ReactionType>(LUNAR_REACTIONS);
 
 interface ReactionSelectorProps {
   /** The formula entry (to read parts) */
@@ -60,8 +53,6 @@ interface ReactionSelectorProps {
   disabled?: boolean;
 }
 
-// ─── Component ───
-
 export function ReactionSelector({
   formulaEntry,
   element,
@@ -81,7 +72,7 @@ export function ReactionSelector({
   const firstPart = formulaEntry.parts[0];
   if (firstPart) {
     const baked = firstPart.formula.tag.reaction;
-    if (TRANSFORMATIVE_REACTIONS.has(baked) || LUNAR_REACTIONS.has(baked)) {
+    if (TRANSFORMATIVE_REACTIONS.has(baked) || LUNAR_REACTIONS_SET.has(baked)) {
       return null;
     }
   }

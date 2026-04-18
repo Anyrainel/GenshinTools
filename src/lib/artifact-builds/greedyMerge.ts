@@ -1,9 +1,4 @@
-import type {
-  MainStatPlus,
-  SetConfig,
-  SlotConfig,
-  SubStat,
-} from "../../data/types";
+import type { SetConfig, SlotConfig, SubStat } from "../../data/types";
 import {
   SLOT_KEYS,
   type SlotKey,

@@ -7,15 +7,11 @@ import type {
   ComputeOptions,
 } from "../../data/types";
 
-// ---------------------------------------------------------------------------
 // Constants
-// ---------------------------------------------------------------------------
 
 export const BUILD_DATA_VERSION = 5;
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 function arraysEqual<T>(
   a: readonly T[] | undefined,
@@ -75,9 +71,7 @@ export function areBuildsEqual(b1: Build, b2: Build): boolean {
   return true;
 }
 
-// ---------------------------------------------------------------------------
 // Export Payload Generation (V5)
-// ---------------------------------------------------------------------------
 
 const getStylesMask = (styles: string[] | undefined): number => {
   if (!styles) return 0;

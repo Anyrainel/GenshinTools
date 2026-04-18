@@ -1,7 +1,3 @@
-import { beforeAll, describe, expect, it } from "vitest";
-
-import { charInfo } from "@/data/charInfo";
-import { charactersById } from "@/data/constants";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { CharacterBase } from "@/lib/team-comp/calc/implModel";
 import {
@@ -11,11 +7,12 @@ import {
   getOptionDef,
   resolveOption,
 } from "@/lib/team-comp/calc/registry";
-import { ScalingBuff, StatBuff } from "@/lib/team-comp/calc/statBuff";
+import { StatBuff } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet, appendFieldState } from "@/lib/team-comp/calc/statSheet";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import type { OptionDef } from "@/lib/team-comp/types";
 import type { DamageTag } from "@/lib/team-comp/types";
+import { beforeAll, describe, expect, it } from "vitest";
 
 // Side-effect barrel: register all characters, weapons, artifacts
 import "@/lib/team-comp/index";
@@ -929,6 +926,8 @@ describe("CharacterBase via createCharacter", () => {
     const result = char.getDamageResult("diluc-skill", stats, [stats], {
       enemyLevel: 100,
       enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
     });
 
     expect(result.totalDamage).toBeGreaterThan(0);

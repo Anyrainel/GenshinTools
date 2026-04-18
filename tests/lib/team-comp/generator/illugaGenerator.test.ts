@@ -26,7 +26,12 @@ import { drain } from "../../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
 
-const CTX: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+const CTX: CalcContext = {
+  enemyLevel: 100,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
+};
 
 function configs(): TeamSlotConfig[] {
   return [

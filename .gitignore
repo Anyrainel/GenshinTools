@@ -1,3 +1,6 @@
+# MCP config (machine-specific)
+.mcp.json
+
 # Logs
 logs
 *.log

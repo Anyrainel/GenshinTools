@@ -137,7 +137,7 @@ export function RecommendationView({
   const { t } = useLanguage();
   const accountData = useActiveAccountData();
   const buildGroups = useAllResolvedBuilds();
-  const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
+  const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const tierCustomization = useTierStore((s) => s.tierCustomization);
   const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);

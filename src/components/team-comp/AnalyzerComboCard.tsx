@@ -12,7 +12,6 @@ import type {
 } from "@/lib/team-comp/analyzer/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type { ExtraBuff } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
   FormulaOverride,
@@ -30,8 +29,6 @@ import {
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
 } from "./cardStyles";
-
-// ─── Props ───
 
 interface AnalyzerComboCardProps {
   teamBuild: TeamBuild;

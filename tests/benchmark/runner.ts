@@ -22,23 +22,18 @@ import type {
   GlobalStatWeights,
   Slot,
 } from "@/data/types";
-import {
-  type BuildMatchResult,
-  matchBuild,
-} from "@/lib/account-data/artifactScore";
+import { matchBuild } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer";
 import type {
   CharOptConfig,
-  TeamOptYield,
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
@@ -62,8 +57,6 @@ const characterBuildIds = allBuildsJson.characterBuilds as Record<
   string,
   string[]
 >;
-
-// ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface ArtifactConfig {
   type?: "4pc" | "2pc+2pc";
@@ -126,11 +119,11 @@ export interface TeamResult {
   constraintViolations?: ConstraintViolation[];
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
 export const DEFAULT_CALC_CONTEXT: CalcContext = {
   enemyLevel: 110,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 export const DEFAULT_GLOBAL_CONFIG: GlobalStatWeights = {
@@ -499,6 +492,8 @@ export async function runOptimizerOnTeam(
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+      rollMultiplier: DEFAULT_CALC_CONTEXT.rollMultiplier,
+      substatBudget: DEFAULT_CALC_CONTEXT.substatBudget,
     };
 
     const baseSheets = buildBaseSheets(team, accountData);
@@ -643,8 +638,7 @@ export async function runOptimizerOnTeam(
     for (const [formulaId, label] of formulaEntries) {
       try {
         const singleCombo = singleFormulaCombo(carryCharId, formulaId);
-        const comboRes = evaluateCombo(
-          optTeamBuild,
+        const comboRes = optTeamBuild.evaluateCombo(
           singleCombo,
           artifactStats,
           calcContext

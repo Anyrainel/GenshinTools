@@ -2,9 +2,7 @@ import type { Element } from "@/data/types";
 import { StatBuff } from "./statBuff";
 import type { TeamMeta } from "./teamMeta";
 
-// ═══════════════════════════════════════════════════════════════
 // TeamResonance
-// ═══════════════════════════════════════════════════════════════
 /**
  * Elemental resonance buffs derived from team composition.
  * Resonance triggers when ≥2 characters share an element,

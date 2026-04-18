@@ -4,8 +4,6 @@ import bossZhData from "./game/leyline_boss_zh.json";
 import { i18nGameData } from "./i18n-game";
 import type { Language } from "./types";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
 export type ElementKey =
   | "physical"
   | "pyro"

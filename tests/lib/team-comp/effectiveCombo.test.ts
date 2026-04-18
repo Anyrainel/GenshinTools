@@ -5,11 +5,7 @@ import { describe, expect, it } from "vitest";
 
 type TeamSlice = Pick<
   Team,
-  | "formulaMode"
-  | "selectedFormula"
-  | "singleReaction"
-  | "combos"
-  | "selectedCombo"
+  "formulaMode" | "selectedFormula" | "singleReaction" | "combo"
 >;
 
 function makeTeam(overrides: Partial<TeamSlice>): TeamSlice {
@@ -17,8 +13,7 @@ function makeTeam(overrides: Partial<TeamSlice>): TeamSlice {
     formulaMode: "single",
     selectedFormula: null,
     singleReaction: undefined,
-    combos: [],
-    selectedCombo: null,
+    combo: null,
     ...overrides,
   };
 }
@@ -95,8 +90,7 @@ describe("getEffectiveCombo", () => {
         makeTeam({
           formulaMode: "single",
           selectedFormula: { charId: "Nahida", formulaId: "burst" },
-          combos: [combo],
-          selectedCombo: "c1",
+          combo: combo,
         })
       );
       expect(result.lines).toHaveLength(1);
@@ -107,7 +101,7 @@ describe("getEffectiveCombo", () => {
   describe("combo mode", () => {
     it("returns empty combo when no combos exist", () => {
       const result = getEffectiveCombo(
-        makeTeam({ formulaMode: "combo", combos: [] })
+        makeTeam({ formulaMode: "combo", combo: null })
       );
       expect(result.lines).toEqual([]);
     });
@@ -125,8 +119,7 @@ describe("getEffectiveCombo", () => {
       const result = getEffectiveCombo(
         makeTeam({
           formulaMode: "combo",
-          combos: [combo],
-          selectedCombo: "c1",
+          combo,
         })
       );
       expect(result.id).toBe("c1");
@@ -134,7 +127,7 @@ describe("getEffectiveCombo", () => {
       expect(result.lines.map((l) => l.charId)).toEqual(["A", "C"]);
     });
 
-    it("falls back to first combo when selectedCombo is null", () => {
+    it("returns the combo when set", () => {
       const combo: ComboFormula = {
         id: "first",
         label: { en: "F", zh: "F" },
@@ -143,8 +136,7 @@ describe("getEffectiveCombo", () => {
       const result = getEffectiveCombo(
         makeTeam({
           formulaMode: "combo",
-          combos: [combo],
-          selectedCombo: null,
+          combo,
         })
       );
       expect(result.id).toBe("first");
@@ -161,8 +153,7 @@ describe("getEffectiveCombo", () => {
           formulaMode: "combo",
           selectedFormula: { charId: "Nahida", formulaId: "burst" },
           singleReaction: { reaction: "bloom" },
-          combos: [combo],
-          selectedCombo: "c1",
+          combo,
         })
       );
       expect(result.lines).toHaveLength(1);
@@ -185,8 +176,7 @@ describe("getEffectiveCombo", () => {
       const result = getEffectiveCombo(
         makeTeam({
           formulaMode: "combo",
-          combos: [combo],
-          selectedCombo: "c1",
+          combo,
         })
       );
       expect(result.lines[0].reaction).toEqual({

@@ -19,9 +19,7 @@ import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRight, CircleHelp } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
-// -----------------------------------------------------------------------------
 // ArtifactDataContent - Shared content component for single artifact display
-// -----------------------------------------------------------------------------
 interface ArtifactDataContentProps {
   artifact: ArtifactData;
   slot: Slot;
@@ -106,10 +104,8 @@ export function ArtifactDataContent({
   );
 }
 
-// -----------------------------------------------------------------------------
 // ArtifactComparisonContent - Side-by-side before → after display
 // When afterArtifact is undefined, shows a "?" placeholder
-// -----------------------------------------------------------------------------
 interface ArtifactComparisonContentProps {
   beforeArtifact?: ArtifactData;
   afterArtifact?: ArtifactData;
@@ -211,9 +207,7 @@ function ArtifactComparisonContent({
   );
 }
 
-// -----------------------------------------------------------------------------
 // ArtifactDataHoverCard - Single artifact hover card (used in InventoryView)
-// -----------------------------------------------------------------------------
 interface ArtifactDataHoverCardProps {
   artifact: ArtifactData;
   slot: Slot;
@@ -307,10 +301,8 @@ export function ArtifactDataHoverCard({
   );
 }
 
-// -----------------------------------------------------------------------------
 // ArtifactComparisonHoverCard - Before→After hover card (used in InsightList)
 // Either side is optional: omit beforeArtifact for EQUIP (empty→artifact)
-// -----------------------------------------------------------------------------
 interface ArtifactComparisonHoverCardProps {
   /** The current/equipped artifact (optional - when missing, shows only the after artifact) */
   beforeArtifact?: ArtifactData;

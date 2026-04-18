@@ -20,7 +20,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AccountData, Build } from "@/data/types";
+import type { Build } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
@@ -188,11 +188,13 @@ export default function AccountDataPage() {
   const buildGroups = useAllResolvedBuilds();
 
   // Convert array of groups to a map for quick lookup during scoring
+  // Filter out disabled (visible=false) builds so they don't affect scores
   const resolvedBuildsMap = useMemo(() => {
     const map: Record<string, Build[]> = {};
     for (const group of buildGroups) {
-      if (group.builds.length > 0) {
-        map[group.characterId] = group.builds;
+      const visible = group.builds.filter((b) => b.visible);
+      if (visible.length > 0) {
+        map[group.characterId] = visible;
       }
     }
     return map;

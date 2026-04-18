@@ -16,15 +16,14 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import {
-  artifactHalfSetsById,
-  getSortableStatsForSlot,
-} from "@/data/constants";
+import { getSortableStatsForSlot } from "@/data/constants";
 import type { ArtifactData, Slot } from "@/data/types";
+import { getStatValue, sortByStats } from "@/lib/artifact/inventory";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRightLeft, Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
+import { SORT_LABELS } from "./cardStyles";
 
 interface ArtifactSwapDialogProps {
   open: boolean;
@@ -37,51 +36,6 @@ interface ArtifactSwapDialogProps {
   matchingSetIds: Set<string>;
   onSwap: (newArtifact: ArtifactData) => void;
   t: ReturnType<typeof useLanguage>["t"];
-}
-
-/**
- * Get the value of a stat on an artifact (checks main stat then substats).
- * Returns 0 if the artifact doesn't have that stat.
- */
-function getStatValue(art: ArtifactData, stat: string): number {
-  if (art.mainStatKey === stat) {
-    // Main stat value isn't stored numerically in ArtifactData,
-    // but we can use level as a proxy (higher level = higher main stat).
-    // For sorting purposes, having the stat at all is the key signal,
-    // so we return a large number to ensure main-stat matches rank high.
-    return 10000 + art.level;
-  }
-  return (art.substats as Record<string, number | undefined>)?.[stat] ?? 0;
-}
-
-/**
- * Sort artifacts mimicking in-game sorting:
- * 1. Number of selected stats matched (more matches first)
- * 2. First stat's value (descending)
- * 3. Second stat's value as tiebreaker (descending)
- * 4. Third, fourth stat values (descending)
- */
-function sortByStats(
-  items: ArtifactData[],
-  sortStats: (string | null)[]
-): ArtifactData[] {
-  const activeStats = sortStats.filter((s): s is string => s != null);
-  if (activeStats.length === 0) return items;
-
-  return [...items].sort((a, b) => {
-    // Count how many of the selected stats each artifact has
-    const countA = activeStats.filter((s) => getStatValue(a, s) > 0).length;
-    const countB = activeStats.filter((s) => getStatValue(b, s) > 0).length;
-    if (countB !== countA) return countB - countA;
-
-    // Tiebreak by stat values in priority order
-    for (const stat of activeStats) {
-      const valA = getStatValue(a, stat);
-      const valB = getStatValue(b, stat);
-      if (valB !== valA) return valB - valA;
-    }
-    return 0;
-  });
 }
 
 export function ArtifactSwapDialog({
@@ -176,8 +130,6 @@ export function ArtifactSwapDialog({
 
   // Stats already selected in other slots (to avoid duplicates in selects)
   const usedStats = new Set(sortStats.filter((s): s is string => s != null));
-
-  const SORT_LABELS = ["1st", "2nd", "3rd", "4th"];
 
   const renderSortSelects = () => (
     <div className="flex flex-col gap-2">
@@ -422,39 +374,4 @@ export function ArtifactSwapDialog({
       </ResponsiveDialogContent>
     </ResponsiveDialog>
   );
-}
-
-/**
- * Compute the set of artifact set IDs that match the team roster's
- * configured sets for a given character index.
- */
-export function getMatchingSetIds(
-  team: {
-    artifacts: (
-      | {
-          type: string;
-          setId?: string;
-          id1?: string | number;
-          id2?: string | number;
-        }
-      | undefined
-    )[];
-  },
-  charIndex: number
-): Set<string> {
-  const ids = new Set<string>();
-  const artConfig = team.artifacts[charIndex];
-  if (!artConfig) return ids;
-
-  if (artConfig.type === "4pc" && artConfig.setId) {
-    ids.add(artConfig.setId);
-  } else if (artConfig.type === "2pc+2pc") {
-    for (const hsId of [String(artConfig.id1), String(artConfig.id2)]) {
-      const hs = artifactHalfSetsById[hsId];
-      if (hs) {
-        for (const setId of hs.setIds) ids.add(setId);
-      }
-    }
-  }
-  return ids;
 }

@@ -20,7 +20,6 @@ import type { SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { WeaponChoiceProgress } from "@/lib/team-comp/analyzer/weaponChoice";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/generator/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type {
@@ -29,7 +28,7 @@ import type {
   WeaponRanking,
 } from "@/stores/useTeamStore";
 import { Loader2, Play } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import {
   CharCrErSettings,
   EnemyInputs,
@@ -40,10 +39,8 @@ import {
   CARD_CLS,
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
+  CONTROLS_CLS,
 } from "./cardStyles";
-
-const CONTROLS_CLS =
-  "flex flex-wrap items-center justify-center mb-3 gap-x-2 gap-y-1 md:gap-x-5 md:gap-y-2";
 
 // Substat display order (most common optimization targets first)
 const SUBSTAT_ORDER: SubStat[] = [
@@ -59,14 +56,6 @@ const SUBSTAT_ORDER: SubStat[] = [
   "def",
 ];
 
-// ─── Types ───
-
-export interface WeaponChoiceCalcSettings {
-  calcContext: CalcContext;
-  rollMultiplier: number;
-  substatBudget: SubstatBudgetPreset;
-}
-
 interface WeaponChoiceResultCardProps {
   team: Team;
   updateTeam: (id: string, patch: Partial<Team>) => void;
@@ -75,7 +64,7 @@ interface WeaponChoiceResultCardProps {
   result: WeaponChoiceResult | null;
   progress?: WeaponChoiceProgress;
   error: Error | null;
-  onRun: (settings: WeaponChoiceCalcSettings) => void;
+  onRun: () => void;
   onStop: () => void;
   t: ReturnType<typeof useLanguage>["t"];
 }
@@ -359,28 +348,14 @@ export function WeaponChoiceResultCard({
   t,
 }: WeaponChoiceResultCardProps) {
   const isMobile = useMediaQuery("(max-width: 1023px)");
+  const ctx = team.calcContext;
 
-  // Local settings state (not persisted)
-  const [enemyLevel, setEnemyLevel] = useState<number | string>(110);
-  const [enemyRes, setEnemyRes] = useState<number | string>(10);
-  const [rollMultiplier, setRollMultiplier] = useState(0.85);
-  const [substatBudget, setSubstatBudget] =
-    useState<SubstatBudgetPreset>("8_6");
-
-  const handleRun = useCallback(() => {
-    const lvl = Number(enemyLevel) || 110;
-    const res = Number(enemyRes) || 10;
-    onRun({
-      calcContext: {
-        enemyLevel: lvl,
-        enemyRes: res / 100,
-        rollMultiplier,
-        substatBudget,
-      },
-      rollMultiplier,
-      substatBudget,
-    });
-  }, [onRun, enemyLevel, enemyRes, rollMultiplier, substatBudget]);
+  const patchCtx = useCallback(
+    (patch: Partial<CalcContext>) => {
+      updateTeam(team.id, { calcContext: { ...ctx, ...patch } });
+    },
+    [team.id, ctx, updateTeam]
+  );
 
   const hasResult = result && Object.keys(result.perCharacter).length > 0;
 
@@ -398,23 +373,28 @@ export function WeaponChoiceResultCard({
         {/* Settings row */}
         <div className={CONTROLS_CLS}>
           <EnemyInputs
-            enemyLevel={enemyLevel}
-            enemyRes={enemyRes}
-            onEnemyLevelChange={setEnemyLevel}
-            onEnemyResChange={setEnemyRes}
+            enemyLevel={ctx.enemyLevel}
+            enemyRes={Math.round(ctx.enemyRes * 100)}
+            onEnemyLevelChange={(raw) => {
+              const num = Number(raw);
+              if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
+            }}
+            onEnemyResChange={(raw) => {
+              const num = Number(raw);
+              if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
+            }}
             t={t}
           />
           <RollQualityInputs
-            rollMultiplier={rollMultiplier}
-            substatBudget={substatBudget}
-            onRollMultiplierChange={setRollMultiplier}
-            onSubstatBudgetChange={setSubstatBudget}
+            rollMultiplier={ctx.rollMultiplier}
+            substatBudget={ctx.substatBudget}
+            onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
+            onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
 
-          {/* Run / Stop button */}
           <Button
-            onClick={isComputing ? onStop : handleRun}
+            onClick={isComputing ? onStop : onRun}
             variant={isComputing ? "destructive" : "default"}
             size="sm"
             className="shrink-0"

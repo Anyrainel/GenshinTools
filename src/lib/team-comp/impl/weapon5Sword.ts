@@ -6,9 +6,7 @@ import { ZERO_ENERGY_CHARS } from "../constants";
 import { ALL_ELEMENTAL_FILTER } from "./helpers";
 import { r, wbs } from "./helpers";
 
-// ══════════════════════════
 // 5★ Swords
-// ══════════════════════════
 
 @RegisterWeapon("athame_artis")
 class AthameArtis extends WeaponBase {

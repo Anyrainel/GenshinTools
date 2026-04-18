@@ -14,8 +14,6 @@ import type { FormulaEntry } from "@/lib/team-comp/types";
 import type { FormulaOverride, ReactionType } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 
-// ─── Helpers ───
-
 /** Build a compact label from a formula part's scaling info: e.g. "230% ATK + 45% EM" */
 export function partLabel(
   part: FormulaEntry["parts"][number],
@@ -29,8 +27,6 @@ export function partLabel(
   }
   return label;
 }
-
-// ─── Props ───
 
 export interface ReactionPartControlsProps {
   /** The formula entry (to read parts). */
@@ -46,8 +42,6 @@ export interface ReactionPartControlsProps {
   /** Disable all interaction (read-only preview). */
   disabled?: boolean;
 }
-
-// ─── Component ───
 
 /**
  * Per-part reaction controls: checkbox + ability label + hit count dropdown.

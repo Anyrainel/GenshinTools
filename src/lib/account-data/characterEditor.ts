@@ -6,8 +6,6 @@ import type {
 } from "@/data/types";
 import { nextArtifactId, nextWeaponId } from "./idUtils";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function cloneData(data: AccountData): AccountData {
   return JSON.parse(JSON.stringify(data));
 }

@@ -8,16 +8,17 @@
  * E.add(E.const(baseline), E.var(idx)). For fixed stats, returns E.const(value).
  */
 
-import type {
-  DamageTag,
-  DamageTagFilter,
-  ElementalOrPhysical,
-  FieldState,
-  StatKey,
-} from "../types";
+import type { DamageTag, DamageTagFilter, FieldState, StatKey } from "../types";
 import { filterMatchesTag } from "../types";
 import { E, type Expr, simplify } from "./expr";
-import { MULTIPLICATIVE_KEYS, appendFieldState } from "./statSheet";
+import {
+  ELEMENTAL_DMG_KEY_TO_ELEMENT,
+  MULTIPLICATIVE_KEYS,
+  SCALED_PERCENT_KEYS,
+  SCALED_STAT_BASES,
+  appendFieldState,
+  serializeFilter,
+} from "./statSheet";
 import { StatSheet } from "./statSheet";
 
 // ─── Variable Mapping ───
@@ -71,41 +72,6 @@ export class VarMapping {
   }
 }
 
-// ─── Scaled stat bases ───
-
-const SCALED_STAT_BASES: Record<string, StatKey> = {
-  atk: "baseAtk",
-  hp: "baseHp",
-  def: "baseDef",
-};
-
-const SCALED_PERCENT_KEYS = new Set(["atk%", "hp%", "def%"]);
-
-/** Per-element/Physical DMG keys that get normalized to dmg% + element filter. */
-const ELEMENTAL_DMG_KEY_TO_ELEMENT: Partial<
-  Record<StatKey, ElementalOrPhysical>
-> = {
-  "pyro%": "Pyro",
-  "hydro%": "Hydro",
-  "electro%": "Electro",
-  "cryo%": "Cryo",
-  "dendro%": "Dendro",
-  "anemo%": "Anemo",
-  "geo%": "Geo",
-  "phys%": "Physical",
-};
-
-/** Serialize a filter to match StatSheet's internal format. */
-function serializeFilter(filter: DamageTagFilter): string {
-  const parts: string[] = [];
-  if (filter.abilities)
-    parts.push(`a:${[...filter.abilities].sort().join(",")}`);
-  if (filter.elements) parts.push(`e:${[...filter.elements].sort().join(",")}`);
-  if (filter.reactions)
-    parts.push(`r:${[...filter.reactions].sort().join(",")}`);
-  return parts.join("|");
-}
-
 /**
  * Expr-returning stat sheet analog. Mirrors StatSheet.get() and getRaw()
  * but returns Expr nodes, mixing constants and variables as appropriate.
@@ -142,7 +108,7 @@ export class ExprStatSheet {
     }
 
     // Scaled stats (ATK, HP, DEF): base × (1 + %) + flat
-    const baseKey = SCALED_STAT_BASES[key];
+    const baseKey = (SCALED_STAT_BASES as Record<string, StatKey>)[key];
     if (baseKey) {
       const base = this.getUniversalExpr(baseKey);
       let pct = this.getUniversalExpr(`${key}%` as StatKey);

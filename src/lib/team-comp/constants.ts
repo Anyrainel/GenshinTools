@@ -203,4 +203,49 @@ export const ARTIFACT_STAT_KEYS: StatKey[] = [
   "anemo%",
   "geo%",
   "phys%",
+]; // Reaction tag color palette
+export const REACTION_COLORS: Partial<Record<ReactionType, string>> = {
+  melt: "#E57373", // Pyro + Cryo (coral red)
+  vaporize: "#81D4FA", // Pyro + Hydro (steam blue)
+  spread: "#A8E063", // Dendro green
+  aggravate: "#BB86FC", // Electro purple
+  overloaded: "#FF6347", // Pyro-Electro explosion (tomato red-orange)
+  electroCharged: "#9370DB", // Electro-Hydro (purple-blue)
+  superconduct: "#B8C4FF", // Cryo-Electro (icy blue-purple)
+  swirl: "#64FFDA", // Anemo teal
+  frozen: "#B8C4FF", // Cryo-Hydro (icy blue-purple)
+  bloom: "#7CB342", // Dendro core green
+  hyperbloom: "#7C4DFF", // Electro purple (hitting core)
+  burgeon: "#FF7043", // Pyro orange-red (hitting core)
+  burning: "#FF9800", // Pyro flame orange
+  lunarCharged: "#B8A5E3", // Lighter electro-charged purple
+  lunarBloom: "#A5D86E", // Lighter bloom green
+  lunarCrystallize: "#FFE082", // Lighter Geo golden
+};
+export const CUSTOM_STAT_OPTIONS: StatKey[] = [
+  "atk",
+  "hp",
+  "def",
+  "em",
+  "atk%",
+  "hp%",
+  "def%",
+  "er",
+  "cr",
+  "cd",
+  "pyro%",
+  "hydro%",
+  "anemo%",
+  "electro%",
+  "dendro%",
+  "cryo%",
+  "geo%",
+  "phys%",
+  "dmg%",
+  "reactionDmg%",
+  "baseDmg%",
+  "baseDmg",
+  "defReduction%",
+  "defIgnore%",
+  "resReduction%",
 ];

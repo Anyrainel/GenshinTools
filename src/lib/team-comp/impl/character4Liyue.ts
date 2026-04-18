@@ -3,12 +3,10 @@ import { CharacterBase } from "../calc/implModel";
 import { RegisterCharacter, resolveOption } from "../calc/registry";
 import { ScalingBuff, StatBuff } from "../calc/statBuff";
 import type { OptionDef } from "../types";
-import type { ComboTemplate, StatKey } from "../types";
+import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Liyue Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("lan_yan")
 class LanYan extends CharacterBase {

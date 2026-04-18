@@ -16,59 +16,24 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getSortableStatsForSlot } from "@/data/constants";
-import type { AccountData, ArtifactData, Slot } from "@/data/types";
+import type { ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import {
+  getAllArtifacts,
+  getStatValue,
+  sortByStats,
+} from "@/lib/artifact/inventory";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getRarityColor } from "@/lib/utils";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
+import { SORT_LABELS } from "./cardStyles";
 
 interface ArtifactFreezeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-/** Collect every artifact from account data (equipped + inventory). */
-function getAllArtifacts(accountData: AccountData): ArtifactData[] {
-  const artifacts: ArtifactData[] = [];
-  for (const char of accountData.characters) {
-    for (const slot of allSlots) {
-      const art = char.artifacts[slot];
-      if (art) artifacts.push(art);
-    }
-  }
-  for (const art of accountData.extraArtifacts) {
-    artifacts.push(art);
-  }
-  return artifacts;
-}
-
-function getStatValue(art: ArtifactData, stat: string): number {
-  if (art.mainStatKey === stat) return 10000 + art.level;
-  return (art.substats as Record<string, number | undefined>)?.[stat] ?? 0;
-}
-
-function sortByStats(
-  items: ArtifactData[],
-  sortStats: (string | null)[]
-): ArtifactData[] {
-  const activeStats = sortStats.filter((s): s is string => s != null);
-  if (activeStats.length === 0) return items;
-
-  return [...items].sort((a, b) => {
-    const countA = activeStats.filter((s) => getStatValue(a, s) > 0).length;
-    const countB = activeStats.filter((s) => getStatValue(b, s) > 0).length;
-    if (countB !== countA) return countB - countA;
-
-    for (const stat of activeStats) {
-      const valA = getStatValue(a, stat);
-      const valB = getStatValue(b, stat);
-      if (valB !== valA) return valB - valA;
-    }
-    return 0;
-  });
 }
 
 export function ArtifactFreezeDialog({
@@ -178,7 +143,6 @@ export function ArtifactFreezeDialog({
   };
 
   const usedStats = new Set(sortStats.filter((s): s is string => s != null));
-  const SORT_LABELS = ["1st", "2nd", "3rd", "4th"];
 
   const selectedCount = selectedIds.size;
 

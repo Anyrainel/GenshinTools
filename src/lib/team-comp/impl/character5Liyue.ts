@@ -1,9 +1,4 @@
-import {
-  DirectFormula,
-  LunarDirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../calc/damageFormula";
+import { DirectFormula, LunarDirectFormula } from "../calc/damageFormula";
 import { CharacterBase } from "../calc/implModel";
 import { RegisterCharacter, resolveOption } from "../calc/registry";
 import { DynamicCapScalingBuff, ScalingBuff, StatBuff } from "../calc/statBuff";
@@ -12,9 +7,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Liyue Characters
-// ═══════════════════════════════════════════════════════════════
 
 const zibaiOption = {
   label: { zh: "时隙浮光消耗", en: "Float-Light Points" },
@@ -898,7 +891,6 @@ class Zhongli extends CharacterBase {
 }
 
 // 5-Star Character Implementations
-// ═══════════════════════════════════════════════════════════════
 
 const huTaoOption = {
   label: { zh: "生命值状态", en: "HP State" },

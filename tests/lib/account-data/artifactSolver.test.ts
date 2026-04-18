@@ -3,7 +3,7 @@ import {
   buildRollTable,
   isAlreadyPrecise,
   solveArtifact,
-} from "@/lib/account-data/artifactSolver";
+} from "@/lib/artifact/solver";
 import { beforeAll, describe, expect, it } from "vitest";
 
 describe("artifactSolver", () => {

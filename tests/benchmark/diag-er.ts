@@ -8,7 +8,7 @@ import "@/lib/team-comp/index";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import type { ArtifactData, Element } from "@/data/types";
+import type { Element } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { defaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
 import {
@@ -23,17 +23,6 @@ import type {
   ComboFormula,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
-
-import {
-  type Team,
-  preloadGameStats as benchPreload,
-  buildPerChar,
-  buildTeamSlotConfig,
-  getAllArtifacts,
-  loadAccountData,
-  loadTeamPreset,
-  runOptimizerOnTeam,
-} from "./runner";
 
 async function main() {
   await preloadGameStats();

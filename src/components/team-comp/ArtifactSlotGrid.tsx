@@ -1,17 +1,9 @@
 import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactData, Slot } from "@/data/types";
+import { type ArtifactData, type Slot, allSlots } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { ArrowRightLeft } from "lucide-react";
-
-const ARTIFACT_SLOTS: Slot[] = [
-  "flower",
-  "plume",
-  "sands",
-  "goblet",
-  "circlet",
-];
 
 export function ArtifactSlotGrid({
   charId,
@@ -30,7 +22,7 @@ export function ArtifactSlotGrid({
 }) {
   return (
     <div className="grid grid-cols-5 gap-0.5 md:gap-1 lg:gap-1.5">
-      {ARTIFACT_SLOTS.map((slot) => {
+      {allSlots.map((slot) => {
         const art = artifactsObj[slot];
         if (!art)
           return (

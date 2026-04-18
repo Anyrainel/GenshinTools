@@ -1,10 +1,8 @@
 import { ExportBranding } from "@/components/shared/ExportBranding";
-import {
-  ExportColumn,
-  buildArtifactOwnerMap,
-} from "@/components/team-comp/SwapGuide";
+import { ExportColumn } from "@/components/team-comp/SwapGuide";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
+import { buildArtifactOwnerMap } from "@/lib/artifact/inventory";
 import type { FrozenTeam } from "@/stores/useFreezeStore";
 import type { Team } from "@/stores/useTeamStore";
 import { forwardRef } from "react";

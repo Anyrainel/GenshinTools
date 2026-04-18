@@ -35,8 +35,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormulaLabel } from "./FormulaLabel";
 import { ReactionPartControls } from "./ReactionPartControls";
 
-// ─── Public API ───
-
 interface AnalyzerComboTabProps {
   teamBuild: TeamBuild;
   charConfigs: AnalyzerCharConfig[];
@@ -102,8 +100,6 @@ export function AnalyzerComboTab({
   );
 }
 
-// ─── Data model ───
-
 /** One reaction variant of a formula (e.g. "Q Direct", "Q Melt"). */
 type Variant = {
   /** Key for override storage, e.g. "burst" or "burst:melt" */
@@ -117,18 +113,6 @@ type Variant = {
   /** FormulaEntry for per-part config (only set for non-direct variants) */
   formulaEntry: FormulaEntry | undefined;
 };
-
-/** One formula row with all its reaction variants. */
-type FormulaRow = {
-  formulaId: string;
-  label: I18nLabel | undefined;
-  minC: number;
-  variants: Variant[];
-  /** Whether to show reaction labels in cells (true when >1 variant) */
-  showLabels: boolean;
-};
-
-// ─── Per-character section ───
 
 function CharComboRow({
   charId,

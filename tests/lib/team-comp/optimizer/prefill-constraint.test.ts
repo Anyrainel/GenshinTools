@@ -1,9 +1,5 @@
-import type { MainStat, Slot, SubStat } from "@/data/types";
+import type { MainStat, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
-/**
- * Tests that computeSubstatPreFill respects the 4-substat-per-slot constraint.
- */
-import { toInternal } from "@/lib/account-data/scoring/utils";
 import { getRollValues } from "@/lib/team-comp/generator/constrainedGreedy";
 import { computeSubstatPreFill } from "@/lib/team-comp/optimizer/erCrConstraints";
 import { describe, expect, it } from "vitest";

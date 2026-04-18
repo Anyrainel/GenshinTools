@@ -19,10 +19,6 @@ import {
   scoreSlot,
 } from "./artifactScore";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 export type ScalingStat = "atk" | "hp" | "def" | "em";
 export type ArchetypeRole = "dps" | "support";
 
@@ -86,9 +82,7 @@ export type SetGroup = {
   worstCompleteness: number;
 };
 
-// ---------------------------------------------------------------------------
 // 1. Dedup builds into EvalBuilds (archetype-based)
-// ---------------------------------------------------------------------------
 
 /**
  * Bucket a raw weight into an archetype tier.
@@ -101,9 +95,7 @@ function bucketWeight(w: number): number {
   return 0; // ignored for archetype identity
 }
 
-// ---------------------------------------------------------------------------
 // Archetype classification
-// ---------------------------------------------------------------------------
 
 const scalingMainStats: Record<string, ScalingStat> = {
   "atk%": "atk",
@@ -361,9 +353,7 @@ export function collectEvalBuilds(
   return Array.from(map.values());
 }
 
-// ---------------------------------------------------------------------------
 // 2. Gather all artifacts from account
-// ---------------------------------------------------------------------------
 
 function getAllArtifacts(accountData: AccountData): ArtifactData[] {
   const artifacts: ArtifactData[] = [];
@@ -382,9 +372,7 @@ function getAllArtifacts(accountData: AccountData): ArtifactData[] {
   return artifacts;
 }
 
-// ---------------------------------------------------------------------------
 // 3. Find best artifact for a slot
-// ---------------------------------------------------------------------------
 
 function matchesMainStat(
   artifact: ArtifactData,
@@ -431,9 +419,7 @@ function findBestArtifact(
   return best;
 }
 
-// ---------------------------------------------------------------------------
 // 4. Evaluate a single build (generalized for variable flex count)
-// ---------------------------------------------------------------------------
 
 /** Generate all combinations of choosing k items from arr (indices). */
 function combinations(n: number, k: number): number[][] {
@@ -722,9 +708,7 @@ function getIdealMainStat(slot: Slot, evalBuild: EvalBuild): MainStat {
   return slot === "circlet" ? "cr" : "atk%";
 }
 
-// ---------------------------------------------------------------------------
 // 4b. Build selection by account constellation
-// ---------------------------------------------------------------------------
 
 /**
  * Key identifying a "build slot" for a character: composition + set-identity + role.
@@ -799,9 +783,7 @@ export function filterOwnedBuildGroups(
   return buildGroups.filter((g) => owned.has(g.characterId));
 }
 
-// ---------------------------------------------------------------------------
 // 5. Evaluate all builds, grouped by artifact set
-// ---------------------------------------------------------------------------
 
 export function evaluateAllBuilds(
   buildGroups: BuildGroup[],
@@ -844,13 +826,9 @@ export function evaluateAllBuilds(
   return groups;
 }
 
-// ---------------------------------------------------------------------------
 // 6. Helpers
-// ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
 // Unified completion tier system
-// ---------------------------------------------------------------------------
 
 export type CompletionTier = (typeof COMPLETION_TIERS)[number];
 

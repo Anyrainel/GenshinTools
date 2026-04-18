@@ -24,9 +24,7 @@ const ROOT = resolve(__dirname, "../..");
 const PROXY_PATH = resolve(ROOT, "functions/api/hoyolab/[[path]].ts");
 const PROBE_PATH = resolve(ROOT, "scripts/hoyolab-probe.ts");
 
-// ---------------------------------------------------------------------------
 // Upstream reference URLs (raw GitHub)
-// ---------------------------------------------------------------------------
 
 const UPSTREAM = {
   cn: {
@@ -37,9 +35,7 @@ const UPSTREAM = {
   },
 };
 
-// ---------------------------------------------------------------------------
 // Read our local values
-// ---------------------------------------------------------------------------
 
 function readLocal(filePath) {
   const src = readFileSync(filePath, "utf-8");
@@ -50,9 +46,7 @@ function readLocal(filePath) {
   return { cnVersion, cnSalt };
 }
 
-// ---------------------------------------------------------------------------
 // Fetch with timeout
-// ---------------------------------------------------------------------------
 
 async function fetchText(url, timeoutMs = 10_000) {
   const controller = new AbortController();
@@ -66,9 +60,7 @@ async function fetchText(url, timeoutMs = 10_000) {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Main
-// ---------------------------------------------------------------------------
 
 async function main() {
   const fix = process.argv.includes("--fix");

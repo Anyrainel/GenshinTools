@@ -16,7 +16,6 @@ import { useGameStats } from "@/hooks/useGameStats";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useBuildsStore } from "@/stores/useBuildsStore";

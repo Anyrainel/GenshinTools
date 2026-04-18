@@ -86,8 +86,6 @@ function parseArgs(): {
   return { command, update, filter, verbose, quiet, seed };
 }
 
-// ─── Main ────────────────────────────────────────────────────────────────────
-
 async function main() {
   const opts = parseArgs();
 

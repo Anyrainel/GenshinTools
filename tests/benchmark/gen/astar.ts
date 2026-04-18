@@ -10,7 +10,6 @@
 
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
-import { allSlots } from "@/data/types";
 import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
@@ -23,8 +22,6 @@ import type {
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
-  CARRY_TOP_K,
-  MAX_ARTS_PER_SLOT,
   MAX_ARTS_PER_SLOT_NOSET,
   type PerCharSearchFn,
   type PerCharSearchOpts,
@@ -40,17 +37,12 @@ import {
   evaluateUpperBound,
   getArtifactCr,
   getArtifactEr,
-  prepareSlotData,
   setupCharSearch,
 } from "./teamSearch";
 
-// ─── Constants ───
-
 const MAX_QUEUE_SIZE = 500_000;
 
-// ═══════════════════════════════════════════════════════════════════════
 // Max-Heap Priority Queue
-// ═══════════════════════════════════════════════════════════════════════
 
 interface AStarState {
   depth: number;
@@ -127,9 +119,7 @@ class MaxHeap {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Core A* Search
-// ═══════════════════════════════════════════════════════════════════════
 
 interface AStarContext {
   teamBuild: TeamBuild;
@@ -325,9 +315,7 @@ function aStarSearch(
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Single-Character A* Runner
-// ═══════════════════════════════════════════════════════════════════════
 
 function runCharacterAStar(opts: PerCharSearchOpts): PerCharSearchResult {
   const {
@@ -562,9 +550,7 @@ function runCharacterAStar(opts: PerCharSearchOpts): PerCharSearchResult {
   return { collector, evaluations: ctx.evaluations, failReason };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Export
-// ═══════════════════════════════════════════════════════════════════════
 
 export const runTeamOptimization: (
   opts: TeamOptimizerOptions

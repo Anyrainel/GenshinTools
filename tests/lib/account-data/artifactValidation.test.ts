@@ -1,5 +1,5 @@
 import type { ArtifactData } from "@/data/types";
-import { validateAndSolveArtifact } from "@/lib/account-data/artifactValidation";
+import { validateAndSolveArtifact } from "@/lib/artifact/validation";
 import { describe, expect, it } from "vitest";
 
 function makeArt(overrides: Partial<ArtifactData> = {}): ArtifactData {

@@ -26,10 +26,8 @@ import {
   type BuildOptimizerResult,
   optimizeBuildWithCrCdExploration,
 } from "./buildOptimizer";
-import { type CandidateArtifact, buildCandidatePool } from "./candidatePool";
+import { buildCandidatePool } from "./candidatePool";
 import { type CrBudgetResult, computeCrBudget } from "./crBudget";
-
-// ─── Types ───
 
 export type ActionType = "swap" | "upgrade" | "reroll" | "farm" | "equip";
 
@@ -266,8 +264,6 @@ function optimizeWithInvestmentConstraints(
     candidates: constrainedCandidates,
   });
 }
-
-// ─── Public API ───
 
 export function generateAllRecommendations(
   accountData: AccountData,

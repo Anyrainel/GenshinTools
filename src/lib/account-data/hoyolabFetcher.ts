@@ -13,7 +13,6 @@ import type {
   IGOODWeapon,
 } from "./goodConversion";
 
-// ---------------------------------------------------------------------------
 // HoYoLAB / 米游社 Battle Chronicle import.
 //
 // Unlike the Enka path (which reads the in-game profile showcase), this calls
@@ -24,7 +23,6 @@ import type {
 // The shape of the response is completely different from Enka's, so we map
 // directly to the internal GOODData format rather than reusing any of the
 // Enka-specific decoding helpers.
-// ---------------------------------------------------------------------------
 
 export type HoyolabRegion = "os" | "cn";
 
@@ -60,9 +58,7 @@ export function uidToServer(uid: string): string | null {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Response types (only the fields we consume)
-// ---------------------------------------------------------------------------
 
 interface HoyolabEnvelope<T> {
   retcode: number;
@@ -130,11 +126,9 @@ interface Skill {
   skill_type: number; // 1 active, 2 passive
 }
 
-// ---------------------------------------------------------------------------
 // Property type → GOOD stat key
 // Empirically verified from real response samples (see tmp_ysh/map-props.mjs).
 // This is the FightProp enum used by the mihoyo calc/chronicle APIs.
-// ---------------------------------------------------------------------------
 
 const PROPERTY_TYPE_TO_GOOD_KEY: Record<number, string> = {
   2: "hp",
@@ -166,9 +160,7 @@ const SLOT_BY_POS: Record<number, string> = {
   5: "circlet",
 };
 
-// ---------------------------------------------------------------------------
 // Low-level fetch through the signed proxy
-// ---------------------------------------------------------------------------
 
 const PROXY_BASE = "/api/hoyolab";
 
@@ -206,9 +198,7 @@ async function callProxy<T>(
   return envelope.data;
 }
 
-// ---------------------------------------------------------------------------
 // Public fetcher: returns the raw list + detail payloads
-// ---------------------------------------------------------------------------
 
 export interface HoyolabFetchResult {
   uid: string;
@@ -258,9 +248,7 @@ export async function fetchHoyolabData(
   return { uid, region, server, characters: details };
 }
 
-// ---------------------------------------------------------------------------
 // Conversion: HoyolabFetchResult → GOODData
-// ---------------------------------------------------------------------------
 
 export interface HoyolabConversionResult {
   data: GOODData;

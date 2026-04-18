@@ -27,9 +27,7 @@ import type {
   TriageSettings,
 } from "./types";
 
-// ---------------------------------------------------------------------------
 // Embryo key
-// ---------------------------------------------------------------------------
 
 function makeEmbryoKey(
   source: DemandSource,
@@ -45,9 +43,7 @@ function makeEmbryoKey(
   return `flex:${slot}:${mainStat}:${subs}`;
 }
 
-// ---------------------------------------------------------------------------
 // Support sets (ER hoarding only applies to these)
-// ---------------------------------------------------------------------------
 
 const SUPPORT_SETS = new Set([
   "silken_moons_serenade",
@@ -62,9 +58,7 @@ const SUPPORT_SETS = new Set([
   "tenacity_of_the_millelith",
 ]);
 
-// ---------------------------------------------------------------------------
 // Set matching
-// ---------------------------------------------------------------------------
 
 function matchesSet(rule: TriageRule, setKey: string): boolean {
   const src = rule.demandSource;
@@ -74,9 +68,7 @@ function matchesSet(rule: TriageRule, setKey: string): boolean {
   return true; // flex matches any set
 }
 
-// ---------------------------------------------------------------------------
 // Triage Pipeline
-// ---------------------------------------------------------------------------
 
 export function runTriage(
   accountData: AccountData,
@@ -553,9 +545,7 @@ export function runTriage(
   };
 }
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 function tierRank(t: QualityTier): number {
   return t === "P" ? 0 : t === "Q" ? 1 : t === "N" ? 2 : 3;

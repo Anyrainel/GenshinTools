@@ -1,5 +1,5 @@
 import type { AccountData, ArtifactData, SubStat } from "@/data/types";
-import { solveArtifact } from "./artifactSolver";
+import { solveArtifact } from "../artifact/solver";
 
 /**
  * Deterministic fingerprint for artifact identity (setKey, slot, level, mainStat, substats, etc.).

@@ -6,9 +6,7 @@ import type { ElementalOrPhysical } from "../types";
 import { ALL_ELEMENTAL_FILTER } from "./helpers";
 import { r, wbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Catalysts
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterWeapon("dawning_frost")
 class DawningFrost extends WeaponBase {

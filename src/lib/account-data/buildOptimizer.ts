@@ -8,13 +8,10 @@ import { allSlots } from "@/data/types";
 import {
   type StatWeightMap,
   getFixedMainStatValue,
-  scoreSlot,
   scoreSlotWithMainStat,
 } from "./artifactScore";
 import type { CandidateArtifact } from "./candidatePool";
 import type { CrBudgetResult } from "./crBudget";
-
-// ─── Types ───
 
 export interface BuildOptimizerConfig {
   weights: StatWeightMap;
@@ -45,8 +42,6 @@ export interface BuildOptimizerResult {
   currentScore: number;
   combinationsEvaluated: number;
 }
-
-// ─── Helpers ───
 
 /** Extract total CR contribution from a candidate artifact (main + sub, in decimal). */
 function getCandidateCr(art: CandidateArtifact): number {

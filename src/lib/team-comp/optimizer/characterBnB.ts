@@ -25,11 +25,9 @@ import type {
   ComboFormula,
   OptFailReason,
   PartialBuffInfo,
-  StatKey,
 } from "../types";
 import {
   computeMarginalScore,
-  computeWeightScore,
   getArtifactCr,
   getArtifactEr,
   prepareSlotData,

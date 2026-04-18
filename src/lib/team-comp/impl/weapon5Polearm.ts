@@ -5,9 +5,7 @@ import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER } from "./helpers";
 import { r, wbs } from "./helpers";
 
-// ══════════════════════════
 // 5★ Polearms
-// ══════════════════════════
 
 @RegisterWeapon("crimson_moons_semblance")
 class CrimsonMoonsSemblance extends WeaponBase {

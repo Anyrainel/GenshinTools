@@ -1,5 +1,4 @@
 import { StatSelect } from "@/components/artifact-builds/StatSelect";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 const mockOptions = ["cr", "cd", "atk%", "hp%", "def%", "em", "er"] as const;

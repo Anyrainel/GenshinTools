@@ -127,6 +127,95 @@ export function computeDefaultActivation(
 }
 
 /**
+ * Core interval-blending for a single sub-part (possibly a reaction split).
+ *
+ * Computes the weighted damage sum across intervals defined by partial buff
+ * activation cutpoints and bespoke overlay cutoff. Returns the raw weighted
+ * sum (NOT divided by hits — caller decides averaging).
+ *
+ * Used by both computeBlendedDamage (stackAllocation) and _calcPartBlended
+ * (implModel) to avoid duplicating the interval math.
+ *
+ * @param subBespokeCutoff  Bespoke cutoff already in sub-part coordinates
+ *   (i.e., number of hits in this sub-part that get the bespoke overlay).
+ *   Set equal to `hits` when bespoke doesn't split this sub-part.
+ * @param hits         Number of hits for this sub-part (may be < originalPartHits for reaction splits)
+ * @param partIdx      Index into partialBuffs[].partActivation
+ * @param originalPartHits  The part's full hit count (before reaction split)
+ * @param partialBuffs Buffs with partial activation on this part
+ * @param statsVariants Pre-built stat sheets for each exclusion combination
+ */
+export function blendSubPart(
+  formula: DamageFormula,
+  baseStats: StatSheet,
+  withBespoke: StatSheet,
+  bespokeOverlay: StatSheet | undefined,
+  subBespokeCutoff: number,
+  charLevel: number,
+  ctx: CalcContext,
+  hits: number,
+  partIdx: number,
+  originalPartHits: number,
+  partialBuffs: PartialBuffInfo[],
+  statsVariants: Map<string, StatSheet> | undefined
+): number {
+  if (hits <= 0) return 0;
+  const scale = hits / originalPartHits;
+
+  // Partials affecting this sub-part (activation scaled)
+  const affecting = partialBuffs.filter((pb) => {
+    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
+    return activated < hits;
+  });
+
+  // Fast path: uniform damage across all hits
+  if (affecting.length === 0 && subBespokeCutoff === hits) {
+    return formula.calc(withBespoke, charLevel, ctx) * hits;
+  }
+
+  // Build interval cutpoints
+  const cutpointSet = new Set<number>([0, hits]);
+  if (subBespokeCutoff < hits) cutpointSet.add(subBespokeCutoff);
+  for (const pb of affecting) {
+    const activated = (pb.partActivation[partIdx] ?? originalPartHits) * scale;
+    if (activated > 0 && activated < hits) cutpointSet.add(activated);
+  }
+  const cutpoints = [...cutpointSet].sort((a, b) => a - b);
+
+  let sum = 0;
+  for (let i = 0; i < cutpoints.length - 1; i++) {
+    const start = cutpoints[i];
+    const end = cutpoints[i + 1];
+    const width = end - start;
+    if (width <= 0) continue;
+
+    const excludeSet = new Set<string>();
+    for (const pb of affecting) {
+      const activated =
+        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
+      if (activated < end) excludeSet.add(pb.buffKey);
+    }
+
+    const bespokeActive = end <= subBespokeCutoff;
+
+    let intervalStats: StatSheet;
+    if (excludeSet.size === 0) {
+      intervalStats = bespokeActive ? withBespoke : baseStats;
+    } else {
+      const eKey = exclusionKey(excludeSet);
+      const variant = statsVariants?.get(eKey) ?? baseStats;
+      intervalStats =
+        bespokeActive && bespokeOverlay
+          ? variant.merge(bespokeOverlay)
+          : variant;
+    }
+
+    sum += width * formula.calc(intervalStats, charLevel, ctx);
+  }
+  return sum;
+}
+
+/**
  * Compute blended total damage for a formula with partial buff activation.
  *
  * Uses interval-based blending: for each part, sort buff cutoff points to
@@ -176,64 +265,26 @@ export function computeBlendedDamage(
       ? baseStats.merge(bespokeOverlay)
       : baseStats;
 
-    // Inner helper: blend `subHits` of `subFormula` with scaled activations.
-    // Used once for non-reacting and once (with reaction variant) for reacting
-    // sub-parts so reaction overrides mirror getDamageResult/compile exactly.
     const blendSub = (subFormula: DamageFormula, subHits: number): number => {
-      if (subHits <= 0) return 0;
-      const scale = subHits / h;
-      const subBespokeCutoff =
-        bespokeOverlay && bespokeMax != null && bespokeMax * scale < subHits
-          ? bespokeMax * scale
+      const subScale = subHits / h;
+      const subBespoke =
+        bespokeOverlay && bespokeCutoff < h
+          ? bespokeCutoff * subScale
           : subHits;
-
-      // Partials affecting this sub-part (activation scaled)
-      const affecting = partialBuffs.filter((pb) => {
-        const activated = (pb.partActivation[idx] ?? h) * scale;
-        return activated < subHits;
-      });
-
-      if (affecting.length === 0 && subBespokeCutoff === subHits) {
-        return subFormula.calc(withBespoke, charLevel, ctx) * subHits;
-      }
-
-      const cutpointSet = new Set<number>([0, subHits]);
-      if (subBespokeCutoff < subHits) cutpointSet.add(subBespokeCutoff);
-      for (const pb of affecting) {
-        const activated = (pb.partActivation[idx] ?? h) * scale;
-        if (activated > 0 && activated < subHits) cutpointSet.add(activated);
-      }
-      const cutpoints = [...cutpointSet].sort((a, b) => a - b);
-
-      let sum = 0;
-      for (let i = 0; i < cutpoints.length - 1; i++) {
-        const start = cutpoints[i];
-        const end = cutpoints[i + 1];
-        const width = end - start;
-        if (width <= 0) continue;
-
-        const excludeSet = new Set<string>();
-        for (const pb of affecting) {
-          const activated = (pb.partActivation[idx] ?? h) * scale;
-          if (activated < end) excludeSet.add(pb.buffKey);
-        }
-
-        const bespokeActive = end <= subBespokeCutoff;
-
-        let intervalStats: StatSheet;
-        if (excludeSet.size === 0) {
-          intervalStats = bespokeActive ? withBespoke : baseStats;
-        } else {
-          const variant = variants.get(exclusionKey(excludeSet)) ?? baseStats;
-          intervalStats =
-            bespokeActive && bespokeOverlay
-              ? variant.merge(bespokeOverlay)
-              : variant;
-        }
-
-        sum += width * subFormula.calc(intervalStats, charLevel, ctx);
-      }
-      return sum;
+      return blendSubPart(
+        subFormula,
+        baseStats,
+        withBespoke,
+        bespokeOverlay,
+        subBespoke,
+        charLevel,
+        ctx,
+        subHits,
+        idx,
+        h,
+        partialBuffs,
+        variants
+      );
     };
 
     // Apply reaction override: split into reacting/non-reacting hits.

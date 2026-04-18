@@ -1,6 +1,5 @@
 import { SlotProgressIndicator } from "@/components/account-data/SlotProgressIndicator";
-import userEvent from "@testing-library/user-event";
-import { render, screen, waitFor } from "../../utils/render";
+import { render } from "../../utils/render";
 
 describe("SlotProgressIndicator", () => {
   describe("progress bar mode", () => {

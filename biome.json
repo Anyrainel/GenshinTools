@@ -15,7 +15,9 @@
         "noNonNullAssertion": "off"
       },
       "complexity": {
-        "noForEach": "warn"
+        "noForEach": "warn",
+        "noExcessiveCognitiveComplexity": "warn",
+        "useSimplifiedLogicExpression": "off"
       },
       "a11y": {
         "useKeyWithClickEvents": "off",

@@ -35,9 +35,7 @@ beforeEach(() => {
 });
 
 describe("useTierStore", () => {
-  // -----------------------------------------------------------------------
   // Initial state
-  // -----------------------------------------------------------------------
   describe("initial state", () => {
     it("starts with one default list", () => {
       const state = useTierStore.getState();
@@ -77,9 +75,7 @@ describe("useTierStore", () => {
     });
   });
 
-  // -----------------------------------------------------------------------
   // Backward-compatible selectors
-  // -----------------------------------------------------------------------
   describe("backward-compatible selectors", () => {
     it("top-level tierAssignments reflects active list", () => {
       const assignments: TierAssignment = {
@@ -128,9 +124,7 @@ describe("useTierStore", () => {
     });
   });
 
-  // -----------------------------------------------------------------------
   // Mutators on active list
-  // -----------------------------------------------------------------------
   describe("setTierAssignments", () => {
     it("sets tier assignments directly", () => {
       const assignments: TierAssignment = {
@@ -329,9 +323,7 @@ describe("useTierStore", () => {
     });
   });
 
-  // -----------------------------------------------------------------------
   // CRUD operations
-  // -----------------------------------------------------------------------
   describe("createTierList", () => {
     it("creates a new list and switches to it", () => {
       const newId = useTierStore.getState().createTierList("New List");
@@ -441,9 +433,7 @@ describe("useTierStore", () => {
     });
   });
 
-  // -----------------------------------------------------------------------
   // Account linking
-  // -----------------------------------------------------------------------
   describe("linkAccount", () => {
     it("links an account to a tier list", () => {
       useTierStore.getState().linkAccount(1, "account-abc");
@@ -500,9 +490,7 @@ describe("useTierStore", () => {
     });
   });
 
-  // -----------------------------------------------------------------------
   // Migration
-  // -----------------------------------------------------------------------
   describe("migrateTierStore", () => {
     it("migrates v0 flat format to v1 multi-instance", () => {
       const v0State = {

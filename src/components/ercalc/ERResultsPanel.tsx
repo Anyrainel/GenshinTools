@@ -98,13 +98,18 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
     }
     // Apply to the first matching team
     const target = matching[0];
-    const minEr: Record<string, number> = {};
+    const charSettings: Record<string, { minEr?: number }> = {
+      ...target.charSettings,
+    };
     for (const r of results) {
       if (r.erNeeded !== Number.POSITIVE_INFINITY && r.erNeeded > 100) {
-        minEr[r.characterId] = erPercentToInternal(r.erNeeded);
+        charSettings[r.characterId] = {
+          ...charSettings[r.characterId],
+          minEr: erPercentToInternal(r.erNeeded),
+        };
       }
     }
-    updateTeam(target.id, { minEr });
+    updateTeam(target.id, { charSettings });
     toast.success(
       language === "zh"
         ? `已应用到「${target.name || "队伍"}」的最低ER`

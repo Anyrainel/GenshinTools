@@ -53,6 +53,8 @@ export const TUNABLE_SUBSTATS: SubStat[] = [
 export const DEFAULT_CALC_CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 10,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 /** A formula with an optional weight (count in the rotation) and per-formula reaction. */

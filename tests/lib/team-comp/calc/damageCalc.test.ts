@@ -427,7 +427,6 @@ describe("isBuffApplicable — charId scoping", () => {
 // Import the side-effect barrel to register all characters, weapons, and artifacts
 import "@/lib/team-comp/index";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { getComboDisplayResult } from "@/lib/team-comp/calc/damageCalc";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
@@ -488,6 +487,8 @@ describe("TeamBuild lifecycle", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   // Empty artifact sheets — pure base stat calculation
@@ -1026,9 +1027,7 @@ describe("TeamBuild lifecycle", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // "other" buff routing — regression test for Illuga P1
-// ═══════════════════════════════════════════════════════════════
 
 describe("other buffs apply to teammates' stats and display", () => {
   // Team: Zibai (Geo, calc target), Illuga (Geo, provides "other" CR/CD),
@@ -1075,6 +1074,8 @@ describe("other buffs apply to teammates' stats and display", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -1158,7 +1159,7 @@ describe("other buffs apply to teammates' stats and display", () => {
       ],
     };
 
-    const comboDisplay = getComboDisplayResult(tb, combo, emptySheets, ctx);
+    const comboDisplay = tb.getComboDisplayResult(combo, emptySheets, ctx);
 
     const zibaiOnFieldCr =
       comboDisplay.statSheets.zibai.onField.get("cr", null) ?? 0;
@@ -1218,9 +1219,7 @@ describe("other buffs apply to teammates' stats and display", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Level tier helpers
-// ═══════════════════════════════════════════════════════════════
 
 describe("getCharacterLevelTier", () => {
   it("maps levels to the closest tier at or above", () => {
@@ -1257,14 +1256,14 @@ describe("getNextLevelTier", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Level-up gains
-// ═══════════════════════════════════════════════════════════════
 
 describe("levelUpGains", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   it("computes level-up gain for Lv90 calc target (both 90→95 and 90→100)", () => {
@@ -1427,14 +1426,14 @@ describe("levelUpGains", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // ER marginal gain with ER-scaling weapon (Engulfing Lightning)
-// ═══════════════════════════════════════════════════════════════
 
 describe("marginalGains — ER with ER-scaling weapon", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   it("includes ER marginal gain for a character with Engulfing Lightning", () => {
@@ -1516,6 +1515,8 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   it("emits separate E burst DMG buffs with correct per-character energy scaling", () => {
@@ -1586,9 +1587,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // bespoke buff display in resolveBuffs
-// ═══════════════════════════════════════════════════════════════
 
 describe("bespoke buffs appear in resolveBuffs output", () => {
   // Gorou has P2 bespoke ScalingBuff (+1.56×DEF as baseDmg) on E and Q parts
@@ -1634,6 +1633,8 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -1705,9 +1706,7 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // forceOnField override — off-field parts use on-field stats
-// ═══════════════════════════════════════════════════════════════
 
 describe("forceOnField override", () => {
   // Team: Xiangling (has off-field formulas + teamOnField P2 ATK% buff)
@@ -1737,6 +1736,8 @@ describe("forceOnField override", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -2436,7 +2437,7 @@ describe("forceOnField override", () => {
       ],
     };
 
-    const result = getComboDisplayResult(tb, combo, sheets, ctx);
+    const result = tb.getComboDisplayResult(combo, sheets, ctx);
 
     const probes = [
       { label: "Columbina C2 teamOnField", id: "columbina", origin: "C2" },
@@ -2568,9 +2569,7 @@ describe("forceOnField override", () => {
   // needs reaction combo system to model correctly (not character formula parts).
 });
 
-// ═══════════════════════════════════════════════════════════════
 // perCharCrTarget — per-character crit rate targeting in getTeamStats
-// ═══════════════════════════════════════════════════════════════
 
 describe("perCharCrTarget in getTeamStats", () => {
   // Diluc (Pyro), Mona (Hydro), Jean (Anemo), Eula (Cryo)
@@ -2632,6 +2631,8 @@ describe("perCharCrTarget in getTeamStats", () => {
     const ctxPerChar: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
       perCharCrTarget: { diluc: 70 },
     };
     const targetedStats = tb.getTeamStats(sheets, "diluc", ctxPerChar);
@@ -2645,49 +2646,26 @@ describe("perCharCrTarget in getTeamStats", () => {
     expect(targetedStats.mona!.get("cr", null)).toBeCloseTo(baseMonaCr, 6);
   });
 
-  it("perCharCrTarget takes priority over global critRateTarget", () => {
+  it("perCharCrTarget applies CR delta per character", () => {
     const tb = new TeamBuild(configs);
 
-    // Context with both global and per-char CR targets
-    const ctxBoth: CalcContext = {
+    const ctxPerChar: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
-      critRateTarget: 80, // global: crDelta=0.2 for all
-      perCharCrTarget: { diluc: 60 }, // per-char: crDelta=0.4 for diluc only
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
+      perCharCrTarget: { diluc: 60 },
     };
-    const stats = ctxBoth.perCharCrTarget
-      ? tb.getTeamStats(sheets, "diluc", ctxBoth)
-      : undefined;
+    const stats = tb.getTeamStats(sheets, "diluc", ctxPerChar);
 
     // Get baseline (no CR target)
     const baseStats = tb.getTeamStats(sheets, "diluc");
     const baseDilucCr = baseStats.diluc!.get("cr", null);
     const baseMonaCr = baseStats.mona!.get("cr", null);
 
-    // Since perCharCrTarget is present, global critRateTarget should be ignored
     // Only diluc gets crDelta=0.4, mona gets nothing
-    expect(stats!.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr + 0.4, 6);
-    expect(stats!.mona!.get("cr", null)).toBeCloseTo(baseMonaCr, 6);
-  });
-
-  it("falls back to global critRateTarget when perCharCrTarget is undefined", () => {
-    const tb = new TeamBuild(configs);
-
-    const baseStats = tb.getTeamStats(sheets, "diluc");
-    const baseDilucCr = baseStats.diluc!.get("cr", null);
-    const baseMonaCr = baseStats.mona!.get("cr", null);
-
-    // Context with only global CR target (crDelta = (100-80)/100 = 0.2)
-    const ctxGlobal: CalcContext = {
-      enemyLevel: 100,
-      enemyRes: 0.1,
-      critRateTarget: 80,
-    };
-    const stats = tb.getTeamStats(sheets, "diluc", ctxGlobal);
-
-    // Global target applies to ALL characters
-    expect(stats.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr + 0.2, 6);
-    expect(stats.mona!.get("cr", null)).toBeCloseTo(baseMonaCr + 0.2, 6);
+    expect(stats.diluc!.get("cr", null)).toBeCloseTo(baseDilucCr + 0.4, 6);
+    expect(stats.mona!.get("cr", null)).toBeCloseTo(baseMonaCr, 6);
   });
 
   it("perCharCrTarget with value 100 means crDelta=0 (no change)", () => {
@@ -2699,6 +2677,8 @@ describe("perCharCrTarget in getTeamStats", () => {
     const ctxTarget100: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
       perCharCrTarget: { diluc: 100 },
     };
     const stats = tb.getTeamStats(sheets, "diluc", ctxTarget100);
@@ -2716,6 +2696,8 @@ describe("perCharCrTarget in getTeamStats", () => {
     const ctxTarget0: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
       perCharCrTarget: { diluc: 0 },
     };
     const stats = tb.getTeamStats(sheets, "diluc", ctxTarget0);
@@ -2769,7 +2751,12 @@ describe("Two-pass dynamic buffs", () => {
     },
   ];
 
-  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
+  };
   const emptySheets: Record<string, StatSheet> = {
     shenhe: new StatSheet([]),
     bennett: new StatSheet([]),
@@ -2831,8 +2818,8 @@ describe("Two-pass dynamic buffs", () => {
       ],
     };
 
-    // Display path: getComboDisplayResult
-    const displayResult = getComboDisplayResult(tb, combo, emptySheets, ctx);
+    // Display path: tb.getComboDisplayResult
+    const displayResult = tb.getComboDisplayResult(combo, emptySheets, ctx);
 
     // Compiled path
     const compiled = compileComboTeamDamage(
@@ -2892,7 +2879,12 @@ describe("Unified field-state StatSheet", () => {
     },
   ];
 
-  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
+  };
   const emptySheets: Record<string, StatSheet> = {
     shenhe: new StatSheet([]),
     bennett: new StatSheet([]),

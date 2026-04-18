@@ -63,9 +63,9 @@ ICON_DIR_ARTIFACT = PROJECT_ROOT / "public" / "artifact"
 API_BASE = "https://api.lunaris.moe/data"
 ASSETS_BASE = "https://api.lunaris.moe/data/assets"
 
-# ---------------------------------------------------------------------------
+
 # Mappings
-# ---------------------------------------------------------------------------
+
 ASCENSION_STAT_MAP: dict[str, str] = {
     "crit rate%": "cr",
     "crit dmg%": "cd",
@@ -174,9 +174,9 @@ def _normalize_stat_key(raw: str, mapping: dict[str, str]) -> str:
     return stripped
 
 
-# ---------------------------------------------------------------------------
 # Utilities
-# ---------------------------------------------------------------------------
+
+
 def derive_id(name: str) -> str:
     """e.g. 'Hu Tao' -> 'hu_tao', 'Linnea' -> 'linnea'"""
     cleaned = re.sub(r"[^\w\s]", "", name.lower())
@@ -213,9 +213,9 @@ def _format_desc(raw: str) -> str:
     return _clean_desc_html(color_tags_to_spans(raw))
 
 
-# ---------------------------------------------------------------------------
 # API
-# ---------------------------------------------------------------------------
+
+
 def fetch_json(url: str) -> dict:
     print(f"  Fetching {url}")
     resp = requests.get(url, timeout=30)
@@ -238,9 +238,9 @@ def get_latest_version() -> str:
     return data["version"]
 
 
-# ---------------------------------------------------------------------------
 # Auto-detection
-# ---------------------------------------------------------------------------
+
+
 def _rarity_from_quality(quality_type: str) -> int:
     """Convert qualityType string to numeric rarity."""
     return RARITY_MAP.get(quality_type, 0)
@@ -346,9 +346,9 @@ def detect_region(meta: dict) -> str:
     return DEFAULT_UNKNOWN_REGION
 
 
-# ---------------------------------------------------------------------------
 # Character parsing
-# ---------------------------------------------------------------------------
+
+
 def _parse_char_stats(
     attributes: list[dict],
 ) -> tuple[dict[str, dict[str, str]], str]:
@@ -714,9 +714,9 @@ def scrape_character(
     return char_id, en_out, zh_out, stats_out, icon_name
 
 
-# ---------------------------------------------------------------------------
 # Weapon parsing
-# ---------------------------------------------------------------------------
+
+
 def _templatize_weapon_desc(all_descs: dict[str, str]) -> tuple[str, list[list[str]]]:
     if not all_descs or len(all_descs) < 2:
         r1 = next(iter(all_descs.values()), "")
@@ -840,9 +840,9 @@ def scrape_weapon(
     return weapon_id, en_out, zh_out, stats_out, icon_name
 
 
-# ---------------------------------------------------------------------------
 # Artifact parsing
-# ---------------------------------------------------------------------------
+
+
 def scrape_artifact(
     set_id_num: str,
     version: str,
@@ -899,9 +899,9 @@ def scrape_artifact(
     return artifact_id, en_out, zh_out, rarity, slot_to_icon
 
 
-# ---------------------------------------------------------------------------
 # Main
-# ---------------------------------------------------------------------------
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Scrape unreleased character/weapon data from lunaris.moe API"

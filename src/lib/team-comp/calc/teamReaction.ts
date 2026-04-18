@@ -29,8 +29,6 @@ import type { CharacterBase } from "./implModel";
 import type { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 
-// ─── Constants ───
-
 /** Damage element produced by each reaction. */
 const REACTION_DAMAGE_ELEMENT: Partial<
   Record<ReactionType, ElementalOrPhysical>
@@ -278,8 +276,6 @@ export class TeamReactionProvider {
     // Return in team-slot order (configs order)
     return this.configs.map((c) => c.charId).filter((id) => eligible.has(id));
   }
-
-  // ─── Public API ───
 
   /**
    * Set pre-computed rank weights for a multi-contributor formula.

@@ -1,4 +1,4 @@
-import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
+import type { CharacterData } from "@/data/types";
 import {
   artifactFingerprint,
   mergeEnkaImportWithInventory,

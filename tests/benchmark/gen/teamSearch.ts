@@ -13,7 +13,7 @@
  * and export `runTeamOptimization` by calling `createTeamOptimizer`.
  */
 
-import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
+import { artifactIdToHalfSetId } from "@/data/constants";
 import { isPctStat } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
@@ -24,7 +24,6 @@ import {
   scoreMainStat,
   scoreSlot,
 } from "@/lib/account-data/artifactScore";
-import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
@@ -45,8 +44,6 @@ import type {
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 
-// ─── Constants ───
-
 export const TOP_K = 50;
 export const CARRY_TOP_K = 100;
 export const MAX_TEAM_SEARCH = 500_000;
@@ -56,10 +53,6 @@ export const FAST_CHAR_TIME_FRACTION = 0.3;
 const ALLOC_TOP_N = 50;
 
 const warnedCalcErrors = new Set<string>();
-
-// ═══════════════════════════════════════════════════════════════════════
-// Types
-// ═══════════════════════════════════════════════════════════════════════
 
 export type ArtifactTuple = [
   ArtifactData | null,
@@ -89,8 +82,6 @@ export interface PreparedSlotData {
   setSuperArtifacts: Map<string, SuperArtifact>;
 }
 
-// ─── Per-Character Search Interface ───
-
 export interface PerCharSearchOpts {
   charId: string;
   charConfig: CharOptConfig;
@@ -119,10 +110,6 @@ export interface PerCharSearchResult {
 }
 
 export type PerCharSearchFn = (opts: PerCharSearchOpts) => PerCharSearchResult;
-
-// ═══════════════════════════════════════════════════════════════════════
-// Top-K Collector
-// ═══════════════════════════════════════════════════════════════════════
 
 export class TopKCollector {
   private entries: TopKEntry[] = [];
@@ -184,9 +171,7 @@ export class TopKCollector {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Artifact Helpers
-// ═══════════════════════════════════════════════════════════════════════
 
 export function getArtifactEr(art: ArtifactData | null): number {
   if (!art) return 0;
@@ -267,9 +252,7 @@ export function computeWeightScore(
   return score;
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Damage Evaluation
-// ═══════════════════════════════════════════════════════════════════════
 
 export function evaluateBuild(
   pieces: ArtifactTuple,
@@ -380,9 +363,7 @@ export function evaluateUpperBound(
   ).totalDamage;
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Set Composition Patterns
-// ═══════════════════════════════════════════════════════════════════════
 
 export const SET4_PATTERNS: number[][] = [
   [0, 1, 1, 1, 1],
@@ -412,9 +393,7 @@ export const SET22_PATTERNS: number[][] = (() => {
   return patterns;
 })();
 
-// ═══════════════════════════════════════════════════════════════════════
 // Slot Data Preparation
-// ═══════════════════════════════════════════════════════════════════════
 
 export function prepareSlotData(
   inventory: ArtifactData[],
@@ -483,9 +462,7 @@ export function buildSlotGroupsForPattern(
   return { groups, supers };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Common per-char search setup (CR discount, slot data, set feasibility)
-// ═══════════════════════════════════════════════════════════════════════
 
 export interface CharSearchSetup {
   slotData: PreparedSlotData[];
@@ -526,7 +503,7 @@ export function setupCharSearch(
   // CR discount
   let crDiscount = 1;
   if (swapCharId === carryCharId) {
-    if (calcContext.critRateTarget != null) {
+    if (calcContext.perCharCrTarget?.[swapCharId] != null) {
       const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
       const blStats = teamBuild.getTeamStats(
         blSheets,
@@ -666,9 +643,7 @@ export function diagnoseFailure(
   return { kind: "all-filtered", combinationsTotal: evaluations };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Team Allocation via Conflict-Aware DFS
-// ═══════════════════════════════════════════════════════════════════════
 
 function generatePermutations<T>(arr: T[]): T[][] {
   if (arr.length <= 1) return [arr];
@@ -878,9 +853,7 @@ function findBestTeamAllocation(
   return { candidates: topCandidates, iterations };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Team Optimization Entry Point
-// ═══════════════════════════════════════════════════════════════════════
 
 const emptyArtifacts: Record<Slot, ArtifactData | null> = {
   flower: null,
@@ -953,8 +926,7 @@ async function* runTeamOpt(
   const comboScoreFn = isComboMode
     ? (sheets: Record<string, StatSheet>, _onFieldCharId: string): number => {
         try {
-          return evaluateCombo(
-            teamBuild,
+          return teamBuild.evaluateCombo(
             combo,
             sheets,
             calcContext,
@@ -996,9 +968,7 @@ async function* runTeamOpt(
     return new TeamBuild(newConfigs, teamBuild.combatOpts, teamBuild.enemyAura);
   }
 
-  // ══════════════════════════════════════════════════════════════════
   // Phase 1: Sequential Per-character search → top-K results
-  // ══════════════════════════════════════════════════════════════════
 
   const topKByChar: Record<string, TopKEntry[]> = {};
   const failReasons: Record<string, OptFailReason> = {};
@@ -1163,9 +1133,7 @@ async function* runTeamOpt(
     await new Promise((r) => setTimeout(r, 0));
   }
 
-  // ══════════════════════════════════════════════════════════════════
   // Phase 1b: Contested Artifact Resolution
-  // ══════════════════════════════════════════════════════════════════
 
   {
     const artUsage: Map<string, { charId: string; count: number }[]> =
@@ -1271,9 +1239,7 @@ async function* runTeamOpt(
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════
   // Phase 2: Team allocation via conflict-aware DFS
-  // ══════════════════════════════════════════════════════════════════
 
   const allocatableChars = allCharIds.filter(
     (id) => (topKByChar[id]?.length ?? 0) > 0
@@ -1474,9 +1440,7 @@ async function* runTeamOpt(
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════
   // Phase 3: Carry Re-optimization
-  // ══════════════════════════════════════════════════════════════════
 
   for (const carryId of carryCharIds) {
     const carryConfig = effectivePerChar[carryId];
@@ -1578,9 +1542,7 @@ async function* runTeamOpt(
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════
   // Phase 4: Constraint repair
-  // ══════════════════════════════════════════════════════════════════
 
   {
     const repairSheets = buildSheetsFromArtifacts(
@@ -1665,9 +1627,7 @@ async function* runTeamOpt(
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════
   // Final: detect accidental sets and rebuild if needed
-  // ══════════════════════════════════════════════════════════════════
 
   let setsChanged = effectiveTeamBuild !== teamBuild;
   for (const charId of allCharIds) {
@@ -1715,8 +1675,7 @@ async function* runTeamOpt(
 
   let comboRes: ComboResult;
   try {
-    comboRes = evaluateCombo(
-      effectiveTeamBuild,
+    comboRes = effectiveTeamBuild.evaluateCombo(
       combo,
       finalSheets,
       calcContext,

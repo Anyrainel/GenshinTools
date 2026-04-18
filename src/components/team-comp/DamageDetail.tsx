@@ -20,18 +20,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  artifactHalfSetsById,
-  artifactsById,
-  charactersById,
-  weaponsById,
-} from "@/data/constants";
-import type {
-  ArtifactData,
-  CharacterData,
-  ReactionType,
-  Slot,
-} from "@/data/types";
+import { artifactHalfSetsById, artifactsById } from "@/data/constants";
+import type { ArtifactData, CharacterData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
@@ -44,6 +34,14 @@ import {
   type BuildMatchResult,
   matchBuild,
 } from "@/lib/account-data/artifactScore";
+import {
+  buildComboLineMap,
+  buildSingleFormulaSelection,
+  collectAllFormulas,
+  resolveActiveCombo,
+  withLineCount,
+  withReactionOverride,
+} from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { getEffectiveCombo } from "@/lib/team-comp/helpers";
@@ -55,86 +53,39 @@ import {
   getHigherTierEquippedArtifactIds,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";
-import type { DamageDetailProps } from "@/lib/team-comp/teamOptUtils";
 import type {
-  BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboLine,
   FormulaOverride,
-  I18nLabel,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
-import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
-import { type Team, useTeamStore } from "@/stores/useTeamStore";
+import { useTeamStore } from "@/stores/useTeamStore";
+import type { Team } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { ArrowLeft, Info } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
+import {
+  type ArtifactConflict,
+  detectFrozenArtifactConflicts,
+  getMatchingSetIds,
+} from "../../lib/artifact/inventory";
+import { ArtifactSwapDialog } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import type { ReuseEntry } from "./StatSheetPanel";
 import { TeamRosterCard } from "./TeamRosterCard";
 
-// getReactionKey removed — reaction config lives on combo lines
-
 const limitMap = { en: limitEnRaw, zh: limitZhRaw };
 
-/** A single artifact conflict: this char wants an artifact that's frozen on another char. */
-type ArtifactConflict = {
-  /** Character trying to freeze */
-  charId: string;
-  /** The conflicting artifact */
-  artifact: ArtifactData;
-  /** Character that currently has it frozen */
-  frozenCharId: string;
-};
-
-/**
- * Find artifacts in `artsByChar` that are already frozen in other teams.
- * Returns the list of conflicts with details about who owns each artifact.
- */
-function detectFrozenArtifactConflicts(
-  artsByChar: Record<string, Record<string, ArtifactData | null>>,
-  frozenArtifactIds: Set<string>,
-  frozenTeams: Record<
-    string,
-    {
-      frozenCharIds: string[];
-      artifactsByChar: Record<string, Record<string, ArtifactData | null>>;
-    }
-  >,
-  currentTeamId: string
-): ArtifactConflict[] {
-  if (frozenArtifactIds.size === 0) return [];
-  // Build reverse map: artifact ID → frozen char ID (from other teams)
-  const artIdToFrozenChar = new Map<string, string>();
-  for (const [tid, entry] of Object.entries(frozenTeams)) {
-    if (tid === currentTeamId || !entry?.artifactsByChar) continue;
-    for (const cid of entry.frozenCharIds ?? []) {
-      const arts = entry.artifactsByChar[cid];
-      if (!arts) continue;
-      for (const art of Object.values(arts)) {
-        if (art) artIdToFrozenChar.set(art.id, cid);
-      }
-    }
-  }
-  const conflicts: ArtifactConflict[] = [];
-  for (const [charId, arts] of Object.entries(artsByChar)) {
-    for (const art of Object.values(arts)) {
-      if (!art) continue;
-      const frozenCharId = artIdToFrozenChar.get(art.id);
-      if (frozenCharId) {
-        conflicts.push({ charId, artifact: art, frozenCharId });
-      }
-    }
-  }
-  return conflicts;
+export interface DamageDetailProps {
+  team: Team;
+  onBack: () => void;
 }
 
 export function DamageDetail({ team, onBack }: DamageDetailProps) {
@@ -220,7 +171,14 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   const { characterStats, weaponStats, ready: gameStatsReady } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
 
-  const ignoreArtifactSets = team.ignoreArtifactSets;
+  const ignoreArtifactSets = useMemo(() => {
+    if (!team.charSettings) return undefined;
+    const map: Record<string, boolean> = {};
+    for (const [cid, s] of Object.entries(team.charSettings)) {
+      if (s.ignoreArtifactSets != null) map[cid] = s.ignoreArtifactSets;
+    }
+    return Object.keys(map).length > 0 ? map : undefined;
+  }, [team.charSettings]);
 
   const optimizerBuildMatchByChar = useMemo(() => {
     if (!accountData) return {};
@@ -344,29 +302,10 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
 
   const validCharIds = Object.keys(availableFormulas);
 
-  const allFormulas = useMemo(() => {
-    const list: { charId: string; formulaId: string; label: I18nLabel }[] = [];
-    for (const charId of validCharIds) {
-      const charFormulas = availableFormulas[charId];
-      if (charFormulas) {
-        for (const [formulaId, label] of Object.entries(charFormulas)) {
-          list.push({ charId, formulaId, label });
-        }
-      }
-    }
-    // Include team reaction formulas so rx- selections validate
-    if (teamBuild) {
-      const rxFormulas = teamBuild.getReactionFormulaIds();
-      for (const [formulaId, label] of Object.entries(rxFormulas)) {
-        const eligible =
-          teamBuild.reactionProvider.getEligibleCharacters(formulaId);
-        for (const charId of eligible) {
-          list.push({ charId, formulaId, label });
-        }
-      }
-    }
-    return list;
-  }, [validCharIds, availableFormulas, teamBuild]);
+  const allFormulas = useMemo(
+    () => collectAllFormulas(validCharIds, availableFormulas, teamBuild),
+    [validCharIds, availableFormulas, teamBuild]
+  );
 
   const resolvedFormula = useMemo(() => {
     if (!team.selectedFormula) return allFormulas[0] || null;
@@ -381,28 +320,23 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   const activeContext = useMemo<CalcContext>(() => {
     // Build per-character CR targets from characters using "target" crMode
     let perCharCrTarget: Record<string, number> | undefined;
-    if (team.crMode) {
-      for (const [cid, mode] of Object.entries(team.crMode)) {
-        if (mode === "target" && team.minCr?.[cid] != null) {
+    if (team.charSettings) {
+      for (const [cid, s] of Object.entries(team.charSettings)) {
+        if (s.crMode === "target" && s.minCr != null) {
           if (!perCharCrTarget) perCharCrTarget = {};
-          perCharCrTarget[cid] = Math.round(team.minCr[cid] * 100);
+          perCharCrTarget[cid] = Math.round(s.minCr * 100);
         }
       }
     }
     return {
-      enemyLevel: team.calcContext?.enemyLevel ?? 110,
-      enemyRes: team.calcContext?.enemyRes ?? 0.1,
-      critRateTarget: team.calcContext?.critRateTarget,
+      ...team.calcContext,
       perCharCrTarget,
-      rollMultiplier: team.calcContext?.rollMultiplier,
-      substatBudget: team.calcContext?.substatBudget,
     };
-  }, [team.calcContext, team.crMode, team.minCr]);
+  }, [team.calcContext, team.charSettings]);
 
   const displayContext = useMemo<CalcContext>(
     () => ({
       ...activeContext,
-      critRateTarget: undefined,
       perCharCrTarget: undefined,
     }),
     [activeContext]
@@ -418,99 +352,36 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   // ─── Combo Management ───
 
   const combo = useMemo<ComboFormula>(() => {
-    const selected =
-      team.combos.find((c) => c.id === team.selectedCombo) ?? team.combos[0];
-    if (selected) return selected;
-    // Initialize from default combo data when no user combo exists
-    const lines: ComboLine[] = [];
-    if (teamBuild) {
-      for (const charId of team.characters) {
-        if (!charId) continue;
-        const combo = teamBuild.getCombo(charId);
-        for (const [formulaId, count] of Object.entries(combo)) {
-          if (count > 0) {
-            lines.push({ charId, formulaId, count });
-          }
-        }
-      }
-      // Append team reaction combo entries (LCh, LCr)
-      lines.push(...teamBuild.getReactionComboLines());
-    }
-    return {
-      id: `combo-${Date.now()}`,
-      label: { en: "Rotation", zh: "循环" },
-      lines,
-    };
-  }, [team.combos, team.selectedCombo, teamBuild, team.characters]);
+    if (team.combo) return team.combo;
+    // No combo stored yet — synthesize a default from teamBuild
+    return resolveActiveCombo([], undefined, teamBuild, team.characters, true);
+  }, [team.combo, teamBuild, team.characters]);
 
   // Persist the default combo to the store so getEffectiveCombo can find it
   useEffect(() => {
-    if (team.combos.length === 0 && combo.lines.length > 0) {
-      updateTeam(team.id, { combos: [combo] });
+    if (!team.combo && combo.lines.length > 0) {
+      updateTeam(team.id, { combo });
     }
-  }, [team.combos.length, combo, updateTeam, team.id]);
+  }, [team.combo, combo, updateTeam, team.id]);
 
-  const comboLineMap = useMemo(() => {
-    const map = new Map<string, { lineIndex: number; line: ComboLine }>();
-    for (let i = 0; i < combo.lines.length; i++) {
-      const line = combo.lines[i];
-      const rxn = line.reaction?.reaction ?? "none";
-      map.set(`${line.charId}.${line.formulaId}.${rxn}`, {
-        lineIndex: i,
-        line,
-      });
-    }
-    return map;
-  }, [combo.lines]);
+  const comboLineMap = useMemo(
+    () => buildComboLineMap(combo.lines),
+    [combo.lines]
+  );
 
   const updateCombo = useCallback(
     (updater: (c: ComboFormula) => ComboFormula) => {
       const updated = updater({ ...combo });
-      const newCombos =
-        team.combos.length > 0
-          ? team.combos.map((c) => (c.id === combo.id ? updated : c))
-          : [updated];
-      updateTeam(team.id, { combos: newCombos });
+      updateTeam(team.id, { combo: updated });
     },
-    [combo, team.combos, team.id, updateTeam]
+    [combo, team.id, updateTeam]
   );
 
   const setComboLineCount = useCallback(
     (charId: string, formulaId: string, reaction: string, count: number) => {
-      const key = `${charId}.${formulaId}.${reaction}`;
-      const existing = comboLineMap.get(key);
-      if (existing) {
-        if (count <= 0) {
-          // Prune line when count reaches 0
-          updateCombo((c) => ({
-            ...c,
-            lines: c.lines.filter((_, i) => i !== existing.lineIndex),
-          }));
-        } else {
-          updateCombo((c) => ({
-            ...c,
-            lines: c.lines.map((l, i) =>
-              i === existing.lineIndex ? { ...l, count } : l
-            ),
-          }));
-        }
-      } else if (count > 0) {
-        updateCombo((c) => ({
-          ...c,
-          lines: [
-            ...c.lines,
-            {
-              charId,
-              formulaId,
-              count,
-              reaction:
-                reaction === "none"
-                  ? undefined
-                  : { reaction: reaction as ReactionType },
-            },
-          ],
-        }));
-      }
+      updateCombo((c) =>
+        withLineCount(c, comboLineMap, charId, formulaId, reaction, count)
+      );
     },
     [comboLineMap, updateCombo]
   );
@@ -525,20 +396,19 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       override: FormulaOverride
     ) => {
       if (formulaMode === "single") {
-        // In single mode, persist per-part config to team.singleReaction
         updateTeam(team.id, { singleReaction: override });
         return;
       }
-      const key = `${charId}.${formulaId}.${reaction}`;
-      const existing = comboLineMap.get(key);
-      if (existing) {
-        updateCombo((c) => ({
-          ...c,
-          lines: c.lines.map((l, i) =>
-            i === existing.lineIndex ? { ...l, reaction: override } : l
-          ),
-        }));
-      }
+      updateCombo((c) =>
+        withReactionOverride(
+          c,
+          comboLineMap,
+          charId,
+          formulaId,
+          reaction,
+          override
+        )
+      );
     },
     [formulaMode, comboLineMap, updateCombo, updateTeam, team.id]
   );
@@ -554,21 +424,14 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
 
   const onSelectSingleFormula = useCallback(
     (charId: string, formulaId: string, reaction: string) => {
-      const prev = team.selectedFormula;
-      const sameFormula =
-        prev?.charId === charId && prev?.formulaId === formulaId;
-      // Preserve existing per-part config when only switching the gate reaction
-      const prevReaction = sameFormula ? team.singleReaction : undefined;
-      const newReaction: FormulaOverride | undefined =
-        reaction === "none"
-          ? undefined
-          : {
-              ...prevReaction,
-              reaction: reaction as ReactionType,
-            };
       updateTeam(team.id, {
-        selectedFormula: { charId, formulaId },
-        singleReaction: newReaction,
+        ...buildSingleFormulaSelection(
+          charId,
+          formulaId,
+          reaction,
+          team.selectedFormula ?? undefined,
+          team.singleReaction
+        ),
       });
     },
     [updateTeam, team.id, team.selectedFormula, team.singleReaction]
@@ -584,16 +447,9 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
         formulaMode,
         selectedFormula: team.selectedFormula,
         singleReaction: team.singleReaction,
-        combos: team.combos,
-        selectedCombo: team.selectedCombo,
+        combo: team.combo,
       }),
-    [
-      formulaMode,
-      team.selectedFormula,
-      team.singleReaction,
-      team.combos,
-      team.selectedCombo,
-    ]
+    [formulaMode, team.selectedFormula, team.singleReaction, team.combo]
   );
 
   // Build per-line PartialBuffInfo[] (defaults + user overrides)
@@ -635,7 +491,8 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   }, [teamBuild, displayCombo, artifactSheets, displayContext, buffOverrides]);
 
   const minErRaw =
-    (resolvedFormula && team.minEr?.[resolvedFormula.charId]) ?? 1.0;
+    (resolvedFormula && team.charSettings?.[resolvedFormula.charId]?.minEr) ??
+    1.0;
 
   const getGoalSets = (charId: string) => {
     const charIdx = effectiveTeam.characters.indexOf(charId);
@@ -686,10 +543,10 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
+      const cs = team.charSettings?.[cid];
       perChar[cid] = {
-        minEr: team.minEr?.[cid] ?? 1.0,
-        // Characters with crMode "target" have their CR value in perCharCrTarget, so minCr = 0
-        minCr: team.crMode?.[cid] === "target" ? 0 : (team.minCr?.[cid] ?? 0),
+        minEr: cs?.minEr ?? 1.0,
+        minCr: cs?.crMode === "target" ? 0 : (cs?.minCr ?? 0),
         buildMatch: bm ?? undefined,
         artifactSetId: goalSetId,
         artifactHalfSetIds: goalHalfSetIds,
@@ -750,9 +607,9 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
 
     // Build per-char excluded artifact IDs for tier-aware pool
     let perCharExcludedArtifactIds: Record<string, string[]> | undefined;
-    if (team.tierAwarePool && accountData) {
+    if (team.charSettings && accountData) {
       for (const cid of Object.keys(perChar)) {
-        if (!team.tierAwarePool[cid]) continue;
+        if (!team.charSettings[cid]?.tierAwarePool) continue;
         const excluded = getHigherTierEquippedArtifactIds(
           cid,
           tierAssignments,
@@ -1009,9 +866,10 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
     const genPerChar: Record<string, { minEr: number; minCr: number }> = {};
     for (const cid of effectiveTeam.characters) {
       if (!cid) continue;
+      const cs = team.charSettings?.[cid];
       genPerChar[cid] = {
-        minEr: team.minEr?.[cid] ?? 1.0,
-        minCr: team.crMode?.[cid] === "target" ? 0 : (team.minCr?.[cid] ?? 0),
+        minEr: cs?.minEr ?? 1.0,
+        minCr: cs?.crMode === "target" ? 0 : (cs?.minCr ?? 0),
       };
     }
 
@@ -1286,7 +1144,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
             // Append team reaction combo entries (LCh, LCr)
             lines.push(...teamBuild.getReactionComboLines());
             updateTeam(team.id, {
-              combos: [{ id: combo.id, label: combo.label, lines }],
+              combo: { id: combo.id, label: combo.label, lines },
             });
           }}
           isMobile={isMobile}

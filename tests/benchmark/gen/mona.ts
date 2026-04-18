@@ -35,14 +35,11 @@ import {
   createTeamOptimizer,
   diagnoseFailure,
   evaluateBuild,
-  evaluateUpperBound,
   getArtifactStats,
   setupCharSearch,
 } from "./teamSearch";
 
-// ═══════════════════════════════════════════════════════════════════════
 // Super Artifact Construction (per set group)
-// ═══════════════════════════════════════════════════════════════════════
 
 interface SlotSetGroup {
   setKey: string;
@@ -102,9 +99,7 @@ function buildMonaSlotData(
   return { groups, crossSetSuperStats, totalCount: arts.length };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Recursive DFS Branch-and-Bound
-// ═══════════════════════════════════════════════════════════════════════
 
 interface MonaContext {
   teamBuild: TeamBuild;
@@ -302,9 +297,7 @@ function enumerateRecursive(
   upperStats[slotIdx] = savedStats;
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Set Pattern Execution
-// ═══════════════════════════════════════════════════════════════════════
 
 /**
  * Build slot groups for a given set mask pattern.
@@ -440,9 +433,7 @@ const MONA_SET2_MASKS: number[][] = (() => {
   return masks;
 })();
 
-// ═══════════════════════════════════════════════════════════════════════
 // Single-Character Mona A* Runner
-// ═══════════════════════════════════════════════════════════════════════
 
 function runCharacterMona(opts: PerCharSearchOpts): PerCharSearchResult {
   const {
@@ -637,9 +628,7 @@ function runCharacterMona(opts: PerCharSearchOpts): PerCharSearchResult {
   return { collector, evaluations: ctx.evaluations, failReason };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Export
-// ═══════════════════════════════════════════════════════════════════════
 
 export const runTeamOptimization: (
   opts: TeamOptimizerOptions

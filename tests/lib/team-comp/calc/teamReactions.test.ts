@@ -5,10 +5,6 @@
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import {
-  evaluateCombo,
-  getComboDisplayResult,
-} from "@/lib/team-comp/calc/damageCalc";
-import {
   compileComboTeamDamage,
   fillVarsFromSheet,
 } from "@/lib/team-comp/calc/formulaCompiler";
@@ -30,8 +26,6 @@ import { describe, expect, it } from "vitest";
 import "@/lib/team-comp/index";
 
 await preloadGameStats();
-
-// ── Helpers ──
 
 function sumCounts(counts: Record<string, number>): number {
   return Object.values(counts).reduce((a, b) => a + b, 0);
@@ -56,6 +50,8 @@ function hasBase(counts: Record<string, number>, baseId: string): boolean {
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 function emptySheets(...charIds: string[]): Record<string, StatSheet> {
@@ -186,9 +182,7 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
   },
 ];
 
-// ═══════════════════════════════════════════════════════════════
 // Tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("TeamReactionProvider — formula generation", () => {
   it("generates overloaded for Pyro+Electro team", () => {
@@ -460,7 +454,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       ],
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.lineDamages).toHaveLength(1);
     expect(result.lineDamages[0].total).toBeCloseTo(
@@ -482,7 +476,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       ],
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.totalDamage).toBe(0);
     expect(result.lineDamages).toHaveLength(0);
   });
@@ -505,7 +499,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
       ],
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.lineDamages).toHaveLength(2);
   });
@@ -536,9 +530,7 @@ describe("TeamReactionProvider — getReactionFormulaIds on TeamBuild", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Lunar team (Moonsign 5★ required)
-// ═══════════════════════════════════════════════════════════════
 
 /** Columbina (Hydro) + Flins (Electro) + Zibai (Geo) + Nahida (Dendro) */
 const LUNAR_TEAM: TeamSlotConfig[] = [
@@ -580,9 +572,7 @@ const LUNAR_TEAM: TeamSlotConfig[] = [
   },
 ];
 
-// ═══════════════════════════════════════════════════════════════
 // Additional tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("TeamReactionProvider — lunar reactions", () => {
   it("generates lunarCharged for Columbina+Flins team", () => {
@@ -792,7 +782,7 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
       ],
     };
 
-    const display = getComboDisplayResult(tb, combo, sheets, CTX);
+    const display = tb.getComboDisplayResult(combo, sheets, CTX);
     expect(display.totalDamage).toBeGreaterThan(0);
     const parts = display.partsByFormula["fischl.rx-overloaded-fischl"];
     expect(parts).toBeDefined();
@@ -816,7 +806,7 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
       ],
     };
 
-    const display = getComboDisplayResult(tb, combo, sheets, CTX);
+    const display = tb.getComboDisplayResult(combo, sheets, CTX);
     expect(display.totalDamage).toBeGreaterThan(0);
     const parts = display.partsByFormula["columbina.rx-lunarCharged-columbina"];
     expect(parts).toBeDefined();
@@ -839,7 +829,7 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
       ],
     };
 
-    const display = getComboDisplayResult(tb, combo, sheets, CTX);
+    const display = tb.getComboDisplayResult(combo, sheets, CTX);
     expect(display.totalDamage).toBeGreaterThan(0);
     // Both formula keys should have display parts
     expect(display.partsByFormula[`hu_tao.${firstFormulaId}`]).toBeDefined();
@@ -881,7 +871,7 @@ describe("TeamReactionProvider — compiler path", () => {
         { charId: "fischl", formulaId: "rx-overloaded-fischl", count: 1 },
       ],
     };
-    const interpreted = evaluateCombo(tb, combo, sheets, CTX);
+    const interpreted = tb.evaluateCombo(combo, sheets, CTX);
 
     // Compiled
     const compiled = compileComboTeamDamage(
@@ -943,7 +933,7 @@ describe("TeamReactionProvider — compiler path", () => {
     };
 
     // Interpreted
-    const interpreted = evaluateCombo(tb, combo, sheets, CTX);
+    const interpreted = tb.evaluateCombo(combo, sheets, CTX);
 
     // Compiled
     const compiled = compileComboTeamDamage(tb, combo, "fischl", sheets, CTX);
@@ -960,9 +950,7 @@ describe("TeamReactionProvider — compiler path", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Reaction combo counts
-// ═══════════════════════════════════════════════════════════════
 
 // LCr only team: Linnea (Geo) + Columbina (Hydro)
 const LCR_ONLY: TeamSlotConfig[] = [
@@ -1297,14 +1285,12 @@ describe("evaluateCombo integration with rx- lines", () => {
       lines: rxLines,
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Reaction Combo Descriptor — detailed tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("getReactionComboDescriptor — base count heuristics", () => {
   it("LCr-only → base 15 (no Columbina)", () => {
@@ -1617,9 +1603,7 @@ describe("getReactionComboDescriptor — Columbina modifier", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // resolveReactionComboEntries — unit tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("resolveReactionComboEntries", () => {
   it("adds active deltas to the total and distributes", () => {

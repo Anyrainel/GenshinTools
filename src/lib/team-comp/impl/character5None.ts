@@ -1,12 +1,6 @@
 import type { Element } from "@/data/types";
 
-import {
-  AmplifyFormula,
-  CatalyzeFormula,
-  DirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../calc/damageFormula";
+import { DirectFormula } from "../calc/damageFormula";
 import { CharacterBase } from "../calc/implModel";
 import { RegisterCharacter, resolveOption } from "../calc/registry";
 import { ScalingBuff, StatBuff } from "../calc/statBuff";
@@ -17,9 +11,7 @@ import type { ComboTemplate } from "../types";
 import { travelerP3Buff } from "./helpers";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ None Characters
-// ═══════════════════════════════════════════════════════════════
 
 // Eligible elements for P1 虚境裂隙: Frozen(Hydro), Superconduct(Electro),
 // Cryo Swirl(Anemo), Cryo Crystallize(Geo), plus other Cryo teammates

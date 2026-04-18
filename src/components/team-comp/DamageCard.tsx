@@ -27,11 +27,13 @@ import type {
   Slot,
   TierAssignment,
 } from "@/data/types";
+import { formulaCritRatio } from "@/lib/team-comp/calc/formulaUtil";
+import { adjustPartDamage } from "@/lib/team-comp/calc/formulaUtil";
+import { buildBuffApplicability } from "@/lib/team-comp/calc/statBuff";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
-import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/generator/substatBudget";
-import { buffSourceKey } from "@/lib/team-comp/helpers";
+
 import {
   aggregateComboFormulaDefaults,
   toStatSheets,
@@ -47,7 +49,6 @@ import type {
   CritMode,
   DisplayPart,
   DisplayResult,
-  StatKey,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
@@ -69,13 +70,9 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { type BuffLedgerFormula, buildBuffApplicability } from "./BuffDialog";
+import type { BuffLedgerFormula } from "./BuffDialog";
 import { BuffLedger } from "./BuffLedger";
-import {
-  FormulaBreakdown,
-  adjustPartDamage,
-  formulaCritRatio,
-} from "./FormulaBreakdown";
+import { FormulaBreakdown } from "./FormulaBreakdown";
 import {
   CharCrErSettings,
   EnemyInputs,
@@ -88,6 +85,7 @@ import {
   CARD_CLS,
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
+  CONTROLS_CLS,
 } from "./cardStyles";
 
 const SESSION_PREFIX = "dmgCard.";
@@ -1079,14 +1077,14 @@ function ComboResultView({
       )?.reaction;
       let buffApplicability: Record<string, number[] | undefined> | undefined;
       try {
-        const dr = teamBuild.getDisplayResult(
+        const resolvedBuffs = teamBuild.resolveFormulaBuffs(
           charId,
           formulaId,
           sheets,
           calcContext,
           lineReaction
         );
-        buffApplicability = buildBuffApplicability(dr.buffs);
+        buffApplicability = buildBuffApplicability(resolvedBuffs);
       } catch {
         // Ignore — fall back to buff-level activePartIndices
       }
@@ -1257,36 +1255,24 @@ function EnemyFields({
 }: CtxProps) {
   return (
     <EnemyInputs
-      enemyLevel={team.calcContext?.enemyLevel ?? ""}
+      enemyLevel={team.calcContext.enemyLevel}
       onEnemyLevelChange={(raw) => {
-        if (raw === "") {
-          const { enemyLevel: _, ...rest } = team.calcContext ?? {};
-          updateTeam(team.id, { calcContext: rest });
-          return;
-        }
         const num = Number(raw);
         if (!Number.isNaN(num))
           updateTeam(team.id, {
             calcContext: { ...team.calcContext, enemyLevel: num },
           });
       }}
-      enemyRes={
-        team.calcContext?.enemyRes != null
-          ? Math.round(team.calcContext.enemyRes * 100)
-          : ""
-      }
+      enemyRes={Math.round(team.calcContext.enemyRes * 100)}
       onEnemyResChange={(raw) => {
-        if (raw === "") {
-          const { enemyRes: _, ...rest } = team.calcContext ?? {};
-          updateTeam(team.id, { calcContext: rest });
-          return;
-        }
-        updateTeam(team.id, {
-          calcContext: {
-            ...team.calcContext,
-            enemyRes: (Number(raw) || 0) / 100,
-          },
-        });
+        const num = Number(raw);
+        if (!Number.isNaN(num))
+          updateTeam(team.id, {
+            calcContext: {
+              ...team.calcContext,
+              enemyRes: num / 100,
+            },
+          });
       }}
       t={t}
     />
@@ -1486,15 +1472,13 @@ function RollQualityFields({
 }: CtxProps) {
   return (
     <RollQualityInputs
-      rollMultiplier={activeContext.rollMultiplier ?? 0.85}
+      rollMultiplier={activeContext.rollMultiplier}
       onRollMultiplierChange={(v) =>
         updateTeam(team.id, {
           calcContext: { ...team.calcContext, rollMultiplier: v },
         })
       }
-      substatBudget={
-        activeContext.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET
-      }
+      substatBudget={activeContext.substatBudget}
       onSubstatBudgetChange={(v) =>
         updateTeam(team.id, {
           calcContext: { ...team.calcContext, substatBudget: v },
@@ -1534,9 +1518,6 @@ function ActionButton({
     </Button>
   );
 }
-
-const CONTROLS_CLS =
-  "flex flex-wrap items-center justify-center mb-3 gap-x-2 gap-y-1 md:gap-x-5 md:gap-y-2";
 
 export function DamageCard({
   team,
@@ -1685,14 +1666,14 @@ export function DamageCard({
         }
       }
       // ER check
-      const minEr = effectiveTeam.minEr[charId];
+      const minEr = effectiveTeam.charSettings?.[charId]?.minEr;
       if (minEr && minEr > 1) {
         const sheets = currentDisplayResult.statSheets[charId];
         const currentEr = sheets?.onField.get("er", null) ?? 1;
         if (currentEr < minEr) erUnmet = true;
       }
       // CR check
-      const minCr = effectiveTeam.minCr?.[charId];
+      const minCr = effectiveTeam.charSettings?.[charId]?.minCr;
       if (minCr && minCr > 0) {
         const sheets = currentDisplayResult.statSheets[charId];
         const currentCr = sheets?.onField.get("cr", null) ?? 0;

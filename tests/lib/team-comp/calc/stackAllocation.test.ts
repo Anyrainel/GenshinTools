@@ -17,7 +17,12 @@ import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";
 import type { FormulaPart } from "@/lib/team-comp/types";
 import type { CalcContext, StatKey } from "@/lib/team-comp/types";
 
-const ctx: CalcContext = { enemyLevel: 90, enemyRes: 0.1 };
+const ctx: CalcContext = {
+  enemyLevel: 90,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
+};
 
 const cryoSkillTag = {
   element: "Cryo" as const,

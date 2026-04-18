@@ -4,7 +4,6 @@
 import { statPools } from "@/data/constants";
 import type {
   ArtifactData,
-  GlobalStatWeights,
   LuckExpectation,
   MainStat,
   Rarity,
@@ -31,13 +30,8 @@ import {
 } from "./artifactProjection";
 import {
   type BuildMatchResult,
-  type StatWeightMap,
-  calculateStatScore,
   getTargetMainStatsForSlot,
-  scoreSlot,
 } from "./artifactScore";
-
-// ─── Types ───
 
 export type CandidateSource =
   | "current"

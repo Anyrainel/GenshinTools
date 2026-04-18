@@ -4,9 +4,7 @@ import { ScalingBuff, StatBuff } from "../calc/statBuff";
 import { ALL_ELEMENTAL_FILTER } from "./helpers";
 import { r, wbs } from "./helpers";
 
-// ══════════════════════════
 // 5★ Bows
-// ══════════════════════════
 
 @RegisterWeapon("silvershower_heartstrings")
 class SilvershowerHeartstrings extends WeaponBase {

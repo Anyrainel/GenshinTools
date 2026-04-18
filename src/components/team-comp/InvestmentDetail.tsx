@@ -2,29 +2,28 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import type { ItemIconSize } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
-import type { Element, Rarity } from "@/data/types";
+import type { Element } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import {
+  fullToStored,
+  reconcileConfigs,
+  rereconcileConfigs,
+} from "@/lib/team-comp/analyzer/analyzerConfig";
 import type { AnalyzerOptions } from "@/lib/team-comp/analyzer/types";
 import type {
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
-import type {
-  AnalyzerCharConfig,
-  StoredAnalyzerCharConfig,
-} from "@/lib/team-comp/analyzer/types";
+import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
-import type { ExtraBuff } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
   ComboLine,
   FormulaOverride,
-  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -33,133 +32,12 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnalyzerComboCard } from "./AnalyzerComboCard";
 import { AnalyzerConfigCard } from "./AnalyzerConfigCard";
-import type { AnalyzerCalcSettings } from "./AnalyzerResultCard";
 import { AnalyzerResultCard } from "./AnalyzerResultCard";
-
-// ─── Props ───
 
 interface InvestmentDetailProps {
   team: Team;
   onBack: () => void;
 }
-
-// ─── Helpers ───
-
-/** Re-reconcile already-expanded full configs when baseConfigs change (char added/removed/swapped). */
-function rereconcileConfigs(
-  prev: AnalyzerCharConfig[],
-  baseConfigs: TeamSlotConfig[]
-): AnalyzerCharConfig[] {
-  const baseIds = new Set(baseConfigs.map((b) => b.charId));
-  const kept = prev.filter((c) => baseIds.has(c.charId));
-  const keptIds = new Set(kept.map((c) => c.charId));
-  const added = buildDefaultCharConfigs(
-    baseConfigs.filter((b) => !keptIds.has(b.charId))
-  );
-  const byId = new Map([...kept, ...added].map((c) => [c.charId, c]));
-  return baseConfigs.map((b) => byId.get(b.charId)!);
-}
-
-/** Reconcile stored (persisted) configs into full AnalyzerCharConfigs using roster data. */
-function reconcileConfigs(
-  stored: StoredAnalyzerCharConfig[],
-  baseConfigs: TeamSlotConfig[]
-): AnalyzerCharConfig[] {
-  const baseIds = new Set(baseConfigs.map((b) => b.charId));
-  const kept = stored.filter((c) => baseIds.has(c.charId));
-  const keptIds = new Set(kept.map((c) => c.charId));
-  const fullKept = kept.map((sc) => {
-    const bc = baseConfigs.find((b) => b.charId === sc.charId)!;
-    return storedToFull(sc, bc);
-  });
-  const added = buildDefaultCharConfigs(
-    baseConfigs.filter((b) => !keptIds.has(b.charId))
-  );
-  const byId = new Map([...fullKept, ...added].map((c) => [c.charId, c]));
-  return baseConfigs.map((b) => byId.get(b.charId)!);
-}
-
-/** Expand a stored config into a full AnalyzerCharConfig using the roster weapon. */
-function storedToFull(
-  sc: StoredAnalyzerCharConfig,
-  bc: TeamSlotConfig
-): AnalyzerCharConfig {
-  const charRes = charactersById[sc.charId];
-  const rarity = (charRes?.rarity ?? 5) as Rarity;
-  const rosterWeapon = weaponsById[bc.weaponId];
-  const rosterIs5Star = rosterWeapon?.rarity === 5;
-
-  return {
-    charId: sc.charId,
-    rarity,
-    weapon4Star: rosterIs5Star
-      ? sc.altWeapon
-        ? { id: sc.altWeapon.id, refinement: sc.altWeapon.refinement ?? 5 }
-        : undefined
-      : { id: bc.weaponId, refinement: bc.refinement },
-    weapon5Star: rosterIs5Star
-      ? { id: bc.weaponId }
-      : sc.altWeapon
-        ? { id: sc.altWeapon.id }
-        : undefined,
-    startConstellation: sc.startConstellation,
-    startRefinement: sc.startRefinement,
-    maxConstellation: sc.maxConstellation,
-    maxRefinement: sc.maxRefinement,
-  };
-}
-
-/** Strip a full config down to the stored form (only alt weapon). */
-function fullToStored(
-  cfg: AnalyzerCharConfig,
-  bc: TeamSlotConfig
-): StoredAnalyzerCharConfig {
-  const rosterWeapon = weaponsById[bc.weaponId];
-  const rosterIs5Star = rosterWeapon?.rarity === 5;
-
-  const altWeapon = rosterIs5Star
-    ? cfg.weapon4Star
-      ? { id: cfg.weapon4Star.id, refinement: cfg.weapon4Star.refinement }
-      : undefined
-    : cfg.weapon5Star
-      ? { id: cfg.weapon5Star.id }
-      : undefined;
-
-  return {
-    charId: cfg.charId,
-    altWeapon,
-    startConstellation: cfg.startConstellation,
-    startRefinement: cfg.startRefinement,
-    maxConstellation: cfg.maxConstellation,
-    maxRefinement: cfg.maxRefinement,
-  };
-}
-
-function buildDefaultCharConfigs(
-  baseConfigs: TeamSlotConfig[]
-): AnalyzerCharConfig[] {
-  return baseConfigs.map((bc) => {
-    const charRes = charactersById[bc.charId];
-    const rarity: Rarity = (charRes?.rarity ?? 5) as Rarity;
-    const weaponRes = weaponsById[bc.weaponId];
-    const is5StarWeapon = weaponRes?.rarity === 5;
-
-    return {
-      charId: bc.charId,
-      rarity,
-      weapon4Star: !is5StarWeapon
-        ? { id: bc.weaponId, refinement: bc.refinement }
-        : undefined,
-      weapon5Star: is5StarWeapon ? { id: bc.weaponId } : undefined,
-      startConstellation: rarity >= 5 ? 0 : bc.constellation,
-      startRefinement: is5StarWeapon ? 1 : 0,
-      maxConstellation: rarity >= 5 ? 6 : bc.constellation,
-      maxRefinement: is5StarWeapon ? 5 : 0,
-    };
-  });
-}
-
-// ─── Main Component ───
 
 export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   const { t } = useLanguage();
@@ -187,12 +65,12 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
         : "lg";
 
   // ── Analyzer-specific environment settings (independent from DamageView) ──
-  const localEnemyAura = team.analyzerEnemyAura;
-  const localExtraBuffs = team.analyzerExtraBuffs ?? [];
+  const localEnemyAura = team.analyzer?.enemyAura;
+  const localExtraBuffs = team.analyzer?.extraBuffs ?? [];
 
   const setLocalEnemyAura = useCallback(
     (el: Element | undefined) => {
-      updateTeam(team.id, { analyzerEnemyAura: el });
+      updateTeam(team.id, { analyzer: { ...team.analyzer, enemyAura: el } });
     },
     [team.id, updateTeam]
   );
@@ -205,7 +83,9 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   const updateEnvTeam = useCallback(
     (_id: string, patch: Partial<Team>) => {
       if (patch.extraBuffs !== undefined) {
-        updateTeam(team.id, { analyzerExtraBuffs: patch.extraBuffs ?? [] });
+        updateTeam(team.id, {
+          analyzer: { ...team.analyzer, extraBuffs: patch.extraBuffs ?? [] },
+        });
       }
     },
     [team.id, updateTeam]
@@ -249,8 +129,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   // Use the DamageView combo structure for counts, but strip reactions —
   // the analyzer manages its own reactions via analyzerReactionOverrides.
   const templateCombo = useMemo<ComboFormula>(() => {
-    const sourceCombo =
-      team.combos.find((c) => c.id === team.selectedCombo) ?? team.combos[0];
+    const sourceCombo = team.combo;
     let baseLines: ComboLine[];
     if (sourceCombo) {
       // Strip reactions from DamageView combo lines — only keep charId/formulaId/count
@@ -287,10 +166,10 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       label: sourceCombo?.label ?? { en: "Rotation", zh: "循环" },
       lines: Array.from(merged.values()),
     };
-  }, [team.combos, team.selectedCombo, teamBuild, team.characters]);
+  }, [team.combo, teamBuild, team.characters]);
 
   // ── Analyzer-specific reaction overrides (persisted, independent from DamageView) ──
-  const reactionOverrides = team.analyzerReactionOverrides ?? {};
+  const reactionOverrides = team.analyzer?.reactionOverrides ?? {};
 
   // Effective combo: templateCombo with analyzer reaction overrides applied.
   // Override key is `charId.formulaId` — all lines for the same formula share one override.
@@ -308,9 +187,12 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   const handleReactionChange = useCallback(
     (stableKey: string, override: FormulaOverride) => {
       updateTeam(team.id, {
-        analyzerReactionOverrides: {
-          ...reactionOverrides,
-          [stableKey]: override,
+        analyzer: {
+          ...team.analyzer,
+          reactionOverrides: {
+            ...reactionOverrides,
+            [stableKey]: override,
+          },
         },
       });
     },
@@ -318,7 +200,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   );
 
   // ── State management ──
-  const storedConfigs = team.analyzerConfigs;
+  const storedConfigs = team.analyzer?.configs;
   const [charConfigs, setCharConfigs] = useState<AnalyzerCharConfig[]>(() =>
     configs.length > 0
       ? reconcileConfigs(
@@ -329,10 +211,10 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   );
 
   const [comboOverrides, setComboOverrides] = useState<ComboCountOverrides>(
-    () => team.analyzerComboOverrides ?? {}
+    () => team.analyzer?.comboOverrides ?? {}
   );
   const [minErOverrides, setMinErOverrides] = useState<MinErOverrides>(
-    () => team.analyzerMinErOverrides ?? {}
+    () => team.analyzer?.minErOverrides ?? {}
   );
 
   const analysis = useAnalyzer(team.id);
@@ -361,21 +243,27 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       const bc = bcs.find((b) => b.charId === cfg.charId);
       return bc ? fullToStored(cfg, bc) : fullToStored(cfg, bcs[0]);
     });
-    updateTeam(team.id, { analyzerConfigs: stored });
+    updateTeam(team.id, { analyzer: { ...team.analyzer, configs: stored } });
   }, [charConfigs, team.id, updateTeam]);
 
   // Persist combo/minEr overrides
   useEffect(() => {
     updateTeam(team.id, {
-      analyzerComboOverrides:
-        Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
+      analyzer: {
+        ...team.analyzer,
+        comboOverrides:
+          Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
+      },
     });
   }, [comboOverrides, team.id, updateTeam]);
 
   useEffect(() => {
     updateTeam(team.id, {
-      analyzerMinErOverrides:
-        Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
+      analyzer: {
+        ...team.analyzer,
+        minErOverrides:
+          Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
+      },
     });
   }, [minErOverrides, team.id, updateTeam]);
 
@@ -451,35 +339,31 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     []
   );
 
-  const handleRun = useCallback(
-    (settings: AnalyzerCalcSettings) => {
-      if (!teamBuild) return;
-      const opts: AnalyzerOptions = {
-        configs: charConfigs,
-        baseConfigs: configs,
-        teamBuild,
-        templateCombo: effectiveCombo,
-        comboOverrides:
-          Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
-        minErOverrides:
-          Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
-        calcContext: settings.calcContext,
-        rollMultiplier: settings.rollMultiplier,
-        substatBudget: settings.substatBudget,
-      };
-      start(opts, !!result);
-    },
-    [
-      charConfigs,
-      configs,
-      result,
+  const handleRun = useCallback(() => {
+    if (!teamBuild) return;
+    const opts: AnalyzerOptions = {
+      configs: charConfigs,
+      baseConfigs: configs,
       teamBuild,
-      effectiveCombo,
-      comboOverrides,
-      minErOverrides,
-      start,
-    ]
-  );
+      templateCombo: effectiveCombo,
+      comboOverrides:
+        Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
+      minErOverrides:
+        Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
+      calcContext: team.calcContext,
+    };
+    start(opts, !!result);
+  }, [
+    charConfigs,
+    configs,
+    result,
+    teamBuild,
+    effectiveCombo,
+    comboOverrides,
+    minErOverrides,
+    team.calcContext,
+    start,
+  ]);
 
   // ── Header with back button + team name ──
   const headerContent = (
@@ -570,6 +454,8 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
 
         {/* 3. Results: settings + run button + chart + table/sequence */}
         <AnalyzerResultCard
+          team={team}
+          updateTeam={updateTeam}
           charConfigs={charConfigs}
           isComputing={isComputing}
           result={result}

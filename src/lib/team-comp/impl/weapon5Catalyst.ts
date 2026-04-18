@@ -4,9 +4,7 @@ import { ScalingBuff, StatBuff } from "../calc/statBuff";
 import { ALL_ELEMENTAL_FILTER } from "./helpers";
 import { r, wbs } from "./helpers";
 
-// ══════════════════════════
 // 5★ Catalysts
-// ══════════════════════════
 
 @RegisterWeapon("nocturnes_curtain_call")
 class NocturnesCurtainCall extends WeaponBase {

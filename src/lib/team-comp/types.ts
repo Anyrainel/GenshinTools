@@ -2,7 +2,6 @@ import type {
   BaseStat,
   Element,
   Faction,
-  LunarReactionType,
   MainStat,
   ReactionType,
   Region,
@@ -220,9 +219,7 @@ export type BuffTarget = {
   charId?: string;
 };
 
-// ═══════════════════════════════════════════════════════════════
 // Combat Options (Schema-Driven)
-// ═══════════════════════════════════════════════════════════════
 /** A single selectable value in an OptionDef. */
 
 export type OptionEntry = {
@@ -538,11 +535,16 @@ export type CritMode = "expected" | "crit" | "noCrit";
 export type CalcContext = {
   enemyLevel: number;
   enemyRes: number;
-  critRateTarget?: number; // 0–100 integer; undefined = disabled
   perCharCrTarget?: Record<string, number>; // charId → 0-100 integer; per-char CR targets
-  rollMultiplier?: number; // generator only; 0.7–1.0, default 0.85
-  /** Generator only; per-slot substat roll totals; default 8_6 */
-  substatBudget?: SubstatBudgetPreset;
+  rollMultiplier: number; // 0.7–1.0
+  substatBudget: SubstatBudgetPreset;
+};
+
+export const DEFAULT_CALC_CONTEXT: CalcContext = {
+  enemyLevel: 110,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 // ─── Reaction Override (Formula v2) ───

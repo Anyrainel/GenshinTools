@@ -1,14 +1,6 @@
-import type {
-  ArtifactData,
-  GlobalStatWeights,
-  Slot,
-  SubStat,
-} from "@/data/types";
+import type { GlobalStatWeights, Slot } from "@/data/types";
 import type { StatWeightMap } from "@/lib/account-data/artifactScore";
-import {
-  type BuildOptimizerConfig,
-  optimizeBuild,
-} from "@/lib/account-data/buildOptimizer";
+import { optimizeBuild } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
 import type { CrBudgetResult } from "@/lib/account-data/crBudget";
 import { describe, expect, it } from "vitest";

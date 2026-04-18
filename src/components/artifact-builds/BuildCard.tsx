@@ -37,11 +37,7 @@ import {
 } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  artifactHalfSetsById,
-  getGobletPool,
-  statPools,
-} from "@/data/constants";
+import { getGobletPool, statPools } from "@/data/constants";
 import {
   type Build,
   type BuildConstellation,

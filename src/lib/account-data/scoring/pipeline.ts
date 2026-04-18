@@ -34,12 +34,7 @@ import {
   emptySubRolls,
   getRollValues,
 } from "@/lib/team-comp/generator/constrainedGreedy";
-import type {
-  CalcContext,
-  I18nLabel,
-  StatKey,
-  TeamSlotConfig,
-} from "@/lib/team-comp/types";
+import type { I18nLabel, StatKey, TeamSlotConfig } from "@/lib/team-comp/types";
 import {
   DEFAULT_CALC_CTX,
   TUNABLE_SUBSTATS,

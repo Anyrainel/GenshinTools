@@ -169,8 +169,6 @@ export function matchesSetRequirement(
   return true;
 }
 
-// ── Helpers ──
-
 /** Extract artifact ER contribution (internal, e.g. 0.518 for 51.8% ER sands). */
 function getArtifactEr(art: ArtifactData | null): number {
   if (!art) return 0;
@@ -691,14 +689,13 @@ export async function* runOptimization(
   // ── CR discount for heuristic scoring ──
   let crDiscount = 1;
   if (swapCharId === formulaCharId) {
-    if (calcContext.critRateTarget != null) {
+    if (calcContext.perCharCrTarget?.[swapCharId] != null) {
       const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
       const baselineStats = teamBuild.getTeamStats(
         baselineSheets,
         onFieldCharId,
         calcContext
       );
-      // CR already includes the critRateTarget bonus from getTeamStats
       const effectiveCr = baselineStats[formulaCharId]?.get("cr", null) ?? 0;
       crDiscount = effectiveCr >= 1.0 ? 0 : Math.max(0, 1 - effectiveCr);
     }

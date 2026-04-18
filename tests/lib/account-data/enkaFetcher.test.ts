@@ -3,7 +3,7 @@ import {
   convertEnkaToGOOD,
   fetchEnkaData,
 } from "@/lib/account-data/enkaFetcher";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("enka", () => {
   describe("fetchEnkaData", () => {

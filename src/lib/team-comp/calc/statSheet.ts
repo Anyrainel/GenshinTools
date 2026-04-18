@@ -632,7 +632,7 @@ export function accumulate(
   }
 }
 /** Per-element/Physical DMG keys normalized to dmg% + element filter. */
-const ELEMENTAL_DMG_KEY_TO_ELEMENT: Partial<
+export const ELEMENTAL_DMG_KEY_TO_ELEMENT: Partial<
   Record<StatKey, ElementalOrPhysical>
 > = {
   "pyro%": "Pyro",

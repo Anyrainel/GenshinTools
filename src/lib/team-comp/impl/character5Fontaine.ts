@@ -7,9 +7,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate, ReactionType } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Fontaine Characters
-// ═══════════════════════════════════════════════════════════════
 
 // Skirk P3 / Tartaglia P3 talent level bonuses handled by CharacterBase._effectiveLevels
 

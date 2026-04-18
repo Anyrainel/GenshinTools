@@ -17,7 +17,6 @@ import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
-  CharOptConfig,
   TeamOptYield,
   TeamOptimizationResult,
   TeamOptimizerOptions,
@@ -36,11 +35,11 @@ import {
 
 await preloadGameStats();
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 const GLOBAL_CONFIG: GlobalStatWeights = {
@@ -127,8 +126,6 @@ function makeNonEsfInventory(): ArtifactData[] {
     makeArt("circlet", OFF),
   ];
 }
-
-// ── Tests ────────────────────────────────────────────────────────────────────
 
 describe("runTeamOptimization — ignoreArtifactSets", () => {
   it("without flag: set failure produces a failReason when ER is impossible", async () => {

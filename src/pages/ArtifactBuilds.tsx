@@ -15,21 +15,12 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type {
-  Build,
-  BuildGroup,
-  BuildPayload,
-  BuildPayloadV5,
-  PresetOption,
-} from "@/data/types";
+import type { BuildPayload, BuildPayloadV5, PresetOption } from "@/data/types";
 
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
-import {
-  createBuildExportPayloadV5,
-  serializeBuildExportPayload,
-} from "@/lib/artifact-builds/buildUtils";
+import { createBuildExportPayloadV5 } from "@/lib/artifact-builds/buildUtils";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,

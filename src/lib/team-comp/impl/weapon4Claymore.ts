@@ -1,14 +1,10 @@
 import { WeaponBase } from "../calc/implModel";
-import { RegisterWeapon, resolveOption } from "../calc/registry";
+import { RegisterWeapon } from "../calc/registry";
 import { ScalingBuff, StatBuff } from "../calc/statBuff";
-import type { OptionDef } from "../types";
-import type { StatKey } from "../types";
 import { ALL_ELEMENTAL_FILTER } from "./helpers";
 import { r, wbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Claymores
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterWeapon("master_key")
 class MasterKey extends WeaponBase {

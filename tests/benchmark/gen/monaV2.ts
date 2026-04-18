@@ -47,9 +47,7 @@ import {
   setupCharSearch,
 } from "./teamSearch";
 
-// ═══════════════════════════════════════════════════════════════════════
 // Weight Heuristic (faithful to weight_heuristic.rs::NaiveWeightHeuristic)
-// ═══════════════════════════════════════════════════════════════════════
 
 /**
  * Binary stat weight: for each stat, check if adding a large amount of it
@@ -161,9 +159,7 @@ function weightedArtifactScore(
   return score;
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // V2 Data Structures
-// ═══════════════════════════════════════════════════════════════════════
 
 /** Key for artifact grouping: (setKey, slotIndex, mainStat) */
 type GroupKey = string;
@@ -306,9 +302,7 @@ function buildV2SlotData(
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Unrolled 5-Level Nested Loop (faithful to cutoff_algo2.rs::do_iter)
-// ═══════════════════════════════════════════════════════════════════════
 
 interface V2Context {
   teamBuild: TeamBuild;
@@ -528,9 +522,7 @@ function doIter(
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Set Mask Iteration (faithful to cutoff_algo2.rs::iter_set)
-// ═══════════════════════════════════════════════════════════════════════
 
 /**
  * For a given set mask and main-stat combination, build the artifact lists
@@ -677,9 +669,7 @@ const V2_SET2_MASKS: number[][] = (() => {
   return masks;
 })();
 
-// ═══════════════════════════════════════════════════════════════════════
 // Single-Character MonaV2 Runner
-// ═══════════════════════════════════════════════════════════════════════
 
 function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
   const {
@@ -885,9 +875,7 @@ function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
   return { collector, evaluations: ctx.evaluations, failReason };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Export
-// ═══════════════════════════════════════════════════════════════════════
 
 export const runTeamOptimization: (
   opts: TeamOptimizerOptions

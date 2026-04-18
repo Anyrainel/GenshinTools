@@ -20,7 +20,6 @@ import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import {
-  type StatEntryData,
   StatEntryRow,
   formatFilter,
   formatReceiverLabel,
@@ -28,6 +27,7 @@ import {
   getSourceIcon,
   getSourceName,
 } from "@/lib/team-comp/buffDisplayUtils";
+import { getTemplateName } from "@/lib/team-comp/displayFormatter";
 import type {
   BuffActivationMap,
   DisplayPart,
@@ -38,9 +38,6 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { Settings2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { getTemplateName } from "./FormulaBreakdown";
-
-// ─── Types ───────────────────────────────────────────────────────────────────
 
 export type BuffLedgerFormula = {
   formulaKey: string;
@@ -64,19 +61,6 @@ type Props = {
   formulas: BuffLedgerFormula[];
   t: ReturnType<typeof useLanguage>["t"];
 };
-
-/** Build the buffApplicability map from a formula-specific DisplayResult's buffs. */
-export function buildBuffApplicability(
-  buffs: ResolvedBuff[]
-): Record<string, number[] | undefined> {
-  const map: Record<string, number[] | undefined> = {};
-  for (const b of buffs) {
-    if (b.active && !b.bespokeLabel) {
-      map[b.buffKey] = b.activePartIndices;
-    }
-  }
-  return map;
-}
 
 // ─── Per-formula block (inside a character tab) ─────────────────────────────
 

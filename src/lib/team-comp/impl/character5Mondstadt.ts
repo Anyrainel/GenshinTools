@@ -8,9 +8,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Mondstadt Characters
-// ═══════════════════════════════════════════════════════════════
 
 const durinOption = {
   label: { zh: "形态", en: "Form" },
@@ -1816,9 +1814,7 @@ class Varka extends CharacterBase {
   })();
 }
 
-// ═══════════════════════════════════════════════════════════════
 // Lohen — 5★ Cryo Polearm (Hexerei)
-// ═══════════════════════════════════════════════════════════════
 // Modeling assumptions (Masterstroke mode is the DPS state):
 // - E switches to Masterstroke: NA/CA become Cryo (non-overridable infusion).
 //   The E talent table provides the Masterstroke-mode NA/CA multipliers

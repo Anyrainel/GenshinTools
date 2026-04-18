@@ -126,8 +126,6 @@ export function getWeaponStatsSync(): WeaponStatsMap | null {
   return weaponStatsCache;
 }
 
-// ─── Helpers ───
-
 /** Map character level to tier key used in character_stats.json. */
 export function getCharacterLevelTier(level: number): CharacterLevelTier {
   if (level <= 70) return "70";

@@ -1,16 +1,12 @@
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 
-// ---------------------------------------------------------------------------
 // Core labels & tiers
-// ---------------------------------------------------------------------------
 
 export type TriageLabel = "lock" | "unlock";
 
 export type QualityTier = "P" | "Q" | "N" | "T";
 
-// ---------------------------------------------------------------------------
 // Demand & Embryo
-// ---------------------------------------------------------------------------
 
 export type DemandSource =
   | { type: "4pc"; setKey: string }
@@ -42,9 +38,7 @@ export type EmbryoMatch = {
   embryoKey: string;
 };
 
-// ---------------------------------------------------------------------------
 // Decision output
-// ---------------------------------------------------------------------------
 
 export type TriageRuleId = string;
 
@@ -79,9 +73,7 @@ export type TriageDecision = {
   supplyDemand: SupplyDemandInfo | null;
 };
 
-// ---------------------------------------------------------------------------
 // Settings
-// ---------------------------------------------------------------------------
 
 export type TriageMode = "strict" | "loose";
 
@@ -111,9 +103,7 @@ export type TriageSettings = {
   customFlexInputs: CustomFlexInput[];
 };
 
-// ---------------------------------------------------------------------------
 // Tier system types
-// ---------------------------------------------------------------------------
 
 export type TierCondition = {
   k: number; // hit ≥ k desired substats

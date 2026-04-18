@@ -1,13 +1,9 @@
 import { WeaponBase } from "../calc/implModel";
-import { RegisterWeapon, resolveOption } from "../calc/registry";
+import { RegisterWeapon } from "../calc/registry";
 import { ScalingBuff, StatBuff } from "../calc/statBuff";
-import type { OptionDef } from "../types";
-import type { StatKey } from "../types";
 import { r, wbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Swords
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterWeapon("moonweavers_dawn")
 class MoonweaversDawn extends WeaponBase {

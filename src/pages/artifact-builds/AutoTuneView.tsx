@@ -34,8 +34,6 @@ import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-// ── Types ──
-
 type EntryStatus = "idle" | "computing" | "done" | "applied";
 
 type ViewFilter = "available" | "all";

@@ -263,9 +263,7 @@ export function applyEquipResults(
   };
 }
 
-// ---------------------------------------------------------------------------
 // Snapshot diff — count-based summary for user confirmation
-// ---------------------------------------------------------------------------
 
 export interface SnapshotDiff {
   localCount: number;
@@ -299,9 +297,7 @@ export function computeSnapshotDiff(
   return { localCount, snapshotCount, localLocked, snapshotLocked };
 }
 
-// ---------------------------------------------------------------------------
 // Job result analysis — groups results by status for UI display
-// ---------------------------------------------------------------------------
 
 export interface JobAnalysis {
   successCount: number;

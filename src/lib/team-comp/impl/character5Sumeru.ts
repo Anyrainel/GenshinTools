@@ -7,9 +7,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Sumeru Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("dehya")
 class Dehya extends CharacterBase {

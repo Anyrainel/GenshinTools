@@ -32,9 +32,8 @@ import json
 import re
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
 # Paths
-# ---------------------------------------------------------------------------
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "src" / "data"
 GAME_DIR = DATA_DIR / "game"
@@ -76,9 +75,9 @@ ARTIFACT_SLOT_LOCAL_SUFFIX: dict[str, str] = {
 }
 
 
-# ---------------------------------------------------------------------------
 # I/O
-# ---------------------------------------------------------------------------
+
+
 def read_beta_json(path: Path) -> dict:
     """Load a gzipped JSON file. Returns an empty dict if the file is missing."""
     if not path.exists():
@@ -115,9 +114,9 @@ def save_json_minified(path: Path, data: dict) -> None:
     )
 
 
-# ---------------------------------------------------------------------------
 # TypeScript file generation
-# ---------------------------------------------------------------------------
+
+
 def generate_resources_beta_ts(
     characters: list[tuple[str, int]],
     weapons: list[tuple[str, int]],
@@ -207,9 +206,9 @@ def generate_i18n_beta_ts(
     return "\n".join(lines) + "\n"
 
 
-# ---------------------------------------------------------------------------
 # Cleanup
-# ---------------------------------------------------------------------------
+
+
 def _load_i18n_game_ids() -> dict[str, set[str]]:
     """Parse i18n-game.ts and return id sets per section.
 

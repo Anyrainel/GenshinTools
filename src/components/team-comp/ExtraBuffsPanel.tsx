@@ -29,9 +29,11 @@ import {
   elementResourcesByName,
   isPctStat,
 } from "@/data/constants";
-import { ENV_BUFF_TARGET_MODE, type EnvBuff, envBuffs } from "@/data/envBuffs";
+import { type EnvBuff, envBuffs } from "@/data/envBuffs";
 import type { Element } from "@/data/types";
 import { elements } from "@/data/types";
+import { CUSTOM_STAT_OPTIONS } from "@/lib/team-comp/constants";
+import { formatBuffStats } from "@/lib/team-comp/displayFormatter";
 import type { ExtraBuff } from "@/lib/team-comp/types";
 import type { StatKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl, getElementColor } from "@/lib/utils";
@@ -39,60 +41,8 @@ import type { Team } from "@/stores/useTeamStore";
 import { ChefHat, Globe, Plus, Settings, Swords, Wand2, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
-// ─── Helpers ───
-
 /** Food preset IDs are stored as "food:<foodId>" to distinguish from other presets. */
 const FOOD_PREFIX = "food:";
-
-const CUSTOM_STAT_OPTIONS: StatKey[] = [
-  "atk",
-  "hp",
-  "def",
-  "em",
-  "atk%",
-  "hp%",
-  "def%",
-  "er",
-  "cr",
-  "cd",
-  "pyro%",
-  "hydro%",
-  "anemo%",
-  "electro%",
-  "dendro%",
-  "cryo%",
-  "geo%",
-  "phys%",
-  "dmg%",
-  "reactionDmg%",
-  "baseDmg%",
-  "baseDmg",
-  "defReduction%",
-  "defIgnore%",
-  "resReduction%",
-];
-
-function formatStatValue(key: StatKey, value: number): string {
-  if (isPctStat(key)) {
-    const display = value * 100;
-    return `${display % 1 === 0 ? display.toFixed(0) : display.toFixed(1)}%`;
-  }
-  return String(Math.round(value));
-}
-
-function formatBuffStats(
-  stats: { key: StatKey; value: number }[],
-  t: { statShort: (key: string) => string }
-): string {
-  return stats
-    .map(
-      (s) =>
-        `${t.statShort(s.key)} ${s.value >= 0 ? "+" : ""}${formatStatValue(s.key as StatKey, s.value)}`
-    )
-    .join(", ");
-}
-
-// ─── ExtraBuffsPanel ───
 
 interface ExtraBuffsPanelProps {
   team: Team;

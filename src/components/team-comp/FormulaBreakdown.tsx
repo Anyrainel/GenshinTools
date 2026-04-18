@@ -1,9 +1,14 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import {
+  adjustPartDamage,
+  computeScalingDmg,
+  getEmBonus,
+} from "@/lib/team-comp/calc/formulaUtil";
+import {
   fmtDamage,
   fmtPercent,
-  fmtStat,
+  getTemplateName,
 } from "@/lib/team-comp/displayFormatter";
 import type {
   BuffActivationMap,
@@ -171,22 +176,6 @@ function ResMathLine({
       <Paren char=")" />
     </span>
   );
-}
-
-// ─── Computational Helpers ───
-
-function getEmBonus(em: number, emCoeff: number): number {
-  const denominator = emCoeff === 2.78 ? 1400 : emCoeff === 5 ? 1200 : 2000;
-  return (emCoeff * em) / (denominator + em);
-}
-
-function computeScalingDmg(p: DisplayPart): number {
-  let dmg = 0;
-  for (let i = 0; i < p.scalingKeys.length; i++) {
-    const k = p.scalingKeys[i];
-    dmg += (p.statValues[k] || 0) * (p.scalingMulti[i] || 0);
-  }
-  return dmg;
 }
 
 const ELEMENTAL_KEYS = [
@@ -960,75 +949,6 @@ const RENDERERS: Record<FormulaTemplate, React.FC<RendererProps>> = {
   lunar: LunarEq,
   lunarDirect: LunarDirectEq,
 };
-
-const TEMPLATE_KEYS: Record<FormulaTemplate, string> = {
-  direct: "DirectDamage",
-  amplify: "AmplifyingReaction",
-  catalyze: "AdditiveReaction",
-  transform: "TransformativeReaction",
-  lunar: "LunarReaction",
-  lunarDirect: "LunarDirect",
-};
-
-// ─── Main Component ───
-
-export function getTemplateName(
-  p: DisplayPart,
-  t: ReturnType<typeof useLanguage>["t"]
-) {
-  const abilityPrefix = p.tag?.ability ? `${t.ability(p.tag.ability)}: ` : "";
-  const elName = p.tag?.element ? `${t.element(p.tag.element)} ` : "";
-  if (p.template === "direct")
-    return abilityPrefix + elName + t.formula("DirectDamage");
-  if (p.tag?.reaction && p.tag.reaction !== "none") {
-    const rxn = t.reaction(p.tag.reaction);
-    if (p.template === "lunarDirect")
-      return abilityPrefix + elName + rxn + t.formula("DirectSuffix");
-    return abilityPrefix + elName + rxn + t.formula("ReactionSuffix");
-  }
-  return abilityPrefix + elName + t.formula(TEMPLATE_KEYS[p.template]);
-}
-
-/**
- * Adjust a DisplayPart's damage for the selected critMode.
- * DisplayPart always stores expected damage; this derives crit/noCrit variants.
- */
-export function adjustPartDamage(p: DisplayPart, critMode: CritMode): number {
-  if (critMode === "expected") return p.damage;
-
-  const cr =
-    p.template === "transform"
-      ? p.statValues.reactionCr || 0
-      : p.statValues.cr || 0;
-  const cd =
-    p.template === "transform"
-      ? p.statValues.reactionCd || 0
-      : p.statValues.cd || 0;
-
-  const expectedMult = 1 + Math.max(0, Math.min(cr, 1)) * cd;
-  if (expectedMult <= 0) return 0;
-
-  const targetMult = critMode === "crit" ? 1 + cd : 1;
-  return (p.damage / expectedMult) * targetMult;
-}
-
-/**
- * Compute critMode adjustment ratio for a formula given its display parts.
- * Returns 1 for expected mode or when parts are empty/zero-damage.
- */
-export function formulaCritRatio(
-  parts: DisplayPart[],
-  critMode: CritMode
-): number {
-  if (critMode === "expected" || parts.length === 0) return 1;
-  const expectedSum = parts.reduce((s, p) => s + p.damage * (p.hits ?? 1), 0);
-  if (expectedSum <= 0) return 1;
-  const adjustedSum = parts.reduce(
-    (s, p) => s + adjustPartDamage(p, critMode) * (p.hits ?? 1),
-    0
-  );
-  return adjustedSum / expectedSum;
-}
 
 export function FormulaBreakdown({
   parts,

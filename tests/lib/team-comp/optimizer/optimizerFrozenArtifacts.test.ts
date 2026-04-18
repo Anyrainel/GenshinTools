@@ -19,11 +19,7 @@ import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
-import type {
-  CharOptConfig,
-  TeamOptimizerOptions,
-  TeamSlotConfig,
-} from "@/lib/team-comp/types";
+import type { CharOptConfig, TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
@@ -36,9 +32,12 @@ import {
 
 await preloadGameStats();
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-const CTX = { enemyLevel: 100, enemyRes: 0.1 };
+const CTX = {
+  enemyLevel: 100,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6" as const,
+};
 const GLOBAL_CONFIG: GlobalStatWeights = {
   flatAtk: 1,
   flatHp: 0,
@@ -122,8 +121,6 @@ function getCharAssignedIds(
   }
   return ids;
 }
-
-// ── Tests ────────────────────────────────────────────────────────────────────
 
 describe("optimizer frozen artifact protection", () => {
   it("frozen artifacts removed from inventory never appear in results", async () => {

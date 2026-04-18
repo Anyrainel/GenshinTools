@@ -13,10 +13,6 @@ import type { ArtifactData, Rarity, SubStat } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getSubstatAvgRoll } from "@/lib/account-data/scoring/utils";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 export type StrategicRuleResult =
   | { kept: true; reason: StrategicReason }
   | { kept: false };
@@ -31,9 +27,7 @@ export type StrategicReason =
 
 export type StrategicRule = (artifact: ArtifactData) => StrategicRuleResult;
 
-// ---------------------------------------------------------------------------
 // Concentrated-stat rule
-// ---------------------------------------------------------------------------
 
 /**
  * A category is a group of substats whose rolls we want to sum together when
@@ -119,9 +113,7 @@ export const concentratedStatRule: StrategicRule = (artifact) => {
   return { kept: false };
 };
 
-// ---------------------------------------------------------------------------
 // Rule registry + public runner
-// ---------------------------------------------------------------------------
 
 const RULES: StrategicRule[] = [concentratedStatRule];
 

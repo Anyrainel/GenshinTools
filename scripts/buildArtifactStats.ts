@@ -14,7 +14,6 @@ import {
 } from "@/lib/account-data/scoring/utils";
 import type { StatKey } from "@/lib/team-comp/types";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface PresetSubstat {
   stat: string;
@@ -42,7 +41,6 @@ export interface ArtifactStatsOverride {
   circlet?: string;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
 
 /**
  * Total "virtual rolls" to distribute as substat budget.
@@ -51,7 +49,6 @@ export interface ArtifactStatsOverride {
  */
 export const TOTAL_SUB_ROLLS = 30;
 
-// ─── Functions ────────────────────────────────────────────────────────────────
 
 /**
  * Find the best matching preset build entry for a character.

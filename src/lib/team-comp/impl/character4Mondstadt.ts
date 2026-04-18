@@ -7,9 +7,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate, ElementalOrPhysical } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Mondstadt Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("dahlia")
 class Dahlia extends CharacterBase {

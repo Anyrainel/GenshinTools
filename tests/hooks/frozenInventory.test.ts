@@ -25,8 +25,6 @@ import {
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 import { describe, expect, it } from "vitest";
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
 let artCounter = 0;
 
 function makeArt(
@@ -93,12 +91,8 @@ function baseParams(
   };
 }
 
-// ── Tests ────────────────────────────────────────────────────────────────────
-
 describe("computeTeamInventory — frozen artifact exclusion", () => {
-  // ────────────────────────────────────────────────────────────────────────
   // 1. Same-team frozen characters
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("same-team frozen characters", () => {
     it("excludes same-team frozen artifacts from available pool (reuseMode=none)", () => {
@@ -165,9 +159,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 2. Cross-team frozen characters
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("cross-team frozen characters", () => {
     it("excludes OTHER team frozen artifacts from pool (reuseMode=none)", () => {
@@ -282,9 +274,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 3. Standalone frozen artifacts
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("standalone frozen artifacts", () => {
     it("standalone frozen IDs are excluded from the pool", () => {
@@ -337,9 +327,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 4. Multiple frozen teams
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("multiple frozen teams", () => {
     it("artifacts from ALL frozen teams are excluded", () => {
@@ -403,9 +391,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 5. Per-char extras isolation
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("per-char extras isolation", () => {
     it("per-char extras are NOT available in the shared pool", () => {
@@ -476,9 +462,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 6. Partially frozen teams
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("partially frozen teams", () => {
     it("only frozen chars' artifacts are excluded, unfrozen chars' artifacts remain", () => {
@@ -518,9 +502,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 7. Edge cases
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("edge cases", () => {
     it("frozen character with null artifact slots", () => {
@@ -658,9 +640,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 8. forceReuse mode
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("forceReuse mode", () => {
     it("matching set config → character added to forceReuseChars", () => {
@@ -734,9 +714,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 9. Optimizer integration: getCharInventory simulation
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("optimizer getCharInventory simulation", () => {
     /**
@@ -922,9 +900,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
     });
   });
 
-  // ────────────────────────────────────────────────────────────────────────
   // 10. Regression: standalone frozen IDs were not included
-  // ────────────────────────────────────────────────────────────────────────
 
   describe("regression: standalone frozen IDs in frozenArtifactIds set", () => {
     it("frozenArtifactIds includes both standalone and team-frozen IDs", () => {

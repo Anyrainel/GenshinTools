@@ -9,10 +9,6 @@ import { describe, expect, it } from "vitest";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import "@/lib/team-comp/index";
 
-import {
-  evaluateCombo,
-  getComboDisplayResult,
-} from "@/lib/team-comp/calc/damageCalc";
 import type { PartialBuffInfo } from "@/lib/team-comp/calc/stackAllocation";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
@@ -32,7 +28,12 @@ import { emptySheets } from "../../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
 
-const CTX: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+const CTX: CalcContext = {
+  enemyLevel: 100,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
+};
 
 // Furina + Kazuha(VV) + Xingqiu + Bennett
 const TEAM: TeamSlotConfig[] = [
@@ -149,7 +150,7 @@ describe("buffOverrides affect off-field parts", () => {
     };
 
     // Baseline (no overrides)
-    const baseline = evaluateCombo(tb, combo, sheets, CTX).totalDamage;
+    const baseline = tb.evaluateCombo(combo, sheets, CTX).totalDamage;
 
     // Override: disable VV on all parts of salon-total
     const partActivation: Record<number, number> = {};
@@ -159,8 +160,7 @@ describe("buffOverrides affect off-field parts", () => {
     const info: PartialBuffInfo = { buffKey: vvKey, partActivation };
     const overrides: Record<number, PartialBuffInfo[]> = { 0: [info] };
 
-    const withOverride = evaluateCombo(
-      tb,
+    const withOverride = tb.evaluateCombo(
       combo,
       sheets,
       CTX,
@@ -204,7 +204,7 @@ describe("buffOverrides affect off-field parts", () => {
     const activeLines = combo.lines;
 
     // Baseline
-    const baseline = evaluateCombo(tb, combo, sheets, CTX).totalDamage;
+    const baseline = tb.evaluateCombo(combo, sheets, CTX).totalDamage;
 
     // UI-style combo overrides for this formula
     const comboOverrides: Record<string, BuffActivationMap> = {
@@ -222,8 +222,7 @@ describe("buffOverrides affect off-field parts", () => {
     );
     expect(built).toBeDefined();
 
-    const withOverride = evaluateCombo(
-      tb,
+    const withOverride = tb.evaluateCombo(
       combo,
       sheets,
       CTX,
@@ -262,7 +261,7 @@ describe("buffOverrides affect off-field parts", () => {
       ],
     };
 
-    const baselineResult = getComboDisplayResult(tb, combo, sheets, CTX);
+    const baselineResult = tb.getComboDisplayResult(combo, sheets, CTX);
     const baselineSalon = baselineResult.partsByFormula[
       "furina.furina-salon-total"
     ]!.reduce((s, p) => s + p.damage * (p.hits ?? 1), 0);
@@ -296,7 +295,7 @@ describe("buffOverrides affect off-field parts", () => {
       comboOverrides
     );
 
-    const withOverride = getComboDisplayResult(tb, combo, sheets, CTX, built);
+    const withOverride = tb.getComboDisplayResult(combo, sheets, CTX, built);
     const overrideSalon = withOverride.partsByFormula[
       "furina.furina-salon-total"
     ]!.reduce((s, p) => s + p.damage * (p.hits ?? 1), 0);
@@ -589,7 +588,7 @@ describe("buffOverrides affect off-field parts", () => {
       lines: [{ charId: "furina", formulaId: "furina-salon-total", count: 1 }],
     };
 
-    const baseline = getComboDisplayResult(tb, combo, sheets, CTX);
+    const baseline = tb.getComboDisplayResult(combo, sheets, CTX);
     const baselinePartDamage = baseline.partsByFormula[
       "furina.furina-salon-total"
     ]!.reduce((s, p) => s + p.damage * (p.hits ?? 1), 0);
@@ -608,7 +607,7 @@ describe("buffOverrides affect off-field parts", () => {
       comboOverrides
     );
 
-    const withOverride = getComboDisplayResult(tb, combo, sheets, CTX, built);
+    const withOverride = tb.getComboDisplayResult(combo, sheets, CTX, built);
     const overridePartDamage = withOverride.partsByFormula[
       "furina.furina-salon-total"
     ]!.reduce((s, p) => s + p.damage * (p.hits ?? 1), 0);
@@ -629,8 +628,7 @@ type TeamLike = {
   formulaMode: "single" | "combo";
   selectedFormula: { charId: string; formulaId: string } | null;
   singleReaction?: { forceOnField?: boolean };
-  combos: ComboFormula[];
-  selectedCombo: string;
+  combo: ComboFormula | null;
 };
 
 /**
@@ -683,8 +681,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       formulaMode: "single",
       selectedFormula: { charId: "furina", formulaId: "furina-salon-total" },
       singleReaction: { forceOnField: true },
-      combos: [],
-      selectedCombo: "",
+      combo: null,
     };
 
     const baseline = runUiFlow(tb, team, sheets, {}).result;
@@ -739,8 +736,7 @@ describe("buffOverride × forceOnField UI flow", () => {
     const team: TeamLike = {
       formulaMode: "combo",
       selectedFormula: null,
-      combos: [combo],
-      selectedCombo: "myCombo",
+      combo,
     };
 
     const baseline = runUiFlow(tb, team, sheets, {}).result;
@@ -780,8 +776,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       formulaMode: "single",
       selectedFormula: { charId: "furina", formulaId: "furina-salon-total" },
       singleReaction: { forceOnField: true },
-      combos: [],
-      selectedCombo: "",
+      combo: null,
     };
     const singleStore: Record<string, BuffActivationMap> = {
       "combo:__single__:furina.furina-salon-total": {
@@ -793,21 +788,18 @@ describe("buffOverride × forceOnField UI flow", () => {
     const comboTeam: TeamLike = {
       formulaMode: "combo",
       selectedFormula: null,
-      combos: [
-        {
-          id: "c",
-          label: { en: "c", zh: "c" },
-          lines: [
-            {
-              charId: "furina",
-              formulaId: "furina-salon-total",
-              count: 1,
-              reaction: { forceOnField: true },
-            },
-          ],
-        },
-      ],
-      selectedCombo: "c",
+      combo: {
+        id: "c",
+        label: { en: "c", zh: "c" },
+        lines: [
+          {
+            charId: "furina",
+            formulaId: "furina-salon-total",
+            count: 1,
+            reaction: { forceOnField: true },
+          },
+        ],
+      },
     };
     const comboStore: Record<string, BuffActivationMap> = {
       "combo:c:furina.furina-salon-total": {
@@ -844,8 +836,7 @@ describe("buffOverride × forceOnField UI flow", () => {
     const team: TeamLike = {
       formulaMode: "single",
       selectedFormula: { charId: "furina", formulaId: "furina-salon-total" },
-      combos: [],
-      selectedCombo: "",
+      combo: null,
     };
 
     const baseline = runUiFlow(tb, team, sheets, {}).result;
@@ -885,8 +876,7 @@ describe("buffOverride × forceOnField UI flow", () => {
     const team: TeamLike = {
       formulaMode: "combo",
       selectedFormula: null,
-      combos: [combo],
-      selectedCombo: "myCombo",
+      combo,
     };
 
     const baseline = runUiFlow(tb, team, sheets, {}).result;
@@ -922,8 +912,7 @@ describe("buffOverride × forceOnField UI flow", () => {
     const singleTeam: TeamLike = {
       formulaMode: "single",
       selectedFormula: { charId: "furina", formulaId: "furina-salon-total" },
-      combos: [],
-      selectedCombo: "",
+      combo: null,
     };
     const singleStore: Record<string, BuffActivationMap> = {
       "combo:__single__:furina.furina-salon-total": {
@@ -934,16 +923,13 @@ describe("buffOverride × forceOnField UI flow", () => {
     const comboTeam: TeamLike = {
       formulaMode: "combo",
       selectedFormula: null,
-      combos: [
-        {
-          id: "c",
-          label: { en: "c", zh: "c" },
-          lines: [
-            { charId: "furina", formulaId: "furina-salon-total", count: 1 },
-          ],
-        },
-      ],
-      selectedCombo: "c",
+      combo: {
+        id: "c",
+        label: { en: "c", zh: "c" },
+        lines: [
+          { charId: "furina", formulaId: "furina-salon-total", count: 1 },
+        ],
+      },
     };
     const comboStore: Record<string, BuffActivationMap> = {
       "combo:c:furina.furina-salon-total": { [vvKey]: { 0: 0, 1: 0, 2: 0 } },

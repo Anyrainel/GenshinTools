@@ -5,12 +5,11 @@ import type {
   ArtifactData,
   CharacterData,
   MainStat,
-  Rarity,
   Slot,
   SubStat,
   WeaponData,
 } from "@/data/types";
-import { solveArtifact } from "./artifactSolver";
+import { solveArtifact } from "../artifact/solver";
 import {
   artifactNameMap as artifactMap,
   charNameMap as charMap,

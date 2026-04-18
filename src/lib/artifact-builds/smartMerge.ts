@@ -28,8 +28,6 @@ import {
   mergeConfigGroup,
 } from "./mergeUtils";
 
-// ── Constants ───────────────────────────────────────────────────────────
-
 /** Stats stripped during archetype classification (not meaningful for grouping). */
 const NOISE_STATS: ReadonlySet<SubStat> = new Set([
   "cr",

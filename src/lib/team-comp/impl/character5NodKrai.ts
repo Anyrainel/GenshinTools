@@ -1,14 +1,7 @@
 import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 import type { Element, Faction } from "@/data/types";
-import {
-  AmplifyFormula,
-  CatalyzeFormula,
-  DirectFormula,
-  LunarDirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../calc/damageFormula";
+import { DirectFormula, LunarDirectFormula } from "../calc/damageFormula";
 import { CharacterBase } from "../calc/implModel";
 import { RegisterCharacter, resolveOption } from "../calc/registry";
 import { ScalingBuff, StatBuff } from "../calc/statBuff";
@@ -18,9 +11,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate, ReactionType } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Nod-Krai Characters
-// ═══════════════════════════════════════════════════════════════
 
 const columbinaOption = {
   label: { zh: "主要月曜反应", en: "Dominant Reaction" },
@@ -1387,9 +1378,7 @@ class Linnea extends CharacterBase {
   })();
 }
 
-// ═══════════════════════════════════════════════════════════════
 // Nicole — 5★ Pyro Catalyst (Hexerei)
-// ═══════════════════════════════════════════════════════════════
 // Modeling assumptions:
 // - E grants Grace of Kenosis → ATK + (ratio × Nicole.ATK), capped at 600.
 //   P1/P2 upgrade it to Guidance of Theosis (+300 ATK) — assume upgraded state

@@ -54,7 +54,7 @@ export function EvaluationView({
   const { t } = useLanguage();
   const accountData = useActiveAccountData();
   const buildGroups = useAllResolvedBuilds();
-  const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
+  const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
 
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -379,9 +379,7 @@ export function EvaluationView({
   );
 }
 
-// ---------------------------------------------------------------------------
 // Set Group Section
-// ---------------------------------------------------------------------------
 
 function SetGroupSection({
   group,

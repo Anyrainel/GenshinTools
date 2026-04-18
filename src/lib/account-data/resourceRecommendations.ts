@@ -33,9 +33,7 @@ import {
 import type { BuildEvaluation, EvalBuild, SetGroup } from "./buildEvaluation";
 import { getSubstatAvgRoll, getSubstatMaxRoll } from "./scoring/utils";
 
-// ---------------------------------------------------------------------------
 // Public types
-// ---------------------------------------------------------------------------
 
 export type TierCompletenessThresholds = Record<Tier, number>;
 
@@ -141,9 +139,7 @@ export function computeSuggestionPUpgrade(
   );
 }
 
-// ---------------------------------------------------------------------------
 // Tier resolution
-// ---------------------------------------------------------------------------
 
 const TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D", "Pool"];
 const tierRank = (t: Tier) => TIER_ORDER.indexOf(t);
@@ -171,9 +167,7 @@ function bestTierForBuild(
   return best;
 }
 
-// ---------------------------------------------------------------------------
 // Candidate enumeration helpers
-// ---------------------------------------------------------------------------
 
 /** Substats eligible to appear on the artifact (excludes main-only stats). */
 const SUBSTAT_POOL: SubStat[] = [
@@ -239,9 +233,7 @@ const EXPECTED_ROLLS_PER_SUB = 1 + (0.75 * 4 + 0.25 * 5) / 4; // 2.0625
 const P_FOUR_UPGRADES = 0.75;
 const ROLL_VALUE_TIERS = [0.7, 0.8, 0.9, 1.0] as const;
 
-// ---------------------------------------------------------------------------
 // Analytic expected score for a 5★ artifact with given lockedSubs + mainStat
-// ---------------------------------------------------------------------------
 
 type DrawPool = { stats: SubStat[]; weights: number[]; totalWeight: number };
 
@@ -349,9 +341,7 @@ function enumerateCompletions(
   return out;
 }
 
-// ---------------------------------------------------------------------------
 // Exact P(upgrade) via PMF convolution
-// ---------------------------------------------------------------------------
 //
 // Two-step model:
 //   (1) SHAPE enumeration: determine which of the 2 randomized substats land
@@ -542,9 +532,7 @@ function pUpgradeForCandidate(
   return totalP;
 }
 
-// ---------------------------------------------------------------------------
 // Per-build suggestion generator
-// ---------------------------------------------------------------------------
 
 const CANDIDATE_POOL_SIZE = 6;
 const TOP_K_PER_BUILD = 5;
@@ -680,9 +668,7 @@ function getBuildSetIds(evalBuild: EvalBuild): Set<string> | null {
   return ids.length > 0 ? new Set(ids) : null;
 }
 
-// ---------------------------------------------------------------------------
 // Public entry point
-// ---------------------------------------------------------------------------
 
 export function generateResourceSuggestions(
   setGroups: SetGroup[],

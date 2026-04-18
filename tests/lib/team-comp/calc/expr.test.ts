@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   E,
-  type Expr,
   compileExpr,
   countVars,
   differentiate,
@@ -10,8 +9,6 @@ import {
   isConst,
   simplify,
 } from "@/lib/team-comp/calc/expr";
-
-// ─── Helpers ───
 
 function vars(...values: number[]): Float64Array {
   return new Float64Array(values);

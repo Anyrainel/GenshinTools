@@ -18,8 +18,6 @@ import {
   createWeaponData,
 } from "../../fixtures";
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-
 const CW = "crimson_witch_of_flames";
 const GL = "gladiators_finale";
 const ESF = "emblem_of_severed_fate";
@@ -285,13 +283,16 @@ describe("buildTeamConfigs", () => {
     ],
     reactions: [] as ReactionType[],
     opts: {} as OptionMap,
-    minEr: {},
+    calcContext: {
+      enemyLevel: 110,
+      enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6" as const,
+    },
     selectedFormula: null,
     optimizationResult: null,
-    reactionOverrides: {},
     formulaMode: "single" as const,
-    combos: [],
-    selectedCombo: null,
+    combo: null,
   };
 
   it("builds configs for non-null characters", () => {
@@ -562,6 +563,8 @@ describe("calcComboResults", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
+        rollMultiplier: 0.85,
+        substatBudget: "8_6" as const,
       }
     );
     expect(result).toBeNull();
@@ -580,6 +583,8 @@ describe("calcComboResults", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
+        rollMultiplier: 0.85,
+        substatBudget: "8_6" as const,
       }
     );
     expect(result).toBeNull();
@@ -594,6 +599,8 @@ describe("calcComboResults", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
+        rollMultiplier: 0.85,
+        substatBudget: "8_6" as const,
       }
     );
     expect(result).toBeNull();

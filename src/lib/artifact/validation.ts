@@ -1,11 +1,11 @@
-import type { ArtifactData, SubStat } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import {
   type RollTable,
   buildRollTable,
   gameRound,
   isAlreadyPrecise,
   solveArtifact,
-} from "./artifactSolver";
+} from "./solver";
 
 export type ValidationResult = { solved: ArtifactData } | { error: string };
 

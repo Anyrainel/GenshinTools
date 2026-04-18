@@ -2,7 +2,7 @@
  * Types for the V2 Optimizer (Branch-and-Bound per character + Team Allocation).
  */
 
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData, Slot } from "@/data/types";
 import type {
   ArtifactVarLookup,
   CompiledTeamDamage,
@@ -11,7 +11,6 @@ import type { StatSheet } from "../calc/statSheet";
 import type { TeamBuild } from "../calc/teamBuild";
 import type {
   CalcContext,
-  CharOptConfig,
   DamageResult,
   OptFailReason,
   StatKey,
@@ -108,4 +107,18 @@ export interface CharacterBnBResult {
   marginalWeights?: MarginalWeights;
   /** True when all marginal + buildMatch weights were zero and fallback weights were injected. */
   usedFallbackWeights?: boolean;
+}
+
+// ─── Artifact Helpers ───
+
+export function artsTupleToRecord(
+  tuple: ArtifactTuple
+): Record<Slot, ArtifactData | null> {
+  return {
+    flower: tuple[0],
+    plume: tuple[1],
+    sands: tuple[2],
+    goblet: tuple[3],
+    circlet: tuple[4],
+  };
 }

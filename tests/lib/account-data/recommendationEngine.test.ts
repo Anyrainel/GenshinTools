@@ -14,8 +14,6 @@ import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
 import { generateRecommendations } from "@/lib/account-data/recommendationEngine";
 import { describe, expect, it } from "vitest";
 
-// ─── Helpers ───
-
 const testWeights: StatWeightMap = { cr: 100, cd: 100 };
 
 const testGlobalConfig: GlobalStatWeights = {
@@ -155,8 +153,6 @@ function makeOptimizerResult(
     combinationsEvaluated: 1,
   };
 }
-
-// ─── Tests ───
 
 describe("generateRecommendations — threshold filtering", () => {
   const highThresholds: InvestmentThresholds = {

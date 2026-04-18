@@ -1,5 +1,4 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -32,15 +31,12 @@ import type {
   ArtifactData,
   CharacterData,
   MainStat,
-  Rarity,
   Slot,
   SubStat,
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import { validateAndSolveArtifact } from "@/lib/account-data/artifactValidation";
 import {
-  activateUnactivatedSubstat,
   changeWeapon,
   createAndEquipArtifact,
   deleteArtifact,
@@ -54,6 +50,7 @@ import {
   updateCharacterStats,
   updateWeaponStats,
 } from "@/lib/account-data/characterEditor";
+import { validateAndSolveArtifact } from "@/lib/artifact/validation";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
 import {
@@ -68,8 +65,6 @@ import type React from "react";
 import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
 import { ArtifactDataHoverCard } from "./ArtifactDataHoverCard";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type DialogView =
   | { kind: "overview" }
   | { kind: "weapon-pick" }
@@ -82,8 +77,6 @@ interface CharacterEditDialogProps {
   accountData: AccountData;
   onSave: (newData: AccountData) => void;
 }
-
-// ─── Constants ────────────────────────────────────────────────────────────────
 
 const mainStatsForSlot = (slot: Slot): readonly string[] => statPools[slot];
 
@@ -99,8 +92,6 @@ const ALL_SUBSTATS: SubStat[] = [
   "hp",
   "def",
 ];
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export function CharacterEditDialog({
   open,

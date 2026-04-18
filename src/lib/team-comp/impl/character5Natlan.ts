@@ -1,15 +1,8 @@
-import {
-  AmplifyFormula,
-  DirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../calc/damageFormula";
+import { DirectFormula } from "../calc/damageFormula";
 import { CharacterBase } from "../calc/implModel";
 import { RegisterCharacter, resolveOption } from "../calc/registry";
 import { ScalingBuff, StatBuff } from "../calc/statBuff";
-import { LUNAR_REACTIONS } from "../constants";
 import type { OptionDef } from "../types";
-import type { FormulaEntry } from "../types";
 import type {
   ComboTemplate,
   DamageTagFilter,
@@ -18,9 +11,7 @@ import type {
 } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
-// ═══════════════════════════════════════════════════════════════
 
 // Varesa rotation state machine (user-approved):
 // E→逐击tap(=CA)→PA is always a bundled sequence. NS limit=40, E+20, PA+25.

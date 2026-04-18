@@ -251,7 +251,12 @@ describe("createExtraStatBuffs", () => {
 
 // ─── Display integration: extra buffs appear in getDisplayResult().buffs ───
 
-const CTX: CalcContext = { enemyLevel: 90, enemyRes: 10 };
+const CTX: CalcContext = {
+  enemyLevel: 90,
+  enemyRes: 10,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
+};
 
 function getFirstFormulaId(tb: TeamBuild, charId: string): string {
   const ids = tb.getFormulaIds()[charId];

@@ -8,11 +8,10 @@
 
 import "@/lib/team-comp/index";
 
-import { artifactHalfSetsById, artifactsById } from "@/data/constants";
-import type { ArtifactData, Element, Slot } from "@/data/types";
+import { artifactHalfSetsById } from "@/data/constants";
+import type { Element, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { getComboDisplayResult } from "@/lib/team-comp/calc/damageCalc";
 import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
@@ -67,11 +66,11 @@ interface TeamCompData {
   description?: string;
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
 export const DEFAULT_CALC_CONTEXT: CalcContext = {
   enemyLevel: 110,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 export const PRNG_SEED = 0xdeadbeef;
@@ -288,8 +287,7 @@ export async function runGeneratorForTeam(
   }
 
   // Get combo display result
-  const displayResult = getComboDisplayResult(
-    teamBuild,
+  const displayResult = teamBuild.getComboDisplayResult(
     combo,
     finalResult.sheetsByChar,
     DEFAULT_CALC_CONTEXT

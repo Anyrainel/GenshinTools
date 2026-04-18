@@ -109,8 +109,6 @@ interface GEdge {
   flagSeg: number;
 }
 
-// ── Constants ──────────────────────────────────────────────────────────
-
 const S = 28;
 const OFF = S / 2 + 4;
 const SPEED = 60;
@@ -276,8 +274,6 @@ const STYLES = `
 }
 
 `;
-
-// ── Component ──────────────────────────────────────────────────────────
 
 export function WhatsNew({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);

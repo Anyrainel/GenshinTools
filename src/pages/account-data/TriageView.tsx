@@ -12,7 +12,6 @@ import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type FlexPattern,
   type TriageDecision,
-  type TriageSettings,
   runTriage,
 } from "@/lib/account-data/triage";
 import { buildTriageInstructions } from "@/lib/artifact-manager/instructions";
@@ -215,7 +214,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     sortDecisions,
   ]);
 
-  const hasAnyBuilds = buildGroups.some((g) => g.builds.length > 0);
+  const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
 
   if (!accountData || !hasAnyBuilds) {
     return (

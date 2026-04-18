@@ -1,13 +1,10 @@
-import { statPools } from "@/data/constants";
 import type { AccountData, Build, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getAcceptedMainStats } from "./demandExtractor";
 import { lookupTierEntry } from "./tierTableBuilder";
 import type { TriageRule, TriageSettings } from "./types";
 
-// ---------------------------------------------------------------------------
 // Build selection: one build per artifact set, best constellation match
-// ---------------------------------------------------------------------------
 
 /** Key that identifies a build's artifact set configuration. */
 function buildSetKey(build: Build): string {
@@ -51,9 +48,7 @@ function selectBuildPerSet(builds: Build[], constellation: number): Build[] {
   return result;
 }
 
-// ---------------------------------------------------------------------------
 // Filler derivation
-// ---------------------------------------------------------------------------
 
 const FILLER_MAP: Partial<Record<SubStat, SubStat>> = {
   "hp%": "hp",
@@ -85,9 +80,7 @@ function deriveFillers(
   return fillers;
 }
 
-// ---------------------------------------------------------------------------
 // Build → TriageRule[]
-// ---------------------------------------------------------------------------
 
 function buildToRules(
   build: Build,
@@ -157,9 +150,7 @@ function buildToRules(
   return rules;
 }
 
-// ---------------------------------------------------------------------------
 // Public: extract all rules from build groups
-// ---------------------------------------------------------------------------
 
 export function extractRules(
   buildGroups: { characterId: string; builds: Build[] }[],

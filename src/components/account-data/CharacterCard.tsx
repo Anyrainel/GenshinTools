@@ -13,7 +13,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo as charInfoData } from "@/data/charInfo";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
-import type { CharacterData, MainStatSlot, Slot, SubStat } from "@/data/types";
+import type { CharacterData, MainStatSlot, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn, getAssetUrl } from "@/lib/utils";

@@ -1,8 +1,4 @@
-import {
-  DirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../calc/damageFormula";
+import { DirectFormula, TransformFormula } from "../calc/damageFormula";
 import { CharacterBase } from "../calc/implModel";
 import { RegisterCharacter, resolveOption } from "../calc/registry";
 import { CrossScalingBuff, ScalingBuff, StatBuff } from "../calc/statBuff";
@@ -11,9 +7,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 5★ Inazuma Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("yumemizuki_mizuki")
 class YumemizukiMizuki extends CharacterBase {

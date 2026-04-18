@@ -2,7 +2,6 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ExternalLink, Scale } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export function AutoTuneEmptyState({
   hasBuilds,

@@ -12,7 +12,7 @@ import type { DisplayResult, StatKey } from "@/lib/team-comp/types";
 import { filterMatchesTag } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { ArtifactData, Slot } from "@/data/types";
 import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
@@ -280,8 +280,6 @@ function useConditionalViewData(
     return rows;
   }, [charId, result]);
 }
-
-// ─── Main Component ───
 
 export function StatSheetPanel({
   result,

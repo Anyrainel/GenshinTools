@@ -10,8 +10,6 @@ import type { TriageDecision } from "@/lib/account-data/triage/types";
 import type { I18nLabel } from "@/lib/team-comp/types";
 import type { WeaponRanking } from "@/stores/useTeamStore";
 
-// ── Helpers ──
-
 function fakeArtifact(
   id: string,
   setKey: string,

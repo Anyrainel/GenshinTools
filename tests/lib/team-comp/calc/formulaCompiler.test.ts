@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -11,7 +10,7 @@ import {
   LunarFormula,
   TransformFormula,
 } from "@/lib/team-comp/calc/damageFormula";
-import { E, evaluate, simplify } from "@/lib/team-comp/calc/expr";
+import { evaluate, simplify } from "@/lib/team-comp/calc/expr";
 import {
   VarMapping,
   createExprStats,
@@ -19,7 +18,6 @@ import {
 import { defaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
 import {
   compileComboTeamDamage,
-  fillVarsFromArtifacts,
   fillVarsFromSheet,
 } from "@/lib/team-comp/calc/formulaCompiler";
 import { CrossScalingBuff, ScalingBuff } from "@/lib/team-comp/calc/statBuff";
@@ -28,7 +26,6 @@ import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
 import {
   buildSheetFromMainAndSubs,
-  emptySubRolls,
   getRollValues,
 } from "@/lib/team-comp/generator/constrainedGreedy";
 import type {
@@ -43,9 +40,9 @@ import { getFirstFormulaId } from "../../../fixtures/optimizerHelpers";
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
-
-// ─── Helpers ───
 
 /** Create a StatSheet + ExprStats pair with variable artifact stats. */
 function makeStatsAndExpr(
@@ -557,9 +554,7 @@ describe("CrossScalingBuff dynamicBuffsExpr parity", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Full Pipeline Fuzz Tests (single-formula + combo)
-// ═══════════════════════════════════════════════════════════════
 
 await preloadGameStats();
 
@@ -913,6 +908,8 @@ const CLORINDE_TEAM: TeamSlotConfig[] = [
 const FUZZ_CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 // ─── Single-formula compiled pipeline fuzz ───
@@ -1202,8 +1199,7 @@ describe("compileComboTeamDamage fuzz", () => {
           }
 
           // Old path
-          const oldDamage = evaluateCombo(
-            tb,
+          const oldDamage = tb.evaluateCombo(
             combo,
             sheets,
             FUZZ_CTX
@@ -1285,7 +1281,7 @@ describe("compileComboTeamDamage fuzz", () => {
       }
 
       const swapCharId = "diluc";
-      const oldDamage = evaluateCombo(tb, combo, sheets, FUZZ_CTX).totalDamage;
+      const oldDamage = tb.evaluateCombo(combo, sheets, FUZZ_CTX).totalDamage;
 
       const compiled = compileComboTeamDamage(
         tb,
@@ -1311,11 +1307,9 @@ describe("compileComboTeamDamage fuzz", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Marginal Gain Parity Tests
 // Verifies that compiled AST and standard path agree on the
 // per-stat-key gradient (marginal gain), not just absolute damage.
-// ═══════════════════════════════════════════════════════════════
 
 describe("marginal gain parity (compiled vs standard)", () => {
   const rv = getRollValues();
@@ -1460,11 +1454,9 @@ describe("marginal gain parity (compiled vs standard)", () => {
   testMarginalGains("clorinde team (xilonen swap)", CLORINDE_TEAM, "xilonen");
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Random Team Generation Fuzz Tests
 // Picks random characters/weapons/artifacts to stress-test the
 // compiled pipeline against diverse buff combinations.
-// ═══════════════════════════════════════════════════════════════
 
 import { artifacts, characters, weapons } from "@/data/resources";
 import {
@@ -1739,11 +1731,9 @@ describe("random team fuzz (compiled vs standard)", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // ER/CR Constraint Compilation Tests
 // Verifies that compileComboTeamDamage with erCheckCharId/minEr/minCr
 // produces correct evaluateEr/evaluateCr functions.
-// ═══════════════════════════════════════════════════════════════
 
 describe("compileComboTeamDamage — ER/CR constraints", () => {
   const rv = getRollValues();
@@ -1950,11 +1940,9 @@ describe("compileComboTeamDamage — ER/CR constraints", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Single→Combo Normalization Parity
 // Verifies that a single formula compiled via compileComboTeamDamage
 // as a 1-line combo produces identical damage to the standard single-formula path.
-// ═══════════════════════════════════════════════════════════════
 
 describe("single→combo normalization parity", () => {
   const rv = getRollValues();
@@ -1982,12 +1970,7 @@ describe("single→combo normalization parity", () => {
           label: { zh: "", en: "" },
           lines: [{ charId: carryId, formulaId, count: 1 }],
         };
-        const oldDamage = evaluateCombo(
-          tb,
-          combo,
-          sheets,
-          FUZZ_CTX
-        ).totalDamage;
+        const oldDamage = tb.evaluateCombo(combo, sheets, FUZZ_CTX).totalDamage;
 
         // Compiled combo path
         const compiled = compileComboTeamDamage(
@@ -2021,12 +2004,10 @@ describe("single→combo normalization parity", () => {
   testNormalization("clorinde team", CLORINDE_TEAM);
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Multi-Character Variable Compilation Parity
 // Verifies that compiling a combo with ALL characters as variable
 // produces identical damage to the domain-object evaluateCombo path.
 // This is the core of the team allocation compiled evaluation.
-// ═══════════════════════════════════════════════════════════════
 
 describe("multi-char variable compilation parity", () => {
   const rv = getRollValues();
@@ -2075,12 +2056,7 @@ describe("multi-char variable compilation parity", () => {
         }
 
         // Domain-object path
-        const oldDamage = evaluateCombo(
-          tb,
-          combo,
-          sheets,
-          FUZZ_CTX
-        ).totalDamage;
+        const oldDamage = tb.evaluateCombo(combo, sheets, FUZZ_CTX).totalDamage;
 
         // Compiled path: fill vars from each character's sheet
         const vars = new Float64Array(compiled.numVars);
@@ -2109,9 +2085,7 @@ describe("multi-char variable compilation parity", () => {
   testMultiChar("clorinde team", CLORINDE_TEAM);
 });
 
-// ═══════════════════════════════════════════════════════════════
 // perCharCrTarget — compiled path parity with damageCalc path
-// ═══════════════════════════════════════════════════════════════
 
 describe("compileComboTeamDamage — perCharCrTarget", () => {
   const rv = getRollValues();
@@ -2136,6 +2110,8 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
       const ctx: CalcContext = {
         enemyLevel: 100,
         enemyRes: 0.1,
+        rollMultiplier: 0.85,
+        substatBudget: "8_6",
         perCharCrTarget: { diluc: 70 },
       };
 
@@ -2177,7 +2153,7 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
     }
   });
 
-  it("perCharCrTarget takes priority over global critRateTarget (compiled path)", () => {
+  it("perCharCrTarget applies CR delta per character (compiled path)", () => {
     const tb = new TeamBuild(DILUC_TEAM);
     const carryId = "diluc";
     const formulaId = getFirstFormulaId(tb, carryId);
@@ -2192,85 +2168,39 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
       );
     }
 
-    // Context with both global and per-char
-    const ctxBoth: CalcContext = {
+    const ctxPerChar: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
-      critRateTarget: 80,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
       perCharCrTarget: { diluc: 60 },
     };
 
-    // Context with only per-char (should produce same result as ctxBoth
-    // since perCharCrTarget takes priority)
-    const ctxPerCharOnly: CalcContext = {
+    // Context without CR target
+    const ctxNone: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
-      perCharCrTarget: { diluc: 60 },
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
     };
 
-    const compiledBoth = compileComboTeamDamage(
+    const compiledPerChar = compileComboTeamDamage(
       tb,
       singleFormulaCombo(carryId, formulaId),
       carryId,
       sheets,
-      ctxBoth
+      ctxPerChar
     );
-    const charIdxBoth = compiledBoth.charIdxMap?.get(carryId) ?? 0;
-    const varsBoth = new Float64Array(compiledBoth.numVars);
-    varsBoth.fill(0);
+    const charIdxPerChar = compiledPerChar.charIdxMap?.get(carryId) ?? 0;
+    const varsPerChar = new Float64Array(compiledPerChar.numVars);
+    varsPerChar.fill(0);
     fillVarsFromSheet(
       sheets[carryId],
-      compiledBoth.varMapping,
-      charIdxBoth,
-      varsBoth
+      compiledPerChar.varMapping,
+      charIdxPerChar,
+      varsPerChar
     );
-    const dmgBoth = compiledBoth.evaluate(varsBoth);
-
-    const compiledPer = compileComboTeamDamage(
-      tb,
-      singleFormulaCombo(carryId, formulaId),
-      carryId,
-      sheets,
-      ctxPerCharOnly
-    );
-    const charIdxPer = compiledPer.charIdxMap?.get(carryId) ?? 0;
-    const varsPer = new Float64Array(compiledPer.numVars);
-    varsPer.fill(0);
-    fillVarsFromSheet(
-      sheets[carryId],
-      compiledPer.varMapping,
-      charIdxPer,
-      varsPer
-    );
-    const dmgPer = compiledPer.evaluate(varsPer);
-
-    // Both should produce identical damage since perCharCrTarget overrides global
-    expect(dmgBoth).toBeCloseTo(dmgPer, 6);
-  });
-
-  it("falls back to global critRateTarget when perCharCrTarget is undefined", () => {
-    const tb = new TeamBuild(DILUC_TEAM);
-    const carryId = "diluc";
-    const formulaId = getFirstFormulaId(tb, carryId);
-    const charIds = DILUC_TEAM.map((c) => c.charId);
-
-    const sheets: Record<string, StatSheet> = {};
-    for (const cid of charIds) {
-      sheets[cid] = buildSheetFromMainAndSubs(
-        randomMainStats(),
-        randomSubRolls(),
-        rv
-      );
-    }
-
-    // No CR target at all
-    const ctxNone: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
-    // Global CR target
-    const ctxGlobal: CalcContext = {
-      enemyLevel: 100,
-      enemyRes: 0.1,
-      critRateTarget: 75,
-    };
+    const dmgPerChar = compiledPerChar.evaluate(varsPerChar);
 
     const compiledNone = compileComboTeamDamage(
       tb,
@@ -2279,38 +2209,19 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
       sheets,
       ctxNone
     );
-    const idxNone = compiledNone.charIdxMap?.get(carryId) ?? 0;
+    const charIdxNone = compiledNone.charIdxMap?.get(carryId) ?? 0;
     const varsNone = new Float64Array(compiledNone.numVars);
     varsNone.fill(0);
     fillVarsFromSheet(
       sheets[carryId],
       compiledNone.varMapping,
-      idxNone,
+      charIdxNone,
       varsNone
     );
     const dmgNone = compiledNone.evaluate(varsNone);
 
-    const compiledGlobal = compileComboTeamDamage(
-      tb,
-      singleFormulaCombo(carryId, formulaId),
-      carryId,
-      sheets,
-      ctxGlobal
-    );
-    const idxGlobal = compiledGlobal.charIdxMap?.get(carryId) ?? 0;
-    const varsGlobal = new Float64Array(compiledGlobal.numVars);
-    varsGlobal.fill(0);
-    fillVarsFromSheet(
-      sheets[carryId],
-      compiledGlobal.varMapping,
-      idxGlobal,
-      varsGlobal
-    );
-    const dmgGlobal = compiledGlobal.evaluate(varsGlobal);
-
-    // Global CR target should change the result compared to no target
-    // (adding CR delta increases expected crit value, changing damage)
-    expect(dmgNone).not.toBeCloseTo(dmgGlobal, 2);
+    // perCharCrTarget should change the result compared to no target
+    expect(dmgPerChar).not.toBeCloseTo(dmgNone, 2);
   });
 
   it("perCharCrTarget=100 means crDelta=0 (no change from baseline)", () => {
@@ -2329,11 +2240,18 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
     }
 
     // No CR target
-    const ctxNone: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+    const ctxNone: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
+    };
     // perCharCrTarget=100 → crDelta=0, should be identical to no target
     const ctxTarget100: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
       perCharCrTarget: { diluc: 100 },
     };
 
@@ -2387,10 +2305,17 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
       );
     }
 
-    const ctxNone: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+    const ctxNone: CalcContext = {
+      enemyLevel: 100,
+      enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
+    };
     const ctxTarget0: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
       perCharCrTarget: { diluc: 0 },
     };
 
@@ -2457,9 +2382,7 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Cross-path fuzz: display vs calc vs compile
-// ──────────────────────────────────────────────────────────────
 // Randomizes inputs across EVERY available dimension and asserts
 // that all three lib evaluation paths produce identical damage:
 //   1. getDisplayResult   (UI / damage card cold path)
@@ -2476,9 +2399,7 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 //     back gracefully so invalid picks won't crash)
 //   • constellation, weapon, refinement, artifact set (random team path)
 //   • enemy level / enemy res / crit mode (random per trial)
-// ═══════════════════════════════════════════════════════════════
 
-import { getComboDisplayResult } from "@/lib/team-comp/calc/damageCalc";
 import { getOptionDef } from "@/lib/team-comp/calc/registry";
 import type { PartialBuffInfo } from "@/lib/team-comp/calc/stackAllocation";
 import { buildStatVariants } from "@/lib/team-comp/calc/stackAllocation";
@@ -2514,11 +2435,13 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     return opts;
   }
 
-  /** Random CalcContext (enemy level, res, optional crit target). */
+  /** Random CalcContext (enemy level, res). */
   function randomCtx(): CalcContext {
     return {
       enemyLevel: 70 + Math.floor(Math.random() * 40), // 70..109
       enemyRes: Math.random() * 0.5, // 0..0.5
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
     };
   }
 
@@ -2871,14 +2794,13 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       }
 
       try {
-        const comboDr = getComboDisplayResult(
-          tb,
+        const comboDr = tb.getComboDisplayResult(
           combo,
           sheets,
           ctx,
           buffOverrides
         );
-        const evaled = evaluateCombo(tb, combo, sheets, ctx, buffOverrides);
+        const evaled = tb.evaluateCombo(combo, sheets, ctx, buffOverrides);
         trials++;
         const dc = relErr(comboDr.totalDamage, evaled.totalDamage);
         if (dc > 1e-6 && errors.length < 15) {

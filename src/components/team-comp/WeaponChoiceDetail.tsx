@@ -1,24 +1,30 @@
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element, ReactionType } from "@/data/types";
+import type { Element } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncWeaponChoice } from "@/hooks/useAsyncWeaponChoice";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
+import {
+  buildComboLineMap,
+  buildSingleFormulaSelection,
+  collectAllFormulas,
+  resolveActiveCombo,
+  withLineCount,
+  withReactionOverride,
+} from "@/lib/team-comp/calc/combo";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { getEffectiveCombo } from "@/lib/team-comp/helpers";
 import {
   buildTeamConfigs,
   buildWeaponChoiceCharConfigs,
 } from "@/lib/team-comp/teamOptUtils";
-import type { ExtraBuff } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
   ComboLine,
   FormulaOverride,
-  I18nLabel,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team, WeaponChoiceResult } from "@/stores/useTeamStore";
@@ -27,17 +33,12 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamRosterCard } from "./TeamRosterCard";
-import type { WeaponChoiceCalcSettings } from "./WeaponChoiceResultCard";
 import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
-
-// ─── Props ───
 
 interface WeaponChoiceDetailProps {
   team: Team;
   onBack: () => void;
 }
-
-// ─── Main Component ───
 
 export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
   const { t } = useLanguage();
@@ -113,121 +114,37 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
 
   const validCharIds = Object.keys(availableFormulas);
 
-  const allFormulas = useMemo(() => {
-    const list: { charId: string; formulaId: string; label: I18nLabel }[] = [];
-    for (const charId of validCharIds) {
-      const charFormulas = availableFormulas[charId];
-      if (charFormulas) {
-        for (const [formulaId, label] of Object.entries(charFormulas)) {
-          list.push({ charId, formulaId, label });
-        }
-      }
-    }
-    // Include team reaction formulas
-    if (teamBuild) {
-      const rxFormulas = teamBuild.getReactionFormulaIds();
-      for (const [formulaId, label] of Object.entries(rxFormulas)) {
-        const eligible =
-          teamBuild.reactionProvider.getEligibleCharacters(formulaId);
-        for (const charId of eligible) {
-          list.push({ charId, formulaId, label });
-        }
-      }
-    }
-    return list;
-  }, [validCharIds, availableFormulas, teamBuild]);
+  const allFormulas = useMemo(
+    () => collectAllFormulas(validCharIds, availableFormulas, teamBuild),
+    [validCharIds, availableFormulas, teamBuild]
+  );
 
   // ── Combo management (unified with Damage tab) ──
-  const teamCombos = team.combos ?? [];
-  const teamSelectedCombo = team.selectedCombo;
+  const combo = useMemo<ComboFormula>(
+    () =>
+      team.combo ??
+      resolveActiveCombo([], undefined, teamBuild, team.characters),
+    [team.combo, teamBuild, team.characters]
+  );
 
-  const combo = useMemo<ComboFormula>(() => {
-    const selected =
-      teamCombos.find((c) => c.id === teamSelectedCombo) ?? teamCombos[0];
-    if (selected) return selected;
-    // Initialize from default combo data
-    const lines: ComboLine[] = [];
-    if (teamBuild) {
-      for (const charId of team.characters) {
-        if (!charId) continue;
-        const comboData = teamBuild.getCombo(charId);
-        for (const [formulaId, count] of Object.entries(comboData)) {
-          if (count > 0) {
-            lines.push({ charId, formulaId, count });
-          }
-        }
-      }
-    }
-    return {
-      id: `combo-${Date.now()}`,
-      label: { en: "Rotation", zh: "循环" },
-      lines,
-    };
-  }, [teamCombos, teamSelectedCombo, teamBuild, team.characters]);
-
-  const comboLineMap = useMemo(() => {
-    const map = new Map<string, { lineIndex: number; line: ComboLine }>();
-    for (let i = 0; i < combo.lines.length; i++) {
-      const line = combo.lines[i];
-      const rxn = line.reaction?.reaction ?? "none";
-      map.set(`${line.charId}.${line.formulaId}.${rxn}`, {
-        lineIndex: i,
-        line,
-      });
-    }
-    return map;
-  }, [combo.lines]);
+  const comboLineMap = useMemo(
+    () => buildComboLineMap(combo.lines),
+    [combo.lines]
+  );
 
   const updateCombo = useCallback(
     (updater: (c: ComboFormula) => ComboFormula) => {
       const updated = updater({ ...combo });
-      const newCombos =
-        teamCombos.length > 0
-          ? teamCombos.map((c) => (c.id === combo.id ? updated : c))
-          : [updated];
-      updateTeam(team.id, {
-        combos: newCombos,
-        selectedCombo: updated.id,
-      });
+      updateTeam(team.id, { combo: updated });
     },
-    [combo, teamCombos, team.id, updateTeam]
+    [combo, team.id, updateTeam]
   );
 
   const setComboLineCount = useCallback(
     (charId: string, formulaId: string, reaction: string, count: number) => {
-      const key = `${charId}.${formulaId}.${reaction}`;
-      const existing = comboLineMap.get(key);
-      if (existing) {
-        if (count <= 0) {
-          updateCombo((c) => ({
-            ...c,
-            lines: c.lines.filter((_, i) => i !== existing.lineIndex),
-          }));
-        } else {
-          updateCombo((c) => ({
-            ...c,
-            lines: c.lines.map((l, i) =>
-              i === existing.lineIndex ? { ...l, count } : l
-            ),
-          }));
-        }
-      } else if (count > 0) {
-        updateCombo((c) => ({
-          ...c,
-          lines: [
-            ...c.lines,
-            {
-              charId,
-              formulaId,
-              count,
-              reaction:
-                reaction === "none"
-                  ? undefined
-                  : { reaction: reaction as ReactionType },
-            },
-          ],
-        }));
-      }
+      updateCombo((c) =>
+        withLineCount(c, comboLineMap, charId, formulaId, reaction, count)
+      );
     },
     [comboLineMap, updateCombo]
   );
@@ -243,16 +160,16 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
         updateTeam(team.id, { singleReaction: override });
         return;
       }
-      const key = `${charId}.${formulaId}.${reaction}`;
-      const existing = comboLineMap.get(key);
-      if (existing) {
-        updateCombo((c) => ({
-          ...c,
-          lines: c.lines.map((l, i) =>
-            i === existing.lineIndex ? { ...l, reaction: override } : l
-          ),
-        }));
-      }
+      updateCombo((c) =>
+        withReactionOverride(
+          c,
+          comboLineMap,
+          charId,
+          formulaId,
+          reaction,
+          override
+        )
+      );
     },
     [formulaMode, comboLineMap, updateCombo, updateTeam, team.id]
   );
@@ -268,20 +185,14 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
 
   const onSelectSingleFormula = useCallback(
     (charId: string, formulaId: string, reaction: string) => {
-      const prev = team.selectedFormula;
-      const sameFormula =
-        prev?.charId === charId && prev?.formulaId === formulaId;
-      const prevReaction = sameFormula ? team.singleReaction : undefined;
-      const newReaction: FormulaOverride | undefined =
-        reaction === "none"
-          ? undefined
-          : {
-              ...prevReaction,
-              reaction: reaction as ReactionType,
-            };
       updateTeam(team.id, {
-        selectedFormula: { charId, formulaId },
-        singleReaction: newReaction,
+        ...buildSingleFormulaSelection(
+          charId,
+          formulaId,
+          reaction,
+          team.selectedFormula ?? undefined,
+          team.singleReaction
+        ),
       });
     },
     [updateTeam, team.id, team.selectedFormula, team.singleReaction]
@@ -300,8 +211,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
       }
     }
     updateTeam(team.id, {
-      combos: [{ id: combo.id, label: combo.label, lines }],
-      selectedCombo: combo.id,
+      combo: { id: combo.id, label: combo.label, lines },
     });
   }, [teamBuild, team.characters, team.id, combo.id, combo.label, updateTeam]);
 
@@ -358,37 +268,31 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
     };
   }, [stop]);
 
-  const handleRun = useCallback(
-    (settings: WeaponChoiceCalcSettings) => {
-      if (!teamBuild || !weaponStats) return;
-      // Derive charConfigs from team opts/minEr/minCr at computation time
-      const charConfigs = buildWeaponChoiceCharConfigs(team, accountData);
-      const opts: WeaponChoiceOptions = {
-        baseConfigs: configs,
-        charConfigs,
-        combo: displayCombo,
-        calcContext: settings.calcContext,
-        rollMultiplier: settings.rollMultiplier,
-        substatBudget: settings.substatBudget,
-        weaponStats,
-        opts: team.opts || {},
-        enemyAura: localEnemyAura,
-        extraBuffs: localExtraBuffs.length > 0 ? localExtraBuffs : undefined,
-      };
-      start(opts);
-    },
-    [
-      teamBuild,
+  const handleRun = useCallback(() => {
+    if (!teamBuild || !weaponStats) return;
+    const charConfigs = buildWeaponChoiceCharConfigs(team, accountData);
+    const opts: WeaponChoiceOptions = {
+      baseConfigs: configs,
+      charConfigs,
+      combo: displayCombo,
+      calcContext: team.calcContext,
       weaponStats,
-      configs,
-      team,
-      accountData,
-      displayCombo,
-      localEnemyAura,
-      localExtraBuffs,
-      start,
-    ]
-  );
+      opts: team.opts || {},
+      enemyAura: localEnemyAura,
+      extraBuffs: localExtraBuffs.length > 0 ? localExtraBuffs : undefined,
+    };
+    start(opts);
+  }, [
+    teamBuild,
+    weaponStats,
+    configs,
+    team,
+    accountData,
+    displayCombo,
+    localEnemyAura,
+    localExtraBuffs,
+    start,
+  ]);
 
   const charIds = useMemo(
     () => team.characters.filter((id): id is string => id != null),

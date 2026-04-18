@@ -25,7 +25,7 @@ import { Download, Filter, Settings, Sparkles, Users, Wrench } from "lucide-reac
 
 function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["t"]) {
     const parts = content.split(/({[^}]+})/g);
-    
+
     return (
         <span>
             {parts.map((part, index) => {
@@ -216,7 +216,7 @@ function TourProvider({
                 isActive: isOpen || isGuideOpen,
             }}>
             {children}
-            
+
             {/* Desktop Tour Overlay */}
             {isDesktop && isOpen && activeTour && steps.length > 0 && (
                 <TourOverlay

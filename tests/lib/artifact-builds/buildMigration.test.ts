@@ -2,9 +2,7 @@ import type { Build } from "@/data/types";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import { describe, expect, it } from "vitest";
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 /** Minimal build object with just the fields migrateBuild touches. */
 function makeBuild(
@@ -131,9 +129,7 @@ function makeCurrentBuild(overrides: Record<string, unknown> = {}): Build {
   } as unknown as Build;
 }
 
-// ---------------------------------------------------------------------------
 // Tests
-// ---------------------------------------------------------------------------
 
 describe("migrateBuild", () => {
   // --- halfSet ID migration -------------------------------------------------

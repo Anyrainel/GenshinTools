@@ -5,7 +5,6 @@ import {
   resolveWeaponStats,
 } from "@/lib/gameStatsLoader";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
-import { exclusionKey } from "../helpers";
 import type { FormulaEntry } from "../types";
 import type {
   BuffSource,
@@ -26,6 +25,7 @@ import { resolvePartReaction } from "./combo";
 import type { DamageFormula } from "./damageFormula";
 import { createReactionVariant } from "./damageFormula";
 import { isPartOffField } from "./fieldState";
+import { blendSubPart } from "./stackAllocation";
 import type { StatBuff } from "./statBuff";
 import {
   type StatSheet,
@@ -473,8 +473,6 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     charLevel?: number
   ): { damage: number; hits: number } {
     const effectiveLevel = charLevel ?? this.charLevel;
-    // Bespoke hit cutoff: applies to hits [0, bespokeCutoff); the rest
-    // fall back to baseStats. Matches getDisplayParts' split semantics.
     const bespokeCutoff =
       bespokeOverlay && bespokeMax != null && bespokeMax < hits
         ? bespokeMax
@@ -483,62 +481,20 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       ? baseStats.merge(bespokeOverlay)
       : baseStats;
 
-    // Scale activation proportionally for sub-parts (reacting/non-reacting split)
-    const scale = hits / originalPartHits;
-    const affecting = (partialBuffs ?? []).filter((pb) => {
-      const activated =
-        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-      return activated < hits;
-    });
-
-    // Fast path: uniform damage across all hits
-    if (affecting.length === 0 && bespokeCutoff === hits) {
-      return {
-        damage: formula.calc(withBespoke, effectiveLevel, ctx),
-        hits,
-      };
-    }
-
-    // Build interval cutpoints
-    const cutpointSet = new Set<number>([0, hits]);
-    if (bespokeCutoff < hits) cutpointSet.add(bespokeCutoff);
-    for (const pb of affecting) {
-      const activated =
-        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-      if (activated > 0 && activated < hits) cutpointSet.add(activated);
-    }
-    const cutpoints = [...cutpointSet].sort((a, b) => a - b);
-
-    let total = 0;
-    for (let i = 0; i < cutpoints.length - 1; i++) {
-      const start = cutpoints[i];
-      const end = cutpoints[i + 1];
-      const width = end - start;
-      if (width <= 0) continue;
-
-      const excludeSet = new Set<string>();
-      for (const pb of affecting) {
-        const activated =
-          (pb.partActivation[partIdx] ?? originalPartHits) * scale;
-        if (activated < end) excludeSet.add(pb.buffKey);
-      }
-
-      const bespokeActive = end <= bespokeCutoff;
-
-      let intervalStats: StatSheet;
-      if (excludeSet.size === 0) {
-        intervalStats = bespokeActive ? withBespoke : baseStats;
-      } else {
-        const eKey = exclusionKey(excludeSet);
-        const variant = statsVariants?.get(eKey) ?? baseStats;
-        intervalStats =
-          bespokeActive && bespokeOverlay
-            ? variant.merge(bespokeOverlay)
-            : variant;
-      }
-
-      total += width * formula.calc(intervalStats, effectiveLevel, ctx);
-    }
+    const total = blendSubPart(
+      formula,
+      baseStats,
+      withBespoke,
+      bespokeOverlay,
+      bespokeCutoff,
+      effectiveLevel,
+      ctx,
+      hits,
+      partIdx,
+      originalPartHits,
+      partialBuffs ?? [],
+      statsVariants
+    );
     return { damage: total / hits, hits };
   }
 }

@@ -13,9 +13,7 @@ export type TriageCardSection =
   | "noChange"
   | "protected";
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 type T = ReturnType<typeof useLanguage>["t"];
 
@@ -79,9 +77,7 @@ function spName(sp: string, t: T): string {
   return key ? t.ui(key) : sp;
 }
 
-// ---------------------------------------------------------------------------
 // Tier Badge
-// ---------------------------------------------------------------------------
 
 function TierBadge({ tier }: { tier: string }) {
   const { t } = useLanguage();
@@ -108,9 +104,7 @@ const CHIP_COLOR = {
   protected: "border-amber-500/25 text-amber-500/60",
 } as const;
 
-// ---------------------------------------------------------------------------
 // Triage Card
-// ---------------------------------------------------------------------------
 
 export function TriageCard({
   decision,

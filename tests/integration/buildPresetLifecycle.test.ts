@@ -27,7 +27,6 @@ vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
 const mockGetCachedPreset = vi.mocked(getCachedPreset);
 const mockLoadPreset = vi.mocked(loadPreset);
 
-// ── Helpers ─────────────────────────────────────────────────────
 function makeBuild(
   id: string,
   characterId: string,
@@ -98,8 +97,6 @@ function subscribeAndRender(characterId: string) {
   });
   return renderHook(() => useResolvedBuilds(characterId));
 }
-
-// ── Tests ───────────────────────────────────────────────────────
 
 describe("Integration: Build Preset Lifecycle", () => {
   describe("subscribe → view", () => {

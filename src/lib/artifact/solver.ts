@@ -9,8 +9,6 @@
 import { isFlatStat, isPctStat } from "@/data/constants";
 import artifactStatData from "@/data/game/artifact_stat.json";
 
-// ─── Constants ───
-
 const MAX_ROLLS = 9;
 const SUBSTATS = [
   "hp",
@@ -25,8 +23,6 @@ const SUBSTATS = [
   "cd",
 ] as const;
 const RARITIES = [4, 5] as const;
-
-// ─── Types ───
 
 /** Map<"stat:rarity", Map<displayValue, Set<rollCount>>> */
 export type RollTable = Map<string, Map<number, Set<number>>>;

@@ -26,6 +26,7 @@ import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
+import { REACTION_COLORS } from "@/lib/team-comp/constants";
 import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -44,26 +45,6 @@ import {
   User2,
 } from "lucide-react";
 import { memo, useMemo } from "react";
-
-// Reaction tag color palette
-const REACTION_COLORS: Partial<Record<ReactionType, string>> = {
-  melt: "#E57373", // Pyro + Cryo (coral red)
-  vaporize: "#81D4FA", // Pyro + Hydro (steam blue)
-  spread: "#A8E063", // Dendro green
-  aggravate: "#BB86FC", // Electro purple
-  overloaded: "#FF6347", // Pyro-Electro explosion (tomato red-orange)
-  electroCharged: "#9370DB", // Electro-Hydro (purple-blue)
-  superconduct: "#B8C4FF", // Cryo-Electro (icy blue-purple)
-  swirl: "#64FFDA", // Anemo teal
-  frozen: "#B8C4FF", // Cryo-Hydro (icy blue-purple)
-  bloom: "#7CB342", // Dendro core green
-  hyperbloom: "#7C4DFF", // Electro purple (hitting core)
-  burgeon: "#FF7043", // Pyro orange-red (hitting core)
-  burning: "#FF9800", // Pyro flame orange
-  lunarCharged: "#B8A5E3", // Lighter electro-charged purple
-  lunarBloom: "#A5D86E", // Lighter bloom green
-  lunarCrystallize: "#FFE082", // Lighter Geo golden
-};
 
 interface TeamCardProps {
   team: Team;

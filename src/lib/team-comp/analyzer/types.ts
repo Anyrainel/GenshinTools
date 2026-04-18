@@ -1,9 +1,6 @@
 import type { Rarity } from "@/data/types";
 import type { TeamBuild } from "../calc/teamBuild";
-import type { SubstatBudgetPreset } from "../generator/substatBudget";
 import type { CalcContext, ComboFormula, TeamSlotConfig } from "../types";
-
-// ─── Types ───
 
 export type CharInvestment = {
   constellation: number; // 0-6
@@ -108,10 +105,7 @@ export type AnalyzerOptions = {
   perChar?: Record<string, { minEr: number; minCr: number }>;
   /** Per-(charId, constellation) minEr overrides */
   minErOverrides?: MinErOverrides;
-  // Optional overrides for calc settings (defaults to hardcoded analyzer constants)
-  calcContext?: CalcContext;
-  rollMultiplier?: number;
-  substatBudget?: SubstatBudgetPreset;
+  calcContext: CalcContext;
 };
 // ─── Tier Snapshot IDs ───
 export type TierSnapshot = {

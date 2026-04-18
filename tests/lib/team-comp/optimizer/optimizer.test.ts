@@ -2,8 +2,6 @@ import type { ArtifactData } from "@/data/types";
 import { describe, expect, it } from "vitest";
 import { matchesSetRequirement } from "./optimizerV1";
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-
 let artId = 0;
 function art(setKey: string, slot = "flower"): ArtifactData {
   return {

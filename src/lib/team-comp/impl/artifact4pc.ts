@@ -9,9 +9,7 @@ import type { OptionDef } from "../types";
 import type { ElementalOrPhysical, StatEntry } from "../types";
 import { getReactionAuraElements } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // Artifact 4-Piece Set Bonuses
-// ═══════════════════════════════════════════════════════════════
 
 const blizzardStrayerOption = {
   label: { zh: "冰风4件套", en: "Blizzard 4pc" },

@@ -5,9 +5,7 @@ import { ScalingBuff, StatBuff } from "../calc/statBuff";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Sumeru Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("sethos")
 class Sethos extends CharacterBase {

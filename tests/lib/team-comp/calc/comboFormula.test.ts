@@ -6,10 +6,6 @@ import type { GlobalStatWeights } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import {
-  evaluateCombo,
-  getComboDisplayResult,
-} from "@/lib/team-comp/calc/damageCalc";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
@@ -39,11 +35,11 @@ import {
 
 await preloadGameStats();
 
-// ── Helpers ──
-
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 const CONFIGS: TeamSlotConfig[] = [
@@ -119,9 +115,7 @@ function makeBuildMatch(): BuildMatchResult {
   };
 }
 
-// ═══════════════════════════════════════════════════════════════
 // 1. evaluateCombo tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("evaluateCombo", () => {
   // TODO: evaluateCombo two-pass changes broke this — fix in damageCalc
@@ -138,7 +132,7 @@ describe("evaluateCombo", () => {
       label: { zh: "测试", en: "Test" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
-    const comboResult = evaluateCombo(tb, combo, sheets, CTX);
+    const comboResult = tb.evaluateCombo(combo, sheets, CTX);
 
     expect(comboResult.totalDamage).toBeCloseTo(singleResult.totalDamage, 2);
     expect(comboResult.lineDamages).toHaveLength(1);
@@ -167,7 +161,7 @@ describe("evaluateCombo", () => {
       ],
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.lineDamages).toHaveLength(2);
     const summed = result.lineDamages.reduce((s, l) => s + l.total, 0);
     expect(result.totalDamage).toBeCloseTo(summed, 2);
@@ -184,7 +178,7 @@ describe("evaluateCombo", () => {
       lines: [{ charId: "diluc", formulaId, count: 5 }],
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.lineDamages[0].total).toBeCloseTo(
       result.lineDamages[0].perHit * 5,
       2
@@ -205,7 +199,7 @@ describe("evaluateCombo", () => {
       ],
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     // count=0 line is dropped — only the count=1 line remains
     expect(result.lineDamages).toHaveLength(1);
     expect(result.lineDamages[0].total).toBeGreaterThan(0);
@@ -223,7 +217,7 @@ describe("evaluateCombo", () => {
       lines: [{ charId: "diluc", formulaId, count: 0 }],
     };
 
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.totalDamage).toBe(0);
   });
 
@@ -238,7 +232,7 @@ describe("evaluateCombo", () => {
       label: { zh: "无反应", en: "No reaction" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
-    const resultNoRxn = evaluateCombo(tb, noRxn, sheets, CTX);
+    const resultNoRxn = tb.evaluateCombo(noRxn, sheets, CTX);
 
     // With reaction set directly on the combo line
     const withRxn: ComboFormula = {
@@ -253,7 +247,7 @@ describe("evaluateCombo", () => {
         },
       ],
     };
-    const resultWithRxn = evaluateCombo(tb, withRxn, sheets, CTX);
+    const resultWithRxn = tb.evaluateCombo(withRxn, sheets, CTX);
 
     expect(resultWithRxn.totalDamage).toBeGreaterThan(resultNoRxn.totalDamage);
   });
@@ -277,7 +271,7 @@ describe("evaluateCombo", () => {
       ],
     };
 
-    const resultNone = evaluateCombo(tb, combo, sheets, CTX);
+    const resultNone = tb.evaluateCombo(combo, sheets, CTX);
 
     // Without any reaction
     const noRxnCombo: ComboFormula = {
@@ -285,16 +279,14 @@ describe("evaluateCombo", () => {
       label: { zh: "基线", en: "Baseline" },
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
-    const resultNoRxn = evaluateCombo(tb, noRxnCombo, sheets, CTX);
+    const resultNoRxn = tb.evaluateCombo(noRxnCombo, sheets, CTX);
 
     // reaction: "none" should produce the same damage as no reaction set
     expect(resultNone.totalDamage).toBeCloseTo(resultNoRxn.totalDamage, 2);
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // 2. getComboDisplayResult tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("getComboDisplayResult", () => {
   it("returns DisplayResult with populated partsByFormula", () => {
@@ -308,7 +300,7 @@ describe("getComboDisplayResult", () => {
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
 
-    const result = getComboDisplayResult(tb, combo, sheets, CTX);
+    const result = tb.getComboDisplayResult(combo, sheets, CTX);
     const parts = result.partsByFormula[`diluc.${formulaId}`];
     expect(parts).toBeDefined();
     expect(parts!.length).toBeGreaterThanOrEqual(1);
@@ -325,9 +317,8 @@ describe("getComboDisplayResult", () => {
       lines: [{ charId: "diluc", formulaId: dilucFormula, count: 3 }],
     };
 
-    const displayResult = getComboDisplayResult(tb, combo, sheets, CTX);
-    const comboResult = evaluateCombo(
-      tb,
+    const displayResult = tb.getComboDisplayResult(combo, sheets, CTX);
+    const comboResult = tb.evaluateCombo(
       { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
       sheets,
       CTX
@@ -347,7 +338,7 @@ describe("getComboDisplayResult", () => {
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
 
-    const result = getComboDisplayResult(tb, combo, sheets, CTX);
+    const result = tb.getComboDisplayResult(combo, sheets, CTX);
     for (const charId of ["diluc", "xingqiu", "bennett", "kaedehara_kazuha"]) {
       expect(result.statSheets[charId]).toBeDefined();
       expect(result.statSheets[charId].onField).toBeDefined();
@@ -366,7 +357,7 @@ describe("getComboDisplayResult", () => {
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
 
-    const result = getComboDisplayResult(tb, combo, sheets, CTX);
+    const result = tb.getComboDisplayResult(combo, sheets, CTX);
     const dilucGains = result.marginalGains.diluc;
     expect(dilucGains).toBeDefined();
     const gainValues = Object.values(dilucGains ?? {});
@@ -384,14 +375,12 @@ describe("getComboDisplayResult", () => {
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
 
-    const result = getComboDisplayResult(tb, combo, sheets, CTX);
+    const result = tb.getComboDisplayResult(combo, sheets, CTX);
     expect(result.buffs.length).toBeGreaterThan(0);
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // 3. runTeamOptimization combo mode tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("runTeamOptimization — combo mode", () => {
   const perChar: Record<string, CharOptConfig> = {
@@ -564,9 +553,7 @@ describe("runTeamOptimization — combo mode", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // 4. runGenerator combo mode tests
-// ═══════════════════════════════════════════════════════════════
 
 describe("runGenerator — combo mode", () => {
   it("with combo option, result includes comboResult", async () => {
@@ -610,9 +597,7 @@ describe("runGenerator — combo mode", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // 5. Edge cases
-// ═══════════════════════════════════════════════════════════════
 
 describe("combo edge cases", () => {
   it("combo with a character not in the team build skips that line", () => {
@@ -630,7 +615,7 @@ describe("combo edge cases", () => {
     };
 
     // Non-existent character lines are silently skipped (only valid line evaluated)
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.lineDamages).toHaveLength(1);
     expect(result.totalDamage).toBeGreaterThanOrEqual(0);
   });
@@ -648,7 +633,7 @@ describe("combo edge cases", () => {
     };
 
     // Non-existent formula lines are silently skipped
-    const result = evaluateCombo(tb, combo, sheets, CTX);
+    const result = tb.evaluateCombo(combo, sheets, CTX);
     expect(result.lineDamages).toHaveLength(0);
     expect(result.totalDamage).toBe(0);
   });
@@ -693,11 +678,9 @@ describe("combo edge cases", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // 6. Single→Combo normalization equivalence
 // Verifies that single mode and 1-line combo mode produce the same
 // bestDamage from the optimizer (internally both use combo path now).
-// ═══════════════════════════════════════════════════════════════
 
 describe("single↔combo normalization equivalence", () => {
   const perChar: Record<string, CharOptConfig> = {

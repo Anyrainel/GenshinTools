@@ -217,13 +217,11 @@ describe("Integration: Account Data Page Flow", () => {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
   // Import overlay tests: cross-type import combinations
   //
   // Rules:
   //  - GOOD import: always wipes everything (complete replace)
   //  - UID import:  upserts character/weapon, moves replaced artifacts to inventory
-  // ───────────────────────────────────────────────────────────────────────────
 
   describe("import overlay: sequential imports to the same profile", () => {
     // ── Shared test data ──

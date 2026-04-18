@@ -251,10 +251,6 @@ export function FlexPatternDialog({
   );
 }
 
-// ---------------------------------------------------------------------------
-// Add form
-// ---------------------------------------------------------------------------
-
 function CustomFlexAddForm({
   settings,
   onSettingsChange,

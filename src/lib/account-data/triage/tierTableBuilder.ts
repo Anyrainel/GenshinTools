@@ -7,9 +7,7 @@ import type { MainStat, Slot, SubStat } from "@/data/types";
 import { P4L, SUB_WEIGHTS, type TriageMode, getTier, pJoint } from "./tierMath";
 import type { DemandTierEntry, TierCondition } from "./types";
 
-// ---------------------------------------------------------------------------
 // Main stat weight pools (same as triage-tier-table.js MAIN_W)
-// ---------------------------------------------------------------------------
 
 const MAIN_W: Partial<Record<Slot, Record<string, number>>> = {
   sands: { "atk%": 26.66, "hp%": 26.66, "def%": 26.66, em: 10, er: 10 },
@@ -51,9 +49,7 @@ const NON_SUB = new Set([
   "heal%",
 ]);
 
-// ---------------------------------------------------------------------------
 // Pool construction
-// ---------------------------------------------------------------------------
 
 function makePool(exclude: string[]): Record<string, number> {
   const pool: Record<string, number> = { ...SUB_WEIGHTS };
@@ -61,9 +57,7 @@ function makePool(exclude: string[]): Record<string, number> {
   return pool;
 }
 
-// ---------------------------------------------------------------------------
 // Main stat probability
-// ---------------------------------------------------------------------------
 
 export function getMainProb(slot: Slot, mainStat: MainStat): number {
   if (slot === "flower" || slot === "plume") return 1.0;
@@ -75,9 +69,7 @@ export function getMainProb(slot: Slot, mainStat: MainStat): number {
   return weight / total;
 }
 
-// ---------------------------------------------------------------------------
 // Structural key — scenarios with identical probability profiles share a table
-// ---------------------------------------------------------------------------
 
 export function structuralKey(
   slot: Slot,
@@ -107,9 +99,7 @@ export function structuralKey(
   return `${tierClass}|${mainRounded}|${poolWeights}|${remWeights}|${fillWeights}`;
 }
 
-// ---------------------------------------------------------------------------
 // Condition row computation (port of JS computeConditionRows)
-// ---------------------------------------------------------------------------
 
 function computeConditionRows(
   pool: Record<string, number>,
@@ -230,9 +220,7 @@ function computeConditionRows(
   return rows;
 }
 
-// ---------------------------------------------------------------------------
 // Cache and lookup
-// ---------------------------------------------------------------------------
 
 const cache = new Map<string, DemandTierEntry>();
 

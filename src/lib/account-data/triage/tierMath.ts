@@ -6,9 +6,7 @@
 import type { Slot, SubStat } from "@/data/types";
 import type { QualityTier } from "./types";
 
-// ---------------------------------------------------------------------------
 // Substat weights (unnormalized shares, same ratios as statPoolWithWeights)
-// ---------------------------------------------------------------------------
 
 export const SUB_WEIGHTS: Record<SubStat, number> = {
   hp: 6,
@@ -44,9 +42,7 @@ const TIER_THRESHOLDS = {
   },
 } as const;
 
-// ---------------------------------------------------------------------------
 // Combinatorics helpers
-// ---------------------------------------------------------------------------
 
 export function combinations<T>(arr: T[], k: number): T[][] {
   if (k === 0) return [[]];
@@ -68,9 +64,7 @@ function permutations<T>(arr: T[]): T[][] {
   return result;
 }
 
-// ---------------------------------------------------------------------------
 // Core probability functions
-// ---------------------------------------------------------------------------
 
 /**
  * P(drawing exactly this ordered set) via weighted sampling without replacement.
@@ -134,9 +128,7 @@ export function pJoint(
   return total;
 }
 
-// ---------------------------------------------------------------------------
 // Tier assignment
-// ---------------------------------------------------------------------------
 
 function getThresholds(slot: Slot, mode: TriageMode) {
   const set = TIER_THRESHOLDS[mode];

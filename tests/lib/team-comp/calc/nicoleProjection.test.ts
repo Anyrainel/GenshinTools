@@ -42,8 +42,6 @@ vi.mock("@/lib/gzipJson", async (importOriginal) => {
     },
   };
 });
-
-import type { Faction } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { createCharacter } from "@/lib/team-comp/calc/registry";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
@@ -53,8 +51,6 @@ import "@/lib/team-comp/index";
 beforeAll(async () => {
   await preloadGameStats();
 });
-
-// ─── Helpers ───
 
 function nicoleWithTeam(teammates: string[], constellation = 0) {
   const charIds = ["nicole", ...teammates];
@@ -79,8 +75,6 @@ function unityEntries(entries: Record<string, FormulaEntry>) {
     id.startsWith("nicole-c1-unity-slot")
   );
 }
-
-// ─── Tests ───
 
 describe("Nicole Q Arcane Projection — slot-based formulas", () => {
   it("generates one projection formula per teammate slot", () => {

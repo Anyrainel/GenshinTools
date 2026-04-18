@@ -139,13 +139,6 @@ function buildPostExprStatsForContext(
         ]);
       }
     }
-  } else if (calcContext.critRateTarget != null) {
-    const crDelta = (100 - calcContext.critRateTarget) / 100;
-    for (const id of Object.keys(postExprStats)) {
-      postExprStats[id] = postExprStats[id].withMergedConst([
-        { key: "cr", value: crDelta },
-      ]);
-    }
   }
 
   return postExprStats;
@@ -326,13 +319,6 @@ function buildOffFieldPostExprStatsForContext(
         ]);
       }
     }
-  } else if (calcContext.critRateTarget != null) {
-    const crDelta = (100 - calcContext.critRateTarget) / 100;
-    for (const id of Object.keys(postExprStats)) {
-      postExprStats[id] = postExprStats[id].withMergedConst([
-        { key: "cr", value: crDelta },
-      ]);
-    }
   }
 
   return postExprStats;
@@ -449,13 +435,6 @@ function buildPostExprStatsExcluding(
           { key: "cr", value: crDelta },
         ]);
       }
-    }
-  } else if (calcContext.critRateTarget != null) {
-    const crDelta = (100 - calcContext.critRateTarget) / 100;
-    for (const id of Object.keys(postExprStats)) {
-      postExprStats[id] = postExprStats[id].withMergedConst([
-        { key: "cr", value: crDelta },
-      ]);
     }
   }
 

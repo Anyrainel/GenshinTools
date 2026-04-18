@@ -16,9 +16,7 @@ const COMBAT_ABILITIES: AbilityType[] = [
   "burst",
 ];
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Nod-Krai Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("illuga")
 class Illuga extends CharacterBase {
@@ -365,9 +363,7 @@ class Aino extends CharacterBase {
   })();
 }
 
-// ═══════════════════════════════════════════════════════════════
 // Prune — 4★ Anemo Catalyst (Hexerei)
-// ═══════════════════════════════════════════════════════════════
 // Modeling assumptions:
 // - Swirl triggers: E hitting a PHEC aura (Pyro/Hydro/Cryo/Electro) converts
 //   Banehunter Oathhammer to that element. We generate one converted-hammer

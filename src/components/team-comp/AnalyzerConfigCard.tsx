@@ -37,8 +37,6 @@ import {
   CARD_TITLE_CLS,
 } from "./cardStyles";
 
-// ─── Helpers ───
-
 function getArtifactIconProps(bc: TeamSlotConfig): {
   artifactSetId?: string;
   halfSetIds?: [string, string];
@@ -54,8 +52,6 @@ function getArtifactIconProps(bc: TeamSlotConfig): {
   }
   return { imagePath: "" };
 }
-
-// ─── Props ───
 
 interface AnalyzerConfigCardProps {
   charConfigs: AnalyzerCharConfig[];
@@ -78,8 +74,6 @@ interface AnalyzerConfigCardProps {
   charIconSize: ItemIconSize;
   subIconSize: ItemIconSize;
 }
-
-// ─── Main Card ───
 
 export function AnalyzerConfigCard({
   charConfigs,

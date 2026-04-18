@@ -34,7 +34,6 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { StatSheet } from "@/lib/team-comp/damageModels";
 import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
 
 /**
  * QA scenario: level-100 enemy with 10% all elemental/physical resistance.
@@ -102,8 +101,6 @@ interface QATestCase {
   expected?: Record<string, ExpectedRange>;
 }
 
-// ─── Preset Loading ───────────────────────────────────────────────────────────
-
 function loadPresetBuilds(): Record<string, PresetBuildEntry> {
   const presetPath = resolve(
     "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
@@ -111,8 +108,6 @@ function loadPresetBuilds(): Record<string, PresetBuildEntry> {
   const raw = readFileSync(presetPath, "utf-8");
   return (JSON.parse(raw) as AllBuildsPreset).builds;
 }
-
-// ─── Config Builders ──────────────────────────────────────────────────────────
 
 function toTeamSlotConfig(entry: RosterEntry): TeamSlotConfig {
   let artifactSetId: string | null = null;
@@ -139,8 +134,6 @@ function toTeamSlotConfig(entry: RosterEntry): TeamSlotConfig {
   };
 }
 
-// ─── Formatting ───────────────────────────────────────────────────────────────
-
 const C = {
   reset: "\x1b[0m",
   bold: "\x1b[1m",
@@ -153,8 +146,6 @@ const C = {
 function fmt(n: number): string {
   return Math.round(n).toLocaleString("en-US");
 }
-
-// ─── Test Runner ──────────────────────────────────────────────────────────────
 
 interface FormulaResult {
   formulaId: string;
@@ -415,7 +406,6 @@ function generateMarkdownReport(results: TestCaseResult[]): string {
   return lines.join("\n");
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);

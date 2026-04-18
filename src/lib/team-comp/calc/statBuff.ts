@@ -1,10 +1,12 @@
 import type { Faction, Region } from "@/data/types";
+import { LUNAR_REACTIONS } from "../constants";
 import {
   type BuffReceiverType,
   type BuffSource,
   type BuffTarget,
   type ExtraBuff,
   FINAL_STAT_KEYS,
+  type ResolvedBuff,
   type StatEntry,
   type StatKey,
 } from "../types";
@@ -30,11 +32,7 @@ export function assertNoDuplicateStatKeys(
   }
 }
 
-const LUNAR_REACTIONS = new Set([
-  "lunarCharged",
-  "lunarCrystallize",
-  "lunarBloom",
-]);
+const LUNAR_REACTION_SET = new Set<string>(LUNAR_REACTIONS);
 
 const VALID_CHARACTER_ORIGINS = new Set([
   "A",
@@ -242,7 +240,9 @@ export function validateStatBuff(
 
     // Special case: elevated% may only be scoped to lunar reactions
     if (key === "elevated%" && filter?.reactions) {
-      const nonLunar = filter.reactions.filter((r) => !LUNAR_REACTIONS.has(r));
+      const nonLunar = filter.reactions.filter(
+        (r) => !LUNAR_REACTION_SET.has(r)
+      );
       if (nonLunar.length > 0) {
         throw new Error(
           `${label} elevated% is not expected to apply to non-lunar reactions yet. Ask for review for this case.`
@@ -758,4 +758,16 @@ export function isBuffApplicable(
     selfCharId,
     selfIsOnField
   );
+} /** Build the buffApplicability map from a formula-specific DisplayResult's buffs. */
+
+export function buildBuffApplicability(
+  buffs: ResolvedBuff[]
+): Record<string, number[] | undefined> {
+  const map: Record<string, number[] | undefined> = {};
+  for (const b of buffs) {
+    if (b.active && !b.bespokeLabel) {
+      map[b.buffKey] = b.activePartIndices;
+    }
+  }
+  return map;
 }

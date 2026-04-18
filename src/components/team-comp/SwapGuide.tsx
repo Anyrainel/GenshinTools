@@ -7,22 +7,19 @@ import {
 } from "@/components/ui/collapsible";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById } from "@/data/constants";
-import type {
-  AccountData,
-  ArtifactData,
-  CharacterData,
-  Slot,
-  SubStat,
-} from "@/data/types";
+import type { AccountData, ArtifactData, Slot, SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import {
-  getMainStatValueAtLevel,
-  getSubstatAvgRoll,
-} from "@/lib/account-data/scoring/utils";
+import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
+import {
+  type ArtifactStatus,
+  buildArtifactOwnerMap,
+  getArtifactStatus,
+  getRollCount,
+} from "@/lib/artifact/inventory";
 import { downloadElementAsImage } from "@/lib/downloadImage";
-import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
+import { resolveBuildInfo } from "@/lib/team-comp/teamOptUtils";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {
@@ -36,48 +33,6 @@ import {
 import { useCallback, useMemo, useRef, useState } from "react";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
-
-type ArtifactStatus =
-  | { type: "same" }
-  | { type: "fromChar"; charId: string }
-  | { type: "inventory" };
-
-export function buildArtifactOwnerMap(
-  accountData: AccountData | null
-): Map<string, string> {
-  const map = new Map<string, string>();
-  if (!accountData) return map;
-  for (const char of accountData.characters) {
-    for (const art of Object.values(char.artifacts)) {
-      if (art) map.set(art.id, char.key);
-    }
-  }
-  return map;
-}
-
-export function getArtifactStatus(
-  optimizedArt: ArtifactData | undefined,
-  equippedArt: ArtifactData | undefined,
-  charId: string,
-  ownerMap: Map<string, string>
-): ArtifactStatus {
-  if (!optimizedArt) return { type: "same" };
-  if (equippedArt && equippedArt.id === optimizedArt.id) {
-    return { type: "same" };
-  }
-  const currentOwner = ownerMap.get(optimizedArt.id);
-  if (currentOwner && currentOwner !== charId) {
-    return { type: "fromChar", charId: currentOwner };
-  }
-  return { type: "inventory" };
-}
-
-function getRollCount(statKey: SubStat, value: number, rarity: number): number {
-  const r = rarity === 4 || rarity === 5 ? rarity : 5;
-  const avgRollValue = getSubstatAvgRoll(statKey, r as 4 | 5);
-  if (!avgRollValue) return 0;
-  return value / avgRollValue;
-}
 
 type Props = {
   team: Team;
@@ -493,46 +448,6 @@ function StatusBadge({
 }
 
 // ─── Export-only column: icon header + on-page slot rows ───
-
-function resolveBuildInfo(
-  charId: string,
-  team: Team,
-  accountData: AccountData | null
-) {
-  const acctChar = accountData?.characters.find(
-    (c: CharacterData) => c.key === charId
-  );
-  const charLevel =
-    team.opts?.[`${charId}.overrideLevel`] !== undefined
-      ? Number(team.opts[`${charId}.overrideLevel`])
-      : acctChar
-        ? Number(getCharacterLevelTier(acctChar.level))
-        : 90;
-  const charConst =
-    team.opts?.[`${charId}.overrideConstellation`] !== undefined
-      ? Number(team.opts[`${charId}.overrideConstellation`])
-      : (acctChar?.constellation ?? 0);
-  const idx = team.characters.indexOf(charId);
-  const weaponId = idx >= 0 ? team.weapons[idx] : null;
-  let defaultRefine = 1;
-  if (weaponId && accountData) {
-    const refinements: number[] = [];
-    for (const c of accountData.characters) {
-      if (c.weapon?.key === weaponId) refinements.push(c.weapon.refinement);
-    }
-    for (const w of accountData.extraWeapons) {
-      if (w.key === weaponId) refinements.push(w.refinement);
-    }
-    if (refinements.length > 0) defaultRefine = Math.max(...refinements);
-  }
-  const weaponRefine =
-    team.opts?.[`${charId}.overrideRefinement`] !== undefined
-      ? Number(team.opts[`${charId}.overrideRefinement`])
-      : defaultRefine;
-  const artConfig = idx >= 0 ? team.artifacts[idx] : null;
-  return { charLevel, charConst, weaponId, weaponRefine, artConfig };
-}
-
 export function ExportColumn({
   charId,
   team,

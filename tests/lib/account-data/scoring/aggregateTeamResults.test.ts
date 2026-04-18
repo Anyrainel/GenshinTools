@@ -8,8 +8,6 @@ import type { AutoTuneTeamResult } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { describe, expect, it } from "vitest";
 
-// ─── Helpers ───
-
 const ZERO_ROLLS: Record<SubStat, number> = {
   cr: 0,
   cd: 0,
@@ -73,8 +71,6 @@ function makeTeamResult(opts: {
     },
   };
 }
-
-// ─── Tests ───
 
 describe("aggregateTeamResults", () => {
   it("should produce output with correct structure from a single team", () => {

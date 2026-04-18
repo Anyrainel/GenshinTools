@@ -48,12 +48,7 @@ import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { stripVTControlCharacters } from "node:util";
 
-import type {
-  AccountData,
-  ArtifactData,
-  GlobalStatWeights,
-  SubStat,
-} from "@/data/types";
+import type { AccountData, ArtifactData, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import {
   getTargetMainStatsForSlot,
@@ -61,7 +56,6 @@ import {
   scoreSlot,
 } from "@/lib/account-data/artifactScore";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
 import {
   type CompiledTeamDamage,
   compileComboTeamDamage,
@@ -96,7 +90,6 @@ import {
   buildTeamSlotConfig,
   fmt,
   getAllArtifacts,
-  getArtifactSetRarity,
   getCarryFormulaIds,
   getTeamCombo,
   loadAccountData,
@@ -148,8 +141,6 @@ function stopLogFile(): void {
   _logStream?.end();
   _logStream = null;
 }
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Solution {
   /** charId -> slotKey -> artifactId */
@@ -305,6 +296,8 @@ function evaluateAssignment(
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+      rollMultiplier: DEFAULT_CALC_CONTEXT.rollMultiplier,
+      substatBudget: DEFAULT_CALC_CONTEXT.substatBudget,
     };
 
     const carryCharId = team.characters[0]!;
@@ -325,7 +318,7 @@ function evaluateAssignment(
       if (!charFormulas?.[formulaId]) return null;
     }
 
-    return evaluateCombo(teamBuild, effectiveCombo, artifactStats, calcContext)
+    return teamBuild.evaluateCombo(effectiveCombo, artifactStats, calcContext)
       .totalDamage;
   } catch {
     return null;
@@ -416,6 +409,8 @@ function checkConstraints(
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+      rollMultiplier: DEFAULT_CALC_CONTEXT.rollMultiplier,
+      substatBudget: DEFAULT_CALC_CONTEXT.substatBudget,
     };
 
     const carryCharId = team.characters[0]!;
@@ -1736,6 +1731,8 @@ async function cmdRefresh(): Promise<void> {
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+      rollMultiplier: DEFAULT_CALC_CONTEXT.rollMultiplier,
+      substatBudget: DEFAULT_CALC_CONTEXT.substatBudget,
     };
 
     const perChar = buildPerChar(team, carryCharId, accountData);
@@ -2277,6 +2274,8 @@ async function cmdCompare(opts: {
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+      rollMultiplier: DEFAULT_CALC_CONTEXT.rollMultiplier,
+      substatBudget: DEFAULT_CALC_CONTEXT.substatBudget,
     };
 
     // ── 1) Artifact stat diff per character ──
@@ -2591,8 +2590,8 @@ async function cmdCarryDiagnose(opts: {
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-      critRateTarget: (team.calcContext as Record<string, unknown>)
-        ?.critRateTarget as number | undefined,
+      rollMultiplier: DEFAULT_CALC_CONTEXT.rollMultiplier,
+      substatBudget: DEFAULT_CALC_CONTEXT.substatBudget,
     };
     const perChar = buildPerChar(team, carryId, accountData);
     const carryConfig = perChar[carryId];
@@ -3234,8 +3233,7 @@ async function cmdFuzzCombo(opts: {
 
           // Old path: evaluateCombo
           const sheets = { ...baseSheets, [swapCharId]: swapSheet };
-          const oldDamage = evaluateCombo(
-            teamBuild,
+          const oldDamage = teamBuild.evaluateCombo(
             combo,
             sheets,
             team.calcContext
@@ -3314,8 +3312,6 @@ function parseFlagInt(
   const val = parseFlag(args, flag);
   return val !== undefined ? Number.parseInt(val) : defaultVal;
 }
-
-// ─── Main ────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);

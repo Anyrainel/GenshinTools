@@ -4,7 +4,7 @@ import type {
   TierItemData,
 } from "@/components/tier-list/tierTableTypes";
 import type { Tier } from "@/data/types";
-import { render, screen } from "../../utils/render";
+import { render } from "../../utils/render";
 
 // Mock useMediaQuery to always return true for desktop mode
 vi.mock("@/hooks/useMediaQuery", () => ({

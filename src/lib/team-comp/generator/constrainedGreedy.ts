@@ -37,8 +37,6 @@ export interface FlexSlotConfig {
   statCap: number;
 }
 
-// ─── Constants ───
-
 const MAX_SUBSTATS_PER_SLOT = 4;
 const allSubstats: readonly SubStat[] = statPools.substat;
 

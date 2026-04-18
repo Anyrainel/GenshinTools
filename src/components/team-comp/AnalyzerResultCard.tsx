@@ -11,9 +11,9 @@ import type {
   AnalyzerCharConfig,
   AnalyzerResult,
 } from "@/lib/team-comp/analyzer/types";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/generator/substatBudget";
 import type { CalcContext } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
+import type { Team } from "@/stores/useTeamStore";
 import { BarChart3, Loader2, Play } from "lucide-react";
 import { useCallback, useState } from "react";
 import { AnalyzerChart } from "./AnalyzerChart";
@@ -25,32 +25,24 @@ import {
   CARD_CLS,
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
+  CONTROLS_CLS,
 } from "./cardStyles";
 
-const CONTROLS_CLS =
-  "flex flex-wrap items-center justify-center mb-3 gap-x-2 gap-y-1 md:gap-x-5 md:gap-y-2";
-
-// ─── Types ───
-
-export interface AnalyzerCalcSettings {
-  calcContext: CalcContext;
-  rollMultiplier: number;
-  substatBudget: SubstatBudgetPreset;
-}
-
 interface AnalyzerResultCardProps {
+  team: Team;
+  updateTeam: (id: string, patch: Partial<Team>) => void;
   charConfigs: AnalyzerCharConfig[];
   isComputing: boolean;
   result: AnalyzerResult | null;
   progress: { overallProgress: number; phase: string } | null;
   error: Error | null;
-  onRun: (settings: AnalyzerCalcSettings) => void;
+  onRun: () => void;
   onStop: () => void;
 }
 
-// ─── Main Card ───
-
 export function AnalyzerResultCard({
+  team,
+  updateTeam,
   charConfigs,
   isComputing,
   result,
@@ -60,31 +52,19 @@ export function AnalyzerResultCard({
   onStop,
 }: AnalyzerResultCardProps) {
   const { t } = useLanguage();
-
-  // Local settings state (not persisted to any store)
-  const [enemyLevel, setEnemyLevel] = useState(110);
-  const [enemyRes, setEnemyRes] = useState(10); // displayed as %, stored as integer
-  const [rollMultiplier, setRollMultiplier] = useState(0.85);
-  const [substatBudget, setSubstatBudget] =
-    useState<SubstatBudgetPreset>("8_6");
+  const ctx = team.calcContext;
 
   type ResultTab = "table" | "sequence";
   const [resultTab, setResultTab] = useState<ResultTab>("table");
 
   const overallPct = progress ? Math.round(progress.overallProgress * 100) : 0;
 
-  const handleRun = useCallback(() => {
-    onRun({
-      calcContext: {
-        enemyLevel,
-        enemyRes: enemyRes / 100,
-        rollMultiplier,
-        substatBudget,
-      },
-      rollMultiplier,
-      substatBudget,
-    });
-  }, [onRun, enemyLevel, enemyRes, rollMultiplier, substatBudget]);
+  const patchCtx = useCallback(
+    (patch: Partial<CalcContext>) => {
+      updateTeam(team.id, { calcContext: { ...ctx, ...patch } });
+    },
+    [team.id, ctx, updateTeam]
+  );
 
   const charIds = charConfigs.map((c) => c.charId);
 
@@ -97,32 +77,30 @@ export function AnalyzerResultCard({
         </span>
       </CardHeader>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-        {/* Settings row (matching DamageCard generate tab) */}
         <div className={CONTROLS_CLS}>
           <EnemyInputs
-            enemyLevel={enemyLevel}
+            enemyLevel={ctx.enemyLevel}
             onEnemyLevelChange={(raw) => {
               const num = Number(raw);
-              if (!Number.isNaN(num)) setEnemyLevel(num);
+              if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
             }}
-            enemyRes={enemyRes}
+            enemyRes={Math.round(ctx.enemyRes * 100)}
             onEnemyResChange={(raw) => {
               const num = Number(raw);
-              if (!Number.isNaN(num)) setEnemyRes(num);
+              if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
             }}
             t={t}
           />
           <RollQualityInputs
-            rollMultiplier={rollMultiplier}
-            onRollMultiplierChange={setRollMultiplier}
-            substatBudget={substatBudget}
-            onSubstatBudgetChange={setSubstatBudget}
+            rollMultiplier={ctx.rollMultiplier}
+            onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
+            substatBudget={ctx.substatBudget}
+            onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
 
-          {/* Run / Stop button */}
           <Button
-            onClick={isComputing ? onStop : handleRun}
+            onClick={isComputing ? onStop : onRun}
             variant={isComputing ? "destructive" : "default"}
             size="sm"
             className="shrink-0"
@@ -141,7 +119,6 @@ export function AnalyzerResultCard({
           </Button>
         </div>
 
-        {/* Progress bar */}
         {isComputing && progress ? (
           <div className="space-y-1">
             <Progress value={overallPct} className="h-2" />
@@ -161,10 +138,8 @@ export function AnalyzerResultCard({
 
         {result ? (
           <>
-            {/* Chart */}
             <AnalyzerChart result={result} charIds={charIds} />
 
-            {/* Table / Sequence toggle */}
             <OptionButtonRow className="px-0 pt-2">
               {(
                 [

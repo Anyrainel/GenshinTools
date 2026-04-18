@@ -20,14 +20,10 @@ import type { Team } from "@/stores/useTeamStore";
 
 const LABEL_CLS =
   "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
-
 const INPUT_CLS =
   "text-center font-bold border-border/20 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1";
-
 const SPINNER_HIDE =
   "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
-
-// ─── Enemy Level + Res ───
 
 type EnemyInputsProps = {
   enemyLevel: number | string;
@@ -212,9 +208,10 @@ export function CharCrErSettings({
   return (
     <div className="flex flex-wrap justify-around items-start gap-y-1 pb-1 md:pb-2">
       {charIds.map((charId) => {
-        const crMode = team.crMode?.[charId] ?? "min";
-        const tierEnabled = team.tierAwarePool?.[charId] ?? false;
-        const ignoreSetEnabled = team.ignoreArtifactSets?.[charId] ?? false;
+        const cs = team.charSettings?.[charId];
+        const crMode = cs?.crMode ?? "min";
+        const tierEnabled = cs?.tierAwarePool ?? false;
+        const ignoreSetEnabled = cs?.ignoreArtifactSets ?? false;
 
         return (
           <div
@@ -238,11 +235,14 @@ export function CharCrErSettings({
                 <Select
                   value={crMode}
                   onValueChange={(v) => {
-                    const newCrMode = { ...(team.crMode ?? {}) };
-                    newCrMode[charId] = v as "min" | "target";
-                    const newMinCr = { ...(team.minCr ?? {}) };
-                    delete newMinCr[charId];
-                    updateTeam(team.id, { crMode: newCrMode, minCr: newMinCr });
+                    const prev = team.charSettings?.[charId];
+                    const { minCr: _, ...rest } = prev ?? {};
+                    updateTeam(team.id, {
+                      charSettings: {
+                        ...team.charSettings,
+                        [charId]: { ...rest, crMode: v as "min" | "target" },
+                      },
+                    });
                   }}
                 >
                   <SelectTrigger className="w-[62px] md:w-[72px] h-5 md:h-6 text-[10px] md:text-xs font-bold text-foreground bg-white/5 border-border/20 px-0.5 shrink-0">
@@ -259,24 +259,27 @@ export function CharCrErSettings({
                 </Select>
                 <PctInput
                   value={
-                    team.minCr?.[charId] != null
-                      ? String(Math.round(team.minCr[charId] * 100))
-                      : ""
+                    cs?.minCr != null ? String(Math.round(cs.minCr * 100)) : ""
                   }
                   onCommit={(rawIn) => {
                     const raw = rawIn.trim();
+                    const prev = team.charSettings?.[charId];
                     if (raw === "") {
-                      const next = { ...(team.minCr ?? {}) };
-                      delete next[charId];
-                      updateTeam(team.id, { minCr: next });
+                      const { minCr: _, ...rest } = prev ?? {};
+                      updateTeam(team.id, {
+                        charSettings: { ...team.charSettings, [charId]: rest },
+                      });
                       return;
                     }
                     const val = Number(raw) / 100;
                     if (!Number.isNaN(val)) {
                       updateTeam(team.id, {
-                        minCr: {
-                          ...(team.minCr ?? {}),
-                          [charId]: Math.max(0, Math.min(1, val)),
+                        charSettings: {
+                          ...team.charSettings,
+                          [charId]: {
+                            ...prev,
+                            minCr: Math.max(0, Math.min(1, val)),
+                          },
                         },
                       });
                     }
@@ -294,21 +297,25 @@ export function CharCrErSettings({
                 </span>
                 <PctInput
                   value={
-                    team.minEr[charId] != null
-                      ? String(Math.round(team.minEr[charId] * 100))
-                      : ""
+                    cs?.minEr != null ? String(Math.round(cs.minEr * 100)) : ""
                   }
                   onCommit={(rawIn) => {
                     const raw = rawIn.trim();
+                    const prev = team.charSettings?.[charId];
                     if (raw === "") {
-                      const { [charId]: _, ...rest } = team.minEr;
-                      updateTeam(team.id, { minEr: rest });
+                      const { minEr: _, ...rest } = prev ?? {};
+                      updateTeam(team.id, {
+                        charSettings: { ...team.charSettings, [charId]: rest },
+                      });
                       return;
                     }
                     const val = Number(raw) / 100;
                     if (!Number.isNaN(val)) {
                       updateTeam(team.id, {
-                        minEr: { ...team.minEr, [charId]: val },
+                        charSettings: {
+                          ...team.charSettings,
+                          [charId]: { ...prev, minEr: val },
+                        },
                       });
                     }
                   }}
@@ -326,9 +333,12 @@ export function CharCrErSettings({
                 className={CB_CLS}
                 onClick={() =>
                   updateTeam(team.id, {
-                    ignoreArtifactSets: {
-                      ...(team.ignoreArtifactSets ?? {}),
-                      [charId]: !ignoreSetEnabled,
+                    charSettings: {
+                      ...team.charSettings,
+                      [charId]: {
+                        ...team.charSettings?.[charId],
+                        ignoreArtifactSets: !ignoreSetEnabled,
+                      },
                     },
                   })
                 }
@@ -348,9 +358,12 @@ export function CharCrErSettings({
                   className={CB_CLS}
                   onClick={() =>
                     updateTeam(team.id, {
-                      tierAwarePool: {
-                        ...(team.tierAwarePool ?? {}),
-                        [charId]: !tierEnabled,
+                      charSettings: {
+                        ...team.charSettings,
+                        [charId]: {
+                          ...team.charSettings?.[charId],
+                          tierAwarePool: !tierEnabled,
+                        },
                       },
                     })
                   }

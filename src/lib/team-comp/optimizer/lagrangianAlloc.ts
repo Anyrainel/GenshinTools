@@ -13,9 +13,8 @@
  */
 
 import type { ArtifactData, Slot } from "@/data/types";
+import { artsTupleToRecord } from "./types";
 import type { ArtifactTuple, TopKEntry } from "./types";
-
-// ─── Types ───
 
 export interface LagrangianConfig {
   /** Max iterations of subgradient descent. Default: 12. */
@@ -48,20 +47,6 @@ export interface LagrangianResult {
   iterations: number;
   /** Whether this improved over the input allocation. */
   improved: boolean;
-}
-
-// ─── Helpers ───
-
-function artsTupleToRecord(
-  tuple: ArtifactTuple
-): Record<Slot, ArtifactData | null> {
-  return {
-    flower: tuple[0],
-    plume: tuple[1],
-    sands: tuple[2],
-    goblet: tuple[3],
-    circlet: tuple[4],
-  };
 }
 
 /**

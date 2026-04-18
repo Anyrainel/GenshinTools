@@ -6,8 +6,6 @@ import {
 } from "@/lib/ercalc/erCalculator";
 import type { TeamMember, Timeline } from "@/lib/ercalc/erCalculator";
 
-// ─── Helpers ───
-
 function member(
   id: string,
   element: string,

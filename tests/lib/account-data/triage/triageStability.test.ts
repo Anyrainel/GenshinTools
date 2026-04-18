@@ -23,9 +23,7 @@ import type {
 import presetJson from "@/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 import { describe, expect, it } from "vitest";
 
-// ---------------------------------------------------------------------------
 // Seeded PRNG (mulberry32) for reproducible randomness
-// ---------------------------------------------------------------------------
 
 function mulberry32(seed: number) {
   let s = seed | 0;
@@ -37,9 +35,7 @@ function mulberry32(seed: number) {
   };
 }
 
-// ---------------------------------------------------------------------------
 // Preset build groups — real builds from the GGArtifact preset
-// ---------------------------------------------------------------------------
 
 const preset = presetJson as BuildPayloadV5;
 const PRESET_BUILD_GROUPS: { characterId: string; builds: Build[] }[] = [];
@@ -52,9 +48,7 @@ for (const [charId, buildIds] of Object.entries(preset.characterBuilds)) {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Valid value pools
-// ---------------------------------------------------------------------------
 
 const FIVE_STAR_SETS = [
   "emblem_of_severed_fate",
@@ -136,9 +130,7 @@ const ALL_SUBSTATS: SubStat[] = [
 /** 4 roll tier values per substat, in display format */
 const ROLL_TIERS = substatRollTiers[5];
 
-// ---------------------------------------------------------------------------
 // Random artifact generator — realistic values
-// ---------------------------------------------------------------------------
 
 function pick<T>(rng: () => number, arr: readonly T[]): T {
   return arr[Math.floor(rng() * arr.length)];
@@ -234,9 +226,7 @@ function generateArtifact(rng: () => number, id: number): ArtifactData {
   } as ArtifactData;
 }
 
-// ---------------------------------------------------------------------------
 // Build group selection — picks N characters from the preset
-// ---------------------------------------------------------------------------
 
 function pickBuildGroups(
   rng: () => number,
@@ -246,9 +236,7 @@ function pickBuildGroups(
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
-// ---------------------------------------------------------------------------
 // Apply triage recommendations: flip lock status per decisions
-// ---------------------------------------------------------------------------
 
 function applyDecisions(
   artifacts: ArtifactData[],
@@ -262,9 +250,7 @@ function applyDecisions(
   });
 }
 
-// ---------------------------------------------------------------------------
 // Count actual recommendations (changes from current lock state)
-// ---------------------------------------------------------------------------
 
 function countRecommendations(
   decisions: { artifact: ArtifactData; label: "lock" | "unlock" }[]
@@ -278,9 +264,7 @@ function countRecommendations(
   return { lockRecs, unlockRecs };
 }
 
-// ---------------------------------------------------------------------------
 // Helper: build account from artifacts + character IDs
-// ---------------------------------------------------------------------------
 
 function buildAccount(
   charIds: string[],
@@ -329,9 +313,7 @@ function buildAccount(
   };
 }
 
-// ---------------------------------------------------------------------------
 // Tests
-// ---------------------------------------------------------------------------
 
 describe("triage stability (fuzz)", () => {
   const SEEDS = [42, 1337, 2024, 9999, 314159];
@@ -426,11 +408,9 @@ describe("triage stability (fuzz)", () => {
   }
 });
 
-// ---------------------------------------------------------------------------
 // 2a: Snapshot rebuild stability
 // After applying decisions, convert to GOOD, rebuild from snapshot, re-triage
 // → assert 0 new recommendations (validates ID reassignment doesn't destabilize)
-// ---------------------------------------------------------------------------
 
 describe("triage stability after snapshot rebuild", () => {
   const SEEDS = [42, 1337, 9999];
@@ -510,11 +490,9 @@ describe("triage stability after snapshot rebuild", () => {
   }
 });
 
-// ---------------------------------------------------------------------------
 // 2b: Partial success stability
 // Some success, some not_found, some error. After applyJobResults, artifacts
 // that succeeded should not swing back.
-// ---------------------------------------------------------------------------
 
 describe("triage stability with partial job results", () => {
   it("succeeded artifacts stay stable, failed artifacts may still have recommendations", () => {
@@ -609,11 +587,9 @@ describe("triage stability with partial job results", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
 // 2c: already_correct correction
 // Artifact has wrong local lock state. Triage recommends change. Scanner
 // returns already_correct. applyJobResults corrects local. Re-triage → stable.
-// ---------------------------------------------------------------------------
 
 describe("already_correct corrects local state", () => {
   it("no new recommendation after already_correct correction", () => {
@@ -695,9 +671,7 @@ describe("already_correct corrects local state", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
 // Order-independence: shuffling 3000 artifacts must produce identical labels
-// ---------------------------------------------------------------------------
 
 describe("triage is order-independent", () => {
   const SEEDS = [42, 1337, 271828];
@@ -773,10 +747,8 @@ describe("triage is order-independent", () => {
   }
 });
 
-// ---------------------------------------------------------------------------
 // Lock-state independence: randomizing lock states produces same labels
 // (with SK disabled — SK intentionally uses lock state for tie-breaking)
-// ---------------------------------------------------------------------------
 
 describe("triage is lock-state-independent (SK disabled)", () => {
   const SEEDS = [42, 1337, 271828];
@@ -855,10 +827,8 @@ describe("triage is lock-state-independent (SK disabled)", () => {
   }
 });
 
-// ---------------------------------------------------------------------------
 // Lock-state independence WITH SK enabled: SK may pick different artifacts
 // from a tie group, but the total lock/unlock counts per set+slot must match
-// ---------------------------------------------------------------------------
 
 describe("triage with SK: lock-state changes preserve lock counts per set+slot", () => {
   const SEEDS = [42, 1337];

@@ -13,7 +13,6 @@ import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { scoreSlot } from "../../account-data/artifactScore";
-import { evaluateCombo } from "../calc/damageCalc";
 import {
   compileComboTeamDamage,
   fillVarsFromArtifacts,
@@ -23,9 +22,7 @@ import { StatSheet } from "../calc/statSheet";
 import { TeamBuild } from "../calc/teamBuild";
 import { detectEquippedSets } from "../teamOptUtils";
 import type {
-  CalcContext,
   CharOptConfig,
-  ComboFormula,
   ComboResult,
   OptFailReason,
   StatKey,
@@ -45,6 +42,7 @@ import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
 import { runLagrangianAllocation } from "./lagrangianAlloc";
 import type { BnBWorkerRequest, BnBWorkerResponse } from "./optimizer.worker";
+import { artsTupleToRecord } from "./types";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
 type TeamOptTraceEvent =
@@ -144,9 +142,7 @@ function computeHyperparams(inventorySize: number): {
   return { topK, maxTeamSearch };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Section 2: Team Allocation via Conflict-Aware DFS
-// ═══════════════════════════════════════════════════════════════════════
 
 /**
  * Given top-K results per character, find the best team assignment where
@@ -351,9 +347,7 @@ function findBestTeamAllocation(
   return { candidates: topCandidates, iterations: totalIterations };
 }
 
-// ═══════════════════════════════════════════════════════════════════════
 // Section 3: Team Optimization Entry Point
-// ═══════════════════════════════════════════════════════════════════════
 
 const emptyArtifacts: Record<Slot, ArtifactData | null> = {
   flower: null,
@@ -362,18 +356,6 @@ const emptyArtifacts: Record<Slot, ArtifactData | null> = {
   goblet: null,
   circlet: null,
 };
-
-function artsTupleToRecord(
-  tuple: ArtifactTuple
-): Record<Slot, ArtifactData | null> {
-  return {
-    flower: tuple[0],
-    plume: tuple[1],
-    sands: tuple[2],
-    goblet: tuple[3],
-    circlet: tuple[4],
-  };
-}
 
 function buildSheetsFromArtifacts(
   baseSheets: Record<string, StatSheet>,
@@ -635,7 +617,7 @@ export async function* runTeamOptimization(
     }
     try {
       const evalFn = (sheets: Record<string, StatSheet>) =>
-        evaluateCombo(teamBuild, combo, sheets, calcContext).totalDamage;
+        teamBuild.evaluateCombo(combo, sheets, calcContext).totalDamage;
       const baseDamage = evalFn(emptySheets);
 
       if (baseDamage > 0) {
@@ -674,8 +656,7 @@ export async function* runTeamOptimization(
               teamBuild.enemyAura,
               teamBuild.extraBuffs
             );
-            const dmgNoSet = evaluateCombo(
-              noSetTB,
+            const dmgNoSet = noSetTB.evaluateCombo(
               combo,
               emptySheets,
               calcContext
@@ -717,13 +698,11 @@ export async function* runTeamOptimization(
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Phase 1: Parallel Per-character B&B → top-K results (via Web Workers)
   //
   // Build heuristic baseSheets so all characters see a realistic team
   // context without sequential dependency, then run each character's
   // B&B in a separate Web Worker.
-  // ════════════════════════════════════════════════════════════════════
 
   const topKByChar: Record<string, TopKEntry[]> = {};
   const failReasons: Record<string, OptFailReason> = {};
@@ -1161,7 +1140,6 @@ export async function* runTeamOptimization(
   } satisfies TeamOptimizationProgress;
   await new Promise((r) => setTimeout(r, 0));
 
-  // ════════════════════════════════════════════════════════════════════
   // Phase 1b: Contested Artifact Resolution
   //
   // When a "dominant" artifact appears in most top-K entries for multiple
@@ -1169,7 +1147,6 @@ export async function* runTeamOptimization(
   // Fix: identify contested artifacts, then re-run B&B for ALL contesting
   // characters with those artifacts excluded — no winner/loser distinction.
   // Phase 2 will decide the best allocation using actual team damage.
-  // ════════════════════════════════════════════════════════════════════
 
   {
     // Count per-artifact usage across characters
@@ -1279,9 +1256,7 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Phase 2: Team allocation via conflict-aware DFS
-  // ════════════════════════════════════════════════════════════════════
 
   // Only allocate characters that have valid results
   const allocatableChars = allCharIds.filter(
@@ -1460,7 +1435,6 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Phase 2b: Same-Set Sequential Partitioning
   //
   // When two characters share the same 4pc artifact set, their Phase 1
@@ -1470,7 +1444,6 @@ export async function* runTeamOptimization(
   // Fix: for each same-set pair, try both orderings — run B&B for A with
   // A's best entries, then B&B for B with A's artifacts excluded. This
   // explores the partition space directly instead of relying on Phase 2 DFS.
-  // ════════════════════════════════════════════════════════════════════
 
   {
     // Detect same-4pc-set pairs
@@ -1658,7 +1631,6 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Phase 2.5: Lagrangian Relaxation for Shared-Set Conflicts
   //
   // When enabled, runs Lagrangian pricing iterations on the Phase 1
@@ -1666,7 +1638,6 @@ export async function* runTeamOptimization(
   // DFS could explore. Particularly effective when 2+ characters share
   // the same 4pc set and Phase 2's width-30 DFS misses the optimal
   // partition.
-  // ════════════════════════════════════════════════════════════════════
 
   // Only run Lagrangian when Phase 2 assigned artifacts to ALL allocatable
   // characters. When some characters are empty, heuristic fill + set detection
@@ -1689,7 +1660,7 @@ export async function* runTeamOptimization(
     let phase2Damage: number;
     try {
       phase2Damage = teamArtifactsMeetConstraints(bestArtifactsByChar)
-        ? evaluateCombo(effectiveTeamBuild, combo, phase2Sheets, calcContext)
+        ? effectiveTeamBuild.evaluateCombo(combo, phase2Sheets, calcContext)
             .totalDamage
         : 0;
     } catch {
@@ -1722,7 +1693,7 @@ export async function* runTeamOptimization(
       }
       const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
       try {
-        return evaluateCombo(effectiveTeamBuild, combo, sheets, calcContext)
+        return effectiveTeamBuild.evaluateCombo(combo, sheets, calcContext)
           .totalDamage;
       } catch {
         return 0;
@@ -1748,7 +1719,6 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Phase 3: Parallel Best-First Team Refinement
   //
   // Run ALL non-saturated characters' B&B in parallel via web workers.
@@ -1756,7 +1726,6 @@ export async function* runTeamOptimization(
   // excluded. Only the single best improvement is committed per round.
   // Repeat until no character improves (or team deadline hit).
   // Budget scales by rank: 1×, 0.75×, 0.5×, 0.25×.
-  // ════════════════════════════════════════════════════════════════════
 
   const MAX_PHASE3_ROUNDS = 6;
   const BUDGET_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
@@ -1804,7 +1773,7 @@ export async function* runTeamOptimization(
       const sheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
       try {
         if (!teamArtifactsMeetConstraints(bestArtifactsByChar)) return 0;
-        return evaluateCombo(effectiveTeamBuild, combo, sheets, calcContext)
+        return effectiveTeamBuild.evaluateCombo(combo, sheets, calcContext)
           .totalDamage;
       } catch {
         return 0;
@@ -1856,8 +1825,7 @@ export async function* runTeamOptimization(
       const evalSheets = { ...refinedBaseSheets, [charId]: charSheet };
       let currentDamage: number;
       try {
-        currentDamage = evaluateCombo(
-          effectiveTeamBuild,
+        currentDamage = effectiveTeamBuild.evaluateCombo(
           combo,
           evalSheets,
           calcContext,
@@ -2063,8 +2031,7 @@ export async function* runTeamOptimization(
       let tentativeDamage: number;
       try {
         if (!teamArtifactsMeetConstraints(tentativeArts)) continue;
-        tentativeDamage = evaluateCombo(
-          effectiveTeamBuild,
+        tentativeDamage = effectiveTeamBuild.evaluateCombo(
           combo,
           tentativeSheets,
           calcContext
@@ -2088,7 +2055,6 @@ export async function* runTeamOptimization(
     bestArtifactsByChar[bestCharId] = artsTupleToRecord(bestNewArtifacts);
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Phase 3b: Pair-wise Perturbation
   //
   // Phase 3 coordinate descent converges to a local optimum where no
@@ -2099,7 +2065,6 @@ export async function* runTeamOptimization(
   // artifacts, re-run B&B for each in sequence (giving access to a
   // larger artifact pool), then check if team damage improved.
   // If any pair improves, restart Phase 3 for one more convergence pass.
-  // ════════════════════════════════════════════════════════════════════
 
   if (phase3Chars.length >= 2) {
     // Set-aware evaluation: detects actual equipped artifact sets and
@@ -2163,7 +2128,7 @@ export async function* runTeamOptimization(
             teamBuild.extraBuffs
           );
         }
-        return evaluateCombo(evalTB, combo, sheets, calcContext).totalDamage;
+        return evalTB.evaluateCombo(combo, sheets, calcContext).totalDamage;
       } catch {
         return 0;
       }
@@ -2338,7 +2303,7 @@ export async function* runTeamOptimization(
           );
           try {
             if (!teamArtifactsMeetConstraints(bestArtifactsByChar)) return 0;
-            return evaluateCombo(effectiveTeamBuild, combo, sheets, calcContext)
+            return effectiveTeamBuild.evaluateCombo(combo, sheets, calcContext)
               .totalDamage;
           } catch {
             return 0;
@@ -2402,8 +2367,7 @@ export async function* runTeamOptimization(
             let newTeamDamage: number;
             try {
               if (!teamArtifactsMeetConstraints(testArts)) continue;
-              newTeamDamage = evaluateCombo(
-                effectiveTeamBuild,
+              newTeamDamage = effectiveTeamBuild.evaluateCombo(
                 combo,
                 testSheets,
                 calcContext
@@ -2423,14 +2387,12 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Heuristic Fill for Saturated & Failed Characters
   //
   // Saturated characters' artifacts don't affect team damage, so B&B
   // was skipped. Characters whose B&B failed (e.g. couldn't meet ER/CR)
   // also need heuristic fill. Fill them from the remaining pool using
   // build-page heuristic weights, respecting set constraints and ER/CR.
-  // ════════════════════════════════════════════════════════════════════
 
   // Characters needing heuristic fill: saturated + failed B&B (no artifacts assigned)
   const needsHeuristicFill = new Set<string>(saturatedCharIds);
@@ -2726,9 +2688,7 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════
   // Final: detect accidental sets and rebuild if needed
-  // ════════════════════════════════════════════════════════════════════
 
   let setsChanged = effectiveTeamBuild !== teamBuild;
   for (const charId of allCharIds) {
@@ -2822,7 +2782,7 @@ export async function* runTeamOptimization(
             teamBuild.extraBuffs
           );
         }
-        return evaluateCombo(evalTB, combo, sheets, calcContext, buffOverrides)
+        return evalTB.evaluateCombo(combo, sheets, calcContext, buffOverrides)
           .totalDamage;
       } catch {
         return 0;
@@ -2960,8 +2920,7 @@ export async function* runTeamOptimization(
 
   let comboRes: ComboResult;
   try {
-    comboRes = evaluateCombo(
-      effectiveTeamBuild,
+    comboRes = effectiveTeamBuild.evaluateCombo(
       combo,
       finalSheets,
       calcContext,

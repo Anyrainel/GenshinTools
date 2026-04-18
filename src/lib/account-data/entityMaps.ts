@@ -5,10 +5,8 @@ import { i18nGameData } from "@/data/i18n-game";
 export const normalizeEntityName = (str: string): string =>
   str.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
-// ---------------------------------------------------------------------------
 // Maps that include beta data (beta first, then game data overlay so released
 // entries win on name collisions). Used by GOOD import.
-// ---------------------------------------------------------------------------
 
 export const charNameMap = new Map<string, string>();
 for (const [id, data] of Object.entries(i18nBetaData.characters)) {
@@ -31,10 +29,8 @@ for (const [id, data] of Object.entries(i18nGameData.artifacts)) {
   artifactNameMap.set(normalizeEntityName(data.en), id);
 }
 
-// ---------------------------------------------------------------------------
 // Maps built from game data only (no beta). Used by HoYoLAB fetcher where
 // beta entities aren't relevant.
-// ---------------------------------------------------------------------------
 
 export const gameOnlyCharNameMap = new Map<string, string>();
 for (const [id, data] of Object.entries(i18nGameData.characters)) {

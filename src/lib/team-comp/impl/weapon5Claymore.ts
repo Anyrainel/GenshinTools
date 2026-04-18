@@ -4,9 +4,7 @@ import { ScalingBuff, StatBuff } from "../calc/statBuff";
 import type { OptionDef } from "../types";
 import { r, wbs } from "./helpers";
 
-// ══════════════════════════
 // 5★ Claymores
-// ══════════════════════════
 
 @RegisterWeapon("a_thousand_blazing_suns")
 class AThousandBlazingSuns extends WeaponBase {

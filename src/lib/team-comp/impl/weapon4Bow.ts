@@ -1,14 +1,12 @@
 import { WeaponBase } from "../calc/implModel";
 import { RegisterWeapon, resolveOption } from "../calc/registry";
-import { ScalingBuff, StatBuff } from "../calc/statBuff";
+import { StatBuff } from "../calc/statBuff";
 import type { OptionDef } from "../types";
 import type { StatKey } from "../types";
 import { ALL_ELEMENTAL_FILTER } from "./helpers";
 import { r, wbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Bows
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterWeapon("rainbow_serpents_rain_bow")
 class RainbowSerpentsRainBow extends WeaponBase {

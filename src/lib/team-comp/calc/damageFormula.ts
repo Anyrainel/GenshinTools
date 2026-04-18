@@ -58,9 +58,7 @@ const LUNAR_REACTION_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
   lunarBloom: 1.0,
 };
 
-// ═══════════════════════════════════════════════════════════════
 // DamageFormula Hierarchy
-// ═══════════════════════════════════════════════════════════════
 //
 // Covers the standard Genshin damage formulas (see DmgResearch.md).
 // Each formula receives a DamageTag describing its full context:

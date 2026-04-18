@@ -18,8 +18,6 @@ import {
 } from "@/stores/useFreezeStore";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function makeArt(
   id: string,
   slot: Slot = "flower",
@@ -54,8 +52,6 @@ function resetFreezeStore() {
     reuseMode: "sameChar",
   });
 }
-
-// ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("remapArtifactIds", () => {
   beforeEach(resetFreezeStore);

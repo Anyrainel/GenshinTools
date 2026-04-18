@@ -35,11 +35,7 @@ const EMPTY_LABEL = { en: "", zh: "" } as const;
 export function getEffectiveCombo(
   team: Pick<
     Team,
-    | "formulaMode"
-    | "selectedFormula"
-    | "singleReaction"
-    | "combos"
-    | "selectedCombo"
+    "formulaMode" | "selectedFormula" | "singleReaction" | "combo"
   >
 ): ComboFormula {
   const mode = team.formulaMode ?? "single";
@@ -59,14 +55,11 @@ export function getEffectiveCombo(
   }
 
   // combo mode
-  const selected =
-    (team.combos ?? []).find((c) => c.id === team.selectedCombo) ??
-    team.combos?.[0];
-  if (!selected) {
+  if (!team.combo) {
     return { id: "__combo_empty__", label: EMPTY_LABEL, lines: [] };
   }
   return {
-    ...selected,
-    lines: selected.lines.filter((l) => l.count > 0),
+    ...team.combo,
+    lines: team.combo.lines.filter((l) => l.count > 0),
   };
 }

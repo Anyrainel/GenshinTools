@@ -14,6 +14,8 @@ import type { CalcContext } from "@/lib/team-comp/types";
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 describe("DirectFormula", () => {
@@ -379,6 +381,8 @@ describe("computeResMult branches", () => {
     const ctx: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
     };
 
     const resMult = (
@@ -395,6 +399,8 @@ describe("computeResMult branches", () => {
     const ctx: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.9, // 90% base RES
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
     };
 
     const resMult = (
@@ -411,6 +417,8 @@ describe("computeResMult branches", () => {
     const ctx: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.5,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
     };
 
     const resMult = (

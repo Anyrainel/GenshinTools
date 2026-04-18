@@ -28,9 +28,12 @@ import {
 
 await preloadGameStats();
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-const CTX = { enemyLevel: 100, enemyRes: 0.1 };
+const CTX = {
+  enemyLevel: 100,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6" as const,
+};
 const GLOBAL_CONFIG: GlobalStatWeights = {
   flatAtk: 1,
   flatHp: 0,
@@ -76,8 +79,6 @@ function getAssignedIds(
     .map((s) => charArts[s]?.id)
     .filter((id): id is string => !!id);
 }
-
-// ── Tests ────────────────────────────────────────────────────────────────────
 
 describe("perCharExcludedArtifactIds", () => {
   it("excluded artifacts are not assigned to the specified character", async () => {

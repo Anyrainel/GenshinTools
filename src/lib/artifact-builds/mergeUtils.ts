@@ -8,7 +8,6 @@
 
 import type {
   CharacterMergeInfo,
-  MainStatPlus,
   SetConfig,
   SlotConfig,
   SubStat,

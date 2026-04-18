@@ -33,11 +33,11 @@ import {
 
 await preloadGameStats();
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 
 const GLOBAL_CONFIG: GlobalStatWeights = {

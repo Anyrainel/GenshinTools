@@ -31,7 +31,6 @@ import type { Element, Rarity } from "@/data/types";
 
 import { CharBuild } from "../calc/charBuild";
 import { resolveComboDescriptor } from "../calc/combo";
-import { evaluateCombo } from "../calc/damageCalc";
 import { StatSheet } from "../calc/statSheet";
 import { TeamBuild } from "../calc/teamBuild";
 import { TeamMeta } from "../calc/teamMeta";
@@ -46,7 +45,6 @@ import type {
   CalcContext,
   ComboFormula,
   ComboLine,
-  ComboTemplate,
   FormulaOverride,
   PartialBuffInfo,
   TeamSlotConfig,
@@ -76,6 +74,8 @@ import type {
 const ANALYZER_CALC_CONTEXT: CalcContext = {
   enemyLevel: 110,
   enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
 };
 const ANALYZER_ROLL_MULT = 0.85;
 
@@ -199,8 +199,6 @@ function computeM(
   }
   return total;
 }
-
-// ─── Helpers ───
 
 function getBaselineState(
   cfg: AnalyzerCharConfig,
@@ -723,7 +721,7 @@ function evalWithCachedArtifacts(
       }
     }
 
-    return evaluateCombo(tb, validCombo, sheets, calcContext, buffOverrides)
+    return tb.evaluateCombo(validCombo, sheets, calcContext, buffOverrides)
       .totalDamage;
   } catch {
     return 0;
@@ -775,11 +773,7 @@ async function runGeneration(
   enemyAura: Element | undefined,
   combo: ComboFormula,
   perChar?: Record<string, { minEr: number; minCr: number }>,
-  overrides?: {
-    calcContext?: CalcContext;
-    rollMultiplier?: number;
-    substatBudget?: SubstatBudgetPreset;
-  }
+  calcContext?: CalcContext
 ): Promise<Record<string, StatSheet>> {
   const configs = baseConfigs.map((bc) => {
     const inv = allocation[bc.charId];
@@ -793,12 +787,12 @@ async function runGeneration(
   for await (const result of runGenerator({
     teamBuild,
     carryCharId,
-    calcContext: overrides?.calcContext ?? ANALYZER_CALC_CONTEXT,
+    calcContext: calcContext ?? ANALYZER_CALC_CONTEXT,
     formula: {
       combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
     },
-    rollMultiplier: overrides?.rollMultiplier ?? ANALYZER_ROLL_MULT,
-    substatBudget: overrides?.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET,
+    rollMultiplier: calcContext?.rollMultiplier ?? ANALYZER_ROLL_MULT,
+    substatBudget: calcContext?.substatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET,
     perChar,
     ignoreArtifactSets: {},
   })) {
@@ -915,11 +909,7 @@ async function* computePhase1(
       enemyAura,
       derivedCombo,
       effectivePerChar,
-      {
-        calcContext: opts.calcContext,
-        rollMultiplier: opts.rollMultiplier,
-        substatBudget: opts.substatBudget,
-      }
+      opts.calcContext
     );
 
     snapshotCache[snapshot.id] = result;
@@ -1065,7 +1055,7 @@ async function* computePhase2(
           combatOpts,
           enemyAura,
           activeCombo,
-          opts.calcContext ?? ANALYZER_CALC_CONTEXT,
+          opts.calcContext,
           charBuildCache,
           hasAnyStackLimited
         );
@@ -1224,7 +1214,7 @@ async function* computePhase3(
           combatOpts,
           enemyAura,
           activeCombo,
-          opts.calcContext ?? ANALYZER_CALC_CONTEXT,
+          opts.calcContext,
           charBuildCache,
           hasAnyStackLimited
         );

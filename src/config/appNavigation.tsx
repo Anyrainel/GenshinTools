@@ -3,7 +3,6 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
-  Battery,
   Book,
   Box,
   Crosshair,

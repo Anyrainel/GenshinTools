@@ -8,10 +8,6 @@ import { DEFAULT_INVESTMENT_THRESHOLDS } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 export interface TierListInstance {
   id: number;
   tierAssignments: TierAssignment;
@@ -76,9 +72,7 @@ interface TierListState {
   findTierListByAccount: (accountId: string) => number | null;
 }
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 function createEmptyInstance(id: number, title = ""): TierListInstance {
   return {
@@ -122,9 +116,7 @@ function updateActiveInstance(
   return { ...base, ...deriveActiveFields(base) };
 }
 
-// ---------------------------------------------------------------------------
 // Migration
-// ---------------------------------------------------------------------------
 
 interface V0PersistedState {
   tierAssignments?: TierAssignment;
@@ -174,9 +166,7 @@ export function migrateTierStore(
   return persistedState as Record<string, unknown>;
 }
 
-// ---------------------------------------------------------------------------
 // Store
-// ---------------------------------------------------------------------------
 
 const defaultInstance = createEmptyInstance(1);
 const defaultTierLists: Record<number, TierListInstance> = {

@@ -29,8 +29,6 @@ import { AutoTuneResults } from "./AutoTuneResults";
 import { AutoTuneTeamRow } from "./AutoTuneTeamRow";
 import { TeamEditDialog } from "./TeamEditDialog";
 
-// ─── Helpers ───
-
 /** Unique key for a combo line: formulaId + reaction */
 function comboLineKey(line: ComboLine): string {
   return `${line.formulaId}.${line.reaction?.reaction ?? "none"}`;
@@ -106,8 +104,6 @@ function reducer(state: State, action: Action): State {
       };
   }
 }
-
-// ─── Props ───
 
 interface AutoTuneDialogProps {
   open: boolean;

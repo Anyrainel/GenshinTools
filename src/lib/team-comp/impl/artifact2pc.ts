@@ -3,9 +3,7 @@ import { RegisterArtifactHalfSet } from "../calc/registry";
 import { StatBuff } from "../calc/statBuff";
 import type { StatEntry } from "../types";
 
-// ═══════════════════════════════════════════════════════════════
 // Artifact 2-Piece Set Bonuses
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterArtifactHalfSet("cryo%-15")
 class CryoDmg2pc extends ArtifactHalfSetBase {

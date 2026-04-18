@@ -1,5 +1,4 @@
 import type {
-  AccountData,
   ArtifactData,
   Build,
   BuildGroup,
@@ -21,9 +20,7 @@ import {
 import { describe, expect, it } from "vitest";
 import { createAccountData, createArtifactData } from "../../fixtures";
 
-// ---------------------------------------------------------------------------
 // Helpers & Factories
-// ---------------------------------------------------------------------------
 
 const GLOBAL_CONFIG: GlobalStatWeights = {
   flatAtk: 30,

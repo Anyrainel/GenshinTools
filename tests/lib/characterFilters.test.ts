@@ -1,8 +1,4 @@
-import type {
-  CharacterFilters,
-  CharacterResource,
-  TierAssignment,
-} from "@/data/types";
+import type { CharacterResource, TierAssignment } from "@/data/types";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,

@@ -1,7 +1,5 @@
-import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
+import type { ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
-import { evaluateCombo } from "@/lib/team-comp/calc/damageCalc";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { hasOffFieldParts } from "@/lib/team-comp/calc/teamBuild";
@@ -25,7 +23,6 @@ import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
-  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import {
   type OptFailReason,
@@ -35,8 +32,6 @@ import {
 } from "../../lib/team-comp/optimizer/optimizerV1";
 
 const warnedCalcErrors = new Set<string>();
-
-// ─── Helpers ───
 
 function collectArtifactIds(arts: Record<Slot, ArtifactData | null>): string[] {
   const ids: string[] = [];
@@ -114,7 +109,7 @@ function computeFinalScore(
   const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
   if (isComboMode && combo) {
     try {
-      return evaluateCombo(teamBuild, combo, sheets, calcContext, buffOverrides)
+      return teamBuild.evaluateCombo(combo, sheets, calcContext, buffOverrides)
         .totalDamage;
     } catch (e) {
       const key = `computeFinalScore:${carryCharId}`;
@@ -179,8 +174,7 @@ export async function* runTeamOptimization(
   const comboScoreFn = isComboMode
     ? (sheets: Record<string, StatSheet>, _onFieldCharId: string): number => {
         try {
-          return evaluateCombo(
-            teamBuild,
+          return teamBuild.evaluateCombo(
             combo,
             sheets,
             calcContext,
@@ -275,13 +269,8 @@ export async function* runTeamOptimization(
             _onFieldCharId: string
           ): number => {
             try {
-              return evaluateCombo(
-                tb,
-                combo,
-                sheets,
-                calcContext,
-                buffOverrides
-              ).totalDamage;
+              return tb.evaluateCombo(combo, sheets, calcContext, buffOverrides)
+                .totalDamage;
             } catch (e) {
               const key = `passComboScoreFn:${carryCharId}`;
               if (!warnedCalcErrors.has(key)) {
@@ -343,9 +332,7 @@ export async function* runTeamOptimization(
     return lastResult;
   }
 
-  // ════════════════════════════════════════════════════════════════════════
   // Phase 1: Unlocked pass — optimize all characters without locking
-  // ════════════════════════════════════════════════════════════════════════
 
   // ── Time budgeting ──
   const teamDeadlineMs = opts.teamDeadlineMs;
@@ -482,9 +469,7 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════════
   // Phase 2: Detect conflicts — find artifacts claimed by 2+ characters
-  // ════════════════════════════════════════════════════════════════════════
 
   function findCompetitorSet(
     results: Record<
@@ -512,9 +497,7 @@ export async function* runTeamOptimization(
 
   const competitorSet = findCompetitorSet(unlockedResults);
 
-  // ════════════════════════════════════════════════════════════════════════
   // Phase 3: Permutation loop — try all orderings of competitors
-  // ════════════════════════════════════════════════════════════════════════
 
   // Best round-1 result (artifacts + score) across all permutations
   let bestR1ArtifactsByChar: Record<
@@ -947,9 +930,7 @@ export async function* runTeamOptimization(
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════════
   // Phase 4: Carry round-2 — re-optimize carries with support artifacts locked
-  // ════════════════════════════════════════════════════════════════════════
 
   // Start from the best round-1 result
   let currentSheets = buildSheetsFromArtifacts(
@@ -1076,9 +1057,7 @@ export async function* runTeamOptimization(
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════════
   // Phase 5: Constraint repair — re-validate minEr/minCr after carry-2
-  // ════════════════════════════════════════════════════════════════════════
   // Carry-2 re-optimization changes carry artifacts, which can shift team
   // buffs and cause support ER/CR to drift below thresholds. Re-optimize
   // any violating character with all other characters locked.
@@ -1163,9 +1142,7 @@ export async function* runTeamOptimization(
     }
   }
 
-  // ════════════════════════════════════════════════════════════════════════
   // Final result — detect accidental set bonuses and rebuild if needed
-  // ════════════════════════════════════════════════════════════════════════
 
   const bestArtifactsByChar = bestR1ArtifactsByChar;
 
@@ -1233,8 +1210,7 @@ export async function* runTeamOptimization(
 
   let comboRes: ComboResult;
   try {
-    comboRes = evaluateCombo(
-      effectiveTeamBuild,
+    comboRes = effectiveTeamBuild.evaluateCombo(
       combo,
       finalSheets,
       calcContext,

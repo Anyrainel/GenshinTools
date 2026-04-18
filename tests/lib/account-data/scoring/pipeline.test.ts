@@ -39,8 +39,6 @@ function makeBuild(overrides?: Partial<Build>): Build {
   };
 }
 
-// ─── Tests ───
-
 describe("computeIdealScore", () => {
   it("should produce a normalizer that maps ideal to 300", () => {
     const weights = {

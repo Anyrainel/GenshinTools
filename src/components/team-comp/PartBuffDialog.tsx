@@ -25,18 +25,17 @@ import {
   getSourceIcon,
   getSourceName,
 } from "@/lib/team-comp/buffDisplayUtils";
+import { getTemplateName } from "@/lib/team-comp/displayFormatter";
 import type {
   BuffActivationMap,
   DisplayPart,
   ResolvedBuff,
   ResolvedStatEntry,
-  StatKey,
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { Settings2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { getTemplateName } from "./FormulaBreakdown";
 
 type Props = {
   parts: DisplayPart[];

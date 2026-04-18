@@ -3,12 +3,12 @@ import { artifactIdToHalfSetId } from "@/data/constants";
 import type {
   AccountData,
   ArtifactData,
+  CharacterData,
   Slot,
   TierAssignment,
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
-import { getComboDisplayResult } from "@/lib/team-comp/calc/damageCalc";
 import { distributeComboHits } from "@/lib/team-comp/calc/stackAllocation";
 import type {
   BuffActivationMap,
@@ -23,12 +23,7 @@ import type { Team, WeaponChoiceCharConfig } from "@/stores/useTeamStore";
 import { StatSheet } from "./calc/statSheet";
 import type { TeamBuild } from "./calc/teamBuild";
 
-export interface DamageDetailProps {
-  team: Team;
-  onBack: () => void;
-}
-
-export interface DetectedSets {
+interface DetectedSets {
   artifactSetId: string | null;
   artifactHalfSetIds: string[];
 }
@@ -253,8 +248,8 @@ export function buildWeaponChoiceCharConfigs(
       constellation,
       talentLevels,
       artifactConfig: team.artifacts[i] ?? null,
-      minEr: team.minEr?.[charId] ?? 1,
-      minCr: team.minCr?.[charId] ?? 0,
+      minEr: team.charSettings?.[charId]?.minEr ?? 1,
+      minCr: team.charSettings?.[charId]?.minCr ?? 0,
     });
   }
   return configs;
@@ -293,8 +288,7 @@ export function calcComboResults(
   const activeLines = combo.lines.filter((l) => l.count > 0);
   if (activeLines.length === 0) return null;
   const activeCombo = { ...combo, lines: activeLines };
-  return getComboDisplayResult(
-    build,
+  return build.getComboDisplayResult(
     activeCombo,
     sheets,
     context,
@@ -475,4 +469,42 @@ export function getHigherTierEquippedArtifactIds(
     }
   }
   return excludedIds;
+}
+export function resolveBuildInfo(
+  charId: string,
+  team: Team,
+  accountData: AccountData | null
+) {
+  const acctChar = accountData?.characters.find(
+    (c: CharacterData) => c.key === charId
+  );
+  const charLevel =
+    team.opts?.[`${charId}.overrideLevel`] !== undefined
+      ? Number(team.opts[`${charId}.overrideLevel`])
+      : acctChar
+        ? Number(getCharacterLevelTier(acctChar.level))
+        : 90;
+  const charConst =
+    team.opts?.[`${charId}.overrideConstellation`] !== undefined
+      ? Number(team.opts[`${charId}.overrideConstellation`])
+      : (acctChar?.constellation ?? 0);
+  const idx = team.characters.indexOf(charId);
+  const weaponId = idx >= 0 ? team.weapons[idx] : null;
+  let defaultRefine = 1;
+  if (weaponId && accountData) {
+    const refinements: number[] = [];
+    for (const c of accountData.characters) {
+      if (c.weapon?.key === weaponId) refinements.push(c.weapon.refinement);
+    }
+    for (const w of accountData.extraWeapons) {
+      if (w.key === weaponId) refinements.push(w.refinement);
+    }
+    if (refinements.length > 0) defaultRefine = Math.max(...refinements);
+  }
+  const weaponRefine =
+    team.opts?.[`${charId}.overrideRefinement`] !== undefined
+      ? Number(team.opts[`${charId}.overrideRefinement`])
+      : defaultRefine;
+  const artConfig = idx >= 0 ? team.artifacts[idx] : null;
+  return { charLevel, charConst, weaponId, weaponRefine, artConfig };
 }

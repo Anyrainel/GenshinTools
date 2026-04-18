@@ -1,10 +1,4 @@
-import type {
-  ArtifactData,
-  Build,
-  CharacterData,
-  GlobalStatWeights,
-  MainStat,
-} from "@/data/types";
+import type { Build, CharacterData, GlobalStatWeights } from "@/data/types";
 import {
   type ArtifactScoreResult,
   type StatWeightMap,
@@ -432,9 +426,7 @@ const mismatchedChar: CharacterData = {
   },
 };
 
-// ---------------------------------------------------------------------------
 // Tests
-// ---------------------------------------------------------------------------
 
 describe("matchBuild", () => {
   describe("basic behavior", () => {
@@ -921,9 +913,7 @@ describe("scoreWithMatchedBuild", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
 // Normalized Score (main stat scoring + 300-point scale)
-// ---------------------------------------------------------------------------
 
 describe("normalizedScore", () => {
   describe("full character — all main stats correct", () => {

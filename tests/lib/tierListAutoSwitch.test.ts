@@ -1,5 +1,4 @@
 import { handleAccountSwitch } from "@/lib/tierListAutoSwitch";
-import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { beforeEach, describe, expect, it } from "vitest";
 

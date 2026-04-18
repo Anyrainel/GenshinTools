@@ -1,7 +1,6 @@
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
 import { ArrowLeft, BarChart3, Lightbulb, Lock } from "lucide-react";
 import { PREVIEW_BUILD } from "./previewData";
 

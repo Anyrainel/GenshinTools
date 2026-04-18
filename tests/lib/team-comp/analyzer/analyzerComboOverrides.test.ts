@@ -23,8 +23,6 @@ import type {
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
-// ─── Helpers ───
-
 /** Create a minimal mock TeamBuild that returns given descriptors per character. */
 function mockTeamBuild(
   descriptors: Record<string, ComboTemplate>,
@@ -477,9 +475,7 @@ describe("buildEffectivePerChar", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // Analyzer override keys — rxCharOverrideKey / rxDeltaOverrideKey
-// ═══════════════════════════════════════════════════════════════
 
 describe("rxCharOverrideKey", () => {
   it("builds _rx-char|{charId}|{formulaId} format", () => {
@@ -503,9 +499,7 @@ describe("rxDeltaOverrideKey", () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
 // deriveComboForAllocation — rx- line expansion
-// ═══════════════════════════════════════════════════════════════
 
 describe("deriveComboForAllocation — rx- handling", () => {
   it("resolves per-triggerer rx- template lines with correct counts", () => {

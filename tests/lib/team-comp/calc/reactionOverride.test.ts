@@ -105,6 +105,8 @@ describe("per-part reaction override — damage calc", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -243,6 +245,8 @@ describe("partHits — multi-hit split", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -439,6 +443,8 @@ describe("getDamageResult matches getDisplayResult total damage", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -516,7 +522,12 @@ describe("multi-element character reaction overrides", () => {
     },
   ];
 
-  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    rollMultiplier: 0.85,
+    substatBudget: "8_6",
+  };
 
   const emptySheets: Record<string, StatSheet> = {
     chasca: new StatSheet([]),

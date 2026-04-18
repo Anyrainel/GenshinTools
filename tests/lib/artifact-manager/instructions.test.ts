@@ -1,4 +1,4 @@
-import type { ArtifactData, Slot } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import { buildTriageInstructions } from "@/lib/artifact-manager/instructions";
 import { describe, expect, it } from "vitest";
 

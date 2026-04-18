@@ -5,7 +5,6 @@ import {
   ICON_CONFIG,
   ItemIcon,
   type ItemIconSize,
-  SIZE_CLASSES,
 } from "@/components/shared/ItemIcon";
 import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
@@ -24,7 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -61,9 +60,8 @@ import {
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { Ban, Bookmark, Check, Search, Trophy, X } from "lucide-react";
+import { Ban, Bookmark, Search, Trophy, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 type ItemPickerType = "character" | "weapon" | "artifact";
@@ -244,9 +242,7 @@ function ItemPickerComponent<T extends ItemPickerType>({
   );
 }
 
-// ------------------------------------------------------------------
 // Sub-components
-// ------------------------------------------------------------------
 
 function PickerItemName({
   type,

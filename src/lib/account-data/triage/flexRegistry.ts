@@ -30,9 +30,7 @@ export function sortSubs(subs: SubStat[]): SubStat[] {
   return [...subs].sort((a, b) => (SUB_ORDER[a] ?? 99) - (SUB_ORDER[b] ?? 99));
 }
 
-// ---------------------------------------------------------------------------
 // Curated templates (compact authoring format)
-// ---------------------------------------------------------------------------
 
 type FlexSub = SubStat | "flat";
 type RawFlex = [Slot, (MainStat | "elemental%")[], FlexSub[], boolean?];
@@ -107,9 +105,7 @@ const CURATED: RawFlex[] = [
   ["circlet", ["atk%"], ["cr", "er", "atk"]],
 ];
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 const NON_SUB = new Set([
   "pyro%",
@@ -174,9 +170,7 @@ export function computeRarity(
   return getMainProb(slot, mainStat) * p;
 }
 
-// ---------------------------------------------------------------------------
 // Public API
-// ---------------------------------------------------------------------------
 
 /**
  * Expands the curated templates into individual FlexPatterns —

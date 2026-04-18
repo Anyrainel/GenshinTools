@@ -15,7 +15,6 @@ import {
 import { StatSheet } from "../calc/statSheet";
 import type { TeamBuild } from "../calc/teamBuild";
 import {
-  ER_20_HALF_SET_ID,
   type ErCrGap,
   computeErCrGap,
   computeSubstatPreFill,
@@ -28,7 +27,6 @@ import type {
   ComboFormula,
   FormulaContext,
   PartialBuffInfo,
-  StatKey,
 } from "../types";
 import {
   type FlexSlotConfig,
@@ -36,7 +34,6 @@ import {
   constrainedGreedyAllocate,
   emptySubRolls,
   getRollValues,
-  rollToInternal,
 } from "./constrainedGreedy";
 import type { SubstatBudgetPreset } from "./substatBudget";
 import {
@@ -46,8 +43,6 @@ import {
 } from "./substatBudget";
 
 export type { SubstatBudgetPreset } from "./substatBudget";
-
-// ─── Types ───
 
 export interface GeneratorOptions {
   teamBuild: TeamBuild;
@@ -76,8 +71,6 @@ export interface GeneratorResult {
   progress: number;
   done: boolean;
 }
-
-// ─── Constants ───
 
 // Valid main stat pools per slot
 const mainStatPools: Record<Slot, readonly MainStat[]> = {
@@ -126,8 +119,6 @@ function pickRandom5StarSetKey(): string {
   if (all5Star.length === 0) return "generated";
   return all5Star[Math.floor(Math.random() * all5Star.length)].id;
 }
-
-// ─── Helpers ───
 
 /**
  * One-shot damage evaluation using compiled path.

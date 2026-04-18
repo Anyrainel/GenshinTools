@@ -6,9 +6,7 @@ import type { OptionDef } from "../types";
 import type { ComboTemplate, ElementalOrPhysical } from "../types";
 import { cbs } from "./helpers";
 
-// ═══════════════════════════════════════════════════════════════
 // 4★ Natlan Characters
-// ═══════════════════════════════════════════════════════════════
 
 @RegisterCharacter("ifa")
 class Ifa extends CharacterBase {

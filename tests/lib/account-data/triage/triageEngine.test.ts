@@ -2,7 +2,6 @@ import type {
   AccountData,
   ArtifactData,
   Build,
-  CharacterData,
   MainStat,
   SubStat,
   WeightedMainStat,
@@ -18,9 +17,7 @@ import type {
 } from "@/lib/account-data/triage/types";
 import { describe, expect, it } from "vitest";
 
-// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------------
 
 let artCounter = 0;
 
@@ -105,9 +102,7 @@ const SETTINGS: TriageSettings = {
   equippedProtection: false,
 };
 
-// ---------------------------------------------------------------------------
 // Tests
-// ---------------------------------------------------------------------------
 
 describe("runTriage", () => {
   it("returns decisions for all artifacts", () => {
@@ -321,9 +316,7 @@ describe("runTriage", () => {
     expect(decisions[0].label).toBe("lock");
   });
 
-  // ---------------------------------------------------------------------------
   // neutralKeep: under-supply keeps best N neutrals
-  // ---------------------------------------------------------------------------
 
   it("neutralKeep: locks top N neutral artifacts when supply < demand", () => {
     // 2 characters wanting the same embryo → demand = 2
@@ -443,9 +436,7 @@ describe("runTriage", () => {
     expect(locked[0].decidingResult?.ruleId).toBe("NK");
   });
 
-  // ---------------------------------------------------------------------------
   // qualityMargin: over-supply caps non-premium locks
-  // ---------------------------------------------------------------------------
 
   it("qualityMargin: caps Q-tier locks in over-supply", () => {
     // Use the tier evaluator to find substat combos that produce distinct P and Q tiers.
@@ -573,9 +564,7 @@ describe("runTriage", () => {
     expect(locked5).toHaveLength(6); // 1P + 5Q
   });
 
-  // ---------------------------------------------------------------------------
   // setSlotKeep: per set+slot minimum
-  // ---------------------------------------------------------------------------
 
   it("setSlotKeep: protects sole artifact in a set+slot from unlock", () => {
     // 1 trash-tier flower in test_set → triage wants to unlock it
@@ -659,9 +648,7 @@ describe("runTriage", () => {
     expect(decisions[0].label).toBe("unlock");
   });
 
-  // ---------------------------------------------------------------------------
   // Idempotency: applying recommendations and re-running produces no new actions
-  // ---------------------------------------------------------------------------
 
   it("idempotency: re-running after applying SK locks yields no new recs", () => {
     // 3 trash flowers in test_set, setSlotKeep=2 → SK promotes 2 to lock.
@@ -753,10 +740,8 @@ describe("runTriage", () => {
     expect(byId(freshB.id).label).toBe("unlock");
   });
 
-  // ---------------------------------------------------------------------------
   // Rule-tiebreak determinism: artifact's chosen group should not depend on
   // input rule order.
-  // ---------------------------------------------------------------------------
 
   it("matched rules are tiebroken by embryoKey (not input order)", () => {
     // Two characters with identical builds → two rules that produce different

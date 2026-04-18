@@ -135,8 +135,6 @@ const nonPresetCharIds = Object.keys(charactersById).filter(
   (id) => !presetCharIds.has(id)
 );
 
-// ─── Tests ───
-
 describe("Preset Validation", () => {
   it("every weapon should match the character's weaponType", () => {
     const charStats = getCharacterStatsSync()!;

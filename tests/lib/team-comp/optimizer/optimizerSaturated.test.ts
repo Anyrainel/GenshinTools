@@ -23,8 +23,6 @@ import "@/lib/team-comp/index";
 
 await preloadGameStats();
 
-// ─── Helpers ───
-
 let artIdCounter = 1;
 function makeArt(
   slot: Slot,
@@ -106,7 +104,12 @@ describe("Saturated character handling", () => {
   }
 
   it("saturation detection: Bennett empty vs super produce same damage", () => {
-    const calcContext = { enemyLevel: 90, enemyRes: 10 };
+    const calcContext = {
+      enemyLevel: 90,
+      enemyRes: 10,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6" as const,
+    };
 
     // Empty sheet for Bennett
     const emptySheets = {
@@ -165,7 +168,12 @@ describe("Saturated character handling", () => {
       carryCharId: "hu_tao",
       formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
       inventory,
-      calcContext: { enemyLevel: 90, enemyRes: 10 },
+      calcContext: {
+        enemyLevel: 90,
+        enemyRes: 10,
+        rollMultiplier: 0.85,
+        substatBudget: "8_6" as const,
+      },
       globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
       baseSheets,
       perChar: {
@@ -275,7 +283,12 @@ describe("Saturated character handling", () => {
         carryCharId: "hu_tao",
         formula: { combo: singleFormulaCombo("hu_tao", formulaId) },
         inventory: erSupportInventory,
-        calcContext: { enemyLevel: 90, enemyRes: 10 },
+        calcContext: {
+          enemyLevel: 90,
+          enemyRes: 10,
+          rollMultiplier: 0.85,
+          substatBudget: "8_6" as const,
+        },
         globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
         baseSheets,
         perChar: {
@@ -402,7 +415,12 @@ describe("Saturated character handling", () => {
       carryCharId: "hu_tao",
       formula: { combo: singleFormulaCombo("hu_tao", gorouFormulaId) },
       inventory: gorouInventory,
-      calcContext: { enemyLevel: 90, enemyRes: 10 },
+      calcContext: {
+        enemyLevel: 90,
+        enemyRes: 10,
+        rollMultiplier: 0.85,
+        substatBudget: "8_6" as const,
+      },
       globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
       baseSheets: gorouBaseSheets,
       perChar: {

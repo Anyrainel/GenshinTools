@@ -13,12 +13,13 @@ import type {
 import type { StoredAnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import type { OptionMap } from "@/lib/team-comp/types";
 import type { ExtraBuff } from "@/lib/team-comp/types";
-import type {
-  CalcContext,
-  ComboFormula,
-  ComboLine,
-  DamageResult,
-  FormulaOverride,
+import {
+  type CalcContext,
+  type ComboFormula,
+  type ComboLine,
+  DEFAULT_CALC_CONTEXT,
+  type DamageResult,
+  type FormulaOverride,
 } from "@/lib/team-comp/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -209,6 +210,115 @@ export function migrateTeamStore(
     // v12: Add optional analyzerReactionOverrides, analyzerEnemyAura, analyzerExtraBuffs fields.
     // No transformation needed — fields are optional and default to undefined.
   }
+  if (version < 13) {
+    // v13: CalcContext required, combo flatten, charSettings merge, analyzer grouping.
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy flat fields
+    state.teams = state.teams.map((t: any) => {
+      // ── CalcContext: make required, drop deprecated critRateTarget ──
+      const { critRateTarget: _, ...restCtx } = t.calcContext ?? {};
+      const calcContext = {
+        enemyLevel: restCtx.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
+        enemyRes: restCtx.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+        rollMultiplier:
+          restCtx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier,
+        substatBudget:
+          restCtx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget,
+        ...(restCtx.perCharCrTarget
+          ? { perCharCrTarget: restCtx.perCharCrTarget }
+          : {}),
+      };
+
+      // ── Combo flatten: combos[] + selectedCombo → combo ──
+      const combos: ComboFormula[] = t.combos ?? [];
+      const selectedCombo: string | null = t.selectedCombo ?? null;
+      const combo =
+        combos.find((c: ComboFormula) => c.id === selectedCombo) ??
+        combos[0] ??
+        null;
+
+      // ── CharSettings merge: 5 parallel Records → charSettings ──
+      const minEr: Record<string, number> = t.minEr ?? {};
+      const minCr: Record<string, number> = t.minCr ?? {};
+      const crMode: Record<string, string> = t.crMode ?? {};
+      const tierAwarePool: Record<string, boolean> = t.tierAwarePool ?? {};
+      const ignoreArtifactSets: Record<string, boolean> =
+        t.ignoreArtifactSets ?? {};
+      const allCharIds = new Set([
+        ...Object.keys(minEr),
+        ...Object.keys(minCr),
+        ...Object.keys(crMode),
+        ...Object.keys(tierAwarePool),
+        ...Object.keys(ignoreArtifactSets),
+      ]);
+      let charSettings: Record<string, CharSettings> | undefined;
+      if (allCharIds.size > 0) {
+        charSettings = {};
+        for (const charId of allCharIds) {
+          const s: CharSettings = {};
+          if (charId in minEr) s.minEr = minEr[charId];
+          if (charId in minCr) s.minCr = minCr[charId];
+          if (charId in crMode) s.crMode = crMode[charId] as "min" | "target";
+          if (charId in tierAwarePool) s.tierAwarePool = tierAwarePool[charId];
+          if (charId in ignoreArtifactSets)
+            s.ignoreArtifactSets = ignoreArtifactSets[charId];
+          charSettings[charId] = s;
+        }
+      }
+
+      // ── Analyzer grouping: 6 flat fields → analyzer sub-object ──
+      const hasAnalyzer =
+        t.analyzerConfigs ||
+        t.analyzerComboOverrides ||
+        t.analyzerMinErOverrides ||
+        t.analyzerReactionOverrides ||
+        t.analyzerEnemyAura ||
+        t.analyzerExtraBuffs;
+      const analyzer: AnalyzerConfig | undefined = hasAnalyzer
+        ? {
+            ...(t.analyzerConfigs ? { configs: t.analyzerConfigs } : {}),
+            ...(t.analyzerComboOverrides
+              ? { comboOverrides: t.analyzerComboOverrides }
+              : {}),
+            ...(t.analyzerMinErOverrides
+              ? { minErOverrides: t.analyzerMinErOverrides }
+              : {}),
+            ...(t.analyzerReactionOverrides
+              ? { reactionOverrides: t.analyzerReactionOverrides }
+              : {}),
+            ...(t.analyzerEnemyAura ? { enemyAura: t.analyzerEnemyAura } : {}),
+            ...(t.analyzerExtraBuffs
+              ? { extraBuffs: t.analyzerExtraBuffs }
+              : {}),
+          }
+        : undefined;
+
+      // ── Rebuild team, dropping old flat fields ──
+      const {
+        combos: _combos,
+        selectedCombo: _selectedCombo,
+        minEr: _minEr,
+        minCr: _minCr,
+        crMode: _crMode,
+        tierAwarePool: _tierAwarePool,
+        ignoreArtifactSets: _ignoreArtifactSets,
+        analyzerConfigs: _ac,
+        analyzerComboOverrides: _aco,
+        analyzerMinErOverrides: _amo,
+        analyzerReactionOverrides: _aro,
+        analyzerEnemyAura: _aea,
+        analyzerExtraBuffs: _aeb,
+        calcContext: _oldCtx,
+        ...rest
+      } = t;
+      return {
+        ...rest,
+        calcContext,
+        combo,
+        ...(charSettings ? { charSettings } : {}),
+        ...(analyzer ? { analyzer } : {}),
+      };
+    });
+  }
   return state;
 }
 
@@ -269,68 +379,68 @@ export interface WeaponChoiceCharConfig {
   minCr: number; // internal format
 }
 
+/** Per-character optimizer/generator settings, keyed by charId. */
+export interface CharSettings {
+  minEr?: number;
+  minCr?: number;
+  crMode?: "min" | "target";
+  tierAwarePool?: boolean;
+  ignoreArtifactSets?: boolean;
+}
+
+/** Analyzer-specific configuration, grouped under team.analyzer. */
+export interface AnalyzerConfig {
+  configs?: StoredAnalyzerCharConfig[];
+  comboOverrides?: ComboCountOverrides;
+  minErOverrides?: MinErOverrides;
+  reactionOverrides?: Record<string, FormulaOverride>;
+  enemyAura?: Element;
+  extraBuffs?: ExtraBuff[];
+}
+
 /** Default values for team fields that may be missing from persisted data. */
 const DEFAULT_TEAM_FIELDS = {
   reactions: [] as ReactionType[],
-  combos: [] as ComboFormula[],
-  selectedCombo: null as string | null,
+  combo: null as ComboFormula | null,
   formulaMode: "single" as "single" | "combo",
-  minEr: {} as Record<string, number>,
-  minCr: {} as Record<string, number>,
   opts: {} as OptionMap,
   extraBuffs: [] as ExtraBuff[],
+  calcContext: { ...DEFAULT_CALC_CONTEXT },
 } satisfies Partial<Team>;
 
 export interface Team {
   id: string;
   name: string;
+  // ─── Composition ───
   characters: (string | null)[];
   weapons: (string | null)[];
   artifacts: (ArtifactConfig | null)[];
   reactions: ReactionType[];
   opts: OptionMap;
-  minEr: Record<string, number>;
-  minCr?: Record<string, number>;
+  // ─── Shared config ───
+  calcContext: CalcContext;
+  /** Persistent element aura on the enemy (e.g. Pyro Regisvine). Enables reactions the team can't otherwise trigger. */
+  enemyAura?: Element;
+  /** Extra buffs applied by user (food, environment, status, custom). */
+  extraBuffs?: ExtraBuff[];
+  // ─── Formula / combo ───
   selectedFormula: { charId: string; formulaId: string } | null;
   /** Reaction override for the selected single formula. Persisted independently from combo lines. */
   singleReaction?: FormulaOverride;
-  optimizationResult: OptimizationResult | null;
-  calcContext?: Partial<CalcContext>;
   /** Formula mode: "single" evaluates one formula at a time, "combo" evaluates a full rotation. */
   formulaMode: "single" | "combo";
-  /** Combo formulas for rotation modeling */
-  combos: ComboFormula[];
-  /** Active combo ID, null = single formula mode */
-  selectedCombo: string | null;
-  /** Persistent element aura on the enemy (e.g. Pyro Regisvine). Enables reactions the team can't otherwise trigger. */
-  enemyAura?: Element;
-  /** Per-character analyzer configs (alt weapon, start/max C/R). Roster weapon is derived at runtime. */
-  analyzerConfigs?: StoredAnalyzerCharConfig[];
-  /** Flat sparse combo count overrides. Key = "charId|constellation|lineKey". */
-  analyzerComboOverrides?: ComboCountOverrides;
-  /** Flat sparse minEr overrides. Key = "charId|constellation". Value in internal format (1.6 = 160%). */
-  analyzerMinErOverrides?: MinErOverrides;
-  /** Per-formula reaction overrides for the analyzer (keyed by charId.formulaId). Independent from DamageView combos. */
-  analyzerReactionOverrides?: Record<string, FormulaOverride>;
-  /** Analyzer-specific enemy aura. Independent from DamageView enemyAura. */
-  analyzerEnemyAura?: Element;
-  /** Analyzer-specific extra buffs. Independent from DamageView extraBuffs. */
-  analyzerExtraBuffs?: ExtraBuff[];
-  /**
-   * Persisted weapon choice computation cache. This is a result cache, not
-   * user configuration — kept here so results survive navigation/refresh.
-   * There is no analogous Damage-tab cache (Damage results are recomputed
-   * synchronously per render), so this field has no duplicate to unify with.
-   */
+  /** Active combo, null when no combo is configured. */
+  combo: ComboFormula | null;
+  // ─── Per-character settings ───
+  /** Per-character optimizer/generator settings (minEr, minCr, crMode, tierAwarePool, ignoreArtifactSets). */
+  charSettings?: Record<string, CharSettings>;
+  // ─── Result caches ───
+  optimizationResult: OptimizationResult | null;
+  /** Persisted weapon choice computation cache. Result cache, not user config. */
   weaponChoiceResult?: WeaponChoiceResult | null;
-  /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
-  extraBuffs?: ExtraBuff[];
-  /** Per-character toggle to exclude artifacts equipped by higher-tier characters */
-  tierAwarePool?: Record<string, boolean>;
-  /** Per-character CR mode: "min" = minCr constraint, "target" = critRateTarget buff */
-  crMode?: Record<string, "min" | "target">;
-  /** Per-character toggle to ignore artifact sets when ER/CR can't be met */
-  ignoreArtifactSets?: Record<string, boolean>;
+  // ─── Analyzer ───
+  /** Analyzer-specific configuration (configs, overrides, enemy aura, extra buffs). */
+  analyzer?: AnalyzerConfig;
 }
 
 /** Exported artifact — `type` discriminator omitted since field names differ. */
@@ -404,6 +514,7 @@ export const useTeamStore = create<TeamState>()(
           ...DEFAULT_TEAM_FIELDS,
           selectedFormula: null,
           optimizationResult: null,
+          combo: null,
           ...initialData,
         };
         set((state) => {
@@ -511,15 +622,11 @@ export const useTeamStore = create<TeamState>()(
               ),
               reactions: t.reactions ?? [],
               opts: t.opts ?? {},
-              // Support both new (minEr/minCr) and legacy (targetEr/targetCr) formats
-              minEr: t.minEr ?? t.targetEr ?? {},
-              minCr: t.minCr ?? t.targetCr ?? {},
               selectedFormula: t.selectedFormula ?? null,
               optimizationResult: null,
               calcContext: t.calcContext,
               formulaMode: t.formulaMode ?? "combo",
-              combos: t.combos ?? [],
-              selectedCombo: t.selectedCombo ?? null,
+              combo: t.combo ?? null,
             };
           });
 
@@ -582,8 +689,16 @@ export const useTeamStore = create<TeamState>()(
             }),
           };
           if (t.reactions.length > 0) entry.reactions = t.reactions;
-          if (t.minEr && Object.keys(t.minEr).length > 0) entry.minEr = t.minEr;
-          if (t.minCr && Object.keys(t.minCr).length > 0) entry.minCr = t.minCr;
+          if (t.charSettings) {
+            const minEr: Record<string, number> = {};
+            const minCr: Record<string, number> = {};
+            for (const [cid, s] of Object.entries(t.charSettings)) {
+              if (s.minEr != null) minEr[cid] = s.minEr;
+              if (s.minCr != null) minCr[cid] = s.minCr;
+            }
+            if (Object.keys(minEr).length > 0) entry.minEr = minEr;
+            if (Object.keys(minCr).length > 0) entry.minCr = minCr;
+          }
           return entry;
         });
         return { teams: exportable, author, description };
@@ -591,7 +706,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 12,
+      version: 13,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }
