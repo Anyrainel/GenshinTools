@@ -78,9 +78,9 @@ export function ArtifactFreezeDialog({
   // All frozen artifact IDs (team-based + standalone).
   // frozenArtifactIds is not used in the callback but is listed to trigger
   // recomputation when standalone freezes change.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: frozenArtifactIds triggers recompute
   const allFrozenIds = useMemo(
     () => getFrozenArtifactIds(),
-    // biome-ignore lint/correctness/useExhaustiveDependencies: frozenArtifactIds triggers recompute
     [getFrozenArtifactIds, frozenArtifactIds]
   );
 

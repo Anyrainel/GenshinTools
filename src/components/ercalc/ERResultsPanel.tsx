@@ -89,6 +89,7 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: t is stable per language, which is already a dependency
   const handleApplyMinER = useCallback(() => {
     const charIds = team.map((s) => s.charId);
     const matching = findMatchingTeams(teams, charIds);

@@ -114,7 +114,12 @@ export function CharacterBuildView({
     });
 
     onTargetProcessed?.();
-  }, [targetCharacterId, characterStats, onTargetProcessed]);
+  }, [
+    targetCharacterId,
+    characterStats,
+    onTargetProcessed,
+    setCheckboxFilters,
+  ]);
 
   // Compute layout flags once and pass to all CharacterBuildCards
   const isMobile = !useMediaQuery("(min-width: 768px)");

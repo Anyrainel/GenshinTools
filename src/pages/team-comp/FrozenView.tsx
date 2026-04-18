@@ -309,6 +309,7 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
       () => new Set(frozenArtifactIds),
       [frozenArtifactIds]
     );
+    // biome-ignore lint/correctness/useExhaustiveDependencies: snapshotVersion triggers recompute when everFrozenArtIdsRef changes
     const displayStandaloneArtifacts = useMemo(() => {
       const result: { art: ArtifactData; slot: Slot; isFrozen: boolean }[] = [];
       for (const id of everFrozenArtIdsRef.current) {

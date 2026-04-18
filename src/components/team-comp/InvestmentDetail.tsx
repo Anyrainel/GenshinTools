@@ -68,9 +68,15 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   const localEnemyAura = team.analyzer?.enemyAura;
   const localExtraBuffs = team.analyzer?.extraBuffs ?? [];
 
+  // Ref to avoid stale closures on team.analyzer in callbacks/effects that also write to it
+  const analyzerRef = useRef(team.analyzer);
+  analyzerRef.current = team.analyzer;
+
   const setLocalEnemyAura = useCallback(
     (el: Element | undefined) => {
-      updateTeam(team.id, { analyzer: { ...team.analyzer, enemyAura: el } });
+      updateTeam(team.id, {
+        analyzer: { ...analyzerRef.current, enemyAura: el },
+      });
     },
     [team.id, updateTeam]
   );
@@ -84,7 +90,10 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     (_id: string, patch: Partial<Team>) => {
       if (patch.extraBuffs !== undefined) {
         updateTeam(team.id, {
-          analyzer: { ...team.analyzer, extraBuffs: patch.extraBuffs ?? [] },
+          analyzer: {
+            ...analyzerRef.current,
+            extraBuffs: patch.extraBuffs ?? [],
+          },
         });
       }
     },
@@ -188,7 +197,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     (stableKey: string, override: FormulaOverride) => {
       updateTeam(team.id, {
         analyzer: {
-          ...team.analyzer,
+          ...analyzerRef.current,
           reactionOverrides: {
             ...reactionOverrides,
             [stableKey]: override,
@@ -222,6 +231,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
 
   // Re-reconcile when baseConfigs change
   const baseCharIds = configs.map((b) => b.charId).join(",");
+  // biome-ignore lint/correctness/useExhaustiveDependencies: baseCharIds is a stable string key derived from configs; using configs directly would over-fire
   useEffect(() => {
     if (configs.length > 0) {
       setCharConfigs((prev) =>
@@ -230,12 +240,12 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
           : reconcileConfigs(storedConfigs ?? [], configs)
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseCharIds]);
 
   // Persist charConfigs to store
   const baseConfigsRef = useRef(configs);
   baseConfigsRef.current = configs;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: analyzerRef avoids infinite loop from team.analyzer
   useEffect(() => {
     if (charConfigs.length === 0) return;
     const bcs = baseConfigsRef.current;
@@ -243,24 +253,28 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       const bc = bcs.find((b) => b.charId === cfg.charId);
       return bc ? fullToStored(cfg, bc) : fullToStored(cfg, bcs[0]);
     });
-    updateTeam(team.id, { analyzer: { ...team.analyzer, configs: stored } });
+    updateTeam(team.id, {
+      analyzer: { ...analyzerRef.current, configs: stored },
+    });
   }, [charConfigs, team.id, updateTeam]);
 
   // Persist combo/minEr overrides
+  // biome-ignore lint/correctness/useExhaustiveDependencies: analyzerRef avoids infinite loop from team.analyzer
   useEffect(() => {
     updateTeam(team.id, {
       analyzer: {
-        ...team.analyzer,
+        ...analyzerRef.current,
         comboOverrides:
           Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
       },
     });
   }, [comboOverrides, team.id, updateTeam]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: analyzerRef avoids infinite loop from team.analyzer
   useEffect(() => {
     updateTeam(team.id, {
       analyzer: {
-        ...team.analyzer,
+        ...analyzerRef.current,
         minErOverrides:
           Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
       },

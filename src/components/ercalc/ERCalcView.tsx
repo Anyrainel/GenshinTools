@@ -102,6 +102,7 @@ export function ERCalcView() {
   const mainTimeline = timelines[timelines.length - 1] ?? [];
   const startupTimelines = timelines.slice(0, -1);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mainTimeline and startupTimelines are derived from timelines
   const results = useMemo<ERResult[]>(() => {
     if (team.length === 0 || mainTimeline.length === 0) return [];
     const teamMembers = team.map(toTeamMember);

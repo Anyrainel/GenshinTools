@@ -53,6 +53,7 @@ export function AnalyzerSequence({ result, charIds }: AnalyzerSequenceProps) {
   const nodeRefs = useRef(new Map<string, HTMLDivElement>());
   const [edgeLines, setEdgeLines] = useState<EdgeLine[]>([]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: rows triggers re-measurement when DOM layout changes
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;

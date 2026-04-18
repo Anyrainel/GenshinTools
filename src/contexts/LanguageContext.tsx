@@ -175,7 +175,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isTestEnv) return;
     loadCharacterKits(language).then(setKitData);
-  }, [language, isTestEnv]);
+  }, [language]);
 
   // Preload weapon & artifact game data for the current language
   const [weaponData, setWeaponData] = useState<WeaponGameData>({});
@@ -225,7 +225,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         artifactLoader().then((mod) => setArtifactData(mod.default));
       }
     }
-  }, [language, isTestEnv]);
+  }, [language]);
 
   const getCharacterKit = useCallback(
     (characterId: string): CharacterKit | null => kitData[characterId] ?? null,

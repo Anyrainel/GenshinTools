@@ -332,6 +332,7 @@ function VirtualizedCharacterGrid({
   const [headerHeight, setHeaderHeight] = useState(0);
 
   // Observe container width → derive column count
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scrollRef.current is a ref and should not be a dependency
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
