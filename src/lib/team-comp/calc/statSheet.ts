@@ -646,7 +646,7 @@ export const ELEMENTAL_DMG_KEY_TO_ELEMENT: Partial<
 };
 /** Reverse mapping: element name → per-element stat key. */
 
-export const ELEMENT_TO_DMG_KEY: Record<string, StatKey> = {
+const ELEMENT_TO_DMG_KEY: Record<string, StatKey> = {
   Pyro: "pyro%",
   Hydro: "hydro%",
   Electro: "electro%",
@@ -661,7 +661,7 @@ export const ELEMENT_TO_DMG_KEY: Record<string, StatKey> = {
  * become dmg% with the corresponding element filter so the sheet stores one representation.
  */
 
-export function normalizeEntry(
+function normalizeEntry(
   key: StatKey,
   value: number,
   existingFilter: DamageTagFilter
@@ -678,7 +678,7 @@ export function normalizeEntry(
 }
 // ─── DamageTagFilter serialization ───
 
-export const EMPTY_FILTER_KEY = "";
+const EMPTY_FILTER_KEY = "";
 /** Serialize a DamageTagFilter into a deterministic string key.
  *  Array fields are sorted to ensure equal filters produce the same key.
  *  Field-state is appended as `f:on` or `f:off` when present. */
@@ -703,12 +703,12 @@ export function appendFieldState(filterKey: string, fs: FieldState): string {
 }
 /** Check if a filter key is field-state-only (f:on or f:off with no damage dimensions). */
 
-export function isFieldStateOnlyKey(filterKey: string): boolean {
+function isFieldStateOnlyKey(filterKey: string): boolean {
   return filterKey === "f:on" || filterKey === "f:off";
 }
 /** Extract the field-state from a filter key (if present). */
 
-export function extractFieldStateFromKey(filterKey: string): {
+function extractFieldStateFromKey(filterKey: string): {
   damageFilterKey: string;
   fieldState: FieldState | null;
 } {
@@ -730,7 +730,7 @@ export function extractFieldStateFromKey(filterKey: string): {
 }
 const filterCache = new Map<string, DamageTagFilter>();
 
-export function deserializeFilter(key: string): DamageTagFilter {
+function deserializeFilter(key: string): DamageTagFilter {
   // Strip field-state component before parsing damage filter
   const { damageFilterKey } = extractFieldStateFromKey(key);
   const effectiveKey = damageFilterKey;
@@ -755,7 +755,7 @@ export function deserializeFilter(key: string): DamageTagFilter {
 }
 /** Extract a DamageTagFilter from a BuffTarget. */
 
-export function extractFilter(target: BuffTarget): DamageTagFilter {
+function extractFilter(target: BuffTarget): DamageTagFilter {
   return target.filter ?? {};
 }
 // ─── Bespoke Buff Helpers ───

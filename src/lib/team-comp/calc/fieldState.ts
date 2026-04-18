@@ -17,7 +17,7 @@ import type { ComboLine, FormulaOverride, TeamSlotConfig } from "../types";
  * Returns true when the (line-level) reaction config forces off-field parts
  * to be treated as on-field for stat computation.
  */
-export function isForcedOnField(
+function isForcedOnField(
   reactionOverride: FormulaOverride | undefined | null
 ): boolean {
   return !!reactionOverride?.forceOnField;
@@ -37,7 +37,7 @@ export function isPartOffField(
 /**
  * Returns the gate reaction from a ComboLine (may be undefined/none).
  */
-export function getLineReaction(
+function getLineReaction(
   line: ComboLine | undefined | null
 ): FormulaOverride | undefined {
   return line?.reaction;

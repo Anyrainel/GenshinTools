@@ -660,28 +660,6 @@ export function deduplicateBuffs<T extends { source: BuffSource }>(
   return result;
 }
 /**
- * Resolve ExtraBuff[] into StatEntry[] for a specific character.
- * Filters buffs targeting "team" or the given charId, then sums duplicate keys.
- */
-
-export function resolveExtraBuffEntries(
-  extraBuffs: ExtraBuff[],
-  charId: string
-): StatEntry[] {
-  const sums = new Map<StatKey, number>();
-  for (const buff of extraBuffs) {
-    if (buff.target !== "team" && buff.target !== charId) continue;
-    for (const { key, value } of buff.stats) {
-      sums.set(key, (sums.get(key) ?? 0) + value);
-    }
-  }
-  const entries: StatEntry[] = [];
-  for (const [key, value] of sums) {
-    entries.push({ key, value });
-  }
-  return entries;
-}
-/**
  * Convert ExtraBuff[] into StatBuff[] for integration with the buff system.
  * Each ExtraBuff becomes one StatBuff with source.type = "extra".
  */

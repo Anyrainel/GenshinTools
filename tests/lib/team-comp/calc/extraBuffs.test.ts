@@ -4,89 +4,12 @@ import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { getSourceIcon, getSourceName } from "@/lib/team-comp/buffDisplayUtils";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import "@/lib/team-comp/index";
-import {
-  createExtraStatBuffs,
-  resolveExtraBuffEntries,
-} from "@/lib/team-comp/calc/statBuff";
+import { createExtraStatBuffs } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { ExtraBuff } from "@/lib/team-comp/types";
 import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 
 await preloadGameStats();
-
-// ─── resolveExtraBuffEntries unit tests ───
-
-describe("resolveExtraBuffEntries", () => {
-  it("returns empty for no buffs", () => {
-    expect(resolveExtraBuffEntries([], "hu_tao")).toEqual([]);
-  });
-
-  it("collects team-wide buffs", () => {
-    const buffs: ExtraBuff[] = [
-      {
-        id: "1",
-        target: "team",
-        stats: [{ key: "atk%", value: 0.2 }],
-      },
-    ];
-    const entries = resolveExtraBuffEntries(buffs, "hu_tao");
-    expect(entries).toEqual([{ key: "atk%", value: 0.2 }]);
-  });
-
-  it("collects character-targeted buffs", () => {
-    const buffs: ExtraBuff[] = [
-      {
-        id: "1",
-        target: "hu_tao",
-        stats: [{ key: "cr", value: 0.1 }],
-      },
-    ];
-    expect(resolveExtraBuffEntries(buffs, "hu_tao")).toEqual([
-      { key: "cr", value: 0.1 },
-    ]);
-    // Other character should NOT receive it
-    expect(resolveExtraBuffEntries(buffs, "xingqiu")).toEqual([]);
-  });
-
-  it("sums duplicate keys from multiple buffs", () => {
-    const buffs: ExtraBuff[] = [
-      {
-        id: "1",
-        target: "team",
-        stats: [{ key: "atk%", value: 0.1 }],
-      },
-      {
-        id: "2",
-        target: "team",
-        stats: [{ key: "atk%", value: 0.15 }],
-      },
-    ];
-    const entries = resolveExtraBuffEntries(buffs, "hu_tao");
-    expect(entries).toHaveLength(1);
-    expect(entries[0]!.key).toBe("atk%");
-    expect(entries[0]!.value).toBeCloseTo(0.25);
-  });
-
-  it("combines team-wide and per-character buffs", () => {
-    const buffs: ExtraBuff[] = [
-      {
-        id: "1",
-        target: "team",
-        stats: [{ key: "atk%", value: 0.1 }],
-      },
-      {
-        id: "2",
-        target: "hu_tao",
-        stats: [{ key: "cr", value: 0.05 }],
-      },
-    ];
-    const entries = resolveExtraBuffEntries(buffs, "hu_tao");
-    expect(entries).toHaveLength(2);
-    const keys = entries.map((e) => e.key);
-    expect(keys).toContain("atk%");
-    expect(keys).toContain("cr");
-  });
-});
 
 // ─── TeamBuild integration: extra buffs affect stat sheets ───
 
