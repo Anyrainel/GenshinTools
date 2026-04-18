@@ -393,6 +393,9 @@ export type DisplayPart = {
   /** Talent/scaling multipliers, 1:1 with scalingKeys */
   scalingMulti: number[];
   damage: number;
+  /** Per-hit damage with all buffs at full activation (no blending).
+   *  Present only when blending reduces damage below the max. */
+  maxDamage?: number;
   hits?: number;
   offField?: boolean;
   tag?: DamageTag;

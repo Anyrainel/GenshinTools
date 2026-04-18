@@ -1,5 +1,4 @@
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { CharBuild } from "@/lib/team-comp/calc/charBuild";
 import { CharacterBase } from "@/lib/team-comp/calc/implModel";
 import {
   RegisterCharacter,
@@ -8,6 +7,7 @@ import {
   getOptionDef,
   resolveOption,
 } from "@/lib/team-comp/calc/registry";
+import { evaluateFormulaDamage } from "@/lib/team-comp/calc/stackAllocation";
 import { StatBuff } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet, appendFieldState } from "@/lib/team-comp/calc/statSheet";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
@@ -916,26 +916,18 @@ describe("CharacterBase via createCharacter", () => {
     }
   });
 
-  it("getDamageResult returns positive damage for known formula", () => {
-    const build = new CharBuild(
-      {
-        charId: "diluc",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "wolfs_gravestone",
-        refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
-      },
-      meta
-    );
+  it("evaluateFormulaDamage returns positive damage for known formula", () => {
+    const char = createCharacter("diluc", 90, 0, meta);
+    const entry = char.getFormulaEntry("diluc-skill");
+    expect(entry).toBeTruthy();
+
     const stats = new StatSheet([
       { key: "baseAtk", value: 800 },
       { key: "cr", value: 0.5 },
       { key: "cd", value: 1.0 },
     ]);
 
-    const result = build.getDamageResult("diluc-skill", stats, [stats], {
+    const result = evaluateFormulaDamage(entry!, 90, stats, [stats], {
       enemyLevel: 100,
       enemyRes: 0.1,
       rollMultiplier: 0.85,

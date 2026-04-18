@@ -49,6 +49,8 @@ import {
   computeBlendedDamage,
   computeComboDefaultActivation,
   computeDefaultActivation,
+  evaluateFormulaDamage,
+  evaluateFormulaDisplay,
 } from "./stackAllocation";
 import {
   CrossScalingBuff,
@@ -1341,14 +1343,20 @@ export class TeamBuild {
         offFieldPostStats = getStats(offOther)[charId];
       }
 
-      const { parts } = build.getDisplayParts(
-        formulaId,
-        postStats[charId]!,
-        ctx,
-        effectiveReaction,
-        offFieldPostStats,
-        firstLine.forceOnField
-      );
+      const displayEntry =
+        build.charBase.getFormulaEntry(formulaId) ??
+        this.formulaIndex.get(formulaId);
+      const { parts } = displayEntry
+        ? evaluateFormulaDisplay(
+            displayEntry,
+            build.charBase.charLevel,
+            postStats[charId]!,
+            ctx,
+            effectiveReaction,
+            offFieldPostStats,
+            firstLine.forceOnField
+          )
+        : { parts: [] as DisplayPart[] };
 
       const totalComboCount = formulaLines.reduce(
         (sum, fl) => sum + fl.line.count,
@@ -1458,17 +1466,27 @@ export class TeamBuild {
                 build.charBase.charLevel,
                 ctx
               );
+              const blendedDmg = blended.partDamages[eidx].damage;
+              const unblendedDmg = rebuilt.damage;
               parts[i] = {
                 ...rebuilt,
                 hits: parts[i].hits,
                 offField: parts[i].offField,
-                damage: blended.partDamages[eidx].damage,
+                damage: blendedDmg,
+                ...(blendedDmg < unblendedDmg
+                  ? { maxDamage: unblendedDmg }
+                  : {}),
                 sourcePartIndex: eidx,
               };
             } else {
+              const blendedDmg = blended.partDamages[eidx].damage;
+              const unblendedDmg = parts[i].damage;
               parts[i] = {
                 ...parts[i],
-                damage: blended.partDamages[eidx].damage,
+                damage: blendedDmg,
+                ...(blendedDmg < unblendedDmg
+                  ? { maxDamage: unblendedDmg }
+                  : {}),
                 sourcePartIndex: eidx,
               };
             }
@@ -1579,14 +1597,18 @@ export class TeamBuild {
     const ownerCharId = formulaOwnerCharId ?? charId;
     const build = this.charBuilds[ownerCharId];
     if (!build) throw new Error(`No CharBuild for character: ${ownerCharId}`);
+    const entry = build.charBase.getFormulaEntry(formulaId);
+    if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const teamStatsArr = Object.values(teamStats);
     // Use stats from charId (the evaluating character) but formula from ownerCharId
-    const statsCharLevel =
+    const charLevel =
       ownerCharId !== charId
-        ? this.charBuilds[charId]?.charBase.charLevel
-        : undefined;
-    return build.getDamageResult(
-      formulaId,
+        ? (this.charBuilds[charId]?.charBase.charLevel ??
+          build.charBase.charLevel)
+        : build.charBase.charLevel;
+    return evaluateFormulaDamage(
+      entry,
+      charLevel,
       teamStats[charId]!,
       teamStatsArr,
       ctx,
@@ -1595,7 +1617,6 @@ export class TeamBuild {
       activation,
       statsVariants,
       offFieldVariants,
-      statsCharLevel,
       forceOnField
     );
   }
@@ -1701,14 +1722,18 @@ export class TeamBuild {
     const offFieldPostStats = formulaHasOffField
       ? this.getOffFieldPostStats(charId, artifactStats, ctx)
       : undefined;
-    const { parts } = build.getDisplayParts(
-      formulaId,
-      postStats[charId]!,
-      ctx,
-      reactionOverride,
-      offFieldPostStats,
-      forceOnField
-    );
+    const resolveEntry = build.charBase.getFormulaEntry(formulaId);
+    const { parts } = resolveEntry
+      ? evaluateFormulaDisplay(
+          resolveEntry,
+          build.charBase.charLevel,
+          postStats[charId]!,
+          ctx,
+          reactionOverride,
+          offFieldPostStats,
+          forceOnField
+        )
+      : { parts: [] as DisplayPart[] };
 
     const partReadKeys = parts.map((p) => p.readKeys);
     const partOffField =
@@ -1808,14 +1833,18 @@ export class TeamBuild {
     const offFieldPreStats = offFieldCtx?.offFieldPreStats;
     const offFieldMidStats = offFieldCtx?.offFieldMidStats;
 
-    let { parts, totalDamage } = build.getDisplayParts(
-      formulaId,
-      postStats[charId]!,
-      ctx,
-      reactionOverride,
-      offFieldPostStats,
-      forceOnField
-    );
+    const displayEntry = build.charBase.getFormulaEntry(formulaId);
+    let { parts, totalDamage } = displayEntry
+      ? evaluateFormulaDisplay(
+          displayEntry,
+          build.charBase.charLevel,
+          postStats[charId]!,
+          ctx,
+          reactionOverride,
+          offFieldPostStats,
+          forceOnField
+        )
+      : { parts: [] as DisplayPart[], totalDamage: 0 };
     // Pre-blending damage: consistent baseline for marginal/level-up gain
     // comparisons (getDamageResult without partial buffs returns this value).
     const fullBuffDamage = totalDamage;
@@ -1948,17 +1977,23 @@ export class TeamBuild {
               build.charBase.charLevel,
               ctx
             );
+            const blendedDmg = blended.partDamages[eidx].damage;
+            const unblendedDmg = rebuilt.damage;
             parts[i] = {
               ...rebuilt,
               hits: parts[i].hits,
               offField: parts[i].offField,
-              damage: blended.partDamages[eidx].damage,
+              damage: blendedDmg,
+              ...(blendedDmg < unblendedDmg ? { maxDamage: unblendedDmg } : {}),
               sourcePartIndex: eidx,
             };
           } else {
+            const blendedDmg = blended.partDamages[eidx].damage;
+            const unblendedDmg = parts[i].damage;
             parts[i] = {
               ...parts[i],
-              damage: blended.partDamages[eidx].damage,
+              damage: blendedDmg,
+              ...(blendedDmg < unblendedDmg ? { maxDamage: unblendedDmg } : {}),
               sourcePartIndex: eidx,
             };
           }
@@ -2565,23 +2600,26 @@ export class TeamBuild {
   ): Record<string, Partial<Record<StatKey, number>>> {
     if (baseDamage === 0) return {};
 
+    const build = this.charBuilds[onFieldCharId]!;
+    const entry = build.charBase.getFormulaEntry(formulaId);
+    if (!entry) return {};
+    const charLevel = build.charBase.charLevel;
     const evalFn = (sheets: Record<string, StatSheet>): number => {
       const stats = this.getTeamStats(sheets, onFieldCharId, ctx);
       const offFieldStats = hasOffField
         ? this.getOffFieldPostStats(onFieldCharId, sheets, ctx)
         : undefined;
-      const build = this.charBuilds[onFieldCharId]!;
-      return build.getDamageResult(
-        formulaId,
+      return evaluateFormulaDamage(
+        entry,
+        charLevel,
         stats[onFieldCharId]!,
         Object.values(stats),
         ctx,
         reactionOverride,
         offFieldStats,
-        undefined, // partialBuffs
+        undefined, // activation
         undefined, // statsVariants
         undefined, // offFieldVariants
-        undefined, // charLevelOverride
         forceOnField
       ).totalDamage;
     };

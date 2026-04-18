@@ -9,7 +9,12 @@
  */
 
 import { ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
-import type { FormulaPart } from "../types";
+import type {
+  DamageResult,
+  DisplayPart,
+  FormulaEntry,
+  FormulaPart,
+} from "../types";
 import type {
   BuffActivationMap,
   BuffSource,
@@ -578,4 +583,385 @@ export function buildStatVariants(
   }
 
   return variants;
+}
+
+/**
+ * Compute blended damage for a sub-part (possibly a reaction split).
+ * If activation affects this part, uses interval-based blending.
+ * Inlined from CharBuild._calcPartBlended.
+ */
+function calcPartBlended(
+  formula: DamageFormula,
+  baseStats: StatSheet,
+  ctx: CalcContext,
+  hits: number,
+  partIdx: number,
+  originalPartHits: number,
+  charLevel: number,
+  activation?: BuffActivationMap,
+  statsVariants?: Map<string, StatSheet>,
+  bespokeOverlay?: StatSheet,
+  bespokeMax?: number
+): { damage: number; hits: number } {
+  const bespokeCutoff =
+    bespokeOverlay && bespokeMax != null && bespokeMax < hits
+      ? bespokeMax
+      : hits;
+  const withBespoke = bespokeOverlay
+    ? baseStats.merge(bespokeOverlay)
+    : baseStats;
+
+  const total = blendSubPart(
+    formula,
+    baseStats,
+    withBespoke,
+    bespokeOverlay,
+    bespokeCutoff,
+    charLevel,
+    ctx,
+    hits,
+    partIdx,
+    originalPartHits,
+    activation ?? {},
+    statsVariants
+  );
+  return { damage: total / hits, hits };
+}
+
+/** Evaluate a formula entry's parts, calling .calc() on each, and aggregate into a DamageResult. */
+export function evaluateFormulaDamage(
+  entry: FormulaEntry,
+  charLevel: number,
+  selfPostStats: StatSheet,
+  teamPostStats: StatSheet[],
+  ctx: CalcContext,
+  reactionOverride?: ReactionOverride,
+  offFieldSelfPostStats?: StatSheet,
+  activation?: BuffActivationMap,
+  statsVariants?: Map<string, StatSheet>,
+  offFieldVariants?: Map<string, StatSheet>,
+  forceOnField?: boolean
+): DamageResult {
+  const parts: DamageResult["parts"] = [];
+  for (let idx = 0; idx < entry.parts.length; idx++) {
+    const part = entry.parts[idx];
+    const { formula, hits: totalHits, bespokeBuffs } = part;
+    const h = totalHits ?? 1;
+    const bespokeMax = bespokeMaxStacks(bespokeBuffs);
+    const effectiveOffField = isPartOffField(part, forceOnField);
+
+    const baseSelfStats =
+      effectiveOffField && offFieldSelfPostStats
+        ? offFieldSelfPostStats
+        : selfPostStats;
+
+    let bespokeOverlay: StatSheet | undefined;
+    if (bespokeBuffs?.length) {
+      bespokeOverlay = buildBespokeOverlay(
+        bespokeBuffs,
+        baseSelfStats,
+        teamPostStats
+      );
+    }
+
+    const partVariants =
+      effectiveOffField && offFieldVariants ? offFieldVariants : statsVariants;
+
+    const hasReaction =
+      reactionOverride?.reaction && reactionOverride.reaction !== "none";
+
+    if (!hasReaction || formula.tag.reaction !== "none") {
+      const buffedResult = calcPartBlended(
+        formula,
+        baseSelfStats,
+        ctx,
+        h,
+        idx,
+        h,
+        charLevel,
+        activation,
+        partVariants,
+        bespokeOverlay,
+        bespokeMax
+      );
+      if (bespokeMax != null) {
+        const unbuffedResult = calcPartBlended(
+          formula,
+          baseSelfStats,
+          ctx,
+          h,
+          idx,
+          h,
+          charLevel,
+          activation,
+          partVariants,
+          undefined,
+          undefined
+        );
+        parts.push({
+          ...buffedResult,
+          bespokeInfo: {
+            unbuffedDamage: unbuffedResult.damage,
+            maxStacks: bespokeMax,
+          },
+        });
+      } else {
+        parts.push(buffedResult);
+      }
+      continue;
+    }
+
+    const partEligible =
+      ELEMENT_ELIGIBLE_REACTIONS[
+        formula.tag.element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+      ];
+    const targetReaction = resolvePartReaction(
+      reactionOverride,
+      idx,
+      partEligible
+    );
+
+    const reactingHits =
+      targetReaction !== "none"
+        ? Math.min(reactionOverride.rxnPartHits?.[idx] ?? h, h)
+        : 0;
+    const nonReactingHits = h - reactingHits;
+
+    if (reactingHits > 0) {
+      const effectiveFormula =
+        targetReaction !== formula.tag.reaction
+          ? createReactionVariant(formula, targetReaction)
+          : formula;
+      const buffedResult = calcPartBlended(
+        effectiveFormula,
+        baseSelfStats,
+        ctx,
+        reactingHits,
+        idx,
+        h,
+        charLevel,
+        activation,
+        partVariants,
+        bespokeOverlay,
+        bespokeMax
+      );
+      if (bespokeMax != null) {
+        const unbuffedResult = calcPartBlended(
+          effectiveFormula,
+          baseSelfStats,
+          ctx,
+          reactingHits,
+          idx,
+          h,
+          charLevel,
+          activation,
+          partVariants,
+          undefined,
+          undefined
+        );
+        parts.push({
+          ...buffedResult,
+          bespokeInfo: {
+            unbuffedDamage: unbuffedResult.damage,
+            maxStacks: bespokeMax,
+          },
+        });
+      } else {
+        parts.push(buffedResult);
+      }
+    }
+    if (nonReactingHits > 0) {
+      const buffedResult = calcPartBlended(
+        formula,
+        baseSelfStats,
+        ctx,
+        nonReactingHits,
+        idx,
+        h,
+        charLevel,
+        activation,
+        partVariants,
+        bespokeOverlay,
+        bespokeMax
+      );
+      if (bespokeMax != null) {
+        const unbuffedResult = calcPartBlended(
+          formula,
+          baseSelfStats,
+          ctx,
+          nonReactingHits,
+          idx,
+          h,
+          charLevel,
+          activation,
+          partVariants,
+          undefined,
+          undefined
+        );
+        parts.push({
+          ...buffedResult,
+          bespokeInfo: {
+            unbuffedDamage: unbuffedResult.damage,
+            maxStacks: bespokeMax,
+          },
+        });
+      } else {
+        parts.push(buffedResult);
+      }
+    }
+  }
+  const totalDamage = parts.reduce(
+    (sum, { damage, hits }) => sum + damage * hits,
+    0
+  );
+  return { parts, totalDamage };
+}
+
+/** Produce structured display data for a formula (cold path). */
+export function evaluateFormulaDisplay(
+  entry: FormulaEntry,
+  charLevel: number,
+  selfPostStats: StatSheet,
+  ctx: CalcContext,
+  reactionOverride?: ReactionOverride,
+  offFieldSelfPostStats?: StatSheet,
+  forceOnField?: boolean
+): { parts: DisplayPart[]; totalDamage: number } {
+  const displayParts: DisplayPart[] = [];
+  let totalDamage = 0;
+  for (let i = 0; i < entry.parts.length; i++) {
+    const part = entry.parts[i];
+    const { formula, hits: totalHits, bespokeBuffs } = part;
+    const h = totalHits ?? 1;
+    const effectiveOffField = isPartOffField(part, forceOnField);
+
+    const baseSelfStats =
+      effectiveOffField && offFieldSelfPostStats
+        ? offFieldSelfPostStats
+        : selfPostStats;
+
+    const stats = bespokeBuffs?.length
+      ? baseSelfStats.merge(
+          buildBespokeOverlay(bespokeBuffs, baseSelfStats, [])
+        )
+      : baseSelfStats;
+
+    const hasReaction =
+      reactionOverride?.reaction && reactionOverride.reaction !== "none";
+
+    const bespokeMax = bespokeMaxStacks(bespokeBuffs);
+
+    if (!hasReaction || formula.tag.reaction !== "none") {
+      if (bespokeMax != null && bespokeMax < h) {
+        const dpBuffed = formula.displayFull(stats, charLevel, ctx);
+        dpBuffed.hits = bespokeMax;
+        dpBuffed.sourcePartIndex = i;
+        if (effectiveOffField) dpBuffed.offField = true;
+        totalDamage += dpBuffed.damage * bespokeMax;
+        displayParts.push(dpBuffed);
+        const dpUnbuffed = formula.displayFull(baseSelfStats, charLevel, ctx);
+        dpUnbuffed.hits = h - bespokeMax;
+        dpUnbuffed.sourcePartIndex = i;
+        if (effectiveOffField) dpUnbuffed.offField = true;
+        totalDamage += dpUnbuffed.damage * (h - bespokeMax);
+        displayParts.push(dpUnbuffed);
+      } else {
+        const dp = formula.displayFull(stats, charLevel, ctx);
+        dp.hits = h;
+        dp.sourcePartIndex = i;
+        if (effectiveOffField) dp.offField = true;
+        totalDamage += dp.damage * h;
+        displayParts.push(dp);
+      }
+      continue;
+    }
+
+    const partEligible =
+      ELEMENT_ELIGIBLE_REACTIONS[
+        formula.tag.element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+      ];
+    const targetReaction = resolvePartReaction(
+      reactionOverride,
+      i,
+      partEligible
+    );
+
+    const reactingHits =
+      targetReaction !== "none"
+        ? Math.min(reactionOverride.rxnPartHits?.[i] ?? h, h)
+        : 0;
+    const nonReactingHits = h - reactingHits;
+
+    let bespokeRemaining =
+      bespokeMax != null && bespokeMax < h ? bespokeMax : undefined;
+
+    if (reactingHits > 0) {
+      const effectiveFormula =
+        targetReaction !== formula.tag.reaction
+          ? createReactionVariant(formula, targetReaction)
+          : formula;
+      if (bespokeRemaining != null) {
+        const buffedRx = Math.min(bespokeRemaining, reactingHits);
+        const unbuffedRx = reactingHits - buffedRx;
+        bespokeRemaining -= buffedRx;
+        if (buffedRx > 0) {
+          const dpB = effectiveFormula.displayFull(stats, charLevel, ctx);
+          dpB.hits = buffedRx;
+          dpB.sourcePartIndex = i;
+          if (effectiveOffField) dpB.offField = true;
+          totalDamage += dpB.damage * buffedRx;
+          displayParts.push(dpB);
+        }
+        if (unbuffedRx > 0) {
+          const dpU = effectiveFormula.displayFull(
+            baseSelfStats,
+            charLevel,
+            ctx
+          );
+          dpU.hits = unbuffedRx;
+          dpU.sourcePartIndex = i;
+          if (effectiveOffField) dpU.offField = true;
+          totalDamage += dpU.damage * unbuffedRx;
+          displayParts.push(dpU);
+        }
+      } else {
+        const dp = effectiveFormula.displayFull(stats, charLevel, ctx);
+        dp.hits = reactingHits;
+        dp.sourcePartIndex = i;
+        if (effectiveOffField) dp.offField = true;
+        totalDamage += dp.damage * reactingHits;
+        displayParts.push(dp);
+      }
+    }
+    if (nonReactingHits > 0) {
+      if (bespokeRemaining != null) {
+        const buffedNr = Math.min(bespokeRemaining, nonReactingHits);
+        const unbuffedNr = nonReactingHits - buffedNr;
+        if (buffedNr > 0) {
+          const dpB = formula.displayFull(stats, charLevel, ctx);
+          dpB.hits = buffedNr;
+          dpB.sourcePartIndex = i;
+          if (effectiveOffField) dpB.offField = true;
+          totalDamage += dpB.damage * buffedNr;
+          displayParts.push(dpB);
+        }
+        if (unbuffedNr > 0) {
+          const dpU = formula.displayFull(baseSelfStats, charLevel, ctx);
+          dpU.hits = unbuffedNr;
+          dpU.sourcePartIndex = i;
+          if (effectiveOffField) dpU.offField = true;
+          totalDamage += dpU.damage * unbuffedNr;
+          displayParts.push(dpU);
+        }
+      } else {
+        const dp = formula.displayFull(stats, charLevel, ctx);
+        dp.hits = nonReactingHits;
+        dp.sourcePartIndex = i;
+        if (effectiveOffField) dp.offField = true;
+        totalDamage += dp.damage * nonReactingHits;
+        displayParts.push(dp);
+      }
+    }
+  }
+  return { parts: displayParts, totalDamage };
 }
