@@ -1,3 +1,4 @@
+import type { Team } from "@/stores/useTeamStore";
 import type {
   ComboFormula,
   ComboLine,
@@ -7,6 +8,48 @@ import type {
   ReactionType,
 } from "../types";
 import type { TeamBuild } from "./teamBuild";
+
+const EMPTY_LABEL = { en: "", zh: "" } as const;
+
+/**
+ * Returns the `ComboFormula` that damage-calc consumers should use.
+ *
+ * - Single mode: synthesizes a 1-line combo from `team.selectedFormula` +
+ *   `team.singleReaction`. If no formula is selected, returns an empty combo.
+ * - Combo mode: returns `team.combos[team.selectedCombo]` with `count <= 0`
+ *   lines filtered out.
+ */
+export function getEffectiveCombo(
+  team: Pick<
+    Team,
+    "formulaMode" | "selectedFormula" | "singleReaction" | "combo"
+  >
+): ComboFormula {
+  const mode = team.formulaMode ?? "single";
+
+  if (mode === "single") {
+    const sel = team.selectedFormula;
+    if (!sel) {
+      return { id: "__single_empty__", label: EMPTY_LABEL, lines: [] };
+    }
+    const line: ComboLine = {
+      charId: sel.charId,
+      formulaId: sel.formulaId,
+      count: 1,
+      reaction: team.singleReaction,
+    };
+    return { id: "__single__", label: EMPTY_LABEL, lines: [line] };
+  }
+
+  // combo mode
+  if (!team.combo) {
+    return { id: "__combo_empty__", label: EMPTY_LABEL, lines: [] };
+  }
+  return {
+    ...team.combo,
+    lines: team.combo.lines.filter((l) => l.count > 0),
+  };
+}
 
 /**
  * Resolve a ComboDescriptor into a flat { formulaId → count } map,

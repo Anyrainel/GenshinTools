@@ -38,13 +38,13 @@ import {
   buildComboLineMap,
   buildSingleFormulaSelection,
   collectAllFormulas,
+  getEffectiveCombo,
   resolveActiveCombo,
   withLineCount,
   withReactionOverride,
 } from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { getEffectiveCombo } from "@/lib/team-comp/helpers";
 import {
   buildBuffOverrides,
   buildTeamConfigs,

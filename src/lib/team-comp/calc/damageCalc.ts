@@ -1,5 +1,10 @@
-import { isFinalStatKey } from "../helpers";
-import type { BuffSource, ResolvedStatEntry, StatEntry } from "../types";
+import {
+  type BuffSource,
+  FINAL_STAT_KEYS,
+  type ResolvedStatEntry,
+  type StatEntry,
+  type StatKey,
+} from "../types";
 import {
   CrossScalingBuff,
   ScalingBuff,
@@ -15,6 +20,10 @@ export type EvaluatedDynamicBuff = {
   providerCharId: string;
   entries: StatEntry[];
 };
+
+export function isFinalStatKey(key: StatKey): boolean {
+  return FINAL_STAT_KEYS.has(key);
+}
 
 /**
  * Whether a dynamic buff should be deferred to the second pass (final-stat pass).

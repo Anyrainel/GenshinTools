@@ -11,8 +11,9 @@ import {
   computeDefaultActivation,
   distributeComboHits,
 } from "@/lib/team-comp/calc/stackAllocation";
+import { exclusionKey } from "@/lib/team-comp/calc/stackAllocation";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { buffSourceKey, exclusionKey } from "@/lib/team-comp/helpers";
+import { buffSourceKey } from "@/lib/team-comp/helpers";
 import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";
 import type { FormulaPart } from "@/lib/team-comp/types";
 import type { CalcContext, StatKey } from "@/lib/team-comp/types";

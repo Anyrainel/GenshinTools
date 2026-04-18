@@ -9,7 +9,6 @@
  */
 
 import { ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
-import { exclusionKey } from "../helpers";
 import type { FormulaPart } from "../types";
 import type {
   BuffActivationMap,
@@ -26,6 +25,11 @@ import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import type { StatSheet } from "./statSheet";
 
 export type { PartialBuffInfo } from "../types";
+
+/** Build a deterministic cache key from a set of excluded buff keys. */
+export function exclusionKey(excludeKeys: Set<string>): string {
+  return [...excludeKeys].sort().join("|");
+}
 
 export type StackLimitedBuffInfo = {
   source: BuffSource;

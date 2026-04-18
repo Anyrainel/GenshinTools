@@ -17,8 +17,6 @@
 import type { ArtifactData, MainStat } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import { ARTIFACT_STAT_KEYS, ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
-import { isFinalStatKey } from "../helpers";
-import { exclusionKey } from "../helpers";
 import type { OptimizerContext, ProvidedStaticBuff } from "../types";
 import type { FormulaPart } from "../types";
 import type {
@@ -30,6 +28,7 @@ import type {
   TeamSlotConfig,
 } from "../types";
 import { resolvePartReaction } from "./combo";
+import { isFinalStatKey } from "./damageCalc";
 import { createReactionVariant } from "./damageFormula";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import {
@@ -39,6 +38,7 @@ import {
 } from "./exprStatSheet";
 import { isOnField } from "./fieldState";
 import { defaultOnFieldCharId, isPartOffField } from "./fieldState";
+import { exclusionKey } from "./stackAllocation";
 import type { PartialBuffInfo } from "./stackAllocation";
 import { CrossScalingBuff, ScalingBuff, getBuffInstanceKey } from "./statBuff";
 import { isBuffApplicable } from "./statBuff";

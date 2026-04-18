@@ -9,10 +9,10 @@ import { describe, expect, it } from "vitest";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import "@/lib/team-comp/index";
 
+import { getEffectiveCombo } from "@/lib/team-comp/calc/combo";
 import type { PartialBuffInfo } from "@/lib/team-comp/calc/stackAllocation";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { getEffectiveCombo } from "@/lib/team-comp/helpers";
 import {
   buildBuffOverrides,
   calcComboResults,

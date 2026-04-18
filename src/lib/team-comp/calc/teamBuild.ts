@@ -1,6 +1,5 @@
 import type { Element } from "@/data/types";
 import { getNextLevelTier } from "@/lib/gameStatsLoader";
-import { exclusionKey } from "../helpers";
 import {
   type BuffActivationMap,
   type CalcContext,
@@ -42,6 +41,7 @@ import {
 } from "./fieldState";
 import type { CharacterBase } from "./implModel";
 import { computeSubstatMarginals } from "./marginalGain";
+import { exclusionKey } from "./stackAllocation";
 import {
   type ComboLineContext,
   type PartialBuffInfo,
