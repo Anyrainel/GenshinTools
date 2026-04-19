@@ -78124,6 +78124,42 @@
           "recordedDamage": 255289.44376888472,
           "foundAt": "2026-04-15T05:54:56.908Z",
           "algorithm": "v1"
+        },
+        {
+          "artifactAssignment": {
+            "eula": {
+              "flower": "artifact-59",
+              "plume": "artifact-42",
+              "sands": "artifact-57",
+              "goblet": "artifact-152",
+              "circlet": "artifact-328"
+            },
+            "furina": {
+              "flower": "artifact-363",
+              "plume": "artifact-1067",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-479"
+            },
+            "mika": {
+              "flower": "artifact-380",
+              "plume": "artifact-1094",
+              "sands": "artifact-777",
+              "goblet": "artifact-1651",
+              "circlet": "artifact-1015"
+            },
+            "raiden_shogun": {
+              "flower": "artifact-1228",
+              "plume": "artifact-483",
+              "sands": "artifact-550",
+              "goblet": "artifact-144",
+              "circlet": "artifact-149"
+            }
+          },
+          "recordedDamage": 199079.83378666942,
+          "foundAt": "2026-04-19T04:06:16.422Z",
+          "algorithm": "v2",
+          "solveTimeSec": 30.855266599999972
         }
       ]
     },

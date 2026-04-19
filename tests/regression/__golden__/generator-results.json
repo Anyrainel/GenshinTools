@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-04-15T04:37:39.412Z",
+  "generatedAt": "2026-04-19T03:27:43.602Z",
   "teams": {
     "W808g3W1RCW53VB0T": {
       "teamName": "varka / durin / bennett / venti",
@@ -58636,7 +58636,7 @@
           "minCr": 0.47
         }
       },
-      "damage": 13914630.1613,
+      "damage": 11419290.7828,
       "comboResult": {
         "lineDamages": [
           {
@@ -58644,16 +58644,16 @@
             "total": 57635.4547
           },
           {
-            "perHit": 239453.0745,
-            "total": 478906.149
+            "perHit": 190392.3256,
+            "total": 380784.6512
           },
           {
-            "perHit": 1618506.9629,
-            "total": 3237013.9259
+            "perHit": 1119439.0872,
+            "total": 2238878.1744
           },
           {
-            "perHit": 2244985.6784,
-            "total": 4489971.3567
+            "perHit": 1545444.6137,
+            "total": 3090889.2274
           },
           {
             "perHit": 71166.6378,
@@ -58696,7 +58696,7 @@
             "total": 169460.3733
           }
         ],
-        "totalDamage": 13914630.1613
+        "totalDamage": 11419290.7828
       },
       "artifacts": {
         "eula": {
@@ -58939,7 +58939,7 @@
         }
       },
       "display": {
-        "totalDamage": 13914630.1613,
+        "totalDamage": 11419290.7828,
         "partsByFormula": {
           "eula.eula-skill-tap": [
             {
@@ -58958,7 +58958,7 @@
               "hits": 2
             },
             {
-              "damage": 153314.8404,
+              "damage": 104254.0914,
               "template": "direct"
             }
           ],
@@ -58968,7 +58968,7 @@
               "template": "direct"
             },
             {
-              "damage": 1559587.1116,
+              "damage": 1060519.2359,
               "template": "direct"
             }
           ],
@@ -58978,7 +58978,7 @@
               "template": "direct"
             },
             {
-              "damage": 2186065.827,
+              "damage": 1486524.7624,
               "template": "direct"
             }
           ],
@@ -59082,19 +59082,6 @@
         "activeBuffs": [
           {
             "source": {
-              "type": "teamResonance",
-              "id": "superconduct"
-            },
-            "entries": [
-              {
-                "key": "resReduction%",
-                "value": 0.4
-              }
-            ],
-            "providerCharId": "eula"
-          },
-          {
-            "source": {
               "type": "character",
               "id": "eula",
               "origin": "E"
@@ -59176,19 +59163,6 @@
               }
             ],
             "providerCharId": "eula"
-          },
-          {
-            "source": {
-              "type": "teamResonance",
-              "id": "superconduct"
-            },
-            "entries": [
-              {
-                "key": "resReduction%",
-                "value": 0.4
-              }
-            ],
-            "providerCharId": "furina"
           },
           {
             "source": {
@@ -59304,19 +59278,6 @@
           },
           {
             "source": {
-              "type": "teamResonance",
-              "id": "superconduct"
-            },
-            "entries": [
-              {
-                "key": "resReduction%",
-                "value": 0.4
-              }
-            ],
-            "providerCharId": "mika"
-          },
-          {
-            "source": {
               "type": "character",
               "id": "mika",
               "origin": "P1"
@@ -59342,19 +59303,6 @@
               }
             ],
             "providerCharId": "mika"
-          },
-          {
-            "source": {
-              "type": "teamResonance",
-              "id": "superconduct"
-            },
-            "entries": [
-              {
-                "key": "resReduction%",
-                "value": 0.4
-              }
-            ],
-            "providerCharId": "raiden_shogun"
           },
           {
             "source": {
@@ -59479,6 +59427,18 @@
                 "value": 0.15
               }
             ]
+          },
+          {
+            "source": {
+              "type": "teamResonance",
+              "id": "superconduct"
+            },
+            "entries": [
+              {
+                "key": "resReduction%",
+                "value": 0.4
+              }
+            ]
           }
         ],
         "detailStats": {
@@ -59581,7 +59541,7 @@
               "cd": 1.8803,
               "er": 2.101,
               "dmg%": 2.737,
-              "resReduction%": 1.85,
+              "resReduction%": 0.65,
               "atkSpd%": 0.49
             },
             "offField": {
@@ -59592,7 +59552,7 @@
               "cd": 1.2803,
               "er": 2.101,
               "dmg%": 1.447,
-              "resReduction%": 1.85,
+              "resReduction%": 0.65,
               "atkSpd%": 0.24
             }
           },
@@ -59669,24 +59629,24 @@
         },
         "marginalGains": {
           "eula": {
-            "atk": 0.0025,
-            "atk%": 0.0086,
-            "cr": 0.0149,
-            "cd": 0.0125
+            "atk": 0.0021,
+            "atk%": 0.0073,
+            "cr": 0.0126,
+            "cd": 0.0107
           },
           "furina": {
-            "hp": 0.0013,
-            "hp%": 0.0041,
+            "hp": 0.0016,
+            "hp%": 0.005,
             "atk": 0.0001,
             "atk%": 0.0002,
-            "cd": 0.0058
+            "cd": 0.007
           },
           "raiden_shogun": {
-            "atk": 0.0005,
-            "atk%": 0.0015,
-            "er": 0.0012,
-            "cr": 0.0025,
-            "cd": 0.0025
+            "atk": 0.0006,
+            "atk%": 0.0018,
+            "er": 0.0015,
+            "cr": 0.003,
+            "cd": 0.0031
           }
         },
         "levelUpGains": {}

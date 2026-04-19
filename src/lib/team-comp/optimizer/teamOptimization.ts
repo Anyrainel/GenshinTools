@@ -1309,9 +1309,11 @@ export async function* runTeamOptimization(
     return artifactsByChar;
   };
   const teamArtifactsMeetConstraints = (
-    artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
+    artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>,
+    prebuiltSheets?: Record<string, StatSheet>
   ): boolean => {
-    const statSheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
+    const statSheets =
+      prebuiltSheets ?? buildSheetsFromArtifacts(baseSheets, artifactsByChar);
     const teamStats = effectiveTeamBuild.getTeamStats(
       statSheets,
       carryCharId,
@@ -2077,17 +2079,36 @@ export async function* runTeamOptimization(
   // If any pair improves, restart Phase 3 for one more convergence pass.
 
   if (phase3Chars.length >= 2) {
-    // Set-aware evaluation: detects actual equipped artifact sets and
-    // rebuilds TeamBuild if they differ from configured sets.
-    // This is critical because ~30K+ of team damage can come from set bonuses
-    // that only appear when artifacts happen to form 2pc/4pc.
-    const evalWithSetDetection = (
+    // When all characters have configured artifact sets, B&B enforces those
+    // sets for every top-K entry → compiledTeamEval (built from the same
+    // effectiveTeamBuild) already includes the correct set bonuses → compiled
+    // damage is exact.
+    //
+    // When any character has unconstrained sets (e.g. ignoreArtifactSets
+    // fallback nulled their set config), top-K entries may have varying sets
+    // not reflected in compiledTeamEval. Must fall back to the interpreted
+    // path that detects actual sets and rebuilds TeamBuild.
+    const allCharsHaveConfiguredSets = allCharIds.every((cid) => {
+      const cc = effectivePerChar[cid];
+      if (!cc) return true;
+      return !!cc.artifactSetId || (cc.artifactHalfSetIds?.length ?? 0) > 0;
+    });
+    const anyCharHasErCrConstraint = allCharIds.some((cid) => {
+      const cc = effectivePerChar[cid];
+      return cc && ((cc.minEr ?? 0) > 0 || (cc.minCr ?? 0) > 0);
+    });
+
+    // Interpreted path: detect actual equipped artifact sets, rebuild
+    // TeamBuild if they differ from configured sets, then evaluate damage.
+    // Needed when ignoreArtifactSets removed a character's set constraint
+    // and B&B explored all set patterns — the compiled evaluator doesn't
+    // include those accidental set bonuses.
+    const evalWithSetRebuild = (
       artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
     ): number => {
       const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
       try {
-        if (!teamArtifactsMeetConstraints(artifactsByChar)) return 0;
-        // Detect actual equipped sets
+        if (!teamArtifactsMeetConstraints(artifactsByChar, sheets)) return 0;
         let evalTB = effectiveTeamBuild;
         let needsRebuild = false;
         const testPerChar = { ...effectivePerChar };
@@ -2145,7 +2166,68 @@ export async function* runTeamOptimization(
       }
     };
 
-    const prePerturbDamage = evalWithSetDetection(bestArtifactsByChar);
+    // Perturbation eval function: uses compiled evaluator when safe,
+    // falls back to interpreted with set rebuild when sets are unconstrained.
+    // `assignment` contains top-K entries for DFS characters; characters not
+    // in the assignment use their current artifacts from bestArtifactsByChar.
+    const perturbEvalFn: TeamEvalFn = allCharsHaveConfiguredSets
+      ? (assignment) => {
+          try {
+            if (anyCharHasErCrConstraint) {
+              const testArts: Record<
+                string,
+                Record<Slot, ArtifactData | null>
+              > = {};
+              for (const cid of allCharIds) {
+                testArts[cid] = assignment[cid]
+                  ? artsTupleToRecord(
+                      assignment[cid].artifacts as ArtifactTuple
+                    )
+                  : (bestArtifactsByChar[cid] ?? { ...emptyArtifacts });
+              }
+              if (!teamArtifactsMeetConstraints(testArts))
+                return Number.NEGATIVE_INFINITY;
+            }
+            compiledTeamVars.fill(0);
+            for (const cid of allCharIds) {
+              const charIdx = compiledTeamEval.charIdxMap!.get(cid);
+              if (charIdx === undefined) continue;
+              const entry = assignment[cid];
+              if (entry) {
+                fillVarsFromArtifacts(
+                  entry.artifacts,
+                  compiledTeamEval.varMapping,
+                  charIdx,
+                  compiledTeamVars
+                );
+              } else {
+                const arts = bestArtifactsByChar[cid];
+                if (arts) {
+                  fillVarsFromArtifacts(
+                    allSlots.map((s) => arts[s]),
+                    compiledTeamEval.varMapping,
+                    charIdx,
+                    compiledTeamVars
+                  );
+                }
+              }
+            }
+            const dmg = compiledTeamEval.evaluate(compiledTeamVars);
+            return dmg > 0 ? dmg : Number.NEGATIVE_INFINITY;
+          } catch {
+            return Number.NEGATIVE_INFINITY;
+          }
+        }
+      : (assignment) => {
+          const testArts = { ...bestArtifactsByChar };
+          for (const [cid, entry] of Object.entries(assignment)) {
+            testArts[cid] = artsTupleToRecord(entry.artifacts as ArtifactTuple);
+          }
+          const dmg = evalWithSetRebuild(testArts);
+          return dmg > 0 ? dmg : Number.NEGATIVE_INFINITY;
+        };
+
+    const prePerturbDamage = perturbEvalFn({});
 
     let perturbationImproved = false;
 
@@ -2216,21 +2298,11 @@ export async function* runTeamOptimization(
           );
         }
 
-        // Run Phase 2 DFS on just this pair
-        const pairEvalFn: TeamEvalFn = (assignment) => {
-          const testArts = { ...bestArtifactsByChar };
-          for (const [cid, entry] of Object.entries(assignment)) {
-            testArts[cid] = artsTupleToRecord(entry.artifacts as ArtifactTuple);
-          }
-          const dmg = evalWithSetDetection(testArts);
-          return dmg > 0 ? dmg : Number.NEGATIVE_INFINITY;
-        };
-
         const pairResult = findBestTeamAllocation(
           [charA, charB],
           pairTopK,
           MAX_TEAM_SEARCH,
-          pairEvalFn
+          perturbEvalFn
         );
 
         // Accept best candidate that doesn't duplicate artifacts with other perturbChars
@@ -2271,20 +2343,11 @@ export async function* runTeamOptimization(
           );
         }
 
-        const allEvalFn: TeamEvalFn = (assignment) => {
-          const testArts = { ...bestArtifactsByChar };
-          for (const [cid, entry] of Object.entries(assignment)) {
-            testArts[cid] = artsTupleToRecord(entry.artifacts as ArtifactTuple);
-          }
-          const dmg = evalWithSetDetection(testArts);
-          return dmg > 0 ? dmg : Number.NEGATIVE_INFINITY;
-        };
-
         const allResult = findBestTeamAllocation(
           perturbChars,
           allTopK,
           MAX_TEAM_SEARCH,
-          allEvalFn
+          perturbEvalFn
         );
 
         if (

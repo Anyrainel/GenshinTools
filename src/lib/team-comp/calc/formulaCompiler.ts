@@ -124,8 +124,7 @@ export function compileComboTeamDamage(
     baseSheets,
     variableCharIds,
     allOnFieldCharIds,
-    calcContext,
-    teamBuild.teamStats
+    calcContext
   );
 
   // Group lines by on-field character (= onFieldCharId)

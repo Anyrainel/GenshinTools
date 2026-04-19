@@ -92,8 +92,7 @@ export class TeamExprStatSheet {
     baseSheets: Record<string, StatSheet>,
     variableCharIds: Set<string>,
     onFieldCharIds: string[],
-    calcContext: CalcContext,
-    existingTeamStats?: TeamStatSheet
+    calcContext: CalcContext
   ) {
     this.charBuilds = charBuilds;
     this.teamMeta = teamMeta;
@@ -109,17 +108,27 @@ export class TeamExprStatSheet {
       this.charLevels[c.charId] = c.charLevel;
     }
 
-    this.teamStats =
-      existingTeamStats ??
-      new TeamStatSheet(
-        charBuilds,
-        teamResonance,
-        extraBuffs,
-        teamMeta,
-        configs,
-        onFieldCharIds
-      );
+    // Private TeamStatSheet — never shares state with TeamBuild.teamStats.
+    this.teamStats = new TeamStatSheet(
+      charBuilds,
+      teamResonance,
+      extraBuffs,
+      teamMeta,
+      configs,
+      onFieldCharIds
+    );
     this.allStaticBuffs = this.teamStats.allStaticBuffs;
+
+    // Set artifacts once: variable chars get empty sheets (stats come from
+    // Float64Array variables), non-variable chars get their baked-in baseSheets.
+    const emptySheet = new StatSheet([]);
+    const artifactSheets: Record<string, StatSheet> = {};
+    for (const [id] of this.charBuildOrder) {
+      artifactSheets[id] = this.variableCharIds.has(id)
+        ? emptySheet
+        : (this.baseSheets[id] ?? emptySheet);
+    }
+    this.teamStats.setArtifacts(artifactSheets, this.calcContext);
   }
 
   getCharLevel(charId: string): number {
@@ -212,19 +221,6 @@ export class TeamExprStatSheet {
     onFieldCharId: string,
     excludeKeys?: Set<string>
   ): Record<string, ExprStatSheet> {
-    const emptySheet = new StatSheet([]);
-
-    // Set up artifact configuration:
-    // Variable chars get empty StatSheets (stats come from Float64Array variables)
-    // Non-variable chars get their baked-in baseSheets
-    const artifactSheets: Record<string, StatSheet> = {};
-    for (const [id] of this.charBuildOrder) {
-      artifactSheets[id] = this.variableCharIds.has(id)
-        ? emptySheet
-        : (this.baseSheets[id] ?? emptySheet);
-    }
-    this.teamStats.setArtifacts(artifactSheets, this.calcContext);
-
     // Get baselines from TeamStatSheet
     const variableBaselines: Record<string, StatSheet> = {};
     for (const varCharId of this.variableCharIds) {

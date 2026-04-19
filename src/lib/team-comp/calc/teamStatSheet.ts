@@ -70,11 +70,15 @@ export class TeamStatSheet {
   private readonly teamMeta: TeamMeta;
   readonly allStaticBuffs: ProvidedStaticBuff[];
   private readonly charLevels: Record<string, number>;
-  /** Stored for future optimization (e.g. precomputing field-dependent buff sets). */
   private readonly onFieldCharIds: string[];
   private artifactStats: Record<string, StatSheet>;
   private ctx: CalcContext | undefined;
   private readonly pipelineCache = new Map<CacheKey, PipelineResult>();
+  /** Cache for field-dependent buff filtering (only depends on onFieldCharId). */
+  private readonly fieldDepCache = new Map<
+    string,
+    Record<string, ProvidedStaticBuff[]>
+  >();
 
   constructor(
     charBuilds: Record<string, CharBuild>,
@@ -112,11 +116,12 @@ export class TeamStatSheet {
     }
   }
 
-  /** Set or swap artifact stat sheets and optional CalcContext. Invalidates all caches. */
+  /** Set or swap artifact stat sheets and optional CalcContext. Invalidates caches. */
   setArtifacts(
     artifactStats: Record<string, StatSheet>,
     ctx?: CalcContext
   ): void {
+    if (this.artifactStats === artifactStats && this.ctx === ctx) return;
     this.artifactStats = artifactStats;
     this.ctx = ctx;
     this.pipelineCache.clear();
@@ -317,6 +322,8 @@ export class TeamStatSheet {
   private getFieldDependentBuffs(
     onFieldCharId: string
   ): Record<string, ProvidedStaticBuff[]> {
+    const cached = this.fieldDepCache.get(onFieldCharId);
+    if (cached) return cached;
     const result: Record<string, ProvidedStaticBuff[]> = {};
     for (const charId of Object.keys(this.charBuilds)) {
       result[charId] = this.allStaticBuffs.filter((b) => {
@@ -331,6 +338,7 @@ export class TeamStatSheet {
         );
       });
     }
+    this.fieldDepCache.set(onFieldCharId, result);
     return result;
   }
 
@@ -343,7 +351,6 @@ export class TeamStatSheet {
     for (const [charId, build] of Object.entries(this.charBuilds)) {
       const artStats = this.artifactStats[charId] ?? new StatSheet([]);
 
-      // Start from baseStatSheet (Phase 1 baseline)
       // Apply field-independent static buffs
       const fieldIndepBuffs = this.allStaticBuffs.filter((entry) => {
         if (
