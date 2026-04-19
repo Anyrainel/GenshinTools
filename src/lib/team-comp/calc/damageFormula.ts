@@ -850,6 +850,19 @@ export class TransformFormula extends DamageFormula {
  * Has separate multiplicative layers: BaseDmgBonus (§8.7) and Elevation (§4).
  */
 export class LunarFormula extends DamageFormula {
+  readonly rankWeight: number;
+
+  constructor(
+    talentMultiplier: number,
+    tag: DamageTag,
+    scalingKey?: ScalingKey,
+    extraTerm?: ExtraScalingTerm,
+    rankWeight?: number
+  ) {
+    super(talentMultiplier, tag, scalingKey, extraTerm);
+    this.rankWeight = rankWeight ?? 1;
+  }
+
   override getReadKeys(): ReadonlySet<StatKey> {
     return new Set<StatKey>([
       ...REACTION_KEYS,
@@ -883,17 +896,19 @@ export class LunarFormula extends DamageFormula {
     const elevated = stats.get("elevated%", this.tag);
 
     const baseDmg = levelMult * reactionCoeff;
-    return simplify(
-      E.mul(
-        E.const(baseDmg),
-        E.add(E.const(1), baseDmgBonus),
-        E.add(E.const(1), reactionBaseDmg),
-        E.add(E.const(1), emBonus, reactionDmgBonus),
-        E.add(E.const(1), elevated),
-        resMult,
-        critMult
-      )
+    let expr = E.mul(
+      E.const(baseDmg),
+      E.add(E.const(1), baseDmgBonus),
+      E.add(E.const(1), reactionBaseDmg),
+      E.add(E.const(1), emBonus, reactionDmgBonus),
+      E.add(E.const(1), elevated),
+      resMult,
+      critMult
     );
+    if (this.rankWeight !== 1) {
+      expr = E.mul(expr, E.const(this.rankWeight));
+    }
+    return simplify(expr);
   }
 
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
@@ -918,7 +933,8 @@ export class LunarFormula extends DamageFormula {
       (1 + emBonus + reactionDmgBonus) *
       (1 + elevated) *
       resMult *
-      critMult
+      critMult *
+      this.rankWeight
     );
   }
 
@@ -943,7 +959,18 @@ export class LunarFormula extends DamageFormula {
       (1 + emBonus + reactionDmgBonus) *
       (1 + elevated) *
       resMult *
-      critMult;
+      critMult *
+      this.rankWeight;
+
+    const params: Record<string, number> = {
+      reactionCoeff,
+      levelCoeff,
+      emCoeff,
+      charLevel,
+      enemyLevel: ctx.enemyLevel,
+      enemyRes: ctx.enemyRes,
+    };
+    if (this.rankWeight !== 1) params.rankWeight = this.rankWeight;
 
     return {
       template: "lunar",
@@ -957,14 +984,7 @@ export class LunarFormula extends DamageFormula {
         cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
         "resReduction%": stats.get("resReduction%", this.tag),
       },
-      params: {
-        reactionCoeff,
-        levelCoeff,
-        emCoeff,
-        charLevel,
-        enemyLevel: ctx.enemyLevel,
-        enemyRes: ctx.enemyRes,
-      },
+      params,
       scalingKeys: [],
       scalingMulti: [],
       damage,

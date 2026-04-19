@@ -12,7 +12,7 @@ import type {
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
-import { distributeComboHits } from "@/lib/team-comp/calc/stackAllocation";
+import { distributeComboHits } from "@/lib/team-comp/calc/stackRank";
 import type {
   BuffActivationMap,
   CalcContext,

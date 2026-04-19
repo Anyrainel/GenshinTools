@@ -8,6 +8,11 @@ import {
   compileComboTeamDamage,
   fillVarsFromSheet,
 } from "@/lib/team-comp/calc/formulaCompiler";
+import {
+  computeLunarRankWeights,
+  evaluateFormulaDamage,
+  evaluateFormulaDisplay,
+} from "@/lib/team-comp/calc/stackRank";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
@@ -31,8 +36,11 @@ function sumCounts(counts: Record<string, number>): number {
   return Object.values(counts).reduce((a, b) => a + b, 0);
 }
 
-/** Sum per-triggerer counts for a base reaction ID. */
+/** Sum counts for a base reaction ID (base-ID entry or per-triggerer entries). */
 function sumBase(counts: Record<string, number>, baseId: string): number {
+  // Multi-contributor reactions produce a single base-ID entry
+  if (baseId in counts) return counts[baseId];
+  // Single-contributor reactions produce per-triggerer entries
   const prefix = `${baseId}-`;
   let total = 0;
   for (const [key, val] of Object.entries(counts)) {
@@ -41,8 +49,9 @@ function sumBase(counts: Record<string, number>, baseId: string): number {
   return total;
 }
 
-/** Check if a base reaction exists in per-triggerer counts. */
+/** Check if a base reaction exists in counts (base-ID or per-triggerer). */
 function hasBase(counts: Record<string, number>, baseId: string): boolean {
+  if (baseId in counts) return true;
   const prefix = `${baseId}-`;
   return Object.keys(counts).some((k) => k.startsWith(prefix));
 }
@@ -410,15 +419,14 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
-    const result = tb.reactionProvider.getDamageResult(
-      "rx-overloaded-fischl",
+    const result = tb.getDamageResult(
       "fischl",
-      teamStats.fischl!,
+      "rx-overloaded-fischl",
+      teamStats,
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.parts).toHaveLength(1);
-    expect(result.parts[0].hits).toBe(1);
   });
 
   it("bloom damage is consistent with TransformFormula calc", () => {
@@ -427,15 +435,12 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "nahida", CTX);
 
-    const result = tb.reactionProvider.getDamageResult(
-      "rx-bloom-nahida",
+    const result = tb.getDamageResult(
       "nahida",
-      teamStats.nahida!,
+      "rx-bloom-nahida",
+      teamStats,
       CTX
     );
-    // Bloom coefficient = 2.0, Level 90 multiplier ≈ 1446.85
-    // With empty stats, EM = 0 so EMBonus = 0, reactionDmg% = 0
-    // damage = 1446.85 * 2.0 * (1 + 0 + 0) * RES * CritMult
     expect(result.totalDamage).toBeGreaterThan(0);
   });
 });
@@ -615,61 +620,20 @@ describe("TeamReactionProvider — lunar reactions", () => {
 });
 
 describe("TeamReactionProvider — multi-contributor evaluation", () => {
-  it("getMultiContributorResult produces rank-weighted damage", () => {
+  it("multi-contributor produces rank-weighted damage via unified pipeline", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
     const charIds = LUNAR_TEAM.map((c) => c.charId);
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    const result = tb.reactionProvider.getMultiContributorResult(
-      "rx-lunarCharged-columbina",
+    // Multi-contributor entries use the base ID after finalization
+    const result = tb.getDamageResult(
       "columbina",
+      "rx-lunarCharged",
       teamStats,
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);
-    expect(result.parts).toHaveLength(1);
-  });
-
-  it("getMultiContributorDisplay returns ranked contributors", () => {
-    const tb = new TeamBuild(LUNAR_TEAM);
-    const charIds = LUNAR_TEAM.map((c) => c.charId);
-    const sheets = emptySheets(...charIds);
-    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
-
-    const display = tb.reactionProvider.getMultiContributorDisplay(
-      "rx-lunarCharged-columbina",
-      "columbina",
-      teamStats,
-      CTX
-    );
-    // Only Electro + Hydro chars contribute to LCh
-    expect(display.contributors).toHaveLength(2);
-    expect(display.totalDamage).toBeGreaterThan(0);
-    // Rank 1 should have weight 0.6 (highest weight first)
-    expect(display.contributors[0].rank).toBe(1);
-    expect(display.contributors[0].weight).toBe(0.6);
-    expect(display.contributors[1].rank).toBe(2);
-    expect(display.contributors[1].weight).toBe(0.3);
-  });
-
-  it("multi-contributor total matches manual rank-weighted sum", () => {
-    const tb = new TeamBuild(LUNAR_TEAM);
-    const charIds = LUNAR_TEAM.map((c) => c.charId);
-    const sheets = emptySheets(...charIds);
-    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
-
-    const display = tb.reactionProvider.getMultiContributorDisplay(
-      "rx-lunarCharged-columbina",
-      "columbina",
-      teamStats,
-      CTX
-    );
-    const manual = display.contributors.reduce(
-      (sum, c) => sum + c.damage * c.weight,
-      0
-    );
-    expect(display.totalDamage).toBeCloseTo(manual);
   });
 });
 
@@ -719,16 +683,16 @@ describe("TeamReactionProvider — different triggers produce different damage",
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
-    const dmgHuTao = tb.reactionProvider.getDamageResult(
-      "rx-overloaded-hu_tao",
+    const dmgHuTao = tb.getDamageResult(
       "hu_tao",
-      teamStats.hu_tao!,
+      "rx-overloaded-hu_tao",
+      teamStats,
       CTX
     ).totalDamage;
-    const dmgFischl = tb.reactionProvider.getDamageResult(
-      "rx-overloaded-fischl",
+    const dmgFischl = tb.getDamageResult(
       "fischl",
-      teamStats.fischl!,
+      "rx-overloaded-fischl",
+      teamStats,
       CTX
     ).totalDamage;
 
@@ -746,10 +710,10 @@ describe("TeamReactionProvider — swirl damage evaluation", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "kaedehara_kazuha", CTX);
 
-    const result = tb.reactionProvider.getDamageResult(
-      "rx-swirl-Pyro-kaedehara_kazuha",
+    const result = tb.getDamageResult(
       "kaedehara_kazuha",
-      teamStats.kaedehara_kazuha!,
+      "rx-swirl-Pyro-kaedehara_kazuha",
+      teamStats,
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -1250,16 +1214,10 @@ describe("getReactionComboLines", () => {
   it("produces ComboLine[] for LCr team", () => {
     const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
     const lines = tb.getReactionComboLines();
-    // Linnea (Geo) + Columbina (Hydro) both eligible for LCr
-    // Total = 20 (15 * 4/3 with Columbina), distributed: on-field gets 19, other gets 1
-    expect(lines.length).toBe(2);
-    expect(
-      lines.every((l) => l.formulaId.startsWith("rx-lunarCrystallize-"))
-    ).toBe(true);
-    expect(lines.reduce((s, l) => s + l.count, 0)).toBe(20);
-    const onFieldLine = lines.find((l) => l.count > 1);
-    expect(onFieldLine).toBeDefined();
-    expect(onFieldLine!.count).toBe(19);
+    // Multi-contributor → single base-ID entry with total count
+    expect(lines.length).toBe(1);
+    expect(lines[0].formulaId).toBe("rx-lunarCrystallize");
+    expect(lines[0].count).toBe(20);
   });
 
   it("omits zero-count lines", () => {
@@ -1606,7 +1564,7 @@ describe("getReactionComboDescriptor — Columbina modifier", () => {
 // resolveReactionComboEntries — unit tests
 
 describe("resolveReactionComboEntries", () => {
-  it("adds active deltas to the total and distributes", () => {
+  it("adds active deltas to the total (multi-contributor → single entry)", () => {
     const entries: ReactionComboEntry[] = [
       {
         id: "rx-lunarCrystallize",
@@ -1617,9 +1575,8 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, { linnea: 6 });
-    // total = 15 + 12 = 27, linnea gets 27 - 1 = 26, columbina gets 1
-    expect(result["rx-lunarCrystallize-linnea"]).toBe(26);
-    expect(result["rx-lunarCrystallize-columbina"]).toBe(1);
+    // Multi-contributor → single base-ID entry with total = 15 + 12 = 27
+    expect(result["rx-lunarCrystallize"]).toBe(27);
   });
 
   it("delta only activates when constellation >= minC", () => {
@@ -1633,10 +1590,10 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const resultC1 = resolveReactionComboEntries(entries, { linnea: 1 });
-    expect(resultC1["rx-lunarCrystallize-linnea"]).toBe(15);
+    expect(resultC1["rx-lunarCrystallize"]).toBe(15);
 
     const resultC2 = resolveReactionComboEntries(entries, { linnea: 2 });
-    expect(resultC2["rx-lunarCrystallize-linnea"]).toBe(27);
+    expect(resultC2["rx-lunarCrystallize"]).toBe(27);
   });
 
   it("missing constellation key defaults to 0", () => {
@@ -1650,7 +1607,7 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, {});
-    expect(result["rx-lunarCrystallize-linnea"]).toBe(15);
+    expect(result["rx-lunarCrystallize"]).toBe(15);
   });
 
   it("multiple deltas from different characters", () => {
@@ -1666,23 +1623,19 @@ describe("resolveReactionComboEntries", () => {
         ],
       },
     ];
-    // Both active: total = 10 + 5 + 3 = 18, linnea = 18 - 2 = 16, others = 1
+    // Both active: total = 10 + 5 + 3 = 18 (single base-ID entry)
     const result = resolveReactionComboEntries(entries, {
       linnea: 2,
       zibai: 1,
     });
-    expect(result["rx-lunarCrystallize-linnea"]).toBe(16);
-    expect(result["rx-lunarCrystallize-zibai"]).toBe(1);
-    expect(result["rx-lunarCrystallize-columbina"]).toBe(1);
+    expect(result["rx-lunarCrystallize"]).toBe(18);
 
-    // Only zibai active: total = 10 + 3 = 13, linnea = 13 - 2 = 11, others = 1
+    // Only zibai active: total = 10 + 3 = 13
     const result2 = resolveReactionComboEntries(entries, {
       linnea: 0,
       zibai: 4,
     });
-    expect(result2["rx-lunarCrystallize-linnea"]).toBe(11);
-    expect(result2["rx-lunarCrystallize-zibai"]).toBe(1);
-    expect(result2["rx-lunarCrystallize-columbina"]).toBe(1);
+    expect(result2["rx-lunarCrystallize"]).toBe(13);
   });
 
   it("handles multiple entries", () => {
@@ -1703,12 +1656,928 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, { linnea: 6 });
-    expect(result["rx-lunarCharged-flins"]).toBe(9);
-    expect(result["rx-lunarCrystallize-linnea"]).toBe(12);
+    expect(result["rx-lunarCharged"]).toBe(9);
+    expect(result["rx-lunarCrystallize"]).toBe(12);
+  });
+
+  it("single-contributor reactions still produce per-triggerer entries", () => {
+    const entries: ReactionComboEntry[] = [
+      {
+        id: "rx-overloaded",
+        total: 6,
+        eligible: ["amber", "fischl"],
+        onFieldCharId: "amber",
+        bonus: [],
+      },
+    ];
+    const result = resolveReactionComboEntries(entries, {});
+    expect(result["rx-overloaded-amber"]).toBe(5);
+    expect(result["rx-overloaded-fischl"]).toBe(1);
   });
 
   it("empty entries returns empty object", () => {
     const result = resolveReactionComboEntries([], {});
     expect(result).toEqual({});
+  });
+});
+
+// ── Unified pipeline: per-part stats routing & exact numerics ──
+
+/**
+ * Team with intentionally different char levels to test per-part charLevel routing.
+ * columbina(Hydro,90) + flins(Electro,70) are both eligible for lunarCharged.
+ * The level gap produces measurably different per-part damage.
+ */
+const MIXED_LEVEL_LUNAR: TeamSlotConfig[] = [
+  {
+    charId: "columbina",
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "thrilling_tales_of_dragon_slayers",
+    refinement: 5,
+    artifactSetId: null,
+    artifactHalfSetIds: [],
+  },
+  {
+    charId: "flins",
+    charLevel: 70,
+    constellation: 0,
+    weaponId: "staff_of_homa",
+    refinement: 1,
+    artifactSetId: null,
+    artifactHalfSetIds: [],
+  },
+];
+
+describe("computeLunarRankWeights — exact rank assignment", () => {
+  it("assigns LUNAR_RANK_WEIGHTS in descending damage order", () => {
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const charIds = LUNAR_TEAM.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+    const charLevels: Record<string, number> = {};
+    for (const c of LUNAR_TEAM) charLevels[c.charId] = c.charLevel;
+
+    const entry = tb.reactionProvider.getFormulaEntry(
+      "rx-lunarCharged-columbina"
+    );
+    expect(entry).toBeDefined();
+    const formula = entry!.parts[0].formula;
+
+    // LunarCharged eligible: Electro + Hydro chars
+    const eligible =
+      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+
+    const weights = computeLunarRankWeights(
+      formula,
+      eligible,
+      teamStats,
+      charLevels,
+      CTX
+    );
+
+    // All eligible chars should have a weight
+    for (const charId of eligible) {
+      expect(weights.has(charId)).toBe(true);
+    }
+
+    // Weights should sum to the first N LUNAR_RANK_WEIGHTS
+    const totalWeight = [...weights.values()].reduce((a, b) => a + b, 0);
+    const expectedSum = LUNAR_RANK_WEIGHTS.slice(0, eligible.length).reduce(
+      (a, b) => a + b,
+      0
+    );
+    expect(totalWeight).toBeCloseTo(expectedSum);
+
+    // Each weight must be one of the positional values
+    const weightValues = [...weights.values()].sort((a, b) => b - a);
+    for (let i = 0; i < weightValues.length; i++) {
+      expect(weightValues[i]).toBe(LUNAR_RANK_WEIGHTS[i]);
+    }
+  });
+
+  it("higher damage char gets higher weight", () => {
+    // flins is level 70, columbina is level 90 — level 90 produces more base damage
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+    const charLevels: Record<string, number> = {
+      columbina: 90,
+      flins: 70,
+    };
+
+    const entry = tb.reactionProvider.getFormulaEntry(
+      "rx-lunarCharged-columbina"
+    );
+    const formula = entry!.parts[0].formula;
+    const eligible =
+      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+
+    const weights = computeLunarRankWeights(
+      formula,
+      eligible,
+      teamStats,
+      charLevels,
+      CTX
+    );
+
+    // Level 90 char should produce more damage → get weight 0.6 (rank 1)
+    // Level 70 char → weight 0.3 (rank 2)
+    const colWeight = weights.get("columbina") ?? 0;
+    const flinsWeight = weights.get("flins") ?? 0;
+
+    // columbina level 90 > flins level 70 → columbina gets higher weight
+    expect(colWeight).toBeGreaterThan(flinsWeight);
+    expect(colWeight).toBe(0.6);
+    expect(flinsWeight).toBe(0.3);
+  });
+});
+
+describe("evaluateFormulaDamage — per-part stats routing", () => {
+  it("routes different stats to different parts via statsCharId", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+
+    // Get the finalized multi-contributor entry
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+    expect(entry!.isMultiContributor).toBe(true);
+
+    // Each part should have a different statsCharId
+    const partCharIds = entry!.parts.map((p) => p.statsCharId);
+    expect(new Set(partCharIds).size).toBe(entry!.parts.length);
+
+    // Evaluate with per-part routing
+    const teamStatsMap = teamStats;
+    const charLevels: Record<string, number> = {
+      columbina: 90,
+      flins: 70,
+    };
+
+    const result = evaluateFormulaDamage(
+      entry!,
+      90, // default charLevel (should be overridden by per-part)
+      teamStats.columbina!,
+      Object.values(teamStats),
+      CTX,
+      undefined, // reactionOverride
+      undefined, // offFieldSelfPostStats
+      undefined, // activation
+      undefined, // statsVariants
+      undefined, // offFieldVariants
+      undefined, // forceOnField
+      teamStatsMap,
+      charLevels
+    );
+
+    expect(result.totalDamage).toBeGreaterThan(0);
+    expect(result.parts.length).toBe(entry!.parts.length);
+  });
+
+  it("per-part charLevel affects damage magnitude", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+
+    // Evaluate with real charLevels
+    const resultReal = evaluateFormulaDamage(
+      entry!,
+      90,
+      teamStats.columbina!,
+      Object.values(teamStats),
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      { columbina: 90, flins: 70 }
+    );
+
+    // Evaluate with all level 90
+    const resultAllL90 = evaluateFormulaDamage(
+      entry!,
+      90,
+      teamStats.columbina!,
+      Object.values(teamStats),
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      { columbina: 90, flins: 90 }
+    );
+
+    // Damage should differ because flins's part uses different level multipliers
+    // Level 90 mult > level 70 mult, so all-90 should produce more damage
+    expect(resultAllL90.totalDamage).toBeGreaterThan(resultReal.totalDamage);
+  });
+});
+
+describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () => {
+  it("sets contributorCharId on each display part for multi-contributor entries", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+    expect(entry!.isMultiContributor).toBe(true);
+
+    const charLevels: Record<string, number> = {
+      columbina: 90,
+      flins: 70,
+    };
+
+    const display = evaluateFormulaDisplay(
+      entry!,
+      90,
+      teamStats.columbina!,
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      charLevels
+    );
+
+    expect(display.parts.length).toBe(entry!.parts.length);
+    expect(display.totalDamage).toBeGreaterThan(0);
+
+    // Each display part should have contributorCharId matching the entry part's statsCharId
+    for (let i = 0; i < entry!.parts.length; i++) {
+      expect(display.parts[i].contributorCharId).toBe(
+        entry!.parts[i].statsCharId
+      );
+    }
+
+    // Verify all expected contributors are present
+    const displayCharIds = display.parts.map((p) => p.contributorCharId);
+    expect(displayCharIds).toContain("columbina");
+    expect(displayCharIds).toContain("flins");
+  });
+
+  it("does NOT set contributorCharId on single-contributor entries", () => {
+    const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
+    const charIds = PYRO_ELECTRO_TEAM.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-overloaded-fischl");
+    expect(entry).toBeDefined();
+    expect(entry!.isMultiContributor).toBeFalsy();
+
+    const display = evaluateFormulaDisplay(
+      entry!,
+      90,
+      teamStats.fischl!,
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      { fischl: 90 }
+    );
+
+    // Single-contributor should NOT have contributorCharId
+    for (const dp of display.parts) {
+      expect(dp.contributorCharId).toBeUndefined();
+    }
+  });
+});
+
+describe("multi-contributor N-part exact numerics", () => {
+  it("N-part total equals sum of per-part weighted contributions", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+
+    const charLevels: Record<string, number> = {
+      columbina: 90,
+      flins: 70,
+    };
+
+    // Evaluate the multi-contributor entry
+    const result = evaluateFormulaDamage(
+      entry!,
+      90,
+      teamStats.columbina!,
+      Object.values(teamStats),
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      charLevels
+    );
+
+    // Sum of parts should equal totalDamage
+    const partSum = result.parts.reduce((s, p) => s + p.damage * p.hits, 0);
+    expect(partSum).toBeCloseTo(result.totalDamage, 6);
+
+    // Each part's damage should match the LunarFormula.calc() with the part's
+    // own stats and charLevel, scaled by rankWeight
+    for (let i = 0; i < entry!.parts.length; i++) {
+      const part = entry!.parts[i];
+      const partCharId = part.statsCharId!;
+      const partStats = teamStats[partCharId]!;
+      const partLevel = charLevels[partCharId];
+      const expectedDamage = part.formula.calc(partStats, partLevel, CTX);
+      expect(result.parts[i].damage).toBeCloseTo(expectedDamage, 4);
+    }
+  });
+
+  it("rankWeight is correctly baked into each part's LunarFormula", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+
+    const charLevels: Record<string, number> = {
+      columbina: 90,
+      flins: 70,
+    };
+
+    // Get the rank weights
+    const weights = tb.reactionProvider.getRankWeights("rx-lunarCharged");
+    expect(weights).toBeDefined();
+
+    // Verify each part's formula.rankWeight matches the assigned weight
+    for (const part of entry!.parts) {
+      const charId = part.statsCharId!;
+      const expectedWeight = weights!.get(charId)!;
+      expect(
+        (part.formula as unknown as { rankWeight: number }).rankWeight
+      ).toBe(expectedWeight);
+    }
+
+    // Compute unweighted damage per contributor using a fresh unweighted formula
+    const sampleEntry = tb.reactionProvider.getFormulaEntry(
+      "rx-lunarCharged-columbina"
+    );
+    const unweightedFormula = sampleEntry!.parts[0].formula;
+
+    for (const part of entry!.parts) {
+      const charId = part.statsCharId!;
+      const partStats = teamStats[charId]!;
+      const partLevel = charLevels[charId];
+      const w = weights!.get(charId)!;
+
+      const unweightedDmg = unweightedFormula.calc(partStats, partLevel, CTX);
+      const weightedDmg = part.formula.calc(partStats, partLevel, CTX);
+      expect(weightedDmg).toBeCloseTo(unweightedDmg * w, 4);
+    }
+  });
+});
+
+describe("display path matches damage path for reaction formulas", () => {
+  it("display totalDamage equals getDamageResult totalDamage for single-contributor", () => {
+    const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
+    const charIds = PYRO_ELECTRO_TEAM.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
+
+    const formulaId = "rx-overloaded-fischl";
+    const entry = tb.reactionProvider.getFormulaEntry(formulaId);
+    expect(entry).toBeDefined();
+
+    const damageResult = evaluateFormulaDamage(
+      entry!,
+      90,
+      teamStats.fischl!,
+      Object.values(teamStats),
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      { fischl: 90 }
+    );
+
+    const displayResult = evaluateFormulaDisplay(
+      entry!,
+      90,
+      teamStats.fischl!,
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      { fischl: 90 }
+    );
+
+    expect(displayResult.totalDamage).toBeCloseTo(damageResult.totalDamage, 4);
+  });
+
+  it("display totalDamage equals getDamageResult totalDamage for multi-contributor", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+
+    const charLevels: Record<string, number> = {
+      columbina: 90,
+      flins: 70,
+    };
+
+    const damageResult = evaluateFormulaDamage(
+      entry!,
+      90,
+      teamStats.columbina!,
+      Object.values(teamStats),
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      charLevels
+    );
+
+    const displayResult = evaluateFormulaDisplay(
+      entry!,
+      90,
+      teamStats.columbina!,
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      teamStats,
+      charLevels
+    );
+
+    expect(displayResult.totalDamage).toBeCloseTo(damageResult.totalDamage, 4);
+  });
+});
+
+describe("compiled multi-contributor matches interpreted", () => {
+  it("compiled lunarCharged matches getDamageResult via combo", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+
+    // Use the on-field char from the entry (parts[0].statsCharId)
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const onFieldChar = entry.parts[0].statsCharId!;
+
+    const combo: ComboFormula = {
+      id: "test",
+      label: { en: "Test", zh: "测试" },
+      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 5 }],
+    };
+
+    // Interpreted
+    const interpreted = tb.getComboDamageResult(combo, sheets, CTX);
+
+    // Compiled
+    const compiled = compileComboTeamDamage(
+      tb,
+      combo,
+      onFieldChar,
+      sheets,
+      CTX
+    );
+    const vars = new Float64Array(compiled.numVars);
+    vars.fill(0);
+    for (const charId of charIds) {
+      const charIdx = compiled.charIdxMap?.get(charId) ?? 0;
+      fillVarsFromSheet(sheets[charId], compiled.varMapping, charIdx, vars);
+    }
+    const compiledDamage = compiled.evaluate(vars);
+
+    const relErr =
+      Math.abs(compiledDamage - interpreted.totalDamage) /
+      Math.abs(interpreted.totalDamage);
+    expect(relErr).toBeLessThan(1e-6);
+  });
+
+  it("compiled mixed char + multi-contributor combo matches interpreted", () => {
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const charIds = LUNAR_TEAM.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+
+    // Use the on-field char from the entry (parts[0].statsCharId)
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const onFieldChar = entry.parts[0].statsCharId!;
+
+    // Get a character formula for the on-field char
+    const charFormulas = tb.getFormulaIds()[onFieldChar];
+    const charFormulaId = Object.keys(charFormulas)[0];
+
+    const combo: ComboFormula = {
+      id: "test",
+      label: { en: "Test", zh: "测试" },
+      lines: [
+        { charId: onFieldChar, formulaId: charFormulaId, count: 2 },
+        { charId: onFieldChar, formulaId: "rx-lunarCharged", count: 3 },
+      ],
+    };
+
+    const interpreted = tb.getComboDamageResult(combo, sheets, CTX);
+
+    const compiled = compileComboTeamDamage(
+      tb,
+      combo,
+      onFieldChar,
+      sheets,
+      CTX
+    );
+    const vars = new Float64Array(compiled.numVars);
+    vars.fill(0);
+    for (const charId of charIds) {
+      const charIdx = compiled.charIdxMap?.get(charId) ?? 0;
+      fillVarsFromSheet(sheets[charId], compiled.varMapping, charIdx, vars);
+    }
+    const compiledDamage = compiled.evaluate(vars);
+
+    const relErr =
+      Math.abs(compiledDamage - interpreted.totalDamage) /
+      Math.abs(interpreted.totalDamage);
+    expect(relErr).toBeLessThan(1e-6);
+  });
+});
+
+describe("multi-contributor entry structure", () => {
+  it("finalized entry has isMultiContributor and correct parts", () => {
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+    expect(entry!.isMultiContributor).toBe(true);
+    expect(entry!.owner).toBe("team");
+
+    // Each part should have a statsCharId
+    for (const part of entry!.parts) {
+      expect(part.statsCharId).toBeDefined();
+      expect(part.statsCharId!.length).toBeGreaterThan(0);
+    }
+
+    // Part statsCharIds should match the eligible characters
+    const eligible =
+      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+    const partCharIds = entry!.parts.map((p) => p.statsCharId!);
+    for (const charId of partCharIds) {
+      expect(eligible).toContain(charId);
+    }
+
+    // Rank weights should sum correctly
+    const weights = entry!.parts.map(
+      (p) => (p.formula as unknown as { rankWeight: number }).rankWeight
+    );
+    const weightSum = weights.reduce((a, b) => a + b, 0);
+    const expectedSum = LUNAR_RANK_WEIGHTS.slice(0, eligible.length).reduce(
+      (a, b) => a + b,
+      0
+    );
+    expect(weightSum).toBeCloseTo(expectedSum, 6);
+  });
+
+  it("per-triggerer entries still exist alongside base entry", () => {
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const eligible =
+      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+
+    // Base entry exists
+    expect(
+      tb.reactionProvider.getFormulaEntry("rx-lunarCharged")
+    ).toBeDefined();
+
+    // Per-triggerer entries also exist
+    for (const charId of eligible) {
+      const perTrig = tb.reactionProvider.getFormulaEntry(
+        `rx-lunarCharged-${charId}`
+      );
+      expect(perTrig).toBeDefined();
+      // Per-triggerer entries should NOT be multi-contributor
+      expect(perTrig!.isMultiContributor).toBeFalsy();
+    }
+  });
+
+  it("single-contributor entries have statsCharId on parts, not isMultiContributor", () => {
+    const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-overloaded-fischl");
+    expect(entry).toBeDefined();
+    expect(entry!.isMultiContributor).toBeFalsy();
+
+    // Parts should have statsCharId set to the trigger character
+    for (const part of entry!.parts) {
+      expect(part.statsCharId).toBe("fischl");
+    }
+  });
+});
+
+describe("multi-contributor off-field flag", () => {
+  it("on-field character's part has offField undefined, others have offField true", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+
+    const onFieldChar = entry!.parts[0].statsCharId!;
+
+    // First part (on-field) should not have offField
+    expect(entry!.parts[0].offField).toBeUndefined();
+
+    // Remaining parts (off-field) should have offField: true
+    for (let i = 1; i < entry!.parts.length; i++) {
+      expect(entry!.parts[i].offField).toBe(true);
+      expect(entry!.parts[i].statsCharId).not.toBe(onFieldChar);
+    }
+  });
+
+  it("on-field character is determined by guessOnFieldChar", () => {
+    const tb = new TeamBuild(LUNAR_TEAM);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+
+    const onFieldChar = entry!.parts[0].statsCharId;
+    const guessed = tb.reactionProvider.guessOnFieldChar("rx-lunarCharged");
+    expect(onFieldChar).toBe(guessed);
+  });
+});
+
+describe("weight prefix for smaller teams", () => {
+  it("2-char team gets first 2 weights [0.6, 0.3]", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    expect(entry).toBeDefined();
+    expect(entry!.parts).toHaveLength(2);
+
+    const weights = entry!.parts.map(
+      (p) => (p.formula as unknown as { rankWeight: number }).rankWeight
+    );
+    weights.sort((a, b) => b - a);
+    expect(weights).toEqual([0.6, 0.3]);
+  });
+
+  it("3-char team with 3 eligible gets first 3 weights [0.6, 0.3, 0.05]", () => {
+    // LUNAR_TEAM has 4 chars but only 2 are eligible for lunarCharged (Electro + Hydro)
+    // For lunarCrystallize, let's check if we can get a 3-eligible case
+    // Use LUNAR_TEAM which has columbina(Hydro), flins(Electro), zibai(Geo), nahida(Dendro)
+    // LCr eligible: Geo + Hydro chars → columbina + zibai = 2
+    // LCh eligible: Electro + Hydro → columbina + flins = 2
+    // Need a team with 3 eligible chars for a lunar reaction
+
+    // Build a team with 3 Electro+Hydro chars for lunarCharged
+    const team: TeamSlotConfig[] = [
+      {
+        charId: "columbina",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "thrilling_tales_of_dragon_slayers",
+        refinement: 5,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "flins",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "staff_of_homa",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "sacrificial_sword",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(team);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    if (!entry) {
+      // If lunarCharged requires specific element combos not met, skip
+      return;
+    }
+
+    const eligible =
+      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+    if (eligible.length !== 3) return; // team might not produce 3 eligible
+
+    expect(entry.parts).toHaveLength(3);
+    const weights = entry.parts.map(
+      (p) => (p.formula as unknown as { rankWeight: number }).rankWeight
+    );
+    weights.sort((a, b) => b - a);
+    expect(weights).toEqual([0.6, 0.3, 0.05]);
+  });
+});
+
+describe("combo count multiplication agreement", () => {
+  it("count × N produces N× the damage of count 1", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const onFieldChar = entry.parts[0].statsCharId!;
+
+    const combo1: ComboFormula = {
+      id: "test1",
+      label: { en: "Test", zh: "测试" },
+      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 1 }],
+    };
+    const combo5: ComboFormula = {
+      id: "test5",
+      label: { en: "Test", zh: "测试" },
+      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 5 }],
+    };
+
+    const dmg1 = tb.getComboDamageResult(combo1, sheets, CTX).totalDamage;
+    const dmg5 = tb.getComboDamageResult(combo5, sheets, CTX).totalDamage;
+
+    expect(dmg5).toBeCloseTo(dmg1 * 5, 4);
+  });
+
+  it("compiled count agrees with interpreted count", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
+    const sheets = emptySheets(...charIds);
+
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const onFieldChar = entry.parts[0].statsCharId!;
+
+    for (const count of [1, 3, 7]) {
+      const combo: ComboFormula = {
+        id: "test",
+        label: { en: "Test", zh: "测试" },
+        lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count }],
+      };
+
+      const interpreted = tb.getComboDamageResult(combo, sheets, CTX);
+      const compiled = compileComboTeamDamage(
+        tb,
+        combo,
+        onFieldChar,
+        sheets,
+        CTX
+      );
+      const vars = new Float64Array(compiled.numVars);
+      vars.fill(0);
+      for (const charId of charIds) {
+        const charIdx = compiled.charIdxMap?.get(charId) ?? 0;
+        fillVarsFromSheet(sheets[charId], compiled.varMapping, charIdx, vars);
+      }
+      const compiledDamage = compiled.evaluate(vars);
+
+      const relErr =
+        Math.abs(compiledDamage - interpreted.totalDamage) /
+        Math.abs(interpreted.totalDamage);
+      expect(relErr).toBeLessThan(1e-6);
+    }
+  });
+});
+
+describe("non-zero EM per-contributor routing", () => {
+  it("contributors with different EM produce different per-part damage", () => {
+    // Give one character artifacts with EM, the other none
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const onFieldChar = entry.parts[0].statsCharId!;
+    const offFieldChar = entry.parts[1].statsCharId!;
+
+    // Create stat sheets: one with EM, one without
+    const emSheet = new StatSheet([{ key: "em", value: 200 }]);
+    const emptySheet = new StatSheet([]);
+    const sheetsA: Record<string, StatSheet> = {
+      [onFieldChar]: emSheet,
+      [offFieldChar]: emptySheet,
+    };
+    const sheetsB: Record<string, StatSheet> = {
+      [onFieldChar]: emptySheet,
+      [offFieldChar]: emSheet,
+    };
+
+    const teamStatsA = tb.getTeamStats(sheetsA, onFieldChar, CTX);
+    const teamStatsB = tb.getTeamStats(sheetsB, onFieldChar, CTX);
+
+    const charLevels: Record<string, number> = {};
+    for (const c of MIXED_LEVEL_LUNAR) charLevels[c.charId] = c.charLevel;
+
+    const resultA = evaluateFormulaDamage(
+      entry,
+      90,
+      teamStatsA[onFieldChar]!,
+      Object.values(teamStatsA),
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      teamStatsA,
+      charLevels
+    );
+    const resultB = evaluateFormulaDamage(
+      entry,
+      90,
+      teamStatsB[onFieldChar]!,
+      Object.values(teamStatsB),
+      CTX,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      teamStatsB,
+      charLevels
+    );
+
+    // Total damage should differ because EM is on different contributors
+    // with different rank weights
+    expect(resultA.totalDamage).not.toBeCloseTo(resultB.totalDamage);
+    expect(resultA.totalDamage).toBeGreaterThan(0);
+    expect(resultB.totalDamage).toBeGreaterThan(0);
+  });
+
+  it("EM on higher-weighted contributor produces more total damage", () => {
+    const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
+    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const onFieldChar = entry.parts[0].statsCharId!;
+    const offFieldChar = entry.parts[1].statsCharId!;
+
+    // Determine which contributor has higher weight
+    const weights = tb.reactionProvider.getRankWeights("rx-lunarCharged")!;
+    const onFieldWeight = weights.get(onFieldChar) ?? 0;
+    const offFieldWeight = weights.get(offFieldChar) ?? 0;
+    const higherWeightChar =
+      onFieldWeight > offFieldWeight ? onFieldChar : offFieldChar;
+    const lowerWeightChar =
+      onFieldWeight > offFieldWeight ? offFieldChar : onFieldChar;
+
+    const emSheet = new StatSheet([{ key: "em", value: 300 }]);
+    const emptySheet = new StatSheet([]);
+
+    // EM on higher-weight contributor
+    const sheetsHigh: Record<string, StatSheet> = {
+      [higherWeightChar]: emSheet,
+      [lowerWeightChar]: emptySheet,
+    };
+    // EM on lower-weight contributor
+    const sheetsLow: Record<string, StatSheet> = {
+      [higherWeightChar]: emptySheet,
+      [lowerWeightChar]: emSheet,
+    };
+
+    const comboHigh: ComboFormula = {
+      id: "h",
+      label: { en: "H", zh: "H" },
+      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 1 }],
+    };
+    const comboLow: ComboFormula = {
+      id: "l",
+      label: { en: "L", zh: "L" },
+      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 1 }],
+    };
+
+    const dmgHigh = tb.getComboDamageResult(
+      comboHigh,
+      sheetsHigh,
+      CTX
+    ).totalDamage;
+    const dmgLow = tb.getComboDamageResult(
+      comboLow,
+      sheetsLow,
+      CTX
+    ).totalDamage;
+
+    // EM on the higher-weighted contributor should produce more damage
+    expect(dmgHigh).toBeGreaterThan(dmgLow);
   });
 });

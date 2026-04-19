@@ -439,7 +439,7 @@ function serializeTeamResult(
   comboDefaults?: {
     perLine: BuffActivationMap[];
     stackLimited: import(
-      "@/lib/team-comp/calc/stackAllocation"
+      "@/lib/team-comp/calc/stackRank"
     ).StackLimitedBuffInfo[];
   }
 ): GoldenTeamResult {

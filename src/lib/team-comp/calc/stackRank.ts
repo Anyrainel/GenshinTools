@@ -27,6 +27,7 @@ import { isPartOffField } from "./fieldState";
 import { type StatBuff, getBuffInstanceKey } from "./statBuff";
 import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import type { StatSheet } from "./statSheet";
+import { LUNAR_RANK_WEIGHTS } from "./teamReaction";
 
 /**
  * Everything needed for one formula.calc() call — the resolved evaluation primitive.
@@ -640,7 +641,9 @@ export function evaluateFormulaDamage(
   activation?: BuffActivationMap,
   statsVariants?: Map<string, StatSheet>,
   offFieldVariants?: Map<string, StatSheet>,
-  forceOnField?: boolean
+  forceOnField?: boolean,
+  teamStatsMap?: Record<string, StatSheet>,
+  charLevels?: Record<string, number>
 ): DamageResult {
   const parts: DamageResult["parts"] = [];
   for (let idx = 0; idx < entry.parts.length; idx++) {
@@ -650,10 +653,22 @@ export function evaluateFormulaDamage(
     const bespokeMax = bespokeMaxStacks(bespokeBuffs);
     const effectiveOffField = isPartOffField(part, forceOnField);
 
+    // Per-part stats routing: use the part's statsCharId stats if available.
+    // When per-part routing is active, teamStatsMap already contains
+    // field-state-correct stats — skip the offFieldSelfPostStats override.
+    const perPartRouting = part.statsCharId && teamStatsMap?.[part.statsCharId];
+    const partStats = perPartRouting
+      ? teamStatsMap[part.statsCharId!]
+      : selfPostStats;
+    const partCharLevel =
+      part.statsCharId && charLevels?.[part.statsCharId] != null
+        ? charLevels[part.statsCharId]
+        : charLevel;
+
     const baseSelfStats =
-      effectiveOffField && offFieldSelfPostStats
+      effectiveOffField && offFieldSelfPostStats && !perPartRouting
         ? offFieldSelfPostStats
-        : selfPostStats;
+        : partStats;
 
     let bespokeOverlay: StatSheet | undefined;
     if (bespokeBuffs?.length) {
@@ -678,7 +693,7 @@ export function evaluateFormulaDamage(
         h,
         idx,
         h,
-        charLevel,
+        partCharLevel,
         activation,
         partVariants,
         bespokeOverlay,
@@ -692,7 +707,7 @@ export function evaluateFormulaDamage(
           h,
           idx,
           h,
-          charLevel,
+          partCharLevel,
           activation,
           partVariants,
           undefined,
@@ -739,7 +754,7 @@ export function evaluateFormulaDamage(
         reactingHits,
         idx,
         h,
-        charLevel,
+        partCharLevel,
         activation,
         partVariants,
         bespokeOverlay,
@@ -753,7 +768,7 @@ export function evaluateFormulaDamage(
           reactingHits,
           idx,
           h,
-          charLevel,
+          partCharLevel,
           activation,
           partVariants,
           undefined,
@@ -778,7 +793,7 @@ export function evaluateFormulaDamage(
         nonReactingHits,
         idx,
         h,
-        charLevel,
+        partCharLevel,
         activation,
         partVariants,
         bespokeOverlay,
@@ -792,7 +807,7 @@ export function evaluateFormulaDamage(
           nonReactingHits,
           idx,
           h,
-          charLevel,
+          partCharLevel,
           activation,
           partVariants,
           undefined,
@@ -825,7 +840,9 @@ export function evaluateFormulaDisplay(
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   offFieldSelfPostStats?: StatSheet,
-  forceOnField?: boolean
+  forceOnField?: boolean,
+  teamStatsMap?: Record<string, StatSheet>,
+  charLevels?: Record<string, number>
 ): { parts: DisplayPart[]; totalDamage: number } {
   const displayParts: DisplayPart[] = [];
   let totalDamage = 0;
@@ -835,10 +852,20 @@ export function evaluateFormulaDisplay(
     const h = totalHits ?? 1;
     const effectiveOffField = isPartOffField(part, forceOnField);
 
+    // Per-part stats routing — skip off-field override when active
+    const perPartRouting = part.statsCharId && teamStatsMap?.[part.statsCharId];
+    const partBaseStats = perPartRouting
+      ? teamStatsMap[part.statsCharId!]
+      : selfPostStats;
+    const partCharLevel =
+      part.statsCharId && charLevels?.[part.statsCharId] != null
+        ? charLevels[part.statsCharId]
+        : charLevel;
+
     const baseSelfStats =
-      effectiveOffField && offFieldSelfPostStats
+      effectiveOffField && offFieldSelfPostStats && !perPartRouting
         ? offFieldSelfPostStats
-        : selfPostStats;
+        : partBaseStats;
 
     const stats = bespokeBuffs?.length
       ? baseSelfStats.merge(
@@ -851,25 +878,38 @@ export function evaluateFormulaDisplay(
 
     const bespokeMax = bespokeMaxStacks(bespokeBuffs);
 
+    const addContributorInfo = (dp: DisplayPart) => {
+      if (entry.isMultiContributor && part.statsCharId) {
+        dp.contributorCharId = part.statsCharId;
+      }
+    };
+
     if (!hasReaction || formula.tag.reaction !== "none") {
       if (bespokeMax != null && bespokeMax < h) {
-        const dpBuffed = formula.displayFull(stats, charLevel, ctx);
+        const dpBuffed = formula.displayFull(stats, partCharLevel, ctx);
         dpBuffed.hits = bespokeMax;
         dpBuffed.sourcePartIndex = i;
         if (effectiveOffField) dpBuffed.offField = true;
+        addContributorInfo(dpBuffed);
         totalDamage += dpBuffed.damage * bespokeMax;
         displayParts.push(dpBuffed);
-        const dpUnbuffed = formula.displayFull(baseSelfStats, charLevel, ctx);
+        const dpUnbuffed = formula.displayFull(
+          baseSelfStats,
+          partCharLevel,
+          ctx
+        );
         dpUnbuffed.hits = h - bespokeMax;
         dpUnbuffed.sourcePartIndex = i;
         if (effectiveOffField) dpUnbuffed.offField = true;
+        addContributorInfo(dpUnbuffed);
         totalDamage += dpUnbuffed.damage * (h - bespokeMax);
         displayParts.push(dpUnbuffed);
       } else {
-        const dp = formula.displayFull(stats, charLevel, ctx);
+        const dp = formula.displayFull(stats, partCharLevel, ctx);
         dp.hits = h;
         dp.sourcePartIndex = i;
         if (effectiveOffField) dp.offField = true;
+        addContributorInfo(dp);
         totalDamage += dp.damage * h;
         displayParts.push(dp);
       }
@@ -905,30 +945,33 @@ export function evaluateFormulaDisplay(
         const unbuffedRx = reactingHits - buffedRx;
         bespokeRemaining -= buffedRx;
         if (buffedRx > 0) {
-          const dpB = effectiveFormula.displayFull(stats, charLevel, ctx);
+          const dpB = effectiveFormula.displayFull(stats, partCharLevel, ctx);
           dpB.hits = buffedRx;
           dpB.sourcePartIndex = i;
           if (effectiveOffField) dpB.offField = true;
+          addContributorInfo(dpB);
           totalDamage += dpB.damage * buffedRx;
           displayParts.push(dpB);
         }
         if (unbuffedRx > 0) {
           const dpU = effectiveFormula.displayFull(
             baseSelfStats,
-            charLevel,
+            partCharLevel,
             ctx
           );
           dpU.hits = unbuffedRx;
           dpU.sourcePartIndex = i;
           if (effectiveOffField) dpU.offField = true;
+          addContributorInfo(dpU);
           totalDamage += dpU.damage * unbuffedRx;
           displayParts.push(dpU);
         }
       } else {
-        const dp = effectiveFormula.displayFull(stats, charLevel, ctx);
+        const dp = effectiveFormula.displayFull(stats, partCharLevel, ctx);
         dp.hits = reactingHits;
         dp.sourcePartIndex = i;
         if (effectiveOffField) dp.offField = true;
+        addContributorInfo(dp);
         totalDamage += dp.damage * reactingHits;
         displayParts.push(dp);
       }
@@ -938,30 +981,60 @@ export function evaluateFormulaDisplay(
         const buffedNr = Math.min(bespokeRemaining, nonReactingHits);
         const unbuffedNr = nonReactingHits - buffedNr;
         if (buffedNr > 0) {
-          const dpB = formula.displayFull(stats, charLevel, ctx);
+          const dpB = formula.displayFull(stats, partCharLevel, ctx);
           dpB.hits = buffedNr;
           dpB.sourcePartIndex = i;
           if (effectiveOffField) dpB.offField = true;
+          addContributorInfo(dpB);
           totalDamage += dpB.damage * buffedNr;
           displayParts.push(dpB);
         }
         if (unbuffedNr > 0) {
-          const dpU = formula.displayFull(baseSelfStats, charLevel, ctx);
+          const dpU = formula.displayFull(baseSelfStats, partCharLevel, ctx);
           dpU.hits = unbuffedNr;
           dpU.sourcePartIndex = i;
           if (effectiveOffField) dpU.offField = true;
+          addContributorInfo(dpU);
           totalDamage += dpU.damage * unbuffedNr;
           displayParts.push(dpU);
         }
       } else {
-        const dp = formula.displayFull(stats, charLevel, ctx);
+        const dp = formula.displayFull(stats, partCharLevel, ctx);
         dp.hits = nonReactingHits;
         dp.sourcePartIndex = i;
         if (effectiveOffField) dp.offField = true;
+        addContributorInfo(dp);
         totalDamage += dp.damage * nonReactingHits;
         displayParts.push(dp);
       }
     }
   }
   return { parts: displayParts, totalDamage };
+}
+
+/**
+ * Compute per-character rank weights for a multi-contributor lunar formula.
+ * Evaluates the formula with each eligible character's stats, sorts by damage
+ * descending, and assigns LUNAR_RANK_WEIGHTS positionally.
+ */
+export function computeLunarRankWeights(
+  formula: DamageFormula,
+  eligible: string[],
+  teamStats: Record<string, StatSheet>,
+  charLevels: Record<string, number>,
+  ctx: CalcContext
+): Map<string, number> {
+  const contributions: { charId: string; damage: number }[] = [];
+  for (const charId of eligible) {
+    const stats = teamStats[charId];
+    if (!stats) continue;
+    const damage = formula.calc(stats, charLevels[charId] ?? 90, ctx);
+    contributions.push({ charId, damage });
+  }
+  contributions.sort((a, b) => b.damage - a.damage);
+  const weights = new Map<string, number>();
+  for (let i = 0; i < contributions.length; i++) {
+    weights.set(contributions[i].charId, LUNAR_RANK_WEIGHTS[i] ?? 0);
+  }
+  return weights;
 }

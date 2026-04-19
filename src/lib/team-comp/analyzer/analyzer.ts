@@ -574,7 +574,7 @@ export function deriveComboForAllocation(
   for (const [formulaId, count] of Object.entries(rxResolvedCounts)) {
     if (rxInTemplate.has(formulaId) || count <= 0) continue;
     const entry = teamBuild.formulaIndex.get(formulaId);
-    const charId = entry?.statsCharId ?? "";
+    const charId = entry?.parts[0]?.statsCharId ?? "";
     lines.push({ charId, formulaId, count });
   }
 

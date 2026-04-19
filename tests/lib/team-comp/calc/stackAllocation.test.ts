@@ -9,8 +9,8 @@ import {
   computeComboDefaultActivation,
   computeDefaultActivation,
   distributeComboHits,
-} from "@/lib/team-comp/calc/stackAllocation";
-import { exclusionKey } from "@/lib/team-comp/calc/stackAllocation";
+} from "@/lib/team-comp/calc/stackRank";
+import { exclusionKey } from "@/lib/team-comp/calc/stackRank";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { buffSourceKey } from "@/lib/team-comp/helpers";
 import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";

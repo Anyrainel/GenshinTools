@@ -18,7 +18,6 @@ import type {
 import type { FormulaEntry } from "../types";
 import type {
   CalcContext,
-  DamageResult,
   ElementalOrPhysical,
   I18nLabel,
   ReactionType,
@@ -26,6 +25,7 @@ import type {
 } from "../types";
 import { LunarFormula, TransformFormula } from "./damageFormula";
 import type { CharacterBase, IFormulaProvider } from "./implModel";
+import { computeLunarRankWeights } from "./stackRank";
 import type { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 
@@ -88,10 +88,10 @@ export const MULTI_CONTRIBUTOR_REACTIONS: ReadonlySet<ReactionType> = new Set([
 /** Rank weights: [Rank1, Rank2, Rank3, Rank4]. */
 export const LUNAR_RANK_WEIGHTS = [0.6, 0.3, 0.05, 0.05] as const;
 
-/** Resolve reaction combo entries into per-triggerer { formulaId → count }.
- *  Adds active constellation bonuses to the total, distributes across eligible
- *  characters (on-field char gets remainder, others get 1), and emits one entry
- *  per triggerer with per-triggerer formula ID (e.g. rx-overloaded-amber). */
+/** Resolve reaction combo entries into { formulaId → count }.
+ *  Adds active constellation bonuses to the total.
+ *  Multi-contributor reactions produce one entry with the base ID (e.g. rx-lunarCharged: totalCount).
+ *  Single-contributor reactions produce per-triggerer entries (e.g. rx-overloaded-amber). */
 export function resolveReactionComboEntries(
   entries: ReactionComboEntry[],
   constellations: Record<string, number>
@@ -104,14 +104,24 @@ export function resolveReactionComboEntries(
         total += b.delta;
       }
     }
-    for (const charId of entry.eligible) {
-      const count =
-        total > 0
-          ? charId === entry.onFieldCharId
-            ? Math.max(0, total - (entry.eligible.length - 1))
-            : 1
-          : 0;
-      result[`${entry.id}-${charId}`] = count;
+    const baseReaction = entry.id.startsWith("rx-")
+      ? entry.id.slice(3)
+      : undefined;
+    const isMulti =
+      baseReaction != null &&
+      MULTI_CONTRIBUTOR_REACTIONS.has(baseReaction as ReactionType);
+    if (isMulti) {
+      result[entry.id] = total;
+    } else {
+      for (const charId of entry.eligible) {
+        const count =
+          total > 0
+            ? charId === entry.onFieldCharId
+              ? Math.max(0, total - (entry.eligible.length - 1))
+              : 1
+            : 0;
+        result[`${entry.id}-${charId}`] = count;
+      }
     }
   }
   return result;
@@ -153,9 +163,8 @@ export class TeamReaction implements IFormulaProvider {
       const id = `${baseId}-${charId}`;
       this.formulas[id] = {
         label,
-        parts,
+        parts: parts.map((p) => ({ ...p, statsCharId: charId })),
         owner: "team",
-        statsCharId: charId,
       };
       this.baseIdFor[id] = baseId;
     }
@@ -276,15 +285,6 @@ export class TeamReaction implements IFormulaProvider {
   }
 
   /**
-   * Set pre-computed rank weights for a multi-contributor formula.
-   * Called by TeamBuild after construction using baseline stats (no artifacts).
-   * Keyed by base reaction ID (e.g. "rx-lunarCharged").
-   */
-  setRankWeights(baseFormulaId: string, weights: Map<string, number>): void {
-    this.rankWeights[baseFormulaId] = weights;
-  }
-
-  /**
    * Get pre-computed rank weights for a formula (accepts per-triggerer or base ID).
    * Returns undefined if not pre-computed (falls back to dynamic ranking).
    */
@@ -293,12 +293,91 @@ export class TeamReaction implements IFormulaProvider {
     return this.rankWeights[base];
   }
 
+  /**
+   * Compute rank weights and create N-part multi-contributor entries.
+   * Called by TeamBuild after construction using baseline stats.
+   * For each multi-contributor base reaction, creates a single FormulaEntry
+   * with N parts (one per eligible character), each with a weighted LunarFormula.
+   */
+  finalizeMultiContributorEntries(
+    teamStats: Record<string, StatSheet>,
+    charLevels: Record<string, number>,
+    ctx: CalcContext
+  ): void {
+    for (const baseId of Object.keys(this.baseEligible)) {
+      const eligible = this.baseEligible[baseId];
+      if (!eligible || eligible.length === 0) continue;
+
+      // Check if this is a multi-contributor reaction
+      const baseReaction = baseId.startsWith("rx-")
+        ? baseId.slice(3)
+        : undefined;
+      if (
+        !baseReaction ||
+        !MULTI_CONTRIBUTOR_REACTIONS.has(baseReaction as ReactionType)
+      )
+        continue;
+
+      // Get the base formula from any per-triggerer entry
+      const sampleEntry = this.formulas[`${baseId}-${eligible[0]}`];
+      if (!sampleEntry) continue;
+      const baseFormula = sampleEntry.parts[0].formula;
+
+      // Compute rank weights
+      const weights = computeLunarRankWeights(
+        baseFormula,
+        eligible,
+        teamStats,
+        charLevels,
+        ctx
+      );
+      this.rankWeights[baseId] = weights;
+
+      // Create N-part entry with weighted LunarFormulas.
+      // The on-field character's part is on-field; all others are off-field.
+      const onFieldCharId = this.guessOnFieldChar(baseId) ?? eligible[0];
+      // Build parts with on-field character first so parts[0].statsCharId
+      // is always the on-field character (used by combo line charId resolution).
+      const orderedEligible = [
+        onFieldCharId,
+        ...eligible.filter((id) => id !== onFieldCharId),
+      ];
+      const parts: FormulaPart[] = [];
+      for (const charId of orderedEligible) {
+        const w = weights.get(charId) ?? 0;
+        if (w === 0) continue;
+        const weightedFormula = new LunarFormula(
+          baseFormula.talentMultiplier,
+          baseFormula.tag,
+          baseFormula.scalingKey as "atk" | "hp" | "def" | "em",
+          baseFormula.extraTerm,
+          w
+        );
+        const offField = charId !== onFieldCharId;
+        parts.push({
+          formula: weightedFormula,
+          hits: 1,
+          statsCharId: charId,
+          offField: offField || undefined,
+        });
+      }
+
+      const label = this.baseLabels[baseId] ?? sampleEntry.label;
+      this.formulas[baseId] = {
+        label,
+        parts,
+        owner: "team",
+        isMultiContributor: true,
+      };
+    }
+  }
+
   /** IFormulaProvider — all per-triggerer reaction formula IDs with i18n labels. */
   get formulaIds(): Record<string, I18nLabel> {
     return this.getFormulaIds();
   }
 
-  /** All per-triggerer reaction formula IDs with i18n labels. */
+  /** All reaction formula IDs with i18n labels (per-triggerer + multi-contributor base). */
   getFormulaIds(): Record<string, I18nLabel> {
     const result: Record<string, I18nLabel> = {};
     for (const [id, entry] of Object.entries(this.formulas)) {
@@ -431,130 +510,6 @@ export class TeamReaction implements IFormulaProvider {
       this.getReactionComboDescriptor(),
       constellations
     );
-  }
-
-  /**
-   * Evaluate single-contributor reaction (transformative).
-   * The trigger character's stats and level are used.
-   */
-  getDamageResult(
-    formulaId: string,
-    triggerCharId: string,
-    triggerStats: StatSheet,
-    ctx: CalcContext
-  ): DamageResult {
-    const entry = this.formulas[formulaId];
-    if (!entry) return { parts: [], totalDamage: 0 };
-
-    const formula = entry.parts[0].formula;
-    const charLevel = this.charLevels[triggerCharId] ?? 90;
-    const damage = formula.calc(triggerStats, charLevel, ctx);
-    return { parts: [{ damage, hits: 1 }], totalDamage: damage };
-  }
-
-  /**
-   * Compute per-character damage contributions for a multi-contributor formula.
-   * Returns eligible characters' raw damage values (unsorted).
-   * Accepts per-triggerer formula IDs (reads multiContributors from entry).
-   */
-  private computeContributions(
-    formulaId: string,
-    teamStats: Record<string, StatSheet>,
-    ctx: CalcContext
-  ): { charId: string; damage: number }[] {
-    const entry = this.formulas[formulaId];
-    if (!entry) return [];
-
-    const formula = entry.parts[0].formula;
-    const base = this.baseIdFor[formulaId] ?? formulaId;
-    const eligible = this.baseEligible[base] ?? [];
-    const contributions: { charId: string; damage: number }[] = [];
-    for (const config of this.configs) {
-      if (!eligible.includes(config.charId)) continue;
-      const stats = teamStats[config.charId];
-      if (!stats) continue;
-      contributions.push({
-        charId: config.charId,
-        damage: formula.calc(stats, config.charLevel, ctx),
-      });
-    }
-    return contributions;
-  }
-
-  /**
-   * Evaluate multi-contributor lunar reaction.
-   * All eligible characters contribute; sorted by damage descending, then weighted by rank.
-   */
-  getMultiContributorResult(
-    formulaId: string,
-    _onFieldCharId: string,
-    teamStats: Record<string, StatSheet>,
-    ctx: CalcContext
-  ): DamageResult {
-    const contributions = this.computeContributions(formulaId, teamStats, ctx);
-    if (contributions.length === 0) return { parts: [], totalDamage: 0 };
-
-    const precomputedWeights = this.getRankWeights(formulaId);
-
-    let totalDamage: number;
-    if (precomputedWeights) {
-      totalDamage = contributions.reduce(
-        (sum, c) => sum + c.damage * (precomputedWeights.get(c.charId) ?? 0),
-        0
-      );
-    } else {
-      contributions.sort((a, b) => b.damage - a.damage);
-      totalDamage = contributions.reduce(
-        (sum, c, i) => sum + c.damage * (LUNAR_RANK_WEIGHTS[i] ?? 0),
-        0
-      );
-    }
-
-    return { parts: [{ damage: totalDamage, hits: 1 }], totalDamage };
-  }
-
-  /**
-   * Display breakdown for multi-contributor lunar reaction.
-   * Returns per-character ranked contributions with weights.
-   */
-  getMultiContributorDisplay(
-    formulaId: string,
-    _onFieldCharId: string,
-    teamStats: Record<string, StatSheet>,
-    ctx: CalcContext
-  ): {
-    contributors: {
-      charId: string;
-      rank: number;
-      weight: number;
-      damage: number;
-    }[];
-    totalDamage: number;
-  } {
-    const contributions = this.computeContributions(formulaId, teamStats, ctx);
-    if (contributions.length === 0) return { contributors: [], totalDamage: 0 };
-
-    const precomputedWeights = this.getRankWeights(formulaId);
-    if (precomputedWeights) {
-      // Sort by weight descending (highest rank first)
-      contributions.sort(
-        (a, b) =>
-          (precomputedWeights.get(b.charId) ?? 0) -
-          (precomputedWeights.get(a.charId) ?? 0)
-      );
-    } else {
-      contributions.sort((a, b) => b.damage - a.damage);
-    }
-
-    const ranked = contributions.map((c, i) => ({
-      charId: c.charId,
-      rank: i + 1,
-      weight: precomputedWeights?.get(c.charId) ?? LUNAR_RANK_WEIGHTS[i] ?? 0,
-      damage: c.damage,
-    }));
-    const totalDamage = ranked.reduce((sum, c) => sum + c.damage * c.weight, 0);
-
-    return { contributors: ranked, totalDamage };
   }
 
   // ─── Internal helpers ───

@@ -2,7 +2,7 @@
  * Tests for Nicole's cross-scaled Q Arcane Projection and C1 Unity formulas.
  *
  * Nicole's Q projections evaluate in the triggering teammate's stat context
- * (their ATK, element, DMG%, crit, EM) via FormulaEntry.statsCharId override.
+ * (their ATK, element, DMG%, crit, EM) via FormulaPart.statsCharId override.
  * Game text: "该伤害受益于该角色的攻击力,并视为由该角色造成的伤害"
  *
  * Nicole is a beta character. We mock betaEnabled() and the gzip loader so
@@ -95,10 +95,10 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
     const { char } = nicoleWithTeam(["amber", "kaeya", "lisa"]);
     const entries = getEntries(char);
 
-    expect(entries["nicole-q-proj-slot1"].statsCharId).toBe("nicole");
-    expect(entries["nicole-q-proj-slot2"].statsCharId).toBe("amber");
-    expect(entries["nicole-q-proj-slot3"].statsCharId).toBe("kaeya");
-    expect(entries["nicole-q-proj-slot4"].statsCharId).toBe("lisa");
+    expect(entries["nicole-q-proj-slot1"].parts[0].statsCharId).toBe("nicole");
+    expect(entries["nicole-q-proj-slot2"].parts[0].statsCharId).toBe("amber");
+    expect(entries["nicole-q-proj-slot3"].parts[0].statsCharId).toBe("kaeya");
+    expect(entries["nicole-q-proj-slot4"].parts[0].statsCharId).toBe("lisa");
   });
 
   it("sets DamageTag element to each occupant's element", () => {
@@ -178,7 +178,7 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
     const { char } = nicoleWithTeam(["amber"]);
     const entries = getEntries(char);
 
-    expect(entries["nicole-q-proj-slot1"].statsCharId).toBe("nicole");
+    expect(entries["nicole-q-proj-slot1"].parts[0].statsCharId).toBe("nicole");
   });
 });
 
@@ -202,9 +202,11 @@ describe("Nicole C1 Unity — constellation gating", () => {
     const { char } = nicoleWithTeam(["amber", "kaeya"], 1);
     const entries = getEntries(char);
 
-    expect(entries["nicole-c1-unity-slot1"].statsCharId).toBe("nicole");
-    expect(entries["nicole-c1-unity-slot2"].statsCharId).toBe("amber");
-    expect(entries["nicole-c1-unity-slot3"].statsCharId).toBe("kaeya");
+    expect(entries["nicole-c1-unity-slot1"].parts[0].statsCharId).toBe(
+      "nicole"
+    );
+    expect(entries["nicole-c1-unity-slot2"].parts[0].statsCharId).toBe("amber");
+    expect(entries["nicole-c1-unity-slot3"].parts[0].statsCharId).toBe("kaeya");
   });
 
   it("C1 Unity uses occupant's element", () => {

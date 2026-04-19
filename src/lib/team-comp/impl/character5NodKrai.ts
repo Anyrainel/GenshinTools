@@ -1562,12 +1562,11 @@ class Nicole extends CharacterBase {
           zh: `Q奥迹造影·${name.zh}`,
           en: `Q Arcane Projection (${name.en})`,
         },
-        statsCharId: occupantId,
         parts: [
           {
             formula: new DirectFormula(projRatio, projTag),
             hits: 5,
-            // Projection triggers on the active (on-field) character.
+            statsCharId: occupantId,
             offField: false,
             ...(p4Buff ? { bespokeBuffs: [p4Buff] } : {}),
           },
@@ -1580,11 +1579,11 @@ class Nicole extends CharacterBase {
             zh: `C1 合一造影·${name.zh}`,
             en: `C1 Unity (${name.en})`,
           },
-          statsCharId: occupantId,
           minC: 1,
           parts: [
             {
               formula: new DirectFormula(6.0, projTag),
+              statsCharId: occupantId,
               offField: false,
               ...(p4Buff ? { bespokeBuffs: [p4Buff] } : {}),
             },

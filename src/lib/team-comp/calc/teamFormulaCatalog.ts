@@ -85,15 +85,18 @@ export class TeamFormulaCatalog {
   }
 
   /** Reaction combo as ComboLine[], ready to append to default combo.
-   *  Each line uses a per-triggerer formula ID (e.g. rx-overloaded-amber)
-   *  with charId = statsCharId from the reaction entry. */
+   *  Multi-contributor reactions use the base ID (e.g. rx-lunarCharged).
+   *  Single-contributor reactions use per-triggerer IDs (e.g. rx-overloaded-amber). */
   getReactionComboLines(): ComboLine[] {
     const resolved = this.reactionProvider.getReactionComboCounts();
     const lines: ComboLine[] = [];
     for (const [formulaId, count] of Object.entries(resolved)) {
       if (count <= 0) continue;
       const entry = this.reactionProvider.getFormulaEntry(formulaId);
-      const charId = entry?.statsCharId ?? "";
+      const charId =
+        entry?.parts[0]?.statsCharId ??
+        this.reactionProvider.guessOnFieldChar(formulaId) ??
+        "";
       lines.push({ charId, formulaId, count });
     }
     return lines;

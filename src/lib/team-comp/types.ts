@@ -250,6 +250,8 @@ export type FormulaPart = {
   /** If true, damage is dealt while the character is off-field.
    *  On-field buffs (onField, selfOnField) will NOT apply. */
   offField?: boolean;
+  /** Override: use this character's stats (from team stats map) instead of the formula-level default. */
+  statsCharId?: string;
 };
 /** Declarative entry in a character's formulaMap. */
 export type FormulaEntry = {
@@ -259,10 +261,9 @@ export type FormulaEntry = {
    *  Populated by the engine during formulaIndex construction.
    *  Undefined until the entry is registered in a formulaIndex. */
   owner?: string;
-  /** Override for the character whose stats are used during evaluation.
-   *  When set, `line.charId` is resolved to this value instead of `owner`.
-   *  Used by cross-scaled formulas (Nicole projections, reaction triggerers). */
-  statsCharId?: string;
+  /** When true, each part represents a different character's contribution.
+   *  Evaluation resolves per-part stats via part.statsCharId. */
+  isMultiContributor?: boolean;
   /** Minimum constellation required (0-6). Omit or 0 = always available. */
   minC?: number;
   /** Additional availability condition (evaluated at construction time).

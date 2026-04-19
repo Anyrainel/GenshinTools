@@ -7,7 +7,7 @@ import {
   getOptionDef,
   resolveOption,
 } from "@/lib/team-comp/calc/registry";
-import { evaluateFormulaDamage } from "@/lib/team-comp/calc/stackAllocation";
+import { evaluateFormulaDamage } from "@/lib/team-comp/calc/stackRank";
 import { StatBuff } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet, appendFieldState } from "@/lib/team-comp/calc/statSheet";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";

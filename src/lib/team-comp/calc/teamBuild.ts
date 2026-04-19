@@ -38,7 +38,7 @@ import {
 } from "./fieldState";
 import type { CharacterBase } from "./implModel";
 import { computeSubstatMarginals } from "./marginalGain";
-import { exclusionKey } from "./stackAllocation";
+import { exclusionKey } from "./stackRank";
 import {
   type ComboLineEval,
   type FormulaPartEval,
@@ -51,7 +51,7 @@ import {
   computeDefaultActivation,
   evaluateFormulaDamage,
   evaluateFormulaDisplay,
-} from "./stackAllocation";
+} from "./stackRank";
 import {
   CrossScalingBuff,
   ScalingBuff,
@@ -66,7 +66,7 @@ import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import { StatSheet } from "./statSheet";
 import { TeamFormulaCatalog } from "./teamFormulaCatalog";
 import { TeamMeta } from "./teamMeta";
-import { LUNAR_RANK_WEIGHTS, TeamReaction } from "./teamReaction";
+import { TeamReaction } from "./teamReaction";
 export { TeamFormulaCatalog } from "./teamFormulaCatalog";
 import { TeamResonance } from "./teamResonance";
 
@@ -250,9 +250,21 @@ export class TeamBuild {
     }
     this.reactionProvider = new TeamReaction(this.teamMeta, charBases, configs);
 
-    // Pre-compute rank weights for multi-contributor lunar formulas
-    // using baseline stats (no artifacts) so ranking is deterministic.
-    this.computeBaselineLunarRanks(configs);
+    // Pre-compute rank weights and N-part entries for multi-contributor lunar
+    // formulas using baseline stats (no artifacts) so ranking is deterministic.
+    {
+      const emptySheet = new StatSheet([]);
+      const emptySheets: Record<string, StatSheet> = {};
+      for (const c of configs) emptySheets[c.charId] = emptySheet;
+      const baselineStats = this.getTeamStats(emptySheets, configs[0].charId);
+      const charLevels: Record<string, number> = {};
+      for (const c of configs) charLevels[c.charId] = c.charLevel;
+      this.reactionProvider.finalizeMultiContributorEntries(
+        baselineStats,
+        charLevels,
+        this.baselineCtx
+      );
+    }
 
     // Build catalog (owns formulaIndex + formula-metadata queries)
     this.catalog = new TeamFormulaCatalog(
@@ -260,51 +272,6 @@ export class TeamBuild {
       this.reactionProvider
     );
     this.formulaIndex = this.catalog.formulaIndex;
-  }
-
-  /**
-   * Compute rank weights for multi-contributor lunar reactions from baseline
-   * stats (base + weapon + static buffs, no artifacts). This determines
-   * a fixed ranking that both the compiled and interpreted paths use consistently.
-   */
-  private computeBaselineLunarRanks(configs: TeamSlotConfig[]): void {
-    const emptySheet = new StatSheet([]);
-    const emptySheets: Record<string, StatSheet> = {};
-    for (const c of configs) emptySheets[c.charId] = emptySheet;
-
-    // Get baseline team stats (no artifacts; use first char as on-field — only
-    // relative ranking matters here, so the choice is arbitrary).
-    const baselineStats = this.getTeamStats(emptySheets, configs[0].charId);
-
-    // Iterate base reaction IDs (not per-triggerer) to avoid duplicate computation
-    for (const baseId of this.reactionProvider.getBaseReactionIds()) {
-      // Pick any per-triggerer entry to get the formula
-      const eligible = this.reactionProvider.getEligibleCharacters(baseId);
-      if (eligible.length === 0) continue;
-      const sampleEntry = this.reactionProvider.getFormulaEntry(
-        `${baseId}-${eligible[0]}`
-      );
-      if (!sampleEntry) continue;
-      if (!this.reactionProvider.isMultiContributor(`${baseId}-${eligible[0]}`))
-        continue;
-
-      const formula = sampleEntry.parts[0].formula;
-      const contributions: { charId: string; damage: number }[] = [];
-      for (const config of configs) {
-        if (!eligible.includes(config.charId)) continue;
-        const stats = baselineStats[config.charId];
-        if (!stats) continue;
-        const damage = formula.calc(stats, config.charLevel, this.baselineCtx);
-        contributions.push({ charId: config.charId, damage });
-      }
-
-      contributions.sort((a, b) => b.damage - a.damage);
-      const weights = new Map<string, number>();
-      for (let i = 0; i < contributions.length; i++) {
-        weights.set(contributions[i].charId, LUNAR_RANK_WEIGHTS[i] ?? 0);
-      }
-      this.reactionProvider.setRankWeights(baseId, weights);
-    }
   }
 
   /**
@@ -930,37 +897,11 @@ export class TeamBuild {
       const entry =
         cb?.charBase.getFormulaEntry(line.formulaId) ??
         this.formulaIndex.get(line.formulaId);
-      const statsCharId = entry?.statsCharId ?? line.charId;
+      const statsCharId = entry?.parts[0]?.statsCharId ?? line.charId;
       const ownerCharId = entry?.owner ?? line.charId;
 
       const teamStats = getStats(statsCharId);
 
-      // Team reaction path
-      if (line.formulaId.startsWith("rx-")) {
-        const rp = this.reactionProvider;
-        let result: DamageResult;
-        if (rp.isMultiContributor(line.formulaId)) {
-          result = rp.getMultiContributorResult(
-            line.formulaId,
-            statsCharId,
-            teamStats,
-            ctx
-          );
-        } else {
-          result = rp.getDamageResult(
-            line.formulaId,
-            statsCharId,
-            teamStats[statsCharId]!,
-            ctx
-          );
-        }
-        return {
-          perHit: result.totalDamage,
-          total: result.totalDamage * line.count,
-        };
-      }
-
-      // Character formula path
       const lineEntry = entry;
       const partOnFieldCharIds = lineEntry
         ? resolvePartOnFieldCharIds(
@@ -1270,93 +1211,48 @@ export class TeamBuild {
       arr.push({ lineIdx: i, line });
     }
 
+    // Build charLevels map for per-part routing in display
+    const displayCharLevels: Record<string, number> = {};
+    for (const c of this.configs) displayCharLevels[c.charId] = c.charLevel;
+
     for (const [formulaKey, formulaLines] of linesByFormula) {
       const { charId, formulaId } = formulaLines[0].line;
       const build = this.charBuilds[charId];
-      if (!build) continue;
 
       const postStats = getStats(charId);
-
-      // ── Team reaction formulas ──
-      if (formulaId.startsWith("rx-")) {
-        const rxEntry = this.formulaIndex.get(formulaId);
-        if (!rxEntry) continue;
-        const formula = rxEntry.parts[0].formula;
-        const charLevel =
-          this.configs.find((c) => c.charId === charId)?.charLevel ?? 90;
-
-        let parts: DisplayPart[];
-        if (this.reactionProvider.isMultiContributor(formulaId)) {
-          const rankWeights = this.reactionProvider.getRankWeights(formulaId);
-          const contributions: { charId: string; weight: number }[] = [];
-          for (const cfg of this.configs) {
-            const w = rankWeights?.get(cfg.charId) ?? 0;
-            contributions.push({ charId: cfg.charId, weight: w });
-          }
-          contributions.sort((a, b) => b.weight - a.weight);
-
-          parts = contributions.map((c) => {
-            const onField =
-              c.charId === charId
-                ? charId
-                : defaultOnFieldCharId(charId, this.configs);
-            const stats = getStats(onField);
-            const cLevel =
-              this.configs.find((cfg) => cfg.charId === c.charId)?.charLevel ??
-              90;
-            const dp = formula.displayFull(stats[c.charId]!, cLevel, ctx);
-            dp.damage = dp.damage * c.weight;
-            dp.hits = 1;
-            dp.params = { ...dp.params, rankWeight: c.weight };
-            dp.contributorCharId = c.charId;
-            return dp;
-          });
-        } else {
-          const dp = formula.displayFull(postStats[charId]!, charLevel, ctx);
-          dp.hits = 1;
-          parts = [dp];
-        }
-
-        const totalComboCount = formulaLines.reduce(
-          (sum, fl) => sum + fl.line.count,
-          0
-        );
-        partsByFormula[formulaKey] = parts.map((dp) => ({
-          ...dp,
-          damage: dp.damage * totalComboCount,
-        }));
-        continue;
-      }
 
       const firstLine = formulaLines[0].line;
       const effectiveReaction = firstLine.reaction;
 
-      const entry =
-        build.charBase.getFormulaEntry(formulaId) ??
-        this.formulaIndex.get(formulaId);
-      const formulaHasOffField =
-        entry?.parts.some((p) => isPartOffField(p, firstLine.forceOnField)) ??
-        false;
+      const entry = build
+        ? (build.charBase.getFormulaEntry(formulaId) ??
+          this.formulaIndex.get(formulaId))
+        : this.formulaIndex.get(formulaId);
+      if (!entry) continue;
+
+      const entryCharLevel = build
+        ? build.charBase.charLevel
+        : (this.configs.find((c) => c.charId === charId)?.charLevel ?? 90);
+      const formulaHasOffField = entry.parts.some((p) =>
+        isPartOffField(p, firstLine.forceOnField)
+      );
       let offFieldPostStats: StatSheet | undefined;
       if (formulaHasOffField) {
         const offOther = defaultOnFieldCharId(charId, this.configs);
         offFieldPostStats = getStats(offOther)[charId];
       }
 
-      const displayEntry =
-        build.charBase.getFormulaEntry(formulaId) ??
-        this.formulaIndex.get(formulaId);
-      const { parts } = displayEntry
-        ? evaluateFormulaDisplay(
-            displayEntry,
-            build.charBase.charLevel,
-            postStats[charId]!,
-            ctx,
-            effectiveReaction,
-            offFieldPostStats,
-            firstLine.forceOnField
-          )
-        : { parts: [] as DisplayPart[] };
+      const { parts } = evaluateFormulaDisplay(
+        entry,
+        entryCharLevel,
+        postStats[charId]!,
+        ctx,
+        effectiveReaction,
+        offFieldPostStats,
+        firstLine.forceOnField,
+        postStats,
+        displayCharLevels
+      );
 
       const totalComboCount = formulaLines.reduce(
         (sum, fl) => sum + fl.line.count,
@@ -1423,7 +1319,7 @@ export class TeamBuild {
             aggregatedActivation,
             postStats[charId]!,
             statsVariants,
-            build.charBase.charLevel,
+            entryCharLevel,
             ctx,
             offFieldPostStats,
             offFieldVariants
@@ -1463,7 +1359,7 @@ export class TeamBuild {
                 : baseVariant;
               const rebuilt = formula.displayFull(
                 displayStats,
-                build.charBase.charLevel,
+                entryCharLevel,
                 ctx
               );
               const blendedDmg = blended.partDamages[eidx].damage;
@@ -1540,7 +1436,7 @@ export class TeamBuild {
                 : postStats[charId]!;
             const dpUnbuffed = formula.displayFull(
               baseSelfStats,
-              build.charBase.charLevel,
+              entryCharLevel,
               ctx
             );
             dpUnbuffed.hits = unbuffedHits;
@@ -1596,16 +1492,24 @@ export class TeamBuild {
   ): DamageResult {
     const ownerCharId = formulaOwnerCharId ?? charId;
     const build = this.charBuilds[ownerCharId];
-    if (!build) throw new Error(`No CharBuild for character: ${ownerCharId}`);
-    const entry = build.charBase.getFormulaEntry(formulaId);
+    // Prefer charBase lookup; fall back to formulaIndex for reaction/cross-scaled formulas
+    const entry = build
+      ? (build.charBase.getFormulaEntry(formulaId) ??
+        this.formulaIndex.get(formulaId))
+      : this.formulaIndex.get(formulaId);
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const teamStatsArr = Object.values(teamStats);
-    // Use stats from charId (the evaluating character) but formula from ownerCharId
-    const charLevel =
-      ownerCharId !== charId
+    const charLevel = build
+      ? ownerCharId !== charId
         ? (this.charBuilds[charId]?.charBase.charLevel ??
           build.charBase.charLevel)
-        : build.charBase.charLevel;
+        : build.charBase.charLevel
+      : (this.configs.find((c) => c.charId === charId)?.charLevel ?? 90);
+
+    // Build charLevels map for per-part routing
+    const charLevels: Record<string, number> = {};
+    for (const c of this.configs) charLevels[c.charId] = c.charLevel;
+
     return evaluateFormulaDamage(
       entry,
       charLevel,
@@ -1617,7 +1521,9 @@ export class TeamBuild {
       activation,
       statsVariants,
       offFieldVariants,
-      forceOnField
+      forceOnField,
+      teamStats,
+      charLevels
     );
   }
 

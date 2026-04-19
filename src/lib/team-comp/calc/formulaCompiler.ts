@@ -38,14 +38,13 @@ import {
 } from "./exprStatSheet";
 import { isOnField } from "./fieldState";
 import { defaultOnFieldCharId, isPartOffField } from "./fieldState";
-import { exclusionKey } from "./stackAllocation";
+import { exclusionKey } from "./stackRank";
 import { CrossScalingBuff, ScalingBuff, getBuffInstanceKey } from "./statBuff";
 import { isBuffApplicable } from "./statBuff";
 import { StatBuff } from "./statBuff";
 import { bespokeMaxStacks } from "./statSheet";
 import { StatSheet } from "./statSheet";
 import type { TeamBuild } from "./teamBuild";
-import { LUNAR_RANK_WEIGHTS } from "./teamReaction";
 
 // ─── Public Interface ───
 
@@ -327,56 +326,6 @@ export function compileComboTeamDamage(
     };
 
     for (const line of lines) {
-      // Team reaction formula path: compile directly from reactionProvider
-      if (line.formulaId.startsWith("rx-")) {
-        const rp = teamBuild.reactionProvider;
-        const rxEntry = rp.getFormulaEntry(line.formulaId);
-        if (!rxEntry) continue;
-
-        const rxFormula = rxEntry.parts[0].formula;
-
-        if (rp.isMultiContributor(line.formulaId)) {
-          const rankWeights = rp.getRankWeights(line.formulaId);
-          const eligible = rp.getEligibleCharacters(line.formulaId);
-          const charExprs: Expr[] = [];
-          for (const cfg of configs) {
-            if (!eligible.includes(cfg.charId)) continue;
-            // Reaction formulas use on-field stats
-            const charStats = postExprStats[cfg.charId];
-            if (!charStats) continue;
-            const weight = rankWeights?.get(cfg.charId);
-            const w =
-              weight ??
-              LUNAR_RANK_WEIGHTS.reduce((a, b) => a + b, 0) / eligible.length;
-            if (w === 0) continue;
-            charExprs.push(
-              E.mul(
-                rxFormula.buildExpr(charStats, cfg.charLevel, calcContext),
-                E.const(w)
-              )
-            );
-          }
-          if (charExprs.length > 0) {
-            const lunarExpr = E.mul(E.add(...charExprs), E.const(line.count));
-            allPartExprs.push(lunarExpr);
-          }
-        } else {
-          // Reaction formulas use on-field stats; prefer entry's statsCharId
-          const triggerCharId = rxEntry.statsCharId ?? line.charId;
-          const triggerStats = postExprStats[triggerCharId];
-          if (!triggerStats) continue;
-          const charLevel =
-            configs.find((c) => c.charId === triggerCharId)?.charLevel ?? 90;
-          const lineExpr = rxFormula.buildExpr(
-            triggerStats,
-            charLevel,
-            calcContext
-          );
-          allPartExprs.push(E.mul(lineExpr, E.const(line.count)));
-        }
-        continue;
-      }
-
       // Prefer charBase lookup to avoid formulaIndex collisions (e.g. manekin);
       // fall back to formulaIndex for cross-scaled formulas.
       const formulaCharBuild = teamBuild.charBuilds[line.charId];
@@ -385,11 +334,33 @@ export function compileComboTeamDamage(
         teamBuild.formulaIndex.get(line.formulaId);
       if (!entry) continue;
 
+      // Multi-contributor entries: each part has its own statsCharId and
+      // weighted formula — compile per-part exprs directly.
+      // postExprStats already contains field-state-correct stats for each
+      // character (computed with the on-field character's context).
+      if (entry.isMultiContributor) {
+        const partExprs: Expr[] = [];
+        for (const part of entry.parts) {
+          const partCharId = part.statsCharId ?? line.charId;
+          const partStats = postExprStats[partCharId];
+          if (!partStats) continue;
+          const partLevel =
+            configs.find((c) => c.charId === partCharId)?.charLevel ?? 90;
+          partExprs.push(
+            part.formula.buildExpr(partStats, partLevel, calcContext)
+          );
+        }
+        if (partExprs.length > 0) {
+          allPartExprs.push(E.mul(E.add(...partExprs), E.const(line.count)));
+        }
+        continue;
+      }
+
       const effectiveReaction = line.reaction;
 
       // Resolve the stats character: cross-scaled formulas (e.g. Nicole projection)
       // evaluate with the statsCharId's stats instead of line.charId.
-      const statsCharId = entry.statsCharId ?? line.charId;
+      const statsCharId = entry.parts[0]?.statsCharId ?? line.charId;
 
       // On-field stats for the formula character (from field-state view)
       const formulaStats = postExprStats[statsCharId]!;

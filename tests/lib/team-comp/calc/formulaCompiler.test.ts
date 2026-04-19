@@ -1071,9 +1071,8 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
 
       for (const formulaId of rxIds) {
         const rxEntry = tb.reactionProvider.getFormulaEntry(formulaId);
-        if (!rxEntry?.statsCharId) continue;
-        // Use the entry's statsCharId as trigger / on-field
-        const triggerCharId = rxEntry.statsCharId;
+        const triggerCharId = rxEntry?.parts[0]?.statsCharId;
+        if (!triggerCharId) continue;
         const swap = swapCharId ?? triggerCharId;
 
         for (let trial = 0; trial < 20; trial++) {
@@ -1086,24 +1085,14 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
             );
           }
 
-          // Standard path
+          // Standard path (unified pipeline)
           const teamStats = tb.getTeamStats(sheets, triggerCharId, FUZZ_CTX);
-          let oldDamage: number;
-          if (tb.reactionProvider.isMultiContributor(formulaId)) {
-            oldDamage = tb.reactionProvider.getMultiContributorResult(
-              formulaId,
-              triggerCharId,
-              teamStats,
-              FUZZ_CTX
-            ).totalDamage;
-          } else {
-            oldDamage = tb.reactionProvider.getDamageResult(
-              formulaId,
-              triggerCharId,
-              teamStats[triggerCharId]!,
-              FUZZ_CTX
-            ).totalDamage;
-          }
+          const oldDamage = tb.getDamageResult(
+            triggerCharId,
+            formulaId,
+            teamStats,
+            FUZZ_CTX
+          ).totalDamage;
 
           // Compiled path
           const compiled = compileComboTeamDamage(
@@ -1169,9 +1158,10 @@ describe("compileComboTeamDamage fuzz", () => {
     const rxFormulas = tb.reactionProvider.getFormulaIds();
     for (const rxId of Object.keys(rxFormulas)) {
       const rxEntry = tb.reactionProvider.getFormulaEntry(rxId);
-      if (rxEntry?.statsCharId) {
+      const rxCharId = rxEntry?.parts[0]?.statsCharId;
+      if (rxCharId) {
         lines.push({
-          charId: rxEntry.statsCharId,
+          charId: rxCharId,
           formulaId: rxId,
           count: 1 + Math.floor(Math.random() * 3),
         });
@@ -2412,7 +2402,7 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 //   • enemy level / enemy res / crit mode (random per trial)
 
 import { getOptionDef } from "@/lib/team-comp/calc/registry";
-import { buildStatVariants } from "@/lib/team-comp/calc/stackAllocation";
+import { buildStatVariants } from "@/lib/team-comp/calc/stackRank";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import type { BuffActivationMap } from "@/lib/team-comp/types";
