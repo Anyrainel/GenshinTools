@@ -448,7 +448,7 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const result = tb.getDamageResult(
       "fischl",
       "rx-overloaded-fischl",
-      teamStats,
+      "hu_tao",
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -464,7 +464,7 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const result = tb.getDamageResult(
       "nahida",
       "rx-bloom-nahida",
-      teamStats,
+      "nahida",
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -656,7 +656,7 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
     const result = tb.getDamageResult(
       "columbina",
       "rx-lunarCharged",
-      teamStats,
+      "columbina",
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -712,13 +712,13 @@ describe("TeamReactionProvider — different triggers produce different damage",
     const dmgHuTao = tb.getDamageResult(
       "hu_tao",
       "rx-overloaded-hu_tao",
-      teamStats,
+      "hu_tao",
       CTX
     ).totalDamage;
     const dmgFischl = tb.getDamageResult(
       "fischl",
       "rx-overloaded-fischl",
-      teamStats,
+      "hu_tao",
       CTX
     ).totalDamage;
 
@@ -739,7 +739,7 @@ describe("TeamReactionProvider — swirl damage evaluation", () => {
     const result = tb.getDamageResult(
       "kaedehara_kazuha",
       "rx-swirl-Pyro-kaedehara_kazuha",
-      teamStats,
+      "kaedehara_kazuha",
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);

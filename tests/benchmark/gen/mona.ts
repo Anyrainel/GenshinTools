@@ -148,33 +148,14 @@ function checkHope(
 
   const { teamBuild, formulaCharId, formulaId, onFieldCharId, calcContext } =
     ctx;
-  const postStats = teamBuild.getTeamStats(
-    updatedSheets,
-    onFieldCharId,
-    calcContext
-  );
-
-  let offFieldStats: Record<string, StatSheet> | undefined;
-  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
-    const otherCharId = Object.keys(teamBuild.charBuilds).find(
-      (id) => id !== formulaCharId
-    );
-    if (otherCharId) {
-      offFieldStats = teamBuild.getTeamStats(
-        updatedSheets,
-        otherCharId,
-        calcContext
-      );
-    }
-  }
+  teamBuild.getTeamStats(updatedSheets, onFieldCharId, calcContext);
 
   return teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
-    postStats,
+    onFieldCharId,
     calcContext,
-    ctx.reactionOverride,
-    offFieldStats
+    ctx.reactionOverride
   ).totalDamage;
 }
 

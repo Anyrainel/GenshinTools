@@ -287,27 +287,12 @@ export function evaluateBuild(
   if (scoreFn)
     return { damage: scoreFn(updatedSheets, onFieldCharId), result: null };
 
-  let offFieldStats: Record<string, StatSheet> | undefined;
-  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
-    const otherCharId = Object.keys(teamBuild.charBuilds).find(
-      (id) => id !== formulaCharId
-    );
-    if (otherCharId) {
-      offFieldStats = teamBuild.getTeamStats(
-        updatedSheets,
-        otherCharId,
-        calcContext
-      );
-    }
-  }
-
   const dmgRes = teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
-    postStats,
+    onFieldCharId,
     calcContext,
-    reactionOverride,
-    offFieldStats
+    reactionOverride
   );
   return { damage: dmgRes.totalDamage, result: dmgRes };
 }
@@ -332,33 +317,14 @@ export function evaluateUpperBound(
   }
   const updatedSheets = { ...baseSheets, [swapCharId]: sheet };
   if (scoreFn) return scoreFn(updatedSheets, onFieldCharId);
-  const postStats = teamBuild.getTeamStats(
-    updatedSheets,
-    onFieldCharId,
-    calcContext
-  );
-
-  let offFieldStats: Record<string, StatSheet> | undefined;
-  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
-    const otherCharId = Object.keys(teamBuild.charBuilds).find(
-      (id) => id !== formulaCharId
-    );
-    if (otherCharId) {
-      offFieldStats = teamBuild.getTeamStats(
-        updatedSheets,
-        otherCharId,
-        calcContext
-      );
-    }
-  }
+  teamBuild.getTeamStats(updatedSheets, onFieldCharId, calcContext);
 
   return teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
-    postStats,
+    onFieldCharId,
     calcContext,
-    reactionOverride,
-    offFieldStats
+    reactionOverride
   ).totalDamage;
 }
 
@@ -1385,31 +1351,13 @@ async function* runTeamOpt(
       damage = comboScoreFn(sheets, carryCharId);
     } else {
       try {
-        const postStats = effectiveTeamBuild.getTeamStats(
-          sheets,
-          carryCharId,
-          calcContext
-        );
-        let offFieldStats: Record<string, StatSheet> | undefined;
-        if (effectiveTeamBuild.hasOffFieldParts(carryCharId, formulaId)) {
-          const otherCharId = Object.keys(effectiveTeamBuild.charBuilds).find(
-            (id) => id !== carryCharId
-          );
-          if (otherCharId) {
-            offFieldStats = effectiveTeamBuild.getTeamStats(
-              sheets,
-              otherCharId,
-              calcContext
-            );
-          }
-        }
+        effectiveTeamBuild.getTeamStats(sheets, carryCharId, calcContext);
         damage = effectiveTeamBuild.getDamageResult(
           carryCharId,
           formulaId,
-          postStats,
+          carryCharId,
           calcContext,
-          reactionOverride,
-          offFieldStats
+          reactionOverride
         ).totalDamage;
       } catch {
         damage = 0;

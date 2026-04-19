@@ -126,26 +126,14 @@ function computeFinalScore(
       return 0;
     }
   }
-  const postStats = teamBuild.getTeamStats(sheets, carryCharId, calcContext);
-
-  // Compute off-field stats if the formula has off-field parts
-  let offFieldStats: Record<string, StatSheet> | undefined;
-  if (teamBuild.hasOffFieldParts(carryCharId, formulaId)) {
-    const otherCharId = Object.keys(teamBuild.charBuilds).find(
-      (id) => id !== carryCharId
-    );
-    if (otherCharId) {
-      offFieldStats = teamBuild.getTeamStats(sheets, otherCharId, calcContext);
-    }
-  }
+  teamBuild.getTeamStats(sheets, carryCharId, calcContext);
 
   return teamBuild.getDamageResult(
     carryCharId,
     formulaId,
-    postStats,
+    carryCharId,
     calcContext,
-    reactionOverride,
-    offFieldStats
+    reactionOverride
   ).totalDamage;
 }
 

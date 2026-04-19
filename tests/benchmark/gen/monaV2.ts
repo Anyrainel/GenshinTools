@@ -75,15 +75,11 @@ function computeStatWeights(
   if (scoreFn) {
     baseScore = scoreFn(baseUpdated, onFieldCharId);
   } else {
-    const postStats = teamBuild.getTeamStats(
-      baseUpdated,
-      onFieldCharId,
-      calcContext
-    );
+    teamBuild.getTeamStats(baseUpdated, onFieldCharId, calcContext);
     baseScore = teamBuild.getDamageResult(
       formulaCharId,
       formulaId,
-      postStats,
+      onFieldCharId,
       calcContext,
       reactionOverride
     ).totalDamage;
@@ -118,15 +114,11 @@ function computeStatWeights(
     if (scoreFn) {
       testScore = scoreFn(testUpdated, onFieldCharId);
     } else {
-      const postStats = teamBuild.getTeamStats(
-        testUpdated,
-        onFieldCharId,
-        calcContext
-      );
+      teamBuild.getTeamStats(testUpdated, onFieldCharId, calcContext);
       testScore = teamBuild.getDamageResult(
         formulaCharId,
         formulaId,
-        postStats,
+        onFieldCharId,
         calcContext,
         reactionOverride
       ).totalDamage;

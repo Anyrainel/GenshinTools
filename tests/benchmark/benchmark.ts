@@ -2743,15 +2743,11 @@ async function cmdCarryDiagnose(opts: {
       bestCarryPieces.filter((a): a is ArtifactData => a != null)
     );
     const bestSheets = { ...baseSheets, [carryId]: bestCarrySheet };
-    const bestPostStats = teamBuild.getTeamStats(
-      bestSheets,
-      carryId,
-      calcContext
-    );
+    teamBuild.getTeamStats(bestSheets, carryId, calcContext);
     const bestDmgResult = teamBuild.getDamageResult(
       carryId,
       problem.formulaId,
-      bestPostStats,
+      carryId,
       calcContext
     );
     console.log(

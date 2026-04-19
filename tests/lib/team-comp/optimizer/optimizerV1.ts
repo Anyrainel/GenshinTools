@@ -286,31 +286,16 @@ function computeMarginalGainsForOptimizer(
   const currentSheet = StatSheet.fromArtifacts(currentArtifacts);
   const sheets = { ...baseSheets, [swapCharId]: currentSheet };
 
-  // Check if we need off-field stats
-  const needsOffField =
-    !scoreFn && teamBuild.hasOffFieldParts(formulaCharId, formulaId);
-  const offFieldCalcTarget = needsOffField
-    ? Object.keys(teamBuild.charBuilds).find((id) => id !== formulaCharId)
-    : undefined;
-
   const baseDamage = scoreFn
     ? scoreFn(sheets, onFieldCharId)
     : (() => {
-        const stats = teamBuild.getTeamStats(
-          sheets,
-          onFieldCharId,
-          calcContext
-        );
-        const offFieldStats = offFieldCalcTarget
-          ? teamBuild.getTeamStats(sheets, offFieldCalcTarget, calcContext)
-          : undefined;
+        teamBuild.getTeamStats(sheets, onFieldCharId, calcContext);
         return teamBuild.getDamageResult(
           formulaCharId,
           formulaId,
-          stats,
+          onFieldCharId,
           calcContext,
-          reactionOverride,
-          offFieldStats
+          reactionOverride
         ).totalDamage;
       })();
   if (baseDamage === 0) return {};
@@ -327,25 +312,13 @@ function computeMarginalGainsForOptimizer(
     const newDamage = scoreFn
       ? scoreFn(tweakedSheets, onFieldCharId)
       : (() => {
-          const newStats = teamBuild.getTeamStats(
-            tweakedSheets,
-            onFieldCharId,
-            calcContext
-          );
-          const offFieldStats = offFieldCalcTarget
-            ? teamBuild.getTeamStats(
-                tweakedSheets,
-                offFieldCalcTarget,
-                calcContext
-              )
-            : undefined;
+          teamBuild.getTeamStats(tweakedSheets, onFieldCharId, calcContext);
           return teamBuild.getDamageResult(
             formulaCharId,
             formulaId,
-            newStats,
+            onFieldCharId,
             calcContext,
-            reactionOverride,
-            offFieldStats
+            reactionOverride
           ).totalDamage;
         })();
     const gain = newDamage - baseDamage;
@@ -393,28 +366,12 @@ function evaluateBuild(
     return { damage: scoreFn(updatedSheets, onFieldCharId), result: null };
   }
 
-  // Compute off-field stats if the formula has off-field parts
-  let offFieldStats: Record<string, StatSheet> | undefined;
-  if (teamBuild.hasOffFieldParts(formulaCharId, formulaId)) {
-    const otherCharId = Object.keys(teamBuild.charBuilds).find(
-      (id) => id !== formulaCharId
-    );
-    if (otherCharId) {
-      offFieldStats = teamBuild.getTeamStats(
-        updatedSheets,
-        otherCharId,
-        calcContext
-      );
-    }
-  }
-
   const dmgRes = teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
-    postStats,
+    onFieldCharId,
     calcContext,
-    reactionOverride,
-    offFieldStats
+    reactionOverride
   );
   return { damage: dmgRes.totalDamage, result: dmgRes };
 }
