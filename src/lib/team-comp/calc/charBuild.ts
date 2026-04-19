@@ -1,12 +1,4 @@
-import type { Faction, Region } from "@/data/types";
-import type {
-  I18nLabel,
-  OptionMap,
-  ProvidedStaticBuff,
-  StatEntry,
-  TeamSlotConfig,
-} from "../types";
-import { isFieldDependentReceiver } from "./fieldState";
+import type { I18nLabel, OptionMap, StatEntry, TeamSlotConfig } from "../types";
 import type {
   ArtifactHalfSetBase,
   ArtifactSetBase,
@@ -19,12 +11,7 @@ import {
   createCharacter,
   createWeapon,
 } from "./registry";
-import {
-  type StatBuff,
-  deduplicateBuffs,
-  getBuffInstanceKey,
-  isBuffApplicable,
-} from "./statBuff";
+import type { StatBuff } from "./statBuff";
 import { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 import { buildGleamResonanceBuffs } from "./teamResonance";
@@ -48,7 +35,6 @@ export class CharBuild {
   private readonly resonanceBuffs: StatBuff[] = [];
   /** Phase 1 baseline: character + weapon + artifact set bonuses, BEFORE static buffs. */
   readonly baseStatSheet: StatSheet;
-  private innerStatSheet: StatSheet;
 
   constructor(
     config: TeamSlotConfig,
@@ -103,15 +89,7 @@ export class CharBuild {
       ...(this.artifactSetBase?.stats ?? []),
       ...this.artifactHalfSetBases.flatMap((h) => h.stats),
     ];
-    this.innerStatSheet = new StatSheet(baseEntries);
-    this.baseStatSheet = this.innerStatSheet;
-  }
-
-  /** Reset innerStatSheet to the pre-applyStaticBuffs baseline.
-   *  Used by the analyzer to efficiently reuse CharBuild instances across
-   *  team combinations without re-constructing CharacterBase/WeaponBase. */
-  resetStatSheet(): void {
-    this.innerStatSheet = this.baseStatSheet;
+    this.baseStatSheet = new StatSheet(baseEntries);
   }
 
   /**
@@ -131,92 +109,6 @@ export class CharBuild {
       ...(this.artifactSetBase?.buffs ?? []),
       ...this.artifactHalfSetBases.flatMap((h) => h.buffs),
     ].filter((b) => !b.isNoOp);
-  }
-
-  /**
-   * Merge with artifact stats + apply target-dependent static buffs.
-   * Returns "pre-stats": after base + all static buffs + artifacts, before dynamic.
-   */
-  getPreStats(
-    artifactStats: StatSheet,
-    targetDependentBuffs: ProvidedStaticBuff[]
-  ): StatSheet {
-    const merged = this.innerStatSheet.merge(artifactStats);
-    if (targetDependentBuffs.length === 0) return merged;
-    const applicable = deduplicateBuffs(
-      targetDependentBuffs.map((b) => b.buff),
-      (b) => b.staticBuffs
-    );
-    return merged.apply(applicable);
-  }
-
-  /**
-   * Rebuild pre-stats from Phase 1 baseline, excluding buffs with matching keys.
-   * Used by the exclusion-based blending system to produce stat variants.
-   */
-  getPreStatsExcluding(
-    artifactStats: StatSheet,
-    targetDependentBuffs: ProvidedStaticBuff[],
-    allStaticBuffs: ProvidedStaticBuff[],
-    excludeKeys: Set<string>,
-    selfCharId: string,
-    selfRegion?: Region,
-    selfFaction?: Faction
-  ): StatSheet {
-    let sheet = this.rebuildBaseExcluding(
-      artifactStats,
-      allStaticBuffs,
-      excludeKeys,
-      selfCharId,
-      selfRegion,
-      selfFaction
-    );
-
-    if (targetDependentBuffs.length > 0) {
-      const filteredTD = targetDependentBuffs.filter(
-        (b) => !excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId))
-      );
-      if (filteredTD.length > 0) {
-        const deduped = deduplicateBuffs(
-          filteredTD.map((b) => b.buff),
-          (b) => b.staticBuffs
-        );
-        sheet = sheet.apply(deduped);
-      }
-    }
-
-    return sheet;
-  }
-
-  /**
-   * Shared base rebuild: re-apply target-independent static buffs (excluding
-   * specified keys) from Phase 1 baseline, then merge artifact stats.
-   */
-  private rebuildBaseExcluding(
-    artifactStats: StatSheet,
-    allStaticBuffs: ProvidedStaticBuff[],
-    excludeKeys: Set<string>,
-    selfCharId: string,
-    selfRegion?: Region,
-    selfFaction?: Faction
-  ): StatSheet {
-    let applicable = allStaticBuffs
-      .filter((b) => {
-        if (excludeKeys.has(getBuffInstanceKey(b.buff, b.providerCharId)))
-          return false;
-        if (isFieldDependentReceiver(b.buff.target.receiver)) return false;
-        return isBuffApplicable(
-          b.buff,
-          b.providerCharId,
-          selfCharId,
-          false,
-          selfRegion,
-          selfFaction
-        );
-      })
-      .map((b) => b.buff);
-    applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
-    return this.baseStatSheet.apply(applicable).merge(artifactStats);
   }
 
   getFormulaIds(): Record<string, I18nLabel> {

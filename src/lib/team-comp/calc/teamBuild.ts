@@ -12,7 +12,6 @@ import {
   type DisplayResult,
   type ExtraBuff,
   type FormulaEntry,
-  type OptimizerContext,
   type OptionMap,
   type ProvidedStaticBuff,
   type ReactionOverride,
@@ -177,7 +176,6 @@ export class TeamBuild {
       for (const config of configs) {
         const cached = cachedCharBuilds[config.charId];
         if (cached) {
-          cached.resetStatSheet();
           this.charBuilds[config.charId] = cached;
         } else {
           this.charBuilds[config.charId] = new CharBuild(
@@ -338,47 +336,6 @@ export class TeamBuild {
   ): Record<string, StatSheet> {
     this.teamStats.setArtifacts(artifactStats, ctx);
     return this.teamStats.getAllPostStats(onFieldCharId, excludeKeys);
-  }
-
-  /**
-   * Create a reusable context for repeated getTeamStats calls where only one
-   * character's artifact sheet changes.  Caches target-dependent buff filtering
-   * and support characters' preStats so the hot loop only recomputes the
-   * swapped character's preStats.
-   */
-  createOptimizerContext(
-    baseSheets: Record<string, StatSheet>,
-    swapCharId: string | string[],
-    onFieldCharId: string,
-    ctx?: CalcContext
-  ): OptimizerContext {
-    const variableCharIds = Array.isArray(swapCharId)
-      ? new Set(swapCharId)
-      : new Set([swapCharId]);
-    const primarySwapCharId = Array.isArray(swapCharId)
-      ? swapCharId[0]
-      : swapCharId;
-
-    // Use TeamStatSheet to compute support preStats
-    this.teamStats.setArtifacts(baseSheets, ctx);
-    const supportPreStats: Record<string, StatSheet> = {};
-    const charBuildOrder = Object.entries(this.charBuilds);
-    for (const [id] of charBuildOrder) {
-      if (!variableCharIds.has(id)) {
-        supportPreStats[id] = this.teamStats.getPreStats(id, onFieldCharId);
-      }
-    }
-
-    return {
-      swapCharId: primarySwapCharId,
-      variableCharIds,
-      onFieldCharId,
-      ctx,
-      targetDependent: {}, // kept for OptimizerContext shape; unused by new pipeline
-      supportPreStats,
-      charBuildOrder,
-      baseSheets,
-    };
   }
 
   /**
