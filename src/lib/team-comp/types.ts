@@ -10,7 +10,6 @@ import type {
 
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
-import type { CharBuild } from "./calc/charBuild";
 import type { DamageFormula } from "./calc/damageFormula";
 import type { StatBuff } from "./calc/statBuff";
 import type { StatSheet } from "./calc/statSheet";
@@ -276,22 +275,6 @@ export type FormulaEntry = {
 export type ProvidedStaticBuff = {
   buff: StatBuff;
   providerCharId: string;
-};
-/** Precomputed context for repeated optimizer evaluations. */
-
-export type OptimizerContext = {
-  swapCharId: string;
-  /** All character IDs whose artifact stats are variable (includes swapCharId). */
-  variableCharIds: Set<string>;
-  /** Which character is on-field. */
-  onFieldCharId: string;
-  ctx?: CalcContext;
-  targetDependent: Record<string, ProvidedStaticBuff[]>;
-  /** Pre-computed stats for non-variable characters (artifact sheets baked in). */
-  supportPreStats: Record<string, StatSheet>;
-  charBuildOrder: [string, CharBuild][];
-  /** Original artifact stat sheets (needed for off-field stat recomputation). */
-  baseSheets: Record<string, StatSheet>;
 };
 
 /**

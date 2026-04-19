@@ -70,7 +70,6 @@ import {
 } from "@/lib/team-comp/generator/constrainedGreedy";
 import { runCharacterBnB } from "@/lib/team-comp/optimizer";
 import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
-import type { OptimizerContext } from "@/lib/team-comp/types";
 import type {
   CalcContext,
   ComboFormula,
@@ -2913,22 +2912,6 @@ async function cmdFuzz(opts: {
       baseSheets[cid] = new StatSheet([]);
     }
 
-    // Create optimizer context
-    let optCtx: OptimizerContext;
-    try {
-      optCtx = teamBuild.createOptimizerContext(
-        baseSheets,
-        carryCharId,
-        carryCharId,
-        calcContext
-      );
-    } catch (e) {
-      console.log(
-        `  ${C.yellow}SKIP${C.reset} ${prob.key} — OptCtx error: ${e instanceof Error ? e.message : e}`
-      );
-      continue;
-    }
-
     // Compile AST
     let compiled: CompiledTeamDamage;
     try {
@@ -2969,13 +2952,14 @@ async function cmdFuzz(opts: {
         }
       }
 
-      // Old path: getTeamStatsFast → getDamageResult
+      // Old path: getTeamStats → getDamageResult
       const charSheet = StatSheet.fromArtifacts(pieces);
-      const postStats = teamBuild.getTeamStatsFast(charSheet, optCtx);
+      const artSheets = { ...baseSheets, [carryCharId]: charSheet };
+      teamBuild.teamStats.setArtifacts(artSheets, calcContext);
       const oldDamage = teamBuild.getDamageResult(
         carryCharId,
         formulaId,
-        postStats,
+        carryCharId,
         calcContext
       ).totalDamage;
 

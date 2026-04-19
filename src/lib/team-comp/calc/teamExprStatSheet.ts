@@ -92,7 +92,8 @@ export class TeamExprStatSheet {
     baseSheets: Record<string, StatSheet>,
     variableCharIds: Set<string>,
     onFieldCharIds: string[],
-    calcContext: CalcContext
+    calcContext: CalcContext,
+    existingTeamStats?: TeamStatSheet
   ) {
     this.charBuilds = charBuilds;
     this.teamMeta = teamMeta;
@@ -108,14 +109,16 @@ export class TeamExprStatSheet {
       this.charLevels[c.charId] = c.charLevel;
     }
 
-    this.teamStats = new TeamStatSheet(
-      charBuilds,
-      teamResonance,
-      extraBuffs,
-      teamMeta,
-      configs,
-      onFieldCharIds
-    );
+    this.teamStats =
+      existingTeamStats ??
+      new TeamStatSheet(
+        charBuilds,
+        teamResonance,
+        extraBuffs,
+        teamMeta,
+        configs,
+        onFieldCharIds
+      );
     this.allStaticBuffs = this.teamStats.allStaticBuffs;
   }
 

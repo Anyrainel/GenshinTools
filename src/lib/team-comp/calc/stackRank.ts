@@ -148,8 +148,8 @@ export function computeDefaultActivation(
  * activation cutpoints and bespoke overlay cutoff. Returns the raw weighted
  * sum (NOT divided by hits — caller decides averaging).
  *
- * Used by both computeBlendedDamage (stackAllocation) and _calcPartBlended
- * (implModel) to avoid duplicating the interval math.
+ * Used by both computeBlendedDamage and calcPartBlended to avoid
+ * duplicating the interval math.
  *
  * @param subBespokeCutoff  Bespoke cutoff already in sub-part coordinates
  *   (i.e., number of hits in this sub-part that get the bespoke overlay).
@@ -602,7 +602,7 @@ export function buildStatVariants(
 /**
  * Compute blended damage for a sub-part (possibly a reaction split).
  * If activation affects this part, uses interval-based blending.
- * Inlined from CharBuild._calcPartBlended.
+ * Extracted from the original CharBuild._calcPartBlended.
  */
 function calcPartBlended(
   formula: DamageFormula,

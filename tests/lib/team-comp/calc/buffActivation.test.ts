@@ -694,8 +694,7 @@ describe("compileComboTeamDamage with buffOverrides", () => {
       CTX
     );
     const varsBase = new Float64Array(compiledBase.numVars);
-    const optCtx = tb.createOptimizerContext(sheets, carryId, carryId, CTX);
-    const charIdx = optCtx.charBuildOrder.findIndex(([id]) => id === carryId);
+    const charIdx = compiledBase.charIdxMap?.get(carryId) ?? 0;
     fillVarsFromSheet(
       sheets[carryId],
       compiledBase.varMapping,
