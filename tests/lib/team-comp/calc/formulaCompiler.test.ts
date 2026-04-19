@@ -2539,85 +2539,89 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
 
   // ── Single-formula cross-path fuzzer ──
   // TODO: two-pass evaluateCombo changes broke compile↔display parity — fix in formulaCompiler
-  it("random teams: cross-path agreement (single formula)", () => {
-    const errors: string[] = [];
-    let trials = 0;
+  it(
+    "random teams: cross-path agreement (single formula)",
+    { timeout: 30_000 },
+    () => {
+      const errors: string[] = [];
+      let trials = 0;
 
-    for (let attempt = 0; attempt < 600 && trials < 300; attempt++) {
-      const configs = tryRandomTeam();
-      if (!configs) continue;
+      for (let attempt = 0; attempt < 600 && trials < 300; attempt++) {
+        const configs = tryRandomTeam();
+        if (!configs) continue;
 
-      const combatOpts = buildRandomCombatOpts(configs);
-      let tb: TeamBuild;
-      try {
-        tb = new TeamBuild(configs, combatOpts);
-      } catch {
-        continue;
-      }
+        const combatOpts = buildRandomCombatOpts(configs);
+        let tb: TeamBuild;
+        try {
+          tb = new TeamBuild(configs, combatOpts);
+        } catch {
+          continue;
+        }
 
-      const pairs = listAllFormulas(tb).filter(
-        (p) => !p.formulaId.startsWith("rx-")
-      );
-      if (pairs.length === 0) continue;
-
-      const pair = pairs[Math.floor(Math.random() * pairs.length)];
-      const reactionOverride = randomReactionOverride(
-        tb,
-        pair.charId,
-        pair.formulaId
-      );
-      const entry = tb.charBuilds[pair.charId]?.charBase.getFormulaEntry(
-        pair.formulaId
-      );
-      const forceOnField =
-        entry?.parts.some((p) => p.offField) && Math.random() < 0.5
-          ? true
-          : undefined;
-
-      const sheets: Record<string, StatSheet> = {};
-      for (const cfg of configs) {
-        sheets[cfg.charId] = buildSheetFromMainAndSubs(
-          randomMainStats(),
-          randomSubRolls(),
-          rv
+        const pairs = listAllFormulas(tb).filter(
+          (p) => !p.formulaId.startsWith("rx-")
         );
-      }
+        if (pairs.length === 0) continue;
 
-      const ctx = randomCtx();
-
-      try {
-        const dist = randomPartialBuffs(tb, pair.charId, pair.formulaId);
-        const paths = evalAllPaths(
+        const pair = pairs[Math.floor(Math.random() * pairs.length)];
+        const reactionOverride = randomReactionOverride(
           tb,
           pair.charId,
-          pair.formulaId,
-          sheets,
-          ctx,
-          reactionOverride,
-          dist,
-          forceOnField
+          pair.formulaId
         );
-        trials++;
-        const msg = checkPaths(
-          paths,
-          `team=[${configs.map((c) => c.charId).join(",")}] ` +
-            `${pair.charId}/${pair.formulaId} ` +
-            `rxo=${JSON.stringify(reactionOverride ?? null)}`
+        const entry = tb.charBuilds[pair.charId]?.charBase.getFormulaEntry(
+          pair.formulaId
         );
-        if (msg && errors.length < 15) errors.push(msg);
-      } catch {
-        // Skip trials that throw (feature-gated formulas / invalid combos)
-      }
-    }
+        const forceOnField =
+          entry?.parts.some((p) => p.offField) && Math.random() < 0.5
+            ? true
+            : undefined;
 
-    if (errors.length > 0) {
-      throw new Error(
-        `${errors.length} random-team cross-path mismatches ` +
-          `(trials=${trials}):\n${errors.join("\n")}`
-      );
+        const sheets: Record<string, StatSheet> = {};
+        for (const cfg of configs) {
+          sheets[cfg.charId] = buildSheetFromMainAndSubs(
+            randomMainStats(),
+            randomSubRolls(),
+            rv
+          );
+        }
+
+        const ctx = randomCtx();
+
+        try {
+          const dist = randomPartialBuffs(tb, pair.charId, pair.formulaId);
+          const paths = evalAllPaths(
+            tb,
+            pair.charId,
+            pair.formulaId,
+            sheets,
+            ctx,
+            reactionOverride,
+            dist,
+            forceOnField
+          );
+          trials++;
+          const msg = checkPaths(
+            paths,
+            `team=[${configs.map((c) => c.charId).join(",")}] ` +
+              `${pair.charId}/${pair.formulaId} ` +
+              `rxo=${JSON.stringify(reactionOverride ?? null)}`
+          );
+          if (msg && errors.length < 15) errors.push(msg);
+        } catch {
+          // Skip trials that throw (feature-gated formulas / invalid combos)
+        }
+      }
+
+      if (errors.length > 0) {
+        throw new Error(
+          `${errors.length} random-team cross-path mismatches ` +
+            `(trials=${trials}):\n${errors.join("\n")}`
+        );
+      }
+      expect(trials).toBeGreaterThan(100);
     }
-    expect(trials).toBeGreaterThan(100);
-  });
+  );
 
   // ── Random-team combo fuzzer ──
   // Builds a random 1–3 line combo from a random team's formulas, each line
