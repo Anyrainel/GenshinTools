@@ -15,7 +15,7 @@ import {
   VarMapping,
   createExprStats,
 } from "@/lib/team-comp/calc/exprStatSheet";
-import { defaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
+
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
@@ -939,22 +939,12 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
         }
 
         // Old path
-        const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
-        // Compute off-field stats if the formula has off-field parts
-        let offFieldTeamStats: Record<string, StatSheet> | undefined;
-        if (tb.hasOffFieldParts(carryId, formulaId)) {
-          const otherCharId = charIds.find((id) => id !== carryId);
-          if (otherCharId) {
-            offFieldTeamStats = tb.getTeamStats(sheets, otherCharId, FUZZ_CTX);
-          }
-        }
+        tb.teamStats.setArtifacts(sheets, FUZZ_CTX);
         const oldDamage = tb.getDamageResult(
           carryId,
           formulaId,
-          teamStats,
-          FUZZ_CTX,
-          undefined,
-          offFieldTeamStats
+          carryId,
+          FUZZ_CTX
         ).totalDamage;
 
         // New path: compile with one char as swap, rest as support
@@ -1027,22 +1017,12 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
       fillVarsFromSheet(sheets[swapId], compiled.varMapping, charIdx, vars);
       const newDamage = compiled.evaluate(vars);
 
-      const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
-      // Compute off-field stats if the formula has off-field parts
-      let offFieldTeamStats2: Record<string, StatSheet> | undefined;
-      if (tb.hasOffFieldParts(carryId, formulaId)) {
-        const otherCharId = charIds.find((id) => id !== carryId);
-        if (otherCharId) {
-          offFieldTeamStats2 = tb.getTeamStats(sheets, otherCharId, FUZZ_CTX);
-        }
-      }
+      tb.teamStats.setArtifacts(sheets, FUZZ_CTX);
       const oldDamage = tb.getDamageResult(
         carryId,
         formulaId,
-        teamStats,
-        FUZZ_CTX,
-        undefined,
-        offFieldTeamStats2
+        carryId,
+        FUZZ_CTX
       ).totalDamage;
 
       const relErr =
@@ -1086,11 +1066,11 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
           }
 
           // Standard path (unified pipeline)
-          const teamStats = tb.getTeamStats(sheets, triggerCharId, FUZZ_CTX);
+          tb.teamStats.setArtifacts(sheets, FUZZ_CTX);
           const oldDamage = tb.getDamageResult(
             triggerCharId,
             formulaId,
-            teamStats,
+            triggerCharId,
             FUZZ_CTX
           ).totalDamage;
 
@@ -1356,19 +1336,12 @@ describe("marginal gain parity (compiled vs standard)", () => {
         fillVarsFromSheet(sheets[swap], compiled.varMapping, charIdx, baseVars);
         const compiledBase = compiled.evaluate(baseVars);
 
-        const baseTeamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
-        let offFieldBase: Record<string, StatSheet> | undefined;
-        if (tb.hasOffFieldParts(carryId, formulaId)) {
-          const oc = charIds.find((id) => id !== carryId);
-          if (oc) offFieldBase = tb.getTeamStats(sheets, oc, FUZZ_CTX);
-        }
+        tb.teamStats.setArtifacts(sheets, FUZZ_CTX);
         const standardBase = tb.getDamageResult(
           carryId,
           formulaId,
-          baseTeamStats,
-          FUZZ_CTX,
-          undefined,
-          offFieldBase
+          carryId,
+          FUZZ_CTX
         ).totalDamage;
 
         // Test marginal gain for each stat key
@@ -1380,24 +1353,12 @@ describe("marginal gain parity (compiled vs standard)", () => {
           const bumpedSheets = { ...sheets, [swap]: bumpedSheet };
 
           // Standard path marginal
-          const bumpedTeamStats = tb.getTeamStats(
-            bumpedSheets,
-            carryId,
-            FUZZ_CTX
-          );
-          let offFieldBumped: Record<string, StatSheet> | undefined;
-          if (tb.hasOffFieldParts(carryId, formulaId)) {
-            const oc = charIds.find((id) => id !== carryId);
-            if (oc)
-              offFieldBumped = tb.getTeamStats(bumpedSheets, oc, FUZZ_CTX);
-          }
+          tb.teamStats.setArtifacts(bumpedSheets, FUZZ_CTX);
           const standardBumped = tb.getDamageResult(
             carryId,
             formulaId,
-            bumpedTeamStats,
-            FUZZ_CTX,
-            undefined,
-            offFieldBumped
+            carryId,
+            FUZZ_CTX
           ).totalDamage;
           const standardMarginal = standardBumped - standardBase;
 
@@ -1548,26 +1509,12 @@ describe("random team fuzz (compiled vs standard)", () => {
         }
 
         try {
-          const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
-          // Compute off-field stats if the formula has off-field parts
-          let offFieldTeamStats: Record<string, StatSheet> | undefined;
-          if (tb.hasOffFieldParts(carryId, formulaId)) {
-            const otherCharId = charIds.find((id) => id !== carryId);
-            if (otherCharId) {
-              offFieldTeamStats = tb.getTeamStats(
-                sheets,
-                otherCharId,
-                FUZZ_CTX
-              );
-            }
-          }
+          tb.teamStats.setArtifacts(sheets, FUZZ_CTX);
           const oldDamage = tb.getDamageResult(
             carryId,
             formulaId,
-            teamStats,
-            FUZZ_CTX,
-            undefined,
-            offFieldTeamStats
+            carryId,
+            FUZZ_CTX
           ).totalDamage;
 
           const compiled = compileComboTeamDamage(
@@ -1660,26 +1607,12 @@ describe("random team fuzz (compiled vs standard)", () => {
         }
 
         try {
-          const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
-          // Compute off-field stats if the formula has off-field parts
-          let offFieldTeamStats: Record<string, StatSheet> | undefined;
-          if (tb.hasOffFieldParts(carryId, formulaId)) {
-            const otherCharId = charIds.find((id) => id !== carryId);
-            if (otherCharId) {
-              offFieldTeamStats = tb.getTeamStats(
-                sheets,
-                otherCharId,
-                FUZZ_CTX
-              );
-            }
-          }
+          tb.teamStats.setArtifacts(sheets, FUZZ_CTX);
           const oldDamage = tb.getDamageResult(
             carryId,
             formulaId,
-            teamStats,
-            FUZZ_CTX,
-            undefined,
-            offFieldTeamStats
+            carryId,
+            FUZZ_CTX
           ).totalDamage;
 
           const compiled = compileComboTeamDamage(
@@ -2117,17 +2050,12 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
       };
 
       // Standard path
-      const teamStats = tb.getTeamStats(sheets, carryId, ctx);
-      const offFieldTeamStats = tb.hasOffFieldParts(carryId, formulaId)
-        ? tb.getTeamStats(sheets, charIds.find((id) => id !== carryId)!, ctx)
-        : undefined;
+      tb.teamStats.setArtifacts(sheets, ctx);
       const oldDamage = tb.getDamageResult(
         carryId,
         formulaId,
-        teamStats,
-        ctx,
-        undefined,
-        offFieldTeamStats
+        carryId,
+        ctx
       ).totalDamage;
 
       // Compiled path
@@ -2321,21 +2249,12 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
     };
 
     // Standard path comparison: verify compiled and standard match for target=0
-    const teamStats = tb.getTeamStats(sheets, carryId, ctxTarget0);
-    const offFieldTeamStats = tb.hasOffFieldParts(carryId, formulaId)
-      ? tb.getTeamStats(
-          sheets,
-          charIds.find((id) => id !== carryId)!,
-          ctxTarget0
-        )
-      : undefined;
+    tb.teamStats.setArtifacts(sheets, ctxTarget0);
     const stdDamage = tb.getDamageResult(
       carryId,
       formulaId,
-      teamStats,
-      ctxTarget0,
-      undefined,
-      offFieldTeamStats
+      carryId,
+      ctxTarget0
     ).totalDamage;
 
     const compiled0 = compileComboTeamDamage(
@@ -2402,7 +2321,6 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 //   • enemy level / enemy res / crit mode (random per trial)
 
 import { getOptionDef } from "@/lib/team-comp/calc/registry";
-import { buildStatVariants } from "@/lib/team-comp/calc/stackRank";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import type { BuffActivationMap } from "@/lib/team-comp/types";
@@ -2559,50 +2477,14 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       forceOnField
     );
 
-    // Path 2: calc — getDamageResult with externally-resolved post-stats.
-    // When a distribution is supplied, we must also supply statsVariants
-    // (and offFieldVariants) per exclusion set, mirroring what
-    // getDisplayResult builds internally.
-    const teamStats = tb.getTeamStats(sheets, charId, ctx);
-    const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId)!;
-    const hasOff =
-      !forceOnField && (entry?.parts.some((p) => p.offField) ?? false);
-    const offFieldTeamStats = hasOff
-      ? tb.getTeamStats(sheets, defaultOnFieldCharId(charId, tb.configs), ctx)
-      : undefined;
-    const statsVariants =
-      Object.keys(dist).length > 0
-        ? buildStatVariants(
-            dist,
-            entry.parts,
-            (excludeSet) =>
-              tb.getTeamStatsExcluding(sheets, charId, ctx, excludeSet)[charId]!
-          )
-        : undefined;
-    const offFieldVariants =
-      Object.keys(dist).length > 0 && hasOff
-        ? buildStatVariants(
-            dist,
-            entry.parts,
-            (excludeSet) =>
-              tb.getTeamStatsExcluding(
-                sheets,
-                defaultOnFieldCharId(charId, tb.configs),
-                ctx,
-                excludeSet
-              )[charId]!
-          )
-        : undefined;
+    // Path 2: calc — getDamageResult (artifacts already set by getDisplayResult above).
     const calcDmg = tb.getDamageResult(
       charId,
       formulaId,
-      teamStats,
+      charId,
       ctx,
       reactionOverride,
-      offFieldTeamStats,
-      dist,
-      statsVariants,
-      offFieldVariants,
+      Object.keys(dist).length > 0 ? dist : undefined,
       undefined,
       forceOnField
     ).totalDamage;

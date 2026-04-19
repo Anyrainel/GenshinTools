@@ -81,30 +81,39 @@ function buildPostExprStatsForContext(
   calcContext: CalcContext,
   excludeKeys?: Set<string>
 ): Record<string, ExprStatSheet> {
-  const { variableCharIds, charBuildOrder, supportPreStats, targetDependent } =
-    optCtx;
+  const { variableCharIds, charBuildOrder, onFieldCharId } = optCtx;
 
   const emptySheet = new StatSheet([]);
+
+  // Use TeamStatSheet to compute baselines with empty artifact sheets for variable chars
+  const emptySheets: Record<string, StatSheet> = {};
+  for (const [id] of charBuildOrder) {
+    emptySheets[id] = variableCharIds.has(id)
+      ? emptySheet
+      : (optCtx.baseSheets[id] ?? emptySheet);
+  }
+  teamBuild.teamStats.setArtifacts(emptySheets, calcContext);
 
   // Compute baselines for all variable characters
   const variableBaselines: Record<string, StatSheet> = {};
   for (const varCharId of variableCharIds) {
-    const build = charBuildOrder.find(([id]) => id === varCharId)?.[1];
-    if (!build)
-      throw new Error(
-        `Variable character ${varCharId} not found in team build`
+    variableBaselines[varCharId] = teamBuild.teamStats.getPreStats(
+      varCharId,
+      onFieldCharId,
+      excludeKeys
+    );
+  }
+
+  // Compute support preStats from TeamStatSheet
+  const supportPreStats: Record<string, StatSheet> = {};
+  for (const [id] of charBuildOrder) {
+    if (!variableCharIds.has(id)) {
+      supportPreStats[id] = teamBuild.teamStats.getPreStats(
+        id,
+        onFieldCharId,
+        excludeKeys
       );
-    variableBaselines[varCharId] = excludeKeys
-      ? build.getPreStatsExcluding(
-          emptySheet,
-          targetDependent[varCharId] ?? [],
-          teamBuild.allStaticBuffs,
-          excludeKeys,
-          varCharId,
-          teamBuild.teamMeta.regions[varCharId],
-          teamBuild.teamMeta.factions[varCharId]
-        )
-      : build.getPreStats(emptySheet, targetDependent[varCharId] ?? []);
+    }
   }
 
   const exprStatsMap: Record<string, ExprStatSheet> = {};
@@ -117,33 +126,6 @@ function buildPostExprStatsForContext(
         varMapping,
         new Set(ARTIFACT_STAT_KEYS)
       );
-    } else if (excludeKeys) {
-      // Non-variable characters need exclusion-aware preStats
-      const supportBuild = charBuildOrder.find(([cid]) => cid === id)?.[1];
-      if (supportBuild) {
-        const supportExcluded = supportBuild.getPreStatsExcluding(
-          optCtx.baseSheets[id] ?? new StatSheet([]),
-          targetDependent[id] ?? [],
-          teamBuild.allStaticBuffs,
-          excludeKeys,
-          id,
-          teamBuild.teamMeta.regions[id],
-          teamBuild.teamMeta.factions[id]
-        );
-        exprStatsMap[id] = createExprStats(
-          supportExcluded,
-          -1,
-          varMapping,
-          new Set()
-        );
-      } else {
-        exprStatsMap[id] = createExprStats(
-          supportPreStats[id]!,
-          -1,
-          varMapping,
-          new Set()
-        );
-      }
     } else {
       exprStatsMap[id] = createExprStats(
         supportPreStats[id]!,

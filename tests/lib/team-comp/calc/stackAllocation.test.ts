@@ -12,11 +12,65 @@ import {
 } from "@/lib/team-comp/calc/stackRank";
 import { exclusionKey } from "@/lib/team-comp/calc/stackRank";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import type { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
 import { buffSourceKey } from "@/lib/team-comp/helpers";
 import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";
 import type { BuffActivationMap } from "@/lib/team-comp/types";
 import type { FormulaPart } from "@/lib/team-comp/types";
 import type { CalcContext, StatKey } from "@/lib/team-comp/types";
+
+/**
+ * Create a mock TeamStatSheet for computeBlendedDamage tests.
+ * Returns the provided postStats for the "test" charId and builds
+ * exclusion variants by negating the specified buff entries.
+ */
+function mockTeamStats(
+  postStats: StatSheet,
+  charLevel = 90,
+  variantConfigs?: {
+    buffKey: string;
+    entries: { key: StatKey; value: number }[];
+  }[]
+): TeamStatSheet {
+  const filter = {
+    elements: ["Cryo" as const],
+    abilities: ["skill" as const],
+  };
+
+  return {
+    getPostStats(
+      _charId: string,
+      _onFieldCharId: string,
+      excludeKeys?: Set<string>
+    ): StatSheet {
+      if (!excludeKeys || excludeKeys.size === 0) return postStats;
+      if (!variantConfigs) return postStats;
+      let stats = postStats;
+      for (const cfg of variantConfigs) {
+        if (excludeKeys.has(cfg.buffKey)) {
+          for (const entry of cfg.entries) {
+            stats = stats.merge(
+              StatSheet.fromEntries(
+                [{ key: entry.key, value: -entry.value }],
+                filter
+              )
+            );
+          }
+        }
+      }
+      return stats;
+    },
+    getAllPostStats(_onFieldCharId: string): Record<string, StatSheet> {
+      return { test: postStats };
+    },
+    getCharLevel(_charId: string): number {
+      return charLevel;
+    },
+    getDefaultOffFieldCharId(_charId: string): string {
+      return "test";
+    },
+  } as unknown as TeamStatSheet;
+}
 
 const ctx: CalcContext = {
   enemyLevel: 90,
@@ -92,44 +146,6 @@ function makePartEvalsWithStats(
     charLevel,
     hits: p.hits ?? 1,
   }));
-}
-
-/**
- * Helper: build stat variants map for computeBlendedDamage tests.
- * Each variant entry maps an exclusionKey → StatSheet with those buffs removed.
- */
-function makeStatVariants(
-  postStats: StatSheet,
-  buffConfigs: { buffKey: string; entries: { key: StatKey; value: number }[] }[]
-): Map<string, StatSheet> {
-  const filter = {
-    elements: ["Cryo" as const],
-    abilities: ["skill" as const],
-  };
-  const variants = new Map<string, StatSheet>();
-
-  // Build variants for all 2^N combinations (excluding empty set)
-  const n = buffConfigs.length;
-  for (let mask = 1; mask < 1 << n; mask++) {
-    const excludeSet = new Set<string>();
-    let stats = postStats;
-    for (let i = 0; i < n; i++) {
-      if (mask & (1 << i)) {
-        excludeSet.add(buffConfigs[i].buffKey);
-        for (const entry of buffConfigs[i].entries) {
-          stats = stats.merge(
-            StatSheet.fromEntries(
-              [{ key: entry.key, value: -entry.value }],
-              filter
-            )
-          );
-        }
-      }
-    }
-    variants.set(exclusionKey(excludeSet), stats);
-  }
-
-  return variants;
 }
 
 describe("computeDefaultActivation", () => {
@@ -257,15 +273,16 @@ describe("unallocated parts in blended damage", () => {
     // part 0 gets 2 stacks, part 1 gets 0 (missing from map = 0 activation)
     const activation: BuffActivationMap = { [bKey]: { 0: 2, 1: 0 } };
 
-    const variants = makeStatVariants(postStats, [
-      { buffKey: bKey, entries: [{ key: "baseDmg", value: 500 }] },
-    ]);
+    const buffConfigs = [
+      { buffKey: bKey, entries: [{ key: "baseDmg" as StatKey, value: 500 }] },
+    ];
+    const ts = mockTeamStats(postStats, 90, buffConfigs);
     const result = computeBlendedDamage(
       parts,
       activation,
-      postStats,
-      variants,
-      90,
+      "test",
+      "test",
+      ts,
       ctx
     );
 
@@ -294,15 +311,8 @@ describe("computeBlendedDamage", () => {
       { key: "baseDmg", value: 500 },
     ]);
 
-    // Empty activation = fully active, empty variants
-    const result = computeBlendedDamage(
-      parts,
-      {},
-      postStats,
-      new Map(),
-      90,
-      ctx
-    );
+    const ts = mockTeamStats(postStats);
+    const result = computeBlendedDamage(parts, {}, "test", "test", ts, ctx);
 
     const dmg0 = parts[0].formula.calc(postStats, 90, ctx);
     const dmg1 = parts[1].formula.calc(postStats, 90, ctx);
@@ -326,15 +336,16 @@ describe("computeBlendedDamage", () => {
       [buffKey]: { 0: 5 }, // 5 out of 21 hits
     };
 
-    const variants = makeStatVariants(postStats, [
-      { buffKey, entries: [{ key: "baseDmg", value: 500 }] },
-    ]);
+    const buffConfigs = [
+      { buffKey, entries: [{ key: "baseDmg" as StatKey, value: 500 }] },
+    ];
+    const ts = mockTeamStats(postStats, 90, buffConfigs);
     const result = computeBlendedDamage(
       parts,
       activation,
-      postStats,
-      variants,
-      90,
+      "test",
+      "test",
+      ts,
       ctx
     );
 
@@ -368,9 +379,10 @@ describe("computeBlendedDamage", () => {
       [buffKey]: { 0: 5 },
     };
 
-    const variants = makeStatVariants(postStats, [
-      { buffKey, entries: [{ key: "baseDmg", value: buffValue }] },
-    ]);
+    const buffConfigs = [
+      { buffKey, entries: [{ key: "baseDmg" as StatKey, value: buffValue }] },
+    ];
+    const ts = mockTeamStats(postStats, 90, buffConfigs);
 
     const dmgWith = parts[0].formula.calc(postStats, 90, ctx);
     const fullDamage = dmgWith * 21;
@@ -378,9 +390,9 @@ describe("computeBlendedDamage", () => {
     const blended = computeBlendedDamage(
       parts,
       activation,
-      postStats,
-      variants,
-      90,
+      "test",
+      "test",
+      ts,
       ctx
     );
     expect(blended.totalDamage).toBeLessThan(fullDamage);
@@ -416,17 +428,21 @@ describe("computeBlendedDamage", () => {
       [buffKey2]: { 0: 2 }, // active for first 2 hits
     };
 
-    const variants = makeStatVariants(postStats, [
-      { buffKey: buffKey1, entries: [{ key: "baseDmg", value: 300 }] },
-      { buffKey: buffKey2, entries: [{ key: "dmg%", value: 0.5 }] },
-    ]);
+    const buffConfigs = [
+      {
+        buffKey: buffKey1,
+        entries: [{ key: "baseDmg" as StatKey, value: 300 }],
+      },
+      { buffKey: buffKey2, entries: [{ key: "dmg%" as StatKey, value: 0.5 }] },
+    ];
+    const ts = mockTeamStats(postStats, 90, buffConfigs);
 
     const result = computeBlendedDamage(
       parts,
       activation,
-      postStats,
-      variants,
-      90,
+      "test",
+      "test",
+      ts,
       ctx
     );
 

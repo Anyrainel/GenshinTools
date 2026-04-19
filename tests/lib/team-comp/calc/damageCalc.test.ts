@@ -624,17 +624,17 @@ describe("TeamBuild lifecycle", () => {
     const tb = new TeamBuild(configs);
 
     it("computes positive damage for a valid formula", () => {
-      const stats = tb.getTeamStats(emptySheets, "diluc");
-      const result = tb.getDamageResult("diluc", "diluc-skill", stats, ctx);
+      tb.teamStats.setArtifacts(emptySheets);
+      const result = tb.getDamageResult("diluc", "diluc-skill", "diluc", ctx);
 
       expect(result.totalDamage).toBeGreaterThan(0);
       expect(result.parts.length).toBeGreaterThanOrEqual(1);
     });
 
     it("throws for unknown character", () => {
-      const stats = tb.getTeamStats(emptySheets, "diluc");
+      tb.teamStats.setArtifacts(emptySheets);
       expect(() =>
-        tb.getDamageResult("nonexistent", "some-formula", stats, ctx)
+        tb.getDamageResult("nonexistent", "some-formula", "nonexistent", ctx)
       ).toThrow();
     });
   });
@@ -685,8 +685,13 @@ describe("TeamBuild lifecycle", () => {
     });
 
     it("display().totalDamage matches getDamageResult().totalDamage", () => {
-      const stats = tb.getTeamStats(emptySheets, "diluc");
-      const hotResult = tb.getDamageResult("diluc", "diluc-skill", stats, ctx);
+      tb.teamStats.setArtifacts(emptySheets);
+      const hotResult = tb.getDamageResult(
+        "diluc",
+        "diluc-skill",
+        "diluc",
+        ctx
+      );
       const coldResult = tb.getDisplayResult(
         "diluc",
         "diluc-skill",
@@ -2136,17 +2141,12 @@ describe("forceOnField override", () => {
     const displayDamage = displayResult.totalDamage;
 
     // Path 2: calc (getDamageResult — the tight loop the optimizer's cold path uses).
-    // Feed it the same resolved on-field stat sheet the display path computed so we
-    // isolate getDamageResult itself from stat-resolution differences.
-    const onFieldStats = displayResult.statSheets.linnea.onField;
+    tb.teamStats.setArtifacts(sheets, ctx);
     const calcResult = tb.getDamageResult(
       "linnea",
       "linnea-million-ton",
-      { ...sheets, linnea: onFieldStats },
+      "linnea",
       ctx,
-      undefined,
-      undefined,
-      undefined,
       undefined,
       undefined,
       undefined,
@@ -2236,49 +2236,19 @@ describe("forceOnField override", () => {
       linnea: "continuous",
     });
 
-    // getDamageResult needs teamStats resolved by the full pipeline.
-    // Use getDisplayResult to obtain the resolved stat sheets for both modes,
-    // then feed them into getDamageResult directly so we exercise the calc
-    // path (not the display pipeline) for the final numeric comparison.
-    const drOff = tb.getDisplayResult(
-      "linnea",
-      "linnea-million-ton",
-      sheets,
-      ctx
-    );
-    const drOn = tb.getDisplayResult(
-      "linnea",
-      "linnea-million-ton",
-      sheets,
-      ctx,
-      undefined,
-      undefined,
-      undefined,
-      true
-    );
+    tb.teamStats.setArtifacts(sheets, ctx);
 
     const calcOff = tb.getDamageResult(
       "linnea",
       "linnea-million-ton",
-      drOff.statSheets.linnea.onField
-        ? { ...sheets, linnea: drOff.statSheets.linnea.onField }
-        : sheets,
-      ctx,
-      undefined,
-      drOff.statSheets.linnea.offField
-        ? { ...sheets, linnea: drOff.statSheets.linnea.offField }
-        : undefined
+      "linnea",
+      ctx
     );
     const calcOn = tb.getDamageResult(
       "linnea",
       "linnea-million-ton",
-      drOn.statSheets.linnea.onField
-        ? { ...sheets, linnea: drOn.statSheets.linnea.onField }
-        : sheets,
+      "linnea",
       ctx,
-      undefined,
-      undefined,
-      undefined,
       undefined,
       undefined,
       undefined,

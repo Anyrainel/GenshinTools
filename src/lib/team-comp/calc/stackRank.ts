@@ -28,6 +28,7 @@ import { type StatBuff, getBuffInstanceKey } from "./statBuff";
 import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import type { StatSheet } from "./statSheet";
 import { LUNAR_RANK_WEIGHTS } from "./teamReaction";
+import type { TeamStatSheet } from "./teamStatSheet";
 
 /**
  * Everything needed for one formula.calc() call — the resolved evaluation primitive.
@@ -243,15 +244,31 @@ export function blendSubPart(
 export function computeBlendedDamage(
   parts: FormulaPart[],
   activation: BuffActivationMap,
-  postStats: StatSheet,
-  statsVariants: Map<string, StatSheet>,
-  charLevel: number,
+  charId: string,
+  onFieldCharId: string,
+  teamStats: TeamStatSheet,
   ctx: CalcContext,
-  offFieldPostStats?: StatSheet,
-  offFieldVariants?: Map<string, StatSheet>,
   reactionOverride?: ReactionOverride,
   forceOnField?: boolean
 ): { totalDamage: number; partDamages: { damage: number; hits: number }[] } {
+  const postStats = teamStats.getPostStats(charId, onFieldCharId);
+  const charLevel = teamStats.getCharLevel(charId);
+
+  const offFieldOnFieldCharId = teamStats.getDefaultOffFieldCharId(charId);
+  const offFieldPostStats =
+    offFieldOnFieldCharId !== onFieldCharId
+      ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
+      : undefined;
+
+  const statsVariants = buildStatVariants(activation, parts, (excl) =>
+    teamStats.getPostStats(charId, onFieldCharId, excl)
+  );
+  const offFieldVariants = offFieldPostStats
+    ? buildStatVariants(activation, parts, (excl) =>
+        teamStats.getPostStats(charId, offFieldOnFieldCharId, excl)
+      )
+    : undefined;
+
   const partDamages: { damage: number; hits: number }[] = [];
   let totalDamage = 0;
 
@@ -266,9 +283,6 @@ export function computeBlendedDamage(
     const variants =
       effectiveOffField && offFieldVariants ? offFieldVariants : statsVariants;
 
-    // Bespoke overlay + hit-count cutoff. Bespoke applies to hits
-    // [0, bespokeCutoff); remaining hits use baseStats. Mirrors
-    // getDisplayParts' split so all 3 paths agree.
     const bespokeOverlay = bespokeBuffs?.length
       ? buildBespokeOverlay(bespokeBuffs, baseStats, [])
       : undefined;
@@ -301,7 +315,6 @@ export function computeBlendedDamage(
       );
     };
 
-    // Apply reaction override: split into reacting/non-reacting hits.
     const hasReaction =
       reactionOverride?.reaction && reactionOverride.reaction !== "none";
     let partTotal = 0;
@@ -632,19 +645,39 @@ function calcPartBlended(
 /** Evaluate a formula entry's parts, calling .calc() on each, and aggregate into a DamageResult. */
 export function evaluateFormulaDamage(
   entry: FormulaEntry,
-  charLevel: number,
-  selfPostStats: StatSheet,
-  teamPostStats: StatSheet[],
+  charId: string,
+  onFieldCharId: string,
+  teamStats: TeamStatSheet,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
-  offFieldSelfPostStats?: StatSheet,
   activation?: BuffActivationMap,
-  statsVariants?: Map<string, StatSheet>,
-  offFieldVariants?: Map<string, StatSheet>,
-  forceOnField?: boolean,
-  teamStatsMap?: Record<string, StatSheet>,
-  charLevels?: Record<string, number>
+  forceOnField?: boolean
 ): DamageResult {
+  const selfPostStats = teamStats.getPostStats(charId, onFieldCharId);
+  const charLevel = teamStats.getCharLevel(charId);
+  const teamPostStatsArr = Object.values(
+    teamStats.getAllPostStats(onFieldCharId)
+  );
+
+  const offFieldOnFieldCharId = teamStats.getDefaultOffFieldCharId(charId);
+  const offFieldSelfPostStats =
+    offFieldOnFieldCharId !== onFieldCharId
+      ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
+      : undefined;
+
+  const statsVariants =
+    activation && Object.keys(activation).length > 0
+      ? buildStatVariants(activation, entry.parts, (excl) =>
+          teamStats.getPostStats(charId, onFieldCharId, excl)
+        )
+      : undefined;
+  const offFieldVariants =
+    activation && Object.keys(activation).length > 0 && offFieldSelfPostStats
+      ? buildStatVariants(activation, entry.parts, (excl) =>
+          teamStats.getPostStats(charId, offFieldOnFieldCharId, excl)
+        )
+      : undefined;
+
   const parts: DamageResult["parts"] = [];
   for (let idx = 0; idx < entry.parts.length; idx++) {
     const part = entry.parts[idx];
@@ -653,17 +686,13 @@ export function evaluateFormulaDamage(
     const bespokeMax = bespokeMaxStacks(bespokeBuffs);
     const effectiveOffField = isPartOffField(part, forceOnField);
 
-    // Per-part stats routing: use the part's statsCharId stats if available.
-    // When per-part routing is active, teamStatsMap already contains
-    // field-state-correct stats — skip the offFieldSelfPostStats override.
-    const perPartRouting = part.statsCharId && teamStatsMap?.[part.statsCharId];
-    const partStats = perPartRouting
-      ? teamStatsMap[part.statsCharId!]
-      : selfPostStats;
-    const partCharLevel =
-      part.statsCharId && charLevels?.[part.statsCharId] != null
-        ? charLevels[part.statsCharId]
-        : charLevel;
+    const perPartRouting = part.statsCharId
+      ? teamStats.getPostStats(part.statsCharId, onFieldCharId)
+      : undefined;
+    const partStats = perPartRouting ?? selfPostStats;
+    const partCharLevel = part.statsCharId
+      ? teamStats.getCharLevel(part.statsCharId)
+      : charLevel;
 
     const baseSelfStats =
       effectiveOffField && offFieldSelfPostStats && !perPartRouting
@@ -675,7 +704,7 @@ export function evaluateFormulaDamage(
       bespokeOverlay = buildBespokeOverlay(
         bespokeBuffs,
         baseSelfStats,
-        teamPostStats
+        teamPostStatsArr
       );
     }
 
@@ -835,15 +864,22 @@ export function evaluateFormulaDamage(
 /** Produce structured display data for a formula (cold path). */
 export function evaluateFormulaDisplay(
   entry: FormulaEntry,
-  charLevel: number,
-  selfPostStats: StatSheet,
+  charId: string,
+  onFieldCharId: string,
+  teamStats: TeamStatSheet,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
-  offFieldSelfPostStats?: StatSheet,
-  forceOnField?: boolean,
-  teamStatsMap?: Record<string, StatSheet>,
-  charLevels?: Record<string, number>
+  forceOnField?: boolean
 ): { parts: DisplayPart[]; totalDamage: number } {
+  const selfPostStats = teamStats.getPostStats(charId, onFieldCharId);
+  const charLevel = teamStats.getCharLevel(charId);
+
+  const offFieldOnFieldCharId = teamStats.getDefaultOffFieldCharId(charId);
+  const offFieldSelfPostStats =
+    offFieldOnFieldCharId !== onFieldCharId
+      ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
+      : undefined;
+
   const displayParts: DisplayPart[] = [];
   let totalDamage = 0;
   for (let i = 0; i < entry.parts.length; i++) {
@@ -852,15 +888,13 @@ export function evaluateFormulaDisplay(
     const h = totalHits ?? 1;
     const effectiveOffField = isPartOffField(part, forceOnField);
 
-    // Per-part stats routing — skip off-field override when active
-    const perPartRouting = part.statsCharId && teamStatsMap?.[part.statsCharId];
-    const partBaseStats = perPartRouting
-      ? teamStatsMap[part.statsCharId!]
-      : selfPostStats;
-    const partCharLevel =
-      part.statsCharId && charLevels?.[part.statsCharId] != null
-        ? charLevels[part.statsCharId]
-        : charLevel;
+    const perPartRouting = part.statsCharId
+      ? teamStats.getPostStats(part.statsCharId, onFieldCharId)
+      : undefined;
+    const partBaseStats = perPartRouting ?? selfPostStats;
+    const partCharLevel = part.statsCharId
+      ? teamStats.getCharLevel(part.statsCharId)
+      : charLevel;
 
     const baseSelfStats =
       effectiveOffField && offFieldSelfPostStats && !perPartRouting

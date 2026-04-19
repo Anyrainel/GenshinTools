@@ -20,6 +20,7 @@ import {
   MULTI_CONTRIBUTOR_REACTIONS,
   resolveReactionComboEntries,
 } from "@/lib/team-comp/calc/teamReaction";
+import type { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
 import type { ReactionComboEntry } from "@/lib/team-comp/types";
 import type {
   CalcContext,
@@ -67,6 +68,31 @@ function emptySheets(...charIds: string[]): Record<string, StatSheet> {
   const sheets: Record<string, StatSheet> = {};
   for (const id of charIds) sheets[id] = new StatSheet([]);
   return sheets;
+}
+
+/**
+ * Create a mock TeamStatSheet from pre-computed team stats for direct
+ * evaluateFormulaDamage/Display calls in tests.
+ */
+function mockTeamStatsFrom(
+  teamStats: Record<string, StatSheet>,
+  charLevels: Record<string, number>
+): TeamStatSheet {
+  return {
+    getPostStats(charId: string, _onFieldCharId: string): StatSheet {
+      return teamStats[charId]!;
+    },
+    getAllPostStats(_onFieldCharId: string): Record<string, StatSheet> {
+      return teamStats;
+    },
+    getCharLevel(charId: string): number {
+      return charLevels[charId] ?? 90;
+    },
+    getDefaultOffFieldCharId(charId: string): string {
+      const other = Object.keys(teamStats).find((id) => id !== charId);
+      return other ?? charId;
+    },
+  } as unknown as TeamStatSheet;
 }
 
 // ── Team Configurations ──
@@ -1810,27 +1836,18 @@ describe("evaluateFormulaDamage — per-part stats routing", () => {
     const partCharIds = entry!.parts.map((p) => p.statsCharId);
     expect(new Set(partCharIds).size).toBe(entry!.parts.length);
 
-    // Evaluate with per-part routing
-    const teamStatsMap = teamStats;
     const charLevels: Record<string, number> = {
       columbina: 90,
       flins: 70,
     };
+    const ts = mockTeamStatsFrom(teamStats, charLevels);
 
     const result = evaluateFormulaDamage(
       entry!,
-      90, // default charLevel (should be overridden by per-part)
-      teamStats.columbina!,
-      Object.values(teamStats),
-      CTX,
-      undefined, // reactionOverride
-      undefined, // offFieldSelfPostStats
-      undefined, // activation
-      undefined, // statsVariants
-      undefined, // offFieldVariants
-      undefined, // forceOnField
-      teamStatsMap,
-      charLevels
+      "columbina",
+      "columbina",
+      ts,
+      CTX
     );
 
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -1846,38 +1863,22 @@ describe("evaluateFormulaDamage — per-part stats routing", () => {
     const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
     expect(entry).toBeDefined();
 
-    // Evaluate with real charLevels
+    const tsReal = mockTeamStatsFrom(teamStats, { columbina: 90, flins: 70 });
     const resultReal = evaluateFormulaDamage(
       entry!,
-      90,
-      teamStats.columbina!,
-      Object.values(teamStats),
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      { columbina: 90, flins: 70 }
+      "columbina",
+      "columbina",
+      tsReal,
+      CTX
     );
 
-    // Evaluate with all level 90
+    const tsAllL90 = mockTeamStatsFrom(teamStats, { columbina: 90, flins: 90 });
     const resultAllL90 = evaluateFormulaDamage(
       entry!,
-      90,
-      teamStats.columbina!,
-      Object.values(teamStats),
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      { columbina: 90, flins: 90 }
+      "columbina",
+      "columbina",
+      tsAllL90,
+      CTX
     );
 
     // Damage should differ because flins's part uses different level multipliers
@@ -1901,17 +1902,14 @@ describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () =>
       columbina: 90,
       flins: 70,
     };
+    const ts = mockTeamStatsFrom(teamStats, charLevels);
 
     const display = evaluateFormulaDisplay(
       entry!,
-      90,
-      teamStats.columbina!,
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      charLevels
+      "columbina",
+      "columbina",
+      ts,
+      CTX
     );
 
     expect(display.parts.length).toBe(entry!.parts.length);
@@ -1940,17 +1938,13 @@ describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () =>
     expect(entry).toBeDefined();
     expect(entry!.isMultiContributor).toBeFalsy();
 
-    const display = evaluateFormulaDisplay(
-      entry!,
-      90,
-      teamStats.fischl!,
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      { fischl: 90 }
-    );
+    const ts = mockTeamStatsFrom(teamStats, {
+      fischl: 90,
+      hu_tao: 90,
+      xingqiu: 90,
+      kazuha: 90,
+    });
+    const display = evaluateFormulaDisplay(entry!, "fischl", "hu_tao", ts, CTX);
 
     // Single-contributor should NOT have contributorCharId
     for (const dp of display.parts) {
@@ -1973,22 +1967,14 @@ describe("multi-contributor N-part exact numerics", () => {
       columbina: 90,
       flins: 70,
     };
+    const ts = mockTeamStatsFrom(teamStats, charLevels);
 
-    // Evaluate the multi-contributor entry
     const result = evaluateFormulaDamage(
       entry!,
-      90,
-      teamStats.columbina!,
-      Object.values(teamStats),
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      charLevels
+      "columbina",
+      "columbina",
+      ts,
+      CTX
     );
 
     // Sum of parts should equal totalDamage
@@ -2064,32 +2050,26 @@ describe("display path matches damage path for reaction formulas", () => {
     const entry = tb.reactionProvider.getFormulaEntry(formulaId);
     expect(entry).toBeDefined();
 
+    const tsF = mockTeamStatsFrom(teamStats, {
+      fischl: 90,
+      hu_tao: 90,
+      xingqiu: 90,
+      kazuha: 90,
+    });
     const damageResult = evaluateFormulaDamage(
       entry!,
-      90,
-      teamStats.fischl!,
-      Object.values(teamStats),
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      { fischl: 90 }
+      "fischl",
+      "hu_tao",
+      tsF,
+      CTX
     );
 
     const displayResult = evaluateFormulaDisplay(
       entry!,
-      90,
-      teamStats.fischl!,
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      { fischl: 90 }
+      "fischl",
+      "hu_tao",
+      tsF,
+      CTX
     );
 
     expect(displayResult.totalDamage).toBeCloseTo(damageResult.totalDamage, 4);
@@ -2108,33 +2088,22 @@ describe("display path matches damage path for reaction formulas", () => {
       columbina: 90,
       flins: 70,
     };
+    const ts = mockTeamStatsFrom(teamStats, charLevels);
 
     const damageResult = evaluateFormulaDamage(
       entry!,
-      90,
-      teamStats.columbina!,
-      Object.values(teamStats),
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      charLevels
+      "columbina",
+      "columbina",
+      ts,
+      CTX
     );
 
     const displayResult = evaluateFormulaDisplay(
       entry!,
-      90,
-      teamStats.columbina!,
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      teamStats,
-      charLevels
+      "columbina",
+      "columbina",
+      ts,
+      CTX
     );
 
     expect(displayResult.totalDamage).toBeCloseTo(damageResult.totalDamage, 4);
@@ -2488,35 +2457,21 @@ describe("non-zero EM per-contributor routing", () => {
     const charLevels: Record<string, number> = {};
     for (const c of MIXED_LEVEL_LUNAR) charLevels[c.charId] = c.charLevel;
 
+    const tsA = mockTeamStatsFrom(teamStatsA, charLevels);
     const resultA = evaluateFormulaDamage(
       entry,
-      90,
-      teamStatsA[onFieldChar]!,
-      Object.values(teamStatsA),
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      teamStatsA,
-      charLevels
+      onFieldChar,
+      onFieldChar,
+      tsA,
+      CTX
     );
+    const tsB = mockTeamStatsFrom(teamStatsB, charLevels);
     const resultB = evaluateFormulaDamage(
       entry,
-      90,
-      teamStatsB[onFieldChar]!,
-      Object.values(teamStatsB),
-      CTX,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      teamStatsB,
-      charLevels
+      onFieldChar,
+      onFieldChar,
+      tsB,
+      CTX
     );
 
     // Total damage should differ because EM is on different contributors

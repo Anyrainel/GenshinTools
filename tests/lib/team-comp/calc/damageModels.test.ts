@@ -7,9 +7,9 @@ import {
   getOptionDef,
   resolveOption,
 } from "@/lib/team-comp/calc/registry";
-import { evaluateFormulaDamage } from "@/lib/team-comp/calc/stackRank";
 import { StatBuff } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet, appendFieldState } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import type { OptionDef } from "@/lib/team-comp/types";
 import type { DamageTag } from "@/lib/team-comp/types";
@@ -917,22 +917,25 @@ describe("CharacterBase via createCharacter", () => {
   });
 
   it("evaluateFormulaDamage returns positive damage for known formula", () => {
-    const char = createCharacter("diluc", 90, 0, meta);
-    const entry = char.getFormulaEntry("diluc-skill");
-    expect(entry).toBeTruthy();
-
-    const stats = new StatSheet([
-      { key: "baseAtk", value: 800 },
-      { key: "cr", value: 0.5 },
-      { key: "cd", value: 1.0 },
+    const tb = new TeamBuild([
+      {
+        charId: "diluc",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
     ]);
-
-    const result = evaluateFormulaDamage(entry!, 90, stats, [stats], {
+    const ctx = {
       enemyLevel: 100,
       enemyRes: 0.1,
       rollMultiplier: 0.85,
-      substatBudget: "8_6",
-    });
+      substatBudget: "8_6" as const,
+    };
+    tb.teamStats.setArtifacts({ diluc: new StatSheet([]) }, ctx);
+    const result = tb.getDamageResult("diluc", "diluc-skill", "diluc", ctx);
 
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.parts.length).toBeGreaterThanOrEqual(1);

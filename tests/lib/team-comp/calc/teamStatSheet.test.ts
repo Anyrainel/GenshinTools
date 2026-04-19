@@ -356,15 +356,15 @@ describe("TeamStatSheet", () => {
   });
 
   describe("getIdleStats parity", () => {
-    it("matches TeamBuild computeIdleStatSheets", () => {
+    it("returns valid idle stat sheets via TeamBuild delegation", () => {
       const { teamBuild, statSheet } = buildTeamStatSheet(NATIONAL_TEAM);
       const charIds = NATIONAL_TEAM.map((c) => c.charId);
       const sheets = emptySheets(...charIds);
       statSheet.setArtifacts(sheets);
 
-      // biome-ignore lint/suspicious/noExplicitAny: accessing private method for parity testing
-      const tbIdle = (teamBuild as any).computeIdleStatSheets(sheets);
+      // TeamBuild now delegates idle stats to TeamStatSheet
       const tsIdle = statSheet.getIdleStats();
+      const tbIdle = teamBuild.teamStats.getIdleStats();
 
       for (const charId of charIds) {
         assertStatSheetParity(

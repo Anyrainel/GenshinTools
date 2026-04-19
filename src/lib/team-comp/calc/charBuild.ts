@@ -6,7 +6,6 @@ import type {
   StatEntry,
   TeamSlotConfig,
 } from "../types";
-import type { EvaluatedDynamicBuff } from "./damageCalc";
 import { isFieldDependentReceiver } from "./fieldState";
 import type {
   ArtifactHalfSetBase,
@@ -21,7 +20,7 @@ import {
   createWeapon,
 } from "./registry";
 import {
-  StatBuff,
+  type StatBuff,
   deduplicateBuffs,
   getBuffInstanceKey,
   isBuffApplicable,
@@ -34,11 +33,12 @@ import { buildGleamResonanceBuffs } from "./teamResonance";
  * Composes a single character's build:
  * character + weapon + artifact sets → stats + buffs + formulas.
  *
- * Owns the stat resolution pipeline:
- * Phase 1: Base stats (character + weapon) → baseStatSheet
- * Phase 2: + target-independent static buffs → innerStatSheet  (construction)
- * Phase 3: + target-dependent buffs + artifact stats → preStats (getTeamStats)
- * Phase 4: + dynamic buffs → postStats                         (getTeamStats)
+ * Provides:
+ * - baseStatSheet: Phase 1 baseline (character + weapon + artifact set bonuses)
+ * - getAllBuffs(): all static buffs from this build's providers
+ * - charBase: character data, formula entries, talent levels
+ *
+ * Stat pipeline (pre → mid → post) is owned by TeamStatSheet.
  */
 export class CharBuild {
   readonly charBase: CharacterBase;
@@ -47,7 +47,7 @@ export class CharBuild {
   readonly artifactHalfSetBases: ArtifactHalfSetBase[];
   private readonly resonanceBuffs: StatBuff[] = [];
   /** Phase 1 baseline: character + weapon + artifact set bonuses, BEFORE static buffs. */
-  private readonly baseStatSheet: StatSheet;
+  readonly baseStatSheet: StatSheet;
   private innerStatSheet: StatSheet;
 
   constructor(
@@ -134,35 +134,6 @@ export class CharBuild {
   }
 
   /**
-   * Apply field-independent static buffs (self, other, team).
-   * Called once during TeamBuild construction.
-   * Field-dependent buffs (*OnField, *OffField) are deferred to getTeamStats.
-   */
-  applyStaticBuffs(
-    teamStaticBuffs: ProvidedStaticBuff[],
-    selfCharId: string,
-    selfRegion?: Region,
-    selfFaction?: Faction
-  ): void {
-    let applicable = teamStaticBuffs
-      .filter(
-        (b) =>
-          !isFieldDependentReceiver(b.buff.target.receiver) &&
-          isBuffApplicable(
-            b.buff,
-            b.providerCharId,
-            selfCharId,
-            false,
-            selfRegion,
-            selfFaction
-          )
-      )
-      .map((b) => b.buff);
-    applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
-    this.innerStatSheet = this.innerStatSheet.apply(applicable);
-  }
-
-  /**
    * Merge with artifact stats + apply target-dependent static buffs.
    * Returns "pre-stats": after base + all static buffs + artifacts, before dynamic.
    */
@@ -246,47 +217,6 @@ export class CharBuild {
       .map((b) => b.buff);
     applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
     return this.baseStatSheet.apply(applicable).merge(artifactStats);
-  }
-
-  /**
-   * Apply dynamic buffs to pre-stats → post-stats.
-   * Evaluates all applicable dynamic buffs.
-   */
-  getPostStats(
-    selfPreStats: StatSheet,
-    teamDynamicBuffs: EvaluatedDynamicBuff[],
-    selfCharId: string,
-    selfIsOnField: boolean,
-    selfRegion?: Region,
-    selfFaction?: Faction
-  ): StatSheet {
-    let applicable = teamDynamicBuffs.filter((b) =>
-      isBuffApplicable(
-        b.buff,
-        b.providerCharId,
-        selfCharId,
-        selfIsOnField,
-        selfRegion,
-        selfFaction
-      )
-    );
-    applicable = deduplicateBuffs(applicable, (b) => b.entries);
-
-    const mappedToStatic = applicable.map(
-      (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
-    );
-    return selfPreStats.apply(mappedToStatic);
-  }
-
-  /**
-   * Compute idle pre-stats: baseStatSheet + artifacts + idle-eligible static buffs.
-   * Bypasses innerStatSheet so only explicitly passed buffs are included.
-   */
-  getIdlePreStats(artifactStats: StatSheet, idleBuffs: StatBuff[]): StatSheet {
-    const sheet = this.baseStatSheet.merge(artifactStats);
-    if (idleBuffs.length === 0) return sheet;
-    const deduped = deduplicateBuffs(idleBuffs, (b) => b.staticBuffs);
-    return sheet.apply(deduped);
   }
 
   getFormulaIds(): Record<string, I18nLabel> {
