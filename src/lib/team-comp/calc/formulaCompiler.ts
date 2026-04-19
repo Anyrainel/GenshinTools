@@ -32,10 +32,14 @@ import { isFinalStatKey } from "./dynamicBuffEval";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStatSheet, VarMapping } from "./exprStatSheet";
 import { getDefaultOnFieldCharId, isPartOffField } from "./fieldState";
-import { exclusionKey } from "./stackRank";
-import { CrossScalingBuff, ScalingBuff, getBuffInstanceKey } from "./statBuff";
-import { StatBuff } from "./statBuff";
-import { bespokeMaxStacks } from "./statSheet";
+import { exclusionKey } from "./formulaEval";
+import {
+  CrossScalingBuff,
+  ScalingBuff,
+  StatBuff,
+  bespokeMaxStacks,
+  getBuffInstanceKey,
+} from "./statBuff";
 import type { StatSheet } from "./statSheet";
 import type { TeamBuild } from "./teamBuild";
 import { TeamExprStatSheet } from "./teamExprStatSheet";

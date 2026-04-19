@@ -3,17 +3,19 @@ import { describe, expect, it } from "vitest";
 import { aggregateComboFormulaDefaults } from "@/lib/team-comp/calc/comboBuffOverrides";
 import { DirectFormula } from "@/lib/team-comp/calc/damageFormula";
 import {
+  computeBlendedDamage,
+  evaluateFormulaDamage,
+  evaluateFormulaDisplay,
+  exclusionKey,
+} from "@/lib/team-comp/calc/formulaEval";
+import {
   type ComboLineEval,
   type FormulaPartEval,
   type StackLimitedBuffInfo,
-  computeBlendedDamage,
   computeComboDefaultActivation,
   computeDefaultActivation,
   distributeComboHits,
-  evaluateFormulaDamage,
-  evaluateFormulaDisplay,
 } from "@/lib/team-comp/calc/stackRank";
-import { exclusionKey } from "@/lib/team-comp/calc/stackRank";
 import { buffSourceKey } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";

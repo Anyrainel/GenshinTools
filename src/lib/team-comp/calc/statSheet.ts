@@ -758,33 +758,3 @@ function deserializeFilter(key: string): DamageTagFilter {
 function extractFilter(target: BuffTarget): DamageTagFilter {
   return target.filter ?? {};
 }
-// ─── Bespoke Buff Helpers ───
-/** Build a merged overlay from an array of bespoke buffs. */
-
-export function buildBespokeOverlay(
-  bespokeBuffs: StatBuff[],
-  baseStats: StatSheet,
-  teamStats: StatSheet[]
-): StatSheet {
-  let overlay = StatSheet.fromEntries([]);
-  for (const bb of bespokeBuffs) {
-    overlay = overlay.merge(
-      StatSheet.fromEntries(
-        [...bb.staticBuffs, ...bb.dynamicBuffs(baseStats, teamStats)],
-        bb.target.filter
-      )
-    );
-  }
-  return overlay;
-}
-/** Extract maxStacks from bespoke buff array (first buff that has it). */
-
-export function bespokeMaxStacks(
-  bespokeBuffs: StatBuff[] | undefined
-): number | undefined {
-  if (!bespokeBuffs) return undefined;
-  for (const bb of bespokeBuffs) {
-    if (bb.source.maxStacks != null) return bb.source.maxStacks;
-  }
-  return undefined;
-}

@@ -4,7 +4,16 @@ import type {
   ProvidedStaticBuff,
   TeamSlotConfig,
 } from "../types";
-import { type CacheKey, makeCacheKey } from "./cacheUtils";
+export type CacheKey = string;
+
+export function makeCacheKey(
+  onFieldCharId: string,
+  excludeKeys?: Set<string>
+): CacheKey {
+  if (!excludeKeys || excludeKeys.size === 0) return onFieldCharId;
+  const sorted = [...excludeKeys].sort();
+  return `${onFieldCharId}\0${sorted.join("\0")}`;
+}
 import type { CharBuild } from "./charBuild";
 import {
   type EvaluatedDynamicBuff,
@@ -16,7 +25,6 @@ import {
   createExtraStatBuffs,
   deduplicateBuffs,
   getBuffInstanceKey,
-  isBuffApplicable,
 } from "./statBuff";
 import { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
@@ -205,8 +213,7 @@ export class TeamStatSheet {
         const fr = fieldReq(buff.target.receiver);
         if (fr === null) {
           if (
-            isBuffApplicable(
-              buff,
+            buff.isApplicable(
               providerCharId,
               charId,
               false,
@@ -218,8 +225,7 @@ export class TeamStatSheet {
         } else {
           const effectiveFS = fr === "on";
           if (
-            isBuffApplicable(
-              buff,
+            buff.isApplicable(
               providerCharId,
               charId,
               effectiveFS,
@@ -318,8 +324,7 @@ export class TeamStatSheet {
     for (const charId of Object.keys(this.charBuilds)) {
       result[charId] = this.allStaticBuffs.filter((b) => {
         if (!isFieldDependentReceiver(b.buff.target.receiver)) return false;
-        return isBuffApplicable(
-          b.buff,
+        return b.buff.isApplicable(
           b.providerCharId,
           charId,
           isOnField(charId, onFieldCharId),
@@ -348,8 +353,7 @@ export class TeamStatSheet {
         )
           return false;
         if (isFieldDependentReceiver(entry.buff.target.receiver)) return false;
-        return isBuffApplicable(
-          entry.buff,
+        return entry.buff.isApplicable(
           entry.providerCharId,
           charId,
           false,
@@ -394,8 +398,7 @@ export class TeamStatSheet {
     isOnFieldChar: boolean
   ): StatSheet {
     let applicable = dynamicBuffs.filter((b) =>
-      isBuffApplicable(
-        b.buff,
+      b.buff.isApplicable(
         b.providerCharId,
         charId,
         isOnFieldChar,

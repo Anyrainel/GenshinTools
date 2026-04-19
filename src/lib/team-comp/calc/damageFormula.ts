@@ -9,6 +9,25 @@ import { E, type Expr, simplify } from "./expr";
 import type { ExprStatSheet } from "./exprStatSheet";
 import type { StatSheet } from "./statSheet";
 
+/**
+ * EM bonus parameters per reaction category.
+ * Formula: emBonus = (emCoeff * EM) / (emDenom + EM)
+ */
+export const EM_BONUS = {
+  amplify: { emCoeff: 2.78, emDenom: 1400 },
+  catalyze: { emCoeff: 5, emDenom: 1200 },
+  transform: { emCoeff: 16, emDenom: 2000 },
+  lunar: { emCoeff: 6, emDenom: 2000 },
+} as const;
+
+export function getEmBonus(
+  em: number,
+  emCoeff: number,
+  emDenom: number
+): number {
+  return (emCoeff * em) / (emDenom + em);
+}
+
 const LEVEL_MULTIPLIERS: Record<number, number> = {
   70: 765.640231,
   80: 1077.443668,
@@ -521,7 +540,8 @@ export class AmplifyFormula extends DirectFormula {
     const reactionBase =
       AMPLIFYING_BASES[this.tag.reaction]?.[this.tag.element] ?? 1.0;
     const em = stats.get("em", this.tag);
-    const emBonus = (2.78 * em) / (1400 + em);
+    const { emCoeff, emDenom } = EM_BONUS.amplify;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const ampMult = reactionBase * (1 + emBonus + reactionDmgBonus);
 
@@ -537,8 +557,8 @@ export class AmplifyFormula extends DirectFormula {
     const reactionCoeff =
       AMPLIFYING_BASES[this.tag.reaction]?.[this.tag.element] ?? 1.0;
     const em = stats.get("em", this.tag);
-    const emCoeff = 2.78;
-    const emBonus = (emCoeff * em) / (1400 + em);
+    const { emCoeff, emDenom } = EM_BONUS.amplify;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const ampMult = reactionCoeff * (1 + emBonus + reactionDmgBonus);
 
@@ -554,6 +574,7 @@ export class AmplifyFormula extends DirectFormula {
         ...base.params,
         reactionCoeff,
         emCoeff,
+        emDenom,
       },
       damage: base.damage * ampMult,
       tag: this.tag,
@@ -643,7 +664,8 @@ export class CatalyzeFormula extends DamageFormula {
         stats.get(this.extraTerm.key, this.tag) * this.extraTerm.multiplier;
     }
     const em = stats.get("em", this.tag);
-    const emBonus = (5 * em) / (1200 + em);
+    const { emCoeff, emDenom } = EM_BONUS.catalyze;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionCoeff = CATALYZE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -668,8 +690,8 @@ export class CatalyzeFormula extends DamageFormula {
     const { keys, multi } = this.getScalingInfo();
 
     const em = stats.get("em", this.tag);
-    const emCoeff = 5;
-    const emBonus = (emCoeff * em) / (1200 + em);
+    const { emCoeff, emDenom } = EM_BONUS.catalyze;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionCoeff = CATALYZE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -717,6 +739,7 @@ export class CatalyzeFormula extends DamageFormula {
         reactionCoeff,
         levelCoeff,
         emCoeff,
+        emDenom,
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,
@@ -782,7 +805,8 @@ export class TransformFormula extends DamageFormula {
 
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const em = stats.get("em", this.tag);
-    const emBonus = (16 * em) / (2000 + em);
+    const { emCoeff, emDenom } = EM_BONUS.transform;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const reactionCoeff = TRANSFORMATIVE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
@@ -803,8 +827,8 @@ export class TransformFormula extends DamageFormula {
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
     const em = stats.get("em", this.tag);
-    const emCoeff = 16;
-    const emBonus = (emCoeff * em) / (2000 + em);
+    const { emCoeff, emDenom } = EM_BONUS.transform;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionCoeff = TRANSFORMATIVE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -833,6 +857,7 @@ export class TransformFormula extends DamageFormula {
         reactionCoeff,
         levelCoeff,
         emCoeff,
+        emDenom,
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,
@@ -913,7 +938,8 @@ export class LunarFormula extends DamageFormula {
 
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const em = stats.get("em", this.tag);
-    const emBonus = (6 * em) / (2000 + em);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const reactionCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.8;
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
@@ -940,8 +966,8 @@ export class LunarFormula extends DamageFormula {
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
     const em = stats.get("em", this.tag);
-    const emCoeff = 6;
-    const emBonus = (emCoeff * em) / (2000 + em);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.8;
     const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -966,6 +992,7 @@ export class LunarFormula extends DamageFormula {
       reactionCoeff,
       levelCoeff,
       emCoeff,
+      emDenom,
       charLevel,
       enemyLevel: ctx.enemyLevel,
       enemyRes: ctx.enemyRes,
@@ -1073,7 +1100,8 @@ export class LunarDirectFormula extends DamageFormula {
     const directCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
 
     const em = stats.get("em", this.tag);
-    const emBonus = (6 * em) / (2000 + em);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const baseDmgBonus = stats.get("baseDmg%", this.tag);
     const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
@@ -1097,8 +1125,8 @@ export class LunarDirectFormula extends DamageFormula {
     const directCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
 
     const em = stats.get("em", this.tag);
-    const emCoeff = 6;
-    const emBonus = (emCoeff * em) / (2000 + em);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
     const baseDmgBonus = stats.get("baseDmg%", this.tag);
@@ -1144,6 +1172,7 @@ export class LunarDirectFormula extends DamageFormula {
       params: {
         directCoeff,
         emCoeff,
+        emDenom,
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,

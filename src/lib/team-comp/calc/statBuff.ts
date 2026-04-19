@@ -13,7 +13,7 @@ import {
 import { E, type Expr, simplify } from "./expr";
 import type { ExprStatSheet } from "./exprStatSheet";
 import { isSelfReceiver } from "./fieldState";
-import type { StatSheet } from "./statSheet";
+import { StatSheet } from "./statSheet";
 
 /** Canonical key for a BuffSource, used in BuffActivationMap and override store. */
 export function buffSourceKey(source: BuffSource): string {
@@ -336,6 +336,42 @@ export class StatBuff {
 
   protected get identityExtra(): string {
     return "";
+  }
+
+  /**
+   * Determine whether this buff applies to a given character's stat sheet.
+   *
+   * @param providerCharId The character that provides the buff
+   * @param selfCharId    The character whose stat sheet we're building
+   * @param selfIsOnField Whether selfCharId is on-field for this damage context.
+   * @param selfRegion    Region of the target character (for region-scoped buffs).
+   * @param selfFaction   Faction of the target character (for faction-scoped buffs).
+   */
+  isApplicable(
+    providerCharId: string,
+    selfCharId: string,
+    selfIsOnField: boolean,
+    selfRegion?: Region,
+    selfFaction?: Faction
+  ): boolean {
+    // CharId filter: if buff specifies charId, target must match
+    if (this.target.charId !== undefined) {
+      if (this.target.charId !== selfCharId) return false;
+    }
+    // Region filter: if buff specifies regions, target must be from one of them
+    if (this.target.regions && selfRegion !== undefined) {
+      if (!this.target.regions.includes(selfRegion)) return false;
+    }
+    // Faction filter: if buff specifies factions, target must be from one of them
+    if (this.target.factions && selfFaction !== undefined) {
+      if (!this.target.factions.includes(selfFaction)) return false;
+    }
+
+    return RECEIVER_RULES[this.target.receiver](
+      providerCharId,
+      selfCharId,
+      selfIsOnField
+    );
   }
 
   get identityShapeKey(): string {
@@ -707,42 +743,62 @@ const RECEIVER_RULES: Record<BuffReceiverType, ReceiverRule> = {
   teamOffField: (_, __, onField) => !onField,
 };
 /**
- * Determine whether a buff applies to a given character's stat sheet.
- *
- * @param buff          The buff to check
- * @param providerCharId The character that provides the buff
- * @param selfCharId    The character whose stat sheet we're building
- * @param selfIsOnField Whether selfCharId is on-field for this damage context.
- * @param selfRegion    Region of the target character (for region-scoped buffs).
- * @param selfFaction   Faction of the target character (for faction-scoped buffs).
+ * Standalone applicability check — works on any object with a `.target` property,
+ * including plain-object casts. Prefer `buff.isApplicable(...)` when you have a
+ * real StatBuff instance.
  */
 export function isBuffApplicable(
-  buff: StatBuff,
+  buff: Pick<StatBuff, "target">,
   providerCharId: string,
   selfCharId: string,
   selfIsOnField: boolean,
   selfRegion?: Region,
   selfFaction?: Faction
 ): boolean {
-  // CharId filter: if buff specifies charId, target must match
   if (buff.target.charId !== undefined) {
     if (buff.target.charId !== selfCharId) return false;
   }
-  // Region filter: if buff specifies regions, target must be from one of them
   if (buff.target.regions && selfRegion !== undefined) {
     if (!buff.target.regions.includes(selfRegion)) return false;
   }
-  // Faction filter: if buff specifies factions, target must be from one of them
   if (buff.target.factions && selfFaction !== undefined) {
     if (!buff.target.factions.includes(selfFaction)) return false;
   }
-
   return RECEIVER_RULES[buff.target.receiver](
     providerCharId,
     selfCharId,
     selfIsOnField
   );
 } /** Build the buffApplicability map from a formula-specific DisplayResult's buffs. */
+
+/** Build a merged overlay from an array of bespoke buffs. */
+export function buildBespokeOverlay(
+  bespokeBuffs: StatBuff[],
+  baseStats: StatSheet,
+  teamStats: StatSheet[]
+): StatSheet {
+  let overlay = StatSheet.fromEntries([]);
+  for (const bb of bespokeBuffs) {
+    overlay = overlay.merge(
+      StatSheet.fromEntries(
+        [...bb.staticBuffs, ...bb.dynamicBuffs(baseStats, teamStats)],
+        bb.target.filter
+      )
+    );
+  }
+  return overlay;
+}
+
+/** Extract maxStacks from bespoke buff array (first buff that has it). */
+export function bespokeMaxStacks(
+  bespokeBuffs: StatBuff[] | undefined
+): number | undefined {
+  if (!bespokeBuffs) return undefined;
+  for (const bb of bespokeBuffs) {
+    if (bb.source.maxStacks != null) return bb.source.maxStacks;
+  }
+  return undefined;
+}
 
 export function buildBuffApplicability(
   buffs: ResolvedBuff[]

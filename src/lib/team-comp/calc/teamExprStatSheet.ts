@@ -20,7 +20,6 @@ import type {
   TeamSlotConfig,
 } from "../types";
 import type { ExtraBuff } from "../types";
-import { type CacheKey, makeCacheKey } from "./cacheUtils";
 import type { CharBuild } from "./charBuild";
 import { isFinalStatKey } from "./dynamicBuffEval";
 import { E, type Expr, simplify } from "./expr";
@@ -36,7 +35,7 @@ import {
   deduplicateDynamicBuffExprs,
   isCompilerDeferredFinalBuff,
 } from "./formulaCompiler";
-import { exclusionKey } from "./stackRank";
+import { exclusionKey } from "./formulaEval";
 import {
   CrossScalingBuff,
   ScalingBuff,
@@ -47,6 +46,7 @@ import {
 import { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 import type { TeamResonance } from "./teamResonance";
+import { type CacheKey, makeCacheKey } from "./teamStatSheet";
 import { TeamStatSheet } from "./teamStatSheet";
 
 /**
@@ -371,7 +371,7 @@ export class TeamExprStatSheet {
 
       const applicable = dynamicBuffExprs.filter((dbExpr) =>
         isBuffApplicable(
-          { target: dbExpr.target, source: dbExpr.source } as StatBuff,
+          { target: dbExpr.target },
           dbExpr.providerCharId,
           id,
           isOnField(id, onFieldCharId),

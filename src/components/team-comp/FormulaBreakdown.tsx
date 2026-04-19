@@ -1,9 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
+import { getEmBonus } from "@/lib/team-comp/calc/damageFormula";
 import {
   adjustPartDamage,
   computeScalingDmg,
-  getEmBonus,
 } from "@/lib/team-comp/calc/formulaDisplay";
 import {
   fmtDamage,
@@ -349,7 +349,8 @@ function CatalyzeAdditiveZone({
 }) {
   const em = p.statValues.em || 0;
   const emCoeff = p.params.emCoeff || 2.78;
-  const emBonus = getEmBonus(em, emCoeff);
+  const emDenom = p.params.emDenom || 1400;
+  const emBonus = getEmBonus(em, emCoeff, emDenom);
   const reactDmg = p.statValues["reactionDmg%"] || 0;
   const levelMult = p.params.levelCoeff || 0;
   const reactBase = p.params.reactionCoeff || 0;
@@ -483,7 +484,8 @@ function ReactionBonusZone({
 }) {
   const em = p.statValues.em || 0;
   const emCoeff = p.params.emCoeff || 0;
-  const emBonus = getEmBonus(em, emCoeff);
+  const emDenom = p.params.emDenom || 2000;
+  const emBonus = getEmBonus(em, emCoeff, emDenom);
   const reactDmg = p.statValues["reactionDmg%"] || 0;
 
   return (

@@ -34,30 +34,32 @@ import {
   isPartOffField,
   resolvePartOnFieldCharIds,
 } from "./fieldState";
+import {
+  buildUserOverrideInfos,
+  computeBlendedDamage,
+  evaluateFormulaDamage,
+  evaluateFormulaDisplay,
+} from "./formulaEval";
 import type { CharacterBase } from "./implModel";
 import { computeSubstatMarginals } from "./marginalGain";
 import {
   type ComboLineEval,
   type FormulaPartEval,
   type StackLimitedBuffInfo,
-  buildUserOverrideInfos,
   collectStackLimitedBuffs,
-  computeBlendedDamage,
   computeComboDefaultActivation,
   computeDefaultActivation,
-  evaluateFormulaDamage,
-  evaluateFormulaDisplay,
 } from "./stackRank";
 import {
   CrossScalingBuff,
   ScalingBuff,
   type StatBuff,
   TeamAggregationBuff,
+  bespokeMaxStacks,
+  buildBespokeOverlay,
   deduplicateBuffs,
   getBuffInstanceKey,
-  isBuffApplicable,
 } from "./statBuff";
-import { bespokeMaxStacks, buildBespokeOverlay } from "./statSheet";
 import { StatSheet } from "./statSheet";
 import { TeamFormulaCatalog } from "./teamFormulaCatalog";
 import { TeamMeta } from "./teamMeta";
@@ -240,73 +242,21 @@ export class TeamBuild {
     return this.teamStats.allStaticBuffs;
   }
 
-  // ─── Centralized buff applicability helpers ──────────────────────────────
-  /** isBuffApplicable with automatic teamMeta region/faction lookup. */
-  private isBuffApplicableForChar(
-    buff: StatBuff,
-    providerCharId: string,
-    selfCharId: string,
-    selfIsOnField: boolean
-  ): boolean {
-    return isBuffApplicable(
-      buff,
-      providerCharId,
-      selfCharId,
-      selfIsOnField,
-      this.teamMeta.regions[selfCharId],
-      this.teamMeta.factions[selfCharId]
-    );
-  }
-
-  /**
-   * Does this buff apply to ANY team member in either field state?
-   *
-   * Used as a display pre-filter in resolveBuffs, which shows buffs for a
-   * formula that may contain both on-field and off-field parts. Intentionally
-   * permissive — Layer 2.5 (fieldReq vs partOffField) narrows per-part.
-   */
-  private isBuffApplicableForTeam(
-    buff: StatBuff,
-    providerCharId: string
-  ): boolean {
-    for (const cid of Object.keys(this.charBuilds)) {
-      if (this.couldBuffApplyToChar(buff, providerCharId, cid)) return true;
-    }
-    return false;
-  }
-
-  /**
-   * Does this buff apply to a specific character in EITHER field state?
-   *
-   * Use this (not `isBuffApplicableForChar(..., true)`) whenever the caller
-   * only knows the carry/line char and does NOT know the field state of each
-   * formula part. Hardcoding `selfIsOnField=true` silently drops buffs whose
-   * receiver is selfOffField/otherOffField/teamOffField, even when the formula
-   * contains off-field parts that should receive them. Layer 2.5
-   * (fieldReq vs partOffField) narrows correctly per-part later.
-   */
+  // ─── Team stat computation ──────────────────────────────────────────────
+  /** Does this buff apply to a character in EITHER field state? */
   private couldBuffApplyToChar(
     buff: StatBuff,
     providerCharId: string,
     selfCharId: string
   ): boolean {
+    const r = this.teamMeta.regions[selfCharId];
+    const f = this.teamMeta.factions[selfCharId];
     return (
-      this.isBuffApplicableForChar(
-        buff,
-        providerCharId,
-        selfCharId,
-        true /* on-field */
-      ) ||
-      this.isBuffApplicableForChar(
-        buff,
-        providerCharId,
-        selfCharId,
-        false /* off-field */
-      )
+      buff.isApplicable(providerCharId, selfCharId, true, r, f) ||
+      buff.isApplicable(providerCharId, selfCharId, false, r, f)
     );
   }
 
-  // ─── Team stat computation ──────────────────────────────────────────────
   /**
    * Compute final stat sheets for all team members.
    * This is the hot path during artifact optimization.
@@ -1433,26 +1383,27 @@ export class TeamBuild {
     offFieldMidStats?: Record<string, StatSheet>
   ): ResolvedBuff[] {
     const result: ResolvedBuff[] = [];
+    const charIds = Object.keys(this.charBuilds);
 
-    // Use allStaticBuffs (populated once at construction) as the single source
-    // of buff objects. This avoids reference-identity mismatches caused by
-    // weapon/artifact getters that create new StatBuff instances each call.
-    // Exclude resonance and extra entries — they are handled separately below.
     const charBuffEntries = this.allStaticBuffs.filter(
       (b) => b.providerCharId !== "resonance" && b.providerCharId !== "extra"
     );
 
     // ── Active static set ──
+    const isTeamApplicable = (buff: StatBuff, pid: string) => {
+      for (const cid of charIds) {
+        if (this.couldBuffApplyToChar(buff, pid, cid)) return true;
+      }
+      return false;
+    };
+
     let applicableStatic = charBuffEntries
-      .filter((b) => this.isBuffApplicableForTeam(b.buff, b.providerCharId))
+      .filter((b) => isTeamApplicable(b.buff, b.providerCharId))
       .map((b) => b.buff);
     applicableStatic = deduplicateBuffs(applicableStatic, (b) => b.staticBuffs);
     const activeStaticSet = new Set<StatBuff>(applicableStatic);
 
     // ── Active dynamic set ──
-    // Evaluate dynamic buffs from the same allStaticBuffs objects.
-    // Final-stat ScalingBuffs (e.g., ATK→baseDmg) use midStats so they see
-    // sheet-stat dynamic buffs like Bennett's ATK share.
     const midStatsArr = midStats ? Object.values(midStats) : undefined;
     const allDynamic: EvaluatedDynamicBuff[] = [];
     for (const { buff, providerCharId } of charBuffEntries) {
@@ -1468,7 +1419,7 @@ export class TeamBuild {
     }
 
     let applicableDynamic = allDynamic.filter((b) =>
-      this.isBuffApplicableForTeam(b.buff, b.providerCharId)
+      isTeamApplicable(b.buff, b.providerCharId)
     );
     applicableDynamic = deduplicateBuffs(applicableDynamic, (b) => b.entries);
     const activeDynamicSet = new Set<StatBuff>(
@@ -1476,11 +1427,6 @@ export class TeamBuild {
     );
 
     // ── Scaling bridge: inputKey → outputKeys reaching calcTarget ──
-    // Enables indirect relevance: a buff giving +ER% is relevant if a scaling
-    // buff reads ER and outputs something the formula reads (e.g. ER → DMG%).
-    // Keyed by (providerCharId, inputKey) — where providerCharId is the scaling
-    // buff's owner who reads inputKey from their own stats.
-    // Scaled stat implicit deps: atk% and baseAtk both feed into atk
     const SCALED_DEPS: Record<string, string[]> = {
       atk: ["atk%", "baseAtk"],
       hp: ["hp%", "baseHp"],
@@ -1489,7 +1435,6 @@ export class TeamBuild {
 
     const scalingBridge = new Map<string, Set<StatKey>>();
     for (const { buff, providerCharId } of charBuffEntries) {
-      // Extract scaling info: input keys → output key for any scaling buff type
       let bridgeInputKeys: StatKey[] | undefined;
       let bridgeOutputKey: StatKey | undefined;
       if (buff instanceof ScalingBuff) {
@@ -1504,30 +1449,10 @@ export class TeamBuild {
       }
       if (!bridgeInputKeys || !bridgeOutputKey) continue;
 
-      // Only care about scaling buffs whose output reaches the calc target.
-      // Check both field states (true = on-field, false = off-field) because
-      // the formula may mix on-field and off-field parts. Layer 2.5 narrows
-      // per-part later.
-      if (
-        !(
-          this.isBuffApplicableForChar(
-            buff,
-            providerCharId,
-            onFieldCharId,
-            true /* on-field */
-          ) ||
-          this.isBuffApplicableForChar(
-            buff,
-            providerCharId,
-            onFieldCharId,
-            false /* off-field */
-          )
-        )
-      )
+      if (!this.couldBuffApplyToChar(buff, providerCharId, onFieldCharId))
         continue;
       if (!activeDynamicSet.has(buff)) continue;
 
-      // Register the bridge for each input key and its implicit dependencies
       for (const baseKey of bridgeInputKeys) {
         const inputKeys = [baseKey, ...(SCALED_DEPS[baseKey] ?? [])];
         for (const iKey of inputKeys) {
@@ -1543,26 +1468,19 @@ export class TeamBuild {
     }
 
     // ── Display loop ──
-    // Pre-compute field-state flags (invariant across buffs).
     const hasOnFieldParts = partOffField.some((f) => !f);
     const hasOffFieldParts =
       offFieldPreStats != null && partOffField.some((f) => f);
 
-    // Iterate charBuffEntries (not cb.getAllBuffs()) so Set.has() matches.
     for (const { buff, providerCharId: ownerId } of charBuffEntries) {
-      const applicable = this.isBuffApplicableForTeam(buff, ownerId);
+      const applicable = isTeamApplicable(buff, ownerId);
 
-      // Resolve dynamic entries with per-entry caps.
-      // Evaluate using stats matching the formula's actual field states:
-      // - on-field parts use preStats/midStats (built with formula char on-field)
-      // - off-field parts use offFieldPreStats/offFieldMidStats (different on-field char)
       let dynamicEntries: ResolvedStatEntry[] = [];
       let active = false;
       let activePartIndices: number[] | undefined;
 
       const useMid = midStats && isDeferredFinalBuff(buff);
 
-      // Evaluate in contexts that the formula actually uses
       const onRaw = hasOnFieldParts
         ? buff.dynamicBuffs(
             useMid ? midStats[ownerId]! : preStats[ownerId]!,
@@ -1579,7 +1497,6 @@ export class TeamBuild {
               : Object.values(offFieldPreStats!)
           )
         : undefined;
-      // Use whichever context produced entries (keys are identical in both).
       const raw = onRaw ?? offRaw ?? [];
 
       if (applicable) {
@@ -1589,58 +1506,18 @@ export class TeamBuild {
           active = activeStaticSet.has(buff);
         }
         if (active && partTags.length > 0) {
-          // Collect the buff's output stat keys
           const rawOutputKeys = new Set<StatKey>();
           for (const e of buff.staticBuffs) rawOutputKeys.add(e.key);
           for (const e of raw) rawOutputKeys.add(e.key);
 
-          // Determine the effective output keys that reach the damage formula.
-          // A buff can reach the formula in two ways:
-          // 1. Direct: outputs land on the calc target's stat sheet
-          // 2. Indirect: outputs land on a teammate's sheet and feed a scaling
-          //    buff whose output reaches the calc target
           const effectiveKeys = new Set<StatKey>();
 
-          // Check if this buff directly affects the calc target's stat sheet.
-          // Check both field states (true = on-field, false = off-field)
-          // because the formula may mix on-field and off-field parts.
-          // Layer 2.5 narrows per-part later.
-          const reachesCalcTarget =
-            this.isBuffApplicableForChar(
-              buff,
-              ownerId,
-              onFieldCharId,
-              true /* on-field */
-            ) ||
-            this.isBuffApplicableForChar(
-              buff,
-              ownerId,
-              onFieldCharId,
-              false /* off-field */
-            );
-          if (reachesCalcTarget) {
+          if (this.couldBuffApplyToChar(buff, ownerId, onFieldCharId)) {
             for (const k of rawOutputKeys) effectiveKeys.add(k);
           }
 
-          // Check indirect path via scaling bridge for all characters
-          // the buff applies to (including calc target — their stats may
-          // also feed their own scaling buffs).
-          // Check both field states per character (same rationale as above).
-          for (const cid of Object.keys(this.charBuilds)) {
-            const buffApplies =
-              this.isBuffApplicableForChar(
-                buff,
-                ownerId,
-                cid,
-                true /* on-field */
-              ) ||
-              this.isBuffApplicableForChar(
-                buff,
-                ownerId,
-                cid,
-                false /* off-field */
-              );
-            if (!buffApplies) continue;
+          for (const cid of charIds) {
+            if (!this.couldBuffApplyToChar(buff, ownerId, cid)) continue;
             for (const outKey of rawOutputKeys) {
               const bridged = scalingBridge.get(`${cid}\0${outKey}`);
               if (bridged) for (const k of bridged) effectiveKeys.add(k);
@@ -1648,20 +1525,15 @@ export class TeamBuild {
           }
 
           activePartIndices = [];
-          // If no effective keys reach the formula at all, buff is irrelevant
           if (effectiveKeys.size > 0) {
             const fr = fieldReq(buff.target.receiver);
             for (let pi = 0; pi < partTags.length; pi++) {
-              // Layer 2.5: Field-context filter — onField buffs don't apply to
-              // off-field parts, offField buffs don't apply to on-field parts
               if (fr === "on" && partOffField[pi]) continue;
               if (fr === "off" && !partOffField[pi]) continue;
               const tag = partTags[pi];
-              // Layer 3: DamageTagFilter
               if (tag && buff.target.filter) {
                 if (!filterMatchesTag(buff.target.filter!, tag)) continue;
               }
-              // Layer 4: Stat relevance
               const rk = partReadKeys[pi];
               if (rk) {
                 let relevant = false;
@@ -1677,20 +1549,16 @@ export class TeamBuild {
             }
           }
           active = activePartIndices.length > 0;
-          // If active for all parts, omit the array (= universal)
           if (activePartIndices.length === partTags.length) {
             activePartIndices = undefined;
           }
         }
       }
 
-      // Always populate dynamic entries for display, even when inactive.
-      // When both on-field and off-field contexts exist, compute range.
       if (raw.length > 0) {
         dynamicEntries = raw.map((entry, i) => {
           const resolved: ResolvedStatEntry = { ...entry };
           annotateScalingInfo(buff, resolved);
-          // If both contexts were evaluated, compare values and set range.
           if (onRaw && offRaw) {
             const onVal = onRaw[i]?.value ?? entry.value;
             const offVal = offRaw[i]?.value ?? entry.value;
@@ -1715,14 +1583,13 @@ export class TeamBuild {
       });
     }
 
-    // Also include resonance buffs
+    // ── Resonance buffs ──
     for (const buff of this.teamResonance.buffs) {
       let active = true;
       let activePartIndicesRes: number[] | undefined;
       if (partTags.length > 0) {
         const outputKeys = new Set<StatKey>(buff.staticBuffs.map((e) => e.key));
-        // Resonance buffs apply to all team members — expand via bridge
-        for (const charId of Object.keys(this.charBuilds)) {
+        for (const charId of charIds) {
           for (const outKey of [...outputKeys]) {
             const bridged = scalingBridge.get(`${charId}\0${outKey}`);
             if (bridged) for (const k of bridged) outputKeys.add(k);
@@ -1769,7 +1636,6 @@ export class TeamBuild {
       (b) => b.providerCharId === "extra"
     );
     for (const { buff } of extraBuffEntries) {
-      // charId filter gates applicability
       if (buff.target.charId && buff.target.charId !== onFieldCharId) {
         result.push({
           buffKey: getBuffInstanceKey(buff, "extra"),
@@ -1786,8 +1652,7 @@ export class TeamBuild {
       let activePartIndicesExtra: number[] | undefined;
       if (partTags.length > 0) {
         const outputKeys = new Set<StatKey>(buff.staticBuffs.map((e) => e.key));
-        // Extra buffs apply to team members — expand via bridge
-        for (const charId of Object.keys(this.charBuilds)) {
+        for (const charId of charIds) {
           for (const outKey of [...outputKeys]) {
             const bridged = scalingBridge.get(`${charId}\0${outKey}`);
             if (bridged) for (const k of bridged) outputKeys.add(k);
@@ -1833,7 +1698,6 @@ export class TeamBuild {
     {
       const calcBuild = this.charBuilds[onFieldCharId];
       const bespokeRaw = calcBuild.charBase.getBespokeBuffs();
-      // Deduplicate by buff identity (same buff object on multiple parts)
       const seenBespokeBuffs = new Set<StatBuff>();
       for (const { formulaId: fId, label, buff } of bespokeRaw) {
         if (seenBespokeBuffs.has(buff)) continue;

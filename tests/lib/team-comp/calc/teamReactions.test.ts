@@ -9,10 +9,10 @@ import {
   fillVarsFromSheet,
 } from "@/lib/team-comp/calc/formulaCompiler";
 import {
-  computeLunarRankWeights,
   evaluateFormulaDamage,
   evaluateFormulaDisplay,
-} from "@/lib/team-comp/calc/stackRank";
+} from "@/lib/team-comp/calc/formulaEval";
+import { computeLunarRankWeights } from "@/lib/team-comp/calc/stackRank";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {

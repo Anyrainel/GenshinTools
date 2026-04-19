@@ -1,9 +1,5 @@
 import type { CritMode, DisplayPart } from "../types";
 
-export function getEmBonus(em: number, emCoeff: number): number {
-  const denominator = emCoeff === 2.78 ? 1400 : emCoeff === 5 ? 1200 : 2000;
-  return (emCoeff * em) / (denominator + em);
-}
 export function computeScalingDmg(p: DisplayPart): number {
   let dmg = 0;
   for (let i = 0; i < p.scalingKeys.length; i++) {
