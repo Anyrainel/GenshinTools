@@ -497,7 +497,7 @@ export function compileComboTeamDamage(
 
 // ─── Dynamic Buff Expression Collection ───
 
-interface DynamicBuffExpr {
+export interface DynamicBuffExpr {
   key: StatKey;
   expr: Expr;
   target: StatBuff["target"];
@@ -510,7 +510,7 @@ interface DynamicBuffExpr {
  * Whether a buff's dynamic output targets a final stat in the compiler path.
  * Same logic as isDeferredFinalBuff in damageCalc.ts.
  */
-function isCompilerDeferredFinalBuff(buff: StatBuff): boolean {
+export function isCompilerDeferredFinalBuff(buff: StatBuff): boolean {
   if (buff instanceof ScalingBuff) return isFinalStatKey(buff.outputKey);
   if (buff instanceof CrossScalingBuff) return isFinalStatKey(buff.outputKey);
   return false;
@@ -519,7 +519,7 @@ function isCompilerDeferredFinalBuff(buff: StatBuff): boolean {
 /**
  * Collect dynamic buff exprs from a single buff, returning them as DynamicBuffExpr[].
  */
-function collectSingleBuffExprs(
+export function collectSingleBuffExprs(
   buff: StatBuff,
   providerCharId: string,
   exprStatsMap: Record<string, ExprStatSheet>,
@@ -716,7 +716,7 @@ function collectAndApplyDynamicBuffExprsTwoPass(
  * artifacts), the runtime value may differ from the compile-time baseline, so
  * we emit E.max(...) to let the JIT resolve the winner at evaluation time.
  */
-function deduplicateDynamicBuffExprs(
+export function deduplicateDynamicBuffExprs(
   buffs: DynamicBuffExpr[]
 ): DynamicBuffExpr[] {
   const result: DynamicBuffExpr[] = [];
