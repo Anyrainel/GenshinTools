@@ -4,11 +4,12 @@ import type {
   ProvidedStaticBuff,
   TeamSlotConfig,
 } from "../types";
+import { type CacheKey, makeCacheKey } from "./cacheUtils";
 import type { CharBuild } from "./charBuild";
 import {
   type EvaluatedDynamicBuff,
   evaluateDynamicBuffsTwoPass,
-} from "./damageCalc";
+} from "./dynamicBuffEval";
 import { fieldReq, isFieldDependentReceiver, isOnField } from "./fieldState";
 import {
   StatBuff,
@@ -20,17 +21,6 @@ import {
 import { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 import type { TeamResonance } from "./teamResonance";
-
-type CacheKey = string;
-
-function makeCacheKey(
-  onFieldCharId: string,
-  excludeKeys?: Set<string>
-): CacheKey {
-  if (!excludeKeys || excludeKeys.size === 0) return onFieldCharId;
-  const sorted = [...excludeKeys].sort();
-  return `${onFieldCharId}\0${sorted.join("\0")}`;
-}
 
 /** Mutate postStats in-place: apply per-character CR-target deltas when present. */
 function applyCrTargetDeltas(

@@ -27,17 +27,15 @@ import type {
   Slot,
   TierAssignment,
 } from "@/data/types";
-import { formulaCritRatio } from "@/lib/team-comp/calc/formulaUtil";
-import { adjustPartDamage } from "@/lib/team-comp/calc/formulaUtil";
+import { formulaCritRatio } from "@/lib/team-comp/calc/formulaDisplay";
+import { adjustPartDamage } from "@/lib/team-comp/calc/formulaDisplay";
 import { buildBuffApplicability } from "@/lib/team-comp/calc/statBuff";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
 
-import {
-  aggregateComboFormulaDefaults,
-  toStatSheets,
-} from "@/lib/team-comp/teamOptUtils";
+import { aggregateComboFormulaDefaults } from "@/lib/team-comp/calc/comboBuffOverrides";
+import { toStatSheets } from "@/lib/team-comp/teamOptUtils";
 import type {
   OptFailReason,
   TeamOptimizationProgress,

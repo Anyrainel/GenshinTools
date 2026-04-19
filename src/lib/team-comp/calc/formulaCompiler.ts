@@ -27,8 +27,8 @@ import type {
 } from "../types";
 import type { BuffActivationMap } from "../types";
 import { resolvePartReaction } from "./combo";
-import { isFinalStatKey } from "./damageCalc";
 import { createReactionVariant } from "./damageFormula";
+import { isFinalStatKey } from "./dynamicBuffEval";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStatSheet, VarMapping } from "./exprStatSheet";
 import { getDefaultOnFieldCharId, isPartOffField } from "./fieldState";

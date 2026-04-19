@@ -315,7 +315,6 @@ function computeMarginalGainsForOptimizer(
           return teamBuild.getDamageResult(
             formulaCharId,
             formulaId,
-            onFieldCharId,
             calcContext,
             reactionOverride
           ).totalDamage;

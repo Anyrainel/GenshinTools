@@ -1068,7 +1068,6 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
           const oldDamage = tb.getDamageResult(
             triggerCharId,
             formulaId,
-            triggerCharId,
             FUZZ_CTX
           ).totalDamage;
 
@@ -1509,7 +1508,6 @@ describe("random team fuzz (compiled vs standard)", () => {
           const oldDamage = tb.getDamageResult(
             carryId,
             formulaId,
-            carryId,
             FUZZ_CTX
           ).totalDamage;
 
@@ -1607,7 +1605,6 @@ describe("random team fuzz (compiled vs standard)", () => {
           const oldDamage = tb.getDamageResult(
             carryId,
             formulaId,
-            carryId,
             FUZZ_CTX
           ).totalDamage;
 

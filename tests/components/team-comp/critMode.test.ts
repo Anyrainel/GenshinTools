@@ -1,7 +1,7 @@
 import {
   adjustPartDamage,
   formulaCritRatio,
-} from "@/lib/team-comp/calc/formulaUtil";
+} from "@/lib/team-comp/calc/formulaDisplay";
 import type { DisplayPart } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 

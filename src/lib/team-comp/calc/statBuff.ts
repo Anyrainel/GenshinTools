@@ -15,6 +15,12 @@ import type { ExprStatSheet } from "./exprStatSheet";
 import { isSelfReceiver } from "./fieldState";
 import type { StatSheet } from "./statSheet";
 
+/** Canonical key for a BuffSource, used in BuffActivationMap and override store. */
+export function buffSourceKey(source: BuffSource): string {
+  const base = `${source.type}:${source.id}:${source.origin ?? ""}`;
+  return source.internalKey ? `${base}:${source.internalKey}` : base;
+}
+
 /**
  * Throws if any StatKey appears more than once in the given entry list.
  * Duplicate keys silently overwrite each other in the StatSheet map.

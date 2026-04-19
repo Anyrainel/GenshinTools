@@ -10,8 +10,7 @@
  * when the semantics change.
  */
 
-import type { BuffReceiverType, FormulaPart } from "../types";
-import type { ReactionOverride, TeamSlotConfig } from "../types";
+import type { BuffReceiverType, FormulaPart, TeamSlotConfig } from "../types";
 
 /**
  * Returns the effective off-field state of a formula part: its intrinsic
@@ -22,15 +21,6 @@ export function isPartOffField(
   forceOnField?: boolean
 ): boolean {
   return !!part.offField && !forceOnField;
-}
-
-/**
- * Returns the gate reaction from a ComboLine (may be undefined/none).
- */
-function getLineReaction(
-  line: { reaction?: ReactionOverride } | undefined | null
-): ReactionOverride | undefined {
-  return line?.reaction;
 }
 
 /**

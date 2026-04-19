@@ -27,7 +27,7 @@ import {
   type EvaluatedDynamicBuff,
   annotateScalingInfo,
   isDeferredFinalBuff,
-} from "./damageCalc";
+} from "./dynamicBuffEval";
 import { fieldReq } from "./fieldState";
 import {
   getDefaultOnFieldCharId,

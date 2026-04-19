@@ -20,8 +20,9 @@ import type {
   TeamSlotConfig,
 } from "../types";
 import type { ExtraBuff } from "../types";
+import { type CacheKey, makeCacheKey } from "./cacheUtils";
 import type { CharBuild } from "./charBuild";
-import { isFinalStatKey } from "./damageCalc";
+import { isFinalStatKey } from "./dynamicBuffEval";
 import { E, type Expr, simplify } from "./expr";
 import {
   type ExprStatSheet,
@@ -47,17 +48,6 @@ import { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
 import type { TeamResonance } from "./teamResonance";
 import { TeamStatSheet } from "./teamStatSheet";
-
-type CacheKey = string;
-
-function makeCacheKey(
-  onFieldCharId: string,
-  excludeKeys?: Set<string>
-): CacheKey {
-  if (!excludeKeys || excludeKeys.size === 0) return onFieldCharId;
-  const sorted = [...excludeKeys].sort();
-  return `${onFieldCharId}\0${sorted.join("\0")}`;
-}
 
 /**
  * Centralized Expr-domain stat computation for the formula compiler.

@@ -12,6 +12,7 @@ import { artifactHalfSetsById } from "@/data/constants";
 import type { Element, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { buffSourceKey } from "@/lib/team-comp/calc/statBuff";
 import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
@@ -19,7 +20,6 @@ import {
   type GeneratorResult,
   runGenerator,
 } from "@/lib/team-comp/generator/generator";
-import { buffSourceKey } from "@/lib/team-comp/helpers";
 import type {
   BuffActivationMap,
   CalcContext,

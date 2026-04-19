@@ -1,10 +1,12 @@
 import type { ArtifactData, ReactionType } from "@/data/types";
+import {
+  calcComboResults,
+  extractComboOverrides,
+} from "@/lib/team-comp/calc/comboBuffOverrides";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import {
   buildTeamConfigs,
-  calcComboResults,
   detectEquippedSets,
-  extractComboOverrides,
   frozenArtifactsMatchConfig,
   setsMatch,
   toStatSheets,

@@ -4,7 +4,7 @@ import {
   adjustPartDamage,
   computeScalingDmg,
   getEmBonus,
-} from "@/lib/team-comp/calc/formulaUtil";
+} from "@/lib/team-comp/calc/formulaDisplay";
 import {
   fmtDamage,
   fmtPercent,

@@ -43,13 +43,15 @@ import {
   withLineCount,
   withReactionOverride,
 } from "@/lib/team-comp/calc/combo";
+import {
+  buildBuffOverrides,
+  calcComboResults,
+  extractComboOverrides,
+} from "@/lib/team-comp/calc/comboBuffOverrides";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
-  buildBuffOverrides,
   buildTeamConfigs,
-  calcComboResults,
-  extractComboOverrides,
   getHigherTierEquippedArtifactIds,
   toStatSheets,
 } from "@/lib/team-comp/teamOptUtils";

@@ -10,13 +10,13 @@ import { preloadGameStats } from "@/lib/gameStatsLoader";
 import "@/lib/team-comp/index";
 
 import { getEffectiveCombo } from "@/lib/team-comp/calc/combo";
-import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
   buildBuffOverrides,
   calcComboResults,
   extractComboOverrides,
-} from "@/lib/team-comp/teamOptUtils";
+} from "@/lib/team-comp/calc/comboBuffOverrides";
+import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
+import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
   BuffActivationMap,
   CalcContext,

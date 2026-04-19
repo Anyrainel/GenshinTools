@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { aggregateComboFormulaDefaults } from "@/lib/team-comp/calc/comboBuffOverrides";
 import { DirectFormula } from "@/lib/team-comp/calc/damageFormula";
 import {
   type ComboLineEval,
@@ -13,10 +14,9 @@ import {
   evaluateFormulaDisplay,
 } from "@/lib/team-comp/calc/stackRank";
 import { exclusionKey } from "@/lib/team-comp/calc/stackRank";
+import { buffSourceKey } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
-import { buffSourceKey } from "@/lib/team-comp/helpers";
-import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";
 import type { BuffActivationMap } from "@/lib/team-comp/types";
 import type { FormulaEntry, FormulaPart } from "@/lib/team-comp/types";
 import type { CalcContext, StatKey } from "@/lib/team-comp/types";
@@ -779,7 +779,7 @@ describe("on-field vs off-field stat routing", () => {
   ]);
 
   const mixedEntry: FormulaEntry = {
-    label: { en: "test" },
+    label: { en: "test", zh: "test" },
     parts: mixedParts,
   };
 
@@ -820,7 +820,7 @@ describe("on-field vs off-field stat routing", () => {
 
     // Cross-check: all-on-field entry should match on-field part
     const allOnEntry: FormulaEntry = {
-      label: { en: "test" },
+      label: { en: "test", zh: "test" },
       parts: makeParts([{ multi: 1, hits: 1, offField: false }]),
     };
     const onResult = evaluateFormulaDamage(allOnEntry, "alice", ts, ctx);
@@ -828,7 +828,7 @@ describe("on-field vs off-field stat routing", () => {
 
     // Cross-check: all-off-field entry should match off-field part
     const allOffEntry: FormulaEntry = {
-      label: { en: "test" },
+      label: { en: "test", zh: "test" },
       parts: makeParts([{ multi: 1, hits: 1, offField: true }]),
     };
     const offResult = evaluateFormulaDamage(allOffEntry, "alice", ts, ctx);
