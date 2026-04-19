@@ -254,9 +254,12 @@ export function computeBlendedDamage(
   const postStats = teamStats.getPostStats(charId, onFieldCharId);
   const charLevel = teamStats.getCharLevel(charId);
 
-  const offFieldOnFieldCharId = teamStats.getDefaultOffFieldCharId(charId);
+  const hasAnyOffField = parts.some((p) => isPartOffField(p, forceOnField));
+  const offFieldOnFieldCharId = hasAnyOffField
+    ? teamStats.getDefaultOffFieldCharId(charId)
+    : onFieldCharId;
   const offFieldPostStats =
-    offFieldOnFieldCharId !== onFieldCharId
+    hasAnyOffField && offFieldOnFieldCharId !== onFieldCharId
       ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
       : undefined;
 
@@ -659,9 +662,14 @@ export function evaluateFormulaDamage(
     teamStats.getAllPostStats(onFieldCharId)
   );
 
-  const offFieldOnFieldCharId = teamStats.getDefaultOffFieldCharId(charId);
+  const hasAnyOffField = entry.parts.some((p) =>
+    isPartOffField(p, forceOnField)
+  );
+  const offFieldOnFieldCharId = hasAnyOffField
+    ? teamStats.getDefaultOffFieldCharId(charId)
+    : onFieldCharId;
   const offFieldSelfPostStats =
-    offFieldOnFieldCharId !== onFieldCharId
+    hasAnyOffField && offFieldOnFieldCharId !== onFieldCharId
       ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
       : undefined;
 
