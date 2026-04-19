@@ -108,10 +108,14 @@ function buildTeamStatSheet(
   combatOpts = {}
 ): { teamBuild: TeamBuild; statSheet: TeamStatSheet } {
   const teamBuild = new TeamBuild(configs, combatOpts);
+  const charIds = configs.map((c) => c.charId);
   const statSheet = new TeamStatSheet(
     teamBuild.charBuilds,
+    teamBuild.teamResonance,
+    teamBuild.extraBuffs,
     teamBuild.teamMeta,
-    teamBuild.allStaticBuffs
+    configs,
+    charIds
   );
   return { teamBuild, statSheet };
 }
@@ -124,7 +128,6 @@ function assertStatSheetParity(
   const actualDump = [...actual.dump()];
   const expectedDump = [...expected.dump()];
 
-  // Build maps for comparison
   const actualMap = new Map<string, number>();
   for (const { key, filterKey, value } of actualDump) {
     actualMap.set(`${key}|${filterKey}`, value);
@@ -134,14 +137,12 @@ function assertStatSheetParity(
     expectedMap.set(`${key}|${filterKey}`, value);
   }
 
-  // Check all expected keys exist in actual with same value
   for (const [k, v] of expectedMap) {
     const av = actualMap.get(k);
     expect(av, `${label}: missing key ${k}`).toBeDefined();
     expect(av, `${label}: mismatch on ${k}`).toBeCloseTo(v, 10);
   }
 
-  // Check no extra keys in actual
   for (const [k] of actualMap) {
     expect(expectedMap.has(k), `${label}: unexpected key ${k}`).toBe(true);
   }
@@ -241,16 +242,17 @@ describe("TeamStatSheet", () => {
   });
 
   describe("parity with TeamBuild.getTeamStats — with CalcContext", () => {
-    it("applies perCharCrTarget correctly", () => {
+    it("applies perCharCrTarget correctly via setArtifacts ctx", () => {
       const { teamBuild, statSheet } = buildTeamStatSheet(NATIONAL_TEAM);
       const charIds = NATIONAL_TEAM.map((c) => c.charId);
       const sheets = emptySheets(...charIds);
-      statSheet.setArtifacts(sheets);
 
       const ctxWithCr: CalcContext = {
         ...CTX,
         perCharCrTarget: { xiangling: 70, raiden_shogun: 85 },
       };
+
+      statSheet.setArtifacts(sheets, ctxWithCr);
 
       for (const onFieldCharId of charIds) {
         const expected = teamBuild.getTeamStats(
@@ -258,7 +260,7 @@ describe("TeamStatSheet", () => {
           onFieldCharId,
           ctxWithCr
         );
-        const actual = statSheet.getAllPostStats(onFieldCharId, ctxWithCr);
+        const actual = statSheet.getAllPostStats(onFieldCharId);
 
         for (const charId of charIds) {
           assertStatSheetParity(
@@ -278,13 +280,12 @@ describe("TeamStatSheet", () => {
       const sheets = emptySheets(...charIds);
       statSheet.setArtifacts(sheets);
 
-      // Pick some buff keys to exclude
       const someBuffKeys = new Set<string>();
       for (const b of teamBuild.allStaticBuffs.slice(0, 3)) {
         someBuffKeys.add(getBuffInstanceKey(b.buff, b.providerCharId));
       }
 
-      if (someBuffKeys.size === 0) return; // no buffs to exclude
+      if (someBuffKeys.size === 0) return;
 
       for (const onFieldCharId of charIds) {
         const expected = teamBuild.getTeamStatsExcluding(
@@ -293,11 +294,7 @@ describe("TeamStatSheet", () => {
           undefined,
           someBuffKeys
         );
-        const actual = statSheet.getAllPostStats(
-          onFieldCharId,
-          undefined,
-          someBuffKeys
-        );
+        const actual = statSheet.getAllPostStats(onFieldCharId, someBuffKeys);
 
         for (const charId of charIds) {
           assertStatSheetParity(
@@ -331,7 +328,7 @@ describe("TeamStatSheet", () => {
   });
 
   describe("getCharLevel", () => {
-    it("returns correct char level", () => {
+    it("returns correct char level from configs", () => {
       const { statSheet } = buildTeamStatSheet(NATIONAL_TEAM);
       expect(statSheet.getCharLevel("xiangling")).toBe(90);
       expect(statSheet.getCharLevel("bennett")).toBe(90);
@@ -348,14 +345,10 @@ describe("TeamStatSheet", () => {
       const mid = statSheet.getMidStats("xiangling", "xiangling");
       const post = statSheet.getPostStats("xiangling", "xiangling");
 
-      // Pre-stats should exist
       expect(pre).toBeDefined();
-      // Mid-stats should exist
       expect(mid).toBeDefined();
-      // Post-stats should exist
       expect(post).toBeDefined();
 
-      // ATK should be >= pre ATK (dynamic buffs can only add)
       const preAtk = pre.get("atk", null);
       const postAtk = post.get("atk", null);
       expect(postAtk).toBeGreaterThanOrEqual(preAtk);
@@ -385,6 +378,26 @@ describe("TeamStatSheet", () => {
           `${charId} idle offField`
         );
       }
+    });
+  });
+
+  describe("constructor collects allStaticBuffs internally", () => {
+    it("allStaticBuffs matches TeamBuild.allStaticBuffs", () => {
+      const { teamBuild, statSheet } = buildTeamStatSheet(NATIONAL_TEAM);
+
+      // Same number of buffs
+      expect(statSheet.allStaticBuffs.length).toBe(
+        teamBuild.allStaticBuffs.length
+      );
+
+      // Same buff identity keys in same order
+      const tsKeys = statSheet.allStaticBuffs.map((b) =>
+        getBuffInstanceKey(b.buff, b.providerCharId)
+      );
+      const tbKeys = teamBuild.allStaticBuffs.map((b) =>
+        getBuffInstanceKey(b.buff, b.providerCharId)
+      );
+      expect(tsKeys).toEqual(tbKeys);
     });
   });
 });

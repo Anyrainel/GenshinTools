@@ -1,4 +1,9 @@
-import type { CalcContext, ProvidedStaticBuff } from "../types";
+import type {
+  CalcContext,
+  ExtraBuff,
+  ProvidedStaticBuff,
+  TeamSlotConfig,
+} from "../types";
 import type { CharBuild } from "./charBuild";
 import {
   type EvaluatedDynamicBuff,
@@ -7,11 +12,13 @@ import {
 import { fieldReq, isFieldDependentReceiver, isOnField } from "./fieldState";
 import {
   type StatBuff,
+  createExtraStatBuffs,
   getBuffInstanceKey,
   isBuffApplicable,
 } from "./statBuff";
 import { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
+import type { TeamResonance } from "./teamResonance";
 
 type CacheKey = string;
 
@@ -61,29 +68,62 @@ export class TeamStatSheet {
   private readonly charBuilds: Record<string, CharBuild>;
   private readonly teamMeta: TeamMeta;
   readonly allStaticBuffs: ProvidedStaticBuff[];
+  private readonly charLevels: Record<string, number>;
+  /** Stored for future optimization (e.g. precomputing field-dependent buff sets). */
+  private readonly onFieldCharIds: string[];
   private artifactStats: Record<string, StatSheet>;
+  private ctx: CalcContext | undefined;
   private readonly pipelineCache = new Map<CacheKey, PipelineResult>();
 
   constructor(
     charBuilds: Record<string, CharBuild>,
+    teamResonance: TeamResonance,
+    extraBuffs: ExtraBuff[],
     teamMeta: TeamMeta,
-    allStaticBuffs: ProvidedStaticBuff[]
+    configs: TeamSlotConfig[],
+    onFieldCharIds: string[]
   ) {
     this.charBuilds = charBuilds;
     this.teamMeta = teamMeta;
-    this.allStaticBuffs = allStaticBuffs;
+    this.onFieldCharIds = onFieldCharIds;
     this.artifactStats = {};
+
+    // Store charLevels from configs
+    this.charLevels = {};
+    for (const c of configs) {
+      this.charLevels[c.charId] = c.charLevel;
+    }
+
+    // Collect allStaticBuffs (same logic as TeamBuild constructor lines 218-232)
+    this.allStaticBuffs = teamResonance.buffs.map((buff) => ({
+      buff,
+      providerCharId: "resonance",
+    }));
+    for (const [charId, build] of Object.entries(charBuilds)) {
+      for (const buff of build.getAllBuffs()) {
+        this.allStaticBuffs.push({ buff, providerCharId: charId });
+      }
+    }
+    if (extraBuffs.length > 0) {
+      for (const buff of createExtraStatBuffs(extraBuffs)) {
+        this.allStaticBuffs.push({ buff, providerCharId: "extra" });
+      }
+    }
   }
 
-  /** Set or swap artifact stat sheets. Invalidates all caches. */
-  setArtifacts(artifactStats: Record<string, StatSheet>): void {
+  /** Set or swap artifact stat sheets and optional CalcContext. Invalidates all caches. */
+  setArtifacts(
+    artifactStats: Record<string, StatSheet>,
+    ctx?: CalcContext
+  ): void {
     this.artifactStats = artifactStats;
+    this.ctx = ctx;
     this.pipelineCache.clear();
   }
 
   /** Get the character level for a given charId. */
   getCharLevel(charId: string): number {
-    return this.charBuilds[charId]!.charBase.charLevel;
+    return this.charLevels[charId]!;
   }
 
   /** Get pre-stats for a character in a given on-field context. */
@@ -109,27 +149,27 @@ export class TeamStatSheet {
   /**
    * Get post-stats for a character in a given on-field context.
    * This is the final stat sheet after all static + dynamic buffs.
+   * Uses the CalcContext stored via setArtifacts() for CR target deltas.
    */
   getPostStats(
     charId: string,
     onFieldCharId: string,
-    ctx?: CalcContext,
     excludeKeys?: Set<string>
   ): StatSheet {
-    const result = this.ensurePipeline(onFieldCharId, excludeKeys, ctx);
+    const result = this.ensurePipeline(onFieldCharId, excludeKeys);
     return result.postStats[charId]!;
   }
 
   /**
    * Get post-stats for ALL characters in a given on-field context.
    * Returns the same format as TeamBuild.getTeamStats().
+   * Uses the CalcContext stored via setArtifacts() for CR target deltas.
    */
   getAllPostStats(
     onFieldCharId: string,
-    ctx?: CalcContext,
     excludeKeys?: Set<string>
   ): Record<string, StatSheet> {
-    const result = this.ensurePipeline(onFieldCharId, excludeKeys, ctx);
+    const result = this.ensurePipeline(onFieldCharId, excludeKeys);
     return result.postStats;
   }
 
@@ -139,6 +179,9 @@ export class TeamStatSheet {
    * - Base stats + artifact stats
    * - Unconditional buffs only (no triggers, no ability/reaction filters)
    * - Dynamic buffs evaluated from idle pre-stats
+   *
+   * TODO: Task 3 will rewrite to use baseStatSheet directly instead of
+   * delegating to CharBuild.getIdlePreStats/getPostStats.
    */
   getIdleStats(): Record<string, { onField: StatSheet; offField: StatSheet }> {
     const idleBuffs = this.allStaticBuffs.filter(({ buff }) => {
@@ -245,32 +288,15 @@ export class TeamStatSheet {
 
   private ensurePipeline(
     onFieldCharId: string,
-    excludeKeys?: Set<string>,
-    ctx?: CalcContext
+    excludeKeys?: Set<string>
   ): PipelineResult {
     const cacheKey = makeCacheKey(onFieldCharId, excludeKeys);
-    let cached = this.pipelineCache.get(cacheKey);
-    if (cached) {
-      // CR target deltas are applied on top of cached post-stats.
-      // If ctx has perCharCrTarget, we need to re-apply (since cache doesn't
-      // store ctx). For simplicity, apply each time — withDelta is cheap.
-      if (ctx?.perCharCrTarget) {
-        const postWithCr = { ...cached.postStats };
-        applyCrTargetDeltas(postWithCr, ctx);
-        return { ...cached, postStats: postWithCr };
-      }
-      return cached;
-    }
+    const cached = this.pipelineCache.get(cacheKey);
+    if (cached) return cached;
 
-    cached = this.runPipeline(onFieldCharId, excludeKeys);
-    this.pipelineCache.set(cacheKey, cached);
-
-    if (ctx?.perCharCrTarget) {
-      const postWithCr = { ...cached.postStats };
-      applyCrTargetDeltas(postWithCr, ctx);
-      return { ...cached, postStats: postWithCr };
-    }
-    return cached;
+    const result = this.runPipeline(onFieldCharId, excludeKeys);
+    this.pipelineCache.set(cacheKey, result);
+    return result;
   }
 
   private runPipeline(
@@ -281,14 +307,21 @@ export class TeamStatSheet {
     const fieldDependent = this.getFieldDependentBuffs(onFieldCharId);
 
     // Step 2: Build preStats
+    // TODO: Task 3 will rewrite to use baseStatSheet directly instead of
+    // delegating to CharBuild.getPreStats/getPreStatsExcluding.
     const preStats = this.buildPreStats(fieldDependent, excludeKeys);
 
     // Step 3+4: Two-pass dynamic buff evaluation → midStats, postStats
+    // TODO: Task 3 will rewrite to use baseStatSheet directly instead of
+    // delegating to CharBuild.getPostStats.
     const { midStats, postStats } = this.evaluateDynamicPipeline(
       preStats,
       onFieldCharId,
       excludeKeys
     );
+
+    // Step 5: Apply CR target deltas from stored ctx
+    applyCrTargetDeltas(postStats, this.ctx);
 
     return { preStats, midStats, postStats };
   }
@@ -385,7 +418,6 @@ export class TeamStatSheet {
       buildMidStats
     );
 
-    // Build final postStats from preStats + all dynamic buffs
     const postStats: Record<string, StatSheet> = {};
     for (const [id, build] of Object.entries(this.charBuilds)) {
       postStats[id] = build.getPostStats(
