@@ -297,11 +297,49 @@ function ConnectionStatus({
     );
   }
 
-  if (connection.status === "error") {
+  if (connection.status === "cors-blocked") {
     return (
-      <div className="flex items-center gap-2">
-        <span className="h-2 w-2 rounded-full bg-destructive" />
-        <span className="text-sm text-destructive">{connection.message}</span>
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-destructive" />
+          <span className="text-sm text-destructive">
+            {t.ui("manager.errorCors")}
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground ml-3.5">
+          {t.ui("manager.errorCorsHint")}
+        </p>
+      </div>
+    );
+  }
+
+  if (connection.status === "error") {
+    const code = connection.httpStatus;
+    let errorText: string;
+    if (code === 404) {
+      errorText = t.ui("manager.errorNotGOODScanner");
+    } else if (code === 403) {
+      errorText = t.ui("manager.errorRejected");
+    } else if (code === 401) {
+      errorText = t.ui("manager.errorAuth");
+    } else if (code === 408) {
+      errorText = t.ui("manager.errorTimeout");
+    } else if (code >= 500) {
+      errorText = t.ui("manager.errorServer").replace("{0}", String(code));
+    } else {
+      errorText = t.ui("manager.errorUnexpected").replace("{0}", String(code));
+    }
+    return (
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-destructive" />
+          <span className="text-sm text-destructive">{errorText}</span>
+        </div>
+        {connection.body && (
+          <p className="text-xs text-muted-foreground ml-3.5 break-all">
+            {connection.body}
+          </p>
+        )}
       </div>
     );
   }

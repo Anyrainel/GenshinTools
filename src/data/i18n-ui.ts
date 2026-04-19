@@ -2160,6 +2160,38 @@ export const i18nUiData = {
       en: "{0} failed — unchanged",
       zh: "{0}个失败 — 未更改",
     },
+    errorCors: {
+      en: "Server is running but the browser is blocking the connection.",
+      zh: "服务器正在运行，但浏览器阻止了连接。",
+    },
+    errorCorsHint: {
+      en: "A browser extension may be modifying request headers. Try disabling extensions or using incognito mode.",
+      zh: "浏览器扩展可能在修改请求头。请尝试禁用扩展或使用无痕模式。",
+    },
+    errorNotGOODScanner: {
+      en: "Server found on this port, but it is not GOODScanner (HTTP 404). Check that the port number matches.",
+      zh: "该端口有服务器响应，但不是 GOODScanner（HTTP 404）。请检查端口号是否正确。",
+    },
+    errorRejected: {
+      en: "Server rejected the request (HTTP 403). A browser extension or firewall may be modifying requests.",
+      zh: "服务器拒绝了请求（HTTP 403）。浏览器扩展或防火墙可能在修改请求。",
+    },
+    errorAuth: {
+      en: "Server requires authentication (HTTP 401). A proxy or firewall may be intercepting requests.",
+      zh: "服务器要求身份验证（HTTP 401）。代理或防火墙可能在拦截请求。",
+    },
+    errorTimeout: {
+      en: "Server timed out (HTTP 408). GOODScanner may be overloaded or unresponsive.",
+      zh: "服务器超时（HTTP 408）。GOODScanner 可能负载过重或无响应。",
+    },
+    errorServer: {
+      en: "Server error (HTTP {0}).",
+      zh: "服务器错误（HTTP {0}）。",
+    },
+    errorUnexpected: {
+      en: "Unexpected response (HTTP {0}).",
+      zh: "意外的响应（HTTP {0}）。",
+    },
   },
   tierList: {
     manageLists: { en: "Switch List", zh: "切换榜单" },

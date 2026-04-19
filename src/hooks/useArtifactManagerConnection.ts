@@ -1,13 +1,38 @@
-import { checkHealth } from "@/lib/artifact-manager/client";
+import {
+  ArtifactManagerError,
+  checkHealth,
+} from "@/lib/artifact-manager/client";
 import type { HealthResponse } from "@/lib/artifact-manager/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ConnectionState =
   | { status: "disconnected" }
   | { status: "connected"; health: HealthResponse }
-  | { status: "error"; message: string };
+  | { status: "error"; httpStatus: number; body: string }
+  | { status: "cors-blocked" };
 
 const POLL_INTERVAL = 5000;
+const PROBE_TIMEOUT_MS = 3000;
+
+/**
+ * Probe whether the server is reachable at all using a no-cors fetch.
+ * Returns true if the server responds (even if CORS blocks reading it).
+ */
+async function isServerReachable(port: number): Promise<boolean> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+  try {
+    await fetch(`http://127.0.0.1:${port}/health`, {
+      mode: "no-cors",
+      signal: controller.signal,
+    });
+    return true;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 /**
  * Poll artifact manager /health endpoint.
@@ -25,9 +50,20 @@ export function useArtifactManagerConnection(enabled: boolean, port = 8765) {
       if (mountedRef.current) {
         setState({ status: "connected", health });
       }
-    } catch {
-      if (mountedRef.current) {
-        setState({ status: "disconnected" });
+    } catch (err) {
+      if (!mountedRef.current) return;
+      if (err instanceof ArtifactManagerError) {
+        setState({
+          status: "error",
+          httpStatus: err.status,
+          body: err.body,
+        });
+      } else {
+        const reachable = await isServerReachable(port);
+        if (!mountedRef.current) return;
+        setState(
+          reachable ? { status: "cors-blocked" } : { status: "disconnected" }
+        );
       }
     }
   }, [port]);

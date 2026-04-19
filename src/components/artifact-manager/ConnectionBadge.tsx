@@ -22,6 +22,9 @@ export function ConnectionBadge({
       !connection.health.gameAlive ||
       connection.health.busy);
 
+  const isError =
+    connection.status === "error" || connection.status === "cors-blocked";
+
   return (
     <span className={cn("inline-flex items-center gap-1.5 text-xs", className)}>
       <span
@@ -31,7 +34,9 @@ export function ConnectionBadge({
             ? "bg-green-500"
             : isConnectedButBusy
               ? "bg-yellow-500"
-              : "bg-muted-foreground"
+              : isError
+                ? "bg-destructive"
+                : "bg-muted-foreground"
         )}
       />
       {isReady
@@ -42,7 +47,9 @@ export function ConnectionBadge({
             : !connection.health.gameAlive
               ? "Game not running"
               : "Paused"
-          : "Manager offline"}
+          : isError
+            ? "Connection error"
+            : "Manager offline"}
     </span>
   );
 }
