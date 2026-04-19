@@ -625,7 +625,7 @@ describe("TeamBuild lifecycle", () => {
 
     it("computes positive damage for a valid formula", () => {
       tb.teamStats.setArtifacts(emptySheets);
-      const result = tb.getDamageResult("diluc", "diluc-skill", "diluc", ctx);
+      const result = tb.getDamageResult("diluc", "diluc-skill", ctx);
 
       expect(result.totalDamage).toBeGreaterThan(0);
       expect(result.parts.length).toBeGreaterThanOrEqual(1);
@@ -634,7 +634,7 @@ describe("TeamBuild lifecycle", () => {
     it("throws for unknown character", () => {
       tb.teamStats.setArtifacts(emptySheets);
       expect(() =>
-        tb.getDamageResult("nonexistent", "some-formula", "nonexistent", ctx)
+        tb.getDamageResult("nonexistent", "some-formula", ctx)
       ).toThrow();
     });
   });
@@ -686,12 +686,7 @@ describe("TeamBuild lifecycle", () => {
 
     it("display().totalDamage matches getDamageResult().totalDamage", () => {
       tb.teamStats.setArtifacts(emptySheets);
-      const hotResult = tb.getDamageResult(
-        "diluc",
-        "diluc-skill",
-        "diluc",
-        ctx
-      );
+      const hotResult = tb.getDamageResult("diluc", "diluc-skill", ctx);
       const coldResult = tb.getDisplayResult(
         "diluc",
         "diluc-skill",
@@ -2145,7 +2140,6 @@ describe("forceOnField override", () => {
     const calcResult = tb.getDamageResult(
       "linnea",
       "linnea-million-ton",
-      "linnea",
       ctx,
       undefined,
       undefined,
@@ -2238,16 +2232,10 @@ describe("forceOnField override", () => {
 
     tb.teamStats.setArtifacts(sheets, ctx);
 
-    const calcOff = tb.getDamageResult(
-      "linnea",
-      "linnea-million-ton",
-      "linnea",
-      ctx
-    );
+    const calcOff = tb.getDamageResult("linnea", "linnea-million-ton", ctx);
     const calcOn = tb.getDamageResult(
       "linnea",
       "linnea-million-ton",
-      "linnea",
       ctx,
       undefined,
       undefined,

@@ -290,7 +290,6 @@ export function evaluateBuild(
   const dmgRes = teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
-    onFieldCharId,
     calcContext,
     reactionOverride
   );
@@ -322,7 +321,6 @@ export function evaluateUpperBound(
   return teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
-    onFieldCharId,
     calcContext,
     reactionOverride
   ).totalDamage;
@@ -1355,7 +1353,6 @@ async function* runTeamOpt(
         damage = effectiveTeamBuild.getDamageResult(
           carryCharId,
           formulaId,
-          carryCharId,
           calcContext,
           reactionOverride
         ).totalDamage;

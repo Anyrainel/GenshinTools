@@ -79,7 +79,6 @@ function computeStatWeights(
     baseScore = teamBuild.getDamageResult(
       formulaCharId,
       formulaId,
-      onFieldCharId,
       calcContext,
       reactionOverride
     ).totalDamage;
@@ -118,7 +117,6 @@ function computeStatWeights(
       testScore = teamBuild.getDamageResult(
         formulaCharId,
         formulaId,
-        onFieldCharId,
         calcContext,
         reactionOverride
       ).totalDamage;

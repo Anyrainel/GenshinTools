@@ -125,7 +125,7 @@ describe("evaluateCombo", () => {
     const sheets = dilucEmptySheets();
 
     const teamStats = tb.getTeamStats(sheets, "diluc", CTX);
-    const singleResult = tb.getDamageResult("diluc", formulaId, "diluc", CTX);
+    const singleResult = tb.getDamageResult("diluc", formulaId, CTX);
 
     const combo: ComboFormula = {
       id: "test",

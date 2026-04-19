@@ -943,7 +943,6 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
         const oldDamage = tb.getDamageResult(
           carryId,
           formulaId,
-          carryId,
           FUZZ_CTX
         ).totalDamage;
 
@@ -1021,7 +1020,6 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
       const oldDamage = tb.getDamageResult(
         carryId,
         formulaId,
-        carryId,
         FUZZ_CTX
       ).totalDamage;
 
@@ -1340,7 +1338,6 @@ describe("marginal gain parity (compiled vs standard)", () => {
         const standardBase = tb.getDamageResult(
           carryId,
           formulaId,
-          carryId,
           FUZZ_CTX
         ).totalDamage;
 
@@ -1357,7 +1354,6 @@ describe("marginal gain parity (compiled vs standard)", () => {
           const standardBumped = tb.getDamageResult(
             carryId,
             formulaId,
-            carryId,
             FUZZ_CTX
           ).totalDamage;
           const standardMarginal = standardBumped - standardBase;
@@ -2051,12 +2047,7 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 
       // Standard path
       tb.teamStats.setArtifacts(sheets, ctx);
-      const oldDamage = tb.getDamageResult(
-        carryId,
-        formulaId,
-        carryId,
-        ctx
-      ).totalDamage;
+      const oldDamage = tb.getDamageResult(carryId, formulaId, ctx).totalDamage;
 
       // Compiled path
       const compiled = compileComboTeamDamage(
@@ -2253,7 +2244,6 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
     const stdDamage = tb.getDamageResult(
       carryId,
       formulaId,
-      carryId,
       ctxTarget0
     ).totalDamage;
 
@@ -2481,7 +2471,6 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     const calcDmg = tb.getDamageResult(
       charId,
       formulaId,
-      charId,
       ctx,
       reactionOverride,
       Object.keys(dist).length > 0 ? dist : undefined,

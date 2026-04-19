@@ -245,30 +245,27 @@ export function computeBlendedDamage(
   parts: FormulaPart[],
   activation: BuffActivationMap,
   charId: string,
-  onFieldCharId: string,
   teamStats: TeamStatSheet,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   forceOnField?: boolean
 ): { totalDamage: number; partDamages: { damage: number; hits: number }[] } {
-  const postStats = teamStats.getPostStats(charId, onFieldCharId);
+  const postStats = teamStats.getPostStats(charId, charId);
   const charLevel = teamStats.getCharLevel(charId);
 
-  const hasAnyOffField = parts.some((p) => isPartOffField(p, forceOnField));
-  const offFieldOnFieldCharId = hasAnyOffField
-    ? teamStats.getDefaultOffFieldCharId(charId)
-    : onFieldCharId;
+  const defaultOnFieldCharId = teamStats.getDefaultOnFieldCharId(charId);
+  const hasOffFieldParts = parts.some((p) => isPartOffField(p, forceOnField));
   const offFieldPostStats =
-    hasAnyOffField && offFieldOnFieldCharId !== onFieldCharId
-      ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
+    hasOffFieldParts && defaultOnFieldCharId !== charId
+      ? teamStats.getPostStats(charId, defaultOnFieldCharId)
       : undefined;
 
   const statsVariants = buildStatVariants(activation, parts, (excl) =>
-    teamStats.getPostStats(charId, onFieldCharId, excl)
+    teamStats.getPostStats(charId, charId, excl)
   );
   const offFieldVariants = offFieldPostStats
     ? buildStatVariants(activation, parts, (excl) =>
-        teamStats.getPostStats(charId, offFieldOnFieldCharId, excl)
+        teamStats.getPostStats(charId, defaultOnFieldCharId, excl)
       )
     : undefined;
 
@@ -649,40 +646,35 @@ function calcPartBlended(
 export function evaluateFormulaDamage(
   entry: FormulaEntry,
   charId: string,
-  onFieldCharId: string,
   teamStats: TeamStatSheet,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   activation?: BuffActivationMap,
   forceOnField?: boolean
 ): DamageResult {
-  const selfPostStats = teamStats.getPostStats(charId, onFieldCharId);
+  const selfPostStats = teamStats.getPostStats(charId, charId);
   const charLevel = teamStats.getCharLevel(charId);
-  const teamPostStatsArr = Object.values(
-    teamStats.getAllPostStats(onFieldCharId)
-  );
+  const teamPostStatsArr = Object.values(teamStats.getAllPostStats(charId));
 
-  const hasAnyOffField = entry.parts.some((p) =>
+  const defaultOnFieldCharId = teamStats.getDefaultOnFieldCharId(charId);
+  const hasOffFieldParts = entry.parts.some((p) =>
     isPartOffField(p, forceOnField)
   );
-  const offFieldOnFieldCharId = hasAnyOffField
-    ? teamStats.getDefaultOffFieldCharId(charId)
-    : onFieldCharId;
   const offFieldSelfPostStats =
-    hasAnyOffField && offFieldOnFieldCharId !== onFieldCharId
-      ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
+    hasOffFieldParts && defaultOnFieldCharId !== charId
+      ? teamStats.getPostStats(charId, defaultOnFieldCharId)
       : undefined;
 
   const statsVariants =
     activation && Object.keys(activation).length > 0
       ? buildStatVariants(activation, entry.parts, (excl) =>
-          teamStats.getPostStats(charId, onFieldCharId, excl)
+          teamStats.getPostStats(charId, charId, excl)
         )
       : undefined;
   const offFieldVariants =
     activation && Object.keys(activation).length > 0 && offFieldSelfPostStats
       ? buildStatVariants(activation, entry.parts, (excl) =>
-          teamStats.getPostStats(charId, offFieldOnFieldCharId, excl)
+          teamStats.getPostStats(charId, defaultOnFieldCharId, excl)
         )
       : undefined;
 
@@ -695,7 +687,7 @@ export function evaluateFormulaDamage(
     const effectiveOffField = isPartOffField(part, forceOnField);
 
     const perPartRouting = part.statsCharId
-      ? teamStats.getPostStats(part.statsCharId, onFieldCharId)
+      ? teamStats.getPostStats(part.statsCharId, charId)
       : undefined;
     const partStats = perPartRouting ?? selfPostStats;
     const partCharLevel = part.statsCharId
@@ -873,19 +865,23 @@ export function evaluateFormulaDamage(
 export function evaluateFormulaDisplay(
   entry: FormulaEntry,
   charId: string,
-  onFieldCharId: string,
   teamStats: TeamStatSheet,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   forceOnField?: boolean
 ): { parts: DisplayPart[]; totalDamage: number } {
-  const selfPostStats = teamStats.getPostStats(charId, onFieldCharId);
+  const selfPostStats = teamStats.getPostStats(charId, charId);
   const charLevel = teamStats.getCharLevel(charId);
 
-  const offFieldOnFieldCharId = teamStats.getDefaultOffFieldCharId(charId);
+  const hasAnyOffField = entry.parts.some((p) =>
+    isPartOffField(p, forceOnField)
+  );
+  const defaultOnFieldCharId = hasAnyOffField
+    ? teamStats.getDefaultOnFieldCharId(charId)
+    : charId;
   const offFieldSelfPostStats =
-    offFieldOnFieldCharId !== onFieldCharId
-      ? teamStats.getPostStats(charId, offFieldOnFieldCharId)
+    hasAnyOffField && defaultOnFieldCharId !== charId
+      ? teamStats.getPostStats(charId, defaultOnFieldCharId)
       : undefined;
 
   const displayParts: DisplayPart[] = [];
@@ -897,7 +893,7 @@ export function evaluateFormulaDisplay(
     const effectiveOffField = isPartOffField(part, forceOnField);
 
     const perPartRouting = part.statsCharId
-      ? teamStats.getPostStats(part.statsCharId, onFieldCharId)
+      ? teamStats.getPostStats(part.statsCharId, charId)
       : undefined;
     const partBaseStats = perPartRouting ?? selfPostStats;
     const partCharLevel = part.statsCharId

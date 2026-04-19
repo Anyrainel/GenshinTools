@@ -9,6 +9,8 @@ import {
   computeComboDefaultActivation,
   computeDefaultActivation,
   distributeComboHits,
+  evaluateFormulaDamage,
+  evaluateFormulaDisplay,
 } from "@/lib/team-comp/calc/stackRank";
 import { exclusionKey } from "@/lib/team-comp/calc/stackRank";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
@@ -16,7 +18,7 @@ import type { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
 import { buffSourceKey } from "@/lib/team-comp/helpers";
 import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";
 import type { BuffActivationMap } from "@/lib/team-comp/types";
-import type { FormulaPart } from "@/lib/team-comp/types";
+import type { FormulaEntry, FormulaPart } from "@/lib/team-comp/types";
 import type { CalcContext, StatKey } from "@/lib/team-comp/types";
 
 /**
@@ -66,7 +68,7 @@ function mockTeamStats(
     getCharLevel(_charId: string): number {
       return charLevel;
     },
-    getDefaultOffFieldCharId(_charId: string): string {
+    getDefaultOnFieldCharId(_charId: string): string {
       return "test";
     },
   } as unknown as TeamStatSheet;
@@ -277,14 +279,7 @@ describe("unallocated parts in blended damage", () => {
       { buffKey: bKey, entries: [{ key: "baseDmg" as StatKey, value: 500 }] },
     ];
     const ts = mockTeamStats(postStats, 90, buffConfigs);
-    const result = computeBlendedDamage(
-      parts,
-      activation,
-      "test",
-      "test",
-      ts,
-      ctx
-    );
+    const result = computeBlendedDamage(parts, activation, "test", ts, ctx);
 
     // Part 0: 2 hits fully buffed
     const dmgWith = parts[0].formula.calc(postStats, 90, ctx);
@@ -312,7 +307,7 @@ describe("computeBlendedDamage", () => {
     ]);
 
     const ts = mockTeamStats(postStats);
-    const result = computeBlendedDamage(parts, {}, "test", "test", ts, ctx);
+    const result = computeBlendedDamage(parts, {}, "test", ts, ctx);
 
     const dmg0 = parts[0].formula.calc(postStats, 90, ctx);
     const dmg1 = parts[1].formula.calc(postStats, 90, ctx);
@@ -340,14 +335,7 @@ describe("computeBlendedDamage", () => {
       { buffKey, entries: [{ key: "baseDmg" as StatKey, value: 500 }] },
     ];
     const ts = mockTeamStats(postStats, 90, buffConfigs);
-    const result = computeBlendedDamage(
-      parts,
-      activation,
-      "test",
-      "test",
-      ts,
-      ctx
-    );
+    const result = computeBlendedDamage(parts, activation, "test", ts, ctx);
 
     const dmgWith = parts[0].formula.calc(postStats, 90, ctx);
     const sansStats = postStats.merge(
@@ -387,14 +375,7 @@ describe("computeBlendedDamage", () => {
     const dmgWith = parts[0].formula.calc(postStats, 90, ctx);
     const fullDamage = dmgWith * 21;
 
-    const blended = computeBlendedDamage(
-      parts,
-      activation,
-      "test",
-      "test",
-      ts,
-      ctx
-    );
+    const blended = computeBlendedDamage(parts, activation, "test", ts, ctx);
     expect(blended.totalDamage).toBeLessThan(fullDamage);
 
     const sansStats = postStats.merge(
@@ -437,14 +418,7 @@ describe("computeBlendedDamage", () => {
     ];
     const ts = mockTeamStats(postStats, 90, buffConfigs);
 
-    const result = computeBlendedDamage(
-      parts,
-      activation,
-      "test",
-      "test",
-      ts,
-      ctx
-    );
+    const result = computeBlendedDamage(parts, activation, "test", ts, ctx);
 
     // Compute damage for each interval:
     // (0,2]: both active → full postStats
@@ -748,5 +722,191 @@ describe("buffSourceKey", () => {
   it("handles missing origin", () => {
     const source = { type: "weapon" as const, id: "mistsplitter" };
     expect(buffSourceKey(source)).toBe("weapon:mistsplitter:");
+  });
+});
+
+// ── On-field vs off-field stat routing ──────────────────────────────────────
+
+/**
+ * Mock that returns DIFFERENT stat sheets depending on onFieldCharId.
+ * - getPostStats("alice", "alice") → onFieldStats (ATK 2000)
+ * - getPostStats("alice", "bob")  → offFieldStats (ATK 1000)
+ *
+ * This lets us verify that on-field parts use on-field stats and
+ * off-field parts use off-field stats.
+ */
+function mockFieldAwareTeamStats(
+  onFieldStats: StatSheet,
+  offFieldStats: StatSheet
+): TeamStatSheet {
+  return {
+    getPostStats(
+      _charId: string,
+      onFieldCharId: string,
+      _excludeKeys?: Set<string>
+    ): StatSheet {
+      return onFieldCharId === "alice" ? onFieldStats : offFieldStats;
+    },
+    getAllPostStats(onFieldCharId: string): Record<string, StatSheet> {
+      const stats = onFieldCharId === "alice" ? onFieldStats : offFieldStats;
+      return { alice: stats, bob: stats };
+    },
+    getCharLevel(_charId: string): number {
+      return 90;
+    },
+    getDefaultOnFieldCharId(charId: string): string {
+      return charId === "alice" ? "bob" : "alice";
+    },
+  } as unknown as TeamStatSheet;
+}
+
+describe("on-field vs off-field stat routing", () => {
+  const highAtkStats = StatSheet.fromEntries(
+    [{ key: "atk" as StatKey, value: 1000 }],
+    { elements: ["Cryo" as const], abilities: ["skill" as const] }
+  );
+  const lowAtkStats = StatSheet.fromEntries(
+    [{ key: "atk" as StatKey, value: 500 }],
+    { elements: ["Cryo" as const], abilities: ["skill" as const] }
+  );
+
+  // alice on-field → highAtk, alice off-field (bob on-field) → lowAtk
+  const ts = mockFieldAwareTeamStats(highAtkStats, lowAtkStats);
+
+  const mixedParts = makeParts([
+    { multi: 1, hits: 1, offField: false }, // on-field part
+    { multi: 1, hits: 1, offField: true }, // off-field part
+  ]);
+
+  const mixedEntry: FormulaEntry = {
+    label: { en: "test" },
+    parts: mixedParts,
+  };
+
+  it("computeBlendedDamage: on-field part uses on-field stats, off-field part uses off-field stats", () => {
+    const mixed = computeBlendedDamage(mixedParts, {}, "alice", ts, ctx);
+
+    // Same formula multiplier, so damage difference comes purely from stats
+    expect(mixed.partDamages[0].damage).toBeGreaterThan(
+      mixed.partDamages[1].damage
+    );
+
+    // Verify against single-part baselines
+    const onFieldOnly = computeBlendedDamage(
+      makeParts([{ multi: 1, hits: 1, offField: false }]),
+      {},
+      "alice",
+      ts,
+      ctx
+    );
+    const offFieldOnly = computeBlendedDamage(
+      makeParts([{ multi: 1, hits: 1, offField: true }]),
+      {},
+      "alice",
+      ts,
+      ctx
+    );
+
+    expect(mixed.partDamages[0].damage).toBe(onFieldOnly.totalDamage);
+    expect(mixed.partDamages[1].damage).toBe(offFieldOnly.totalDamage);
+    // Confirm they're actually different (stats diverge)
+    expect(onFieldOnly.totalDamage).not.toBe(offFieldOnly.totalDamage);
+  });
+
+  it("evaluateFormulaDamage: on-field part uses on-field stats, off-field part uses off-field stats", () => {
+    const result = evaluateFormulaDamage(mixedEntry, "alice", ts, ctx);
+
+    expect(result.parts[0].damage).toBeGreaterThan(result.parts[1].damage);
+
+    // Cross-check: all-on-field entry should match on-field part
+    const allOnEntry: FormulaEntry = {
+      label: { en: "test" },
+      parts: makeParts([{ multi: 1, hits: 1, offField: false }]),
+    };
+    const onResult = evaluateFormulaDamage(allOnEntry, "alice", ts, ctx);
+    expect(result.parts[0].damage).toBe(onResult.parts[0].damage);
+
+    // Cross-check: all-off-field entry should match off-field part
+    const allOffEntry: FormulaEntry = {
+      label: { en: "test" },
+      parts: makeParts([{ multi: 1, hits: 1, offField: true }]),
+    };
+    const offResult = evaluateFormulaDamage(allOffEntry, "alice", ts, ctx);
+    expect(result.parts[1].damage).toBe(offResult.parts[0].damage);
+  });
+
+  it("evaluateFormulaDisplay: on-field part uses on-field stats, off-field part uses off-field stats", () => {
+    const display = evaluateFormulaDisplay(mixedEntry, "alice", ts, ctx);
+
+    // Display parts should show different damage for on-field vs off-field
+    const onFieldDp = display.parts.find((p) => !p.offField)!;
+    const offFieldDp = display.parts.find((p) => p.offField)!;
+    expect(onFieldDp).toBeDefined();
+    expect(offFieldDp).toBeDefined();
+    expect(onFieldDp.damage).toBeGreaterThan(offFieldDp.damage);
+  });
+
+  it("forceOnField collapses off-field parts to use on-field stats", () => {
+    const withForce = computeBlendedDamage(
+      mixedParts,
+      {},
+      "alice",
+      ts,
+      ctx,
+      undefined,
+      true // forceOnField
+    );
+    const withoutForce = computeBlendedDamage(mixedParts, {}, "alice", ts, ctx);
+
+    // With forceOnField, both parts should use on-field stats → same damage
+    expect(withForce.partDamages[0].damage).toBe(
+      withForce.partDamages[1].damage
+    );
+    // Without forceOnField, they differ
+    expect(withoutForce.partDamages[0].damage).not.toBe(
+      withoutForce.partDamages[1].damage
+    );
+    // The off-field part should have higher damage with forceOnField (on-field stats > off-field stats)
+    expect(withForce.partDamages[1].damage).toBeGreaterThan(
+      withoutForce.partDamages[1].damage
+    );
+    // The on-field part should be unchanged
+    expect(withForce.partDamages[0].damage).toBe(
+      withoutForce.partDamages[0].damage
+    );
+  });
+
+  it("evaluateFormulaDamage: forceOnField makes all parts use on-field stats", () => {
+    const forced = evaluateFormulaDamage(
+      mixedEntry,
+      "alice",
+      ts,
+      ctx,
+      undefined,
+      undefined,
+      true
+    );
+    const normal = evaluateFormulaDamage(mixedEntry, "alice", ts, ctx);
+
+    // With forceOnField, both parts get on-field stats → identical damage
+    expect(forced.parts[0].damage).toBe(forced.parts[1].damage);
+    // Total damage should be higher with forceOnField
+    expect(forced.totalDamage).toBeGreaterThan(normal.totalDamage);
+  });
+
+  it("evaluateFormulaDisplay: forceOnField removes offField flag from display parts", () => {
+    const forced = evaluateFormulaDisplay(
+      mixedEntry,
+      "alice",
+      ts,
+      ctx,
+      undefined,
+      true
+    );
+
+    // No part should be marked offField
+    expect(forced.parts.every((p) => !p.offField)).toBe(true);
+    // Both parts should have equal damage (same stats)
+    expect(forced.parts[0].damage).toBe(forced.parts[1].damage);
   });
 });

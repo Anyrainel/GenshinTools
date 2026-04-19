@@ -133,11 +133,11 @@ export class TeamStatSheet {
   }
 
   /**
-   * Get the default off-field on-field character ID for a given charId.
+   * Get the default onFieldCharId for off-field parts owned by charId.
    * Returns the first onFieldCharId that isn't charId, or charId itself
    * for single-character teams.
    */
-  getDefaultOffFieldCharId(charId: string): string {
+  getDefaultOnFieldCharId(charId: string): string {
     const other = this.onFieldCharIds.find((id) => id !== charId);
     return other ?? charId;
   }

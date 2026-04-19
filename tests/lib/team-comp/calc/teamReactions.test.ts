@@ -88,7 +88,7 @@ function mockTeamStatsFrom(
     getCharLevel(charId: string): number {
       return charLevels[charId] ?? 90;
     },
-    getDefaultOffFieldCharId(charId: string): string {
+    getDefaultOnFieldCharId(charId: string): string {
       const other = Object.keys(teamStats).find((id) => id !== charId);
       return other ?? charId;
     },
@@ -445,12 +445,7 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
-    const result = tb.getDamageResult(
-      "fischl",
-      "rx-overloaded-fischl",
-      "hu_tao",
-      CTX
-    );
+    const result = tb.getDamageResult("fischl", "rx-overloaded-fischl", CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.parts).toHaveLength(1);
   });
@@ -461,12 +456,7 @@ describe("TeamReactionProvider — damage evaluation", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "nahida", CTX);
 
-    const result = tb.getDamageResult(
-      "nahida",
-      "rx-bloom-nahida",
-      "nahida",
-      CTX
-    );
+    const result = tb.getDamageResult("nahida", "rx-bloom-nahida", CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
   });
 });
@@ -653,12 +643,7 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
     // Multi-contributor entries use the base ID after finalization
-    const result = tb.getDamageResult(
-      "columbina",
-      "rx-lunarCharged",
-      "columbina",
-      CTX
-    );
+    const result = tb.getDamageResult("columbina", "rx-lunarCharged", CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
   });
 });
@@ -712,13 +697,11 @@ describe("TeamReactionProvider — different triggers produce different damage",
     const dmgHuTao = tb.getDamageResult(
       "hu_tao",
       "rx-overloaded-hu_tao",
-      "hu_tao",
       CTX
     ).totalDamage;
     const dmgFischl = tb.getDamageResult(
       "fischl",
       "rx-overloaded-fischl",
-      "hu_tao",
       CTX
     ).totalDamage;
 
@@ -739,7 +722,6 @@ describe("TeamReactionProvider — swirl damage evaluation", () => {
     const result = tb.getDamageResult(
       "kaedehara_kazuha",
       "rx-swirl-Pyro-kaedehara_kazuha",
-      "kaedehara_kazuha",
       CTX
     );
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -1842,13 +1824,7 @@ describe("evaluateFormulaDamage — per-part stats routing", () => {
     };
     const ts = mockTeamStatsFrom(teamStats, charLevels);
 
-    const result = evaluateFormulaDamage(
-      entry!,
-      "columbina",
-      "columbina",
-      ts,
-      CTX
-    );
+    const result = evaluateFormulaDamage(entry!, "columbina", ts, CTX);
 
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.parts.length).toBe(entry!.parts.length);
@@ -1864,18 +1840,11 @@ describe("evaluateFormulaDamage — per-part stats routing", () => {
     expect(entry).toBeDefined();
 
     const tsReal = mockTeamStatsFrom(teamStats, { columbina: 90, flins: 70 });
-    const resultReal = evaluateFormulaDamage(
-      entry!,
-      "columbina",
-      "columbina",
-      tsReal,
-      CTX
-    );
+    const resultReal = evaluateFormulaDamage(entry!, "columbina", tsReal, CTX);
 
     const tsAllL90 = mockTeamStatsFrom(teamStats, { columbina: 90, flins: 90 });
     const resultAllL90 = evaluateFormulaDamage(
       entry!,
-      "columbina",
       "columbina",
       tsAllL90,
       CTX
@@ -1904,13 +1873,7 @@ describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () =>
     };
     const ts = mockTeamStatsFrom(teamStats, charLevels);
 
-    const display = evaluateFormulaDisplay(
-      entry!,
-      "columbina",
-      "columbina",
-      ts,
-      CTX
-    );
+    const display = evaluateFormulaDisplay(entry!, "columbina", ts, CTX);
 
     expect(display.parts.length).toBe(entry!.parts.length);
     expect(display.totalDamage).toBeGreaterThan(0);
@@ -1944,7 +1907,7 @@ describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () =>
       xingqiu: 90,
       kazuha: 90,
     });
-    const display = evaluateFormulaDisplay(entry!, "fischl", "hu_tao", ts, CTX);
+    const display = evaluateFormulaDisplay(entry!, "fischl", ts, CTX);
 
     // Single-contributor should NOT have contributorCharId
     for (const dp of display.parts) {
@@ -1969,13 +1932,7 @@ describe("multi-contributor N-part exact numerics", () => {
     };
     const ts = mockTeamStatsFrom(teamStats, charLevels);
 
-    const result = evaluateFormulaDamage(
-      entry!,
-      "columbina",
-      "columbina",
-      ts,
-      CTX
-    );
+    const result = evaluateFormulaDamage(entry!, "columbina", ts, CTX);
 
     // Sum of parts should equal totalDamage
     const partSum = result.parts.reduce((s, p) => s + p.damage * p.hits, 0);
@@ -2056,21 +2013,9 @@ describe("display path matches damage path for reaction formulas", () => {
       xingqiu: 90,
       kazuha: 90,
     });
-    const damageResult = evaluateFormulaDamage(
-      entry!,
-      "fischl",
-      "hu_tao",
-      tsF,
-      CTX
-    );
+    const damageResult = evaluateFormulaDamage(entry!, "fischl", tsF, CTX);
 
-    const displayResult = evaluateFormulaDisplay(
-      entry!,
-      "fischl",
-      "hu_tao",
-      tsF,
-      CTX
-    );
+    const displayResult = evaluateFormulaDisplay(entry!, "fischl", tsF, CTX);
 
     expect(displayResult.totalDamage).toBeCloseTo(damageResult.totalDamage, 4);
   });
@@ -2090,21 +2035,9 @@ describe("display path matches damage path for reaction formulas", () => {
     };
     const ts = mockTeamStatsFrom(teamStats, charLevels);
 
-    const damageResult = evaluateFormulaDamage(
-      entry!,
-      "columbina",
-      "columbina",
-      ts,
-      CTX
-    );
+    const damageResult = evaluateFormulaDamage(entry!, "columbina", ts, CTX);
 
-    const displayResult = evaluateFormulaDisplay(
-      entry!,
-      "columbina",
-      "columbina",
-      ts,
-      CTX
-    );
+    const displayResult = evaluateFormulaDisplay(entry!, "columbina", ts, CTX);
 
     expect(displayResult.totalDamage).toBeCloseTo(damageResult.totalDamage, 4);
   });
@@ -2458,21 +2391,9 @@ describe("non-zero EM per-contributor routing", () => {
     for (const c of MIXED_LEVEL_LUNAR) charLevels[c.charId] = c.charLevel;
 
     const tsA = mockTeamStatsFrom(teamStatsA, charLevels);
-    const resultA = evaluateFormulaDamage(
-      entry,
-      onFieldChar,
-      onFieldChar,
-      tsA,
-      CTX
-    );
+    const resultA = evaluateFormulaDamage(entry, onFieldChar, tsA, CTX);
     const tsB = mockTeamStatsFrom(teamStatsB, charLevels);
-    const resultB = evaluateFormulaDamage(
-      entry,
-      onFieldChar,
-      onFieldChar,
-      tsB,
-      CTX
-    );
+    const resultB = evaluateFormulaDamage(entry, onFieldChar, tsB, CTX);
 
     // Total damage should differ because EM is on different contributors
     // with different rank weights

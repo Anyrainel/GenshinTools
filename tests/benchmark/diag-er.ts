@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { Element } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { defaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
+import { getDefaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
@@ -165,10 +165,10 @@ async function main() {
   }
 
   console.log("\n=== ER for all chars with default off-field ===");
-  const offFieldCharId = defaultOnFieldCharId(carryCharId, configs);
+  const onFieldCharId = getDefaultOnFieldCharId(carryCharId, configs);
   const nullStats = teamBuild.getTeamStats(
     emptySheets,
-    offFieldCharId,
+    onFieldCharId,
     calcContext
   );
   for (const cfg of configs) {

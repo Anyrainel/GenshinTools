@@ -153,7 +153,6 @@ function checkHope(
   return teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
-    onFieldCharId,
     calcContext,
     ctx.reactionOverride
   ).totalDamage;

@@ -30,7 +30,7 @@ import {
 } from "./damageCalc";
 import { fieldReq } from "./fieldState";
 import {
-  defaultOnFieldCharId,
+  getDefaultOnFieldCharId,
   isPartOffField,
   resolvePartOnFieldCharIds,
 } from "./fieldState";
@@ -454,7 +454,6 @@ export class TeamBuild {
       const result = this.getDamageResult(
         statsCharId,
         line.formulaId,
-        statsCharId,
         ctx,
         effectiveReaction,
         lineInfos,
@@ -526,8 +525,8 @@ export class TeamBuild {
     > = {};
     for (const cid of allCharIds) {
       const onField = this.teamStats.getPostStats(cid, cid);
-      const offOther = defaultOnFieldCharId(cid, this.configs);
-      const offField = this.teamStats.getPostStats(cid, offOther);
+      const defaultOnFieldCharId = this.teamStats.getDefaultOnFieldCharId(cid);
+      const offField = this.teamStats.getPostStats(cid, defaultOnFieldCharId);
       statSheets[cid] = { onField, offField };
     }
 
@@ -713,15 +712,12 @@ export class TeamBuild {
       const formulaHasOffField = entry.parts.some((p) =>
         isPartOffField(p, firstLine.forceOnField)
       );
-      const offFieldOnFieldCharId =
-        this.teamStats.getDefaultOffFieldCharId(charId);
-      const offFieldPostStats = formulaHasOffField
-        ? this.teamStats.getPostStats(charId, offFieldOnFieldCharId)
-        : undefined;
+      const defaultOnFieldCharId = formulaHasOffField
+        ? this.teamStats.getDefaultOnFieldCharId(charId)
+        : charId;
 
       const { parts } = evaluateFormulaDisplay(
         entry,
-        charId,
         charId,
         this.teamStats,
         ctx,
@@ -772,7 +768,6 @@ export class TeamBuild {
             entry.parts,
             aggregatedActivation,
             charId,
-            charId,
             this.teamStats,
             ctx
           );
@@ -802,7 +797,7 @@ export class TeamBuild {
               const baseVariant = offField
                 ? this.teamStats.getPostStats(
                     charId,
-                    offFieldOnFieldCharId,
+                    defaultOnFieldCharId,
                     zeroBuffKeys
                   )
                 : this.teamStats.getPostStats(charId, charId, zeroBuffKeys);
@@ -885,7 +880,7 @@ export class TeamBuild {
           if (buffedHits > 0 && unbuffedHits > 0) {
             const { formula, offField } = entry.parts[eidx];
             const baseSelfStats = offField
-              ? this.teamStats.getPostStats(charId, offFieldOnFieldCharId)
+              ? this.teamStats.getPostStats(charId, defaultOnFieldCharId)
               : this.teamStats.getPostStats(charId, charId);
             const dpUnbuffed = formula.displayFull(
               baseSelfStats,
@@ -934,7 +929,6 @@ export class TeamBuild {
   getDamageResult(
     charId: string,
     formulaId: string,
-    onFieldCharId: string,
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     activation?: BuffActivationMap,
@@ -952,7 +946,6 @@ export class TeamBuild {
     return evaluateFormulaDamage(
       entry,
       charId,
-      onFieldCharId,
       this.teamStats,
       ctx,
       reactionOverride,
@@ -974,15 +967,18 @@ export class TeamBuild {
     offFieldPreStats: Record<string, StatSheet>;
     offFieldMidStats: Record<string, StatSheet> | undefined;
   } {
-    const offOther = defaultOnFieldCharId(charId, this.configs);
+    const defaultOnFieldCharId = getDefaultOnFieldCharId(charId, this.configs);
     const offFieldPreStats: Record<string, StatSheet> = {};
     for (const cid of Object.keys(this.charBuilds)) {
-      offFieldPreStats[cid] = this.teamStats.getPreStats(cid, offOther);
+      offFieldPreStats[cid] = this.teamStats.getPreStats(
+        cid,
+        defaultOnFieldCharId
+      );
     }
     const offFieldMidStats: Record<string, StatSheet> = {};
     let hasOffMid = false;
     for (const cid of Object.keys(this.charBuilds)) {
-      const mid = this.teamStats.getMidStats(cid, offOther);
+      const mid = this.teamStats.getMidStats(cid, defaultOnFieldCharId);
       const pre = offFieldPreStats[cid]!;
       if (mid !== pre) hasOffMid = true;
       offFieldMidStats[cid] = mid;
@@ -1040,15 +1036,21 @@ export class TeamBuild {
     let offFieldPreStats: Record<string, StatSheet> | undefined;
     let offFieldMidStats: Record<string, StatSheet> | undefined;
     if (formulaHasOffField) {
-      const offOther = defaultOnFieldCharId(charId, this.configs);
+      const defaultOnFieldCharId = getDefaultOnFieldCharId(
+        charId,
+        this.configs
+      );
       offFieldPreStats = {};
       for (const cid of Object.keys(this.charBuilds)) {
-        offFieldPreStats[cid] = this.teamStats.getPreStats(cid, offOther);
+        offFieldPreStats[cid] = this.teamStats.getPreStats(
+          cid,
+          defaultOnFieldCharId
+        );
       }
       offFieldMidStats = {};
       let hasOffMid = false;
       for (const cid of Object.keys(this.charBuilds)) {
-        const mid = this.teamStats.getMidStats(cid, offOther);
+        const mid = this.teamStats.getMidStats(cid, defaultOnFieldCharId);
         const pre = offFieldPreStats[cid]!;
         if (mid !== pre) hasOffMid = true;
         offFieldMidStats[cid] = mid;
@@ -1061,7 +1063,6 @@ export class TeamBuild {
     const { parts } = resolveEntry
       ? evaluateFormulaDisplay(
           resolveEntry,
-          charId,
           charId,
           this.teamStats,
           ctx,
@@ -1152,7 +1153,6 @@ export class TeamBuild {
       ? evaluateFormulaDisplay(
           displayEntry,
           charId,
-          charId,
           this.teamStats,
           ctx,
           reactionOverride,
@@ -1219,13 +1219,9 @@ export class TeamBuild {
       if (Object.keys(allActivation).length > 0) {
         buffActivation = mergedActivation;
 
-        const offFieldOnFieldCharId =
-          this.teamStats.getDefaultOffFieldCharId(charId);
-
         const blended = computeBlendedDamage(
           entry.parts,
           allActivation,
-          charId,
           charId,
           this.teamStats,
           ctx,
@@ -1254,7 +1250,7 @@ export class TeamBuild {
             const baseVariant = offField
               ? this.teamStats.getPostStats(
                   charId,
-                  offFieldOnFieldCharId,
+                  this.teamStats.getDefaultOnFieldCharId(charId),
                   zeroBuffKeys
                 )
               : this.teamStats.getPostStats(charId, charId, zeroBuffKeys);
@@ -1338,8 +1334,8 @@ export class TeamBuild {
     > = {};
     for (const cid of Object.keys(this.charBuilds)) {
       const onField = this.teamStats.getPostStats(cid, cid);
-      const offOther = defaultOnFieldCharId(cid, this.configs);
-      const offField = this.teamStats.getPostStats(cid, offOther);
+      const defaultOnFieldCharId = this.teamStats.getDefaultOnFieldCharId(cid);
+      const offField = this.teamStats.getPostStats(cid, defaultOnFieldCharId);
       statSheets[cid] = { onField, offField };
     }
 
@@ -1896,7 +1892,6 @@ export class TeamBuild {
       return evaluateFormulaDamage(
         entry,
         onFieldCharId,
-        onFieldCharId,
         this.teamStats,
         ctx,
         reactionOverride,
@@ -1955,7 +1950,6 @@ export class TeamBuild {
       const tweakedResult = tweakedTeam.getDamageResult(
         onFieldCharId,
         formulaId,
-        onFieldCharId,
         ctx,
         reactionOverride,
         undefined, // activation

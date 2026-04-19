@@ -124,7 +124,6 @@ describe("Saturated character handling", () => {
     const dmgEmpty = teamBuild.getDamageResult(
       "hu_tao",
       formulaId,
-      "hu_tao",
       calcContext
     ).totalDamage;
 
@@ -151,7 +150,6 @@ describe("Saturated character handling", () => {
     const dmgSuper = teamBuild.getDamageResult(
       "hu_tao",
       formulaId,
-      "hu_tao",
       calcContext
     ).totalDamage;
 

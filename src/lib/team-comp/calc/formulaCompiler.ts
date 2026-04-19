@@ -31,7 +31,7 @@ import { isFinalStatKey } from "./damageCalc";
 import { createReactionVariant } from "./damageFormula";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStatSheet, VarMapping } from "./exprStatSheet";
-import { defaultOnFieldCharId, isPartOffField } from "./fieldState";
+import { getDefaultOnFieldCharId, isPartOffField } from "./fieldState";
 import { exclusionKey } from "./stackRank";
 import { CrossScalingBuff, ScalingBuff, getBuffInstanceKey } from "./statBuff";
 import { StatBuff } from "./statBuff";
@@ -110,7 +110,7 @@ export function compileComboTeamDamage(
   const allOnFieldCharIds = [
     ...new Set([
       ...validLines.map((l) => l.charId),
-      ...validLines.map((l) => defaultOnFieldCharId(l.charId, configs)),
+      ...validLines.map((l) => getDefaultOnFieldCharId(l.charId, configs)),
       ...(erCheckCharId ? [erCheckCharId] : []),
     ]),
   ];
@@ -127,21 +127,21 @@ export function compileComboTeamDamage(
     calcContext
   );
 
-  // Group lines by on-field character (= onFieldCharId)
-  const linesByCalcTarget = new Map<string, typeof validLines>();
+  // Group lines by formula owner (= line.charId)
+  const linesByCharId = new Map<string, typeof validLines>();
   for (const line of validLines) {
-    let group = linesByCalcTarget.get(line.charId);
+    let group = linesByCharId.get(line.charId);
     if (!group) {
       group = [];
-      linesByCalcTarget.set(line.charId, group);
+      linesByCharId.set(line.charId, group);
     }
     group.push(line);
   }
 
   const allPartExprs: Expr[] = [];
 
-  for (const [onFieldCharId, lines] of linesByCalcTarget) {
-    const offFieldOnFieldCharId = defaultOnFieldCharId(onFieldCharId, configs);
+  for (const [charId, lines] of linesByCharId) {
+    const onFieldCharId = getDefaultOnFieldCharId(charId, configs);
 
     for (const line of lines) {
       const formulaCharBuild = teamBuild.charBuilds[line.charId];
@@ -156,10 +156,7 @@ export function compileComboTeamDamage(
         const partExprs: Expr[] = [];
         for (const part of entry.parts) {
           const partCharId = part.statsCharId ?? line.charId;
-          const partStats = teamExprStats.getExprStats(
-            partCharId,
-            onFieldCharId
-          );
+          const partStats = teamExprStats.getExprStats(partCharId, charId);
           if (!partStats) continue;
           const partLevel = teamExprStats.getCharLevel(partCharId);
           partExprs.push(
@@ -178,15 +175,12 @@ export function compileComboTeamDamage(
       // evaluate with the statsCharId's stats instead of line.charId.
       const statsCharId = entry.parts[0]?.statsCharId ?? line.charId;
 
-      const formulaStats = teamExprStats.getExprStats(
-        statsCharId,
-        onFieldCharId
-      );
+      const formulaStats = teamExprStats.getExprStats(statsCharId, charId);
       const hasOffField = entry.parts.some((p) =>
         isPartOffField(p, line.forceOnField)
       );
       const offFieldFormulaStats = hasOffField
-        ? teamExprStats.getExprStats(statsCharId, offFieldOnFieldCharId)
+        ? teamExprStats.getExprStats(statsCharId, onFieldCharId)
         : undefined;
 
       // Look up by line index first (for per-line combo overrides), then formula key
@@ -203,14 +197,14 @@ export function compileComboTeamDamage(
           lineBuffs,
           entry.parts,
           statsCharId,
-          onFieldCharId
+          charId
         );
         if (hasOffField) {
           lineOffFieldVariants = teamExprStats.buildExprStatVariants(
             lineBuffs,
             entry.parts,
             statsCharId,
-            offFieldOnFieldCharId
+            onFieldCharId
           );
         }
       }

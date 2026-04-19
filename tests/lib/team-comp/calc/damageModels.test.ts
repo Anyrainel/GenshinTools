@@ -935,7 +935,7 @@ describe("CharacterBase via createCharacter", () => {
       substatBudget: "8_6" as const,
     };
     tb.teamStats.setArtifacts({ diluc: new StatSheet([]) }, ctx);
-    const result = tb.getDamageResult("diluc", "diluc-skill", "diluc", ctx);
+    const result = tb.getDamageResult("diluc", "diluc-skill", ctx);
 
     expect(result.totalDamage).toBeGreaterThan(0);
     expect(result.parts.length).toBeGreaterThanOrEqual(1);

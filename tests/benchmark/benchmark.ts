@@ -2747,7 +2747,6 @@ async function cmdCarryDiagnose(opts: {
     const bestDmgResult = teamBuild.getDamageResult(
       carryId,
       problem.formulaId,
-      carryId,
       calcContext
     );
     console.log(
@@ -2955,7 +2954,6 @@ async function cmdFuzz(opts: {
       const oldDamage = teamBuild.getDamageResult(
         carryCharId,
         formulaId,
-        carryCharId,
         calcContext
       ).totalDamage;
 

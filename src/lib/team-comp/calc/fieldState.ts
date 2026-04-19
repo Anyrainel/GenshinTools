@@ -38,7 +38,7 @@ function getLineReaction(
  * Returns the first team member that isn't the formula owner.
  * This eliminates the concept of "nobody on-field" (null).
  */
-export function defaultOnFieldCharId(
+export function getDefaultOnFieldCharId(
   charId: string,
   configs: TeamSlotConfig[]
 ): string {
@@ -62,9 +62,9 @@ export function resolvePartOnFieldCharIds(
   configs: TeamSlotConfig[],
   forceOnField?: boolean
 ): string[] {
-  const defaultOther = defaultOnFieldCharId(charId, configs);
+  const defaultOnFieldCharId = getDefaultOnFieldCharId(charId, configs);
   return parts.map((part) =>
-    isPartOffField(part, forceOnField) ? defaultOther : charId
+    isPartOffField(part, forceOnField) ? defaultOnFieldCharId : charId
   );
 }
 

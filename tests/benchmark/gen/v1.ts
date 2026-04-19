@@ -131,7 +131,6 @@ function computeFinalScore(
   return teamBuild.getDamageResult(
     carryCharId,
     formulaId,
-    carryCharId,
     calcContext,
     reactionOverride
   ).totalDamage;
