@@ -18,8 +18,8 @@ import type {
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import { resolveComboDescriptor } from "@/lib/team-comp/calc/combo";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { getFormulaReactions } from "@/lib/team-comp/calc/teamFormulaCatalog";
 import { resolveReactionComboEntries } from "@/lib/team-comp/calc/teamReaction";
-import { getFormulaReactions } from "@/lib/team-comp/constants";
 import type { FormulaEntry } from "@/lib/team-comp/types";
 import type { ReactionComboEntry } from "@/lib/team-comp/types";
 import type {

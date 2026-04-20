@@ -8,10 +8,8 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, ReactionType } from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  REACTION_ELEMENT_REQUIREMENTS,
-  getFormulaReactions,
-} from "@/lib/team-comp/constants";
+import { getFormulaReactions } from "@/lib/team-comp/calc/teamFormulaCatalog";
+import { REACTION_ELEMENT_REQUIREMENTS } from "@/lib/team-comp/constants";
 import type {
   ComboLine,
   I18nLabel,
