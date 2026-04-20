@@ -12,6 +12,7 @@ import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, Region } from "@/data/types";
 import { elements, regions, tiers } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
@@ -166,6 +167,7 @@ export function TeamGrid({
   // Ownership
   const isOwned = useIsOwned();
   const hasAccountData = useHasAccountData();
+  const checkAutoDisableOwned = useAutoDisableOwnedFilter(viewId);
 
   // Tier data
   const tierAssignments = useTierStore((s) => s.tierAssignments);
@@ -672,7 +674,11 @@ export function TeamGrid({
                       <TeamCard
                         team={team}
                         index={realIndex}
-                        onUpdate={(patch) => updateTeam(team.id, patch)}
+                        onUpdate={(patch) => {
+                          updateTeam(team.id, patch);
+                          if (patch.characters)
+                            checkAutoDisableOwned(patch.characters);
+                        }}
                         onDelete={() => {
                           if (enableFreeze) unfreezeTeam(team.id);
                           deleteTeam(team.id);
