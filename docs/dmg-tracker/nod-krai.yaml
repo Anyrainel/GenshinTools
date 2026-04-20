@@ -118,3 +118,48 @@
   detail: >
     Added C4 +100% dmg% bespokeBuff to varesa-fp-kick, matching the existing one
     on varesa-kablam. Gated on constellation >= 4, filter: burst ability.
+
+- id: nicole-q-coord-count-zh
+  entity: nicole
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    Q Arcane Projection comboDescriptor uses count: 5 (EN "5 times"). ZH says
+    "至多触发4次" (max 4 times). Per beta ZH-wins rule, should be count: 4.
+  detail: >
+    Changed Q coord comboDescriptor count from 5 to 4 and updated comments.
+
+- id: nicole-p4-scaling-zh
+  entity: nicole
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    P4 Hexerei Secret Rite ScalingBuff uses scale 1.5 (EN "150% of Nicole's ATK").
+    ZH says "200%". Per beta ZH-wins rule, should be 2.0.
+  detail: >
+    Changed P4 ScalingBuff scale from 1.5 to 2.0 in bespoke buff on Q projections.
+
+- id: prune-p2-values-zh
+  entity: prune
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    P2 Tolling Rally ScalingBuff uses EN values: scale 0.0001 (0.01%/pt),
+    threshold 1000, cap 0.35 (35%). ZH says 0.02%/pt over 2000, max 50%.
+    Per beta ZH-wins rule, should be scale 0.0002, threshold 2000, cap 0.50.
+  detail: >
+    Changed P2 ScalingBuff: scale 0.0001→0.0002, threshold 1000→2000, cap 0.35→0.50.
+
+- id: prune-p4-swirl-atk-zh
+  entity: prune
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    P4 Hexerei Swirl ATK buff uses 0.2 (EN 20%). ZH says 30%.
+    Per beta ZH-wins rule, should be 0.30.
+  detail: >
+    Changed P4 Swirl ATK buff value from 0.2 to 0.3.

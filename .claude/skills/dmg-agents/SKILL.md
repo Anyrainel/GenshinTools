@@ -9,6 +9,8 @@ Launch specialized agents for the damage calculator pipeline. **Your job is to l
 
 > **Note:** This skill is specifically for the damage review/triage/implement pipeline. For generic coding tasks, continue using standard subagents (general-purpose, Explore, etc.) directly.
 
+> **Tracker files** live in `docs/dmg-tracker/` — one YAML per region/scope (e.g., `mondstadt.yaml`, `artifacts.yaml`).
+
 ## Scope Formats
 
 ### Region/type scope (full sweep)

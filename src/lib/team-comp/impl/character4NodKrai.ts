@@ -371,10 +371,11 @@ class Aino extends CharacterBase {
 //   stays unavailable (the formula is gated by `when`).
 // - P1: during Q Hunter-Seeker, bell swirl summons a 150% ATK converted hammer.
 //   Modeled as a single coord hit per burst cycle per present PHEC element.
-// - P2 Tolling Rally: teammate DMG +0.01% per Prune ATK over 1000, cap 35%.
+// - P2 Tolling Rally: teammate DMG +0.02% per Prune ATK over 2000, cap 50% (per ZH).
 //   Approximated as an always-on ScalingBuff once Prune is the sustained trigger.
-// - P4 Hexerei: Prune +45% ATK after any teammate reaction under Tolling Rally.
-//   Always-on under Hexerei active + any reaction available.
+// - P4 Hexerei: Prune +45% ATK after any teammate reaction under Tolling Rally;
+//   if Swirl, triggering Hexerei teammate +30% ATK (per ZH). Always-on under
+//   Hexerei active + any reaction available.
 // - C2: ramping ATK from 10% → 40% during Hunter-Seeker mode. Assumed capped.
 // - C4: ricochet adds a second converted-hammer hit at 80% ATK.
 // - C6: team +350 ATK after teammate reaction (always-on under sustain).
@@ -399,7 +400,7 @@ class Prune extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    // P2 Tolling Rally: 0.01% DMG per Prune ATK above 1000, max 35%.
+    // P2 Tolling Rally: 0.02% DMG per Prune ATK above 2000, max 50% (per ZH).
     // Applies to NA/CA/plunge/E/Q of other teammates while under Tolling Rally.
     // Capped by threshold + scale + cap parameters of ScalingBuff.
     buffs.push(
@@ -414,9 +415,9 @@ class Prune extends CharacterBase {
         [],
         "atk",
         "dmg%",
-        0.0001,
-        0.35,
-        1000
+        0.0002,
+        0.5,
+        2000
       )
     );
 
@@ -458,13 +459,13 @@ class Prune extends CharacterBase {
             { key: "atk%", value: 0.45 },
           ])
         );
-        // Swirl: the triggering Hexerei teammate also gains +20% ATK.
+        // Swirl: the triggering Hexerei teammate also gains +30% ATK (per ZH).
         if (this.canSwirl) {
           buffs.push(
             new StatBuff(
               cbs(this, "P4", ["swirl"]),
               { receiver: "other", factions: ["Hexerei"] },
-              [{ key: "atk%", value: 0.2 }]
+              [{ key: "atk%", value: 0.3 }]
             )
           );
         }

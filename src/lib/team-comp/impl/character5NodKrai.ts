@@ -1384,7 +1384,7 @@ class Linnea extends CharacterBase {
 //   P1/P2 upgrade it to Guidance of Theosis (+300 ATK) — assume upgraded state
 //   under rotation (P2 triggers on any teammate elemental DMG; P1 triggers for
 //   Hexerei teammates or after 3s on-field).
-// - Q Arcane Projection: 5 triggers × (200% of triggering char's ATK), Pyro DMG
+// - Q Arcane Projection: 4 triggers × (200% of triggering char's ATK), Pyro DMG
 //   tagged as triggering character (elemental type = theirs). We model these as
 //   separate Pyro coord formulas with hits scaled.
 // - C1: extra 600% ATK coord attack, once per 6s (≈1 trigger per rotation).
@@ -1486,7 +1486,7 @@ class Nicole extends CharacterBase {
 
     // Hexerei P4 is attached as a bespokeBuff on the Arcane Projection
     // formula parts below (Q projection + C1 Unity), not a broad burst-
-    // ability buff — the +150% Nicole ATK baseDmg must not apply to
+    // ability buff — the +200% Nicole ATK baseDmg must not apply to
     // nicole-burst (Q initial slash).
 
     return buffs;
@@ -1516,7 +1516,7 @@ class Nicole extends CharacterBase {
       },
     };
 
-    // Q Arcane Projection: 5 triggers × 200% of triggering char's ATK.
+    // Q Arcane Projection: 4 triggers × 200% of triggering char's ATK (per ZH "至多触发4次").
     // Game text: "该伤害受益于该角色的攻击力,并视为由该角色造成的伤害"
     // → Each projection evaluates with the triggering teammate's stats and element.
     // Generate one formula per team slot with statsCharId override.
@@ -1544,7 +1544,7 @@ class Nicole extends CharacterBase {
         reaction: "none" as const,
       };
 
-      // Hexerei P4 +150% Nicole ATK baseDmg — per-occupant bespoke buff.
+      // Hexerei P4 +200% Nicole ATK baseDmg — per-occupant bespoke buff (per ZH).
       // Target routes to the occupant's stat sheet via charId.
       const p4Buff = this.isHexereiActive
         ? new ScalingBuff(
@@ -1553,7 +1553,7 @@ class Nicole extends CharacterBase {
             [],
             "atk",
             "baseDmg",
-            1.5
+            2.0
           )
         : undefined;
 
@@ -1601,7 +1601,7 @@ class Nicole extends CharacterBase {
     return [
       { id: "nicole-skill", count: 1 },
       { id: "nicole-burst", count: 1 },
-      { id: "nicole-q-coord-slot1", count: 5 },
+      { id: "nicole-q-coord-slot1", count: 4 },
       ...(this.constellation >= 1
         ? [{ id: "nicole-c1-coord-slot1", count: 3 }]
         : []),

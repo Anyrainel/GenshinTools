@@ -32,3 +32,60 @@
   detail: >
     Removed maxStacks: 1 from both C1 bespokeBuffs (special E and special CA).
     BespokeBuff applies to all parts of the formula entry naturally.
+
+- id: lohen-c1-maxwill-zh
+  entity: lohen
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    C1 max Will to Win uses EN value 250 (250% of base). ZH says 300% (300).
+    Per beta ZH-wins rule, maxWill at C1 should be 300.
+  detail: >
+    Changed maxWill C1 value from 250 to 300 in character5Mondstadt.ts.
+
+- id: lohen-c2-blade-multiplier-zh
+  entity: lohen
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    C2 Evilsbane Blade formula uses 3.0 (EN 300% ATK). ZH says 500% ATK.
+    Per beta ZH-wins rule, should be 5.0.
+  detail: >
+    Changed C2 Evilsbane Blade DirectFormula multiplier from 3.0 to 5.0.
+
+- id: lohen-c2-em-zh
+  entity: lohen
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    C2 teammate EM buff uses 125 (EN value). ZH says 200.
+    Per beta ZH-wins rule, should be 200.
+  detail: >
+    Changed C2 EM buff value from 125 to 200.
+
+- id: lohen-c6-cd-zh
+  entity: lohen
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    C6 CRIT DMG buff uses 1.5 (EN 150%). ZH says 175%.
+    Per beta ZH-wins rule, should be 1.75.
+  detail: >
+    Changed C6 CRIT DMG buff value from 1.5 to 1.75.
+
+- id: lohen-p2-receiver
+  entity: lohen
+  rule: U1
+  status: completed
+  category: bug
+  summary: >
+    P2 teammate ATK buff uses receiver "otherOnField" but game text says
+    "该角色的攻击力提升15%" referring to the triggering teammate regardless of
+    field status. Off-field characters can trigger Cryo reactions (e.g., deployables).
+    Should use receiver "other".
+  detail: >
+    Changed P2 teammate ATK buff receiver from "otherOnField" to "other".

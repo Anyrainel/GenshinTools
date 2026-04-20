@@ -1329,9 +1329,9 @@ class TheExile4pc extends ArtifactSetBase {
 @RegisterArtifactSet("disenchantment_in_deep_shadow")
 class DisenchantmentInDeepShadow4pc extends ArtifactSetBase {
   // 2pc: ATK +18% (via halfSetId)
-  // 4pc: Superconduct DMG +40%; when attacking Superconducted opponents,
-  //      this attack's CRIT Rate +16%. The "all-new blessing" flavor text
-  //      has no mechanical effect.
+  // 4pc: Superconduct DMG +80% (ZH: 80%, EN mistranslation says 40%);
+  //      when attacking Superconducted opponents, CRIT Rate +16%.
+  //      The "all-new blessing" flavor text has no mechanical effect.
   // CR gate: active whenever team can trigger Superconduct (Cryo + Electro).
   readonly halfSetId = "atk%-18";
   readonly stats: StatEntry[] = [];
@@ -1343,7 +1343,7 @@ class DisenchantmentInDeepShadow4pc extends ArtifactSetBase {
         triggers: ["on-reaction"],
       },
       { receiver: "self", filter: { reactions: ["superconduct"] } },
-      [{ key: "reactionDmg%", value: 0.4 }]
+      [{ key: "reactionDmg%", value: 0.8 }]
     ),
     ...(this.teamMeta.hasReaction("superconduct")
       ? [
@@ -1462,4 +1462,38 @@ class HeavensGift4pc extends ArtifactSetBase {
     }
     this.buffs = buffs;
   }
+}
+
+@RegisterArtifactSet("glacier_and_snowfield")
+class GlacierAndSnowfield4pc extends ArtifactSetBase {
+  // 2pc: Cryo DMG +15% (via halfSetId)
+  // 4pc: Superconduct DMG +100%, Melt coefficient +15%,
+  //      Cryo DMG +30% after burst for 10s.
+  readonly halfSetId = "cryo%-15";
+  readonly stats: StatEntry[] = [];
+  readonly buffs = [
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["on-reaction"],
+      },
+      { receiver: "self", filter: { reactions: ["superconduct"] } },
+      [{ key: "reactionDmg%", value: 1.0 }]
+    ),
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["on-reaction"],
+      },
+      { receiver: "self", filter: { reactions: ["melt"] } },
+      [{ key: "reactionDmg%", value: 0.15 }]
+    ),
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId, triggers: ["burst"] },
+      { receiver: "self" },
+      [{ key: "cryo%", value: 0.3 }]
+    ),
+  ];
 }

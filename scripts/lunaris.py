@@ -6,13 +6,13 @@ artifactlist against existing released JSON files.
 
 Usage:
   uv run --project scripts/pyproject.toml scripts/lunaris.py
-  uv run --project scripts/pyproject.toml scripts/lunaris.py --force
 
 Pipeline (always cleanup first, then scrape):
   1. Cleanup: remove from beta files entries that have been promoted to
      released. Beta JSON entries are only removed if the corresponding
      official JSON has the data (carry-over safety).
-  2. Scrape: fetch missing beta entities from lunaris API and write data.
+  2. Scrape: always re-fetch beta entities from lunaris API and write data.
+     Images are skipped if already present on disk.
 
 Output files (under src/data/game/):
   character_beta_stats.json.gz, character_beta_en.json.gz, character_beta_zh.json.gz
@@ -907,11 +907,6 @@ def main() -> None:
         description="Scrape unreleased character/weapon data from lunaris.moe API"
     )
     parser.add_argument(
-        "--force",
-        action="store_true",
-        help="Re-scrape even if beta files already have data",
-    )
-    parser.add_argument(
         "--version",
         default="",
         help="Data version (auto-detected if omitted)",
@@ -998,19 +993,6 @@ def main() -> None:
     print(f"Found {len(unreleased_artifacts)} unreleased artifact sets:")
     for num_id, derived_id, meta in unreleased_artifacts:
         print(f"  {meta.get('enName', '?')} ({num_id} -> {derived_id})")
-
-    # Check if we should skip (unless --force)
-    if not args.force:
-        beta_chars_existing = load_json(BETA_CHARACTER_STATS_PATH)
-        beta_weapons_existing = load_json(BETA_WEAPON_STATS_PATH)
-        beta_artifacts_existing = load_json(BETA_ARTIFACT_EN_PATH)
-        if beta_chars_existing or beta_weapons_existing or beta_artifacts_existing:
-            print("\nBeta files already have data. Use --force to re-scrape.")
-            nc = len(beta_chars_existing)
-            nw = len(beta_weapons_existing)
-            na = len(beta_artifacts_existing)
-            print(f"  Existing beta: {nc} chars, {nw} weapons, {na} artifact sets")
-            return
 
     # Scrape characters
     char_en_data: dict = {}

@@ -1846,8 +1846,8 @@ const lohenOption = {
 @RegisterCharacter("lohen", lohenOption)
 class Lohen extends CharacterBase {
   private readonly o = resolveOption(lohenOption, this.option);
-  // Max Will to Win capacity (C1 raises to 250% of base 100 = 250)
-  private readonly maxWill = this.constellation >= 1 ? 250 : 100;
+  // Max Will to Win capacity (C1 raises to 300% of base 100 = 300, per ZH)
+  private readonly maxWill = this.constellation >= 1 ? 300 : 100;
   // Will to Win point count based on user tier. C4+ auto-fills on Q and C6
   // removes consumption entirely, so treat max as the sustained value there.
   private readonly willStacks = (() => {
@@ -1924,7 +1924,7 @@ class Lohen extends CharacterBase {
         new StatBuff(cbs(this, "P2", ["E"]), { receiver: "self" }, [
           { key: "atk%", value: 0.15 },
         ]),
-        new StatBuff(cbs(this, "P2", ["E"]), { receiver: "otherOnField" }, [
+        new StatBuff(cbs(this, "P2", ["E"]), { receiver: "other" }, [
           { key: "atk%", value: 0.15 },
         ])
       );
@@ -1946,20 +1946,20 @@ class Lohen extends CharacterBase {
       );
     }
 
-    // C2: Evilsbane Blade → teammates +125 EM (8s) after special E or Q.
+    // C2: Evilsbane Blade → teammates +200 EM (8s) after special E or Q (per ZH).
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(cbs(this, "C2", ["E", "Q"]), { receiver: "other" }, [
-          { key: "em", value: 125 },
+          { key: "em", value: 200 },
         ])
       );
     }
 
-    // C6: +150% CRIT DMG to the two damage sources named in the same C6
+    // C6: +175% CRIT DMG to the two damage sources named in the same C6
     // clause — special E (镂骨彻心) and Q (裁罚遂成). ZH: "上述所有伤害的
-    // 暴击伤害都将提升150%" refers to the special E and Q just named above
+    // 暴击伤害都将提升175%" refers to the special E and Q just named above
     // in the C6 text; Masterstroke NA/CA/plunge are not part of that
-    // referent. Using `1.5` per ZH (EN "80%" is overridden by ZH-wins rule).
+    // referent. Using `1.75` per ZH.
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
@@ -1968,7 +1968,7 @@ class Lohen extends CharacterBase {
             receiver: "selfOnField",
             filter: { abilities: ["skill", "burst"] },
           },
-          [{ key: "cd", value: 1.5 }]
+          [{ key: "cd", value: 1.75 }]
         )
       );
     }
@@ -2064,14 +2064,14 @@ class Lohen extends CharacterBase {
           },
         ],
       },
-      // C2: Evilsbane Blade — 300% ATK Cryo AoE after special E/Q, once per 4s.
+      // C2: Evilsbane Blade — 500% ATK Cryo AoE after special E/Q, once per 4s (per ZH).
       // Modeled as a single extra hit per combo (triggered once after special E).
       "lohen-c2-blade": {
         label: { zh: "C2 破邪之刃", en: "C2 Evilsbane Blade" },
         minC: 2,
         parts: [
           {
-            formula: new DirectFormula(3.0, {
+            formula: new DirectFormula(5.0, {
               element: "Cryo",
               ability: "normal",
               reaction: "none",
