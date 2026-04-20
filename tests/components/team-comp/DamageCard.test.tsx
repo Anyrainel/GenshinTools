@@ -403,14 +403,14 @@ describe("CharCrErSettings", () => {
 
   it("shows CR mode selector", () => {
     render(<TestCharCrErSettings />);
-    // Default CR mode is "min" → should display "Min. CR" for each character
-    expect(screen.getAllByText("Min. CR").length).toBeGreaterThanOrEqual(2);
+    // Default CR mode is "min" → should display "Min.CR" for each character
+    expect(screen.getAllByText("Min.CR").length).toBeGreaterThanOrEqual(2);
   });
 
   it("shows ER input", () => {
     render(<TestCharCrErSettings />);
-    // Should have "Min. ER" labels for each character
-    expect(screen.getAllByText("Min. ER").length).toBe(2);
+    // Should have "Min.ER" labels for each character
+    expect(screen.getAllByText("Min.ER").length).toBe(2);
   });
 
   it("shows Tier checkbox when character has tier assignment", () => {
