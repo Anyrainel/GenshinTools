@@ -1,4 +1,4 @@
-import type { WeaponType } from "../types";
+import type { WeaponType } from "../../data/types";
 
 export type WeaponEnergyEffect =
   | {

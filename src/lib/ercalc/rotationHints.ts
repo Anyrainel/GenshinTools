@@ -1,20 +1,11 @@
 import {
   expectedPeriodicProcs,
   periodicGenerators,
-} from "@/data/ercalc/particleConfig";
-import type { ActionType, Timeline } from "./erCalculator";
+} from "@/lib/ercalc/particleConfig";
+import { BURST_ACTIONS } from "./constants";
+import type { RotationHint, Timeline } from "./types";
 
-export interface RotationHint {
-  type: "warning" | "info";
-  messageEn: string;
-  messageZh: string;
-  /** Character ID referenced in the hint (for UI to translate). */
-  charId?: string;
-  /** Index of the action that triggered this hint. */
-  actionIndex?: number;
-}
-
-const BURST_ACTIONS = new Set<ActionType>(["Q", "specialQ"]);
+export type { RotationHint } from "./types";
 
 /**
  * Analyze a rotation timeline and return hints for common issues.

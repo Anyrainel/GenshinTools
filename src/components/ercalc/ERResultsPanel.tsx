@@ -1,21 +1,22 @@
+import { CharAvatar } from "@/components/shared/CharAvatar";
+import { CARD_CLS, CARD_HEADER_CLS } from "@/components/team-comp/cardStyles";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/types";
-import type { ERResult, EnergyEvent } from "@/lib/ercalc/erCalculator";
+import { ACTION_LABELS } from "@/lib/ercalc/constants";
 import {
   erPercentToInternal,
   findMatchingTeams,
 } from "@/lib/ercalc/teamStoreIntegration";
-import { getElementColor } from "@/lib/utils";
+import type { ERResult, EnergyEvent, TeamSlot } from "@/lib/ercalc/types";
+import { cn } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { ChevronDown, Copy, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { CharAvatar } from "./CharAvatar";
-import type { TeamSlot } from "./ERCalcView";
 
 interface ERResultsPanelProps {
   results: ERResult[];
   team: TeamSlot[];
+  embedded?: boolean;
 }
 
 function getERTextColor(er: number, isInfinity: boolean) {
@@ -73,14 +74,6 @@ function summarizeEventsForChar(
     ...val,
   }));
 }
-
-const ACTION_LABELS_SHORT: Record<string, { en: string; zh: string }> = {
-  E: { en: "E", zh: "E" },
-  holdE: { en: "Hold E", zh: "长按E" },
-  periodicE: { en: "Tick", zh: "持续E" },
-  Q: { en: "Q", zh: "Q" },
-  specialQ: { en: "Alt Q", zh: "特殊Q" },
-};
 
 export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
   const { t, language } = useLanguage();
@@ -141,8 +134,8 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
   }, [results, team, t]);
 
   return (
-    <section className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
-      <div className="px-4 py-2.5 bg-gradient-select border-b border-border/70 flex items-center justify-between">
+    <section className={cn("rounded-xl overflow-hidden", CARD_CLS)}>
+      <div className={cn(CARD_HEADER_CLS, "flex items-center justify-between")}>
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold">
             {t.ui("erCalc.erRequirements")}
@@ -200,8 +193,6 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
             ? 100
             : Math.min(100, ((result.erNeeded - 100) / 200) * 100);
           const erTextColor = getERTextColor(result.erNeeded, isInfinity);
-          const textColor = getElementColor(slot.element as Element, "text");
-          const barColor = getElementColor(slot.element as Element, "bg");
           const isExpanded = expanded === result.characterId;
 
           // Get per-char events from binding window
@@ -224,9 +215,7 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
                   {/* Character avatar + name */}
                   <div className="flex items-center gap-2 w-28 shrink-0">
                     <CharAvatar charId={result.characterId} size={24} />
-                    <span
-                      className={`${textColor} text-sm font-medium truncate`}
-                    >
+                    <span className="text-sm font-medium truncate">
                       {t.character(result.characterId)}
                     </span>
                   </div>
@@ -235,7 +224,7 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
                   <div className="flex-1 flex items-center gap-3">
                     <div className="flex-1 h-6 bg-background/30 rounded-md overflow-hidden relative">
                       <div
-                        className={`h-full rounded-md ${barColor}`}
+                        className="h-full rounded-md bg-primary/40"
                         style={{
                           width: `${Math.max(3, erNormalized)}%`,
                         }}
@@ -289,7 +278,7 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
                       const sourceChar = parts[0];
                       const sourceAction = parts[1];
                       const actionLabel =
-                        ACTION_LABELS_SHORT[sourceAction]?.[
+                        ACTION_LABELS[sourceAction]?.[
                           language === "zh" ? "zh" : "en"
                         ] ?? sourceAction;
 

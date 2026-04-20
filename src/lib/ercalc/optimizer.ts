@@ -1,14 +1,12 @@
-import {
-  type ActionType,
-  type EROptions,
-  type ERResult,
-  type TeamMember,
-  type Timeline,
-  calculateTeamER,
-} from "./erCalculator";
-
-const PARTICLE_ACTIONS = new Set<ActionType>(["E", "holdE", "periodicE"]);
-const BURST_ACTIONS = new Set<ActionType>(["Q", "specialQ"]);
+import { BURST_ACTIONS, PARTICLE_ACTIONS } from "./constants";
+import { calculateTeamER } from "./erCalculator";
+import type {
+  ActionType,
+  EROptions,
+  ERResult,
+  TeamMember,
+  Timeline,
+} from "./types";
 
 /**
  * Find optimal wait block insertions to minimize the maximum team ER requirement.

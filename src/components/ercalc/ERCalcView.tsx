@@ -1,42 +1,25 @@
+import { CARD_CLS, CARD_HEADER_CLS } from "@/components/team-comp/cardStyles";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { TEAM_PRESETS } from "@/data/ercalc/presetRotations";
-import type { Element } from "@/data/types";
-import {
-  type ActionType,
-  type CalcMode,
-  type ERResult,
-  type ParticleMode,
-  type TeamMember,
-  type Timeline,
-  calculateTeamER,
-} from "@/lib/ercalc/erCalculator";
+import { ENEMY_PRESETS } from "@/lib/ercalc/constants";
+import { calculateTeamER, toTeamMember } from "@/lib/ercalc/erCalculator";
 import { analyzeRotation } from "@/lib/ercalc/rotationHints";
+import type {
+  ActionType,
+  CalcMode,
+  ERResult,
+  ParticleMode,
+  TeamSlot,
+  Timeline,
+} from "@/lib/ercalc/types";
+import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useState } from "react";
 import { ERResultsPanel } from "./ERResultsPanel";
 import { TeamSetup } from "./TeamSetup";
 import { TimelineStrip } from "./TimelineStrip";
 
-export type TeamSlot = {
-  charId: string;
-  element: Element;
-  burstCost: number;
-  constellation: number;
-  weaponId?: string;
-  refinement?: number; // 0-4 for R1-R5
-};
-
-function toTeamMember(slot: TeamSlot): TeamMember {
-  return {
-    id: slot.charId,
-    element: slot.element,
-    burstCost: slot.burstCost,
-    constellation: slot.constellation,
-    weaponId: slot.weaponId,
-    refinement: slot.refinement,
-  };
-}
+export type { TeamSlot } from "@/lib/ercalc/types";
 
 const DEFAULT_TEAM: TeamSlot[] = [
   { charId: "bennett", element: "Pyro", burstCost: 60, constellation: 0 },
@@ -64,19 +47,6 @@ const DEFAULT_TIMELINE: Timeline = [
   { char: "sucrose", action: "E" },
   { char: "sucrose", action: "E" },
   { char: "sucrose", action: "Q" },
-];
-
-// CALC_MODES removed — replaced by two independent toggles (startEmpty + repeatLast)
-
-const ENEMY_PRESETS: {
-  value: number;
-  labelEn: string;
-  labelZh: string;
-}[] = [
-  { value: 0, labelEn: "None (Boss)", labelZh: "无 (Boss)" },
-  { value: 6, labelEn: "Low (Elite)", labelZh: "少 (精英怪)" },
-  { value: 12, labelEn: "Medium (Mixed)", labelZh: "中 (混合怪)" },
-  { value: 24, labelEn: "High (AoE)", labelZh: "多 (群怪)" },
 ];
 
 export function ERCalcView() {
@@ -230,46 +200,16 @@ export function ERCalcView() {
     <div className="flex-1 overflow-y-auto p-4 md:p-6 xl:p-8">
       <div className="max-w-6xl mx-auto space-y-4">
         {/* ── Team card ── */}
-        <div className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
+        <div className={cn("rounded-xl overflow-hidden", CARD_CLS)}>
           <div className="p-3 md:p-4 space-y-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground">
-                {t.ui("erCalc.presetTeams")}
-              </span>
-              {TEAM_PRESETS.map((preset) => (
-                <Button
-                  key={preset.id}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs h-7"
-                  onClick={() => {
-                    setTeam(
-                      preset.team.map((m) => ({
-                        charId: m.id,
-                        element: m.element as Element,
-                        burstCost: m.burstCost,
-                        constellation: m.constellation ?? 0,
-                        weaponId: m.weaponId,
-                        refinement: m.refinement,
-                      }))
-                    );
-                    setTimelines([preset.timeline]);
-                  }}
-                >
-                  {language === "zh"
-                    ? preset.nameZh.split("(")[0].trim()
-                    : preset.nameEn.split("(")[0].trim()}
-                </Button>
-              ))}
-            </div>
             <TeamSetup team={team} onChange={handleTeamChange} />
           </div>
         </div>
 
         {/* ── Combat Sequence section ── */}
-        <div className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
+        <div className={cn("rounded-xl overflow-hidden", CARD_CLS)}>
           {/* Section header: title + settings */}
-          <div className="px-4 py-2.5 bg-gradient-select border-b border-border/70 space-y-2">
+          <div className={cn(CARD_HEADER_CLS, "space-y-2")}>
             <div className="flex flex-wrap items-center gap-3">
               <h3 className="text-sm font-semibold">
                 {language === "zh" ? "战斗序列" : "Combat Sequence"}

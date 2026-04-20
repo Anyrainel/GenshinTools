@@ -154,14 +154,6 @@ export const getNavigationConfig = (
       },
     ],
   },
-  ...(import.meta.env.DEV
-    ? [
-        {
-          label: t.ui("app.navERCalc"),
-          href: "/er-calc",
-        },
-      ]
-    : []),
   {
     label: t.ui("app.navArchive"),
     href: "/archive",

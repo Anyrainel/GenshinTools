@@ -2,13 +2,13 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo } from "@/data/charInfo";
-import { weaponEnergyById } from "@/data/ercalc/weaponEnergy";
 import type { Element } from "@/data/types";
 import { particles } from "@/lib/ercalc/erCalculator";
+import type { TeamSlot } from "@/lib/ercalc/types";
+import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import { getElementColor } from "@/lib/utils";
 import { Plus, X } from "lucide-react";
 import { useCallback, useMemo } from "react";
-import type { TeamSlot } from "./ERCalcView";
 
 /** Get all character IDs that have particle data or charInfo */
 function getAvailableCharacters(): string[] {

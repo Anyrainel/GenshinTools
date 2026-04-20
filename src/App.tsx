@@ -14,7 +14,6 @@ const ArtifactBuildsPage = lazy(() => import("./pages/ArtifactBuilds"));
 const TeamCompPage = lazy(() => import("./pages/TeamComp"));
 const TierListPage = lazy(() => import("./pages/TierList"));
 const ArchivePage = lazy(() => import("./pages/Archive"));
-const ERCalcPage = lazy(() => import("./pages/ERCalc"));
 
 const SITE_NAME = "GGArtifact";
 
@@ -24,7 +23,6 @@ const PAGE_TITLES: Record<string, { en: string; zh: string }> = {
   "/tier-list": { en: "Tier List", zh: "榜单" },
   "/archive": { en: "Archive", zh: "图鉴" },
   "/team-comp": { en: "Team DMG", zh: "队伍伤害" },
-  "/er-calc": { en: "ER Calculator", zh: "充能计算" },
 };
 
 function App() {
@@ -73,9 +71,6 @@ function App() {
                 <Route path="/archive/:tab" element={<ArchivePage />} />
                 <Route path="/team-comp" element={<TeamCompPage />} />
                 <Route path="/team-comp/:tab" element={<TeamCompPage />} />
-                {import.meta.env.DEV && (
-                  <Route path="/er-calc" element={<ERCalcPage />} />
-                )}
               </Routes>
             </Suspense>
           </main>
