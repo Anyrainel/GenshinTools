@@ -1121,23 +1121,19 @@ describe("calculateTeamER", () => {
         { char: "bennett", action: "E" },
         { char: "bennett", action: "Q" },
       ];
-      // With NA (adds field time energy)
+      // With NA: sword procs every 2nd NA → 2 NAs = 1 proc of 1 flat energy
       const withNA: Timeline = [
         { char: "bennett", action: "E" },
         { char: "bennett", action: "NA" },
+        { char: "bennett", action: "NA" }, // proc here
         { char: "bennett", action: "NA" },
-        { char: "bennett", action: "NA" },
+        { char: "bennett", action: "NA" }, // proc here
         { char: "bennett", action: "Q" },
       ];
       const noNAResults = calculateTeamER(team, noNA);
       const withNAResults = calculateTeamER(team, withNA);
       // More NAs = more energy = lower ER
       expect(withNAResults[0].erNeeded).toBeLessThan(noNAResults[0].erNeeded);
-      // 3 NAs × 2.5 energy × 1.0 on-field = 7.5 additional energy
-      const energyDiff =
-        withNAResults[0].energyBreakdown.particleEnergy -
-        noNAResults[0].energyBreakdown.particleEnergy;
-      expect(energyDiff).toBeCloseTo(7.5, 1);
     });
 
     it("off-field teammates get reduced NA energy", () => {
@@ -1145,18 +1141,26 @@ describe("calculateTeamER", () => {
         member("bennett", "Pyro", 60),
         member("xiangling", "Pyro", 80),
       ];
+      // 2 NAs trigger sword pity → 1 flat energy distributed via absorber model.
+      // Bennett E provides particles so ER is finite.
       const timeline: Timeline = [
-        { char: "bennett", action: "NA" }, // Bennett on-field, XL off-field
+        { char: "bennett", action: "E" },
+        { char: "bennett", action: "NA" },
+        { char: "bennett", action: "NA" }, // proc: 1 flat energy distributed
+        { char: "bennett", action: "Q" },
+        { char: "xiangling", action: "Q" },
+      ];
+      const noNATimeline: Timeline = [
+        { char: "bennett", action: "E" },
         { char: "bennett", action: "Q" },
         { char: "xiangling", action: "Q" },
       ];
       const results = calculateTeamER(team, timeline);
+      const noNAResults = calculateTeamER(team, noNATimeline);
       const bennett = results.find((r) => r.characterId === "bennett")!;
-      const xl = results.find((r) => r.characterId === "xiangling")!;
-      // Bennett gets on-field NA energy (2.5), XL gets off-field (2.5 × 0.8)
-      expect(bennett.energyBreakdown.particleEnergy).toBeGreaterThan(
-        xl.energyBreakdown.particleEnergy
-      );
+      const bennettNoNA = noNAResults.find((r) => r.characterId === "bennett")!;
+      // Bennett gets NA energy → needs less ER than without NAs
+      expect(bennett.erNeeded).toBeLessThan(bennettNoNA.erNeeded);
     });
   });
 

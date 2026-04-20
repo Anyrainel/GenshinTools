@@ -7,6 +7,7 @@ export const CLEAR_PARTICLE = 2.0;
 export const ORB_MULTIPLIER = 3.0;
 
 // Off-field characters receive reduced energy from particles.
+// Formula: 1.0 - 0.1 × partySize (matches gcsim pkg/core/player/character/energy.go)
 // Key = party size, value = multiplier.
 export const OFF_FIELD_MULTIPLIER: Record<number, number> = {
   1: 1.0,

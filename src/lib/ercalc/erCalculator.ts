@@ -508,6 +508,8 @@ function getAbsorber(
 
 interface CharSimState {
   particleAccum: number;
+  flatAccum: number;
+  consecutiveNAs: number;
   maxER: number;
   maxERParticle: number;
   maxERFlat: number;
@@ -517,6 +519,34 @@ interface CharSimState {
   qEvaluated: number;
   firstQSkipped: boolean;
 }
+
+/**
+ * NA energy generation model (based on gcsim pkg/core/energy.go).
+ *
+ * gcsim: on each NA/CA hit there's a weapon-dependent probability to generate
+ * 1 flat energy, with a pity system (probability increases on miss, resets on
+ * proc and swap). 12-frame ICD between procs.
+ *
+ * We model this as: every N-th consecutive NA/CA/PA action by the same character
+ * procs 1 flat energy. The proc follows the absorber model (next-action absorber
+ * is on-field, energy distributed to all team members with on/off-field rates).
+ *
+ * N (actions between procs) by weapon type, assuming ~3 hits per action:
+ *   Sword    (10% base, +5%/miss, ~5.5 hits/proc) → every 2nd action
+ *   Claymore (0% base, +10%/miss, ~4.5 hits/proc) → every 2nd action
+ *   Polearm  (0% base, +4%/miss, ~7.1 hits/proc)  → every 3rd action
+ *   Bow      (0% base, +5%/miss, ~6.3 hits/proc)  → every 2nd action
+ *   Catalyst (0% base, +10%/miss, ~4.5 hits/proc) → every 2nd action
+ */
+const NA_PROC_INTERVAL: Record<string, number> = {
+  sword: 2,
+  claymore: 2,
+  polearm: 3,
+  bow: 2,
+  catalyst: 2,
+};
+const NA_PROC_INTERVAL_DEFAULT = 2;
+const NA_FLAT_ENERGY_PER_PROC = 1.0;
 
 /**
  * Walk through a sequence of actions, tracking particle energy per Q window.
@@ -585,6 +615,8 @@ function simulateER(
   for (const m of team) {
     state.set(m.id, {
       particleAccum: 0,
+      flatAccum: 0,
+      consecutiveNAs: 0,
       maxER: 0,
       maxERParticle: 0,
       maxERFlat: 0,
@@ -678,20 +710,36 @@ function simulateER(
       }
     }
 
-    // ── Normal attack energy (approximation from gcsim model) ──
-    // gcsim: ~14% chance per NA hit to generate 1 Clear orb.
-    // Clear orb = 3 Clear particles × 2.0 energy = 6 energy (on-field, before ER).
-    // Each NA/CA/PA action approximates ~3 hits → expected 0.14 × 3 × 6 = 2.5 energy.
-    // This goes to the active character at on-field rate as particle energy (scales with ER).
+    // ── Normal attack energy (absorber model, per gcsim pity system) ──
+    // gcsim: weapon-dependent pity probability per hit → 1 flat energy on proc.
+    // We approximate: every N-th consecutive NA/CA/PA action by the same char procs.
+    // Non-attack actions (E, Q, swap) reset the counter (gcsim resets on swap).
+    // Energy follows absorber model: next-action char is on-field, distributed to team.
     if (act.action === "NA" || act.action === "CA" || act.action === "PA") {
-      // ~2.5 particle energy per NA action for the active character
-      const naParticleEnergy = 2.5;
-      for (const m of team) {
-        const s = state.get(m.id)!;
-        const onField = m.id === act.char;
-        const mult = onField ? 1.0 : offFieldMult;
-        s.particleAccum += naParticleEnergy * mult;
+      const s = state.get(act.char)!;
+      s.consecutiveNAs++;
+
+      const member = teamById.get(act.char)!;
+      const weaponType = member.weaponType?.toLowerCase();
+      const interval = weaponType
+        ? (NA_PROC_INTERVAL[weaponType] ?? NA_PROC_INTERVAL_DEFAULT)
+        : NA_PROC_INTERVAL_DEFAULT;
+
+      if (s.consecutiveNAs >= interval) {
+        s.consecutiveNAs = 0;
+        // Proc: distribute flat energy via absorber model
+        const absorber = getAbsorber(sequence, i, isRepeating);
+        for (const m of team) {
+          const ms = state.get(m.id)!;
+          const onField = m.id === absorber;
+          const mult = onField ? 1.0 : offFieldMult;
+          ms.flatAccum += NA_FLAT_ENERGY_PER_PROC * mult;
+        }
       }
+    } else {
+      // Non-attack action resets NA counter for the acting character
+      const s = state.get(act.char)!;
+      s.consecutiveNAs = 0;
     }
 
     // ── Burst checkpoint ──
@@ -703,6 +751,7 @@ function simulateER(
       if (skipFirstQ && !s.firstQSkipped) {
         s.firstQSkipped = true;
         s.particleAccum = 0;
+        s.flatAccum = 0;
         s.currentEvents = [];
         continue;
       }
@@ -710,7 +759,7 @@ function simulateER(
       if (member.burstCost > 0) {
         const numWindows = qWindowCount.get(act.char) ?? 1;
         const rotEnergy = rotationEnergyMap.get(act.char)!;
-        const windowFlat = rotEnergy.flat / numWindows;
+        const windowFlat = rotEnergy.flat / numWindows + s.flatAccum;
         const windowErScaling = rotEnergy.erScaling / numWindows;
 
         // Add proportional enemy particles
@@ -738,8 +787,9 @@ function simulateER(
         s.qEvaluated++;
       }
 
-      // Reset particle accumulator (energy drains to 0 on burst)
+      // Reset accumulators (energy drains to 0 on burst)
       s.particleAccum = 0;
+      s.flatAccum = 0;
       s.currentEvents = [];
     }
   }
