@@ -506,6 +506,11 @@ export type CalcContext = {
   substatBudget: SubstatBudgetPreset;
 };
 
+/** Resolve a Partial<CalcContext> (from the store) into a full CalcContext with defaults. */
+export function resolveCalcContext(ctx?: Partial<CalcContext>): CalcContext {
+  return { ...DEFAULT_CALC_CONTEXT, ...ctx };
+}
+
 export const DEFAULT_CALC_CONTEXT: CalcContext = {
   enemyLevel: 110,
   enemyRes: 0.1,

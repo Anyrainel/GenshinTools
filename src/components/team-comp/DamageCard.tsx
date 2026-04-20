@@ -35,7 +35,7 @@ import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
 
 import { aggregateComboFormulaDefaults } from "@/lib/team-comp/calc/comboBuffOverrides";
-import { toStatSheets } from "@/lib/team-comp/teamOptUtils";
+import { toStatSheets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   OptFailReason,
   TeamOptimizationProgress,
@@ -1254,7 +1254,7 @@ function EnemyFields({
 }: CtxProps) {
   return (
     <EnemyInputs
-      enemyLevel={team.calcContext.enemyLevel}
+      enemyLevel={team.calcContext.enemyLevel ?? ""}
       onEnemyLevelChange={(raw) => {
         const num = Number(raw);
         if (!Number.isNaN(num))
@@ -1262,7 +1262,11 @@ function EnemyFields({
             calcContext: { ...team.calcContext, enemyLevel: num },
           });
       }}
-      enemyRes={Math.round(team.calcContext.enemyRes * 100)}
+      enemyRes={
+        team.calcContext.enemyRes != null
+          ? Math.round(team.calcContext.enemyRes * 100)
+          : ""
+      }
       onEnemyResChange={(raw) => {
         const num = Number(raw);
         if (!Number.isNaN(num))

@@ -923,11 +923,11 @@ describe("migrateTeamStore", () => {
       const result = migrateTeamStore(state, 12);
       const team = result.teams[0] as Team;
 
+      // CalcContext is now sparse — only user-customized fields are stored.
+      // Migration strips critRateTarget but preserves other fields as-is.
       expect(team.calcContext).toEqual({
         enemyLevel: 90,
         enemyRes: 0.1,
-        rollMultiplier: 0.85,
-        substatBudget: "8_6",
       });
       expect(
         (team.calcContext as unknown as Record<string, unknown>).critRateTarget
@@ -979,12 +979,8 @@ describe("migrateTeamStore", () => {
       const result = migrateTeamStore(state, 12);
       const team = result.teams[0] as Team;
 
-      expect(team.calcContext).toEqual({
-        enemyLevel: 110,
-        enemyRes: 0.1,
-        rollMultiplier: 0.85,
-        substatBudget: "8_6",
-      });
+      // Missing calcContext → empty sparse object (defaults resolved at UI boundary)
+      expect(team.calcContext).toEqual({});
     });
   });
 

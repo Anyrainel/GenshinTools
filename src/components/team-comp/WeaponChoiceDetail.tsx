@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Element } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncWeaponChoice } from "@/hooks/useAsyncWeaponChoice";
+import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
@@ -20,11 +21,12 @@ import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
   buildTeamConfigs,
   buildWeaponChoiceCharConfigs,
-} from "@/lib/team-comp/teamOptUtils";
-import type {
-  ComboFormula,
-  ComboLine,
-  ReactionOverride,
+} from "@/lib/team-comp/teamConfigUtils";
+import {
+  type ComboFormula,
+  type ComboLine,
+  type ReactionOverride,
+  resolveCalcContext,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team, WeaponChoiceResult } from "@/stores/useTeamStore";
@@ -38,11 +40,24 @@ import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
 interface WeaponChoiceDetailProps {
   team: Team;
   onBack: () => void;
+  viewId?: import("@/stores/useSessionNavStore").ViewId;
 }
 
-export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
+export function WeaponChoiceDetail({
+  team,
+  onBack,
+  viewId = "weaponChoice",
+}: WeaponChoiceDetailProps) {
   const { t } = useLanguage();
-  const updateTeam = useTeamStore((s) => s.updateTeam);
+  const storeUpdateTeam = useTeamStore((s) => s.updateTeam);
+  const checkAutoDisableOwned = useAutoDisableOwnedFilter(viewId);
+  const updateTeam = useCallback(
+    (id: string, patch: Partial<Team>) => {
+      storeUpdateTeam(id, patch);
+      if (patch.characters) checkAutoDisableOwned(patch.characters);
+    },
+    [storeUpdateTeam, checkAutoDisableOwned]
+  );
   const accountData = useActiveAccountData();
   const { ready: gameStatsReady, characterStats, weaponStats } = useGameStats();
   const isMobile = useMediaQuery("(max-width: 1023px)");
@@ -275,7 +290,7 @@ export function WeaponChoiceDetail({ team, onBack }: WeaponChoiceDetailProps) {
       baseConfigs: configs,
       charConfigs,
       combo: displayCombo,
-      calcContext: team.calcContext,
+      calcContext: resolveCalcContext(team.calcContext),
       weaponStats,
       opts: team.opts || {},
       enemyAura: localEnemyAura,

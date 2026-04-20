@@ -20,7 +20,7 @@ import type { SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { WeaponChoiceProgress } from "@/lib/team-comp/analyzer/weaponChoice";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
-import type { CalcContext } from "@/lib/team-comp/types";
+import { type CalcContext, DEFAULT_CALC_CONTEXT } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type {
   Team,
@@ -373,8 +373,10 @@ export function WeaponChoiceResultCard({
         {/* Settings row */}
         <div className={CONTROLS_CLS}>
           <EnemyInputs
-            enemyLevel={ctx.enemyLevel}
-            enemyRes={Math.round(ctx.enemyRes * 100)}
+            enemyLevel={ctx.enemyLevel ?? ""}
+            enemyRes={
+              ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
+            }
             onEnemyLevelChange={(raw) => {
               const num = Number(raw);
               if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
@@ -386,8 +388,12 @@ export function WeaponChoiceResultCard({
             t={t}
           />
           <RollQualityInputs
-            rollMultiplier={ctx.rollMultiplier}
-            substatBudget={ctx.substatBudget}
+            rollMultiplier={
+              ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
+            }
+            substatBudget={
+              ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
+            }
             onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
             onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}

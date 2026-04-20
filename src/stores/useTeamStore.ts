@@ -214,19 +214,8 @@ export function migrateTeamStore(
     // v13: CalcContext required, combo flatten, charSettings merge, analyzer grouping.
     // biome-ignore lint/suspicious/noExplicitAny: migration from legacy flat fields
     state.teams = state.teams.map((t: any) => {
-      // ── CalcContext: make required, drop deprecated critRateTarget ──
-      const { critRateTarget: _, ...restCtx } = t.calcContext ?? {};
-      const calcContext = {
-        enemyLevel: restCtx.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
-        enemyRes: restCtx.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-        rollMultiplier:
-          restCtx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier,
-        substatBudget:
-          restCtx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget,
-        ...(restCtx.perCharCrTarget
-          ? { perCharCrTarget: restCtx.perCharCrTarget }
-          : {}),
-      };
+      // ── CalcContext: drop deprecated critRateTarget, keep rest (all fields now optional) ──
+      const { critRateTarget: _, ...calcContext } = t.calcContext ?? {};
 
       // ── Combo flatten: combos[] + selectedCombo → combo ──
       const combos: ComboFormula[] = t.combos ?? [];
@@ -405,7 +394,7 @@ const DEFAULT_TEAM_FIELDS = {
   formulaMode: "single" as "single" | "combo",
   opts: {} as OptionMap,
   extraBuffs: [] as ExtraBuff[],
-  calcContext: { ...DEFAULT_CALC_CONTEXT },
+  calcContext: {} as CalcContext,
 } satisfies Partial<Team>;
 
 export interface Team {
@@ -418,7 +407,8 @@ export interface Team {
   reactions: ReactionType[];
   opts: OptionMap;
   // ─── Shared config ───
-  calcContext: CalcContext;
+  /** Sparse — only stores user-customized fields. Resolve via resolveCalcContext() before calc. */
+  calcContext: Partial<CalcContext>;
   /** Persistent element aura on the enemy (e.g. Pyro Regisvine). Enables reactions the team can't otherwise trigger. */
   enemyAura?: Element;
   /** Extra buffs applied by user (food, environment, status, custom). */

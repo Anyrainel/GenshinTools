@@ -26,6 +26,7 @@ import { allSlots } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
+import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
@@ -54,12 +55,13 @@ import {
   buildTeamConfigs,
   getHigherTierEquippedArtifactIds,
   toStatSheets,
-} from "@/lib/team-comp/teamOptUtils";
-import type {
-  CalcContext,
-  ComboFormula,
-  ComboLine,
-  ReactionOverride,
+} from "@/lib/team-comp/teamConfigUtils";
+import {
+  type CalcContext,
+  type ComboFormula,
+  type ComboLine,
+  type ReactionOverride,
+  resolveCalcContext,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
@@ -88,9 +90,14 @@ const limitMap = { en: limitEnRaw, zh: limitZhRaw };
 export interface DamageDetailProps {
   team: Team;
   onBack: () => void;
+  viewId?: import("@/stores/useSessionNavStore").ViewId;
 }
 
-export function DamageDetail({ team, onBack }: DamageDetailProps) {
+export function DamageDetail({
+  team,
+  onBack,
+  viewId = "damage",
+}: DamageDetailProps) {
   const { t } = useLanguage();
   const limitText = limitMap[t.lang];
   const [limitOpen, setLimitOpen] = useState(false);
@@ -103,7 +110,15 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
   useEffect(() => setExpandedLine(null), [team.id]);
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const accountData = useActiveAccountData();
-  const updateTeam = useTeamStore((state) => state.updateTeam);
+  const storeUpdateTeam = useTeamStore((state) => state.updateTeam);
+  const checkAutoDisableOwned = useAutoDisableOwnedFilter(viewId);
+  const updateTeam = useCallback(
+    (id: string, patch: Partial<Team>) => {
+      storeUpdateTeam(id, patch);
+      if (patch.characters) checkAutoDisableOwned(patch.characters);
+    },
+    [storeUpdateTeam, checkAutoDisableOwned]
+  );
   const scoreConfig = useArtifactScoreStore((state) => state.config);
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   // Use targeted selectors — subscribing to the full store caused re-renders
@@ -331,7 +346,7 @@ export function DamageDetail({ team, onBack }: DamageDetailProps) {
       }
     }
     return {
-      ...team.calcContext,
+      ...resolveCalcContext(team.calcContext),
       perCharCrTarget,
     };
   }, [team.calcContext, team.charSettings]);

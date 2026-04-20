@@ -19,11 +19,12 @@ import type {
 } from "@/lib/team-comp/analyzer/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
-import type {
-  ComboFormula,
-  ComboLine,
-  ReactionOverride,
+import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
+import {
+  type ComboFormula,
+  type ComboLine,
+  type ReactionOverride,
+  resolveCalcContext,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -364,7 +365,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
         Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
       minErOverrides:
         Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
-      calcContext: team.calcContext,
+      calcContext: resolveCalcContext(team.calcContext),
     };
     start(opts, !!result);
   }, [

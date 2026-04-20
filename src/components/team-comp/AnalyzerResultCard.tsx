@@ -11,7 +11,7 @@ import type {
   AnalyzerCharConfig,
   AnalyzerResult,
 } from "@/lib/team-comp/analyzer/types";
-import type { CalcContext } from "@/lib/team-comp/types";
+import { type CalcContext, DEFAULT_CALC_CONTEXT } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { BarChart3, Loader2, Play } from "lucide-react";
@@ -79,12 +79,14 @@ export function AnalyzerResultCard({
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
         <div className={CONTROLS_CLS}>
           <EnemyInputs
-            enemyLevel={ctx.enemyLevel}
+            enemyLevel={ctx.enemyLevel ?? ""}
             onEnemyLevelChange={(raw) => {
               const num = Number(raw);
               if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
             }}
-            enemyRes={Math.round(ctx.enemyRes * 100)}
+            enemyRes={
+              ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
+            }
             onEnemyResChange={(raw) => {
               const num = Number(raw);
               if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
@@ -92,9 +94,13 @@ export function AnalyzerResultCard({
             t={t}
           />
           <RollQualityInputs
-            rollMultiplier={ctx.rollMultiplier}
+            rollMultiplier={
+              ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
+            }
             onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
-            substatBudget={ctx.substatBudget}
+            substatBudget={
+              ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
+            }
             onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
