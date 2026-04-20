@@ -355,7 +355,7 @@ export function buildToWeightMap(
   globalConfig?: GlobalStatWeights
 ): StatWeightMap {
   const map: StatWeightMap = {};
-  for (const { stat, weight } of build.substats) {
+  for (const { stat, weight } of build.substats ?? []) {
     map[stat] = weight;
   }
   // Flat stats: if explicitly set in the build, honor that weight directly.

@@ -24,6 +24,7 @@ import {
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { repairTeam } from "./storeValidation";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 
 /**
@@ -326,10 +327,11 @@ export function mergeTeamStore(
     ...(persistedState as object),
   } as TeamState;
   if (Array.isArray(merged.teams)) {
-    merged.teams = merged.teams.map((t) => ({
-      ...DEFAULT_TEAM_FIELDS,
-      ...t,
-    }));
+    merged.teams = merged.teams.map((t) => {
+      const team = { ...DEFAULT_TEAM_FIELDS, ...t };
+      repairTeam(team as unknown as Record<string, unknown>);
+      return team;
+    });
   }
   return merged;
 }

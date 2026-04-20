@@ -33,7 +33,7 @@ export function getArtifactEr(art: ArtifactData | null): number {
       "er",
       getMainStatValueAtLevel("er", art.rarity, art.level)
     );
-  if (art.substats.er) er += toInternal("er", art.substats.er);
+  if (art.substats?.er) er += toInternal("er", art.substats.er);
   return er;
 }
 
@@ -45,7 +45,7 @@ export function getArtifactCr(art: ArtifactData | null): number {
       "cr",
       getMainStatValueAtLevel("cr", art.rarity, art.level)
     );
-  if (art.substats.cr) cr += toInternal("cr", art.substats.cr);
+  if (art.substats?.cr) cr += toInternal("cr", art.substats.cr);
   return cr;
 }
 
@@ -56,7 +56,7 @@ function getArtifactStats(art: ArtifactData): Partial<Record<StatKey, number>> {
     getMainStatValueAtLevel(art.mainStatKey, art.rarity, art.level)
   );
   stats[art.mainStatKey as StatKey] = mainVal;
-  for (const [key, val] of Object.entries(art.substats)) {
+  for (const [key, val] of Object.entries(art.substats ?? {})) {
     if (!val) continue;
     const statKey = key as StatKey;
     stats[statKey] = (stats[statKey] ?? 0) + toInternal(key, val as number);

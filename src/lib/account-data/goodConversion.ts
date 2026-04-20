@@ -9,6 +9,7 @@ import type {
   SubStat,
   WeaponData,
 } from "@/data/types";
+import { repairArtifact } from "@/stores/storeValidation";
 import { solveArtifact } from "../artifact/solver";
 import {
   artifactNameMap as artifactMap,
@@ -159,7 +160,7 @@ export function convertSingleArtifact(
   const substats: Partial<Record<SubStat, number>> = {};
   const initialValues: Partial<Record<SubStat, number>> = {};
   let hasInitialValues = false;
-  for (const sub of art.substats) {
+  for (const sub of art.substats ?? []) {
     const key = statKeyMap[sub.key] as SubStat;
     if (key) {
       substats[key] = sub.value;
@@ -191,7 +192,7 @@ export function convertSingleArtifact(
     }
   }
 
-  return {
+  const result: ArtifactData = {
     id,
     setKey,
     slotKey,
@@ -208,6 +209,8 @@ export function convertSingleArtifact(
     ...(unactivatedSubstats && { unactivatedSubstats }),
     ...(hasInitialValues && { initialValues }),
   };
+  repairArtifact(result);
+  return result;
 }
 
 // Multi-element characters: bare key -> default element fallback

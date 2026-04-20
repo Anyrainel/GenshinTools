@@ -574,6 +574,20 @@ export const useBuildsStore = create<BuildsState>()(
           ...currentState,
           ...(persistedState as object),
         } as BuildsState;
+        if (!merged.builds || typeof merged.builds !== "object")
+          merged.builds = {};
+        if (
+          !merged.characterToBuildIds ||
+          typeof merged.characterToBuildIds !== "object"
+        )
+          merged.characterToBuildIds = {};
+        if (
+          !merged.validationErrors ||
+          typeof merged.validationErrors !== "object"
+        )
+          merged.validationErrors = {};
+        if (!Array.isArray(merged.presetDeletedBuildIds))
+          merged.presetDeletedBuildIds = [];
         for (const build of Object.values(merged.builds)) {
           migrateBuild(build);
         }
