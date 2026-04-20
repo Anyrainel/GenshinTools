@@ -51,6 +51,7 @@ blob-report/
 
 coverage/
 temp/
+scripts/bin/
 scripts/data/*.txt
 scripts/output/
 

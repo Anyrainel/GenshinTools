@@ -61,12 +61,16 @@ const PROXY_TOOLS = [
     url: "https://gh-proxy.org/https://github.com/konkers/irminsul/releases/latest/download/irminsul.exe",
   },
   {
+    label: "data_cache.json",
+    url: "/good/data_cache.json",
+  },
+  {
     label: "GOODScanner.exe",
     url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe",
   },
   {
-    label: "data_cache.json",
-    url: "/good/data_cache.json",
+    label: "GOODCapture.exe",
+    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODCapture.exe",
   },
 ] as const;
 
