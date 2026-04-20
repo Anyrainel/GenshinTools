@@ -572,7 +572,7 @@ export const i18nUiData = {
     navArtifactFilter: { en: "Builds", zh: "配装" },
     navAccountData: { en: "Account Data", zh: "账号数据" },
     navTierList: { en: "Tier List", zh: "榜单" },
-    navERCalc: { en: "ER Calc", zh: "充能计算" },
+
     navArchive: { en: "Archive", zh: "图鉴" },
     navTeamComp: { en: "Team DMG", zh: "队伍伤害" },
     heroDescription: {
@@ -1946,6 +1946,8 @@ export const i18nUiData = {
     },
     sortByTier: { en: "Tier", zh: "品质" },
     sortByName: { en: "Name", zh: "名称" },
+    expandAll: { en: "Expand All", zh: "全部展开" },
+    collapseAll: { en: "Collapse All", zh: "全部折叠" },
     erHoarding: {
       en: "ER hoarding (4-liner + ER)",
       zh: "辅助套充能锁定（4初始+充能）",
@@ -2108,6 +2110,8 @@ export const i18nUiData = {
       en: "{0} / {1} artifacts processed",
       zh: "已处理 {0} / {1} 个圣遗物",
     },
+    includeLock: { en: "Include lock instructions", zh: "包括锁定指令" },
+    includeUnlock: { en: "Include unlock instructions", zh: "包括解锁指令" },
     connectionDesc: {
       en: "Connect to the local artifact manager to apply changes in-game.",
       zh: "连接本地圣遗物管理器以在游戏中应用更改。",
@@ -2210,7 +2214,6 @@ export const i18nUiData = {
     importCreateNew: { en: "Create New", zh: "创建新的" },
   },
   erCalc: {
-    presetTeams: { en: "Presets", zh: "预设队伍" },
     noMatchingTeamFound: {
       en: "No matching team found in Team DMG",
       zh: "未找到匹配的队伍配置",
@@ -2231,10 +2234,7 @@ export const i18nUiData = {
     flatEnergy: { en: "Flat energy", zh: "固定充能" },
     totalCost: { en: "Total / Cost", zh: "总计 / 需求" },
     actionsLabel: { en: "actions", zh: "个动作" },
-    addActionsBelow: {
-      en: "Add actions using buttons below",
-      zh: "使用下方按钮添加动作",
-    },
+
     addCharacter: { en: "Add character", zh: "添加角色" },
     noWeapon: { en: "No weapon", zh: "无武器" },
   },

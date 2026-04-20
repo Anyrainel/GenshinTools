@@ -8,9 +8,21 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import type { TriageDecision } from "@/lib/account-data/triage";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Lock, LockOpen, ShieldAlert } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 type T = ReturnType<typeof useLanguage>["t"];
+
+export interface TriageTabContentHandle {
+  expandAll: () => void;
+  collapseAll: () => void;
+  hasExpanded: boolean;
+}
 
 function useGridCols() {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -94,6 +106,7 @@ export function TriageTabContent({
   recommendUnlock,
   noAction,
   noChange,
+  handleRef,
 }: {
   t: T;
   isStale: boolean;
@@ -101,8 +114,10 @@ export function TriageTabContent({
   recommendUnlock: TriageDecision[];
   noAction: TriageDecision[];
   noChange: TriageDecision[];
+  handleRef?: React.RefObject<TriageTabContentHandle | null>;
 }) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState("lock");
   const { gridRef, cols: gridCols } = useGridCols();
 
   const toggleRow = (tab: string, index: number) => {
@@ -126,9 +141,36 @@ export function TriageTabContent({
     nochange: noChange,
   };
 
+  useImperativeHandle(handleRef, () => ({
+    expandAll: () => {
+      const items = itemsMap[activeTab] ?? [];
+      if (items.length === 0 || gridCols < 1) return;
+      const totalRows = Math.ceil(items.length / gridCols);
+      const keys = new Set(expandedRows);
+      for (let r = 0; r < totalRows; r++) keys.add(`${activeTab}:${r}`);
+      setExpandedRows(keys);
+    },
+    collapseAll: () => {
+      setExpandedRows((prev) => {
+        const next = new Set(prev);
+        for (const key of prev) {
+          if (key.startsWith(`${activeTab}:`)) next.delete(key);
+        }
+        return next;
+      });
+    },
+    get hasExpanded() {
+      for (const key of expandedRows) {
+        if (key.startsWith(`${activeTab}:`)) return true;
+      }
+      return false;
+    },
+  }));
+
   return (
     <Tabs
       defaultValue="lock"
+      onValueChange={setActiveTab}
       className={cn(
         isStale && "opacity-60 pointer-events-none transition-opacity"
       )}

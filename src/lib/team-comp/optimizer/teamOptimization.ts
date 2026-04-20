@@ -12,7 +12,7 @@ import { charInfo } from "@/data/charInfo";
 import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { scoreSlot } from "../../account-data/artifactScore";
+import { scoreSlotWithMainStat } from "../../account-data/artifactScore";
 import {
   compileComboTeamDamage,
   fillVarsFromArtifacts,
@@ -109,16 +109,23 @@ function hasIntersection(a: Set<string>, b: Set<string>): boolean {
  * weight 0.3 since flat substats still contribute after conversion but are
  * ~3× weaker per-roll than their % counterparts.
  */
-function buildSupStatFallbackWeights(charId: string): Record<string, number> {
+function buildSupStatFallbackWeights(charId: string): {
+  weights: Record<string, number>;
+  targetMainStats: Set<string>;
+} {
   const weights: Record<string, number> = { er: 1 };
+  const targetMainStats = new Set<string>(["er"]);
   const supStat = charInfo[charId]?.supStat;
   if (supStat) {
-    for (const s of supStat) weights[s] = 1;
+    for (const s of supStat) {
+      weights[s] = 1;
+      targetMainStats.add(s);
+    }
   }
   if (weights["atk%"]) weights.atk = 0.3;
   if (weights["hp%"]) weights.hp = 0.3;
   if (weights["def%"]) weights.def = 0.3;
-  return weights;
+  return { weights, targetMainStats };
 }
 
 function computeHyperparams(inventorySize: number): {
@@ -483,16 +490,29 @@ function buildHeuristicAssignment(
 
     if (candidates.length === 0) continue;
 
-    const fallbackWeights = buildMatch
+    const erFallback = buildMatch
       ? undefined
-      : ({ er: 100 } as Record<string, number>);
+      : {
+          weights: { er: 100 } as Record<string, number>,
+          targetMainStats: new Set(["er"]),
+        };
     candidates.sort((a, b) => {
       const sa = buildMatch
         ? computeWeightScore(a, buildMatch, globalConfig, 1)
-        : scoreSlot(a, fallbackWeights!, globalConfig);
+        : scoreSlotWithMainStat(
+            a,
+            erFallback!.weights,
+            globalConfig,
+            erFallback!.targetMainStats
+          );
       const sb = buildMatch
         ? computeWeightScore(b, buildMatch, globalConfig, 1)
-        : scoreSlot(b, fallbackWeights!, globalConfig);
+        : scoreSlotWithMainStat(
+            b,
+            erFallback!.weights,
+            globalConfig,
+            erFallback!.targetMainStats
+          );
       return sb - sa || b.level - a.level;
     });
 
@@ -2658,16 +2678,26 @@ export async function* runTeamOptimization(
         // Score by build weights (no CR/CD fallback for saturated chars)
         // Use ER (and supStat scaling keys for healers/shielders) as fallback
         // weights if no build match exists.
-        const fallbackWeights = buildMatch
+        const fallback = buildMatch
           ? undefined
           : buildSupStatFallbackWeights(charId);
         candidates.sort((a, b) => {
           const sa = buildMatch
             ? computeWeightScore(a, buildMatch, globalConfig, 1)
-            : scoreSlot(a, fallbackWeights!, globalConfig);
+            : scoreSlotWithMainStat(
+                a,
+                fallback!.weights,
+                globalConfig,
+                fallback!.targetMainStats
+              );
           const sb = buildMatch
             ? computeWeightScore(b, buildMatch, globalConfig, 1)
-            : scoreSlot(b, fallbackWeights!, globalConfig);
+            : scoreSlotWithMainStat(
+                b,
+                fallback!.weights,
+                globalConfig,
+                fallback!.targetMainStats
+              );
           if (sb !== sa) return sb - sa;
           // Tiebreak: prefer higher level
           return b.level - a.level;

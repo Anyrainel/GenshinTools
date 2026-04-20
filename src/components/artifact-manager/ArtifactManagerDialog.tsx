@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -74,6 +75,8 @@ export function ArtifactManagerDialog({
   const { t } = useLanguage();
   const [port, setPort] = useState(DEFAULT_PORT);
   const [portInput, setPortInput] = useState(String(DEFAULT_PORT));
+  const [includeLock, setIncludeLock] = useState(true);
+  const [includeUnlock, setIncludeUnlock] = useState(true);
 
   const { connection, refresh } = useArtifactManagerConnection(open, port);
   const { phase, submit, reset } = useArtifactManagerJob(port);
@@ -111,7 +114,15 @@ export function ArtifactManagerDialog({
 
   const handleAction = useCallback(() => {
     if (job.type === "manage") {
-      const payload = job.build();
+      const full = job.build();
+      const payload: ManagePayload = {
+        request: {
+          lock: includeLock ? full.request.lock : [],
+          unlock: includeUnlock ? full.request.unlock : [],
+        },
+        lockIds: includeLock ? full.lockIds : [],
+        unlockIds: includeUnlock ? full.unlockIds : [],
+      };
       const total = payload.request.lock.length + payload.request.unlock.length;
       if (total > 0) {
         submit({ type: "manage", payload });
@@ -122,7 +133,7 @@ export function ArtifactManagerDialog({
         submit({ type: "equip", payload });
       }
     }
-  }, [job, submit]);
+  }, [job, submit, includeLock, includeUnlock]);
 
   const applySnapshot = useCallback((snapshot: IGOODArtifact[]) => {
     const account = getActiveAccount(useAccountStore.getState());
@@ -202,6 +213,30 @@ export function ArtifactManagerDialog({
                   onRetry={refresh}
                 />
               </div>
+              {job.type === "manage" && (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Checkbox
+                      id="include-lock"
+                      checked={includeLock}
+                      onCheckedChange={(v) => setIncludeLock(!!v)}
+                    />
+                    <label htmlFor="include-lock">
+                      {t.ui("manager.includeLock")}
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Checkbox
+                      id="include-unlock"
+                      checked={includeUnlock}
+                      onCheckedChange={(v) => setIncludeUnlock(!!v)}
+                    />
+                    <label htmlFor="include-unlock">
+                      {t.ui("manager.includeUnlock")}
+                    </label>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -254,7 +289,13 @@ export function ArtifactManagerDialog({
         <DialogFooter className="gap-2 sm:gap-0">
           {phase.type === "idle" && (
             <>
-              <Button disabled={!isReady} onClick={handleAction}>
+              <Button
+                disabled={
+                  !isReady ||
+                  (job.type === "manage" && !includeLock && !includeUnlock)
+                }
+                onClick={handleAction}
+              >
                 {actionLabel}
               </Button>
               {import.meta.env.DEV && (

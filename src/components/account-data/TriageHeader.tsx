@@ -1,6 +1,7 @@
 import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { TriageSettingsPanel } from "@/components/account-data/TriageSettingsPanel";
+import type { TriageTabContentHandle } from "@/components/account-data/TriageTabContent";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ArtifactManagerDialog } from "@/components/artifact-manager/ArtifactManagerDialog";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,8 @@ import { TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
 import {
   ArrowDown,
   ArrowUp,
+  ChevronsDownUp,
+  ChevronsUpDown,
   CircleHelp,
   Monitor,
   Puzzle,
@@ -56,6 +59,7 @@ export function TriageHeader({
   activeSortDir,
   onToggleSort,
   buildManagerInstructions,
+  tabContentRef,
 }: {
   t: T;
   settings: TriageSettings;
@@ -70,10 +74,12 @@ export function TriageHeader({
   activeSortDir: "asc" | "desc";
   onToggleSort: (dim: SortDimension) => void;
   buildManagerInstructions: () => ManagePayload;
+  tabContentRef?: React.RefObject<TriageTabContentHandle | null>;
 }) {
   const [flexOpen, setFlexOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
+  const [, forceRender] = useState(0);
 
   const totalArtifacts = decisions.length;
   const tierCounts = { P: 0, Q: 0, N: 0, T: 0 };
@@ -163,15 +169,16 @@ export function TriageHeader({
           ).map(([dim, labelKey]) => {
             const isActive = activeSortDim === dim;
             return (
-              <button
+              <Button
                 key={dim}
-                type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => onToggleSort(dim)}
                 className={cn(
-                  "inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-md text-sm font-medium transition-colors border min-w-[4.5rem]",
+                  "h-7 px-2 text-sm gap-1 min-w-[4.5rem]",
                   isActive
-                    ? "bg-primary/40 text-primary-foreground border-primary/40"
-                    : "bg-secondary text-secondary-foreground border-primary/40 hover:bg-secondary/80"
+                    ? "bg-primary/40 text-primary-foreground border-primary/20"
+                    : "border-border"
                 )}
               >
                 {t.ui(labelKey)}
@@ -184,9 +191,33 @@ export function TriageHeader({
                 ) : (
                   <ArrowDown className="h-3.5 w-3.5 opacity-30" />
                 )}
-              </button>
+              </Button>
             );
           })}
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 px-2 text-sm gap-1 border-border"
+            onClick={() => {
+              const handle = tabContentRef?.current;
+              if (!handle) return;
+              if (handle.hasExpanded) handle.collapseAll();
+              else handle.expandAll();
+              forceRender((n) => n + 1);
+            }}
+          >
+            {tabContentRef?.current?.hasExpanded ? (
+              <>
+                {t.ui("triage.collapseAll")}
+                <ChevronsDownUp className="h-3.5 w-3.5" />
+              </>
+            ) : (
+              <>
+                {t.ui("triage.expandAll")}
+                <ChevronsUpDown className="h-3.5 w-3.5" />
+              </>
+            )}
+          </Button>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-1">

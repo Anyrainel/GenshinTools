@@ -426,6 +426,9 @@ export interface Team {
   // ─── Per-character settings ───
   /** Per-character optimizer/generator settings (minEr, minCr, crMode, tierAwarePool, ignoreArtifactSets). */
   charSettings?: Record<string, CharSettings>;
+  // ─── ER calculator ───
+  /** Persisted ER timeline sequences. Last entry = main rotation, earlier = startup. */
+  erTimelines?: import("@/lib/ercalc/erCalculator").ERTimeline[];
   // ─── Result caches ───
   optimizationResult: OptimizationResult | null;
   /** Persisted weapon choice computation cache. Result cache, not user config. */

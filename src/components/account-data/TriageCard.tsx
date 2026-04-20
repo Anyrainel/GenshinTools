@@ -277,36 +277,38 @@ export function TriageCard({
                   </div>
                 )}
 
-                {/* All character evaluations */}
-                {decision.allResults.length > 0 && (
+                {/* All character evaluations (skip T tier — no meaningful match) */}
+                {decision.allResults.some((r) => r.tier !== "T") && (
                   <div className="border-t border-border/50 pt-1.5 space-y-0.5">
-                    {decision.allResults.map((r, i) => {
-                      const src = r.embryo.demand.demandSource;
-                      const prefix =
-                        src.type === "4pc"
-                          ? t.ui("computeFilters.fourPc")
-                          : src.type === "2pc"
-                            ? t.ui("computeFilters.twoPc")
-                            : t.ui("triage.rulePrefixFlex");
-                      const char = t.character(r.embryo.demand.characterId);
-                      return (
-                        <div
-                          key={i}
-                          className={cn(
-                            "flex items-center gap-1",
-                            r === dr
-                              ? "text-foreground"
-                              : "text-muted-foreground"
-                          )}
-                        >
-                          {r.tier && <TierBadge tier={r.tier} />}
-                          <span className="truncate">{char}</span>
-                          <span className="text-muted-foreground">
-                            {prefix}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    {decision.allResults
+                      .filter((r) => r.tier !== "T")
+                      .map((r, i) => {
+                        const src = r.embryo.demand.demandSource;
+                        const prefix =
+                          src.type === "4pc"
+                            ? t.ui("computeFilters.fourPc")
+                            : src.type === "2pc"
+                              ? t.ui("computeFilters.twoPc")
+                              : t.ui("triage.rulePrefixFlex");
+                        const char = t.character(r.embryo.demand.characterId);
+                        return (
+                          <div
+                            key={i}
+                            className={cn(
+                              "flex items-center gap-1",
+                              r === dr
+                                ? "text-foreground"
+                                : "text-muted-foreground"
+                            )}
+                          >
+                            {r.tier && <TierBadge tier={r.tier} />}
+                            <span className="truncate">{char}</span>
+                            <span className="text-muted-foreground">
+                              {prefix}
+                            </span>
+                          </div>
+                        );
+                      })}
                   </div>
                 )}
               </div>

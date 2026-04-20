@@ -3,7 +3,10 @@ import {
   type SortDimension,
   TriageHeader,
 } from "@/components/account-data/TriageHeader";
-import { TriageTabContent } from "@/components/account-data/TriageTabContent";
+import {
+  TriageTabContent,
+  type TriageTabContentHandle,
+} from "@/components/account-data/TriageTabContent";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactIdToHalfSetId } from "@/data/constants";
@@ -16,7 +19,13 @@ import {
 } from "@/lib/account-data/triage";
 import { buildTriageInstructions } from "@/lib/artifact-manager/instructions";
 import { useTriageStore } from "@/stores/useTriageStore";
-import { useCallback, useDeferredValue, useMemo, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 interface TriageViewProps {
   onOpenImport?: () => void;
@@ -27,6 +36,8 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
   const accountData = useActiveAccountData();
   const buildGroups = useAllResolvedBuilds();
+
+  const tabContentRef = useRef<TriageTabContentHandle | null>(null);
 
   const settings = useTriageStore((s) => s.settings);
   const setSettings = useTriageStore((s) => s.setSettings);
@@ -246,6 +257,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           activeSortDir={activeSortDir}
           onToggleSort={toggleSort}
           buildManagerInstructions={buildManagerInstructions}
+          tabContentRef={tabContentRef}
         />
       }
     >
@@ -256,6 +268,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
         recommendUnlock={recommendUnlock}
         noAction={noAction}
         noChange={noChange}
+        handleRef={tabContentRef}
       />
     </ScrollLayout>
   );
