@@ -206,7 +206,7 @@ export function CharCrErSettings({
   if (charIds.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap justify-around items-start gap-y-1 pb-1 md:pb-2">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 pb-1 md:pb-2">
       {charIds.map((charId) => {
         const cs = team.charSettings?.[charId];
         const crMode = cs?.crMode ?? "min";
@@ -327,7 +327,7 @@ export function CharCrErSettings({
             </div>
 
             {/* Row 2: checkboxes */}
-            <div className="flex items-center gap-2 md:gap-3 pl-6 md:pl-7">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 md:gap-x-3 pl-6 md:pl-7">
               {/* ER over set checkbox */}
               <div
                 className={CB_CLS}
