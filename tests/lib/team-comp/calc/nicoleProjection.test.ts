@@ -66,13 +66,13 @@ function getEntries(char: { allFormulaEntries: Record<string, FormulaEntry> }) {
 
 function projEntries(entries: Record<string, FormulaEntry>) {
   return Object.entries(entries).filter(([id]) =>
-    id.startsWith("nicole-q-proj-slot")
+    id.startsWith("nicole-q-coord-slot")
   );
 }
 
 function unityEntries(entries: Record<string, FormulaEntry>) {
   return Object.entries(entries).filter(([id]) =>
-    id.startsWith("nicole-c1-unity-slot")
+    id.startsWith("nicole-c1-coord-slot")
   );
 }
 
@@ -84,10 +84,10 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
 
     expect(projs).toHaveLength(4); // nicole + 3 teammates = 4 slots
     expect(projs.map(([id]) => id)).toEqual([
-      "nicole-q-proj-slot1",
-      "nicole-q-proj-slot2",
-      "nicole-q-proj-slot3",
-      "nicole-q-proj-slot4",
+      "nicole-q-coord-slot1",
+      "nicole-q-coord-slot2",
+      "nicole-q-coord-slot3",
+      "nicole-q-coord-slot4",
     ]);
   });
 
@@ -95,10 +95,10 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
     const { char } = nicoleWithTeam(["amber", "kaeya", "lisa"]);
     const entries = getEntries(char);
 
-    expect(entries["nicole-q-proj-slot1"].parts[0].statsCharId).toBe("nicole");
-    expect(entries["nicole-q-proj-slot2"].parts[0].statsCharId).toBe("amber");
-    expect(entries["nicole-q-proj-slot3"].parts[0].statsCharId).toBe("kaeya");
-    expect(entries["nicole-q-proj-slot4"].parts[0].statsCharId).toBe("lisa");
+    expect(entries["nicole-q-coord-slot1"].parts[0].statsCharId).toBe("nicole");
+    expect(entries["nicole-q-coord-slot2"].parts[0].statsCharId).toBe("amber");
+    expect(entries["nicole-q-coord-slot3"].parts[0].statsCharId).toBe("kaeya");
+    expect(entries["nicole-q-coord-slot4"].parts[0].statsCharId).toBe("lisa");
   });
 
   it("sets DamageTag element to each occupant's element", () => {
@@ -106,16 +106,16 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
     const entries = getEntries(char);
 
     // nicole = Pyro, amber = Pyro, kaeya = Cryo, lisa = Electro
-    expect(entries["nicole-q-proj-slot1"].parts[0].formula.tag.element).toBe(
+    expect(entries["nicole-q-coord-slot1"].parts[0].formula.tag.element).toBe(
       "Pyro"
     );
-    expect(entries["nicole-q-proj-slot2"].parts[0].formula.tag.element).toBe(
+    expect(entries["nicole-q-coord-slot2"].parts[0].formula.tag.element).toBe(
       "Pyro"
     );
-    expect(entries["nicole-q-proj-slot3"].parts[0].formula.tag.element).toBe(
+    expect(entries["nicole-q-coord-slot3"].parts[0].formula.tag.element).toBe(
       "Cryo"
     );
-    expect(entries["nicole-q-proj-slot4"].parts[0].formula.tag.element).toBe(
+    expect(entries["nicole-q-coord-slot4"].parts[0].formula.tag.element).toBe(
       "Electro"
     );
   });
@@ -140,19 +140,19 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
     }
   });
 
-  it("sets hits: 5 per projection formula", () => {
+  it("projection parts have no hits override (count expressed via combo)", () => {
     const { char } = nicoleWithTeam(["amber"]);
     const entries = getEntries(char);
 
-    expect(entries["nicole-q-proj-slot1"].parts[0].hits).toBe(5);
-    expect(entries["nicole-q-proj-slot2"].parts[0].hits).toBe(5);
+    expect(entries["nicole-q-coord-slot1"].parts[0].hits).toBeUndefined();
+    expect(entries["nicole-q-coord-slot2"].parts[0].hits).toBeUndefined();
   });
 
   it("bakes occupant name into labels", () => {
     const { char } = nicoleWithTeam(["amber"]);
     const entries = getEntries(char);
 
-    const proj2 = entries["nicole-q-proj-slot2"];
+    const proj2 = entries["nicole-q-coord-slot2"];
     expect(proj2.label.en).toContain("Amber");
     expect(proj2.label.zh).toContain("安柏");
   });
@@ -163,7 +163,7 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
     const projs = projEntries(entries);
 
     expect(projs).toHaveLength(3);
-    expect(entries["nicole-q-proj-slot4"]).toBeUndefined();
+    expect(entries["nicole-q-coord-slot4"]).toBeUndefined();
   });
 
   it("2-char team → 2 projection entries", () => {
@@ -178,7 +178,7 @@ describe("Nicole Q Arcane Projection — slot-based formulas", () => {
     const { char } = nicoleWithTeam(["amber"]);
     const entries = getEntries(char);
 
-    expect(entries["nicole-q-proj-slot1"].parts[0].statsCharId).toBe("nicole");
+    expect(entries["nicole-q-coord-slot1"].parts[0].statsCharId).toBe("nicole");
   });
 });
 
@@ -202,18 +202,18 @@ describe("Nicole C1 Unity — constellation gating", () => {
     const { char } = nicoleWithTeam(["amber", "kaeya"], 1);
     const entries = getEntries(char);
 
-    expect(entries["nicole-c1-unity-slot1"].parts[0].statsCharId).toBe(
+    expect(entries["nicole-c1-coord-slot1"].parts[0].statsCharId).toBe(
       "nicole"
     );
-    expect(entries["nicole-c1-unity-slot2"].parts[0].statsCharId).toBe("amber");
-    expect(entries["nicole-c1-unity-slot3"].parts[0].statsCharId).toBe("kaeya");
+    expect(entries["nicole-c1-coord-slot2"].parts[0].statsCharId).toBe("amber");
+    expect(entries["nicole-c1-coord-slot3"].parts[0].statsCharId).toBe("kaeya");
   });
 
   it("C1 Unity uses occupant's element", () => {
     const { char } = nicoleWithTeam(["kaeya"], 1);
     const entries = getEntries(char);
 
-    expect(entries["nicole-c1-unity-slot2"].parts[0].formula.tag.element).toBe(
+    expect(entries["nicole-c1-coord-slot2"].parts[0].formula.tag.element).toBe(
       "Cryo"
     );
   });
@@ -222,8 +222,8 @@ describe("Nicole C1 Unity — constellation gating", () => {
     const { char } = nicoleWithTeam(["amber"], 6);
     const entries = getEntries(char);
 
-    expect(entries["nicole-c1-unity-slot1"].minC).toBe(1);
-    expect(entries["nicole-c1-unity-slot2"].minC).toBe(1);
+    expect(entries["nicole-c1-coord-slot1"].minC).toBe(1);
+    expect(entries["nicole-c1-coord-slot2"].minC).toBe(1);
   });
 
   it("C1 Unity entries have offField: false", () => {
@@ -261,12 +261,12 @@ describe("Nicole P4 Hexerei bespoke buff", () => {
     const { char } = nicoleWithTeam(["prune", "kaeya"], 6);
     const entries = getEntries(char);
 
-    const proj2 = entries["nicole-q-proj-slot2"]; // prune's slot
+    const proj2 = entries["nicole-q-coord-slot2"]; // prune's slot
     const buff = proj2.parts[0].bespokeBuffs![0];
     expect(buff.target.receiver).toBe("team");
     expect((buff.target as { charId: string }).charId).toBe("prune");
 
-    const proj3 = entries["nicole-q-proj-slot3"]; // kaeya's slot
+    const proj3 = entries["nicole-q-coord-slot3"]; // kaeya's slot
     const buff3 = proj3.parts[0].bespokeBuffs![0];
     expect((buff3.target as { charId: string }).charId).toBe("kaeya");
   });
@@ -288,7 +288,7 @@ describe("Nicole comboDescriptor", () => {
       .comboDescriptor;
 
     expect(
-      combo.some((c: { id: string }) => c.id === "nicole-q-proj-slot1")
+      combo.some((c: { id: string }) => c.id === "nicole-q-coord-slot1")
     ).toBe(true);
   });
 
@@ -298,7 +298,7 @@ describe("Nicole comboDescriptor", () => {
       .comboDescriptor;
 
     expect(
-      combo.some((c: { id: string }) => c.id === "nicole-c1-unity-slot1")
+      combo.some((c: { id: string }) => c.id === "nicole-c1-coord-slot1")
     ).toBe(true);
   });
 
@@ -308,7 +308,7 @@ describe("Nicole comboDescriptor", () => {
       .comboDescriptor;
 
     expect(
-      combo.some((c: { id: string }) => c.id === "nicole-c1-unity-slot1")
+      combo.some((c: { id: string }) => c.id === "nicole-c1-coord-slot1")
     ).toBe(false);
   });
 });

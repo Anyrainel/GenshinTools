@@ -681,7 +681,7 @@ class Mavuika extends CharacterBase {
       },
       // Flamestrider N1-N5 full chain (E params 4-8)
       "mavuika-fs-normal": {
-        label: { zh: "驰轮车N1-N5", en: "Flamestrider N1-N5" },
+        label: { zh: "驰轮车普攻5段", en: "Flamestrider NA x5" },
         parts: [
           {
             formula: new DirectFormula(
@@ -757,7 +757,7 @@ class Mavuika extends CharacterBase {
       },
       // C6: Ring hit → Flamestrider crash (200% ATK Pyro DMG per Ring attack, off-field)
       "mavuika-c6-crash": {
-        label: { zh: "C6环撞击", en: "C6 Ring Crash" },
+        label: { zh: "6命车环撞击", en: "C6 Ring Crash" },
         minC: 6,
         parts: [
           {

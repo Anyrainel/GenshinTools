@@ -497,7 +497,7 @@ class RaidenShogun extends CharacterBase {
       "raiden-normal": {
         label: {
           zh: "Q普攻3段",
-          en: "Q Normal N1-N3",
+          en: "Q Normal x3",
         },
         parts: [
           {

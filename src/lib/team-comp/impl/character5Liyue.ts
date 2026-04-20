@@ -135,7 +135,7 @@ class Zibai extends CharacterBase {
       "zibai-e-combo": {
         label: {
           zh: "E普攻4段",
-          en: "E NA Combo (N1-N4)",
+          en: "E NA x4",
         },
         // Each hit is a separate part so that baseDmg buffs apply correctly per hit.
         // N3 has 2 equal-multiplier hits → hits: 2 with per-hit talent value.

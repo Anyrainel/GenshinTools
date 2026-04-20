@@ -1557,15 +1557,14 @@ class Nicole extends CharacterBase {
           )
         : undefined;
 
-      formulas[`nicole-q-proj-slot${slotIdx + 1}`] = {
+      formulas[`nicole-q-coord-slot${slotIdx + 1}`] = {
         label: {
           zh: `Q奥迹造影·${name.zh}`,
-          en: `Q Arcane Projection (${name.en})`,
+          en: `Q Arcane (${name.en})`,
         },
         parts: [
           {
             formula: new DirectFormula(projRatio, projTag),
-            hits: 5,
             statsCharId: occupantId,
             offField: false,
             ...(p4Buff ? { bespokeBuffs: [p4Buff] } : {}),
@@ -1574,10 +1573,10 @@ class Nicole extends CharacterBase {
       };
 
       if (this.constellation >= 1) {
-        formulas[`nicole-c1-unity-slot${slotIdx + 1}`] = {
+        formulas[`nicole-c1-coord-slot${slotIdx + 1}`] = {
           label: {
-            zh: `C1 合一造影·${name.zh}`,
-            en: `C1 Unity (${name.en})`,
+            zh: `合一造影·${name.zh}`,
+            en: `Unity (${name.en})`,
           },
           minC: 1,
           parts: [
@@ -1602,9 +1601,9 @@ class Nicole extends CharacterBase {
     return [
       { id: "nicole-skill", count: 1 },
       { id: "nicole-burst", count: 1 },
-      { id: "nicole-q-proj-slot1", count: 1 },
+      { id: "nicole-q-coord-slot1", count: 5 },
       ...(this.constellation >= 1
-        ? [{ id: "nicole-c1-unity-slot1", count: 1 }]
+        ? [{ id: "nicole-c1-coord-slot1", count: 3 }]
         : []),
     ];
   }

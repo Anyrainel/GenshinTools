@@ -205,7 +205,6 @@ export function FormulaSelectorCard({
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
               {effectiveTeam.characters.map((cid, idx) => {
                 if (!cid) return <div key={idx} />;
-                const charRes = charactersById[cid];
                 const charFormulas = displayFormulas[cid];
                 const unlockedFormulas = availableFormulas[cid];
                 const charElement = teamBuild?.teamMeta.elements[cid];
@@ -257,6 +256,13 @@ export function FormulaSelectorCard({
                             teamBuild?.charBuilds[
                               cid
                             ]?.charBase.getFormulaEntry(formulaId);
+
+                          // For cross-scaled formulas (e.g. Nicole projections),
+                          // show the statsCharId's avatar instead of the formula owner's.
+                          const iconCharId =
+                            formulaEntry?.parts[0]?.statsCharId ?? cid;
+                          const iconCharRes = charactersById[iconCharId];
+
                           const reactions: ReactionType[] = isLocked
                             ? ["none"]
                             : getFormulaReactions(
@@ -302,10 +308,10 @@ export function FormulaSelectorCard({
                                     );
                                   }}
                                 >
-                                  {charRes && (
+                                  {iconCharRes && (
                                     <img
-                                      src={getAssetUrl(charRes.imagePath)}
-                                      alt={cid}
+                                      src={getAssetUrl(iconCharRes.imagePath)}
+                                      alt={iconCharId}
                                       className="w-6 h-6 object-contain rounded-full bg-secondary/40 shrink-0"
                                     />
                                   )}
@@ -406,10 +412,10 @@ export function FormulaSelectorCard({
                               className="px-2 py-0.5 rounded transition-colors"
                             >
                               <div className="flex items-center gap-2">
-                                {charRes && (
+                                {iconCharRes && (
                                   <img
-                                    src={getAssetUrl(charRes.imagePath)}
-                                    alt={cid}
+                                    src={getAssetUrl(iconCharRes.imagePath)}
+                                    alt={iconCharId}
                                     className="w-5 h-5 rounded-full bg-secondary/40 shrink-0"
                                   />
                                 )}

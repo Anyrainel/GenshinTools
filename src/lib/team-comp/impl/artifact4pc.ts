@@ -1362,10 +1362,16 @@ class DisenchantmentInDeepShadow4pc extends ArtifactSetBase {
 }
 
 const heavensGiftOption = {
-  label: { zh: "凡世颂歌范围", en: "Mortal Hymn scope" },
+  label: { zh: "凡世颂歌模拟范围", en: "Mortal Hymn scope" },
   choices: [
-    { value: "self", label: { zh: "仅场上角色", en: "Active char only" } },
-    { value: "team", label: { zh: "全队共享", en: "Share with team" } },
+    {
+      value: "self",
+      label: { zh: "场上角色自增益（保守）", en: "On-field self buffs" },
+    },
+    {
+      value: "team",
+      label: { zh: "全队共享全增益（激进）", en: "whole team all buffs" },
+    },
   ] as const,
 } satisfies OptionDef;
 
