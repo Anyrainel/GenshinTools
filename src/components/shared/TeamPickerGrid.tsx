@@ -13,7 +13,7 @@ import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
-import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
+import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import { Diamond, Swords, User } from "lucide-react";
 import { useCallback } from "react";
 

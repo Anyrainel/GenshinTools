@@ -8,7 +8,7 @@ import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
  * Backup algorithm for benchmark solution generation.
  * Moved from src/lib/team-comp/teamOptimizer.ts.
  */
-import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
+import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   BuffActivationMap,
   CalcContext,

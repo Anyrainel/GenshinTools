@@ -19,7 +19,7 @@ import {
 } from "@/lib/artifact/inventory";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
-import { resolveBuildInfo } from "@/lib/team-comp/teamOptUtils";
+import { resolveBuildInfo } from "@/lib/team-comp/teamConfigUtils";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {

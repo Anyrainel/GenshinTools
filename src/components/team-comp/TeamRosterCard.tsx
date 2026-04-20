@@ -32,7 +32,7 @@ import {
   isChoiceEnabled,
 } from "@/lib/team-comp/calc/registry";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
-import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
+import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Users } from "lucide-react";

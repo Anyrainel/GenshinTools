@@ -69,7 +69,7 @@ import {
   getRollValues,
 } from "@/lib/team-comp/generator/constrainedGreedy";
 import { runCharacterBnB } from "@/lib/team-comp/optimizer";
-import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
+import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   CalcContext,
   ComboFormula,

@@ -19,7 +19,7 @@ import type {
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
-import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
+import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
 import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { Loader2, Minus, Plus } from "lucide-react";

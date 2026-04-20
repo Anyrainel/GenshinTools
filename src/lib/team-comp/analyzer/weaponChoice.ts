@@ -19,7 +19,7 @@ import { TeamBuild } from "../calc/teamBuild";
 import { getRollValues } from "../generator/constrainedGreedy";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
-import { deriveSetKeysFromConfigs } from "../teamOptUtils";
+import { deriveSetKeysFromConfigs } from "../teamConfigUtils";
 
 import type { ExtraBuff } from "../types";
 import type { CalcContext, ComboFormula, TeamSlotConfig } from "../types";

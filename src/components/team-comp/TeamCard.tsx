@@ -27,7 +27,7 @@ import {
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
 import { REACTION_COLORS } from "@/lib/team-comp/constants";
-import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
+import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {

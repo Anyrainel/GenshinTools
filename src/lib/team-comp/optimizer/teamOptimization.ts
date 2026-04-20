@@ -20,7 +20,7 @@ import {
 import { computeSubstatMarginals } from "../calc/marginalGain";
 import { StatSheet } from "../calc/statSheet";
 import { TeamBuild } from "../calc/teamBuild";
-import { detectEquippedSets } from "../teamOptUtils";
+import { detectEquippedSets } from "../teamConfigUtils";
 import type {
   CharOptConfig,
   ComboResult,

@@ -18,7 +18,7 @@ import {
   erCrGapAfterMainStats,
   erMainStatInternal,
 } from "../optimizer/erCrConstraints";
-import { deriveSetKeysFromConfigs } from "../teamOptUtils";
+import { deriveSetKeysFromConfigs } from "../teamConfigUtils";
 import type { BuffActivationMap, CalcContext, ComboFormula } from "../types";
 import {
   type FlexSlotConfig,

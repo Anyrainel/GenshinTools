@@ -1,7 +1,7 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import type { ArtifactData, CharacterData, Slot } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { frozenArtifactsMatchConfig } from "@/lib/team-comp/teamOptUtils";
+import { frozenArtifactsMatchConfig } from "@/lib/team-comp/teamConfigUtils";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";

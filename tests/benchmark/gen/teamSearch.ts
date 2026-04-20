@@ -26,7 +26,7 @@ import {
 } from "@/lib/account-data/artifactScore";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
+import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   CalcContext,
   CharOptConfig,

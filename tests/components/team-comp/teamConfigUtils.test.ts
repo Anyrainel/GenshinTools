@@ -10,7 +10,7 @@ import {
   frozenArtifactsMatchConfig,
   setsMatch,
   toStatSheets,
-} from "@/lib/team-comp/teamOptUtils";
+} from "@/lib/team-comp/teamConfigUtils";
 import type { OptionMap } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 import {
