@@ -825,7 +825,7 @@ export async function* runTeamOptimization(
         const charConfig = effectivePerChar[charId];
         return new Promise<void>((resolve) => {
           const worker = new Worker(
-            new URL("../optimizer.worker.ts", import.meta.url),
+            new URL("./optimizer.worker.ts", import.meta.url),
             { type: "module" }
           );
 
@@ -1903,7 +1903,7 @@ export async function* runTeamOptimization(
         (input) =>
           new Promise<Phase3Result>((resolve) => {
             const worker = new Worker(
-              new URL("../optimizer.worker.ts", import.meta.url),
+              new URL("./optimizer.worker.ts", import.meta.url),
               { type: "module" }
             );
 
