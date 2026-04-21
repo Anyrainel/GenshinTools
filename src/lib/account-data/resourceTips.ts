@@ -573,7 +573,7 @@ function isValidInitialValue(
   value: number,
   rarity: number
 ): boolean {
-  const maxRoll = getSubstatMaxRoll(stat, rarity);
+  const maxRoll = getSubstatMaxRoll(stat, rarity as 4 | 5);
   const minRoll = maxRoll * 0.7;
   // Allow small tolerance for floating point
   return value >= minRoll * 0.95 && value <= maxRoll * 1.05;
@@ -682,7 +682,7 @@ function pUpgradeForReroll(
     (s) =>
       calculateStatScore(
         s,
-        getSubstatMaxRoll(s, art.rarity),
+        getSubstatMaxRoll(s, art.rarity as 4 | 5),
         weights,
         globalConfig
       ).score
@@ -938,7 +938,7 @@ function pUpgradeForLevelup(
   for (const s of allSubsFor4) {
     const coef = calculateStatScore(
       s,
-      getSubstatMaxRoll(s, art.rarity),
+      getSubstatMaxRoll(s, art.rarity as 4 | 5),
       weights,
       globalConfig
     ).score;
