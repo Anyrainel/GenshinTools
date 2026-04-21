@@ -10,7 +10,12 @@ import {
   generateResourceSuggestions,
 } from "@/lib/account-data/resourceTips";
 
-const ZERO_MIN_DIFF = { S: 0, A: 0, B: 0, C: 0, D: 0, Pool: 0 } as const;
+const ZERO_TIER = { S: 0, A: 0, B: 0, C: 0, D: 0, Pool: 0 } as const;
+const ZERO_MIN_DIFF = {
+  craft: { ...ZERO_TIER },
+  reroll: { ...ZERO_TIER },
+  levelup: { ...ZERO_TIER },
+};
 import { describe, expect, it } from "vitest";
 import { createAccountData } from "../../fixtures";
 

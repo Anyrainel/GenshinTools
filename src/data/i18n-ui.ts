@@ -428,9 +428,9 @@ export const i18nUiData = {
       },
       goToTierList: { en: "Manage Tiers", zh: "管理层级" },
     },
-    allOptimal: {
-      en: "No recommendations — all builds are optimal!",
-      zh: "无推荐 — 所有配装已最优！",
+    noRankedChars: {
+      en: "Rank your characters in the Tier List to get personalized upgrade recommendations.",
+      zh: "在层级列表中为角色排序，即可获得个性化的升级建议。",
     },
     luckExpectation: {
       label: { en: "Roll Value Expectation", zh: "词条期望" },
@@ -1667,6 +1667,7 @@ export const i18nUiData = {
   evaluation: {
     title: { en: "Artifact Evaluation", zh: "圣遗物评估" },
     tabLabel: { en: "Set Evaluation", zh: "套装评估" },
+    resourcesTabLabel: { en: "Resources", zh: "资源规划" },
     subtitle: { en: "{0} builds · Avg {1}%", zh: "{0} 个配装 · 均值 {1}%" },
     goToBuilds: {
       en: "Configure Builds",
@@ -1679,11 +1680,13 @@ export const i18nUiData = {
     tierSortAsc: { en: "Char tier ↑", zh: "角色评级排序 升序" },
     all: { en: "All", zh: "全部" },
     ownedOnly: { en: "Owned characters", zh: "仅已拥有角色" },
-    resourceSuggestions: { en: "Resource Suggestions", zh: "资源使用建议" },
-    suggestCraft: { en: "Craft", zh: "合成" },
+    resourceSuggestions: { en: "Resource Planning", zh: "资源投入规划" },
+    suggestCraft: { en: "Craft", zh: "制作" },
     suggestReroll: { en: "Reroll", zh: "重铸" },
+    suggestLevelup: { en: "Level Up", zh: "强化" },
+    sanctifyingEssence: { en: "Sanctifying Essence", zh: "祝圣精华" },
     tierThresholds: { en: "Completeness goal", zh: "完成度目标" },
-    minScoreDiff: { en: "Min score gain", zh: "最低分数收益" },
+    minScoreDiff: { en: "Min score gain", zh: "最低收益" },
     gainLabel: { en: "Avg. Gain", zh: "平均收益" },
     sanctifyingElixir: { en: "Sanctifying Elixir", zh: "祝圣之霜" },
     dustOfEnlightenment: { en: "Dust of Enlightenment", zh: "启圣之尘" },
@@ -1692,6 +1695,46 @@ export const i18nUiData = {
     noSuggestions: {
       en: "No suggestions — all builds meet their tier threshold.",
       zh: "暂无建议 — 所有配装已达到各自评级的阈值。",
+    },
+    helpTitle: {
+      en: "How Scores Are Calculated",
+      zh: "分数计算方式",
+    },
+    helpDesc: {
+      en: "Each option compares the expected outcome against the best-scoring artifact for that slot in the build.",
+      zh: "每个选项将操作的期望结果与该配装对应位置得分最高的圣遗物进行对比。",
+    },
+    helpBaselineTitle: { en: "Baseline", zh: "基准" },
+    helpBaselineDesc: {
+      en: "The comparison target is the score of the best-matching artifact for that slot in the build (as determined by Set Evaluation), including substat scores and main stat contribution.",
+      zh: "对比基准为套装评估中该配装对应位置得分最高的圣遗物分数，包含副词条分数与主词条贡献。",
+    },
+    helpExpectedTitle: { en: "Expected Score", zh: "期望分数" },
+    helpExpectedCraftDesc: {
+      en: "Craft: you select 2 substats; the other 2 are drawn randomly from a weighted pool. Enumerates all possible draws, computes E[score] = rolls per sub × avg roll value, averaged over all draw outcomes. Roll budget: 8 (75%) or 9 (25%) total.",
+      zh: "制作：选择2条副词条，另外2条从加权池中随机抽取。枚举所有可能的抽取结果，计算 E[分数] = 每条词条的强化次数 × 平均强化数值，对所有抽取结果取加权平均。总强化次数：8次(75%) 或 9次(25%)。",
+    },
+    helpExpectedRerollDesc: {
+      en: "Reroll: keeps all 4 existing substats and their initial roll values. You select 2 substats; 2 guaranteed upgrades are distributed among them, remaining upgrades distributed randomly among all 4 substats. Total upgrade count is fixed (same as the original: 4 or 5 depending on 3-line or 4-line start).",
+      zh: "重铸：保留全部4条现有副词条及其初始数值。选择2条副词条，2次保底强化在选中的2条中分配，剩余强化次数在全部4条副词条中随机分配。总强化次数固定不变（与原圣遗物一致：3词条起始为4次，4词条起始为5次）。",
+    },
+    helpExpectedLevelupDesc: {
+      en: "Level up: starts from current substat values, adds expected gain from remaining upgrade rolls (each uniformly among 4 substats, value ×0.7/0.8/0.9/1.0). For 3-line artifacts, uses known 4th substat data when available for exact calculation.",
+      zh: "强化：从当前副词条数值出发，加上剩余强化次数的期望收益（每次强化等概率分配到4条副词条，数值在×0.7/0.8/0.9/1.0间均匀分布）。3词条圣遗物在已知第4条词条时使用精确计算。",
+    },
+    helpMetricsTitle: { en: "Metrics", zh: "指标说明" },
+    helpGainDesc: {
+      en: "Avg. Gain = expected score − baseline. Positive means the action is expected to improve the slot on average.",
+      zh: "平均收益 = 期望分数 − 基准分数。正数表示该操作预期能提升该位置的平均水平。",
+    },
+    helpPUpgradeDesc: {
+      en: "P(upgrade) = exact probability that the outcome scores higher than the baseline. Computed by convolving the probability mass function over all possible roll outcomes (upgrade count × tier value × substat routing).",
+      zh: "升级概率 = 结果分数超过基准的精确概率。通过卷积所有可能强化结果（强化次数 × 档位数值 × 词条分配）的概率质量函数计算。",
+    },
+    helpThresholdsTitle: { en: "Filtering", zh: "筛选条件" },
+    helpThresholdsDesc: {
+      en: "Only builds below the completeness goal for their character tier are analyzed. Min score gain filters out low-impact options. Both are configurable per tier.",
+      zh: "仅分析未达到对应角色评级完成度目标的配装。最低分数收益用于过滤低价值选项。两者均可按评级自定义。",
     },
   },
   v2Weights: {},
