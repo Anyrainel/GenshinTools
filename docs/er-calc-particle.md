@@ -2,263 +2,317 @@
 
 ## Motivation
 
-The current particle data is spread across 4 independent surfaces that must stay in sync:
+The v1 particle data is spread across 4 independent surfaces that must stay in sync:
 
 | Surface | What it stores | Problem |
 |---|---|---|
 | `particles.json` | Per-character `press`/`hold` avgParticles | Per-hit vs per-use ambiguity; no min/max |
 | `particleConfig.ts:periodicGenerators` | Set of charIds whose E produces 0 | Must manually sync with particles.json |
-| `particleConfig.ts:expectedPeriodicProcs` | Default tick count per deployment | Must manually sync with periodicGenerators |
+| `particleConfig.ts:expectedPeriodicProcs` | Default proc count per deployment | Must manually sync with periodicGenerators |
 | `particleConfig.ts:multiHitETotal` | Override totals for multi-hit chars | Patches over particles.json inconsistency |
 
-Additionally, `periodicE` is currently an action type, but it is not a real action — it is a background particle event that happens *during* another character's action. The UI already separates ticks from actions via the `ERTimeline` model (`{ actions, ticks }`), but the engine requires flattening ticks back into fake `periodicE` actions. This is a leaky abstraction.
+Additionally, `periodicE` is currently an action type, but it is not a real action — it is a background particle event that happens *during* another character's action. The UI already separates these from actions via `ERTimeline` (`{ actions, periodic }`), but the engine flattens them back into fake `periodicE` actions. This is a leaky abstraction.
 
 This design:
-1. Unifies all four data surfaces into a single `particles.json` schema
-2. Removes `periodicE` from the action space — ticks become a first-class engine concept
-3. Extends the action space with `specialE` (enhanced/alternative skill) alongside existing `specialQ`
+1. Unifies all four data surfaces into a single `particles.json` schema.
+2. Removes `periodicE` from the action space — periodic events become a first-class engine concept.
+3. Extends the action space with `specialE` / `specialQ` for enhanced/alternative variants that the user interweaves at runtime (e.g. Cyno burst-mode E, Flins `specialQ`, Varesa `specialQ`).
+4. Models particle generation as a **list of independent rolls** (gcsim-native), from which min/expected/max are derived at load time.
+
+## Design Principles
+
+- **Trust the user's combat sequence.** If the user places 10 consecutive infused NAs, that is what they claim to play. The schema describes *which NA hit in a chain produces particles*, not whether the user "should" have stopped earlier. Overcounting past ICD is the user's problem to avoid — we surface `notes` to guide them.
+- **Event-based, no real time.** Actions are points on a timeline. Particle travel is approximated by the next-action-absorber rule. Periodic deployment duration is not modeled — periodic events are a count, editable in the UI.
+- **Data shape should mirror the source.** Particle counts in game are a sum of independent probabilistic rolls (`rand.Float64() < p` in gcsim). Our schema stores those rolls directly; min/max/avg are derived.
 
 ## Action Space (v2)
 
-Actions represent things a character **does**. Background particle events (ticks) are not actions.
+Actions represent things a character **does**. Background particle events (periodic procs) are not actions.
 
-| Action | Description | Generates particles |
+| Action | Description | Direct particles |
 |---|---|---|
 | `E` | Elemental skill (press) | Yes — from schema |
-| `holdE` | Elemental skill (hold) | Yes — from schema |
-| `specialE` | Enhanced/alternative skill | Yes — from schema |
+| `holdE` | Elemental skill (hold) | Yes — from schema (falls back to `E`) |
+| `specialE` | Enhanced/alternative skill variant | Yes — from schema |
 | `Q` | Elemental burst | No (drains energy) |
-| `specialQ` | Reduced-cost burst variant | No (drains energy, different cost) |
-| `NA` | Normal attack | Yes — if char has infusion particle config |
-| `CA` | Charged attack | Yes — if char has infusion particle config |
-| `PA` | Plunge attack | Yes — if char has infusion particle config |
+| `specialQ` | Alternative burst variant | No (drains energy, different cost) |
+| `NA` | Normal attack | Yes — if char has NA pattern config |
+| `CA` | Charged attack | Yes — if char has CA pattern config |
+| `PA` | Plunge attack | Yes — if char has PA pattern config |
 | `wait` | Stay on-field (catch particles) | No |
 
-**Removed**: `periodicE` — replaced by tick model (see below).
+**Removed**: `periodicE` — replaced by the periodic-event model (see below).
 
-### Ticks (background particle events)
+Both `specialE` and `specialQ` are first-class actions the user can place anywhere in a timeline. They are not "one-time mode switches" — characters like Flins and Varesa interweave `Q` and `specialQ` based on runtime stacks, and the user expresses that by placing the appropriate blocks.
 
-Ticks represent off-field particle generation from summons, constructs, or coordinated attacks. They are **not actions** — they are particle events that occur *during* another character's on-field action.
+### Periodic events (background particles)
 
-The UI model (`ERTimeline`) already represents ticks separately:
+Periodic events represent off-field particle generation from summons, constructs, or coordinated attacks triggered by another character's skill or burst. They are **not actions** — they are background particle events that occur *during* another character's on-field action.
+
 ```ts
 interface ERTimeline {
-  actions: TimelineAction[];  // real actions only
-  ticks: TickAssignment[];    // background particle events attached to actions
+  actions: TimelineAction[];    // real actions only
+  periodic: PeriodicProc[];     // background particle events attached to actions
 }
 ```
 
-The engine should consume `ERTimeline` directly instead of flattening to a legacy `Timeline` with fake `periodicE` entries. Each tick's `targetIndex` identifies which action is happening when those particles arrive — that action's character is on-field and absorbs the particles.
+Each periodic proc's `targetIndex` identifies which action is happening when those particles arrive — that action's character is on-field and absorbs the particles. Proc count is auto-placed from schema defaults when the trigger action is added, and is editable by the user in the trigger node's popover menu.
 
 ## Schema Definition
 
 ```jsonc
-// particles.json — one entry per character
+// particles.json — one entry per character, nested by action.
 {
   "<charId>": {
     "element": "<Element>",       // particle element type
 
-    // ── Direct particle generation ──
-    // Present = this action produces elemental particles; absent = 0 particles.
-    // Any action type the character can perform may have a particle config.
-    "E"?:        ParticleCount,
-    "holdE"?:    ParticleCount,   // falls back to "E" if absent
-    "specialE"?: ParticleCount,   // enhanced/alternative skill variant
-    "NA"?:       ParticleCount,   // self-infusion characters
-    "CA"?:       ParticleCount,   // self-infusion characters
-    "PA"?:       ParticleCount,   // self-infusion characters
+    // ── Direct particle generation (instant on cast) ──
+    "E"?:        ActionParticles,
+    "holdE"?:    ActionParticles,   // falls back to "E" if absent
+    "specialE"?: ActionParticles,
 
-    // ── Tick generation (background particles) ──
-    // Present = this cast triggers background particle ticks; absent = no ticks.
-    // The tick source is always the character who cast the trigger action.
-    // Ticks are absorbed by whichever character is on-field at that point.
-    "ticks"?: {
-      "E"?: TickConfig,           // ticks triggered by E or holdE cast
-      "Q"?: TickConfig            // ticks triggered by Q cast (rare)
+    // ── Self-infusion attacks (per-hit pattern) ──
+    "NA"?:       HitPatternConfig,
+    "CA"?:       HitPatternConfig,
+    "PA"?:       HitPatternConfig,
+
+    // ── Periodic generation (background particles) ──
+    // Present = this cast triggers background particle procs; absent = none.
+    "periodic"?: {
+      "E"?: PeriodicConfig,         // procs triggered by E or holdE
+      "Q"?: PeriodicConfig          // procs triggered by Q or specialQ (rare)
     },
 
-    "spawnPoint"?: "Character" | "Enemy" | "Construct"
+    "spawnPoint"?: "Character" | "Enemy" | "Construct",  // optional, display-only
+    "source"?: "fandom" | "gcsim" | "datamine" | "manual"
   }
 }
 ```
 
-### ParticleCount
+### `Particles` — list of independent rolls
+
+```ts
+// A list of independent particle-generating events. Each entry is [count, chance].
+// Integer shorthand: `3` means `[[3, 1.0]]`.
+type Particles = number | Array<[count: number, chance: number]>;
+```
+
+Examples:
+
+| Raw form | Meaning |
+|---|---|
+| `3` | Deterministic 3 particles |
+| `[[2, 1.0], [1, 0.25]]` | Always 2, plus 25% chance of a 3rd |
+| `[[1, 0.67]]` | 67% chance of 1 particle (Fischl Oz proc) |
+| `[[1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8]]` | 5 independent 80% rolls (Diona paws) |
+
+Derived at load time:
+
+```
+min = Σ count where chance == 1.0
+max = Σ count
+avg = Σ count × chance
+```
+
+### `ActionParticles` — direct generation on cast
 
 ```jsonc
 {
-  "min": 2,           // particle count floor (for min mode)
-  "max": 3,           // particle count ceiling (for max mode)
-  "avg": 2.25,        // expected value (for expected mode)
-  "notes"?: "string"  // human-readable condition/context (not consumed by engine)
+  "particles": Particles,
+  "notes"?: "string"
 }
 ```
 
-- `min`/`max` feed directly into the min/expected/max particle mode toggle.
-- `avg` is the primary computation value. For deterministic generators, `min == max == avg`.
-- Fractional `avg` means "N guaranteed + X% chance of +1" (e.g., 2.25 = always 2, 25% chance of 3rd).
+`notes` is human-readable context (conditions, source), not consumed by the engine.
 
-### TickConfig
+### `HitPatternConfig` — infusion NA/CA/PA
 
 ```jsonc
 {
-  "procs": 7,                  // default tick count per trigger (rotation-length estimate)
-  "perProc": ParticleCount,    // particles per tick
-  "notes"?: "string"           // source description (e.g., "Oz ATK", "Stele resonance; 1.5s ICD")
+  "pattern": Particles[],          // cycles; pattern[i % len] applies to the i-th hit
+  "notes"?: "string"               // typically documents the ICD assumption
 }
 ```
 
-- `procs` is the expected number of ticks during a typical rotation window (~15-20s). The UI uses this to auto-place ticks when the user adds the trigger action, but the user can freely add/remove/reposition ticks.
-- `perProc` is the particle count for each individual tick event.
+Indexed by the character's consecutive NA/CA/PA hit count in the timeline (not the action index across all chars). Cycles after `pattern.length`.
+
+Example — Hu Tao generates 1 particle on every 3rd NA during Blood Blossom:
+
+```jsonc
+"NA": { "pattern": [1, 0, 0], "notes": "Blood Blossom; 5s ICD ≈ every 3rd NA" }
+```
+
+Each pattern element is a `Particles` value, so probabilistic patterns are fine:
+
+```jsonc
+"NA": { "pattern": [[[1, 0.9]], 0, 0] }
+```
+
+We trust the user to stop placing NAs when infusion drops. The `notes` field documents the assumed infusion state so the user can plan around it.
+
+### `PeriodicConfig` — periodic off-field generation
+
+```jsonc
+{
+  "procs": 7,                     // default proc count auto-placed when trigger is added
+  "particles": Particles,         // particle roll per individual proc
+  "notes"?: "string"              // source description (e.g. "Oz ATK", "Stele resonance; 1.5s ICD")
+}
+```
+
+- `procs` is a UX default, not engine-binding. When the user adds the trigger action, the UI auto-places that many procs; the user can add, remove, or reposition procs freely via the trigger node's popover menu. This lets the user adapt to short or long rotations without schema changes.
+- `particles` is the roll for each individual proc event.
 
 ## Engine Mapping
 
-### `getActionParticles(charId, action, mode)`
+### `getActionParticles(charId, action, mode) → number`
 
-Resolves direct particles for a timeline action. Does not handle ticks (those are resolved separately).
-
-```
-action == "E":
-  → data.E           (if present, select min/avg/max by mode)
-  → 0                (if absent — periodic-only or no-particle char)
-
-action == "holdE":
-  → data.holdE       (if present)
-  → data.E           (fallback to press)
-  → 0
-
-action == "specialE":
-  → data.specialE    (if present)
-  → 0
-
-action == "NA":
-  → data.NA          (if present — infusion chars)
-  → 0                (universal NA clear energy handled separately)
-
-action == "CA" / "PA":
-  → data.CA / data.PA (if present)
-  → 0
-
-action == "Q" / "specialQ" / "wait":
-  → 0                (always)
-```
-
-### `getTickParticles(charId, mode)`
-
-Resolves particles for a single tick from this character. Called once per `TickAssignment`.
+Resolves direct particles for a timeline action. Does not handle periodic procs.
 
 ```
-→ data.ticks.E.perProc  (select min/avg/max by mode)
-  — or data.ticks.Q.perProc depending on which trigger spawned this tick
+data = particles[charId]
+p = undefined
+
+switch (action):
+  case "E":         p = data.E
+  case "holdE":     p = data.holdE ?? data.E
+  case "specialE":  p = data.specialE
+  case "NA" / "CA" / "PA":
+    // Resolved separately — see getHitParticles below.
+  case "Q" / "specialQ" / "wait":  return 0
+
+if p == null: return 0
+return resolveParticles(p.particles, mode)
 ```
 
-Note: The tick already knows its source character (from `TickAssignment.sourceChar`). The engine looks up that character's tick config to determine particle count and element.
+### `getHitParticles(charId, action, hitIndex, mode) → number`
 
-### `hasTickGeneration(charId, trigger)`
-
-Whether a character's action triggers background ticks. Used by UI for auto-placement.
+Resolves particles for the `hitIndex`-th NA/CA/PA from this character in the current timeline window. The caller tracks per-character hit counters while walking the timeline.
 
 ```
-trigger == "E" or "holdE" → data.ticks?.E != null
-trigger == "Q"            → data.ticks?.Q != null
+cfg = particles[charId][action]?.pattern
+if cfg == null: return 0
+return resolveParticles(cfg[hitIndex % cfg.length], mode)
 ```
 
-Replaces the current `periodicGenerators` Set.
-
-### `getDefaultTickCount(charId, trigger)`
-
-How many ticks to auto-place when the trigger action is added.
+### `getPeriodicParticles(charId, trigger, mode) → number`
 
 ```
-trigger == "E" or "holdE" → data.ticks?.E?.procs ?? 0
-trigger == "Q"            → data.ticks?.Q?.procs ?? 0
+cfg = particles[charId].periodic?[trigger]
+if cfg == null: return 0
+return resolveParticles(cfg.particles, mode)
 ```
 
-Replaces the current `expectedPeriodicProcs` map.
+### `hasPeriodicGeneration(charId, trigger) → boolean`
 
-### `rngSelect(particleCount, mode)`
+Whether a character's action triggers background procs. Used by UI for auto-placement.
 
 ```
-mode == "min"      → particleCount.min
-mode == "max"      → particleCount.max
-mode == "expected" → particleCount.avg
+trigger == "E" or "holdE" → data.periodic?.E != null
+trigger == "Q" or "specialQ" → data.periodic?.Q != null
 ```
 
-Replaces the current `floor(avg)` / `ceil(avg)` heuristic with explicit values.
+Replaces the v1 `periodicGenerators` Set.
 
-## Engine Changes: Native Tick Processing
+### `getDefaultProcCount(charId, trigger) → number`
 
-Currently the engine flattens `ERTimeline` → `Timeline` by inserting fake `periodicE` actions, then processes a flat action sequence. With ticks as a first-class concept:
+How many procs to auto-place when the trigger action is added.
+
+```
+trigger == "E" or "holdE" → data.periodic?.E?.procs ?? 0
+trigger == "Q" or "specialQ" → data.periodic?.Q?.procs ?? 0
+```
+
+Replaces the v1 `expectedPeriodicProcs` map.
+
+### `resolveParticles(p: Particles, mode) → number`
+
+```
+if typeof p == "number": return p
+switch (mode):
+  case "min":      return Σ p[i].count where p[i].chance == 1.0
+  case "max":      return Σ p[i].count
+  case "expected": return Σ p[i].count × p[i].chance
+```
+
+Replaces the v1 `floor(avg)` / `ceil(avg)` heuristic — min and max come from the distribution directly.
+
+## Engine Changes: Native Periodic Processing
 
 ### Simulation loop (sketch)
 
 ```
+hitCounters = {}  // per-char per-action hit index
+
 for each action[i] in ert.actions:
-  // 1. Process ticks attached to this action
-  for each tick where tick.targetIndex == i:
+  // 1. Periodic procs attached to this action
+  for each proc where proc.targetIndex == i:
     absorber = action[i].char  // on-field character
-    particles = getTickParticles(tick.sourceChar, mode)
-    element = data[tick.sourceChar].element
-    distributeParticles(team, tick.sourceChar, particles, element, absorber)
+    n = getPeriodicParticles(proc.sourceChar, proc.trigger, mode)
+    element = data[proc.sourceChar].element
+    distributeParticles(team, proc.sourceChar, n, element, absorber)
 
-  // 2. Process the action itself
-  particles = getActionParticles(action[i].char, action[i].action, mode)
-  if particles > 0:
-    absorber = getAbsorber(ert.actions, i)  // next action's char
-    element = data[action[i].char].element
-    distributeParticles(team, action[i].char, particles, element, absorber)
+  // 2. The action itself
+  a = action[i]
+  if a.action in ["NA", "CA", "PA"]:
+    idx = hitCounters[a.char]?[a.action] ?? 0
+    n = getHitParticles(a.char, a.action, idx, mode)
+    hitCounters[a.char][a.action] = idx + 1
+  else:
+    n = getActionParticles(a.char, a.action, mode)
 
-  // 3. Handle burst energy drain
-  if action[i].action in ["Q", "specialQ"]:
-    drainEnergy(action[i].char)
+  if n > 0:
+    absorber = getAbsorber(ert.actions, i)
+    element = data[a.char].element
+    distributeParticles(team, a.char, n, element, absorber)
+
+  // 3. Burst energy drain
+  if a.action == "Q":         drainEnergy(a.char, team[a.char].burstCost)
+  if a.action == "specialQ":  drainEnergy(a.char, specialBurstCost(a.char))
 ```
 
-Key difference: `getAbsorber` now only walks real actions (no `periodicE` to skip). Ticks are resolved against their `targetIndex` directly — the character performing that action is on-field and absorbs the tick particles.
+Key differences from v1:
+- `getAbsorber` only walks real actions (no `periodicE` to skip).
+- Periodic procs resolved against `targetIndex` directly.
+- NA/CA/PA use per-character hit counters so the `pattern` cycles correctly.
 
 ### `specialQ` energy drain
 
-`specialQ` drains a different (usually lower) amount of energy than `Q`. The character's `burstCost` in `TeamSlot` reflects the standard Q cost. For `specialQ`, the drain amount should come from character data (e.g., burst cost override or a percentage of full cost). This is orthogonal to the particle schema and handled by `selfEnergy` or a separate cost lookup.
+`specialQ` drains a different amount of energy than `Q`. The standard `burstCost` lives on `TeamSlot`. For `specialQ`, we look up a per-character override in character data (field TBD — see Open Questions).
 
 ## Character Patterns
 
 ### Pattern 1: Simple instant E
 
-Most characters. Press E, get particles immediately.
-
 ```jsonc
 "bennett": {
   "element": "Pyro",
-  "E": { "min": 2, "max": 3, "avg": 2.25 },
-  "holdE": { "min": 3, "max": 3, "avg": 3.0 },
+  "E":     { "particles": [[2, 1.0], [1, 0.25]] },
+  "holdE": { "particles": 3 },
   "spawnPoint": "Character"
 }
 ```
 
-### Pattern 2: Multi-hit instant (total stored, not per-hit)
-
-Characters whose skill fires multiple hits simultaneously. Schema stores the **total** per use.
+### Pattern 2: Multi-hit instant (total per cast)
 
 ```jsonc
 "diona": {
   "element": "Cryo",
-  "E": { "min": 4, "max": 4, "avg": 4.0, "notes": "5 paws x 0.8" },
-  "holdE": { "min": 4, "max": 5, "avg": 4.0, "notes": "5 paws x 0.8" },
+  "E":     { "particles": [[1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8]], "notes": "5 paws × 0.8" },
+  "holdE": { "particles": [[1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8]] },
   "spawnPoint": "Enemy"
 }
 ```
 
-Replaces `multiHitETotal` — per-use total baked into the schema directly.
-
-### Pattern 3: Off-field ticks (summon)
-
-E deploys a summon that attacks independently. E itself produces 0 direct particles; all particles come via ticks.
+### Pattern 3: Off-field periodic (summon)
 
 ```jsonc
 "fischl": {
   "element": "Electro",
-  "ticks": {
+  "periodic": {
     "E": {
       "procs": 7,
-      "perProc": { "min": 0, "max": 1, "avg": 0.67 },
+      "particles": [[1, 0.67]],
       "notes": "Oz ATK"
     }
   },
@@ -267,10 +321,10 @@ E deploys a summon that attacks independently. E itself produces 0 direct partic
 
 "xiangling": {
   "element": "Pyro",
-  "ticks": {
+  "periodic": {
     "E": {
       "procs": 4,
-      "perProc": { "min": 1, "max": 1, "avg": 1.0 },
+      "particles": 1,
       "notes": "Guoba breath"
     }
   },
@@ -278,20 +332,18 @@ E deploys a summon that attacks independently. E itself produces 0 direct partic
 }
 ```
 
-Engine: E → 0 direct particles (no `"E"` key). Auto-place 4-7 ticks. Each tick distributes particles to whoever is on-field at that point.
+Engine: E → 0 direct particles. Auto-place N procs at trigger time. Each proc distributes to whoever is on-field at that point.
 
-### Pattern 4: Off-field ticks (coordinated / construct)
-
-Same as Pattern 3. Coordinated attacks and construct resonance are modeled identically — they produce background particles regardless of who is on-field.
+### Pattern 4: Off-field periodic (coordinated / construct)
 
 ```jsonc
 "raiden_shogun": {
   "element": "Electro",
-  "ticks": {
+  "periodic": {
     "E": {
       "procs": 5,
-      "perProc": { "min": 0, "max": 1, "avg": 0.5 },
-      "notes": "Eye coordinated ATK; 0.8s ICD"
+      "particles": [[1, 0.5]],
+      "notes": "Eye coordinated ATK; 0.9s ICD"
     }
   },
   "spawnPoint": "Enemy"
@@ -299,10 +351,10 @@ Same as Pattern 3. Coordinated attacks and construct resonance are modeled ident
 
 "zhongli": {
   "element": "Geo",
-  "ticks": {
+  "periodic": {
     "E": {
       "procs": 4,
-      "perProc": { "min": 0, "max": 1, "avg": 0.5 },
+      "particles": [[1, 0.5]],
       "notes": "Stele resonance; 1.5s ICD"
     }
   },
@@ -310,63 +362,57 @@ Same as Pattern 3. Coordinated attacks and construct resonance are modeled ident
 }
 ```
 
-### Pattern 5: Self-infusion (NA/CA/PA generate particles)
+### Pattern 5: Self-infusion (NA/CA/PA pattern)
 
-Character's E activates an infusion state. During that state, their attacks generate elemental particles. We model this as direct particles on the attack action type, assuming best-case infusion uptime.
-
-The user places attack actions in the timeline; each generates particles. The `notes` field documents the ICD so the user knows how many attack actions are meaningful.
+Infusion skills activate a state where N-th hits generate elemental particles. Schema stores the per-hit pattern derived from gcsim's ICD. User-placed NA count determines procs; we trust their sequence.
 
 ```jsonc
 "yoimiya": {
   "element": "Pyro",
-  "NA": { "min": 1, "max": 1, "avg": 1.0, "notes": "Niwabi Fire-Dance; 2s ICD" },
+  "NA": { "pattern": [1, 0, 0, 0], "notes": "Niwabi; 2s ICD ≈ every 4th NA" },
   "spawnPoint": "Enemy"
 }
 
 "hu_tao": {
   "element": "Pyro",
-  "NA": { "min": 2, "max": 3, "avg": 2.5, "notes": "Paramita Papilio; 5s ICD" },
+  "NA": { "pattern": [1, 0, 0], "notes": "Blood Blossom; 5s ICD ≈ every 3rd NA" },
   "spawnPoint": "Enemy"
 }
 
 "tartaglia": {
   "element": "Hydro",
-  "NA": { "min": 1, "max": 1, "avg": 1.0, "notes": "Riptide Slash/Flash; 3s ICD" },
+  "NA": { "pattern": [1, 0, 0], "notes": "Riptide Slash; 3s ICD in melee stance" },
   "spawnPoint": "Enemy"
 }
 
 "gaming": {
   "element": "Pyro",
-  "PA": { "min": 2, "max": 2, "avg": 2.0, "notes": "Charmed Cloudstrider; 3s ICD" },
+  "PA": { "pattern": [2], "notes": "Charmed Cloudstrider plunge" },
   "spawnPoint": "Character"
 }
 ```
 
 ### Pattern 6: Direct E + infusion NA
 
-Some characters produce particles both from the skill hit itself AND from subsequent infused attacks.
-
 ```jsonc
 "alhaitham": {
   "element": "Dendro",
-  "E": { "min": 1, "max": 1, "avg": 1.0 },
-  "NA": { "min": 1, "max": 1, "avg": 1.0, "notes": "Projection Attack; 1.5s ICD" },
+  "E":  { "particles": 1 },
+  "NA": { "pattern": [0, 1, 0], "notes": "Projection wave; 1.5s ICD ≈ on 2nd NA" },
   "spawnPoint": "Enemy"
 }
 ```
 
-### Pattern 7: Direct E + ticks
-
-Skill hit generates instant particles AND deploys a periodic generator.
+### Pattern 7: Direct E + periodic
 
 ```jsonc
 "nahida": {
   "element": "Dendro",
-  "E": { "min": 3, "max": 3, "avg": 3.0, "notes": "On initial Karma link" },
-  "ticks": {
+  "E": { "particles": 3, "notes": "On initial Karma link" },
+  "periodic": {
     "E": {
       "procs": 1,
-      "perProc": { "min": 3, "max": 3, "avg": 3.0 },
+      "particles": 3,
       "notes": "Tri-Karma Purification; 7s ICD"
     }
   },
@@ -374,11 +420,7 @@ Skill hit generates instant particles AND deploys a periodic generator.
 }
 ```
 
-Engine: E → 3.0 direct particles AND auto-place 1 tick.
-
 ### Pattern 8: No particles
-
-Shield/heal skills that generate zero particles.
 
 ```jsonc
 "noelle": {
@@ -386,158 +428,166 @@ Shield/heal skills that generate zero particles.
 }
 ```
 
-No action keys, no ticks → engine returns 0 for all actions.
+No action keys, no periodic → engine returns 0 for all actions.
 
 ### Pattern 9: Simplified variable (counter/stacks)
-
-Characters with state-dependent counts. Simplified to averaged values. Inaccuracy is acceptable.
 
 ```jsonc
 "beidou": {
   "element": "Electro",
-  "E": { "min": 2, "max": 4, "avg": 3.0, "notes": "Avg across counter levels" },
+  "E": { "particles": [[2, 1.0], [1, 0.5], [1, 0.5]], "notes": "Avg across counter levels" },
   "spawnPoint": "Enemy"
 }
 ```
 
 ### Pattern 10: specialE (enhanced skill variant)
 
-Characters with a distinct enhanced skill that produces different particles.
-
 ```jsonc
 "cyno": {
   "element": "Electro",
-  "E": { "min": 3, "max": 3, "avg": 3.0, "notes": "Normal" },
-  "specialE": { "min": 1, "max": 2, "avg": 1.33, "notes": "During Pactsworn Pathclearer (burst)" },
+  "E":        { "particles": 3, "notes": "Normal stance" },
+  "specialE": { "particles": [[1, 1.0], [1, 0.33]], "notes": "During Pactsworn Pathclearer" },
   "spawnPoint": "Character"
 }
 
 "freminet": {
   "element": "Cryo",
-  "E": { "min": 2, "max": 2, "avg": 2.0, "notes": "Upward Thrust" },
-  "specialE": { "min": 1, "max": 1, "avg": 1.0, "notes": "Lv.4 Shattering Pressure" },
+  "E":        { "particles": 2, "notes": "Upward Thrust" },
+  "specialE": { "particles": 1, "notes": "Lv.4 Shattering Pressure" },
   "spawnPoint": "Character"
 }
 ```
 
-### Pattern 11: Ticks from Q
-
-If a character's burst triggers periodic particle generation (not flat energy):
+### Pattern 11: specialQ (alternative burst variant)
 
 ```jsonc
-"example_char": {
+"varesa": {
   "element": "Electro",
-  "ticks": {
+  "E": { "particles": 2 }
+  // specialQ is a Q variant at reduced cost — no particles, but different drain.
+}
+```
+
+`specialQ` typically drains a different energy amount than `Q`. The character entry does not carry particle data for it; energy drain override lives in character-stats data (see Open Questions).
+
+### Pattern 12: Periodic from Q (rare)
+
+```jsonc
+"raiden_shogun_burst": {
+  "element": "Electro",
+  "periodic": {
     "Q": {
       "procs": 3,
-      "perProc": { "min": 1, "max": 1, "avg": 1.0 },
-      "notes": "Burst coordinated ATK"
+      "particles": [[1, 1.0]],
+      "notes": "Musou Isshin coordinated ATK during burst"
     }
   }
 }
 ```
 
-Note: Most burst-related energy comes through flat restoration (modeled in `selfEnergy`), not particles. This pattern exists for completeness but may have no current instances.
+Most burst-related energy comes through flat restoration (modeled in `selfEnergy`), not particles. This pattern exists for completeness.
+
+## Data Sources
+
+### Phase 1 — Fandom (production) + Lunaris (side-by-side reference)
+
+**Fandom Wiki** (`scripts/scrape_particles.py`)
+- Provides: `element`, `avg` particles (press/hold), `spawnPoint`, human-readable notes
+- Covers: all released characters (≈112 from wiki + a handful of unreleased back-filled from datamine)
+- Writes to: `src/data/ercalc/particles.json` (production)
+- Extrapolation rule: an `avg` of `N.f` becomes `[[floor(avg), 1.0], [1, f]]` — i.e., guaranteed `floor` particles plus `f` chance of one more. Integer `avg` → shorthand `avg`. Preserves min/max derivation without inventing variance.
+- Classification (periodic vs multi-hit vs simple E) is hardcoded in the scraper, mirroring v1's `src/lib/ercalc/particleConfig.ts` until v1 is removed.
+
+**Lunaris API** (`scripts/scrape_particles_lunaris.py`)
+- Provides: **full probabilistic per-event particle distribution** — every `source`, integer `particles`, `chance` (0-1), and `cd` — exactly what gcsim encodes.
+- Covers: ≈121 characters (released + unreleased). Some legacy chars (Aloy, Sigewinne) have empty energy arrays in Lunaris — Fandom covers those.
+- Writes to: `src/data/ercalc/particles.lunaris.json` (side-by-side reference, **not consumed in production**)
+- Output form is raw: `{ events: [{source, particles, chance, cd}, ...] }`. Events sharing `source`+`cd` are *sometimes* independent rolls on one cast (Bennett Ball1 = 2@100% + 1@25%) and *sometimes* mutually-exclusive variants (Cyno's 3 entries cover normal + burst-state E). Interpretation is left to manual review — grouping heuristics don't disambiguate reliably.
+- Used for: drift detection vs Fandom, sourcing unreleased characters, and as a faster alternative to gcsim extraction if the raw data is rich enough.
+
+### Phase 2 — gcsim extraction (if Lunaris is insufficient)
+
+Given Lunaris already supplies the probabilistic distribution, Phase 2 may collapse to a narrower effort: reviewing Lunaris events for infusion chars (hu_tao, yoimiya, etc.) to assign `NA.pattern`, and resolving Cyno-style variants into `E`/`specialE` splits. Full gcsim Go-source extraction becomes a last-resort fallback for any gap Lunaris leaves.
+
+### Always present
+
+- `source` field tagged on every production entry: `"fandom" | "lunaris" | "gcsim" | "manual"` so the UI can surface confidence and tooling can filter for re-scrapes.
 
 ## Migration from v1
 
-### Data migration
+### Data migration (one-shot script)
 
-1. **Periodic chars** (in `periodicGenerators`):
-   - If infusion char (hu_tao, yoimiya, etc.): move to `NA`/`CA`/`PA` direct config
-   - If off-field generator (fischl, xiangling, etc.): move to `ticks.E`
-   - `press.avgParticles` → `perProc.avg` or direct action `avg`
-   - `expectedPeriodicProcs[charId]` → `ticks.E.procs`
-   - Derive `min`/`max`: `min = floor(avg)`, `max = ceil(avg)` (refine with gcsim data later)
-
-2. **Multi-hit chars** (in `multiHitETotal`):
-   - `multiHitETotal[charId]` → `E.avg` (total per use, not per hit)
-
+1. **Periodic chars** (in v1 `periodicGenerators`):
+   - Off-field generator (Fischl, Xiangling, etc.): `press.avgParticles` → `periodic.E.particles`; `expectedPeriodicProcs[charId]` → `periodic.E.procs`.
+   - Infusion char (Hu Tao, Yoimiya, etc.): move to `NA`/`CA`/`PA` with a hand-written `pattern`. v1 data has no pattern, so emit a placeholder `[avg, 0, 0]` cycle and flag for Phase 2 gcsim review.
+2. **Multi-hit chars** (in v1 `multiHitETotal`):
+   - `multiHitETotal[charId]` → `E.particles` as shorthand integer.
 3. **Simple chars**:
-   - `press.avgParticles` → `E.avg`
-   - `hold.avgParticles` → `holdE.avg` (if present and different from press)
-
-4. **All chars**: Preserve `element` and `spawnPoint`. Move `notes` into relevant `ParticleCount.notes`.
+   - `press.avgParticles = N.f` → `E.particles = [[N, 1.0], [1, f]]` (or integer shorthand for whole values).
+   - `hold.avgParticles` → `holdE.particles` (omit if identical to press — engine falls back).
+4. **All chars**: preserve `element`, `spawnPoint` (optional now). Move v1 notes into the appropriate `notes` field. Tag `source: "fandom"`.
 
 ### Action space migration
 
-- Remove `periodicE` from `ActionType` union
-- Add `specialE` to `ActionType` union
-- Remove `periodicE` from `PARTICLE_ACTIONS` set
-- Update `ACTION_LABELS` (remove `periodicE`, add `specialE`)
-- Remove `flattenERTimeline` / `legacyToERTimeline` conversion functions
+- Remove `periodicE` from `ActionType`, `PARTICLE_ACTIONS`, `ACTION_LABELS`.
+- Add `specialE`, `specialQ` to `ActionType` and `ACTION_LABELS`.
+- Delete `flattenERTimeline` / `legacyToERTimeline` bridge functions.
 
 ### Engine migration
 
-- `getActionParticles`: remove `periodicE` branch, add `specialE`/`NA`/`CA`/`PA` branches
-- `getAbsorber`: remove `periodicE` skip logic (all actions are real now)
-- Simulation loop: process `ert.ticks` directly instead of flattened `periodicE` actions
-- `autoPlaceTicks`: read from `particles[charId].ticks.E.procs` instead of `expectedPeriodicProcs`
+- `getActionParticles`: remove `periodicE`, add `specialE` branch; delegate NA/CA/PA to `getHitParticles`.
+- Add `getHitParticles(charId, action, hitIndex, mode)` with per-character hit counters in the simulation loop.
+- `getAbsorber`: remove `periodicE` skip logic.
+- Simulation loop consumes `ert.periodic` directly against `targetIndex`.
+- `autoPlacePeriodic` reads from `particles[charId].periodic.*.procs`.
 
 ### Files affected
 
 | File | Change |
 |---|---|
 | `src/data/ercalc/particles.json` | Rewrite to v2 schema |
-| `src/lib/ercalc/types.ts` | Remove `periodicE` from ActionType, add `specialE` |
+| `src/data/ercalc/particles.lunaris.json` | New — Phase 1 side-by-side datamine source |
+| `src/lib/ercalc/types.ts` | Remove `periodicE` from ActionType, add `specialE`/`specialQ` |
 | `src/lib/ercalc/particleConfig.ts` | Delete entirely |
 | `src/lib/ercalc/constants.ts` | Update `ParticleEntry` type, action sets, action labels |
-| `src/lib/ercalc/erCalculator.ts` | Rewrite particle resolution + simulation loop |
-| `src/lib/ercalc/rotationHints.ts` | Update hint logic (no more `periodicE` references) |
+| `src/lib/ercalc/erCalculator.ts` | Rewrite particle resolution + simulation loop; add hit counters |
+| `src/lib/ercalc/rotationHints.ts` | Remove `periodicE` references |
 | `src/lib/ercalc/optimizer.ts` | Update action set references |
-| `src/components/ercalc/TimelineStrip.tsx` | Remove `periodicE` rendering, update particle detection |
-| `src/components/ercalc/ERCalcCard.tsx` | Update auto-tick logic |
-| `src/components/ercalc/ERCalcView.tsx` | Update default timeline (no `periodicE` actions) |
-| `scripts/scrape_particles.py` | Update output format |
+| `src/components/ercalc/TimelineStrip.tsx` | Remove `periodicE` rendering; add periodic sub-track, popover proc editor |
+| `src/components/ercalc/ERCalcCard.tsx` | Update auto-proc logic |
+| `src/components/ercalc/ERCalcView.tsx` | Update default timeline |
+| `scripts/scrape_particles.py` | Emit v2 schema |
+| `scripts/scrape_particles_lunaris.py` | New — scrape datamine source |
 
-## Infusion Character Classification
+### Rollout
 
-Characters whose NA/CA/PA generate elemental particles during a skill-activated state. Modeled as direct particle config on the attack action, assuming best-case infusion uptime.
+1. Land v2 types + `src/data/ercalc/particles.json` rewrite via migration script; keep v1 engine running behind a feature flag.
+2. Implement native periodic engine + hit counters; parity tests against current 52-test suite.
+3. Port UI to `ERTimeline`-native (no flattening); add periodic sub-track + popover proc editor.
+4. Flip feature flag; remove v1 code and dead types.
 
-| Character | Action | Avg | ICD | Notes |
-|---|---|---|---|---|
-| hu_tao | NA | 2.5 | 5s | Blood Blossom during Paramita Papilio |
-| yoimiya | NA | 1.0 | 2s | Converted NA during Niwabi Fire-Dance |
-| tartaglia | NA | 1.0 | 3s | Riptide procs during melee stance |
-| kamisato_ayato | NA | 1.5 | 2.5s | Converted NA during Takimeguri Kanka |
-| wanderer | NA | 1.0 | 2s | NA during Windfavored hover |
-| wriothesley | NA | 1.0 | 2s | NA during Icefang Rush |
-| clorinde | NA | 1.0 | 2s | Swift Hunt / Impale the Night |
-| alhaitham | NA | 1.0 | 1.5s | Projection Attack waves |
-| gaming | PA | 2.0 | 3s | Charmed Cloudstrider plunge |
+## Infusion Character Reference (Phase 2 target)
 
-## Data Sources and Confidence
+Starting table for gcsim-sourced NA patterns. ICDs are from Fandom; actual pattern cycle requires gcsim audit.
 
-### Primary: gcsim (Go source → LLM extraction)
-
-- **Authoritative** for: `min`/`max` particle counts, ICD values, periodic vs instant classification
-- **Method**: Feed `internal/characters/<name>/skill.go` to LLM with target schema
-- **Coverage**: All released characters implemented in gcsim
-- **Limitation**: Go source patterns vary per character; extraction may need manual review
-
-### Secondary: Fandom Wiki (existing scraper)
-
-- **Good for**: `avg` values, `spawnPoint`, human-readable `notes`
-- **Method**: Existing `scrape_particles.py` parses Energy/Data wiki table
-- **Coverage**: All released characters, but lags behind new releases
-- **Limitation**: No min/max split, no ICD data, no periodic/instant classification
-
-### Fallback: character_stats.json (datamine)
-
-- **Use only for**: Unreleased characters with no wiki or gcsim data
-- **Limitation**: Integer-only particle counts, no fractional data, no conditions
-- **Marked in output** with `"notes": "from character_stats.json (integer)"`
-
-### Validation strategy
-
-Cross-reference gcsim and Fandom values. If `|gcsim.avg - fandom.avg| > 0.1`, flag for manual review. Fandom `avg` should equal `(gcsim.min + gcsim.max) / 2` for binary probability characters, or match gcsim's weighted average for multi-outcome characters.
+| Character | Action | ICD | Likely pattern (pre-audit) |
+|---|---|---|---|
+| hu_tao | NA | 5s | `[1, 0, 0]` |
+| yoimiya | NA | 2s | `[1, 0, 0, 0]` |
+| tartaglia | NA | 3s | `[1, 0, 0]` |
+| kamisato_ayato | NA | 2.5s | `[1, 0, 0]` |
+| wanderer | NA | 2s | `[1, 0, 0, 0]` |
+| wriothesley | NA | 2s | `[1, 0, 0, 0]` |
+| clorinde | NA | 2s | `[1, 0, 0, 0]` |
+| alhaitham | NA | 1.5s | `[0, 1, 0]` |
+| gaming | PA | 3s | `[2]` |
 
 ## Open Questions
 
-1. **holdE ticks**: Should `ticks.E` be triggered by both E and holdE? Currently assumed yes (same deployment). If a character has different tick behavior for press vs hold, we'd need `ticks.holdE`.
+1. **`specialQ` cost model.** `TeamSlot.burstCost` is a single number. Options: add `specialBurstCost` to the slot, or store per-char in character data keyed by `specialQ`. Either way it's orthogonal to this schema. Recommended: add `specialBurstCost?: number` to character data and look up in the engine's drain step.
 
-2. **specialE ticks**: Can `specialE` trigger ticks? If Cyno's burst-state E also produces periodic effects, we'd need `ticks.specialE`. Probably not needed — his burst-state E is instant.
+2. **`holdE` periodic.** `periodic.E` fires for both `E` and `holdE` (same deployment). If any character has different periodic behavior for press vs hold, we'd add `periodic.holdE` — unlikely at this point.
 
-3. **NA particle cap**: Should the schema include a `maxProcs` on NA/CA/PA to engine-enforce ICD? Current design leaves this to the user (aided by `notes`). Adding `maxProcs` would prevent overestimation but adds complexity.
+3. **`specialE` periodic.** Can `specialE` trigger periodic procs distinct from base `E`? If Cyno's burst-state E needed different procs we'd add `periodic.specialE`. Deferred — no known instance.
 
-4. **specialQ cost**: How to model the reduced energy cost of `specialQ`? Currently `TeamSlot.burstCost` is a single number. Options: add `specialBurstCost` to the slot, or model the cost difference in `selfEnergy` as a flat refund.
+4. **Lunaris integration depth.** Phase 1 keeps Lunaris as a reference file only. Future: an automated discrepancy reporter that posts drift between Fandom `avg` and Lunaris integers. Out of scope for this doc.

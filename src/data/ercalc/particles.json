@@ -1,1162 +1,1163 @@
 {
   "aino": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 3
+    }
   },
   "albedo": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 0.67,
-      "notes": "On Transient Blossom"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 5,
+        "particles": [[1, 0.67]],
+        "notes": "On Transient Blossom"
+      }
+    }
   },
   "alhaitham": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Projection Attack Wave"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": 1,
+        "notes": "On Projection Attack Wave"
+      }
+    }
   },
   "aloy": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 5.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 5
+    }
   },
   "amber": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "E": {
+      "particles": 4
+    }
   },
   "arataki_itto": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 3.5,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.5]]
+    }
   },
   "arlecchino": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 5.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 5
+    }
   },
   "baizhu": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 3.5,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.5]]
+    }
   },
   "barbara": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 0.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom"
   },
   "beidou": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2
     },
-    "hold": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": 4
+    }
   },
   "bennett": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 2.25,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[2, 1.0], [1, 0.25]]
     },
-    "hold": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": 3
+    }
   },
   "candace": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2
     },
-    "hold": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": 3
+    }
   },
   "charlotte": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3
     },
-    "hold": {
-      "avgParticles": 5.0,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": 5
+    }
   },
   "chasca": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 5.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 5,
       "notes": "On Converted Charged Attack Hit"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "chevreuse": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 4.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 4,
       "notes": "10s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "chiori": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 1.2,
-      "notes": "On Tamoto Hit"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": [[1, 1.0], [1, 0.2]],
+        "notes": "On Tamoto Hit"
+      }
+    }
   },
   "chongyun": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 4
+    }
   },
   "citlali": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 5.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 5
+    }
   },
   "clorinde": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Swift Hunt/Impale the Night/C1/C6, 2s CD"
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On Swift Hunt/Impale the Night/C1/C6, 2s CD"
+      }
+    }
   },
   "collei": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 3
+    }
   },
   "columbina": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 1.3333333,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": [[1, 1.0], [1, 0.3333]]
+    }
   },
   "cyno": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 3.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3,
       "notes": "Normal"
     },
-    "hold": null,
-    "spawnPoint": "Character",
-    "variants": [
+    "_variants": [
       {
-        "avgParticles": 1.333,
+        "particles": [[1, 1.0], [1, 0.333]],
         "notes": "Burst"
       }
     ]
   },
   "dahlia": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 3
+    }
   },
   "dehya": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 1.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 1,
       "notes": "On Field DMG"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "diluc": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 1.33,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[1, 1.0], [1, 0.33]],
       "notes": "On Hit"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "diona": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 0.8,
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 4,
       "notes": "On Hit"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    }
   },
   "dori": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 2
+    }
   },
   "emilie": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Lv. 1/2 Lumidouce Case Hit; 2.5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On Lv. 1/2 Lumidouce Case Hit; 2.5s CD"
+      }
+    }
   },
   "escoffier": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 4.0,
+    "source": "fandom",
+    "E": {
+      "particles": 4,
       "notes": "On Activation"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "eula": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 1.5,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[1, 1.0], [1, 0.5]]
     },
-    "hold": {
-      "avgParticles": 2.5,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": [[2, 1.0], [1, 0.5]]
+    }
   },
   "faruzan": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": "On Pressurized Collapse Vortex; 5.5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 1,
+        "particles": 2,
+        "notes": "On Pressurized Collapse Vortex; 5.5s CD"
+      }
+    }
   },
   "fischl": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 0.67,
-      "notes": "On Oz ATK"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 7,
+        "particles": [[1, 0.67]],
+        "notes": "On Oz ATK"
+      }
+    }
   },
   "freminet": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 2.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2,
       "notes": "Normal; On Upward Thrust"
     },
-    "hold": null,
-    "spawnPoint": "Character",
-    "variants": [
+    "_variants": [
       {
-        "avgParticles": 1.0,
+        "particles": 1,
         "notes": "Burst; On Upward Thrust"
       },
       {
-        "avgParticles": 1.0,
+        "particles": 1,
         "notes": "On Level 4 Shattering Pressure"
       }
     ]
   },
   "furina": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Salon Member Hit, 2.5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 5,
+        "particles": 1,
+        "notes": "On Salon Member Hit, 2.5s CD"
+      }
+    }
   },
   "gaming": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": "On Charmed Cloudstrider Hit, 3s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 1,
+        "particles": 2,
+        "notes": "On Charmed Cloudstrider Hit, 3s CD"
+      }
+    }
   },
   "ganyu": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "E": {
+      "particles": 4
+    }
   },
   "gorou": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2
+    }
   },
   "hu_tao": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 2.5,
-      "notes": "On Converted Attack; 5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 1,
+        "particles": [[2, 1.0], [1, 0.5]],
+        "notes": "On Converted Attack; 5s CD"
+      }
+    }
   },
   "ifa": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 4.5,
+    "source": "fandom",
+    "E": {
+      "particles": [[4, 1.0], [1, 0.5]],
       "notes": "On Tonicshot; Max Once per Nightsoul's Blessing"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "illuga": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 4.5,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": [[4, 1.0], [1, 0.5]]
+    }
   },
   "jean": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 2.67,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[2, 1.0], [1, 0.67]]
+    }
   },
   "kachina": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 0.667,
-      "notes": "0.2s CD"
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "periodic": {
+      "E": {
+        "procs": 5,
+        "particles": [[1, 0.667]],
+        "notes": "0.2s CD"
+      }
+    }
   },
   "kaedehara_kazuha": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3
     },
-    "hold": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": 4
+    }
   },
   "kaeya": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 2.67,
-      "notes": null
-    },
-    "hold": null,
+    "source": "fandom",
     "spawnPoint": "Character",
-    "variants": [
+    "E": {
+      "particles": [[2, 1.0], [1, 0.67]]
+    },
+    "_variants": [
       {
-        "avgParticles": 3.67,
+        "particles": [[3, 1.0], [1, 0.67]],
         "notes": "w/ 4th Ascension Passive"
       }
     ]
   },
   "kamisato_ayaka": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 4.5,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[4, 1.0], [1, 0.5]]
+    }
   },
   "kamisato_ayato": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 1.5,
-      "notes": "On Converted Attack; 2.5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": [[1, 1.0], [1, 0.5]],
+        "notes": "On Converted Attack; 2.5s CD"
+      }
+    }
   },
   "kaveh": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2
+    }
   },
   "keqing": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 2.5,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[2, 1.0], [1, 0.5]],
       "notes": "On Slashing or Thunderclap Slash"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "kinich": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 5.0,
+    "source": "fandom",
+    "E": {
+      "particles": 5,
       "notes": "On Scalespiker Cannon; Max Once per Nightsoul's Blessing"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "kirara": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3
     },
-    "hold": {
-      "avgParticles": 1.0,
+    "holdE": {
+      "particles": 1,
       "notes": "On Urgent Neko Parcel Hit; 4s CD"
     },
-    "spawnPoint": "Character",
-    "variants": [
+    "_variants": [
       {
-        "avgParticles": 3.0,
+        "particles": 3,
         "notes": "On Flipclaw Strike"
       }
     ]
   },
   "klee": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 4
+    }
   },
   "kujou_sara": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "E": {
+      "particles": 3
+    }
   },
   "kuki_shinobu": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 0.45,
-      "notes": "On Hit; 0.2s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 6,
+        "particles": [[1, 0.45]],
+        "notes": "On Hit; 0.2s CD"
+      }
+    }
   },
   "lan_yan": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 3
+    }
   },
   "lauma": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 1.3,
-      "notes": "On Frostgrove Sanctuary; 3.3s CD"
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": [[1, 1.0], [1, 0.3]],
+        "notes": "On Frostgrove Sanctuary; 3.3s CD"
+      }
+    }
   },
   "layla": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 1.33,
-      "notes": "On Night Star; 3s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": [[1, 1.0], [1, 0.33]],
+        "notes": "On Night Star; 3s CD"
+      }
+    }
   },
   "linnea": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 3
+    }
   },
   "lisa": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 0.0,
-      "notes": null
-    },
-    "hold": {
-      "avgParticles": 5.0,
-      "notes": null
-    },
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "holdE": {
+      "particles": 5
+    }
   },
   "lynette": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 4.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 4,
       "notes": "On Enigma Thrust"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "lyney": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 5.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 5
+    }
   },
   "mavuika": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 5.0,
+    "source": "fandom",
+    "E": {
+      "particles": 5,
       "notes": "On Skill DMG"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "mika": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 4
+    }
   },
   "mona": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 3.33,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.33]]
+    }
   },
   "mualani": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 4.5,
+    "source": "fandom",
+    "E": {
+      "particles": [[4, 1.0], [1, 0.5]],
       "notes": "On Sharky's Bite or Sharky's Surging Bite; Max Once per Surf"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "nahida": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": "On Tri-Karma Purification; 7s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 1,
+        "particles": 3,
+        "notes": "On Tri-Karma Purification; 7s CD"
+      }
+    }
   },
   "navia": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 3.5,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.5]],
       "notes": "On Rosula Shardshot"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "nefer": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 2.6667,
+    "source": "fandom",
+    "E": {
+      "particles": [[2, 1.0], [1, 0.6667]],
       "notes": "On Skill DMG"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "neuvillette": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 4.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 4,
       "notes": "On Skill DMG"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "nilou": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 1.5,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[1, 1.0], [1, 0.5]],
       "notes": "On Activation"
     },
-    "hold": null,
-    "spawnPoint": "Character",
-    "variants": [
+    "_variants": [
       {
-        "avgParticles": 1.0,
+        "particles": 1,
         "notes": "On Converted Attack During Pirouette"
       }
     ]
   },
   "ningguang": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 3.33,
-      "notes": "6s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "periodic": {
+      "E": {
+        "procs": 1,
+        "particles": [[3, 1.0], [1, 0.33]],
+        "notes": "6s CD"
+      }
+    }
   },
   "noelle": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 0.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom"
   },
   "ororon": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 3
+    }
   },
   "qiqi": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 0.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom"
   },
   "raiden_shogun": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 0.5,
-      "notes": "On Coordinated Attack"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 5,
+        "particles": [[1, 0.5]],
+        "notes": "On Coordinated Attack"
+      }
+    }
   },
   "razor": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3
     },
-    "hold": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": 4
+    }
   },
   "rosaria": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3
+    }
   },
   "sangonomiya_kokomi": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 0.67,
-      "notes": "On Hit"
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "periodic": {
+      "E": {
+        "procs": 5,
+        "particles": [[1, 0.67]],
+        "notes": "On Hit"
+      }
+    }
   },
   "sayu": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2
     },
-    "hold": {
-      "avgParticles": 1.0,
+    "holdE": {
+      "particles": 1,
       "notes": "On Fuufuu Windwheel Hit; 3s CD"
     },
-    "spawnPoint": "Character",
-    "variants": [
+    "_variants": [
       {
-        "avgParticles": 2.0,
+        "particles": 2,
         "notes": "On Fuufuu Whirlwind Kick"
       }
     ]
   },
   "sethos": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 2
+    }
   },
   "shenhe": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3
     },
-    "hold": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "spawnPoint": "Character"
+    "holdE": {
+      "particles": 4
+    }
   },
   "shikanoin_heizou": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 2.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2,
       "notes": "0-1 Stacks"
     },
-    "hold": null,
-    "spawnPoint": "Character",
-    "variants": [
+    "_variants": [
       {
-        "avgParticles": 2.5,
+        "particles": [[2, 1.0], [1, 0.5]],
         "notes": "2-3 Stacks"
       },
       {
-        "avgParticles": 3.0,
+        "particles": 3,
         "notes": "4 Stacks"
       }
     ]
   },
   "sigewinne": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 4.0,
+    "source": "fandom",
+    "E": {
+      "particles": 4,
       "notes": "On Bubblebalm Hit; Once Per Bubblebalm"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "skirk": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 4.0,
+    "source": "fandom",
+    "E": {
+      "particles": 4,
       "notes": "On Any Cryo Hit; 15s CD"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "sucrose": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 4
+    }
   },
   "tartaglia": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Riptide Slash or Riptide Flash; 3s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": 1,
+        "notes": "On Riptide Slash or Riptide Flash; 3s CD"
+      }
+    }
   },
   "thoma": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 3.5,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.5]]
+    }
   },
   "tighnari": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 3.5,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.5]]
+    }
   },
   "traveler_anemo": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2
     },
-    "hold": {
-      "avgParticles": 3.33,
+    "holdE": {
+      "particles": [[3, 1.0], [1, 0.33]],
       "notes": "On Storm"
-    },
-    "spawnPoint": "Character"
+    }
   },
   "traveler_dendro": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 2.5,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[2, 1.0], [1, 0.5]]
+    }
   },
   "traveler_electro": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 1
+    }
   },
   "traveler_geo": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 3.33,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.33]]
+    }
   },
   "traveler_hydro": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 3.333,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.333]],
       "notes": "On Torrent Surge"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "traveler_pyro": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Blazing Threshold, 2.9s CD"
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": 1,
+        "notes": "On Blazing Threshold, 2.9s CD"
+      }
+    }
   },
   "varka": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 6.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 6
+    }
   },
   "venti": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 3
     },
-    "hold": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "spawnPoint": "Enemy"
+    "holdE": {
+      "particles": 4
+    }
   },
   "wanderer": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On NA/CA During Skill; 2s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On NA/CA During Skill; 2s CD"
+      }
+    }
   },
   "wriothesley": {
     "element": "Cryo",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On NA During Skill or Enhanced CA; 2s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On NA During Skill or Enhanced CA; 2s CD"
+      }
+    }
   },
   "xiangling": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Hit"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On Hit"
+      }
+    }
   },
   "xianyun": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 5.0,
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 5,
       "notes": "On Driftcloud Wave Hit"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    }
   },
   "xiao": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 3
+    }
   },
   "xilonen": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "E": {
+      "particles": 4
+    }
   },
   "xingqiu": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 5.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 5
+    }
   },
   "xinyan": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 4
+    }
   },
   "yae_miko": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Hit; 2.5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": 1,
+        "notes": "On Hit; 2.5s CD"
+      }
+    }
   },
   "yanfei": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 3.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "E": {
+      "particles": 3
+    }
   },
   "yaoyao": {
     "element": "Dendro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Hit, 1.5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Enemy"
+    "source": "fandom",
+    "spawnPoint": "Enemy",
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": 1,
+        "notes": "On Hit, 1.5s CD"
+      }
+    }
   },
   "yelan": {
     "element": "Hydro",
-    "press": {
-      "avgParticles": 4.0,
-      "notes": null
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 4
+    }
   },
   "yoimiya": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Converted Attack, 2s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Character"
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On Converted Attack, 2s CD"
+      }
+    }
   },
   "yumemizuki_mizuki": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Hit, 0.5s CD, Max 4 Per Skill"
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On Hit, 0.5s CD, Max 4 Per Skill"
+      }
+    }
   },
   "yun_jin": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 2.0,
-      "notes": null
+    "source": "fandom",
+    "spawnPoint": "Character",
+    "E": {
+      "particles": 2
     },
-    "hold": {
-      "avgParticles": 2.5,
+    "holdE": {
+      "particles": [[2, 1.0], [1, 0.5]],
       "notes": "Charge Lv. 2"
     },
-    "spawnPoint": "Character",
-    "variants": [
+    "_variants": [
       {
-        "avgParticles": 3.0,
+        "particles": 3,
         "notes": "Charge Lv. 3"
       }
     ]
   },
   "zhongli": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 0.5,
-      "notes": "On Hit, 1.5s CD"
-    },
-    "hold": null,
-    "spawnPoint": "Construct"
+    "source": "fandom",
+    "spawnPoint": "Construct",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": [[1, 0.5]],
+        "notes": "On Hit, 1.5s CD"
+      }
+    }
   },
   "zibai": {
     "element": "Geo",
-    "press": {
-      "avgParticles": 1.0,
-      "notes": "On Any Attack Hit During Lunar Phase Shift, 2s CD"
-    },
-    "hold": null,
-    "spawnPoint": null
+    "source": "fandom",
+    "periodic": {
+      "E": {
+        "procs": 4,
+        "particles": 1,
+        "notes": "On Any Attack Hit During Lunar Phase Shift, 2s CD"
+      }
+    }
   },
   "durin": {
     "element": "Pyro",
-    "press": {
-      "avgParticles": 4,
+    "source": "lunaris",
+    "E": {
+      "particles": 4,
       "notes": "from character_stats.json (integer)"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "flins": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 1,
+    "source": "lunaris",
+    "E": {
+      "particles": 1,
       "notes": "from character_stats.json (integer)"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "iansan": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 4,
+    "source": "lunaris",
+    "E": {
+      "particles": 4,
       "notes": "from character_stats.json (integer)"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "ineffa": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 1,
+    "source": "lunaris",
+    "E": {
+      "particles": 1,
       "notes": "from character_stats.json (integer)"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   },
   "jahoda": {
     "element": "Anemo",
-    "press": {
-      "avgParticles": 4,
+    "source": "lunaris",
+    "E": {
+      "particles": 4,
       "notes": "from character_stats.json (integer)"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
+  },
+  "lohen": {
+    "element": "Cryo",
+    "source": "lunaris"
+  },
+  "nicole": {
+    "element": "Pyro",
+    "source": "lunaris"
+  },
+  "prune": {
+    "element": "Anemo",
+    "source": "lunaris"
   },
   "varesa": {
     "element": "Electro",
-    "press": {
-      "avgParticles": 3,
+    "source": "lunaris",
+    "E": {
+      "particles": 3,
       "notes": "from character_stats.json (integer)"
-    },
-    "hold": null,
-    "spawnPoint": null
+    }
   }
 }

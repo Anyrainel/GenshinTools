@@ -1,12 +1,38 @@
 #!/usr/bin/env python3
 """
-Scrape elemental skill particle data from the Genshin Impact Fandom Wiki.
-Outputs to src/data/ercalc/particles.json.
+Scrape elemental skill particle data from the Genshin Impact Fandom Wiki and
+write the ER calculator's v2 particle schema.
+
+Output: src/data/ercalc/particles.json  (production; v2 schema; source="fandom")
+
+The separate Lunaris API scrape (scripts/scrape_particles_lunaris.py) emits
+src/data/ercalc/particles.lunaris.json as a side-by-side reference with full
+probabilistic data — not consumed in production.
+
+v2 schema per character (see docs/er-calc-particle.md):
+  {
+    "element": "<Element>",
+    "source": "fandom" | "lunaris" | "gcsim" | "manual",
+    "spawnPoint"?: "Character" | "Enemy" | "Construct",
+    "E"?:        { "particles": Particles, "notes"?: str },
+    "holdE"?:    { "particles": Particles, "notes"?: str },
+    "NA"?:       { "pattern":   Particles[], "notes"?: str },  // Phase 2
+    "periodic"?: { "E"?: { "procs": int, "particles": Particles, "notes"?: str },
+                   "Q"?: { ... } }
+  }
+
+Particles = number | Array<[count, chance]>
+
+Classification (simple E / periodic / multi-hit) mirrors v1's
+src/lib/ercalc/particleConfig.ts. Keep the PERIODIC_GENERATORS /
+EXPECTED_PERIODIC_PROCS / MULTI_HIT_E_TOTAL dicts below in sync with that
+file until v1 is removed.
 
 Data source: https://genshin-impact.fandom.com/wiki/Energy/Data
 """
 
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -22,6 +48,92 @@ WIKI_API = (
     "https://genshin-impact.fandom.com/api.php"
     "?action=parse&page=Energy/Data&format=json&prop=wikitext"
 )
+
+# ── Classification (mirrors src/lib/ercalc/particleConfig.ts) ───────────────
+# Characters whose E deploys a periodic particle generator. For these, the
+# Fandom avgParticles is per-proc, not per-cast. Emit under periodic.E.
+PERIODIC_GENERATORS: set[str] = {
+    # Deployable skill generators
+    "fischl",
+    "xiangling",
+    "albedo",
+    "sangonomiya_kokomi",
+    "furina",
+    "kuki_shinobu",
+    "yae_miko",
+    "yaoyao",
+    "chiori",
+    "layla",
+    "emilie",
+    "nahida",
+    "yumemizuki_mizuki",
+    # Construct / periodic generators
+    "raiden_shogun",
+    "zhongli",
+    "kachina",
+    "ningguang",
+    # Infusion / converted attack generators (reclassified to NA.pattern in Phase 2)
+    "hu_tao",
+    "kamisato_ayato",
+    "wanderer",
+    "wriothesley",
+    "clorinde",
+    "yoimiya",
+    "tartaglia",
+    # Other periodic
+    "gaming",
+    "faruzan",
+    "alhaitham",
+    "traveler_pyro",
+    "lauma",
+    "zibai",
+}
+
+# Default proc count per deployment (UI auto-placement hint). ~15-20s rotation.
+EXPECTED_PERIODIC_PROCS: dict[str, int] = {
+    "fischl": 7,
+    "xiangling": 4,
+    "albedo": 5,
+    "sangonomiya_kokomi": 5,
+    "furina": 5,
+    "kuki_shinobu": 6,
+    "yae_miko": 3,
+    "yaoyao": 3,
+    "chiori": 3,
+    "layla": 3,
+    "emilie": 4,
+    "nahida": 1,
+    "raiden_shogun": 5,
+    "zhongli": 4,
+    "hu_tao": 1,
+    "kamisato_ayato": 3,
+    "wanderer": 4,
+    "wriothesley": 4,
+    "clorinde": 4,
+    "yoimiya": 4,
+    "tartaglia": 3,
+    "yumemizuki_mizuki": 4,
+    "kachina": 5,
+    "ningguang": 1,
+    "gaming": 1,
+    "faruzan": 1,
+    "alhaitham": 3,
+    "traveler_pyro": 3,
+    "lauma": 3,
+    "zibai": 4,
+}
+
+# Total particles per E use for multi-hit instant characters. Overrides the
+# Fandom per-hit value which would otherwise undercount.
+MULTI_HIT_E_TOTAL: dict[str, float] = {
+    "diona": 4,
+    "diluc": 1.33,
+    "sigewinne": 4,
+    "skirk": 4,
+    "xianyun": 5,
+    "chasca": 5,
+    "chevreuse": 4,
+}
 
 # Map wiki character names to our character IDs.
 # Fallback: lowercase + space→underscore + remove apostrophes.
@@ -287,64 +399,123 @@ def parse_table(wikitext: str) -> dict:
     return characters
 
 
-def build_output(characters: dict) -> dict:
-    """Convert parsed data to final output format.
+def to_particles(avg: float | int | None):
+    """Extrapolate a Fandom avg value into the v2 Particles form.
 
-    Output schema per character:
-    {
-        "element": "Pyro",
-        "press": { "avgParticles": 2.25, "notes": null },
-        "hold": { "avgParticles": 3, "notes": null },
-        "spawnPoint": "Character"
-    }
+    - None or 0       → None (omit the field entirely)
+    - integer N       → N (shorthand)
+    - float N.f       → [[floor(N.f), 1.0], [1, round(frac, 4)]]
 
-    For characters with multiple variants, the primary (first) variant is used
-    for press/hold. All variants are preserved in a "variants" array if > 1.
+    Examples:
+      2.25 → [[2, 1.0], [1, 0.25]]
+      3.0  → 3
+      0.67 → [[1, 0.67]]         (floor=0 collapses to a single 1-count roll)
+      4.0  → 4
     """
-    output = {}
+    if avg is None:
+        return None
+    if avg == 0:
+        return None
+    # Integer-valued (treat 3.0 as 3)
+    if float(avg).is_integer():
+        return int(avg)
+    floor = int(math.floor(avg))
+    frac = round(avg - floor, 4)
+    if floor == 0:
+        # Pure probabilistic: "X% chance of 1 particle"
+        return [[1, frac]]
+    return [[floor, 1.0], [1, frac]]
+
+
+def _action_entry(particles, notes: str | None) -> dict | None:
+    if particles is None:
+        return None
+    entry: dict = {"particles": particles}
+    if notes:
+        entry["notes"] = notes
+    return entry
+
+
+def build_output(characters: dict) -> dict:
+    """Convert parsed Fandom data to the v2 ER-calc particle schema.
+
+    Classification rules (mirrors v1 particleConfig.ts):
+      - charId in MULTI_HIT_E_TOTAL  → E.particles = integer total (overrides Fandom)
+      - charId in PERIODIC_GENERATORS → periodic.E = { procs, particles }
+      - otherwise                     → E.particles (+ holdE if distinct)
+
+    Characters listed as periodic AND matching an infusion note (hu_tao,
+    yoimiya, etc.) stay under periodic.E for Phase 1. The migration to
+    NA.pattern happens in Phase 2 with gcsim-sourced hit patterns.
+    """
+    output: dict = {}
     for char_id, data in sorted(characters.items()):
-        entry = {
-            "element": data.get("element"),
-            "press": None,
-            "hold": None,
-            "spawnPoint": data.get("spawnPoint"),
-        }
-
         variants = data.get("variants", [])
-        if not variants:
-            output[char_id] = entry
-            continue
+        primary = variants[0] if variants else {}
+        press_avg = primary.get("press")
+        press_notes = primary.get("pressNotes")
+        hold_avg = primary.get("hold")
+        hold_notes = primary.get("holdNotes")
 
-        # Primary variant → press/hold
-        primary = variants[0]
-        if "press" in primary:
-            entry["press"] = {
-                "avgParticles": primary["press"],
-                "notes": primary.get("pressNotes"),
-            }
-        if "hold" in primary:
-            entry["hold"] = {
-                "avgParticles": primary["hold"],
-                "notes": primary.get("holdNotes"),
-            }
+        entry: dict = {
+            "element": data.get("element"),
+            "source": "fandom",
+        }
+        spawn = data.get("spawnPoint")
+        if spawn:
+            entry["spawnPoint"] = spawn
 
-        # Additional variants
+        # Dispatch by classification
+        if char_id in MULTI_HIT_E_TOTAL:
+            total = MULTI_HIT_E_TOTAL[char_id]
+            note = press_notes or "multi-hit instant; total per cast"
+            e = _action_entry(to_particles(total), note)
+            if e:
+                entry["E"] = e
+            # Preserve hold if it's a distinct, non-multi-hit value
+            if hold_avg is not None and hold_avg != press_avg:
+                h = _action_entry(to_particles(hold_avg), hold_notes)
+                if h:
+                    entry["holdE"] = h
+
+        elif char_id in PERIODIC_GENERATORS:
+            # Fandom avg for periodic chars is per-proc
+            per_proc = press_avg if press_avg is not None else hold_avg
+            procs = EXPECTED_PERIODIC_PROCS.get(char_id, 3)
+            note = press_notes or hold_notes
+            particles = to_particles(per_proc)
+            if particles is not None:
+                periodic_e: dict = {"procs": procs, "particles": particles}
+                if note:
+                    periodic_e["notes"] = note
+                entry["periodic"] = {"E": periodic_e}
+
+        else:
+            e = _action_entry(to_particles(press_avg), press_notes)
+            if e:
+                entry["E"] = e
+            # holdE: only emit if distinct from press
+            if hold_avg is not None and hold_avg != press_avg:
+                h = _action_entry(to_particles(hold_avg), hold_notes)
+                if h:
+                    entry["holdE"] = h
+
+        # Additional variants → attach as a top-level list of action entries
+        # for later manual review. Phase 2 gcsim pass will decide whether any
+        # become specialE / specialQ / etc.
         if len(variants) > 1:
-            extra = []
+            extras = []
             for v in variants[1:]:
-                ev = {}
-                if "press" in v:
-                    ev["avgParticles"] = v["press"]
-                    if v.get("pressNotes"):
-                        ev["notes"] = v["pressNotes"]
-                elif "hold" in v:
-                    ev["avgParticles"] = v["hold"]
-                    if v.get("holdNotes"):
-                        ev["notes"] = v["holdNotes"]
-                if ev:
-                    extra.append(ev)
-            if extra:
-                entry["variants"] = extra
+                p = v.get("press") if v.get("press") is not None else v.get("hold")
+                n = v.get("pressNotes") or v.get("holdNotes")
+                part = to_particles(p)
+                if part is not None:
+                    ex: dict = {"particles": part}
+                    if n:
+                        ex["notes"] = n
+                    extras.append(ex)
+            if extras:
+                entry["_variants"] = extras
 
         output[char_id] = entry
 
@@ -399,31 +570,37 @@ def main():
         missing = known_ids - scraped_ids - npc_ids
         if missing:
             print(f"  Characters in charInfo but not in scraped data: {sorted(missing)}")
-            # Fill from character_stats.json energy data
+            # Fill from character_stats.json energy data (lunaris-derived,
+            # integer-only since character_stats drops the chance field).
+            # Run scripts/scrape_particles_lunaris.py for the full probabilistic
+            # reference at src/data/ercalc/particles.lunaris.json.
             for cid in sorted(missing):
                 stats_entry = all_stats.get(cid, {})
                 energy_data = stats_entry.get("energy")
                 element = stats_entry.get("element")
+                entry: dict = {"element": element, "source": "lunaris"}
                 if energy_data:
-                    total = sum(e.get("particles", 0) for e in energy_data)
-                    output[cid] = {
-                        "element": element,
-                        "press": {
-                            "avgParticles": total,
+                    total = sum(int(e.get("particles", 0)) for e in energy_data)
+                    if cid in PERIODIC_GENERATORS:
+                        procs = EXPECTED_PERIODIC_PROCS.get(cid, 3)
+                        per_proc = max(1, round(total / procs)) if total > 0 else 0
+                        if per_proc > 0:
+                            entry["periodic"] = {
+                                "E": {
+                                    "procs": procs,
+                                    "particles": per_proc,
+                                    "notes": "from character_stats.json (integer, split by procs)",
+                                }
+                            }
+                    elif total > 0:
+                        entry["E"] = {
+                            "particles": total,
                             "notes": "from character_stats.json (integer)",
-                        },
-                        "hold": None,
-                        "spawnPoint": None,
-                    }
+                        }
                     print(f"    → {cid}: filled from character_stats.json (total={total})")
                 else:
-                    output[cid] = {
-                        "element": element,
-                        "press": {"avgParticles": 0, "notes": "no particle data available"},
-                        "hold": None,
-                        "spawnPoint": None,
-                    }
-                    print(f"    → {cid}: no particle data, defaulting to 0")
+                    print(f"    → {cid}: no particle data, defaulting to empty")
+                output[cid] = entry
 
         extra = scraped_ids - known_ids
         if extra:

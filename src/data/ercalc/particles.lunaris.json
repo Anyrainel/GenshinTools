@@ -1,0 +1,1773 @@
+{
+  "kamisato_ayaka": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall_Base",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.3s"
+      },
+      {
+        "source": "DropBall_Base",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "jean": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball_Extra",
+        "particles": 1,
+        "chance": 0.67,
+        "cd": "1s"
+      }
+    ]
+  },
+  "traveler_anemo": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": []
+  },
+  "traveler_dendro": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": []
+  },
+  "traveler_electro": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": []
+  },
+  "traveler_geo": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": []
+  },
+  "traveler_hydro": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": []
+  },
+  "traveler_pyro": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": []
+  },
+  "lisa": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "1s"
+      },
+      {
+        "source": "ThunderFall_GenerateEelmentBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.2s"
+      },
+      {
+        "source": "ThunderFall_ElementBall_1",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "1s"
+      }
+    ]
+  },
+  "barbara": {
+    "element": "Hydro",
+    "rarity": 4,
+    "events": []
+  },
+  "kaeya": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "FrozenStar_ElementBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "IceShield_Impact_ElemBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "IceShield_Impact_ElemBall",
+        "particles": 1,
+        "chance": 0.67,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "diluc": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball_Extra",
+        "particles": 1,
+        "chance": 0.33,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "razor": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ClawMark_Click_DropBall_Base",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "1s"
+      },
+      {
+        "source": "ClawMark_Burst_DropBall_Base",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "1s"
+      }
+    ]
+  },
+  "amber": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "DummyElementBall_Base",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "venti": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "WindBladeElementBall_Base",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "WindBladeLand_ElementBall_Base",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "xiangling": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1s"
+      }
+    ]
+  },
+  "beidou": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.4s"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.4s"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.4s"
+      }
+    ]
+  },
+  "xingqiu": {
+    "element": "Hydro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Spoondrift_ElementBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "1s"
+      }
+    ]
+  },
+  "xiao": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DevilDash_DropBall_Base",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "ningguang": {
+    "element": "Geo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "1s"
+      },
+      {
+        "source": "ServantStone_ElemEnergy_Handler",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "ServantStone_ElemEnergy_Handler",
+        "particles": 1,
+        "chance": 0.33,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "klee": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Jumping_Drug_ElementBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "Jumping_Drug_ElementBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "Jumping_Drug_ElementBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "zhongli": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_ElementBall_Extra",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "1.5s"
+      }
+    ]
+  },
+  "fischl": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "AttackElementBall",
+        "particles": 1,
+        "chance": 0.67,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "bennett": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball1",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball1",
+        "particles": 1,
+        "chance": 0.25,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball2",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "1.5s"
+      }
+    ]
+  },
+  "tartaglia": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "WaterMagicArrow_AquaFlower_Melee",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1.5s"
+      },
+      {
+        "source": "WaterMagicArrow_AquaFlower_Melee_Talent",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1.5s"
+      },
+      {
+        "source": "WaterMagicArrow_AquaFlower_Range",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s (Tick)"
+      },
+      {
+        "source": "WaterMagicArrow_AquaFlower_Range_Talent",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s (Tick)"
+      }
+    ]
+  },
+  "noelle": {
+    "element": "Geo",
+    "rarity": 4,
+    "events": []
+  },
+  "qiqi": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": []
+  },
+  "chongyun": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball_Base",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "ganyu": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "Ball",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "albedo": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "AlchemyTrap_BloomElemBall",
+        "particles": 1,
+        "chance": 0.67,
+        "cd": "1s"
+      }
+    ]
+  },
+  "diona": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.8,
+        "cd": "1s"
+      }
+    ]
+  },
+  "mona": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "1s"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.33,
+        "cd": "1s"
+      }
+    ]
+  },
+  "keqing": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.6s"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.6s"
+      },
+      {
+        "source": "DropBall_Talent",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "sucrose": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_WindBlackHole_Gadget_ReviveEnergy_Detect_Hanlder",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.4s"
+      }
+    ]
+  },
+  "xinyan": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball_Base",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "rosaria": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.6s"
+      }
+    ]
+  },
+  "hu_tao": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall_Handler",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "DropBall_Handler",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "kaedehara_kazuha": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.2s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "yanfei": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "yoimiya": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2s"
+      }
+    ]
+  },
+  "thoma": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball_Extra",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "eula": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_Click_DropBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.3s"
+      },
+      {
+        "source": "ElementalArt_Click_DropBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.3s"
+      },
+      {
+        "source": "ElementalArt_Burst_DropBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.5s"
+      },
+      {
+        "source": "ElementalArt_Burst_DropBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "raiden_shogun": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_Elf_ElementalBall_Handler",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "sayu": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_Roll_DropBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "3s"
+      },
+      {
+        "source": "UNIQUE_Strike_DropBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "sangonomiya_kokomi": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_ElemBall",
+        "particles": 1,
+        "chance": 0.67,
+        "cd": "1s"
+      }
+    ]
+  },
+  "gorou": {
+    "element": "Geo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_BloomElemBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "kujou_sara": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_GenerateElemBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.1s"
+      }
+    ]
+  },
+  "arataki_itto": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 0.5,
+        "cd": "0.2s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 4,
+        "chance": 0.5,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "yae_miko": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_ElementBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2.5s (Tick)"
+      }
+    ]
+  },
+  "shikanoin_heizou": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.2s"
+      },
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.2s"
+      },
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.2s"
+      },
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "yelan": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_Strike_DropBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "kirara": {
+    "element": "Dendro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_CatBox_DropBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "4s"
+      },
+      {
+        "source": "UNIQUE_Strike_DropBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "aloy": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": []
+  },
+  "shenhe": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_Bullet_ElemBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "ElementalArt_ElemBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "yun_jin": {
+    "element": "Geo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.3s"
+      },
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "kuki_shinobu": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_ElemBall",
+        "particles": 1,
+        "chance": 0.44,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "kamisato_ayato": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1.9s"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "1.9s"
+      }
+    ]
+  },
+  "collei": {
+    "element": "Dendro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Bullet_ElemBall_Drop",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "dori": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1.5s"
+      },
+      {
+        "source": "UNIQUE_SubBullet_Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1.5s"
+      }
+    ]
+  },
+  "tighnari": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "nilou": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Water_ElemBall_1",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.1s"
+      },
+      {
+        "source": "Water_ElemBall_1",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.1s"
+      },
+      {
+        "source": "Water_ElemBall_2",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.1s"
+      },
+      {
+        "source": "Bullet_Water_ElemBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "cyno": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 0.33,
+        "cd": "0.5s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.5s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "candace": {
+    "element": "Hydro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_H_DropElemBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.5s"
+      },
+      {
+        "source": "ElementalArt_L_DropElemBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "nahida": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "7s"
+      }
+    ]
+  },
+  "layla": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_Ball_1",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "UNIQUE_Ball_1",
+        "particles": 1,
+        "chance": 0.33,
+        "cd": "Instant"
+      },
+      {
+        "source": "UNIQUE_Ball_2",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "UNIQUE_Ball_2",
+        "particles": 1,
+        "chance": 0.33,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "wanderer": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2s"
+      }
+    ]
+  },
+  "faruzan": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "WindZoneAttackLand_GenerateBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "1s"
+      }
+    ]
+  },
+  "yaoyao": {
+    "element": "Dendro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1.5s"
+      }
+    ]
+  },
+  "alhaitham": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall_Base",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "1.5s"
+      }
+    ]
+  },
+  "dehya": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "mika": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ice_ElemBall_1",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.15s"
+      }
+    ]
+  },
+  "kaveh": {
+    "element": "Dendro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "baizhu": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "1s"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "1s"
+      }
+    ]
+  },
+  "lynette": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_Strike_DropBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.6s"
+      }
+    ]
+  },
+  "lyney": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall_Base",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "freminet": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball1",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball1_Burst",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "Ball2",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "wriothesley": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_GenerateEnergy",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2s"
+      }
+    ]
+  },
+  "neuvillette": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "charlotte": {
+    "element": "Cryo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_DropBall_Click",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "UNIQUE_DropBall_Hold",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.3s"
+      },
+      {
+        "source": "UNIQUE_DropBall_Hold",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "furina": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_GenerateElemBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2.5s"
+      }
+    ]
+  },
+  "chevreuse": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "10s"
+      }
+    ]
+  },
+  "navia": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Rock_ElemBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.2s"
+      },
+      {
+        "source": "Rock_ElemBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "gaming": {
+    "element": "Pyro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "3s"
+      }
+    ]
+  },
+  "xianyun": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "chiori": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 0.8,
+        "cd": "3s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 2,
+        "chance": 0.19,
+        "cd": "3s"
+      }
+    ]
+  },
+  "sigewinne": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": []
+  },
+  "arlecchino": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_DropBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "1.5s"
+      }
+    ]
+  },
+  "sethos": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "clorinde": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_Electric_Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2s"
+      }
+    ]
+  },
+  "emilie": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "Instant"
+      },
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "kachina": {
+    "element": "Geo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 0.66,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "kinich": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElemBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.4s"
+      }
+    ]
+  },
+  "mualani": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 4,
+        "chance": 0.5,
+        "cd": "2s"
+      },
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 5,
+        "chance": 0.5,
+        "cd": "2s"
+      }
+    ]
+  },
+  "xilonen": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "chasca": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "ororon": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "mavuika": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "citlali": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "Instant"
+      }
+    ]
+  },
+  "lan_yan": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_ElementalBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "yumemizuki_mizuki": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElemBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "iansan": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_Strike_DropBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "3s"
+      }
+    ]
+  },
+  "varesa": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "0.1s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 0.5,
+        "cd": "0.1s"
+      }
+    ]
+  },
+  "escoffier": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "GenerateBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "ifa": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "DropBall",
+        "particles": 4,
+        "chance": 0.5,
+        "cd": "0.2s"
+      },
+      {
+        "source": "DropBall",
+        "particles": 5,
+        "chance": 0.5,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "skirk": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalBall_GenerateEnergy",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "15s"
+      }
+    ]
+  },
+  "dahlia": {
+    "element": "Hydro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "ineffa": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropElemBall",
+        "particles": 1,
+        "chance": 0.66,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "lauma": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 0.66,
+        "cd": "3.3s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 2,
+        "chance": 0.33,
+        "cd": "3.3s"
+      }
+    ]
+  },
+  "flins": {
+    "element": "Electro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2s"
+      }
+    ]
+  },
+  "aino": {
+    "element": "Hydro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "UNIQUE_ElementalArt_DropElemBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.4s"
+      }
+    ]
+  },
+  "nefer": {
+    "element": "Dendro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 0.66,
+        "cd": "0.2s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 2,
+        "chance": 0.33,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "durin": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "jahoda": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalBall_GenerateEnergy",
+        "particles": 4,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "columbina": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropBall",
+        "particles": 1,
+        "chance": 0.66,
+        "cd": "3.5s (Tick)"
+      },
+      {
+        "source": "DropBall",
+        "particles": 2,
+        "chance": 0.33,
+        "cd": "3.5s (Tick)"
+      }
+    ]
+  },
+  "zibai": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropElemBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2s"
+      }
+    ]
+  },
+  "illuga": {
+    "element": "Geo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 4,
+        "chance": 0.5,
+        "cd": "0.5s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 5,
+        "chance": 0.5,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "varka": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 6,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  },
+  "lohen": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalBall_GenerateEnergy",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2s"
+      }
+    ]
+  },
+  "linnea": {
+    "element": "Geo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "UNIQUE_GenerateElemBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "9s"
+      }
+    ]
+  },
+  "nicole": {
+    "element": "Pyro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "prune": {
+    "element": "Anemo",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.3s"
+      }
+    ]
+  }
+}
