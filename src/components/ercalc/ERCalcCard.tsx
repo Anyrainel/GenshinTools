@@ -8,12 +8,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo } from "@/data/charInfo";
 import type { Element } from "@/data/types";
-import { ENEMY_PRESETS } from "@/lib/ercalc/constants";
+import { ENEMY_PRESETS, particles } from "@/lib/ercalc/constants";
 import {
   autoPlaceTicks,
   calculateTeamER,
   flattenERTimeline,
-  particles,
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
 import { periodicGenerators } from "@/lib/ercalc/particleConfig";
@@ -48,8 +47,9 @@ function teamToSlots(team: Team): TeamSlot[] {
     .filter((id): id is string => id != null)
     .map((charId, i) => {
       const info = charInfo[charId];
-      const element = (info?.element ?? "Anemo") as Element;
-      const burstCost = info?.burstCost ?? 60;
+      const pData = particles[charId];
+      const element = (pData?.element ?? "Anemo") as Element;
+      const burstCost = info?.energy ?? 60;
       const weaponId = team.weapons[i] ?? undefined;
       return {
         charId,

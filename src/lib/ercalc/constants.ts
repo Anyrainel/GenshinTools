@@ -39,14 +39,41 @@ export const allSelfEnergy: SelfEnergyMap = {
   ...noneSE,
 };
 
-interface ParticleEntry {
-  element: string;
-  press: { avgParticles: number; notes: string | null } | null;
-  hold: { avgParticles: number; notes: string | null } | null;
-  spawnPoint: string | null;
+/** Particle data can be a fixed number or weighted array [[count, probability], ...]. */
+type ParticleValue = number | [number, number][];
+
+interface ParticleSkillEntry {
+  particles: ParticleValue;
+  notes?: string;
 }
 
-export const particles = particlesData as Record<string, ParticleEntry>;
+interface ParticlePeriodicEntry {
+  procs: number;
+  particles: ParticleValue;
+  notes?: string;
+}
+
+export interface ParticleEntry {
+  element: string;
+  source?: string;
+  spawnPoint?: string;
+  E?: ParticleSkillEntry;
+  holdE?: ParticleSkillEntry;
+  periodic?: { E: ParticlePeriodicEntry };
+}
+
+/** Resolve a ParticleValue to its expected (average) number. */
+export function resolveParticleAvg(v: ParticleValue | undefined): number {
+  if (v == null) return 0;
+  if (typeof v === "number") return v;
+  // weighted: sum(count * probability)
+  return v.reduce((sum, [count, prob]) => sum + count * prob, 0);
+}
+
+export const particles = particlesData as unknown as Record<
+  string,
+  ParticleEntry
+>;
 
 // ─── Energy multipliers ───
 

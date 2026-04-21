@@ -1,5 +1,6 @@
 import { artifactEnergyById } from "@/lib/ercalc/artifactEnergy";
 import {
+  expectedPeriodicProcs,
   multiHitETotal,
   periodicGenerators,
 } from "@/lib/ercalc/particleConfig";
@@ -18,6 +19,7 @@ import {
   type SelfEnergyEntry,
   allSelfEnergy,
   particles as particlesData,
+  resolveParticleAvg,
 } from "./constants";
 import type {
   ActionType,
@@ -174,24 +176,28 @@ function getActionParticles(
   const data = particles[charId];
   if (!data) return 0;
 
-  // periodicE: always uses raw per-proc press data
+  // periodicE: per-proc value from periodic data or E data
   if (action === "periodicE") {
-    return rngAdjust(data.press?.avgParticles ?? 0, mode);
+    const periodicParticles = data.periodic?.E?.particles;
+    if (periodicParticles != null) {
+      return rngAdjust(resolveParticleAvg(periodicParticles), mode);
+    }
+    return rngAdjust(resolveParticleAvg(data.E?.particles), mode);
   }
 
   // Periodic deployers: E/holdE produces 0 (deployment only)
   if (periodicGenerators.has(charId)) return 0;
 
-  // holdE: prefer hold data
-  if (action === "holdE" && data.hold) {
-    return rngAdjust(data.hold.avgParticles, mode);
+  // holdE: prefer holdE data
+  if (action === "holdE" && data.holdE) {
+    return rngAdjust(resolveParticleAvg(data.holdE.particles), mode);
   }
 
-  // E (or holdE fallback): multi-hit override or press data
+  // E (or holdE fallback): multi-hit override or E data
   if (multiHitETotal[charId] != null) {
     return rngAdjust(multiHitETotal[charId], mode);
   }
-  return rngAdjust(data.press?.avgParticles ?? 0, mode);
+  return rngAdjust(resolveParticleAvg(data.E?.particles), mode);
 }
 
 function getParticleElement(charId: string): string {
@@ -837,7 +843,7 @@ export function calculateTeamER(
 /** Get available action types for a character (periodicE is auto-managed via ticks). */
 export function getAvailableActions(charId: string): ActionType[] {
   const actions: ActionType[] = ["E"];
-  if (particles[charId]?.hold) actions.push("holdE");
+  if (particles[charId]?.holdE) actions.push("holdE");
   actions.push("Q", "NA", "CA", "PA", "wait");
   return actions;
 }
