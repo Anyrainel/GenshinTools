@@ -7,6 +7,7 @@ import {
 import { EvaluationView } from "@/pages/account-data/EvaluationView";
 import { InventoryView } from "@/pages/account-data/InventoryView";
 import { RecommendationView } from "@/pages/account-data/RecommendationView";
+import { ResourceView } from "@/pages/account-data/ResourceView";
 import { TriageView } from "@/pages/account-data/TriageView";
 
 import { AccountManagerDialog } from "@/components/account-data/AccountManagerDialog";
@@ -83,11 +84,13 @@ const isValidAccountDataTab = (
   | "inventory"
   | "recommendations"
   | "evaluation"
+  | "resources"
   | "triage" =>
   tab === "characters" ||
   tab === "inventory" ||
   tab === "recommendations" ||
   tab === "evaluation" ||
+  tab === "resources" ||
   tab === "triage";
 
 const NoDataPlaceholder = ({
@@ -728,6 +731,13 @@ export default function AccountDataPage() {
 
         <TabsContent value="evaluation" className="mt-0 h-full">
           <EvaluationView
+            onOpenImport={() => importRef.current?.open()}
+            onShowTour={() => tour.start("account-data")}
+          />
+        </TabsContent>
+
+        <TabsContent value="resources" className="mt-0 h-full">
+          <ResourceView
             onOpenImport={() => importRef.current?.open()}
             onShowTour={() => tour.start("account-data")}
           />

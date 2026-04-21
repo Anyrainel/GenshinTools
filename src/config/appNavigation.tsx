@@ -10,6 +10,7 @@ import {
   Diamond,
   Filter,
   FlaskConical,
+  Gem,
   Lightbulb,
   Lock,
   Medal,
@@ -69,6 +70,12 @@ export const getNavigationConfig = (
         value: "evaluation",
         icon: BarChart3,
         tourStepId: "ad-evaluation",
+      },
+      {
+        label: t.ui("evaluation.resourcesTabLabel"),
+        href: "/account-data/resources",
+        value: "resources",
+        icon: Gem,
       },
       {
         label: t.ui("triage.tabLabel"),

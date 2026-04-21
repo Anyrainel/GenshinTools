@@ -35,7 +35,6 @@ import {
   ArrowRightLeft,
   Dices,
   Info,
-  PartyPopper,
   Pickaxe,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -249,93 +248,101 @@ export function RecommendationView({
     );
   }
 
-  const hasAnyRecs =
-    allRecs &&
-    Object.values(allRecs.perCharacter).some((cr) => cr.actions.length > 0);
+  const hasRankedChars = tiers.some(
+    (tier) =>
+      tier !== "Pool" &&
+      !tierCustomization[tier]?.hidden &&
+      (charactersByTier[tier]?.length ?? 0) > 0
+  );
 
   return (
     <ScrollLayout bodyClassName="space-y-4">
-      {/* Investment threshold controls */}
-      <Card className="bg-gradient-card shrink-0">
-        <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 p-4">
-          <div className="flex items-center gap-2 pr-2 lg:pr-4 xl:pr-6">
-            <CardTitle className="text-lg font-bold text-white">
-              {t.ui("accountData.investmentLevel.label")}
-            </CardTitle>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-white/10"
+      {hasRankedChars ? (
+        /* Investment threshold controls */
+        <Card className="bg-gradient-card shrink-0">
+          <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 p-4">
+            <div className="flex items-center gap-2 pr-2 lg:pr-4 xl:pr-6">
+              <CardTitle className="text-lg font-bold text-white">
+                {t.ui("accountData.investmentLevel.label")}
+              </CardTitle>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                  >
+                    <Info className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="bottom"
+                  align="start"
+                  className="w-80 space-y-2 text-sm"
                 >
-                  <Info className="w-4 h-4" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent
-                side="bottom"
-                align="start"
-                className="w-80 space-y-2 text-sm"
-              >
-                <p className="font-semibold text-foreground">
-                  {t.ui("accountData.howItWorks.title")}
-                </p>
-                <ul className="space-y-1.5 text-muted-foreground list-disc pl-4">
-                  <li>{t.ui("accountData.howItWorks.step1")}</li>
-                  <li>{t.ui("accountData.howItWorks.step2")}</li>
-                  <li>{t.ui("accountData.howItWorks.step3")}</li>
-                  <li>{t.ui("accountData.howItWorks.step4")}</li>
-                </ul>
-              </PopoverContent>
-            </Popover>
+                  <p className="font-semibold text-foreground">
+                    {t.ui("accountData.howItWorks.title")}
+                  </p>
+                  <ul className="space-y-1.5 text-muted-foreground list-disc pl-4">
+                    <li>{t.ui("accountData.howItWorks.step1")}</li>
+                    <li>{t.ui("accountData.howItWorks.step2")}</li>
+                    <li>{t.ui("accountData.howItWorks.step3")}</li>
+                    <li>{t.ui("accountData.howItWorks.step4")}</li>
+                  </ul>
+                </PopoverContent>
+              </Popover>
+            </div>
+            {(
+              [
+                {
+                  key: "swap" as const,
+                  label: "accountData.insights.swap",
+                  icon: ArrowRightLeft,
+                  color: "text-sky-400",
+                },
+                {
+                  key: "upgrade" as const,
+                  label: "accountData.insights.upgrade",
+                  icon: ArrowBigUpDash,
+                  color: "text-emerald-400",
+                },
+                {
+                  key: "farm" as const,
+                  label: "accountData.insights.farm",
+                  icon: Pickaxe,
+                  color: "text-indigo-400",
+                },
+                {
+                  key: "reroll" as const,
+                  label: "accountData.insights.reroll",
+                  icon: Dices,
+                  color: "text-violet-400",
+                },
+              ] as const
+            ).map(({ key, label, icon: ThIcon, color }) => (
+              <ThresholdInput
+                key={key}
+                label={t.ui(label)}
+                icon={ThIcon}
+                color={color}
+                value={investmentThresholds[key]}
+                onChange={(v) => setInvestmentThreshold(key, v)}
+              />
+            ))}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-4 py-12">
+          <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center">
+            <Info className="w-6 h-6 text-primary" />
           </div>
-          {(
-            [
-              {
-                key: "swap" as const,
-                label: "accountData.insights.swap",
-                icon: ArrowRightLeft,
-                color: "text-sky-400",
-              },
-              {
-                key: "upgrade" as const,
-                label: "accountData.insights.upgrade",
-                icon: ArrowBigUpDash,
-                color: "text-emerald-400",
-              },
-              {
-                key: "farm" as const,
-                label: "accountData.insights.farm",
-                icon: Pickaxe,
-                color: "text-indigo-400",
-              },
-              {
-                key: "reroll" as const,
-                label: "accountData.insights.reroll",
-                icon: Dices,
-                color: "text-violet-400",
-              },
-            ] as const
-          ).map(({ key, label, icon: ThIcon, color }) => (
-            <ThresholdInput
-              key={key}
-              label={t.ui(label)}
-              icon={ThIcon}
-              color={color}
-              value={investmentThresholds[key]}
-              onChange={(v) => setInvestmentThreshold(key, v)}
-            />
-          ))}
-        </CardContent>
-      </Card>
-
-      {!hasAnyRecs && allRecs && (
-        <div className="flex items-center justify-center gap-3 py-12">
-          <div className="rounded-full bg-primary/20 w-10 h-10 flex items-center justify-center">
-            <PartyPopper className="w-5 h-5 text-primary" />
-          </div>
-          <div className="text-foreground font-medium">
-            {t.ui("accountData.allOptimal")}
-          </div>
+          <p className="text-sm text-muted-foreground text-center max-w-md">
+            {t.ui("accountData.noRankedChars")}
+          </p>
+          <Button asChild variant="outline">
+            <Link to="/tier-list/characters">
+              {t.ui("accountData.insights.goToTierList")}
+            </Link>
+          </Button>
         </div>
       )}
 
