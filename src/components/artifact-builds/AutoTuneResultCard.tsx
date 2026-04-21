@@ -135,7 +135,7 @@ export function AutoTuneResultCard({
           }}
         />
         <div className="p-3 flex items-center gap-2">
-          {char && <ItemIcon characterId={entry.characterId} size="md" />}
+          {char && <ItemIcon characterId={entry.characterId} size="sm" />}
           <div className="min-w-0 flex-1">
             <div className={cn("font-bold text-base truncate", elColor)}>
               {t.character(entry.characterId)}
@@ -174,7 +174,7 @@ export function AutoTuneResultCard({
       <div className="p-3 space-y-3">
         {/* Header */}
         <div className="flex items-center gap-2">
-          {char && <ItemIcon characterId={entry.characterId} size="md" />}
+          {char && <ItemIcon characterId={entry.characterId} size="sm" />}
           <div className="min-w-0 flex-1">
             <div className={cn("font-bold text-base truncate", elColor)}>
               {t.character(entry.characterId)}

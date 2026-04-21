@@ -49,6 +49,7 @@ function TeamsTooltip({
           enabled={true}
           onToggle={() => {}}
           accountData={accountData}
+          hideCheckbox
         />
       ))}
     </div>
@@ -111,7 +112,7 @@ export function AutoTuneSelectionCard({
         </div>
 
         {/* Character icon */}
-        {char && <ItemIcon characterId={entry.characterId} size="md" />}
+        {char && <ItemIcon characterId={entry.characterId} size="sm" />}
 
         {/* Right column: name top, artifact + team count bottom */}
         <div className="min-w-0 flex flex-col gap-1 self-stretch py-0.5">
@@ -134,7 +135,7 @@ export function AutoTuneSelectionCard({
       {entry.teams.length > 0 && (
         <div
           className={cn(
-            "absolute z-50 left-0 top-full mt-1",
+            "absolute z-50 left-0 top-full mt-1 min-w-max",
             "bg-popover border border-border rounded-lg shadow-xl",
             "opacity-0 pointer-events-none scale-95 origin-top-left",
             "group-hover:opacity-100 group-hover:pointer-events-auto group-hover:scale-100",

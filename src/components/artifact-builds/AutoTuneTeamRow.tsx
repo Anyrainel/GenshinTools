@@ -12,6 +12,7 @@ interface AutoTuneTeamRowProps {
   enabled: boolean;
   onToggle: (enabled: boolean) => void;
   accountData: AccountData | null;
+  hideCheckbox?: boolean;
 }
 
 export function AutoTuneTeamRow({
@@ -20,17 +21,20 @@ export function AutoTuneTeamRow({
   enabled,
   onToggle,
   accountData,
+  hideCheckbox,
 }: AutoTuneTeamRowProps) {
   const { t } = useLanguage();
 
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is a controlled component inside the label
     <label className="flex items-start gap-2 px-1.5 py-1.5 rounded border border-border/30 hover:bg-muted/20 cursor-pointer w-fit">
-      <Checkbox
-        checked={enabled}
-        onCheckedChange={(checked) => onToggle(!!checked)}
-        className="mt-0.5 flex-shrink-0"
-      />
+      {!hideCheckbox && (
+        <Checkbox
+          checked={enabled}
+          onCheckedChange={(checked) => onToggle(!!checked)}
+          className="mt-0.5 flex-shrink-0"
+        />
+      )}
       <div className="flex-1 min-w-0">
         <div className="text-xs font-medium mb-1 truncate text-muted-foreground">
           {team.name || buildTeamLabel(team, t)}
@@ -51,12 +55,12 @@ export function AutoTuneTeamRow({
               >
                 {charRes ? (
                   <ItemIcon
-                    size="sm"
+                    size="xs"
                     characterId={charId!}
                     badge={constellation}
                   />
                 ) : (
-                  <div className="w-[48px] h-[48px] rounded bg-muted/40 border border-dashed border-border/30" />
+                  <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
                 )}
               </div>
             );
