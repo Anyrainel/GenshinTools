@@ -49,8 +49,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "wolfs_gravestone",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -58,8 +57,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "bennett",
@@ -67,8 +65,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kaedehara_kazuha",
@@ -76,8 +73,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 

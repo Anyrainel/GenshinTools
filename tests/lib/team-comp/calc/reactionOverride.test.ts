@@ -87,8 +87,7 @@ describe("per-part reaction override — damage calc", () => {
       constellation: 0,
       weaponId: "wolfs_gravestone",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     // Need a Hydro teammate for vaporize availability
     {
@@ -97,8 +96,7 @@ describe("per-part reaction override — damage calc", () => {
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -227,8 +225,7 @@ describe("partHits — multi-hit split", () => {
       constellation: 0,
       weaponId: "kaguras_verity",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     // Need Dendro teammate for aggravate
     {
@@ -237,8 +234,7 @@ describe("partHits — multi-hit split", () => {
       constellation: 0,
       weaponId: "a_thousand_floating_dreams",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -426,8 +422,7 @@ describe("getDamageResult matches getDisplayResult total damage", () => {
       constellation: 0,
       weaponId: "kaguras_verity",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "nahida",
@@ -435,8 +430,7 @@ describe("getDamageResult matches getDisplayResult total damage", () => {
       constellation: 0,
       weaponId: "a_thousand_floating_dreams",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -499,8 +493,7 @@ describe("multi-element character reaction overrides", () => {
       constellation: 0,
       weaponId: "aqua_simulacra",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "xiangling",
@@ -508,8 +501,7 @@ describe("multi-element character reaction overrides", () => {
       constellation: 0,
       weaponId: "the_catch",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "xingqiu",
@@ -517,8 +509,7 @@ describe("multi-element character reaction overrides", () => {
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 

@@ -71,8 +71,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 1,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: CW,
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: CW },
   },
   {
     charId: "xingqiu",
@@ -80,8 +79,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: ESF,
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: ESF },
   },
 ];
 
@@ -153,8 +151,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
           minEr: 5.0, // impossibly high ER to force failure
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: CW,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: CW },
         },
       },
     };
@@ -182,8 +179,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
           minEr: 1.0,
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: CW,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: CW },
         },
       },
       ignoreArtifactSets: { hu_tao: true },
@@ -215,8 +211,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
           minEr: 1.0,
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: CW,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: CW },
         },
       },
       ignoreArtifactSets: { hu_tao: true },
@@ -249,14 +244,12 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
           minEr: 5.0, // impossibly high ER to force failure
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: CW,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: CW },
         },
         xingqiu: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: ESF,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: ESF },
         },
       },
       ignoreArtifactSets: { xingqiu: true },
@@ -287,14 +280,12 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
           minEr: 1.0,
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: CW,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: CW },
         },
         xingqiu: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: ESF,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: ESF },
         },
       },
       ignoreArtifactSets: { hu_tao: true, xingqiu: true },
@@ -320,8 +311,7 @@ describe("runTeamOptimization — accidental set detection", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null, // no set requirement
-        artifactHalfSetIds: [],
+        artifactSet: null, // no set requirement
       },
     ];
     const tb = new TeamBuild(configs);
@@ -349,8 +339,7 @@ describe("runTeamOptimization — accidental set detection", () => {
           minEr: 1.0,
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
       },
     };
@@ -375,8 +364,7 @@ describe("runTeamOptimization — accidental set detection", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       },
     ];
     const tb = new TeamBuild(configs);
@@ -396,8 +384,7 @@ describe("runTeamOptimization — accidental set detection", () => {
           minEr: 1.0,
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: CW,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: CW },
         },
       },
     };
@@ -419,8 +406,7 @@ describe("runTeamOptimization — accidental set detection", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       },
     ]);
     const formulaId = getFirstFormulaId(tb, "hu_tao");
@@ -446,8 +432,7 @@ describe("runTeamOptimization — accidental set detection", () => {
           minEr: 1.0,
           minCr: 0,
           buildMatch: makeBuildMatch(),
-          artifactSetId: CW,
-          artifactHalfSetIds: [],
+          artifactSet: { type: "4pc", setId: CW },
         },
       },
       ignoreArtifactSets: { hu_tao: true },
@@ -470,8 +455,7 @@ describe("TeamBuild — configs and combatOpts stored", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       },
     ];
     const tb = new TeamBuild(configs, { someOpt: "val" });
@@ -487,12 +471,11 @@ describe("TeamBuild — configs and combatOpts stored", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       },
     ];
     const tb = new TeamBuild(configs);
     expect(tb.configs).toBe(configs);
-    expect(tb.configs[0].artifactSetId).toBe(CW);
+    expect(tb.configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
 });

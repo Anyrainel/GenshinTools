@@ -25,8 +25,7 @@ describe("Mavuika melt Q damage investigation", () => {
       constellation: 0,
       weaponId: "a_thousand_blazing_suns",
       refinement: 1,
-      artifactSetId: "obsidian_codex",
-      artifactHalfSetIds: ["nightsoul-dmg%-15"],
+      artifactSet: { type: "4pc", setId: "obsidian_codex" },
     },
     {
       charId: "citlali",
@@ -34,8 +33,7 @@ describe("Mavuika melt Q damage investigation", () => {
       constellation: 2,
       weaponId: "starcallers_watch",
       refinement: 1,
-      artifactSetId: "scroll_of_the_hero_of_cinder_city",
-      artifactHalfSetIds: ["nightsoul-energy-6"],
+      artifactSet: { type: "4pc", setId: "scroll_of_the_hero_of_cinder_city" },
     },
     {
       charId: "xilonen",
@@ -43,8 +41,7 @@ describe("Mavuika melt Q damage investigation", () => {
       constellation: 0,
       weaponId: "freedomsworn",
       refinement: 1,
-      artifactSetId: "archaic_petra",
-      artifactHalfSetIds: ["geo%-15"],
+      artifactSet: { type: "4pc", setId: "archaic_petra" },
     },
     {
       charId: "bennett",
@@ -52,8 +49,7 @@ describe("Mavuika melt Q damage investigation", () => {
       constellation: 6,
       weaponId: "mistsplitter_reforged",
       refinement: 2,
-      artifactSetId: "noblesse_oblige",
-      artifactHalfSetIds: ["burst-dmg%-20"],
+      artifactSet: { type: "4pc", setId: "noblesse_oblige" },
     },
   ];
 

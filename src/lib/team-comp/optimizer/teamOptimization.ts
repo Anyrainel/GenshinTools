@@ -33,6 +33,7 @@ import type {
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "../types";
+import { getHalfSetIds, getSetId } from "../types";
 import {
   computeWeightScore,
   getArtifactCr,
@@ -400,11 +401,8 @@ function buildHeuristicAssignment(
     circlet: null,
   };
 
-  const is4pc = !!charConfig.artifactSetId;
-  const is2pc =
-    !charConfig.artifactSetId &&
-    !!charConfig.artifactHalfSetIds &&
-    charConfig.artifactHalfSetIds.length === 2;
+  const is4pc = charConfig.artifactSet?.type === "4pc";
+  const is2pc = charConfig.artifactSet?.type === "2pc+2pc";
 
   const buildMatch = charConfig.buildMatch;
 
@@ -412,7 +410,7 @@ function buildHeuristicAssignment(
   const slotSetAssignment: (string | null)[] = [null, null, null, null, null];
 
   if (is4pc) {
-    const setId = charConfig.artifactSetId!;
+    const setId = getSetId(charConfig.artifactSet)!;
     const onSetCounts = allSlots.map(
       (slot) =>
         inventory.filter(
@@ -428,7 +426,7 @@ function buildHeuristicAssignment(
       slotSetAssignment[i] = i === flexSlotIdx ? null : setId;
     }
   } else if (is2pc) {
-    const [h1, h2] = charConfig.artifactHalfSetIds!;
+    const [h1, h2] = getHalfSetIds(charConfig.artifactSet) as [string, string];
     const h1Sets = new Set(artifactHalfSetsById[h1]?.setIds ?? []);
     const h2Sets = new Set(artifactHalfSetsById[h2]?.setIds ?? []);
     let h1Count = 0;
@@ -662,14 +660,10 @@ export async function* runTeamOptimization(
           }
 
           // Substats don't matter. Check if artifact set bonus affects damage.
-          const hasSetConfig =
-            !!charPerConf?.artifactSetId ||
-            (charPerConf?.artifactHalfSetIds?.length ?? 0) > 0;
+          const hasSetConfig = !!charPerConf?.artifactSet;
           if (hasSetConfig) {
             const noSetConfigs = teamBuild.configs.map((c) =>
-              c.charId === cid
-                ? { ...c, artifactSetId: null, artifactHalfSetIds: [] }
-                : c
+              c.charId === cid ? { ...c, artifactSet: null } : c
             );
             const noSetTB = new TeamBuild(
               noSetConfigs,
@@ -705,8 +699,7 @@ export async function* runTeamOptimization(
       if (epc) {
         return {
           ...c,
-          artifactSetId: epc.artifactSetId ?? null,
-          artifactHalfSetIds: epc.artifactHalfSetIds ?? [],
+          artifactSet: epc.artifactSet ?? null,
         };
       }
       return c;
@@ -1081,13 +1074,11 @@ export async function* runTeamOptimization(
       failReasons[charId] &&
       opts.ignoreArtifactSets?.[charId] &&
       charConfig &&
-      (charConfig.artifactSetId ||
-        (charConfig.artifactHalfSetIds?.length ?? 0) > 0)
+      !!charConfig.artifactSet
     ) {
       effectivePerChar[charId] = {
         ...charConfig,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       };
       effectiveTeamBuild = rebuildTeamBuild();
       const charDeadline = perCharDeadlineMs
@@ -1472,7 +1463,7 @@ export async function* runTeamOptimization(
     // Detect same-4pc-set pairs
     const setToChars = new Map<string, string[]>();
     for (const cid of allocatableChars) {
-      const setId = effectivePerChar[cid]?.artifactSetId;
+      const setId = getSetId(effectivePerChar[cid]?.artifactSet);
       if (!setId) continue;
       if (!setToChars.has(setId)) setToChars.set(setId, []);
       setToChars.get(setId)!.push(cid);
@@ -2111,7 +2102,7 @@ export async function* runTeamOptimization(
     const allCharsHaveConfiguredSets = allCharIds.every((cid) => {
       const cc = effectivePerChar[cid];
       if (!cc) return true;
-      return !!cc.artifactSetId || (cc.artifactHalfSetIds?.length ?? 0) > 0;
+      return !!cc.artifactSet;
     });
     const anyCharHasErCrConstraint = allCharIds.some((cid) => {
       const cc = effectivePerChar[cid];
@@ -2142,10 +2133,10 @@ export async function* runTeamOptimization(
           const detected = detectEquippedSets(pieces);
           const epc = testPerChar[cid];
           if (!epc) continue;
-          const currentSetId = epc.artifactSetId ?? null;
-          const currentHalfIds = epc.artifactHalfSetIds ?? [];
-          const detectedSetId = detected.artifactSetId;
-          const detectedHalfIds = detected.artifactHalfSetIds;
+          const currentSetId = getSetId(epc.artifactSet);
+          const currentHalfIds = getHalfSetIds(epc.artifactSet);
+          const detectedSetId = getSetId(detected);
+          const detectedHalfIds = getHalfSetIds(detected);
           if (
             detectedSetId !== currentSetId ||
             detectedHalfIds.length !== currentHalfIds.length ||
@@ -2154,8 +2145,7 @@ export async function* runTeamOptimization(
           ) {
             testPerChar[cid] = {
               ...epc,
-              artifactSetId: detectedSetId,
-              artifactHalfSetIds: detectedHalfIds,
+              artifactSet: detected,
             };
             needsRebuild = true;
           }
@@ -2166,8 +2156,7 @@ export async function* runTeamOptimization(
             if (epc) {
               return {
                 ...c,
-                artifactSetId: epc.artifactSetId ?? null,
-                artifactHalfSetIds: epc.artifactHalfSetIds ?? [],
+                artifactSet: epc.artifactSet ?? null,
               };
             }
             return c;
@@ -2529,11 +2518,8 @@ export async function* runTeamOptimization(
       const charConfig = effectivePerChar[charId]!;
       const charPool = getCharInventory(charId);
 
-      const is4pc = !!charConfig.artifactSetId;
-      const is2pc =
-        !charConfig.artifactSetId &&
-        !!charConfig.artifactHalfSetIds &&
-        charConfig.artifactHalfSetIds.length === 2;
+      const is4pc = charConfig.artifactSet?.type === "4pc";
+      const is2pc = charConfig.artifactSet?.type === "2pc+2pc";
 
       // Score and pick artifacts per slot using build weights
       const buildMatch = charConfig.buildMatch;
@@ -2554,7 +2540,7 @@ export async function* runTeamOptimization(
       if (is4pc) {
         // Need 4 slots on-set + 1 flex. When ER constraint exists, choose the
         // flex slot that maximizes achievable ER; otherwise fewest on-set candidates.
-        const setId = charConfig.artifactSetId!;
+        const setId = getSetId(charConfig.artifactSet)!;
         const onSetCounts = allSlots.map(
           (slot) =>
             charPool.filter(
@@ -2612,7 +2598,10 @@ export async function* runTeamOptimization(
           slotSetAssignment[i] = i === flexSlotIdx ? null : setId;
         }
       } else if (is2pc) {
-        const [h1, h2] = charConfig.artifactHalfSetIds!;
+        const [h1, h2] = getHalfSetIds(charConfig.artifactSet) as [
+          string,
+          string,
+        ];
         const h1Sets = new Set(artifactHalfSetsById[h1]?.setIds ?? []);
         const h2Sets = new Set(artifactHalfSetsById[h2]?.setIds ?? []);
         // Greedy: assign first 2 available slots to h1, next 2 to h2
@@ -2808,10 +2797,10 @@ export async function* runTeamOptimization(
     const epc = effectivePerChar[charId];
     if (!epc) continue;
 
-    const currentSetId = epc.artifactSetId ?? null;
-    const currentHalfIds = epc.artifactHalfSetIds ?? [];
-    const detectedSetId = detected.artifactSetId;
-    const detectedHalfIds = detected.artifactHalfSetIds;
+    const currentSetId = getSetId(epc.artifactSet);
+    const currentHalfIds = getHalfSetIds(epc.artifactSet);
+    const detectedSetId = getSetId(detected);
+    const detectedHalfIds = getHalfSetIds(detected);
 
     const setIdChanged = detectedSetId !== currentSetId;
     const halfIdsChanged =
@@ -2822,8 +2811,7 @@ export async function* runTeamOptimization(
     if (setIdChanged || halfIdsChanged) {
       effectivePerChar[charId] = {
         ...epc,
-        artifactSetId: detectedSetId,
-        artifactHalfSetIds: detectedHalfIds,
+        artifactSet: detected,
       };
       setsChanged = true;
     }
@@ -2856,17 +2844,19 @@ export async function* runTeamOptimization(
           const detected = detectEquippedSets(pieces);
           const epc = testPerChar[cid];
           if (!epc) continue;
+          const currentSetId = getSetId(epc.artifactSet);
+          const currentHalfIds = getHalfSetIds(epc.artifactSet);
+          const detectedSetId = getSetId(detected);
+          const detectedHalfIds = getHalfSetIds(detected);
           if (
-            detected.artifactSetId !== (epc.artifactSetId ?? null) ||
-            detected.artifactHalfSetIds.length !==
-              (epc.artifactHalfSetIds ?? []).length ||
-            [...detected.artifactHalfSetIds].sort().join(",") !==
-              [...(epc.artifactHalfSetIds ?? [])].sort().join(",")
+            detectedSetId !== currentSetId ||
+            detectedHalfIds.length !== currentHalfIds.length ||
+            [...detectedHalfIds].sort().join(",") !==
+              [...currentHalfIds].sort().join(",")
           ) {
             testPerChar[cid] = {
               ...epc,
-              artifactSetId: detected.artifactSetId,
-              artifactHalfSetIds: detected.artifactHalfSetIds,
+              artifactSet: detected,
             };
             needsRebuild = true;
           }
@@ -2877,8 +2867,7 @@ export async function* runTeamOptimization(
             return epc
               ? {
                   ...c,
-                  artifactSetId: epc.artifactSetId ?? null,
-                  artifactHalfSetIds: epc.artifactHalfSetIds ?? [],
+                  artifactSet: epc.artifactSet ?? null,
                 }
               : c;
           });

@@ -26,6 +26,7 @@ import type {
   ComboFormula,
   OptFailReason,
 } from "../types";
+import { getHalfSetIds, getSetId } from "../types";
 import {
   computeMarginalScore,
   getArtifactCr,
@@ -522,36 +523,33 @@ export function runCharacterBnB(
     };
   }
 
-  const is4pc = !!charConfig.artifactSetId;
-  const is2pc =
-    !charConfig.artifactSetId &&
-    !!charConfig.artifactHalfSetIds &&
-    charConfig.artifactHalfSetIds.length === 2;
+  const is4pc = charConfig.artifactSet?.type === "4pc";
+  const is2pc = charConfig.artifactSet?.type === "2pc+2pc";
 
   // Set feasibility
   if (is4pc) {
+    const setId = getSetId(charConfig.artifactSet)!;
     let slotsWithPiece = 0;
     for (let s = 0; s < 5; s++) {
-      if (slotData[s].bySet.has(charConfig.artifactSetId!)) slotsWithPiece++;
+      if (slotData[s].bySet.has(setId)) slotsWithPiece++;
     }
     if (slotsWithPiece < 4) {
       const slotCounts: Record<string, number> = {};
       for (let s = 0; s < 5; s++) {
-        slotCounts[allSlots[s]] =
-          slotData[s].bySet.get(charConfig.artifactSetId!)?.length ?? 0;
+        slotCounts[allSlots[s]] = slotData[s].bySet.get(setId)?.length ?? 0;
       }
       return {
         collector: new TopKCollector(topK),
         evaluations: 0,
         failReason: {
           kind: "set-impossible",
-          setId: charConfig.artifactSetId,
+          artifactSet: charConfig.artifactSet,
           slotCounts,
         },
       };
     }
   } else if (is2pc) {
-    const [h1, h2] = charConfig.artifactHalfSetIds!;
+    const [h1, h2] = getHalfSetIds(charConfig.artifactSet) as [string, string];
     const slotsForHalf = (hId: string): number => {
       let count = 0;
       for (let s = 0; s < 5; s++) {
@@ -573,7 +571,7 @@ export function runCharacterBnB(
         evaluations: 0,
         failReason: {
           kind: "set-impossible",
-          halfSetIds: charConfig.artifactHalfSetIds,
+          artifactSet: charConfig.artifactSet,
           slotCounts,
         },
       };
@@ -868,14 +866,18 @@ export function runCharacterBnB(
     const tasks: PatternTask[] = [];
     for (const pattern of SET4_PATTERNS) {
       const t = buildTask(
-        buildSlotGroupsForPattern(pattern, slotData, charConfig.artifactSetId!)
+        buildSlotGroupsForPattern(
+          pattern,
+          slotData,
+          getSetId(charConfig.artifactSet)!
+        )
       );
       if (t) tasks.push(t);
     }
     collectAndRunPatternTasks(tasks);
   } else if (is2pc) {
     const tasks: PatternTask[] = [];
-    const [h1, h2] = charConfig.artifactHalfSetIds as [string, string];
+    const [h1, h2] = getHalfSetIds(charConfig.artifactSet) as [string, string];
     const h1Keys = artifactHalfSetsById[h1]?.setIds ?? [];
     const h2Keys = artifactHalfSetsById[h2]?.setIds ?? [];
     for (const pattern of SET22_PATTERNS) {

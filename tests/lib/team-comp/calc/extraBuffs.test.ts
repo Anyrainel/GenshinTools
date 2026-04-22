@@ -20,8 +20,7 @@ const baseConfigs: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -29,8 +28,7 @@ const baseConfigs: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "zhongli",
@@ -38,8 +36,7 @@ const baseConfigs: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "black_tassel",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kaedehara_kazuha",
@@ -47,8 +44,7 @@ const baseConfigs: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "favonius_sword",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -182,7 +178,7 @@ const CTX: CalcContext = {
 };
 
 function getFirstFormulaId(tb: TeamBuild, charId: string): string {
-  const ids = tb.getFormulaIds()[charId];
+  const ids = tb.catalog.getFormulaIds()[charId];
   if (!ids) throw new Error(`No formulas for ${charId}`);
   return Object.keys(ids)[0]!;
 }

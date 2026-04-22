@@ -260,8 +260,9 @@ function makeDrawPool(mainStat: MainStat, excluded: SubStat[]): DrawPool {
   const stats: SubStat[] = [];
   const weights: number[] = [];
   let totalWeight = 0;
+  const mainKey: string = mainStat;
   for (const s of SUBSTAT_POOL) {
-    if (s === (mainStat as unknown as SubStat)) continue;
+    if (s === mainKey) continue;
     if (excluded.includes(s)) continue;
     const w = DRAW_WEIGHTS[s];
     stats.push(s);
@@ -991,10 +992,9 @@ function suggestionsForBuild(
     let bestCraft: ResourceSuggestion | null = null;
     const mains = getCandidateMainStats(slot, evalBuild);
     for (const mainStat of mains) {
+      const mainKey: string = mainStat;
       const subPairs = pairs(desirableSubs).filter(
-        ([a, b]) =>
-          a !== (mainStat as unknown as SubStat) &&
-          b !== (mainStat as unknown as SubStat)
+        ([a, b]) => a !== mainKey && b !== mainKey
       );
 
       for (const [s1, s2] of subPairs) {

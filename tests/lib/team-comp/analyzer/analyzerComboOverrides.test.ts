@@ -13,8 +13,11 @@ import type {
   MinErOverrides,
   TeamInvestment,
 } from "@/lib/team-comp/analyzer/types";
+import { resolveComboDescriptor } from "@/lib/team-comp/calc/combo";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type { ReactionComboEntry } from "@/lib/team-comp/types";
+import type { ReactionComboGridRow } from "@/lib/team-comp/calc/teamFormulaCatalog";
+import { MULTI_CONTRIBUTOR_REACTIONS } from "@/lib/team-comp/calc/teamReaction";
+import type { ReactionComboEntry, ReactionType } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
   ComboLine,
@@ -33,36 +36,55 @@ function mockTeamBuild(
 ): TeamBuild {
   const rxDesc = rxOpts?.rxDescriptor ?? [];
   return {
-    getComboDescriptor(charId: string): ComboTemplate {
-      return descriptors[charId] ?? [];
-    },
-    formulaIndex: new Map(
-      rxDesc.flatMap((e) =>
-        e.eligible.map(
-          (c) =>
-            [`${e.id}-${c}`, { statsCharId: c }] as [
-              string,
-              { statsCharId: string },
-            ]
-        )
-      )
-    ),
-    reactionProvider: {
-      getReactionComboDescriptor: () => rxDesc,
-      hasColumbina: false,
-      guessOnFieldChar: rxOpts?.guessOnFieldChar ?? (() => undefined),
-      getBaseReactionIds: () => rxDesc.map((e) => e.id),
-      getFormulaIds: () => {
-        const ids: Record<string, { en: string; zh: string }> = {};
-        for (const e of rxDesc) {
-          for (const c of e.eligible) {
-            const key = `${e.id}-${c}`;
-            ids[key] = { en: key, zh: key };
-          }
-        }
-        return ids;
+    catalog: {
+      resolveCombo(
+        charId: string,
+        constellation: number
+      ): Record<string, number> {
+        const desc = descriptors[charId] ?? [];
+        return resolveComboDescriptor(desc, constellation);
       },
-      isMultiContributor: () => true,
+      formulaIndex: new Map(
+        rxDesc.flatMap((e) =>
+          e.eligible.map(
+            (c) =>
+              [`${e.id}-${c}`, { statsCharId: c }] as [
+                string,
+                { statsCharId: string },
+              ]
+          )
+        )
+      ),
+      getReactionComboGrid: (): ReactionComboGridRow[] =>
+        rxDesc.map((e) => {
+          const baseReaction = e.id.startsWith("rx-")
+            ? e.id.slice(3)
+            : undefined;
+          const isMulti =
+            baseReaction != null &&
+            MULTI_CONTRIBUTOR_REACTIONS.has(baseReaction as ReactionType);
+          const counts: Record<string, number> = {};
+          for (const c of e.eligible) counts[c] = 0;
+          if (e.eligible.length > 0) {
+            counts[e.onFieldCharId] = Math.max(
+              0,
+              e.total - (e.eligible.length - 1)
+            );
+            for (const c of e.eligible) {
+              if (c !== e.onFieldCharId) counts[c] = 1;
+            }
+          }
+          return {
+            baseId: e.id,
+            label: { en: e.id, zh: e.id },
+            isMultiContributor: isMulti,
+            onFieldCharId: e.onFieldCharId,
+            baseTotal: e.total,
+            counts,
+            eligible: new Set(e.eligible),
+            bonus: e.bonus,
+          };
+        }),
     },
   } as unknown as TeamBuild;
 }

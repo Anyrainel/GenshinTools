@@ -13,6 +13,7 @@ import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/account-data/scoring/utils";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {
+  ArtifactSetConfig,
   CalcContext,
   DamageResult,
   OptFailReason,
@@ -32,8 +33,7 @@ export interface OptimizerOptions {
   baseSheets: Record<string, StatSheet>; // Sheets for other 3 chars
   calcContext: CalcContext;
 
-  artifactSetId?: string | null;
-  artifactHalfSetIds?: string[];
+  artifactSet?: ArtifactSetConfig | null;
 
   // ── Multi-pass support (all default to targetCharId for backward compat) ──
   swapCharId?: string; // Whose artifacts to enumerate
@@ -623,13 +623,18 @@ export async function* runOptimization(
     globalConfig,
     baseSheets,
     calcContext,
-    artifactSetId,
-    artifactHalfSetIds,
+    artifactSet,
     excludedArtifactIds,
     reactionOverride,
     scoreFn,
     deadlineMs,
   } = opts;
+
+  // Derive internal set variables from the new ArtifactSetConfig type
+  const artifactSetId: string | null =
+    artifactSet?.type === "4pc" ? artifactSet.setId : null;
+  const artifactHalfSetIds: string[] | undefined =
+    artifactSet?.type === "2pc+2pc" ? [...artifactSet.halfSetIds] : undefined;
 
   // Resolve effective IDs (default to targetCharId for backward compat)
   const swapCharId = opts.swapCharId ?? targetCharId;
@@ -842,7 +847,7 @@ export async function* runOptimization(
         }
         failReason = {
           kind: "set-impossible",
-          setId: artifactSetId,
+          artifactSet,
           slotCounts,
         };
       }
@@ -868,7 +873,7 @@ export async function* runOptimization(
         }
         failReason = {
           kind: "set-impossible",
-          halfSetIds: artifactHalfSetIds,
+          artifactSet,
           slotCounts,
         };
       }
@@ -1011,7 +1016,7 @@ export async function* runOptimization(
       }
       failReason = {
         kind: "set-impossible",
-        setId: artifactSetId,
+        artifactSet,
         slotCounts,
       };
     } else if (is2pc) {
@@ -1021,14 +1026,13 @@ export async function* runOptimization(
       }
       failReason = {
         kind: "set-impossible",
-        halfSetIds: artifactHalfSetIds,
+        artifactSet,
         slotCounts,
       };
     } else {
       failReason = {
         kind: "no-seeds",
-        setId: artifactSetId,
-        halfSetIds: artifactHalfSetIds,
+        artifactSet,
       };
     }
     yield getResult("evaluating", true);
@@ -1053,7 +1057,7 @@ export async function* runOptimization(
           (s) => s.art.setKey === artifactSetId
         ).length;
       }
-      failReason = { kind: "set-impossible", setId: artifactSetId, slotCounts };
+      failReason = { kind: "set-impossible", artifactSet, slotCounts };
     }
   } else if (is2pc) {
     // For 2+2, check that each half-set has pieces in ≥2 distinct slots
@@ -1078,7 +1082,7 @@ export async function* runOptimization(
       }
       failReason = {
         kind: "set-impossible",
-        halfSetIds: artifactHalfSetIds,
+        artifactSet,
         slotCounts,
       };
     }

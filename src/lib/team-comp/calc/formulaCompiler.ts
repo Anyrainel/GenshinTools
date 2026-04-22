@@ -28,7 +28,7 @@ import type {
 import type { BuffActivationMap } from "../types";
 import { resolvePartReaction } from "./combo";
 import { createReactionVariant } from "./damageFormula";
-import { isFinalStatKey } from "./dynamicBuffEval";
+import { isDeferredFinalBuff, isFinalStatKey } from "./dynamicBuffEval";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStatSheet, VarMapping } from "./exprStatSheet";
 import { getDefaultOnFieldCharId, isPartOffField } from "./fieldState";
@@ -82,15 +82,10 @@ export function compileComboTeamDamage(
   minEr?: number,
   minCr?: number
 ): CompiledTeamDamage {
-  const allFormulas = teamBuild.getFormulaIds();
-  const reactionFormulas = teamBuild.reactionProvider.getFormulaIds();
+  const allFormulas = teamBuild.catalog.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
     if (line.count <= 0) return false;
-    if (line.formulaId.startsWith("rx-")) {
-      return reactionFormulas[line.formulaId] !== undefined;
-    }
-    const charFormulas = allFormulas[line.charId];
-    return charFormulas?.[line.formulaId];
+    return allFormulas[line.charId]?.[line.formulaId] !== undefined;
   });
 
   if (validLines.length === 0) {
@@ -120,11 +115,7 @@ export function compileComboTeamDamage(
   ];
 
   const teamExprStats = new TeamExprStatSheet(
-    teamBuild.charBuilds,
-    teamBuild.teamResonance,
-    teamBuild.extraBuffs,
-    teamBuild.teamMeta,
-    configs,
+    teamBuild.teamStats,
     baseSheets,
     variableCharIds,
     allOnFieldCharIds,
@@ -148,10 +139,7 @@ export function compileComboTeamDamage(
     const onFieldCharId = getDefaultOnFieldCharId(charId, configs);
 
     for (const line of lines) {
-      const formulaCharBuild = teamBuild.charBuilds[line.charId];
-      const entry =
-        formulaCharBuild?.charBase.getFormulaEntry(line.formulaId) ??
-        teamBuild.formulaIndex.get(line.formulaId);
+      const entry = teamBuild.catalog.formulaIndex.get(line.formulaId);
       if (!entry) continue;
 
       // Multi-contributor entries: each part has its own statsCharId and
@@ -197,14 +185,14 @@ export function compileComboTeamDamage(
       let lineExprVariants: Map<string, ExprStatSheet> | undefined;
       let lineOffFieldVariants: Map<string, ExprStatSheet> | undefined;
       if (lineBuffs && Object.keys(lineBuffs).length > 0) {
-        lineExprVariants = teamExprStats.buildExprStatVariants(
+        lineExprVariants = teamExprStats.buildBuffVariants(
           lineBuffs,
           entry.parts,
           statsCharId,
           charId
         );
         if (hasOffField) {
-          lineOffFieldVariants = teamExprStats.buildExprStatVariants(
+          lineOffFieldVariants = teamExprStats.buildBuffVariants(
             lineBuffs,
             entry.parts,
             statsCharId,
@@ -268,10 +256,10 @@ export function compileComboTeamDamage(
   }
 
   // Build charIdxMap for all variable characters
-  const charBuildOrder = Object.entries(teamBuild.charBuilds);
+  const charIds = teamBuild.teamMeta.characters;
   const charIdxMap = new Map<string, number>();
   for (const varCharId of variableCharIdArr) {
-    const idx = charBuildOrder.findIndex(([id]) => id === varCharId);
+    const idx = charIds.indexOf(varCharId);
     if (idx >= 0) charIdxMap.set(varCharId, idx);
   }
 
@@ -299,12 +287,10 @@ export interface DynamicBuffExpr {
 
 /**
  * Whether a buff's dynamic output targets a final stat in the compiler path.
- * Same logic as isDeferredFinalBuff in damageCalc.ts.
+ * Delegates to isDeferredFinalBuff — same classification for both paths.
  */
 export function isCompilerDeferredFinalBuff(buff: StatBuff): boolean {
-  if (buff instanceof ScalingBuff) return isFinalStatKey(buff.outputKey);
-  if (buff instanceof CrossScalingBuff) return isFinalStatKey(buff.outputKey);
-  return false;
+  return isDeferredFinalBuff(buff);
 }
 
 /**

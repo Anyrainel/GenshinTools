@@ -1,4 +1,3 @@
-import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
@@ -12,19 +11,19 @@ import type {
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
-import type { TalentLevels, TeamSlotConfig } from "@/lib/team-comp/types";
+import type {
+  ArtifactSetConfig,
+  TalentLevels,
+  TeamSlotConfig,
+} from "@/lib/team-comp/types";
+import { getHalfSetIds, getSetId } from "@/lib/team-comp/types";
 import type { Team, WeaponChoiceCharConfig } from "@/stores/useTeamStore";
 import { StatSheet } from "./calc/statSheet";
-
-interface DetectedSets {
-  artifactSetId: string | null;
-  artifactHalfSetIds: string[];
-}
 
 /** Detect what artifact set bonuses the equipped pieces actually form. */
 export function detectEquippedSets(
   artifacts: (ArtifactData | null | undefined)[]
-): DetectedSets {
+): ArtifactSetConfig | null {
   const setCounts: Record<string, number> = {};
   for (const art of artifacts) {
     if (!art) continue;
@@ -34,7 +33,7 @@ export function detectEquippedSets(
   // 4pc check
   for (const [setKey, count] of Object.entries(setCounts)) {
     if (count >= 4) {
-      return { artifactSetId: setKey, artifactHalfSetIds: [] };
+      return { type: "4pc", setId: setKey };
     }
   }
 
@@ -51,19 +50,13 @@ export function detectEquippedSets(
         return hsId ?? "";
       })
       .filter(Boolean);
-    return { artifactSetId: null, artifactHalfSetIds: halfSetIds };
+    if (halfSetIds.length === 2) {
+      return { type: "2pc+2pc", halfSetIds: halfSetIds as [string, string] };
+    }
   }
 
-  // Single 2pc
-  if (twoPcSets.length === 1) {
-    const hsId = artifactIdToHalfSetId[twoPcSets[0]];
-    return {
-      artifactSetId: null,
-      artifactHalfSetIds: hsId != null ? [hsId] : [],
-    };
-  }
-
-  return { artifactSetId: null, artifactHalfSetIds: [] };
+  // Single 2pc — no full config to return
+  return null;
 }
 
 /**
@@ -72,7 +65,7 @@ export function detectEquippedSets(
  */
 export function frozenArtifactsMatchConfig(
   frozenArts: Record<Slot, ArtifactData | null>,
-  goalConfig: ArtifactConfig | null
+  goalConfig: ArtifactSetConfig | null
 ): boolean {
   if (!goalConfig) return false;
   const equipped = detectEquippedSets(allSlots.map((s) => frozenArts[s]));
@@ -81,16 +74,17 @@ export function frozenArtifactsMatchConfig(
 
 /** Check if equipped sets match the goal sets from team config. */
 export function setsMatch(
-  goal: Team["artifacts"][number],
-  equipped: DetectedSets
+  goal: ArtifactSetConfig | null | undefined,
+  equipped: ArtifactSetConfig | null
 ): boolean {
   if (!goal) return true;
   if (goal.type === "4pc") {
-    return equipped.artifactSetId === goal.setId;
+    return equipped?.type === "4pc" && equipped.setId === goal.setId;
   }
   if (goal.type === "2pc+2pc") {
-    const goalIds = [String(goal.id1), String(goal.id2)].sort();
-    const eqIds = [...equipped.artifactHalfSetIds].sort();
+    if (equipped?.type !== "2pc+2pc") return false;
+    const goalIds = [...goal.halfSetIds].sort();
+    const eqIds = [...equipped.halfSetIds].sort();
     return goalIds[0] === eqIds[0] && goalIds[1] === eqIds[1];
   }
   return true;
@@ -204,15 +198,17 @@ export function buildTeamConfigs(
     const weaponId = team.weapons[i]!;
     const refinement = resolveRefinement(charId, weaponId, team, accountData);
 
-    let artifactSetId: string | null = null;
-    let artifactHalfSetIds: string[] = [];
+    let artifactSet: ArtifactSetConfig | null = null;
 
     const artConfig = team.artifacts[i];
     if (artConfig) {
       if (artConfig.type === "4pc") {
-        artifactSetId = artConfig.setId;
+        artifactSet = { type: "4pc", setId: artConfig.setId };
       } else if (artConfig.type === "2pc+2pc") {
-        artifactHalfSetIds = [String(artConfig.id1), String(artConfig.id2)];
+        artifactSet = {
+          type: "2pc+2pc",
+          halfSetIds: artConfig.halfSetIds,
+        };
       }
     }
 
@@ -229,8 +225,7 @@ export function buildTeamConfigs(
       constellation,
       weaponId,
       refinement,
-      artifactSetId,
-      artifactHalfSetIds,
+      artifactSet,
       talentLevels,
     });
   }
@@ -359,24 +354,24 @@ export function resolveBuildInfo(
 export function deriveSetKeysFromConfigs(
   configs: {
     charId: string;
-    artifactSetId?: string | null;
-    artifactHalfSetIds?: string[];
+    artifactSet?: ArtifactSetConfig | null;
   }[]
 ): Record<string, Record<Slot, string>> {
   const result: Record<string, Record<Slot, string>> = {};
   for (const cfg of configs) {
-    if (cfg.artifactSetId) {
-      const sk = cfg.artifactSetId;
+    const setId = getSetId(cfg.artifactSet);
+    const halfSetIds = getHalfSetIds(cfg.artifactSet);
+    if (setId) {
       result[cfg.charId] = {
-        flower: sk,
-        plume: sk,
-        sands: sk,
-        goblet: sk,
-        circlet: sk,
+        flower: setId,
+        plume: setId,
+        sands: setId,
+        goblet: setId,
+        circlet: setId,
       };
-    } else if (cfg.artifactHalfSetIds && cfg.artifactHalfSetIds.length === 2) {
-      const hs1 = artifactHalfSetsById[cfg.artifactHalfSetIds[0]];
-      const hs2 = artifactHalfSetsById[cfg.artifactHalfSetIds[1]];
+    } else if (halfSetIds.length === 2) {
+      const hs1 = artifactHalfSetsById[halfSetIds[0]];
+      const hs2 = artifactHalfSetsById[halfSetIds[1]];
       const sk1 =
         hs1?.setIds.find((id: string) => artifactsById[id]?.rarity === 5) ??
         hs1?.setIds[0] ??

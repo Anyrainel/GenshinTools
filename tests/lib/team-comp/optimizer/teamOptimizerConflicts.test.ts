@@ -87,8 +87,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -96,8 +95,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
         constellation: 6,
         weaponId: "sacrificial_sword",
         refinement: 5,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "zhongli",
@@ -105,12 +103,11 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
         constellation: 0,
         weaponId: "black_tassel",
         refinement: 5,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
-    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+    const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
     // Small inventory: 3 artifacts per slot → characters MUST share the pool,
     // creating competition for the best pieces.
@@ -147,20 +144,17 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
           minEr: 1.0,
           minCr: 0,
           buildMatch: makeBuildMatch(GL),
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
         xingqiu: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
         zhongli: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
       },
     };
@@ -196,8 +190,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
           constellation: 1,
           weaponId: "staff_of_homa",
           refinement: 1,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
         {
           charId: "xingqiu",
@@ -205,8 +198,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
           constellation: 6,
           weaponId: "sacrificial_sword",
           refinement: 5,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
         {
           charId: "zhongli",
@@ -214,8 +206,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
           constellation: 0,
           weaponId: "black_tassel",
           refinement: 5,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
         {
           charId: "kaedehara_kazuha",
@@ -223,12 +214,11 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
           constellation: 0,
           weaponId: "iron_sting",
           refinement: 5,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
       ];
       const tb = new TeamBuild(configs);
-      const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+      const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
       // 4 artifacts per slot → exactly enough for 4 characters, all will compete
       const inventory: ArtifactData[] = [];
@@ -273,26 +263,22 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
           hu_tao: {
             minEr: 1.0,
             minCr: 0,
-            artifactSetId: null,
-            artifactHalfSetIds: [],
+            artifactSet: null,
           },
           xingqiu: {
             minEr: 1.0,
             minCr: 0,
-            artifactSetId: null,
-            artifactHalfSetIds: [],
+            artifactSet: null,
           },
           zhongli: {
             minEr: 1.0,
             minCr: 0,
-            artifactSetId: null,
-            artifactHalfSetIds: [],
+            artifactSet: null,
           },
           kaedehara_kazuha: {
             minEr: 1.0,
             minCr: 0,
-            artifactSetId: null,
-            artifactHalfSetIds: [],
+            artifactSet: null,
           },
         },
       };
@@ -334,12 +320,11 @@ describe("runOptimization — set-infeasible early exit", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       },
     ];
     const tb = new TeamBuild(configs);
-    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+    const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
     const inventory: ArtifactData[] = [
       // CW in only 3 slots
@@ -364,8 +349,7 @@ describe("runOptimization — set-infeasible early exit", () => {
         globalConfig: GLOBAL_CONFIG,
         baseSheets: emptySheets("hu_tao"),
         calcContext: CTX,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       })
     );
     const elapsed = Date.now() - startTime;
@@ -385,12 +369,11 @@ describe("runOptimization — set-infeasible early exit", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       },
     ];
     const tb = new TeamBuild(configs);
-    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+    const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
     const inventory: ArtifactData[] = [
       makeArt("flower", CW),
@@ -412,8 +395,7 @@ describe("runOptimization — set-infeasible early exit", () => {
         globalConfig: GLOBAL_CONFIG,
         baseSheets: emptySheets("hu_tao"),
         calcContext: CTX,
-        artifactSetId: CW,
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: CW },
       })
     );
 
@@ -431,12 +413,11 @@ describe("runOptimization — set-infeasible early exit", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["atk%-18", "er-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["atk%-18", "er-20"] },
       },
     ];
     const tb = new TeamBuild(configs);
-    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+    const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
     // ESF (er-20) only in 1 slot → can't form 2pc
     const inventory: ArtifactData[] = [
@@ -459,8 +440,7 @@ describe("runOptimization — set-infeasible early exit", () => {
         globalConfig: GLOBAL_CONFIG,
         baseSheets: emptySheets("hu_tao"),
         calcContext: CTX,
-        artifactSetId: null,
-        artifactHalfSetIds: ["atk%-18", "er-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["atk%-18", "er-20"] },
       })
     );
 
@@ -485,8 +465,7 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -494,12 +473,11 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
         constellation: 6,
         weaponId: "sacrificial_sword",
         refinement: 5,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
-    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+    const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
     // Shared pool: 2 mediocre artifacts per slot (both chars draw from this)
     const sharedInventory: ArtifactData[] = [];
@@ -566,14 +544,10 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
         hu_tao: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
         },
         xingqiu: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
         },
       },
       perCharExtraArtifacts: {
@@ -615,8 +589,7 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -624,12 +597,11 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
         constellation: 6,
         weaponId: "sacrificial_sword",
         refinement: 5,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
-    const formulaId = Object.keys(tb.getFormulaIds().hu_tao)[0];
+    const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
     // Shared pool: mediocre artifacts
     const sharedInventory: ArtifactData[] = [];
@@ -696,14 +668,10 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
         hu_tao: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
         },
         xingqiu: {
           minEr: 1.0,
           minCr: 0,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
         },
       },
       perCharExtraArtifacts: {

@@ -83,8 +83,7 @@ export function buildBuffOverrides(
 
       const lineCounts = lineIndices.map((i) => activeLines[i].count);
       const [charId, formulaId] = formulaKey.split(".");
-      const entry =
-        build.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+      const entry = build.catalog.formulaIndex.get(formulaId);
       if (!entry) continue;
 
       for (const [buffKey, partMap] of Object.entries(comboActivation)) {

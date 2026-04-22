@@ -587,6 +587,36 @@ describe("Entity Instantiation", () => {
     });
   });
 
+  describe("No formula ID collisions across characters", () => {
+    it("every character's formula IDs are globally unique", () => {
+      const idOwners = new Map<string, string[]>();
+      for (const charId of Object.keys(charactersById)) {
+        try {
+          const team = new TeamMeta([charId]);
+          const char = createCharacter(charId, 100, 6, team);
+          for (const fid of Object.keys(char.allFormulaEntries)) {
+            const owners = idOwners.get(fid);
+            if (owners) owners.push(charId);
+            else idOwners.set(fid, [charId]);
+          }
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No character registered",
+            "No character stats for"
+          );
+        }
+      }
+      const collisions: string[] = [];
+      for (const [fid, owners] of idOwners) {
+        if (owners.length > 1) {
+          collisions.push(`"${fid}" owned by: ${owners.join(", ")}`);
+        }
+      }
+      expect(collisions).toEqual([]);
+    });
+  });
+
   describe("Buff static validation", () => {
     function validateAllBuffs(buffs: StatBuff[]): string[] {
       const errors: string[] = [];

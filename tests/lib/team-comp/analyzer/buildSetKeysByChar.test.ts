@@ -57,8 +57,7 @@ describe("buildSetKeysByChar", () => {
         charId: "diluc",
         artifactConfig: {
           type: "2pc+2pc",
-          id1: HALF_SET_ATK,
-          id2: HALF_SET_EM,
+          halfSetIds: [HALF_SET_ATK, HALF_SET_EM] as [string, string],
         },
       }),
     ];
@@ -92,8 +91,7 @@ describe("buildSetKeysByChar", () => {
         charId: "xingqiu",
         artifactConfig: {
           type: "2pc+2pc",
-          id1: HALF_SET_ATK,
-          id2: HALF_SET_EM,
+          halfSetIds: [HALF_SET_ATK, HALF_SET_EM] as [string, string],
         },
       }),
       makeCharConfig({
@@ -120,8 +118,7 @@ describe("buildSetKeysByChar", () => {
         charId: "diluc",
         artifactConfig: {
           type: "2pc+2pc",
-          id1: HALF_SET_ATK,
-          id2: HALF_SET_ATK,
+          halfSetIds: [HALF_SET_ATK, HALF_SET_ATK] as [string, string],
         },
       }),
     ];

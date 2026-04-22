@@ -1,6 +1,7 @@
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuffLedger } from "@/lib/team-comp/calc/teamBuffLedger";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
 import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
@@ -32,8 +33,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "the_catch",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
   {
     charId: "bennett",
@@ -41,8 +41,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: "noblesse_oblige",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "noblesse_oblige" },
   },
   {
     charId: "xingqiu",
@@ -50,8 +49,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
   {
     charId: "raiden_shogun",
@@ -59,8 +57,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "the_catch",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
 ];
 
@@ -71,8 +68,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 1,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: "crimson_witch_of_flames",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
   },
   {
     charId: "kaedehara_kazuha",
@@ -80,8 +76,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: "viridescent_venerer",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "viridescent_venerer" },
   },
   {
     charId: "xingqiu",
@@ -89,8 +84,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
   {
     charId: "yelan",
@@ -98,8 +92,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aqua_simulacra",
     refinement: 1,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
 ];
 
@@ -109,14 +102,12 @@ function buildTeamStatSheet(
 ): { teamBuild: TeamBuild; statSheet: TeamStatSheet } {
   const teamBuild = new TeamBuild(configs, combatOpts);
   const charIds = configs.map((c) => c.charId);
-  const statSheet = new TeamStatSheet(
-    teamBuild.charBuilds,
-    teamBuild.teamResonance,
-    teamBuild.extraBuffs,
+  const ledger = new TeamBuffLedger(
+    teamBuild.buffLedger.allBuffs,
     teamBuild.teamMeta,
-    configs,
     charIds
   );
+  const statSheet = new TeamStatSheet(teamBuild.charBuilds, ledger, charIds);
   return { teamBuild, statSheet };
 }
 
@@ -281,7 +272,7 @@ describe("TeamStatSheet", () => {
       statSheet.setArtifacts(sheets);
 
       const someBuffKeys = new Set<string>();
-      for (const b of teamBuild.allStaticBuffs.slice(0, 3)) {
+      for (const b of teamBuild.buffLedger.allBuffs.slice(0, 3)) {
         someBuffKeys.add(getBuffInstanceKey(b.buff, b.providerCharId));
       }
 
@@ -382,19 +373,19 @@ describe("TeamStatSheet", () => {
   });
 
   describe("constructor collects allStaticBuffs internally", () => {
-    it("allStaticBuffs matches TeamBuild.allStaticBuffs", () => {
+    it("ledger.allBuffs matches TeamBuild.buffLedger.allBuffs", () => {
       const { teamBuild, statSheet } = buildTeamStatSheet(NATIONAL_TEAM);
 
       // Same number of buffs
-      expect(statSheet.allStaticBuffs.length).toBe(
-        teamBuild.allStaticBuffs.length
+      expect(statSheet.ledger.allBuffs.length).toBe(
+        teamBuild.buffLedger.allBuffs.length
       );
 
       // Same buff identity keys in same order
-      const tsKeys = statSheet.allStaticBuffs.map((b) =>
+      const tsKeys = statSheet.ledger.allBuffs.map((b) =>
         getBuffInstanceKey(b.buff, b.providerCharId)
       );
-      const tbKeys = teamBuild.allStaticBuffs.map((b) =>
+      const tbKeys = teamBuild.buffLedger.allBuffs.map((b) =>
         getBuffInstanceKey(b.buff, b.providerCharId)
       );
       expect(tsKeys).toEqual(tbKeys);

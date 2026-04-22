@@ -707,7 +707,7 @@ export async function* runGenerator(
   // Per-character rarity and roll values
   const charRarity: Record<string, 4 | 5> = {};
   const charRv: Record<string, Record<SubStat, number>> = {};
-  const allCharIds = Object.keys(teamBuild.getFormulaIds());
+  const allCharIds = Object.keys(teamBuild.catalog.getFormulaIds());
   for (const cid of allCharIds) {
     const r = getCharRarity(cid, setKeysByChar);
     charRarity[cid] = r;

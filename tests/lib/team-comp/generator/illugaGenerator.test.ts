@@ -41,8 +41,7 @@ function configs(): TeamSlotConfig[] {
       constellation: 0,
       weaponId: "prototype_amber",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "illuga",
@@ -50,8 +49,7 @@ function configs(): TeamSlotConfig[] {
       constellation: 0,
       weaponId: "prototype_amber",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "columbina",
@@ -59,8 +57,7 @@ function configs(): TeamSlotConfig[] {
       constellation: 0,
       weaponId: "prototype_amber",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "gorou",
@@ -68,8 +65,7 @@ function configs(): TeamSlotConfig[] {
       constellation: 0,
       weaponId: "prototype_amber",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 }

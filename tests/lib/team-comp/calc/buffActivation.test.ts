@@ -62,8 +62,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "wolfs_gravestone",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -71,8 +70,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "bennett",
@@ -80,8 +78,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kaedehara_kazuha",
@@ -89,8 +86,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -99,7 +95,7 @@ function makeDilucTeamBuild(): TeamBuild {
 }
 
 function getBennettQKey(tb: TeamBuild): string {
-  const match = tb.allStaticBuffs.find(
+  const match = tb.buffLedger.allBuffs.find(
     (b) =>
       b.providerCharId === "bennett" &&
       b.buff.source.type === "character" &&

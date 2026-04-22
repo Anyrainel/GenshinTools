@@ -5,9 +5,10 @@
  * artifact stats, dynamic buff expression collection, and lazy caching per
  * (onFieldCharId, excludeKeys?).
  *
- * Absorbs the logic from buildPostExprStatsForContext,
- * collectAndApplyDynamicBuffExprsTwoPass, and buildExprStatVariants
- * in formulaCompiler.ts.
+ * Shares the caller's TeamStatSheet for numeric baseline computation instead of
+ * creating a redundant internal copy. Variable characters use
+ * getPreStatsNoArtifacts() (artifacts come from Float64Array variables),
+ * supports use getPreStats() (artifacts baked in from baseSheets).
  */
 
 import { ARTIFACT_STAT_KEYS } from "../constants";
@@ -15,14 +16,8 @@ import type {
   BuffActivationMap,
   CalcContext,
   FormulaPart,
-  ProvidedStaticBuff,
   StatKey,
-  TeamSlotConfig,
 } from "../types";
-import type { ExtraBuff } from "../types";
-import type { CharBuild } from "./charBuild";
-import { isFinalStatKey } from "./dynamicBuffEval";
-import { E, type Expr, simplify } from "./expr";
 import {
   type ExprStatSheet,
   VarMapping,
@@ -37,24 +32,21 @@ import {
 } from "./formulaCompiler";
 import { exclusionKey } from "./formulaEval";
 import {
-  CrossScalingBuff,
-  ScalingBuff,
   type StatBuff,
   getBuffInstanceKey,
   isBuffApplicable,
 } from "./statBuff";
-import { StatSheet } from "./statSheet";
+import type { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
-import type { TeamResonance } from "./teamResonance";
-import { type CacheKey, makeCacheKey } from "./teamStatSheet";
-import { TeamStatSheet } from "./teamStatSheet";
+import { makeCacheKey } from "./teamStatSheet";
+import type { TeamStatSheet } from "./teamStatSheet";
 
 /**
  * Centralized Expr-domain stat computation for the formula compiler.
  *
- * Wraps a TeamStatSheet internally for numeric baseline computation,
- * then converts to ExprStatSheets with Float64Array variables for
- * variable characters and const values for supports.
+ * Uses a shared TeamStatSheet for numeric baseline computation, then converts
+ * to ExprStatSheets with Float64Array variables for variable characters and
+ * const values for supports.
  *
  * The VarMapping is shared across all getExprStats calls so the compiler
  * can build one unified expression tree.
@@ -62,67 +54,34 @@ import { TeamStatSheet } from "./teamStatSheet";
 export class TeamExprStatSheet {
   readonly varMapping: VarMapping;
   private readonly teamStats: TeamStatSheet;
-  private readonly charBuildOrder: [string, CharBuild][];
+  private readonly charIds: readonly string[];
   private readonly variableCharIds: Set<string>;
-  private readonly onFieldCharIds: string[];
-  private readonly baseSheets: Record<string, StatSheet>;
   private readonly calcContext: CalcContext;
-  private readonly allStaticBuffs: ProvidedStaticBuff[];
   private readonly teamMeta: TeamMeta;
-  private readonly charBuilds: Record<string, CharBuild>;
-  private readonly charLevels: Record<string, number>;
-  private readonly cache = new Map<CacheKey, Record<string, ExprStatSheet>>();
+  private readonly cache = new Map<string, Record<string, ExprStatSheet>>();
 
   constructor(
-    charBuilds: Record<string, CharBuild>,
-    teamResonance: TeamResonance,
-    extraBuffs: ExtraBuff[],
-    teamMeta: TeamMeta,
-    configs: TeamSlotConfig[],
+    teamStats: TeamStatSheet,
     baseSheets: Record<string, StatSheet>,
     variableCharIds: Set<string>,
     onFieldCharIds: string[],
     calcContext: CalcContext
   ) {
-    this.charBuilds = charBuilds;
-    this.teamMeta = teamMeta;
-    this.baseSheets = baseSheets;
+    this.teamStats = teamStats;
     this.variableCharIds = variableCharIds;
-    this.onFieldCharIds = onFieldCharIds;
     this.calcContext = calcContext;
     this.varMapping = new VarMapping();
-    this.charBuildOrder = Object.entries(charBuilds);
+    this.teamMeta = teamStats.ledger.teamMeta;
+    this.charIds = this.teamMeta.characters;
 
-    this.charLevels = {};
-    for (const c of configs) {
-      this.charLevels[c.charId] = c.charLevel;
-    }
-
-    // Private TeamStatSheet — never shares state with TeamBuild.teamStats.
-    this.teamStats = new TeamStatSheet(
-      charBuilds,
-      teamResonance,
-      extraBuffs,
-      teamMeta,
-      configs,
-      onFieldCharIds
-    );
-    this.allStaticBuffs = this.teamStats.allStaticBuffs;
-
-    // Set artifacts once: variable chars get empty sheets (stats come from
-    // Float64Array variables), non-variable chars get their baked-in baseSheets.
-    const emptySheet = new StatSheet([]);
-    const artifactSheets: Record<string, StatSheet> = {};
-    for (const [id] of this.charBuildOrder) {
-      artifactSheets[id] = this.variableCharIds.has(id)
-        ? emptySheet
-        : (this.baseSheets[id] ?? emptySheet);
-    }
-    this.teamStats.setArtifacts(artifactSheets, this.calcContext);
+    // Set artifacts on the shared TeamStatSheet: supports get their baked-in
+    // baseSheets, variable chars' artifact state doesn't matter since we use
+    // getPreStatsNoArtifacts() for them.
+    teamStats.setArtifacts(baseSheets, calcContext);
   }
 
   getCharLevel(charId: string): number {
-    return this.charLevels[charId]!;
+    return this.teamStats.getCharLevel(charId);
   }
 
   /**
@@ -163,7 +122,7 @@ export class TeamExprStatSheet {
    * Build ExprStats variants for all exclusion combinations needed by a BuffActivationMap.
    * Returns a Map from exclusionKey -> ExprStatSheet for the formula character.
    */
-  buildExprStatVariants(
+  buildBuffVariants(
     activation: BuffActivationMap,
     parts: FormulaPart[],
     formulaCharId: string,
@@ -211,10 +170,10 @@ export class TeamExprStatSheet {
     onFieldCharId: string,
     excludeKeys?: Set<string>
   ): Record<string, ExprStatSheet> {
-    // Get baselines from TeamStatSheet
+    // Get baselines: variable chars without artifacts, supports with artifacts
     const variableBaselines: Record<string, StatSheet> = {};
     for (const varCharId of this.variableCharIds) {
-      variableBaselines[varCharId] = this.teamStats.getPreStats(
+      variableBaselines[varCharId] = this.teamStats.getPreStatsNoArtifacts(
         varCharId,
         onFieldCharId,
         excludeKeys
@@ -222,7 +181,7 @@ export class TeamExprStatSheet {
     }
 
     const supportPreStats: Record<string, StatSheet> = {};
-    for (const [id] of this.charBuildOrder) {
+    for (const id of this.charIds) {
       if (!this.variableCharIds.has(id)) {
         supportPreStats[id] = this.teamStats.getPreStats(
           id,
@@ -234,9 +193,9 @@ export class TeamExprStatSheet {
 
     // Create ExprStatSheets
     const exprStatsMap: Record<string, ExprStatSheet> = {};
-    for (const [id] of this.charBuildOrder) {
+    for (const id of this.charIds) {
       if (this.variableCharIds.has(id)) {
-        const charIdx = this.charBuildOrder.findIndex(([cid]) => cid === id);
+        const charIdx = this.charIds.indexOf(id);
         exprStatsMap[id] = createExprStats(
           variableBaselines[id],
           charIdx,
@@ -297,12 +256,11 @@ export class TeamExprStatSheet {
       }
     }
 
+    const allStaticBuffs = this.teamStats.ledger.allBuffs;
     const sheetBuffExprs: DynamicBuffExpr[] = [];
     const deferredBuffs: { buff: StatBuff; providerCharId: string }[] = [];
 
-    for (const { buff, providerCharId } of this.allStaticBuffs) {
-      if (providerCharId === "resonance" || providerCharId === "extra")
-        continue;
+    for (const { buff, providerCharId } of allStaticBuffs) {
       if (excludeKeys?.has(getBuffInstanceKey(buff, providerCharId))) continue;
 
       if (isCompilerDeferredFinalBuff(buff)) {
@@ -366,7 +324,7 @@ export class TeamExprStatSheet {
   ): Record<string, ExprStatSheet> {
     const result: Record<string, ExprStatSheet> = {};
 
-    for (const [id] of this.charBuildOrder) {
+    for (const id of this.charIds) {
       let stats = preExprStats[id]!;
 
       const applicable = dynamicBuffExprs.filter((dbExpr) =>

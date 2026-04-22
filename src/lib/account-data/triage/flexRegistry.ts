@@ -36,31 +36,19 @@ type FlexSub = SubStat | "flat";
 type RawFlex = [Slot, (MainStat | "elemental%")[], FlexSub[], boolean?];
 
 const CURATED: RawFlex[] = [
-  // ── Flower ──────────────────────────────────────────────────────────────
-  ["flower", ["hp"], ["cr", "cd", "atk%", "atk"]],
-  ["flower", ["hp"], ["cr", "cd", "def%", "def"]],
-  ["flower", ["hp"], ["cr", "cd", "atk%", "hp%"], true],
-  ["flower", ["hp"], ["cr", "cd", "atk%", "def%"], true],
-  ["flower", ["hp"], ["cr", "cd", "atk%", "er"]],
-  ["flower", ["hp"], ["cr", "cd", "hp%", "er"]],
-  ["flower", ["hp"], ["cr", "cd", "def%", "er"]],
-  ["flower", ["hp"], ["cr", "cd", "atk%", "em"]],
-  ["flower", ["hp"], ["cr", "cd", "hp%", "em"]],
-  ["flower", ["hp"], ["cr", "cd", "def%", "em"]],
-
-  // ── Plume ──────────────────────────────────────────────────────────────
-  ["plume", ["atk"], ["cr", "cd", "hp%", "hp"]],
-  ["plume", ["atk"], ["cr", "cd", "def%", "def"]],
-  ["plume", ["atk"], ["cr", "cd", "atk%", "hp%"], true],
-  ["plume", ["atk"], ["cr", "cd", "atk%", "def%"], true],
-  ["plume", ["atk"], ["cr", "cd", "atk%", "er"]],
-  ["plume", ["atk"], ["cr", "cd", "hp%", "er"]],
-  ["plume", ["atk"], ["cr", "cd", "def%", "er"]],
-  ["plume", ["atk"], ["cr", "cd", "atk%", "em"]],
-  ["plume", ["atk"], ["cr", "cd", "hp%", "em"]],
-  ["plume", ["atk"], ["cr", "cd", "def%", "em"]],
-
-  // ── Sands ──────────────────────────────────────────────────────────────
+  // ── Flower ──
+  ["flower", ["hp"], ["cr", "cd", "atk%"]],
+  ["flower", ["hp"], ["cr", "cd", "hp%"]],
+  ["flower", ["hp"], ["cr", "cd", "def%"]],
+  ["flower", ["hp"], ["cr", "cd", "er"]],
+  ["flower", ["hp"], ["cr", "cd", "em"]],
+  // ── Plume ──
+  ["plume", ["atk"], ["cr", "cd", "atk%"]],
+  ["plume", ["atk"], ["cr", "cd", "hp%"]],
+  ["plume", ["atk"], ["cr", "cd", "def%"]],
+  ["plume", ["atk"], ["cr", "cd", "er"]],
+  ["plume", ["atk"], ["cr", "cd", "em"]],
+  // ── Sands ──
   ["sands", ["em"], ["cr", "cd"]],
   ["sands", ["er"], ["cr", "cd"]],
   ["sands", ["atk%", "hp%", "def%"], ["cr", "cd"]],
@@ -73,8 +61,7 @@ const CURATED: RawFlex[] = [
   ["sands", ["er"], ["hp%", "hp", "cr"]],
   ["sands", ["er"], ["def%", "def"], true],
   ["sands", ["er"], ["def%", "def", "cr"]],
-
-  // ── Goblet ─────────────────────────────────────────────────────────────
+  // ── Goblet ──
   ["goblet", ["elemental%"], ["cr", "cd"]],
   ["goblet", ["phys%"], ["cr", "cd"]],
   ["goblet", ["em"], ["cr", "cd"]],
@@ -83,8 +70,7 @@ const CURATED: RawFlex[] = [
   ["goblet", ["atk%", "hp%", "def%"], ["cr", "cd", "er"]],
   ["goblet", ["atk%", "hp%", "def%"], ["cr", "cd", "em"]],
   ["goblet", ["atk%"], ["cr", "er", "atk"]],
-
-  // ── Circlet ────────────────────────────────────────────────────────────
+  // ── Circlet ──
   ["circlet", ["em"], ["cr", "cd"]],
   ["circlet", ["cr"], ["cd", "atk%"]],
   ["circlet", ["cr"], ["cd", "def%"]],
@@ -104,8 +90,6 @@ const CURATED: RawFlex[] = [
   ["circlet", ["heal%"], ["def%", "er"]],
   ["circlet", ["atk%"], ["cr", "er", "atk"]],
 ];
-
-// Helpers
 
 const NON_SUB = new Set([
   "pyro%",

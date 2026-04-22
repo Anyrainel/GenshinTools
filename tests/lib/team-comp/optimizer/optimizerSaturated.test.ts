@@ -70,8 +70,7 @@ describe("Saturated character handling", () => {
       constellation: 1,
       weaponId: "staff_of_homa",
       refinement: 1,
-      artifactSetId: "crimson_witch_of_flames",
-      artifactHalfSetIds: ["pyro%-15"],
+      artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
     },
     {
       charId: "bennett",
@@ -79,15 +78,14 @@ describe("Saturated character handling", () => {
       constellation: 6,
       weaponId: "mistsplitter_reforged",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
   const teamBuild = new TeamBuild(configs);
 
   // Get Hu Tao's first formula
-  const allFormulas = teamBuild.getFormulaIds();
+  const allFormulas = teamBuild.catalog.getFormulaIds();
   const huTaoFormulas = allFormulas.hu_tao;
   const formulaId = Object.keys(huTaoFormulas)[0];
 
@@ -178,8 +176,7 @@ describe("Saturated character handling", () => {
         hu_tao: {
           minEr: 0,
           minCr: 0,
-          artifactSetId: "crimson_witch_of_flames",
-          artifactHalfSetIds: ["pyro%-15"],
+          artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
         },
         bennett: {
           minEr: 0,
@@ -293,8 +290,7 @@ describe("Saturated character handling", () => {
           hu_tao: {
             minEr: 0,
             minCr: 0,
-            artifactSetId: "crimson_witch_of_flames",
-            artifactHalfSetIds: ["pyro%-15"],
+            artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
           },
           bennett: {
             minEr: 2.0,
@@ -357,8 +353,7 @@ describe("Saturated character handling", () => {
         constellation: 1,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: "crimson_witch_of_flames",
-        artifactHalfSetIds: ["pyro%-15"],
+        artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
       },
       {
         charId: "gorou",
@@ -366,13 +361,12 @@ describe("Saturated character handling", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
 
     const gorouTeam = new TeamBuild(gorouConfigs);
-    const gorouFormulas = gorouTeam.getFormulaIds().hu_tao;
+    const gorouFormulas = gorouTeam.catalog.getFormulaIds().hu_tao;
     const gorouFormulaId = Object.keys(gorouFormulas)[0];
 
     // Hu Tao gets her full crimson witch set. Gorou chooses between two
@@ -425,8 +419,7 @@ describe("Saturated character handling", () => {
         hu_tao: {
           minEr: 0,
           minCr: 0,
-          artifactSetId: "crimson_witch_of_flames",
-          artifactHalfSetIds: ["pyro%-15"],
+          artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
         },
         gorou: {
           minEr: 0,

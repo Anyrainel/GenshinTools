@@ -4,11 +4,13 @@ import type { ArtifactData, Element, GlobalStatWeights } from "@/data/types";
  * Each worker handles one character's B&B search independently.
  */
 import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { z } from "zod";
 // Side-effect: register all character/weapon/artifact implementations
 import "../index";
 import { runCharacterBnB } from ".";
 import { StatSheet } from "../calc/statSheet";
 import { TeamBuild } from "../calc/teamBuild";
+import { TeamSlotConfigSchema } from "../schemas";
 import type { OptionMap } from "../types";
 import type { ExtraBuff } from "../types";
 import type {
@@ -86,6 +88,18 @@ export type BnBWorkerResponse =
 self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
   const req = e.data;
   try {
+    // Validate configs survive structured clone (discriminated unions need re-validation)
+    const configsParsed = z.array(TeamSlotConfigSchema).safeParse(req.configs);
+    if (!configsParsed.success) {
+      self.postMessage({
+        id: req.id,
+        type: "error",
+        error: `Invalid TeamSlotConfig: ${configsParsed.error.message}`,
+      } satisfies BnBWorkerResponse);
+      return;
+    }
+    req.configs = configsParsed.data as TeamSlotConfig[];
+
     await preloadGameStats();
 
     // Reconstruct TeamBuild

@@ -924,8 +924,7 @@ describe("CharacterBase via createCharacter", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ]);
     const ctx = {

@@ -35,8 +35,7 @@ function makeBaseConfigs(
       constellation: 0,
       weaponId: "wolfs_gravestone",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "xingqiu",
@@ -44,8 +43,7 @@ function makeBaseConfigs(
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "bennett",
@@ -53,8 +51,7 @@ function makeBaseConfigs(
       constellation: 0,
       weaponId: "aquila_favonia",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "kaedehara_kazuha",
@@ -62,8 +59,7 @@ function makeBaseConfigs(
       constellation: 0,
       weaponId: "iron_sting",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
   for (let i = 0; i < overrides.length; i++) {
@@ -75,7 +71,7 @@ function makeBaseConfigs(
 describe("deriveSetKeysByChar", () => {
   it("4pc config: all 5 slots get the same setKey", () => {
     const configs = makeBaseConfigs([
-      { artifactSetId: "crimson_witch_of_flames", artifactHalfSetIds: [] },
+      { artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" } },
     ]);
     const tb = new TeamBuild(configs);
     const result = deriveSetKeysByChar(tb);
@@ -90,7 +86,12 @@ describe("deriveSetKeysByChar", () => {
 
   it("2+2pc config: flower/plume/sands get sk1, goblet/circlet get sk2", () => {
     const configs = makeBaseConfigs([
-      { artifactHalfSetIds: [HALF_SET_ATK, HALF_SET_EM] },
+      {
+        artifactSet: {
+          type: "2pc+2pc",
+          halfSetIds: [HALF_SET_ATK, HALF_SET_EM],
+        },
+      },
     ]);
     const tb = new TeamBuild(configs);
     const result = deriveSetKeysByChar(tb);
@@ -110,7 +111,7 @@ describe("deriveSetKeysByChar", () => {
   it("empty/missing config: character is skipped", () => {
     const configs = makeBaseConfigs([
       // diluc has no artifact config
-      { artifactSetId: null, artifactHalfSetIds: [] },
+      { artifactSet: null },
     ]);
     const tb = new TeamBuild(configs);
     const result = deriveSetKeysByChar(tb);
@@ -121,8 +122,13 @@ describe("deriveSetKeysByChar", () => {
 
   it("multiple characters with different configs", () => {
     const configs = makeBaseConfigs([
-      { artifactSetId: "crimson_witch_of_flames" },
-      { artifactHalfSetIds: [HALF_SET_ATK, HALF_SET_EM] },
+      { artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" } },
+      {
+        artifactSet: {
+          type: "2pc+2pc",
+          halfSetIds: [HALF_SET_ATK, HALF_SET_EM],
+        },
+      },
       // bennett: no config
       // kazuha: no config
     ]);
@@ -145,7 +151,12 @@ describe("deriveSetKeysByChar", () => {
 
   it("same half-set for both 2pc slots produces distinct concrete sets", () => {
     const configs = makeBaseConfigs([
-      { artifactHalfSetIds: [HALF_SET_ATK, HALF_SET_ATK] },
+      {
+        artifactSet: {
+          type: "2pc+2pc",
+          halfSetIds: [HALF_SET_ATK, HALF_SET_ATK],
+        },
+      },
     ]);
     const tb = new TeamBuild(configs);
     const result = deriveSetKeysByChar(tb);

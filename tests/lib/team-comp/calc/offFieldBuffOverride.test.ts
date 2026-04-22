@@ -43,8 +43,7 @@ const TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "splendor_of_tranquil_waters",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kaedehara_kazuha",
@@ -52,8 +51,7 @@ const TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: "viridescent_venerer",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "viridescent_venerer" },
   },
   {
     charId: "xingqiu",
@@ -61,8 +59,7 @@ const TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "bennett",
@@ -70,8 +67,7 @@ const TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -85,7 +81,7 @@ describe("buffOverrides affect off-field parts", () => {
       "bennett"
     );
 
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -127,7 +123,7 @@ describe("buffOverrides affect off-field parts", () => {
     );
 
     // Find VV's team-receiver (res reduction) buff
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -183,7 +179,7 @@ describe("buffOverrides affect off-field parts", () => {
     );
 
     // Find VV's team-receiver (res reduction) buff
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -242,7 +238,7 @@ describe("buffOverrides affect off-field parts", () => {
       "bennett"
     );
 
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -314,8 +310,7 @@ describe("buffOverrides affect off-field parts", () => {
         constellation: 0,
         weaponId: "splendor_of_tranquil_waters",
         refinement: 1,
-        artifactSetId: "viridescent_venerer",
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: "viridescent_venerer" },
       },
       {
         charId: "kaedehara_kazuha",
@@ -323,8 +318,7 @@ describe("buffOverrides affect off-field parts", () => {
         constellation: 0,
         weaponId: "iron_sting",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -332,8 +326,7 @@ describe("buffOverrides affect off-field parts", () => {
         constellation: 0,
         weaponId: "sacrificial_sword",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "bennett",
@@ -341,8 +334,7 @@ describe("buffOverrides affect off-field parts", () => {
         constellation: 0,
         weaponId: "aquila_favonia",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
 
@@ -354,7 +346,7 @@ describe("buffOverrides affect off-field parts", () => {
       "bennett"
     );
 
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "furina" &&
         b.buff.source.type === "artifactSet" &&
@@ -406,7 +398,7 @@ describe("buffOverrides affect off-field parts", () => {
       "bennett"
     );
 
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -463,7 +455,7 @@ describe("buffOverrides affect off-field parts", () => {
       "bennett"
     );
 
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -523,7 +515,7 @@ describe("buffOverrides affect off-field parts", () => {
       "bennett"
     );
 
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -574,7 +566,7 @@ describe("buffOverrides affect off-field parts", () => {
       "bennett"
     );
 
-    const vvMatch = tb.allStaticBuffs.find(
+    const vvMatch = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -670,7 +662,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       "xingqiu",
       "bennett"
     );
-    const vv = tb.allStaticBuffs.find(
+    const vv = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -714,7 +706,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       "xingqiu",
       "bennett"
     );
-    const vv = tb.allStaticBuffs.find(
+    const vv = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -764,7 +756,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       "xingqiu",
       "bennett"
     );
-    const vv = tb.allStaticBuffs.find(
+    const vv = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -826,7 +818,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       "xingqiu",
       "bennett"
     );
-    const vv = tb.allStaticBuffs.find(
+    const vv = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -861,7 +853,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       "xingqiu",
       "bennett"
     );
-    const vv = tb.allStaticBuffs.find(
+    const vv = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&
@@ -902,7 +894,7 @@ describe("buffOverride × forceOnField UI flow", () => {
       "xingqiu",
       "bennett"
     );
-    const vv = tb.allStaticBuffs.find(
+    const vv = tb.buffLedger.allBuffs.find(
       (b) =>
         b.providerCharId === "kaedehara_kazuha" &&
         b.buff.source.type === "artifactSet" &&

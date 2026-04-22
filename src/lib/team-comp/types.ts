@@ -548,6 +548,8 @@ export type ConstellationDelta = {
   minC: number;
   /** Additive change to count when constellation ≥ minC. */
   delta: number;
+  /** Whose constellation gates this delta. If omitted, uses the owning character. */
+  charId?: string;
 };
 
 /**
@@ -578,6 +580,26 @@ export type ComboResult = {
   totalDamage: number;
 };
 
+// ─── Artifact Set Config ───
+
+export type ArtifactSetConfig =
+  | { type: "4pc"; setId: string }
+  | { type: "2pc+2pc"; halfSetIds: [string, string] };
+
+/** Extract the 4pc set ID, or null if not a 4pc config. */
+export function getSetId(
+  cfg: ArtifactSetConfig | null | undefined
+): string | null {
+  return cfg?.type === "4pc" ? cfg.setId : null;
+}
+
+/** Extract half-set IDs, or empty array if not a 2pc+2pc config. */
+export function getHalfSetIds(
+  cfg: ArtifactSetConfig | null | undefined
+): string[] {
+  return cfg?.type === "2pc+2pc" ? cfg.halfSetIds : [];
+}
+
 // ─── Char Build Config ───
 
 export type TalentLevels = { auto: number; skill: number; burst: number };
@@ -588,8 +610,7 @@ export type TeamSlotConfig = {
   constellation: number;
   weaponId: string;
   refinement: number;
-  artifactSetId: string | null; // null if 2+2
-  artifactHalfSetIds: string[]; // 1 (for 4pc) or 2 (for 2+2)
+  artifactSet: ArtifactSetConfig | null;
   talentLevels?: TalentLevels;
 };
 
@@ -601,13 +622,12 @@ export type TeamSlotConfig = {
 
 export type OptFailReason =
   | { kind: "empty-pool"; emptySlots: Slot[] }
-  | { kind: "no-seeds"; setId?: string | null; halfSetIds?: string[] }
+  | { kind: "no-seeds"; artifactSet?: ArtifactSetConfig | null }
   | { kind: "er-unmet"; minEr: number; bestEr: number }
   | { kind: "cr-unmet"; minCr: number; bestCr: number }
   | {
       kind: "set-impossible";
-      setId?: string | null;
-      halfSetIds?: string[];
+      artifactSet?: ArtifactSetConfig | null;
       slotCounts: Record<string, number>;
     }
   | { kind: "all-filtered"; combinationsTotal: number }
@@ -661,8 +681,7 @@ export interface CharOptConfig {
   minEr: number;
   minCr: number;
   buildMatch?: BuildMatchResult | null;
-  artifactSetId?: string | null;
-  artifactHalfSetIds?: string[];
+  artifactSet?: ArtifactSetConfig | null;
 }
 
 export interface TeamOptimizerOptions {

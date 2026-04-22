@@ -8,7 +8,7 @@ export interface AsyncComputationState<TResult, TOpts> {
   stop: () => void;
 }
 
-export function useAsyncComputation<TYield, TResult, TOpts>(
+export function useAsyncComputation<TYield, TResult = TYield, TOpts = unknown>(
   runFn: (opts: TOpts) => AsyncGenerator<TYield, void>,
   onYield?: (yielded: TYield, setState: (result: TResult) => void) => void,
   onStart?: () => void
@@ -36,14 +36,13 @@ export function useAsyncComputation<TYield, TResult, TOpts>(
     setIsComputing(false);
   }, []);
 
-  const defaultOnYield = useCallback(
-    (yielded: TYield, setState: (result: TResult) => void) => {
+  // When onYield is omitted, TYield = TResult (enforced by the default type param).
+  // TypeScript cannot verify this generic relationship statically.
+  const handleYield =
+    onYield ??
+    ((yielded: TYield, setState: (r: TResult) => void) => {
       setState(yielded as unknown as TResult);
-    },
-    []
-  );
-
-  const handleYield = onYield ?? defaultOnYield;
+    });
 
   const start = useCallback(
     async (opts: TOpts) => {

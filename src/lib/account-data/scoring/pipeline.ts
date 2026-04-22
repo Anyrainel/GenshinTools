@@ -105,7 +105,7 @@ function resolveElement(charId: string): string {
 
 /** Find all damage formula IDs for a character in a TeamBuild. */
 function findAllFormulaIds(teamBuild: TeamBuild, charId: string): string[] {
-  const formulas = teamBuild.getFormulaIds();
+  const formulas = teamBuild.catalog.getFormulaIds();
   const charFormulas = formulas[charId];
   if (!charFormulas) return [];
   return Object.keys(charFormulas);
@@ -285,7 +285,7 @@ function runComboEnumerationPipeline(
       // Sort breakdowns by damage descending, keep top combos
       comboBreakdowns.sort((a, b) => b.damage - a.damage);
       const charFormulaLabels =
-        ctx.teamBuild.getFormulaIds()[characterId] ?? {};
+        ctx.teamBuild.catalog.getFormulaIds()[characterId] ?? {};
       teamBreakdowns.push({
         teamIndex: teamIdx,
         label: ctx.label,
@@ -567,7 +567,8 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
 
   comboBreakdowns.sort((a, b) => b.damage - a.damage);
 
-  const charFormulaLabels = teamBuild.getFormulaIds()[characterId] ?? {};
+  const charFormulaLabels =
+    teamBuild.catalog.getFormulaIds()[characterId] ?? {};
   return {
     qualifying,
     teamBreakdown: {

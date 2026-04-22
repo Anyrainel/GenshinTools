@@ -10,21 +10,16 @@ import { i18nAppData } from "@/data/i18n-app";
 import type { Element } from "@/data/types";
 
 import { LUNAR_REACTIONS, PHEC_ELEMENTS } from "../constants";
-import type {
-  FormulaPart,
-  ReactionComboDelta,
-  ReactionComboEntry,
-} from "../types";
+import type { FormulaPart, ReactionComboEntry } from "../types";
 import type { FormulaEntry } from "../types";
 import type {
   CalcContext,
   ElementalOrPhysical,
   I18nLabel,
   ReactionType,
-  TeamSlotConfig,
 } from "../types";
 import { LunarFormula, TransformFormula } from "./damageFormula";
-import type { CharacterBase, IFormulaProvider } from "./implModel";
+import type { IFormulaProvider } from "./implModel";
 import { computeLunarRankWeights } from "./stackRank";
 import type { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
@@ -111,7 +106,8 @@ export function resolveReactionComboEntries(
       baseReaction != null &&
       MULTI_CONTRIBUTOR_REACTIONS.has(baseReaction as ReactionType);
     if (isMulti) {
-      result[entry.id] = total;
+      // Emit per-on-field-char ID so the formula lookup matches the per-triggerer entry
+      result[`${entry.id}-${entry.onFieldCharId}`] = total;
     } else {
       for (const charId of entry.eligible) {
         const count =
@@ -140,9 +136,6 @@ export class TeamReaction implements IFormulaProvider {
   /** Labels per base reaction ID (for UI grid display). */
   private readonly baseLabels: Record<string, I18nLabel> = {};
 
-  /** Config lookup for charLevel per charId. */
-  private readonly charLevels: Record<string, number>;
-
   /**
    * Pre-computed rank weights for multi-contributor lunar formulas.
    * Keyed by base formula ID (e.g. "rx-lunarCharged"), value maps charId → weight.
@@ -164,30 +157,22 @@ export class TeamReaction implements IFormulaProvider {
       this.formulas[id] = {
         label,
         parts: parts.map((p) => ({ ...p, statsCharId: charId })),
-        owner: "team",
+        owner: charId,
       };
       this.baseIdFor[id] = baseId;
     }
   }
 
-  constructor(
-    private readonly teamMeta: TeamMeta,
-    private readonly charBases: Record<string, CharacterBase>,
-    private readonly configs: TeamSlotConfig[]
-  ) {
-    this.charLevels = {};
-    for (const c of configs) {
-      this.charLevels[c.charId] = c.charLevel;
-    }
-    this.hasColumbina = configs.some((c) => c.charId === "columbina");
+  constructor(private readonly teamMeta: TeamMeta) {
+    const charIds = teamMeta.characters;
 
     // Collect team element info
     const teamElementChars = new Map<Element, string[]>();
-    for (const c of configs) {
-      const el = teamMeta.elements[c.charId];
+    for (const charId of charIds) {
+      const el = teamMeta.elements[charId];
       if (!el) continue;
       if (!teamElementChars.has(el)) teamElementChars.set(el, []);
-      teamElementChars.get(el)!.push(c.charId);
+      teamElementChars.get(el)!.push(charId);
     }
 
     // Generate transformative reaction formulas (per-triggerer)
@@ -213,9 +198,9 @@ export class TeamReaction implements IFormulaProvider {
       // Nilou Bountiful Core upgrade
       if (
         reaction === "bloom" &&
-        configs.some((c) => c.charId === "nilou") &&
-        configs.every((c) => {
-          const e = teamMeta.elements[c.charId];
+        charIds.includes("nilou") &&
+        charIds.every((id) => {
+          const e = teamMeta.elements[id];
           return e === "Dendro" || e === "Hydro";
         })
       ) {
@@ -280,8 +265,8 @@ export class TeamReaction implements IFormulaProvider {
       const chars = teamElementChars.get(el);
       if (chars) for (const c of chars) eligible.add(c);
     }
-    // Return in team-slot order (configs order)
-    return this.configs.map((c) => c.charId).filter((id) => eligible.has(id));
+    // Return in team-slot order
+    return this.teamMeta.characters.filter((id) => eligible.has(id));
   }
 
   /**
@@ -362,13 +347,41 @@ export class TeamReaction implements IFormulaProvider {
         });
       }
 
-      const label = this.baseLabels[baseId] ?? sampleEntry.label;
-      this.formulas[baseId] = {
-        label,
-        parts,
-        owner: "team",
-        isMultiContributor: true,
-      };
+      // Update per-triggerer entries with weighted multi-contributor parts.
+      // Each per-triggerer entry represents "this reaction with charId on-field",
+      // so parts[0] is always the on-field character.
+      for (const onFieldId of eligible) {
+        const perTrigId = `${baseId}-${onFieldId}`;
+        const ordered = [
+          onFieldId,
+          ...eligible.filter((id) => id !== onFieldId),
+        ];
+        const perTrigParts: FormulaPart[] = [];
+        for (const charId of ordered) {
+          const w = weights.get(charId) ?? 0;
+          if (w === 0) continue;
+          const weightedFormula = new LunarFormula(
+            baseFormula.talentMultiplier,
+            baseFormula.tag,
+            baseFormula.scalingKey as "atk" | "hp" | "def" | "em",
+            baseFormula.extraTerm,
+            w
+          );
+          perTrigParts.push({
+            formula: weightedFormula,
+            hits: 1,
+            statsCharId: charId,
+            offField: charId !== onFieldId || undefined,
+          });
+        }
+        const label = this.baseLabels[baseId] ?? sampleEntry.label;
+        this.formulas[perTrigId] = {
+          label,
+          parts: perTrigParts,
+          owner: onFieldId,
+          isMultiContributor: true,
+        };
+      }
     }
   }
 
@@ -402,7 +415,7 @@ export class TeamReaction implements IFormulaProvider {
     );
   }
 
-  /** Get the FormulaEntry for a per-triggerer reaction formula ID. */
+  /** Get the FormulaEntry for a reaction formula ID. */
   getFormulaEntry(formulaId: string): FormulaEntry | undefined {
     return this.formulas[formulaId];
   }
@@ -417,99 +430,14 @@ export class TeamReaction implements IFormulaProvider {
     return this.baseLabels;
   }
 
-  /** Guess the on-field character for a base reaction.
-   *  Priority: best on-field damage dealer for the rotation. */
-  guessOnFieldChar(baseId: string): string | undefined {
+  /** Guess the on-field character for a base reaction (internal use only). */
+  private guessOnFieldChar(baseId: string): string | undefined {
     const eligible = this.baseEligible[baseId] ?? [];
     const priority = ["flins", "zibai", "ineffa", "linnea", "columbina"];
     for (const charId of priority) {
       if (eligible.includes(charId)) return charId;
     }
-    // Fallback: first eligible char
-    return eligible[0] ?? this.configs[0]?.charId;
-  }
-
-  /** Whether Columbina is on the team (P2: ×4/3 reaction triggers). */
-  private readonly hasColumbina: boolean;
-
-  /** Cached reaction combo descriptor (built once). */
-  private cachedDescriptor: ReactionComboEntry[] | undefined;
-
-  /** Reaction combo descriptor: base counts + character-gated deltas. */
-  getReactionComboDescriptor(): ReactionComboEntry[] {
-    if (this.cachedDescriptor) return this.cachedDescriptor;
-
-    const hasLCh = "rx-lunarCharged" in this.baseEligible;
-    const hasLCr = "rx-lunarCrystallize" in this.baseEligible;
-    const hasLB = this.teamMeta.hasReaction("lunarBloom");
-
-    const entries: ReactionComboEntry[] = [];
-    const lunarCount = +hasLCh + +hasLCr + +hasLB;
-
-    // Base counts from lunar reaction heuristics
-    const baseCounts: Record<string, number> = {};
-    if (lunarCount >= 3) {
-      if (hasLCh) baseCounts["rx-lunarCharged"] = 0;
-      if (hasLCr) baseCounts["rx-lunarCrystallize"] = 0;
-    } else if (lunarCount === 1) {
-      if (hasLCh) baseCounts["rx-lunarCharged"] = 9;
-      if (hasLCr) baseCounts["rx-lunarCrystallize"] = 15;
-    } else {
-      if (hasLCh && hasLCr) {
-        baseCounts["rx-lunarCharged"] = 9;
-        baseCounts["rx-lunarCrystallize"] = 0;
-      } else if (hasLCr && hasLB) {
-        baseCounts["rx-lunarCrystallize"] = 3;
-      } else if (hasLCh && hasLB) {
-        baseCounts["rx-lunarCharged"] = 3;
-      }
-    }
-
-    // Columbina P2: ×4/3 baked into all values so downstream never needs to know
-    const col = this.hasColumbina
-      ? (n: number) => Math.round((n * 4) / 3)
-      : (n: number) => n;
-
-    for (const [id, baseTotal] of Object.entries(baseCounts)) {
-      const bonus: ReactionComboDelta[] = [];
-
-      // Linnea C2: extra LCr from Moondrift on Overdrive/Million Ton
-      if (id === "rx-lunarCrystallize" && this.charBases.linnea) {
-        const linneaCombo = this.charBases.linnea.combo;
-        const isTap = "linnea-overdrive" in linneaCombo;
-        bonus.push({
-          charId: "linnea",
-          minC: 2,
-          delta: col(isTap ? 12 : 3),
-        });
-      }
-
-      const eligible = this.baseEligible[id] ?? [];
-      const onFieldCharId = this.guessOnFieldChar(id) ?? eligible[0] ?? "";
-
-      entries.push({
-        id,
-        total: col(baseTotal),
-        eligible,
-        onFieldCharId,
-        bonus,
-      });
-    }
-
-    this.cachedDescriptor = entries;
-    return entries;
-  }
-
-  /** Resolved per-triggerer reaction combo counts at construction-time constellations. */
-  getReactionComboCounts(): Record<string, number> {
-    const constellations: Record<string, number> = {};
-    for (const c of this.configs) {
-      constellations[c.charId] = this.charBases[c.charId]?.constellation ?? 0;
-    }
-    return resolveReactionComboEntries(
-      this.getReactionComboDescriptor(),
-      constellations
-    );
+    return eligible[0] ?? this.teamMeta.characters[0];
   }
 
   // ─── Internal helpers ───

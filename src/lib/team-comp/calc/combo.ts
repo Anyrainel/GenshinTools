@@ -139,16 +139,6 @@ export function collectAllFormulas(
       }
     }
   }
-  if (teamBuild) {
-    const rxFormulas = teamBuild.getReactionFormulaIds();
-    for (const [formulaId, label] of Object.entries(rxFormulas)) {
-      const eligible =
-        teamBuild.reactionProvider.getEligibleCharacters(formulaId);
-      for (const charId of eligible) {
-        list.push({ charId, formulaId, label });
-      }
-    }
-  }
   return list;
 }
 
@@ -182,13 +172,13 @@ export function resolveActiveCombo(
   if (teamBuild) {
     for (const charId of characters) {
       if (!charId) continue;
-      const comboData: Record<string, number> = teamBuild.getCombo(charId);
+      const comboData: Record<string, number> =
+        teamBuild.catalog.getCombo(charId);
       for (const [formulaId, count] of Object.entries(comboData)) {
-        if (count > 0) lines.push({ charId, formulaId, count });
+        if (count <= 0) continue;
+        if (!includeRxComboLines && formulaId.startsWith("rx-")) continue;
+        lines.push({ charId, formulaId, count });
       }
-    }
-    if (includeRxComboLines) {
-      lines.push(...teamBuild.getReactionComboLines());
     }
   }
   return {

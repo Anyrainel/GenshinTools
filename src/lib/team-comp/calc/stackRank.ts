@@ -10,8 +10,9 @@
 
 import type { BuffActivationMap, BuffSource, CalcContext } from "../types";
 import type { DamageFormula } from "./damageFormula";
-import { type StatBuff, getBuffInstanceKey } from "./statBuff";
+import type { StatBuff } from "./statBuff";
 import type { StatSheet } from "./statSheet";
+import type { TeamBuffLedger } from "./teamBuffLedger";
 import { LUNAR_RANK_WEIGHTS } from "./teamReaction";
 
 /**
@@ -121,19 +122,23 @@ export function computeDefaultActivation(
 }
 
 /**
- * Collect stack-limited buff info from a team's allStaticBuffs.
- * Evaluates dynamic entries only to check if the buff is non-empty.
+ * Collect stack-limited buff info from the ledger.
+ * Uses pre-indexed stack-limited buffs, filtering out resonance/extra
+ * and checking for non-empty entries via dynamic evaluation.
  */
 export function collectStackLimitedBuffs(
-  allStaticBuffs: { buff: StatBuff; providerCharId: string }[],
+  ledger: TeamBuffLedger,
   preStats: Record<string, StatSheet>,
   teamPreStatsArr: StatSheet[]
 ): StackLimitedBuffInfo[] {
   const result: StackLimitedBuffInfo[] = [];
 
-  for (const { buff, providerCharId } of allStaticBuffs) {
+  for (const {
+    buff,
+    providerCharId,
+    buffKey,
+  } of ledger.getStackLimitedBuffs()) {
     if (providerCharId === "resonance" || providerCharId === "extra") continue;
-    if (buff.source.maxStacks == null) continue;
 
     const ownerStats = preStats[providerCharId];
     if (!ownerStats) continue;
@@ -145,8 +150,8 @@ export function collectStackLimitedBuffs(
 
     result.push({
       source: buff.source,
-      buffKey: getBuffInstanceKey(buff, providerCharId),
-      maxStacks: buff.source.maxStacks,
+      buffKey,
+      maxStacks: buff.source.maxStacks!,
     });
   }
 

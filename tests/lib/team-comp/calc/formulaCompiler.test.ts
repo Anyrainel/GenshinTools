@@ -634,8 +634,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "wolfs_gravestone",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -643,8 +642,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "bennett",
@@ -652,8 +650,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kaedehara_kazuha",
@@ -661,8 +658,7 @@ const DILUC_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -673,8 +669,7 @@ const RAIDEN_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "the_catch",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xiangling",
@@ -682,8 +677,7 @@ const RAIDEN_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "the_catch",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -691,8 +685,7 @@ const RAIDEN_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "bennett",
@@ -700,8 +693,7 @@ const RAIDEN_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -713,8 +705,7 @@ const VARKA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "gest_of_the_mighty_wolf",
     refinement: 1,
-    artifactSetId: "a_day_carved_from_rising_winds",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "a_day_carved_from_rising_winds" },
   },
   {
     charId: "durin",
@@ -722,8 +713,7 @@ const VARKA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "athame_artis",
     refinement: 1,
-    artifactSetId: "a_day_carved_from_rising_winds",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "a_day_carved_from_rising_winds" },
   },
   {
     charId: "venti",
@@ -731,8 +721,7 @@ const VARKA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "elegy_for_the_end",
     refinement: 1,
-    artifactSetId: "viridescent_venerer",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "viridescent_venerer" },
   },
   {
     charId: "bennett",
@@ -740,8 +729,7 @@ const VARKA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: "noblesse_oblige",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "noblesse_oblige" },
   },
 ];
 
@@ -752,8 +740,7 @@ const CHASCA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "astral_vultures_crimson_plumage",
     refinement: 1,
-    artifactSetId: "obsidian_codex",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "obsidian_codex" },
   },
   {
     charId: "citlali",
@@ -761,8 +748,7 @@ const CHASCA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "starcallers_watch",
     refinement: 1,
-    artifactSetId: "scroll_of_the_hero_of_cinder_city",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "scroll_of_the_hero_of_cinder_city" },
   },
   {
     charId: "xilonen",
@@ -770,8 +756,7 @@ const CHASCA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "peak_patrol_song",
     refinement: 1,
-    artifactSetId: "instructor",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "instructor" },
   },
   {
     charId: "bennett",
@@ -779,8 +764,7 @@ const CHASCA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: "noblesse_oblige",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "noblesse_oblige" },
   },
 ];
 
@@ -791,8 +775,7 @@ const EULA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "song_of_broken_pines",
     refinement: 1,
-    artifactSetId: "pale_flame",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "pale_flame" },
   },
   {
     charId: "raiden_shogun",
@@ -800,8 +783,7 @@ const EULA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "the_catch",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
   {
     charId: "zhongli",
@@ -809,8 +791,7 @@ const EULA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "black_tassel",
     refinement: 5,
-    artifactSetId: "tenacity_of_the_millelith",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "tenacity_of_the_millelith" },
   },
   {
     charId: "bennett",
@@ -818,8 +799,7 @@ const EULA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: "noblesse_oblige",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "noblesse_oblige" },
   },
 ];
 
@@ -833,8 +813,7 @@ const LINNEA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "lightbearing_moonshard",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: ["def%-30", "def%-30"],
+    artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
   },
   {
     charId: "illuga",
@@ -842,8 +821,7 @@ const LINNEA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "the_widsith",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: ["em-80", "em-80"],
+    artifactSet: { type: "2pc+2pc", halfSetIds: ["em-80", "em-80"] },
   },
   {
     charId: "columbina",
@@ -851,8 +829,7 @@ const LINNEA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "a_thousand_floating_dreams",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: ["hp%-20", "hp%-20"],
+    artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
   },
   {
     charId: "gorou",
@@ -860,8 +837,7 @@ const LINNEA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "favonius_warbow",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: ["def%-30", "def%-30"],
+    artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
   },
 ];
 
@@ -872,8 +848,7 @@ const CLORINDE_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "absolution",
     refinement: 1,
-    artifactSetId: "fragment_of_harmonic_whimsy",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "fragment_of_harmonic_whimsy" },
   },
   {
     charId: "columbina",
@@ -881,8 +856,7 @@ const CLORINDE_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "nocturnes_curtain_call",
     refinement: 1,
-    artifactSetId: "aubade_of_morningstar_and_moon",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "aubade_of_morningstar_and_moon" },
   },
   {
     charId: "ineffa",
@@ -890,8 +864,7 @@ const CLORINDE_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "fractured_halo",
     refinement: 1,
-    artifactSetId: "silken_moons_serenade",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "silken_moons_serenade" },
   },
   {
     charId: "xilonen",
@@ -899,8 +872,7 @@ const CLORINDE_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "peak_patrol_song",
     refinement: 1,
-    artifactSetId: "scroll_of_the_hero_of_cinder_city",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "scroll_of_the_hero_of_cinder_city" },
   },
 ];
 
@@ -1043,12 +1015,12 @@ describe("compileComboTeamDamage full pipeline fuzz", () => {
     it(`${label}: reaction formulas compiled match standard path`, () => {
       const tb = new TeamBuild(configs);
       const charIds = configs.map((c) => c.charId);
-      const rxFormulas = tb.reactionProvider.getFormulaIds();
+      const rxFormulas = tb.catalog.getFormulaIds();
       const rxIds = Object.keys(rxFormulas);
       if (rxIds.length === 0) return; // no reactions for this team
 
       for (const formulaId of rxIds) {
-        const rxEntry = tb.reactionProvider.getFormulaEntry(formulaId);
+        const rxEntry = tb.catalog.formulaIndex.get(formulaId);
         const triggerCharId = rxEntry?.parts[0]?.statsCharId;
         if (!triggerCharId) continue;
         const swap = swapCharId ?? triggerCharId;
@@ -1120,7 +1092,7 @@ describe("compileComboTeamDamage fuzz", () => {
 
   /** Build a combo formula from all formulas of all characters + team reactions. */
   function buildFullCombo(tb: TeamBuild): ComboFormula {
-    const allFormulas = tb.getFormulaIds();
+    const allFormulas = tb.catalog.getFormulaIds();
     const lines: ComboFormula["lines"] = [];
     for (const [charId, formulas] of Object.entries(allFormulas)) {
       for (const formulaId of Object.keys(formulas)) {
@@ -1132,9 +1104,9 @@ describe("compileComboTeamDamage fuzz", () => {
       }
     }
     // Include team reaction formulas (rx-*) — per-triggerer formula IDs
-    const rxFormulas = tb.reactionProvider.getFormulaIds();
+    const rxFormulas = tb.catalog.getFormulaIds();
     for (const rxId of Object.keys(rxFormulas)) {
-      const rxEntry = tb.reactionProvider.getFormulaEntry(rxId);
+      const rxEntry = tb.catalog.formulaIndex.get(rxId);
       const rxCharId = rxEntry?.parts[0]?.statsCharId;
       if (rxCharId) {
         lines.push({
@@ -1457,8 +1429,10 @@ describe("random team fuzz (compiled vs standard)", () => {
         constellation: Math.floor(Math.random() * 7),
         weaponId: pick(compatible),
         refinement: Math.floor(Math.random() * 5) + 1,
-        artifactSetId: Math.random() > 0.3 ? pick(fiveStarArtifacts) : null,
-        artifactHalfSetIds: [],
+        artifactSet:
+          Math.random() > 0.3
+            ? { type: "4pc" as const, setId: pick(fiveStarArtifacts) }
+            : null,
       });
     }
 
@@ -1936,7 +1910,7 @@ describe("multi-char variable compilation parity", () => {
   const rv = getRollValues();
 
   function buildFullCombo(tb: TeamBuild): ComboFormula {
-    const allFormulas = tb.getFormulaIds();
+    const allFormulas = tb.catalog.getFormulaIds();
     const lines: ComboFormula["lines"] = [];
     for (const [charId, formulas] of Object.entries(allFormulas)) {
       for (const formulaId of Object.keys(formulas)) {
@@ -2313,6 +2287,7 @@ import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import type { BuffActivationMap } from "@/lib/team-comp/types";
 import type { OptionMap } from "@/lib/team-comp/types";
 import type { ReactionOverride } from "@/lib/team-comp/types";
+import { getSetId } from "@/lib/team-comp/types";
 
 describe("cross-path fuzz (display vs calc vs compile)", () => {
   const rv = getRollValues();
@@ -2333,9 +2308,10 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       if (cv !== undefined) opts[cfg.charId] = cv;
       const wv = pickRandomOptionValue(cfg.weaponId);
       if (wv !== undefined) opts[cfg.weaponId] = wv;
-      if (cfg.artifactSetId) {
-        const av = pickRandomOptionValue(cfg.artifactSetId);
-        if (av !== undefined) opts[cfg.artifactSetId] = av;
+      const artSetId = getSetId(cfg.artifactSet);
+      if (artSetId) {
+        const av = pickRandomOptionValue(artSetId);
+        if (av !== undefined) opts[artSetId] = av;
       }
     }
     return opts;
@@ -2356,7 +2332,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     tb: TeamBuild
   ): { charId: string; formulaId: string }[] {
     const pairs: { charId: string; formulaId: string }[] = [];
-    const all = tb.getFormulaIds();
+    const all = tb.catalog.getFormulaIds();
     for (const [cid, fmap] of Object.entries(all)) {
       for (const fid of Object.keys(fmap)) {
         pairs.push({ charId: cid, formulaId: fid });
@@ -2417,7 +2393,7 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
     const entry = tb.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
     if (!entry) return {};
     const activation: BuffActivationMap = {};
-    for (const { buff, providerCharId } of tb.allStaticBuffs) {
+    for (const { buff, providerCharId } of tb.buffLedger.allBuffs) {
       if (providerCharId === "resonance" || providerCharId === "extra")
         continue;
       // 60% chance to include each buff as a partial-buff override
@@ -2751,9 +2727,13 @@ function tryRandomTeam(): TeamSlotConfig[] | null {
       refinement: Math.floor(Math.random() * 5) + 1,
       // Always a 4pc 5-star set (all slots same set). We only need to
       // fuzz 4pc — 2+2 is easier and rarely catches path divergence.
-      artifactSetId:
-        fiveStarArtifacts[Math.floor(Math.random() * fiveStarArtifacts.length)],
-      artifactHalfSetIds: [],
+      artifactSet: {
+        type: "4pc" as const,
+        setId:
+          fiveStarArtifacts[
+            Math.floor(Math.random() * fiveStarArtifacts.length)
+          ],
+      },
     });
   }
   return picked.length >= 4 ? picked : null;

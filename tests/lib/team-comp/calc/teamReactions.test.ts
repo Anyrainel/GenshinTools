@@ -4,6 +4,7 @@
  */
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import { LunarFormula } from "@/lib/team-comp/calc/damageFormula";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
@@ -15,6 +16,10 @@ import {
 import { computeLunarRankWeights } from "@/lib/team-comp/calc/stackRank";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import type {
+  ReactionComboGridRow,
+  TeamFormulaCatalog,
+} from "@/lib/team-comp/calc/teamFormulaCatalog";
 import {
   LUNAR_RANK_WEIGHTS,
   MULTI_CONTRIBUTOR_REACTIONS,
@@ -25,6 +30,7 @@ import type { ReactionComboEntry } from "@/lib/team-comp/types";
 import type {
   CalcContext,
   ComboFormula,
+  I18nLabel,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
@@ -33,28 +39,50 @@ import "@/lib/team-comp/index";
 
 await preloadGameStats();
 
-function sumCounts(counts: Record<string, number>): number {
-  return Object.values(counts).reduce((a, b) => a + b, 0);
+function findGridRow(grid: ReactionComboGridRow[], baseId: string) {
+  return grid.find((r) => r.baseId === baseId);
 }
 
-/** Sum counts for a base reaction ID (base-ID entry or per-triggerer entries). */
-function sumBase(counts: Record<string, number>, baseId: string): number {
-  // Multi-contributor reactions produce a single base-ID entry
-  if (baseId in counts) return counts[baseId];
-  // Single-contributor reactions produce per-triggerer entries
-  const prefix = `${baseId}-`;
-  let total = 0;
-  for (const [key, val] of Object.entries(counts)) {
-    if (key.startsWith(prefix)) total += val;
+function gridTotal(grid: ReactionComboGridRow[], baseId: string): number {
+  const row = findGridRow(grid, baseId);
+  if (!row) return 0;
+  return Object.values(row.counts).reduce((a, b) => a + b, 0);
+}
+
+/** Check if any per-triggerer formula with this base ID prefix exists in the catalog. */
+function hasReactionFormula(
+  catalog: TeamFormulaCatalog,
+  baseId: string
+): boolean {
+  for (const key of catalog.formulaIndex.keys()) {
+    if (key.startsWith(`${baseId}-`)) return true;
   }
-  return total;
+  return false;
 }
 
-/** Check if a base reaction exists in counts (base-ID or per-triggerer). */
-function hasBase(counts: Record<string, number>, baseId: string): boolean {
-  if (baseId in counts) return true;
-  const prefix = `${baseId}-`;
-  return Object.keys(counts).some((k) => k.startsWith(prefix));
+/** Get the label of the first per-triggerer formula matching this base ID. */
+function getReactionLabel(
+  catalog: TeamFormulaCatalog,
+  baseId: string
+): I18nLabel | undefined {
+  for (const [key, entry] of catalog.formulaIndex) {
+    if (key.startsWith(`${baseId}-`)) return entry.label;
+  }
+  return undefined;
+}
+
+/** Get the set of character IDs that have per-triggerer formulas for this base reaction. */
+function getEligibleFromIndex(
+  catalog: TeamFormulaCatalog,
+  baseId: string
+): Set<string> {
+  const eligible = new Set<string>();
+  for (const key of catalog.formulaIndex.keys()) {
+    if (key.startsWith(`${baseId}-`)) {
+      eligible.add(key.slice(baseId.length + 1));
+    }
+  }
+  return eligible;
 }
 
 const CTX: CalcContext = {
@@ -105,8 +133,7 @@ const PYRO_ELECTRO_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "fischl",
@@ -114,8 +141,7 @@ const PYRO_ELECTRO_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "the_stringless",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -123,8 +149,7 @@ const PYRO_ELECTRO_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kaedehara_kazuha",
@@ -132,8 +157,7 @@ const PYRO_ELECTRO_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -145,8 +169,7 @@ const BLOOM_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "a_thousand_floating_dreams",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "sangonomiya_kokomi",
@@ -154,8 +177,7 @@ const BLOOM_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "thrilling_tales_of_dragon_slayers",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kuki_shinobu",
@@ -163,8 +185,7 @@ const BLOOM_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "yelan",
@@ -172,8 +193,7 @@ const BLOOM_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aqua_simulacra",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -185,8 +205,7 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "bennett",
@@ -194,8 +213,7 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -203,8 +221,7 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kamisato_ayaka",
@@ -212,8 +229,7 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "mistsplitter_reforged",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -222,96 +238,90 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
 describe("TeamReactionProvider — formula generation", () => {
   it("generates overloaded for Pyro+Electro team", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-overloaded"]).toBeDefined();
-    expect(rxFormulas["rx-overloaded"].en).toBe("Overloaded");
+    expect(hasReactionFormula(tb.catalog, "rx-overloaded")).toBe(true);
+    expect(getReactionLabel(tb.catalog, "rx-overloaded")?.en).toBe(
+      "Overloaded"
+    );
   });
 
   it("generates electroCharged for Hydro+Electro team", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-electroCharged"]).toBeDefined();
+    expect(hasReactionFormula(tb.catalog, "rx-electroCharged")).toBe(true);
   });
 
   it("does NOT generate bloom when missing Dendro", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-bloom"]).toBeUndefined();
+    expect(hasReactionFormula(tb.catalog, "rx-bloom")).toBe(false);
   });
 
   it("generates bloom for Dendro+Hydro+Electro team", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-bloom"]).toBeDefined();
+    expect(hasReactionFormula(tb.catalog, "rx-bloom")).toBe(true);
   });
 
   it("generates rx-hyperbloom when Electro char has only off-field formula", () => {
     // Kuki Shinobu's shinobu-hyperbloom has offField: true,
     // so she remains eligible → team rx-hyperbloom is generated
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-hyperbloom"]).toBeDefined();
+    expect(hasReactionFormula(tb.catalog, "rx-hyperbloom")).toBe(true);
   });
 
   it("does NOT generate burgeon when missing Pyro", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-burgeon"]).toBeUndefined();
+    expect(hasReactionFormula(tb.catalog, "rx-burgeon")).toBe(false);
   });
 
   it("does NOT generate superconduct when missing Cryo+Electro pair", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-superconduct"]).toBeUndefined();
+    expect(hasReactionFormula(tb.catalog, "rx-superconduct")).toBe(false);
   });
 });
 
 describe("TeamReactionProvider — swirl variants", () => {
   it("generates swirl variants for each reactive element on the team", () => {
     const tb = new TeamBuild(SWIRL_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
     // Pyro from Bennett, Hydro from Xingqiu, Cryo from Ayaka
-    expect(rxFormulas["rx-swirl-Pyro"]).toBeDefined();
-    expect(rxFormulas["rx-swirl-Hydro"]).toBeDefined();
-    expect(rxFormulas["rx-swirl-Cryo"]).toBeDefined();
+    expect(hasReactionFormula(tb.catalog, "rx-swirl-Pyro")).toBe(true);
+    expect(hasReactionFormula(tb.catalog, "rx-swirl-Hydro")).toBe(true);
+    expect(hasReactionFormula(tb.catalog, "rx-swirl-Cryo")).toBe(true);
     // No Electro on this team
-    expect(rxFormulas["rx-swirl-Electro"]).toBeUndefined();
+    expect(hasReactionFormula(tb.catalog, "rx-swirl-Electro")).toBe(false);
   });
 
   it("swirl eligible characters are only Anemo", () => {
     const tb = new TeamBuild(SWIRL_TEAM);
-    const eligible = tb.reactionProvider.getEligibleCharacters("rx-swirl-Pyro");
-    expect(eligible).toContain("kaedehara_kazuha");
-    expect(eligible).not.toContain("bennett");
-    expect(eligible).not.toContain("xingqiu");
+    const eligible = getEligibleFromIndex(tb.catalog, "rx-swirl-Pyro");
+    expect(eligible.has("kaedehara_kazuha")).toBe(true);
+    expect(eligible.has("bennett")).toBe(false);
+    expect(eligible.has("xingqiu")).toBe(false);
   });
 });
 
 describe("TeamReactionProvider — eligible characters", () => {
   it("overloaded eligible chars include both Pyro and Electro members", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const eligible = tb.reactionProvider.getEligibleCharacters("rx-overloaded");
-    expect(eligible).toContain("hu_tao");
-    expect(eligible).toContain("fischl");
+    const eligible = getEligibleFromIndex(tb.catalog, "rx-overloaded");
+    expect(eligible.has("hu_tao")).toBe(true);
+    expect(eligible.has("fischl")).toBe(true);
     // Hydro and Anemo should NOT be eligible
-    expect(eligible).not.toContain("xingqiu");
-    expect(eligible).not.toContain("kaedehara_kazuha");
+    expect(eligible.has("xingqiu")).toBe(false);
+    expect(eligible.has("kaedehara_kazuha")).toBe(false);
   });
 
   it("bloom eligible chars include Hydro and Dendro members", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const eligible = tb.reactionProvider.getEligibleCharacters("rx-bloom");
+    const eligible = getEligibleFromIndex(tb.catalog, "rx-bloom");
     // Nahida = Dendro, Kokomi + Yelan = Hydro
-    expect(eligible).toContain("sangonomiya_kokomi");
-    expect(eligible).toContain("yelan");
-    expect(eligible).toContain("nahida");
+    expect(eligible.has("sangonomiya_kokomi")).toBe(true);
+    expect(eligible.has("yelan")).toBe(true);
+    expect(eligible.has("nahida")).toBe(true);
   });
 
   it("hyperbloom eligible chars include Shinobu (off-field formula doesn't filter)", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const eligible = tb.reactionProvider.getEligibleCharacters("rx-hyperbloom");
+    const eligible = getEligibleFromIndex(tb.catalog, "rx-hyperbloom");
     // Kuki Shinobu's hyperbloom formula is off-field → she stays eligible
-    expect(eligible).toContain("kuki_shinobu");
+    expect(eligible.has("kuki_shinobu")).toBe(true);
   });
 });
 
@@ -323,8 +333,7 @@ const NILOU_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "key_of_khajnisut",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "nahida",
@@ -332,8 +341,7 @@ const NILOU_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "a_thousand_floating_dreams",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "sangonomiya_kokomi",
@@ -341,8 +349,7 @@ const NILOU_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "thrilling_tales_of_dragon_slayers",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "yelan",
@@ -350,8 +357,7 @@ const NILOU_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aqua_simulacra",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -363,8 +369,7 @@ const KAVEH_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "nahida",
@@ -372,8 +377,7 @@ const KAVEH_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "a_thousand_floating_dreams",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "sangonomiya_kokomi",
@@ -381,8 +385,7 @@ const KAVEH_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "thrilling_tales_of_dragon_slayers",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -390,51 +393,50 @@ const KAVEH_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "sacrificial_sword",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
 describe("TeamReactionProvider — character override filtering", () => {
   it("Nilou is NOT filtered from rx-bloom (her bloom formula is off-field)", () => {
     const tb = new TeamBuild(NILOU_TEAM);
-    const eligible = tb.reactionProvider.getEligibleCharacters("rx-bloom");
+    const eligible = getEligibleFromIndex(tb.catalog, "rx-bloom");
     // Nilou's nilou-bountiful-core has offField: true, so she stays eligible
-    expect(eligible).toContain("nilou");
-    expect(eligible).toContain("nahida");
-    expect(eligible).toContain("sangonomiya_kokomi");
-    expect(eligible).toContain("yelan");
+    expect(eligible.has("nilou")).toBe(true);
+    expect(eligible.has("nahida")).toBe(true);
+    expect(eligible.has("sangonomiya_kokomi")).toBe(true);
+    expect(eligible.has("yelan")).toBe(true);
   });
 
   it("Shinobu is NOT filtered from rx-hyperbloom (her hyperbloom formula is off-field)", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const eligible = tb.reactionProvider.getEligibleCharacters("rx-hyperbloom");
+    const eligible = getEligibleFromIndex(tb.catalog, "rx-hyperbloom");
     // shinobu-hyperbloom has offField: true → she remains eligible for team rx-hyperbloom
-    expect(eligible).toContain("kuki_shinobu");
+    expect(eligible.has("kuki_shinobu")).toBe(true);
   });
 
   it("Kaveh is eligible for rx-bloom (character formulas don't exclude from team reactions)", () => {
     const tb = new TeamBuild(KAVEH_TEAM);
-    const eligible = tb.reactionProvider.getEligibleCharacters("rx-bloom");
-    expect(eligible).toContain("kaveh");
-    expect(eligible).toContain("nahida");
-    expect(eligible).toContain("sangonomiya_kokomi");
-    expect(eligible).toContain("xingqiu");
+    const eligible = getEligibleFromIndex(tb.catalog, "rx-bloom");
+    expect(eligible.has("kaveh")).toBe(true);
+    expect(eligible.has("nahida")).toBe(true);
+    expect(eligible.has("sangonomiya_kokomi")).toBe(true);
+    expect(eligible.has("xingqiu")).toBe(true);
   });
 
   it("rx-bloom label upgrades to Bountiful Core for Nilou all-Hydro/Dendro team", () => {
     const tb = new TeamBuild(NILOU_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-bloom"]).toBeDefined();
-    expect(rxFormulas["rx-bloom"].en).toBe("Bountiful Core");
-    expect(rxFormulas["rx-bloom"].zh).toBe("丰穰之核");
+    const label = getReactionLabel(tb.catalog, "rx-bloom");
+    expect(label).toBeDefined();
+    expect(label!.en).toBe("Bountiful Core");
+    expect(label!.zh).toBe("丰穰之核");
   });
 
   it("rx-bloom label stays as Dendro Core for non-Nilou team", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-bloom"]).toBeDefined();
-    expect(rxFormulas["rx-bloom"].en).toBe("Dendro Core");
+    const label = getReactionLabel(tb.catalog, "rx-bloom");
+    expect(label).toBeDefined();
+    expect(label!.en).toBe("Dendro Core");
   });
 });
 
@@ -508,7 +510,7 @@ describe("TeamReactionProvider — evaluateCombo integration", () => {
     const sheets = emptySheets(...charIds);
 
     // Get a real character formula
-    const charFormulas = tb.getFormulaIds().hu_tao;
+    const charFormulas = tb.catalog.getFormulaIds().hu_tao;
     const firstFormulaId = Object.keys(charFormulas)[0];
 
     const combo: ComboFormula = {
@@ -542,12 +544,23 @@ describe("TeamReactionProvider — multi-contributor", () => {
   });
 });
 
-describe("TeamReactionProvider — getReactionFormulaIds on TeamBuild", () => {
-  it("returns same result as reactionProvider.getFormulaIds()", () => {
+describe("TeamFormulaCatalog — reaction formulas in getFormulaIds", () => {
+  it("includes per-triggerer reaction IDs under triggerer characters", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const direct = tb.reactionProvider.getFormulaIds();
-    const method = tb.getReactionFormulaIds();
-    expect(method).toEqual(direct);
+    const allFormulas = tb.catalog.getFormulaIds();
+    const grid = tb.catalog.getReactionComboGrid();
+    const baseIds = grid.map((r) => r.baseId);
+    // Each base reaction should have at least one per-triggerer ID in the catalog
+    for (const baseId of baseIds) {
+      const prefix = `${baseId}-`;
+      const found = Object.values(allFormulas).some(
+        (charFormulas: Record<string, I18nLabel>) =>
+          Object.keys(charFormulas).some((fid: string) =>
+            fid.startsWith(prefix)
+          )
+      );
+      expect(found).toBe(true);
+    }
   });
 });
 
@@ -561,8 +574,7 @@ const LUNAR_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "thrilling_tales_of_dragon_slayers",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "flins",
@@ -570,8 +582,7 @@ const LUNAR_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "zibai",
@@ -579,8 +590,7 @@ const LUNAR_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "mistsplitter_reforged",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "nahida",
@@ -588,8 +598,7 @@ const LUNAR_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "a_thousand_floating_dreams",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -598,40 +607,38 @@ const LUNAR_TEAM: TeamSlotConfig[] = [
 describe("TeamReactionProvider — lunar reactions", () => {
   it("generates lunarCharged for Columbina+Flins team", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-lunarCharged"]).toBeDefined();
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(findGridRow(grid, "rx-lunarCharged")).toBeDefined();
   });
 
   it("generates lunarCrystallize for Columbina+Zibai team", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-lunarCrystallize"]).toBeDefined();
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(findGridRow(grid, "rx-lunarCrystallize")).toBeDefined();
   });
 
   it("does NOT generate lunarBloom (dendro core uses regular bloom formula)", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const rxFormulas = tb.reactionProvider.getBaseFormulaLabels();
-    expect(rxFormulas["rx-lunarBloom"]).toBeUndefined();
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(findGridRow(grid, "rx-lunarBloom")).toBeUndefined();
     // The team should get rx-bloom instead (standard dendro core)
-    expect(rxFormulas["rx-bloom"]).toBeDefined();
+    expect(hasReactionFormula(tb.catalog, "rx-bloom")).toBe(true);
   });
 
   it("multi-contributor eligible chars are filtered to contributing elements", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
+    const grid = tb.catalog.getReactionComboGrid();
     // LCh: Electro + Hydro only → columbina (Hydro) + flins (Electro)
-    const eligibleLCh =
-      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
-    expect(eligibleLCh).toHaveLength(2);
-    expect(eligibleLCh).toContain("columbina");
-    expect(eligibleLCh).toContain("flins");
+    const rowLCh = findGridRow(grid, "rx-lunarCharged")!;
+    expect(rowLCh.eligible.size).toBe(2);
+    expect(rowLCh.eligible.has("columbina")).toBe(true);
+    expect(rowLCh.eligible.has("flins")).toBe(true);
 
     // LCr: Geo + Hydro only → columbina (Hydro) + zibai (Geo)
-    const eligibleLCr = tb.reactionProvider.getEligibleCharacters(
-      "rx-lunarCrystallize"
-    );
-    expect(eligibleLCr).toHaveLength(2);
-    expect(eligibleLCr).toContain("columbina");
-    expect(eligibleLCr).toContain("zibai");
+    const rowLCr = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(rowLCr.eligible.size).toBe(2);
+    expect(rowLCr.eligible.has("columbina")).toBe(true);
+    expect(rowLCr.eligible.has("zibai")).toBe(true);
   });
 });
 
@@ -642,8 +649,12 @@ describe("TeamReactionProvider — multi-contributor evaluation", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    // Multi-contributor entries use the base ID after finalization
-    const result = tb.getDamageResult("columbina", "rx-lunarCharged", CTX);
+    // Multi-contributor entries use per-triggerer IDs (on-field char = flins)
+    const result = tb.getDamageResult(
+      "columbina",
+      "rx-lunarCharged-flins",
+      CTX
+    );
     expect(result.totalDamage).toBeGreaterThan(0);
   });
 });
@@ -658,8 +669,7 @@ describe("TeamReactionProvider — different triggers produce different damage",
         constellation: 0,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "fischl",
@@ -667,8 +677,7 @@ describe("TeamReactionProvider — different triggers produce different damage",
         constellation: 0,
         weaponId: "the_stringless",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -676,8 +685,7 @@ describe("TeamReactionProvider — different triggers produce different damage",
         constellation: 0,
         weaponId: "sacrificial_sword",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "kaedehara_kazuha",
@@ -685,8 +693,7 @@ describe("TeamReactionProvider — different triggers produce different damage",
         constellation: 0,
         weaponId: "iron_sting",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team);
@@ -729,10 +736,10 @@ describe("TeamReactionProvider — swirl damage evaluation", () => {
 
   it("different swirl elements use different damage elements", () => {
     const tb = new TeamBuild(SWIRL_TEAM);
-    const entryPyro = tb.reactionProvider.getFormulaEntry(
+    const entryPyro = tb.catalog.formulaIndex.get(
       "rx-swirl-Pyro-kaedehara_kazuha"
     );
-    const entryHydro = tb.reactionProvider.getFormulaEntry(
+    const entryHydro = tb.catalog.formulaIndex.get(
       "rx-swirl-Hydro-kaedehara_kazuha"
     );
     expect(entryPyro!.parts[0].formula.tag.element).toBe("Pyro");
@@ -771,8 +778,8 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
       label: { en: "Test", zh: "测试" },
       lines: [
         {
-          charId: "columbina",
-          formulaId: "rx-lunarCharged-columbina",
+          charId: "flins",
+          formulaId: "rx-lunarCharged-flins",
           count: 1,
         },
       ],
@@ -780,7 +787,7 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
 
     const display = tb.getComboDisplayResult(combo, sheets, CTX);
     expect(display.totalDamage).toBeGreaterThan(0);
-    const parts = display.partsByFormula["columbina.rx-lunarCharged-columbina"];
+    const parts = display.partsByFormula["flins.rx-lunarCharged-flins"];
     expect(parts).toBeDefined();
   });
 
@@ -789,7 +796,7 @@ describe("TeamReactionProvider — display path (getComboDisplayResult)", () => 
     const charIds = PYRO_ELECTRO_TEAM.map((c) => c.charId);
     const sheets = emptySheets(...charIds);
 
-    const charFormulas = tb.getFormulaIds().hu_tao;
+    const charFormulas = tb.catalog.getFormulaIds().hu_tao;
     const firstFormulaId = Object.keys(charFormulas)[0];
 
     const combo: ComboFormula = {
@@ -870,7 +877,7 @@ describe("TeamReactionProvider — compiler path", () => {
     const charIds = PYRO_ELECTRO_TEAM.map((c) => c.charId);
     const sheets = emptySheets(...charIds);
 
-    const charFormulas = tb.getFormulaIds().hu_tao;
+    const charFormulas = tb.catalog.getFormulaIds().hu_tao;
     const firstFormulaId = Object.keys(charFormulas)[0];
 
     const combo: ComboFormula = {
@@ -932,8 +939,7 @@ const LCR_ONLY: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "lightbearing_moonshard",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "columbina",
@@ -941,8 +947,7 @@ const LCR_ONLY: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "a_thousand_floating_dreams",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -954,8 +959,7 @@ const LCH_ONLY: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "xingqiu",
@@ -963,8 +967,7 @@ const LCH_ONLY: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "mistsplitter_reforged",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -972,16 +975,16 @@ describe("reaction combo counts", () => {
   it("LCr only → base 15, with Columbina → 20", () => {
     // LCR_ONLY has Columbina → 15 * 4/3 = 20
     const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
-    const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(20);
-    expect(hasBase(counts, "rx-lunarCharged")).toBe(false);
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(20);
+    expect(findGridRow(grid, "rx-lunarCharged")).toBeUndefined();
   });
 
   it("LCh only → 9", () => {
     const tb = new TeamBuild(LCH_ONLY);
-    const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumBase(counts, "rx-lunarCharged")).toBe(9);
-    expect(hasBase(counts, "rx-lunarCrystallize")).toBe(false);
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(gridTotal(grid, "rx-lunarCharged")).toBe(9);
+    expect(findGridRow(grid, "rx-lunarCrystallize")).toBeUndefined();
   });
 
   it("LCh + LCr → LCh=9, LCr=0", () => {
@@ -996,8 +999,7 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "flins",
@@ -1005,8 +1007,7 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "zibai",
@@ -1014,24 +1015,23 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team);
-    const counts = tb.reactionProvider.getReactionComboCounts();
+    const grid = tb.catalog.getReactionComboGrid();
     // With Columbina: round(9 * 4/3) = 12, round(0 * 4/3) = 0
-    expect(sumBase(counts, "rx-lunarCharged")).toBe(12);
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(0);
+    expect(gridTotal(grid, "rx-lunarCharged")).toBe(12);
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(0);
   });
 
   it("All 3 lunar → LCh=0, LCr=0", () => {
     // LUNAR_TEAM: Columbina(Hydro) + Flins(Electro) + Zibai(Geo) + Nahida(Dendro)
     // → LCh (Electro+Hydro), LCr (Geo+Hydro), LB (Dendro+Hydro)
     const tb = new TeamBuild(LUNAR_TEAM);
-    const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumBase(counts, "rx-lunarCharged")).toBe(0);
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(0);
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(gridTotal(grid, "rx-lunarCharged")).toBe(0);
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(0);
   });
 
   it("LCr only without Columbina → base 15", () => {
@@ -1042,8 +1042,7 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -1051,13 +1050,12 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(15);
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(15);
   });
 
   it("Linnea C2 tap → +12 LCr", () => {
@@ -1068,8 +1066,7 @@ describe("reaction combo counts", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -1077,14 +1074,13 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const counts = tb.reactionProvider.getReactionComboCounts();
+    const grid = tb.catalog.getReactionComboGrid();
     // LCr only, no Columbina: base 15 + 12 = 27
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(27);
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(27);
   });
 
   it("Linnea C2 continuous → +3 LCr", () => {
@@ -1095,8 +1091,7 @@ describe("reaction combo counts", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -1104,14 +1099,13 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "continuous" });
-    const counts = tb.reactionProvider.getReactionComboCounts();
+    const grid = tb.catalog.getReactionComboGrid();
     // LCr only, no Columbina: base 15 + 3 = 18
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(18);
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(18);
   });
 
   it("Linnea C2 tap + Columbina → (15 + 12) × 4/3 = 36", () => {
@@ -1122,8 +1116,7 @@ describe("reaction combo counts", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "columbina",
@@ -1131,14 +1124,13 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const counts = tb.reactionProvider.getReactionComboCounts();
+    const grid = tb.catalog.getReactionComboGrid();
     // (15 + 12) * 4/3 = 36
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(36);
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(36);
   });
 
   it("Linnea C2 continuous + Columbina → (15 + 3) × 4/3 = 24", () => {
@@ -1149,8 +1141,7 @@ describe("reaction combo counts", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "columbina",
@@ -1158,21 +1149,21 @@ describe("reaction combo counts", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "continuous" });
-    const counts = tb.reactionProvider.getReactionComboCounts();
-    expect(sumBase(counts, "rx-lunarCrystallize")).toBe(24);
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(24);
   });
 });
 
-describe("guessOnFieldChar", () => {
+describe("guessOnFieldChar (via grid onFieldCharId)", () => {
   it("prefers flins over other chars for LCh", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const onField = tb.reactionProvider.guessOnFieldChar("rx-lunarCharged");
-    expect(onField).toBe("flins");
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged")!;
+    expect(row.onFieldCharId).toBe("flins");
   });
 
   it("prefers zibai over linnea for LCr", () => {
@@ -1183,8 +1174,7 @@ describe("guessOnFieldChar", () => {
         constellation: 0,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "zibai",
@@ -1192,8 +1182,7 @@ describe("guessOnFieldChar", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "columbina",
@@ -1201,38 +1190,41 @@ describe("guessOnFieldChar", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team);
-    const onField = tb.reactionProvider.guessOnFieldChar("rx-lunarCrystallize");
-    expect(onField).toBe("zibai");
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(row.onFieldCharId).toBe("zibai");
   });
 
   it("falls back to first eligible element char", () => {
     const tb = new TeamBuild(LCH_ONLY);
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged")!;
     // No priority chars on team → falls back to first eligible (flins = Electro)
-    const onField = tb.reactionProvider.guessOnFieldChar("rx-lunarCharged");
-    expect(onField).toBe("flins");
+    expect(row.onFieldCharId).toBe("flins");
   });
 });
 
-describe("getReactionComboLines", () => {
-  it("produces ComboLine[] for LCr team", () => {
+describe("getReactionComboGrid — combo count verification", () => {
+  it("produces grid with correct counts for LCr team", () => {
     const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
-    const lines = tb.getReactionComboLines();
-    // Multi-contributor → single base-ID entry with total count
-    expect(lines.length).toBe(1);
-    expect(lines[0].formulaId).toBe("rx-lunarCrystallize");
-    expect(lines[0].count).toBe(20);
+    const grid = tb.catalog.getReactionComboGrid();
+    // Multi-contributor → single row with per-char counts
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(row).toBeDefined();
+    expect(row.onFieldCharId).toBe("linnea");
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(20);
   });
 
-  it("omits zero-count lines", () => {
-    // All 3 lunar → both 0 → no lines
+  it("zero-count rows have all-zero counts", () => {
+    // All 3 lunar → both 0
     const tb = new TeamBuild(LUNAR_TEAM);
-    const lines = tb.getReactionComboLines();
-    expect(lines.length).toBe(0);
+    const grid = tb.catalog.getReactionComboGrid();
+    expect(gridTotal(grid, "rx-lunarCharged")).toBe(0);
+    expect(gridTotal(grid, "rx-lunarCrystallize")).toBe(0);
   });
 });
 
@@ -1242,7 +1234,16 @@ describe("evaluateCombo integration with rx- lines", () => {
     const charIds = LCR_ONLY.map((c) => c.charId);
     const sheets = emptySheets(...charIds);
 
-    const rxLines = tb.getReactionComboLines();
+    // Build combo lines from the grid counts
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    const rxLines = Object.entries(row.counts)
+      .filter(([, count]) => count > 0)
+      .map(([charId, count]) => ({
+        charId,
+        formulaId: `${row.baseId}-${row.onFieldCharId}`,
+        count,
+      }));
     expect(rxLines.length).toBeGreaterThan(0);
 
     const combo: ComboFormula = {
@@ -1258,7 +1259,7 @@ describe("evaluateCombo integration with rx- lines", () => {
 
 // Reaction Combo Descriptor — detailed tests
 
-describe("getReactionComboDescriptor — base count heuristics", () => {
+describe("getReactionComboGrid — base count heuristics", () => {
   it("LCr-only → base 15 (no Columbina)", () => {
     // Linnea (Geo) + Xingqiu (Hydro) → LCr only, no Columbina
     const team: TeamSlotConfig[] = [
@@ -1268,8 +1269,7 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -1277,26 +1277,25 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const lcrEntry = desc.find((e) => e.id === "rx-lunarCrystallize");
-    expect(lcrEntry).toBeDefined();
-    expect(lcrEntry!.total).toBe(15);
+    const grid = tb.catalog.getReactionComboGrid();
+    const lcrRow = findGridRow(grid, "rx-lunarCrystallize");
+    expect(lcrRow).toBeDefined();
+    expect(lcrRow!.baseTotal).toBe(15);
     // No LCh entry
-    expect(desc.find((e) => e.id === "rx-lunarCharged")).toBeUndefined();
+    expect(findGridRow(grid, "rx-lunarCharged")).toBeUndefined();
   });
 
   it("LCh-only → base 9", () => {
     const tb = new TeamBuild(LCH_ONLY);
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const lchEntry = desc.find((e) => e.id === "rx-lunarCharged");
-    expect(lchEntry).toBeDefined();
-    expect(lchEntry!.total).toBe(9);
-    expect(desc.find((e) => e.id === "rx-lunarCrystallize")).toBeUndefined();
+    const grid = tb.catalog.getReactionComboGrid();
+    const lchRow = findGridRow(grid, "rx-lunarCharged");
+    expect(lchRow).toBeDefined();
+    expect(lchRow!.baseTotal).toBe(9);
+    expect(findGridRow(grid, "rx-lunarCrystallize")).toBeUndefined();
   });
 
   it("LCh + LCr (no LB) → LCh=9, LCr=0 (with Columbina modifier)", () => {
@@ -1308,8 +1307,7 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "flins",
@@ -1317,8 +1315,7 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "zibai",
@@ -1326,31 +1323,30 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team);
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const lchEntry = desc.find((e) => e.id === "rx-lunarCharged");
-    const lcrEntry = desc.find((e) => e.id === "rx-lunarCrystallize");
+    const grid = tb.catalog.getReactionComboGrid();
+    const lchRow = findGridRow(grid, "rx-lunarCharged");
+    const lcrRow = findGridRow(grid, "rx-lunarCrystallize");
     // Columbina: round(9 * 4/3) = 12, round(0 * 4/3) = 0
-    expect(lchEntry).toBeDefined();
-    expect(lchEntry!.total).toBe(12);
-    expect(lcrEntry).toBeDefined();
-    expect(lcrEntry!.total).toBe(0);
+    expect(lchRow).toBeDefined();
+    expect(lchRow!.baseTotal).toBe(12);
+    expect(lcrRow).toBeDefined();
+    expect(lcrRow!.baseTotal).toBe(0);
   });
 
   it("all-3 lunar → LCh=0, LCr=0", () => {
     // LUNAR_TEAM has all 3 lunar reactions
     const tb = new TeamBuild(LUNAR_TEAM);
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const lchEntry = desc.find((e) => e.id === "rx-lunarCharged");
-    const lcrEntry = desc.find((e) => e.id === "rx-lunarCrystallize");
-    expect(lchEntry).toBeDefined();
-    expect(lchEntry!.total).toBe(0);
-    expect(lcrEntry).toBeDefined();
-    expect(lcrEntry!.total).toBe(0);
+    const grid = tb.catalog.getReactionComboGrid();
+    const lchRow = findGridRow(grid, "rx-lunarCharged");
+    const lcrRow = findGridRow(grid, "rx-lunarCrystallize");
+    expect(lchRow).toBeDefined();
+    expect(lchRow!.baseTotal).toBe(0);
+    expect(lcrRow).toBeDefined();
+    expect(lcrRow!.baseTotal).toBe(0);
   });
 
   it("LCr + LB (no LCh) → LCr=3 (with Columbina → 4)", () => {
@@ -1363,8 +1359,7 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "columbina",
@@ -1372,8 +1367,7 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "nahida",
@@ -1381,18 +1375,17 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const lcrEntry = desc.find((e) => e.id === "rx-lunarCrystallize");
-    expect(lcrEntry).toBeDefined();
+    const grid = tb.catalog.getReactionComboGrid();
+    const lcrRow = findGridRow(grid, "rx-lunarCrystallize");
+    expect(lcrRow).toBeDefined();
     // base 3, with Columbina: round(3 * 4/3) = 4
-    expect(lcrEntry!.total).toBe(4);
+    expect(lcrRow!.baseTotal).toBe(4);
     // No LCh (no Electro)
-    expect(desc.find((e) => e.id === "rx-lunarCharged")).toBeUndefined();
+    expect(findGridRow(grid, "rx-lunarCharged")).toBeUndefined();
   });
 
   it("LCh + LB (no LCr) → LCh=3 (with Columbina → 4)", () => {
@@ -1405,8 +1398,7 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "columbina",
@@ -1414,8 +1406,7 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "nahida",
@@ -1423,29 +1414,30 @@ describe("getReactionComboDescriptor — base count heuristics", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team);
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const lchEntry = desc.find((e) => e.id === "rx-lunarCharged");
-    expect(lchEntry).toBeDefined();
+    const grid = tb.catalog.getReactionComboGrid();
+    const lchRow = findGridRow(grid, "rx-lunarCharged");
+    expect(lchRow).toBeDefined();
     // base 3, with Columbina: round(3 * 4/3) = 4
-    expect(lchEntry!.total).toBe(4);
+    expect(lchRow!.baseTotal).toBe(4);
     // No LCr (no Geo)
-    expect(desc.find((e) => e.id === "rx-lunarCrystallize")).toBeUndefined();
+    expect(findGridRow(grid, "rx-lunarCrystallize")).toBeUndefined();
   });
 
-  it("empty descriptor when no lunar reactions exist", () => {
-    // PYRO_ELECTRO_TEAM has no Moonsign characters
+  it("empty grid when no lunar reactions exist", () => {
+    // PYRO_ELECTRO_TEAM has no Moonsign characters — grid may have non-lunar entries
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    expect(desc).toHaveLength(0);
+    const grid = tb.catalog.getReactionComboGrid();
+    // No lunar reactions in grid
+    expect(findGridRow(grid, "rx-lunarCharged")).toBeUndefined();
+    expect(findGridRow(grid, "rx-lunarCrystallize")).toBeUndefined();
   });
 });
 
-describe("getReactionComboDescriptor — Linnea C2 delta", () => {
+describe("getReactionComboGrid — Linnea C2 delta", () => {
   it("tap mode → delta = 12 (no Columbina)", () => {
     const team: TeamSlotConfig[] = [
       {
@@ -1454,8 +1446,7 @@ describe("getReactionComboDescriptor — Linnea C2 delta", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -1463,17 +1454,16 @@ describe("getReactionComboDescriptor — Linnea C2 delta", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const entry = desc.find((e) => e.id === "rx-lunarCrystallize")!;
-    expect(entry.bonus).toHaveLength(1);
-    expect(entry.bonus[0].charId).toBe("linnea");
-    expect(entry.bonus[0].minC).toBe(2);
-    expect(entry.bonus[0].delta).toBe(12);
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(row.bonus).toHaveLength(1);
+    expect(row.bonus[0].charId).toBe("linnea");
+    expect(row.bonus[0].minC).toBe(2);
+    expect(row.bonus[0].delta).toBe(12);
   });
 
   it("continuous mode → delta = 3 (no Columbina)", () => {
@@ -1484,8 +1474,7 @@ describe("getReactionComboDescriptor — Linnea C2 delta", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -1493,24 +1482,23 @@ describe("getReactionComboDescriptor — Linnea C2 delta", () => {
         constellation: 0,
         weaponId: "mistsplitter_reforged",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "continuous" });
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const entry = desc.find((e) => e.id === "rx-lunarCrystallize")!;
-    expect(entry.bonus[0].delta).toBe(3);
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(row.bonus[0].delta).toBe(3);
   });
 });
 
-describe("getReactionComboDescriptor — Columbina modifier", () => {
+describe("getReactionComboGrid — Columbina modifier", () => {
   it("baked into base count: LCr-only → round(15*4/3) = 20", () => {
     // LCR_ONLY has Columbina
     const tb = new TeamBuild(LCR_ONLY, { linnea: "tap" });
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const entry = desc.find((e) => e.id === "rx-lunarCrystallize")!;
-    expect(entry.total).toBe(20); // round(15 * 4/3) = 20
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(row.baseTotal).toBe(20); // round(15 * 4/3) = 20
   });
 
   it("baked into delta: tap delta with Columbina → round(12*4/3) = 16", () => {
@@ -1521,8 +1509,7 @@ describe("getReactionComboDescriptor — Columbina modifier", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "columbina",
@@ -1530,15 +1517,14 @@ describe("getReactionComboDescriptor — Columbina modifier", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const entry = desc.find((e) => e.id === "rx-lunarCrystallize")!;
-    expect(entry.total).toBe(20); // round(15 * 4/3) = 20
-    expect(entry.bonus[0].delta).toBe(16); // round(12 * 4/3) = 16
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(row.baseTotal).toBe(20); // round(15 * 4/3) = 20
+    expect(row.bonus[0].delta).toBe(16); // round(12 * 4/3) = 16
   });
 
   it("continuous delta with Columbina → round(3*4/3) = 4", () => {
@@ -1549,8 +1535,7 @@ describe("getReactionComboDescriptor — Columbina modifier", () => {
         constellation: 2,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "columbina",
@@ -1558,14 +1543,13 @@ describe("getReactionComboDescriptor — Columbina modifier", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team, { linnea: "continuous" });
-    const desc = tb.reactionProvider.getReactionComboDescriptor();
-    const entry = desc.find((e) => e.id === "rx-lunarCrystallize")!;
-    expect(entry.bonus[0].delta).toBe(4); // round(3 * 4/3) = 4
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCrystallize")!;
+    expect(row.bonus[0].delta).toBe(4); // round(3 * 4/3) = 4
   });
 });
 
@@ -1583,8 +1567,8 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, { linnea: 6 });
-    // Multi-contributor → single base-ID entry with total = 15 + 12 = 27
-    expect(result["rx-lunarCrystallize"]).toBe(27);
+    // Multi-contributor → per-triggerer entry with total = 15 + 12 = 27
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(27);
   });
 
   it("delta only activates when constellation >= minC", () => {
@@ -1598,10 +1582,10 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const resultC1 = resolveReactionComboEntries(entries, { linnea: 1 });
-    expect(resultC1["rx-lunarCrystallize"]).toBe(15);
+    expect(resultC1["rx-lunarCrystallize-linnea"]).toBe(15);
 
     const resultC2 = resolveReactionComboEntries(entries, { linnea: 2 });
-    expect(resultC2["rx-lunarCrystallize"]).toBe(27);
+    expect(resultC2["rx-lunarCrystallize-linnea"]).toBe(27);
   });
 
   it("missing constellation key defaults to 0", () => {
@@ -1615,7 +1599,7 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, {});
-    expect(result["rx-lunarCrystallize"]).toBe(15);
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(15);
   });
 
   it("multiple deltas from different characters", () => {
@@ -1631,19 +1615,19 @@ describe("resolveReactionComboEntries", () => {
         ],
       },
     ];
-    // Both active: total = 10 + 5 + 3 = 18 (single base-ID entry)
+    // Both active: total = 10 + 5 + 3 = 18 (per-triggerer entry)
     const result = resolveReactionComboEntries(entries, {
       linnea: 2,
       zibai: 1,
     });
-    expect(result["rx-lunarCrystallize"]).toBe(18);
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(18);
 
     // Only zibai active: total = 10 + 3 = 13
     const result2 = resolveReactionComboEntries(entries, {
       linnea: 0,
       zibai: 4,
     });
-    expect(result2["rx-lunarCrystallize"]).toBe(13);
+    expect(result2["rx-lunarCrystallize-linnea"]).toBe(13);
   });
 
   it("handles multiple entries", () => {
@@ -1664,8 +1648,8 @@ describe("resolveReactionComboEntries", () => {
       },
     ];
     const result = resolveReactionComboEntries(entries, { linnea: 6 });
-    expect(result["rx-lunarCharged"]).toBe(9);
-    expect(result["rx-lunarCrystallize"]).toBe(12);
+    expect(result["rx-lunarCharged-flins"]).toBe(9);
+    expect(result["rx-lunarCrystallize-linnea"]).toBe(12);
   });
 
   it("single-contributor reactions still produce per-triggerer entries", () => {
@@ -1703,8 +1687,7 @@ const MIXED_LEVEL_LUNAR: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "thrilling_tales_of_dragon_slayers",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "flins",
@@ -1712,8 +1695,7 @@ const MIXED_LEVEL_LUNAR: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -1726,15 +1708,18 @@ describe("computeLunarRankWeights — exact rank assignment", () => {
     const charLevels: Record<string, number> = {};
     for (const c of LUNAR_TEAM) charLevels[c.charId] = c.charLevel;
 
-    const entry = tb.reactionProvider.getFormulaEntry(
-      "rx-lunarCharged-columbina"
-    );
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
+    // Use the first part's formula (which has a rankWeight baked in) to derive
+    // an unweighted base formula for computeLunarRankWeights input.
+    // The function only uses formula.tag and formula.calc structure, so any
+    // part's formula works as a representative.
     const formula = entry!.parts[0].formula;
 
     // LunarCharged eligible: Electro + Hydro chars
-    const eligible =
-      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged")!;
+    const eligible = [...row.eligible];
 
     const weights = computeLunarRankWeights(
       formula,
@@ -1775,12 +1760,11 @@ describe("computeLunarRankWeights — exact rank assignment", () => {
       flins: 70,
     };
 
-    const entry = tb.reactionProvider.getFormulaEntry(
-      "rx-lunarCharged-columbina"
-    );
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     const formula = entry!.parts[0].formula;
-    const eligible =
-      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged")!;
+    const eligible = [...row.eligible];
 
     const weights = computeLunarRankWeights(
       formula,
@@ -1809,8 +1793,8 @@ describe("evaluateFormulaDamage — per-part stats routing", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    // Get the finalized multi-contributor entry
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    // Get the finalized multi-contributor entry (per-triggerer, on-field = flins)
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
     expect(entry!.isMultiContributor).toBe(true);
 
@@ -1836,7 +1820,7 @@ describe("evaluateFormulaDamage — per-part stats routing", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
 
     const tsReal = mockTeamStatsFrom(teamStats, { columbina: 90, flins: 70 });
@@ -1863,7 +1847,7 @@ describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () =>
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
     expect(entry!.isMultiContributor).toBe(true);
 
@@ -1897,7 +1881,7 @@ describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () =>
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-overloaded-fischl");
+    const entry = tb.catalog.formulaIndex.get("rx-overloaded-fischl");
     expect(entry).toBeDefined();
     expect(entry!.isMultiContributor).toBeFalsy();
 
@@ -1923,7 +1907,7 @@ describe("multi-contributor N-part exact numerics", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
 
     const charLevels: Record<string, number> = {
@@ -1956,7 +1940,7 @@ describe("multi-contributor N-part exact numerics", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
 
     const charLevels: Record<string, number> = {
@@ -1965,7 +1949,7 @@ describe("multi-contributor N-part exact numerics", () => {
     };
 
     // Get the rank weights
-    const weights = tb.reactionProvider.getRankWeights("rx-lunarCharged");
+    const weights = tb.catalog.getRankWeights("rx-lunarCharged");
     expect(weights).toBeDefined();
 
     // Verify each part's formula.rankWeight matches the assigned weight
@@ -1977,11 +1961,8 @@ describe("multi-contributor N-part exact numerics", () => {
       ).toBe(expectedWeight);
     }
 
-    // Compute unweighted damage per contributor using a fresh unweighted formula
-    const sampleEntry = tb.reactionProvider.getFormulaEntry(
-      "rx-lunarCharged-columbina"
-    );
-    const unweightedFormula = sampleEntry!.parts[0].formula;
+    // Build an unweighted formula from the base entry's tag (rankWeight = 1)
+    const unweightedFormula = new LunarFormula(0, entry!.parts[0].formula.tag);
 
     for (const part of entry!.parts) {
       const charId = part.statsCharId!;
@@ -2004,7 +1985,7 @@ describe("display path matches damage path for reaction formulas", () => {
     const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
     const formulaId = "rx-overloaded-fischl";
-    const entry = tb.reactionProvider.getFormulaEntry(formulaId);
+    const entry = tb.catalog.formulaIndex.get(formulaId);
     expect(entry).toBeDefined();
 
     const tsF = mockTeamStatsFrom(teamStats, {
@@ -2026,7 +2007,7 @@ describe("display path matches damage path for reaction formulas", () => {
     const sheets = emptySheets(...charIds);
     const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
 
     const charLevels: Record<string, number> = {
@@ -2050,13 +2031,15 @@ describe("compiled multi-contributor matches interpreted", () => {
     const sheets = emptySheets(...charIds);
 
     // Use the on-field char from the entry (parts[0].statsCharId)
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins")!;
     const onFieldChar = entry.parts[0].statsCharId!;
 
     const combo: ComboFormula = {
       id: "test",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 5 }],
+      lines: [
+        { charId: onFieldChar, formulaId: "rx-lunarCharged-flins", count: 5 },
+      ],
     };
 
     // Interpreted
@@ -2090,11 +2073,11 @@ describe("compiled multi-contributor matches interpreted", () => {
     const sheets = emptySheets(...charIds);
 
     // Use the on-field char from the entry (parts[0].statsCharId)
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins")!;
     const onFieldChar = entry.parts[0].statsCharId!;
 
     // Get a character formula for the on-field char
-    const charFormulas = tb.getFormulaIds()[onFieldChar];
+    const charFormulas = tb.catalog.getFormulaIds()[onFieldChar];
     const charFormulaId = Object.keys(charFormulas)[0];
 
     const combo: ComboFormula = {
@@ -2102,7 +2085,7 @@ describe("compiled multi-contributor matches interpreted", () => {
       label: { en: "Test", zh: "测试" },
       lines: [
         { charId: onFieldChar, formulaId: charFormulaId, count: 2 },
-        { charId: onFieldChar, formulaId: "rx-lunarCharged", count: 3 },
+        { charId: onFieldChar, formulaId: "rx-lunarCharged-flins", count: 3 },
       ],
     };
 
@@ -2133,10 +2116,10 @@ describe("compiled multi-contributor matches interpreted", () => {
 describe("multi-contributor entry structure", () => {
   it("finalized entry has isMultiContributor and correct parts", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
     expect(entry!.isMultiContributor).toBe(true);
-    expect(entry!.owner).toBe("team");
+    expect(entry!.owner).toBe("flins");
 
     // Each part should have a statsCharId
     for (const part of entry!.parts) {
@@ -2145,11 +2128,11 @@ describe("multi-contributor entry structure", () => {
     }
 
     // Part statsCharIds should match the eligible characters
-    const eligible =
-      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged")!;
     const partCharIds = entry!.parts.map((p) => p.statsCharId!);
     for (const charId of partCharIds) {
-      expect(eligible).toContain(charId);
+      expect(row.eligible.has(charId)).toBe(true);
     }
 
     // Rank weights should sum correctly
@@ -2157,37 +2140,30 @@ describe("multi-contributor entry structure", () => {
       (p) => (p.formula as unknown as { rankWeight: number }).rankWeight
     );
     const weightSum = weights.reduce((a, b) => a + b, 0);
-    const expectedSum = LUNAR_RANK_WEIGHTS.slice(0, eligible.length).reduce(
+    const expectedSum = LUNAR_RANK_WEIGHTS.slice(0, row.eligible.size).reduce(
       (a, b) => a + b,
       0
     );
     expect(weightSum).toBeCloseTo(expectedSum, 6);
   });
 
-  it("per-triggerer entries still exist alongside base entry", () => {
+  it("per-triggerer entries exist for each eligible character", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const eligible =
-      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged")!;
 
-    // Base entry exists
-    expect(
-      tb.reactionProvider.getFormulaEntry("rx-lunarCharged")
-    ).toBeDefined();
-
-    // Per-triggerer entries also exist
-    for (const charId of eligible) {
-      const perTrig = tb.reactionProvider.getFormulaEntry(
-        `rx-lunarCharged-${charId}`
-      );
+    // Per-triggerer entries exist — each represents the reaction with that char on-field
+    for (const charId of row.eligible) {
+      const perTrig = tb.catalog.formulaIndex.get(`rx-lunarCharged-${charId}`);
       expect(perTrig).toBeDefined();
-      // Per-triggerer entries should NOT be multi-contributor
-      expect(perTrig!.isMultiContributor).toBeFalsy();
+      // Per-triggerer entries ARE multi-contributor after finalization
+      expect(perTrig!.isMultiContributor).toBe(true);
     }
   });
 
   it("single-contributor entries have statsCharId on parts, not isMultiContributor", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-overloaded-fischl");
+    const entry = tb.catalog.formulaIndex.get("rx-overloaded-fischl");
     expect(entry).toBeDefined();
     expect(entry!.isMultiContributor).toBeFalsy();
 
@@ -2201,7 +2177,7 @@ describe("multi-contributor entry structure", () => {
 describe("multi-contributor off-field flag", () => {
   it("on-field character's part has offField undefined, others have offField true", () => {
     const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
 
     const onFieldChar = entry!.parts[0].statsCharId!;
@@ -2216,13 +2192,15 @@ describe("multi-contributor off-field flag", () => {
     }
   });
 
-  it("on-field character is determined by guessOnFieldChar", () => {
+  it("on-field character is determined by grid onFieldCharId", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged")!;
+    const guessed = row.onFieldCharId;
+    const entry = tb.catalog.formulaIndex.get(`rx-lunarCharged-${guessed}`);
     expect(entry).toBeDefined();
 
     const onFieldChar = entry!.parts[0].statsCharId;
-    const guessed = tb.reactionProvider.guessOnFieldChar("rx-lunarCharged");
     expect(onFieldChar).toBe(guessed);
   });
 });
@@ -2230,7 +2208,7 @@ describe("multi-contributor off-field flag", () => {
 describe("weight prefix for smaller teams", () => {
   it("2-char team gets first 2 weights [0.6, 0.3]", () => {
     const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     expect(entry).toBeDefined();
     expect(entry!.parts).toHaveLength(2);
 
@@ -2257,8 +2235,7 @@ describe("weight prefix for smaller teams", () => {
         constellation: 0,
         weaponId: "thrilling_tales_of_dragon_slayers",
         refinement: 5,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "flins",
@@ -2266,8 +2243,7 @@ describe("weight prefix for smaller teams", () => {
         constellation: 0,
         weaponId: "staff_of_homa",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "xingqiu",
@@ -2275,20 +2251,19 @@ describe("weight prefix for smaller teams", () => {
         constellation: 0,
         weaponId: "sacrificial_sword",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(team);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged");
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins");
     if (!entry) {
       // If lunarCharged requires specific element combos not met, skip
       return;
     }
 
-    const eligible =
-      tb.reactionProvider.getEligibleCharacters("rx-lunarCharged");
-    if (eligible.length !== 3) return; // team might not produce 3 eligible
+    const grid = tb.catalog.getReactionComboGrid();
+    const row = findGridRow(grid, "rx-lunarCharged");
+    if (!row || row.eligible.size !== 3) return; // team might not produce 3 eligible
 
     expect(entry.parts).toHaveLength(3);
     const weights = entry.parts.map(
@@ -2305,18 +2280,22 @@ describe("combo count multiplication agreement", () => {
     const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
     const sheets = emptySheets(...charIds);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins")!;
     const onFieldChar = entry.parts[0].statsCharId!;
 
     const combo1: ComboFormula = {
       id: "test1",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 1 }],
+      lines: [
+        { charId: onFieldChar, formulaId: "rx-lunarCharged-flins", count: 1 },
+      ],
     };
     const combo5: ComboFormula = {
       id: "test5",
       label: { en: "Test", zh: "测试" },
-      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 5 }],
+      lines: [
+        { charId: onFieldChar, formulaId: "rx-lunarCharged-flins", count: 5 },
+      ],
     };
 
     const dmg1 = tb.getComboDamageResult(combo1, sheets, CTX).totalDamage;
@@ -2330,14 +2309,16 @@ describe("combo count multiplication agreement", () => {
     const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);
     const sheets = emptySheets(...charIds);
 
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins")!;
     const onFieldChar = entry.parts[0].statsCharId!;
 
     for (const count of [1, 3, 7]) {
       const combo: ComboFormula = {
         id: "test",
         label: { en: "Test", zh: "测试" },
-        lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count }],
+        lines: [
+          { charId: onFieldChar, formulaId: "rx-lunarCharged-flins", count },
+        ],
       };
 
       const interpreted = tb.getComboDamageResult(combo, sheets, CTX);
@@ -2368,7 +2349,7 @@ describe("non-zero EM per-contributor routing", () => {
   it("contributors with different EM produce different per-part damage", () => {
     // Give one character artifacts with EM, the other none
     const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins")!;
     const onFieldChar = entry.parts[0].statsCharId!;
     const offFieldChar = entry.parts[1].statsCharId!;
 
@@ -2404,12 +2385,12 @@ describe("non-zero EM per-contributor routing", () => {
 
   it("EM on higher-weighted contributor produces more total damage", () => {
     const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
-    const entry = tb.reactionProvider.getFormulaEntry("rx-lunarCharged")!;
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCharged-flins")!;
     const onFieldChar = entry.parts[0].statsCharId!;
     const offFieldChar = entry.parts[1].statsCharId!;
 
     // Determine which contributor has higher weight
-    const weights = tb.reactionProvider.getRankWeights("rx-lunarCharged")!;
+    const weights = tb.catalog.getRankWeights("rx-lunarCharged")!;
     const onFieldWeight = weights.get(onFieldChar) ?? 0;
     const offFieldWeight = weights.get(offFieldChar) ?? 0;
     const higherWeightChar =
@@ -2434,12 +2415,16 @@ describe("non-zero EM per-contributor routing", () => {
     const comboHigh: ComboFormula = {
       id: "h",
       label: { en: "H", zh: "H" },
-      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 1 }],
+      lines: [
+        { charId: onFieldChar, formulaId: "rx-lunarCharged-flins", count: 1 },
+      ],
     };
     const comboLow: ComboFormula = {
       id: "l",
       label: { en: "L", zh: "L" },
-      lines: [{ charId: onFieldChar, formulaId: "rx-lunarCharged", count: 1 }],
+      lines: [
+        { charId: onFieldChar, formulaId: "rx-lunarCharged-flins", count: 1 },
+      ],
     };
 
     const dmgHigh = tb.getComboDamageResult(

@@ -28,6 +28,12 @@ import type { StatBuff } from "./statBuff";
  * - `getRaw(key)` → raw universal-only value, no formula.
  */
 
+/** Internal init bag for factory methods — bypasses entry parsing. */
+interface StatSheetInit {
+  data: Map<StatKey, Map<string, number>>;
+  fieldState: FieldState | null;
+}
+
 export class StatSheet {
   private readonly data: Map<StatKey, Map<string, number>>;
   /**
@@ -37,7 +43,23 @@ export class StatSheet {
    */
   private readonly _fieldState: FieldState | null;
 
-  constructor(entries: StatEntry[], filterKey = EMPTY_FILTER_KEY) {
+  constructor(entries: StatEntry[], filterKey?: string);
+  /** @internal Factory constructor — do not use directly. */
+  constructor(
+    entries: StatEntry[],
+    filterKey: string | undefined,
+    init: StatSheetInit
+  );
+  constructor(
+    entries: StatEntry[],
+    filterKey = EMPTY_FILTER_KEY,
+    init?: StatSheetInit
+  ) {
+    if (init) {
+      this.data = init.data;
+      this._fieldState = init.fieldState;
+      return;
+    }
     this.data = new Map();
     this._fieldState = null;
     const baseFilter = deserializeFilter(filterKey);
@@ -61,13 +83,14 @@ export class StatSheet {
     data: Map<StatKey, Map<string, number>>,
     fieldState?: FieldState | null
   ): StatSheet {
-    const sheet = new StatSheet([]);
-    (sheet as unknown as { _fieldState: FieldState | null })._fieldState =
-      fieldState ?? null;
+    const copiedData = new Map<StatKey, Map<string, number>>();
     for (const [key, bucket] of data) {
-      sheet.data.set(key, new Map(bucket));
+      copiedData.set(key, new Map(bucket));
     }
-    return sheet;
+    return new StatSheet([], undefined, {
+      data: copiedData,
+      fieldState: fieldState ?? null,
+    });
   }
 
   /**
@@ -79,12 +102,7 @@ export class StatSheet {
    * field tag are excluded.
    */
   withFieldState(fs: FieldState): StatSheet {
-    const view = new StatSheet([]);
-    // Share the data map directly (no copy) — the view is read-only
-    (view as unknown as { data: Map<StatKey, Map<string, number>> }).data =
-      this.data;
-    (view as unknown as { _fieldState: FieldState | null })._fieldState = fs;
-    return view;
+    return new StatSheet([], undefined, { data: this.data, fieldState: fs });
   }
 
   /** The pinned field state of this sheet, or null if not field-filtered. */
@@ -529,7 +547,7 @@ export class StatSheet {
    * element-only filter back to per-element keys (pyro%, hydro%, …).
    * Generic (unfiltered) `dmg%` is omitted — the game panel doesn't show it.
    */
-  getIdleRecord(): Partial<Record<StatKey, number>> {
+  getIdleStats(): Partial<Record<StatKey, number>> {
     const result: Partial<Record<StatKey, number>> = {};
     const evalKeys = new Set(this.data.keys());
     evalKeys.add("atk" as StatKey);

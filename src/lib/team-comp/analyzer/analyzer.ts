@@ -30,7 +30,6 @@
 import type { Element, Rarity } from "@/data/types";
 
 import { CharBuild } from "../calc/charBuild";
-import { resolveComboDescriptor } from "../calc/combo";
 import { StatSheet } from "../calc/statSheet";
 import { TeamBuild } from "../calc/teamBuild";
 import { TeamMeta } from "../calc/teamMeta";
@@ -41,13 +40,14 @@ import {
   type SubstatBudgetPreset,
 } from "../generator/substatBudget";
 import type { OptionMap } from "../types";
-import type {
-  BuffActivationMap,
-  CalcContext,
-  ComboFormula,
-  ComboLine,
-  ReactionOverride,
-  TeamSlotConfig,
+import {
+  type BuffActivationMap,
+  type CalcContext,
+  type ComboFormula,
+  type ComboLine,
+  type ReactionOverride,
+  type TeamSlotConfig,
+  getSetId,
 } from "../types";
 import type {
   AnalyzerCharConfig,
@@ -464,12 +464,9 @@ export function deriveComboForAllocation(
   // Build per-char default counts at current constellation
   const descriptorCounts: Record<string, Record<string, number>> = {};
   for (const [charId, inv] of Object.entries(allocation)) {
-    const descriptor = teamBuild.getComboDescriptor(charId);
-    if (descriptor.length > 0) {
-      descriptorCounts[charId] = resolveComboDescriptor(
-        descriptor,
-        inv.constellation
-      );
+    const resolved = teamBuild.catalog.resolveCombo(charId, inv.constellation);
+    if (resolved && Object.keys(resolved).length > 0) {
+      descriptorCounts[charId] = resolved;
     }
   }
 
@@ -484,45 +481,43 @@ export function deriveComboForAllocation(
   // Resolve per-triggerer rx- counts with override support.
   // Template combo lines already have per-triggerer formula IDs (e.g. rx-overloaded-amber)
   // with charId and default counts. We apply user overrides on top.
-  const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
-  const rxDescriptorMap: Record<string, (typeof rxDescriptor)[number]> = {};
-  for (const entry of rxDescriptor) rxDescriptorMap[entry.id] = entry;
+  const rxGrid = teamBuild.catalog.getReactionComboGrid();
 
-  // Pre-resolve per-triggerer counts from descriptors with overrides applied
+  // Pre-resolve per-triggerer counts from grid rows with overrides applied
   const rxResolvedCounts: Record<string, number> = {};
-  for (const baseId of teamBuild.reactionProvider.getBaseReactionIds()) {
-    const entry = rxDescriptorMap[baseId];
-    if (!entry) continue;
+  for (const row of rxGrid) {
+    const eligibleArr = [...row.eligible];
 
     // Check if any per-char overrides exist for this base reaction
-    const hasCharOverride = entry.eligible.some(
-      (c) => comboOverrides?.[rxCharOverrideKey(c, baseId)] != null
+    const hasCharOverride = eligibleArr.some(
+      (c) => comboOverrides?.[rxCharOverrideKey(c, row.baseId)] != null
     );
 
     if (hasCharOverride) {
-      for (const charId of entry.eligible) {
-        const override = comboOverrides?.[rxCharOverrideKey(charId, baseId)];
-        rxResolvedCounts[`${baseId}-${charId}`] = override ?? 0;
+      for (const charId of eligibleArr) {
+        const override =
+          comboOverrides?.[rxCharOverrideKey(charId, row.baseId)];
+        rxResolvedCounts[`${row.baseId}-${charId}`] = override ?? 0;
       }
     } else {
-      let total = entry.total;
-      for (const b of entry.bonus) {
+      let total = row.baseTotal;
+      for (const b of row.bonus) {
         const delta =
-          comboOverrides?.[rxDeltaOverrideKey(b.charId, baseId)] ?? b.delta;
+          comboOverrides?.[rxDeltaOverrideKey(b.charId, row.baseId)] ?? b.delta;
         if ((allocation[b.charId]?.constellation ?? 0) >= b.minC) {
           total += delta;
         }
       }
       if (total > 0) {
-        for (const charId of entry.eligible) {
-          rxResolvedCounts[`${baseId}-${charId}`] =
-            charId === entry.onFieldCharId
-              ? Math.max(0, total - (entry.eligible.length - 1))
+        for (const charId of eligibleArr) {
+          rxResolvedCounts[`${row.baseId}-${charId}`] =
+            charId === row.onFieldCharId
+              ? Math.max(0, total - (eligibleArr.length - 1))
               : 1;
         }
       } else {
-        for (const charId of entry.eligible) {
-          rxResolvedCounts[`${baseId}-${charId}`] = 0;
+        for (const charId of eligibleArr) {
+          rxResolvedCounts[`${row.baseId}-${charId}`] = 0;
         }
       }
     }
@@ -573,7 +568,7 @@ export function deriveComboForAllocation(
   );
   for (const [formulaId, count] of Object.entries(rxResolvedCounts)) {
     if (rxInTemplate.has(formulaId) || count <= 0) continue;
-    const entry = teamBuild.formulaIndex.get(formulaId);
+    const entry = teamBuild.catalog.formulaIndex.get(formulaId);
     const charId = entry?.parts[0]?.statsCharId ?? "";
     lines.push({ charId, formulaId, count });
   }
@@ -699,7 +694,7 @@ function evalWithCachedArtifacts(
 
     // Compute greedy buff allocation for this specific constellation state.
     // Filter to valid lines (formulas that exist at this constellation).
-    const allFormulas = tb.getFormulaIds();
+    const allFormulas = tb.catalog.getFormulaIds();
     const validLines = combo.lines.filter((l) => {
       const cf = allFormulas[l.charId];
       return cf?.[l.formulaId];
@@ -711,7 +706,9 @@ function evalWithCachedArtifacts(
       // If hasAnyStackLimited is undefined (no pre-check), do the per-eval check
       const needCheck =
         hasAnyStackLimited === true ||
-        tb.allStaticBuffs.some(({ buff }) => buff.source.maxStacks != null);
+        tb.buffLedger.allBuffs.some(
+          ({ buff }) => buff.source.maxStacks != null
+        );
       if (needCheck) {
         buffOverrides = tb.computeComboPartialBuffSpecs(
           validLines,
@@ -959,7 +956,8 @@ function buildCharBuildCache(
   const artifactSets: Record<string, string> = {};
   for (const c of baseConfigs) {
     baseConstellations[c.charId] = c.constellation;
-    if (c.artifactSetId) artifactSets[c.charId] = c.artifactSetId;
+    const setId = getSetId(c.artifactSet);
+    if (setId) artifactSets[c.charId] = setId;
   }
 
   for (const { charId, options } of charOpts) {

@@ -51,8 +51,7 @@ const TWO_CHAR_CONFIGS: TeamSlotConfig[] = [
     constellation: 1,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: "crimson_witch_of_flames",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
   },
   {
     charId: "xingqiu",
@@ -60,8 +59,7 @@ const TWO_CHAR_CONFIGS: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 
@@ -73,8 +71,7 @@ const FOUR_CHAR_CONFIGS: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "black_tassel",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
   {
     charId: "kaedehara_kazuha",
@@ -82,8 +79,7 @@ const FOUR_CHAR_CONFIGS: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 

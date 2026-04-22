@@ -1092,6 +1092,7 @@ class TravelerPyro extends CharacterBase {
 }
 
 function manekinFormulas(
+  charId: string,
   param: (skill: "A" | "E" | "Q", paramIndex: number) => number,
   element: Element
 ) {
@@ -1099,16 +1100,15 @@ function manekinFormulas(
   // - No constellations
   // - P2: Off-field ER regen (utility, no damage)
   // - P3: Random cosmetic change (no combat effect)
+  // Formula IDs are prefixed with charId to avoid collisions between variants.
   const tag = (ability: "skill" | "burst") =>
     ({ element, ability, reaction: "none" as const }) as const;
   return {
-    // - E: single hit of own element (2 charges)
-    "manekin-skill": {
+    [`${charId}-skill`]: {
       label: { zh: "E伤害", en: "E" },
       parts: [{ formula: new DirectFormula(param("E", 1), tag("skill")) }],
     },
-    // - Q: summon hit + trespass per tick (0.5s ICD, 8s duration → 16 ticks)
-    "manekin-burst": {
+    [`${charId}-burst`]: {
       label: { zh: "Q生成+踏入×16", en: "Q Summon + Trespass×16" },
       parts: [
         { formula: new DirectFormula(param("Q", 1), tag("burst")) },
@@ -1118,8 +1118,7 @@ function manekinFormulas(
         },
       ],
     },
-    // - P1: When leaving field with Q active, Restricted Area explodes for 200% ATK
-    "manekin-p1-explosion": {
+    [`${charId}-p1-explosion`]: {
       label: { zh: "P1 Q爆炸", en: "P1 Q Explosion" },
       parts: [
         { formula: new DirectFormula(2.0, tag("burst")), offField: true },
@@ -1128,22 +1127,24 @@ function manekinFormulas(
   };
 }
 
-// Manekin/Manekina rotation: 2×E (2 charges) > Q > swap (off-field support)
-const manekinDefaultRotation: ComboTemplate = [
-  { id: "manekin-skill", count: 2 },
-  { id: "manekin-burst", count: 1 },
-  { id: "manekin-p1-explosion", count: 1 },
-];
+function manekinDefaultRotation(charId: string): ComboTemplate {
+  return [
+    { id: `${charId}-skill`, count: 2 },
+    { id: `${charId}-burst`, count: 1 },
+    { id: `${charId}-p1-explosion`, count: 1 },
+  ];
+}
 
 @RegisterCharacter("manekin_anemo")
 class ManekinAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Anemo"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1151,11 +1152,12 @@ class ManekinAnemo extends CharacterBase {
 class ManekinCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Cryo"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1163,11 +1165,12 @@ class ManekinCryo extends CharacterBase {
 class ManekinDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Dendro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1175,20 +1178,25 @@ class ManekinDendro extends CharacterBase {
 class ManekinElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Electro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
 @RegisterCharacter("manekin_geo")
 class ManekinGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas(this.param.bind(this), "Geo");
+  protected readonly formulaMap = manekinFormulas(
+    this.charId,
+    this.param.bind(this),
+    "Geo"
+  );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1196,11 +1204,12 @@ class ManekinGeo extends CharacterBase {
 class ManekinHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Hydro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1208,11 +1217,12 @@ class ManekinHydro extends CharacterBase {
 class ManekinPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Pyro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1220,11 +1230,12 @@ class ManekinPyro extends CharacterBase {
 class ManekinaAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Anemo"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1232,11 +1243,12 @@ class ManekinaAnemo extends CharacterBase {
 class ManekinaCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Cryo"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1244,11 +1256,12 @@ class ManekinaCryo extends CharacterBase {
 class ManekinaDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Dendro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1256,20 +1269,25 @@ class ManekinaDendro extends CharacterBase {
 class ManekinaElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Electro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
 @RegisterCharacter("manekina_geo")
 class ManekinaGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = manekinFormulas(this.param.bind(this), "Geo");
+  protected readonly formulaMap = manekinFormulas(
+    this.charId,
+    this.param.bind(this),
+    "Geo"
+  );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1277,11 +1295,12 @@ class ManekinaGeo extends CharacterBase {
 class ManekinaHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Hydro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }
 
@@ -1289,10 +1308,11 @@ class ManekinaHydro extends CharacterBase {
 class ManekinaPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas(
+    this.charId,
     this.param.bind(this),
     "Pyro"
   );
   protected override get comboDescriptor(): ComboTemplate {
-    return manekinDefaultRotation;
+    return manekinDefaultRotation(this.charId);
   }
 }

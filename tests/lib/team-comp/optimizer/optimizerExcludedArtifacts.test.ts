@@ -47,8 +47,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 1,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: "crimson_witch_of_flames",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
   },
   {
     charId: "xingqiu",
@@ -56,8 +55,7 @@ const CONFIGS: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: null,
-    artifactHalfSetIds: [],
+    artifactSet: null,
   },
 ];
 

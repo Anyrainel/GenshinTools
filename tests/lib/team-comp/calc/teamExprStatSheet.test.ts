@@ -2,10 +2,10 @@ import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { evaluate, simplify } from "@/lib/team-comp/calc/expr";
 import { fillVarsFromSheet } from "@/lib/team-comp/calc/formulaCompiler";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { TeamBuffLedger } from "@/lib/team-comp/calc/teamBuffLedger";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { TeamExprStatSheet } from "@/lib/team-comp/calc/teamExprStatSheet";
 import { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
-import { ARTIFACT_STAT_KEYS } from "@/lib/team-comp/constants";
 import type {
   CalcContext,
   StatKey,
@@ -31,8 +31,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "the_catch",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
   {
     charId: "bennett",
@@ -40,8 +39,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "aquila_favonia",
     refinement: 1,
-    artifactSetId: "noblesse_oblige",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "noblesse_oblige" },
   },
   {
     charId: "xingqiu",
@@ -49,8 +47,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
   {
     charId: "raiden_shogun",
@@ -58,8 +55,7 @@ const NATIONAL_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "the_catch",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
 ];
 
@@ -70,8 +66,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 1,
     weaponId: "staff_of_homa",
     refinement: 1,
-    artifactSetId: "crimson_witch_of_flames",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
   },
   {
     charId: "kaedehara_kazuha",
@@ -79,8 +74,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "iron_sting",
     refinement: 1,
-    artifactSetId: "viridescent_venerer",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "viridescent_venerer" },
   },
   {
     charId: "xingqiu",
@@ -88,8 +82,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 6,
     weaponId: "sacrificial_sword",
     refinement: 5,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
   {
     charId: "yelan",
@@ -97,8 +90,7 @@ const KAZUHA_TEAM: TeamSlotConfig[] = [
     constellation: 0,
     weaponId: "aqua_simulacra",
     refinement: 1,
-    artifactSetId: "emblem_of_severed_fate",
-    artifactHalfSetIds: [],
+    artifactSet: { type: "4pc", setId: "emblem_of_severed_fate" },
   },
 ];
 
@@ -144,24 +136,18 @@ function assertExprStatParity(
     baseSheets[id] = id === swapCharId ? artSheet : new StatSheet([]);
   }
 
-  // Old path: TeamStatSheet with baked-in artifacts
-  const teamStats = new TeamStatSheet(
-    tb.charBuilds,
-    tb.teamResonance,
-    tb.extraBuffs,
+  // TeamStatSheet with baked-in artifacts for the old path
+  const ledger = new TeamBuffLedger(
+    tb.buffLedger.allBuffs,
     tb.teamMeta,
-    configs,
     charIds
   );
+  const teamStats = new TeamStatSheet(tb.charBuilds, ledger, charIds);
   teamStats.setArtifacts(baseSheets, CTX);
 
-  // New path: TeamExprStatSheet
+  // TeamExprStatSheet shares the TeamStatSheet
   const exprStatSheet = new TeamExprStatSheet(
-    tb.charBuilds,
-    tb.teamResonance,
-    tb.extraBuffs,
-    tb.teamMeta,
-    configs,
+    teamStats,
     baseSheets,
     variableCharIds,
     charIds,
@@ -210,11 +196,7 @@ describe("TeamExprStatSheet", () => {
       const tb = new TeamBuild(NATIONAL_TEAM);
       const charIds = NATIONAL_TEAM.map((c) => c.charId);
       const exprSheet = new TeamExprStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
-        tb.teamMeta,
-        NATIONAL_TEAM,
+        tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
         charIds,
@@ -287,22 +269,16 @@ describe("TeamExprStatSheet", () => {
 
       const baseSheets = emptySheets(...charIds);
 
-      const teamStats = new TeamStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
+      const ledger = new TeamBuffLedger(
+        tb.buffLedger.allBuffs,
         tb.teamMeta,
-        NATIONAL_TEAM,
         charIds
       );
+      const teamStats = new TeamStatSheet(tb.charBuilds, ledger, charIds);
       teamStats.setArtifacts(baseSheets, CTX);
 
       const exprSheet = new TeamExprStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
-        tb.teamMeta,
-        NATIONAL_TEAM,
+        teamStats,
         baseSheets,
         new Set([swapCharId]),
         charIds,
@@ -355,11 +331,7 @@ describe("TeamExprStatSheet", () => {
       const tb = new TeamBuild(NATIONAL_TEAM);
       const charIds = NATIONAL_TEAM.map((c) => c.charId);
       const exprSheet = new TeamExprStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
-        tb.teamMeta,
-        NATIONAL_TEAM,
+        tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
         charIds,
@@ -380,11 +352,7 @@ describe("TeamExprStatSheet", () => {
       const tb = new TeamBuild(NATIONAL_TEAM);
       const charIds = NATIONAL_TEAM.map((c) => c.charId);
       const exprSheet = new TeamExprStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
-        tb.teamMeta,
-        NATIONAL_TEAM,
+        tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
         charIds,
@@ -400,11 +368,7 @@ describe("TeamExprStatSheet", () => {
       const tb = new TeamBuild(NATIONAL_TEAM);
       const charIds = NATIONAL_TEAM.map((c) => c.charId);
       const exprSheet = new TeamExprStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
-        tb.teamMeta,
-        NATIONAL_TEAM,
+        tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
         charIds,
@@ -430,11 +394,7 @@ describe("TeamExprStatSheet", () => {
       };
 
       const exprSheet = new TeamExprStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
-        tb.teamMeta,
-        NATIONAL_TEAM,
+        tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
         charIds,
@@ -442,11 +402,7 @@ describe("TeamExprStatSheet", () => {
       );
 
       const exprSheetNoCr = new TeamExprStatSheet(
-        tb.charBuilds,
-        tb.teamResonance,
-        tb.extraBuffs,
-        tb.teamMeta,
-        NATIONAL_TEAM,
+        tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
         charIds,

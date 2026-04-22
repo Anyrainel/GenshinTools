@@ -9,6 +9,7 @@ import type { ArtifactData } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import type { ArtifactSetConfig, TeamSlotConfig } from "@/lib/team-comp/types";
 
 // ── Artifact factory ────────────────────────────────────────────────────────
 
@@ -114,10 +115,39 @@ export function emptySheets(...charIds: string[]): Record<string, StatSheet> {
   return sheets;
 }
 
+// ── Config factory ──────────────────────────────────────────────────────────
+
+/**
+ * Create a TeamSlotConfig with sensible defaults.
+ * Accepts partial overrides for any field.
+ */
+export function mkConfig(
+  overrides: Partial<TeamSlotConfig> & { charId: string }
+): TeamSlotConfig {
+  return {
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "staff_of_homa",
+    refinement: 1,
+    artifactSet: null,
+    ...overrides,
+  };
+}
+
+/** Shorthand: build a 4pc ArtifactSetConfig. */
+export function art4pc(setId: string): ArtifactSetConfig {
+  return { type: "4pc", setId };
+}
+
+/** Shorthand: build a 2pc+2pc ArtifactSetConfig. */
+export function art2pc(id1: string, id2: string): ArtifactSetConfig {
+  return { type: "2pc+2pc", halfSetIds: [id1, id2] };
+}
+
 // ── Formula-ID helper ───────────────────────────────────────────────────────
 
 /** Return the first formula ID registered for `charId` on `tb`. */
 export function getFirstFormulaId(tb: TeamBuild, charId: string): string {
-  const formulas = tb.getFormulaIds()[charId];
+  const formulas = tb.catalog.getFormulaIds()[charId];
   return Object.keys(formulas)[0];
 }

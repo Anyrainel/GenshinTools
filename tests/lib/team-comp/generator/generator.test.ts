@@ -50,8 +50,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [HALF_SET_1, HALF_SET_2],
+        artifactSet: { type: "2pc+2pc", halfSetIds: [HALF_SET_1, HALF_SET_2] },
       },
       {
         charId: "xingqiu",
@@ -59,8 +58,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "sacrificial_sword",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "bennett",
@@ -68,8 +66,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "aquila_favonia",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "kaedehara_kazuha",
@@ -77,8 +74,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "iron_sting",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
   }
@@ -187,8 +183,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [HALF_SET_1, HALF_SET_1], // same half-set!
+        artifactSet: { type: "2pc+2pc", halfSetIds: [HALF_SET_1, HALF_SET_1] }, // same half-set!
       },
       {
         charId: "xingqiu",
@@ -196,8 +191,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "sacrificial_sword",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "bennett",
@@ -205,8 +199,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "aquila_favonia",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "kaedehara_kazuha",
@@ -214,8 +207,7 @@ describe("generator — 2+2pc set assignment", () => {
         constellation: 0,
         weaponId: "iron_sting",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
@@ -279,8 +271,7 @@ describe("generator — 4★ flex slot promotion", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: "crimson_witch_of_flames",
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: "crimson_witch_of_flames" },
       },
       {
         charId: "xingqiu",
@@ -288,8 +279,7 @@ describe("generator — 4★ flex slot promotion", () => {
         constellation: 0,
         weaponId: "sacrificial_sword",
         refinement: 1,
-        artifactSetId: "instructor", // 4★ set
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: "instructor" }, // 4★ set
       },
       {
         charId: "bennett",
@@ -297,8 +287,7 @@ describe("generator — 4★ flex slot promotion", () => {
         constellation: 0,
         weaponId: "aquila_favonia",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "kaedehara_kazuha",
@@ -306,8 +295,7 @@ describe("generator — 4★ flex slot promotion", () => {
         constellation: 0,
         weaponId: "iron_sting",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
   }

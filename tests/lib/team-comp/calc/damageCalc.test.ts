@@ -76,6 +76,100 @@ describe("TeamMeta — Dendro team", () => {
   });
 });
 
+describe("TeamMeta — charLevels", () => {
+  it("stores charLevels passed to constructor", () => {
+    const meta = new TeamMeta(["hu_tao", "xingqiu"], {}, {}, undefined, {
+      hu_tao: 90,
+      xingqiu: 80,
+    });
+    expect(meta.charLevels.hu_tao).toBe(90);
+    expect(meta.charLevels.xingqiu).toBe(80);
+  });
+
+  it("defaults to empty when charLevels not provided", () => {
+    const meta = new TeamMeta(["hu_tao"]);
+    expect(meta.charLevels).toEqual({});
+  });
+});
+
+describe("TeamMeta — hasHealer / hasShielder", () => {
+  it("hasHealer returns true when team has a healer (Bennett C0+)", () => {
+    const meta = new TeamMeta(["bennett", "xiangling"], { bennett: 0 });
+    expect(meta.hasHealer()).toBe(true);
+  });
+
+  it("hasHealer returns false when no healer on team", () => {
+    const meta = new TeamMeta(["xiangling", "fischl"]);
+    expect(meta.hasHealer()).toBe(false);
+  });
+
+  it("hasShielder returns true when team has a shielder (Zhongli C0+)", () => {
+    const meta = new TeamMeta(["zhongli", "hu_tao"], { zhongli: 0 });
+    expect(meta.hasShielder()).toBe(true);
+  });
+
+  it("hasShielder returns false when no shielder on team", () => {
+    const meta = new TeamMeta(["hu_tao", "xiangling"]);
+    expect(meta.hasShielder()).toBe(false);
+  });
+
+  it("healer gated by constellation (Gorou needs C4)", () => {
+    expect(new TeamMeta(["gorou"], { gorou: 3 }).hasHealer()).toBe(false);
+    expect(new TeamMeta(["gorou"], { gorou: 4 }).hasHealer()).toBe(true);
+  });
+});
+
+describe("TeamMeta — countByRegion / countByFaction", () => {
+  it("countByRegion counts characters from a given region", () => {
+    const meta = new TeamMeta(["hu_tao", "xiangling", "xingqiu", "zhongli"]);
+    expect(meta.countByRegion("Liyue")).toBe(4);
+    expect(meta.countByRegion("Inazuma")).toBe(0);
+  });
+
+  it("countByFaction counts characters from a given faction", () => {
+    const meta = new TeamMeta(["hu_tao", "xiangling"]);
+    expect(meta.countByFaction("None")).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe("TeamMeta — talentPassiveBonuses", () => {
+  it("Tartaglia grants +1 Normal Attack to all party members", () => {
+    const meta = new TeamMeta(["tartaglia", "xiangling"]);
+    const bonus = meta.talentPassiveBonuses();
+    expect(bonus.A).toBe(1);
+    expect(bonus.E).toBe(0);
+    expect(bonus.Q).toBe(0);
+  });
+
+  it("no Tartaglia means no A bonus", () => {
+    const meta = new TeamMeta(["xiangling", "xingqiu"]);
+    expect(meta.talentPassiveBonuses().A).toBe(0);
+  });
+
+  it("Skirk grants +1 E when all team is Hydro/Cryo with both present", () => {
+    const meta = new TeamMeta(["skirk", "xingqiu", "kaeya", "diona"]);
+    const bonus = meta.talentPassiveBonuses();
+    expect(bonus.E).toBe(1);
+  });
+
+  it("Skirk does NOT grant +1 E when team has non-Hydro/Cryo", () => {
+    const meta = new TeamMeta(["skirk", "xingqiu", "hu_tao", "kaeya"]);
+    expect(meta.talentPassiveBonuses().E).toBe(0);
+  });
+
+  it("Skirk does NOT grant +1 E when team is all Cryo (no Hydro)", () => {
+    const meta = new TeamMeta(["skirk", "kaeya", "ganyu", "diona"]);
+    expect(meta.talentPassiveBonuses().E).toBe(0);
+  });
+
+  it("targetCharId scoping: non-target chars get no self-only bonus", () => {
+    // Without any self-only passive providers, targetCharId doesn't matter
+    const meta = new TeamMeta(["tartaglia", "xiangling"]);
+    expect(meta.talentPassiveBonuses("tartaglia").A).toBe(1);
+    expect(meta.talentPassiveBonuses("xiangling").A).toBe(1);
+  });
+});
+
 describe("TeamResonance", () => {
   it("generates ATK +25% for dual Pyro (Fervent Flames)", () => {
     const meta = new TeamMeta(["hu_tao", "xiangling", "xingqiu", "zhongli"]);
@@ -448,8 +542,7 @@ describe("TeamBuild lifecycle", () => {
       constellation: 0,
       weaponId: "wolfs_gravestone",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: ["cryo%-15"], // Cryo DMG +15%
+      artifactSet: { type: "2pc+2pc", halfSetIds: ["cryo%-15", "atk%-18"] }, // Cryo DMG +15%
     },
     {
       charId: "mona",
@@ -457,8 +550,7 @@ describe("TeamBuild lifecycle", () => {
       constellation: 0,
       weaponId: "skyward_blade",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "jean",
@@ -466,8 +558,7 @@ describe("TeamBuild lifecycle", () => {
       constellation: 0,
       weaponId: "aquila_favonia",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "eula",
@@ -475,8 +566,7 @@ describe("TeamBuild lifecycle", () => {
       constellation: 0,
       weaponId: "skyward_pride",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -501,7 +591,7 @@ describe("TeamBuild lifecycle", () => {
 
   describe("getFormulaIds", () => {
     const tb = new TeamBuild(configs);
-    const formulas = tb.getFormulaIds();
+    const formulas = tb.catalog.getFormulaIds();
 
     it("returns formulas for all 4 characters", () => {
       expect(Object.keys(formulas)).toHaveLength(4);
@@ -575,8 +665,7 @@ describe("TeamBuild lifecycle", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "bennett",
@@ -584,8 +673,7 @@ describe("TeamBuild lifecycle", () => {
         constellation: 6,
         weaponId: "aquila_favonia",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const bennettTb = new TeamBuild(bennettConfigs);
@@ -745,8 +833,7 @@ describe("TeamBuild lifecycle", () => {
           constellation: 0,
           weaponId: "wolfs_gravestone",
           refinement: 1,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
         {
           charId: "diluc",
@@ -754,8 +841,7 @@ describe("TeamBuild lifecycle", () => {
           constellation: 0,
           weaponId: "wolfs_gravestone",
           refinement: 1,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
       ];
       const varkaTb = new TeamBuild(varkaConfigs);
@@ -1003,8 +1089,7 @@ describe("other buffs apply to teammates' stats and display", () => {
       constellation: 0,
       weaponId: "verdict",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "illuga",
@@ -1012,8 +1097,7 @@ describe("other buffs apply to teammates' stats and display", () => {
       constellation: 0,
       weaponId: "kitain_cross_spear",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "xingqiu",
@@ -1021,8 +1105,7 @@ describe("other buffs apply to teammates' stats and display", () => {
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "gorou",
@@ -1030,8 +1113,7 @@ describe("other buffs apply to teammates' stats and display", () => {
       constellation: 0,
       weaponId: "favonius_warbow",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -1238,8 +1320,7 @@ describe("levelUpGains", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
@@ -1273,8 +1354,7 @@ describe("levelUpGains", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
@@ -1302,8 +1382,7 @@ describe("levelUpGains", () => {
           constellation: 0,
           weaponId: "wolfs_gravestone",
           refinement: 1,
-          artifactSetId: null,
-          artifactHalfSetIds: [],
+          artifactSet: null,
         },
       ];
       const tb = new TeamBuild(configs);
@@ -1327,8 +1406,7 @@ describe("levelUpGains", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
@@ -1351,8 +1429,7 @@ describe("levelUpGains", () => {
         constellation: 0,
         weaponId: "wolfs_gravestone",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "mona",
@@ -1360,8 +1437,7 @@ describe("levelUpGains", () => {
         constellation: 0,
         weaponId: "skyward_blade",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
@@ -1408,13 +1484,12 @@ describe("marginalGains — ER with ER-scaling weapon", () => {
         constellation: 0,
         weaponId: "engulfing_lightning",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
     const tb = new TeamBuild(configs);
     const emptySheets = { raiden_shogun: new StatSheet([]) };
-    const formulas = tb.getFormulaIds();
+    const formulas = tb.catalog.getFormulaIds();
     const formulaId = Object.keys(formulas.raiden_shogun!)[0]!;
 
     const display = tb.getDisplayResult(
@@ -1440,8 +1515,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
       constellation: 0,
       weaponId: "engulfing_lightning",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "bennett",
@@ -1449,8 +1523,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "xingqiu",
@@ -1458,8 +1531,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "kaedehara_kazuha",
@@ -1467,8 +1539,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
   const tb = new TeamBuild(configs);
@@ -1485,7 +1556,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
 
   it("emits separate E burst DMG buffs with correct per-character energy scaling", () => {
     // Get display for Raiden on-field to inspect resolved buffs
-    const formulas = tb.getFormulaIds();
+    const formulas = tb.catalog.getFormulaIds();
     const formulaId = Object.keys(formulas.raiden_shogun!)[0]!;
     const display = tb.getDisplayResult(
       "raiden_shogun",
@@ -1527,7 +1598,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
   });
 
   it("only the matching charId buff is active for a given calc target", () => {
-    const formulas = tb.getFormulaIds();
+    const formulas = tb.catalog.getFormulaIds();
     // Pick a burst formula so the abilities:["burst"] filter passes
     const display = tb.getDisplayResult(
       "raiden_shogun",
@@ -1562,8 +1633,7 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
       constellation: 0,
       weaponId: "favonius_warbow",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "noelle",
@@ -1571,8 +1641,7 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
       constellation: 0,
       weaponId: "whiteblind",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "yun_jin",
@@ -1580,8 +1649,7 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
       constellation: 0,
       weaponId: "favonius_lance",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "zhongli",
@@ -1589,8 +1657,7 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
       constellation: 0,
       weaponId: "black_tassel",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -1683,8 +1750,7 @@ describe("forceOnField override", () => {
       constellation: 0,
       weaponId: "the_catch",
       refinement: 5,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "bennett",
@@ -1692,8 +1758,7 @@ describe("forceOnField override", () => {
       constellation: 0,
       weaponId: "sacrificial_sword",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -1749,25 +1814,21 @@ describe("forceOnField override", () => {
     const tb = new TeamBuild(configs);
 
     // offFieldStatus checks the formula's intrinsic offField flags, not the override
-    const status = tb.offFieldStatus("xiangling", "xiangling-pyronado-tick");
+    const status = tb.catalog.offFieldStatus("xiangling-pyronado-tick");
     expect(status).toBe("full"); // all parts are offField
 
-    const guobaStatus = tb.offFieldStatus("xiangling", "xiangling-guoba");
+    const guobaStatus = tb.catalog.offFieldStatus("xiangling-guoba");
     expect(guobaStatus).toBe("full"); // guoba is also fully off-field
 
     // hasOffFieldParts should also report true regardless of override
-    expect(tb.hasOffFieldParts("xiangling", "xiangling-pyronado-tick")).toBe(
-      true
-    );
+    expect(tb.catalog.hasOffFieldParts("xiangling-pyronado-tick")).toBe(true);
   });
 
   it("pyronado-swing (on-field formula) reports offField status 'none'", () => {
     const tb = new TeamBuild(configs);
-    const status = tb.offFieldStatus("xiangling", "xiangling-pyronado-swing");
+    const status = tb.catalog.offFieldStatus("xiangling-pyronado-swing");
     expect(status).toBe("none");
-    expect(tb.hasOffFieldParts("xiangling", "xiangling-pyronado-swing")).toBe(
-      false
-    );
+    expect(tb.catalog.hasOffFieldParts("xiangling-pyronado-swing")).toBe(false);
   });
 
   it("forceOnField produces higher damage when teamOnField buffs exist", () => {
@@ -1815,8 +1876,7 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "the_catch",
         refinement: 5,
-        artifactSetId: "vermillion_hereafter",
-        artifactHalfSetIds: [],
+        artifactSet: { type: "4pc", setId: "vermillion_hereafter" },
       },
       {
         charId: "bennett",
@@ -1824,8 +1884,7 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "sacrificial_sword",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "fischl",
@@ -1833,8 +1892,7 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "the_stringless",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
       {
         charId: "sucrose",
@@ -1842,8 +1900,7 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "the_widsith",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       },
     ];
 
@@ -1977,8 +2034,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "illuga",
@@ -1986,8 +2042,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "the_widsith",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["em-80", "em-80"] },
       },
       {
         charId: "columbina",
@@ -1995,8 +2050,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
       },
       {
         charId: "gorou",
@@ -2004,8 +2058,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "favonius_warbow",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
     ];
 
@@ -2077,8 +2130,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "illuga",
@@ -2086,8 +2138,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "the_widsith",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["em-80", "em-80"] },
       },
       {
         charId: "columbina",
@@ -2095,8 +2146,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
       },
       {
         charId: "gorou",
@@ -2104,8 +2154,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "favonius_warbow",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
     ];
 
@@ -2186,8 +2235,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "illuga",
@@ -2195,8 +2243,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "the_widsith",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["em-80", "em-80"] },
       },
       {
         charId: "columbina",
@@ -2204,8 +2251,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
       },
       {
         charId: "gorou",
@@ -2213,8 +2259,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "favonius_warbow",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
     ];
 
@@ -2256,8 +2301,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "illuga",
@@ -2265,8 +2309,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "the_widsith",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["em-80", "em-80"] },
       },
       {
         charId: "columbina",
@@ -2274,8 +2317,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
       },
       {
         charId: "gorou",
@@ -2283,8 +2325,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "favonius_warbow",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
     ];
 
@@ -2340,8 +2381,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "illuga",
@@ -2349,8 +2389,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "the_widsith",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["em-80", "em-80"] },
       },
       {
         charId: "columbina",
@@ -2358,8 +2397,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
       },
       {
         charId: "gorou",
@@ -2367,8 +2405,7 @@ describe("forceOnField override", () => {
         constellation: 6,
         weaponId: "favonius_warbow",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
     ];
 
@@ -2451,8 +2488,7 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "columbina",
@@ -2460,14 +2496,13 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
       },
     ];
 
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const combo = tb.getCombo("linnea");
-    expect(combo).toEqual({ "linnea-pound": 4, "linnea-overdrive": 4 });
+    const combo = tb.catalog.getCombo("linnea");
+    expect(combo).toMatchObject({ "linnea-pound": 4, "linnea-overdrive": 4 });
   });
 
   it("linnea tap combo without LC has pound only", () => {
@@ -2478,8 +2513,7 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "illuga",
@@ -2487,14 +2521,13 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "the_widsith",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["em-80", "em-80"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["em-80", "em-80"] },
       },
     ];
 
     const tb = new TeamBuild(team, { linnea: "tap" });
-    const combo = tb.getCombo("linnea");
-    expect(combo).toEqual({ "linnea-pound": 8 });
+    const combo = tb.catalog.getCombo("linnea");
+    expect(combo).toMatchObject({ "linnea-pound": 8 });
   });
 
   it("linnea continuous-tap combo has million-ton + pound", () => {
@@ -2505,8 +2538,7 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "lightbearing_moonshard",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["def%-30", "def%-30"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["def%-30", "def%-30"] },
       },
       {
         charId: "columbina",
@@ -2514,14 +2546,13 @@ describe("forceOnField override", () => {
         constellation: 0,
         weaponId: "a_thousand_floating_dreams",
         refinement: 1,
-        artifactSetId: null,
-        artifactHalfSetIds: ["hp%-20", "hp%-20"],
+        artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
       },
     ];
 
     const tb = new TeamBuild(team, { linnea: "continuous" });
-    const combo = tb.getCombo("linnea");
-    expect(combo).toEqual({
+    const combo = tb.catalog.getCombo("linnea");
+    expect(combo).toMatchObject({
       "linnea-million-ton": 1,
       "linnea-pound": 4,
     });
@@ -2543,8 +2574,7 @@ describe("perCharCrTarget in getTeamStats", () => {
       constellation: 0,
       weaponId: "wolfs_gravestone",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "mona",
@@ -2552,8 +2582,7 @@ describe("perCharCrTarget in getTeamStats", () => {
       constellation: 0,
       weaponId: "skyward_blade",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "jean",
@@ -2561,8 +2590,7 @@ describe("perCharCrTarget in getTeamStats", () => {
       constellation: 0,
       weaponId: "aquila_favonia",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "eula",
@@ -2570,8 +2598,7 @@ describe("perCharCrTarget in getTeamStats", () => {
       constellation: 0,
       weaponId: "skyward_pride",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 
@@ -2682,8 +2709,7 @@ describe("Two-pass dynamic buffs", () => {
       constellation: 0,
       weaponId: "calamity_queller",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "bennett",
@@ -2691,8 +2717,7 @@ describe("Two-pass dynamic buffs", () => {
       constellation: 1,
       weaponId: "aquila_favonia",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "ganyu",
@@ -2700,8 +2725,7 @@ describe("Two-pass dynamic buffs", () => {
       constellation: 0,
       weaponId: "amos_bow",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
     {
       charId: "zhongli",
@@ -2709,8 +2733,7 @@ describe("Two-pass dynamic buffs", () => {
       constellation: 0,
       weaponId: "black_tassel",
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     },
   ];
 

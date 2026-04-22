@@ -179,7 +179,7 @@ function estimateScalingBonus(
 
   for (const [providerCharId, build] of Object.entries(teamBuild.charBuilds)) {
     // Collect scaling buffs from character + weapon
-    const allBuffs = [...build.charBase.buffs, ...build.weaponBase.buffs];
+    const allBuffs = [...build.getCharBuffs(), ...build.getWeaponBuffs()];
 
     for (const buff of allBuffs) {
       if (!(buff instanceof ScalingBuff)) continue;

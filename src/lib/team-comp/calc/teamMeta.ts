@@ -24,6 +24,7 @@ import type { ReactionType } from "../types";
 export class TeamMeta {
   readonly characters: string[];
   readonly constellations: Record<string, number>;
+  readonly charLevels: Record<string, number>;
   /** From character_stats.json when loaded; undefined if character not in stats. */
   readonly elements: Record<string, Element | undefined>;
   readonly regions: Record<string, Region | undefined>;
@@ -43,10 +44,12 @@ export class TeamMeta {
     characterIds: string[],
     constellations: Record<string, number> = {},
     artifactSets: Record<string, string> = {},
-    enemyAura?: Element
+    enemyAura?: Element,
+    charLevels: Record<string, number> = {}
   ) {
     this.characters = characterIds;
     this.constellations = constellations;
+    this.charLevels = charLevels;
     this.elements = {};
     this.regions = {};
     this.rarities = {};

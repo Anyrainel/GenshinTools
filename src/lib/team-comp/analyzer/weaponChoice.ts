@@ -118,18 +118,7 @@ function applyCharConfig(
     },
     // Apply artifact config override if present
     ...(charConfig.artifactConfig
-      ? charConfig.artifactConfig.type === "4pc"
-        ? {
-            artifactSetId: charConfig.artifactConfig.setId,
-            artifactHalfSetIds: [],
-          }
-        : {
-            artifactSetId: null,
-            artifactHalfSetIds: [
-              String(charConfig.artifactConfig.id1),
-              String(charConfig.artifactConfig.id2),
-            ],
-          }
+      ? { artifactSet: charConfig.artifactConfig }
       : {}),
   };
 }
@@ -172,15 +161,10 @@ export function buildSetKeysByChar(
   return deriveSetKeysFromConfigs(
     charConfigs
       .filter((cc) => cc.artifactConfig != null)
-      .map((cc) => {
-        const ac = cc.artifactConfig!;
-        return ac.type === "4pc"
-          ? { charId: cc.charId, artifactSetId: ac.setId }
-          : {
-              charId: cc.charId,
-              artifactHalfSetIds: [String(ac.id1), String(ac.id2)],
-            };
-      })
+      .map((cc) => ({
+        charId: cc.charId,
+        artifactSet: cc.artifactConfig,
+      }))
   );
 }
 
