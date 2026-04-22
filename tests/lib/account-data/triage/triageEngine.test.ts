@@ -439,11 +439,16 @@ describe("runTriage", () => {
   // qualityMargin: over-supply caps non-premium locks
 
   it("qualityMargin: caps Q-tier locks in over-supply", () => {
-    // Use the tier evaluator to find substat combos that produce distinct P and Q tiers.
-    // Desired=[atk%, cd, cr, er] for flower/hp → subN=4.
+    // Use circlet/heal% with a single custom pattern to test margin capping
+    // in isolation (no curated patterns exist for heal%, so zero overlap).
     const desired = ["atk%", "cd", "cr", "er"] as SubStat[];
-    const fillers = ["atk"] as SubStat[]; // atk% → atk filler for flower
-    const entry = lookupTierEntry("flower", "hp" as MainStat, desired, fillers);
+    const fillers = ["atk"] as SubStat[];
+    const entry = lookupTierEntry(
+      "circlet",
+      "heal%" as MainStat,
+      desired,
+      fillers
+    );
 
     // Find P-tier and Q-tier conditions from the computed condition table
     const pCond = entry.conditions.find((c) => c.tier === "P");
@@ -511,17 +516,30 @@ describe("runTriage", () => {
     if (pTier.tier !== "P" || qTier.tier !== "Q") return;
 
     const premiumArt = makeArt({
+      slotKey: "circlet",
+      mainStatKey: "heal%",
       substats: pSubs,
       level: pCond.is4L ? 0 : 20,
       totalRolls: pCond.is4L ? undefined : 9,
     });
     const qualityArts = Array.from({ length: 5 }, (_, i) =>
       makeArt({
+        slotKey: "circlet",
+        mainStatKey: "heal%",
         substats: qSubs,
         level: qCond.is4L ? 0 : 16 - i,
         totalRolls: qCond.is4L ? undefined : 8,
       })
     );
+
+    const healBuild = makeBuild({
+      circletWeights: [{ stat: "heal%", weight: 100 }],
+    });
+    const customFlex = {
+      slot: "circlet" as const,
+      mainStat: "heal%" as const,
+      requiredSubs: ["cr", "cd", "atk%", "er"] as SubStat[],
+    };
 
     // demand=1, 1P + 5Q → over-supply
     // margin=1: Q cap = max(1+1-1,0) = 1 → 1P + 1Q = 2 locked
@@ -531,13 +549,14 @@ describe("runTriage", () => {
     );
     const r1 = runTriage(
       account1,
-      [{ characterId: "char_a", builds: [makeBuild()] }],
+      [{ characterId: "char_a", builds: [healBuild] }],
       {
         ...SETTINGS,
         qualityMargin: 1,
         setSlotKeep: 0,
         neutralKeep: 0,
         doubleCritLockEnabled: false,
+        customFlexInputs: [customFlex],
       }
     );
     const locked1 = r1.decisions.filter((d) => d.label === "lock");
@@ -551,13 +570,14 @@ describe("runTriage", () => {
     );
     const r5 = runTriage(
       account5,
-      [{ characterId: "char_a", builds: [makeBuild()] }],
+      [{ characterId: "char_a", builds: [healBuild] }],
       {
         ...SETTINGS,
         qualityMargin: 5,
         setSlotKeep: 0,
         neutralKeep: 0,
         doubleCritLockEnabled: false,
+        customFlexInputs: [customFlex],
       }
     );
     const locked5 = r5.decisions.filter((d) => d.label === "lock");
@@ -802,7 +822,7 @@ describe("runTriage", () => {
   });
 
   it("custom patterns matching an official key are deduplicated (official wins)", () => {
-    // flower hp cr+cd+atk%+atk is a curated pattern
+    // flower hp cr+cd+atk% is a curated pattern (3-substat simplified form)
     const account = makeAccount([], [makeArt({})]);
     const { flexPatterns } = runTriage(
       account,
@@ -814,7 +834,7 @@ describe("runTriage", () => {
           {
             slot: "flower",
             mainStat: "hp",
-            requiredSubs: ["cr", "cd", "atk%", "atk"],
+            requiredSubs: ["cr", "cd", "atk%"],
           },
         ],
       }
@@ -825,7 +845,7 @@ describe("runTriage", () => {
     expect(keys.length).toBe(unique.size);
     // The official version should not be marked custom
     const officialMatch = flexPatterns.find(
-      (fp) => fp.key === "flex:flower:hp:cr,cd,atk%,atk"
+      (fp) => fp.key === "flex:flower:hp:cr,cd,atk%"
     );
     expect(officialMatch).toBeDefined();
     expect(officialMatch!.custom).toBeUndefined();
