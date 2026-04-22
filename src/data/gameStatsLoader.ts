@@ -14,8 +14,8 @@ import type {
   WeaponResource,
   WeaponType,
 } from "@/data/types";
-import type { StatEntry } from "@/lib/team-comp/types";
-import { betaEnabled } from "@/stores/useBetaStore";
+import type { StatEntry } from "@/data/types";
+import { betaEnabled } from "@/data/useBetaStore";
 
 // ─── JSON shapes (match character_stats.json / weapon_stats.json) ───
 

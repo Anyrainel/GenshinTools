@@ -474,7 +474,7 @@ def _is_constant_across_levels(multipliers_values: list[str], num_index: int) ->
 
 def _multipliers_to_talent_and_details(
     multipliers: dict[str, list[str]],
-) -> tuple[list[list[float]], list[list[str]]]:
+) -> tuple[list[list[float]], list[dict[str, str]]]:
     """Convert lunaris multipliers to both talent array and templated details.
 
     Only values that vary across talent levels become params. Constant values
@@ -482,7 +482,7 @@ def _multipliers_to_talent_and_details(
 
     Returns:
       talent: [[param1_lv1, param2_lv1, ...], ...] (15 levels)
-      details: [[label, template_str], ...] matching official format
+      details: [{"label": ..., "template": ...}, ...] matching official format
     """
     if not multipliers:
         return [], []
@@ -491,7 +491,7 @@ def _multipliers_to_talent_and_details(
     n_levels = max(len(vals) for vals in multipliers.values()) if multipliers else 0
 
     # First pass: determine which numbers vary across levels and assign params
-    details: list[list[str]] = []
+    details: list[dict[str, str]] = []
     # Track which (label_idx, num_idx) positions become params
     param_positions: list[tuple[int, int]] = []  # (label_idx, num_index_in_row)
     param_idx = 1  # 1-based
@@ -499,7 +499,7 @@ def _multipliers_to_talent_and_details(
     for label_idx, label in enumerate(labels):
         vals = multipliers[label]
         if not vals:
-            details.append([label, ""])
+            details.append({"label": label, "template": ""})
             continue
 
         # Find all numbers in the first level's string
@@ -525,7 +525,7 @@ def _multipliers_to_talent_and_details(
             last_end = m.end()
 
         template_parts.append(vals[0][last_end:])
-        details.append([label, "".join(template_parts)])
+        details.append({"label": label, "template": "".join(template_parts)})
 
     total_params = param_idx - 1
 

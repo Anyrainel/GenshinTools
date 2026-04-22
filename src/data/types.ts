@@ -530,6 +530,45 @@ export type GlobalStatWeights = {
   flatDef: number;
 };
 
+// ─── Stat keys used throughout the damage engine and game data ───
+
+/**
+ * All stat keys the engine tracks.
+ *
+ * Aggregation rules (handled internally by StatSheet):
+ * - Scaled stats (ATK, HP, DEF): base × (1 + sum(%)) + sum(flat)
+ * - Additive stats (everything else): sum(contributions)
+ *
+ * Universal keys are scoped by DamageTagFilter on the buff target.
+ * See DmgDesign.md §1.1 for the stat key zone table.
+ */
+export type StatKey =
+  | BaseStat
+  | MainStat
+  | SubStat
+  // Damage modifiers — scoped by DamageTagFilter on BuffTarget
+  | "dmg%" // generic + ability + element DMG bonus (§3 zone, replaces ${AbilityType}%)
+  | "baseDmg" // flat base DMG add (replaces ${AbilityType}Base: Yun Jin, Zhongli A4, Shenhe)
+  | "baseDmg%" // 倍率乘区: "deal X% original DMG" multiplier (Yoimiya E, Neuvillette A1, Veil of Falsehood, etc.)
+  | "reactionBaseDmg%" // 反应基础提升: lunar reaction base DMG bonus (Nod-Krai P3 passives)
+  | "elevated%" // elevation multiplier §4 (replaces ${LunarReactionType}Elevated%)
+  | "reactionDmg%" // reaction DMG bonus §8.4 (replaces ${ReactionType}%, separate zone from dmg%)
+  | "reactionCr" // reaction CRIT rate §8.8 (replaces ${ReactionType}Cr, separate from cr)
+  | "reactionCd" // reaction CRIT DMG §8.8 (replaces ${ReactionType}Cd, separate from cd)
+  | "atkSpd%" // Attack Speed Bonus
+  // Enemy debuff / modifier stats
+  | "defReduction%"
+  | "defIgnore%"
+  | "resReduction%"
+  // Non-artifact element DMG bonus keys (used in formula DMG% alias expansion)
+  | "pneuma%"
+  | "lunar%";
+
+export type StatEntry = {
+  key: StatKey;
+  value: number;
+};
+
 // ─── Game Data: weapon / artifact per-language bundles ───
 
 export type WeaponGameEntry = {

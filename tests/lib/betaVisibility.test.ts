@@ -22,7 +22,7 @@ import {
   betaCharacters,
   betaWeapons,
 } from "@/data/resources_beta";
-import { betaEnabled } from "@/stores/useBetaStore";
+import { betaEnabled } from "@/data/useBetaStore";
 import { describe, expect, it } from "vitest";
 
 const releasedCharIds = new Set(releasedCharacters.map((c) => c.id));

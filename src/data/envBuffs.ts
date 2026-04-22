@@ -1,4 +1,4 @@
-import type { StatKey } from "@/lib/team-comp/types";
+import type { StatKey } from "@/data/types";
 
 export type EnvBuffCategory = "food" | "enemy" | "status";
 

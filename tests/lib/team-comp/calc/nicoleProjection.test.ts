@@ -11,7 +11,7 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 // Mock betaEnabled BEFORE constants.ts evaluates.
-vi.mock("@/stores/useBetaStore", () => ({
+vi.mock("@/data/useBetaStore", () => ({
   betaEnabled: () => true,
   setBetaEnabled: () => {},
   maybeHandleBetaMagic: () => false,

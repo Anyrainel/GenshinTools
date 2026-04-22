@@ -19,7 +19,7 @@
  * is loaded.
  */
 
-import { betaEnabled } from "@/stores/useBetaStore";
+import { betaEnabled } from "@/data/useBetaStore";
 import { fetchGzipJson } from "./gzipJson";
 import { i18nGameData } from "./i18n-game";
 import type {
@@ -148,13 +148,19 @@ function createLangJsonLoader<T extends Record<string, unknown>>({
 // Character kits — character_{4,5}_{en,zh}.json (+ beta gzip per lang)
 // ═══════════════════════════════════════════════════════════════════════════
 
+// Details rows can arrive in two shapes during the migration from tuple to
+// object layout: older scraped JSONs have ``[label, template]`` pairs; newer
+// emissions (lunaris.py + normalized released scraper) use
+// ``{ label, template }``. The transform below handles both; once every
+// source emits objects, the tuple path + RawSkill.details union can be dropped.
+type RawSkillDetail = CharacterSkillDetail | [string, string];
 type RawSkill = {
   name: string;
   descHtml: string;
-  details: string[][];
+  details: RawSkillDetail[];
 };
 type RawKit = {
-  name: string; // present in JSON but not propagated to CharacterKit
+  name?: string; // present in older JSON; newer emissions omit it
   skills: RawSkill[];
   passives: CharacterEffect[];
   constellations: CharacterEffect[];
@@ -175,11 +181,14 @@ const betaCharacterModules = import.meta.glob<string>(
   { eager: false, query: "?url", import: "default" }
 );
 
-function transformDetails(raw: string[][]): CharacterSkillDetail[] {
-  return raw.map(([label, template]) => ({
-    label: label ?? "",
-    template: template ?? "",
-  }));
+function transformDetails(raw: RawSkillDetail[]): CharacterSkillDetail[] {
+  return raw.map((row) => {
+    if (Array.isArray(row)) {
+      const [label, template] = row;
+      return { label: label ?? "", template: template ?? "" };
+    }
+    return row;
+  });
 }
 
 function transformSkill(raw: RawSkill): CharacterSkill {
