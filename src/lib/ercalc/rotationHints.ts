@@ -1,56 +1,51 @@
-import {
-  expectedPeriodicProcs,
-  periodicGenerators,
-} from "@/lib/ercalc/particleConfig";
-import { BURST_ACTIONS } from "./constants";
-import type { RotationHint, Timeline } from "./types";
+import { BURST_ACTIONS, DIRECT_PARTICLE_ACTIONS, particles } from "./constants";
+import { hasPeriodicGeneration } from "./erCalculator";
+import type { ERTimeline, RotationHint } from "./types";
 
 export type { RotationHint } from "./types";
 
 /**
- * Analyze a rotation timeline and return hints for common issues.
+ * Analyze an ERTimeline and return hints for common issues.
  * These are suggestions, not errors — the user's rotation might be intentional.
  */
 export function analyzeRotation(
-  timeline: Timeline,
+  timeline: ERTimeline,
   teamCharIds: string[]
 ): RotationHint[] {
   const hints: RotationHint[] = [];
-  if (timeline.length === 0) return hints;
+  const actions = timeline.actions;
+  if (actions.length === 0) return hints;
 
   const teamSet = new Set(teamCharIds);
 
   // Track which characters have E before their first Q
   const hasEBeforeQ = new Map<string, boolean>();
-  for (const act of timeline) {
+  for (let i = 0; i < actions.length; i++) {
+    const act = actions[i];
     if (!teamSet.has(act.char)) continue;
-    if (
-      act.action === "E" ||
-      act.action === "holdE" ||
-      act.action === "periodicE"
-    ) {
+    if (DIRECT_PARTICLE_ACTIONS.has(act.action)) {
       hasEBeforeQ.set(act.char, true);
     }
     if (BURST_ACTIONS.has(act.action) && !hasEBeforeQ.has(act.char)) {
-      // Q before any E — character bursts without generating particles first
       hints.push({
         type: "info",
         charId: act.char,
         messageEn:
           "{char} bursts before using skill — no self-generated particles before Q.",
         messageZh: "{char} 在释放E之前释放了Q — Q之前没有自己产生的粒子。",
-        actionIndex: timeline.indexOf(act),
+        actionIndex: i,
       });
-      hasEBeforeQ.set(act.char, true); // Don't warn again
+      hasEBeforeQ.set(act.char, true);
     }
   }
 
-  // Check for too few periodicE procs vs expected
+  // Check for too few periodic procs vs expected default
   for (const charId of teamCharIds) {
-    const expected = expectedPeriodicProcs[charId];
-    if (!expected) continue;
-    const actual = timeline.filter(
-      (a) => a.char === charId && a.action === "periodicE"
+    const cfg = particles[charId]?.periodic?.E;
+    if (!cfg) continue;
+    const expected = cfg.procs;
+    const actual = timeline.periodic.filter(
+      (p) => p.sourceChar === charId && p.trigger === "E"
     ).length;
     if (actual > 0 && actual < expected - 1) {
       hints.push({
@@ -62,16 +57,18 @@ export function analyzeRotation(
     }
   }
 
-  // Check for periodic deployers missing their E deployment
+  // Periodic procs present but no triggering skill in timeline
   for (const charId of teamCharIds) {
-    if (!periodicGenerators.has(charId)) continue;
-    const hasE = timeline.some(
-      (a) => a.char === charId && (a.action === "E" || a.action === "holdE")
+    if (!hasPeriodicGeneration(charId, "E")) continue;
+    const hasE = actions.some(
+      (a) =>
+        a.char === charId &&
+        (a.action === "E" || a.action === "holdE" || a.action === "specialE")
     );
-    const hasPeriodicE = timeline.some(
-      (a) => a.char === charId && a.action === "periodicE"
+    const hasPeriodic = timeline.periodic.some(
+      (p) => p.sourceChar === charId && p.trigger === "E"
     );
-    if (hasPeriodicE && !hasE) {
+    if (hasPeriodic && !hasE) {
       hints.push({
         type: "warning",
         charId,
@@ -82,9 +79,9 @@ export function analyzeRotation(
     }
   }
 
-  // Check for consecutive bursts with no particle generation between them
+  // 3+ consecutive bursts with no skill between
   let consecutiveBursts = 0;
-  for (const act of timeline) {
+  for (const act of actions) {
     if (BURST_ACTIONS.has(act.action)) {
       consecutiveBursts++;
       if (consecutiveBursts >= 3) {
@@ -94,28 +91,20 @@ export function analyzeRotation(
             "3+ bursts in a row with no skills between them — consider adding E casts to generate particles.",
           messageZh: "连续3个以上爆发没有E技能 — 考虑在中间添加E产球。",
         });
-        break; // Only warn once
+        break;
       }
-    } else if (
-      act.action === "E" ||
-      act.action === "holdE" ||
-      act.action === "periodicE"
-    ) {
+    } else if (DIRECT_PARTICLE_ACTIONS.has(act.action)) {
       consecutiveBursts = 0;
     }
   }
 
-  // Check for periodicE procs grouped at the end (instead of interleaved)
-  // This matters because backward absorption assigns all grouped procs to the same absorber
-  if (timeline.length > 5) {
-    const lastActions = timeline.slice(-Math.ceil(timeline.length * 0.4));
-    const periodicCount = lastActions.filter(
-      (a) => a.action === "periodicE"
+  // Periodic procs grouped at the end vs interleaved (soft hint)
+  if (actions.length > 5 && timeline.periodic.length >= 3) {
+    const boundary = Math.ceil(actions.length * 0.6);
+    const lateProcs = timeline.periodic.filter(
+      (p) => p.targetIndex >= boundary
     ).length;
-    const totalPeriodic = timeline.filter(
-      (a) => a.action === "periodicE"
-    ).length;
-    if (totalPeriodic >= 3 && periodicCount === totalPeriodic) {
+    if (lateProcs === timeline.periodic.length) {
       hints.push({
         type: "info",
         messageEn:
@@ -126,9 +115,9 @@ export function analyzeRotation(
     }
   }
 
-  // Check for characters in team but not in timeline
+  // Chars in team but not in timeline
   for (const charId of teamCharIds) {
-    const inTimeline = timeline.some((a) => a.char === charId);
+    const inTimeline = actions.some((a) => a.char === charId);
     if (!inTimeline) {
       hints.push({
         type: "info",

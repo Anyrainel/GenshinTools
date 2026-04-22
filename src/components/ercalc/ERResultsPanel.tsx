@@ -13,13 +13,13 @@ import { ChevronDown, Copy, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
-interface ERResultsPanelProps {
+interface ErResultsPanelProps {
   results: ERResult[];
   team: TeamSlot[];
   embedded?: boolean;
 }
 
-function getERTextColor(er: number, isInfinity: boolean) {
+function getErTextColor(er: number, isInfinity: boolean) {
   if (isInfinity) return "text-destructive";
   if (er <= 100) return "text-green-400";
   if (er <= 140) return "text-emerald-400";
@@ -75,7 +75,7 @@ function summarizeEventsForChar(
   }));
 }
 
-export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
+export function ErResultsPanel({ results, team }: ErResultsPanelProps) {
   const { t, language } = useLanguage();
   const teams = useTeamStore((s) => s.teams);
   const updateTeam = useTeamStore((s) => s.updateTeam);
@@ -192,7 +192,7 @@ export function ERResultsPanel({ results, team }: ERResultsPanelProps) {
           const erNormalized = isInfinity
             ? 100
             : Math.min(100, ((result.erNeeded - 100) / 200) * 100);
-          const erTextColor = getERTextColor(result.erNeeded, isInfinity);
+          const erTextColor = getErTextColor(result.erNeeded, isInfinity);
           const isExpanded = expanded === result.characterId;
 
           // Get per-char events from binding window

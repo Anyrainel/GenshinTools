@@ -1,10 +1,45 @@
 import { calculateTeamER } from "@/lib/ercalc/erCalculator";
-import type { TeamMember, Timeline } from "@/lib/ercalc/erCalculator";
+import type {
+  ERTimeline,
+  PeriodicProc,
+  TeamMember,
+  TimelineAction,
+} from "@/lib/ercalc/erCalculator";
 import { describe, it } from "vitest";
+
+/** Legacy flat timeline shape for test readability: supports periodicE entries
+ *  that get converted into periodic procs attached to the next real action. */
+type LegacyEntry = {
+  char: string;
+  action: TimelineAction["action"] | "periodicE";
+};
+
+function flatToERT(flat: LegacyEntry[]): ERTimeline {
+  const actions: TimelineAction[] = [];
+  const periodic: PeriodicProc[] = [];
+  const pending: string[] = [];
+  for (const e of flat) {
+    if (e.action === "periodicE") {
+      pending.push(e.char);
+    } else {
+      const idx = actions.length;
+      for (const src of pending)
+        periodic.push({ sourceChar: src, trigger: "E", targetIndex: idx });
+      pending.length = 0;
+      actions.push({ char: e.char, action: e.action });
+    }
+  }
+  if (pending.length && actions.length > 0) {
+    const last = actions.length - 1;
+    for (const src of pending)
+      periodic.push({ sourceChar: src, trigger: "E", targetIndex: last });
+  }
+  return { actions, periodic };
+}
 
 interface TeamScenario {
   team: TeamMember[];
-  timeline: Timeline;
+  timeline: LegacyEntry[];
   enemyParticles?: number;
 }
 
@@ -181,7 +216,11 @@ describe("ER diagnostic", () => {
       const opts = scenario.enemyParticles
         ? { enemyParticles: scenario.enemyParticles }
         : {};
-      const results = calculateTeamER(scenario.team, scenario.timeline, opts);
+      const results = calculateTeamER(
+        scenario.team,
+        flatToERT(scenario.timeline),
+        opts
+      );
       console.log(`\n=== ${name} ===`);
       for (const r of results) {
         const b = r.energyBreakdown;

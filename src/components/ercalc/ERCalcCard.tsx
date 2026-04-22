@@ -10,12 +10,12 @@ import { charInfo } from "@/data/charInfo";
 import type { Element } from "@/data/types";
 import { ENEMY_PRESETS, particles } from "@/lib/ercalc/constants";
 import {
-  autoPlaceTicks,
+  autoPlaceFavonius,
+  autoPlacePeriodic,
   calculateTeamER,
-  flattenERTimeline,
+  hasPeriodicGeneration,
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
-import { periodicGenerators } from "@/lib/ercalc/particleConfig";
 import { analyzeRotation } from "@/lib/ercalc/rotationHints";
 import type {
   ActionType,
@@ -23,10 +23,12 @@ import type {
   ERResult,
   ERTimeline,
   ParticleMode,
+  PeriodicProc,
   TeamSlot,
-  TickAssignment,
   TimelineAction,
 } from "@/lib/ercalc/types";
+import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
+import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -37,10 +39,10 @@ import {
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
 } from "../team-comp/cardStyles";
-import { ERResultsPanel } from "./ERResultsPanel";
+import { ErResultsPanel } from "./ErResultsPanel";
 import { TimelineStrip } from "./TimelineStrip";
 
-const EMPTY_ERT: ERTimeline = { actions: [], ticks: [] };
+const EMPTY_ERT: ERTimeline = { actions: [], periodic: [] };
 
 function teamToSlots(team: Team): TeamSlot[] {
   return team.characters
@@ -62,11 +64,11 @@ function teamToSlots(team: Team): TeamSlot[] {
     .filter((s) => particles[s.charId]);
 }
 
-interface ERCalcCardProps {
+interface ErCalcCardProps {
   team: Team;
 }
 
-export function ERCalcCard({ team }: ERCalcCardProps) {
+export function ErCalcCard({ team }: ErCalcCardProps) {
   const { t, language } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
   const [collapsed, setCollapsed] = useState(true);
@@ -104,29 +106,41 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
   const mainERT = timelines[timelines.length - 1] ?? EMPTY_ERT;
   const startupERTs = timelines.slice(0, -1);
 
+  // Concatenate multiple startup ERTimelines into one ERTimeline
+  const concatErTimelines = useCallback((ts: ERTimeline[]): ERTimeline => {
+    const actions: TimelineAction[] = [];
+    const periodic: PeriodicProc[] = [];
+    let offset = 0;
+    for (const t of ts) {
+      for (const a of t.actions) actions.push({ ...a });
+      for (const p of t.periodic) {
+        periodic.push({ ...p, targetIndex: p.targetIndex + offset });
+      }
+      offset += t.actions.length;
+    }
+    return { actions, periodic };
+  }, []);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: mainERT derived from timelines
   const results = useMemo<ERResult[]>(() => {
     if (erTeam.length === 0 || mainERT.actions.length === 0) return [];
     const teamMembers = erTeam.map(toTeamMember);
-    const mainFlat = flattenERTimeline(mainERT);
-    const startupFlat =
-      startupERTs.length > 0
-        ? startupERTs.flatMap((ert) => flattenERTimeline(ert))
-        : undefined;
+    const startup =
+      startupERTs.length > 0 ? concatErTimelines(startupERTs) : undefined;
     const opts = {
       calcMode,
       particleMode,
       enemyParticles: enemyParticles || undefined,
-      timeline2:
-        startupFlat && startupFlat.length > 0 ? startupFlat : undefined,
+      timeline2: startup && startup.actions.length > 0 ? mainERT : undefined,
     };
-    if (startupFlat && startupFlat.length > 0) {
-      return calculateTeamER(teamMembers, startupFlat, {
-        ...opts,
-        timeline2: mainFlat,
-      });
+    if (startup && startup.actions.length > 0) {
+      return calculateTeamER(teamMembers, startup, opts);
     }
-    return calculateTeamER(teamMembers, mainFlat, opts);
+    return calculateTeamER(teamMembers, mainERT, {
+      calcMode,
+      particleMode,
+      enemyParticles: enemyParticles || undefined,
+    });
   }, [erTeam, timelines, calcMode, particleMode, enemyParticles]);
 
   const updateTimeline = useCallback(
@@ -142,37 +156,79 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
   const handleAddAction = useCallback(
     (charId: string, action: ActionType, tlIndex: number) => {
       updateTimeline(tlIndex, (ert) => {
-        const newActions = [...ert.actions, { char: charId, action }];
-        let newTicks = [...ert.ticks];
-        if (
-          (action === "E" || action === "holdE") &&
-          periodicGenerators.has(charId)
-        ) {
-          const eIndex = newActions.length - 1;
-          newTicks = [
-            ...newTicks,
-            ...autoPlaceTicks(newActions, eIndex, charId),
+        const newActions: TimelineAction[] = [
+          ...ert.actions,
+          { char: charId, action },
+        ];
+        let newPeriodic = [...ert.periodic];
+
+        // Auto-place periodic procs when a periodic trigger is added
+        const isETrigger =
+          action === "E" || action === "holdE" || action === "specialE";
+        const isQTrigger = action === "Q" || action === "specialQ";
+        if (isETrigger && hasPeriodicGeneration(charId, "E")) {
+          const idx = newActions.length - 1;
+          newPeriodic = [
+            ...newPeriodic,
+            ...autoPlacePeriodic(newActions, idx, charId, "E"),
+          ];
+        } else if (isQTrigger && hasPeriodicGeneration(charId, "Q")) {
+          const idx = newActions.length - 1;
+          newPeriodic = [
+            ...newPeriodic,
+            ...autoPlacePeriodic(newActions, idx, charId, "Q"),
           ];
         }
-        return { actions: newActions, ticks: newTicks };
+
+        // Auto-toggle Favonius on this node if wielder has Favonius AND
+        // doesn't yet have the default N procs flagged in this timeline
+        const wielder = erTeam.find((s) => s.charId === charId);
+        const we = wielder?.weaponId
+          ? weaponEnergyById[wielder.weaponId]
+          : undefined;
+        if (we?.energy.effect === "particles" && (isETrigger || isQTrigger)) {
+          const defaultProcs =
+            we.energy.defaultProcsByRefinement[wielder?.refinement ?? 0];
+          const existing = newActions.filter(
+            (a) => a.char === charId && a.favoniusProc
+          ).length;
+          if (existing < defaultProcs) {
+            newActions[newActions.length - 1] = {
+              ...newActions[newActions.length - 1],
+              favoniusProc: true,
+            };
+          }
+        }
+
+        return { actions: newActions, periodic: newPeriodic };
       });
     },
-    [updateTimeline]
+    [updateTimeline, erTeam]
   );
 
   const handleRemoveAction = useCallback(
     (index: number, tlIndex: number) => {
       updateTimeline(tlIndex, (ert) => {
         const newActions = ert.actions.filter((_, i) => i !== index);
-        const newTicks = ert.ticks
-          .filter((tk) => tk.targetIndex !== index)
-          .map((tk) => ({
-            ...tk,
+        const newPeriodic = ert.periodic
+          .filter((p) => p.targetIndex !== index)
+          .map((p) => ({
+            ...p,
             targetIndex:
-              tk.targetIndex > index ? tk.targetIndex - 1 : tk.targetIndex,
+              p.targetIndex > index ? p.targetIndex - 1 : p.targetIndex,
           }));
-        return { actions: newActions, ticks: newTicks };
+        return { actions: newActions, periodic: newPeriodic };
       });
+    },
+    [updateTimeline]
+  );
+
+  const handleUpdateAction = useCallback(
+    (index: number, action: TimelineAction, tlIndex: number) => {
+      updateTimeline(tlIndex, (ert) => ({
+        ...ert,
+        actions: ert.actions.map((a, i) => (i === index ? action : a)),
+      }));
     },
     [updateTimeline]
   );
@@ -184,9 +240,9 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
     [updateTimeline]
   );
 
-  const handleUpdateTicks = useCallback(
-    (newTicks: TickAssignment[], tlIndex: number) => {
-      updateTimeline(tlIndex, (ert) => ({ ...ert, ticks: newTicks }));
+  const handleUpdatePeriodic = useCallback(
+    (newPeriodic: PeriodicProc[], tlIndex: number) => {
+      updateTimeline(tlIndex, (ert) => ({ ...ert, periodic: newPeriodic }));
     },
     [updateTimeline]
   );
@@ -211,10 +267,10 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
   const hints = useMemo(
     () =>
       analyzeRotation(
-        timelines.flatMap((ert) => flattenERTimeline(ert)),
+        concatErTimelines(timelines),
         erTeam.map((s) => s.charId)
       ),
-    [timelines, erTeam]
+    [timelines, erTeam, concatErTimelines]
   );
 
   const bottleneck = useMemo(() => {
@@ -225,6 +281,25 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
       return null;
     return max;
   }, [results]);
+
+  // Suggestion: auto-toggle Favonius on existing timelines when a wielder equips Favonius
+  const applyFavoniusDefaults = useCallback(() => {
+    for (const slot of erTeam) {
+      const we = slot.weaponId ? weaponEnergyById[slot.weaponId] : undefined;
+      if (we?.energy.effect !== "particles") continue;
+      const defaultProcs =
+        we.energy.defaultProcsByRefinement[slot.refinement ?? 0];
+      const newTimelines = timelines.map((ert) => {
+        const actions = ert.actions.map((a) => ({ ...a }));
+        // Clear prior Favonius flags for this wielder, then re-apply defaults
+        for (const a of actions)
+          if (a.char === slot.charId) a.favoniusProc = false;
+        autoPlaceFavonius(actions, slot.charId, defaultProcs);
+        return { ...ert, actions };
+      });
+      setTimelines(newTimelines);
+    }
+  }, [erTeam, timelines, setTimelines]);
 
   if (charIds.length < 2) return null;
 
@@ -311,6 +386,19 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
                   </option>
                 ))}
               </select>
+
+              <button
+                type="button"
+                onClick={applyFavoniusDefaults}
+                className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded border border-border/30 hover:border-border"
+                title={
+                  language === "zh"
+                    ? "重置西风默认产球"
+                    : "Reset Favonius defaults"
+                }
+              >
+                {language === "zh" ? "重置西风" : "Reset Fav"}
+              </button>
             </div>
 
             {/* Timeline editors */}
@@ -352,12 +440,11 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
                     handleAddAction(charId, action, tlIdx)
                   }
                   onRemoveAction={(i) => handleRemoveAction(i, tlIdx)}
+                  onUpdateAction={(i, a) => handleUpdateAction(i, a, tlIdx)}
                   onReorderActions={(newActions) =>
                     handleReorderActions(newActions, tlIdx)
                   }
-                  onUpdateTicks={(newTicks) =>
-                    handleUpdateTicks(newTicks, tlIdx)
-                  }
+                  onUpdatePeriodic={(newP) => handleUpdatePeriodic(newP, tlIdx)}
                   onClear={() => handleClearTimeline(tlIdx)}
                 />
               );
@@ -390,7 +477,7 @@ export function ERCalcCard({ team }: ERCalcCardProps) {
 
             {/* Results */}
             {results.length > 0 && (
-              <ERResultsPanel results={results} team={erTeam} embedded />
+              <ErResultsPanel results={results} team={erTeam} embedded />
             )}
           </CardContent>
         </CollapsibleContent>

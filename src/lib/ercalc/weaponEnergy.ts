@@ -2,11 +2,16 @@ import type { WeaponType } from "../../data/types";
 
 export type WeaponEnergyEffect =
   | {
-      /** Generates clear particles on proc */
+      /** Generates clear particles on proc. User attaches procs to individual
+       *  E/Q nodes on the timeline via the `favoniusProc` flag. */
       effect: "particles";
       particleCount: number;
-      /** Cooldown in seconds per refinement [R1..R5] */
+      /** Cooldown in seconds per refinement [R1..R5] (for documentation / UI hints). */
       cooldown: [number, number, number, number, number];
+      /** Default proc count to auto-attach to E/Q nodes per refinement [R1..R5].
+       *  Rough estimate assuming ~15s rotation with continuous damage uptime.
+       *  Users adjust per-node via popover. */
+      defaultProcsByRefinement: [number, number, number, number, number];
     }
   | {
       /** Grants flat energy (not affected by ER%) */
@@ -28,11 +33,13 @@ export interface WeaponEnergyEntry {
   energy: WeaponEnergyEffect;
 }
 
-// Favonius: 3 clear particles on CRIT hit
+// Favonius: 3 clear particles on CRIT. CD by refinement 12/10.5/9/7.5/6s.
+// Typical 15-20s rotation with continuous-damage wielder → 1-3 procs.
 const favoniusEnergy: WeaponEnergyEffect = {
   effect: "particles",
   particleCount: 3,
   cooldown: [12, 10.5, 9, 7.5, 6],
+  defaultProcsByRefinement: [1, 1, 2, 2, 3],
 };
 
 const favoniusWeapons: WeaponEnergyEntry[] = [

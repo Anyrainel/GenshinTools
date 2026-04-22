@@ -8,9 +8,15 @@ import nodKraiSE from "@/data/ercalc/selfEnergy-nod-krai.json";
 import noneSE from "@/data/ercalc/selfEnergy-none.json";
 import snezhnayaSE from "@/data/ercalc/selfEnergy-snezhnaya.json";
 import sumeruSE from "@/data/ercalc/selfEnergy-sumeru.json";
-import type { ActionType } from "./types";
+import { z } from "zod";
+import type {
+  ActionType,
+  ParticleEntry,
+  ParticleMode,
+  Particles,
+} from "./types";
 
-// ─── JSON data ───
+// ─── Self-energy data ───
 
 export interface SelfEnergyEntry {
   source: string;
@@ -39,41 +45,81 @@ export const allSelfEnergy: SelfEnergyMap = {
   ...noneSE,
 };
 
-/** Particle data can be a fixed number or weighted array [[count, probability], ...]. */
-type ParticleValue = number | [number, number][];
+// ─── Particle data schema validation ───
 
-interface ParticleSkillEntry {
-  particles: ParticleValue;
-  notes?: string;
+const ParticlesSchema: z.ZodType<Particles> = z.union([
+  z.number(),
+  z.array(z.tuple([z.number(), z.number()])),
+]);
+
+const ActionParticleSchema = z.object({
+  particles: ParticlesSchema,
+  notes: z.string().optional(),
+});
+
+const HitPatternSchema = z.object({
+  pattern: z.array(ParticlesSchema),
+  notes: z.string().optional(),
+});
+
+const PeriodicConfigSchema = z.object({
+  procs: z.number(),
+  particles: ParticlesSchema,
+  notes: z.string().optional(),
+});
+
+const ParticleEntrySchema = z.object({
+  element: z.string(),
+  source: z.enum(["fandom", "gcsim", "lunaris", "manual"]).optional(),
+  spawnPoint: z.enum(["Character", "Enemy", "Construct"]).optional(),
+  E: ActionParticleSchema.optional(),
+  holdE: ActionParticleSchema.optional(),
+  specialE: ActionParticleSchema.optional(),
+  NA: HitPatternSchema.optional(),
+  CA: HitPatternSchema.optional(),
+  PA: HitPatternSchema.optional(),
+  periodic: z
+    .object({
+      E: PeriodicConfigSchema.optional(),
+      Q: PeriodicConfigSchema.optional(),
+    })
+    .optional(),
+  _unmodeled: z.array(z.string()).optional(),
+});
+
+export const particles: Record<string, ParticleEntry> = z
+  .record(z.string(), ParticleEntrySchema)
+  .parse(particlesData) as Record<string, ParticleEntry>;
+
+// ─── Particle resolution ───
+
+/** Resolve a Particles value to its (min, expected, max) triple. */
+export function particleRange(p: Particles | undefined): {
+  min: number;
+  expected: number;
+  max: number;
+} {
+  if (p == null) return { min: 0, expected: 0, max: 0 };
+  if (typeof p === "number") return { min: p, expected: p, max: p };
+  let min = 0;
+  let expected = 0;
+  let max = 0;
+  for (const [count, chance] of p) {
+    if (chance >= 0.9999) min += count;
+    expected += count * chance;
+    max += count;
+  }
+  return { min, expected, max };
 }
 
-interface ParticlePeriodicEntry {
-  procs: number;
-  particles: ParticleValue;
-  notes?: string;
+/** Pick a concrete particle count based on the RNG mode. */
+export function resolveParticles(
+  p: Particles | undefined,
+  mode: ParticleMode
+): number {
+  const r = particleRange(p);
+  return mode === "min" ? r.min : mode === "max" ? r.max : r.expected;
 }
-
-export interface ParticleEntry {
-  element: string;
-  source?: string;
-  spawnPoint?: string;
-  E?: ParticleSkillEntry;
-  holdE?: ParticleSkillEntry;
-  periodic?: { E: ParticlePeriodicEntry };
-}
-
-/** Resolve a ParticleValue to its expected (average) number. */
-export function resolveParticleAvg(v: ParticleValue | undefined): number {
-  if (v == null) return 0;
-  if (typeof v === "number") return v;
-  // weighted: sum(count * probability)
-  return v.reduce((sum, [count, prob]) => sum + count * prob, 0);
-}
-
-export const particles = particlesData as unknown as Record<
-  string,
-  ParticleEntry
->;
 
 // ─── Energy multipliers ───
 
@@ -84,7 +130,7 @@ export const ORB_MULTIPLIER = 3.0;
 
 /**
  * Off-field characters receive reduced energy from particles.
- * Formula: 1.0 - 0.1 × partySize (matches gcsim pkg/core/player/character/energy.go)
+ * Formula: 1.0 - 0.1 × partySize (matches gcsim pkg/core/player/character/energy.go).
  */
 export const OFF_FIELD_MULTIPLIER: Record<number, number> = {
   1: 1.0,
@@ -93,31 +139,34 @@ export const OFF_FIELD_MULTIPLIER: Record<number, number> = {
   4: 0.6,
 };
 
-export const FAVONIUS_PARTICLES = 3;
-
 // ─── Action classification sets ───
 
-/** Actions that produce particles (used by simulation engine). */
-export const PARTICLE_ACTIONS = new Set<ActionType>([
+/** Direct per-cast particle-producing actions. */
+export const DIRECT_PARTICLE_ACTIONS = new Set<ActionType>([
   "E",
   "holdE",
-  "periodicE",
+  "specialE",
 ]);
+
+/** Per-hit pattern actions (infusion chars). */
+export const PATTERN_ACTIONS = new Set<ActionType>(["NA", "CA", "PA"]);
 
 /** Actions that consume energy (burst). */
 export const BURST_ACTIONS = new Set<ActionType>(["Q", "specialQ"]);
+
+/** Actions that trigger periodic deployments (E/holdE → periodic.E, Q/specialQ → periodic.Q). */
+export const PERIODIC_E_TRIGGERS = new Set<ActionType>([
+  "E",
+  "holdE",
+  "specialE",
+]);
+export const PERIODIC_Q_TRIGGERS = new Set<ActionType>(["Q", "specialQ"]);
 
 // ─── NA energy model ───
 
 /**
  * NA energy generation model (based on gcsim pkg/core/energy.go).
- *
- * N (actions between procs) by weapon type, assuming ~3 hits per action:
- *   Sword    (10% base, +5%/miss, ~5.5 hits/proc) → every 2nd action
- *   Claymore (0% base, +10%/miss, ~4.5 hits/proc) → every 2nd action
- *   Polearm  (0% base, +4%/miss, ~7.1 hits/proc)  → every 3rd action
- *   Bow      (0% base, +5%/miss, ~6.3 hits/proc)  → every 2nd action
- *   Catalyst (0% base, +10%/miss, ~4.5 hits/proc) → every 2nd action
+ * Approximates "pity" procs: every N-th NA/CA/PA action by a character drops 1 flat energy.
  */
 export const NA_PROC_INTERVAL: Record<string, number> = {
   sword: 2,
@@ -152,22 +201,25 @@ export const ENEMY_PRESETS: {
 
 // ─── Action labels (i18n) ───
 
-/** Full action label map (all action types including tick). */
+/** Full action label map (includes event-source labels for results display). */
 export const ACTION_LABELS: Record<string, { en: string; zh: string }> = {
   E: { en: "E", zh: "E" },
   holdE: { en: "Hold E", zh: "长按E" },
-  periodicE: { en: "Tick", zh: "持续E" },
+  specialE: { en: "Alt E", zh: "特殊E" },
   Q: { en: "Q", zh: "Q" },
   specialQ: { en: "Alt Q", zh: "特殊Q" },
   NA: { en: "NA", zh: "普攻" },
   CA: { en: "CA", zh: "重击" },
   PA: { en: "Plunge", zh: "下落" },
   wait: { en: "Wait", zh: "等待" },
+  periodic: { en: "Periodic", zh: "持续产球" },
+  favonius: { en: "Favonius", zh: "西风" },
 };
 
-export const TICK_LABEL = { en: "E Tick", zh: "E产球" };
+export const PERIODIC_LABEL = { en: "Periodic", zh: "持续产球" };
+export const FAVONIUS_LABEL = { en: "Favonius", zh: "西风" };
 
 // ─── UI constants ───
 
-/** Standard chip height for timeline action/tick blocks. */
+/** Standard chip height for timeline action blocks. */
 export const CHIP_H = "h-7";

@@ -1,25 +1,23 @@
 import { artifactEnergyById } from "@/lib/ercalc/artifactEnergy";
-import {
-  expectedPeriodicProcs,
-  multiHitETotal,
-  periodicGenerators,
-} from "@/lib/ercalc/particleConfig";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import {
   BURST_ACTIONS,
   CLEAR_PARTICLE,
   DIFF_ELEMENT_PARTICLE,
+  DIRECT_PARTICLE_ACTIONS,
   NA_FLAT_ENERGY_PER_PROC,
   NA_PROC_INTERVAL,
   NA_PROC_INTERVAL_DEFAULT,
   OFF_FIELD_MULTIPLIER,
   PARAM_DEFAULTS,
-  PARTICLE_ACTIONS,
+  PATTERN_ACTIONS,
+  PERIODIC_E_TRIGGERS,
+  PERIODIC_Q_TRIGGERS,
   SAME_ELEMENT_PARTICLE,
   type SelfEnergyEntry,
   allSelfEnergy,
   particles as particlesData,
-  resolveParticleAvg,
+  resolveParticles,
 } from "./constants";
 import type {
   ActionType,
@@ -28,14 +26,12 @@ import type {
   ERTimeline,
   EnergyEvent,
   ParticleMode,
+  PeriodicProc,
   TeamMember,
   TeamSlot,
-  TickAssignment,
-  Timeline,
   TimelineAction,
 } from "./types";
 
-// Re-export all public types for backwards compatibility
 export type {
   ActionType,
   CalcMode,
@@ -44,90 +40,143 @@ export type {
   ERTimeline,
   EnergyEvent,
   ParticleMode,
+  PeriodicProc,
   TeamMember,
-  TickAssignment,
-  Timeline,
   TimelineAction,
 } from "./types";
 
-/**
- * Convert an ERTimeline to a flat Timeline for the simulation engine.
- * Inserts periodicE actions just before their target main action.
- */
-export function flattenERTimeline(ert: ERTimeline): Timeline {
-  const ticksByTarget = new Map<number, TickAssignment[]>();
-  for (const tick of ert.ticks) {
-    const arr = ticksByTarget.get(tick.targetIndex);
-    if (arr) arr.push(tick);
-    else ticksByTarget.set(tick.targetIndex, [tick]);
-  }
-  const flat: Timeline = [];
-  for (let i = 0; i < ert.actions.length; i++) {
-    const ticks = ticksByTarget.get(i);
-    if (ticks) {
-      for (const tick of ticks) {
-        flat.push({ char: tick.sourceChar, action: "periodicE" });
-      }
-    }
-    flat.push(ert.actions[i]);
-  }
-  return flat;
-}
-
-/**
- * Convert a legacy flat Timeline (with periodicE entries) to an ERTimeline.
- * Periodic actions are assigned to the next non-periodic action.
- */
-export function legacyToERTimeline(timeline: Timeline): ERTimeline {
-  const actions: TimelineAction[] = [];
-  const ticks: TickAssignment[] = [];
-  const pending: string[] = [];
-  for (const act of timeline) {
-    if (act.action === "periodicE") {
-      pending.push(act.char);
-    } else {
-      const targetIndex = actions.length;
-      for (const sourceChar of pending) {
-        ticks.push({ sourceChar, targetIndex });
-      }
-      pending.length = 0;
-      actions.push(act);
-    }
-  }
-  if (pending.length > 0 && actions.length > 0) {
-    const lastIndex = actions.length - 1;
-    for (const sourceChar of pending) {
-      ticks.push({ sourceChar, targetIndex: lastIndex });
-    }
-  }
-  return { actions, ticks };
-}
-
-/**
- * Auto-generate tick assignments when adding an E for a periodic generator.
- * Distributes N ticks to the next N main actions after `eIndex`.
- */
-export function autoPlaceTicks(
-  actions: TimelineAction[],
-  eIndex: number,
-  charId: string
-): TickAssignment[] {
-  const count = expectedPeriodicProcs[charId] ?? 0;
-  if (count <= 0) return [];
-  const newTicks: TickAssignment[] = [];
-  let placed = 0;
-  for (let i = eIndex + 1; i < actions.length && placed < count; i++) {
-    newTicks.push({ sourceChar: charId, targetIndex: i });
-    placed++;
-  }
-  if (placed < count && placed === 0) {
-    newTicks.push({ sourceChar: charId, targetIndex: eIndex });
-    placed++;
-  }
-  return newTicks;
-}
-
 const particles = particlesData;
+
+// ─── Particle lookup ───
+
+/** Direct per-cast particles for a main action. Does not handle periodic, pattern, or Favonius. */
+function getActionParticles(
+  charId: string,
+  action: ActionType,
+  mode: ParticleMode
+): number {
+  if (!DIRECT_PARTICLE_ACTIONS.has(action)) return 0;
+  const data = particles[charId];
+  if (!data) return 0;
+  if (action === "E") return resolveParticles(data.E?.particles, mode);
+  if (action === "holdE") {
+    if (data.holdE) return resolveParticles(data.holdE.particles, mode);
+    return resolveParticles(data.E?.particles, mode); // fallback
+  }
+  if (action === "specialE")
+    return resolveParticles(data.specialE?.particles, mode);
+  return 0;
+}
+
+/** Per-hit pattern particles for NA/CA/PA (infusion chars).
+ *  hitIndex is the char's consecutive count of this action type. */
+function getHitParticles(
+  charId: string,
+  action: ActionType,
+  hitIndex: number,
+  mode: ParticleMode
+): number {
+  if (!PATTERN_ACTIONS.has(action)) return 0;
+  const data = particles[charId];
+  if (!data) return 0;
+  const cfg =
+    action === "NA"
+      ? data.NA
+      : action === "CA"
+        ? data.CA
+        : action === "PA"
+          ? data.PA
+          : undefined;
+  if (!cfg || cfg.pattern.length === 0) return 0;
+  return resolveParticles(cfg.pattern[hitIndex % cfg.pattern.length], mode);
+}
+
+/** Per-proc particles for a periodic emission from the given trigger. */
+function getPeriodicParticles(
+  charId: string,
+  trigger: "E" | "Q",
+  mode: ParticleMode
+): number {
+  const cfg = particles[charId]?.periodic?.[trigger];
+  if (!cfg) return 0;
+  return resolveParticles(cfg.particles, mode);
+}
+
+/** Element of a character's particles. */
+function getParticleElement(charId: string): string {
+  return particles[charId]?.element ?? "Clear";
+}
+
+/** Default periodic proc count the UI should auto-place when the trigger action is added. */
+export function getDefaultProcCount(
+  charId: string,
+  trigger: "E" | "Q"
+): number {
+  return particles[charId]?.periodic?.[trigger]?.procs ?? 0;
+}
+
+/** Whether a character has a periodic generator triggered by a given action. */
+export function hasPeriodicGeneration(
+  charId: string,
+  trigger: "E" | "Q"
+): boolean {
+  return particles[charId]?.periodic?.[trigger] != null;
+}
+
+// ─── Auto-placement ───
+
+/**
+ * Auto-place N periodic procs when a trigger action is added to the timeline.
+ * Distributes procs to the main-action slots following the trigger.
+ */
+export function autoPlacePeriodic(
+  actions: TimelineAction[],
+  triggerIndex: number,
+  charId: string,
+  trigger: "E" | "Q"
+): PeriodicProc[] {
+  const count = getDefaultProcCount(charId, trigger);
+  if (count <= 0) return [];
+  const procs: PeriodicProc[] = [];
+  let placed = 0;
+  for (let i = triggerIndex + 1; i < actions.length && placed < count; i++) {
+    procs.push({ sourceChar: charId, trigger, targetIndex: i });
+    placed++;
+  }
+  // If we couldn't place any forward (trigger is last action), attach one to itself.
+  if (placed === 0) {
+    procs.push({ sourceChar: charId, trigger, targetIndex: triggerIndex });
+  }
+  return procs;
+}
+
+/**
+ * Auto-toggle Favonius procs for a wielder on the first N E/Q actions.
+ * Mutates the provided actions array in place.
+ */
+export function autoPlaceFavonius(
+  actions: TimelineAction[],
+  wielderId: string,
+  procCount: number
+): void {
+  let placed = 0;
+  for (const a of actions) {
+    if (placed >= procCount) break;
+    if (a.char !== wielderId) continue;
+    if (
+      a.action === "E" ||
+      a.action === "holdE" ||
+      a.action === "specialE" ||
+      a.action === "Q" ||
+      a.action === "specialQ"
+    ) {
+      a.favoniusProc = true;
+      placed++;
+    }
+  }
+}
+
+// ─── Helpers ───
 
 function resolveParamAmount(
   charId: string,
@@ -139,8 +188,6 @@ function resolveParamAmount(
   return base * param.multiplier;
 }
 
-// ─── Particle helpers ───
-
 function elementMatchEnergy(
   receiverElement: string,
   particleElement: string
@@ -151,62 +198,8 @@ function elementMatchEnergy(
     : DIFF_ELEMENT_PARTICLE;
 }
 
-/** Apply RNG mode to a fractional particle average. */
-function rngAdjust(avg: number, mode: ParticleMode): number {
-  if (mode === "min") return Math.floor(avg);
-  if (mode === "max") return Math.ceil(avg);
-  return avg;
-}
+// ─── Self-energy / weapon / artifact ───
 
-/**
- * Get particle count for a timeline action.
- * - periodicE → per-proc value from particles.json press data
- * - E on periodic chars → 0 (deployment only; use periodicE for procs)
- * - E on multi-hit-instant chars → corrected total from multiHitETotal
- * - E on simple chars → press.avgParticles
- * - holdE → hold data if available, else falls back to E logic
- */
-function getActionParticles(
-  charId: string,
-  action: ActionType,
-  mode: ParticleMode
-): number {
-  if (!PARTICLE_ACTIONS.has(action)) return 0;
-
-  const data = particles[charId];
-  if (!data) return 0;
-
-  // periodicE: per-proc value from periodic data or E data
-  if (action === "periodicE") {
-    const periodicParticles = data.periodic?.E?.particles;
-    if (periodicParticles != null) {
-      return rngAdjust(resolveParticleAvg(periodicParticles), mode);
-    }
-    return rngAdjust(resolveParticleAvg(data.E?.particles), mode);
-  }
-
-  // Periodic deployers: E/holdE produces 0 (deployment only)
-  if (periodicGenerators.has(charId)) return 0;
-
-  // holdE: prefer holdE data
-  if (action === "holdE" && data.holdE) {
-    return rngAdjust(resolveParticleAvg(data.holdE.particles), mode);
-  }
-
-  // E (or holdE fallback): multi-hit override or E data
-  if (multiHitETotal[charId] != null) {
-    return rngAdjust(multiHitETotal[charId], mode);
-  }
-  return rngAdjust(resolveParticleAvg(data.E?.particles), mode);
-}
-
-function getParticleElement(charId: string): string {
-  return particles[charId]?.element ?? "Clear";
-}
-
-// ─── Shared energy helpers ───
-
-/** Check if a self-energy entry's trigger action is present in the timeline. */
 function isActionTriggered(
   entryAction: string,
   activeActions: Set<string>
@@ -215,11 +208,14 @@ function isActionTriggered(
   if (entryAction === "Q")
     return activeActions.has("Q") || activeActions.has("specialQ");
   if (entryAction === "E")
-    return activeActions.has("E") || activeActions.has("holdE");
+    return (
+      activeActions.has("E") ||
+      activeActions.has("holdE") ||
+      activeActions.has("specialE")
+    );
   return activeActions.has(entryAction);
 }
 
-/** Accumulate energy from an entry (erScale, param, or flat amount). */
 function accumulateEntryEnergy(
   entry: SelfEnergyEntry,
   charId: string,
@@ -227,7 +223,6 @@ function accumulateEntryEnergy(
   accum: { flat: number; erScaling: number }
 ): void {
   const procs = entry.procs ?? 1;
-
   if (entry.erScale) {
     accum.erScaling += (entry.erScale.per100 ?? 0) * procs;
     return;
@@ -244,12 +239,6 @@ function accumulateEntryEnergy(
   }
 }
 
-/**
- * Compute self-energy for a character from their own passives/constellations.
- * Returns { flat, erScaling } separately:
- * - flat: energy not affected by ER% (refunds, fixed amounts)
- * - erScaling: energy per 100% ER (treated as additional particle energy in solver)
- */
 function computeSelfEnergy(
   charId: string,
   constellation: number,
@@ -258,7 +247,6 @@ function computeSelfEnergy(
 ): { flat: number; erScaling: number } {
   const entries = allSelfEnergy[charId];
   if (!entries) return { flat: 0, erScaling: 0 };
-
   const accum = { flat: 0, erScaling: 0 };
   for (const entry of entries) {
     if (constellation < entry.minC) continue;
@@ -270,10 +258,6 @@ function computeSelfEnergy(
   return accum;
 }
 
-/**
- * Compute party energy that a character gives to teammates.
- * Returns { flat, erScaling } — erScaling is energy per 100% ER of the SOURCE.
- */
 function computePartyEnergy(
   sourceId: string,
   sourceConstellation: number,
@@ -281,7 +265,6 @@ function computePartyEnergy(
 ): { flat: number; erScaling: number } {
   const entries = allSelfEnergy[sourceId];
   if (!entries) return { flat: 0, erScaling: 0 };
-
   const accum = { flat: 0, erScaling: 0 };
   for (const entry of entries) {
     if (sourceConstellation < entry.minC) continue;
@@ -298,35 +281,22 @@ function computePartyEnergy(
   return accum;
 }
 
-// ─── Flat energy computation (global per rotation) ───
-
-/**
- * Compute all non-particle energy for a character per rotation.
- * Returns { flat, erScaling }:
- * - flat: energy not affected by ER% (self-refunds, weapons, artifacts, party)
- * - erScaling: energy per 100% ER (ER-scaling passives like Sara P2, Dori P2)
- */
 function computeRotationEnergy(
   member: TeamMember,
   team: TeamMember[],
-  /** Actions each character performs in the timeline. Used for conditional energy triggers. */
   allCharActions?: Map<string, Set<string>>,
-  /** Actions this specific character performs. */
   activeActions?: Set<string>
 ): { flat: number; erScaling: number } {
   const { id, constellation = 0, burstCost } = member;
   let flat = 0;
   let erScaling = 0;
 
-  // Self-energy effects (conditional on having the triggering action in timeline)
   const self = computeSelfEnergy(id, constellation, burstCost, activeActions);
   flat += self.flat;
   erScaling += self.erScaling;
 
-  // Party energy from teammates (conditional on source having the trigger action)
   for (const tm of team) {
     if (tm.id === id) continue;
-    // Pass source's active actions for conditional filtering
     const sourceActions = allCharActions?.get(tm.id);
     const party = computePartyEnergy(
       tm.id,
@@ -334,39 +304,35 @@ function computeRotationEnergy(
       sourceActions
     );
     flat += party.flat;
-    // Party ER-scaling uses SOURCE's ER, not receiver's.
-    // For simplicity, we add it to receiver's erScaling — this is an approximation.
     erScaling += party.erScaling;
   }
 
-  // Weapon flat energy (goes to wielder only, conditional on trigger action)
   for (const tm of team) {
     const we = tm.weaponId ? weaponEnergyById[tm.weaponId] : undefined;
     if (!we) continue;
     if (we.energy.effect === "flatEnergy" && tm.id === id) {
-      // Check if the trigger condition is met in the timeline
       const triggerAction = we.energy.trigger;
       if (activeActions) {
         const hasTrigger =
           triggerAction === "burst"
             ? activeActions.has("Q") || activeActions.has("specialQ")
             : triggerAction === "skill"
-              ? activeActions.has("E") || activeActions.has("holdE")
-              : // "heal", "reaction", "onField" — assume triggered if character is in rotation
-                activeActions.size > 0;
+              ? activeActions.has("E") ||
+                activeActions.has("holdE") ||
+                activeActions.has("specialE")
+              : activeActions.size > 0;
         if (!hasTrigger) continue;
       }
       flat += we.energy.totalEnergy[tm.refinement ?? 0];
     }
   }
 
-  // Artifact energy (conditional on source having the trigger action)
   for (const tm of team) {
-    const ae = tm.artifactSetId
-      ? artifactEnergyById[tm.artifactSetId]
-      : undefined;
+    const ae =
+      tm.artifactSet?.type === "4pc"
+        ? artifactEnergyById[tm.artifactSet.setId]
+        : undefined;
     if (!ae) continue;
-    // Exile 4pc only triggers if the wielder bursts
     if (ae.trigger === "burst" && ae.target === "partyOthers" && tm.id !== id) {
       const tmActions = allCharActions?.get(tm.id);
       if (tmActions && !tmActions.has("Q") && !tmActions.has("specialQ"))
@@ -384,17 +350,8 @@ function computeRotationEnergy(
   return { flat, erScaling };
 }
 
-// ─── ER solver ───
+// ─── Solver ───
 
-/**
- * Solve for required ER%.
- *
- * Energy equation: flatEnergy + (particleEnergy + erScaling) × (ER/100) ≥ burstCost
- * Solving: ER = (burstCost - flatEnergy) / (particleEnergy + erScaling) × 100
- *
- * erScaling is energy per 100% ER from passives (Sara P2, Dori P2).
- * It acts like additional particle energy since it scales with ER.
- */
 function solveER(
   burstCost: number,
   particleEnergy: number,
@@ -408,51 +365,61 @@ function solveER(
   return Math.max(100, (needed / totalScaling) * 100);
 }
 
-// ─── On-field tracker ───
+// ─── Absorber ───
 
 /**
- * Determine who absorbs particles from action `i`.
- *
- * Particles travel to the character performing the NEXT action in the sequence.
- * However, periodicE actions don't represent a character swap (the character is
- * off-field), so they are skipped when determining the absorber — particles
- * pass through to the next real (non-periodicE) action.
- *
- * In repeating mode, the last action wraps to the first.
- * In one-shot mode, the last action self-absorbs.
+ * Absorber for particles emitted at main-action index `i`.
+ * Next-action-char rule; self-absorb at end of one-shot sequence, wrap in repeating.
  */
 function getAbsorber(
-  sequence: Timeline,
+  actions: TimelineAction[],
   i: number,
   isRepeating: boolean
 ): string {
-  // Find the next non-periodicE action (since periodicE chars are off-field)
-  for (let j = 1; j <= sequence.length; j++) {
-    let idx: number;
-    if (i + j < sequence.length) {
-      idx = i + j;
-    } else if (isRepeating) {
-      idx = (i + j) % sequence.length;
-    } else {
-      // One-shot: no more actions, self-absorb
-      return sequence[i].char;
-    }
-    if (sequence[idx].action !== "periodicE") {
-      return sequence[idx].char;
-    }
-  }
-  // All periodicE? Fallback to self
-  return sequence[i].char;
+  if (i + 1 < actions.length) return actions[i + 1].char;
+  if (isRepeating) return actions[0].char;
+  return actions[i].char;
 }
 
-// ─── Simulation helpers ───
+// ─── Simulation state ───
 
-/** Distribute particle energy from a single source to all team members. */
+interface CharSimState {
+  particleAccum: number;
+  flatAccum: number;
+  consecutiveNAs: number;
+  hitCounts: { NA: number; CA: number; PA: number };
+  maxER: number;
+  maxERParticle: number;
+  maxERFlat: number;
+  maxERQIndex: number;
+  maxEREvents: EnergyEvent[];
+  currentEvents: EnergyEvent[];
+  qEvaluated: number;
+  firstQSkipped: boolean;
+}
+
+function freshState(): CharSimState {
+  return {
+    particleAccum: 0,
+    flatAccum: 0,
+    consecutiveNAs: 0,
+    hitCounts: { NA: 0, CA: 0, PA: 0 },
+    maxER: 0,
+    maxERParticle: 0,
+    maxERFlat: 0,
+    maxERQIndex: -1,
+    maxEREvents: [],
+    currentEvents: [],
+    qEvaluated: 0,
+    firstQSkipped: false,
+  };
+}
+
 function distributeParticles(
   team: TeamMember[],
   state: Map<string, CharSimState>,
   sourceChar: string,
-  sourceAction: ActionType,
+  sourceAction: ActionType | "periodic" | "favonius",
   sourceIndex: number,
   particleCount: number,
   particleElement: string,
@@ -461,14 +428,16 @@ function distributeParticles(
   rotationLength: number
 ): void {
   for (const m of team) {
-    const s = state.get(m.id)!;
+    const s = state.get(m.id);
+    if (!s) continue;
     const onField = m.id === absorber;
     const mult = onField ? 1.0 : offFieldMult;
     const energy =
       particleCount * elementMatchEnergy(m.element, particleElement) * mult;
     s.particleAccum += energy;
     s.currentEvents.push({
-      sourceIndex: sourceIndex % rotationLength,
+      sourceIndex:
+        rotationLength > 0 ? sourceIndex % rotationLength : sourceIndex,
       sourceChar,
       sourceAction,
       absorberChar: absorber,
@@ -483,33 +452,14 @@ function distributeParticles(
 
 // ─── Simulation engine ───
 
-interface CharSimState {
-  particleAccum: number;
-  flatAccum: number;
-  consecutiveNAs: number;
-  maxER: number;
-  maxERParticle: number;
-  maxERFlat: number;
-  maxERQIndex: number;
-  maxEREvents: EnergyEvent[];
-  currentEvents: EnergyEvent[];
-  qEvaluated: number;
-  firstQSkipped: boolean;
-}
-
 /**
- * Walk through a sequence of actions, tracking particle energy per Q window.
- *
- * Key model rules:
- * 1. Regular E/holdE: "next-action absorber" — particles go to whoever acts next
- * 2. periodicE: particles go to the current on-field character (not the periodicE char)
- * 3. Q drains energy to 0 and evaluates the ER needed for that window
- * 4. Favonius procs follow the same absorber as the triggering E action
- * 5. All characters receive particles (on-field at 1.0x, off-field at reduced rate)
+ * Walk an expanded action sequence with per-action periodic procs.
+ * The sequence is pre-expanded (repeated for full-energy-repeat mode).
  */
-function simulateER(
+function simulateSequence(
   team: TeamMember[],
-  sequence: Timeline,
+  actions: TimelineAction[],
+  procsByIndex: Map<number, PeriodicProc[]>,
   options: EROptions | undefined,
   isRepeating: boolean,
   skipFirstQ: boolean,
@@ -522,15 +472,14 @@ function simulateER(
   const enemyClearParticles = options?.enemyParticles ?? 0;
   const teamById = new Map(team.map((m) => [m.id, m]));
 
-  // Compute per-character action sets (which actions each char performs)
+  // Action sets per character (for conditional energy triggers)
   const charActions = new Map<string, Set<string>>();
-  for (const act of sequence) {
+  for (const act of actions) {
     if (!teamById.has(act.char)) continue;
     if (!charActions.has(act.char)) charActions.set(act.char, new Set());
     charActions.get(act.char)!.add(act.action);
   }
 
-  // Compute rotation energy per character (flat + erScaling)
   const rotationEnergyMap = new Map<
     string,
     { flat: number; erScaling: number }
@@ -547,10 +496,9 @@ function simulateER(
     );
   }
 
-  // Count effective Q windows per character (excluding skipped first Q)
   const qWindowCount = new Map<string, number>();
   const firstQSeen = new Set<string>();
-  for (const act of sequence) {
+  for (const act of actions) {
     if (!BURST_ACTIONS.has(act.action) || !teamById.has(act.char)) continue;
     if (skipFirstQ && !firstQSeen.has(act.char)) {
       firstQSeen.add(act.char);
@@ -559,82 +507,34 @@ function simulateER(
     qWindowCount.set(act.char, (qWindowCount.get(act.char) ?? 0) + 1);
   }
 
-  // Simulation state per character
   const state = new Map<string, CharSimState>();
-  for (const m of team) {
-    state.set(m.id, {
-      particleAccum: 0,
-      flatAccum: 0,
-      consecutiveNAs: 0,
-      maxER: 0,
-      maxERParticle: 0,
-      maxERFlat: 0,
-      maxERQIndex: -1,
-      maxEREvents: [],
-      currentEvents: [],
-      qEvaluated: 0,
-      firstQSkipped: false,
-    });
-  }
+  for (const m of team) state.set(m.id, freshState());
 
-  const favProcced = new Set<string>();
-  const repeatCount = rotationLength > 0 ? sequence.length / rotationLength : 1;
+  const repeatCount = rotationLength > 0 ? actions.length / rotationLength : 1;
 
-  for (let i = 0; i < sequence.length; i++) {
-    // Reset Favonius tracking at rotation boundaries
-    if (i > 0 && rotationLength > 0 && i % rotationLength === 0) {
-      favProcced.clear();
-    }
-
-    const act = sequence[i];
+  for (let i = 0; i < actions.length; i++) {
+    const act = actions[i];
     if (!teamById.has(act.char)) continue;
 
-    // ── Particle-producing actions ──
-    if (PARTICLE_ACTIONS.has(act.action)) {
-      const particleCount = getActionParticles(
-        act.char,
-        act.action,
-        particleMode
-      );
-
-      // Determine absorber
-      const absorber = getAbsorber(sequence, i, isRepeating);
-
-      if (particleCount > 0) {
-        distributeParticles(
-          team,
-          state,
-          act.char,
-          act.action,
-          i,
-          particleCount,
-          getParticleElement(act.char),
-          absorber,
-          offFieldMult,
-          rotationLength
+    // ── 1. Periodic procs attached to this action (absorbed by on-field char = act.char) ──
+    const incoming = procsByIndex.get(i);
+    if (incoming) {
+      for (const proc of incoming) {
+        const n = getPeriodicParticles(
+          proc.sourceChar,
+          proc.trigger,
+          particleMode
         );
-      }
-
-      // Favonius-type weapon particles (one proc per wielder per rotation)
-      if (
-        (act.action === "E" || act.action === "holdE") &&
-        !favProcced.has(act.char)
-      ) {
-        const source = teamById.get(act.char)!;
-        const weaponEntry = source.weaponId
-          ? weaponEnergyById[source.weaponId]
-          : undefined;
-        if (weaponEntry?.energy.effect === "particles") {
-          favProcced.add(act.char);
+        if (n > 0) {
           distributeParticles(
             team,
             state,
-            act.char,
-            act.action,
+            proc.sourceChar,
+            "periodic",
             i,
-            weaponEntry.energy.particleCount,
-            "Clear",
-            absorber,
+            n,
+            getParticleElement(proc.sourceChar),
+            act.char, // on-field absorber
             offFieldMult,
             rotationLength
           );
@@ -642,44 +542,102 @@ function simulateER(
       }
     }
 
-    // ── Normal attack energy (absorber model, per gcsim pity system) ──
-    // gcsim: weapon-dependent pity probability per hit → 1 flat energy on proc.
-    // We approximate: every N-th consecutive NA/CA/PA action by the same char procs.
-    // Non-attack actions (E, Q, swap) reset the counter (gcsim resets on swap).
-    // Energy follows absorber model: next-action char is on-field, distributed to team.
-    if (act.action === "NA" || act.action === "CA" || act.action === "PA") {
-      const s = state.get(act.char)!;
-      s.consecutiveNAs++;
+    // ── 2. The action itself ──
+    const s = state.get(act.char)!;
 
+    // Direct per-cast particles (E / holdE / specialE)
+    if (DIRECT_PARTICLE_ACTIONS.has(act.action)) {
+      const n = getActionParticles(act.char, act.action, particleMode);
+      if (n > 0) {
+        const absorber = getAbsorber(actions, i, isRepeating);
+        distributeParticles(
+          team,
+          state,
+          act.char,
+          act.action,
+          i,
+          n,
+          getParticleElement(act.char),
+          absorber,
+          offFieldMult,
+          rotationLength
+        );
+      }
+    }
+
+    // Per-hit pattern particles (NA / CA / PA — infusion chars)
+    if (PATTERN_ACTIONS.has(act.action)) {
+      const hitKey = act.action as "NA" | "CA" | "PA";
+      const hitIndex = s.hitCounts[hitKey];
+      s.hitCounts[hitKey] = hitIndex + 1;
+      const n = getHitParticles(act.char, act.action, hitIndex, particleMode);
+      if (n > 0) {
+        const absorber = getAbsorber(actions, i, isRepeating);
+        distributeParticles(
+          team,
+          state,
+          act.char,
+          act.action,
+          i,
+          n,
+          getParticleElement(act.char),
+          absorber,
+          offFieldMult,
+          rotationLength
+        );
+      }
+    }
+
+    // Favonius proc attached to this node
+    if (act.favoniusProc) {
+      const member = teamById.get(act.char)!;
+      const we = member.weaponId
+        ? weaponEnergyById[member.weaponId]
+        : undefined;
+      if (we?.energy.effect === "particles") {
+        const absorber = getAbsorber(actions, i, isRepeating);
+        distributeParticles(
+          team,
+          state,
+          act.char,
+          "favonius",
+          i,
+          we.energy.particleCount,
+          "Clear",
+          absorber,
+          offFieldMult,
+          rotationLength
+        );
+      }
+    }
+
+    // NA pity flat energy (per gcsim; separate from infusion particles)
+    if (act.action === "NA" || act.action === "CA" || act.action === "PA") {
+      s.consecutiveNAs++;
       const member = teamById.get(act.char)!;
       const weaponType = member.weaponType?.toLowerCase();
       const interval = weaponType
         ? (NA_PROC_INTERVAL[weaponType] ?? NA_PROC_INTERVAL_DEFAULT)
         : NA_PROC_INTERVAL_DEFAULT;
-
       if (s.consecutiveNAs >= interval) {
         s.consecutiveNAs = 0;
-        // Proc: distribute flat energy via absorber model
-        const absorber = getAbsorber(sequence, i, isRepeating);
+        const absorber = getAbsorber(actions, i, isRepeating);
         for (const m of team) {
-          const ms = state.get(m.id)!;
+          const ms = state.get(m.id);
+          if (!ms) continue;
           const onField = m.id === absorber;
           const mult = onField ? 1.0 : offFieldMult;
           ms.flatAccum += NA_FLAT_ENERGY_PER_PROC * mult;
         }
       }
     } else {
-      // Non-attack action resets NA counter for the acting character
-      const s = state.get(act.char)!;
       s.consecutiveNAs = 0;
     }
 
-    // ── Burst checkpoint ──
+    // ── 3. Burst checkpoint ──
     if (BURST_ACTIONS.has(act.action)) {
-      const s = state.get(act.char)!;
       const member = teamById.get(act.char)!;
 
-      // Skip first Q in FE-repeat (character starts with full energy)
       if (skipFirstQ && !s.firstQSkipped) {
         s.firstQSkipped = true;
         s.particleAccum = 0;
@@ -694,7 +652,6 @@ function simulateER(
         const windowFlat = rotEnergy.flat / numWindows + s.flatAccum;
         const windowErScaling = rotEnergy.erScaling / numWindows;
 
-        // Add proportional enemy particles
         let windowParticle = s.particleAccum;
         if (enemyClearParticles > 0 && numWindows > 0) {
           windowParticle +=
@@ -713,20 +670,18 @@ function simulateER(
           s.maxER = erForQ;
           s.maxERParticle = windowParticle;
           s.maxERFlat = windowFlat;
-          s.maxERQIndex = i % rotationLength;
+          s.maxERQIndex = rotationLength > 0 ? i % rotationLength : i;
           s.maxEREvents = [...s.currentEvents];
         }
         s.qEvaluated++;
       }
 
-      // Reset accumulators (energy drains to 0 on burst)
       s.particleAccum = 0;
       s.flatAccum = 0;
       s.currentEvents = [];
     }
   }
 
-  // Build results
   return team.map((member) => {
     const { id, element, burstCost } = member;
     const s = state.get(id)!;
@@ -740,7 +695,6 @@ function simulateER(
       };
     }
 
-    // Characters with no evaluated Q: use per-rotation accumulated energy
     if (s.qEvaluated === 0) {
       const rotEnergy = rotationEnergyMap.get(id)!;
       let particleEnergy = s.particleAccum / repeatCount;
@@ -749,7 +703,6 @@ function simulateER(
           (enemyClearParticles / team.length) *
           elementMatchEnergy(element, "Clear");
       }
-
       return {
         characterId: id,
         erNeeded: solveER(
@@ -780,29 +733,77 @@ function simulateER(
   });
 }
 
-// ─── Main calculator ───
+/**
+ * Build a map from main-action index to the periodic procs that fire there.
+ */
+function indexProcs(procs: PeriodicProc[]): Map<number, PeriodicProc[]> {
+  const map = new Map<number, PeriodicProc[]>();
+  for (const p of procs) {
+    const arr = map.get(p.targetIndex);
+    if (arr) arr.push(p);
+    else map.set(p.targetIndex, [p]);
+  }
+  return map;
+}
+
+/**
+ * Expand an ERTimeline into a full sequence (for full-energy-repeat, [T, T]).
+ * Offsets periodic proc indexes for the repeated copy.
+ */
+function expandRepeat(
+  ert: ERTimeline,
+  repeats: number
+): { actions: TimelineAction[]; procs: PeriodicProc[] } {
+  const actions: TimelineAction[] = [];
+  const procs: PeriodicProc[] = [];
+  for (let r = 0; r < repeats; r++) {
+    const offset = r * ert.actions.length;
+    for (const a of ert.actions) actions.push({ ...a });
+    for (const p of ert.periodic) {
+      procs.push({
+        sourceChar: p.sourceChar,
+        trigger: p.trigger,
+        targetIndex: p.targetIndex + offset,
+      });
+    }
+  }
+  return { actions, procs };
+}
+
+/**
+ * Concatenate two ERTimelines (T1 + T2), offsetting T2's periodic procs.
+ */
+function concatTimelines(t1: ERTimeline, t2: ERTimeline): ERTimeline {
+  const actions = [...t1.actions, ...t2.actions];
+  const offset = t1.actions.length;
+  const periodic: PeriodicProc[] = [
+    ...t1.periodic,
+    ...t2.periodic.map((p) => ({
+      sourceChar: p.sourceChar,
+      trigger: p.trigger,
+      targetIndex: p.targetIndex + offset,
+    })),
+  ];
+  return { actions, periodic };
+}
+
+// ─── Public API ───
 
 /**
  * Calculate the minimum ER% for each team member to burst every rotation.
  *
  * Supports three calculation modes:
  * - **zero-energy-start**: Can I burst starting from 0? Uses T1(+T2) as one-shot.
- * - **full-energy-repeat**: Can I sustain forever? Doubles repeating timeline [T,T].
+ * - **full-energy-repeat**: Can I sustain forever? Doubles the repeating timeline.
  * - **zero-energy-repeat**: Both checks; takes max ER per character.
  *
  * The `timeline` parameter is the primary (or only) timeline:
- * - With 1 timeline: it IS the repeating rotation (循环轴).
- * - With `options.timeline2`: `timeline` is the startup (启动轴),
- *   `timeline2` is the repeating rotation.
- *
- * **Absorption rules:**
- * - Regular E/holdE: "next-action absorber" — particles go to whoever acts next
- * - periodicE: particles go to current on-field character (not the periodicE char)
- * - All 4 characters receive energy (absorber at 1.0x, others at off-field rate)
+ * - With 1 timeline: it IS the repeating rotation.
+ * - With `options.timeline2`: `timeline` is startup, `timeline2` is repeating.
  */
 export function calculateTeamER(
   team: TeamMember[],
-  timeline: Timeline,
+  timeline: ERTimeline,
   options?: EROptions
 ): ERResult[] {
   const calcMode = options?.calcMode ?? "full-energy-repeat";
@@ -826,44 +827,78 @@ export function calculateTeamER(
   const timeline2 = options?.timeline2;
 
   if (calcMode === "zero-energy-start") {
-    // One-shot: T1 + T2 (if present). Last action self-absorbs.
-    const sequence = timeline2 ? [...timeline, ...timeline2] : [...timeline];
-    return simulateER(team, sequence, options, false, false, sequence.length);
+    const full = timeline2 ? concatTimelines(timeline, timeline2) : timeline;
+    return simulateSequence(
+      team,
+      full.actions,
+      indexProcs(full.periodic),
+      options,
+      false,
+      false,
+      full.actions.length
+    );
   }
 
-  // full-energy-repeat: double the repeating timeline [T, T].
-  // Repeating = timeline2 if dual-timeline, else timeline itself.
+  // full-energy-repeat
   const repeating = timeline2 ?? timeline;
-  const sequence = [...repeating, ...repeating];
-  return simulateER(team, sequence, options, true, true, repeating.length);
+  const expanded = expandRepeat(repeating, 2);
+  return simulateSequence(
+    team,
+    expanded.actions,
+    indexProcs(expanded.procs),
+    options,
+    true,
+    true,
+    repeating.actions.length
+  );
 }
 
 // ─── UI utilities ───
 
-/** Get available action types for a character (periodicE is auto-managed via ticks). */
+/** Get available action types for a character. */
 export function getAvailableActions(charId: string): ActionType[] {
-  const actions: ActionType[] = ["E"];
-  if (particles[charId]?.holdE) actions.push("holdE");
-  actions.push("Q", "NA", "CA", "PA", "wait");
-  return actions;
+  const data = particles[charId];
+  const out: ActionType[] = ["E"];
+  if (data?.holdE) out.push("holdE");
+  if (data?.specialE) out.push("specialE");
+  out.push("Q");
+  // specialQ is available for chars who have it in character-level data; keep always for now.
+  out.push("specialQ");
+  if (data?.NA) out.push("NA");
+  if (data?.CA) out.push("CA");
+  if (data?.PA) out.push("PA");
+  // NA/CA/PA always available for any char (even without particle patterns) as field-time fillers
+  if (!out.includes("NA")) out.push("NA");
+  if (!out.includes("CA")) out.push("CA");
+  if (!out.includes("PA")) out.push("PA");
+  out.push("wait");
+  return out;
 }
 
-/** Expose for testing and UI. */
 /**
  * Get the absorber character for a particle-producing action at index `i`.
- * For UI display: shows who catches the particles from this action.
- * Uses the same logic as the simulation engine.
+ * Used by the UI for arrow rendering.
  */
 export function getAbsorberForAction(
-  timeline: Timeline,
+  timeline: ERTimeline,
   i: number,
   isRepeating = true
 ): string | null {
-  const act = timeline[i];
+  const act = timeline.actions[i];
   if (!act) return null;
-  const particles = getActionParticles(act.char, act.action, "expected");
-  if (particles <= 0) return null;
-  return getAbsorber(timeline, i, isRepeating);
+  const particleMode: ParticleMode = "expected";
+  let produces = 0;
+  if (DIRECT_PARTICLE_ACTIONS.has(act.action))
+    produces = getActionParticles(act.char, act.action, particleMode);
+  // For pattern chars we'd need hit index — skip for UI indicator (conservative: consider producing)
+  if (
+    PATTERN_ACTIONS.has(act.action) &&
+    particles[act.char]?.[act.action as "NA" | "CA" | "PA"]
+  )
+    produces = 1;
+  if (act.favoniusProc) produces = Math.max(produces, 1);
+  if (produces <= 0) return null;
+  return getAbsorber(timeline.actions, i, isRepeating);
 }
 
 /** Convert a UI TeamSlot to an engine TeamMember. */
@@ -878,4 +913,140 @@ export function toTeamMember(slot: TeamSlot): TeamMember {
   };
 }
 
-export { allSelfEnergy, getActionParticles, getParticleElement, particles };
+export {
+  allSelfEnergy,
+  getActionParticles,
+  getHitParticles,
+  getPeriodicParticles,
+  getParticleElement,
+  particles,
+  PERIODIC_E_TRIGGERS,
+  PERIODIC_Q_TRIGGERS,
+};
+
+// ─── Per-node energy event lookup (for UI popovers) ───
+
+export interface NodeEnergyEvent {
+  source: string; // short label (e.g. "Venti A4", "Prototype Amber", "Exile 4pc")
+  amount: number; // flat energy amount
+  toSelf: boolean; // receiver is the acting character
+  toParty: boolean; // receivers are other party members
+  category: "drain" | "refund" | "weapon" | "artifact" | "party";
+}
+
+/**
+ * Resolve the set of flat-energy events that fire when this character performs
+ * this action. Used by the timeline UI to show per-node energy restores/drains.
+ *
+ * Intentionally omits particles — those are shown as flow edges, not node events.
+ */
+export function getNodeEnergyEvents(
+  charId: string,
+  action: ActionType,
+  weaponId: string | undefined,
+  refinement: number | undefined,
+  artifactSetId: string | undefined,
+  burstCost: number
+): NodeEnergyEvent[] {
+  const events: NodeEnergyEvent[] = [];
+
+  // Burst drain
+  if (action === "Q" || action === "specialQ") {
+    events.push({
+      source: action === "specialQ" ? "Alt burst" : "Burst",
+      amount: burstCost,
+      toSelf: true,
+      toParty: false,
+      category: "drain",
+    });
+  }
+
+  // Self-energy entries from this char that trigger on this action
+  const selfEntries = allSelfEnergy[charId] ?? [];
+  for (const entry of selfEntries) {
+    if (!entryMatchesAction(entry.action, action)) continue;
+    const amount = resolveEntryAmount(entry, charId, burstCost);
+    if (amount == null || amount === 0) continue;
+    const toSelf = entry.target === "self" || entry.target === "party";
+    const toParty =
+      entry.target === "party" ||
+      entry.target === "partyOthers" ||
+      entry.target === "active";
+    events.push({
+      source: entry.source ?? "passive",
+      amount,
+      toSelf,
+      toParty,
+      category: toParty && !toSelf ? "party" : "refund",
+    });
+  }
+
+  // Weapon flat energy
+  const we = weaponId ? weaponEnergyById[weaponId] : undefined;
+  if (we?.energy.effect === "flatEnergy") {
+    const weaponTrigger = we.energy.trigger;
+    const weaponMatches =
+      (weaponTrigger === "burst" &&
+        (action === "Q" || action === "specialQ")) ||
+      (weaponTrigger === "skill" &&
+        (action === "E" || action === "holdE" || action === "specialE"));
+    if (weaponMatches) {
+      events.push({
+        source: weaponId ?? "weapon",
+        amount: we.energy.totalEnergy[refinement ?? 0],
+        toSelf: true,
+        toParty: false,
+        category: "weapon",
+      });
+    }
+  }
+
+  // Artifact flat energy
+  const ae = artifactSetId ? artifactEnergyById[artifactSetId] : undefined;
+  if (ae) {
+    const artifactMatches =
+      ae.trigger === "burst" && (action === "Q" || action === "specialQ");
+    if (artifactMatches) {
+      const toParty = ae.target === "partyOthers";
+      events.push({
+        source: `${artifactSetId} 4pc`,
+        amount: ae.flatEnergy,
+        toSelf: !toParty,
+        toParty,
+        category: "artifact",
+      });
+    }
+  }
+
+  return events;
+}
+
+function entryMatchesAction(entryAction: string, action: ActionType): boolean {
+  if (entryAction === "A") return true;
+  if (entryAction === "Q") return action === "Q" || action === "specialQ";
+  if (entryAction === "E")
+    return action === "E" || action === "holdE" || action === "specialE";
+  return entryAction === action;
+}
+
+function resolveEntryAmount(
+  entry: SelfEnergyEntry,
+  charId: string,
+  burstCost: number
+): number | null {
+  const procs = entry.procs ?? 1;
+  if (entry.erScale) {
+    // ER-scaling energy isn't a fixed flat — omit from per-node display.
+    return null;
+  }
+  if (entry.param) {
+    const paramAmount = resolveParamAmount(charId, entry.param);
+    if (paramAmount == null) return null;
+    return paramAmount * procs;
+  }
+  if (entry.percentRefund != null) {
+    return (burstCost * entry.percentRefund) / 100;
+  }
+  if (entry.amount != null) return entry.amount * procs;
+  return null;
+}

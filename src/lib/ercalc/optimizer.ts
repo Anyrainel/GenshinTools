@@ -1,65 +1,112 @@
-import { BURST_ACTIONS, PARTICLE_ACTIONS } from "./constants";
+import {
+  BURST_ACTIONS,
+  DIRECT_PARTICLE_ACTIONS,
+  PATTERN_ACTIONS,
+} from "./constants";
 import { calculateTeamER } from "./erCalculator";
 import type {
-  ActionType,
   EROptions,
   ERResult,
+  ERTimeline,
   TeamMember,
-  Timeline,
+  TimelineAction,
 } from "./types";
+
+// ─── ERTimeline edit helpers (keep periodic targetIndex consistent) ───
+
+function insertAction(
+  ert: ERTimeline,
+  index: number,
+  action: TimelineAction
+): ERTimeline {
+  const actions = [
+    ...ert.actions.slice(0, index),
+    action,
+    ...ert.actions.slice(index),
+  ];
+  const periodic = ert.periodic.map((p) =>
+    p.targetIndex >= index ? { ...p, targetIndex: p.targetIndex + 1 } : p
+  );
+  return { actions, periodic };
+}
+
+function removeAction(ert: ERTimeline, index: number): ERTimeline {
+  const actions = [
+    ...ert.actions.slice(0, index),
+    ...ert.actions.slice(index + 1),
+  ];
+  const periodic = ert.periodic
+    .filter((p) => p.targetIndex !== index)
+    .map((p) =>
+      p.targetIndex > index ? { ...p, targetIndex: p.targetIndex - 1 } : p
+    );
+  return { actions, periodic };
+}
+
+function swapAdjacent(ert: ERTimeline, i: number): ERTimeline {
+  const actions = [...ert.actions];
+  [actions[i], actions[i + 1]] = [actions[i + 1], actions[i]];
+  const periodic = ert.periodic.map((p) => {
+    if (p.targetIndex === i) return { ...p, targetIndex: i + 1 };
+    if (p.targetIndex === i + 1) return { ...p, targetIndex: i };
+    return p;
+  });
+  return { actions, periodic };
+}
+
+/** Does this action produce particles (for optimizer targeting)? */
+function producesParticles(act: TimelineAction): boolean {
+  return (
+    DIRECT_PARTICLE_ACTIONS.has(act.action) ||
+    PATTERN_ACTIONS.has(act.action) ||
+    !!act.favoniusProc
+  );
+}
 
 /**
  * Find optimal wait block insertions to minimize the maximum team ER requirement.
  *
  * A wait block after a particle-producing action causes the producing character
- * to self-absorb their particles (on-field, same-element bonus). Without a wait,
- * particles go to the next action's character.
+ * to self-absorb their particles (on-field, same-element bonus).
  *
- * Uses greedy search: iteratively insert the wait that reduces max team ER the most.
- * Stops when no insertion improves the result.
- *
- * @returns The optimized timeline with wait blocks inserted, plus the ER results.
+ * Uses greedy search: iteratively pick the edit (insert wait / remove wait /
+ * swap E↔Q) that reduces max team ER the most. Stops when no edit improves.
  */
 export function optimizeWaitBlocks(
   team: TeamMember[],
-  timeline: Timeline,
+  timeline: ERTimeline,
   options?: EROptions
-): { timeline: Timeline; results: ERResult[]; insertedWaits: number } {
-  let currentTimeline = [...timeline];
-  let currentResults = calculateTeamER(team, currentTimeline, options);
+): { timeline: ERTimeline; results: ERResult[]; insertedWaits: number } {
+  let current = timeline;
+  let currentResults = calculateTeamER(team, current, options);
   let insertedWaits = 0;
 
-  const maxIterations = 20; // Safety limit
+  const maxIterations = 20;
 
   for (let iter = 0; iter < maxIterations; iter++) {
     const currentMaxER = Math.max(...currentResults.map((r) => r.erNeeded));
     if (currentMaxER <= 100 || currentMaxER === Number.POSITIVE_INFINITY) break;
 
-    let bestTimeline: Timeline | null = null;
+    let bestTimeline: ERTimeline | null = null;
     let bestMaxER = currentMaxER;
     let bestResults: ERResult[] | null = null;
 
     // Try inserting a wait after each particle-producing action
-    for (let i = 0; i < currentTimeline.length; i++) {
-      const act = currentTimeline[i];
-      if (!PARTICLE_ACTIONS.has(act.action)) continue;
+    for (let i = 0; i < current.actions.length; i++) {
+      const act = current.actions[i];
+      if (!producesParticles(act)) continue;
 
-      // Skip if already followed by a wait from the same character
       if (
-        i + 1 < currentTimeline.length &&
-        currentTimeline[i + 1].action === "wait" &&
-        currentTimeline[i + 1].char === act.char
-      ) {
+        i + 1 < current.actions.length &&
+        current.actions[i + 1].action === "wait" &&
+        current.actions[i + 1].char === act.char
+      )
         continue;
-      }
 
-      // Try inserting wait
-      const candidate: Timeline = [
-        ...currentTimeline.slice(0, i + 1),
-        { char: act.char, action: "wait" as ActionType },
-        ...currentTimeline.slice(i + 1),
-      ];
-
+      const candidate = insertAction(current, i + 1, {
+        char: act.char,
+        action: "wait",
+      });
       const candidateResults = calculateTeamER(team, candidate, options);
       const candidateMaxER = Math.max(
         ...candidateResults.map((r) => r.erNeeded)
@@ -72,20 +119,14 @@ export function optimizeWaitBlocks(
       }
     }
 
-    // Also try REMOVING existing wait blocks
-    for (let i = 0; i < currentTimeline.length; i++) {
-      if (currentTimeline[i].action !== "wait") continue;
-
-      const candidate = [
-        ...currentTimeline.slice(0, i),
-        ...currentTimeline.slice(i + 1),
-      ];
-
+    // Try removing existing wait blocks
+    for (let i = 0; i < current.actions.length; i++) {
+      if (current.actions[i].action !== "wait") continue;
+      const candidate = removeAction(current, i);
       const candidateResults = calculateTeamER(team, candidate, options);
       const candidateMaxER = Math.max(
         ...candidateResults.map((r) => r.erNeeded)
       );
-
       if (candidateMaxER < bestMaxER) {
         bestMaxER = candidateMaxER;
         bestTimeline = candidate;
@@ -93,27 +134,20 @@ export function optimizeWaitBlocks(
       }
     }
 
-    // Also try swapping adjacent E→Q to Q→E for same character
-    // This models "burst first if energy is full" — particles go to next window
-    for (let i = 0; i < currentTimeline.length - 1; i++) {
-      const act = currentTimeline[i];
-      const next = currentTimeline[i + 1];
-
+    // Try swapping adjacent E↔Q for same char
+    for (let i = 0; i < current.actions.length - 1; i++) {
+      const a = current.actions[i];
+      const b = current.actions[i + 1];
       if (
-        PARTICLE_ACTIONS.has(act.action) &&
-        BURST_ACTIONS.has(next.action) &&
-        act.char === next.char
+        producesParticles(a) &&
+        BURST_ACTIONS.has(b.action) &&
+        a.char === b.char
       ) {
-        // Try swapping: Q first, then E
-        const candidate = [...currentTimeline];
-        candidate[i] = next;
-        candidate[i + 1] = act;
-
+        const candidate = swapAdjacent(current, i);
         const candidateResults = calculateTeamER(team, candidate, options);
         const candidateMaxER = Math.max(
           ...candidateResults.map((r) => r.erNeeded)
         );
-
         if (candidateMaxER < bestMaxER) {
           bestMaxER = candidateMaxER;
           bestTimeline = candidate;
@@ -122,17 +156,11 @@ export function optimizeWaitBlocks(
       }
     }
 
-    // No improvement found — stop
     if (!bestTimeline || !bestResults) break;
-
-    currentTimeline = bestTimeline;
+    current = bestTimeline;
     currentResults = bestResults;
     insertedWaits++;
   }
 
-  return {
-    timeline: currentTimeline,
-    results: currentResults,
-    insertedWaits,
-  };
+  return { timeline: current, results: currentResults, insertedWaits };
 }

@@ -1,16 +1,48 @@
 import { describe, expect, it } from "vitest";
 
-import type { Timeline } from "@/lib/ercalc/erCalculator";
+import type {
+  ERTimeline,
+  PeriodicProc,
+  TimelineAction,
+} from "@/lib/ercalc/erCalculator";
 import { analyzeRotation } from "@/lib/ercalc/rotationHints";
+
+/** Flat entry → ERTimeline helper (accepts periodicE for readability). */
+type FlatEntry = {
+  char: string;
+  action: TimelineAction["action"] | "periodicE";
+};
+function ert(flat: FlatEntry[]): ERTimeline {
+  const actions: TimelineAction[] = [];
+  const periodic: PeriodicProc[] = [];
+  const pending: string[] = [];
+  for (const e of flat) {
+    if (e.action === "periodicE") {
+      pending.push(e.char);
+    } else {
+      const idx = actions.length;
+      for (const src of pending)
+        periodic.push({ sourceChar: src, trigger: "E", targetIndex: idx });
+      pending.length = 0;
+      actions.push({ char: e.char, action: e.action });
+    }
+  }
+  if (pending.length && actions.length > 0) {
+    const last = actions.length - 1;
+    for (const src of pending)
+      periodic.push({ sourceChar: src, trigger: "E", targetIndex: last });
+  }
+  return { actions, periodic };
+}
 
 describe("analyzeRotation", () => {
   it("detects Q before E (burst before skill)", () => {
-    const timeline: Timeline = [
+    const timeline = ert([
       { char: "bennett", action: "E" },
-      { char: "xiangling", action: "Q" }, // XL Q before XL E
+      { char: "xiangling", action: "Q" },
       { char: "xiangling", action: "E" },
       { char: "bennett", action: "Q" },
-    ];
+    ]);
     const hints = analyzeRotation(timeline, ["bennett", "xiangling"]);
     const xlHint = hints.find((h) => h.charId === "xiangling");
     expect(xlHint).toBeDefined();
@@ -18,10 +50,10 @@ describe("analyzeRotation", () => {
   });
 
   it("no hint when E comes before Q", () => {
-    const timeline: Timeline = [
+    const timeline = ert([
       { char: "bennett", action: "E" },
       { char: "bennett", action: "Q" },
-    ];
+    ]);
     const hints = analyzeRotation(timeline, ["bennett"]);
     const qBeforeE = hints.find(
       (h) => h.charId === "bennett" && h.messageEn.includes("bursts before")
@@ -30,11 +62,14 @@ describe("analyzeRotation", () => {
   });
 
   it("detects periodic deployer missing E", () => {
-    const timeline: Timeline = [
-      { char: "xiangling", action: "periodicE" },
-      { char: "xiangling", action: "periodicE" },
-      { char: "xiangling", action: "Q" },
-    ];
+    // Xiangling has periodic procs attached but no E/holdE/specialE cast in actions
+    const timeline: ERTimeline = {
+      actions: [{ char: "xiangling", action: "Q" }],
+      periodic: [
+        { sourceChar: "xiangling", trigger: "E", targetIndex: 0 },
+        { sourceChar: "xiangling", trigger: "E", targetIndex: 0 },
+      ],
+    };
     const hints = analyzeRotation(timeline, ["xiangling"]);
     const missingE = hints.find(
       (h) => h.charId === "xiangling" && h.messageEn.includes("no E deployment")
@@ -44,10 +79,10 @@ describe("analyzeRotation", () => {
   });
 
   it("detects character with no actions", () => {
-    const timeline: Timeline = [
+    const timeline = ert([
       { char: "bennett", action: "E" },
       { char: "bennett", action: "Q" },
-    ];
+    ]);
     const hints = analyzeRotation(timeline, ["bennett", "sucrose"]);
     const noAction = hints.find(
       (h) => h.charId === "sucrose" && h.messageEn.includes("no actions")
@@ -55,25 +90,24 @@ describe("analyzeRotation", () => {
     expect(noAction).toBeDefined();
   });
 
-  it("returns empty hints for well-formed rotation", () => {
-    const timeline: Timeline = [
+  it("returns empty warnings for well-formed rotation", () => {
+    const timeline = ert([
       { char: "bennett", action: "E" },
       { char: "bennett", action: "Q" },
       { char: "sucrose", action: "E" },
       { char: "sucrose", action: "Q" },
-    ];
+    ]);
     const hints = analyzeRotation(timeline, ["bennett", "sucrose"]);
-    // Should have no warnings (both chars have E before Q, both are in timeline)
     const warnings = hints.filter((h) => h.type === "warning");
     expect(warnings).toHaveLength(0);
   });
 
   it("warns about 3+ consecutive bursts", () => {
-    const timeline: Timeline = [
+    const timeline = ert([
       { char: "bennett", action: "Q" },
       { char: "xiangling", action: "Q" },
       { char: "xingqiu", action: "Q" },
-    ];
+    ]);
     const hints = analyzeRotation(timeline, [
       "bennett",
       "xiangling",
@@ -83,13 +117,15 @@ describe("analyzeRotation", () => {
     expect(burstHint).toBeDefined();
   });
 
-  it("warns about too few periodicE procs", () => {
-    // Xiangling expects 4 procs, give her only 1
-    const timeline: Timeline = [
-      { char: "xiangling", action: "E" },
-      { char: "xiangling", action: "periodicE" },
-      { char: "xiangling", action: "Q" },
-    ];
+  it("warns about too few periodic procs vs schema default", () => {
+    // Xiangling's default procs is 4; give only 1
+    const timeline: ERTimeline = {
+      actions: [
+        { char: "xiangling", action: "E" },
+        { char: "xiangling", action: "Q" },
+      ],
+      periodic: [{ sourceChar: "xiangling", trigger: "E", targetIndex: 1 }],
+    };
     const hints = analyzeRotation(timeline, ["xiangling"]);
     const procHint = hints.find(
       (h) => h.charId === "xiangling" && h.messageEn.includes("periodic procs")

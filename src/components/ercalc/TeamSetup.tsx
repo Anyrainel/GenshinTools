@@ -6,6 +6,7 @@ import type { Element } from "@/data/types";
 import { particles } from "@/lib/ercalc/erCalculator";
 import type { TeamSlot } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
+import { isElement } from "@/lib/typeValidation";
 import { getElementColor } from "@/lib/utils";
 import { Plus, X } from "lucide-react";
 import { useCallback, useMemo } from "react";
@@ -20,7 +21,7 @@ function getAvailableCharacters(): string[] {
 
 function inferElement(charId: string): Element {
   const pe = particles[charId]?.element;
-  if (pe && pe !== "Clear") return pe as Element;
+  if (pe && pe !== "Clear" && isElement(pe)) return pe;
   return "Anemo";
 }
 

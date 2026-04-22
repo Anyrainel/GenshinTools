@@ -1,4 +1,5 @@
 import type { Element } from "@/data/types";
+import type { ArtifactSetConfig } from "@/lib/team-comp/types";
 
 // ─── Team model ───
 
@@ -10,7 +11,7 @@ export interface TeamMember {
   constellation?: number; // 0-6
   weaponId?: string;
   refinement?: number; // 0-4 for R1-R5
-  artifactSetId?: string; // 4pc artifact set ID
+  artifactSet?: ArtifactSetConfig | null;
   weaponType?: string; // for Scholar 4pc check
 }
 
@@ -29,20 +30,23 @@ export type TeamSlot = {
 /**
  * Action types for the timeline.
  *
- * - `E`         — Skill press. Produces particles for simple/multi-hit-instant chars.
- * - `holdE`     — Skill hold. Uses hold particle data when available.
- * - `periodicE` — One proc of a periodic generator (Guoba hit, Oz attack, etc).
- *                 Unlike E, the producing char is off-field. Particles go to whoever
- *                 is currently on-field, determined by the most recent swap action.
- * - `Q`         — Burst. Drains energy to 0, triggers burst-related effects.
- * - `specialQ`  — Special burst. Same as Q for ER purposes.
- * - `NA`/`CA`/`PA` — Attacks. No particle generation (keeps char on-field).
+ * - `E`         — Skill press. Direct particle emission from skill data.
+ * - `holdE`     — Skill hold. Falls back to `E` data if `holdE` is absent.
+ * - `specialE`  — Enhanced/alternative skill variant (Cyno burst-mode E,
+ *                 Freminet L4, Ayato stance, etc.). User-interwoven at runtime.
+ * - `Q`         — Elemental burst. Drains energy; rarely produces particles.
+ * - `specialQ`  — Alternative burst variant (Flins, Varesa). Different drain cost.
+ * - `NA`/`CA`/`PA` — Attacks. Produce particles on infusion chars via a
+ *                   per-hit cycling pattern.
  * - `wait`      — Stay on-field to catch incoming particles.
+ *
+ * Particles from summon / coordinated-attack / periodic mechanics are NOT
+ * actions — they are `PeriodicProc` events attached to main actions.
  */
 export type ActionType =
   | "E"
   | "holdE"
-  | "periodicE"
+  | "specialE"
   | "Q"
   | "specialQ"
   | "NA"
@@ -50,36 +54,92 @@ export type ActionType =
   | "PA"
   | "wait";
 
-/** A single action in the rotation timeline. */
+/** A single action in the rotation timeline (main track). */
 export interface TimelineAction {
   /** Character performing this action. */
   char: string;
   /** Action type. */
   action: ActionType;
+  /** Whether a Favonius particle proc fires at this node. Default false; auto-toggled
+   *  by the UI for the first N E/Q actions of a Favonius wielder (N from refinement). */
+  favoniusProc?: boolean;
 }
 
-/** An ordered sequence of actions forming one rotation. */
+/** An ordered sequence of main actions. */
 export type Timeline = TimelineAction[];
 
-// ─── Tick model (UI) ───
+// ─── Periodic event model (background particles) ───
 
-/** A periodic tick assignment: one proc from a source char attached to a main action. */
-export interface TickAssignment {
-  /** Character producing the periodic particles (e.g. "fischl"). */
+/**
+ * A periodic particle proc — a single tick from a source character's summon,
+ * coordinated attack, or other off-field generator. Attached to a main
+ * action's index; the character performing that action absorbs the particles.
+ */
+export interface PeriodicProc {
+  /** Character producing the particles (e.g. "fischl"). */
   sourceChar: string;
-  /** Index into the main actions array that absorbs this tick. */
+  /** Which trigger action spawned this proc (E or Q). */
+  trigger: "E" | "Q";
+  /** Index into `ERTimeline.actions` that absorbs this proc. */
   targetIndex: number;
 }
 
-/**
- * Timeline with ticks separated from main actions.
- * The UI uses this model; it's flattened to a legacy Timeline before simulation.
- */
+/** Timeline with main actions and background periodic procs separated. */
 export interface ERTimeline {
-  /** Main actions only — no periodicE entries. */
+  /** Main actions only. */
   actions: TimelineAction[];
-  /** Periodic tick assignments. One tick per source per target index. */
-  ticks: TickAssignment[];
+  /** Background periodic procs. One entry per (source, target-index) pair. */
+  periodic: PeriodicProc[];
+}
+
+// ─── Particle data schema (v2) ───
+
+/**
+ * Particle count as a list of independent rolls. Each entry is `[count, chance]`.
+ * Integer shorthand `N` is equivalent to `[[N, 1.0]]`.
+ *
+ * Derived values:
+ *   min      = Σ count where chance == 1.0
+ *   max      = Σ count
+ *   expected = Σ count × chance
+ */
+export type Particles = number | Array<[count: number, chance: number]>;
+
+export interface ActionParticleConfig {
+  particles: Particles;
+  notes?: string;
+}
+
+export interface HitPatternConfig {
+  /** Cyclic pattern indexed by the char's i-th hit of this action type. */
+  pattern: Particles[];
+  notes?: string;
+}
+
+export interface PeriodicConfig {
+  /** Default number of procs to auto-place in the UI. User-adjustable. */
+  procs: number;
+  /** Particle emission shape per individual proc. */
+  particles: Particles;
+  notes?: string;
+}
+
+/** One character's entry in particles.json. */
+export interface ParticleEntry {
+  element: string;
+  source?: "fandom" | "gcsim" | "lunaris" | "manual";
+  spawnPoint?: "Character" | "Enemy" | "Construct";
+  E?: ActionParticleConfig;
+  holdE?: ActionParticleConfig;
+  specialE?: ActionParticleConfig;
+  NA?: HitPatternConfig;
+  CA?: HitPatternConfig;
+  PA?: HitPatternConfig;
+  periodic?: {
+    E?: PeriodicConfig;
+    Q?: PeriodicConfig;
+  };
+  _unmodeled?: string[];
 }
 
 // ─── Calc options ───
@@ -106,7 +166,7 @@ export interface EROptions {
   /** Calculation mode. Default: "full-energy-repeat". */
   calcMode?: CalcMode;
   /** Repeating timeline (循环轴). When provided, the main timeline is the startup (启动轴). */
-  timeline2?: Timeline;
+  timeline2?: ERTimeline;
 }
 
 // ─── Results ───
@@ -117,8 +177,9 @@ export interface EnergyEvent {
   sourceIndex: number;
   /** Character that produced the particles/energy. */
   sourceChar: string;
-  /** Action type that produced the energy. */
-  sourceAction: ActionType;
+  /** Action type that produced the energy, or "periodic" for periodic procs,
+   *  or "favonius" for Favonius weapon procs. */
+  sourceAction: ActionType | "periodic" | "favonius";
   /** Character that absorbed the particles on-field. */
   absorberChar: string;
   /** Particle count (before element/field multipliers). */
