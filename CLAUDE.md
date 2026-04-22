@@ -102,11 +102,11 @@ Do NOT introduce a generic `Result<T>` type. The above patterns are sufficient f
 
 When a new feature requires incompatible changes to a store's data structure:
 1. **Document the old shape** in code comments at the migration site — the old data structure is no longer visible in the codebase, so without comments the migration code looks like it's coding against imagined interfaces.
-2. Always add proper migration logic with respect to the current origin version (treat pending changes and local-only commits as the same version).
-3. Version the store data so there is an easier way to check for migration logic.
+2. Version the store data so there is an easier way to check for migration logic. Multiple local commits should not bump the version multiple times, aim for one bump on the version per push.
+3. Always add proper migration logic with respect to the current origin version. If local commits have a new version already, merge the migration logic into the existing local version bump.
 4. Add a migration test to ensure old format can migrate to the new format.
 
-When smooth auto-migration isn't possible, discuss options with the user before proceeding.
+When smooth auto-migration isn't possible, discuss options with the user before proceeding. For non-store refactoring work, backwards compatibility should be avoided, migrate all codebase callers to keep code clean.
 
 ## Multi-Agent Environment
 

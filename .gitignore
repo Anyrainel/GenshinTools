@@ -68,3 +68,16 @@ memory/
 
 # Scratch / reverse-engineering workspace (may contain real cookies & UIDs)
 tmp_ysh/
+
+# ER calculator per-source intermediate data files.
+# Only particles.json (the merged production file) is committed.
+# Per-source files are regenerated via:
+#   scripts/scrape_particles.py          -> particles.fandom.json
+#   scripts/scrape_particles_lunaris.py  -> particles.lunaris.json
+#   gcsim-particle-extract agent sweep   -> particles.gcsim.json
+# Then merged via scripts/merge_particles_sources.py -> particles.json
+src/data/ercalc/particles.fandom.json
+src/data/ercalc/particles.gcsim.json
+src/data/ercalc/particles.lunaris.json
+scripts/out/particles.gcsim.batch_*.json
+scripts/out/particle-locations.json
