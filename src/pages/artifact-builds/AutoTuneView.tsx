@@ -141,9 +141,9 @@ function buildTeamInputsFromUserTeams(
       let formulas: WeightedFormula[] | undefined;
       try {
         const tb = new TeamBuild(configs, opts);
-        const combo = tb.getCombo(characterId);
+        const combo = tb.catalog.getCombo(characterId);
         if (Object.keys(combo).length > 0) {
-          const charFormulas = tb.getFormulaIds()[characterId];
+          const charFormulas = tb.catalog.getFormulaIds()[characterId];
           if (charFormulas) {
             formulas = Object.keys(charFormulas).map((formulaId) => ({
               formulaId,
@@ -191,7 +191,7 @@ function getMatchingTeams(
     if (build.composition === "2pc+2pc" && build.halfSet1 && build.halfSet2) {
       if (teamArt.type === "2pc+2pc") {
         const buildIds = [build.halfSet1, build.halfSet2].sort();
-        const teamIds = [teamArt.id1, teamArt.id2].sort();
+        const teamIds = [teamArt.halfSetIds[0], teamArt.halfSetIds[1]].sort();
         return buildIds[0] === teamIds[0] && buildIds[1] === teamIds[1];
       }
       return true;

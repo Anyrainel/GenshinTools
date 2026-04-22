@@ -66,11 +66,10 @@ import { memo, useCallback, useMemo, useState } from "react";
 
 type ItemPickerType = "character" | "weapon" | "artifact";
 
-export type ArtifactConfig =
-  | { type: "4pc"; setId: string }
-  | { type: "2pc+2pc"; id1: string; id2: string };
+export type { ArtifactSetConfig as ArtifactConfig } from "@/lib/team-comp/types";
+import type { ArtifactSetConfig } from "@/lib/team-comp/types";
 
-type ValueType<T> = T extends "artifact" ? ArtifactConfig : string;
+type ValueType<T> = T extends "artifact" ? ArtifactSetConfig : string;
 
 /** Maps an ItemPickerType to the resource type passed to filter callbacks. */
 export type ItemResourceType<T extends ItemPickerType> = T extends "character"
@@ -307,7 +306,9 @@ function TriggerTooltip({
       "type" in value &&
       value.type === "2pc+2pc"
     ) {
-      content = <MixedSetTooltip id1={value.id1} id2={value.id2} />;
+      content = (
+        <MixedSetTooltip id1={value.halfSetIds[0]} id2={value.halfSetIds[1]} />
+      );
     } else {
       return null;
     }
@@ -362,14 +363,18 @@ function PickerTrigger({
   }
 
   if (type === "artifact") {
-    const conf = value as ArtifactConfig;
+    const conf = value as ArtifactSetConfig;
     if (conf.type === "4pc") {
       return (
         <ItemIcon artifactSetId={conf.setId} size={size} frozen={frozen} />
       );
     }
     return (
-      <ItemIcon halfSetIds={[conf.id1, conf.id2]} size={size} frozen={frozen} />
+      <ItemIcon
+        halfSetIds={[conf.halfSetIds[0], conf.halfSetIds[1]]}
+        size={size}
+        frozen={frozen}
+      />
     );
   }
 
@@ -477,7 +482,7 @@ function PickerContent({
 
   // Artifact Specific State
   const initialTab =
-    type === "artifact" && (value as ArtifactConfig)?.type === "2pc+2pc"
+    type === "artifact" && (value as ArtifactSetConfig)?.type === "2pc+2pc"
       ? "2pc"
       : "4pc";
   const [artifactTab, setArtifactTab] = useState(initialTab);
@@ -491,7 +496,7 @@ function PickerContent({
       "type" in value &&
       value.type === "2pc+2pc"
     ) {
-      return [value.id1, value.id2];
+      return [value.halfSetIds[0], value.halfSetIds[1]];
     }
     return [null, null];
   };
@@ -654,7 +659,7 @@ function PickerContent({
   // Confirm 2pc selection
   const confirmMixedSet = () => {
     if (mixedSlot1 !== null && mixedSlot2 !== null) {
-      onSelect({ type: "2pc+2pc", id1: mixedSlot1, id2: mixedSlot2 });
+      onSelect({ type: "2pc+2pc", halfSetIds: [mixedSlot1, mixedSlot2] });
     }
   };
 

@@ -12,13 +12,15 @@ import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type {
-  CalcContext,
-  OptFailReason,
-  ReactionOverride,
-  StatKey,
-  TeamOptYield,
-  TeamOptimizerOptions,
+import {
+  type CalcContext,
+  type OptFailReason,
+  type ReactionOverride,
+  type StatKey,
+  type TeamOptYield,
+  type TeamOptimizerOptions,
+  getHalfSetIds,
+  getSetId,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
@@ -373,12 +375,12 @@ function runCharacterAStar(opts: PerCharSearchOpts): PerCharSearchResult {
       const built = buildSlotGroupsForPattern(
         pattern,
         slotData,
-        charConfig.artifactSetId!
+        getSetId(charConfig.artifactSet)!
       );
       if (built) aStarSearch(built.groups, built.supers, ctx);
     }
   } else if (is2pc) {
-    const [h1, h2] = charConfig.artifactHalfSetIds as [string, string];
+    const [h1, h2] = getHalfSetIds(charConfig.artifactSet) as [string, string];
     const h1Keys = artifactHalfSetsById[h1]?.setIds ?? [];
     const h2Keys = artifactHalfSetsById[h2]?.setIds ?? [];
 

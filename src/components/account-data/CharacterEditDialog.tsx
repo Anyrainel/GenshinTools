@@ -842,7 +842,7 @@ function ArtifactEditor({
           ) : (
             <Select
               value={art.mainStatKey}
-              onValueChange={(v) => onUpdate({ mainStatKey: v as MainStat })}
+              onValueChange={(v) => onUpdate({ mainStatKey: v })}
             >
               <SelectTrigger className="h-9 lg:h-10 font-medium text-xs lg:text-sm px-2.5 bg-background/50">
                 <SelectValue />
@@ -997,7 +997,7 @@ function SubstatsEditor({
               onChangeKey={(v) => {
                 const next: Partial<Record<SubStat, number>> = {};
                 for (const [k, val] of entries) {
-                  next[k === key ? (v as SubStat) : k] = val;
+                  next[k === key ? v : k] = val;
                 }
                 onChange(next);
               }}
@@ -1034,9 +1034,7 @@ function SubstatsEditor({
             mainStatKey={mainStatKey}
             t={t}
             dimmed={true}
-            onChangeKey={(v) =>
-              onChangeUnactivated([v as SubStat, unactivatedSubstat[1]])
-            }
+            onChangeKey={(v) => onChangeUnactivated([v, unactivatedSubstat[1]])}
             onChangeValue={(v) =>
               onChangeUnactivated([unactivatedSubstat[0], v])
             }
@@ -1105,7 +1103,7 @@ function SubstatRow({
   mainStatKey: string;
   t: ReturnType<typeof useLanguage>["t"];
   dimmed: boolean;
-  onChangeKey: (key: string) => void;
+  onChangeKey: (key: SubStat) => void;
   onChangeValue: (value: number) => void;
   onDelete: () => void;
   /** Whether this substat is currently unactivated */
@@ -1389,11 +1387,7 @@ function ArtifactPickPanel({
       )}
 
       {mode === "equip" && currentSetKey && (
-        <Tabs
-          value={tab}
-          onValueChange={(v) => setTab(v as "same" | "other")}
-          className="w-full"
-        >
+        <Tabs value={tab} onValueChange={(v) => setTab(v)} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="same">
               {t.ui("accountData.sameSet")}

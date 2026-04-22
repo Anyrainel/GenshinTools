@@ -15,6 +15,7 @@ import type {
   I18nLabel,
   ReactionOverride,
 } from "@/lib/team-comp/types";
+import { isElement, isReactionType } from "@/lib/typeValidation";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {
@@ -38,9 +39,11 @@ import {
 /** Derive the contributing elements for a reaction formula ID. */
 function getReactionElements(formulaId: string): Element[] {
   if (formulaId.startsWith("rx-swirl-")) {
-    return ["Anemo", formulaId.slice("rx-swirl-".length) as Element];
+    const el = formulaId.slice("rx-swirl-".length);
+    return isElement(el) ? ["Anemo", el] : [];
   }
-  const reaction = formulaId.slice(3) as ReactionType;
+  const reaction = formulaId.slice(3);
+  if (!isReactionType(reaction)) return [];
   const req = REACTION_ELEMENT_REQUIREMENTS[reaction];
   if (!req) return [];
   return req.requiredElements.map((slot) => slot[0]);
@@ -253,9 +256,7 @@ export function FormulaSelectorCard({
 
                           // Derive reactions for this formula
                           const formulaEntry =
-                            teamBuild?.charBuilds[
-                              cid
-                            ]?.charBase.getFormulaEntry(formulaId);
+                            teamBuild?.catalog.formulaIndex.get(formulaId);
 
                           // For cross-scaled formulas (e.g. Nicole projections),
                           // show the statsCharId's avatar instead of the formula owner's.
@@ -279,7 +280,7 @@ export function FormulaSelectorCard({
                               ? (team.singleReaction?.reaction ?? "none")
                               : "none";
                             const offField = teamBuild
-                              ? teamBuild.offFieldStatus(cid, formulaId)
+                              ? teamBuild.catalog.offFieldStatus(formulaId)
                               : "none";
 
                             return (
@@ -438,7 +439,9 @@ export function FormulaSelectorCard({
                               {!isLocked &&
                                 (() => {
                                   const comboOffField = teamBuild
-                                    ? teamBuild.offFieldStatus(cid, formulaId)
+                                    ? teamBuild.catalog.offFieldStatus(
+                                        formulaId
+                                      )
                                     : "none";
                                   if (comboOffField === "none") return null;
                                   const firstLineKey = reactions
@@ -715,9 +718,8 @@ export function FormulaSelectorCard({
             {/* ── Team Reactions ── */}
             {teamBuild &&
               (() => {
-                const rxFormulas = teamBuild.reactionProvider.getFormulaIds();
-                const rxEntries = Object.entries(rxFormulas);
-                if (rxEntries.length === 0) return null;
+                const rxGroups = teamBuild.catalog.getReactionComboGrid();
+                if (rxGroups.length === 0) return null;
 
                 return (
                   <div className="rounded-lg border border-border bg-black/5 overflow-hidden">
@@ -725,128 +727,132 @@ export function FormulaSelectorCard({
                       {t.ui("teamComp.transformativeReactionDmg")}
                     </div>
                     <div className="px-2 pb-1 flex flex-wrap items-start justify-center gap-x-4 lg:gap-x-6 2xl:gap-x-8 gap-y-1">
-                      {rxEntries.map(([formulaId, label]) => {
-                        const eligible =
-                          teamBuild.reactionProvider.getEligibleCharacters(
-                            formulaId
+                      {rxGroups.map(
+                        ({ baseId, label, eligible, isMultiContributor }) => {
+                          const eligibleArr = [...eligible];
+                          const triggerFormulaId = (cid: string) =>
+                            `${baseId}-${cid}`;
+
+                          const isMulti = isMultiContributor;
+                          const roleLabel = t.ui(
+                            isMulti
+                              ? "teamComp.rxOnField"
+                              : "teamComp.rxTrigger"
                           );
 
-                        const isMulti =
-                          teamBuild.reactionProvider.isMultiContributor(
-                            formulaId
-                          );
-                        const roleLabel = t.ui(
-                          isMulti ? "teamComp.rxOnField" : "teamComp.rxTrigger"
-                        );
-
-                        return (
-                          <div key={formulaId} className="px-2 py-0.5">
-                            <div className="flex items-center gap-1.5 text-xs md:text-sm lg:text-xs xl:text-sm font-bold text-foreground mb-0.5">
-                              <ReactionElementIcons
-                                formulaId={formulaId}
-                                size="w-4 h-4"
-                              />
-                              {t.resolveLabel(label)}
-                            </div>
-                            {isSingle ? (
-                              /* Single mode: chip buttons — mutually exclusive with character formulas */
-                              <div className="flex flex-wrap items-center gap-1">
-                                {eligible.map((cid) => {
-                                  const isActive =
-                                    team.selectedFormula?.charId === cid &&
-                                    team.selectedFormula?.formulaId ===
-                                      formulaId;
-                                  return (
-                                    <button
-                                      key={cid}
-                                      type="button"
-                                      className={cn(
-                                        "px-2 py-0.5 rounded-lg border-2 text-[10px] md:text-xs xl:text-sm font-semibold transition-colors",
-                                        isActive
-                                          ? "bg-primary/15 border-primary/40 text-foreground/80"
-                                          : "bg-secondary border-border/40 text-foreground/80 hover:bg-secondary/80"
-                                      )}
-                                      onClick={() =>
-                                        onSelectSingleFormula?.(
-                                          cid,
-                                          formulaId,
-                                          "none"
-                                        )
-                                      }
-                                    >
-                                      {t.character(cid)}
-                                      <span className="text-[0.85em] text-muted-foreground font-normal ml-0.5">
-                                        {roleLabel}
-                                      </span>
-                                    </button>
-                                  );
-                                })}
+                          return (
+                            <div key={baseId} className="px-2 py-0.5">
+                              <div className="flex items-center gap-1.5 text-xs md:text-sm lg:text-xs xl:text-sm font-bold text-foreground mb-0.5">
+                                <ReactionElementIcons
+                                  formulaId={triggerFormulaId(eligibleArr[0])}
+                                  size="w-4 h-4"
+                                />
+                                {t.resolveLabel(label)}
                               </div>
-                            ) : (
-                              /* Combo mode: count steppers */
-                              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                                {eligible.map((cid) => {
-                                  const lineKey = `${cid}.${formulaId}.none`;
-                                  const count =
-                                    comboLineMap.get(lineKey)?.line.count ?? 0;
-
-                                  return (
-                                    <div
-                                      key={cid}
-                                      className="flex items-center"
-                                    >
-                                      <span className="text-[10px] md:text-xs xl:text-sm font-semibold text-foreground/80">
+                              {isSingle ? (
+                                /* Single mode: chip buttons — mutually exclusive with character formulas */
+                                <div className="flex flex-wrap items-center gap-1">
+                                  {eligibleArr.map((cid) => {
+                                    const cidFormula = triggerFormulaId(cid);
+                                    const isActive =
+                                      team.selectedFormula?.charId === cid &&
+                                      team.selectedFormula?.formulaId ===
+                                        cidFormula;
+                                    return (
+                                      <button
+                                        key={cid}
+                                        type="button"
+                                        className={cn(
+                                          "px-2 py-0.5 rounded-lg border-2 text-[10px] md:text-xs xl:text-sm font-semibold transition-colors",
+                                          isActive
+                                            ? "bg-primary/15 border-primary/40 text-foreground/80"
+                                            : "bg-secondary border-border/40 text-foreground/80 hover:bg-secondary/80"
+                                        )}
+                                        onClick={() =>
+                                          onSelectSingleFormula?.(
+                                            cid,
+                                            cidFormula,
+                                            "none"
+                                          )
+                                        }
+                                      >
                                         {t.character(cid)}
                                         <span className="text-[0.85em] text-muted-foreground font-normal ml-0.5">
                                           {roleLabel}
                                         </span>
-                                      </span>
-                                      <button
-                                        type="button"
-                                        className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                        disabled={count <= 0}
-                                        onClick={() =>
-                                          setComboLineCount(
-                                            cid,
-                                            formulaId,
-                                            "none",
-                                            Math.max(0, count - 1)
-                                          )
-                                        }
-                                      >
-                                        <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
                                       </button>
-                                      <span
-                                        className={cn(
-                                          "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
-                                          count === 0 && "text-muted-foreground"
-                                        )}
+                                    );
+                                  })}
+                                </div>
+                              ) : (
+                                /* Combo mode: count steppers */
+                                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                                  {eligibleArr.map((cid) => {
+                                    const cidFormula = triggerFormulaId(cid);
+                                    const lineKey = `${cid}.${cidFormula}.none`;
+                                    const count =
+                                      comboLineMap.get(lineKey)?.line.count ??
+                                      0;
+
+                                    return (
+                                      <div
+                                        key={cid}
+                                        className="flex items-center"
                                       >
-                                        {count}
-                                      </span>
-                                      <button
-                                        type="button"
-                                        className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                        disabled={count >= 99}
-                                        onClick={() =>
-                                          setComboLineCount(
-                                            cid,
-                                            formulaId,
-                                            "none",
-                                            Math.min(99, count + 1)
-                                          )
-                                        }
-                                      >
-                                        <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
-                                      </button>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                                        <span className="text-[10px] md:text-xs xl:text-sm font-semibold text-foreground/80">
+                                          {t.character(cid)}
+                                          <span className="text-[0.85em] text-muted-foreground font-normal ml-0.5">
+                                            {roleLabel}
+                                          </span>
+                                        </span>
+                                        <button
+                                          type="button"
+                                          className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                          disabled={count <= 0}
+                                          onClick={() =>
+                                            setComboLineCount(
+                                              cid,
+                                              cidFormula,
+                                              "none",
+                                              Math.max(0, count - 1)
+                                            )
+                                          }
+                                        >
+                                          <Minus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                        </button>
+                                        <span
+                                          className={cn(
+                                            "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
+                                            count === 0 &&
+                                              "text-muted-foreground"
+                                          )}
+                                        >
+                                          {count}
+                                        </span>
+                                        <button
+                                          type="button"
+                                          className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                          disabled={count >= 99}
+                                          onClick={() =>
+                                            setComboLineCount(
+                                              cid,
+                                              cidFormula,
+                                              "none",
+                                              Math.min(99, count + 1)
+                                            )
+                                          }
+                                        >
+                                          <Plus className="w-3 h-3 md:w-3.5 md:h-3.5 xl:w-4 xl:h-4" />
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                      )}
                     </div>
                   </div>
                 );

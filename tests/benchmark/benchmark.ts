@@ -76,6 +76,7 @@ import type {
   StatKey,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
+import { getHalfSetIds, getSetId } from "@/lib/team-comp/types";
 import type { CharOptConfig } from "@/lib/team-comp/types";
 
 import {
@@ -281,8 +282,7 @@ function evaluateAssignment(
       const pieces = artifactPieces[cfg.charId];
       if (!pieces) continue;
       const detected = detectEquippedSets(pieces);
-      cfg.artifactSetId = detected.artifactSetId;
-      cfg.artifactHalfSetIds = detected.artifactHalfSetIds;
+      cfg.artifactSet = detected;
     }
 
     const teamBuild = new TeamBuild(
@@ -312,7 +312,7 @@ function evaluateAssignment(
     // Validate formula exists before evaluating (evaluateCombo silently
     // returns 0 for missing formulas instead of throwing)
     if (!combo) {
-      const allFormulas = teamBuild.getFormulaIds();
+      const allFormulas = teamBuild.catalog.getFormulaIds();
       const charFormulas = allFormulas[carryCharId];
       if (!charFormulas?.[formulaId]) return null;
     }
@@ -397,8 +397,7 @@ function checkConstraints(
       const pieces = artifactPieces[cfg.charId];
       if (!pieces) continue;
       const detected = detectEquippedSets(pieces);
-      cfg.artifactSetId = detected.artifactSetId;
-      cfg.artifactHalfSetIds = detected.artifactHalfSetIds;
+      cfg.artifactSet = detected;
     }
 
     const teamBuild = new TeamBuild(
@@ -2615,7 +2614,7 @@ async function cmdCarryDiagnose(opts: {
     };
     console.log(`  Build weights: ${JSON.stringify(baseWeights)}`);
     console.log(
-      `  Set constraint: ${carryConfig.artifactSetId ?? carryConfig.artifactHalfSetIds?.join("+") ?? "none"}`
+      `  Set constraint: ${getSetId(carryConfig.artifactSet) ?? (getHalfSetIds(carryConfig.artifactSet).join("+") || "none")}`
     );
     console.log(
       `  ER target: ${carryConfig.minEr} | CR target: ${carryConfig.minCr}`
@@ -3153,7 +3152,7 @@ async function cmdFuzzCombo(opts: {
     }
 
     // Build combo with ALL formulas from ALL characters
-    const allFormulas = teamBuild.getFormulaIds();
+    const allFormulas = teamBuild.catalog.getFormulaIds();
     const comboLines: ComboFormula["lines"] = [];
     for (const [charId, formulas] of Object.entries(allFormulas)) {
       for (const formulaId of Object.keys(formulas)) {

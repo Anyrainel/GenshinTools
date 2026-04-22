@@ -24,7 +24,7 @@ import {
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { repairTeam } from "./storeValidation";
+import { PersistedTeamStoreSchema } from "./schemas";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 
 /**
@@ -158,11 +158,19 @@ export function migrateTeamStore(
 
             // Merge single-mode per-part config into the line's reaction.
             // Old data used partReactions/partHits; normalize to rxnParts/rxnPartHits.
-            // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field names
-            const so = singleOverride as any;
+            interface LegacyReactionOverride {
+              reaction?: unknown;
+              rxnParts?: Record<string, string>;
+              partReactions?: Record<string, string>;
+              rxnPartHits?: Record<string, number>;
+              partHits?: Record<string, number>;
+            }
+            const so = singleOverride as LegacyReactionOverride;
             const normalized: ReactionOverride = {
-              reaction: so.reaction,
-              rxnParts: so.rxnParts ?? so.partReactions,
+              reaction: so.reaction as ReactionOverride["reaction"],
+              rxnParts: (so.rxnParts ?? so.partReactions) as
+                | Record<number, ReactionType>
+                | undefined,
               rxnPartHits: so.rxnPartHits ?? so.partHits,
             };
             let merged = line.reaction;
@@ -203,9 +211,9 @@ export function migrateTeamStore(
     // No transformation needed — fields are optional and default to undefined.
   }
   if (version < 11) {
-    // v11: activeTeamId removed from persisted team store (now in sessionStorage).
-    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field
-    (state as any).activeTeamId = undefined;
+    // v11: activeTeamId was moved to sessionStorage. Remove from persisted state.
+    // biome-ignore lint/performance/noDelete: migration cleanup of defunct persisted field
+    delete (state as TeamState & { activeTeamId?: unknown }).activeTeamId;
   }
   if (version < 12) {
     // v12: Add optional analyzerReactionOverrides, analyzerEnemyAura, analyzerExtraBuffs fields.
@@ -213,7 +221,7 @@ export function migrateTeamStore(
   }
   if (version < 13) {
     // v13: CalcContext required, combo flatten, charSettings merge, analyzer grouping.
-    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy flat fields
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy flat fields — old schema has combos[], selectedCombo, flat minEr/minCr/crMode/tierAwarePool/ignoreArtifactSets, and flat analyzerConfigs/analyzerComboOverrides/analyzerMinErOverrides/analyzerReactionOverrides/analyzerEnemyAura/analyzerExtraBuffs
     state.teams = state.teams.map((t: any) => {
       // ── CalcContext: drop deprecated critRateTarget, keep rest (all fields now optional) ──
       const { critRateTarget: _, ...calcContext } = t.calcContext ?? {};
@@ -309,6 +317,117 @@ export function migrateTeamStore(
       };
     });
   }
+  if (version < 14) {
+    // v14 bundles two independent schema changes landing in the same push:
+    //   (a) ArtifactConfig 2pc+2pc shape:    { id1, id2 } → { halfSetIds: [id1, id2] }
+    //   (b) ER calculator v2 ERTimeline:     { actions, ticks } + periodicE actions
+    //                                      → { actions, periodic: PeriodicProc[] }
+    //       and PeriodicProc { sourceChar, trigger: "E"|"Q", targetIndex }
+
+    // biome-ignore lint/suspicious/noExplicitAny: migration reads legacy persisted shapes from several prior versions
+    state.teams = state.teams.map((t: any) => {
+      // (a) Artifact 2pc+2pc
+      // biome-ignore lint/suspicious/noExplicitAny: migration reads legacy persisted shape with { id1, id2 } fields
+      const artifacts = (t.artifacts ?? []).map((a: any) => {
+        if (!a) return null;
+        if (a.type === "4pc") return a;
+        if (a.type === "2pc+2pc") {
+          return {
+            type: "2pc+2pc" as const,
+            halfSetIds: [
+              String(a.id1 ?? a.halfSetIds?.[0] ?? ""),
+              String(a.id2 ?? a.halfSetIds?.[1] ?? ""),
+            ] as [string, string],
+          };
+        }
+        if ("setId" in a) return { type: "4pc" as const, setId: a.setId };
+        if ("id1" in a)
+          return {
+            type: "2pc+2pc" as const,
+            halfSetIds: [String(a.id1), String(a.id2)] as [string, string],
+          };
+        return null;
+      });
+
+      // (b) ER calc v2: ticks → periodic, drop periodicE actions
+      let erTimelines = t.erTimelines;
+      if (Array.isArray(erTimelines)) {
+        // biome-ignore lint/suspicious/noExplicitAny: legacy timeline shape
+        erTimelines = erTimelines.map((ert: any) => {
+          if (!ert) return { actions: [], periodic: [] };
+          const legacyActions = Array.isArray(ert.actions) ? ert.actions : [];
+          const legacyTicks = Array.isArray(ert.ticks) ? ert.ticks : [];
+          const legacyPeriodic = Array.isArray(ert.periodic)
+            ? ert.periodic
+            : null;
+
+          // Already v2 shape: just strip any stray periodicE actions.
+          if (legacyPeriodic) {
+            return {
+              actions: legacyActions.filter(
+                // biome-ignore lint/suspicious/noExplicitAny: legacy action shape
+                (a: any) => a?.action !== "periodicE"
+              ),
+              periodic: legacyPeriodic,
+            };
+          }
+
+          // Convert periodicE actions → periodic procs attached to the next real action.
+          const realActions: { char: string; action: string }[] = [];
+          const periodicFromActions: {
+            sourceChar: string;
+            trigger: "E";
+            targetIndex: number;
+          }[] = [];
+          const pending: string[] = [];
+          // biome-ignore lint/suspicious/noExplicitAny: legacy action shape
+          for (const a of legacyActions as any[]) {
+            if (!a) continue;
+            if (a.action === "periodicE") {
+              pending.push(a.char);
+            } else {
+              const idx = realActions.length;
+              for (const src of pending)
+                periodicFromActions.push({
+                  sourceChar: src,
+                  trigger: "E",
+                  targetIndex: idx,
+                });
+              pending.length = 0;
+              realActions.push(a);
+            }
+          }
+          if (pending.length && realActions.length > 0) {
+            const last = realActions.length - 1;
+            for (const src of pending)
+              periodicFromActions.push({
+                sourceChar: src,
+                trigger: "E",
+                targetIndex: last,
+              });
+          }
+
+          // Rename ticks → periodic (legacy ticks already reference real-action indices)
+          const fromTicks = legacyTicks
+            // biome-ignore lint/suspicious/noExplicitAny: legacy tick shape
+            .filter((tk: any) => tk?.sourceChar != null)
+            // biome-ignore lint/suspicious/noExplicitAny: legacy tick shape
+            .map((tk: any) => ({
+              sourceChar: tk.sourceChar,
+              trigger: "E" as const,
+              targetIndex: tk.targetIndex ?? 0,
+            }));
+
+          return {
+            actions: realActions,
+            periodic: [...periodicFromActions, ...fromTicks],
+          };
+        });
+      }
+
+      return { ...t, artifacts, erTimelines };
+    });
+  }
   return state;
 }
 
@@ -322,18 +441,23 @@ export function mergeTeamStore(
   persistedState: unknown,
   currentState: TeamState
 ): TeamState {
-  const merged = {
+  const parsed = PersistedTeamStoreSchema.safeParse(persistedState);
+  if (!parsed.success) return currentState;
+  // Spread persisted state first (preserves extra fields like author/description),
+  // then override with validated teams.
+  const persisted =
+    typeof persistedState === "object" && persistedState !== null
+      ? persistedState
+      : {};
+  return {
     ...currentState,
-    ...(persistedState as object),
+    ...persisted,
+    // Zod's .passthrough() adds an index signature that doesn't align with Team,
+    // but TeamSchema has already validated and healed all required fields.
+    teams: parsed.data.teams.map(
+      (t) => ({ ...DEFAULT_TEAM_FIELDS, ...t }) as Team
+    ),
   } as TeamState;
-  if (Array.isArray(merged.teams)) {
-    merged.teams = merged.teams.map((t) => {
-      const team = { ...DEFAULT_TEAM_FIELDS, ...t };
-      repairTeam(team as unknown as Record<string, unknown>);
-      return team;
-    });
-  }
-  return merged;
 }
 
 export interface OptimizationResult {
@@ -443,7 +567,7 @@ export interface Team {
 /** Exported artifact — `type` discriminator omitted since field names differ. */
 export type ExportedArtifact =
   | { setId: string }
-  | { id1: string | number; id2: string | number };
+  | { halfSetIds: [string, string] };
 
 /** Exported team shape — only composition metadata, no user/account state. */
 export interface ExportedTeam {
@@ -611,10 +735,22 @@ export const useTeamStore = create<TeamState>()(
                 // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
                 (a: any): ArtifactConfig | null => {
                   if (!a) return null;
+                  if (a.type === "4pc" && "setId" in a)
+                    return { type: "4pc", setId: a.setId };
+                  if (a.type === "2pc+2pc" && a.halfSetIds)
+                    return { type: "2pc+2pc", halfSetIds: a.halfSetIds };
+                  // Legacy format without type discriminator
                   if ("setId" in a) return { type: "4pc", setId: a.setId };
+                  // Legacy: { id1, id2 } → { halfSetIds }
                   if ("id1" in a)
-                    return { type: "2pc+2pc", id1: a.id1, id2: a.id2 };
-                  return a; // already has type discriminator
+                    return {
+                      type: "2pc+2pc",
+                      halfSetIds: [String(a.id1), String(a.id2)],
+                    };
+                  // Legacy: { halfSetIds } without type
+                  if ("halfSetIds" in a)
+                    return { type: "2pc+2pc", halfSetIds: a.halfSetIds };
+                  return null;
                 }
               ),
               reactions: t.reactions ?? [],
@@ -682,7 +818,7 @@ export const useTeamStore = create<TeamState>()(
             artifacts: t.artifacts.map((a) => {
               if (!a) return null;
               if (a.type === "4pc") return { setId: a.setId };
-              return { id1: a.id1, id2: a.id2 };
+              return { halfSetIds: a.halfSetIds };
             }),
           };
           if (t.reactions.length > 0) entry.reactions = t.reactions;
@@ -703,7 +839,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 13,
+      version: 14,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }

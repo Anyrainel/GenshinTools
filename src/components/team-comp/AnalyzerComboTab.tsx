@@ -16,12 +16,12 @@ import type {
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import { resolveComboDescriptor } from "@/lib/team-comp/calc/combo";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { getFormulaReactions } from "@/lib/team-comp/calc/teamFormulaCatalog";
-import { resolveReactionComboEntries } from "@/lib/team-comp/calc/teamReaction";
+import {
+  type ReactionComboGridRow,
+  getFormulaReactions,
+} from "@/lib/team-comp/calc/teamFormulaCatalog";
 import type { FormulaEntry } from "@/lib/team-comp/types";
-import type { ReactionComboEntry } from "@/lib/team-comp/types";
 import type {
   ComboFormula,
   I18nLabel,
@@ -61,9 +61,8 @@ export function AnalyzerComboTab({
   onMinErOverridesChange,
   onReactionChange,
 }: AnalyzerComboTabProps) {
-  const rxDescriptor = teamBuild.reactionProvider.getReactionComboDescriptor();
-  const rxFormulas = teamBuild.reactionProvider.getFormulaIds();
-  const hasRxFormulas = Object.keys(rxFormulas).length > 0;
+  const rxGrid = teamBuild.catalog.getReactionComboGrid();
+  const hasRxFormulas = rxGrid.length > 0;
 
   return (
     <div className="flex flex-wrap justify-center items-start gap-x-3 gap-y-2 lg:gap-x-5 lg:gap-y-3">
@@ -83,15 +82,14 @@ export function AnalyzerComboTab({
             onComboOverridesChange={onComboOverridesChange}
             onMinErOverridesChange={onMinErOverridesChange}
             onReactionChange={onReactionChange}
-            rxDescriptor={rxDescriptor}
+            rxGrid={rxGrid}
           />
         );
       })}
       {hasRxFormulas && (
         <ReactionComboTable
-          teamBuild={teamBuild}
           baseConfigs={baseConfigs}
-          rxDescriptor={rxDescriptor}
+          rxGrid={rxGrid}
           comboOverrides={comboOverrides}
           onComboOverridesChange={onComboOverridesChange}
         />
@@ -125,7 +123,7 @@ function CharComboRow({
   onComboOverridesChange,
   onMinErOverridesChange,
   onReactionChange,
-  rxDescriptor,
+  rxGrid,
 }: {
   charId: string;
   config: AnalyzerCharConfig;
@@ -137,7 +135,7 @@ function CharComboRow({
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
   onReactionChange: (stableKey: string, override: ReactionOverride) => void;
-  rxDescriptor: ReactionComboEntry[];
+  rxGrid: ReactionComboGridRow[];
 }) {
   const { t } = useLanguage();
   const char = charactersById[charId];
@@ -154,30 +152,29 @@ function CharComboRow({
     return cols;
   }, [startC, maxC]);
 
-  const descriptor = teamBuild.getComboDescriptor(charId);
-  const allFormulas = teamBuild.getAllFormulaIds()[charId] ?? {};
+  const allFormulas = teamBuild.catalog.getAllFormulaIds()[charId] ?? {};
 
   // Rx- deltas gated by this character's constellation
   const charRxDeltas = useMemo(() => {
-    const result: { entry: ReactionComboEntry; minC: number; delta: number }[] =
+    const result: { row: ReactionComboGridRow; minC: number; delta: number }[] =
       [];
-    for (const entry of rxDescriptor) {
-      for (const b of entry.bonus) {
+    for (const row of rxGrid) {
+      for (const b of row.bonus) {
         if (b.charId === charId) {
-          result.push({ entry, minC: b.minC, delta: b.delta });
+          result.push({ row, minC: b.minC, delta: b.delta });
         }
       }
     }
     return result;
-  }, [rxDescriptor, charId]);
+  }, [rxGrid, charId]);
 
   const descriptorCounts = useMemo(() => {
     const map: Record<number, Record<string, number>> = {};
     for (const c of constellations) {
-      map[c] = resolveComboDescriptor(descriptor, c);
+      map[c] = teamBuild.catalog.resolveCombo(charId, c);
     }
     return map;
-  }, [constellations, descriptor]);
+  }, [constellations, teamBuild, charId]);
 
   // ─── Build formula rows ───
   const formulaRows = useMemo(() => {
@@ -201,13 +198,13 @@ function CharComboRow({
       };
     }
 
-    // Collect all formula IDs: descriptor entries first (preserving order), then remaining
+    // Collect all formula IDs: combo counts first (preserving order), then remaining
     const allFormulaIds: string[] = [];
     const seen = new Set<string>();
-    for (const entry of descriptor) {
-      if (seen.has(entry.id)) continue;
-      seen.add(entry.id);
-      allFormulaIds.push(entry.id);
+    for (const formulaId of Object.keys(descriptorCounts[startC] ?? {})) {
+      if (seen.has(formulaId)) continue;
+      seen.add(formulaId);
+      allFormulaIds.push(formulaId);
     }
     for (const formulaId of Object.keys(allFormulas)) {
       if (seen.has(formulaId)) continue;
@@ -218,8 +215,7 @@ function CharComboRow({
     return allFormulaIds.map((formulaId) => {
       const formulaInfo = allFormulas[formulaId];
       const formulaEntry =
-        teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId) ??
-        null;
+        teamBuild.catalog.formulaIndex.get(formulaId) ?? null;
       const reactions = getFormulaReactions(
         charId,
         formulaEntry,
@@ -257,7 +253,7 @@ function CharComboRow({
       };
     });
   }, [
-    descriptor,
+    startC,
     allFormulas,
     templateCombo.lines,
     charId,
@@ -522,12 +518,12 @@ function CharComboRow({
               ))}
 
               {/* Rx- delta rows: this character's constellation-gated delta */}
-              {charRxDeltas.map(({ entry, minC, delta }) => {
-                const rxType = entry.id.replace("rx-", "") as ReactionType;
-                const overrideKey = rxDeltaOverrideKey(charId, entry.id);
+              {charRxDeltas.map(({ row, minC, delta }) => {
+                const rxType = row.baseId.replace("rx-", "") as ReactionType;
+                const overrideKey = rxDeltaOverrideKey(charId, row.baseId);
                 const effectiveDelta = comboOverrides[overrideKey] ?? delta;
                 return (
-                  <tr key={entry.id} className="bg-purple-500/5">
+                  <tr key={row.baseId} className="bg-purple-500/5">
                     <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
                       <span className="text-xs text-purple-300">
                         {t.reaction(rxType)}{" "}
@@ -699,40 +695,17 @@ function NumericCell({
 // ─── Team Reaction Combo Table ───
 
 function ReactionComboTable({
-  teamBuild,
   baseConfigs,
-  rxDescriptor,
+  rxGrid,
   comboOverrides,
   onComboOverridesChange,
 }: {
-  teamBuild: TeamBuild;
   baseConfigs: TeamSlotConfig[];
-  rxDescriptor: ReactionComboEntry[];
+  rxGrid: ReactionComboGridRow[];
   comboOverrides: ComboCountOverrides;
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
 }) {
   const { t } = useLanguage();
-  const rp = teamBuild.reactionProvider;
-
-  // Base reaction labels for grid rows (one row per base reaction)
-  const baseLabels = rp.getBaseFormulaLabels();
-  const descriptorByFormula = useMemo(() => {
-    const map: Record<string, ReactionComboEntry> = {};
-    for (const entry of rxDescriptor) map[entry.id] = entry;
-    return map;
-  }, [rxDescriptor]);
-
-  // Resolved per-triggerer counts at base constellations
-  const resolvedCounts = useMemo(() => {
-    const constellations: Record<string, number> = {};
-    for (const c of baseConfigs) constellations[c.charId] = c.constellation;
-    return resolveReactionComboEntries(rxDescriptor, constellations);
-  }, [rxDescriptor, baseConfigs]);
-
-  const formulaEntries = useMemo(
-    () => Object.entries(baseLabels),
-    [baseLabels]
-  );
 
   return (
     <div className="flex flex-col rounded-lg bg-black/10 border border-purple-600/50 p-1.5 gap-1.5 xl:p-2">
@@ -769,19 +742,18 @@ function ReactionComboTable({
             </tr>
           </thead>
           <tbody>
-            {formulaEntries.map(([formulaId, label]) => {
-              const isMulti = rp.isMultiContributor(formulaId);
+            {rxGrid.map((row) => {
               const roleLabel = t.ui(
-                isMulti ? "teamComp.rxOnField" : "teamComp.rxTrigger"
+                row.isMultiContributor
+                  ? "teamComp.rxOnField"
+                  : "teamComp.rxTrigger"
               );
-              const descriptorEntry = descriptorByFormula[formulaId];
-              const eligible = rp.getEligibleCharacters(formulaId);
 
               return (
-                <tr key={formulaId}>
+                <tr key={row.baseId}>
                   <td className="text-left pr-1 py-0.5 border border-border whitespace-nowrap">
                     <span className="text-xs text-purple-300">
-                      {t.resolveLabel(label)}
+                      {t.resolveLabel(row.label)}
                     </span>
                     <span className="text-[10px] text-muted-foreground ml-0.5">
                       ({roleLabel})
@@ -790,11 +762,10 @@ function ReactionComboTable({
                   {baseConfigs.map((cfg) => {
                     const overrideKey = rxCharOverrideKey(
                       cfg.charId,
-                      formulaId
+                      row.baseId
                     );
-                    const isEligible = eligible.includes(cfg.charId);
-                    const defaultCount =
-                      resolvedCounts[`${formulaId}-${cfg.charId}`] ?? 0;
+                    const isEligible = row.eligible.has(cfg.charId);
+                    const defaultCount = row.counts[cfg.charId] ?? 0;
                     const effectiveCount =
                       comboOverrides[overrideKey] ?? defaultCount;
                     return (

@@ -33,6 +33,7 @@ import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer";
 import type {
+  ArtifactSetConfig,
   CharOptConfig,
   TeamOptimizationResult,
   TeamOptimizerOptions,
@@ -41,6 +42,7 @@ import type {
   CalcContext,
   ComboFormula,
   ComboLine,
+  I18nLabel,
   TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { runTeamOptimization as runAStar } from "./gen/astar";
@@ -263,13 +265,15 @@ export function buildTeamSlotConfig(
   }
 
   const goalArt = team.artifacts[index];
-  let artifactSetId: string | null = null;
-  let artifactHalfSetIds: string[] = [];
+  let artifactSet: ArtifactSetConfig | null = null;
 
   if (goalArt?.setId) {
-    artifactSetId = goalArt.setId;
+    artifactSet = { type: "4pc", setId: goalArt.setId };
   } else if (goalArt?.id1 && goalArt?.id2) {
-    artifactHalfSetIds = [String(goalArt.id1), String(goalArt.id2)];
+    artifactSet = {
+      type: "2pc+2pc",
+      halfSetIds: [String(goalArt.id1), String(goalArt.id2)],
+    };
   }
 
   return {
@@ -278,8 +282,7 @@ export function buildTeamSlotConfig(
     constellation,
     weaponId,
     refinement,
-    artifactSetId,
-    artifactHalfSetIds,
+    artifactSet,
   };
 }
 
@@ -294,12 +297,14 @@ export function buildPerChar(
     if (!cid) continue;
 
     const goalArt = team.artifacts[ci];
-    let goalSetId: string | null = null;
-    let goalHalfSetIds: string[] = [];
+    let artifactSet: ArtifactSetConfig | null = null;
     if (goalArt?.setId) {
-      goalSetId = goalArt.setId;
+      artifactSet = { type: "4pc", setId: goalArt.setId };
     } else if (goalArt?.id1 && goalArt?.id2) {
-      goalHalfSetIds = [String(goalArt.id1), String(goalArt.id2)];
+      artifactSet = {
+        type: "2pc+2pc",
+        halfSetIds: [String(goalArt.id1), String(goalArt.id2)],
+      };
     }
 
     const hasFavonius = team.weapons[ci]?.startsWith("favonius_") ?? false;
@@ -327,8 +332,7 @@ export function buildPerChar(
       minEr,
       minCr: hasFavonius ? (team.minCr?.[cid] ?? 0.05) : 0,
       buildMatch: bm ?? undefined,
-      artifactSetId: goalSetId,
-      artifactHalfSetIds: goalHalfSetIds,
+      artifactSet,
     };
   }
   return perChar;
@@ -367,8 +371,7 @@ export function getCarryFormulaIds(
       constellation: 0,
       weaponId,
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     });
   }
   if (configs.length === 0) return [];
@@ -379,7 +382,7 @@ export function getCarryFormulaIds(
       team.enemyAura as Element | undefined
     );
     const carryId = team.characters[0]!;
-    const formulas = tb.getFormulaIds()[carryId];
+    const formulas = tb.catalog.getFormulaIds()[carryId];
     if (!formulas) return [];
     return Object.entries(formulas).map(([fid, lbl]) => ({
       formulaId: fid,
@@ -406,8 +409,7 @@ export function getTeamCombo(team: Team): ComboFormula | null {
       constellation: 0,
       weaponId,
       refinement: 1,
-      artifactSetId: null,
-      artifactHalfSetIds: [],
+      artifactSet: null,
     });
   }
   if (configs.length === 0) return null;
@@ -420,7 +422,7 @@ export function getTeamCombo(team: Team): ComboFormula | null {
     const lines: ComboLine[] = [];
     for (const charId of team.characters) {
       if (!charId) continue;
-      const combo = tb.getCombo(charId);
+      const combo = tb.catalog.getCombo(charId);
       for (const [formulaId, count] of Object.entries(combo)) {
         if (count > 0) {
           lines.push({ charId, formulaId, count });
@@ -499,8 +501,9 @@ export async function runOptimizerOnTeam(
     const baseSheets = buildBaseSheets(team, accountData);
     const perChar = buildPerChar(team, carryCharId, accountData);
 
-    const allFormulas = teamBuild.getFormulaIds();
-    const carryFormulas = allFormulas[carryCharId] ?? {};
+    const allFormulas = teamBuild.catalog.getFormulaIds();
+    const carryFormulas: Record<string, I18nLabel> =
+      allFormulas[carryCharId] ?? {};
     const formulaEntries = Object.entries(carryFormulas);
 
     let combo: ComboFormula;

@@ -117,14 +117,8 @@ export function TeamPickerGrid({
           const equipped = Object.values(acctChar.artifacts || {});
           if (equipped.length > 0) {
             const detected = detectEquippedSets(equipped);
-            if (detected.artifactSetId) {
-              newArts[idx] = { type: "4pc", setId: detected.artifactSetId };
-            } else if (detected.artifactHalfSetIds.length === 2) {
-              newArts[idx] = {
-                type: "2pc+2pc",
-                id1: detected.artifactHalfSetIds[0],
-                id2: detected.artifactHalfSetIds[1],
-              };
+            if (detected) {
+              newArts[idx] = detected;
             }
           }
         } else {

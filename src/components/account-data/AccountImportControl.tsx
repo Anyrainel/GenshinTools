@@ -424,7 +424,7 @@ export const AccountImportControl = forwardRef<
                   <Checkbox
                     id="clearData"
                     checked={clearData}
-                    onCheckedChange={(c) => setClearData(c as boolean)}
+                    onBooleanChange={setClearData}
                     disabled={isBusy}
                   />
                   <Label
@@ -582,7 +582,7 @@ export const AccountImportControl = forwardRef<
                   <Checkbox
                     id="hoyolabClear"
                     checked={hoyolabClear}
-                    onCheckedChange={(c) => setHoyolabClear(c as boolean)}
+                    onBooleanChange={setHoyolabClear}
                     disabled={isBusy}
                   />
                   <Label

@@ -120,11 +120,11 @@ export function WeaponChoiceDetail({
 
   // Derive formula lists from teamBuild
   const availableFormulas = useMemo(() => {
-    return teamBuild ? teamBuild.getFormulaIds() : {};
+    return teamBuild ? teamBuild.catalog.getFormulaIds() : {};
   }, [teamBuild]);
 
   const displayFormulas = useMemo(() => {
-    return teamBuild ? teamBuild.getAllFormulaIds() : {};
+    return teamBuild ? teamBuild.catalog.getAllFormulaIds() : {};
   }, [teamBuild]);
 
   const validCharIds = Object.keys(availableFormulas);
@@ -218,7 +218,7 @@ export function WeaponChoiceDetail({
     const lines: ComboLine[] = [];
     for (const charId of team.characters) {
       if (!charId) continue;
-      const comboData = teamBuild.getCombo(charId);
+      const comboData = teamBuild.catalog.getCombo(charId);
       for (const [formulaId, count] of Object.entries(comboData)) {
         if (count > 0) {
           lines.push({ charId, formulaId, count });

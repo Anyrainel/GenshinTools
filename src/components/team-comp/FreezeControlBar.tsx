@@ -37,10 +37,7 @@ export function FreezeControlBar({
         <span className="text-sm md:text-base font-bold text-foreground whitespace-nowrap">
           {t.ui("teamComp.reuseLabel")}
         </span>
-        <Select
-          value={reuseMode}
-          onValueChange={(v) => onReuseModeChange(v as ArtifactReuseMode)}
-        >
+        <Select value={reuseMode} onValueChange={(v) => onReuseModeChange(v)}>
           <SelectTrigger className="w-auto text-sm md:text-base font-bold h-7 md:h-8 gap-1.5 px-3 border-primary/30 bg-primary/10 text-foreground ring-1 ring-primary/15 hover:bg-primary/15">
             <SelectValue />
           </SelectTrigger>

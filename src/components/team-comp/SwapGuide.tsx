@@ -498,7 +498,7 @@ export function ExportColumn({
         )}
         {artConfig && artConfig.type === "2pc+2pc" && (
           <ItemIcon
-            halfSetIds={[artConfig.id1, artConfig.id2]}
+            halfSetIds={[artConfig.halfSetIds[0], artConfig.halfSetIds[1]]}
             size={isDesktop ? "sm" : "xs"}
           />
         )}

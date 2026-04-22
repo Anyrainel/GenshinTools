@@ -152,7 +152,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       baseLines = [];
       for (const charId of team.characters) {
         if (!charId) continue;
-        const combo = teamBuild.getCombo(charId);
+        const combo = teamBuild.catalog.getCombo(charId);
         for (const [formulaId, count] of Object.entries(combo)) {
           if (count > 0) baseLines.push({ charId, formulaId, count });
         }

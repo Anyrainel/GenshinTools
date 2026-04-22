@@ -57,7 +57,9 @@ import {
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
 import {
+  type ArtifactSetConfig,
   type CalcContext,
+  type CharOptConfig,
   type ComboFormula,
   type ComboLine,
   type ReactionOverride,
@@ -270,12 +272,12 @@ export function DamageDetail({
   ]);
 
   const availableFormulas = useMemo(() => {
-    return teamBuild ? teamBuild.getFormulaIds() : {};
+    return teamBuild ? teamBuild.catalog.getFormulaIds() : {};
   }, [teamBuild]);
 
   /** All formulas including constellation-locked ones, with minC info for UI rendering. */
   const displayFormulas = useMemo(() => {
-    return teamBuild ? teamBuild.getAllFormulaIds() : {};
+    return teamBuild ? teamBuild.catalog.getAllFormulaIds() : {};
   }, [teamBuild]);
 
   const equippedArtifactsByChar = useMemo(() => {
@@ -518,17 +520,10 @@ export function DamageDetail({
     (resolvedFormula && team.charSettings?.[resolvedFormula.charId]?.minEr) ??
     1.0;
 
-  const getGoalSets = (charId: string) => {
+  const getGoalArtifactSet = (charId: string): ArtifactSetConfig | null => {
     const charIdx = effectiveTeam.characters.indexOf(charId);
     const goalArt = charIdx >= 0 ? effectiveTeam.artifacts[charIdx] : undefined;
-    let goalSetId: string | null = null;
-    let goalHalfSetIds: string[] = [];
-    if (goalArt?.type === "4pc") {
-      goalSetId = goalArt.setId;
-    } else if (goalArt?.type === "2pc+2pc") {
-      goalHalfSetIds = [String(goalArt.id1), String(goalArt.id2)];
-    }
-    return { goalSetId, goalHalfSetIds };
+    return goalArt ?? null;
   };
 
   // Artifact inventory is provided by useTeamInventory — see teamInventory above
@@ -549,16 +544,7 @@ export function DamageDetail({
       effectiveTeam.characters.find((c): c is string => c != null)!;
     const formulaId = resolvedFormula?.formulaId ?? "";
 
-    const perChar: Record<
-      string,
-      {
-        minEr: number;
-        minCr: number;
-        buildMatch?: BuildMatchResult | null;
-        artifactSetId?: string | null;
-        artifactHalfSetIds?: string[];
-      }
-    > = {};
+    const perChar: Record<string, CharOptConfig> = {};
 
     for (let ci = 0; ci < effectiveTeam.characters.length; ci++) {
       const cid = effectiveTeam.characters[ci];
@@ -566,25 +552,20 @@ export function DamageDetail({
       // Skip frozen and force-reused characters — their artifacts are locked
       if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
-      const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
+      const goalArtSet = getGoalArtifactSet(cid);
       const cs = team.charSettings?.[cid];
       perChar[cid] = {
         minEr: cs?.minEr ?? 1.0,
         minCr: cs?.crMode === "target" ? 0 : (cs?.minCr ?? 0),
         buildMatch: bm ?? undefined,
-        artifactSetId: goalSetId,
-        artifactHalfSetIds: goalHalfSetIds,
+        artifactSet: goalArtSet,
       };
     }
 
     const optimizerConfigs = configs.map((c) => {
-      const { goalSetId, goalHalfSetIds } = getGoalSets(c.charId);
-      if (goalSetId || goalHalfSetIds.length > 0) {
-        return {
-          ...c,
-          artifactSetId: goalSetId,
-          artifactHalfSetIds: goalHalfSetIds,
-        };
+      const goalArtSet = getGoalArtifactSet(c.charId);
+      if (goalArtSet) {
+        return { ...c, artifactSet: goalArtSet };
       }
       return c;
     });
@@ -854,8 +835,8 @@ export function DamageDetail({
           circlet: sk,
         };
       } else if (artConfig.type === "2pc+2pc") {
-        const hs1 = artifactHalfSetsById[String(artConfig.id1)];
-        const hs2 = artifactHalfSetsById[String(artConfig.id2)];
+        const hs1 = artifactHalfSetsById[String(artConfig.halfSetIds[0])];
+        const hs2 = artifactHalfSetsById[String(artConfig.halfSetIds[1])];
         // Pick a 5-star set from each half-set (4-star sets have fewer stats)
         const sk1 =
           hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
@@ -1158,15 +1139,13 @@ export function DamageDetail({
             const lines: ComboLine[] = [];
             for (const charId of team.characters) {
               if (!charId) continue;
-              const combo = teamBuild.getCombo(charId);
+              const combo = teamBuild.catalog.getCombo(charId);
               for (const [formulaId, count] of Object.entries(combo)) {
                 if (count > 0) {
                   lines.push({ charId, formulaId, count });
                 }
               }
             }
-            // Append team reaction combo entries (LCh, LCr)
-            lines.push(...teamBuild.getReactionComboLines());
             updateTeam(team.id, {
               combo: { id: combo.id, label: combo.label, lines },
             });

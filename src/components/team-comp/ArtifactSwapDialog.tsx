@@ -340,10 +340,7 @@ export function ArtifactSwapDialog({
         </div>
 
         {/* Tabs for matching vs other */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(v) => setActiveTab(v as "matching" | "other")}
-        >
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)}>
           <TabsList className="w-full">
             <TabsTrigger value="matching" className="flex-1 gap-1.5 text-sm">
               {t.ui("teamComp.swapTabMatching")}

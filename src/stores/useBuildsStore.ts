@@ -1,5 +1,6 @@
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
+import { PersistedBuildsStoreSchema } from "@/stores/schemas";
 import { invalidateScores } from "@/stores/useAccountStore";
 import { create } from "zustand";
 
@@ -523,8 +524,15 @@ export const useBuildsStore = create<BuildsState>()(
       name: "artifact-filter-builds",
       version: BUILD_DATA_VERSION,
       migrate: (persistedState: unknown, version: number) => {
-        // biome-ignore lint/suspicious/noExplicitAny: Migration handling for old data shape
-        const state = persistedState as any;
+        /** Shape of builds store data during migration. Version-dependent fields may be missing. */
+        interface LegacyBuildsState {
+          builds?: Record<string, Build>;
+          characterToBuildIds?: Record<string, string[]>;
+          presetDeletedBuildIds?: string[];
+          validationErrors?: Record<string, string[]>;
+        }
+
+        const state = persistedState as LegacyBuildsState;
 
         // Guard against missing builds map (corrupted or very old data)
         if (!state.builds || typeof state.builds !== "object") {
@@ -537,28 +545,36 @@ export const useBuildsStore = create<BuildsState>()(
         }
 
         if (version < 5) {
+          /** Shape of a Build before v5 migration (string[] substats, optional kOverride). */
+          interface LegacyBuildV4 {
+            substats: string[] | WeightedSubStat[];
+            characterId: string;
+            kOverride?: unknown;
+          }
+
           // Migration from version < 5 (SubStat[] -> WeightedSubStat[])
-          for (const build of Object.values(state.builds) as Build[]) {
-            // biome-ignore lint/suspicious/noExplicitAny: Migration handling for old data shape
-            const buildAny = build as any;
+          for (const build of Object.values(state.builds)) {
+            const legacy = build as unknown as LegacyBuildV4;
             if (
-              Array.isArray(buildAny.substats) &&
-              typeof buildAny.substats[0] === "string"
+              Array.isArray(legacy.substats) &&
+              typeof legacy.substats[0] === "string"
             ) {
               build.substats = migrateSubstats(
-                buildAny.substats,
-                build.characterId
+                legacy.substats as string[],
+                legacy.characterId
               );
             }
             // Remove legacy kOverride field
-            // biome-ignore lint/performance/noDelete: Migration cleanup
-            delete buildAny.kOverride;
+            if ("kOverride" in legacy) {
+              // biome-ignore lint/performance/noDelete: Migration cleanup of legacy field
+              delete legacy.kOverride;
+            }
           }
         }
 
         // Run idempotent build-level migrations (halfSet IDs, weights, normalizer)
         // on every version so persisted data always has required fields.
-        for (const build of Object.values(state.builds) as Build[]) {
+        for (const build of Object.values(state.builds)) {
           migrateBuild(build);
           state.validationErrors[build.id] = getBuildValidationErrors(build);
         }
@@ -570,24 +586,9 @@ export const useBuildsStore = create<BuildsState>()(
       // (sandsWeights, normalizer, etc.) are applied even when the stored
       // version already matches the configured version.
       merge: (persistedState, currentState) => {
-        const merged = {
-          ...currentState,
-          ...(persistedState as object),
-        } as BuildsState;
-        if (!merged.builds || typeof merged.builds !== "object")
-          merged.builds = {};
-        if (
-          !merged.characterToBuildIds ||
-          typeof merged.characterToBuildIds !== "object"
-        )
-          merged.characterToBuildIds = {};
-        if (
-          !merged.validationErrors ||
-          typeof merged.validationErrors !== "object"
-        )
-          merged.validationErrors = {};
-        if (!Array.isArray(merged.presetDeletedBuildIds))
-          merged.presetDeletedBuildIds = [];
+        const parsed = PersistedBuildsStoreSchema.safeParse(persistedState);
+        const persisted = parsed.success ? parsed.data : {};
+        const merged = { ...currentState, ...persisted };
         for (const build of Object.values(merged.builds)) {
           migrateBuild(build);
         }

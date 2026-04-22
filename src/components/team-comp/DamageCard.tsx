@@ -163,18 +163,13 @@ function ComboBreakdown({
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
 }) {
-  const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
-  const rxFormulaIds = useMemo(
-    () => teamBuild.getReactionFormulaIds(),
+  const allFormulaIds = useMemo(
+    () => teamBuild.catalog.getFormulaIds(),
     [teamBuild]
   );
   // Filter to active lines whose formula still exists (matches combo eval filtering)
   const activeLines = comboLines.filter(
-    (l) =>
-      l.count > 0 &&
-      (allFormulaIds[l.charId]?.[l.formulaId] !== undefined ||
-        (l.formulaId.startsWith("rx-") &&
-          rxFormulaIds[l.formulaId] !== undefined))
+    (l) => l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
   );
 
   // Group active lines by character, applying critMode adjustment
@@ -420,10 +415,7 @@ function ComboBreakdown({
                         const label =
                           allFormulaIds[focusedLine.charId]?.[
                             focusedLine.formulaId
-                          ] ??
-                          (focusedLine.formulaId.startsWith("rx-")
-                            ? rxFormulaIds[focusedLine.formulaId]
-                            : undefined);
+                          ];
                         return label
                           ? t.resolveLabel(label)
                           : focusedLine.formulaId;
@@ -522,11 +514,7 @@ function ComboBreakdown({
                           {lines && lines.length > 0 ? (
                             lines.map(
                               ({ line, perHit, total, isPartial }, idx) => {
-                                const label =
-                                  charFormulas?.[line.formulaId] ??
-                                  (line.formulaId.startsWith("rx-")
-                                    ? rxFormulaIds[line.formulaId]
-                                    : undefined);
+                                const label = charFormulas?.[line.formulaId];
                                 const rxn = line.reaction?.reaction;
                                 return (
                                   <div
@@ -657,7 +645,8 @@ function ComboBreakdown({
                     <div className="p-1 flex flex-wrap gap-x-4 lg:gap-x-6 gap-y-0">
                       {teamReactionLines.map(
                         ({ line, perHit, total, isPartial }, idx) => {
-                          const label = rxFormulaIds[line.formulaId];
+                          const label =
+                            allFormulaIds[line.charId]?.[line.formulaId];
                           return (
                             <div
                               key={idx}
@@ -817,9 +806,8 @@ function SingleResultView({
   const comboKey = comboId ? `combo:${comboId}:${formulaKey}` : undefined;
   const parts = displayResult.partsByFormula[formulaKey];
 
-  const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
-  const rxFormulaIds = useMemo(
-    () => teamBuild.getReactionFormulaIds(),
+  const allFormulaIds = useMemo(
+    () => teamBuild.catalog.getFormulaIds(),
     [teamBuild]
   );
 
@@ -966,7 +954,7 @@ function SingleResultView({
                     formulaLabel:
                       allFormulaIds[resolvedFormula.charId]?.[
                         resolvedFormula.formulaId
-                      ] ?? rxFormulaIds[resolvedFormula.formulaId],
+                      ],
                   },
                 ]
               : undefined
@@ -1025,21 +1013,17 @@ function ComboResultView({
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
 }) {
-  const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
-  const rxFormulaIds = useMemo(
-    () => teamBuild.getReactionFormulaIds(),
+  const allFormulaIds = useMemo(
+    () => teamBuild.catalog.getFormulaIds(),
     [teamBuild]
   );
   const activeLines = useMemo(
     () =>
       comboLines.filter(
         (l) =>
-          l.count > 0 &&
-          (allFormulaIds[l.charId]?.[l.formulaId] !== undefined ||
-            (l.formulaId.startsWith("rx-") &&
-              rxFormulaIds[l.formulaId] !== undefined))
+          l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
       ),
-    [comboLines, allFormulaIds, rxFormulaIds]
+    [comboLines, allFormulaIds]
   );
   const teamCharIds = useMemo(
     () => team.characters.filter((id): id is string => id != null),
@@ -1093,8 +1077,7 @@ function ComboResultView({
         defaultActivation: activation,
         comboCount: count,
         comboKey: comboId ? `combo:${comboId}:${fKey}` : undefined,
-        formulaLabel:
-          allFormulaIds[charId]?.[formulaId] ?? rxFormulaIds[formulaId],
+        formulaLabel: allFormulaIds[charId]?.[formulaId],
         buffApplicability,
       };
     });
@@ -1107,7 +1090,6 @@ function ComboResultView({
     calcContext,
     comboId,
     allFormulaIds,
-    rxFormulaIds,
   ]);
 
   return (
@@ -1298,7 +1280,7 @@ function CritModeDropdown({
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
-    <Select value={critMode} onValueChange={(v) => setCritMode(v as CritMode)}>
+    <Select<CritMode> value={critMode} onValueChange={(v) => setCritMode(v)}>
       <SelectTrigger
         className={cn(
           "w-auto font-semibold border-none bg-transparent shadow-none focus:ring-0 text-amber-400 px-1 py-0 gap-0.5 shrink-0 [&>svg:last-child]:hidden",
@@ -1654,8 +1636,8 @@ export function DamageCard({
           if (reqSet.type === "4pc") {
             if ((setCounts.get(reqSet.setId) ?? 0) < 4) setMismatch = true;
           } else {
-            const id1 = String(reqSet.id1);
-            const id2 = String(reqSet.id2);
+            const id1 = String(reqSet.halfSetIds[0]);
+            const id2 = String(reqSet.halfSetIds[1]);
             if (id1 === id2) {
               if ((setCounts.get(id1) ?? 0) < 4) setMismatch = true;
             } else {

@@ -42,12 +42,12 @@ function getArtifactIconProps(bc: TeamSlotConfig): {
   halfSetIds?: [string, string];
   imagePath?: string;
 } {
-  if (bc.artifactSetId) {
-    return { artifactSetId: bc.artifactSetId };
+  if (bc.artifactSet?.type === "4pc") {
+    return { artifactSetId: bc.artifactSet.setId };
   }
-  if (bc.artifactHalfSetIds.length >= 2) {
+  if (bc.artifactSet?.type === "2pc+2pc") {
     return {
-      halfSetIds: [bc.artifactHalfSetIds[0], bc.artifactHalfSetIds[1]],
+      halfSetIds: [bc.artifactSet.halfSetIds[0], bc.artifactSet.halfSetIds[1]],
     };
   }
   return { imagePath: "" };
@@ -188,19 +188,19 @@ function CharConfigGroup({
   const rosterIs5Star = rosterWeapon?.rarity === 5;
 
   const artifactTooltip = useMemo(() => {
-    if (baseConfig.artifactSetId) {
-      return <ArtifactTooltip setId={baseConfig.artifactSetId} />;
+    if (baseConfig.artifactSet?.type === "4pc") {
+      return <ArtifactTooltip setId={baseConfig.artifactSet.setId} />;
     }
-    if (baseConfig.artifactHalfSetIds.length >= 2) {
+    if (baseConfig.artifactSet?.type === "2pc+2pc") {
       return (
         <MixedSetTooltip
-          id1={baseConfig.artifactHalfSetIds[0]}
-          id2={baseConfig.artifactHalfSetIds[1]}
+          id1={baseConfig.artifactSet.halfSetIds[0]}
+          id2={baseConfig.artifactSet.halfSetIds[1]}
         />
       );
     }
     return null;
-  }, [baseConfig.artifactSetId, baseConfig.artifactHalfSetIds]);
+  }, [baseConfig.artifactSet]);
 
   const SIZE_TO_W: Record<string, string> = {
     xs: "w-10",

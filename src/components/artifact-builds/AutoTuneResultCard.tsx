@@ -8,11 +8,12 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type { AccountData, Build, Element } from "@/data/types";
+import type { AccountData, Build } from "@/data/types";
 import type {
   AutoTuneOutput,
   TeamBreakdown,
 } from "@/lib/account-data/scoring/pipeline";
+import { parseElement } from "@/lib/typeValidation";
 import { ELEMENT_HEX, cn, getElementColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
@@ -120,7 +121,7 @@ export function AutoTuneResultCard({
 }) {
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
-  const elColor = getElementColor(element as Element, "text");
+  const elColor = getElementColor(parseElement(element), "text");
   const elHex = ELEMENT_HEX[element] || "#888";
   const result = entry.result;
 

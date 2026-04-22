@@ -2,6 +2,7 @@ import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { PersistedTriageStoreSchema } from "./schemas";
 
 interface TriageState {
   settings: TriageSettings;
@@ -53,19 +54,19 @@ export const useTriageStore = create<TriageState>()(
           settings.strategicHighLevelEvaluation = undefined;
         }
         state.settings = settings;
-        return state as unknown as Partial<TriageState>;
+        return state as Partial<TriageState>;
       },
       partialize: (state) => ({
         settings: state.settings,
       }),
       merge: (persistedState, currentState) => {
-        const persisted = persistedState as Partial<TriageState>;
+        const parsed = PersistedTriageStoreSchema.safeParse(persistedState);
+        if (!parsed.success) return currentState;
         return {
           ...currentState,
-          ...(persisted ?? {}),
           settings: {
             ...currentState.settings,
-            ...(persisted?.settings ?? {}),
+            ...(parsed.data.settings as Partial<TriageSettings>),
           },
         };
       },

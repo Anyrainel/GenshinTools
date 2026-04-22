@@ -2,7 +2,7 @@ import type { AccountData, ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { repairArtifact } from "./storeValidation";
+import { PersistedFreezeStoreSchema } from "./schemas";
 import { getActiveAccount, useAccountStore } from "./useAccountStore";
 
 /** Collect all artifact IDs from account data. */
@@ -143,7 +143,7 @@ export function migrateFreezeStore(
       state.frozenArtifactIds = [];
     }
   }
-  return state as unknown as FreezeState;
+  return state as Partial<FreezeState> as FreezeState;
 }
 
 export const useFreezeStore = create<FreezeState>()(
@@ -379,21 +379,9 @@ export const useFreezeStore = create<FreezeState>()(
         frozenArtifactIds: state.frozenArtifactIds,
       }),
       merge: (persistedState, currentState) => {
-        const merged = {
-          ...currentState,
-          ...(persistedState as object),
-        } as FreezeState;
-        // Validate all frozen artifacts on every rehydration
-        for (const entry of Object.values(merged.frozenTeams)) {
-          if (!entry?.artifactsByChar) continue;
-          for (const slotMap of Object.values(entry.artifactsByChar)) {
-            for (const slot of allSlots) {
-              const art = slotMap[slot];
-              if (art) repairArtifact(art);
-            }
-          }
-        }
-        return merged;
+        const parsed = PersistedFreezeStoreSchema.safeParse(persistedState);
+        const persisted = parsed.success ? parsed.data : {};
+        return { ...currentState, ...persisted };
       },
     }
   )

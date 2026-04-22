@@ -17,13 +17,15 @@ import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type {
-  CalcContext,
-  OptFailReason,
-  ReactionOverride,
-  StatKey,
-  TeamOptYield,
-  TeamOptimizerOptions,
+import {
+  type CalcContext,
+  type OptFailReason,
+  type ReactionOverride,
+  type StatKey,
+  type TeamOptYield,
+  type TeamOptimizerOptions,
+  getHalfSetIds,
+  getSetId,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
@@ -495,11 +497,11 @@ function runCharacterMona(opts: PerCharSearchOpts): PerCharSearchResult {
     // 4-piece set: 5 masks (one flex slot)
     for (const mask of MONA_SET4_MASKS) {
       if (ctx.aborted) break;
-      runMonaSearch(mask, monaSlotData, ctx, charConfig.artifactSetId!);
+      runMonaSearch(mask, monaSlotData, ctx, getSetId(charConfig.artifactSet)!);
     }
   } else if (is2pc) {
     // 2+2: iterate all set-key combinations for both half-sets
-    const [h1, h2] = charConfig.artifactHalfSetIds as [string, string];
+    const [h1, h2] = getHalfSetIds(charConfig.artifactSet) as [string, string];
     const h1Keys = artifactHalfSetsById[h1]?.setIds ?? [];
     const h2Keys = artifactHalfSetsById[h2]?.setIds ?? [];
 

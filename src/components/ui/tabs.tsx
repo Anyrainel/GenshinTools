@@ -3,7 +3,33 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
 
-const Tabs = TabsPrimitive.Root
+/**
+ * Generic Tabs wrapper — narrows `onValueChange` to `T` so call sites
+ * don't need `v as SomeType` casts.
+ */
+function Tabs<T extends string = string>({
+  onValueChange,
+  value,
+  defaultValue,
+  ...props
+}: Omit<
+  React.ComponentProps<typeof TabsPrimitive.Root>,
+  "onValueChange" | "value" | "defaultValue"
+> & {
+  value?: T
+  defaultValue?: T
+  onValueChange?: (value: T) => void
+}) {
+  return (
+    <TabsPrimitive.Root
+      {...props}
+      value={value}
+      defaultValue={defaultValue}
+      onValueChange={onValueChange as ((value: string) => void) | undefined}
+    />
+  )
+}
+Tabs.displayName = "Tabs"
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,

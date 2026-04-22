@@ -194,11 +194,14 @@ function formatFailReason(
         .replace("{0}", String(Math.round(reason.minCr * 100)))
         .replace("{1}", String(Math.round(reason.bestCr * 100)));
     case "set-impossible": {
-      const name = reason.setId
-        ? t.artifact(reason.setId) || reason.setId
-        : (reason.halfSetIds
-            ?.map((id) => t.halfSetShort(id) || id)
-            .join(" + ") ?? "?");
+      const name =
+        reason.artifactSet?.type === "4pc"
+          ? t.artifact(reason.artifactSet.setId) || reason.artifactSet.setId
+          : reason.artifactSet?.type === "2pc+2pc"
+            ? reason.artifactSet.halfSetIds
+                .map((id) => t.halfSetShort(id) || id)
+                .join(" + ")
+            : "?";
       return t.ui("teamComp.failSetImpossible").replace("{0}", name);
     }
     case "all-filtered":

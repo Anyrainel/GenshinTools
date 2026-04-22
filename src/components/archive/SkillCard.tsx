@@ -17,11 +17,13 @@ import {
 
 const TALENT_SLOTS = ["A", "E", "S", "Q"] as const;
 type TalentSlot = (typeof TALENT_SLOTS)[number];
+const TALENT_SLOT_SET = new Set<string>(TALENT_SLOTS);
 
 /** Derive talent slot from skill name prefix (e.g. "E. Skill Name" → "E"). */
 function inferTalentSlot(skillName: string): TalentSlot {
   const match = skillName.match(/^([AESQ])\.\s/);
-  return (match?.[1] as TalentSlot) ?? "A";
+  const slot = match?.[1];
+  return slot && TALENT_SLOT_SET.has(slot) ? (slot as TalentSlot) : "A";
 }
 
 function getDefaultLevels(

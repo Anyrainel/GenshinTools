@@ -107,8 +107,8 @@ function packMember(
       artPayload = artSetToIdx.get(artifact.setId) ?? 0;
     } else {
       artType = 1;
-      const h1 = halfSetToIdx.get(String(artifact.id1)) ?? 0;
-      const h2 = halfSetToIdx.get(String(artifact.id2)) ?? 0;
+      const h1 = halfSetToIdx.get(String(artifact.halfSetIds[0])) ?? 0;
+      const h2 = halfSetToIdx.get(String(artifact.halfSetIds[1])) ?? 0;
       artPayload = (h1 << 5) | h2;
     }
   }

@@ -90,10 +90,7 @@ export function AutoTuneTeamRow({
                 {artConfig?.type === "4pc" ? (
                   <ItemIcon artifactSetId={artConfig.setId} size="xs" />
                 ) : artConfig?.type === "2pc+2pc" ? (
-                  <ItemIcon
-                    halfSetIds={[artConfig.id1, artConfig.id2]}
-                    size="xs"
-                  />
+                  <ItemIcon halfSetIds={artConfig.halfSetIds} size="xs" />
                 ) : (
                   <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
                 )}

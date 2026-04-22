@@ -11,6 +11,7 @@ import {
   setsMatch,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
+import type { ArtifactSetConfig } from "@/lib/team-comp/types";
 import type { OptionMap } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 import {
@@ -45,8 +46,11 @@ describe("detectEquippedSets", () => {
       makeArtifact(GL, "circlet"),
     ];
     const result = detectEquippedSets(arts);
-    expect(result.artifactSetId).toBe(CW);
-    expect(result.artifactHalfSetIds).toEqual([]);
+    expect(result).not.toBeNull();
+    expect(result!.type).toBe("4pc");
+    if (result?.type === "4pc") {
+      expect(result.setId).toBe(CW);
+    }
   });
 
   it("detects 5pc as 4pc", () => {
@@ -58,7 +62,11 @@ describe("detectEquippedSets", () => {
       makeArtifact(CW, "circlet"),
     ];
     const result = detectEquippedSets(arts);
-    expect(result.artifactSetId).toBe(CW);
+    expect(result).not.toBeNull();
+    expect(result!.type).toBe("4pc");
+    if (result?.type === "4pc") {
+      expect(result.setId).toBe(CW);
+    }
   });
 
   it("detects 2pc+2pc combo", () => {
@@ -70,8 +78,11 @@ describe("detectEquippedSets", () => {
       makeArtifact(GL, "circlet"),
     ];
     const result = detectEquippedSets(arts);
-    expect(result.artifactSetId).toBeNull();
-    expect(result.artifactHalfSetIds).toHaveLength(2);
+    expect(result).not.toBeNull();
+    expect(result!.type).toBe("2pc+2pc");
+    if (result?.type === "2pc+2pc") {
+      expect(result.halfSetIds).toHaveLength(2);
+    }
   });
 
   it("detects single 2pc bonus", () => {
@@ -83,11 +94,11 @@ describe("detectEquippedSets", () => {
       makeArtifact(WT, "circlet"),
     ];
     const result = detectEquippedSets(arts);
-    expect(result.artifactSetId).toBeNull();
-    expect(result.artifactHalfSetIds.length).toBeLessThanOrEqual(1);
+    // Single 2pc is not a complete set config — returns null
+    expect(result).toBeNull();
   });
 
-  it("returns no bonuses for rainbow set", () => {
+  it("returns null for rainbow set", () => {
     const arts = [
       makeArtifact(CW, "flower"),
       makeArtifact(GL, "plume"),
@@ -96,14 +107,12 @@ describe("detectEquippedSets", () => {
       makeArtifact("thundering_fury", "circlet"),
     ];
     const result = detectEquippedSets(arts);
-    expect(result.artifactSetId).toBeNull();
-    expect(result.artifactHalfSetIds).toEqual([]);
+    expect(result).toBeNull();
   });
 
   it("handles empty array", () => {
     const result = detectEquippedSets([]);
-    expect(result.artifactSetId).toBeNull();
-    expect(result.artifactHalfSetIds).toEqual([]);
+    expect(result).toBeNull();
   });
 
   it("detects single 2pc from partial artifacts (3 pieces)", () => {
@@ -113,9 +122,8 @@ describe("detectEquippedSets", () => {
       makeArtifact(GL, "sands"),
     ];
     const result = detectEquippedSets(arts);
-    expect(result.artifactSetId).toBeNull();
-    // Single 2pc detected — length 1
-    expect(result.artifactHalfSetIds).toHaveLength(1);
+    // Single 2pc is not a complete 2pc+2pc config — returns null
+    expect(result).toBeNull();
   });
 
   it("handles null/undefined entries in array", () => {
@@ -128,15 +136,14 @@ describe("detectEquippedSets", () => {
     const result = detectEquippedSets(
       arts as (ArtifactData | null | undefined)[]
     );
-    expect(result.artifactSetId).toBeNull();
-    expect(result.artifactHalfSetIds).toHaveLength(1);
+    // Only 2 CW pieces = single 2pc, not a full config
+    expect(result).toBeNull();
   });
 
-  it("returns no bonuses when only 1 piece of each set", () => {
+  it("returns null when only 1 piece of each set", () => {
     const arts = [makeArtifact(CW, "flower"), makeArtifact(GL, "plume")];
     const result = detectEquippedSets(arts);
-    expect(result.artifactSetId).toBeNull();
-    expect(result.artifactHalfSetIds).toEqual([]);
+    expect(result).toBeNull();
   });
 });
 
@@ -144,58 +151,63 @@ describe("detectEquippedSets", () => {
 
 describe("setsMatch", () => {
   it("returns true for null goal", () => {
-    expect(
-      setsMatch(null as never, { artifactSetId: CW, artifactHalfSetIds: [] })
-    ).toBe(true);
+    const equipped: ArtifactSetConfig = { type: "4pc", setId: CW };
+    expect(setsMatch(null, equipped)).toBe(true);
   });
 
   it("matches 4pc goal with equipped 4pc", () => {
-    const goal = { type: "4pc" as const, setId: CW };
-    expect(setsMatch(goal, { artifactSetId: CW, artifactHalfSetIds: [] })).toBe(
-      true
-    );
+    const goal: ArtifactSetConfig = { type: "4pc", setId: CW };
+    const equipped: ArtifactSetConfig = { type: "4pc", setId: CW };
+    expect(setsMatch(goal, equipped)).toBe(true);
   });
 
   it("rejects 4pc goal when different set equipped", () => {
-    const goal = { type: "4pc" as const, setId: CW };
-    expect(setsMatch(goal, { artifactSetId: GL, artifactHalfSetIds: [] })).toBe(
-      false
-    );
+    const goal: ArtifactSetConfig = { type: "4pc", setId: CW };
+    const equipped: ArtifactSetConfig = { type: "4pc", setId: GL };
+    expect(setsMatch(goal, equipped)).toBe(false);
   });
 
   it("rejects 4pc goal when no 4pc equipped", () => {
-    const goal = { type: "4pc" as const, setId: CW };
-    expect(
-      setsMatch(goal, {
-        artifactSetId: null,
-        artifactHalfSetIds: ["pyro%-15", "er-20"],
-      })
-    ).toBe(false);
+    const goal: ArtifactSetConfig = { type: "4pc", setId: CW };
+    const equipped: ArtifactSetConfig = {
+      type: "2pc+2pc",
+      halfSetIds: ["pyro%-15", "er-20"],
+    };
+    expect(setsMatch(goal, equipped)).toBe(false);
   });
 
   it("matches 2pc+2pc goal with correct halfSetIds", () => {
-    const goal = { type: "2pc+2pc" as const, id1: "pyro%-15", id2: "er-20" };
-    const equipped = {
-      artifactSetId: null,
-      artifactHalfSetIds: ["pyro%-15", "er-20"],
+    const goal: ArtifactSetConfig = {
+      type: "2pc+2pc",
+      halfSetIds: ["pyro%-15", "er-20"],
+    };
+    const equipped: ArtifactSetConfig = {
+      type: "2pc+2pc",
+      halfSetIds: ["pyro%-15", "er-20"],
     };
     expect(setsMatch(goal, equipped)).toBe(true);
   });
 
   it("matches 2pc+2pc regardless of order", () => {
-    const goal = { type: "2pc+2pc" as const, id1: "er-20", id2: "pyro%-15" };
-    const equipped = {
-      artifactSetId: null,
-      artifactHalfSetIds: ["pyro%-15", "er-20"],
+    const goal: ArtifactSetConfig = {
+      type: "2pc+2pc",
+      halfSetIds: ["er-20", "pyro%-15"],
+    };
+    const equipped: ArtifactSetConfig = {
+      type: "2pc+2pc",
+      halfSetIds: ["pyro%-15", "er-20"],
     };
     expect(setsMatch(goal, equipped)).toBe(true);
   });
 
   it("rejects 2pc+2pc with mismatched halfSetIds", () => {
-    const goal = { type: "2pc+2pc" as const, id1: "pyro%-15", id2: "er-20" };
-    const equipped = {
-      artifactSetId: null,
-      artifactHalfSetIds: ["pyro%-15", "atk%-18"],
+    const goal: ArtifactSetConfig = {
+      type: "2pc+2pc",
+      halfSetIds: ["pyro%-15", "er-20"],
+    };
+    const equipped: ArtifactSetConfig = {
+      type: "2pc+2pc",
+      halfSetIds: ["pyro%-15", "atk%-18"],
     };
     expect(setsMatch(goal, equipped)).toBe(false);
   });
@@ -234,7 +246,6 @@ describe("frozenArtifactsMatchConfig", () => {
   });
 
   it("returns true for matching 2pc+2pc", () => {
-    // 2 CW + 2 ESF + 1 random
     const slots = ["flower", "plume", "sands", "goblet", "circlet"] as const;
     const arts = Object.fromEntries([
       ["flower", makeArtifact(CW, "flower")],
@@ -243,13 +254,14 @@ describe("frozenArtifactsMatchConfig", () => {
       ["goblet", makeArtifact(ESF, "goblet")],
       ["circlet", makeArtifact(GL, "circlet")],
     ]) as Record<(typeof slots)[number], ArtifactData | null>;
-    // Need half-set IDs — get them via detectEquippedSets
+    // Detect equipped sets to get the half-set IDs
     const equipped = detectEquippedSets(Object.values(arts));
-    // Use the actual half-set IDs from detection
-    if (equipped.artifactHalfSetIds.length === 2) {
-      const [id1, id2] = equipped.artifactHalfSetIds;
+    if (equipped?.type === "2pc+2pc") {
       expect(
-        frozenArtifactsMatchConfig(arts, { type: "2pc+2pc", id1, id2 })
+        frozenArtifactsMatchConfig(arts, {
+          type: "2pc+2pc",
+          halfSetIds: equipped.halfSetIds,
+        })
       ).toBe(true);
     }
   });
@@ -259,8 +271,7 @@ describe("frozenArtifactsMatchConfig", () => {
     expect(
       frozenArtifactsMatchConfig(arts, {
         type: "2pc+2pc",
-        id1: "pyro%-15",
-        id2: "er-20",
+        halfSetIds: ["pyro%-15", "er-20"],
       })
     ).toBe(false);
   });
@@ -279,7 +290,10 @@ describe("buildTeamConfigs", () => {
     )[],
     artifacts: [
       { type: "4pc" as const, setId: CW },
-      { type: "2pc+2pc" as const, id1: "er-20", id2: "atk%-18" },
+      {
+        type: "2pc+2pc" as const,
+        halfSetIds: ["er-20", "atk%-18"] as [string, string],
+      },
       null,
       null,
     ],
@@ -345,11 +359,12 @@ describe("buildTeamConfigs", () => {
   it("falls back to goal artifact sets when no account artifacts equipped", () => {
     const configs = buildTeamConfigs(baseTeam, null);
     // hu_tao has 4pc CW goal
-    expect(configs[0].artifactSetId).toBe(CW);
-    expect(configs[0].artifactHalfSetIds).toEqual([]);
+    expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
     // xingqiu has 2pc+2pc goal
-    expect(configs[1].artifactSetId).toBeNull();
-    expect(configs[1].artifactHalfSetIds).toEqual(["er-20", "atk%-18"]);
+    expect(configs[1].artifactSet).toEqual({
+      type: "2pc+2pc",
+      halfSetIds: ["er-20", "atk%-18"],
+    });
   });
 
   it("uses team roster 4pc config even when equipped artifacts differ", () => {
@@ -369,7 +384,7 @@ describe("buildTeamConfigs", () => {
     });
     const configs = buildTeamConfigs(baseTeam, acct);
     // Team roster says 4pc CW — that's the source of truth
-    expect(configs[0].artifactSetId).toBe(CW);
+    expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
 
   it("picks highest weapon refinement from account", () => {
@@ -403,11 +418,9 @@ describe("buildTeamConfigs", () => {
   });
 
   it("picks refinement from weapon equipped on a different character", () => {
-    // staff_of_homa is assigned to hu_tao in the team, but in account data
-    // it's equipped on zhongli. The lookup should still find it.
     const acct = createAccountData({
       characters: [
-        createCharacterData({ key: "hu_tao" }), // no weapon equipped
+        createCharacterData({ key: "hu_tao" }),
         createCharacterData({
           key: "zhongli",
           weapon: {
@@ -441,7 +454,6 @@ describe("buildTeamConfigs", () => {
       extraWeapons: [createWeaponData({ key: "staff_of_homa", refinement: 2 })],
     });
     const configs = buildTeamConfigs(baseTeam, acct);
-    // Should pick 3 (equipped on xingqiu) over 2 (extra inventory)
     expect(configs[0].refinement).toBe(3);
   });
 
@@ -456,8 +468,6 @@ describe("buildTeamConfigs", () => {
   });
 
   it("falls back to goal sets when only a single 2pc is equipped (partial artifacts)", () => {
-    // Character has only 3 artifacts, forming a single 2pc — should fall back
-    // to the 4pc CW goal rather than using the incomplete single-2pc detection.
     const acct = createAccountData({
       characters: [
         createCharacterData({
@@ -472,8 +482,7 @@ describe("buildTeamConfigs", () => {
     });
     const configs = buildTeamConfigs(baseTeam, acct);
     // Goal for hu_tao is 4pc CW — should fall back since single 2pc is incomplete
-    expect(configs[0].artifactSetId).toBe(CW);
-    expect(configs[0].artifactHalfSetIds).toEqual([]);
+    expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
 
   it("falls back to goal sets when character has 0 artifacts", () => {
@@ -486,8 +495,7 @@ describe("buildTeamConfigs", () => {
       ],
     });
     const configs = buildTeamConfigs(baseTeam, acct);
-    expect(configs[0].artifactSetId).toBe(CW);
-    expect(configs[0].artifactHalfSetIds).toEqual([]);
+    expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
 
   it("uses team roster artifact config regardless of equipped artifacts", () => {
@@ -507,8 +515,7 @@ describe("buildTeamConfigs", () => {
     });
     const configs = buildTeamConfigs(baseTeam, acct);
     // Team roster says 4pc CW — equipped artifacts are irrelevant
-    expect(configs[0].artifactSetId).toBe(CW);
-    expect(configs[0].artifactHalfSetIds).toEqual([]);
+    expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
 });
 

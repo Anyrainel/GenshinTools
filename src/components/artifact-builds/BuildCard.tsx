@@ -52,6 +52,7 @@ import {
   buildStyles,
   mainStatSlots,
 } from "@/data/types";
+import { parseBuildConstellation } from "@/lib/typeValidation";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { AutoTuneOutput } from "@/lib/account-data/scoring/pipeline";
@@ -183,7 +184,7 @@ function BuildCardComponent({
 
   const handleConstellationChange = useCallback(
     (value: string) => {
-      const cons = Number(value) as BuildConstellation;
+      const cons = parseBuildConstellation(Number(value));
       setBuild(buildId, { minCons: cons === 0 ? undefined : cons }, build);
     },
     [buildId, setBuild, build]
@@ -287,7 +288,10 @@ function BuildCardComponent({
         ? { type: "4pc" as const, setId: build.artifactSet }
         : null
       : build.halfSet1 && build.halfSet2
-        ? { type: "2pc+2pc" as const, id1: build.halfSet1, id2: build.halfSet2 }
+        ? {
+            type: "2pc+2pc" as const,
+            halfSetIds: [build.halfSet1, build.halfSet2] as [string, string],
+          }
         : null;
 
   const handlePickerChange = (val: ArtifactConfig) => {
@@ -301,8 +305,8 @@ function BuildCardComponent({
     } else {
       handleBuildChange({
         composition: "2pc+2pc",
-        halfSet1: val.id1,
-        halfSet2: val.id2,
+        halfSet1: val.halfSetIds[0],
+        halfSet2: val.halfSetIds[1],
         artifactSet: undefined,
       });
     }

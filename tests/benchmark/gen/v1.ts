@@ -221,8 +221,7 @@ export async function* runTeamOptimization(
       if (epc) {
         return {
           ...c,
-          artifactSetId: epc.artifactSetId ?? null,
-          artifactHalfSetIds: epc.artifactHalfSetIds ?? [],
+          artifactSet: epc.artifactSet ?? null,
         };
       }
       return c;
@@ -290,8 +289,7 @@ export async function* runTeamOptimization(
       globalConfig,
       baseSheets: currentSheets,
       calcContext,
-      artifactSetId: charConfig.artifactSetId ?? null,
-      artifactHalfSetIds: charConfig.artifactHalfSetIds,
+      artifactSet: charConfig.artifactSet ?? null,
       swapCharId: charId,
       onFieldCharId: carryCharId,
       formulaCharId: carryCharId,
@@ -396,14 +394,12 @@ export async function* runTeamOptimization(
     if (
       lastResult?.failReason &&
       opts.ignoreArtifactSets?.[charId] &&
-      (effectivePerChar[charId]?.artifactSetId ||
-        (effectivePerChar[charId]?.artifactHalfSetIds?.length ?? 0) > 0)
+      !!effectivePerChar[charId]?.artifactSet
     ) {
       // Strip set constraints for this character
       effectivePerChar[charId] = {
         ...effectivePerChar[charId],
-        artifactSetId: null,
-        artifactHalfSetIds: [],
+        artifactSet: null,
       };
       effectiveTeamBuild = rebuildTeamBuild();
 
@@ -1154,22 +1150,23 @@ export async function* runTeamOptimization(
     if (!epc) continue;
 
     // Compare detected sets with what the effective config has
-    const currentSetId = epc.artifactSetId ?? null;
-    const currentHalfIds = epc.artifactHalfSetIds ?? [];
-    const detectedSetId = detected.artifactSetId;
-    const detectedHalfIds = detected.artifactHalfSetIds;
+    const current = epc.artifactSet ?? null;
+    const setsEqual =
+      current === detected ||
+      (current !== null &&
+        detected !== null &&
+        current.type === detected.type &&
+        (current.type === "4pc" && detected.type === "4pc"
+          ? current.setId === detected.setId
+          : current.type === "2pc+2pc" && detected.type === "2pc+2pc"
+            ? [...current.halfSetIds].sort().join(",") ===
+              [...detected.halfSetIds].sort().join(",")
+            : false));
 
-    const setIdChanged = detectedSetId !== currentSetId;
-    const halfIdsChanged =
-      detectedHalfIds.length !== currentHalfIds.length ||
-      [...detectedHalfIds].sort().join(",") !==
-        [...currentHalfIds].sort().join(",");
-
-    if (setIdChanged || halfIdsChanged) {
+    if (!setsEqual) {
       effectivePerChar[charId] = {
         ...epc,
-        artifactSetId: detectedSetId,
-        artifactHalfSetIds: detectedHalfIds,
+        artifactSet: detected,
       };
       setsChanged = true;
     }

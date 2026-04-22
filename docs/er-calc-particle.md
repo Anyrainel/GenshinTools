@@ -554,8 +554,8 @@ Given Lunaris already supplies the probabilistic distribution, Phase 2 may colla
 | `src/lib/ercalc/rotationHints.ts` | Remove `periodicE` references |
 | `src/lib/ercalc/optimizer.ts` | Update action set references |
 | `src/components/ercalc/TimelineStrip.tsx` | Remove `periodicE` rendering; add periodic sub-track, popover proc editor |
-| `src/components/ercalc/ERCalcCard.tsx` | Update auto-proc logic |
-| `src/components/ercalc/ERCalcView.tsx` | Update default timeline |
+| `src/components/ercalc/ErCalcCard.tsx` | Update auto-proc logic |
+| `src/components/ercalc/ErCalcView.tsx` | Update default timeline |
 | `scripts/scrape_particles.py` | Emit v2 schema |
 | `scripts/scrape_particles_lunaris.py` | New — scrape datamine source |
 

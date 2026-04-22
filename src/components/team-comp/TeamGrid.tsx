@@ -242,8 +242,10 @@ export function TeamGrid({
           if (art.type === "4pc") {
             if (fuzzyMatch(query, t.artifact(art.setId))) return true;
           } else {
-            if (fuzzyMatch(query, t.artifact(String(art.id1)))) return true;
-            if (fuzzyMatch(query, t.artifact(String(art.id2)))) return true;
+            if (fuzzyMatch(query, t.artifact(String(art.halfSetIds[0]))))
+              return true;
+            if (fuzzyMatch(query, t.artifact(String(art.halfSetIds[1]))))
+              return true;
           }
         }
         // Reaction names

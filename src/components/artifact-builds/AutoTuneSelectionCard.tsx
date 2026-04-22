@@ -2,7 +2,8 @@ import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type { AccountData, Build, Element } from "@/data/types";
+import type { AccountData, Build } from "@/data/types";
+import { parseElement } from "@/lib/typeValidation";
 import { ELEMENT_HEX, cn, getElementColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Check } from "lucide-react";
@@ -70,7 +71,7 @@ export function AutoTuneSelectionCard({
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
   const elHex = ELEMENT_HEX[element] || "#888";
-  const elColor = getElementColor(element as Element, "text");
+  const elColor = getElementColor(parseElement(element), "text");
   const noTeams = entry.teams.length === 0;
 
   return (

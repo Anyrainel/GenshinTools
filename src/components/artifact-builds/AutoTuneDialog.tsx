@@ -142,7 +142,7 @@ export function AutoTuneDialog({
       if (build.composition === "2pc+2pc" && build.halfSet1 && build.halfSet2) {
         if (teamArt.type === "2pc+2pc") {
           const buildIds = [build.halfSet1, build.halfSet2].sort();
-          const teamIds = [teamArt.id1, teamArt.id2].sort();
+          const teamIds = [teamArt.halfSetIds[0], teamArt.halfSetIds[1]].sort();
           return buildIds[0] === teamIds[0] && buildIds[1] === teamIds[1];
         }
         return true;
@@ -207,17 +207,17 @@ export function AutoTuneDialog({
             configs,
             (team.opts ?? {}) as Record<string, string>
           );
-          const allFormulas = tb.getFormulaIds();
+          const allFormulas = tb.catalog.getFormulaIds();
           const charFormulas = allFormulas[characterId];
           if (!charFormulas || Object.keys(charFormulas).length === 0) continue;
           for (const [fid, label] of Object.entries(charFormulas)) {
             formulas.push({
               formulaId: fid,
               label,
-              offField: tb.offFieldStatus(characterId, fid),
+              offField: tb.catalog.offFieldStatus(fid),
             });
           }
-          combo = tb.getCombo(characterId);
+          combo = tb.catalog.getCombo(characterId);
           // Determine eligible reactions for this element + team
           const eligible = ELEMENT_ELIGIBLE_REACTIONS[
             element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
@@ -286,7 +286,7 @@ export function AutoTuneDialog({
     if (build.composition === "4pc" && build.artifactSet)
       return { type: "4pc", setId: build.artifactSet };
     if (build.composition === "2pc+2pc" && build.halfSet1 && build.halfSet2)
-      return { type: "2pc+2pc", id1: build.halfSet1, id2: build.halfSet2 };
+      return { type: "2pc+2pc", halfSetIds: [build.halfSet1, build.halfSet2] };
     return null;
   }, [build]);
 

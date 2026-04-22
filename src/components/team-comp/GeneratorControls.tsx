@@ -134,10 +134,7 @@ export function RollQualityInputs({
       </div>
       <div className="flex items-center gap-0.5 md:gap-1">
         <span className={LABEL_CLS}>{t.ui("teamComp.substatBudget")}</span>
-        <Select
-          value={substatBudget}
-          onValueChange={onSubstatBudgetChange as (v: string) => void}
-        >
+        <Select value={substatBudget} onValueChange={onSubstatBudgetChange}>
           <SelectTrigger className="font-bold border-border/20 bg-white/5 min-w-0 max-w-[9rem] text-xs h-6 px-1 py-0 md:text-sm md:h-7 md:max-w-[10rem] md:px-1.5">
             <SelectValue />
           </SelectTrigger>

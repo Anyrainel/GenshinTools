@@ -14,6 +14,7 @@ import {
 } from "@/lib/account-data/resourceTips";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { PersistedResourceRecStoreSchema } from "./schemas";
 
 interface ResourceRecState {
   thresholds: TierCompletenessThresholds;
@@ -107,7 +108,7 @@ export const useResourceRecStore = create<ResourceRecState>()(
           // Remove obsolete kindMinScore field from v5
           state.kindMinScore = undefined;
         }
-        return state as unknown as Partial<ResourceRecState>;
+        return state as Partial<ResourceRecState>;
       },
       partialize: (state) => ({
         thresholds: state.thresholds,
@@ -118,26 +119,29 @@ export const useResourceRecStore = create<ResourceRecState>()(
         showLevelup: state.showLevelup,
       }),
       merge: (persistedState, currentState) => {
-        const persisted = persistedState as Partial<ResourceRecState>;
+        const parsed =
+          PersistedResourceRecStoreSchema.safeParse(persistedState);
+        if (!parsed.success) return currentState;
+        const persisted = parsed.data;
         return {
           ...currentState,
-          ...(persisted ?? {}),
+          ...persisted,
           thresholds: {
             ...currentState.thresholds,
-            ...(persisted?.thresholds ?? {}),
+            ...persisted.thresholds,
           },
           minScoreDiff: {
             craft: {
               ...currentState.minScoreDiff.craft,
-              ...(persisted?.minScoreDiff?.craft ?? {}),
+              ...persisted.minScoreDiff.craft,
             },
             reroll: {
               ...currentState.minScoreDiff.reroll,
-              ...(persisted?.minScoreDiff?.reroll ?? {}),
+              ...persisted.minScoreDiff.reroll,
             },
             levelup: {
               ...currentState.minScoreDiff.levelup,
-              ...(persisted?.minScoreDiff?.levelup ?? {}),
+              ...persisted.minScoreDiff.levelup,
             },
           },
         };

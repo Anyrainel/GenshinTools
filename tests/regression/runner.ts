@@ -21,6 +21,7 @@ import {
   runGenerator,
 } from "@/lib/team-comp/generator/generator";
 import type {
+  ArtifactSetConfig,
   BuffActivationMap,
   CalcContext,
   ComboFormula,
@@ -118,20 +119,25 @@ export function loadTeamPreset(): TeamCompData {
 
 // ─── Config Building ─────────────────────────────────────────────────────────
 
-function parseArtifactSets(goalArt: ArtifactConfig | null): {
-  artifactSetId: string | null;
-  artifactHalfSetIds: string[];
-} {
-  let artifactSetId: string | null = null;
-  let artifactHalfSetIds: string[] = [];
-  if (!goalArt) return { artifactSetId, artifactHalfSetIds };
+function parseArtifactSets(
+  goalArt: ArtifactConfig | null
+): ArtifactSetConfig | null {
+  if (!goalArt) return null;
 
-  if (goalArt.type === "4pc") {
-    artifactSetId = goalArt.setId ?? null;
-  } else if (goalArt.type === "2pc+2pc") {
-    artifactHalfSetIds = [String(goalArt.id1), String(goalArt.id2)];
+  if (goalArt.type === "4pc" && goalArt.setId) {
+    return { type: "4pc", setId: goalArt.setId };
   }
-  return { artifactSetId, artifactHalfSetIds };
+  if (
+    goalArt.type === "2pc+2pc" &&
+    goalArt.id1 != null &&
+    goalArt.id2 != null
+  ) {
+    return {
+      type: "2pc+2pc",
+      halfSetIds: [String(goalArt.id1), String(goalArt.id2)],
+    };
+  }
+  return null;
 }
 
 export interface GeneratorProblem {
@@ -161,9 +167,7 @@ export function buildGeneratorProblem(
     const weaponId = team.weapons[i];
     if (!charId || !weaponId) continue;
 
-    const { artifactSetId, artifactHalfSetIds } = parseArtifactSets(
-      team.artifacts[i] ?? null
-    );
+    const artifactSet = parseArtifactSets(team.artifacts[i] ?? null);
 
     configs.push({
       charId,
@@ -171,18 +175,16 @@ export function buildGeneratorProblem(
       constellation: 6,
       weaponId,
       refinement: 5,
-      artifactSetId,
-      artifactHalfSetIds,
+      artifactSet,
     });
 
     // Build set keys for each slot (used for proper rendering)
     const slotKeys: Record<string, string> = {};
-    if (artifactSetId) {
-      for (const slot of allSlots) slotKeys[slot] = artifactSetId;
-    } else if (artifactHalfSetIds.length >= 2) {
-      // Map half-set IDs to full artifact set IDs
-      const fullId0 = resolveHalfSetToFullId(artifactHalfSetIds[0]);
-      const fullId1 = resolveHalfSetToFullId(artifactHalfSetIds[1]);
+    if (artifactSet?.type === "4pc") {
+      for (const slot of allSlots) slotKeys[slot] = artifactSet.setId;
+    } else if (artifactSet?.type === "2pc+2pc") {
+      const fullId0 = resolveHalfSetToFullId(artifactSet.halfSetIds[0]);
+      const fullId1 = resolveHalfSetToFullId(artifactSet.halfSetIds[1]);
       slotKeys.flower = fullId0;
       slotKeys.plume = fullId0;
       slotKeys.sands = fullId0;
@@ -204,7 +206,7 @@ export function buildGeneratorProblem(
   );
 
   // Get all formulas
-  const allFormulas = teamBuild.getFormulaIds();
+  const allFormulas = teamBuild.catalog.getFormulaIds();
   const carryCharId = charIds[0];
   const carryFormulas = allFormulas[carryCharId];
   if (!carryFormulas || Object.keys(carryFormulas).length === 0) return null;

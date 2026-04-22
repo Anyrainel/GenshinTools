@@ -31,7 +31,7 @@ export function FormulaLabel({
 
   const offField =
     teamBuild && charId && formulaId
-      ? teamBuild.offFieldStatus(charId, formulaId)
+      ? teamBuild.catalog.offFieldStatus(formulaId)
       : "none";
 
   return (

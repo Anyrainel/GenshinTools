@@ -23,13 +23,15 @@ import type { ArtifactData } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type {
-  CalcContext,
-  OptFailReason,
-  ReactionOverride,
-  StatKey,
-  TeamOptYield,
-  TeamOptimizerOptions,
+import {
+  type CalcContext,
+  type OptFailReason,
+  type ReactionOverride,
+  type StatKey,
+  type TeamOptYield,
+  type TeamOptimizerOptions,
+  getHalfSetIds,
+  getSetId,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
@@ -734,10 +736,10 @@ function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
   if (is4pc) {
     for (const mask of V2_SET4_MASKS) {
       if (ctx.aborted) break;
-      iterMainStats(mask, v2Slots, ctx, charConfig.artifactSetId!);
+      iterMainStats(mask, v2Slots, ctx, getSetId(charConfig.artifactSet)!);
     }
   } else if (is2pc) {
-    const [h1, h2] = charConfig.artifactHalfSetIds as [string, string];
+    const [h1, h2] = getHalfSetIds(charConfig.artifactSet) as [string, string];
     const h1Keys = artifactHalfSetsById[h1]?.setIds ?? [];
     const h2Keys = artifactHalfSetsById[h2]?.setIds ?? [];
 
