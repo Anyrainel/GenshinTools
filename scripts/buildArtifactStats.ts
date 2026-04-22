@@ -11,7 +11,7 @@ import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import {
   AVG_SUBSTAT_ROLL,
   toInternal,
-} from "@/lib/account-data/scoring/utils";
+} from "@/lib/artifact/scoring/utils";
 import type { StatKey } from "@/lib/team-comp/types";
 
 

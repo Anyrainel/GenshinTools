@@ -1,7 +1,7 @@
 import { charInfo } from "@/data/charInfo";
+import { getCharacterStatsSync } from "@/data/gameStatsLoader";
 import type { CharacterSkill, SkillLevel } from "@/data/types";
 import { SKILL_LEVELS } from "@/data/types";
-import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
 import { renderTemplate } from "@/lib/talentRenderer";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";

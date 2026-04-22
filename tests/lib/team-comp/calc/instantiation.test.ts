@@ -11,7 +11,7 @@ import {
   getCharacterStatsSync,
   getWeaponStatsSync,
   preloadGameStats,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
 import { isSelfReceiver } from "@/lib/team-comp/calc/fieldState";
 import {
   createArtifactHalfSet,

@@ -11,7 +11,7 @@
  * (display: delta / baseDamage) or normalized weights (optimizer: 0-100).
  */
 
-import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
+import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/utils";
 import type { StatKey } from "../types";
 import { StatSheet } from "./statSheet";
 

@@ -16,15 +16,15 @@ import type { AccountData, Build, BuildGroup } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
-import type { WeightedFormula } from "@/lib/account-data/scoring/autoTune";
-import type { AutoTuneWorkerResponse } from "@/lib/account-data/scoring/autoTune.worker";
+import type { WeightedFormula } from "@/lib/artifact-builds/auto-tune/autoTune";
+import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
+import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import type {
   AutoTuneOutput,
   AutoTuneTeamInput,
   AutoTuneTeamResult,
-} from "@/lib/account-data/scoring/pipeline";
-import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
-import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
+} from "@/lib/artifact/scoring/pipeline";
+import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
 import { cn } from "@/lib/utils";
@@ -73,7 +73,7 @@ function runAutoTuneWorkers(
     for (let i = 0; i < teamInputs.length; i++) {
       const worker = new Worker(
         new URL(
-          "@/lib/account-data/scoring/autoTune.worker.ts",
+          "@/lib/artifact-builds/auto-tune/autoTune.worker.ts",
           import.meta.url
         ),
         { type: "module" }

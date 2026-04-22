@@ -43,6 +43,10 @@ import {
   weaponResourcesByName,
   weaponsById,
 } from "@/data/constants";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/data/gameStatsLoader";
 import type {
   ArtifactHalfSet,
   ArtifactSetResource,
@@ -55,10 +59,6 @@ import type { TierAssignment } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
-import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
 import { Ban, Bookmark, Search, Trophy, X } from "lucide-react";

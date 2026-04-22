@@ -9,7 +9,6 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById } from "@/data/constants";
 import type { AccountData, ArtifactData, Slot, SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
 import {
   type ArtifactStatus,
@@ -17,6 +16,7 @@ import {
   getArtifactStatus,
   getRollCount,
 } from "@/lib/artifact/inventory";
+import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { resolveBuildInfo } from "@/lib/team-comp/teamConfigUtils";

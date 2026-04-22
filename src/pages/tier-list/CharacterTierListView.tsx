@@ -30,6 +30,7 @@ import {
   getSortedCharacters,
   weaponResourcesByName,
 } from "@/data/constants";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   CharacterResource,
   Element,
@@ -40,7 +41,6 @@ import type {
 } from "@/data/types";
 import { elements } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,

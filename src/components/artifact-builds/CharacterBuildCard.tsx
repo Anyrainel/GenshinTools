@@ -20,15 +20,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/data/gameStatsLoader";
 import type { Build, CharacterResource } from "@/data/types";
 import type { WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
-import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/lib/gameStatsLoader";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Eye, EyeOff, Plus, RotateCcw } from "lucide-react";

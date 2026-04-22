@@ -2,7 +2,7 @@
  * Tests for TeamReactionProvider: team-wide reaction formula generation,
  * eligibility filtering, damage evaluation, compiler path, and display path.
  */
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { LunarFormula } from "@/lib/team-comp/calc/damageFormula";
 import {

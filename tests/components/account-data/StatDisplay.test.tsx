@@ -5,7 +5,7 @@ import type {
   BuildMatchResult,
   NormalizedScoreInfo,
   StatScoreBreakdown,
-} from "@/lib/account-data/artifactScore";
+} from "@/lib/artifact/scoring/artifactScore";
 import { render, screen } from "../../utils/render";
 
 // Sample artifact for testing

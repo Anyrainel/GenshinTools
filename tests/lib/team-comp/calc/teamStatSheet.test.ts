@@ -1,4 +1,4 @@
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuffLedger } from "@/lib/team-comp/calc/teamBuffLedger";

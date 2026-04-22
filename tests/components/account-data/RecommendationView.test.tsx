@@ -4,7 +4,7 @@ import type {
   BuildMatchResult,
   NormalizedScoreInfo,
   StatScoreBreakdown,
-} from "@/lib/account-data/artifactScore";
+} from "@/lib/artifact/scoring/artifactScore";
 import { RecommendationView } from "@/pages/account-data/RecommendationView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";

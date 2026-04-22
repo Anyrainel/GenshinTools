@@ -12,7 +12,7 @@ import { charInfo } from "@/data/charInfo";
 import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { scoreSlotWithMainStat } from "../../account-data/artifactScore";
+import { scoreSlotWithMainStat } from "../../artifact/scoring/artifactScore";
 import {
   compileComboTeamDamage,
   fillVarsFromArtifacts,

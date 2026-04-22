@@ -8,14 +8,14 @@
 
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { toInternal } from "@/lib/account-data/scoring/utils";
+import { toInternal } from "@/lib/artifact/scoring/utils";
 import {
   type BuildMatchResult,
   getMainStatValueAtLevel,
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
-} from "../../account-data/artifactScore";
+} from "../../artifact/scoring/artifactScore";
 import type { StatKey } from "../types";
 import type { MarginalWeights, PreparedSlotData, SuperArtifact } from "./types";
 

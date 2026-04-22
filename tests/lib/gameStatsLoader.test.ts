@@ -15,7 +15,7 @@ import {
   getWeaponStatsAt90,
   getWeaponStatsSync,
   preloadGameStats,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
 import { beforeAll, describe, expect, it } from "vitest";
 
 // ─── getCharacterLevelTier ───────────────────────────────────────────────────

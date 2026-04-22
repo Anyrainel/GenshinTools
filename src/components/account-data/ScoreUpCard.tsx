@@ -17,8 +17,8 @@ import {
 } from "@/data/constants";
 import type { ArtifactData, CharacterData, Tier } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
+import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { ArrowUpRight, PartyPopper } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";

@@ -3,7 +3,7 @@ import {
   getTalentParam,
   resolveCharacterStats,
   resolveWeaponStats,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
 import type { FormulaEntry } from "../types";
 import type {
   ComboTemplate,

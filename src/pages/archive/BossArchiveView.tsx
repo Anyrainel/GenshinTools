@@ -3,13 +3,14 @@ import { BossDetailPanel } from "@/components/archive/BossDetailPanel";
 import { BossGrid, BossListPanel } from "@/components/archive/BossListPanel";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getCurrentSchedule, schedules } from "@/data/leylineBoss";
+import { useLeylineBossData } from "@/hooks/useLeylineBossData";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { Skull } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 
 export function BossArchiveView() {
   const { t } = useLanguage();
+  const bossData = useLeylineBossData();
   const searchQuery = useArchiveSessionStore((s) => s.bossSearch);
   const setSearchQuery = useArchiveSessionStore((s) => s.setBossSearch);
   const selectedBossId = useArchiveSessionStore((s) => s.selectedBossId);
@@ -20,16 +21,17 @@ export function BossArchiveView() {
   // e.g. from the mobile "Back" button — must not be re-seeded.
   const didSeed = useRef(false);
   useEffect(() => {
+    if (!bossData) return;
     if (didSeed.current) return;
     didSeed.current = true;
     if (selectedBossId != null) return;
-    const current = getCurrentSchedule();
+    const current = bossData.getCurrentSchedule();
     const fallback =
       current?.boss_ids[0] ??
-      schedules[schedules.length - 1]?.boss_ids[0] ??
+      bossData.schedules[bossData.schedules.length - 1]?.boss_ids[0] ??
       null;
     if (fallback != null) setSelectedBossId(fallback);
-  }, [selectedBossId, setSelectedBossId]);
+  }, [bossData, selectedBossId, setSelectedBossId]);
 
   const handleSelect = useCallback(
     (id: number) => {
@@ -50,9 +52,30 @@ export function BossArchiveView() {
     />
   );
 
+  if (!bossData) {
+    return (
+      <SidebarDetailLayout
+        header={toolbar}
+        hasSelection={false}
+        onBack={handleBack}
+        backLabel={t.ui("archive.bossList")}
+        sidebarWidth="w-2/5 max-w-[20rem]"
+        sidebar={null}
+      >
+        <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+          <Skull className="h-12 w-12 mb-4 opacity-30 animate-pulse" />
+        </div>
+      </SidebarDetailLayout>
+    );
+  }
+
   const detailPanel =
     selectedBossId !== null ? (
-      <BossDetailPanel key={selectedBossId} bossId={selectedBossId} />
+      <BossDetailPanel
+        key={selectedBossId}
+        bossId={selectedBossId}
+        bossData={bossData}
+      />
     ) : (
       <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
         <Skull className="h-12 w-12 mb-4 opacity-30" />
@@ -72,10 +95,15 @@ export function BossArchiveView() {
           selectedBossId={selectedBossId}
           onSelect={handleSelect}
           searchQuery={searchQuery}
+          bossData={bossData}
         />
       }
       mobileGrid={
-        <BossGrid onSelect={handleSelect} searchQuery={searchQuery} />
+        <BossGrid
+          onSelect={handleSelect}
+          searchQuery={searchQuery}
+          bossData={bossData}
+        />
       }
     >
       {detailPanel}

@@ -7,13 +7,13 @@
  */
 import { describe, expect, it } from "vitest";
 
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import {
   type ArtifactData,
   type MainStat,
   type Slot,
   allSlots,
 } from "@/data/types";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";

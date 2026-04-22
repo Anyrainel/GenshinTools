@@ -3,6 +3,50 @@ import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 import { presetWatcher } from "./scripts/dev/vite-plugin-preset-watcher";
 
+// Chunk assignment shared between the main app graph and each worker graph.
+// Workers have their own Rollup build rooted at the worker entry, so this
+// function runs independently per graph — the output filenames will differ,
+// but each graph receives the same splitting rules.
+//
+// Goal is cache-lifespan: group modules by change frequency so one patch or
+// impl edit invalidates as small a chunk as possible.
+const chunkAssignments: Array<[(id: string) => boolean, string]> = [
+  // Vendor — changes only on lockfile bumps
+  [
+    (id) =>
+      id.includes("node_modules") &&
+      /[\\/]react(-dom|-router-dom)?[\\/]/.test(id),
+    "vendor-react",
+  ],
+  [
+    (id) => id.includes("node_modules") && id.includes("@radix-ui"),
+    "vendor-radix",
+  ],
+  [
+    (id) => id.includes("node_modules") && id.includes("recharts"),
+    "vendor-recharts",
+  ],
+
+  // App source — more specific patterns first
+  [
+    (id) => /[\\/]src[\\/]lib[\\/]team-comp[\\/]impl[\\/]/.test(id),
+    "team-comp-impl",
+  ],
+  [(id) => /[\\/]src[\\/]lib[\\/]team-comp[\\/]/.test(id), "team-comp-engine"],
+  [(id) => /[\\/]src[\\/]data[\\/]i18n-/.test(id), "i18n-data"],
+  // Skip raw JSON assets here so Vite's json-plugin handles them via its own
+  // rules (glob-lazy imports stay as standalone chunks; static imports stay
+  // with their importer). Only intercept ``*.ts`` source files under data/.
+  [(id) => /[\\/]src[\\/]data[\\/][^\\/]+\.ts$/.test(id), "game-data"],
+];
+
+function manualChunks(id: string): string | undefined {
+  for (const [predicate, chunk] of chunkAssignments) {
+    if (predicate(id)) return chunk;
+  }
+  return undefined;
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   base: mode === "github" ? "/GenshinTools/" : "/",
@@ -45,6 +89,9 @@ export default defineConfig(({ mode }) => ({
   },
   worker: {
     format: "es",
+    rollupOptions: {
+      output: { manualChunks },
+    },
   },
   build: {
     // Beta game-data files (``*.json.gz``) must ship as standalone gzipped
@@ -54,35 +101,7 @@ export default defineConfig(({ mode }) => ({
     assetsInlineLimit: (filePath) =>
       filePath.endsWith(".json.gz") ? false : undefined,
     rollupOptions: {
-      output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-radix": [
-            "@radix-ui/react-accordion",
-            "@radix-ui/react-alert-dialog",
-            "@radix-ui/react-checkbox",
-            "@radix-ui/react-collapsible",
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-hover-card",
-            "@radix-ui/react-label",
-            "@radix-ui/react-navigation-menu",
-            "@radix-ui/react-popover",
-            "@radix-ui/react-progress",
-            "@radix-ui/react-radio-group",
-            "@radix-ui/react-scroll-area",
-            "@radix-ui/react-select",
-            "@radix-ui/react-slider",
-            "@radix-ui/react-slot",
-            "@radix-ui/react-switch",
-            "@radix-ui/react-tabs",
-            "@radix-ui/react-toggle",
-            "@radix-ui/react-toggle-group",
-            "@radix-ui/react-tooltip",
-          ],
-          "vendor-recharts": ["recharts"],
-        },
-      },
+      output: { manualChunks },
     },
   },
   server: {

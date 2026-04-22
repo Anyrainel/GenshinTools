@@ -19,12 +19,12 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/constants";
-import type { WeaponResource } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
 import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
+import type { WeaponResource } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import type { TeamSlotConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";

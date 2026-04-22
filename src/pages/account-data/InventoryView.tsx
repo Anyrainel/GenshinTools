@@ -21,6 +21,7 @@ import {
   artifactIdToHalfSetId,
   weaponsById,
 } from "@/data/constants";
+import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   AccountData,
   ArtifactData,
@@ -29,7 +30,6 @@ import type {
 } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 import { useCallback, useMemo, useState } from "react";
 
 interface InventoryViewProps {

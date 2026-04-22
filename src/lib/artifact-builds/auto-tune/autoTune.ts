@@ -31,9 +31,9 @@ import type {
   ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
-import type { AutoTuneResult } from "./utils";
-import { AVG_SUBSTAT_ROLL } from "./utils";
-export { computeIdealScore } from "./utils";
+import type { AutoTuneResult } from "../../artifact/scoring/utils";
+import { AVG_SUBSTAT_ROLL } from "../../artifact/scoring/utils";
+export { computeIdealScore } from "../../artifact/scoring/utils";
 
 /** Substat keys eligible for roll allocation */
 export const TUNABLE_SUBSTATS: SubStat[] = [

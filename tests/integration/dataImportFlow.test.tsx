@@ -13,11 +13,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { render } from "../utils/render";
 
 import { CharacterCard } from "@/components/account-data/CharacterCard";
-import { scoreWithBuilds } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
+import { scoreWithBuilds } from "@/lib/artifact/scoring/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 

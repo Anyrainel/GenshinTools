@@ -1,5 +1,5 @@
 import { ReactionSelector } from "@/components/team-comp/ReactionSelector";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import "@/lib/team-comp/index";
 import {
   DirectFormula,

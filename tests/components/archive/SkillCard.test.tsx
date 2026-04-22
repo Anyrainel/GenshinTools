@@ -13,8 +13,9 @@ const mockTalentParams = Array.from({ length: 15 }, (_, lvIdx) => [
 ]);
 
 // Mock getCharacterStatsSync to return talent data
-vi.mock("@/lib/gameStatsLoader", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/gameStatsLoader")>();
+vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/data/gameStatsLoader")>();
   return {
     ...actual,
     getCharacterStatsSync: () => ({

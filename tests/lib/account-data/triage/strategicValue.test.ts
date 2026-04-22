@@ -1,9 +1,9 @@
 import type { ArtifactData, SubStat } from "@/data/types";
-import { getSubstatAvgRoll } from "@/lib/account-data/scoring/utils";
 import {
   concentratedStatRule,
   runStrategicRules,
 } from "@/lib/account-data/triage/strategicValue";
+import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 import { describe, expect, it } from "vitest";
 
 /** Build a minimal 5★ ArtifactData with given substat *roll counts*. */

@@ -13,6 +13,7 @@ import { resolve } from "node:path";
 import "@/lib/team-comp/index";
 
 import { artifactsById } from "@/data/constants";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import type {
   AccountData,
   ArtifactData,
@@ -22,12 +23,11 @@ import type {
   GlobalStatWeights,
   Slot,
 } from "@/data/types";
-import { matchBuild } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { matchBuild } from "@/lib/artifact/scoring/artifactScore";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";

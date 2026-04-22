@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { getSourceIcon, getSourceName } from "@/lib/team-comp/buffDisplayUtils";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import "@/lib/team-comp/index";

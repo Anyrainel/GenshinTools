@@ -1,5 +1,6 @@
 import { charInfo } from "@/data/charInfo";
 import { charactersById } from "@/data/constants";
+import { getCharacterStatsSync } from "@/data/gameStatsLoader";
 import type {
   Element,
   Faction,
@@ -7,7 +8,6 @@ import type {
   Region,
   WeaponType,
 } from "@/data/types";
-import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
 import {
   LUNAR_SUPERSEDES,
   REACTION_AURA_TRIGGER,

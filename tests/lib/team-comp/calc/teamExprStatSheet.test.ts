@@ -1,4 +1,4 @@
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { evaluate, simplify } from "@/lib/team-comp/calc/expr";
 import { fillVarsFromSheet } from "@/lib/team-comp/calc/formulaCompiler";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";

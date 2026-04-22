@@ -55,7 +55,7 @@ import {
 import { parseBuildConstellation } from "@/lib/typeValidation";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { AutoTuneOutput } from "@/lib/account-data/scoring/pipeline";
+import type { AutoTuneOutput } from "@/lib/artifact/scoring/pipeline";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import {

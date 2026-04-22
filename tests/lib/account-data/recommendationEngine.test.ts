@@ -5,13 +5,13 @@ import type {
   InvestmentThresholds,
   Slot,
 } from "@/data/types";
-import type {
-  BuildMatchResult,
-  StatWeightMap,
-} from "@/lib/account-data/artifactScore";
 import type { BuildOptimizerResult } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
 import { generateScoreUpActions } from "@/lib/account-data/scoreUpEngine";
+import type {
+  BuildMatchResult,
+  StatWeightMap,
+} from "@/lib/artifact/scoring/artifactScore";
 import { describe, expect, it } from "vitest";
 
 const testWeights: StatWeightMap = { cr: 100, cd: 100 };

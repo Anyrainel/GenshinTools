@@ -9,7 +9,7 @@ import {
   type StatWeightMap,
   getFixedMainStatValue,
   scoreSlotWithMainStat,
-} from "./artifactScore";
+} from "../artifact/scoring/artifactScore";
 import type { CandidateArtifact } from "./candidatePool";
 import type { CrBudgetResult } from "./crBudget";
 

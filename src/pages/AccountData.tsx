@@ -26,10 +26,6 @@ import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
-  type ArtifactScoreResult,
-  scoreWithBuilds,
-} from "@/lib/account-data/artifactScore";
-import {
   deleteInventoryArtifact,
   deleteInventoryWeapon,
 } from "@/lib/account-data/characterEditor";
@@ -57,6 +53,10 @@ import {
   mergeAccountData,
   mergePartialAccountData,
 } from "@/lib/account-data/mergeAccountData";
+import {
+  type ArtifactScoreResult,
+  scoreWithBuilds,
+} from "@/lib/artifact/scoring/artifactScore";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";

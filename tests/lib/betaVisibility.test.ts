@@ -1,13 +1,15 @@
 /**
  * Guards that verify beta (unreleased) game data does not leak into the
  * default user-facing surfaces. The test environment runs with
- * ``betaEnabled() === false`` (hard-disabled in betaFlag.ts under MODE=test),
+ * ``betaEnabled() === false`` (hard-disabled in useBetaStore.ts under MODE=test),
  * which mirrors the experience of a non-DEV visitor who has not opted into
  * beta via localStorage. These tests would fail if any loader or entity map
  * stopped gating its beta data on ``betaEnabled()``.
  */
 
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
+import { loadCharacterKits } from "@/data/gameDataLoader";
+import { getCharacterStats, getWeaponStats } from "@/data/gameStatsLoader";
 import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 import {
@@ -20,9 +22,7 @@ import {
   betaCharacters,
   betaWeapons,
 } from "@/data/resources_beta";
-import { betaEnabled } from "@/lib/betaFlag";
-import { loadCharacterKits } from "@/lib/characterKitLoader";
-import { getCharacterStats, getWeaponStats } from "@/lib/gameStatsLoader";
+import { betaEnabled } from "@/stores/useBetaStore";
 import { describe, expect, it } from "vitest";
 
 const releasedCharIds = new Set(releasedCharacters.map((c) => c.id));
@@ -44,7 +44,7 @@ const betaOnlyArtifactIds = betaArtifacts
 
 describe("betaEnabled flag", () => {
   it("is hard-disabled under MODE=test", () => {
-    // betaFlag.ts short-circuits to false when import.meta.env.MODE === 'test'
+    // useBetaStore.ts short-circuits to false when import.meta.env.MODE === 'test'
     // so the suite mirrors the public production default.
     expect(betaEnabled()).toBe(false);
   });

@@ -22,7 +22,7 @@ import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
   getSubstatMaxRoll,
-} from "./scoring/utils";
+} from "./utils";
 
 // 1. Constants & Helpers
 

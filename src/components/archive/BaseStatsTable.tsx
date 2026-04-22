@@ -1,11 +1,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { BaseStat } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
 import {
   CHARACTER_LEVEL_TIERS,
   type CharacterLevelStats,
   type CharacterLevelTier,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
+import type { BaseStat } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 
 const BASE_STAT_KEYS = ["baseHp", "baseAtk", "baseDef", "em"] as const;
 

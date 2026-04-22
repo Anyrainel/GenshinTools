@@ -1,5 +1,23 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
+  formatWeaponEffect,
+  loadArtifactGameData,
+  loadCharacterKits,
+  loadWeaponGameData,
+} from "@/data/gameDataLoader";
+import { i18nAppData } from "@/data/i18n-app";
+import { i18nBetaData } from "@/data/i18n-beta";
+import { i18nGameData } from "@/data/i18n-game";
+import { i18nUiData } from "@/data/i18n-ui";
+import type {
+  ArtifactGameData,
+  CharacterEffect,
+  CharacterKit,
+  CharacterSkill,
+  Language,
+  WeaponGameData,
+} from "@/data/types";
+import {
   type ReactNode,
   createContext,
   useCallback,
@@ -8,70 +26,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { i18nAppData } from "../data/i18n-app";
-import { i18nBetaData } from "../data/i18n-beta";
-import { i18nGameData } from "../data/i18n-game";
-import { i18nUiData } from "../data/i18n-ui";
-import type {
-  CharacterEffect,
-  CharacterKit,
-  CharacterSkill,
-  Language,
-} from "../data/types";
-import { betaEnabled } from "../lib/betaFlag";
-import { loadCharacterKits } from "../lib/characterKitLoader";
-import { fetchGzipJson } from "../lib/gzipJson";
-
-// Per-language JSON shape for weapon/artifact game data
-type WeaponGameEntry = {
-  name: string;
-  descHtmlTpl: string;
-  refinements: string[][];
-};
-type ArtifactGameEntry = { name: string; effect2: string; effect4: string };
-type WeaponGameData = Record<string, WeaponGameEntry>;
-type ArtifactGameData = Record<string, ArtifactGameEntry>;
-
-/** Format a weapon template by substituting placeholders with combined refinement values. */
-function formatWeaponEffect(
-  tpl: string,
-  refinements: string[][],
-  refinement?: number
-): string {
-  if (!tpl || refinements.length === 0) return tpl;
-  // refinements: 5 lists (R1..R5), each with N values for {0}..{N-1}
-  const paramCount = refinements[0].length;
-  return tpl.replace(/\{(\d+)\}/g, (match, idx) => {
-    const i = Number(idx);
-    if (i >= paramCount) return match;
-    if (refinement !== undefined && refinement >= 1 && refinement <= 5) {
-      return refinements[refinement - 1][i];
-    }
-    // Combine all 5 refinement values: "20%/25%/30%/35%/40%"
-    return refinements.map((r) => r[i]).join("/");
-  });
-}
-
-// Lazy-loaded game data modules (weapon/artifact per-language JSONs)
-const weaponModules = import.meta.glob<{ default: WeaponGameData }>(
-  "../data/game/weapon_*.json",
-  { eager: false }
-);
-const artifactModules = import.meta.glob<{ default: ArtifactGameData }>(
-  "../data/game/artifact_*.json",
-  { eager: false }
-);
-// Beta weapon/artifact data is gzipped so its contents aren't indexed by
-// GitHub code search; resolved to a URL at build time and fetched+decompressed
-// at runtime.
-const betaWeaponModules = import.meta.glob<string>(
-  "../data/game/weapon_beta_*.json.gz",
-  { eager: false, query: "?url", import: "default" }
-);
-const betaArtifactModules = import.meta.glob<string>(
-  "../data/game/artifact_beta_*.json.gz",
-  { eager: false, query: "?url", import: "default" }
-);
 
 interface LanguageContextType {
   language: Language;
@@ -182,49 +136,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [artifactData, setArtifactData] = useState<ArtifactGameData>({});
   useEffect(() => {
     if (isTestEnv) return;
-    const weaponPath = `../data/game/weapon_${language}.json`;
-    const artifactPath = `../data/game/artifact_${language}.json`;
-    const weaponLoader = weaponModules[weaponPath];
-    const artifactLoader = artifactModules[artifactPath];
-
-    if (weaponLoader) {
-      const betaWeaponPath = `../data/game/weapon_beta_${language}.json.gz`;
-      const betaWeaponUrlLoader = betaEnabled()
-        ? betaWeaponModules[betaWeaponPath]
-        : null;
-
-      if (betaWeaponUrlLoader) {
-        Promise.all([
-          weaponLoader(),
-          betaWeaponUrlLoader().then((url) =>
-            fetchGzipJson<WeaponGameData>(url)
-          ),
-        ]).then(([baseMod, betaData]) =>
-          setWeaponData({ ...baseMod.default, ...betaData })
-        );
-      } else {
-        weaponLoader().then((mod) => setWeaponData(mod.default));
-      }
-    }
-    if (artifactLoader) {
-      const betaArtifactPath = `../data/game/artifact_beta_${language}.json.gz`;
-      const betaArtifactUrlLoader = betaEnabled()
-        ? betaArtifactModules[betaArtifactPath]
-        : null;
-
-      if (betaArtifactUrlLoader) {
-        Promise.all([
-          artifactLoader(),
-          betaArtifactUrlLoader().then((url) =>
-            fetchGzipJson<ArtifactGameData>(url)
-          ),
-        ]).then(([baseMod, betaData]) =>
-          setArtifactData({ ...baseMod.default, ...betaData })
-        );
-      } else {
-        artifactLoader().then((mod) => setArtifactData(mod.default));
-      }
-    }
+    loadWeaponGameData(language).then(setWeaponData);
+    loadArtifactGameData(language).then(setArtifactData);
   }, [language]);
 
   const getCharacterKit = useCallback(

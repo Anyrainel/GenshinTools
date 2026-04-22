@@ -1,10 +1,10 @@
+import { preloadGameStats } from "@/data/gameStatsLoader";
 /**
  * Tests for the combo formula system: evaluateCombo, getComboDisplayResult,
  * runTeamOptimization (combo mode), and runGenerator (combo mode).
  */
 import type { GlobalStatWeights } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";

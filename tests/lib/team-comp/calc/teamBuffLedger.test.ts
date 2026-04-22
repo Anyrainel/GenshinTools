@@ -1,4 +1,4 @@
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import type { TeamBuffLedger } from "@/lib/team-comp/calc/teamBuffLedger";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type { TeamSlotConfig } from "@/lib/team-comp/types";

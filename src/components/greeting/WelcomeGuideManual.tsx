@@ -1,8 +1,19 @@
 import type { ControlHandle } from "@/components/layout/AppBar";
 import { newsMap } from "@/components/shared/WhatsNew";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
-import WelcomeGuide from "./WelcomeGuide";
+import {
+  Suspense,
+  forwardRef,
+  lazy,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
+
+// Lazy-loaded so the welcome guide bundle is only fetched when the user
+// actively opens it from the settings menu. Mirrors the lazy import in
+// GreetingGate so both code paths can share a single split chunk.
+const WelcomeGuide = lazy(() => import("./WelcomeGuide"));
 
 export const WelcomeGuideManual = forwardRef<ControlHandle>(
   function WelcomeGuideManual(_, ref) {
@@ -21,10 +32,12 @@ export const WelcomeGuideManual = forwardRef<ControlHandle>(
     if (!isOpen) return null;
 
     return (
-      <WelcomeGuide
-        latestDate={latestDate}
-        onDismiss={() => setIsOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <WelcomeGuide
+          latestDate={latestDate}
+          onDismiss={() => setIsOpen(false)}
+        />
+      </Suspense>
     );
   }
 );

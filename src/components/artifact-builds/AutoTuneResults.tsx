@@ -9,7 +9,7 @@ import type {
   AutoTuneOutput,
   ComboBreakdown,
   TeamBreakdown,
-} from "@/lib/account-data/scoring/pipeline";
+} from "@/lib/artifact/scoring/pipeline";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";

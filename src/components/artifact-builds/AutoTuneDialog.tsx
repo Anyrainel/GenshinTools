@@ -11,12 +11,12 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, Build, Element } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import type { AutoTuneWorkerResponse } from "@/lib/account-data/scoring/autoTune.worker";
+import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
 import type {
   AutoTuneOutput,
   AutoTuneTeamResult,
-} from "@/lib/account-data/scoring/pipeline";
-import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
+} from "@/lib/artifact/scoring/pipeline";
+import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
@@ -349,7 +349,7 @@ export function AutoTuneDialog({
     for (let i = 0; i < teamInputs.length; i++) {
       const worker = new Worker(
         new URL(
-          "@/lib/account-data/scoring/autoTune.worker.ts",
+          "@/lib/artifact-builds/auto-tune/autoTune.worker.ts",
           import.meta.url
         ),
         { type: "module" }

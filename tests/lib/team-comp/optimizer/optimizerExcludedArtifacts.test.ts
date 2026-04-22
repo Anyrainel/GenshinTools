@@ -1,3 +1,4 @@
+import { preloadGameStats } from "@/data/gameStatsLoader";
 /**
  * Tests for perCharExcludedArtifactIds filtering in the team optimizer.
  *
@@ -6,7 +7,6 @@
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";

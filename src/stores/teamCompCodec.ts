@@ -21,8 +21,8 @@ import {
   allWeapons,
   artifactHalfSets,
 } from "@/data/constants";
+import { getCharacterStatsSync } from "@/data/gameStatsLoader";
 import { toBase64 } from "@/lib/base64";
-import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
 
 // ── Index maps (built once at module load) ──
 // Indexes are 1-based, oldest entity = 1, newest = N. New entries (prepended

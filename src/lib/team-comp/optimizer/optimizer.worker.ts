@@ -1,9 +1,9 @@
-import type { ArtifactData, Element, GlobalStatWeights } from "@/data/types";
 /**
  * Web Worker for Phase 1 per-character B&B.
  * Each worker handles one character's B&B search independently.
  */
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
+import type { ArtifactData, Element, GlobalStatWeights } from "@/data/types";
 import { z } from "zod";
 // Side-effect: register all character/weapon/artifact implementations
 import "../index";

@@ -1,5 +1,5 @@
+import { getNextLevelTier } from "@/data/gameStatsLoader";
 import type { Element } from "@/data/types";
-import { getNextLevelTier } from "@/lib/gameStatsLoader";
 import {
   type BuffActivationMap,
   type CalcContext,

@@ -5,7 +5,7 @@ import {
   type SubStat,
   allSlots,
 } from "@/data/types";
-import { getSubstatAvgRoll } from "../account-data/scoring/utils";
+import { getSubstatAvgRoll } from "./scoring/utils";
 
 /**
  * Compute the set of artifact set IDs that match the team roster's

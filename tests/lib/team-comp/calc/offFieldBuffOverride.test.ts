@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import "@/lib/team-comp/index";
 
 import { getEffectiveCombo } from "@/lib/team-comp/calc/combo";

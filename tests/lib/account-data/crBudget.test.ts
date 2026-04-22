@@ -1,10 +1,10 @@
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import type { Build, CharacterData } from "@/data/types";
+import { computeCrBudget } from "@/lib/account-data/crBudget";
 import {
   type BuildMatchResult,
   buildToWeightMap,
-} from "@/lib/account-data/artifactScore";
-import { computeCrBudget } from "@/lib/account-data/crBudget";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+} from "@/lib/artifact/scoring/artifactScore";
 import { beforeAll, describe, expect, it } from "vitest";
 
 // Must preload game stats for resolveCharacterStats/resolveWeaponStats

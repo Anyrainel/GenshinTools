@@ -1,5 +1,5 @@
 import type { Build, MainStat, SubStat, WeightedMainStat } from "@/data/types";
-import { computeIdealScore } from "@/lib/account-data/scoring/utils";
+import { computeIdealScore } from "@/lib/artifact/scoring/utils";
 
 /**
  * Migration map from legacy numeric halfSet IDs to new string-based IDs.

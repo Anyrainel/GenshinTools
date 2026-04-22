@@ -4,8 +4,8 @@
  */
 
 import type { MainStat, SubStat } from "@/data/types";
-import type { AutoTuneTeamResult } from "@/lib/account-data/scoring/pipeline";
-import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
+import type { AutoTuneTeamResult } from "@/lib/artifact/scoring/pipeline";
+import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
 import { describe, expect, it } from "vitest";
 
 const ZERO_ROLLS: Record<SubStat, number> = {

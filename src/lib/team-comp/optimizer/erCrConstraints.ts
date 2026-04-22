@@ -10,7 +10,7 @@
 import { getMainStatValue } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { toInternal } from "@/lib/account-data/scoring/utils";
+import { toInternal } from "@/lib/artifact/scoring/utils";
 
 import { StatSheet } from "../calc/statSheet";
 import type { TeamBuild } from "../calc/teamBuild";

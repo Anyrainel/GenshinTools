@@ -11,14 +11,14 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 // Mock betaEnabled BEFORE constants.ts evaluates.
-vi.mock("@/lib/betaFlag", () => ({
+vi.mock("@/stores/useBetaStore", () => ({
   betaEnabled: () => true,
   setBetaEnabled: () => {},
   maybeHandleBetaMagic: () => false,
 }));
 
 // Mock fetchGzipJson to resolve beta stat files from disk instead of fetch().
-vi.mock("@/lib/gzipJson", async (importOriginal) => {
+vi.mock("@/data/gzipJson", async (importOriginal) => {
   const { readFileSync } = await import("node:fs");
   const { resolve } = await import("node:path");
   const { gunzipSync } = await import("node:zlib");
@@ -42,7 +42,7 @@ vi.mock("@/lib/gzipJson", async (importOriginal) => {
     },
   };
 });
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { createCharacter } from "@/lib/team-comp/calc/registry";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import type { FormulaEntry } from "@/lib/team-comp/types";

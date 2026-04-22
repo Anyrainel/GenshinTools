@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
   MULTI_ELEMENT_CHARS,

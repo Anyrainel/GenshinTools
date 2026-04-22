@@ -1,28 +1,20 @@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  bossMatchesSearch,
-  getBossDisplayName,
-  getBossImagePath,
-  getBossInfo,
-  getCurrentSchedule,
-  getScheduleActiveDates,
-  getScheduleName,
-  schedules,
-} from "@/data/leylineBoss";
+import { getScheduleActiveDates } from "@/data/gameDataLoader";
+import type { LeylineBossData } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { Fragment, useMemo } from "react";
 import { BossIcon } from "./BossDetailPanel";
 
-function useBossListTranslations() {
+function useBossListTranslations(bossData: LeylineBossData) {
   const { language } = useLanguage();
   return useMemo(
     () => ({
-      bossName: (id: number) => getBossDisplayName(id, language),
-      scheduleName: (id: number) => getScheduleName(id, language),
+      bossName: (id: number) => bossData.getBossDisplayName(id, language),
+      scheduleName: (id: number) => bossData.getScheduleName(id, language),
     }),
-    [language]
+    [language, bossData]
   );
 }
 
@@ -30,15 +22,23 @@ export function BossListPanel({
   selectedBossId,
   onSelect,
   searchQuery,
+  bossData,
 }: {
   selectedBossId: number | null;
   onSelect: (id: number) => void;
   searchQuery: string;
+  bossData: LeylineBossData;
 }) {
   const { t } = useLanguage();
-  const boss = useBossListTranslations();
-  const currentSchedule = useMemo(() => getCurrentSchedule(), []);
-  const reversedSchedules = useMemo(() => [...schedules].reverse(), []);
+  const boss = useBossListTranslations(bossData);
+  const currentSchedule = useMemo(
+    () => bossData.getCurrentSchedule(),
+    [bossData]
+  );
+  const reversedSchedules = useMemo(
+    () => [...bossData.schedules].reverse(),
+    [bossData]
+  );
   const query = searchQuery.trim().toLowerCase();
 
   return (
@@ -51,7 +51,7 @@ export function BossListPanel({
         const dateStr = `${t.shortDate(openDate)} – ${t.shortDate(closeDate)}`;
 
         const matchingBossIds = schedule.boss_ids.filter((bossId) =>
-          bossMatchesSearch(bossId, query)
+          bossData.bossMatchesSearch(bossId, query)
         );
 
         if (query && matchingBossIds.length === 0) return null;
@@ -71,10 +71,10 @@ export function BossListPanel({
             </Label>
 
             {matchingBossIds.map((bossId) => {
-              const info = getBossInfo(bossId);
+              const info = bossData.getBossInfo(bossId);
               if (!info) return null;
               const name = boss.bossName(bossId);
-              const imagePath = getBossImagePath(bossId);
+              const imagePath = bossData.getBossImagePath(bossId);
               const isSelected = selectedBossId === bossId;
 
               return (
@@ -106,14 +106,22 @@ export function BossListPanel({
 export function BossGrid({
   onSelect,
   searchQuery,
+  bossData,
 }: {
   onSelect: (id: number) => void;
   searchQuery: string;
+  bossData: LeylineBossData;
 }) {
   const { t } = useLanguage();
-  const boss = useBossListTranslations();
-  const currentSchedule = useMemo(() => getCurrentSchedule(), []);
-  const reversedSchedules = useMemo(() => [...schedules].reverse(), []);
+  const boss = useBossListTranslations(bossData);
+  const currentSchedule = useMemo(
+    () => bossData.getCurrentSchedule(),
+    [bossData]
+  );
+  const reversedSchedules = useMemo(
+    () => [...bossData.schedules].reverse(),
+    [bossData]
+  );
   const query = searchQuery.trim().toLowerCase();
 
   return (
@@ -126,7 +134,7 @@ export function BossGrid({
         const dateStr = `${t.shortDate(openDate)} – ${t.shortDate(closeDate)}`;
 
         const matchingBossIds = schedule.boss_ids.filter((bossId) =>
-          bossMatchesSearch(bossId, query)
+          bossData.bossMatchesSearch(bossId, query)
         );
 
         if (query && matchingBossIds.length === 0) return null;
@@ -148,10 +156,10 @@ export function BossGrid({
             </div>
             <div className="grid grid-cols-3 gap-2">
               {matchingBossIds.map((bossId) => {
-                const info = getBossInfo(bossId);
+                const info = bossData.getBossInfo(bossId);
                 if (!info) return null;
                 const name = boss.bossName(bossId);
-                const imagePath = getBossImagePath(bossId);
+                const imagePath = bossData.getBossImagePath(bossId);
 
                 return (
                   <button

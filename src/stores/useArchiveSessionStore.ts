@@ -1,4 +1,4 @@
-import { maybeHandleBetaMagic } from "@/lib/betaFlag";
+import { maybeHandleBetaMagic } from "@/stores/useBetaStore";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

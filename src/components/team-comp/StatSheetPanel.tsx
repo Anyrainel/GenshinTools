@@ -15,7 +15,7 @@ import type { Team } from "@/stores/useTeamStore";
 import { useMemo, useState } from "react";
 
 import type { ArtifactData, Slot } from "@/data/types";
-import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
+import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/utils";
 import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamConfigUtils";
 import type { OptFailReason } from "@/lib/team-comp/types";
 import {

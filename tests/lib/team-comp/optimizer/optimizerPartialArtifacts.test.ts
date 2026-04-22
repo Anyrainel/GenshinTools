@@ -1,10 +1,10 @@
+import { preloadGameStats } from "@/data/gameStatsLoader";
 /**
  * Tests for the optimizer when characters have fewer than 5 equipped artifacts.
  * Verifies that both single-pass and multi-pass optimization handle partial
  * artifact inventories without errors.
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";

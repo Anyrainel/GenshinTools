@@ -14,10 +14,10 @@ import {
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";

@@ -3,16 +3,16 @@ import {
   ItemPicker,
 } from "@/components/shared/ItemPicker";
 import { charactersById, weaponsById } from "@/data/constants";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/data/gameStatsLoader";
 import type {
   AccountData,
   CharacterResource,
   WeaponResource,
 } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/lib/gameStatsLoader";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import { Diamond, Swords, User } from "lucide-react";
 import { useCallback } from "react";

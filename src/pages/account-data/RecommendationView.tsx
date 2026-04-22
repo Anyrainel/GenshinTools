@@ -21,12 +21,12 @@ import {
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   type ScoreUpAction,
   buildArtifactLookup,
   generateAllRecommendations,
 } from "@/lib/account-data/scoreUpEngine";
+import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";

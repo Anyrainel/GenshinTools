@@ -11,11 +11,11 @@
 
 import { MAIN_STAT_VALUES_5STAR, statPools } from "@/data/constants";
 import type { MainStat, SubStat } from "@/data/types";
-import { toInternal } from "@/lib/account-data/scoring/utils";
+import { toInternal } from "@/lib/artifact/scoring/utils";
 import {
   type BuildMatchResult,
   getTargetMainStatsForSlot,
-} from "../../account-data/artifactScore";
+} from "../../artifact/scoring/artifactScore";
 import { computeSubstatMarginals } from "../calc/marginalGain";
 import { StatSheet } from "../calc/statSheet";
 import type { DamageEvalFn } from "../generator/constrainedGreedy";

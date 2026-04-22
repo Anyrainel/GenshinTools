@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import {
   AmplifyFormula,
@@ -1379,11 +1379,11 @@ describe("marginal gain parity (compiled vs standard)", () => {
 // Picks random characters/weapons/artifacts to stress-test the
 // compiled pipeline against diverse buff combinations.
 
-import { artifacts, characters, weapons } from "@/data/resources";
 import {
   getCharacterStatsSync,
   getWeaponStatsSync,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
+import { artifacts, characters, weapons } from "@/data/resources";
 
 describe("random team fuzz (compiled vs standard)", () => {
   const rv = getRollValues();

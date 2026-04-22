@@ -7,7 +7,7 @@ import type {
 } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
-import { getSubstatAvgRoll } from "@/lib/account-data/scoring/utils";
+import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";
 import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { isInitial4Line } from "./is4L";

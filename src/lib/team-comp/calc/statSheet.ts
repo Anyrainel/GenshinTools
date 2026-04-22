@@ -1,6 +1,6 @@
 import type { ArtifactData } from "@/data/types";
-import { getMainStatValueAtLevel } from "@/lib/account-data/artifactScore";
-import { toInternal } from "@/lib/account-data/scoring/utils";
+import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/artifactScore";
+import { toInternal } from "@/lib/artifact/scoring/utils";
 import {
   type BuffTarget,
   type DamageTag,

@@ -1,9 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
+import type { CharacterLevelTier } from "@/data/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { BaseStat } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import type { CharacterLevelTier } from "@/lib/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 
 const BASE_STAT_KEYS = ["baseHp", "baseAtk", "baseDef", "em"] as const;

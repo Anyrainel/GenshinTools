@@ -2,9 +2,12 @@
  * Web Worker for auto-tune — handles a single team's computation
  * so multiple teams can run in parallel across workers.
  */
-import { preloadGameStats } from "@/lib/gameStatsLoader";
-import type { AutoTuneTeamInput, AutoTuneTeamResult } from "./pipeline";
-import { autoTuneTeam } from "./pipeline";
+import { preloadGameStats } from "@/data/gameStatsLoader";
+import type {
+  AutoTuneTeamInput,
+  AutoTuneTeamResult,
+} from "../../artifact/scoring/pipeline";
+import { autoTuneTeam } from "../../artifact/scoring/pipeline";
 
 export type AutoTuneWorkerRequest = {
   id: number;

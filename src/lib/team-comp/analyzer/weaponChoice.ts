@@ -7,9 +7,9 @@
  */
 
 import { weaponsById } from "@/data/constants";
+import type { WeaponStatsMap } from "@/data/gameStatsLoader";
 import type { Element, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
-import type { WeaponStatsMap } from "@/lib/gameStatsLoader";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,

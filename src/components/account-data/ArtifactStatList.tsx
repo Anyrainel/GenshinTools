@@ -3,7 +3,7 @@ import type { ArtifactData, Rarity, SubStat } from "@/data/types";
 import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
-} from "@/lib/account-data/scoring/utils";
+} from "@/lib/artifact/scoring/utils";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getRarityColor } from "@/lib/utils";
 

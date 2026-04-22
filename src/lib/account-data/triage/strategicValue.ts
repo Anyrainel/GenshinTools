@@ -11,7 +11,7 @@
 
 import type { ArtifactData, Rarity, SubStat } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
-import { getSubstatAvgRoll } from "@/lib/account-data/scoring/utils";
+import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 
 export type StrategicRuleResult =
   | { kept: true; reason: StrategicReason }

@@ -24,14 +24,14 @@ const TIER_RANK: Record<Tier, number> = {
   Pool: 5,
 };
 import {
+  type BuildMatchResult,
+  getTargetMainStatsForSlot,
+} from "../artifact/scoring/artifactScore";
+import {
   MAX_LEVEL_BY_RARITY,
   getAllSubstats,
   getExpectedRollValue,
 } from "./artifactProjection";
-import {
-  type BuildMatchResult,
-  getTargetMainStatsForSlot,
-} from "./artifactScore";
 
 export type CandidateSource =
   | "current"

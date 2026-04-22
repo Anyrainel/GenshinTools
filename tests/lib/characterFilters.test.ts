@@ -1,3 +1,5 @@
+import type { CharacterStatsMap } from "@/data/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { CharacterResource, TierAssignment } from "@/data/types";
 import {
   defaultCharacterFilters,
@@ -5,8 +7,6 @@ import {
   getDefaultCharacterFilters,
   hasActiveFilters,
 } from "@/lib/characterFilters";
-import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { describe, expect, it } from "vitest";
 
 const mockCharacters: CharacterResource[] = [

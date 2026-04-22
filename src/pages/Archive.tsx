@@ -3,11 +3,11 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
-import { betaEnabled, setBetaEnabled } from "@/lib/betaFlag";
 import { ArtifactArchiveView } from "@/pages/archive/ArtifactArchiveView";
 import { BossArchiveView } from "@/pages/archive/BossArchiveView";
 import { CharacterArchiveView } from "@/pages/archive/CharacterArchiveView";
 import { WeaponArchiveView } from "@/pages/archive/WeaponArchiveView";
+import { betaEnabled, setBetaEnabled } from "@/stores/useBetaStore";
 import { FlaskConical } from "lucide-react";
 import { useMemo } from "react";
 

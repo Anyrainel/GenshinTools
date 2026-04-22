@@ -23,7 +23,7 @@ import {
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
-} from "@/lib/account-data/artifactScore";
+} from "@/lib/artifact/scoring/artifactScore";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";

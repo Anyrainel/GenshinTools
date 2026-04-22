@@ -9,7 +9,7 @@ import type {
 } from "@/data/types";
 
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
+import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
 import type { DamageFormula } from "./calc/damageFormula";
 import type { StatBuff } from "./calc/statBuff";
 import type { StatSheet } from "./calc/statSheet";

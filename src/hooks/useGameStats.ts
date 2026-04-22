@@ -2,7 +2,7 @@ import {
   getCharacterStatsSync,
   getWeaponStatsSync,
   preloadGameStats,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
 import { useEffect, useState } from "react";
 
 export interface GameStatsState {

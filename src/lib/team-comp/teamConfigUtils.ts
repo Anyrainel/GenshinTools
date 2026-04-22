@@ -3,6 +3,7 @@ import {
   artifactIdToHalfSetId,
   artifactsById,
 } from "@/data/constants";
+import { getCharacterLevelTier } from "@/data/gameStatsLoader";
 import type {
   AccountData,
   ArtifactData,
@@ -10,7 +11,6 @@ import type {
   TierAssignment,
 } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import type {
   ArtifactSetConfig,
   TalentLevels,

@@ -1,6 +1,6 @@
+import type { CharacterStatsMap } from "@/data/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { CharacterResource } from "@/data/types";
-import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { beforeEach, describe, expect, it } from "vitest";
 

@@ -17,6 +17,7 @@ import {
   weaponResourcesByName,
   weaponsById,
 } from "@/data/constants";
+import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   MainStat,
   PresetOption,
@@ -29,7 +30,6 @@ import type {
 } from "@/data/types";
 import { weaponTypes } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import {

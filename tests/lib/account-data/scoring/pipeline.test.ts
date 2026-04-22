@@ -9,8 +9,8 @@ import type { Build, SubStat } from "@/data/types";
 import {
   averageWeights,
   computeIdealScore,
-} from "@/lib/account-data/scoring/autoTune";
-import { scoreNormalized } from "@/lib/account-data/scoring/scorer";
+} from "@/lib/artifact-builds/auto-tune/autoTune";
+import { scoreNormalized } from "@/lib/artifact/scoring/scorer";
 import { describe, expect, it } from "vitest";
 
 /** Helper: create a minimal Build for scoring tests. */

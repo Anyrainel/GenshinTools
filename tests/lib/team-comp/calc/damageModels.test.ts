@@ -1,4 +1,4 @@
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { CharacterBase } from "@/lib/team-comp/calc/implModel";
 import {
   RegisterCharacter,

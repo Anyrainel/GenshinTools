@@ -2,9 +2,9 @@
  * Tests for generator — verifying 2+2pc set assignment and 4★ flex slot promotion.
  */
 import { artifactHalfSetsById, artifactsById } from "@/data/constants";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import type { Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {

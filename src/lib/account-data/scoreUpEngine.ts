@@ -16,11 +16,14 @@ import {
   type LuckExpectation,
   allSlots,
 } from "@/data/types";
-import type { ArtifactScoreResult, BuildMatchResult } from "./artifactScore";
+import type {
+  ArtifactScoreResult,
+  BuildMatchResult,
+} from "../artifact/scoring/artifactScore";
 import {
   getTargetMainStatsForSlot,
   scoreSlotWithMainStat,
-} from "./artifactScore";
+} from "../artifact/scoring/artifactScore";
 import {
   type BuildOptimizerConfig,
   type BuildOptimizerResult,

@@ -54,7 +54,7 @@ import {
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
-} from "@/lib/account-data/artifactScore";
+} from "@/lib/artifact/scoring/artifactScore";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import {
   type CompiledTeamDamage,

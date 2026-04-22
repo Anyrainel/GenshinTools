@@ -29,9 +29,12 @@ import {
   calculateStatScore,
   scaleFlatWeights,
   scoreMainStat,
-} from "./artifactScore";
+} from "../artifact/scoring/artifactScore";
+import {
+  getSubstatAvgRoll,
+  getSubstatMaxRoll,
+} from "../artifact/scoring/utils";
 import type { BuildEvaluation, EvalBuild, SetGroup } from "./buildEvaluation";
-import { getSubstatAvgRoll, getSubstatMaxRoll } from "./scoring/utils";
 
 // Public types
 

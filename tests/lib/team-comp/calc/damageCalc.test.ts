@@ -5,7 +5,7 @@ import {
   getCharacterLevelTier,
   getNextLevelTier,
   preloadGameStats,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
 import { StatBuff, isBuffApplicable } from "@/lib/team-comp/calc/statBuff";
 import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
 import { TeamResonance } from "@/lib/team-comp/calc/teamResonance";

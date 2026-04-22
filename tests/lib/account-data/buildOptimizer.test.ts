@@ -1,8 +1,8 @@
 import type { GlobalStatWeights, Slot } from "@/data/types";
-import type { StatWeightMap } from "@/lib/account-data/artifactScore";
 import { optimizeBuild } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
 import type { CrBudgetResult } from "@/lib/account-data/crBudget";
+import type { StatWeightMap } from "@/lib/artifact/scoring/artifactScore";
 import { describe, expect, it } from "vitest";
 
 const testWeights: StatWeightMap = {

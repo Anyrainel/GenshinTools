@@ -9,9 +9,9 @@
 import "@/lib/team-comp/index";
 
 import { artifactHalfSetsById } from "@/data/constants";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import type { Element, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { buffSourceKey } from "@/lib/team-comp/calc/statBuff";
 import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";

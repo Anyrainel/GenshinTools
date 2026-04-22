@@ -2,7 +2,7 @@
  * Behavioral lock for deriveSetKeysByChar — set key derivation from TeamBuild configs.
  */
 import { artifactHalfSetsById, artifactsById } from "@/data/constants";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { deriveSetKeysByChar } from "@/lib/team-comp/generator/generator";
 import type { TeamSlotConfig } from "@/lib/team-comp/types";

@@ -14,7 +14,7 @@
 import { avgSubstatRolls, maxSubstatRolls, statPools } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { getMainStatValue, toInternal } from "@/lib/account-data/scoring/utils";
+import { getMainStatValue, toInternal } from "@/lib/artifact/scoring/utils";
 
 import { StatSheet } from "../calc/statSheet";
 import type { StatKey } from "../types";

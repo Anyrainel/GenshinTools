@@ -17,7 +17,7 @@ import {
   scaleFlatWeights,
   scoreMainStat,
   scoreSlot,
-} from "./artifactScore";
+} from "../artifact/scoring/artifactScore";
 
 export type ScalingStat = "atk" | "hp" | "def" | "em";
 export type ArchetypeRole = "dps" | "support";

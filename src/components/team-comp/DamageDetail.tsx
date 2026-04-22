@@ -34,7 +34,7 @@ import { useTeamInventory } from "@/hooks/useTeamInventory";
 import {
   type BuildMatchResult,
   matchBuild,
-} from "@/lib/account-data/artifactScore";
+} from "@/lib/artifact/scoring/artifactScore";
 import {
   buildComboLineMap,
   buildSingleFormulaSelection,

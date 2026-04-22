@@ -17,6 +17,7 @@
 import "@/lib/team-comp";
 
 import { getGobletPool, statPools } from "@/data/constants";
+import { getCharacterStatsSync } from "@/data/gameStatsLoader";
 import type {
   Element,
   MainStat,
@@ -25,7 +26,6 @@ import type {
   WeightedMainStat,
   WeightedSubStat,
 } from "@/data/types";
-import { getCharacterStatsSync } from "@/lib/gameStatsLoader";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { MULTI_ELEMENT_CHARS } from "@/lib/team-comp/constants";
@@ -44,7 +44,7 @@ import {
   compileAutoTuneEval,
   computeIdealScore,
   toWeightedFormulas,
-} from "./autoTune";
+} from "../../artifact-builds/auto-tune/autoTune";
 import type { AutoTuneResult } from "./utils";
 
 // ─── Main stat candidates per slot (from canonical statPools) ───

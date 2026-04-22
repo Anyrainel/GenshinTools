@@ -17,15 +17,15 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo } from "@/data/charInfo";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
-import type { AccountData, CharacterData, WeaponResource } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { CharacterStats, WeaponStats } from "@/lib/gameStatsLoader";
+import type { CharacterStats, WeaponStats } from "@/data/gameStatsLoader";
 import {
   CHARACTER_LEVEL_TIERS,
   getCharacterDisplayMeta,
   getCharacterLevelTier,
   getWeaponDisplayMeta,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
+import type { AccountData, CharacterData, WeaponResource } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   getDefaultOptionValue,
   getOptionDef,

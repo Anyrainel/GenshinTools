@@ -1,5 +1,5 @@
-import { betaEnabled } from "@/lib/betaFlag";
-import type { CharacterStatsMap, WeaponStatsMap } from "@/lib/gameStatsLoader";
+import type { CharacterStatsMap, WeaponStatsMap } from "@/data/gameStatsLoader";
+import { betaEnabled } from "@/stores/useBetaStore";
 import artifactStatData from "./game/artifact_stat.json";
 import {
   artifactHalfSets,

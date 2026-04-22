@@ -18,7 +18,7 @@ import type {
   NormalizedScoreInfo,
   StatScoreBreakdown,
   SubstatScoreResult,
-} from "@/lib/account-data/artifactScore";
+} from "@/lib/artifact/scoring/artifactScore";
 
 function emptySlotScores(): Record<Slot, number> {
   const out = {} as Record<Slot, number>;

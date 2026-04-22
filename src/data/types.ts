@@ -529,3 +529,125 @@ export type GlobalStatWeights = {
   flatHp: number;
   flatDef: number;
 };
+
+// ─── Game Data: weapon / artifact per-language bundles ───
+
+export type WeaponGameEntry = {
+  name: string;
+  descHtmlTpl: string;
+  refinements: string[][];
+};
+export type WeaponGameData = Record<string, WeaponGameEntry>;
+
+export type ArtifactGameEntry = {
+  name: string;
+  effect2: string;
+  effect4: string;
+};
+export type ArtifactGameData = Record<string, ArtifactGameEntry>;
+
+// ─── Game Data: leyline boss bundles ───
+
+export type ElementKey =
+  | "physical"
+  | "pyro"
+  | "hydro"
+  | "electro"
+  | "dendro"
+  | "anemo"
+  | "geo"
+  | "cryo";
+
+export const ELEMENT_KEYS: ElementKey[] = [
+  "physical",
+  "pyro",
+  "hydro",
+  "electro",
+  "dendro",
+  "anemo",
+  "geo",
+  "cryo",
+];
+
+export interface BossTierStats {
+  id: number;
+  level: number;
+  hp?: number;
+  atk?: number;
+  def?: number;
+}
+
+export interface BossState {
+  state: string;
+  ability: string;
+  res_delta?: Partial<Record<ElementKey, number>>;
+  value_delta?: { atk_ratio: number };
+}
+
+export interface BossInfo {
+  id: number;
+  tiers: Record<string, BossTierStats>;
+  monster_id?: number;
+  describe_id?: number;
+  res?: Record<ElementKey, number>;
+  states?: BossState[];
+  params?: Record<string, Record<string, number>>;
+}
+
+export interface BossVariant {
+  tiers: number[];
+  id: number;
+  name: string;
+}
+
+export interface BossBullet {
+  tiers: number[];
+  title?: string;
+  short?: string;
+  detail?: string;
+}
+
+export interface BossDescribeName {
+  id: number;
+  name: string;
+}
+
+export interface BossDescription {
+  id: number;
+  variants: BossVariant[];
+  advantage?: { tiers: number[]; text: string }[];
+  disadvantage?: { tiers: number[]; text: string }[];
+  bullets: BossBullet[];
+  describe_names?: BossDescribeName[];
+}
+
+export interface BossSchedule {
+  id: number;
+  open: string;
+  close: string;
+  boss_ids: number[];
+}
+
+/**
+ * All boss data keyed for quick lookup, plus accessor methods that close
+ * over the loaded data. Obtain via ``loadLeylineBossData()`` from
+ * ``gameDataLoader.ts``.
+ */
+export interface LeylineBossData {
+  schedules: BossSchedule[];
+  allBossIds: number[];
+  getBossInfo(id: number): BossInfo | undefined;
+  getBossDesc(id: number, lang: Language): BossDescription | undefined;
+  getScheduleName(scheduleId: number, lang: Language): string;
+  getBossVariantName(id: number, tier: number, lang: Language): string;
+  getBossDisplayName(id: number, lang: Language): string;
+  getBulletsForTier(id: number, tier: number, lang: Language): BossBullet[];
+  getAdvantageForTier(
+    id: number,
+    tier: number,
+    lang: Language
+  ): { advantage: string[]; disadvantage: string[] };
+  getCurrentSchedule(): BossSchedule | undefined;
+  getBossImagePath(bossId: number): string | null;
+  bossMatchesSearch(bossId: number, query: string): boolean;
+}

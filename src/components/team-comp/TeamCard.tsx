@@ -16,16 +16,16 @@ import {
   weaponsById,
 } from "@/data/constants";
 import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/data/gameStatsLoader";
+import {
   type AccountData,
   type ReactionType,
   TEAM_REACTION_OPTIONS,
   type WeaponResource,
 } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/lib/gameStatsLoader";
 import { REACTION_COLORS } from "@/lib/team-comp/constants";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import { cn, getAssetUrl } from "@/lib/utils";

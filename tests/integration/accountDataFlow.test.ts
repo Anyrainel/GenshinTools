@@ -11,12 +11,12 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { scoreAllSlots } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import { mergeAccountData } from "@/lib/account-data/mergeAccountData";
+import { scoreAllSlots } from "@/lib/artifact/scoring/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";

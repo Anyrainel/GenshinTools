@@ -5,7 +5,7 @@
  */
 
 import type { ArtifactData, MainStat } from "@/data/types";
-import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
+import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import type {
   ArtifactVarLookup,
   CompiledTeamDamage,

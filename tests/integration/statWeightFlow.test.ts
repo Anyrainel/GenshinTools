@@ -11,11 +11,11 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { scoreAllSlots } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
+import { scoreAllSlots } from "@/lib/artifact/scoring/artifactScore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 
 // Test data: Hu Tao with Crimson Witch artifacts

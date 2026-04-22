@@ -8,8 +8,8 @@ import {
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
-} from "@/lib/account-data/artifactScore";
-import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/account-data/scoring/utils";
+} from "@/lib/artifact/scoring/artifactScore";
+import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/artifact/scoring/utils";
 import { StatSheet } from "@/lib/team-comp/calc/statSheet";
 import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import type {

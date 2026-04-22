@@ -1,20 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { computeStateRes, formatStat } from "@/data/gameDataLoader";
 import {
   type BossState,
   ELEMENT_KEYS,
   type ElementKey,
-  computeStateRes,
-  formatStat,
-  getAdvantageForTier,
-  getBossDesc,
-  getBossDisplayName,
-  getBossImagePath,
-  getBossInfo,
-  getBossVariantName,
-  getBulletsForTier,
-} from "@/data/leylineBoss";
+  type LeylineBossData,
+} from "@/data/types";
 import { SENTIMENT_BADGE, cn, getAssetUrl } from "@/lib/utils";
 import {
   HelpCircle,
@@ -27,20 +20,20 @@ import {
 } from "lucide-react";
 import { Fragment, type ReactNode, useMemo, useState } from "react";
 
-function useBossTranslations() {
+function useBossTranslations(bossData: LeylineBossData) {
   const { language } = useLanguage();
   return useMemo(
     () => ({
-      bossName: (id: number) => getBossDisplayName(id, language),
+      bossName: (id: number) => bossData.getBossDisplayName(id, language),
       bossVariantName: (id: number, tier: number) =>
-        getBossVariantName(id, tier, language),
-      bossDesc: (id: number) => getBossDesc(id, language),
+        bossData.getBossVariantName(id, tier, language),
+      bossDesc: (id: number) => bossData.getBossDesc(id, language),
       bossBullets: (id: number, tier: number) =>
-        getBulletsForTier(id, tier, language),
+        bossData.getBulletsForTier(id, tier, language),
       bossAdvantage: (id: number, tier: number) =>
-        getAdvantageForTier(id, tier, language),
+        bossData.getAdvantageForTier(id, tier, language),
     }),
-    [language]
+    [language, bossData]
   );
 }
 
@@ -254,13 +247,16 @@ function TierSelector({
   );
 }
 
-export function BossDetailPanel({ bossId }: { bossId: number }) {
+export function BossDetailPanel({
+  bossId,
+  bossData,
+}: { bossId: number; bossData: LeylineBossData }) {
   const { t } = useLanguage();
-  const boss = useBossTranslations();
+  const boss = useBossTranslations(bossData);
   const [selectedTier, setSelectedTier] = useState(6);
   const [showDetailedDesc, setShowDetailedDesc] = useState(true);
 
-  const info = getBossInfo(bossId);
+  const info = bossData.getBossInfo(bossId);
   const desc = boss.bossDesc(bossId);
 
   const leylineStates = useMemo(() => {
@@ -295,7 +291,7 @@ export function BossDetailPanel({ bossId }: { bossId: number }) {
   const tierStats = info.tiers[String(selectedTier)];
   const variantName = boss.bossVariantName(bossId, selectedTier);
   const displayName = boss.bossName(bossId);
-  const imagePath = getBossImagePath(bossId);
+  const imagePath = bossData.getBossImagePath(bossId);
   const bullets = boss.bossBullets(bossId, selectedTier);
   const { advantage, disadvantage } = boss.bossAdvantage(bossId, selectedTier);
 

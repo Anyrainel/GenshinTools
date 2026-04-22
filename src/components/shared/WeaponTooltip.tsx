@@ -1,10 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { weaponsById } from "@/data/constants";
-import { useGameStats } from "@/hooks/useGameStats";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
-} from "@/lib/gameStatsLoader";
+} from "@/data/gameStatsLoader";
+import { useGameStats } from "@/hooks/useGameStats";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 
 interface WeaponTooltipProps {

@@ -12,7 +12,7 @@ import type { AccountData, Build } from "@/data/types";
 import type {
   AutoTuneOutput,
   TeamBreakdown,
-} from "@/lib/account-data/scoring/pipeline";
+} from "@/lib/artifact/scoring/pipeline";
 import { parseElement } from "@/lib/typeValidation";
 import { ELEMENT_HEX, cn, getElementColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";

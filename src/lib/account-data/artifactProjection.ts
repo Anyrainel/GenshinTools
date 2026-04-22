@@ -4,7 +4,10 @@ import type {
   Rarity,
   SubStat,
 } from "@/data/types";
-import { getSubstatAvgRoll, getSubstatRollTiers } from "./scoring/utils";
+import {
+  getSubstatAvgRoll,
+  getSubstatRollTiers,
+} from "../artifact/scoring/utils";
 
 export const MAX_LEVEL_BY_RARITY: Record<Rarity, number> = {
   5: 20,

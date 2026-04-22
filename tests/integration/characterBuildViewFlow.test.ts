@@ -10,6 +10,8 @@
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { charactersById } from "@/data/constants";
+import type { CharacterStatsMap } from "@/data/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { characters } from "@/data/resources";
 import type { CharacterFilters, Tier } from "@/data/types";
 import {
@@ -17,8 +19,6 @@ import {
   filterAndSortCharacters,
   hasActiveFilters,
 } from "@/lib/characterFilters";
-import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useTierStore } from "@/stores/useTierStore";
 
 describe("Integration: Character Build View Filter Flow", () => {

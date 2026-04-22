@@ -1,4 +1,6 @@
 import { charactersById } from "@/data/constants";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import type { CharacterStatsMap } from "@/data/gameStatsLoader";
 import {
   type CharacterData,
   type CharacterFilters,
@@ -6,9 +8,7 @@ import {
   type TierAssignment,
   tiers,
 } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
-import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
+import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { fuzzyMatch } from "@/lib/search";
 
 type OwnershipCheck = (id: string) => boolean;

@@ -3,6 +3,7 @@
  * Single in-memory copy per file; shared by all consumers.
  */
 
+import { fetchGzipJson } from "@/data/gzipJson";
 import type {
   BaseStat,
   CharacterResource,
@@ -13,9 +14,8 @@ import type {
   WeaponResource,
   WeaponType,
 } from "@/data/types";
-import { betaEnabled } from "@/lib/betaFlag";
-import { fetchGzipJson } from "@/lib/gzipJson";
 import type { StatEntry } from "@/lib/team-comp/types";
+import { betaEnabled } from "@/stores/useBetaStore";
 
 // ─── JSON shapes (match character_stats.json / weapon_stats.json) ───
 

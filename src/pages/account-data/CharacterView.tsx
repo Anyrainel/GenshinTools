@@ -9,16 +9,16 @@ import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSideb
 import { ExportBranding } from "@/components/shared/ExportBranding";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { AccountData, CharacterData } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { downloadElementAsImage } from "@/lib/downloadImage";
-import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";

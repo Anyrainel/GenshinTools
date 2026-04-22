@@ -1,3 +1,4 @@
+import { preloadGameStats } from "@/data/gameStatsLoader";
 /**
  * Tests for artifact conflict resolution in runTeamOptimization.
  *
@@ -10,7 +11,6 @@
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
 import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";

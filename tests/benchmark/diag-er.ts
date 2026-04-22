@@ -8,8 +8,8 @@ import "@/lib/team-comp/index";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import type { Element } from "@/data/types";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { getDefaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
 import {
   compileComboTeamDamage,

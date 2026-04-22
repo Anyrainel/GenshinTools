@@ -9,8 +9,8 @@ import { charInfo } from "@/data/charInfo";
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, MainStat } from "@/data/types";
 import { allSlots } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
-import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
+import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
+import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import {
   buildArtifactVarLookup,
   compileComboTeamDamage,

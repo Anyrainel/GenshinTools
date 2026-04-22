@@ -1,11 +1,12 @@
+import {
+  resolveCharacterStats,
+  resolveWeaponStats,
+} from "@/data/gameStatsLoader";
 /**
  * Computes non-artifact CR so the optimizer knows the ceiling for artifact CR.
  */
 import type { CharacterData } from "@/data/types";
-import {
-  resolveCharacterStats,
-  resolveWeaponStats,
-} from "@/lib/gameStatsLoader";
+import type { BuildMatchResult } from "../artifact/scoring/artifactScore";
 import {
   createArtifactSet,
   createWeapon,
@@ -13,7 +14,6 @@ import {
 } from "../team-comp/calc/registry";
 import { TeamMeta } from "../team-comp/calc/teamMeta";
 import type { OptionMap } from "../team-comp/types";
-import type { BuildMatchResult } from "./artifactScore";
 
 export interface CrBudgetResult {
   baseCr: number; // 0.05
