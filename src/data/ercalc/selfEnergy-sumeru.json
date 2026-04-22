@@ -64,7 +64,7 @@
   "layla": [
     {
       "source": "C2",
-      "action": "periodicE",
+      "action": "E",
       "amount": 1,
       "target": "self",
       "minC": 2,

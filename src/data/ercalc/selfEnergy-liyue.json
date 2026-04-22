@@ -33,7 +33,7 @@
   "qiqi": [
     {
       "source": "C1",
-      "action": "periodicE",
+      "action": "E",
       "amount": 2,
       "target": "self",
       "minC": 1,

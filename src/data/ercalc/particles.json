@@ -8,87 +8,78 @@
   },
   "albedo": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 5,
+        "procs": 7,
         "particles": [[1, 0.67]],
-        "notes": "On Transient Blossom"
+        "notes": "Solar Isotoma lifetime 30s, 2s skill ICD (coordinated attack); procs=min(15,7)=7 for 15s rotation window"
       }
     }
   },
   "alhaitham": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "periodic": {
-      "E": {
-        "procs": 3,
-        "particles": 1,
-        "notes": "On Projection Attack Wave"
-      }
-    }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [1, 0, 0],
+      "notes": "Fires from projectionAttack registered on NA hits; 1.5s particle ICD; cycle length 3 assumes NA cadence ~0.5s; requires at least 1 Chisel-Light Mirror active"
+    },
+    "_unmodeled": [
+      "CA and PA also register projectionAttack and share the same 1.5s particle ICD — proc count spans NA+CA+PA combined; projectionAttack itself has a separate 1.6s ICD"
+    ]
   },
   "aloy": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "E": {
       "particles": 5
     }
   },
   "amber": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Construct",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "arataki_itto": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[3, 1.0], [1, 0.5]]
     }
   },
   "arlecchino": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 5
     }
   },
   "baizhu": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "E": {
       "particles": [[3, 1.0], [1, 0.5]]
     }
   },
   "barbara": {
     "element": "Hydro",
-    "source": "fandom"
+    "source": "gcsim"
   },
   "beidou": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 2
     },
-    "holdE": {
-      "particles": 4
-    }
+    "_unmodeled": [
+      "Particle count scales with counter param: counter=0 → 2 (baseline modeled), counter=1 → 3 (1 hit absorbed), counter=2 → 4 (perfect parry); schema cannot express deterministic counter-gated variants"
+    ]
   },
   "bennett": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[2, 1.0], [1, 0.25]]
     },
@@ -98,8 +89,7 @@
   },
   "candace": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 2
     },
@@ -109,8 +99,7 @@
   },
   "charlotte": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 3
     },
@@ -120,64 +109,60 @@
   },
   "chasca": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 5,
-      "notes": "On Converted Charged Attack Hit"
+      "notes": "skillParticleICD is a boolean flag reset on enterNightsoul(); fires exactly once per Nightsoul blessing regardless of how many Shadowhunt Shells are fired"
     }
   },
   "chevreuse": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 4,
-      "notes": "10s CD"
+      "notes": "Press and hold both call the same particleCB; 10s particle ICD (not hitlag-extendable) caps at one emission per 10s regardless of press/hold variant"
     }
   },
   "chiori": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 3,
+        "procs": 5,
         "particles": [[1, 1.0], [1, 0.2]],
-        "notes": "On Tamoto Hit"
+        "notes": "Tamoto doll ticks every 3.6s; shared 3s particle ICD caps at floor(15/3)=5 procs over a 15s rotation. Rock doll (construct-triggered) shares the same ICD — extra doll does not increase procs."
       }
     }
   },
   "chongyun": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "citlali": {
     "element": "Cryo",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 5
     }
   },
   "clorinde": {
     "element": "Electro",
-    "source": "fandom",
-    "periodic": {
-      "E": {
-        "procs": 4,
-        "particles": 1,
-        "notes": "On Swift Hunt/Impale the Night/C1/C6, 2s CD"
-      }
-    }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [1, 0, 0, 0],
+      "notes": "particleCB active only during Night Watch state; 2s particle ICD, pattern length 4 assumes ~0.5s enhanced-NA cadence. Skill dashes share the same ICD — dash-heavy rotations consume the ICD window without adding procs."
+    },
+    "_unmodeled": [
+      "Skill dashes (skillDashNoBOL / skillDashRegular / skillDashFullBOL all use AttackTagNormal and register particleCB with the same 2s particleICDKey as enhanced NAs",
+      "C1: Nightvigil Shade coordinated attacks (1.2s own ICD) also register particleCB, sharing the 2s particle ICD (cons.go:34-79)"
+    ]
   },
   "collei": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "E": {
       "particles": 3
     }
@@ -191,85 +176,97 @@
   },
   "cyno": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 3,
-      "notes": "Normal"
+      "particles": 3
     },
-    "_variants": [
-      {
-        "particles": [[1, 1.0], [1, 0.333]],
-        "notes": "Burst"
-      }
-    ]
+    "specialE": {
+      "particles": [[1, 1.0], [1, 0.33]],
+      "notes": "Only during Pactsworn Pathclearer burst state; 0.5s ICD prevents duplicate fires on Endseer multi-hit"
+    }
   },
   "dahlia": {
     "element": "Hydro",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 3
     }
   },
   "dehya": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "E": {
-      "particles": 1,
-      "notes": "On Field DMG"
-    }
-  },
-  "diluc": {
-    "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "E": {
-      "particles": [[1, 1.0], [1, 0.33]],
-      "notes": "On Hit"
-    }
-  },
-  "diona": {
-    "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
-    "E": {
-      "particles": 4,
-      "notes": "On Hit"
-    }
-  },
-  "dori": {
-    "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
-    "E": {
-      "particles": 2
-    }
-  },
-  "emilie": {
-    "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Construct",
+    "source": "gcsim",
     "periodic": {
       "E": {
         "procs": 4,
         "particles": 1,
-        "notes": "On Lv. 1/2 Lumidouce Case Hit; 2.5s CD"
+        "notes": "Fiery Sanctum field lasts 12s; coordinated-attack hook fires on any in-field enemy damage, gated by 2.5s ICD. procs=floor(12/2.5)=4."
       }
     }
   },
-  "escoffier": {
+  "diluc": {
+    "element": "Pyro",
+    "source": "gcsim",
+    "E": {
+      "particles": [[1, 1.0], [1, 0.33]]
+    },
+    "_unmodeled": [
+      "Diluc uses 3 separate E presses per rotation (Searing Onslaught 1/2/3). Each press fires particleCB independently (0.3s ICD is shorter than animation gaps). Full 3-E sequence yields 3× this per-press distribution."
+    ]
+  },
+  "diona": {
     "element": "Cryo",
-    "source": "fandom",
+    "source": "gcsim",
+    "E": {
+      "particles": [[1, 0.8], [1, 0.8]]
+    },
+    "holdE": {
+      "particles": [[1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8]]
+    }
+  },
+  "dori": {
+    "element": "Electro",
+    "source": "gcsim",
+    "E": {
+      "particles": 2
+    }
+  },
+  "durin": {
+    "element": "Pyro",
+    "source": "lunaris",
     "E": {
       "particles": 4,
-      "notes": "On Activation"
+      "notes": "from character_stats.json (integer)"
+    }
+  },
+  "emilie": {
+    "element": "Dendro",
+    "source": "gcsim",
+    "periodic": {
+      "E": {
+        "procs": 6,
+        "particles": 1,
+        "notes": "Lumidouce Case ticks every 1.5s; 2.5s particle ICD caps at floor(min(22s lifetime, 15s rotation)/2.5)=6. Level-2 case fires 2 attacks per tick but shared ICD still limits to 1 proc per 2.5s."
+      },
+      "Q": {
+        "procs": 1,
+        "particles": 1,
+        "notes": "Burst-spawned level-3 Lumidouce lasts 2.8s at T9; 2.5s particle ICD allows at most 1 proc during burst window."
+      }
+    },
+    "_unmodeled": [
+      "E and Q Lumidouce share the same particleICDKey ('skill-particle-icd') — if the E Lumidouce procced recently, the burst Lumidouce window may yield 0 procs"
+    ]
+  },
+  "escoffier": {
+    "element": "Cryo",
+    "source": "gcsim",
+    "E": {
+      "particles": 4
     }
   },
   "eula": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[1, 1.0], [1, 0.5]]
     },
@@ -279,97 +276,101 @@
   },
   "faruzan": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
-    "periodic": {
-      "E": {
-        "procs": 1,
-        "particles": 2,
-        "notes": "On Pressurized Collapse Vortex; 5.5s CD"
-      }
-    }
+    "source": "gcsim",
+    "specialE": {
+      "particles": 2,
+      "notes": "Particles are emitted by Pressurized Collapse vortex triggered by Hurricane Arrow (fully-charged CA while Manifest Gale is active); E alone produces no particles. 5.5s particle ICD per collapse."
+    },
+    "_unmodeled": [
+      "C1: allows up to 2 Hurricane Arrows per E (hurricaneCount=2 at C1), potentially yielding 2 collapses per E usage; second proc limited by 5.5s ICD timing"
+    ]
   },
   "fischl": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
         "procs": 7,
         "particles": [[1, 0.67]],
-        "notes": "On Oz ATK"
+        "notes": "Oz 10s lifetime (600f) at ~1s tick interval (59f) = 10 max ticks; procs=7 assumes typical 15s rotation with absorption gaps. C6 extends Oz by 2s (10→12 ticks)."
       }
+    },
+    "_unmodeled": [
+      "C6: Oz duration extended by 2s — up to 12 ticks at full uptime; default procs=7 unchanged but C6 users may raise to 9-10"
+    ]
+  },
+  "flins": {
+    "element": "Electro",
+    "source": "gcsim",
+    "NA": {
+      "pattern": [1, 0, 0, 0],
+      "notes": "Only emits during Manifest Flame buff (~10s); 2s particle ICD, NA cadence ~0.5s gives cycle length 4"
     }
   },
   "freminet": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 2,
-      "notes": "Normal; On Upward Thrust"
+      "particles": 2
     },
-    "_variants": [
-      {
-        "particles": 1,
-        "notes": "Burst; On Upward Thrust"
-      },
-      {
-        "particles": 1,
-        "notes": "On Level 4 Shattering Pressure"
-      }
+    "specialE": {
+      "particles": 2,
+      "notes": "Lv4 Shattering Pressure (4 Rime stacks); Lv0-3 detonation has no particle CB — only Lv4 emits"
+    },
+    "_unmodeled": [
+      "During burst state (freminet-stalking active), both particleCBThrust and particleCBLv4 halve emission from 2 to 1"
     ]
   },
   "furina": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 5,
+        "procs": 6,
         "particles": 1,
-        "notes": "On Salon Member Hit, 2.5s CD"
+        "notes": "Ousia mode only (Salon Solitaire members); 2.5s particle ICD shared across all 3 members caps at floor(15/2.5)=6 procs per 15s rotation; Pneuma (Singer of Many Waters) has no particle emissions"
       }
     }
   },
   "gaming": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "periodic": {
-      "E": {
-        "procs": 1,
-        "particles": 2,
-        "notes": "On Charmed Cloudstrider Hit, 3s CD"
-      }
+    "source": "gcsim",
+    "PA": {
+      "pattern": [2],
+      "notes": "Per Charmed Cloudstrider special plunge during Wushou Stance; 3s particle ICD — in typical plunge-heavy rotations each plunge lands after ICD expiry"
     }
   },
   "ganyu": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Construct",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "gorou": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 2
     }
   },
   "hu_tao": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "periodic": {
-      "E": {
-        "procs": 1,
-        "particles": [[2, 1.0], [1, 0.5]],
-        "notes": "On Converted Attack; 5s CD"
-      }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [[[2, 1.0], [1, 0.5]], 0, 0],
+      "notes": "Only while Paramita Papilio active (~9s); 5s particle ICD at ~1.5s NA cadence gives cycle length 3"
+    },
+    "_unmodeled": [
+      "CA (ppChargeAttack) shares the same 5s particle ICD as NA — CA-heavy rotations consume the ICD window without adding procs"
+    ]
+  },
+  "iansan": {
+    "element": "Electro",
+    "source": "lunaris",
+    "E": {
+      "particles": 4,
+      "notes": "from character_stats.json (integer)"
     }
   },
   "ifa": {
@@ -387,10 +388,28 @@
       "particles": [[4, 1.0], [1, 0.5]]
     }
   },
+  "ineffa": {
+    "element": "Electro",
+    "source": "gcsim",
+    "periodic": {
+      "E": {
+        "procs": 7,
+        "particles": [[1, 0.66]],
+        "notes": "Birgitta ticks every 119 frames (~2s); 20s lifetime; particle ICD 0.3s is non-limiting; floor(15×60/119)=7 ticks in 15s rotation"
+      }
+    }
+  },
+  "jahoda": {
+    "element": "Anemo",
+    "source": "lunaris",
+    "E": {
+      "particles": 4,
+      "notes": "from character_stats.json (integer)"
+    }
+  },
   "jean": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[2, 1.0], [1, 0.67]]
     }
@@ -408,8 +427,7 @@
   },
   "kaedehara_kazuha": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 3
     },
@@ -419,138 +437,135 @@
   },
   "kaeya": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[2, 1.0], [1, 0.67]]
     },
-    "_variants": [
-      {
-        "particles": [[3, 1.0], [1, 0.67]],
-        "notes": "w/ 4th Ascension Passive"
-      }
+    "_unmodeled": [
+      "A4 (Ascension 4): hitting Frozen enemies with Frostgnaw drops up to 2 additional Cryo particles per cast; condition-gated on enemy Frozen aura"
     ]
   },
   "kamisato_ayaka": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[4, 1.0], [1, 0.5]]
     }
   },
   "kamisato_ayato": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "periodic": {
-      "E": {
-        "procs": 3,
-        "particles": [[1, 1.0], [1, 0.5]],
-        "notes": "On Converted Attack; 2.5s CD"
-      }
-    }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [[[1, 1.0], [1, 0.5]], 0, 0, 0, 0],
+      "notes": "Shunsuiken fires during Takimeguri Kanka stance (6s skill buff); 1.9s particle ICD; cycle length 5 assumes Shunsuiken cadence ~0.4s"
+    },
+    "_unmodeled": [
+      "Only emits while skill buff is active — effective window is 6s of Shunsuiken",
+      "CA shares the same particle ICD as NA — proc count is across NA+CA combined"
+    ]
   },
   "kaveh": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 2
     }
   },
   "keqing": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[2, 1.0], [1, 0.5]],
-      "notes": "On Slashing or Thunderclap Slash"
-    }
+      "notes": "Fires on stiletto recall (either E-recast slashing hit or CA Thunderclap Slash); CA fires particleCB on 2 hits but 0.6s ICD gates it to 1 emission either way"
+    },
+    "_unmodeled": [
+      "C2: 50% chance of 1 Electro particle when NA/CA hits an Electro-affected enemy; 5s ICD — constellation-gated"
+    ]
   },
   "kinich": {
     "element": "Dendro",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 5,
-      "notes": "On Scalespiker Cannon; Max Once per Nightsoul's Blessing"
-    }
+      "notes": "Fires on ScalespikerCannon (requires full Nightsoul points); initial E (entering Nightsoul blessing) emits no particles"
+    },
+    "_unmodeled": [
+      "C6: passes same particleCB to chain-shot, but particlesGenerated flag is already set — no extra particles at C6"
+    ]
   },
   "kirara": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 3
     },
     "holdE": {
-      "particles": 1,
-      "notes": "On Urgent Neko Parcel Hit; 4s CD"
-    },
-    "_variants": [
-      {
-        "particles": 3,
-        "notes": "On Flipclaw Strike"
-      }
-    ]
+      "particles": 4,
+      "notes": "3 Dendro from Flipclaw Strike kick + 1 Dendro from roll ticks (rollParticleCB, 4s ICD fires at most once per hold)"
+    }
   },
   "klee": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "kujou_sara": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Construct",
-    "E": {
-      "particles": 3
+    "source": "gcsim",
+    "specialE": {
+      "particles": 3,
+      "notes": "E alone emits nothing; particles fire when Tengu Juurai: Ambush hits after a fully-charged aimed CA consumes Crowfeather Cover (aimed.go:138)"
     }
   },
   "kuki_shinobu": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 6,
+        "procs": 8,
         "particles": [[1, 0.45]],
-        "notes": "On Hit; 0.2s CD"
+        "notes": "Grass Ring tick every 1.5s (90f), 0.2s ICD; ring duration 12s → 8 ticks. C2 extends duration to 15s → 10 ticks"
       }
-    }
+    },
+    "_unmodeled": [
+      "C4: Thundergrass Mark coordinated attacks (triggered by other characters' NA/CA/PA while ring is active) also call particleCB with a 5s ICD — additional proc opportunity not modeled"
+    ]
   },
   "lan_yan": {
     "element": "Anemo",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
-      "particles": 3
+      "particles": 3,
+      "notes": "Fires on reathermoonRings (second E press after leap-back connects); initial Detect press emits no particles"
     }
   },
   "lauma": {
     "element": "Dendro",
-    "source": "fandom",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 3,
+        "procs": 4,
         "particles": [[1, 1.0], [1, 0.3]],
-        "notes": "On Frostgrove Sanctuary; 3.3s CD"
+        "notes": "Frostgrove Sanctuary tick; 3.3s ICD, ticks every ~2s (117f); 8 ticks over 15s but ICD allows only ticks 1, 3, 5, 7 to fire → 4 procs"
       }
     }
   },
   "layla": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 3,
+        "procs": 2,
         "particles": [[1, 1.0], [1, 0.33]],
-        "notes": "On Night Star; 3s CD"
+        "notes": "Shooting Stars fire when 4 Night Stars accumulate; alternating ICD keys (3.5s each) allow back-to-back procs. E adds 2 stars per cast → ~2 shooting-star discharges per skill"
       }
-    }
+    },
+    "_unmodeled": [
+      "Q also adds Night Stars (2 per cast, 0.5s ICD), potentially triggering additional Shooting Star discharges beyond the 2 modeled",
+      "C6 reduces star-tick interval, increasing discharge frequency"
+    ]
   },
   "linnea": {
     "element": "Geo",
@@ -561,80 +576,79 @@
   },
   "lisa": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "holdE": {
       "particles": 5
     }
   },
+  "lohen": {
+    "element": "Cryo",
+    "source": "lunaris"
+  },
   "lynette": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 4,
-      "notes": "On Enigma Thrust"
+      "particles": 4
     }
   },
   "lyney": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 5
-    }
+    },
+    "_unmodeled": [
+      "Burst-mode E (explosiveFirework) suppresses particle generation (R16); E: 5 applies only outside burst state"
+    ]
   },
   "mavuika": {
     "element": "Pyro",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 5,
-      "notes": "On Skill DMG"
+      "notes": "All three skill variants (press, hold/Flamestrider, bikeRefresh) call the same particleCB; Rings of Searing Radiance ticks use c6RingCB (no particles)"
     }
   },
   "mika": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "mona": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Construct",
+    "source": "gcsim",
     "E": {
       "particles": [[3, 1.0], [1, 0.33]]
     }
   },
   "mualani": {
     "element": "Hydro",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": [[4, 1.0], [1, 0.5]],
-      "notes": "On Sharky's Bite or Sharky's Surging Bite; Max Once per Surf"
+      "notes": "particleICD=9999*60 is reset on each E press (DeleteStatus in Skill()); at most one emission per surfing window regardless of attack type; modeled as direct E per R11 escape clause"
     }
   },
   "nahida": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 1,
+        "procs": 2,
         "particles": 3,
-        "notes": "On Tri-Karma Purification; 7s CD"
+        "notes": "7s particle ICD; floor(15/7)=2 procs per 15s rotation assuming two reaction/damage triggers on marked enemies"
       }
     }
   },
   "navia": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[3, 1.0], [1, 0.5]],
-      "notes": "On Rosula Shardshot"
+      "notes": "0.2s ICD caps at one firing per skill cast regardless of how many bullets hit"
     }
   },
   "nefer": {
@@ -647,127 +661,124 @@
   },
   "neuvillette": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 4,
-      "notes": "On Skill DMG"
+      "particles": 4
     }
+  },
+  "nicole": {
+    "element": "Pyro",
+    "source": "lunaris"
   },
   "nilou": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": [[1, 1.0], [1, 0.5]],
-      "notes": "On Activation"
+      "particles": [[1, 1.0], [1, 0.5]]
     },
-    "_variants": [
-      {
-        "particles": 1,
-        "notes": "On Converted Attack During Pirouette"
-      }
-    ]
+    "specialE": {
+      "particles": 1,
+      "notes": "Per pirouette hit (SwordDance/WhirlingSteps); 3 hits per full sequence, each fires once while pirouetteStatus active; 6-frame ICD is negligible between separate attack calls"
+    }
   },
   "ningguang": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Construct",
-    "periodic": {
-      "E": {
-        "procs": 1,
-        "particles": [[3, 1.0], [1, 0.33]],
-        "notes": "6s CD"
-      }
+    "source": "gcsim",
+    "E": {
+      "particles": [[3, 1.0], [1, 0.33]]
     }
   },
   "noelle": {
     "element": "Geo",
-    "source": "fandom"
+    "source": "gcsim"
   },
   "ororon": {
     "element": "Electro",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 3
     }
   },
+  "prune": {
+    "element": "Anemo",
+    "source": "lunaris"
+  },
   "qiqi": {
     "element": "Cryo",
-    "source": "fandom"
+    "source": "gcsim"
   },
   "raiden_shogun": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 5,
+        "procs": 6,
         "particles": [[1, 0.5]],
-        "notes": "On Coordinated Attack"
+        "notes": "Eye coordinated-attack ICD 0.9s; particle has own 0.8s ICD with 50% proc chance; procs=6 is representative — theoretical floor(15/0.9)=16 is unreachable without sustained on-field damage throughout the rotation"
       }
     }
   },
   "razor": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 3
     },
     "holdE": {
       "particles": 4
-    }
+    },
+    "_unmodeled": [
+      "During Lightning Fang burst buff, particleCB is not assigned to either press or hold E — zero particles emitted while burst is active (skill.go:94-97, 159-162)"
+    ]
   },
   "rosaria": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 3
     }
   },
   "sangonomiya_kokomi": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Construct",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 5,
+        "procs": 6,
         "particles": [[1, 0.67]],
-        "notes": "On Hit"
+        "notes": "Bake-Kurage ticks every ~2.1s (126f), 1s ICD between procs; skill duration 12.5s → ~6 ticks"
       }
     }
   },
   "sayu": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 2
     },
     "holdE": {
-      "particles": 1,
-      "notes": "On Fuufuu Windwheel Hit; 3s CD"
+      "particles": 2
     },
-    "_variants": [
-      {
-        "particles": 2,
-        "notes": "On Fuufuu Whirlwind Kick"
+    "periodic": {
+      "E": {
+        "procs": 3,
+        "particles": 1,
+        "notes": "rollParticleCB on Windwheel DoT ticks during hold roll; 3s ICD; max 10s hold gives floor(10/3)=3 procs; only applies during holdE roll phase, not during tap-E"
       }
+    },
+    "_unmodeled": [
+      "periodic.E roll procs are conditional on holdE being used; tap-E has no roll phase and produces no roll particles; short-hold (~0.8s) has at most 1 DoT tick but 3s particle ICD means 0 roll procs in practice"
     ]
   },
   "sethos": {
     "element": "Electro",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 2
     }
   },
   "shenhe": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 3
     },
@@ -777,71 +788,59 @@
   },
   "shikanoin_heizou": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 2,
-      "notes": "0-1 Stacks"
+      "particles": [[2, 1.0], [1, 0.5]],
+      "notes": "Modeled at 2-3 Declension stacks (mid-range). At 0-1 stacks: 2 flat. At 4 stacks: 3 flat. Schema cannot express the stack-parameterized distribution; see _unmodeled"
     },
-    "_variants": [
-      {
-        "particles": [[2, 1.0], [1, 0.5]],
-        "notes": "2-3 Stacks"
-      },
-      {
-        "particles": 3,
-        "notes": "4 Stacks"
-      }
+    "_unmodeled": [
+      "Particle count is Declension-stack-dependent: 0-1 stacks → 2; 2-3 stacks → [[2,1.0],[1,0.5]]; 4 stacks → 3. Cannot express all variants in a single E entry"
     ]
   },
   "sigewinne": {
     "element": "Hydro",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
-      "particles": 4,
-      "notes": "On Bubblebalm Hit; Once Per Bubblebalm"
+      "particles": 4
     }
   },
   "skirk": {
     "element": "Cryo",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 4,
-      "notes": "On Any Cryo Hit; 15s CD"
+      "notes": "particleICD = 15s (≥ rotation window); fires on any Cryo damage hit from Skirk while skill state is active; at most 1 emission per skill activation — modeled as direct E per R11 escape"
     }
   },
   "sucrose": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "tartaglia": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
-    "periodic": {
-      "E": {
-        "procs": 3,
-        "particles": 1,
-        "notes": "On Riptide Slash or Riptide Flash; 3s CD"
-      }
-    }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [1, 0, 0, 0, 0, 0],
+      "notes": "3s particle ICD shared across Riptide Flash and Riptide Slash callbacks; cycle length 6 assumes NA cadence ~0.5s in melee stance; only active during Foul Legacy melee stance (up to 30s)"
+    },
+    "_unmodeled": [
+      "Riptide Flash queues 3 simultaneous hits each with particleCB, but the shared 3s ICD caps to 1 emission per flash trigger (riptide.go:125-127)",
+      "Riptide Slash (from CA and melee NA hitting riptide-marked enemies) shares the same 3s particle ICD — CA-heavy rotations consume the ICD window without adding procs"
+    ]
   },
   "thoma": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[3, 1.0], [1, 0.5]]
     }
   },
   "tighnari": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": [[3, 1.0], [1, 0.5]]
     }
@@ -902,6 +901,16 @@
       }
     }
   },
+  "varesa": {
+    "element": "Electro",
+    "source": "gcsim",
+    "E": {
+      "particles": [[2, 1.0], [1, 0.5]]
+    },
+    "_unmodeled": [
+      "Free skill casts (freeSkill flag, granted by Nightsoul Blessing entry) produce no particles — particleCB is set to nil for those casts (skill.go:72-74)"
+    ]
+  },
   "varka": {
     "element": "Anemo",
     "source": "fandom",
@@ -911,8 +920,7 @@
   },
   "venti": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "E": {
       "particles": 3
     },
@@ -922,172 +930,166 @@
   },
   "wanderer": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "periodic": {
-      "E": {
-        "procs": 4,
-        "particles": 1,
-        "notes": "On NA/CA During Skill; 2s CD"
-      }
-    }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [1, 0, 0, 0],
+      "notes": "particleCB gated by Windfavored skillKey status and 2s particle ICD; cycle length 4 assumes NA cadence ~0.5s; only active during E hover state (up to ~10s of Kuugoryoku Points)"
+    },
+    "_unmodeled": [
+      "CA (WindfavoredChargeAttack) also calls particleCB with the same 2s ICD — CA-heavy rotations share the ICD window with NA procs"
+    ]
   },
   "wriothesley": {
     "element": "Cryo",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "periodic": {
-      "E": {
-        "procs": 4,
-        "particles": 1,
-        "notes": "On NA During Skill or Enhanced CA; 2s CD"
-      }
-    }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [1, 0, 0, 0],
+      "notes": "particleCB only assigned when skillBuffActive() = Icefang Rush skill active AND HP > 50%; 2s particle ICD; cycle length 4 assumes NA cadence ~0.5s; skill buff lasts 10s per cast"
+    },
+    "_unmodeled": [
+      "R17: particles only emit when HP > 50% — rotations that drain HP below this threshold lose NA procs",
+      "CA (Rebuke: Vaulting Fist via A1) also calls particleCB with the same 2s ICD, but A1 only procs when HP < 60%; the NA (HP > 50%) and CA (HP < 60%) particle conditions overlap in the 50–60% range"
+    ]
   },
   "xiangling": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
         "procs": 4,
         "particles": 1,
-        "notes": "On Hit"
+        "notes": "Guoba breathes exactly 4 times (frames 103, 203, 303, 403 of its 438-frame / ~7.3s lifetime); 1s particle ICD allows one emission per breath"
       }
     }
   },
   "xianyun": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "E": {
-      "particles": 5,
-      "notes": "On Driftcloud Wave Hit"
-    }
+    "source": "gcsim",
+    "PA": {
+      "pattern": [5],
+      "notes": "particleCB fires on each Driftcloud Wave (the final plunge after E leap sequence); particleICD = 0.2s — shorter than any plunge cadence so fires once per Driftcloud Wave; no particles on C6-granted free skill casts"
+    },
+    "_unmodeled": [
+      "C6 skill casts (Galefeather Pursuit charges) produce no particles — particleCB() factory returns nil when skillWasC6 is true (skill.go:139-142)"
+    ]
   },
   "xiao": {
     "element": "Anemo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 3
+      "particles": 3,
+      "notes": "No particles generated while Bane of All Evil burst buff is active"
     }
   },
   "xilonen": {
     "element": "Geo",
-    "source": "fandom",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "xingqiu": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 5
+      "particles": 5,
+      "notes": "Both rainscreen hits share particleCB with 1s ICD; hit 2 lands at 31f (within 60f window) so only hit 1 fires"
     }
   },
   "xinyan": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 4
     }
   },
   "yae_miko": {
     "element": "Electro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 3,
+        "procs": 6,
         "particles": 1,
-        "notes": "On Hit; 2.5s CD"
+        "notes": "Up to 3 Sesshou Sakura share a single 2.5s particle ICD; floor(15/2.5)=6 procs per 15s rotation across all sakura combined"
       }
     }
   },
   "yanfei": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "E": {
       "particles": 3
     }
   },
   "yaoyao": {
     "element": "Dendro",
-    "source": "fandom",
-    "spawnPoint": "Enemy",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 3,
+        "procs": 5,
         "particles": 1,
-        "notes": "On Hit, 1.5s CD"
+        "notes": "Yuegui (Throwing) 10s lifetime, throws every 1s, 1.5s particle ICD caps at every 2nd throw: 5 procs per deployment"
       }
-    }
+    },
+    "_unmodeled": [
+      "Yuegui (Jumping) spawned by burst has makeParticleCB returning nil — only Throwing variant emits particles"
+    ]
   },
   "yelan": {
     "element": "Hydro",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
-      "particles": 4
+      "particles": 4,
+      "notes": "0.3s ICD blocks simultaneous multi-enemy firings; effectively 1 emission per cast regardless of targets marked"
     }
   },
   "yoimiya": {
     "element": "Pyro",
-    "source": "fandom",
-    "spawnPoint": "Character",
-    "periodic": {
-      "E": {
-        "procs": 4,
-        "particles": 1,
-        "notes": "On Converted Attack, 2s CD"
-      }
+    "source": "gcsim",
+    "NA": {
+      "pattern": [1, 0, 0, 0],
+      "notes": "Niwabi Fire-Dance active (10s); 2s ICD with ~0.5s NA cadence yields emission on every 4th hit"
     }
   },
   "yumemizuki_mizuki": {
     "element": "Anemo",
-    "source": "fandom",
-    "periodic": {
-      "E": {
-        "procs": 4,
-        "particles": 1,
-        "notes": "On Hit, 0.5s CD, Max 4 Per Skill"
-      }
-    }
+    "source": "gcsim",
+    "E": {
+      "particles": 4,
+      "notes": "Capped at 4 procs per E cast (skillParticleGenerations counter); spread across activation hit and early cloud hits over ~1.5s"
+    },
+    "_unmodeled": [
+      "Second E cast (cancels DreamDrifter state) resets particleGenerationsRemaining to 0 — only the activating E cast generates particles"
+    ]
   },
   "yun_jin": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Character",
+    "source": "gcsim",
     "E": {
       "particles": 2
     },
     "holdE": {
-      "particles": [[2, 1.0], [1, 0.5]],
-      "notes": "Charge Lv. 2"
+      "particles": 3,
+      "notes": "Hold Level 2 / perfect counter baseline; Hold Level 1 is 50/50 between 2 and 3 particles"
     },
-    "_variants": [
-      {
-        "particles": 3,
-        "notes": "Charge Lv. 3"
-      }
+    "_unmodeled": [
+      "Hold Level 1 (chargeLevel=1) fires 2 or 3 particles with equal probability — modeled as [[2, 1.0], [1, 0.5]]; not captured in schema since holdE models Level 2 (3 deterministic)"
     ]
   },
   "zhongli": {
     "element": "Geo",
-    "source": "fandom",
-    "spawnPoint": "Construct",
+    "source": "gcsim",
     "periodic": {
       "E": {
-        "procs": 4,
+        "procs": 6,
         "particles": [[1, 0.5]],
-        "notes": "On Hit, 1.5s CD"
+        "notes": "Stele resonance ticks every 2s (120f); 1.5s ICD (90f) doesn't block successive ticks since 2s > 1.5s. ~6 procs in a typical 15s rotation (initial creation hit + 5 resonance ticks)"
       }
-    }
+    },
+    "_unmodeled": [
+      "C1 allows a second Stone Stele; two steles fire interleaved resonance attacks sharing the 1.5s particle ICD, potentially adding procs",
+      "Resonance attacks from nearby non-stele constructs also call particleCB but are blocked by the same shared ICD"
+    ]
   },
   "zibai": {
     "element": "Geo",
@@ -1098,66 +1100,6 @@
         "particles": 1,
         "notes": "On Any Attack Hit During Lunar Phase Shift, 2s CD"
       }
-    }
-  },
-  "durin": {
-    "element": "Pyro",
-    "source": "lunaris",
-    "E": {
-      "particles": 4,
-      "notes": "from character_stats.json (integer)"
-    }
-  },
-  "flins": {
-    "element": "Electro",
-    "source": "lunaris",
-    "E": {
-      "particles": 1,
-      "notes": "from character_stats.json (integer)"
-    }
-  },
-  "iansan": {
-    "element": "Electro",
-    "source": "lunaris",
-    "E": {
-      "particles": 4,
-      "notes": "from character_stats.json (integer)"
-    }
-  },
-  "ineffa": {
-    "element": "Electro",
-    "source": "lunaris",
-    "E": {
-      "particles": 1,
-      "notes": "from character_stats.json (integer)"
-    }
-  },
-  "jahoda": {
-    "element": "Anemo",
-    "source": "lunaris",
-    "E": {
-      "particles": 4,
-      "notes": "from character_stats.json (integer)"
-    }
-  },
-  "lohen": {
-    "element": "Cryo",
-    "source": "lunaris"
-  },
-  "nicole": {
-    "element": "Pyro",
-    "source": "lunaris"
-  },
-  "prune": {
-    "element": "Anemo",
-    "source": "lunaris"
-  },
-  "varesa": {
-    "element": "Electro",
-    "source": "lunaris",
-    "E": {
-      "particles": 3,
-      "notes": "from character_stats.json (integer)"
     }
   }
 }

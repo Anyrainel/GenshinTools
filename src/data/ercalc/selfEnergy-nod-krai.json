@@ -58,7 +58,7 @@
   "ineffa": [
     {
       "source": "C4",
-      "action": "periodicE",
+      "action": "E",
       "amount": 5,
       "target": "party",
       "minC": 4,
@@ -81,7 +81,7 @@
   "lauma": [
     {
       "source": "C4",
-      "action": "periodicE",
+      "action": "E",
       "amount": 4,
       "target": "self",
       "minC": 4,

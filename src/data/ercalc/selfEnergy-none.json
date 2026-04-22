@@ -63,7 +63,7 @@
   "traveler_pyro": [
     {
       "source": "P2",
-      "action": "periodicE",
+      "action": "E",
       "amount": 5,
       "target": "self",
       "minC": 0,
@@ -73,7 +73,7 @@
     },
     {
       "source": "P2",
-      "action": "periodicE",
+      "action": "E",
       "amount": 4,
       "target": "self",
       "minC": 0,

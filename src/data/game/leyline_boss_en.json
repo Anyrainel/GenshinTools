@@ -22,7 +22,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Electro characters"
+          "text": "Pyro characters"
         }
       ],
       "disadvantage": [
@@ -84,13 +84,13 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Geo Electro characters"
+          "text": "Dendro Pyro characters"
         }
       ],
       "disadvantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Pyro Hydro characters"
+          "text": "Cryo Hydro characters"
         }
       ],
       "bullets": [
@@ -148,7 +148,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Pyro characters"
+          "text": "Cryo characters"
         }
       ],
       "bullets": [
@@ -495,7 +495,7 @@
       "disadvantage": [
         {
           "tiers": [5, 6],
-          "text": "Electro characters"
+          "text": "Pyro characters"
         }
       ],
       "bullets": [
@@ -559,7 +559,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Electro-Charged reactions | Anemo characters"
+          "text": "Electro-Charged reactions | Electro characters"
         }
       ],
       "bullets": [
@@ -781,7 +781,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Pyro Hydro Geo characters"
+          "text": "Cryo Hydro Dendro characters"
         }
       ],
       "bullets": [
@@ -849,11 +849,11 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4],
-          "text": "Electro characters | Ranged Characters"
+          "text": "Pyro characters | Ranged Characters"
         },
         {
           "tiers": [5, 6],
-          "text": "Electro characters | Ranged Characters | Crowd-control Characters"
+          "text": "Pyro characters | Ranged Characters | Crowd-control Characters"
         }
       ],
       "disadvantage": [
@@ -1049,7 +1049,7 @@
       "disadvantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Electro characters"
+          "text": "Pyro characters"
         }
       ],
       "bullets": [
@@ -1113,7 +1113,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Electro Anemo Characters | Crowd Control Characters"
+          "text": "Pyro Electro Characters | Crowd Control Characters"
         }
       ],
       "bullets": [
@@ -1177,7 +1177,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Electro-Charged Reactions | Anemo Characters"
+          "text": "Electro-Charged Reactions | Electro Characters"
         }
       ],
       "bullets": [
@@ -1251,7 +1251,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "Cryo Characters | Healing Characters"
+          "text": "Geo Characters | Healing Characters"
         }
       ],
       "bullets": [

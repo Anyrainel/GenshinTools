@@ -3,11 +3,15 @@
 Scrape elemental skill particle data from the Genshin Impact Fandom Wiki and
 write the ER calculator's v2 particle schema.
 
-Output: src/data/ercalc/particles.json  (production; v2 schema; source="fandom")
+Output: src/data/ercalc/particles.fandom.json  (per-source; v2 schema; source="fandom")
 
-The separate Lunaris API scrape (scripts/scrape_particles_lunaris.py) emits
-src/data/ercalc/particles.lunaris.json as a side-by-side reference with full
-probabilistic data — not consumed in production.
+Source files and the merge pipeline:
+  - particles.fandom.json  — this script's output
+  - particles.gcsim.json   — from gcsim-particle-extract agents
+  - particles.lunaris.json — from scrape_particles_lunaris.py (raw-event reference)
+  - particles.json         — production, built by merge_particles_sources.py
+
+The merge script picks gcsim > fandom per-character after human review.
 
 v2 schema per character (see docs/er-calc-particle.md):
   {
@@ -42,7 +46,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from beta_files import read_beta_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT_PATH = ROOT / "src" / "data" / "ercalc" / "particles.json"
+OUT_PATH = ROOT / "src" / "data" / "ercalc" / "particles.fandom.json"
 
 WIKI_API = (
     "https://genshin-impact.fandom.com/api.php"
