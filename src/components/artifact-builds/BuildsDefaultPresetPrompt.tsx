@@ -1,5 +1,6 @@
 import { CheckCircle2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,7 @@ import { useBuildsStore } from "@/stores/useBuildsStore";
 export function BuildsDefaultPresetPrompt() {
   const { t } = useLanguage();
   const tour = useTour();
+  const navigate = useNavigate();
   const activePresetId = useBuildsStore((state) => state.activePresetId);
   const hasPrompted = useBuildsStore((state) => state.hasPromptedForPreset);
   const setHasPromptedForPreset = useBuildsStore(
@@ -87,12 +89,22 @@ export function BuildsDefaultPresetPrompt() {
             {t.ui("app.presetAppliedDesc")}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
-        <div className="flex justify-center px-4 pt-2 pb-6 sm:pb-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-2 px-4 pt-2 pb-6 sm:pb-4">
           <Button
+            variant="outline"
             onClick={() => setConfirmOpen(false)}
             className="sm:min-w-[7rem]"
           >
             {t.ui("common.gotIt")}
+          </Button>
+          <Button
+            onClick={() => {
+              setConfirmOpen(false);
+              navigate("/artifact-filter");
+            }}
+            className="sm:min-w-[7rem]"
+          >
+            {t.ui("accountData.viewBuilds")}
           </Button>
         </div>
       </ResponsiveDialogContent>
