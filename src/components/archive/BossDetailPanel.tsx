@@ -365,35 +365,44 @@ export function BossDetailPanel({
                     label: "Lv.",
                     value: String(tierStats?.level ?? "?"),
                     color: "text-primary",
+                    hidden: false,
                   },
                   {
                     label: t.statShort("hp"),
                     value: formatStat(tierStats?.hp),
                     color: "text-green-400",
+                    // TODO: unhide once HP data is populated in leyline_boss_info.json.
+                    hidden: true,
                   },
                   {
                     label: t.statShort("atk"),
                     value: formatStat(tierStats?.atk),
                     color: "text-red-400",
+                    // TODO: unhide once ATK data is populated in leyline_boss_info.json.
+                    hidden: true,
                   },
                   {
                     label: t.statShort("def"),
                     value: formatStat(tierStats?.def),
                     color: "text-amber-400",
+                    // TODO: unhide once DEF data is populated in leyline_boss_info.json.
+                    hidden: true,
                   },
-                ].map(({ label, value, color }) => (
-                  <div
-                    key={label}
-                    className="flex items-baseline gap-3 rounded-lg bg-muted/40 border border-border/30 px-3 py-1.5"
-                  >
-                    <span className={cn("text-sm font-medium", color)}>
-                      {label}
-                    </span>
-                    <span className="font-mono font-bold text-xl text-foreground">
-                      {value}
-                    </span>
-                  </div>
-                ))}
+                ]
+                  .filter((s) => !s.hidden)
+                  .map(({ label, value, color }) => (
+                    <div
+                      key={label}
+                      className="flex items-baseline gap-3 rounded-lg bg-muted/40 border border-border/30 px-3 py-1.5"
+                    >
+                      <span className={cn("text-sm font-medium", color)}>
+                        {label}
+                      </span>
+                      <span className="font-mono font-bold text-xl text-foreground">
+                        {value}
+                      </span>
+                    </div>
+                  ))}
               </div>
             </div>
 
