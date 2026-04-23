@@ -59,6 +59,18 @@ export interface SubmitResponse {
   total: number;
 }
 
+// ---------- Scan ----------
+export interface ScanRequest {
+  characters: boolean;
+  weapons: boolean;
+  artifacts: boolean;
+}
+
+export interface ScanSubmitResponse {
+  jobId: string;
+  targets: ScanRequest;
+}
+
 // ---------- Status ----------
 export type JobState = "idle" | "running" | "completed";
 
@@ -66,10 +78,36 @@ export interface StatusIdle {
   state: "idle";
 }
 
+export type CategoryProgressState =
+  | "pending"
+  | "running"
+  | "complete"
+  | "aborted";
+
+export interface CategoryProgress {
+  completed: number;
+  total: number;
+  state: CategoryProgressState;
+}
+
+export interface ScanProgress {
+  characters?: CategoryProgress;
+  weapons?: CategoryProgress;
+  artifacts?: CategoryProgress;
+}
+
 export interface StatusRunning {
   state: "running";
   jobId: string;
-  progress: { completed: number; total: number };
+  /** Linear progress for manage / equip jobs. */
+  progress?: {
+    completed: number;
+    total: number;
+    currentId?: string;
+    phase?: string;
+  };
+  /** Per-category progress for scan jobs. */
+  scanProgress?: ScanProgress;
 }
 
 export interface StatusCompleted {

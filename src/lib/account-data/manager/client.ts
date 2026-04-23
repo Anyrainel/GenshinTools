@@ -1,9 +1,15 @@
-import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
+import type {
+  IGOODArtifact,
+  IGOODCharacter,
+  IGOODWeapon,
+} from "@/lib/account-data/import/goodConversion";
 import type {
   EquipRequest,
   HealthResponse,
   ManageRequest,
   ResultResponse,
+  ScanRequest,
+  ScanSubmitResponse,
   StatusResponse,
   SubmitResponse,
 } from "./types";
@@ -80,10 +86,59 @@ export function getResult(
 }
 
 export function fetchArtifacts(
-  port = DEFAULT_PORT
+  port = DEFAULT_PORT,
+  jobId?: string
 ): Promise<IGOODArtifact[] | null> {
-  return fetchJson<IGOODArtifact[]>(`${baseUrl(port)}/artifacts`).catch((e) => {
-    // 404 = no scan data, 503 = incomplete scan
+  const url = jobId
+    ? `${baseUrl(port)}/artifacts?jobId=${encodeURIComponent(jobId)}`
+    : `${baseUrl(port)}/artifacts`;
+  return fetchJson<IGOODArtifact[]>(url).catch((e) => {
+    // 404 = no scan data for that jobId, 503 = category didn't complete
+    if (
+      e instanceof ArtifactManagerError &&
+      (e.status === 404 || e.status === 503)
+    )
+      return null;
+    throw e;
+  });
+}
+
+export function submitScanJob(
+  request: ScanRequest,
+  port = DEFAULT_PORT
+): Promise<ScanSubmitResponse> {
+  return fetchJson<ScanSubmitResponse>(`${baseUrl(port)}/scan`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export function fetchCharacters(
+  jobId: string,
+  port = DEFAULT_PORT
+): Promise<IGOODCharacter[] | null> {
+  return fetchJson<IGOODCharacter[]>(
+    `${baseUrl(port)}/characters?jobId=${encodeURIComponent(jobId)}`
+  ).catch((e) => {
+    // 404 = no data for this jobId, 503 = category didn't complete
+    if (
+      e instanceof ArtifactManagerError &&
+      (e.status === 404 || e.status === 503)
+    )
+      return null;
+    throw e;
+  });
+}
+
+export function fetchWeapons(
+  jobId: string,
+  port = DEFAULT_PORT
+): Promise<IGOODWeapon[] | null> {
+  return fetchJson<IGOODWeapon[]>(
+    `${baseUrl(port)}/weapons?jobId=${encodeURIComponent(jobId)}`
+  ).catch((e) => {
+    // 404 = no data for this jobId, 503 = category didn't complete
     if (
       e instanceof ArtifactManagerError &&
       (e.status === 404 || e.status === 503)

@@ -2245,18 +2245,30 @@ export const i18nUiData = {
     },
     scanTargets: { en: "What to scan", zh: "扫描内容" },
     startScan: { en: "Start Scan", zh: "开始扫描" },
-    phaseProgress: {
-      en: "Phase {0} / {1}",
-      zh: "第 {0} / {1} 阶段",
-    },
+    statePending: { en: "Pending", zh: "待扫描" },
+    countScanned: { en: "{0} scanned", zh: "已扫描 {0}" },
     fetchingData: {
       en: "Fetching scan results...",
       zh: "正在获取扫描结果...",
     },
     scanComplete: { en: "Scan complete", zh: "扫描完成" },
+    scanPartial: { en: "Scan partially complete", zh: "扫描部分完成" },
+    allAborted: { en: "All categories aborted", zh: "全部类别已中止" },
+    partialApplyHint: {
+      en: "Only completed categories will be applied. Aborted categories are skipped.",
+      zh: "仅应用已完成的类别，已中止的类别将被跳过。",
+    },
     noData: { en: "No data", zh: "无数据" },
     countItems: { en: "{0} entries", zh: "{0} 项" },
     applyToAccount: { en: "Apply to account", zh: "应用到账号" },
+    applyCompletedOnly: {
+      en: "Apply completed categories",
+      zh: "应用已完成的类别",
+    },
+    nothingToApply: {
+      en: "Nothing to apply — no category completed successfully.",
+      zh: "没有可应用的数据 — 没有类别成功完成。",
+    },
     syncApplied: {
       en: "Synced: {0}",
       zh: "已同步：{0}",

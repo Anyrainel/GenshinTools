@@ -143,8 +143,8 @@ export function useArtifactManagerJob(port = 8765) {
           setPhase({
             type: "running",
             jobId: status.jobId,
-            completed: status.progress.completed,
-            total: status.progress.total,
+            completed: status.progress?.completed ?? 0,
+            total: status.progress?.total ?? 0,
           });
         } else if (status.state === "completed") {
           stopPolling();

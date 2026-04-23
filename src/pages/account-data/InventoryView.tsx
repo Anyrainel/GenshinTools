@@ -1,3 +1,4 @@
+import { Monitor } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import {
   InventoryArtifactGrid,
@@ -14,8 +15,10 @@ import {
   type TaggedWeapon,
 } from "@/components/account-data/InventoryWeaponGrid";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { ArtifactScannerDialog } from "@/components/shared/ArtifactScannerDialog";
 import { CategoryChip } from "@/components/shared/CategoryChip";
 import { FilterChip } from "@/components/shared/FilterChip";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Rarity } from "@/data/enums";
 import {
@@ -58,6 +61,9 @@ export function InventoryView({
   );
   const [selectedArtifact, setSelectedArtifact] =
     useState<TaggedArtifact | null>(null);
+  const [scannerOpen, setScannerOpen] = useState<
+    false | "weapons" | "artifacts"
+  >(false);
 
   // ── Category toggles (default: unequipped + maxLevel) ──
   const [wShowEquipped, setWShowEquipped] = useState(false);
@@ -275,12 +281,23 @@ export function InventoryView({
     <ScrollLayout bodyClassName="space-y-6">
       {/* ══════ WEAPONS ══════ */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground/90 px-2">
-          {t.ui("accountData.weapons")}{" "}
-          <span className="text-muted-foreground ml-1 text-base font-normal">
-            ({groupedWeapons.length})
-          </span>
-        </h3>
+        <div className="flex items-center gap-3 px-2">
+          <h3 className="text-lg font-semibold text-foreground/90">
+            {t.ui("accountData.weapons")}{" "}
+            <span className="text-muted-foreground ml-1 text-base font-normal">
+              ({groupedWeapons.length})
+            </span>
+          </h3>
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto gap-1.5"
+            onClick={() => setScannerOpen("weapons")}
+          >
+            <Monitor className="h-4 w-4" />
+            {t.ui("scanner.syncFromGame")}
+          </Button>
+        </div>
 
         <div className="flex flex-wrap items-center gap-1.5 px-2">
           <CategoryChip
@@ -348,12 +365,23 @@ export function InventoryView({
 
       {/* ══════ ARTIFACTS ══════ */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground/90 px-2">
-          {t.ui("accountData.artifacts")}{" "}
-          <span className="text-muted-foreground ml-1 text-base font-normal">
-            ({filteredArtifacts.length})
-          </span>
-        </h3>
+        <div className="flex items-center gap-3 px-2">
+          <h3 className="text-lg font-semibold text-foreground/90">
+            {t.ui("accountData.artifacts")}{" "}
+            <span className="text-muted-foreground ml-1 text-base font-normal">
+              ({filteredArtifacts.length})
+            </span>
+          </h3>
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto gap-1.5"
+            onClick={() => setScannerOpen("artifacts")}
+          >
+            <Monitor className="h-4 w-4" />
+            {t.ui("scanner.syncFromGame")}
+          </Button>
+        </div>
 
         <div className="flex flex-wrap items-center gap-1.5 px-2">
           <CategoryChip
@@ -442,6 +470,14 @@ export function InventoryView({
             : undefined
         }
         t={t}
+      />
+
+      <ArtifactScannerDialog
+        open={scannerOpen !== false}
+        onOpenChange={(o) => {
+          if (!o) setScannerOpen(false);
+        }}
+        defaultTarget={scannerOpen || "artifacts"}
       />
     </ScrollLayout>
   );
