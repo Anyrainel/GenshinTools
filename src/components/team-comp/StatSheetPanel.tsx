@@ -5,17 +5,33 @@ import {
   Flame,
   Link2,
   Lock,
+  Settings,
   Snowflake,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { Slot, StatKey } from "@/data/enums";
+import { getGobletPool, statPools } from "@/data/constants";
+import type { MainStat, MainStatSlot, Slot, StatKey } from "@/data/enums";
+import { mainStatSlots } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
+import { characterStatsResource } from "@/data/gameStatsLoader";
 import type { ArtifactData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
@@ -63,6 +79,16 @@ type Props = {
   reuseInfo?: Map<string, ReuseEntry>;
   /** Preview mode — hides idle/combat/marginal tabs */
   preview?: boolean;
+  /** Per-character preferred main stats for optimizer (sands/goblet/circlet). */
+  preferredMainStats?: Record<string, Partial<Record<MainStatSlot, MainStat>>>;
+  /** Callback to update a character's preferred main stat for a slot. `null` clears. */
+  onPreferredMainStatsChange?: (
+    charId: string,
+    slot: MainStatSlot,
+    stat: MainStat | null
+  ) => void;
+  /** Disable the main-stat filter gear while the optimizer is running. */
+  preferredMainStatsDisabled?: boolean;
 };
 
 const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
@@ -287,6 +313,9 @@ export function StatSheetPanel({
   forceReusedCharIds,
   reuseInfo,
   preview,
+  preferredMainStats,
+  onPreferredMainStatsChange,
+  preferredMainStatsDisabled,
 }: Props) {
   // Per-character open view: null = collapsed
   const [openViews, setOpenViews] = useState<Record<string, ViewMode | null>>(
@@ -370,6 +399,15 @@ export function StatSheetPanel({
               <span className="font-bold text-xs md:text-sm truncate text-foreground/70">
                 {t.character(charId)}
               </span>
+              {onPreferredMainStatsChange && (
+                <MainStatFilterPopover
+                  charId={charId}
+                  prefs={preferredMainStats?.[charId]}
+                  onChange={onPreferredMainStatsChange}
+                  disabled={preferredMainStatsDisabled}
+                  t={t}
+                />
+              )}
               {result && !isTarget && marginalKeys.length === 0 && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -562,6 +600,102 @@ export function StatSheetPanel({
         );
       })}
     </div>
+  );
+}
+
+// ─── Main Stat Filter Popover ───
+
+const ANY_VALUE = "__any__";
+
+function MainStatFilterPopover({
+  charId,
+  prefs,
+  onChange,
+  disabled,
+  t,
+}: {
+  charId: string;
+  prefs: Partial<Record<MainStatSlot, MainStat>> | undefined;
+  onChange: (charId: string, slot: MainStatSlot, stat: MainStat | null) => void;
+  disabled?: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const element = characterStatsResource.peek()?.[charId]?.element;
+  const hasAny = prefs && Object.values(prefs).some(Boolean);
+
+  const poolsBySlot: Record<MainStatSlot, readonly MainStat[]> = {
+    sands: statPools.sands,
+    goblet: getGobletPool(element),
+    circlet: statPools.circlet,
+  };
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          disabled={disabled}
+          aria-label={t.ui("teamComp.mainStatFilter")}
+          className={cn(
+            "shrink-0 flex items-center justify-center w-4 h-4 md:w-5 md:h-5 rounded text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors",
+            hasAny && "text-primary",
+            disabled &&
+              "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-muted-foreground"
+          )}
+        >
+          <Settings className="w-3 h-3 md:w-3.5 md:h-3.5" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        side="bottom"
+        className="w-[min(90vw,340px)] p-3 space-y-2"
+      >
+        <div className="text-xs font-bold text-foreground/90">
+          {t.ui("teamComp.mainStatFilter")}
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {mainStatSlots.map((slot) => (
+            <div
+              key={`label-${slot}`}
+              className="text-[10px] md:text-xs font-semibold text-muted-foreground text-center"
+            >
+              {t.slot(slot)}
+            </div>
+          ))}
+          {mainStatSlots.map((slot) => {
+            const current = prefs?.[slot];
+            return (
+              <Select
+                key={`sel-${slot}`}
+                value={current ?? ANY_VALUE}
+                onValueChange={(v) =>
+                  onChange(
+                    charId,
+                    slot,
+                    v === ANY_VALUE ? null : (v as MainStat)
+                  )
+                }
+              >
+                <SelectTrigger className="h-7 text-xs px-2">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ANY_VALUE}>
+                    {t.ui("computeFilters.any")}
+                  </SelectItem>
+                  {poolsBySlot[slot].map((stat) => (
+                    <SelectItem key={stat} value={stat}>
+                      {t.stat(stat)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            );
+          })}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 

@@ -39,6 +39,7 @@ export const i18nUiData = {
     offFieldSuffix: { en: "(off-field)", zh: "(后台)" },
     partialOffFieldSuffix: { en: "(partial off-field)", zh: "(部分后台)" },
     forceOnField: { en: "Force on-field", zh: "强制前台" },
+    ignoreCharDamage: { en: "Ignore {0} damage", zh: "忽略{0}伤害" },
     damage: { en: "Damage", zh: "伤害" },
     stop: { en: "Stop", zh: "停止" },
     equip: { en: "Equip", zh: "装备" },
@@ -960,6 +961,10 @@ export const i18nUiData = {
     saturatedIntrinsicHint: {
       en: "This character's artifact stats never affect team damage (e.g. buff scales from base ATK only). Artifacts are filled from the remaining pool and this character is skipped when freezing all.",
       zh: "该角色的圣遗物属性从不影响队伍伤害（如增益仅基于基础攻击力）。圣遗物从剩余池中分配，冻结全部时会跳过该角色。",
+    },
+    mainStatFilter: {
+      en: "Main Stat Filter",
+      zh: "主词条筛选",
     },
     saturatedMarginalHint: {
       en: "This character's contributions to team damage are independent of artifact stats. Set an ER or CR requirement if you need burst uptime or Favonius procs.",
@@ -2229,6 +2234,36 @@ export const i18nUiData = {
     errorUnexpected: {
       en: "Unexpected response (HTTP {0}).",
       zh: "意外的响应（HTTP {0}）。",
+    },
+  },
+  scanner: {
+    syncFromGame: { en: "Sync from Game", zh: "从游戏同步" },
+    title: { en: "Scan from Game", zh: "从游戏扫描" },
+    description: {
+      en: "Scan your in-game inventory with GOODScanner and sync the results into this account.",
+      zh: "使用 GOODScanner 扫描游戏内背包，并将结果同步到当前账号。",
+    },
+    scanTargets: { en: "What to scan", zh: "扫描内容" },
+    startScan: { en: "Start Scan", zh: "开始扫描" },
+    phaseProgress: {
+      en: "Phase {0} / {1}",
+      zh: "第 {0} / {1} 阶段",
+    },
+    fetchingData: {
+      en: "Fetching scan results...",
+      zh: "正在获取扫描结果...",
+    },
+    scanComplete: { en: "Scan complete", zh: "扫描完成" },
+    noData: { en: "No data", zh: "无数据" },
+    countItems: { en: "{0} entries", zh: "{0} 项" },
+    applyToAccount: { en: "Apply to account", zh: "应用到账号" },
+    syncApplied: {
+      en: "Synced: {0}",
+      zh: "已同步：{0}",
+    },
+    syncWarnings: {
+      en: "{0} unknown entries were skipped",
+      zh: "有 {0} 个未识别条目被跳过",
     },
   },
   tierList: {

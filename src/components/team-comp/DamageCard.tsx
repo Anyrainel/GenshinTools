@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Slot } from "@/data/enums";
+import type { MainStat, MainStatSlot, Slot } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { AccountData, ArtifactData, TierAssignment } from "@/data/types";
 import { aggregateComboFormulaDefaults } from "@/lib/dmgcalc/core/comboBuffOverrides";
@@ -767,6 +767,9 @@ function SingleResultView({
   dpsSeconds,
   setDpsSeconds,
   comboId,
+  preferredMainStats,
+  onPreferredMainStatsChange,
+  preferredMainStatsDisabled,
 }: {
   displayResult: DisplayResult;
   resolvedFormula: { charId: string; formulaId: string };
@@ -795,6 +798,13 @@ function SingleResultView({
    * dead store slot and the UI toggle has no effect.
    */
   comboId?: string;
+  preferredMainStats?: Record<string, Partial<Record<MainStatSlot, MainStat>>>;
+  onPreferredMainStatsChange?: (
+    charId: string,
+    slot: MainStatSlot,
+    stat: MainStat | null
+  ) => void;
+  preferredMainStatsDisabled?: boolean;
 }) {
   const formulaKey = `${resolvedFormula.charId}.${resolvedFormula.formulaId}`;
   const comboKey = comboId ? `combo:${comboId}:${formulaKey}` : undefined;
@@ -832,6 +842,9 @@ function SingleResultView({
           onUnfreezeChar={onUnfreezeChar}
           forceReusedCharIds={forceReusedCharIds}
           reuseInfo={reuseInfo}
+          preferredMainStats={preferredMainStats}
+          onPreferredMainStatsChange={onPreferredMainStatsChange}
+          preferredMainStatsDisabled={preferredMainStatsDisabled}
         />
       )}
 
@@ -983,6 +996,9 @@ function ComboResultView({
   currentCaveats,
   dpsSeconds,
   setDpsSeconds,
+  preferredMainStats,
+  onPreferredMainStatsChange,
+  preferredMainStatsDisabled,
 }: {
   displayResult: DisplayResult;
   comboLines: ComboLine[];
@@ -1006,6 +1022,13 @@ function ComboResultView({
   currentCaveats?: string[];
   dpsSeconds?: string;
   setDpsSeconds?: (v: string) => void;
+  preferredMainStats?: Record<string, Partial<Record<MainStatSlot, MainStat>>>;
+  onPreferredMainStatsChange?: (
+    charId: string,
+    slot: MainStatSlot,
+    stat: MainStat | null
+  ) => void;
+  preferredMainStatsDisabled?: boolean;
 }) {
   const allFormulaIds = useMemo(
     () => teamBuild.catalog.getFormulaIds(),
@@ -1107,6 +1130,9 @@ function ComboResultView({
           onUnfreezeChar={onUnfreezeChar}
           forceReusedCharIds={forceReusedCharIds}
           reuseInfo={reuseInfo}
+          preferredMainStats={preferredMainStats}
+          onPreferredMainStatsChange={onPreferredMainStatsChange}
+          preferredMainStatsDisabled={preferredMainStatsDisabled}
         />
       )}
       <ComboBreakdown
@@ -1206,6 +1232,14 @@ interface DamageCardProps {
   currentTabFrozenCharIds?: Set<string>;
   // Tier-aware pool
   tierAssignments?: TierAssignment;
+  // Optimizer main-stat filter (sands/goblet/circlet preference per char)
+  preferredMainStats?: Record<string, Partial<Record<MainStatSlot, MainStat>>>;
+  onPreferredMainStatsChange?: (
+    charId: string,
+    slot: MainStatSlot,
+    stat: MainStat | null
+  ) => void;
+  preferredMainStatsDisabled?: boolean;
 }
 
 // ─── Shared inline control helpers ───
@@ -1534,6 +1568,9 @@ export function DamageCard({
   onUnfreezeCharFromCurrent,
   currentTabFrozenCharIds,
   tierAssignments,
+  preferredMainStats,
+  onPreferredMainStatsChange,
+  preferredMainStatsDisabled,
 }: DamageCardProps) {
   const { t } = useLanguage();
   const [resultsTab, setResultsTab] = useSessionState<
@@ -1895,6 +1932,9 @@ export function DamageCard({
                     onFreezeChar={onFreezeChar}
                     onUnfreezeChar={onUnfreezeChar}
                     preview
+                    preferredMainStats={preferredMainStats}
+                    onPreferredMainStatsChange={onPreferredMainStatsChange}
+                    preferredMainStatsDisabled={preferredMainStatsDisabled}
                   />
                 )}
               </div>
@@ -2079,6 +2119,9 @@ export function DamageCard({
                   dpsSeconds={dpsSeconds}
                   setDpsSeconds={setDpsSeconds}
                   comboId={comboId}
+                  preferredMainStats={preferredMainStats}
+                  onPreferredMainStatsChange={onPreferredMainStatsChange}
+                  preferredMainStatsDisabled={preferredMainStatsDisabled}
                 />
               ) : comboLines ? (
                 <ComboResultView
@@ -2106,6 +2149,9 @@ export function DamageCard({
                   currentCaveats={currentCaveats}
                   dpsSeconds={dpsSeconds}
                   setDpsSeconds={setDpsSeconds}
+                  preferredMainStats={preferredMainStats}
+                  onPreferredMainStatsChange={onPreferredMainStatsChange}
+                  preferredMainStatsDisabled={preferredMainStatsDisabled}
                 />
               ) : null
             ) : allCharsResolved && !isComputing ? (

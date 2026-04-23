@@ -7,6 +7,7 @@ import {
   Swords,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   OptionButton,
   OptionButtonCell,
@@ -118,6 +119,10 @@ interface FormulaSelectorCardProps {
     formulaId: string,
     reaction: string
   ) => void;
+  /** Character IDs whose damage is currently ignored (combo mode only, ephemeral). */
+  ignoredCharIds?: ReadonlySet<string>;
+  /** Toggle the ignore state for a character. */
+  onToggleIgnoreChar?: (charId: string) => void;
   t: ReturnType<typeof useLanguage>["t"];
 }
 
@@ -139,6 +144,8 @@ export function FormulaSelectorCard({
   formulaMode,
   onModeChange,
   onSelectSingleFormula,
+  ignoredCharIds,
+  onToggleIgnoreChar,
   t,
 }: FormulaSelectorCardProps) {
   const isSingle = formulaMode === "single";
@@ -225,10 +232,12 @@ export function FormulaSelectorCard({
                   );
                 }
 
+                const isCharIgnored = !!ignoredCharIds?.has(cid);
+
                 return (
                   <div
                     key={cid}
-                    className="rounded-lg border border-border bg-black/5 overflow-hidden"
+                    className="rounded-lg border border-border bg-black/5 overflow-hidden flex flex-col"
                   >
                     {/* Formula labels: single = chip buttons, combo = steppers */}
                     <div
@@ -514,7 +523,10 @@ export function FormulaSelectorCard({
                                           return (
                                             <div
                                               key={lineKey}
-                                              className="flex items-center"
+                                              className={cn(
+                                                "flex items-center",
+                                                isCharIgnored && "line-through"
+                                              )}
                                             >
                                               {showChevron ? (
                                                 <button
@@ -552,7 +564,9 @@ export function FormulaSelectorCard({
                                                 type="button"
                                                 className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
                                                 disabled={
-                                                  isLocked || count <= 0
+                                                  isLocked ||
+                                                  isCharIgnored ||
+                                                  count <= 0
                                                 }
                                                 onClick={() =>
                                                   setComboLineCount(
@@ -568,7 +582,9 @@ export function FormulaSelectorCard({
                                               <span
                                                 className={cn(
                                                   "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
-                                                  (isLocked || count === 0) &&
+                                                  (isLocked ||
+                                                    isCharIgnored ||
+                                                    count === 0) &&
                                                     "text-muted-foreground"
                                                 )}
                                               >
@@ -578,7 +594,9 @@ export function FormulaSelectorCard({
                                                 type="button"
                                                 className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
                                                 disabled={
-                                                  isLocked || count >= 99
+                                                  isLocked ||
+                                                  isCharIgnored ||
+                                                  count >= 99
                                                 }
                                                 onClick={() =>
                                                   setComboLineCount(
@@ -595,7 +613,12 @@ export function FormulaSelectorCard({
                                           );
                                         })
                                       ) : (
-                                        <div className="flex items-center">
+                                        <div
+                                          className={cn(
+                                            "flex items-center",
+                                            isCharIgnored && "line-through"
+                                          )}
+                                        >
                                           {(() => {
                                             const c =
                                               comboLineMap.get(
@@ -606,7 +629,11 @@ export function FormulaSelectorCard({
                                                 <button
                                                   type="button"
                                                   className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                                  disabled={isLocked || c <= 0}
+                                                  disabled={
+                                                    isLocked ||
+                                                    isCharIgnored ||
+                                                    c <= 0
+                                                  }
                                                   onClick={() =>
                                                     setComboLineCount(
                                                       cid,
@@ -621,7 +648,9 @@ export function FormulaSelectorCard({
                                                 <span
                                                   className={cn(
                                                     "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
-                                                    (isLocked || c === 0) &&
+                                                    (isLocked ||
+                                                      isCharIgnored ||
+                                                      c === 0) &&
                                                       "text-muted-foreground"
                                                   )}
                                                 >
@@ -630,7 +659,11 @@ export function FormulaSelectorCard({
                                                 <button
                                                   type="button"
                                                   className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                                  disabled={isLocked || c >= 99}
+                                                  disabled={
+                                                    isLocked ||
+                                                    isCharIgnored ||
+                                                    c >= 99
+                                                  }
                                                   onClick={() =>
                                                     setComboLineCount(
                                                       cid,
@@ -702,6 +735,24 @@ export function FormulaSelectorCard({
                         }
                       )}
                     </div>
+                    {!isSingle && onToggleIgnoreChar && (
+                      <button
+                        type="button"
+                        onClick={() => onToggleIgnoreChar(cid)}
+                        className="mt-auto flex items-center justify-center gap-1.5 px-2 py-1 cursor-pointer border-t border-border/30 bg-black/10"
+                      >
+                        <Checkbox
+                          checked={isCharIgnored}
+                          onBooleanChange={() => onToggleIgnoreChar(cid)}
+                          className="rounded-full pointer-events-none"
+                        />
+                        <span className="text-xs md:text-sm lg:text-xs xl:text-sm text-muted-foreground truncate">
+                          {t
+                            .ui("common.ignoreCharDamage")
+                            .replace("{0}", t.character(cid))}
+                        </span>
+                      </button>
+                    )}
                   </div>
                 );
               })}
@@ -785,13 +836,22 @@ export function FormulaSelectorCard({
                                     const count =
                                       comboLineMap.get(lineKey)?.line.count ??
                                       0;
+                                    const isRxCharIgnored =
+                                      !!ignoredCharIds?.has(cid);
 
                                     return (
                                       <div
                                         key={cid}
                                         className="flex items-center"
                                       >
-                                        <span className="text-[10px] md:text-xs xl:text-sm font-semibold text-foreground/80">
+                                        <span
+                                          className={cn(
+                                            "text-[10px] md:text-xs xl:text-sm font-semibold",
+                                            isRxCharIgnored
+                                              ? "text-muted-foreground"
+                                              : "text-foreground/80"
+                                          )}
+                                        >
                                           {t.character(cid)}
                                           <span className="text-[0.85em] text-muted-foreground font-normal ml-0.5">
                                             {roleLabel}
@@ -800,7 +860,9 @@ export function FormulaSelectorCard({
                                         <button
                                           type="button"
                                           className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                          disabled={count <= 0}
+                                          disabled={
+                                            isRxCharIgnored || count <= 0
+                                          }
                                           onClick={() =>
                                             setComboLineCount(
                                               cid,
@@ -815,8 +877,9 @@ export function FormulaSelectorCard({
                                         <span
                                           className={cn(
                                             "text-[10px] md:text-xs xl:text-sm font-mono tabular-nums w-4 text-center font-bold",
-                                            count === 0 &&
-                                              "text-muted-foreground"
+                                            (isRxCharIgnored || count === 0) &&
+                                              "text-muted-foreground",
+                                            isRxCharIgnored && "line-through"
                                           )}
                                         >
                                           {count}
@@ -824,7 +887,9 @@ export function FormulaSelectorCard({
                                         <button
                                           type="button"
                                           className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                                          disabled={count >= 99}
+                                          disabled={
+                                            isRxCharIgnored || count >= 99
+                                          }
                                           onClick={() =>
                                             setComboLineCount(
                                               cid,

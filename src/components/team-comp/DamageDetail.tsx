@@ -22,7 +22,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Slot } from "@/data/enums";
+import type { MainStat, MainStatSlot, Slot } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
 import {
@@ -463,7 +463,7 @@ export function DamageDetail({
   // Unified projection: damage-calc consumers must read this, NEVER raw
   // `combo` or `team.singleReaction`. See src/lib/team-comp/effectiveCombo.ts.
 
-  const displayCombo = useMemo<ComboFormula>(
+  const displayComboBase = useMemo<ComboFormula>(
     () =>
       getEffectiveCombo({
         formulaMode,
@@ -480,6 +480,34 @@ export function DamageDetail({
       team.combo,
     ]
   );
+
+  // Ephemeral "ignore character damage" toggles (combo mode only).
+  // Not persisted: a quick-tweak override that zeroes any line owned by
+  // (or sourced from) an ignored character before damage is computed.
+  const [ignoredCharIds, setIgnoredCharIds] = useState<ReadonlySet<string>>(
+    () => new Set()
+  );
+  const toggleIgnoreChar = useCallback((charId: string) => {
+    setIgnoredCharIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(charId)) next.delete(charId);
+      else next.add(charId);
+      return next;
+    });
+  }, []);
+
+  const displayCombo = useMemo<ComboFormula>(() => {
+    if (ignoredCharIds.size === 0) return displayComboBase;
+    const lines = displayComboBase.lines.map((line) => {
+      if (ignoredCharIds.has(line.charId)) return { ...line, count: 0 };
+      const entry = teamBuild?.catalog.formulaIndex.get(line.formulaId);
+      const sourcedFromIgnored = entry?.parts.some(
+        (p) => p.statsCharId && ignoredCharIds.has(p.statsCharId)
+      );
+      return sourcedFromIgnored ? { ...line, count: 0 } : line;
+    });
+    return { ...displayComboBase, lines };
+  }, [displayComboBase, ignoredCharIds, teamBuild]);
 
   // Build per-line BuffActivationMap (defaults + user overrides)
   const buffOverrides = useMemo(() => {
@@ -532,6 +560,32 @@ export function DamageDetail({
   // Artifact inventory is provided by useTeamInventory — see teamInventory above
 
   const [timeBudgetSec, setTimeBudgetSec] = useState(30);
+
+  // Ephemeral — not persisted to team store. Per-char preferred main stats
+  // (sands/goblet/circlet) used to prefilter the optimizer's artifact pool.
+  const [preferredMainStats, setPreferredMainStats] = useState<
+    Record<string, Partial<Record<MainStatSlot, MainStat>>>
+  >({});
+  const handlePreferredMainStatsChange = useCallback(
+    (charId: string, slot: MainStatSlot, stat: MainStat | null) => {
+      setPreferredMainStats((prev) => {
+        const next = { ...prev };
+        const charPrefs = { ...(next[charId] ?? {}) };
+        if (stat === null) {
+          delete charPrefs[slot];
+        } else {
+          charPrefs[slot] = stat;
+        }
+        if (Object.keys(charPrefs).length === 0) {
+          delete next[charId];
+        } else {
+          next[charId] = charPrefs;
+        }
+        return next;
+      });
+    },
+    []
+  );
 
   const handleOptimize = () => {
     if (!teamBuild || !accountData) return;
@@ -627,6 +681,31 @@ export function DamageDetail({
           perCharExcludedArtifactIds[cid] = [...excluded];
         }
       }
+    }
+
+    // Apply per-char preferred main stat filter by excluding non-matching
+    // artifacts from each character's inventory pool.
+    for (const cid of Object.keys(perChar)) {
+      const prefs = preferredMainStats[cid];
+      if (!prefs) continue;
+      const extras = teamInventory.perCharExtraArtifacts?.[cid] ?? [];
+      const pool = extras.length
+        ? [...teamInventory.availableArtifacts, ...extras]
+        : teamInventory.availableArtifacts;
+      const excludeIds: string[] = [];
+      for (const art of pool) {
+        const slot = art.slotKey;
+        if (slot !== "sands" && slot !== "goblet" && slot !== "circlet")
+          continue;
+        const pref = prefs[slot];
+        if (pref && art.mainStatKey !== pref) excludeIds.push(art.id);
+      }
+      if (excludeIds.length === 0) continue;
+      if (!perCharExcludedArtifactIds) perCharExcludedArtifactIds = {};
+      const existing = perCharExcludedArtifactIds[cid];
+      perCharExcludedArtifactIds[cid] = existing
+        ? [...new Set([...existing, ...excludeIds])]
+        : excludeIds;
     }
 
     startTeamOpt({
@@ -1133,6 +1212,8 @@ export function DamageDetail({
           formulaMode={formulaMode}
           onModeChange={handleModeChange}
           onSelectSingleFormula={onSelectSingleFormula}
+          ignoredCharIds={ignoredCharIds}
+          onToggleIgnoreChar={toggleIgnoreChar}
           onResetCombo={() => {
             if (!teamBuild) return;
             const lines: ComboLine[] = [];
@@ -1283,6 +1364,9 @@ export function DamageDetail({
           onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
           onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}
           currentTabFrozenCharIds={currentTabFrozenCharIds}
+          preferredMainStats={preferredMainStats}
+          onPreferredMainStatsChange={handlePreferredMainStatsChange}
+          preferredMainStatsDisabled={isComputing}
         />
 
         {/* Artifact Swap Dialog */}

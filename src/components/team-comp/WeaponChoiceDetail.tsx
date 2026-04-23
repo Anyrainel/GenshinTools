@@ -226,10 +226,38 @@ export function WeaponChoiceDetail({
   }, [teamBuild, team.characters, team.id, combo.id, combo.label, updateTeam]);
 
   // ── Effective combo (unified projection, shared with Damage tab) ──
-  const displayCombo = useMemo<ComboFormula>(
+  const displayComboBase = useMemo<ComboFormula>(
     () => getEffectiveCombo(team),
     [team]
   );
+
+  // Ephemeral "ignore character damage" toggles (combo mode only).
+  // See DamageDetail for rationale — zero out lines owned by or sourced
+  // from an ignored character before damage is computed.
+  const [ignoredCharIds, setIgnoredCharIds] = useState<ReadonlySet<string>>(
+    () => new Set()
+  );
+  const toggleIgnoreChar = useCallback((charId: string) => {
+    setIgnoredCharIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(charId)) next.delete(charId);
+      else next.add(charId);
+      return next;
+    });
+  }, []);
+
+  const displayCombo = useMemo<ComboFormula>(() => {
+    if (ignoredCharIds.size === 0) return displayComboBase;
+    const lines = displayComboBase.lines.map((line) => {
+      if (ignoredCharIds.has(line.charId)) return { ...line, count: 0 };
+      const entry = teamBuild?.catalog.formulaIndex.get(line.formulaId);
+      const sourcedFromIgnored = entry?.parts.some(
+        (p) => p.statsCharId && ignoredCharIds.has(p.statsCharId)
+      );
+      return sourcedFromIgnored ? { ...line, count: 0 } : line;
+    });
+    return { ...displayComboBase, lines };
+  }, [displayComboBase, ignoredCharIds, teamBuild]);
 
   // ── Computation ──
   const {
@@ -404,6 +432,8 @@ export function WeaponChoiceDetail({
           formulaMode={formulaMode}
           onModeChange={handleModeChange}
           onSelectSingleFormula={onSelectSingleFormula}
+          ignoredCharIds={ignoredCharIds}
+          onToggleIgnoreChar={toggleIgnoreChar}
           t={t}
         />
 
