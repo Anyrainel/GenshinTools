@@ -5,7 +5,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { TriageDecision } from "@/lib/account-data/triage";
+import type { TriageDecision } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Lock, LockOpen, ShieldAlert } from "lucide-react";
 import {

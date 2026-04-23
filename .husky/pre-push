@@ -37,6 +37,9 @@ if [ "$has_ts" = true ]; then
 
   echo "Running tests..."
   npm run test || exit 1
+
+  echo "Running regression tests..."
+  npm run regtest -- run --quiet || exit 1
 fi
 
 # HoYoLAB / 米游社 API version check (non-blocking on network errors)

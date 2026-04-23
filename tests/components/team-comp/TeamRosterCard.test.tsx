@@ -7,37 +7,8 @@ vi.mock("@/hooks/useMediaQuery", () => ({
   useMediaQuery: () => false,
 }));
 
-vi.mock("@/hooks/useGameStats", () => ({
-  useGameStats: () => ({
-    characterStats: {
-      hu_tao: {
-        rarity: 5,
-        element: "Pyro",
-        weaponType: "Polearm",
-        region: "Liyue",
-        releaseDate: "2021-03-02",
-        levels: {},
-      },
-      xingqiu: {
-        rarity: 4,
-        element: "Hydro",
-        weaponType: "Sword",
-        region: "Liyue",
-        releaseDate: "2020-09-28",
-        levels: {},
-      },
-    },
-    weaponStats: {
-      staff_of_homa: {
-        rarity: 5,
-        type: "Polearm",
-        secondaryStat: "cd",
-        levels: { "90": { baseAtk: 608, secondaryStatValue: "66.2%" } },
-      },
-    },
-    ready: true,
-  }),
-}));
+// TeamRosterCard reads characterStats/weaponStats from props, not from
+// the resources directly — no module mock needed.
 
 type RosterProps = Omit<ComponentProps<typeof TeamRosterCard>, "t">;
 

@@ -1,10 +1,7 @@
-import { artifactHalfSetsById } from "@/data/constants";
-import {
-  type AccountData,
-  type ArtifactData,
-  type SubStat,
-  allSlots,
-} from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { SubStat } from "@/data/enums";
+import { artifactHalfSetsById } from "@/data/gameResources";
+import type { AccountData, ArtifactData } from "@/data/types";
 import { getSubstatAvgRoll } from "./scoring/utils";
 
 /**

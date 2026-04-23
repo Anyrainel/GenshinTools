@@ -7,6 +7,9 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
+// Side-effect module: registers cross-store subscriptions at startup.
+import "./stores/storeEffects.ts";
+
 // Clean up cache-busting query param after error recovery reload
 if (new URLSearchParams(window.location.search).has("_r")) {
   const url = new URL(window.location.href);

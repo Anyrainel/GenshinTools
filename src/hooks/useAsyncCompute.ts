@@ -1,9 +1,9 @@
+import type { MergeAlgorithm } from "@/data/enums";
 import type {
-  ArtifactSetConfigs,
+  ArtifactBuildConfigs,
+  BuildConfig,
   BuildGroup,
   ComputeOptions,
-  MergeAlgorithm,
-  SetConfig,
 } from "@/data/types";
 import {
   DEFAULT_COMPUTE_OPTIONS,
@@ -14,7 +14,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface AsyncComputeState {
   /** Cached results — always available (may be stale while recomputing) */
-  results: ArtifactSetConfigs[];
+  results: ArtifactBuildConfigs[];
   /** True while a merge computation is in progress */
   isComputing: boolean;
 }
@@ -23,17 +23,17 @@ interface AsyncComputeState {
 // Persists across mounts so tab switches are instant.
 
 /** Per-set merged results, keyed by setId */
-const cachedPerSet: Record<string, ArtifactSetConfigs> = {};
+const cachedPerSet: Record<string, ArtifactBuildConfigs> = {};
 /** Per-set raw config fingerprints for incremental diff */
 let cachedRawKeys: Record<string, string> = {};
 /** Compute options used for the cached results */
 let cachedOptionsKey = "";
 /** Flattened results array (derived from cachedPerSet) */
-let cachedResults: ArtifactSetConfigs[] = [];
+let cachedResults: ArtifactBuildConfigs[] = [];
 /** Active abort controller */
 let activeController: AbortController | null = null;
 
-function rawConfigKey(configs: SetConfig[]): string {
+function rawConfigKey(configs: BuildConfig[]): string {
   // Structural fingerprint of a set's raw (pre-merge) configs.
   // JSON.stringify is fast enough for small arrays of simple objects.
   return JSON.stringify(configs);
@@ -43,7 +43,7 @@ function optionsKey(options: ComputeOptions): string {
   return JSON.stringify(options);
 }
 
-function flattenCache(): ArtifactSetConfigs[] {
+function flattenCache(): ArtifactBuildConfigs[] {
   return Object.values(cachedPerSet);
 }
 
@@ -59,7 +59,7 @@ export function useAsyncCompute(
   characterBuilds: BuildGroup[],
   computeOptions: ComputeOptions
 ): AsyncComputeState {
-  const [results, setResults] = useState<ArtifactSetConfigs[]>(cachedResults);
+  const [results, setResults] = useState<ArtifactBuildConfigs[]>(cachedResults);
   const [isComputing, setIsComputing] = useState(false);
   const mountedRef = useRef(true);
 
@@ -84,7 +84,7 @@ export function useAsyncCompute(
 
     // Diff: identify which sets need recomputation
     const newRawKeys: Record<string, string> = {};
-    const dirtyConfigs: Record<string, SetConfig[]> = {};
+    const dirtyConfigs: Record<string, BuildConfig[]> = {};
 
     for (const [setId, configs] of Object.entries(rawConfigs)) {
       const key = rawConfigKey(configs);

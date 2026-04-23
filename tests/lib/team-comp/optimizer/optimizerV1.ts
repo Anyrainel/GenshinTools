@@ -1,25 +1,32 @@
-import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
-import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import {
+  artifactHalfSetsById,
+  artifactIdToHalfSetId,
+} from "@/data/gameResources";
+import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactSetConfig } from "@/data/types";
+import { getMainStatValue } from "@/data/utils";
 import {
   type BuildMatchResult,
-  getFixedMainStatValue,
-  getMainStatValueAtLevel,
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
 } from "@/lib/artifact/scoring/artifactScore";
-import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/artifact/scoring/utils";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
+import {
+  getMainStatValueAtLevel,
+  toInternal,
+} from "@/lib/artifact/scoring/utils";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
-  ArtifactSetConfig,
   CalcContext,
   DamageResult,
-  OptFailReason,
   ReactionOverride,
-  StatKey,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import type { OptFailReason } from "@/lib/team-comp/types";
 
 export interface OptimizerOptions {
   teamBuild: TeamBuild;
@@ -225,15 +232,15 @@ function sameTuple(a: ArtifactTuple, b: ArtifactTuple): boolean {
 
 const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
   ...AVG_SUBSTAT_ROLL,
-  "pyro%": toInternal("pyro%", getFixedMainStatValue("pyro%", 5)),
-  "hydro%": toInternal("hydro%", getFixedMainStatValue("hydro%", 5)),
-  "anemo%": toInternal("anemo%", getFixedMainStatValue("anemo%", 5)),
-  "electro%": toInternal("electro%", getFixedMainStatValue("electro%", 5)),
-  "dendro%": toInternal("dendro%", getFixedMainStatValue("dendro%", 5)),
-  "cryo%": toInternal("cryo%", getFixedMainStatValue("cryo%", 5)),
-  "geo%": toInternal("geo%", getFixedMainStatValue("geo%", 5)),
-  "phys%": toInternal("phys%", getFixedMainStatValue("phys%", 5)),
-  "heal%": toInternal("heal%", getFixedMainStatValue("heal%", 5)),
+  "pyro%": toInternal("pyro%", getMainStatValue("pyro%", 5)),
+  "hydro%": toInternal("hydro%", getMainStatValue("hydro%", 5)),
+  "anemo%": toInternal("anemo%", getMainStatValue("anemo%", 5)),
+  "electro%": toInternal("electro%", getMainStatValue("electro%", 5)),
+  "dendro%": toInternal("dendro%", getMainStatValue("dendro%", 5)),
+  "cryo%": toInternal("cryo%", getMainStatValue("cryo%", 5)),
+  "geo%": toInternal("geo%", getMainStatValue("geo%", 5)),
+  "phys%": toInternal("phys%", getMainStatValue("phys%", 5)),
+  "heal%": toInternal("heal%", getMainStatValue("heal%", 5)),
 };
 
 /** Score an artifact by its actual stat contributions weighted by marginal gains. */

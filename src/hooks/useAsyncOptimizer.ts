@@ -1,10 +1,10 @@
+import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
 import type {
   TeamOptYield,
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
-} from "@/lib/team-comp/optimizer";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer";
+} from "@/lib/team-comp/types";
 import { useCallback, useState } from "react";
 import { useAsyncComputation } from "./useAsyncComputation";
 

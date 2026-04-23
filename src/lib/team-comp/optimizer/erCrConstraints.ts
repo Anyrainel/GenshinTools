@@ -7,14 +7,14 @@
  * 3. Pre-fill substat rolls to meet remaining constraints
  */
 
-import { getMainStatValue } from "@/data/constants";
-import type { MainStat, Slot, SubStat } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { getMainStatValue } from "@/data/utils";
 import { toInternal } from "@/lib/artifact/scoring/utils";
 
-import { StatSheet } from "../calc/statSheet";
-import type { TeamBuild } from "../calc/teamBuild";
-import type { CalcContext } from "../types";
+import type { CalcContext } from "@/lib/dmgcalc/types";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
+import type { TeamBuild } from "../../dmgcalc/core/teamBuild";
 
 // ─── Gap Computation ───
 

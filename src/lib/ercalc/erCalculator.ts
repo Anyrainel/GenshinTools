@@ -11,14 +11,11 @@ import {
   OFF_FIELD_MULTIPLIER,
   PARAM_DEFAULTS,
   PATTERN_ACTIONS,
-  PERIODIC_E_TRIGGERS,
-  PERIODIC_Q_TRIGGERS,
   SAME_ELEMENT_PARTICLE,
-  type SelfEnergyEntry,
   allSelfEnergy,
   particles as particlesData,
-  resolveParticles,
 } from "./constants";
+import type { SelfEnergyEntry } from "./types";
 import type {
   ActionType,
   EROptions,
@@ -31,26 +28,14 @@ import type {
   TeamSlot,
   TimelineAction,
 } from "./types";
-
-export type {
-  ActionType,
-  CalcMode,
-  EROptions,
-  ERResult,
-  ERTimeline,
-  EnergyEvent,
-  ParticleMode,
-  PeriodicProc,
-  TeamMember,
-  TimelineAction,
-} from "./types";
+import { resolveParticles } from "./utils";
 
 const particles = particlesData;
 
 // ─── Particle lookup ───
 
 /** Direct per-cast particles for a main action. Does not handle periodic, pattern, or Favonius. */
-function getActionParticles(
+export function getActionParticles(
   charId: string,
   action: ActionType,
   mode: ParticleMode
@@ -70,7 +55,7 @@ function getActionParticles(
 
 /** Per-hit pattern particles for NA/CA/PA (infusion chars).
  *  hitIndex is the char's consecutive count of this action type. */
-function getHitParticles(
+export function getHitParticles(
   charId: string,
   action: ActionType,
   hitIndex: number,
@@ -92,7 +77,7 @@ function getHitParticles(
 }
 
 /** Per-proc particles for a periodic emission from the given trigger. */
-function getPeriodicParticles(
+export function getPeriodicParticles(
   charId: string,
   trigger: "E" | "Q",
   mode: ParticleMode
@@ -103,7 +88,7 @@ function getPeriodicParticles(
 }
 
 /** Element of a character's particles. */
-function getParticleElement(charId: string): string {
+export function getParticleElement(charId: string): string {
   return particles[charId]?.element ?? "Clear";
 }
 
@@ -912,17 +897,6 @@ export function toTeamMember(slot: TeamSlot): TeamMember {
     refinement: slot.refinement,
   };
 }
-
-export {
-  allSelfEnergy,
-  getActionParticles,
-  getHitParticles,
-  getPeriodicParticles,
-  getParticleElement,
-  particles,
-  PERIODIC_E_TRIGGERS,
-  PERIODIC_Q_TRIGGERS,
-};
 
 // ─── Per-node energy event lookup (for UI popovers) ───
 

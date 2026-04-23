@@ -10,16 +10,16 @@
  */
 
 import { MAIN_STAT_VALUES_5STAR, statPools } from "@/data/constants";
-import type { MainStat, SubStat } from "@/data/types";
+import type { MainStat, SubStat } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
 import { toInternal } from "@/lib/artifact/scoring/utils";
 import {
   type BuildMatchResult,
   getTargetMainStatsForSlot,
 } from "../../artifact/scoring/artifactScore";
-import { computeSubstatMarginals } from "../calc/marginalGain";
-import { StatSheet } from "../calc/statSheet";
+import { computeSubstatMarginals } from "../../dmgcalc/core/marginalGain";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
 import type { DamageEvalFn } from "../generator/constrainedGreedy";
-import type { StatKey } from "../types";
 import type { MarginalWeights } from "./types";
 
 const MARGINAL_SUBSTATS: SubStat[] = [

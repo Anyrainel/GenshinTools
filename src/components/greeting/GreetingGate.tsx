@@ -11,7 +11,7 @@ const NewsDialog = lazy(() => import("./NewsDialog"));
 type GreetingMode = "welcome" | "news" | null;
 
 function useGreetingMode(): { mode: GreetingMode; latestDate: string } {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const onboardingCompleted = useGreetingStore((s) => s.onboardingCompleted);
   const lastSeenUpdate = useGreetingStore((s) => s.lastSeenUpdate);
   const hasAccountData = useAccountStore((s) => {
@@ -20,9 +20,9 @@ function useGreetingMode(): { mode: GreetingMode; latestDate: string } {
   });
 
   const latestDate = useMemo(() => {
-    const news = newsMap[t.lang];
+    const news = newsMap[language];
     return news.entries[0]?.date ?? "";
-  }, [t.lang]);
+  }, [language]);
 
   let mode: GreetingMode = null;
 

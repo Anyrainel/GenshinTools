@@ -1,21 +1,15 @@
-/**
- * Runtime validation helpers for domain union types.
- *
- * Use these instead of bare `as Type` casts when the value comes from
- * an external/dynamic source (user input, parsed strings, JSON data).
- */
+import { TEAM_REACTION_OPTIONS } from "@/data/constants";
+import { allSlots } from "@/data/enums";
+import { buildConstellations } from "@/data/enums";
+import type { BuildConstellation } from "@/data/enums";
 import {
-  type BuildConstellation,
   type Element,
   type MainStat,
-  type ReactionType,
   type Slot,
   type SubStat,
-  TEAM_REACTION_OPTIONS,
-  allSlots,
-  buildConstellations,
   elements,
-} from "@/data/types";
+} from "@/data/enums";
+import type { ReactionType } from "@/data/enums";
 
 const ELEMENTS = new Set<string>(elements);
 const SLOTS = new Set<string>(allSlots);

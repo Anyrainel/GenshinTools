@@ -1,25 +1,31 @@
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { CharacterBase } from "@/lib/team-comp/calc/implModel";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { CharacterBase } from "@/lib/dmgcalc/core/implModel";
 import {
   RegisterCharacter,
   createCharacter,
   createWeapon,
   getOptionDef,
   resolveOption,
-} from "@/lib/team-comp/calc/registry";
-import { StatBuff } from "@/lib/team-comp/calc/statBuff";
-import { StatSheet, appendFieldState } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
-import type { OptionDef } from "@/lib/team-comp/types";
-import type { DamageTag } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/core/registry";
+import { StatBuff } from "@/lib/dmgcalc/core/statBuff";
+import { StatSheet, appendFieldState } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
+import type { OptionDef } from "@/lib/dmgcalc/types";
+import type { DamageTag } from "@/lib/dmgcalc/types";
 import { beforeAll, describe, expect, it } from "vitest";
 
 // Side-effect barrel: register all characters, weapons, artifacts
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
 beforeAll(async () => {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
 });
 
 describe("StatSheet", () => {

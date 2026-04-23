@@ -1,4 +1,4 @@
-import { ArtifactManagerDialog } from "@/components/artifact-manager/ArtifactManagerDialog";
+import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Collapsible,
@@ -6,10 +6,11 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById, charactersById } from "@/data/constants";
-import type { AccountData, ArtifactData, Slot, SubStat } from "@/data/types";
+import type { Slot, SubStat } from "@/data/enums";
+import { artifactsById, charactersById } from "@/data/gameResources";
+import type { AccountData, ArtifactData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
+import { buildEquipInstructions } from "@/lib/account-data/manager/instructions";
 import {
   type ArtifactStatus,
   buildArtifactOwnerMap,
@@ -20,8 +21,8 @@ import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { resolveBuildInfo } from "@/lib/team-comp/teamConfigUtils";
-import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
+import type { Team } from "@/lib/team-comp/types";
+import { cn, getAssetUrl } from "@/lib/utils";
 import {
   ArrowRightLeft,
   Check,
@@ -31,6 +32,7 @@ import {
   Package,
 } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { getRarityColor } from "../shared/colors";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
 

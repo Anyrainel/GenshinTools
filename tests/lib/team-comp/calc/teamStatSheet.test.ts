@@ -1,15 +1,21 @@
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuffLedger } from "@/lib/team-comp/calc/teamBuffLedger";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
-import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { getBuffInstanceKey } from "@/lib/dmgcalc/core/statBuff";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuffLedger } from "@/lib/dmgcalc/core/teamBuffLedger";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import { TeamStatSheet } from "@/lib/dmgcalc/core/teamStatSheet";
+import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { describe, expect, it } from "vitest";
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const CTX: CalcContext = {
   enemyLevel: 100,

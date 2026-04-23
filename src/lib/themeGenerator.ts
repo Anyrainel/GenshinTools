@@ -5,7 +5,7 @@
  * This replaces the manual theme definitions in index.css.
  */
 
-import type { ThemeId } from "@/contexts/ThemeContext";
+import type { ThemeId } from "@/data/enums";
 
 // HSL color type
 interface HSL {

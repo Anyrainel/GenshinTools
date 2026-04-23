@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
+import { calculateTeamER } from "@/lib/ercalc/erCalculator";
+import { optimizeWaitBlocks } from "@/lib/ercalc/optimizer";
 import type {
   ERTimeline,
   PeriodicProc,
   TeamMember,
   TimelineAction,
-} from "@/lib/ercalc/erCalculator";
-import { calculateTeamER } from "@/lib/ercalc/erCalculator";
-import { optimizeWaitBlocks } from "@/lib/ercalc/optimizer";
+} from "@/lib/ercalc/types";
 
 function member(
   id: string,

@@ -1,15 +1,24 @@
-import { artifactsById, statPools } from "@/data/constants";
-import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { statPools } from "@/data/constants";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { artifactsById } from "@/data/gameResources";
+import type { ArtifactData } from "@/data/types";
 
-import type { CompiledTeamDamage } from "../calc/formulaCompiler";
+import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
+import type { FlexSlotConfig } from "@/lib/artifact/scoring/sheetBuilder";
+import { emptySubRolls } from "@/lib/artifact/scoring/utils";
+import { getRollValues } from "@/lib/artifact/scoring/utils";
+import type { CalcContext, ComboFormula } from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
+import type { CompiledTeamDamage } from "../../dmgcalc/core/formulaCompiler";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
   makeCompiledEvalDamage,
-} from "../calc/formulaCompiler";
-import { StatSheet } from "../calc/statSheet";
-import type { TeamBuild } from "../calc/teamBuild";
+} from "../../dmgcalc/core/formulaCompiler";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
+import type { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import {
   type ErCrGap,
   computeErCrGap,
@@ -19,22 +28,12 @@ import {
   erMainStatInternal,
 } from "../optimizer/erCrConstraints";
 import { deriveSetKeysFromConfigs } from "../teamConfigUtils";
-import type { BuffActivationMap, CalcContext, ComboFormula } from "../types";
-import {
-  type FlexSlotConfig,
-  buildSheetFromMainAndSubs,
-  constrainedGreedyAllocate,
-  emptySubRolls,
-  getRollValues,
-} from "./constrainedGreedy";
-import type { SubstatBudgetPreset } from "./substatBudget";
+import { constrainedGreedyAllocate } from "./constrainedGreedy";
 import {
   maxRollsPerStatForPreset,
   resolveSubstatBudgetPreset,
   rollsPerSlotForPreset,
 } from "./substatBudget";
-
-export type { SubstatBudgetPreset } from "./substatBudget";
 
 export interface GeneratorOptions {
   teamBuild: TeamBuild;

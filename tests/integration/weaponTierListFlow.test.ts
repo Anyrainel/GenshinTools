@@ -11,7 +11,8 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import type { Tier, TierAssignment, TierCustomization } from "@/data/types";
+import type { Tier } from "@/data/enums";
+import type { TierAssignment, TierCustomization } from "@/data/types";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 
 describe("Integration: Weapon Tier List Page Flow", () => {

@@ -184,6 +184,17 @@ export const i18nAppData = {
     Moonsign: { en: "Moonsign", zh: "月兆" },
     None: { en: "None", zh: "无" },
   },
+  receivers: {
+    self: { en: "Self", zh: "自身" },
+    selfOnField: { en: "Self (On-Field)", zh: "自身-前台" },
+    selfOffField: { en: "Self (Off-Field)", zh: "自身-后台" },
+    other: { en: "Others", zh: "仅队友" },
+    otherOnField: { en: "Other (On-Field)", zh: "仅队友-前台" },
+    otherOffField: { en: "Other (Off-Field)", zh: "仅队友-后台" },
+    team: { en: "Team", zh: "全队" },
+    teamOnField: { en: "Team (On-Field)", zh: "全队-前台" },
+    teamOffField: { en: "Team (Off-Field)", zh: "全队-后台" },
+  },
   slots: {
     flower: { en: "Flower", zh: "生之花" },
     plume: { en: "Plume", zh: "死之羽" },

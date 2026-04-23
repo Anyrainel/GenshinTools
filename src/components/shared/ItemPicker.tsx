@@ -30,44 +30,44 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { MainStat, Rarity } from "@/data/enums";
 import {
-  artifactHalfSets,
   artifactHalfSetsById,
   artifactsById,
   charactersById,
   elementResourcesByName,
   getSortedCharacters,
-  getSortedWeaponSecondaryStats,
   sortedArtifacts,
+  sortedHalfSets,
   sortedWeapons,
   weaponResourcesByName,
   weaponsById,
-} from "@/data/constants";
+} from "@/data/gameResources";
 import {
+  type CharacterStatsMap,
+  type WeaponStatsMap,
+  characterStatsResource,
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type {
   ArtifactHalfSet,
   ArtifactSetResource,
   CharacterResource,
-  MainStat,
-  Rarity,
   WeaponResource,
 } from "@/data/types";
 import type { TierAssignment } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
+import type { ArtifactSetConfig } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
+import { getSortedWeaponSecondaryStats } from "@/lib/utils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
 import { Ban, Bookmark, Search, Trophy, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 type ItemPickerType = "character" | "weapon" | "artifact";
-
-export type { ArtifactSetConfig as ArtifactConfig } from "@/lib/team-comp/types";
-import type { ArtifactSetConfig } from "@/lib/team-comp/types";
 
 type ValueType<T> = T extends "artifact" ? ArtifactSetConfig : string;
 
@@ -121,7 +121,8 @@ function ItemPickerComponent<T extends ItemPickerType>({
   onOpenChange: onOpenChangeProp,
   frozen = false,
 }: ItemPickerProps<T>) {
-  const { characterStats, weaponStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -338,7 +339,7 @@ function PickerTrigger({
   size: ItemIconSize;
   disabled?: boolean;
   showElementBadge?: boolean;
-  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  characterStats: CharacterStatsMap | null;
   frozen?: boolean;
 }) {
   const iconSize = ICON_CONFIG[size]?.icon ?? ICON_CONFIG.lg.icon;
@@ -440,8 +441,8 @@ interface PickerContentProps {
   menuSize: ItemIconSize;
   tooltipSide: "left" | "right";
   isDesktop: boolean;
-  characterStats: ReturnType<typeof useGameStats>["characterStats"];
-  weaponStats: ReturnType<typeof useGameStats>["weaponStats"];
+  characterStats: CharacterStatsMap | null;
+  weaponStats: WeaponStatsMap | null;
   tierAssignments: TierAssignment;
   hasTierData: boolean;
   sortedWeaponSecondaryStats: MainStat[];
@@ -552,7 +553,7 @@ function PickerContent({
         }));
       }
       // 2pc Half Sets - show all that have at least one rarity 5 set
-      return artifactHalfSets
+      return sortedHalfSets
         .filter((half) =>
           half.setIds.some((id) => (artifactsById[id]?.rarity ?? 0) === 5)
         )

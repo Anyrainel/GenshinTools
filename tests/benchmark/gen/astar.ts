@@ -8,19 +8,20 @@
  * Previously named "mona" — renamed to "astar" for clarity.
  */
 
-import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
-import type { ArtifactData } from "@/data/types";
-import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import type { StatKey } from "@/data/enums";
 import {
-  type CalcContext,
-  type OptFailReason,
-  type ReactionOverride,
-  type StatKey,
-  type TeamOptYield,
-  type TeamOptimizerOptions,
-  getHalfSetIds,
-  getSetId,
+  artifactHalfSetsById,
+  artifactIdToHalfSetId,
+} from "@/data/gameResources";
+import type { ArtifactData } from "@/data/types";
+import type { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { CalcContext, ReactionOverride } from "@/lib/dmgcalc/types";
+import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
+import type {
+  OptFailReason,
+  TeamOptYield,
+  TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,

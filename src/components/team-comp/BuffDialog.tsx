@@ -8,6 +8,8 @@
  * Outer shell (header → tabs → scrollable content) mirrors PartBuffDialog.
  */
 
+import { getReceiverColor } from "@/components/shared/colors";
+import { StatEntryRow } from "@/components/team-comp/StatEntryRow";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -18,22 +20,20 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
 import {
-  StatEntryRow,
-  formatFilter,
-  formatReceiverLabel,
-  getReceiverBadgeClasses,
-  getSourceIcon,
-  getSourceName,
-} from "@/lib/team-comp/buffDisplayUtils";
-import { getTemplateName } from "@/lib/team-comp/displayFormatter";
+  useBuffFilterLabel,
+  useBuffReceiverLabel,
+  useBuffSourceName,
+  useTemplateName,
+} from "@/hooks/useBuffLabels";
 import type {
-  BuffActivationMap,
   DisplayPart,
   ResolvedBuff,
   ResolvedStatEntry,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { Settings2 } from "lucide-react";
@@ -75,6 +75,7 @@ function FormulaBlock({
   buff: ResolvedBuff;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const templateName = useTemplateName();
   const {
     formulaKey,
     parts,
@@ -172,8 +173,8 @@ function FormulaBlock({
             {/* Part name */}
             <span className="text-xs text-foreground/80 min-w-0 flex-1 truncate">
               {parts.length > 1
-                ? `${partIndex + 1}. ${getTemplateName(part, t)}`
-                : getTemplateName(part, t)}
+                ? `${partIndex + 1}. ${templateName(part)}`
+                : templateName(part)}
             </span>
 
             {/* Activation control */}
@@ -252,7 +253,10 @@ export function BuffDialog({ buff, formulas, t }: Props) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const bKey = buff.buffKey;
-  const name = getSourceName(buff.source, t);
+  const sourceName = useBuffSourceName();
+  const receiverLabel = useBuffReceiverLabel();
+  const filterLabel = useBuffFilterLabel();
+  const name = sourceName(buff.source);
 
   // Group applicable formulas by character (using per-formula applicability)
   const groupedByChar = useMemo(() => {
@@ -410,10 +414,13 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                   <span
                     className={cn(
                       "ml-auto text-[10px] md:text-xs font-bold uppercase px-1.5 py-0.5 rounded shrink-0",
-                      getReceiverBadgeClasses(buff.target)
+                      getReceiverColor(
+                        buff.target.receiver,
+                        !!buff.target.charId
+                      )
                     )}
                   >
-                    {formatReceiverLabel(buff.target, t)}
+                    {receiverLabel(buff.target)}
                   </span>
                 </div>
                 {/* Stat entries */}
@@ -432,7 +439,7 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                       maxValue: e.maxValue,
                     })),
                   ].map((entry, i) => (
-                    <StatEntryRow key={i} entry={entry} t={t} />
+                    <StatEntryRow key={i} entry={entry} />
                   ))}
                   {buff.source.maxStacks != null && (
                     <span className="text-[11px] md:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded">
@@ -442,7 +449,7 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                     </span>
                   )}
                   {(() => {
-                    const filterDesc = formatFilter(buff.target, t);
+                    const filterDesc = filterLabel(buff.target);
                     return filterDesc ? (
                       <span className="text-[11px] md:text-xs italic text-muted-foreground">
                         [{filterDesc}]

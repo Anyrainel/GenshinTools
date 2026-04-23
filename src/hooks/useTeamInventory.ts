@@ -1,5 +1,6 @@
-import type { ArtifactConfig } from "@/components/shared/ItemPicker";
-import type { ArtifactData, CharacterData, Slot } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { ArtifactSetConfig } from "@/data/types";
+import type { ArtifactData, CharacterData } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { frozenArtifactsMatchConfig } from "@/lib/team-comp/teamConfigUtils";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
@@ -32,7 +33,7 @@ export interface ComputeInventoryParams {
   standaloneFrozenIds: string[];
   teamId: string;
   teamCharacters: (string | null)[];
-  teamArtifacts: (ArtifactConfig | null)[];
+  teamArtifacts: (ArtifactSetConfig | null)[];
 }
 
 /**
@@ -170,7 +171,7 @@ export function useTeamInventory(teamId: string): TeamInventory {
       standaloneFrozenIds,
       teamId,
       teamCharacters: teamCharacters ?? [],
-      teamArtifacts: (teamArtifacts ?? []) as (ArtifactConfig | null)[],
+      teamArtifacts: (teamArtifacts ?? []) as (ArtifactSetConfig | null)[],
     });
 
     return {

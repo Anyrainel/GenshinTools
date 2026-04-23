@@ -6,12 +6,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { ReactionType } from "@/data/enums";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
   MULTI_ELEMENT_CHARS,
-} from "@/lib/team-comp/constants";
-import type { FormulaEntry } from "@/lib/team-comp/types";
-import type { ReactionOverride, ReactionType } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/constants";
+import type { FormulaEntry } from "@/lib/dmgcalc/types";
+import type { ReactionOverride } from "@/lib/dmgcalc/types";
 import { cn } from "@/lib/utils";
 
 /** Build a compact label from a formula part's scaling info: e.g. "230% ATK + 45% EM" */

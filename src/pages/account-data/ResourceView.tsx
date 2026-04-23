@@ -4,12 +4,12 @@
  */
 
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
+import { ResourceHelpDialog } from "@/components/account-data/ResourceHelpDialog";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import {
   ArtifactDataContent,
   ArtifactDataHoverCard,
-} from "@/components/account-data/ArtifactDataHoverCard";
-import { ResourceHelpDialog } from "@/components/account-data/ResourceHelpDialog";
-import { ScrollLayout } from "@/components/layout/ScrollLayout";
+} from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,8 +22,9 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import { type Tier, tiers } from "@/data/types";
+import { tiers } from "@/data/enums";
+import type { Tier } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {

@@ -1,5 +1,6 @@
-import type { AccountData, ArtifactData, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { AccountData, ArtifactData } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { PersistedFreezeStoreSchema } from "./schemas";

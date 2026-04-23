@@ -1,15 +1,16 @@
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
 /**
  * Tests for freeze store ID remapping and validation — the safety net
  * that prevents frozen artifact references from becoming orphaned
  * after imports, merges, or scanner snapshots reassign artifact IDs.
  */
-import type { AccountData, ArtifactData, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import type { AccountData, ArtifactData } from "@/data/types";
 import {
   mergeAccountData,
   mergePartialAccountData,
-} from "@/lib/account-data/mergeAccountData";
-import { rebuildAccountFromSnapshot } from "@/lib/artifact-manager/storeSync";
+} from "@/lib/account-data/import/mergeAccountData";
+import { rebuildAccountFromSnapshot } from "@/lib/account-data/manager/storeSync";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {
   collectAllArtifactIds,

@@ -9,18 +9,8 @@ import {
   useState,
 } from "react";
 
+import type { ThemeId } from "@/data/enums";
 import { applyThemeVars } from "@/lib/themeGenerator";
-
-export type ThemeId =
-  | "abyss"
-  | "mondstadt"
-  | "liyue"
-  | "inazuma"
-  | "sumeru"
-  | "fontaine"
-  | "natlan"
-  | "snezhnaya"
-  | "nodkrai";
 
 export const THEME_IDS: ThemeId[] = [
   "abyss",

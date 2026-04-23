@@ -12,8 +12,8 @@
  * bound and best feasible solution is <1%, we know we're near-optimal.
  */
 
-import type { ArtifactData, Slot } from "@/data/types";
-import { artsTupleToRecord } from "./types";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
 export interface LagrangianConfig {
@@ -47,6 +47,18 @@ export interface LagrangianResult {
   iterations: number;
   /** Whether this improved over the input allocation. */
   improved: boolean;
+}
+
+export function artsTupleToRecord(
+  tuple: ArtifactTuple
+): Record<Slot, ArtifactData | null> {
+  return {
+    flower: tuple[0],
+    plume: tuple[1],
+    sands: tuple[2],
+    goblet: tuple[3],
+    circlet: tuple[4],
+  };
 }
 
 /**

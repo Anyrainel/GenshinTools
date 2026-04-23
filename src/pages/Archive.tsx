@@ -1,5 +1,5 @@
 import { PageLayout } from "@/components/layout/PageLayout";
-import { getTabsForRoute } from "@/config/appNavigation";
+import { getTabsForRoute } from "@/components/layout/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { ArtifactArchiveView } from "@/pages/archive/ArtifactArchiveView";

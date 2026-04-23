@@ -1,5 +1,6 @@
 import { StatDisplay } from "@/components/account-data/StatDisplay";
-import type { ArtifactData, SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,

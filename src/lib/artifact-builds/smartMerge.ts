@@ -18,7 +18,8 @@
  * Flat stat restore (step 5) is applied by the caller.
  */
 
-import type { SetConfig, SubStat } from "../../data/types";
+import type { SubStat } from "@/data/enums";
+import type { BuildConfig } from "../../data/types";
 import { computeSlotChances } from "./artifactChance";
 import { bruteForcePartition } from "./bruteForcePartition";
 import {
@@ -65,13 +66,13 @@ const BRUTE_PREFERENCE_THRESHOLD = 0.005;
 
 // ── Quality scoring ─────────────────────────────────────────────────────
 
-function worstSlotPassChance(config: SetConfig): number {
+function worstSlotPassChance(config: BuildConfig): number {
   const chances = computeSlotChances(config);
   return Math.max(...SLOT_KEYS.map((s) => chances[s]));
 }
 
 /** Max worst-slot pass chance across all groups (lower = tighter filter). */
-function scoreCandidate(groups: SetConfig[]): number {
+function scoreCandidate(groups: BuildConfig[]): number {
   let m = 0;
   for (const g of groups) {
     const p = worstSlotPassChance(g);
@@ -87,7 +88,7 @@ function scoreCandidate(groups: SetConfig[]): number {
  * also has ≤ the count of the brute-force candidate (to keep domain-aware
  * labels); otherwise prefer fewer configs.
  */
-function pickBetter(smart: SetConfig[], brute: SetConfig[]): SetConfig[] {
+function pickBetter(smart: BuildConfig[], brute: BuildConfig[]): BuildConfig[] {
   const smartScore = scoreCandidate(smart);
   const bruteScore = scoreCandidate(brute);
 
@@ -107,7 +108,7 @@ function pickBetter(smart: SetConfig[], brute: SetConfig[]): SetConfig[] {
  * checks if remaining is exactly {ER, X} where X is a scaling stat.
  * Returns the scaling stat X, or null.
  */
-function classifyErArchetype(config: SetConfig): SubStat | null {
+function classifyErArchetype(config: BuildConfig): SubStat | null {
   const stripped = config.flowerPlume.substats.filter(
     (s) => !NOISE_STATS.has(s)
   );
@@ -127,7 +128,7 @@ function classifyErArchetype(config: SetConfig): SubStat | null {
  * weight threshold. Since archetype classification guarantees all configs
  * share ER in their substat pools, we restore it as a structural invariant.
  */
-function mergeErGroup(configs: SetConfig[]): SetConfig {
+function mergeErGroup(configs: BuildConfig[]): BuildConfig {
   if (configs.length === 1) return configs[0];
   const merged = mergeConfigGroup(configs);
   for (const slot of SLOT_KEYS) {
@@ -151,9 +152,9 @@ function mergeErGroup(configs: SetConfig[]): SetConfig {
  * the rest into the final slot.
  */
 function prioritySplit(
-  archetypes: Map<SubStat, SetConfig>,
+  archetypes: Map<SubStat, BuildConfig>,
   budget: number
-): SetConfig[] {
+): BuildConfig[] {
   if (archetypes.size <= budget) {
     return [...archetypes.values()];
   }
@@ -172,7 +173,7 @@ function prioritySplit(
 
   // CR creates a natural split when both sides are populated.
   if (withCr.length > 0 && withoutCr.length > 0) {
-    const result: SetConfig[] = [];
+    const result: BuildConfig[] = [];
     // Give each side an initial slot.
     let crSlots = 1;
     let ncSlots = 1;
@@ -208,8 +209,8 @@ function prioritySplit(
 function isolateByPriority(
   stats: SubStat[],
   slots: number,
-  archetypes: Map<SubStat, SetConfig>
-): SetConfig[] {
+  archetypes: Map<SubStat, BuildConfig>
+): BuildConfig[] {
   if (stats.length === 0 || slots <= 0) return [];
   if (stats.length <= slots) {
     return stats.map((s) => archetypes.get(s)!);
@@ -226,7 +227,10 @@ function isolateByPriority(
  * Constraint: merged groups must have non-empty mustPresent on flower/plume.
  * Falls back to outputting each config separately if constraint can't be met.
  */
-function partitionRemainder(configs: SetConfig[], slots: number): SetConfig[] {
+function partitionRemainder(
+  configs: BuildConfig[],
+  slots: number
+): BuildConfig[] {
   if (configs.length <= slots) return configs;
 
   if (slots === 1) {
@@ -239,7 +243,7 @@ function partitionRemainder(configs: SetConfig[], slots: number): SetConfig[] {
   // Score: minimise the max flower/plume substat pool size across groups
   // (tighter pool = better filter). Reject any partition where a group
   // lost its mustPresent anchor.
-  const evaluator = (groups: SetConfig[]): number | null => {
+  const evaluator = (groups: BuildConfig[]): number | null => {
     let maxPool = 0;
     for (const g of groups) {
       if (g.flowerPlume.mustPresent.length === 0) return null;
@@ -266,7 +270,7 @@ function partitionRemainder(configs: SetConfig[], slots: number): SetConfig[] {
  * Receives non-CR+CD configs only (CR+CD handling is done by the caller).
  * Returns merged configs WITHOUT flat stat restore (caller applies step 5).
  */
-export function smartMerge(configs: SetConfig[]): SetConfig[] {
+export function smartMerge(configs: BuildConfig[]): BuildConfig[] {
   if (configs.length <= 1) return configs;
 
   const archetypeResult = smartMergeArchetypeOnly(configs);
@@ -278,10 +282,10 @@ export function smartMerge(configs: SetConfig[]): SetConfig[] {
   return pickBetter(archetypeResult, bruteResult);
 }
 
-function smartMergeArchetypeOnly(configs: SetConfig[]): SetConfig[] {
+function smartMergeArchetypeOnly(configs: BuildConfig[]): BuildConfig[] {
   // === Classify into ER+scaling archetypes vs other ===
-  const erGroups = new Map<SubStat, SetConfig[]>();
-  const otherConfigs: SetConfig[] = [];
+  const erGroups = new Map<SubStat, BuildConfig[]>();
+  const otherConfigs: BuildConfig[] = [];
 
   for (const config of configs) {
     const scalingStat = classifyErArchetype(config);
@@ -295,7 +299,7 @@ function smartMergeArchetypeOnly(configs: SetConfig[]): SetConfig[] {
   }
 
   // Merge within each ER archetype (use mergeErGroup to preserve ER mustPresent)
-  const mergedEr = new Map<SubStat, SetConfig>();
+  const mergedEr = new Map<SubStat, BuildConfig>();
   for (const [stat, group] of erGroups) {
     mergedEr.set(stat, mergeErGroup(group));
   }

@@ -15,18 +15,19 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { WeaponResource } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned, useRefinement } from "@/hooks/useOwnership";
-import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { Bookmark } from "lucide-react";
 import { memo, useMemo, useState } from "react";
+import { getRarityColor } from "../shared/colors";
 
 export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
   const { t } = useLanguage();
-  const { weaponStats } = useGameStats();
+  const weaponStats = weaponStatsResource.use();
   const meta = useMemo(
     () => getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]),
     [weapon, weaponStats]

@@ -1,9 +1,5 @@
-import type {
-  MainStatPlus,
-  SetConfig,
-  SlotConfig,
-  SubStat,
-} from "@/data/types";
+import type { MainStatPlus, SubStat } from "@/data/enums";
+import type { BuildConfig, SlotConfig } from "@/data/types";
 import {
   bruteForcePartition,
   bruteForcePartitionAsync,
@@ -24,7 +20,7 @@ function makeConfig(
   mustPresent: SubStat[],
   minStatCount: number,
   characterId: string
-): SetConfig {
+): BuildConfig {
   const slot = makeSlot(substats, mustPresent, minStatCount);
   return {
     flowerPlume: { ...slot },

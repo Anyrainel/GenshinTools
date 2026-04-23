@@ -1,8 +1,9 @@
-import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactData, Slot } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { Plus, Snowflake, X } from "lucide-react";
 

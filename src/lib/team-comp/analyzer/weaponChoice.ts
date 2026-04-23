@@ -6,28 +6,32 @@
  * evaluation via an async generator that yields progress updates.
  */
 
-import { weaponsById } from "@/data/constants";
+import { allSlots } from "@/data/enums";
+import type { Element, MainStat, Slot, SubStat } from "@/data/enums";
+import { weaponsById } from "@/data/gameResources";
 import type { WeaponStatsMap } from "@/data/gameStatsLoader";
-import type { Element, MainStat, Slot, SubStat } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { getRollValues } from "@/lib/artifact/scoring/utils";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "../calc/formulaCompiler";
-import type { StatSheet } from "../calc/statSheet";
-import { TeamBuild } from "../calc/teamBuild";
-import { getRollValues } from "../generator/constrainedGreedy";
+} from "../../dmgcalc/core/formulaCompiler";
+import type { StatSheet } from "../../dmgcalc/core/statSheet";
+import { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { deriveSetKeysFromConfigs } from "../teamConfigUtils";
 
-import type { ExtraBuff } from "../types";
-import type { CalcContext, ComboFormula, TeamSlotConfig } from "../types";
+import type { ExtraBuff } from "@/lib/dmgcalc/types";
+import type {
+  CalcContext,
+  ComboFormula,
+  TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
 
 import type {
   WeaponChoiceCharConfig,
   WeaponRanking,
-} from "@/stores/useTeamStore";
+} from "@/lib/team-comp/types";
 
 export interface CharProgress {
   charId: string;

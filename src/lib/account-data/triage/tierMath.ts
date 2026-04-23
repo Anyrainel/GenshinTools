@@ -3,7 +3,7 @@
  * Ported from docs/triage-tier-table.js.
  */
 
-import type { Slot, SubStat } from "@/data/types";
+import type { Slot, SubStat } from "@/data/enums";
 import type { QualityTier } from "./types";
 
 // Substat weights (unnormalized shares, same ratios as statPoolWithWeights)

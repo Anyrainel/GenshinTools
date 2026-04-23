@@ -1,5 +1,5 @@
-import type { ControlHandle } from "@/components/layout/AppBar";
 import { ExportControl } from "@/components/shared/ExportControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";

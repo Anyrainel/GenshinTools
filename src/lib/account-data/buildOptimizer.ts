@@ -1,13 +1,10 @@
-/**
- * 5-slot combinatorial optimizer with CR ceiling penalty.
- * Uses weight-based scoring (fast, additive per-slot) with CR ceiling as the only cross-slot coupling.
- */
-import { artifactIdToHalfSetId } from "@/data/constants";
-import type { GlobalStatWeights, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import { artifactIdToHalfSetId } from "@/data/gameResources";
+import type { GlobalStatWeights } from "@/data/types";
+import { getMainStatValue } from "@/data/utils";
 import {
   type StatWeightMap,
-  getFixedMainStatValue,
   scoreSlotWithMainStat,
 } from "../artifact/scoring/artifactScore";
 import type { CandidateArtifact } from "./candidatePool";
@@ -47,7 +44,7 @@ export interface BuildOptimizerResult {
 function getCandidateCr(art: CandidateArtifact): number {
   let cr = 0;
   if (art.mainStatKey === "cr") {
-    cr += getFixedMainStatValue("cr", art.rarity) / 100;
+    cr += getMainStatValue("cr", art.rarity) / 100;
   }
   if (art.substats.cr) {
     cr += art.substats.cr / 100;

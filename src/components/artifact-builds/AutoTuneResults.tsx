@@ -4,7 +4,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
 import type {
   AutoTuneOutput,
   ComboBreakdown,

@@ -6,8 +6,8 @@ import {
 import { CharCrErSettings } from "@/components/team-comp/GeneratorControls";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { TierAssignment } from "@/data/types";
-import type { CalcContext, DisplayResult } from "@/lib/team-comp/types";
-import type { Team } from "@/stores/useTeamStore";
+import type { CalcContext, DisplayResult } from "@/lib/dmgcalc/types";
+import type { Team } from "@/lib/team-comp/types";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { render, screen } from "../../utils/render";
@@ -16,30 +16,42 @@ vi.mock("@/hooks/useMediaQuery", () => ({
   useMediaQuery: () => false,
 }));
 
-vi.mock("@/hooks/useGameStats", () => ({
-  useGameStats: () => ({
-    characterStats: {
-      hu_tao: {
-        rarity: 5,
-        element: "Pyro",
-        weaponType: "Polearm",
-        region: "Liyue",
-        releaseDate: "2021-03-02",
-        levels: {},
-      },
-      xingqiu: {
-        rarity: 4,
-        element: "Hydro",
-        weaponType: "Sword",
-        region: "Liyue",
-        releaseDate: "2020-09-28",
-        levels: {},
-      },
+const mockCharStats = {
+  hu_tao: {
+    rarity: 5,
+    element: "Pyro",
+    weaponType: "Polearm",
+    region: "Liyue",
+    releaseDate: "2021-03-02",
+    levels: {},
+  },
+  xingqiu: {
+    rarity: 4,
+    element: "Hydro",
+    weaponType: "Sword",
+    region: "Liyue",
+    releaseDate: "2020-09-28",
+    levels: {},
+  },
+};
+const mockWeapStats = {};
+vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+  return {
+    ...actual,
+    characterStatsResource: {
+      preload: () => Promise.resolve(mockCharStats),
+      use: () => mockCharStats,
+      peek: () => mockCharStats,
     },
-    weaponStats: {},
-    ready: true,
-  }),
-}));
+    weaponStatsResource: {
+      preload: () => Promise.resolve(mockWeapStats),
+      use: () => mockWeapStats,
+      peek: () => mockWeapStats,
+    },
+  };
+});
 
 const mockTeam: Team = {
   id: "test-team",

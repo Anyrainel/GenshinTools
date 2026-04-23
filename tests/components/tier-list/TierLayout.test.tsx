@@ -3,7 +3,7 @@ import type {
   TierGroupConfig,
   TierItemData,
 } from "@/components/tier-list/tierTableTypes";
-import type { Tier } from "@/data/types";
+import type { Tier } from "@/data/enums";
 import { DndContext } from "@dnd-kit/core";
 import { render, screen } from "../../utils/render";
 

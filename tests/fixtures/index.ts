@@ -3,15 +3,14 @@
  * These fixtures are complete, type-safe representations of domain objects.
  */
 
+import { allSlots } from "@/data/enums";
+import type { Slot, SubStat } from "@/data/enums";
 import type {
   AccountData,
   ArtifactData,
   CharacterData,
-  Slot,
-  SubStat,
   WeaponData,
 } from "@/data/types";
-import { allSlots } from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,

@@ -1,10 +1,13 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import type { CharacterLevelTier } from "@/data/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
-import type { BaseStat } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
-import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
+import type { BaseStat } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import {
+  type CharacterLevelTier,
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { getRarityColor } from "./colors";
 
 const BASE_STAT_KEYS = ["baseHp", "baseAtk", "baseDef", "em"] as const;
 const TOOLTIP_TIERS: CharacterLevelTier[] = ["70", "80", "90", "100"];
@@ -15,7 +18,7 @@ interface CharacterTooltipProps {
 
 export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
   const { t } = useLanguage();
-  const { characterStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
   const character = charactersById[characterId];
 
   if (!character) return null;

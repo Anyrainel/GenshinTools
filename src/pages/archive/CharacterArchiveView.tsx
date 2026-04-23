@@ -1,25 +1,24 @@
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { CharacterDetailPanel } from "@/components/archive/CharacterDetailPanel";
-import { FilterChip } from "@/components/archive/FilterChip";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
+import { FilterChip } from "@/components/shared/FilterChip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Element, Rarity, WeaponType } from "@/data/enums";
+import { elements, weaponTypes } from "@/data/enums";
 import {
-  allCharacters,
   elementResourcesByName,
   weaponResourcesByName,
-} from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
-import type {
-  CharacterResource,
-  Element,
-  Rarity,
-  WeaponType,
-} from "@/data/types";
-import { elements, weaponTypes } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
+} from "@/data/gameResources";
+import { allCharacters } from "@/data/gameResources";
+import {
+  type CharacterStatsMap,
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
+import type { CharacterResource } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
 import { characterMatchesSearch } from "@/lib/search";
@@ -41,7 +40,7 @@ const CharacterListItem = memo(
     isSelected,
     onSelect,
   }: CharacterListItemProps & {
-    characterStats: ReturnType<typeof useGameStats>["characterStats"];
+    characterStats: CharacterStatsMap | null;
   }) => {
     const { t } = useLanguage();
     const meta = getCharacterDisplayMeta(
@@ -87,7 +86,7 @@ function CharacterListPanel({
   onSelect,
 }: {
   characters: CharacterResource[];
-  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  characterStats: CharacterStatsMap | null;
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
@@ -123,7 +122,7 @@ function CharacterGrid({
   onSelect,
 }: {
   characters: CharacterResource[];
-  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  characterStats: CharacterStatsMap | null;
   onSelect: (id: string) => void;
 }) {
   const { t } = useLanguage();
@@ -252,7 +251,7 @@ function CharacterFilterChips({
 
 export function CharacterArchiveView() {
   const { t } = useLanguage();
-  const { characterStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
   const sortedCharacters = useMemo(() => {
     const list = [...allCharacters];
     if (!characterStats) return list;

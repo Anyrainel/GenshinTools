@@ -1,5 +1,6 @@
-import type { AccountData, Build, MainStat, Slot, SubStat } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import type { AccountData, Build } from "@/data/types";
 import { getAcceptedMainStats } from "./demandExtractor";
 import { lookupTierEntry } from "./tierTableBuilder";
 import type { TriageRule, TriageSettings } from "./types";

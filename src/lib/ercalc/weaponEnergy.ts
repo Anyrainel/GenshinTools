@@ -1,4 +1,4 @@
-import type { WeaponType } from "../../data/types";
+import type { WeaponType } from "@/data/enums";
 
 export type WeaponEnergyEffect =
   | {

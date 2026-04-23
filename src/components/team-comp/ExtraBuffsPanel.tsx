@@ -24,22 +24,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import {
-  charactersById,
-  elementResourcesByName,
-  isPctStat,
-} from "@/data/constants";
-import { type EnvBuff, envBuffs } from "@/data/envBuffs";
-import type { Element } from "@/data/types";
-import { elements } from "@/data/types";
+import type { Element } from "@/data/enums";
+import { elements } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import { envBuffs } from "@/data/envBuffs";
+import { charactersById, elementResourcesByName } from "@/data/gameResources";
+import type { EnvBuff } from "@/data/types";
+import { isPctStat } from "@/data/utils";
+import type { ExtraBuff } from "@/lib/dmgcalc/types";
 import { CUSTOM_STAT_OPTIONS } from "@/lib/team-comp/constants";
 import { formatBuffStats } from "@/lib/team-comp/displayFormatter";
-import type { ExtraBuff } from "@/lib/team-comp/types";
-import type { StatKey } from "@/lib/team-comp/types";
-import { cn, getAssetUrl, getElementColor } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
+import type { Team } from "@/lib/team-comp/types";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { ChefHat, Globe, Plus, Settings, Swords, Wand2, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { getElementColor } from "../shared/colors";
 
 /** Food preset IDs are stored as "food:<foodId>" to distinguish from other presets. */
 const FOOD_PREFIX = "food:";
@@ -409,7 +408,7 @@ export function ExtraBuffsPanel({
                         <span className="text-muted-foreground">
                           →{" "}
                           {buff.target === "team"
-                            ? t.ui("teamComp.receiverTeam")
+                            ? t.receiver("team")
                             : t.character(buff.target)}
                         </span>
                         <button
@@ -578,9 +577,7 @@ function CustomBuffDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="team">
-                  {t.ui("teamComp.receiverTeam")}
-                </SelectItem>
+                <SelectItem value="team">{t.receiver("team")}</SelectItem>
                 {characters.map((charId) => (
                   <SelectItem key={charId} value={charId}>
                     <div className="flex items-center gap-2">

@@ -10,28 +10,31 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import "@/lib/team-comp/index";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import "@/lib/dmgcalc";
 
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/team-comp/calc/formulaCompiler";
-import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  type GeneratorOptions,
-  runGenerator,
-} from "@/lib/team-comp/generator/generator";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer";
+} from "@/lib/dmgcalc/core/formulaCompiler";
+import { getBuffInstanceKey } from "@/lib/dmgcalc/core/statBuff";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   BuffActivationMap,
   CalcContext,
   ComboFormula,
-  TeamOptimizerOptions,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import {
+  type GeneratorOptions,
+  runGenerator,
+} from "@/lib/team-comp/generator/generator";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
+import type { TeamOptimizerOptions } from "@/lib/team-comp/types";
 import {
   drain,
   emptySheets,
@@ -39,7 +42,10 @@ import {
   makeArt,
 } from "../../../fixtures/optimizerHelpers";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 function getOnlyParts(r: {
   partsByFormula: Record<string, unknown[]>;

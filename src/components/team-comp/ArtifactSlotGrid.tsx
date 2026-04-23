@@ -1,7 +1,9 @@
-import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { type ArtifactData, type Slot, allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { ArrowRightLeft } from "lucide-react";
 

@@ -10,12 +10,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Tier } from "@/data/enums";
 import {
   artifactIdToHalfSetId,
   artifactsById,
   charactersById,
-} from "@/data/constants";
-import type { ArtifactData, CharacterData, Tier } from "@/data/types";
+} from "@/data/gameResources";
+import type { ArtifactData, CharacterData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";

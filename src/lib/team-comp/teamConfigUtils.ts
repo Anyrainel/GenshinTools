@@ -1,24 +1,27 @@
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
 import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
   artifactsById,
-} from "@/data/constants";
+} from "@/data/gameResources";
 import { getCharacterLevelTier } from "@/data/gameStatsLoader";
+import type { AccountData, ArtifactData, TierAssignment } from "@/data/types";
+import type { ArtifactSetConfig } from "@/data/types";
 import type {
-  AccountData,
-  ArtifactData,
-  Slot,
-  TierAssignment,
-} from "@/data/types";
-import { allSlots } from "@/data/types";
+  CharBaseConfig,
+  Team,
+  WeaponChoiceCharConfig,
+} from "@/lib/team-comp/types";
+import { EMPTY_LABEL } from "../dmgcalc/core/combo";
+import { StatSheet } from "../dmgcalc/core/statSheet";
 import type {
-  ArtifactSetConfig,
+  ComboFormula,
+  ComboLine,
   TalentLevels,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
-import { getHalfSetIds, getSetId } from "@/lib/team-comp/types";
-import type { Team, WeaponChoiceCharConfig } from "@/stores/useTeamStore";
-import { StatSheet } from "./calc/statSheet";
+} from "../dmgcalc/types";
+import { getHalfSetIds, getSetId } from "../dmgcalc/utils";
 
 /** Detect what artifact set bonuses the equipped pieces actually form. */
 export function detectEquippedSets(
@@ -88,12 +91,6 @@ export function setsMatch(
     return goalIds[0] === eqIds[0] && goalIds[1] === eqIds[1];
   }
   return true;
-}
-
-interface CharBaseConfig {
-  charLevel: number;
-  constellation: number;
-  acctTalent: TalentLevels | undefined;
 }
 
 /**
@@ -328,6 +325,7 @@ export function getHigherTierEquippedArtifactIds(
   }
   return excludedIds;
 }
+
 export function resolveBuildInfo(
   charId: string,
   team: Team,
@@ -393,4 +391,48 @@ export function deriveSetKeysFromConfigs(
     }
   }
   return result;
+} /**
+ * Returns the `ComboFormula` that damage-calc consumers should use.
+ *
+ * - Single mode: synthesizes a 1-line combo from `team.selectedFormula` +
+ *   `team.singleReaction`. If no formula is selected, returns an empty combo.
+ * - Combo mode: returns `team.combos[team.selectedCombo]` with `count <= 0`
+ *   lines filtered out.
+ */
+
+export function getEffectiveCombo(
+  team: Pick<
+    Team,
+    | "formulaMode"
+    | "selectedFormula"
+    | "singleReaction"
+    | "singleForceOnField"
+    | "combo"
+  >
+): ComboFormula {
+  const mode = team.formulaMode ?? "single";
+
+  if (mode === "single") {
+    const sel = team.selectedFormula;
+    if (!sel) {
+      return { id: "__single_empty__", label: EMPTY_LABEL, lines: [] };
+    }
+    const line: ComboLine = {
+      charId: sel.charId,
+      formulaId: sel.formulaId,
+      count: 1,
+      reaction: team.singleReaction,
+      forceOnField: team.singleForceOnField,
+    };
+    return { id: "__single__", label: EMPTY_LABEL, lines: [line] };
+  }
+
+  // combo mode
+  if (!team.combo) {
+    return { id: "__combo_empty__", label: EMPTY_LABEL, lines: [] };
+  }
+  return {
+    ...team.combo,
+    lines: team.combo.lines.filter((l) => l.count > 0),
+  };
 }

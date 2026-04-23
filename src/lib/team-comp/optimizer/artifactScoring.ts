@@ -6,17 +6,19 @@
  * - Marginal-based: uses damage-formula-derived marginal weights (context-aware)
  */
 
+import { allSlots } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { toInternal } from "@/lib/artifact/scoring/utils";
+import {
+  getMainStatValueAtLevel,
+  toInternal,
+} from "@/lib/artifact/scoring/utils";
 import {
   type BuildMatchResult,
-  getMainStatValueAtLevel,
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
 } from "../../artifact/scoring/artifactScore";
-import type { StatKey } from "../types";
 import type { MarginalWeights, PreparedSlotData, SuperArtifact } from "./types";
 
 /** After scoring & sorting, keep at most this many unleveled (level 0) artifacts per slot.

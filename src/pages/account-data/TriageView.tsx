@@ -9,15 +9,15 @@ import {
 } from "@/components/account-data/TriageTabContent";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactIdToHalfSetId } from "@/data/constants";
+import { artifactIdToHalfSetId } from "@/data/gameResources";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
-import {
-  type FlexPattern,
-  type TriageDecision,
-  runTriage,
-} from "@/lib/account-data/triage";
-import { buildTriageInstructions } from "@/lib/artifact-manager/instructions";
+import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
+import { runTriage } from "@/lib/account-data/triage/triageEngine";
+import type {
+  FlexPattern,
+  TriageDecision,
+} from "@/lib/account-data/triage/types";
 import { useTriageStore } from "@/stores/useTriageStore";
 import {
   useCallback,

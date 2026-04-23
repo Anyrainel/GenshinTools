@@ -1,9 +1,10 @@
-import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
+import type { ActionConfig } from "@/components/layout/AppBar";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierListManagerDialog } from "@/components/tier-list/TierListManagerDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
@@ -24,31 +25,33 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Element } from "@/data/enums";
+import { elements } from "@/data/enums";
 import {
   charactersById,
   elementResourcesByName,
   getSortedCharacters,
   weaponResourcesByName,
-} from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+} from "@/data/gameResources";
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
 import type {
   CharacterResource,
-  Element,
   PresetOption,
   TierAssignment,
   TierCustomization,
   TierListData,
 } from "@/data/types";
-import { elements } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
   loadPresetPayload,
 } from "@/lib/presetLoader";
 
+import { getElementColor } from "@/components/shared/colors";
 import { useIsOwned } from "@/hooks/useOwnership";
-import { getElementColor } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
 import {
   ArrowLeftRight,
@@ -96,7 +99,7 @@ export function CharacterTierListView({
   onActions,
 }: CharacterTierListViewProps) {
   const { t } = useLanguage();
-  const { characterStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
   const sortedCharacters = useMemo(
     () => getSortedCharacters(characterStats ?? null),
     [characterStats]

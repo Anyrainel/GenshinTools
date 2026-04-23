@@ -1,4 +1,4 @@
-import { ArtifactDataContent } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactDataContent } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   LightweightSelect,
@@ -16,13 +16,15 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { getSortableStatsForSlot } from "@/data/constants";
-import type { ArtifactData, Slot } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { getStatValue, sortByStats } from "@/lib/artifact/inventory";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
-import { cn, getRarityColor } from "@/lib/utils";
+import { getSortableStatsForSlot } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { ArrowRightLeft, Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
+import { getRarityColor } from "../shared/colors";
 import { SORT_LABELS } from "./cardStyles";
 
 interface ArtifactSwapDialogProps {

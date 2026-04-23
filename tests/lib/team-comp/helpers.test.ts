@@ -4,7 +4,7 @@ import {
   ALL_ELEMENTAL_FILTER,
   getReactionAuraElements,
   r,
-} from "@/lib/team-comp/impl/helpers";
+} from "@/lib/dmgcalc/impl/helpers";
 
 describe("r() — refinement value picker", () => {
   const values: [number, number, number, number, number] = [

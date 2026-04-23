@@ -1,4 +1,4 @@
-import type { SortDirection } from "@/data/types";
+import type { SortDirection } from "@/data/enums";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

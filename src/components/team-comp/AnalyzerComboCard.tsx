@@ -5,20 +5,20 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/types";
+import type { Element } from "@/data/enums";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type {
+  ComboFormula,
+  ReactionOverride,
+  TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
 import type {
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type {
-  ComboFormula,
-  ReactionOverride,
-  TeamSlotConfig,
-} from "@/lib/team-comp/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import { ChevronDown, ListOrdered } from "lucide-react";
 import { useState } from "react";
 import { AnalyzerComboTab } from "./AnalyzerComboTab";

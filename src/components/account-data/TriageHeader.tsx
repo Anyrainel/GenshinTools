@@ -2,8 +2,8 @@ import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { TriageSettingsPanel } from "@/components/account-data/TriageSettingsPanel";
 import type { TriageTabContentHandle } from "@/components/account-data/TriageTabContent";
-import { FilterChip } from "@/components/archive/FilterChip";
-import { ArtifactManagerDialog } from "@/components/artifact-manager/ArtifactManagerDialog";
+import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
+import { FilterChip } from "@/components/shared/FilterChip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,14 +12,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { allHalfSetIds } from "@/data/constants";
+import { allHalfSetIds } from "@/data/gameResources";
+import type { ManagePayload } from "@/lib/account-data/manager/types";
 import type {
   FlexPattern,
   TriageDecision,
   TriageSettings,
-} from "@/lib/account-data/triage";
-import type { ManagePayload } from "@/lib/artifact-manager/types";
-import { TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
+} from "@/lib/account-data/triage/types";
+import { cn } from "@/lib/utils";
 import {
   ArrowDown,
   ArrowUp,
@@ -31,6 +31,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useState } from "react";
+import { TRIAGE_TIER_COLORS } from "../shared/colors";
 
 type T = ReturnType<typeof useLanguage>["t"];
 

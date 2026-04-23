@@ -5,10 +5,10 @@
  * Provides a threshold (K-th best damage) for pruning in the B&B DFS.
  */
 
-import type { DamageResult } from "../types";
-import type { ArtifactTuple, TopKCollectorLike, TopKEntry } from "./types";
+import type { DamageResult } from "@/lib/dmgcalc/types";
+import type { ArtifactTuple, TopKEntry } from "./types";
 
-export class TopKCollector implements TopKCollectorLike {
+export class TopKCollector {
   private entries: TopKEntry[] = [];
   threshold = Number.NEGATIVE_INFINITY;
 

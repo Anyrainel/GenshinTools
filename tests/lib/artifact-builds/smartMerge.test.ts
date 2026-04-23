@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type { SubStat } from "@/data/enums";
 import type {
+  BuildConfig,
   BuildGroup,
   BuildPayloadV5,
-  SetConfig,
   SlotConfig,
-  SubStat,
 } from "@/data/types";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import {
@@ -23,7 +23,7 @@ function makeConfig(
   minStatCount: number,
   characterId: string,
   opts: { sands?: string[]; goblet?: string[]; circlet?: string[] } = {}
-): SetConfig {
+): BuildConfig {
   const slot: SlotConfig = {
     mainStats: [],
     substats,

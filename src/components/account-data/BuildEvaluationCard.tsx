@@ -1,4 +1,4 @@
-import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Tooltip,
@@ -6,8 +6,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
 import {
   type BuildEvaluation,
   type EvalBuild,

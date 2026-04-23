@@ -1,73 +1,85 @@
 import { TeamCard } from "@/components/team-comp/TeamCard";
-import type { Team } from "@/stores/useTeamStore";
+import type { Team } from "@/lib/team-comp/types";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
-vi.mock("@/hooks/useGameStats", () => ({
-  useGameStats: () => ({
-    characterStats: {
-      hu_tao: {
-        rarity: 5,
-        element: "Pyro",
-        weaponType: "Polearm",
-        region: "Liyue",
-        releaseDate: "2021-03-02",
-        levels: {},
-      },
-      xingqiu: {
-        rarity: 4,
-        element: "Hydro",
-        weaponType: "Sword",
-        region: "Liyue",
-        releaseDate: "2020-09-28",
-        levels: {},
-      },
-      zhongli: {
-        rarity: 5,
-        element: "Geo",
-        weaponType: "Polearm",
-        region: "Liyue",
-        releaseDate: "2020-12-01",
-        levels: {},
-      },
-      bennett: {
-        rarity: 4,
-        element: "Pyro",
-        weaponType: "Sword",
-        region: "Mondstadt",
-        releaseDate: "2020-09-28",
-        levels: {},
-      },
+const mockCharStats = {
+  hu_tao: {
+    rarity: 5,
+    element: "Pyro",
+    weaponType: "Polearm",
+    region: "Liyue",
+    releaseDate: "2021-03-02",
+    levels: {},
+  },
+  xingqiu: {
+    rarity: 4,
+    element: "Hydro",
+    weaponType: "Sword",
+    region: "Liyue",
+    releaseDate: "2020-09-28",
+    levels: {},
+  },
+  zhongli: {
+    rarity: 5,
+    element: "Geo",
+    weaponType: "Polearm",
+    region: "Liyue",
+    releaseDate: "2020-12-01",
+    levels: {},
+  },
+  bennett: {
+    rarity: 4,
+    element: "Pyro",
+    weaponType: "Sword",
+    region: "Mondstadt",
+    releaseDate: "2020-09-28",
+    levels: {},
+  },
+};
+const mockWeapStats = {
+  staff_of_homa: {
+    rarity: 5,
+    type: "Polearm",
+    secondaryStat: "cd",
+    levels: { "90": { baseAtk: 608, secondaryStatValue: "66.2%" } },
+  },
+  sacrificial_sword: {
+    rarity: 4,
+    type: "Sword",
+    secondaryStat: "er",
+    levels: { "90": { baseAtk: 454, secondaryStatValue: "61.3%" } },
+  },
+  black_tassel: {
+    rarity: 3,
+    type: "Polearm",
+    secondaryStat: "hp%",
+    levels: { "90": { baseAtk: 354, secondaryStatValue: "46.9%" } },
+  },
+  skyward_blade: {
+    rarity: 5,
+    type: "Sword",
+    secondaryStat: "er",
+    levels: { "90": { baseAtk: 608, secondaryStatValue: "55.1%" } },
+  },
+};
+vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+  return {
+    ...actual,
+    characterStatsResource: {
+      preload: () => Promise.resolve(mockCharStats),
+      use: () => mockCharStats,
+      peek: () => mockCharStats,
     },
-    weaponStats: {
-      staff_of_homa: {
-        rarity: 5,
-        type: "Polearm",
-        secondaryStat: "cd",
-        levels: { "90": { baseAtk: 608, secondaryStatValue: "66.2%" } },
-      },
-      sacrificial_sword: {
-        rarity: 4,
-        type: "Sword",
-        secondaryStat: "er",
-        levels: { "90": { baseAtk: 454, secondaryStatValue: "61.3%" } },
-      },
-      black_tassel: {
-        rarity: 3,
-        type: "Polearm",
-        secondaryStat: "hp%",
-        levels: { "90": { baseAtk: 354, secondaryStatValue: "46.9%" } },
-      },
-      skyward_blade: {
-        rarity: 5,
-        type: "Sword",
-        secondaryStat: "er",
-        levels: { "90": { baseAtk: 608, secondaryStatValue: "55.1%" } },
-      },
+    weaponStatsResource: {
+      preload: () => Promise.resolve(mockWeapStats),
+      use: () => mockWeapStats,
+      peek: () => mockWeapStats,
     },
-    ready: true,
-  }),
-}));
+  };
+});
 
 const mockTeam: Team = {
   id: "team-1",

@@ -1,5 +1,5 @@
-import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   AlertDialog,
@@ -20,14 +20,19 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactHalfSetsById, artifactsById } from "@/data/constants";
-import type { ArtifactData, CharacterData, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import type { ArtifactData, CharacterData } from "@/data/types";
+import type { ArtifactSetConfig } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
-import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { useTeamInventory } from "@/hooks/useTeamInventory";
@@ -39,40 +44,40 @@ import {
   buildComboLineMap,
   buildSingleFormulaSelection,
   collectAllFormulas,
-  getEffectiveCombo,
   resolveActiveCombo,
   withLineCount,
   withReactionOverride,
-} from "@/lib/team-comp/calc/combo";
+} from "@/lib/dmgcalc/core/combo";
 import {
   buildBuffOverrides,
   calcComboResults,
   extractComboOverrides,
-} from "@/lib/team-comp/calc/comboBuffOverrides";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+} from "@/lib/dmgcalc/core/comboBuffOverrides";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type {
+  CalcContext,
+  ComboFormula,
+  ComboLine,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
+import { resolveCalcContext } from "@/lib/dmgcalc/utils";
+import { getEffectiveCombo } from "@/lib/team-comp/teamConfigUtils";
 import {
   buildTeamConfigs,
   getHigherTierEquippedArtifactIds,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
-import {
-  type ArtifactSetConfig,
-  type CalcContext,
-  type CharOptConfig,
-  type ComboFormula,
-  type ComboLine,
-  type ReactionOverride,
-  resolveCalcContext,
-} from "@/lib/team-comp/types";
+import type { CharOptConfig } from "@/lib/team-comp/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
+import type { ViewId } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import type { Team } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { ArrowLeft, Info } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -92,7 +97,7 @@ const limitMap = { en: limitEnRaw, zh: limitZhRaw };
 export interface DamageDetailProps {
   team: Team;
   onBack: () => void;
-  viewId?: import("@/stores/useSessionNavStore").ViewId;
+  viewId?: ViewId;
 }
 
 export function DamageDetail({
@@ -100,8 +105,8 @@ export function DamageDetail({
   onBack,
   viewId = "damage",
 }: DamageDetailProps) {
-  const { t } = useLanguage();
-  const limitText = limitMap[t.lang];
+  const { t, language } = useLanguage();
+  const limitText = limitMap[language];
   const [limitOpen, setLimitOpen] = useState(false);
   const [expandedLine, setExpandedLine] = useState<{
     charId: string;
@@ -187,7 +192,9 @@ export function DamageDetail({
     Record<string, ArtifactData>
   > | null>(null);
 
-  const { characterStats, weaponStats, ready: gameStatsReady } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
+  const gameStatsReady = characterStats !== null && weaponStats !== null;
   const buildGroups = useAllResolvedBuilds();
 
   const ignoreArtifactSets = useMemo(() => {

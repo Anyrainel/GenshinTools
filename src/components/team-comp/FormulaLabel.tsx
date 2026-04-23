@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type { I18nLabel } from "@/lib/team-comp/types";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { I18nLabel } from "@/lib/dmgcalc/types";
 import { cn } from "@/lib/utils";
 
 interface FormulaLabelProps {

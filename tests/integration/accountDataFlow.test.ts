@@ -14,8 +14,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   type GOODData,
   convertGOODToAccountData,
-} from "@/lib/account-data/goodConversion";
-import { mergeAccountData } from "@/lib/account-data/mergeAccountData";
+} from "@/lib/account-data/import/goodConversion";
+import { mergeAccountData } from "@/lib/account-data/import/mergeAccountData";
 import { scoreAllSlots } from "@/lib/artifact/scoring/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";

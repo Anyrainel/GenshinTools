@@ -21,12 +21,13 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
+  characterStatsResource,
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { Build, CharacterResource } from "@/data/types";
 import type { WeaponResource } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { cn } from "@/lib/utils";
@@ -202,7 +203,8 @@ function CharacterBuildCardComponent({
     toggleHidden(character.id);
   }, [toggleHidden, character.id]);
 
-  const { characterStats, weaponStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
   const charMeta = useMemo(
     () => getCharacterDisplayMeta(character, characterStats?.[character.id]),
     [character, characterStats]

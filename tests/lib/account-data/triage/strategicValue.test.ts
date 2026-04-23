@@ -1,4 +1,5 @@
-import type { ArtifactData, SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import {
   concentratedStatRule,
   runStrategicRules,

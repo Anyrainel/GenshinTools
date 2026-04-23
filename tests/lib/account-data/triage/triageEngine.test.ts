@@ -1,9 +1,8 @@
+import type { MainStat, SubStat } from "@/data/enums";
 import type {
   AccountData,
   ArtifactData,
   Build,
-  MainStat,
-  SubStat,
   WeightedMainStat,
   WeightedSubStat,
 } from "@/data/types";

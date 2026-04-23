@@ -6,8 +6,9 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Lock, ShieldAlert, Zap } from "lucide-react";
+import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS } from "../shared/colors";
 
 const TIER_KEY = {
   P: "triage.tier.P",

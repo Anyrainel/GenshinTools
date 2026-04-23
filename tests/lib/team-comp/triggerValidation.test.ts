@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const implDir = resolve(__dirname, "../../../src/lib/team-comp/impl");
+const implDir = resolve(__dirname, "../../../src/lib/dmgcalc/impl");
 const implFiles = readdirSync(implDir)
   .filter((f) => f.endsWith(".ts"))
   .map((f) => ({

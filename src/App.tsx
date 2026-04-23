@@ -1,11 +1,19 @@
 import { GreetingGate } from "@/components/greeting/GreetingGate";
+import { useTourLabels, useTours } from "@/components/layout/tourConfig";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
 import { TourProvider } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getTours } from "@/lib/tourConfig";
+import {
+  artifactTextResource,
+  weaponTextResource,
+} from "@/data/gameDataLoader";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import { cn } from "@/lib/utils";
-import { Suspense, lazy, useEffect, useMemo } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 
@@ -27,7 +35,7 @@ const PAGE_TITLES: Record<string, { en: string; zh: string }> = {
 
 function App() {
   const location = useLocation();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const isHomePage = location.pathname === "/";
 
   useEffect(() => {
@@ -36,12 +44,22 @@ function App() {
     document.title = page ? `${page[language]} — ${SITE_NAME}` : SITE_NAME;
   }, [location.pathname, language]);
 
-  // Memoize tours to avoid recreating on every render
-  const tours = useMemo(() => getTours(t), [t]);
+  // Tier B preload — fire-and-forget at app boot. Tooltip / table consumers
+  // call resource.use() themselves and render skeletons until ready, so this
+  // is purely an optimization to start the network requests earlier.
+  useEffect(() => {
+    void characterStatsResource.preload();
+    void weaponStatsResource.preload();
+    void weaponTextResource.preload(language);
+    void artifactTextResource.preload(language);
+  }, [language]);
+
+  const tours = useTours();
+  const tourLabels = useTourLabels();
 
   return (
     <PageErrorBoundary>
-      <TourProvider tours={tours}>
+      <TourProvider tours={tours} labels={tourLabels}>
         <div className="h-dvh bg-background text-foreground flex flex-col">
           <main
             className={cn(

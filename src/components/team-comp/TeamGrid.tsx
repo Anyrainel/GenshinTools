@@ -1,28 +1,31 @@
-import { CategoryChip } from "@/components/archive/CategoryChip";
-import { FilterChip } from "@/components/archive/FilterChip";
-import type { ControlHandle } from "@/components/layout/AppBar";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { CategoryChip } from "@/components/shared/CategoryChip";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { FilterChip } from "@/components/shared/FilterChip";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, elementResourcesByName } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
-import type { Element, Region } from "@/data/types";
-import { elements, regions, tiers } from "@/data/types";
+import { tiers } from "@/data/enums";
+import type { Element, Region } from "@/data/enums";
+import { elements, regions } from "@/data/enums";
+import { charactersById, elementResourcesByName } from "@/data/gameResources";
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
-import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
 import { fuzzyMatch } from "@/lib/search";
+import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useFreezeStore } from "@/stores/useFreezeStore";
-import type { TeamSort } from "@/stores/useSessionNavStore";
+import type { TeamSort, ViewId } from "@/stores/useSessionNavStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
-import type { Team } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
 import {
@@ -106,7 +109,7 @@ function SortableTeamSlot({
 
 export interface TeamGridProps {
   /** Identifies which view this grid belongs to (for per-view session settings) */
-  viewId: import("@/stores/useSessionNavStore").ViewId;
+  viewId: ViewId;
   /** Session navigation: which team is currently open in detail view */
   activeTeamId: string | null;
   setActiveTeamId: (id: string | null) => void;
@@ -140,7 +143,7 @@ export function TeamGrid({
   const tour = useTour();
   const isXl = useMediaQuery("(min-width: 1280px)");
   const cardMinWidth = isXl ? CARD_MAX_WIDTH : CARD_MAX_WIDTH_COMPACT;
-  const { characterStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
   const accountData = useActiveAccountData();
   const teams = useTeamStore((s) => s.teams);
   const addTeam = useTeamStore((s) => s.addTeam);

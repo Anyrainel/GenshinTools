@@ -3,7 +3,7 @@ import type {
   TierGroupConfig,
   TierItemData,
 } from "@/components/tier-list/tierTableTypes";
-import type { Tier } from "@/data/types";
+import type { Tier } from "@/data/enums";
 import { render } from "../../utils/render";
 
 // Mock useMediaQuery to always return true for desktop mode

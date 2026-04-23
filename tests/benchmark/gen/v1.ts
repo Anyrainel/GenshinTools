@@ -1,7 +1,15 @@
-import type { ArtifactData, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type {
+  BuffActivationMap,
+  CalcContext,
+  ComboFormula,
+  ComboResult,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
 /**
  * V1 Team Optimizer: Hill-Climbing with Greedy Allocation
  *
@@ -10,12 +18,7 @@ import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
  */
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type {
-  BuffActivationMap,
-  CalcContext,
   CharOptConfig,
-  ComboFormula,
-  ComboResult,
-  ReactionOverride,
   TeamOptPassId,
   TeamOptPassResult,
   TeamOptYield,

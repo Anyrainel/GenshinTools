@@ -1,5 +1,6 @@
-import type { Tier, TierAssignment } from "@/data/types";
-import { DEFAULT_INVESTMENT_THRESHOLDS } from "@/data/types";
+import type { Tier } from "@/data/enums";
+import type { TierAssignment } from "@/data/types";
+import { DEFAULT_INVESTMENT_THRESHOLDS } from "@/stores/useTierStore";
 import {
   type TierListInstance,
   migrateTierStore,

@@ -9,23 +9,25 @@
  */
 
 import { charInfo } from "@/data/charInfo";
-import { artifactHalfSetsById } from "@/data/constants";
-import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import { artifactHalfSetsById } from "@/data/gameResources";
+import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ComboResult } from "@/lib/dmgcalc/types";
+import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import { scoreSlotWithMainStat } from "../../artifact/scoring/artifactScore";
 import {
   compileComboTeamDamage,
   fillVarsFromArtifacts,
-} from "../calc/formulaCompiler";
-import { computeSubstatMarginals } from "../calc/marginalGain";
-import { StatSheet } from "../calc/statSheet";
-import { TeamBuild } from "../calc/teamBuild";
+} from "../../dmgcalc/core/formulaCompiler";
+import { computeSubstatMarginals } from "../../dmgcalc/core/marginalGain";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
+import { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import { detectEquippedSets } from "../teamConfigUtils";
 import type {
   CharOptConfig,
-  ComboResult,
   OptFailReason,
-  StatKey,
   TeamOptPassId,
   TeamOptPassResult,
   TeamOptYield,
@@ -33,7 +35,6 @@ import type {
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "../types";
-import { getHalfSetIds, getSetId } from "../types";
 import {
   computeWeightScore,
   getArtifactCr,
@@ -42,8 +43,8 @@ import {
 import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
 import { runLagrangianAllocation } from "./lagrangianAlloc";
+import { artsTupleToRecord } from "./lagrangianAlloc";
 import type { BnBWorkerRequest, BnBWorkerResponse } from "./optimizer.worker";
-import { artsTupleToRecord } from "./types";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
 type TeamOptTraceEvent =

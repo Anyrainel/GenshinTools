@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { TriageSettings } from "@/lib/account-data/triage";
+import type { TriageSettings } from "@/lib/account-data/triage/types";
 
 type T = ReturnType<typeof useLanguage>["t"];
 

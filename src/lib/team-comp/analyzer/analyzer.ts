@@ -27,28 +27,26 @@
  *   R_value: 0 for 4★ weapon, refinement (1-5) for 5★ weapon
  */
 
-import type { Element, Rarity } from "@/data/types";
+import type { Element, Rarity } from "@/data/enums";
 
-import { CharBuild } from "../calc/charBuild";
-import { StatSheet } from "../calc/statSheet";
-import { TeamBuild } from "../calc/teamBuild";
-import { TeamMeta } from "../calc/teamMeta";
+import type { OptionMap } from "@/lib/dmgcalc/types";
+import type {
+  CalcContext,
+  ComboFormula,
+  ComboLine,
+  ReactionOverride,
+  TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
+import { getSetId } from "@/lib/dmgcalc/utils";
+import { CharBuild } from "../../dmgcalc/core/charBuild";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
+import { TeamBuild } from "../../dmgcalc/core/teamBuild";
+import { TeamMeta } from "../../dmgcalc/core/teamMeta";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
-import {
-  SUBSTAT_BUDGET_DEFAULT_PRESET,
-  type SubstatBudgetPreset,
-} from "../generator/substatBudget";
-import type { OptionMap } from "../types";
-import {
-  type BuffActivationMap,
-  type CalcContext,
-  type ComboFormula,
-  type ComboLine,
-  type ReactionOverride,
-  type TeamSlotConfig,
-  getSetId,
-} from "../types";
+import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "../generator/substatBudget";
 import type {
   AnalyzerCharConfig,
   AnalyzerDAG,

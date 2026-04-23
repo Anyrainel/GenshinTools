@@ -1,9 +1,5 @@
-import type {
-  Build,
-  BuildGroup,
-  BuildPayloadV5,
-  BuildSource,
-} from "@/data/types";
+import type { BuildSource } from "@/data/enums";
+import type { Build, BuildGroup, BuildPayloadV5 } from "@/data/types";
 import {
   getCachedPreset,
   loadPreset,

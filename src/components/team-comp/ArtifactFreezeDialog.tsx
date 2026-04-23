@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSortableStatsForSlot } from "@/data/constants";
-import type { ArtifactData, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import {
   getAllArtifacts,
@@ -25,10 +25,12 @@ import {
   sortByStats,
 } from "@/lib/artifact/inventory";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
-import { cn, getRarityColor } from "@/lib/utils";
+import { getSortableStatsForSlot } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { Check, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
+import { getRarityColor } from "../shared/colors";
 import { SORT_LABELS } from "./cardStyles";
 
 interface ArtifactFreezeDialogProps {

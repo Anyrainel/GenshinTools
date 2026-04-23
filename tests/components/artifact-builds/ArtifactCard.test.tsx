@@ -1,8 +1,8 @@
 import { ArtifactCard } from "@/components/artifact-builds/ArtifactCard";
-import type { ArtifactSetConfigs } from "@/data/types";
+import type { ArtifactBuildConfigs } from "@/data/types";
 import { render, screen } from "../../utils/render";
 
-const mockFilter: ArtifactSetConfigs = {
+const mockFilter: ArtifactBuildConfigs = {
   setId: "emblem_of_severed_fate",
   configurations: [
     {

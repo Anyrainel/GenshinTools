@@ -6,14 +6,15 @@ import {
 import { AutoTuneView } from "@/pages/artifact-builds/AutoTuneView";
 import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
 
-import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
+import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { getTabsForRoute } from "@/components/layout/appNavigation";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
-import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { BuildPayload, BuildPayloadV5, PresetOption } from "@/data/types";
 

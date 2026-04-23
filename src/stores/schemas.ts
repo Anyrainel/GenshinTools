@@ -7,11 +7,6 @@
  */
 import { z } from "zod";
 
-// Re-export from team-comp schemas
-export {
-  ArtifactSetConfigSchema,
-  TeamSlotConfigSchema,
-} from "@/lib/team-comp/schemas";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
 
 // ─── ArtifactData (replaces repairArtifact) ───

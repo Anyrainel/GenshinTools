@@ -1,9 +1,9 @@
 import {
-  getAssetUrl,
   getElementColor,
   getRarityColor,
   getTierColor,
-} from "@/lib/utils";
+} from "@/components/shared/colors";
+import { getAssetUrl } from "@/lib/utils";
 import { describe, expect, it } from "vitest";
 
 describe("getAssetUrl", () => {

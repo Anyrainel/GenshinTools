@@ -6,38 +6,42 @@
  * and provides diffing utilities.
  */
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
-import { artifactHalfSetsById } from "@/data/constants";
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import type { Element, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { buffSourceKey } from "@/lib/team-comp/calc/statBuff";
-import type { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { allSlots } from "@/data/enums";
+import type { Element, Slot } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import { artifactHalfSetsById } from "@/data/gameResources";
 import {
-  type GeneratorOptions,
-  type GeneratorResult,
-  runGenerator,
-} from "@/lib/team-comp/generator/generator";
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import type { ArtifactSetConfig } from "@/data/types";
+import type { StackLimitedBuffInfo } from "@/lib/dmgcalc/core/stackRank";
+import { buffSourceKey } from "@/lib/dmgcalc/core/statBuff";
+import type { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
-  ArtifactSetConfig,
   BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboLine,
   DamageTag,
   DisplayResult,
-  StatKey,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import {
+  type GeneratorOptions,
+  type GeneratorResult,
+  runGenerator,
+} from "@/lib/team-comp/generator/generator";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // ─── Re-exports from benchmark runner ────────────────────────────────────────
 
-export { preloadGameStats };
+export { characterStatsResource, weaponStatsResource };
 
 // ─── Types (local, matching benchmark runner conventions) ────────────────────
 
@@ -440,9 +444,7 @@ function serializeTeamResult(
   charIds: string[],
   comboDefaults?: {
     perLine: BuffActivationMap[];
-    stackLimited: import(
-      "@/lib/team-comp/calc/stackRank"
-    ).StackLimitedBuffInfo[];
+    stackLimited: StackLimitedBuffInfo[];
   }
 ): GoldenTeamResult {
   // Artifacts

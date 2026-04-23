@@ -1,4 +1,5 @@
-import type { SetConfig, SlotConfig, SubStat } from "../../data/types";
+import type { SubStat } from "@/data/enums";
+import type { BuildConfig, SlotConfig } from "../../data/types";
 import {
   SLOT_KEYS,
   type SlotKey,
@@ -36,7 +37,7 @@ interface FlexSlotShape {
  *    introducing a flexible slot.
  * 4. Run step 2 again (step 3 may have created new same-mustPresent pairs).
  */
-export function greedyMerge(configs: SetConfig[]): SetConfig[] {
+export function greedyMerge(configs: BuildConfig[]): BuildConfig[] {
   if (configs.length <= 1) {
     return configs;
   }
@@ -55,9 +56,9 @@ export function greedyMerge(configs: SetConfig[]): SetConfig[] {
  * Repeatedly apply a pairwise merge strategy until no more pairs can merge.
  */
 function reduceWithStrategy(
-  configs: SetConfig[],
-  strategy: (target: SetConfig, candidate: SetConfig) => boolean
-): SetConfig[] {
+  configs: BuildConfig[],
+  strategy: (target: BuildConfig, candidate: BuildConfig) => boolean
+): BuildConfig[] {
   const list = [...configs];
 
   let didMerge = true;
@@ -89,8 +90,8 @@ function reduceWithStrategy(
  * have been caught by mergeIdenticalConfigs).
  */
 function tryPairwiseMerge(
-  target: SetConfig,
-  candidate: SetConfig,
+  target: BuildConfig,
+  candidate: BuildConfig,
   slotMerger: (target: SlotConfig, candidate: SlotConfig) => SlotConfig | null
 ): boolean {
   const slotUpdates: Partial<Record<SlotKey, SlotConfig>> = {};
@@ -138,8 +139,8 @@ function tryPairwiseMerge(
  * k = |mustPresent| + 1. Unions the option pools ("flex stat").
  */
 function tryMergeSameMustPresent(
-  target: SetConfig,
-  candidate: SetConfig
+  target: BuildConfig,
+  candidate: BuildConfig
 ): boolean {
   return tryPairwiseMerge(target, candidate, mergeSameMustPresentSlot);
 }
@@ -149,8 +150,8 @@ function tryMergeSameMustPresent(
  * k−1 stats. Extracts the common mustPresent and creates a flex slot.
  */
 function tryExtractCommonMustPresent(
-  target: SetConfig,
-  candidate: SetConfig
+  target: BuildConfig,
+  candidate: BuildConfig
 ): boolean {
   return tryPairwiseMerge(target, candidate, extractCommonMustPresentSlot);
 }

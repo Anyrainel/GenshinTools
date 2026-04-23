@@ -7,21 +7,24 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot } from "@/data/enums";
 import {
-  type ArtifactData,
-  type MainStat,
-  type Slot,
-  allSlots,
-} from "@/data/types";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer";
-import type { TeamSlotConfig } from "@/lib/team-comp/types";
-import "@/lib/team-comp/index";
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import type { ArtifactData } from "@/data/types";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
+import "@/lib/dmgcalc";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 let artIdCounter = 1;
 function makeArt(

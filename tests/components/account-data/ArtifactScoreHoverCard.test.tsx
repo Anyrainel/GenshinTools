@@ -1,5 +1,5 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
-import type { SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,

@@ -1,12 +1,11 @@
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot } from "@/data/enums";
 import type {
   ArtifactData,
   Build,
   BuildGroup,
   GlobalStatWeights,
-  MainStat,
-  Slot,
 } from "@/data/types";
-import { allSlots } from "@/data/types";
 import {
   type EvalBuild,
   collectEvalBuilds,

@@ -1,13 +1,14 @@
+import type { Rarity, Slot } from "@/data/enums";
 import {
   artifactHalfSetsById,
   artifactsById,
   charactersById,
   weaponsById,
-} from "@/data/constants";
-import type { Rarity, Slot } from "@/data/types";
-import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
+} from "@/data/gameResources";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { Lock } from "lucide-react";
 import { forwardRef } from "react";
+import { getRarityColor } from "./colors";
 
 /**
  * Resolve two artifact half-set IDs to distinct flower image paths.

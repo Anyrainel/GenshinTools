@@ -12,9 +12,9 @@ import { AutoTuneSelectionCard } from "@/components/artifact-builds/AutoTuneSele
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { characterStatsResource } from "@/data/gameStatsLoader";
 import type { AccountData, Build, BuildGroup } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { WeightedFormula } from "@/lib/artifact-builds/auto-tune/autoTune";
 import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
@@ -25,11 +25,12 @@ import type {
   AutoTuneTeamResult,
 } from "@/lib/artifact/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
+import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { type Team, useTeamStore } from "@/stores/useTeamStore";
+import { useTeamStore } from "@/stores/useTeamStore";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -241,7 +242,7 @@ function collectEntries(
 
 export function AutoTuneView() {
   const { t } = useLanguage();
-  const { characterStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
   const groups = useAllResolvedBuilds();
   const setBuild = useBuildsStore((s) => s.setBuild);
   const allUserTeams = useTeamStore((s) => s.teams);

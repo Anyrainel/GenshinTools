@@ -1,15 +1,13 @@
-import { artifactHalfSetsById, artifactsById } from "@/data/constants";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
 import type {
   AccountData,
   ArtifactData,
   Build,
   BuildGroup,
   GlobalStatWeights,
-  MainStat,
-  Slot,
-  SubStat,
 } from "@/data/types";
-import { allSlots } from "@/data/types";
 import {
   type StatWeightMap,
   buildToWeightMap,

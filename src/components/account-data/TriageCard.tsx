@@ -1,11 +1,12 @@
-import { ArtifactStatList } from "@/components/account-data/ArtifactStatList";
+import { ArtifactStatList } from "@/components/shared/ArtifactStatList";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { TriageDecision } from "@/lib/account-data/triage";
-import { cn, getRarityColor, getTriageTierColor } from "@/lib/utils";
+import type { TriageDecision } from "@/lib/account-data/triage/types";
+import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp, Info, ShieldAlert } from "lucide-react";
+import { getRarityColor, getTriageTierColor } from "../shared/colors";
 
 export type TriageCardSection =
   | "recommendLock"

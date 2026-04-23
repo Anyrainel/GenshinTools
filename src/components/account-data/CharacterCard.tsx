@@ -12,9 +12,14 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo as charInfoData } from "@/data/charInfo";
-import { artifactsById, charactersById, weaponsById } from "@/data/constants";
-import type { CharacterData, MainStatSlot, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { MainStatSlot, Slot } from "@/data/enums";
+import {
+  artifactsById,
+  charactersById,
+  weaponsById,
+} from "@/data/gameResources";
+import type { CharacterData } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { Pencil, Sword } from "lucide-react";

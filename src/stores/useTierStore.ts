@@ -1,10 +1,9 @@
+import type { LuckExpectation } from "@/data/enums";
 import type {
   InvestmentThresholds,
-  LuckExpectation,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
-import { DEFAULT_INVESTMENT_THRESHOLDS } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -165,6 +164,13 @@ export function migrateTierStore(
   }
   return persistedState as Record<string, unknown>;
 }
+
+export const DEFAULT_INVESTMENT_THRESHOLDS: InvestmentThresholds = {
+  swap: 1,
+  upgrade: 3,
+  reroll: 7,
+  farm: 5,
+};
 
 // Store
 
@@ -420,6 +426,3 @@ export const useTierStore = create<TierListState>()(
     }
   )
 );
-
-// Auto-switch tier list when active account changes
-import("@/lib/tierListAutoSwitch");

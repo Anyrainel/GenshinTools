@@ -1,9 +1,12 @@
-import type { ArtifactData, ReactionType } from "@/data/types";
+import type { ReactionType } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
+import type { ArtifactSetConfig } from "@/data/types";
 import {
   calcComboResults,
   extractComboOverrides,
-} from "@/lib/team-comp/calc/comboBuffOverrides";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+} from "@/lib/dmgcalc/core/comboBuffOverrides";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { OptionMap } from "@/lib/dmgcalc/types";
 import {
   buildTeamConfigs,
   detectEquippedSets,
@@ -11,8 +14,6 @@ import {
   setsMatch,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
-import type { ArtifactSetConfig } from "@/lib/team-comp/types";
-import type { OptionMap } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 import {
   createAccountData,

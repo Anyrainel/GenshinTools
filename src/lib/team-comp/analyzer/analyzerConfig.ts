@@ -1,6 +1,6 @@
-import { charactersById, weaponsById } from "@/data/constants";
-import type { Rarity } from "@/data/types";
-import type { TeamSlotConfig } from "../types";
+import type { Rarity } from "@/data/enums";
+import { charactersById, weaponsById } from "@/data/gameResources";
+import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import type { AnalyzerCharConfig, StoredAnalyzerCharConfig } from "./types";
 
 /** Re-reconcile already-expanded full configs when baseConfigs change (char added/removed/swapped). */

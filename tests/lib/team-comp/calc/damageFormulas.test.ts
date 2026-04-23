@@ -7,9 +7,9 @@ import {
   LunarDirectFormula,
   LunarFormula,
   TransformFormula,
-} from "@/lib/team-comp/calc/damageFormula";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { CalcContext } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/core/damageFormula";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { CalcContext } from "@/lib/dmgcalc/types";
 
 const CTX: CalcContext = {
   enemyLevel: 100,

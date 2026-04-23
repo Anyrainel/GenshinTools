@@ -5,16 +5,13 @@ import {
   type CharacterStatsMap,
   type WeaponStats,
   type WeaponStatsMap,
+  characterStatsResource,
   getCharacterDisplayMeta,
   getCharacterLevelStats,
   getCharacterLevelTier,
-  getCharacterStats,
-  getCharacterStatsSync,
   getWeaponDisplayMeta,
-  getWeaponStats,
   getWeaponStatsAt90,
-  getWeaponStatsSync,
-  preloadGameStats,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -194,33 +191,36 @@ describe("getWeaponDisplayMeta", () => {
 
 describe("async loaders and sync getters", () => {
   beforeAll(async () => {
-    await preloadGameStats();
+    await Promise.all([
+      characterStatsResource.preload(),
+      weaponStatsResource.preload(),
+    ]);
   });
 
   it("getCharacterStats resolves to a non-empty map", async () => {
-    const data = await getCharacterStats();
+    const data = await characterStatsResource.preload();
     expect(typeof data).toBe("object");
     expect(Object.keys(data).length).toBeGreaterThan(0);
   });
 
   it("getWeaponStats resolves to a non-empty map", async () => {
-    const data = await getWeaponStats();
+    const data = await weaponStatsResource.preload();
     expect(typeof data).toBe("object");
     expect(Object.keys(data).length).toBeGreaterThan(0);
   });
 
   it("getCharacterStatsSync returns non-null after preload", () => {
-    const data = getCharacterStatsSync();
+    const data = characterStatsResource.peek();
     expect(data).not.toBeNull();
   });
 
   it("getWeaponStatsSync returns non-null after preload", () => {
-    const data = getWeaponStatsSync();
+    const data = weaponStatsResource.peek();
     expect(data).not.toBeNull();
   });
 
   it("character stats entries have expected shape", async () => {
-    const data = await getCharacterStats();
+    const data = await characterStatsResource.preload();
     const albedo = data.albedo;
     expect(albedo).toBeDefined();
     expect(albedo.element).toBe("Geo");
@@ -231,7 +231,7 @@ describe("async loaders and sync getters", () => {
   });
 
   it("character stats levels contain numeric-string values", async () => {
-    const data = await getCharacterStats();
+    const data = await characterStatsResource.preload();
     const albedo = data.albedo;
     const tier90 = albedo.levels["90"] as CharacterLevelStats;
     expect(tier90).toBeDefined();
@@ -240,7 +240,7 @@ describe("async loaders and sync getters", () => {
   });
 
   it("weapon stats entries have expected shape", async () => {
-    const data = await getWeaponStats();
+    const data = await weaponStatsResource.preload();
     const weapon = data.a_thousand_floating_dreams;
     expect(weapon).toBeDefined();
     expect(weapon.type).toBe("Catalyst");
@@ -249,21 +249,21 @@ describe("async loaders and sync getters", () => {
   });
 
   it("weapon stats at 90 have numeric baseAtk", async () => {
-    const data = await getWeaponStats();
+    const data = await weaponStatsResource.preload();
     const stats = getWeaponStatsAt90(data, "a_thousand_floating_dreams");
     expect(stats).toBeDefined();
     expect(stats!.baseAtk).toBeGreaterThan(0);
   });
 
   it("getCharacterStats returns the same cached reference on repeated calls", async () => {
-    const a = await getCharacterStats();
-    const b = await getCharacterStats();
+    const a = await characterStatsResource.preload();
+    const b = await characterStatsResource.preload();
     expect(a).toBe(b);
   });
 
   it("getWeaponStats returns the same cached reference on repeated calls", async () => {
-    const a = await getWeaponStats();
-    const b = await getWeaponStats();
+    const a = await weaponStatsResource.preload();
+    const b = await weaponStatsResource.preload();
     expect(a).toBe(b);
   });
 });

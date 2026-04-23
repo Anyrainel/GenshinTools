@@ -1,8 +1,8 @@
 import {
   adjustPartDamage,
   formulaCritRatio,
-} from "@/lib/team-comp/calc/formulaDisplay";
-import type { DisplayPart } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/core/formulaDisplay";
+import type { DisplayPart } from "@/lib/dmgcalc/types";
 import { describe, expect, it } from "vitest";
 
 /** Helper to build a minimal DisplayPart with the fields adjustPartDamage reads. */

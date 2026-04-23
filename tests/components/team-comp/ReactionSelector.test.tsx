@@ -1,16 +1,22 @@
 import { ReactionSelector } from "@/components/team-comp/ReactionSelector";
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import "@/lib/team-comp/index";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import "@/lib/dmgcalc";
 import {
   DirectFormula,
   TransformFormula,
-} from "@/lib/team-comp/calc/damageFormula";
-import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
-import type { FormulaEntry } from "@/lib/team-comp/types";
-import type { ReactionOverride } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/core/damageFormula";
+import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
+import type { FormulaEntry } from "@/lib/dmgcalc/types";
+import type { ReactionOverride } from "@/lib/dmgcalc/types";
 import { render, screen } from "../../utils/render";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 // ─── Fixtures ───
 

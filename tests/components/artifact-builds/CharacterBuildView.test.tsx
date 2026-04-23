@@ -88,24 +88,28 @@ vi.mock("@/data/constants", () => ({
   ],
 }));
 
-vi.mock("@/data/resources", () => ({
-  characters: [
-    {
-      id: "char1",
-      element: "Pyro",
-      weaponType: "Sword",
-      rarity: 5,
-      region: "Mondstadt",
-    },
-    {
-      id: "char2",
-      element: "Hydro",
-      weaponType: "Bow",
-      rarity: 4,
-      region: "Liyue",
-    },
-  ],
-}));
+vi.mock("@/data/resources", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/data/resources")>();
+  return {
+    ...actual,
+    characters: [
+      {
+        id: "char1",
+        element: "Pyro",
+        weaponType: "Sword",
+        rarity: 5,
+        region: "Mondstadt",
+      },
+      {
+        id: "char2",
+        element: "Hydro",
+        weaponType: "Bow",
+        rarity: 4,
+        region: "Liyue",
+      },
+    ],
+  };
+});
 
 // Mock virtualizer
 vi.mock("@tanstack/react-virtual", () => ({

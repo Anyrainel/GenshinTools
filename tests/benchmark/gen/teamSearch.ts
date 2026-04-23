@@ -13,36 +13,38 @@
  * and export `runTeamOptimization` by calling `createTeamOptimizer`.
  */
 
-import { artifactIdToHalfSetId } from "@/data/constants";
-import { isPctStat } from "@/data/constants";
-import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import { artifactIdToHalfSetId } from "@/data/gameResources";
+import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import { isPctStat } from "@/data/utils";
 import {
   type BuildMatchResult,
-  getMainStatValueAtLevel,
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
 } from "@/lib/artifact/scoring/artifactScore";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type {
+  CalcContext,
+  ComboResult,
+  DamageResult,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
+import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
-import {
-  type CalcContext,
-  type CharOptConfig,
-  type ComboResult,
-  type DamageResult,
-  type OptFailReason,
-  type ReactionOverride,
-  type StatKey,
-  type TeamOptPassId,
-  type TeamOptPassResult,
-  type TeamOptYield,
-  type TeamOptimizationProgress,
-  type TeamOptimizationResult,
-  type TeamOptimizerOptions,
-  getHalfSetIds,
-  getSetId,
+import type {
+  CharOptConfig,
+  OptFailReason,
+  TeamOptPassId,
+  TeamOptPassResult,
+  TeamOptYield,
+  TeamOptimizationProgress,
+  TeamOptimizationResult,
+  TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 
 export const TOP_K = 50;

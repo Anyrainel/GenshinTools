@@ -1,7 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import type { ReactionType } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import {
+  type ReactionComboGridRow,
+  getFormulaReactions,
+} from "@/lib/dmgcalc/core/teamFormulaCatalog";
+import type { FormulaEntry } from "@/lib/dmgcalc/types";
+import type {
+  ComboFormula,
+  I18nLabel,
+  ReactionOverride,
+  TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
 import {
   comboLineKey,
   comboOverrideKey,
@@ -16,19 +29,6 @@ import type {
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  type ReactionComboGridRow,
-  getFormulaReactions,
-} from "@/lib/team-comp/calc/teamFormulaCatalog";
-import type { FormulaEntry } from "@/lib/team-comp/types";
-import type {
-  ComboFormula,
-  I18nLabel,
-  ReactionOverride,
-  ReactionType,
-  TeamSlotConfig,
-} from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

@@ -1,4 +1,3 @@
-import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -9,7 +8,10 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AccountData, Build, Element } from "@/data/types";
+import type { Element } from "@/data/enums";
+import type { ReactionType } from "@/data/enums";
+import type { ArtifactSetConfig } from "@/data/types";
+import type { AccountData, Build } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
 import type {
@@ -17,11 +19,12 @@ import type {
   AutoTuneTeamResult,
 } from "@/lib/artifact/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
+import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/dmgcalc/constants";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { ComboLine, I18nLabel } from "@/lib/dmgcalc/types";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
-import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
-import { type Team, useTeamStore } from "@/stores/useTeamStore";
+import type { Team } from "@/lib/team-comp/types";
+import { useTeamStore } from "@/stores/useTeamStore";
 import { Loader2, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { AutoTuneResults } from "./AutoTuneResults";
@@ -282,7 +285,7 @@ export function AutoTuneDialog({
   // ─── Add Team (via edit dialog) ───
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
-  const buildArtifactConfig = useCallback((): ArtifactConfig | null => {
+  const buildArtifactConfig = useCallback((): ArtifactSetConfig | null => {
     if (build.composition === "4pc" && build.artifactSet)
       return { type: "4pc", setId: build.artifactSet };
     if (build.composition === "2pc+2pc" && build.halfSet1 && build.halfSet2)
@@ -298,7 +301,7 @@ export function AutoTuneDialog({
     (team: {
       characters: (string | null)[];
       weapons: (string | null)[];
-      artifacts: (ArtifactConfig | null)[];
+      artifacts: (ArtifactSetConfig | null)[];
     }) => {
       const teamId = addTeam({
         characters: team.characters,

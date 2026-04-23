@@ -1,4 +1,4 @@
-import type { SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
 import { evaluateTier } from "@/lib/account-data/triage/tierEvaluator";
 import type {
   TierCondition,

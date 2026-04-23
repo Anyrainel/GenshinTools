@@ -1,6 +1,8 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { type Tier, type TierAssignment, tiers } from "@/data/types";
+import { tiers } from "@/data/enums";
+import type { Tier } from "@/data/enums";
+import type { TierAssignment } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   DndContext,

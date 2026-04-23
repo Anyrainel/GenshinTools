@@ -1,3 +1,4 @@
+import type { Slot } from "@/data/enums";
 /**
  * Comprehensive tests for frozen artifact inventory filtering.
  *
@@ -17,7 +18,7 @@
  * 9. Partially frozen teams
  * 10. Edge cases: empty slots, null artifacts, missing characters
  */
-import type { ArtifactData, Slot } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import {
   type ComputeInventoryParams,
   computeTeamInventory,

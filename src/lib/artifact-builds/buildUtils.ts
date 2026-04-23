@@ -1,4 +1,4 @@
-import { allArtifacts, allCharacters } from "@/data/constants";
+import { allArtifacts, allCharacters } from "@/data/gameResources";
 import { toBase64 } from "@/lib/base64";
 import type {
   Build,

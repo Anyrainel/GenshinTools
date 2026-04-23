@@ -219,13 +219,13 @@ describe("LanguageContext", () => {
         wrapper: LanguageProvider,
       });
 
-      expect(result.current.t.lang).toBe("en");
+      expect(result.current.language).toBe("en");
 
       act(() => {
         result.current.setLanguage("zh");
       });
 
-      expect(result.current.t.lang).toBe("zh");
+      expect(result.current.language).toBe("zh");
     });
   });
 });

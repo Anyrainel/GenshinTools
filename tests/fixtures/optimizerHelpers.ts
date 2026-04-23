@@ -6,10 +6,11 @@
  * across every test file.
  */
 import type { ArtifactData } from "@/data/types";
+import type { ArtifactSetConfig } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type { ArtifactSetConfig, TeamSlotConfig } from "@/lib/team-comp/types";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 
 // ── Artifact factory ────────────────────────────────────────────────────────
 

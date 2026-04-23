@@ -6,7 +6,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Language } from "@/data/types";
+import type { Language } from "@/data/enums";
 import { cn } from "@/lib/utils";
 import newsEnRaw from "@/presets/updatelog/en.md?raw";
 import newsZhRaw from "@/presets/updatelog/zh.md?raw";
@@ -277,8 +277,8 @@ const STYLES = `
 
 export function WhatsNew({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const { t } = useLanguage();
-  const news = useMemo(() => newsMap[t.lang], [t.lang]);
+  const { t, language } = useLanguage();
+  const news = useMemo(() => newsMap[language], [language]);
 
   // Register this instance as the programmatic open target
   useEffect(() => {

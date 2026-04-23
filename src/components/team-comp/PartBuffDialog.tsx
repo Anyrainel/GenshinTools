@@ -6,6 +6,11 @@
  * slider (hits > 1) or toggle (hits === 1) for activation control.
  */
 
+import { getReceiverColor } from "@/components/shared/colors";
+import {
+  type StatEntryData,
+  StatEntryRow,
+} from "@/components/team-comp/StatEntryRow";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -17,21 +22,18 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import {
-  type StatEntryData,
-  StatEntryRow,
-  formatFilter,
-  formatReceiverLabel,
-  getReceiverBadgeClasses,
-  getSourceIcon,
-  getSourceName,
-} from "@/lib/team-comp/buffDisplayUtils";
-import { getTemplateName } from "@/lib/team-comp/displayFormatter";
+  useBuffFilterLabel,
+  useBuffReceiverLabel,
+  useBuffSourceName,
+  useTemplateName,
+} from "@/hooks/useBuffLabels";
 import type {
-  BuffActivationMap,
   DisplayPart,
   ResolvedBuff,
   ResolvedStatEntry,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { Settings2 } from "lucide-react";
@@ -76,6 +78,10 @@ function PartTab({
   comboCount?: number;
   comboKey?: string;
 }) {
+  const sourceName = useBuffSourceName();
+  const filterLabel = useBuffFilterLabel();
+  const receiverLabel = useBuffReceiverLabel();
+  const templateName = useTemplateName();
   const hits = part.hits ?? 1;
   // Route to comboOverrides whenever comboKey is provided — the damage-calc
   // path always reads from comboOverrides (single mode uses comboId
@@ -150,8 +156,8 @@ function PartTab({
             const isDefault = overrides?.[bKey]?.[partIndex] === undefined;
 
             const icon = getSourceIcon(buff.source);
-            const name = getSourceName(buff.source, t);
-            const filterDesc = formatFilter(buff.target, t);
+            const name = sourceName(buff.source);
+            const filterDesc = filterLabel(buff.target);
             const allEntries: StatEntryData[] = [
               ...buff.staticEntries.map((e) => ({
                 key: e.key,
@@ -167,7 +173,7 @@ function PartTab({
               })),
             ];
 
-            const receiverLabel = formatReceiverLabel(buff.target, t);
+            const receiverLabelText = receiverLabel(buff.target);
 
             return (
               <div
@@ -205,10 +211,13 @@ function PartTab({
                   <span
                     className={cn(
                       "ml-auto text-xs font-bold uppercase px-1.5 py-0.5 rounded shrink-0",
-                      getReceiverBadgeClasses(buff.target)
+                      getReceiverColor(
+                        buff.target.receiver,
+                        !!buff.target.charId
+                      )
                     )}
                   >
-                    {receiverLabel}
+                    {receiverLabelText}
                   </span>
                 </div>
 
@@ -224,11 +233,7 @@ function PartTab({
                   {/* Stat entries */}
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0 flex-1">
                     {allEntries.map((entry, i) => (
-                      <StatEntryRow
-                        key={`${entry.key}-${i}`}
-                        entry={entry}
-                        t={t}
-                      />
+                      <StatEntryRow key={`${entry.key}-${i}`} entry={entry} />
                     ))}
                   </div>
 
@@ -296,6 +301,7 @@ export function PartBuffDialog({
 }: Props) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(initialTab);
+  const templateName = useTemplateName();
   const isCombo = comboKey != null;
   const overrides = useBuffOverrideStore((s) =>
     isCombo ? s.comboOverrides[comboKey] : s.overrides[formulaKey]
@@ -368,7 +374,7 @@ export function PartBuffDialog({
                     )}
                     onClick={() => setActiveTab(idx)}
                   >
-                    {idx + 1}. {getTemplateName(p, t)}
+                    {idx + 1}. {templateName(p)}
                   </button>
                 );
               })}

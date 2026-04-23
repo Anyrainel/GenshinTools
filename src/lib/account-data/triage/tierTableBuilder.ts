@@ -3,7 +3,7 @@
  * On-demand: computes and caches entries by structural key.
  */
 
-import type { MainStat, Slot, SubStat } from "@/data/types";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
 import { P4L, SUB_WEIGHTS, type TriageMode, getTier, pJoint } from "./tierMath";
 import type { DemandTierEntry, TierCondition } from "./types";
 

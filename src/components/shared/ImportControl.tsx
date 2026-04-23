@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import type { ControlHandle } from "@/components/layout/AppBar";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import {
   AlertDialog,
   AlertDialogAction,

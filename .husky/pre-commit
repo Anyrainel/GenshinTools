@@ -10,5 +10,8 @@ if [ ! -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
   if [ -n "$STAGED_TS_FILES" ]; then
     echo "Running related tests..."
     npx vitest related --run $STAGED_TS_FILES || exit 1
+
+    echo "Running dependency-cruiser..."
+    npm run depcheck || exit 1
   fi
 fi

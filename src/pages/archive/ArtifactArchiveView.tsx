@@ -1,13 +1,13 @@
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { ArtifactCard } from "@/components/archive/ArtifactCard";
-import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { FilterChip } from "@/components/shared/FilterChip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   allHalfSetIds,
   artifactIdToHalfSetId,
   sortedArtifacts,
-} from "@/data/constants";
+} from "@/data/gameResources";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { fuzzyMatch } from "@/lib/search";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";

@@ -1,23 +1,29 @@
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
 /**
  * Tests for generator — verifying 2+2pc set assignment and 4★ flex slot promotion.
  */
-import { artifactHalfSetsById, artifactsById } from "@/data/constants";
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import type { Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
 import {
   type GeneratorOptions,
   runGenerator,
 } from "@/lib/team-comp/generator/generator";
-import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 import { drain, getFirstFormulaId } from "../../../fixtures/optimizerHelpers";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const CTX: CalcContext = {
   enemyLevel: 100,

@@ -24,18 +24,19 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { statPools } from "@/data/constants";
-import { artifactsById, charactersById, weaponsById } from "@/data/constants";
-import { isPctStat } from "@/data/constants";
-import type {
-  AccountData,
-  ArtifactData,
-  CharacterData,
-  MainStat,
-  Slot,
-  SubStat,
-} from "@/data/types";
-import { allSlots } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import {
+  artifactsById,
+  charactersById,
+  weaponsById,
+} from "@/data/gameResources";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
+import { isPctStat } from "@/data/utils";
 import {
   changeWeapon,
   createAndEquipArtifact,
@@ -63,7 +64,7 @@ import {
 } from "lucide-react";
 import type React from "react";
 import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
-import { ArtifactDataHoverCard } from "./ArtifactDataHoverCard";
+import { ArtifactDataHoverCard } from "../shared/ArtifactDataHoverCard";
 
 type DialogView =
   | { kind: "overview" }
@@ -1147,7 +1148,6 @@ function SubstatRow({
             checked={isUnactivated}
             onCheckedChange={() => onToggleUnactivated?.()}
           />
-          {/* biome-ignore lint/a11y/noLabelWithoutControl: htmlFor targets Radix Checkbox */}
           <label
             htmlFor={`unactivated-${statKey}`}
             className="text-xs text-muted-foreground select-none cursor-pointer"
@@ -1198,7 +1198,8 @@ function WeaponPickPanel({
   const [search, setSearch] = useState("");
   const q = search.toLowerCase();
 
-  const { characterStats, weaponStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
   const reqType = characterStats?.[char.key]?.weaponType;
 
   const inventory = data.extraWeapons.filter((w) => {

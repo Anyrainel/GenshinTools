@@ -5,19 +5,20 @@ import {
   OptionButtonRow,
 } from "@/components/ui/option-button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, elementResourcesByName } from "@/data/constants";
-import type { Element, ReactionType } from "@/data/types";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { getFormulaReactions } from "@/lib/team-comp/calc/teamFormulaCatalog";
-import { REACTION_ELEMENT_REQUIREMENTS } from "@/lib/team-comp/constants";
+import type { Element } from "@/data/enums";
+import type { ReactionType } from "@/data/enums";
+import { charactersById, elementResourcesByName } from "@/data/gameResources";
+import { REACTION_ELEMENT_REQUIREMENTS } from "@/lib/dmgcalc/constants";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import { getFormulaReactions } from "@/lib/dmgcalc/core/teamFormulaCatalog";
 import type {
   ComboLine,
   I18nLabel,
   ReactionOverride,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import type { Team } from "@/lib/team-comp/types";
 import { isElement, isReactionType } from "@/lib/typeValidation";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import {
   ChevronDown,
   ChevronRight,

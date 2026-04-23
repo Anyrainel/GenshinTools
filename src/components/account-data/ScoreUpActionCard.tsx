@@ -1,7 +1,7 @@
-import { ArtifactComparisonHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactComparisonHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
 import type { ArtifactData } from "@/data/types";
 import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import { cn } from "@/lib/utils";

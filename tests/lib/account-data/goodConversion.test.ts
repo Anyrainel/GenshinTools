@@ -2,8 +2,8 @@ import type { AccountData, CharacterData } from "@/data/types";
 import {
   type GOODData,
   convertGOODToAccountData,
-} from "@/lib/account-data/goodConversion";
-import { mergePartialAccountData } from "@/lib/account-data/mergeAccountData";
+} from "@/lib/account-data/import/goodConversion";
+import { mergePartialAccountData } from "@/lib/account-data/import/mergeAccountData";
 import { describe, expect, it } from "vitest";
 import goodMinimal from "../../fixtures/good-minimal.json";
 import goodSample from "../../fixtures/good-sample.json";

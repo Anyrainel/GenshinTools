@@ -18,15 +18,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/gameResources";
 import {
+  characterStatsResource,
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { WeaponResource } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
+import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import type { TeamSlotConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { Users } from "lucide-react";
 import { useCallback, useMemo } from "react";
@@ -145,7 +146,8 @@ function CharConfigGroup({
   subIconSize?: ItemIconSize;
 }) {
   const { t } = useLanguage();
-  const { characterStats, weaponStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
   const char = charactersById[config.charId];
 
   const charWeaponType = useMemo(() => {

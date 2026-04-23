@@ -7,33 +7,19 @@
  */
 
 import {
-  MAIN_STAT_VALUES_4STAR,
-  MAIN_STAT_VALUES_5STAR,
   SUBSTAT_COEFFICIENTS,
   avgSubstatRolls,
-  getMainStatValue,
-  isFlatStat,
   mainStatLevelValues,
   maxSubstatRolls,
   substatRollTiers,
 } from "@/data/constants";
-import type { MainStat, SubStat } from "@/data/types";
-
-// Re-export canonical constants so existing importers don't break
-export { SUBSTAT_COEFFICIENTS, getMainStatValue };
-
-// ─── Substat roll accessors ───
-
-/**
- * Average 5★ substat roll values in StatSheet-internal format (pct stats ÷ 100).
- * Used for marginal-gain analysis where one roll ≈ this delta on a StatSheet.
- */
-export const AVG_SUBSTAT_ROLL: Record<SubStat, number> = Object.fromEntries(
-  Object.entries(avgSubstatRolls[5]).map(([stat, avg]) => [
-    stat,
-    isFlatStat(stat) ? avg : avg / 100,
-  ])
-) as Record<SubStat, number>;
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { isFlatStat } from "@/data/utils";
+import {
+  AVG_ROLL_CD_EQUIV,
+  IDEAL_ROLL_DISTRIBUTION,
+  MAIN_STAT_CD_EQUIV_5STAR,
+} from "./constants";
 
 /** Convert a display-format stat value to StatSheet-internal format (pct stats ÷ 100) */
 export function toInternal(stat: string, displayValue: number): number {
@@ -79,27 +65,6 @@ export function getMainStatValueAtLevel(
   const idx = Math.max(0, Math.min(level, maxLevel));
   return table[idx] ?? 0;
 }
-
-// ─── Scoring constants ───
-
-/** CD-equivalent of one average roll = avg(cd tiers) in display form */
-export const AVG_ROLL_CD_EQUIV = avgSubstatRolls[5].cd;
-
-/** CD-equivalent of a 5-star main stat at Lv.20 (= CD main stat value) */
-export const MAIN_STAT_CD_EQUIV_5STAR = MAIN_STAT_VALUES_5STAR.cd;
-
-/** CD-equivalent of a 4-star main stat at Lv.16 (= CD main stat value) */
-export const MAIN_STAT_CD_EQUIV_4STAR = MAIN_STAT_VALUES_4STAR.cd;
-
-/** Reference substat budget: 40 average rolls for 5 artifacts */
-export const SUBSTAT_BUDGET_ROLLS = 40;
-
-/**
- * Ideal roll distribution across top-4 weighted substats.
- * Based on: 5 artifacts, each with 4 substats, top-end (all start with 4 lines)
- * ≈ [22, 10, 5, 5] rolls across the top 4 stats.
- */
-export const IDEAL_ROLL_DISTRIBUTION = [22, 10, 5, 5];
 
 // ─── Shared Scoring Utilities ───
 
@@ -158,13 +123,46 @@ export function computeCrDeduction(
   const excessCr = Math.max(0, totalArtifactCr - artifactCrBudget);
   if (excessCr <= 0) return 0;
   return excessCr * 100 * SUBSTAT_COEFFICIENTS.cr * (crWeight / 100);
-}
+} /** Create empty sub rolls record */
 
-/** Result of the auto-tuning pipeline for a single main-stat combo + team context */
-export type AutoTuneResult = {
-  weights: Record<SubStat, number>;
-  rollAllocation: Record<SubStat, number>;
-  midpointMarginals: Record<SubStat, number>;
-  /** Total damage after applying full greedy allocation (sum of all formulas) */
-  finalDamage: number;
-};
+export function emptySubRolls(): Record<
+  Slot,
+  Partial<Record<SubStat, number>>
+> {
+  return {
+    flower: {},
+    plume: {},
+    sands: {},
+    goblet: {},
+    circlet: {},
+  };
+} // ─── Roll value helpers ───
+/**
+ * Get roll values per stat in display format for a given rarity.
+ * When multiplier is provided, returns max × multiplier (for generator quality scaling).
+ * When omitted, returns exact averages from game data.
+ */
+
+export function getRollValues(
+  multiplier?: number,
+  rarity: 4 | 5 = 5
+): Record<SubStat, number> {
+  if (multiplier != null) {
+    return Object.fromEntries(
+      Object.entries(maxSubstatRolls[rarity]).map(([k, v]) => [
+        k,
+        v * multiplier,
+      ])
+    ) as Record<SubStat, number>;
+  }
+  return { ...avgSubstatRolls[rarity] };
+}
+/** Convert a display-format roll value to StatSheet-internal representation */
+
+export function rollToInternal(
+  stat: SubStat,
+  rolls: number,
+  rv: Record<SubStat, number>
+): number {
+  return toInternal(stat, rv[stat] * rolls);
+}

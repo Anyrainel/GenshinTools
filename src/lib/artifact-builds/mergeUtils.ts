@@ -6,11 +6,11 @@
  * three artifact config merge strategies.
  */
 
+import type { SubStat } from "@/data/enums";
 import type {
+  BuildConfig,
   CharacterMergeInfo,
-  SetConfig,
   SlotConfig,
-  SubStat,
 } from "../../data/types";
 
 export type SlotKey = "flowerPlume" | "sands" | "goblet" | "circlet";
@@ -30,7 +30,7 @@ export function cloneSlot(slot: SlotConfig): SlotConfig {
   };
 }
 
-export function cloneConfig(config: SetConfig): SetConfig {
+export function cloneConfig(config: BuildConfig): BuildConfig {
   return {
     flowerPlume: cloneSlot(config.flowerPlume),
     sands: cloneSlot(config.sands),
@@ -127,7 +127,7 @@ export function slotFingerprint(slot: SlotConfig): string {
 }
 
 /** Full config fingerprint across all slots (ignores mainStats and servedCharacters). */
-function configFingerprint(config: SetConfig): string {
+function configFingerprint(config: BuildConfig): string {
   return SLOT_KEYS.map((key) => slotFingerprint(config[key])).join("|");
 }
 
@@ -135,8 +135,8 @@ function configFingerprint(config: SetConfig): string {
  * Group configs by substat fingerprint, merging metadata (main stats +
  * servedCharacters) within each group. Reduces N before expensive operations.
  */
-export function coalesceByFingerprint(configs: SetConfig[]): SetConfig[] {
-  const groups = new Map<string, SetConfig>();
+export function coalesceByFingerprint(configs: BuildConfig[]): BuildConfig[] {
+  const groups = new Map<string, BuildConfig>();
 
   for (const config of configs) {
     const key = configFingerprint(config);
@@ -164,15 +164,15 @@ export function coalesceByFingerprint(configs: SetConfig[]): SetConfig[] {
  * Returns the best-scoring group list, or null if all partitions were skipped.
  */
 export function bestKPartition(
-  configs: SetConfig[],
+  configs: BuildConfig[],
   k: number,
-  evaluate: (groups: SetConfig[]) => number | null
-): SetConfig[] | null {
+  evaluate: (groups: BuildConfig[]) => number | null
+): BuildConfig[] | null {
   const n = configs.length;
   if (k <= 0 || n < k) return null;
 
   const labels = new Array<number>(n).fill(0);
-  let best: SetConfig[] | null = null;
+  let best: BuildConfig[] | null = null;
   let bestScore = Number.POSITIVE_INFINITY;
 
   const recurse = (i: number, maxSeen: number): void => {
@@ -214,9 +214,9 @@ export function bestKPartition(
  * enumerator. The evaluator still takes (a, b) for convenience.
  */
 export function bestTwoPartition(
-  configs: SetConfig[],
-  evaluate: (a: SetConfig, b: SetConfig) => number | null
-): [SetConfig, SetConfig] | null {
+  configs: BuildConfig[],
+  evaluate: (a: BuildConfig, b: BuildConfig) => number | null
+): [BuildConfig, BuildConfig] | null {
   const result = bestKPartition(configs, 2, (groups) =>
     evaluate(groups[0], groups[1])
   );
@@ -242,7 +242,7 @@ export function reorderSubstats(
  * Merge N configs into one: union main stats, union substats,
  * intersect mustPresent, min of minStatCount (clamped).
  */
-export function mergeConfigGroup(configs: SetConfig[]): SetConfig {
+export function mergeConfigGroup(configs: BuildConfig[]): BuildConfig {
   if (configs.length === 0) throw new Error("Cannot merge empty config group");
   if (configs.length === 1) return cloneConfig(configs[0]);
 
@@ -282,8 +282,8 @@ export function mergeConfigGroup(configs: SetConfig[]): SetConfig {
  * - servedCharacters: merge by characterId (AND hasPerfectMerge, OR has4pcBuild)
  */
 export function mergeConfigMetadata(
-  target: SetConfig,
-  source: SetConfig
+  target: BuildConfig,
+  source: BuildConfig
 ): void {
   for (const key of SLOT_KEYS) {
     target[key].mainStats = orderedUnion(

@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { aggregateComboFormulaDefaults } from "@/lib/team-comp/calc/comboBuffOverrides";
-import { DirectFormula } from "@/lib/team-comp/calc/damageFormula";
+import type { StatKey } from "@/data/enums";
+import { aggregateComboFormulaDefaults } from "@/lib/dmgcalc/core/comboBuffOverrides";
+import { DirectFormula } from "@/lib/dmgcalc/core/damageFormula";
 import {
   computeBlendedDamage,
   evaluateFormulaDamage,
   evaluateFormulaDisplay,
   exclusionKey,
-} from "@/lib/team-comp/calc/formulaEval";
+} from "@/lib/dmgcalc/core/formulaEval";
 import {
   type ComboLineEval,
   type FormulaPartEval,
@@ -15,13 +16,13 @@ import {
   computeComboDefaultActivation,
   computeDefaultActivation,
   distributeComboHits,
-} from "@/lib/team-comp/calc/stackRank";
-import { buffSourceKey } from "@/lib/team-comp/calc/statBuff";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
-import type { BuffActivationMap } from "@/lib/team-comp/types";
-import type { FormulaEntry, FormulaPart } from "@/lib/team-comp/types";
-import type { CalcContext, StatKey } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/core/stackRank";
+import { buffSourceKey } from "@/lib/dmgcalc/core/statBuff";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { TeamStatSheet } from "@/lib/dmgcalc/core/teamStatSheet";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import type { FormulaEntry, FormulaPart } from "@/lib/dmgcalc/types";
+import type { CalcContext } from "@/lib/dmgcalc/types";
 
 /**
  * Create a mock TeamStatSheet for computeBlendedDamage tests.

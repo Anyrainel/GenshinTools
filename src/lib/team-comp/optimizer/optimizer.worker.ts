@@ -1,27 +1,30 @@
+import type { Element } from "@/data/enums";
 /**
  * Web Worker for Phase 1 per-character B&B.
  * Each worker handles one character's B&B search independently.
  */
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import type { ArtifactData, Element, GlobalStatWeights } from "@/data/types";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { z } from "zod";
 // Side-effect: register all character/weapon/artifact implementations
-import "../index";
-import { runCharacterBnB } from ".";
-import { StatSheet } from "../calc/statSheet";
-import { TeamBuild } from "../calc/teamBuild";
-import { TeamSlotConfigSchema } from "../schemas";
-import type { OptionMap } from "../types";
-import type { ExtraBuff } from "../types";
+import "../../dmgcalc/index";
+import type { StatKey } from "@/data/enums";
+import type { OptionMap } from "@/lib/dmgcalc/types";
+import type { ExtraBuff } from "@/lib/dmgcalc/types";
 import type {
-  BuffActivationMap,
   CalcContext,
-  CharOptConfig,
   ComboFormula,
-  OptFailReason,
-  StatKey,
   TeamSlotConfig,
-} from "../types";
+} from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
+import { TeamBuild } from "../../dmgcalc/core/teamBuild";
+import { TeamSlotConfigSchema } from "../schemas";
+import type { CharOptConfig, OptFailReason } from "../types";
+import { runCharacterBnB } from "./characterBnB";
 
 export type BnBWorkerRequest = {
   id: number;
@@ -100,7 +103,10 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
     }
     req.configs = configsParsed.data as TeamSlotConfig[];
 
-    await preloadGameStats();
+    await Promise.all([
+      characterStatsResource.preload(),
+      weaponStatsResource.preload(),
+    ]);
 
     // Reconstruct TeamBuild
     const teamBuild = new TeamBuild(

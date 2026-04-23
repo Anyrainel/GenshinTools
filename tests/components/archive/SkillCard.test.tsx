@@ -12,27 +12,33 @@ const mockTalentParams = Array.from({ length: 15 }, (_, lvIdx) => [
   0.6 + lvIdx * 0.1, // param2
 ]);
 
-// Mock getCharacterStatsSync to return talent data
+// Mock characterStatsResource so SkillCard reads our talent data instead of
+// the real character_stats.json (which isn't loaded in jsdom).
+const mockStats = {
+  hu_tao: {
+    rarity: 5,
+    element: "Pyro",
+    weaponType: "Polearm",
+    region: "Liyue",
+    releaseDate: "2021-03-02",
+    levels: {},
+    talent: {
+      A: mockTalentParams,
+      E: mockTalentParams,
+      Q: mockTalentParams,
+    },
+  },
+};
 vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("@/data/gameStatsLoader")>();
   return {
     ...actual,
-    getCharacterStatsSync: () => ({
-      hu_tao: {
-        rarity: 5,
-        element: "Pyro",
-        weaponType: "Polearm",
-        region: "Liyue",
-        releaseDate: "2021-03-02",
-        levels: {},
-        talent: {
-          A: mockTalentParams,
-          E: mockTalentParams,
-          Q: mockTalentParams,
-        },
-      },
-    }),
+    characterStatsResource: {
+      preload: () => Promise.resolve(mockStats),
+      use: () => mockStats,
+      peek: () => mockStats,
+    },
   };
 });
 

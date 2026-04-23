@@ -1,6 +1,5 @@
-import type { useLanguage } from "@/contexts/LanguageContext";
-import { isPctStat } from "@/data/constants";
-import type { DisplayPart, FormulaTemplate, StatKey } from "./types";
+import type { StatKey } from "@/data/enums";
+import { isPctStat } from "@/data/utils";
 
 /**
  * Format a stat value for display.
@@ -38,31 +37,6 @@ export function fmtDamage(value: number | null | undefined): string {
   return Math.round(value).toLocaleString();
 }
 
-const TEMPLATE_KEYS: Record<FormulaTemplate, string> = {
-  direct: "DirectDamage",
-  amplify: "AmplifyingReaction",
-  catalyze: "AdditiveReaction",
-  transform: "TransformativeReaction",
-  lunar: "LunarReaction",
-  lunarDirect: "LunarDirect",
-};
-
-export function getTemplateName(
-  p: DisplayPart,
-  t: ReturnType<typeof useLanguage>["t"]
-) {
-  const abilityPrefix = p.tag?.ability ? `${t.ability(p.tag.ability)}: ` : "";
-  const elName = p.tag?.element ? `${t.element(p.tag.element)} ` : "";
-  if (p.template === "direct")
-    return abilityPrefix + elName + t.formula("DirectDamage");
-  if (p.tag?.reaction && p.tag.reaction !== "none") {
-    const rxn = t.reaction(p.tag.reaction);
-    if (p.template === "lunarDirect")
-      return abilityPrefix + elName + rxn + t.formula("DirectSuffix");
-    return abilityPrefix + elName + rxn + t.formula("ReactionSuffix");
-  }
-  return abilityPrefix + elName + t.formula(TEMPLATE_KEYS[p.template]);
-}
 function formatStatValue(key: StatKey, value: number): string {
   if (isPctStat(key)) {
     const display = value * 100;

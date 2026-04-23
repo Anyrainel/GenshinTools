@@ -6,15 +6,18 @@ import {
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allCharacters, charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
+import { allCharacters } from "@/data/gameResources";
 import {
   useActiveAccountData,
   useActiveAccountScores,
 } from "@/hooks/useActiveAccount";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
-import { useGameStats } from "@/hooks/useGameStats";
 
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
@@ -47,7 +50,7 @@ export function CharacterBuildView({
   onShowTour,
 }: CharacterBuildViewProps) {
   const { t } = useLanguage();
-  const { characterStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
   const mainScrollRef = useRef<HTMLDivElement>(null);
 
   const activeAccountData = useActiveAccountData();

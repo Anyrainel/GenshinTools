@@ -1,23 +1,18 @@
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
-import { FilterChip } from "@/components/archive/FilterChip";
 import { WeaponCard } from "@/components/archive/WeaponCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { FilterChip } from "@/components/shared/FilterChip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { MainStat, Rarity, WeaponType } from "@/data/enums";
+import { weaponTypes } from "@/data/enums";
+import { sortedWeapons, weaponResourcesByName } from "@/data/gameResources";
 import {
-  getSortedWeaponSecondaryStats,
-  sortedWeapons,
-  weaponResourcesByName,
-} from "@/data/constants";
-import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
-import type {
-  MainStat,
-  Rarity,
-  WeaponResource,
-  WeaponType,
-} from "@/data/types";
-import { weaponTypes } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
+  getWeaponDisplayMeta,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import type { WeaponResource } from "@/data/types";
 import { fuzzyMatch } from "@/lib/search";
+import { getSortedWeaponSecondaryStats } from "@/lib/utils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { ChevronDown } from "lucide-react";
@@ -181,7 +176,7 @@ function WeaponTypeSection({
 
 export function WeaponArchiveView() {
   const { t } = useLanguage();
-  const { weaponStats } = useGameStats();
+  const weaponStats = weaponStatsResource.use();
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
     [weaponStats]

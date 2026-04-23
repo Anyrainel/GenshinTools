@@ -16,9 +16,9 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 
 import { WelcomeGuideManual } from "@/components/greeting/WelcomeGuideManual";
-import type { ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { WhatsNew } from "@/components/shared/WhatsNew";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 
 export default function Home() {
   const { t } = useLanguage();

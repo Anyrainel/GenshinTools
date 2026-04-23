@@ -1,21 +1,27 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/team-comp/calc/formulaCompiler";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+} from "@/lib/dmgcalc/core/formulaCompiler";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ReactionOverride,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
-import "@/lib/team-comp/index";
+} from "@/lib/dmgcalc/types";
+import "@/lib/dmgcalc";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 describe("Mavuika melt Q damage investigation", () => {
   const configs: TeamSlotConfig[] = [

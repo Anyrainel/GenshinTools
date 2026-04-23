@@ -1,24 +1,22 @@
+import { getReceiverColor } from "@/components/shared/colors";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import type { StatKey } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
 import {
-  formatFilter,
-  formatReceiverLabel,
-  getReceiverBadgeClasses,
-  getSourceIcon,
-  getSourceName,
-} from "@/lib/team-comp/buffDisplayUtils";
+  useBuffFilterLabel,
+  useBuffReceiverLabel,
+  useBuffSourceName,
+} from "@/hooks/useBuffLabels";
+import type { ResolvedBuff, ResolvedStatEntry } from "@/lib/dmgcalc/types";
+import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
-import type {
-  ResolvedBuff,
-  ResolvedStatEntry,
-  StatKey,
-} from "@/lib/team-comp/types";
-import { VALUE_COLORS, cn, getAssetUrl, getValueColor } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
+import type { Team } from "@/lib/team-comp/types";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { VALUE_COLORS, getValueColor } from "../shared/colors";
 import { BuffDialog, type BuffLedgerFormula } from "./BuffDialog";
 
 type Props = {
@@ -39,7 +37,10 @@ function BuffChip({
 }) {
   const { source, target, staticEntries, dynamicEntries, active } = buff;
   const icon = getSourceIcon(source);
-  const filterDesc = formatFilter(target, t);
+  const sourceName = useBuffSourceName();
+  const filterLabel = useBuffFilterLabel();
+  const receiverLabel = useBuffReceiverLabel();
+  const filterDesc = filterLabel(target);
 
   return (
     <div
@@ -80,7 +81,7 @@ function BuffChip({
             <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
               <span className="font-bold text-xs md:text-sm text-foreground/90 truncate">
                 {source.type === "extra"
-                  ? getSourceName(source, t)
+                  ? sourceName(source)
                   : source.type === "teamResonance"
                     ? t.resonance(source.id) || t.ui("teamComp.teamResonance")
                     : source.origin
@@ -102,10 +103,10 @@ function BuffChip({
         <span
           className={cn(
             "text-[10px] lg:text-xs font-bold uppercase px-1 md:px-1.5 py-0.5 rounded shrink-0",
-            getReceiverBadgeClasses(target)
+            getReceiverColor(target.receiver, !!target.charId)
           )}
         >
-          {formatReceiverLabel(target, t)}
+          {receiverLabel(target)}
         </span>
       </div>
 

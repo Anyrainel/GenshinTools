@@ -1,4 +1,4 @@
-import { charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
 import { getAssetUrl } from "@/lib/utils";
 
 /** Small circular character avatar for compact inline use (timeline blocks, palettes, result rows). */

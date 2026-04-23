@@ -4,14 +4,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { PersistedAccountStoreSchema } from "./schemas";
 
-export type AccountState = {
-  /** Storage key. Either a Genshin UID string (e.g. "800000000") or the sentinel "default". */
-  id: string;
-  name: string;
-  data: AccountData;
-  scores: Record<string, ArtifactScoreResult | null>;
-  lastUpdate: number;
-};
+// AccountState shape lives in @/lib/account-data/types so pure account-data
+// logic across src/lib/ can depend on it without reaching into stores.
+import type { AccountState } from "@/lib/account-data/types";
 
 interface AccountStore {
   accounts: Record<string, AccountState>;

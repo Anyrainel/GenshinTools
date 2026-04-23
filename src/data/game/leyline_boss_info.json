@@ -10,7 +10,7 @@
         "5": {"id": 1001061,"level": 105},
         "6": {"id": 1001061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10012,
@@ -22,7 +22,7 @@
         "5": {"id": 1001062,"level": 105},
         "6": {"id": 1001062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10013,
@@ -34,7 +34,7 @@
         "5": {"id": 1001063,"level": 105},
         "6": {"id": 1001063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10021,
@@ -46,7 +46,7 @@
         "5": {"id": 1002061,"level": 105},
         "6": {"id": 1002061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10022,
@@ -69,7 +69,7 @@
         "5": {"id": 1002063,"level": 105},
         "6": {"id": 1002063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10031,
@@ -81,7 +81,7 @@
         "5": {"id": 1003061,"level": 105},
         "6": {"id": 1003061,"level": 110}
       },
-      "res": {"physical": 70,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 70,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10032,
@@ -93,7 +93,7 @@
         "5": {"id": 1003062,"level": 105},
         "6": {"id": 1003062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10033,
@@ -105,7 +105,7 @@
         "5": {"id": 1003063,"level": 105},
         "6": {"id": 1003063,"level": 110}
       },
-      "res": {"physical": -20,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": -20,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10041,
@@ -117,7 +117,7 @@
         "5": {"id": 1004061,"level": 105},
         "6": {"id": 1004061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10042,
@@ -129,7 +129,7 @@
         "5": {"id": 1004062,"level": 105},
         "6": {"id": 1004062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10043,
@@ -141,7 +141,7 @@
         "5": {"id": 1004063,"level": 105},
         "6": {"id": 1004063,"level": 110}
       },
-      "res": {"physical": -20,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 50}
+      "res": {"Physical": -20,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 50}
     },
     {
       "id": 10051,
@@ -153,7 +153,7 @@
         "5": {"id": 1005061,"level": 105},
         "6": {"id": 1005061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10052,
@@ -165,7 +165,7 @@
         "5": {"id": 1005062,"level": 105},
         "6": {"id": 1005062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 50}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 50}
     },
     {
       "id": 10053,
@@ -177,7 +177,7 @@
         "5": {"id": 1005063,"level": 105},
         "6": {"id": 1005063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 70,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 70,"Cryo": 10}
     },
     {
       "id": 10061,
@@ -189,7 +189,7 @@
         "5": {"id": 1006061,"level": 105},
         "6": {"id": 1006061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10063,
@@ -201,7 +201,7 @@
         "5": {"id": 1006063,"level": 105},
         "6": {"id": 1006063,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 60,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 60,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10071,
@@ -213,7 +213,7 @@
         "5": {"id": 1007061,"level": 105},
         "6": {"id": 1007061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 135,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 135,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10072,
@@ -225,7 +225,7 @@
         "5": {"id": 1007062,"level": 105},
         "6": {"id": 1007062,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 10,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 10,"Cryo": 10}
     },
     {
       "id": 10081,
@@ -237,7 +237,7 @@
         "5": {"id": 1008061,"level": 105},
         "6": {"id": 1008061,"level": 110}
       },
-      "res": {"physical": 10,"pyro": 10,"hydro": 10,"electro": 10,"dendro": 10,"anemo": 10,"geo": 70,"cryo": 10}
+      "res": {"Physical": 10,"Pyro": 10,"Hydro": 10,"Electro": 10,"Dendro": 10,"Anemo": 10,"Geo": 70,"Cryo": 10}
     }
   ],
   "schedules": [

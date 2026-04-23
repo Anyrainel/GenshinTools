@@ -1,4 +1,4 @@
-import type { Rarity } from "@/data/types";
+import type { Rarity } from "@/data/enums";
 
 /**
  * Base interface for items displayed in the TierTable.

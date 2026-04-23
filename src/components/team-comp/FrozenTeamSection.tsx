@@ -2,15 +2,11 @@ import { StatSheetPanel } from "@/components/team-comp/StatSheetPanel";
 import { SwapGuide } from "@/components/team-comp/SwapGuide";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import type {
-  AccountData,
-  ArtifactData,
-  CharacterData,
-  Slot,
-} from "@/data/types";
+import type { Slot } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import { ChevronDown, ChevronUp, Flame, Snowflake } from "lucide-react";
 import { useMemo, useState } from "react";
 

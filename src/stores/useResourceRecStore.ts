@@ -4,7 +4,7 @@
  * expected score gain filters.
  */
 
-import type { Tier } from "@/data/types";
+import type { Tier } from "@/data/enums";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,

@@ -1,23 +1,20 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import { getEmBonus } from "@/lib/team-comp/calc/damageFormula";
+import type { StatKey } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import { useTemplateName } from "@/hooks/useBuffLabels";
+import { getEmBonus } from "@/lib/dmgcalc/core/damageFormula";
 import {
   adjustPartDamage,
   computeScalingDmg,
-} from "@/lib/team-comp/calc/formulaDisplay";
-import {
-  fmtDamage,
-  fmtPercent,
-  getTemplateName,
-} from "@/lib/team-comp/displayFormatter";
+} from "@/lib/dmgcalc/core/formulaDisplay";
 import type {
-  BuffActivationMap,
   CritMode,
   DisplayPart,
   FormulaTemplate,
   ResolvedBuff,
-  StatKey,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import { fmtDamage, fmtPercent } from "@/lib/team-comp/displayFormatter";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type React from "react";
 import { PartBuffDialog } from "./PartBuffDialog";
@@ -963,6 +960,7 @@ export function FormulaBreakdown({
   comboKey,
 }: Props) {
   const { t } = useLanguage();
+  const templateName = useTemplateName();
   return (
     <div className="w-full overflow-x-auto pt-2 px-1">
       <div className="w-max mx-auto flex flex-col items-center md:gap-1">
@@ -1003,9 +1001,7 @@ export function FormulaBreakdown({
               </div>
               <div className="flex flex-col items-center justify-between gap-1 md:gap-2 bg-primary/5 border border-primary/20 px-2 md:px-4 py-1.5 md:py-2 rounded-lg">
                 <span className="text-[11px] md:text-sm text-primary tracking-wide leading-none flex flex-wrap items-baseline justify-center gap-x-1">
-                  <span className="whitespace-nowrap">
-                    {getTemplateName(p, t)}
-                  </span>
+                  <span className="whitespace-nowrap">{templateName(p)}</span>
                   {p.offField && (
                     <span className="text-muted-foreground font-normal whitespace-nowrap">
                       {t.ui("common.offFieldSuffix")}

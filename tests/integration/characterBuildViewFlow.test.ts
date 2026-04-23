@@ -9,11 +9,12 @@
 
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-import { charactersById } from "@/data/constants";
+import type { Tier } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
 import type { CharacterStatsMap } from "@/data/gameStatsLoader";
 import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { characters } from "@/data/resources";
-import type { CharacterFilters, Tier } from "@/data/types";
+import type { CharacterFilters } from "@/data/types";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,

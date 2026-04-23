@@ -4,7 +4,7 @@ import { ComputeSidebar } from "@/components/artifact-builds/ComputeSidebar";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { ExportBranding } from "@/components/shared/ExportBranding";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allArtifacts } from "@/data/constants";
+import { allArtifacts } from "@/data/gameResources";
 import type { ComputeOptions } from "@/data/types";
 import { useAsyncCompute } from "@/hooks/useAsyncCompute";
 import { useMediaQuery } from "@/hooks/useMediaQuery";

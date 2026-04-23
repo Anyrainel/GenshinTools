@@ -10,40 +10,42 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // Side-effect barrel: registers all character/weapon/artifact implementations.
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
-import { artifactsById } from "@/data/constants";
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import type { Element, Slot } from "@/data/enums";
+import { artifactsById } from "@/data/gameResources";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import type {
   AccountData,
   ArtifactData,
   Build,
   CharacterData,
-  Element,
   GlobalStatWeights,
-  Slot,
 } from "@/data/types";
+import type { ArtifactSetConfig } from "@/data/types";
 import {
   type GOODData,
   convertGOODToAccountData,
-} from "@/lib/account-data/goodConversion";
+} from "@/lib/account-data/import/goodConversion";
 import { matchBuild } from "@/lib/artifact/scoring/artifactScore";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer";
-import type {
-  ArtifactSetConfig,
-  CharOptConfig,
-  TeamOptimizationResult,
-  TeamOptimizerOptions,
-} from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   ComboLine,
   I18nLabel,
   TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
+import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer/teamOptimization";
+import type {
+  CharOptConfig,
+  TeamOptimizationResult,
+  TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import { runTeamOptimization as runAStar } from "./gen/astar";
 import { runTeamOptimization as runMona } from "./gen/mona";
@@ -442,7 +444,7 @@ export function getTeamCombo(team: Team): ComboFormula | null {
 
 // ─── Runner ──────────────────────────────────────────────────────────────────
 
-export { preloadGameStats };
+export { characterStatsResource, weaponStatsResource };
 
 export async function runOptimizerOnTeam(
   team: Team,

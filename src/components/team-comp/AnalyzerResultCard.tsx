@@ -7,13 +7,14 @@ import {
 } from "@/components/ui/option-button";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { DEFAULT_CALC_CONTEXT } from "@/lib/dmgcalc/constants";
+import type { CalcContext } from "@/lib/dmgcalc/types";
 import type {
   AnalyzerCharConfig,
   AnalyzerResult,
 } from "@/lib/team-comp/analyzer/types";
-import { type CalcContext, DEFAULT_CALC_CONTEXT } from "@/lib/team-comp/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import { BarChart3, Loader2, Play } from "lucide-react";
 import { useCallback, useState } from "react";
 import { AnalyzerChart } from "./AnalyzerChart";

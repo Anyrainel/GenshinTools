@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/gameResources";
 import type {
   AnalyzerResult,
   CharInvestment,

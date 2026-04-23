@@ -3,12 +3,13 @@
  * All data here is static sample data — never used in production logic.
  */
 
-import type { ArtifactData, Build, Slot } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData, Build } from "@/data/types";
 import type { BuildEvaluation } from "@/lib/account-data/buildEvaluation";
 import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import type { TriageDecision } from "@/lib/account-data/triage/types";
-import type { I18nLabel } from "@/lib/team-comp/types";
-import type { WeaponRanking } from "@/stores/useTeamStore";
+import type { I18nLabel } from "@/lib/dmgcalc/types";
+import type { WeaponRanking } from "@/lib/team-comp/types";
 
 function fakeArtifact(
   id: string,

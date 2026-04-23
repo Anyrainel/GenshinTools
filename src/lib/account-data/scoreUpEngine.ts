@@ -1,3 +1,7 @@
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
+import type { Tier } from "@/data/enums";
+import type { LuckExpectation } from "@/data/enums";
 /**
  * Diffs optimizer output against current equipment to produce typed recommendations.
  */
@@ -6,16 +10,10 @@ import type {
   ArtifactData,
   CharacterData,
   GlobalStatWeights,
-  Slot,
-  Tier,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
-import {
-  type InvestmentThresholds,
-  type LuckExpectation,
-  allSlots,
-} from "@/data/types";
+import type { InvestmentThresholds } from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,

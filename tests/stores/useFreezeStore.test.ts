@@ -1,4 +1,5 @@
-import type { ArtifactData, Slot } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { migrateFreezeStore, useFreezeStore } from "@/stores/useFreezeStore";
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";

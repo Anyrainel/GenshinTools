@@ -1,17 +1,17 @@
 import type { AccountData, ArtifactData } from "@/data/types";
-import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
+import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
 import {
   analyzeManageResults,
   applyEquipResults,
   applyJobResults,
   computeSnapshotDiff,
   rebuildAccountFromSnapshot,
-} from "@/lib/artifact-manager/storeSync";
+} from "@/lib/account-data/manager/storeSync";
 import type {
   EquipPayload,
   InstructionResult,
   ManagePayload,
-} from "@/lib/artifact-manager/types";
+} from "@/lib/account-data/manager/types";
 import { describe, expect, it } from "vitest";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {

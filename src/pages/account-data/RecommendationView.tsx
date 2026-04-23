@@ -11,13 +11,11 @@ import {
 } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import {
-  type CharacterData,
-  LUCK_MULTIPLIERS,
-  type LuckExpectation,
-  tiers,
-} from "@/data/types";
+import { LUCK_MULTIPLIERS } from "@/data/enums";
+import { tiers } from "@/data/enums";
+import type { LuckExpectation } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import type { CharacterData } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";

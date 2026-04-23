@@ -1,3 +1,7 @@
+import {
+  type TabConfig,
+  getNavigationConfig,
+} from "@/components/layout/appNavigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,13 +21,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { getNavigationConfig } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  SELECTABLE_THEME_IDS,
-  type ThemeId,
-  useTheme,
-} from "@/contexts/ThemeContext";
+import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
+import type { ThemeId } from "@/data/enums";
 
 import { cn, getAssetUrl } from "@/lib/utils";
 import {
@@ -38,14 +38,6 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 /**
- * Handle interface for control components that can be opened programmatically.
- * Controls expose `.open()` via ref using forwardRef + useImperativeHandle.
- */
-export interface ControlHandle {
-  open: (options?: unknown) => void;
-}
-
-/**
  * Configuration for an action button in the AppBar.
  * Actions open dialogs managed by the page, not the AppBar itself.
  */
@@ -56,18 +48,6 @@ export interface ActionConfig {
   onTrigger: () => void;
   /** If true, always visible; otherwise collapses into overflow menu on mobile (< md) */
   alwaysShow?: boolean;
-  /** Tour step ID for onboarding spotlight */
-  tourStepId?: string;
-}
-
-/**
- * Configuration for a tab in the AppBar.
- * Tabs are displayed inline on desktop and collapse into the hamburger menu on mobile.
- */
-export interface TabConfig {
-  value: string;
-  label: string;
-  icon?: LucideIcon;
   /** Tour step ID for onboarding spotlight */
   tourStepId?: string;
 }

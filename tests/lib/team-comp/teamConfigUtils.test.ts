@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { Slot, TierAssignment } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { TierAssignment } from "@/data/types";
 import { getHigherTierEquippedArtifactIds } from "@/lib/team-comp/teamConfigUtils";
 import {
   createAccountData,

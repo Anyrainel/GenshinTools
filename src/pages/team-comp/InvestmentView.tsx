@@ -1,4 +1,4 @@
-import type { ControlHandle } from "@/components/layout/AppBar";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { InvestmentDetail } from "@/components/team-comp/InvestmentDetail";
 import { TeamGrid } from "@/components/team-comp/TeamGrid";
 import { useLanguage } from "@/contexts/LanguageContext";

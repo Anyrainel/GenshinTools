@@ -3,7 +3,7 @@
  * single-team auto-tune results into a final AutoTuneOutput.
  */
 
-import type { MainStat, SubStat } from "@/data/types";
+import type { MainStat, SubStat } from "@/data/enums";
 import type { AutoTuneTeamResult } from "@/lib/artifact/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
 import { describe, expect, it } from "vitest";

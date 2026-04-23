@@ -3,12 +3,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   elementResourcesByName,
   weaponResourcesByName,
-} from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+} from "@/data/gameResources";
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
 import type { CharacterResource } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
-import { cn, getAssetUrl, getElementColor, getRarityColor } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { memo } from "react";
+import { getElementColor, getRarityColor } from "./colors";
 
 interface CharacterInfoProps {
   character: CharacterResource;
@@ -27,7 +30,7 @@ export const CharacterInfo = memo(
     children,
   }: CharacterInfoProps) => {
     const { t } = useLanguage();
-    const { characterStats } = useGameStats();
+    const characterStats = characterStatsResource.use();
     const meta = getCharacterDisplayMeta(
       character,
       characterStats?.[character.id]

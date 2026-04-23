@@ -16,8 +16,8 @@ import {
   routeLocalImport,
   routeResolveImport,
   routeUidImport,
-} from "@/lib/account-data/importRouting";
-import type { AccountState } from "@/stores/useAccountStore";
+} from "@/lib/account-data/import/importRouting";
+import type { AccountState } from "@/lib/account-data/types";
 import { describe, expect, it } from "vitest";
 
 // ─── Test fixtures ────────────────────────────────────────────────────────────

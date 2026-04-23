@@ -19,62 +19,15 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer"
-import { useLanguage } from "@/contexts/LanguageContext"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
-import { Download, Filter, Settings, Sparkles, Users, Wrench } from "lucide-react"
 
-function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["t"]) {
-    const parts = content.split(/({[^}]+})/g);
-
-    return (
-        <span>
-            {parts.map((part, index) => {
-                const match = part.match(/{([^}]+)}/);
-                if (match) {
-                    const key = match[1];
-                    let icon = null;
-                    let label = "";
-
-                    switch (key) {
-                        case "import":
-                            icon = <Download className="size-3.5 mr-1" />;
-                            label = t.ui("import.action");
-                            break;
-                        case "customize":
-                            icon = <Wrench className="size-3.5 mr-1" />;
-                            label = t.ui("buttons.customize");
-                            break;
-                        case "builds":
-                            icon = <Settings className="size-3.5 mr-1" />;
-                            label = t.ui("navigation.configure"); // Character Builds
-                            break;
-                        case "filters":
-                            icon = <Filter className="size-3.5 mr-1" />;
-                            label = t.ui("navigation.computeFilters"); // Artifact Filters
-                            break;
-                        case "characters":
-                            icon = <Users className="size-3.5 mr-1" />;
-                            label = t.ui("accountData.characters");
-                            break;
-                        case "optimize":
-                            icon = <Sparkles className="size-3.5 mr-1" />;
-                            label = t.ui("teamComp.teamOptimization");
-                            break;
-                        default:
-                            return part;
-                    }
-
-                    return (
-                        <span key={index} className="inline-flex items-center mx-1 font-medium text-foreground bg-muted px-1.5 py-0.5 rounded-md border text-sm align-baseline transform translate-y-[2px]">
-                            {icon}
-                            {label}
-                        </span>
-                    );
-                }
-                return part;
-            })}
-        </span>
-    );
+interface TourLabels {
+    guideTitle: React.ReactNode
+    gotIt: React.ReactNode
+    previous: React.ReactNode
+    next: React.ReactNode
+    finish: React.ReactNode
+    stepOf: (current: number, total: number) => React.ReactNode
 }
 
 const TourContext = React.createContext<{
@@ -97,8 +50,6 @@ interface Step {
     content: React.ReactNode
     nextRoute?: string
     previousRoute?: string
-    nextLabel?: React.ReactNode
-    previousLabel?: React.ReactNode
     side?: React.ComponentProps<typeof Content>["side"]
     sideOffset?: React.ComponentProps<typeof Content>["sideOffset"]
     align?: React.ComponentProps<typeof Content>["align"]
@@ -109,17 +60,18 @@ interface Step {
 interface Tour {
     id: string
     steps: Step[]
-    guideContent?: string
+    guideContent?: React.ReactNode
 }
 
 function TourProvider({
     tours,
+    labels,
     children,
 }: {
     tours: Tour[]
+    labels: TourLabels
     children: React.ReactNode
 }) {
-    const { t } = useLanguage()
     const [isOpen, setIsOpen] = React.useState(false) // Desktop Tour State
     const [activeTourId, setActiveTourId] = React.useState<string | null>(null)
     const [currentStepIndex, setCurrentStepIndex] = React.useState(0)
@@ -223,6 +175,7 @@ function TourProvider({
                     step={steps[currentStepIndex]}
                     currentStepIndex={currentStepIndex}
                     totalSteps={steps.length}
+                    labels={labels}
                     onNext={next}
                     onPrevious={previous}
                     onClose={close}
@@ -234,13 +187,13 @@ function TourProvider({
                 <Drawer open={isGuideOpen} onOpenChange={setIsGuideOpen}>
                     <DrawerContent>
                         <DrawerHeader>
-                            <DrawerTitle>{t.ui("tour.guide.title")}</DrawerTitle>
+                            <DrawerTitle>{labels.guideTitle}</DrawerTitle>
                             <DrawerDescription className="whitespace-pre-line text-left pt-4 text-base">
-                                {activeGuide.guideContent ? renderGuideContent(activeGuide.guideContent, t) : "No guide content available."}
+                                {activeGuide.guideContent ?? "No guide content available."}
                             </DrawerDescription>
                         </DrawerHeader>
                         <DrawerFooter>
-                            <Button onClick={() => setIsGuideOpen(false)}>{t.ui("common.gotIt")}</Button>
+                            <Button onClick={() => setIsGuideOpen(false)}>{labels.gotIt}</Button>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
@@ -253,6 +206,7 @@ function TourOverlay({
     step,
     currentStepIndex,
     totalSteps,
+    labels,
     onNext,
     onPrevious,
     onClose,
@@ -260,11 +214,11 @@ function TourOverlay({
     step: Step
     currentStepIndex: number
     totalSteps: number
+    labels: TourLabels
     onNext: () => void
     onPrevious: () => void
     onClose: () => void
 }) {
-    const { t } = useLanguage()
     const [targets, setTargets] = React.useState<
         { rect: DOMRect; radius: number }[]
     >([])
@@ -475,7 +429,7 @@ function TourOverlay({
                                     {step.title}
                                 </div>
                                 <div className="mt-1 text-sm text-muted-foreground">
-                                    {t.format("common.stepOf", currentStepIndex + 1, totalSteps)}
+                                    {labels.stepOf(currentStepIndex + 1, totalSteps)}
                                 </div>
                             </div>
 
@@ -494,8 +448,7 @@ function TourOverlay({
                                             onClick={onPrevious}
                                             asChild>
                                             <Link to={step.previousRoute}>
-                                                {step.previousLabel ??
-                                                    t.ui("common.previous")}
+                                                {labels.previous}
                                             </Link>
                                         </Button>
                                     ) : (
@@ -503,7 +456,7 @@ function TourOverlay({
                                             variant="outline"
                                             size="sm"
                                             onClick={onPrevious}>
-                                            {step.previousLabel ?? t.ui("common.previous")}
+                                            {labels.previous}
                                         </Button>
                                     )
                                 ) : (
@@ -515,19 +468,16 @@ function TourOverlay({
                                         onClick={onNext}
                                         asChild>
                                         <Link to={step.nextRoute}>
-                                            {step.nextLabel ??
-                                                (currentStepIndex ===
-                                                totalSteps - 1
-                                                    ? t.ui("common.finish")
-                                                    : t.ui("common.next"))}
+                                            {currentStepIndex === totalSteps - 1
+                                                ? labels.finish
+                                                : labels.next}
                                         </Link>
                                     </Button>
                                 ) : (
                                     <Button size="sm" onClick={onNext}>
-                                        {step.nextLabel ??
-                                            (currentStepIndex === totalSteps - 1
-                                                ? t.ui("common.finish")
-                                                : t.ui("common.next"))}
+                                        {currentStepIndex === totalSteps - 1
+                                            ? labels.finish
+                                            : labels.next}
                                     </Button>
                                 )}
                             </div>
@@ -539,4 +489,4 @@ function TourOverlay({
     )
 }
 
-export { TourProvider, useTour, type Step, type Tour }
+export { TourProvider, useTour, type Step, type Tour, type TourLabels }

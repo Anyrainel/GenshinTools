@@ -1,21 +1,27 @@
 /**
  * Lazy-loaded game stats from character_stats.json and weapon_stats.json.
  * Single in-memory copy per file; shared by all consumers.
+ *
+ * Both files are dynamically imported (not statically) so they ship as
+ * separate JS chunks rather than inflating the entry bundle. App boot
+ * preloads them in the background; tooltip / table consumers render
+ * skeletons until ``ready``.
  */
 
-import { fetchGzipJson } from "@/data/gzipJson";
+import { betaEnabled } from "@/data/betaState";
+import { makeResource, withBetaOverlay } from "@/data/gameDataUtil";
+import type { CharacterResource, WeaponResource } from "@/data/types";
+import type { StatEntry } from "@/data/types";
+import { fetchGzipJson } from "@/data/utils";
 import type {
   BaseStat,
-  CharacterResource,
   Element,
   MainStat,
   Rarity,
   Region,
-  WeaponResource,
   WeaponType,
-} from "@/data/types";
-import type { StatEntry } from "@/data/types";
-import { betaEnabled } from "@/data/useBetaStore";
+} from "./enums";
+import type { Resource } from "./types";
 
 // ─── JSON shapes (match character_stats.json / weapon_stats.json) ───
 
@@ -53,78 +59,35 @@ export type WeaponStats = {
 
 export type WeaponStatsMap = Record<string, WeaponStats>;
 
-// ─── Loader state ───
+// ─── Resources (singleton, dedup, beta-merged when enabled) ───
 
-let characterStatsCache: CharacterStatsMap | null = null;
-let characterStatsPromise: Promise<CharacterStatsMap> | null = null;
-
-let weaponStatsCache: WeaponStatsMap | null = null;
-let weaponStatsPromise: Promise<WeaponStatsMap> | null = null;
-
-// ─── Async loaders (lazy, single load, shared reference) ───
-
-export function getCharacterStats(): Promise<CharacterStatsMap> {
-  if (characterStatsCache) return Promise.resolve(characterStatsCache);
-  if (!characterStatsPromise) {
-    const loaders: Promise<CharacterStatsMap>[] = [
+export const characterStatsResource: Resource<CharacterStatsMap> = makeResource(
+  withBetaOverlay<CharacterStatsMap>(
+    () =>
       import("@/data/game/character_stats.json").then(
         (m) => m.default as CharacterStatsMap
       ),
-    ];
-    if (betaEnabled()) {
-      loaders.push(
-        import("@/data/game/character_beta_stats.json.gz?url").then((m) =>
-          fetchGzipJson<CharacterStatsMap>(m.default)
-        )
-      );
-    }
-    characterStatsPromise = Promise.all(loaders).then(([base, beta]) => {
-      // Released stats win over beta stats when the same id exists in both.
-      characterStatsCache = beta ? { ...beta, ...base } : base;
-      return characterStatsCache;
-    });
-  }
-  return characterStatsPromise;
-}
+    () =>
+      import("@/data/game/character_beta_stats.json.gz?url").then((m) =>
+        fetchGzipJson<CharacterStatsMap>(m.default)
+      ),
+    betaEnabled
+  )
+);
 
-export function getWeaponStats(): Promise<WeaponStatsMap> {
-  if (weaponStatsCache) return Promise.resolve(weaponStatsCache);
-  if (!weaponStatsPromise) {
-    const loaders: Promise<WeaponStatsMap>[] = [
+export const weaponStatsResource: Resource<WeaponStatsMap> = makeResource(
+  withBetaOverlay<WeaponStatsMap>(
+    () =>
       import("@/data/game/weapon_stats.json").then(
         (m) => m.default as WeaponStatsMap
       ),
-    ];
-    if (betaEnabled()) {
-      loaders.push(
-        import("@/data/game/weapon_beta_stats.json.gz?url").then((m) =>
-          fetchGzipJson<WeaponStatsMap>(m.default)
-        )
-      );
-    }
-    weaponStatsPromise = Promise.all(loaders).then(([base, beta]) => {
-      // Released stats win over beta stats when the same id exists in both.
-      weaponStatsCache = beta ? { ...beta, ...base } : base;
-      return weaponStatsCache;
-    });
-  }
-  return weaponStatsPromise;
-}
-
-/** Load both; resolves when both are in cache. Use to preload before using sync getters. */
-export function preloadGameStats(): Promise<void> {
-  return Promise.all([getCharacterStats(), getWeaponStats()]).then(() => {});
-}
-
-// ─── Sync getters (return cache; null if not yet loaded) ───
-
-export function getCharacterStatsSync(): CharacterStatsMap | null {
-  return characterStatsCache;
-}
-
-export function getWeaponStatsSync(): WeaponStatsMap | null {
-  return weaponStatsCache;
-}
+    () =>
+      import("@/data/game/weapon_beta_stats.json.gz?url").then((m) =>
+        fetchGzipJson<WeaponStatsMap>(m.default)
+      ),
+    betaEnabled
+  )
+);
 
 /** Map character level to tier key used in character_stats.json. */
 export function getCharacterLevelTier(level: number): CharacterLevelTier {
@@ -238,16 +201,16 @@ function parseWeaponSecondary(stat: MainStat, rawValue: string): number {
 /**
  * Build StatEntry[] from character_stats.json for a given character.
  * Level is mapped to tier (70/80/90/95/100). Includes stat baselines (5% CR, 50% CD, 100% ER).
- * Requires game stats to be preloaded (e.g. via preloadGameStats() or useGameStats).
+ * Requires character stats to be preloaded (call ``characterStatsResource.preload()`` first).
  */
 export function resolveCharacterStats(
   charId: string,
   charLevel: number
 ): StatEntry[] {
-  const statsData = getCharacterStatsSync();
+  const statsData = characterStatsResource.peek();
   if (!statsData)
     throw new Error(
-      "Character stats not loaded; call preloadGameStats() or use useGameStats() first."
+      "Character stats not loaded; await characterStatsResource.preload() first."
     );
   const tier = getCharacterLevelTier(charLevel);
   const levelStats = getCharacterLevelStats(statsData, charId, tier);
@@ -269,12 +232,12 @@ export function resolveCharacterStats(
   return entries;
 }
 
-/** Build StatEntry[] from weapon_stats.json for a given weapon (L90). Requires game stats preloaded. */
+/** Build StatEntry[] from weapon_stats.json for a given weapon (L90). Requires weapon stats preloaded. */
 export function resolveWeaponStats(weaponId: string): StatEntry[] {
-  const statsData = getWeaponStatsSync();
+  const statsData = weaponStatsResource.peek();
   if (!statsData)
     throw new Error(
-      "Weapon stats not loaded; call preloadGameStats() or use useGameStats() first."
+      "Weapon stats not loaded; await weaponStatsResource.preload() first."
     );
   const entry = statsData[weaponId];
   if (!entry) throw new Error(`No weapon stats for: ${weaponId}`);
@@ -296,17 +259,17 @@ export function resolveWeaponStats(weaponId: string): StatEntry[] {
 
 // ─── Talent Param Accessor ───
 
-/** Get raw talent param value for a character. Requires game stats preloaded. */
+/** Get raw talent param value for a character. Requires character stats preloaded. */
 export function getTalentParam(
   charId: string,
   skill: "A" | "E" | "Q",
   levelIndex: number,
   paramIndex: number
 ): number {
-  const statsData = getCharacterStatsSync();
+  const statsData = characterStatsResource.peek();
   if (!statsData)
     throw new Error(
-      "Character stats not loaded; call preloadGameStats() first."
+      "Character stats not loaded; await characterStatsResource.preload() first."
     );
   const entry = statsData[charId];
   if (!entry) throw new Error(`No character stats for: ${charId}`);

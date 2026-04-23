@@ -1,10 +1,10 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/gameResources";
 import type { AccountData } from "@/data/types";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
-import type { Team } from "@/stores/useTeamStore";
+import type { Team } from "@/lib/team-comp/types";
 
 interface AutoTuneTeamRowProps {
   team: Team;

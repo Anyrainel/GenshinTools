@@ -8,15 +8,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
 import type { TierAssignment } from "@/data/types";
 import {
   numericInputFilter,
   useDeferredTextInput,
 } from "@/hooks/useDeferredTextInput";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/generator/substatBudget";
+import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
+import type { Team } from "@/lib/team-comp/types";
 import { getAssetUrl } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 
 const LABEL_CLS =
   "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";

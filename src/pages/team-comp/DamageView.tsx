@@ -1,4 +1,4 @@
-import type { ControlHandle } from "@/components/layout/AppBar";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { DamageDetail } from "@/components/team-comp/DamageDetail";
 import { TeamGrid } from "@/components/team-comp/TeamGrid";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";

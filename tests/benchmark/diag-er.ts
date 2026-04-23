@@ -4,28 +4,34 @@
  * Run: npx tsx --tsconfig tsconfig.test.json tests/benchmark/diag-er.ts
  */
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import type { Element } from "@/data/types";
-import { getDefaultOnFieldCharId } from "@/lib/team-comp/calc/fieldState";
+import type { Element } from "@/data/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { getDefaultOnFieldCharId } from "@/lib/dmgcalc/core/fieldState";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/team-comp/calc/formulaCompiler";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { ConstraintChecker } from "@/lib/team-comp/optimizer/constraintChecker";
+} from "@/lib/dmgcalc/core/formulaCompiler";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import { ConstraintChecker } from "@/lib/team-comp/optimizer/constraintChecker";
 
 async function main() {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
 
   // Load problem cache
   const problemsPath = resolve("tests/benchmark/data/problems.json");

@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { WeaponData } from "@/data/types";
-import type { ChipColor } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import type { ChipColor } from "../shared/colors";
 
 export type TaggedWeapon = WeaponData & { equipped: boolean };
 type GroupedWeapon = TaggedWeapon & { count: number };

@@ -9,7 +9,7 @@
  *              value = total activatedHits across ALL repetitions of that formula in the combo.
  */
 
-import type { BuffActivationMap } from "@/lib/team-comp/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
 import { create } from "zustand";
 
 interface BuffOverrideState {

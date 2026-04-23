@@ -6,12 +6,8 @@
  * and smartMerge and check shared postconditions.
  */
 
-import type {
-  MainStatPlus,
-  SetConfig,
-  SlotConfig,
-  SubStat,
-} from "@/data/types";
+import type { MainStatPlus, SubStat } from "@/data/enums";
+import type { BuildConfig, SlotConfig } from "@/data/types";
 import { bruteForcePartition } from "@/lib/artifact-builds/bruteForcePartition";
 import { greedyMerge } from "@/lib/artifact-builds/greedyMerge";
 import { SLOT_KEYS } from "@/lib/artifact-builds/mergeUtils";
@@ -28,7 +24,7 @@ function makeConfig(
     goblet?: MainStatPlus[];
     circlet?: MainStatPlus[];
   } = {}
-): SetConfig {
+): BuildConfig {
   const slot: SlotConfig = {
     mainStats: [],
     substats,
@@ -46,7 +42,7 @@ function makeConfig(
   };
 }
 
-type MergeFn = (configs: SetConfig[]) => SetConfig[];
+type MergeFn = (configs: BuildConfig[]) => BuildConfig[];
 
 const algorithms: [string, MergeFn][] = [
   ["greedyMerge", greedyMerge],
@@ -55,7 +51,7 @@ const algorithms: [string, MergeFn][] = [
 ];
 
 /** All character IDs present in the input must appear in the output. */
-function collectCharacterIds(configs: SetConfig[]): Set<string> {
+function collectCharacterIds(configs: BuildConfig[]): Set<string> {
   const ids = new Set<string>();
   for (const c of configs) {
     for (const sc of c.servedCharacters) {
@@ -189,7 +185,7 @@ describe("algorithm-specific behaviors", () => {
         minStatCount: 3,
       });
 
-      const a: SetConfig = {
+      const a: BuildConfig = {
         flowerPlume: pickOneSlot("atk%"),
         sands: pickOneSlot("atk%"),
         goblet: pickOneSlot("atk%", ["anemo%"]),
@@ -198,7 +194,7 @@ describe("algorithm-specific behaviors", () => {
           { characterId: "a", hasPerfectMerge: true, has4pcBuild: true },
         ],
       };
-      const b: SetConfig = {
+      const b: BuildConfig = {
         flowerPlume: pickOneSlot("er"),
         sands: pickOneSlot("er"),
         goblet: pickOneSlot("er", ["anemo%"]),
@@ -227,7 +223,7 @@ describe("algorithm-specific behaviors", () => {
         minStatCount: stats.length,
       });
 
-      const a: SetConfig = {
+      const a: BuildConfig = {
         flowerPlume: rigidSlot(["cr", "cd"]),
         sands: rigidSlot(["cr", "cd"]),
         goblet: rigidSlot(["cr", "cd"], ["anemo%"]),
@@ -236,7 +232,7 @@ describe("algorithm-specific behaviors", () => {
           { characterId: "a", hasPerfectMerge: true, has4pcBuild: true },
         ],
       };
-      const b: SetConfig = {
+      const b: BuildConfig = {
         flowerPlume: rigidSlot(["cr", "atk%"]),
         sands: rigidSlot(["cr", "atk%"]),
         goblet: rigidSlot(["cr", "atk%"], ["anemo%"]),

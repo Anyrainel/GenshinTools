@@ -6,7 +6,7 @@
  * we focus on testing behavior (edge cases, constraints) rather than exact numbers.
  */
 
-import type { SetConfig, SlotConfig } from "@/data/types";
+import type { BuildConfig, SlotConfig } from "@/data/types";
 import {
   computeSlotChance,
   computeSlotChances,
@@ -25,7 +25,7 @@ function createSlotConfig(overrides: Partial<SlotConfig> = {}): SlotConfig {
 }
 
 // Helper to create a full SetConfig with minimal slots
-function createSetConfig(overrides: Partial<SetConfig> = {}): SetConfig {
+function createSetConfig(overrides: Partial<BuildConfig> = {}): BuildConfig {
   return {
     flowerPlume: createSlotConfig(),
     sands: createSlotConfig(),

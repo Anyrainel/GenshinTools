@@ -6,10 +6,13 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import { characterKitsResource } from "@/data/gameDataLoader";
+import { charactersById } from "@/data/gameResources";
+import {
+  type CharacterStatsMap,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
 import type { CharacterResource } from "@/data/types";
-import type { useGameStats } from "@/hooks/useGameStats";
 import { useConstellation, useIsOwned } from "@/hooks/useOwnership";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { cn } from "@/lib/utils";
@@ -55,7 +58,7 @@ function LinkedBuildSection({
   characterStats,
 }: {
   character: CharacterResource;
-  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  characterStats: CharacterStatsMap | null;
 }) {
   const { t } = useLanguage();
   const builds = useResolvedBuilds(character.id);
@@ -140,9 +143,12 @@ export function CharacterDetailPanel({
   characterStats,
 }: {
   characterId: string;
-  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  characterStats: CharacterStatsMap | null;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  // Tier C: subscribe so load fires on Archive mount and the t.* peeks
+  // below see populated data after re-render.
+  characterKitsResource.use(language);
   const character = charactersById[characterId];
   const meta = character
     ? getCharacterDisplayMeta(character, characterStats?.[characterId])

@@ -26,14 +26,14 @@ export default function NewsDialog({
   latestDate: string;
   onDismiss: () => void;
 }) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   const dismissNews = useGreetingStore((s) => s.dismissNews);
 
   const entry = useMemo(() => {
-    const news = newsMap[t.lang];
+    const news = newsMap[language];
     return news.entries.find((e) => e.date === latestDate) ?? news.entries[0];
-  }, [t.lang, latestDate]);
+  }, [language, latestDate]);
 
   const handleClose = () => {
     dismissNews(latestDate);

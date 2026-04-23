@@ -1,6 +1,10 @@
-import type { Rarity } from "@/data/types";
-import type { TeamBuild } from "../calc/teamBuild";
-import type { CalcContext, ComboFormula, TeamSlotConfig } from "../types";
+import type { Rarity } from "@/data/enums";
+import type {
+  CalcContext,
+  ComboFormula,
+  TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
+import type { TeamBuild } from "../../dmgcalc/core/teamBuild";
 
 export type CharInvestment = {
   constellation: number; // 0-6

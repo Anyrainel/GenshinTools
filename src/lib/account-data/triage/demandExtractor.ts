@@ -1,5 +1,7 @@
-import { artifactHalfSetsById, statPools } from "@/data/constants";
-import type { Build, MainStat, Slot } from "@/data/types";
+import { statPools } from "@/data/constants";
+import type { MainStat, Slot } from "@/data/enums";
+import { artifactHalfSetsById } from "@/data/gameResources";
+import type { Build } from "@/data/types";
 
 /**
  * Get accepted main stats for a slot from a build's main stat weights.

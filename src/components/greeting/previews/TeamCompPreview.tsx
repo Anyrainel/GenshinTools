@@ -2,7 +2,7 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { CharacterWeaponPanel } from "@/components/team-comp/WeaponChoiceResultCard";
 import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
 import { cn, getAssetUrl } from "@/lib/utils";
 import {
   ChevronsUpDown,

@@ -1,9 +1,9 @@
+import type { Slot } from "@/data/enums";
 import type {
   ArtifactData,
   CharacterData,
   GlobalStatWeights,
   InvestmentThresholds,
-  Slot,
 } from "@/data/types";
 import type { BuildOptimizerResult } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";

@@ -1,6 +1,6 @@
-import { ArtifactDataContent } from "@/components/account-data/ArtifactDataHoverCard";
 import type { TaggedArtifact } from "@/components/account-data/InventoryArtifactGrid";
 import type { TaggedWeapon } from "@/components/account-data/InventoryWeaponGrid";
+import { ArtifactDataContent } from "@/components/shared/ArtifactDataHoverCard";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Button } from "@/components/ui/button";
 import {

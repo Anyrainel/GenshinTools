@@ -7,9 +7,17 @@
  * stopped gating its beta data on ``betaEnabled()``.
  */
 
-import { artifactsById, charactersById, weaponsById } from "@/data/constants";
-import { loadCharacterKits } from "@/data/gameDataLoader";
-import { getCharacterStats, getWeaponStats } from "@/data/gameStatsLoader";
+import { betaEnabled } from "@/data/betaState";
+import { characterKitsResource } from "@/data/gameDataLoader";
+import {
+  artifactsById,
+  charactersById,
+  weaponsById,
+} from "@/data/gameResources";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 import {
@@ -22,7 +30,6 @@ import {
   betaCharacters,
   betaWeapons,
 } from "@/data/resources_beta";
-import { betaEnabled } from "@/data/useBetaStore";
 import { describe, expect, it } from "vitest";
 
 const releasedCharIds = new Set(releasedCharacters.map((c) => c.id));
@@ -71,15 +78,15 @@ describe("beta visibility — entity maps (constants.ts)", () => {
 });
 
 describe("beta visibility — async game stats loaders", () => {
-  it("getCharacterStats() omits beta-only character ids", async () => {
-    const stats = await getCharacterStats();
+  it("characterStatsResource.preload() omits beta-only character ids", async () => {
+    const stats = await characterStatsResource.preload();
     for (const id of betaOnlyCharIds) {
       expect(stats[id]).toBeUndefined();
     }
   });
 
-  it("getWeaponStats() omits beta-only weapon ids", async () => {
-    const stats = await getWeaponStats();
+  it("weaponStatsResource.preload() omits beta-only weapon ids", async () => {
+    const stats = await weaponStatsResource.preload();
     for (const id of betaOnlyWeaponIds) {
       expect(stats[id]).toBeUndefined();
     }
@@ -127,15 +134,15 @@ describe("beta visibility — i18n name maps", () => {
 });
 
 describe("beta visibility — character kit loader", () => {
-  it("loadCharacterKits('en') omits beta-only character ids", async () => {
-    const kits = await loadCharacterKits("en");
+  it("characterKitsResource.preload('en') omits beta-only character ids", async () => {
+    const kits = await characterKitsResource.preload("en");
     for (const id of betaOnlyCharIds) {
       expect(kits[id]).toBeUndefined();
     }
   });
 
-  it("loadCharacterKits('zh') omits beta-only character ids", async () => {
-    const kits = await loadCharacterKits("zh");
+  it("characterKitsResource.preload('zh') omits beta-only character ids", async () => {
+    const kits = await characterKitsResource.preload("zh");
     for (const id of betaOnlyCharIds) {
       expect(kits[id]).toBeUndefined();
     }

@@ -6,8 +6,8 @@ import {
   StatBuff,
   TeamAggregationBuff,
   deduplicateBuffs,
-} from "@/lib/team-comp/calc/statBuff";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+} from "@/lib/dmgcalc/core/statBuff";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 
 describe("StatBuff", () => {
   it("base StatBuff has no dynamic buffs", () => {

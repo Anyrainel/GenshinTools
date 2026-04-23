@@ -6,12 +6,13 @@
  */
 
 import type { AccountData, ArtifactData } from "@/data/types";
-import type { ComboFormula } from "@/lib/team-comp/types";
+import type { ComboFormula } from "@/lib/dmgcalc/types";
 import {
+  characterStatsResource,
   getAllArtifacts,
   loadAccountData,
-  preloadGameStats,
   runOptimizerOnTeam,
+  weaponStatsResource,
 } from "./runner";
 import type { Team } from "./runner";
 
@@ -44,7 +45,10 @@ let accountData: AccountData;
 let inventory: ArtifactData[];
 
 async function init(): Promise<void> {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
   accountData = loadAccountData(accountFile);
   inventory = getAllArtifacts(accountData);
   process.send!({ type: "ready" });

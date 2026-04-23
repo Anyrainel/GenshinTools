@@ -1,7 +1,7 @@
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { getTabsForRoute } from "@/components/layout/appNavigation";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { CharacterTierListView } from "@/pages/tier-list/CharacterTierListView";

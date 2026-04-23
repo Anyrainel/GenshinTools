@@ -1,8 +1,8 @@
 import { ArtifactConfigCard } from "@/components/artifact-builds/ArtifactConfigCard";
-import type { SetConfig } from "@/data/types";
+import type { BuildConfig } from "@/data/types";
 import { fireEvent, render, screen } from "../../utils/render";
 
-const mockConfig: SetConfig = {
+const mockConfig: BuildConfig = {
   flowerPlume: {
     mainStats: [],
     substats: ["cr", "cd", "er"],
@@ -139,7 +139,7 @@ describe("ArtifactConfigCard", () => {
   });
 
   it("handles empty servedCharacters gracefully", () => {
-    const emptyConfig: SetConfig = {
+    const emptyConfig: BuildConfig = {
       ...mockConfig,
       servedCharacters: [],
     };

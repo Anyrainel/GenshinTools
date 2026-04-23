@@ -4,22 +4,21 @@ import {
   artifactHalfSetsById,
   artifactsById,
   charactersById,
-  isPctStat,
   weaponsById,
-} from "@/data/constants";
+} from "@/data/gameResources";
 import {
-  getCharacterStatsSync,
-  getWeaponStatsSync,
-  preloadGameStats,
+  characterStatsResource,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import { isSelfReceiver } from "@/lib/team-comp/calc/fieldState";
+import { isPctStat } from "@/data/utils";
+import { isSelfReceiver } from "@/lib/dmgcalc/core/fieldState";
 import {
   createArtifactHalfSet,
   createArtifactSet,
   createCharacter,
   createWeapon,
   getOptionDef,
-} from "@/lib/team-comp/calc/registry";
+} from "@/lib/dmgcalc/core/registry";
 import {
   CrossScalingBuff,
   ScalingBuff,
@@ -27,14 +26,17 @@ import {
   getBuffInstanceKey,
   validateOrigin,
   validateStatBuff,
-} from "@/lib/team-comp/calc/statBuff";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
+} from "@/lib/dmgcalc/core/statBuff";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import { beforeAll, describe, expect, it } from "vitest";
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
 beforeAll(async () => {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
 });
 
 function rethrowIfUnexpected(e: unknown, ...skipPhrases: string[]): void {
@@ -137,8 +139,8 @@ const nonPresetCharIds = Object.keys(charactersById).filter(
 
 describe("Preset Validation", () => {
   it("every weapon should match the character's weaponType", () => {
-    const charStats = getCharacterStatsSync()!;
-    const weaponStats = getWeaponStatsSync()!;
+    const charStats = characterStatsResource.peek()!;
+    const weaponStats = weaponStatsResource.peek()!;
     const violations: string[] = [];
 
     for (const team of presetData.teams) {

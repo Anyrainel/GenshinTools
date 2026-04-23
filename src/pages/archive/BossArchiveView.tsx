@@ -3,14 +3,14 @@ import { BossDetailPanel } from "@/components/archive/BossDetailPanel";
 import { BossGrid, BossListPanel } from "@/components/archive/BossListPanel";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useLeylineBossData } from "@/hooks/useLeylineBossData";
+import { leylineBossResource } from "@/data/gameDataLoader";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { Skull } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 
 export function BossArchiveView() {
   const { t } = useLanguage();
-  const bossData = useLeylineBossData();
+  const bossData = leylineBossResource.use();
   const searchQuery = useArchiveSessionStore((s) => s.bossSearch);
   const setSearchQuery = useArchiveSessionStore((s) => s.setBossSearch);
   const selectedBossId = useArchiveSessionStore((s) => s.selectedBossId);

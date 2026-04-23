@@ -1,9 +1,5 @@
-import type {
-  AccountData,
-  ArtifactData,
-  CharacterData,
-  Slot,
-} from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
 import { nextArtifactId, nextWeaponId } from "./idUtils";
 
 function cloneData(data: AccountData): AccountData {

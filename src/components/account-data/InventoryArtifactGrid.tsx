@@ -1,4 +1,4 @@
-import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import type { ArtifactData } from "@/data/types";
 import { cn } from "@/lib/utils";

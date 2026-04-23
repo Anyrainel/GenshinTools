@@ -1,13 +1,13 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactSetConfigs } from "@/data/types";
+import type { ArtifactBuildConfigs } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ArtifactConfigCard } from "./ArtifactConfigCard";
 
 interface ArtifactCardProps {
   setId: string;
-  filter: ArtifactSetConfigs;
+  filter: ArtifactBuildConfigs;
   onJumpToCharacter: (characterId: string) => void;
 }
 

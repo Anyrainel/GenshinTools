@@ -18,7 +18,7 @@ import {
   useState,
 } from "react";
 
-import type { ControlHandle } from "@/components/layout/AppBar";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -30,7 +30,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { GOODData } from "@/lib/account-data/goodConversion";
+import type { GOODData } from "@/lib/account-data/import/goodConversion";
 import { cn } from "@/lib/utils";
 
 interface AccountImportControlProps {

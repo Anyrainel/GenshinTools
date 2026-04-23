@@ -12,7 +12,7 @@ vi.mock("@/contexts/LanguageContext", () => ({
   }),
 }));
 
-vi.mock("@/data/constants", () => ({
+vi.mock("@/data/gameResources", () => ({
   artifactHalfSetsById: {
     101: { id: 101, setIds: ["SetA", "SetB"] },
     102: { id: 102, setIds: ["SetC"] },

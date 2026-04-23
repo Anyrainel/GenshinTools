@@ -16,7 +16,7 @@ import { CharacterCard } from "@/components/account-data/CharacterCard";
 import {
   type GOODData,
   convertGOODToAccountData,
-} from "@/lib/account-data/goodConversion";
+} from "@/lib/account-data/import/goodConversion";
 import { scoreWithBuilds } from "@/lib/artifact/scoring/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";

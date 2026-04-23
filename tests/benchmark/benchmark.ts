@@ -48,35 +48,33 @@ import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { stripVTControlCharacters } from "node:util";
 
-import type { AccountData, ArtifactData, SubStat } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Element, MainStat, Slot, StatKey, SubStat } from "@/data/enums";
+import type { AccountData, ArtifactData } from "@/data/types";
 import {
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
 } from "@/lib/artifact/scoring/artifactScore";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
+import { getRollValues } from "@/lib/artifact/scoring/utils";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import {
   type CompiledTeamDamage,
   compileComboTeamDamage,
   fillVarsFromArtifacts,
   fillVarsFromSheet,
-} from "@/lib/team-comp/calc/formulaCompiler";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  buildSheetFromMainAndSubs,
-  getRollValues,
-} from "@/lib/team-comp/generator/constrainedGreedy";
-import { runCharacterBnB } from "@/lib/team-comp/optimizer";
-import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
+} from "@/lib/dmgcalc/core/formulaCompiler";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
-  StatKey,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
-import { getHalfSetIds, getSetId } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
+import { runCharacterBnB } from "@/lib/team-comp/optimizer/characterBnB";
+import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type { CharOptConfig } from "@/lib/team-comp/types";
 
 import {
@@ -88,14 +86,15 @@ import {
   type TeamResult,
   buildPerChar,
   buildTeamSlotConfig,
+  characterStatsResource,
   fmt,
   getAllArtifacts,
   getCarryFormulaIds,
   getTeamCombo,
   loadAccountData,
   loadTeamPreset,
-  preloadGameStats,
   runOptimizerOnTeam,
+  weaponStatsResource,
 } from "./runner";
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
@@ -288,7 +287,7 @@ function evaluateAssignment(
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyAura as import("@/data/types").Element | undefined
+      team.enemyAura as Element | undefined
     );
 
     const calcContext: CalcContext = {
@@ -403,7 +402,7 @@ function checkConstraints(
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyAura as import("@/data/types").Element | undefined
+      team.enemyAura as Element | undefined
     );
 
     const calcContext: CalcContext = {
@@ -499,7 +498,10 @@ async function loadContext(): Promise<BenchmarkContext> {
     console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
     process.exit(1);
   }
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
   const store = loadStore();
   const accountData = loadAccountData(ACCOUNT_PATH);
   const inventory = getAllArtifacts(accountData);
@@ -762,7 +764,10 @@ async function cmdInit(accountFile: string): Promise<void> {
   console.log(`Copying account data → ${ACCOUNT_PATH}`);
   copyFileSync(resolve(accountFile), ACCOUNT_PATH);
 
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
   const accountData = loadAccountData(ACCOUNT_PATH);
   const inventory = getAllArtifacts(accountData);
   console.log(
@@ -2269,7 +2274,7 @@ async function cmdCompare(opts: {
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyAura as import("@/data/types").Element | undefined
+      team.enemyAura as Element | undefined
     );
     const calcContext: CalcContext = {
       enemyLevel:
@@ -2585,7 +2590,7 @@ async function cmdCarryDiagnose(opts: {
     const teamBuild = new TeamBuild(
       configs,
       team.opts || {},
-      team.enemyAura as import("@/data/types").Element | undefined
+      team.enemyAura as Element | undefined
     );
     const calcContext: CalcContext = {
       enemyLevel:
@@ -2829,7 +2834,10 @@ async function cmdFuzz(opts: {
   problemKey?: string;
   trials: number;
 }): Promise<void> {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
   const accountData = loadAccountData(ACCOUNT_PATH);
   const inventory = getAllArtifacts(accountData);
   const problemCache = loadProblemCache();
@@ -2886,7 +2894,7 @@ async function cmdFuzz(opts: {
       teamBuild = new TeamBuild(
         prob.configs,
         prob.combatOpts,
-        prob.enemyAura as import("@/data/types").Element | undefined
+        prob.enemyAura as Element | undefined
       );
     } catch (e) {
       console.log(
@@ -3009,9 +3017,6 @@ async function cmdFuzz(opts: {
 
 // ─── Fuzz-Combo: AST Combo vs evaluateCombo Equivalence ──────────────────────
 
-type MainStat = import("@/data/types").MainStat;
-type Slot = import("@/data/types").Slot;
-
 const MAIN_STAT_POOLS: Record<Slot, readonly MainStat[]> = {
   flower: ["hp"],
   plume: ["atk"],
@@ -3075,7 +3080,10 @@ async function cmdFuzzCombo(opts: {
   problemKey?: string;
   trials: number;
 }): Promise<void> {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
   const problemCache = loadProblemCache();
 
   if (!problemCache) {
@@ -3142,7 +3150,7 @@ async function cmdFuzzCombo(opts: {
       teamBuild = new TeamBuild(
         team.configs,
         team.combatOpts,
-        team.enemyAura as import("@/data/types").Element | undefined
+        team.enemyAura as Element | undefined
       );
     } catch (e) {
       console.log(

@@ -1,30 +1,33 @@
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 /**
  * Tests for the combo formula system: evaluateCombo, getComboDisplayResult,
  * runTeamOptimization (combo mode), and runGenerator (combo mode).
  */
 import type { GlobalStatWeights } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  type GeneratorOptions,
-  runGenerator,
-} from "@/lib/team-comp/generator/generator";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer";
-import type {
-  CharOptConfig,
-  TeamOptimizerOptions,
-} from "@/lib/team-comp/types";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
+import {
+  type GeneratorOptions,
+  runGenerator,
+} from "@/lib/team-comp/generator/generator";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
+import type {
+  CharOptConfig,
+  TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 import {
   makeBuildMatch as _makeBuildMatch,
   drain,
@@ -33,7 +36,10 @@ import {
   makeArt,
 } from "../../../fixtures/optimizerHelpers";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const CTX: CalcContext = {
   enemyLevel: 100,

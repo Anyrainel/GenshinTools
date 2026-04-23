@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
 import type {
   AnalyzerResult,
   AnalyzerStep,
@@ -109,7 +109,6 @@ export function AnalyzerChart({ result, charIds }: AnalyzerChartProps) {
   );
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: Recharts tooltip payload type
 function CustomTooltip({
   active,
   payload,

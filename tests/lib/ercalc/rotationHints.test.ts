@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
+import { analyzeRotation } from "@/lib/ercalc/rotationHints";
 import type {
   ERTimeline,
   PeriodicProc,
   TimelineAction,
-} from "@/lib/ercalc/erCalculator";
-import { analyzeRotation } from "@/lib/ercalc/rotationHints";
+} from "@/lib/ercalc/types";
 
 /** Flat entry → ERTimeline helper (accepts periodicE for readability). */
 type FlatEntry = {

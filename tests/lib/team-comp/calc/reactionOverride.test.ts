@@ -1,22 +1,28 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
   MULTI_ELEMENT_CHARS,
-} from "@/lib/team-comp/constants";
-import "@/lib/team-comp/index";
-import { resolvePartReaction } from "@/lib/team-comp/calc/combo";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+} from "@/lib/dmgcalc/constants";
+import "@/lib/dmgcalc";
+import { resolvePartReaction } from "@/lib/dmgcalc/core/combo";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   DisplayPart,
   ReactionOverride,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 /** Extract the single formula's parts from a DisplayResult. */
 function getOnlyParts(r: {

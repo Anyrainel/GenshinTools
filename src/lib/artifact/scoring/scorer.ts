@@ -6,26 +6,16 @@
  * - Substat scoring (CD-equivalent formula)
  * - Normalization to 300-point scale
  */
-
-import type {
-  ArtifactData,
-  Build,
-  MainStat,
-  MainStatSlot,
-  Slot,
-  SubStat,
-  WeightedMainStat,
-} from "@/data/types";
-import { allSlots, mainStatSlots } from "@/data/types";
+import { SUBSTAT_COEFFICIENTS } from "@/data/constants";
+import { allSlots, mainStatSlots } from "@/data/enums";
+import type { MainStat, MainStatSlot, Slot, SubStat } from "@/data/enums";
+import type { ArtifactData, Build, WeightedMainStat } from "@/data/types";
+import { getMainStatValue } from "@/data/utils";
 import {
   MAIN_STAT_CD_EQUIV_4STAR,
   MAIN_STAT_CD_EQUIV_5STAR,
-  SUBSTAT_COEFFICIENTS,
-  computeCrDeduction,
-  getMainStatValue,
-} from "./utils";
-
-// ─── Score Result Types ───
+} from "./constants";
+import { computeCrDeduction } from "./utils";
 
 export type SlotScore = {
   mainStatScore: number;

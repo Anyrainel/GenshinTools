@@ -16,7 +16,11 @@ import {
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo } from "@/data/charInfo";
-import { artifactsById, charactersById, weaponsById } from "@/data/constants";
+import {
+  artifactsById,
+  charactersById,
+  weaponsById,
+} from "@/data/gameResources";
 import type { CharacterStats, WeaponStats } from "@/data/gameStatsLoader";
 import {
   CHARACTER_LEVEL_TIERS,
@@ -30,11 +34,11 @@ import {
   getDefaultOptionValue,
   getOptionDef,
   isChoiceEnabled,
-} from "@/lib/team-comp/calc/registry";
-import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
+} from "@/lib/dmgcalc/core/registry";
+import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
+import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import { Users } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import {

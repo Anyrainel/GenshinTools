@@ -11,9 +11,9 @@ import {
   createArtifactSet,
   createWeapon,
   getOptionDef,
-} from "../team-comp/calc/registry";
-import { TeamMeta } from "../team-comp/calc/teamMeta";
-import type { OptionMap } from "../team-comp/types";
+} from "../dmgcalc/core/registry";
+import { TeamMeta } from "../dmgcalc/core/teamMeta";
+import type { OptionMap } from "../dmgcalc/types";
 
 export interface CrBudgetResult {
   baseCr: number; // 0.05

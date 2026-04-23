@@ -1,5 +1,5 @@
-import type { Element } from "@/data/types";
-import type { ArtifactSetConfig } from "@/lib/team-comp/types";
+import type { Element } from "@/data/enums";
+import type { ArtifactSetConfig } from "@/data/types";
 
 // ─── Team model ───
 
@@ -224,4 +224,19 @@ export interface RotationHint {
   charId?: string;
   /** Index of the action that triggered this hint. */
   actionIndex?: number;
+} // ─── Self-energy data ───
+
+export interface SelfEnergyEntry {
+  source: string;
+  action: string;
+  amount?: number;
+  percentRefund?: number;
+  target: string;
+  minC: number;
+  procs?: number;
+  erScale?: { per100: number; max?: number };
+  param?: { source: string; index: number; multiplier: number };
+  [key: string]: unknown;
 }
+
+export type SelfEnergyMap = Record<string, SelfEnergyEntry[]>;

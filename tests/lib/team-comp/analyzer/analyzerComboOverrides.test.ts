@@ -1,3 +1,15 @@
+import type { ReactionType } from "@/data/enums";
+import { resolveComboDescriptor } from "@/lib/dmgcalc/core/combo";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { ReactionComboGridRow } from "@/lib/dmgcalc/core/teamFormulaCatalog";
+import { MULTI_CONTRIBUTOR_REACTIONS } from "@/lib/dmgcalc/core/teamReaction";
+import type { ReactionComboEntry } from "@/lib/dmgcalc/types";
+import type {
+  ComboFormula,
+  ComboLine,
+  ComboTemplate,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
 import {
   buildEffectivePerChar,
   comboLineKey,
@@ -13,17 +25,6 @@ import type {
   MinErOverrides,
   TeamInvestment,
 } from "@/lib/team-comp/analyzer/types";
-import { resolveComboDescriptor } from "@/lib/team-comp/calc/combo";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import type { ReactionComboGridRow } from "@/lib/team-comp/calc/teamFormulaCatalog";
-import { MULTI_CONTRIBUTOR_REACTIONS } from "@/lib/team-comp/calc/teamReaction";
-import type { ReactionComboEntry, ReactionType } from "@/lib/team-comp/types";
-import type {
-  ComboFormula,
-  ComboLine,
-  ComboTemplate,
-  ReactionOverride,
-} from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 /** Create a minimal mock TeamBuild that returns given descriptors per character. */

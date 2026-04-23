@@ -1,8 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactData, SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
-import { cn, getRarityColor } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { getRarityColor } from "../shared/colors";
 import { SlotProgressIndicator } from "./SlotProgressIndicator";
 
 interface StatDisplayProps {

@@ -1,4 +1,5 @@
-import type { GlobalStatWeights, Slot } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { GlobalStatWeights } from "@/data/types";
 import { optimizeBuild } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
 import type { CrBudgetResult } from "@/lib/account-data/crBudget";

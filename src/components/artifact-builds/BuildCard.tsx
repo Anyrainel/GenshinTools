@@ -1,7 +1,4 @@
-import {
-  type ArtifactConfig,
-  ItemPicker,
-} from "@/components/shared/ItemPicker";
+import { ItemPicker } from "@/components/shared/ItemPicker";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,20 +35,12 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getGobletPool, statPools } from "@/data/constants";
-import {
-  type Build,
-  type BuildConstellation,
-  type BuildRole,
-  type BuildStyle,
-  type Element,
-  type MainStatSlot,
-  type WeightedMainStat,
-  type WeightedSubStat,
-  buildConstellations,
-  buildRoles,
-  buildStyles,
-  mainStatSlots,
-} from "@/data/types";
+import { mainStatSlots } from "@/data/enums";
+import { buildConstellations, buildRoles, buildStyles } from "@/data/enums";
+import type { BuildConstellation, BuildRole, BuildStyle } from "@/data/enums";
+import type { Element, MainStatSlot } from "@/data/enums";
+import type { ArtifactSetConfig } from "@/data/types";
+import type { Build, WeightedMainStat, WeightedSubStat } from "@/data/types";
 import { parseBuildConstellation } from "@/lib/typeValidation";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -294,7 +283,7 @@ function BuildCardComponent({
           }
         : null;
 
-  const handlePickerChange = (val: ArtifactConfig) => {
+  const handlePickerChange = (val: ArtifactSetConfig) => {
     if (val.type === "4pc") {
       handleBuildChange({
         composition: "4pc",

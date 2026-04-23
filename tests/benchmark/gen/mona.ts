@@ -13,19 +13,17 @@
  *   - Exhaustive set combination iteration (no heuristic subset)
  */
 
-import { artifactHalfSetsById } from "@/data/constants";
+import type { StatKey } from "@/data/enums";
+import { artifactHalfSetsById } from "@/data/gameResources";
 import type { ArtifactData } from "@/data/types";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  type CalcContext,
-  type OptFailReason,
-  type ReactionOverride,
-  type StatKey,
-  type TeamOptYield,
-  type TeamOptimizerOptions,
-  getHalfSetIds,
-  getSetId,
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { CalcContext, ReactionOverride } from "@/lib/dmgcalc/types";
+import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
+import type {
+  OptFailReason,
+  TeamOptYield,
+  TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,

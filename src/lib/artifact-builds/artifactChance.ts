@@ -1,12 +1,11 @@
-import { elementalMainStats, statPoolWithWeights } from "../../data/constants";
 import type {
   MainStat,
   MainStatPlus,
   MainStatSlot,
-  SetConfig,
-  SlotConfig,
   SubStat,
-} from "../../data/types";
+} from "@/data/enums";
+import { elementalMainStats, statPoolWithWeights } from "../../data/constants";
+import type { BuildConfig, SlotConfig } from "../../data/types";
 
 type SlotKind = "flowerPlume" | "sands" | "goblet" | "circlet";
 
@@ -27,7 +26,7 @@ export interface SlotChanceResult {
   circlet: number;
 }
 
-export function computeSlotChances(config: SetConfig): SlotChanceResult {
+export function computeSlotChances(config: BuildConfig): SlotChanceResult {
   return {
     flowerPlume: computeSlotChance("flowerPlume", config.flowerPlume),
     sands: computeSlotChance("sands", config.sands),

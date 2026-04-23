@@ -1,8 +1,8 @@
 import {
   ArtifactManagerError,
   checkHealth,
-} from "@/lib/artifact-manager/client";
-import type { HealthResponse } from "@/lib/artifact-manager/types";
+} from "@/lib/account-data/manager/client";
+import type { HealthResponse } from "@/lib/account-data/manager/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ConnectionState =

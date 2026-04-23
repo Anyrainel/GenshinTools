@@ -1,25 +1,23 @@
 import { substatRollTiers } from "@/data/constants";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
 import type {
   AccountData,
   ArtifactData,
   Build,
   BuildPayloadV5,
-  MainStat,
-  Slot,
-  SubStat,
 } from "@/data/types";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
-import { runTriage } from "@/lib/account-data/triage/triageEngine";
-import type { TriageSettings } from "@/lib/account-data/triage/types";
-import { toGOODArtifact } from "@/lib/artifact-manager/instructions";
+import { toGOODArtifact } from "@/lib/account-data/manager/instructions";
 import {
   applyJobResults,
   rebuildAccountFromSnapshot,
-} from "@/lib/artifact-manager/storeSync";
+} from "@/lib/account-data/manager/storeSync";
 import type {
   InstructionResult,
   ManagePayload,
-} from "@/lib/artifact-manager/types";
+} from "@/lib/account-data/manager/types";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { runTriage } from "@/lib/account-data/triage/triageEngine";
+import type { TriageSettings } from "@/lib/account-data/triage/types";
 import presetJson from "@/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 import { describe, expect, it } from "vitest";
 

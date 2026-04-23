@@ -2,8 +2,6 @@ import { BURST_ACTIONS, DIRECT_PARTICLE_ACTIONS, particles } from "./constants";
 import { hasPeriodicGeneration } from "./erCalculator";
 import type { ERTimeline, RotationHint } from "./types";
 
-export type { RotationHint } from "./types";
-
 /**
  * Analyze an ERTimeline and return hints for common issues.
  * These are suggestions, not errors — the user's rotation might be intentional.

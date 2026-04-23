@@ -1,35 +1,39 @@
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/types";
+import type { Element } from "@/data/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncWeaponChoice } from "@/hooks/useAsyncWeaponChoice";
 import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
-import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
 import {
   buildComboLineMap,
   buildSingleFormulaSelection,
   collectAllFormulas,
-  getEffectiveCombo,
   resolveActiveCombo,
   withLineCount,
   withReactionOverride,
-} from "@/lib/team-comp/calc/combo";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+} from "@/lib/dmgcalc/core/combo";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type {
+  ComboFormula,
+  ComboLine,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
+import { resolveCalcContext } from "@/lib/dmgcalc/utils";
+import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
+import { getEffectiveCombo } from "@/lib/team-comp/teamConfigUtils";
 import {
   buildTeamConfigs,
   buildWeaponChoiceCharConfigs,
 } from "@/lib/team-comp/teamConfigUtils";
-import {
-  type ComboFormula,
-  type ComboLine,
-  type ReactionOverride,
-  resolveCalcContext,
-} from "@/lib/team-comp/types";
+import type { Team, WeaponChoiceResult } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import type { Team, WeaponChoiceResult } from "@/stores/useTeamStore";
+import type { ViewId } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -40,7 +44,7 @@ import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
 interface WeaponChoiceDetailProps {
   team: Team;
   onBack: () => void;
-  viewId?: import("@/stores/useSessionNavStore").ViewId;
+  viewId?: ViewId;
 }
 
 export function WeaponChoiceDetail({
@@ -59,7 +63,9 @@ export function WeaponChoiceDetail({
     [storeUpdateTeam, checkAutoDisableOwned]
   );
   const accountData = useActiveAccountData();
-  const { ready: gameStatsReady, characterStats, weaponStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
+  const gameStatsReady = characterStats !== null && weaponStats !== null;
   const isMobile = useMediaQuery("(max-width: 1023px)");
 
   // ── Environment settings (unified with Damage tab) ──

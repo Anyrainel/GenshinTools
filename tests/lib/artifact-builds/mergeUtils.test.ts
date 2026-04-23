@@ -1,9 +1,5 @@
-import type {
-  MainStatPlus,
-  SetConfig,
-  SlotConfig,
-  SubStat,
-} from "@/data/types";
+import type { MainStatPlus, SubStat } from "@/data/enums";
+import type { BuildConfig, SlotConfig } from "@/data/types";
 import {
   SLOT_KEYS,
   areArraysEqualIgnoreOrder,
@@ -40,7 +36,7 @@ function makeConfig(
     goblet?: MainStatPlus[];
     circlet?: MainStatPlus[];
   } = {}
-): SetConfig {
+): BuildConfig {
   const slot: SlotConfig = {
     mainStats: [],
     substats,

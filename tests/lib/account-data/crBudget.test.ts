@@ -1,4 +1,7 @@
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import type { Build, CharacterData } from "@/data/types";
 import { computeCrBudget } from "@/lib/account-data/crBudget";
 import {
@@ -9,7 +12,10 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 // Must preload game stats for resolveCharacterStats/resolveWeaponStats
 beforeAll(async () => {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
 });
 
 const testBuild: Build = {

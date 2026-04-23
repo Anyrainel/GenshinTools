@@ -11,11 +11,11 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type { MergeAlgorithm } from "@/data/enums";
 import type {
-  ArtifactSetConfigs,
+  ArtifactBuildConfigs,
   BuildGroup,
   BuildPayloadV5,
-  MergeAlgorithm,
 } from "@/data/types";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import {
@@ -57,7 +57,7 @@ function loadPresetBuilds(): BuildGroup[] {
  * Deterministic serialization: sort set configs by setId, sort
  * servedCharacters by id for stability across runs.
  */
-function stabilize(results: ArtifactSetConfigs[]) {
+function stabilize(results: ArtifactBuildConfigs[]) {
   return results
     .sort((a, b) => a.setId.localeCompare(b.setId))
     .map((setConfigs) => ({

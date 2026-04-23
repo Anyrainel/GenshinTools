@@ -17,7 +17,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { PendingImport } from "@/lib/account-data/importRouting";
+import type { PendingImport } from "@/lib/account-data/import/importRouting";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { Check, Download, Edit2, Plus, Trash2, User } from "lucide-react";

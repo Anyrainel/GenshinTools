@@ -2,11 +2,21 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import type { ItemIconSize } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/types";
+import type { Element } from "@/data/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAnalyzer } from "@/hooks/useAnalyzer";
-import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type {
+  ComboFormula,
+  ComboLine,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
+import { resolveCalcContext } from "@/lib/dmgcalc/utils";
 import {
   fullToStored,
   reconcileConfigs,
@@ -18,16 +28,9 @@ import type {
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
-import {
-  type ComboFormula,
-  type ComboLine,
-  type ReactionOverride,
-  resolveCalcContext,
-} from "@/lib/team-comp/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -44,7 +47,9 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   const { t } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
   const accountData = useActiveAccountData();
-  const { ready: gameStatsReady, characterStats, weaponStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
+  const gameStatsReady = characterStats !== null && weaponStats !== null;
 
   // 3-tier icon sizing matching TeamRosterCard
   const isMobile = useMediaQuery("(max-width: 1023px)");
@@ -246,7 +251,6 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   // Persist charConfigs to store
   const baseConfigsRef = useRef(configs);
   baseConfigsRef.current = configs;
-  // biome-ignore lint/correctness/useExhaustiveDependencies: analyzerRef avoids infinite loop from team.analyzer
   useEffect(() => {
     if (charConfigs.length === 0) return;
     const bcs = baseConfigsRef.current;
@@ -260,7 +264,6 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   }, [charConfigs, team.id, updateTeam]);
 
   // Persist combo/minEr overrides
-  // biome-ignore lint/correctness/useExhaustiveDependencies: analyzerRef avoids infinite loop from team.analyzer
   useEffect(() => {
     updateTeam(team.id, {
       analyzer: {
@@ -271,7 +274,6 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     });
   }, [comboOverrides, team.id, updateTeam]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: analyzerRef avoids infinite loop from team.analyzer
   useEffect(() => {
     updateTeam(team.id, {
       analyzer: {

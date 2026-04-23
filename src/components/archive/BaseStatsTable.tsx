@@ -1,11 +1,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { BaseStat } from "@/data/enums";
 import {
   CHARACTER_LEVEL_TIERS,
   type CharacterLevelStats,
   type CharacterLevelTier,
+  characterStatsResource,
 } from "@/data/gameStatsLoader";
-import type { BaseStat } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
 
 const BASE_STAT_KEYS = ["baseHp", "baseAtk", "baseDef", "em"] as const;
 
@@ -26,7 +26,8 @@ function isZeroStat(raw: string | undefined): boolean {
 
 export function BaseStatsTable({ characterId }: { characterId: string }) {
   const { t } = useLanguage();
-  const { characterStats, ready } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const ready = characterStats !== null;
   const entry = ready && characterStats ? characterStats[characterId] : null;
   if (!entry) return null;
 

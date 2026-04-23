@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -9,31 +13,26 @@ import {
   LunarDirectFormula,
   LunarFormula,
   TransformFormula,
-} from "@/lib/team-comp/calc/damageFormula";
-import { evaluate, simplify } from "@/lib/team-comp/calc/expr";
-import {
-  VarMapping,
-  createExprStats,
-} from "@/lib/team-comp/calc/exprStatSheet";
+} from "@/lib/dmgcalc/core/damageFormula";
+import { evaluate, simplify } from "@/lib/dmgcalc/core/expr";
+import { VarMapping, createExprStats } from "@/lib/dmgcalc/core/exprStatSheet";
 
+import type { StatKey } from "@/data/enums";
+import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
+import { getRollValues } from "@/lib/artifact/scoring/utils";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/team-comp/calc/formulaCompiler";
-import { CrossScalingBuff, ScalingBuff } from "@/lib/team-comp/calc/statBuff";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  buildSheetFromMainAndSubs,
-  getRollValues,
-} from "@/lib/team-comp/generator/constrainedGreedy";
+} from "@/lib/dmgcalc/core/formulaCompiler";
+import { CrossScalingBuff, ScalingBuff } from "@/lib/dmgcalc/core/statBuff";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
-  StatKey,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
-import "@/lib/team-comp/index";
+} from "@/lib/dmgcalc/types";
+import "@/lib/dmgcalc";
 import { getFirstFormulaId } from "../../../fixtures/optimizerHelpers";
 
 const CTX: CalcContext = {
@@ -555,11 +554,10 @@ describe("CrossScalingBuff dynamicBuffsExpr parity", () => {
 
 // Full Pipeline Fuzz Tests (single-formula + combo)
 
-await preloadGameStats();
-
-type MainStat = import("@/data/types").MainStat;
-type SubStat = import("@/data/types").SubStat;
-type Slot = import("@/data/types").Slot;
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 /** Random main stats per slot for fuzz testing. */
 function randomMainStats(): Record<Slot, MainStat> {
@@ -1379,17 +1377,13 @@ describe("marginal gain parity (compiled vs standard)", () => {
 // Picks random characters/weapons/artifacts to stress-test the
 // compiled pipeline against diverse buff combinations.
 
-import {
-  getCharacterStatsSync,
-  getWeaponStatsSync,
-} from "@/data/gameStatsLoader";
 import { artifacts, characters, weapons } from "@/data/resources";
 
 describe("random team fuzz (compiled vs standard)", () => {
   const rv = getRollValues();
 
   function buildWeaponsByType(): Record<string, string[]> {
-    const weaponStats = getWeaponStatsSync()!;
+    const weaponStats = weaponStatsResource.peek()!;
     const byType: Record<string, string[]> = {};
     for (const w of weapons) {
       const stats = weaponStats[w.id];
@@ -1410,7 +1404,7 @@ describe("random team fuzz (compiled vs standard)", () => {
     .map((a) => a.id);
 
   function tryRandomTeam(): TeamSlotConfig[] | null {
-    const charStats = getCharacterStatsSync()!;
+    const charStats = characterStatsResource.peek()!;
     const weaponsByType = buildWeaponsByType();
     const shuffled = [...characters].sort(() => Math.random() - 0.5);
     const picked: TeamSlotConfig[] = [];
@@ -2281,13 +2275,13 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 //   • constellation, weapon, refinement, artifact set (random team path)
 //   • enemy level / enemy res / crit mode (random per trial)
 
-import { getOptionDef } from "@/lib/team-comp/calc/registry";
-import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
-import type { BuffActivationMap } from "@/lib/team-comp/types";
-import type { OptionMap } from "@/lib/team-comp/types";
-import type { ReactionOverride } from "@/lib/team-comp/types";
-import { getSetId } from "@/lib/team-comp/types";
+import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/dmgcalc/constants";
+import { getOptionDef } from "@/lib/dmgcalc/core/registry";
+import { getBuffInstanceKey } from "@/lib/dmgcalc/core/statBuff";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import type { OptionMap } from "@/lib/dmgcalc/types";
+import type { ReactionOverride } from "@/lib/dmgcalc/types";
+import { getSetId } from "@/lib/dmgcalc/utils";
 
 describe("cross-path fuzz (display vs calc vs compile)", () => {
   const rv = getRollValues();
@@ -2694,8 +2688,8 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
 // tryRandomTeam is defined inside the "random team fuzz" describe block above.
 // Re-export via a local helper for the cross-path fuzz suite.
 function tryRandomTeam(): TeamSlotConfig[] | null {
-  const charStats = getCharacterStatsSync()!;
-  const weaponStats = getWeaponStatsSync()!;
+  const charStats = characterStatsResource.peek()!;
+  const weaponStats = weaponStatsResource.peek()!;
 
   const weaponsByType: Record<string, string[]> = {};
   for (const w of weapons) {

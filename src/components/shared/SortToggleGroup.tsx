@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { SortDirection } from "@/data/types";
+import type { SortDirection } from "@/data/enums";
 import { AlertTriangle, ArrowDown, ArrowUp, Minus } from "lucide-react";
 
 interface SortToggleGroupProps {

@@ -1,8 +1,8 @@
 /** Preset substat roll totals per artifact slot (5★ count, then 4★). */
-export type SubstatBudgetPreset = "7_5" | "7_6" | "8_6" | "8_7" | "9_7";
+
+import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
 
 export const SUBSTAT_BUDGET_DEFAULT_PRESET: SubstatBudgetPreset = "8_6";
-
 const PRESET_ROLLS: Record<
   SubstatBudgetPreset,
   { rolls5: number; rolls4: number }

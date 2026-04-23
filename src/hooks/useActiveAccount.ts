@@ -1,10 +1,7 @@
 import type { AccountData } from "@/data/types";
+import type { AccountState } from "@/lib/account-data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
-import {
-  type AccountState,
-  getActiveAccount,
-  useAccountStore,
-} from "@/stores/useAccountStore";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 
 /**
  * Returns the full active AccountState (id, data, scores, etc.) or null.

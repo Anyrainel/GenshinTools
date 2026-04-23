@@ -1,9 +1,10 @@
-import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
+import type { ActionConfig } from "@/components/layout/AppBar";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
@@ -11,25 +12,25 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { MainStat, Rarity, WeaponType } from "@/data/enums";
+import { weaponTypes } from "@/data/enums";
 import {
-  getSortedWeaponSecondaryStats,
   sortedWeapons,
   weaponResourcesByName,
   weaponsById,
-} from "@/data/constants";
-import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
+} from "@/data/gameResources";
+import {
+  getWeaponDisplayMeta,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import type {
-  MainStat,
   PresetOption,
-  Rarity,
   TierAssignment,
   TierCustomization,
   TierListData,
   WeaponResource,
-  WeaponType,
 } from "@/data/types";
-import { weaponTypes } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
+import { getSortedWeaponSecondaryStats } from "@/lib/utils";
 
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import {
@@ -107,7 +108,7 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
     1: false,
   });
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
-  const { weaponStats } = useGameStats();
+  const weaponStats = weaponStatsResource.use();
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
     [weaponStats]

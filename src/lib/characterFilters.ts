@@ -1,12 +1,12 @@
-import { charactersById } from "@/data/constants";
+import { tiers } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
 import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { CharacterStatsMap } from "@/data/gameStatsLoader";
-import {
-  type CharacterData,
-  type CharacterFilters,
-  type CharacterResource,
-  type TierAssignment,
-  tiers,
+import type {
+  CharacterData,
+  CharacterFilters,
+  CharacterResource,
+  TierAssignment,
 } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { fuzzyMatch } from "@/lib/search";

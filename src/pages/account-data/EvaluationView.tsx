@@ -11,8 +11,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { SortDirection } from "@/data/types";
-import { tiers } from "@/data/types";
+import { tiers } from "@/data/enums";
+import type { SortDirection } from "@/data/enums";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";

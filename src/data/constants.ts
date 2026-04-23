@@ -1,65 +1,6 @@
-import type { CharacterStatsMap, WeaponStatsMap } from "@/data/gameStatsLoader";
-import { betaEnabled } from "@/data/useBetaStore";
+import type { Element, MainStat, MainStatPlus, SubStat } from "./enums";
+import type { ReactionType } from "./enums";
 import artifactStatData from "./game/artifact_stat.json";
-import {
-  artifactHalfSets,
-  artifacts,
-  characters,
-  elementResources,
-  weaponTypeResources as weaponResources,
-  weapons,
-} from "./resources";
-import { betaArtifacts, betaCharacters, betaWeapons } from "./resources_beta";
-
-// Beta-only entries are spliced in FIRST so stable rarity sorts rank them
-// above released same-rarity peers. Released wins on ID collision.
-export const allCharacters = betaEnabled()
-  ? [
-      ...betaCharacters.filter((b) => !characters.some((c) => c.id === b.id)),
-      ...characters,
-    ]
-  : characters;
-export const allWeapons = betaEnabled()
-  ? [
-      ...betaWeapons.filter((b) => !weapons.some((w) => w.id === b.id)),
-      ...weapons,
-    ]
-  : weapons;
-// Beta artifact IDs that should render LAST within their rarity bucket, after
-// official sets — used for scrapped/never-released sets (e.g. Glacier and
-// Snowfield) so they don't push genuine upcoming sets down in the archive.
-const RENDER_LAST_BETA_ARTIFACT_IDS = new Set<string>([
-  "glacier_and_snowfield",
-]);
-export const allArtifacts = betaEnabled()
-  ? [
-      ...betaArtifacts.filter(
-        (b) =>
-          !RENDER_LAST_BETA_ARTIFACT_IDS.has(b.id) &&
-          !artifacts.some((a) => a.id === b.id)
-      ),
-      ...artifacts,
-      ...betaArtifacts.filter(
-        (b) =>
-          RENDER_LAST_BETA_ARTIFACT_IDS.has(b.id) &&
-          !artifacts.some((a) => a.id === b.id)
-      ),
-    ]
-  : artifacts;
-
-import type {
-  ArtifactHalfSet,
-  ArtifactSetResource,
-  CharacterResource,
-  Element,
-  ElementResource,
-  MainStat,
-  SubStat,
-  TierAssignment,
-  WeaponResource,
-  WeaponTypeResource,
-} from "./types";
-import { tiers } from "./types";
 
 // Function to get goblet pool with character's elemental damage bonus
 export const getGobletPool = (element?: Element): readonly MainStat[] => {
@@ -115,24 +56,6 @@ export const statPools = {
   ] as const,
 };
 
-/**
- * Stats that can appear on a given slot (substats first in substat order,
- * then main-stat-only stats appended). Use for sort selectors scoped to a slot.
- */
-export function getSortableStatsForSlot(
-  slot: import("./types").Slot
-): string[] {
-  const mainStats = new Set<string>(statPools[slot] as readonly string[]);
-  const subs = statPools.substat as readonly string[];
-  // Start with substats (in substat order), which are the most useful to sort by
-  const result: string[] = [...subs];
-  // Append main-stat-only stats (e.g. elemental%, heal%) that aren't already in substats
-  for (const ms of mainStats) {
-    if (!result.includes(ms)) result.push(ms);
-  }
-  return result;
-}
-
 export const statPoolWithWeights = {
   flower: { hp: 1 },
   plume: { atk: 1 },
@@ -177,7 +100,12 @@ export const statPoolWithWeights = {
 // ─── Artifact stat data (derived from official game data) ───
 
 /** Stats where values are flat numbers (not percentages) */
-const FLAT_STATS: ReadonlySet<string> = new Set(["hp", "atk", "def", "em"]);
+export const FLAT_STATS: ReadonlySet<string> = new Set([
+  "hp",
+  "atk",
+  "def",
+  "em",
+]);
 
 /** Convert JSON decimal to display format. Pct stats ×100, flat stats unchanged. */
 function toDisplay(stat: string, val: number): number {
@@ -185,24 +113,6 @@ function toDisplay(stat: string, val: number): number {
   return Math.round(val * 1e6) / 1e4;
 }
 
-/** Whether a stat key is a flat (non-percentage) stat */
-export function isFlatStat(stat: string): boolean {
-  return FLAT_STATS.has(stat);
-}
-
-/** Whether a stat key represents a percentage value (needs ÷100 for internal format). */
-export function isPctStat(key: string): boolean {
-  return (
-    key.endsWith("%") ||
-    key === "cr" ||
-    key === "cd" ||
-    key === "er" ||
-    key === "reactionCr" ||
-    key === "reactionCd"
-  );
-}
-
-// Valid stat keys (filter out FIGHT_PROP_FIRE_SUB_HURT etc from JSON)
 const VALID_SUBSTATS = new Set<string>(statPools.substat);
 const VALID_MAIN_STATS = new Set<string>([
   ...statPools.flower,
@@ -295,14 +205,6 @@ export const MAIN_STAT_VALUES_4STAR: Record<string, number> =
     ])
   );
 
-/** Get the max-level main stat value in display format (46.6 for ATK%, 311 for flat ATK) */
-export function getMainStatValue(stat: MainStat, rarity: number): number {
-  const table = rarity === 4 ? MAIN_STAT_VALUES_4STAR : MAIN_STAT_VALUES_5STAR;
-  return table[stat] ?? 0;
-}
-
-// ─── Derived scoring constants ───
-
 /** Maps each substat to its CD-equivalent coefficient: maxRoll(cd) / maxRoll(stat) */
 export const SUBSTAT_COEFFICIENTS: Record<string, number> = Object.fromEntries(
   Object.entries(maxSubstatRolls[5]).map(([stat, maxRoll]) => [
@@ -311,172 +213,45 @@ export const SUBSTAT_COEFFICIENTS: Record<string, number> = Object.fromEntries(
   ])
 );
 
-const createRecord = <Item, Key extends PropertyKey>(
-  items: readonly Item[],
-  getKey: (item: Item) => Key
-): Record<Key, Item> => {
-  return items.reduce<Record<Key, Item>>(
-    (acc, item) => {
-      acc[getKey(item)] = item;
-      return acc;
-    },
-    {} as Record<Key, Item>
-  );
-};
+export const mainStatsPlus: MainStatPlus[] = [
+  "cr",
+  "cd",
+  "atk%",
+  "hp%",
+  "def%",
+  "em",
+  "er",
+  "pyro%",
+  "hydro%",
+  "anemo%",
+  "electro%",
+  "dendro%",
+  "cryo%",
+  "geo%",
+  "phys%",
+  "heal%",
+  "atk",
+  "hp",
+  "elemental%",
+  "cr/cd",
+] as const;
 
-const freezeRecord = <MapType extends Record<PropertyKey, unknown>>(
-  record: MapType
-) => Object.freeze(record) as Readonly<MapType>;
-
-export const charactersById = freezeRecord(
-  createRecord<CharacterResource, CharacterResource["id"]>(
-    allCharacters,
-    (character) => character.id
-  )
-);
-
-export const artifactsById = freezeRecord(
-  createRecord<ArtifactSetResource, ArtifactSetResource["id"]>(
-    allArtifacts,
-    (artifact) => artifact.id
-  )
-);
-
-export const weaponsById = freezeRecord(
-  createRecord<WeaponResource, WeaponResource["id"]>(
-    allWeapons,
-    (weapon) => weapon.id
-  )
-);
-
-export const artifactHalfSetsById = freezeRecord(
-  createRecord<ArtifactHalfSet, ArtifactHalfSet["id"]>(
-    artifactHalfSets,
-    (halfSet) => halfSet.id
-  )
-);
-
-export const artifactIdToHalfSetId = freezeRecord(
-  artifactHalfSets.reduce<Record<string, string>>((acc, halfSet) => {
-    for (const setId of halfSet.setIds) {
-      acc[setId] = halfSet.id;
-    }
-    return acc;
-  }, {})
-);
-
-/** Hand-picked half-set IDs shown first, then remaining IDs sorted alphabetically. */
-const pinnedHalfSetIds: string[] = [
-  "atk%-18",
-  "hp%-20",
-  "def%-30",
-  "em-80",
-  "er-20",
-  "cr-12",
-  "pyro%-15",
-  "hydro%-15",
-  "electro%-15",
-  "cryo%-15",
-  "anemo%-15",
-  "dendro%-15",
-  "geo%-15",
-  "phys%-25",
-  "na-ca-dmg%-15",
-  "plunge-dmg%-25",
-  "skill-dmg%-20",
-  "burst-dmg%-20",
-  "nightsoul-dmg%-15",
-  "nightsoul-energy-6",
+/** Subset of reactions useful as team composition tags (excludes "none" and intermediate reactions). */
+export const TEAM_REACTION_OPTIONS: ReactionType[] = [
+  "melt",
+  "vaporize",
+  "spread",
+  "aggravate",
+  "overloaded",
+  "electroCharged",
+  "superconduct",
+  "swirl",
+  "frozen",
+  "bloom",
+  "hyperbloom",
+  "burgeon",
+  "burning",
+  "lunarCharged",
+  "lunarBloom",
+  "lunarCrystallize",
 ];
-export const allHalfSetIds: readonly string[] = Object.freeze([
-  ...pinnedHalfSetIds,
-  ...artifactHalfSets
-    .map((hs) => hs.id)
-    .filter((id) => !pinnedHalfSetIds.includes(id))
-    .sort(),
-]);
-
-export const elementResourcesByName = freezeRecord(
-  createRecord<ElementResource, ElementResource["name"]>(
-    elementResources,
-    (element) => element.name
-  )
-);
-
-export const weaponResourcesByName = freezeRecord(
-  createRecord<WeaponTypeResource, WeaponTypeResource["name"]>(
-    weaponResources,
-    (weapon) => weapon.name
-  )
-);
-
-/**
- * Sorts items by rarity in descending order.
- * Since the original lists (resources.ts) are ordered by release date descending,
- * and Array.prototype.sort is stable in modern JS environments,
- * this results in Rarity Descending > Release Date Descending.
- */
-function sortItemsByRarityDesc<T extends { rarity?: number }>(
-  items: readonly T[]
-): T[] {
-  return [...items].sort((a, b) => (b.rarity ?? 0) - (a.rarity ?? 0));
-}
-
-/**
- * Character class rank for sorting: regular 5★ > regular 4★ > traveler > manekin/manekina.
- * Lower value = higher priority.
- */
-function getCharacterClassRank(id: string, rarity: number): number {
-  if (id.startsWith("manekin")) return 3;
-  if (id.startsWith("traveler")) return 2;
-  return rarity >= 5 ? 0 : 1;
-}
-
-/** Characters sorted by optional tier, then character class rank, then release date descending. */
-export function getSortedCharacters(
-  characterStats: CharacterStatsMap | null,
-  tierAssignments?: TierAssignment | null
-): CharacterResource[] {
-  const list = [...allCharacters];
-  if (!characterStats) return list;
-  return list.sort((a, b) => {
-    // 1. Tier rank (S=0, A=1, …, Pool=5, unassigned=last)
-    if (tierAssignments) {
-      const tierA = tierAssignments[a.id]?.tier;
-      const tierB = tierAssignments[b.id]?.tier;
-      const rankA = tierA ? tiers.indexOf(tierA) : tiers.length;
-      const rankB = tierB ? tiers.indexOf(tierB) : tiers.length;
-      if (rankA !== rankB) return rankA - rankB;
-    }
-    // 2. Character class: 5★ > 4★ > traveler > manekin/manekina
-    const rarityA = characterStats[a.id]?.rarity ?? a.rarity;
-    const rarityB = characterStats[b.id]?.rarity ?? b.rarity;
-    const classA = getCharacterClassRank(a.id, rarityA);
-    const classB = getCharacterClassRank(b.id, rarityB);
-    if (classA !== classB) return classA - classB;
-    // 3. Within same class, sort by release date descending
-    const dateA = characterStats[a.id]?.releaseDate ?? "";
-    const dateB = characterStats[b.id]?.releaseDate ?? "";
-    if (!dateA && !dateB) return 0;
-    if (!dateA) return -1;
-    if (!dateB) return 1;
-    return dateB.localeCompare(dateA);
-  });
-}
-
-export const sortedWeapons = sortItemsByRarityDesc(allWeapons);
-export const sortedArtifacts = sortItemsByRarityDesc(allArtifacts);
-
-export { artifactHalfSets } from "./resources";
-
-/** Unique weapon secondary stats from weapon_stats (L90), sorted. */
-export function getSortedWeaponSecondaryStats(
-  weaponStats: WeaponStatsMap | null
-): MainStat[] {
-  if (!weaponStats) return [];
-  const set = new Set<MainStat>();
-  for (const entry of Object.values(weaponStats)) {
-    if (entry.secondaryStat) set.add(entry.secondaryStat);
-  }
-  return Array.from(set).sort();
-}

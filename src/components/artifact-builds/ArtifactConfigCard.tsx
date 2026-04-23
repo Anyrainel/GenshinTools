@@ -1,8 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import type { MainStatPlus, SetConfig, SlotConfig } from "@/data/types";
+import type { MainStatPlus } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import type { BuildConfig, SlotConfig } from "@/data/types";
 import { computeSlotChance } from "@/lib/artifact-builds/artifactChance";
 import { hasCrCdMustPresent } from "@/lib/artifact-builds/computeFilters";
 import { cn } from "@/lib/utils";
@@ -12,7 +13,7 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Info } from "lucide-react";
 
 interface ArtifactConfigCardProps {
-  config: SetConfig;
+  config: BuildConfig;
   configNumber: number;
   onJumpToCharacter: (characterId: string) => void;
 }

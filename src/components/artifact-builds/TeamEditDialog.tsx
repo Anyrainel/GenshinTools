@@ -1,4 +1,3 @@
-import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import { TeamPickerGrid } from "@/components/shared/TeamPickerGrid";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +9,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { ArtifactSetConfig } from "@/data/types";
 import type { AccountData } from "@/data/types";
 import { useState } from "react";
 
@@ -18,12 +18,12 @@ interface TeamEditDialogProps {
   onSave: (team: {
     characters: (string | null)[];
     weapons: (string | null)[];
-    artifacts: (ArtifactConfig | null)[];
+    artifacts: (ArtifactSetConfig | null)[];
   }) => void;
   onCancel: () => void;
   initialCharacters: (string | null)[];
   initialWeapons: (string | null)[];
-  initialArtifacts: (ArtifactConfig | null)[];
+  initialArtifacts: (ArtifactSetConfig | null)[];
   accountData: AccountData | null;
 }
 
@@ -42,7 +42,7 @@ export function TeamEditDialog({
     useState<(string | null)[]>(initialCharacters);
   const [weapons, setWeapons] = useState<(string | null)[]>(initialWeapons);
   const [artifacts, setArtifacts] =
-    useState<(ArtifactConfig | null)[]>(initialArtifacts);
+    useState<(ArtifactSetConfig | null)[]>(initialArtifacts);
 
   return (
     <ResponsiveDialog open={open} onOpenChange={(o) => !o && onCancel()}>

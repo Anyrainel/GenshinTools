@@ -20,37 +20,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import type {
-  AccountData,
-  ArtifactData,
-  Slot,
-  TierAssignment,
-} from "@/data/types";
-import { formulaCritRatio } from "@/lib/team-comp/calc/formulaDisplay";
-import { adjustPartDamage } from "@/lib/team-comp/calc/formulaDisplay";
-import { buildBuffApplicability } from "@/lib/team-comp/calc/statBuff";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import type { Slot } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import type { AccountData, ArtifactData, TierAssignment } from "@/data/types";
+import { formulaCritRatio } from "@/lib/dmgcalc/core/formulaDisplay";
+import { adjustPartDamage } from "@/lib/dmgcalc/core/formulaDisplay";
+import { buildBuffApplicability } from "@/lib/dmgcalc/core/statBuff";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
 
-import { aggregateComboFormulaDefaults } from "@/lib/team-comp/calc/comboBuffOverrides";
-import { toStatSheets } from "@/lib/team-comp/teamConfigUtils";
-import type {
-  OptFailReason,
-  TeamOptimizationProgress,
-  TeamOptimizationResult,
-} from "@/lib/team-comp/types";
+import { aggregateComboFormulaDefaults } from "@/lib/dmgcalc/core/comboBuffOverrides";
 import type {
   CalcContext,
   ComboLine,
   CritMode,
   DisplayPart,
   DisplayResult,
+} from "@/lib/dmgcalc/types";
+import { toStatSheets } from "@/lib/team-comp/teamConfigUtils";
+import type {
+  OptFailReason,
+  TeamOptimizationProgress,
+  TeamOptimizationResult,
 } from "@/lib/team-comp/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import {
   AlertTriangle,
   ArrowLeft,

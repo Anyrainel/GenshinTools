@@ -12,23 +12,21 @@ import {
   groupWeapons,
   rarityColor,
 } from "@/components/account-data/InventoryWeaponGrid";
-import { CategoryChip } from "@/components/archive/CategoryChip";
-import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { CategoryChip } from "@/components/shared/CategoryChip";
+import { FilterChip } from "@/components/shared/FilterChip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Rarity } from "@/data/enums";
 import {
   allHalfSetIds,
   artifactIdToHalfSetId,
   weaponsById,
-} from "@/data/constants";
-import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
-import type {
-  AccountData,
-  ArtifactData,
-  Rarity,
-  WeaponData,
-} from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
+} from "@/data/gameResources";
+import {
+  getWeaponDisplayMeta,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useCallback, useMemo, useState } from "react";
 
@@ -50,7 +48,7 @@ export function InventoryView({
   onDeleteArtifact,
 }: InventoryViewProps) {
   const { t } = useLanguage();
-  const { weaponStats } = useGameStats();
+  const weaponStats = weaponStatsResource.use();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const iconSize = isMobile ? "lg" : "xl";
 

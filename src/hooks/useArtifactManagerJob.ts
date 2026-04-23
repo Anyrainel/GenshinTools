@@ -1,4 +1,4 @@
-import type { IGOODArtifact } from "@/lib/account-data/goodConversion";
+import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
 import {
   ArtifactManagerError,
   fetchArtifacts,
@@ -6,17 +6,17 @@ import {
   pollStatus,
   submitEquipJob,
   submitJob,
-} from "@/lib/artifact-manager/client";
+} from "@/lib/account-data/manager/client";
 import {
   applyEquipResults,
   applyJobResults,
-} from "@/lib/artifact-manager/storeSync";
+} from "@/lib/account-data/manager/storeSync";
 import type {
   EquipPayload,
   ManagePayload,
   ResultResponse,
   SubmitResponse,
-} from "@/lib/artifact-manager/types";
+} from "@/lib/account-data/manager/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 

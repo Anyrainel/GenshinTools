@@ -1,4 +1,4 @@
-import { isPartOffField } from "@/lib/team-comp/calc/fieldState";
+import { isPartOffField } from "@/lib/dmgcalc/core/fieldState";
 import { describe, expect, it } from "vitest";
 
 describe("reactionResolve helpers", () => {

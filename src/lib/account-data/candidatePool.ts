@@ -2,17 +2,11 @@
  * Builds per-slot candidate lists of synthetic ArtifactData objects tagged with their source.
  */
 import { statPools } from "@/data/constants";
-import type {
-  ArtifactData,
-  LuckExpectation,
-  MainStat,
-  Rarity,
-  Slot,
-  SubStat,
-  Tier,
-  TierAssignment,
-} from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Rarity, Slot, SubStat } from "@/data/enums";
+import type { Tier } from "@/data/enums";
+import type { LuckExpectation } from "@/data/enums";
+import type { ArtifactData, TierAssignment } from "@/data/types";
 
 /** Lower index = higher priority. A character can only steal from strictly lower-priority tiers. */
 const TIER_RANK: Record<Tier, number> = {

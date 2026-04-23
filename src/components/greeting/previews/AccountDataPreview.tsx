@@ -5,7 +5,7 @@ import { CharacterInfo } from "@/components/shared/CharacterInfo";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import { charactersById } from "@/data/gameResources";
 import { BarChart3, Box, Lightbulb, Lock, Monitor, Users } from "lucide-react";
 import { AnimatedTabPreview, type TabDef } from "./AnimatedTabPreview";
 import {

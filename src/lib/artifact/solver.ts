@@ -6,8 +6,8 @@
  * roll-count assignments.
  */
 
-import { isFlatStat, isPctStat } from "@/data/constants";
 import artifactStatData from "@/data/game/artifact_stat.json";
+import { isFlatStat, isPctStat } from "@/data/utils";
 
 const MAX_ROLLS = 9;
 const SUBSTATS = [

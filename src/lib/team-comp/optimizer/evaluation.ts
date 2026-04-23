@@ -4,14 +4,15 @@
  * - evaluateUpperBoundCompiled: compute an optimistic upper bound using compiled expression
  */
 
-import type { ArtifactData, MainStat } from "@/data/types";
+import type { MainStat } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import type {
   ArtifactVarLookup,
   CompiledTeamDamage,
-} from "../calc/formulaCompiler";
-import { fillVarsFromRawStats } from "../calc/formulaCompiler";
-import type { StatKey } from "../types";
+} from "../../dmgcalc/core/formulaCompiler";
+import { fillVarsFromRawStats } from "../../dmgcalc/core/formulaCompiler";
 
 // ─── Compiled Evaluation ───
 

@@ -10,26 +10,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { LightweightMultiSelect } from "@/components/ui/lightweight-multiselect";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { TEAM_REACTION_OPTIONS } from "@/data/constants";
+import type { ReactionType } from "@/data/enums";
 import {
   charactersById,
   elementResourcesByName,
   weaponsById,
-} from "@/data/constants";
+} from "@/data/gameResources";
 import {
+  characterStatsResource,
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import {
-  type AccountData,
-  type ReactionType,
-  TEAM_REACTION_OPTIONS,
-  type WeaponResource,
-} from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
-import { REACTION_COLORS } from "@/lib/team-comp/constants";
+import type { AccountData, WeaponResource } from "@/data/types";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
+import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import {
   ArrowDown,
   ArrowUp,
@@ -45,6 +42,7 @@ import {
   User2,
 } from "lucide-react";
 import { memo, useMemo } from "react";
+import { REACTION_COLORS } from "../shared/colors";
 
 interface TeamCardProps {
   team: Team;
@@ -104,7 +102,8 @@ export const TeamCard = memo(
     dragHandleProps,
   }: TeamCardProps) {
     const { t } = useLanguage();
-    const { characterStats, weaponStats } = useGameStats();
+    const characterStats = characterStatsResource.use();
+    const weaponStats = weaponStatsResource.use();
 
     // At least one character with a weapon is enough to optimize
     const hasConfiguredMember = team.characters.some(

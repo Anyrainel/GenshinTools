@@ -1,4 +1,5 @@
-import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 
 // Core labels & tiers
 

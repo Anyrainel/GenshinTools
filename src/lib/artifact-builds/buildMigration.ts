@@ -1,4 +1,5 @@
-import type { Build, MainStat, SubStat, WeightedMainStat } from "@/data/types";
+import type { MainStat, SubStat } from "@/data/enums";
+import type { Build, WeightedMainStat } from "@/data/types";
 import { computeIdealScore } from "@/lib/artifact/scoring/utils";
 
 /**

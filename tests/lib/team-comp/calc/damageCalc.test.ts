@@ -1,17 +1,22 @@
 import { describe, expect, it } from "vitest";
 
 import { charInfo } from "@/data/charInfo";
+import type { Faction } from "@/data/enums";
 import {
+  characterStatsResource,
   getCharacterLevelTier,
   getNextLevelTier,
-  preloadGameStats,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import { StatBuff, isBuffApplicable } from "@/lib/team-comp/calc/statBuff";
-import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
-import { TeamResonance } from "@/lib/team-comp/calc/teamResonance";
+import { StatBuff, isBuffApplicable } from "@/lib/dmgcalc/core/statBuff";
+import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
+import { TeamResonance } from "@/lib/dmgcalc/core/teamResonance";
 
 // Preload before any describe runs (describe callbacks create TeamBuild at collect time)
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 describe("TeamMeta", () => {
   // Team: Hu Tao (Pyro), Xingqiu (Hydro), Zhongli (Geo), Kazuha (Anemo)
@@ -409,7 +414,7 @@ describe("isBuffApplicable — faction scoping", () => {
   ) =>
     new StatBuff(
       { type: "character", id: ownerId, origin: "C1" },
-      { receiver, factions: factions as import("@/data/types").Faction[] },
+      { receiver, factions: factions as Faction[] },
       [{ key: "atk%", value: 0.1 }]
     );
 
@@ -519,19 +524,19 @@ describe("isBuffApplicable — charId scoping", () => {
 });
 
 // Import the side-effect barrel to register all characters, weapons, and artifacts
-import "@/lib/team-comp/index";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
+import "@/lib/dmgcalc";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/team-comp/calc/formulaCompiler";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+} from "@/lib/dmgcalc/core/formulaCompiler";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
 
 describe("TeamBuild lifecycle", () => {
   // Diluc (Pyro, Claymore), Mona (Hydro, Catalyst), Jean (Anemo, Sword), Eula (Cryo, Claymore)

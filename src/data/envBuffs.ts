@@ -1,21 +1,5 @@
-import type { StatKey } from "@/data/types";
-
-export type EnvBuffCategory = "food" | "enemy" | "status";
-
-/**
- * A buff entry (food, enemy, or status) with stat bonuses.
- * Values use engine format: flat for hp/atk/def/em, fractional for %.
- * i18n names live in i18n-app.ts under the `envBuffs` key.
- */
-export type EnvBuff = {
-  id: string;
-  category: EnvBuffCategory;
-  stats: { key: StatKey; value: number }[];
-  /** Optional image path for display (relative to public/). */
-  imagePath?: string;
-  /** Food slot: only one food per slot can be active. */
-  foodSlot?: number;
-};
+import type { EnvBuffCategory } from "./enums";
+import type { EnvBuff } from "./types";
 
 /** Target mode per category: food/enemy are team-wide, status is per-character. */
 export const ENV_BUFF_TARGET_MODE: Record<EnvBuffCategory, "team" | "perChar"> =

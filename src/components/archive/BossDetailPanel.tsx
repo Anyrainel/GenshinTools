@@ -1,14 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ELEMENT_KEYS, type ElementalOrPhysical } from "@/data/enums";
 import { computeStateRes, formatStat } from "@/data/gameDataLoader";
-import {
-  type BossState,
-  ELEMENT_KEYS,
-  type ElementKey,
-  type LeylineBossData,
-} from "@/data/types";
-import { SENTIMENT_BADGE, cn, getAssetUrl } from "@/lib/utils";
+import type { BossState, LeylineBossData } from "@/data/types";
+import { cn, getAssetUrl } from "@/lib/utils";
 import {
   HelpCircle,
   Settings,
@@ -19,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Fragment, type ReactNode, useMemo, useState } from "react";
+import { SENTIMENT_BADGE } from "../shared/colors";
 
 function useBossTranslations(bossData: LeylineBossData) {
   const { language } = useLanguage();
@@ -75,15 +72,15 @@ export function BossIcon({
   );
 }
 
-const ELEMENT_COLOR: Record<ElementKey, string> = {
-  physical: "text-gray-300",
-  pyro: "text-element-pyro",
-  hydro: "text-element-hydro",
-  electro: "text-element-electro",
-  dendro: "text-element-dendro",
-  anemo: "text-element-anemo",
-  geo: "text-element-geo",
-  cryo: "text-element-cryo",
+const ELEMENT_COLOR: Record<ElementalOrPhysical, string> = {
+  Physical: "text-gray-300",
+  Pyro: "text-element-pyro",
+  Hydro: "text-element-hydro",
+  Electro: "text-element-electro",
+  Dendro: "text-element-dendro",
+  Anemo: "text-element-anemo",
+  Geo: "text-element-geo",
+  Cryo: "text-element-cryo",
 };
 
 function ResValue({
@@ -117,8 +114,8 @@ function ResGrid({
   res,
   delta,
 }: {
-  res: Record<ElementKey, number>;
-  delta?: Partial<Record<ElementKey, number>>;
+  res: Record<ElementalOrPhysical, number>;
+  delta?: Partial<Record<ElementalOrPhysical, number>>;
 }) {
   const { t } = useLanguage();
   return (

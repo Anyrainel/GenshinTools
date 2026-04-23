@@ -9,7 +9,8 @@
  * without restructuring callers.
  */
 
-import type { ArtifactData, Rarity, SubStat } from "@/data/types";
+import type { Rarity, SubStat } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 

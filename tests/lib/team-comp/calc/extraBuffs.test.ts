@@ -1,15 +1,21 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { getSourceIcon, getSourceName } from "@/lib/team-comp/buffDisplayUtils";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import "@/lib/team-comp/index";
-import { createExtraStatBuffs } from "@/lib/team-comp/calc/statBuff";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { ExtraBuff } from "@/lib/team-comp/types";
-import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
+import "@/lib/dmgcalc";
+import { createExtraStatBuffs } from "@/lib/dmgcalc/core/statBuff";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { ExtraBuff } from "@/lib/dmgcalc/types";
+import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 // ─── TeamBuild integration: extra buffs affect stat sheets ───
 
@@ -259,7 +265,7 @@ describe("extra buffs in DisplayResult", () => {
   });
 });
 
-// ─── buffDisplayUtils: getSourceIcon / getSourceName for extraBuff ───
+// ─── buffDisplayUtils: getSourceIcon for extraBuff ───
 
 describe("buffDisplayUtils for extraBuff source", () => {
   it("getSourceIcon returns imagePath from envBuffsById for known preset", () => {
@@ -270,13 +276,5 @@ describe("buffDisplayUtils for extraBuff source", () => {
   it("getSourceIcon returns undefined for unknown/custom id", () => {
     const icon = getSourceIcon({ type: "extra", id: "custom-unknown" });
     expect(icon).toBeUndefined();
-  });
-
-  it("getSourceName returns translated name via t.envBuff", () => {
-    const mockT = {
-      envBuff: (id: string) => `translated:${id}`,
-    } as unknown as Parameters<typeof getSourceName>[1];
-    const name = getSourceName({ type: "extra", id: "gateau_debord" }, mockT);
-    expect(name).toBe("translated:gateau_debord");
   });
 });

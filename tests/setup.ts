@@ -84,3 +84,23 @@ if (typeof Element.prototype.releasePointerCapture !== "function") {
 if (typeof Element.prototype.hasPointerCapture !== "function") {
   Element.prototype.hasPointerCapture = vi.fn();
 }
+
+// Guard against leaks to the Cloudflare proxy endpoints. The enka/hoyolab
+// fetchers talk to /api/enka/* and /api/hoyolab/*; letting a test fall into
+// those paths would either make a real network call or produce a flaky jsdom
+// fetch failure. Fail loudly instead so the offending test stubs fetch itself.
+const realFetch = globalThis.fetch;
+globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
+  const url =
+    typeof input === "string"
+      ? input
+      : input instanceof URL
+        ? input.toString()
+        : (input as Request).url;
+  if (url.startsWith("/api/enka") || url.startsWith("/api/hoyolab")) {
+    throw new Error(
+      `Blocked test-time fetch to Cloudflare proxy: ${url}. Stub it locally with vi.stubGlobal("fetch", ...) or mock the fetcher module.`
+    );
+  }
+  return realFetch(input, init);
+}) as typeof fetch;

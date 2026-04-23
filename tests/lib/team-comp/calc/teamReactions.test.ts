@@ -2,42 +2,48 @@
  * Tests for TeamReactionProvider: team-wide reaction formula generation,
  * eligibility filtering, damage evaluation, compiler path, and display path.
  */
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { LunarFormula } from "@/lib/team-comp/calc/damageFormula";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+import { LunarFormula } from "@/lib/dmgcalc/core/damageFormula";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/team-comp/calc/formulaCompiler";
+} from "@/lib/dmgcalc/core/formulaCompiler";
 import {
   evaluateFormulaDamage,
   evaluateFormulaDisplay,
-} from "@/lib/team-comp/calc/formulaEval";
-import { computeLunarRankWeights } from "@/lib/team-comp/calc/stackRank";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+} from "@/lib/dmgcalc/core/formulaEval";
+import { computeLunarRankWeights } from "@/lib/dmgcalc/core/stackRank";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   ReactionComboGridRow,
   TeamFormulaCatalog,
-} from "@/lib/team-comp/calc/teamFormulaCatalog";
+} from "@/lib/dmgcalc/core/teamFormulaCatalog";
 import {
   LUNAR_RANK_WEIGHTS,
   MULTI_CONTRIBUTOR_REACTIONS,
   resolveReactionComboEntries,
-} from "@/lib/team-comp/calc/teamReaction";
-import type { TeamStatSheet } from "@/lib/team-comp/calc/teamStatSheet";
-import type { ReactionComboEntry } from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/core/teamReaction";
+import type { TeamStatSheet } from "@/lib/dmgcalc/core/teamStatSheet";
+import type { ReactionComboEntry } from "@/lib/dmgcalc/types";
 import type {
   CalcContext,
   ComboFormula,
   I18nLabel,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
 import { describe, expect, it } from "vitest";
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 function findGridRow(grid: ReactionComboGridRow[], baseId: string) {
   return grid.find((r) => r.baseId === baseId);

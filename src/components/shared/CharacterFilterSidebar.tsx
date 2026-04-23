@@ -11,19 +11,19 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  elementResourcesByName,
-  weaponResourcesByName,
-} from "@/data/constants";
-import {
-  type CharacterFilters,
   type Element,
   type Rarity,
-  type SortDirection,
   type WeaponType,
   elements,
   regions,
   weaponTypes,
-} from "@/data/types";
+} from "@/data/enums";
+import type { SortDirection } from "@/data/enums";
+import {
+  elementResourcesByName,
+  weaponResourcesByName,
+} from "@/data/gameResources";
+import type { CharacterFilters } from "@/data/types";
 import { getAssetUrl } from "@/lib/utils";
 import { AlertTriangle, Search, X } from "lucide-react";
 

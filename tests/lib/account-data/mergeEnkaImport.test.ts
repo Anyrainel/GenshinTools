@@ -2,7 +2,7 @@ import type { CharacterData } from "@/data/types";
 import {
   artifactFingerprint,
   mergeEnkaImportWithInventory,
-} from "@/lib/account-data/mergeEnkaImport";
+} from "@/lib/account-data/import/mergeEnkaImport";
 import { describe, expect, it } from "vitest";
 import {
   MOCK_ARTIFACTS,

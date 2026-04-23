@@ -1,26 +1,20 @@
-import type { ArtifactConfig } from "@/components/shared/ItemPicker";
+import type { Element, MainStat, SubStat } from "@/data/enums";
+import type { ReactionType } from "@/data/enums";
+import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
+import type { OptionMap } from "@/lib/dmgcalc/types";
+import type { ExtraBuff } from "@/lib/dmgcalc/types";
 import type {
-  ArtifactData,
-  Element,
-  MainStat,
-  ReactionType,
-  SubStat,
-} from "@/data/types";
+  CalcContext,
+  ComboFormula,
+  ComboLine,
+  DamageResult,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
 import type {
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
 import type { StoredAnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import type { OptionMap } from "@/lib/team-comp/types";
-import type { ExtraBuff } from "@/lib/team-comp/types";
-import {
-  type CalcContext,
-  type ComboFormula,
-  type ComboLine,
-  DEFAULT_CALC_CONTEXT,
-  type DamageResult,
-  type ReactionOverride,
-} from "@/lib/team-comp/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -460,58 +454,15 @@ export function mergeTeamStore(
   } as TeamState;
 }
 
-export interface OptimizationResult {
-  artifacts: Record<string, ArtifactData>;
-  damage: DamageResult;
-  erTargets: Record<string, number>;
-}
-
-export interface WeaponRanking {
-  weaponId: string;
-  refinement: number;
-  damage: number;
-  percentOfBest: number; // 0-100
-  /** Main stat choices for sands/goblet/circlet. */
-  mainStats?: { sands: MainStat; goblet: MainStat; circlet: MainStat };
-  /** Aggregated substat roll counts across all 5 artifact slots (number of rolls, not values). */
-  substatRolls?: Partial<Record<SubStat, number>>;
-  /** Artifact set IDs used (first set from flower). */
-  artifactSetIds?: string[];
-}
-
-export interface WeaponChoiceResult {
-  timestamp: number;
-  perCharacter: Record<string, WeaponRanking[]>;
-}
-
-export interface WeaponChoiceCharConfig {
-  charId: string;
-  level: number; // default 90
-  constellation: number; // 0-6
-  talentLevels: [number, number, number]; // NA, E, Q
-  artifactConfig: ArtifactConfig | null; // 4pc or 2pc+2pc
-  minEr: number; // internal format, e.g. 1.6 = 160%
-  minCr: number; // internal format
-}
-
-/** Per-character optimizer/generator settings, keyed by charId. */
-export interface CharSettings {
-  minEr?: number;
-  minCr?: number;
-  crMode?: "min" | "target";
-  tierAwarePool?: boolean;
-  ignoreArtifactSets?: boolean;
-}
-
-/** Analyzer-specific configuration, grouped under team.analyzer. */
-export interface AnalyzerConfig {
-  configs?: StoredAnalyzerCharConfig[];
-  comboOverrides?: ComboCountOverrides;
-  minErOverrides?: MinErOverrides;
-  reactionOverrides?: Record<string, ReactionOverride>;
-  enemyAura?: Element;
-  extraBuffs?: ExtraBuff[];
-}
+// Team state shapes live in @/lib/team-comp/types so pure team logic across
+// src/lib/ can depend on them without reaching into the stores layer.
+import type {
+  AnalyzerConfig,
+  CharSettings,
+  ExportedTeam,
+  Team,
+  TeamCompData,
+} from "@/lib/team-comp/types";
 
 /** Default values for team fields that may be missing from persisted data. */
 const DEFAULT_TEAM_FIELDS = {
@@ -522,72 +473,6 @@ const DEFAULT_TEAM_FIELDS = {
   extraBuffs: [] as ExtraBuff[],
   calcContext: {} as CalcContext,
 } satisfies Partial<Team>;
-
-export interface Team {
-  id: string;
-  name: string;
-  // ─── Composition ───
-  characters: (string | null)[];
-  weapons: (string | null)[];
-  artifacts: (ArtifactConfig | null)[];
-  reactions: ReactionType[];
-  opts: OptionMap;
-  // ─── Shared config ───
-  /** Sparse — only stores user-customized fields. Resolve via resolveCalcContext() before calc. */
-  calcContext: Partial<CalcContext>;
-  /** Persistent element aura on the enemy (e.g. Pyro Regisvine). Enables reactions the team can't otherwise trigger. */
-  enemyAura?: Element;
-  /** Extra buffs applied by user (food, environment, status, custom). */
-  extraBuffs?: ExtraBuff[];
-  // ─── Formula / combo ───
-  selectedFormula: { charId: string; formulaId: string } | null;
-  /** Reaction override for the selected single formula. Persisted independently from combo lines. */
-  singleReaction?: ReactionOverride;
-  /** Force on-field for the selected single formula. Persisted independently from combo lines. */
-  singleForceOnField?: boolean;
-  /** Formula mode: "single" evaluates one formula at a time, "combo" evaluates a full rotation. */
-  formulaMode: "single" | "combo";
-  /** Active combo, null when no combo is configured. */
-  combo: ComboFormula | null;
-  // ─── Per-character settings ───
-  /** Per-character optimizer/generator settings (minEr, minCr, crMode, tierAwarePool, ignoreArtifactSets). */
-  charSettings?: Record<string, CharSettings>;
-  // ─── ER calculator ───
-  /** Persisted ER timeline sequences. Last entry = main rotation, earlier = startup. */
-  erTimelines?: import("@/lib/ercalc/erCalculator").ERTimeline[];
-  // ─── Result caches ───
-  optimizationResult: OptimizationResult | null;
-  /** Persisted weapon choice computation cache. Result cache, not user config. */
-  weaponChoiceResult?: WeaponChoiceResult | null;
-  // ─── Analyzer ───
-  /** Analyzer-specific configuration (configs, overrides, enemy aura, extra buffs). */
-  analyzer?: AnalyzerConfig;
-}
-
-/** Exported artifact — `type` discriminator omitted since field names differ. */
-export type ExportedArtifact =
-  | { setId: string }
-  | { halfSetIds: [string, string] };
-
-/** Exported team shape — only composition metadata, no user/account state. */
-export interface ExportedTeam {
-  /** Stable base64 ID derived from the team composition. */
-  id: string;
-  name: string;
-  characters: (string | null)[];
-  weapons: (string | null)[];
-  artifacts: (ExportedArtifact | null)[];
-  reactions?: ReactionType[];
-  minEr?: Record<string, number>;
-  minCr?: Record<string, number>;
-}
-
-/** Importable/exportable team composition envelope. Backwards-compatible with raw Team[]. */
-export interface TeamCompData {
-  teams: ExportedTeam[];
-  author?: string;
-  description?: string;
-}
 
 interface TeamState {
   teams: Team[];
@@ -733,7 +618,7 @@ export const useTeamStore = create<TeamState>()(
               weapons: t.weapons ?? [null, null, null, null],
               artifacts: (t.artifacts ?? [null, null, null, null]).map(
                 // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
-                (a: any): ArtifactConfig | null => {
+                (a: any): ArtifactSetConfig | null => {
                   if (!a) return null;
                   if (a.type === "4pc" && "setId" in a)
                     return { type: "4pc", setId: a.setId };

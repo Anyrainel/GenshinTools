@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
+import type { Team } from "@/lib/team-comp/types";
 import {
   erPercentToInternal,
   findMatchingTeams,
-} from "@/lib/ercalc/teamStoreIntegration";
-import type { Team } from "@/stores/useTeamStore";
+} from "@/stores/teamStoreIntegration";
 
 // Minimal Team mock for testing
 function mockTeam(id: string, chars: (string | null)[]): Team {

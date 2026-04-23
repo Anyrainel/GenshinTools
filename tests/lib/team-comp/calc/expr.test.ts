@@ -8,7 +8,7 @@ import {
   evaluate,
   isConst,
   simplify,
-} from "@/lib/team-comp/calc/expr";
+} from "@/lib/dmgcalc/core/expr";
 
 function vars(...values: number[]): Float64Array {
   return new Float64Array(values);

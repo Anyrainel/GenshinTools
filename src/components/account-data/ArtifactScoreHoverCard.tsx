@@ -11,7 +11,8 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { type Slot, allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { Slot } from "@/data/enums";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn } from "@/lib/utils";

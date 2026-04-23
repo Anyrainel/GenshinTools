@@ -1,76 +1,75 @@
+import type { Language } from "@/data/enums";
 /* eslint-disable react-refresh/only-export-components */
 import {
+  artifactTextResource,
+  characterKitsResource,
   formatWeaponEffect,
-  loadArtifactGameData,
-  loadCharacterKits,
-  loadWeaponGameData,
+  weaponTextResource,
 } from "@/data/gameDataLoader";
 import { i18nAppData } from "@/data/i18n-app";
 import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 import { i18nUiData } from "@/data/i18n-ui";
 import type {
-  ArtifactGameData,
   CharacterEffect,
   CharacterKit,
   CharacterSkill,
-  Language,
-  WeaponGameData,
 } from "@/data/types";
 import {
   type ReactNode,
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
+
+interface I18n {
+  character: (id: string) => string;
+  artifact: (id: string) => string;
+  artifactHalfSet: (id: string | number) => string;
+  artifactEffects: (id: string) => string[];
+  region: (key: string) => string;
+  stat: (key: string) => string;
+  statShort: (key: string) => string;
+  statMin: (key: string) => string;
+  formula: (key: string) => string;
+  mainStat: (key: string) => string;
+  subStat: (key: string) => string;
+  element: (key: string) => string;
+  reaction: (key: string) => string;
+  receiver: (key: string) => string;
+  ability: (key: string) => string;
+  faction: (key: string) => string;
+  resonance: (key: string) => string;
+  weaponType: (type: string) => string;
+  weapon: (id: string) => string;
+  weaponEffect: (id: string, refinement?: number) => string;
+  slot: (key: string) => string;
+  style: (key: string) => string;
+  role: (key: string) => string;
+  tier: (key: string) => string;
+  halfSetShort: (halfSetId: string) => string;
+  formatDate: (dateString: string | null) => string;
+  ui: (path: string) => string;
+  format: (key: string, ...args: (string | number)[]) => string;
+  resolveLabel: (label: Record<string, string>) => string;
+  characterKit: (id: string) => CharacterKit | null;
+  skills: (id: string) => CharacterSkill[] | null;
+  passives: (id: string) => CharacterEffect[] | null;
+  constellations: (id: string) => CharacterEffect[] | null;
+  envBuff: (id: string) => string;
+  glossary: (id: string) => CharacterEffect[] | null;
+  origin: (key: string) => string;
+  elementRes: (key: string) => string;
+  shortDate: (date: Date) => string;
+}
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
-  t: {
-    character: (id: string) => string;
-    artifact: (id: string) => string;
-    artifactHalfSet: (id: string | number) => string;
-    artifactEffects: (id: string) => string[];
-    region: (key: string) => string;
-    stat: (key: string) => string;
-    statShort: (key: string) => string;
-    statMin: (key: string) => string;
-    formula: (key: string) => string;
-    mainStat: (key: string) => string;
-    subStat: (key: string) => string;
-    element: (key: string) => string;
-    reaction: (key: string) => string;
-    ability: (key: string) => string;
-    faction: (key: string) => string;
-    resonance: (key: string) => string;
-    weaponType: (type: string) => string;
-    weapon: (id: string) => string;
-    weaponEffect: (id: string, refinement?: number) => string;
-    slot: (key: string) => string;
-    style: (key: string) => string;
-    role: (key: string) => string;
-    tier: (key: string) => string;
-    halfSetShort: (halfSetId: string) => string;
-    formatDate: (dateString: string | null) => string;
-    ui: (path: string) => string;
-    format: (key: string, ...args: (string | number)[]) => string;
-    resolveLabel: (label: Record<string, string>) => string;
-    characterKit: (id: string) => CharacterKit | null;
-    skills: (id: string) => CharacterSkill[] | null;
-    passives: (id: string) => CharacterEffect[] | null;
-    constellations: (id: string) => CharacterEffect[] | null;
-    envBuff: (id: string) => string;
-    glossary: (id: string) => CharacterEffect[] | null;
-    origin: (key: string) => string;
-    elementRes: (key: string) => string;
-    shortDate: (date: Date) => string;
-    lang: Language;
-  };
+  t: I18n;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(
@@ -121,52 +120,42 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // Preload character kit bundle for the current language.
-  // Skipped under vitest: the async setState fires after render and pollutes
-  // every component test with act(...) warnings. Tests don't rely on kit data.
-  const isTestEnv = import.meta.env.MODE === "test";
-  const [kitData, setKitData] = useState<Record<string, CharacterKit>>({});
-  useEffect(() => {
-    if (isTestEnv) return;
-    loadCharacterKits(language).then(setKitData);
-  }, [language]);
-
-  // Preload weapon & artifact game data for the current language
-  const [weaponData, setWeaponData] = useState<WeaponGameData>({});
-  const [artifactData, setArtifactData] = useState<ArtifactGameData>({});
-  useEffect(() => {
-    if (isTestEnv) return;
-    loadWeaponGameData(language).then(setWeaponData);
-    loadArtifactGameData(language).then(setArtifactData);
-  }, [language]);
+  // Tier B (weapon + artifact text) is preloaded at app boot in App.tsx via
+  // resource.preload(); the resources subscribe their consumers via use().
+  // Tier C (character kits) is loaded by Archive routes via use(); accessors
+  // here just peek so non-Archive callers see null instead of triggering load.
+  const weaponData = weaponTextResource.use(language);
+  const artifactData = artifactTextResource.use(language);
 
   const getCharacterKit = useCallback(
-    (characterId: string): CharacterKit | null => kitData[characterId] ?? null,
-    [kitData]
+    (characterId: string): CharacterKit | null =>
+      characterKitsResource.peek(language)?.[characterId] ?? null,
+    [language]
   );
 
   const getSkills = useCallback(
     (characterId: string): CharacterSkill[] | null =>
-      kitData[characterId]?.skills ?? null,
-    [kitData]
+      characterKitsResource.peek(language)?.[characterId]?.skills ?? null,
+    [language]
   );
 
   const getPassives = useCallback(
     (characterId: string): CharacterEffect[] | null =>
-      kitData[characterId]?.passives ?? null,
-    [kitData]
+      characterKitsResource.peek(language)?.[characterId]?.passives ?? null,
+    [language]
   );
 
   const getConstellations = useCallback(
     (characterId: string): CharacterEffect[] | null =>
-      kitData[characterId]?.constellations ?? null,
-    [kitData]
+      characterKitsResource.peek(language)?.[characterId]?.constellations ??
+      null,
+    [language]
   );
 
   const getGlossary = useCallback(
     (characterId: string): CharacterEffect[] | null =>
-      kitData[characterId]?.glossary ?? null,
-    [kitData]
+      characterKitsResource.peek(language)?.[characterId]?.glossary ?? null,
+    [language]
   );
 
   const getCharacterName = useCallback(
@@ -205,7 +194,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getArtifactSetEffects = useCallback(
     (setId: string): string[] => {
-      const entry = artifactData[setId];
+      const entry = artifactData?.[setId];
       if (!entry) return [];
       const effects: string[] = [];
       if (entry.effect2) effects.push(entry.effect2);
@@ -390,6 +379,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getReceiverName = useCallback(
+    (receiverKey: string): string => {
+      const recs = (
+        i18nAppData as unknown as {
+          receivers: Record<string, Record<string, string>>;
+        }
+      ).receivers;
+      return recs[receiverKey]?.[language] || receiverKey;
+    },
+    [language]
+  );
+
   const getResonanceName = useCallback(
     (resonanceKey: string): string => {
       const res = i18nAppData.resonances as Record<
@@ -433,7 +434,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getWeaponEffect = useCallback(
     (weaponId: string, refinement?: number): string => {
-      const entry = weaponData[weaponId];
+      const entry = weaponData?.[weaponId];
       if (!entry?.descHtmlTpl) return "";
       return formatWeaponEffect(
         entry.descHtmlTpl,
@@ -575,6 +576,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       reaction: getReactionName,
       ability: getAbilityName,
       faction: getFactionName,
+      receiver: getReceiverName,
       resonance: getResonanceName,
       weaponType: getWeaponTypeName,
       weapon: getWeaponName,
@@ -615,6 +617,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getReactionName,
       getAbilityName,
       getFactionName,
+      getReceiverName,
       getResonanceName,
       getWeaponTypeName,
       getWeaponName,

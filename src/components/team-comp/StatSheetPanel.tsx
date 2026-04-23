@@ -4,18 +4,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import type { StatKey } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { DisplayResult } from "@/lib/dmgcalc/types";
+import { filterMatchesTag } from "@/lib/dmgcalc/utils";
 import { fmtPercent, fmtStat } from "@/lib/team-comp/displayFormatter";
-import type { DisplayResult, StatKey } from "@/lib/team-comp/types";
-import { filterMatchesTag } from "@/lib/team-comp/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type { Team } from "@/stores/useTeamStore";
 import { useMemo, useState } from "react";
 
-import type { ArtifactData, Slot } from "@/data/types";
-import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/utils";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
+import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
 import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamConfigUtils";
 import type { OptFailReason } from "@/lib/team-comp/types";
 import {

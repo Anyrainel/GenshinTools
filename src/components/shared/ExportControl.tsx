@@ -1,7 +1,7 @@
 import { Upload } from "lucide-react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 
-import type { ControlHandle } from "@/components/layout/AppBar";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

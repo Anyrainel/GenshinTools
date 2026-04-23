@@ -1,6 +1,6 @@
-import { getEffectiveCombo } from "@/lib/team-comp/calc/combo";
-import type { ComboFormula } from "@/lib/team-comp/types";
-import type { Team } from "@/stores/useTeamStore";
+import type { ComboFormula } from "@/lib/dmgcalc/types";
+import { getEffectiveCombo } from "@/lib/team-comp/teamConfigUtils";
+import type { Team } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 type TeamSlice = Pick<

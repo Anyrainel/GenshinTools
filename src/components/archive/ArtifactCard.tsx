@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { type ArtifactSetResource, allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { ArtifactSetResource } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import { memo, useEffect, useRef, useState } from "react";

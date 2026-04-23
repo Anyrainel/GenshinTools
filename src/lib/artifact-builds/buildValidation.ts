@@ -1,4 +1,4 @@
-import { artifactHalfSetsById } from "@/data/constants";
+import { artifactHalfSetsById } from "@/data/gameResources";
 import type { Build } from "@/data/types";
 
 /**

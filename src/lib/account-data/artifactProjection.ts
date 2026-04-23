@@ -1,9 +1,6 @@
-import type {
-  ArtifactData,
-  LuckExpectation,
-  Rarity,
-  SubStat,
-} from "@/data/types";
+import type { Rarity, SubStat } from "@/data/enums";
+import type { LuckExpectation } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import {
   getSubstatAvgRoll,
   getSubstatRollTiers,

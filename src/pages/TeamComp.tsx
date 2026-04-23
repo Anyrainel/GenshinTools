@@ -1,11 +1,11 @@
 import { PageLayout } from "@/components/layout/PageLayout";
-import { getTabsForRoute } from "@/config/appNavigation";
+import { getTabsForRoute } from "@/components/layout/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import "@/lib/team-comp";
-import type { ControlHandle } from "@/components/layout/AppBar";
+import "@/lib/dmgcalc";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { useTour } from "@/components/ui/tour";
 import type { PresetOption } from "@/data/types";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
@@ -14,9 +14,9 @@ import {
   loadPresetMetadata,
   loadPresetPayload,
 } from "@/lib/presetLoader";
+import type { TeamCompData } from "@/lib/team-comp/types";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
-import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

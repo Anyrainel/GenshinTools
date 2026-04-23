@@ -8,23 +8,29 @@
  * a teamOnField ScalingBuff). Geo% goblet is wrong because Illuga has no
  * buff that scales off her own geo%.
  */
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
 import {
-  type GeneratorOptions,
-  runGenerator,
-} from "@/lib/team-comp/generator/generator";
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   ComboLine,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import {
+  type GeneratorOptions,
+  runGenerator,
+} from "@/lib/team-comp/generator/generator";
 import { describe, expect, it } from "vitest";
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 import { drain } from "../../../fixtures/optimizerHelpers";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const CTX: CalcContext = {
   enemyLevel: 100,

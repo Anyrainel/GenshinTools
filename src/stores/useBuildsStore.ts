@@ -8,6 +8,7 @@ let _buildIdSeq = 0;
 function nextBuildId(): string {
   return `b${Date.now()}${_buildIdSeq++}`;
 }
+import type { SubStat } from "@/data/enums";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type {
@@ -15,7 +16,6 @@ import type {
   BuildPayload,
   BuildPayloadV5,
   ComputeOptions,
-  SubStat,
   WeightedSubStat,
 } from "../data/types";
 import {

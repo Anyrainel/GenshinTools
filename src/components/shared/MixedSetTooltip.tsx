@@ -3,7 +3,7 @@ import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
   artifactsById,
-} from "@/data/constants";
+} from "@/data/gameResources";
 import type { ArtifactHalfSet } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 

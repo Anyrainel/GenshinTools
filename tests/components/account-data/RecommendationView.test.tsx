@@ -1,4 +1,4 @@
-import type { SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,

@@ -1,11 +1,12 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { weaponsById } from "@/data/constants";
+import { weaponsById } from "@/data/gameResources";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import { useGameStats } from "@/hooks/useGameStats";
-import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { getRarityColor } from "./colors";
 
 interface WeaponTooltipProps {
   weaponId: string;
@@ -13,7 +14,7 @@ interface WeaponTooltipProps {
 
 export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
   const { t } = useLanguage();
-  const { weaponStats } = useGameStats();
+  const weaponStats = weaponStatsResource.use();
   const weapon = weaponsById[weaponId];
 
   if (!weapon) return null;

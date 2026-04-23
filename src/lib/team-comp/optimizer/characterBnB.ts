@@ -6,27 +6,29 @@
  */
 
 import { charInfo } from "@/data/charInfo";
-import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
-import type { ArtifactData, GlobalStatWeights, MainStat } from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { MainStat } from "@/data/enums";
+import {
+  artifactHalfSetsById,
+  artifactIdToHalfSetId,
+} from "@/data/gameResources";
+import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
 import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
+import type { CalcContext, ComboFormula } from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import {
+  type ArtifactVarLookup,
+  type CompiledTeamDamage,
   buildArtifactVarLookup,
   compileComboTeamDamage,
   fillVarsFromRawStats,
   makeCompiledEvalDamage,
-} from "../calc/formulaCompiler";
-import { StatSheet } from "../calc/statSheet";
-import type { TeamBuild } from "../calc/teamBuild";
-import type {
-  BuffActivationMap,
-  CalcContext,
-  CharOptConfig,
-  ComboFormula,
-  OptFailReason,
-} from "../types";
-import { getHalfSetIds, getSetId } from "../types";
+} from "../../dmgcalc/core/formulaCompiler";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
+import type { TeamBuild } from "../../dmgcalc/core/teamBuild";
+import type { CharOptConfig, OptFailReason } from "../types";
 import {
   computeMarginalScore,
   getArtifactCr,
@@ -43,15 +45,10 @@ import { computeMarginalWeights } from "./marginalWeights";
 import { TopKCollector } from "./topKCollector";
 import type {
   ArtifactTuple,
-  BnBContext,
-  CharacterBnBResult,
-  CompiledContext,
   MarginalWeights,
   PreparedSlotData,
   SuperArtifact,
 } from "./types";
-
-// ─── Set Composition Patterns ───
 
 const SET4_PATTERNS: number[][] = [
   [0, 1, 1, 1, 1],
@@ -80,6 +77,39 @@ const SET22_PATTERNS: number[][] = (() => {
   }
   return patterns;
 })();
+
+/** Pre-compiled damage expression for fast DFS evaluation. */
+interface CompiledContext {
+  compiled: CompiledTeamDamage;
+  vars: Float64Array;
+  charIdx: number;
+  lookup: ArtifactVarLookup;
+}
+
+/** Mutable state shared across the DFS and hill-climbing within a single character B&B run. */
+interface BnBContext {
+  teamBuild: TeamBuild;
+  swapCharId: string;
+  baseSheets: Record<string, StatSheet>;
+  calcContext: CalcContext;
+  constraints: ConstraintChecker;
+  collector: TopKCollector;
+  evaluations: number;
+  sinceLastYield: number;
+  compiledCtx: CompiledContext;
+  deadline?: number;
+  aborted?: boolean;
+  onProgress?: (bestDamage: number, evaluations: number) => void;
+}
+
+interface CharacterBnBResult {
+  collector: TopKCollector;
+  evaluations: number;
+  failReason?: OptFailReason;
+  marginalWeights?: MarginalWeights;
+  /** True when all marginal + buildMatch weights were zero and fallback weights were injected. */
+  usedFallbackWeights?: boolean;
+}
 
 // ─── Compiled B&B DFS (incremental vars, pre-computed deltas) ───
 

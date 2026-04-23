@@ -1,5 +1,5 @@
-import type { ControlHandle } from "@/components/layout/AppBar";
 import { newsMap } from "@/components/shared/WhatsNew";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Suspense,
@@ -18,12 +18,12 @@ const WelcomeGuide = lazy(() => import("./WelcomeGuide"));
 export const WelcomeGuideManual = forwardRef<ControlHandle>(
   function WelcomeGuideManual(_, ref) {
     const [isOpen, setIsOpen] = useState(false);
-    const { t } = useLanguage();
+    const { language } = useLanguage();
 
     const latestDate = useMemo(() => {
-      const news = newsMap[t.lang];
+      const news = newsMap[language];
       return news.entries[0]?.date ?? "";
-    }, [t.lang]);
+    }, [language]);
 
     useImperativeHandle(ref, () => ({
       open: () => setIsOpen(true),

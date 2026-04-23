@@ -6,27 +6,34 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import "@/lib/team-comp/index";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import "@/lib/dmgcalc";
 
-import { getEffectiveCombo } from "@/lib/team-comp/calc/combo";
 import {
   buildBuffOverrides,
   calcComboResults,
   extractComboOverrides,
-} from "@/lib/team-comp/calc/comboBuffOverrides";
-import { getBuffInstanceKey } from "@/lib/team-comp/calc/statBuff";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+} from "@/lib/dmgcalc/core/comboBuffOverrides";
+import { getBuffInstanceKey } from "@/lib/dmgcalc/core/statBuff";
+import type { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   BuffActivationMap,
   CalcContext,
   ComboFormula,
   ReactionOverride,
   TeamSlotConfig,
-} from "@/lib/team-comp/types";
+} from "@/lib/dmgcalc/types";
+import { getEffectiveCombo } from "@/lib/team-comp/teamConfigUtils";
 import { emptySheets } from "../../../fixtures/optimizerHelpers";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const CTX: CalcContext = {
   enemyLevel: 100,
@@ -632,7 +639,7 @@ type TeamLike = {
 function runUiFlow(
   tb: TeamBuild,
   team: TeamLike,
-  sheets: Record<string, import("@/lib/team-comp/calc/statSheet").StatSheet>,
+  sheets: Record<string, StatSheet>,
   storeOverrides: Record<string, BuffActivationMap>
 ) {
   const displayCombo = getEffectiveCombo(team);

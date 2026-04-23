@@ -1,4 +1,8 @@
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import { allSlots } from "@/data/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 /**
  * Tests for artifact conflict resolution in runTeamOptimization.
  *
@@ -10,20 +14,19 @@ import { preloadGameStats } from "@/data/gameStatsLoader";
  * 4. Set-infeasible early exit for 2+2 sets
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
 import type {
   TeamOptYield,
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 import { type OptimizationResult, runOptimization } from "./optimizerV1";
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 import {
   drain,
   emptySheets,
@@ -31,7 +34,10 @@ import {
   makeBuildMatch,
 } from "../../../fixtures/optimizerHelpers";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const CTX: CalcContext = {
   enemyLevel: 100,

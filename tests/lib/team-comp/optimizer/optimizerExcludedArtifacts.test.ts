@@ -1,4 +1,8 @@
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import { allSlots } from "@/data/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 /**
  * Tests for perCharExcludedArtifactIds filtering in the team optimizer.
  *
@@ -6,19 +10,18 @@ import { preloadGameStats } from "@/data/gameStatsLoader";
  * character, while remaining available for other characters.
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { singleFormulaCombo } from "@/lib/team-comp/calc/combo";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer";
+import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
 import type {
   CharOptConfig,
   TeamOptimizerOptions,
-  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 import {
   drain,
   getFirstFormulaId,
@@ -26,7 +29,10 @@ import {
   makeBuildMatch,
 } from "../../../fixtures/optimizerHelpers";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const CTX = {
   enemyLevel: 100,

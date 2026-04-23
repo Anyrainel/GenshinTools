@@ -1,22 +1,29 @@
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { render, screen } from "../../utils/render";
 
-vi.mock("@/hooks/useGameStats", () => ({
-  useGameStats: () => ({
-    characterStats: null,
-    weaponStats: {
-      staff_of_homa: {
-        rarity: 5,
-        type: "Polearm",
-        secondaryStat: "cd",
-        levels: {
-          "90": { baseAtk: 608, secondaryStatValue: "66.2%" },
-        },
-      },
+const mockWeaponStats = {
+  staff_of_homa: {
+    rarity: 5,
+    type: "Polearm",
+    secondaryStat: "cd",
+    levels: {
+      "90": { baseAtk: 608, secondaryStatValue: "66.2%" },
     },
-    ready: true,
-  }),
-}));
+  },
+};
+
+vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+  return {
+    ...actual,
+    weaponStatsResource: {
+      preload: () => Promise.resolve(mockWeaponStats),
+      use: () => mockWeaponStats,
+      peek: () => mockWeaponStats,
+    },
+  };
+});
 
 describe("WeaponTooltip", () => {
   it("renders weapon name for valid weapon", () => {

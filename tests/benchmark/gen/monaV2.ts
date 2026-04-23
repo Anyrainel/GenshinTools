@@ -18,20 +18,18 @@
  *     sort higher, finding feasible builds faster)
  */
 
-import { artifactHalfSetsById } from "@/data/constants";
+import { allSlots } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import { artifactHalfSetsById } from "@/data/gameResources";
 import type { ArtifactData } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  type CalcContext,
-  type OptFailReason,
-  type ReactionOverride,
-  type StatKey,
-  type TeamOptYield,
-  type TeamOptimizerOptions,
-  getHalfSetIds,
-  getSetId,
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { CalcContext, ReactionOverride } from "@/lib/dmgcalc/types";
+import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
+import type {
+  OptFailReason,
+  TeamOptYield,
+  TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
@@ -56,7 +54,7 @@ import {
  * increases the target function output. Weight = 1.0 if yes, 0.0 if no.
  */
 function computeStatWeights(
-  teamBuild: import("@/lib/team-comp/calc/teamBuild").TeamBuild,
+  teamBuild: TeamBuild,
   swapCharId: string,
   formulaCharId: string,
   formulaId: string,

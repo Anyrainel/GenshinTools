@@ -4,7 +4,7 @@ import type {
   PeriodicProc,
   TeamMember,
   TimelineAction,
-} from "@/lib/ercalc/erCalculator";
+} from "@/lib/ercalc/types";
 import { describe, it } from "vitest";
 
 /** Legacy flat timeline shape for test readability: supports periodicE entries

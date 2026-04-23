@@ -1,16 +1,22 @@
 /**
  * Behavioral lock for deriveSetKeysByChar — set key derivation from TeamBuild configs.
  */
-import { artifactHalfSetsById, artifactsById } from "@/data/constants";
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
+import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { deriveSetKeysByChar } from "@/lib/team-comp/generator/generator";
-import type { TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
-import "@/lib/team-comp/index";
+import "@/lib/dmgcalc";
 
-await preloadGameStats();
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
 
 const HALF_SET_ATK = "atk%-18";
 const HALF_SET_EM = "em-80";

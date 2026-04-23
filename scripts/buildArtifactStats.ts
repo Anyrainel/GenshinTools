@@ -7,12 +7,12 @@
  */
 
 import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import {
-  AVG_SUBSTAT_ROLL,
   toInternal,
 } from "@/lib/artifact/scoring/utils";
-import type { StatKey } from "@/lib/team-comp/types";
+import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
+import type { StatKey } from "@/data/enums";
 
 
 export interface PresetSubstat {

@@ -10,30 +10,29 @@
  * 4. Normalize weights to 0-100 scale
  */
 
-import type { MainStat, Slot, SubStat } from "@/data/types";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
+import type { AutoTuneResult } from "@/lib/artifact/scoring/pipeline";
+import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
+import { emptySubRolls } from "@/lib/artifact/scoring/utils";
+import { getRollValues } from "@/lib/artifact/scoring/utils";
 import {
   compileComboTeamDamage,
   makeCompiledEvalDamage,
-} from "@/lib/team-comp/calc/formulaCompiler";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import type { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import {
-  type DamageEvalFn,
-  buildSheetFromMainAndSubs,
-  constrainedGreedyAllocate,
-  emptySubRolls,
-  flattenAllocation,
-  getRollValues,
-} from "@/lib/team-comp/generator/constrainedGreedy";
+} from "@/lib/dmgcalc/core/formulaCompiler";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   ReactionOverride,
-  StatKey,
-} from "@/lib/team-comp/types";
-import type { AutoTuneResult } from "../../artifact/scoring/utils";
-import { AVG_SUBSTAT_ROLL } from "../../artifact/scoring/utils";
-export { computeIdealScore } from "../../artifact/scoring/utils";
+} from "@/lib/dmgcalc/types";
+import {
+  type DamageEvalFn,
+  constrainedGreedyAllocate,
+  flattenAllocation,
+} from "@/lib/team-comp/generator/constrainedGreedy";
 
 /** Substat keys eligible for roll allocation */
 export const TUNABLE_SUBSTATS: SubStat[] = [

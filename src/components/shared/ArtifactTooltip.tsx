@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById } from "@/data/constants";
-import { cn, getRarityColor } from "@/lib/utils";
+import { artifactsById } from "@/data/gameResources";
+import { cn } from "@/lib/utils";
+import { getRarityColor } from "./colors";
 
 interface ArtifactTooltipProps {
   setId: string;

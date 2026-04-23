@@ -7,7 +7,7 @@ import {
   scoreAllSlots,
   scoreWithBuilds,
 } from "@/lib/artifact/scoring/artifactScore";
-import { MAIN_STAT_CD_EQUIV_5STAR } from "@/lib/artifact/scoring/utils";
+import { MAIN_STAT_CD_EQUIV_5STAR } from "@/lib/artifact/scoring/constants";
 import { describe, expect, it } from "vitest";
 
 const testWeights: StatWeightMap = {

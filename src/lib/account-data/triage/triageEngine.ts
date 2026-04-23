@@ -1,11 +1,6 @@
-import type {
-  AccountData,
-  ArtifactData,
-  Build,
-  MainStat,
-  SubStat,
-} from "@/data/types";
-import { allSlots } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { MainStat, SubStat } from "@/data/enums";
+import type { AccountData, ArtifactData, Build } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";

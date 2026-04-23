@@ -1,127 +1,27 @@
-export type Language = "en" | "zh";
-
-export type Rarity = 1 | 2 | 3 | 4 | 5;
-
-export type Element =
-  | "Pyro"
-  | "Hydro"
-  | "Electro"
-  | "Cryo"
-  | "Anemo"
-  | "Geo"
-  | "Dendro";
-export const elements: Element[] = [
-  "Pyro",
-  "Hydro",
-  "Electro",
-  "Cryo",
-  "Anemo",
-  "Geo",
-  "Dendro",
-];
-
-export type WeaponType = "Sword" | "Claymore" | "Polearm" | "Catalyst" | "Bow";
-export const weaponTypes: WeaponType[] = [
-  "Sword",
-  "Claymore",
-  "Polearm",
-  "Catalyst",
-  "Bow",
-];
-
-export type Region =
-  | "Mondstadt"
-  | "Liyue"
-  | "Inazuma"
-  | "Sumeru"
-  | "Fontaine"
-  | "Natlan"
-  | "Snezhnaya"
-  | "Nod-Krai"
-  | "None";
-export const regions: Region[] = [
-  "Mondstadt",
-  "Liyue",
-  "Inazuma",
-  "Sumeru",
-  "Fontaine",
-  "Natlan",
-  "Snezhnaya",
-  "Nod-Krai",
-  "None",
-];
-
-export type Faction = "Hexerei" | "Moonsign" | "Nightsoul" | "None";
-
-export type MainStatSlot = "sands" | "goblet" | "circlet";
-export const mainStatSlots: MainStatSlot[] = ["sands", "goblet", "circlet"];
-export type Slot = MainStatSlot | "flower" | "plume";
-export const allSlots: Slot[] = [
-  "flower",
-  "plume",
-  "sands",
-  "goblet",
-  "circlet",
-];
-
-export type MainStat =
-  | "cr"
-  | "cd"
-  | "atk%"
-  | "hp%"
-  | "def%"
-  | "em"
-  | "er"
-  | "pyro%"
-  | "hydro%"
-  | "anemo%"
-  | "electro%"
-  | "dendro%"
-  | "cryo%"
-  | "geo%"
-  | "phys%"
-  | "heal%"
-  | "atk"
-  | "hp";
-export type SubStat =
-  | "cr"
-  | "cd"
-  | "atk%"
-  | "hp%"
-  | "def%"
-  | "er"
-  | "em"
-  | "atk"
-  | "hp"
-  | "def";
-export type MainStatPlus = MainStat | "elemental%" | "cr/cd";
-
-// Base stat keys from character stat tables.
-// Every character has baseHp/baseAtk/baseDef/em plus exactly one ascension stat.
-export type BaseStat = "baseHp" | "baseAtk" | "baseDef" | MainStat;
-
-export const mainStatsPlus: MainStatPlus[] = [
-  "cr",
-  "cd",
-  "atk%",
-  "hp%",
-  "def%",
-  "em",
-  "er",
-  "pyro%",
-  "hydro%",
-  "anemo%",
-  "electro%",
-  "dendro%",
-  "cryo%",
-  "geo%",
-  "phys%",
-  "heal%",
-  "atk",
-  "hp",
-  "elemental%",
-  "cr/cd",
-] as const;
+import type {
+  BuildConstellation,
+  BuildRole,
+  BuildSource,
+  BuildStyle,
+  Element,
+  ElementalOrPhysical,
+  EnemyType,
+  EnvBuffCategory,
+  Faction,
+  Language,
+  LuckExpectation,
+  MainStat,
+  MainStatPlus,
+  MergeAlgorithm,
+  Rarity,
+  Region,
+  Slot,
+  SortDirection,
+  StatKey,
+  SubStat,
+  Tier,
+  WeaponType,
+} from "./enums";
 
 export type CharacterResource = {
   id: string;
@@ -161,81 +61,11 @@ export type WeaponTypeResource = {
   imagePath: string; // Local serving path
 };
 
-export type EnemyType =
-  | "human"
-  | "automaton"
-  | "fatui"
-  | "boss"
-  | "hilichurl"
-  | "elemental"
-  | "abyss"
-  | "beast"
-  | "legend"
-  | ""; // "" = uncategorized (auto-imported from hoyolab, type not yet classified)
-
 export type EnemyResource = {
   id: string;
   type: EnemyType;
   imagePath: string; // Local serving path
 };
-
-export type BuildStyle = "on-field" | "off-field";
-export const buildStyles: BuildStyle[] = ["on-field", "off-field"];
-
-export type BuildRole = "dps" | "support" | "sustain";
-export const buildRoles: BuildRole[] = ["dps", "support", "sustain"];
-
-export type BuildConstellation = 0 | 1 | 2 | 4 | 6;
-export const buildConstellations: BuildConstellation[] = [0, 1, 2, 4, 6];
-
-export type LunarReactionType =
-  | "lunarCharged"
-  | "lunarBloom"
-  | "lunarCrystallize";
-
-export type ReactionType =
-  | "none"
-  // Amplifying
-  | "melt"
-  | "vaporize"
-  // Additive (Catalyze)
-  | "quicken"
-  | "spread"
-  | "aggravate"
-  // Transformative
-  | "overloaded"
-  | "electroCharged"
-  | "superconduct"
-  | "swirl"
-  | "frozen"
-  | "shatter"
-  | "bloom"
-  | "hyperbloom"
-  | "burgeon"
-  | "burning"
-  | "crystallize"
-  // Lunar
-  | LunarReactionType;
-
-/** Subset of reactions useful as team composition tags (excludes "none" and intermediate reactions). */
-export const TEAM_REACTION_OPTIONS: ReactionType[] = [
-  "melt",
-  "vaporize",
-  "spread",
-  "aggravate",
-  "overloaded",
-  "electroCharged",
-  "superconduct",
-  "swirl",
-  "frozen",
-  "bloom",
-  "hyperbloom",
-  "burgeon",
-  "burning",
-  "lunarCharged",
-  "lunarBloom",
-  "lunarCrystallize",
-];
 
 export type CharacterInfo = {
   energy: number;
@@ -249,26 +79,6 @@ export type CharacterInfo = {
 };
 
 // Character kit types (lazy-loaded per-language data from character_*.json)
-/** Skill table levels (Lv1–Lv15). */
-export const SKILL_LEVELS = [
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "11",
-  "12",
-  "13",
-  "14",
-  "15",
-] as const;
-export type SkillLevel = (typeof SKILL_LEVELS)[number];
-
 /** One row of the skill details table: label + template string for runtime rendering. */
 export type CharacterSkillDetail = {
   label: string;
@@ -290,8 +100,6 @@ export type CharacterKit = {
   constellations: CharacterEffect[];
   glossary: CharacterEffect[] | null;
 };
-
-export type BuildSource = "preset" | "modified" | "custom";
 
 export type WeightedMainStat = {
   stat: MainStat;
@@ -336,8 +144,6 @@ export type BuildGroup = {
   weapons?: string[]; // character weapon choices
 };
 
-export type MergeAlgorithm = "greedyMerge" | "bruteForce" | "smartMerge";
-
 export type ComputeOptions = {
   // Simplify certain main stats
   expandElementalGoblet?: boolean; // default: true
@@ -366,18 +172,10 @@ export type BuildPayloadV5 = {
   author: string;
   description: string;
   lastModified?: number; // Timestamp
-
-  // Flat Maps
-  builds: Record<string, Build>;
-
-  // Character mapping
-  characterBuilds: Record<string, string[]>;
-
-  // Weapon defaults
-  characterWeapons: Record<string, string[]>;
-
-  // Compute Options
-  computeOptions?: ComputeOptions;
+  builds: Record<string, Build>; // Flat Maps
+  characterBuilds: Record<string, string[]>; // Character mapping
+  characterWeapons: Record<string, string[]>; // Weapon defaults
+  computeOptions?: ComputeOptions; // Compute Options
 };
 
 export type CharacterMergeInfo = {
@@ -392,34 +190,21 @@ export type SlotConfig = {
   mustPresent: SubStat[];
   minStatCount: number;
 };
-
-export type SetConfig = {
+export type BuildConfig = {
   flowerPlume: SlotConfig;
   sands: SlotConfig;
   goblet: SlotConfig;
   circlet: SlotConfig;
   servedCharacters: CharacterMergeInfo[];
 };
-
-export type ArtifactSetConfigs = {
+export type ArtifactBuildConfigs = {
   setId: string;
-  configurations: SetConfig[];
+  configurations: BuildConfig[];
 };
 
-export type Tier = "S" | "A" | "B" | "C" | "D" | "Pool";
-export const tiers: Tier[] = ["S", "A", "B", "C", "D", "Pool"];
-
-// Luck expectation for artifact upgrade projections
-// - cautious: 0.80x (pessimistic, expect lower rolls)
-// - balanced: 0.85x (realistic average)
-// - hopeful: 0.90x (optimistic, expect higher rolls)
-export type LuckExpectation = "cautious" | "balanced" | "hopeful";
-
-export const LUCK_MULTIPLIERS: Record<LuckExpectation, number> = {
-  cautious: 0.8,
-  balanced: 0.85,
-  hopeful: 0.9,
-};
+export type ArtifactSetConfig =
+  | { type: "4pc"; setId: string }
+  | { type: "2pc+2pc"; halfSetIds: [string, string] };
 
 export type TierAssignment = {
   [characterId: string]: {
@@ -433,13 +218,6 @@ export type InvestmentThresholds = {
   upgrade: number;
   reroll: number;
   farm: number;
-};
-
-export const DEFAULT_INVESTMENT_THRESHOLDS: InvestmentThresholds = {
-  swap: 1,
-  upgrade: 3,
-  reroll: 7,
-  farm: 5,
 };
 
 export type TierCustomization = {
@@ -509,8 +287,6 @@ export type AccountData = {
   extraWeapons: WeaponData[];
 };
 
-export type SortDirection = "asc" | "desc" | "off";
-
 export interface CharacterFilters {
   elements: Element[];
   weaponTypes: WeaponType[];
@@ -530,83 +306,24 @@ export type GlobalStatWeights = {
   flatDef: number;
 };
 
-// ─── Stat keys used throughout the damage engine and game data ───
-
-/**
- * All stat keys the engine tracks.
- *
- * Aggregation rules (handled internally by StatSheet):
- * - Scaled stats (ATK, HP, DEF): base × (1 + sum(%)) + sum(flat)
- * - Additive stats (everything else): sum(contributions)
- *
- * Universal keys are scoped by DamageTagFilter on the buff target.
- * See DmgDesign.md §1.1 for the stat key zone table.
- */
-export type StatKey =
-  | BaseStat
-  | MainStat
-  | SubStat
-  // Damage modifiers — scoped by DamageTagFilter on BuffTarget
-  | "dmg%" // generic + ability + element DMG bonus (§3 zone, replaces ${AbilityType}%)
-  | "baseDmg" // flat base DMG add (replaces ${AbilityType}Base: Yun Jin, Zhongli A4, Shenhe)
-  | "baseDmg%" // 倍率乘区: "deal X% original DMG" multiplier (Yoimiya E, Neuvillette A1, Veil of Falsehood, etc.)
-  | "reactionBaseDmg%" // 反应基础提升: lunar reaction base DMG bonus (Nod-Krai P3 passives)
-  | "elevated%" // elevation multiplier §4 (replaces ${LunarReactionType}Elevated%)
-  | "reactionDmg%" // reaction DMG bonus §8.4 (replaces ${ReactionType}%, separate zone from dmg%)
-  | "reactionCr" // reaction CRIT rate §8.8 (replaces ${ReactionType}Cr, separate from cr)
-  | "reactionCd" // reaction CRIT DMG §8.8 (replaces ${ReactionType}Cd, separate from cd)
-  | "atkSpd%" // Attack Speed Bonus
-  // Enemy debuff / modifier stats
-  | "defReduction%"
-  | "defIgnore%"
-  | "resReduction%"
-  // Non-artifact element DMG bonus keys (used in formula DMG% alias expansion)
-  | "pneuma%"
-  | "lunar%";
-
 export type StatEntry = {
   key: StatKey;
   value: number;
 };
 
 // ─── Game Data: weapon / artifact per-language bundles ───
-
 export type WeaponGameEntry = {
   name: string;
   descHtmlTpl: string;
   refinements: string[][];
 };
 export type WeaponGameData = Record<string, WeaponGameEntry>;
-
 export type ArtifactGameEntry = {
   name: string;
   effect2: string;
   effect4: string;
 };
 export type ArtifactGameData = Record<string, ArtifactGameEntry>;
-
-// ─── Game Data: leyline boss bundles ───
-
-export type ElementKey =
-  | "physical"
-  | "pyro"
-  | "hydro"
-  | "electro"
-  | "dendro"
-  | "anemo"
-  | "geo"
-  | "cryo";
-
-export const ELEMENT_KEYS: ElementKey[] = [
-  "physical",
-  "pyro",
-  "hydro",
-  "electro",
-  "dendro",
-  "anemo",
-  "geo",
-  "cryo",
-];
 
 export interface BossTierStats {
   id: number;
@@ -619,7 +336,7 @@ export interface BossTierStats {
 export interface BossState {
   state: string;
   ability: string;
-  res_delta?: Partial<Record<ElementKey, number>>;
+  res_delta?: Partial<Record<ElementalOrPhysical, number>>;
   value_delta?: { atk_ratio: number };
 }
 
@@ -628,7 +345,7 @@ export interface BossInfo {
   tiers: Record<string, BossTierStats>;
   monster_id?: number;
   describe_id?: number;
-  res?: Record<ElementKey, number>;
+  res?: Record<ElementalOrPhysical, number>;
   states?: BossState[];
   params?: Record<string, Record<string, number>>;
 }
@@ -669,7 +386,7 @@ export interface BossSchedule {
 
 /**
  * All boss data keyed for quick lookup, plus accessor methods that close
- * over the loaded data. Obtain via ``loadLeylineBossData()`` from
+ * over the loaded data. Obtain via ``leylineBossResource`` from
  * ``gameDataLoader.ts``.
  */
 export interface LeylineBossData {
@@ -689,4 +406,29 @@ export interface LeylineBossData {
   getCurrentSchedule(): BossSchedule | undefined;
   getBossImagePath(bossId: number): string | null;
   bossMatchesSearch(bossId: number, query: string): boolean;
+} /**
+ * A buff entry (food, enemy, or status) with stat bonuses.
+ * Values use engine format: flat for hp/atk/def/em, fractional for %.
+ * i18n names live in i18n-app.ts under the `envBuffs` key.
+ */
+
+export type EnvBuff = {
+  id: string;
+  category: EnvBuffCategory;
+  stats: { key: StatKey; value: number }[];
+  /** Optional image path for display (relative to public/). */
+  imagePath?: string;
+  /** Food slot: only one food per slot can be active. */
+  foodSlot?: number;
+};
+export interface Resource<T> {
+  preload(): Promise<T>;
+  use(): T | null;
+  peek(): T | null;
+}
+
+export interface LangResource<T> {
+  preload(lang: Language): Promise<T>;
+  use(lang: Language): T | null;
+  peek(lang: Language): T | null;
 }

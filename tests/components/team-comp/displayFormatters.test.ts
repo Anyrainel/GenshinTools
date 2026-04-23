@@ -1,4 +1,4 @@
-import { isPctStat } from "@/data/constants";
+import { isPctStat } from "@/data/utils";
 import {
   fmtDamage,
   fmtMult,

@@ -1,4 +1,5 @@
-import type { Tier, TierAssignment } from "@/data/types";
+import type { Tier } from "@/data/enums";
+import type { TierAssignment } from "@/data/types";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { beforeEach, describe, expect, it } from "vitest";
 

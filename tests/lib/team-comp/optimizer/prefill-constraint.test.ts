@@ -1,6 +1,6 @@
-import type { MainStat, Slot } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { getRollValues } from "@/lib/team-comp/generator/constrainedGreedy";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot } from "@/data/enums";
+import { getRollValues } from "@/lib/artifact/scoring/utils";
 import { computeSubstatPreFill } from "@/lib/team-comp/optimizer/erCrConstraints";
 import { describe, expect, it } from "vitest";
 

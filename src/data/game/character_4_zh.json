@@ -7,34 +7,34 @@
         "name": "A. 敲打修理法",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}*2"],
-          ["重击循环伤害", "{param4:F1P}"],
-          ["重击终结伤害", "{param5:P}"],
-          ["重击体力消耗", "每秒{param6:F1}点"],
-          ["最大持续时间", "{param7:F1}秒"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}*2"},
+          {"label": "重击循环伤害", "template": "{param4:F1P}"},
+          {"label": "重击终结伤害", "template": "{param5:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param6:F1}点"},
+          {"label": "最大持续时间", "template": "{param7:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 妙思捕手",
         "descHtml": "向前方投出<span style=\"color: #FFD780FF;\">「妙思捕手」</span>，造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>，同时将自己牵引至前方，并在移动结束时对身边的敌人造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>。<br>长按时将以不同的方式施放。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>进入瞄准状态，以调整投出「妙思捕手」的方向。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["冷却时间", "{param3:F1}秒"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 精密水冷仪",
         "descHtml": "抛出特制的超级喷水机关<span style=\"color: #FFD780FF;\">「冷静一下鸭」</span>，展开<span style=\"color: #FFD780FF;\">对点水冷域</span>。<br>持续期间，「冷静一下鸭」会间歇性对附近的敌人发射水弹，造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>。",
         "details": [
-          ["水弹伤害", "{param1:F1P}"],
-          ["持续时间", "{param2:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "水弹伤害", "template": "{param1:F1P}"},
+          {"label": "持续时间", "template": "{param2:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -92,35 +92,35 @@
         "name": "A. 神射手",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，烈焰会在箭矢上持续积聚。聚满了烈焰的箭矢会造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:F1P}"],
-          ["瞄准射击", "{param6:F1P}"],
-          ["满蓄力瞄准射击", "{param7:P}"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "瞄准射击", "template": "{param6:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param7:P}"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 爆弹玩偶",
         "descHtml": "请可靠的兔兔伯爵上阵。<br><br><span style=\"color: #FFD780FF;\">兔兔伯爵</span><br>·持续嘲讽周围的敌人，吸引火力；<br>·耐久度按比例继承安柏的生命值上限；<br>·被摧毁或持续时间结束时，会发生剧烈的爆炸，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>调整投掷方向。<br>投掷距离随长按时间增加。<br><br><i>兔兔伯爵有着悠久的家系。但从兔兔八百九十三世开始，安柏就停止计数了。</i>",
         "details": [
-          ["继承生命", "{param1:F1P}"],
-          ["爆炸伤害", "{param2:P}"],
-          ["冷却时间", "{param4:F1}秒"]
+          {"label": "继承生命", "template": "{param1:F1P}"},
+          {"label": "爆炸伤害", "template": "{param2:P}"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"}
         ]
       },
       {
         "name": "Q. 箭雨",
         "descHtml": "射出火焰箭雨，持续造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br><br><i>满心热诚的安柏真的很热。</i>",
         "details": [
-          ["箭雨单次伤害", "{param1:F1P}"],
-          ["箭雨总伤害", "{param4:P}"],
-          ["持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param2:F1}秒"],
-          ["元素能量", "{param3:I}"]
+          {"label": "箭雨单次伤害", "template": "{param1:F1P}"},
+          {"label": "箭雨总伤害", "template": "{param4:P}"},
+          {"label": "持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"},
+          {"label": "元素能量", "template": "{param3:I}"}
         ]
       }
     ],
@@ -174,34 +174,34 @@
         "name": "A. 水之浅唱",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的水花攻击，造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂咏唱后，造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚水元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击伤害", "{param5:P}"],
-          ["重击体力消耗", "{param6:F1}点"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击伤害", "template": "{param5:P}"},
+          {"label": "重击体力消耗", "template": "{param6:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 演唱，开始♪",
         "descHtml": "唤出歌声般跃动的水珠，形成歌声之环，对周围的敌人造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>，并施加<span style=\"color: #80C0FFFF;\">潮湿</span>状态。<br><br><span style=\"color: #FFD780FF;\">歌声之环</span><br>·芭芭拉的普通攻击命中时，为队伍中自己的角色，以及附近的友方角色恢复生命值，回复量受益于芭芭拉的生命值上限；<br>·重击命中时，能产生4倍回复量；<br>·每隔一段时间，为当前场上自己的角色恢复生命值；<br>·对角色与触及的敌人施加<span style=\"color: #80C0FFFF;\">潮湿</span>状态。<br><br><i>芭芭拉的音乐就是治疗大家的魔法。</i>",
         "details": [
-          ["命中治疗量", "{param3:F2P}生命值上限+{param4:I}"],
-          ["持续治疗量", "{param1:F2P}生命值上限+{param2:I}"],
-          ["水珠伤害", "{param5:F1P}"],
-          ["持续时间", "{param6:F1}秒"],
-          ["冷却时间", "{param7:F1}秒"]
+          {"label": "命中治疗量", "template": "{param3:F2P}生命值上限+{param4:I}"},
+          {"label": "持续治疗量", "template": "{param1:F2P}生命值上限+{param2:I}"},
+          {"label": "水珠伤害", "template": "{param5:F1P}"},
+          {"label": "持续时间", "template": "{param6:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"}
         ]
       },
       {
         "name": "Q. 闪耀奇迹♪",
         "descHtml": "为附近的友方角色及队伍中自己的角色恢复大量生命值，回复量受益于芭芭拉的生命值上限。<br><br><i>治愈大家的心就是芭芭拉战斗与歌唱的力量。</i>",
         "details": [
-          ["治疗量", "{param1:F1P}生命值上限+{param2:I}"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "治疗量", "template": "{param1:F1P}生命值上限+{param2:I}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -255,39 +255,39 @@
         "name": "A. 征涛",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，快速进行连续的斩击。<br>重击结束时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:P}"],
-          ["重击循环伤害", "{param6:F1P}"],
-          ["重击终结伤害", "{param7:P}"],
-          ["重击体力消耗", "每秒{param8:F1}点"],
-          ["最大持续时间", "{param9:F1}秒"],
-          ["下坠期间伤害", "{param10:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param11:P}/{param12:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:P}"},
+          {"label": "重击循环伤害", "template": "{param6:F1P}"},
+          {"label": "重击终结伤害", "template": "{param7:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param8:F1}点"},
+          {"label": "最大持续时间", "template": "{param9:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param10:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param11:P}/{param12:P}"}
         ]
       },
       {
         "name": "E. 捉浪",
         "descHtml": "没有什么好担心的。如果有人敢对她或她的人出手，那就以雷电与大剑十倍奉还。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>积聚雷之力，猛烈向前挥舞大剑，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>举起武器形成护盾，伤害吸收量受益于北斗的生命值上限。<br>松开技能或持续时间结束时，会挥舞大剑释放积攒的力量进行攻击，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。依据技能期间受到攻击的次数，提高释放时造成的伤害。触发2次达到最高伤害加成。<br>护盾具有如下效果：<br>·对<span style=\"color: #FFACFFFF;\">雷元素伤害</span>有250%的吸收效果；<br>·施放的瞬间，为北斗施加<span style=\"color: #FFACFFFF;\">雷元素附着</span>。<br><br><i>渺渺征船，追电捉浪。</i>",
         "details": [
-          ["护盾吸收量", "{param1:F1P}生命值上限+{param2:I}"],
-          ["基础伤害", "{param3:P}"],
-          ["受击时伤害提升", "{param4:P}"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "护盾吸收量", "template": "{param1:F1P}生命值上限+{param2:I}"},
+          {"label": "基础伤害", "template": "{param3:P}"},
+          {"label": "受击时伤害提升", "template": "{param4:P}"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 斫雷",
         "descHtml": "重忆斩灭海山巨兽之战，唤起巨兽与雷电的力量，创造环绕自身的雷兽之盾，并对周围的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">雷兽之盾</span><br>·普通攻击与重击命中时，释放雷电之力，引来1道能在敌人之间跃动的闪雷，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>；<br>·提高角色的抗打断能力，并降低受到的伤害。<br><br>每秒至多触发1道闪雷。<br><br><i>赫赫雷来，斫灭海山。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["闪雷伤害", "{param2:F1P}"],
-          ["伤害减免", "{param3:P}"],
-          ["持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"],
-          ["元素能量", "{param6:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "闪雷伤害", "template": "{param2:F1P}"},
+          {"label": "伤害减免", "template": "{param3:P}"},
+          {"label": "持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
@@ -341,38 +341,38 @@
         "name": "A. 好运剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}+{param7:F1P}"],
-          ["重击体力消耗", "{param8:F1}点"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}+{param7:F1P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 热情过载",
         "descHtml": "班尼特将火元素与冒险的热情凝聚在剑上。根据热情凝聚的程度，可能会发生不同的事情…<br><br><span style=\"color: #FFD780FF;\">点按</span><br>快速向前挥出火焰一击，造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>根据长按时间进行蓄力，释放时依照蓄力段数造成不同的效果。<br>·一段蓄力：发动二段攻击，造成<span style=\"color: #FF9999FF;\">火元素伤害</span>并将敌人击飞；<br>·二段蓄力：发动三段连续攻击，造成可观的<span style=\"color: #FF9999FF;\">火元素伤害</span>。最后一击会发生爆炸，将班尼特与敌人同时击飞。被击飞时，班尼特不会受到伤害。<br><br><i>聚集热情与梦想与火元素的一击。但热情有时会过头，而火元素有时会爆炸。</i>",
         "details": [
-          ["点按伤害", "{param1:P}"],
-          ["一段蓄力伤害", "{param2:F1P}+{param3:F1P}"],
-          ["二段蓄力伤害", "{param4:F1P}+{param5:F1P}"],
-          ["爆炸伤害", "{param6:P}"],
-          ["冷却时间", "{param7:F1}/{param8:F1}/{param9:F1}秒"]
+          {"label": "点按伤害", "template": "{param1:P}"},
+          {"label": "一段蓄力伤害", "template": "{param2:F1P}+{param3:F1P}"},
+          {"label": "二段蓄力伤害", "template": "{param4:F1P}+{param5:F1P}"},
+          {"label": "爆炸伤害", "template": "{param6:P}"},
+          {"label": "冷却时间", "template": "{param7:F1}/{param8:F1}/{param9:F1}秒"}
         ]
       },
       {
         "name": "Q. 美妙旅程",
         "descHtml": "班尼特进行腾跃轰击，造成<span style=\"color: #FF9999FF;\">火元素伤害</span>，并生成鼓舞领域。<br><br><span style=\"color: #FFD780FF;\">鼓舞领域</span><br>·领域内的角色如果生命值低于或等于70%，会持续恢复生命值，回复量受益于班尼特的最大生命值；<br>·领域内的角色如果生命值高于70%，会基于班尼特的基础攻击力，以一定比例获得攻击力加成；<br>·为其中的角色施加<span style=\"color: #FF9999FF;\">火元素附着</span>。<br><br><i>班尼冒险团每一次探险之旅都充满意外风险。尽管唯一的成员班尼特更倾向于说这是「精彩、刺激又美妙的旅程」。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["持续治疗", "每秒{param2:F2P}生命值上限+{param3:I}"],
-          ["攻击力加成比例", "{param4:P}"],
-          ["持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"],
-          ["元素能量", "{param7:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "持续治疗", "template": "每秒{param2:F2P}生命值上限+{param3:I}"},
+          {"label": "攻击力加成比例", "template": "{param4:P}"},
+          {"label": "持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
         ]
       }
     ],
@@ -426,38 +426,38 @@
         "name": "A. 流耀枪术·守势",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}"],
-          ["重击体力消耗", "{param7:F1}点"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 圣仪·苍鹭庇卫",
         "descHtml": "坎蒂丝的战斗风格，是能抵御洪水一般的军势的。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>以盾牌进行冲击，向前方造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>举起盾牌抵挡周围敌人的攻击，形成护盾，伤害吸收量受益于坎蒂丝的生命值上限，并且对<span style=\"color: #80C0FFFF;\">水元素伤害</span>有250%的吸收效果。护盾持续至元素战技施放完毕。<br>长按一段时间后，坎蒂丝将完成蓄力，并在松开技能、持续时间结束，或护盾被破坏时，进行跳跃攻击，对前方的敌人造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>。<br><br><i>守护者们传承的誓言，要比他们传承的盾更为刚坚。</i>",
         "details": [
-          ["护盾吸收量", "{param1:F1P}生命值上限+{param2:I}"],
-          ["基础伤害", "{param3:F1P}生命值上限"],
-          ["蓄力完成伤害", "{param4:F1P}生命值上限"],
-          ["点按冷却时间", "{param5:F1}秒"],
-          ["长按冷却时间", "{param6:F1}秒"]
+          {"label": "护盾吸收量", "template": "{param1:F1P}生命值上限+{param2:I}"},
+          {"label": "基础伤害", "template": "{param3:F1P}生命值上限"},
+          {"label": "蓄力完成伤害", "template": "{param4:F1P}生命值上限"},
+          {"label": "点按冷却时间", "template": "{param5:F1}秒"},
+          {"label": "长按冷却时间", "template": "{param6:F1}秒"}
         ]
       },
       {
         "name": "Q. 圣仪·灰鸰衒潮",
         "descHtml": "高举武器，召请神佑，基于坎蒂丝的生命值上限，造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>，并持续为当前场上自己的角色赋予「赤冕祝祷」状态。<br><br><span style=\"color: #FFD780FF;\">赤冕祝祷</span><br>具有如下特性：<br>·角色的普通攻击对敌人造成元素伤害时，提高造成的伤害；<br>·角色登场时，会发动水波冲击，对周围的敌人造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>。该效果在持续时间内触发的次数有限；<br>·处于这种状态下的单手剑、双手剑、长柄武器角色会获得<span style=\"color: #80C0FFFF;\">水元素附魔</span>。<br><br><i>坎蒂丝家族世代传承的秘仪。尽管古老的信仰早已消逝在千年的岁月中，沙海依然庇护着古国的后人。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}生命值上限"],
-          ["持续时间", "{param2:F1}秒"],
-          ["伤害加成", "{param3:F1P}"],
-          ["水波冲击伤害", "{param4:F1P}生命值上限"],
-          ["水波冲击触发次数", "{param5:I}次"],
-          ["冷却时间", "{param6:F1}秒"],
-          ["元素能量", "{param7:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}生命值上限"},
+          {"label": "持续时间", "template": "{param2:F1}秒"},
+          {"label": "伤害加成", "template": "{param3:F1P}"},
+          {"label": "水波冲击伤害", "template": "{param4:F1P}生命值上限"},
+          {"label": "水波冲击触发次数", "template": "{param5:I}次"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
         ]
       }
     ],
@@ -511,44 +511,44 @@
         "name": "A. 冷色摄影律",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>以特制留影机「温亨廷先生」瞄准目标，进行至多三段的攻击，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂准备后，部署「温亨廷先生」，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚冰元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">始基力：芒性</span><br>每隔一段时间，夏洛蒂施放重击后，将降下穿透敌人的灵息之刺，造成具有芒性的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["重击伤害", "{param4:F1P}"],
-          ["重击体力消耗", "{param5:F1}点"],
-          ["下坠期间伤害", "{param6:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param7:P}/{param8:P}"],
-          ["灵息之刺伤害", "{param9:F1P}"],
-          ["灵息之刺伤害间隔", "{param10:F1}秒"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "重击伤害", "template": "{param4:F1P}"},
+          {"label": "重击体力消耗", "template": "{param5:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param6:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param7:P}/{param8:P}"},
+          {"label": "灵息之刺伤害", "template": "{param9:F1P}"},
+          {"label": "灵息之刺伤害间隔", "template": "{param10:F1}秒"}
         ]
       },
       {
         "name": "E. 取景·冰点构图法",
         "descHtml": "凝聚王牌记者的锐意，尽情施展摄影技巧，依据点按、长按，以不同的方式产生效果。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>以「温亨廷先生」施展利落的抓拍，对前方的敌人造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，并对命中的至多5名敌人施加「瞬时剪影」。持续期间，「瞬时剪影」将间歇性对敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>打开「温亨廷先生」的取景框，进入构图状态，取景框将在长按期间逐渐扩张到最大画幅。在这种状态下，夏洛蒂能够进行移动与改变朝向。<br>长按结束时，「温亨廷先生」将对取景框内锁定的敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，并为其施加与点按相同的「瞬时剪影」；若在取景框达到最大画幅后施放技能，将转为施加持续时间更长、伤害更高的「聚焦印象」，并使本次技能的冷却时间更长。<br>构图状态至多持续15秒，至多选定5名敌人。<br><br><i>「新闻留影讲究一个画面简洁，主题突出，不过最关键的，还是要有能抓住动人时刻的天赋！」</i>",
         "details": [
-          ["点按拍照伤害", "{param1:F1P}"],
-          ["长按拍照伤害", "{param2:F1P}"],
-          ["「瞬时剪影」印记伤害", "{param3:F1P}"],
-          ["「瞬时剪影」印记触发间隔", "{param4:F1}秒"],
-          ["「瞬时剪影」印记持续时间", "{param5:F1}秒"],
-          ["「聚焦印象」印记伤害", "{param6:F1P}"],
-          ["「聚焦印象」印记触发间隔", "{param7:F1}秒"],
-          ["「聚焦印象」印记持续时间", "{param8:F1}秒"],
-          ["冷却时间", "{param9:F1}秒"],
-          ["最大画幅施放冷却时间", "{param10:F1}秒"]
+          {"label": "点按拍照伤害", "template": "{param1:F1P}"},
+          {"label": "长按拍照伤害", "template": "{param2:F1P}"},
+          {"label": "「瞬时剪影」印记伤害", "template": "{param3:F1P}"},
+          {"label": "「瞬时剪影」印记触发间隔", "template": "{param4:F1}秒"},
+          {"label": "「瞬时剪影」印记持续时间", "template": "{param5:F1}秒"},
+          {"label": "「聚焦印象」印记伤害", "template": "{param6:F1P}"},
+          {"label": "「聚焦印象」印记触发间隔", "template": "{param7:F1}秒"},
+          {"label": "「聚焦印象」印记持续时间", "template": "{param8:F1}秒"},
+          {"label": "冷却时间", "template": "{param9:F1}秒"},
+          {"label": "最大画幅施放冷却时间", "template": "{param10:F1}秒"}
         ]
       },
       {
         "name": "Q. 定格·全方位确证",
         "descHtml": "以冰霜凝聚《蒸汽鸟报》的招牌，建立「临事场域」，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，为队伍中附近的所有角色恢复生命值，回复量受益于夏洛蒂的攻击力。<br><br><span style=\"color: #FFD780FF;\">临事场域</span><br>·持续期间，「温亨廷先生」将间歇性攻击其中的敌人，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br>·持续为其中的当前场上角色恢复生命值，回复量受益于夏洛蒂的攻击力。<br><br><i>「取得各方立场，还原发生的事态，一份好的报道，当然要从多个角度进行取证了解…这样才能选择最好的进行报道的角度！」</i>",
         "details": [
-          ["施放治疗量", "{param1:F1P}攻击力+{param2:I}"],
-          ["技能伤害", "{param3:F1P}"],
-          ["相机持续治疗量", "{param4:F1P}攻击力+{param5:I}"],
-          ["相机伤害", "{param6:F1P}"],
-          ["「临事场域」持续时间", "{param7:F1}秒"],
-          ["冷却时间", "{param8:F1}秒"],
-          ["元素能量", "{param9:I}"]
+          {"label": "施放治疗量", "template": "{param1:F1P}攻击力+{param2:I}"},
+          {"label": "技能伤害", "template": "{param3:F1P}"},
+          {"label": "相机持续治疗量", "template": "{param4:F1P}攻击力+{param5:I}"},
+          {"label": "相机伤害", "template": "{param6:F1P}"},
+          {"label": "「临事场域」持续时间", "template": "{param7:F1}秒"},
+          {"label": "冷却时间", "template": "{param8:F1}秒"},
+          {"label": "元素能量", "template": "{param9:I}"}
         ]
       }
     ],
@@ -602,38 +602,38 @@
         "name": "A. 线列枪刺·改",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}"],
-          ["重击体力消耗", "{param7:F1}点"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 近迫式急促拦射",
         "descHtml": "夏沃蕾将铳枪快速抵肩，射击敌人，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br>夏沃蕾进行射击后的一段时间内，将持续为当前场上自己的角色恢复生命值，回复量受益于夏沃蕾的生命值上限。<br>长按时将以不同的方式施放。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>进入瞄准状态，锁定准星内的一名敌人，进行更为精确的拦截射击；若夏沃蕾拥有「超量装药弹头」，则转为发射「超量装药弹头」，造成范围更大、伤害更高的<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br>夏沃蕾将在队伍中附近的角色触发超载反应时获得1枚「超量装药弹头」。至多同时持有1枚「超量装药弹头」。<br><br><span style=\"color: #FFD780FF;\">始基力：荒性</span><br>每隔一段时间，夏沃蕾的「近迫式急促拦射」命中时，将唤出流涌之刃，造成具有荒性的<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><i>「其实训练条令里只有『拦射』这个术语，但有本小说的主角认为，包含专业词汇的招式名能让自己人更有干劲，让敌人输在气势的起跑线上…我觉得很有道理，就改了改条令！」</i>",
         "details": [
-          ["点按伤害", "{param1:F1P}"],
-          ["长按伤害", "{param2:F1P}"],
-          ["「超量装药弹头」伤害", "{param3:F1P}"],
-          ["持续治疗量", "{param5:F2P}生命值上限+{param6:I}"],
-          ["治疗持续时间", "{param4:F1}秒"],
-          ["流涌之刃伤害", "{param7:F1P}"],
-          ["流涌之刃间隔", "{param8:F1}秒"],
-          ["冷却时间", "{param9:F1}秒"]
+          {"label": "点按伤害", "template": "{param1:F1P}"},
+          {"label": "长按伤害", "template": "{param2:F1P}"},
+          {"label": "「超量装药弹头」伤害", "template": "{param3:F1P}"},
+          {"label": "持续治疗量", "template": "{param5:F2P}生命值上限+{param6:I}"},
+          {"label": "治疗持续时间", "template": "{param4:F1}秒"},
+          {"label": "流涌之刃伤害", "template": "{param7:F1P}"},
+          {"label": "流涌之刃间隔", "template": "{param8:F1}秒"},
+          {"label": "冷却时间", "template": "{param9:F1}秒"}
         ]
       },
       {
         "name": "Q. 圆阵掷弹爆轰术",
         "descHtml": "夏沃蕾以铳枪向敌人投射爆轰榴弹，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。爆轰榴弹命中后，将分裂成许多二重毁伤弹。<br>二重毁伤弹将在短暂间隔后爆炸，对附近的敌人造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><i>「照理来说，轰炸一块方形的区域，就能有效打击结阵的敌人，可惜爆炸的冲击波截面就像大部分蛋糕，是圆形的，所以飞散的榴弹也只能像蛋糕边缘的水果那样，呈环形排布开来。」</i>",
         "details": [
-          ["爆轰榴弹伤害", "{param1:F1P}"],
-          ["二重毁伤弹伤害", "{param2:F1P}"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "爆轰榴弹伤害", "template": "{param1:F1P}"},
+          {"label": "二重毁伤弹伤害", "template": "{param2:F1P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -687,35 +687,35 @@
         "name": "A. 灭邪四式",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 灵刃·重华叠霜",
         "descHtml": "重云挥动巨剑猛击地面，在前方圆形范围内引发冰爆，并对敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br>短暂延迟后，冰爆引发的寒气汇聚成重华叠霜领域，其中的单手剑、大剑、长柄武器角色获得<span style=\"color: #99FFFFFF;\">冰元素附魔</span>。<br><br><i>「琳琅振响，十方静默。江河不动，重云凝霜。如法开坛，诸邪退散。」</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["附魔持续时间", "{param2:F1}秒"],
-          ["领域持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "附魔持续时间", "template": "{param2:F1}秒"},
+          {"label": "领域持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 灵刃·云开星落",
         "descHtml": "重云结印，在前方半空中连续召唤出三柄巨大灵刃，短时间内依次落向地面并爆裂。<br>灵刃爆裂时，会造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，并击飞敌人。<br><br><i>「卓剑天地动，冰凌霜寒生。如律令！」</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["冷却时间", "{param2:F1}秒"],
-          ["元素能量", "{param3:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"},
+          {"label": "元素能量", "template": "{param3:I}"}
         ]
       }
     ],
@@ -769,33 +769,33 @@
         "name": "A. 祈颂射艺",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，草元素会凭附在箭矢上。聚满了草元素的箭矢会造成<span style=\"color: #99FF88FF;\">草元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["瞄准射击", "{param5:F1P}"],
-          ["满蓄力瞄准射击", "{param6:P}"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "瞄准射击", "template": "{param5:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param6:P}"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 拂花偈叶",
         "descHtml": "投掷飞叶轮，对触及的目标各造成一次<span style=\"color: #99FF88FF;\">草元素伤害</span>。<br>飞叶轮将在投掷一定时间后返回，再次造成<span style=\"color: #99FF88FF;\">草元素伤害</span>。<br><br><i>柯莱对付那些狂躁不安的野兽用的可靠小道具。被这东西敲过几下后，一般都会再度变得温顺起来。对于那些不怀好意的恶徒也同样好使。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["冷却时间", "{param2:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
         "name": "Q. 猫猫秘宝",
         "descHtml": "请可靠的柯里安巴上阵帮忙。<br>投掷柯里安巴玩偶，爆发时造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>，并产生柯里安巴领域。柯里安巴会在领域中不断跃动，造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>。<br><br><i>「怎么样，很厉害吧！…哎？你问柯里安巴的名字是怎么来的？呜，这、这个…」</i>",
         "details": [
-          ["爆发伤害", "{param1:F1P}"],
-          ["跃动伤害", "{param2:F1P}"],
-          ["持续时间", "{param3:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "爆发伤害", "template": "{param1:F1P}"},
+          {"label": "跃动伤害", "template": "{param2:F1P}"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],
@@ -849,33 +849,33 @@
         "name": "A. 西风剑术·祭仪",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}+{param7:F1P}"],
-          ["重击体力消耗", "{param8:F1}点"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}+{param7:F1P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 圣浸的礼典",
         "descHtml": "是时候玩些有趣的小把戏啦！依据点按、长按，以不同的方式唤出雾雨秘迹。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>短暂祷告后，在前方唤出雾雨秘迹。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>持续进行祷告，并在祷告结束时，在指定位置唤出雾雨秘迹。<br><br><span style=\"color: #FFD780FF;\">雾雨秘迹</span><br>敌人或队伍中附近的角色接触到雾雨秘迹后，依据接触者的不同，将会产生不同的效果：<br>若敌人接触到雾雨秘迹，雾雨秘迹将会发生爆炸，对周围的敌人造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>；<br>若队伍中附近的角色接触到雾雨秘迹，雾雨秘迹会将接触者高高弹起。<br><br>同时只能存在一个由塔利雅自己创造的雾雨秘迹。",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["技能冷却时间", "{param2:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "技能冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
         "name": "Q. 纯耀的祷咏",
         "descHtml": "以虔诚的心意与歌声向神明祷告，对周围的敌人造成<span style=\"color: #80C0FFFF;\">水元素范围伤害</span>，为队伍中自己的角色赋予「西风之眷」效果，并唤出圣眷护盾。<br>圣眷护盾的伤害吸收量受益于塔利雅的生命值上限，对<span style=\"color: #80C0FFFF;\">水元素伤害</span>有250%的吸收效果。<br><br><span style=\"color: #FFD780FF;\">西风之眷</span><br>持续期间，圣眷护盾因伤害破碎时，塔利雅可以消耗一层祝颂效果，重新唤出圣眷护盾。<br><br>塔利雅可以通过以下方式获得祝颂效果：<br>·队伍中自己的当前场上角色处于西风之眷效果影响下时，普通攻击每命中敌人4次，塔利雅将获得1层祝颂效果；<br>·触发突破天赋「风色柔愿的眷宠」的效果后（需要解锁突破天赋「风色柔愿的眷宠」）。<br>每次西风之眷效果持续期间，塔利雅至多获得4层祝颂效果。",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["圣眷护盾吸收量", "{param3:F1P}生命值上限+{param2:I}"],
-          ["西风之眷持续时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"],
-          ["冷却时间", "{param6:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "圣眷护盾吸收量", "template": "{param3:F1P}生命值上限+{param2:I}"},
+          {"label": "西风之眷持续时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"}
         ]
       }
     ],
@@ -929,38 +929,38 @@
         "name": "A. 猎人射术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，冰霜散发的寒气会凭附在箭矢上。聚满了寒气的箭矢会造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:F1P}"],
-          ["瞄准射击", "{param7:F1P}"],
-          ["满蓄力瞄准射击", "{param8:P}"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "瞄准射击", "template": "{param7:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param8:P}"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 猫爪冻冻",
         "descHtml": "发射冻冻猫猫爪，对敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，并在命中时形成护盾。<br>护盾的伤害吸收量受益于迪奥娜的生命值上限，持续时间基于命中的冻冻猫猫爪数目。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>快速发射二枚冻冻猫猫爪。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>迅速后撤，并发射五枚冻冻猫猫爪。<br>通过长按产生的护盾获得75%伤害吸收量加成。<br><br>护盾对<span style=\"color: #99FFFFFF;\">冰元素伤害</span>有250%的吸收效果，并会在形成时，为当前角色施加短暂的<span style=\"color: #99FFFFFF;\">冰元素附着</span>。<br><br><i>一开始，酒里加多少冰也伤害不了酒鬼。直到迪奥娜有了神之眼，然后就有了这些冻得人太阳穴疼的冰。好评！</i>",
         "details": [
-          ["猫爪伤害", "每个{param1:F1P}"],
-          ["护盾基础吸收量", "{param2:F1P}最大生命值+{param3:I}"],
-          ["持续时间", "每个猫爪{param6:F1}秒"],
-          ["点按冷却时间", "{param4:F1}秒"],
-          ["长按冷却时间", "{param5:F1}秒"]
+          {"label": "猫爪伤害", "template": "每个{param1:F1P}"},
+          {"label": "护盾基础吸收量", "template": "{param2:F1P}最大生命值+{param3:I}"},
+          {"label": "持续时间", "template": "每个猫爪{param6:F1}秒"},
+          {"label": "点按冷却时间", "template": "{param4:F1}秒"},
+          {"label": "长按冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 最烈特调",
         "descHtml": "抛出特别调制的冰酿烈调，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，并产生冰气酒雾领域。<br><br><span style=\"color: #FFD780FF;\">冰气酒雾领域</span><br>·对其中的敌人持续造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>；<br>·为其中的角色持续恢复生命值。<br><br><i>迪奥娜自己都觉得不人道的恐怖配方。前味恐怖，推荐留给敌人；后劲清冽，可惜只能用鼻子和皮肤享用。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["领域持续伤害", "{param2:F1P}"],
-          ["持续治疗量", "{param3:F2P}生命值上限+{param4:I}"],
-          ["持续时间", "{param7:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"],
-          ["元素能量", "{param6:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "领域持续伤害", "template": "{param2:F1P}"},
+          {"label": "持续治疗量", "template": "{param3:F2P}生命值上限+{param4:I}"},
+          {"label": "持续时间", "template": "{param7:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
@@ -1014,36 +1014,36 @@
         "name": "A. 妙显剑舞·改",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}+{param3:F1P}"],
-          ["三段伤害", "{param4:F1P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}+{param3:F1P}"},
+          {"label": "三段伤害", "template": "{param4:F1P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 镇灵之灯·烦恼解决炮",
         "descHtml": "示意镇灵之灯向敌人发射断除烦恼炮，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>断除烦恼炮命中后，将会产生2枚能自行追踪附近敌人的售后服务弹，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><i>据说，无论想要解决什么样的烦恼，只要出价足够合适，多莉都能办得到。</i>",
         "details": [
-          ["断除烦恼炮伤害", "{param1:F1P}"],
-          ["售后服务弹伤害", "{param2:F1P}"],
-          ["冷却时间", "{param3:F1}秒"]
+          {"label": "断除烦恼炮伤害", "template": "{param1:F1P}"},
+          {"label": "售后服务弹伤害", "template": "{param2:F1P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 卡萨扎莱宫的无微不至",
         "descHtml": "召唤灯中幽精，为顾客提供形形色色的帮助。<br><br><span style=\"color: #FFD780FF;\">灯中幽精</span><br>会与附近的角色相连。与灯中幽精相连的角色将会：<br>·持续恢复生命值，回复量受益于多莉的生命值上限；<br>·持续获得元素能量；<br>·处于<span style=\"color: #FFACFFFF;\">雷元素附着</span>状态下。<br><br>此外，角色与灯中幽精之间的连接触碰敌人时，将每0.4秒对敌人造成一次<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br>同时只能存在一个灯中幽精。<br><br><i>「嗯？客人是挑中了这盏灯吗？哎呀…您的品味还真好呢！只不过，这个可是无价之宝。就比如说，不管别人出多少摩拉，客人您也不会把您旁边那个小吉祥物卖出去吧？」</i>",
         "details": [
-          ["连接伤害", "{param1:P}"],
-          ["持续治疗量", "{param2:F1P}生命值上限+{param3:I}"],
-          ["元素能量恢复", "{param4:F1}"],
-          ["持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"],
-          ["元素能量", "{param7:I}"]
+          {"label": "连接伤害", "template": "{param1:P}"},
+          {"label": "持续治疗量", "template": "{param2:F1P}生命值上限+{param3:I}"},
+          {"label": "元素能量恢复", "template": "{param4:F1}"},
+          {"label": "持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
         ]
       }
     ],
@@ -1097,38 +1097,38 @@
         "name": "A. 迴身箭术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，强风会在箭矢上持续积聚。聚满了强风之力的箭矢会造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，攻击下落路径上的敌人，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["瞄准射击", "{param5:F1P}"],
-          ["满蓄力瞄准射击", "{param6:P}"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "瞄准射击", "template": "{param5:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param6:P}"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 非想风天",
         "descHtml": "珐露珊部署多方面体，对附近的敌人造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>，并获得「疾风示现」效果。<br>处于「疾风示现」状态下时，珐露珊下一次蓄力完毕的瞄准射击将消耗本次「疾风示现」效果，转为发射附带高压涡流的「飓烈箭」，基于「普通攻击·迴身箭术」的满蓄力瞄准射击伤害，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">风压坍陷</span><br>飓烈箭将为命中的敌人或角色施加「风压坍陷」效果。该效果将在短暂延迟后移除，产生风涡造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>，并牵引附近的物体与敌人；若未命中敌人或角色，则将在命中的位置施加「风压坍陷」效果。<br>风涡造成的伤害视为元素战技伤害。<br><br><i>摧破俗见的迷障，真理之风终将吹拂求知者的灵囿。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["风压坍陷风涡伤害", "{param2:F1P}"],
-          ["疾风示现持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "风压坍陷风涡伤害", "template": "{param2:F1P}"},
+          {"label": "疾风示现持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 抟风秘道",
         "descHtml": "珐露珊迅速部署「赫耀多方面体」，释放一次「烈风波」，并造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br>存在期间内，赫耀多方面体将持续以三角形路径移动，每次移动到三角形路径的顶点时，赫耀多方面体都将释放一次烈风波。<br><br><span style=\"color: #FFD780FF;\">烈风波</span><br>·烈风波释放时，将对周围的敌人施加「诡风之祸」效果：降低敌人的<span style=\"color: #80FFD7FF;\">风元素抗性</span>；<br>·烈风波释放时，将为附近的队伍中所有角色施加「祈风之赐」效果：获得<span style=\"color: #80FFD7FF;\">风元素伤害加成</span>。<br><br><i>对于隐藏在古老遗迹中未知的智慧，理应抱有足够的敬畏之心。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["风元素伤害加成", "{param2:F1P}"],
-          ["祈风之赐持续时间", "{param3:F1}秒"],
-          ["风元素抗性降低", "{param4:F1P}"],
-          ["诡风之祸持续时间", "{param5:F1}秒"],
-          ["持续时间", "{param6:F1}秒"],
-          ["冷却时间", "{param7:F1}秒"],
-          ["元素能量", "{param8:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "风元素伤害加成", "template": "{param2:F1P}"},
+          {"label": "祈风之赐持续时间", "template": "{param3:F1}秒"},
+          {"label": "风元素抗性降低", "template": "{param4:F1P}"},
+          {"label": "诡风之祸持续时间", "template": "{param5:F1}秒"},
+          {"label": "持续时间", "template": "{param6:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"},
+          {"label": "元素能量", "template": "{param8:I}"}
         ]
       }
     ],
@@ -1182,34 +1182,34 @@
         "name": "A. 罪灭之矢",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，幽夜净土的黯雷精灵会听从皇女的号令，凭附在她的雷影魔箭上。聚满了断罪之雷的魔箭会造成高额的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:F1P}"],
-          ["瞄准射击", "{param6:F1P}"],
-          ["满蓄力瞄准射击", "{param7:P}"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "瞄准射击", "template": "{param6:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param7:P}"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 夜巡影翼",
         "descHtml": "召唤奥兹。暗影与雷电构成的夜鸦降生尘世时，会在小范围内造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>存在期间内，奥兹会持续发射<span style=\"color: #FFACFFFF;\">雷之魔弹</span>攻击附近的敌人。<br><br>长按以调整技能生效位置。<br>奥兹存在期间内再次点按可以将其召唤至身旁。<br><br><i>「本皇女的精力，可是很宝贵的，不值得浪费在你们这种人身上…奥兹，请你替我降下那撕开永夜的断罪之雷吧。」</i><br><i>——《菲谢尔皇女夜谭·卷四·「永别世界夫人」》</i>",
         "details": [
-          ["奥兹攻击伤害", "{param1:F1P}"],
-          ["召唤伤害", "{param2:P}"],
-          ["奥兹存在时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "奥兹攻击伤害", "template": "{param1:F1P}"},
+          {"label": "召唤伤害", "template": "{param2:P}"},
+          {"label": "奥兹存在时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 至夜幻现",
         "descHtml": "呼唤奥兹，张开纯粹的夜色编织成的双翼，守护菲谢尔。<br>持续期间，具有如下效果：<br>·以奥兹的形态进行高速移动；<br>·对附近的敌人降下落雷，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。每个敌人只能受到一次落雷伤害；<br>·效果结束时，奥兹将会停留在战场上，攻击皇女的敌人。若奥兹已经在场，则重置奥兹的存在时间。<br><br><i>…追随着受诅咒的断罪之血而来的群兽当中，只有那见证过一千世界寂灭的夜鸦亲王，能明白她的崇高。于是它张开至夜织成的双翼荫蔽高贵的皇女，并发誓永远守护她。</i><br><i>——《菲谢尔皇女夜谭·卷一·「末日解体概要」》</i>",
         "details": [
-          ["落雷伤害", "{param1:P}"],
-          ["冷却时间", "{param5:F1}秒"],
-          ["元素能量", "{param6:I}"]
+          {"label": "落雷伤害", "template": "{param1:P}"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
@@ -1267,42 +1267,42 @@
         "name": "A. 洑流剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 浮冰增压",
         "descHtml": "进行上挑攻击，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，并进入持续10秒的佩伊刻计状态。<br>处于佩伊刻计状态下时，元素战技将转为高压粉碎。<br><br><span style=\"color: #FFD780FF;\">高压粉碎</span><br>依据佩伊刻计的压力阶级进行不同的攻击，并移除佩伊刻计状态：<br>·零阶时：进行纵斩，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>；<br>·一阶至三阶时：进行纵斩并协同佩伊，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>与物理伤害。伤害依据压力阶级有所不同；<br>·四阶时：借助充满压力的佩伊的力量，造成物理伤害。此时「普通攻击·洑流剑」将被替换为高压粉碎。<br><br><span style=\"color: #FFD780FF;\">佩伊刻计</span><br>菲米尼进行普通攻击时，将同时释放霜寒造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，并为佩伊刻计提升压力阶级。<br>同时造成的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>视为元素战技伤害。<br><br><span style=\"color: #FFD780FF;\">始基力：芒性</span><br>每隔一段时间，进行上挑攻击后，将形成进行挑击的灵息之刺，造成具有芒性的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><i>阻滞对手的行动，而非夺去对手的性命。从某种意义上来说，这也是为了「生存」而选择的战略。</i><br><i>「佩伊…接下来就拜托你了。」</i>",
         "details": [
-          ["上挑攻击伤害", "{param1:F1P}"],
-          ["霜寒伤害", "{param3:F1P}"],
-          ["零阶高压粉碎伤害", "{param4:F1P}"],
-          ["一阶高压粉碎伤害", "{param5:F1P}冰元素+{param6:F1P}物理"],
-          ["二阶高压粉碎伤害", "{param7:F1P}冰元素+{param8:F1P}物理"],
-          ["三阶高压粉碎伤害", "{param9:F1P}冰元素+{param10:F1P}物理"],
-          ["四阶高压粉碎伤害", "{param11:F1P}"],
-          ["灵息之刺伤害", "{param2:F1P}"],
-          ["灵息之刺间隔", "{param13:F1}秒"],
-          ["冷却时间", "{param12:F1}秒"]
+          {"label": "上挑攻击伤害", "template": "{param1:F1P}"},
+          {"label": "霜寒伤害", "template": "{param3:F1P}"},
+          {"label": "零阶高压粉碎伤害", "template": "{param4:F1P}"},
+          {"label": "一阶高压粉碎伤害", "template": "{param5:F1P}冰元素+{param6:F1P}物理"},
+          {"label": "二阶高压粉碎伤害", "template": "{param7:F1P}冰元素+{param8:F1P}物理"},
+          {"label": "三阶高压粉碎伤害", "template": "{param9:F1P}冰元素+{param10:F1P}物理"},
+          {"label": "四阶高压粉碎伤害", "template": "{param11:F1P}"},
+          {"label": "灵息之刺伤害", "template": "{param2:F1P}"},
+          {"label": "灵息之刺间隔", "template": "{param13:F1}秒"},
+          {"label": "冷却时间", "template": "{param12:F1}秒"}
         ]
       },
       {
         "name": "Q. 猎影潜袭",
         "descHtml": "释放不可触及的寒气，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，重置元素战技「浮冰增压」的冷却时间，并进入持续10秒的潜猎模式。<br><br>处于潜猎模式状态下时，菲米尼的抗打断能力提升，元素战技「浮冰增压」获得如下强化：<br>·冷却时间缩短70%；<br>·进行普通攻击时额外提升一阶佩伊刻计的压力阶级，并使普通攻击释放的霜寒造成的伤害为原本的200%。<br><br>效果将在菲米尼退场时解除。<br><br><i>「现在…不需要什么多余的杂音了。」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["持续时间", "{param2:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "持续时间", "template": "{param2:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -1356,36 +1356,36 @@
         "name": "A. 刃爪悬星",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 瑞兽登高楼",
         "descHtml": "以舞兽之法向前扑击，接触目标或地形后高高腾跃至空中。<br>嘉明因元素战技·瑞兽登高楼而升空后，若立即进行下落攻击，则会施展格外强劲的下落攻击·踏云献瑞。<br><br><span style=\"color: #FFD780FF;\">下落攻击·踏云献瑞</span><br>通过元素战技·瑞兽登高楼施放的下落攻击，造成的伤害将转化为无法被附魔覆盖的<span style=\"color: #FF9999FF;\">火元素伤害</span>，并在落地时使嘉明消耗一定的生命值，至多通过这种方式使嘉明的生命值降低至10%。<br>踏云献瑞造成的伤害视为下落攻击伤害。<br><br><i>「瑞兽踏高步采青呢，寓意瑞气临门，生财有道，祝各位步步高升啦！」</i>",
         "details": [
-          ["下落攻击·踏云献瑞伤害", "{param1:F1P}"],
-          ["消耗生命值", "{param2:F1P}生命值上限"],
-          ["冷却时间", "{param3:F1}秒"]
+          {"label": "下落攻击·踏云献瑞伤害", "template": "{param1:F1P}"},
+          {"label": "消耗生命值", "template": "{param2:F1P}生命值上限"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 璨焰金猊舞",
         "descHtml": "嘉明进入舞兽态势，为嘉明施加短暂的<span style=\"color: #FF9999FF;\">火元素附着</span>，恢复一定的生命值，并召唤可靠的伙伴猊兽·文仔砸击目标，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br>猊兽·文仔完成砸击后将向附近滚落，随后向嘉明的位置移动，成功与嘉明会合时，猊兽·文仔将退场，并刷新嘉明的元素战技「瑞兽登高楼」的冷却时间。<br>舞兽态势持续期间，提高嘉明的抗打断能力，下落攻击·踏云献瑞落地时，或瑞兽登高楼的向前扑击结束时，若嘉明的生命值高于50%，将再次唤出猊兽·文仔。<br>场上至多同时存在一位嘉明自己的猊兽·文仔。<br>效果将在嘉明退场时解除。<br><br><i>「金猊吐祥，火树银花，嗱，这个就叫红红火火，常赚常有咯。」</i>",
         "details": [
-          ["猊兽·文仔砸击伤害", "{param1:F1P}"],
-          ["技能治疗量", "{param2:F1P}生命值上限"],
-          ["舞兽态势持续时间", "{param3:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "猊兽·文仔砸击伤害", "template": "{param1:F1P}"},
+          {"label": "技能治疗量", "template": "{param2:F1P}生命值上限"},
+          {"label": "舞兽态势持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],
@@ -1439,36 +1439,36 @@
         "name": "A. 呲牙裂扇箭",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，岩晶会在箭矢上持续积聚。聚满了晶岩的箭矢会造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["瞄准射击", "{param5:F1P}"],
-          ["满蓄力瞄准射击", "{param6:P}"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "瞄准射击", "template": "{param5:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param6:P}"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 犬坂吠吠方圆阵",
         "descHtml": "造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>，并立起大将旗指物。<br><br><span style=\"color: #FFD780FF;\">大将旗指物</span><br>依据施放时队伍中元素类型为<span style=\"color: #FFE699FF;\">岩元素</span>的角色数量，为其领域内的当前场上角色赋予如下效果：<br>·一名角色时：「坚牢」：防御力提升；<br>·二名角色时：「难破」：除上述效果外，提升抗打断能力；<br>·三名角色时：「摧碎」：除上述效果外，获得<span style=\"color: #FFE699FF;\">岩元素伤害加成</span>。<br><br>同时只能存在一个由五郎自己创造的大将旗指物；角色只能获得一个大将旗指物提供的效果。角色离开领域后，领域的效果将持续2秒。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>可以调整技能生效位置。<br><br><i>「只要进入此阵中，便能保证性命安全无虞！」无论何时何地，作为领军的大将，五郎最不希望看到的就是跟随其身后的同伴受到伤害吧。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["防御力提升", "{param2:I}"],
-          ["岩元素伤害加成", "{param3:P}"],
-          ["持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "防御力提升", "template": "{param2:I}"},
+          {"label": "岩元素伤害加成", "template": "{param3:P}"},
+          {"label": "持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 兽牙逐突形胜战法",
         "descHtml": "展现大将之威，造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>，并展开大将威仪之领域，鼓舞身边的战友。<br><br><span style=\"color: #FFD780FF;\">大将威仪</span><br>具有如下特性：<br>·领域拥有等同于元素战技「犬坂吠吠方圆阵」创造的大将旗指物的效果，依据施放时队伍中元素类型为<span style=\"color: #FFE699FF;\">岩元素</span>的角色数量，为其领域内的当前场上角色赋予效果，并且会随着当前场上角色移动；<br>·每1.5秒，会产生一次岩晶崩破，对领域内一名敌人造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>；<br>·每1.5秒，将领域内1枚结晶反应产生的晶片吸引至当前角色的位置。<br><br>施放时，若场上存在五郎自己的大将旗指物，会将其破坏。此外，在大将威仪的持续期间，五郎自己施放元素战技「犬坂吠吠方圆阵」时，将不会产生大将旗指物。<br>五郎倒下时将解除五郎自己的大将威仪效果。<br><br><i>「地势在我！」五郎能够稍许改变战场的地势以获得胜利，此为对抗强敌的不二秘诀。</i>",
         "details": [
-          ["技能伤害", "{param1:P}防御力"],
-          ["岩晶崩破伤害", "{param2:P}防御力"],
-          ["持续时间", "{param3:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "技能伤害", "template": "{param1:P}防御力"},
+          {"label": "岩晶崩破伤害", "template": "{param2:P}防御力"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],
@@ -1522,37 +1522,37 @@
         "name": "A. 负重锥击",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。<br><br><span style=\"color: #FFD780FF;\">夜魂状态·雷霆飞缒</span><br>在夜魂加持状态下，伊安珊的重击将转为施展豪烈的「雷霆飞缒」，消耗一定体力向前方猛踏，造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["重击伤害", "{param4:F1P}"],
-          ["雷霆飞缒伤害", "{param5:F1P}"],
-          ["重击与雷霆飞缒体力消耗", "{param6:F1}点"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "重击伤害", "template": "{param4:F1P}"},
+          {"label": "雷霆飞缒伤害", "template": "{param5:F1P}"},
+          {"label": "重击与雷霆飞缒体力消耗", "template": "{param6:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 电掣雷驰",
         "descHtml": "伊安珊向前突进一段距离，对路径上的敌人造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>施放后，伊安珊将恢复54点夜魂值，并进入夜魂加持状态。并且在突进结束后的5秒内，点按普通攻击时，伊安珊将快速施放一次不消耗体力的「雷霆飞缒」踏击。<br><br><span style=\"color: #FFD780FF;\">夜魂加持·伊安珊</span><br>持续消耗夜魂值。夜魂值耗尽时，或是再次施放时，伊安珊的夜魂加持将会结束。夜魂加持状态具有如下特性：<br>·提升伊安珊的移动速度；<br>·长按冲刺会切换至「雷驰电掣」模式，短时间内大幅提升伊安珊的移动速度；在这种状态下伊安珊可以利用地形差进行飞跃，或额外消耗夜魂值在水面与液态燃素上移动，并免疫液态燃素的伤害。<br><br><i>「更快，更强！平时的不懈努力就是为了这一刻。」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["夜魂值上限", "{param2:F1}点"],
-          ["冷却时间", "{param3:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "夜魂值上限", "template": "{param2:F1}点"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 力的三原理",
         "descHtml": "以「力量」之名踏破大地，造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>，并取出珍藏的限定版动能标示（健身用）。<br>施放时，伊安珊将获得15点夜魂值，并进入夜魂加持状态。<br>动能标示退场时，伊安珊的夜魂加持将会结束。<br><br><span style=\"color: #FFD780FF;\">动能标示</span><br>动能标示将跟随角色行动，并根据伊安珊的夜魂值，以不同的方式使队伍中自己的当前场上角色的攻击力提升：<br>·若伊安珊的夜魂值少于42点，将基于伊安珊的夜魂值与攻击力，获得攻击力加成；<br>·若伊安珊拥有至少42点夜魂值，动能标示将切换至「炽烈声援！」模式，基于伊安珊的攻击力，获得更高的攻击力加成。<br>此外，动能标示存在期间，将记录除伊安珊外的队伍中自己的当前场上角色的移动距离；每秒都将基于上一秒记录的移动距离，为伊安珊恢复夜魂值。<br>动能标示将在伊安珊的夜魂加持结束时消失。不处于战斗状态下时，动能标示将在1秒后消失。动能标示存在期间，伊安珊处于后台时，夜魂加持也不会结束。<br><br><i>「力量并非天生的馈赠，力量源于不懈的努力，力量需要正确的方法。」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["高夜魂值攻击力转化率", "{param2:P}攻击力"],
-          ["低夜魂值攻击力转化率", "每点夜魂值{param3:F1P}攻击力"],
-          ["最大攻击力加成", "{param4:F1}点"],
-          ["持续时间", "{param6:F1}秒"],
-          ["非战斗状态持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param7:F1}秒"],
-          ["元素能量", "{param8:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "高夜魂值攻击力转化率", "template": "{param2:P}攻击力"},
+          {"label": "低夜魂值攻击力转化率", "template": "每点夜魂值{param3:F1P}攻击力"},
+          {"label": "最大攻击力加成", "template": "{param4:F1}点"},
+          {"label": "持续时间", "template": "{param6:F1}秒"},
+          {"label": "非战斗状态持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"},
+          {"label": "元素能量", "template": "{param8:I}"}
         ]
       }
     ],
@@ -1610,33 +1610,33 @@
         "name": "A. 祛风妙仪",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方射击，造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["重击伤害", "{param4:F1P}"],
-          ["重击体力消耗", "{param5:F1}点"],
-          ["下坠期间伤害", "{param6:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param7:P}/{param8:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "重击伤害", "template": "{param4:F1P}"},
+          {"label": "重击体力消耗", "template": "{param5:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param6:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param7:P}/{param8:P}"}
         ]
       },
       {
         "name": "E. 空天疾护",
         "descHtml": "到好哥们出场的时候了，哥们！伊法唤来咔库库一同战斗。<br>施放后，伊法将获得80点夜魂值，并进入<span style=\"color: #FFD780FF;\">夜魂加持</span>状态。夜魂加持状态期间，伊法将在咔库库的帮助下悬浮，进行普通攻击时，将依据点按、长按，转为以不同的方式进行<span style=\"color: #FFD780FF;\">「援护射击」</span>，发射能够为队伍中所有角色恢复生命值的秘药弹。<br><br>此外，在夜魂加持状态下，长按施放元素战技<span style=\"color: #FFD780FF;\">空天疾护</span>时，伊法将转为进行具有夜魂性质的下落攻击，松开技能时可以中断下落攻击，并维持悬浮状态；在下落攻击过程中落地时，伊法的夜魂加持将会结束。",
         "details": [
-          ["秘药弹伤害", "{param1:F1P}"],
-          ["秘药弹命中治疗量", "{param2:F1P}元素精通+{param3:F1}"],
-          ["夜魂值上限", "{param4:F1}点"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "秘药弹伤害", "template": "{param1:F1P}"},
+          {"label": "秘药弹命中治疗量", "template": "{param2:F1P}元素精通+{param3:F1}"},
+          {"label": "夜魂值上限", "template": "{param4:F1}点"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 复合镇静域",
         "descHtml": "向（暂时还没有冷静下来的）敌人发射一枚疗域镇静剂。疗域镇静剂将在命中时炸裂，产生固缚风场，牵引附近的物品与敌人，并造成具有夜魂性质的<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br>疗域镇静剂命中处于<span style=\"color: #80C0FFFF;\">水元素</span>/<span style=\"color: #FF9999FF;\">火元素</span>/<span style=\"color: #99FFFFFF;\">冰元素</span>/<span style=\"color: #FFACFFFF;\">雷元素</span>附着下的敌人时，会为这些敌人施加<span style=\"color: #FFD780FF;\">「镇静标记」</span>效果。",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["镇静标记伤害", "{param2:F1P}"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "镇静标记伤害", "template": "{param2:F1P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -1711,37 +1711,37 @@
         "name": "A. 守誓枪术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}"],
-          ["重击体力消耗", "{param7:F1}点"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 衔莺破晓",
         "descHtml": "唤出并肩作战的信鸟「阿咚」，依据点按、长按，以不同的方式产生效果。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>阿咚冲向前方的敌人，对触及的敌人造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>进行瞄准，并使阿咚冲向被瞄准的敌人，对触及的敌人造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。",
         "details": [
-          ["点按伤害", "{param1:P}元素精通+{param2:P}防御力"],
-          ["长按伤害", "{param3:P}元素精通+{param4:P}防御力"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "点按伤害", "template": "{param1:P}元素精通+{param2:P}防御力"},
+          {"label": "长按伤害", "template": "{param3:P}元素精通+{param4:P}防御力"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 鉴照无影",
         "descHtml": "点亮灯火，造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>，并获得「魇夜的莺歌」效果，持续20秒：持续期间，叶洛亚获得21层<span style=\"color: #FFD780FF;\">「夜莺之歌」</span>，队伍中附近的当前场上角色的普通攻击、重击、下落攻击、元素战技或元素爆发对敌人造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>时，将消耗1层「夜莺之歌」，提升造成的伤害，提升值基于叶洛亚的元素精通；若该伤害为月结晶反应造成的伤害，还会进一步提升造成的伤害。<br>通过上述方式造成的<span style=\"color: #FFE699FF;\">岩元素伤害</span>同时命中多名敌人时，会依据命中敌人的数量消耗「夜莺之歌」的层数。<br><br>此外，叶洛亚在场上存在队伍中附近的角色创造的<span style=\"color: #FFE699FF;\">岩元素创造物</span>的情况下施放元素爆发时，或在「魇夜的莺歌」持续期间，队伍中附近的角色创造了<span style=\"color: #FFE699FF;\">岩元素创造物</span>时，场上的每个<span style=\"color: #FFE699FF;\">岩元素创造物</span>都会使叶洛亚额外获得5层「夜莺之歌」。每次施放元素爆发后的20秒内，叶洛亚至多通过这种方式额外获得15层「夜莺之歌」。<br><br>「夜莺之歌」的层数耗尽时，或持续时间结束时，「魇夜的莺歌」效果将会解除。",
         "details": [
-          ["技能伤害", "{param1:P}元素精通+{param2:P}防御力"],
-          ["岩元素伤害增加", "{param3:F1P}元素精通"],
-          ["月结晶反应伤害增加", "{param4:F1P}元素精通"],
-          ["施放元素爆发时获得夜莺之歌", "{param5:I}层"],
-          ["创生岩造物获得夜莺之歌", "每个岩造物/{param6:I}层"],
-          ["持续时间", "{param7:F1}秒"],
-          ["冷却时间", "{param8:F1}秒"],
-          ["元素能量", "{param9:I}"]
+          {"label": "技能伤害", "template": "{param1:P}元素精通+{param2:P}防御力"},
+          {"label": "岩元素伤害增加", "template": "{param3:F1P}元素精通"},
+          {"label": "月结晶反应伤害增加", "template": "{param4:F1P}元素精通"},
+          {"label": "施放元素爆发时获得夜莺之歌", "template": "{param5:I}层"},
+          {"label": "创生岩造物获得夜莺之歌", "template": "每个岩造物/{param6:I}层"},
+          {"label": "持续时间", "template": "{param7:F1}秒"},
+          {"label": "冷却时间", "template": "{param8:F1}秒"},
+          {"label": "元素能量", "template": "{param9:I}"}
         ]
       }
     ],
@@ -1804,38 +1804,38 @@
         "name": "A. 见机行矢",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，强风会在箭矢上持续积聚。聚满了强风之力的箭矢会造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，攻击下落路径上的敌人，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}*2"],
-          ["三段伤害", "{param3:F1P}"],
-          ["瞄准射击", "{param4:F1P}"],
-          ["满蓄力瞄准射击", "{param5:P}"],
-          ["下坠期间伤害", "{param6:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param7:P}/{param8:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}*2"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "瞄准射击", "template": "{param4:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param5:P}"},
+          {"label": "下坠期间伤害", "template": "{param6:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param7:P}/{param8:P}"}
         ]
       },
       {
         "name": "E. 奇策·财富分配方案",
         "descHtml": "雅珂达向敌人突进，并在触及敌人时进入「掠影追袭」状态。处于该状态下时，雅珂达将持续快速移动；若附近的敌人处于<span style=\"color: #FF9999FF;\">火元素</span>、<span style=\"color: #80C0FFFF;\">水元素</span>、<span style=\"color: #FFACFFFF;\">雷元素</span>或<span style=\"color: #99FFFFFF;\">冰元素</span>附着下，雅珂达还会偷偷将随身携带的<span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span>转换成对应的元素属性，并持续进行装填。持续时间结束或再次施放时，雅珂达将会清空<span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span>，并对附近的敌人造成一次<span style=\"color: #80FFD7FF;\">风元素伤害</span>；<span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span>装满时，雅珂达也会清空<span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span>，退出掠影追袭状态，并对附近的敌人造成一次伤害更高的<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br>如果雅珂达的突进没有触及敌人，雅珂达会在原地投掷下一枚烟雾弹，对身边的敌人造成一次<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">月兆·满辉</span>：<span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span>装满时，雅珂达不会立刻清空<span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span>，而是会在接下来的一段时间内，持续消耗瓶中装填的元素，并间歇性向附近的敌人发射<span style=\"color: #FFD780FF;\">软绒绒猫猫球</span>，造成<span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span>对应元素类型的伤害。<span style=\"color: #FFD780FF;\">软绒绒猫猫球</span>命中敌人时，还会为雅珂达恢复2点元素能量，该效果每3.5秒至多触发一次。<br><br><i>世上分配财富的方式很多，但对挪德卡莱的宝藏猎人与盗宝团而言，效率最高的分配方式从来都只有一种。</i>",
         "details": [
-          ["烟雾弹伤害", "{param1:F1P}"],
-          ["秘藏瓶未装满伤害", "{param2:F1P}"],
-          ["秘藏瓶装满伤害", "{param3:F1P}"],
-          ["秘藏瓶持续时间", "{param4:F1}秒"],
-          ["猫猫球伤害", "{param5:F1P}"],
-          ["冷却时间", "{param6:F1}秒"]
+          {"label": "烟雾弹伤害", "template": "{param1:F1P}"},
+          {"label": "秘藏瓶未装满伤害", "template": "{param2:F1P}"},
+          {"label": "秘藏瓶装满伤害", "template": "{param3:F1P}"},
+          {"label": "秘藏瓶持续时间", "template": "{param4:F1}秒"},
+          {"label": "猫猫球伤害", "template": "{param5:F1P}"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"}
         ]
       },
       {
         "name": "Q. 秘器·猎人的七道具",
         "descHtml": "压箱底的秘藏只能在这里用掉啦！雅珂达取出两枚<span style=\"color: #FFD780FF;\">猫型家用互助协调器</span>，并对附近的敌人造成一次<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><i>「所谓互助协调嘛，就是你掏出摩拉互助，我们负责协调。怎么样，很合理吧？」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["猫型家用互助协调器伤害", "{param2:F1P}"],
-          ["猫型家用互助协调器持续时间", "{param3:F1}秒"],
-          ["猫型家用互助协调器治疗量", "{param4:F1P}攻击力+{param5:I}"],
-          ["最低生命值角色额外治疗量", "{param6:F1P}攻击力+{param7:I}"],
-          ["冷却时间", "{param8:F1}秒"],
-          ["元素能量", "{param9:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "猫型家用互助协调器伤害", "template": "{param2:F1P}"},
+          {"label": "猫型家用互助协调器持续时间", "template": "{param3:F1}秒"},
+          {"label": "猫型家用互助协调器治疗量", "template": "{param4:F1P}攻击力+{param5:I}"},
+          {"label": "最低生命值角色额外治疗量", "template": "{param6:F1P}攻击力+{param7:I}"},
+          {"label": "冷却时间", "template": "{param8:F1}秒"},
+          {"label": "元素能量", "template": "{param9:I}"}
         ]
       }
     ],
@@ -1902,34 +1902,34 @@
         "name": "A. 嵴之啮咬",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}+{param3:F1P}"],
-          ["三段伤害", "{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}"],
-          ["重击体力消耗", "{param7:F1}点"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}+{param3:F1P}"},
+          {"label": "三段伤害", "template": "{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 出击，冲天转转！",
         "descHtml": "和超可靠的冲天转转一同战斗！<br>召唤「冲天转转」；长按施放时，卡齐娜将召唤并搭乘冲天转转。<br>施放后，卡齐娜将获得60点夜魂值并进入夜魂加持状态。<br><br><span style=\"color: #FFD780FF;\">夜魂加持·卡齐娜</span><br>冲天转转的各种行为将消耗夜魂值。<br>夜魂值耗尽时卡齐娜的夜魂加持将会结束。<br><br><span style=\"color: #FFD780FF;\">冲天转转</span><br>能够独立存在，或是由卡齐娜搭乘操控。冲天转转存在时，卡齐娜的元素战技「出击，冲天转转！」将替换为搭乘或脱离冲天转转。<br>·冲天转转独立存在时，将间歇性冲击地面，基于卡齐娜的防御力，造成具有夜魂性质的<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>；<br>·卡齐娜搭乘冲天转转时，能操控冲天转转快速移动、攀爬，并在进行普通攻击时冲击地面，基于卡齐娜的防御力，造成具有夜魂性质的<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>。<br><br>冲天转转将在卡齐娜的夜魂加持结束时消失，被视为岩元素创造物；同时只能存在一个卡齐娜自己的冲天转转。<br><br><i>「冲天转转」只是看着像陀螺，其实是能破开坚固岩石的钻头。</i>",
         "details": [
-          ["冲天转转搭乘伤害", "{param1:F1P}防御力"],
-          ["冲天转转独立伤害", "{param2:F1P}防御力"],
-          ["夜魂值上限", "{param3:F1}点"],
-          ["冷却时间", "{param4:F1}秒"]
+          {"label": "冲天转转搭乘伤害", "template": "{param1:F1P}防御力"},
+          {"label": "冲天转转独立伤害", "template": "{param2:F1P}防御力"},
+          {"label": "夜魂值上限", "template": "{param3:F1}点"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"}
         ]
       },
       {
         "name": "Q. 现在，认真时间！",
         "descHtml": "冲击大地，基于卡齐娜的防御力造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>，并产生超级钻钻领域。<br>超级钻钻领域能提升冲天转转的攻击范围与搭乘冲天转转时的移动速度。<br><br>施放时，若场上存在卡齐娜自己的冲天转转，则将其召唤至身边。<br><br><i>就像是紧张的人上台表演可以把观众想象成木偶，卡齐娜需要把对手想象成最好的宝石矿。可以带回家囤着那种。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}防御力"],
-          ["领域持续时间", "{param2:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}防御力"},
+          {"label": "领域持续时间", "template": "{param2:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -1987,33 +1987,33 @@
         "name": "A. 仪典剑术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}+{param7:F1P}"],
-          ["重击体力消耗", "{param8:F1}点"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}+{param7:F1P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 霜袭",
         "descHtml": "瞬间放出急冻的寒气，对前方的敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><i>看上去如此亲切的凯亚，是谁也无法融化的坚冰。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["冷却时间", "{param2:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
         "name": "Q. 凛冽轮舞",
         "descHtml": "凝聚空气中的寒霜，召唤3枚围绕自身旋转的寒冰之棱。<br>存在期间内，寒冰之棱会跟随角色运动，对路径上的敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><i>亲切的笑容、和善的话语，和潜藏在这两者之下的毫不留情的冰霜，都是凯亚的武器。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["冷却时间", "{param2:F1}秒"],
-          ["持续时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -2067,35 +2067,35 @@
         "name": "A. 旋规设矩",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>驱动「梅赫拉克」，进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，快速进行连续的斩击。<br>重击结束时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 画则巧施",
         "descHtml": "将「梅赫拉克」的测绘能量转为攻势用途，进行圆状扫描，造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>，并使扫描范围内的所有草原核立即迸发。<br><br><i>「梅赫拉克」是在古代科技的基础上改造而成的，因此除了能辅助完成测绘之类的工作外，说不定还有什么其他的功能…</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["冷却时间", "{param2:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
         "name": "Q. 繁绘隅穹",
         "descHtml": "完全释放「梅赫拉克」的能量，划分立方体状的测绘空间，对空间内的敌人造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>，使范围内的所有草原核立即迸发，并在一定时间内强化卡维的作战能力：<br>·提高卡维的普通攻击、重击与下落攻击的攻击范围，并将攻击伤害转为无法被附魔覆盖的<span style=\"color: #99FF88FF;\">草元素伤害</span>；<br>·队伍中自己的角色触发绽放或月绽放反应产生的草原核，在迸发时造成的伤害提升；<br>·提高卡维的抗打断能力。<br>效果将在卡维退场时解除。<br><br><i>「每一种建筑形式都包含了建造者对于世界的独特思考，从这一角度而言，可以说建筑本身就是人们凝固的记忆。」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["持续时间", "{param2:F1}秒"],
-          ["草原核迸发伤害加成", "{param3:F1P}"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "持续时间", "template": "{param2:F1}秒"},
+          {"label": "草原核迸发伤害加成", "template": "{param3:F1P}"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],
@@ -2149,39 +2149,39 @@
         "name": "A. 箱纸切削术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方挥出三次爪击。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}+{param7:F1P}+{param8:F1P}"],
-          ["重击体力消耗", "{param9:F1}点"],
-          ["下坠期间伤害", "{param10:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param11:P}/{param12:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}+{param7:F1P}+{param8:F1P}"},
+          {"label": "重击体力消耗", "template": "{param9:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param10:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param11:P}/{param12:P}"}
         ]
       },
       {
         "name": "E. 呜喵町飞足",
         "descHtml": "<span style=\"color: #FFD780FF;\">点按</span><br>以猫猫在花丛间穿行的灵巧身法起跳，使出甩尾飞踢痛揍敌人，造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>，同时展开安全运输护盾，并为绮良良施加短暂的<span style=\"color: #99FF88FF;\">草元素附着</span>。安全运输护盾对<span style=\"color: #99FF88FF;\">草元素伤害</span>有250%的吸收效果。护盾的伤害吸收量受益于绮良良的生命值上限，且至多不超过绮良良生命值上限的一定比例，剩余的伤害吸收量在获取新的安全运输护盾时将会叠加，并刷新持续时间。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>拿出「半天之内送货上门」的气势，展开与点按相同的安全运输护盾，并蜷缩至特制的快递箱中，进入猫箱急件状态，更为迅捷地移动与战斗。<br><br><span style=\"color: #FFD780FF;\">猫箱急件状态</span><br>·对冲撞触及的敌人造成<span style=\"color: #99FF88FF;\">草元素伤害</span>，此效果每0.5秒对每个敌人至多触发一次；<br>·处于该状态下时，绮良良的移动速度、攀爬速度、跳跃能力提升，攀爬时消耗的体力提高；<br>·持续时间结束或再次施放技能时，将使出相比点按更为强大的翻正爪击，造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>；<br>·猫箱急件状态持续至多10秒。效果结束时，技能将进入冷却。在猫箱急件状态下持续的时间越长，冷却时间越长；<br>·持续期间进行冲刺或主动解除攀爬，将提前结束猫箱急件状态。<br><br><i>「嗯，你问往来送货如此迅速的秘诀是什么？当然是脚力啦！」</i>",
         "details": [
-          ["甩尾飞踢伤害", "{param1:F1P}"],
-          ["护盾吸收量", "{param2:F1P}生命值上限+{param3:I}"],
-          ["护盾吸收量上限", "{param4:F1P}生命值上限+{param5:I}"],
-          ["护盾持续时间", "{param6:F1}秒"],
-          ["猫箱急件冲撞伤害", "{param7:F1P}"],
-          ["猫箱急件状态最大持续时间", "{param8:F1}秒"],
-          ["翻正爪击伤害", "{param9:F1P}"],
-          ["冷却时间", "{param10:F1}秒到{param11:F1}秒"]
+          {"label": "甩尾飞踢伤害", "template": "{param1:F1P}"},
+          {"label": "护盾吸收量", "template": "{param2:F1P}生命值上限+{param3:I}"},
+          {"label": "护盾吸收量上限", "template": "{param4:F1P}生命值上限+{param5:I}"},
+          {"label": "护盾持续时间", "template": "{param6:F1}秒"},
+          {"label": "猫箱急件冲撞伤害", "template": "{param7:F1P}"},
+          {"label": "猫箱急件状态最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "翻正爪击伤害", "template": "{param9:F1P}"},
+          {"label": "冷却时间", "template": "{param10:F1}秒到{param11:F1}秒"}
         ]
       },
       {
         "name": "Q. 秘法·惊喜特派",
         "descHtml": "以惩罚盗贼的特派快递箱猛砸敌人，造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>。特派快递箱爆炸后，将分裂成许多<span style=\"color: #FFD780FF;\">猫草豆蔻</span>，猫草豆蔻会在接触到敌人或一段时间后爆炸，造成<span style=\"color: #99FF88FF;\">草元素范围伤害</span>。<br><br><i>「嘿嘿，这就是专门为那些喜欢偷快递的家伙准备的，坏蛋们，收到记得好评哦！」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["猫草豆蔻爆炸伤害", "{param2:F1P}"],
-          ["猫草豆蔻存在时间", "{param3:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "猫草豆蔻爆炸伤害", "template": "{param2:F1P}"},
+          {"label": "猫草豆蔻存在时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],
@@ -2235,35 +2235,35 @@
         "name": "A. 天狗传弓术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，雷霆的力量会汇聚到她的箭矢上。聚满了雷霆之力的箭矢在命中敌人时造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>处于「乌羽护持」状态下时，蓄力完成的箭矢会在命中时留下「乌羽」。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:F1P}"],
-          ["瞄准射击", "{param6:F1P}"],
-          ["满蓄力瞄准射击", "{param7:P}"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "瞄准射击", "template": "{param6:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param7:P}"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 鸦羽天狗霆雷召咒",
         "descHtml": "以天狗之神速向后转移，并唤来乌羽的加护。<br>获得持续18秒的「乌羽护持」，当九条裟罗发射完成蓄力的箭矢时，会消耗「乌羽护持」，并在命中的位置留下「乌羽」。<br>「乌羽」会在短时间后引发天狗咒雷·伏，对范围内敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>，并使其范围内的当前场上角色基于九条裟罗的基础攻击力，以一定比例获得攻击力加成。<br><br>各种天狗咒雷提供的攻击力提升不能叠加，效果与持续时间由后生效的为准。<br><br><i>天狗一族不乏获取雷元素神之眼的异士。只不过他们操作雷元素时，仍会习惯性诵咒，礼赞雷神。咒曰：</i><br><i>「礼赞鸣神大权现，善信某甲，请祈黄雷。娑婆诃！」</i>",
         "details": [
-          ["天狗咒雷·伏 伤害", "{param1:F1P}"],
-          ["攻击力加成比例", "{param2:P}"],
-          ["攻击力加成持续时间", "{param3:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"]
+          {"label": "天狗咒雷·伏 伤害", "template": "{param1:F1P}"},
+          {"label": "攻击力加成比例", "template": "{param2:P}"},
+          {"label": "攻击力加成持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"}
         ]
       },
       {
         "name": "Q. 煌煌千道镇式",
         "descHtml": "在目标的位置降下天狗咒雷·金刚坏，造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。此后，天狗咒雷·金刚坏将扩散转为4道连续的天狗咒雷·雷砾，造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。<br>天狗咒雷·金刚坏与天狗咒雷·雷砾会使其范围内的当前场上角色获得与元素战技「鸦羽天狗霆雷召咒」相同的攻击力加成。<br><br>各种天狗咒雷提供的攻击力提升不能叠加，效果与持续时间由后生效的为准。<br><br><i>裟罗背离天狗之众，又短暂对天领奉行失去了信仰。在打破迷惘之后，这是她重新所找到的，属于自己的雷光。</i>",
         "details": [
-          ["天狗咒雷·金刚坏 伤害", "{param1:F1P}"],
-          ["天狗咒雷·雷砾 伤害", "{param2:F1P}"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "天狗咒雷·金刚坏 伤害", "template": "{param1:F1P}"},
+          {"label": "天狗咒雷·雷砾 伤害", "template": "{param2:F1P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -2317,37 +2317,37 @@
         "name": "A. 忍流飞刃斩",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击伤害", "{param5:F1P}+{param6:F1P}"],
-          ["重击体力消耗", "{param7:F1}点"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击伤害", "template": "{param5:F1P}+{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 越祓雷草之轮",
         "descHtml": "编结越祓草轮，消耗一部分生命值，对周围的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">越祓草轮</span><br>将跟随当前场上角色。每1.5秒，对周围的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>，并为范围内的当前场上角色恢复生命值，回复量受益于久岐忍的生命值上限。<br><br>施放该技能所消耗的生命值，至多使久岐忍的生命值降低至20%。<br><br><i>鸣草结环，系于腰际，以驱邪祟。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["越祓草轮治疗量", "{param2:F1P}生命值上限+{param3:I}"],
-          ["越祓草轮伤害", "{param4:F1P}"],
-          ["技能消耗", "{param5:P}当前生命值"],
-          ["持续时间", "{param6:F1}秒"],
-          ["冷却时间", "{param7:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "越祓草轮治疗量", "template": "{param2:F1P}生命值上限+{param3:I}"},
+          {"label": "越祓草轮伤害", "template": "{param4:F1P}"},
+          {"label": "技能消耗", "template": "{param5:P}当前生命值"},
+          {"label": "持续时间", "template": "{param6:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"}
         ]
       },
       {
         "name": "Q. 御咏鸣神刈山祭",
         "descHtml": "将退邪之刃刺入地面，在前方创造清净邪物的结界，基于久岐忍的生命值上限，对其中的敌人持续造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>施放时，若久岐忍的生命值低于或等于50%，结界的持续时间将会延长。<br><br><i>原本是用于割除杂草，祈祷来年丰收的祭祷之术，忍在结束巫女生涯后，也并未将此忘记。</i>",
         "details": [
-          ["单次伤害", "{param1:F1P}生命值上限"],
-          ["总伤害", "{param2:F1P}/{param3:F1P}生命值上限"],
-          ["持续时间", "{param4:F1}秒/{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"],
-          ["元素能量", "{param7:I}"]
+          {"label": "单次伤害", "template": "{param1:F1P}生命值上限"},
+          {"label": "总伤害", "template": "{param2:F1P}/{param3:F1P}生命值上限"},
+          {"label": "持续时间", "template": "{param4:F1}秒/{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
         ]
       }
     ],
@@ -2401,33 +2401,33 @@
         "name": "A. 玄鸾画水",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>挥舞翦月环，进行至多四段的攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，抛出手中的翦月环，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚风元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}+{param3:F1P}"],
-          ["三段伤害", "{param4:F1P}+{param5:F1P}"],
-          ["四段伤害", "{param6:F1P}"],
-          ["重击伤害", "{param7:F1P}*3"],
-          ["重击体力消耗", "{param8:F1}点"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}+{param3:F1P}"},
+          {"label": "三段伤害", "template": "{param4:F1P}+{param5:F1P}"},
+          {"label": "四段伤害", "template": "{param6:F1P}"},
+          {"label": "重击伤害", "template": "{param7:F1P}*3"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 凤缕随翦舞",
         "descHtml": "唤出世代秘传的凤缕护盾，并以雨旆先驰之姿迅捷突进，接触目标会向后腾跃至空中。<br>凤缕护盾的伤害吸收量受益于蓝砚的攻击力，对<span style=\"color: #80FFD7FF;\">风元素伤害</span>有250%的吸收效果。<br>蓝砚因元素战技·凤缕随翦舞而腾跃至空中时，若点按元素战技或点按普通攻击，则会向敌人抛出翦月环，命中后将在附近的敌人间回旋两次，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br>长按时将以不同的方式施放。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>进入瞄准状态，以调整突进的方向。<br><br><i>「剪云舞影月华悠，银影翩然韵盈眸。」</i>",
         "details": [
-          ["翦月环伤害", "{param1:F1P}"],
-          ["护盾吸收量", "{param2:F1P}攻击力+{param3:I}"],
-          ["护盾持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "翦月环伤害", "template": "{param1:F1P}"},
+          {"label": "护盾吸收量", "template": "{param2:F1P}攻击力+{param3:I}"},
+          {"label": "护盾持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 鹍弦踏月出",
         "descHtml": "蓝砚踏出银燕翦月阵，牵引附近的敌人与物体，并造成数次<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><i>从字面意义上来说，如果只有蓝砚一个人，其实是不能称之为「阵」的。不过，要是把她随身携带的那些藤编小人也算在内的话，大概就能满足要求了…应该是这样吧？</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}*3"],
-          ["冷却时间", "{param2:F1}秒"],
-          ["元素能量", "{param3:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}*3"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"},
+          {"label": "元素能量", "template": "{param3:I}"}
         ]
       }
     ],
@@ -2481,34 +2481,34 @@
         "name": "A. 熠辉轨度剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["重击伤害", "{param4:F1P}+{param5:F1P}"],
-          ["重击体力消耗", "{param6:F1}点"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "重击伤害", "template": "{param4:F1P}+{param5:F1P}"},
+          {"label": "重击体力消耗", "template": "{param6:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 垂裳端凝之夜",
         "descHtml": "展开安眠帷幕护盾，并造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br>安眠帷幕护盾的伤害吸收量受益于莱依拉的生命值上限，并对<span style=\"color: #99FFFFFF;\">冰元素伤害</span>有250%的吸收效果。展开护盾时，为莱依拉施加短暂的<span style=\"color: #99FFFFFF;\">冰元素附着</span>。<br><br><span style=\"color: #FFD780FF;\">晚星与飞星</span><br>安眠帷幕护盾在持续期间内，将每1.5秒产生1枚依附其上的晚星；处于该护盾庇护下的角色施放元素战技时，也将产生2枚晚星，每0.3秒至多通过这种方式产生一次晚星，至多同时拥有4枚晚星。<br>安眠帷幕护盾的晚星达到4枚后，若附近存在敌人，晚星将转化为自行索敌的飞星依次发射，对命中的敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br>安眠帷幕护盾持续时间结束或被破坏时，晚星将会一同消失。若已经转换为飞星开始发射，飞星将继续存在直至这一轮发射完毕。<br><br>一轮飞星全部发射完成之前无法产生新的晚星。<br><br><i>「我与她像两位未曾谋面的神匠，同坐在一个椅垫上，同描绣一朵梦之花。」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["飞星伤害", "{param2:F1P}"],
-          ["护盾基础吸收量", "{param3:F1P}生命值上限+{param4:I}"],
-          ["护盾持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "飞星伤害", "template": "{param2:F1P}"},
+          {"label": "护盾基础吸收量", "template": "{param3:F1P}生命值上限+{param4:I}"},
+          {"label": "护盾持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"}
         ]
       },
       {
         "name": "Q. 星流摇床之梦",
         "descHtml": "释放帮助入眠的饰梦天球，持续发射星光弹攻击领域内的敌人，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br>星光弹命中后，将为附近的安眠帷幕护盾产生1枚晚星。每个安眠帷幕护盾每0.5秒至多通过这种方式获得1枚晚星。<br><br><i>「睡吧，睡吧，我知道那诸多星轨在你梦中，诸多命运在你朦胧的睡眼前展露。」</i>",
         "details": [
-          ["星光弹伤害", "{param1:F1P}生命值上限"],
-          ["持续时间", "{param2:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "星光弹伤害", "template": "{param1:F1P}生命值上限"},
+          {"label": "持续时间", "template": "{param2:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -2562,37 +2562,37 @@
         "name": "A. 指尖雷暴",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的电击，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂咏唱后，造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚雷电的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击伤害", "{param5:P}"],
-          ["重击体力消耗", "{param6:F1}点"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击伤害", "template": "{param5:P}"},
+          {"label": "重击体力消耗", "template": "{param6:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 苍雷",
         "descHtml": "导引雷电的力量，把麻烦的东西都清理干净。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>放出能自行索敌的球形闪电。<br>命中时，会造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>，并对小范围内的敌人施加至多叠加3层的引雷状态。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>持续咏唱后，召唤雷电从天而降，对附近的所有敌人造成大量<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>对处于引雷状态下的敌人，会根据叠加层数造成大量额外伤害，并清除引雷效果。<br><br><i>雷电的颜色就是蔷薇魔女的颜色。</i>",
         "details": [
-          ["点按伤害", "{param6:F1P}"],
-          ["点按冷却时间", "{param7:F1}秒"],
-          ["无引雷长按伤害", "{param1:P}"],
-          ["一层引雷长按伤害", "{param2:P}"],
-          ["二层引雷长按伤害", "{param3:P}"],
-          ["三层引雷长按伤害", "{param4:P}"],
-          ["长按冷却时间", "{param5:F1}秒"]
+          {"label": "点按伤害", "template": "{param6:F1P}"},
+          {"label": "点按冷却时间", "template": "{param7:F1}秒"},
+          {"label": "无引雷长按伤害", "template": "{param1:P}"},
+          {"label": "一层引雷长按伤害", "template": "{param2:P}"},
+          {"label": "二层引雷长按伤害", "template": "{param3:P}"},
+          {"label": "三层引雷长按伤害", "template": "{param4:P}"},
+          {"label": "长按冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 蔷薇的雷光",
         "descHtml": "召唤蔷薇雷光，释放强大的雷电之力，击退周围的敌人并造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>存在期间内，蔷薇雷光会持续放电攻击附近的敌人，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><i>这朵蔷薇固然美丽，却也有着致命的刺。</i>",
         "details": [
-          ["放电伤害", "{param1:F1P}"],
-          ["持续时间", "{param2:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "放电伤害", "template": "{param1:F1P}"},
+          {"label": "持续时间", "template": "{param2:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -2646,39 +2646,39 @@
         "name": "A. 迅捷礼刺剑",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}+{param7:F1P}"],
-          ["重击体力消耗", "{param8:F1}点"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}+{param7:F1P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 谜影障身法",
         "descHtml": "挥舞斗篷，击出谜影突刺，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br>谜影突刺命中敌人时，将为琳妮特恢复生命值，回复量基于琳妮特的生命值上限，并在此后的4秒内，每秒将消耗一定的生命值。<br>依据点按、长按，以不同的方式击出谜影突刺。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>迅速击出谜影突刺。 <br><br><span style=\"color: #FFD780FF;\">长按</span><br>琳妮特以「谜身影盗」的姿态疾走，并对附近的敌人施加「刺影征标」。期间可以控制疾走的方向，并能通过再次施放技能，提前结束疾走状态。<br>疾走结束时，琳妮特将击出谜影突刺。若附近存在具有刺影征标的敌人，琳妮特将在击出谜影突刺前高速闪掠接近该敌人。<br><br>同时至多有一名敌人具有琳妮特自身施加的刺影征标。与具有刺影征标的敌人距离过远时，将移除该刺影征标。<br><br><span style=\"color: #FFD780FF;\">始基力：荒性</span><br>每隔一段时间，琳妮特击出谜影突刺时，将唤出流涌之刃，造成具有荒性的<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><i>「现在就将视线转回台上，继续观赏表演吧。当我再次出现，就会是在你意想不到的地方了。」</i>",
         "details": [
-          ["谜影突刺伤害", "{param1:F1P}"],
-          ["流涌之刃伤害", "{param3:F1P}"],
-          ["流涌之刃间隔", "{param8:F1}秒"],
-          ["命中治疗量", "{param4:P}生命值上限"],
-          ["生命值消耗", "{param6:P}当前生命值/秒"],
-          ["长按最大持续时间", "{param9:F1}秒"],
-          ["冷却时间", "{param7:F1}秒"]
+          {"label": "谜影突刺伤害", "template": "{param1:F1P}"},
+          {"label": "流涌之刃伤害", "template": "{param3:F1P}"},
+          {"label": "流涌之刃间隔", "template": "{param8:F1}秒"},
+          {"label": "命中治疗量", "template": "{param4:P}生命值上限"},
+          {"label": "生命值消耗", "template": "{param6:P}当前生命值/秒"},
+          {"label": "长按最大持续时间", "template": "{param9:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"}
         ]
       },
       {
         "name": "Q. 魔术·运变惊奇",
         "descHtml": "琳妮特高举斗篷造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>，用惊人的手法变出巨大的惊奇猫猫盒！<br><br><span style=\"color: #FFD780FF;\">惊奇猫猫盒</span><br>·能够持续嘲讽周围的敌人，吸引敌人攻击；<br>·将周期性对附近的敌人造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>；<br>·惊奇猫猫盒接触了<span style=\"color: #80C0FFFF;\">水元素</span>/<span style=\"color: #FF9999FF;\">火元素</span>/<span style=\"color: #99FFFFFF;\">冰元素</span>/<span style=\"color: #FFACFFFF;\">雷元素</span>，则会获得对应元素属性，周期性对附近的敌人追加发射彩练术弹，造成该元素的伤害。<br>元素转化在技能持续期间仅会发生一次。<br><br><i>「就看向这个方向，看仔细。这是独属于我们的，奇迹时刻。」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["惊奇猫猫盒伤害", "{param2:F1P}"],
-          ["彩练术弹伤害", "{param3:F1P}"],
-          ["惊奇猫猫盒持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"],
-          ["元素能量", "{param6:I}"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "惊奇猫猫盒伤害", "template": "{param2:F1P}"},
+          {"label": "彩练术弹伤害", "template": "{param3:F1P}"},
+          {"label": "惊奇猫猫盒持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
@@ -2732,39 +2732,39 @@
         "name": "A. 西风枪术·镝传",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>结合手弩与长枪，进行至多五段的连击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}+{param5:F1P}"],
-          ["五段伤害", "{param6:F1P}"],
-          ["重击伤害", "{param7:F1P}"],
-          ["重击体力消耗", "{param8:F1}点"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}+{param5:F1P}"},
+          {"label": "五段伤害", "template": "{param6:F1P}"},
+          {"label": "重击伤害", "template": "{param7:F1P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 星霜的流旋",
         "descHtml": "利用手弩攻击敌人，并为队伍中附近的所有角色赋予灵风状态。处于灵风状态下的角色处于场上时，攻击速度将获得提升。<br>依据点按、长按，以不同的方式产生效果。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>快速发射能够穿透敌人的霜流矢，对触及的敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>进行瞄准，并对一名瞄准锁定的敌人发射冰星信标，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。冰星信标命中后，将升空爆裂，向周围至多3名其他敌人发射冰星破片，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><i>霜天之下，其为星芒。</i>",
         "details": [
-          ["霜流矢伤害", "{param1:F2P}"],
-          ["冰星信标伤害", "{param2:F2P}"],
-          ["冰星破片伤害", "{param3:F2P}"],
-          ["攻击速度提升", "{param4:P}"],
-          ["灵风持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"]
+          {"label": "霜流矢伤害", "template": "{param1:F2P}"},
+          {"label": "冰星信标伤害", "template": "{param2:F2P}"},
+          {"label": "冰星破片伤害", "template": "{param3:F2P}"},
+          {"label": "攻击速度提升", "template": "{param4:P}"},
+          {"label": "灵风持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"}
         ]
       },
       {
         "name": "Q. 苍翎的颂愿",
         "descHtml": "从骑士团的诵祷中导引鼓舞伙伴奋勇前行的力量，为队伍中附近的所有角色恢复生命值，回复量受益于米卡的生命值上限，并为其施加鹰翎状态。<br><br><span style=\"color: #FFD780FF;\">鹰翎</span><br>处于鹰翎状态下的当前场上角色在普通攻击命中敌人时，米卡将为其恢复生命值，回复量受益于米卡的生命值上限。<br>处于这种状态下的角色，短时间内至多通过这种方式恢复一次生命值。<br><br><i>「逆境中心怀希望、顺遂时不忘警戒…因为那洁白的翎羽，终将引领迷途的旅者。」</i>",
         "details": [
-          ["施放治疗量", "{param2:F1P}生命值上限+{param1:I}"],
-          ["鹰翎治疗量", "{param4:F1P}生命值上限+{param3:I}"],
-          ["鹰翎治疗间隔", "{param5:F1}秒"],
-          ["鹰翎持续时间", "{param6:F1}秒"],
-          ["冷却时间", "{param7:F1}秒"],
-          ["元素能量", "{param8:I}"]
+          {"label": "施放治疗量", "template": "{param2:F1P}生命值上限+{param1:I}"},
+          {"label": "鹰翎治疗量", "template": "{param4:F1P}生命值上限+{param3:I}"},
+          {"label": "鹰翎治疗间隔", "template": "{param5:F1}秒"},
+          {"label": "鹰翎持续时间", "template": "{param6:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"},
+          {"label": "元素能量", "template": "{param8:I}"}
         ]
       }
     ],
@@ -2818,30 +2818,30 @@
         "name": "A. 千金掷",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>发射宝石，造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br>命中时，赋予凝光一枚星璇。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗体力，发射一颗巨型宝石，造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br>若凝光拥有星璇，施放重击时会将所有星璇一同发射，造成额外的伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚晶岩的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>。",
         "details": [
-          ["普通攻击伤害", "{param1:F1P}"],
-          ["重击伤害", "{param2:P}"],
-          ["星璇伤害", "每个{param3:F1P}"],
-          ["重击体力消耗", "{param4:F1}点"],
-          ["下坠期间伤害", "{param5:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param6:P}/{param7:P}"]
+          {"label": "普通攻击伤害", "template": "{param1:F1P}"},
+          {"label": "重击伤害", "template": "{param2:P}"},
+          {"label": "星璇伤害", "template": "每个{param3:F1P}"},
+          {"label": "重击体力消耗", "template": "{param4:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param5:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param6:P}/{param7:P}"}
         ]
       },
       {
         "name": "E. 璇玑屏",
         "descHtml": "借由黄金、黑曜岩与强者的余裕，构建出坚固的璇玑屏，并造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">璇玑屏</span><br>·阻挡敌人发射的投射物；<br>·耐久度按比例继承凝光的生命值上限。<br><br>璇玑屏被视为<span style=\"color: #FFE699FF;\">岩元素创造物</span>，可以阻挡部分攻击，不可攀爬。同时只能存在一个。<br><br><i>星罗棋布，璇玑合屏。</i>",
         "details": [
-          ["继承生命", "{param3:F1P}"],
-          ["技能伤害", "{param2:P}"],
-          ["冷却时间", "{param4:F1}秒"]
+          {"label": "继承生命", "template": "{param3:F1P}"},
+          {"label": "技能伤害", "template": "{param2:P}"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"}
         ]
       },
       {
         "name": "Q. 天权崩玉",
         "descHtml": "凝光在身边凝聚诸多宝石，散之一瞬，自动索敌打击附近的敌人，造成大量<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br>施放天权崩玉时，如果附近有璇玑屏存在，璇玑屏将发射额外的宝石飞弹协同攻击。<br><br><i>星散玉崩，尽灭群丑。</i>",
         "details": [
-          ["宝石伤害", "每个{param1:F1P}"],
-          ["冷却时间", "{param2:F1}秒"],
-          ["元素能量", "{param3:I}"]
+          {"label": "宝石伤害", "template": "每个{param1:F1P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"},
+          {"label": "元素能量", "template": "{param3:I}"}
         ]
       }
     ],
@@ -2895,40 +2895,40 @@
         "name": "A. 西风剑术·女仆",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:F1P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 护心铠",
         "descHtml": "唤出护体的岩铠，对周围的敌人造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>，并形成护盾，伤害吸收量基于诺艾尔的防御力。<br>护盾具有如下效果：<br>·诺艾尔的普通攻击与重击命中时，都有几率为队伍中所有角色恢复生命值；<br>·对所有元素伤害与物理伤害有150%的吸收效果。<br><br>触发治疗时的治疗量受益于诺艾尔的防御力。<br><br><i>诺艾尔既是侍奉的女仆，也是坚毅的骑士。</i>",
         "details": [
-          ["技能伤害", "{param6:P}防御力"],
-          ["吸收量", "{param1:P}防御力+{param7:I}"],
-          ["治疗量", "{param2:F1P}防御力+{param8:I}"],
-          ["治疗触发几率", "{param3:P}"],
-          ["持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "技能伤害", "template": "{param6:P}防御力"},
+          {"label": "吸收量", "template": "{param1:P}防御力+{param7:I}"},
+          {"label": "治疗量", "template": "{param2:F1P}防御力+{param8:I}"},
+          {"label": "治疗触发几率", "template": "{param3:P}"},
+          {"label": "持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 大扫除",
         "descHtml": "将磐石的力量凝聚在武器上，冲击周围的敌人并进行一次大范围扫击，造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br>此后，获得如下效果：<br>·提高诺艾尔的攻击范围；<br>·将攻击伤害转为<span style=\"color: #FFE699FF;\">岩元素伤害</span>，该元素转化无法被附魔覆盖；<br>·基于诺艾尔的防御力，提高攻击力。<br><br><i>需要扫除的，有时不仅仅是灰尘…</i>",
         "details": [
-          ["爆发伤害", "{param1:F1P}"],
-          ["技能伤害", "{param2:F1P}"],
-          ["攻击力提高", "{param3:P}防御力"],
-          ["持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"],
-          ["元素能量", "{param6:I}"]
+          {"label": "爆发伤害", "template": "{param1:F1P}"},
+          {"label": "技能伤害", "template": "{param2:F1P}"},
+          {"label": "攻击力提高", "template": "{param3:P}防御力"},
+          {"label": "持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
@@ -2982,21 +2982,21 @@
         "name": "A. 宿灵闪箭",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，雷元素会凭附在箭矢上。聚满了雷元素的箭矢会造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["瞄准射击", "{param4:F1P}"],
-          ["满蓄力瞄准射击", "{param5:P}"],
-          ["下坠期间伤害", "{param6:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param7:P}/{param8:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "瞄准射击", "template": "{param4:F1P}"},
+          {"label": "满蓄力瞄准射击", "template": "{param5:P}"},
+          {"label": "下坠期间伤害", "template": "{param6:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param7:P}/{param8:P}"}
         ]
       },
       {
         "name": "E. 暝色缒索",
         "descHtml": "欧洛伦将烟谜主亘古传承的秘术具现为暝色的<span style=\"color: #FFD780FF;\">宿灵球</span>投向敌人，造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>附近存在其他敌人时，宿灵球将在附近的敌人间弹跳，造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。每次施放暝色缒索后，每名敌人只能被选为一次目标。<br>进行3次弹跳或附近没有可以被选为目标的敌人时，宿灵球将消失。<br><br><i>「人们总是想要预见未来，但那或许是因为他们还没有找到自己该做的事…抱歉，又在说难懂的话了。」</i>",
         "details": [
-          ["宿灵球伤害", "{param1:F1P}"],
-          ["冷却时间", "{param2:F1}秒"]
+          {"label": "宿灵球伤害", "template": "{param1:F1P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
@@ -3008,11 +3008,11 @@
         "name": "Q. 黯声回响",
         "descHtml": "欧洛伦唤起远古的秘仪，造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>，并召唤出「超音灵眼」。<br><br><span style=\"color: #FFD780FF;\">超音灵眼</span><br>·持续嘲讽周围的敌人，吸引敌人攻击；<br>·持续旋转并发射音波，对附近的敌人造成具有夜魂性质的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><i>拥有足够感知的人，能够听见万物细微的声响。那样即便是在无光的长夜，也不会失去行路的方向。</i>",
         "details": [
-          ["秘仪伤害", "{param1:F1P}"],
-          ["音波碰撞伤害", "{param2:F1P}"],
-          ["持续时间", "{param3:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "秘仪伤害", "template": "{param1:F1P}"},
+          {"label": "音波碰撞伤害", "template": "{param2:F1P}"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],
@@ -3070,42 +3070,42 @@
         "name": "A. 钢脊",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:P}"],
-          ["四段伤害", "{param4:P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:P}"},
+          {"label": "四段伤害", "template": "{param4:P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 利爪与苍雷",
         "descHtml": "用师父与他的「家人」教他的方法，来解决猎物。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>向前挥动雷狼之爪，对前方的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>若命中敌人，则会为雷泽积攒一个雷之印，提高雷泽的元素充能效率。<br>最多同时存在3个雷之印，叠加刷新持续时间。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>积聚雷电力量引发小范围的雷爆，造成大量<span style=\"color: #FFACFFFF;\">雷元素伤害</span>，并清除已有的雷之印。<br>每个因此被清除的雷之印，都会转为雷泽的元素能量。<br><br><i>雷击落下的一瞬，偶尔能瞥见雷泽灵魂深处那头狼打量猎物的眼神。</i>",
         "details": [
-          ["点按技能伤害", "{param1:P}"],
-          ["长按技能伤害", "{param2:P}"],
-          ["雷之印充能效率提升", "每个{param3:P}"],
-          ["雷之印吸收恢复能量", "每个{param4:F1}点"],
-          ["雷之印持续时间", "{param5:F1}秒"],
-          ["点按冷却时间", "{param6:F1}秒"],
-          ["长按冷却时间", "{param7:F1}秒"]
+          {"label": "点按技能伤害", "template": "{param1:P}"},
+          {"label": "长按技能伤害", "template": "{param2:P}"},
+          {"label": "雷之印充能效率提升", "template": "每个{param3:P}"},
+          {"label": "雷之印吸收恢复能量", "template": "每个{param4:F1}点"},
+          {"label": "雷之印持续时间", "template": "{param5:F1}秒"},
+          {"label": "点按冷却时间", "template": "{param6:F1}秒"},
+          {"label": "长按冷却时间", "template": "{param7:F1}秒"}
         ]
       },
       {
         "name": "Q. 雷牙",
         "descHtml": "唤醒无形的雷狼守护自己，对周围的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>，并消耗所有雷之印，为雷泽恢复元素能量。<br>雷狼存在期间，会与雷泽共同战斗。<br><br><span style=\"color: #FFD780FF;\">雷狼</span><br>·会随雷泽的普通攻击协同攻击，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>；<br>·提高雷泽的攻击速度、<span style=\"color: #FFACFFFF;\">雷元素抗性</span>；<br>·使雷泽免疫<span style=\"color: #FFACFFFF;\">感电</span>反应的伤害；<br>·无法施放重击；<br>·提高雷泽的抗打断能力。<br><br>效果将在雷泽退场时解除。<br>退场时，会依据剩余的持续时间，返还至多10点元素能量。<br><br><i>狼苏醒了。狩猎的时候到了。</i>",
         "details": [
-          ["爆发伤害", "{param1:P}"],
-          ["狼魂伤害", "{param2:F1P}普通攻击伤害"],
-          ["普通攻击速度提升", "{param3:P}"],
-          ["雷元素抗性提升", "{param4:P}"],
-          ["持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"],
-          ["元素能量", "{param7:I}"]
+          {"label": "爆发伤害", "template": "{param1:P}"},
+          {"label": "狼魂伤害", "template": "{param2:F1P}普通攻击伤害"},
+          {"label": "普通攻击速度提升", "template": "{param3:P}"},
+          {"label": "雷元素抗性提升", "template": "{param4:P}"},
+          {"label": "持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
         ]
       }
     ],
@@ -3163,34 +3163,34 @@
         "name": "A. 教会枪术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}*2"],
-          ["四段伤害", "{param4:F1P}"],
-          ["五段伤害", "{param5:F1P}+{param6:F1P}"],
-          ["重击伤害", "{param7:P}"],
-          ["重击体力消耗", "{param8:F1}点"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}*2"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}+{param6:F1P}"},
+          {"label": "重击伤害", "template": "{param7:P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 噬罪的告解",
         "descHtml": "罗莎莉亚快速移动至目标敌人身后，进行长枪穿刺与挥砍，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br>无法通过施放时的快速移动，转移至体型较大的敌人身后。<br><br><i>对着修女罗莎莉亚的告解并不能获得赦罪。相反，罪孽越深，降罚的冰寒就越是刺骨。</i>",
         "details": [
-          ["技能伤害", "{param1:P}+{param2:P}"],
-          ["冷却时间", "{param3:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}+{param2:P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 终命的圣礼",
         "descHtml": "这是罗莎莉亚专属的领祷仪式。挥舞武器扫击身边的敌人后，凝聚极寒的冰枪击向地面，分别造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br>冰枪在存在期间内，会间歇性释放寒气，对附近的敌人造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><i>审判这件事很麻烦，所以越过审判直接执行临终祈礼吧。罗莎莉亚本就不信奉风神，这件事因此格外轻松。</i>",
         "details": [
-          ["技能伤害", "{param1:P}+{param2:P}"],
-          ["冰枪持续伤害", "{param3:P}"],
-          ["持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"],
-          ["元素能量", "{param6:I}"]
+          {"label": "技能伤害", "template": "{param1:P}+{param2:P}"},
+          {"label": "冰枪持续伤害", "template": "{param3:P}"},
+          {"label": "持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
@@ -3244,42 +3244,42 @@
         "name": "A. 忍刀·终末番",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击循环伤害", "{param6:F1P}"],
-          ["重击终结伤害", "{param7:P}"],
-          ["重击体力消耗", "每秒{param8:F1}点"],
-          ["最大持续时间", "{param9:F1}秒"],
-          ["下坠期间伤害", "{param10:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param11:P}/{param12:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击循环伤害", "template": "{param6:F1P}"},
+          {"label": "重击终结伤害", "template": "{param7:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param8:F1}点"},
+          {"label": "最大持续时间", "template": "{param9:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param10:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param11:P}/{param12:P}"}
         ]
       },
       {
         "name": "E. 呜呼流·风隐急进",
         "descHtml": "忍法·呜呼流的独创奥义！以风驰电掣之势席卷战场的绝技！<br>蜷缩成高速滚动的风风轮，冲撞触及的敌人造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>，并在结束时使出风风轮舞踢，造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>进入风风轮状态，向前滚动一小段距离，并使出风风轮舞踢。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>以风风轮之姿持续滚动，并在该状态下提高早柚的抗打断能力。<br>期间，早柚可以控制滚动的方向，并能通过再次施放技能，提前结束状态使出相比点按更为强大的风风轮舞踢。<br>该技能通过长按施放时，能发生元素转化。<br><br>持续至多10秒。效果结束时，技能将进入冷却。在风风轮状态下持续的时间越长，冷却时间越长。<br><br><span style=\"color: #FFD780FF;\">元素转化</span><br>若早柚在风风轮状态下，接触了<span style=\"color: #80C0FFFF;\">水元素</span>/<span style=\"color: #FF9999FF;\">火元素</span>/<span style=\"color: #99FFFFFF;\">冰元素</span>/<span style=\"color: #FFACFFFF;\">雷元素</span>，则会获得对应元素属性，使风风轮与风风轮舞踢额外造成该元素的附加伤害。<br>元素转化在技能持续期间仅会发生一次。<br><br><i>早柚闭着眼睛都能熟练施展出来。原本用于逃跑，有了神之眼之后，终于能趁机让敌人吃些苦头了。</i>",
         "details": [
-          ["风风轮伤害", "{param1:F1P}"],
-          ["风风轮舞踢点按伤害", "{param3:F1P}"],
-          ["风风轮舞踢长按伤害", "{param4:F1P}"],
-          ["风风轮附带元素伤害", "{param2:F1P}"],
-          ["风风轮舞踢长按附带元素伤害", "{param5:F1P}"],
-          ["长按最大持续时间", "{param6:F1}秒"],
-          ["冷却时间", "{param7:F1}到{param8:F1}秒"]
+          {"label": "风风轮伤害", "template": "{param1:F1P}"},
+          {"label": "风风轮舞踢点按伤害", "template": "{param3:F1P}"},
+          {"label": "风风轮舞踢长按伤害", "template": "{param4:F1P}"},
+          {"label": "风风轮附带元素伤害", "template": "{param2:F1P}"},
+          {"label": "风风轮舞踢长按附带元素伤害", "template": "{param5:F1P}"},
+          {"label": "长按最大持续时间", "template": "{param6:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}到{param8:F1}秒"}
         ]
       },
       {
         "name": "Q. 呜呼流·影貉缭乱",
         "descHtml": "忍法·呜呼流的另一个独创奥义！能创造出替早柚干活的帮手！<br>对身边的敌人造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>，为队伍中附近的所有角色恢复生命值，回复量受益于早柚的攻击力，并召唤出「不倒貉貉」。<br><br><span style=\"color: #FFD780FF;\">不倒貉貉</span><br>周期性地根据附近的状况，采取其中一种行动：<br>·附近的角色如果生命值均高于70%，不倒貉貉会攻击附近的一名敌人，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>；<br>·附近场上如果存在生命值低于或等于70%的角色，会为附近场上生命值百分比最低的角色恢复生命值，回复量受益于早柚的攻击力。若附近不存在敌人，即使角色的生命值均高于70%，也会为角色恢复生命值。<br><br><i>不懂忍术的人都非常希望早柚能多多展示一下这个，也有人试图找早柚学习。可早柚只想睡觉，不想被打扰。</i>",
         "details": [
-          ["技能发动伤害", "{param1:P}"],
-          ["技能发动治疗量", "{param3:F1P}攻击力+{param2:I}"],
-          ["不倒貉貉伤害", "{param4:P}"],
-          ["不倒貉貉治疗量", "{param6:F1P}攻击力+{param5:I}"],
-          ["持续时间", "{param7:F1}秒"],
-          ["冷却时间", "{param8:F1}秒"],
-          ["元素能量", "{param9:I}"]
+          {"label": "技能发动伤害", "template": "{param1:P}"},
+          {"label": "技能发动治疗量", "template": "{param3:F1P}攻击力+{param2:I}"},
+          {"label": "不倒貉貉伤害", "template": "{param4:P}"},
+          {"label": "不倒貉貉治疗量", "template": "{param6:F1P}攻击力+{param5:I}"},
+          {"label": "持续时间", "template": "{param7:F1}秒"},
+          {"label": "冷却时间", "template": "{param8:F1}秒"},
+          {"label": "元素能量", "template": "{param9:I}"}
         ]
       }
     ],
@@ -3333,33 +3333,33 @@
         "name": "A. 王家苇箭术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续弓箭射击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>进行伤害更高、更为精准的<span style=\"color: #FFD780FF;\">瞄准射击</span>。<br>瞄准时，雷霆的力量会在箭矢上持续积聚，并随攻击发射出去。根据蓄力时间长短，能造成不同的效果：<br>·一段蓄力：射出附有雷元素的箭矢，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>；<br>·二段蓄力：发射能穿透敌人的<span style=\"color: #FFD780FF;\">贯影箭</span>，对路径上的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。贯影箭完成蓄力后，赛索斯将无法进行移动。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}+{param3:F1P}"],
-          ["三段伤害", "{param4:F1P}"],
-          ["瞄准射击", "{param5:F1P}"],
-          ["一段蓄力瞄准射击", "{param6:F1P}"],
-          ["贯影箭伤害", "{param7:F1P}攻击力+{param8:F1P}元素精通"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:F1P}/{param11:F1P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}+{param3:F1P}"},
+          {"label": "三段伤害", "template": "{param4:F1P}"},
+          {"label": "瞄准射击", "template": "{param5:F1P}"},
+          {"label": "一段蓄力瞄准射击", "template": "{param6:F1P}"},
+          {"label": "贯影箭伤害", "template": "{param7:F1P}攻击力+{param8:F1P}元素精通"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:F1P}/{param11:F1P}"}
         ]
       },
       {
         "name": "E. 古仪·鸣砂掣雷",
         "descHtml": "凝集轰雷，造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>并快速后退。如果此次攻击对敌人触发了感电、月感电、超导、超载、原激化、超激化、超绽放或雷元素扩散反应，赛索斯将恢复一定的元素能量。<br><br><i>「神灵凭依的司祭、点穴成泉的术师，沙海的歌者间流传着他们的故事…但我知道那并非传说，因为他们就是我们的先辈。」</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["恢复元素能量", "{param2:I}点"],
-          ["冷却时间", "{param3:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "恢复元素能量", "template": "{param2:I}点"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 秘仪·瞑光贯影",
         "descHtml": "施展秘仪，进入「寂想瞑影」状态，在此期间，赛索斯的普通攻击将转为发射能穿透敌人的<span style=\"color: #FFD780FF;\">瞑弦矢</span>：对路径上的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>，并基于赛索斯的元素精通，提升其造成的伤害。<br>持续期间，赛索斯无法进行瞄准射击。<br>瞑弦矢造成的伤害视为重击伤害。<br>效果将在赛索斯退场时解除。<br><br><i>缄默之殿的藏书室中保存着不少从赤王时代的阿赫塔蒙遗留下来的书籍，书中记载了许多威力强大的秘仪。但即便在缄默之殿中，也只有少数人能够习得掌握它们的力量。</i>",
         "details": [
-          ["瞑弦矢伤害提升", "{param1:F1P}元素精通"],
-          ["寂想瞑影持续时间", "{param2:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "瞑弦矢伤害提升", "template": "{param1:F1P}元素精通"},
+          {"label": "寂想瞑影持续时间", "template": "{param2:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -3413,36 +3413,36 @@
         "name": "A. 不动流格斗术",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>以强风加持的招式与敌人格斗，进行至多五段的攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，使出扬尘踢，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚强风的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}+{param5:F1P}+{param6:F1P}"],
-          ["五段伤害", "{param7:F1P}"],
-          ["重击伤害", "{param8:F1P}"],
-          ["重击体力消耗", "{param9:F1}点"],
-          ["下坠期间伤害", "{param10:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param11:P}/{param12:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}+{param5:F1P}+{param6:F1P}"},
+          {"label": "五段伤害", "template": "{param7:F1P}"},
+          {"label": "重击伤害", "template": "{param8:F1P}"},
+          {"label": "重击体力消耗", "template": "{param9:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param10:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param11:P}/{param12:P}"}
         ]
       },
       {
         "name": "E. 勠心拳",
         "descHtml": "<span style=\"color: #FFD780FF;\">点按</span><br>驱使疾风，向前打出勠心拳，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>积蓄力量，以施展更为强大的拳势。蓄力期间，将持续获得能提升勠心拳威力的「变格」效果；松开技能或蓄力结束时，会向前打出勠心拳，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">变格</span><br>提升下一次勠心拳造成的伤害，至多叠加4层。<br>拥有4层「变格」时，将产生「正论」效果，使下一次勠心拳造成的伤害将进一步提高，并拥有更大的影响范围。<br><br><i>看似只是简单的蓄力冲拳，但是包含了平藏想要令罪人们乖乖认罪忏悔的心意。</i>",
         "details": [
-          ["技能伤害", "{param1:F1P}"],
-          ["变格伤害提升", "{param2:F1P}/层"],
-          ["正论伤害提升", "{param3:F1P}"],
-          ["变格持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "变格伤害提升", "template": "{param2:F1P}/层"},
+          {"label": "正论伤害提升", "template": "{param3:F1P}"},
+          {"label": "变格持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"}
         ]
       },
       {
         "name": "Q. 聚风蹴",
         "descHtml": "腾跃至空中，向敌人踢出不动流·真空弹。不动流·真空弹将在命中时炸裂，产生缉拿风穴，牵引附近的物体与敌人，造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br>不动流·真空弹命中处于<span style=\"color: #80C0FFFF;\">水元素</span>/<span style=\"color: #FF9999FF;\">火元素</span>/<span style=\"color: #99FFFFFF;\">冰元素</span>/<span style=\"color: #FFACFFFF;\">雷元素</span>附着下的敌人时，会为这些敌人施加「聚风真眼」效果，该效果会在片刻后爆发消失，并造成对应元素属性的范围伤害。<br>不动流·真空弹至多对4名命中的敌人施加「聚风真眼」；敌人无法同时处于多种元素属性的「聚风真眼」状态下。<br><br><i>将风元素聚集一处并踢出的独特招式，往往能在罪人暴露、四处逃窜之时，稳当踢中其后背。</i>",
         "details": [
-          ["不动流·真空弹伤害", "{param1:F1P}"],
-          ["聚风真眼伤害", "{param2:F1P}"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "不动流·真空弹伤害", "template": "{param1:F1P}"},
+          {"label": "聚风真眼伤害", "template": "{param2:F1P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -3496,33 +3496,33 @@
         "name": "A. 简式风灵作成",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的风灵攻击，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂咏唱后，造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚风灵的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击伤害", "{param5:P}"],
-          ["重击体力消耗", "{param6:F1}点"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击伤害", "template": "{param5:P}"},
+          {"label": "重击体力消耗", "template": "{param6:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 风灵作成·陆叁零捌",
         "descHtml": "召唤出小型风灵，将敌人与物体牵引至风灵所在位置，击飞范围内的敌人，并造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><i>说来很不好意思，虽然术式里诞生的元素生命迅速就消散了，但是在冒险里真的很好用。失败的实验也会诞生实用技术。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["冷却时间", "{param2:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
         "name": "Q. 禁·风灵作成·柒伍同构贰型",
         "descHtml": "砂糖抛出不稳定的烧瓶，生成大型风灵。<br>存在期间，大型风灵会持续牵引附近的敌人与物体，击飞附近的敌人，并造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">元素转化</span><br>若风灵在技能持续期间接触了<span style=\"color: #80C0FFFF;\">水元素</span>/<span style=\"color: #FF9999FF;\">火元素</span>/<span style=\"color: #99FFFFFF;\">冰元素</span>/<span style=\"color: #FFACFFFF;\">雷元素</span>，则会获得对应元素属性，额外造成该元素的附加伤害。<br>元素转化在技能持续期间仅会发生一次。<br><br><i>砂糖也曾经想给每一个不稳态无相之风取名字。但是其世系迅速超过了兔兔伯爵的八百九十三世。</i>",
         "details": [
-          ["持续伤害", "{param1:P}"],
-          ["附加元素伤害", "{param2:F1P}"],
-          ["持续时间", "{param3:F1}秒"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "持续伤害", "template": "{param1:P}"},
+          {"label": "附加元素伤害", "template": "{param2:F1P}"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],
@@ -3580,38 +3580,38 @@
         "name": "A. 迅破枪势",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}*2"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击伤害", "{param5:P}"],
-          ["重击体力消耗", "{param6:F1}点"],
-          ["下坠期间伤害", "{param7:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param8:P}/{param9:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}*2"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击伤害", "template": "{param5:P}"},
+          {"label": "重击体力消耗", "template": "{param6:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param7:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param8:P}/{param9:P}"}
         ]
       },
       {
         "name": "E. 烈烧佑命之侍护",
         "descHtml": "托马以枪尖刺地作为支点，倾注燃焰之力，向前迅猛踢击，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>，唤出护体的烈烧佑命护盾，并在施放的瞬间，为托马施加<span style=\"color: #FF9999FF;\">火元素附着</span>。<br>护盾的伤害吸收量受益于托马的生命值上限。<br>烈烧佑命护盾具有如下特性：<br>·对<span style=\"color: #FF9999FF;\">火元素伤害</span>有250%的吸收效果；<br>·护盾剩余的伤害吸收量在获取新的烈烧佑命护盾时将会叠加，并刷新持续时间。<br><br>护盾的伤害吸收量至多不超过托马生命值上限的一定比例。<br><br><i>作为异乡来客，唯有点燃最为炽烈的盛情之火，才能习得精湛且纯粹的稻妻枪术。而托马的成就远远不止于「最速学成出师」与「枪术豪杰」，有着「守护」信念的他，还将御敌的技巧与甲胄的特性融入了自己的枪术之中。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["护盾吸收量", "{param2:F1P}生命值上限+{param3:I}"],
-          ["护盾持续时间", "{param4:F1}秒"],
-          ["护盾吸收量上限", "{param5:F1P}生命值上限+{param6:I}"],
-          ["冷却时间", "{param7:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "护盾吸收量", "template": "{param2:F1P}生命值上限+{param3:I}"},
+          {"label": "护盾持续时间", "template": "{param4:F1}秒"},
+          {"label": "护盾吸收量上限", "template": "{param5:F1P}生命值上限+{param6:I}"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"}
         ]
       },
       {
         "name": "Q. 真红炽火之大铠",
         "descHtml": "托马旋转长枪，以炽烈的燃焰挥斩周围的敌人，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>，并产生炽火大铠。<br><br><span style=\"color: #FFD780FF;\">炽火大铠</span><br>处于炽火大铠效果下的当前场上角色进行普通攻击时，将触发炽火崩破，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>，并唤出护体的烈烧佑命护盾。<br>炽火崩破每1秒至多触发一次。<br><br>产生的护盾，除伤害吸收量以外，特性与元素战技「烈烧佑命之侍护」的护盾相同：<br>·对<span style=\"color: #FF9999FF;\">火元素伤害</span>有250%的吸收效果；<br>·护盾剩余的伤害吸收量在获取新的烈烧佑命护盾时将会叠加，并刷新持续时间。<br><br>护盾的伤害吸收量至多不超过托马生命值上限的一定比例。<br><br>托马倒下时，将会清除炽火大铠的效果。<br><br><i>「我绝不会忘记当初的承诺，所以这股烈火，必将守护我珍视的人，永不熄灭。」</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["炽火崩破伤害", "{param2:P}"],
-          ["护盾吸收量", "{param3:F1P}生命值上限+{param4:I}"],
-          ["护盾持续时间", "{param5:F1}秒"],
-          ["炽火大铠持续时间", "{param7:F1}秒"],
-          ["冷却时间", "{param8:F1}秒"],
-          ["元素能量", "{param9:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "炽火崩破伤害", "template": "{param2:P}"},
+          {"label": "护盾吸收量", "template": "{param3:F1P}生命值上限+{param4:I}"},
+          {"label": "护盾持续时间", "template": "{param5:F1}秒"},
+          {"label": "炽火大铠持续时间", "template": "{param7:F1}秒"},
+          {"label": "冷却时间", "template": "{param8:F1}秒"},
+          {"label": "元素能量", "template": "{param9:I}"}
         ]
       }
     ],
@@ -3665,36 +3665,36 @@
         "name": "A. 白案功夫",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}*4"],
-          ["五段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:P}"],
-          ["重击体力消耗", "{param7:F1}点"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}*4"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 锅巴出击",
         "descHtml": "唤出喷火的锅巴，存在期间内，不断对敌人喷火，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br><br><i>锅巴喜欢吃火辣的食物。但锅巴承受不了如此火辣的食物。</i>",
         "details": [
-          ["喷火伤害", "{param1:P}"],
-          ["冷却时间", "{param2:F1}秒"]
+          {"label": "喷火伤害", "template": "{param1:P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
         "name": "Q. 旋火轮",
         "descHtml": "以控制火候与枪术的精湛技巧，甩出围绕自己快速旋转的旋火轮。<br>存在期间内，旋火轮会跟随角色运动，对路径上的敌人造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><i>火力永远不够。远远不够。</i>",
         "details": [
-          ["一段挥舞伤害", "{param1:F1P}"],
-          ["二段挥舞伤害", "{param2:F1P}"],
-          ["三段挥舞伤害", "{param3:P}"],
-          ["旋火轮伤害", "{param4:P}"],
-          ["持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"],
-          ["元素能量", "{param7:I}"]
+          {"label": "一段挥舞伤害", "template": "{param1:F1P}"},
+          {"label": "二段挥舞伤害", "template": "{param2:F1P}"},
+          {"label": "三段挥舞伤害", "template": "{param3:P}"},
+          {"label": "旋火轮伤害", "template": "{param4:P}"},
+          {"label": "持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
         ]
       }
     ],
@@ -3748,35 +3748,35 @@
         "name": "A. 古华剑法",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["五段伤害", "{param6:F1P}+{param7:F1P}"],
-          ["重击伤害", "{param8:F1P}+{param9:F1P}"],
-          ["重击体力消耗", "{param10:F1}点"],
-          ["下坠期间伤害", "{param11:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param12:P}/{param13:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "五段伤害", "template": "{param6:F1P}+{param7:F1P}"},
+          {"label": "重击伤害", "template": "{param8:F1P}+{param9:F1P}"},
+          {"label": "重击体力消耗", "template": "{param10:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param11:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param12:P}/{param13:P}"}
         ]
       },
       {
         "name": "E. 古华剑·画雨笼山",
         "descHtml": "使出连续两段的剑技，对前方的敌人造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>。同时，生成最大数量的雨帘剑围绕在当前场上自己的角色身边。<br>具有如下特性：<br>·角色受到伤害时会破碎，降低受到的伤害；<br>·提高角色的抗打断能力。<br>行秋<span style=\"color: #80C0FFFF;\">水元素伤害加成</span>的20%将转换为雨帘剑的额外伤害减免。<br><br>最多通过这种方式获得24%额外伤害减免。<br>初始雨帘剑的最大数量为3柄。<br>施放的瞬间，为角色施加<span style=\"color: #80C0FFFF;\">潮湿</span>状态。<br><br><i>「蛟龙易斩，雨线难画」。</i>",
         "details": [
-          ["技能伤害", "{param1:P}+{param2:P}"],
-          ["减伤比例", "{param3:P}"],
-          ["持续时间", "{param4:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}+{param2:P}"},
+          {"label": "减伤比例", "template": "{param3:P}"},
+          {"label": "持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
         ]
       },
       {
         "name": "Q. 古华剑·裁雨留虹",
         "descHtml": "展开虹剑势，驾御幻影剑雨战斗，并生成最大数量的雨帘剑。<br><br><span style=\"color: #FFD780FF;\">虹剑势</span><br>·当前场上自己的角色进行普通攻击时，会产生剑雨连携攻击，造成<span style=\"color: #80C0FFFF;\">水元素伤害</span>；<br>·雨帘剑的数量将始终维持在最大数量。<br><br><i>「裁雨法」不传绝学，古华镇派秘诀之一。</i>",
         "details": [
-          ["剑雨伤害", "{param1:F1P}"],
-          ["持续时间", "{param2:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "剑雨伤害", "template": "{param1:F1P}"},
+          {"label": "持续时间", "template": "{param2:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -3830,40 +3830,40 @@
         "name": "A. 炎舞",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>持续消耗体力，旋转大剑攻击周围的敌人。<br>停止旋转时，会进行一次格外有力的挥砍。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["四段伤害", "{param4:F1P}"],
-          ["重击循环伤害", "{param5:F1P}"],
-          ["重击终结伤害", "{param6:P}"],
-          ["重击体力消耗", "每秒{param7:F1}点"],
-          ["最大持续时间", "{param8:F1}秒"],
-          ["下坠期间伤害", "{param9:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param10:P}/{param11:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "重击循环伤害", "template": "{param5:F1P}"},
+          {"label": "重击终结伤害", "template": "{param6:P}"},
+          {"label": "重击体力消耗", "template": "每秒{param7:F1}点"},
+          {"label": "最大持续时间", "template": "{param8:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
         ]
       },
       {
         "name": "E. 热情拂扫",
         "descHtml": "辛焱挥动乐器，对周围的敌人造成<span style=\"color: #FF9999FF;\">火元素伤害</span>，并借由「观众」的「热情」，形成护盾。<br>护盾的伤害吸收量受益于辛焱的防御力，并基于命中敌人的数目：<br>·未命中或命中一名敌人：一级护盾·散序节拍；<br>·命中二名敌人：二级护盾·歌头节拍；<br>·命中三名或更多敌人时，将产生三级护盾·舞遍节拍。除了吸收伤害，还会间歇性对周围的敌人造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br>护盾具有如下特性：<br>·施放的瞬间，为辛焱施加<span style=\"color: #FF9999FF;\">火元素附着</span>；<br>·对<span style=\"color: #FF9999FF;\">火元素伤害</span>有250%的吸收效果。<br><br><i>辛焱坚称这些火花是演奏技术到极致时的表现，是物理现象，和神之眼无关。</i>",
         "details": [
-          ["挥舞伤害", "{param1:P}"],
-          ["一级护盾吸收量", "{param2:F1P}防御力+{param3:I}"],
-          ["二级护盾吸收量", "{param4:F1P}防御力+{param5:I}"],
-          ["三级护盾吸收量", "{param6:F1P}防御力+{param7:I}"],
-          ["持续伤害", "{param8:F1P}"],
-          ["护盾持续时间", "{param9:F1}秒"],
-          ["冷却时间", "{param10:F1}秒"]
+          {"label": "挥舞伤害", "template": "{param1:P}"},
+          {"label": "一级护盾吸收量", "template": "{param2:F1P}防御力+{param3:I}"},
+          {"label": "二级护盾吸收量", "template": "{param4:F1P}防御力+{param5:I}"},
+          {"label": "三级护盾吸收量", "template": "{param6:F1P}防御力+{param7:I}"},
+          {"label": "持续伤害", "template": "{param8:F1P}"},
+          {"label": "护盾持续时间", "template": "{param9:F1}秒"},
+          {"label": "冷却时间", "template": "{param10:F1}秒"}
         ]
       },
       {
         "name": "Q. 叛逆刮弦",
         "descHtml": "迅速扫弦引发音波，击退敌人，对周围的敌人造成物理伤害，激起「舞台」上的氛围。<br>因为氛围实在太过炙烈，所以会引起烈焰，对周围的敌人持续造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><i>曾经辛焱每次演出结束都会来这么一出。后来不这么弄了倒不是因为危险。要是被喊了「安可」的话，她弄不出更炸裂的闭幕了。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["火元素持续伤害", "{param2:P}"],
-          ["持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param3:F1}秒"],
-          ["元素能量", "{param4:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "火元素持续伤害", "template": "{param2:P}"},
+          {"label": "持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
         ]
       }
     ],
@@ -3917,35 +3917,35 @@
         "name": "A. 火漆制印",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>连续发射火球，造成最多三段的<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br>普通攻击命中敌人时，会赋予烟绯一枚丹火印。初始最多持有三枚丹火印，每次触发都会刷新已有的丹火印持续时间。<br>每枚丹火印都会降低烟绯的体力消耗，并会在烟绯退场时消失。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗体力，短暂咏唱后，消耗所有的丹火印，在前方造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br>根据被消耗的丹火印数量，强化这次重击的范围与伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>凝聚火元素的力量，从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}"],
-          ["重击伤害", "{param4:P}/{param5:P}/{param6:P}/{param7:P}/{param8:P}"],
-          ["重击体力消耗", "{param14:F1}点"],
-          ["丹火印降低体力消耗", "每枚{param15:F1P}"],
-          ["丹火印持续时间", "{param19:F1}秒"],
-          ["下坠期间伤害", "{param16:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param17:P}/{param18:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "重击伤害", "template": "{param4:P}/{param5:P}/{param6:P}/{param7:P}/{param8:P}"},
+          {"label": "重击体力消耗", "template": "{param14:F1}点"},
+          {"label": "丹火印降低体力消耗", "template": "每枚{param15:F1P}"},
+          {"label": "丹火印持续时间", "template": "{param19:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param16:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param17:P}/{param18:P}"}
         ]
       },
       {
         "name": "E. 丹书立约",
         "descHtml": "唤出烈焰，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br>命中敌人后，会为烟绯赋予最大数量的丹火印。<br><br><i>以火烧制的印除了法律效应之外，还带着烟绯自己的附加条款。毕竟自然法则只靠总务司是改不掉的。</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["冷却时间", "{param2:F1}秒"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "冷却时间", "template": "{param2:F1}秒"}
         ]
       },
       {
         "name": "Q. 凭此结契",
         "descHtml": "引发喷薄爆发的烈火，冲击周围的敌人，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>，并为烟绯自己赋予最大数量的丹火印与灼灼效果。<br><br><span style=\"color: #FFD780FF;\">灼灼</span><br>具有如下效果：<br>·每间隔一段时间，为烟绯赋予一枚丹火印；<br>·提高重击造成的伤害。<br>灼灼效果会在烟绯退场与倒下时移除。<br><br><i>「条款齐备，依此立下生死之契。当然，是你死我生啦！」</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["丹火印赋予间隔", "{param4:F1}秒"],
-          ["重击伤害提升", "{param2:P}"],
-          ["持续时间", "{param3:F1}秒"],
-          ["冷却时间", "{param5:F1}秒"],
-          ["元素能量", "{param6:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "丹火印赋予间隔", "template": "{param4:F1}秒"},
+          {"label": "重击伤害提升", "template": "{param2:P}"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
@@ -3999,38 +3999,38 @@
         "name": "A. 颠扑连环枪",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}"],
-          ["重击伤害", "{param6:F1P}"],
-          ["重击体力消耗", "{param7:F1}点"],
-          ["下坠期间伤害", "{param8:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param9:P}/{param10:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
         ]
       },
       {
         "name": "E. 云台团团降芦菔",
         "descHtml": "请某位仙人特制的机关「月桂·抛掷型」上阵，帮助瑶瑶解决烦恼。<br>长按时将以不同的方式施放。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>进入瞄准状态，调整投掷方向。<br><br><span style=\"color: #FFD780FF;\">月桂·抛掷型</span><br>会投掷白玉萝卜，白玉萝卜会在命中角色或敌人时炸裂，对一定范围内的敌人造成<span style=\"color: #99FF88FF;\">草元素伤害</span>，并为其中的角色恢复生命值，回复量受益于瑶瑶的生命值上限；若未命中敌人或角色，白玉萝卜将会留在命中的位置，并在触及角色或敌人时，或持续时间结束时炸裂。<br>月桂·抛掷型会依据附近的情况，选择投掷白玉萝卜的目标：<br>·附近的角色如果生命值均高于70%，会向附近的一名敌人投掷；<br>·附近如果存在生命值低于或等于70%的角色，则会向附近场上生命值百分比最低的角色投掷。若附近不存在敌人，在角色的生命值均高于70%、低于100%时，也会向角色投掷；否则会向周围随意投掷。<br><br>同时至多存在2个月桂·抛掷型。<br><br><i>「萝卜上市，郎中无事！啊，这不是说萝卜治百病的意思，不过，多吃萝卜确实有好处！」</i>",
         "details": [
-          ["白玉萝卜伤害", "{param1:F1P}"],
-          ["白玉萝卜治疗量", "{param2:F2P}生命值上限+{param3:I}"],
-          ["月桂·抛掷型持续时间", "{param4:F1}秒"],
-          ["白玉萝卜持续时间", "{param5:F1}秒"],
-          ["冷却时间", "{param6:F1}秒"]
+          {"label": "白玉萝卜伤害", "template": "{param1:F1P}"},
+          {"label": "白玉萝卜治疗量", "template": "{param2:F2P}生命值上限+{param3:I}"},
+          {"label": "月桂·抛掷型持续时间", "template": "{param4:F1}秒"},
+          {"label": "白玉萝卜持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"}
         ]
       },
       {
         "name": "Q. 玉颗珊珊月中落",
         "descHtml": "依照某位仙人的嘱咐，在紧急情况下，解放月桂的全部潜能，对周围的敌人造成<span style=\"color: #99FF88FF;\">草元素伤害</span>，并进入（某种意义上）所向披靡的「桂子仙机」状态。<br><br><span style=\"color: #FFD780FF;\">桂子仙机</span><br>·产生的白玉萝卜将转为依据本技能详细属性造成伤害与治疗，炸裂时将为队伍中附近的所有角色恢复生命值，造成的<span style=\"color: #99FF88FF;\">草元素伤害</span>转而视为元素爆发伤害；<br>·周期性召唤「月桂·弹跳型」，直到数量达到上限。月桂·弹跳型与元素战技「云台团团降芦菔」召唤的月桂·抛掷型行为方式相同。同时至多存在3个月桂·弹跳型；<br>·瑶瑶的移动速度提升15%；<br>·瑶瑶获得<span style=\"color: #99FF88FF;\">草元素抗性</span>提升。<br><br>桂子仙机状态将在退场时结束。桂子仙机状态结束时，将移除剩余的月桂·弹跳型。<br><br><i>「咦，你问我这一个和那一个里哪个是月桂？奇怪，这里的每一个都是月桂呀！」</i>",
         "details": [
-          ["技能伤害", "{param4:F1P}"],
-          ["桂子仙机白玉萝卜伤害", "{param1:F1P}"],
-          ["桂子仙机白玉萝卜治疗量", "{param2:F2P}生命值上限+{param3:I}"],
-          ["草元素抗性提升", "{param5:P}"],
-          ["桂子仙机持续时间", "{param6:F1}秒"],
-          ["冷却时间", "{param7:F1}秒"],
-          ["元素能量", "{param8:I}"]
+          {"label": "技能伤害", "template": "{param4:F1P}"},
+          {"label": "桂子仙机白玉萝卜伤害", "template": "{param1:F1P}"},
+          {"label": "桂子仙机白玉萝卜治疗量", "template": "{param2:F2P}生命值上限+{param3:I}"},
+          {"label": "草元素抗性提升", "template": "{param5:P}"},
+          {"label": "桂子仙机持续时间", "template": "{param6:F1}秒"},
+          {"label": "冷却时间", "template": "{param7:F1}秒"},
+          {"label": "元素能量", "template": "{param8:I}"}
         ]
       }
     ],
@@ -4084,38 +4084,38 @@
         "name": "A. 拂云出手",
         "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续枪击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
-          ["一段伤害", "{param1:F1P}"],
-          ["二段伤害", "{param2:F1P}"],
-          ["三段伤害", "{param3:F1P}+{param4:F1P}"],
-          ["四段伤害", "{param5:F1P}+{param6:F1P}"],
-          ["五段伤害", "{param7:F1P}"],
-          ["重击伤害", "{param8:F1P}"],
-          ["重击体力消耗", "{param9:F1}点"],
-          ["下坠期间伤害", "{param10:F1P}"],
-          ["低空/高空坠地冲击伤害", "{param11:P}/{param12:P}"]
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}+{param6:F1P}"},
+          {"label": "五段伤害", "template": "{param7:F1P}"},
+          {"label": "重击伤害", "template": "{param8:F1P}"},
+          {"label": "重击体力消耗", "template": "{param9:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param10:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param11:P}/{param12:P}"}
         ]
       },
       {
         "name": "E. 旋云开相",
         "descHtml": "云先生的武戏架势，是真能御敌的。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>以拨云之势旋舞长枪，造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>摆出旋云开相之架势蓄力，形成护盾，伤害吸收量受益于云堇的生命值上限，对所有元素伤害与物理伤害有150%的吸收效果。护盾持续至元素战技施放完毕。<br>松开技能、持续时间结束时，或护盾被破坏时，会挥舞长枪释放积攒的力量进行攻击，造成<span style=\"color: #FFE699FF;\">岩元素伤害</span>。<br>依据蓄力的时间，释放时的状态将分为一段蓄力与二段蓄力。<br><br><i>台上一刹光华，台下十年辛苦。</i>",
         "details": [
-          ["点按伤害", "{param3:F1P}防御力"],
-          ["一段蓄力伤害", "{param4:F1P}防御力"],
-          ["二段蓄力伤害", "{param5:F1P}防御力"],
-          ["护盾吸收量", "{param1:P}生命值上限+{param2:I}"],
-          ["冷却时间", "{param6:F1}秒"]
+          {"label": "点按伤害", "template": "{param3:F1P}防御力"},
+          {"label": "一段蓄力伤害", "template": "{param4:F1P}防御力"},
+          {"label": "二段蓄力伤害", "template": "{param5:F1P}防御力"},
+          {"label": "护盾吸收量", "template": "{param1:P}生命值上限+{param2:I}"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"}
         ]
       },
       {
         "name": "Q. 破嶂见旌仪",
         "descHtml": "造成<span style=\"color: #FFE699FF;\">岩元素范围伤害</span>，并为附近的队伍中所有角色赋予「飞云旗阵」。<br><br><span style=\"color: #FFD780FF;\">飞云旗阵</span><br>对敌人造成普通攻击伤害时，基于云堇自己当前的防御力，提高造成的伤害。<br><br>「飞云旗阵」效果会在持续时间结束或生效一定次数后消失。<br>一次普通攻击同时命中多名敌人时，会依据命中敌人的数量消耗生效次数；队伍中具有「飞云旗阵」的角色，其生效次数单独计算。<br><br><i>「桴鼓声中，刀枪剑戟空翻影，女婵娟今扮作掌旗大将。」</i><br><i>「红毹上琴笛铙钹齐鸣，且看她如何荡平妖魔。」</i>",
         "details": [
-          ["技能伤害", "{param1:P}"],
-          ["伤害值提升", "{param2:P}防御力"],
-          ["持续时间", "{param3:F1}秒"],
-          ["生效次数", "{param6:I}次"],
-          ["冷却时间", "{param4:F1}秒"],
-          ["元素能量", "{param5:I}"]
+          {"label": "技能伤害", "template": "{param1:P}"},
+          {"label": "伤害值提升", "template": "{param2:P}防御力"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "生效次数", "template": "{param6:I}次"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
         ]
       }
     ],

@@ -1,18 +1,17 @@
+import { ItemPicker } from "@/components/shared/ItemPicker";
+import { charactersById, weaponsById } from "@/data/gameResources";
 import {
-  type ArtifactConfig,
-  ItemPicker,
-} from "@/components/shared/ItemPicker";
-import { charactersById, weaponsById } from "@/data/constants";
-import {
+  characterStatsResource,
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
+  weaponStatsResource,
 } from "@/data/gameStatsLoader";
+import type { ArtifactSetConfig } from "@/data/types";
 import type {
   AccountData,
   CharacterResource,
   WeaponResource,
 } from "@/data/types";
-import { useGameStats } from "@/hooks/useGameStats";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import { Diamond, Swords, User } from "lucide-react";
 import { useCallback } from "react";
@@ -22,11 +21,11 @@ type TriggerSize = "xs" | "sm" | "md";
 interface TeamPickerGridProps {
   characters: (string | null)[];
   weapons: (string | null)[];
-  artifacts: (ArtifactConfig | null)[];
+  artifacts: (ArtifactSetConfig | null)[];
   onChange: (patch: {
     characters?: (string | null)[];
     weapons?: (string | null)[];
-    artifacts?: (ArtifactConfig | null)[];
+    artifacts?: (ArtifactSetConfig | null)[];
   }) => void;
   accountData?: AccountData | null;
   triggerSize?: TriggerSize;
@@ -48,7 +47,8 @@ export function TeamPickerGrid({
   prefixOrdering = false,
   gap = "md",
 }: TeamPickerGridProps) {
-  const { characterStats, weaponStats } = useGameStats();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
 
   const gapClass = gap === "sm" ? "gap-x-2 gap-y-2" : "gap-3";
 
@@ -174,7 +174,7 @@ export function TeamPickerGrid({
   );
 
   const handleArtifactChange = useCallback(
-    (idx: number, val: ArtifactConfig | null) => {
+    (idx: number, val: ArtifactSetConfig | null) => {
       const next = [...artifacts];
       next[idx] = val;
       onChange({ artifacts: next });

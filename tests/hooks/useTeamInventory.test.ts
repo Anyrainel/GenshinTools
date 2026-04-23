@@ -1,4 +1,5 @@
-import type { ArtifactData, Slot } from "@/data/types";
+import type { Slot } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import { useTeamInventory } from "@/hooks/useTeamInventory";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";

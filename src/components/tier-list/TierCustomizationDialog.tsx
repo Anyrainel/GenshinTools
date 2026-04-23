@@ -11,8 +11,8 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { tiers } from "@/data/enums";
 import type { TierCustomization } from "@/data/types";
-import { tiers } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 

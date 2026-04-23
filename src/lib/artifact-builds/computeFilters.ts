@@ -3,20 +3,23 @@
  * Based on V3 algorithm with coverage theorem and merge rules
  */
 
-import { artifactHalfSetsById, elementalMainStats } from "../../data/constants";
-import {
-  type ArtifactSetConfigs,
-  type Build,
-  type BuildGroup,
-  type ComputeOptions,
-  type MainStat,
-  type MainStatPlus,
-  type MainStatSlot,
-  type MergeAlgorithm,
-  type SetConfig,
-  type SlotConfig,
-  type SubStat,
-  mainStatsPlus,
+import { mainStatsPlus } from "@/data/constants";
+import type {
+  MainStat,
+  MainStatPlus,
+  MainStatSlot,
+  SubStat,
+} from "@/data/enums";
+import type { MergeAlgorithm } from "@/data/enums";
+import { artifactHalfSetsById } from "@/data/gameResources";
+import { elementalMainStats } from "../../data/constants";
+import type {
+  ArtifactBuildConfigs,
+  Build,
+  BuildConfig,
+  BuildGroup,
+  ComputeOptions,
+  SlotConfig,
 } from "../../data/types";
 import { bruteForcePartitionAsync } from "./bruteForcePartition";
 import { greedyMerge } from "./greedyMerge";
@@ -39,9 +42,9 @@ export const DEFAULT_COMPUTE_OPTIONS: ComputeOptions = {
 export function buildRawConfigs(
   buildGroups: BuildGroup[],
   options: ComputeOptions = DEFAULT_COMPUTE_OPTIONS
-): Record<string, SetConfig[]> {
+): Record<string, BuildConfig[]> {
   const mergedOptions = { ...DEFAULT_COMPUTE_OPTIONS, ...options };
-  const setFilters: Record<string, SetConfig[]> = {};
+  const setFilters: Record<string, BuildConfig[]> = {};
 
   const visibleGroups = buildGroups.filter((group) => !group.hidden);
   for (const { characterId, builds } of visibleGroups) {
@@ -71,7 +74,7 @@ export function buildRawConfigs(
  * When k - |mustPresent| ≤ 1 (at most 1 flexible slot), merging all configs
  * barely affects pass chance. Beyond that, pool expansion matters.
  */
-function isSafeToMergeAll(configs: SetConfig[]): boolean {
+function isSafeToMergeAll(configs: BuildConfig[]): boolean {
   const merged = mergeConfigGroup(configs);
   const flexSlots =
     merged.flowerPlume.minStatCount - merged.flowerPlume.mustPresent.length;
@@ -82,7 +85,7 @@ function isSafeToMergeAll(configs: SetConfig[]): boolean {
  * Post-process: if a config only has 2 substats (N=k=2), append corresponding
  * flat stats (e.g. ATK% → ATK) to widen the filter.
  */
-function appendFlatStats(config: SetConfig): SetConfig {
+function appendFlatStats(config: BuildConfig): BuildConfig {
   if (
     config.flowerPlume.substats.length > 2 ||
     config.flowerPlume.minStatCount !== config.flowerPlume.substats.length
@@ -126,12 +129,12 @@ function appendFlatStats(config: SetConfig): SetConfig {
 }
 
 async function splitAndMergeAsync(
-  configs: SetConfig[],
+  configs: BuildConfig[],
   algorithm: MergeAlgorithm,
   normalizeFlatStats: boolean,
   signal: AbortSignal
-): Promise<SetConfig[]> {
-  const mergeFn = async (group: SetConfig[]) => {
+): Promise<BuildConfig[]> {
+  const mergeFn = async (group: BuildConfig[]) => {
     if (algorithm === "smartMerge") return smartMerge(group);
     if (algorithm === "greedyMerge") return greedyMerge(group);
     return await bruteForcePartitionAsync(group, signal);
@@ -164,12 +167,12 @@ async function splitAndMergeAsync(
  * Checks `signal.aborted` between sets for cancellation.
  */
 export async function mergeConfigsAsync(
-  rawConfigs: Record<string, SetConfig[]>,
+  rawConfigs: Record<string, BuildConfig[]>,
   algorithm: MergeAlgorithm,
   normalizeFlatStats: boolean,
   signal: AbortSignal
-): Promise<ArtifactSetConfigs[]> {
-  const results: ArtifactSetConfigs[] = [];
+): Promise<ArtifactBuildConfigs[]> {
+  const results: ArtifactBuildConfigs[] = [];
   const entries = Object.entries(rawConfigs);
 
   for (const [setId, configs] of entries) {
@@ -191,7 +194,7 @@ export async function mergeConfigsAsync(
   return results;
 }
 
-function finalizeMainStatsConversion(config: SetConfig): SetConfig {
+function finalizeMainStatsConversion(config: BuildConfig): BuildConfig {
   const finalizeSlot = (slot: SlotConfig): SlotConfig => ({
     ...slot,
     mainStats: sortMainStats(expandCrCdMainStats(slot.mainStats)),
@@ -259,7 +262,7 @@ function getMainStatOrder(stat: MainStatPlus): number {
  * Check if build should be skipped (CR+CD auto-lock)
  * Uses must-present detection to determine if both CR and CD are required
  */
-export function hasCrCdMustPresent(config: SetConfig): boolean {
+export function hasCrCdMustPresent(config: BuildConfig): boolean {
   return (
     config.flowerPlume.mustPresent.includes("cr") &&
     config.flowerPlume.mustPresent.includes("cd")
@@ -300,7 +303,7 @@ function createConfigFromBuild(
   characterId: string,
   is4pc: boolean,
   options: ComputeOptions
-): SetConfig {
+): BuildConfig {
   const includeThreshold =
     options.substatWeightThreshold ??
     DEFAULT_COMPUTE_OPTIONS.substatWeightThreshold!;
@@ -422,7 +425,7 @@ function expandMainStats(
  * Sort configurations by priority.
  * CR+CD configs are ranked last so users see non-crit configs first.
  */
-function sortConfigurations(configs: SetConfig[]): SetConfig[] {
+function sortConfigurations(configs: BuildConfig[]): BuildConfig[] {
   return configs.slice().sort((a, b) => {
     // Primary: CR+CD configs go last
     const aCrit = hasCrCdMustPresent(a) ? 1 : 0;

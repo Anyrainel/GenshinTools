@@ -1,4 +1,4 @@
-import type { SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
 import type { QualityTier, TierCondition, TriageRule } from "./types";
 
 function countHits(subs: SubStat[], targets: SubStat[]): number {

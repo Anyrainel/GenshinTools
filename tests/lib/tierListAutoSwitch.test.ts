@@ -1,4 +1,4 @@
-import { handleAccountSwitch } from "@/lib/tierListAutoSwitch";
+import { handleAccountSwitch } from "@/stores/storeEffects";
 import { useTierStore } from "@/stores/useTierStore";
 import { beforeEach, describe, expect, it } from "vitest";
 

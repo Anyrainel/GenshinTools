@@ -1,9 +1,5 @@
-import type {
-  MainStatPlus,
-  SetConfig,
-  SlotConfig,
-  SubStat,
-} from "@/data/types";
+import type { MainStatPlus, SubStat } from "@/data/enums";
+import type { BuildConfig, SlotConfig } from "@/data/types";
 import { greedyMerge } from "@/lib/artifact-builds/greedyMerge";
 import { describe, expect, it } from "vitest";
 
@@ -19,7 +15,7 @@ function createSlotConfig(overrides: Partial<SlotConfig> = {}): SlotConfig {
 }
 
 // Helper to create a complete SetConfig for testing
-function createSetConfig(overrides: Partial<SetConfig> = {}): SetConfig {
+function createSetConfig(overrides: Partial<BuildConfig> = {}): BuildConfig {
   return {
     flowerPlume: createSlotConfig(),
     sands: createSlotConfig(),

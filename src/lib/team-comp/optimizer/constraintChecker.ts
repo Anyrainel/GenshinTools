@@ -5,12 +5,14 @@
  * feasibility checks across DFS, evaluation, and team orchestration.
  */
 
-import { isSelfReceiver } from "../calc/fieldState";
-import type { CompiledTeamDamage } from "../calc/formulaCompiler";
-import { ScalingBuff } from "../calc/statBuff";
-import { StatSheet } from "../calc/statSheet";
-import type { TeamBuild } from "../calc/teamBuild";
-import type { CalcContext, OptFailReason, StatKey } from "../types";
+import type { StatKey } from "@/data/enums";
+import type { CalcContext } from "@/lib/dmgcalc/types";
+import { isSelfReceiver } from "../../dmgcalc/core/fieldState";
+import type { CompiledTeamDamage } from "../../dmgcalc/core/formulaCompiler";
+import { ScalingBuff } from "../../dmgcalc/core/statBuff";
+import { StatSheet } from "../../dmgcalc/core/statSheet";
+import type { TeamBuild } from "../../dmgcalc/core/teamBuild";
+import type { OptFailReason } from "../types";
 import { getArtifactCr, getArtifactEr } from "./artifactScoring";
 import type { ArtifactTuple, PreparedSlotData } from "./types";
 

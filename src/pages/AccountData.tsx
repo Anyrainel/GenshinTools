@@ -12,14 +12,15 @@ import { TriageView } from "@/pages/account-data/TriageView";
 
 import { AccountManagerDialog } from "@/components/account-data/AccountManagerDialog";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
-import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
+import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { getTabsForRoute } from "@/components/layout/appNavigation";
 import { EmptyState } from "@/components/shared/EmptyState";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
-import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Build } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
@@ -32,27 +33,27 @@ import {
 import {
   convertEnkaToGOOD,
   fetchEnkaData,
-} from "@/lib/account-data/enkaFetcher";
+} from "@/lib/account-data/import/enkaFetcher";
 import {
   type ConversionResult,
   type GOODData,
   convertGOODToAccountData,
-} from "@/lib/account-data/goodConversion";
-import type { ConversionWarning } from "@/lib/account-data/goodConversion";
+} from "@/lib/account-data/import/goodConversion";
+import type { ConversionWarning } from "@/lib/account-data/import/goodConversion";
 import {
   convertHoyolabToGOOD,
   fetchHoyolabData,
-} from "@/lib/account-data/hoyolabFetcher";
+} from "@/lib/account-data/import/hoyolabFetcher";
 import {
   type PendingImport,
   routeLocalImport,
   routeResolveImport,
   routeUidImport,
-} from "@/lib/account-data/importRouting";
+} from "@/lib/account-data/import/importRouting";
 import {
   mergeAccountData,
   mergePartialAccountData,
-} from "@/lib/account-data/mergeAccountData";
+} from "@/lib/account-data/import/mergeAccountData";
 import {
   type ArtifactScoreResult,
   scoreWithBuilds,

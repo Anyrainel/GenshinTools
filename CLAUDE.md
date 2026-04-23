@@ -22,6 +22,7 @@ Hosted on **Cloudflare Pages** (`npm run build` → `dist/`).
 - `npm run lint` / `lint:fix` — Biome check / auto-fix
 - `npm run type-check` — TypeScript check (src + tests tsconfigs)
 - `npm run test` / `test:watch` / `test:coverage` — Vitest unit tests
+- `npm run regtest` — Artifact generator golden-file regression test (separate from `test`; also runs in pre-push after `test`)
 - `npm run test:e2e` / `test:e2e:ui` — Playwright e2e tests
 
 ## Styling Rules
@@ -106,7 +107,8 @@ When a new feature requires incompatible changes to a store's data structure:
 3. Always add proper migration logic with respect to the current origin version. If local commits have a new version already, merge the migration logic into the existing local version bump.
 4. Add a migration test to ensure old format can migrate to the new format.
 
-When smooth auto-migration isn't possible, discuss options with the user before proceeding. For non-store refactoring work, backwards compatibility should be avoided, migrate all codebase callers to keep code clean.
+When smooth auto-migration isn't possible, discuss options with the user before proceeding.
+For non-store refactoring work, migrate all codebase callers to keep code clean (one way to import and implement anything). Re-export for backwards compatibility is strictly forbidden.
 
 ## Multi-Agent Environment
 

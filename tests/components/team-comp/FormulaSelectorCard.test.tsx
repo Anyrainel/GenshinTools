@@ -1,7 +1,7 @@
 import { FormulaSelectorCard } from "@/components/team-comp/FormulaSelectorCard";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ComboLine } from "@/lib/team-comp/types";
-import type { Team } from "@/stores/useTeamStore";
+import type { ComboLine } from "@/lib/dmgcalc/types";
+import type { Team } from "@/lib/team-comp/types";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { render, screen } from "../../utils/render";

@@ -12,26 +12,9 @@ import { z } from "zod";
 import type {
   ActionType,
   ParticleEntry,
-  ParticleMode,
   Particles,
+  SelfEnergyMap,
 } from "./types";
-
-// ─── Self-energy data ───
-
-export interface SelfEnergyEntry {
-  source: string;
-  action: string;
-  amount?: number;
-  percentRefund?: number;
-  target: string;
-  minC: number;
-  procs?: number;
-  erScale?: { per100: number; max?: number };
-  param?: { source: string; index: number; multiplier: number };
-  [key: string]: unknown;
-}
-
-export type SelfEnergyMap = Record<string, SelfEnergyEntry[]>;
 
 export const allSelfEnergy: SelfEnergyMap = {
   ...mondstadtSE,
@@ -90,36 +73,6 @@ const ParticleEntrySchema = z.object({
 export const particles: Record<string, ParticleEntry> = z
   .record(z.string(), ParticleEntrySchema)
   .parse(particlesData) as Record<string, ParticleEntry>;
-
-// ─── Particle resolution ───
-
-/** Resolve a Particles value to its (min, expected, max) triple. */
-export function particleRange(p: Particles | undefined): {
-  min: number;
-  expected: number;
-  max: number;
-} {
-  if (p == null) return { min: 0, expected: 0, max: 0 };
-  if (typeof p === "number") return { min: p, expected: p, max: p };
-  let min = 0;
-  let expected = 0;
-  let max = 0;
-  for (const [count, chance] of p) {
-    if (chance >= 0.9999) min += count;
-    expected += count * chance;
-    max += count;
-  }
-  return { min, expected, max };
-}
-
-/** Pick a concrete particle count based on the RNG mode. */
-export function resolveParticles(
-  p: Particles | undefined,
-  mode: ParticleMode
-): number {
-  const r = particleRange(p);
-  return mode === "min" ? r.min : mode === "max" ? r.max : r.expected;
-}
 
 // ─── Energy multipliers ───
 

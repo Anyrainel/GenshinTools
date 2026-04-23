@@ -11,19 +11,21 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 // Mock betaEnabled BEFORE constants.ts evaluates.
-vi.mock("@/data/useBetaStore", () => ({
+vi.mock("@/data/betaState", () => ({
   betaEnabled: () => true,
   setBetaEnabled: () => {},
   maybeHandleBetaMagic: () => false,
 }));
 
 // Mock fetchGzipJson to resolve beta stat files from disk instead of fetch().
-vi.mock("@/data/gzipJson", async (importOriginal) => {
+vi.mock("@/data/utils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/data/utils")>();
   const { readFileSync } = await import("node:fs");
   const { resolve } = await import("node:path");
   const { gunzipSync } = await import("node:zlib");
 
   return {
+    ...actual,
     fetchGzipJson: async (url: string) => {
       // url is like "/src/data/game/character_beta_stats.json.gz"
       const fileName = url.split("/").pop()!;
@@ -42,14 +44,20 @@ vi.mock("@/data/gzipJson", async (importOriginal) => {
     },
   };
 });
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { createCharacter } from "@/lib/team-comp/calc/registry";
-import { TeamMeta } from "@/lib/team-comp/calc/teamMeta";
-import type { FormulaEntry } from "@/lib/team-comp/types";
-import "@/lib/team-comp/index";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
+import { createCharacter } from "@/lib/dmgcalc/core/registry";
+import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
+import type { FormulaEntry } from "@/lib/dmgcalc/types";
+import "@/lib/dmgcalc";
 
 beforeAll(async () => {
-  await preloadGameStats();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
 });
 
 function nicoleWithTeam(teammates: string[], constellation = 0) {

@@ -15,18 +15,19 @@ import {
 } from "@/components/ui/hover-card";
 import { Progress } from "@/components/ui/progress";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
-import type { SubStat } from "@/data/types";
+import type { SubStat } from "@/data/enums";
+import { charactersById, weaponsById } from "@/data/gameResources";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { DEFAULT_CALC_CONTEXT } from "@/lib/dmgcalc/constants";
+import type { CalcContext } from "@/lib/dmgcalc/types";
 import type { WeaponChoiceProgress } from "@/lib/team-comp/analyzer/weaponChoice";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
-import { type CalcContext, DEFAULT_CALC_CONTEXT } from "@/lib/team-comp/types";
-import { cn, getAssetUrl } from "@/lib/utils";
 import type {
   Team,
   WeaponChoiceResult,
   WeaponRanking,
-} from "@/stores/useTeamStore";
+} from "@/lib/team-comp/types";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { Loader2, Play } from "lucide-react";
 import { useCallback } from "react";
 import {

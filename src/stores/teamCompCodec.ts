@@ -14,14 +14,14 @@
  * Indices are 1-based into the resource arrays.
  */
 
-import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import {
   allArtifacts,
   allCharacters,
+  allHalfSets,
   allWeapons,
-  artifactHalfSets,
-} from "@/data/constants";
-import { getCharacterStatsSync } from "@/data/gameStatsLoader";
+} from "@/data/gameResources";
+import { characterStatsResource } from "@/data/gameStatsLoader";
+import type { ArtifactSetConfig } from "@/data/types";
 import { toBase64 } from "@/lib/base64";
 
 // ── Index maps (built once at module load) ──
@@ -34,7 +34,7 @@ const artSetToIdx = new Map(
   allArtifacts.map((a, i, arr) => [a.id, arr.length - i])
 );
 const halfSetToIdx = new Map(
-  artifactHalfSets.map((h, i, a) => [h.id, a.length - i])
+  allHalfSets.map((h, i, a) => [h.id, a.length - i])
 );
 
 // ── Sorting ──
@@ -46,7 +46,7 @@ let charReleaseSortKey: Map<string, number> | null = null;
 function ensureSortKeys(): Map<string, number> {
   if (charReleaseSortKey) return charReleaseSortKey;
   charReleaseSortKey = new Map();
-  const stats = getCharacterStatsSync();
+  const stats = characterStatsResource.peek();
   if (stats) {
     for (const [id, entry] of Object.entries(stats)) {
       const d = (entry as { releaseDate?: string }).releaseDate
@@ -77,7 +77,7 @@ const BITS_PER_MEMBER = 27n;
 export function encodeTeamId(
   characters: (string | null)[],
   weapons: (string | null)[],
-  artifacts: (ArtifactConfig | null)[]
+  artifacts: (ArtifactSetConfig | null)[]
 ): string {
   let packed = 0n;
   for (let i = 0; i < 4; i++) {
@@ -95,7 +95,7 @@ export function encodeTeamId(
 function packMember(
   charId: string | null,
   weaponId: string | null,
-  artifact: ArtifactConfig | null
+  artifact: ArtifactSetConfig | null
 ): bigint {
   const ci = charId ? (charToIdx.get(charId) ?? 0) : 0;
   const wi = weaponId ? (weaponToIdx.get(weaponId) ?? 0) : 0;

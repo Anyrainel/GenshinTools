@@ -1,6 +1,7 @@
-import type { AccountData, ArtifactData, Slot } from "@/data/types";
-import { buildEquipInstructions } from "@/lib/artifact-manager/instructions";
-import type { Team } from "@/stores/useTeamStore";
+import type { Slot } from "@/data/enums";
+import type { AccountData, ArtifactData } from "@/data/types";
+import { buildEquipInstructions } from "@/lib/account-data/manager/instructions";
+import type { Team } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {

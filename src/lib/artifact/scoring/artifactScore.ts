@@ -1,24 +1,23 @@
 import { charInfo } from "@/data/charInfo";
-import { artifactIdToHalfSetId, statPools } from "@/data/constants";
+import { SUBSTAT_COEFFICIENTS, statPools } from "@/data/constants";
+import { allSlots, mainStatSlots } from "@/data/enums";
+import type { MainStat, MainStatSlot, Slot, SubStat } from "@/data/enums";
+import { artifactIdToHalfSetId } from "@/data/gameResources";
 import type {
   ArtifactData,
   Build,
   CharacterData,
   GlobalStatWeights,
-  MainStat,
-  MainStatSlot,
-  Slot,
-  SubStat,
   WeightedMainStat,
 } from "@/data/types";
-import { allSlots, mainStatSlots } from "@/data/types";
+import { getMainStatValue } from "@/data/utils";
 import {
   MAIN_STAT_CD_EQUIV_4STAR,
   MAIN_STAT_CD_EQUIV_5STAR,
-  SUBSTAT_COEFFICIENTS,
+} from "./constants";
+import {
   computeCrDeduction,
   computeIdealScore as computeIdealScoreShared,
-  getMainStatValue,
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
   getSubstatMaxRoll,
@@ -43,11 +42,6 @@ const SUB_STATS: SubStat[] = [
   "hp",
   "def",
 ];
-
-/** @deprecated Use getMainStatValue from scoring/utils instead */
-export const getFixedMainStatValue = getMainStatValue;
-
-export { getMainStatValueAtLevel };
 
 /** Per-stat breakdown for UI (value and weighted sub-score only; main score not exposed). */
 export interface StatScoreBreakdown {
@@ -157,7 +151,7 @@ export function scoreMainStat(
   const value =
     level != null
       ? getMainStatValueAtLevel(mainStat, rarity, level)
-      : getFixedMainStatValue(mainStat, rarity);
+      : getMainStatValue(mainStat, rarity);
   if (!value) return 0;
 
   // SubStat-typed mains: reroute through the substat formula at weight 100.
@@ -519,7 +513,7 @@ export function scoreAllSlots(
         const artifact = char.artifacts?.[slot];
         if (artifact?.mainStatKey === "cr") {
           const rarity = artifact.rarity === 4 ? 4 : 5;
-          totalArtifactCr += getFixedMainStatValue("cr", rarity) / 100;
+          totalArtifactCr += getMainStatValue("cr", rarity) / 100;
         }
       }
       subScore -= computeCrDeduction(totalArtifactCr, nonArtifactCr, crWeight);

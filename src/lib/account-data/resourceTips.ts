@@ -12,18 +12,16 @@
  * design spec for details. The score proxy is consistent with EvaluationView.
  */
 
-import { artifactsById } from "@/data/constants";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import type { Tier } from "@/data/enums";
+import { artifactsById } from "@/data/gameResources";
 import type {
   AccountData,
   ArtifactData,
   GlobalStatWeights,
-  MainStat,
-  Slot,
-  SubStat,
-  Tier,
   TierAssignment,
 } from "@/data/types";
-import { allSlots } from "@/data/types";
 import {
   type StatWeightMap,
   calculateStatScore,

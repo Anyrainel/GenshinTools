@@ -17,14 +17,17 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { statPools } from "@/data/constants";
-import type { MainStat, Slot, SubStat } from "@/data/types";
-import { allSlots } from "@/data/types";
-import { buildCustomFlexPattern, sortSubs } from "@/lib/account-data/triage";
+import { allSlots } from "@/data/enums";
+import type { MainStat, Slot, SubStat } from "@/data/enums";
+import {
+  buildCustomFlexPattern,
+  sortSubs,
+} from "@/lib/account-data/triage/flexRegistry";
 import type {
   CustomFlexInput,
   FlexPattern,
   TriageSettings,
-} from "@/lib/account-data/triage";
+} from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";

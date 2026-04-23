@@ -14,27 +14,17 @@
  */
 
 // Ensure all character/weapon/artifact implementations are registered
-import "@/lib/team-comp";
+import "@/lib/dmgcalc";
 
 import { getGobletPool, statPools } from "@/data/constants";
-import { getCharacterStatsSync } from "@/data/gameStatsLoader";
-import type {
-  Element,
-  MainStat,
-  Slot,
-  SubStat,
-  WeightedMainStat,
-  WeightedSubStat,
-} from "@/data/types";
-import { StatSheet } from "@/lib/team-comp/calc/statSheet";
-import { TeamBuild } from "@/lib/team-comp/calc/teamBuild";
-import { MULTI_ELEMENT_CHARS } from "@/lib/team-comp/constants";
-import {
-  buildSheetFromMainAndSubs,
-  emptySubRolls,
-  getRollValues,
-} from "@/lib/team-comp/generator/constrainedGreedy";
-import type { I18nLabel, StatKey, TeamSlotConfig } from "@/lib/team-comp/types";
+import type { Element, MainStat, Slot, SubStat } from "@/data/enums";
+import type { StatKey } from "@/data/enums";
+import { characterStatsResource } from "@/data/gameStatsLoader";
+import type { WeightedMainStat, WeightedSubStat } from "@/data/types";
+import { MULTI_ELEMENT_CHARS } from "@/lib/dmgcalc/constants";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { I18nLabel, TeamSlotConfig } from "@/lib/dmgcalc/types";
 import {
   DEFAULT_CALC_CTX,
   TUNABLE_SUBSTATS,
@@ -42,10 +32,21 @@ import {
   autoTuneWeights,
   averageWeights,
   compileAutoTuneEval,
-  computeIdealScore,
   toWeightedFormulas,
 } from "../../artifact-builds/auto-tune/autoTune";
-import type { AutoTuneResult } from "./utils";
+import { buildSheetFromMainAndSubs } from "./sheetBuilder";
+import { getRollValues } from "./utils";
+import { emptySubRolls } from "./utils";
+import { computeIdealScore } from "./utils";
+
+/** Result of the auto-tuning pipeline for a single main-stat combo + team context */
+export type AutoTuneResult = {
+  weights: Record<SubStat, number>;
+  rollAllocation: Record<SubStat, number>;
+  midpointMarginals: Record<SubStat, number>;
+  /** Total damage after applying full greedy allocation (sum of all formulas) */
+  finalDamage: number;
+};
 
 // ─── Main stat candidates per slot (from canonical statPools) ───
 
@@ -98,7 +99,7 @@ function buildTeamArtifactStats(
 
 /** Resolve the DPS character's element from character_stats.json. */
 function resolveElement(charId: string): string {
-  const charStats = getCharacterStatsSync();
+  const charStats = characterStatsResource.peek();
   if (!charStats) return "";
   return charStats[charId]?.element ?? "";
 }

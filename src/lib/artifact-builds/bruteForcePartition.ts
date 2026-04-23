@@ -17,7 +17,7 @@
  * stays responsive even for sets with many configs.
  */
 
-import type { SetConfig } from "../../data/types";
+import type { BuildConfig } from "../../data/types";
 import { computeSlotChances } from "./artifactChance";
 import {
   SLOT_KEYS,
@@ -37,14 +37,14 @@ const MAX_GROUPS = 3;
 /** Yield to the event loop every this many partition evaluations. */
 const YIELD_INTERVAL = 64;
 
-function worstSlotPassChance(config: SetConfig): number {
+function worstSlotPassChance(config: BuildConfig): number {
   const chances = computeSlotChances(config);
   return Math.max(...SLOT_KEYS.map((s) => chances[s]));
 }
 
 interface Best {
   /** Best result per exact group count, indexed by groups-1. */
-  perCount: Array<{ result: SetConfig[]; maxPass: number } | null>;
+  perCount: Array<{ result: BuildConfig[]; maxPass: number } | null>;
 }
 
 /**
@@ -55,7 +55,7 @@ interface Best {
  * If `onIter` is provided, it is called once per leaf; it may throw to abort.
  */
 function enumerate(
-  configs: SetConfig[],
+  configs: BuildConfig[],
   maxGroups: number,
   best: Best,
   onIter?: () => void
@@ -80,7 +80,7 @@ function enumerate(
       const groupIdx: number[][] = Array.from({ length: groupCount }, () => []);
       for (let j = 0; j < n; j++) groupIdx[labels[j]].push(j);
 
-      const merged: SetConfig[] = [];
+      const merged: BuildConfig[] = [];
       let maxPass = 0;
       let aborted = false;
       for (let g = 0; g < groupCount; g++) {
@@ -113,7 +113,7 @@ function enumerate(
  * hierarchical SPLIT_THRESHOLD preference: fewer configs win unless the
  * next level improves max pass chance by at least SPLIT_THRESHOLD.
  */
-function chooseBest(best: Best): SetConfig[] {
+function chooseBest(best: Best): BuildConfig[] {
   let chosen = best.perCount[0]!;
   for (let k = 1; k < best.perCount.length; k++) {
     const next = best.perCount[k];
@@ -129,7 +129,7 @@ function chooseBest(best: Best): SetConfig[] {
  * Synchronous brute-force partition.
  * Used by the sync `computeArtifactFilters` wrapper (tests, export, etc.).
  */
-export function bruteForcePartition(rawConfigs: SetConfig[]): SetConfig[] {
+export function bruteForcePartition(rawConfigs: BuildConfig[]): BuildConfig[] {
   if (rawConfigs.length <= 1) return rawConfigs;
 
   const configs = coalesceByFingerprint(rawConfigs);
@@ -157,9 +157,9 @@ export function bruteForcePartition(rawConfigs: SetConfig[]): SetConfig[] {
  * Supports cancellation via AbortSignal.
  */
 export async function bruteForcePartitionAsync(
-  rawConfigs: SetConfig[],
+  rawConfigs: BuildConfig[],
   signal: AbortSignal
-): Promise<SetConfig[]> {
+): Promise<BuildConfig[]> {
   if (rawConfigs.length <= 1) return rawConfigs;
 
   const configs = coalesceByFingerprint(rawConfigs);
