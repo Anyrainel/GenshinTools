@@ -1,3 +1,5 @@
+import { ChevronDown, ChevronUp, Flame, Snowflake } from "lucide-react";
+import { useMemo, useState } from "react";
 import { StatSheetPanel } from "@/components/team-comp/StatSheetPanel";
 import { SwapGuide } from "@/components/team-comp/SwapGuide";
 import { Button } from "@/components/ui/button";
@@ -7,11 +9,8 @@ import { charactersById } from "@/data/gameResources";
 import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
 import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { ChevronDown, ChevronUp, Flame, Snowflake } from "lucide-react";
-import { useMemo, useState } from "react";
 
 interface FrozenTeamSectionProps {
-  teamId: string;
   team: Team;
   /** 1-based display index for the "Team N" label. */
   teamIndex: number;
@@ -29,7 +28,6 @@ interface FrozenTeamSectionProps {
 }
 
 export function FrozenTeamSection({
-  teamId,
   team,
   teamIndex,
   frozenCharIds,

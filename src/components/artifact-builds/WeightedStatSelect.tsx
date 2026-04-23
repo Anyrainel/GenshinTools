@@ -1,3 +1,5 @@
+import { Plus } from "lucide-react";
+import { memo, useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,8 +18,6 @@ import {
 } from "@/components/ui/weighted-select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
-import { memo, useCallback, useState } from "react";
 
 /** Generic weighted stat item — works for both substats and main stats. */
 type WeightedItem = { stat: string; weight: number };

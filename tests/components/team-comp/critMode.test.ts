@@ -1,9 +1,9 @@
+import { describe, expect, it } from "vitest";
 import {
   adjustPartDamage,
   formulaCritRatio,
 } from "@/lib/dmgcalc/core/formulaDisplay";
 import type { DisplayPart } from "@/lib/dmgcalc/types";
-import { describe, expect, it } from "vitest";
 
 /** Helper to build a minimal DisplayPart with the fields adjustPartDamage reads. */
 function makePart(

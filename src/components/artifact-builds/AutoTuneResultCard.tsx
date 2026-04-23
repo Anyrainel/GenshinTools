@@ -1,3 +1,5 @@
+import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { useState } from "react";
 import {
   ComboTable,
   MainStatColumn,
@@ -12,12 +14,10 @@ import type { AccountData, Build } from "@/data/types";
 import type {
   AutoTuneOutput,
   TeamBreakdown,
-} from "@/lib/artifact/scoring/pipeline";
+} from "@/lib/artifact-builds/auto-tune/pipeline";
 import type { Team } from "@/lib/team-comp/types";
 import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
-import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
-import { useState } from "react";
 import { ELEMENT_HEX, getElementColor } from "../shared/colors";
 
 type EntryStatus = "idle" | "computing" | "done" | "applied";

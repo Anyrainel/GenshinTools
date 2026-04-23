@@ -1,3 +1,5 @@
+import { Trash2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import { StatSelect } from "@/components/artifact-builds/StatSelect";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +19,8 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { statPools } from "@/data/constants";
-import { allSlots } from "@/data/enums";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import {
   buildCustomFlexPattern,
   sortSubs,
@@ -29,8 +31,6 @@ import type {
   TriageSettings,
 } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
 
 export function FlexPatternDialog({
   open,

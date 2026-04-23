@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
 import {
   ArtifactManagerError,
@@ -18,7 +19,6 @@ import type {
   SubmitResponse,
 } from "@/lib/account-data/manager/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 export type JobPhase =
   | { type: "idle" }

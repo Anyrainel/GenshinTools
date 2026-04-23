@@ -1,3 +1,14 @@
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  CircleHelp,
+  Monitor,
+  Puzzle,
+  Settings,
+} from "lucide-react";
+import { useState } from "react";
 import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { TriageSettingsPanel } from "@/components/account-data/TriageSettingsPanel";
@@ -20,17 +31,6 @@ import type {
   TriageSettings,
 } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronsDownUp,
-  ChevronsUpDown,
-  CircleHelp,
-  Monitor,
-  Puzzle,
-  Settings,
-} from "lucide-react";
-import { useState } from "react";
 import { TRIAGE_TIER_COLORS } from "../shared/colors";
 
 type T = ReturnType<typeof useLanguage>["t"];

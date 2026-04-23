@@ -1,7 +1,7 @@
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
 
 interface ArtifactMixedBuilderProps {
   mixedSlot1: string | null;

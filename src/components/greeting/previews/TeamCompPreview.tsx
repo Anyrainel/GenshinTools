@@ -1,9 +1,3 @@
-import { ItemIcon } from "@/components/shared/ItemIcon";
-import { CharacterWeaponPanel } from "@/components/team-comp/WeaponChoiceResultCard";
-import { Button } from "@/components/ui/button";
-import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/gameResources";
-import { cn, getAssetUrl } from "@/lib/utils";
 import {
   ChevronsUpDown,
   Crosshair,
@@ -14,6 +8,12 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { CharacterWeaponPanel } from "@/components/team-comp/WeaponChoiceResultCard";
+import { Button } from "@/components/ui/button";
+import type { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/gameResources";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { AnimatedTabPreview, type TabDef } from "./AnimatedTabPreview";
 import {
   PREVIEW_FORMULA_LABEL,
@@ -29,6 +29,14 @@ const tabs: TabDef[] = [
   { icon: Snowflake, labelKey: "teamComp.tabFrozen" },
   { icon: TrendingUp, labelKey: "teamComp.tabInvestment" },
   { icon: Medal, labelKey: "teamComp.tabWeaponChoice" },
+];
+
+/* Edges: [fromId, toId, isBest] — gold only when both endpoints are optimal */
+const INVESTMENT_EDGES: [string, string, boolean][] = [
+  ["0", "1", true],
+  ["0", "2", false],
+  ["1", "3", true],
+  ["2", "3", false],
 ];
 
 export default function TeamCompPreview({ t }: PreviewProps) {
@@ -218,14 +226,6 @@ function InvestmentContent({ t }: PreviewProps) {
     ],
   ];
 
-  /* Edges: [fromId, toId, isBest] — gold only when both endpoints are optimal */
-  const edges: [string, string, boolean][] = [
-    ["0", "1", true],
-    ["0", "2", false],
-    ["1", "3", true],
-    ["2", "3", false],
-  ];
-
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef(new Map<string, HTMLDivElement>());
   const [lines, setLines] = useState<
@@ -237,7 +237,7 @@ function InvestmentContent({ t }: PreviewProps) {
     if (!container) return;
     const cRect = container.getBoundingClientRect();
     const result: typeof lines = [];
-    for (const [fromId, toId, isBest] of edges) {
+    for (const [fromId, toId, isBest] of INVESTMENT_EDGES) {
       const fromEl = nodeRefs.current.get(fromId);
       const toEl = nodeRefs.current.get(toId);
       if (!fromEl || !toEl) continue;

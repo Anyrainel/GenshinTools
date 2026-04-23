@@ -1,8 +1,8 @@
+import { forwardRef, type ReactNode } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Tier } from "@/data/enums";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { type ReactNode, forwardRef } from "react";
 import { getTierColor } from "../shared/colors";
 import { TierCell } from "./TierCell";
 import type { TierGroupConfig, TierItemData } from "./tierTableTypes";

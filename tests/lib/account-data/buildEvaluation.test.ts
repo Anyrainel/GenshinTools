@@ -1,5 +1,6 @@
-import { allSlots } from "@/data/enums";
+import { describe, expect, it } from "vitest";
 import type { MainStat, Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type {
   ArtifactData,
   Build,
@@ -7,8 +8,8 @@ import type {
   GlobalStatWeights,
 } from "@/data/types";
 import {
-  type EvalBuild,
   collectEvalBuilds,
+  type EvalBuild,
   evaluateAllBuilds,
   getArchetypeLabel,
   getArchetypeRole,
@@ -16,7 +17,6 @@ import {
   getScalingStat,
   getTier,
 } from "@/lib/account-data/buildEvaluation";
-import { describe, expect, it } from "vitest";
 import { createAccountData, createArtifactData } from "../../fixtures";
 
 // Helpers & Factories
@@ -104,21 +104,6 @@ const atkDpsBuild = createBuild({
   ],
   artifactSet: "fragment_of_harmonic_whimsy",
   roles: ["dps"],
-});
-
-const hpSupportBuild = createBuild({
-  id: "hp-support",
-  sandsWeights: [{ stat: "hp%", weight: 100 }],
-  gobletWeights: [{ stat: "hp%", weight: 100 }],
-  circletWeights: [{ stat: "heal%", weight: 100 }],
-  substats: [
-    { stat: "hp%", weight: 100 },
-    { stat: "er", weight: 80 },
-    { stat: "em", weight: 50 },
-  ],
-  artifactSet: "tenacity_of_the_millelith",
-  characterId: "zhongli",
-  roles: ["support"],
 });
 
 const twoPlusTwoBuild = createBuild({

@@ -1,3 +1,5 @@
+import { Loader2, Minus, Plus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -8,25 +10,21 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
-import type { ArtifactSetConfig } from "@/data/types";
-import type { AccountData, Build } from "@/data/types";
+import type { Element, ReactionType } from "@/data/enums";
+import type { AccountData, ArtifactSetConfig, Build } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
 import type {
   AutoTuneOutput,
   AutoTuneTeamResult,
-} from "@/lib/artifact/scoring/pipeline";
-import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
+} from "@/lib/artifact-builds/auto-tune/pipeline";
+import { aggregateTeamResults } from "@/lib/artifact-builds/auto-tune/pipeline";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/dmgcalc/constants";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { ComboLine, I18nLabel } from "@/lib/dmgcalc/types";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
 import type { Team } from "@/lib/team-comp/types";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Loader2, Minus, Plus } from "lucide-react";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { AutoTuneResults } from "./AutoTuneResults";
 import { AutoTuneTeamRow } from "./AutoTuneTeamRow";
 import { TeamEditDialog } from "./TeamEditDialog";

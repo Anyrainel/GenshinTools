@@ -1,10 +1,10 @@
+import { waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import {
   ErrorBoundary,
   PageErrorBoundary,
   SectionErrorBoundary,
 } from "@/components/shared/ErrorBoundary";
-import { waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 // A component that throws when `shouldThrow` is true

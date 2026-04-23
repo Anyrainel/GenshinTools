@@ -1,13 +1,17 @@
-import { allSlots } from "@/data/enums";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
   artifactsById,
 } from "@/data/gameResources";
 import { getCharacterLevelTier } from "@/data/gameStatsLoader";
-import type { AccountData, ArtifactData, TierAssignment } from "@/data/types";
-import type { ArtifactSetConfig } from "@/data/types";
+import type {
+  AccountData,
+  ArtifactData,
+  ArtifactSetConfig,
+  TierAssignment,
+} from "@/data/types";
 import type {
   CharBaseConfig,
   Team,

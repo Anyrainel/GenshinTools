@@ -6,12 +6,12 @@
  * we focus on testing behavior (edge cases, constraints) rather than exact numbers.
  */
 
+import { describe, expect, it } from "vitest";
 import type { BuildConfig, SlotConfig } from "@/data/types";
 import {
   computeSlotChance,
   computeSlotChances,
 } from "@/lib/artifact-builds/artifactChance";
-import { describe, expect, it } from "vitest";
 
 // Helper to create a minimal SlotConfig
 function createSlotConfig(overrides: Partial<SlotConfig> = {}): SlotConfig {

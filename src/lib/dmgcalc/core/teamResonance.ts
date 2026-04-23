@@ -1,7 +1,6 @@
 import type { Element } from "@/data/enums";
 import type { StatEntry } from "@/data/types";
-import type { BuffTarget } from "../types";
-import type { BuffSource } from "../types";
+import type { BuffSource, BuffTarget } from "../types";
 import type { IStatProvider } from "./implModel";
 import { ScalingBuff, StatBuff } from "./statBuff";
 import type { TeamMeta } from "./teamMeta";
@@ -25,7 +24,6 @@ export class TeamResonance implements IStatProvider {
       if (el === undefined) continue;
       elemCounts.set(el, (elemCounts.get(el) ?? 0) + 1);
     }
-    const uniqueElements = elemCounts.size;
 
     // Pyro 2+: ATK +25%
     if ((elemCounts.get("Pyro") ?? 0) >= 2) {

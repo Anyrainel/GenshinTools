@@ -6,6 +6,8 @@
  * slider (hits > 1) or toggle (hits === 1) for activation control.
  */
 
+import { Settings2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import { getReceiverColor } from "@/components/shared/colors";
 import {
   type StatEntryData,
@@ -28,16 +30,14 @@ import {
   useTemplateName,
 } from "@/hooks/useBuffLabels";
 import type {
+  BuffActivationMap,
   DisplayPart,
   ResolvedBuff,
   ResolvedStatEntry,
 } from "@/lib/dmgcalc/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
 import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
-import { Settings2 } from "lucide-react";
-import { useMemo, useState } from "react";
 
 type Props = {
   parts: DisplayPart[];
@@ -81,7 +81,6 @@ function PartTab({
   const sourceName = useBuffSourceName();
   const filterLabel = useBuffFilterLabel();
   const receiverLabel = useBuffReceiverLabel();
-  const templateName = useTemplateName();
   const hits = part.hits ?? 1;
   // Route to comboOverrides whenever comboKey is provided — the damage-calc
   // path always reads from comboOverrides (single mode uses comboId
@@ -303,7 +302,7 @@ export function PartBuffDialog({
   const [activeTab, setActiveTab] = useState(initialTab);
   const templateName = useTemplateName();
   const isCombo = comboKey != null;
-  const overrides = useBuffOverrideStore((s) =>
+  const _overrides = useBuffOverrideStore((s) =>
     isCombo ? s.comboOverrides[comboKey] : s.overrides[formulaKey]
   );
 

@@ -4,8 +4,7 @@ import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { TeamMeta } from "../core/teamMeta";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
+import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 // 5★ Fontaine Characters

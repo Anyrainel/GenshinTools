@@ -1,3 +1,5 @@
+import { ArrowRight, CircleHelp } from "lucide-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { ArtifactStatList } from "@/components/shared/ArtifactStatList";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
@@ -17,8 +19,6 @@ import type { Slot } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
-import { ArrowRight, CircleHelp } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
 import { getRarityColor } from "./colors";
 
 // ArtifactDataContent - Shared content component for single artifact display
@@ -256,12 +256,6 @@ export function ArtifactDataHoverCard({
     };
   }, [isPinned]);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsPinned((prev) => !prev);
-  };
-
   const handleOpenChange = (open: boolean) => {
     if (isPinned) return;
     setIsHovering(open);
@@ -358,12 +352,6 @@ export function ArtifactComparisonHoverCard({
       document.removeEventListener("click", handleClickOutside);
     };
   }, [isPinned]);
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsPinned((prev) => !prev);
-  };
 
   const handleOpenChange = (open: boolean) => {
     if (isPinned) return;

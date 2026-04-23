@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
 import {
@@ -12,7 +13,6 @@ import type {
   InstructionResult,
   ManagePayload,
 } from "@/lib/account-data/manager/types";
-import { describe, expect, it } from "vitest";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {

@@ -1,23 +1,19 @@
+import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
-import {
-  ArtifactBuildsView,
-  type ArtifactBuildsViewHandle,
-} from "@/pages/artifact-builds/ArtifactBuildsView";
-import { AutoTuneView } from "@/pages/artifact-builds/AutoTuneView";
-import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
-
 import type { ActionConfig } from "@/components/layout/AppBar";
-import { PageLayout } from "@/components/layout/PageLayout";
 import { getTabsForRoute } from "@/components/layout/appNavigation";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
-import type { ControlHandle } from "@/components/shared/controlHandle";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { BuildPayload, BuildPayloadV5, PresetOption } from "@/data/types";
-
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
@@ -26,11 +22,13 @@ import {
   getCachedPresetMetadata,
   loadPresetMetadata,
 } from "@/lib/presetLoader";
+import {
+  ArtifactBuildsView,
+  type ArtifactBuildsViewHandle,
+} from "@/pages/artifact-builds/ArtifactBuildsView";
+import { AutoTuneView } from "@/pages/artifact-builds/AutoTuneView";
+import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
 
 const isValidArtifactBuildsTab = (
   tab: string | null

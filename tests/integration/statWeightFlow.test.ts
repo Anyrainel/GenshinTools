@@ -12,8 +12,8 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import {
-  type GOODData,
   convertGOODToAccountData,
+  type GOODData,
 } from "@/lib/account-data/import/goodConversion";
 import { scoreAllSlots } from "@/lib/artifact/scoring/artifactScore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
@@ -116,9 +116,8 @@ describe("Integration: Stat Weight Configuration Flow", () => {
     it("calculates score for imported character", () => {
       const { data } = convertGOODToAccountData(testGOODData);
       const character = data.characters[0];
-      const config = useArtifactScoreStore.getState().config;
 
-      const score = scoreAllSlots(character, testWeights, config.global);
+      const score = scoreAllSlots(character, testWeights);
 
       expect(score).toBeDefined();
       expect(score.subScore).toBeGreaterThan(0); // Has crit substats
@@ -126,12 +125,6 @@ describe("Integration: Stat Weight Configuration Flow", () => {
     });
 
     it("score changes when global flat weights change", () => {
-      const { data } = convertGOODToAccountData(testGOODData);
-      const character = data.characters[0];
-      const config = useArtifactScoreStore.getState().config;
-
-      const initialScore = scoreAllSlots(character, testWeights, config.global);
-
       act(() => {
         useArtifactScoreStore.getState().setGlobalWeight("flatAtk", 0);
         useArtifactScoreStore.getState().setGlobalWeight("flatHp", 0);
@@ -139,15 +132,9 @@ describe("Integration: Stat Weight Configuration Flow", () => {
       });
 
       const updatedConfig = useArtifactScoreStore.getState().config;
-      const updatedScore = scoreAllSlots(
-        character,
-        testWeights,
-        updatedConfig.global
-      );
-
       expect(updatedConfig.global.flatAtk).toBe(0);
       expect(updatedConfig.global.flatHp).toBe(0);
-      expect(updatedScore.subScore).toBeDefined();
+      expect(updatedConfig.global.flatDef).toBe(0);
     });
   });
 

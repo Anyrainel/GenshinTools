@@ -1,3 +1,6 @@
+import { Clock, Crown, Wine } from "lucide-react";
+import { memo } from "react";
+import { Link } from "react-router-dom";
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
@@ -11,15 +14,12 @@ import { charactersById } from "@/data/gameResources";
 import {
   type BuildEvaluation,
   type EvalBuild,
-  type SlotEvaluation,
   getArchetypeLabel,
   getBarColor,
   getTier,
+  type SlotEvaluation,
 } from "@/lib/account-data/buildEvaluation";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Clock, Crown, Wine } from "lucide-react";
-import { memo } from "react";
-import { Link } from "react-router-dom";
 
 // Slot label icons for sands/goblet/circlet (compact alternative to text)
 const slotIcons = {

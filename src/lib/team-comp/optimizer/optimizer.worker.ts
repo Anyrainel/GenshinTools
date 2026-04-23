@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type { Element } from "@/data/enums";
 /**
  * Web Worker for Phase 1 per-character B&B.
@@ -7,19 +8,18 @@ import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import { z } from "zod";
+import type { ArtifactData } from "@/data/types";
 // Side-effect: register all character/weapon/artifact implementations
 import "../../dmgcalc/index";
 import type { StatKey } from "@/data/enums";
-import type { OptionMap } from "@/lib/dmgcalc/types";
-import type { ExtraBuff } from "@/lib/dmgcalc/types";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboFormula,
+  ExtraBuff,
+  OptionMap,
   TeamSlotConfig,
 } from "@/lib/dmgcalc/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
 import { StatSheet } from "../../dmgcalc/core/statSheet";
 import { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import { TeamSlotConfigSchema } from "../schemas";
@@ -37,7 +37,6 @@ export type BnBWorkerRequest = {
   // B&B parameters
   carryCharId: string;
   inventory: ArtifactData[];
-  globalConfig: GlobalStatWeights;
   baseSheetsDump: Record<
     string,
     { key: StatKey; filterKey: string; value: number }[]
@@ -148,7 +147,6 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       teamBuild,
       req.carryCharId,
       req.inventory,
-      req.globalConfig,
       baseSheets,
       req.calcContext,
       req.excludedIds ? new Set(req.excludedIds) : undefined,

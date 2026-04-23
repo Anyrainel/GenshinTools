@@ -1,7 +1,7 @@
+import userEvent from "@testing-library/user-event";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { characters } from "@/data/resources";
 import { useAccountStore } from "@/stores/useAccountStore";
-import userEvent from "@testing-library/user-event";
 import { render, screen, waitFor } from "../../utils/render";
 
 describe("ItemPicker", () => {
@@ -190,7 +190,7 @@ describe("ItemPicker", () => {
       expect(getIsOwned("character", unownedIds[0])).toBe(false);
 
       const user = userEvent.setup({ delay: null });
-      const { container } = render(
+      render(
         <ItemPicker
           type="character"
           value={null}

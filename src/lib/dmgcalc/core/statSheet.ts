@@ -1,12 +1,15 @@
-import type { ElementalOrPhysical } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
+import type { ElementalOrPhysical, StatKey } from "@/data/enums";
 import type { ArtifactData, StatEntry } from "@/data/types";
 import {
   getMainStatValueAtLevel,
   toInternal,
 } from "@/lib/artifact/scoring/utils";
-import type { BuffTarget } from "../types";
-import type { DamageTag, DamageTagFilter, FieldState } from "../types";
+import type {
+  BuffTarget,
+  DamageTag,
+  DamageTagFilter,
+  FieldState,
+} from "../types";
 import { filterMatchesTag } from "../utils";
 import type { StatBuff } from "./statBuff";
 
@@ -138,7 +141,7 @@ export class StatSheet {
     const entries: StatEntry[] = [];
 
     for (const art of artifacts) {
-      if (!art || !art.mainStatKey) continue;
+      if (!art?.mainStatKey) continue;
 
       const mainStatVal = toInternal(
         art.mainStatKey,

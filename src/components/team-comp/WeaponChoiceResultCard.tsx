@@ -1,3 +1,5 @@
+import { Loader2, Play } from "lucide-react";
+import { useCallback } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -28,13 +30,6 @@ import type {
   WeaponRanking,
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Loader2, Play } from "lucide-react";
-import { useCallback } from "react";
-import {
-  CharCrErSettings,
-  EnemyInputs,
-  RollQualityInputs,
-} from "./GeneratorControls";
 import {
   CARD_BODY_CLS,
   CARD_CLS,
@@ -42,6 +37,11 @@ import {
   CARD_TITLE_CLS,
   CONTROLS_CLS,
 } from "./cardStyles";
+import {
+  CharCrErSettings,
+  EnemyInputs,
+  RollQualityInputs,
+} from "./GeneratorControls";
 
 // Substat display order (most common optimization targets first)
 const SUBSTAT_ORDER: SubStat[] = [
@@ -102,7 +102,6 @@ function WeaponDetailContent({
   entry: WeaponRanking;
   t: WeaponChoiceResultCardProps["t"];
 }) {
-  const weapon = weaponsById[entry.weaponId];
   return (
     <div className="space-y-2 text-xs">
       {/* Header: weapon + artifact set icons */}

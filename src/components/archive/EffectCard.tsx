@@ -1,7 +1,7 @@
-import type { CharacterEffect } from "@/data/types";
-import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import type { CharacterEffect } from "@/data/types";
+import { cn } from "@/lib/utils";
 
 export function EffectCard({ effect }: { effect: CharacterEffect }) {
   const [expanded, setExpanded] = useState(true);

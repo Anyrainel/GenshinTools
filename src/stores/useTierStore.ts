@@ -1,11 +1,11 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { LuckExpectation } from "@/data/enums";
 import type {
   InvestmentThresholds,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 export interface TierListInstance {
   id: number;

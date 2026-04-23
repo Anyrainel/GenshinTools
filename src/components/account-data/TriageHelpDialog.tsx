@@ -1,3 +1,4 @@
+import { Lock, ShieldAlert, Zap } from "lucide-react";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -7,7 +8,6 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import { Lock, ShieldAlert, Zap } from "lucide-react";
 import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS } from "../shared/colors";
 
 const TIER_KEY = {

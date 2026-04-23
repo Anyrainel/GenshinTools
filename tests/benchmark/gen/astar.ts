@@ -20,19 +20,11 @@ import type { CalcContext, ReactionOverride } from "@/lib/dmgcalc/types";
 import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import type {
   OptFailReason,
-  TeamOptYield,
   TeamOptimizerOptions,
+  TeamOptYield,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
-  MAX_ARTS_PER_SLOT_NOSET,
-  type PerCharSearchFn,
-  type PerCharSearchOpts,
-  type PerCharSearchResult,
-  SET4_PATTERNS,
-  SET22_PATTERNS,
-  type SuperArtifact,
-  TopKCollector,
   buildSlotGroupsForPattern,
   createTeamOptimizer,
   diagnoseFailure,
@@ -40,7 +32,15 @@ import {
   evaluateUpperBound,
   getArtifactCr,
   getArtifactEr,
+  MAX_ARTS_PER_SLOT_NOSET,
+  type PerCharSearchFn,
+  type PerCharSearchOpts,
+  type PerCharSearchResult,
+  SET4_PATTERNS,
+  SET22_PATTERNS,
+  type SuperArtifact,
   setupCharSearch,
+  TopKCollector,
 } from "./teamSearch";
 
 const MAX_QUEUE_SIZE = 500_000;
@@ -327,11 +327,8 @@ function runCharacterAStar(opts: PerCharSearchOpts): PerCharSearchResult {
     teamBuild,
     carryCharId,
     formulaId,
-    inventory,
-    globalConfig,
     baseSheets,
     calcContext,
-    excludedIds,
     reactionOverride,
     scoreFn,
     topK,

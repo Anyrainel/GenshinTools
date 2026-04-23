@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { handleAccountSwitch } from "@/stores/storeEffects";
 import { useTierStore } from "@/stores/useTierStore";
-import { beforeEach, describe, expect, it } from "vitest";
 
 beforeEach(() => {
   useTierStore.setState({

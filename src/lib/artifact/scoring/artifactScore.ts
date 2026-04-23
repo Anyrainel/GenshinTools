@@ -1,7 +1,7 @@
 import { charInfo } from "@/data/charInfo";
 import { SUBSTAT_COEFFICIENTS, statPools } from "@/data/constants";
-import { allSlots, mainStatSlots } from "@/data/enums";
 import type { MainStat, MainStatSlot, Slot, SubStat } from "@/data/enums";
+import { allSlots, mainStatSlots } from "@/data/enums";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
 import type {
   ArtifactData,
@@ -74,9 +74,9 @@ export function scaleFlatWeights(
   globalConfig: GlobalStatWeights
 ): StatWeightMap {
   const out = { ...weights };
-  if (out.hp != null) out.hp = out.hp * (globalConfig.flatHp / 100);
-  if (out.atk != null) out.atk = out.atk * (globalConfig.flatAtk / 100);
-  if (out.def != null) out.def = out.def * (globalConfig.flatDef / 100);
+  if (out.hp != null) out.hp *= globalConfig.flatHp / 100;
+  if (out.atk != null) out.atk *= globalConfig.flatAtk / 100;
+  if (out.def != null) out.def *= globalConfig.flatDef / 100;
   return out;
 }
 
@@ -116,13 +116,13 @@ export interface ArtifactScoreResult {
 
 /**
  * Calculates the score for a single attribute.
- * Returns { score, weight }
+ * Returns { score, weight }. Callers must pass pre-scaled weights
+ * (flat stats scaled via `scaleFlatWeights`).
  */
 export function calculateStatScore(
   stat: SubStat,
   value: number,
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  weights: StatWeightMap
 ): { score: number; weight: number } {
   const rawWeight = weights[stat] ?? 0;
   const coeff = SUBSTAT_COEFFICIENTS[stat] ?? 0;
@@ -145,7 +145,6 @@ export function calculateStatScore(
 export function scoreMainStat(
   mainStat: MainStat,
   rarity: number,
-  globalConfig: GlobalStatWeights,
   level?: number
 ): number {
   const value =
@@ -157,12 +156,9 @@ export function scoreMainStat(
   // SubStat-typed mains: reroute through the substat formula at weight 100.
   // calculateStatScore returns 0 for unknown stat keys, so a non-zero result
   // confirms this stat is handled as a substat.
-  const { score: subScore } = calculateStatScore(
-    mainStat as SubStat,
-    value,
-    { [mainStat]: 100 },
-    globalConfig
-  );
+  const { score: subScore } = calculateStatScore(mainStat as SubStat, value, {
+    [mainStat]: 100,
+  });
   if (subScore > 0) return subScore;
 
   // Main-only stats: fixed conversion factors (same normalization as substat formula)
@@ -390,19 +386,13 @@ export function getTargetMainStatsForSlot(
 
 export function scoreSlot(
   artifact: ArtifactData,
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  weights: StatWeightMap
 ): number {
   let score = 0;
   if (artifact.substats) {
     for (const [key, val] of Object.entries(artifact.substats)) {
       if (val == null) continue;
-      score += calculateStatScore(
-        key as SubStat,
-        val,
-        weights,
-        globalConfig
-      ).score;
+      score += calculateStatScore(key as SubStat, val, weights).score;
     }
   }
   return score;
@@ -417,10 +407,9 @@ export function scoreSlot(
 export function scoreSlotWithMainStat(
   artifact: ArtifactData,
   weights: StatWeightMap,
-  globalConfig: GlobalStatWeights,
   targetMainStats: Set<string>
 ): number {
-  let score = scoreSlot(artifact, weights, globalConfig);
+  let score = scoreSlot(artifact, weights);
 
   // Add main stat contribution for sands/goblet/circlet
   // Flower (hp) and plume (atk) are fixed so main stat doesn't differentiate candidates
@@ -433,24 +422,18 @@ export function scoreSlotWithMainStat(
   }
 
   // Score the main stat value using the same system
-  score += scoreMainStat(
-    mainStat,
-    artifact.rarity,
-    globalConfig,
-    artifact.level
-  );
+  score += scoreMainStat(mainStat, artifact.rarity, artifact.level);
   return score;
 }
 
 export function scoreAllSlots(
   char: CharacterData,
   weights: StatWeightMap,
-  globalConfig: GlobalStatWeights,
   nonArtifactCr?: number
 ): SubstatScoreResult {
   const statScores = Object.fromEntries(
     SUB_STATS.map((key) => {
-      const { weight } = calculateStatScore(key, 0, weights, globalConfig);
+      const { weight } = calculateStatScore(key, 0, weights);
       return [key, { subValue: 0, subScore: 0, subCount: 0, weight }];
     })
   ) as Record<SubStat, StatScoreBreakdown>;
@@ -476,7 +459,7 @@ export function scoreAllSlots(
     for (const [key, rawVal] of Object.entries(artifact.substats ?? {})) {
       const val = rawVal ?? 0;
       const stat = key as SubStat;
-      const { score } = calculateStatScore(stat, val, weights, globalConfig);
+      const { score } = calculateStatScore(stat, val, weights);
       slotSub += score;
       subScore += score;
       statScores[stat].subValue += val;
@@ -634,7 +617,6 @@ export function scoreWithBuilds(
   const substatScore = scoreAllSlots(
     char,
     buildMatch.statWeights,
-    globalConfig,
     nonArtifactCr
   );
   const normalized = computeNormalizedScore(

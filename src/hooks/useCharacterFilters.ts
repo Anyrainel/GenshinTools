@@ -1,7 +1,7 @@
+import { useCallback, useMemo, useState } from "react";
 import type { CharacterFilters } from "@/data/types";
 import { defaultCharacterFilters } from "@/lib/characterFilters";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
-import { useCallback, useMemo, useState } from "react";
 
 interface UseCharacterFiltersOptions {
   /** Default value for ownedOnly filter. CharacterView uses false, CharacterBuildView uses true. */

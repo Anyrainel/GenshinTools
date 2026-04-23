@@ -1,3 +1,24 @@
+import {
+  AlertCircle,
+  ArrowDown,
+  ArrowUp,
+  Check,
+  Copy,
+  MoreVertical,
+  RotateCcw,
+  Trash2,
+  Wand2,
+} from "lucide-react";
+import {
+  lazy,
+  memo,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import {
   AlertDialog,
@@ -35,39 +56,30 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getGobletPool, statPools } from "@/data/constants";
-import { mainStatSlots } from "@/data/enums";
-import { buildConstellations, buildRoles, buildStyles } from "@/data/enums";
-import type { BuildConstellation, BuildRole, BuildStyle } from "@/data/enums";
-import type { Element, MainStatSlot } from "@/data/enums";
-import type { ArtifactSetConfig } from "@/data/types";
-import type { Build, WeightedMainStat, WeightedSubStat } from "@/data/types";
-import { parseBuildConstellation } from "@/lib/typeValidation";
-
+import type {
+  BuildConstellation,
+  BuildRole,
+  BuildStyle,
+  Element,
+  MainStatSlot,
+} from "@/data/enums";
+import {
+  buildConstellations,
+  buildRoles,
+  buildStyles,
+  mainStatSlots,
+} from "@/data/enums";
+import type {
+  ArtifactSetConfig,
+  Build,
+  WeightedMainStat,
+  WeightedSubStat,
+} from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { AutoTuneOutput } from "@/lib/artifact/scoring/pipeline";
+import type { AutoTuneOutput } from "@/lib/artifact-builds/auto-tune/pipeline";
+import { parseBuildConstellation } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import {
-  AlertCircle,
-  ArrowDown,
-  ArrowUp,
-  Check,
-  Copy,
-  MoreVertical,
-  RotateCcw,
-  Trash2,
-  Wand2,
-} from "lucide-react";
-import {
-  Suspense,
-  lazy,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 import { WeightedStatSelect } from "./WeightedStatSelect";
 
 const AutoTuneDialog = lazy(() =>

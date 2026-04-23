@@ -1,12 +1,3 @@
-import { ItemIcon } from "@/components/shared/ItemIcon";
-import { Button } from "@/components/ui/button";
-import {
-  ResponsiveDialog,
-  ResponsiveDialogContent,
-} from "@/components/ui/responsive-dialog";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
-import { useGreetingStore } from "@/stores/useGreetingStore";
 import {
   ChevronDown,
   ChevronLeft,
@@ -24,7 +15,16 @@ import {
   Upload,
   Users,
 } from "lucide-react";
-import { Suspense, lazy, useState } from "react";
+import { lazy, Suspense, useState } from "react";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { Button } from "@/components/ui/button";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+} from "@/components/ui/responsive-dialog";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
+import { useGreetingStore } from "@/stores/useGreetingStore";
 
 const AccountDataPreview = lazy(() => import("./previews/AccountDataPreview"));
 const TeamCompPreview = lazy(() => import("./previews/TeamCompPreview"));

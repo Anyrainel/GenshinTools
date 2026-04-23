@@ -1,10 +1,11 @@
 /**
  * Behavioral lock for buildSetKeysByChar — set key derivation from WeaponChoiceCharConfig[].
  */
+
+import { describe, expect, it } from "vitest";
 import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
 import { buildSetKeysByChar } from "@/lib/team-comp/analyzer/weaponChoice";
 import type { WeaponChoiceCharConfig } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 
 const HALF_SET_ATK = "atk%-18";
 const HALF_SET_EM = "em-80";

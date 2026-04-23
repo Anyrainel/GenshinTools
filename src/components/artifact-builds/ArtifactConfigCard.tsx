@@ -1,3 +1,6 @@
+import { Info } from "lucide-react";
+import { useMemo } from "react";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -7,10 +10,6 @@ import type { BuildConfig, SlotConfig } from "@/data/types";
 import { computeSlotChance } from "@/lib/artifact-builds/artifactChance";
 import { hasCrCdMustPresent } from "@/lib/artifact-builds/computeFilters";
 import { cn } from "@/lib/utils";
-import { useMemo } from "react";
-
-import { ItemIcon } from "@/components/shared/ItemIcon";
-import { Info } from "lucide-react";
 
 interface ArtifactConfigCardProps {
   config: BuildConfig;

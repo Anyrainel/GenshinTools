@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -6,7 +7,6 @@ import type { AccountData, Build } from "@/data/types";
 import type { Team } from "@/lib/team-comp/types";
 import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
 import { ELEMENT_HEX, getElementColor } from "../shared/colors";
 
 type SelectionEntry = {

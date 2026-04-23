@@ -1,6 +1,6 @@
+import userEvent from "@testing-library/user-event";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 describe("BuildCard", () => {

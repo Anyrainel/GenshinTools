@@ -1,9 +1,9 @@
+import userEvent from "@testing-library/user-event";
+import type { ComponentProps } from "react";
 import { FormulaSelectorCard } from "@/components/team-comp/FormulaSelectorCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ComboLine } from "@/lib/dmgcalc/types";
 import type { Team } from "@/lib/team-comp/types";
-import userEvent from "@testing-library/user-event";
-import type { ComponentProps } from "react";
 import { render, screen } from "../../utils/render";
 
 const mockTeam: Team = {
@@ -90,7 +90,6 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
     formulaMode: "combo",
     onModeChange: vi.fn(),
     onSelectSingleFormula: vi.fn(),
-    isMobile: false,
     ...overrides,
   };
 }

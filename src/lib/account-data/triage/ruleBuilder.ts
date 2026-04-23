@@ -1,5 +1,5 @@
-import { allSlots } from "@/data/enums";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type { AccountData, Build } from "@/data/types";
 import { getAcceptedMainStats } from "./demandExtractor";
 import { lookupTierEntry } from "./tierTableBuilder";

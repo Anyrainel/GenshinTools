@@ -1,17 +1,17 @@
+import { ChevronDown, Copy, Upload } from "lucide-react";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import { CharAvatar } from "@/components/shared/CharAvatar";
 import { CARD_CLS, CARD_HEADER_CLS } from "@/components/team-comp/cardStyles";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ACTION_LABELS } from "@/lib/ercalc/constants";
-import type { ERResult, EnergyEvent, TeamSlot } from "@/lib/ercalc/types";
+import type { EnergyEvent, ERResult, TeamSlot } from "@/lib/ercalc/types";
 import { cn } from "@/lib/utils";
 import {
   erPercentToInternal,
   findMatchingTeams,
 } from "@/stores/teamStoreIntegration";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { ChevronDown, Copy, Upload } from "lucide-react";
-import { useCallback, useState } from "react";
-import { toast } from "sonner";
 
 interface ErResultsPanelProps {
   results: ERResult[];

@@ -1,3 +1,5 @@
+import { RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -5,12 +7,12 @@ import type { ReactionType } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import {
-  type ReactionComboGridRow,
   getFormulaReactions,
+  type ReactionComboGridRow,
 } from "@/lib/dmgcalc/core/teamFormulaCatalog";
-import type { FormulaEntry } from "@/lib/dmgcalc/types";
 import type {
   ComboFormula,
+  FormulaEntry,
   I18nLabel,
   ReactionOverride,
   TeamSlotConfig,
@@ -25,13 +27,11 @@ import {
   rxDeltaOverrideKey,
 } from "@/lib/team-comp/analyzer/analyzer";
 import type {
+  AnalyzerCharConfig,
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
-import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { RotateCcw } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormulaLabel } from "./FormulaLabel";
 import { ReactionPartControls } from "./ReactionPartControls";
 
@@ -663,6 +663,7 @@ function NumericCell({
         type="text"
         inputMode="numeric"
         value={editing ? localValue : String(value)}
+        placeholder={String(defaultValue)}
         onFocus={() => {
           setEditing(true);
           setLocalValue(String(value));

@@ -1,13 +1,14 @@
-import type { Element } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
+import type { Element, StatKey } from "@/data/enums";
 import { getNextLevelTier } from "@/data/gameStatsLoader";
 import type { StatEntry } from "@/data/types";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboLine,
   ComboResult,
   DamageResult,
+  DamageTag,
   DisplayPart,
   DisplayResult,
   ExtraBuff,
@@ -19,16 +20,15 @@ import type {
   ResolvedStatEntry,
   TeamSlotConfig,
 } from "../types";
-import type { BuffActivationMap, DamageTag } from "../types";
 import { filterMatchesTag } from "../utils";
 import { CharBuild } from "./charBuild";
 import {
-  type EvaluatedDynamicBuff,
   annotateScalingInfo,
+  type EvaluatedDynamicBuff,
   isDeferredFinalBuff,
 } from "./dynamicBuffEval";
-import { fieldReq } from "./fieldState";
 import {
+  fieldReq,
   getDefaultOnFieldCharId,
   isPartOffField,
   resolvePartOnFieldCharIds,
@@ -42,22 +42,22 @@ import {
 import { computeSubstatMarginals } from "./marginalGain";
 import {
   type ComboLineEval,
-  type FormulaPartEval,
-  type StackLimitedBuffInfo,
   collectStackLimitedBuffs,
   computeComboDefaultActivation,
   computeDefaultActivation,
+  type FormulaPartEval,
+  type StackLimitedBuffInfo,
 } from "./stackRank";
 import {
-  CrossScalingBuff,
-  ScalingBuff,
-  type StatBuff,
-  TeamAggregationBuff,
   bespokeMaxStacks,
   buildBespokeOverlay,
+  CrossScalingBuff,
   createExtraStatBuffs,
   deduplicateBuffs,
   getBuffInstanceKey,
+  ScalingBuff,
+  type StatBuff,
+  TeamAggregationBuff,
 } from "./statBuff";
 import { StatSheet } from "./statSheet";
 import { TeamBuffLedger } from "./teamBuffLedger";
@@ -373,23 +373,18 @@ export class TeamBuild {
     this.teamStats.setArtifacts(artifactStats, ctx);
 
     const lineDamages = validLines.map((line, lineIdx) => {
-      const cb = this.charBuilds[line.charId];
       const entry = this.catalog.formulaIndex.get(line.formulaId);
       const statsCharId = entry?.parts[0]?.statsCharId ?? line.charId;
-      const ownerCharId = entry?.owner ?? line.charId;
 
       const effectiveReaction = line.reaction;
       const lineInfos = buffOverrides?.[lineIdx];
 
-      const formulaOwner =
-        ownerCharId !== statsCharId ? ownerCharId : undefined;
       const result = this.getDamageResult(
         statsCharId,
         line.formulaId,
         ctx,
         effectiveReaction,
         lineInfos,
-        formulaOwner,
         line.forceOnField
       );
 
@@ -622,7 +617,6 @@ export class TeamBuild {
 
     for (const [formulaKey, formulaLines] of linesByFormula) {
       const { charId, formulaId } = formulaLines[0].line;
-      const build = this.charBuilds[charId];
 
       const firstLine = formulaLines[0].line;
       const effectiveReaction = firstLine.reaction;
@@ -854,11 +848,8 @@ export class TeamBuild {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     activation?: BuffActivationMap,
-    formulaOwnerCharId?: string,
     forceOnField?: boolean
   ): DamageResult {
-    const ownerCharId = formulaOwnerCharId ?? charId;
-    const build = this.charBuilds[ownerCharId];
     const entry = this.catalog.formulaIndex.get(formulaId);
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
 
@@ -997,15 +988,12 @@ export class TeamBuild {
     );
     const midStats = hasMidStats ? midStatsRecord : undefined;
 
-    const postStats = this.teamStats.getAllPostStats(charId);
+    const _postStats = this.teamStats.getAllPostStats(charId);
 
     // ── Formula display ──
     const entry = this.catalog.formulaIndex.get(formulaId);
     const partTags: (DamageTag | undefined)[] =
       entry?.parts.map((p) => p.formula.tag) ?? [];
-    const formulaTags: DamageTag[] = partTags.filter(
-      (t): t is DamageTag => t !== undefined
-    );
 
     // Compute off-field stats for display if the formula has off-field parts
     const formulaHasOffField =
@@ -1611,7 +1599,7 @@ export class TeamBuild {
     ctx: CalcContext,
     baseDamage: number,
     reactionOverride?: ReactionOverride,
-    hasOffField?: boolean,
+    _hasOffField?: boolean,
     forceOnField?: boolean
   ): Record<string, Partial<Record<StatKey, number>>> {
     if (baseDamage === 0) return {};
@@ -1662,7 +1650,7 @@ export class TeamBuild {
     ctx: CalcContext,
     baseDamage: number,
     reactionOverride?: ReactionOverride,
-    hasOffField?: boolean,
+    _hasOffField?: boolean,
     forceOnField?: boolean
   ): Record<string, { gain: number; from: number; to: number }[]> {
     if (baseDamage === 0) return {};
@@ -1684,7 +1672,6 @@ export class TeamBuild {
         ctx,
         reactionOverride,
         undefined, // activation
-        undefined, // formulaOwnerCharId
         forceOnField
       );
       return (tweakedResult.totalDamage - baseDamage) / baseDamage;
@@ -1734,7 +1721,7 @@ export class TeamBuild {
     formulaId: string,
     sheets: Record<string, StatSheet>,
     ctx: CalcContext,
-    reactionOverride?: ReactionOverride,
+    _reactionOverride?: ReactionOverride,
     userOverrides?: BuffActivationMap,
     forceOnField?: boolean
   ): BuffActivationMap {
@@ -1803,7 +1790,7 @@ export class TeamBuild {
     activeLines: ComboLine[],
     sheets: Record<string, StatSheet>,
     ctx: CalcContext,
-    rxnOverrides?: Record<string, ReactionOverride>,
+    _rxnOverrides?: Record<string, ReactionOverride>,
     perLineUserOverrides?: Map<number, BuffActivationMap>
   ): Record<number, BuffActivationMap> | undefined {
     if (activeLines.length === 0) return undefined;

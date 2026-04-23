@@ -1,3 +1,5 @@
+import { Filter, type LucideIcon } from "lucide-react";
+import { type RefObject, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -8,8 +10,6 @@ import {
 } from "@/components/ui/sheet";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { cn } from "@/lib/utils";
-import { Filter, type LucideIcon } from "lucide-react";
-import { type RefObject, useRef, useState } from "react";
 
 interface SidebarLayoutProps {
   sidebar: React.ReactNode;

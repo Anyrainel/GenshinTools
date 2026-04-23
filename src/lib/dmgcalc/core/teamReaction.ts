@@ -6,14 +6,16 @@
  * define the reaction in their own formulaMap.
  */
 
-import type { Element } from "@/data/enums";
-import type { ElementalOrPhysical } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
+import type { Element, ElementalOrPhysical, ReactionType } from "@/data/enums";
 import { i18nAppData } from "@/data/i18n-app";
 import { LUNAR_REACTIONS, PHEC_ELEMENTS } from "../constants";
-import type { FormulaPart, ReactionComboEntry } from "../types";
-import type { FormulaEntry } from "../types";
-import type { CalcContext, I18nLabel } from "../types";
+import type {
+  CalcContext,
+  FormulaEntry,
+  FormulaPart,
+  I18nLabel,
+  ReactionComboEntry,
+} from "../types";
 import { LunarFormula, TransformFormula } from "./damageFormula";
 import type { IFormulaProvider } from "./implModel";
 import { computeLunarRankWeights } from "./stackRank";

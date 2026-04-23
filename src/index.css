@@ -47,7 +47,8 @@
     --chart-5: 27 87% 67%;
 
     /* Gradients - fallback Abyss values, overridden by JS */
-    --gradient-page: radial-gradient(
+    --gradient-page:
+      radial-gradient(
         ellipse 85% 75% at 50% 50%,
         hsl(280 45% 22%) 0%,
         transparent 92%
@@ -133,13 +134,13 @@
 
 /* Hide scrollbar while retaining scroll capability */
 .scrollbar-none {
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .scrollbar-none::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Staggered card entry animation — delay set per-element via inline style */
@@ -216,7 +217,8 @@
   z-index: 1;
   pointer-events: none;
   /* corners — heavier frost */
-  background: radial-gradient(
+  background:
+    radial-gradient(
       ellipse at 0% 0%,
       rgba(186, 230, 253, 0.18) 0%,
       transparent 50%

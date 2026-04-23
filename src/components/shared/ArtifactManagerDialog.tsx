@@ -1,3 +1,11 @@
+import {
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  Loader2,
+  XCircle,
+} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,16 +21,16 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
-import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
 import type { JobInput } from "@/hooks/useArtifactManagerJob";
+import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
 import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
 import { fetchArtifacts } from "@/lib/account-data/manager/client";
 import {
-  type JobAnalysis,
-  type SnapshotDiff,
   analyzeManageResults,
   computeSnapshotDiff,
+  type JobAnalysis,
   rebuildAccountFromSnapshot,
+  type SnapshotDiff,
 } from "@/lib/account-data/manager/storeSync";
 import type {
   EquipPayload,
@@ -33,14 +41,6 @@ import type {
 import { cn } from "@/lib/utils";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import {
-  CheckCircle2,
-  Download,
-  ExternalLink,
-  Loader2,
-  XCircle,
-} from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 
 export type ArtifactManagerJobConfig =
   | { type: "manage"; build: () => ManagePayload }
@@ -78,7 +78,7 @@ export function ArtifactManagerDialog({
   const [includeLock, setIncludeLock] = useState(true);
   const [includeUnlock, setIncludeUnlock] = useState(true);
 
-  const { connection, refresh } = useArtifactManagerConnection(open, port);
+  const { connection } = useArtifactManagerConnection(open, port);
   const { phase, submit, reset } = useArtifactManagerJob(port);
 
   // Sync port input → port number on blur or enter
@@ -207,11 +207,7 @@ export function ArtifactManagerDialog({
                     onKeyDown={(e) => e.key === "Enter" && commitPort()}
                   />
                 </div>
-                <ConnectionStatus
-                  connection={connection}
-                  t={t}
-                  onRetry={refresh}
-                />
+                <ConnectionStatus connection={connection} t={t} />
               </div>
               {job.type === "manage" && (
                 <div className="flex items-center gap-4">
@@ -321,11 +317,9 @@ export function ArtifactManagerDialog({
 function ConnectionStatus({
   connection,
   t,
-  onRetry,
 }: {
   connection: ReturnType<typeof useArtifactManagerConnection>["connection"];
   t: ReturnType<typeof useLanguage>["t"];
-  onRetry: () => void;
 }) {
   if (connection.status === "disconnected") {
     return (

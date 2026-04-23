@@ -1,16 +1,17 @@
+import { create } from "zustand";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
 import { PersistedBuildsStoreSchema } from "@/stores/schemas";
 import { invalidateScores } from "@/stores/useAccountStore";
-import { create } from "zustand";
 
 let _buildIdSeq = 0;
 function nextBuildId(): string {
   return `b${Date.now()}${_buildIdSeq++}`;
 }
-import type { SubStat } from "@/data/enums";
+
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import type { SubStat } from "@/data/enums";
 import type {
   Build,
   BuildPayload,
@@ -24,8 +25,8 @@ import {
 } from "../lib/artifact-builds/buildImportExport";
 import { migrateBuild } from "../lib/artifact-builds/buildMigration";
 import {
-  BUILD_DATA_VERSION,
   areBuildsEqual,
+  BUILD_DATA_VERSION,
 } from "../lib/artifact-builds/buildUtils";
 import { DEFAULT_COMPUTE_OPTIONS } from "../lib/artifact-builds/computeFilters";
 
@@ -566,7 +567,6 @@ export const useBuildsStore = create<BuildsState>()(
             }
             // Remove legacy kOverride field
             if ("kOverride" in legacy) {
-              // biome-ignore lint/performance/noDelete: Migration cleanup of legacy field
               delete legacy.kOverride;
             }
           }

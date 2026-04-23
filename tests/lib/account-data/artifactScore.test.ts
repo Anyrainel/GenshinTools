@@ -1,14 +1,14 @@
+import { describe, expect, it } from "vitest";
 import type { Build, CharacterData, GlobalStatWeights } from "@/data/types";
 import {
   type ArtifactScoreResult,
-  type StatWeightMap,
   buildToWeightMap,
   matchBuild,
+  type StatWeightMap,
   scoreAllSlots,
   scoreWithBuilds,
 } from "@/lib/artifact/scoring/artifactScore";
 import { MAIN_STAT_CD_EQUIV_5STAR } from "@/lib/artifact/scoring/constants";
-import { describe, expect, it } from "vitest";
 
 const testWeights: StatWeightMap = {
   cr: 100,
@@ -17,12 +17,6 @@ const testWeights: StatWeightMap = {
   em: 60,
   "atk%": 40,
   er: 20,
-};
-
-const testGlobalConfig = {
-  flatAtk: 50,
-  flatHp: 0,
-  flatDef: 0,
 };
 
 // Full character with all artifacts
@@ -1165,29 +1159,17 @@ describe("normalizedScore", () => {
 describe("calculateArtifactScore", () => {
   describe("complete character (5 artifacts)", () => {
     it("returns isComplete = true", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       expect(result.isComplete).toBe(true);
     });
 
     it("calculates positive sub score and slot scores", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       expect(result.subScore).toBeGreaterThan(0);
     });
 
     it("populates slotSubScores for all 5 slots", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       const slots: Array<keyof typeof result.slotSubScores> = [
         "flower",
         "plume",
@@ -1202,11 +1184,7 @@ describe("calculateArtifactScore", () => {
     });
 
     it("populates slotMaxSubScores for 5-star artifacts", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       const slots: Array<keyof typeof result.slotMaxSubScores> = [
         "flower",
         "plume",
@@ -1220,11 +1198,7 @@ describe("calculateArtifactScore", () => {
     });
 
     it("populates statScores with breakdown per stat", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       // CD should have both main (from circlet) and sub values
       expect(result.statScores.cd).toBeDefined();
       expect(result.statScores.cd.subValue).toBeGreaterThan(0);
@@ -1236,31 +1210,19 @@ describe("calculateArtifactScore", () => {
 
   describe("partial character (missing artifacts)", () => {
     it("returns isComplete = false", () => {
-      const result = scoreAllSlots(
-        partialCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(partialCharacter, testWeights);
       expect(result.isComplete).toBe(false);
     });
 
     it("still calculates scores for equipped artifacts", () => {
-      const result = scoreAllSlots(
-        partialCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(partialCharacter, testWeights);
       expect(result.subScore).toBeGreaterThan(0);
       expect(result.slotSubScores.flower).toBeGreaterThan(0);
       expect(result.slotSubScores.plume).toBeGreaterThan(0);
     });
 
     it("sets 0 scores for missing slots", () => {
-      const result = scoreAllSlots(
-        partialCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(partialCharacter, testWeights);
       expect(result.slotSubScores.goblet).toBe(0);
       expect(result.slotSubScores.circlet).toBe(0);
     });
@@ -1268,11 +1230,7 @@ describe("calculateArtifactScore", () => {
 
   describe("character with no artifacts", () => {
     it("returns all zero scores", () => {
-      const result = scoreAllSlots(
-        emptyCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(emptyCharacter, testWeights);
       expect(result.subScore).toBe(0);
       expect(result.isComplete).toBe(false);
     });
@@ -1280,27 +1238,15 @@ describe("calculateArtifactScore", () => {
 
   describe("4-star artifacts", () => {
     it("calculates sub scores for 4-star artifacts", () => {
-      const result = scoreAllSlots(
-        fourStarCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fourStarCharacter, testWeights);
       // Flower main stat is HP which has 0 weight, so main score is 0
       // But we have CR, CD, EM substats which should contribute
       expect(result.slotSubScores.flower).toBeGreaterThan(0);
     });
 
     it("calculates slotMaxSubScores for 4-star artifacts (lower than 5-star)", () => {
-      const result = scoreAllSlots(
-        fourStarCharacter,
-        testWeights,
-        testGlobalConfig
-      );
-      const result5Star = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fourStarCharacter, testWeights);
+      const result5Star = scoreAllSlots(fullCharacter, testWeights);
       // 4-star max sub score formula uses fewer rolls (6 vs 8) and lower CD roll value
       // Both should have positive max sub scores for flower
       expect(result.slotMaxSubScores.flower).toBeGreaterThan(0);
@@ -1313,41 +1259,29 @@ describe("calculateArtifactScore", () => {
 
   describe("empty weights", () => {
     it("returns zero scores when weights object is empty", () => {
-      const result = scoreAllSlots(fullCharacter, {}, testGlobalConfig);
+      const result = scoreAllSlots(fullCharacter, {});
       expect(result.subScore).toBe(0);
     });
   });
 
   describe("stat count computation", () => {
     it("computes statCount > 0 for a complete character with weighted stats", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       expect(result.statCount).toBeGreaterThan(0);
     });
 
     it("returns statCount = 0 when no artifacts are equipped", () => {
-      const result = scoreAllSlots(
-        emptyCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(emptyCharacter, testWeights);
       expect(result.statCount).toBe(0);
     });
 
     it("returns statCount = 0 when weights are empty", () => {
-      const result = scoreAllSlots(fullCharacter, {}, testGlobalConfig);
+      const result = scoreAllSlots(fullCharacter, {});
       expect(result.statCount).toBe(0);
     });
 
     it("computes per-stat subCount for weighted stats", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       // CR has weight 100, and fullCharacter has CR substats
       expect(result.statScores.cr.subCount).toBeGreaterThan(0);
       // CD has weight 100
@@ -1356,20 +1290,12 @@ describe("calculateArtifactScore", () => {
 
     it("does not count stats with zero weight", () => {
       // def% has no weight in testWeights
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       expect(result.statScores["def%"].subCount).toBe(0);
     });
 
     it("statCount equals the sum of all per-stat subCounts", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       const subCountSum = Object.values(result.statScores).reduce(
         (sum, s) => sum + s.subCount,
         0
@@ -1380,22 +1306,14 @@ describe("calculateArtifactScore", () => {
     it("computes lower subCount for 4-star artifacts", () => {
       // 4-star artifacts have lower max rolls, so same value yields higher roll count
       // But 4-star artifacts typically have lower stat values
-      const result4 = scoreAllSlots(
-        fourStarCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result4 = scoreAllSlots(fourStarCharacter, testWeights);
       expect(result4.statCount).toBeGreaterThan(0);
     });
   });
 
   describe("stat weight calculations", () => {
     it("applies weight correctly to crit stats", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       // CD has 100 weight, CR has 100 weight
       // Both should contribute to sub score
       expect(result.statScores.cd.weight).toBe(100);
@@ -1403,11 +1321,7 @@ describe("calculateArtifactScore", () => {
     });
 
     it("applies global flat effectiveness to flat stats", () => {
-      const result = scoreAllSlots(
-        fullCharacter,
-        testWeights,
-        testGlobalConfig
-      );
+      const result = scoreAllSlots(fullCharacter, testWeights);
       // We have flatAtk = 50, so atk weight should be effectively halved
       // The circlet has atk: 33 substat
       expect(result.statScores.atk.subValue).toBe(33);

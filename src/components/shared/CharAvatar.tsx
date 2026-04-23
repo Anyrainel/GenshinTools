@@ -5,7 +5,10 @@ import { getAssetUrl } from "@/lib/utils";
 export function CharAvatar({
   charId,
   size = 20,
-}: { charId: string; size?: number }) {
+}: {
+  charId: string;
+  size?: number;
+}) {
   const char = charactersById[charId];
   const src = char?.imagePath ? getAssetUrl(char.imagePath) : "";
 

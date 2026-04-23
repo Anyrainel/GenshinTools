@@ -571,7 +571,7 @@ describe("runTeamOptimization with partialBuffs", () => {
       },
       inventory,
       calcContext: CTX,
-      globalConfig: { flatAtk: 80, flatHp: 30, flatDef: 10 },
+
       baseSheets: sheets,
       perChar: { diluc: { minEr: 1.0, minCr: 0 } },
       teamDeadlineMs: performance.now() + 10_000,
@@ -629,7 +629,7 @@ describe("runTeamOptimization with partialBuffs", () => {
       },
       inventory,
       calcContext: CTX,
-      globalConfig: { flatAtk: 80, flatHp: 30, flatDef: 10 },
+
       baseSheets: sheets,
       perChar: { diluc: { minEr: 1.0, minCr: 0 } },
       teamDeadlineMs: performance.now() + 10_000,

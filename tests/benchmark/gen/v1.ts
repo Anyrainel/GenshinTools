@@ -1,5 +1,5 @@
-import { allSlots } from "@/data/enums";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
@@ -19,12 +19,12 @@ import type {
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   CharOptConfig,
-  TeamOptPassId,
-  TeamOptPassResult,
-  TeamOptYield,
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
+  TeamOptPassId,
+  TeamOptPassResult,
+  TeamOptYield,
 } from "@/lib/team-comp/types";
 import {
   type OptFailReason,
@@ -42,12 +42,6 @@ function collectArtifactIds(arts: Record<Slot, ArtifactData | null>): string[] {
     if (a) ids.push(a.id);
   }
   return ids;
-}
-
-function collectArtifactIdSet(
-  arts: Record<Slot, ArtifactData | null>
-): Set<string> {
-  return new Set(collectArtifactIds(arts));
 }
 
 const emptyArtifacts: Record<Slot, ArtifactData | null> = {
@@ -149,7 +143,6 @@ export async function* runTeamOptimization(
     carryCharId,
     inventory,
     calcContext,
-    globalConfig,
     baseSheets,
     perChar,
     combo,
@@ -289,7 +282,6 @@ export async function* runTeamOptimization(
       minCr: charConfig.minCr,
       inventory,
       buildMatch: charConfig.buildMatch,
-      globalConfig,
       baseSheets: currentSheets,
       calcContext,
       artifactSet: charConfig.artifactSet ?? null,

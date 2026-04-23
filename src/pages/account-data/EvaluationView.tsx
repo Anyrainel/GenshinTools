@@ -1,3 +1,10 @@
+import {
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  Combine,
+  Minus,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -11,28 +18,21 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { tiers } from "@/data/enums";
 import type { SortDirection } from "@/data/enums";
+import { tiers } from "@/data/enums";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
   COMPLETION_TIERS,
-  type SetGroup,
   evaluateAllBuilds,
   getTier,
+  type SetGroup,
   selectActiveBuildsForAccount,
 } from "@/lib/account-data/buildEvaluation";
 import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";
-import {
-  ArrowDownWideNarrow,
-  ArrowUpNarrowWide,
-  Combine,
-  Minus,
-} from "lucide-react";
-import { useMemo, useState } from "react";
 
 type SortDir = "asc" | "desc";
 type RoleFilter = "all" | ArchetypeRole;
@@ -344,11 +344,7 @@ export function EvaluationView({
 
 // Set Group Section
 
-function SetGroupSection({
-  group,
-}: {
-  group: SetGroup;
-}) {
+function SetGroupSection({ group }: { group: SetGroup }) {
   const { t } = useLanguage();
   const is2p2 = group.artifactSet === "__2+2__";
 

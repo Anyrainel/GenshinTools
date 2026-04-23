@@ -1,5 +1,5 @@
-import { THEME_SEEDS, generateThemeVars } from "@/lib/themeGenerator";
 import { describe, expect, it } from "vitest";
+import { generateThemeVars, THEME_SEEDS } from "@/lib/themeGenerator";
 
 const ALL_THEME_IDS = Object.keys(THEME_SEEDS) as Array<
   keyof typeof THEME_SEEDS
@@ -129,7 +129,7 @@ describe("generateThemeVars", () => {
 
     // Parse lightness from "h s% l%" format
     const parseLightness = (hslVar: string) =>
-      Number.parseInt(hslVar.split(" ")[2]);
+      Number.parseInt(hslVar.split(" ")[2], 10);
 
     expect(parseLightness(abyss.primary)).toBeLessThan(
       parseLightness(mondstadt.primary)

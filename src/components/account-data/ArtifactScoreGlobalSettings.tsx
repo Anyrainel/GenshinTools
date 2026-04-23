@@ -1,3 +1,5 @@
+import { CircleHelp, RotateCcw } from "lucide-react";
+import { useState } from "react";
 import { ScoreChangeDialogTrigger } from "@/components/account-data/ScoreChangeAnnouncement";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +13,6 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { CircleHelp, RotateCcw } from "lucide-react";
-import { useState } from "react";
 
 function ScoreExplanationDialog() {
   const { t } = useLanguage();

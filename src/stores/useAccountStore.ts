@@ -1,12 +1,11 @@
-import type { AccountData } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { PersistedAccountStoreSchema } from "./schemas";
-
+import type { AccountData } from "@/data/types";
 // AccountState shape lives in @/lib/account-data/types so pure account-data
 // logic across src/lib/ can depend on it without reaching into stores.
 import type { AccountState } from "@/lib/account-data/types";
+import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
+import { PersistedAccountStoreSchema } from "./schemas";
 
 interface AccountStore {
   accounts: Record<string, AccountState>;

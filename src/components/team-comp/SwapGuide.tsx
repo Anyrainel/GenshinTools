@@ -1,3 +1,12 @@
+import {
+  ArrowRightLeft,
+  Check,
+  ChevronDown,
+  Download,
+  Monitor,
+  Package,
+} from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
@@ -23,15 +32,6 @@ import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { resolveBuildInfo } from "@/lib/team-comp/teamConfigUtils";
 import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import {
-  ArrowRightLeft,
-  Check,
-  ChevronDown,
-  Download,
-  Monitor,
-  Package,
-} from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
 import { getRarityColor } from "../shared/colors";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];

@@ -60,11 +60,7 @@ export function computeSlotChance(
     return 0;
   }
 
-  const choices = resolveMainStatChoices(
-    slotConfig.mainStats,
-    slot,
-    mainStatPool
-  );
+  const choices = resolveMainStatChoices(slotConfig.mainStats, mainStatPool);
   const effectiveChoices =
     choices.length > 0
       ? choices
@@ -243,7 +239,6 @@ interface MainStatChoice {
 
 function resolveMainStatChoices(
   mainStats: MainStatPlus[],
-  slot: Exclude<SlotKind, "flower" | "plume">,
   pool: Record<MainStat, number>
 ): MainStatChoice[] {
   const choices: MainStatChoice[] = [];

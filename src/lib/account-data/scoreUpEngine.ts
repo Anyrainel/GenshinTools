@@ -1,7 +1,5 @@
+import type { LuckExpectation, Slot, Tier } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import type { Slot } from "@/data/enums";
-import type { Tier } from "@/data/enums";
-import type { LuckExpectation } from "@/data/enums";
 /**
  * Diffs optimizer output against current equipment to produce typed recommendations.
  */
@@ -9,11 +7,10 @@ import type {
   AccountData,
   ArtifactData,
   CharacterData,
-  GlobalStatWeights,
+  InvestmentThresholds,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
-import type { InvestmentThresholds } from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
@@ -67,7 +64,6 @@ export function generateScoreUpActions(
   char: CharacterData,
   buildMatch: BuildMatchResult,
   optimizerResult: BuildOptimizerResult,
-  globalConfig: GlobalStatWeights,
   targetMainStats: Record<Slot, Set<string>>,
   thresholds?: InvestmentThresholds
 ): CharacterActions {
@@ -94,7 +90,6 @@ export function generateScoreUpActions(
         const currentScore = scoreSlotWithMainStat(
           current,
           buildMatch.statWeights,
-          globalConfig,
           targetMainStats[slot]
         );
         const optimalScore = topBuild.slotScores[slot];
@@ -122,7 +117,6 @@ export function generateScoreUpActions(
       ? scoreSlotWithMainStat(
           current,
           buildMatch.statWeights,
-          globalConfig,
           targetMainStats[slot]
         )
       : 0;
@@ -192,7 +186,6 @@ function optimizeWithInvestmentConstraints(
   baseConfig: BuildOptimizerConfig,
   char: { key: string; artifacts: Partial<Record<Slot, ArtifactData>> },
   buildMatch: BuildMatchResult,
-  globalConfig: GlobalStatWeights,
   thresholds: { swap: number; upgrade: number; reroll: number; farm: number }
 ): BuildOptimizerResult {
   // Pass 1: unconstrained (with CR/CD exploration)
@@ -212,7 +205,6 @@ function optimizeWithInvestmentConstraints(
       ? scoreSlotWithMainStat(
           current,
           buildMatch.statWeights,
-          globalConfig,
           baseConfig.targetMainStats[slot]
         )
       : 0;
@@ -269,7 +261,6 @@ function optimizeWithInvestmentConstraints(
 export function generateAllRecommendations(
   accountData: AccountData,
   scores: Record<string, ArtifactScoreResult | null>,
-  globalConfig: GlobalStatWeights,
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {},
   investmentThresholds?: InvestmentThresholds
@@ -366,7 +357,6 @@ export function generateAllRecommendations(
 
     const baseConfig: BuildOptimizerConfig = {
       weights: buildMatch.statWeights,
-      globalConfig,
       candidates,
       crBudget,
       targetMainStats,
@@ -383,7 +373,6 @@ export function generateAllRecommendations(
           baseConfig,
           char,
           buildMatch,
-          globalConfig,
           investmentThresholds
         )
       : optimizeBuildWithCrCdExploration(baseConfig);
@@ -393,7 +382,6 @@ export function generateAllRecommendations(
       char,
       buildMatch,
       optimizerResult,
-      globalConfig,
       targetMainStats,
       investmentThresholds
     );

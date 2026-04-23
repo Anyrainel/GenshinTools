@@ -1,6 +1,6 @@
+import type { Draft } from "immer";
 import type { Build, BuildPayload, BuildPayloadV5 } from "@/data/types";
 import type { BuildsState } from "@/stores/useBuildsStore";
-import type { Draft } from "immer";
 import { migrateBuild } from "./buildMigration";
 import { areBuildsEqual } from "./buildUtils";
 import { getBuildValidationErrors } from "./buildValidation";

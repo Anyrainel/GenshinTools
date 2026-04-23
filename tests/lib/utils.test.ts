@@ -1,10 +1,10 @@
+import { describe, expect, it } from "vitest";
 import {
   getElementColor,
   getRarityColor,
   getTierColor,
 } from "@/components/shared/colors";
 import { getAssetUrl } from "@/lib/utils";
-import { describe, expect, it } from "vitest";
 
 describe("getAssetUrl", () => {
   it("prepends base URL to absolute paths", () => {

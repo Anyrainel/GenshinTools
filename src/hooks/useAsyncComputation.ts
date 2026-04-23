@@ -20,14 +20,6 @@ export function useAsyncComputation<TYield, TResult = TYield, TOpts = unknown>(
   const activeGenerator = useRef<AsyncGenerator<TYield, void> | null>(null);
   const isMounted = useRef(true);
 
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-      stop();
-    };
-  }, []);
-
   const stop = useCallback(() => {
     if (activeGenerator.current) {
       activeGenerator.current.return(undefined);
@@ -35,6 +27,14 @@ export function useAsyncComputation<TYield, TResult = TYield, TOpts = unknown>(
     }
     setIsComputing(false);
   }, []);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      stop();
+    };
+  }, [stop]);
 
   // When onYield is omitted, TYield = TResult (enforced by the default type param).
   // TypeScript cannot verify this generic relationship statically.

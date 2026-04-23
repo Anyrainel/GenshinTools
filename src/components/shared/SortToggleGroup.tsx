@@ -1,3 +1,4 @@
+import { AlertTriangle, ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
@@ -7,7 +8,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SortDirection } from "@/data/enums";
-import { AlertTriangle, ArrowDown, ArrowUp, Minus } from "lucide-react";
 
 interface SortToggleGroupProps {
   label?: string;

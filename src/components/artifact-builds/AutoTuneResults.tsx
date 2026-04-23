@@ -1,3 +1,5 @@
+import { AlertTriangle, ChevronDown, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -9,14 +11,12 @@ import type {
   AutoTuneOutput,
   ComboBreakdown,
   TeamBreakdown,
-} from "@/lib/artifact/scoring/pipeline";
+} from "@/lib/artifact-builds/auto-tune/pipeline";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, ChevronDown, ChevronRight } from "lucide-react";
-import { useState } from "react";
 
 // ── Exported sub-components for reuse (e.g., batch AutoTune view) ──
 
-export { SubstatPills, MainStatColumn, ComboTable };
+export { ComboTable, MainStatColumn, SubstatPills };
 
 // Color mapping for stat categories
 const STAT_COLORS: Record<
@@ -250,11 +250,7 @@ function formatRolls(
 }
 
 /** Reusable combo table: header + qualifying combo rows */
-function ComboTable({
-  combos,
-}: {
-  combos: ComboBreakdown[];
-}) {
+function ComboTable({ combos }: { combos: ComboBreakdown[] }) {
   const { t } = useLanguage();
   return (
     <table className="w-full text-xs">
@@ -280,11 +276,7 @@ function ComboTable({
   );
 }
 
-function TeamBreakdownSection({
-  breakdown,
-}: {
-  breakdown: TeamBreakdown;
-}) {
+function TeamBreakdownSection({ breakdown }: { breakdown: TeamBreakdown }) {
   const [expanded, setExpanded] = useState(false);
 
   // Filter to ≥96% combos
@@ -317,11 +309,7 @@ function TeamBreakdownSection({
   );
 }
 
-function ComboRow({
-  combo,
-}: {
-  combo: ComboBreakdown;
-}) {
+function ComboRow({ combo }: { combo: ComboBreakdown }) {
   const { t } = useLanguage();
   return (
     <tr className="border-b border-border/10 last:border-0">

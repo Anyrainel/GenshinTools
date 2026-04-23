@@ -7,10 +7,10 @@
  */
 
 import {
-  SUBSTAT_COEFFICIENTS,
   avgSubstatRolls,
   mainStatLevelValues,
   maxSubstatRolls,
+  SUBSTAT_COEFFICIENTS,
   substatRollTiers,
 } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/enums";

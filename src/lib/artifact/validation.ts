@@ -1,9 +1,9 @@
 import type { ArtifactData } from "@/data/types";
 import {
-  type RollTable,
   buildRollTable,
   gameRound,
   isAlreadyPrecise,
+  type RollTable,
   solveArtifact,
 } from "./solver";
 
@@ -59,7 +59,7 @@ function validateActivatedSubstats(
     if (value === undefined) continue;
     const key = `${stat}:${rarity}`;
     const displayMap = table.get(key);
-    if (!displayMap || !displayMap.has(gameRound(stat, value))) {
+    if (!displayMap?.has(gameRound(stat, value))) {
       invalidStats.push(stat);
     }
   }

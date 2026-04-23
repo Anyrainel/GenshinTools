@@ -1,5 +1,4 @@
-import type { Element, Faction } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
+import type { Element, Faction, ReactionType } from "@/data/enums";
 import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 import { LUNAR_REACTIONS } from "../constants";
@@ -7,9 +6,12 @@ import { DirectFormula, LunarDirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import type { FormulaEntry, FormulaPart } from "../types";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
+import type {
+  ComboTemplate,
+  FormulaEntry,
+  FormulaPart,
+  OptionDef,
+} from "../types";
 import { cbs } from "./helpers";
 
 // 5★ Nod-Krai Characters
@@ -312,7 +314,10 @@ class Nefer extends CharacterBase {
   // Veil of Falsehood: only under Ascendant Gleam (≥2 Nod-Krai); cap 3 at C0-1, 5 at C2+
   private readonly veilStacks = (() => {
     if (this.teamMeta.countByFaction("Moonsign") < 2) return 0;
-    const requested = Number.parseInt(resolveOption(neferOption, this.option));
+    const requested = Number.parseInt(
+      resolveOption(neferOption, this.option),
+      10
+    );
     return Math.min(requested, this.constellation >= 2 ? 5 : 3);
   })();
 

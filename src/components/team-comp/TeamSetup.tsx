@@ -1,3 +1,5 @@
+import { Plus, X } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -7,8 +9,6 @@ import { particles } from "@/lib/ercalc/constants";
 import type { TeamSlot } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import { isElement } from "@/lib/typeValidation";
-import { Plus, X } from "lucide-react";
-import { useCallback, useMemo } from "react";
 import { getElementColor } from "../shared/colors";
 
 /** Get all character IDs that have particle data or charInfo */
@@ -31,7 +31,7 @@ interface TeamSetupProps {
 }
 
 export function TeamSetup({ team, onChange }: TeamSetupProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const allChars = useMemo(getAvailableCharacters, []);
 
   const handleCharChange = useCallback(
@@ -148,7 +148,7 @@ function TeamSlotCard({
   ) => void;
   onRemove: (index: number) => void;
 }) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const borderColor = getElementColor(slot.element, "border");
   const textColor = getElementColor(slot.element, "text");
 
@@ -188,7 +188,10 @@ function TeamSlotCard({
             <select
               value={slot.constellation}
               onChange={(e) =>
-                onConstellationChange(index, Number.parseInt(e.target.value))
+                onConstellationChange(
+                  index,
+                  Number.parseInt(e.target.value, 10)
+                )
               }
               className="bg-transparent border-none text-xs cursor-pointer text-muted-foreground"
             >
@@ -219,7 +222,7 @@ function TeamSlotCard({
                   onWeaponChange(
                     index,
                     slot.weaponId,
-                    Number.parseInt(e.target.value)
+                    Number.parseInt(e.target.value, 10)
                   )
                 }
                 className="bg-transparent border-none text-xs cursor-pointer text-muted-foreground"

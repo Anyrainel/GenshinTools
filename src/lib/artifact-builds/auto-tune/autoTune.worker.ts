@@ -6,11 +6,8 @@ import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import type {
-  AutoTuneTeamInput,
-  AutoTuneTeamResult,
-} from "../../artifact/scoring/pipeline";
-import { autoTuneTeam } from "../../artifact/scoring/pipeline";
+import type { AutoTuneTeamInput, AutoTuneTeamResult } from "./pipeline";
+import { autoTuneTeam } from "./pipeline";
 
 export type AutoTuneWorkerRequest = {
   id: number;

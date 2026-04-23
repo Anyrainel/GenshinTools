@@ -3,8 +3,7 @@ import { WeaponBase } from "../core/implModel";
 import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
-import { ALL_ELEMENTAL_FILTER } from "./helpers";
-import { r, wbs } from "./helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
 // 4★ Catalysts
 

@@ -3,9 +3,7 @@ import { DirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import type { FormulaEntry } from "../types";
-import type { ComboTemplate } from "../types";
-import type { AbilityType } from "../types";
+import type { AbilityType, ComboTemplate, FormulaEntry } from "../types";
 import { cbs } from "./helpers";
 
 /** NA/CA/PA/E/Q — excludes "special" and "sprint" */

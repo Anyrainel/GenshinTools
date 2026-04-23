@@ -1,12 +1,12 @@
-import { PageLayout } from "@/components/layout/PageLayout";
+import { useMemo } from "react";
 import { getTabsForRoute } from "@/components/layout/appNavigation";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { ArtifactArchiveView } from "@/pages/archive/ArtifactArchiveView";
 import { BossArchiveView } from "@/pages/archive/BossArchiveView";
 import { CharacterArchiveView } from "@/pages/archive/CharacterArchiveView";
 import { WeaponArchiveView } from "@/pages/archive/WeaponArchiveView";
-import { useMemo } from "react";
 
 type ArchiveTab = "characters" | "weapons" | "artifacts" | "bosses";
 

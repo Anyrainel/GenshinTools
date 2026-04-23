@@ -13,14 +13,14 @@ import type { DamageTag, DamageTagFilter, FieldState } from "../types";
 import { filterMatchesTag } from "../utils";
 import { E, type Expr, simplify } from "./expr";
 import {
+  appendFieldState,
   ELEMENTAL_DMG_KEY_TO_ELEMENT,
   MULTIPLICATIVE_KEYS,
   SCALED_PERCENT_KEYS,
   SCALED_STAT_BASES,
-  appendFieldState,
+  StatSheet,
   serializeFilter,
 } from "./statSheet";
-import { StatSheet } from "./statSheet";
 
 // ─── Variable Mapping ───
 

@@ -1,7 +1,7 @@
 import { tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { CharacterStatsMap } from "@/data/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   CharacterData,
   CharacterFilters,

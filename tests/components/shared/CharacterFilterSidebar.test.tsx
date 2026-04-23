@@ -1,6 +1,6 @@
+import userEvent from "@testing-library/user-event";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { defaultCharacterFilters } from "@/lib/characterFilters";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 describe("CharacterFilterSidebar", () => {
@@ -37,7 +37,7 @@ describe("CharacterFilterSidebar", () => {
   });
 
   it("renders sort toggle groups", () => {
-    const { container } = render(
+    render(
       <CharacterFilterSidebar
         filters={defaultCharacterFilters}
         onFiltersChange={mockOnFiltersChange}

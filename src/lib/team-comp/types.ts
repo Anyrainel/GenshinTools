@@ -1,10 +1,11 @@
-import type { Element, MainStat, Slot, SubStat } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
 import type {
-  ArtifactData,
-  ArtifactSetConfig,
-  GlobalStatWeights,
-} from "@/data/types";
+  Element,
+  MainStat,
+  ReactionType,
+  Slot,
+  SubStat,
+} from "@/data/enums";
+import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
 import type { ERTimeline } from "@/lib/ercalc/types";
 import type { StatSheet } from "../dmgcalc/core/statSheet";
@@ -96,7 +97,6 @@ export interface TeamOptimizerOptions {
   combo: ComboFormula;
   inventory: ArtifactData[];
   calcContext: CalcContext;
-  globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>;
   perChar: Record<string, CharOptConfig>;
   ignoreArtifactSets?: Record<string, boolean>;

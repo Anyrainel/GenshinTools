@@ -28,17 +28,15 @@
  */
 
 import type { Element, Rarity } from "@/data/enums";
-
-import type { OptionMap } from "@/lib/dmgcalc/types";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboLine,
+  OptionMap,
   ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/dmgcalc/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
-import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
 import { getSetId } from "@/lib/dmgcalc/utils";
 import { CharBuild } from "../../dmgcalc/core/charBuild";
 import { StatSheet } from "../../dmgcalc/core/statSheet";

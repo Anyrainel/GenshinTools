@@ -1,3 +1,6 @@
+import { ArrowUpRight, CircleAlert, Info, TriangleAlert } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Drawer,
   DrawerContent,
@@ -11,14 +14,11 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots } from "@/data/enums";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, CircleAlert, Info, TriangleAlert } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 
 interface ArtifactScoreHoverCardProps {
   score: ArtifactScoreResult | null;

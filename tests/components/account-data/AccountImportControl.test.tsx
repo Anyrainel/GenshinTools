@@ -1,10 +1,10 @@
-import { AccountImportControl } from "@/components/account-data/AccountImportControl";
-import type { ControlHandle } from "@/components/shared/controlHandle";
-import type { GOODData } from "@/lib/account-data/import/goodConversion";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useEffect, useRef } from "react";
 import { describe, expect, it, vi } from "vitest";
+import { AccountImportControl } from "@/components/account-data/AccountImportControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
+import type { GOODData } from "@/lib/account-data/import/goodConversion";
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({

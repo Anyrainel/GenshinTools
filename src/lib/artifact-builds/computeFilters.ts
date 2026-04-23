@@ -8,9 +8,9 @@ import type {
   MainStat,
   MainStatPlus,
   MainStatSlot,
+  MergeAlgorithm,
   SubStat,
 } from "@/data/enums";
-import type { MergeAlgorithm } from "@/data/enums";
 import { artifactHalfSetsById } from "@/data/gameResources";
 import { elementalMainStats } from "../../data/constants";
 import type {
@@ -23,7 +23,7 @@ import type {
 } from "../../data/types";
 import { bruteForcePartitionAsync } from "./bruteForcePartition";
 import { greedyMerge } from "./greedyMerge";
-import { SLOT_KEYS, mergeConfigGroup } from "./mergeUtils";
+import { mergeConfigGroup, SLOT_KEYS } from "./mergeUtils";
 import { smartMerge } from "./smartMerge";
 
 export const DEFAULT_COMPUTE_OPTIONS: ComputeOptions = {

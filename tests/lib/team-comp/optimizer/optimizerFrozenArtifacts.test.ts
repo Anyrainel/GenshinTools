@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { allSlots } from "@/data/enums";
 import {
   characterStatsResource,
@@ -17,14 +18,13 @@ import {
  * - Run the optimizer and verify none of the frozen IDs appear in results
  * - Also test perCharExtraArtifacts: only the designated character gets them
  */
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
 import type { CharOptConfig } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 import {
@@ -45,12 +45,6 @@ const CTX = {
   rollMultiplier: 0.85,
   substatBudget: "8_6" as const,
 };
-const GLOBAL_CONFIG: GlobalStatWeights = {
-  flatAtk: 1,
-  flatHp: 0,
-  flatDef: 0,
-};
-
 const TWO_CHAR_CONFIGS: TeamSlotConfig[] = [
   {
     charId: "hu_tao",
@@ -173,7 +167,7 @@ describe("optimizer frozen artifact protection", () => {
         combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: { hu_tao: new StatSheet([]), xingqiu: new StatSheet([]) },
         perChar,
       })
@@ -234,7 +228,7 @@ describe("optimizer frozen artifact protection", () => {
         combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: { hu_tao: new StatSheet([]), xingqiu: new StatSheet([]) },
         perChar,
         perCharExtraArtifacts: {
@@ -300,7 +294,7 @@ describe("optimizer frozen artifact protection", () => {
         combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: { hu_tao: new StatSheet([]), xingqiu: new StatSheet([]) },
         perChar,
         perCharExtraArtifacts: {
@@ -367,7 +361,7 @@ describe("optimizer frozen artifact protection", () => {
         combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: {
           hu_tao: new StatSheet([]),
           xingqiu: new StatSheet([]),
@@ -430,7 +424,7 @@ describe("optimizer frozen artifact protection", () => {
         combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: {
           hu_tao: new StatSheet([]),
           xingqiu: new StatSheet([]),
@@ -478,7 +472,7 @@ describe("optimizer frozen artifact protection", () => {
         combo: singleFormulaCombo("hu_tao", formulaId),
         inventory,
         calcContext: CTX,
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: { hu_tao: new StatSheet([]), xingqiu: new StatSheet([]) },
         perChar,
       })
@@ -491,14 +485,17 @@ describe("optimizer frozen artifact protection", () => {
     const htIds = getCharAssignedIds(final.bestArtifactsByChar, "hu_tao");
     expect(htIds.size).toBeGreaterThan(0);
 
-    // xingqiu should NOT have artifacts (not optimized)
-    // The optimizer may still create an empty entry
+    // xingqiu was omitted from perChar (frozen). The optimizer may still
+    // heuristic-fill from the shared pool for stat-sheet computation, but
+    // must not assign hu_tao's inventory to xingqiu's result.
     const xqArts = final.bestArtifactsByChar.xingqiu;
     if (xqArts) {
-      const hasArts = allSlots.some((s) => xqArts[s] != null);
-      // If xingqiu got heuristic-filled artifacts, that's fine as long as
-      // they come from the pool. The key point is that xingqiu doesn't
-      // get frozen extras meant for hu_tao.
+      const xqIds = new Set(
+        allSlots.map((s) => xqArts[s]?.id).filter(Boolean) as string[]
+      );
+      for (const id of htIds) {
+        expect(xqIds.has(id)).toBe(false);
+      }
     }
   });
 });

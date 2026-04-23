@@ -4,8 +4,8 @@ import {
   isAnalyzerResult,
   runAnalysis,
 } from "@/lib/team-comp/analyzer/analyzer";
-import type { AnalyzerOptions } from "@/lib/team-comp/analyzer/types";
 import type {
+  AnalyzerOptions,
   AnalyzerProgress,
   AnalyzerResult,
 } from "@/lib/team-comp/analyzer/types";

@@ -1,23 +1,20 @@
 import type { ReactionType } from "@/data/enums";
 import { ELEMENT_ELIGIBLE_REACTIONS, MULTI_ELEMENT_CHARS } from "../constants";
 import type {
-  ComboLine,
-  ComboTemplate,
   ComboTemplateEntry,
-  ConstellationDelta,
+  DamageTag,
   FormulaEntry,
   I18nLabel,
   ReactionComboDelta,
   ReactionComboEntry,
 } from "../types";
-import type { DamageTag } from "../types";
 import type { CharBuild } from "./charBuild";
 import { resolveComboDescriptor } from "./combo";
 import type { TeamMeta } from "./teamMeta";
 import {
   MULTI_CONTRIBUTOR_REACTIONS,
-  type TeamReaction,
   resolveReactionComboEntries,
+  type TeamReaction,
 } from "./teamReaction";
 
 /**

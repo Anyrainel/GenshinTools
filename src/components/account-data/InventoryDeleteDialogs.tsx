@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import type { TaggedArtifact } from "@/components/account-data/InventoryArtifactGrid";
 import type { TaggedWeapon } from "@/components/account-data/InventoryWeaponGrid";
 import { ArtifactDataContent } from "@/components/shared/ArtifactDataHoverCard";
@@ -12,7 +13,6 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { Trash2 } from "lucide-react";
 
 type T = ReturnType<typeof useLanguage>["t"];
 

@@ -1,3 +1,5 @@
+import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import { getReceiverColor } from "@/components/shared/colors";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Switch } from "@/components/ui/switch";
@@ -14,9 +16,7 @@ import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { VALUE_COLORS, getValueColor } from "../shared/colors";
+import { getValueColor, VALUE_COLORS } from "../shared/colors";
 import { BuffDialog, type BuffLedgerFormula } from "./BuffDialog";
 
 type Props = {

@@ -1,7 +1,7 @@
+import { describe, expect, it } from "vitest";
 import type { MainStatPlus, SubStat } from "@/data/enums";
 import type { BuildConfig, SlotConfig } from "@/data/types";
 import {
-  SLOT_KEYS,
   areArraysEqualIgnoreOrder,
   areSlotsStructurallyEqual,
   cloneConfig,
@@ -12,9 +12,9 @@ import {
   mergeConfigMetadata,
   orderedUnion,
   reorderSubstats,
+  SLOT_KEYS,
   slotFingerprint,
 } from "@/lib/artifact-builds/mergeUtils";
-import { describe, expect, it } from "vitest";
 
 function makeSlot(overrides: Partial<SlotConfig> = {}): SlotConfig {
   return {

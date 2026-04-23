@@ -1,6 +1,8 @@
 /**
  * Behavioral lock for deriveSetKeysByChar — set key derivation from TeamBuild configs.
  */
+
+import { describe, expect, it } from "vitest";
 import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
 import {
   characterStatsResource,
@@ -9,7 +11,6 @@ import {
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { deriveSetKeysByChar } from "@/lib/team-comp/generator/generator";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 

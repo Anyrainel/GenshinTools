@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -7,7 +8,7 @@ import {
  * Verifies that both single-pass and multi-pass optimization handle partial
  * artifact inventories without errors.
  */
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
@@ -17,7 +18,6 @@ import type {
   CharOptConfig,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 import { type OptimizerOptions, runOptimization } from "./optimizerV1";
 
 import "@/lib/dmgcalc";
@@ -38,12 +38,6 @@ const CTX: CalcContext = {
   enemyRes: 0.1,
   rollMultiplier: 0.85,
   substatBudget: "8_6",
-};
-
-const GLOBAL_CONFIG: GlobalStatWeights = {
-  flatAtk: 1,
-  flatHp: 0,
-  flatDef: 0,
 };
 
 // ── Team setup ──────────────────────────────────────────────────────────────
@@ -113,7 +107,7 @@ describe("runOptimization — partial artifact inventory", () => {
       minCr: 0,
       inventory: [],
       buildMatch: makeBuildMatch(),
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: new StatSheet([]),
         xingqiu: new StatSheet([]),
@@ -142,7 +136,7 @@ describe("runOptimization — partial artifact inventory", () => {
       inventory,
       minCr: 0,
       buildMatch: makeBuildMatch(),
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(inventory),
         xingqiu: new StatSheet([]),
@@ -175,7 +169,7 @@ describe("runOptimization — partial artifact inventory", () => {
       inventory,
       minCr: 0,
       buildMatch: makeBuildMatch(),
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(inventory),
         xingqiu: new StatSheet([]),
@@ -203,7 +197,7 @@ describe("runOptimization — partial artifact inventory", () => {
       inventory,
       minCr: 0,
       buildMatch: makeBuildMatch(),
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(inventory),
         xingqiu: new StatSheet([]),
@@ -241,7 +235,7 @@ describe("runOptimization — partial artifact inventory", () => {
       inventory,
       minCr: 0,
       buildMatch: makeBuildMatch(),
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(inventory.slice(0, 5)),
         xingqiu: new StatSheet([]),
@@ -272,7 +266,7 @@ describe("runOptimization — partial artifact inventory", () => {
       inventory,
       minCr: 0,
       buildMatch: makeBuildMatch(),
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(inventory),
       },
@@ -309,7 +303,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory: [],
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: new StatSheet([]),
         xingqiu: new StatSheet([]),
@@ -346,7 +340,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(carryArtifacts),
         xingqiu: StatSheet.fromArtifacts(supportArtifacts),
@@ -378,7 +372,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory: carryArtifacts,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(carryArtifacts),
         xingqiu: new StatSheet([]),
@@ -409,7 +403,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: StatSheet.fromArtifacts(inventory),
       },

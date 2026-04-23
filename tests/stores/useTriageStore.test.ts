@@ -1,7 +1,7 @@
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
-import { useTriageStore } from "@/stores/useTriageStore";
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { useTriageStore } from "@/stores/useTriageStore";
 
 beforeEach(() => {
   useTriageStore.setState({ settings: { ...DEFAULT_TRIAGE_SETTINGS } });

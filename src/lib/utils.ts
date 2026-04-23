@@ -1,8 +1,8 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { statPools } from "@/data/constants";
 import type { MainStat, Slot } from "@/data/enums";
 import type { WeaponStatsMap } from "@/data/gameStatsLoader";
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

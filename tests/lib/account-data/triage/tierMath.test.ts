@@ -1,11 +1,11 @@
+import { describe, expect, it } from "vitest";
 import {
-  SUB_WEIGHTS,
   combinations,
   getTier,
   pDrawSet,
   pJoint,
+  SUB_WEIGHTS,
 } from "@/lib/account-data/triage/tierMath";
-import { describe, expect, it } from "vitest";
 
 describe("combinations", () => {
   it("returns [[]] for k=0", () => {

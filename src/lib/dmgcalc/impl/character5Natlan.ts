@@ -1,12 +1,9 @@
-import type { ElementalOrPhysical } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
+import type { ElementalOrPhysical, StatKey } from "@/data/enums";
 import { DirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
-import type { DamageTagFilter } from "../types";
+import type { ComboTemplate, DamageTagFilter, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 // 5★ Natlan Characters

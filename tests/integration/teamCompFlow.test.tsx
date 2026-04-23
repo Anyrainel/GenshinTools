@@ -9,11 +9,10 @@
 
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { render, screen } from "../utils/render";
-
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import type { Team } from "@/lib/team-comp/types";
 import { useTeamStore } from "@/stores/useTeamStore";
+import { render, screen } from "../utils/render";
 
 describe("Integration: Team Builder Flow", () => {
   beforeEach(() => {

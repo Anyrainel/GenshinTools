@@ -1,3 +1,4 @@
+import { describe, it } from "vitest";
 import { calculateTeamER } from "@/lib/ercalc/erCalculator";
 import type {
   ERTimeline,
@@ -5,7 +6,6 @@ import type {
   TeamMember,
   TimelineAction,
 } from "@/lib/ercalc/types";
-import { describe, it } from "vitest";
 
 /** Legacy flat timeline shape for test readability: supports periodicE entries
  *  that get converted into periodic procs attached to the next real action. */

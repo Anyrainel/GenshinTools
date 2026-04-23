@@ -1,3 +1,11 @@
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import type { Language } from "@/data/enums";
 /* eslint-disable react-refresh/only-export-components */
 import {
@@ -15,14 +23,6 @@ import type {
   CharacterKit,
   CharacterSkill,
 } from "@/data/types";
-import {
-  type ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
 
 interface I18n {
   character: (id: string) => string;
@@ -297,7 +297,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getStatMinName = useCallback(
     (statKey: string): string => {
-      // @ts-ignore - statsMin exists in the object but might not be inferred yet if types are strict
       const statsMin = i18nAppData.statsMin as Record<
         string,
         Record<string, string>
@@ -310,7 +309,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getFormulaLabel = useCallback(
     (formulaKey: string): string => {
-      // @ts-ignore - formulas exists in the object but might not be inferred yet
       const formulas = i18nAppData.formulas as Record<
         string,
         Record<string, string>
@@ -347,7 +345,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getReactionName = useCallback(
     (reactionKey: string): string => {
-      // @ts-ignore - reactions exists in the object but might not be inferred yet if types are strict
       const rxns = i18nAppData.reactions as Record<
         string,
         Record<string, string>

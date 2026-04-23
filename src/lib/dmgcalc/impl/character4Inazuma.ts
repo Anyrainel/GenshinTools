@@ -2,8 +2,7 @@ import { DirectFormula, TransformFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { CrossScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
+import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 // 4★ Inazuma Characters

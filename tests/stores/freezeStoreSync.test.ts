@@ -1,5 +1,6 @@
-import { allSlots } from "@/data/enums";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 /**
  * Tests for freeze store ID remapping and validation — the safety net
  * that prevents frozen artifact references from becoming orphaned
@@ -17,7 +18,6 @@ import {
   remapFreezeStoreForImport,
   useFreezeStore,
 } from "@/stores/useFreezeStore";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 function makeArt(
   id: string,

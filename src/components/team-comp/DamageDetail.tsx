@@ -1,3 +1,5 @@
+import { ArrowLeft, Info } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -20,15 +22,18 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots } from "@/data/enums";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
 import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import type { ArtifactData, CharacterData } from "@/data/types";
-import type { ArtifactSetConfig } from "@/data/types";
+import type {
+  ArtifactData,
+  ArtifactSetConfig,
+  CharacterData,
+} from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
@@ -62,14 +67,13 @@ import type {
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
 import { resolveCalcContext } from "@/lib/dmgcalc/utils";
-import { getEffectiveCombo } from "@/lib/team-comp/teamConfigUtils";
 import {
   buildTeamConfigs,
+  getEffectiveCombo,
   getHigherTierEquippedArtifactIds,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
-import type { CharOptConfig } from "@/lib/team-comp/types";
-import type { Team } from "@/lib/team-comp/types";
+import type { CharOptConfig, Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
@@ -79,8 +83,6 @@ import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { ViewId } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { ArrowLeft, Info } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   type ArtifactConflict,
   detectFrozenArtifactConflicts,
@@ -155,11 +157,6 @@ export function DamageDetail({
   const forceReusedCharIds = useMemo(
     () => new Set(Object.keys(teamInventory.forceReuseChars)),
     [teamInventory.forceReuseChars]
-  );
-  // Combined set of all "locked" characters (frozen + forced)
-  const lockedCharIds = useMemo(
-    () => new Set([...frozenCharIdSet, ...forceReusedCharIds]),
-    [frozenCharIdSet, forceReusedCharIds]
   );
   // Per-character reuse info: "locked" (force-reused) or "shared" (pool expansion)
   const reuseInfo = useMemo(() => {
@@ -282,6 +279,12 @@ export function DamageDetail({
     return teamBuild ? teamBuild.catalog.getFormulaIds() : {};
   }, [teamBuild]);
 
+  const validCharIds = Object.keys(availableFormulas);
+  const allFormulas = useMemo(
+    () => collectAllFormulas(validCharIds, availableFormulas),
+    [validCharIds, availableFormulas]
+  );
+
   /** All formulas including constellation-locked ones, with minC info for UI rendering. */
   const displayFormulas = useMemo(() => {
     return teamBuild ? teamBuild.catalog.getAllFormulaIds() : {};
@@ -325,13 +328,6 @@ export function DamageDetail({
     }
     return result;
   }, [frozenEntry, equippedArtifactsByChar]);
-
-  const validCharIds = Object.keys(availableFormulas);
-
-  const allFormulas = useMemo(
-    () => collectAllFormulas(validCharIds, availableFormulas, teamBuild),
-    [validCharIds, availableFormulas, teamBuild]
-  );
 
   const resolvedFormula = useMemo(() => {
     if (!team.selectedFormula) return allFormulas[0] || null;
@@ -549,7 +545,6 @@ export function DamageDetail({
       resolvedFormula?.charId ??
       displayCombo.lines.find((l) => l.count > 0)?.charId ??
       effectiveTeam.characters.find((c): c is string => c != null)!;
-    const formulaId = resolvedFormula?.formulaId ?? "";
 
     const perChar: Record<string, CharOptConfig> = {};
 
@@ -643,7 +638,6 @@ export function DamageDetail({
       },
       inventory: teamInventory.availableArtifacts,
       calcContext: activeContext,
-      globalConfig: scoreConfig.global,
       baseSheets: optBaseSheets,
       perChar,
       teamDeadlineMs: performance.now() + timeBudgetSec * 1000,
@@ -756,7 +750,6 @@ export function DamageDetail({
     !!restoredArtifacts ||
     isComputing ||
     hasPreResolved;
-  const hasAnyResult = hasOptResult;
 
   // True when every roster character has artifacts from any source
   // (frozen, force-reused, optimizer results, restored, or equipped)
@@ -872,7 +865,6 @@ export function DamageDetail({
       resolvedFormula?.charId ??
       displayCombo.lines.find((l) => l.count > 0)?.charId ??
       effectiveTeam.characters.find((c): c is string => c != null)!;
-    const genFormulaId = resolvedFormula?.formulaId ?? "";
 
     // Build per-char ER/CR constraints for generator
     const genPerChar: Record<string, { minEr: number; minCr: number }> = {};
@@ -1157,7 +1149,6 @@ export function DamageDetail({
               combo: { id: combo.id, label: combo.label, lines },
             });
           }}
-          isMobile={isMobile}
           t={t}
         />
 

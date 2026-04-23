@@ -1,9 +1,9 @@
 import {
+  allSlots,
   type MainStat,
   type Slot,
   type StatKey,
   type SubStat,
-  allSlots,
 } from "@/data/enums";
 import { getMainStatValue } from "@/data/utils";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";

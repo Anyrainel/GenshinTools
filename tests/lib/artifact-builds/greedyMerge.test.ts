@@ -1,7 +1,7 @@
+import { describe, expect, it } from "vitest";
 import type { MainStatPlus, SubStat } from "@/data/enums";
 import type { BuildConfig, SlotConfig } from "@/data/types";
 import { greedyMerge } from "@/lib/artifact-builds/greedyMerge";
-import { describe, expect, it } from "vitest";
 
 // Helper to create a slot config for testing
 function createSlotConfig(overrides: Partial<SlotConfig> = {}): SlotConfig {

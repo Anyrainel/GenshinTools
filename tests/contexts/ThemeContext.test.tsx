@@ -1,6 +1,6 @@
-import { THEME_IDS, ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { THEME_IDS, ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 
 // Mock localStorage
 const localStorageMock = (() => {

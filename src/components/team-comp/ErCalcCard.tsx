@@ -1,3 +1,5 @@
+import { Battery, ChevronDown } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Collapsible,
@@ -29,14 +31,11 @@ import type {
 } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import type { Team } from "@/lib/team-comp/types";
-import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Battery, ChevronDown } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { CARD_CLS, CARD_HEADER_CLS, CARD_TITLE_CLS } from "./cardStyles";
 import { ErResultsPanel } from "./ErResultsPanel";
 import { TimelineStrip } from "./TimelineStrip";
-import { CARD_CLS, CARD_HEADER_CLS, CARD_TITLE_CLS } from "./cardStyles";
 
 const EMPTY_ERT: ERTimeline = { actions: [], periodic: [] };
 
@@ -372,7 +371,7 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
               <select
                 value={enemyParticles}
                 onChange={(e) =>
-                  setEnemyParticles(Number.parseInt(e.target.value))
+                  setEnemyParticles(Number.parseInt(e.target.value, 10))
                 }
                 className="text-xs rounded-md border border-border bg-background/50 px-2 py-1 h-6"
               >

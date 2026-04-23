@@ -1,12 +1,9 @@
-import type { Element } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
+import type { Element, ReactionType } from "@/data/enums";
 import { DirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import type { FormulaEntry } from "../types";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
+import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 // 5★ Mondstadt Characters

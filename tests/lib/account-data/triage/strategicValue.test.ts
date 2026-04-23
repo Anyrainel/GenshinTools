@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import type { SubStat } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import {
@@ -5,7 +6,6 @@ import {
   runStrategicRules,
 } from "@/lib/account-data/triage/strategicValue";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
-import { describe, expect, it } from "vitest";
 
 /** Build a minimal 5★ ArtifactData with given substat *roll counts*. */
 function artifactWithRolls(

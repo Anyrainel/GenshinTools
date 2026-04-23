@@ -1,9 +1,3 @@
-import { ItemIcon } from "@/components/shared/ItemIcon";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { tiers } from "@/data/enums";
-import type { Tier } from "@/data/enums";
-import type { TierAssignment } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   DndContext,
   type DragEndEvent,
@@ -12,14 +6,20 @@ import {
   type DragStartEvent,
   KeyboardSensor,
   PointerSensor,
-  TouchSensor,
   pointerWithin,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Tier } from "@/data/enums";
+import { tiers } from "@/data/enums";
+import type { TierAssignment } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { type LayoutMode, TierLayout } from "./TierLayout";
 import type { TierGroupConfig, TierItemData } from "./tierTableTypes";
 

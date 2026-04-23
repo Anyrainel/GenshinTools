@@ -1,7 +1,7 @@
 import {
+  avgSubstatRolls,
   MAIN_STAT_VALUES_4STAR,
   MAIN_STAT_VALUES_5STAR,
-  avgSubstatRolls,
 } from "@/data/constants";
 import type { SubStat } from "@/data/enums";
 import { isFlatStat } from "@/data/utils";

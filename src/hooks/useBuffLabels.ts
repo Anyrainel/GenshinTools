@@ -1,12 +1,12 @@
+import { useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactHalfSetsById } from "@/data/gameResources";
 import type {
   BuffTarget,
   DisplayPart,
+  FormulaTemplate,
   ResolvedBuff,
 } from "@/lib/dmgcalc/types";
-import type { FormulaTemplate } from "@/lib/dmgcalc/types";
-import { useCallback } from "react";
 
 const TEMPLATE_KEYS: Record<FormulaTemplate, string> = {
   direct: "DirectDamage",

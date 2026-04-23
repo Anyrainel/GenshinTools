@@ -3,8 +3,8 @@
  * These fixtures are complete, type-safe representations of domain objects.
  */
 
-import { allSlots } from "@/data/enums";
 import type { Slot, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type {
   AccountData,
   ArtifactData,
@@ -164,7 +164,7 @@ export const createAccountData = (
   ...overrides,
 });
 
-const MOCK_ACCOUNT_DATA = {
+const _MOCK_ACCOUNT_DATA = {
   empty: createAccountData(),
   withOneCharacter: createAccountData({
     characters: [MOCK_CHARACTERS.huTao],
@@ -231,7 +231,7 @@ export const createArtifactScoreResult = (
   };
 };
 
-const MOCK_SCORES = {
+const _MOCK_SCORES = {
   complete: createArtifactScoreResult({ substatScore: { isComplete: true } }),
   incomplete: createArtifactScoreResult({
     substatScore: { isComplete: false },
@@ -247,7 +247,7 @@ const MOCK_SCORES = {
 // Tier Assignment Fixtures
 // ============================================================================
 
-const MOCK_TIER_ASSIGNMENTS = {
+const _MOCK_TIER_ASSIGNMENTS = {
   empty: {},
   singleSTier: {
     hu_tao: { tier: "S", position: 0 },

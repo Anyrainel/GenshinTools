@@ -72,10 +72,6 @@ describe("DirectFormula", () => {
     expect(dp.scalingKeys).toEqual(["atk"]);
     expect(dp.scalingMulti).toEqual([2.426]);
   });
-
-  it("display() assumes correct crit context", () => {
-    const dp = formula.display(stats, 90, CTX);
-  });
 });
 
 describe("DirectFormula — dual scaling", () => {
@@ -120,11 +116,20 @@ describe("AmplifyFormula", () => {
   it("calc() applies amplifying multiplier to direct damage", () => {
     const result = formula.calc(stats, 90, CTX);
 
-    // EM bonus = (2.78 × 200) / (1400 + 200) = 0.3475
-    // AmpMult = 1.5 × (1 + 0.3475) = 2.02125
-    const emBonus = (2.78 * 200) / 1600;
-    const ampMult = 1.5 * (1 + emBonus);
-    expect(result).toBeGreaterThan(0);
+    // Baseline (no EM → no amp bonus) vs this test (em=200 → AmpMult = 1.5 × 1.3475).
+    // Assert amplified damage is strictly greater than the non-amplified version
+    // with the same atk/crit, confirming the amp multiplier is applied.
+    const statsNoEm = new StatSheet([
+      { key: "baseAtk", value: 1000 },
+      { key: "em", value: 0 },
+      { key: "cr", value: 0.05 },
+      { key: "cd", value: 0.5 },
+    ]);
+    const baseline = formula.calc(statsNoEm, 90, CTX);
+    expect(result).toBeGreaterThan(baseline);
+    // EM bonus 34.75% should increase damage proportionally to ampMult ratio.
+    const expectedRatio = 1 + (2.78 * 200) / 1600;
+    expect(result / baseline).toBeCloseTo(expectedRatio, 2);
   });
 
   it("display() has amplify template and reaction params", () => {

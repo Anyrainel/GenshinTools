@@ -7,8 +7,8 @@
  * - Normalization to 300-point scale
  */
 import { SUBSTAT_COEFFICIENTS } from "@/data/constants";
-import { allSlots, mainStatSlots } from "@/data/enums";
 import type { MainStat, MainStatSlot, Slot, SubStat } from "@/data/enums";
+import { allSlots, mainStatSlots } from "@/data/enums";
 import type { ArtifactData, Build, WeightedMainStat } from "@/data/types";
 import { getMainStatValue } from "@/data/utils";
 import {

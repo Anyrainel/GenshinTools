@@ -1,6 +1,6 @@
+import userEvent from "@testing-library/user-event";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import type { TierCustomization } from "@/data/types";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 describe("TierCustomizationDialog", () => {

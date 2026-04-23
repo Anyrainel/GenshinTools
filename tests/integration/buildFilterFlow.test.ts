@@ -12,8 +12,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import type { Build, BuildGroup } from "@/data/types";
 import {
-  DEFAULT_COMPUTE_OPTIONS,
   buildRawConfigs,
+  DEFAULT_COMPUTE_OPTIONS,
   mergeConfigsAsync,
 } from "@/lib/artifact-builds/computeFilters";
 import { useBuildsStore } from "@/stores/useBuildsStore";

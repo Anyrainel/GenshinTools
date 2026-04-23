@@ -1,3 +1,5 @@
+import { ChevronDown, ListOrdered } from "lucide-react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Collapsible,
@@ -13,22 +15,20 @@ import type {
   TeamSlotConfig,
 } from "@/lib/dmgcalc/types";
 import type {
+  AnalyzerCharConfig,
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
-import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ListOrdered } from "lucide-react";
-import { useState } from "react";
 import { AnalyzerComboTab } from "./AnalyzerComboTab";
-import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
 import {
   CARD_BODY_CLS,
   CARD_CLS,
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
 } from "./cardStyles";
+import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
 
 interface AnalyzerComboCardProps {
   teamBuild: TeamBuild;

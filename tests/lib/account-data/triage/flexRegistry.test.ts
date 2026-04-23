@@ -1,5 +1,5 @@
-import { buildCustomFlexPattern } from "@/lib/account-data/triage/flexRegistry";
 import { describe, expect, it } from "vitest";
+import { buildCustomFlexPattern } from "@/lib/account-data/triage/flexRegistry";
 
 describe("buildCustomFlexPattern", () => {
   it("returns correct key, sorted subs, rarity, and custom flag", () => {

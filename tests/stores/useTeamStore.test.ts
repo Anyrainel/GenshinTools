@@ -1,10 +1,10 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import type { Team } from "@/lib/team-comp/types";
 import {
   mergeTeamStore,
   migrateTeamStore,
   useTeamStore,
 } from "@/stores/useTeamStore";
-import { beforeEach, describe, expect, it } from "vitest";
 
 // Reset store before each test
 beforeEach(() => {
@@ -386,7 +386,6 @@ describe("migrateTeamStore", () => {
       description: "",
     };
     // Remove the default minEr so the legacy fields are picked up
-    // biome-ignore lint/performance/noDelete: test cleanup
     delete (state.teams[0] as Record<string, unknown>).minEr;
     const result = migrateTeamStore(state, 3);
     const team = result.teams[0] as Team;

@@ -3,6 +3,14 @@
  * Computes suggestions from evaluation data and displays them grouped by tier.
  */
 
+import {
+  ChevronDown,
+  ChevronRight,
+  CircleHelp,
+  RefreshCw,
+  Search,
+} from "lucide-react";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { ResourceHelpDialog } from "@/components/account-data/ResourceHelpDialog";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -22,8 +30,8 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { tiers } from "@/data/enums";
 import type { Tier } from "@/data/enums";
+import { tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
@@ -33,11 +41,11 @@ import {
   selectActiveBuildsForAccount,
 } from "@/lib/account-data/buildEvaluation";
 import {
-  type ResourceKind,
-  type ResourceSuggestion,
   computeSuggestionPUpgrade,
   generateResourceSuggestions,
   hashGlobalConfig,
+  type ResourceKind,
+  type ResourceSuggestion,
   suggestionCacheKey,
 } from "@/lib/account-data/resourceTips";
 import { cn, getAssetUrl } from "@/lib/utils";
@@ -45,14 +53,6 @@ import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { usePUpgradeCacheStore } from "@/stores/usePUpgradeCacheStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";
 import { useTierStore } from "@/stores/useTierStore";
-import {
-  ChevronDown,
-  ChevronRight,
-  CircleHelp,
-  RefreshCw,
-  Search,
-} from "lucide-react";
-import { forwardRef, useEffect, useMemo, useState } from "react";
 
 const CRAFT_ICON = "/assets/craft.webp";
 const REROLL_ICON = "/assets/reroll.webp";

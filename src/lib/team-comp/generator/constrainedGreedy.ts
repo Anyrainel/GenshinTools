@@ -12,14 +12,13 @@
  */
 
 import { statPools } from "@/data/constants";
-import { allSlots } from "@/data/enums";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
-import { emptySubRolls } from "@/lib/artifact/scoring/utils";
-
+import { allSlots } from "@/data/enums";
 import {
-  type FlexSlotConfig,
   buildSheetFromMainAndSubs,
+  type FlexSlotConfig,
 } from "@/lib/artifact/scoring/sheetBuilder";
+import { emptySubRolls } from "@/lib/artifact/scoring/utils";
 import type { StatSheet } from "../../dmgcalc/core/statSheet";
 
 const MAX_SUBSTATS_PER_SLOT = 4;

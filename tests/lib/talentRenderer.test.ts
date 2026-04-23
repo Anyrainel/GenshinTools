@@ -1,5 +1,5 @@
-import { renderTemplate } from "@/lib/talentRenderer";
 import { describe, expect, it } from "vitest";
+import { renderTemplate } from "@/lib/talentRenderer";
 
 describe("renderTemplate", () => {
   it("renders F1P format", () => {

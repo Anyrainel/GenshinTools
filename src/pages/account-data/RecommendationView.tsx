@@ -1,3 +1,12 @@
+import {
+  ArrowBigUpDash,
+  ArrowRightLeft,
+  Dices,
+  Info,
+  Pickaxe,
+} from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -11,32 +20,21 @@ import {
 } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { LUCK_MULTIPLIERS } from "@/data/enums";
-import { tiers } from "@/data/enums";
 import type { LuckExpectation } from "@/data/enums";
+import { LUCK_MULTIPLIERS, tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { CharacterData } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
-  type ScoreUpAction,
   buildArtifactLookup,
   generateAllRecommendations,
+  type ScoreUpAction,
 } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { cn } from "@/lib/utils";
-import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";
-import {
-  ArrowBigUpDash,
-  ArrowRightLeft,
-  Dices,
-  Info,
-  Pickaxe,
-} from "lucide-react";
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 
 // Height model for masonry layout (measured px values)
 const CARD_GAP = 16; // gap-4
@@ -140,8 +138,6 @@ export function RecommendationView({
   const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
   const investmentThresholds = useTierStore((s) => s.investmentThresholds);
   const setInvestmentThreshold = useTierStore((s) => s.setInvestmentThreshold);
-  const scoreConfig = useArtifactScoreStore((s) => s.config);
-
   // Generate optimizer-based recommendations
   const allRecs = useMemo(() => {
     if (!accountData) return null;
@@ -149,7 +145,6 @@ export function RecommendationView({
       return generateAllRecommendations(
         accountData,
         scores,
-        scoreConfig.global,
         tierAssignments,
         tierCustomization,
         investmentThresholds
@@ -161,7 +156,6 @@ export function RecommendationView({
   }, [
     accountData,
     scores,
-    scoreConfig.global,
     tierAssignments,
     tierCustomization,
     investmentThresholds,

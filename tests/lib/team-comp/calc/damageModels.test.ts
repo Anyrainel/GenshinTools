@@ -1,22 +1,21 @@
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import { CharacterBase } from "@/lib/dmgcalc/core/implModel";
 import {
-  RegisterCharacter,
   createCharacter,
   createWeapon,
   getOptionDef,
+  RegisterCharacter,
   resolveOption,
 } from "@/lib/dmgcalc/core/registry";
 import { StatBuff } from "@/lib/dmgcalc/core/statBuff";
-import { StatSheet, appendFieldState } from "@/lib/dmgcalc/core/statSheet";
+import { appendFieldState, StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
-import type { OptionDef } from "@/lib/dmgcalc/types";
-import type { DamageTag } from "@/lib/dmgcalc/types";
-import { beforeAll, describe, expect, it } from "vitest";
+import type { DamageTag, OptionDef } from "@/lib/dmgcalc/types";
 
 // Side-effect barrel: register all characters, weapons, artifacts
 import "@/lib/dmgcalc";
@@ -623,11 +622,6 @@ describe("StatSheet baseDmg% multiplicative aggregation", () => {
     ability: "skill" as const,
     reaction: "none" as const,
   };
-  const burstTag = {
-    element: "Pyro" as const,
-    ability: "burst" as const,
-    reaction: "none" as const,
-  };
   const normalTag = {
     element: "Pyro" as const,
     ability: "normal" as const,
@@ -972,7 +966,7 @@ describe("Barebone Character Test (lauma)", () => {
   it("populates the def number from base stats even with no artifacts", () => {
     // 2. Register the character
     @RegisterCharacter("lauma")
-    class Lauma extends CharacterBase {
+    class _Lauma extends CharacterBase {
       buffs = [];
       protected formulaMap = {};
     }

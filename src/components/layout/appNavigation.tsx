@@ -1,4 +1,3 @@
-import type { useLanguage } from "@/contexts/LanguageContext";
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
@@ -21,6 +20,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import type { useLanguage } from "@/contexts/LanguageContext";
 
 interface NavTab {
   label: string;

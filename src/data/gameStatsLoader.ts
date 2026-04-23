@@ -10,8 +10,11 @@
 
 import { betaEnabled } from "@/data/betaState";
 import { makeResource, withBetaOverlay } from "@/data/gameDataUtil";
-import type { CharacterResource, WeaponResource } from "@/data/types";
-import type { StatEntry } from "@/data/types";
+import type {
+  CharacterResource,
+  StatEntry,
+  WeaponResource,
+} from "@/data/types";
 import { fetchGzipJson } from "@/data/utils";
 import type {
   BaseStat,
@@ -189,12 +192,11 @@ function parseStatValue(raw: string): number {
   return Number.parseFloat(raw);
 }
 
-/** Parse weapon secondary stat value string */
-function parseWeaponSecondary(stat: MainStat, rawValue: string): number {
+/** Parse weapon secondary stat value string (flat or %). */
+function parseWeaponSecondary(rawValue: string): number {
   if (rawValue.endsWith("%")) {
     return Number.parseFloat(rawValue.slice(0, -1)) / 100;
   }
-  // Flat stats like EM — the stat type tells us it's flat (no %)
   return Number.parseFloat(rawValue);
 }
 
@@ -248,10 +250,7 @@ export function resolveWeaponStats(weaponId: string): StatEntry[] {
   if (entry.secondaryStat && level90.secondaryStatValue) {
     entries.push({
       key: entry.secondaryStat,
-      value: parseWeaponSecondary(
-        entry.secondaryStat,
-        level90.secondaryStatValue
-      ),
+      value: parseWeaponSecondary(level90.secondaryStatValue),
     });
   }
   return entries;

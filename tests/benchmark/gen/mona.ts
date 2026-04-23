@@ -22,20 +22,20 @@ import type { CalcContext, ReactionOverride } from "@/lib/dmgcalc/types";
 import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import type {
   OptFailReason,
-  TeamOptYield,
   TeamOptimizerOptions,
+  TeamOptYield,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
-  type PerCharSearchFn,
-  type PerCharSearchOpts,
-  type PerCharSearchResult,
-  TopKCollector,
   createTeamOptimizer,
   diagnoseFailure,
   evaluateBuild,
   getArtifactStats,
+  type PerCharSearchFn,
+  type PerCharSearchOpts,
+  type PerCharSearchResult,
   setupCharSearch,
+  TopKCollector,
 } from "./teamSearch";
 
 // Super Artifact Construction (per set group)
@@ -53,49 +53,6 @@ interface MonaSlotData {
   crossSetSuperStats: Partial<Record<StatKey, number>>;
   /** Total artifact count across all groups. */
   totalCount: number;
-}
-
-function buildMonaSlotData(
-  inventory: ArtifactData[],
-  slot: string,
-  excludedIds: Set<string> | undefined
-): MonaSlotData {
-  const arts = inventory.filter(
-    (a) => a.slotKey === slot && (!excludedIds || !excludedIds.has(a.id))
-  );
-
-  const bySet = new Map<string, ArtifactData[]>();
-  for (const art of arts) {
-    const arr = bySet.get(art.setKey);
-    if (arr) arr.push(art);
-    else bySet.set(art.setKey, [art]);
-  }
-
-  const groups: SlotSetGroup[] = [];
-  for (const [setKey, setArts] of bySet) {
-    // Build super artifact: component-wise max of all stats
-    const superStats: Partial<Record<StatKey, number>> = {};
-    for (const art of setArts) {
-      const s = getArtifactStats(art);
-      for (const [key, val] of Object.entries(s)) {
-        const sk = key as StatKey;
-        superStats[sk] = Math.max(superStats[sk] ?? 0, val);
-      }
-    }
-    groups.push({ setKey, artifacts: setArts, superStats });
-  }
-
-  // Cross-set super: max across ALL artifacts regardless of set
-  const crossSetSuperStats: Partial<Record<StatKey, number>> = {};
-  for (const art of arts) {
-    const s = getArtifactStats(art);
-    for (const [key, val] of Object.entries(s)) {
-      const sk = key as StatKey;
-      crossSetSuperStats[sk] = Math.max(crossSetSuperStats[sk] ?? 0, val);
-    }
-  }
-
-  return { groups, crossSetSuperStats, totalCount: arts.length };
 }
 
 // Recursive DFS Branch-and-Bound
@@ -421,10 +378,8 @@ function runCharacterMona(opts: PerCharSearchOpts): PerCharSearchResult {
     teamBuild,
     carryCharId,
     formulaId,
-    inventory,
     calcContext,
     baseSheets,
-    excludedIds,
     reactionOverride,
     scoreFn,
     topK,

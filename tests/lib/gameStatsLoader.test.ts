@@ -1,19 +1,19 @@
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   CHARACTER_LEVEL_TIERS,
   type CharacterLevelStats,
   type CharacterStats,
   type CharacterStatsMap,
-  type WeaponStats,
-  type WeaponStatsMap,
   characterStatsResource,
   getCharacterDisplayMeta,
   getCharacterLevelStats,
   getCharacterLevelTier,
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
+  type WeaponStats,
+  type WeaponStatsMap,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import { beforeAll, describe, expect, it } from "vitest";
 
 // ─── getCharacterLevelTier ───────────────────────────────────────────────────
 

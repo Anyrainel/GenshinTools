@@ -1,3 +1,5 @@
+import { ChevronDown } from "lucide-react";
+import { useMemo, useState } from "react";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { WeaponCard } from "@/components/archive/WeaponCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -12,11 +14,8 @@ import {
 } from "@/data/gameStatsLoader";
 import type { WeaponResource } from "@/data/types";
 import { fuzzyMatch } from "@/lib/search";
-import { getSortedWeaponSecondaryStats } from "@/lib/utils";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl, getSortedWeaponSecondaryStats } from "@/lib/utils";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
-import { ChevronDown } from "lucide-react";
-import { useMemo, useState } from "react";
 
 // ─── Filter Chips ─────────────────────────────────────────────────────────────
 

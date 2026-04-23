@@ -1,31 +1,47 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "correctness": {
         "useExhaustiveDependencies": "warn",
-        "useHookAtTopLevel": "error"
+        "useHookAtTopLevel": "off",
+        "noUnusedVariables": "error",
+        "noUnusedFunctionParameters": "error",
+        "noUnusedImports": "error",
+        "noUnusedPrivateClassMembers": "error"
       },
       "style": {
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "useTemplate": "error",
+        "useNodejsImportProtocol": "error",
+        "noUselessElse": "error",
+        "useShorthandAssign": "warn"
       },
       "complexity": {
         "noForEach": "warn",
         "noExcessiveCognitiveComplexity": "off",
-        "useSimplifiedLogicExpression": "off"
-      },
-      "a11y": {
-        "useKeyWithClickEvents": "off",
-        "noSvgWithoutTitle": "off"
+        "useSimplifiedLogicExpression": "off",
+        "useFlatMap": "warn",
+        "noUselessFragments": "error",
+        "noUselessTernary": "error",
+        "noUselessCatch": "error",
+        "noUselessStringConcat": "error",
+        "noUselessLoneBlockStatements": "error",
+        "noUselessUndefinedInitialization": "error"
       },
       "suspicious": {
         "noArrayIndexKey": "off",
-        "noApproximativeNumericConstant": "off"
+        "noApproximativeNumericConstant": "off",
+        "noUnknownAtRules": "off",
+        "noEmptyBlockStatements": "off"
+      },
+      "a11y": {
+        "useKeyWithClickEvents": "off",
+        "noSvgWithoutTitle": "off",
+        "noStaticElementInteractions": "off"
       }
     }
   },
@@ -49,26 +65,32 @@
       "allowTrailingCommas": true
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "files": {
-    "ignore": [
-      "dist",
-      "node_modules",
-      "coverage",
-      "public",
-      "src-tauri",
-      "scripts",
-      "*.min.js",
-      "*.d.ts",
-      "src/components/ui",
-      "src/data/i18n-game.ts",
-      "src/data/i18n-beta.ts",
-      "src/data/resources.ts",
-      "src/data/resources_beta.ts",
-      "src/data/enkaIdMap.ts",
-      "src/data/game/*.json",
-      "src/data/charInfo.ts",
-      "tests/**/__golden__/**",
-      "tests/**/data/**"
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/node_modules",
+      "!**/coverage",
+      "!**/public",
+      "!**/src-tauri",
+      "!**/scripts",
+      "!**/*.min.js",
+      "!**/*.d.ts",
+      "!**/src/components/ui",
+      "!**/src/data/i18n-game.ts",
+      "!**/src/data/i18n-beta.ts",
+      "!**/src/data/resources.ts",
+      "!**/src/data/resources_beta.ts",
+      "!**/src/data/enkaIdMap.ts",
+      "!**/src/data/game/**/*.json",
+      "!**/src/data/charInfo.ts",
+      "!**/tests/**/__golden__",
+      "!**/tests/**/data"
     ]
   },
   "vcs": {
@@ -78,11 +100,25 @@
   },
   "overrides": [
     {
-      "include": ["tests/**"],
+      "includes": ["**/tests/**"],
       "linter": {
         "rules": {
           "complexity": {
             "noForEach": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/lib/dmgcalc/impl/**"],
+      "linter": {
+        "enabled": true,
+        "rules": {
+          "recommended": true,
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off",
+            "noUnusedPrivateClassMembers": "off"
           }
         }
       }

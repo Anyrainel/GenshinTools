@@ -1,3 +1,4 @@
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -8,7 +9,6 @@ import {
   type BuildMatchResult,
   buildToWeightMap,
 } from "@/lib/artifact/scoring/artifactScore";
-import { beforeAll, describe, expect, it } from "vitest";
 
 // Must preload game stats for resolveCharacterStats/resolveWeaponStats
 beforeAll(async () => {

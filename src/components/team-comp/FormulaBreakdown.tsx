@@ -1,3 +1,4 @@
+import type React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { StatKey } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
@@ -8,15 +9,14 @@ import {
   computeScalingDmg,
 } from "@/lib/dmgcalc/core/formulaDisplay";
 import type {
+  BuffActivationMap,
   CritMode,
   DisplayPart,
   FormulaTemplate,
   ResolvedBuff,
 } from "@/lib/dmgcalc/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
 import { fmtDamage, fmtPercent } from "@/lib/team-comp/displayFormatter";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type React from "react";
 import { PartBuffDialog } from "./PartBuffDialog";
 
 type HlKey = StatKey | "charLevel" | null;
@@ -127,7 +127,11 @@ function ResMathLine({
   effRes,
   hl,
   t,
-}: { effRes: number; hl: boolean; t: ReturnType<typeof useLanguage>["t"] }) {
+}: {
+  effRes: number;
+  hl: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
   if (effRes < 0) {
     return (
       <span className="flex items-center">

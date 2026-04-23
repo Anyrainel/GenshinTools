@@ -1,10 +1,10 @@
+import { beforeAll, describe, expect, it } from "vitest";
 import {
-  type RollTable,
   buildRollTable,
   isAlreadyPrecise,
+  type RollTable,
   solveArtifact,
 } from "@/lib/artifact/solver";
-import { beforeAll, describe, expect, it } from "vitest";
 
 describe("artifactSolver", () => {
   describe("buildRollTable", () => {

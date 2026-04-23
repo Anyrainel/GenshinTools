@@ -1,8 +1,8 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import type { CharacterStatsMap } from "@/data/gameStatsLoader";
 import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { CharacterResource } from "@/data/types";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { beforeEach, describe, expect, it } from "vitest";
 
 /**
  * Tests for the unreleased character ownership logic.

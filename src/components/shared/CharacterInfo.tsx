@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -10,7 +11,6 @@ import {
 } from "@/data/gameStatsLoader";
 import type { CharacterResource } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { memo } from "react";
 import { getElementColor, getRarityColor } from "./colors";
 
 interface CharacterInfoProps {

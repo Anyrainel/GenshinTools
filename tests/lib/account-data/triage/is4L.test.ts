@@ -1,6 +1,6 @@
+import { describe, expect, it } from "vitest";
 import type { ArtifactData } from "@/data/types";
 import { isInitial4Line } from "@/lib/account-data/triage/is4L";
-import { describe, expect, it } from "vitest";
 
 function makeArt(opts: {
   substats?: Record<string, number>;

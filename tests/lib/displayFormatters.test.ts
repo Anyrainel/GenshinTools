@@ -1,5 +1,5 @@
-import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { describe, expect, it } from "vitest";
+import { fmtStat } from "@/lib/team-comp/displayFormatter";
 
 describe("fmtStat flat stat rounding", () => {
   it("rounds precise flat HP to integer", () => {

@@ -1,3 +1,6 @@
+import { CheckCircle2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -13,9 +16,6 @@ import {
   loadPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { CheckCircle2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 
 export function BuildsDefaultPresetPrompt() {
   const { t } = useLanguage();

@@ -5,11 +5,8 @@ import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { TeamMeta } from "../core/teamMeta";
-import type { FormulaEntry } from "../types";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
-import { travelerP3Buff } from "./helpers";
-import { cbs } from "./helpers";
+import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
+import { cbs, travelerP3Buff } from "./helpers";
 
 // 5★ None Characters
 
@@ -47,7 +44,8 @@ const skirkOption = {
 @RegisterCharacter("skirk", skirkOption)
 class Skirk extends CharacterBase {
   private readonly riftCount = Number.parseInt(
-    resolveOption(skirkOption, this.option)
+    resolveOption(skirkOption, this.option),
+    10
   );
 
   // P2 死河渡断: 1 per Hydro teammate + 1 per non-Skirk Cryo teammate (max 3)
@@ -712,7 +710,8 @@ const travelerDendroOption = {
 @RegisterCharacter("traveler_dendro", travelerDendroOption)
 class TravelerDendro extends CharacterBase {
   private readonly lotusEM = Number.parseInt(
-    resolveOption(travelerDendroOption, this.option)
+    resolveOption(travelerDendroOption, this.option),
+    10
   );
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [

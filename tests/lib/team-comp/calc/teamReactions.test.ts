@@ -2,6 +2,8 @@
  * Tests for TeamReactionProvider: team-wide reaction formula generation,
  * eligibility filtering, damage evaluation, compiler path, and display path.
  */
+
+import { describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -29,14 +31,13 @@ import {
   resolveReactionComboEntries,
 } from "@/lib/dmgcalc/core/teamReaction";
 import type { TeamStatSheet } from "@/lib/dmgcalc/core/teamStatSheet";
-import type { ReactionComboEntry } from "@/lib/dmgcalc/types";
 import type {
   CalcContext,
   ComboFormula,
   I18nLabel,
+  ReactionComboEntry,
   TeamSlotConfig,
 } from "@/lib/dmgcalc/types";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 
@@ -449,9 +450,6 @@ describe("TeamReactionProvider — character override filtering", () => {
 describe("TeamReactionProvider — damage evaluation", () => {
   it("single-contributor overloaded produces non-zero damage", () => {
     const tb = new TeamBuild(PYRO_ELECTRO_TEAM);
-    const charIds = PYRO_ELECTRO_TEAM.map((c) => c.charId);
-    const sheets = emptySheets(...charIds);
-    const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
 
     const result = tb.getDamageResult("fischl", "rx-overloaded-fischl", CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -460,9 +458,6 @@ describe("TeamReactionProvider — damage evaluation", () => {
 
   it("bloom damage is consistent with TransformFormula calc", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
-    const charIds = BLOOM_TEAM.map((c) => c.charId);
-    const sheets = emptySheets(...charIds);
-    const teamStats = tb.getTeamStats(sheets, "nahida", CTX);
 
     const result = tb.getDamageResult("nahida", "rx-bloom-nahida", CTX);
     expect(result.totalDamage).toBeGreaterThan(0);
@@ -651,9 +646,6 @@ describe("TeamReactionProvider — lunar reactions", () => {
 describe("TeamReactionProvider — multi-contributor evaluation", () => {
   it("multi-contributor produces rank-weighted damage via unified pipeline", () => {
     const tb = new TeamBuild(LUNAR_TEAM);
-    const charIds = LUNAR_TEAM.map((c) => c.charId);
-    const sheets = emptySheets(...charIds);
-    const teamStats = tb.getTeamStats(sheets, "columbina", CTX);
 
     // Multi-contributor entries use per-triggerer IDs (on-field char = flins)
     const result = tb.getDamageResult(
@@ -703,10 +695,6 @@ describe("TeamReactionProvider — different triggers produce different damage",
       },
     ];
     const tb = new TeamBuild(team);
-    const charIds = team.map((c) => c.charId);
-    const sheets = emptySheets(...charIds);
-    const teamStats = tb.getTeamStats(sheets, "hu_tao", CTX);
-
     const dmgHuTao = tb.getDamageResult(
       "hu_tao",
       "rx-overloaded-hu_tao",
@@ -728,9 +716,6 @@ describe("TeamReactionProvider — different triggers produce different damage",
 describe("TeamReactionProvider — swirl damage evaluation", () => {
   it("swirl produces non-zero damage", () => {
     const tb = new TeamBuild(SWIRL_TEAM);
-    const charIds = SWIRL_TEAM.map((c) => c.charId);
-    const sheets = emptySheets(...charIds);
-    const teamStats = tb.getTeamStats(sheets, "kaedehara_kazuha", CTX);
 
     const result = tb.getDamageResult(
       "kaedehara_kazuha",

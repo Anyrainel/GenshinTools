@@ -1,10 +1,10 @@
+import { describe, expect, it } from "vitest";
 import type { MainStatPlus, SubStat } from "@/data/enums";
 import type { BuildConfig, SlotConfig } from "@/data/types";
 import {
   bruteForcePartition,
   bruteForcePartitionAsync,
 } from "@/lib/artifact-builds/bruteForcePartition";
-import { describe, expect, it } from "vitest";
 
 function makeSlot(
   substats: SubStat[],

@@ -1,3 +1,5 @@
+import { Megaphone } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
@@ -10,8 +12,6 @@ import type { Language } from "@/data/enums";
 import { cn } from "@/lib/utils";
 import newsEnRaw from "@/presets/updatelog/en.md?raw";
 import newsZhRaw from "@/presets/updatelog/zh.md?raw";
-import { Megaphone } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ── Programmatic opener ────────────────────────────────────────────────
 

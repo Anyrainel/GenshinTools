@@ -1,6 +1,6 @@
-import { maybeHandleBetaMagic } from "@/data/betaState";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { maybeHandleBetaMagic } from "@/data/betaState";
 
 /**
  * Session-scoped state for the Archive pages. Survives in-session navigation

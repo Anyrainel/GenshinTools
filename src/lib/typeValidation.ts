@@ -1,15 +1,14 @@
 import { TEAM_REACTION_OPTIONS } from "@/data/constants";
-import { allSlots } from "@/data/enums";
-import { buildConstellations } from "@/data/enums";
-import type { BuildConstellation } from "@/data/enums";
+import type { BuildConstellation, ReactionType } from "@/data/enums";
 import {
+  allSlots,
+  buildConstellations,
   type Element,
+  elements,
   type MainStat,
   type Slot,
   type SubStat,
-  elements,
 } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
 
 const ELEMENTS = new Set<string>(elements);
 const SLOTS = new Set<string>(allSlots);

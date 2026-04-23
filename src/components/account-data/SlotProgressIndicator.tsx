@@ -1,3 +1,4 @@
+import { TriangleAlert } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -6,7 +7,6 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getBarColor } from "@/lib/account-data/buildEvaluation";
 import { cn } from "@/lib/utils";
-import { TriangleAlert } from "lucide-react";
 
 interface SlotProgressIndicatorProps {
   slot: string;

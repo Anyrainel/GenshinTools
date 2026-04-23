@@ -1,12 +1,10 @@
+import type { Slot, StatKey } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import type { Slot } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
 import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
 } from "@/data/gameResources";
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import type { ArtifactSetConfig } from "@/data/types";
+import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
 import { getMainStatValue } from "@/data/utils";
 import {
   type BuildMatchResult,
@@ -36,7 +34,6 @@ export interface OptimizerOptions {
   minCr: number; // e.g. 0.05 for 5% (for Favonius weapons)
   inventory: ArtifactData[];
   buildMatch?: BuildMatchResult | null;
-  globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>; // Sheets for other 3 chars
   calcContext: CalcContext;
 
@@ -84,7 +81,6 @@ export interface OptimizationResult {
 function scorePiece(
   art: ArtifactData,
   buildMatch: BuildMatchResult | null | undefined,
-  globalConfig: GlobalStatWeights,
   crDiscount = 1
 ): number {
   if (!buildMatch) return 0;
@@ -93,7 +89,7 @@ function scorePiece(
     crDiscount < 1
       ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }
       : baseWeights;
-  let score = scoreSlot(art, weights, globalConfig);
+  let score = scoreSlot(art, weights);
 
   // Add main stat contribution when it matches the build recommendation.
   if (buildMatch) {
@@ -102,12 +98,7 @@ function scorePiece(
       buildMatch.build
     );
     if (recommended.has(art.mainStatKey)) {
-      let mainScore = scoreMainStat(
-        art.mainStatKey,
-        art.rarity,
-        globalConfig,
-        art.level
-      );
+      let mainScore = scoreMainStat(art.mainStatKey, art.rarity, art.level);
       // Also discount CR main stat when CR is devalued
       if (crDiscount < 1 && art.mainStatKey === "cr") {
         mainScore *= crDiscount;
@@ -627,7 +618,6 @@ export async function* runOptimization(
     minCr,
     inventory,
     buildMatch,
-    globalConfig,
     baseSheets,
     calcContext,
     artifactSet,
@@ -721,14 +711,12 @@ export async function* runOptimization(
 
   for (const slot of allSlots) {
     const slotArts = inventory.filter(
-      (a) =>
-        a.slotKey === slot &&
-        (!excludedArtifactIds || !excludedArtifactIds.has(a.id))
+      (a) => a.slotKey === slot && !excludedArtifactIds?.has(a.id)
     );
 
     const withScore = slotArts.map((art) => ({
       art,
-      score: scorePiece(art, effectiveBuildMatch, globalConfig, crDiscount),
+      score: scorePiece(art, effectiveBuildMatch, crDiscount),
       er: getArtifactEr(art),
     }));
 
@@ -756,7 +744,7 @@ export async function* runOptimization(
       const seen = new Set<string>();
       for (const { art } of scoredPools[slot]) {
         const hsId = artifactIdToHalfSetId[art.setKey];
-        if (!hsId || !hsId.startsWith("er-") || seen.has(hsId)) continue;
+        if (!hsId?.startsWith("er-") || seen.has(hsId)) continue;
         seen.add(hsId);
         erHalfSetSlots.set(hsId, (erHalfSetSlots.get(hsId) ?? 0) + 1);
       }

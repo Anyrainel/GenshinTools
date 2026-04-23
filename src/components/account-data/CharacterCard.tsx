@@ -1,3 +1,6 @@
+import { Pencil, Sword } from "lucide-react";
+import { memo } from "react";
+import { Link } from "react-router-dom";
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
@@ -12,8 +15,8 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo as charInfoData } from "@/data/charInfo";
-import { allSlots } from "@/data/enums";
 import type { MainStatSlot, Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import {
   artifactsById,
   charactersById,
@@ -22,9 +25,6 @@ import {
 import type { CharacterData } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Pencil, Sword } from "lucide-react";
-import { memo } from "react";
-import { Link } from "react-router-dom";
 import { StatDisplay } from "./StatDisplay";
 
 /** Pre-computed layout flags, hoisted to the parent to avoid per-card useMediaQuery hooks. */

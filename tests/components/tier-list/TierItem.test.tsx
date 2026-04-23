@@ -1,7 +1,7 @@
-import { TierItem } from "@/components/tier-list/TierItem";
-import type { TierItemData } from "@/components/tier-list/tierTableTypes";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
+import { TierItem } from "@/components/tier-list/TierItem";
+import type { TierItemData } from "@/components/tier-list/tierTableTypes";
 import { render } from "../../utils/render";
 
 // Wrapper to provide dnd-kit context
@@ -62,10 +62,10 @@ describe("TierItem", () => {
       </DndWrapper>
     );
 
-    // ItemIcon should render an image
+    // ItemIcon should render an image with the item's accessible alt text
     const img = container.querySelector("img");
     expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute("alt", mockItem.imagePath);
+    expect(img).toHaveAttribute("alt", "Hu Tao");
   });
 
   it("renders overlay image when provided", () => {

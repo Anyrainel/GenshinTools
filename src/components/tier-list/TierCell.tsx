@@ -1,8 +1,8 @@
+import { useDroppable } from "@dnd-kit/core";
+import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
+import type { ReactNode } from "react";
 import type { Tier } from "@/data/enums";
 import { cn } from "@/lib/utils";
-import { useDroppable } from "@dnd-kit/core";
-import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
-import type { ReactNode } from "react";
 import { getTierColor } from "../shared/colors";
 import { TierItem } from "./TierItem";
 import type { TierItemData } from "./tierTableTypes";

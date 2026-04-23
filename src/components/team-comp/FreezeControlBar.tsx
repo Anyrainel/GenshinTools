@@ -1,3 +1,4 @@
+import { Flame, Monitor, Snowflake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -8,7 +9,6 @@ import {
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactReuseMode } from "@/stores/useFreezeStore";
-import { Flame, Monitor, Snowflake } from "lucide-react";
 
 interface FreezeControlBarProps {
   reuseMode: ArtifactReuseMode;

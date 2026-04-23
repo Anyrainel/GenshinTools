@@ -10,16 +10,15 @@
 
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { render } from "../utils/render";
-
 import { CharacterCard } from "@/components/account-data/CharacterCard";
 import {
-  type GOODData,
   convertGOODToAccountData,
+  type GOODData,
 } from "@/lib/account-data/import/goodConversion";
 import { scoreWithBuilds } from "@/lib/artifact/scoring/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { render } from "../utils/render";
 
 // Minimal GOOD data with one character and artifacts
 const integrationGOODData: GOODData = {

@@ -10,8 +10,7 @@
  */
 
 import { MAIN_STAT_VALUES_5STAR, statPools } from "@/data/constants";
-import type { MainStat, SubStat } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
+import type { MainStat, StatKey, SubStat } from "@/data/enums";
 import { toInternal } from "@/lib/artifact/scoring/utils";
 import {
   type BuildMatchResult,

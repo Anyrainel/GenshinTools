@@ -1,22 +1,3 @@
-import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
-import { EmptyState } from "@/components/shared/EmptyState";
-import { ArtifactFreezeDialog } from "@/components/team-comp/ArtifactFreezeDialog";
-import { FreezeControlBar } from "@/components/team-comp/FreezeControlBar";
-import { FrozenExportPanel } from "@/components/team-comp/FrozenExportPanel";
-import { FrozenTeamSection } from "@/components/team-comp/FrozenTeamSection";
-import { StandaloneArtifactsCard } from "@/components/team-comp/StandaloneArtifactsCard";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots } from "@/data/enums";
-import type { Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { buildBatchEquipInstructions } from "@/lib/account-data/manager/instructions";
-import { downloadElementAsImage } from "@/lib/downloadImage";
-import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
-import { useFreezeStore } from "@/stores/useFreezeStore";
-import { useTeamStore } from "@/stores/useTeamStore";
 import { Snowflake } from "lucide-react";
 import {
   forwardRef,
@@ -27,6 +8,25 @@ import {
   useRef,
   useState,
 } from "react";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { ArtifactFreezeDialog } from "@/components/team-comp/ArtifactFreezeDialog";
+import { FreezeControlBar } from "@/components/team-comp/FreezeControlBar";
+import { FrozenExportPanel } from "@/components/team-comp/FrozenExportPanel";
+import { FrozenTeamSection } from "@/components/team-comp/FrozenTeamSection";
+import { StandaloneArtifactsCard } from "@/components/team-comp/StandaloneArtifactsCard";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { buildBatchEquipInstructions } from "@/lib/account-data/manager/instructions";
+import { downloadElementAsImage } from "@/lib/downloadImage";
+import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
+import { useFreezeStore } from "@/stores/useFreezeStore";
+import { useTeamStore } from "@/stores/useTeamStore";
 
 export interface FrozenViewHandle {
   downloadAllFrozen: () => void;
@@ -410,7 +410,6 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
             frozenTeamEntries.map((entry) => (
               <FrozenTeamSection
                 key={entry.teamId}
-                teamId={entry.teamId}
                 team={entry.team}
                 teamIndex={entry.teamIndex}
                 frozenCharIds={entry.frozenCharIds}

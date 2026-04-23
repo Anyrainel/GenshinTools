@@ -1,3 +1,4 @@
+import { z } from "zod";
 import particlesData from "@/data/ercalc/particles.json";
 import fontaineSE from "@/data/ercalc/selfEnergy-fontaine.json";
 import inazumaSE from "@/data/ercalc/selfEnergy-inazuma.json";
@@ -8,7 +9,6 @@ import nodKraiSE from "@/data/ercalc/selfEnergy-nod-krai.json";
 import noneSE from "@/data/ercalc/selfEnergy-none.json";
 import snezhnayaSE from "@/data/ercalc/selfEnergy-snezhnaya.json";
 import sumeruSE from "@/data/ercalc/selfEnergy-sumeru.json";
-import { z } from "zod";
 import type {
   ActionType,
   ParticleEntry,

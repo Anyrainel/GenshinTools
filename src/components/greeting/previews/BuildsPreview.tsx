@@ -1,7 +1,7 @@
+import { ArrowLeft, BarChart3, Lightbulb, Lock } from "lucide-react";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { ArrowLeft, BarChart3, Lightbulb, Lock } from "lucide-react";
 import { PREVIEW_BUILD } from "./previewData";
 
 type PreviewProps = { t: ReturnType<typeof useLanguage>["t"] };

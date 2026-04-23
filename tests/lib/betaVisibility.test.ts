@@ -7,6 +7,7 @@
  * stopped gating its beta data on ``betaEnabled()``.
  */
 
+import { describe, expect, it } from "vitest";
 import { betaEnabled } from "@/data/betaState";
 import { characterKitsResource } from "@/data/gameDataLoader";
 import {
@@ -30,7 +31,6 @@ import {
   betaCharacters,
   betaWeapons,
 } from "@/data/resources_beta";
-import { describe, expect, it } from "vitest";
 
 const releasedCharIds = new Set(releasedCharacters.map((c) => c.id));
 const releasedWeaponIds = new Set(releasedWeapons.map((w) => w.id));

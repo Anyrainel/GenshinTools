@@ -11,6 +11,7 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
 import type { MergeAlgorithm } from "@/data/enums";
 import type {
   ArtifactBuildConfigs,
@@ -19,11 +20,10 @@ import type {
 } from "@/data/types";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import {
-  DEFAULT_COMPUTE_OPTIONS,
   buildRawConfigs,
+  DEFAULT_COMPUTE_OPTIONS,
   mergeConfigsAsync,
 } from "@/lib/artifact-builds/computeFilters";
-import { describe, expect, it } from "vitest";
 
 const GOLDEN_DIR = resolve(__dirname, "__golden__");
 const UPDATE = process.env.UPDATE_GOLDEN === "1";

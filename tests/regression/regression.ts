@@ -27,19 +27,19 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import {
-  C,
-  type DiffEntry,
-  type GoldenFile,
-  PRNG_SEED,
   buildGeneratorProblem,
+  C,
   characterStatsResource,
+  type DiffEntry,
   deepDiff,
   fmt,
   formatSummary,
   formatTeamDiff,
+  type GoldenFile,
   hasRegressions,
   loadTeamPreset,
   mulberry32,
+  PRNG_SEED,
   runGeneratorForTeam,
   weaponStatsResource,
 } from "./runner";

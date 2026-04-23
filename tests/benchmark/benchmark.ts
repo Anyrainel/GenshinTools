@@ -35,21 +35,20 @@
  */
 
 import {
-  type WriteStream,
   copyFileSync,
   createWriteStream,
   existsSync,
   mkdirSync,
   readFileSync,
+  type WriteStream,
   writeFileSync,
 } from "node:fs";
 import { availableParallelism } from "node:os";
 import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { stripVTControlCharacters } from "node:util";
-
-import { allSlots } from "@/data/enums";
 import type { Element, MainStat, Slot, StatKey, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData } from "@/data/types";
 import {
   getTargetMainStatsForSlot,
@@ -78,15 +77,12 @@ import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type { CharOptConfig } from "@/lib/team-comp/types";
 
 import {
-  C,
-  type ConstraintViolation,
-  DEFAULT_CALC_CONTEXT,
-  DEFAULT_GLOBAL_CONFIG,
-  type Team,
-  type TeamResult,
   buildPerChar,
   buildTeamSlotConfig,
+  C,
+  type ConstraintViolation,
   characterStatsResource,
+  DEFAULT_CALC_CONTEXT,
   fmt,
   getAllArtifacts,
   getCarryFormulaIds,
@@ -94,6 +90,8 @@ import {
   loadAccountData,
   loadTeamPreset,
   runOptimizerOnTeam,
+  type Team,
+  type TeamResult,
   weaponStatsResource,
 } from "./runner";
 
@@ -1375,7 +1373,7 @@ async function cmdRun(opts: {
       key: p.key,
       combo: p.combo,
     }));
-    const results = await runParallel(
+    const _results = await runParallel(
       tasks,
       opts.algo,
       opts.timeoutSec,
@@ -1697,7 +1695,7 @@ async function cmdStatus(): Promise<void> {
 
   if (problems.length > 0) {
     console.log(`\n  ${C.bold}Problems:${C.reset}`);
-    for (const [key, problem] of problems.sort((a, b) =>
+    for (const [_key, problem] of problems.sort((a, b) =>
       a[0].localeCompare(b[0])
     )) {
       const bestDmg = Math.max(
@@ -2393,7 +2391,6 @@ async function cmdCompare(opts: {
 async function cmdReverseWeights(filter?: string): Promise<void> {
   const { store, accountData, inventory, artById, teamById } =
     await loadContext();
-  const globalConfig = DEFAULT_GLOBAL_CONFIG;
 
   // Accumulate per-stat "rank penalty" across all problems to find systematic biases
   const statRankPenalties: Record<
@@ -2427,23 +2424,14 @@ async function cmdReverseWeights(filter?: string): Promise<void> {
       const slotArts = inventory
         .filter((a) => a.slotKey === slot)
         .map((a) => {
-          let score = scoreSlot(
-            a,
-            baseWeights as Record<string, number>,
-            globalConfig
-          );
+          let score = scoreSlot(a, baseWeights as Record<string, number>);
           if (carryConfig.buildMatch) {
             const rec = getTargetMainStatsForSlot(
               slot,
               carryConfig.buildMatch.build
             );
             if (rec.has(a.mainStatKey)) {
-              score += scoreMainStat(
-                a.mainStatKey,
-                a.rarity,
-                globalConfig,
-                a.level
-              );
+              score += scoreMainStat(a.mainStatKey, a.rarity, a.level);
             }
           }
           return { art: a, score };
@@ -2606,8 +2594,6 @@ async function cmdCarryDiagnose(opts: {
       continue;
     }
 
-    const globalConfig = DEFAULT_GLOBAL_CONFIG;
-
     // ── 1) Carry artifact ranking per slot ──
     console.log(`\n  ${C.magenta}── Carry Artifact Ranking ──${C.reset}`);
     const bestCarrySlots = bestSol.artifactAssignment[carryId] ?? {};
@@ -2634,23 +2620,14 @@ async function cmdCarryDiagnose(opts: {
         .filter((a) => a.slotKey === slot)
         .map((a) => {
           const weights = baseWeights;
-          let score = scoreSlot(
-            a,
-            weights as Record<string, number>,
-            globalConfig
-          );
+          let score = scoreSlot(a, weights as Record<string, number>);
           if (carryConfig.buildMatch) {
             const rec = getTargetMainStatsForSlot(
               slot,
               carryConfig.buildMatch.build
             );
             if (rec.has(a.mainStatKey)) {
-              score += scoreMainStat(
-                a.mainStatKey,
-                a.rarity,
-                globalConfig,
-                a.level
-              );
+              score += scoreMainStat(a.mainStatKey, a.rarity, a.level);
             }
           }
           return { art: a, score };
@@ -2723,7 +2700,6 @@ async function cmdCarryDiagnose(opts: {
       teamBuild,
       carryId,
       inventory,
-      globalConfig,
       baseSheets,
       calcContext,
       supportArtIds, // exclude support artifacts
@@ -2789,7 +2765,6 @@ async function cmdCarryDiagnose(opts: {
       teamBuild,
       carryId,
       inventory,
-      globalConfig,
       baseSheets,
       calcContext,
       undefined,
@@ -3298,7 +3273,7 @@ function parseFlagInt(
   defaultVal: number
 ): number {
   const val = parseFlag(args, flag);
-  return val !== undefined ? Number.parseInt(val) : defaultVal;
+  return val !== undefined ? Number.parseInt(val, 10) : defaultVal;
 }
 
 async function main(): Promise<void> {

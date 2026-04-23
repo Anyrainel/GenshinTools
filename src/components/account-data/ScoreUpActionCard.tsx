@@ -1,10 +1,3 @@
-import { ArtifactComparisonHoverCard } from "@/components/shared/ArtifactDataHoverCard";
-import { ItemIcon } from "@/components/shared/ItemIcon";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/gameResources";
-import type { ArtifactData } from "@/data/types";
-import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
-import { cn } from "@/lib/utils";
 import {
   ArrowBigUpDash,
   ArrowRight,
@@ -17,6 +10,13 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { memo } from "react";
+import { ArtifactComparisonHoverCard } from "@/components/shared/ArtifactDataHoverCard";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/gameResources";
+import type { ArtifactData } from "@/data/types";
+import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
+import { cn } from "@/lib/utils";
 
 interface ScoreUpActionCardProps {
   recommendation: ScoreUpAction;

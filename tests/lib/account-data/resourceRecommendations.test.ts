@@ -16,6 +16,7 @@ const ZERO_MIN_DIFF = {
   reroll: { ...ZERO_TIER },
   levelup: { ...ZERO_TIER },
 };
+
 import { describe, expect, it } from "vitest";
 import { createAccountData } from "../../fixtures";
 

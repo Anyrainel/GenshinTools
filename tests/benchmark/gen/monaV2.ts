@@ -18,8 +18,8 @@
  *     sort higher, finding feasible builds faster)
  */
 
-import { allSlots } from "@/data/enums";
 import type { StatKey } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { artifactHalfSetsById } from "@/data/gameResources";
 import type { ArtifactData } from "@/data/types";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
@@ -28,15 +28,11 @@ import type { CalcContext, ReactionOverride } from "@/lib/dmgcalc/types";
 import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import type {
   OptFailReason,
-  TeamOptYield,
   TeamOptimizerOptions,
+  TeamOptYield,
 } from "@/lib/team-comp/types";
 import {
   type ArtifactTuple,
-  type PerCharSearchFn,
-  type PerCharSearchOpts,
-  type PerCharSearchResult,
-  TopKCollector,
   createTeamOptimizer,
   diagnoseFailure,
   evaluateBuild,
@@ -44,7 +40,11 @@ import {
   getArtifactCr,
   getArtifactEr,
   getArtifactStats,
+  type PerCharSearchFn,
+  type PerCharSearchOpts,
+  type PerCharSearchResult,
   setupCharSearch,
+  TopKCollector,
 } from "./teamSearch";
 
 // Weight Heuristic (faithful to weight_heuristic.rs::NaiveWeightHeuristic)
@@ -191,7 +191,7 @@ function buildV2SlotData(
 ): V2SlotData {
   const slot = allSlots[slotIdx];
   const arts = inventory.filter(
-    (a) => a.slotKey === slot && (!excludedIds || !excludedIds.has(a.id))
+    (a) => a.slotKey === slot && !excludedIds?.has(a.id)
   );
 
   const bySetAndMain = new Map<GroupKey, ArtifactData[]>();

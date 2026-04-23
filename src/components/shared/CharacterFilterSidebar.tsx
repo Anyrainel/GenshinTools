@@ -1,3 +1,4 @@
+import { AlertTriangle, Search, X } from "lucide-react";
 import { SortToggleGroup } from "@/components/shared/SortToggleGroup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,22 +11,21 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { SortDirection } from "@/data/enums";
 import {
   type Element,
-  type Rarity,
-  type WeaponType,
   elements,
+  type Rarity,
   regions,
+  type WeaponType,
   weaponTypes,
 } from "@/data/enums";
-import type { SortDirection } from "@/data/enums";
 import {
   elementResourcesByName,
   weaponResourcesByName,
 } from "@/data/gameResources";
 import type { CharacterFilters } from "@/data/types";
 import { getAssetUrl } from "@/lib/utils";
-import { AlertTriangle, Search, X } from "lucide-react";
 
 interface CharacterFilterSidebarProps {
   filters: CharacterFilters;

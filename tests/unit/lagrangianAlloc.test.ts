@@ -1,10 +1,10 @@
+import { describe, expect, it } from "vitest";
 import {
   DEFAULT_LAGRANGIAN_CONFIG,
   findContestedArtifacts,
   runLagrangianAllocation,
 } from "@/lib/team-comp/optimizer/lagrangianAlloc";
 import type { ArtifactTuple, TopKEntry } from "@/lib/team-comp/optimizer/types";
-import { describe, expect, it } from "vitest";
 
 function makeEntry(damage: number, ids: string[]): TopKEntry {
   return {

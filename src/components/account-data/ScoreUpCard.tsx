@@ -1,3 +1,6 @@
+import { ArrowUpRight, PartyPopper } from "lucide-react";
+import { memo } from "react";
+import { Link } from "react-router-dom";
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
@@ -20,9 +23,6 @@ import type { ArtifactData, CharacterData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
-import { ArrowUpRight, PartyPopper } from "lucide-react";
-import { memo } from "react";
-import { Link } from "react-router-dom";
 import { ScoreUpActionCard } from "./ScoreUpActionCard";
 
 interface ScoreUpCardProps {

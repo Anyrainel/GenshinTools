@@ -44,6 +44,7 @@ vi.mock("@/data/utils", async (importOriginal) => {
     },
   };
 });
+
 import {
   characterStatsResource,
   weaponStatsResource,

@@ -1,9 +1,9 @@
+import { TrendingUp } from "lucide-react";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { InvestmentDetail } from "@/components/team-comp/InvestmentDetail";
 import { TeamGrid } from "@/components/team-comp/TeamGrid";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
-import { TrendingUp } from "lucide-react";
 
 interface InvestmentViewProps {
   importRef: React.RefObject<ControlHandle | null>;

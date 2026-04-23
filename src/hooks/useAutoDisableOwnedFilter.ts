@@ -1,5 +1,5 @@
-import { type ViewId, useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useCallback } from "react";
+import { useSessionNavStore, type ViewId } from "@/stores/useSessionNavStore";
 import { useHasAccountData, useIsOwned } from "./useOwnership";
 
 /**

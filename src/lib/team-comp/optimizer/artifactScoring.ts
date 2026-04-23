@@ -6,9 +6,9 @@
  * - Marginal-based: uses damage-formula-derived marginal weights (context-aware)
  */
 
-import { allSlots } from "@/data/enums";
 import type { StatKey } from "@/data/enums";
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import { allSlots } from "@/data/enums";
+import type { ArtifactData } from "@/data/types";
 import {
   getMainStatValueAtLevel,
   toInternal,
@@ -89,7 +89,6 @@ export function buildSuperArtifact(artifacts: ArtifactData[]): SuperArtifact {
 export function computeWeightScore(
   art: ArtifactData,
   buildMatch: BuildMatchResult | null | undefined,
-  globalConfig: GlobalStatWeights,
   crDiscount: number
 ): number {
   const baseWeights = buildMatch?.statWeights ?? {};
@@ -97,7 +96,7 @@ export function computeWeightScore(
     crDiscount < 1 && baseWeights.cr
       ? { ...baseWeights, cr: baseWeights.cr * crDiscount }
       : baseWeights;
-  let score = scoreSlot(art, weights, globalConfig);
+  let score = scoreSlot(art, weights);
   const hasMainStatBuild =
     buildMatch &&
     Array.isArray(
@@ -107,12 +106,7 @@ export function computeWeightScore(
   if (hasMainStatBuild) {
     const rec = getTargetMainStatsForSlot(art.slotKey, buildMatch.build);
     if (rec.has(art.mainStatKey)) {
-      let mainScore = scoreMainStat(
-        art.mainStatKey,
-        art.rarity,
-        globalConfig,
-        art.level
-      );
+      let mainScore = scoreMainStat(art.mainStatKey, art.rarity, art.level);
       if (crDiscount < 1 && art.mainStatKey === "cr") mainScore *= crDiscount;
       score += mainScore;
     }
@@ -130,7 +124,6 @@ export function computeWeightScore(
 export function computeMarginalScore(
   art: ArtifactData,
   buildMatch: BuildMatchResult | null | undefined,
-  globalConfig: GlobalStatWeights,
   crDiscount: number,
   marginals: MarginalWeights
 ): number {
@@ -140,37 +133,27 @@ export function computeMarginalScore(
     if (crDiscount < 1) {
       mWeights.cr = (mWeights.cr ?? 0) * crDiscount;
     }
-    score = scoreSlot(art, mWeights, globalConfig);
+    score = scoreSlot(art, mWeights);
   } else {
     const baseWeights = buildMatch?.statWeights ?? { cr: 100, cd: 100 };
     const weights =
       crDiscount < 1
         ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }
         : baseWeights;
-    score = scoreSlot(art, weights, globalConfig);
+    score = scoreSlot(art, weights);
   }
 
   const slotMarginals = marginals.mainStatMarginals[art.slotKey];
   if (slotMarginals) {
     const proportion = slotMarginals[art.mainStatKey] ?? 0;
     if (proportion > 0) {
-      let mainScore = scoreMainStat(
-        art.mainStatKey,
-        art.rarity,
-        globalConfig,
-        art.level
-      );
+      let mainScore = scoreMainStat(art.mainStatKey, art.rarity, art.level);
       if (crDiscount < 1 && art.mainStatKey === "cr") mainScore *= crDiscount;
       score += mainScore * proportion;
     }
   } else {
     // flower/plume: always give full main stat bonus
-    score += scoreMainStat(
-      art.mainStatKey,
-      art.rarity,
-      globalConfig,
-      art.level
-    );
+    score += scoreMainStat(art.mainStatKey, art.rarity, art.level);
   }
 
   return score;
@@ -182,7 +165,6 @@ export function prepareSlotData(
   inventory: ArtifactData[],
   excludedIds: Set<string> | undefined,
   buildMatch: BuildMatchResult | null | undefined,
-  globalConfig: GlobalStatWeights,
   crDiscount: number,
   maxArtsPerSlot = 0,
   marginals?: MarginalWeights | null,
@@ -192,27 +174,13 @@ export function prepareSlotData(
   for (let slotIndex = 0; slotIndex < 5; slotIndex++) {
     const slot = allSlots[slotIndex];
     let arts = inventory
-      .filter(
-        (a) => a.slotKey === slot && (!excludedIds || !excludedIds.has(a.id))
-      )
+      .filter((a) => a.slotKey === slot && !excludedIds?.has(a.id))
       .sort((a, b) =>
         marginals
-          ? computeMarginalScore(
-              b,
-              buildMatch,
-              globalConfig,
-              crDiscount,
-              marginals
-            ) -
-            computeMarginalScore(
-              a,
-              buildMatch,
-              globalConfig,
-              crDiscount,
-              marginals
-            )
-          : computeWeightScore(b, buildMatch, globalConfig, crDiscount) -
-            computeWeightScore(a, buildMatch, globalConfig, crDiscount)
+          ? computeMarginalScore(b, buildMatch, crDiscount, marginals) -
+            computeMarginalScore(a, buildMatch, crDiscount, marginals)
+          : computeWeightScore(b, buildMatch, crDiscount) -
+            computeWeightScore(a, buildMatch, crDiscount)
       );
     if (maxArtsPerSlot > 0 && arts.length > maxArtsPerSlot) {
       arts = arts.slice(0, maxArtsPerSlot);

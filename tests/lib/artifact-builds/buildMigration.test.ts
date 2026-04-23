@@ -1,6 +1,6 @@
+import { describe, expect, it } from "vitest";
 import type { Build } from "@/data/types";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
-import { describe, expect, it } from "vitest";
 
 // Helpers
 

@@ -81,8 +81,7 @@ type FormulaListEntry = {
 /** Collect all formulas (character + reaction) into a flat list. */
 export function collectAllFormulas(
   validCharIds: string[],
-  availableFormulas: Record<string, Record<string, I18nLabel>>,
-  teamBuild: TeamBuild | null
+  availableFormulas: Record<string, Record<string, I18nLabel>>
 ): FormulaListEntry[] {
   const list: FormulaListEntry[] = [];
   for (const charId of validCharIds) {

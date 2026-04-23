@@ -1,3 +1,10 @@
+import {
+  useCallback,
+  useDeferredValue,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import {
   type SortDimension,
@@ -19,18 +26,20 @@ import type {
   TriageDecision,
 } from "@/lib/account-data/triage/types";
 import { useTriageStore } from "@/stores/useTriageStore";
-import {
-  useCallback,
-  useDeferredValue,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 
 interface TriageViewProps {
   onOpenImport?: () => void;
   onShowTour?: () => void;
 }
+
+const TIER_RANK_MAP: Record<string, number> = { P: 0, Q: 1, N: 2, T: 3 };
+const SLOT_ORDER: Record<string, number> = {
+  flower: 0,
+  plume: 1,
+  sands: 2,
+  goblet: 3,
+  circlet: 4,
+};
 
 export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
@@ -97,15 +106,6 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     return runTriage(accountData, deferredBuildGroups, deferredSettings);
   }, [accountData, deferredBuildGroups, deferredSettings]);
 
-  const tierRankMap: Record<string, number> = { P: 0, Q: 1, N: 2, T: 3 };
-  const slotOrder: Record<string, number> = {
-    flower: 0,
-    plume: 1,
-    sands: 2,
-    goblet: 3,
-    circlet: 4,
-  };
-
   const hasSP = useCallback(
     (d: TriageDecision) =>
       d.specialRules.includes("SP3") || d.specialRules.includes("SP4"),
@@ -129,13 +129,13 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
         const bb = b.artifact;
         return (
           aa.setKey.localeCompare(bb.setKey) ||
-          (slotOrder[aa.slotKey] ?? 9) - (slotOrder[bb.slotKey] ?? 9) ||
+          (SLOT_ORDER[aa.slotKey] ?? 9) - (SLOT_ORDER[bb.slotKey] ?? 9) ||
           aa.mainStatKey.localeCompare(bb.mainStatKey)
         );
       };
       const compareTier = (a: TriageDecision, b: TriageDecision) =>
-        (tierRankMap[a.decidingResult?.tier ?? "T"] ?? 3) -
-        (tierRankMap[b.decidingResult?.tier ?? "T"] ?? 3);
+        (TIER_RANK_MAP[a.decidingResult?.tier ?? "T"] ?? 3) -
+        (TIER_RANK_MAP[b.decidingResult?.tier ?? "T"] ?? 3);
       const compareLevel = (a: TriageDecision, b: TriageDecision) =>
         b.artifact.level - a.artifact.level;
 

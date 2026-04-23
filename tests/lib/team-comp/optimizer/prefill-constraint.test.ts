@@ -1,8 +1,8 @@
-import { allSlots } from "@/data/enums";
+import { describe, expect, it } from "vitest";
 import type { MainStat, Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { getRollValues } from "@/lib/artifact/scoring/utils";
 import { computeSubstatPreFill } from "@/lib/team-comp/optimizer/erCrConstraints";
-import { describe, expect, it } from "vitest";
 
 const rv = getRollValues(undefined, 5); // avg 5-star roll values
 
@@ -21,7 +21,6 @@ describe("computeSubstatPreFill — 4-substat constraint", () => {
       0.6, // ~11 ER rolls needed
       0,
       defaultMainStats,
-      5,
       rv,
       8, // maxRollsPerSlot
       5 // maxRollsPerStat
@@ -50,7 +49,6 @@ describe("computeSubstatPreFill — 4-substat constraint", () => {
       0.5, // ~10 ER rolls needed
       0.3, // ~10 CR rolls needed
       defaultMainStats,
-      5,
       rv,
       8, // maxRollsPerSlot
       5 // maxRollsPerStat
@@ -82,7 +80,6 @@ describe("computeSubstatPreFill — 4-substat constraint", () => {
       1.0, // huge ER gap — try to fill max
       0,
       defaultMainStats,
-      5,
       rv,
       8,
       5
@@ -110,7 +107,7 @@ describe("computeSubstatPreFill — 4-substat constraint", () => {
       ...defaultMainStats,
       sands: "er",
     };
-    const result = computeSubstatPreFill(0.3, 0, erSandsMain, 5, rv, 8, 5);
+    const result = computeSubstatPreFill(0.3, 0, erSandsMain, rv, 8, 5);
     expect(result).not.toBeNull();
     expect(result!.sands.er).toBeUndefined();
   });

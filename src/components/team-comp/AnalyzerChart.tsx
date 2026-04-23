@@ -1,10 +1,3 @@
-import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/gameResources";
-import type {
-  AnalyzerResult,
-  AnalyzerStep,
-} from "@/lib/team-comp/analyzer/types";
-import { getAssetUrl } from "@/lib/utils";
 import { useMemo } from "react";
 import {
   CartesianGrid,
@@ -15,6 +8,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/gameResources";
+import type {
+  AnalyzerResult,
+  AnalyzerStep,
+} from "@/lib/team-comp/analyzer/types";
+import { getAssetUrl } from "@/lib/utils";
 
 interface AnalyzerChartProps {
   result: AnalyzerResult;

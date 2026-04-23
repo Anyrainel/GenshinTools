@@ -1,8 +1,8 @@
 import type { Slot } from "@/data/enums";
 import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
 import {
-  type IGOODArtifact,
   convertSingleArtifact,
+  type IGOODArtifact,
 } from "@/lib/account-data/import/goodConversion";
 import type { MergeResult } from "@/lib/account-data/import/mergeAccountData";
 import { goodKeyToCharId } from "./keys";

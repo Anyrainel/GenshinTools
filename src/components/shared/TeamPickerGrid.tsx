@@ -1,3 +1,5 @@
+import { Diamond, Swords, User } from "lucide-react";
+import { useCallback } from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { charactersById, weaponsById } from "@/data/gameResources";
 import {
@@ -6,15 +8,13 @@ import {
   getWeaponDisplayMeta,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import type { ArtifactSetConfig } from "@/data/types";
 import type {
   AccountData,
+  ArtifactSetConfig,
   CharacterResource,
   WeaponResource,
 } from "@/data/types";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
-import { Diamond, Swords, User } from "lucide-react";
-import { useCallback } from "react";
 
 type TriggerSize = "xs" | "sm" | "md";
 

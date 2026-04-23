@@ -1,20 +1,18 @@
+import { ArrowRightLeft } from "lucide-react";
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots } from "@/data/enums";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { cn } from "@/lib/utils";
-import { ArrowRightLeft } from "lucide-react";
 
 export function ArtifactSlotGrid({
-  charId,
   artifactsObj,
   t,
   onSwap,
   compact,
 }: {
-  charId: string;
   artifactsObj: Record<string, ArtifactData>;
   t: ReturnType<typeof useLanguage>["t"];
   /** When provided, artifacts become clickable to trigger a swap */

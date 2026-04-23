@@ -9,8 +9,8 @@
  *              value = total activatedHits across ALL repetitions of that formula in the combo.
  */
 
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
 import { create } from "zustand";
+import type { BuffActivationMap } from "@/lib/dmgcalc/types";
 
 interface BuffOverrideState {
   /**

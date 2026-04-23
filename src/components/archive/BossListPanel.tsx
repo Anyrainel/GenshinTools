@@ -1,10 +1,10 @@
+import { Fragment, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getScheduleActiveDates } from "@/data/gameDataLoader";
 import type { LeylineBossData } from "@/data/types";
 import { cn } from "@/lib/utils";
-import { Fragment, useMemo } from "react";
 import { BossIcon } from "./BossDetailPanel";
 
 function useBossListTranslations(bossData: LeylineBossData) {

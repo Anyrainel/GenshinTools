@@ -1,3 +1,13 @@
+import {
+  ArrowLeft,
+  ArrowLeftRight,
+  Package,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
+import type React from "react";
+import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,8 +34,8 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { statPools } from "@/data/constants";
+import type { Slot, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import type { MainStat, Slot, SubStat } from "@/data/enums";
 import {
   artifactsById,
   charactersById,
@@ -52,18 +62,7 @@ import {
   updateWeaponStats,
 } from "@/lib/account-data/characterEditor";
 import { validateAndSolveArtifact } from "@/lib/artifact/validation";
-import { cn } from "@/lib/utils";
-import { getAssetUrl } from "@/lib/utils";
-import {
-  ArrowLeft,
-  ArrowLeftRight,
-  Package,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
-import type React from "react";
-import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { ArtifactDataHoverCard } from "../shared/ArtifactDataHoverCard";
 
 type DialogView =
@@ -362,10 +361,7 @@ export function CharacterEditDialog({
               onUpdateStats={updateStats}
               onUpdateWeaponStats={handleWeaponStats}
               onPickWeapon={() => setView({ kind: "weapon-pick" })}
-              onUnequipWeapon={handleUnequipWeapon}
               onUpdateArtifact={handleUpdateArtifact}
-              onDeleteArtifact={handleDeleteArtifact}
-              onUnequipArtifact={handleUnequipArtifact}
               onPickArtifact={(slot, mode) =>
                 setView({ kind: "artifact-pick", slot, mode })
               }
@@ -423,10 +419,7 @@ function OverviewPanel({
   onUpdateStats,
   onUpdateWeaponStats,
   onPickWeapon,
-  onUnequipWeapon,
   onUpdateArtifact,
-  onDeleteArtifact,
-  onUnequipArtifact,
   onPickArtifact,
   onSave,
   onCancel,
@@ -444,7 +437,6 @@ function OverviewPanel({
   }) => void;
   onUpdateWeaponStats: (u: { level?: number; refinement?: number }) => void;
   onPickWeapon: () => void;
-  onUnequipWeapon: () => void;
   onUpdateArtifact: (
     slot: Slot,
     updates: Partial<
@@ -459,8 +451,6 @@ function OverviewPanel({
       >
     >
   ) => void;
-  onDeleteArtifact: (slot: Slot) => void;
-  onUnequipArtifact: (slot: Slot) => void;
   onPickArtifact: (slot: Slot, mode: "equip" | "create") => void;
   onSave: () => void;
   onCancel: () => void;
@@ -1478,7 +1468,10 @@ function ArtifactPickPanel({
 function SectionHeader({
   color,
   children,
-}: { color: string; children: React.ReactNode }) {
+}: {
+  color: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex items-center gap-2 px-1">
       <div className={cn("w-1 h-3.5 lg:h-4 rounded-full", color)} />

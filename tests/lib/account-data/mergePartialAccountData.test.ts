@@ -1,7 +1,7 @@
+import { describe, expect, it } from "vitest";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import type { PresentSections } from "@/lib/account-data/import/goodConversion";
 import { mergePartialAccountData } from "@/lib/account-data/import/mergeAccountData";
-import { describe, expect, it } from "vitest";
 
 const makeWeapon = (key: string, level = 90): WeaponData => ({
   id: "weapon-0",

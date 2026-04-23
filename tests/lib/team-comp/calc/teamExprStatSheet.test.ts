@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import type { StatKey } from "@/data/enums";
 import {
   characterStatsResource,
@@ -11,7 +12,6 @@ import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import { TeamExprStatSheet } from "@/lib/dmgcalc/core/teamExprStatSheet";
 import { TeamStatSheet } from "@/lib/dmgcalc/core/teamStatSheet";
 import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 
@@ -153,7 +153,6 @@ function assertExprStatParity(
     teamStats,
     baseSheets,
     variableCharIds,
-    charIds,
     CTX
   );
 
@@ -202,7 +201,6 @@ describe("TeamExprStatSheet", () => {
         tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
-        charIds,
         CTX
       );
 
@@ -284,7 +282,6 @@ describe("TeamExprStatSheet", () => {
         teamStats,
         baseSheets,
         new Set([swapCharId]),
-        charIds,
         CTX
       );
 
@@ -337,7 +334,6 @@ describe("TeamExprStatSheet", () => {
         tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
-        charIds,
         CTX
       );
 
@@ -358,7 +354,6 @@ describe("TeamExprStatSheet", () => {
         tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
-        charIds,
         CTX
       );
 
@@ -374,7 +369,6 @@ describe("TeamExprStatSheet", () => {
         tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
-        charIds,
         CTX
       );
 
@@ -400,7 +394,6 @@ describe("TeamExprStatSheet", () => {
         tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
-        charIds,
         ctxWithCr
       );
 
@@ -408,7 +401,6 @@ describe("TeamExprStatSheet", () => {
         tb.teamStats,
         emptySheets(...charIds),
         new Set(["xiangling"]),
-        charIds,
         CTX
       );
 

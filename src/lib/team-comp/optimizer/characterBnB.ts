@@ -6,22 +6,25 @@
  */
 
 import { charInfo } from "@/data/charInfo";
-import { allSlots } from "@/data/enums";
 import type { MainStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
 } from "@/data/gameResources";
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
 import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
-import type { CalcContext, ComboFormula } from "@/lib/dmgcalc/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import type {
+  BuffActivationMap,
+  CalcContext,
+  ComboFormula,
+} from "@/lib/dmgcalc/types";
 import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import {
   type ArtifactVarLookup,
-  type CompiledTeamDamage,
   buildArtifactVarLookup,
+  type CompiledTeamDamage,
   compileComboTeamDamage,
   fillVarsFromRawStats,
   makeCompiledEvalDamage,
@@ -37,8 +40,8 @@ import {
   withResortedSlotData,
 } from "./artifactScoring";
 import {
-  ConstraintChecker,
   boostWeightsForConstraints,
+  ConstraintChecker,
 } from "./constraintChecker";
 import { evaluateUpperBoundCompiled } from "./evaluation";
 import { computeMarginalWeights } from "./marginalWeights";
@@ -365,7 +368,6 @@ export function runCharacterBnB(
   teamBuild: TeamBuild,
   carryCharId: string,
   inventory: ArtifactData[],
-  globalConfig: GlobalStatWeights,
   baseSheets: Record<string, StatSheet>,
   calcContext: CalcContext,
   excludedIds: Set<string> | undefined,
@@ -534,7 +536,6 @@ export function runCharacterBnB(
     inventory,
     excludedIds,
     effectiveBuildMatch,
-    globalConfig,
     crDiscount,
     maxArtsPerSlot,
     effectiveMarginals,
@@ -820,17 +821,10 @@ export function runCharacterBnB(
         computeMarginalScore(
           b,
           effectiveBuildMatch,
-          globalConfig,
           crDiscount,
           fullMarginals
         ) -
-        computeMarginalScore(
-          a,
-          effectiveBuildMatch,
-          globalConfig,
-          crDiscount,
-          fullMarginals
-        );
+        computeMarginalScore(a, effectiveBuildMatch, crDiscount, fullMarginals);
 
       // Re-sort → run HC2 into separate collector → restore original order
       hc2Collector = new TopKCollector(topK);

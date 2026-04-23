@@ -1,5 +1,5 @@
-import type { ArtifactData } from "@/data/types";
 import { describe, expect, it } from "vitest";
+import type { ArtifactData } from "@/data/types";
 import { matchesSetRequirement } from "./optimizerV1";
 
 let artId = 0;

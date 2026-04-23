@@ -1,8 +1,8 @@
-import { allSlots } from "@/data/enums";
-import type { Slot } from "@/data/enums";
-import type { AccountData, ArtifactData } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
+import type { AccountData, ArtifactData } from "@/data/types";
 import { PersistedFreezeStoreSchema } from "./schemas";
 import { getActiveAccount, useAccountStore } from "./useAccountStore";
 

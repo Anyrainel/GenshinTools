@@ -1,8 +1,8 @@
+import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 import type { AccountData, ArtifactData } from "@/data/types";
 import { buildEquipInstructions } from "@/lib/account-data/manager/instructions";
 import type { Team } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {

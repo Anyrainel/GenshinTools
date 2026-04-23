@@ -1,6 +1,7 @@
+import { useCallback, useMemo, useState } from "react";
 import type { ActionConfig } from "@/components/layout/AppBar";
-import { PageLayout } from "@/components/layout/PageLayout";
 import { getTabsForRoute } from "@/components/layout/appNavigation";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
@@ -8,7 +9,6 @@ import { CharacterTierListView } from "@/pages/tier-list/CharacterTierListView";
 import { WeaponTierListView } from "@/pages/tier-list/WeaponTierListView";
 import { useTierStore } from "@/stores/useTierStore";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
-import { useCallback, useMemo, useState } from "react";
 
 type TierListTab = "characters" | "weapons";
 

@@ -6,11 +6,21 @@
  * evaluation via an async generator that yields progress updates.
  */
 
-import { allSlots } from "@/data/enums";
 import type { Element, MainStat, Slot, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { weaponsById } from "@/data/gameResources";
 import type { WeaponStatsMap } from "@/data/gameStatsLoader";
 import { getRollValues } from "@/lib/artifact/scoring/utils";
+import type {
+  CalcContext,
+  ComboFormula,
+  ExtraBuff,
+  TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
+import type {
+  WeaponChoiceCharConfig,
+  WeaponRanking,
+} from "@/lib/team-comp/types";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
@@ -20,18 +30,6 @@ import { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { deriveSetKeysFromConfigs } from "../teamConfigUtils";
-
-import type { ExtraBuff } from "@/lib/dmgcalc/types";
-import type {
-  CalcContext,
-  ComboFormula,
-  TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
-
-import type {
-  WeaponChoiceCharConfig,
-  WeaponRanking,
-} from "@/lib/team-comp/types";
 
 export interface CharProgress {
   charId: string;
@@ -246,7 +244,6 @@ async function computeForChar(
   charIds: string[],
   combo: ComboFormula,
   calcContext: CalcContext,
-  weaponStats: WeaponStatsMap,
   opts: Record<string, string>,
   enemyAura: Element | undefined,
   extraBuffs: ExtraBuff[],
@@ -508,7 +505,6 @@ export async function* runWeaponChoice(
       charIds,
       combo,
       calcContext,
-      weaponStats,
       opts,
       enemyAura,
       extraBuffs ?? [],

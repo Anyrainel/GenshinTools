@@ -10,13 +10,11 @@
  * 4. Normalize weights to 0-100 scale
  */
 
-import type { MainStat, Slot, SubStat } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
+import type { MainStat, Slot, StatKey, SubStat } from "@/data/enums";
 import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
-import type { AutoTuneResult } from "@/lib/artifact/scoring/pipeline";
 import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
-import { emptySubRolls } from "@/lib/artifact/scoring/utils";
-import { getRollValues } from "@/lib/artifact/scoring/utils";
+import { emptySubRolls, getRollValues } from "@/lib/artifact/scoring/utils";
+import type { AutoTuneResult } from "@/lib/artifact-builds/auto-tune/pipeline";
 import {
   compileComboTeamDamage,
   makeCompiledEvalDamage,
@@ -29,8 +27,8 @@ import type {
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
 import {
-  type DamageEvalFn,
   constrainedGreedyAllocate,
+  type DamageEvalFn,
   flattenAllocation,
 } from "@/lib/team-comp/generator/constrainedGreedy";
 

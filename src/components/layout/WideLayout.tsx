@@ -1,3 +1,5 @@
+import { Filter } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -7,8 +9,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { Filter } from "lucide-react";
-import { useState } from "react";
 
 interface FilterGroup {
   key: string;

@@ -1,8 +1,8 @@
+import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 import type {
   ArtifactData,
   CharacterData,
-  GlobalStatWeights,
   InvestmentThresholds,
 } from "@/data/types";
 import type { BuildOptimizerResult } from "@/lib/account-data/buildOptimizer";
@@ -12,15 +12,8 @@ import type {
   BuildMatchResult,
   StatWeightMap,
 } from "@/lib/artifact/scoring/artifactScore";
-import { describe, expect, it } from "vitest";
 
 const testWeights: StatWeightMap = { cr: 100, cd: 100 };
-
-const testGlobalConfig: GlobalStatWeights = {
-  flatAtk: 0,
-  flatHp: 0,
-  flatDef: 0,
-};
 
 const defaultTargetMainStats: Record<Slot, Set<string>> = {
   flower: new Set(["hp"]),
@@ -173,7 +166,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "swap", slotScore: 10 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -192,7 +184,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "swap", slotScore: 9.9 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -218,7 +209,6 @@ describe("generateRecommendations — threshold filtering", () => {
             sourceArtifactId: "current-flower",
           },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -243,7 +233,6 @@ describe("generateRecommendations — threshold filtering", () => {
             sourceArtifactId: "current-flower",
           },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -265,7 +254,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "upgrade", slotScore: 30 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -285,7 +273,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "upgrade", slotScore: 29 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -307,7 +294,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "reroll", slotScore: 20 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -327,7 +313,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "reroll", slotScore: 19.9 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -349,7 +334,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "farm", slotScore: 15 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -367,7 +351,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "farm", slotScore: 14.9 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -384,7 +367,6 @@ describe("generateRecommendations — threshold filtering", () => {
         char,
         makeBuildMatch(),
         makeOptimizerResult([{ slot: "flower", source: "swap", slotScore: 1 }]),
-        testGlobalConfig,
         defaultTargetMainStats,
         highThresholds
       );
@@ -404,7 +386,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "swap", slotScore: 0.5 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats
         // no thresholds
       );
@@ -421,7 +402,6 @@ describe("generateRecommendations — threshold filtering", () => {
         makeOptimizerResult([
           { slot: "flower", source: "swap", slotScore: 0.4 },
         ]),
-        testGlobalConfig,
         defaultTargetMainStats
       );
       expect(result.actions).toHaveLength(0);

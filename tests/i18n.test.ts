@@ -27,7 +27,7 @@ function getFlattenedKeys(
         value as Record<string, unknown>,
         newKey
       );
-      subKeys.forEach((sk) => keys.add(sk));
+      for (const sk of subKeys) keys.add(sk);
     }
   }
   return keys;

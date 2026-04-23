@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { ArtifactCard } from "@/components/archive/ArtifactCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -11,7 +12,6 @@ import {
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { fuzzyMatch } from "@/lib/search";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export function ArtifactArchiveView() {
   const { t } = useLanguage();

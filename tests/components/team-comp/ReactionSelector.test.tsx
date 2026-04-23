@@ -9,8 +9,7 @@ import {
   TransformFormula,
 } from "@/lib/dmgcalc/core/damageFormula";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
-import type { FormulaEntry } from "@/lib/dmgcalc/types";
-import type { ReactionOverride } from "@/lib/dmgcalc/types";
+import type { FormulaEntry, ReactionOverride } from "@/lib/dmgcalc/types";
 import { render, screen } from "../../utils/render";
 
 await Promise.all([

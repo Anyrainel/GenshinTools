@@ -1,5 +1,5 @@
-import { isPartOffField } from "@/lib/dmgcalc/core/fieldState";
 import { describe, expect, it } from "vitest";
+import { isPartOffField } from "@/lib/dmgcalc/core/fieldState";
 
 describe("reactionResolve helpers", () => {
   it("isPartOffField returns the intrinsic offField unless forceOnField overrides it", () => {

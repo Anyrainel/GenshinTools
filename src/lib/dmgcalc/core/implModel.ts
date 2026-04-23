@@ -6,10 +6,10 @@ import {
   resolveWeaponStats,
 } from "@/data/gameStatsLoader";
 import type { StatEntry } from "@/data/types";
-import type { FormulaEntry } from "../types";
 import type {
   ComboTemplate,
   ComboTemplateEntry,
+  FormulaEntry,
   I18nLabel,
   OptionMap,
   TalentLevels,

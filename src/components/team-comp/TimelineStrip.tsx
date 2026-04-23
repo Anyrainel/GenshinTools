@@ -1,3 +1,5 @@
+import { ArrowDown, ArrowRight, Plus, Trash2, Zap } from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { CharAvatar } from "@/components/shared/CharAvatar";
 import {
   Popover,
@@ -16,7 +18,6 @@ import {
   particles,
 } from "@/lib/ercalc/constants";
 import {
-  type NodeEnergyEvent,
   getActionParticles,
   getAvailableActions,
   getDefaultProcCount,
@@ -25,6 +26,7 @@ import {
   getParticleElement,
   getPeriodicParticles,
   hasPeriodicGeneration,
+  type NodeEnergyEvent,
 } from "@/lib/ercalc/erCalculator";
 import type {
   ActionType,
@@ -35,8 +37,6 @@ import type {
 } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import { cn } from "@/lib/utils";
-import { ArrowDown, ArrowRight, Plus, Trash2, Zap } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
 
 interface TimelineStripProps {
   label: React.ReactNode;

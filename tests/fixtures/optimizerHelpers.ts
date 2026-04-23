@@ -5,8 +5,7 @@
  * getFirstFormulaId so they are defined once instead of copy-pasted
  * across every test file.
  */
-import type { ArtifactData } from "@/data/types";
-import type { ArtifactSetConfig } from "@/data/types";
+import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";

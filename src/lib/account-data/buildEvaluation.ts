@@ -1,5 +1,5 @@
-import { allSlots } from "@/data/enums";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
 import type {
   AccountData,
@@ -9,9 +9,9 @@ import type {
   GlobalStatWeights,
 } from "@/data/types";
 import {
-  type StatWeightMap,
   buildToWeightMap,
   calculateMaxSlotSubScore,
+  type StatWeightMap,
   scaleFlatWeights,
   scoreMainStat,
   scoreSlot,
@@ -309,8 +309,9 @@ export function collectEvalBuilds(
   }
 
   // Expand flat stat weights from their % counterparts.
-  // e.g. if hp% = 100, flat hp should also be 100 (the punishment factor is
-  // applied later by calculateStatScore via globalConfig.flatHp).
+  // e.g. if hp% = 100, flat hp should also be 100. The global-config punishment
+  // factor is applied separately by scaleFlatWeights at the calculateStatScore
+  // call site.
   const flatPairs: [string, string][] = [
     ["atk%", "atk"],
     ["hp%", "hp"],
@@ -408,7 +409,7 @@ function findBestArtifact(
     if (setFilter && !setFilter.has(art.setKey)) continue;
     if (!matchesMainStat(art, slot, evalBuild)) continue;
 
-    const score = scoreSlot(art, weights, globalConfig);
+    const score = scoreSlot(art, weights);
     if (!best || score > best.score) {
       best = { artifact: art, score };
     }
@@ -445,7 +446,6 @@ function buildSlotEval(
   slot: Slot,
   candidate: { artifact: ArtifactData; score: number } | null,
   evalBuild: EvalBuild,
-  globalConfig: GlobalStatWeights,
   isFlex: boolean
 ): SlotEvaluation {
   const rarity = candidate?.artifact.rarity ?? 5;
@@ -456,12 +456,10 @@ function buildSlotEval(
     slot === "sands" || slot === "goblet" || slot === "circlet";
   const idealMainStat = getIdealMainStat(slot, evalBuild);
   const mainStatMax = isVariableMainStat
-    ? scoreMainStat(idealMainStat, rarity, globalConfig)
+    ? scoreMainStat(idealMainStat, rarity)
     : 0;
   const mainStatActual =
-    isVariableMainStat && candidate
-      ? scoreMainStat(mainStat, rarity, globalConfig)
-      : 0;
+    isVariableMainStat && candidate ? scoreMainStat(mainStat, rarity) : 0;
 
   return {
     artifact: candidate?.artifact ?? null,
@@ -475,8 +473,7 @@ function buildSlotEval(
 function buildEvalResult(
   evalBuild: EvalBuild,
   bestSlots: Record<Slot, SlotEvaluation>,
-  bestTotalScore: number,
-  globalConfig: GlobalStatWeights
+  bestTotalScore: number
 ): BuildEvaluation {
   let adjustedMaxScore = 0;
   for (const slot of allSlots) {
@@ -488,9 +485,7 @@ function buildEvalResult(
         slot === "sands" || slot === "goblet" || slot === "circlet";
       adjustedMaxScore +=
         calculateMaxSlotSubScore(idealMainStat, evalBuild.weights, 5) +
-        (isVariableMainStat
-          ? scoreMainStat(idealMainStat, 5, globalConfig)
-          : 0);
+        (isVariableMainStat ? scoreMainStat(idealMainStat, 5) : 0);
     }
   }
 
@@ -557,13 +552,7 @@ function evaluateBuild(
         ? (anySet[slot] ?? onSet[slot])
         : (onSet[slot] ?? null);
 
-      arrangement[slot] = buildSlotEval(
-        slot,
-        candidate,
-        evalBuild,
-        globalConfig,
-        isFlex
-      );
+      arrangement[slot] = buildSlotEval(slot, candidate, evalBuild, isFlex);
       totalScore += arrangement[slot].score;
     }
 
@@ -573,7 +562,7 @@ function evaluateBuild(
     }
   }
 
-  return buildEvalResult(evalBuild, bestSlots, bestTotalScore, globalConfig);
+  return buildEvalResult(evalBuild, bestSlots, bestTotalScore);
 }
 
 /**
@@ -678,7 +667,6 @@ function evaluateBuild2p2(
               slot,
               candidate,
               evalBuild,
-              globalConfig,
               isFlex
             );
             totalScore += arrangement[slot].score;
@@ -693,7 +681,7 @@ function evaluateBuild2p2(
     }
   }
 
-  return buildEvalResult(evalBuild, bestSlots, bestTotalScore, globalConfig);
+  return buildEvalResult(evalBuild, bestSlots, bestTotalScore);
 }
 
 function getIdealMainStat(slot: Slot, evalBuild: EvalBuild): MainStat {

@@ -1,3 +1,5 @@
+import { lazy, Suspense, useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { GreetingGate } from "@/components/greeting/GreetingGate";
 import { useTourLabels, useTours } from "@/components/layout/tourConfig";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
@@ -13,8 +15,6 @@ import {
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import { cn } from "@/lib/utils";
-import { Suspense, lazy, useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 
 const AccountDataPage = lazy(() => import("./pages/AccountData"));

@@ -1,15 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ElementalOrPhysical } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
+import type { ElementalOrPhysical, ReactionType } from "@/data/enums";
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
   LUNAR_REACTIONS,
   MULTI_ELEMENT_CHARS,
 } from "@/lib/dmgcalc/constants";
 import type { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
-import type { FormulaEntry } from "@/lib/dmgcalc/types";
-import type { ReactionOverride } from "@/lib/dmgcalc/types";
+import type { FormulaEntry, ReactionOverride } from "@/lib/dmgcalc/types";
 import { cn } from "@/lib/utils";
 import { ReactionPartControls } from "./ReactionPartControls";
 

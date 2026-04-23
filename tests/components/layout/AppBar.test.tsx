@@ -1,8 +1,8 @@
-import { AppBar } from "@/components/layout/AppBar";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Home } from "lucide-react";
 import { BrowserRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
+import { AppBar } from "@/components/layout/AppBar";
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({

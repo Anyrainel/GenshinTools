@@ -1,8 +1,8 @@
+import { AlertTriangle, Home, RefreshCw, Trash2 } from "lucide-react";
+import React, { type ErrorInfo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Home, RefreshCw, Trash2 } from "lucide-react";
-import React, { type ErrorInfo, type ReactNode } from "react";
 
 /** Detect stale-chunk / dynamic-import failures (post-deploy cache mismatch). */
 function isChunkLoadError(error?: Error): boolean {

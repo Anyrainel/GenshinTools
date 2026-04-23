@@ -8,6 +8,8 @@
  * that the UI-facing resolved builds stay correct through mutations.
  */
 
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Build, BuildPayloadV5 } from "@/data/types";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
@@ -15,8 +17,6 @@ import {
   loadPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { act, renderHook, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ── Mock the preset registry ────────────────────────────────────
 vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({

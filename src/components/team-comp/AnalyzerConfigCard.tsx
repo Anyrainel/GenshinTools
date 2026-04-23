@@ -1,3 +1,5 @@
+import { Users } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon, type ItemIconSize } from "@/components/shared/ItemIcon";
@@ -29,8 +31,6 @@ import type { WeaponResource } from "@/data/types";
 import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import { cn } from "@/lib/utils";
-import { Users } from "lucide-react";
-import { useCallback, useMemo } from "react";
 import {
   CARD_BODY_CLS,
   CARD_CLS,

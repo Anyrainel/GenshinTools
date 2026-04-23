@@ -1,6 +1,6 @@
+import userEvent from "@testing-library/user-event";
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import type { Team } from "@/lib/team-comp/types";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 const mockCharStats = {

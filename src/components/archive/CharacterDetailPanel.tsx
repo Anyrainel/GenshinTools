@@ -1,3 +1,6 @@
+import { Bookmark, ChevronRight, Info, Plus } from "lucide-react";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { CharacterCard } from "@/components/account-data/CharacterCard";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
@@ -18,9 +21,6 @@ import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { Bookmark, ChevronRight, Info, Plus } from "lucide-react";
-import { useMemo } from "react";
-import { Link } from "react-router-dom";
 import { BaseStatsTable } from "./BaseStatsTable";
 import { EffectCard } from "./EffectCard";
 import { SkillCard } from "./SkillCard";
@@ -181,116 +181,107 @@ export function CharacterDetailPanel({
   if (!character) return null;
 
   return (
-    <>
-      <Card className="bg-gradient-card">
-        <CardContent className="py-4 md:py-6 px-3 md:px-6 space-y-4 md:space-y-6">
-          {/* Character header + stats side-by-side on wide screens */}
-          <div className="flex flex-col min-[1920px]:flex-row min-[1920px]:items-start min-[1920px]:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <ItemIcon
-                characterId={characterId}
-                rarity={meta?.rarity ?? character.rarity}
-                size="xl"
-              />
-              <CharacterInfo character={character} showDate>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1.5 shrink-0 rounded-full h-8 px-3",
-                      effectiveOwned
-                        ? "text-amber-400"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    <Bookmark
-                      className={cn(
-                        "h-4 w-4",
-                        effectiveOwned && "fill-current"
-                      )}
-                    />
-                    <span className="text-xs font-medium">
-                      {effectiveOwned
-                        ? constellation > 0
-                          ? `${t.ui("archive.owned")} (${t.format("common.constellationFormat", constellation)})`
-                          : t.ui("archive.owned")
-                        : t.ui("archive.notOwned")}
-                    </span>
-                  </span>
-                </div>
-              </CharacterInfo>
-            </div>
-            {/* Base Stats — top-right on wide screens */}
-            {!unreleased && <BaseStatsTable characterId={characterId} />}
-          </div>
-
-          {!unreleased ? (
-            <>
-              {/* Skills */}
-              {skills && skills.length > 0 && (
-                <KitSection title={t.ui("archive.skills")}>
-                  {skills.map((skill, i) => (
-                    <SkillCard
-                      key={skill.name || i}
-                      skill={skill}
-                      characterId={characterId}
-                    />
-                  ))}
-                </KitSection>
-              )}
-
-              {/* Passives — 2 columns on wide screens */}
-              {passives && passives.length > 0 && (
-                <KitSection title={t.ui("archive.passives")} columns>
-                  {passives.map((passive, i) => (
-                    <EffectCard key={passive.name || i} effect={passive} />
-                  ))}
-                </KitSection>
-              )}
-
-              {/* Glossary */}
-              {glossary && glossary.length > 0 && (
-                <KitSection title={t.ui("archive.glossary")} columns>
-                  {glossary.map((entry, i) => (
-                    <EffectCard key={entry.name || i} effect={entry} />
-                  ))}
-                </KitSection>
-              )}
-
-              {/* Constellations — 2 columns on wide screens */}
-              {constellations && constellations.length > 0 && (
-                <KitSection title={t.ui("archive.constellations")} columns>
-                  {constellations.map((constellation, i) => (
-                    <EffectCard
-                      key={constellation.name || i}
-                      effect={constellation}
-                    />
-                  ))}
-                </KitSection>
-              )}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground select-none">
-              <Info className="h-12 w-12 mb-4 opacity-50" />
-              <p className="text-lg font-medium">
-                {t.ui("archive.notReleased")}
-              </p>
-            </div>
-          )}
-
-          {/* Linked: Artifact Builds */}
-          <SectionErrorBoundary>
-            <LinkedBuildSection
-              character={character}
-              characterStats={characterStats}
+    <Card className="bg-gradient-card">
+      <CardContent className="py-4 md:py-6 px-3 md:px-6 space-y-4 md:space-y-6">
+        {/* Character header + stats side-by-side on wide screens */}
+        <div className="flex flex-col min-[1920px]:flex-row min-[1920px]:items-start min-[1920px]:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <ItemIcon
+              characterId={characterId}
+              rarity={meta?.rarity ?? character.rarity}
+              size="xl"
             />
-          </SectionErrorBoundary>
+            <CharacterInfo character={character} showDate>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1.5 shrink-0 rounded-full h-8 px-3",
+                    effectiveOwned ? "text-amber-400" : "text-muted-foreground"
+                  )}
+                >
+                  <Bookmark
+                    className={cn("h-4 w-4", effectiveOwned && "fill-current")}
+                  />
+                  <span className="text-xs font-medium">
+                    {effectiveOwned
+                      ? constellation > 0
+                        ? `${t.ui("archive.owned")} (${t.format("common.constellationFormat", constellation)})`
+                        : t.ui("archive.owned")
+                      : t.ui("archive.notOwned")}
+                  </span>
+                </span>
+              </div>
+            </CharacterInfo>
+          </div>
+          {/* Base Stats — top-right on wide screens */}
+          {!unreleased && <BaseStatsTable characterId={characterId} />}
+        </div>
 
-          {/* Linked: Account Data */}
-          <SectionErrorBoundary>
-            <LinkedAccountSection character={character} />
-          </SectionErrorBoundary>
-        </CardContent>
-      </Card>
-    </>
+        {!unreleased ? (
+          <>
+            {/* Skills */}
+            {skills && skills.length > 0 && (
+              <KitSection title={t.ui("archive.skills")}>
+                {skills.map((skill, i) => (
+                  <SkillCard
+                    key={skill.name || i}
+                    skill={skill}
+                    characterId={characterId}
+                  />
+                ))}
+              </KitSection>
+            )}
+
+            {/* Passives — 2 columns on wide screens */}
+            {passives && passives.length > 0 && (
+              <KitSection title={t.ui("archive.passives")} columns>
+                {passives.map((passive, i) => (
+                  <EffectCard key={passive.name || i} effect={passive} />
+                ))}
+              </KitSection>
+            )}
+
+            {/* Glossary */}
+            {glossary && glossary.length > 0 && (
+              <KitSection title={t.ui("archive.glossary")} columns>
+                {glossary.map((entry, i) => (
+                  <EffectCard key={entry.name || i} effect={entry} />
+                ))}
+              </KitSection>
+            )}
+
+            {/* Constellations — 2 columns on wide screens */}
+            {constellations && constellations.length > 0 && (
+              <KitSection title={t.ui("archive.constellations")} columns>
+                {constellations.map((constellation, i) => (
+                  <EffectCard
+                    key={constellation.name || i}
+                    effect={constellation}
+                  />
+                ))}
+              </KitSection>
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground select-none">
+            <Info className="h-12 w-12 mb-4 opacity-50" />
+            <p className="text-lg font-medium">{t.ui("archive.notReleased")}</p>
+          </div>
+        )}
+
+        {/* Linked: Artifact Builds */}
+        <SectionErrorBoundary>
+          <LinkedBuildSection
+            character={character}
+            characterStats={characterStats}
+          />
+        </SectionErrorBoundary>
+
+        {/* Linked: Account Data */}
+        <SectionErrorBoundary>
+          <LinkedAccountSection character={character} />
+        </SectionErrorBoundary>
+      </CardContent>
+    </Card>
   );
 }

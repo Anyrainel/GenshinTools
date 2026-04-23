@@ -1,3 +1,5 @@
+import { Users } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -39,8 +41,6 @@ import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Users } from "lucide-react";
-import { useEffect, useMemo } from "react";
 import {
   CARD_BODY_CLS,
   CARD_CLS,
@@ -316,7 +316,6 @@ export function TeamRosterCard({
 
             const char = charactersById[charId];
             const weaponId = team.weapons[i];
-            const weapon = weaponId ? weaponsById[weaponId] : null;
             const charHasOption = getOptionDef(charId) != null;
             const weaponHasOption =
               weaponId != null && getOptionDef(weaponId) != null;

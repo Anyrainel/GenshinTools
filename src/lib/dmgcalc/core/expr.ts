@@ -435,9 +435,3 @@ export function countVars(e: Expr): Set<number> {
 export function isConst(e: Expr): e is { tag: "const"; value: number } {
   return e.tag === "const";
 }
-
-/** Get the constant value of an expression, or undefined if not constant. */
-function constValue(e: Expr): number | undefined {
-  if (e.tag === "const") return e.value;
-  return undefined;
-}

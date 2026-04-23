@@ -1,3 +1,5 @@
+import { ChefHat, Globe, Plus, Settings, Swords, Wand2, X } from "lucide-react";
+import { type ReactNode, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,9 +26,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/enums";
+import type { Element, StatKey } from "@/data/enums";
 import { elements } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
 import { envBuffs } from "@/data/envBuffs";
 import { charactersById, elementResourcesByName } from "@/data/gameResources";
 import type { EnvBuff } from "@/data/types";
@@ -36,8 +37,6 @@ import { CUSTOM_STAT_OPTIONS } from "@/lib/team-comp/constants";
 import { formatBuffStats } from "@/lib/team-comp/displayFormatter";
 import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { ChefHat, Globe, Plus, Settings, Swords, Wand2, X } from "lucide-react";
-import { type ReactNode, useState } from "react";
 import { getElementColor } from "../shared/colors";
 
 /** Food preset IDs are stored as "food:<foodId>" to distinguish from other presets. */
@@ -546,8 +545,8 @@ function CustomBuffDialog({
       id: `custom-${Date.now()}`,
       target,
       stats: [{ key: statKey, value: engineValue }],
-      ...(maxStacks && Number.parseInt(maxStacks) > 0
-        ? { maxStacks: Number.parseInt(maxStacks) }
+      ...(maxStacks && Number.parseInt(maxStacks, 10) > 0
+        ? { maxStacks: Number.parseInt(maxStacks, 10) }
         : {}),
     };
 

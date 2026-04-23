@@ -1,5 +1,5 @@
-import { allSlots } from "@/data/enums";
 import type { MainStat, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData, Build } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
@@ -8,7 +8,7 @@ import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { isInitial4Line } from "./is4L";
 import { extractRules } from "./ruleBuilder";
 import { runStrategicRules } from "./strategicValue";
-import { type TierResult, evaluateTier } from "./tierEvaluator";
+import { evaluateTier, type TierResult } from "./tierEvaluator";
 import type {
   DemandSource,
   EmbryoMatch,

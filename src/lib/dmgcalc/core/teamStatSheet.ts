@@ -8,16 +8,17 @@ export function makeCacheKey(
   const sorted = [...excludeKeys].sort();
   return `${onFieldCharId}\0${sorted.join("\0")}`;
 }
+
 import type { CharBuild } from "./charBuild";
 import {
   type EvaluatedDynamicBuff,
   isDeferredFinalBuff,
 } from "./dynamicBuffEval";
-import { fieldReq, isOnField } from "./fieldState";
+import { fieldReq } from "./fieldState";
 import {
-  StatBuff,
   assertNoDuplicateStatKeys,
   deduplicateBuffs,
+  StatBuff,
 } from "./statBuff";
 import { StatSheet } from "./statSheet";
 import type { TeamBuffLedger } from "./teamBuffLedger";

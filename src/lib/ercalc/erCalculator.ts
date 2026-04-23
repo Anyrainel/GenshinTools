@@ -1,6 +1,7 @@
 import { artifactEnergyById } from "@/lib/ercalc/artifactEnergy";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import {
+  allSelfEnergy,
   BURST_ACTIONS,
   CLEAR_PARTICLE,
   DIFF_ELEMENT_PARTICLE,
@@ -11,19 +12,18 @@ import {
   OFF_FIELD_MULTIPLIER,
   PARAM_DEFAULTS,
   PATTERN_ACTIONS,
-  SAME_ELEMENT_PARTICLE,
-  allSelfEnergy,
   particles as particlesData,
+  SAME_ELEMENT_PARTICLE,
 } from "./constants";
-import type { SelfEnergyEntry } from "./types";
 import type {
   ActionType,
+  EnergyEvent,
   EROptions,
   ERResult,
   ERTimeline,
-  EnergyEvent,
   ParticleMode,
   PeriodicProc,
+  SelfEnergyEntry,
   TeamMember,
   TeamSlot,
   TimelineAction,

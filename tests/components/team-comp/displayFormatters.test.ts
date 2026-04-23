@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { isPctStat } from "@/data/utils";
 import {
   fmtDamage,
@@ -5,7 +6,6 @@ import {
   fmtPercent,
   fmtStat,
 } from "@/lib/team-comp/displayFormatter";
-import { describe, expect, it } from "vitest";
 
 describe("fmtStat", () => {
   it("returns '0' for zero value", () => {

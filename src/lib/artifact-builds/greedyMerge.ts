@@ -1,8 +1,6 @@
 import type { SubStat } from "@/data/enums";
 import type { BuildConfig, SlotConfig } from "../../data/types";
 import {
-  SLOT_KEYS,
-  type SlotKey,
   areArraysEqualIgnoreOrder,
   areSlotsStructurallyEqual,
   coalesceByFingerprint,
@@ -11,6 +9,8 @@ import {
   mergeConfigMetadata,
   orderedUnion,
   reorderSubstats,
+  SLOT_KEYS,
+  type SlotKey,
 } from "./mergeUtils";
 
 type SlotShape = RigidSlotShape | FlexSlotShape;

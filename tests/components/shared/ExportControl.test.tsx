@@ -1,8 +1,8 @@
-import { ExportControl } from "@/components/shared/ExportControl";
-import type { ControlHandle } from "@/components/shared/controlHandle";
 import { act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
+import type { ControlHandle } from "@/components/shared/controlHandle";
+import { ExportControl } from "@/components/shared/ExportControl";
 import { render, screen } from "../../utils/render";
 
 describe("ExportControl", () => {

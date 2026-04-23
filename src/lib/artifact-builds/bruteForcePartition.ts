@@ -20,9 +20,9 @@
 import type { BuildConfig } from "../../data/types";
 import { computeSlotChances } from "./artifactChance";
 import {
-  SLOT_KEYS,
   coalesceByFingerprint,
   mergeConfigGroup,
+  SLOT_KEYS,
 } from "./mergeUtils";
 
 /**

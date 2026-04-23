@@ -1,3 +1,5 @@
+import { Check, Edit2, Layers, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,8 +29,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { Check, Edit2, Layers, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface TierListManagerDialogProps {
   isOpen: boolean;

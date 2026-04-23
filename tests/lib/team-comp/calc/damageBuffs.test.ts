@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   DynamicCapScalingBuff,
+  deduplicateBuffs,
   ScalingBuff,
   StatBuff,
   TeamAggregationBuff,
-  deduplicateBuffs,
 } from "@/lib/dmgcalc/core/statBuff";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 

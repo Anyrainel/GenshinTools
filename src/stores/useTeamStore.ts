@@ -1,23 +1,16 @@
-import type { Element, MainStat, SubStat } from "@/data/enums";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 import type { ReactionType } from "@/data/enums";
-import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
-import type { OptionMap } from "@/lib/dmgcalc/types";
-import type { ExtraBuff } from "@/lib/dmgcalc/types";
+import type { ArtifactSetConfig } from "@/data/types";
 import type {
   CalcContext,
   ComboFormula,
   ComboLine,
-  DamageResult,
+  ExtraBuff,
+  OptionMap,
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
-import type {
-  ComboCountOverrides,
-  MinErOverrides,
-} from "@/lib/team-comp/analyzer/types";
-import type { StoredAnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { immer } from "zustand/middleware/immer";
 import { PersistedTeamStoreSchema } from "./schemas";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 
@@ -206,7 +199,6 @@ export function migrateTeamStore(
   }
   if (version < 11) {
     // v11: activeTeamId was moved to sessionStorage. Remove from persisted state.
-    // biome-ignore lint/performance/noDelete: migration cleanup of defunct persisted field
     delete (state as TeamState & { activeTeamId?: unknown }).activeTeamId;
   }
   if (version < 12) {

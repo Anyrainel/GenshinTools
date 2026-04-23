@@ -1,6 +1,6 @@
-import type { TierAssignment, TierCustomization } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { TierAssignment, TierCustomization } from "@/data/types";
 
 /** Base state shared by both character and weapon tier stores. */
 export interface TierStoreBase {

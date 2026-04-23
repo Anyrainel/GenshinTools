@@ -1,3 +1,6 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { memo } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Tooltip,
@@ -5,9 +8,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { memo } from "react";
 import type { TierItemData } from "./tierTableTypes";
 
 interface TierItemProps<T extends TierItemData> {
@@ -64,6 +64,7 @@ function TierItemComponent<T extends TierItemData>({
       rarity={item.rarity}
       size={size}
       weaponTypeBadge={overlayImage}
+      alt={alt}
     />
   );
 

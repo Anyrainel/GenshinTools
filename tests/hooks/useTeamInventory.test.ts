@@ -1,11 +1,11 @@
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { useTeamInventory } from "@/hooks/useTeamInventory";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
 

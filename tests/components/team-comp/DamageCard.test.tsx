@@ -1,3 +1,5 @@
+import userEvent from "@testing-library/user-event";
+import type { ComponentProps } from "react";
 import {
   ComparisonLabel,
   DamageCard,
@@ -6,10 +8,8 @@ import {
 import { CharCrErSettings } from "@/components/team-comp/GeneratorControls";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { TierAssignment } from "@/data/types";
-import type { CalcContext, DisplayResult } from "@/lib/dmgcalc/types";
+import type { CalcContext } from "@/lib/dmgcalc/types";
 import type { Team } from "@/lib/team-comp/types";
-import userEvent from "@testing-library/user-event";
-import type { ComponentProps } from "react";
 import { render, screen } from "../../utils/render";
 
 vi.mock("@/hooks/useMediaQuery", () => ({
@@ -72,22 +72,6 @@ const mockTeam: Team = {
   optimizationResult: null,
   opts: {},
 };
-
-function makeDisplayResult(overrides?: Partial<DisplayResult>): DisplayResult {
-  return {
-    partsByFormula: {},
-    totalDamage: 50000,
-    buffs: [],
-    buffActivation: {},
-    statSheets: {},
-    charFormulaTags: {},
-    marginalGains: { hu_tao: {}, xingqiu: {} },
-    levelUpGains: {},
-    idleStatRecords: {},
-    intrinsicSaturatedCharIds: [],
-    ...overrides,
-  } as DisplayResult;
-}
 
 type CardProps = ComponentProps<typeof DamageCard>;
 

@@ -1,5 +1,5 @@
-import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { describe, expect, it, vi } from "vitest";
+import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 
 // Type for mock preset data - matches the generic constraint in presetLoader
 type MockPreset = { author?: string; description?: string; data?: unknown[] };

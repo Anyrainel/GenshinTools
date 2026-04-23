@@ -1,3 +1,5 @@
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import type { ItemIconSize } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
@@ -22,18 +24,16 @@ import {
   reconcileConfigs,
   rereconcileConfigs,
 } from "@/lib/team-comp/analyzer/analyzerConfig";
-import type { AnalyzerOptions } from "@/lib/team-comp/analyzer/types";
 import type {
+  AnalyzerCharConfig,
+  AnalyzerOptions,
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
-import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
 import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { ArrowLeft, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnalyzerComboCard } from "./AnalyzerComboCard";
 import { AnalyzerConfigCard } from "./AnalyzerConfigCard";
 import { AnalyzerResultCard } from "./AnalyzerResultCard";

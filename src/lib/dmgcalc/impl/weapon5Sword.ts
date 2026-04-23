@@ -3,8 +3,7 @@ import { ZERO_ENERGY_CHARS } from "../constants";
 import { WeaponBase } from "../core/implModel";
 import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import { ALL_ELEMENTAL_FILTER } from "./helpers";
-import { r, wbs } from "./helpers";
+import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
 // 5★ Swords
 

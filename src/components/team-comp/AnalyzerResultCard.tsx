@@ -1,3 +1,5 @@
+import { BarChart3, Loader2, Play } from "lucide-react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -15,12 +17,9 @@ import type {
 } from "@/lib/team-comp/analyzer/types";
 import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import { BarChart3, Loader2, Play } from "lucide-react";
-import { useCallback, useState } from "react";
 import { AnalyzerChart } from "./AnalyzerChart";
 import { AnalyzerSequence } from "./AnalyzerSequence";
 import { AnalyzerTable } from "./AnalyzerTable";
-import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
 import {
   CARD_BODY_CLS,
   CARD_CLS,
@@ -28,6 +27,7 @@ import {
   CARD_TITLE_CLS,
   CONTROLS_CLS,
 } from "./cardStyles";
+import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
 
 interface AnalyzerResultCardProps {
   team: Team;

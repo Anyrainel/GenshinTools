@@ -8,10 +8,8 @@
  * value via the UI (sliders/toggles), even exceeding maxStacks.
  */
 
-import type { CalcContext } from "../types";
-import type { BuffActivationMap, BuffSource } from "../types";
+import type { BuffActivationMap, BuffSource, CalcContext } from "../types";
 import type { DamageFormula } from "./damageFormula";
-import type { StatBuff } from "./statBuff";
 import type { StatSheet } from "./statSheet";
 import type { TeamBuffLedger } from "./teamBuffLedger";
 import { LUNAR_RANK_WEIGHTS } from "./teamReaction";

@@ -1,3 +1,20 @@
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  ChevronsUpDown,
+  Eye,
+  Flame,
+  Loader2,
+  Play,
+  Snowflake,
+  Swords,
+  Undo2,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -23,14 +40,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { AccountData, ArtifactData, TierAssignment } from "@/data/types";
-import { formulaCritRatio } from "@/lib/dmgcalc/core/formulaDisplay";
-import { adjustPartDamage } from "@/lib/dmgcalc/core/formulaDisplay";
+import { aggregateComboFormulaDefaults } from "@/lib/dmgcalc/core/comboBuffOverrides";
+import {
+  adjustPartDamage,
+  formulaCritRatio,
+} from "@/lib/dmgcalc/core/formulaDisplay";
 import { buildBuffApplicability } from "@/lib/dmgcalc/core/statBuff";
 import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import { fmtDamage } from "@/lib/team-comp/displayFormatter";
-import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
-
-import { aggregateComboFormulaDefaults } from "@/lib/dmgcalc/core/comboBuffOverrides";
 import type {
   CalcContext,
   ComboLine,
@@ -38,34 +54,25 @@ import type {
   DisplayPart,
   DisplayResult,
 } from "@/lib/dmgcalc/types";
+import { fmtDamage } from "@/lib/team-comp/displayFormatter";
+import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
 import { toStatSheets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   OptFailReason,
+  Team,
   TeamOptimizationProgress,
   TeamOptimizationResult,
 } from "@/lib/team-comp/types";
-import type { Team } from "@/lib/team-comp/types";
-import { cn } from "@/lib/utils";
-import { getAssetUrl } from "@/lib/utils";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Check,
-  ChevronDown,
-  ChevronRight,
-  ChevronsUpDown,
-  Eye,
-  Flame,
-  Loader2,
-  Play,
-  Snowflake,
-  Swords,
-  Undo2,
-} from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { cn, getAssetUrl } from "@/lib/utils";
 import type { BuffLedgerFormula } from "./BuffDialog";
 import { BuffLedger } from "./BuffLedger";
+import {
+  CARD_BODY_CLS,
+  CARD_CLS,
+  CARD_HEADER_CLS,
+  CARD_TITLE_CLS,
+  CONTROLS_CLS,
+} from "./cardStyles";
 import { FormulaBreakdown } from "./FormulaBreakdown";
 import {
   CharCrErSettings,
@@ -74,13 +81,6 @@ import {
 } from "./GeneratorControls";
 import { type ReuseEntry, StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
-import {
-  CARD_BODY_CLS,
-  CARD_CLS,
-  CARD_HEADER_CLS,
-  CARD_TITLE_CLS,
-  CONTROLS_CLS,
-} from "./cardStyles";
 
 const SESSION_PREFIX = "dmgCard.";
 
@@ -751,7 +751,6 @@ function SingleResultView({
   teamBuild,
   team,
   artifactsByChar,
-  calcContext,
   critMode,
   setCritMode,
   isMobile,
@@ -774,7 +773,6 @@ function SingleResultView({
   teamBuild: TeamBuild;
   team: Team;
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
-  calcContext: CalcContext;
   critMode: CritMode;
   setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
@@ -1216,20 +1214,13 @@ type CtxProps = {
   team: Team;
   activeContext: CalcContext;
   updateTeam: (id: string, patch: Partial<Team>) => void;
-  isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
 };
 
 const LABEL_CLS =
   "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
 
-function EnemyFields({
-  team,
-  activeContext,
-  updateTeam,
-  isMobile,
-  t,
-}: CtxProps) {
+function EnemyFields({ team, updateTeam, t }: Omit<CtxProps, "activeContext">) {
   return (
     <EnemyInputs
       enemyLevel={team.calcContext.enemyLevel ?? ""}
@@ -1444,13 +1435,7 @@ function ComparisonLabel({
   );
 }
 
-function RollQualityFields({
-  team,
-  activeContext,
-  updateTeam,
-  isMobile,
-  t,
-}: CtxProps) {
+function RollQualityFields({ team, activeContext, updateTeam, t }: CtxProps) {
   return (
     <RollQualityInputs
       rollMultiplier={activeContext.rollMultiplier}
@@ -1597,7 +1582,7 @@ export function DamageCard({
     };
   }, [isComputing]);
 
-  const ctxProps: CtxProps = { team, activeContext, updateTeam, isMobile, t };
+  const ctxProps: CtxProps = { team, activeContext, updateTeam, t };
 
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
 
@@ -1727,7 +1712,6 @@ export function DamageCard({
                 teamBuild={teamBuild}
                 team={effectiveTeam}
                 artifactsByChar={equippedArtifactsByChar}
-                calcContext={activeContext}
                 critMode={critMode}
                 setCritMode={setCritMode}
                 isMobile={isMobile}
@@ -2077,7 +2061,6 @@ export function DamageCard({
                   teamBuild={teamBuild}
                   team={effectiveTeam}
                   artifactsByChar={optimizedArtifactsByChar}
-                  calcContext={activeContext}
                   critMode={critMode}
                   setCritMode={setCritMode}
                   isMobile={isMobile}
@@ -2219,7 +2202,6 @@ export function DamageCard({
                 teamBuild={teamBuild}
                 team={effectiveTeam}
                 artifactsByChar={genArtifactsByChar}
-                calcContext={activeContext}
                 critMode={critMode}
                 setCritMode={setCritMode}
                 isMobile={isMobile}

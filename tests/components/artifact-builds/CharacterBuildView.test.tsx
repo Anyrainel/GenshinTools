@@ -1,9 +1,9 @@
+import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { CharacterResource } from "@/data/types";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({

@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -25,7 +26,6 @@ import type {
   CharOptConfig,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 import {
@@ -92,7 +92,7 @@ function dilucEmptySheets(): Record<string, StatSheet> {
   return emptySheets("diluc", "xingqiu", "bennett", "kaedehara_kazuha");
 }
 
-const GLOBAL_CONFIG: GlobalStatWeights = {
+const _GLOBAL_CONFIG: GlobalStatWeights = {
   flatAtk: 1,
   flatHp: 0,
   flatDef: 0,
@@ -126,7 +126,6 @@ describe("evaluateCombo", () => {
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = dilucEmptySheets();
 
-    const teamStats = tb.getTeamStats(sheets, "diluc", CTX);
     const singleResult = tb.getDamageResult("diluc", formulaId, CTX);
 
     const combo: ComboFormula = {
@@ -406,7 +405,7 @@ describe("runTeamOptimization — combo mode", () => {
       combo,
       inventory: [],
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: dilucEmptySheets(),
       perChar,
     };
@@ -429,7 +428,7 @@ describe("runTeamOptimization — combo mode", () => {
       combo: singleFormulaCombo("diluc", formulaId),
       inventory: [],
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: dilucEmptySheets(),
       perChar,
     };
@@ -463,7 +462,7 @@ describe("runTeamOptimization — combo mode", () => {
       combo,
       inventory: [],
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: dilucEmptySheets(),
       perChar: {
         diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
@@ -508,7 +507,7 @@ describe("runTeamOptimization — combo mode", () => {
       combo,
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         ...dilucEmptySheets(),
         diluc: StatSheet.fromArtifacts(inventory),
@@ -542,7 +541,7 @@ describe("runTeamOptimization — combo mode", () => {
       combo,
       inventory: [],
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: dilucEmptySheets(),
       perChar: {
         diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
@@ -656,7 +655,7 @@ describe("combo edge cases", () => {
       combo,
       inventory: [],
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: dilucEmptySheets(),
       perChar: {
         diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
@@ -708,7 +707,7 @@ describe("single↔combo normalization equivalence", () => {
       combo: singleFormulaCombo("diluc", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         ...dilucEmptySheets(),
         diluc: StatSheet.fromArtifacts(inventory),
@@ -780,7 +779,7 @@ describe("single↔combo normalization equivalence", () => {
       combo: comboWithLineRxn,
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets,
       perChar,
     };
@@ -799,7 +798,7 @@ describe("single↔combo normalization equivalence", () => {
       combo: comboNoRxn,
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets,
       perChar,
     };

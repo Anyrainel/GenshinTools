@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { tiers } from "@/data/enums";
 import type { TierCustomization } from "@/data/types";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 
 interface TierCustomizationDialogProps {
   isOpen: boolean;

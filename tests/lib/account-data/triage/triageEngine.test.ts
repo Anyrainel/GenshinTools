@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import type { MainStat, SubStat } from "@/data/enums";
 import type {
   AccountData,
@@ -14,7 +15,6 @@ import type {
   TriageRule,
   TriageSettings,
 } from "@/lib/account-data/triage/types";
-import { describe, expect, it } from "vitest";
 
 // Helpers
 

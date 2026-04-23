@@ -1,9 +1,9 @@
+import { ChevronDown } from "lucide-react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { allSlots } from "@/data/enums";
 import type { ArtifactSetResource } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
-import { memo, useEffect, useRef, useState } from "react";
 
 /** Height threshold (px) for the inner effect container before collapsing kicks in */
 const COLLAPSE_THRESHOLD = 210;

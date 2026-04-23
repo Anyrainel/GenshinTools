@@ -10,11 +10,6 @@ import {
 } from "../../fixtures";
 
 describe("getHigherTierEquippedArtifactIds", () => {
-  const flower = createArtifactData({ id: "art-flower", slotKey: "flower" });
-  const plume = createArtifactData({ id: "art-plume", slotKey: "plume" });
-  const sands = createArtifactData({ id: "art-sands", slotKey: "sands" });
-  const goblet = createArtifactData({ id: "art-goblet", slotKey: "goblet" });
-
   const charWithArts = (
     key: string,
     artIds: { id: string; slotKey: Slot }[]

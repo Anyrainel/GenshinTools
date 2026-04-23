@@ -1,5 +1,5 @@
-import { EmptyState } from "@/components/shared/EmptyState";
 import { Download, ExternalLink, Scale } from "lucide-react";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { render, screen } from "../../utils/render";
 
 describe("EmptyState", () => {

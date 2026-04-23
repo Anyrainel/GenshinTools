@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 /**
  * Comprehensive tests for frozen artifact inventory filtering.
@@ -24,7 +25,6 @@ import {
   computeTeamInventory,
 } from "@/hooks/useTeamInventory";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
-import { describe, expect, it } from "vitest";
 
 let artCounter = 0;
 
@@ -70,11 +70,6 @@ function artIds(arts: Record<Slot, ArtifactData | null>): string[] {
   return Object.values(arts)
     .filter((a): a is ArtifactData => a != null)
     .map((a) => a.id);
-}
-
-function availableIds(params: ComputeInventoryParams): Set<string> {
-  const result = computeTeamInventory(params);
-  return new Set(result.availableArtifacts.map((a) => a.id));
 }
 
 function baseParams(

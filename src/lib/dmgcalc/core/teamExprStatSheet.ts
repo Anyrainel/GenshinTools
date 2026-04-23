@@ -13,30 +13,29 @@
 
 import type { StatKey } from "@/data/enums";
 import { ARTIFACT_STAT_KEYS } from "../constants";
-import type { CalcContext, FormulaPart } from "../types";
-import type { BuffActivationMap } from "../types";
+import type { BuffActivationMap, CalcContext, FormulaPart } from "../types";
 import {
+  createExprStats,
   type ExprStatSheet,
   VarMapping,
-  createExprStats,
 } from "./exprStatSheet";
 import { isOnField } from "./fieldState";
 import {
-  type DynamicBuffExpr,
   collectSingleBuffExprs,
+  type DynamicBuffExpr,
   deduplicateDynamicBuffExprs,
   isCompilerDeferredFinalBuff,
 } from "./formulaCompiler";
 import { exclusionKey } from "./formulaEval";
 import {
-  type StatBuff,
   getBuffInstanceKey,
   isBuffApplicable,
+  type StatBuff,
 } from "./statBuff";
 import type { StatSheet } from "./statSheet";
 import type { TeamMeta } from "./teamMeta";
-import { makeCacheKey } from "./teamStatSheet";
 import type { TeamStatSheet } from "./teamStatSheet";
+import { makeCacheKey } from "./teamStatSheet";
 
 /**
  * Centralized Expr-domain stat computation for the formula compiler.
@@ -61,7 +60,6 @@ export class TeamExprStatSheet {
     teamStats: TeamStatSheet,
     baseSheets: Record<string, StatSheet>,
     variableCharIds: Set<string>,
-    onFieldCharIds: string[],
     calcContext: CalcContext
   ) {
     this.teamStats = teamStats;

@@ -7,8 +7,8 @@
  * 3. Pre-fill substat rolls to meet remaining constraints
  */
 
-import { allSlots } from "@/data/enums";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { getMainStatValue } from "@/data/utils";
 import { toInternal } from "@/lib/artifact/scoring/utils";
 
@@ -73,7 +73,6 @@ export function crMainStatInternal(rarity: 4 | 5 = 5): number {
  * @param erGapAfterMain - remaining ER gap after main stats (internal)
  * @param crGapAfterMain - remaining CR gap after main stats (internal)
  * @param mainStats - chosen main stats (to exclude ER/CR substats from slots with matching mains)
- * @param rarity - artifact rarity
  * @param rv - roll values in display format
  * @param maxRollsPerSlot - per-artifact substat roll budget for this rarity
  * @param maxRollsPerStat - max rolls on one substat line for this rarity
@@ -83,7 +82,6 @@ export function computeSubstatPreFill(
   erGapAfterMain: number,
   crGapAfterMain: number,
   mainStats: Record<Slot, MainStat>,
-  rarity: 4 | 5,
   rv: Record<SubStat, number>,
   maxRollsPerSlot: number,
   maxRollsPerStat: number

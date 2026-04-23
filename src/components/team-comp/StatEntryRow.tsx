@@ -1,9 +1,9 @@
-import { VALUE_COLORS, getValueColor } from "@/components/shared/colors";
+import { ArrowUpRight } from "lucide-react";
+import { getValueColor, VALUE_COLORS } from "@/components/shared/colors";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { StatKey } from "@/data/enums";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight } from "lucide-react";
 
 export type StatEntryData = {
   key: string;

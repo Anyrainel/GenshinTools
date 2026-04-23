@@ -1,3 +1,11 @@
+import { CheckCircle2, Lock, LockOpen, ShieldAlert } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import {
   TriageCard,
   type TriageCardSection,
@@ -7,14 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { TriageDecision } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Lock, LockOpen, ShieldAlert } from "lucide-react";
-import {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
 
 type T = ReturnType<typeof useLanguage>["t"];
 

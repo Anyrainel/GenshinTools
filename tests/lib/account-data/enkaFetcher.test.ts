@@ -1,9 +1,9 @@
+import { describe, expect, it } from "vitest";
 import {
-  type EnkaResponse,
   convertEnkaToGOOD,
+  type EnkaResponse,
   fetchEnkaData,
 } from "@/lib/account-data/import/enkaFetcher";
-import { describe, expect, it } from "vitest";
 
 describe("enka", () => {
   describe("fetchEnkaData", () => {

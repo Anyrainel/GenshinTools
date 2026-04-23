@@ -1,6 +1,6 @@
-import type { GlobalStatWeights } from "@/data/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import type { GlobalStatWeights } from "@/data/types";
 import { invalidateScores } from "./useAccountStore";
 
 const DEFAULT_GLOBAL: GlobalStatWeights = {

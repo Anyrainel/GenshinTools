@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
 import type { SubStat } from "@/data/enums";
 import type {
   BuildConfig,
@@ -9,13 +10,12 @@ import type {
 } from "@/data/types";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import {
-  DEFAULT_COMPUTE_OPTIONS,
   buildRawConfigs,
+  DEFAULT_COMPUTE_OPTIONS,
   mergeConfigsAsync,
 } from "@/lib/artifact-builds/computeFilters";
 import { mergeConfigGroup } from "@/lib/artifact-builds/mergeUtils";
 import { smartMerge } from "@/lib/artifact-builds/smartMerge";
-import { describe, expect, it } from "vitest";
 
 function makeConfig(
   substats: SubStat[],
@@ -129,15 +129,6 @@ describe("Silken Moon's Serenade preset regression", () => {
     const raw = buildRawConfigs(buildGroups, DEFAULT_COMPUTE_OPTIONS);
     const silkenRaw = raw.silken_moons_serenade;
     expect(silkenRaw).toBeDefined();
-
-    // If all configs with ER substats already have ER mustPresent,
-    // the original bug scenario no longer exists — verify the merge still
-    // preserves ER mustPresent (the core assertion below still exercises the code path).
-    const erInSubsNotMust = silkenRaw.filter(
-      (c) =>
-        c.flowerPlume.substats.includes("er") &&
-        !c.flowerPlume.mustPresent.includes("er")
-    );
 
     const result = await mergeConfigsAsync(
       { silken_moons_serenade: silkenRaw },

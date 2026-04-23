@@ -1,6 +1,6 @@
+import { Download, ExternalLink, HelpCircle, SearchCheck } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Download, ExternalLink, HelpCircle, SearchCheck } from "lucide-react";
 
 interface AccountDataNeedsBothStateProps {
   /** Whether account data is missing (shows import account button) */

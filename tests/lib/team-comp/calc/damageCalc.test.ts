@@ -8,7 +8,7 @@ import {
   getNextLevelTier,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import { StatBuff, isBuffApplicable } from "@/lib/dmgcalc/core/statBuff";
+import { isBuffApplicable, StatBuff } from "@/lib/dmgcalc/core/statBuff";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import { TeamResonance } from "@/lib/dmgcalc/core/teamResonance";
 
@@ -1603,7 +1603,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
   });
 
   it("only the matching charId buff is active for a given calc target", () => {
-    const formulas = tb.catalog.getFormulaIds();
+    const _formulas = tb.catalog.getFormulaIds();
     // Pick a burst formula so the abilities:["burst"] filter passes
     const display = tb.getDisplayResult(
       "raiden_shogun",
@@ -2197,7 +2197,6 @@ describe("forceOnField override", () => {
       ctx,
       undefined,
       undefined,
-      undefined,
       forceOnField
     );
     const calcDamage = calcResult.totalDamage;
@@ -2287,7 +2286,6 @@ describe("forceOnField override", () => {
       "linnea",
       "linnea-million-ton",
       ctx,
-      undefined,
       undefined,
       undefined,
       true

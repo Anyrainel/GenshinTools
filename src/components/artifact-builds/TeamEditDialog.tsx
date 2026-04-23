@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { TeamPickerGrid } from "@/components/shared/TeamPickerGrid";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,9 +10,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactSetConfig } from "@/data/types";
-import type { AccountData } from "@/data/types";
-import { useState } from "react";
+import type { AccountData, ArtifactSetConfig } from "@/data/types";
 
 interface TeamEditDialogProps {
   open: boolean;

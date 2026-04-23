@@ -1,26 +1,4 @@
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { useLanguage } from "@/contexts/LanguageContext";
-import type { StatKey } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { DisplayResult } from "@/lib/dmgcalc/types";
-import { filterMatchesTag } from "@/lib/dmgcalc/utils";
-import { fmtPercent, fmtStat } from "@/lib/team-comp/displayFormatter";
-import type { Team } from "@/lib/team-comp/types";
-import { cn, getAssetUrl } from "@/lib/utils";
-import { useMemo, useState } from "react";
-
-import type { Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
-import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamConfigUtils";
-import type { OptFailReason } from "@/lib/team-comp/types";
-import {
   AlertTriangle,
   ChevronDown,
   ChevronUp,
@@ -29,6 +7,25 @@ import {
   Lock,
   Snowflake,
 } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { useLanguage } from "@/contexts/LanguageContext";
+import type { Slot, StatKey } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
+import type { ArtifactData } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
+import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { DisplayResult } from "@/lib/dmgcalc/types";
+import { filterMatchesTag } from "@/lib/dmgcalc/utils";
+import { fmtPercent, fmtStat } from "@/lib/team-comp/displayFormatter";
+import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamConfigUtils";
+import type { OptFailReason, Team } from "@/lib/team-comp/types";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
 
 export type ReuseEntry = {
@@ -106,19 +103,6 @@ const STAT_ORDER: StatKey[] = [
   "resReduction%",
   "baseDmg",
 ];
-
-function getSortedKeys(keys: Set<StatKey>): StatKey[] {
-  const arr = Array.from(keys);
-  arr.sort((a, b) => {
-    let ia = STAT_ORDER.indexOf(a);
-    let ib = STAT_ORDER.indexOf(b);
-    if (ia === -1) ia = 999;
-    if (ib === -1) ib = 999;
-    if (ia !== ib) return ia - ib;
-    return a.localeCompare(b);
-  });
-  return arr;
-}
 
 /**
  * Determine which column is "primary" (highlighted) vs "secondary" (muted).
@@ -473,7 +457,6 @@ export function StatSheetPanel({
                 </div>
               ) : (
                 <ArtifactSlotGrid
-                  charId={charId}
                   artifactsObj={artifactsObj}
                   t={t}
                   compact={compact}

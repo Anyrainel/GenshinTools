@@ -1,3 +1,5 @@
+import { Skull } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { BossDetailPanel } from "@/components/archive/BossDetailPanel";
 import { BossGrid, BossListPanel } from "@/components/archive/BossListPanel";
@@ -5,8 +7,6 @@ import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { leylineBossResource } from "@/data/gameDataLoader";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
-import { Skull } from "lucide-react";
-import { useCallback, useEffect, useRef } from "react";
 
 export function BossArchiveView() {
   const { t } = useLanguage();

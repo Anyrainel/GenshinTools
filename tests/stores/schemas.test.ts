@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
 import {
   AccountDataSchema,
@@ -13,7 +14,6 @@ import {
   TeamSchema,
   WeaponDataSchema,
 } from "@/stores/schemas";
-import { describe, expect, it } from "vitest";
 
 // ─── Helpers ───
 

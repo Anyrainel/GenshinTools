@@ -1,6 +1,6 @@
-import type { AnalyzerResult } from "@/lib/team-comp/analyzer/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { AnalyzerResult } from "@/lib/team-comp/analyzer/types";
 
 // ─── Map serialization helpers ───
 

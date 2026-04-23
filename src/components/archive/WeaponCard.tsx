@@ -1,3 +1,5 @@
+import { Bookmark } from "lucide-react";
+import { memo, useMemo, useState } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import {
@@ -21,8 +23,6 @@ import type { WeaponResource } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned, useRefinement } from "@/hooks/useOwnership";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Bookmark } from "lucide-react";
-import { memo, useMemo, useState } from "react";
 import { getRarityColor } from "../shared/colors";
 
 export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {

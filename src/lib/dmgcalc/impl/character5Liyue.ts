@@ -2,9 +2,7 @@ import { DirectFormula, LunarDirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { DynamicCapScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
-import type { FormulaEntry } from "../types";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
+import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 // 5★ Liyue Characters

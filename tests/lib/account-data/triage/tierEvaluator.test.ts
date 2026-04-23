@@ -1,10 +1,10 @@
+import { describe, expect, it } from "vitest";
 import type { SubStat } from "@/data/enums";
 import { evaluateTier } from "@/lib/account-data/triage/tierEvaluator";
 import type {
   TierCondition,
   TriageRule,
 } from "@/lib/account-data/triage/types";
-import { describe, expect, it } from "vitest";
 
 function makeRule(opts: {
   desired: SubStat[];

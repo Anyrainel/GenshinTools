@@ -1,6 +1,6 @@
+import type { ComponentProps } from "react";
 import { TeamRosterCard } from "@/components/team-comp/TeamRosterCard";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ComponentProps } from "react";
 import { render, screen } from "../../utils/render";
 
 vi.mock("@/hooks/useMediaQuery", () => ({

@@ -9,8 +9,11 @@ import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import "@/lib/dmgcalc";
 import { createExtraStatBuffs } from "@/lib/dmgcalc/core/statBuff";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { ExtraBuff } from "@/lib/dmgcalc/types";
-import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
+import type {
+  CalcContext,
+  ExtraBuff,
+  TeamSlotConfig,
+} from "@/lib/dmgcalc/types";
 
 await Promise.all([
   characterStatsResource.preload(),

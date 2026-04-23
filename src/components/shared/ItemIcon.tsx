@@ -1,3 +1,5 @@
+import { Lock } from "lucide-react";
+import { forwardRef } from "react";
 import type { Rarity, Slot } from "@/data/enums";
 import {
   artifactHalfSetsById,
@@ -6,8 +8,6 @@ import {
   weaponsById,
 } from "@/data/gameResources";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Lock } from "lucide-react";
-import { forwardRef } from "react";
 import { getRarityColor } from "./colors";
 
 /**
@@ -90,6 +90,8 @@ interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   level?: string;
   size?: ItemIconSize;
   frozen?: boolean;
+  /** Accessible alt text for the icon image. Falls back to imagePath when omitted. */
+  alt?: string;
 }
 
 // Explicit configuration for each size
@@ -192,6 +194,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       level,
       size = "lg",
       frozen,
+      alt,
       className,
       style,
       ...props
@@ -330,7 +333,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       >
         <img
           src={getAssetUrl(imagePath)}
-          alt={imagePath}
+          alt={alt ?? imagePath}
           className="w-full h-full object-cover"
           style={{ transform: "scale(1.1)" }}
           draggable={false}

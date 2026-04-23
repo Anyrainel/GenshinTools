@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { allSlots } from "@/data/enums";
 import {
   characterStatsResource,
@@ -9,7 +10,7 @@ import {
  * Verifies that excluded artifact IDs are not assigned to the specified
  * character, while remaining available for other characters.
  */
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
@@ -19,7 +20,6 @@ import type {
   CharOptConfig,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 import {
@@ -40,12 +40,6 @@ const CTX = {
   rollMultiplier: 0.85,
   substatBudget: "8_6" as const,
 };
-const GLOBAL_CONFIG: GlobalStatWeights = {
-  flatAtk: 1,
-  flatHp: 0,
-  flatDef: 0,
-};
-
 const CONFIGS: TeamSlotConfig[] = [
   {
     charId: "hu_tao",
@@ -122,7 +116,7 @@ describe("perCharExcludedArtifactIds", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: new StatSheet([]),
         xingqiu: new StatSheet([]),
@@ -184,7 +178,7 @@ describe("perCharExcludedArtifactIds", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: new StatSheet([]),
         xingqiu: new StatSheet([]),
@@ -200,16 +194,11 @@ describe("perCharExcludedArtifactIds", () => {
     expect(final.done).toBe(true);
     if (!final.done) return;
 
-    // Hu Tao must NOT have the excluded flower
+    // Hu Tao must NOT have the excluded flower.
+    // (xingqiu has no exclusion and may take the shared flower freely — the
+    // key invariant is only that hu_tao doesn't get the excluded one.)
     const huTaoIds = getAssignedIds(final.bestArtifactsByChar, "hu_tao");
     expect(huTaoIds).not.toContain(sharedFlower.id);
-
-    // Xingqiu CAN have the shared flower (no exclusion for xingqiu)
-    const xingqiuIds = getAssignedIds(final.bestArtifactsByChar, "xingqiu");
-    // The shared flower is the best flower available, so xingqiu should use it
-    // (though this depends on the optimizer's allocation — just verify it's allowed)
-    // We only assert it's not blocked: if xingqiu gets a flower, it could be either one
-    // The key invariant is hu_tao doesn't get the excluded one.
   });
 
   it("empty exclusion list has no effect", async () => {
@@ -234,7 +223,7 @@ describe("perCharExcludedArtifactIds", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: new StatSheet([]),
         xingqiu: new StatSheet([]),
@@ -287,7 +276,7 @@ describe("perCharExcludedArtifactIds", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: {
         hu_tao: new StatSheet([]),
         xingqiu: new StatSheet([]),

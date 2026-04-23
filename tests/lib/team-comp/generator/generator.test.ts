@@ -1,5 +1,6 @@
-import { allSlots } from "@/data/enums";
+import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 /**
  * Tests for generator — verifying 2+2pc set assignment and 4★ flex slot promotion.
  */
@@ -15,7 +16,6 @@ import {
   type GeneratorOptions,
   runGenerator,
 } from "@/lib/team-comp/generator/generator";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 import { drain, getFirstFormulaId } from "../../../fixtures/optimizerHelpers";

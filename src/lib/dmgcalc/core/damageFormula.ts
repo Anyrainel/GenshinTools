@@ -1,7 +1,5 @@
-import type { ReactionType } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
-import type { CalcContext, DisplayPart } from "../types";
-import type { DamageTag } from "../types";
+import type { ReactionType, StatKey } from "@/data/enums";
+import type { CalcContext, DamageTag, DisplayPart } from "../types";
 import { E, type Expr, simplify } from "./expr";
 import type { ExprStatSheet } from "./exprStatSheet";
 import type { StatSheet } from "./statSheet";

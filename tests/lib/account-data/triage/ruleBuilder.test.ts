@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import type {
   AccountData,
   Build,
@@ -7,7 +8,6 @@ import type {
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
 import { extractRules } from "@/lib/account-data/triage/ruleBuilder";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
-import { describe, expect, it } from "vitest";
 
 function makeBuild(opts: {
   id?: string;

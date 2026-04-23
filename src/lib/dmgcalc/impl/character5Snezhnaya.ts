@@ -9,9 +9,13 @@ import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { StatBuff } from "../core/statBuff";
 import type { StatSheet } from "../core/statSheet";
-import type { OptionDef } from "../types";
-import type { CalcContext, ComboTemplate, DisplayPart } from "../types";
-import type { DamageTag } from "../types";
+import type {
+  CalcContext,
+  ComboTemplate,
+  DamageTag,
+  DisplayPart,
+  OptionDef,
+} from "../types";
 import { cbs } from "./helpers";
 
 class ArlecchinoNormalFormula extends DirectFormula {
@@ -311,7 +315,7 @@ class Arlecchino extends CharacterBase {
       this.param("A", 5),
       this.param("A", 6),
     ];
-    const initialBol = Number.parseInt(this.initialBolStr) / 100;
+    const initialBol = Number.parseInt(this.initialBolStr, 10) / 100;
     const masqueScale =
       this.constellation >= 1 ? this.param("A", 12) + 1.0 : this.param("A", 12);
 

@@ -1,6 +1,6 @@
+import { describe, expect, it } from "vitest";
 import type { ReactionType } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import type { ArtifactSetConfig } from "@/data/types";
+import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
 import {
   calcComboResults,
   extractComboOverrides,
@@ -14,7 +14,6 @@ import {
   setsMatch,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
-import { describe, expect, it } from "vitest";
 import {
   createAccountData,
   createArtifactData,

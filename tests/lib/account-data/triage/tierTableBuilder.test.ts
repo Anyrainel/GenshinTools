@@ -1,10 +1,10 @@
+import { afterEach, describe, expect, it } from "vitest";
 import {
   clearTierTableCache,
   getMainProb,
   lookupTierEntry,
   structuralKey,
 } from "@/lib/account-data/triage/tierTableBuilder";
-import { afterEach, describe, expect, it } from "vitest";
 
 afterEach(() => clearTierTableCache());
 

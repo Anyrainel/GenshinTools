@@ -1,12 +1,15 @@
+import { useMemo } from "react";
 import type { Slot } from "@/data/enums";
-import type { ArtifactSetConfig } from "@/data/types";
-import type { ArtifactData, CharacterData } from "@/data/types";
+import type {
+  ArtifactData,
+  ArtifactSetConfig,
+  CharacterData,
+} from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { frozenArtifactsMatchConfig } from "@/lib/team-comp/teamConfigUtils";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { useMemo } from "react";
 
 export interface TeamInventory {
   /** All artifacts from the account (equipped + inventory), unfiltered */

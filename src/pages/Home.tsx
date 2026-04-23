@@ -1,7 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
-
-import { cn, getAssetUrl } from "@/lib/utils";
 import {
   ArrowRight,
   Award,
@@ -14,11 +10,13 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-
 import { WelcomeGuideManual } from "@/components/greeting/WelcomeGuideManual";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { WhatsNew } from "@/components/shared/WhatsNew";
 import type { ControlHandle } from "@/components/shared/controlHandle";
+import { WhatsNew } from "@/components/shared/WhatsNew";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn, getAssetUrl } from "@/lib/utils";
 
 export default function Home() {
   const { t } = useLanguage();

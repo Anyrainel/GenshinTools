@@ -1,9 +1,9 @@
+import { Sword } from "lucide-react";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { TeamGrid } from "@/components/team-comp/TeamGrid";
 import { WeaponChoiceDetail } from "@/components/team-comp/WeaponChoiceDetail";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
-import { Sword } from "lucide-react";
 
 interface WeaponChoiceViewProps {
   importRef: React.RefObject<ControlHandle | null>;

@@ -1,6 +1,6 @@
+import { vi } from "vitest";
 import { SkillCard } from "@/components/archive/SkillCard";
 import type { CharacterSkill } from "@/data/types";
-import { vi } from "vitest";
 import { fireEvent, render, screen } from "../../utils/render";
 
 // hu_tao: c3Talent "E", c5Talent "Q" — so index 0 (A) = 6 vs 10, index 1 (E) / 2 (Q) = 10 vs 13

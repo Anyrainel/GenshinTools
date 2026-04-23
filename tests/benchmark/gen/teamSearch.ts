@@ -13,11 +13,10 @@
  * and export `runTeamOptimization` by calling `createTeamOptimizer`.
  */
 
+import type { Slot, StatKey } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import type { Slot } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import { isPctStat } from "@/data/utils";
 import {
   type BuildMatchResult,
@@ -39,12 +38,12 @@ import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   CharOptConfig,
   OptFailReason,
-  TeamOptPassId,
-  TeamOptPassResult,
-  TeamOptYield,
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
+  TeamOptPassId,
+  TeamOptPassResult,
+  TeamOptYield,
 } from "@/lib/team-comp/types";
 
 export const TOP_K = 50;
@@ -92,7 +91,6 @@ export interface PerCharSearchOpts {
   carryCharId: string;
   formulaId: string;
   inventory: ArtifactData[];
-  globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>;
   calcContext: CalcContext;
   excludedIds: Set<string> | undefined;
@@ -230,7 +228,6 @@ export function buildSuperArtifact(artifacts: ArtifactData[]): SuperArtifact {
 export function computeWeightScore(
   art: ArtifactData,
   buildMatch: BuildMatchResult | null | undefined,
-  globalConfig: GlobalStatWeights,
   crDiscount: number
 ): number {
   const baseWeights = buildMatch?.statWeights ?? { cr: 100, cd: 100 };
@@ -238,16 +235,11 @@ export function computeWeightScore(
     crDiscount < 1
       ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }
       : baseWeights;
-  let score = scoreSlot(art, weights, globalConfig);
+  let score = scoreSlot(art, weights);
   if (buildMatch) {
     const rec = getTargetMainStatsForSlot(art.slotKey, buildMatch.build);
     if (rec.has(art.mainStatKey)) {
-      let ms = scoreMainStat(
-        art.mainStatKey,
-        art.rarity,
-        globalConfig,
-        art.level
-      );
+      let ms = scoreMainStat(art.mainStatKey, art.rarity, art.level);
       if (crDiscount < 1 && art.mainStatKey === "cr") ms *= crDiscount;
       score += ms;
     }
@@ -366,20 +358,17 @@ export function prepareSlotData(
   inventory: ArtifactData[],
   excludedIds: Set<string> | undefined,
   buildMatch: BuildMatchResult | null | undefined,
-  globalConfig: GlobalStatWeights,
   crDiscount: number
 ): PreparedSlotData[] {
   const result: PreparedSlotData[] = [];
   for (let si = 0; si < 5; si++) {
     const slot = allSlots[si];
     const arts = inventory
-      .filter(
-        (a) => a.slotKey === slot && (!excludedIds || !excludedIds.has(a.id))
-      )
+      .filter((a) => a.slotKey === slot && !excludedIds?.has(a.id))
       .sort(
         (a, b) =>
-          computeWeightScore(b, buildMatch, globalConfig, crDiscount) -
-          computeWeightScore(a, buildMatch, globalConfig, crDiscount)
+          computeWeightScore(b, buildMatch, crDiscount) -
+          computeWeightScore(a, buildMatch, crDiscount)
       );
     const bySet = new Map<string, ArtifactData[]>();
     for (const art of arts) {
@@ -456,7 +445,6 @@ export function setupCharSearch(
     teamBuild,
     carryCharId,
     inventory,
-    globalConfig,
     baseSheets,
     calcContext,
     excludedIds,
@@ -486,7 +474,6 @@ export function setupCharSearch(
     inventory,
     excludedIds,
     charConfig.buildMatch,
-    globalConfig,
     crDiscount
   );
 
@@ -873,7 +860,6 @@ async function* runTeamOpt(
     carryCharId,
     inventory,
     calcContext,
-    globalConfig,
     baseSheets,
     perChar,
     combo,
@@ -974,7 +960,6 @@ async function* runTeamOpt(
     const charId = phase1Order[ci];
     const charConfig = effectivePerChar[charId];
     if (!charConfig) continue;
-    const charStartTime = performance.now();
 
     const isCarry = carryCharIds.includes(charId);
     const passId: TeamOptPassId = isCarry ? "carry-1" : "support";
@@ -1014,7 +999,7 @@ async function* runTeamOpt(
       carryCharId,
       formulaId,
       inventory,
-      globalConfig,
+
       baseSheets: runningBaseSheets,
       calcContext,
       excludedIds: undefined,
@@ -1045,7 +1030,7 @@ async function* runTeamOpt(
         carryCharId,
         formulaId,
         inventory,
-        globalConfig,
+
         baseSheets: runningBaseSheets,
         calcContext,
         excludedIds: undefined,
@@ -1172,7 +1157,7 @@ async function* runTeamOpt(
           carryCharId,
           formulaId,
           inventory,
-          globalConfig,
+
           baseSheets: runningBaseSheets,
           calcContext,
           excludedIds: excludeSet,
@@ -1275,7 +1260,7 @@ async function* runTeamOpt(
           carryCharId,
           formulaId,
           inventory,
-          globalConfig,
+
           baseSheets: runningBaseSheets,
           calcContext,
           excludedIds: seqUsed,
@@ -1454,7 +1439,7 @@ async function* runTeamOpt(
       carryCharId,
       formulaId,
       inventory,
-      globalConfig,
+
       baseSheets: refinedBaseSheets,
       calcContext,
       excludedIds,
@@ -1543,7 +1528,7 @@ async function* runTeamOpt(
         carryCharId,
         formulaId,
         inventory,
-        globalConfig,
+
         baseSheets: repairBaseSheets,
         calcContext,
         excludedIds: repairExcluded,

@@ -14,28 +14,31 @@
  * the inner loop, leaving ~20-50 arithmetic ops per evaluation.
  */
 
-import type { MainStat } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
+import type { MainStat, StatKey } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
-import type { FormulaPart } from "../types";
-import type { CalcContext, ComboFormula, ReactionOverride } from "../types";
-import type { DamageTag } from "../types";
-import type { BuffActivationMap } from "../types";
+import type {
+  BuffActivationMap,
+  CalcContext,
+  ComboFormula,
+  DamageTag,
+  FormulaPart,
+  ReactionOverride,
+} from "../types";
 import { resolvePartReaction } from "./combo";
 import { createReactionVariant } from "./damageFormula";
-import { isDeferredFinalBuff, isFinalStatKey } from "./dynamicBuffEval";
-import { E, type Expr, compileExpr, simplify } from "./expr";
+import { isDeferredFinalBuff } from "./dynamicBuffEval";
+import { compileExpr, E, type Expr, simplify } from "./expr";
 import { type ExprStatSheet, VarMapping } from "./exprStatSheet";
 import { getDefaultOnFieldCharId, isPartOffField } from "./fieldState";
 import { exclusionKey } from "./formulaEval";
 import {
+  bespokeMaxStacks,
   CrossScalingBuff,
+  getBuffInstanceKey,
   ScalingBuff,
   StatBuff,
-  bespokeMaxStacks,
-  getBuffInstanceKey,
 } from "./statBuff";
 import type { StatSheet } from "./statSheet";
 import type { TeamBuild } from "./teamBuild";
@@ -101,21 +104,10 @@ export function compileComboTeamDamage(
     : [swapCharId];
   const variableCharIds = new Set(variableCharIdArr);
 
-  // Collect all unique on-field charIds: each line's charId is on-field,
-  // plus off-field default contexts and the ER check char if present.
-  const allOnFieldCharIds = [
-    ...new Set([
-      ...validLines.map((l) => l.charId),
-      ...validLines.map((l) => getDefaultOnFieldCharId(l.charId, configs)),
-      ...(erCheckCharId ? [erCheckCharId] : []),
-    ]),
-  ];
-
   const teamExprStats = new TeamExprStatSheet(
     teamBuild.teamStats,
     baseSheets,
     variableCharIds,
-    allOnFieldCharIds,
     calcContext
   );
 
@@ -707,7 +699,7 @@ function mergeBespokeEntriesAll(
 }
 
 /** Apply bespoke buff array overlay to ExprStats (static + dynamic parts). */
-function applyBespokeOverlay(
+function _applyBespokeOverlay(
   stats: ExprStatSheet,
   bespokeBuffs?: StatBuff[]
 ): ExprStatSheet {

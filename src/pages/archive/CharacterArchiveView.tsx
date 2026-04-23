@@ -1,3 +1,5 @@
+import { Book } from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { CharacterDetailPanel } from "@/components/archive/CharacterDetailPanel";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
@@ -9,10 +11,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Element, Rarity, WeaponType } from "@/data/enums";
 import { elements, weaponTypes } from "@/data/enums";
 import {
+  allCharacters,
   elementResourcesByName,
   weaponResourcesByName,
 } from "@/data/gameResources";
-import { allCharacters } from "@/data/gameResources";
 import {
   type CharacterStatsMap,
   characterStatsResource,
@@ -24,8 +26,6 @@ import { useIsOwned } from "@/hooks/useOwnership";
 import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
-import { Book } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 interface CharacterListItemProps {
   character: CharacterResource;

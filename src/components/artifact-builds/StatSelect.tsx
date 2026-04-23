@@ -1,3 +1,5 @@
+import { Plus } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -9,8 +11,6 @@ import {
 } from "@/components/ui/lightweight-select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
 
 interface StatSelectProps {
   values: string[];

@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import type { CharacterStatsMap } from "@/data/gameStatsLoader";
 import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { CharacterResource, TierAssignment } from "@/data/types";
@@ -7,7 +8,6 @@ import {
   getDefaultCharacterFilters,
   hasActiveFilters,
 } from "@/lib/characterFilters";
-import { describe, expect, it } from "vitest";
 
 const mockCharacters: CharacterResource[] = [
   { id: "hu_tao", rarity: 5, imagePath: "" },

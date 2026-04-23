@@ -1,16 +1,17 @@
 import { statPools } from "@/data/constants";
-import { allSlots } from "@/data/enums";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { artifactsById } from "@/data/gameResources";
 import type { ArtifactData } from "@/data/types";
-
-import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
 import type { FlexSlotConfig } from "@/lib/artifact/scoring/sheetBuilder";
-import { emptySubRolls } from "@/lib/artifact/scoring/utils";
-import { getRollValues } from "@/lib/artifact/scoring/utils";
-import type { CalcContext, ComboFormula } from "@/lib/dmgcalc/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
-import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
+import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
+import { emptySubRolls, getRollValues } from "@/lib/artifact/scoring/utils";
+import type {
+  BuffActivationMap,
+  CalcContext,
+  ComboFormula,
+  SubstatBudgetPreset,
+} from "@/lib/dmgcalc/types";
 import type { CompiledTeamDamage } from "../../dmgcalc/core/formulaCompiler";
 import {
   compileComboTeamDamage,
@@ -20,10 +21,10 @@ import {
 import { StatSheet } from "../../dmgcalc/core/statSheet";
 import type { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import {
-  type ErCrGap,
   computeErCrGap,
   computeSubstatPreFill,
   crMainStatInternal,
+  type ErCrGap,
   erCrGapAfterMainStats,
   erMainStatInternal,
 } from "../optimizer/erCrConstraints";
@@ -421,7 +422,6 @@ function constraintAwareGenerate(
             erRemaining,
             crRemaining,
             mainStats,
-            rarity,
             rv,
             maxSlot,
             maxStat
@@ -573,7 +573,6 @@ function findBestMainStatsConstrained(
               erRemaining,
               crRemaining,
               mainStats,
-              rarity,
               rv,
               maxSlot,
               maxStat
@@ -759,7 +758,6 @@ export async function* runGenerator(
 
   // ── Helper: get pre-fill for a character's chosen main stats ──
   const getPreFill = (
-    cid: string,
     gap: ErCrGap,
     mainStats: Record<Slot, MainStat>,
     r: 4 | 5,
@@ -779,7 +777,6 @@ export async function* runGenerator(
         erRemaining,
         crRemaining,
         mainStats,
-        r,
         cRv,
         rollsPerSlotForPreset(budgetPreset, r),
         maxRollsPerStatForPreset(budgetPreset, r)
@@ -968,7 +965,6 @@ export async function* runGenerator(
   await yieldFrame();
   {
     const refinedPreFill = getPreFill(
-      carryCharId,
       carryGap,
       allMainStats[carryCharId],
       carryR,
@@ -1022,7 +1018,6 @@ export async function* runGenerator(
     // Try the alternative circlet with fresh substats
     const altMainStats = { ...allMainStats[carryCharId], circlet: altCirclet };
     const altPreFill = getPreFill(
-      carryCharId,
       carryGap,
       altMainStats,
       carryR,

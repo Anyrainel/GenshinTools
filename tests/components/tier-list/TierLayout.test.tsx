@@ -1,10 +1,10 @@
+import { DndContext } from "@dnd-kit/core";
 import { TierLayout } from "@/components/tier-list/TierLayout";
 import type {
   TierGroupConfig,
   TierItemData,
 } from "@/components/tier-list/tierTableTypes";
 import type { Tier } from "@/data/enums";
-import { DndContext } from "@dnd-kit/core";
 import { render, screen } from "../../utils/render";
 
 // Wrapper to provide dnd-kit context

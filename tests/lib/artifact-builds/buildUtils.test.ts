@@ -1,6 +1,6 @@
+import { describe, expect, it } from "vitest";
 import type { Build, BuildGroup, ComputeOptions } from "@/data/types";
 import { createBuildExportPayloadV5 } from "@/lib/artifact-builds/buildUtils";
-import { describe, expect, it } from "vitest";
 
 const mockComputeOptions: ComputeOptions = {
   expandElementalGoblet: true,

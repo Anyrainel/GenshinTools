@@ -8,6 +8,8 @@
  * Outer shell (header → tabs → scrollable content) mirrors PartBuffDialog.
  */
 
+import { Settings2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import { getReceiverColor } from "@/components/shared/colors";
 import { StatEntryRow } from "@/components/team-comp/StatEntryRow";
 import {
@@ -28,16 +30,14 @@ import {
   useTemplateName,
 } from "@/hooks/useBuffLabels";
 import type {
+  BuffActivationMap,
   DisplayPart,
   ResolvedBuff,
   ResolvedStatEntry,
 } from "@/lib/dmgcalc/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
 import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
-import { Settings2 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
 
 export type BuffLedgerFormula = {
   formulaKey: string;

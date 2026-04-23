@@ -1,9 +1,9 @@
-import { ImportControl } from "@/components/shared/ImportControl";
-import type { ControlHandle } from "@/components/shared/controlHandle";
-import type { PresetOption } from "@/data/types";
 import { act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
+import type { ControlHandle } from "@/components/shared/controlHandle";
+import { ImportControl } from "@/components/shared/ImportControl";
+import type { PresetOption } from "@/data/types";
 import { render, screen } from "../../utils/render";
 
 describe("ImportControl", () => {

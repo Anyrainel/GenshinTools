@@ -1,14 +1,14 @@
+import { describe, expect, it } from "vitest";
 import type { CharacterData } from "@/data/types";
 import {
   artifactFingerprint,
   mergeEnkaImportWithInventory,
 } from "@/lib/account-data/import/mergeEnkaImport";
-import { describe, expect, it } from "vitest";
 import {
-  MOCK_ARTIFACTS,
   createAccountData,
   createArtifactData,
   createCharacterData,
+  MOCK_ARTIFACTS,
 } from "../../fixtures";
 
 describe("artifactFingerprint", () => {

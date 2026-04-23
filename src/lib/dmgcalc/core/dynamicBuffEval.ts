@@ -1,10 +1,9 @@
 import type { StatKey } from "@/data/enums";
 import type { StatEntry } from "@/data/types";
 import { FINAL_STAT_KEYS } from "../constants";
-import type { ResolvedStatEntry } from "../types";
-import type { BuffSource } from "../types";
-import { CrossScalingBuff, ScalingBuff, TeamAggregationBuff } from "./statBuff";
+import type { BuffSource, ResolvedStatEntry } from "../types";
 import type { StatBuff } from "./statBuff";
+import { CrossScalingBuff, ScalingBuff, TeamAggregationBuff } from "./statBuff";
 
 export type EvaluatedDynamicBuff = {
   buff: StatBuff;

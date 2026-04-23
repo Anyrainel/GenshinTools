@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { substatRollTiers } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
 import type {
@@ -19,7 +20,6 @@ import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
 import { runTriage } from "@/lib/account-data/triage/triageEngine";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 import presetJson from "@/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
-import { describe, expect, it } from "vitest";
 
 // Seeded PRNG (mulberry32) for reproducible randomness
 
@@ -28,7 +28,7 @@ function mulberry32(seed: number) {
   return () => {
     s = (s + 0x6d2b79f5) | 0;
     let t = Math.imul(s ^ (s >>> 15), 1 | s);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }

@@ -10,8 +10,7 @@
  * when the semantics change.
  */
 
-import type { FormulaPart, TeamSlotConfig } from "../types";
-import type { BuffReceiverType } from "../types";
+import type { BuffReceiverType, FormulaPart, TeamSlotConfig } from "../types";
 
 /**
  * Returns the effective off-field state of a formula part: its intrinsic

@@ -10,7 +10,7 @@ Before building any UI, check this list. Re-inventing these is a common mistake.
 | Artifact icon with data | `ArtifactIcon` | `shared/ArtifactIcon.tsx` | `artifact`, `artInfo`, `slot`, `size` |
 | Character name/element/rarity header | `CharacterInfo` | `shared/CharacterInfo.tsx` | `character`, `showDate?`, `children` |
 | Artifact stat breakdown | `StatDisplay` | `account-data/StatDisplay.tsx` | `artifact`, `scoreResult?`, `compact?` |
-| 5-slot artifact grid | `ArtifactSlotGrid` | `team-comp/ArtifactSlotGrid.tsx` | `charId`, `artifactsObj`, `onSwap?` |
+| 5-slot artifact grid | `ArtifactSlotGrid` | `team-comp/ArtifactSlotGrid.tsx` | `artifactsObj`, `onSwap?` |
 
 **Sizing:** Use exported `ICON_CONFIG` and `SIZE_CLASSES` from `ItemIcon.tsx` for consistent dimensions.
 

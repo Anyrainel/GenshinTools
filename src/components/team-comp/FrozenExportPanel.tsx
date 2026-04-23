@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { ExportBranding } from "@/components/shared/ExportBranding";
 import { ExportColumn } from "@/components/team-comp/SwapGuide";
 import type { useLanguage } from "@/contexts/LanguageContext";
@@ -5,7 +6,6 @@ import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
 import { buildArtifactOwnerMap } from "@/lib/artifact/inventory";
 import type { Team } from "@/lib/team-comp/types";
 import type { FrozenTeam } from "@/stores/useFreezeStore";
-import { forwardRef } from "react";
 
 interface FrozenExportPanelProps {
   entries: {

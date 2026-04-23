@@ -1,16 +1,43 @@
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { LucideIcon } from "lucide-react";
+import {
+  ArrowUpDown,
+  Bookmark,
+  Download,
+  HelpCircle,
+  Plus,
+  Search,
+  Swords,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CategoryChip } from "@/components/shared/CategoryChip";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChip } from "@/components/shared/FilterChip";
-import type { ControlHandle } from "@/components/shared/controlHandle";
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { tiers } from "@/data/enums";
 import type { Element, Region } from "@/data/enums";
-import { elements, regions } from "@/data/enums";
+import { elements, regions, tiers } from "@/data/enums";
 import { charactersById, elementResourcesByName } from "@/data/gameResources";
 import {
   characterStatsResource,
@@ -28,34 +55,6 @@ import type { TeamSort, ViewId } from "@/stores/useSessionNavStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
-import {
-  DndContext,
-  type DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  rectSortingStrategy,
-  sortableKeyboardCoordinates,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import type { LucideIcon } from "lucide-react";
-import {
-  ArrowUpDown,
-  Bookmark,
-  Download,
-  HelpCircle,
-  Plus,
-  Search,
-  Swords,
-} from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const EMPTY_SET = new Set<string>();
 const CARD_MAX_WIDTH = 320;
@@ -705,8 +704,6 @@ export function TeamGrid({
                         selectClassName={selectClassName}
                         isFrozen={freeze?.isFrozen ?? false}
                         isFullyFrozen={freeze?.isFullyFrozen ?? false}
-                        frozenCount={freeze?.frozenCount ?? 0}
-                        totalCharCount={freeze?.totalCharCount ?? 0}
                         frozenCharIds={freeze?.frozenCharIds ?? EMPTY_SET}
                         onUnfreeze={
                           enableFreeze ? () => unfreezeTeam(team.id) : undefined

@@ -1,9 +1,9 @@
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { LanguageProvider } from "@/contexts/LanguageContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import { type RenderOptions, render } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 // Wrapper that provides all context providers
 function AllProviders({ children }: { children: ReactNode }) {

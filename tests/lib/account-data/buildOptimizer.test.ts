@@ -1,22 +1,15 @@
+import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
-import type { GlobalStatWeights } from "@/data/types";
 import { optimizeBuild } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
 import type { CrBudgetResult } from "@/lib/account-data/crBudget";
 import type { StatWeightMap } from "@/lib/artifact/scoring/artifactScore";
-import { describe, expect, it } from "vitest";
 
 const testWeights: StatWeightMap = {
   cr: 100,
   cd: 100,
   "atk%": 80,
   em: 60,
-};
-
-const testGlobalConfig: GlobalStatWeights = {
-  flatAtk: 50,
-  flatHp: 0,
-  flatDef: 0,
 };
 
 function makeCandidate(
@@ -108,7 +101,6 @@ describe("buildOptimizer", () => {
 
     const result = optimizeBuild({
       weights: testWeights,
-      globalConfig: testGlobalConfig,
       candidates,
       crBudget: baseCrBudget,
       targetMainStats: defaultTargetMainStats,
@@ -162,7 +154,6 @@ describe("buildOptimizer", () => {
 
     const result = optimizeBuild({
       weights: testWeights,
-      globalConfig: testGlobalConfig,
       candidates,
       crBudget: highCrBudget,
       targetMainStats: defaultTargetMainStats,
@@ -196,7 +187,6 @@ describe("buildOptimizer", () => {
 
     const result = optimizeBuild({
       weights: testWeights,
-      globalConfig: testGlobalConfig,
       candidates,
       crBudget: baseCrBudget,
       targetMainStats: defaultTargetMainStats,
@@ -224,7 +214,6 @@ describe("buildOptimizer", () => {
 
     const result = optimizeBuild({
       weights: testWeights,
-      globalConfig: testGlobalConfig,
       candidates,
       crBudget: baseCrBudget,
       targetMainStats: defaultTargetMainStats,

@@ -1,7 +1,6 @@
-import { allSlots } from "@/data/enums";
 import type { Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
-import type { GlobalStatWeights } from "@/data/types";
 import { getMainStatValue } from "@/data/utils";
 import {
   type StatWeightMap,
@@ -12,7 +11,6 @@ import type { CrBudgetResult } from "./crBudget";
 
 export interface BuildOptimizerConfig {
   weights: StatWeightMap;
-  globalConfig: GlobalStatWeights;
   candidates: Record<Slot, CandidateArtifact[]>;
   crBudget: CrBudgetResult;
   targetMainStats: Record<Slot, Set<string>>;
@@ -161,7 +159,6 @@ export function optimizeBuild(
 ): BuildOptimizerResult {
   const {
     weights,
-    globalConfig,
     candidates,
     crBudget,
     targetMainStats,
@@ -181,7 +178,6 @@ export function optimizeBuild(
       currentScore += scoreSlotWithMainStat(
         current,
         weights,
-        globalConfig,
         targetMainStats[slot]
       );
     }
@@ -234,7 +230,7 @@ export function optimizeBuild(
       const slotTargetMains = targetMainStats[slot];
       const scored = filtered.map((c) => ({
         candidate: c,
-        score: scoreSlotWithMainStat(c, weights, globalConfig, slotTargetMains),
+        score: scoreSlotWithMainStat(c, weights, slotTargetMains),
       }));
       scored.sort((a, b) => b.score - a.score);
 

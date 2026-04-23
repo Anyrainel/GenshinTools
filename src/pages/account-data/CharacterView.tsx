@@ -1,3 +1,13 @@
+import { useVirtualizer } from "@tanstack/react-virtual";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ArtifactScoreGlobalSettings } from "@/components/account-data/ArtifactScoreGlobalSettings";
 import {
   type CardLayout,
@@ -23,16 +33,6 @@ import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 
 export interface CharacterViewHandle {
   downloadImage: () => void;

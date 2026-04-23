@@ -1,3 +1,4 @@
+import { useCallback, useMemo, useState } from "react";
 import {
   InventoryArtifactGrid,
   type TaggedArtifact,
@@ -7,10 +8,10 @@ import {
   WeaponDeleteDialog,
 } from "@/components/account-data/InventoryDeleteDialogs";
 import {
-  InventoryWeaponGrid,
-  type TaggedWeapon,
   groupWeapons,
+  InventoryWeaponGrid,
   rarityColor,
+  type TaggedWeapon,
 } from "@/components/account-data/InventoryWeaponGrid";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CategoryChip } from "@/components/shared/CategoryChip";
@@ -28,7 +29,6 @@ import {
 } from "@/data/gameStatsLoader";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useCallback, useMemo, useState } from "react";
 
 interface InventoryViewProps {
   data: AccountData;
@@ -231,7 +231,6 @@ export function InventoryView({
 
   // ── Toggle helpers ──
   const toggleSet = <T,>(
-    set: Set<T>,
     setter: React.Dispatch<React.SetStateAction<Set<T>>>,
     value: T
   ) => {
@@ -318,7 +317,7 @@ export function InventoryView({
               key={r}
               color={rarityColor[r] ?? "sky"}
               active={weaponRarities.has(r)}
-              onClick={() => toggleSet(weaponRarities, setWeaponRarities, r)}
+              onClick={() => toggleSet(setWeaponRarities, r)}
             >
               {r}★
             </CategoryChip>
@@ -330,9 +329,7 @@ export function InventoryView({
               <FilterChip
                 key={stat}
                 active={weaponSubstats.size === 0 || weaponSubstats.has(stat)}
-                onClick={() =>
-                  toggleSet(weaponSubstats, setWeaponSubstats, stat)
-                }
+                onClick={() => toggleSet<string>(setWeaponSubstats, stat)}
               >
                 {t.stat(stat)}
               </FilterChip>
@@ -393,9 +390,7 @@ export function InventoryView({
               key={r}
               color={rarityColor[r] ?? "sky"}
               active={artifactRarities.has(r)}
-              onClick={() =>
-                toggleSet(artifactRarities, setArtifactRarities, r)
-              }
+              onClick={() => toggleSet(setArtifactRarities, r)}
             >
               {r}★
             </CategoryChip>
@@ -412,9 +407,7 @@ export function InventoryView({
                 artifactHalfSetFilter.size === 0 ||
                 artifactHalfSetFilter.has(hsId)
               }
-              onClick={() =>
-                toggleSet(artifactHalfSetFilter, setArtifactHalfSetFilter, hsId)
-              }
+              onClick={() => toggleSet(setArtifactHalfSetFilter, hsId)}
             >
               {t.halfSetShort(hsId)}
             </FilterChip>

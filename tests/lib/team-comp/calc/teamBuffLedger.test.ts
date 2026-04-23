@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -5,7 +6,6 @@ import {
 import type { TeamBuffLedger } from "@/lib/dmgcalc/core/teamBuffLedger";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 

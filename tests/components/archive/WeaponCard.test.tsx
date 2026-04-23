@@ -1,7 +1,7 @@
+import userEvent from "@testing-library/user-event";
 import { WeaponCard } from "@/components/archive/WeaponCard";
 import type { WeaponResource } from "@/data/types";
 import { useAccountStore } from "@/stores/useAccountStore";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
 const MOCK_WEAPON: WeaponResource = {

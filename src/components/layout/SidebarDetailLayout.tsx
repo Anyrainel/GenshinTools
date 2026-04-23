@@ -1,9 +1,9 @@
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
-import { ArrowLeft } from "lucide-react";
-import { useRef } from "react";
 
 interface SidebarDetailLayoutProps {
   /** Fixed header content (e.g. toolbar / search bar) */

@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Build, BuildPayloadV5 } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
   getCachedPreset: vi.fn(() => null),

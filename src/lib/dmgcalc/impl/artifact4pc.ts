@@ -1,6 +1,5 @@
-import { elements as ALL_ELEMENTS, type Element } from "@/data/enums";
-
 import type { ElementalOrPhysical } from "@/data/enums";
+import { elements as ALL_ELEMENTS, type Element } from "@/data/enums";
 import type { StatEntry } from "@/data/types";
 import { PHEC_ELEMENTS } from "../constants";
 import { ArtifactSetBase } from "../core/implModel";

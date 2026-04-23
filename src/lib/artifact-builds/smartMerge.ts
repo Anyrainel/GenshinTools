@@ -23,10 +23,10 @@ import type { BuildConfig } from "../../data/types";
 import { computeSlotChances } from "./artifactChance";
 import { bruteForcePartition } from "./bruteForcePartition";
 import {
-  SLOT_KEYS,
   bestKPartition,
   bestTwoPartition,
   mergeConfigGroup,
+  SLOT_KEYS,
 } from "./mergeUtils";
 
 /** Stats stripped during archetype classification (not meaningful for grouping). */

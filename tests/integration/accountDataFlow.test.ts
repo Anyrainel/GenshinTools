@@ -12,8 +12,8 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import {
-  type GOODData,
   convertGOODToAccountData,
+  type GOODData,
 } from "@/lib/account-data/import/goodConversion";
 import { mergeAccountData } from "@/lib/account-data/import/mergeAccountData";
 import { scoreAllSlots } from "@/lib/artifact/scoring/artifactScore";
@@ -173,10 +173,9 @@ describe("Integration: Account Data Page Flow", () => {
 
     it("calculates scores for all characters", () => {
       const { data } = convertGOODToAccountData(fullGOODData);
-      const scoreConfig = useArtifactScoreStore.getState().config;
 
       const scores = data.characters.map((char) =>
-        scoreAllSlots(char, testWeights, scoreConfig.global)
+        scoreAllSlots(char, testWeights)
       );
 
       expect(scores).toHaveLength(4);
@@ -185,11 +184,6 @@ describe("Integration: Account Data Page Flow", () => {
     });
 
     it("adjusts scores when global weights change", () => {
-      const { data } = convertGOODToAccountData(fullGOODData);
-      const huTao = data.characters.find((c) => c.key === "hu_tao")!;
-      const initialConfig = useArtifactScoreStore.getState().config;
-      scoreAllSlots(huTao, testWeights, initialConfig.global);
-
       act(() => {
         useArtifactScoreStore.getState().setGlobalWeight("flatAtk", 0);
       });

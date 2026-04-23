@@ -8,6 +8,8 @@
  * a teamOnField ScalingBuff). Geo% goblet is wrong because Illuga has no
  * buff that scales off her own geo%.
  */
+
+import { describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -23,7 +25,6 @@ import {
   type GeneratorOptions,
   runGenerator,
 } from "@/lib/team-comp/generator/generator";
-import { describe, expect, it } from "vitest";
 import "@/lib/dmgcalc";
 import { drain } from "../../../fixtures/optimizerHelpers";
 

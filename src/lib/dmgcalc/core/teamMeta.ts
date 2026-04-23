@@ -3,10 +3,10 @@ import type {
   Element,
   Faction,
   Rarity,
+  ReactionType,
   Region,
   WeaponType,
 } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import { characterStatsResource } from "@/data/gameStatsLoader";
 import {

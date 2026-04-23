@@ -1,10 +1,10 @@
+import { describe, expect, it } from "vitest";
 import type { Build, BuildGroup } from "@/data/types";
 import {
-  DEFAULT_COMPUTE_OPTIONS,
   buildRawConfigs,
+  DEFAULT_COMPUTE_OPTIONS,
   mergeConfigsAsync,
 } from "@/lib/artifact-builds/computeFilters";
-import { describe, expect, it } from "vitest";
 
 // Helper to create a complete Build matching the actual type
 function createBuild(overrides: Partial<Build> = {}): Build {

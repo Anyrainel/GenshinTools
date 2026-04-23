@@ -6,9 +6,8 @@
  * still assign sensible (level-20) artifacts via fallback weights.
  */
 import { describe, expect, it } from "vitest";
-
-import { allSlots } from "@/data/enums";
 import type { MainStat, Slot } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -122,11 +121,6 @@ describe("Saturated character handling", () => {
       "hu_tao",
       calcContext
     );
-    const dmgEmpty = teamBuild.getDamageResult(
-      "hu_tao",
-      formulaId,
-      calcContext
-    ).totalDamage;
 
     // Super sheet for Bennett (high stats from artifacts)
     const superSheet = StatSheet.fromRaw({
@@ -148,16 +142,11 @@ describe("Saturated character handling", () => {
       "hu_tao",
       calcContext
     );
-    const dmgSuper = teamBuild.getDamageResult(
-      "hu_tao",
-      formulaId,
-      calcContext
-    ).totalDamage;
 
-    // Both should be equal — Bennett's artifacts don't affect Hu Tao's damage
-    expect(dmgEmpty).toBeGreaterThan(0);
-    expect(Math.abs(dmgSuper - dmgEmpty) / Math.max(dmgEmpty, 1)).toBeLessThan(
-      0.001
+    // Hu Tao's post-team stats should be identical — Bennett's artifacts don't
+    // flow into Hu Tao's sheet, so the super-sheet condition gives the same result.
+    expect(postStatsSuper.hu_tao.getAll(null)).toEqual(
+      postStatsEmpty.hu_tao.getAll(null)
     );
   });
 
@@ -173,7 +162,7 @@ describe("Saturated character handling", () => {
         rollMultiplier: 0.85,
         substatBudget: "8_6" as const,
       },
-      globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
+
       baseSheets,
       perChar: {
         hu_tao: {
@@ -207,23 +196,6 @@ describe("Saturated character handling", () => {
       .map((s) => bennettArts[s])
       .filter(Boolean) as ArtifactData[];
     expect(bennettPieces.length).toBeGreaterThan(0);
-
-    // Debug: show what was assigned
-    const bennettInfo = bennettPieces.map((a) => ({
-      id: a.id,
-      slot: a.slotKey,
-      set: a.setKey,
-      level: a.level,
-    }));
-    const huTaoInfo = allSlots
-      .map((s) => result!.bestArtifactsByChar.hu_tao[s])
-      .filter(Boolean)
-      .map((a) => ({
-        id: a!.id,
-        slot: a!.slotKey,
-        set: a!.setKey,
-        level: a!.level,
-      }));
 
     // Bennett's artifacts should prefer level 20 over level 0
     // (Hu Tao may take one gladiator piece for the flex slot, so allow at most 1 level-0)
@@ -287,7 +259,7 @@ describe("Saturated character handling", () => {
           rollMultiplier: 0.85,
           substatBudget: "8_6" as const,
         },
-        globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
+
         baseSheets,
         perChar: {
           hu_tao: {
@@ -416,7 +388,7 @@ describe("Saturated character handling", () => {
         rollMultiplier: 0.85,
         substatBudget: "8_6" as const,
       },
-      globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
+
       baseSheets: gorouBaseSheets,
       perChar: {
         hu_tao: {

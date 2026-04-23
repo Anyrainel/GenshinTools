@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  E,
   compileExpr,
   countVars,
   differentiate,
+  E,
   evaluate,
   isConst,
   simplify,
@@ -335,7 +335,7 @@ describe("compileExpr", () => {
     const fn = compileExpr(e);
     for (let i = 0; i < 50; i++) {
       const v = randomVars(2);
-      v[0] = v[0] - 5; // allow negative CR values
+      v[0] -= 5; // allow negative CR values
       expect(fn(v)).toBeCloseTo(evaluate(e, v), 10);
     }
   });

@@ -6,13 +6,13 @@
  * and smartMerge and check shared postconditions.
  */
 
+import { describe, expect, it } from "vitest";
 import type { MainStatPlus, SubStat } from "@/data/enums";
 import type { BuildConfig, SlotConfig } from "@/data/types";
 import { bruteForcePartition } from "@/lib/artifact-builds/bruteForcePartition";
 import { greedyMerge } from "@/lib/artifact-builds/greedyMerge";
 import { SLOT_KEYS } from "@/lib/artifact-builds/mergeUtils";
 import { smartMerge } from "@/lib/artifact-builds/smartMerge";
-import { describe, expect, it } from "vitest";
 
 function makeConfig(
   substats: SubStat[],

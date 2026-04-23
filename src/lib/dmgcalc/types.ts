@@ -4,8 +4,8 @@ import type {
   Faction,
   ReactionType,
   Region,
+  StatKey,
 } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
 import type { ArtifactSetConfig, StatEntry } from "@/data/types";
 import type { DamageFormula } from "./core/damageFormula";
 import type { StatBuff } from "./core/statBuff";

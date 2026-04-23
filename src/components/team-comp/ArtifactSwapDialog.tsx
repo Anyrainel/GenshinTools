@@ -1,3 +1,5 @@
+import { ArrowRightLeft, Check, Snowflake } from "lucide-react";
+import { useMemo, useState } from "react";
 import { ArtifactDataContent } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
@@ -20,10 +22,7 @@ import type { Slot } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { getStatValue, sortByStats } from "@/lib/artifact/inventory";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
-import { getSortableStatsForSlot } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-import { ArrowRightLeft, Check, Snowflake } from "lucide-react";
-import { useMemo, useState } from "react";
+import { cn, getSortableStatsForSlot } from "@/lib/utils";
 import { getRarityColor } from "../shared/colors";
 import { SORT_LABELS } from "./cardStyles";
 

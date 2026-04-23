@@ -1,10 +1,3 @@
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ELEMENT_KEYS, type ElementalOrPhysical } from "@/data/enums";
-import { computeStateRes, formatStat } from "@/data/gameDataLoader";
-import type { BossState, LeylineBossData } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
 import {
   HelpCircle,
   Settings,
@@ -15,6 +8,13 @@ import {
   Zap,
 } from "lucide-react";
 import { Fragment, type ReactNode, useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { ELEMENT_KEYS, type ElementalOrPhysical } from "@/data/enums";
+import { computeStateRes, formatStat } from "@/data/gameDataLoader";
+import type { BossState, LeylineBossData } from "@/data/types";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { SENTIMENT_BADGE } from "../shared/colors";
 
 function useBossTranslations(bossData: LeylineBossData) {
@@ -47,7 +47,11 @@ export function BossIcon({
   imagePath,
   name,
   size,
-}: { imagePath: string | null; name: string; size: "sm" | "md" | "lg" }) {
+}: {
+  imagePath: string | null;
+  name: string;
+  size: "sm" | "md" | "lg";
+}) {
   const [failed, setFailed] = useState(false);
   const s = BOSS_ICON_SIZES[size];
   const showFallback = !imagePath || failed;
@@ -87,7 +91,11 @@ function ResValue({
   value,
   muted,
   base,
-}: { value: number; muted?: boolean; base?: boolean }) {
+}: {
+  value: number;
+  muted?: boolean;
+  base?: boolean;
+}) {
   return (
     <span
       className={cn(
@@ -247,7 +255,10 @@ function TierSelector({
 export function BossDetailPanel({
   bossId,
   bossData,
-}: { bossId: number; bossData: LeylineBossData }) {
+}: {
+  bossId: number;
+  bossData: LeylineBossData;
+}) {
   const { t } = useLanguage();
   const boss = useBossTranslations(bossData);
   const [selectedTier, setSelectedTier] = useState(6);

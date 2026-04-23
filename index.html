@@ -19,7 +19,7 @@
     <!-- Fallback: if the main bundle fails to load (e.g. post-deploy cache mismatch),
          show a reload prompt instead of a black screen. -->
     <script>
-      setTimeout(function () {
+      setTimeout(() => {
         if (document.getElementById("root").children.length === 0) {
           document.getElementById("root").innerHTML =
             '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:system-ui;color:#e4e4e7;background:#09090b;gap:16px;text-align:center;padding:20px">' +

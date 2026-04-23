@@ -1,14 +1,26 @@
+import {
+  ArrowLeftRight,
+  Download,
+  FileDown,
+  HelpCircle,
+  Trash2,
+  Upload,
+  Wrench,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import { getElementColor } from "@/components/shared/colors";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
-import type { ControlHandle } from "@/components/shared/controlHandle";
+import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierListManagerDialog } from "@/components/tier-list/TierListManagerDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
-import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import {
   AlertDialog,
@@ -44,26 +56,13 @@ import type {
   TierCustomization,
   TierListData,
 } from "@/data/types";
+import { useIsOwned } from "@/hooks/useOwnership";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
   loadPresetPayload,
 } from "@/lib/presetLoader";
-
-import { getElementColor } from "@/components/shared/colors";
-import { useIsOwned } from "@/hooks/useOwnership";
 import { useTierStore } from "@/stores/useTierStore";
-import {
-  ArrowLeftRight,
-  Download,
-  FileDown,
-  HelpCircle,
-  Trash2,
-  Upload,
-  Wrench,
-} from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
 
 const presetModules = import.meta.glob<{ default: TierListData }>(
   "@/presets/tier-list/*.json",

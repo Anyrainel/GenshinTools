@@ -1,6 +1,6 @@
+import { describe, expect, it } from "vitest";
 import type { Build } from "@/data/types";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
-import { describe, expect, it } from "vitest";
 
 const validBuild: Build = {
   id: "test-1",

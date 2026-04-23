@@ -1,3 +1,5 @@
+import { Ban, Bookmark, Search, Trophy, X } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { ArtifactMixedBuilder } from "@/components/shared/ArtifactMixedBuilder";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
@@ -45,27 +47,24 @@ import {
 } from "@/data/gameResources";
 import {
   type CharacterStatsMap,
-  type WeaponStatsMap,
   characterStatsResource,
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
+  type WeaponStatsMap,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type {
   ArtifactHalfSet,
+  ArtifactSetConfig,
   ArtifactSetResource,
   CharacterResource,
+  TierAssignment,
   WeaponResource,
 } from "@/data/types";
-import type { TierAssignment } from "@/data/types";
-import type { ArtifactSetConfig } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
-import { getSortedWeaponSecondaryStats } from "@/lib/utils";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl, getSortedWeaponSecondaryStats } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
-import { Ban, Bookmark, Search, Trophy, X } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
 
 type ItemPickerType = "character" | "weapon" | "artifact";
 
@@ -190,7 +189,6 @@ function ItemPickerComponent<T extends ItemPickerType>({
       filter={filter as PickerContentProps["filter"]}
       menuSize={menuSize}
       tooltipSide={tooltipSide}
-      isDesktop={isDesktop}
       characterStats={characterStats}
       weaponStats={weaponStats}
       tierAssignments={tierAssignments}
@@ -247,7 +245,10 @@ function ItemPickerComponent<T extends ItemPickerType>({
 function PickerItemName({
   type,
   value,
-}: { type: ItemPickerType; value: ValueType<ItemPickerType> }) {
+}: {
+  type: ItemPickerType;
+  value: ValueType<ItemPickerType>;
+}) {
   const { t } = useLanguage();
   let name = "";
 
@@ -440,7 +441,6 @@ interface PickerContentProps {
   ) => boolean;
   menuSize: ItemIconSize;
   tooltipSide: "left" | "right";
-  isDesktop: boolean;
   characterStats: CharacterStatsMap | null;
   weaponStats: WeaponStatsMap | null;
   tierAssignments: TierAssignment;
@@ -455,7 +455,6 @@ function PickerContent({
   onClear,
   filter,
   menuSize,
-  isDesktop,
   tooltipSide,
   characterStats,
   weaponStats,

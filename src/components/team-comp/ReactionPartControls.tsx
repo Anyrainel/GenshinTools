@@ -11,8 +11,7 @@ import {
   ELEMENT_ELIGIBLE_REACTIONS,
   MULTI_ELEMENT_CHARS,
 } from "@/lib/dmgcalc/constants";
-import type { FormulaEntry } from "@/lib/dmgcalc/types";
-import type { ReactionOverride } from "@/lib/dmgcalc/types";
+import type { FormulaEntry, ReactionOverride } from "@/lib/dmgcalc/types";
 import { cn } from "@/lib/utils";
 
 /** Build a compact label from a formula part's scaling info: e.g. "230% ATK + 45% EM" */

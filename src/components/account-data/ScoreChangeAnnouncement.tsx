@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -9,14 +10,16 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useEffect, useState } from "react";
 
 const DISMISS_KEY = "score-v1-300-announced";
 
 function ScoreChangeDialog({
   open,
   onClose,
-}: { open: boolean; onClose: () => void }) {
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const { t } = useLanguage();
 
   return (

@@ -1,7 +1,10 @@
+import { Megaphone } from "lucide-react";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  SECTION_COLORS,
   newsMap,
   openWhatsNew,
+  SECTION_COLORS,
 } from "@/components/shared/WhatsNew";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +18,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { useGreetingStore } from "@/stores/useGreetingStore";
-import { Megaphone } from "lucide-react";
-import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function NewsDialog({
   latestDate,

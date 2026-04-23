@@ -1,10 +1,8 @@
 import { DirectFormula, TransformFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
-import { RegisterCharacter } from "../core/registry";
-import { resolveOption } from "../core/registry";
+import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff, TeamAggregationBuff } from "../core/statBuff";
-import type { OptionDef } from "../types";
-import type { ComboTemplate } from "../types";
+import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 // 5★ Sumeru Characters
@@ -442,7 +440,8 @@ const nahidaOption = {
 @RegisterCharacter("nahida", nahidaOption)
 class Nahida extends CharacterBase {
   private readonly enemyCount = Number.parseInt(
-    resolveOption(nahidaOption, this.option)
+    resolveOption(nahidaOption, this.option),
+    10
   );
   // Q Pyro bonus: DMG% on Tri-Karma based on Pyro char count (C1 adds +1 virtual Pyro)
   // Lv10: 1 Pyro → +26.8%, 2 Pyro → +40.2%; Lv13 (C5): +31.6% / +47.4%

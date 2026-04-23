@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import type { MergeAlgorithm } from "@/data/enums";
 import type {
   ArtifactBuildConfigs,
@@ -6,11 +7,10 @@ import type {
   ComputeOptions,
 } from "@/data/types";
 import {
-  DEFAULT_COMPUTE_OPTIONS,
   buildRawConfigs,
+  DEFAULT_COMPUTE_OPTIONS,
   mergeConfigsAsync,
 } from "@/lib/artifact-builds/computeFilters";
-import { useEffect, useRef, useState } from "react";
 
 interface AsyncComputeState {
   /** Cached results — always available (may be stale while recomputing) */

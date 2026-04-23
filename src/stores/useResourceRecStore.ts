@@ -4,6 +4,8 @@
  * expected score gain filters.
  */
 
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { Tier } from "@/data/enums";
 import {
   DEFAULT_MIN_SCORE_DIFF,
@@ -12,8 +14,6 @@ import {
   type ResourceKind,
   type TierCompletenessThresholds,
 } from "@/lib/account-data/resourceTips";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { PersistedResourceRecStoreSchema } from "./schemas";
 
 interface ResourceRecState {

@@ -7,6 +7,7 @@
  * does after receiving the routing result.
  */
 
+import { describe, expect, it } from "vitest";
 import type { AccountData } from "@/data/types";
 import {
   type DirectImport,
@@ -18,7 +19,6 @@ import {
   routeUidImport,
 } from "@/lib/account-data/import/importRouting";
 import type { AccountState } from "@/lib/account-data/types";
-import { describe, expect, it } from "vitest";
 
 // ─── Test fixtures ────────────────────────────────────────────────────────────
 
@@ -197,7 +197,7 @@ describe("routeUidImport", () => {
       dataB,
       "Player",
       false,
-      (old, incoming) => {
+      (_old, incoming) => {
         mergeCalled = true;
         return incoming;
       }

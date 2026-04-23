@@ -1,18 +1,17 @@
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/gameResources";
 import {
-  type EdgeLine,
-  type GraphNode,
   buildGraph,
   computeRows,
+  type EdgeLine,
+  type GraphNode,
 } from "@/lib/team-comp/analyzer/sequenceGraph";
 import type {
   AnalyzerResult,
   CharInvestment,
 } from "@/lib/team-comp/analyzer/types";
-import { getAssetUrl } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { cn, getAssetUrl } from "@/lib/utils";
 
 const NODE_GAP = 8;
 

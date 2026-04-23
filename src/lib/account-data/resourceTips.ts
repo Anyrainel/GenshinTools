@@ -12,9 +12,8 @@
  * design spec for details. The score proxy is consistent with EvaluationView.
  */
 
+import type { MainStat, Slot, SubStat, Tier } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import type { MainStat, Slot, SubStat } from "@/data/enums";
-import type { Tier } from "@/data/enums";
 import { artifactsById } from "@/data/gameResources";
 import type {
   AccountData,
@@ -23,8 +22,8 @@ import type {
   TierAssignment,
 } from "@/data/types";
 import {
-  type StatWeightMap,
   calculateStatScore,
+  type StatWeightMap,
   scaleFlatWeights,
   scoreMainStat,
 } from "../artifact/scoring/artifactScore";
@@ -135,8 +134,7 @@ export function computeSuggestionPUpgrade(
     return pUpgradeForLevelup(
       suggestion.sourceArtifact,
       suggestion.baselineScore,
-      weights,
-      globalConfig
+      weights
     );
   }
   if (suggestion.kind === "reroll" && suggestion.sourceArtifact) {
@@ -145,8 +143,7 @@ export function computeSuggestionPUpgrade(
         suggestion.sourceArtifact,
         suggestion.lockedSubs,
         suggestion.baselineScore,
-        weights,
-        globalConfig
+        weights
       );
     }
   }
@@ -154,8 +151,7 @@ export function computeSuggestionPUpgrade(
     suggestion.lockedSubs,
     suggestion.mainStat,
     suggestion.baselineScore,
-    weights,
-    globalConfig
+    weights
   );
 }
 
@@ -250,7 +246,6 @@ function pairs<T>(arr: T[]): [T, T][] {
  */
 const TOTAL_SUB_SLOTS = 4;
 const EXPECTED_ROLLS_PER_SUB = 1 + (0.75 * 4 + 0.25 * 5) / 4; // 2.0625
-const P_FOUR_UPGRADES = 0.75;
 const ROLL_VALUE_TIERS = [0.7, 0.8, 0.9, 1.0] as const;
 
 // Analytic expected score for a 5★ artifact with given lockedSubs + mainStat
@@ -277,11 +272,10 @@ function makeDrawPool(mainStat: MainStat, excluded: SubStat[]): DrawPool {
 function avgRollScore(
   stat: SubStat,
   weights: StatWeightMap,
-  globalConfig: GlobalStatWeights,
   rollCount: number
 ): number {
   const value = getSubstatAvgRoll(stat, 5) * rollCount;
-  return calculateStatScore(stat, value, weights, globalConfig).score;
+  return calculateStatScore(stat, value, weights).score;
 }
 
 /**
@@ -299,7 +293,6 @@ function expectedCraftScore(
   lockedSubs: SubStat[],
   mainStat: MainStat,
   weights: StatWeightMap,
-  globalConfig: GlobalStatWeights,
   rarity = 5
 ): number {
   const needed = TOTAL_SUB_SLOTS - lockedSubs.length;
@@ -315,7 +308,7 @@ function expectedCraftScore(
     const subs = [...lockedSubs, ...c.stats];
     let perRollSum = 0;
     for (const s of subs) {
-      perRollSum += avgRollScore(s, weights, globalConfig, 1);
+      perRollSum += avgRollScore(s, weights, 1);
     }
     expected += c.prob * EXPECTED_ROLLS_PER_SUB * perRollSum;
   }
@@ -324,7 +317,7 @@ function expectedCraftScore(
   const mainContribution =
     mainStat === "hp" || mainStat === "atk"
       ? 0
-      : scoreMainStat(mainStat, rarity, globalConfig);
+      : scoreMainStat(mainStat, rarity);
 
   return expected + mainContribution;
 }
@@ -493,16 +486,13 @@ function pUpgradeForCandidate(
   lockedSubs: SubStat[],
   mainStat: MainStat,
   baselineScore: number,
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  weights: StatWeightMap
 ): number {
   const pool = makeDrawPool(mainStat, lockedSubs);
   if (pool.stats.length < 2) return 0;
 
   const mainContribution =
-    mainStat === "hp" || mainStat === "atk"
-      ? 0
-      : scoreMainStat(mainStat, 5, globalConfig);
+    mainStat === "hp" || mainStat === "atk" ? 0 : scoreMainStat(mainStat, 5);
   const threshold = baselineScore - mainContribution;
 
   // Per-sub max-roll score (coef in the convolution above). 0 = junk.
@@ -510,12 +500,7 @@ function pUpgradeForCandidate(
   const coefOf = (s: SubStat): number => {
     const cached = coefCache[s];
     if (cached !== undefined) return cached;
-    const v = calculateStatScore(
-      s,
-      getSubstatMaxRoll(s, 5),
-      weights,
-      globalConfig
-    ).score;
+    const v = calculateStatScore(s, getSubstatMaxRoll(s, 5), weights).score;
     coefCache[s] = v;
     return v;
   };
@@ -591,8 +576,7 @@ function isValidInitialValue(
 function expectedRerollScore(
   art: ArtifactData,
   lockedSubs: [SubStat, SubStat],
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  weights: StatWeightMap
 ): number {
   const allSubs = Object.keys(art.substats ?? {}) as SubStat[];
   const upgradeCount = (art.totalRolls ?? 8) - 4;
@@ -607,20 +591,20 @@ function expectedRerollScore(
         ? rawInit
         : null;
     if (validInit != null) {
-      score += calculateStatScore(s, validInit, weights, globalConfig).score;
+      score += calculateStatScore(s, validInit, weights).score;
     } else {
-      score += avgRollScore(s, weights, globalConfig, 1);
+      score += avgRollScore(s, weights, 1);
     }
     // Upgrade rolls: E[guaranteed] = 1 per locked sub + share of random upgrades
     const isLocked = lockedSubs.includes(s);
     const expectedUpgrades = (isLocked ? 1 : 0) + randomUpgrades / 4;
-    score += avgRollScore(s, weights, globalConfig, expectedUpgrades);
+    score += avgRollScore(s, weights, expectedUpgrades);
   }
 
   const mainContribution =
     art.mainStatKey === "hp" || art.mainStatKey === "atk"
       ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+      : scoreMainStat(art.mainStatKey, art.rarity);
 
   return score + mainContribution;
 }
@@ -640,8 +624,7 @@ function pUpgradeForReroll(
   art: ArtifactData,
   lockedSubs: [SubStat, SubStat],
   baselineScore: number,
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  weights: StatWeightMap
 ): number {
   const allSubs = Object.keys(art.substats ?? {}) as SubStat[];
   const n = allSubs.length;
@@ -651,7 +634,7 @@ function pUpgradeForReroll(
   const mainContribution =
     art.mainStatKey === "hp" || art.mainStatKey === "atk"
       ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+      : scoreMainStat(art.mainStatKey, art.rarity);
 
   // Fixed score from known initial values; unknown/corrupted initials are random
   let fixedScore = 0;
@@ -663,12 +646,7 @@ function pUpgradeForReroll(
         ? rawInit
         : null;
     if (validInit != null) {
-      fixedScore += calculateStatScore(
-        s,
-        validInit,
-        weights,
-        globalConfig
-      ).score;
+      fixedScore += calculateStatScore(s, validInit, weights).score;
       hasKnownInit.push(true);
     } else {
       hasKnownInit.push(false);
@@ -682,12 +660,8 @@ function pUpgradeForReroll(
   // Per-sub max-roll score coefficient
   const subCoefs = allSubs.map(
     (s) =>
-      calculateStatScore(
-        s,
-        getSubstatMaxRoll(s, art.rarity as 4 | 5),
-        weights,
-        globalConfig
-      ).score
+      calculateStatScore(s, getSubstatMaxRoll(s, art.rarity as 4 | 5), weights)
+        .score
   );
 
   // Locked sub indices (exactly 2)
@@ -788,8 +762,7 @@ function remainingUpgradeRolls(level: number): number {
  */
 function expectedLevelupScore(
   art: ArtifactData,
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  weights: StatWeightMap
 ): number {
   // Current substat score
   let currentSubScore = 0;
@@ -797,7 +770,7 @@ function expectedLevelupScore(
   for (const s of subs) {
     const val = art.substats[s];
     if (val == null) continue;
-    currentSubScore += calculateStatScore(s, val, weights, globalConfig).score;
+    currentSubScore += calculateStatScore(s, val, weights).score;
   }
 
   const remaining = remainingUpgradeRolls(art.level);
@@ -813,12 +786,7 @@ function expectedLevelupScore(
     if (unact && Object.keys(unact).length > 0) {
       // Known 4th sub from unactivatedSubstats — deterministic
       const [newSub, newVal] = Object.entries(unact)[0] as [SubStat, number];
-      extraFromNewSub = calculateStatScore(
-        newSub,
-        newVal,
-        weights,
-        globalConfig
-      ).score;
+      extraFromNewSub = calculateStatScore(newSub, newVal, weights).score;
       newSubForRolls = newSub;
     } else {
       // Unknown — expected draw from pool
@@ -826,8 +794,7 @@ function expectedLevelupScore(
       if (pool.stats.length > 0) {
         for (let i = 0; i < pool.stats.length; i++) {
           const prob = pool.weights[i] / pool.totalWeight;
-          extraFromNewSub +=
-            prob * avgRollScore(pool.stats[i], weights, globalConfig, 1);
+          extraFromNewSub += prob * avgRollScore(pool.stats[i], weights, 1);
         }
       }
     }
@@ -837,21 +804,20 @@ function expectedLevelupScore(
   // Remaining upgrade rolls: each lands uniformly on one of the 4 subs.
   let perRollExpected = 0;
   for (const s of subs) {
-    perRollExpected += avgRollScore(s, weights, globalConfig, 1);
+    perRollExpected += avgRollScore(s, weights, 1);
   }
   // Include the 4th sub's contribution to future upgrade rolls
   if (subs.length < 4) {
     if (newSubForRolls) {
       // Known 4th sub participates in future rolls
-      perRollExpected += avgRollScore(newSubForRolls, weights, globalConfig, 1);
+      perRollExpected += avgRollScore(newSubForRolls, weights, 1);
     } else {
       // Expected draw for the 4th sub's participation
       const pool = makeDrawPool(art.mainStatKey, subs);
       if (pool.stats.length > 0) {
         for (let i = 0; i < pool.stats.length; i++) {
           const prob = pool.weights[i] / pool.totalWeight;
-          perRollExpected +=
-            prob * avgRollScore(pool.stats[i], weights, globalConfig, 1);
+          perRollExpected += prob * avgRollScore(pool.stats[i], weights, 1);
         }
       }
     }
@@ -863,7 +829,7 @@ function expectedLevelupScore(
   const mainContribution =
     art.mainStatKey === "hp" || art.mainStatKey === "atk"
       ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+      : scoreMainStat(art.mainStatKey, art.rarity);
 
   return currentSubScore + expectedGain + mainContribution;
 }
@@ -877,8 +843,7 @@ function expectedLevelupScore(
 function pUpgradeForLevelup(
   art: ArtifactData,
   baselineScore: number,
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  weights: StatWeightMap
 ): number {
   const subs = Object.keys(art.substats ?? {}) as SubStat[];
   const unact = art.unactivatedSubstats;
@@ -886,7 +851,7 @@ function pUpgradeForLevelup(
 
   if (subs.length < 4 && !hasKnown4th) {
     // Unknown 4th sub — fall back to heuristic estimate
-    const expected = expectedLevelupScore(art, weights, globalConfig);
+    const expected = expectedLevelupScore(art, weights);
     return expected > baselineScore ? 0.6 : 0.3;
   }
 
@@ -898,7 +863,7 @@ function pUpgradeForLevelup(
   for (const s of subs) {
     const val = art.substats[s];
     if (val == null) continue;
-    currentSubScore += calculateStatScore(s, val, weights, globalConfig).score;
+    currentSubScore += calculateStatScore(s, val, weights).score;
   }
 
   // For 3-sub artifacts with known 4th sub: add its initial value score
@@ -907,12 +872,7 @@ function pUpgradeForLevelup(
   let upgradeRolls = remaining;
   if (hasKnown4th) {
     const [newSub, newVal] = Object.entries(unact)[0] as [SubStat, number];
-    currentSubScore += calculateStatScore(
-      newSub,
-      newVal,
-      weights,
-      globalConfig
-    ).score;
+    currentSubScore += calculateStatScore(newSub, newVal, weights).score;
     allSubsFor4 = [...subs, newSub];
     upgradeRolls = remaining - 1; // first roll consumed by the 4th sub
   }
@@ -922,14 +882,14 @@ function pUpgradeForLevelup(
     const mainContribution =
       art.mainStatKey === "hp" || art.mainStatKey === "atk"
         ? 0
-        : scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+        : scoreMainStat(art.mainStatKey, art.rarity);
     return currentSubScore + mainContribution > baselineScore ? 1 : 0;
   }
 
   const mainContribution =
     art.mainStatKey === "hp" || art.mainStatKey === "atk"
       ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+      : scoreMainStat(art.mainStatKey, art.rarity);
 
   // Threshold for the upgrade rolls alone
   const threshold = baselineScore - currentSubScore - mainContribution;
@@ -941,8 +901,7 @@ function pUpgradeForLevelup(
     const coef = calculateStatScore(
       s,
       getSubstatMaxRoll(s, art.rarity as 4 | 5),
-      weights,
-      globalConfig
+      weights
     ).score;
     for (const tier of ROLL_VALUE_TIERS) {
       const key = Math.round(coef * tier * SCORE_SCALE);
@@ -999,12 +958,7 @@ function suggestionsForBuild(
       );
 
       for (const [s1, s2] of subPairs) {
-        const expected = expectedCraftScore(
-          [s1, s2],
-          mainStat,
-          weights,
-          globalConfig
-        );
+        const expected = expectedCraftScore([s1, s2], mainStat, weights);
         const gain = expected - baselineScore;
         if (bestCraft == null || gain > bestCraft.expectedScoreGain) {
           bestCraft = {
@@ -1061,12 +1015,7 @@ function suggestionsForBuild(
 
       if (Object.keys(art.substats ?? {}).length !== 4) continue;
 
-      const expected = expectedRerollScore(
-        art,
-        lockedSubs,
-        weights,
-        globalConfig
-      );
+      const expected = expectedRerollScore(art, lockedSubs, weights);
       const gain = expected - baselineScore;
       candidates.push({
         kind: "reroll",
@@ -1097,7 +1046,7 @@ function suggestionsForBuild(
       const existingSubs = Object.keys(art.substats ?? {}) as SubStat[];
       if (existingSubs.length < 2) continue;
 
-      const expected = expectedLevelupScore(art, weights, globalConfig);
+      const expected = expectedLevelupScore(art, weights);
       const gain = expected - baselineScore;
 
       // Use top 2 weighted subs for display

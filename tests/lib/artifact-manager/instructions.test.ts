@@ -1,6 +1,6 @@
+import { describe, expect, it } from "vitest";
 import type { ArtifactData } from "@/data/types";
 import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
-import { describe, expect, it } from "vitest";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {

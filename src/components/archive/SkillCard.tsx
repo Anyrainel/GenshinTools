@@ -1,13 +1,5 @@
-import { charInfo } from "@/data/charInfo";
-import { SKILL_LEVELS } from "@/data/enums";
-import type { SkillLevel } from "@/data/enums";
-import { characterStatsResource } from "@/data/gameStatsLoader";
-import type { CharacterSkill } from "@/data/types";
-import { renderTemplate } from "@/lib/talentRenderer";
-import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
-
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -15,6 +7,13 @@ import {
   LightweightSelectTrigger,
   LightweightSelectValue,
 } from "@/components/ui/lightweight-select";
+import { charInfo } from "@/data/charInfo";
+import type { SkillLevel } from "@/data/enums";
+import { SKILL_LEVELS } from "@/data/enums";
+import { characterStatsResource } from "@/data/gameStatsLoader";
+import type { CharacterSkill } from "@/data/types";
+import { renderTemplate } from "@/lib/talentRenderer";
+import { cn } from "@/lib/utils";
 
 const TALENT_SLOTS = ["A", "E", "S", "Q"] as const;
 type TalentSlot = (typeof TALENT_SLOTS)[number];

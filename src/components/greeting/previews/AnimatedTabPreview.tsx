@@ -1,7 +1,7 @@
+import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
 import { useAutoRotate } from "./useAutoRotate";
 
 type PreviewProps = { t: ReturnType<typeof useLanguage>["t"] };

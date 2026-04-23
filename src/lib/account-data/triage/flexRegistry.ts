@@ -1,5 +1,5 @@
 import type { MainStat, Slot, SubStat } from "@/data/enums";
-import { SUB_WEIGHTS, pJoint } from "./tierMath";
+import { pJoint, SUB_WEIGHTS } from "./tierMath";
 import { getMainProb } from "./tierTableBuilder";
 import type { CustomFlexInput, FlexPattern, TriageRule } from "./types";
 

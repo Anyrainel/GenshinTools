@@ -1,28 +1,3 @@
-import { BuildsEmptyState } from "@/components/artifact-builds/BuildsEmptyState";
-import {
-  type BuildCardLayout,
-  CharacterBuildCard,
-} from "@/components/artifact-builds/CharacterBuildCard";
-import { SidebarLayout } from "@/components/layout/SidebarLayout";
-import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/gameResources";
-import { allCharacters } from "@/data/gameResources";
-import {
-  useActiveAccountData,
-  useActiveAccountScores,
-} from "@/hooks/useActiveAccount";
-import { useCharacterFilters } from "@/hooks/useCharacterFilters";
-
-import {
-  characterStatsResource,
-  getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useIsOwned } from "@/hooks/useOwnership";
-import { filterAndSortCharacters } from "@/lib/characterFilters";
-import { useBuildsStore } from "@/stores/useBuildsStore";
-import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   useCallback,
@@ -31,6 +6,30 @@ import {
   useMemo,
   useRef,
 } from "react";
+import { BuildsEmptyState } from "@/components/artifact-builds/BuildsEmptyState";
+import {
+  type BuildCardLayout,
+  CharacterBuildCard,
+} from "@/components/artifact-builds/CharacterBuildCard";
+import { SidebarLayout } from "@/components/layout/SidebarLayout";
+import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { allCharacters, charactersById } from "@/data/gameResources";
+
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
+import {
+  useActiveAccountData,
+  useActiveAccountScores,
+} from "@/hooks/useActiveAccount";
+import { useCharacterFilters } from "@/hooks/useCharacterFilters";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsOwned } from "@/hooks/useOwnership";
+import { filterAndSortCharacters } from "@/lib/characterFilters";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { useTierStore } from "@/stores/useTierStore";
 
 interface CharacterBuildViewProps {
   /** When set, filters will be configured to show this character */

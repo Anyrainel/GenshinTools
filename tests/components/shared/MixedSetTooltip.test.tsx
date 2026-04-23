@@ -1,6 +1,6 @@
-import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({

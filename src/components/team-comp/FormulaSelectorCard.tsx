@@ -1,3 +1,11 @@
+import {
+  ChevronDown,
+  ChevronRight,
+  Minus,
+  Plus,
+  RotateCcw,
+  Swords,
+} from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   OptionButton,
@@ -5,8 +13,7 @@ import {
   OptionButtonRow,
 } from "@/components/ui/option-button";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/enums";
-import type { ReactionType } from "@/data/enums";
+import type { Element, ReactionType } from "@/data/enums";
 import { charactersById, elementResourcesByName } from "@/data/gameResources";
 import { REACTION_ELEMENT_REQUIREMENTS } from "@/lib/dmgcalc/constants";
 import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
@@ -20,22 +27,14 @@ import type { Team } from "@/lib/team-comp/types";
 import { isElement, isReactionType } from "@/lib/typeValidation";
 import { cn, getAssetUrl } from "@/lib/utils";
 import {
-  ChevronDown,
-  ChevronRight,
-  Minus,
-  Plus,
-  RotateCcw,
-  Swords,
-} from "lucide-react";
-import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
-import { FormulaLabel } from "./FormulaLabel";
-import { ReactionPartControls } from "./ReactionPartControls";
-import {
   CARD_BODY_CLS,
   CARD_CLS,
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
 } from "./cardStyles";
+import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
+import { FormulaLabel } from "./FormulaLabel";
+import { ReactionPartControls } from "./ReactionPartControls";
 
 /** Derive the contributing elements for a reaction formula ID. */
 function getReactionElements(formulaId: string): Element[] {
@@ -119,7 +118,6 @@ interface FormulaSelectorCardProps {
     formulaId: string,
     reaction: string
   ) => void;
-  isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
 }
 
@@ -141,7 +139,6 @@ export function FormulaSelectorCard({
   formulaMode,
   onModeChange,
   onSelectSingleFormula,
-  isMobile,
   t,
 }: FormulaSelectorCardProps) {
   const isSingle = formulaMode === "single";
@@ -216,12 +213,6 @@ export function FormulaSelectorCard({
                 // Reactions (charReactions = element-level default, refined per-formula below)
                 const hasReactionFn = (rx: ReactionType, id?: string) =>
                   teamBuild?.teamMeta.hasReaction(rx, id) ?? false;
-                const charReactions = getFormulaReactions(
-                  cid,
-                  null,
-                  charElement,
-                  hasReactionFn
-                );
 
                 if (!charFormulas) {
                   return (

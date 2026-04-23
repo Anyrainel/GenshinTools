@@ -1,6 +1,6 @@
-import { useGreetingStore } from "@/stores/useGreetingStore";
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
+import { useGreetingStore } from "@/stores/useGreetingStore";
 
 beforeEach(() => {
   useGreetingStore.setState({

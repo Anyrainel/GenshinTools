@@ -1,3 +1,18 @@
+import {
+  ArrowDown,
+  ArrowUp,
+  Copy,
+  Diamond,
+  Flame,
+  GripVertical,
+  type LucideIcon,
+  MoreVertical,
+  Sparkles,
+  Swords,
+  Trash2,
+  User2,
+} from "lucide-react";
+import { memo, useMemo } from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,21 +42,6 @@ import type { AccountData, WeaponResource } from "@/data/types";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import {
-  ArrowDown,
-  ArrowUp,
-  Copy,
-  Diamond,
-  Flame,
-  GripVertical,
-  type LucideIcon,
-  MoreVertical,
-  Sparkles,
-  Swords,
-  Trash2,
-  User2,
-} from "lucide-react";
-import { memo, useMemo } from "react";
 import { REACTION_COLORS } from "../shared/colors";
 
 interface TeamCardProps {
@@ -61,8 +61,6 @@ interface TeamCardProps {
   onMoveDown?: () => void;
   isFrozen?: boolean;
   isFullyFrozen?: boolean;
-  frozenCount?: number;
-  totalCharCount?: number;
   frozenCharIds?: Set<string>;
   onUnfreeze?: () => void;
   accountData?: AccountData | null;
@@ -93,8 +91,6 @@ export const TeamCard = memo(
     onMoveDown,
     isFrozen,
     isFullyFrozen,
-    frozenCount,
-    totalCharCount,
     frozenCharIds,
     onUnfreeze,
     accountData,
@@ -473,8 +469,6 @@ export const TeamCard = memo(
     prev.index === next.index &&
     prev.isFrozen === next.isFrozen &&
     prev.isFullyFrozen === next.isFullyFrozen &&
-    prev.frozenCount === next.frozenCount &&
-    prev.totalCharCount === next.totalCharCount &&
     setsEqual(prev.frozenCharIds, next.frozenCharIds) &&
     prev.accountData === next.accountData &&
     prev.allUnowned === next.allUnowned &&

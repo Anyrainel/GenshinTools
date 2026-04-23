@@ -1,6 +1,6 @@
-import type { SortDirection } from "@/data/enums";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { SortDirection } from "@/data/enums";
 
 interface CharacterSortPreferences {
   tierSort: SortDirection;

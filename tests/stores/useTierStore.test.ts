@@ -1,12 +1,12 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
-import { DEFAULT_INVESTMENT_THRESHOLDS } from "@/stores/useTierStore";
 import {
-  type TierListInstance,
+  DEFAULT_INVESTMENT_THRESHOLDS,
   migrateTierStore,
+  type TierListInstance,
   useTierStore,
 } from "@/stores/useTierStore";
-import { beforeEach, describe, expect, it } from "vitest";
 
 // Reset store before each test — create a fresh default state
 beforeEach(() => {
@@ -108,7 +108,7 @@ describe("useTierStore", () => {
       });
 
       // Create list 2
-      const id2 = useTierStore.getState().createTierList("List Two");
+      const _id2 = useTierStore.getState().createTierList("List Two");
 
       // Top-level should now reflect list 2
       let state = useTierStore.getState();
@@ -227,7 +227,7 @@ describe("useTierStore", () => {
 
     it("only resets the active list", () => {
       useTierStore.getState().setCustomTitle("List One Data");
-      const id2 = useTierStore.getState().createTierList("List Two");
+      useTierStore.getState().createTierList("List Two");
       useTierStore.getState().setCustomTitle("List Two Data");
 
       // Reset list 2

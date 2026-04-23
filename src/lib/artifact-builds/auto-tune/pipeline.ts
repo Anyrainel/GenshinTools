@@ -17,27 +17,27 @@
 import "@/lib/dmgcalc";
 
 import { getGobletPool, statPools } from "@/data/constants";
-import type { Element, MainStat, Slot, SubStat } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
-import { characterStatsResource } from "@/data/gameStatsLoader";
+import type { Element, MainStat, Slot, StatKey, SubStat } from "@/data/enums";
 import type { WeightedMainStat, WeightedSubStat } from "@/data/types";
 import { MULTI_ELEMENT_CHARS } from "@/lib/dmgcalc/constants";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { I18nLabel, TeamSlotConfig } from "@/lib/dmgcalc/types";
+import { buildSheetFromMainAndSubs } from "../../artifact/scoring/sheetBuilder";
 import {
-  DEFAULT_CALC_CTX,
-  TUNABLE_SUBSTATS,
-  type WeightedFormula,
+  computeIdealScore,
+  emptySubRolls,
+  getRollValues,
+} from "../../artifact/scoring/utils";
+import {
   autoTuneWeights,
   averageWeights,
   compileAutoTuneEval,
+  DEFAULT_CALC_CTX,
+  TUNABLE_SUBSTATS,
   toWeightedFormulas,
-} from "../../artifact-builds/auto-tune/autoTune";
-import { buildSheetFromMainAndSubs } from "./sheetBuilder";
-import { getRollValues } from "./utils";
-import { emptySubRolls } from "./utils";
-import { computeIdealScore } from "./utils";
+  type WeightedFormula,
+} from "./autoTune";
 
 /** Result of the auto-tuning pipeline for a single main-stat combo + team context */
 export type AutoTuneResult = {
@@ -97,13 +97,6 @@ function buildTeamArtifactStats(
   return stats;
 }
 
-/** Resolve the DPS character's element from character_stats.json. */
-function resolveElement(charId: string): string {
-  const charStats = characterStatsResource.peek();
-  if (!charStats) return "";
-  return charStats[charId]?.element ?? "";
-}
-
 /** Find all damage formula IDs for a character in a TeamBuild. */
 function findAllFormulaIds(teamBuild: TeamBuild, charId: string): string[] {
   const formulas = teamBuild.catalog.getFormulaIds();
@@ -117,8 +110,6 @@ const BASELINE_PREFILTER = 0.5;
 /** Qualifying threshold: combos achieving ≥ this fraction of best post-greedy damage are kept. */
 const QUALIFYING_THRESHOLD = 0.96;
 
-// ─── Combo result from one main-stat combo + one team context ───
-
 type ComboResult = {
   sands: MainStat;
   goblet: MainStat;
@@ -127,252 +118,6 @@ type ComboResult = {
   /** normalizedDamage = finalDamage / bestFinalDamage within this team context */
   normalizedDamage: number;
 };
-
-// ─── Shared pipeline types ───
-
-type TeamTuneContext = {
-  configs: TeamSlotConfig[];
-  teamBuild: TeamBuild;
-  formulas: WeightedFormula[];
-  label: string;
-};
-
-type AggregatedResult = {
-  allQualifying: ComboResult[];
-  avgWeights: Record<SubStat, number>;
-  idealRolls: Record<SubStat, number>;
-  sandsWeights: WeightedMainStat[];
-  gobletWeights: WeightedMainStat[];
-  circletWeights: WeightedMainStat[];
-  idealScore: number;
-  normalizer: number;
-  teamBreakdowns: TeamBreakdown[];
-};
-
-/**
- * Run the shared combo enumeration → filtering → averaging pipeline
- * for a DPS character across one or more team contexts.
- */
-function runComboEnumerationPipeline(
-  characterId: string,
-  gobletCandidates: readonly MainStat[],
-  teamContexts: TeamTuneContext[]
-): AggregatedResult {
-  const allQualifying: ComboResult[] = [];
-  const teamBreakdowns: TeamBreakdown[] = [];
-
-  for (let teamIdx = 0; teamIdx < teamContexts.length; teamIdx++) {
-    const ctx = teamContexts[teamIdx];
-    try {
-      if (ctx.formulas.length === 0) continue;
-
-      // Compile once per team context
-      const compileBaseStats = buildTeamArtifactStats(
-        ctx.configs,
-        characterId,
-        new StatSheet([])
-      );
-      const evalDamageFn = compileAutoTuneEval(
-        ctx.teamBuild,
-        characterId,
-        ctx.formulas,
-        compileBaseStats,
-        DEFAULT_CALC_CTX
-      );
-
-      // ─── Phase 1: Quick baseline eval for all combos ───
-      const combos: {
-        s: MainStat;
-        g: MainStat;
-        c: MainStat;
-        baselineDmg: number;
-      }[] = [];
-
-      for (const s of SANDS_CANDIDATES) {
-        for (const g of gobletCandidates) {
-          for (const c of CIRCLET_CANDIDATES) {
-            const sheet = buildBaselineSheet(s, g, c);
-            const artifactStats = buildTeamArtifactStats(
-              ctx.configs,
-              characterId,
-              sheet
-            );
-            const dmg = evalDamageFn(artifactStats);
-            combos.push({ s, g, c, baselineDmg: dmg });
-          }
-        }
-      }
-
-      // Pre-filter: keep combos with baseline ≥ 50% of best baseline
-      const baselineBest = Math.max(...combos.map((c) => c.baselineDmg));
-      const viable = combos.filter(
-        (c) => c.baselineDmg >= baselineBest * BASELINE_PREFILTER
-      );
-
-      // ─── Phase 2: Full greedy allocation for viable combos ───
-      const teamResults: {
-        combo: (typeof viable)[0];
-        tuneResult: AutoTuneResult;
-      }[] = [];
-
-      for (const combo of viable) {
-        const mainStats: Record<Slot, MainStat> = {
-          flower: "hp",
-          plume: "atk",
-          sands: combo.s,
-          goblet: combo.g,
-          circlet: combo.c,
-        };
-        const dummySheet = buildBaselineSheet(combo.s, combo.g, combo.c);
-        const artifactStats = buildTeamArtifactStats(
-          ctx.configs,
-          characterId,
-          dummySheet
-        );
-        const tuneResult = autoTuneWeights(
-          characterId,
-          mainStats,
-          artifactStats,
-          evalDamageFn
-        );
-
-        teamResults.push({ combo, tuneResult });
-      }
-
-      // ─── Phase 3: Filter to ≥95% of best post-greedy damage ───
-      // Baseline = best damage among balanced (non-lopsided) combos.
-      // Lopsided combos are capped at 100% so they never define the baseline.
-      const balancedDmgs = teamResults
-        .filter((r) => !isLopsidedAllocation(r.tuneResult.rollAllocation))
-        .map((r) => r.tuneResult.finalDamage);
-      const bestBalancedDmg =
-        balancedDmgs.length > 0 ? Math.max(...balancedDmgs) : null;
-      const bestFinalDmg =
-        bestBalancedDmg ??
-        Math.max(...teamResults.map((r) => r.tuneResult.finalDamage));
-
-      // Collect per-team breakdown
-      const comboBreakdowns: ComboBreakdown[] = [];
-      for (const { combo, tuneResult } of teamResults) {
-        const comboLopsided =
-          bestBalancedDmg !== null &&
-          isLopsidedAllocation(tuneResult.rollAllocation);
-        // Clamp to 1.0: lopsided combos whose raw damage exceeds the best
-        // balanced damage are capped at 100% rather than being penalized.
-        const normalizedDamage =
-          bestFinalDmg > 0
-            ? Math.min(tuneResult.finalDamage / bestFinalDmg, 1.0)
-            : 0;
-
-        comboBreakdowns.push({
-          mainStats: { sands: combo.s, goblet: combo.g, circlet: combo.c },
-          rollAllocation: { ...tuneResult.rollAllocation },
-          damage: tuneResult.finalDamage,
-          damageRatio: normalizedDamage,
-          ...(comboLopsided && { lopsided: true }),
-        });
-
-        if (normalizedDamage >= QUALIFYING_THRESHOLD) {
-          allQualifying.push({
-            sands: combo.s,
-            goblet: combo.g,
-            circlet: combo.c,
-            tuneResult,
-            normalizedDamage,
-          });
-        }
-      }
-
-      // Sort breakdowns by damage descending, keep top combos
-      comboBreakdowns.sort((a, b) => b.damage - a.damage);
-      const charFormulaLabels =
-        ctx.teamBuild.catalog.getFormulaIds()[characterId] ?? {};
-      teamBreakdowns.push({
-        teamIndex: teamIdx,
-        label: ctx.label,
-        combos: comboBreakdowns, // all combos for debugging/display
-        bestDamage: bestFinalDmg,
-        formulas: ctx.formulas.map((f) => ({
-          formulaId: f.formulaId,
-          count: f.count,
-          label: charFormulaLabels[f.formulaId],
-        })),
-      });
-    } catch {}
-  }
-
-  if (allQualifying.length === 0) {
-    throw new Error(
-      `All team contexts failed for ${characterId}. Check that character/weapon/artifact implementations exist.`
-    );
-  }
-
-  // ─── Aggregate across qualifying combos ───
-  const avgWeights = averageWeights(allQualifying.map((q) => q.tuneResult));
-
-  // Ideal rolls from the best qualifying combo.
-  // Tiebreaker: prefer combos with more even cr/cd roll split.
-  const sortedQualifying = [...allQualifying].sort((a, b) => {
-    const dmgDiff = b.tuneResult.finalDamage - a.tuneResult.finalDamage;
-    if (Math.abs(dmgDiff) > 1e-6) return dmgDiff;
-    const aCrCdDiff = Math.abs(
-      (a.tuneResult.rollAllocation.cr || 0) -
-        (a.tuneResult.rollAllocation.cd || 0)
-    );
-    const bCrCdDiff = Math.abs(
-      (b.tuneResult.rollAllocation.cr || 0) -
-        (b.tuneResult.rollAllocation.cd || 0)
-    );
-    return aCrCdDiff - bCrCdDiff;
-  });
-  const bestCombo = sortedQualifying[0];
-  const idealRolls = {} as Record<SubStat, number>;
-  for (const stat of TUNABLE_SUBSTATS) {
-    idealRolls[stat] =
-      Math.round((bestCombo.tuneResult.rollAllocation[stat] || 0) * 10) / 10;
-  }
-
-  const sandsWeights = computeMainStatWeightsFromDamage(
-    "sands",
-    SANDS_CANDIDATES,
-    allQualifying
-  );
-  const gobletWeights = computeMainStatWeightsFromDamage(
-    "goblet",
-    gobletCandidates,
-    allQualifying
-  );
-  const circletWeights = computeMainStatWeightsFromDamage(
-    "circlet",
-    CIRCLET_CANDIDATES,
-    allQualifying
-  );
-
-  const bestSandsWeight = sandsWeights[0]?.weight ?? 100;
-  const bestGobletWeight = gobletWeights[0]?.weight ?? 100;
-  const bestCircletWeight = circletWeights[0]?.weight ?? 100;
-
-  const { idealScore, normalizer } = computeIdealScore(
-    avgWeights,
-    bestSandsWeight,
-    bestGobletWeight,
-    bestCircletWeight
-  );
-
-  return {
-    allQualifying,
-    avgWeights,
-    idealRolls,
-    sandsWeights,
-    gobletWeights,
-    circletWeights,
-    idealScore,
-    normalizer,
-    teamBreakdowns,
-  };
-}
-
-// ─── Auto-Tune Library Function ───
 
 export type ComboBreakdown = {
   mainStats: { sands: MainStat; goblet: MainStat; circlet: MainStat };
@@ -719,7 +464,7 @@ function isLopsidedAllocation(
  */
 function computeMainStatWeightsFromDamage(
   slot: "sands" | "goblet" | "circlet",
-  candidates: readonly MainStat[],
+  _candidates: readonly MainStat[],
   qualifying: ComboResult[]
 ): WeightedMainStat[] {
   // For each candidate stat, find the best combo (by damage, then cr/cd split).

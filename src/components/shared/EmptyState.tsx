@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface EmptyStateCta {
   label: string;
@@ -33,7 +33,10 @@ interface EmptyStateProps {
 function CtaButton({
   cta,
   variant,
-}: { cta: EmptyStateCta; variant: "default" | "outline" }) {
+}: {
+  cta: EmptyStateCta;
+  variant: "default" | "outline";
+}) {
   const Icon = cta.icon;
   const inner = (
     <>

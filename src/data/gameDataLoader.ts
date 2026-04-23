@@ -32,14 +32,15 @@ import {
   withBetaOverlay,
 } from "./gameDataUtil";
 import { LEYLINE_BOSS_IMAGE_ENEMY_ID } from "./resources_manual";
-import type { LangResource, Resource } from "./types";
 import type {
   ArtifactGameData,
   BossDescription,
   BossInfo,
   BossSchedule,
   CharacterKit,
+  LangResource,
   LeylineBossData,
+  Resource,
   WeaponGameData,
 } from "./types";
 import { fetchGzipJson } from "./utils";
@@ -345,7 +346,7 @@ function buildLeylineBossData(
     if (!desc) return `Boss #${id}`;
     // Use tier 1 variant name, strip ": Normal" / "·常形" suffix.
     const name = desc.variants[0]?.name ?? `Boss #${id}`;
-    return name.replace(/[:\·]?\s*(Normal|常形)$/i, "").trim();
+    return name.replace(/[:·]?\s*(Normal|常形)$/i, "").trim();
   };
 
   const getBulletsForTier: LeylineBossData["getBulletsForTier"] = (

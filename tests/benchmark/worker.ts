@@ -7,6 +7,7 @@
 
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { ComboFormula } from "@/lib/dmgcalc/types";
+import type { Team } from "./runner";
 import {
   characterStatsResource,
   getAllArtifacts,
@@ -14,7 +15,6 @@ import {
   runOptimizerOnTeam,
   weaponStatsResource,
 } from "./runner";
-import type { Team } from "./runner";
 
 interface RunMessage {
   type: "run";

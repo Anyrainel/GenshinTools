@@ -1,6 +1,16 @@
 import {
-  type TabConfig,
+  Check,
+  Languages,
+  type LucideIcon,
+  Menu,
+  MoreVertical,
+  Palette,
+} from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
   getNavigationConfig,
+  type TabConfig,
 } from "@/components/layout/appNavigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,18 +34,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
 import type { ThemeId } from "@/data/enums";
-
 import { cn, getAssetUrl } from "@/lib/utils";
-import {
-  Check,
-  Languages,
-  type LucideIcon,
-  Menu,
-  MoreVertical,
-  Palette,
-} from "lucide-react";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 
 /**
  * Configuration for an action button in the AppBar.
@@ -88,8 +87,7 @@ export function AppBar({
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isPending, startTransition] = useTransition();
+  const [_isPending, startTransition] = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);

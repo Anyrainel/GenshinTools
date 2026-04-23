@@ -5,12 +5,12 @@
  * Auto-tuning is tested via fullPipeline.test.ts (requires real TeamBuild).
  */
 
+import { describe, expect, it } from "vitest";
 import type { SubStat } from "@/data/enums";
 import type { Build } from "@/data/types";
-import { averageWeights } from "@/lib/artifact-builds/auto-tune/autoTune";
 import { scoreNormalized } from "@/lib/artifact/scoring/scorer";
 import { computeIdealScore } from "@/lib/artifact/scoring/utils";
-import { describe, expect, it } from "vitest";
+import { averageWeights } from "@/lib/artifact-builds/auto-tune/autoTune";
 
 /** Helper: create a minimal Build for scoring tests. */
 function makeBuild(overrides?: Partial<Build>): Build {

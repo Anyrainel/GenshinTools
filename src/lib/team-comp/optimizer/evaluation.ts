@@ -4,8 +4,7 @@
  * - evaluateUpperBoundCompiled: compute an optimistic upper bound using compiled expression
  */
 
-import type { MainStat } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
+import type { MainStat, StatKey } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import type {

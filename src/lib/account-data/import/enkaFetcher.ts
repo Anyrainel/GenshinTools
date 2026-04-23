@@ -129,7 +129,7 @@ async function ensureReverseMaps(): Promise<void> {
   // Her depot IDs are offset by +200 (e.g. male 504 → female 704).
   for (const [id, key] of Object.entries({ ...charIdToKey })) {
     if (id.startsWith("10000005-")) {
-      const depotId = Number.parseInt(id.split("-")[1]);
+      const depotId = Number.parseInt(id.split("-")[1], 10);
       charIdToKey[`10000007-${depotId + 200}`] = key;
     }
   }
@@ -142,7 +142,6 @@ async function ensureReverseMaps(): Promise<void> {
 
 type SlotKey = "flower" | "plume" | "sands" | "goblet" | "circlet";
 type StatKey = string;
-type SetKey = string;
 
 // --- Enka API Types ---
 
@@ -269,7 +268,7 @@ function hasCloudflareProxy(): boolean {
 }
 
 export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
-  if (!uid || !uid.match(/^\d{9}$/)) {
+  if (!uid?.match(/^\d{9}$/)) {
     throw new Error("Invalid UID format");
   }
 

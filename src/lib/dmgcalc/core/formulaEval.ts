@@ -10,6 +10,7 @@
 
 import { ELEMENT_ELIGIBLE_REACTIONS } from "../constants";
 import type {
+  BuffActivationMap,
   CalcContext,
   DamageResult,
   DisplayPart,
@@ -17,15 +18,14 @@ import type {
   FormulaPart,
   ReactionOverride,
 } from "../types";
-import type { BuffActivationMap } from "../types";
 import { resolvePartReaction } from "./combo";
-import { type DamageFormula, createReactionVariant } from "./damageFormula";
+import { createReactionVariant, type DamageFormula } from "./damageFormula";
 import { isPartOffField } from "./fieldState";
 import {
-  type StatBuff,
   bespokeMaxStacks,
   buildBespokeOverlay,
   getBuffInstanceKey,
+  type StatBuff,
 } from "./statBuff";
 import type { StatSheet } from "./statSheet";
 import type { TeamStatSheet } from "./teamStatSheet";

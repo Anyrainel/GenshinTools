@@ -3,10 +3,10 @@
  * single-team auto-tune results into a final AutoTuneOutput.
  */
 
-import type { MainStat, SubStat } from "@/data/enums";
-import type { AutoTuneTeamResult } from "@/lib/artifact/scoring/pipeline";
-import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
 import { describe, expect, it } from "vitest";
+import type { MainStat, SubStat } from "@/data/enums";
+import type { AutoTuneTeamResult } from "@/lib/artifact-builds/auto-tune/pipeline";
+import { aggregateTeamResults } from "@/lib/artifact-builds/auto-tune/pipeline";
 
 const ZERO_ROLLS: Record<SubStat, number> = {
   cr: 0,

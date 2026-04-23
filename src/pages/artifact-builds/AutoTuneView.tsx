@@ -6,6 +6,9 @@
  * Results display in V2-style cards with shared AutoTuneResults sub-components.
  */
 
+import { Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { AutoTuneEmptyState } from "@/components/artifact-builds/AutoTuneEmptyState";
 import { AutoTuneResultCard } from "@/components/artifact-builds/AutoTuneResultCard";
 import { AutoTuneSelectionCard } from "@/components/artifact-builds/AutoTuneSelectionCard";
@@ -18,22 +21,19 @@ import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { WeightedFormula } from "@/lib/artifact-builds/auto-tune/autoTune";
 import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
-import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import type {
   AutoTuneOutput,
   AutoTuneTeamInput,
   AutoTuneTeamResult,
-} from "@/lib/artifact/scoring/pipeline";
-import { aggregateTeamResults } from "@/lib/artifact/scoring/pipeline";
+} from "@/lib/artifact-builds/auto-tune/pipeline";
+import { aggregateTeamResults } from "@/lib/artifact-builds/auto-tune/pipeline";
+import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
 import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Loader2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 
 type EntryStatus = "idle" | "computing" | "done" | "applied";
 

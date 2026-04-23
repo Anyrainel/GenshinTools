@@ -1,10 +1,10 @@
+import userEvent from "@testing-library/user-event";
+import type { ComponentProps } from "react";
 import { StatSheetPanel } from "@/components/team-comp/StatSheetPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { StatKey } from "@/data/enums";
 import type { DisplayResult } from "@/lib/dmgcalc/types";
 import type { Team } from "@/lib/team-comp/types";
-import userEvent from "@testing-library/user-event";
-import type { ComponentProps } from "react";
 import { render, screen } from "../../utils/render";
 
 const mockTeam: Team = {

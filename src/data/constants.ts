@@ -1,5 +1,10 @@
-import type { Element, MainStat, MainStatPlus, SubStat } from "./enums";
-import type { ReactionType } from "./enums";
+import type {
+  Element,
+  MainStat,
+  MainStatPlus,
+  ReactionType,
+  SubStat,
+} from "./enums";
 import artifactStatData from "./game/artifact_stat.json";
 
 // Function to get goblet pool with character's elemental damage bonus

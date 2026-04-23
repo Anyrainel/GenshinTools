@@ -1,8 +1,8 @@
-import { ClearAllControl } from "@/components/shared/ClearAllControl";
-import type { ControlHandle } from "@/components/shared/controlHandle";
 import { act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
+import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { render, screen } from "../../utils/render";
 
 describe("ClearAllControl", () => {

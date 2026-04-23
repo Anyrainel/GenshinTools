@@ -1,5 +1,3 @@
-import type { Tour, TourLabels } from "@/components/ui/tour";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Download,
   Filter,
@@ -9,6 +7,8 @@ import {
   Wrench,
 } from "lucide-react";
 import { useMemo } from "react";
+import type { Tour, TourLabels } from "@/components/ui/tour";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function useTourLabels(): TourLabels {
   const { t } = useLanguage();

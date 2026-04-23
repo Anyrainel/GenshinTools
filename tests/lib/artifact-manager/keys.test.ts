@@ -1,8 +1,8 @@
+import { describe, expect, it } from "vitest";
 import {
   artifactIdToGOODKey,
   charIdToGOODKey,
 } from "@/lib/account-data/manager/keys";
-import { describe, expect, it } from "vitest";
 
 describe("charIdToGOODKey", () => {
   it("converts single-word character name", () => {

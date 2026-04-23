@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { allSlots } from "@/data/enums";
 import {
   characterStatsResource,
@@ -13,17 +14,16 @@ import {
  *    instead of retrying with widening altCount
  * 4. Set-infeasible early exit for 2+2 sets
  */
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
 import type {
-  TeamOptYield,
   TeamOptimizationResult,
   TeamOptimizerOptions,
+  TeamOptYield,
 } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 import { type OptimizationResult, runOptimization } from "./optimizerV1";
 
 import "@/lib/dmgcalc";
@@ -44,12 +44,6 @@ const CTX: CalcContext = {
   enemyRes: 0.1,
   rollMultiplier: 0.85,
   substatBudget: "8_6",
-};
-
-const GLOBAL_CONFIG: GlobalStatWeights = {
-  flatAtk: 1,
-  flatHp: 0,
-  flatDef: 0,
 };
 
 async function getFinalResult(
@@ -75,10 +69,8 @@ async function drainOptimizer(
 const CW = "crimson_witch_of_flames";
 const GL = "gladiators_finale";
 const ESF = "emblem_of_severed_fate";
-const WT = "wanderers_troupe";
 const OFF = "thundering_fury";
 const NO = "noblesse_oblige";
-const TM = "tenacity_of_the_millelith";
 
 // ── Tests: no duplicate artifacts ─────────────────────────────────────────────
 
@@ -143,7 +135,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets("hu_tao", "xingqiu", "zhongli"),
       perChar: {
         hu_tao: {
@@ -185,130 +177,126 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
     expect(duplicates).toEqual([]);
   });
 
-  it(
-    "4-character team with tight inventory: no duplicates",
-    { timeout: 30000 },
-    async () => {
-      const configs: TeamSlotConfig[] = [
-        {
-          charId: "hu_tao",
-          charLevel: 90,
-          constellation: 1,
-          weaponId: "staff_of_homa",
-          refinement: 1,
-          artifactSet: null,
-        },
-        {
-          charId: "xingqiu",
-          charLevel: 90,
-          constellation: 6,
-          weaponId: "sacrificial_sword",
-          refinement: 5,
-          artifactSet: null,
-        },
-        {
-          charId: "zhongli",
-          charLevel: 90,
-          constellation: 0,
-          weaponId: "black_tassel",
-          refinement: 5,
-          artifactSet: null,
-        },
-        {
-          charId: "kaedehara_kazuha",
-          charLevel: 90,
-          constellation: 0,
-          weaponId: "iron_sting",
-          refinement: 5,
-          artifactSet: null,
-        },
-      ];
-      const tb = new TeamBuild(configs);
-      const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
+  it("4-character team with tight inventory: no duplicates", {
+    timeout: 30000,
+  }, async () => {
+    const configs: TeamSlotConfig[] = [
+      {
+        charId: "hu_tao",
+        charLevel: 90,
+        constellation: 1,
+        weaponId: "staff_of_homa",
+        refinement: 1,
+        artifactSet: null,
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 6,
+        weaponId: "sacrificial_sword",
+        refinement: 5,
+        artifactSet: null,
+      },
+      {
+        charId: "zhongli",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "black_tassel",
+        refinement: 5,
+        artifactSet: null,
+      },
+      {
+        charId: "kaedehara_kazuha",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "iron_sting",
+        refinement: 5,
+        artifactSet: null,
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const formulaId = Object.keys(tb.catalog.getFormulaIds().hu_tao)[0];
 
-      // 4 artifacts per slot → exactly enough for 4 characters, all will compete
-      const inventory: ArtifactData[] = [];
-      const sets = [GL, CW, OFF, NO];
-      for (const slot of allSlots) {
-        const main =
-          slot === "flower"
-            ? "hp"
-            : slot === "plume"
-              ? "atk"
-              : slot === "sands"
-                ? "hp%"
-                : slot === "goblet"
-                  ? "pyro%"
-                  : "cr";
-        for (let i = 0; i < sets.length; i++) {
-          inventory.push(
-            makeArt(slot, sets[i], main as ArtifactData["mainStatKey"], {
-              cr: 10 - i * 2,
-              cd: 20 - i * 4,
-              atk: 30 - i * 5,
-              em: 30 - i * 5,
-            })
-          );
-        }
+    // 4 artifacts per slot → exactly enough for 4 characters, all will compete
+    const inventory: ArtifactData[] = [];
+    const sets = [GL, CW, OFF, NO];
+    for (const slot of allSlots) {
+      const main =
+        slot === "flower"
+          ? "hp"
+          : slot === "plume"
+            ? "atk"
+            : slot === "sands"
+              ? "hp%"
+              : slot === "goblet"
+                ? "pyro%"
+                : "cr";
+      for (let i = 0; i < sets.length; i++) {
+        inventory.push(
+          makeArt(slot, sets[i], main as ArtifactData["mainStatKey"], {
+            cr: 10 - i * 2,
+            cd: 20 - i * 4,
+            atk: 30 - i * 5,
+            em: 30 - i * 5,
+          })
+        );
       }
-
-      const opts: TeamOptimizerOptions = {
-        teamBuild: tb,
-        carryCharId: "hu_tao",
-        combo: singleFormulaCombo("hu_tao", formulaId),
-        inventory,
-        calcContext: CTX,
-        globalConfig: GLOBAL_CONFIG,
-        baseSheets: emptySheets(
-          "hu_tao",
-          "xingqiu",
-          "zhongli",
-          "kaedehara_kazuha"
-        ),
-        perChar: {
-          hu_tao: {
-            minEr: 1.0,
-            minCr: 0,
-            artifactSet: null,
-          },
-          xingqiu: {
-            minEr: 1.0,
-            minCr: 0,
-            artifactSet: null,
-          },
-          zhongli: {
-            minEr: 1.0,
-            minCr: 0,
-            artifactSet: null,
-          },
-          kaedehara_kazuha: {
-            minEr: 1.0,
-            minCr: 0,
-            artifactSet: null,
-          },
-        },
-      };
-
-      const result = await getFinalResult(runTeamOptimization(opts));
-
-      const allArtIds: string[] = [];
-      for (const arts of Object.values(result.bestArtifactsByChar)) {
-        for (const slot of allSlots) {
-          const a = arts[slot];
-          if (a) allArtIds.push(a.id);
-        }
-      }
-
-      const idCounts = new Map<string, number>();
-      for (const id of allArtIds) {
-        idCounts.set(id, (idCounts.get(id) ?? 0) + 1);
-      }
-      const duplicates = [...idCounts.entries()].filter(
-        ([, count]) => count > 1
-      );
-      expect(duplicates).toEqual([]);
     }
-  );
+
+    const opts: TeamOptimizerOptions = {
+      teamBuild: tb,
+      carryCharId: "hu_tao",
+      combo: singleFormulaCombo("hu_tao", formulaId),
+      inventory,
+      calcContext: CTX,
+
+      baseSheets: emptySheets(
+        "hu_tao",
+        "xingqiu",
+        "zhongli",
+        "kaedehara_kazuha"
+      ),
+      perChar: {
+        hu_tao: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSet: null,
+        },
+        xingqiu: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSet: null,
+        },
+        zhongli: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSet: null,
+        },
+        kaedehara_kazuha: {
+          minEr: 1.0,
+          minCr: 0,
+          artifactSet: null,
+        },
+      },
+    };
+
+    const result = await getFinalResult(runTeamOptimization(opts));
+
+    const allArtIds: string[] = [];
+    for (const arts of Object.values(result.bestArtifactsByChar)) {
+      for (const slot of allSlots) {
+        const a = arts[slot];
+        if (a) allArtIds.push(a.id);
+      }
+    }
+
+    const idCounts = new Map<string, number>();
+    for (const id of allArtIds) {
+      idCounts.set(id, (idCounts.get(id) ?? 0) + 1);
+    }
+    const duplicates = [...idCounts.entries()].filter(([, count]) => count > 1);
+    expect(duplicates).toEqual([]);
+  });
 });
 
 // ── Tests: set-infeasible early exit ──────────────────────────────────────────
@@ -352,7 +340,7 @@ describe("runOptimization — set-infeasible early exit", () => {
         minCr: 0,
         inventory,
         buildMatch: makeBuildMatch(),
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: emptySheets("hu_tao"),
         calcContext: CTX,
         artifactSet: { type: "4pc", setId: CW },
@@ -398,7 +386,7 @@ describe("runOptimization — set-infeasible early exit", () => {
         minCr: 0,
         inventory,
         buildMatch: makeBuildMatch(),
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: emptySheets("hu_tao"),
         calcContext: CTX,
         artifactSet: { type: "4pc", setId: CW },
@@ -443,7 +431,7 @@ describe("runOptimization — set-infeasible early exit", () => {
         minCr: 0,
         inventory,
         buildMatch: makeBuildMatch(),
-        globalConfig: GLOBAL_CONFIG,
+
         baseSheets: emptySheets("hu_tao"),
         calcContext: CTX,
         artifactSet: { type: "2pc+2pc", halfSetIds: ["atk%-18", "er-20"] },
@@ -544,7 +532,7 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory: sharedInventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets("hu_tao", "xingqiu"),
       perChar: {
         hu_tao: {
@@ -668,7 +656,7 @@ describe("runTeamOptimization — perCharExtraArtifacts", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory: sharedInventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets("hu_tao", "xingqiu"),
       perChar: {
         hu_tao: {

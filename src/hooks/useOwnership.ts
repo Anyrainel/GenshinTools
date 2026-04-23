@@ -8,6 +8,7 @@ const ALWAYS_OWNED_CHARACTER_IDS = new Set(
     .filter((c) => /^(traveler|manekin|manekina)_/.test(c.id))
     .map((c) => c.id)
 );
+
 import { useCallback, useMemo } from "react";
 
 /**

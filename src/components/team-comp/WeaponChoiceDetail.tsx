@@ -1,7 +1,8 @@
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/enums";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -26,17 +27,15 @@ import type {
 } from "@/lib/dmgcalc/types";
 import { resolveCalcContext } from "@/lib/dmgcalc/utils";
 import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
-import { getEffectiveCombo } from "@/lib/team-comp/teamConfigUtils";
 import {
   buildTeamConfigs,
   buildWeaponChoiceCharConfigs,
+  getEffectiveCombo,
 } from "@/lib/team-comp/teamConfigUtils";
 import type { Team, WeaponChoiceResult } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { ViewId } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { ArrowLeft, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamRosterCard } from "./TeamRosterCard";
 import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
@@ -68,24 +67,14 @@ export function WeaponChoiceDetail({
   const gameStatsReady = characterStats !== null && weaponStats !== null;
   const isMobile = useMediaQuery("(max-width: 1023px)");
 
-  // ── Environment settings (unified with Damage tab) ──
   const localEnemyAura = team.enemyAura;
   const localExtraBuffs = team.extraBuffs ?? [];
 
-  const setLocalEnemyAura = useCallback(
-    (el: Element | undefined) => {
-      updateTeam(team.id, { enemyAura: el });
-    },
-    [team.id, updateTeam]
-  );
-
-  // ── Compute baseConfigs ──
   const configs = useMemo(
     () => buildTeamConfigs(team, accountData),
     [team, accountData]
   );
 
-  // ── Compute teamBuild ──
   // biome-ignore lint/correctness/useExhaustiveDependencies: characterStats/weaponStats are intentional invalidation triggers
   const { teamBuild, buildError } = useMemo(() => {
     if (!gameStatsReady) return { teamBuild: null, buildError: null };
@@ -136,8 +125,8 @@ export function WeaponChoiceDetail({
   const validCharIds = Object.keys(availableFormulas);
 
   const allFormulas = useMemo(
-    () => collectAllFormulas(validCharIds, availableFormulas, teamBuild),
-    [validCharIds, availableFormulas, teamBuild]
+    () => collectAllFormulas(validCharIds, availableFormulas),
+    [validCharIds, availableFormulas]
   );
 
   // ── Combo management (unified with Damage tab) ──
@@ -415,7 +404,6 @@ export function WeaponChoiceDetail({
           formulaMode={formulaMode}
           onModeChange={handleModeChange}
           onSelectSingleFormula={onSelectSingleFormula}
-          isMobile={isMobile}
           t={t}
         />
 

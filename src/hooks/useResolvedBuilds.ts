@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import type { BuildSource } from "@/data/enums";
 import type { Build, BuildGroup, BuildPayloadV5 } from "@/data/types";
 import {
@@ -5,8 +7,6 @@ import {
   loadPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { useEffect, useMemo, useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 
 const EMPTY_ARRAY: string[] = [];
 

@@ -1,22 +1,26 @@
-import { AccountImportControl } from "@/components/account-data/AccountImportControl";
-import { ScoreChangeAnnouncement } from "@/components/account-data/ScoreChangeAnnouncement";
 import {
-  CharacterView,
-  type CharacterViewHandle,
-} from "@/pages/account-data/CharacterView";
-import { EvaluationView } from "@/pages/account-data/EvaluationView";
-import { InventoryView } from "@/pages/account-data/InventoryView";
-import { RecommendationView } from "@/pages/account-data/RecommendationView";
-import { ResourceView } from "@/pages/account-data/ResourceView";
-import { TriageView } from "@/pages/account-data/TriageView";
-
+  AlertTriangle,
+  Database,
+  Download,
+  FileDown,
+  FileJson,
+  Globe,
+  HelpCircle,
+  Pencil,
+  Users,
+  X,
+} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
+import { AccountImportControl } from "@/components/account-data/AccountImportControl";
 import { AccountManagerDialog } from "@/components/account-data/AccountManagerDialog";
+import { ScoreChangeAnnouncement } from "@/components/account-data/ScoreChangeAnnouncement";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import type { ActionConfig } from "@/components/layout/AppBar";
-import { PageLayout } from "@/components/layout/PageLayout";
 import { getTabsForRoute } from "@/components/layout/appNavigation";
-import { EmptyState } from "@/components/shared/EmptyState";
+import { PageLayout } from "@/components/layout/PageLayout";
 import type { ControlHandle } from "@/components/shared/controlHandle";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -34,12 +38,12 @@ import {
   convertEnkaToGOOD,
   fetchEnkaData,
 } from "@/lib/account-data/import/enkaFetcher";
+import type { ConversionWarning } from "@/lib/account-data/import/goodConversion";
 import {
   type ConversionResult,
-  type GOODData,
   convertGOODToAccountData,
+  type GOODData,
 } from "@/lib/account-data/import/goodConversion";
-import type { ConversionWarning } from "@/lib/account-data/import/goodConversion";
 import {
   convertHoyolabToGOOD,
   fetchHoyolabData,
@@ -58,25 +62,18 @@ import {
   type ArtifactScoreResult,
   scoreWithBuilds,
 } from "@/lib/artifact/scoring/artifactScore";
+import {
+  CharacterView,
+  type CharacterViewHandle,
+} from "@/pages/account-data/CharacterView";
+import { EvaluationView } from "@/pages/account-data/EvaluationView";
+import { InventoryView } from "@/pages/account-data/InventoryView";
+import { RecommendationView } from "@/pages/account-data/RecommendationView";
+import { ResourceView } from "@/pages/account-data/ResourceView";
+import { TriageView } from "@/pages/account-data/TriageView";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { useBuildsStore } from "@/stores/useBuildsStore";
-import {
-  AlertTriangle,
-  Database,
-  Download,
-  FileDown,
-  FileJson,
-  Globe,
-  HelpCircle,
-  Pencil,
-  Users,
-  X,
-} from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
 
 const isValidAccountDataTab = (
   tab: string | null
@@ -153,7 +150,6 @@ const NoDataPlaceholder = ({
 export default function AccountDataPage() {
   const { t } = useLanguage();
   const tour = useTour();
-  const [searchParams, setSearchParams] = useSearchParams();
   const { activeTab, setActiveTab } = useCanonicalTabRoute({
     basePath: "/account-data",
     defaultTab: "characters",
@@ -185,8 +181,6 @@ export default function AccountDataPage() {
   const [isAccountManagerOpen, setIsAccountManagerOpen] = useState(false);
 
   const scoreConfig = useArtifactScoreStore((s) => s.config);
-  const buildsMap = useBuildsStore((s) => s.builds);
-  const characterToBuildIds = useBuildsStore((s) => s.characterToBuildIds);
 
   // Use the hook to get all resolved builds efficiently
   const buildGroups = useAllResolvedBuilds();

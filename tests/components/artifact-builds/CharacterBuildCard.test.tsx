@@ -1,7 +1,7 @@
+import { act } from "react";
 import { CharacterBuildCard } from "@/components/artifact-builds/CharacterBuildCard";
 import type { CharacterResource } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { act } from "react";
 import { render, screen } from "../../utils/render";
 
 const mockCharacter: CharacterResource = {

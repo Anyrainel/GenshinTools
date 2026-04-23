@@ -7,12 +7,12 @@
 
 import { distributeComboHits } from "@/lib/dmgcalc/core/stackRank";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboLine,
   DisplayResult,
 } from "../types";
-import type { BuffActivationMap } from "../types";
 import type { StatSheet } from "./statSheet";
 import type { TeamBuild } from "./teamBuild";
 
@@ -82,7 +82,7 @@ export function buildBuffOverrides(
       if (!lineIndices || lineIndices.length === 0) continue;
 
       const lineCounts = lineIndices.map((i) => activeLines[i].count);
-      const [charId, formulaId] = formulaKey.split(".");
+      const formulaId = formulaKey.split(".")[1];
       const entry = build.catalog.formulaIndex.get(formulaId);
       if (!entry) continue;
 

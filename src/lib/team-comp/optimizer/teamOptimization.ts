@@ -9,11 +9,10 @@
  */
 
 import { charInfo } from "@/data/charInfo";
+import type { Slot, StatKey } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import type { Slot } from "@/data/enums";
-import type { StatKey } from "@/data/enums";
 import { artifactHalfSetsById } from "@/data/gameResources";
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import type { ComboResult } from "@/lib/dmgcalc/types";
 import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
 import { scoreSlotWithMainStat } from "../../artifact/scoring/artifactScore";
@@ -28,12 +27,12 @@ import { detectEquippedSets } from "../teamConfigUtils";
 import type {
   CharOptConfig,
   OptFailReason,
-  TeamOptPassId,
-  TeamOptPassResult,
-  TeamOptYield,
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
+  TeamOptPassId,
+  TeamOptPassResult,
+  TeamOptYield,
 } from "../types";
 import {
   computeWeightScore,
@@ -42,8 +41,7 @@ import {
 } from "./artifactScoring";
 import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
-import { runLagrangianAllocation } from "./lagrangianAlloc";
-import { artsTupleToRecord } from "./lagrangianAlloc";
+import { artsTupleToRecord, runLagrangianAllocation } from "./lagrangianAlloc";
 import type { BnBWorkerRequest, BnBWorkerResponse } from "./optimizer.worker";
 import type { ArtifactTuple, TopKEntry } from "./types";
 
@@ -391,7 +389,6 @@ function buildSheetsFromArtifacts(
 function buildHeuristicAssignment(
   charConfig: CharOptConfig,
   inventory: ArtifactData[],
-  globalConfig: GlobalStatWeights,
   assignedIds: Set<string>
 ): Record<Slot, ArtifactData | null> {
   const empty: Record<Slot, ArtifactData | null> = {
@@ -497,19 +494,17 @@ function buildHeuristicAssignment(
         };
     candidates.sort((a, b) => {
       const sa = buildMatch
-        ? computeWeightScore(a, buildMatch, globalConfig, 1)
+        ? computeWeightScore(a, buildMatch, 1)
         : scoreSlotWithMainStat(
             a,
             erFallback!.weights,
-            globalConfig,
             erFallback!.targetMainStats
           );
       const sb = buildMatch
-        ? computeWeightScore(b, buildMatch, globalConfig, 1)
+        ? computeWeightScore(b, buildMatch, 1)
         : scoreSlotWithMainStat(
             b,
             erFallback!.weights,
-            globalConfig,
             erFallback!.targetMainStats
           );
       return sb - sa || b.level - a.level;
@@ -533,7 +528,6 @@ function buildHeuristicBaseSheets(
   carryCharIds: string[],
   perChar: Record<string, CharOptConfig>,
   inventory: ArtifactData[],
-  globalConfig: GlobalStatWeights,
   baseSheets: Record<string, StatSheet>
 ): Record<string, StatSheet> {
   const result = { ...baseSheets };
@@ -548,12 +542,7 @@ function buildHeuristicBaseSheets(
   for (const charId of ordered) {
     const charConfig = perChar[charId];
     if (!charConfig) continue;
-    const picked = buildHeuristicAssignment(
-      charConfig,
-      inventory,
-      globalConfig,
-      assignedIds
-    );
+    const picked = buildHeuristicAssignment(charConfig, inventory, assignedIds);
     const pieces = allSlots
       .map((s) => picked[s])
       .filter((a): a is ArtifactData => a != null);
@@ -576,7 +565,6 @@ export async function* runTeamOptimization(
     carryCharId,
     inventory,
     calcContext,
-    globalConfig,
     baseSheets,
     perChar,
     perCharDeadlineMs: rawPerCharDeadlineMs,
@@ -745,7 +733,6 @@ export async function* runTeamOptimization(
     carryCharIds,
     effectivePerChar,
     inventory,
-    globalConfig,
     baseSheets
   );
 
@@ -953,7 +940,6 @@ export async function* runTeamOptimization(
             extraBuffs: teamBuild.extraBuffs,
             carryCharId,
             inventory: getCharInventory(charId),
-            globalConfig,
             baseSheetsDump,
             calcContext,
             topK: TOP_K,
@@ -1035,7 +1021,6 @@ export async function* runTeamOptimization(
         effectiveTeamBuild,
         carryCharId,
         getCharInventory(charId),
-        globalConfig,
         heuristicSheets,
         calcContext,
         undefined,
@@ -1091,7 +1076,6 @@ export async function* runTeamOptimization(
         effectiveTeamBuild,
         carryCharId,
         getCharInventory(charId),
-        globalConfig,
         heuristicSheets,
         calcContext,
         undefined,
@@ -1235,7 +1219,6 @@ export async function* runTeamOptimization(
           effectiveTeamBuild,
           carryCharId,
           getCharInventory(yielderId),
-          globalConfig,
           heuristicSheets,
           calcContext,
           excludeSet,
@@ -1374,7 +1357,7 @@ export async function* runTeamOptimization(
     return compiledTeamEval.evaluate(compiledTeamVars);
   };
 
-  let { candidates, iterations: allocIterations } = findBestTeamAllocation(
+  let { candidates } = findBestTeamAllocation(
     allocatableChars,
     topKByChar,
     MAX_TEAM_SEARCH,
@@ -1422,7 +1405,6 @@ export async function* runTeamOptimization(
           effectiveTeamBuild,
           carryCharId,
           getCharInventory(cid),
-          globalConfig,
           heuristicSheets,
           calcContext,
           seqUsed,
@@ -1523,7 +1505,6 @@ export async function* runTeamOptimization(
             effectiveTeamBuild,
             carryCharId,
             getCharInventory(secondId),
-            globalConfig,
             heuristicSheets,
             calcContext,
             excludeSet,
@@ -1970,7 +1951,6 @@ export async function* runTeamOptimization(
               extraBuffs: effectiveTeamBuild.extraBuffs,
               carryCharId,
               inventory: getCharInventory(input.charId),
-              globalConfig,
               baseSheetsDump: input.refinedSheetsDump,
               calcContext,
               topK: TOP_K,
@@ -2005,7 +1985,6 @@ export async function* runTeamOptimization(
           effectiveTeamBuild,
           carryCharId,
           getCharInventory(input.charId),
-          globalConfig,
           input.refinedBaseSheets,
           calcContext,
           new Set(input.excludedIds),
@@ -2429,7 +2408,6 @@ export async function* runTeamOptimization(
             effectiveTeamBuild,
             carryCharId,
             getCharInventory(charId),
-            globalConfig,
             refinedBaseSheets,
             calcContext,
             excludedIdSet,
@@ -2673,19 +2651,17 @@ export async function* runTeamOptimization(
           : buildSupStatFallbackWeights(charId);
         candidates.sort((a, b) => {
           const sa = buildMatch
-            ? computeWeightScore(a, buildMatch, globalConfig, 1)
+            ? computeWeightScore(a, buildMatch, 1)
             : scoreSlotWithMainStat(
                 a,
                 fallback!.weights,
-                globalConfig,
                 fallback!.targetMainStats
               );
           const sb = buildMatch
-            ? computeWeightScore(b, buildMatch, globalConfig, 1)
+            ? computeWeightScore(b, buildMatch, 1)
             : scoreSlotWithMainStat(
                 b,
                 fallback!.weights,
-                globalConfig,
                 fallback!.targetMainStats
               );
           if (sb !== sa) return sb - sa;

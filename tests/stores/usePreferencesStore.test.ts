@@ -1,6 +1,6 @@
-import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
+import { usePreferencesStore } from "@/stores/usePreferencesStore";
 
 beforeEach(() => {
   usePreferencesStore.setState({

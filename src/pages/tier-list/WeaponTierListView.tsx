@@ -1,10 +1,14 @@
+import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
-import type { ControlHandle } from "@/components/shared/controlHandle";
+import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
@@ -30,20 +34,14 @@ import type {
   TierListData,
   WeaponResource,
 } from "@/data/types";
-import { getSortedWeaponSecondaryStats } from "@/lib/utils";
-
-import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
+import { useIsOwned } from "@/hooks/useOwnership";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
   loadPresetPayload,
 } from "@/lib/presetLoader";
-
-import { useIsOwned } from "@/hooks/useOwnership";
+import { getSortedWeaponSecondaryStats } from "@/lib/utils";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
-import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
 
 // Placeholder for weapon tier list presets
 const presetModules = import.meta.glob<{ default: TierListData }>(

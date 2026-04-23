@@ -1,3 +1,13 @@
+import { Loader2 } from "lucide-react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ArtifactCard } from "@/components/artifact-builds/ArtifactCard";
 import { BuildsEmptyState } from "@/components/artifact-builds/BuildsEmptyState";
 import { ComputeSidebar } from "@/components/artifact-builds/ComputeSidebar";
@@ -11,16 +21,6 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { Loader2 } from "lucide-react";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 
 interface ArtifactBuildsViewProps {
   onJumpToCharacter: (characterId: string) => void;

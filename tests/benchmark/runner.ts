@@ -21,14 +21,14 @@ import {
 import type {
   AccountData,
   ArtifactData,
+  ArtifactSetConfig,
   Build,
   CharacterData,
   GlobalStatWeights,
 } from "@/data/types";
-import type { ArtifactSetConfig } from "@/data/types";
 import {
-  type GOODData,
   convertGOODToAccountData,
+  type GOODData,
 } from "@/lib/account-data/import/goodConversion";
 import { matchBuild } from "@/lib/artifact/scoring/artifactScore";
 import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
@@ -245,11 +245,11 @@ export function buildTeamSlotConfig(
   const consOverride = team.opts?.[`${charId}.overrideConstellation`];
 
   const charLevel = levelOverride
-    ? Number.parseInt(levelOverride)
+    ? Number.parseInt(levelOverride, 10)
     : (acctChar?.level ?? 90);
   const constellation =
     consOverride !== undefined
-      ? Number.parseInt(consOverride)
+      ? Number.parseInt(consOverride, 10)
       : (acctChar?.constellation ?? 0);
 
   let refinement = 1;
@@ -531,7 +531,6 @@ export async function runOptimizerOnTeam(
       combo,
       inventory,
       calcContext,
-      globalConfig: DEFAULT_GLOBAL_CONFIG,
       baseSheets,
       perChar,
       ...(timeoutMs > 0

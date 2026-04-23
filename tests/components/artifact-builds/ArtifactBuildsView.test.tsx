@@ -1,6 +1,6 @@
+import { waitFor } from "@testing-library/react";
 import { ArtifactBuildsView } from "@/pages/artifact-builds/ArtifactBuildsView";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { waitFor } from "@testing-library/react";
 import { render, screen } from "../../utils/render";
 
 describe("ArtifactBuildsView", () => {

@@ -1,3 +1,6 @@
+import { Eye, EyeOff, Plus, RotateCcw } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -26,15 +29,11 @@ import {
   getWeaponDisplayMeta,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import type { Build, CharacterResource } from "@/data/types";
-import type { WeaponResource } from "@/data/types";
+import type { Build, CharacterResource, WeaponResource } from "@/data/types";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { Eye, EyeOff, Plus, RotateCcw } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { BuildCard } from "./BuildCard";
 
 interface WeaponSlotProps {
@@ -161,11 +160,6 @@ function CharacterBuildCardComponent({
     (state) => !!state.hiddenCharacters[character.id]
   );
   const toggleHidden = useBuildsStore((state) => state.toggleCharacterHidden);
-
-  const displayName = useMemo(
-    () => t.character(character.id),
-    [t, character.id]
-  );
 
   const characterWeapons = useBuildsStore((state) =>
     state.getCharacterWeapons(character.id)
@@ -404,20 +398,18 @@ function CharacterBuildCardComponent({
                 </Button>
               </div>
             ) : (
-              <>
-                {builds.map((build, index) => (
-                  <BuildCard
-                    key={build.id}
-                    build={build}
-                    buildId={build.id}
-                    onDuplicate={handleDuplicateBuild}
-                    onMove={handleMoveBuild}
-                    canMoveUp={index > 0}
-                    canMoveDown={index < builds.length - 1}
-                    element={charMeta.element ?? "Pyro"}
-                  />
-                ))}
-              </>
+              builds.map((build, index) => (
+                <BuildCard
+                  key={build.id}
+                  build={build}
+                  buildId={build.id}
+                  onDuplicate={handleDuplicateBuild}
+                  onMove={handleMoveBuild}
+                  canMoveUp={index > 0}
+                  canMoveDown={index < builds.length - 1}
+                  element={charMeta.element ?? "Pyro"}
+                />
+              ))
             )}
           </div>
           {builds.length > 0 && (

@@ -12,10 +12,10 @@ import type { ProvidedStaticBuff } from "../types";
 import { isDeferredFinalBuff } from "./dynamicBuffEval";
 import { isOnField } from "./fieldState";
 import {
-  StatBuff,
   deduplicateBuffs,
   getBuffInstanceKey,
   isBuffApplicable,
+  StatBuff,
 } from "./statBuff";
 import type { TeamMeta } from "./teamMeta";
 

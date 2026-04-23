@@ -1,8 +1,8 @@
+import { lazy, Suspense, useMemo, useState } from "react";
 import { newsMap } from "@/components/shared/WhatsNew";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useGreetingStore } from "@/stores/useGreetingStore";
-import { Suspense, lazy, useMemo, useState } from "react";
 
 // Lazy-load the heavy dialog components
 const WelcomeGuide = lazy(() => import("./WelcomeGuide"));

@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -14,18 +15,17 @@ import {
  * 6. No accidental bonus   → no teamBuild on result
  * 7. Per-character flag     → only flagged char retried
  */
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData } from "@/data/types";
 import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
 import type {
-  TeamOptYield,
   TeamOptimizationResult,
   TeamOptimizerOptions,
+  TeamOptYield,
 } from "@/lib/team-comp/types";
-import { describe, expect, it } from "vitest";
 
 import "@/lib/dmgcalc";
 import {
@@ -46,12 +46,6 @@ const CTX: CalcContext = {
   enemyRes: 0.1,
   rollMultiplier: 0.85,
   substatBudget: "8_6",
-};
-
-const GLOBAL_CONFIG: GlobalStatWeights = {
-  flatAtk: 1,
-  flatHp: 0,
-  flatDef: 0,
 };
 
 async function getFinalResult(
@@ -150,7 +144,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
@@ -178,7 +172,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
@@ -210,7 +204,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
@@ -243,7 +237,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
@@ -279,7 +273,7 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
@@ -338,7 +332,7 @@ describe("runTeamOptimization — accidental set detection", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: { hu_tao: new StatSheet([]) },
       perChar: {
         hu_tao: {
@@ -383,7 +377,7 @@ describe("runTeamOptimization — accidental set detection", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: { hu_tao: new StatSheet([]) },
       perChar: {
         hu_tao: {
@@ -431,7 +425,7 @@ describe("runTeamOptimization — accidental set detection", () => {
       combo: singleFormulaCombo("hu_tao", formulaId),
       inventory,
       calcContext: CTX,
-      globalConfig: GLOBAL_CONFIG,
+
       baseSheets: { hu_tao: new StatSheet([]) },
       perChar: {
         hu_tao: {

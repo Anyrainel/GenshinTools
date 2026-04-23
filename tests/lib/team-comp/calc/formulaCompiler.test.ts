@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-
-import type { MainStat, Slot, SubStat } from "@/data/enums";
+import type { MainStat, Slot, StatKey, SubStat } from "@/data/enums";
 import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
+import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
+import { getRollValues } from "@/lib/artifact/scoring/utils";
 import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import {
   AmplifyFormula,
@@ -15,11 +16,7 @@ import {
   TransformFormula,
 } from "@/lib/dmgcalc/core/damageFormula";
 import { evaluate, simplify } from "@/lib/dmgcalc/core/expr";
-import { VarMapping, createExprStats } from "@/lib/dmgcalc/core/exprStatSheet";
-
-import type { StatKey } from "@/data/enums";
-import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
-import { getRollValues } from "@/lib/artifact/scoring/utils";
+import { createExprStats, VarMapping } from "@/lib/dmgcalc/core/exprStatSheet";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
@@ -2278,9 +2275,11 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/dmgcalc/constants";
 import { getOptionDef } from "@/lib/dmgcalc/core/registry";
 import { getBuffInstanceKey } from "@/lib/dmgcalc/core/statBuff";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
-import type { OptionMap } from "@/lib/dmgcalc/types";
-import type { ReactionOverride } from "@/lib/dmgcalc/types";
+import type {
+  BuffActivationMap,
+  OptionMap,
+  ReactionOverride,
+} from "@/lib/dmgcalc/types";
 import { getSetId } from "@/lib/dmgcalc/utils";
 
 describe("cross-path fuzz (display vs calc vs compile)", () => {
@@ -2441,7 +2440,6 @@ describe("cross-path fuzz (display vs calc vs compile)", () => {
       ctx,
       reactionOverride,
       Object.keys(dist).length > 0 ? dist : undefined,
-      undefined,
       forceOnField
     ).totalDamage;
 
