@@ -336,6 +336,7 @@ export function buildCandidatePool(
           mainStatKey: mainStat,
           lock: false,
           substats: farmed,
+          totalRolls: 8,
           source: "farm",
         });
       }

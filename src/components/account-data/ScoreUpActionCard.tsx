@@ -84,6 +84,9 @@ function ScoreUpActionCardComponent({
   const sourceArtifact = rec.sourceArtifactId
     ? (artifactLookup.get(rec.sourceArtifactId) ?? null)
     : null;
+  // Farm actions have no real source artifact — use the optimizer's synthetic ideal.
+  const farmIdeal =
+    rec.actionType === "farm" && rec.idealArtifact ? rec.idealArtifact : null;
 
   const isSwapLike =
     rec.actionType === "swap" ||
@@ -234,10 +237,16 @@ function ScoreUpActionCardComponent({
             badge={sourceArtifact.astralMark ? "⭐" : undefined}
             size="sm"
           />
-        ) : isSwapLike || rec.actionType === "equip" ? (
-          <div className="flex items-center justify-center w-12 h-12">
-            <PlaceholderIcon className="w-7 h-7 text-muted-foreground" />
-          </div>
+        ) : farmIdeal ? (
+          <ItemIcon
+            artifactSetId={farmIdeal.setKey}
+            slot={rec.slot}
+            rarity={farmIdeal.rarity}
+            lock={false}
+            level={`+${farmIdeal.level}`}
+            badge="❓"
+            size="sm"
+          />
         ) : (
           <div className="flex items-center justify-center w-12 h-12">
             <PlaceholderIcon className="w-7 h-7 text-muted-foreground" />
@@ -271,7 +280,20 @@ function ScoreUpActionCardComponent({
     );
   }
 
-  // Farm/reroll or missing source — show only the current artifact
+  // Farm: compare current vs the synthetic farm candidate the optimizer used.
+  if (farmIdeal) {
+    return (
+      <ArtifactComparisonHoverCard
+        beforeArtifact={currentArtifact ?? undefined}
+        afterArtifact={farmIdeal}
+        slot={rec.slot}
+      >
+        {cardContent}
+      </ArtifactComparisonHoverCard>
+    );
+  }
+
+  // Reroll or missing source — show only the current artifact
   if (currentArtifact) {
     return (
       <ArtifactComparisonHoverCard

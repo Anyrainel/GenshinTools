@@ -44,6 +44,8 @@ export interface ScoreUpAction {
   maxPotentialScore: number;
   isSteal?: boolean;
   donorCharacterId?: string;
+  /** Synthetic artifact used by the optimizer for farm actions — shown as the "after" target. */
+  idealArtifact?: ArtifactData;
 }
 
 export interface CharacterActions {
@@ -163,6 +165,7 @@ export function generateScoreUpActions(
       maxPotentialScore: topBuild.slotScores[slot],
       isSteal: !!optimal.donorCharacterId,
       donorCharacterId: optimal.donorCharacterId,
+      idealArtifact: actionType === "farm" ? optimal : undefined,
     });
   }
 
