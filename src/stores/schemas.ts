@@ -102,11 +102,30 @@ export const BuildSchema = z
   })
   .passthrough();
 
+const ComputeOptionsSchema = z
+  .object({
+    expandElementalGoblet: z.boolean().optional(),
+    expandCritCirclet: z.boolean().optional(),
+    mergeAlgorithm: z.string().optional(),
+    normalizeFlatStats: z.boolean().optional(),
+    substatWeightThreshold: z.number().optional(),
+    mustPresentWeightThreshold: z.number().optional(),
+  })
+  .passthrough()
+  .catch({});
+
 export const PersistedBuildsStoreSchema = z.object({
   builds: z.record(z.string(), BuildSchema).catch({}),
   characterToBuildIds: z.record(z.string(), z.array(z.string())).catch({}),
   presetDeletedBuildIds: z.array(z.string()).catch([]),
   validationErrors: z.record(z.string(), z.array(z.string())).catch({}),
+  activePresetId: z.string().nullable().catch(null),
+  hasPromptedForPreset: z.boolean().catch(false),
+  hiddenCharacters: z.record(z.string(), z.boolean()).catch({}),
+  characterWeapons: z.record(z.string(), z.array(z.string())).catch({}),
+  computeOptions: ComputeOptionsSchema,
+  author: z.string().catch(""),
+  description: z.string().catch(""),
 });
 
 // ─── Team (replaces repairTeam) ───
@@ -131,6 +150,8 @@ export const TeamSchema = z
 
 export const PersistedTeamStoreSchema = z.object({
   teams: z.array(TeamSchema).catch([]),
+  author: z.string().catch(""),
+  description: z.string().catch(""),
 });
 
 // ─── Freeze ───

@@ -429,15 +429,9 @@ export function mergeTeamStore(
 ): TeamState {
   const parsed = PersistedTeamStoreSchema.safeParse(persistedState);
   if (!parsed.success) return currentState;
-  // Spread persisted state first (preserves extra fields like author/description),
-  // then override with validated teams.
-  const persisted =
-    typeof persistedState === "object" && persistedState !== null
-      ? persistedState
-      : {};
   return {
     ...currentState,
-    ...persisted,
+    ...parsed.data,
     // Zod's .passthrough() adds an index signature that doesn't align with Team,
     // but TeamSchema has already validated and healed all required fields.
     teams: parsed.data.teams.map(

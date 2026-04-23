@@ -288,7 +288,33 @@ describe("PersistedBuildsStoreSchema", () => {
       characterToBuildIds: {},
       presetDeletedBuildIds: [],
       validationErrors: {},
+      activePresetId: null,
+      hasPromptedForPreset: false,
+      hiddenCharacters: {},
+      characterWeapons: {},
+      computeOptions: {},
+      author: "",
+      description: "",
     });
+  });
+
+  it("preserves user-facing fields that previously got stripped", () => {
+    const result = PersistedBuildsStoreSchema.parse({
+      activePresetId: "gg-v1",
+      hasPromptedForPreset: true,
+      hiddenCharacters: { diluc: true },
+      characterWeapons: { diluc: ["wolfs_gravestone"] },
+      computeOptions: { normalizeFlatStats: false },
+      author: "me",
+      description: "my builds",
+    });
+    expect(result.activePresetId).toBe("gg-v1");
+    expect(result.hasPromptedForPreset).toBe(true);
+    expect(result.hiddenCharacters).toEqual({ diluc: true });
+    expect(result.characterWeapons).toEqual({ diluc: ["wolfs_gravestone"] });
+    expect(result.computeOptions).toEqual({ normalizeFlatStats: false });
+    expect(result.author).toBe("me");
+    expect(result.description).toBe("my builds");
   });
 
   it("throws on non-object input", () => {
@@ -364,7 +390,21 @@ describe("TeamSchema", () => {
 
 describe("PersistedTeamStoreSchema", () => {
   it("heals all fields from empty object", () => {
-    expect(PersistedTeamStoreSchema.parse({})).toEqual({ teams: [] });
+    expect(PersistedTeamStoreSchema.parse({})).toEqual({
+      teams: [],
+      author: "",
+      description: "",
+    });
+  });
+
+  it("preserves author and description metadata", () => {
+    const result = PersistedTeamStoreSchema.parse({
+      teams: [],
+      author: "me",
+      description: "my teams",
+    });
+    expect(result.author).toBe("me");
+    expect(result.description).toBe("my teams");
   });
 
   it("throws on non-object input", () => {
