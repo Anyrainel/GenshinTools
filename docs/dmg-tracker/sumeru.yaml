@@ -24,22 +24,10 @@
     KQM TCL as Base DMG Multiplier (baseDmg%), not DMG Bonus (dmg%). Reverted
     the change back to baseDmg%.
 
-- id: sethos-c2-receiver
-  entity: sethos
-  rule: U1
-  status: completed
-  category: bug
-  summary: >
-    C2 Electro DMG Bonus +30% uses receiver "selfOnField" but game text
-    "赛索斯的雷元素伤害加成提升15%" has no on-field restriction. Should be "self".
-  detail: >
-    Changed C2 Electro DMG buff receiver from "selfOnField" to "self" to match
-    game text which has no on-field restriction.
-
 - id: sethos-dusk-bolt-missing-atk
   entity: sethos
   rule: S2
-  status: open
+  status: actionable
   category: approximation
   summary: >
     Q Dusk Bolt formula uses scalingKey "em" only, but Dusk Bolts are converted
@@ -48,9 +36,47 @@
   detail: >
     Game text says "Normal Attacks will be converted into Dusk Bolts" with "DMG
     increased based on Elemental Mastery." The Q talent table only shows "Dusk Bolt
-    DMG Increase: {param1:F1P} Elemental Mastery" — no ATK scaling row. This is
-    ambiguous: it could mean (a) Dusk Bolts replace normal attacks entirely with
-    pure EM scaling, or (b) Dusk Bolts add EM-based flat damage on top of normal
-    attack ATK scaling. KQM or in-game testing needed to confirm which model is
-    correct. If the current EM-only model matches in-game damage, the S2 flag is
-    a false positive.
+    DMG Increase: {param1:F1P} Elemental Mastery". It actually means Dusk Bolts add
+    EM-based flat damage on top of normal attack ATK scaling.
+
+- id: alhaitham-p2-filter-too-broad
+  entity: alhaitham
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    P2 "EM × 0.1% → DMG%" buff filters abilities:["skill","burst"] but game text
+    restricts it to Projection Attacks and Q only, not the E Rush initial hit.
+    The E Rush formula currently receives the bonus incorrectly.
+  detail: >
+    P2 scope should exclude the E Rush Attack. Fix is to move the buff to
+    bespokeBuffs on the alhaitham-projection and alhaitham-burst formulas instead
+    of a shared buff with abilities filter.
+
+- id: dehya-c2-missing-maxstacks
+  entity: dehya
+  rule: U8b
+  status: actionable
+  category: bug
+  summary: >
+    C2 "下次协同攻击造成的伤害提升50%" buff applies to all 4 Molten Inferno field
+    hits in the rotation, but game text limits it to the NEXT coordinated attack
+    only. The buff is missing maxStacks: 1.
+  detail: >
+    Current implementation: StatBuff dmg% +0.5 with receiver "self" + abilities
+    skill filter. Should add maxStacks: 1 to the BuffSource (cbs result) so only
+    one hit receives the bonus per trigger.
+
+- id: nahida-p2-q-pyro-scope
+  entity: nahida
+  rule: U5
+  status: actionable
+  category: approximation
+  summary: >
+    P2 (EM → dmg%/CR on Tri-Karma) and Q Pyro-resonance DMG bonus use filter
+    abilities:["skill"] which also applies to E Press and E Hold initial hits.
+    Game text restricts these bonuses to Tri-Karma Purification only.
+  detail: >
+    Press/Hold are cast rarely in a Nahida rotation so the over-apply is minor,
+    but both buffs should attach via bespokeBuffs on the nahida-karma formula
+    (and nahida-c6-karma) rather than a skill-wide ability filter.

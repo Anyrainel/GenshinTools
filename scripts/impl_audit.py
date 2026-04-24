@@ -15,7 +15,7 @@ from ts_reader import load_ts_data
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 DATA = SRC / "data"
-IMPL_DIR = SRC / "lib/team-comp/impl"
+IMPL_DIR = SRC / "lib/dmgcalc/impl"
 
 GAME_DIR = DATA / "game"
 CHAR_EN_PATHS = [
@@ -403,12 +403,23 @@ def cmd_detail(char_id: str, detail_spec: str) -> None:
     talent_data = char_stats.get(char_id, {}).get("talent", {}).get(skill_code, [])
     level_params = talent_data[level - 1] if level - 1 < len(talent_data) else []
 
+    def _row_label(r):
+        if isinstance(r, dict):
+            return r.get("label", "")
+        return r[0] if r and len(r) >= 1 else ""
+
+    def _row_template(r):
+        if isinstance(r, dict):
+            return r.get("template", "")
+        return r[1] if r and len(r) >= 2 else ""
+
     for j, row in enumerate(en_details):
-        if not row or len(row) < 2:
+        if not row:
             continue
-        en_name = row[0]
-        template = row[1]
-        zh_name = zh_details[j][0] if j < len(zh_details) and zh_details[j] else ""
+        en_name = _row_label(row)
+        template = _row_template(row)
+        zh_row = zh_details[j] if j < len(zh_details) else None
+        zh_name = _row_label(zh_row) if zh_row else ""
         rendered = render_template(template, level_params)
         print(f"  {en_name} ({zh_name}): {rendered}")
 
@@ -438,15 +449,27 @@ def print_char_kit(
 
         en_details = en_s.get("details") or []
         zh_details = (zh_s.get("details") or []) if zh_s else []
+
+        def _row_label(r):
+            if isinstance(r, dict):
+                return r.get("label", "")
+            return r[0] if r and len(r) >= 1 else ""
+
+        def _row_template(r):
+            if isinstance(r, dict):
+                return r.get("template", "")
+            return r[1] if r and len(r) >= 2 else ""
+
         for j, row in enumerate(en_details):
-            if not row or len(row) < 2:
+            if not row:
                 continue
-            template = row[1]
-            zh_name = zh_details[j][0] if j < len(zh_details) and zh_details[j] else ""
+            template = _row_template(row)
+            zh_row = zh_details[j] if j < len(zh_details) else None
+            zh_name = _row_label(zh_row) if zh_row else ""
             if zh_only:
                 print(f"  {zh_name}: {template}")
             else:
-                en_name = row[0]
+                en_name = _row_label(row)
                 print(f"  {en_name} ({zh_name}): {template}")
 
     en_passives = en_kit.get("passives", [])
@@ -638,7 +661,7 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
 
     if impl:
         n_lines = impl["end_line"] - impl["start_line"] + 1
-        impl_path = f"src/lib/team-comp/impl/{impl['filename']}"
+        impl_path = f"src/lib/dmgcalc/impl/{impl['filename']}"
         print(f"{'─' * 50}")
         print(
             f"  IMPL found ({n_lines} lines): {impl_path} L{impl['start_line']}–L{impl['end_line']}"

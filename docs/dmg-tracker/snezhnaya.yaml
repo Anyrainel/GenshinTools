@@ -24,3 +24,17 @@
     Normal Attacks (~4500%+ ATK equivalent per rotation with Bond of Life scaling) plus
     Q and C2 Bloodfire. The directive's 114.4% contributes ~2% of total rotation DPS.
     Negligible impact; not worth adding a formula for.
+
+- id: "tartaglia-c4-riptide-count"
+  entity: "tartaglia"
+  rule: "S9"
+  status: actionable
+  category: "approximation"
+  summary: >
+    C4 triggers an additional Riptide Slash (melee) or Riptide Flash (ranged) every 4s
+    that is not subject to the 1.5s internal CD of the base procs. The current
+    comboDescriptor has tartaglia-riptide-slash count: 6 with no C4 bonus, so C4 adds no
+    extra hits in the calc. Should add `bonus: [{ minC: 4, delta: N }]` tuning for the
+    expected extra procs over a ~9s melee rotation.
+  detail: >
+    Let's make C4 double it, so delta as 6. Leave a comment saying it is approximation

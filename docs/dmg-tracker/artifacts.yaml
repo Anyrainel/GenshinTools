@@ -22,30 +22,18 @@
     Added DefendersWill4pc class with halfSetId "def%-30" and empty buffs array.
     Defensive RES bonus is not damage-relevant per rule U9.
 
-- id: disenchantment-superconduct-dmg-zh
-  entity: disenchantment_in_deep_shadow
-  rule: U3
-  status: completed
-  category: bug
+- id: finale-deep-galleries-exclusion
+  entity: finale_of_the_deep_galleries
+  rule: S6
+  status: wont-do
+  category: approximation
   summary: >
-    4pc Superconduct reactionDmg% uses 0.4 (EN "40%"). ZH says "超导反应造成的伤害提升80%".
-    Per beta ZH-wins rule, should be 0.8.
+    4pc Normal ATK +60% and Burst +60% buffs mutually exclude in game (each disables
+    the other for 6s after its hit) and require 0 energy. Implementation applies
+    both simultaneously and unconditionally, over-estimating for rotations that use
+    both ability types.
   detail: >
-    Fixed reactionDmg% value from 0.4 to 0.8 in DisenchantmentInDeepShadow4pc.
-    Updated comment to note EN mistranslation.
-
-- id: glacier-snowfield-not-implemented
-  entity: glacier_and_snowfield
-  rule: U3
-  status: completed
-  category: missing-formula
-  summary: >
-    glacier_and_snowfield has no 4pc implementation. 2pc is Cryo DMG +15%.
-    4pc provides Superconduct DMG +100%, Melt coefficient +15%, and Cryo DMG +30%
-    after burst for 10s. Requires a new ArtifactSetBase class with proper reaction
-    and element-scoped buffs.
-  detail: >
-    Added GlacierAndSnowfield4pc class with halfSetId "cryo%-15". Three buffs:
-    reactionDmg% 1.0 for superconduct, reactionDmg% 0.15 for melt, cryo% 0.3
-    post-burst (always-active per S6).
-
+    This set is mostly used by Skirk, whose skill kit works around those 6s cooldowns
+    effectively. So implementing any lower approximation is likely bad for Skirk. For
+    other characters, it is not necessary to optimize for correctness as user can tune
+    the partial buff applications manually.

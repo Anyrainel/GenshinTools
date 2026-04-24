@@ -80,32 +80,6 @@
     over-depleting stacks meant for other team reactions.
   detail: given lauma DPS is a niche, this is not a priority.
 
-- id: linnea-c1-c6-maxstacks
-  entity: linnea
-  rule: U8b
-  status: completed
-  category: bug
-  summary: >
-    C1 Field Catalog team ScalingBuff has maxStacks=13 at C6, but C6 doubles stack consumption
-    (2 per regular LC hit instead of 1). After million-ton consumes 10 stacks (5 events × 2),
-    only 8 remain for regular hits = 4 buffed hits, not 13.
-  detail: >
-    Added maxStacks to C1 ScalingBuff: 13 at C0-C5 (18 total - 5 million-ton),
-    4 at C6 (18 - 10 million-ton = 8 remaining / 2 per hit). Million-ton bespoke
-    is per-formula so no maxStacks needed.
-
-- id: linnea-file-placement
-  entity: linnea
-  rule: U8
-  status: completed
-  category: bug
-  summary: >
-    Linnea (5★ Nod-Krai) is registered in character5Snezhnaya.ts instead of
-    character5NodKrai.ts. File placement must match rarity and region.
-  detail: >
-    Moved Linnea class (including linneaOption) from character5Snezhnaya.ts to
-    character5NodKrai.ts. All imports were already present in the target file.
-
 - id: varesa-fp-kick-c4-missing
   entity: varesa
   rule: S9
@@ -119,47 +93,18 @@
     Added C4 +100% dmg% bespokeBuff to varesa-fp-kick, matching the existing one
     on varesa-kablam. Gated on constellation >= 4, filter: burst ability.
 
-- id: nicole-q-coord-count-zh
-  entity: nicole
-  rule: S5
-  status: completed
-  category: bug
+- id: linnea-p2-em-overcount
+  entity: linnea
+  rule: S6
+  status: actionable
+  category: approximation
   summary: >
-    Q Arcane Projection comboDescriptor uses count: 5 (EN "5 times"). ZH says
-    "至多触发4次" (max 4 times). Per beta ZH-wins rule, should be count: 4.
+    P2 Universal Naturalist Archive grants 5% DEF as EM to either the active
+    character (if Moonsign) OR Linnea (if non-Moonsign active) — not both.
+    Implementation models both branches simultaneously (selfOffField + teamOnField/Moonsign),
+    so on Nod-Krai teams with a Moonsign teammate active off-field of Linnea, both
+    Linnea and the active Moonsign teammate receive +EM, double-counting the buff for
+    Linnea's own off-field reaction damage (lunarCrystallize EM bonus).
   detail: >
-    Changed Q coord comboDescriptor count from 5 to 4 and updated comments.
-
-- id: nicole-p4-scaling-zh
-  entity: nicole
-  rule: U3
-  status: completed
-  category: bug
-  summary: >
-    P4 Hexerei Secret Rite ScalingBuff uses scale 1.5 (EN "150% of Nicole's ATK").
-    ZH says "200%". Per beta ZH-wins rule, should be 2.0.
-  detail: >
-    Changed P4 ScalingBuff scale from 1.5 to 2.0 in bespoke buff on Q projections.
-
-- id: prune-p2-values-zh
-  entity: prune
-  rule: U3
-  status: completed
-  category: bug
-  summary: >
-    P2 Tolling Rally ScalingBuff uses EN values: scale 0.0001 (0.01%/pt),
-    threshold 1000, cap 0.35 (35%). ZH says 0.02%/pt over 2000, max 50%.
-    Per beta ZH-wins rule, should be scale 0.0002, threshold 2000, cap 0.50.
-  detail: >
-    Changed P2 ScalingBuff: scale 0.0001→0.0002, threshold 1000→2000, cap 0.35→0.50.
-
-- id: prune-p4-swirl-atk-zh
-  entity: prune
-  rule: U3
-  status: completed
-  category: bug
-  summary: >
-    P4 Hexerei Swirl ATK buff uses 0.2 (EN 20%). ZH says 30%.
-    Per beta ZH-wins rule, should be 0.30.
-  detail: >
-    Changed P4 Swirl ATK buff value from 0.2 to 0.3.
+    Let's approximate this by: if team has other moonsign 5* geo characters, only provide 
+    the teamOnField/Moonsign buff. Otherwise only provide the self buff (combines on and off field for self).

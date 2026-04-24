@@ -71,60 +71,26 @@
     contributes well under 5% of team DPS. Not worth implementing for a healer
     support character.
 
-- id: itto-c6-combo-count
-  entity: arataki_itto
-  rule: S12
-  status: completed
+- id: chiori-p1-coord-offfield
+  entity: chiori
+  rule: S13
+  status: open
+  category: bug
+  summary: >
+    chiori-e-combo bundles the on-field upward sweep with 2 P1 coordinated attacks as
+    hits:3 on a single on-field part. P1 coordinated attacks occur after Tapestry swap,
+    so Chiori is off-field for those 2 hits. The part should be split so the sweep stays
+    on-field and the 2 P1 coordinated hits are marked offField: true.
+  detail: ""
+
+- id: yoimiya-c6-separate-formula
+  entity: yoimiya
+  rule: S9
+  status: open
   category: approximation
   summary: >
-    C6 50% chance to not consume Superlative Superstrength is modeled as 8 combo slashes
-    (doubled from 4). Expected value with 5 stacks is ~10 slashes (5/0.5). Current value
-    of 8 underestimates by ~20%.
-  detail: >
-    Updated C6 combo count from 8 to 10 to match expected value of geometric
-    distribution (5 stacks / 0.5 probability = 10 slashes).
-
-- id: ayaka-c6-always-active
-  entity: kamisato_ayaka
-  rule: U8b
-  status: completed
-  category: approximation
-  summary: >
-    C6 Usurahi Butou (+298% Charged ATK DMG) is modeled as always-active on all charged
-    attacks. In practice it applies to only ~1 CA per 10s (cleared 0.5s after hit, timer
-    restarts). With 3 CAs in combo (~20s rotation), 2 of 3 CAs are over-buffed. Should
-    use bespokeBuff or separate buffed/unbuffed CA formulas per U8b.
-  detail: >
-    Removed always-active C6 StatBuff. Added separate ayaka-charged-c6 formula entry
-    with bespokeBuff (+298% dmg%). Combo descriptor uses 1 buffed CA + 2 unbuffed CAs
-    at C6, 3 unbuffed CAs otherwise.
-
-- id: kazuha-plunge-c0
-  entity: kaedehara_kazuha
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    E-triggered Midare Ranzan plunge formula is gated behind minC: 6 (kazuha-plunge-c6),
-    but the plunge is Kazuha's primary personal damage source at all constellations. The
-    E talent converts plunge to Anemo DMG at C0+. Should have a plunge formula without minC.
-  detail: >
-    Renamed kazuha-plunge-c6 to kazuha-plunge and removed minC: 6. Also renamed
-    absorbed-element plunge variants (kazuha-plunge-c6-{el} → kazuha-plunge-{el})
-    and removed their minC. Updated combo descriptor to use new formula IDs with
-    P1 absorbed element plunge when available.
-
-- id: raiden-q-normal-missing
-  entity: raiden_shogun
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    Q Musou Isshin normal attack formulas (N1-N5, Q params 5-10) are not modeled. Only
-    the initial slash and charged attacks exist. In a typical N3C rotation, 9 normal hits
-    contribute meaningful damage. All 5-star Q damage parts should be modeled per S8b.
-  detail: >
-    Added raiden-normal formula entry with N1-N3 parts (Q params 5-7), each with
-    60 resolve bonus. Added to combo descriptor with count: 3 for 3×N3C rotation.
-    All parts use Electro/burst tag.
-
+    C6 extra Blazing Arrow (50% chance, 60% DMG) is modeled as a separate formulaMap
+    entry yoimiya-c6-arrow with count:0 default, rather than as a dmg% or baseDmg% buff
+    on the existing yoimiya-normal formula. Per S9, constellations enhancing an existing
+    attack should be modeled as buffs, not separate formula entries.
+  detail: ""

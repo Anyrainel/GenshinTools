@@ -68,7 +68,6 @@
     relative to team DPS (<5%). C6 adds a 50% chance extra shot at 120% ATK — still
     minor. Not worth implementing for a healer whose value is in buffs and utility.
 
-
 - id: iansan-q-atk-scaling-option
   entity: iansan
   rule: S12
@@ -88,7 +87,6 @@
     selects, and (3) the actual value is movement-dependent and unknowable without
     gameplay specifics. The approximation is acceptable.
 
-
 - id: chasca-e-tap-missing
   entity: chasca
   rule: S8b
@@ -99,35 +97,6 @@
     distinct damage instance in the 5-star E talent (quick Anemo Normal
     Attack hit when tapping during Nightsoul's Blessing).
   detail: nobody use this tap damage, we always hold.
-
-- id: chasca-p1-c2-stack-count
-  entity: chasca
-  rule: S5
-  status: completed
-  category: bug
-  summary: >
-    P1 Spirit of the Radiant Shadow stack count does not account for C2's +1 stack
-    on swap-in. With C2 and 1-2 eligible element types, the DMG bonus is
-    undervalued (e.g., 2 types gives 35% instead of correct 65%).
-  detail: >
-    Added p1Stacks field that adds +1 at C2 and caps at 3. P1 DMG bonus now uses
-    p1Stacks instead of raw eligibleTypes for the lookup table.
-
-- id: mavuika-fs-n2n5-missing
-  entity: mavuika
-  rule: S8b
-  status: completed
-  category: missing-formula
-  summary: >
-    E Flamestrider Normal Attack N2-N5 (params 5-8) have no formula parts in
-    formulaMap. S8b requires all 5-star E damage instances to be covered. A
-    full N1-N5 chain formula entry should exist alongside the existing N1-only
-    combo formulas.
-  detail: >
-    Added mavuika-fs-normal formula entry with N1-N5 parts (E params 4-8),
-    all Pyro/normal. Existing combo formulas (mavuika-combo, mavuika-szszzp)
-    retained for rotation modeling. Sprint and CA already covered by existing
-    formulas.
 
 - id: varesa-pa-fp-missing-p1-with-c4
   entity: varesa
@@ -148,4 +117,41 @@
   summary: >
     C4 Diligent Refinement ScalingBuff is missing cap parameter. Game text says
     "至多通过这种方式提升20000" (max 20000). Should be ScalingBuff(..., 5.0, 20000).
+  detail: ""
+
+- id: ororon-c6-basedmg-filter-too-broad
+  entity: ororon
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    C6 Q-triggered Hypersense uses a baseDmg% +1.0 StatBuff with filter
+    abilities:["special"], which also applies to the regular P1 Hypersense
+    formula (also ability:"special"). At C6, all 8 regular Hypersense hits
+    get doubled, not only the single Q-triggered hit. Should be a bespokeBuff
+    on the C6 part of ororon-burst only.
+  detail: ""
+
+- id: kinich-c1-cd-filter-too-broad
+  entity: kinich
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    C1 Scalespiker Cannon CD +100% StatBuff filter abilities:["skill"] also
+    applies to Loop Shot (also ability:"skill"). Game text limits this to
+    Scalespiker Cannon only. Should be a bespokeBuff on the kinich-cannon
+    formula parts instead of a filtered StatBuff.
+  detail: ""
+
+- id: citlali-c2-em-receiver
+  entity: citlali
+  rule: U1
+  status: actionable
+  category: bug
+  summary: >
+    C2 +250 EM buff uses receiver:"other" but game text "处于白曜护盾的庇护下
+    或是伊兹帕帕跟随的其他角色" limits to shielded/followed teammates, which in
+    practice means only the active (on-field) teammate. Should use
+    receiver:"otherOnField".
   detail: ""

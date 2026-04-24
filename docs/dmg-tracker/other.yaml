@@ -39,18 +39,6 @@
     (340.7%/402.2%) is already modeled. Estimated <5% of any team DPS
     contribution from Dewdrops.
 
-- id: traveler-p3-charged-attack
-  entity: traveler_anemo
-  rule: S8
-  status: wont-do
-  category: missing-formula
-  summary: >
-    Special Charged Attack variants (Whirlwind/Rockfell/Detonate/Verdessence/
-    Tidebound/Inferno) for all Traveler elements not modeled.
-  detail: >
-    Requires stack build-up from teammates. Applies to traveler_anemo, traveler_geo,
-    traveler_electro, traveler_dendro, traveler_hydro, and traveler_pyro P3.
-
 - id: traveler-electro-c6-world-shaker
   entity: traveler_electro
   rule: S8
@@ -126,3 +114,21 @@
     mechanics on existing characters (e.g., Yelan Exquisite Throw, Faruzan
     Dazzling Polyhedron cadence). External sources (KQM, HHW, Wiki) do not
     yet cover Prune as she is unreleased beta. Revisit only after official release.
+
+- id: skirk-wither-10-trigger-cap
+  entity: skirk
+  rule: U8b
+  status: actionable
+  category: approximation
+  summary: >
+    Q All Shall Wither NA baseDmg% buff is not capped at 10 triggers as game
+    text specifies ("该效果将在触发次数达到10次时解除"). The buff applies to all
+    NA hits in the combo rotation without limit.
+  detail: >
+    Game text caps the Wither effect at 10 NA hit triggers per Havoc: Extinction
+    cast. Current impl applies baseDmg% to every NA hit in skirk-e-normal (7 hits
+    per use × count=4 = 28 hits) and skirk-e-normal-2 (2 × 4 = 8), well over the
+    10-trigger budget. Code comment says "Self buff → modeled via formula hit
+    counts, not maxStacks", but formulas do not limit to 10 hits either.
+    Candidate fix: use bespokeBuffs pattern on targeted FormulaPart(s) with
+    maxStacks=10 to bound the budget per cast.

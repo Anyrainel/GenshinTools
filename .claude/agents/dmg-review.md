@@ -106,6 +106,14 @@ Every `completed` item MUST be either cleaned or reopened — never left as `com
 - **Missing buff**: If a combat-relevant stat buff or debuff described in the game text has no corresponding buff in the implementation, flag it. Missing buffs cause incorrect damage calculations for any formula they would apply to — they are almost never intentionally omitted (except U9 utility effects).
 - **Missing formula**: A missing damage formula is acceptable when the ability isn't part of the character's intended playstyle. However, if the character's own kit contains buffs that specifically target an ability type (e.g., "Plunge Attack DMG +30%", "Normal Attack DMG increased by X% of DEF"), a formula for that ability should exist — the kit is signaling that this damage source is intended to be meaningful. Flag missing formulas only when the kit's buffs indicate the ability matters.
 
+  **When flagging a missing formula, include hit-count guidance in the tracker `detail` only if it's obvious from the game text. Skip the count entirely when not obvious — don't guess.** Two shapes:
+
+  - **Add to existing formula**: when the missing piece is a sub-part of an already-modeled ability (e.g., a proc tied to an existing E/Q part). Specify the existing `formulaId` and the hit count for the new part. Example: `Add to formulaId "navia-burst" as a new part with hits: 3 (game text says "fires 3 cannonballs").`
+  - **Add as new formula**: when the missing piece is a standalone ability/proc. Suggest a `count` for the `comboDescriptor`. Example: `New formula "xxx-arkhe-proc" with comboDescriptor count: 5 (active ~10s, ticks every 2s).`
+  - **Constellation count change** (bonus): if a constellation explicitly increases the trigger count (e.g., "C2: +1 stack/proc/hit"), include the C-level uplift. Example: `count: 3 at C0–C1, count: 4 at C2+ (C2 adds one extra Riptide Slash).`
+
+  Only include the count when game text directly states or trivially implies it (explicit "X times", "X bounces", a fixed-duration window with a fixed tick rate, an explicit max stacks). If the count depends on player rotation, enemy positioning, RNG, or any other unstated factor, omit the count and just describe what's missing.
+
 ### Step 4: Create tracker items
 
 For each new issue found, append to the tracker YAML file:

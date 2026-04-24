@@ -13,7 +13,6 @@
     mechanic that cannot be generalized — no other weapon or character buff uses
     weak spot DMG as a stat. Not worth the engine complexity for a 3-star bow.
 
-
 - id: forest-regalia-pickup-gap
   entity: forest_regalia
   rule: U1
@@ -55,7 +54,7 @@
 - id: royal-greatsword-stack-approx
   entity: royal_greatsword
   rule: S12
-  status: wont-do
+  status: actionable
   category: approximation
   summary: >
     Royal Greatsword CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
@@ -63,13 +62,7 @@
     be determined at construction time. No OptionMap or documentation of the
     forced average exists.
   detail: >
-    S12 targets time-dependent ramps, not action-dependent stacks with
-    CRIT-based resets. Royal weapons are not time-ramping buffs — the stack
-    count depends on CRIT Rate, which makes the effective average highly
-    variable (fewer stacks at higher CR). 3 stacks is a reasonable middle-ground
-    approximation. Royal weapons are 4-star Starglitter Exchange weapons widely
-    regarded as suboptimal choices. Adding OptionMap for a low-priority weapon
-    series with a niche stacking mechanic is not worth the complexity.
+    add OptionMap for 3 stack (default), 5 stack and 1 stack.
 
 - id: sapwood-blade-pickup-gap
   entity: sapwood_blade
@@ -108,7 +101,7 @@
 - id: royal-spear-stack-approx
   entity: royal_spear
   rule: S12
-  status: wont-do
+  status: actionable
   category: approximation
   summary: >
     Royal Spear CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
@@ -116,16 +109,12 @@
     be determined at construction time. No OptionMap or documentation of the
     forced average exists.
   detail: >
-    Same rationale as royal-greatsword-stack-approx. Royal weapons are not
-    time-ramping buffs — the CRIT-reset mechanic makes effective stacks
-    inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
-    average for these low-priority 4-star Starglitter Exchange weapons.
-    Not worth OptionMap complexity.
+    add OptionMap for 3 stack (default), 5 stack and 1 stack.
 
 - id: royal-bow-stack-approx
   entity: royal_bow
   rule: S12
-  status: wont-do
+  status: actionable
   category: approximation
   summary: >
     Royal Bow CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
@@ -133,12 +122,7 @@
     be determined at construction time. No OptionMap or documentation of the
     forced average exists.
   detail: >
-    Same rationale as royal-greatsword-stack-approx. Royal weapons are not
-    time-ramping buffs — the CRIT-reset mechanic makes effective stacks
-    inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
-    average for these low-priority 4-star Starglitter Exchange weapons.
-    Not worth OptionMap complexity.
-
+    add OptionMap for 3 stack (default), 5 stack and 1 stack.
 
 - id: prized-isshin-blade-proc-dmg
   entity: prized_isshin_blade
@@ -156,55 +140,10 @@
     penalty, making it a niche choice. The 180% ATK proc every 8s is minor
     relative to character ability damage. Not worth engine changes for this case.
 
-- id: flameforged-insight-missing-lunar-reactions
-  entity: flameforged_insight
-  rule: S10
-  status: completed
-  category: bug
-  summary: >
-    Flameforged Insight's reaction check is missing lunar reaction variants (lunarCharged,
-    lunarBloom, lunarCrystallize). The game text explicitly lists all six reactions including
-    lunar variants, but hasReaction() only checks the three base reactions. On Moonsign teams
-    where lunar reactions supersede base reactions, the EM buff incorrectly deactivates.
-  detail: >
-    Added lunarCharged, lunarBloom, and lunarCrystallize to the canTrigger
-    reaction gate in weapon4Claymore.ts, matching all six reactions listed
-    in the game text.
-
-- id: verdict-missing-lunar-crystallize
-  entity: verdict
-  rule: S10
-  status: completed
-  category: bug
-  summary: >
-    Verdict's Seal condition only checks hasReaction("crystallize") but the game text
-    explicitly includes "触发月结晶反应" (Lunar-Crystallize). On Moonsign teams where
-    the only Geo+element source is Hydro+Geo, crystallize is superseded by lunarCrystallize
-    and hasReaction("crystallize") returns false, causing the Skill DMG buff to deactivate.
-  detail: >
-    Added hasReaction("lunarCrystallize") as an OR condition to the Seal
-    gate in weapon5Claymore.ts, so the Skill DMG buff activates on both
-    crystallize and lunarCrystallize teams.
-
-- id: bloodsoaked-ruins-wrong-reaction-gate
-  entity: bloodsoaked_ruins
-  rule: S10
-  status: completed
-  category: bug
-  summary: >
-    Bloodsoaked Ruins gates buffs on hasReaction("electroCharged") but all its buffs
-    target lunarCharged damage. When lunarCharged supersedes electroCharged (Moonsign
-    teams), hasReaction("electroCharged") returns false and the buffs are never created.
-    Should use hasReaction("lunarCharged") instead.
-  detail: >
-    Changed the reaction gate from hasReaction("electroCharged") to
-    hasReaction("lunarCharged") in weapon5Polearm.ts. The buff filters
-    already correctly targeted lunarCharged reactions.
-
 - id: royal-longsword-stack-approx
   entity: royal_longsword
   rule: S12
-  status: wont-do
+  status: actioanble
   category: approximation
   summary: >
     Royal Longsword CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
@@ -212,24 +151,373 @@
     be determined at construction time. No OptionMap or documentation of the
     forced average exists.
   detail: >
-    Same rationale as royal-greatsword-stack-approx. Royal weapons are not
-    time-ramping buffs — the CRIT-reset mechanic makes effective stacks
-    inversely proportional to CRIT Rate. 3 stacks is a reasonable forced
-    average for these low-priority 4-star Starglitter Exchange weapons.
-    Not worth OptionMap complexity.
+    add OptionMap for 3 stack (default), 5 stack and 1 stack.
 
-- id: golden-frostbound-oath-mischief-unconditional
-  entity: golden_frostbound_oath
-  rule: U1
-  status: completed
+- id: serpent-spine-ramp-approx
+  entity: serpent_spine
+  rule: S12
+  status: actionable
+  category: approximation
+  summary: >
+    Serpent Spine DMG% stacks (6%/7%/8%/9%/10% per stack, max 5) ramp over time
+    (1 stack per 4s of on-field time, 20s to reach max). Implementation hardcodes
+    max 5 stacks without OptionMap or documented approximation, violating S12's
+    time-ramping rule.
+  detail: >
+    should add OptionMap for each stack tier descending, so default is max stack.
+
+- id: skyward-pride-vacuum-blade
+  entity: skyward_pride
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Skyward Pride's post-burst vacuum blade proc (100% ATK per blade, up to 8 blades
+    over 20s, triggered by Normal/Charged attack hits) is not modeled.
+  detail: ""
+
+- id: luxurious-sealord-tuna-proc
+  entity: luxurious_sealord
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Luxurious Sealord's tuna onrush proc (150% ATK AoE on burst hit, once every 15s)
+    is not modeled.
+  detail: ""
+
+- id: prototype-archaic-proc-dmg
+  entity: prototype_archaic
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Prototype Archaic's on-hit AoE proc (360% ATK at R1, 50% chance on N/CA hit,
+    once every 15s) is not modeled.
+  detail: ""
+
+- id: snowtombed-starsilver-proc-dmg
+  entity: snowtombed_starsilver
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Snow-Tombed Starsilver's Everfrost Icicle proc (110% ATK, or 280% vs Cryo-affected
+    enemies at R1, on N/CA hit once every 10s) is not modeled.
+  detail: ""
+
+- id: lions-roar-missing-team-element-check
+  entity: lions_roar
+  rule: S10
+  status: actionable
   category: bug
   summary: >
-    Frost Fae's Mischief (other Geo DMG% + LC reactionDmg%) is always active
-    regardless of team composition. The buff requires Moondrifts near the wielder,
-    which only exist when lunarCrystallize has been triggered. On teams without
-    Hydro+Geo+5-star Moonsign, the buff incorrectly applies to all other party members.
-  detail: >
-    Converted readonly buffs to a getter and gated the Frost Fae's Mischief
-    buffs (other Geo DMG% + LC reactionDmg%) behind
-    hasReaction("lunarCrystallize") in weapon5Bow.ts.
+    Lion's Roar's "DMG against Pyro/Electro-affected opponents" buff is always
+    applied without checking team composition. Per S10, enemy element affection
+    should gate on whether the team contains a Pyro or Electro character. Same
+    pattern is correctly implemented in bloodtainted_greatsword — lions_roar
+    should mirror that pattern.
+  detail: ""
 
+- id: aquila-favonia-proc-dmg
+  entity: aquila_favonia
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Aquila Favonia's Falcon of the West proc (200-320% ATK AoE on taking DMG,
+    once every 15s) is not modeled.
+  detail: ""
+
+- id: kagotsurube-isshin-proc-dmg
+  entity: kagotsurube_isshin
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Kagotsurube Isshin's Hewing Gale proc (180% ATK AoE on N/CA/Plunge hit,
+    once every 8s) is not modeled. The ATK +15% buff after the proc is modeled,
+    but the damage instance itself cannot be.
+  detail: ""
+
+- id: the-flute-proc-dmg
+  entity: the_flute
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    The Flute's 5-Harmonic music proc (100-200% ATK AoE when 5 Harmonics
+    accumulate on N/CA hits) is not modeled.
+  detail: ""
+
+- id: sword-of-narzissenkreuz-proc-dmg
+  entity: sword_of_narzissenkreuz
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Sword of Narzissenkreuz's Pneuma/Ousia energy blast (160-320% ATK on
+    N/CA/Plunge hit, once every 12s, only when wielder has no Arkhe) is not
+    modeled.
+  detail: ""
+
+- id: ashgraven-drinking-horn-proc-dmg
+  entity: ashgraven_drinking_horn
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Ashgraven Drinking Horn's AoE proc (40-80% Max HP, once every 15s on attack hit)
+    is not modeled.
+  detail: ""
+
+- id: eye-of-perception-proc-dmg
+  entity: eye_of_perception
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Eye of Perception's Bolt of Perception proc (240-360% ATK, bouncing up to 4 times,
+    50% chance on N/CA hit, 12/11/10/9/8s CD) is not modeled.
+  detail: ""
+
+- id: frostbearer-proc-dmg
+  entity: frostbearer
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Frostbearer's Everfrost Icicle proc (80-140% ATK, or 200-360% against
+    Cryo-affected enemies, 60-100% chance on N/CA hit, 10s CD) is not modeled.
+  detail: ""
+
+- id: skyward-atlas-proc-dmg
+  entity: skyward_atlas
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Skyward Atlas's cloud proc (160-320% ATK seeking attacks for 15s, 50% chance
+    on Normal Attack hit, 30s CD) is not modeled. The passive
+    elemental DMG% portion is implemented; only the active proc is missing.
+  detail: ""
+
+- id: royal-grimoire-stack-approx
+  entity: royal_grimoire
+  rule: S12
+  status: actionable
+  category: approximation
+  summary: >
+    Royal Grimoire CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
+    The effective stack count depends on the character's CRIT Rate, which cannot
+    be determined at construction time.
+  detail: >
+    add OptionMap for 3 stack (default), 5 stack and 1 stack.
+
+- id: lost-prayer-selfonfield-receiver
+  entity: lost_prayer_to_the_sacred_winds
+  rule: U1
+  status: intended
+  category: bug
+  summary: >
+    Lost Prayer to the Sacred Winds uses receiver "selfOnField" for its 4-stack
+    elemental DMG buff. Per game text, stacks persist until the character falls
+    or leaves combat — they are retained while the wielder is off-field. The buff
+    should apply to off-field damage sources (e.g., Mona Q persisting after swap),
+    so the correct receiver is "self".
+  detail: >
+    the Chinese description is more accurate. The buff accumulates when “在场上”, and
+    it disappear after “离场”. selfOnField is correct.
+
+- id: halberd-proc-dmg
+  entity: halberd
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Halberd's Normal Attack follow-up (160%/200%/240%/280%/320% ATK every 10s)
+    is not modeled.
+  detail: ""
+
+- id: black-tassel-slime-dmg
+  entity: black_tassel
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    "Increases DMG against slimes by 40-80%" does not map to any existing stat
+    key — enemy-type-specific DMG bonuses are not modeled.
+  detail: "too niche"
+
+- id: dragonspine-spear-icicle-proc
+  entity: dragonspine_spear
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Dragonspine Spear's Everfrost Icicle proc (80-140% ATK / 200-360% ATK on
+    Cryo-affected enemies, once every 10s on Normal/Charged hit) is not modeled.
+  detail: ""
+
+- id: skyward-spine-vacuum-blade
+  entity: skyward_spine
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Skyward Spine's vacuum blade proc (40-100% ATK AoE, 50% chance on Normal/
+    Charged hit, once every 2s) is not modeled.
+  detail: ""
+
+- id: fractured-halo-wielder-shielder
+  entity: fractured_halo
+  rule: S6
+  status: actionable
+  category: bug
+  summary: >
+    Electrifying Edict (team-wide lunarCharged reactionDmg+) is gated on
+    teamMeta.hasShielder(), but the game text requires the equipping character
+    to create a shield ("装备者创造了护盾"). Should use
+    teamMeta.isShielder[this.charId] instead so the buff only activates when
+    the wielder is a shielder, matching the starcallers_watch pattern.
+  detail: ""
+
+- id: symphonist-of-scents-off-field-receiver
+  entity: symphonist_of_scents
+  rule: U1
+  status: actionable
+  category: bug
+  summary: >
+    The extra +12-24% ATK for off-field state is summed into the base ATK buff
+    with receiver "self", causing it to apply on-field as well. The
+    "当装备此武器的角色处于队伍后台时" clause requires a separate StatBuff with
+    receiver "selfOffField" for the extra portion; the base 12-24% ATK stays on
+    "self".
+  detail: ""
+
+- id: crimson-moons-semblance-bol-threshold
+  entity: crimson_moons_semblance
+  rule: S6
+  status: actionable
+  category: approximation
+  summary: >
+    The 24-56% DMG bonus requires Bond of Life >= 30% Max HP, but the
+    implementation always sums both tiers unconditionally. The weapon's own
+    Charged Attack generates only 25% Max HP BoL (max once per 14s), so
+    reaching 30% requires external BoL sources (e.g., Arlecchino). Should be
+    gated behind an OptionMap of BoL states or recognized as a forced-average
+    approximation.
+  detail: "Use OptionMap to gate the additional bonus, but default to ON."
+
+- id: raven-bow-missing-team-element-check
+  entity: raven_bow
+  rule: S10
+  status: actionable
+  category: bug
+  summary: >
+    Raven Bow's "DMG against Hydro/Pyro-affected opponents" buff is always
+    applied without checking team composition. Same pattern as the
+    lions-roar-missing-team-element-check item — should gate on whether the
+    team contains a Hydro or Pyro character, matching the correct
+    implementation used in bloodtainted_greatsword and magic_guide.
+  detail: ""
+
+- id: cool-steel-missing-team-element-check
+  entity: cool_steel
+  rule: S10
+  status: actionable
+  category: bug
+  summary: >
+    Cool Steel's "DMG against Hydro/Cryo-affected opponents" buff is always
+    applied without checking team composition. Same pattern as the
+    lions-roar-missing-team-element-check item — should gate on whether the
+    team contains a Hydro or Cryo character, matching the correct
+    implementation used in bloodtainted_greatsword and magic_guide.
+  detail: ""
+
+- id: alley-hunter-time-ramping-max
+  entity: alley_hunter
+  rule: S12
+  status: actionable
+  category: approximation
+  summary: >
+    Alley Hunter's DMG% ramps from 0 to 20-40% over 10s while off-field, then
+    decays while on-field. Implementation hardcodes the max value with no
+    OptionMap or documented approximation. Per S12 (as applied to Fading
+    Twilight), time-dependent ramps should either offer OptionMap tiers or
+    be documented as a forced average.
+  detail: "Add OptionMap with max as default"
+
+- id: scion-of-the-blazing-sun-proc-dmg
+  entity: scion_of_the_blazing_sun
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Scion of the Blazing Sun's Sunfire Arrow proc (60-120% ATK on CA hit,
+    once every 10s) is not modeled. The Heartsearer CA DMG+ buff is
+    implemented, but the arrow's damage instance itself cannot be.
+  detail: ""
+
+- id: the-viridescent-hunt-proc-dmg
+  entity: the_viridescent_hunt
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    The Viridescent Hunt's Cyclone proc (40-80% ATK every 0.5s for 4s on
+    N/CA hit, 50% chance, once every 14-10s) is not modeled.
+  detail: ""
+
+- id: end-of-the-line-proc-dmg
+  entity: end_of_the_line
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    End of the Line's Flowrider proc (80-160% ATK AoE, up to 3 instances per
+    trigger, triggered by E cast, once every 12s) is not modeled.
+  detail: ""
+
+- id: sequence-of-solitude-proc-dmg
+  entity: sequence_of_solitude
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Sequence of Solitude's HP-scaling AoE proc (40-80% Max HP on attack hit,
+    once every 15s) is not modeled.
+  detail: ""
+
+- id: kings-squire-end-proc-dmg
+  entity: kings_squire
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    King's Squire's Teachings of the Forest end-proc (100-180% ATK to one
+    nearby enemy when the EM buff ends or is removed, once every 20s) is
+    not modeled. The EM buff itself is implemented, but the damage instance
+    at the end of the effect cannot be.
+  detail: ""
+
+- id: skyward-harp-proc-dmg
+  entity: skyward_harp
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Skyward Harp's small AoE proc (125% ATK Physical DMG on any hit, 60-100%
+    chance, once every 4-2s) is not modeled. The CRIT DMG buff is implemented,
+    but the damage instance itself cannot be.
+  detail: ""
+
+- id: messenger-proc-dmg
+  entity: messenger
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Messenger's weak-spot CA proc (100-200% ATK bonus damage as guaranteed CRIT,
+    once every 10s) is not modeled.
+  detail: ""

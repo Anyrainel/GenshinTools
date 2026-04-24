@@ -90,3 +90,39 @@
     present. Requires a user-selectable absorption element (engine feature). The existing
     dead-code baseDmg% buffs are harmless since no absorbed-element formula activates them.
 
+- id: xiangling-pepper-pickup
+  entity: xiangling
+  rule: U1
+  status: wont-do
+  category: engine-gap
+  summary: >
+    P2 chili pepper pickup grants ATK +10% to the single character who picks it up,
+    but receiver is "teamOnField" which applies to whoever is active at hit time.
+    Engine lacks persistent single-character pickup buff tracking.
+  detail: >
+    This approximation is acceptable for now.
+
+- id: chongyun-p1-weapon-filter
+  entity: chongyun
+  rule: U1
+  status: actionable
+  category: engine-gap
+  summary: >
+    P1 Normal ATK SPD +8% is limited to Sword/Claymore/Polearm users in the Chonghua
+    Frost Field, but the buff applies to all active teammates because BuffTarget has
+    no weaponTypes filter. Catalyst/bow teammates incorrectly receive the atkSpd buff.
+  detail: >
+    Modify the buffs to target specific charId based on Sword/Claymore/Polearm.
+
+- id: zhongli-press-formula
+  entity: zhongli
+  rule: S8b
+  status: actionable
+  category: missing-formula
+  summary: >
+    E Press mode (stele creation only) has no formula. Only Hold is modeled via
+    "zhongli-hold" (hold AoE + stele creation). Per S8b, 5★ E should expose both
+    tap and hold modes as separate formulas.
+  detail: >
+    Should add additional formulas for tap E. But the resonance DMG formula should be 
+    modeled as a separate formula.
