@@ -1,4 +1,5 @@
 import type { SubStat } from "@/data/enums";
+import type { Build } from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
@@ -9,6 +10,23 @@ import { RecommendationView } from "@/pages/account-data/RecommendationView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { render, screen } from "../../utils/render";
+
+const mockBuild: Build = {
+  id: "test-build",
+  characterId: "hu_tao",
+  visible: true,
+  name: "Test",
+  composition: "4pc",
+  artifactSet: "crimson_witch_of_flames",
+  substats: [
+    { stat: "cr", weight: 100 },
+    { stat: "cd", weight: 100 },
+  ],
+  sandsWeights: [{ stat: "hp%", weight: 100 }],
+  gobletWeights: [{ stat: "pyro%", weight: 100 }],
+  circletWeights: [{ stat: "cr", weight: 100 }],
+  normalizer: 3,
+};
 
 const mockScoreResult: ArtifactScoreResult = {
   substatScore: {
@@ -21,7 +39,7 @@ const mockScoreResult: ArtifactScoreResult = {
     isComplete: true,
   },
   buildMatch: {
-    build: { name: "Test" },
+    build: mockBuild,
     buildIndex: 0,
     statWeights: { cr: 100, cd: 100 },
     setMatched: true,

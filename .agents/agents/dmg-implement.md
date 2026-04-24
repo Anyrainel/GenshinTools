@@ -28,14 +28,14 @@ Ad-hoc tasks skip Step 1 (tracker loading) and go directly to Step 2. No tracker
 
 Read these files:
 
-1. `.claude/skills/genshin-knowledge/translator-rules.md` — implementation checklist (U-series universal, S-series character-only). Same checklist the reviewer uses — apply it while writing code to catch scope mistakes, faction filters, per-char stacks, `offField` marking, etc. before you commit.
-2. `.claude/skills/genshin-knowledge/tools-and-tracking.md` — tracker schema
+1. `.agents/skills/genshin-knowledge/translator-rules.md` — implementation checklist (U-series universal, S-series character-only). Same checklist the reviewer uses — apply it while writing code to catch scope mistakes, faction filters, per-char stacks, `offField` marking, etc. before you commit.
+2. `.agents/skills/genshin-knowledge/tools-and-tracking.md` — tracker schema
 
 Consult as needed (don't need to load up-front):
 
-- `.claude/skills/genshin-knowledge/damage-design.md` — code patterns, extension system, buff classes. Open when you need the exact shape of a formula/buff class, the `BuffTarget` field list, or the `CharacterBase` API surface.
-- `.claude/skills/genshin-knowledge/damage-formulas.md` — math reference. Open when you need to verify damage-formula math or reaction multipliers.
-- `.claude/skills/genshin-knowledge/elemental-reactions.md` — reaction reference. Open when you encounter reaction-dependent formulas/buffs or need to verify reaction math.
+- `.agents/skills/genshin-knowledge/damage-design.md` — code patterns, extension system, buff classes. Open when you need the exact shape of a formula/buff class, the `BuffTarget` field list, or the `CharacterBase` API surface.
+- `.agents/skills/genshin-knowledge/damage-formulas.md` — math reference. Open when you need to verify damage-formula math or reaction multipliers.
+- `.agents/skills/genshin-knowledge/elemental-reactions.md` — reaction reference. Open when you encounter reaction-dependent formulas/buffs or need to verify reaction math.
 
 
 ---

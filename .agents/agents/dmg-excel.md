@@ -17,8 +17,8 @@ Only characters are supported (the Excel calculator has no weapon/artifact logic
 
 Read these files:
 
-1. `.claude/skills/genshin-knowledge/translator-rules.md` — review rules (needed to classify findings)
-2. `.claude/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
+1. `.agents/skills/genshin-knowledge/translator-rules.md` — review rules (needed to classify findings)
+2. `.agents/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
 
 ---
 

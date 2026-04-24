@@ -279,7 +279,17 @@ describe("Entity Instantiation", () => {
     });
   });
 
-  describe("Self buffs must not have maxStacks", () => {
+  // Characters allowed to use self buffs with maxStacks because their cap is a
+  // legitimate cross-skill (or cross-formula) global cap that can't be modeled
+  // as a per-part bespokeBuff (bespokeBuffs cap locally per FormulaPart only).
+  // For each entry, document the kit feature that justifies the exception.
+  const SELF_MAXSTACKS_ALLOWLIST: Record<string, string> = {
+    // Q "All Shall Wither" cancels after 10 NA-hit triggers per cast — the cap
+    // spans skirk-e-normal, skirk-e-normal-2, and skirk-c6-normal-coord.
+    skirk: "Q All Shall Wither 10-trigger cap across NA formulas",
+  };
+
+  describe("Self buffs should not have maxStacks (unless cross-skill cap)", () => {
     it.each(Object.keys(charactersById))("%s", (charId) => {
       try {
         const team = new TeamMeta([charId]);
@@ -293,9 +303,11 @@ describe("Entity Instantiation", () => {
             );
           }
         }
-        if (violations.length > 0)
+        if (violations.length > 0 && !SELF_MAXSTACKS_ALLOWLIST[charId])
           throw new Error(
-            `Self buffs must not use maxStacks (use formula nuances instead):\n${violations.join("\n")}`
+            `Self buffs normally shouldn't use maxStacks — refactor to a bespokeBuff on the relevant formula part(s) (bespokeBuffs cap locally per part, which is usually what you want).\n` +
+              `Exception: cross-skill / cross-formula global caps that can't be expressed per-part. If this is one of those, add the charId to SELF_MAXSTACKS_ALLOWLIST in this test with a one-line justification.\n` +
+              `Violations:\n${violations.join("\n")}`
           );
       } catch (e) {
         rethrowIfUnexpected(

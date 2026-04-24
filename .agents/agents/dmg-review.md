@@ -29,13 +29,13 @@ When `Entities:` is present, `<scope>` can be omitted.
 
 Read these files (you need all of them throughout the review):
 
-1. `.claude/skills/genshin-knowledge/translator-rules.md` — the review checklist (U-series universal, S-series character-only)
-2. `.claude/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
+1. `.agents/skills/genshin-knowledge/translator-rules.md` — the review checklist (U-series universal, S-series character-only)
+2. `.agents/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
 
 Consult as needed (don't need to load up-front):
 
-- `.claude/skills/genshin-knowledge/damage-formulas.md` — math reference. Open when you need to verify damage-formula math or reaction multipliers.
-- `.claude/skills/genshin-knowledge/elemental-reactions.md` — reaction reference. Open when you encounter reaction-dependent formulas/buffs or need to verify reaction math.
+- `.agents/skills/genshin-knowledge/damage-formulas.md` — math reference. Open when you need to verify damage-formula math or reaction multipliers.
+- `.agents/skills/genshin-knowledge/elemental-reactions.md` — reaction reference. Open when you encounter reaction-dependent formulas/buffs or need to verify reaction math.
 
 
 ---

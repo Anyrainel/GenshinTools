@@ -228,6 +228,22 @@ SHIELDER_MIN_C: dict[str, int] = {
     "beidou": 1,  # E shield requires timed hold/parry; real shield comes at C1.
 }
 
+# Primary heal action per character. Used by the ER calculator to anchor
+# heal-triggered weapons (Dialogues, Rightful Reward) to the correct skill
+# node. Only set for healers whose main healing source is the skill (E);
+# omission means the engine defaults to Q, which fits most Q-field healers.
+HEAL_ACTION: dict[str, str] = {
+    "baizhu": "E",
+    "barbara": "E",
+    "diona": "E",
+    "kuki_shinobu": "E",
+    "noelle": "E",
+    "qiqi": "E",
+    "sangonomiya_kokomi": "E",
+    "sayu": "E",
+    "sigewinne": "E",
+}
+
 
 def strip_html(s: str) -> str:
     return re.sub(r"<[^>]+>", "", s)
@@ -471,6 +487,8 @@ def main():
         elif is_nightsoul:
             faction = "Nightsoul"
 
+        heal_action = HEAL_ACTION.get(char_id) if healer_c is not None else None
+
         output.append(
             {
                 "id": char_id,
@@ -481,6 +499,7 @@ def main():
                 "c3Talent": c3_talent,
                 "c5Talent": c5_talent,
                 "faction": faction,
+                "healAction": heal_action,
             }
         )
 
@@ -496,13 +515,14 @@ def main():
         e = c["energy"]
         h_str = f" healerC: {c['healerC']}," if c["healerC"] is not None else ""
         s_str = f" shielderC: {c['shielderC']}," if c["shielderC"] is not None else ""
+        ha_str = f' healAction: "{c["healAction"]}",' if c.get("healAction") else ""
         sup_str = ""
         if c["supStat"]:
             sup_items = ", ".join(f'"{k}"' for k in c["supStat"])
             sup_str = f" supStat: [{sup_items}],"
         f_str = f', faction: "{c["faction"]}"' if c["faction"] is not None else ""
         lines.append(
-            f'  {k}: {{ energy: {e},{h_str}{s_str}{sup_str} c3Talent: "{c["c3Talent"]}", c5Talent: "{c["c5Talent"]}"{f_str} }},'  # noqa: E501
+            f'  {k}: {{ energy: {e},{h_str}{s_str}{ha_str}{sup_str} c3Talent: "{c["c3Talent"]}", c5Talent: "{c["c5Talent"]}"{f_str} }},'  # noqa: E501
         )
     lines.append("};")
     lines.append("")

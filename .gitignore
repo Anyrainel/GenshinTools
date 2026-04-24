@@ -41,9 +41,9 @@ blob-report/
 # Wrangler (Cloudflare)
 .wrangler/
 
-.claude/*
-!.claude/skills/
-!.claude/agents/
+.agents/*
+!.agents/skills/
+!.agents/agents/
 .superpowers/
 
 # Worktrees

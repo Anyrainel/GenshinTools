@@ -1,13 +1,13 @@
 ---
 name: dmg-agents
-description: Launch damage calculator agents (review, triage, implement, excel, cleanup). Use when the user asks to review, audit, triage, implement, cross-validate, or clean up damage formulas or buff implementations.
+description: Launch damage calculator worker subagents (review, triage, implement, excel, cleanup). Use when the user asks to review, audit, triage, implement, cross-validate, or clean up damage formulas or buff implementations.
 ---
 
 # Damage Agent Dispatch
 
-Launch specialized agents for the damage calculator pipeline. **Your job is to launch the right agent(s) with the right scope — not to read reference material yourself.** Each agent's instruction file tells it what to read.
+Launch specialized worker subagents for the damage calculator pipeline. **Your job is to launch the right worker(s) with the right scope — not to read reference material yourself.** Each worker's instruction file tells it what to read.
 
-> **Note:** This skill is specifically for the damage review/triage/implement pipeline. For generic coding tasks, continue using standard subagents (general-purpose, Explore, etc.) directly.
+> **Note:** This skill is specifically for the damage review/triage/implement pipeline. For generic coding tasks, continue using Codex's standard built-in subagents directly.
 
 > **Tracker files** live in `docs/dmg-tracker/` — one YAML per region/scope (e.g., `mondstadt.yaml`, `artifacts.yaml`).
 
@@ -29,18 +29,20 @@ Process specific entities by ID. Use `Entities:` with `<type>:<id>` pairs. **Can
 
 ## Agents
 
+Use Codex's `worker` subagent type for every launch below. Tell each worker that it is not alone in the codebase, must not revert edits made by others, and must adapt to concurrent changes. The prompt body should be the matching launch block below, with the requested scope filled in.
+
 ### dmg-review — Audit & fix implementations
 
 Reads implementations, creates tracker items for issues needing triage. **Does not modify implementation code.**
 
 **Launch (region scope):**
 ```
-Read `.claude/agents/dmg-review.md` and follow its instructions. Scope: C mondstadt
+Read `.agents/agents/dmg-review.md` and follow its instructions. Scope: C mondstadt
 ```
 
 **Launch (entity scope):**
 ```
-Read `.claude/agents/dmg-review.md` and follow its instructions. Entities: C:linnea, W:golden_frostbound_oath
+Read `.agents/agents/dmg-review.md` and follow its instructions. Entities: C:linnea, W:golden_frostbound_oath
 ```
 
 ### dmg-triage — Process open tracker items
@@ -49,17 +51,17 @@ Researches open items, classifies as actionable or wont-do.
 
 **Launch (region scope):**
 ```
-Read `.claude/agents/dmg-triage.md` and follow its instructions. Scopes: mondstadt, liyue, inazuma
+Read `.agents/agents/dmg-triage.md` and follow its instructions. Scopes: mondstadt, liyue, inazuma
 ```
 
 **Launch (entity scope):**
 ```
-Read `.claude/agents/dmg-triage.md` and follow its instructions. Entities: C:linnea, W:golden_frostbound_oath
+Read `.agents/agents/dmg-triage.md` and follow its instructions. Entities: C:linnea, W:golden_frostbound_oath
 ```
 
 **Launch (retriage mode):** Re-evaluate all open + actionable items against updated rules:
 ```
-Read `.claude/agents/dmg-triage.md` and follow its instructions. Scopes: mondstadt, liyue, inazuma. --retriage
+Read `.agents/agents/dmg-triage.md` and follow its instructions. Scopes: mondstadt, liyue, inazuma. --retriage
 ```
 
 Scope format: comma-separated region names, `weapons`, or `artifacts`. Combine small scopes into one agent.
@@ -70,17 +72,17 @@ Implements actionable tracker items or ad-hoc tasks, runs type-check, marks comp
 
 **Launch (tracker mode, region scope):**
 ```
-Read `.claude/agents/dmg-implement.md` and follow its instructions. Scope: mondstadt
+Read `.agents/agents/dmg-implement.md` and follow its instructions. Scope: mondstadt
 ```
 
 **Launch (tracker mode, entity scope):**
 ```
-Read `.claude/agents/dmg-implement.md` and follow its instructions. Entities: C:linnea
+Read `.agents/agents/dmg-implement.md` and follow its instructions. Entities: C:linnea
 ```
 
 **Launch (ad-hoc mode):**
 ```
-Read `.claude/agents/dmg-implement.md` and follow its instructions. Task: Add E Hold formula to Shenhe with param index 2, Cryo/skill/none
+Read `.agents/agents/dmg-implement.md` and follow its instructions. Task: Add E Hold formula to Shenhe with param index 2, Cryo/skill/none
 ```
 
 ### dmg-excel — Cross-validate against Excel calculator
@@ -89,12 +91,12 @@ Compares character damage implementations against the Chinese community Excel da
 
 **Launch (region scope):**
 ```
-Read `.claude/agents/dmg-excel.md` and follow its instructions. Scope: C mondstadt
+Read `.agents/agents/dmg-excel.md` and follow its instructions. Scope: C mondstadt
 ```
 
 **Launch (entity scope):**
 ```
-Read `.claude/agents/dmg-excel.md` and follow its instructions. Entities: C:hu_tao
+Read `.agents/agents/dmg-excel.md` and follow its instructions. Entities: C:hu_tao
 ```
 
 **Note:** Different regions can run in parallel (they write to separate tracker files). Avoid running excel + review on the same region simultaneously.
@@ -105,12 +107,12 @@ Scans implementations for code quality issues. **Modifies code directly.**
 
 **Launch (region scope):**
 ```
-Read `.claude/agents/dmg-cleanup.md` and follow its instructions. Scope: C mondstadt
+Read `.agents/agents/dmg-cleanup.md` and follow its instructions. Scope: C mondstadt
 ```
 
 **Launch (entity scope):**
 ```
-Read `.claude/agents/dmg-cleanup.md` and follow its instructions. Entities: C:linnea, W:golden_frostbound_oath
+Read `.agents/agents/dmg-cleanup.md` and follow its instructions. Entities: C:linnea, W:golden_frostbound_oath
 ```
 
 **Note:** This agent modifies implementation files. Don't run it in parallel with review or implement on the same entities.

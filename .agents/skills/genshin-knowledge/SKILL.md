@@ -22,6 +22,6 @@ Reference material for implementing, reviewing, and tracking damage calculator e
 | 4 | Translator Rules | `translator-rules.md` | Review checklist: U1–U9 (universal), S1–S13 (character-only) |
 | 5 | Tools & Tracking | `tools-and-tracking.md` | `impl_audit.py` commands, tracker YAML schema, state machine |
 
-All topic files are in the same directory as this file: `.claude/skills/genshin-knowledge/`.
+All topic files are in the same directory as this file: `.agents/skills/genshin-knowledge/`.
 
 To launch damage agents (review, triage, implement), use the `dmg-agents` skill instead — it handles dispatch. This skill is reference material only.

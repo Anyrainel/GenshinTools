@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
 import {
-  DEFAULT_INVESTMENT_THRESHOLDS,
+  DEFAULT_RECOMMENDATION_PREFS,
   migrateTierStore,
   type TierListInstance,
   useTierStore,
@@ -26,7 +26,7 @@ beforeEach(() => {
     showWeapons: true,
     showTravelers: false,
     showManekin: false,
-    investmentThresholds: { ...DEFAULT_INVESTMENT_THRESHOLDS },
+    recommendationPrefs: { ...DEFAULT_RECOMMENDATION_PREFS },
     tierAssignments: {},
     tierCustomization: {},
     customTitle: "",
@@ -70,9 +70,9 @@ describe("useTierStore", () => {
       expect(state.customTitle).toBe("");
     });
 
-    it("has default investment thresholds", () => {
+    it("has default recommendation prefs", () => {
       const state = useTierStore.getState();
-      expect(state.investmentThresholds).toEqual(DEFAULT_INVESTMENT_THRESHOLDS);
+      expect(state.recommendationPrefs).toEqual(DEFAULT_RECOMMENDATION_PREFS);
     });
   });
 
@@ -313,13 +313,22 @@ describe("useTierStore", () => {
     });
   });
 
-  describe("setInvestmentThreshold", () => {
-    it("updates a single threshold key", () => {
-      useTierStore.getState().setInvestmentThreshold("swap", 5);
-      const state = useTierStore.getState();
-      expect(state.investmentThresholds.swap).toBe(5);
-      expect(state.investmentThresholds.upgrade).toBe(
-        DEFAULT_INVESTMENT_THRESHOLDS.upgrade
+  describe("recommendation prefs", () => {
+    it("setScoreDiffThreshold updates the threshold", () => {
+      useTierStore.getState().setScoreDiffThreshold(5);
+      expect(
+        useTierStore.getState().recommendationPrefs.scoreDiffThreshold
+      ).toBe(5);
+    });
+
+    it("setIncludeUpgrades toggles the upgrade flag", () => {
+      useTierStore.getState().setIncludeUpgrades(false);
+      expect(useTierStore.getState().recommendationPrefs.includeUpgrades).toBe(
+        false
+      );
+      useTierStore.getState().setIncludeUpgrades(true);
+      expect(useTierStore.getState().recommendationPrefs.includeUpgrades).toBe(
+        true
       );
     });
   });
@@ -493,7 +502,7 @@ describe("useTierStore", () => {
 
   // Migration
   describe("migrateTierStore", () => {
-    it("migrates v0 flat format to v1 multi-instance", () => {
+    it("migrates v0 flat format to v2 multi-instance + recommendation prefs", () => {
       const v0State = {
         tierAssignments: { venti: { tier: "S", position: 0 } },
         tierCustomization: { S: { displayName: "Best", hidden: false } },
@@ -513,7 +522,12 @@ describe("useTierStore", () => {
       expect(result.showWeapons).toBe(false);
       expect(result.showTravelers).toBe(true);
       expect(result.showManekin).toBe(true);
-      expect(result.investmentThresholds).toEqual(v0State.investmentThresholds);
+      // v0/v1 had per-source thresholds; we collapse to a single score-diff
+      // threshold = min(swap, upgrade) so visible recs stay close.
+      expect(result.recommendationPrefs).toEqual({
+        scoreDiffThreshold: 2,
+        includeUpgrades: true,
+      });
 
       const tierLists = result.tierLists as Record<number, TierListInstance>;
       expect(tierLists[1]).toBeDefined();
@@ -538,9 +552,7 @@ describe("useTierStore", () => {
       expect(tierLists[1].customTitle).toBe("");
       expect(result.showWeapons).toBe(true);
       expect(result.showTravelers).toBe(false);
-      expect(result.investmentThresholds).toEqual(
-        DEFAULT_INVESTMENT_THRESHOLDS
-      );
+      expect(result.recommendationPrefs).toEqual(DEFAULT_RECOMMENDATION_PREFS);
     });
 
     it("handles null persisted state for v0", () => {
@@ -551,15 +563,20 @@ describe("useTierStore", () => {
       expect(tierLists[1].tierAssignments).toEqual({});
     });
 
-    it("passes through v1 state unchanged", () => {
+    it("migrates v1 state to v2 by collapsing investmentThresholds", () => {
       const v1State = {
         tierLists: { 1: { id: 1, customTitle: "Already v1" } },
         activeTierListId: 1,
         nextId: 2,
+        investmentThresholds: { swap: 3, upgrade: 5, reroll: 8, farm: 6 },
       };
 
       const result = migrateTierStore(v1State, 1);
-      expect(result).toBe(v1State); // same reference
+      expect(result.recommendationPrefs).toEqual({
+        scoreDiffThreshold: 3,
+        includeUpgrades: true,
+      });
+      expect(result.investmentThresholds).toBeUndefined();
     });
   });
 });

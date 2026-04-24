@@ -1,11 +1,11 @@
 ---
 name: energy-agents
-description: Launch energy recovery data agents to populate selfEnergy data files. Use when the user asks to generate, update, or review self-energy recovery data for the ER calculator.
+description: Launch energy recovery worker subagents to populate selfEnergy data files. Use when the user asks to generate, update, or review self-energy recovery data for the ER calculator.
 ---
 
 # Energy Recovery Agent Dispatch
 
-Launch specialized agents to populate `src/data/ercalc/selfEnergy/<region>.json` with per-character energy recovery effects. Each agent reads character kits via `impl_audit.py` and writes to its own region file.
+Launch specialized worker subagents to populate `src/data/ercalc/selfEnergy/<region>.json` with per-character energy recovery effects. Each worker reads character kits via `impl_audit.py` and writes to its own region file.
 
 > **Note:** This skill is specifically for the energy recovery data pipeline. For other ER calculator work, use standard subagents.
 
@@ -35,18 +35,20 @@ uv run --project scripts/pyproject.toml scripts/gen_self_energy.py
 
 ## Agents
 
+Use Codex's `worker` subagent type for every launch below. Tell each worker that it is not alone in the codebase, must not revert edits made by others, and must adapt to concurrent changes. The prompt body should be the matching launch block below, with the requested scope filled in.
+
 ### energy-review — Generate/update selfEnergy entries
 
 Reads each candidate's full kit, determines energy recovery mechanics, and writes correct JSON entries to the region file.
 
 **Launch (region scope):**
 ```
-Read `.claude/agents/energy-review.md` and follow its instructions. Region: mondstadt
+Read `.agents/agents/energy-review.md` and follow its instructions. Region: mondstadt
 ```
 
 **Launch (entity scope):**
 ```
-Read `.claude/agents/energy-review.md` and follow its instructions. Entities: raiden_shogun, dori
+Read `.agents/agents/energy-review.md` and follow its instructions. Entities: raiden_shogun, dori
 ```
 
 ## Right-Sizing

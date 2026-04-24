@@ -448,6 +448,9 @@ export function TimelineStrip({
                           onToggleFavonius={(v) =>
                             onUpdateAction(i, { ...act, favoniusProc: v })
                           }
+                          onToggleReaction={(v) =>
+                            onUpdateAction(i, { ...act, reactionProc: v })
+                          }
                           onAddProc={(sourceChar, trigger) =>
                             handleAddProc(sourceChar, i, trigger)
                           }
@@ -537,6 +540,7 @@ function MainChip({
   onDragEnd,
   onRemove,
   onToggleFavonius,
+  onToggleReaction,
   onAddProc,
 }: {
   act: TimelineAction;
@@ -557,6 +561,7 @@ function MainChip({
   onDragEnd: () => void;
   onRemove: () => void;
   onToggleFavonius: (v: boolean) => void;
+  onToggleReaction: (v: boolean) => void;
   onAddProc: (sourceChar: string, trigger: "E" | "Q") => void;
 }) {
   const { t, language } = useLanguage();
@@ -568,13 +573,24 @@ function MainChip({
     !!slot &&
     !!slot.weaponId &&
     weaponEnergyById[slot.weaponId]?.energy.effect === "particles";
-  const favEligible =
-    hasFavWeapon &&
-    (act.action === "E" ||
-      act.action === "holdE" ||
-      act.action === "specialE" ||
-      act.action === "Q" ||
-      act.action === "specialQ");
+  const isSkillOrBurst =
+    act.action === "E" ||
+    act.action === "holdE" ||
+    act.action === "specialE" ||
+    act.action === "Q" ||
+    act.action === "specialQ";
+  const favEligible = hasFavWeapon && isSkillOrBurst;
+
+  // Reaction trigger weapon equipped? Shows a "this E/Q reacts" toggle so
+  // reaction-triggered weapons (Bloodsoaked Ruins, Lumidouce Elegy, etc.)
+  // fire at user-designated skill nodes instead of lumping at Q.
+  const wEnergy = slot?.weaponId
+    ? weaponEnergyById[slot.weaponId]?.energy
+    : undefined;
+  const reactionEligible =
+    isSkillOrBurst &&
+    wEnergy?.effect === "flatEnergy" &&
+    wEnergy.trigger === "reaction";
 
   // Other team members who could attach a periodic proc here (when this char is on-field)
   const periodicSourceCandidates = team.filter(
@@ -763,6 +779,22 @@ function MainChip({
                   +3 {t.ui("erCalc.clearParticle")}
                 </span>
               </span>
+            </label>
+          </div>
+        )}
+
+        {/* Reaction trigger toggle (Bloodsoaked Ruins, Lumidouce Elegy, etc.) */}
+        {reactionEligible && (
+          <div className="border-t border-border/30 pt-2">
+            <label className="flex items-center gap-2 cursor-pointer text-xs">
+              <input
+                type="checkbox"
+                checked={!!act.reactionProc}
+                onChange={(e) => onToggleReaction(e.target.checked)}
+                className="rounded border-border"
+              />
+              <Zap className="w-3.5 h-3.5 text-fuchsia-400" />
+              <span>{t.ui("erCalc.reactionTrigger")}</span>
             </label>
           </div>
         )}

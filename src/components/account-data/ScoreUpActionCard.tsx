@@ -4,9 +4,6 @@ import {
   ArrowRightLeft,
   CircleHelp,
   CirclePlus,
-  Dices,
-  Pickaxe,
-  RefreshCw,
   TrendingUp,
 } from "lucide-react";
 import { memo } from "react";
@@ -43,14 +40,6 @@ function getActionIcon(actionType: string) {
         color: "text-emerald-400",
         bg: "bg-emerald-800/30",
       };
-    case "reroll":
-      return { icon: Dices, color: "text-violet-400", bg: "bg-violet-800/30" };
-    case "farm":
-      return {
-        icon: Pickaxe,
-        color: "text-indigo-400",
-        bg: "bg-indigo-800/30",
-      };
     default:
       return { icon: CircleHelp, color: "text-gray-400", bg: "bg-gray-800/30" };
   }
@@ -84,28 +73,13 @@ function ScoreUpActionCardComponent({
   const sourceArtifact = rec.sourceArtifactId
     ? (artifactLookup.get(rec.sourceArtifactId) ?? null)
     : null;
-  // Farm actions have no real source artifact — use the optimizer's synthetic ideal.
-  const farmIdeal =
-    rec.actionType === "farm" && rec.idealArtifact ? rec.idealArtifact : null;
-
   const isSwapLike =
     rec.actionType === "swap" ||
     rec.actionType === "equip" ||
     rec.actionType === "upgrade";
 
-  const getPlaceholderIcon = () => {
-    switch (rec.actionType) {
-      case "farm":
-        return CircleHelp;
-      case "upgrade":
-        return TrendingUp;
-      case "reroll":
-        return RefreshCw;
-      default:
-        return CircleHelp;
-    }
-  };
-  const PlaceholderIcon = getPlaceholderIcon();
+  const PlaceholderIcon =
+    rec.actionType === "upgrade" ? TrendingUp : CircleHelp;
 
   const isUpgradeInPlace =
     rec.actionType === "upgrade" &&
@@ -177,13 +151,9 @@ function ScoreUpActionCardComponent({
               ? t.ui("accountData.insights.swap")
               : rec.actionType === "upgrade"
                 ? t.ui("accountData.insights.upgrade")
-                : rec.actionType === "reroll"
-                  ? t.ui("accountData.insights.reroll")
-                  : rec.actionType === "farm"
-                    ? t.ui("accountData.insights.farm")
-                    : rec.actionType === "equip"
-                      ? t.ui("common.equip")
-                      : rec.actionType}
+                : rec.actionType === "equip"
+                  ? t.ui("common.equip")
+                  : rec.actionType}
           </span>
           <span className="text-xs text-foreground">{t.slot(rec.slot)}</span>
         </div>
@@ -237,16 +207,6 @@ function ScoreUpActionCardComponent({
             badge={sourceArtifact.astralMark ? "⭐" : undefined}
             size="sm"
           />
-        ) : farmIdeal ? (
-          <ItemIcon
-            artifactSetId={farmIdeal.setKey}
-            slot={rec.slot}
-            rarity={farmIdeal.rarity}
-            lock={false}
-            level={`+${farmIdeal.level}`}
-            badge="❓"
-            size="sm"
-          />
         ) : (
           <div className="flex items-center justify-center w-12 h-12">
             <PlaceholderIcon className="w-7 h-7 text-muted-foreground" />
@@ -280,20 +240,7 @@ function ScoreUpActionCardComponent({
     );
   }
 
-  // Farm: compare current vs the synthetic farm candidate the optimizer used.
-  if (farmIdeal) {
-    return (
-      <ArtifactComparisonHoverCard
-        beforeArtifact={currentArtifact ?? undefined}
-        afterArtifact={farmIdeal}
-        slot={rec.slot}
-      >
-        {cardContent}
-      </ArtifactComparisonHoverCard>
-    );
-  }
-
-  // Reroll or missing source — show only the current artifact
+  // Missing source — show only the current artifact
   if (currentArtifact) {
     return (
       <ArtifactComparisonHoverCard

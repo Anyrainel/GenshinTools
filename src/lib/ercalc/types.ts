@@ -15,15 +15,11 @@ export interface TeamMember {
   weaponType?: string; // for Scholar 4pc check
   /** [auto, skill, burst] talent levels, 1-based (matches Genshin in-game). */
   talentLevels?: [number, number, number];
-  /** Whether this character can trigger healing (for "heal"-triggered
-   *  weapons like Dialogues of the Desert Sages). Approximation:
-   *  `charInfo.healerC <= constellation`. */
-  isHealer?: boolean;
-  /** Whether this character can trigger an elemental reaction with the
-   *  current team (for "reaction"-triggered weapons). Approximation:
-   *  team has ≥2 reactive elements and this char's element is one of
-   *  them. Decided by the caller; engine reads this flag only. */
-  canTriggerReaction?: boolean;
+  /** Primary heal action ("E" or "Q"), from `charInfo.healAction`. Used to
+   *  anchor heal-triggered weapons to the right node. Unset for
+   *  non-healers. Defaults to "Q" when the char is a healer with no
+   *  explicit `healAction`. */
+  healAction?: "E" | "Q";
 }
 
 /** Slot in the team UI: character + equipment context. */
@@ -36,8 +32,8 @@ export type TeamSlot = {
   refinement?: number; // 0-4 for R1-R5
   /** [auto, skill, burst] talent levels, 1-based. */
   talentLevels?: [number, number, number];
-  isHealer?: boolean;
-  canTriggerReaction?: boolean;
+  /** Primary heal action (from charInfo.healAction). Unset for non-healers. */
+  healAction?: "E" | "Q";
 };
 
 // ─── Action model ───
@@ -83,6 +79,11 @@ export interface TimelineAction {
   /** Whether a Favonius particle proc fires at this node. Default false; auto-toggled
    *  by the UI for the first N E/Q actions of a Favonius wielder (N from refinement). */
   favoniusProc?: boolean;
+  /** Whether this E/Q triggers an elemental reaction, gating reaction-triggered
+   *  weapons (Bloodsoaked Ruins, Lumidouce Elegy, Nocturne's Curtain Call,
+   *  Flame-Forged Insight). Default false; user-togglable in the node popover
+   *  and UI-autotoggled when the wearer holds a reaction-trigger weapon. */
+  reactionProc?: boolean;
   /** Flat energy to grant at this node, keyed by recipient charId (team slot id).
    *  Only read when `action === "grantEnergy"`. */
   energyGrants?: Record<string, number>;

@@ -1,57 +1,74 @@
-import type { LuckExpectation, Slot, Tier } from "@/data/enums";
-import { allSlots } from "@/data/enums";
 /**
- * Diffs optimizer output against current equipment to produce typed recommendations.
+ * Recommendation engine: produces typed actions ("swap", "equip", "upgrade")
+ * from the tier-waterfall allocation + per-character upgrade pass.
+ *
+ * Pipeline:
+ *   1. tierWaterfall  → per-character allocated build (S→A→B→C→D, artifact-disjoint within tier).
+ *   2. allocationDiff → ScoreUpAction[] for slots whose allocated artifact differs from equipped.
+ *   3. upgradePass    → ScoreUpAction[] for upgrade recommendations (in-place + flex-swap variants).
+ *   4. filter & sort  → drop actions below the user's score-diff threshold.
  */
+
+import type { Slot, Tier } from "@/data/enums";
+import { allSlots } from "@/data/enums";
 import type {
   AccountData,
   ArtifactData,
-  CharacterData,
-  InvestmentThresholds,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
-import type {
-  ArtifactScoreResult,
-  BuildMatchResult,
-} from "../artifact/scoring/artifactScore";
 import {
-  getTargetMainStatsForSlot,
+  type ArtifactScoreResult,
   scoreSlotWithMainStat,
 } from "../artifact/scoring/artifactScore";
+import type { OptimizedBuild } from "./buildOptimizer";
 import {
-  type BuildOptimizerConfig,
-  type BuildOptimizerResult,
-  optimizeBuildWithCrCdExploration,
-} from "./buildOptimizer";
-import { buildCandidatePool } from "./candidatePool";
-import { type CrBudgetResult, computeCrBudget } from "./crBudget";
+  type AllocatedBuild,
+  type AllocationOptions,
+  runTierWaterfall,
+} from "./tierWaterfall";
+import {
+  type CharacterUpgrades,
+  runUpgradePassForCharacter,
+  type UpgradeStrategy,
+} from "./upgradePass";
 
-export type ActionType = "swap" | "upgrade" | "reroll" | "farm" | "equip";
+export type ActionType = "swap" | "equip" | "upgrade";
 
 export interface ScoreUpAction {
   actionType: ActionType;
   characterId: string;
   slot: Slot;
-  /** ID of the source artifact to act on (swap in, upgrade, etc.). Null for farm. */
+  /** Artifact this action installs (allocation pick or upgrade target). Null when nothing to install. */
   sourceArtifactId: string | null;
-  /** ID of the currently equipped artifact in this slot. */
+  /** Artifact currently in this slot before applying the action. */
   currentArtifactId: string | null;
-  /** Artifact set key (for display — always available, even for farm candidates). */
+  /** Artifact set key of the source artifact (for display). */
   setKey: string;
+  /** Score delta for this single slot — used as the surface threshold. */
   slotScoreDiff: number;
+  /** Score delta for the whole build, applying all actions for this character. */
   buildScoreDiff: number;
+  /** Score this slot would contribute after the action. */
   maxPotentialScore: number;
+  /** True when the source artifact currently lives on a different character. */
   isSteal?: boolean;
   donorCharacterId?: string;
-  /** Synthetic artifact used by the optimizer for farm actions — shown as the "after" target. */
-  idealArtifact?: ArtifactData;
+  /** Upgrade strategy label (1/2/3). Only set on upgrade actions. */
+  upgradeStrategy?: UpgradeStrategy;
+  /** For compound upgrades (strategies 2/3): the additional swap-partner slot. */
+  swapSlot?: Slot;
+  swapArtifactId?: string;
 }
 
 export interface CharacterActions {
   characterId: string;
+  /** Sorted by slotScoreDiff desc. Includes both allocation diffs and upgrades. */
   actions: ScoreUpAction[];
-  optimizerResult: BuildOptimizerResult;
+  /** Tier this character is recommended under. */
+  tier: Tier;
+  /** Allocated build (post-waterfall). Null when no allocation could be made. */
+  allocatedBuild: OptimizedBuild | null;
 }
 
 export interface AllActions {
@@ -59,350 +76,178 @@ export interface AllActions {
   perCharacter: Record<string, CharacterActions>;
 }
 
-// ─── Recommendation Generation ───
-
-/** @internal — exported for testing */
-export function generateScoreUpActions(
-  char: CharacterData,
-  buildMatch: BuildMatchResult,
-  optimizerResult: BuildOptimizerResult,
-  targetMainStats: Record<Slot, Set<string>>,
-  thresholds?: InvestmentThresholds
-): CharacterActions {
-  const actions: ScoreUpAction[] = [];
-
-  if (optimizerResult.builds.length === 0) {
-    return { characterId: char.key, actions: actions, optimizerResult };
-  }
-
-  const topBuild = optimizerResult.builds[0];
-  const buildScoreDiff = topBuild.finalScore - optimizerResult.currentScore;
-
-  // Check each slot's artifact in the optimal build
-  for (const slot of allSlots) {
-    const optimal = topBuild.artifacts[slot];
-    if (!optimal) continue;
-
-    const current = char.artifacts[slot] ?? null;
-
-    // If source is "current", no action needed (already optimal or will be after leveling)
-    if (optimal.source === "current") {
-      // But if the current isn't at max level, this is an upgrade-in-place
-      if (current && optimal.sourceArtifactId === current.id) {
-        const currentScore = scoreSlotWithMainStat(
-          current,
-          buildMatch.statWeights,
-          targetMainStats[slot]
-        );
-        const optimalScore = topBuild.slotScores[slot];
-        const diff = optimalScore - currentScore;
-        const upgradeMin = thresholds?.upgrade ?? 1.0;
-        if (diff >= upgradeMin) {
-          actions.push({
-            actionType: "upgrade",
-            characterId: char.key,
-            slot,
-            sourceArtifactId: optimal.sourceArtifactId ?? null,
-            currentArtifactId: current.id,
-            setKey: optimal.setKey,
-            slotScoreDiff: diff,
-            buildScoreDiff,
-            maxPotentialScore: optimalScore,
-            isSteal: false,
-          });
-        }
-      }
-      continue;
-    }
-
-    const currentScore = current
-      ? scoreSlotWithMainStat(
-          current,
-          buildMatch.statWeights,
-          targetMainStats[slot]
-        )
-      : 0;
-    const slotScoreDiff = topBuild.slotScores[slot] - currentScore;
-
-    let actionType: ActionType;
-    switch (optimal.source) {
-      case "swap":
-        actionType = current ? "swap" : "equip";
-        break;
-      case "upgrade":
-        actionType = current ? "upgrade" : "equip";
-        break;
-      case "reroll":
-        actionType = "reroll";
-        break;
-      case "farm":
-        actionType = "farm";
-        break;
-      default:
-        continue;
-    }
-
-    // Skip improvements below threshold
-    if (thresholds) {
-      let minDiff: number;
-      if (actionType === "swap" || actionType === "equip")
-        minDiff = actionType === "equip" ? 0.5 : thresholds.swap;
-      else if (actionType === "upgrade") minDiff = thresholds.upgrade;
-      else if (actionType === "reroll") minDiff = thresholds.reroll;
-      else minDiff = thresholds.farm;
-      if (slotScoreDiff < minDiff) continue;
-    } else if (slotScoreDiff < 0.5) continue;
-
-    actions.push({
-      actionType,
-      characterId: char.key,
-      slot,
-      sourceArtifactId: optimal.sourceArtifactId ?? null,
-      currentArtifactId: current?.id ?? null,
-      setKey: optimal.setKey,
-      slotScoreDiff,
-      buildScoreDiff,
-      maxPotentialScore: topBuild.slotScores[slot],
-      isSteal: !!optimal.donorCharacterId,
-      donorCharacterId: optimal.donorCharacterId,
-      idealArtifact: actionType === "farm" ? optimal : undefined,
-    });
-  }
-
-  // Sort by slotScoreDiff desc
-  actions.sort((a, b) => b.slotScoreDiff - a.slotScoreDiff);
-
-  return { characterId: char.key, actions: actions, optimizerResult };
+export interface RecommendationPrefs {
+  /** Hide actions whose slot score diff falls below this. */
+  scoreDiffThreshold: number;
+  /** When false, allocation actions are still produced; upgrade actions are skipped. */
+  includeUpgrades: boolean;
 }
 
-// ─── Two-Pass Constrained Optimization ───
+export const DEFAULT_RECOMMENDATION_PREFS: RecommendationPrefs = {
+  scoreDiffThreshold: 1.0,
+  includeUpgrades: true,
+};
 
-/**
- * Run optimizer, then re-run with slots locked where the improvement doesn't
- * justify the action cost. This finds the best build the user would actually
- * want to execute, respecting their investment preference.
- *
- * Pass 1: unconstrained → find optimal build
- * Pass 2: lock slots where action cost exceeds threshold → re-optimize
- */
-function optimizeWithInvestmentConstraints(
-  baseConfig: BuildOptimizerConfig,
-  char: { key: string; artifacts: Partial<Record<Slot, ArtifactData>> },
-  buildMatch: BuildMatchResult,
-  thresholds: { swap: number; upgrade: number; reroll: number; farm: number }
-): BuildOptimizerResult {
-  // Pass 1: unconstrained (with CR/CD exploration)
-  const pass1 = optimizeBuildWithCrCdExploration(baseConfig);
-  if (pass1.builds.length === 0) return pass1;
-
-  const topBuild = pass1.builds[0];
-
-  // Identify slots that need locking
-  const slotsToLock: Slot[] = [];
-  for (const slot of allSlots) {
-    const optimal = topBuild.artifacts[slot];
-    if (!optimal || optimal.source === "current") continue;
-
-    const current = char.artifacts[slot];
-    const currentScore = current
-      ? scoreSlotWithMainStat(
-          current,
-          buildMatch.statWeights,
-          baseConfig.targetMainStats[slot]
-        )
-      : 0;
-    const slotDiff = topBuild.slotScores[slot] - currentScore;
-
-    // Map source to action type for threshold lookup
-    const source = optimal.source;
-    let threshold: number;
-    if (source === "swap") {
-      // Check if it's actually equip (no current) — equip is always free
-      if (!current) continue;
-      threshold = thresholds.swap;
-    } else if (source === "upgrade") {
-      // Upgrade-in-place (same artifact) uses upgrade threshold
-      // Upgrade from another artifact uses swap threshold (it's effectively a swap + upgrade)
-      threshold =
-        optimal.sourceArtifactId === current?.id
-          ? thresholds.upgrade
-          : thresholds.swap;
-    } else if (source === "reroll") {
-      threshold = thresholds.reroll;
-    } else if (source === "farm") {
-      threshold = thresholds.farm;
-    } else {
-      continue;
-    }
-
-    if (slotDiff < threshold) {
-      slotsToLock.push(slot);
-    }
-  }
-
-  // If no slots need locking, pass 1 result is already correct
-  if (slotsToLock.length === 0) return pass1;
-
-  // Pass 2: lock below-threshold slots to current-only candidates
-  const constrainedCandidates = { ...baseConfig.candidates };
-  for (const slot of slotsToLock) {
-    const currentOnly = constrainedCandidates[slot].filter(
-      (c) => c.source === "current"
-    );
-    // If no current candidate (empty slot), keep all candidates
-    if (currentOnly.length > 0) {
-      constrainedCandidates[slot] = currentOnly;
-    }
-  }
-
-  return optimizeBuildWithCrCdExploration({
-    ...baseConfig,
-    candidates: constrainedCandidates,
-  });
-}
+// ─── Main entry ───
 
 export function generateAllRecommendations(
   accountData: AccountData,
   scores: Record<string, ArtifactScoreResult | null>,
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {},
-  investmentThresholds?: InvestmentThresholds
+  prefs: RecommendationPrefs = DEFAULT_RECOMMENDATION_PREFS,
+  options: AllocationOptions = {}
 ): AllActions {
-  const byActionType: Record<ActionType, ScoreUpAction[]> = {
-    swap: [],
-    upgrade: [],
-    reroll: [],
-    farm: [],
-    equip: [],
-  };
-  const perCharacter: Record<string, CharacterActions> = {};
+  const allocation = runTierWaterfall(
+    accountData,
+    scores,
+    tierAssignments,
+    tierCustomization,
+    options
+  );
 
-  // Collect all artifacts for candidate pool
-  const allArtifacts: (ArtifactData & { location?: string })[] = [
-    ...accountData.extraArtifacts.map((a) => ({ ...a, location: undefined })),
+  const ownerByArtifactId = new Map<string, string>();
+  for (const char of accountData.characters) {
+    for (const a of Object.values(char.artifacts)) {
+      if (a) ownerByArtifactId.set(a.id, char.key);
+    }
+  }
+
+  const allArtifacts: ArtifactData[] = [
+    ...accountData.extraArtifacts,
     ...accountData.characters.flatMap((c) =>
-      Object.values(c.artifacts)
-        .filter((a): a is ArtifactData => !!a)
-        .map((a) => ({ ...a, location: c.key }))
+      Object.values(c.artifacts).filter((a): a is ArtifactData => !!a)
     ),
   ];
 
+  const byActionType: Record<ActionType, ScoreUpAction[]> = {
+    swap: [],
+    equip: [],
+    upgrade: [],
+  };
+  const perCharacter: Record<string, CharacterActions> = {};
+
   for (const char of accountData.characters) {
-    const tier: Tier = tierAssignments[char.key]?.tier || "Pool";
-    if (tier === "Pool") {
+    const alloc = allocation.perCharacter[char.key];
+    if (!alloc) {
       perCharacter[char.key] = {
         characterId: char.key,
         actions: [],
-        optimizerResult: {
-          builds: [],
-          currentScore: 0,
-          combinationsEvaluated: 0,
-        },
+        tier: tierAssignments[char.key]?.tier || "Pool",
+        allocatedBuild: null,
       };
       continue;
     }
 
-    const scoreResult = scores[char.key];
-    const buildMatch = scoreResult?.buildMatch;
-    if (!buildMatch) {
-      perCharacter[char.key] = {
-        characterId: char.key,
-        actions: [],
-        optimizerResult: {
-          builds: [],
-          currentScore: 0,
-          combinationsEvaluated: 0,
-        },
-      };
-      continue;
+    const actions: ScoreUpAction[] = [];
+    const buildScoreDiff =
+      alloc.build && alloc.context
+        ? alloc.build.finalScore - currentBuildScore(alloc, char)
+        : 0;
+
+    // 1. Allocation diff actions
+    if (alloc.build && alloc.context) {
+      for (const slot of allSlots) {
+        const allocated = alloc.build.artifacts[slot];
+        if (!allocated) continue;
+        const equipped = char.artifacts[slot];
+
+        if (equipped && equipped.id === allocated.id) continue;
+
+        const slotScore = alloc.build.slotScores[slot] ?? 0;
+        const currentSlotScore = equipped
+          ? scoreSlotWithMainStat(
+              equipped,
+              alloc.context.config.weights,
+              alloc.context.config.targetMainStats[slot]
+            )
+          : 0;
+        const slotScoreDiff = slotScore - currentSlotScore;
+        if (slotScoreDiff < prefs.scoreDiffThreshold) continue;
+
+        const donor = ownerByArtifactId.get(allocated.id);
+        const isSteal = !!donor && donor !== char.key;
+
+        actions.push({
+          actionType: equipped ? "swap" : "equip",
+          characterId: char.key,
+          slot,
+          sourceArtifactId: allocated.id,
+          currentArtifactId: equipped?.id ?? null,
+          setKey: allocated.setKey,
+          slotScoreDiff,
+          buildScoreDiff,
+          maxPotentialScore: slotScore,
+          isSteal,
+          donorCharacterId: isSteal ? donor : undefined,
+        });
+      }
     }
 
-    const luckExpectation: LuckExpectation =
-      tierCustomization[tier]?.luckExpectation || "balanced";
-
-    // Phase 1: CR Budget
-    let crBudget: CrBudgetResult;
-    try {
-      crBudget = computeCrBudget(char, buildMatch);
-    } catch {
-      crBudget = {
-        baseCr: 0.05,
-        ascensionCr: 0,
-        weaponSecondaryCr: 0,
-        weaponPassiveCr: 0,
-        artifactSetCr: 0,
-        totalNonArtifactCr: 0.05,
-      };
-    }
-
-    // Phase 2: Candidate Pool
-    const candidates = buildCandidatePool(
-      char,
-      buildMatch,
-      allArtifacts,
-      tierAssignments,
-      luckExpectation,
-      tier
-    );
-
-    // Phase 3: Optimize (two-pass with investment constraints)
-    const build = buildMatch.build;
-
-    // Build target main stats per slot for main stat scoring
-    const targetMainStats = {} as Record<Slot, Set<string>>;
-    for (const slot of allSlots) {
-      targetMainStats[slot] = getTargetMainStatsForSlot(
-        slot,
-        build,
-        char.artifacts[slot] ?? undefined
+    // 2. Upgrade actions (post-allocation)
+    if (prefs.includeUpgrades && alloc.build && alloc.context) {
+      const upgrades: CharacterUpgrades = runUpgradePassForCharacter(
+        alloc,
+        allArtifacts,
+        { minScoreDiff: prefs.scoreDiffThreshold }
       );
+      for (const up of upgrades.recommendations) {
+        const allocatedInSlot = alloc.build.artifacts[up.upgradeSlot];
+        actions.push({
+          actionType: "upgrade",
+          characterId: char.key,
+          slot: up.upgradeSlot,
+          sourceArtifactId: up.upgradeArtifactId,
+          currentArtifactId: allocatedInSlot?.id ?? null,
+          setKey: allocatedInSlot?.setKey ?? "",
+          slotScoreDiff: up.scoreDiff,
+          buildScoreDiff: buildScoreDiff + up.scoreDiff,
+          maxPotentialScore: up.finalScore,
+          upgradeStrategy: up.strategy,
+          swapSlot: up.swapSlot,
+          swapArtifactId: up.swapArtifactId,
+        });
+      }
     }
 
-    const baseConfig: BuildOptimizerConfig = {
-      weights: buildMatch.statWeights,
-      candidates,
-      crBudget,
-      targetMainStats,
-      setConstraint: {
-        composition: build.composition,
-        artifactSet: build.artifactSet,
-        halfSet1: build.halfSet1,
-        halfSet2: build.halfSet2,
-      },
+    actions.sort((a, b) => b.slotScoreDiff - a.slotScoreDiff);
+
+    perCharacter[char.key] = {
+      characterId: char.key,
+      actions,
+      tier: alloc.tier,
+      allocatedBuild: alloc.build,
     };
 
-    const optimizerResult = investmentThresholds
-      ? optimizeWithInvestmentConstraints(
-          baseConfig,
-          char,
-          buildMatch,
-          investmentThresholds
-        )
-      : optimizeBuildWithCrCdExploration(baseConfig);
-
-    // Phase 4: Generate Recommendations
-    const charRecs = generateScoreUpActions(
-      char,
-      buildMatch,
-      optimizerResult,
-      targetMainStats,
-      investmentThresholds
-    );
-
-    perCharacter[char.key] = charRecs;
-
-    // Group by action type
-    for (const rec of charRecs.actions) {
-      byActionType[rec.actionType].push(rec);
-    }
+    for (const a of actions) byActionType[a.actionType].push(a);
   }
 
-  // Sort each action type group by buildScoreDiff desc
-  for (const key of Object.keys(byActionType) as ActionType[]) {
-    byActionType[key].sort((a, b) => b.buildScoreDiff - a.buildScoreDiff);
+  for (const k of Object.keys(byActionType) as ActionType[]) {
+    byActionType[k].sort((a, b) => b.buildScoreDiff - a.buildScoreDiff);
   }
 
   return { byActionType, perCharacter };
+}
+
+// ─── Helpers ───
+
+function currentBuildScore(
+  alloc: AllocatedBuild,
+  char: AccountData["characters"][number]
+): number {
+  if (!alloc.context) return 0;
+  const { config } = alloc.context;
+  let total = 0;
+  for (const slot of allSlots) {
+    const eq = char.artifacts[slot];
+    if (!eq) continue;
+    total += scoreSlotWithMainStat(
+      eq,
+      config.weights,
+      config.targetMainStats[slot]
+    );
+  }
+  return total;
 }
 
 /** Build a flat artifact lookup map from account data (keyed by artifact ID). */

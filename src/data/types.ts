@@ -71,6 +71,11 @@ export type CharacterInfo = {
   energy: number;
   healerC?: number; // min constellation starting from 0, omitted if none
   shielderC?: number; // min constellation starting from 0, omitted if none
+  /** Which action primarily heals the party. Used by the ER calculator to
+   *  anchor heal-triggered weapons (Dialogues, Rightful Reward, etc.) to the
+   *  correct skill node. Default "Q" when omitted. Only meaningful when
+   *  `healerC` is set. */
+  healAction?: "E" | "Q";
   /** Stat keys that scale this character's heal or shield output. */
   supStat?: ("hp%" | "atk%" | "def%" | "em")[];
   c3Talent: "A" | "E" | "Q";
@@ -213,11 +218,11 @@ export type TierAssignment = {
   };
 };
 
-export type InvestmentThresholds = {
-  swap: number;
-  upgrade: number;
-  reroll: number;
-  farm: number;
+export type RecommendationPrefs = {
+  /** Hide actions whose slot score diff falls below this. */
+  scoreDiffThreshold: number;
+  /** When false, allocation actions are still produced; upgrade actions are skipped. */
+  includeUpgrades: boolean;
 };
 
 export type TierCustomization = {

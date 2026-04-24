@@ -260,7 +260,11 @@ export function optimizeBuild(
         const rawScore = partialScores[depth];
         const totalCr = crBudget.totalNonArtifactCr + partialCr[depth];
         const wastedCr = Math.max(0, totalCr - 1.0);
-        const crPenalty = wastedCr * 100 * 2 * (crWeight / 100);
+        // Excess CR contributes 0 to the score: subtract the raw value the
+        // over-cap CR substats added, leaving them as net-zero. The build is
+        // still feasible — going to e.g. 101% CR is allowed if the rest of
+        // the substats make it worthwhile.
+        const crPenalty = wastedCr * crWeight;
         const finalScore = rawScore - crPenalty;
 
         if (finalScore > tracker.threshold) {
@@ -378,4 +382,81 @@ export function optimizeBuildWithCrCdExploration(
     combinationsEvaluated:
       primary.combinationsEvaluated + altResult.combinationsEvaluated,
   };
+}
+
+// ─── Stand-alone build scoring (for upgrade pass, etc.) ───
+
+/**
+ * Score a fixed 5-artifact build using the same scoring + CR penalty logic
+ * the optimizer applies internally. Used by the upgrade pass to evaluate
+ * "what if I swap this artifact for an upgraded variant".
+ */
+export function scoreFullBuild(
+  artifacts: Record<Slot, CandidateArtifact>,
+  weights: StatWeightMap,
+  targetMainStats: Record<Slot, Set<string>>,
+  crBudget: CrBudgetResult
+): { rawScore: number; finalScore: number; totalArtifactCr: number } {
+  const crWeight = weights.cr ?? 0;
+  let rawScore = 0;
+  let totalArtifactCr = 0;
+  for (const slot of allSlots) {
+    const a = artifacts[slot];
+    if (!a) continue;
+    rawScore += scoreSlotWithMainStat(a, weights, targetMainStats[slot]);
+    totalArtifactCr += getCandidateCr(a);
+  }
+  const totalCr = crBudget.totalNonArtifactCr + totalArtifactCr;
+  const wastedCr = Math.max(0, totalCr - 1.0);
+  const crPenalty = wastedCr * crWeight;
+  return { rawScore, finalScore: rawScore - crPenalty, totalArtifactCr };
+}
+
+// ─── Top-K Enumeration (for cross-character allocation) ───
+
+/**
+ * The per-pattern inner enumeration can produce the same 5-artifact assignment
+ * under multiple patterns (e.g., a 4pc build with all 5 artifacts of the main
+ * set satisfies all 5 "flex-slot" patterns). We over-request by this factor
+ * and dedupe by sorted artifact-ID signature.
+ *
+ * Kept small because inflating topN weakens the TopNTracker's pruning threshold
+ * and can blow up inner B&B runtime on large candidate pools (particularly for
+ * 2pc+2pc builds with their 30 patterns).
+ */
+const DEDUP_INFLATE = 1;
+
+/**
+ * Enumerate the top-K *unique* feasible builds for a single character, in
+ * score-descending order. Two builds are considered equal when they use the
+ * same set of artifact IDs (regardless of which slot is the "flex" slot).
+ *
+ * Used by the allocation pass: each character contributes K "columns" (full builds)
+ * to the cross-character packer, which then picks one column per character such
+ * that artifact IDs are pairwise disjoint.
+ *
+ * K = 1 is equivalent to the current optimizer behavior. Larger K trades enumeration
+ * cost for more flexibility in resolving cross-character conflicts.
+ */
+export function enumerateBuilds(
+  config: BuildOptimizerConfig,
+  k: number
+): BuildOptimizerResult {
+  const inner = optimizeBuildWithCrCdExploration({
+    ...config,
+    topN: k * DEDUP_INFLATE,
+  });
+  const seen = new Set<string>();
+  const deduped: typeof inner.builds = [];
+  for (const b of inner.builds) {
+    const ids = allSlots
+      .map((s) => b.artifacts[s]?.id ?? "")
+      .sort()
+      .join("|");
+    if (seen.has(ids)) continue;
+    seen.add(ids);
+    deduped.push(b);
+    if (deduped.length >= k) break;
+  }
+  return { ...inner, builds: deduped };
 }

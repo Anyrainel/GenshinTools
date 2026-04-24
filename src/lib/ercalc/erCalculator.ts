@@ -1,5 +1,5 @@
 import { getTalentParam } from "@/data/gameStatsLoader";
-import { artifactEnergyById } from "@/lib/ercalc/artifactEnergy";
+import { getArtifactEnergyImpl } from "@/lib/ercalc/artifactEnergy";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import {
   allSelfEnergy,
@@ -355,8 +355,11 @@ function distributeParticles(
   particleElement: string,
   absorber: string,
   offFieldMult: number,
-  rotationLength: number
+  rotationLength: number,
+  artifactScratch: Map<string, Record<string, unknown>>
 ): void {
+  const wrappedIndex =
+    rotationLength > 0 ? sourceIndex % rotationLength : sourceIndex;
   for (const m of team) {
     const s = state.get(m.id);
     if (!s) continue;
@@ -366,8 +369,7 @@ function distributeParticles(
       particleCount * elementMatchEnergy(m.element, particleElement) * mult;
     s.particleAccum += energy;
     s.currentEvents.push({
-      sourceIndex:
-        rotationLength > 0 ? sourceIndex % rotationLength : sourceIndex,
+      sourceIndex: wrappedIndex,
       sourceChar,
       sourceAction,
       absorberChar: absorber,
@@ -377,6 +379,45 @@ function distributeParticles(
       onField,
       type: "particle",
     });
+
+    // Artifact 4pc onParticleGain hook — fires for the wearer only, and only
+    // when this member has any positive gain. Emitted events feed into the
+    // same flat-accum stream as weapon/self-energy events.
+    if (particleCount <= 0) continue;
+    const impl =
+      m.artifactSet?.type === "4pc"
+        ? getArtifactEnergyImpl(m.artifactSet.setId)
+        : undefined;
+    if (!impl?.onParticleGain) continue;
+    let scratch = artifactScratch.get(m.id);
+    if (!scratch) {
+      scratch = {};
+      artifactScratch.set(m.id, scratch);
+    }
+    const gainEvents = impl.onParticleGain({
+      wearer: m,
+      team,
+      particleCount,
+      isOrb: false,
+      actionIndex: sourceIndex,
+      scratch,
+    });
+    for (const ev of gainEvents) {
+      const rs = state.get(ev.recipientId);
+      if (!rs) continue;
+      rs.flatAccum += ev.amount;
+      rs.currentEvents.push({
+        sourceIndex: wrappedIndex,
+        sourceChar: ev.sourceChar,
+        sourceAction: ev.sourceAction,
+        absorberChar: ev.recipientId,
+        particleCount: 0,
+        particleElement: "",
+        energyAt100: ev.amount,
+        onField: ev.recipientId === absorber,
+        type: "flat",
+      });
+    }
   }
 }
 
@@ -474,9 +515,11 @@ function collectFlatEventsAt(
 
   // 3) Weapon flat-energy triggers for the source's own weapon.
   //    - burst / skill  → fire at wearer's matching action.
-  //    - heal           → approximate: fire at wearer's Q if wearer is a healer.
-  //    - reaction       → approximate: fire at wearer's Q if wearer participates
-  //                        in a team reaction (caller sets canTriggerReaction).
+  //    - heal           → fire at the wearer's primary heal action
+  //                        (`charInfo.healAction`, default "Q"). Only when the
+  //                        wearer is actually a healer (TeamMember.healAction set).
+  //    - reaction       → fire when the user toggles `reactionProc` on the
+  //                        node (E or Q only).
   //    - partyPlunge    → handled in a second pass below; fires for every plunge
   //                        action in the timeline regardless of who performs it.
   const we = source.weaponId ? weaponEnergyById[source.weaponId] : undefined;
@@ -485,11 +528,18 @@ function collectFlatEventsAt(
     const isBurst = act.action === "Q" || act.action === "specialQ";
     const isSkill =
       act.action === "E" || act.action === "holdE" || act.action === "specialE";
+    const healFires =
+      trig === "heal" &&
+      source.healAction != null &&
+      ((source.healAction === "Q" && isBurst) ||
+        (source.healAction === "E" && isSkill));
+    const reactionFires =
+      trig === "reaction" && act.reactionProc === true && (isBurst || isSkill);
     const fires =
       (trig === "burst" && isBurst) ||
       (trig === "skill" && isSkill) ||
-      (trig === "heal" && isBurst && source.isHealer === true) ||
-      (trig === "reaction" && isBurst && source.canTriggerReaction === true);
+      healFires ||
+      reactionFires;
     if (fires) {
       out.push({
         recipientId: source.id,
@@ -520,31 +570,22 @@ function collectFlatEventsAt(
     }
   }
 
-  // 4) Artifact 4pc flat-energy — only burst trigger is modeled.
-  const ae =
+  // 4) Artifact 4pc — delegate to the set's impl. Each set expresses its own
+  //    trigger/target/procs logic (no shared config shape).
+  const impl =
     source.artifactSet?.type === "4pc"
-      ? artifactEnergyById[source.artifactSet.setId]
+      ? getArtifactEnergyImpl(source.artifactSet.setId)
       : undefined;
-  if (
-    ae &&
-    ae.trigger === "burst" &&
-    (act.action === "Q" || act.action === "specialQ")
-  ) {
-    const recipients =
-      ae.target === "partyOthers"
-        ? team.filter((m) => m.id !== source.id)
-        : team;
-    for (const r of recipients) {
+  if (impl?.onAction) {
+    for (const ev of impl.onAction({ act, wearer: source, team })) {
       out.push({
-        recipientId: r.id,
-        sourceChar: source.id,
-        sourceAction: act.action,
-        sourceLabel:
-          source.artifactSet?.type === "4pc"
-            ? `${source.artifactSet.setId} 4pc`
-            : "artifact",
-        amount: ae.flatEnergy,
+        recipientId: ev.recipientId,
+        sourceChar: ev.sourceChar,
+        sourceAction: ev.sourceAction,
+        sourceLabel: ev.sourceLabel,
+        amount: ev.amount,
         isErScaling: false,
+        procs: ev.procs,
       });
     }
   }
@@ -656,6 +697,7 @@ function simulateSequence(
 
   const state = new Map<string, CharSimState>();
   for (const m of team) state.set(m.id, freshState());
+  const artifactScratch = new Map<string, Record<string, unknown>>();
 
   for (let i = 0; i < actions.length; i++) {
     const act = actions[i];
@@ -681,7 +723,8 @@ function simulateSequence(
             getParticleElement(proc.sourceChar),
             act.char, // on-field absorber
             offFieldMult,
-            rotationLength
+            rotationLength,
+            artifactScratch
           );
         }
       }
@@ -705,7 +748,8 @@ function simulateSequence(
           getParticleElement(act.char),
           absorber,
           offFieldMult,
-          rotationLength
+          rotationLength,
+          artifactScratch
         );
       }
     }
@@ -728,7 +772,8 @@ function simulateSequence(
           getParticleElement(act.char),
           absorber,
           offFieldMult,
-          rotationLength
+          rotationLength,
+          artifactScratch
         );
       }
     }
@@ -751,7 +796,8 @@ function simulateSequence(
           "Clear",
           absorber,
           offFieldMult,
-          rotationLength
+          rotationLength,
+          artifactScratch
         );
       }
     }
@@ -1052,8 +1098,7 @@ export function toTeamMember(slot: TeamSlot): TeamMember {
     weaponId: slot.weaponId,
     refinement: slot.refinement,
     talentLevels: slot.talentLevels,
-    isHealer: slot.isHealer,
-    canTriggerReaction: slot.canTriggerReaction,
+    healAction: slot.healAction,
   };
 }
 

@@ -89,17 +89,6 @@ function resolveCharCtx(
 
 function teamToSlots(team: Team, accountData: AccountData | null): TeamSlot[] {
   const charIds = team.characters.filter((id): id is string => id != null);
-  // Team reaction heuristic: any two chars with different reactive elements
-  // from {Pyro, Hydro, Electro, Cryo, Dendro} → reactive team. Anemo/Geo
-  // are supports and don't directly enable reactions on their wielders.
-  const reactiveEls = new Set<string>();
-  for (const id of charIds) {
-    const el = particles[id]?.element;
-    if (!el) continue;
-    if (["Pyro", "Hydro", "Electro", "Cryo", "Dendro"].includes(el))
-      reactiveEls.add(el);
-  }
-  const teamCanReact = reactiveEls.size >= 2;
 
   return charIds
     .map((charId, i) => {
@@ -113,15 +102,13 @@ function teamToSlots(team: Team, accountData: AccountData | null): TeamSlot[] {
         team,
         accountData
       );
-      // Healer gate: matches dmgcalc convention — healerC field is the
-      // constellation threshold above which the char functions as a healer.
+      // healAction: only set if this character actually heals at the current
+      // constellation. Default action is Q when data hasn't specified one.
       const isHealer =
         info?.healerC !== undefined && constellation >= info.healerC;
-      // Reaction gate: char must have a reactive element AND the team has
-      // ≥2 reactive elements overall.
-      const canTriggerReaction =
-        teamCanReact &&
-        ["Pyro", "Hydro", "Electro", "Cryo", "Dendro"].includes(element);
+      const healAction: "E" | "Q" | undefined = isHealer
+        ? (info?.healAction ?? "Q")
+        : undefined;
       return {
         charId,
         element,
@@ -129,8 +116,7 @@ function teamToSlots(team: Team, accountData: AccountData | null): TeamSlot[] {
         constellation,
         weaponId,
         talentLevels,
-        isHealer,
-        canTriggerReaction,
+        healAction,
       };
     })
     .filter((s) => particles[s.charId]);

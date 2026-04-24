@@ -1,11 +1,11 @@
 ---
 name: gcsim-particle-extract
-description: Launch agents that read gcsim character source code and extract v2-schema particle data. Use when the user asks to populate, update, or audit particle data from gcsim for the ER calculator.
+description: Launch worker subagents that read gcsim character source code and extract v2-schema particle data. Use when the user asks to populate, update, or audit particle data from gcsim for the ER calculator.
 ---
 
 # gcsim Particle Extraction Dispatch
 
-Launch parallel Sonnet agents to extract per-character particle generation data from a local gcsim clone, and emit v2-schema JSON into `src/data/ercalc/particles.gcsim.json`.
+Launch parallel worker subagents to extract per-character particle generation data from a local gcsim clone, and emit v2-schema batch JSON for later merge into `src/data/ercalc/particles.gcsim.json`.
 
 Fandom (`particles.json`) and Lunaris (`particles.lunaris.json`) remain as-is for cross-validation. This skill produces a third, higher-fidelity reference sourced from gcsim's actual runtime logic (`done` flags, probability rolls, ICD gating, etc.).
 
@@ -17,7 +17,7 @@ The location scanner covers **99 characters** (Barbara and the Traveler base fil
 
 ## Agent
 
-**`.claude/agents/gcsim-particle-extract.md`** contains the extraction rules. Each agent reads that file, processes its assigned batch of characters, and writes to its own batch output file.
+**`.agents/agents/gcsim-particle-extract.md`** contains the extraction rules. Each worker reads that file, processes its assigned batch of characters, and writes to its own batch output file.
 
 ## Launch
 
@@ -25,19 +25,19 @@ Batch size: **15 characters per agent**. For a full sweep of 99 covered chars â†
 
 Launch each agent with:
 ```
-Read `.claude/agents/gcsim-particle-extract.md` and follow its instructions.
+Read `.agents/agents/gcsim-particle-extract.md` and follow its instructions.
 Batch: <N>
 Characters: <id1>, <id2>, ..., <id15>
 ```
 
 Example for a subset re-run:
 ```
-Read `.claude/agents/gcsim-particle-extract.md` and follow its instructions.
+Read `.agents/agents/gcsim-particle-extract.md` and follow its instructions.
 Batch: 1
 Characters: bennett, fischl, hutao, raiden, klee, diona, charlotte, emilie, nahida, albedo, alhaitham, xiangling, xingqiu, ayaka, ayato
 ```
 
-All agents run concurrently â€” launch them in a single message with multiple `Agent` tool invocations, each with `model: "sonnet"`.
+All agents run concurrently. Use Codex's `worker` subagent type for each batch. Tell each worker that it is not alone in the codebase, must not revert edits made by others, and owns exactly its assigned batch output file.
 
 ## Parallelization
 

@@ -1,10 +1,4 @@
-import {
-  ArrowBigUpDash,
-  ArrowRightLeft,
-  Dices,
-  Info,
-  Pickaxe,
-} from "lucide-react";
+import { ArrowBigUpDash, Info, Sliders } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
@@ -136,8 +130,9 @@ export function RecommendationView({
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const tierCustomization = useTierStore((s) => s.tierCustomization);
   const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
-  const investmentThresholds = useTierStore((s) => s.investmentThresholds);
-  const setInvestmentThreshold = useTierStore((s) => s.setInvestmentThreshold);
+  const recommendationPrefs = useTierStore((s) => s.recommendationPrefs);
+  const setScoreDiffThreshold = useTierStore((s) => s.setScoreDiffThreshold);
+  const setIncludeUpgrades = useTierStore((s) => s.setIncludeUpgrades);
   // Generate optimizer-based recommendations
   const allRecs = useMemo(() => {
     if (!accountData) return null;
@@ -147,7 +142,7 @@ export function RecommendationView({
         scores,
         tierAssignments,
         tierCustomization,
-        investmentThresholds
+        recommendationPrefs
       );
     } catch (e) {
       console.error("Recommendation engine error:", e);
@@ -158,7 +153,7 @@ export function RecommendationView({
     scores,
     tierAssignments,
     tierCustomization,
-    investmentThresholds,
+    recommendationPrefs,
   ]);
 
   // Build artifact lookup for resolving recommendation artifact IDs
@@ -283,43 +278,25 @@ export function RecommendationView({
                 </PopoverContent>
               </Popover>
             </div>
-            {(
-              [
-                {
-                  key: "swap" as const,
-                  label: "accountData.insights.swap",
-                  icon: ArrowRightLeft,
-                  color: "text-sky-400",
-                },
-                {
-                  key: "upgrade" as const,
-                  label: "accountData.insights.upgrade",
-                  icon: ArrowBigUpDash,
-                  color: "text-emerald-400",
-                },
-                {
-                  key: "farm" as const,
-                  label: "accountData.insights.farm",
-                  icon: Pickaxe,
-                  color: "text-indigo-400",
-                },
-                {
-                  key: "reroll" as const,
-                  label: "accountData.insights.reroll",
-                  icon: Dices,
-                  color: "text-violet-400",
-                },
-              ] as const
-            ).map(({ key, label, icon: ThIcon, color }) => (
-              <ThresholdInput
-                key={key}
-                label={t.ui(label)}
-                icon={ThIcon}
-                color={color}
-                value={investmentThresholds[key]}
-                onChange={(v) => setInvestmentThreshold(key, v)}
+            <ThresholdInput
+              label={t.ui("accountData.insights.minScoreDiff")}
+              icon={Sliders}
+              color="text-sky-400"
+              value={recommendationPrefs.scoreDiffThreshold}
+              onChange={setScoreDiffThreshold}
+            />
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={recommendationPrefs.includeUpgrades}
+                onChange={(e) => setIncludeUpgrades(e.target.checked)}
+                className="accent-emerald-400 w-4 h-4"
               />
-            ))}
+              <ArrowBigUpDash className="w-4 h-4 text-emerald-400" />
+              <span className="text-sm text-emerald-400">
+                {t.ui("accountData.insights.includeUpgrades")}
+              </span>
+            </label>
           </CardContent>
         </Card>
       ) : (

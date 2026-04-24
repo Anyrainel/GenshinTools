@@ -20,7 +20,7 @@ This agent **reads game data and modifies implementation code directly**.
 ## Before You Start
 
 Read this file for context on how `this.param()` works:
-- `.claude/skills/genshin-knowledge/damage-design.md` — §9b covers the param accessor
+- `.agents/skills/genshin-knowledge/damage-design.md` — §9b covers the param accessor
 
 ---
 

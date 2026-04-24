@@ -414,8 +414,8 @@ export const i18nUiData = {
     insights: {
       upgrade: { en: "Upgrade", zh: "强化" },
       swap: { en: "Swap", zh: "替换" },
-      reroll: { en: "Reroll", zh: "洗词条" },
-      farm: { en: "Farm", zh: "刷取" },
+      minScoreDiff: { en: "Min score gain", zh: "最小评分提升" },
+      includeUpgrades: { en: "Include upgrades", zh: "包含强化建议" },
       fromInventory: { en: "In Inventory", zh: "背包中" },
       fromCharacter: { en: "from {0}", zh: "取自 {0}" },
       allGood: { en: "All Good!", zh: "完美!" },
@@ -2360,6 +2360,7 @@ export const i18nUiData = {
     drainLabel: { en: "Drain", zh: "消耗能量" },
     perProcSuffix: { en: "/proc", zh: "/次" },
     clearParticle: { en: "clear", zh: "中性粒子" },
+    reactionTrigger: { en: "Triggers reaction", zh: "触发反应" },
     perProcLabel: { en: "Per proc", zh: "每次微粒" },
     particleSuffix: { en: "P", zh: "球" },
     particlesSuffixTriggered: { en: " particles", zh: "产球" },

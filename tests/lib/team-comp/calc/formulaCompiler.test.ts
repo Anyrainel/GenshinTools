@@ -556,10 +556,27 @@ await Promise.all([
   weaponStatsResource.preload(),
 ]);
 
+/**
+ * Seeded PRNG (mulberry32) for deterministic fuzz inputs.
+ * One shared instance — fuzz loops still see varied draws across iterations,
+ * but the sequence is stable across test runs.
+ */
+function mulberry32(seed: number): () => number {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rand = mulberry32(0x9e3779b9);
+
 /** Random main stats per slot for fuzz testing. */
 function randomMainStats(): Record<Slot, MainStat> {
   const pick = <T>(arr: readonly T[]): T =>
-    arr[Math.floor(Math.random() * arr.length)];
+    arr[Math.floor(rand() * arr.length)];
   return {
     flower: "hp",
     plume: "atk",
@@ -611,10 +628,10 @@ function randomSubRolls(): Record<Slot, Partial<Record<SubStat, number>>> {
     "circlet",
   ] as const) {
     // Pick 4 random substats, give each 1-6 rolls
-    const shuffled = [...allSubs].sort(() => Math.random() - 0.5);
+    const shuffled = [...allSubs].sort(() => rand() - 0.5);
     const picked = shuffled.slice(0, 4);
     for (const sub of picked) {
-      result[slot][sub] = Math.floor(Math.random() * 6) + 1;
+      result[slot][sub] = Math.floor(rand() * 6) + 1;
     }
   }
   return result;
@@ -2041,15 +2058,6 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
     const formulaId = getFirstFormulaId(tb, carryId);
     const charIds = DILUC_TEAM.map((c) => c.charId);
 
-    const sheets: Record<string, StatSheet> = {};
-    for (const cid of charIds) {
-      sheets[cid] = buildSheetFromMainAndSubs(
-        randomMainStats(),
-        randomSubRolls(),
-        rv
-      );
-    }
-
     const ctxPerChar: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
@@ -2066,44 +2074,63 @@ describe("compileComboTeamDamage — perCharCrTarget", () => {
       substatBudget: "8_6",
     };
 
-    const compiledPerChar = compileComboTeamDamage(
-      tb,
-      singleFormulaCombo(carryId, formulaId),
-      carryId,
-      sheets,
-      ctxPerChar
-    );
-    const charIdxPerChar = compiledPerChar.charIdxMap?.get(carryId) ?? 0;
-    const varsPerChar = new Float64Array(compiledPerChar.numVars);
-    varsPerChar.fill(0);
-    fillVarsFromSheet(
-      sheets[carryId],
-      compiledPerChar.varMapping,
-      charIdxPerChar,
-      varsPerChar
-    );
-    const dmgPerChar = compiledPerChar.evaluate(varsPerChar);
+    // Run a few trials — random sheets may saturate CR at 100% (making the
+    // delta a no-op), so we only require at least one trial shows a change.
+    let sawChange = false;
+    for (let trial = 0; trial < 5; trial++) {
+      const sheets: Record<string, StatSheet> = {};
+      for (const cid of charIds) {
+        sheets[cid] = buildSheetFromMainAndSubs(
+          randomMainStats(),
+          randomSubRolls(),
+          rv
+        );
+      }
 
-    const compiledNone = compileComboTeamDamage(
-      tb,
-      singleFormulaCombo(carryId, formulaId),
-      carryId,
-      sheets,
-      ctxNone
-    );
-    const charIdxNone = compiledNone.charIdxMap?.get(carryId) ?? 0;
-    const varsNone = new Float64Array(compiledNone.numVars);
-    varsNone.fill(0);
-    fillVarsFromSheet(
-      sheets[carryId],
-      compiledNone.varMapping,
-      charIdxNone,
-      varsNone
-    );
-    const dmgNone = compiledNone.evaluate(varsNone);
+      const compiledPerChar = compileComboTeamDamage(
+        tb,
+        singleFormulaCombo(carryId, formulaId),
+        carryId,
+        sheets,
+        ctxPerChar
+      );
+      const charIdxPerChar = compiledPerChar.charIdxMap?.get(carryId) ?? 0;
+      const varsPerChar = new Float64Array(compiledPerChar.numVars);
+      varsPerChar.fill(0);
+      fillVarsFromSheet(
+        sheets[carryId],
+        compiledPerChar.varMapping,
+        charIdxPerChar,
+        varsPerChar
+      );
+      const dmgPerChar = compiledPerChar.evaluate(varsPerChar);
 
-    // perCharCrTarget should change the result compared to no target
-    expect(dmgPerChar).not.toBeCloseTo(dmgNone, 2);
+      const compiledNone = compileComboTeamDamage(
+        tb,
+        singleFormulaCombo(carryId, formulaId),
+        carryId,
+        sheets,
+        ctxNone
+      );
+      const charIdxNone = compiledNone.charIdxMap?.get(carryId) ?? 0;
+      const varsNone = new Float64Array(compiledNone.numVars);
+      varsNone.fill(0);
+      fillVarsFromSheet(
+        sheets[carryId],
+        compiledNone.varMapping,
+        charIdxNone,
+        varsNone
+      );
+      const dmgNone = compiledNone.evaluate(varsNone);
+
+      if (Math.abs(dmgPerChar - dmgNone) > 1) {
+        sawChange = true;
+        break;
+      }
+    }
+
+    // perCharCrTarget should change the result in at least one trial
+    expect(sawChange).toBe(true);
   });
 
   it("perCharCrTarget=100 means crDelta=0 (no change from baseline)", () => {

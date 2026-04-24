@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { LuckExpectation } from "@/data/enums";
 import type {
-  InvestmentThresholds,
+  RecommendationPrefs,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
@@ -27,7 +27,7 @@ interface TierListState {
   showWeapons: boolean;
   showTravelers: boolean;
   showManekin: boolean;
-  investmentThresholds: InvestmentThresholds;
+  recommendationPrefs: RecommendationPrefs;
 
   // Derived fields from active list (backward-compatible selectors)
   tierAssignments: TierAssignment;
@@ -54,10 +54,8 @@ interface TierListState {
   setTierLuckExpectation: (tier: string, luck: LuckExpectation) => void;
 
   // View settings setters
-  setInvestmentThreshold: (
-    key: keyof InvestmentThresholds,
-    value: number
-  ) => void;
+  setScoreDiffThreshold: (value: number) => void;
+  setIncludeUpgrades: (include: boolean) => void;
   setShowWeapons: (show: boolean) => void;
   setShowTravelers: (show: boolean) => void;
   setShowManekin: (show: boolean) => void;
@@ -117,24 +115,58 @@ function updateActiveInstance(
 
 // Migration
 
-interface V0PersistedState {
+/** v0 (single instance, with farm/reroll thresholds) and v1 (multi-instance, same thresholds). */
+interface LegacyInvestmentThresholds {
+  swap?: number;
+  upgrade?: number;
+  reroll?: number;
+  farm?: number;
+}
+interface LegacyPersistedState {
+  // v0 fields
   tierAssignments?: TierAssignment;
   tierCustomization?: TierCustomization;
   customTitle?: string;
   author?: string;
   description?: string;
+  // v0 + v1
   showWeapons?: boolean;
   showTravelers?: boolean;
   showManekin?: boolean;
-  investmentThresholds?: InvestmentThresholds;
+  investmentThresholds?: LegacyInvestmentThresholds;
+  // v1
+  tierLists?: Record<number, TierListInstance>;
+  activeTierListId?: number;
+  nextId?: number;
+}
+
+export const DEFAULT_RECOMMENDATION_PREFS: RecommendationPrefs = {
+  scoreDiffThreshold: 1,
+  includeUpgrades: true,
+};
+
+function deriveRecommendationPrefs(
+  legacy: LegacyInvestmentThresholds | undefined
+): RecommendationPrefs {
+  // v0/v1 had per-source thresholds (swap/upgrade/reroll/farm). The redesign
+  // collapses these into one score-diff threshold; we take the minimum of the
+  // old swap/upgrade values (the two that survived) to keep visible recs
+  // approximately the same.
+  if (!legacy) return { ...DEFAULT_RECOMMENDATION_PREFS };
+  const candidates = [legacy.swap, legacy.upgrade].filter(
+    (v): v is number => typeof v === "number"
+  );
+  const scoreDiffThreshold =
+    candidates.length > 0 ? Math.min(...candidates) : 1;
+  return { scoreDiffThreshold, includeUpgrades: true };
 }
 
 export function migrateTierStore(
   persistedState: unknown,
   version: number
 ): Record<string, unknown> {
-  if (version === 0) {
-    const old = (persistedState ?? {}) as V0PersistedState;
+  if (version <= 0) {
+    const old = (persistedState ?? {}) as LegacyPersistedState;
     const instance: TierListInstance = {
       id: 1,
       tierAssignments: old.tierAssignments ?? {},
@@ -151,10 +183,7 @@ export function migrateTierStore(
       showWeapons: old.showWeapons ?? true,
       showTravelers: old.showTravelers ?? false,
       showManekin: old.showManekin ?? false,
-      investmentThresholds: old.investmentThresholds ?? {
-        ...DEFAULT_INVESTMENT_THRESHOLDS,
-      },
-      // Derived fields
+      recommendationPrefs: deriveRecommendationPrefs(old.investmentThresholds),
       tierAssignments: instance.tierAssignments,
       tierCustomization: instance.tierCustomization,
       customTitle: instance.customTitle,
@@ -162,15 +191,17 @@ export function migrateTierStore(
       description: instance.description,
     };
   }
+  if (version === 1) {
+    // v1 → v2: convert investmentThresholds to recommendationPrefs.
+    const old = (persistedState ?? {}) as LegacyPersistedState;
+    const { investmentThresholds, ...rest } = old;
+    return {
+      ...rest,
+      recommendationPrefs: deriveRecommendationPrefs(investmentThresholds),
+    };
+  }
   return persistedState as Record<string, unknown>;
 }
-
-export const DEFAULT_INVESTMENT_THRESHOLDS: InvestmentThresholds = {
-  swap: 1,
-  upgrade: 3,
-  reroll: 7,
-  farm: 5,
-};
 
 // Store
 
@@ -191,7 +222,7 @@ export const useTierStore = create<TierListState>()(
       showWeapons: true,
       showTravelers: false,
       showManekin: false,
-      investmentThresholds: { ...DEFAULT_INVESTMENT_THRESHOLDS },
+      recommendationPrefs: { ...DEFAULT_RECOMMENDATION_PREFS },
 
       // Derived fields (from default instance)
       tierAssignments: defaultInstance.tierAssignments,
@@ -268,11 +299,19 @@ export const useTierStore = create<TierListState>()(
 
       // --- View settings setters ---
 
-      setInvestmentThreshold: (key, value) =>
+      setScoreDiffThreshold: (value) =>
         set((state) => ({
-          investmentThresholds: {
-            ...state.investmentThresholds,
-            [key]: value,
+          recommendationPrefs: {
+            ...state.recommendationPrefs,
+            scoreDiffThreshold: value,
+          },
+        })),
+
+      setIncludeUpgrades: (include) =>
+        set((state) => ({
+          recommendationPrefs: {
+            ...state.recommendationPrefs,
+            includeUpgrades: include,
           },
         })),
 
@@ -384,7 +423,7 @@ export const useTierStore = create<TierListState>()(
     }),
     {
       name: "tierlist-storage",
-      version: 1,
+      version: 2,
       migrate: migrateTierStore,
       partialize: (state) => ({
         tierLists: state.tierLists,
@@ -393,7 +432,7 @@ export const useTierStore = create<TierListState>()(
         showWeapons: state.showWeapons,
         showTravelers: state.showTravelers,
         showManekin: state.showManekin,
-        investmentThresholds: state.investmentThresholds,
+        recommendationPrefs: state.recommendationPrefs,
       }),
       merge: (persistedState, currentState) => {
         const persisted = (persistedState ?? {}) as Record<string, unknown>;
