@@ -6,19 +6,38 @@ import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
 // 5★ Polearms
 
-@RegisterWeapon("crimson_moons_semblance")
+const crimsonMoonsSemblanceOption = {
+  label: { zh: "生命之契状态", en: "Bond of Life State" },
+  choices: [
+    {
+      value: "above30",
+      label: { zh: "生命之契≥30%生命值", en: "BoL ≥ 30% Max HP" },
+    },
+    {
+      value: "below30",
+      label: { zh: "生命之契<30%生命值", en: "BoL < 30% Max HP" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("crimson_moons_semblance", crimsonMoonsSemblanceOption)
 class CrimsonMoonsSemblance extends WeaponBase {
-  // Bond of Life present + ≥30% Max HP: both DMG bonuses active
-  readonly buffs = [
-    new StatBuff(wbs(this, ["bond-of-life"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value:
-          r(this.refinement, [0.12, 0.16, 0.2, 0.24, 0.28]) +
-          r(this.refinement, [0.24, 0.32, 0.4, 0.48, 0.56]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(crimsonMoonsSemblanceOption, this.option);
+
+  // Tier 1: BoL present (12-28% DMG). Tier 2: BoL ≥ 30% Max HP (extra 24-56% DMG).
+  // Default assumes BoL ≥ 30% (typical with Arlecchino or similar BoL sources).
+  get buffs() {
+    const value =
+      r(this.refinement, [0.12, 0.16, 0.2, 0.24, 0.28]) +
+      (this.o === "above30"
+        ? r(this.refinement, [0.24, 0.32, 0.4, 0.48, 0.56])
+        : 0);
+    return [
+      new StatBuff(wbs(this, ["bond-of-life"]), { receiver: "self" }, [
+        { key: "dmg%", value },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("lumidouce_elegy")
@@ -89,7 +108,7 @@ class FracturedHalo extends WeaponBase {
         },
       ]),
     ];
-    if (this.teamMeta.hasShielder()) {
+    if (this.teamMeta.isShielder[this.charId]) {
       buffs.push(
         new StatBuff(
           wbs(this, ["E", "Q", "shield"], "fractured-halo-lunar-charged-dmg"),
@@ -114,12 +133,18 @@ class FracturedHalo extends WeaponBase {
 class SymphonistOfScents extends WeaponBase {
   get buffs() {
     const buffs: StatBuff[] = [
-      new StatBuff(wbs(this, ["off-field"]), { receiver: "self" }, [
+      // Base ATK% — always active on self
+      new StatBuff(wbs(this), { receiver: "self" }, [
         {
           key: "atk%",
-          value:
-            r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
-            r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]),
+      // Extra ATK% — only while wielder is off-field
+      new StatBuff(wbs(this, ["off-field"]), { receiver: "selfOffField" }, [
+        {
+          key: "atk%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
         },
       ]),
     ];

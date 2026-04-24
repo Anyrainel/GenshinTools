@@ -2,7 +2,7 @@ import { WeaponBase } from "../core/implModel";
 import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
-import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
+import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
 // 4★ Polearms
 
@@ -263,16 +263,22 @@ class WavebreakersFin extends WeaponBase {
   }
 }
 
-@RegisterWeapon("royal_spear")
+@RegisterWeapon("royal_spear", royalSeriesOption)
 class RoyalSpear extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
-      {
-        key: "cr",
-        value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(royalSeriesOption, this.option);
+
+  // Stacks reset on CRIT — effective count depends on CRIT Rate. Default 3.
+  get buffs() {
+    const stacks = Number(this.o);
+    return [
+      new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
+        {
+          key: "cr",
+          value: stacks * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("kitain_cross_spear")

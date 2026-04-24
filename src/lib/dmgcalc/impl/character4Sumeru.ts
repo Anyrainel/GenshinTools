@@ -62,14 +62,18 @@ class Sethos extends CharacterBase {
         ],
       },
       "sethos-dusk-bolt": {
-        label: { zh: "Q瞑弦矢", en: "Q Dusk Bolt" },
+        label: { zh: "Q瞑弦矢 (普攻一段)", en: "Q Dusk Bolt (N1)" },
         parts: [
           {
-            // Q Dusk Bolt: DMG increase based on EM, considered Charged ATK DMG
+            // Q Dusk Bolt converts a Normal Attack into a piercing bolt:
+            // base = N1% × ATK, with Q's EM-based DMG increase added on top.
+            // Models the most common single-hit Dusk Bolt (one NA tap = one bolt).
+            // The Q-induced EM scaling (Q param1) is added as a flat extraTerm.
             formula: new DirectFormula(
-              this.param("Q", 1),
+              this.param("A", 1),
               { element: "Electro", ability: "charge", reaction: "none" },
-              "em"
+              "atk",
+              { key: "em", multiplier: this.param("Q", 1) }
             ),
           },
         ],

@@ -96,7 +96,7 @@
 - id: linnea-p2-em-overcount
   entity: linnea
   rule: S6
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     P2 Universal Naturalist Archive grants 5% DEF as EM to either the active
@@ -106,5 +106,7 @@
     Linnea and the active Moonsign teammate receive +EM, double-counting the buff for
     Linnea's own off-field reaction damage (lunarCrystallize EM bonus).
   detail: >
-    Let's approximate this by: if team has other moonsign 5* geo characters, only provide 
-    the teamOnField/Moonsign buff. Otherwise only provide the self buff (combines on and off field for self).
+    Replaced the simultaneous selfOffField + teamOnField/Moonsign branches with an
+    XOR: if any other Moonsign 5★ Geo teammate is present, only emit the
+    teamOnField/Moonsign buff; otherwise only emit a self buff (covers Linnea on and
+    off-field). Eliminates the double-count on Linnea's off-field LC reaction damage.

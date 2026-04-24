@@ -118,17 +118,13 @@
 - id: skirk-wither-10-trigger-cap
   entity: skirk
   rule: U8b
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     Q All Shall Wither NA baseDmg% buff is not capped at 10 triggers as game
     text specifies ("该效果将在触发次数达到10次时解除"). The buff applies to all
     NA hits in the combo rotation without limit.
   detail: >
-    Game text caps the Wither effect at 10 NA hit triggers per Havoc: Extinction
-    cast. Current impl applies baseDmg% to every NA hit in skirk-e-normal (7 hits
-    per use × count=4 = 28 hits) and skirk-e-normal-2 (2 × 4 = 8), well over the
-    10-trigger budget. Code comment says "Self buff → modeled via formula hit
-    counts, not maxStacks", but formulas do not limit to 10 hits either.
-    Candidate fix: use bespokeBuffs pattern on targeted FormulaPart(s) with
-    maxStacks=10 to bound the budget per cast.
+    Added maxStacks:10 to the Wither baseDmg% StatBuff (selfOnField, ability:
+    normal). The combo allocator now distributes the buff across exactly 10 NA
+    hits per rotation, matching the in-game 10-trigger cap on Havoc:Extinction.

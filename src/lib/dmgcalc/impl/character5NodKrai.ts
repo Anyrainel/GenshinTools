@@ -1192,24 +1192,42 @@ class Linnea extends CharacterBase {
       { receiver: "team", filter: { elements: ["Geo"] } },
       [{ key: "resReduction%", value: this.isAscendantGleam ? 0.3 : 0.15 }]
     ),
-    // P2 (Universal Naturalist Archive): EM = 5% DEF
-    // Moonsign active → that character gets EM; non-Moonsign active → Linnea gets EM
-    new ScalingBuff(
-      cbs(this, "P2", ["passive"]),
-      { receiver: "teamOnField", factions: ["Moonsign" as Faction] },
-      [],
-      "def",
-      "em",
-      0.05
-    ),
-    new ScalingBuff(
-      cbs(this, "P2", ["passive"]),
-      { receiver: "selfOffField" },
-      [],
-      "def",
-      "em",
-      0.05
-    ),
+    // P2 (Universal Naturalist Archive): EM = 5% DEF granted to either the active
+    // Moonsign teammate OR Linnea (when the active char is not Moonsign) — never both.
+    // To avoid double-counting Linnea's own off-field reaction damage, we approximate:
+    //   - If team has another Moonsign 5★ Geo teammate (likely the on-field carry),
+    //     emit only the teamOnField/Moonsign buff (the carry receives it on field).
+    //   - Otherwise emit only the self buff (covers Linnea on AND off field).
+    ...(() => {
+      const hasOtherMoonsign5Geo = Object.entries(this.teamMeta.elements).some(
+        ([cid, el]) =>
+          cid !== this.charId &&
+          el === "Geo" &&
+          this.teamMeta.factions[cid] === "Moonsign" &&
+          this.teamMeta.rarities[cid] === 5
+      );
+      return hasOtherMoonsign5Geo
+        ? [
+            new ScalingBuff(
+              cbs(this, "P2", ["passive"]),
+              { receiver: "teamOnField", factions: ["Moonsign" as Faction] },
+              [],
+              "def",
+              "em",
+              0.05
+            ),
+          ]
+        : [
+            new ScalingBuff(
+              cbs(this, "P2", ["passive"]),
+              { receiver: "self" },
+              [],
+              "def",
+              "em",
+              0.05
+            ),
+          ];
+    })(),
     // C1: Field Catalog — team LC reaction hits gain +75% DEF baseDmg
     // With lunarCrystallize in team, stacks regenerate from reactions → effectively
     // unlimited, so no maxStacks. (user-approved)

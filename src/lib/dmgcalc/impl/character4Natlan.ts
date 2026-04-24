@@ -229,19 +229,6 @@ class Ororon extends CharacterBase {
       );
     }
 
-    if (this.constellation >= 6) {
-      // C6: Q triggers one Hypersense at "200% of original DMG" ("造成原本200%的伤害") → baseDmg% +1.0
-      // Note: filter by ability "special" also affects ororon-hypersense display at C6 —
-      // engine limitation: baseDmg% scopes by ability type, not by individual formula entry.
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C6", ["Q"]),
-          { receiver: "selfOnField", filter: { abilities: ["special"] } },
-          [{ key: "baseDmg%", value: 1.0 }]
-        )
-      );
-    }
-
     // C2: After using Q, Ororon gains Spiritual Supersense: +8% Electro DMG Bonus
     // + up to 32% more based on enemies hit (max 4 extra enemies → +32%)
     // Assume max enemies hit (4 extra) → total +40% Electro DMG Bonus
@@ -287,7 +274,9 @@ class Ororon extends CharacterBase {
               reaction: "none",
             }),
           },
-          // C6: Q use triggers one Hypersense-equivalent hit (200% of Hypersense DMG)
+          // C6: Q use triggers one Hypersense-equivalent hit at "200% of original DMG"
+          // ("造成原本200%的伤害") → baseDmg% +1.0 attached as a bespokeBuff so it only
+          // doubles this Q-triggered Hypersense, not the regular ororon-hypersense procs.
           ...(this.constellation >= 6
             ? [
                 {
@@ -296,6 +285,16 @@ class Ororon extends CharacterBase {
                     ability: "special",
                     reaction: "none",
                   }),
+                  bespokeBuffs: [
+                    new StatBuff(
+                      cbs(this, "C6", ["Q"]),
+                      {
+                        receiver: "selfOnField",
+                        filter: { abilities: ["special"] },
+                      },
+                      [{ key: "baseDmg%" as const, value: 1.0 }]
+                    ),
+                  ],
                 },
               ]
             : []),

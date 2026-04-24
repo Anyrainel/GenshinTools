@@ -105,24 +105,27 @@
 - id: chongyun-p1-weapon-filter
   entity: chongyun
   rule: U1
-  status: actionable
+  status: completed
   category: engine-gap
   summary: >
     P1 Normal ATK SPD +8% is limited to Sword/Claymore/Polearm users in the Chonghua
     Frost Field, but the buff applies to all active teammates because BuffTarget has
     no weaponTypes filter. Catalyst/bow teammates incorrectly receive the atkSpd buff.
   detail: >
-    Modify the buffs to target specific charId based on Sword/Claymore/Polearm.
+    Replaced the single teamOnField StatBuff with per-charId StatBuffs filtered via
+    teamMeta.weaponTypes — only Sword/Claymore/Polearm teammates now receive the
+    atkSpd% buff. Pattern matches Bennett C6 weapon-filter implementation.
 
 - id: zhongli-press-formula
   entity: zhongli
   rule: S8b
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     E Press mode (stele creation only) has no formula. Only Hold is modeled via
     "zhongli-hold" (hold AoE + stele creation). Per S8b, 5★ E should expose both
     tap and hold modes as separate formulas.
   detail: >
-    Should add additional formulas for tap E. But the resonance DMG formula should be 
-    modeled as a separate formula.
+    Added a "zhongli-press" DirectFormula entry using this.param("E", 1) (stele
+    creation Geo DMG) with the existing eHpExtra HP term. Resonance remains its
+    own formula (zhongli-resonance) and zhongli-hold is unchanged.

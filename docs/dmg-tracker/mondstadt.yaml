@@ -22,7 +22,7 @@
 - id: sucrose-p1-element-restriction
   entity: sucrose
   rule: U1
-  status: actionable
+  status: completed
   category: bug
   summary: >
     P1 Catalyst Conversion buff grants +50 EM to all non-Sucrose teammates via
@@ -30,15 +30,14 @@
     to teammates whose element matches the swirled element ("队伍中所有对应元素
     类型的角色"). Non-matching teammates incorrectly receive the buff.
   detail: >
-    Should iterate teammates by element and emit per-charId buffs only for those
-    matching swirlable elements present in the team (Pyro/Hydro/Cryo/Electro). For
-    example, in a Hyperbloom team (Sucrose/Raiden/Nahida/Beidou), Nahida (Dendro)
-    should not receive +50 EM from Pyro/Electro swirls.
+    Replaced the single receiver:"other" StatBuff with a per-charId loop over
+    teammates, emitting +50 EM only to teammates whose element is in the
+    presentAbsorbElements set (the swirlable elements actually present on the team).
 
 - id: albedo-c6-fatal-blossom-only
   entity: albedo
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C6 +250% DEF baseDmg buff (after Silver Isotoma destroyed by Q) uses
@@ -46,15 +45,14 @@
     Fatal Blossoms. Game text restricts the boost to Fatal Blossoms only ("生灭
     之花造成的伤害").
   detail: >
-    Use bespokeBuffs on the Fatal Blossom part of `albedo-burst` (and `albedo-c2-offfield`
-    if applicable) instead of a global ability-filtered buff. The C2 buff (also DEF
-    baseDmg, but applies to both burst slash and Fatal Blossom per text) should remain
-    as-is since text covers both.
+    Removed the global ability-filtered C6 buff from buffs[]; moved it to a
+    bespokeBuffs ScalingBuff on the Fatal Blossom part of albedo-burst, gated on
+    Hexerei. The C2 buff is unchanged.
 
 - id: diluc-missing-normal-formula
   entity: diluc
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Diluc has no Normal Attack formula despite NAs being part of his canonical
@@ -62,14 +60,14 @@
     (DMG +30%, ATK SPD +30%). Missing NA formula reduces accuracy especially
     for C6 builds and undercounts vape rotations that include NAs.
   detail: >
-    Diluc Pyro infusion from Q lasts 12s (8s base + 4s P2). NAs during infusion
-    are Pyro-typed. Add a `diluc-normal` formula with N1-N4 multipliers (A param1-4).
-    Combo could include 1-3 NAs alongside E hits.
+    Added single-part diluc-normal formula (DirectFormula on A param1, Pyro/normal/none)
+    representing the N1 cancel used in the N1E×3 string. comboDescriptor sets
+    count=3 to reflect three N1 hits per rotation.
 
 - id: venti-windsunder-requires-hexerei
   entity: venti
   rule: S6
-  status: actionable
+  status: completed
   category: bug
   summary: >
     `venti-windsunder` formula models Hexerei: Secret Rite Windsunder Arrow
@@ -78,14 +76,14 @@
     bow shots, not Windsunder Arrows — current modeling over-counts Anemo
     damage for non-Hexerei teams.
   detail: >
-    Gate the formula with `when: this.teamMeta.countByFaction("Hexerei") >= 2`.
-    Game text: "魔导·秘仪 元素爆发风神之诗创造的暴风之眼存在期间，温迪将获得额外的强化
-    效果：·温迪的普通攻击将转为发射能穿透敌人的飓风箭".
+    Added when: this.teamMeta.countByFaction("Hexerei") >= 2 to the
+    venti-windsunder FormulaEntry so it only fires when Hexerei: Secret Rite is
+    active.
 
 - id: venti-q-absorption-additional-dmg
   entity: venti
   rule: S10
-  status: actionable
+  status: completed
   category: engine-gap
   summary: >
     Q Stormeye Additional Elemental DMG (param2, fires per tick when an element
@@ -94,6 +92,8 @@
     from team composition alone. Currently only the Anemo DoT (param1) is modeled,
     missing the absorbed-element companion damage.
   detail: >
-    Modeling would require per-element formula variants gated by team
-    composition (similar to how the C6 RES shred handles per-present absorbable
-    element).
+    Added per-element venti-burst-absorb-{pyro|hydro|cryo|electro} formula entries
+    for each absorbable element present in the team (param2, 20 hits, offField=true,
+    burst-ability tag). Default count=0 in comboDescriptor since only one
+    absorption can occur per cast — user opts in to the element they expect to be
+    absorbed.

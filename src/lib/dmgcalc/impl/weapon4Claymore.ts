@@ -1,7 +1,8 @@
 import { WeaponBase } from "../core/implModel";
-import { RegisterWeapon } from "../core/registry";
+import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
+import type { OptionDef } from "../types";
+import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
 // 4★ Claymores
 
@@ -287,17 +288,33 @@ class LuxuriousSealord extends WeaponBase {
   ];
 }
 
-@RegisterWeapon("serpent_spine")
+const serpentSpineOption = {
+  label: { zh: "在场叠加层数", en: "On-field Stacks" },
+  choices: [
+    { value: "5", label: { zh: "5层（满层）", en: "5 stacks (max)" } },
+    { value: "4", label: { zh: "4层", en: "4 stacks" } },
+    { value: "3", label: { zh: "3层", en: "3 stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
+    { value: "1", label: { zh: "1层", en: "1 stack" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("serpent_spine", serpentSpineOption)
 class SerpentSpine extends WeaponBase {
-  // 5-stack on-field DMG bonus
-  readonly buffs = [
-    new StatBuff(wbs(this, ["on-field"]), { receiver: "selfOnField" }, [
-      {
-        key: "dmg%",
-        value: 5 * r(this.refinement, [0.06, 0.07, 0.08, 0.09, 0.1]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(serpentSpineOption, this.option);
+
+  // Stacks ramp at 1 per 4s of on-field time (20s to max). Default to max.
+  get buffs() {
+    const stacks = Number(this.o);
+    return [
+      new StatBuff(wbs(this, ["on-field"]), { receiver: "selfOnField" }, [
+        {
+          key: "dmg%",
+          value: stacks * r(this.refinement, [0.06, 0.07, 0.08, 0.09, 0.1]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("sacrificial_greatsword")
@@ -364,16 +381,22 @@ class Akuoumaru extends WeaponBase {
   }
 }
 
-@RegisterWeapon("royal_greatsword")
+@RegisterWeapon("royal_greatsword", royalSeriesOption)
 class RoyalGreatsword extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
-      {
-        key: "cr",
-        value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(royalSeriesOption, this.option);
+
+  // Stacks reset on CRIT — effective count depends on CRIT Rate. Default 3.
+  get buffs() {
+    const stacks = Number(this.o);
+    return [
+      new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
+        {
+          key: "cr",
+          value: stacks * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("lithic_blade")

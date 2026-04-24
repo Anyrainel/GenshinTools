@@ -615,13 +615,24 @@ class Sucrose extends CharacterBase {
       ),
     ];
     // P1: Swirl element → matching-element party members EM +50 (excludes Sucrose)
-    // Requires team to have a swirlable element (Pyro/Hydro/Cryo/Electro)
+    // Game text restricts to teammates whose element matches the swirled element.
+    // Iterate teammates and only buff those whose element is a swirlable element
+    // present in the team (so a swirl of that element is possible).
     if (this.teamMeta.hasReaction("swirl")) {
-      buffs.push(
-        new StatBuff(cbs(this, "P1", ["swirl"]), { receiver: "other" }, [
-          { key: "em", value: 50 },
-        ])
-      );
+      for (const [cid, el] of Object.entries(this.teamMeta.elements)) {
+        if (cid === this.charId) continue;
+        if (
+          !presentAbsorbElements.includes(el as (typeof absorbElements)[number])
+        )
+          continue;
+        buffs.push(
+          new StatBuff(
+            cbs(this, "P1", ["swirl"]),
+            { receiver: "other", charId: cid },
+            [{ key: "em", value: 50 }]
+          )
+        );
+      }
     }
     // C6: Q Elemental Absorption → Team +20% DMG Bonus for the absorbed element
     // + Hexerei characters gain additional +8.57142%

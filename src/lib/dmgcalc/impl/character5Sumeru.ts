@@ -37,16 +37,9 @@ class Dehya extends CharacterBase {
       );
     }
 
-    // C2: When active character in E field is attacked, next coordinated attack DMG +50%
-    if (this.constellation >= 2) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C2", ["E"]),
-          { receiver: "self", filter: { abilities: ["skill"] } },
-          [{ key: "dmg%", value: 0.5 }]
-        )
-      );
-    }
+    // C2 "next coordinated attack DMG +50%" is attached as a bespokeBuff on the
+    // dehya-molten-inferno part with maxStacks: 1, so only one of the 4 Molten
+    // Inferno field hits gets the bonus per rotation.
 
     // C6: Leonine Bite CR +10%, after crits CD +15% × 4 stacks (max +60%)
     if (this.constellation >= 6) {
@@ -76,6 +69,17 @@ class Dehya extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
+    // C2 "next coordinated attack DMG +50%" — attached as a bespokeBuff on the
+    // Molten Inferno part with maxStacks: 1 so only one of the 4 hits gets the
+    // bonus per rotation (matching the in-game "next attack" wording).
+    const c2NextCoord =
+      this.constellation >= 2
+        ? new StatBuff(
+            { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
+            { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+            [{ key: "dmg%" as const, value: 0.5 }]
+          )
+        : null;
     return {
       // E Indomitable Flame DMG (first cast)
       "dehya-indomitable": {
@@ -107,6 +111,7 @@ class Dehya extends CharacterBase {
             ),
             hits: 4,
             offField: true,
+            ...(c2NextCoord ? { bespokeBuffs: [c2NextCoord] } : {}),
           },
         ],
       },
@@ -146,16 +151,9 @@ class Dehya extends CharacterBase {
 @RegisterCharacter("alhaitham")
 class Alhaitham extends CharacterBase {
   readonly buffs = [
-    // P2: EM × 0.1% → Projection (skill) & Q (burst) DMG bonus (cap 100%)
-    new ScalingBuff(
-      cbs(this, "P2", []),
-      { receiver: "selfOnField", filter: { abilities: ["skill", "burst"] } },
-      [],
-      "em",
-      "dmg%",
-      0.001,
-      1.0
-    ),
+    // P2: EM × 0.1% → Projection & Q DMG bonus (cap 100%) is applied via
+    // bespokeBuffs on alhaitham-projection and alhaitham-burst (game text restricts
+    // to Projection Attacks and Q only — E Rush initial hit is excluded).
     // C2: EM +50 per Mirror generated (max 4 stacks = 200)
     ...(this.constellation >= 2
       ? [
@@ -190,8 +188,28 @@ class Alhaitham extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
+    // P2: EM × 0.1% → DMG% (cap 100%) — applies only to Projection (E mirrors) and Q,
+    // NOT the E Rush initial hit. Attached as bespokeBuffs on the two affected formulas.
+    const p2Skill = new ScalingBuff(
+      cbs(this, "P2", []),
+      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+      [],
+      "em",
+      "dmg%",
+      0.001,
+      1.0
+    );
+    const p2Burst = new ScalingBuff(
+      cbs(this, "P2", []),
+      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+      [],
+      "em",
+      "dmg%",
+      0.001,
+      1.0
+    );
     return {
-      // E Rush Attack DMG (initial dash hit)
+      // E Rush Attack DMG (initial dash hit) — P2 does NOT apply here
       "alhaitham-rush": {
         label: { zh: "E突进", en: "E Rush" },
         parts: [
@@ -217,6 +235,7 @@ class Alhaitham extends CharacterBase {
               { key: "em", multiplier: this.param("E", 9) }
             ),
             hits: 3,
+            bespokeBuffs: [p2Skill],
           },
         ],
       },
@@ -232,6 +251,7 @@ class Alhaitham extends CharacterBase {
               { key: "em", multiplier: this.param("Q", 2) }
             ),
             hits: 10,
+            bespokeBuffs: [p2Burst],
           },
         ],
       },
@@ -467,29 +487,8 @@ class Nahida extends CharacterBase {
       250,
       "max"
     ),
-    // P2: EM above 200 → Tri-Karma DMG +0.1%/EM (cap 80%)
-    // Tri-Karma fires off-field, so use "self" not "selfOnField"
-    new ScalingBuff(
-      cbs(this, "P2", []),
-      { receiver: "self", filter: { abilities: ["skill"] } },
-      [],
-      "em",
-      "dmg%",
-      0.001,
-      0.8,
-      200
-    ),
-    // P2: EM above 200 → Tri-Karma CR +0.03%/EM (cap 24%)
-    new ScalingBuff(
-      cbs(this, "P2", []),
-      { receiver: "self", filter: { abilities: ["skill"] } },
-      [],
-      "em",
-      "cr",
-      0.0003,
-      0.24,
-      200
-    ),
+    // P2 (EM → DMG/CR on Tri-Karma) and Q Pyro-resonance DMG bonus are scoped
+    // to Tri-Karma only — applied via bespokeBuffs on nahida-karma and nahida-c6-karma.
     // C2: Quicken → DEF -30% for 8s
     ...(this.constellation >= 2 && this.teamMeta.hasReaction("quicken")
       ? [
@@ -547,17 +546,7 @@ class Nahida extends CharacterBase {
           ]),
         ]
       : []),
-    // Q: Pyro element bonus → Tri-Karma DMG% (requires Q field active; assumed under peak model)
-    // C1 adds +1 virtual Pyro/Electro/Hydro to the count for Q effect tiers
-    ...(this.pyroBonusDmg > 0
-      ? [
-          new StatBuff(
-            cbs(this, "Q", ["Q"]),
-            { receiver: "self", filter: { abilities: ["skill"] } },
-            [{ key: "dmg%", value: this.pyroBonusDmg }]
-          ),
-        ]
-      : []),
+    // Q Pyro-resonance bonus is attached via bespokeBuffs on nahida-karma/c6-karma.
   ];
 
   protected readonly formulaMap = (() => {
@@ -566,6 +555,40 @@ class Nahida extends CharacterBase {
       ability: "skill" as const,
       reaction: "none" as const,
     };
+    // Tri-Karma-only buffs:
+    //  - P2: EM above 200 → +0.1%/EM dmg% (cap 80%) and +0.03%/EM CR (cap 24%)
+    //  - Q Pyro resonance: flat dmg% based on Pyro count
+    const triKarmaBespoke: InstanceType<
+      typeof StatBuff | typeof ScalingBuff
+    >[] = [
+      new ScalingBuff(
+        cbs(this, "P2", []),
+        { receiver: "self" },
+        [],
+        "em",
+        "dmg%",
+        0.001,
+        0.8,
+        200
+      ),
+      new ScalingBuff(
+        cbs(this, "P2", []),
+        { receiver: "self" },
+        [],
+        "em",
+        "cr",
+        0.0003,
+        0.24,
+        200
+      ),
+    ];
+    if (this.pyroBonusDmg > 0) {
+      triKarmaBespoke.push(
+        new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "self" }, [
+          { key: "dmg%", value: this.pyroBonusDmg },
+        ])
+      );
+    }
     return {
       // E Press DMG (initial cast)
       "nahida-press": {
@@ -597,6 +620,7 @@ class Nahida extends CharacterBase {
               { key: "em", multiplier: this.param("E", 4) }
             ),
             offField: true,
+            bespokeBuffs: triKarmaBespoke,
           },
         ],
       },
@@ -615,6 +639,7 @@ class Nahida extends CharacterBase {
               { key: "em", multiplier: 4.0 }
             ),
             hits: 6,
+            bespokeBuffs: triKarmaBespoke,
           },
         ],
       },

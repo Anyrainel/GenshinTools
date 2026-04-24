@@ -112,6 +112,19 @@ class Escoffier extends CharacterBase {
           },
         ],
       },
+      // Arkhe: Ousia — Surging Blade proc (E param4). Ousia-aligned Cryo DMG dealt
+      // periodically while the Cooking Mek is in Cold Storage mode. ~10s interval
+      // vs ~20s Cold Storage duration → 2 procs per E cast.
+      "escoffier-surging-blade": {
+        label: { zh: "E流涌之刃×2", en: "E Surging Blade (×2)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 4), skillTag),
+            hits: 2,
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 
@@ -121,6 +134,7 @@ class Escoffier extends CharacterBase {
       { id: "escoffier-skill-parfait", count: 1 },
       { id: "escoffier-burst", count: 1 },
       { id: "escoffier-c6-parfait", count: 1 },
+      { id: "escoffier-surging-blade", count: 1 },
     ];
   }
 }
@@ -248,6 +262,40 @@ class Emilie extends CharacterBase {
           },
         ],
       },
+      // Lv1 Lumidouce Case attack (E param2). Without a Pyro teammate the Case
+      // never upgrades, so it stays at Lv1 and fires single Dendro shots over the
+      // case duration. Approximated as 14 ticks (matches the Lv2 hit cadence).
+      "emilie-skill-lv1": {
+        label: { zh: "E一阶×14", en: "E Lv1 (×14)" },
+        when: !hasPyro,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: 14,
+            offField: true,
+          },
+        ],
+      },
+      // Arkhe: Pneuma — Spiritbreath Thorn proc (E param5). Periodic Pneuma-aligned
+      // Dendro DMG dropping while the Lumidouce Case is active. Approximated as
+      // once per E cast (S8b minimum coverage; KQM treats it as a minor proc).
+      "emilie-spiritbreath": {
+        label: { zh: "E灵息之刺", en: "E Spiritbreath Thorn" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 5), {
+              element: "Dendro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            offField: true,
+          },
+        ],
+      },
       "emilie-burst-9hit": {
         label: { zh: "Q伤害×9", en: "Q (×9)" },
         parts: [
@@ -275,6 +323,8 @@ class Emilie extends CharacterBase {
     return [
       { id: "emilie-skill-cast", count: 1 },
       { id: "emilie-skill-burning", count: 1 },
+      { id: "emilie-skill-lv1", count: 1 },
+      { id: "emilie-spiritbreath", count: 1 },
       { id: "emilie-burst-9hit", count: 1 },
       { id: "emilie-c6-normal", count: 1 },
     ];
@@ -392,6 +442,22 @@ class Sigewinne extends CharacterBase {
           },
         ],
       },
+      // Arkhe: Ousia — Surging Blade proc (E param7). Ousia-aligned Hydro DMG
+      // dropping periodically while Bolstering Bubblebalm is bouncing. Scales
+      // with Max HP (template suffix). Modeled as once per E cast.
+      "sigewinne-surging-blade": {
+        label: { zh: "E流涌之刃", en: "E Surging Blade" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("E", 7),
+              { element: "Hydro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+            offField: true,
+          },
+        ],
+      },
     };
   })();
 
@@ -401,6 +467,7 @@ class Sigewinne extends CharacterBase {
       { id: "sigewinne-skill", count: 1 },
       { id: "sigewinne-burst", count: 1 },
       { id: "sigewinne-burst-c4", count: 1 },
+      { id: "sigewinne-surging-blade", count: 1 },
     ];
   }
 }
@@ -466,6 +533,11 @@ class Clorinde extends CharacterBase {
       ability: "normal" as const,
       reaction: "none" as const,
     };
+    const normalSkillTag = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
 
     return {
       "clorinde-normal": {
@@ -476,7 +548,7 @@ class Clorinde extends CharacterBase {
             hits: 3,
           },
           {
-            formula: new DirectFormula(this.param("E", 7), normalBaseTag),
+            formula: new DirectFormula(this.param("E", 7), normalSkillTag),
             hits: 3,
           },
           ...(this.constellation >= 1
@@ -500,6 +572,17 @@ class Clorinde extends CharacterBase {
           },
         ],
       },
+      // Arkhe: Ousia — Surging Blade proc on Swift Hunt hits (E param10).
+      // Ousia-aligned Electro DMG; classified as Skill DMG. Approximated as
+      // firing once per initial E cast (10s CD vs 7.5s Night Vigil duration).
+      "clorinde-surging-blade": {
+        label: { zh: "E流涌之刃", en: "E Surging Blade" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 10), normalSkillTag),
+          },
+        ],
+      },
     };
   })();
 
@@ -508,6 +591,7 @@ class Clorinde extends CharacterBase {
     return [
       { id: "clorinde-normal", count: 6 },
       { id: "clorinde-burst", count: 1 },
+      { id: "clorinde-surging-blade", count: 1 },
     ];
   }
 }
@@ -619,6 +703,22 @@ class Navia extends CharacterBase {
           },
         ],
       },
+      // Arkhe: Ousia — Surging Blade proc on Gunbrella firing (E param5).
+      // Ousia-aligned Geo DMG. Modeled as once per E cast — minor over-count
+      // when two Es are pressed back-to-back since Surging Blade has its own
+      // ICD (param6).
+      "navia-surging-blade": {
+        label: { zh: "E流涌之刃", en: "E Surging Blade" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 5), {
+              element: "Geo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
@@ -627,6 +727,7 @@ class Navia extends CharacterBase {
     return [
       { id: "navia-burst", count: 1 },
       { id: "navia-crystalshot", count: 2 },
+      { id: "navia-surging-blade", count: 2 },
     ];
   }
 }
@@ -995,6 +1096,18 @@ class Neuvillette extends CharacterBase {
           },
         ],
       },
+      // Arkhe: Pneuma — Spiritbreath Thorn proc (E param2). Pneuma-aligned Hydro
+      // DMG dropping after Raging Waterfall hits. Unlike the E skill DMG (HP-scaled),
+      // the Thorn template has no "Max HP" suffix → ATK-scaled (default scaling).
+      // Modeled as once per E cast.
+      "neuvillette-spiritbreath": {
+        label: { zh: "E灵息之刺", en: "E Spiritbreath Thorn" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), hydroSkillTag),
+          },
+        ],
+      },
     };
   })();
 
@@ -1005,6 +1118,7 @@ class Neuvillette extends CharacterBase {
       { id: "neuvillette-skill", count: 3 },
       { id: "neuvillette-burst", count: 1 },
       { id: "neuvillette-c6-currents", count: 3 },
+      { id: "neuvillette-spiritbreath", count: 3 },
     ];
   }
 }

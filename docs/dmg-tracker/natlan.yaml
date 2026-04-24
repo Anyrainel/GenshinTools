@@ -122,7 +122,7 @@
 - id: ororon-c6-basedmg-filter-too-broad
   entity: ororon
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C6 Q-triggered Hypersense uses a baseDmg% +1.0 StatBuff with filter
@@ -130,28 +130,37 @@
     formula (also ability:"special"). At C6, all 8 regular Hypersense hits
     get doubled, not only the single Q-triggered hit. Should be a bespokeBuff
     on the C6 part of ororon-burst only.
-  detail: ""
+  detail: >
+    Removed the global C6 baseDmg% StatBuff and re-attached it as a bespokeBuff
+    on the C6 Hypersense part of ororon-burst. Only the single Q-triggered
+    Hypersense hit is now doubled; the 8 regular ororon-hypersense procs are
+    unaffected.
 
 - id: kinich-c1-cd-filter-too-broad
   entity: kinich
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C1 Scalespiker Cannon CD +100% StatBuff filter abilities:["skill"] also
     applies to Loop Shot (also ability:"skill"). Game text limits this to
     Scalespiker Cannon only. Should be a bespokeBuff on the kinich-cannon
     formula parts instead of a filtered StatBuff.
-  detail: ""
+  detail: >
+    Removed the global C1 cd StatBuff and attached it as a bespokeBuff on the
+    cannon main hit and C6 bounce parts of kinich-cannon. Loop Shot no longer
+    incorrectly receives the +100% Crit DMG.
 
 - id: citlali-c2-em-receiver
   entity: citlali
   rule: U1
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C2 +250 EM buff uses receiver:"other" but game text "处于白曜护盾的庇护下
     或是伊兹帕帕跟随的其他角色" limits to shielded/followed teammates, which in
     practice means only the active (on-field) teammate. Should use
     receiver:"otherOnField".
-  detail: ""
+  detail: >
+    Changed the C2 +250 EM StatBuff receiver from "other" to "otherOnField" so
+    only the active teammate (not off-field teammates) receives the bonus.

@@ -28,7 +28,7 @@
 - id: "tartaglia-c4-riptide-count"
   entity: "tartaglia"
   rule: "S9"
-  status: actionable
+  status: completed
   category: "approximation"
   summary: >
     C4 triggers an additional Riptide Slash (melee) or Riptide Flash (ranged) every 4s
@@ -37,4 +37,6 @@
     extra hits in the calc. Should add `bonus: [{ minC: 4, delta: N }]` tuning for the
     expected extra procs over a ~9s melee rotation.
   detail: >
-    Let's make C4 double it, so delta as 6. Leave a comment saying it is approximation
+    Added bonus:[{ minC: 4, delta: 6 }] to the tartaglia-riptide-slash entry in
+    comboDescriptor (doubles the base 6 procs to 12 at C4+). Code comment notes
+    this is an approximation of C4's CD-bypassed extra trigger over the rotation.

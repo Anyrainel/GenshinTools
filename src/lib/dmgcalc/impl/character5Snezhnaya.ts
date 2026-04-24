@@ -398,7 +398,14 @@ class Tartaglia extends CharacterBase {
     return [
       { id: "tartaglia-melee-combo", count: 4 },
       { id: "tartaglia-burst-melee", count: 1 },
-      { id: "tartaglia-riptide-slash", count: 6 },
+      // C4: triggers an additional Riptide Slash every 4s, not bound by the 1.5s
+      // base proc CD. Approximate as doubling the proc count over a ~9s rotation
+      // (delta: 6). This is an approximation — real C4 yield depends on field timing.
+      {
+        id: "tartaglia-riptide-slash",
+        count: 6,
+        bonus: [{ minC: 4, delta: 6 }],
+      },
       { id: "tartaglia-stance-change", count: 1 },
     ];
   }

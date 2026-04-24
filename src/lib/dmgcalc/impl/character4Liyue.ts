@@ -389,11 +389,23 @@ class Chongyun extends CharacterBase {
 
   readonly buffs = [
     // P1: Sword, Claymore, Polearm chars in E field get Normal ATK SPD +8%
-    new StatBuff(
-      cbs(this, "P1", ["E"]),
-      { receiver: "teamOnField", filter: { abilities: ["normal"] } },
-      [{ key: "atkSpd%", value: 0.08 }]
-    ),
+    // Catalyst/bow teammates do not benefit — emit per-charId buffs filtered by weapon type.
+    ...Object.entries(this.teamMeta.weaponTypes)
+      .filter(
+        ([, wt]) => wt === "Sword" || wt === "Claymore" || wt === "Polearm"
+      )
+      .map(
+        ([cid]) =>
+          new StatBuff(
+            cbs(this, "P1", ["E"]),
+            {
+              receiver: "teamOnField",
+              charId: cid,
+              filter: { abilities: ["normal"] },
+            },
+            [{ key: "atkSpd%", value: 0.08 }]
+          )
+      ),
     // P2: After E field disappears, enemies' Cryo RES -10% for 8s
     new StatBuff(
       cbs(this, "P2", ["E"]),

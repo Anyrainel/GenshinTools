@@ -92,14 +92,19 @@ class SkyriderSword extends WeaponBase {
 
 @RegisterWeapon("cool_steel")
 class CoolSteel extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["hydro-cryo-enemy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
-    ]),
-  ];
+  // Enemy affected by Hydro or Cryo
+  get buffs() {
+    const els = Object.values(this.teamMeta.elements);
+    if (!els.includes("Hydro") && !els.includes("Cryo")) return [];
+    return [
+      new StatBuff(wbs(this, ["hydro-cryo-enemy"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("magic_guide")
@@ -120,14 +125,19 @@ class MagicGuide extends WeaponBase {
 
 @RegisterWeapon("raven_bow")
 class RavenBow extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["hydro-pyro-enemy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
-    ]),
-  ];
+  // Enemy affected by Hydro or Pyro
+  get buffs() {
+    const els = Object.values(this.teamMeta.elements);
+    if (!els.includes("Hydro") && !els.includes("Pyro")) return [];
+    return [
+      new StatBuff(wbs(this, ["hydro-pyro-enemy"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("bloodtainted_greatsword")

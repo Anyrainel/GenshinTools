@@ -27,56 +27,56 @@
 - id: sethos-dusk-bolt-missing-atk
   entity: sethos
   rule: S2
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     Q Dusk Bolt formula uses scalingKey "em" only, but Dusk Bolts are converted
     Normal Attacks whose damage should include Normal ATK multiplier × ATK plus
     Q EM-based increase. The ATK-scaling component is missing.
   detail: >
-    Game text says "Normal Attacks will be converted into Dusk Bolts" with "DMG
-    increased based on Elemental Mastery." The Q talent table only shows "Dusk Bolt
-    DMG Increase: {param1:F1P} Elemental Mastery". It actually means Dusk Bolts add
-    EM-based flat damage on top of normal attack ATK scaling.
+    Switched scalingKey to "atk" with talent multiplier this.param("A", 1) (N1)
+    and added an extraTerm of EM × this.param("Q", 1) so Dusk Bolt = N1% × ATK +
+    Q-EM scaling, matching the in-game NA-conversion mechanic.
 
 - id: alhaitham-p2-filter-too-broad
   entity: alhaitham
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     P2 "EM × 0.1% → DMG%" buff filters abilities:["skill","burst"] but game text
     restricts it to Projection Attacks and Q only, not the E Rush initial hit.
     The E Rush formula currently receives the bonus incorrectly.
   detail: >
-    P2 scope should exclude the E Rush Attack. Fix is to move the buff to
-    bespokeBuffs on the alhaitham-projection and alhaitham-burst formulas instead
-    of a shared buff with abilities filter.
+    Removed the shared P2 ScalingBuff from buffs[]; created two ScalingBuff
+    instances (skill-filter and burst-filter) and attached them as bespokeBuffs to
+    alhaitham-projection and alhaitham-burst respectively. alhaitham-rush no
+    longer receives the bonus.
 
 - id: dehya-c2-missing-maxstacks
   entity: dehya
   rule: U8b
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C2 "下次协同攻击造成的伤害提升50%" buff applies to all 4 Molten Inferno field
     hits in the rotation, but game text limits it to the NEXT coordinated attack
     only. The buff is missing maxStacks: 1.
   detail: >
-    Current implementation: StatBuff dmg% +0.5 with receiver "self" + abilities
-    skill filter. Should add maxStacks: 1 to the BuffSource (cbs result) so only
-    one hit receives the bonus per trigger.
+    Spread maxStacks: 1 onto the BuffSource (cbs result) for the C2 StatBuff so
+    only one E field hit per rotation receives the +50% DMG.
 
 - id: nahida-p2-q-pyro-scope
   entity: nahida
   rule: U5
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     P2 (EM → dmg%/CR on Tri-Karma) and Q Pyro-resonance DMG bonus use filter
     abilities:["skill"] which also applies to E Press and E Hold initial hits.
     Game text restricts these bonuses to Tri-Karma Purification only.
   detail: >
-    Press/Hold are cast rarely in a Nahida rotation so the over-apply is minor,
-    but both buffs should attach via bespokeBuffs on the nahida-karma formula
-    (and nahida-c6-karma) rather than a skill-wide ability filter.
+    Removed the skill-filtered P2 ScalingBuffs and Q Pyro-resonance StatBuff from
+    buffs[]; built a triKarmaBespoke list of those buffs (no ability filter,
+    receiver:"self") and attached it via bespokeBuffs on nahida-karma and
+    nahida-c6-karma. nahida-press / nahida-hold no longer receive the bonuses.

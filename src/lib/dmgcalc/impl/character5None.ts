@@ -89,11 +89,14 @@ class Skirk extends CharacterBase {
       this.param("Q", 6),
       this.param("Q", 7),
     ][riftCount];
-    // "All Shall Wither" fires on each NA hit, canceled after 10 triggers
-    // Self buff → modeled via formula hit counts, not maxStacks.
+    // Game text: "该效果将在触发次数达到10次时解除" — Wither cancels after 10
+    // NA-hit triggers per cast. This 10-stack cap spans 3 NA formulas
+    // (skirk-e-normal/-2/-c6-normal-coord) so it must be a self buff with
+    // maxStacks (bespokeBuffs cap per-part, which couldn't share a global cap).
+    // Skirk is allowlisted in instantiation.test.ts for this reason.
     buffs.push(
       new StatBuff(
-        cbs(this, "Q", ["Q"]),
+        { ...cbs(this, "Q", ["Q"]), maxStacks: 10 },
         { receiver: "selfOnField", filter: { abilities: ["normal"] } },
         [{ key: "baseDmg%", value: witherPct }]
       )

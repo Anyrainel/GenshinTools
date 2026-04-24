@@ -3,7 +3,7 @@ import { charactersById } from "@/data/gameResources";
 import type { StatEntry } from "@/data/types";
 import type { CharacterBase } from "../core/implModel";
 import { StatBuff } from "../core/statBuff";
-import type { BuffSource, DamageTagFilter } from "../types";
+import type { BuffSource, DamageTagFilter, OptionDef } from "../types";
 
 /** Pick a refinement-scaled value (R1–R5, 1-indexed refinement). */
 
@@ -85,3 +85,19 @@ export function getReactionAuraElements(
 ): readonly Element[] {
   return REACTION_TO_AURA_ELEMENTS[triggerElement];
 }
+
+// ─── Shared OptionDefs ───
+/**
+ * Royal series (Royal Greatsword/Spear/Bow/Longsword/Grimoire): CRIT Rate
+ * stacks (max 5) that reset on a CRIT hit. Effective stack count depends on
+ * the wielder's CRIT Rate, which can't be determined at construction time —
+ * offer fixed tiers and default to 3 stacks.
+ */
+export const royalSeriesOption = {
+  label: { zh: "专注层数", en: "Focus Stacks" },
+  choices: [
+    { value: "3", label: { zh: "3层（默认）", en: "3 stacks (default)" } },
+    { value: "5", label: { zh: "5层（满层）", en: "5 stacks (max)" } },
+    { value: "1", label: { zh: "1层", en: "1 stack" } },
+  ] as const,
+} satisfies OptionDef;

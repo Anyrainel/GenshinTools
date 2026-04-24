@@ -821,6 +821,20 @@ class Zhongli extends CharacterBase {
     };
 
     return {
+      "zhongli-press": {
+        label: { zh: "E点按", en: "E Press" },
+        parts: [
+          {
+            // Press only creates the Stone Stele (no Hold AoE)
+            formula: new DirectFormula(
+              this.param("E", 1),
+              geoSkillTag,
+              "atk",
+              eHpExtra
+            ),
+          },
+        ],
+      },
       "zhongli-hold": {
         label: { zh: "E长按", en: "E Hold" },
         parts: [

@@ -409,8 +409,10 @@ class Citlali extends CharacterBase {
           new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
             { key: "em", value: 125 },
           ]),
-          // "其他角色的元素精通提升250" → other (no on-field restriction)
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "other" }, [
+          // "处于白曜护盾的庇护下或是伊兹帕帕跟随的其他角色的元素精通提升250" —
+          // shielded/followed teammates only. In practice this resolves to the active
+          // (on-field) teammate, so use receiver "otherOnField".
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "otherOnField" }, [
             { key: "em", value: 250 },
           ]),
         ]
@@ -1391,16 +1393,8 @@ class Kinich extends CharacterBase {
         "baseDmg",
         6.4 // 320% × 2 stacks = 640% of ATK
       ),
-      // C1: Scalespiker Cannon CD +100%
-      ...(this.constellation >= 1
-        ? [
-            new StatBuff(
-              cbs(this, "C1", ["E"]),
-              { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-              [{ key: "cd", value: 1.0 }]
-            ),
-          ]
-        : []),
+      // C1: Scalespiker Cannon CD +100% — only on the cannon, NOT Loop Shot.
+      // Implemented as a bespokeBuff on kinich-cannon parts (see formulaMap).
       // C2: Dendro RES -30% on E hit
       ...(this.constellation >= 2
         ? [
@@ -1451,58 +1445,60 @@ class Kinich extends CharacterBase {
           },
         ],
       },
-      "kinich-cannon": {
-        label: { zh: "E炮击", en: "E Cannon" },
-        parts: [
-          {
-            formula: new DirectFormula(this.param("E", 2), {
-              element: "Dendro",
-              ability: "skill",
-              reaction: "none",
-            }),
-            ...(this.constellation >= 2
-              ? {
-                  bespokeBuffs: [
-                    new StatBuff(
-                      { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
-                      {
-                        receiver: "selfOnField",
-                        filter: { abilities: ["skill"] },
-                      },
-                      [{ key: "dmg%", value: 1.0 }]
-                    ),
-                  ],
-                }
-              : {}),
-          },
-          // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
-          ...(this.constellation >= 6
-            ? [
-                {
-                  formula: new DirectFormula(7.0, {
-                    element: "Dendro",
-                    ability: "skill",
-                    reaction: "none",
-                  }),
-                  ...(this.constellation >= 2
-                    ? {
-                        bespokeBuffs: [
-                          new StatBuff(
-                            { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
-                            {
-                              receiver: "selfOnField",
-                              filter: { abilities: ["skill"] },
-                            },
-                            [{ key: "dmg%", value: 1.0 }]
-                          ),
-                        ],
-                      }
-                    : {}),
-                },
-              ]
-            : []),
-        ],
-      },
+      "kinich-cannon": (() => {
+        // Bespoke buffs that should apply to the cannon shots (and C6 bounce) only,
+        // NOT to Loop Shot (which also has ability:"skill").
+        const cannonBespoke: StatBuff[] = [];
+        if (this.constellation >= 1) {
+          cannonBespoke.push(
+            new StatBuff(
+              cbs(this, "C1", ["E"]),
+              { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+              [{ key: "cd" as const, value: 1.0 }]
+            )
+          );
+        }
+        // C2: First Scalespiker Cannon after Nightsoul Burst gets +100% DMG.
+        // maxStacks:1 → only the first cannon hit gets it (combo allocator).
+        const c2FirstCannon =
+          this.constellation >= 2
+            ? new StatBuff(
+                { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
+                { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+                [{ key: "dmg%" as const, value: 1.0 }]
+              )
+            : null;
+        return {
+          label: { zh: "E炮击", en: "E Cannon" },
+          parts: [
+            {
+              formula: new DirectFormula(this.param("E", 2), {
+                element: "Dendro",
+                ability: "skill",
+                reaction: "none",
+              }),
+              bespokeBuffs: c2FirstCannon
+                ? [...cannonBespoke, c2FirstCannon]
+                : cannonBespoke,
+            },
+            // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
+            ...(this.constellation >= 6
+              ? [
+                  {
+                    formula: new DirectFormula(7.0, {
+                      element: "Dendro",
+                      ability: "skill",
+                      reaction: "none",
+                    }),
+                    bespokeBuffs: c2FirstCannon
+                      ? [...cannonBespoke, c2FirstCannon]
+                      : cannonBespoke,
+                  },
+                ]
+              : []),
+          ],
+        };
+      })(),
       "kinich-burst": {
         label: { zh: "Q+5龙息", en: "Q + 5 Breaths" },
         parts: [

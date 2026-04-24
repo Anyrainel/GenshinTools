@@ -1,7 +1,7 @@
 import { WeaponBase } from "../core/implModel";
-import { RegisterWeapon } from "../core/registry";
+import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import { r, wbs } from "./helpers";
+import { r, royalSeriesOption, wbs } from "./helpers";
 
 // 4★ Swords
 
@@ -381,16 +381,22 @@ class TheAlleyFlash extends WeaponBase {
   ];
 }
 
-@RegisterWeapon("royal_longsword")
+@RegisterWeapon("royal_longsword", royalSeriesOption)
 class RoyalLongsword extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
-      {
-        key: "cr",
-        value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(royalSeriesOption, this.option);
+
+  // Stacks reset on CRIT — effective count depends on CRIT Rate. Default 3.
+  get buffs() {
+    const stacks = Number(this.o);
+    return [
+      new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
+        {
+          key: "cr",
+          value: stacks * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("amenoma_kageuchi")
@@ -411,13 +417,17 @@ class PrizedIsshinBlade extends WeaponBase {
 
 @RegisterWeapon("lions_roar")
 class LionsRoar extends WeaponBase {
-  // Conditional: enemy affected by Pyro/Electro
-  readonly buffs = [
-    new StatBuff(wbs(this, ["pyro-electro-enemy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.2, 0.24, 0.28, 0.32, 0.36]),
-      },
-    ]),
-  ];
+  // Enemy affected by Pyro or Electro
+  get buffs() {
+    const els = Object.values(this.teamMeta.elements);
+    if (!els.includes("Pyro") && !els.includes("Electro")) return [];
+    return [
+      new StatBuff(wbs(this, ["pyro-electro-enemy"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.2, 0.24, 0.28, 0.32, 0.36]),
+        },
+      ]),
+    ];
+  }
 }

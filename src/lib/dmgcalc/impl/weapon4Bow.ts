@@ -3,7 +3,7 @@ import { WeaponBase } from "../core/implModel";
 import { RegisterWeapon, resolveOption } from "../core/registry";
 import { StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
-import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
+import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
 // 4★ Bows
 
@@ -364,14 +364,35 @@ class MouunsMoon extends WeaponBase {
   }
 }
 
-@RegisterWeapon("alley_hunter")
+const alleyHunterOption = {
+  label: { zh: "后台叠加层数", en: "Off-field Stacks" },
+  choices: [
+    { value: "10", label: { zh: "10层（满层）", en: "10 stacks (max)" } },
+    { value: "8", label: { zh: "8层", en: "8 stacks" } },
+    { value: "6", label: { zh: "6层", en: "6 stacks" } },
+    { value: "4", label: { zh: "4层", en: "4 stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 stacks" } },
+    { value: "0", label: { zh: "0层", en: "0 stacks" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("alley_hunter", alleyHunterOption)
 class AlleyHunter extends WeaponBase {
-  // Max off-field stacks assumed
-  readonly buffs = [
-    new StatBuff(wbs(this, ["off-field"]), { receiver: "self" }, [
-      { key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-    ]),
-  ];
+  private readonly o = resolveOption(alleyHunterOption, this.option);
+
+  // Stacks ramp from 0 to 10 over 10s while off-field, decay while on-field.
+  // Max DMG% bonus is 20-40% (R1-R5) at 10 stacks (2-4% per stack). Default to max.
+  get buffs() {
+    const stacks = Number(this.o);
+    return [
+      new StatBuff(wbs(this, ["off-field"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: stacks * r(this.refinement, [0.02, 0.025, 0.03, 0.035, 0.04]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("predator")
@@ -429,15 +450,20 @@ class MitternachtsWaltz extends WeaponBase {
   ];
 }
 
-// Royal series: 5-stack CR on hit (resets on crit) — model at 3 stacks (average)
-@RegisterWeapon("royal_bow")
+@RegisterWeapon("royal_bow", royalSeriesOption)
 class RoyalBow extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
-      {
-        key: "cr",
-        value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(royalSeriesOption, this.option);
+
+  // Stacks reset on CRIT — effective count depends on CRIT Rate. Default 3.
+  get buffs() {
+    const stacks = Number(this.o);
+    return [
+      new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
+        {
+          key: "cr",
+          value: stacks * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]),
+    ];
+  }
 }

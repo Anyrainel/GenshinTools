@@ -500,22 +500,15 @@ class Albedo extends CharacterBase {
       );
     }
 
-    // C6: Fatal Blossom DMG +250% DEF for 20s (after Silver Isotoma destroyed by Q)
-    if (this.constellation >= 6 && isHexerei) {
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C6", ["Q"]),
-          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-          [],
-          "def",
-          "baseDmg",
-          2.5
-        )
-      );
-    }
+    // C6 Fatal-Blossom-only +250% DEF baseDmg buff is applied via bespokeBuffs on the
+    // Fatal Blossom part of albedo-burst (game text restricts this to "生灭之花造成的伤害"
+    // only — burst initial slash should not receive it).
 
     return buffs;
   })();
+
+  // Capture flag for bespokeBuffs in formulaMap
+  private readonly _isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
 
   protected readonly formulaMap = (() => {
     return {
@@ -562,6 +555,22 @@ class Albedo extends CharacterBase {
               reaction: "none",
             }),
             hits: 7,
+            // C6: +250% DEF baseDmg applies ONLY to Fatal Blossoms (生灭之花),
+            // not the burst initial slash. Gated on Hexerei (Silver Isotoma must exist).
+            ...(this.constellation >= 6 && this._isHexerei
+              ? {
+                  bespokeBuffs: [
+                    new ScalingBuff(
+                      cbs(this, "C6", ["Q"]),
+                      { receiver: "selfOnField" },
+                      [],
+                      "def",
+                      "baseDmg",
+                      2.5
+                    ),
+                  ],
+                }
+              : {}),
           },
         ],
       },
@@ -732,12 +741,29 @@ class Diluc extends CharacterBase {
           },
         ],
       },
+      // Canonical rotation is N1E×3 (vape carry) — only the N1 hit is used per
+      // E cancel. During Q infusion (8s base + 4s P2), NAs deal Pyro DMG.
+      // Modeled as single-part N1 formula; count=3 in comboDescriptor reflects
+      // the 3 N1 hits in the N1E×3 string. (Full N1-N4 chain rarely used.)
+      "diluc-normal": {
+        label: { zh: "普通攻击 (N1)", en: "Normal (N1)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 1), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
-  // Rotation: Q > N1E > N1E > N1E (vape carry)
+  // Rotation: Q > N1E > N1E > N1E (vape carry) — 3 N1 cancels alongside the 3 E hits
   protected override get comboDescriptor(): ComboTemplate {
     return [
+      { id: "diluc-normal", count: 3 },
       { id: "diluc-skill", count: 1 },
       { id: "diluc-burst", count: 1 },
       { id: "diluc-plunge", count: 0 },
@@ -1126,9 +1152,15 @@ class Venti extends CharacterBase {
       reaction: "none" as const,
     };
 
+    // Hexerei: Secret Rite — converts Venti's NAs into Windsunder Arrows during
+    // Stormeye. Without 2 Hexerei teammates, Venti's NAs are normal physical bow
+    // shots and this Anemo Windsunder formula does not apply.
+    const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
+
     return {
       "venti-windsunder": {
         label: { zh: "Q 普攻飓风箭", en: "Q Windsunder Arrow" },
+        when: isHexerei,
         parts: [
           { formula: new DirectFormula(n1 * ws, naTag), hits: 2 }, // N1
           { formula: new DirectFormula(n2 * ws, naTag) }, // N2
@@ -1181,6 +1213,39 @@ class Venti extends CharacterBase {
           },
         ],
       },
+      // Q absorbed-element additional DMG (param2): fires per tick when Stormeye
+      // absorbs Hydro/Pyro/Cryo/Electro. Per S10, the absorbed element depends on
+      // in-game aura priority (Pyro > Hydro > Electro > Cryo) and cannot be
+      // determined from team comp alone. Modeled as one formula per absorbable
+      // element present in team — same approach as the C6 RES shred above.
+      // Note: in-game only ONE absorption occurs per cast; this model
+      // over-counts when multiple absorbable elements are present.
+      ...(() => {
+        const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+        const teamEls = new Set(Object.values(this.teamMeta.elements));
+        const present = absorbElements.filter((el) => teamEls.has(el));
+        const entries: Record<string, FormulaEntry> = {};
+        for (const el of present) {
+          entries[`venti-burst-absorb-${el.toLowerCase()}`] = {
+            label: {
+              zh: `Q ${el}附加×20`,
+              en: `Q ${el} Absorb ×20`,
+            },
+            parts: [
+              {
+                formula: new DirectFormula(this.param("Q", 2), {
+                  element: el,
+                  ability: "burst",
+                  reaction: "none",
+                }),
+                hits: 20,
+                offField: true,
+              },
+            ],
+          };
+        }
+        return entries;
+      })(),
       // E Press DMG (param1) — C2 "Wherever a Breeze Blows" baseDmg% +2.0 applied via buff
       "venti-skill": {
         label: {
@@ -1217,11 +1282,21 @@ class Venti extends CharacterBase {
   })();
 
   // Rotation: Q (burst ticks baked in) + 1 Windsunder NA string + C2 E
+  // Q absorbed-element entries default to count=0 — only ONE absorption can occur
+  // per cast, but we cannot determine which element the engine picks without aura
+  // priority info. User can opt in by setting count=1 on the matching element.
   protected override get comboDescriptor(): ComboTemplate {
+    const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+    const teamEls = new Set(Object.values(this.teamMeta.elements));
+    const present = absorbElements.filter((el) => teamEls.has(el));
     return [
       { id: "venti-windsunder", count: 1 },
       { id: "venti-burst-total", count: 1 },
       { id: "venti-skill", count: 1 },
+      ...present.map((el) => ({
+        id: `venti-burst-absorb-${el.toLowerCase()}` as const,
+        count: 0,
+      })),
     ];
   }
 }
