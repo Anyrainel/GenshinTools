@@ -1,5 +1,5 @@
 import { Battery, ChevronDown } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Collapsible,
@@ -21,6 +21,7 @@ import {
   hasPeriodicGeneration,
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
+import { optimizeWaitBlocks } from "@/lib/ercalc/optimizer";
 import { analyzeRotation } from "@/lib/ercalc/rotationHints";
 import type {
   ActionType,
@@ -416,24 +417,115 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
     [timelines, erTeam, concatErTimelines]
   );
 
-  // Suggestion: auto-toggle Favonius on existing timelines when a wielder equips Favonius
-  const applyFavoniusDefaults = useCallback(() => {
+  // Auto-apply Favonius defaults whenever a wielder's weapon or refinement
+  // changes. The first run after mount records current weapon state without
+  // touching timelines, so persisted customizations survive page reloads;
+  // afterwards, equip / refinement / unequip changes re-snap flags to the
+  // refinement's default proc count.
+  const prevFavState = useRef<Map<string, string> | null>(null);
+  useEffect(() => {
+    if (prevFavState.current === null) {
+      const initial = new Map<string, string>();
+      for (const slot of erTeam) {
+        const we = slot.weaponId ? weaponEnergyById[slot.weaponId] : undefined;
+        const isFav = we?.energy.effect === "particles";
+        initial.set(
+          slot.charId,
+          isFav ? `${slot.weaponId}|${slot.refinement ?? 0}` : ""
+        );
+      }
+      prevFavState.current = initial;
+      return;
+    }
+    let dirty = false;
+    let next = timelines;
+    for (const slot of erTeam) {
+      const we = slot.weaponId ? weaponEnergyById[slot.weaponId] : undefined;
+      const isFav = we?.energy.effect === "particles";
+      const stateKey = isFav ? `${slot.weaponId}|${slot.refinement ?? 0}` : "";
+      const prev = prevFavState.current.get(slot.charId) ?? "";
+      if (prev === stateKey) continue;
+      prevFavState.current.set(slot.charId, stateKey);
+
+      const defaultProcs =
+        isFav && we && we.energy.effect === "particles"
+          ? we.energy.defaultProcsByRefinement[slot.refinement ?? 0]
+          : 0;
+      next = next.map((ert) => {
+        const actions = ert.actions.map((a) => ({ ...a }));
+        for (const a of actions)
+          if (a.char === slot.charId) a.favoniusProc = false;
+        if (defaultProcs > 0)
+          autoPlaceFavonius(actions, slot.charId, defaultProcs);
+        return { ...ert, actions };
+      });
+      dirty = true;
+    }
+    if (dirty) setTimelines(next);
+  }, [erTeam, timelines, setTimelines]);
+
+  // Manual "re-snap" for cases where the user edited Favonius flags by hand
+  // and wants to return to default placement without touching the weapon.
+  const handleResetFavDefaults = useCallback(() => {
+    let next = timelines;
     for (const slot of erTeam) {
       const we = slot.weaponId ? weaponEnergyById[slot.weaponId] : undefined;
       if (we?.energy.effect !== "particles") continue;
       const defaultProcs =
         we.energy.defaultProcsByRefinement[slot.refinement ?? 0];
-      const newTimelines = timelines.map((ert) => {
+      next = next.map((ert) => {
         const actions = ert.actions.map((a) => ({ ...a }));
-        // Clear prior Favonius flags for this wielder, then re-apply defaults
         for (const a of actions)
           if (a.char === slot.charId) a.favoniusProc = false;
         autoPlaceFavonius(actions, slot.charId, defaultProcs);
         return { ...ert, actions };
       });
-      setTimelines(newTimelines);
     }
+    setTimelines(next);
   }, [erTeam, timelines, setTimelines]);
+
+  // Greedy optimizer: insert wait blocks (+ swap E↔Q) on the loop timeline
+  // to minimize the maximum team ER requirement. Operates on the loop only;
+  // startup timelines are untouched.
+  const handleOptimizeWaits = useCallback(() => {
+    if (erTeam.length === 0 || mainERT.actions.length === 0) return;
+    const teamMembers = erTeam.map(toTeamMember);
+    const startup =
+      startupERTs.length > 0 ? concatErTimelines(startupERTs) : undefined;
+    const opts = {
+      calcMode,
+      particleMode,
+      timeline2: startup && startup.actions.length > 0 ? mainERT : undefined,
+    };
+    const baseTimeline =
+      startup && startup.actions.length > 0 ? startup : mainERT;
+    const result = optimizeWaitBlocks(teamMembers, baseTimeline, opts);
+    // Only write back to the loop. Optimizer returns the timeline it mutated,
+    // which is `startup` when present — but the optimization edits propagate
+    // to the loop via the simulated repeat; we re-run it on the loop only
+    // when there's no startup, otherwise we keep startup edits via the result.
+    if (!startup || startup.actions.length === 0) {
+      setTimelines([...timelines.slice(0, -1), result.timeline]);
+    } else {
+      // With startup: optimizer edited the startup; the loop is unchanged.
+      // For now apply the same optimizer to the loop as a separate pass to
+      // surface in-loop wait insertions, which are more impactful for repeats.
+      const loopResult = optimizeWaitBlocks(teamMembers, mainERT, {
+        calcMode: "full-energy-repeat",
+        particleMode,
+      });
+      setTimelines([...timelines.slice(0, -1), loopResult.timeline]);
+    }
+  }, [
+    erTeam,
+    timelines,
+    mainERT,
+    startupERTs,
+    calcMode,
+    particleMode,
+    concatErTimelines,
+    setTimelines,
+  ]);
 
   if (charIds.length < 2) return null;
 
@@ -526,11 +618,19 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
 
               <button
                 type="button"
-                onClick={applyFavoniusDefaults}
+                onClick={handleResetFavDefaults}
                 className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
-                title={t.ui("erCalc.resetFavTitle")}
+                title={t.ui("erCalc.resetFavDefaultsTitle")}
               >
-                {t.ui("erCalc.resetFav")}
+                {t.ui("erCalc.resetFavDefaults")}
+              </button>
+              <button
+                type="button"
+                onClick={handleOptimizeWaits}
+                className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                title={t.ui("erCalc.optimizeWaitsTitle")}
+              >
+                {t.ui("erCalc.optimizeWaits")}
               </button>
             </div>
 

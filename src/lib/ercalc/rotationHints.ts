@@ -113,18 +113,5 @@ export function analyzeRotation(
     }
   }
 
-  // Chars in team but not in timeline
-  for (const charId of teamCharIds) {
-    const inTimeline = actions.some((a) => a.char === charId);
-    if (!inTimeline) {
-      hints.push({
-        type: "info",
-        charId,
-        messageEn: "{char} is in the team but has no actions.",
-        messageZh: "{char} 在队伍中但没有动作。",
-      });
-    }
-  }
-
   return hints;
 }

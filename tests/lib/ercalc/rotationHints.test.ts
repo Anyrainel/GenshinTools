@@ -78,18 +78,6 @@ describe("analyzeRotation", () => {
     expect(missingE!.type).toBe("warning");
   });
 
-  it("detects character with no actions", () => {
-    const timeline = ert([
-      { char: "bennett", action: "E" },
-      { char: "bennett", action: "Q" },
-    ]);
-    const hints = analyzeRotation(timeline, ["bennett", "sucrose"]);
-    const noAction = hints.find(
-      (h) => h.charId === "sucrose" && h.messageEn.includes("no actions")
-    );
-    expect(noAction).toBeDefined();
-  });
-
   it("returns empty warnings for well-formed rotation", () => {
     const timeline = ert([
       { char: "bennett", action: "E" },

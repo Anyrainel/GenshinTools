@@ -2339,10 +2339,15 @@ export const i18nUiData = {
     minEst: { en: "Min", zh: "最低" },
     avgEst: { en: "Avg", zh: "期望" },
     maxEst: { en: "Max", zh: "最高" },
-    resetFav: { en: "Reset Fav", zh: "重置西风" },
-    resetFavTitle: {
-      en: "Reset Favonius defaults",
-      zh: "重置西风默认产球",
+    optimizeWaits: { en: "Auto Waits", zh: "自动添加等待" },
+    optimizeWaitsTitle: {
+      en: "Insert wait blocks to minimize team ER",
+      zh: "插入等待节点以降低团队所需充能",
+    },
+    resetFavDefaults: { en: "Reset Fav", zh: "重置西风默认" },
+    resetFavDefaultsTitle: {
+      en: "Reapply Favonius default proc placement for all wielders",
+      zh: "为所有西风武器持有者重新应用默认产球位置",
     },
 
     // Timeline controls
