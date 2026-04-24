@@ -160,7 +160,7 @@ function WeaponDetailDrawer({
       <DrawerContent className="max-h-[85vh]">
         <DrawerTitle className="sr-only">{name}</DrawerTitle>
         <DrawerDescription className="sr-only">{weaponType}</DrawerDescription>
-        <div className="px-4 pb-6 pt-2 overflow-y-auto space-y-4 max-w-lg mx-auto w-full">
+        <div className="px-4 pb-6 pt-2 overflow-y-auto space-y-4 max-w-lg mx-auto w-full select-text">
           {/* Header: icon + name + stars + ownership */}
           <div className="flex items-center gap-3">
             <ItemIcon

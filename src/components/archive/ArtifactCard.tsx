@@ -6,7 +6,7 @@ import type { ArtifactSetResource } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 
 /** Height threshold (px) for the inner effect container before collapsing kicks in */
-const COLLAPSE_THRESHOLD = 210;
+const COLLAPSE_THRESHOLD = 180;
 
 export const ArtifactCard = memo(
   ({
@@ -60,34 +60,32 @@ export const ArtifactCard = memo(
             <div
               ref={contentRef}
               className={cn(
-                "space-y-3 text-sm bg-accent/20 rounded-lg p-4 overflow-hidden transition-[max-height] duration-300 ease-in-out",
-                overflows && !expanded && "max-h-[210px]",
+                "space-y-2 text-sm bg-accent/20 rounded-lg p-4 overflow-hidden transition-[max-height] duration-300 ease-in-out",
+                overflows && !expanded && "max-h-[180px]",
                 (!overflows || expanded) && "flex-1"
               )}
             >
               <h3 className="font-semibold text-lg leading-tight text-center">
                 {name}
               </h3>
-              <div className="flex flex-col gap-1">
-                <span className="text-amber-400 font-semibold px-2 py-0.5 bg-amber-400/10 rounded-md w-fit text-xs self-start">
+              <p className="text-muted-foreground leading-relaxed">
+                <span className="text-amber-400 font-semibold px-1.5 py-0.5 bg-amber-400/10 rounded text-xs align-middle mr-1.5">
                   {t.ui("accountData.twoPiece")}
                 </span>
                 <span
-                  className="text-muted-foreground leading-relaxed"
                   // biome-ignore lint/security/noDangerouslySetInnerHtml: Artifact effect HTML from game data pipeline
                   dangerouslySetInnerHTML={{ __html: effects[0] ?? "" }}
                 />
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-amber-400 font-semibold px-2 py-0.5 bg-amber-400/10 rounded-md w-fit text-xs self-start">
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                <span className="text-amber-400 font-semibold px-1.5 py-0.5 bg-amber-400/10 rounded text-xs align-middle mr-1.5">
                   {t.ui("accountData.fourPiece")}
                 </span>
                 <span
-                  className="text-muted-foreground leading-relaxed"
                   // biome-ignore lint/security/noDangerouslySetInnerHtml: Artifact effect HTML from game data pipeline
                   dangerouslySetInnerHTML={{ __html: effects[1] ?? "" }}
                 />
-              </div>
+              </p>
             </div>
 
             {/* Fade overlay + expand/collapse toggle */}
