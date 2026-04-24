@@ -224,7 +224,7 @@ describe("ER diagnostic", () => {
             : "";
         console.log(
           `  ${r.characterId}: ${r.erNeeded === Number.POSITIVE_INFINITY ? "∞" : r.erNeeded.toFixed(0)}% ER` +
-            ` (particles=${b.particleEnergy.toFixed(1)}, flat=${b.flatEnergy.toFixed(1)})${qInfo}`
+            ` (particles=${b.particleEnergy.toFixed(1)}, scalable=${b.scalableEnergy.toFixed(1)}, flat=${b.flatEnergy.toFixed(1)})${qInfo}`
         );
       }
     }

@@ -1,5 +1,5 @@
-import { ArrowDown, ArrowRight, Plus, Trash2, Zap } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { ArrowDown, ArrowRight, Plus, Skull, Trash2, Zap } from "lucide-react";
+import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { CharAvatar } from "@/components/shared/CharAvatar";
 import {
   Popover,
@@ -284,6 +284,23 @@ export function TimelineStrip({
           >
             {t.ui("erCalc.addGrant")}
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              // Use first team slot as positioning anchor; orbCount edited via chip popover.
+              const anchor = team[0]?.charId;
+              if (!anchor) return;
+              onAddAction(anchor, "enemyOrb");
+              setAddPopoverOpen(false);
+              requestAnimationFrame(() => {
+                if (scrollRef.current)
+                  scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+              });
+            }}
+            className="mt-1 w-full text-xs md:text-sm px-2 py-1 rounded border border-border/40 hover:border-border hover:bg-rose-500/10 text-rose-400"
+          >
+            {t.ui("erCalc.addEnemyOrb")}
+          </button>
         </div>
       </PopoverContent>
     </Popover>
@@ -419,6 +436,16 @@ export function TimelineStrip({
                         <GrantChip
                           act={act}
                           team={team}
+                          isDragging={isDragging}
+                          onDragStart={(e) => handleDragStart(e, i)}
+                          onDragOver={(e) => handleDragOver(e, i)}
+                          onDragEnd={handleDragEnd}
+                          onUpdate={(next) => onUpdateAction(i, next)}
+                          onRemove={() => onRemoveAction(i)}
+                        />
+                      ) : act.action === "enemyOrb" ? (
+                        <EnemyOrbChip
+                          act={act}
                           isDragging={isDragging}
                           onDragStart={(e) => handleDragStart(e, i)}
                           onDragOver={(e) => handleDragOver(e, i)}
@@ -591,6 +618,16 @@ function MainChip({
     isSkillOrBurst &&
     wEnergy?.effect === "flatEnergy" &&
     wEnergy.trigger === "reaction";
+  const reactionAmount =
+    reactionEligible && wEnergy?.effect === "flatEnergy"
+      ? wEnergy.totalEnergy[slot?.refinement ?? 0]
+      : 0;
+  const reactionConditionLabel =
+    reactionEligible && wEnergy?.effect === "flatEnergy"
+      ? ((language === "zh"
+          ? wEnergy.reactionCondition?.zh
+          : wEnergy.reactionCondition?.en) ?? null)
+      : null;
 
   // Other team members who could attach a periodic proc here (when this char is on-field)
   const periodicSourceCandidates = team.filter(
@@ -786,15 +823,32 @@ function MainChip({
         {/* Reaction trigger toggle (Bloodsoaked Ruins, Lumidouce Elegy, etc.) */}
         {reactionEligible && (
           <div className="border-t border-border/30 pt-2">
-            <label className="flex items-center gap-2 cursor-pointer text-xs">
+            <label className="flex items-start gap-2 cursor-pointer text-xs">
               <input
                 type="checkbox"
                 checked={!!act.reactionProc}
                 onChange={(e) => onToggleReaction(e.target.checked)}
-                className="rounded border-border"
+                className="rounded border-border mt-0.5"
               />
-              <Zap className="w-3.5 h-3.5 text-fuchsia-400" />
-              <span>{t.ui("erCalc.reactionTrigger")}</span>
+              <Zap className="w-3.5 h-3.5 text-fuchsia-400 mt-0.5 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span>{t.ui("erCalc.reactionTrigger")}</span>
+                  {reactionAmount > 0 && (
+                    <span className="font-medium tabular-nums text-blue-400 shrink-0">
+                      +
+                      {reactionAmount % 1 === 0
+                        ? reactionAmount
+                        : reactionAmount.toFixed(1)}
+                    </span>
+                  )}
+                </div>
+                {reactionConditionLabel && (
+                  <div className="text-[10px] text-foreground/60 mt-0.5">
+                    {t.ui("erCalc.reactionIf")} {reactionConditionLabel}
+                  </div>
+                )}
+              </div>
             </label>
           </div>
         )}
@@ -945,12 +999,31 @@ function GrantChip({
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const grants = act.energyGrants ?? {};
-  const total = Object.values(grants).reduce((a, b) => a + (b || 0), 0);
+  // Display total: sum flat + percent (resolved against burst cost). Quick
+  // "is anything set" hint on the chip surface.
+  const total = team.reduce((sum, slot) => {
+    const g = grants[slot.charId];
+    if (!g) return sum;
+    const f = g.flat ?? 0;
+    const p = ((g.percent ?? 0) / 100) * (slot.burstCost ?? 0);
+    return sum + f + p;
+  }, 0);
 
-  const setGrant = (charId: string, amount: number) => {
+  const setGrantField = (
+    charId: string,
+    field: "flat" | "percent",
+    amount: number
+  ) => {
     const next = { ...(act.energyGrants ?? {}) };
-    if (!amount || Number.isNaN(amount)) delete next[charId];
-    else next[charId] = amount;
+    const prev = next[charId] ?? {};
+    const updated = { ...prev };
+    if (!amount || Number.isNaN(amount)) delete updated[field];
+    else updated[field] = amount;
+    if ((updated.flat ?? 0) === 0 && (updated.percent ?? 0) === 0) {
+      delete next[charId];
+    } else {
+      next[charId] = updated;
+    }
     onUpdate({ ...act, energyGrants: next });
   };
 
@@ -990,28 +1063,145 @@ function GrantChip({
           {t.ui("erCalc.grantDesc")}
         </div>
         <div className="space-y-1.5 border-t border-border/40 pt-2">
-          {team.map((slot) => (
-            <div
-              key={slot.charId}
-              className="flex items-center gap-2 text-xs md:text-sm"
-            >
-              <CharAvatar charId={slot.charId} size={20} />
-              <span className="flex-1 truncate">
-                {t.character(slot.charId)}
-              </span>
-              <input
-                type="number"
-                min={0}
-                step={1}
-                value={grants[slot.charId] ?? ""}
-                onChange={(e) =>
-                  setGrant(slot.charId, Number.parseFloat(e.target.value) || 0)
-                }
-                className="w-16 rounded border border-border/40 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
-                placeholder="0"
-              />
-            </div>
-          ))}
+          <div className="grid grid-cols-[1fr_auto_auto] gap-x-1.5 gap-y-0.5 items-center text-[10px] md:text-xs text-foreground/60">
+            <span />
+            <span className="text-center w-14">{t.ui("erCalc.grantFlat")}</span>
+            <span className="text-center w-12">
+              {t.ui("erCalc.grantPercent")}
+            </span>
+            {team.map((slot) => {
+              const g = grants[slot.charId] ?? {};
+              return (
+                <Fragment key={slot.charId}>
+                  <div className="flex items-center gap-1.5 min-w-0 text-xs md:text-sm">
+                    <CharAvatar charId={slot.charId} size={20} />
+                    <span className="truncate">{t.character(slot.charId)}</span>
+                  </div>
+                  <input
+                    type="number"
+                    min={0}
+                    step={1}
+                    value={g.flat ?? ""}
+                    onChange={(e) =>
+                      setGrantField(
+                        slot.charId,
+                        "flat",
+                        Number.parseFloat(e.target.value) || 0
+                      )
+                    }
+                    className="w-14 rounded border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
+                    placeholder="0"
+                    title={t.ui("erCalc.grantFlatTitle")}
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    step={5}
+                    value={g.percent ?? ""}
+                    onChange={(e) =>
+                      setGrantField(
+                        slot.charId,
+                        "percent",
+                        Number.parseFloat(e.target.value) || 0
+                      )
+                    }
+                    className="w-12 rounded border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
+                    placeholder="%"
+                    title={t.ui("erCalc.grantPercentTitle")}
+                  />
+                </Fragment>
+              );
+            })}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            onRemove();
+            setOpen(false);
+          }}
+          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center justify-center gap-1.5 pt-1 border-t border-border/30"
+        >
+          <Trash2 className="w-3 h-3" />
+          {t.ui("erCalc.remove")}
+        </button>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function EnemyOrbChip({
+  act,
+  isDragging,
+  onDragStart,
+  onDragOver,
+  onDragEnd,
+  onUpdate,
+  onRemove,
+}: {
+  act: TimelineAction;
+  isDragging: boolean;
+  onDragStart: (e: React.DragEvent) => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDragEnd: () => void;
+  onUpdate: (next: TimelineAction) => void;
+  onRemove: () => void;
+}) {
+  const { t } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const orbCount = act.orbCount ?? 0;
+
+  const setCount = (n: number) => {
+    if (!Number.isFinite(n) || n < 0) n = 0;
+    onUpdate({ ...act, orbCount: n });
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div
+          draggable
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDragEnd={onDragEnd}
+          className={cn(
+            "rounded-md flex items-center gap-1 px-2 cursor-grab select-none shrink-0 border",
+            "border-rose-500/40 bg-rose-500/10 text-rose-300",
+            CHIP_H,
+            isDragging && "opacity-40 scale-95"
+          )}
+          style={{ minWidth: "3.5rem" }}
+          title={t.ui("erCalc.enemyOrbTitle")}
+        >
+          <Skull className="w-3.5 h-3.5" />
+          <span className="text-xs md:text-sm font-semibold">
+            {t.erAction("enemyOrb")}
+          </span>
+          {orbCount > 0 && (
+            <span className="text-[10px] md:text-xs font-semibold tabular-nums text-rose-200">
+              ×{orbCount}
+            </span>
+          )}
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-56 p-3 space-y-2" side="bottom">
+        <div className="text-sm font-semibold">
+          {t.ui("erCalc.enemyOrbTitle")}
+        </div>
+        <div className="text-xs text-foreground/80">
+          {t.ui("erCalc.enemyOrbDesc")}
+        </div>
+        <div className="flex items-center gap-2 border-t border-border/40 pt-2 text-xs md:text-sm">
+          <span className="flex-1">{t.ui("erCalc.enemyOrbCount")}</span>
+          <input
+            type="number"
+            min={0}
+            step={1}
+            value={orbCount || ""}
+            onChange={(e) => setCount(Number.parseFloat(e.target.value) || 0)}
+            className="w-16 rounded border border-border/40 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
+            placeholder="0"
+          />
         </div>
         <button
           type="button"

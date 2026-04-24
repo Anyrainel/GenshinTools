@@ -27,6 +27,16 @@ export type WeaponEnergyEffect =
         | "heal" // Wearer is a healer (approximated: fires at wearer's Q)
         | "reaction" // Wearer participates in a reaction (fires at wearer's Q)
         | "partyPlunge"; // Per plunge (NA/CA/PA gated to plunge) by any team member
+      /** For `trigger: "reaction"` weapons — which reaction the wearer must
+       *  participate in. Rendered in the timeline node popover so users
+       *  know when to enable the toggle. */
+      reactionCondition?: {
+        /** Canonical reaction name used in-game. Keep human-readable so the
+         *  UI can just surface it directly. Examples: "Lunar-Charged",
+         *  "Burning", "Burning / Burgeon / Vaporize / Melt". */
+        en: string;
+        zh: string;
+      };
     };
 
 export interface WeaponEnergyEntry {
@@ -102,16 +112,6 @@ const otherWeapons: WeaponEnergyEntry[] = [
       trigger: "skill",
     },
   },
-  // Prototype Starglitter: burst regenerates 4/4.5/5/5.5/6 per tick × 2 ticks
-  {
-    id: "prototype_starglitter",
-    type: "Polearm",
-    energy: {
-      effect: "flatEnergy",
-      totalEnergy: [8, 9, 10, 11, 12],
-      trigger: "burst",
-    },
-  },
   // Bloodsoaked Ruins: 12/13/14/15/16 energy after triggering Lunar-Charged, 14s CD
   {
     id: "bloodsoaked_ruins",
@@ -120,6 +120,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       effect: "flatEnergy",
       totalEnergy: [12, 13, 14, 15, 16],
       trigger: "reaction",
+      reactionCondition: { en: "Lunar-Charged", zh: "月感电" },
     },
   },
   // Crane's Echoing Call: 2.5/2.75/3/3.25/3.5 energy per party plunge hit, 0.7s CD.
@@ -133,14 +134,20 @@ const otherWeapons: WeaponEnergyEntry[] = [
       trigger: "partyPlunge",
     },
   },
-  // Nocturne's Curtain Call: energy on Lunar reaction
+  // Nocturne's Curtain Call: 14/15/16/17/18 energy when wearer triggers or
+  // deals DMG via any Lunar reaction. No explicit CD listed on tooltip (paired
+  // with the 12s HP-max/Lunar-DMG buff window).
   {
     id: "nocturnes_curtain_call",
     type: "Catalyst",
     energy: {
       effect: "flatEnergy",
-      totalEnergy: [8, 9, 10, 11, 12],
+      totalEnergy: [14, 15, 16, 17, 18],
       trigger: "reaction",
+      reactionCondition: {
+        en: "any Lunar reaction",
+        zh: "任意月曜反应",
+      },
     },
   },
   // Jadefall's Splendor: 4.5/5/5.5/6/6.5 energy every 2.5s for 3s after burst/shield
@@ -186,24 +193,31 @@ const otherWeapons: WeaponEnergyEntry[] = [
     },
   },
   // Oathsworn Eye: 24/30/36/42/48% ER for 10s after E (stat buff, not flat energy)
-  // Lumidouce Elegy: 8/9/10/11/12 energy after Burning/Dendro DMG on burning, 12s CD
+  // Lumidouce Elegy: 12/13/14/15/16 energy on reaching 2 stacks (Dendro DMG
+  // on Burning enemies) or refreshing at 2. 12s CD.
   {
     id: "lumidouce_elegy",
     type: "Polearm",
     energy: {
       effect: "flatEnergy",
-      totalEnergy: [8, 9, 10, 11, 12],
+      totalEnergy: [12, 13, 14, 15, 16],
       trigger: "reaction",
+      reactionCondition: { en: "Burning", zh: "燃烧" },
     },
   },
-  // Flame-Forged Insight: 4/4.5/5/5.5/6 energy on certain reactions
+  // Flame-Forged Insight: 12/15/18/21/24 energy on Electro-Charged / Lunar-
+  // Charged / Bloom / Lunar-Bloom / Crystallize / Lunar-Crystallize. 15s CD.
   {
-    id: "flame-forged_insight",
+    id: "flameforged_insight",
     type: "Claymore",
     energy: {
       effect: "flatEnergy",
-      totalEnergy: [4, 4.5, 5, 5.5, 6],
+      totalEnergy: [12, 15, 18, 21, 24],
       trigger: "reaction",
+      reactionCondition: {
+        en: "Electro-Charged / Lunar-Charged / Bloom / Lunar-Bloom / Crystallize / Lunar-Crystallize",
+        zh: "感电 / 月感电 / 绽放 / 月绽放 / 结晶 / 月结晶",
+      },
     },
   },
   // Portable Power Saw: 6/7.5/9/10.5/12 energy from Stoic Symbols on burst (max 3 symbols)
@@ -226,14 +240,28 @@ const otherWeapons: WeaponEnergyEntry[] = [
       trigger: "burst",
     },
   },
-  // Sacrificer's Staff: 6/7.5/9/10.5/12 energy on burst (similar mechanic)
+  // Tome of the Eternal Flow: 8/9/10/11/12 energy when reaching or refreshing
+  // 3 stacks of the HP-change Charged Attack buff. 12s CD. In practice fires
+  // ~once per Neuvillette burst window, so we anchor to burst.
   {
-    id: "sacrificers_staff",
-    type: "Polearm",
+    id: "tome_of_the_eternal_flow",
+    type: "Catalyst",
     energy: {
       effect: "flatEnergy",
-      totalEnergy: [6, 7.5, 9, 10.5, 12],
+      totalEnergy: [8, 9, 10, 11, 12],
       trigger: "burst",
+    },
+  },
+  // Seven Edicts of Dust and Light: 14/15/16/17/18 energy when wearer creates
+  // a shield. 14s CD. Most shielders generate shields from their skill (Zhongli
+  // hold-E, Baizhu E, Layla E, etc.), so we anchor to skill.
+  {
+    id: "seven_edicts_of_dust_and_light",
+    type: "Catalyst",
+    energy: {
+      effect: "flatEnergy",
+      totalEnergy: [14, 15, 16, 17, 18],
+      trigger: "skill",
     },
   },
 ];

@@ -257,6 +257,14 @@ export const i18nUiData = {
     characters: { en: "Characters", zh: "角色" },
     inventory: { en: "Inventory", zh: "库存" },
     recommendations: { en: "Recommendations", zh: "提分推荐" },
+    recommendationsRenovatingTitle: {
+      en: "This Page Is Being Renovated",
+      zh: "此页面正在翻新中",
+    },
+    recommendationsRenovatingDesc: {
+      en: "Recommendations are temporarily unavailable while the algorithm and interface are rebuilt.",
+      zh: "提分推荐的算法与界面正在重做，暂时不可用。",
+    },
     weapons: { en: "Weapons", zh: "武器" },
     artifacts: { en: "Artifacts", zh: "圣遗物" },
     equipped: { en: "Equipped", zh: "已装备" },
@@ -2299,15 +2307,28 @@ export const i18nUiData = {
       en: "No matching team found in Team DMG",
       zh: "未找到匹配的队伍配置",
     },
-    title: { en: "ER Requirements", zh: "能量需求" },
+    title: { en: "ER Requirements Calc (WIP)", zh: "能量需求 (开发中)" },
     erRequirements: { en: "ER Requirements", zh: "充能需求" },
     copyResults: { en: "Copy results", zh: "复制结果" },
     applyToTeamMinER: { en: "Apply to team Min ER", zh: "应用到队伍最低ER" },
     copied: { en: "Copied", zh: "已复制" },
     bindingModeStart: { en: "start", zh: "启动" },
     bindingModeRepeat: { en: "repeat", zh: "循环" },
-    onFieldLabel: { en: "on-field", zh: "前台" },
-    offFieldLabel: { en: "off-field", zh: "后台" },
+    qWindowScalableRow: { en: "scalable", zh: "可充能" },
+    qWindowBinding: { en: "binding", zh: "瓶颈" },
+    qWindowEmpty: { en: "—", zh: "—" },
+    particleEnergyTitle: {
+      en: "Particle / orb energy at 100% ER (scales with ER)",
+      zh: "100% 充能下的微粒 / 元素球能量（受充能影响）",
+    },
+    scalableEnergyTitle: {
+      en: "Scalable flat energy at 100% ER (scales with ER, e.g. orb grants)",
+      zh: "100% 充能下的可充能固定能量（受充能影响，如元素球赋能）",
+    },
+    flatEnergyTitle: {
+      en: "Fixed flat energy (NOT affected by ER)",
+      zh: "固定能量（不受充能影响）",
+    },
     actionsLabel: { en: "actions", zh: "个动作" },
 
     // Settings bar labels
@@ -2342,15 +2363,32 @@ export const i18nUiData = {
       zh: "删除此启动轴",
     },
     addAction: { en: "Add action", zh: "添加动作" },
-    addGrant: { en: "+ Grant Energy (custom)", zh: "+ 赋能事件 (自定义能量)" },
+    addGrant: { en: "+ Custom Energy Event", zh: "+ 自定义能量事件" },
 
     // Grant chip + popover
     grantLabel: { en: "Grant", zh: "赋能" },
-    grantEventTitle: { en: "Grant energy", zh: "赋能事件" },
+    grantEventTitle: { en: "Custom energy", zh: "自定义能量" },
     grantDesc: {
-      en: "Grant flat energy to specified chars at this moment (not ER-scaled).",
-      zh: "在此刻向指定角色授予固定能量（不受充能影响）。",
+      en: "Grant flat energy to specific chars at this moment. Either as a fixed amount, or as a % of the recipient's burst cost. Neither is ER-scaled. For ER-scaled enemy orb drops, use a separate enemy orb event.",
+      zh: "在此刻向指定角色授予固定能量。可填固定值或爆发消耗的百分比，皆不受充能影响。可充能的敌方产球请使用单独的「敌方产球」事件。",
     },
+    grantFlat: { en: "flat", zh: "固定" },
+    grantPercent: { en: "%cost", zh: "%消耗" },
+    grantFlatTitle: {
+      en: "Flat energy (not ER-scaled)",
+      zh: "固定能量（不受充能影响）",
+    },
+    grantPercentTitle: {
+      en: "% of recipient's burst cost (resolves to flat, not ER-scaled)",
+      zh: "对方爆发消耗的百分比（解析为固定能量，不受充能影响）",
+    },
+    addEnemyOrb: { en: "+ Enemy Orb", zh: "+ 敌方产球" },
+    enemyOrbTitle: { en: "Enemy orb drop", zh: "敌方产球" },
+    enemyOrbDesc: {
+      en: "Element-agnostic orbs dropped by enemies (shield breaks, kills, etc.). Absorbed by the next on-field char, ER-scaled like normal particles.",
+      zh: "敌方掉落的无属性元素球（破盾、击杀等）。由下一个前台角色拾取，与微粒一样受充能影响。",
+    },
+    enemyOrbCount: { en: "Orbs", zh: "球数" },
     remove: { en: "Remove", zh: "删除" },
 
     // Main chip popover
@@ -2361,6 +2399,7 @@ export const i18nUiData = {
     perProcSuffix: { en: "/proc", zh: "/次" },
     clearParticle: { en: "clear", zh: "中性粒子" },
     reactionTrigger: { en: "Triggers reaction", zh: "触发反应" },
+    reactionIf: { en: "if", zh: "条件：" },
     perProcLabel: { en: "Per proc", zh: "每次微粒" },
     particleSuffix: { en: "P", zh: "球" },
     particlesSuffixTriggered: { en: " particles", zh: "产球" },

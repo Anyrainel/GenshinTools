@@ -24,6 +24,7 @@ import type {
   ERTimeline,
   ParticleMode,
   PeriodicProc,
+  QWindow,
   SelfEnergyEntry,
   TeamMember,
   TeamSlot,
@@ -323,6 +324,8 @@ interface CharSimState {
   currentEvents: EnergyEvent[];
   qEvaluated: number;
   firstQSkipped: boolean;
+  /** Recorded Q / specialQ windows in timeline order. */
+  qWindows: QWindow[];
 }
 
 function freshState(): CharSimState {
@@ -342,6 +345,7 @@ function freshState(): CharSimState {
     currentEvents: [],
     qEvaluated: 0,
     firstQSkipped: false,
+    qWindows: [],
   };
 }
 
@@ -460,18 +464,34 @@ function collectFlatEventsAt(
   const out: FlatEventDescriptor[] = [];
   const onFieldId = act.char;
 
-  // 1) grantEnergy node — user-defined grants.
+  // 1) grantEnergy node — user-defined grants. Two independent components
+  //    per recipient: flat (not ER-scaled) and percent of burst cost
+  //    (resolves to flat, not ER-scaled). ER-scalable orb drops are a
+  //    separate `enemyOrb` action — handled in the simulation loop, not here.
   if (act.action === "grantEnergy" && act.energyGrants) {
-    for (const [recipientId, amount] of Object.entries(act.energyGrants)) {
-      if (!amount) continue;
-      out.push({
-        recipientId,
-        sourceChar: act.char,
-        sourceAction: "grantEnergy",
-        sourceLabel: "Grant",
-        amount,
-        isErScaling: false,
-      });
+    for (const [recipientId, g] of Object.entries(act.energyGrants)) {
+      if (!g) continue;
+      const recipient = team.find((m) => m.id === recipientId);
+      if (g.flat && g.flat > 0) {
+        out.push({
+          recipientId,
+          sourceChar: act.char,
+          sourceAction: "grantEnergy",
+          sourceLabel: "Grant",
+          amount: g.flat,
+          isErScaling: false,
+        });
+      }
+      if (g.percent && g.percent > 0 && recipient) {
+        out.push({
+          recipientId,
+          sourceChar: act.char,
+          sourceAction: "grantEnergy",
+          sourceLabel: "Grant%",
+          amount: (g.percent / 100) * recipient.burstCost,
+          isErScaling: false,
+        });
+      }
     }
     return out;
   }
@@ -624,7 +644,7 @@ function emitFlatEventsAt(
           particleElement: "",
           energyAt100: p.amount,
           onField: m.id === onFieldId,
-          type: "flat",
+          type: p.isErScaling ? "scalable" : "flat",
         });
       }
       rs.pendingProcs = rs.pendingProcs.filter((p) => p.remaining > 0);
@@ -647,7 +667,7 @@ function emitFlatEventsAt(
       particleElement: "",
       energyAt100: ev.amount,
       onField: ev.recipientId === onFieldId,
-      type: "flat",
+      type: ev.isErScaling ? "scalable" : "flat",
     });
     // Enqueue remaining (procs - 1) for subsequent attacks.
     if (ev.procs && ev.procs > 1) {
@@ -728,6 +748,31 @@ function simulateSequence(
           );
         }
       }
+    }
+
+    // ── 2a. Enemy orb drop — element-agnostic ("Clear") particles, absorbed
+    //         by the next on-field char. The action has no source-char
+    //         semantics (act.char is just a positioning anchor); skip the
+    //         normal per-action / burst / flat-event pipeline entirely. ──
+    if (act.action === "enemyOrb") {
+      const n = act.orbCount ?? 0;
+      if (n > 0) {
+        const absorber = getAbsorber(actions, i, isRepeating);
+        distributeParticles(
+          team,
+          state,
+          act.char, // positioning anchor; only used for source-attribution display
+          "enemyOrb",
+          i,
+          n,
+          "Clear",
+          absorber,
+          offFieldMult,
+          rotationLength,
+          artifactScratch
+        );
+      }
+      continue;
     }
 
     // ── 2. The action itself ──
@@ -862,12 +907,25 @@ function simulateSequence(
           s.erScalingAccum
         );
 
+        const wrappedQIdx = rotationLength > 0 ? i % rotationLength : i;
+        s.qWindows.push({
+          qIndex: wrappedQIdx,
+          qAction: act.action as "Q" | "specialQ",
+          burstCost: member.burstCost,
+          erNeeded: erForQ,
+          particleEnergy: s.particleAccum,
+          scalableEnergy: s.erScalingAccum,
+          flatEnergy: s.flatAccum,
+          events: [...s.currentEvents],
+          isBinding: false, // set after the loop
+        });
+
         if (erForQ > s.maxER) {
           s.maxER = erForQ;
           s.maxERParticle = s.particleAccum;
           s.maxERFlat = s.flatAccum;
           s.maxERErScaling = s.erScalingAccum;
-          s.maxERQIndex = rotationLength > 0 ? i % rotationLength : i;
+          s.maxERQIndex = wrappedQIdx;
           s.maxEREvents = [...s.currentEvents];
         }
         s.qEvaluated++;
@@ -888,7 +946,11 @@ function simulateSequence(
       return {
         characterId: id,
         erNeeded: 100,
-        energyBreakdown: { particleEnergy: 0, flatEnergy: 0 },
+        energyBreakdown: {
+          particleEnergy: 0,
+          scalableEnergy: 0,
+          flatEnergy: 0,
+        },
         hasQ: false,
       };
     }
@@ -899,9 +961,34 @@ function simulateSequence(
       return {
         characterId: id,
         erNeeded: 100,
-        energyBreakdown: { particleEnergy: 0, flatEnergy: 0 },
+        energyBreakdown: {
+          particleEnergy: 0,
+          scalableEnergy: 0,
+          flatEnergy: 0,
+        },
         hasQ: false,
       };
+    }
+
+    // Deduplicate Q windows by `qIndex`: in repeating mode the same Q
+    // position fires across startup + multiple repeats. Keep the
+    // worst-case occurrence per index — that's the one the engine actually
+    // requires ER for.
+    const byIndex = new Map<number, QWindow>();
+    for (const w of s.qWindows) {
+      const prev = byIndex.get(w.qIndex);
+      if (!prev || w.erNeeded > prev.erNeeded) byIndex.set(w.qIndex, w);
+    }
+    const uniqueWindows = [...byIndex.values()].sort(
+      (a, b) => a.qIndex - b.qIndex
+    );
+    // Mark the binding window (the worst — matches s.maxER).
+    let bindingMarked = false;
+    for (const w of uniqueWindows) {
+      if (!bindingMarked && w.erNeeded === s.maxER) {
+        w.isBinding = true;
+        bindingMarked = true;
+      }
     }
 
     return {
@@ -909,10 +996,12 @@ function simulateSequence(
       erNeeded: s.maxER,
       energyBreakdown: {
         particleEnergy: s.maxERParticle,
+        scalableEnergy: s.maxERErScaling,
         flatEnergy: s.maxERFlat,
       },
       bindingEvents: s.maxEREvents,
       bindingQIndex: s.maxERQIndex,
+      qWindows: uniqueWindows,
       hasQ: true,
     };
   });

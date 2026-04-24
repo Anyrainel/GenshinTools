@@ -304,11 +304,16 @@ export function migrateTeamStore(
     });
   }
   if (version < 14) {
-    // v14 bundles two independent schema changes landing in the same push:
+    // v14 bundles three independent schema changes landing in the same push:
     //   (a) ArtifactConfig 2pc+2pc shape:    { id1, id2 } → { halfSetIds: [id1, id2] }
     //   (b) ER calculator v2 ERTimeline:     { actions, ticks } + periodicE actions
     //                                      → { actions, periodic: PeriodicProc[] }
     //       and PeriodicProc { sourceChar, trigger: "E"|"Q", targetIndex }
+    //   (c) TimelineAction.energyGrants widened from `Record<string, number>`
+    //       to `Record<string, { flat?, percent? }>`. Legacy number values were
+    //       always flat grants → mapped to { flat: N }. Defensive: strips any
+    //       stray `.orb` field from intermediate dev builds (orb drops moved to
+    //       a dedicated `enemyOrb` action type).
 
     // biome-ignore lint/suspicious/noExplicitAny: migration reads legacy persisted shapes from several prior versions
     state.teams = state.teams.map((t: any) => {
@@ -408,6 +413,37 @@ export function migrateTeamStore(
             actions: realActions,
             periodic: [...periodicFromActions, ...fromTicks],
           };
+        });
+      }
+
+      // (c) Widen energyGrants on every action of every timeline.
+      if (Array.isArray(erTimelines)) {
+        // biome-ignore lint/suspicious/noExplicitAny: legacy timeline shape
+        erTimelines = erTimelines.map((tl: any) => {
+          if (!tl) return tl;
+          // biome-ignore lint/suspicious/noExplicitAny: legacy action shape
+          const actions = (tl.actions ?? []).map((a: any) => {
+            if (!a || a.action !== "grantEnergy" || !a.energyGrants) return a;
+            const widened: Record<string, { flat?: number; percent?: number }> =
+              {};
+            for (const [cid, val] of Object.entries(a.energyGrants)) {
+              if (typeof val === "number") {
+                if (val > 0) widened[cid] = { flat: val };
+              } else if (val && typeof val === "object") {
+                const v = val as {
+                  flat?: number;
+                  percent?: number;
+                  orb?: number;
+                };
+                const next: { flat?: number; percent?: number } = {};
+                if (v.flat) next.flat = v.flat;
+                if (v.percent) next.percent = v.percent;
+                if (next.flat || next.percent) widened[cid] = next;
+              }
+            }
+            return { ...a, energyGrants: widened };
+          });
+          return { ...tl, actions };
         });
       }
 

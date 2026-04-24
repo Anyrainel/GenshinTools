@@ -1,664 +1,453 @@
-# Energy Recharge Requirements Calculator — Design Document
+# ER Calculator — Design Document
 
-> System design for calculating ER requirements given a team and its rotation.
-
-## Implementation Status (April 2026)
-
-### Implemented (52 tests)
-- Core ER calculation with three modes (zero-energy-start, full-energy-repeat, zero-energy-repeat)
-- Timeline-based simulation with next-action absorber rule
-- **periodicE backward absorption**: periodic particles go to whoever is currently on-field (backward lookup)
-- Particle RNG modes (min/expected/max) with UI toggle
-- Per-action energy breakdown (bindingEvents) with grouped display and ER formula derivation
-- Binding Q identification (which Q determines the ER requirement) with thick yellow ring highlight
-- Self-energy from 69 characters — **action-conditional** (only triggers when the required action is in timeline)
-- ER-scaling energy support (Sara P2, Dori P2)
-- **Action-conditional party energy**: Raiden Q energy only applies if Raiden bursts; Sara P2 only if Sara uses E
-- **Action-conditional weapon energy**: Prototype Amber only on burst; Kitain only on skill
-- **Action-conditional artifact energy**: Exile 4pc only when wielder bursts
-- Weapon energy effects (Favonius ×5, Prototype Amber, Amenoma, Kitain, Katsuragikiri, Prototype Starglitter)
-- Artifact energy effects (Exile 4pc, Scholar 4pc)
-- Enemy particle presets (None/Low/Medium/High) with named labels
-- Wait-block auto-optimizer (greedy: insert waits, remove waits, swap E↔Q)
-- Team preset rotations (6: National, Raiden National, Fav National, Mono Geo, Freeze, Hu Tao Double Hydro)
-- Weapon selector on team cards with localized names
-- UI: gradient card system (9 themes), side-by-side layout (XL+), absorber arrows (→avatar), expandable breakdown panel with grouped events (×count), ER formula derivation, bottleneck indicator, copy results, color-coded action palette, team change auto-cleanup
-
-### Not Yet Implemented
-- Particle linkage arrows between timeline rows (design doc Section 12.2-12.3) — replaced with inline absorber arrows
-- Multi-row timeline visualization (one row per character)
-- "Apply to Min ER" button connecting to team-comp store
-- Integration with team-comp store for importing existing teams
-- URL sharing for configurations
-- gcsim CLI validation for accuracy cross-checking (plan documented in docs/er-calc-gcsim-validation.md)
-- ~7 newer weapons with energy effects not yet modeled
-
-### Deviations from Design
-- periodicE absorption uses **backward** lookup (who is on-field) instead of forward (next action). More accurate for off-field generators.
-- All energy effects are **action-conditional**: self-energy, party energy, weapon energy, and artifact energy only trigger when the relevant action is present in the timeline. This prevents phantom energy contributions.
-- The doubled timeline `[T,T]` hack is used for FE-repeat wrap-around instead of modular indexing.
-- Self-energy is distributed evenly across Q windows (approximation for multi-Q rotations).
-- Normal attack energy generation is approximated at ~2.5 particle energy per NA/CA/PA action (based on gcsim's 14% proc rate × 3 hits × 6 energy per Clear orb). Distributed to all team members (on-field 1.0×, off-field 0.6×).
-- Particle travel time is approximated via the absorber rule rather than frame-precise timing.
-
-### gcsim Comparison (from source code analysis)
-Our calculator matches gcsim's core formula: `ER = (burstCost - flatEnergy) / rawParticles × 100`.
-Key differences: gcsim uses Monte Carlo simulation with frame-precise timing, particle travel delay (100 frames), probabilistic particle generation, and NA energy. Our deterministic model trades precision for speed and interpretability. Expected deviation: 5-15% for well-structured rotations.
+> The definitive design reference for the Energy Recharge calculator under `src/lib/ercalc/` and `src/data/ercalc/`. Aimed at AI agents extending the system; describes what the system is supposed to be, not every detail of how it is currently implemented. When implementation disagrees with this document, the document wins unless the difference is explicitly called out below.
 
 ---
 
-## Table of Contents
+## 1. Purpose
 
-1. [Overview](#1-overview)
-2. [Energy System Fundamentals](#2-energy-system-fundamentals)
-3. [Energy Sources Taxonomy](#3-energy-sources-taxonomy)
-4. [Core Formula](#4-core-formula)
-5. [Timeline & Rotation Model](#5-timeline--rotation-model)
-6. [Action Keys & Particle Linkage](#6-action-keys--particle-linkage)
-7. [Three Calculation Modes](#7-three-calculation-modes)
-8. [Particle RNG Modes](#8-particle-rng-modes)
-9. [Weapon & Artifact Energy Sources](#9-weapon--artifact-energy-sources)
-10. [Enemy Energy Drops](#10-enemy-energy-drops)
-11. [Data Pipeline](#11-data-pipeline)
-12. [Timeline UI Design](#12-timeline-ui-design)
-13. [Inputs & Outputs](#13-inputs--outputs)
-14. [Reference Constants](#14-reference-constants)
-15. [Algorithm](#15-algorithm)
+The ER calculator answers one question per character in a team:
+
+> **"What ER% does this character need to execute this rotation?"**
+
+The user builds an explicit *event timeline* for a 4-character team. The calculator deterministically traces every point of energy — where it comes from, who absorbs it — and solves for the minimum ER% per character whose burst appears in the timeline.
+
+The output is an ER% *requirement*, which is then compared against the character's real-time ER% stat elsewhere in the app (artifact builder, team optimizer). The calculator itself never reads the character's actual ER% stat; see §3.
 
 ---
 
-## 1. Overview
+## 2. Design Principles
 
-An ER calculator answers: **"How much Energy Recharge does each character need to execute this rotation?"**
+### 2.1 Events, not time
 
-The user builds a visual timeline of actions for their 4-character team. The calculator determines who generates energy, who absorbs it, and solves for the minimum ER% on each character.
+gcsim simulates combat at frame granularity with an RNG seed. We do not. Our input is a **deterministic event timeline** — a list of discrete combat events a player understands (`E`, `Q`, `NA`, `wait`, …). Time is never modeled. Particle travel is approximated by the *next-action absorber* rule (§5.3). Periodic deployment duration is replaced by an editable proc count (§6.2).
 
-Three calculation modes address different player questions:
-- Can I burst on the first rotation starting from 0 energy?
-- Can I sustain this rotation forever starting from full energy?
-- Can I sustain this rotation forever starting from 0 energy?
+This buys two things: every point of energy is traceable to a node on the timeline (visualizable), and identical inputs always produce identical outputs (comparable across runs).
+
+### 2.2 Deterministic inputs, automated averaging of randomness
+
+The timeline is deterministic, but the game contains real randomness: extra-particle probabilities, Favonius CRIT procs, ICD-gated infusion hits, weapon reaction triggers. We push that randomness into the *data layer* (as probability distributions) and **auto-compute a best-guess placement** onto the timeline at load time. The user may then override anything manually.
+
+Concretely:
+- Particle counts are stored as lists of independent rolls; `min` / `expected` / `max` are derived, not heuristically inferred (§8).
+- Favonius procs are auto-placed onto the first *N* E/Q nodes of the wielder, where *N* is derived from refinement.
+- Reaction-trigger weapon procs are surfaced on the wielder's E/Q nodes with a user-togglable "did it react here?" flag and clearly labeled with the required reaction + energy refund.
+- Periodic generators (Oz, Guoba, Raiden Eye, Stele) auto-attach their default proc count to the first on-field action after their summon is placed; the user re-positions or re-counts.
+
+Our automation is currently weak in places (e.g. Scholar 3s CD, NA infusion ICDs). Improving automation accuracy is the main direction of ongoing work; the design accommodates this without requiring users to eyeball every node.
+
+### 2.3 User-togglable flags for conditional events
+
+For events that *genuinely* depend on something outside the action space (player timing, enemy state, which reaction is active), the resolution is always:
+
+1. Pick a sensible default at auto-placement.
+2. Let the user override it per-node, with a clear label on the toggle.
+
+Current flags on `TimelineAction`:
+
+| Flag | Meaning | Default |
+|---|---|---|
+| `favoniusProc` | Did a Favonius CRIT proc fire at this node? | Auto-on for the first *N* eligible E/Q of a Favonius wielder |
+| `reactionProc` | Did the wearer's E/Q trigger the weapon-required reaction? | Off; shown only when the wearer holds a reaction-trigger weapon |
+| `energyGrants` | User-defined flat/scalable energy delivered at this node | None |
+
+This pattern is the canonical answer for future conditional mechanics. Prefer a per-node flag over a global toggle or a hidden heuristic.
+
+### 2.4 Compensation via `grantEnergy`
+
+Any energy source we have not modeled — an unreleased weapon, an obscure passive, an enemy orb drop, a manual "assume this consumable" scenario — can be added as a `grantEnergy` node. This prevents the calculator from being blocked by missing data and gives users an escape hatch for edge cases.
 
 ---
 
-## 2. Energy System Fundamentals
+## 3. Scope
 
-### 2.1 Particle vs Flat Energy
+### 3.1 Permanently out of scope
 
-| Mechanism | Affected by ER% | Affected by Element Match | Affected by On/Off-Field |
-|-----------|:---:|:---:|:---:|
-| Elemental Particle | Yes | Yes | Yes |
-| Elemental Orb | Yes | Yes | Yes |
-| Flat Energy | **No** | No | Sometimes |
+- **Time / frames.** No frame counts, no travel delay, no ICD timers expressed in seconds. ICDs are baked into data shapes (NA hit-pattern cycles, periodic proc counts).
+- **ER% stat scaling.** We compute ER *requirement*. The character's current ER stat belongs to the damage calculator / team optimizer, which consume our output. Internally we work in "energy at 100% ER" + "flat energy" and solve symbolically.
+- **Sub-event granularity.** The timeline is the user's mental model of combat. Never model events finer than what the user inputs — no internal "hit 3 of NA chain triggers ICD reset" logic exposed in the action space. Data layer may encode these as patterns; the action space stays at the user's level.
+- **Damage.** Owned by `dmgcalc/`. The ER calculator does not read or derive damage numbers.
 
-Orbs = 3× particles in all cases. This document normalizes to particles.
+### 3.2 In scope, currently incomplete
 
-### 2.2 Element Matching
+- NA/CA/PA per-hit particle patterns for infusion characters.
+- Some newer weapons, artifact sets, and character passives.
+- Automated placement quality for multi-proc periodic generators under short rotations.
+- Reaction auto-detection from team composition (currently manual `reactionProc` toggle).
 
-| Affinity | Energy per particle |
-|----------|:------------------:|
-| Same element | 3.0 |
+### 3.3 Abstraction ceiling
+
+Someday we may add an "easy mode" that synthesizes a timeline from higher-level intent (e.g. "standard rotation"). Such a layer **must produce** a concrete user-level event timeline and feed the same engine — it does not bypass the event model.
+
+---
+
+## 4. Energy Model
+
+### 4.1 Three energy categories
+
+Everything that charges a burst falls into exactly one:
+
+| Category | ER%-scaled | Example |
+|---|---|---|
+| **Particle energy** | Yes | Bennett E particles, Fischl Oz periodic |
+| **Flat energy** | No | Venti A4 (15 on Q end), Bennett C1 (15 per resonance), Prototype Amber (per tick), artifact 4pc restores |
+| **Scalable (percent) energy** | Yes, linearly | Sara C2 (2.1 energy per particle at 100% ER), orb drops |
+
+Orbs = particles × 3. Modeled via `grantEnergy` nodes (§5.4), not as a first-class type.
+
+### 4.2 Element match & field multipliers
+
+Applied to particle energy only:
+
+| Affinity | Particle → base energy |
+|---|:---:|
+| Same element as absorber | 3.0 |
 | Different element | 1.0 |
-| Clear / Neutral | 2.0 |
+| Clear (no element) | 2.0 |
 
-### 2.3 On-Field vs Off-Field
-
-| Party Size | Off-Field Multiplier |
-|:----------:|:-------------------:|
+| Party size | Off-field multiplier |
+|:---:|:---:|
 | 4 | 0.60 |
 | 3 | 0.70 |
 | 2 | 0.80 |
 | 1 | 1.00 |
 
-### 2.4 ER% Scaling
+### 4.3 The core equation
+
+For each character with a burst in the rotation's collection window:
 
 ```
-energy_from_particle = base_energy × (ER% / 100)
+Flat + Scalable × (ER / 100) + Particles_at_100ER × (ER / 100)  ≥  BurstCost
 ```
 
-Linear, no soft cap. Does **not** affect flat energy.
+which gives
+
+```
+Required_ER%  =  max(100,  (BurstCost − Flat) / (Particles_at_100ER + Scalable)  × 100)
+```
+
+The 100% floor is the game's hard minimum. "Collection window" is mode-dependent (§7).
 
 ---
 
-## 3. Energy Sources Taxonomy
+## 5. The Event Timeline
 
-### 3.1 Skill Particles (Primary)
+### 5.1 Structure
 
-Each character's Elemental Skill generates elemental particles. Key properties:
-- **Particle count** — often fractional, representing RNG (2.67 = 2 guaranteed + 67% chance of 3rd)
-- **Press vs Hold** — different counts per mode
-- **Periodic generation** — some skills generate particles over time (Oz, Guoba, Raiden E)
-- **Element** — matches the character's vision
-
-### 3.2 Self-Energy Effects
-
-Some characters have skills/passives/bursts that directly grant flat energy:
-- **Burst refund**: Venti A4 (15 flat energy on burst end)
-- **Party energy restore**: Raiden burst (flat energy to party per hit)
-- **Skill self-energy**: some skills grant energy directly to the caster
-
-These are **flat energy** — not affected by ER%.
-
-### 3.3 Weapon & Artifact Energy
-
-See [Section 9](#9-weapon--artifact-energy-sources).
-
-### 3.4 Enemy HP Drops
-
-See [Section 10](#10-enemy-energy-drops).
-
----
-
-## 4. Core Formula
-
-For each character with a BURST action in the sequence:
-
-```
-Flat_Energy + (Particle_Energy_at_100ER × ER%) ≥ Burst_Cost
-```
-
-Solving:
-
-```
-Required_ER% = max(100%, (Burst_Cost - Flat_Energy) / Particle_Energy_at_100ER × 100%)
-```
-
-Where:
-- `Particle_Energy_at_100ER` = sum of all particle energy in the collection window at base 100% ER
-- `Flat_Energy` = sum of all flat energy sources (unaffected by ER%)
-- The "collection window" depends on the calculation mode (see Section 7)
-
----
-
-## 5. Timeline & Rotation Model
-
-### 5.1 Dual-Timeline System
-
-The user can create **up to 2 timelines** (rows):
-
-```
-Timeline 1 (initial):    [Bennett E] [Bennett Q] [Xiangling Q] [Xingqiu E] [Xingqiu E] [Xingqiu Q] ...
-Timeline 2 (repeating):  [Bennett E] [Bennett Q] [Xiangling Q] [Xingqiu E] [Xingqiu Q] [Sucrose E] [Sucrose Q]
-```
-
-**Rules:**
-- **1 timeline only** → that timeline is used as the repeating rotation
-- **2 timelines** → Timeline 1 is the initial (one-time) sequence, Timeline 2 is the repeating rotation
-- Users can **clone Timeline 1 to create Timeline 2**, then edit the repeating rotation separately
-
-This naturally represents real gameplay: the first rotation often differs from subsequent ones (e.g., pre-funneling, different burst order to build energy).
-
-### 5.2 On-Field Derivation
-
-The currently on-field character is determined by who performed the most recent action. Whenever a different character acts, an implicit swap occurs.
-
-```
-Actions: [Bennett E] [Bennett Q] [Xiangling Q] [Xingqiu E] ...
-On-field:  Bennett     Bennett     Xiangling     Xingqiu
-```
-
-### 5.3 Particle Absorption Rule
-
-Each particle-producing action generates particles that are absorbed by the character performing the **next action** in the timeline. This is the "next-action absorber" rule.
-
-```
-[Bennett E] → particles → [Xiangling Q]  ← Xiangling absorbs Bennett's particles on-field
-```
-
-The `wait` action block allows the user to keep the current character on-field to absorb their own particles:
-
-```
-[Bennett E] [wait] → Bennett stays on-field, absorbs own particles
-[Xiangling Q] ...
-```
-
----
-
-## 6. Action Keys & Particle Linkage
-
-### 6.1 Action Keys
-
-Each character has a set of available action blocks. Not all characters have all actions.
-
-| Key | Name | Produces Particles | Notes |
-|-----|------|:------------------:|-------|
-| `NA` | Normal Attack | No | Fills field time; negligible energy |
-| `CA` | Charged Attack | No | |
-| `PA` | Plunge Attack | No | |
-| `E` | Elemental Skill (Press) | **Yes** | Primary particle source |
-| `holdE` | Elemental Skill (Hold) | **Yes** | Different particle count than press |
-| `periodicE` | Periodic Skill Particles | **Yes** | One "proc" of a periodic generator (Oz tick, Guoba breath, Raiden E coordinated attack) |
-| `Q` | Elemental Burst | No | Consumes energy; drains pool to 0 |
-| `specialQ` | Special Burst | No | For non-standard burst mechanics |
-| `wait` | Wait | No | Current character stays on-field; delays absorption to control who catches particles |
-
-**Availability per character:**
-- Every character: `NA`, `CA`, `E`, `Q`, `wait`
-- Characters with hold skill: additionally `holdE`
-- Characters with periodic generators: additionally `periodicE`
-- Characters with plunge mechanics: additionally `PA`
-- Characters with special burst: additionally `specialQ` (e.g., Linnea's continuous tap E → modeled as `holdE`)
-
-The available actions per character are derived from the particle data file — if Fandom/gcsim data lists a hold variant, `holdE` is available; if it lists periodic generation, `periodicE` is available.
-
-### 6.2 Particle Linkage Visualization
-
-The timeline UI draws **arrows** from each particle-producing node to the absorbing node (the next action's character). This makes funneling visible:
-
-```
-Timeline:
-  Bennett:    [E]───────────┐
-                             ↓
-  Xiangling:          [absorb] [Q]
-                                ↑ needs 80 energy
-  Xingqiu:                        [E]──┐ [E]──┐ [Q]
-                                        ↓      ↓
-  Sucrose:                        [absorb] [absorb] [E] [Q]
-```
-
-Each arrow shows the particle info based on the selected RNG mode:
-- Expected mode: "2.25 Pyro particles"
-- Min mode: "2 Pyro particles"
-- Max mode: "3 Pyro particles"
-
-The energy received is calculated considering element match and on/off-field status:
-- Arrow label: "2.25 × 3.0 (same elem) × 1.0 (on-field) = 6.75 base energy"
-
-### 6.3 Self-Energy Annotations
-
-Actions that produce self-energy (flat) show a tag on the block:
-- Venti's Q block: `[Q +15 flat]`
-- Raiden's Q block: `[Q +12.5 flat (party)]`
-- Prototype Amber wielder's Q: `[Q +12 flat (weapon)]`
-
-### 6.4 Energy Balance Display
-
-Below the timeline, show a per-character energy balance bar:
-```
-Bennett:    ████████████░░░░░░ 42.3 / 60  (need 142% ER)
-Xiangling:  ███████░░░░░░░░░░ 28.1 / 80  (need 285% ER)
-Xingqiu:    ██████████████░░░ 58.2 / 80  (need 137% ER)
-Sucrose:    █████████████████ 80.0 / 80  (need 100% ER) ✓
-```
-
----
-
-## 7. Three Calculation Modes
-
-### 7.1 Mode Definitions
-
-Given the timeline(s), define each character's **collection window** — the set of actions whose particles count toward charging their burst.
-
-| Mode | Starting Energy | Question | Collection Window |
-|------|:-:|---|---|
-| **Zero-Energy Start** | 0 | Can I burst in this sequence? | All actions before each character's first Q in the combined sequence (Timeline 1 + Timeline 2 if present) |
-| **Full-Energy Repeat** | Full | Can I sustain bursting forever? | All actions between consecutive Q casts within the repeating timeline (Timeline 2, or Timeline 1 if only one) |
-| **Zero-Energy Repeat** | 0 | Can I get going and keep going? | Must satisfy BOTH: zero-energy start for Timeline 1 AND full-energy repeat for Timeline 2 |
-
-### 7.2 Collection Window Examples
-
-**Setup:** Bennett bursts at positions 2 and 8 in a 10-action repeating timeline.
-
-**Full-Energy Repeat:** Particles between burst at position 8 (previous cycle) → burst at position 2 (next cycle), wrapping around:
-- Actions [9, 10, 1] contribute (positions after previous Q, before next Q)
-
-**Zero-Energy Start (single timeline):** Particles from actions [1] before the first Q at position 2.
-
-### 7.3 How Timelines Map to Modes
-
-| Configuration | Zero-Energy Start | Full-Energy Repeat | Zero-Energy Repeat |
-|---|---|---|---|
-| 1 timeline | Sequence before first Q | Between consecutive Q's, wrapping | Both checks on same timeline |
-| 2 timelines | T1 + T2 before first Q | Between consecutive Q's in T2 only, wrapping | T1+T2 for first burst; T2 for sustain |
-
-### 7.4 Characters Without Q in the Sequence
-
-If a character has no Q action in the relevant timeline, their ER requirement is N/A — they don't need energy.
-
----
-
-## 8. Particle RNG Modes
-
-### 8.1 The Problem
-
-Many particle sources are probabilistic. Fandom wiki data represents this as fractional averages (2.67 = floor 2 guaranteed + 67% chance of +1).
-
-### 8.2 Three Display Modes
-
-| Mode | Particle Count Used | Philosophy |
-|------|:---:|---|
-| **Expected** | Fractional average (2.67) | Typical rotation |
-| **Min** | floor(2.67) = 2 | Never fail to burst |
-| **Max** | ceil(2.67) = 3 | Best possible luck |
-
-For integer values (4.0), all three modes give the same result.
-
-### 8.3 Preprocessing from Source Data
-
-The scraped data stores the raw fractional average. Min/max are inferred at load time:
-
-```
-inferRange(2.67) → { min: 2, expected: 2.67, max: 3 }
-inferRange(4.0)  → { min: 4, expected: 4.0,  max: 4 }
-inferRange(0.5)  → { min: 0, expected: 0.5,  max: 1 }
-```
-
-### 8.4 Display
-
-Show the selected mode's value prominently on each particle arrow, with all three visible as context in the results panel.
-
----
-
-## 9. Weapon & Artifact Energy Sources
-
-### 9.1 Weapon Energy Effects (Hand-Maintained)
-
-Small surface area — only weapons with meaningful energy mechanics:
-
-| Weapon | Type | Amount | Target | Notes |
-|--------|------|--------|--------|-------|
-| Favonius (all 5) | Particle (Clear) | 3 per proc | Party | CRIT trigger, 1 proc/rotation assumed |
-| Prototype Amber | Flat | 12 (R1) – 18 (R5) | Self | On burst use |
-| Amenoma Kageuchi | Flat | 6–12 per seed (R1–R5), max 3 seeds | Self | On burst use |
-| Kitain Cross Spear | Flat | +6 net (R1) – +12 net (R5) | Self | On skill hit |
-| Katsuragikiri Nagamasa | Flat | +6 net (R1) | Self | On skill hit |
-
-### 9.2 Artifact Set Energy Effects (Hand-Maintained)
-
-| Set | Effect | Type | Target |
-|-----|--------|------|--------|
-| The Exile 4pc | 6 flat energy on burst | Flat | Party (others) |
-| Scholar 4pc | 3 flat energy on particle gain (3s CD) | Flat | Bow/Catalyst party members |
-| Emblem of Severed Fate 2pc | +20% ER | Stat buff | Self |
-
----
-
-## 10. Enemy Energy Drops
-
-Modeled as clear particles per rotation via presets:
-
-| Scenario | Clear Particles | Use Case |
-|----------|:-:|---|
-| None (Boss) | 0 | Single-target boss |
-| Low | 6 | Elite enemies |
-| Medium | 12 | Mixed encounters |
-| High | 24 | AoE mob clearing |
-
-Distributed to party based on field time proportion.
-
----
-
-## 11. Data Pipeline
-
-### 11.1 Architecture
-
-```
-┌─────────────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
-│  Fandom Wiki API    │     │  gen_char_info.py     │     │  energy-effects.ts  │
-│  (scraped)          │     │  (auto-generated)     │     │  (hand-maintained)  │
-└────────┬────────────┘     └──────────┬───────────┘     └──────────┬──────────┘
-         │                             │                            │
-         ▼                             ▼                            │
-  particles.json              charInfo.ts                           │
-  (faithful repr:             (burst cost via                       │
-   avgParticles,               energy field,                        │
-   pressNotes,                 specialEnergy?                       │
-   holdValue, etc.)            for overrides)                       │
-         │                             │                            │
-         └──────────┬──────────────────┘────────────────────────────┘
-                    ▼
-             ercalc library
-             (preprocessing: infer min/expected/max from raw avgParticles)
-             (isolated from damageCalc — no shared imports)
-```
-
-### 11.2 particles.json — Scraped, Faithful Representation
-
-Scraped from Fandom Wiki's `Energy/Data` page via MediaWiki API. Each character entry preserves the source data exactly:
-
-```json
-{
-  "bennett": {
-    "element": "Pyro",
-    "press": { "avgParticles": 2.25, "notes": null },
-    "hold": { "avgParticles": 3, "notes": null },
-    "periodic": null,
-    "spawnPoint": "Character"
-  },
-  "fischl": {
-    "element": "Electro",
-    "press": null,
-    "hold": null,
-    "periodic": { "avgParticles": 0.67, "notes": "On Oz ATK" },
-    "spawnPoint": "Enemy"
-  },
-  "raiden_shogun": {
-    "element": "Electro",
-    "press": null,
-    "hold": null,
-    "periodic": { "avgParticles": 0.5, "notes": "On Coordinated Attack, 0.9s CD" },
-    "spawnPoint": "Enemy"
-  },
-  "ganyu": {
-    "element": "Cryo",
-    "press": { "avgParticles": 4, "notes": "2x2 (initial + explosion)" },
-    "hold": null,
-    "periodic": null,
-    "spawnPoint": "Construct"
-  },
-  "barbara": {
-    "element": "Hydro",
-    "press": { "avgParticles": 0, "notes": null },
-    "hold": null,
-    "periodic": null,
-    "spawnPoint": null
-  }
+```ts
+interface ERTimeline {
+  actions: TimelineAction[];  // ordered main track — what the player does
+  periodic: PeriodicProc[];   // background particle procs pinned to actions
 }
 ```
 
-**Key design rule:** No inference in this file. Fractional values like `2.25` are stored as-is. The ercalc library computes min/max at load time.
+The user can maintain up to **two** timelines per team:
 
-### 11.3 charInfo.ts — Burst Cost
+- **Startup (启动轴)** — the first rotation from an initial energy state (usually 0).
+- **Repeat (循环轴)** — the steady-state rotation cycling forever.
 
-Auto-generated by `gen_char_info.py`. The `energy` field stores the **actual burst cost** as an integer (e.g., Bennett=60, Raiden=90, Xiangling=80).
+If only one is provided, it plays both roles (see §7).
 
-The script resolves burst cost by extracting the param index from `{paramN:I}` template strings in the game's skill detail data, then looking up `talent.Q[level][N-1]` in `character_stats.json`. An assertion verifies the burst cost is consistent across all talent levels.
+### 5.2 Action space
 
-Characters with `energy=0` (Mavuika, Skirk) don't use normal energy mechanics.
+| Action | Produces particles | Notes |
+|---|:---:|---|
+| `E` | ✓ | Skill press |
+| `holdE` | ✓ | Falls back to `E` data if unspecified |
+| `specialE` | ✓ | Enhanced/alternative variant (Cyno burst-mode, Freminet L4) — freely interwoven |
+| `Q` | ✕ | Drains burst cost |
+| `specialQ` | ✕ | Alternative burst variant with a different cost (Flins, Varesa) |
+| `NA` / `CA` / `PA` | ✓ (only for infusion chars) | Resolves via per-hit pattern |
+| `wait` | ✕ | Keeps current char on-field — controls who absorbs the previous particle event |
+| `grantEnergy` | ✕ | User-defined energy delivery; see §5.4 |
 
-### 11.4 energy-effects.ts — Hand-Maintained
+Background particles from Oz, Guoba, Raiden Eye, Stele, etc. are **not actions**. They are `PeriodicProc` entries pinned to a main-track action index:
 
-Covers three categories with small surface area:
-1. **Self-energy effects** — character passives/constellations that grant flat energy
-2. **Weapon energy effects** — Favonius, Prototype Amber, etc.
-3. **Artifact set energy effects** — Exile, Scholar
+```ts
+interface PeriodicProc {
+  sourceChar: string;     // who generates the particles
+  trigger: "E" | "Q";     // which of their casts spawned this proc
+  targetIndex: number;    // which main-track action absorbs it
+}
+```
 
-### 11.5 Determining Available Actions per Character
+### 5.3 Particle absorption
 
-The particle data file determines which action keys are available:
-- `press` exists and > 0 → `E` available
-- `hold` exists → `holdE` available
-- `periodic` exists → `periodicE` available
-- Every character gets `NA`, `CA`, `Q`, `wait`
-- Characters with known plunge mechanics → `PA`
+Particles generated by an action are absorbed by whoever is on-field at the resolution point. On-field is derived from "who acted most recently":
+
+```
+[Bennett E] [Xiangling Q] [Xingqiu E]   →   on-field: Bennett, Xiangling, Xingqiu
+```
+
+Resolution rules:
+
+- A **main-action** particle emission is absorbed by the character at the *next* action in the timeline.
+- A **`wait`** node keeps the previous character on-field — the point of `wait` is to self-absorb your own particles.
+- A **periodic proc** is absorbed by the character performing the action at `targetIndex`.
+- At the end of the repeating timeline, particles wrap to the first action.
+- All 4 team members receive the particles each event; absorber gets the on-field rate, others get the off-field multiplier.
+
+### 5.4 `grantEnergy` — the compensation event
+
+A user-placed node that delivers energy not otherwise modeled. Three grant types coexist on one node:
+
+| Grant type | ER%-scaled | Use |
+|---|:---:|---|
+| Flat | No | Unmodeled weapon/passive effects; "assume this food buff" |
+| Percent | Yes | "Full refund" mechanics |
+| Orb | Yes | Enemy orb drops (same math as particles × 3) |
+
+This is the primary extension point for users — anything the engine doesn't automate yet can be expressed here without code changes.
 
 ---
 
-## 12. Timeline UI Design
+## 6. Energy Sources
 
-### 12.1 Layout
+### 6.1 Character particles
 
+Per-character data in `src/data/ercalc/particles.json` (v2 schema, §8). Covers direct emission (E/holdE/specialE), infusion hit patterns (NA/CA/PA), and periodic generation (summons, constructs, coordinated attacks).
+
+### 6.2 Character flat & scalable energy
+
+Per-character data in `src/data/ercalc/selfEnergy-<region>.json`, extracted from kit descriptions (kit text is authoritative; we use LLM agents to extract structured entries, then hand-verify).
+
+Shapes currently supported:
+
+- Flat amount, per-action, with optional `minC` constellation gate.
+- Percent refund of burst cost.
+- ER-scaling bonus (`per100` energy per 100% ER, optional max).
+- Per-proc parameterized by talent level.
+
+Target scope includes Raiden P2 party energy, Venti A4, Bennett C1, Sara P2 / C2, Dori P2, Fischl C1, etc.
+
+### 6.3 Weapon energy
+
+Code-defined in `src/lib/ercalc/weaponEnergy.ts`. Small, growing list. Each entry is one of:
+
+- **Particle**: on-CRIT clear-particle generation (the 5 Favonius weapons). Auto-placed on E/Q with refinement-scaled default proc count.
+- **Flat energy** with a trigger: `burst` | `skill` | `heal` | `reaction` | `partyPlunge`. Fires at the relevant action node of the wearer (`heal` fires at the wearer's `healAction`, which is `E` or `Q` per `charInfo.healAction`; `reaction` requires the user's `reactionProc` flag).
+
+Weapons with pure stat buffs (ATK%, ER%, DMG%) are *not* in scope here — those belong to the damage calculator.
+
+### 6.4 Artifact set energy
+
+Per-set code in `src/lib/ercalc/artifactEnergy.ts`, one implementation per set. Each set exposes a narrow hook interface:
+
+```ts
+interface ArtifactEnergyImpl {
+  setId: string;
+  onAction?(ctx): ArtifactFlatEvent[];          // fires at a wearer action
+  onParticleGain?(ctx): ArtifactFlatEvent[];    // fires when the wearer gains a particle
+}
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│ ER Calculator                                                    [×]   │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│ Mode: [Zero-Energy Start ▾]   Particles: [Expected ▾]   Enemy: [None ▾]│
-│                                                                         │
-│ ┌─ Timeline 1 (Initial) ──────────────────────────── [Clone to T2] ──┐ │
-│ │                          ← scroll →                                 │ │
-│ │ Bennett:    [E]──────┐  [Q]                                        │ │
-│ │                       ↓                                             │ │
-│ │ Xiangling:      [absorb] [Q]                                       │ │
-│ │                                                                     │ │
-│ │ Xingqiu:              [E]──┐  [E]──┐  [Q]                         │ │
-│ │                             ↓       ↓                               │ │
-│ │ Sucrose:              [abs] [abs]  [E]  [Q]                        │ │
-│ │                                                                     │ │
-│ │         [+ Add Action]  (mobile: tap to select)                    │ │
-│ │                         (desktop: drag from palette)                │ │
-│ └─────────────────────────────────────────────────────────────────────┘ │
-│                                                                         │
-│ ┌─ Timeline 2 (Repeating) ─────────────────────────── [Delete T2] ──┐ │
-│ │ (empty — click "Clone to T2" above or build from scratch)          │ │
-│ └─────────────────────────────────────────────────────────────────────┘ │
-│                                                                         │
-│ ┌─ Results ──────────────────────────────────────────────────────────┐ │
-│ │ Bennett     ████████████░░░░  42/60   ER: 142%  (min:167 avg:142  │ │
-│ │ Xiangling   ████░░░░░░░░░░░  28/80   ER: 285%   max:118)         │ │
-│ │ Xingqiu     ████████████░░░  58/80   ER: 137%                    │ │
-│ │ Sucrose     ████████████████  80/80   ER: 100% ✓                  │ │
-│ │                                                                    │ │
-│ │                              [Apply to Min ER]                     │ │
-│ └────────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────────┘
-```
 
-### 12.2 Horizontal Scroll
+Each hook can emit flat-energy events to self / partyOthers / whole party. Per-wearer bookkeeping (e.g. CD approximation) lives in a scratch map handed to every hook call. Current sets modeled: **The Exile 4pc**, **Scholar 4pc**. Adding a set = one new impl file entry.
 
-Each timeline row scrolls horizontally. Action blocks are fixed-width, laid out left-to-right in sequence order. Long rotations overflow with scroll.
+The per-set pattern exists because every artifact set's mechanic is unique; a shared config schema would add friction without reducing code volume.
 
-### 12.3 Action Block Rendering
+### 6.5 Enemy drops
 
-Each block shows:
-- Character icon (small, color-coded by element)
-- Action key label (E, holdE, periodicE, Q, NA, CA, PA, wait)
-- For particle producers: outgoing arrow to next block
-- For Q blocks: energy drain indicator
-- For blocks with self-energy: "+X flat" tag
-
-### 12.4 Building the Sequence
-
-**Mobile:** Tap [+ Add Action] button at the end of the timeline. A bottom sheet appears with:
-1. Select character (4 icons)
-2. Select action (only available actions shown — e.g., if no hold variant, no holdE button)
-3. Action appends to timeline
-
-**Desktop:** Drag from a palette sidebar. Palette shows character rows with their available action blocks. Drag a block onto the timeline to insert at position.
-
-**Both:** Click an existing block to delete or reorder (drag to rearrange).
-
-### 12.5 Clone Timeline
-
-"Clone to T2" button copies Timeline 1 into Timeline 2. Users can then edit T2 independently. This is the common workflow — first rotation differs slightly from the repeat rotation.
+Currently expressed by the user as `grantEnergy` orb events. There is no global "enemy particle preset" dropdown; that pattern proved less useful than letting users place specific events on the timeline.
 
 ---
 
-## 13. Inputs & Outputs
+## 7. Calculation Modes
 
-### 13.1 Inputs
+Given the timeline(s), each character gets a **collection window** — the slice of the rotation whose energy charges their binding burst. Three modes answer three player questions:
 
-**From team (auto-populated):**
-- 4 characters (element, burst cost from charInfo)
-- Weapons (for Favonius/Prototype Amber detection)
-- Artifact sets (for Exile/Scholar detection)
+| Mode | Starting energy | Question | Collection window |
+|---|:---:|---|---|
+| `zero-energy-start` | 0 | Can I get the first burst off? | All events before each char's first Q across startup + repeat |
+| `full-energy-repeat` | Full | Can I sustain bursting forever? | Events between consecutive Q casts in the repeat timeline, wrapping |
+| `zero-energy-repeat` | 0 | Can I get going *and* sustain? | `max(start, repeat)` per character |
 
-**User-configured:**
-- Timeline 1 (required) — action sequence
-- Timeline 2 (optional) — repeating rotation
-- Calculation mode: Zero-Energy Start / Full-Energy Repeat / Zero-Energy Repeat
-- Particle RNG mode: Min / Expected / Max
-- Enemy particle preset: None / Low / Medium / High
+Single-timeline case: the one timeline plays both roles. Characters with no Q in the window have no ER requirement (result is marked `hasQ: false`).
 
-### 13.2 Outputs
-
-**Per character:**
-- Required ER% (for selected mode, all three RNG variants shown)
-- Energy balance bar (visual)
-- Breakdown: which sources contribute how much energy
-
-**Apply button:** Writes the calculated ER% (for selected RNG mode) into each character's minEr in the team store.
+The Q that determines a character's ER is the **binding Q**. The UI highlights it with a yellow ring. Per-event breakdowns are returned relative to the binding Q's window.
 
 ---
 
-## 14. Reference Constants
+## 8. Particle RNG
 
+### 8.1 Why lists of rolls
+
+Genshin's particle generation is a sum of independent probabilistic rolls (`rand.Float64() < p` in gcsim). Storing the raw rolls lets min/expected/max fall out of the data without inference:
+
+```ts
+type Particles = number | Array<[count: number, chance: number]>;
+// min      = Σ count where chance == 1.0
+// expected = Σ count × chance
+// max      = Σ count
 ```
-SAME_ELEMENT_PARTICLE  = 3.0
-DIFF_ELEMENT_PARTICLE  = 1.0
-CLEAR_PARTICLE         = 2.0
-ORB_MULTIPLIER         = 3.0
 
-OFF_FIELD_MULT = { 4: 0.60, 3: 0.70, 2: 0.80, 1: 1.00 }
+Examples:
 
-ENEMY_PRESETS = { none: 0, low: 6, medium: 12, high: 24 }
+| Raw | Meaning |
+|---|---|
+| `3` | Deterministic 3 particles |
+| `[[2, 1.0], [1, 0.25]]` | Always 2, plus 25% of a 3rd (Bennett E) |
+| `[[1, 0.67]]` | 67% of 1 particle per tick (Fischl Oz) |
+| `[[1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8], [1, 0.8]]` | 5 independent 80% rolls (Diona) |
 
-FAVONIUS_PARTICLES = 3 (clear)
-```
+### 8.2 User-selectable mode
+
+The UI exposes `min` / `expected` / `max`. The engine computes all three; the selected mode is just the value displayed and used for the ER solve. Min is "never fail", expected is "typical", max is "best luck".
 
 ---
 
-## 15. Algorithm
+## 9. Data Layer
 
-### 15.1 Pseudocode
+The ercalc system pulls from four kinds of source:
 
-```
-function calculateER(team, timeline1, timeline2, mode, enemyPreset):
+| Concern | Location | Shape | Why |
+|---|---|---|---|
+| Character particles | `src/data/ercalc/particles.json` (+ `particles.fandom.json`, `particles.gcsim.json`, `particles.lunaris.json` as cross-references) | JSON, v2 schema (§8) | Particle logic only exists in engine code / community data; must be learned from gcsim or Fandom |
+| Character flat/scalable energy | `src/data/ercalc/selfEnergy-<region>.json` | JSON per entry (§6.2) | Described in kit text; extractable by LLM agents |
+| Character metadata (burst cost, `healAction`, etc.) | `src/data/charInfo.ts` | TS, auto-generated by `scripts/gen_char_info.py` | Shared with rest of app |
+| Weapon / artifact energy | `src/lib/ercalc/weaponEnergy.ts`, `artifactEnergy.ts` | TS code | Few instances, each unique; code is more flexible than config |
 
-  // Determine which timeline(s) to use per mode
-  if mode == "zero-energy-start":
-    sequence = concat(timeline1, timeline2 ?? [])
-    // Collection window: everything before each char's first Q
-    for each character:
-      window = actions before first Q in sequence
+Character data is the surface where drift matters most — it covers ~130 characters. Weapons and artifacts are fewer and bespoke; code suits them. Over time a weapon/artifact entry *may* move to config, but the decision is driven by friction, not principle.
 
-  elif mode == "full-energy-repeat":
-    repeating = timeline2 ?? timeline1
-    // Collection window: between consecutive Q's, wrapping
-    for each character:
-      window = actions between last Q and next Q in repeating (circular)
+### 9.1 `particles.json` schema (v2)
 
-  elif mode == "zero-energy-repeat":
-    // Must satisfy BOTH:
-    // 1) zero-energy-start across concat(T1, T2)
-    // 2) full-energy-repeat within (T2 ?? T1)
-    // Output = max(ER from check 1, ER from check 2) per character
+```jsonc
+"<charId>": {
+  "element": "<Element>",
+  "spawnPoint"?: "Character" | "Enemy" | "Construct",
+  "source"?: "fandom" | "gcsim" | "lunaris" | "manual",
 
-  // For each character, compute energy in their window
-  for each character:
-    flatEnergy = 0
-    particleEnergy = { min: 0, expected: 0, max: 0 }
+  // Direct emission on cast
+  "E"?:        { "particles": Particles, "notes"?: "..." },
+  "holdE"?:    { "particles": Particles, "notes"?: "..." },
+  "specialE"?: { "particles": Particles, "notes"?: "..." },
 
-    for each action in window:
-      if action produces particles:
-        absorber = next_action_character(action)
-        fieldMult = (absorber == character) ? 1.0 : OFF_FIELD_MULT[partySize]
-        elemMult = elementMatch(character.element, action.particleElement)
-        for mode in [min, expected, max]:
-          particleEnergy[mode] += particles[mode] * elemMult * fieldMult
+  // Infusion hit patterns (cyclic, indexed by the char's i-th hit of this type)
+  "NA"?: { "pattern": Particles[], "notes"?: "..." },
+  "CA"?: { "pattern": Particles[], "notes"?: "..." },
+  "PA"?: { "pattern": Particles[], "notes"?: "..." },
 
-    // Add self-energy, weapon, artifact, enemy effects
-    flatEnergy += selfEnergy + weaponFlat + artifactFlat
-    particleEnergy += weaponParticles + enemyParticles
-
-    // Solve
-    requiredER[mode] = max(100, (burstCost - flatEnergy) / particleEnergy[mode] * 100)
+  // Off-field generators
+  "periodic"?: {
+    "E"?: { "procs": number, "particles": Particles, "notes"?: "..." },
+    "Q"?: { "procs": number, "particles": Particles, "notes"?: "..." }
+  },
+}
 ```
 
-### 15.2 Particle Linkage Resolution
+`procs` is a UX default: when the trigger action is added to the timeline, the UI auto-places that many periodic procs pinned to the most plausible absorbing actions. The user is expected to reposition or re-count as the rotation demands.
 
-For each particle-producing action at index `i`:
-1. The **absorber** is the character performing the action at index `i+1`
-2. If `i` is the last action in the timeline, the absorber depends on mode:
-   - In repeating timelines: wraps to the first action
-   - In one-shot timelines: the acting character stays on-field (self-absorb)
-3. If the next action is `wait` by the same character: self-absorb (the point of wait)
-4. All 4 characters receive the particles — absorber gets on-field rate, others get off-field rate
+### 9.2 `selfEnergy-*.json` entry shape
 
-### 15.3 Self-Energy Association
+```ts
+interface SelfEnergyEntry {
+  source: string;        // human-readable source (e.g. "Venti A4")
+  action: string;        // anchor action (Q, E, periodic, etc.)
+  amount?: number;       // flat energy
+  percentRefund?: number; // % of burst cost
+  erScale?: { per100: number; max?: number };
+  target: "self" | "party" | "partyOthers";
+  minC: number;          // constellation gate
+  procs?: number;        // how many procs per anchor fire
+  param?: { source: "talent"; index: number; multiplier: number };  // talent-scaled
+}
+```
 
-Self-energy effects are associated with action keys:
-- `Q` → burst refund (Venti +15), weapon flat energy (Prototype Amber +12)
-- `E` → skill self-energy (if any)
-- `periodicE` → per-proc flat energy (if any)
+### 9.3 Data provenance for particles
 
-The energy-effects.ts data maps `(charId, actionKey) → flatEnergy`.
+We maintain three datasets:
+- `particles.fandom.json` — scraped from Fandom wiki averages; broad coverage, approximate.
+- `particles.lunaris.json` — pulled from Lunaris datamine; full per-event probability distributions.
+- `particles.gcsim.json` — extracted from gcsim's Go source; authoritative where available.
+
+`particles.json` is the live file consumed by the engine, assembled from the three with manual review. Disagreements are resolved in favor of gcsim > lunaris > fandom, with spot-checks against observed game behavior. The engine never reads multiple sources at runtime.
+
+---
+
+## 10. Engine Architecture
+
+High-level pipeline (all synchronous, deterministic):
+
+```
+ (team, startup?, repeat?, options)
+        │
+        ▼
+ assemble collection window per calc mode  ──────────────────┐
+        │                                                     │
+        ▼                                                     │
+ simulate(window) :                                           │
+   for each action[i]:                                        │
+     1. fire periodic procs whose targetIndex == i            │
+     2. resolve direct particles (E/holdE/specialE/NA/…)      │
+     3. distribute particles via next-action absorber rule    │
+     4. collect flat-energy events at this node:              │
+          - self-energy (charInfo + selfEnergy-*.json)        │
+          - weapon flat triggers (weaponEnergy.ts)            │
+          - artifact 4pc onAction hooks (artifactEnergy.ts)   │
+          - user grantEnergy                                  │
+     5. if action is Q / specialQ: close current window       │
+        │                                                     │
+        ▼                                                     │
+ per-character totals: flat, scalable, particles@100ER  ──────┘
+        │
+        ▼
+ solve ER requirement + record bindingQIndex + bindingEvents
+```
+
+Everything else (rotation hints, wait-block optimizer) is a consumer of this pipeline, not part of it.
+
+---
+
+## 11. UI Responsibilities
+
+The UI is not part of this design doc's authoritative scope, but these behaviors *are* load-bearing on the design:
+
+- Must render the timeline as discrete, user-mutable event nodes. One row per team member is the current presentation; a single scrolling track is acceptable.
+- Must surface per-node energy contributions on hover/tap (the `bindingEvents` breakdown).
+- Must visualize the absorber relationship (arrow from emitter to absorber) for particle events.
+- Must expose per-node toggles for `favoniusProc` and `reactionProc` only when the wielder's weapon makes them relevant, with labels showing *what would happen* if toggled on (reaction name, energy refund amount at the current refinement).
+- Must allow adding `grantEnergy` nodes with flat / percent / orb grant types.
+- Calculation mode, particle RNG mode, and the two-timeline toggle are global per-team controls.
+
+---
+
+## 12. Extending the System
+
+### 12.1 Adding a new character
+1. Add a `particles.json` entry with sourced rolls.
+2. Add a `selfEnergy-<region>.json` entry if the kit grants flat/scalable energy.
+3. Regenerate `charInfo.ts` (sets `energy`, `healAction`, healer/shielder flags). Add to `HEAL_ACTION` in `gen_char_info.py` if E-anchored healing.
+
+### 12.2 Adding a new weapon
+Add an entry to `weaponEnergy.ts`. Pick `effect: "particles"` (on-crit) or `effect: "flatEnergy"` with a trigger. For `reaction` trigger, supply `reactionCondition: { en, zh }` — the UI uses it to label the toggle.
+
+### 12.3 Adding a new artifact 4pc
+Add an `ArtifactEnergyImpl` to `artifactEnergy.ts` with `onAction` and/or `onParticleGain` hooks. Use the scratch map for any per-wearer state (CD counters, stack counts).
+
+### 12.4 Adding a new conditional mechanic
+If the mechanic depends on in-combat state the timeline can't know, add a `TimelineAction` flag (like `favoniusProc` / `reactionProc`) and surface it in the node popover with a clear description of what the toggle does and how much energy it's worth.
+
+---
+
+## 13. Relation to gcsim
+
+We are **deliberately** less precise than gcsim in exchange for interpretability, determinism, and speed:
+
+| | gcsim | this calculator |
+|---|---|---|
+| Time model | Frame-precise | None — event-based |
+| RNG | Monte Carlo | Deterministic (min/expected/max as distribution aggregates) |
+| Particle travel | 100-frame delay | Absorber rule |
+| Output | Damage + energy profile | ER% requirement per character |
+| Input | Config script | Visual timeline |
+
+Expected agreement: within a few percent on well-structured rotations, larger on rotations with many short-CD ICD-gated effects. Closing that gap is a function of automation quality (§2.2), not of adding more runtime simulation.
+
+---
+
+## 14. Open Design Questions
+
+1. **`specialQ` burst cost.** Currently not first-class in character metadata. Options: per-char override field on `charInfo`, or a general `alternateBurstCost` concept on particle entries.
+2. **Reaction auto-detection.** `reactionProc` is a manual toggle today. A team-composition-aware heuristic (e.g. "Raiden holds Lumidouce + team has Dendro + Pyro → auto-enable on Raiden E") could auto-set the default without removing the override.
+3. **Scalable energy ceiling.** Sara/Dori `erScale.max` caps the energy at a given ER%. How do we solve when the cap binds? Currently we compute both unconstrained and constrained roots and take the valid one; an explicit solver would be cleaner.
+4. **Periodic proc re-distribution under timeline edits.** When the user deletes or reorders actions, periodic procs pinned to `targetIndex` may point to a now-implausible absorber. We currently leave the user to fix this; automated re-placement on edit is an open question.
+5. **Artifact 4pc CD modeling.** Per-set hooks have a scratch map for CD state, but there is no shared time model, so CDs are approximated by "fires at most once per *N* action indices". Acceptable for Scholar; some future set may demand better.

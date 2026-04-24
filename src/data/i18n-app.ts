@@ -193,6 +193,7 @@ export const i18nAppData = {
     PA: { en: "Plunge", zh: "下落" },
     wait: { en: "Wait", zh: "等待" },
     grantEnergy: { en: "Grant", zh: "赋能" },
+    enemyOrb: { en: "Enemy orb", zh: "敌方产球" },
     periodic: { en: "Periodic", zh: "持续产球" },
     favonius: { en: "Favonius", zh: "西风" },
   },

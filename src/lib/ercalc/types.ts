@@ -66,7 +66,12 @@ export type ActionType =
   | "wait"
   /** Generic user-controlled flat-energy grant. Fires at the moment this
    *  node is reached. Grants are stored on `TimelineAction.energyGrants`. */
-  | "grantEnergy";
+  | "grantEnergy"
+  /** Enemy-side orb drop (e.g. from breaking a shield, slime kill, etc.).
+   *  Treated like particles: ER-scaled, "Clear" element, absorbed by the
+   *  next on-field char (same rule as `getAbsorber`). The user only specifies
+   *  `orbCount`; the node has no specific recipient. */
+  | "enemyOrb";
 
 /** A single action in the rotation timeline (main track). */
 export interface TimelineAction {
@@ -84,9 +89,17 @@ export interface TimelineAction {
    *  Flame-Forged Insight). Default false; user-togglable in the node popover
    *  and UI-autotoggled when the wearer holds a reaction-trigger weapon. */
   reactionProc?: boolean;
-  /** Flat energy to grant at this node, keyed by recipient charId (team slot id).
-   *  Only read when `action === "grantEnergy"`. */
-  energyGrants?: Record<string, number>;
+  /** Energy to grant at this node, keyed by recipient charId (team slot id).
+   *  Only read when `action === "grantEnergy"`. Two independent components:
+   *    - `flat`    — fixed energy, NOT scaled by ER%.
+   *    - `percent` — % of recipient's burst cost; resolves to a flat amount
+   *                  (`percent/100 × burstCost`); NOT scaled by ER%.
+   *  Any combination may be set; missing fields are treated as 0.
+   *  For ER-scalable orb drops use a separate `enemyOrb` node instead. */
+  energyGrants?: Record<string, { flat?: number; percent?: number }>;
+  /** Number of enemy-dropped orbs at this node. Only read when
+   *  `action === "enemyOrb"`. */
+  orbCount?: number;
 }
 
 /** An ordered sequence of main actions. */
@@ -212,8 +225,35 @@ export interface EnergyEvent {
   energyAt100: number;
   /** Whether this character was on-field when absorbing. */
   onField: boolean;
-  /** Type: 'particle' for ER-scaling energy, 'flat' for fixed energy. */
-  type: "particle" | "flat";
+  /** Energy type:
+   *   - `particle`  — true particle/orb absorption; scales with ER% via
+   *                   element/field multipliers.
+   *   - `scalable`  — flat-amount source that nonetheless scales linearly
+   *                   with ER% (e.g. orb-typed grants, scalable artifact procs).
+   *   - `flat`      — fixed energy, NOT affected by ER%. */
+  type: "particle" | "flat" | "scalable";
+}
+
+/** A single energy-spending event (Q / specialQ) and the energy that
+ *  accumulated for the wearer between the previous Q and this one. */
+export interface QWindow {
+  /** Position of the burst action in the rotation timeline. */
+  qIndex: number;
+  /** Burst variant. */
+  qAction: "Q" | "specialQ";
+  /** Cost of the burst at this node (recipient.burstCost). */
+  burstCost: number;
+  /** ER% required to clear this specific window. Infinity if unsolvable. */
+  erNeeded: number;
+  /** Energy accumulated for this window, by category, at 100% ER. */
+  particleEnergy: number;
+  scalableEnergy: number;
+  flatEnergy: number;
+  /** Every event that delivered energy to this window. */
+  events: EnergyEvent[];
+  /** True for the worst-case window — the one that determines the
+   *  character's rotation-wide ER requirement. */
+  isBinding: boolean;
 }
 
 export interface ERResult {
@@ -221,15 +261,22 @@ export interface ERResult {
   /** ER% needed (100 = base, 200 = double). Infinity if impossible. */
   erNeeded: number;
   energyBreakdown: {
-    /** Energy from all particle sources at 100% ER. Scales with ER%. */
+    /** Energy from particle/orb absorption at 100% ER. Scales with ER% via
+     *  element/field multipliers. */
     particleEnergy: number;
-    /** Energy from flat sources. Not affected by ER%. */
+    /** Energy from scalable flat sources (orb-typed grants, scalable artifact
+     *  procs) at 100% ER. Scales linearly with ER%. */
+    scalableEnergy: number;
+    /** Energy from fixed flat sources. Not affected by ER%. */
     flatEnergy: number;
   };
   /** Per-action energy events for the binding Q window (the one that determines ER). */
   bindingEvents?: EnergyEvent[];
   /** Index of the Q action in the timeline that determines the ER requirement. */
   bindingQIndex?: number;
+  /** All Q / specialQ windows in the timeline for this character, in order.
+   *  The window with `isBinding: true` matches `erNeeded`. */
+  qWindows?: QWindow[];
   /** For "zero-energy-repeat" mode: which sub-mode is the binding constraint. */
   bindingMode?: "zero-energy-start" | "full-energy-repeat";
   /** Whether this character has a Q in the timeline. If false, ER is hypothetical. */

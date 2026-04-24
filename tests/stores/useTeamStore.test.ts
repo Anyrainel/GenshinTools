@@ -983,6 +983,135 @@ describe("migrateTeamStore", () => {
     });
   });
 
+  describe("v14: energyGrants widened to {flat, percent}", () => {
+    it("converts legacy number grants → { flat: N }", () => {
+      const state = {
+        teams: [
+          makeV0Team({
+            erTimelines: [
+              {
+                actions: [
+                  {
+                    char: "raiden",
+                    action: "grantEnergy",
+                    energyGrants: { raiden: 20, xingqiu: 5 },
+                  },
+                  { char: "raiden", action: "Q" },
+                ],
+              },
+            ],
+          }),
+        ],
+        author: "",
+        description: "",
+      };
+      const result = migrateTeamStore(state, 13);
+      const team = result.teams[0] as unknown as {
+        erTimelines: Array<{
+          actions: Array<{
+            action: string;
+            energyGrants?: Record<string, { flat?: number; percent?: number }>;
+          }>;
+        }>;
+      };
+      expect(team.erTimelines[0].actions[0].energyGrants).toEqual({
+        raiden: { flat: 20 },
+        xingqiu: { flat: 5 },
+      });
+    });
+
+    it("strips legacy .orb field from intermediate dev shape", () => {
+      const state = {
+        teams: [
+          makeV0Team({
+            erTimelines: [
+              {
+                actions: [
+                  {
+                    char: "raiden",
+                    action: "grantEnergy",
+                    energyGrants: {
+                      raiden: { flat: 10, percent: 50, orb: 3 },
+                    },
+                  },
+                ],
+              },
+            ],
+          }),
+        ],
+        author: "",
+        description: "",
+      };
+      const result = migrateTeamStore(state, 13);
+      const team = result.teams[0] as unknown as {
+        erTimelines: Array<{
+          actions: Array<{
+            energyGrants?: Record<string, Record<string, number>>;
+          }>;
+        }>;
+      };
+      const grant = team.erTimelines[0].actions[0].energyGrants?.raiden;
+      expect(grant).toEqual({ flat: 10, percent: 50 });
+      expect(grant && "orb" in grant).toBe(false);
+    });
+
+    it("drops zero-only grants entirely", () => {
+      const state = {
+        teams: [
+          makeV0Team({
+            erTimelines: [
+              {
+                actions: [
+                  {
+                    char: "raiden",
+                    action: "grantEnergy",
+                    energyGrants: { raiden: 0 },
+                  },
+                ],
+              },
+            ],
+          }),
+        ],
+        author: "",
+        description: "",
+      };
+      const result = migrateTeamStore(state, 13);
+      const team = result.teams[0] as unknown as {
+        erTimelines: Array<{
+          actions: Array<{ energyGrants?: Record<string, unknown> }>;
+        }>;
+      };
+      expect(team.erTimelines[0].actions[0].energyGrants).toEqual({});
+    });
+
+    it("leaves non-grantEnergy actions untouched", () => {
+      const state = {
+        teams: [
+          makeV0Team({
+            erTimelines: [
+              {
+                actions: [
+                  { char: "raiden", action: "E" },
+                  { char: "raiden", action: "Q" },
+                ],
+              },
+            ],
+          }),
+        ],
+        author: "",
+        description: "",
+      };
+      const result = migrateTeamStore(state, 13);
+      const team = result.teams[0] as unknown as {
+        erTimelines: Array<{ actions: Array<{ action: string }> }>;
+      };
+      expect(team.erTimelines[0].actions).toEqual([
+        { char: "raiden", action: "E" },
+        { char: "raiden", action: "Q" },
+      ]);
+    });
+  });
+
   it("full migration from v0 applies all steps", () => {
     const state = {
       teams: [

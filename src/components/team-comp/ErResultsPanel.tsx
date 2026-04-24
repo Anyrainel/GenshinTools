@@ -3,7 +3,12 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { CharAvatar } from "@/components/shared/CharAvatar";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { EnergyEvent, ERResult, TeamSlot } from "@/lib/ercalc/types";
+import type {
+  EnergyEvent,
+  ERResult,
+  QWindow,
+  TeamSlot,
+} from "@/lib/ercalc/types";
 import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import {
@@ -33,34 +38,42 @@ function getErTextColor(er: number, isInfinity: boolean) {
   return "text-red-400";
 }
 
-/** Group events by (type, source char, source action), merging duplicate procs. */
-function summarizeEventsForChar(
-  events: EnergyEvent[],
-  charId: string
-): {
-  source: string;
+interface SummaryItem {
+  key: string;
   sourceChar: string;
   sourceAction: string;
-  type: "particle" | "flat";
+  /** Energy at 100% ER (sum across procs in this group). */
   energy: number;
-  onField: boolean;
+  /** Number of procs merged into this group. */
   count: number;
-}[] {
-  const grouped = new Map<
-    string,
-    {
-      sourceChar: string;
-      sourceAction: string;
-      type: "particle" | "flat";
-      energy: number;
-      onField: boolean;
-      count: number;
-    }
-  >();
+  /** True when at least one proc was absorbed on-field. */
+  onField: boolean;
+}
+
+/** Group events of one bucket (flat OR scalable+particle) for one absorber by
+ *  (sourceChar, sourceAction), summing energy. Drops events that didn't reach
+ *  this character. */
+function summarizeBucket(
+  events: EnergyEvent[],
+  charId: string,
+  bucket: "flat" | "scalable"
+): SummaryItem[] {
+  const grouped = new Map<string, SummaryItem>();
   for (const ev of events) {
-    // For flat events, only include those whose recipient is the current char
-    // (flat events carry recipient in `absorberChar`).
-    if (ev.type === "flat" && ev.absorberChar !== charId) continue;
+    // Bucket assignment: particles + scalable both ER-scale → "scalable" row.
+    const evBucket: "flat" | "scalable" =
+      ev.type === "flat" ? "flat" : "scalable";
+    if (evBucket !== bucket) continue;
+    // Flat / scalable events carry their recipient in absorberChar.
+    if (
+      (ev.type === "flat" || ev.type === "scalable") &&
+      ev.absorberChar !== charId
+    )
+      continue;
+    // Particles use absorberChar = on-field char; we still want them attributed
+    // to the current char (calculator already filters distribution to this
+    // char's accumulator before pushing into the binding events). We accept
+    // every particle event in the array.
     const key = `${ev.type}:${ev.sourceChar}:${ev.sourceAction}`;
     const onField = ev.absorberChar === charId;
     const existing = grouped.get(key);
@@ -70,19 +83,16 @@ function summarizeEventsForChar(
       if (onField) existing.onField = true;
     } else {
       grouped.set(key, {
+        key,
         sourceChar: ev.sourceChar,
         sourceAction: ev.sourceAction,
-        type: ev.type,
         energy: ev.energyAt100,
-        onField,
         count: 1,
+        onField,
       });
     }
   }
-  return Array.from(grouped.entries()).map(([key, val]) => ({
-    source: key,
-    ...val,
-  }));
+  return Array.from(grouped.values()).sort((a, b) => b.energy - a.energy);
 }
 
 export function ErResultsPanel({
@@ -183,7 +193,7 @@ export function ErResultsPanel({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 p-2">
         {team.map((slot) => {
           const result = results.find((r) => r.characterId === slot.charId);
-          const hasData = !!(result && result.hasQ);
+          const hasData = !!result?.hasQ;
           const erNeeded = hasData ? result.erNeeded : 100;
           const isInfinity = erNeeded === Number.POSITIVE_INFINITY;
           const erDisplay = isInfinity ? "∞" : `${Math.ceil(erNeeded)}%`;
@@ -192,13 +202,23 @@ export function ErResultsPanel({
             : Math.min(100, ((erNeeded - 100) / 200) * 100);
           const erTextColor = getErTextColor(erNeeded, isInfinity);
           const particle = hasData ? result.energyBreakdown.particleEnergy : 0;
+          const scalable = hasData ? result.energyBreakdown.scalableEnergy : 0;
           const flat = hasData ? result.energyBreakdown.flatEnergy : 0;
+          // Particles + scalable both ER-scale together (they share the same
+          // linear coefficient against ER%). The denominator in the formula
+          // is their sum; flat is subtracted from burst cost.
           const burstCost = slot.burstCost;
 
-          const charEvents =
-            allExpanded && hasData && result.bindingEvents
-              ? summarizeEventsForChar(result.bindingEvents, slot.charId)
-              : [];
+          // Per-Q windows for the expanded breakdown. Sort by ER desc so the
+          // worst-case (binding) window is on top — it's the one that
+          // determines the displayed character ER.
+          const qWindows: QWindow[] = hasData ? (result.qWindows ?? []) : [];
+          const sortedWindows = [...qWindows].sort((a, b) => {
+            // Push Infinity to the top.
+            if (a.erNeeded === Number.POSITIVE_INFINITY) return -1;
+            if (b.erNeeded === Number.POSITIVE_INFINITY) return 1;
+            return b.erNeeded - a.erNeeded;
+          });
 
           const toggleExpand = () => {
             if (hasData) setAllExpanded((p) => !p);
@@ -241,15 +261,32 @@ export function ErResultsPanel({
                   )}
                 </div>
 
-                {/* Energy math: scalable + flat / cost */}
+                {/* Energy math: particle + scalable + flat / cost */}
                 <div className="mt-1 flex items-center gap-1 text-xs md:text-sm tabular-nums">
-                  <span className="text-primary/90 font-medium">
+                  <span
+                    className="text-primary/90 font-medium"
+                    title={t.ui("erCalc.particleEnergyTitle")}
+                  >
                     {particle.toFixed(1)}
                   </span>
+                  {scalable > 0 && (
+                    <>
+                      <span>+</span>
+                      <span
+                        className="text-cyan-400 font-medium"
+                        title={t.ui("erCalc.scalableEnergyTitle")}
+                      >
+                        {scalable.toFixed(1)}
+                      </span>
+                    </>
+                  )}
                   {flat > 0 && (
                     <>
                       <span>+</span>
-                      <span className="text-blue-400 font-medium">
+                      <span
+                        className="text-blue-400 font-medium"
+                        title={t.ui("erCalc.flatEnergyTitle")}
+                      >
                         {flat.toFixed(1)}
                       </span>
                     </>
@@ -274,66 +311,20 @@ export function ErResultsPanel({
                 </div>
               </button>
 
-              {/* Expanded breakdown — stays in grid cell */}
-              {allExpanded && hasData && result.bindingEvents && (
-                <div className="px-2 pb-2 pt-0">
-                  <div className="rounded-md bg-background/30 p-1.5 space-y-1 text-foreground">
-                    {charEvents.map((ev) => {
-                      const actionLabel = t.erAction(ev.sourceAction);
-                      const isFlat = ev.type === "flat";
-
-                      return (
-                        <div
-                          key={ev.source}
-                          className="flex items-center gap-1.5 text-xs"
-                        >
-                          <CharAvatar charId={ev.sourceChar} size={16} />
-                          <span className="truncate min-w-0 flex-1">
-                            {t.character(ev.sourceChar).split(/[\s_]/)[0]}{" "}
-                            {actionLabel}
-                            {ev.count > 1 && ` ×${ev.count}`}
-                          </span>
-                          {!isFlat && (
-                            <span
-                              className={cn(
-                                "tabular-nums shrink-0",
-                                ev.onField
-                                  ? "text-green-400"
-                                  : "text-amber-300/90"
-                              )}
-                            >
-                              {ev.onField
-                                ? t.ui("erCalc.onFieldLabel")
-                                : t.ui("erCalc.offFieldLabel")}
-                            </span>
-                          )}
-                          <span
-                            className={cn(
-                              "tabular-nums font-medium shrink-0",
-                              isFlat ? "text-blue-400" : undefined
-                            )}
-                          >
-                            +{ev.energy.toFixed(1)}
-                            {isFlat
-                              ? language === "zh"
-                                ? " 固定"
-                                : " flat"
-                              : ""}
-                          </span>
-                        </div>
-                      );
-                    })}
-                    {!isInfinity && (
-                      <div className="text-xs tabular-nums border-t border-border/40 pt-1 mt-1">
-                        ({burstCost}
-                        {flat > 0 ? ` - ${flat.toFixed(1)}` : ""}) /{" "}
-                        {particle.toFixed(1)} × 100 ={" "}
-                        <span className={cn(erTextColor, "font-semibold")}>
-                          {Math.ceil(erNeeded)}%
-                        </span>
-                      </div>
-                    )}
-                  </div>
+              {/* Expanded breakdown — one block per Q window, sorted by ER desc. */}
+              {allExpanded && hasData && sortedWindows.length > 0 && (
+                <div className="px-2 pb-2 pt-0 space-y-1.5">
+                  {sortedWindows.map((w, idx) => (
+                    <QWindowBlock
+                      key={`${w.qIndex}-${idx}`}
+                      window={w}
+                      charId={slot.charId}
+                      tCharacter={t.character}
+                      tErAction={t.erAction}
+                      tUi={t.ui}
+                      language={language}
+                    />
+                  ))}
                 </div>
               )}
             </div>
@@ -341,5 +332,141 @@ export function ErResultsPanel({
         })}
       </div>
     </section>
+  );
+}
+
+/** One Q-window breakdown block:
+ *    – Header line  : Q label, the window's ER %, "binding" tag if applicable
+ *    – Flat row     : per-source numbers (hover for action label) + sum
+ *    – Scalable row : per-source numbers (hover for action label) + sum
+ *    – Formula line : (cost − flat) / scalable × 100 = ER%
+ */
+function QWindowBlock({
+  window: w,
+  charId,
+  tCharacter,
+  tErAction,
+  tUi,
+  language,
+}: {
+  window: QWindow;
+  charId: string;
+  tCharacter: (id: string) => string;
+  tErAction: (action: string) => string;
+  tUi: (key: string) => string;
+  language: "en" | "zh";
+}) {
+  const isInfinity = w.erNeeded === Number.POSITIVE_INFINITY;
+  const erColor = getErTextColor(w.erNeeded, isInfinity);
+  const erDisplay = isInfinity ? "∞" : `${Math.ceil(w.erNeeded)}%`;
+  const flatItems = summarizeBucket(w.events, charId, "flat");
+  const scalableItems = summarizeBucket(w.events, charId, "scalable");
+  const flatTotal = flatItems.reduce((a, b) => a + b.energy, 0);
+  const scalableTotal = scalableItems.reduce((a, b) => a + b.energy, 0);
+  const qLabel = tErAction(w.qAction);
+
+  return (
+    <div
+      className={cn(
+        "rounded-md border bg-background/30 p-1.5 text-foreground space-y-0.5",
+        w.isBinding ? "border-primary/50" : "border-border/30"
+      )}
+    >
+      <div className="flex items-center gap-1.5 text-xs">
+        <span className="font-semibold flex-1 truncate min-w-0">
+          {qLabel} <span className="text-foreground/50">@{w.qIndex}</span>
+          {w.isBinding && (
+            <span className="ml-1.5 px-1 rounded bg-primary/20 text-primary text-[10px] uppercase tracking-wide">
+              {tUi("erCalc.qWindowBinding")}
+            </span>
+          )}
+        </span>
+        <span className={cn("font-bold tabular-nums", erColor)}>
+          {erDisplay}
+        </span>
+      </div>
+
+      <BreakdownRow
+        label={tUi("erCalc.grantFlat")}
+        items={flatItems}
+        total={flatTotal}
+        toneClass="text-blue-400"
+        tCharacter={tCharacter}
+        tErAction={tErAction}
+        empty={tUi("erCalc.qWindowEmpty")}
+      />
+      <BreakdownRow
+        label={tUi("erCalc.qWindowScalableRow")}
+        items={scalableItems}
+        total={scalableTotal}
+        toneClass="text-cyan-400"
+        tCharacter={tCharacter}
+        tErAction={tErAction}
+        empty={tUi("erCalc.qWindowEmpty")}
+      />
+
+      {!isInfinity && (
+        <div className="text-[11px] md:text-xs tabular-nums pt-0.5 mt-0.5 border-t border-border/30 text-foreground/80">
+          ({w.burstCost}
+          {flatTotal > 0 ? ` − ${flatTotal.toFixed(1)}` : ""}) /{" "}
+          {scalableTotal.toFixed(1)} × 100 ={" "}
+          <span className={cn(erColor, "font-semibold")}>{erDisplay}</span>
+          <span className="ml-1 text-foreground/50">
+            {language === "zh" ? "" : ""}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** A single energy-bucket row: label · per-source numbers (with action-label
+ *  tooltips) · sum. */
+function BreakdownRow({
+  label,
+  items,
+  total,
+  toneClass,
+  tCharacter,
+  tErAction,
+  empty,
+}: {
+  label: string;
+  items: SummaryItem[];
+  total: number;
+  toneClass: string;
+  tCharacter: (id: string) => string;
+  tErAction: (action: string) => string;
+  empty: string;
+}) {
+  return (
+    <div className="flex items-baseline gap-1.5 text-[11px] md:text-xs flex-wrap">
+      <span className="text-foreground/60 shrink-0 w-14">{label}</span>
+      <div className="flex items-baseline gap-1 flex-wrap flex-1 min-w-0">
+        {items.length === 0 ? (
+          <span className="text-foreground/40">{empty}</span>
+        ) : (
+          items.map((it, i) => {
+            const charLabel = tCharacter(it.sourceChar).split(/[\s_]/)[0];
+            const actionLabel = tErAction(it.sourceAction);
+            const tooltip = `${charLabel} ${actionLabel}${it.count > 1 ? ` ×${it.count}` : ""}`;
+            return (
+              <span key={it.key} className="inline-flex items-baseline gap-0.5">
+                {i > 0 && <span className="text-foreground/40">+</span>}
+                <span
+                  className={cn("tabular-nums cursor-help", toneClass)}
+                  title={tooltip}
+                >
+                  {it.energy.toFixed(1)}
+                </span>
+              </span>
+            );
+          })
+        )}
+      </div>
+      <span className={cn("font-semibold tabular-nums shrink-0", toneClass)}>
+        = {total.toFixed(1)}
+      </span>
+    </div>
   );
 }

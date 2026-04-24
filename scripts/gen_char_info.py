@@ -249,6 +249,17 @@ def strip_html(s: str) -> str:
     return re.sub(r"<[^>]+>", "", s)
 
 
+def detail_kv(detail) -> tuple[str, str] | None:
+    """Return (label, template) for a skill detail row, or None if malformed."""
+    if not isinstance(detail, dict):
+        return None
+    label = detail.get("label")
+    template = detail.get("template")
+    if label is None or template is None:
+        return None
+    return str(label), str(template)
+
+
 def extract_supstats(text: str) -> list[str]:
     """Return supStat keys (in canonical order) present in `text`."""
     found = []
@@ -270,10 +281,10 @@ def detect_heal_shield(char_data: dict) -> tuple[int | None, int | None, list[st
     # Pass 1 — skill details (reliable, always C0 if matched)
     for skill in char_data.get("skills", []):
         for det in skill.get("details", []):
-            if len(det) < 2:
+            kv = detail_kv(det)
+            if kv is None:
                 continue
-            key = str(det[0])
-            val = str(det[1])
+            key, val = kv
             if HEAL_KEY_PAT.search(key):
                 healer_c = 0
                 for s in extract_supstats(val):
@@ -327,9 +338,10 @@ def scan_supstats_unrestricted(char_data: dict, scan_heal: bool, scan_shield: bo
 
     for skill in char_data.get("skills", []):
         for det in skill.get("details", []):
-            if len(det) < 2:
+            kv = detail_kv(det)
+            if kv is None:
                 continue
-            key, val = str(det[0]), str(det[1])
+            key, val = kv
             if scan_heal and HEAL_ANY_KEY_PAT.search(key):
                 add_all(val)
             if scan_shield and SHIELD_KEY_PAT.search(key):
@@ -410,8 +422,12 @@ def main():
         skills = char_data.get("skills", [])
         for skill in skills:
             for detail in skill.get("details", []):
-                if detail[0] == "元素能量":
-                    energy = resolve_burst_cost(detail[1], char_id, talent_data)
+                kv = detail_kv(detail)
+                if kv is None:
+                    continue
+                key, val = kv
+                if key == "元素能量":
+                    energy = resolve_burst_cost(val, char_id, talent_data)
 
         constellations = char_data.get("constellations", [])
         c3_talent = "Q"
