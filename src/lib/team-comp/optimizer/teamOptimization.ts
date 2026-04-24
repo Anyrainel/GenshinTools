@@ -8,7 +8,6 @@
  * - runTeamOptimization async generator (main entry point)
  */
 
-import { charInfo } from "@/data/charInfo";
 import type { Slot, StatKey } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import { artifactHalfSetsById } from "@/data/gameResources";
@@ -35,6 +34,7 @@ import type {
   TeamOptYield,
 } from "../types";
 import {
+  buildFallbackWeights,
   computeWeightScore,
   getArtifactCr,
   getArtifactEr,
@@ -98,34 +98,6 @@ function hasIntersection(a: Set<string>, b: Set<string>): boolean {
     if (larger.has(id)) return true;
   }
   return false;
-}
-
-/**
- * Fallback scoring weights for saturated characters with no build match.
- * Always includes ER (healers/shielders need burst uptime); for characters
- * with `supStat` (heal/shield scaling stats), also includes those keys so
- * the greedy picker prefers artifacts whose substats scale their support
- * output (e.g. Bennett→hp%, Gorou→def%). Flat counterparts are included at
- * weight 0.3 since flat substats still contribute after conversion but are
- * ~3× weaker per-roll than their % counterparts.
- */
-function buildSupStatFallbackWeights(charId: string): {
-  weights: Record<string, number>;
-  targetMainStats: Set<string>;
-} {
-  const weights: Record<string, number> = { er: 1 };
-  const targetMainStats = new Set<string>(["er"]);
-  const supStat = charInfo[charId]?.supStat;
-  if (supStat) {
-    for (const s of supStat) {
-      weights[s] = 1;
-      targetMainStats.add(s);
-    }
-  }
-  if (weights["atk%"]) weights.atk = 0.3;
-  if (weights["hp%"]) weights.hp = 0.3;
-  if (weights["def%"]) weights.def = 0.3;
-  return { weights, targetMainStats };
 }
 
 function computeHyperparams(inventorySize: number): {
@@ -387,6 +359,7 @@ function buildSheetsFromArtifacts(
  * team context without sequential dependency.
  */
 function buildHeuristicAssignment(
+  charId: string,
   charConfig: CharOptConfig,
   inventory: ArtifactData[],
   assignedIds: Set<string>
@@ -486,26 +459,21 @@ function buildHeuristicAssignment(
 
     if (candidates.length === 0) continue;
 
-    const erFallback = buildMatch
-      ? undefined
-      : {
-          weights: { er: 100 } as Record<string, number>,
-          targetMainStats: new Set(["er"]),
-        };
+    const fallback = buildMatch ? undefined : buildFallbackWeights(charId);
     candidates.sort((a, b) => {
       const sa = buildMatch
         ? computeWeightScore(a, buildMatch, 1)
         : scoreSlotWithMainStat(
             a,
-            erFallback!.weights,
-            erFallback!.targetMainStats
+            fallback!.weights,
+            fallback!.targetMainStats
           );
       const sb = buildMatch
         ? computeWeightScore(b, buildMatch, 1)
         : scoreSlotWithMainStat(
             b,
-            erFallback!.weights,
-            erFallback!.targetMainStats
+            fallback!.weights,
+            fallback!.targetMainStats
           );
       return sb - sa || b.level - a.level;
     });
@@ -542,7 +510,12 @@ function buildHeuristicBaseSheets(
   for (const charId of ordered) {
     const charConfig = perChar[charId];
     if (!charConfig) continue;
-    const picked = buildHeuristicAssignment(charConfig, inventory, assignedIds);
+    const picked = buildHeuristicAssignment(
+      charId,
+      charConfig,
+      inventory,
+      assignedIds
+    );
     const pieces = allSlots
       .map((s) => picked[s])
       .filter((a): a is ArtifactData => a != null);
@@ -2643,12 +2616,10 @@ export async function* runTeamOptimization(
 
         if (candidates.length === 0) continue;
 
-        // Score by build weights (no CR/CD fallback for saturated chars)
-        // Use ER (and supStat scaling keys for healers/shielders) as fallback
-        // weights if no build match exists.
-        const fallback = buildMatch
-          ? undefined
-          : buildSupStatFallbackWeights(charId);
+        // Score by build weights; when no build match exists, fall back to
+        // role-aware defaults (supStat for healers/shielders, CR/CD+atk% for
+        // DPS-shaped characters).
+        const fallback = buildMatch ? undefined : buildFallbackWeights(charId);
         candidates.sort((a, b) => {
           const sa = buildMatch
             ? computeWeightScore(a, buildMatch, 1)

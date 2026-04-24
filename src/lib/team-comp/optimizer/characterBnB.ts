@@ -5,7 +5,6 @@
  * including set composition patterns, core DFS, and the runCharacterBnB entry point.
  */
 
-import { charInfo } from "@/data/charInfo";
 import type { MainStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import {
@@ -33,6 +32,7 @@ import { StatSheet } from "../../dmgcalc/core/statSheet";
 import type { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import type { CharOptConfig, OptFailReason } from "../types";
 import {
+  buildFallbackWeights,
   computeMarginalScore,
   getArtifactCr,
   getArtifactEr,
@@ -439,10 +439,9 @@ export function runCharacterBnB(
   let effectiveBuildMatch = charConfig.buildMatch;
   let effectiveMarginals = marginals;
   {
-    const baseWeights = charConfig.buildMatch?.statWeights ?? {
-      cr: 100,
-      cd: 100,
-    };
+    const baseWeights =
+      charConfig.buildMatch?.statWeights ??
+      buildFallbackWeights(swapCharId, 100).weights;
     const maxWeight = Math.max(
       0,
       ...Object.values(baseWeights).map((v) => Math.abs(v ?? 0))
@@ -480,8 +479,10 @@ export function runCharacterBnB(
   }
 
   // If all effective weights are still zero (saturated character), inject
-  // fallback weights so B&B can rank artifacts.  Prefer constraint-derived
-  // weights (ER/CR requirements); if none, use a generic fallback.
+  // fallback weights so B&B can rank artifacts. Start from role-aware defaults
+  // (supStat for supports, CR/CD + atk% for DPS) and overlay any explicit
+  // ER/CR constraints so saturated characters with constraints still prioritize
+  // meeting them.
   let usedFallbackWeights = false;
   {
     const allZero = (w: Record<string, number>) =>
@@ -492,28 +493,9 @@ export function runCharacterBnB(
       allZero(effectiveBuildMatch.statWeights as Record<string, number>);
     if (marginalZero && buildZero) {
       usedFallbackWeights = true;
-      const fallback: Record<string, number> = {};
-      if (constraints.hasEr) fallback.er = 1;
-      if (constraints.hasCr) fallback.cr = 1;
-      const supStat = charInfo[swapCharId]?.supStat;
-      if (supStat) {
-        // Healers/shielders generally want ER for burst uptime, even absent
-        // an explicit ER constraint.
-        fallback.er = 1;
-        for (const s of supStat) fallback[s] = 1;
-      }
-      if (Object.keys(fallback).length === 0) {
-        fallback.er = 1;
-        fallback["hp%"] = 1;
-        fallback["def%"] = 1;
-      }
-      // Whenever a %-stat is in the fallback, include its flat counterpart
-      // too (flat substat rolls still contribute after conversion). Weight
-      // 0.3 reflects that flat substats are roughly 3× weaker per-roll than
-      // their % counterparts on a typical 90-level character.
-      if (fallback["atk%"]) fallback.atk = 0.3;
-      if (fallback["hp%"]) fallback.hp = 0.3;
-      if (fallback["def%"]) fallback.def = 0.3;
+      const fallback = { ...buildFallbackWeights(swapCharId).weights };
+      if (constraints.hasEr) fallback.er = Math.max(fallback.er ?? 0, 1);
+      if (constraints.hasCr) fallback.cr = Math.max(fallback.cr ?? 0, 1);
       effectiveBuildMatch = {
         build: {} as BuildMatchResult["build"],
         buildIndex: 0,

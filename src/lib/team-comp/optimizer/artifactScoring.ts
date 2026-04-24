@@ -6,6 +6,7 @@
  * - Marginal-based: uses damage-formula-derived marginal weights (context-aware)
  */
 
+import { charInfo } from "@/data/charInfo";
 import type { StatKey } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
@@ -20,6 +21,54 @@ import {
   scoreSlot,
 } from "../../artifact/scoring/artifactScore";
 import type { MarginalWeights, PreparedSlotData, SuperArtifact } from "./types";
+
+/**
+ * Fallback scoring weights for characters without a saved build (and/or
+ * saturated characters where no other signal is available). Shape:
+ * - Healers/shielders (`charInfo.supStat` present): ER + supStat keys
+ *   (heal/shield output scales from those stats).
+ * - Others (DPS-shaped, no supStat): CR/CD + atk% as a generic crit-scaling
+ *   default.
+ * - Flat counterparts (atk/hp/def) are always added at 0.3× the %-variant
+ *   weight — flat rolls still contribute after conversion but are ~3× weaker
+ *   per-roll at level 90.
+ *
+ * `scale` controls absolute magnitude (1 by default). Pass 100 when the caller
+ * mixes these weights with marginal substat weights or with real build weights
+ * (which conventionally use 0–100 range) — the absolute scale affects how
+ * constraint boosts are sized relative to the baseline.
+ */
+export function buildFallbackWeights(
+  charId: string,
+  scale = 1
+): { weights: Record<string, number>; targetMainStats: Set<string> } {
+  const weights: Record<string, number> = {};
+  const targetMainStats = new Set<string>();
+  const supStat = charInfo[charId]?.supStat;
+
+  if (supStat && supStat.length > 0) {
+    weights.er = scale;
+    targetMainStats.add("er");
+    for (const s of supStat) {
+      weights[s] = scale;
+      targetMainStats.add(s);
+    }
+  } else {
+    weights.cr = scale;
+    weights.cd = scale;
+    weights["atk%"] = scale;
+    targetMainStats.add("cr");
+    targetMainStats.add("cd");
+    targetMainStats.add("atk%");
+  }
+
+  const flat = 0.3 * scale;
+  if (weights["atk%"]) weights.atk = flat;
+  if (weights["hp%"]) weights.hp = flat;
+  if (weights["def%"]) weights.def = flat;
+
+  return { weights, targetMainStats };
+}
 
 /** After scoring & sorting, keep at most this many unleveled (level 0) artifacts per slot.
  *  Leveled artifacts are always retained regardless of rank. */
