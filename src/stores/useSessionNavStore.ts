@@ -8,6 +8,7 @@ interface ViewSettings {
   activeTeamId: string | null;
   ownedOnly: boolean | null; // null = use default (hasAccountData)
   teamSort: TeamSort;
+  erCalcExpanded: boolean;
 }
 
 interface SessionNavState {
@@ -15,12 +16,14 @@ interface SessionNavState {
   setActiveTeamId: (viewId: ViewId, id: string | null) => void;
   setViewOwnedOnly: (viewId: ViewId, value: boolean) => void;
   setViewTeamSort: (viewId: ViewId, value: TeamSort) => void;
+  setErCalcExpanded: (viewId: ViewId, value: boolean) => void;
 }
 
 const defaultViewSettings: ViewSettings = {
   activeTeamId: null,
   ownedOnly: null,
   teamSort: "default",
+  erCalcExpanded: false,
 };
 
 export const useSessionNavStore = create<SessionNavState>()(
@@ -50,6 +53,13 @@ export const useSessionNavStore = create<SessionNavState>()(
           viewSettings: {
             ...s.viewSettings,
             [viewId]: { ...s.viewSettings[viewId], teamSort: value },
+          },
+        })),
+      setErCalcExpanded: (viewId, value) =>
+        set((s) => ({
+          viewSettings: {
+            ...s.viewSettings,
+            [viewId]: { ...s.viewSettings[viewId], erCalcExpanded: value },
           },
         })),
     }),

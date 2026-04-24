@@ -47,7 +47,7 @@ Each character maps to an array of energy recovery entries:
 | Field | Type | Description |
 |-------|------|-------------|
 | `source` | string | Where the effect comes from. Use impl_audit.py notation: `A`, `E`, `Q`, `P1`–`P4`, `C1`–`C6`, `G` |
-| `action` | string | Which timeline action to attach this energy to. One of: `A` (normal attack), `ChargeA`, `PlungeA`, `E`, `holdE`, `Q`, `periodicE` |
+| `action` | string | Which timeline action triggers this entry. One of: `A` (any normal-attack-family action — matches NA/CA/PA), `NA` (normal attack), `CA` (charged attack), `PA` (plunge attack), `E`, `holdE`, `Q`, `periodicE`. **Do NOT use** `ChargeA` / `PlungeA` / `NormalA` — these keys are dead in the engine. Use `CA` / `PA` / `NA`. |
 | `amount` | number | Energy recovered per proc. Use the flat number from game text. **Omit if using `param` or `percentRefund` instead.** |
 | `target` | string | Who receives the energy. One of: `self`, `party`, `active`, `partyOthers` |
 | `minC` | number | Minimum constellation required. `0` for passives/base kit |
@@ -137,11 +137,14 @@ For each energy recovery mention, read the full context to determine:
    - "为队伍中所有角色恢复" → `party`
    - "为当前场上角色恢复" → `active`
    - "为队伍中所有角色（不包括X）恢复" → `partyOthers`
-4. **Action**: Which gameplay action triggers this:
-   - E skill hit → `E` | hold E → `holdE` | normal attack → `A`
-   - Charged attack → `ChargeA` | plunge → `PlungeA` | burst → `Q`
+4. **Action**: Which gameplay action triggers this. Use the engine's runtime keys — if in doubt, check `ActionType` in `src/lib/ercalc/types.ts`:
+   - E skill hit → `E` | hold E → `holdE` | alt-form E → `specialE`
+   - Normal attack → `NA` | charged attack → `CA` | plunge → `PA`
+   - "Any attack" wildcard (fires on NA / CA / PA) → `A`
+   - Burst → `Q` | alt-form burst → `specialQ`
    - Periodic E effect (turret, summon) → `periodicE`
-   - Burst end → `Q` | passive always-on → `E` (default)
+   - Passive always-on → default to the most natural trigger (usually `E` or `Q`)
+   - ⚠️ `ChargeA` / `PlungeA` are the old key names — **never emit these**; the engine does not match them and the entry will silently never fire.
 5. **Procs**: If multi-hit, set `procs` to max count if capped (e.g., "至多5次" → 5), or estimated typical count if uncapped.
 6. **Conditions**: If conditional, provide both `conditionEn` and `conditionZh`.
 
@@ -161,11 +164,12 @@ For each energy recovery mention, read the full context to determine:
 **Crit-rate-based probability** (e.g., Escoffier C4):
 - Document in `conditionEn`/`conditionZh`. Don't try to multiply amount by probability.
 
-**Effects that mention 能量 but aren't energy recovery — SKIP these**:
+**Effects that mention 能量 but aren't standard elemental energy — SKIP these**:
 - "元素能量" as burst cost label (just the burst cost display)
 - "元素充能效率" (ER% buff, not flat energy)
 - "能量层数" (energy stacks, like Eula's Lightfall Sword)
 - Energy threshold conditions (e.g., Dori C4 "元素能量低于50%")
+- **Character-specific alternate energy / resource systems**: some characters recharge their own internal resource (stacks, sigils, a bespoke energy meter, etc.) that powers their burst via a non-standard pathway. This is **not** the shared elemental-energy pool the ER calculator models — **do not** encode it as a `selfEnergy` entry and **do not** represent its trigger as particle generation. If in doubt, confirm the effect adds to the character's standard elemental energy pool (the one that fills the burst bar the same way particles do) before writing an entry. When you skip such an effect, add a note to your summary so we can revisit if the scraper mis-categorized it elsewhere.
 
 ### Step 4: Approximation
 
@@ -205,3 +209,4 @@ After writing the file, report:
 - Raiden Q energy restore IS valid (flat energy to party during burst).
 - Tartaglia Q energy return IS valid (returns energy on ranged burst).
 - Provide BOTH `conditionEn` and `conditionZh` when conditions are present. Omit both if unconditional.
+- **Double-check the fill pathway before encoding**: an effect that says "restore energy" or "recharge" only belongs in this data if it adds to the character's **standard elemental energy pool** (the burst bar that fills from particles). Character-specific alternate resources or bespoke recharge systems are out of scope — skip them and flag in your summary.

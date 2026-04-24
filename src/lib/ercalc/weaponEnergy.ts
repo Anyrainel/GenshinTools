@@ -16,15 +16,17 @@ export type WeaponEnergyEffect =
   | {
       /** Grants flat energy (not affected by ER%) */
       effect: "flatEnergy";
-      /** Total flat energy per refinement [R1..R5] */
+      /** Amount per event (per trigger fire); for burst/skill/heal/reaction
+       *  this is typically the rotation-total for a single trigger, for
+       *  `partyPlunge` it's the per-plunge-hit amount. */
       totalEnergy: [number, number, number, number, number];
       /** Which action triggers the effect */
       trigger:
-        | "burst" // Elemental Burst
-        | "skill" // Elemental Skill
-        | "heal" // When wielder is healed
-        | "reaction" // When triggering elemental reactions
-        | "onField"; // During field time (NA hits, etc.)
+        | "burst" // Elemental Burst (wearer)
+        | "skill" // Elemental Skill (wearer)
+        | "heal" // Wearer is a healer (approximated: fires at wearer's Q)
+        | "reaction" // Wearer participates in a reaction (fires at wearer's Q)
+        | "partyPlunge"; // Per plunge (NA/CA/PA gated to plunge) by any team member
     };
 
 export interface WeaponEnergyEntry {
@@ -120,15 +122,15 @@ const otherWeapons: WeaponEnergyEntry[] = [
       trigger: "reaction",
     },
   },
-  // Crane's Echoing Call: 2.5/2.75/3/3.25/3.5 energy per party plunge hit, 0.7s CD
-  // Assume ~5 plunge hits per rotation
+  // Crane's Echoing Call: 2.5/2.75/3/3.25/3.5 energy per party plunge hit, 0.7s CD.
+  // Per-hit value — fires at every party plunge action in the timeline.
   {
     id: "cranes_echoing_call",
     type: "Catalyst",
     energy: {
       effect: "flatEnergy",
-      totalEnergy: [12.5, 13.75, 15, 16.25, 17.5],
-      trigger: "onField",
+      totalEnergy: [2.5, 2.75, 3, 3.25, 3.5],
+      trigger: "partyPlunge",
     },
   },
   // Nocturne's Curtain Call: energy on Lunar reaction

@@ -110,14 +110,14 @@
   "varesa": [
     {
       "source": "C2",
-      "action": "PlungeA",
+      "action": "PA",
       "amount": 11.5,
       "target": "self",
       "minC": 2
     },
     {
       "source": "C6",
-      "action": "PlungeA",
+      "action": "PA",
       "amount": 30,
       "target": "self",
       "minC": 6,

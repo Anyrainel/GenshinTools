@@ -133,44 +133,11 @@ export const NA_FLAT_ENERGY_PER_PROC = 1.0;
 
 // ─── Param defaults (talent level 10) ───
 
-export const PARAM_DEFAULTS: Record<string, number> = {
-  "raiden_shogun:Q:17": 2.5,
-  "dori:Q:4": 1.5,
-  "durin:E:5": 3.0,
-};
+/** Last-resort defaults when character_stats talent data is missing.
+ *  Prefer real `getTalentParam` lookups; keep these only for edge cases. */
+export const PARAM_DEFAULTS: Record<string, number> = {};
 
-// ─── Enemy particle presets ───
-
-export const ENEMY_PRESETS: {
-  value: number;
-  labelEn: string;
-  labelZh: string;
-}[] = [
-  { value: 0, labelEn: "None (Boss)", labelZh: "无 (Boss)" },
-  { value: 6, labelEn: "Low (Elite)", labelZh: "少 (精英怪)" },
-  { value: 12, labelEn: "Medium (Mixed)", labelZh: "中 (混合怪)" },
-  { value: 24, labelEn: "High (AoE)", labelZh: "多 (群怪)" },
-];
-
-// ─── Action labels (i18n) ───
-
-/** Full action label map (includes event-source labels for results display). */
-export const ACTION_LABELS: Record<string, { en: string; zh: string }> = {
-  E: { en: "E", zh: "E" },
-  holdE: { en: "Hold E", zh: "长按E" },
-  specialE: { en: "Alt E", zh: "特殊E" },
-  Q: { en: "Q", zh: "Q" },
-  specialQ: { en: "Alt Q", zh: "特殊Q" },
-  NA: { en: "NA", zh: "普攻" },
-  CA: { en: "CA", zh: "重击" },
-  PA: { en: "Plunge", zh: "下落" },
-  wait: { en: "Wait", zh: "等待" },
-  periodic: { en: "Periodic", zh: "持续产球" },
-  favonius: { en: "Favonius", zh: "西风" },
-};
-
-export const PERIODIC_LABEL = { en: "Periodic", zh: "持续产球" };
-export const FAVONIUS_LABEL = { en: "Favonius", zh: "西风" };
+// Action/source labels live in i18n-app.ts `erActions` — access via `t.erAction(key)`.
 
 // ─── UI constants ───
 

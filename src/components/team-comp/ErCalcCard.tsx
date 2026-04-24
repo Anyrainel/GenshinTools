@@ -10,11 +10,14 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo } from "@/data/charInfo";
 import type { Element } from "@/data/enums";
-import { ENEMY_PRESETS, particles } from "@/lib/ercalc/constants";
+import type { AccountData } from "@/data/types";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import { particles } from "@/lib/ercalc/constants";
 import {
   autoPlaceFavonius,
   autoPlacePeriodic,
   calculateTeamER,
+  getDefaultProcCount,
   hasPeriodicGeneration,
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
@@ -32,6 +35,7 @@ import type {
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
+import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { CARD_CLS, CARD_HEADER_CLS, CARD_TITLE_CLS } from "./cardStyles";
 import { ErResultsPanel } from "./ErResultsPanel";
@@ -39,21 +43,94 @@ import { TimelineStrip } from "./TimelineStrip";
 
 const EMPTY_ERT: ERTimeline = { actions: [], periodic: [] };
 
-function teamToSlots(team: Team): TeamSlot[] {
-  return team.characters
-    .filter((id): id is string => id != null)
+function resolveCharCtx(
+  charId: string,
+  team: Team,
+  accountData: AccountData | null
+): { constellation: number; talentLevels: [number, number, number] } {
+  const acctChar = accountData?.characters.find((c) => c.key === charId);
+  const defaultConst = acctChar ? acctChar.constellation : 0;
+  const constellation =
+    team.opts?.[`${charId}.overrideConstellation`] !== undefined
+      ? Number(team.opts[`${charId}.overrideConstellation`])
+      : defaultConst;
+  const acct = acctChar?.talent ?? { auto: 10, skill: 10, burst: 10 };
+  const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
+  const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
+  const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
+  const base: [number, number, number] = [
+    overrideAuto !== undefined && overrideAuto !== ""
+      ? Number(overrideAuto)
+      : acct.auto,
+    overrideSkill !== undefined && overrideSkill !== ""
+      ? Number(overrideSkill)
+      : acct.skill,
+    overrideBurst !== undefined && overrideBurst !== ""
+      ? Number(overrideBurst)
+      : acct.burst,
+  ];
+
+  // Apply constellation +3 talent bonuses (C3 / C5) — matches CharacterBase
+  // effective-level calc in dmgcalc, so ercalc stays aligned with what the UI
+  // displays in the talent dropdowns.
+  const info = charInfo[charId];
+  const c3Bonus = constellation >= 3 && info ? 3 : 0;
+  const c5Bonus = constellation >= 5 && info ? 3 : 0;
+  const bonusFor = (slot: "A" | "E" | "Q") =>
+    (info?.c3Talent === slot ? c3Bonus : 0) +
+    (info?.c5Talent === slot ? c5Bonus : 0);
+  const talentLevels: [number, number, number] = [
+    base[0] + bonusFor("A"),
+    base[1] + bonusFor("E"),
+    base[2] + bonusFor("Q"),
+  ];
+  return { constellation, talentLevels };
+}
+
+function teamToSlots(team: Team, accountData: AccountData | null): TeamSlot[] {
+  const charIds = team.characters.filter((id): id is string => id != null);
+  // Team reaction heuristic: any two chars with different reactive elements
+  // from {Pyro, Hydro, Electro, Cryo, Dendro} → reactive team. Anemo/Geo
+  // are supports and don't directly enable reactions on their wielders.
+  const reactiveEls = new Set<string>();
+  for (const id of charIds) {
+    const el = particles[id]?.element;
+    if (!el) continue;
+    if (["Pyro", "Hydro", "Electro", "Cryo", "Dendro"].includes(el))
+      reactiveEls.add(el);
+  }
+  const teamCanReact = reactiveEls.size >= 2;
+
+  return charIds
     .map((charId, i) => {
       const info = charInfo[charId];
       const pData = particles[charId];
       const element = (pData?.element ?? "Anemo") as Element;
       const burstCost = info?.energy ?? 60;
       const weaponId = team.weapons[i] ?? undefined;
+      const { constellation, talentLevels } = resolveCharCtx(
+        charId,
+        team,
+        accountData
+      );
+      // Healer gate: matches dmgcalc convention — healerC field is the
+      // constellation threshold above which the char functions as a healer.
+      const isHealer =
+        info?.healerC !== undefined && constellation >= info.healerC;
+      // Reaction gate: char must have a reactive element AND the team has
+      // ≥2 reactive elements overall.
+      const canTriggerReaction =
+        teamCanReact &&
+        ["Pyro", "Hydro", "Electro", "Cryo", "Dendro"].includes(element);
       return {
         charId,
         element,
         burstCost,
-        constellation: 0,
+        constellation,
         weaponId,
+        talentLevels,
+        isHealer,
+        canTriggerReaction,
       };
     })
     .filter((s) => particles[s.charId]);
@@ -66,10 +143,35 @@ interface ErCalcCardProps {
 export function ErCalcCard({ team }: ErCalcCardProps) {
   const { t, language } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
-  const [collapsed, setCollapsed] = useState(true);
+  const accountData = useActiveAccountData();
+  // Persist open/closed across refresh via session store (sessionStorage-backed).
+  const expanded = useSessionNavStore(
+    (s) => s.viewSettings.damage.erCalcExpanded
+  );
+  const setErCalcExpanded = useSessionNavStore((s) => s.setErCalcExpanded);
+  const collapsed = !expanded;
+  const setCollapsed = useCallback(
+    (updater: boolean | ((prev: boolean) => boolean)) => {
+      const next = typeof updater === "function" ? updater(collapsed) : updater;
+      setErCalcExpanded("damage", !next);
+    },
+    [collapsed, setErCalcExpanded]
+  );
 
   const charIds = team.characters.filter((id): id is string => id != null);
-  const erTeam = useMemo(() => teamToSlots(team), [team]);
+  const erTeam = useMemo(
+    () => teamToSlots(team, accountData),
+    [team, accountData]
+  );
+
+  // Scholar 4pc bonus is not modeled by the engine (particle-gain trigger
+  // isn't wired through distributeParticles yet). Show a banner when any
+  // teammate has it equipped so users know the calc ignores it.
+  const hasScholarEquipped = useMemo(
+    () =>
+      team.artifacts.some((a) => a?.type === "4pc" && a.setId === "scholar"),
+    [team.artifacts]
+  );
 
   // Read timelines from team store, fallback to empty
   const timelines = useMemo<ERTimeline[]>(
@@ -89,7 +191,6 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
 
   const [startEmpty, setStartEmpty] = useState(false);
   const [repeatLast, setRepeatLast] = useState(true);
-  const [enemyParticles, setEnemyParticles] = useState(0);
   const [particleMode, setParticleMode] = useState<ParticleMode>("expected");
 
   const calcMode: CalcMode = startEmpty
@@ -125,18 +226,13 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
     const opts = {
       calcMode,
       particleMode,
-      enemyParticles: enemyParticles || undefined,
       timeline2: startup && startup.actions.length > 0 ? mainERT : undefined,
     };
     if (startup && startup.actions.length > 0) {
       return calculateTeamER(teamMembers, startup, opts);
     }
-    return calculateTeamER(teamMembers, mainERT, {
-      calcMode,
-      particleMode,
-      enemyParticles: enemyParticles || undefined,
-    });
-  }, [erTeam, timelines, calcMode, particleMode, enemyParticles]);
+    return calculateTeamER(teamMembers, mainERT, { calcMode, particleMode });
+  }, [erTeam, timelines, calcMode, particleMode]);
 
   const updateTimeline = useCallback(
     (tlIndex: number, updater: (ert: ERTimeline) => ERTimeline) => {
@@ -156,22 +252,56 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
           { char: charId, action },
         ];
         let newPeriodic = [...ert.periodic];
+        const newIndex = newActions.length - 1;
+
+        // Backfill deferred procs from earlier triggers onto the new action
+        // (procs couldn't be placed when the trigger was the last action).
+        for (let j = 0; j < newIndex; j++) {
+          const prior = newActions[j];
+          const priorIsE =
+            prior.action === "E" ||
+            prior.action === "holdE" ||
+            prior.action === "specialE";
+          const priorIsQ = prior.action === "Q" || prior.action === "specialQ";
+          let priorTrigger: "E" | "Q" | null = null;
+          if (priorIsE && hasPeriodicGeneration(prior.char, "E"))
+            priorTrigger = "E";
+          else if (priorIsQ && hasPeriodicGeneration(prior.char, "Q"))
+            priorTrigger = "Q";
+          if (!priorTrigger) continue;
+          const expected = getDefaultProcCount(prior.char, priorTrigger);
+          const existing = newPeriodic.filter(
+            (p) =>
+              p.sourceChar === prior.char &&
+              p.trigger === priorTrigger &&
+              p.targetIndex > j &&
+              p.targetIndex <= newIndex
+          ).length;
+          if (existing < expected) {
+            newPeriodic = [
+              ...newPeriodic,
+              {
+                sourceChar: prior.char,
+                trigger: priorTrigger,
+                targetIndex: newIndex,
+              },
+            ];
+          }
+        }
 
         // Auto-place periodic procs when a periodic trigger is added
         const isETrigger =
           action === "E" || action === "holdE" || action === "specialE";
         const isQTrigger = action === "Q" || action === "specialQ";
         if (isETrigger && hasPeriodicGeneration(charId, "E")) {
-          const idx = newActions.length - 1;
           newPeriodic = [
             ...newPeriodic,
-            ...autoPlacePeriodic(newActions, idx, charId, "E"),
+            ...autoPlacePeriodic(newActions, newIndex, charId, "E"),
           ];
         } else if (isQTrigger && hasPeriodicGeneration(charId, "Q")) {
-          const idx = newActions.length - 1;
           newPeriodic = [
             ...newPeriodic,
-            ...autoPlacePeriodic(newActions, idx, charId, "Q"),
+            ...autoPlacePeriodic(newActions, newIndex, charId, "Q"),
           ];
         }
 
@@ -249,6 +379,38 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
     [updateTimeline]
   );
 
+  // Insert a new empty startup timeline immediately before the loop (last).
+  const handleAddStartup = useCallback(() => {
+    const next = [...timelines];
+    // Splice a new empty startup at the position before the loop
+    next.splice(next.length - 1, 0, { actions: [], periodic: [] });
+    setTimelines(next);
+  }, [timelines, setTimelines]);
+
+  // Clone the loop's contents into a new startup timeline.
+  const handleCloneLoopToStartup = useCallback(() => {
+    const loop = timelines[timelines.length - 1];
+    if (!loop || loop.actions.length === 0) return;
+    const cloned: ERTimeline = {
+      actions: loop.actions.map((a) => ({ ...a })),
+      periodic: loop.periodic.map((p) => ({ ...p })),
+    };
+    const next = [...timelines];
+    next.splice(next.length - 1, 0, cloned);
+    setTimelines(next);
+  }, [timelines, setTimelines]);
+
+  // Remove a startup timeline (cannot remove the loop).
+  const handleRemoveTimeline = useCallback(
+    (tlIndex: number) => {
+      if (tlIndex === timelines.length - 1) return; // never remove loop
+      if (timelines.length <= 1) return;
+      const next = timelines.filter((_, i) => i !== tlIndex);
+      setTimelines(next);
+    },
+    [timelines, setTimelines]
+  );
+
   const bindingQIndices = useMemo(() => {
     const indices = new Set<number>();
     for (const r of results) {
@@ -267,15 +429,6 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
       ),
     [timelines, erTeam, concatErTimelines]
   );
-
-  const bottleneck = useMemo(() => {
-    const withQ = results.filter((r) => r.hasQ);
-    if (withQ.length === 0) return null;
-    const max = withQ.reduce((a, b) => (a.erNeeded > b.erNeeded ? a : b));
-    if (max.erNeeded === Number.POSITIVE_INFINITY || max.erNeeded <= 100)
-      return null;
-    return max;
-  }, [results]);
 
   // Suggestion: auto-toggle Favonius on existing timelines when a wielder equips Favonius
   const applyFavoniusDefaults = useCallback(() => {
@@ -308,21 +461,13 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
           <CardHeader
             className={cn(CARD_HEADER_CLS, "cursor-pointer select-none")}
           >
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center w-full">
               <div className={CARD_TITLE_CLS}>
                 <Battery className="w-4 h-4" />
-                {language === "zh" ? "能量需求" : "ER Requirements"}
-              </div>
-              <div className="flex items-center gap-2">
-                {collapsed && bottleneck && (
-                  <span className="text-xs text-amber-400 font-medium">
-                    {t.character(bottleneck.characterId).split(/[\s_]/)[0]}{" "}
-                    {Math.ceil(bottleneck.erNeeded)}%
-                  </span>
-                )}
+                {t.ui("erCalc.title")}
                 <ChevronDown
                   className={cn(
-                    "w-4 h-4 text-muted-foreground transition-transform",
+                    "w-4 h-4 transition-transform",
                     !collapsed && "rotate-180"
                   )}
                 />
@@ -332,78 +477,91 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <CardContent className="p-0">
+          <CardContent className="p-0 max-h-[65vh] overflow-y-auto">
             {/* Settings bar */}
-            <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center gap-2">
-              <ToggleGroup
-                type="single"
-                value={startEmpty ? "empty" : "full"}
-                onValueChange={(v) => v && setStartEmpty(v === "empty")}
-                variant="outline"
-                size="sm"
-              >
-                <ToggleGroupItem value="empty" className="text-xs h-6">
-                  {language === "zh" ? "零能量" : "Empty"}
-                </ToggleGroupItem>
-                <ToggleGroupItem value="full" className="text-xs h-6">
-                  {language === "zh" ? "满能量" : "Full"}
-                </ToggleGroupItem>
-              </ToggleGroup>
+            <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center gap-x-4 gap-y-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs md:text-sm text-foreground/80">
+                  {t.ui("erCalc.startEnergy")}
+                </span>
+                <ToggleGroup
+                  type="single"
+                  value={startEmpty ? "empty" : "full"}
+                  onValueChange={(v) => v && setStartEmpty(v === "empty")}
+                  variant="outline"
+                  size="sm"
+                >
+                  <ToggleGroupItem
+                    value="empty"
+                    className="text-xs md:text-sm h-7"
+                  >
+                    {t.ui("erCalc.zeroEnergy")}
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="full"
+                    className="text-xs md:text-sm h-7"
+                  >
+                    {t.ui("erCalc.fullEnergy")}
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
 
-              <ToggleGroup
-                type="single"
-                value={particleMode}
-                onValueChange={(v) => v && setParticleMode(v as ParticleMode)}
-                variant="outline"
-                size="sm"
-              >
-                <ToggleGroupItem value="min" className="text-xs h-6">
-                  Min
-                </ToggleGroupItem>
-                <ToggleGroupItem value="expected" className="text-xs h-6">
-                  {language === "zh" ? "期望" : "Avg"}
-                </ToggleGroupItem>
-                <ToggleGroupItem value="max" className="text-xs h-6">
-                  Max
-                </ToggleGroupItem>
-              </ToggleGroup>
-
-              <select
-                value={enemyParticles}
-                onChange={(e) =>
-                  setEnemyParticles(Number.parseInt(e.target.value, 10))
-                }
-                className="text-xs rounded-md border border-border bg-background/50 px-2 py-1 h-6"
-              >
-                {ENEMY_PRESETS.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {language === "zh" ? p.labelZh : p.labelEn}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs md:text-sm text-foreground/80">
+                  {t.ui("erCalc.particleEst")}
+                </span>
+                <ToggleGroup
+                  type="single"
+                  value={particleMode}
+                  onValueChange={(v) => v && setParticleMode(v as ParticleMode)}
+                  variant="outline"
+                  size="sm"
+                >
+                  <ToggleGroupItem
+                    value="min"
+                    className="text-xs md:text-sm h-7"
+                  >
+                    {t.ui("erCalc.minEst")}
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="expected"
+                    className="text-xs md:text-sm h-7"
+                  >
+                    {t.ui("erCalc.avgEst")}
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="max"
+                    className="text-xs md:text-sm h-7"
+                  >
+                    {t.ui("erCalc.maxEst")}
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
 
               <button
                 type="button"
                 onClick={applyFavoniusDefaults}
-                className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded border border-border/30 hover:border-border"
-                title={
-                  language === "zh"
-                    ? "重置西风默认产球"
-                    : "Reset Favonius defaults"
-                }
+                className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                title={t.ui("erCalc.resetFavTitle")}
               >
-                {language === "zh" ? "重置西风" : "Reset Fav"}
+                {t.ui("erCalc.resetFav")}
               </button>
             </div>
+
+            {hasScholarEquipped && (
+              <div className="px-3 py-1.5 text-xs md:text-sm text-amber-400 border-b border-border/30 bg-amber-500/5">
+                {t.ui("erCalc.scholarNotImplemented")}
+              </div>
+            )}
 
             {/* Timeline editors */}
             {timelines.map((tl, tlIdx) => {
               const isLast = tlIdx === timelines.length - 1;
-              const seqNum = tlIdx + 1;
+              const startupNum = tlIdx + 1;
               const labelNode = isLast ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold">
-                    {language === "zh" ? `序列 ${seqNum}` : `Seq ${seqNum}`}
+                  <span className="text-sm md:text-base font-semibold">
+                    {t.ui("erCalc.loopLabel")}
                   </span>
                   <ToggleGroup
                     type="single"
@@ -412,17 +570,58 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                     variant="outline"
                     size="sm"
                   >
-                    <ToggleGroupItem value="once" className="text-xs h-5">
+                    <ToggleGroupItem
+                      value="once"
+                      className="text-sm font-semibold h-7 px-2.5"
+                    >
                       ×1
                     </ToggleGroupItem>
-                    <ToggleGroupItem value="repeat" className="text-xs h-5">
+                    <ToggleGroupItem
+                      value="repeat"
+                      className="text-sm font-semibold h-7 px-2.5"
+                    >
                       ×∞
                     </ToggleGroupItem>
                   </ToggleGroup>
                 </div>
               ) : (
-                `${language === "zh" ? "序列" : "Seq"} ${seqNum} ×1`
+                <span className="text-sm md:text-base font-semibold">
+                  {t.ui("erCalc.startupLabel")} {startupNum}
+                </span>
               );
+
+              const removeControl = !isLast ? (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTimeline(tlIdx)}
+                  className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded border border-border/30 hover:border-destructive/40"
+                  title={t.ui("erCalc.removeStartupTitle")}
+                >
+                  {t.ui("erCalc.remove")}
+                </button>
+              ) : null;
+
+              const loopControls = isLast ? (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={handleAddStartup}
+                    className="text-xs md:text-sm hover:text-primary px-2 py-0.5 rounded border border-border/30 hover:border-border"
+                    title={t.ui("erCalc.addStartupTitle")}
+                  >
+                    {t.ui("erCalc.addStartup")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCloneLoopToStartup}
+                    disabled={tl.actions.length === 0}
+                    className="text-xs md:text-sm hover:text-primary px-2 py-0.5 rounded border border-border/30 hover:border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={t.ui("erCalc.cloneLoopTitle")}
+                  >
+                    {t.ui("erCalc.cloneLoop")}
+                  </button>
+                </div>
+              ) : null;
 
               return (
                 <TimelineStrip
@@ -431,6 +630,7 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                   ert={tl}
                   team={erTeam}
                   bindingQIndices={isLast ? bindingQIndices : undefined}
+                  extraControls={removeControl ?? loopControls}
                   onAddAction={(charId, action) =>
                     handleAddAction(charId, action, tlIdx)
                   }
@@ -452,10 +652,10 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                   <div
                     key={`hint-${i}`}
                     className={cn(
-                      "text-xs",
+                      "text-xs md:text-sm",
                       hint.type === "warning"
                         ? "text-amber-400"
-                        : "text-muted-foreground"
+                        : "text-foreground/80"
                     )}
                   >
                     {(language === "zh"
@@ -472,7 +672,12 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
 
             {/* Results */}
             {results.length > 0 && (
-              <ErResultsPanel results={results} team={erTeam} embedded />
+              <ErResultsPanel
+                results={results}
+                team={erTeam}
+                targetTeam={team}
+                embedded
+              />
             )}
           </CardContent>
         </CollapsibleContent>

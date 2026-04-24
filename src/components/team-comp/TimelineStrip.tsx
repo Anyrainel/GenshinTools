@@ -8,25 +8,22 @@ import {
 } from "@/components/ui/popover";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  ACTION_LABELS,
   BURST_ACTIONS,
   CHIP_H,
   DIRECT_PARTICLE_ACTIONS,
-  FAVONIUS_LABEL,
   PATTERN_ACTIONS,
-  PERIODIC_LABEL,
   particles,
 } from "@/lib/ercalc/constants";
 import {
   getActionParticles,
   getAvailableActions,
-  getDefaultProcCount,
   getHitParticles,
   getNodeEnergyEvents,
   getParticleElement,
   getPeriodicParticles,
   hasPeriodicGeneration,
   type NodeEnergyEvent,
+  toTeamMember,
 } from "@/lib/ercalc/erCalculator";
 import type {
   ActionType,
@@ -65,7 +62,7 @@ export function TimelineStrip({
   onUpdatePeriodic,
   onClear,
 }: TimelineStripProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [procDrag, setProcDrag] = useState<{
     procIndex: number;
@@ -150,19 +147,26 @@ export function TimelineStrip({
     []
   );
 
-  const handleProcDragOverTarget = useCallback(
+  const handleColDragOver = useCallback(
     (e: React.DragEvent, targetIndex: number) => {
-      if (!procDrag) return;
-      e.preventDefault();
-      setProcDragOver(targetIndex);
+      if (procDrag) {
+        e.preventDefault();
+        setProcDragOver(targetIndex);
+        return;
+      }
+      // Delegate to main-action dragover so reordering works anywhere in the
+      // column (including over the arrow/gap area).
+      if (dragIndex !== null) {
+        handleDragOver(e, targetIndex);
+      }
     },
-    [procDrag]
+    [procDrag, dragIndex, handleDragOver]
   );
 
   const handleProcDrop = useCallback(
     (e: React.DragEvent, targetIndex: number) => {
-      e.preventDefault();
       if (!procDrag) return;
+      e.preventDefault();
       const { procIndex, sourceChar } = procDrag;
       const alreadyHas = periodic.some(
         (p, i) =>
@@ -209,16 +213,7 @@ export function TimelineStrip({
     [periodic, onUpdatePeriodic]
   );
 
-  const getLabel = useCallback(
-    (action: string) => {
-      const entry = ACTION_LABELS[action];
-      return entry ? (language === "zh" ? entry.zh : entry.en) : action;
-    },
-    [language]
-  );
-
-  const periodicLabel =
-    language === "zh" ? PERIODIC_LABEL.zh : PERIODIC_LABEL.en;
+  const getLabel = useCallback((action: string) => t.erAction(action), [t]);
 
   // Compute the particle count emitted BY the action at index i (for arrow display)
   const actionParticleCount = useCallback(
@@ -249,8 +244,7 @@ export function TimelineStrip({
           )}
         >
           <Plus className="w-3.5 h-3.5" />
-          {actions.length === 0 &&
-            (language === "zh" ? "添加动作" : "Add action")}
+          {actions.length === 0 && t.ui("erCalc.addAction")}
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -262,7 +256,6 @@ export function TimelineStrip({
           <QuickAddRow
             key={slot.charId}
             slot={slot}
-            language={language}
             onAdd={(charId, action) => {
               onAddAction(charId, action);
               requestAnimationFrame(() => {
@@ -272,16 +265,36 @@ export function TimelineStrip({
             }}
           />
         ))}
+        <div className="border-t border-border/40 pt-1.5 mt-1.5">
+          <button
+            type="button"
+            onClick={() => {
+              // Use first team slot as positioning anchor; grants are zeroed
+              // by default and edited via the chip popover.
+              const anchor = team[0]?.charId;
+              if (!anchor) return;
+              onAddAction(anchor, "grantEnergy");
+              setAddPopoverOpen(false);
+              requestAnimationFrame(() => {
+                if (scrollRef.current)
+                  scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+              });
+            }}
+            className="w-full text-xs md:text-sm px-2 py-1 rounded border border-border/40 hover:border-border hover:bg-blue-500/10 text-blue-400"
+          >
+            {t.ui("erCalc.addGrant")}
+          </button>
+        </div>
       </PopoverContent>
     </Popover>
   );
 
   return (
-    <section className="border-t border-border/30">
-      <div className="flex items-center justify-between px-2 md:px-5 py-2">
+    <section className="mx-2 my-2 rounded-lg border border-border/50 bg-background/10 overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-muted/15 border-b border-border/40">
         <div className="flex items-center gap-2">
-          <div className="text-sm font-semibold">{label}</div>
-          <span className="text-xs text-muted-foreground tabular-nums">
+          <div className="text-sm md:text-base font-semibold">{label}</div>
+          <span className="text-xs md:text-sm tabular-nums">
             {actions.length} {t.ui("erCalc.actionsLabel")}
           </span>
         </div>
@@ -291,20 +304,22 @@ export function TimelineStrip({
             <button
               type="button"
               onClick={onClear}
-              className="text-xs text-muted-foreground hover:text-destructive p-1"
+              className="hover:text-destructive p-1"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="w-4 h-4" />
             </button>
           )}
         </div>
       </div>
 
       <div className="overflow-x-auto pb-2" ref={scrollRef}>
-        <div className="px-2 md:px-5 min-w-fit">
+        <div className="px-2 md:px-4 min-w-fit">
           {actions.length === 0 ? (
             <div className="py-2">{addPopover}</div>
           ) : (
-            <div className="flex items-end gap-0">
+            <div className="flex items-end gap-0 relative pt-1">
+              {/* Main-track rail — horizontal line running through action chips */}
+              <div className="pointer-events-none absolute left-0 right-0 bottom-[13px] h-0.5 bg-primary/20 rounded-full" />
               {actions.map((act, i) => {
                 const slot = teamMap.get(act.char);
                 const isBurst = BURST_ACTIONS.has(act.action);
@@ -346,36 +361,29 @@ export function TimelineStrip({
                   : null;
 
                 const energyEvents = slot
-                  ? getNodeEnergyEvents(
-                      act.char,
-                      act.action,
-                      slot.weaponId,
-                      slot.refinement,
-                      undefined, // artifactSetId: not plumbed through TeamSlot yet
-                      slot.burstCost
-                    )
+                  ? getNodeEnergyEvents(act, team.map(toTeamMember))
                   : [];
 
                 const isProcDropTarget = procDragOver === i;
 
                 return (
-                  <div key={`col-${i}`} className="flex items-end shrink-0">
+                  <div
+                    key={`col-${i}`}
+                    className={cn(
+                      "flex items-end shrink-0",
+                      isProcDropTarget && "ring-1 ring-emerald-400/40 rounded"
+                    )}
+                    onDragOver={(e) => handleColDragOver(e, i)}
+                    onDrop={(e) => handleProcDrop(e, i)}
+                  >
                     {i > 0 && (
                       <ParticleArrow
                         particleCount={prevParticles}
                         favoniusBonus={prevFavonius}
-                        absorberId={act.char}
                         particleElement={prevElement}
                       />
                     )}
-                    <div
-                      className={cn(
-                        "flex flex-col items-center gap-0.5",
-                        isProcDropTarget && "ring-1 ring-emerald-400/40 rounded"
-                      )}
-                      onDragOver={(e) => handleProcDragOverTarget(e, i)}
-                      onDrop={(e) => handleProcDrop(e, i)}
-                    >
+                    <div className="flex flex-col items-center gap-0.5">
                       {targetProcs.length > 0 && (
                         <>
                           <div className="flex flex-col items-center gap-0.5">
@@ -389,8 +397,7 @@ export function TimelineStrip({
                                   proc.trigger,
                                   "expected"
                                 )}
-                                actionLabel={periodicLabel}
-                                language={language}
+                                actionLabel={`${t.erAction(proc.trigger)}${t.ui("erCalc.particlesSuffixTriggered")}`}
                                 isDragging={procDrag?.procIndex === procIndex}
                                 onDragStart={(e) =>
                                   handleProcDragStart(
@@ -408,32 +415,44 @@ export function TimelineStrip({
                         </>
                       )}
 
-                      <MainChip
-                        act={act}
-                        slot={slot}
-                        isBurst={isBurst}
-                        isDirect={isDirect}
-                        isPattern={isPattern}
-                        isBindingQ={isBindingQ ?? false}
-                        isDragging={isDragging}
-                        particleCount={particleCount}
-                        periodicAbsorbed={periodicAbsorbed}
-                        energyEvents={energyEvents}
-                        charName={t.character(act.char)}
-                        actionLabel={getLabel(act.action)}
-                        language={language}
-                        team={team}
-                        onDragStart={(e) => handleDragStart(e, i)}
-                        onDragOver={(e) => handleDragOver(e, i)}
-                        onDragEnd={handleDragEnd}
-                        onRemove={() => onRemoveAction(i)}
-                        onToggleFavonius={(v) =>
-                          onUpdateAction(i, { ...act, favoniusProc: v })
-                        }
-                        onAddProc={(sourceChar, trigger) =>
-                          handleAddProc(sourceChar, i, trigger)
-                        }
-                      />
+                      {act.action === "grantEnergy" ? (
+                        <GrantChip
+                          act={act}
+                          team={team}
+                          isDragging={isDragging}
+                          onDragStart={(e) => handleDragStart(e, i)}
+                          onDragOver={(e) => handleDragOver(e, i)}
+                          onDragEnd={handleDragEnd}
+                          onUpdate={(next) => onUpdateAction(i, next)}
+                          onRemove={() => onRemoveAction(i)}
+                        />
+                      ) : (
+                        <MainChip
+                          act={act}
+                          slot={slot}
+                          isBurst={isBurst}
+                          isDirect={isDirect}
+                          isPattern={isPattern}
+                          isBindingQ={isBindingQ ?? false}
+                          isDragging={isDragging}
+                          particleCount={particleCount}
+                          periodicAbsorbed={periodicAbsorbed}
+                          energyEvents={energyEvents}
+                          charName={t.character(act.char)}
+                          actionLabel={getLabel(act.action)}
+                          team={team}
+                          onDragStart={(e) => handleDragStart(e, i)}
+                          onDragOver={(e) => handleDragOver(e, i)}
+                          onDragEnd={handleDragEnd}
+                          onRemove={() => onRemoveAction(i)}
+                          onToggleFavonius={(v) =>
+                            onUpdateAction(i, { ...act, favoniusProc: v })
+                          }
+                          onAddProc={(sourceChar, trigger) =>
+                            handleAddProc(sourceChar, i, trigger)
+                          }
+                        />
+                      )}
                     </div>
                   </div>
                 );
@@ -453,23 +472,30 @@ export function TimelineStrip({
 function ParticleArrow({
   particleCount,
   favoniusBonus = 0,
-  absorberId,
   particleElement,
 }: {
   particleCount: number;
   favoniusBonus?: number;
-  absorberId?: string;
   particleElement?: string | null;
 }) {
+  const { t } = useLanguage();
   const total = particleCount + favoniusBonus;
-  if (total <= 0) return <div className="h-px w-3 bg-border/20 shrink-0" />;
+  const suffix = t.ui("erCalc.particleSuffix");
+  if (total <= 0) {
+    return <div className={cn(CHIP_H, "w-3 shrink-0")} />;
+  }
   const elemHint = particleElement
     ? particleElement === "Clear"
       ? "text-sky-400"
       : "text-emerald-400"
     : "text-emerald-400";
   return (
-    <div className="flex items-center shrink-0 gap-0.5 px-0.5">
+    <div
+      className={cn(
+        "flex items-center justify-center shrink-0 gap-0.5 px-0.5",
+        CHIP_H
+      )}
+    >
       <div className="h-px w-1 bg-emerald-500/50" />
       <span
         className={cn(
@@ -485,13 +511,9 @@ function ParticleArrow({
         {favoniusBonus > 0 && (
           <span className="text-sky-400 ml-0.5">+{favoniusBonus}</span>
         )}
+        <span className="ml-0.5 opacity-70">{suffix}</span>
       </span>
-      <ArrowRight className="w-3.5 h-3.5 text-emerald-400/60 shrink-0 -ml-0.5" />
-      {absorberId && (
-        <span className="shrink-0 -ml-0.5">
-          <CharAvatar charId={absorberId} size={14} />
-        </span>
-      )}
+      <ArrowRight className="w-3.5 h-3.5 text-emerald-400/60 shrink-0" />
     </div>
   );
 }
@@ -509,7 +531,6 @@ function MainChip({
   energyEvents,
   charName,
   actionLabel,
-  language,
   team,
   onDragStart,
   onDragOver,
@@ -530,7 +551,6 @@ function MainChip({
   energyEvents: NodeEnergyEvent[];
   charName: string;
   actionLabel: string;
-  language: string;
   team: TeamSlot[];
   onDragStart: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
@@ -539,6 +559,7 @@ function MainChip({
   onToggleFavonius: (v: boolean) => void;
   onAddProc: (sourceChar: string, trigger: "E" | "Q") => void;
 }) {
+  const { t, language } = useLanguage();
   const [open, setOpen] = useState(false);
   const emits = isDirect || isPattern;
   const particleElement = emits ? getParticleElement(act.char) : null;
@@ -563,6 +584,13 @@ function MainChip({
         hasPeriodicGeneration(s.charId, "Q"))
   );
 
+  // Total self-refund (flat energy whose recipient list includes the acting
+  // char). Shown as chip badge so users see a numeric hint without opening
+  // the popover.
+  const selfRefundAmount = energyEvents
+    .filter((ev) => ev.category !== "drain" && ev.recipients.includes(act.char))
+    .reduce((sum, ev) => sum + ev.amount, 0);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -585,7 +613,18 @@ function MainChip({
           style={{ minWidth: "3.5rem" }}
         >
           <CharAvatar charId={act.char} size={18} />
-          <span className="text-xs font-medium">{actionLabel}</span>
+          <span className="text-xs md:text-sm font-medium">{actionLabel}</span>
+          {selfRefundAmount > 0 && (
+            <span
+              className="text-[10px] md:text-xs font-semibold text-blue-400 tabular-nums leading-none"
+              title={t.ui("erCalc.selfEnergy")}
+            >
+              +
+              {selfRefundAmount % 1 === 0
+                ? selfRefundAmount
+                : selfRefundAmount.toFixed(1)}
+            </span>
+          )}
           {act.favoniusProc && (
             <Zap className="w-3 h-3 text-sky-400 absolute -top-1 -right-1" />
           )}
@@ -603,7 +642,7 @@ function MainChip({
           {emits && particleCount > 0 && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">
-                {language === "zh" ? "生成微粒" : "Particles"}
+                {t.ui("erCalc.particlesLabel")}
               </span>
               <span className="text-emerald-400 font-medium tabular-nums">
                 {particleCount % 1 === 0
@@ -616,7 +655,7 @@ function MainChip({
           {periodicAbsorbed > 0 && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">
-                {language === "zh" ? "吸收周期微粒" : "Periodic absorbed"}
+                {t.ui("erCalc.periodicAbsorbed")}
               </span>
               <span className="text-blue-400 font-medium tabular-nums">
                 +
@@ -632,39 +671,77 @@ function MainChip({
             .map((ev, idx) => (
               <div key={`drain-${idx}`} className="flex justify-between">
                 <span className="text-muted-foreground">
-                  {language === "zh" ? "消耗能量" : "Drain"}
+                  {t.ui("erCalc.drainLabel")}
                 </span>
                 <span className="text-amber-400 font-medium tabular-nums">
                   -{ev.amount}
                 </span>
               </div>
             ))}
-          {/* Energy restores (refund / weapon / artifact / party) */}
+          {/* Energy restores — one row per logical effect, showing recipients. */}
           {energyEvents
             .filter((ev) => ev.category !== "drain")
-            .map((ev, idx) => (
-              <div key={`restore-${idx}`} className="flex justify-between">
-                <span className="text-muted-foreground">
-                  {ev.source}
-                  {ev.toParty && !ev.toSelf && (
-                    <span className="text-[10px] ml-1">
-                      ({language === "zh" ? "队伍" : "party"})
+            .map((ev, idx) => {
+              const toAll =
+                ev.recipients.length === team.length && team.length > 0;
+              const toSelfOnly =
+                ev.recipients.length === 1 && ev.recipients[0] === act.char;
+              const recipientLabel = toAll
+                ? t.ui("erCalc.allTarget")
+                : toSelfOnly
+                  ? null
+                  : ev.recipients
+                      .map((id) => t.character(id).split(/[\s_]/)[0])
+                      .join(", ");
+              const condition =
+                language === "zh" ? ev.conditionZh : ev.conditionEn;
+              return (
+                <div key={`restore-${idx}`} className="space-y-0.5">
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="truncate">
+                      {ev.sourceLabel}
+                      {ev.procs && ev.procs > 1 && (
+                        <span className="text-[10px] ml-0.5 text-foreground/70">
+                          ×{ev.procs}
+                        </span>
+                      )}
+                      {recipientLabel && (
+                        <span className="text-[10px] ml-1 text-foreground/60">
+                          → {recipientLabel}
+                        </span>
+                      )}
                     </span>
+                    <span
+                      className={cn(
+                        "font-medium tabular-nums shrink-0",
+                        ev.isErScaling ? "text-purple-400" : "text-blue-400"
+                      )}
+                    >
+                      +{ev.amount % 1 === 0 ? ev.amount : ev.amount.toFixed(1)}
+                      {ev.isErScaling && (
+                        <span className="text-[10px] ml-0.5">/100%ER</span>
+                      )}
+                      {ev.procs && ev.procs > 1 && (
+                        <span className="text-[10px] ml-0.5 text-foreground/60">
+                          {t.ui("erCalc.perProcSuffix")}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  {condition && (
+                    <div className="text-[10px] text-foreground/60 pl-1">
+                      {condition}
+                    </div>
                   )}
-                </span>
-                <span className="text-blue-400 font-medium tabular-nums">
-                  +{ev.amount % 1 === 0 ? ev.amount : ev.amount.toFixed(1)}
-                </span>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           {!emits &&
             !isBurst &&
             periodicAbsorbed === 0 &&
             energyEvents.length === 0 && (
               <div className="text-muted-foreground">
-                {language === "zh"
-                  ? "此动作不产生微粒"
-                  : "No particle generation"}
+                {t.ui("erCalc.noParticleGen")}
               </div>
             )}
         </div>
@@ -681,9 +758,9 @@ function MainChip({
               />
               <Zap className="w-3.5 h-3.5 text-sky-400" />
               <span>
-                {language === "zh" ? FAVONIUS_LABEL.zh : FAVONIUS_LABEL.en}
+                {t.erAction("favonius")}
                 <span className="text-muted-foreground ml-1">
-                  +3 {language === "zh" ? "中性粒子" : "clear"}
+                  +3 {t.ui("erCalc.clearParticle")}
                 </span>
               </span>
             </label>
@@ -694,7 +771,7 @@ function MainChip({
         {periodicSourceCandidates.length > 0 && (
           <div className="border-t border-border/30 pt-2 space-y-1">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              {language === "zh" ? "添加持续产球" : "Attach periodic proc"}
+              {t.ui("erCalc.attachPeriodic")}
             </div>
             <div className="flex flex-wrap gap-1">
               {periodicSourceCandidates.map((s) => {
@@ -726,7 +803,7 @@ function MainChip({
           className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center gap-1.5 pt-1 border-t border-border/30"
         >
           <Trash2 className="w-3 h-3" />
-          {language === "zh" ? "删除" : "Remove"}
+          {t.ui("erCalc.remove")}
         </button>
       </PopoverContent>
     </Popover>
@@ -738,7 +815,6 @@ function PeriodicChip({
   charName,
   particleCount,
   actionLabel,
-  language,
   isDragging,
   onDragStart,
   onDragEnd,
@@ -748,12 +824,12 @@ function PeriodicChip({
   charName: string;
   particleCount: number;
   actionLabel: string;
-  language: string;
   isDragging: boolean;
   onDragStart: (e: React.DragEvent) => void;
   onDragEnd: () => void;
   onRemove: () => void;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const particleElement = getParticleElement(charId);
 
@@ -772,10 +848,8 @@ function PeriodicChip({
           )}
         >
           <CharAvatar charId={charId} size={16} />
-          <span className="text-xs text-muted-foreground font-medium">
-            {actionLabel}
-          </span>
-          <span className="text-xs tabular-nums text-emerald-400/70">
+          <span className="text-xs md:text-sm font-medium">{actionLabel}</span>
+          <span className="text-xs md:text-sm tabular-nums text-emerald-400">
             {particleCount % 1 === 0 ? particleCount : particleCount.toFixed(1)}
           </span>
         </div>
@@ -791,7 +865,7 @@ function PeriodicChip({
         <div className="text-xs space-y-1 border-t border-border/30 pt-2">
           <div className="flex justify-between">
             <span className="text-muted-foreground">
-              {language === "zh" ? "每次微粒" : "Per proc"}
+              {t.ui("erCalc.perProcLabel")}
             </span>
             <span className="text-emerald-400 tabular-nums font-medium">
               {particleCount % 1 === 0
@@ -810,7 +884,113 @@ function PeriodicChip({
           className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center gap-1.5 pt-1 border-t border-border/30"
         >
           <Trash2 className="w-3 h-3" />
-          {language === "zh" ? "删除" : "Remove"}
+          {t.ui("erCalc.remove")}
+        </button>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function GrantChip({
+  act,
+  team,
+  isDragging,
+  onDragStart,
+  onDragOver,
+  onDragEnd,
+  onUpdate,
+  onRemove,
+}: {
+  act: TimelineAction;
+  team: TeamSlot[];
+  isDragging: boolean;
+  onDragStart: (e: React.DragEvent) => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDragEnd: () => void;
+  onUpdate: (next: TimelineAction) => void;
+  onRemove: () => void;
+}) {
+  const { t } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const grants = act.energyGrants ?? {};
+  const total = Object.values(grants).reduce((a, b) => a + (b || 0), 0);
+
+  const setGrant = (charId: string, amount: number) => {
+    const next = { ...(act.energyGrants ?? {}) };
+    if (!amount || Number.isNaN(amount)) delete next[charId];
+    else next[charId] = amount;
+    onUpdate({ ...act, energyGrants: next });
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div
+          draggable
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDragEnd={onDragEnd}
+          className={cn(
+            "rounded-md flex items-center gap-1 px-2 cursor-grab select-none shrink-0 border",
+            "border-blue-500/40 bg-blue-500/10 text-blue-300",
+            CHIP_H,
+            isDragging && "opacity-40 scale-95"
+          )}
+          style={{ minWidth: "3.5rem" }}
+          title={t.ui("erCalc.grantEventTitle")}
+        >
+          <Zap className="w-3.5 h-3.5" />
+          <span className="text-xs md:text-sm font-semibold">
+            {t.ui("erCalc.grantLabel")}
+          </span>
+          {total > 0 && (
+            <span className="text-[10px] md:text-xs font-semibold tabular-nums text-blue-200">
+              +{total}
+            </span>
+          )}
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-3 space-y-2" side="bottom">
+        <div className="text-sm font-semibold">
+          {t.ui("erCalc.grantEventTitle")}
+        </div>
+        <div className="text-xs text-foreground/80">
+          {t.ui("erCalc.grantDesc")}
+        </div>
+        <div className="space-y-1.5 border-t border-border/40 pt-2">
+          {team.map((slot) => (
+            <div
+              key={slot.charId}
+              className="flex items-center gap-2 text-xs md:text-sm"
+            >
+              <CharAvatar charId={slot.charId} size={20} />
+              <span className="flex-1 truncate">
+                {t.character(slot.charId)}
+              </span>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={grants[slot.charId] ?? ""}
+                onChange={(e) =>
+                  setGrant(slot.charId, Number.parseFloat(e.target.value) || 0)
+                }
+                className="w-16 rounded border border-border/40 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
+                placeholder="0"
+              />
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            onRemove();
+            setOpen(false);
+          }}
+          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center justify-center gap-1.5 pt-1 border-t border-border/30"
+        >
+          <Trash2 className="w-3 h-3" />
+          {t.ui("erCalc.remove")}
         </button>
       </PopoverContent>
     </Popover>
@@ -819,16 +999,13 @@ function PeriodicChip({
 
 function QuickAddRow({
   slot,
-  language,
   onAdd,
 }: {
   slot: TeamSlot;
-  language: string;
   onAdd: (charId: string, action: ActionType) => void;
 }) {
+  const { t } = useLanguage();
   const actions = getAvailableActions(slot.charId);
-  const eProcs = getDefaultProcCount(slot.charId, "E");
-  const qProcs = getDefaultProcCount(slot.charId, "Q");
   const hasPatternNA = !!particles[slot.charId]?.NA;
   const hasPatternCA = !!particles[slot.charId]?.CA;
   const hasPatternPA = !!particles[slot.charId]?.PA;
@@ -840,12 +1017,6 @@ function QuickAddRow({
         const isBurst = action === "Q" || action === "specialQ";
         const isSkill =
           action === "E" || action === "holdE" || action === "specialE";
-        const showProcs =
-          (action === "E" && eProcs > 0) ||
-          (action === "holdE" && eProcs > 0) ||
-          (action === "specialE" && eProcs > 0) ||
-          (action === "Q" && qProcs > 0);
-        const procs = action === "Q" ? qProcs : eProcs;
         const isInfusion =
           (action === "NA" && hasPatternNA) ||
           (action === "CA" && hasPatternCA) ||
@@ -864,17 +1035,10 @@ function QuickAddRow({
                   ? "border-amber-500/30 text-amber-400/80 hover:bg-amber-500/10"
                   : isInfusion
                     ? "border-emerald-500/20 text-emerald-400/60 hover:bg-emerald-500/5"
-                    : "border-border/30 text-muted-foreground hover:bg-accent"
+                    : "border-border/30 hover:bg-accent"
             )}
           >
-            {language === "zh"
-              ? (ACTION_LABELS[action]?.zh ?? action)
-              : (ACTION_LABELS[action]?.en ?? action)}
-            {showProcs && (
-              <span className="text-muted-foreground ml-0.5 text-[10px]">
-                +{procs}
-              </span>
-            )}
+            {t.erAction(action)}
           </button>
         );
       })}

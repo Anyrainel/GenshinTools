@@ -14,7 +14,7 @@
   "gaming": [
     {
       "source": "C4",
-      "action": "PlungeA",
+      "action": "PA",
       "amount": 2,
       "target": "self",
       "minC": 4,
@@ -24,7 +24,7 @@
   "ganyu": [
     {
       "source": "C1",
-      "action": "ChargeA",
+      "action": "CA",
       "amount": 2,
       "target": "self",
       "minC": 1

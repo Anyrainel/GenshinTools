@@ -2299,22 +2299,86 @@ export const i18nUiData = {
       en: "No matching team found in Team DMG",
       zh: "未找到匹配的队伍配置",
     },
+    title: { en: "ER Requirements", zh: "能量需求" },
     erRequirements: { en: "ER Requirements", zh: "充能需求" },
     copyResults: { en: "Copy results", zh: "复制结果" },
     applyToTeamMinER: { en: "Apply to team Min ER", zh: "应用到队伍最低ER" },
     copied: { en: "Copied", zh: "已复制" },
-    teamBottleneck: { en: "Team bottleneck", zh: "团队瓶颈" },
-    energyWindowBreakdown: {
-      en: "Energy window breakdown (particle energy at 100% ER)",
-      zh: "充能窗口详情 (100% ER 下的粒子能量)",
-    },
     bindingModeStart: { en: "start", zh: "启动" },
     bindingModeRepeat: { en: "repeat", zh: "循环" },
     onFieldLabel: { en: "on-field", zh: "前台" },
     offFieldLabel: { en: "off-field", zh: "后台" },
-    flatEnergy: { en: "Flat energy", zh: "固定充能" },
-    totalCost: { en: "Total / Cost", zh: "总计 / 需求" },
     actionsLabel: { en: "actions", zh: "个动作" },
+
+    // Settings bar labels
+    startEnergy: { en: "Start energy", zh: "初始能量" },
+    zeroEnergy: { en: "Empty", zh: "零能量" },
+    fullEnergy: { en: "Full", zh: "满能量" },
+    particleEst: { en: "Particle est.", zh: "产球估算" },
+    minEst: { en: "Min", zh: "最低" },
+    avgEst: { en: "Avg", zh: "期望" },
+    maxEst: { en: "Max", zh: "最高" },
+    resetFav: { en: "Reset Fav", zh: "重置西风" },
+    resetFavTitle: {
+      en: "Reset Favonius defaults",
+      zh: "重置西风默认产球",
+    },
+
+    // Timeline controls
+    loopLabel: { en: "Loop", zh: "循环轴" },
+    startupLabel: { en: "Startup", zh: "启动轴" },
+    addStartup: { en: "+ Startup", zh: "+ 启动轴" },
+    addStartupTitle: {
+      en: "Add startup timeline",
+      zh: "在循环轴前添加启动轴",
+    },
+    cloneLoop: { en: "Clone → Startup", zh: "复制为启动" },
+    cloneLoopTitle: {
+      en: "Clone loop as new startup",
+      zh: "复制循环轴为新启动轴",
+    },
+    removeStartupTitle: {
+      en: "Remove this startup",
+      zh: "删除此启动轴",
+    },
+    addAction: { en: "Add action", zh: "添加动作" },
+    addGrant: { en: "+ Grant Energy (custom)", zh: "+ 赋能事件 (自定义能量)" },
+
+    // Grant chip + popover
+    grantLabel: { en: "Grant", zh: "赋能" },
+    grantEventTitle: { en: "Grant energy", zh: "赋能事件" },
+    grantDesc: {
+      en: "Grant flat energy to specified chars at this moment (not ER-scaled).",
+      zh: "在此刻向指定角色授予固定能量（不受充能影响）。",
+    },
+    remove: { en: "Remove", zh: "删除" },
+
+    // Main chip popover
+    selfEnergy: { en: "Self energy", zh: "自身充能" },
+    particlesLabel: { en: "Particles", zh: "生成微粒" },
+    periodicAbsorbed: { en: "Periodic absorbed", zh: "吸收周期微粒" },
+    drainLabel: { en: "Drain", zh: "消耗能量" },
+    perProcSuffix: { en: "/proc", zh: "/次" },
+    clearParticle: { en: "clear", zh: "中性粒子" },
+    perProcLabel: { en: "Per proc", zh: "每次微粒" },
+    particleSuffix: { en: "P", zh: "球" },
+    particlesSuffixTriggered: { en: " particles", zh: "产球" },
+    attachPeriodic: {
+      en: "Attach periodic proc",
+      zh: "添加持续产球",
+    },
+    allTarget: { en: "all", zh: "全队" },
+
+    noParticleGen: {
+      en: "No particle generation",
+      zh: "此动作不产生微粒",
+    },
+
+    // Warnings
+    scholarNotImplemented: {
+      en: "Note: Scholar 4pc (energy to bow/catalyst on particle gain) is not modeled; ER estimates ignore this bonus.",
+      zh: "注意：学者 4 件套（触发粒子时为弓/法器队员回能）尚未实现，计算结果略偏高。",
+    },
 
     addCharacter: { en: "Add character", zh: "添加角色" },
     noWeapon: { en: "No weapon", zh: "无武器" },

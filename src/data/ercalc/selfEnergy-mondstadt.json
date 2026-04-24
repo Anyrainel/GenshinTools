@@ -19,7 +19,7 @@
     },
     {
       "source": "C4",
-      "action": "ChargeA",
+      "action": "CA",
       "amount": 1,
       "target": "self",
       "minC": 4,
@@ -82,7 +82,7 @@
   "klee": [
     {
       "source": "P2",
-      "action": "ChargeA",
+      "action": "CA",
       "amount": 2,
       "target": "party",
       "minC": 0,

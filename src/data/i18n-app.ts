@@ -179,6 +179,23 @@ export const i18nAppData = {
     sprint: { en: "Sprint", zh: "冲刺" },
     special: { en: "Special", zh: "特殊" },
   },
+  /** Short action labels used by the ER calculator timeline chips.
+   *  Keyed by engine `ActionType` plus the synthetic "periodic"/"favonius"
+   *  sources for the breakdown UI. */
+  erActions: {
+    E: { en: "E", zh: "E" },
+    holdE: { en: "Hold E", zh: "长按E" },
+    specialE: { en: "Alt E", zh: "特殊E" },
+    Q: { en: "Q", zh: "Q" },
+    specialQ: { en: "Alt Q", zh: "特殊Q" },
+    NA: { en: "NA", zh: "普攻" },
+    CA: { en: "CA", zh: "重击" },
+    PA: { en: "Plunge", zh: "下落" },
+    wait: { en: "Wait", zh: "等待" },
+    grantEnergy: { en: "Grant", zh: "赋能" },
+    periodic: { en: "Periodic", zh: "持续产球" },
+    favonius: { en: "Favonius", zh: "西风" },
+  },
   factions: {
     Hexerei: { en: "Hexerei", zh: "魔导" },
     Moonsign: { en: "Moonsign", zh: "月兆" },

@@ -1,3 +1,4 @@
+import { getTalentParam } from "@/data/gameStatsLoader";
 import { artifactEnergyById } from "@/lib/ercalc/artifactEnergy";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import {
@@ -128,10 +129,9 @@ export function autoPlacePeriodic(
     procs.push({ sourceChar: charId, trigger, targetIndex: i });
     placed++;
   }
-  // If we couldn't place any forward (trigger is last action), attach one to itself.
-  if (placed === 0) {
-    procs.push({ sourceChar: charId, trigger, targetIndex: triggerIndex });
-  }
+  // Procs that cannot be placed yet (trigger is last, or not enough following
+  // slots) are deferred — they will be auto-added when later actions are
+  // appended. See handleAddAction backfill logic.
   return procs;
 }
 
@@ -165,8 +165,40 @@ export function autoPlaceFavonius(
 
 function resolveParamAmount(
   charId: string,
-  param: { source: string; index: number; multiplier: number }
+  param: { source: string; index: number; multiplier: number },
+  talentLevels?: [number, number, number]
 ): number | null {
+  // Map entry source to the skill ("A"/"E"/"Q") exposed by getTalentParam.
+  const skill =
+    param.source === "A"
+      ? "A"
+      : param.source === "E" || param.source === "holdE"
+        ? "E"
+        : param.source === "Q" || param.source === "specialQ"
+          ? "Q"
+          : null;
+  // 1-based talent level (1..15). Index into talent data is level-1.
+  // Default talent 10 → levelIndex 9 when no override provided.
+  let talentLevel = 10;
+  if (talentLevels) {
+    if (skill === "A") talentLevel = talentLevels[0];
+    else if (skill === "E") talentLevel = talentLevels[1];
+    else if (skill === "Q") talentLevel = talentLevels[2];
+  }
+  const levelIndex = Math.max(0, talentLevel - 1);
+  // param.index is 1-based (matches in-game talent description numbering);
+  // getTalentParam expects a 0-based index.
+  const paramIndex0 = Math.max(0, param.index - 1);
+  if (skill) {
+    try {
+      const base = getTalentParam(charId, skill, levelIndex, paramIndex0);
+      if (base != null && Number.isFinite(base)) {
+        return base * param.multiplier;
+      }
+    } catch {
+      // Fall through to PARAM_DEFAULTS fallback below.
+    }
+  }
   const key = `${charId}:${param.source}:${param.index}`;
   const base = PARAM_DEFAULTS[key];
   if (base == null) return null;
@@ -185,154 +217,47 @@ function elementMatchEnergy(
 
 // ─── Self-energy / weapon / artifact ───
 
-function isActionTriggered(
-  entryAction: string,
-  activeActions: Set<string>
-): boolean {
-  if (entryAction === "A") return true;
-  if (entryAction === "Q")
-    return activeActions.has("Q") || activeActions.has("specialQ");
-  if (entryAction === "E")
-    return (
-      activeActions.has("E") ||
-      activeActions.has("holdE") ||
-      activeActions.has("specialE")
-    );
-  return activeActions.has(entryAction);
-}
-
-function accumulateEntryEnergy(
+/** Resolve a selfEnergy entry into the per-proc amount (not multiplied by procs).
+ *  Engine now spreads procs as subsequent events instead of lumping, so callers
+ *  apply the count separately. */
+function resolveEntryPerProcFlat(
   entry: SelfEnergyEntry,
-  charId: string,
-  burstCost: number | undefined,
-  accum: { flat: number; erScaling: number }
-): void {
-  const procs = entry.procs ?? 1;
+  source: TeamMember
+): { amountPerProc: number; isErScaling: boolean } | null {
   if (entry.erScale) {
-    accum.erScaling += (entry.erScale.per100 ?? 0) * procs;
-    return;
+    return {
+      amountPerProc: entry.erScale.per100 ?? 0,
+      isErScaling: true,
+    };
   }
   if (entry.param) {
-    const paramAmount = resolveParamAmount(charId, entry.param);
-    if (paramAmount != null) accum.flat += paramAmount * procs;
-    return;
+    const p = resolveParamAmount(source.id, entry.param, source.talentLevels);
+    if (p == null) return null;
+    return { amountPerProc: p, isErScaling: false };
   }
-  if (entry.percentRefund != null && burstCost != null) {
-    accum.flat += (burstCost * entry.percentRefund) / 100;
-  } else if (entry.amount != null) {
-    accum.flat += entry.amount * procs;
+  if (entry.percentRefund != null) {
+    return {
+      amountPerProc: (source.burstCost * entry.percentRefund) / 100,
+      isErScaling: false,
+    };
   }
+  if (entry.amount != null) {
+    return { amountPerProc: entry.amount, isErScaling: false };
+  }
+  return null;
 }
 
-function computeSelfEnergy(
-  charId: string,
-  constellation: number,
-  burstCost: number,
-  activeActions?: Set<string>
-): { flat: number; erScaling: number } {
-  const entries = allSelfEnergy[charId];
-  if (!entries) return { flat: 0, erScaling: 0 };
-  const accum = { flat: 0, erScaling: 0 };
-  for (const entry of entries) {
-    if (constellation < entry.minC) continue;
-    if (entry.target !== "self" && entry.target !== "party") continue;
-    if (activeActions && !isActionTriggered(entry.action, activeActions))
-      continue;
-    accumulateEntryEnergy(entry, charId, burstCost, accum);
-  }
-  return accum;
-}
-
-function computePartyEnergy(
-  sourceId: string,
-  sourceConstellation: number,
-  sourceActions?: Set<string>
-): { flat: number; erScaling: number } {
-  const entries = allSelfEnergy[sourceId];
-  if (!entries) return { flat: 0, erScaling: 0 };
-  const accum = { flat: 0, erScaling: 0 };
-  for (const entry of entries) {
-    if (sourceConstellation < entry.minC) continue;
-    if (
-      entry.target !== "party" &&
-      entry.target !== "partyOthers" &&
-      entry.target !== "active"
-    )
-      continue;
-    if (sourceActions && !isActionTriggered(entry.action, sourceActions))
-      continue;
-    accumulateEntryEnergy(entry, sourceId, undefined, accum);
-  }
-  return accum;
-}
-
-function computeRotationEnergy(
-  member: TeamMember,
+function resolveRecipients(
+  target: string,
   team: TeamMember[],
-  allCharActions?: Map<string, Set<string>>,
-  activeActions?: Set<string>
-): { flat: number; erScaling: number } {
-  const { id, constellation = 0, burstCost } = member;
-  let flat = 0;
-  let erScaling = 0;
-
-  const self = computeSelfEnergy(id, constellation, burstCost, activeActions);
-  flat += self.flat;
-  erScaling += self.erScaling;
-
-  for (const tm of team) {
-    if (tm.id === id) continue;
-    const sourceActions = allCharActions?.get(tm.id);
-    const party = computePartyEnergy(
-      tm.id,
-      tm.constellation ?? 0,
-      sourceActions
-    );
-    flat += party.flat;
-    erScaling += party.erScaling;
-  }
-
-  for (const tm of team) {
-    const we = tm.weaponId ? weaponEnergyById[tm.weaponId] : undefined;
-    if (!we) continue;
-    if (we.energy.effect === "flatEnergy" && tm.id === id) {
-      const triggerAction = we.energy.trigger;
-      if (activeActions) {
-        const hasTrigger =
-          triggerAction === "burst"
-            ? activeActions.has("Q") || activeActions.has("specialQ")
-            : triggerAction === "skill"
-              ? activeActions.has("E") ||
-                activeActions.has("holdE") ||
-                activeActions.has("specialE")
-              : activeActions.size > 0;
-        if (!hasTrigger) continue;
-      }
-      flat += we.energy.totalEnergy[tm.refinement ?? 0];
-    }
-  }
-
-  for (const tm of team) {
-    const ae =
-      tm.artifactSet?.type === "4pc"
-        ? artifactEnergyById[tm.artifactSet.setId]
-        : undefined;
-    if (!ae) continue;
-    if (ae.trigger === "burst" && ae.target === "partyOthers" && tm.id !== id) {
-      const tmActions = allCharActions?.get(tm.id);
-      if (tmActions && !tmActions.has("Q") && !tmActions.has("specialQ"))
-        continue;
-      flat += ae.flatEnergy;
-    }
-    if (
-      ae.trigger === "particleGain" &&
-      ae.target === "bowCatalystParty" &&
-      (member.weaponType === "Bow" || member.weaponType === "Catalyst")
-    )
-      flat += ae.flatEnergy;
-  }
-
-  return { flat, erScaling };
+  sourceId: string,
+  onFieldId: string
+): TeamMember[] {
+  if (target === "self") return team.filter((m) => m.id === sourceId);
+  if (target === "party") return [...team];
+  if (target === "partyOthers") return team.filter((m) => m.id !== sourceId);
+  if (target === "active") return team.filter((m) => m.id === onFieldId);
+  return [];
 }
 
 // ─── Solver ───
@@ -368,14 +293,31 @@ function getAbsorber(
 
 // ─── Simulation state ───
 
+/** A deferred proc waiting to fire on a subsequent matching action.
+ *  Used to spread multi-proc entries (e.g. Raiden Q procs=5, Shinobu Q procs=15)
+ *  over the attacks that follow the trigger, instead of lumping them all at
+ *  the trigger node. */
+interface PendingProc {
+  remaining: number;
+  amount: number;
+  isErScaling: boolean;
+  sourceChar: string;
+  sourceAction: ActionType;
+  sourceLabel: string;
+}
+
 interface CharSimState {
   particleAccum: number;
   flatAccum: number;
+  erScalingAccum: number;
   consecutiveNAs: number;
   hitCounts: { NA: number; CA: number; PA: number };
+  /** Deferred procs for this recipient; drained on NA/CA/PA actions. */
+  pendingProcs: PendingProc[];
   maxER: number;
   maxERParticle: number;
   maxERFlat: number;
+  maxERErScaling: number;
   maxERQIndex: number;
   maxEREvents: EnergyEvent[];
   currentEvents: EnergyEvent[];
@@ -387,11 +329,14 @@ function freshState(): CharSimState {
   return {
     particleAccum: 0,
     flatAccum: 0,
+    erScalingAccum: 0,
     consecutiveNAs: 0,
     hitCounts: { NA: 0, CA: 0, PA: 0 },
+    pendingProcs: [],
     maxER: 0,
     maxERParticle: 0,
     maxERFlat: 0,
+    maxERErScaling: 0,
     maxERQIndex: -1,
     maxEREvents: [],
     currentEvents: [],
@@ -435,6 +380,248 @@ function distributeParticles(
   }
 }
 
+/**
+ * Flat / erScaling event emitted at a single timeline action, keyed by
+ * recipient. Shared by both the simulation (`emitFlatEventsAt`) and the
+ * per-node UI popover (`getNodeEnergyEvents`) so there is one source of
+ * truth for "what fires at this action".
+ *
+ * Covered:
+ *   - Self-energy entries (param / percentRefund / amount / erScale / procs)
+ *   - Party-energy entries (target = party / partyOthers / active)
+ *   - Weapon flat-energy (burst / skill trigger)
+ *   - Artifact 4pc flat-energy (burst trigger; partyOthers or party)
+ *   - grantEnergy timeline nodes (user-defined per-char grants)
+ *
+ * Not yet modeled (triggers without an action anchor): heal / reaction /
+ * onField weapon triggers, Scholar 4pc particleGain. See unimplemented list.
+ */
+interface FlatEventDescriptor {
+  recipientId: string;
+  sourceChar: string;
+  sourceAction: ActionType | "grantEnergy";
+  sourceLabel: string;
+  amount: number;
+  isErScaling: boolean;
+  /** Mirrors `SelfEnergyEntry.procs`: total number of ticks this effect
+   *  fires per trigger. When > 1, proc #1 fires at the trigger and the
+   *  remaining (procs - 1) are enqueued onto subsequent NA/CA/PA actions. */
+  procs?: number;
+  /** Free-text condition from the data (conditionEn / conditionZh). */
+  conditionEn?: string;
+  conditionZh?: string;
+}
+
+function collectFlatEventsAt(
+  act: TimelineAction,
+  team: TeamMember[]
+): FlatEventDescriptor[] {
+  const out: FlatEventDescriptor[] = [];
+  const onFieldId = act.char;
+
+  // 1) grantEnergy node — user-defined grants.
+  if (act.action === "grantEnergy" && act.energyGrants) {
+    for (const [recipientId, amount] of Object.entries(act.energyGrants)) {
+      if (!amount) continue;
+      out.push({
+        recipientId,
+        sourceChar: act.char,
+        sourceAction: "grantEnergy",
+        sourceLabel: "Grant",
+        amount,
+        isErScaling: false,
+      });
+    }
+    return out;
+  }
+
+  const source = team.find((m) => m.id === onFieldId);
+  if (!source) return out;
+
+  // 2) Self-energy / party-energy entries that fire when the source performs this action.
+  //    Only the first proc is emitted at this node; the remaining (procs-1)
+  //    are enqueued as pending procs and drain on subsequent NA/CA/PA actions.
+  //    This matches how "over-burst" effects actually work in-game (Raiden Q
+  //    ticks per attack, Charlotte Q ticks per drone hit, Shinobu Q ticks per
+  //    ring-tick, etc.) rather than lumping all ticks at the trigger moment.
+  const entries = allSelfEnergy[source.id] ?? [];
+  for (const entry of entries) {
+    if ((source.constellation ?? 0) < entry.minC) continue;
+    if (!entryMatchesAction(entry.action, act.action)) continue;
+    const resolved = resolveEntryPerProcFlat(entry, source);
+    if (!resolved || resolved.amountPerProc === 0) continue;
+    const entryProcs = entry.procs ?? 1;
+    const recipients = resolveRecipients(
+      entry.target,
+      team,
+      source.id,
+      onFieldId
+    );
+    for (const r of recipients) {
+      out.push({
+        recipientId: r.id,
+        sourceChar: source.id,
+        sourceAction: act.action,
+        sourceLabel: entry.source ?? "passive",
+        amount: resolved.amountPerProc,
+        isErScaling: resolved.isErScaling,
+        procs: entryProcs > 1 ? entryProcs : undefined,
+        conditionEn: entry.conditionEn as string | undefined,
+        conditionZh: entry.conditionZh as string | undefined,
+      });
+    }
+  }
+
+  // 3) Weapon flat-energy triggers for the source's own weapon.
+  //    - burst / skill  → fire at wearer's matching action.
+  //    - heal           → approximate: fire at wearer's Q if wearer is a healer.
+  //    - reaction       → approximate: fire at wearer's Q if wearer participates
+  //                        in a team reaction (caller sets canTriggerReaction).
+  //    - partyPlunge    → handled in a second pass below; fires for every plunge
+  //                        action in the timeline regardless of who performs it.
+  const we = source.weaponId ? weaponEnergyById[source.weaponId] : undefined;
+  if (we && we.energy.effect === "flatEnergy") {
+    const trig = we.energy.trigger;
+    const isBurst = act.action === "Q" || act.action === "specialQ";
+    const isSkill =
+      act.action === "E" || act.action === "holdE" || act.action === "specialE";
+    const fires =
+      (trig === "burst" && isBurst) ||
+      (trig === "skill" && isSkill) ||
+      (trig === "heal" && isBurst && source.isHealer === true) ||
+      (trig === "reaction" && isBurst && source.canTriggerReaction === true);
+    if (fires) {
+      out.push({
+        recipientId: source.id,
+        sourceChar: source.id,
+        sourceAction: act.action,
+        sourceLabel: source.weaponId ?? "weapon",
+        amount: we.energy.totalEnergy[source.refinement ?? 0],
+        isErScaling: false,
+      });
+    }
+  }
+
+  // 3b) partyPlunge-triggered weapons (e.g. Crane's Echoing Call) fire for every
+  //     plunge action (PA) anywhere in the team.
+  if (act.action === "PA") {
+    for (const tm of team) {
+      const twe = tm.weaponId ? weaponEnergyById[tm.weaponId] : undefined;
+      if (!twe || twe.energy.effect !== "flatEnergy") continue;
+      if (twe.energy.trigger !== "partyPlunge") continue;
+      out.push({
+        recipientId: tm.id,
+        sourceChar: act.char,
+        sourceAction: act.action,
+        sourceLabel: tm.weaponId ?? "weapon",
+        amount: twe.energy.totalEnergy[tm.refinement ?? 0],
+        isErScaling: false,
+      });
+    }
+  }
+
+  // 4) Artifact 4pc flat-energy — only burst trigger is modeled.
+  const ae =
+    source.artifactSet?.type === "4pc"
+      ? artifactEnergyById[source.artifactSet.setId]
+      : undefined;
+  if (
+    ae &&
+    ae.trigger === "burst" &&
+    (act.action === "Q" || act.action === "specialQ")
+  ) {
+    const recipients =
+      ae.target === "partyOthers"
+        ? team.filter((m) => m.id !== source.id)
+        : team;
+    for (const r of recipients) {
+      out.push({
+        recipientId: r.id,
+        sourceChar: source.id,
+        sourceAction: act.action,
+        sourceLabel:
+          source.artifactSet?.type === "4pc"
+            ? `${source.artifactSet.setId} 4pc`
+            : "artifact",
+        amount: ae.flatEnergy,
+        isErScaling: false,
+      });
+    }
+  }
+  return out;
+}
+
+function emitFlatEventsAt(
+  act: TimelineAction,
+  i: number,
+  team: TeamMember[],
+  state: Map<string, CharSimState>,
+  rotationLength: number
+): void {
+  const wrappedIndex = rotationLength > 0 ? i % rotationLength : i;
+  const onFieldId = act.char;
+
+  // Drain one pending proc per recipient if the current action is an attack.
+  // This spreads multi-proc effects (procs > 1) across subsequent NA/CA/PA.
+  const isAttack =
+    act.action === "NA" || act.action === "CA" || act.action === "PA";
+  if (isAttack) {
+    for (const m of team) {
+      const rs = state.get(m.id);
+      if (!rs) continue;
+      for (const p of rs.pendingProcs) {
+        if (p.remaining <= 0) continue;
+        p.remaining -= 1;
+        if (p.isErScaling) rs.erScalingAccum += p.amount;
+        else rs.flatAccum += p.amount;
+        rs.currentEvents.push({
+          sourceIndex: wrappedIndex,
+          sourceChar: p.sourceChar,
+          sourceAction: p.sourceAction,
+          absorberChar: m.id,
+          particleCount: 0,
+          particleElement: "",
+          energyAt100: p.amount,
+          onField: m.id === onFieldId,
+          type: "flat",
+        });
+      }
+      rs.pendingProcs = rs.pendingProcs.filter((p) => p.remaining > 0);
+    }
+  }
+
+  const events = collectFlatEventsAt(act, team);
+  for (const ev of events) {
+    const rs = state.get(ev.recipientId);
+    if (!rs) continue;
+    // Fire proc #1 now.
+    if (ev.isErScaling) rs.erScalingAccum += ev.amount;
+    else rs.flatAccum += ev.amount;
+    rs.currentEvents.push({
+      sourceIndex: wrappedIndex,
+      sourceChar: ev.sourceChar,
+      sourceAction: ev.sourceAction as ActionType,
+      absorberChar: ev.recipientId,
+      particleCount: 0,
+      particleElement: "",
+      energyAt100: ev.amount,
+      onField: ev.recipientId === onFieldId,
+      type: "flat",
+    });
+    // Enqueue remaining (procs - 1) for subsequent attacks.
+    if (ev.procs && ev.procs > 1) {
+      rs.pendingProcs.push({
+        remaining: ev.procs - 1,
+        amount: ev.amount,
+        isErScaling: ev.isErScaling,
+        sourceChar: ev.sourceChar,
+        sourceAction: ev.sourceAction as ActionType,
+        sourceLabel: ev.sourceLabel,
+      });
+    }
+  }
+}
+
 // ─── Simulation engine ───
 
 /**
@@ -454,32 +641,7 @@ function simulateSequence(
   const offFieldMult =
     OFF_FIELD_MULTIPLIER[partySize] ?? OFF_FIELD_MULTIPLIER[4];
   const particleMode = options?.particleMode ?? "expected";
-  const enemyClearParticles = options?.enemyParticles ?? 0;
   const teamById = new Map(team.map((m) => [m.id, m]));
-
-  // Action sets per character (for conditional energy triggers)
-  const charActions = new Map<string, Set<string>>();
-  for (const act of actions) {
-    if (!teamById.has(act.char)) continue;
-    if (!charActions.has(act.char)) charActions.set(act.char, new Set());
-    charActions.get(act.char)!.add(act.action);
-  }
-
-  const rotationEnergyMap = new Map<
-    string,
-    { flat: number; erScaling: number }
-  >();
-  for (const member of team) {
-    rotationEnergyMap.set(
-      member.id,
-      computeRotationEnergy(
-        member,
-        team,
-        charActions,
-        charActions.get(member.id)
-      )
-    );
-  }
 
   const qWindowCount = new Map<string, number>();
   const firstQSeen = new Set<string>();
@@ -494,8 +656,6 @@ function simulateSequence(
 
   const state = new Map<string, CharSimState>();
   for (const m of team) state.set(m.id, freshState());
-
-  const repeatCount = rotationLength > 0 ? actions.length / rotationLength : 1;
 
   for (let i = 0; i < actions.length; i++) {
     const act = actions[i];
@@ -596,7 +756,8 @@ function simulateSequence(
       }
     }
 
-    // NA pity flat energy (per gcsim; separate from infusion particles)
+    // NA pity flat energy (per gcsim; separate from infusion particles).
+    // Per-action event attached to the NA/CA/PA node.
     if (act.action === "NA" || act.action === "CA" || act.action === "PA") {
       s.consecutiveNAs++;
       const member = teamById.get(act.char)!;
@@ -612,14 +773,29 @@ function simulateSequence(
           if (!ms) continue;
           const onField = m.id === absorber;
           const mult = onField ? 1.0 : offFieldMult;
-          ms.flatAccum += NA_FLAT_ENERGY_PER_PROC * mult;
+          const amount = NA_FLAT_ENERGY_PER_PROC * mult;
+          ms.flatAccum += amount;
+          ms.currentEvents.push({
+            sourceIndex: rotationLength > 0 ? i % rotationLength : i,
+            sourceChar: act.char,
+            sourceAction: act.action,
+            absorberChar: m.id,
+            particleCount: 0,
+            particleElement: "",
+            energyAt100: amount,
+            onField,
+            type: "flat",
+          });
         }
       }
     } else {
       s.consecutiveNAs = 0;
     }
 
-    // ── 3. Burst checkpoint ──
+    // ── 3. Per-action flat / erScaling events (self + party + weapon + artifact + grantEnergy) ──
+    emitFlatEventsAt(act, i, team, state, rotationLength);
+
+    // ── 4. Burst checkpoint ──
     if (BURST_ACTIONS.has(act.action)) {
       const member = teamById.get(act.char)!;
 
@@ -627,34 +803,24 @@ function simulateSequence(
         s.firstQSkipped = true;
         s.particleAccum = 0;
         s.flatAccum = 0;
+        s.erScalingAccum = 0;
         s.currentEvents = [];
         continue;
       }
 
       if (member.burstCost > 0) {
-        const numWindows = qWindowCount.get(act.char) ?? 1;
-        const rotEnergy = rotationEnergyMap.get(act.char)!;
-        const windowFlat = rotEnergy.flat / numWindows + s.flatAccum;
-        const windowErScaling = rotEnergy.erScaling / numWindows;
-
-        let windowParticle = s.particleAccum;
-        if (enemyClearParticles > 0 && numWindows > 0) {
-          windowParticle +=
-            (enemyClearParticles / partySize / numWindows) *
-            elementMatchEnergy(member.element, "Clear");
-        }
-
         const erForQ = solveER(
           member.burstCost,
-          windowParticle,
-          windowFlat,
-          windowErScaling
+          s.particleAccum,
+          s.flatAccum,
+          s.erScalingAccum
         );
 
         if (erForQ > s.maxER) {
           s.maxER = erForQ;
-          s.maxERParticle = windowParticle;
-          s.maxERFlat = windowFlat;
+          s.maxERParticle = s.particleAccum;
+          s.maxERFlat = s.flatAccum;
+          s.maxERErScaling = s.erScalingAccum;
           s.maxERQIndex = rotationLength > 0 ? i % rotationLength : i;
           s.maxEREvents = [...s.currentEvents];
         }
@@ -663,12 +829,13 @@ function simulateSequence(
 
       s.particleAccum = 0;
       s.flatAccum = 0;
+      s.erScalingAccum = 0;
       s.currentEvents = [];
     }
   }
 
   return team.map((member) => {
-    const { id, element, burstCost } = member;
+    const { id, burstCost } = member;
     const s = state.get(id)!;
 
     if (burstCost <= 0) {
@@ -681,25 +848,12 @@ function simulateSequence(
     }
 
     if (s.qEvaluated === 0) {
-      const rotEnergy = rotationEnergyMap.get(id)!;
-      let particleEnergy = s.particleAccum / repeatCount;
-      if (enemyClearParticles > 0) {
-        particleEnergy +=
-          (enemyClearParticles / team.length) *
-          elementMatchEnergy(element, "Clear");
-      }
+      // No burst in the timeline for this char — ER is hypothetical; default
+      // to 100% so the results panel shows "no requirement".
       return {
         characterId: id,
-        erNeeded: solveER(
-          burstCost,
-          particleEnergy,
-          rotEnergy.flat,
-          rotEnergy.erScaling
-        ),
-        energyBreakdown: {
-          particleEnergy,
-          flatEnergy: rotEnergy.flat,
-        },
+        erNeeded: 100,
+        energyBreakdown: { particleEnergy: 0, flatEnergy: 0 },
         hasQ: false,
       };
     }
@@ -847,8 +1001,10 @@ export function getAvailableActions(charId: string): ActionType[] {
   if (data?.holdE) out.push("holdE");
   if (data?.specialE) out.push("specialE");
   out.push("Q");
-  // specialQ is available for chars who have it in character-level data; keep always for now.
-  out.push("specialQ");
+  // specialQ is only available for chars with an alternate-burst self-energy entry.
+  if ((allSelfEnergy[charId] ?? []).some((e) => e.action === "specialQ")) {
+    out.push("specialQ");
+  }
   if (data?.NA) out.push("NA");
   if (data?.CA) out.push("CA");
   if (data?.PA) out.push("PA");
@@ -895,132 +1051,115 @@ export function toTeamMember(slot: TeamSlot): TeamMember {
     constellation: slot.constellation,
     weaponId: slot.weaponId,
     refinement: slot.refinement,
+    talentLevels: slot.talentLevels,
+    isHealer: slot.isHealer,
+    canTriggerReaction: slot.canTriggerReaction,
   };
 }
 
 // ─── Per-node energy event lookup (for UI popovers) ───
 
 export interface NodeEnergyEvent {
-  source: string; // short label (e.g. "Venti A4", "Prototype Amber", "Exile 4pc")
-  amount: number; // flat energy amount
-  toSelf: boolean; // receiver is the acting character
-  toParty: boolean; // receivers are other party members
-  category: "drain" | "refund" | "weapon" | "artifact" | "party";
+  /** Short label for display (e.g. "Burst", "P2", "favonius_sword", "gladiators 4pc", "Grant"). */
+  sourceLabel: string;
+  amount: number;
+  /** Recipient charIds. Empty for "drain" (self-only, implicit). */
+  recipients: string[];
+  category: "drain" | "refund";
+  isErScaling?: boolean;
+  /** Optional sourceChar — who emits (≠ acting char for partyPlunge / periodic / grant). */
+  sourceChar?: string;
+  /** Total proc count when > 1; engine spreads them across NA/CA/PA, UI displays "×N". */
+  procs?: number;
+  /** Free-text conditions from data — displayed verbatim in the popover. */
+  conditionEn?: string;
+  conditionZh?: string;
 }
 
 /**
- * Resolve the set of flat-energy events that fire when this character performs
- * this action. Used by the timeline UI to show per-node energy restores/drains.
+ * Resolve the set of flat-energy events that fire AT this action node.
+ * Shares core logic with `collectFlatEventsAt` so popover and calc agree.
  *
  * Intentionally omits particles — those are shown as flow edges, not node events.
  */
 export function getNodeEnergyEvents(
-  charId: string,
-  action: ActionType,
-  weaponId: string | undefined,
-  refinement: number | undefined,
-  artifactSetId: string | undefined,
-  burstCost: number
+  act: TimelineAction,
+  team: TeamMember[]
 ): NodeEnergyEvent[] {
   const events: NodeEnergyEvent[] = [];
+  const actor = team.find((m) => m.id === act.char);
 
-  // Burst drain
-  if (action === "Q" || action === "specialQ") {
+  // Burst drain — shown first in the popover.
+  if (
+    (act.action === "Q" || act.action === "specialQ") &&
+    actor &&
+    actor.burstCost > 0
+  ) {
     events.push({
-      source: action === "specialQ" ? "Alt burst" : "Burst",
-      amount: burstCost,
-      toSelf: true,
-      toParty: false,
+      sourceLabel: act.action === "specialQ" ? "Alt burst" : "Burst",
+      amount: actor.burstCost,
+      recipients: [actor.id],
       category: "drain",
     });
   }
 
-  // Self-energy entries from this char that trigger on this action
-  const selfEntries = allSelfEnergy[charId] ?? [];
-  for (const entry of selfEntries) {
-    if (!entryMatchesAction(entry.action, action)) continue;
-    const amount = resolveEntryAmount(entry, charId, burstCost);
-    if (amount == null || amount === 0) continue;
-    const toSelf = entry.target === "self" || entry.target === "party";
-    const toParty =
-      entry.target === "party" ||
-      entry.target === "partyOthers" ||
-      entry.target === "active";
+  // Aggregate all flat emissions at this action, grouping by (sourceChar, sourceAction, sourceLabel, isErScaling).
+  // A single logical effect (e.g. Venti P2 +15 target=party) emits N descriptors (one per recipient);
+  // merge them back here so the popover shows one row with the recipient list.
+  const descriptors = collectFlatEventsAt(act, team);
+  const grouped = new Map<
+    string,
+    {
+      sourceLabel: string;
+      amount: number;
+      sourceChar?: string;
+      isErScaling: boolean;
+      recipients: string[];
+      procs?: number;
+      conditionEn?: string;
+      conditionZh?: string;
+    }
+  >();
+  for (const d of descriptors) {
+    const key = `${d.sourceChar}|${d.sourceAction}|${d.sourceLabel}|${d.isErScaling}|${d.amount}|${d.procs ?? 1}`;
+    const g = grouped.get(key);
+    if (g) {
+      g.recipients.push(d.recipientId);
+    } else {
+      grouped.set(key, {
+        sourceLabel: d.sourceLabel,
+        amount: d.amount,
+        sourceChar: d.sourceChar,
+        isErScaling: d.isErScaling,
+        recipients: [d.recipientId],
+        procs: d.procs,
+        conditionEn: d.conditionEn,
+        conditionZh: d.conditionZh,
+      });
+    }
+  }
+  for (const g of grouped.values()) {
     events.push({
-      source: entry.source ?? "passive",
-      amount,
-      toSelf,
-      toParty,
-      category: toParty && !toSelf ? "party" : "refund",
+      sourceLabel: g.sourceLabel,
+      amount: g.amount,
+      recipients: g.recipients,
+      category: "refund",
+      isErScaling: g.isErScaling,
+      sourceChar: g.sourceChar,
+      procs: g.procs,
+      conditionEn: g.conditionEn,
+      conditionZh: g.conditionZh,
     });
   }
-
-  // Weapon flat energy
-  const we = weaponId ? weaponEnergyById[weaponId] : undefined;
-  if (we?.energy.effect === "flatEnergy") {
-    const weaponTrigger = we.energy.trigger;
-    const weaponMatches =
-      (weaponTrigger === "burst" &&
-        (action === "Q" || action === "specialQ")) ||
-      (weaponTrigger === "skill" &&
-        (action === "E" || action === "holdE" || action === "specialE"));
-    if (weaponMatches) {
-      events.push({
-        source: weaponId ?? "weapon",
-        amount: we.energy.totalEnergy[refinement ?? 0],
-        toSelf: true,
-        toParty: false,
-        category: "weapon",
-      });
-    }
-  }
-
-  // Artifact flat energy
-  const ae = artifactSetId ? artifactEnergyById[artifactSetId] : undefined;
-  if (ae) {
-    const artifactMatches =
-      ae.trigger === "burst" && (action === "Q" || action === "specialQ");
-    if (artifactMatches) {
-      const toParty = ae.target === "partyOthers";
-      events.push({
-        source: `${artifactSetId} 4pc`,
-        amount: ae.flatEnergy,
-        toSelf: !toParty,
-        toParty,
-        category: "artifact",
-      });
-    }
-  }
-
   return events;
 }
 
 function entryMatchesAction(entryAction: string, action: ActionType): boolean {
-  if (entryAction === "A") return true;
+  // "A" (wildcard attack) matches any normal-attack family action — NOT every action.
+  if (entryAction === "A")
+    return action === "NA" || action === "CA" || action === "PA";
   if (entryAction === "Q") return action === "Q" || action === "specialQ";
   if (entryAction === "E")
     return action === "E" || action === "holdE" || action === "specialE";
   return entryAction === action;
-}
-
-function resolveEntryAmount(
-  entry: SelfEnergyEntry,
-  charId: string,
-  burstCost: number
-): number | null {
-  const procs = entry.procs ?? 1;
-  if (entry.erScale) {
-    // ER-scaling energy isn't a fixed flat — omit from per-node display.
-    return null;
-  }
-  if (entry.param) {
-    const paramAmount = resolveParamAmount(charId, entry.param);
-    if (paramAmount == null) return null;
-    return paramAmount * procs;
-  }
-  if (entry.percentRefund != null) {
-    return (burstCost * entry.percentRefund) / 100;
-  }
-  if (entry.amount != null) return entry.amount * procs;
-  return null;
 }

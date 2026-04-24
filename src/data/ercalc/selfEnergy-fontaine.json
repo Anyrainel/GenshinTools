@@ -61,7 +61,7 @@
   "lyney": [
     {
       "source": "P1",
-      "action": "ChargeA",
+      "action": "CA",
       "amount": 3,
       "target": "self",
       "minC": 0,

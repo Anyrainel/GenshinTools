@@ -1,11 +1,10 @@
-import { ChevronDown, Copy, Upload } from "lucide-react";
+import { ChevronDown, Copy } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { CharAvatar } from "@/components/shared/CharAvatar";
-import { CARD_CLS, CARD_HEADER_CLS } from "@/components/team-comp/cardStyles";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ACTION_LABELS } from "@/lib/ercalc/constants";
 import type { EnergyEvent, ERResult, TeamSlot } from "@/lib/ercalc/types";
+import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import {
   erPercentToInternal,
@@ -17,6 +16,11 @@ interface ErResultsPanelProps {
   results: ERResult[];
   team: TeamSlot[];
   embedded?: boolean;
+  /**
+   * When provided, Apply writes directly to this team's charSettings.
+   * When absent, falls back to matching by character IDs.
+   */
+  targetTeam?: Team;
 }
 
 function getErTextColor(er: number, isInfinity: boolean) {
@@ -29,13 +33,15 @@ function getErTextColor(er: number, isInfinity: boolean) {
   return "text-red-400";
 }
 
-/** Group events by source char+action, merging duplicate procs. */
+/** Group events by (type, source char, source action), merging duplicate procs. */
 function summarizeEventsForChar(
   events: EnergyEvent[],
   charId: string
 ): {
   source: string;
   sourceChar: string;
+  sourceAction: string;
+  type: "particle" | "flat";
   energy: number;
   onField: boolean;
   count: number;
@@ -44,25 +50,29 @@ function summarizeEventsForChar(
     string,
     {
       sourceChar: string;
+      sourceAction: string;
+      type: "particle" | "flat";
       energy: number;
       onField: boolean;
       count: number;
     }
   >();
   for (const ev of events) {
-    if (ev.type !== "particle") continue;
-    // Group by char+action (merge multiple procs of same action type)
-    const key = `${ev.sourceChar}:${ev.sourceAction}`;
+    // For flat events, only include those whose recipient is the current char
+    // (flat events carry recipient in `absorberChar`).
+    if (ev.type === "flat" && ev.absorberChar !== charId) continue;
+    const key = `${ev.type}:${ev.sourceChar}:${ev.sourceAction}`;
     const onField = ev.absorberChar === charId;
     const existing = grouped.get(key);
     if (existing) {
       existing.energy += ev.energyAt100;
       existing.count++;
-      // If any proc is on-field, mark as on-field
       if (onField) existing.onField = true;
     } else {
       grouped.set(key, {
         sourceChar: ev.sourceChar,
+        sourceAction: ev.sourceAction,
+        type: ev.type,
         energy: ev.energyAt100,
         onField,
         count: 1,
@@ -75,23 +85,29 @@ function summarizeEventsForChar(
   }));
 }
 
-export function ErResultsPanel({ results, team }: ErResultsPanelProps) {
+export function ErResultsPanel({
+  results,
+  team,
+  targetTeam,
+}: ErResultsPanelProps) {
   const { t, language } = useLanguage();
   const teams = useTeamStore((s) => s.teams);
   const updateTeam = useTeamStore((s) => s.updateTeam);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [allExpanded, setAllExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: t is stable per language, which is already a dependency
   const handleApplyMinER = useCallback(() => {
-    const charIds = team.map((s) => s.charId);
-    const matching = findMatchingTeams(teams, charIds);
-    if (matching.length === 0) {
-      toast.info(t.ui("erCalc.noMatchingTeamFound"));
-      return;
+    let target = targetTeam;
+    if (!target) {
+      const charIds = team.map((s) => s.charId);
+      const matching = findMatchingTeams(teams, charIds);
+      if (matching.length === 0) {
+        toast.info(t.ui("erCalc.noMatchingTeamFound"));
+        return;
+      }
+      target = matching[0];
     }
-    // Apply to the first matching team
-    const target = matching[0];
     const charSettings: Record<string, { minEr?: number }> = {
       ...target.charSettings,
     };
@@ -109,7 +125,7 @@ export function ErResultsPanel({ results, team }: ErResultsPanelProps) {
         ? `已应用到「${target.name || "队伍"}」的最低ER`
         : `Applied to "${target.name || "team"}" min ER`
     );
-  }, [team, teams, results, updateTeam, language]);
+  }, [team, teams, results, updateTeam, language, targetTeam]);
 
   const handleCopy = useCallback(() => {
     const teamNames = team.map((s) => t.character(s.charId)).join(" / ");
@@ -134,218 +150,186 @@ export function ErResultsPanel({ results, team }: ErResultsPanelProps) {
   }, [results, team, t]);
 
   return (
-    <section className={cn("rounded-xl overflow-hidden", CARD_CLS)}>
-      <div className={cn(CARD_HEADER_CLS, "flex items-center justify-between")}>
+    <section className={cn("overflow-hidden border-t border-border/40")}>
+      <div className="flex items-center justify-between gap-2 px-3 py-1.5 bg-muted/10">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold">
+          <h3 className="text-sm md:text-base font-semibold">
             {t.ui("erCalc.erRequirements")}
           </h3>
           <button
             type="button"
             onClick={handleCopy}
-            className="text-muted-foreground hover:text-foreground"
+            className="hover:text-primary"
             title={t.ui("erCalc.copyResults")}
           >
-            <Copy className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={handleApplyMinER}
-            className="text-muted-foreground hover:text-foreground"
-            title={t.ui("erCalc.applyToTeamMinER")}
-          >
-            <Upload className="w-3.5 h-3.5" />
+            <Copy className="w-4 h-4" />
           </button>
           {copied && (
-            <span className="text-xs text-green-400">
+            <span className="text-xs md:text-sm text-green-400">
               {t.ui("erCalc.copied")}
             </span>
           )}
         </div>
-        {(() => {
-          const maxER = Math.max(...results.map((r) => r.erNeeded));
-          const maxChar = results.find((r) => r.erNeeded === maxER);
-          if (!maxChar || maxER === Number.POSITIVE_INFINITY) return null;
-          return (
-            <span className="text-xs text-muted-foreground">
-              {t.ui("erCalc.teamBottleneck")}:{" "}
-              <span className="text-amber-400 font-medium">
-                {t.character(maxChar.characterId).split(/[\s_]/)[0]}{" "}
-                {Math.ceil(maxER)}%
-              </span>
-            </span>
-          );
-        })()}
+        <button
+          type="button"
+          onClick={handleApplyMinER}
+          className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary text-primary-foreground transition-colors"
+          title={t.ui("erCalc.applyToTeamMinER")}
+        >
+          {t.ui("erCalc.applyToTeamMinER")}
+        </button>
       </div>
 
-      <div className="divide-y divide-border/50">
-        {results.map((result, i) => {
-          const slot = team[i];
-          if (!slot) return null;
-
-          const isInfinity = result.erNeeded === Number.POSITIVE_INFINITY;
-          const erDisplay = isInfinity
-            ? "∞"
-            : !result.hasQ
-              ? `~${Math.ceil(result.erNeeded)}%`
-              : `${Math.ceil(result.erNeeded)}%`;
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 p-2">
+        {team.map((slot) => {
+          const result = results.find((r) => r.characterId === slot.charId);
+          const hasData = !!(result && result.hasQ);
+          const erNeeded = hasData ? result.erNeeded : 100;
+          const isInfinity = erNeeded === Number.POSITIVE_INFINITY;
+          const erDisplay = isInfinity ? "∞" : `${Math.ceil(erNeeded)}%`;
           const erNormalized = isInfinity
             ? 100
-            : Math.min(100, ((result.erNeeded - 100) / 200) * 100);
-          const erTextColor = getErTextColor(result.erNeeded, isInfinity);
-          const isExpanded = expanded === result.characterId;
+            : Math.min(100, ((erNeeded - 100) / 200) * 100);
+          const erTextColor = getErTextColor(erNeeded, isInfinity);
+          const particle = hasData ? result.energyBreakdown.particleEnergy : 0;
+          const flat = hasData ? result.energyBreakdown.flatEnergy : 0;
+          const burstCost = slot.burstCost;
 
-          // Get per-char events from binding window
           const charEvents =
-            result.bindingEvents && isExpanded
-              ? summarizeEventsForChar(result.bindingEvents, result.characterId)
+            allExpanded && hasData && result.bindingEvents
+              ? summarizeEventsForChar(result.bindingEvents, slot.charId)
               : [];
 
+          const toggleExpand = () => {
+            if (hasData) setAllExpanded((p) => !p);
+          };
+
           return (
-            <div key={result.characterId}>
-              {/* Main result row */}
+            <div
+              key={slot.charId}
+              className="rounded-md border border-border/40 bg-background/20 overflow-hidden"
+            >
               <button
                 type="button"
-                className="w-full px-4 py-3 hover:bg-muted/20 text-left"
-                onClick={() =>
-                  setExpanded(isExpanded ? null : result.characterId)
-                }
+                className={cn(
+                  "w-full px-2 py-1.5 text-left text-foreground",
+                  hasData && "hover:bg-muted/20 cursor-pointer"
+                )}
+                onClick={toggleExpand}
+                disabled={!hasData}
               >
-                <div className="flex items-center gap-3">
-                  {/* Character avatar + name */}
-                  <div className="flex items-center gap-2 w-28 shrink-0">
-                    <CharAvatar charId={result.characterId} size={24} />
-                    <span className="text-sm font-medium truncate">
-                      {t.character(result.characterId)}
-                    </span>
-                  </div>
-
-                  {/* Energy bar */}
-                  <div className="flex-1 flex items-center gap-3">
-                    <div className="flex-1 h-6 bg-background/30 rounded-md overflow-hidden relative">
-                      <div
-                        className="h-full rounded-md bg-primary/40"
-                        style={{
-                          width: `${Math.max(3, erNormalized)}%`,
-                        }}
-                      />
-                      <span className="absolute inset-0 flex items-center px-2.5 text-xs tabular-nums">
-                        {result.energyBreakdown.particleEnergy.toFixed(1)}
-                        {result.energyBreakdown.flatEnergy > 0
-                          ? ` + ${result.energyBreakdown.flatEnergy.toFixed(1)}`
-                          : ""}{" "}
-                        / {slot.burstCost}
-                      </span>
-                    </div>
-
-                    {/* ER percentage + binding mode */}
-                    <div className="flex flex-col items-end shrink-0 w-16">
-                      <span
-                        className={`${erTextColor} text-base font-bold tabular-nums`}
-                      >
-                        {erDisplay}
-                      </span>
-                      {result.bindingMode && (
-                        <span className="text-xs text-muted-foreground leading-none">
-                          {result.bindingMode === "zero-energy-start"
-                            ? t.ui("erCalc.bindingModeStart")
-                            : t.ui("erCalc.bindingModeRepeat")}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Expand indicator */}
-                    {result.bindingEvents && (
-                      <ChevronDown
-                        className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform ${
-                          isExpanded ? "rotate-180" : ""
-                        }`}
-                      />
+                <div className="flex items-center gap-1.5">
+                  <CharAvatar charId={slot.charId} size={22} />
+                  <span className="text-xs md:text-sm font-semibold truncate flex-1 min-w-0">
+                    {t.character(slot.charId)}
+                  </span>
+                  <span
+                    className={cn(
+                      erTextColor,
+                      "text-sm md:text-base font-bold tabular-nums"
                     )}
-                  </div>
+                  >
+                    {erDisplay}
+                  </span>
+                  {hasData && (
+                    <ChevronDown
+                      className={cn(
+                        "w-3.5 h-3.5 shrink-0 transition-transform",
+                        allExpanded && "rotate-180"
+                      )}
+                    />
+                  )}
+                </div>
+
+                {/* Energy math: scalable + flat / cost */}
+                <div className="mt-1 flex items-center gap-1 text-xs md:text-sm tabular-nums">
+                  <span className="text-primary/90 font-medium">
+                    {particle.toFixed(1)}
+                  </span>
+                  {flat > 0 && (
+                    <>
+                      <span>+</span>
+                      <span className="text-blue-400 font-medium">
+                        {flat.toFixed(1)}
+                      </span>
+                    </>
+                  )}
+                  <span>/</span>
+                  <span className="font-semibold">{burstCost}</span>
+                  {result?.bindingMode && (
+                    <span className="ml-auto text-[11px] md:text-xs leading-none shrink-0">
+                      {result.bindingMode === "zero-energy-start"
+                        ? t.ui("erCalc.bindingModeStart")
+                        : t.ui("erCalc.bindingModeRepeat")}
+                    </span>
+                  )}
+                </div>
+
+                {/* ER bar */}
+                <div className="mt-1 h-1.5 bg-background/40 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-primary/50"
+                    style={{ width: `${Math.max(3, erNormalized)}%` }}
+                  />
                 </div>
               </button>
 
-              {/* Expanded breakdown */}
-              {isExpanded && result.bindingEvents && (
-                <div className="px-4 pb-3 pt-0">
-                  <div className="rounded-lg bg-background/20 p-3 space-y-1.5">
-                    <div className="text-xs text-muted-foreground mb-2">
-                      {t.ui("erCalc.energyWindowBreakdown")}
-                    </div>
+              {/* Expanded breakdown — stays in grid cell */}
+              {allExpanded && hasData && result.bindingEvents && (
+                <div className="px-2 pb-2 pt-0">
+                  <div className="rounded-md bg-background/30 p-1.5 space-y-1 text-foreground">
                     {charEvents.map((ev) => {
-                      const parts = ev.source.split(":");
-                      const sourceChar = parts[0];
-                      const sourceAction = parts[1];
-                      const actionLabel =
-                        ACTION_LABELS[sourceAction]?.[
-                          language === "zh" ? "zh" : "en"
-                        ] ?? sourceAction;
+                      const actionLabel = t.erAction(ev.sourceAction);
+                      const isFlat = ev.type === "flat";
 
                       return (
                         <div
                           key={ev.source}
-                          className="flex items-center gap-2 text-xs"
+                          className="flex items-center gap-1.5 text-xs"
                         >
-                          <CharAvatar charId={sourceChar} size={16} />
-                          <span className="text-muted-foreground w-24 shrink-0">
-                            {t.character(sourceChar).split(/[\s_]/)[0]}{" "}
+                          <CharAvatar charId={ev.sourceChar} size={16} />
+                          <span className="truncate min-w-0 flex-1">
+                            {t.character(ev.sourceChar).split(/[\s_]/)[0]}{" "}
                             {actionLabel}
-                            {ev.count > 1 && (
-                              <span className="text-muted-foreground">
-                                {" "}
-                                ×{ev.count}
-                              </span>
-                            )}
+                            {ev.count > 1 && ` ×${ev.count}`}
                           </span>
+                          {!isFlat && (
+                            <span
+                              className={cn(
+                                "tabular-nums shrink-0",
+                                ev.onField
+                                  ? "text-green-400"
+                                  : "text-amber-300/90"
+                              )}
+                            >
+                              {ev.onField
+                                ? t.ui("erCalc.onFieldLabel")
+                                : t.ui("erCalc.offFieldLabel")}
+                            </span>
+                          )}
                           <span
-                            className={`tabular-nums ${
-                              ev.onField
-                                ? "text-green-400"
-                                : "text-muted-foreground"
-                            }`}
+                            className={cn(
+                              "tabular-nums font-medium shrink-0",
+                              isFlat ? "text-blue-400" : undefined
+                            )}
                           >
-                            {ev.onField
-                              ? t.ui("erCalc.onFieldLabel")
-                              : t.ui("erCalc.offFieldLabel")}
-                          </span>
-                          <span className="ml-auto tabular-nums font-medium">
                             +{ev.energy.toFixed(1)}
+                            {isFlat
+                              ? language === "zh"
+                                ? " 固定"
+                                : " flat"
+                              : ""}
                           </span>
                         </div>
                       );
                     })}
-                    {result.energyBreakdown.flatEnergy > 0 && (
-                      <div className="flex items-center gap-2 text-xs border-t border-border/30 pt-1.5 mt-1.5">
-                        <span className="text-muted-foreground">
-                          {t.ui("erCalc.flatEnergy")}
-                        </span>
-                        <span className="ml-auto tabular-nums font-medium text-blue-400">
-                          +{result.energyBreakdown.flatEnergy.toFixed(1)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-2 text-xs border-t border-border/30 pt-1.5 mt-1.5 font-medium">
-                      <span>{t.ui("erCalc.totalCost")}</span>
-                      <span className="ml-auto tabular-nums">
-                        {(
-                          result.energyBreakdown.particleEnergy +
-                          result.energyBreakdown.flatEnergy
-                        ).toFixed(1)}{" "}
-                        / {slot.burstCost}
-                      </span>
-                    </div>
-                    {/* ER derivation */}
                     {!isInfinity && (
-                      <div className="text-xs text-muted-foreground mt-1.5 tabular-nums">
-                        ER = ({slot.burstCost}
-                        {result.energyBreakdown.flatEnergy > 0
-                          ? ` - ${result.energyBreakdown.flatEnergy.toFixed(1)}`
-                          : ""}
-                        ) / {result.energyBreakdown.particleEnergy.toFixed(1)} ×
-                        100 ={" "}
-                        <span className={erTextColor}>
-                          {Math.ceil(result.erNeeded)}%
+                      <div className="text-xs tabular-nums border-t border-border/40 pt-1 mt-1">
+                        ({burstCost}
+                        {flat > 0 ? ` - ${flat.toFixed(1)}` : ""}) /{" "}
+                        {particle.toFixed(1)} × 100 ={" "}
+                        <span className={cn(erTextColor, "font-semibold")}>
+                          {Math.ceil(erNeeded)}%
                         </span>
                       </div>
                     )}

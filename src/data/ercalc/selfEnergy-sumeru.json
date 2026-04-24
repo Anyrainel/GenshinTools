@@ -92,7 +92,7 @@
     },
     {
       "source": "C6",
-      "action": "ChargeA",
+      "action": "CA",
       "amount": 20,
       "target": "self",
       "minC": 6,

@@ -90,6 +90,7 @@ import {
 } from "../../lib/artifact/inventory";
 import { ArtifactSwapDialog } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
+import { ErCalcCard } from "./ErCalcCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import type { ReuseEntry } from "./StatSheetPanel";
 import { TeamRosterCard } from "./TeamRosterCard";
@@ -1232,6 +1233,9 @@ export function DamageDetail({
           }}
           t={t}
         />
+
+        {/* ER Requirements — collapsible; applies to team charSettings.minEr */}
+        <ErCalcCard team={team} />
 
         {/* Card 3 — Equipment & Damage */}
         <DamageCard

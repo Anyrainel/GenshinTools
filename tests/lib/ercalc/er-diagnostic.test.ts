@@ -40,7 +40,6 @@ function flatToERT(flat: LegacyEntry[]): ERTimeline {
 interface TeamScenario {
   team: TeamMember[];
   timeline: LegacyEntry[];
-  enemyParticles?: number;
 }
 
 describe("ER diagnostic", () => {
@@ -166,7 +165,6 @@ describe("ER diagnostic", () => {
           { char: "sucrose", action: "E" },
           { char: "sucrose", action: "Q" },
         ],
-        enemyParticles: 12,
       },
       "Freeze (Ayaka + Shenhe + Kokomi + Kazuha)": {
         team: [
@@ -213,13 +211,9 @@ describe("ER diagnostic", () => {
       },
     };
     for (const [name, scenario] of Object.entries(scenarios)) {
-      const opts = scenario.enemyParticles
-        ? { enemyParticles: scenario.enemyParticles }
-        : {};
       const results = calculateTeamER(
         scenario.team,
-        flatToERT(scenario.timeline),
-        opts
+        flatToERT(scenario.timeline)
       );
       console.log(`\n=== ${name} ===`);
       for (const r of results) {
