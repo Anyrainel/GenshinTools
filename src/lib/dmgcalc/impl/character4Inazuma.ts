@@ -5,8 +5,6 @@ import { CrossScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 4★ Inazuma Characters
-
 @RegisterCharacter("kirara")
 class Kirara extends CharacterBase {
   readonly buffs = [

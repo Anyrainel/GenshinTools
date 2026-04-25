@@ -6,8 +6,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 5★ Mondstadt Characters
-
 const durinOption = {
   label: { zh: "形态", en: "Form" },
   choices: [

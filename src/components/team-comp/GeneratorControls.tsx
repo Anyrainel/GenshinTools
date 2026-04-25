@@ -216,7 +216,7 @@ export function CharCrErSettings({
             className="flex flex-col gap-0.5 rounded-md border border-border px-1.5 py-1 md:px-2 md:py-1.5"
           >
             {/* Row 1: icon + CR + ER */}
-            <div className="flex items-center gap-1 md:gap-1.5">
+            <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 md:gap-x-1.5">
               {/* Character icon */}
               {charactersById[charId] && (
                 <img
@@ -289,7 +289,7 @@ export function CharCrErSettings({
 
               {/* ER block: label + value input + % */}
               <div className="flex items-center gap-px">
-                <span className="font-bold text-foreground text-[10px] md:text-xs mr-px">
+                <span className="whitespace-nowrap font-bold text-foreground text-[10px] md:text-xs mr-px">
                   {t.ui("teamComp.minEr")}
                 </span>
                 <PctInput

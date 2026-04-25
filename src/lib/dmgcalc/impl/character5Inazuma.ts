@@ -5,8 +5,6 @@ import { CrossScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 5★ Inazuma Characters
-
 @RegisterCharacter("yumemizuki_mizuki")
 class YumemizukiMizuki extends CharacterBase {
   readonly buffs = (() => {

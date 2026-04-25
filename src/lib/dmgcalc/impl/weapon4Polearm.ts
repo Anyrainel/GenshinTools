@@ -4,8 +4,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
-// 4★ Polearms
-
 @RegisterWeapon("sacrificers_staff")
 class SacrificersStaff extends WeaponBase {
   readonly buffs = [

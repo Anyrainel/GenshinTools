@@ -5,8 +5,6 @@ import { ScalingBuff, StatBuff, TeamAggregationBuff } from "../core/statBuff";
 import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 5★ Sumeru Characters
-
 @RegisterCharacter("dehya")
 class Dehya extends CharacterBase {
   readonly buffs = (() => {

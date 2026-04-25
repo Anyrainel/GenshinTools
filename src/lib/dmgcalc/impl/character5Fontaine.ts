@@ -7,10 +7,6 @@ import type { TeamMeta } from "../core/teamMeta";
 import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 5★ Fontaine Characters
-
-// Skirk P3 / Tartaglia P3 talent level bonuses handled by CharacterBase._effectiveLevels
-
 @RegisterCharacter("escoffier")
 class Escoffier extends CharacterBase {
   private readonly hydroCryo =

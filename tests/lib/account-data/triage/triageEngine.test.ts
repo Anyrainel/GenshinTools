@@ -315,12 +315,12 @@ describe("runTriage", () => {
     expect(decisions[0].label).toBe("lock");
   });
 
-  // neutralKeep: under-supply keeps best N neutrals
+  // fillerKeep: under-supply keeps best N neutrals
 
-  it("neutralKeep: locks top N neutral artifacts when supply < demand", () => {
+  it("fillerKeep: locks top N neutral artifacts when supply < demand", () => {
     // 2 characters wanting the same embryo → demand = 2
     // Supply: 0 P, 0 Q, 4 N → under-supply
-    // neutralKeep = 2 → lock best 2 N, unlock rest
+    // fillerKeep = 2 → lock best 2 N, unlock rest
     const build1 = makeBuild({ id: "b1" });
     const build2 = makeBuild({ id: "b2" });
     // N-tier: 2 desired out of 4 (cr+cd match, but missing atk% and er)
@@ -342,7 +342,7 @@ describe("runTriage", () => {
       ],
       {
         ...SETTINGS,
-        neutralKeep: 2,
+        fillerKeep: 2,
         setSlotKeep: 0,
         doubleCritLockEnabled: false,
       }
@@ -356,7 +356,7 @@ describe("runTriage", () => {
     }
   });
 
-  it("neutralKeep: respects different values (keep 1 vs 3)", () => {
+  it("fillerKeep: respects different values (keep 1 vs 3)", () => {
     const build1 = makeBuild({ id: "b1" });
     const build2 = makeBuild({ id: "b2" });
     const neutralArts = Array.from({ length: 4 }, (_, i) =>
@@ -366,7 +366,7 @@ describe("runTriage", () => {
       })
     );
 
-    // neutralKeep = 1
+    // fillerKeep = 1
     const account1 = makeAccount(
       [{ key: "char_a" }, { key: "char_b" }],
       neutralArts.map((a) => ({ ...a, id: `k1_${a.id}` }))
@@ -379,14 +379,14 @@ describe("runTriage", () => {
       ],
       {
         ...SETTINGS,
-        neutralKeep: 1,
+        fillerKeep: 1,
         setSlotKeep: 0,
         doubleCritLockEnabled: false,
       }
     );
     expect(r1.decisions.filter((d) => d.label === "lock")).toHaveLength(1);
 
-    // neutralKeep = 3
+    // fillerKeep = 3
     const account3 = makeAccount(
       [{ key: "char_a" }, { key: "char_b" }],
       neutralArts.map((a) => ({ ...a, id: `k3_${a.id}` }))
@@ -399,7 +399,7 @@ describe("runTriage", () => {
       ],
       {
         ...SETTINGS,
-        neutralKeep: 3,
+        fillerKeep: 3,
         setSlotKeep: 0,
         doubleCritLockEnabled: false,
       }
@@ -407,9 +407,9 @@ describe("runTriage", () => {
     expect(r3.decisions.filter((d) => d.label === "lock")).toHaveLength(3);
   });
 
-  it("neutralKeep: clamped by shortfall so total locked ≤ demand+margin", () => {
+  it("fillerKeep: clamped by shortfall so total locked ≤ demand+margin", () => {
     // demand = 1, qualityMargin = 0, P = 0, Q = 0 → shortfall = 1
-    // neutralKeep = 5 → neutralCap = min(1, 5) = 1
+    // fillerKeep = 5 → neutralCap = min(1, 5) = 1
     // 3 neutral artifacts → only 1 should lock
     const build1 = makeBuild({ id: "b1" });
     const neutralArts = Array.from({ length: 3 }, (_, i) =>
@@ -424,7 +424,7 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [build1] }],
       {
         ...SETTINGS,
-        neutralKeep: 5,
+        fillerKeep: 5,
         qualityMargin: 0,
         setSlotKeep: 0,
         doubleCritLockEnabled: false,
@@ -553,7 +553,7 @@ describe("runTriage", () => {
         ...SETTINGS,
         qualityMargin: 1,
         setSlotKeep: 0,
-        neutralKeep: 0,
+        fillerKeep: 0,
         doubleCritLockEnabled: false,
         customFlexInputs: [customFlex],
       }
@@ -574,7 +574,7 @@ describe("runTriage", () => {
         ...SETTINGS,
         qualityMargin: 5,
         setSlotKeep: 0,
-        neutralKeep: 0,
+        fillerKeep: 0,
         doubleCritLockEnabled: false,
         customFlexInputs: [customFlex],
       }
@@ -588,7 +588,7 @@ describe("runTriage", () => {
   it("setSlotKeep: protects sole artifact in a set+slot from unlock", () => {
     // 1 trash-tier flower in test_set → triage wants to unlock it
     // setSlotKeep=1 → should promote to lock via SK
-    // Use flower/hp (common main stat, no k=0 fallback) and neutralKeep=0
+    // Use flower/hp (common main stat, no k=0 fallback) and fillerKeep=0
     const art = makeArt({
       substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
     });
@@ -599,7 +599,7 @@ describe("runTriage", () => {
       {
         ...SETTINGS,
         setSlotKeep: 1,
-        neutralKeep: 0,
+        fillerKeep: 0,
         doubleCritLockEnabled: false,
       }
     );
@@ -640,7 +640,7 @@ describe("runTriage", () => {
       {
         ...SETTINGS,
         setSlotKeep: 1,
-        neutralKeep: 0,
+        fillerKeep: 0,
         doubleCritLockEnabled: false,
       }
     );
@@ -660,7 +660,7 @@ describe("runTriage", () => {
       {
         ...SETTINGS,
         setSlotKeep: 0,
-        neutralKeep: 0,
+        fillerKeep: 0,
         doubleCritLockEnabled: false,
       }
     );
@@ -684,7 +684,7 @@ describe("runTriage", () => {
     const opts: TriageSettings = {
       ...SETTINGS,
       setSlotKeep: 2,
-      neutralKeep: 0,
+      fillerKeep: 0,
       doubleCritLockEnabled: false,
     };
     const r1 = runTriage(
@@ -748,7 +748,7 @@ describe("runTriage", () => {
       {
         ...SETTINGS,
         setSlotKeep: 1,
-        neutralKeep: 0,
+        fillerKeep: 0,
         doubleCritLockEnabled: false,
       }
     );

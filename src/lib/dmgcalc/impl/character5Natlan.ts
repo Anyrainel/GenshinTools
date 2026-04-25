@@ -6,25 +6,7 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, DamageTagFilter, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 5★ Natlan Characters
-
-// Varesa rotation state machine (user-approved):
-// E→逐击tap(=CA)→PA is always a bundled sequence. NS limit=40, E+20, PA+25.
-// After first eaa: NS=45→cap 40→enters 炽热激情(FP). FP plunge consumes all NS.
-//
-// C0: eaa → EAAq repeat (1 normal + 1 FP cycle, sQ after FP plunge enters 极限驱动)
-// C2: eaaq → EAAq repeat (C2: every PA→极限驱动, so sQ available after normal PA too)
-// C6: EAAq ×4 repeat (C6: E restores NS to max→always FP, +30 energy on 极限驱动)
-//
-// P1 (虹色坠击): gained from E, consumed on plunge hit. Since E→CA→PA is bundled,
-// every PA has P1 active. C0: +50% ATK non-FP / +180% ATK in FP. C1+: always +180%.
-// C1 also grants 虹色坠击 from sQ itself → sQ gets P1 +180% at C1+.
-//
-// C4: Full Q from normal state → 精進勇猛 (+500% ATK on next plunge, cap 20000).
-//     sQ from 极限驱动 → this Q +100% DMG. Both modeled via bespokeBuff.
-//
 // OptionMap: skip-q (default) vs full-q. Full Q is often skipped for DPS (long animation).
-
 const varesaOption = {
   label: { zh: "使用Q开场", en: "Open with full Q" },
   choices: [
@@ -1072,11 +1054,9 @@ class Xilonen extends CharacterBase {
           )
         );
       }
-      // 3 PHEC + below C2: all 3 Source Samples are converted, no Geo sample remains.
-      // Geo RES shred is NOT active.
     } else {
-      // 0-1 PHEC: Geo Source Sample is always active in Nightsoul's Blessing
-      // U6: resReduction% must use receiver "team"
+      // 3 PHEC + below C2: all 3 Source Samples are converted, no Geo sample remains from E.
+      // C2 makes Geo sample always active
       if (this.constellation >= 2) {
         buffs.push(
           new StatBuff(
@@ -1086,10 +1066,11 @@ class Xilonen extends CharacterBase {
           )
         );
       } else {
+        // C0-C1: Geo Source Sample is only active in Nightsoul's Blessing (on-field)
         buffs.push(
           new StatBuff(
             cbs(this, "E", ["E"]),
-            { receiver: "team", filter: { elements: ["Geo"] } },
+            { receiver: "selfOnField", filter: { elements: ["Geo"] } },
             [{ key: "resReduction%", value: resValue }]
           )
         );

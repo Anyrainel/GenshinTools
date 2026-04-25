@@ -5,8 +5,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// 4★ Sumeru Characters
-
 @RegisterCharacter("sethos")
 class Sethos extends CharacterBase {
   readonly buffs = [

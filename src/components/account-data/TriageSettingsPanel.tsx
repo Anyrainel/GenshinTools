@@ -159,9 +159,9 @@ export function TriageSettingsPanel({
           step={1}
         />
         <SliderRow
-          label={t.ui("triage.neutralKeep")}
-          value={settings.neutralKeep}
-          onChange={(v) => update("neutralKeep", v)}
+          label={t.ui("triage.fillerKeep")}
+          value={settings.fillerKeep}
+          onChange={(v) => update("fillerKeep", v)}
           min={1}
           max={7}
           step={1}

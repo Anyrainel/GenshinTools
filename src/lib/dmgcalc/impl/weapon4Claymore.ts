@@ -4,8 +4,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
-// 4★ Claymores
-
 @RegisterWeapon("master_key")
 class MasterKey extends WeaponBase {
   // Same as Snare Hook

@@ -5,8 +5,6 @@ import { DynamicCapScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 5★ Liyue Characters
-
 const zibaiOption = {
   label: { zh: "时隙浮光消耗", en: "Float-Light Points" },
   choices: [

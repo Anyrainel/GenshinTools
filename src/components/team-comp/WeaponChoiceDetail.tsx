@@ -32,7 +32,11 @@ import {
   buildWeaponChoiceCharConfigs,
   getEffectiveCombo,
 } from "@/lib/team-comp/teamConfigUtils";
-import type { Team, WeaponChoiceResult } from "@/lib/team-comp/types";
+import type {
+  ChoiceResultCache,
+  Team,
+  WeaponChoiceResult,
+} from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { ViewId } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -66,6 +70,7 @@ export function WeaponChoiceDetail({
   const weaponStats = weaponStatsResource.use();
   const gameStatsReady = characterStats !== null && weaponStats !== null;
   const isMobile = useMediaQuery("(max-width: 1023px)");
+  const [choiceMode, setChoiceMode] = useState<"weapon" | "artifact">("weapon");
 
   const localEnemyAura = team.enemyAura;
   const localExtraBuffs = team.extraBuffs ?? [];
@@ -269,9 +274,15 @@ export function WeaponChoiceDetail({
   } = useAsyncWeaponChoice();
 
   // Display result: either from computation or restored from store
-  const [displayResult, setDisplayResult] = useState<WeaponChoiceResult | null>(
-    () => team.weaponChoiceResult ?? null
+  const [displayResults, setDisplayResults] = useState<ChoiceResultCache>(
+    () => ({
+      ...(team.weaponChoiceResult ? { weapon: team.weaponChoiceResult } : {}),
+      ...(team.choiceResults ?? {}),
+    })
   );
+  const displayResultsRef = useRef(displayResults);
+  const handledComputeResultKeyRef = useRef<string | null>(null);
+  const activeDisplayResult = displayResults[choiceMode] ?? null;
 
   // Clear stale results when team composition changes
   const compositionKey = `${team.characters.join(",")}|${team.weapons.join(",")}`;
@@ -279,23 +290,57 @@ export function WeaponChoiceDetail({
   useEffect(() => {
     if (prevCompositionKey.current !== compositionKey) {
       prevCompositionKey.current = compositionKey;
-      updateTeam(team.id, { weaponChoiceResult: null });
-      setDisplayResult(null);
+      updateTeam(team.id, { choiceResults: {}, weaponChoiceResult: null });
+      displayResultsRef.current = {};
+      setDisplayResults({});
     }
   }, [compositionKey, team.id, updateTeam]);
 
+  useEffect(() => {
+    const cached = {
+      ...(team.weaponChoiceResult ? { weapon: team.weaponChoiceResult } : {}),
+      ...(team.choiceResults ?? {}),
+    };
+    displayResultsRef.current = cached;
+    setDisplayResults(cached);
+  }, [team.choiceResults, team.weaponChoiceResult]);
+
   // Update displayResult when computation yields
   useEffect(() => {
-    if (computeResult) {
-      const storeResult: WeaponChoiceResult = {
-        timestamp: computeResult.timestamp,
-        perCharacter: computeResult.perCharacter,
+    if (!computeResult) return;
+    const resultKey = [
+      computeResult.mode,
+      computeResult.timestamp,
+      computeResult.done,
+      computeResult.progress.phase,
+      Object.keys(computeResult.perCharacter).length,
+      computeResult.artifactAssignmentSuggestion?.bestDamage ?? "",
+    ].join(":");
+    if (handledComputeResultKeyRef.current === resultKey) return;
+    handledComputeResultKeyRef.current = resultKey;
+
+    const mode = computeResult.mode;
+    const storeResult: WeaponChoiceResult = {
+      mode,
+      timestamp: computeResult.timestamp,
+      perCharacter: computeResult.perCharacter,
+      artifactAssignmentSuggestion: computeResult.artifactAssignmentSuggestion,
+    };
+    setDisplayResults((prev) => {
+      const next = { ...prev, [mode]: storeResult };
+      displayResultsRef.current = next;
+      return next;
+    });
+    // Persist when done
+    if (computeResult.done) {
+      const nextChoiceResults: ChoiceResultCache = {
+        ...displayResultsRef.current,
+        [mode]: storeResult,
       };
-      setDisplayResult(storeResult);
-      // Persist when done
-      if (computeResult.done) {
-        updateTeam(team.id, { weaponChoiceResult: storeResult });
-      }
+      updateTeam(team.id, {
+        choiceResults: nextChoiceResults,
+        ...(mode === "weapon" ? { weaponChoiceResult: storeResult } : {}),
+      });
     }
   }, [computeResult, team.id, updateTeam]);
 
@@ -310,6 +355,7 @@ export function WeaponChoiceDetail({
     if (!teamBuild || !weaponStats) return;
     const charConfigs = buildWeaponChoiceCharConfigs(team, accountData);
     const opts: WeaponChoiceOptions = {
+      mode: choiceMode,
       baseConfigs: configs,
       charConfigs,
       combo: displayCombo,
@@ -327,6 +373,7 @@ export function WeaponChoiceDetail({
     team,
     accountData,
     displayCombo,
+    choiceMode,
     localEnemyAura,
     localExtraBuffs,
     start,
@@ -443,7 +490,9 @@ export function WeaponChoiceDetail({
           updateTeam={updateTeam}
           charIds={charIds}
           isComputing={isComputing}
-          result={displayResult}
+          choiceMode={choiceMode}
+          onChoiceModeChange={setChoiceMode}
+          result={activeDisplayResult}
           progress={computeResult?.progress}
           error={error}
           onRun={handleRun}

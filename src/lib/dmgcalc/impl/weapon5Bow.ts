@@ -3,8 +3,6 @@ import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
-// 5★ Bows
-
 @RegisterWeapon("silvershower_heartstrings")
 class SilvershowerHeartstrings extends WeaponBase {
   // 3-stack Remedy: HP% + Burst CRIT Rate

@@ -450,6 +450,22 @@ export function migrateTeamStore(
       return { ...t, artifacts, erTimelines };
     });
   }
+  if (version < 15) {
+    // v15: split the single Weapon Choice cache into mode-keyed choice results.
+    // Old shape: team.weaponChoiceResult held the weapon-mode result only.
+    // New shape: team.choiceResults.weapon/artifact can cache each mode
+    // independently while keeping weaponChoiceResult as a legacy mirror.
+    state.teams = state.teams.map((t) => {
+      if (!t.weaponChoiceResult || t.choiceResults?.weapon) return t;
+      return {
+        ...t,
+        choiceResults: {
+          ...(t.choiceResults ?? {}),
+          weapon: { ...t.weaponChoiceResult, mode: "weapon" as const },
+        },
+      };
+    });
+  }
   return state;
 }
 
@@ -746,7 +762,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 14,
+      version: 15,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }

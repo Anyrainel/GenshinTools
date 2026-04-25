@@ -1112,6 +1112,36 @@ describe("migrateTeamStore", () => {
     });
   });
 
+  it("migrates v14 weaponChoiceResult into mode-keyed choiceResults", () => {
+    const weaponChoiceResult = {
+      timestamp: 123,
+      perCharacter: {
+        hu_tao: [
+          {
+            type: "weapon" as const,
+            weaponId: "staff_of_homa",
+            refinement: 1,
+            damage: 100,
+            percentOfBest: 100,
+          },
+        ],
+      },
+    };
+    const state = {
+      teams: [makeV0Team({ weaponChoiceResult })],
+      author: "",
+      description: "",
+    };
+
+    const result = migrateTeamStore(state, 14);
+
+    expect(result.teams[0].choiceResults?.weapon).toEqual({
+      ...weaponChoiceResult,
+      mode: "weapon",
+    });
+    expect(result.teams[0].weaponChoiceResult).toBe(weaponChoiceResult);
+  });
+
   it("full migration from v0 applies all steps", () => {
     const state = {
       teams: [

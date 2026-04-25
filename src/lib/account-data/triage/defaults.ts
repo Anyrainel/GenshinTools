@@ -4,7 +4,7 @@ export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   triageMode: "loose",
   mainStatThreshold: 90,
   optionalSubThreshold: 50,
-  neutralKeep: 5,
+  fillerKeep: 5,
   qualityMargin: 5,
   setSlotKeep: 3,
   ownedOnly: true,

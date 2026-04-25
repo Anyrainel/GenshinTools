@@ -1223,26 +1223,64 @@ export const i18nUiData = {
     tabDamage: { en: "DMG Optimizer", zh: "伤害优化" },
     tabFrozen: { en: "Frozen Teams", zh: "冻结管理" },
     tabInvestment: { en: "Investment", zh: "补金分析" },
-    tabWeaponChoice: { en: "Weapon Choice", zh: "武器选择" },
+    tabWeaponChoice: { en: "Weapon & Artifact Choice", zh: "武器圣遗物选择" },
     weaponChoiceDesc: {
-      en: "Select a team to compare weapons",
-      zh: "选择队伍来比较武器",
+      en: "Select a team to compare weapons and artifact sets",
+      zh: "选择队伍来比较武器与圣遗物套装",
     },
     weaponChoiceRun: { en: "Run", zh: "运行" },
     weaponChoiceRunning: { en: "Computing...", zh: "计算中..." },
     weaponChoiceRanking: { en: "Weapon Ranking", zh: "武器排名" },
     weaponChoiceConfig: { en: "Character Config", zh: "角色配置" },
     weaponChoiceBest: { en: "Best", zh: "最佳" },
-    weaponChoiceResults: { en: "Weapon Choice Results", zh: "武器选择结果" },
+    weaponChoiceResults: { en: "Choice Results", zh: "选择结果" },
+    choiceModeWeapon: { en: "Weapon Choice", zh: "武器选择" },
+    choiceModeWeaponDesc: {
+      en: "Compare compatible weapons with generated artifacts",
+      zh: "用生成圣遗物比较可用武器",
+    },
+    choiceModeArtifact: { en: "Artifact Choice", zh: "圣遗物选择" },
+    choiceModeArtifactDesc: {
+      en: "Compare 4-piece artifact sets with the current weapon",
+      zh: "用当前武器比较四件套",
+    },
+    choiceOthersUnchanged: {
+      en: "(others unchanged)",
+      zh: "（其他人不变）",
+    },
+    artifactAssignmentSuggestion: {
+      en: "Artifact Assignment Suggestion",
+      zh: "圣遗物分配建议",
+    },
+    artifactAssignmentImprovesBy: {
+      en: "Improves by",
+      zh: "提升",
+    },
+    artifactAssignmentApply: {
+      en: "Apply to team",
+      zh: "应用到队伍",
+    },
+    artifactAssignmentNoChange: {
+      en: "Current assignment is already best",
+      zh: "当前分配已经最优",
+    },
     weaponChoiceEmpty: {
       en: "Click Run to analyze weapons",
       zh: "点击运行以分析武器",
+    },
+    artifactChoiceEmpty: {
+      en: "Click Run to analyze artifact sets",
+      zh: "点击运行以分析圣遗物套装",
     },
     mainStats: { en: "Main Stats", zh: "主词条" },
     substatAllocation: { en: "Substat Totals", zh: "副词条合计" },
     noCompatibleWeapons: {
       en: "No compatible weapons",
       zh: "无匹配武器",
+    },
+    noCompatibleArtifactSets: {
+      en: "No compatible artifact sets",
+      zh: "无匹配圣遗物套装",
     },
   },
   filters: {
@@ -1988,8 +2026,8 @@ export const i18nUiData = {
       en: "Demand margin (extra keep above demand)",
       zh: "需求余量数（满足需求后多留几个备用）",
     },
-    neutralKeep: {
-      en: "Neutral backup cap (max backups when short)",
+    fillerKeep: {
+      en: "Filler backup cap (max backups when short)",
       zh: "过渡保底数（即使需求不足时最多留几个过渡）",
     },
     setSlotKeep: {

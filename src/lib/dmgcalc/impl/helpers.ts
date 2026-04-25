@@ -6,15 +6,14 @@ import { StatBuff } from "../core/statBuff";
 import type { BuffSource, DamageTagFilter, OptionDef } from "../types";
 
 /** Pick a refinement-scaled value (R1–R5, 1-indexed refinement). */
-
 export function r(
   refinement: number,
   values: [number, number, number, number, number]
 ): number {
   return values[refinement - 1]!;
 }
-/** Weapon buff source. */
 
+/** Weapon buff source. */
 export function wbs(
   self: { weaponId: string; refinement: number },
   triggers?: string[],
@@ -28,8 +27,8 @@ export function wbs(
     origin: `R${self.refinement}`,
   };
 }
-/** Character buff source. */
 
+/** Character buff source. */
 export function cbs(
   self: { charId: string },
   origin: string,
@@ -45,7 +44,6 @@ export function cbs(
  * Cryo is gated on `traveler_cryo` existing in the character data — remove
  * the guard once the unit ships.
  */
-
 export const TRAVELER_RESONANCE_ENTRIES: StatEntry[] = [
   { key: "cr", value: 0.1 }, // Anemo
   { key: "def%", value: 0.2 }, // Geo
@@ -64,11 +62,13 @@ export function travelerP3Buff(self: CharacterBase): StatBuff {
     { receiver: "self" },
     TRAVELER_RESONANCE_ENTRIES
   );
-} /** Filter matching all 7 elements (not Physical). Use with `dmg%` entries. */
+}
 
+/** Filter matching all 7 elements (not Physical). Use with `dmg%` entries. */
 export const ALL_ELEMENTAL_FILTER: DamageTagFilter = {
   elements: ["Anemo", "Cryo", "Dendro", "Electro", "Geo", "Hydro", "Pyro"],
 };
+
 // Maps a proc element to the attach elements it reacts with.
 const REACTION_TO_AURA_ELEMENTS: Record<Element, readonly Element[]> = {
   Pyro: ["Hydro", "Electro", "Cryo", "Dendro"],

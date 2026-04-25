@@ -5,8 +5,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 4★ Liyue Characters
-
 @RegisterCharacter("lan_yan")
 class LanYan extends CharacterBase {
   get buffs() {

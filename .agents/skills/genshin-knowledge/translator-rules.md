@@ -117,7 +117,7 @@ For the last row, receiver follows from which source is boosted: all party membe
 
 ### U6. `resReduction%` / `defReduction%` Must Use `receiver: "team"`
 
-These are enemy debuffs — they benefit all party members equally. Scoping to `self`, `selfOnField`, or `teamOnField` means only that character's calculations see the debuff. **[BUG]** if either key has any receiver other than `"team"`. A `filter: { elements: [...] }` is valid when the text specifies an element.
+These are enemy debuffs — they benefit all party members equally. Scoping to `self`, `selfOnField`, or `teamOnField` means only that character's calculations see the debuff. **[BUG]** if either key has any receiver other than `"team"`. A `filter: { elements: [...] }` is valid when the text specifies an element. The only exception is xilonen's E approximate to `selfOnField` Geo resReduction% to avoid applying C2 effect prematurely.
 
 ### U7. `BuffSource` Display Fields
 

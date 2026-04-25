@@ -6,8 +6,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 4★ Mondstadt Characters
-
 @RegisterCharacter("dahlia")
 class Dahlia extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
@@ -796,11 +794,12 @@ class Bennett extends CharacterBase {
     };
   })();
 
-  // Rotation: E + Q (support, tap E has ~4s CD with P1)
+  // Rotation: E + Q, but avoid counting because bennett is saturated by default
+  // This will lead to optimizing bennett's own damage instead of heal
   protected override get comboDescriptor(): ComboTemplate {
     return [
-      { id: "bennett-skill", count: 1 },
-      { id: "bennett-burst", count: 1 },
+      { id: "bennett-skill", count: 0 },
+      { id: "bennett-burst", count: 0 },
     ];
   }
 }

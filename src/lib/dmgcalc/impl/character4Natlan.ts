@@ -6,8 +6,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-// 4★ Natlan Characters
-
 @RegisterCharacter("ifa")
 class Ifa extends CharacterBase {
   // P1 Rescue Essentials: ~80 team Nightsoul pts baseline.

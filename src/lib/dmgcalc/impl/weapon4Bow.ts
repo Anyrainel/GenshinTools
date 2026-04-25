@@ -5,8 +5,6 @@ import { StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
-// 4★ Bows
-
 @RegisterWeapon("rainbow_serpents_rain_bow")
 class RainbowSerpentsRainBow extends WeaponBase {
   // ATK% while off-field hits

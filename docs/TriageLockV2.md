@@ -9,7 +9,7 @@
 
 1. **有理有据**：每条规则的阈值都由概率计算推导，不是拍脑袋
 2. **统一评估**：4pc/2pc/flex 共用一套质量评估，只在供需阶段区分
-3. **弹性可调**：用户通过供需配额旋钮（neutralKeep, qualityMargin）和几个开关控制行为
+3. **弹性可调**：用户通过供需配额旋钮（fillerKeep, qualityMargin）和几个开关控制行为
 4. **供需分离**：质量评估（"这个胚子好不好"）和供需决策（"我需不需要它"）明确分开
 5. **主词条硬筛选**：主词条不是加分项，是门槛。不匹配的主词条直接跳过
 
@@ -190,7 +190,7 @@ Rarity 回答的问题：**"如果我重新刷，刷出一个至少跟这个一�
 例：EM 杯 P(main) = 2.5%
   rarity(hit≥0) = 2.5% → 花/羽阈值下 N，沙/杯/头阈值下不适用（EM杯是沙/杯/头, 2.5% ≤ 10% → N）
   → 生成 hit≥0 → N 条件
-  → EM 杯即使0命中也是 Neutral，可被 neutralKeep 保底保留
+  → EM 杯即使0命中也是 Neutral，可被 fillerKeep 保底保留
 ```
 
 `hit≥0` 不添加任何修饰符（crcd/4L/fill 在0命中时无意义）。
@@ -223,7 +223,7 @@ Rarity 回答的问题：**"如果我重新刷，刷出一个至少跟这个一�
 
 | 旋钮 | 影响什么 | 默认值 |
 |------|---------|-------|
-| **neutralKeep** | 供不足时从 Neutral 中保留几个 | 2 |
+| **fillerKeep** | 供不足时从 Neutral 中保留几个 | 2 |
 | **qualityMargin** | 供充足时额外保留的 Quality 缓冲数量 | 2 |
 | **setSlotKeep** | 每个套装×部位至少保留几个圣遗物（SP6） | 2 |
 | **optionalSubThreshold** | 副词条权重低于此值视为 optional（0-100 刻度） | 50 |
@@ -447,7 +447,7 @@ SP1、SP5、FLEX 标记的圣遗物，若供需决策后仍为 unlock，强制�
 ```
 Premium  → LOCK (TP)
 Quality  → LOCK (TQ)
-Neutral  → 从 Neutral 中挑最好的保留 neutralKeep 个 (NK)，其余 UNLOCK (TN)
+Neutral  → 从 Neutral 中挑最好的保留 fillerKeep 个 (NK)，其余 UNLOCK (TN)
 Trash    → UNLOCK (TF)
 ```
 
@@ -544,7 +544,7 @@ type FlexPattern = {
 
 | 设定 | 默认 | 说明 |
 |------|------|------|
-| **neutralKeep** | 2 | 供不足时从 Neutral 中保留几个 |
+| **fillerKeep** | 2 | 供不足时从 Neutral 中保留几个 |
 | **qualityMargin** | 2 | 供充足时额外保留的 Quality 缓冲数量 |
 | **setSlotKeep** | 2 | 每个套装×部位至少保留的圣遗物数 |
 | **optionalSubThreshold** | 50 | 副词条权重低于此值视为 optional（0-100 刻度） |

@@ -14,7 +14,7 @@ describe("useTriageStore", () => {
       const v0Settings = {
         mainStatThreshold: 90,
         optionalSubThreshold: 50,
-        neutralKeep: 2,
+        fillerKeep: 2,
         qualityMargin: 2,
         setSlotKeep: 2,
         ownedOnly: true,

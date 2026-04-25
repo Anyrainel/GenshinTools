@@ -5,8 +5,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate } from "../types";
 import { cbs } from "./helpers";
 
-// 4★ Fontaine Characters
-
 @RegisterCharacter("chevreuse")
 class Chevreuse extends CharacterBase {
   // P1 requires all team members to be Pyro or Electro

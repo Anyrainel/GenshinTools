@@ -538,7 +538,7 @@ describe("PersistedTriageStoreSchema", () => {
       triageMode: "loose",
       mainStatThreshold: 90,
       optionalSubThreshold: 50,
-      neutralKeep: 5,
+      fillerKeep: 5,
       qualityMargin: 5,
       setSlotKeep: 3,
       ownedOnly: true,
@@ -569,7 +569,7 @@ describe("PersistedTriageStoreSchema", () => {
     expect(result.settings.mainStatThreshold).toBe(80);
     // Healed fields
     expect(result.settings.optionalSubThreshold).toBe(50);
-    expect(result.settings.neutralKeep).toBe(5);
+    expect(result.settings.fillerKeep).toBe(5);
     expect(result.settings.ownedOnly).toBe(true);
     expect(result.settings.levelProtection).toBe(12);
     expect(result.settings.customFlexInputs).toEqual([]);

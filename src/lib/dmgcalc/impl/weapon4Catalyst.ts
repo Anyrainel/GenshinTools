@@ -5,8 +5,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
-// 4★ Catalysts
-
 @RegisterWeapon("dawning_frost")
 class DawningFrost extends WeaponBase {
   // EM after CA hit; EM after E hit

@@ -4,8 +4,6 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
-// 5★ Polearms
-
 const crimsonMoonsSemblanceOption = {
   label: { zh: "生命之契状态", en: "Bond of Life State" },
   choices: [

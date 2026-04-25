@@ -8,8 +8,6 @@ import type { TeamMeta } from "../core/teamMeta";
 import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs, travelerP3Buff } from "./helpers";
 
-// 5★ None Characters
-
 // Eligible elements for P1 虚境裂隙: Frozen(Hydro), Superconduct(Electro),
 // Cryo Swirl(Anemo), Cryo Crystallize(Geo), plus other Cryo teammates
 const skirkRiftEligible = (tm: TeamMeta): number =>

@@ -83,7 +83,7 @@ export type TriageSettings = {
   triageMode: TriageMode;
   mainStatThreshold: number; // default 90 (weight 0-100 scale)
   optionalSubThreshold: number; // default 50 (weight 0-100 scale)
-  neutralKeep: number; // default 2
+  fillerKeep: number; // default 2
   qualityMargin: number; // default 2
   setSlotKeep: number; // default 2 (min artifacts to keep per set+slot)
   ownedOnly: boolean; // default true (only consider owned characters' builds)

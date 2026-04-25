@@ -336,7 +336,7 @@ export function runTriage(
       // Cap neutral locks so total locked (P+Q+N) never exceeds demand+margin.
       const shortfall =
         demand + settings.qualityMargin - premiumCount - qualityCount;
-      const neutralCap = Math.min(shortfall, settings.neutralKeep);
+      const neutralCap = Math.min(shortfall, settings.fillerKeep);
 
       for (let i = 0; i < neutral.length; i++) {
         if (i < neutralCap) {

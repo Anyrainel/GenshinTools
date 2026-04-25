@@ -3,8 +3,6 @@ import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { r, royalSeriesOption, wbs } from "./helpers";
 
-// 4★ Swords
-
 @RegisterWeapon("moonweavers_dawn")
 class MoonweaversDawn extends WeaponBase {
   get buffs() {

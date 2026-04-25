@@ -122,9 +122,7 @@ export interface OptimizationResult {
   erTargets: Record<string, number>;
 }
 
-export interface WeaponRanking {
-  weaponId: string;
-  refinement: number;
+interface ChoiceRankingBase {
   damage: number;
   percentOfBest: number; // 0-100
   /** Main stat choices for sands/goblet/circlet. */
@@ -135,10 +133,40 @@ export interface WeaponRanking {
   artifactSetIds?: string[];
 }
 
-export interface WeaponChoiceResult {
-  timestamp: number;
-  perCharacter: Record<string, WeaponRanking[]>;
+export interface WeaponRanking extends ChoiceRankingBase {
+  type?: "weapon";
+  weaponId: string;
+  refinement: number;
 }
+
+export interface ArtifactRanking extends ChoiceRankingBase {
+  type: "artifact";
+  artifactSet: ArtifactSetConfig;
+  artifactSetIds: string[];
+}
+
+export type ChoiceRanking = WeaponRanking | ArtifactRanking;
+
+export interface ArtifactAssignmentSuggestion {
+  currentDamage: number;
+  bestDamage: number;
+  percentImprovement: number;
+  assignments: {
+    charId: string;
+    artifactSet: ArtifactSetConfig | null;
+  }[];
+}
+
+export interface WeaponChoiceResult {
+  mode?: "weapon" | "artifact";
+  timestamp: number;
+  perCharacter: Record<string, ChoiceRanking[]>;
+  artifactAssignmentSuggestion?: ArtifactAssignmentSuggestion | null;
+}
+
+export type ChoiceResultCache = Partial<
+  Record<"weapon" | "artifact", WeaponChoiceResult | null>
+>;
 
 export interface WeaponChoiceCharConfig {
   charId: string;
@@ -194,6 +222,8 @@ export interface Team {
   erTimelines?: ERTimeline[];
   // ─── Result caches ───
   optimizationResult: OptimizationResult | null;
+  choiceResults?: ChoiceResultCache;
+  /** @deprecated use choiceResults.weapon */
   weaponChoiceResult?: WeaponChoiceResult | null;
   // ─── Analyzer ───
   analyzer?: AnalyzerConfig;

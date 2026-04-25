@@ -14,8 +14,6 @@ import type {
 } from "../types";
 import { cbs } from "./helpers";
 
-// 5★ Nod-Krai Characters
-
 const columbinaOption = {
   label: { zh: "主要月曜反应", en: "Dominant Reaction" },
   choices: [

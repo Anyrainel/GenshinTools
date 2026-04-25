@@ -15,8 +15,6 @@ const COMBAT_ABILITIES: AbilityType[] = [
   "burst",
 ];
 
-// 4★ Nod-Krai Characters
-
 @RegisterCharacter("illuga")
 class Illuga extends CharacterBase {
   private readonly hydroGeo =

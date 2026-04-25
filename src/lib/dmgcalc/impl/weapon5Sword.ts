@@ -5,8 +5,6 @@ import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
-// 5★ Swords
-
 @RegisterWeapon("athame_artis")
 class AthameArtis extends WeaponBase {
   // Burst CD + Blade of the Daylight Hours: self ATK% + team ATK%

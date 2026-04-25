@@ -247,8 +247,9 @@ export function FormulaSelectorCard({
                           : "px-2 py-1 flex flex-col md:grid md:grid-cols-2 md:gap-x-2 lg:grid-cols-1 xl:grid-cols-2"
                       )}
                     >
-                      {Object.entries(charFormulas).map(
-                        ([formulaId, { label, minC }]) => {
+                      {Object.entries(charFormulas)
+                        .filter(([formulaId]) => !formulaId.startsWith("rx-"))
+                        .map(([formulaId, { label, minC }]) => {
                           const isLocked = !unlockedFormulas?.[formulaId];
                           const isSingleSelected =
                             isSingle &&
@@ -732,8 +733,7 @@ export function FormulaSelectorCard({
                               })()}
                             </div>
                           );
-                        }
-                      )}
+                        })}
                     </div>
                     {!isSingle && onToggleIgnoreChar && (
                       <button

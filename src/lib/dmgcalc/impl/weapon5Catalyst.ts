@@ -3,8 +3,6 @@ import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
-// 5★ Catalysts
-
 @RegisterWeapon("nocturnes_curtain_call")
 class NocturnesCurtainCall extends WeaponBase {
   get buffs() {
