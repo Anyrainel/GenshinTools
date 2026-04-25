@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { maybeHandleBetaMagic } from "@/data/betaState";
+import { PersistedArchiveSessionStoreSchema } from "./schemas";
 
 /**
  * Session-scoped state for the Archive pages. Survives in-session navigation
@@ -53,6 +54,14 @@ export const useArchiveSessionStore = create<ArchiveSessionState>()(
     }),
     {
       name: "archive-session-storage",
+      partialize: (state) => ({
+        characterSearch: state.characterSearch,
+        weaponSearch: state.weaponSearch,
+        artifactSearch: state.artifactSearch,
+        bossSearch: state.bossSearch,
+        selectedCharacterId: state.selectedCharacterId,
+        selectedBossId: state.selectedBossId,
+      }),
       storage: {
         getItem: (name) => {
           const str = sessionStorage.getItem(name);
@@ -64,6 +73,12 @@ export const useArchiveSessionStore = create<ArchiveSessionState>()(
         removeItem: (name) => {
           sessionStorage.removeItem(name);
         },
+      },
+      merge: (persistedState, currentState) => {
+        const parsed =
+          PersistedArchiveSessionStoreSchema.safeParse(persistedState);
+        const persisted = parsed.success ? parsed.data : {};
+        return { ...currentState, ...persisted };
       },
     }
   )

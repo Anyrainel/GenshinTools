@@ -764,6 +764,11 @@ export const useTeamStore = create<TeamState>()(
       name: "team-builder-storage",
       version: 15,
       migrate: migrateTeamStore,
+      partialize: (state) => ({
+        teams: state.teams,
+        author: state.author,
+        description: state.description,
+      }),
       merge: mergeTeamStore,
     }
   )

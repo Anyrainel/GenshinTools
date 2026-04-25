@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { PersistedSessionNavStoreSchema } from "./schemas";
 
 export type ViewId = "damage" | "investment" | "weaponChoice";
 export type TeamSort = "default" | "tier" | "release";
@@ -65,6 +66,9 @@ export const useSessionNavStore = create<SessionNavState>()(
     }),
     {
       name: "session-nav-storage",
+      partialize: (state) => ({
+        viewSettings: state.viewSettings,
+      }),
       storage: {
         getItem: (name) => {
           const str = sessionStorage.getItem(name);
@@ -109,6 +113,20 @@ export const useSessionNavStore = create<SessionNavState>()(
         removeItem: (name) => {
           sessionStorage.removeItem(name);
         },
+      },
+      merge: (persistedState, currentState) => {
+        const parsed = PersistedSessionNavStoreSchema.safeParse(persistedState);
+        const persisted = parsed.success
+          ? parsed.data
+          : PersistedSessionNavStoreSchema.parse({});
+        return {
+          ...currentState,
+          ...persisted,
+          viewSettings: {
+            ...currentState.viewSettings,
+            ...persisted.viewSettings,
+          },
+        };
       },
     }
   )

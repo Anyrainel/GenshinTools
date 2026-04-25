@@ -585,6 +585,19 @@ export const useBuildsStore = create<BuildsState>()(
       // rehydration, ensuring idempotent build-level migrations
       // (sandsWeights, normalizer, etc.) are applied even when the stored
       // version already matches the configured version.
+      partialize: (state) => ({
+        activePresetId: state.activePresetId,
+        characterToBuildIds: state.characterToBuildIds,
+        builds: state.builds,
+        presetDeletedBuildIds: state.presetDeletedBuildIds,
+        hasPromptedForPreset: state.hasPromptedForPreset,
+        hiddenCharacters: state.hiddenCharacters,
+        validationErrors: state.validationErrors,
+        characterWeapons: state.characterWeapons,
+        computeOptions: state.computeOptions,
+        author: state.author,
+        description: state.description,
+      }),
       merge: (persistedState, currentState) => {
         const parsed = PersistedBuildsStoreSchema.safeParse(persistedState);
         const persisted = parsed.success ? parsed.data : {};

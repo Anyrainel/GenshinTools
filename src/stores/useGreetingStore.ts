@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { PersistedGreetingStoreSchema } from "./schemas";
 
 interface GreetingState {
   onboardingCompleted: boolean;
@@ -27,10 +28,11 @@ export const useGreetingStore = create<GreetingState>()(
         onboardingCompleted: state.onboardingCompleted,
         lastSeenUpdate: state.lastSeenUpdate,
       }),
-      merge: (persistedState, currentState) => ({
-        ...currentState,
-        ...(persistedState as object),
-      }),
+      merge: (persistedState, currentState) => {
+        const parsed = PersistedGreetingStoreSchema.safeParse(persistedState);
+        const persisted = parsed.success ? parsed.data : {};
+        return { ...currentState, ...persisted };
+      },
     }
   )
 );

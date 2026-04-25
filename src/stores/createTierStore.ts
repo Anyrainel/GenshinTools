@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { TierAssignment, TierCustomization } from "@/data/types";
+import { PersistedBaseTierStoreSchema } from "./schemas";
 
 /** Base state shared by both character and weapon tier stores. */
 export interface TierStoreBase {
@@ -107,24 +108,12 @@ export function createTierStore<T extends TierStoreBase>(
           ...(options.extraPartialize?.(state) ?? {}),
         }),
         merge: (persistedState, currentState) => {
+          const parsed = PersistedBaseTierStoreSchema.safeParse(persistedState);
+          const persisted = parsed.success ? parsed.data : {};
           const merged = {
             ...currentState,
-            ...(persistedState as object),
+            ...persisted,
           } as T;
-          // Ensure base fields have correct types
-          if (
-            typeof merged.tierAssignments !== "object" ||
-            merged.tierAssignments == null
-          )
-            merged.tierAssignments = {};
-          if (
-            typeof merged.tierCustomization !== "object" ||
-            merged.tierCustomization == null
-          )
-            merged.tierCustomization = {};
-          if (typeof merged.customTitle !== "string") merged.customTitle = "";
-          if (typeof merged.author !== "string") merged.author = "";
-          if (typeof merged.description !== "string") merged.description = "";
           return merged;
         },
       }

@@ -6,10 +6,18 @@ import {
   BuildSchema,
   CharacterDataSchema,
   PersistedAccountStoreSchema,
+  PersistedAnalyzerCacheStoreSchema,
+  PersistedArchiveSessionStoreSchema,
+  PersistedArtifactScoreStoreSchema,
+  PersistedBaseTierStoreSchema,
   PersistedBuildsStoreSchema,
   PersistedFreezeStoreSchema,
+  PersistedGreetingStoreSchema,
+  PersistedPreferencesStoreSchema,
   PersistedResourceRecStoreSchema,
+  PersistedSessionNavStoreSchema,
   PersistedTeamStoreSchema,
+  PersistedTierListStoreSchema,
   PersistedTriageStoreSchema,
   TeamSchema,
   WeaponDataSchema,
@@ -594,6 +602,203 @@ describe("PersistedTriageStoreSchema", () => {
     expect(result.settings.mainStatThreshold).toBe(90);
     expect(result.settings.levelProtection).toBe(12);
     expect(result.settings.customFlexInputs).toEqual([]);
+  });
+});
+
+// ─── PersistedBaseTierStoreSchema ───
+
+describe("PersistedBaseTierStoreSchema", () => {
+  it("heals missing base tier-list fields", () => {
+    expect(PersistedBaseTierStoreSchema.parse({})).toEqual({
+      tierAssignments: {},
+      tierCustomization: {},
+      customTitle: "",
+      author: "",
+      description: "",
+    });
+  });
+
+  it("preserves valid assignments and customization", () => {
+    const result = PersistedBaseTierStoreSchema.parse({
+      tierAssignments: {
+        ayaka: { tier: "S", position: 1 },
+      },
+      tierCustomization: {
+        S: { displayName: "Top", hidden: false, luckExpectation: 12 },
+      },
+      customTitle: "Characters",
+      author: "me",
+      description: "notes",
+    });
+    expect(result.tierAssignments.ayaka).toEqual({
+      tier: "S",
+      position: 1,
+    });
+    expect(result.tierCustomization.S).toEqual({
+      displayName: "Top",
+      hidden: false,
+      luckExpectation: 12,
+    });
+    expect(result.customTitle).toBe("Characters");
+  });
+});
+
+// ─── PersistedTierListStoreSchema ───
+
+describe("PersistedTierListStoreSchema", () => {
+  it("heals missing multi-list tier fields", () => {
+    expect(PersistedTierListStoreSchema.parse({})).toEqual({
+      tierLists: {},
+      activeTierListId: 1,
+      nextId: 2,
+      showWeapons: true,
+      showTravelers: false,
+      showManekin: false,
+      recommendationPrefs: {
+        scoreDiffThreshold: 1,
+        includeUpgrades: true,
+      },
+    });
+  });
+
+  it("heals corrupted flags and recommendation prefs", () => {
+    const result = PersistedTierListStoreSchema.parse({
+      activeTierListId: "bad",
+      showWeapons: "yes",
+      recommendationPrefs: {
+        scoreDiffThreshold: "high",
+        includeUpgrades: null,
+      },
+    });
+    expect(result.activeTierListId).toBe(1);
+    expect(result.showWeapons).toBe(true);
+    expect(result.recommendationPrefs).toEqual({
+      scoreDiffThreshold: 1,
+      includeUpgrades: true,
+    });
+  });
+});
+
+// ─── PersistedPreferencesStoreSchema ───
+
+describe("PersistedPreferencesStoreSchema", () => {
+  it("heals missing or corrupted sort preferences", () => {
+    expect(PersistedPreferencesStoreSchema.parse({})).toEqual({
+      characterSort: {
+        tierSort: "desc",
+        releaseSort: "desc",
+        scoreSort: "off",
+      },
+    });
+
+    const result = PersistedPreferencesStoreSchema.parse({
+      characterSort: {
+        tierSort: "sideways",
+        releaseSort: "asc",
+        scoreSort: "desc",
+      },
+    });
+    expect(result.characterSort).toEqual({
+      tierSort: "desc",
+      releaseSort: "asc",
+      scoreSort: "desc",
+    });
+  });
+});
+
+// ─── PersistedGreetingStoreSchema ───
+
+describe("PersistedGreetingStoreSchema", () => {
+  it("heals greeting flags", () => {
+    expect(PersistedGreetingStoreSchema.parse({})).toEqual({
+      onboardingCompleted: false,
+      lastSeenUpdate: null,
+    });
+
+    const result = PersistedGreetingStoreSchema.parse({
+      onboardingCompleted: true,
+      lastSeenUpdate: "2026-04-25",
+    });
+    expect(result.onboardingCompleted).toBe(true);
+    expect(result.lastSeenUpdate).toBe("2026-04-25");
+  });
+});
+
+// ─── PersistedArtifactScoreStoreSchema ───
+
+describe("PersistedArtifactScoreStoreSchema", () => {
+  it("heals global score weights", () => {
+    expect(PersistedArtifactScoreStoreSchema.parse({})).toEqual({
+      config: { global: { flatAtk: 30, flatHp: 30, flatDef: 30 } },
+    });
+
+    const result = PersistedArtifactScoreStoreSchema.parse({
+      config: {
+        global: { flatAtk: 10, flatHp: "bad", flatDef: 50 },
+      },
+    });
+    expect(result.config.global).toEqual({
+      flatAtk: 10,
+      flatHp: 30,
+      flatDef: 50,
+    });
+  });
+});
+
+// ─── PersistedArchiveSessionStoreSchema ───
+
+describe("PersistedArchiveSessionStoreSchema", () => {
+  it("heals archive session fields", () => {
+    expect(PersistedArchiveSessionStoreSchema.parse({})).toEqual({
+      characterSearch: "",
+      weaponSearch: "",
+      artifactSearch: "",
+      bossSearch: "",
+      selectedCharacterId: null,
+      selectedBossId: null,
+    });
+  });
+});
+
+// ─── PersistedSessionNavStoreSchema ───
+
+describe("PersistedSessionNavStoreSchema", () => {
+  it("heals view settings", () => {
+    const result = PersistedSessionNavStoreSchema.parse({
+      viewSettings: {
+        damage: { activeTeamId: "team-1", teamSort: "tier" },
+        investment: { ownedOnly: true, erCalcExpanded: true },
+        weaponChoice: { teamSort: "bad" },
+      },
+    });
+    expect(result.viewSettings.damage).toEqual({
+      activeTeamId: "team-1",
+      ownedOnly: null,
+      teamSort: "tier",
+      erCalcExpanded: false,
+    });
+    expect(result.viewSettings.investment).toEqual({
+      activeTeamId: null,
+      ownedOnly: true,
+      teamSort: "default",
+      erCalcExpanded: true,
+    });
+    expect(result.viewSettings.weaponChoice.teamSort).toBe("default");
+  });
+});
+
+// ─── PersistedAnalyzerCacheStoreSchema ───
+
+describe("PersistedAnalyzerCacheStoreSchema", () => {
+  it("heals analyzer cache envelope", () => {
+    expect(PersistedAnalyzerCacheStoreSchema.parse({})).toEqual({
+      lastByTeam: {},
+    });
+    expect(
+      PersistedAnalyzerCacheStoreSchema.parse({
+        lastByTeam: { "team-1": { expensive: "opaque-cache-payload" } },
+      }).lastByTeam["team-1"]
+    ).toEqual({ expensive: "opaque-cache-payload" });
   });
 });
 

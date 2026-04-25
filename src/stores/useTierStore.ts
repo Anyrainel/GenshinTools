@@ -6,6 +6,7 @@ import type {
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
+import { PersistedTierListStoreSchema } from "./schemas";
 
 export interface TierListInstance {
   id: number;
@@ -435,7 +436,8 @@ export const useTierStore = create<TierListState>()(
         recommendationPrefs: state.recommendationPrefs,
       }),
       merge: (persistedState, currentState) => {
-        const persisted = (persistedState ?? {}) as Record<string, unknown>;
+        const parsed = PersistedTierListStoreSchema.safeParse(persistedState);
+        const persisted = parsed.success ? parsed.data : {};
         const merged = { ...currentState, ...persisted } as TierListState;
 
         // Ensure tierLists is a valid object

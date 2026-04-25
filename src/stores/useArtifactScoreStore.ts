@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { GlobalStatWeights } from "@/data/types";
+import { PersistedArtifactScoreStoreSchema } from "./schemas";
 import { invalidateScores } from "./useAccountStore";
 
 const DEFAULT_GLOBAL: GlobalStatWeights = {
@@ -12,17 +13,8 @@ const DEFAULT_GLOBAL: GlobalStatWeights = {
 type ArtifactScoreGlobalConfig = { global: GlobalStatWeights };
 
 function migratePersisted(persisted: unknown): ArtifactScoreGlobalConfig {
-  const raw = persisted as { config?: { global?: GlobalStatWeights } };
-  const global = raw?.config?.global;
-  return {
-    global:
-      global &&
-      typeof global.flatAtk === "number" &&
-      typeof global.flatHp === "number" &&
-      typeof global.flatDef === "number"
-        ? global
-        : DEFAULT_GLOBAL,
-  };
+  const parsed = PersistedArtifactScoreStoreSchema.safeParse(persisted);
+  return parsed.success ? parsed.data.config : { global: DEFAULT_GLOBAL };
 }
 
 interface ArtifactScoreState {
@@ -67,6 +59,9 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
       storage: createJSONStorage(() => localStorage),
       migrate: (persisted) => ({
         config: migratePersisted(persisted),
+      }),
+      partialize: (state) => ({
+        config: state.config,
       }),
       merge: (persistedState, currentState) => ({
         ...currentState,

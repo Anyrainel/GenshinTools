@@ -9,6 +9,31 @@ import { z } from "zod";
 
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
 
+// ─── Shared lightweight persisted shapes ───
+
+const TierAssignmentItemSchema = z
+  .object({
+    tier: z.string(),
+    position: z.number().catch(0),
+  })
+  .passthrough();
+
+const TierCustomizationItemSchema = z
+  .object({
+    displayName: z.string().catch(""),
+    hidden: z.boolean().catch(false),
+    luckExpectation: z.number().optional(),
+  })
+  .passthrough();
+
+const TierAssignmentSchema = z
+  .record(z.string(), TierAssignmentItemSchema)
+  .catch({});
+
+const TierCustomizationSchema = z
+  .record(z.string(), TierCustomizationItemSchema)
+  .catch({});
+
 // ─── ArtifactData (replaces repairArtifact) ───
 
 export const ArtifactDataSchema = z
@@ -240,4 +265,131 @@ export const PersistedTriageStoreSchema = z.object({
       enabledFlexPatterns: [],
       customFlexInputs: [],
     }),
+});
+
+// ─── Tier list stores ───
+
+export const PersistedBaseTierStoreSchema = z.object({
+  tierAssignments: TierAssignmentSchema,
+  tierCustomization: TierCustomizationSchema,
+  customTitle: z.string().catch(""),
+  author: z.string().catch(""),
+  description: z.string().catch(""),
+});
+
+const TierListInstanceSchema = PersistedBaseTierStoreSchema.extend({
+  id: z.number(),
+  linkedAccountId: z.string().nullable().catch(null),
+});
+
+export const PersistedTierListStoreSchema = z.object({
+  tierLists: z.record(z.string(), TierListInstanceSchema).catch({}),
+  activeTierListId: z.number().catch(1),
+  nextId: z.number().catch(2),
+  showWeapons: z.boolean().catch(true),
+  showTravelers: z.boolean().catch(false),
+  showManekin: z.boolean().catch(false),
+  recommendationPrefs: z
+    .object({
+      scoreDiffThreshold: z.number().catch(1),
+      includeUpgrades: z.boolean().catch(true),
+    })
+    .catch({ scoreDiffThreshold: 1, includeUpgrades: true }),
+});
+
+// ─── Preferences ───
+
+export const PersistedPreferencesStoreSchema = z.object({
+  characterSort: z
+    .object({
+      tierSort: z.enum(["asc", "desc", "off"]).catch("desc"),
+      releaseSort: z.enum(["asc", "desc", "off"]).catch("desc"),
+      scoreSort: z.enum(["asc", "desc", "off"]).catch("off"),
+    })
+    .catch({ tierSort: "desc", releaseSort: "desc", scoreSort: "off" }),
+});
+
+// ─── Greeting ───
+
+export const PersistedGreetingStoreSchema = z.object({
+  onboardingCompleted: z.boolean().catch(false),
+  lastSeenUpdate: z.string().nullable().catch(null),
+});
+
+// ─── Artifact score ───
+
+export const PersistedArtifactScoreStoreSchema = z.object({
+  config: z
+    .object({
+      global: z
+        .object({
+          flatAtk: z.number().catch(30),
+          flatHp: z.number().catch(30),
+          flatDef: z.number().catch(30),
+        })
+        .catch({ flatAtk: 30, flatHp: 30, flatDef: 30 }),
+    })
+    .catch({ global: { flatAtk: 30, flatHp: 30, flatDef: 30 } }),
+});
+
+// ─── Archive session ───
+
+export const PersistedArchiveSessionStoreSchema = z.object({
+  characterSearch: z.string().catch(""),
+  weaponSearch: z.string().catch(""),
+  artifactSearch: z.string().catch(""),
+  bossSearch: z.string().catch(""),
+  selectedCharacterId: z.string().nullable().catch(null),
+  selectedBossId: z.number().nullable().catch(null),
+});
+
+// ─── Team comp session navigation ───
+
+const ViewSettingsSchema = z
+  .object({
+    activeTeamId: z.string().nullable().catch(null),
+    ownedOnly: z.boolean().nullable().catch(null),
+    teamSort: z.enum(["default", "tier", "release"]).catch("default"),
+    erCalcExpanded: z.boolean().catch(false),
+  })
+  .catch({
+    activeTeamId: null,
+    ownedOnly: null,
+    teamSort: "default" as const,
+    erCalcExpanded: false,
+  });
+
+export const PersistedSessionNavStoreSchema = z.object({
+  viewSettings: z
+    .object({
+      damage: ViewSettingsSchema,
+      investment: ViewSettingsSchema,
+      weaponChoice: ViewSettingsSchema,
+    })
+    .catch({
+      damage: {
+        activeTeamId: null,
+        ownedOnly: null,
+        teamSort: "default" as const,
+        erCalcExpanded: false,
+      },
+      investment: {
+        activeTeamId: null,
+        ownedOnly: null,
+        teamSort: "default" as const,
+        erCalcExpanded: false,
+      },
+      weaponChoice: {
+        activeTeamId: null,
+        ownedOnly: null,
+        teamSort: "default" as const,
+        erCalcExpanded: false,
+      },
+    }),
+});
+
+// ─── Analyzer cache ───
+
+export const PersistedAnalyzerCacheStoreSchema = z.object({
+  lastByTeam: z.record(z.string(), z.unknown()).catch({}),
 });

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AnalyzerResult } from "@/lib/team-comp/analyzer/types";
+import { PersistedAnalyzerCacheStoreSchema } from "./schemas";
 
 // ─── Map serialization helpers ───
 
@@ -84,6 +85,17 @@ export const useAnalyzerCacheStore = create<AnalyzerCacheState>()(
       name: "analyzer-cache",
       // Only persist lastByTeam, not the in-memory cache
       partialize: (state) => ({ lastByTeam: state.lastByTeam }),
+      merge: (persistedState, currentState) => {
+        const parsed =
+          PersistedAnalyzerCacheStoreSchema.safeParse(persistedState);
+        const persisted = parsed.success
+          ? parsed.data
+          : PersistedAnalyzerCacheStoreSchema.parse({});
+        return {
+          ...currentState,
+          lastByTeam: persisted.lastByTeam as Record<string, SerializedResult>,
+        };
+      },
     }
   )
 );

@@ -259,6 +259,11 @@ export const useAccountStore = create<AccountStore>()(
       name: "genshin-account-storage",
       version: 4,
       migrate: migrateAccountStore,
+      partialize: (state) => ({
+        accounts: state.accounts,
+        activeAccountId: state.activeAccountId,
+        staleScoreCharIds: state.staleScoreCharIds,
+      }),
       merge: (persistedState, currentState) => {
         const parsed = PersistedAccountStoreSchema.safeParse(persistedState);
         const persisted = parsed.success ? parsed.data : {};
