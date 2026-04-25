@@ -11,6 +11,7 @@ import {
   NA_PROC_INTERVAL,
   NA_PROC_INTERVAL_DEFAULT,
   OFF_FIELD_MULTIPLIER,
+  ORB_MULTIPLIER,
   PARAM_DEFAULTS,
   PATTERN_ACTIONS,
   particles as particlesData,
@@ -19,12 +20,15 @@ import {
 import type {
   ActionType,
   EnergyEvent,
+  ERCalculationSegment,
   EROptions,
   ERResult,
+  ERSequenceOptions,
   ERTimeline,
   ParticleMode,
   PeriodicProc,
   QWindow,
+  QWindowSource,
   SelfEnergyEntry,
   TeamMember,
   TeamSlot,
@@ -285,10 +289,11 @@ function solveER(
 function getAbsorber(
   actions: TimelineAction[],
   i: number,
-  isRepeating: boolean
+  isRepeating: boolean,
+  repeatStartIndex = 0
 ): string {
   if (i + 1 < actions.length) return actions[i + 1].char;
-  if (isRepeating) return actions[0].char;
+  if (isRepeating) return actions[repeatStartIndex]?.char ?? actions[0].char;
   return actions[i].char;
 }
 
@@ -696,7 +701,9 @@ function simulateSequence(
   options: EROptions | undefined,
   isRepeating: boolean,
   skipFirstQ: boolean,
-  rotationLength: number
+  rotationLength: number,
+  qWindowSources?: Map<number, QWindowSource>,
+  sequenceOptions?: ERSequenceOptions & { repeatStartIndex?: number }
 ): ERResult[] {
   const partySize = team.length;
   const offFieldMult =
@@ -717,7 +724,26 @@ function simulateSequence(
 
   const state = new Map<string, CharSimState>();
   for (const m of team) state.set(m.id, freshState());
+  if (sequenceOptions?.startFull) {
+    for (const m of team) {
+      const s = state.get(m.id);
+      if (!s || m.burstCost <= 0) continue;
+      s.flatAccum += m.burstCost;
+      s.currentEvents.push({
+        sourceIndex: -1,
+        sourceChar: m.id,
+        sourceAction: "initialEnergy",
+        absorberChar: m.id,
+        particleCount: 0,
+        particleElement: "",
+        energyAt100: m.burstCost,
+        onField: true,
+        type: "flat",
+      });
+    }
+  }
   const artifactScratch = new Map<string, Record<string, unknown>>();
+  const repeatStartIndex = sequenceOptions?.repeatStartIndex ?? 0;
 
   for (let i = 0; i < actions.length; i++) {
     const act = actions[i];
@@ -750,14 +776,14 @@ function simulateSequence(
       }
     }
 
-    // ── 2a. Enemy orb drop — element-agnostic ("Clear") particles, absorbed
-    //         by the next on-field char. The action has no source-char
+    // ── 2a. Enemy orb drop — 3x particle value, absorbed by the next on-field
+    //         char. The action has no source-char
     //         semantics (act.char is just a positioning anchor); skip the
     //         normal per-action / burst / flat-event pipeline entirely. ──
     if (act.action === "enemyOrb") {
-      const n = act.orbCount ?? 0;
+      const n = (act.orbCount ?? 0) * ORB_MULTIPLIER;
       if (n > 0) {
-        const absorber = getAbsorber(actions, i, isRepeating);
+        const absorber = getAbsorber(actions, i, isRepeating, repeatStartIndex);
         distributeParticles(
           team,
           state,
@@ -765,7 +791,7 @@ function simulateSequence(
           "enemyOrb",
           i,
           n,
-          "Clear",
+          act.orbElement ?? "Clear",
           absorber,
           offFieldMult,
           rotationLength,
@@ -782,7 +808,7 @@ function simulateSequence(
     if (DIRECT_PARTICLE_ACTIONS.has(act.action)) {
       const n = getActionParticles(act.char, act.action, particleMode);
       if (n > 0) {
-        const absorber = getAbsorber(actions, i, isRepeating);
+        const absorber = getAbsorber(actions, i, isRepeating, repeatStartIndex);
         distributeParticles(
           team,
           state,
@@ -806,7 +832,7 @@ function simulateSequence(
       s.hitCounts[hitKey] = hitIndex + 1;
       const n = getHitParticles(act.char, act.action, hitIndex, particleMode);
       if (n > 0) {
-        const absorber = getAbsorber(actions, i, isRepeating);
+        const absorber = getAbsorber(actions, i, isRepeating, repeatStartIndex);
         distributeParticles(
           team,
           state,
@@ -830,7 +856,7 @@ function simulateSequence(
         ? weaponEnergyById[member.weaponId]
         : undefined;
       if (we?.energy.effect === "particles") {
-        const absorber = getAbsorber(actions, i, isRepeating);
+        const absorber = getAbsorber(actions, i, isRepeating, repeatStartIndex);
         distributeParticles(
           team,
           state,
@@ -848,7 +874,8 @@ function simulateSequence(
     }
 
     // NA pity flat energy (per gcsim; separate from infusion particles).
-    // Per-action event attached to the NA/CA/PA node.
+    // Only the on-field attacker gains this flat energy; it is not a particle
+    // pickup and does not distribute to off-field party members.
     if (act.action === "NA" || act.action === "CA" || act.action === "PA") {
       s.consecutiveNAs++;
       const member = teamById.get(act.char)!;
@@ -858,26 +885,19 @@ function simulateSequence(
         : NA_PROC_INTERVAL_DEFAULT;
       if (s.consecutiveNAs >= interval) {
         s.consecutiveNAs = 0;
-        const absorber = getAbsorber(actions, i, isRepeating);
-        for (const m of team) {
-          const ms = state.get(m.id);
-          if (!ms) continue;
-          const onField = m.id === absorber;
-          const mult = onField ? 1.0 : offFieldMult;
-          const amount = NA_FLAT_ENERGY_PER_PROC * mult;
-          ms.flatAccum += amount;
-          ms.currentEvents.push({
-            sourceIndex: rotationLength > 0 ? i % rotationLength : i,
-            sourceChar: act.char,
-            sourceAction: act.action,
-            absorberChar: m.id,
-            particleCount: 0,
-            particleElement: "",
-            energyAt100: amount,
-            onField,
-            type: "flat",
-          });
-        }
+        const amount = NA_FLAT_ENERGY_PER_PROC;
+        s.flatAccum += amount;
+        s.currentEvents.push({
+          sourceIndex: rotationLength > 0 ? i % rotationLength : i,
+          sourceChar: act.char,
+          sourceAction: act.action,
+          absorberChar: act.char,
+          particleCount: 0,
+          particleElement: "",
+          energyAt100: amount,
+          onField: true,
+          type: "flat",
+        });
       }
     } else {
       s.consecutiveNAs = 0;
@@ -917,6 +937,7 @@ function simulateSequence(
           scalableEnergy: s.erScalingAccum,
           flatEnergy: s.flatAccum,
           events: [...s.currentEvents],
+          source: qWindowSources?.get(i),
           isBinding: false, // set after the loop
         });
 
@@ -970,21 +991,10 @@ function simulateSequence(
       };
     }
 
-    // Deduplicate Q windows by `qIndex`: in repeating mode the same Q
-    // position fires across startup + multiple repeats. Keep the
-    // worst-case occurrence per index — that's the one the engine actually
-    // requires ER for.
-    const byIndex = new Map<number, QWindow>();
-    for (const w of s.qWindows) {
-      const prev = byIndex.get(w.qIndex);
-      if (!prev || w.erNeeded > prev.erNeeded) byIndex.set(w.qIndex, w);
-    }
-    const uniqueWindows = [...byIndex.values()].sort(
-      (a, b) => a.qIndex - b.qIndex
-    );
+    const windows = [...s.qWindows];
     // Mark the binding window (the worst — matches s.maxER).
     let bindingMarked = false;
-    for (const w of uniqueWindows) {
+    for (const w of windows) {
       if (!bindingMarked && w.erNeeded === s.maxER) {
         w.isBinding = true;
         bindingMarked = true;
@@ -1001,7 +1011,7 @@ function simulateSequence(
       },
       bindingEvents: s.maxEREvents,
       bindingQIndex: s.maxERQIndex,
-      qWindows: uniqueWindows,
+      qWindows: windows,
       hasQ: true,
     };
   });
@@ -1124,6 +1134,62 @@ export function calculateTeamER(
     true,
     true,
     repeating.actions.length
+  );
+}
+
+/**
+ * Calculate ER over an explicit authored sequence. Each Q / specialQ in each
+ * segment is retained as its own window; loop repeat checks are represented by
+ * adding the loop segment twice.
+ */
+export function calculateTeamERSequence(
+  team: TeamMember[],
+  segments: ERCalculationSegment[],
+  options?: ERSequenceOptions
+): ERResult[] {
+  const actions: TimelineAction[] = [];
+  const procs: PeriodicProc[] = [];
+  const qWindowSources = new Map<number, QWindowSource>();
+  let loopStartIndex = 0;
+  let hasLoop = false;
+
+  for (const segment of segments) {
+    const offset = actions.length;
+    if (segment.source.kind === "loop" && !hasLoop) {
+      loopStartIndex = offset;
+      hasLoop = true;
+    }
+
+    segment.timeline.actions.forEach((action, localIndex) => {
+      const globalIndex = offset + localIndex;
+      actions.push({ ...action });
+      if (BURST_ACTIONS.has(action.action)) {
+        qWindowSources.set(globalIndex, {
+          ...segment.source,
+          actionIndex: localIndex,
+        } as QWindowSource);
+      }
+    });
+
+    for (const p of segment.timeline.periodic) {
+      procs.push({
+        sourceChar: p.sourceChar,
+        trigger: p.trigger,
+        targetIndex: p.targetIndex + offset,
+      });
+    }
+  }
+
+  return simulateSequence(
+    team,
+    actions,
+    indexProcs(procs),
+    { particleMode: options?.particleMode },
+    options?.isRepeating ?? false,
+    false,
+    0,
+    qWindowSources,
+    { ...options, repeatStartIndex: hasLoop ? loopStartIndex : 0 }
   );
 }
 

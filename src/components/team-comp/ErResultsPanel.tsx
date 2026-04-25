@@ -209,16 +209,9 @@ export function ErResultsPanel({
           // is their sum; flat is subtracted from burst cost.
           const burstCost = slot.burstCost;
 
-          // Per-Q windows for the expanded breakdown. Sort by ER desc so the
-          // worst-case (binding) window is on top — it's the one that
-          // determines the displayed character ER.
+          // Per-Q windows are already in authored sequence order: startup(s),
+          // loop first pass, then loop subsequent pass when enabled.
           const qWindows: QWindow[] = hasData ? (result.qWindows ?? []) : [];
-          const sortedWindows = [...qWindows].sort((a, b) => {
-            // Push Infinity to the top.
-            if (a.erNeeded === Number.POSITIVE_INFINITY) return -1;
-            if (b.erNeeded === Number.POSITIVE_INFINITY) return 1;
-            return b.erNeeded - a.erNeeded;
-          });
 
           const toggleExpand = () => {
             if (hasData) setAllExpanded((p) => !p);
@@ -311,10 +304,10 @@ export function ErResultsPanel({
                 </div>
               </button>
 
-              {/* Expanded breakdown — one block per Q window, sorted by ER desc. */}
-              {allExpanded && hasData && sortedWindows.length > 0 && (
+              {/* Expanded breakdown — one block per Q window in sequence order. */}
+              {allExpanded && hasData && qWindows.length > 0 && (
                 <div className="px-2 pb-2 pt-0 space-y-1.5">
-                  {sortedWindows.map((w, idx) => (
+                  {qWindows.map((w, idx) => (
                     <QWindowBlock
                       key={`${w.qIndex}-${idx}`}
                       window={w}
@@ -364,6 +357,7 @@ function QWindowBlock({
   const flatTotal = flatItems.reduce((a, b) => a + b.energy, 0);
   const scalableTotal = scalableItems.reduce((a, b) => a + b.energy, 0);
   const qLabel = tErAction(w.qAction);
+  const sourceLabel = formatQWindowSource(w, tUi);
 
   return (
     <div
@@ -374,7 +368,10 @@ function QWindowBlock({
     >
       <div className="flex items-center gap-1.5 text-xs">
         <span className="font-semibold flex-1 truncate min-w-0">
-          {qLabel} <span className="text-foreground/50">@{w.qIndex}</span>
+          {qLabel}{" "}
+          <span className="text-foreground/70">
+            {sourceLabel ?? `@${w.qIndex}`}
+          </span>
           {w.isBinding && (
             <span className="ml-1.5 px-1 rounded bg-primary/20 text-primary text-[10px] uppercase tracking-wide">
               {tUi("erCalc.qWindowBinding")}
@@ -418,6 +415,21 @@ function QWindowBlock({
       )}
     </div>
   );
+}
+
+function formatQWindowSource(
+  w: QWindow,
+  tUi: (key: string) => string
+): string | null {
+  if (!w.source) return null;
+  if (w.source.kind === "startup") {
+    return `${tUi("erCalc.startupLabel")} ${w.source.timelineNumber} @${w.source.actionIndex}`;
+  }
+  const loopLabel =
+    w.source.iteration === "first"
+      ? tUi("erCalc.qWindowLoopFirst")
+      : tUi("erCalc.qWindowLoopSubsequent");
+  return `${loopLabel} @${w.source.actionIndex}`;
 }
 
 /** A single energy-bucket row: label · per-source numbers (with action-label

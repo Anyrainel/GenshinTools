@@ -1,6 +1,8 @@
 import type { Element } from "@/data/enums";
 import type { ArtifactSetConfig } from "@/data/types";
 
+export type EnergyParticleElement = Element | "Clear";
+
 // ─── Team model ───
 
 /** A character in the team. Describes who they are, not what they do. */
@@ -100,6 +102,9 @@ export interface TimelineAction {
   /** Number of enemy-dropped orbs at this node. Only read when
    *  `action === "enemyOrb"`. */
   orbCount?: number;
+  /** Element of enemy-dropped orbs. Defaults to `Clear` for older timelines.
+   *  Elemental orbs use normal same/different-element matching. */
+  orbElement?: EnergyParticleElement;
 }
 
 /** An ordered sequence of main actions. */
@@ -206,6 +211,46 @@ export interface EROptions {
 
 // ─── Results ───
 
+export type EnergySourceAction =
+  | ActionType
+  | "periodic"
+  | "favonius"
+  | "grantEnergy"
+  | "initialEnergy";
+
+export type QWindowSource =
+  | {
+      kind: "startup";
+      timelineNumber: number;
+      actionIndex: number;
+    }
+  | {
+      kind: "loop";
+      iteration: "first" | "subsequent";
+      actionIndex: number;
+    };
+
+export interface ERCalculationSegment {
+  timeline: ERTimeline;
+  source:
+    | {
+        kind: "startup";
+        timelineNumber: number;
+      }
+    | {
+        kind: "loop";
+        iteration: "first" | "subsequent";
+      };
+}
+
+export interface ERSequenceOptions {
+  particleMode?: ParticleMode;
+  /** Treat the party as starting with full burst energy before the first segment. */
+  startFull?: boolean;
+  /** If true, end-of-sequence particles wrap back to the first loop action. */
+  isRepeating?: boolean;
+}
+
 /** Per-action energy event for the breakdown visualization. */
 export interface EnergyEvent {
   /** Index of the action in the timeline that produced this energy. */
@@ -214,7 +259,7 @@ export interface EnergyEvent {
   sourceChar: string;
   /** Action type that produced the energy, or "periodic" for periodic procs,
    *  or "favonius" for Favonius weapon procs. */
-  sourceAction: ActionType | "periodic" | "favonius";
+  sourceAction: EnergySourceAction;
   /** Character that absorbed the particles on-field. */
   absorberChar: string;
   /** Particle count (before element/field multipliers). */
@@ -251,6 +296,8 @@ export interface QWindow {
   flatEnergy: number;
   /** Every event that delivered energy to this window. */
   events: EnergyEvent[];
+  /** Which authored timeline this burst calculation came from. */
+  source?: QWindowSource;
   /** True for the worst-case window — the one that determines the
    *  character's rotation-wide ER requirement. */
   isBinding: boolean;

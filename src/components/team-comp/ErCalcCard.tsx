@@ -16,7 +16,7 @@ import { particles } from "@/lib/ercalc/constants";
 import {
   autoPlaceFavonius,
   autoPlacePeriodic,
-  calculateTeamER,
+  calculateTeamERSequence,
   getDefaultProcCount,
   hasPeriodicGeneration,
   toTeamMember,
@@ -26,6 +26,7 @@ import { analyzeRotation } from "@/lib/ercalc/rotationHints";
 import type {
   ActionType,
   CalcMode,
+  ERCalculationSegment,
   ERResult,
   ERTimeline,
   ParticleMode,
@@ -204,22 +205,39 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
     return { actions, periodic };
   }, []);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: mainERT derived from timelines
   const results = useMemo<ERResult[]>(() => {
     if (erTeam.length === 0 || mainERT.actions.length === 0) return [];
     const teamMembers = erTeam.map(toTeamMember);
-    const startup =
-      startupERTs.length > 0 ? concatErTimelines(startupERTs) : undefined;
-    const opts = {
-      calcMode,
-      particleMode,
-      timeline2: startup && startup.actions.length > 0 ? mainERT : undefined,
-    };
-    if (startup && startup.actions.length > 0) {
-      return calculateTeamER(teamMembers, startup, opts);
+    const segments: ERCalculationSegment[] = [
+      ...startupERTs.map((timeline, index) => ({
+        timeline,
+        source: {
+          kind: "startup" as const,
+          timelineNumber: index + 1,
+        },
+      })),
+      {
+        timeline: mainERT,
+        source: { kind: "loop" as const, iteration: "first" as const },
+      },
+    ];
+
+    if (repeatLast) {
+      segments.push({
+        timeline: mainERT,
+        source: {
+          kind: "loop" as const,
+          iteration: "subsequent" as const,
+        },
+      });
     }
-    return calculateTeamER(teamMembers, mainERT, { calcMode, particleMode });
-  }, [erTeam, timelines, calcMode, particleMode]);
+
+    return calculateTeamERSequence(teamMembers, segments, {
+      particleMode,
+      startFull: !startEmpty,
+      isRepeating: repeatLast,
+    });
+  }, [erTeam, mainERT, startupERTs, repeatLast, startEmpty, particleMode]);
 
   const updateTimeline = useCallback(
     (tlIndex: number, updater: (ert: ERTimeline) => ERTimeline) => {
@@ -401,8 +419,11 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
   const bindingQIndices = useMemo(() => {
     const indices = new Set<number>();
     for (const r of results) {
-      if (r.bindingQIndex != null && r.bindingQIndex >= 0) {
-        indices.add(r.bindingQIndex);
+      const bindingLoopWindow = r.qWindows?.find(
+        (w) => w.isBinding && w.source?.kind === "loop"
+      );
+      if (bindingLoopWindow?.source?.kind === "loop") {
+        indices.add(bindingLoopWindow.source.actionIndex);
       }
     }
     return indices;

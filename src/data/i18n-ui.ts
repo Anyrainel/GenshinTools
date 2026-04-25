@@ -2363,6 +2363,11 @@ export const i18nUiData = {
     qWindowScalableRow: { en: "scalable", zh: "可充能" },
     qWindowBinding: { en: "binding", zh: "瓶颈" },
     qWindowEmpty: { en: "—", zh: "—" },
+    qWindowLoopFirst: { en: "Loop (first)", zh: "循环轴（首次）" },
+    qWindowLoopSubsequent: {
+      en: "Loop (subsequent)",
+      zh: "循环轴（后续）",
+    },
     particleEnergyTitle: {
       en: "Particle / orb energy at 100% ER (scales with ER)",
       zh: "100% 充能下的微粒 / 元素球能量（受充能影响）",
@@ -2436,10 +2441,12 @@ export const i18nUiData = {
     addEnemyOrb: { en: "+ Enemy Orb", zh: "+ 敌方产球" },
     enemyOrbTitle: { en: "Enemy orb drop", zh: "敌方产球" },
     enemyOrbDesc: {
-      en: "Element-agnostic orbs dropped by enemies (shield breaks, kills, etc.). Absorbed by the next on-field char, ER-scaled like normal particles.",
-      zh: "敌方掉落的无属性元素球（破盾、击杀等）。由下一个前台角色拾取，与微粒一样受充能影响。",
+      en: "Orbs dropped by enemies (shield breaks, kills, etc.). Absorbed by the next on-field char, ER-scaled at 3x particle value.",
+      zh: "敌方掉落的元素球（破盾、击杀等）。由下一个前台角色拾取，受充能影响，能量为微粒的 3 倍。",
     },
     enemyOrbCount: { en: "Orbs", zh: "球数" },
+    enemyOrbElement: { en: "Element", zh: "元素" },
+    enemyOrbClear: { en: "Clear", zh: "无色" },
     remove: { en: "Remove", zh: "删除" },
 
     // Main chip popover

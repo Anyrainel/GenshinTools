@@ -196,6 +196,7 @@ export const i18nAppData = {
     enemyOrb: { en: "Enemy orb", zh: "敌方产球" },
     periodic: { en: "Periodic", zh: "持续产球" },
     favonius: { en: "Favonius", zh: "西风" },
+    initialEnergy: { en: "Start energy", zh: "初始能量" },
   },
   factions: {
     Hexerei: { en: "Hexerei", zh: "魔导" },

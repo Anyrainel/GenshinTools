@@ -6,7 +6,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { elements } from "@/data/enums";
 import {
   BURST_ACTIONS,
   CHIP_H,
@@ -27,6 +35,7 @@ import {
 } from "@/lib/ercalc/erCalculator";
 import type {
   ActionType,
+  EnergyParticleElement,
   ERTimeline,
   PeriodicProc,
   TeamSlot,
@@ -34,6 +43,8 @@ import type {
 } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import { cn } from "@/lib/utils";
+
+const ORB_ELEMENT_OPTIONS: EnergyParticleElement[] = [...elements, "Clear"];
 
 interface TimelineStripProps {
   label: React.ReactNode;
@@ -1150,10 +1161,20 @@ function EnemyOrbChip({
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const orbCount = act.orbCount ?? 0;
+  const orbElement = act.orbElement ?? "Clear";
+
+  const getOrbElementLabel = (element: EnergyParticleElement) => {
+    if (element === "Clear") return t.ui("erCalc.enemyOrbClear");
+    return t.element(element);
+  };
 
   const setCount = (n: number) => {
     if (!Number.isFinite(n) || n < 0) n = 0;
     onUpdate({ ...act, orbCount: n });
+  };
+
+  const setElement = (element: EnergyParticleElement) => {
+    onUpdate({ ...act, orbElement: element });
   };
 
   return (
@@ -1178,13 +1199,16 @@ function EnemyOrbChip({
             {t.erAction("enemyOrb")}
           </span>
           {orbCount > 0 && (
-            <span className="text-[10px] md:text-xs font-semibold tabular-nums text-rose-200">
+            <span className="text-xs font-semibold tabular-nums text-rose-200">
               ×{orbCount}
             </span>
           )}
+          <span className="text-xs font-medium text-rose-200">
+            {getOrbElementLabel(orbElement)}
+          </span>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-56 p-3 space-y-2" side="bottom">
+      <PopoverContent className="w-64 p-3 space-y-2" side="bottom">
         <div className="text-sm font-semibold">
           {t.ui("erCalc.enemyOrbTitle")}
         </div>
@@ -1202,6 +1226,26 @@ function EnemyOrbChip({
             className="w-16 rounded border border-border/40 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
             placeholder="0"
           />
+        </div>
+        <div className="flex items-center gap-2 border-t border-border/40 pt-2 text-xs md:text-sm">
+          <span className="flex-1">{t.ui("erCalc.enemyOrbElement")}</span>
+          <Select
+            value={orbElement}
+            onValueChange={(value) =>
+              setElement(value as EnergyParticleElement)
+            }
+          >
+            <SelectTrigger className="h-8 w-28 bg-background/50 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ORB_ELEMENT_OPTIONS.map((element) => (
+                <SelectItem key={element} value={element}>
+                  {getOrbElementLabel(element)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <button
           type="button"
