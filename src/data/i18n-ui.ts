@@ -645,6 +645,10 @@ export const i18nUiData = {
     ctaJoinCommunity: { en: "Join Community", zh: "加入社区" },
     tierListTitle: { en: "Character Priority", zh: "角色优先级" },
     weaponTierListTitle: { en: "Weapon Priority", zh: "武器优先级" },
+    artifactTierListTitle: {
+      en: "Artifact Priority",
+      zh: "圣遗物优先级",
+    },
 
     print: { en: "Download Image", zh: "下载图片" },
     generatingImage: { en: "Generating image...", zh: "正在生成图片..." },
@@ -2288,6 +2292,9 @@ export const i18nUiData = {
     },
   },
   tierList: {
+    dpsSet: { en: "DPS Set", zh: "输出套" },
+    supportSet: { en: "Support Set", zh: "辅助套" },
+    otherSet: { en: "Other Set", zh: "其他套" },
     manageLists: { en: "Switch List", zh: "切换榜单" },
     manageListsDesc: {
       en: "Switch between tier lists or create new ones.",

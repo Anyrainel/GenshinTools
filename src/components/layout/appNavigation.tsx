@@ -170,6 +170,12 @@ export const getNavigationConfig = (
         icon: Sword,
         tourStepId: "tl-weapons-tab",
       },
+      {
+        label: t.ui("app.artifactTierListTitle"),
+        href: "/tier-list/artifacts",
+        value: "artifacts",
+        icon: Diamond,
+      },
     ],
   },
   {

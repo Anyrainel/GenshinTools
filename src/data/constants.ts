@@ -7,6 +7,51 @@ import type {
 } from "./enums";
 import artifactStatData from "./game/artifact_stat.json";
 
+/** Artifact support sets used by triage's support-only ER hoarding rule. */
+export const TRIAGE_SUPPORT_ARTIFACT_SET_IDS = [
+  "silken_moons_serenade",
+  "scroll_of_the_hero_of_cinder_city",
+  "song_of_days_past",
+  "deepwood_memories",
+  "maiden_beloved",
+  "viridescent_venerer",
+  "oceanhued_clam",
+  "noblesse_oblige",
+  "archaic_petra",
+  "tenacity_of_the_millelith",
+] as const;
+
+export const TRIAGE_SUPPORT_ARTIFACT_SETS: ReadonlySet<string> = new Set(
+  TRIAGE_SUPPORT_ARTIFACT_SET_IDS
+);
+
+/** 4-star sets grouped as support sets in the artifact tier list only. */
+export const TIER_LIST_4STAR_SUPPORT_ARTIFACT_SET_IDS = [
+  "the_exile",
+  "instructor",
+  "scholar",
+] as const;
+
+export const TIER_LIST_SUPPORT_ARTIFACT_SET_IDS = [
+  ...TRIAGE_SUPPORT_ARTIFACT_SET_IDS,
+  ...TIER_LIST_4STAR_SUPPORT_ARTIFACT_SET_IDS,
+] as const;
+
+export const TIER_LIST_SUPPORT_ARTIFACT_SETS: ReadonlySet<string> = new Set(
+  TIER_LIST_SUPPORT_ARTIFACT_SET_IDS
+);
+
+/** Sets grouped as Other in the artifact tier list even when they are 5-star. */
+export const TIER_LIST_OTHER_ARTIFACT_SET_IDS = [
+  "retracing_bolide",
+  "lavawalker",
+  "thundersoother",
+] as const;
+
+export const TIER_LIST_OTHER_ARTIFACT_SETS: ReadonlySet<string> = new Set(
+  TIER_LIST_OTHER_ARTIFACT_SET_IDS
+);
+
 // Function to get goblet pool with character's elemental damage bonus
 export const getGobletPool = (element?: Element): readonly MainStat[] => {
   if (!element) {

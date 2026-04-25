@@ -1,3 +1,4 @@
+import { TRIAGE_SUPPORT_ARTIFACT_SETS } from "@/data/constants";
 import type { MainStat, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData, Build } from "@/data/types";
@@ -37,21 +38,6 @@ function makeEmbryoKey(
     return `2pc:${source.halfSetId}:${slot}:${mainStat}:${subs}`;
   return `flex:${slot}:${mainStat}:${subs}`;
 }
-
-// Support sets (ER hoarding only applies to these)
-
-const SUPPORT_SETS = new Set([
-  "silken_moons_serenade",
-  "scroll_of_the_hero_of_cinder_city",
-  "song_of_days_past",
-  "deepwood_memories",
-  "maiden_beloved",
-  "viridescent_venerer",
-  "oceanhued_clam",
-  "noblesse_oblige",
-  "archaic_petra",
-  "tenacity_of_the_millelith",
-]);
 
 // Set matching
 
@@ -140,7 +126,7 @@ export function runTriage(
       is4L &&
       artifact.slotKey !== "sands" &&
       substats.includes("er") &&
-      SUPPORT_SETS.has(artifact.setKey)
+      TRIAGE_SUPPORT_ARTIFACT_SETS.has(artifact.setKey)
     ) {
       const anyRuleNeedsER = rules.some(
         (r) => r.desired.includes("er") && r.slot === artifact.slotKey

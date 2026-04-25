@@ -5,15 +5,17 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
+import { ArtifactTierListView } from "@/pages/tier-list/ArtifactTierListView";
 import { CharacterTierListView } from "@/pages/tier-list/CharacterTierListView";
 import { WeaponTierListView } from "@/pages/tier-list/WeaponTierListView";
+import { useArtifactTierStore } from "@/stores/useArtifactTierStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 
-type TierListTab = "characters" | "weapons";
+type TierListTab = "characters" | "weapons" | "artifacts";
 
 const isValidTab = (tab: string | null): tab is TierListTab =>
-  tab === "characters" || tab === "weapons";
+  tab === "characters" || tab === "weapons" || tab === "artifacts";
 
 export default function TierListPage() {
   const { activeTab, setActiveTab } = useCanonicalTabRoute({
@@ -45,14 +47,18 @@ export default function TierListPage() {
         onClearData={
           activeTab === "characters"
             ? useTierStore.getState().resetTierList
-            : useWeaponTierStore.getState().resetTierList
+            : activeTab === "weapons"
+              ? useWeaponTierStore.getState().resetTierList
+              : useArtifactTierStore.getState().resetTierList
         }
         clearLabel={t.ui("common.clearTierList")}
       >
         {activeTab === "characters" ? (
           <CharacterTierListView onActions={handleActions} />
-        ) : (
+        ) : activeTab === "weapons" ? (
           <WeaponTierListView onActions={handleActions} />
+        ) : (
+          <ArtifactTierListView onActions={handleActions} />
         )}
       </PageErrorBoundary>
     </PageLayout>
