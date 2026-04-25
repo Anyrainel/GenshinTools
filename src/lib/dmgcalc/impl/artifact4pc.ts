@@ -1045,9 +1045,18 @@ class ADayCarvedFromRisingWinds4pc extends ArtifactSetBase {
   // 4pc: After hitting opponent, ATK +25%. (assume always true)
   // If equipping character is Hexerei (Witch's Homework), also CR +20%.
   readonly halfSetId = "atk%-18";
-  readonly stats: StatEntry[] = [{ key: "atk%", value: 0.25 }];
-  readonly buffs: StatBuff[] =
-    this.teamMeta.factions[this.charId] === "Hexerei"
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] = [
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["on-hit"],
+      },
+      { receiver: "self" },
+      [{ key: "atk%", value: 0.25 }]
+    ),
+    ...(this.teamMeta.factions[this.charId] === "Hexerei"
       ? [
           new StatBuff(
             {
@@ -1059,7 +1068,8 @@ class ADayCarvedFromRisingWinds4pc extends ArtifactSetBase {
             [{ key: "cr", value: 0.2 }]
           ),
         ]
-      : [];
+      : []),
+  ];
 }
 
 @RegisterArtifactSet("silken_moons_serenade")
@@ -1377,38 +1387,16 @@ const heavensGiftOption = {
 
 @RegisterArtifactSet("heavens_gift", heavensGiftOption)
 class HeavensGift4pc extends ArtifactSetBase {
-  // 2pc: Energy Recharge +20% (via halfSetId)
-  // 4pc: If equipping char has completed "Witch's Homework" (= Hexerei faction),
-  //      after E they gain "Light's Guidance" (20s): team gets +20% elemental DMG
-  //      of the equipping character's element. Effect triggers off-field.
-  //      When team has "Hexerei: Secret Rite" (≥2 Hexerei), upgrades to "Mortal Hymn":
-  //      bonus becomes +40% and also applies for the "current active party
-  //      member's" element as well (same-element bonuses don't stack).
-  //      Same-name artifact DMG bonuses do not stack (per-element noStackId).
+  // 2pc: ER +20%.
+  // 4pc: Hexerei wearer gets a post-E buff giving
+  //       +20% dmg to their element off-field.
+  //       With 2+ Hexerei, Mortal Hymn upgrades to +40%
+  //       and also applies to other team elements.
+  //       Same-element Heaven's Gift bonuses do not stack.
   //
-  // Modeling — per translator U-series, this time-limited post-skill buff that
-  // triggers every rotation is modeled as always-on. The base buff always
-  // covers the equipping character's element at the appropriate tier.
-  //
-  // Mortal Hymn's "active party member's element" clause depends on who is
-  // on-field at the moment of damage, which the team-comp model cannot
-  // determine globally. The OptionMap offers two modeling approaches:
-  //
-  //   "self" (default, realistic): for each OTHER team element present,
-  //     apply the +40% DMG bonus with receiver `otherOnField`, so it only
-  //     counts when that element's owner is the active on-field character.
-  //     This is an approximation — it implicitly assumes the on-field char
-  //     is the sole source of their own element (true in most team comps),
-  //     and excludes off-field damage from benefiting.
-  //
-  //   "team" (optimistic): apply the +40% team-wide to every other team
-  //     element. Useful when several characters share an element (the bonus
-  //     effectively applies continuously) or when off-field elemental damage
-  //     needs to benefit.
-  //
-  // noStackId uses `${artifactSetId}-${elem}` on every element-specific buff,
-  // so two Heaven's Gift equippers can't double-stack the same element but
-  // different elements remain independent.
+  // Modeling: effect is always-on. "self" limits bonus to
+  // the active on-field element, "team" makes it team-wide.
+  // noStackId is element-specific to prevent same-element stacking.
   private readonly o = resolveOption(heavensGiftOption, this.option);
   readonly halfSetId = "er-20";
   readonly stats: StatEntry[] = [];

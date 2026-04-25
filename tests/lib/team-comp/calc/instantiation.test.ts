@@ -359,6 +359,18 @@ describe("Entity Instantiation", () => {
       }
     });
 
+    it.each(
+      Object.keys(artifactsById)
+    )("artifact set %s has no direct 4pc stat entries", (artifactId) => {
+      try {
+        const team = new TeamMeta(["amber"]);
+        const artifactSet = createArtifactSet(artifactId, "amber", team);
+        expect(artifactSet.stats).toEqual([]);
+      } catch (e) {
+        rethrowIfUnexpected(e, "No artifact set registered");
+      }
+    });
+
     it.each(Object.keys(artifactHalfSetsById))("artifact half-set %s", (id) => {
       try {
         const team = new TeamMeta(["amber"]);

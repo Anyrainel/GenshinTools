@@ -9,6 +9,14 @@ Sections marked **[S]** apply to Characters only.
 
 ## Universal Checks
 
+### U0. File Placement
+
+The `show` output indicates which file the implementation is in. **[BUG]** if misplaced:
+
+- Characters: `character{rarity}{Region}.ts` — rarity and region must match `charInfo`.
+- Weapons: `weapon{rarity}{WeaponType}.ts` — rarity and weapon type must match.
+- Artifacts: 2pc bonus in `artifact2pc.ts`, 4pc bonus in `artifact4pc.ts`.
+
 ### U1. `BuffTarget.receiver` Type
 
 Map every buff's game text to the correct receiver. Wrong receiver = **[BUG]**:
@@ -124,15 +132,52 @@ These are enemy debuffs — they benefit all party members equally. Scoping to `
 - `origin` must be one of: `"A"`, `"E"`, `"Q"`, `"P1"`–`"P4"`, `"C0"`–`"C6"`, `"R1"`–`"R5"`. Multiple origins joined with `"/"` (e.g., `"P2/C2"`). No dashes or other separators.
 - `triggers` should use kebab-case strings consistent with existing usage (e.g., `"low-hp"`, `"elemental-reaction"`, `"burst"`, `"lunarBloom"`). Match `AbilityType` or `ReactionType` values when applicable. Always-active passives use `"A1"` / `"A4"`.
 
-### U8. File Placement
+### U8. Conditional Stat Modifiers Must Be Buffs
 
-The `show` output indicates which file the implementation is in. **[BUG]** if misplaced:
+Any stat modifier gated by combat text such as "after hitting", "after using E/Q", "after triggering a reaction", "while shielded", or similar activation conditions must be implemented as a `StatBuff` or scaling buff with accurate `triggers`, even when the calculator models the condition as always active for combat.
 
-- Characters: `character{rarity}{Region}.ts` — rarity and region must match `charInfo`.
-- Weapons: `weapon{rarity}{WeaponType}.ts` — rarity and weapon type must match.
-- Artifacts: 2pc bonus in `artifact2pc.ts`, 4pc bonus in `artifact4pc.ts`.
+- **[BUG]** if a conditional modifier is placed in provider `stats`. Direct `stats` are unconditional and are included in idle stats, so combat-gated effects would appear when they should not.
+- Use provider `stats` only for unconditional inherent stats that should appear in idle stats, such as character base stats, weapon main/substats, and unconditional 2pc-style stat bonuses.
+- Artifact 4pc bonuses should normally be represented through `buffs`; `ArtifactSetBase.stats` should stay empty unless a documented engine/design exception requires otherwise.
 
-### U8b. `maxStacks` on Limited-Activation Buffs
+### U8b. Buff Modeling Scope
+
+Only damage-affecting stats are modeled. When reviewing:
+
+- **Skip silently** (omit from summary table): utility and defense buffs — shield strength, character damage-taken reduction, energy grants. These are out of scope; no [BUG] or [OK] outcome needed.
+- **`atkSpd%` and `heal%` are modeled.** **[BUG]** if a buff granting either stat is absent or incorrect. Note: `heal%` can also appear as the input key of a `ScalingBuff` that converts healing bonus into an offensive stat (e.g., heal% → atk%).
+- **[TRACK]** if game text converts an *unmodeled* defensive stat (e.g., shield strength, incoming DMG reduction) into an offensive stat — create a tracker item with category `engine-gap`.
+
+### U9. Assumption Conventions
+
+The model targets **peak damage**, not average loop DPS. Verify each assumption is applied correctly:
+
+`cbs()` fields (`origin`, `triggers`) and other `BuffSource.triggers` are display-only — they don't gate runtime buff distribution, but must accurately reflect the activation condition. See U7b: conditional stat modifiers must still be buffs, not provider `stats`, even when modeled as always active.
+
+| Assumption type | Expected handling | Flag if wrong |
+|---|---|---|
+| Conditional buff with no team dependency (e.g., post-skill, post-attack) | Always active; label the condition accurately in `triggers` | [BUG] if blocked by unnecessary runtime check, or if `triggers` are missing/wrong |
+| Stackable buff, easy to maintain at max | Max stacks, no OptionMap | [BUG] |
+| Stackable buff, each stack needs specific teammates | `teamMeta` count per stack | [BUG] if assumed max without checking |
+| Stackable buff, hard to maintain at max | `OptionMap` | [BUG] if hardcoded |
+| Mutually exclusive modes (form switches, random buffs like 流浪乐章, HP-state gates) | `OptionMap` per mode | [BUG] if all variants applied simultaneously |
+| Dual-mode character with lasting buffs (character can switch between modes freely, and buffs from each mode persist for a duration) | Both modes' **buffs** treated as simultaneously active; implement separate **formulas** for each mode's damage; if modes grant different **team buffs**, use `OptionMap` to select which team buff the character provides | [BUG] if one mode's buffs are deleted because "only one mode is active at a time" — the character can switch and retain both |
+| Low-HP condition ("HP低于X%", "when HP is below X%") ★ | `OptionMap` with explicit HP states | [BUG] if assumed always-on |
+| Enemy HP condition ("HP高于/低于X%的敌人", "opponents with more/less than X% HP") ★ | `OptionMap` with enemy HP states | [BUG] if assumed always-active |
+| Shield condition | `teamMeta.hasShielder()` | [BUG] if always-on or always-off |
+| Heal condition | `teamMeta.hasHealer()` | [BUG] if always-on or always-off |
+| Reaction condition | `teamMeta.hasReaction(...)` — see note on lunar superseding below | [BUG] if unconditional |
+| Enemy element affection ("对处于X元素影响下的敌人") | Active if team has an X-element character (see U11) | [BUG] if assumed always-active |
+| Self element affection ("处于X元素附着下") | Always assumed active; add a code comment noting the assumption | [BUG] if gated unnecessarily |
+| Moonsign Nascent Gleam (初辉) | `teamMeta.countByFaction("Moonsign") >= 1` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
+| Moonsign Ascendant Gleam (满辉) | `teamMeta.countByFaction("Moonsign") >= 2` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
+| Hexerei: Secret Rite (魔导·秘仪) | `teamMeta.countByFaction("Hexerei") >= 2` | [BUG] if checks for a specific character instead of faction count |
+
+**★ HP-based conditions** apply to **all entity types** (characters, weapons, artifacts), not just characters. `ArtifactSetBase` and `WeaponBase` both support `OptionMap` — use `@RegisterArtifactSet("id", optionDef)` or `@RegisterWeapon("id", optionDef)` to declare the option schema.
+
+If none of the above rows covers the condition, consult the [When to Create a Tracker Item](#appendix-when-to-create-a-tracker-item) appendix.
+
+### U10. `maxStacks` on Limited-Activation Buffs
 
 When game text specifies that a **team/other buff** can only trigger a limited number of times per cast/rotation (e.g., "最多触发N次", "can trigger up to N times", "the above effect can be triggered N time(s)"), the `BuffSource` must include `maxStacks: N`.
 
@@ -170,13 +215,38 @@ for (const cid of Object.keys(this.teamMeta.elements)) {
 "char-normal": { parts: [{ formula }] },
 ```
 
-### U9. Buff Modeling Scope
+### U11. Ramping Buffs → OptionMap
 
-Only damage-affecting stats are modeled. When reviewing:
+Buffs that ramp up or down over time (not instant) should be implemented as `OptionMap` using an `OptionMap`, offering fixed value tiers for the user to choose from.
 
-- **Skip silently** (omit from summary table): utility and defense buffs — shield strength, character damage-taken reduction, energy grants. These are out of scope; no [BUG] or [OK] outcome needed.
-- **`atkSpd%` and `heal%` are modeled.** **[BUG]** if a buff granting either stat is absent or incorrect. Note: `heal%` can also appear as the input key of a `ScalingBuff` that converts healing bonus into an offensive stat (e.g., heal% → atk%).
-- **[TRACK]** if game text converts an *unmodeled* defensive stat (e.g., shield strength, incoming DMG reduction) into an offensive stat — create a tracker item with category `engine-gap`.
+**When this applies:** The buff's value changes continuously over a duration and takes more than ~1 second to reach its target. The user cannot meaningfully control which value they get — it depends on elapsed time.
+
+| Example | Ramp behavior | Modeling |
+|---|---|---|
+| Furina Fanfare stacks | Ramps from 0 to max over ~18s burst duration | `OptionMap` with tier choices (e.g., 100/200/300/400 stacks) |
+| Yelan burst DMG% | Ramps 1%→50% linearly over 15s | `OptionMap` with tier choices (e.g., 25%/35%/50%) |
+
+**When this does NOT apply:** Buffs that stack after using specific abilities (A/E/Q) individually do NOT need this treatment — those are modeled as fixed stack counts at max. For example, "gain 1 stack per Normal Attack hit, max 5 stacks" is fine as a fixed 5-stack assumption, because the player can easily reach max stacks by performing the required actions.
+
+**Key distinction:** Time-dependent ramp (needs `OptionMap` with tiers) vs action-dependent stacking (fixed max assumption is fine per U8).
+
+- **[BUG]** if a time-ramping buff is hardcoded to its maximum value without offering user-selectable tiers.
+- **[BUG]** if an action-dependent stackable buff (easy to maintain at max per U8) is unnecessarily gated behind `OptionMap`.
+
+**Forced averaging:** When an entity already has a more important `OptionMap` (each entity supports only one), a time-ramping buff may be hardcoded to an amortized average instead.
+
+- **[TRACK]** if a buff uses a forced average (not max, not user-selectable) and no tracker item documents it with category `approximation`.
+
+### U12. Team Element & Reaction Conditions
+
+- **Reaction conditions**: use `teamMeta.hasReaction(reactionName)`. To determine which aura elements a given trigger element can react with, call `getReactionAuraElements(triggerElement)` from `src/lib/team-comp/helpers.ts` rather than re-deriving the table manually. **Lunar superseding:** when a lunar reaction is possible (requires a 5★ Moonsign teammate), `hasReaction()` for the base reaction returns **false** — e.g., `hasReaction("electroCharged")` is false when `hasReaction("lunarCharged")` is true (see `LUNAR_SUPERSEDES` in constants.ts). Any `hasReaction` gate for electroCharged, bloom, or crystallize (Hydro+Geo only) must also check the corresponding lunar variant (`lunarCharged`, `lunarBloom`, `lunarCrystallize`), or the buff will incorrectly deactivate on Moonsign teams. **[BUG]** if a reaction gate checks only the base reaction without the lunar variant.
+- **Enemy element affection** ("对处于X元素影响下的敌人"): active if any team character applies element X. Check `Object.values(this.teamMeta.elements).includes("X")`.
+- **Element absorption** (buffs): when an absorbed element changes a **buff's** scope or value (e.g., Sucrose C6 "+20% DMG of the absorbed element"), iterate `Object.values(this.teamMeta.elements)` to find which absorbable elements are present and add one buff per match. Derive the absorbable set from game text — do not assume.
+- **Element absorption** (formulas): when absorption changes the **damage element** of a formula (e.g., Kazuha Q additional hits, Traveler Anemo Q), the absorbed element depends on in-game aura priority (Pyro > Hydro > Electro > Cryo) and enemy state — it cannot be determined from team composition alone. **[TRACK]** create a tracker item with category `engine-gap`. **[BUG]** if the implementation picks the first team element or any single element by default — this produces incorrect results when multiple absorbable elements are present.
+- **Self element affection** ("处于X元素附着下"): always assumed active under the peak-damage model. No `teamMeta` check needed; add a code comment noting the assumption.
+- **Element-count threshold**: when a mechanic scales based on the number of qualifying teammates (e.g., "1/2/3 Hydro or Geo characters", "fewer than 2 converted samples"), use `teamMeta.countByElement` or a `Set` over `teamMeta.elements` values. Declare the result as a `private readonly` field before `readonly buffs`. **[BUG]** if hardcoded to max stacks without checking team composition, or tracked in a tracker item as an engine limitation.
+
+If a team-element condition cannot be modeled with any of the above approaches, consult the [When to Create a Tracker Item](#appendix-when-to-create-a-tracker-item) appendix.
 
 ---
 
@@ -260,43 +330,14 @@ Conversely, values from passives (P1–P4) and constellations (C1–C6) are fixe
 - Note: C3/C5 talent level bonuses and teammate passive bonuses (Tartaglia P3 +1 A, Skirk P3 +1 E) are all handled automatically by `this.param()` via `CharacterBase._effectiveLevels`. Implementations should never manually check for these.
 - **[BUG]** if a `this.param()` call uses a conditional param index (e.g., `this.param("E", someCondition ? 2 : 1)`) unless the game mechanic genuinely selects a different param row (e.g., Yanfei C6 extra seal, Hu Tao low-HP burst tier). Constellation-gated talent levels are never a valid reason for conditional indices.
 
-### S6. Assumption Conventions
-
-The model targets **peak damage**, not average loop DPS. Verify each assumption is applied correctly:
-
-`cbs()` fields (`origin`, `triggers`) are display-only — they don't gate runtime buff distribution, but must accurately reflect the activation condition.
-
-| Assumption type | Expected handling | Flag if wrong |
-|---|---|---|
-| Conditional buff with no team dependency (e.g., post-skill, post-attack) | Always active; label the condition accurately in `cbs()` triggers | [BUG] if blocked by unnecessary runtime check, or if `cbs()` triggers are missing/wrong |
-| Stackable buff, easy to maintain at max | Max stacks, no OptionMap | [BUG] |
-| Stackable buff, each stack needs specific teammates | `teamMeta` count per stack | [BUG] if assumed max without checking |
-| Stackable buff, hard to maintain at max | `OptionMap` | [BUG] if hardcoded |
-| Mutually exclusive modes (form switches, random buffs like 流浪乐章, HP-state gates) | `OptionMap` per mode | [BUG] if all variants applied simultaneously |
-| Dual-mode character with lasting buffs (character can switch between modes freely, and buffs from each mode persist for a duration) | Both modes' **buffs** treated as simultaneously active; implement separate **formulas** for each mode's damage; if modes grant different **team buffs**, use `OptionMap` to select which team buff the character provides | [BUG] if one mode's buffs are deleted because "only one mode is active at a time" — the character can switch and retain both |
-| Low-HP condition ("HP低于X%", "when HP is below X%") ★ | `OptionMap` with explicit HP states | [BUG] if assumed always-on |
-| Enemy HP condition ("HP高于/低于X%的敌人", "opponents with more/less than X% HP") ★ | `OptionMap` with enemy HP states | [BUG] if assumed always-active |
-| Shield condition | `teamMeta.hasShielder()` | [BUG] if always-on or always-off |
-| Heal condition | `teamMeta.hasHealer()` | [BUG] if always-on or always-off |
-| Reaction condition | `teamMeta.hasReaction(...)` — see note on lunar superseding below | [BUG] if unconditional |
-| Enemy element affection ("对处于X元素影响下的敌人") | Active if team has an X-element character (see S10) | [BUG] if assumed always-active |
-| Self element affection ("处于X元素附着下") | Always assumed active; add a code comment noting the assumption | [BUG] if gated unnecessarily |
-| Moonsign Nascent Gleam (初辉) | `teamMeta.countByFaction("Moonsign") >= 1` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
-| Moonsign Ascendant Gleam (满辉) | `teamMeta.countByFaction("Moonsign") >= 2` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
-| Hexerei: Secret Rite (魔导·秘仪) | `teamMeta.countByFaction("Hexerei") >= 2` | [BUG] if checks for a specific character instead of faction count |
-
-**★ HP-based conditions** apply to **all entity types** (characters, weapons, artifacts), not just characters. `ArtifactSetBase` and `WeaponBase` both support `OptionMap` — use `@RegisterArtifactSet("id", optionDef)` or `@RegisterWeapon("id", optionDef)` to declare the option schema.
-
-If none of the above rows covers the condition, consult the [When to Create a Tracker Item](#appendix-when-to-create-a-tracker-item) appendix.
-
-### S7. No Construction-Time Stats
+### S6. No Construction-Time Stats
 
 - **[BUG]** if `formulaMap` or a buff inside `readonly buffs = [...]` calls `this.stats.get(...)` at construction time. Stats are not resolved yet — stat-dependent values must go in a named buff class:
   - `ScalingBuff(src, tgt, static, inputKey, outputKey, scale, cap?, threshold?)` — single stat → output. The optional `cap` enforces a hard maximum ("boost capped at 20,000" → `cap: 20000`); `threshold` subtracts a base before scaling ("HP above 30,000").
   - `ErScalingBuff(src, tgt, static, outputKey, scale, cap)` — (ER% − 1.0) × scale, capped.
   - `CrossScalingBuff(src, tgt, static, statA, scaleA, capA, statB, outputKey)` — min(statA × scaleA, capA) × statB → output, for cross-stat products with a cap on the first factor.
 
-### S8. Formula Coverage
+### S7. Formula Coverage
 
 **Missing formula check:** If a character's significant damage source (any attack contributing meaningfully to their rotation DPS) has no `formulaMap` entry, flag it. Adding formulas is not harmful — use your judgment to identify missing ones rather than relying on an external list.
 
@@ -312,27 +353,15 @@ This does NOT apply to transformative, lunar, or other inherent reaction damage.
 - **[BUG]** if separate `formulaMap` entries exist for the same attack with different amplifying/catalyze reactions (e.g., `"hutao-charge-vape"` and `"hutao-charge-melt"` as two entries).
 - **[BUG]** if inherent reaction damage (hyperbloom, swirl, lunar, etc.) is missing its own formula entry because it was conflated with "no separate reaction variants."
 
-### S8b. 5★ E/Q Formula Completeness
+### S8. 5★ E/Q Formula Completeness
 
-For **5★ characters**, every distinct damage instance described in the E (Elemental Skill) and Q (Elemental Burst) talent text must have a corresponding formula part in `formulaMap`. This is stricter than S8's general coverage check — S8 flags missing formulas only when they're rotation-significant, but for 5★ E/Q abilities, all damage parts should be modeled regardless of rotation contribution.
+For **5★ characters**, every damaging E/Q talent row must be represented in `formulaMap`, even if that damage is not rotation-significant. This is stricter than S7's general coverage rule. Normal Attack formulas and 4★ E/Q formulas still follow S7 judgment.
 
-Normal Attack (A) formulas are welcome but not required by this rule — many 5★ characters don't use normal attacks as a meaningful damage source (off-field supports, characters whose E overrides A multipliers, on-field DPS that don't rely on normal attacks). Use S8's general coverage judgment for A.
-
-**What counts as a "distinct damage instance":** Each row in the talent detail table that shows a damage multiplier (`{paramN:P}` or `{paramN:F1P}`) is a damage instance. Multiple hits from the same action at the same multiplier use `hits: N` on a single part.
-
-**How to assemble formulas:** Formulas should be organized at the granularity of **user actions during combat** — not one formula per damage row. For example:
-- A skill that deals an initial hit + creates a turret with periodic ticks → two formulas: "E Cast" and "E Tick". Each formula gets its own `comboDescriptor` count (1 for the cast, N for the ticks). Do **not** combine cast + ticks into one formula with mixed parts.
-- A pure tick-based damage source (one tick number on a periodic timer, no initial hit) → prefer a **per-tick** formula (single part, no `hits`) and set the tick count via `comboDescriptor.count`. This keeps tick count easy to tune after gameplay observation. **Exception**: complex tick patterns (e.g., Furina's E Salon Members cycle through multiple tick variants per rotation) should stay as a single formula with the full pattern modeled via `hits`/parts.
-- A burst with a slash + bloom → one formula with two parts
-- A normal attack sequence (N1–N5) → one formula with 5 parts
-- A skill with tap and hold modes dealing different damage → two formulas: "E Tap" and "E Hold"
-- A character with a state-change E that has an initial E and a follow-up E → two formulas (like Varesa's "E Initial" and "E Following")
-
-**Exception — non-damaging components:** Skip rows that are clearly non-damage (duration, stamina cost, CD, energy cost, Nightsoul point limits). These have format codes like `{paramN:F1}s` or `{paramN:I}` (no `P` suffix) and label text containing 持续时间, 冷却时间, 体力消耗, 元素能量, 夜魂值上限.
-
-**4★ characters** are exempt from this rule — their E/Q damage is often negligible in their support role, so S8's general coverage check is sufficient.
-
-- **[BUG]** if a 5★ character's E or Q talent has damage multiplier rows with no corresponding formula part anywhere in `formulaMap`.
+- **Damage rows:** rows with damage multipliers such as `{paramN:P}` or `{paramN:F1P}`. Skip clear non-damage rows like duration, CD, stamina, energy, and point limits.
+- **Grouping:** formulas should follow combat actions, not talent-table rows. Initial hit plus turret/tick damage usually means separate formulas; a slash plus bloom from one burst action can be one formula with multiple parts; tap/hold or first/follow-up modes should be separate formulas.
+- **Ticks:** prefer a per-tick formula with `comboDescriptor` count for simple periodic damage. Keep complex repeating patterns in one formula only when the pattern itself matters.
+- **Repeated same-multiplier hits:** use `hits: N` on one part, per S3.
+- **[BUG]** if a 5★ E/Q damage row has no corresponding formula part anywhere in `formulaMap`.
 
 ### S9. Constellation Enhancements: Buff vs. New Formula
 
@@ -342,18 +371,7 @@ When a constellation improves an **existing** attack's damage, model it as a `St
 
 **When a new formula entry IS warranted:** The constellation introduces a genuinely new damage source — a new attack mode, or a proc on a different trigger than any existing formula. Merely scaling up an existing hit's multiplier does not qualify.
 
-### S10. Team Element & Reaction Conditions
-
-- **Reaction conditions**: use `teamMeta.hasReaction(reactionName)`. To determine which aura elements a given trigger element can react with, call `getReactionAuraElements(triggerElement)` from `src/lib/team-comp/helpers.ts` rather than re-deriving the table manually. **Lunar superseding:** when a lunar reaction is possible (requires a 5★ Moonsign teammate), `hasReaction()` for the base reaction returns **false** — e.g., `hasReaction("electroCharged")` is false when `hasReaction("lunarCharged")` is true (see `LUNAR_SUPERSEDES` in constants.ts). Any `hasReaction` gate for electroCharged, bloom, or crystallize (Hydro+Geo only) must also check the corresponding lunar variant (`lunarCharged`, `lunarBloom`, `lunarCrystallize`), or the buff will incorrectly deactivate on Moonsign teams. **[BUG]** if a reaction gate checks only the base reaction without the lunar variant.
-- **Enemy element affection** ("对处于X元素影响下的敌人"): active if any team character applies element X. Check `Object.values(this.teamMeta.elements).includes("X")`.
-- **Element absorption** (buffs): when an absorbed element changes a **buff's** scope or value (e.g., Sucrose C6 "+20% DMG of the absorbed element"), iterate `Object.values(this.teamMeta.elements)` to find which absorbable elements are present and add one buff per match. Derive the absorbable set from game text — do not assume.
-- **Element absorption** (formulas): when absorption changes the **damage element** of a formula (e.g., Kazuha Q additional hits, Traveler Anemo Q), the absorbed element depends on in-game aura priority (Pyro > Hydro > Electro > Cryo) and enemy state — it cannot be determined from team composition alone. **[TRACK]** create a tracker item with category `engine-gap`. **[BUG]** if the implementation picks the first team element or any single element by default — this produces incorrect results when multiple absorbable elements are present.
-- **Self element affection** ("处于X元素附着下"): always assumed active under the peak-damage model. No `teamMeta` check needed; add a code comment noting the assumption.
-- **Element-count threshold**: when a mechanic scales based on the number of qualifying teammates (e.g., "1/2/3 Hydro or Geo characters", "fewer than 2 converted samples"), use `teamMeta.countByElement` or a `Set` over `teamMeta.elements` values. Declare the result as a `private readonly` field before `readonly buffs`. **[BUG]** if hardcoded to max stacks without checking team composition, or tracked in a tracker item as an engine limitation.
-
-If a team-element condition cannot be modeled with any of the above approaches, consult the [When to Create a Tracker Item](#appendix-when-to-create-a-tracker-item) appendix.
-
-### S11. Physical vs Elemental Damage on `DamageTag`
+### S10. Physical vs Elemental Damage on `DamageTag`
 
 Every formula's `DamageTag` must specify the correct `element`. **[BUG]** if a physical damage formula uses the character's own vision element instead of `"physical"`, or vice versa.
 
@@ -361,47 +379,21 @@ Every formula's `DamageTag` must specify the correct `element`. **[BUG]** if a p
 
 | Ability type | Default element | Override condition |
 |---|---|---|
-| Skill (`"skill"`) | Character's vision element | Only physical if game text explicitly says so (e.g., Eula, Freminet, Xinyan) |
-| Burst (`"burst"`) | Character's vision element | Only physical if game text explicitly says so (e.g., Eula, Xinyan) |
+| Skill (`"skill"`) | Character's element | Only physical if game text explicitly says so (e.g., Eula, Freminet, Xinyan) |
+| Burst (`"burst"`) | Character's element | Only physical if game text explicitly says so (e.g., Eula, Xinyan) |
 | Normal / Charged / Plunge | **Physical** | See exceptions below |
 
 **Exceptions — Normal/Charged/Plunge that deal elemental damage:**
 
-1. **Catalyst users**: all attacks always match the character's vision element. Catalyst users never deal physical damage.
-2. **Elemental infusion from skill/burst**: when a character enters a special state (after using E or Q) that converts Normal/Charged/Plunge attacks to an element, those formulas use that element instead of physical. Examples: Hu Tao (Pyro infusion from E), Raiden Shogun (Electro from Q), Cyno (Electro from Q), Alhaitham (Dendro from E mirrors).
+1. **Catalyst users**: all attacks always match the character's element. Catalyst users never deal physical damage.
+2. **Elemental infusion from skill/burst**: when a character enters a special state (after using E or Q) that converts Normal/Charged/Plunge attacks to an element, those formulas use that element instead of physical. Examples: Hu Tao (Pyro infusion from E), Raiden Shogun (Electro from Q).
 3. **Teammate-element-dependent attacks**: some characters deal elemental damage based on teammates' elements (e.g., Chasca, Varka). The element on these formulas depends on team composition — follow the game text for which elements qualify and how they are selected.
 4. **Innate elemental attacks in talent text**: some characters have specific attacks listed as elemental in their talent description (e.g., certain charged attacks or plunge effects). Follow the game text.
 
-**Verification steps:**
-- For every Normal/Charged/Plunge formula, check whether the character is a catalyst user → elemental, or has an infusion/conversion mechanic → elemental during that state, otherwise → `"physical"`.
-- For every Skill/Burst formula, default to the character's vision element unless the game text explicitly mentions physical damage.
 - **[BUG]** if a bow/sword/polearm/claymore user's uninfused Normal/Charged/Plunge formula uses any element other than `"physical"`.
 - **[BUG]** if a catalyst user's Normal/Charged/Plunge formula uses `"physical"`.
 
-### S12. Ramping Buffs → OptionMap
-
-Buffs that ramp up or down over time (not instant) should be implemented as `OptionMap` using an `OptionMap`, offering fixed value tiers for the user to choose from.
-
-**When this applies:** The buff's value changes continuously over a duration and takes more than ~1 second to reach its target. The user cannot meaningfully control which value they get — it depends on elapsed time.
-
-| Example | Ramp behavior | Modeling |
-|---|---|---|
-| Furina Fanfare stacks | Ramps from 0 to max over ~18s burst duration | `OptionMap` with tier choices (e.g., 100/200/300/400 stacks) |
-| Yelan burst DMG% | Ramps 1%→50% linearly over 15s | `OptionMap` with tier choices (e.g., 25%/35%/50%) |
-| Xiao burst DMG% | Decays over burst duration | `OptionMap` with tier choices reflecting effective average |
-
-**When this does NOT apply:** Buffs that stack after using specific abilities (A/E/Q) individually do NOT need this treatment — those are modeled as fixed stack counts at max. For example, "gain 1 stack per Normal Attack hit, max 5 stacks" is fine as a fixed 5-stack assumption, because the player can easily reach max stacks by performing the required actions.
-
-**Key distinction:** Time-dependent ramp (needs `OptionMap` with tiers) vs action-dependent stacking (fixed max assumption is fine per S6).
-
-- **[BUG]** if a time-ramping buff is hardcoded to its maximum value without offering user-selectable tiers.
-- **[BUG]** if an action-dependent stackable buff (easy to maintain at max per S6) is unnecessarily gated behind `OptionMap`.
-
-**Forced averaging:** When an entity already has a more important `OptionMap` (each entity supports only one), a time-ramping or non-trivial buff may be hardcoded to an amortized average instead. This is acceptable, but every forced average **must** be documented in the tracker with category `approximation` so it remains visible. The tracker item should note the averaged value, the actual range, and why `OptionMap` was not used (existing option takes priority).
-
-- **[TRACK]** if a buff uses a forced average (not max, not user-selectable) and no tracker item documents it.
-
-### S13. Off-Field Damage Parts
+### S11. Off-Field Damage Parts
 
 When a formula part represents damage dealt while the character is off-field
 (deployable skills, persistent burst effects, coordinated attacks), mark it
@@ -438,9 +430,9 @@ When the review agent encounters an issue it cannot resolve by applying the rule
 
 These can be resolved using existing rules — do NOT create tracker items for:
 
-- HP-state conditions → OptionMap (see S6)
-- Enemy element affection → S10 team element check
-- Element absorption (buffs only) → S10 per-element buff iteration
+- HP-state conditions → OptionMap (see U8)
+- Enemy element affection → U11 team element check
+- Element absorption (buffs only) → U11 per-element buff iteration
 - Debuff applied and consumed by the same character → model as self buff or formula part
 - Flat damage caps → `ScalingBuff` `cap` parameter (see S7)
-- Conditional buffs with no team dependency → see S6
+- Conditional buffs with no team dependency → see U8
