@@ -63,14 +63,42 @@ function producesParticles(act: TimelineAction): boolean {
   );
 }
 
+/** Score = ER values sorted descending. Compared lexicographically so the
+ *  optimizer minimizes max ER first, then second-highest, then third, etc.
+ *  Exported for testing the ordering behavior in isolation. */
+export function scoreOf(results: ERResult[]): number[] {
+  return results.map((r) => r.erNeeded).sort((a, b) => b - a);
+}
+
+/** Returns true if `a` is strictly better (lexicographically smaller) than `b`.
+ *  Exported for testing. */
+export function scoreLess(a: number[], b: number[]): boolean {
+  const n = Math.max(a.length, b.length);
+  for (let i = 0; i < n; i++) {
+    const av = a[i] ?? 0;
+    const bv = b[i] ?? 0;
+    if (av < bv) return true;
+    if (av > bv) return false;
+  }
+  return false;
+}
+
 /**
- * Find optimal wait block insertions to minimize the maximum team ER requirement.
+ * Find optimal wait block insertions to minimize the team ER requirement vector,
+ * lexicographically: minimize max ER first, then second-highest, then third, ...
  *
- * A wait block after a particle-producing action causes the producing character
- * to self-absorb their particles (on-field, same-element bonus).
+ * For each particle-producing edge (a particle-producing action immediately
+ * followed by another action), exactly two wait insertions are enumerated:
  *
- * Uses greedy search: iteratively pick the edit (insert wait / remove wait /
- * swap E↔Q) that reduces max team ER the most. Stops when no edit improves.
+ *   (a) wait owned by the producer char — "don't switch yet, absorb then switch".
+ *       Skipped when next.char === producer.char (no field switch ⇒ no point).
+ *   (b) wait owned by the next char — "don't cast Q yet, absorb then cast".
+ *       Skipped when next.action is not Q/specialQ (otherwise no point in
+ *       coming on early).
+ *
+ * Each iteration also tries removing existing waits and swapping E↔Q for the
+ * same char. Greedy: pick the edit that improves the score the most; stop
+ * when no edit improves.
  */
 export function optimizeWaitBlocks(
   team: TeamMember[],
@@ -84,57 +112,56 @@ export function optimizeWaitBlocks(
   const maxIterations = 20;
 
   for (let iter = 0; iter < maxIterations; iter++) {
-    const currentMaxER = Math.max(...currentResults.map((r) => r.erNeeded));
-    if (currentMaxER <= 100 || currentMaxER === Number.POSITIVE_INFINITY) break;
+    const currentScore = scoreOf(currentResults);
+    const currentMax = currentScore[0] ?? 0;
+    // 100 is the floor (non-bursters report 100); ∞ means unsolvable.
+    if (currentMax <= 100 || currentMax === Number.POSITIVE_INFINITY) break;
 
     let bestTimeline: ERTimeline | null = null;
-    let bestMaxER = currentMaxER;
+    let bestScore = currentScore;
     let bestResults: ERResult[] | null = null;
 
-    // Try inserting a wait after each particle-producing action
+    const tryCandidate = (candidate: ERTimeline) => {
+      const candidateResults = calculateTeamER(team, candidate, options);
+      const candidateScore = scoreOf(candidateResults);
+      if (scoreLess(candidateScore, bestScore)) {
+        bestScore = candidateScore;
+        bestTimeline = candidate;
+        bestResults = candidateResults;
+      }
+    };
+
+    // Per particle-producing edge, enumerate wait-by-producer and wait-by-next.
     for (let i = 0; i < current.actions.length; i++) {
       const act = current.actions[i];
       if (!producesParticles(act)) continue;
+      const next = current.actions[i + 1];
+      if (!next) continue;
+      // Already padded with a wait at this edge — leave it to the remove pass.
+      if (next.action === "wait") continue;
 
-      if (
-        i + 1 < current.actions.length &&
-        current.actions[i + 1].action === "wait" &&
-        current.actions[i + 1].char === act.char
-      )
-        continue;
+      // (a) Wait owned by producer — invalid when next is the same char.
+      if (next.char !== act.char) {
+        tryCandidate(
+          insertAction(current, i + 1, { char: act.char, action: "wait" })
+        );
+      }
 
-      const candidate = insertAction(current, i + 1, {
-        char: act.char,
-        action: "wait",
-      });
-      const candidateResults = calculateTeamER(team, candidate, options);
-      const candidateMaxER = Math.max(
-        ...candidateResults.map((r) => r.erNeeded)
-      );
-
-      if (candidateMaxER < bestMaxER) {
-        bestMaxER = candidateMaxER;
-        bestTimeline = candidate;
-        bestResults = candidateResults;
+      // (b) Wait owned by next char — only when next is energy-consuming (Q/specialQ).
+      if (BURST_ACTIONS.has(next.action) && next.char !== act.char) {
+        tryCandidate(
+          insertAction(current, i + 1, { char: next.char, action: "wait" })
+        );
       }
     }
 
-    // Try removing existing wait blocks
+    // Try removing existing wait blocks (pruning unhelpful waits).
     for (let i = 0; i < current.actions.length; i++) {
       if (current.actions[i].action !== "wait") continue;
-      const candidate = removeAction(current, i);
-      const candidateResults = calculateTeamER(team, candidate, options);
-      const candidateMaxER = Math.max(
-        ...candidateResults.map((r) => r.erNeeded)
-      );
-      if (candidateMaxER < bestMaxER) {
-        bestMaxER = candidateMaxER;
-        bestTimeline = candidate;
-        bestResults = candidateResults;
-      }
+      tryCandidate(removeAction(current, i));
     }
 
-    // Try swapping adjacent E↔Q for same char
+    // Try swapping adjacent E↔Q for the same char.
     for (let i = 0; i < current.actions.length - 1; i++) {
       const a = current.actions[i];
       const b = current.actions[i + 1];
@@ -143,16 +170,7 @@ export function optimizeWaitBlocks(
         BURST_ACTIONS.has(b.action) &&
         a.char === b.char
       ) {
-        const candidate = swapAdjacent(current, i);
-        const candidateResults = calculateTeamER(team, candidate, options);
-        const candidateMaxER = Math.max(
-          ...candidateResults.map((r) => r.erNeeded)
-        );
-        if (candidateMaxER < bestMaxER) {
-          bestMaxER = candidateMaxER;
-          bestTimeline = candidate;
-          bestResults = candidateResults;
-        }
+        tryCandidate(swapAdjacent(current, i));
       }
     }
 
