@@ -1928,6 +1928,7 @@ export const i18nUiData = {
       Q: { en: "Solid", zh: "精良" },
       N: { en: "Filler", zh: "过渡" },
       T: { en: "Fodder", zh: "狗粮" },
+      FLEX: { en: "Flex", zh: "散件" },
     },
     // Rule descriptions (what decided the action)
     rule: {

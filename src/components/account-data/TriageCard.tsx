@@ -4,7 +4,10 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { TriageDecision } from "@/lib/account-data/triage/types";
+import type {
+  EmbryoResult,
+  TriageDecision,
+} from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 import { getRarityColor, getTriageTierColor } from "../shared/colors";
 
@@ -33,6 +36,7 @@ const TIER_KEY = {
   Q: "triage.tier.Q",
   N: "triage.tier.N",
   T: "triage.tier.T",
+  FLEX: "triage.tier.FLEX",
 } as const;
 
 const CHIP_KEY = {
@@ -78,15 +82,62 @@ function spName(sp: string, t: T): string {
   return key ? t.ui(key) : sp;
 }
 
+function demandSourceLabel(result: EmbryoResult, t: T): string {
+  const src = result.embryo.demand.demandSource;
+  if (src.type === "4pc") return t.ui("computeFilters.fourPc");
+  if (src.type === "2pc") return t.ui("computeFilters.twoPc");
+  return t.ui("triage.rulePrefixFlex");
+}
+
+function groupableDemandSourceKey(result: EmbryoResult): string | null {
+  const src = result.embryo.demand.demandSource;
+  if (src.type === "2pc") return null;
+  return src.type === "4pc" ? `4pc:${src.setKey}` : "flex";
+}
+
+function groupEvaluationResults(results: EmbryoResult[]) {
+  const groups: Array<{
+    key: string;
+    results: EmbryoResult[];
+  }> = [];
+  const groupIndex = new Map<string, number>();
+
+  for (const result of results) {
+    const sourceKey = groupableDemandSourceKey(result);
+    const key = sourceKey && result.tier ? `${result.tier}:${sourceKey}` : null;
+
+    if (!key) {
+      groups.push({ key: `single:${groups.length}`, results: [result] });
+      continue;
+    }
+
+    const existingIndex = groupIndex.get(key);
+    if (existingIndex == null) {
+      groupIndex.set(key, groups.length);
+      groups.push({ key, results: [result] });
+    } else {
+      groups[existingIndex].results.push(result);
+    }
+  }
+
+  return groups;
+}
+
 // Tier Badge
 
-function TierBadge({ tier }: { tier: string }) {
+function TierBadge({
+  tier,
+  colorTier = tier,
+}: {
+  tier: string;
+  colorTier?: string;
+}) {
   const { t } = useLanguage();
   return (
     <span
       className={cn(
         "inline-flex items-center justify-center h-5 px-1 rounded text-[10px] font-bold border shrink-0",
-        getTriageTierColor(tier, "badge")
+        getTriageTierColor(colorTier, "badge")
       )}
     >
       {tierName(tier, t)}
@@ -123,6 +174,11 @@ export function TriageCard({
   const setName = t.artifact(artifact.setKey);
   const dr = decision.decidingResult;
   const isProtected = section === "protected";
+  const isNoDemandDecision = dr?.ruleId === "TD";
+  const showFlexTierBadge =
+    dr?.tier != null &&
+    (dr.tier === "N" || dr.tier === "T") &&
+    decision.specialRules.includes("FLEX");
 
   const chipKind: keyof typeof CHIP_COLOR =
     section === "recommendLock"
@@ -152,22 +208,43 @@ export function TriageCard({
           />
 
           <div className="flex-1 min-w-0">
-            {/* Row 1: set name + tier badge */}
-            <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "text-sm font-medium truncate",
-                  getRarityColor(artifact.rarity, "text")
-                )}
-              >
-                {setName}
-              </span>
-              {dr?.tier && !isProtected && <TierBadge tier={dr.tier} />}
+            <div className="flex items-start gap-3">
+              <div className="flex-1 min-w-0">
+                {/* Row 1: set name + tier badge */}
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "text-sm font-medium truncate",
+                      getRarityColor(artifact.rarity, "text")
+                    )}
+                  >
+                    {setName}
+                  </span>
+                  {dr?.tier && !isProtected && (
+                    <TierBadge
+                      tier={showFlexTierBadge ? "FLEX" : dr.tier}
+                      colorTier={showFlexTierBadge ? "P" : dr.tier}
+                    />
+                  )}
+                </div>
+                {/* Row 2: slot · mainstat */}
+                <div className="text-xs text-muted-foreground">
+                  {t.slot(artifact.slotKey)} ·{" "}
+                  {t.statShort(artifact.mainStatKey)}
+                </div>
+              </div>
+
+              <div className="flex shrink-0 self-stretch items-center">
+                {/* Status/action chip (per section) */}
+                <Badge
+                  variant="outline"
+                  className={cn("shrink-0 text-xs", CHIP_COLOR[chipKind])}
+                >
+                  {t.ui(CHIP_KEY[chipKind])}
+                </Badge>
+              </div>
             </div>
-            {/* Row 2: slot · mainstat */}
-            <div className="text-xs text-muted-foreground">
-              {t.slot(artifact.slotKey)} · {t.statShort(artifact.mainStatKey)}
-            </div>
+
             {/* Row 3: single reason line — sp rules take priority */}
             {(() => {
               let spRules = decision.specialRules;
@@ -178,9 +255,11 @@ export function TriageCard({
               }
               if (spRules.length > 0) {
                 return (
-                  <div className="text-xs mt-0.5 inline-flex items-center gap-1 text-amber-400">
+                  <div className="text-xs mt-0.5 flex items-start gap-1 text-amber-400">
                     <ShieldAlert className="w-3 h-3 shrink-0" />
-                    {spRules.map((sp) => spName(sp, t)).join(", ")}
+                    <span className="min-w-0">
+                      {spRules.map((sp) => spName(sp, t)).join(", ")}
+                    </span>
                   </div>
                 );
               }
@@ -188,9 +267,9 @@ export function TriageCard({
                 const ruleText = formatRule(dr.ruleId, dr.reasonArgs, t);
                 if (ruleText) {
                   return (
-                    <div className="text-xs mt-0.5 inline-flex items-center gap-1 text-amber-400">
+                    <div className="text-xs mt-0.5 flex items-start gap-1 text-amber-400">
                       <Info className="w-3 h-3 shrink-0" />
-                      {ruleText}
+                      <span className="min-w-0">{ruleText}</span>
                     </div>
                   );
                 }
@@ -198,14 +277,6 @@ export function TriageCard({
               return null;
             })()}
           </div>
-
-          {/* Status/action chip (per section) */}
-          <Badge
-            variant="outline"
-            className={cn("shrink-0 text-xs", CHIP_COLOR[chipKind])}
-          >
-            {t.ui(CHIP_KEY[chipKind])}
-          </Badge>
 
           {expanded ? (
             <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -226,7 +297,7 @@ export function TriageCard({
               {/* Right: evaluation details */}
               <div className="flex-1 min-w-0 space-y-2 text-xs">
                 {/* Supply/demand context */}
-                {decision.supplyDemand && (
+                {decision.supplyDemand && !isNoDemandDecision && (
                   <div className="text-muted-foreground space-y-0.5">
                     {dr?.embryo?.demand.coreStats && (
                       <div className="text-xs text-foreground">
@@ -240,9 +311,10 @@ export function TriageCard({
                     <div>
                       {t.ui("triage.detail.demand")}:{" "}
                       {decision.supplyDemand.demand}
+                    </div>
+                    <div>
                       {decision.supplyDemand.demand > 0 ? (
                         <>
-                          {" · "}
                           {t.ui("triage.detail.supply")}:{" "}
                           {decision.supplyDemand.supplyByTier.P}{" "}
                           {tierName("P", t)}
@@ -252,7 +324,6 @@ export function TriageCard({
                         </>
                       ) : (
                         <>
-                          {" · "}
                           {t.ui("triage.detail.supply")}:{" "}
                           {decision.supplyDemand.tierTotal} {tierName("T", t)}
                         </>
@@ -281,35 +352,36 @@ export function TriageCard({
                 {/* All character evaluations (skip T tier — no meaningful match) */}
                 {decision.allResults.some((r) => r.tier !== "T") && (
                   <div className="border-t border-border/50 pt-1.5 space-y-0.5">
-                    {decision.allResults
-                      .filter((r) => r.tier !== "T")
-                      .map((r, i) => {
-                        const src = r.embryo.demand.demandSource;
-                        const prefix =
-                          src.type === "4pc"
-                            ? t.ui("computeFilters.fourPc")
-                            : src.type === "2pc"
-                              ? t.ui("computeFilters.twoPc")
-                              : t.ui("triage.rulePrefixFlex");
-                        const char = t.character(r.embryo.demand.characterId);
-                        return (
-                          <div
-                            key={i}
-                            className={cn(
-                              "flex items-center gap-1",
-                              r === dr
-                                ? "text-foreground"
-                                : "text-muted-foreground"
-                            )}
-                          >
-                            {r.tier && <TierBadge tier={r.tier} />}
-                            <span className="truncate">{char}</span>
+                    {groupEvaluationResults(
+                      decision.allResults.filter((r) => r.tier !== "T")
+                    ).map((group) => {
+                      const [first] = group.results;
+                      const chars = group.results
+                        .map((r) => t.character(r.embryo.demand.characterId))
+                        .join(", ");
+                      const shape = demandSourceLabel(first, t);
+                      const isDeciding =
+                        dr != null && group.results.includes(dr);
+                      return (
+                        <div
+                          key={group.key}
+                          className={cn(
+                            "flex items-start gap-1",
+                            isDeciding
+                              ? "text-foreground"
+                              : "text-muted-foreground"
+                          )}
+                        >
+                          {first.tier && <TierBadge tier={first.tier} />}
+                          <span className="min-w-0">
+                            {chars}{" "}
                             <span className="text-muted-foreground">
-                              {prefix}
+                              ({shape})
                             </span>
-                          </div>
-                        );
-                      })}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
