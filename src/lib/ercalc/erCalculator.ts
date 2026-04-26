@@ -166,6 +166,30 @@ export function autoPlaceFavonius(
   }
 }
 
+/** Whether a weapon has flat energy gated by wearer reaction participation. */
+export function hasReactionEnergyTrigger(
+  weaponId: string | undefined
+): boolean {
+  const we = weaponId ? weaponEnergyById[weaponId] : undefined;
+  return we?.energy.effect === "flatEnergy" && we.energy.trigger === "reaction";
+}
+
+/**
+ * Temporary heuristic for reaction-gated weapon energy: assume every skill node
+ * from the wielder triggers the weapon condition.
+ */
+export function autoPlaceReactionProcs(
+  actions: TimelineAction[],
+  wielderId: string
+): void {
+  for (const a of actions) {
+    if (a.char !== wielderId) continue;
+    if (a.action === "E" || a.action === "holdE" || a.action === "specialE") {
+      a.reactionProc = true;
+    }
+  }
+}
+
 // ─── Helpers ───
 
 function resolveParamAmount(

@@ -1,12 +1,37 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  autoPlaceReactionProcs,
   calculateTeamER,
   calculateTeamERSequence,
+  hasReactionEnergyTrigger,
 } from "@/lib/ercalc/erCalculator";
 import type { ERTimeline, TeamMember } from "@/lib/ercalc/types";
 
 describe("calculateTeamER", () => {
+  it("auto-flags all skill variants for reaction-triggered weapon energy", () => {
+    expect(hasReactionEnergyTrigger("lumidouce_elegy")).toBe(true);
+    expect(hasReactionEnergyTrigger("favonius_lance")).toBe(false);
+
+    const actions: ERTimeline["actions"] = [
+      { char: "emilie", action: "E" },
+      { char: "emilie", action: "holdE" },
+      { char: "emilie", action: "specialE" },
+      { char: "emilie", action: "Q" },
+      { char: "bennett", action: "E" },
+    ];
+
+    autoPlaceReactionProcs(actions, "emilie");
+
+    expect(actions.map((a) => a.reactionProc ?? false)).toEqual([
+      true,
+      true,
+      true,
+      false,
+      false,
+    ]);
+  });
+
   it("applies orb scaling and selected element to enemy orb drops", () => {
     const team: TeamMember[] = [
       { id: "bennett", element: "Pyro", burstCost: 60 },

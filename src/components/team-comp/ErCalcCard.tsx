@@ -16,9 +16,11 @@ import { particles } from "@/lib/ercalc/constants";
 import {
   autoPlaceFavonius,
   autoPlacePeriodic,
+  autoPlaceReactionProcs,
   calculateTeamERSequence,
   getDefaultProcCount,
   hasPeriodicGeneration,
+  hasReactionEnergyTrigger,
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
 import { optimizeWaitBlocks } from "@/lib/ercalc/optimizer";
@@ -329,6 +331,12 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
             };
           }
         }
+        if (isETrigger && hasReactionEnergyTrigger(wielder?.weaponId)) {
+          newActions[newActions.length - 1] = {
+            ...newActions[newActions.length - 1],
+            reactionProc: true,
+          };
+        }
 
         return { actions: newActions, periodic: newPeriodic };
       });
@@ -450,9 +458,10 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
       for (const slot of erTeam) {
         const we = slot.weaponId ? weaponEnergyById[slot.weaponId] : undefined;
         const isFav = we?.energy.effect === "particles";
+        const isReaction = hasReactionEnergyTrigger(slot.weaponId);
         initial.set(
           slot.charId,
-          isFav ? `${slot.weaponId}|${slot.refinement ?? 0}` : ""
+          isFav || isReaction ? `${slot.weaponId}|${slot.refinement ?? 0}` : ""
         );
       }
       prevFavState.current = initial;
@@ -463,7 +472,9 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
     for (const slot of erTeam) {
       const we = slot.weaponId ? weaponEnergyById[slot.weaponId] : undefined;
       const isFav = we?.energy.effect === "particles";
-      const stateKey = isFav ? `${slot.weaponId}|${slot.refinement ?? 0}` : "";
+      const isReaction = hasReactionEnergyTrigger(slot.weaponId);
+      const stateKey =
+        isFav || isReaction ? `${slot.weaponId}|${slot.refinement ?? 0}` : "";
       const prev = prevFavState.current.get(slot.charId) ?? "";
       if (prev === stateKey) continue;
       prevFavState.current.set(slot.charId, stateKey);
@@ -478,6 +489,7 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
           if (a.char === slot.charId) a.favoniusProc = false;
         if (defaultProcs > 0)
           autoPlaceFavonius(actions, slot.charId, defaultProcs);
+        if (isReaction) autoPlaceReactionProcs(actions, slot.charId);
         return { ...ert, actions };
       });
       dirty = true;
