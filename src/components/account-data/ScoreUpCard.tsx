@@ -12,8 +12,10 @@ import {
   ArtifactComparisonHoverCard,
   ArtifactDataHoverCard,
 } from "@/components/shared/ArtifactDataHoverCard";
+import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -23,13 +25,18 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { allSlots, type Slot, type StatKey, type Tier } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
-import type { ArtifactData, CharacterData } from "@/data/types";
+import { artifactIdToHalfSetId, charactersById } from "@/data/gameResources";
+import {
+  resolveCharacterStats,
+  resolveWeaponStats,
+} from "@/data/gameStatsLoader";
+import type { ArtifactData, CharacterData, StatEntry } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { OptimizedBuild } from "@/lib/account-data/buildOptimizer";
 import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { HALF_SET_STATS } from "@/lib/dmgcalc/impl/artifact2pc";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn } from "@/lib/utils";
 import { ScoreUpActionCard } from "./ScoreUpActionCard";
@@ -47,11 +54,8 @@ type DetailView = "swap" | "upgrade";
 
 const STAT_ROWS: StatKey[] = [
   "hp",
-  "hp%",
   "atk",
-  "atk%",
   "def",
-  "def%",
   "em",
   "er",
   "cr",
@@ -66,6 +70,8 @@ const STAT_ROWS: StatKey[] = [
   "phys%",
   "heal%",
 ];
+
+const SCALED_STAT_KEYS = new Set(["atk", "hp", "def"]);
 
 function resolveBuildArtifact(
   artifact: OptimizedBuild["artifacts"][Slot] | undefined,
@@ -204,17 +210,61 @@ function HeaderWeaponIcon({
   );
 }
 
+function buildIdleStatSheet(
+  artifacts: Partial<Record<Slot, ArtifactData | null>>,
+  charId: string,
+  charLevel: number,
+  weapon: CharacterData["weapon"]
+): StatSheet {
+  const baseEntries: StatEntry[] = [];
+
+  try {
+    baseEntries.push(...resolveCharacterStats(charId, charLevel));
+  } catch {}
+
+  if (weapon) {
+    try {
+      baseEntries.push(...resolveWeaponStats(weapon.key));
+    } catch {}
+  }
+
+  const halfSetCounts = new Map<string, number>();
+  for (const slot of allSlots) {
+    const art = artifacts[slot];
+    if (art) {
+      const halfSetId = artifactIdToHalfSetId[art.setKey];
+      if (halfSetId)
+        halfSetCounts.set(halfSetId, (halfSetCounts.get(halfSetId) ?? 0) + 1);
+    }
+  }
+  for (const [halfSetId, count] of halfSetCounts) {
+    if (count >= 2) {
+      const stats = HALF_SET_STATS[halfSetId];
+      if (stats) baseEntries.push(...stats);
+    }
+  }
+
+  return new StatSheet(baseEntries).merge(
+    StatSheet.fromArtifacts(allSlots.map((s) => artifacts[s]))
+  );
+}
+
 function buildStatRows(
   beforeArtifacts: Partial<Record<Slot, ArtifactData | null>>,
-  afterArtifacts: Partial<Record<Slot, ArtifactData | null>>
+  afterArtifacts: Partial<Record<Slot, ArtifactData | null>>,
+  charId: string,
+  charLevel: number,
+  weapon: CharacterData["weapon"]
 ) {
-  const before = StatSheet.fromArtifacts(
-    allSlots.map((s) => beforeArtifacts[s])
-  );
-  const after = StatSheet.fromArtifacts(allSlots.map((s) => afterArtifacts[s]));
+  const before = buildIdleStatSheet(beforeArtifacts, charId, charLevel, weapon);
+  const after = buildIdleStatSheet(afterArtifacts, charId, charLevel, weapon);
   return STAT_ROWS.map((key) => {
-    const beforeValue = before.getRaw(key);
-    const afterValue = after.getRaw(key);
+    const beforeValue = SCALED_STAT_KEYS.has(key)
+      ? before.get(key, null)
+      : before.getRaw(key);
+    const afterValue = SCALED_STAT_KEYS.has(key)
+      ? after.get(key, null)
+      : after.getRaw(key);
     return { key, beforeValue, afterValue, diff: afterValue - beforeValue };
   }).filter(
     (row) =>
@@ -324,17 +374,37 @@ function ScoreUpCardComponent({
     .filter((entry): entry is [string, number] => entry[1] >= 2)
     .sort((a, b) => b[1] - a[1]);
 
-  const getSetTypeLabel = () => {
+  type SetInfo =
+    | { type: "4pc"; setId: string; label: string }
+    | { type: "2pc"; setId: string; label: string }
+    | { type: "2pc+2pc"; setId1: string; setId2: string; label: string }
+    | null;
+
+  const setInfo = ((): SetInfo => {
     if (activeSets.length === 0) return null;
     const fourPcSet = activeSets.find(([, count]) => count >= 4);
-    if (fourPcSet) return t.artifact(fourPcSet[0]);
+    if (fourPcSet)
+      return {
+        type: "4pc",
+        setId: fourPcSet[0],
+        label: t.artifact(fourPcSet[0]),
+      };
     const twoPcSets = activeSets.filter(([, count]) => count >= 2);
-    if (twoPcSets.length >= 2) return t.ui("buildCard.2pc+2pc");
-    if (twoPcSets.length === 1) return t.artifact(twoPcSets[0][0]);
+    if (twoPcSets.length >= 2)
+      return {
+        type: "2pc+2pc",
+        setId1: twoPcSets[0][0],
+        setId2: twoPcSets[1][0],
+        label: t.ui("buildCard.2pc+2pc"),
+      };
+    if (twoPcSets.length === 1)
+      return {
+        type: "2pc",
+        setId: twoPcSets[0][0],
+        label: t.artifact(twoPcSets[0][0]),
+      };
     return null;
-  };
-
-  const setTypeLabel = getSetTypeLabel();
+  })();
   const recs = recommendations ?? [];
   const allocationRecs = recs.filter((rec) => rec.actionType !== "upgrade");
   const upgradeRecs = recs.filter((rec) => rec.actionType === "upgrade");
@@ -359,8 +429,15 @@ function ScoreUpCardComponent({
     return result;
   }, [allocatedBuild, artifactLookup]);
   const statRows = useMemo(
-    () => buildStatRows(currentArtifacts, allocationArtifacts),
-    [currentArtifacts, allocationArtifacts]
+    () =>
+      buildStatRows(
+        currentArtifacts,
+        allocationArtifacts,
+        char.key,
+        char.level,
+        char.weapon
+      ),
+    [currentArtifacts, allocationArtifacts, char.key, char.level, char.weapon]
   );
   const currentNormalizedScore = score
     ? Math.min(300, Math.max(0, Math.round(score.normalized.normalizedScore)))
@@ -410,10 +487,30 @@ function ScoreUpCardComponent({
               {t.character(char.key)}
             </div>
             <div className="flex items-start gap-2">
-              {setTypeLabel && (
-                <div className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-tight flex-1 min-w-0">
-                  {setTypeLabel}
-                </div>
+              {setInfo && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-tight flex-1 min-w-0 cursor-default">
+                      {setInfo.label}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="p-0 border-none bg-transparent"
+                  >
+                    {setInfo.type === "2pc+2pc" ? (
+                      <MixedSetTooltip
+                        set1={setInfo.setId1}
+                        set2={setInfo.setId2}
+                      />
+                    ) : (
+                      <ArtifactTooltip
+                        setId={setInfo.setId}
+                        hideFourPieceEffect={setInfo.type === "2pc"}
+                      />
+                    )}
+                  </TooltipContent>
+                </Tooltip>
               )}
               {score && (
                 <div className="-mt-1 lg:-mt-2">

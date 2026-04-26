@@ -176,3 +176,31 @@ export function computeCrBudget(
       artifactSetCr,
   };
 }
+
+/**
+ * Compute non-artifact CR from character and weapon only (no artifact set).
+ * Used for live score display where the matched build isn't known yet.
+ */
+export function computeCharWeaponNonArtifactCr(char: CharacterData): number {
+  const result = computeCrBudget(char, {
+    build: {
+      id: "",
+      characterId: char.key,
+      visible: false,
+      composition: "4pc",
+      name: "",
+      sandsWeights: [],
+      gobletWeights: [],
+      circletWeights: [],
+      normalizer: 0,
+      substats: [],
+    },
+    buildIndex: 0,
+    statWeights: {},
+    setMatched: false,
+    setDifferent: false,
+    mainStatMatches: 0,
+    mainStatMismatches: [],
+  });
+  return result.totalNonArtifactCr; // artifactSetCr is 0 because artifactSet is undefined
+}

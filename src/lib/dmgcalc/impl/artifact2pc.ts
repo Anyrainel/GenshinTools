@@ -237,3 +237,26 @@ class CritRate2pc extends ArtifactHalfSetBase {
   readonly stats: StatEntry[] = [{ key: "cr", value: 0.12 }];
   readonly buffs = [];
 }
+
+/**
+ * Static lookup of 2pc half-set ID → stat entries.
+ * Only includes sets whose 2pc bonus adds a universal stat (not filtered buffs).
+ * Used for lightweight stat display without instantiating the full CharBuild.
+ */
+export const HALF_SET_STATS: Record<string, StatEntry[]> = {
+  "cryo%-15": [{ key: "cryo%", value: 0.15 }],
+  "hp%-20": [{ key: "hp%", value: 0.2 }],
+  "def%-30": [{ key: "def%", value: 0.3 }],
+  "electro%-15": [{ key: "electro%", value: 0.15 }],
+  "geo%-15": [{ key: "geo%", value: 0.15 }],
+  "em-80": [{ key: "em", value: 80 }],
+  "atk%-18": [{ key: "atk%", value: 0.18 }],
+  "phys%-25": [{ key: "phys%", value: 0.25 }],
+  "hydro%-15": [{ key: "hydro%", value: 0.15 }],
+  "heal%-15": [{ key: "heal%", value: 0.15 }],
+  "pyro%-15": [{ key: "pyro%", value: 0.15 }],
+  "er-20": [{ key: "er", value: 0.2 }],
+  "anemo%-15": [{ key: "anemo%", value: 0.15 }],
+  "dendro%-15": [{ key: "dendro%", value: 0.15 }],
+  "cr-12": [{ key: "cr", value: 0.12 }],
+};

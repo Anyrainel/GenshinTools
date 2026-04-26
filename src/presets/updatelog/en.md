@@ -1,7 +1,17 @@
 ## roadmap
 - Ongoing: more damage formulas and customization options
-- P0: More useful all character equipment and artifact upgrade suggestions
-- P2: Better graduation celebration effects
+- P1: Better graduation celebration effects
+
+## 2026-04-26
+
+### features
+- Reworked the artifact upgrade recommendation page — now distributes all inventory artifacts across characters based on their build scores, and computes upgrade suggestions from that global assignment
+- The recommendation page now supports one-click equip-to-game syncing (requires GOODScanner); the feature is still under testing and may be unstable
+- Added an Energy Recharge calculator, accessible from the Team Damage page (collapsed by default); the feature is still under development and current data may not be accurate
+
+### fixes
+- Fixed buff issues for several characters, such as Xilonen pre-C2 Geo RES shred and Linnea's EM-to-DMG% condition
+- Refactored large portions of code to improve load performance and data compatibility
 
 ## 2026-04-16
 

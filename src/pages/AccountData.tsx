@@ -34,6 +34,7 @@ import {
   deleteInventoryArtifact,
   deleteInventoryWeapon,
 } from "@/lib/account-data/characterEditor";
+import { computeCharWeaponNonArtifactCr } from "@/lib/account-data/crBudget";
 import {
   convertEnkaToGOOD,
   fetchEnkaData,
@@ -226,7 +227,12 @@ export default function AccountDataPage() {
       const results: Record<string, ArtifactScoreResult | null> = {};
       for (const char of charsToScore) {
         const builds = resolvedBuildsMap[char.key] ?? [];
-        results[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);
+        results[char.key] = scoreWithBuilds(
+          char,
+          builds,
+          scoreConfig.global,
+          computeCharWeaponNonArtifactCr(char)
+        );
       }
       mergeScores(results);
     }, 50);
