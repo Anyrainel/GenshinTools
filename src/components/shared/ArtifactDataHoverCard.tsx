@@ -1,5 +1,5 @@
 import { ArrowRight, CircleHelp } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { ArtifactStatList } from "@/components/shared/ArtifactStatList";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
@@ -7,7 +7,6 @@ import {
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
   HoverCard,
@@ -209,6 +208,30 @@ function ArtifactComparisonContent({
   );
 }
 
+interface ArtifactComparisonRow {
+  beforeArtifact?: ArtifactData;
+  afterArtifact?: ArtifactData;
+  slot: Slot;
+  currentLabel?: string;
+  upgradeLabel?: string;
+}
+
+function ArtifactComparisonLabelRow({
+  currentLabel,
+  upgradeLabel,
+}: {
+  currentLabel: string;
+  upgradeLabel: string;
+}) {
+  return (
+    <div className="flex items-center justify-center gap-2 mb-3">
+      <span className="text-sm text-muted-foreground">{currentLabel}</span>
+      <ArrowRight className="w-4 h-4 text-muted-foreground" />
+      <span className="text-sm text-muted-foreground">{upgradeLabel}</span>
+    </div>
+  );
+}
+
 // ArtifactDataHoverCard - Single artifact hover card (used in InventoryView)
 interface ArtifactDataHoverCardProps {
   artifact: ArtifactData;
@@ -225,75 +248,54 @@ export function ArtifactDataHoverCard({
 }: ArtifactDataHoverCardProps) {
   const { t } = useLanguage();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [isPinned, setIsPinned] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  const isOpen = isPinned || isHovering;
+  const drawer = (
+    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+      <DrawerContent className="bg-slate-950/95 border-t border-white/10">
+        <DrawerTitle className="sr-only">
+          {t.ui("accountData.artifactDetails")}
+        </DrawerTitle>
+        <DrawerDescription className="sr-only">
+          {t.artifact(artifact.setKey)} - {t.slot(slot)}
+        </DrawerDescription>
+        <div className="p-4 pt-0 safe-area-bottom flex justify-center">
+          <ArtifactDataContent artifact={artifact} slot={slot} showIcon />
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
 
-  // Click-outside detection when pinned
-  useEffect(() => {
-    if (!isPinned) return;
+  const trigger = (
+    <div className="cursor-pointer" onClick={() => setDrawerOpen(true)}>
+      {children}
+    </div>
+  );
 
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      const isOutsideTrigger = !triggerRef.current?.contains(target);
-      const isOutsideContent = !contentRef.current?.contains(target);
-
-      if (isOutsideTrigger && isOutsideContent) {
-        setIsPinned(false);
-      }
-    };
-
-    const timeoutId = setTimeout(() => {
-      document.addEventListener("click", handleClickOutside);
-    }, 0);
-
-    return () => {
-      clearTimeout(timeoutId);
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isPinned]);
-
-  const handleOpenChange = (open: boolean) => {
-    if (isPinned) return;
-    setIsHovering(open);
-  };
-
-  // Mobile: Use Drawer
   if (isMobile) {
     return (
-      <Drawer>
-        <DrawerTrigger asChild>{children}</DrawerTrigger>
-        <DrawerContent className="bg-slate-950/95 border-t border-white/10">
-          {/* Accessible title/description (visually hidden) */}
-          <DrawerTitle className="sr-only">
-            {t.ui("accountData.artifactDetails")}
-          </DrawerTitle>
-          <DrawerDescription className="sr-only">
-            {t.artifact(artifact.setKey)} - {t.slot(slot)}
-          </DrawerDescription>
-          <div className="p-4 pt-0 safe-area-bottom flex justify-center">
-            <ArtifactDataContent artifact={artifact} slot={slot} showIcon />
-          </div>
-        </DrawerContent>
-      </Drawer>
+      <>
+        {trigger}
+        {drawer}
+      </>
     );
   }
 
-  // Desktop: Use HoverCard with click-to-pin
+  // Desktop: hover for preview, click for drawer
   return (
-    <HoverCard openDelay={200} open={isOpen} onOpenChange={handleOpenChange}>
-      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-      <HoverCardContent
-        ref={contentRef}
-        side={side}
-        className="w-auto p-0 border-none bg-slate-900 shadow-xl"
-      >
-        <ArtifactDataContent artifact={artifact} slot={slot} />
-      </HoverCardContent>
-    </HoverCard>
+    <>
+      <HoverCard openDelay={200} open={isHovering} onOpenChange={setIsHovering}>
+        <HoverCardTrigger asChild>{trigger}</HoverCardTrigger>
+        <HoverCardContent
+          side={side}
+          className="w-auto p-0 border-none bg-slate-900 shadow-xl"
+        >
+          <ArtifactDataContent artifact={artifact} slot={slot} />
+        </HoverCardContent>
+      </HoverCard>
+      {drawer}
+    </>
   );
 }
 
@@ -310,6 +312,8 @@ interface ArtifactComparisonHoverCardProps {
   currentLabel?: string;
   /** Label for the upgrade artifact (e.g., "Upgrade") */
   upgradeLabel?: string;
+  /** Optional stacked comparison rows for compound actions. */
+  comparisonRows?: ArtifactComparisonRow[];
 }
 
 export function ArtifactComparisonHoverCard({
@@ -319,106 +323,114 @@ export function ArtifactComparisonHoverCard({
   children,
   currentLabel,
   upgradeLabel,
+  comparisonRows,
 }: ArtifactComparisonHoverCardProps) {
   const { t } = useLanguage();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [isPinned, setIsPinned] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const isOpen = isPinned || isHovering;
-
-  // Click-outside detection when pinned
-  useEffect(() => {
-    if (!isPinned) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      const isOutsideTrigger = !triggerRef.current?.contains(target);
-      const isOutsideContent = !contentRef.current?.contains(target);
-
-      if (isOutsideTrigger && isOutsideContent) {
-        setIsPinned(false);
-      }
-    };
-
-    const timeoutId = setTimeout(() => {
-      document.addEventListener("click", handleClickOutside);
-    }, 0);
-
-    return () => {
-      clearTimeout(timeoutId);
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isPinned]);
-
-  const handleOpenChange = (open: boolean) => {
-    if (isPinned) return;
-    setIsHovering(open);
-  };
 
   const defaultCurrentLabel = t.ui("accountData.current");
   const defaultUpgradeLabel = t.ui("accountData.upgrade");
+  const rows = comparisonRows ?? [
+    {
+      beforeArtifact,
+      afterArtifact,
+      slot,
+      currentLabel,
+      upgradeLabel,
+    },
+  ];
+  const describeRows = rows
+    .map(
+      (row) =>
+        `${row.currentLabel ?? defaultCurrentLabel} → ${row.upgradeLabel ?? defaultUpgradeLabel}`
+    )
+    .join("; ");
 
-  // Mobile: Use Drawer
-  if (isMobile) {
-    return (
-      <Drawer>
-        <DrawerTrigger asChild>
-          <div className="cursor-pointer">{children}</div>
-        </DrawerTrigger>
-        <DrawerContent className="bg-slate-950/95 border-t border-white/10">
-          {/* Accessible title/description (visually hidden) */}
-          <DrawerTitle className="sr-only">
-            {t.ui("accountData.artifactDetails")}
-          </DrawerTitle>
-          <DrawerDescription className="sr-only">
-            {`${currentLabel ?? defaultCurrentLabel} → ${upgradeLabel ?? defaultUpgradeLabel}`}
-          </DrawerDescription>
-          <div className="p-4 pt-0 safe-area-bottom w-full">
-            {/* Labels - centered */}
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="text-sm text-muted-foreground">
-                {currentLabel ?? defaultCurrentLabel}
-              </span>
-              <ArrowRight className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">
-                {upgradeLabel ?? defaultUpgradeLabel}
-              </span>
-            </div>
-            {/* Comparison - full width */}
+  const drawerBody = (
+    <div className="p-4 pt-0 safe-area-bottom w-full">
+      <div className="space-y-4 max-w-md mx-auto">
+        {rows.map((row, index) => (
+          <div key={`${row.slot}-${index}`}>
+            <ArtifactComparisonLabelRow
+              currentLabel={row.currentLabel ?? defaultCurrentLabel}
+              upgradeLabel={row.upgradeLabel ?? defaultUpgradeLabel}
+            />
             <ArtifactComparisonContent
-              beforeArtifact={beforeArtifact}
-              afterArtifact={afterArtifact}
-              slot={slot}
+              beforeArtifact={row.beforeArtifact}
+              afterArtifact={row.afterArtifact}
+              slot={row.slot}
               showIcons
               compact
             />
           </div>
-        </DrawerContent>
-      </Drawer>
+        ))}
+      </div>
+    </div>
+  );
+
+  const drawer = (
+    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+      <DrawerContent className="bg-slate-950/95 border-t border-white/10">
+        <DrawerTitle className="sr-only">
+          {t.ui("accountData.artifactDetails")}
+        </DrawerTitle>
+        <DrawerDescription className="sr-only">
+          {describeRows}
+        </DrawerDescription>
+        {drawerBody}
+      </DrawerContent>
+    </Drawer>
+  );
+
+  const trigger = (
+    <div className="cursor-pointer" onClick={() => setDrawerOpen(true)}>
+      {children}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {trigger}
+        {drawer}
+      </>
     );
   }
 
-  // Desktop: Use HoverCard with click-to-pin
+  // Desktop: hover for preview, click for drawer
   return (
-    <HoverCard openDelay={200} open={isOpen} onOpenChange={handleOpenChange}>
-      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-      <HoverCardContent
-        ref={contentRef}
-        side="top"
-        align="center"
-        className="w-auto max-w-none p-3 bg-slate-950/95 border border-slate-700 rounded-lg"
-      >
-        <ArtifactComparisonContent
-          beforeArtifact={beforeArtifact}
-          afterArtifact={afterArtifact}
-          slot={slot}
-          showIcons={false}
-          compact={false}
-        />
-      </HoverCardContent>
-    </HoverCard>
+    <>
+      <HoverCard openDelay={200} open={isHovering} onOpenChange={setIsHovering}>
+        <HoverCardTrigger asChild>{trigger}</HoverCardTrigger>
+        <HoverCardContent
+          side="top"
+          align="center"
+          className="w-auto max-w-none p-3 bg-slate-950/95 border border-slate-700 rounded-lg"
+        >
+          <div className="space-y-3">
+            {rows.map((row, index) => (
+              <div key={`${row.slot}-${index}`}>
+                {rows.length > 1 && (
+                  <ArtifactComparisonLabelRow
+                    currentLabel={row.currentLabel ?? defaultCurrentLabel}
+                    upgradeLabel={row.upgradeLabel ?? defaultUpgradeLabel}
+                  />
+                )}
+                <ArtifactComparisonContent
+                  beforeArtifact={row.beforeArtifact}
+                  afterArtifact={row.afterArtifact}
+                  slot={row.slot}
+                  showIcons={false}
+                  compact={false}
+                />
+              </div>
+            ))}
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+      {drawer}
+    </>
   );
 }

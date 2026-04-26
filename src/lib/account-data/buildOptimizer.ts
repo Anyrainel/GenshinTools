@@ -14,6 +14,12 @@ export interface BuildOptimizerConfig {
   candidates: Record<Slot, CandidateArtifact[]>;
   crBudget: CrBudgetResult;
   targetMainStats: Record<Slot, Set<string>>;
+  /** Optional artifact shadow prices used only to rank generated builds. */
+  artifactPrices?: ReadonlyMap<string, number>;
+  slotCaps?: {
+    set?: number;
+    flex?: number;
+  };
   setConstraint: {
     composition: "4pc" | "2pc+2pc";
     artifactSet?: string;
@@ -29,6 +35,8 @@ export interface OptimizedBuild {
   rawScore: number;
   crPenalty: number;
   finalScore: number;
+  /** Score used for ranking during priced column generation. */
+  adjustedScore?: number;
   totalArtifactCr: number;
 }
 
@@ -64,13 +72,13 @@ class TopNTracker {
     if (this.items.length < this.n) {
       this.items.push(build);
       if (this.items.length === this.n) {
-        this.items.sort((a, b) => a.finalScore - b.finalScore);
-        this.minScore = this.items[0].finalScore;
+        this.items.sort((a, b) => rankScore(a) - rankScore(b));
+        this.minScore = rankScore(this.items[0]);
       }
-    } else if (build.finalScore > this.minScore) {
+    } else if (rankScore(build) > this.minScore) {
       this.items[0] = build;
-      this.items.sort((a, b) => a.finalScore - b.finalScore);
-      this.minScore = this.items[0].finalScore;
+      this.items.sort((a, b) => rankScore(a) - rankScore(b));
+      this.minScore = rankScore(this.items[0]);
     }
   }
 
@@ -81,8 +89,12 @@ class TopNTracker {
   }
 
   getResults(): OptimizedBuild[] {
-    return [...this.items].sort((a, b) => b.finalScore - a.finalScore);
+    return [...this.items].sort((a, b) => rankScore(b) - rankScore(a));
   }
+}
+
+function rankScore(build: OptimizedBuild): number {
+  return build.adjustedScore ?? build.finalScore;
 }
 
 // ─── Set Composition Patterns ───
@@ -162,6 +174,8 @@ export function optimizeBuild(
     candidates,
     crBudget,
     targetMainStats,
+    artifactPrices,
+    slotCaps,
     setConstraint,
     topN = 3,
   } = config;
@@ -196,6 +210,7 @@ export function optimizeBuild(
     // Filter candidates per slot by set requirement
     const slotCandidates: CandidateArtifact[][] = [];
     const slotScoresCache: number[][] = [];
+    const adjustedSlotScoresCache: number[][] = [];
     let anyEmpty = false;
 
     for (const { slotIdx, setRequirement } of pattern) {
@@ -231,25 +246,33 @@ export function optimizeBuild(
       const scored = filtered.map((c) => ({
         candidate: c,
         score: scoreSlotWithMainStat(c, weights, slotTargetMains),
+        adjustedScore:
+          scoreSlotWithMainStat(c, weights, slotTargetMains) -
+          (artifactPrices?.get(c.id) ?? 0),
       }));
-      scored.sort((a, b) => b.score - a.score);
+      scored.sort((a, b) => b.adjustedScore - a.adjustedScore);
 
       // Take top-K: set-constrained slots get a higher cap since they're already filtered
-      const k = setRequirement === "flex" ? TOP_K_FLEX : TOP_K_SET;
+      const k =
+        setRequirement === "flex"
+          ? (slotCaps?.flex ?? TOP_K_FLEX)
+          : (slotCaps?.set ?? TOP_K_SET);
       const topK = scored.slice(0, k);
       slotCandidates.push(topK.map((s) => s.candidate));
       slotScoresCache.push(topK.map((s) => s.score));
+      adjustedSlotScoresCache.push(topK.map((s) => s.adjustedScore));
     }
 
     if (anyEmpty) continue;
 
     // Compute upper bounds per slot for pruning
-    const bestPerSlot = slotScoresCache.map((scores) => scores[0]);
+    const bestPerSlot = adjustedSlotScoresCache.map((scores) => scores[0]);
 
     // Enumerate combinations with branch-and-bound pruning
     const depths = slotCandidates.length;
     const indices = new Array(depths).fill(0);
     const partialScores = new Array(depths + 1).fill(0);
+    const partialAdjustedScores = new Array(depths + 1).fill(0);
     const partialCr = new Array(depths + 1).fill(0);
 
     let depth = 0;
@@ -258,6 +281,7 @@ export function optimizeBuild(
         // Complete combination
         combinationsEvaluated++;
         const rawScore = partialScores[depth];
+        const adjustedRawScore = partialAdjustedScores[depth];
         const totalCr = crBudget.totalNonArtifactCr + partialCr[depth];
         const wastedCr = Math.max(0, totalCr - 1.0);
         // Excess CR contributes 0 to the score: subtract the raw value the
@@ -266,8 +290,9 @@ export function optimizeBuild(
         // the substats make it worthwhile.
         const crPenalty = wastedCr * crWeight;
         const finalScore = rawScore - crPenalty;
+        const adjustedScore = adjustedRawScore - crPenalty;
 
-        if (finalScore > tracker.threshold) {
+        if (adjustedScore > tracker.threshold) {
           const artifacts = {} as Record<Slot, CandidateArtifact>;
           const slotScoresRecord = {} as Record<Slot, number>;
           for (let i = 0; i < depths; i++) {
@@ -283,6 +308,7 @@ export function optimizeBuild(
             rawScore,
             crPenalty,
             finalScore,
+            adjustedScore,
             totalArtifactCr: partialCr[depth],
           });
         }
@@ -303,10 +329,14 @@ export function optimizeBuild(
 
       // Pruning: can we beat the current threshold?
       const candidateScore = slotScoresCache[depth][indices[depth]];
+      const candidateAdjustedScore =
+        adjustedSlotScoresCache[depth][indices[depth]];
       const newPartial = partialScores[depth] + candidateScore;
+      const newAdjustedPartial =
+        partialAdjustedScores[depth] + candidateAdjustedScore;
 
       // Upper bound: partial + best possible for remaining slots
-      let upperBound = newPartial;
+      let upperBound = newAdjustedPartial;
       for (let j = depth + 1; j < depths; j++) {
         upperBound += bestPerSlot[j];
       }
@@ -322,6 +352,7 @@ export function optimizeBuild(
       // Extend
       const candidate = slotCandidates[depth][indices[depth]];
       partialScores[depth + 1] = newPartial;
+      partialAdjustedScores[depth + 1] = newAdjustedPartial;
       partialCr[depth + 1] = partialCr[depth] + getCandidateCr(candidate);
 
       depth++;
@@ -373,7 +404,7 @@ export function optimizeBuildWithCrCdExploration(
   // Merge top builds from both runs, deduplicate by finalScore, keep topN
   const topN = config.topN ?? 3;
   const merged = [...primary.builds, ...altResult.builds]
-    .sort((a, b) => b.finalScore - a.finalScore)
+    .sort((a, b) => rankScore(b) - rankScore(a))
     .slice(0, topN);
 
   return {

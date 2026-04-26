@@ -3,6 +3,7 @@ import {
   type PackerCharacter,
   type PackerColumn,
   packColumns,
+  packColumnsBeam,
 } from "@/lib/account-data/columnPacker";
 
 /** Brute-force optimum for verifying packColumns against ground truth. */
@@ -165,5 +166,40 @@ describe("packColumns", () => {
     const r = packColumns(chars);
     expect(r.totalScore).toBe(100);
     expect(r.byCharacter.B).toBeNull();
+  });
+
+  it("beam packer resolves conflicts and keeps assignments disjoint", () => {
+    const chars: PackerCharacter[] = [
+      {
+        characterId: "A",
+        columns: [
+          col(100, ["x1", "a2", "a3", "a4", "a5"]),
+          col(92, ["a1", "a2", "a3", "a4", "a5"]),
+        ],
+      },
+      {
+        characterId: "B",
+        columns: [
+          col(99, ["x1", "b2", "b3", "b4", "b5"]),
+          col(70, ["b1", "b2", "b3", "b4", "b5"]),
+        ],
+      },
+      {
+        characterId: "C",
+        columns: [col(80, ["c1", "c2", "c3", "c4", "c5"])],
+      },
+    ];
+
+    const r = packColumnsBeam(chars, { beamWidth: 4, repairSweeps: 1 });
+    expect(r.totalScore).toBe(271);
+
+    const used = new Set<string>();
+    for (const picked of Object.values(r.byCharacter)) {
+      if (!picked) continue;
+      for (const id of picked.artifactIds) {
+        expect(used.has(id)).toBe(false);
+        used.add(id);
+      }
+    }
   });
 });

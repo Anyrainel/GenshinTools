@@ -25,7 +25,7 @@ import {
   enumerateBuilds,
   type OptimizedBuild,
 } from "./buildOptimizer";
-import { type PackerCharacter, packColumns } from "./columnPacker";
+import { type PackerCharacter, packColumnsBeam } from "./columnPacker";
 import { type CrBudgetResult, computeCrBudget } from "./crBudget";
 
 /**
@@ -57,14 +57,44 @@ export interface AllocationResult {
   totalNodesExplored: number;
 }
 
+export interface TierAllocationStep {
+  tier: Tier;
+  allocation: AllocationResult;
+  completedTierCount: number;
+  totalTierCount: number;
+}
+
 export interface AllocationOptions {
-  /** Top-K columns per character. Higher = closer to ground truth, slower. */
+  /** Columns generated per character in each pricing round. */
   topK?: number;
+  /** Number of shadow-price rounds used to diversify contended columns. */
+  pricingRounds?: number;
+  /** Maximum accumulated columns retained per character for beam packing. */
+  maxColumnsPerCharacter?: number;
+  /** Beam width for production-sized cross-character packing. */
+  beamWidth?: number;
+  /** Local repair sweeps after beam packing. */
+  repairSweeps?: number;
+  /** Price update strength for contended artifacts. */
+  priceStep?: number;
+  /** Price decay per round; lower values forget stale contention faster. */
+  priceDecay?: number;
+  /** Candidate caps inside the per-character optimizer. */
+  slotCaps?: BuildOptimizerConfig["slotCaps"];
   /** Order of tiers processed; default is S → A → B → C → D (Pool excluded). */
   tierOrder?: Tier[];
 }
 
 const DEFAULT_TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
+const DEFAULT_TOP_K = 30;
+const DEFAULT_PRICING_ROUNDS = 8;
+const DEFAULT_MAX_COLUMNS = 120;
+const DEFAULT_BEAM_WIDTH = 1024;
+const DEFAULT_REPAIR_SWEEPS = 2;
+const DEFAULT_PRICE_STEP = 0.35;
+const DEFAULT_PRICE_DECAY = 0.65;
+const PRICE_REGRET_CAP = 25;
+const PRICE_CAP = 80;
 
 export function runTierWaterfall(
   accountData: AccountData,
@@ -73,7 +103,28 @@ export function runTierWaterfall(
   tierCustomization: TierCustomization = {},
   options: AllocationOptions = {}
 ): AllocationResult {
-  const topK = options.topK ?? 20;
+  const steps = runTierWaterfallSteps(
+    accountData,
+    scores,
+    tierAssignments,
+    tierCustomization,
+    options
+  );
+  let next = steps.next();
+  while (!next.done) {
+    next = steps.next();
+  }
+  return next.value;
+}
+
+export function* runTierWaterfallSteps(
+  accountData: AccountData,
+  scores: Record<string, ArtifactScoreResult | null>,
+  tierAssignments: TierAssignment,
+  tierCustomization: TierCustomization = {},
+  options: AllocationOptions = {}
+): Generator<TierAllocationStep, AllocationResult> {
+  const topK = options.topK ?? DEFAULT_TOP_K;
   const tierOrder = options.tierOrder ?? DEFAULT_TIER_ORDER;
 
   const allArtifacts: ArtifactData[] = [
@@ -89,6 +140,10 @@ export function runTierWaterfall(
     if (!charsByTier.has(tier)) charsByTier.set(tier, []);
     charsByTier.get(tier)!.push(char);
   }
+  const totalTierCount = tierOrder.filter(
+    (tier) => (charsByTier.get(tier)?.length ?? 0) > 0
+  ).length;
+  let completedTierCount = 0;
 
   const perCharacter: Record<string, AllocatedBuild> = {};
   const unclaimedById = new Map<string, ArtifactData>();
@@ -103,7 +158,7 @@ export function runTierWaterfall(
     const luckExpectation: LuckExpectation =
       tierCustomization[tier]?.luckExpectation || "balanced";
 
-    const packerChars: PackerCharacter[] = [];
+    const preparedChars: PreparedTierCharacter[] = [];
     const ctxByChar = new Map<string, AllocationContext>();
     const unclaimedSnapshot = Array.from(unclaimedById.values());
 
@@ -129,6 +184,7 @@ export function runTierWaterfall(
         candidates,
         crBudget,
         targetMainStats,
+        slotCaps: options.slotCaps,
         setConstraint: {
           composition: buildMatch.build.composition,
           artifactSet: buildMatch.build.artifactSet,
@@ -137,27 +193,40 @@ export function runTierWaterfall(
         },
       };
 
-      const result = enumerateBuilds(config, topK);
-      const columns = result.builds.map((b) => ({
-        artifactIds: allSlots.map((s) => b.artifacts[s].id),
-        score: b.finalScore,
-        payload: b,
-      }));
-
       ctxByChar.set(char.key, { config, crBudget, scoreResult });
-      packerChars.push({ characterId: char.key, columns });
+      preparedChars.push({ characterId: char.key, config });
     }
 
-    if (packerChars.length === 0) {
+    if (preparedChars.length === 0) {
       // Still record the no-build characters for this tier
       for (const char of chars) {
         if (perCharacter[char.key]) continue;
         perCharacter[char.key] = makeUnallocated(char, tier, luckExpectation);
       }
+      completedTierCount += 1;
+      yield {
+        tier,
+        allocation: snapshotAllocation(
+          perCharacter,
+          unclaimedById,
+          totalNodesExplored
+        ),
+        completedTierCount,
+        totalTierCount,
+      };
       continue;
     }
 
-    const assignment = packColumns(packerChars);
+    const assignment = allocatePreparedTier(preparedChars, {
+      topK,
+      pricingRounds: options.pricingRounds ?? DEFAULT_PRICING_ROUNDS,
+      maxColumnsPerCharacter:
+        options.maxColumnsPerCharacter ?? DEFAULT_MAX_COLUMNS,
+      beamWidth: options.beamWidth ?? DEFAULT_BEAM_WIDTH,
+      repairSweeps: options.repairSweeps ?? DEFAULT_REPAIR_SWEEPS,
+      priceStep: options.priceStep ?? DEFAULT_PRICE_STEP,
+      priceDecay: options.priceDecay ?? DEFAULT_PRICE_DECAY,
+    });
     totalNodesExplored += assignment.nodesExplored;
 
     // Pass 1: record packer assignments and remove their claimed artifacts.
@@ -198,7 +267,7 @@ export function runTierWaterfall(
     });
     if (skippedAfterMain.length > 0) {
       const leftoverPool = Array.from(unclaimedById.values());
-      const subPackerChars: PackerCharacter[] = [];
+      const subPreparedChars: PreparedTierCharacter[] = [];
       const subConfigByChar = new Map<string, BuildOptimizerConfig>();
       for (const char of skippedAfterMain) {
         const ctx = ctxByChar.get(char.key)!;
@@ -207,17 +276,23 @@ export function runTierWaterfall(
           ...ctx.config,
           candidates,
         };
-        const result = enumerateBuilds(subConfig, topK);
-        const columns = result.builds.map((b) => ({
-          artifactIds: allSlots.map((s) => b.artifacts[s].id),
-          score: b.finalScore,
-          payload: b,
-        }));
         subConfigByChar.set(char.key, subConfig);
-        subPackerChars.push({ characterId: char.key, columns });
+        subPreparedChars.push({ characterId: char.key, config: subConfig });
       }
 
-      const subAssignment = packColumns(subPackerChars);
+      const subAssignment = allocatePreparedTier(subPreparedChars, {
+        topK,
+        pricingRounds: Math.max(
+          2,
+          Math.ceil((options.pricingRounds ?? DEFAULT_PRICING_ROUNDS) / 2)
+        ),
+        maxColumnsPerCharacter:
+          options.maxColumnsPerCharacter ?? DEFAULT_MAX_COLUMNS,
+        beamWidth: options.beamWidth ?? DEFAULT_BEAM_WIDTH,
+        repairSweeps: options.repairSweeps ?? DEFAULT_REPAIR_SWEEPS,
+        priceStep: options.priceStep ?? DEFAULT_PRICE_STEP,
+        priceDecay: options.priceDecay ?? DEFAULT_PRICE_DECAY,
+      });
       totalNodesExplored += subAssignment.nodesExplored;
 
       for (const char of skippedAfterMain) {
@@ -241,13 +316,11 @@ export function runTierWaterfall(
       }
     }
 
-    // Pass 3: guaranteed-assignment sequential greedy. After the sub-packer,
-    // any character still without a build gets one via per-char B&B against
-    // whatever artifacts remain unclaimed, in priority order. The
-    // `buildAllocationPool` always includes each char's currently-equipped
-    // artifacts as candidates, so a feasible build is virtually always
-    // findable — this guarantee lets the caller trust that every character
-    // with valid `scoreResult` ends up with an allocated build.
+    // Pass 3: sequential greedy rescue. After the sub-packer, any character
+    // still without a build gets one via per-char B&B against whatever
+    // artifacts remain unclaimed, in priority order. Equipped artifacts are
+    // not reintroduced once another character has claimed them, so a character
+    // can still remain empty if the leftover pool cannot satisfy its set.
     for (const char of chars) {
       const allocated = perCharacter[char.key];
       if (!allocated || allocated.build !== null) continue;
@@ -276,6 +349,18 @@ export function runTierWaterfall(
         if (a) unclaimedById.delete(a.id);
       }
     }
+
+    completedTierCount += 1;
+    yield {
+      tier,
+      allocation: snapshotAllocation(
+        perCharacter,
+        unclaimedById,
+        totalNodesExplored
+      ),
+      completedTierCount,
+      totalTierCount,
+    };
   }
 
   // Pool (and any tier not in tierOrder) characters: record unallocated
@@ -287,11 +372,7 @@ export function runTierWaterfall(
     perCharacter[char.key] = makeUnallocated(char, tier, luckExpectation);
   }
 
-  return {
-    perCharacter,
-    unclaimedAfterWaterfall: Array.from(unclaimedById.values()),
-    totalNodesExplored,
-  };
+  return snapshotAllocation(perCharacter, unclaimedById, totalNodesExplored);
 }
 
 // ─── Helpers ───
@@ -311,6 +392,18 @@ function makeUnallocated(
   };
 }
 
+function snapshotAllocation(
+  perCharacter: Record<string, AllocatedBuild>,
+  unclaimedById: Map<string, ArtifactData>,
+  totalNodesExplored: number
+): AllocationResult {
+  return {
+    perCharacter: { ...perCharacter },
+    unclaimedAfterWaterfall: Array.from(unclaimedById.values()),
+    totalNodesExplored,
+  };
+}
+
 function safeComputeCrBudget(
   char: Parameters<typeof computeCrBudget>[0],
   buildMatch: Parameters<typeof computeCrBudget>[1]
@@ -326,5 +419,136 @@ function safeComputeCrBudget(
       artifactSetCr: 0,
       totalNonArtifactCr: 0.05,
     };
+  }
+}
+
+interface PreparedTierCharacter {
+  characterId: string;
+  config: BuildOptimizerConfig;
+}
+
+interface PreparedTierOptions {
+  topK: number;
+  pricingRounds: number;
+  maxColumnsPerCharacter: number;
+  beamWidth: number;
+  repairSweeps: number;
+  priceStep: number;
+  priceDecay: number;
+}
+
+function allocatePreparedTier(
+  chars: PreparedTierCharacter[],
+  options: PreparedTierOptions
+) {
+  const prices = new Map<string, number>();
+  const columnsByChar = new Map<string, PackerCharacter["columns"]>();
+  const seenByChar = new Map<string, Set<string>>();
+
+  for (const char of chars) {
+    columnsByChar.set(char.characterId, []);
+    seenByChar.set(char.characterId, new Set());
+  }
+
+  const rounds = Math.max(1, options.pricingRounds);
+  for (let round = 0; round < rounds; round++) {
+    for (const char of chars) {
+      const result = enumerateBuilds(
+        { ...char.config, artifactPrices: prices },
+        options.topK
+      );
+      const columns = columnsByChar.get(char.characterId)!;
+      const seen = seenByChar.get(char.characterId)!;
+      for (const build of result.builds) {
+        const artifactIds = allSlots.map((s) => build.artifacts[s].id);
+        const signature = artifactIds.slice().sort().join("|");
+        if (seen.has(signature)) continue;
+        seen.add(signature);
+        columns.push({
+          artifactIds,
+          score: build.finalScore,
+          payload: build,
+        });
+      }
+      columns.sort((a, b) => b.score - a.score);
+      if (columns.length > options.maxColumnsPerCharacter) {
+        columns.length = options.maxColumnsPerCharacter;
+      }
+    }
+    updateArtifactPrices(columnsByChar, prices, options);
+  }
+
+  const packerChars: PackerCharacter[] = chars.map((char) => ({
+    characterId: char.characterId,
+    columns: columnsByChar.get(char.characterId) ?? [],
+  }));
+
+  return packColumnsBeam(packerChars, {
+    beamWidth: options.beamWidth,
+    repairSweeps: options.repairSweeps,
+  });
+}
+
+function updateArtifactPrices(
+  columnsByChar: Map<string, PackerCharacter["columns"]>,
+  prices: Map<string, number>,
+  options: PreparedTierOptions
+): void {
+  const regretsByArtifact = new Map<string, number[]>();
+
+  for (const columns of columnsByChar.values()) {
+    if (columns.length === 0) continue;
+    const considered = columns.slice(0, Math.min(columns.length, 48));
+    const artifactIds = new Set<string>();
+    for (const col of considered) {
+      for (const id of col.artifactIds) artifactIds.add(id);
+    }
+
+    for (const id of artifactIds) {
+      let bestWith = Number.NEGATIVE_INFINITY;
+      let bestWithout = Number.NEGATIVE_INFINITY;
+      for (const col of considered) {
+        if (col.artifactIds.includes(id)) {
+          bestWith = Math.max(bestWith, col.score);
+        } else {
+          bestWithout = Math.max(bestWithout, col.score);
+        }
+      }
+      if (bestWith === Number.NEGATIVE_INFINITY) continue;
+      if (bestWithout === Number.NEGATIVE_INFINITY) {
+        bestWithout = bestWith - PRICE_REGRET_CAP;
+      }
+      const regret = Math.min(
+        PRICE_REGRET_CAP,
+        Math.max(0, bestWith - bestWithout)
+      );
+      if (regret <= 0) continue;
+      const regrets = regretsByArtifact.get(id) ?? [];
+      regrets.push(regret);
+      regretsByArtifact.set(id, regrets);
+    }
+  }
+
+  for (const [id, oldPrice] of prices) {
+    if (!regretsByArtifact.has(id)) {
+      const decayed = oldPrice * options.priceDecay;
+      if (decayed < 0.01) prices.delete(id);
+      else prices.set(id, decayed);
+    }
+  }
+
+  for (const [id, regrets] of regretsByArtifact) {
+    if (regrets.length <= 1) {
+      const decayed = (prices.get(id) ?? 0) * options.priceDecay;
+      if (decayed < 0.01) prices.delete(id);
+      else prices.set(id, decayed);
+      continue;
+    }
+    regrets.sort((a, b) => b - a);
+    const losingDemand = regrets.slice(1).reduce((sum, r) => sum + r, 0);
+    const next =
+      (prices.get(id) ?? 0) * options.priceDecay +
+      losingDemand * options.priceStep;
+    prices.set(id, Math.min(PRICE_CAP, next));
   }
 }

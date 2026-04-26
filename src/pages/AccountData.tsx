@@ -8,7 +8,6 @@ import {
   HelpCircle,
   Pencil,
   Users,
-  Wrench,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -69,6 +68,7 @@ import {
 } from "@/pages/account-data/CharacterView";
 import { EvaluationView } from "@/pages/account-data/EvaluationView";
 import { InventoryView } from "@/pages/account-data/InventoryView";
+import { RecommendationView } from "@/pages/account-data/RecommendationView";
 import { ResourceView } from "@/pages/account-data/ResourceView";
 import { TriageView } from "@/pages/account-data/TriageView";
 import { applyAccountImport } from "@/stores/applyAccountImport";
@@ -145,18 +145,6 @@ const NoDataPlaceholder = ({
       {t.ui("accountData.afterImportHint")}
     </p>
   </EmptyState>
-);
-
-const RecommendationsRenovatingPlaceholder = ({
-  t,
-}: {
-  t: ReturnType<typeof useLanguage>["t"];
-}) => (
-  <EmptyState
-    icon={Wrench}
-    title={t.ui("accountData.recommendationsRenovatingTitle")}
-    description={t.ui("accountData.recommendationsRenovatingDesc")}
-  />
 );
 
 export default function AccountDataPage() {
@@ -729,8 +717,11 @@ export default function AccountDataPage() {
         </TabsContent>
 
         <TabsContent value="recommendations" className="mt-0 h-full">
-          {/* Temporarily bypass RecommendationView to avoid importing or mounting its slow WIP calculations. */}
-          <RecommendationsRenovatingPlaceholder t={t} />
+          <RecommendationView
+            scores={scores}
+            onOpenImport={() => importRef.current?.open()}
+            onShowTour={() => tour.start("account-data")}
+          />
         </TabsContent>
 
         <TabsContent value="evaluation" className="mt-0 h-full">

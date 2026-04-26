@@ -1,116 +1,29 @@
-import { ArrowBigUpDash, Info, Sliders } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Info, Loader2, RefreshCw } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { LuckExpectation } from "@/data/enums";
 import { LUCK_MULTIPLIERS, tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { CharacterData } from "@/data/types";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
+import { useAsyncRecommendations } from "@/hooks/useAsyncRecommendations";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   buildArtifactLookup,
-  generateAllRecommendations,
+  type CharacterActions,
   type ScoreUpAction,
 } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
-import { cn } from "@/lib/utils";
+import { useRecommendationCacheStore } from "@/stores/useRecommendationCacheStore";
 import { useTierStore } from "@/stores/useTierStore";
-
-// Height model for masonry layout (measured px values)
-const CARD_GAP = 16; // gap-4
-const HEIGHT = {
-  compact: { empty: 146, base: 102, perRec: 83 },
-  normal: { empty: 155, base: 111, perRec: 83 },
-} as const;
-
-function estimateCardHeight(recCount: number, compact: boolean): number {
-  const h = compact ? HEIGHT.compact : HEIGHT.normal;
-  if (recCount === 0) return h.empty;
-  return h.base + recCount * h.perRec;
-}
-
-function computeMasonryColumns<T>(
-  items: T[],
-  getHeight: (item: T) => number,
-  columnCount: number
-): T[][] {
-  if (columnCount <= 1) return [items];
-  const columns: T[][] = Array.from({ length: columnCount }, () => []);
-  const heights: number[] = new Array(columnCount).fill(0);
-
-  for (const item of items) {
-    let minIdx = 0;
-    for (let i = 1; i < columnCount; i++) {
-      if (heights[i] < heights[minIdx]) minIdx = i;
-    }
-    columns[minIdx].push(item);
-    heights[minIdx] += getHeight(item) + CARD_GAP;
-  }
-
-  return columns;
-}
-
-function ThresholdInput({
-  label,
-  icon: ThIcon,
-  color,
-  value,
-  onChange,
-}: {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-  value: number;
-  onChange: (v: number) => void;
-}) {
-  const [draft, setDraft] = useState<string | null>(null);
-  const displayed = draft ?? String(value);
-
-  return (
-    <div className="flex items-center gap-2">
-      <ThIcon className={cn("w-4 h-4", color)} />
-      <span className={cn("text-sm", color)}>{label}</span>
-      <input
-        type="text"
-        inputMode="numeric"
-        value={displayed}
-        onChange={(e) => {
-          const raw = e.target.value;
-          // Allow empty while editing
-          if (raw === "") {
-            setDraft("");
-            return;
-          }
-          const v = Number(raw);
-          if (!Number.isNaN(v) && v >= 0 && v <= 99) {
-            setDraft(raw);
-            onChange(v);
-          }
-        }}
-        onBlur={() => {
-          // Commit empty → 0
-          if (draft === "") onChange(0);
-          setDraft(null);
-        }}
-        className="w-10 bg-transparent border-b border-muted-foreground text-center text-sm font-mono font-bold text-foreground outline-none focus:border-primary"
-      />
-    </div>
-  );
-}
 
 interface RecommendationViewProps {
   scores: Record<string, ArtifactScoreResult | null>;
@@ -124,37 +37,136 @@ export function RecommendationView({
   onShowTour,
 }: RecommendationViewProps) {
   const { t } = useLanguage();
-  const accountData = useActiveAccountData();
+  const activeAccount = useActiveAccount();
+  const accountData = activeAccount?.data ?? null;
   const buildGroups = useAllResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const tierCustomization = useTierStore((s) => s.tierCustomization);
   const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
   const recommendationPrefs = useTierStore((s) => s.recommendationPrefs);
-  const setScoreDiffThreshold = useTierStore((s) => s.setScoreDiffThreshold);
-  const setIncludeUpgrades = useTierStore((s) => s.setIncludeUpgrades);
-  // Generate optimizer-based recommendations
-  const allRecs = useMemo(() => {
-    if (!accountData) return null;
-    try {
-      return generateAllRecommendations(
+  const {
+    recommendations: allRecs,
+    progress,
+    isComputing,
+    error: recommendationError,
+    start: startRecommendations,
+    stop: stopRecommendations,
+  } = useAsyncRecommendations();
+  const cacheVersion = useRecommendationCacheStore((s) => s.version);
+  const cacheGet = useRecommendationCacheStore((s) => s.get);
+  const cacheSet = useRecommendationCacheStore((s) => s.set);
+  const cacheClearKey = useRecommendationCacheStore((s) => s.clearKey);
+  const [activeRunKey, setActiveRunKey] = useState<string | null>(null);
+  const [recalculateNonce, setRecalculateNonce] = useState(0);
+
+  const recommendationCacheKey = useMemo(() => {
+    if (!activeAccount || !accountData || !hasAnyBuilds) return null;
+    return `recommendations:${hashString(
+      JSON.stringify({
+        accountId: activeAccount.id,
         accountData,
         scores,
         tierAssignments,
         tierCustomization,
-        recommendationPrefs
-      );
-    } catch (e) {
-      console.error("Recommendation engine error:", e);
-      return null;
-    }
+        recommendationPrefs: { ...recommendationPrefs, includeUpgrades: true },
+      })
+    )}`;
   }, [
+    activeAccount,
     accountData,
+    hasAnyBuilds,
     scores,
     tierAssignments,
     tierCustomization,
     recommendationPrefs,
   ]);
+
+  const cachedRecommendations = recommendationCacheKey
+    ? cacheGet(recommendationCacheKey)
+    : undefined;
+  void cacheVersion;
+
+  useEffect(() => {
+    void recalculateNonce;
+    if (!accountData || !hasAnyBuilds || !recommendationCacheKey) {
+      stopRecommendations();
+      setActiveRunKey(null);
+      return;
+    }
+
+    if (useRecommendationCacheStore.getState().get(recommendationCacheKey)) {
+      stopRecommendations();
+      setActiveRunKey(null);
+      return;
+    }
+
+    setActiveRunKey(recommendationCacheKey);
+    startRecommendations({
+      accountData,
+      scores,
+      tierAssignments,
+      tierCustomization,
+      prefs: { ...recommendationPrefs, includeUpgrades: true },
+    });
+
+    return stopRecommendations;
+  }, [
+    accountData,
+    hasAnyBuilds,
+    recommendationCacheKey,
+    recalculateNonce,
+    scores,
+    tierAssignments,
+    tierCustomization,
+    recommendationPrefs,
+    startRecommendations,
+    stopRecommendations,
+  ]);
+
+  useEffect(() => {
+    if (
+      !recommendationCacheKey ||
+      activeRunKey !== recommendationCacheKey ||
+      isComputing ||
+      !allRecs
+    ) {
+      return;
+    }
+
+    cacheSet(recommendationCacheKey, {
+      recommendations: allRecs,
+      progress,
+    });
+  }, [
+    recommendationCacheKey,
+    activeRunKey,
+    isComputing,
+    allRecs,
+    progress,
+    cacheSet,
+  ]);
+
+  const displayedRecommendations =
+    cachedRecommendations?.recommendations ??
+    (activeRunKey === recommendationCacheKey ? allRecs : null);
+  const displayedProgress =
+    cachedRecommendations?.progress ??
+    (activeRunKey === recommendationCacheKey
+      ? progress
+      : {
+          completedTierCount: 0,
+          totalTierCount: 0,
+          currentTier: null,
+        });
+  const isCalculating = isComputing && activeRunKey === recommendationCacheKey;
+
+  const handleRecalculate = () => {
+    if (!recommendationCacheKey) return;
+    cacheClearKey(recommendationCacheKey);
+    setActiveRunKey(null);
+    setRecalculateNonce((n) => n + 1);
+  };
 
   // Build artifact lookup for resolving recommendation artifact IDs
   const artifactLookup = useMemo(
@@ -164,7 +176,7 @@ export function RecommendationView({
 
   // Group characters by tier, sorted by max recommendation impact
   const charactersByTier = useMemo(() => {
-    if (!accountData || !allRecs) return {};
+    if (!accountData || !displayedRecommendations) return {};
 
     const byTier: Record<
       string,
@@ -172,6 +184,7 @@ export function RecommendationView({
         char: CharacterData;
         scoreResult: ArtifactScoreResult;
         recommendations: ScoreUpAction[];
+        allocatedBuild: CharacterActions["allocatedBuild"];
       }[]
     > = {};
     for (const tier of tiers) {
@@ -185,14 +198,25 @@ export function RecommendationView({
       const assignment = tierAssignments[char.key];
       const tier = assignment ? assignment.tier : "Pool";
 
-      const charRecs = allRecs.perCharacter[char.key];
+      const charRecs = displayedRecommendations.perCharacter[char.key];
       const recommendations = charRecs?.actions ?? [];
+      const allocatedBuild = charRecs?.allocatedBuild ?? null;
 
       if (!byTier[tier]) {
         if (!byTier.Pool) byTier.Pool = [];
-        byTier.Pool.push({ char, scoreResult, recommendations });
+        byTier.Pool.push({
+          char,
+          scoreResult,
+          recommendations,
+          allocatedBuild,
+        });
       } else {
-        byTier[tier].push({ char, scoreResult, recommendations });
+        byTier[tier].push({
+          char,
+          scoreResult,
+          recommendations,
+          allocatedBuild,
+        });
       }
     }
 
@@ -212,15 +236,7 @@ export function RecommendationView({
     }
 
     return byTier;
-  }, [accountData, scores, tierAssignments, allRecs]);
-
-  const isSm = useMediaQuery("(min-width: 640px)");
-  const isMd = useMediaQuery("(min-width: 768px)");
-  const isLg = useMediaQuery("(min-width: 1024px)");
-  const isXl = useMediaQuery("(min-width: 1280px)");
-  const is2xl = useMediaQuery("(min-width: 1536px)");
-  const isCompact = !isMd;
-  const columnCount = is2xl ? 4 : isXl ? 3 : isLg ? 3 : isSm ? 2 : 1;
+  }, [accountData, scores, tierAssignments, displayedRecommendations]);
 
   if (!accountData || !hasAnyBuilds) {
     return (
@@ -235,71 +251,77 @@ export function RecommendationView({
     );
   }
 
-  const hasRankedChars = tiers.some(
-    (tier) =>
-      tier !== "Pool" &&
-      !tierCustomization[tier]?.hidden &&
-      (charactersByTier[tier]?.length ?? 0) > 0
+  const hasRankedChars = accountData.characters.some((char) => {
+    const tier = tierAssignments[char.key]?.tier || "Pool";
+    return tier !== "Pool" && !tierCustomization[tier]?.hidden;
+  });
+  const progressValue =
+    displayedProgress.totalTierCount > 0
+      ? (displayedProgress.completedTierCount /
+          displayedProgress.totalTierCount) *
+        100
+      : 0;
+  const currentTierName = displayedProgress.currentTier
+    ? tierCustomization[displayedProgress.currentTier]?.displayName ||
+      t.tier(displayedProgress.currentTier)
+    : null;
+  const firstVisibleTier = tiers.find((tier) => {
+    if (tier === "Pool") return false;
+    if (tierCustomization[tier]?.hidden) return false;
+    return (charactersByTier[tier]?.length ?? 0) > 0;
+  });
+
+  const renderCalculationStatus = () => (
+    <div className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
+      <div className="bg-gradient-select border-b border-border/70 px-4 py-2.5 flex items-center gap-2">
+        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        <span className="text-sm font-semibold">
+          {t.ui("accountData.recommendationsCalculating")}
+        </span>
+        {currentTierName && (
+          <span className="text-xs text-muted-foreground">
+            {t.format(
+              "accountData.recommendationsCurrentTier",
+              currentTierName
+            )}
+          </span>
+        )}
+      </div>
+      <div className="p-3 md:p-4 space-y-2">
+        <Progress value={progressValue} className="h-2" />
+        <p className="text-xs text-muted-foreground">
+          {t.format(
+            "accountData.recommendationsProgress",
+            displayedProgress.completedTierCount,
+            displayedProgress.totalTierCount
+          )}
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderRecalculateButton = () => (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={handleRecalculate}
+      disabled={!recommendationCacheKey || isCalculating}
+      title={t.ui("accountData.recalculateRecommendations")}
+      className="ml-auto gap-2"
+    >
+      <RefreshCw
+        className={isCalculating ? "h-4 w-4 animate-spin" : "h-4 w-4"}
+      />
+      <span className="hidden sm:inline">
+        {t.ui("accountData.recalculateRecommendations")}
+      </span>
+    </Button>
   );
 
   return (
     <ScrollLayout bodyClassName="space-y-4">
-      {hasRankedChars ? (
-        /* Investment threshold controls */
-        <Card className="bg-gradient-card shrink-0">
-          <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 p-4">
-            <div className="flex items-center gap-2 pr-2 lg:pr-4 xl:pr-6">
-              <CardTitle className="text-lg font-bold text-white">
-                {t.ui("accountData.investmentLevel.label")}
-              </CardTitle>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-white/10"
-                  >
-                    <Info className="w-4 h-4" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  side="bottom"
-                  align="start"
-                  className="w-80 space-y-2 text-sm"
-                >
-                  <p className="font-semibold text-foreground">
-                    {t.ui("accountData.howItWorks.title")}
-                  </p>
-                  <ul className="space-y-1.5 text-muted-foreground list-disc pl-4">
-                    <li>{t.ui("accountData.howItWorks.step1")}</li>
-                    <li>{t.ui("accountData.howItWorks.step2")}</li>
-                    <li>{t.ui("accountData.howItWorks.step3")}</li>
-                    <li>{t.ui("accountData.howItWorks.step4")}</li>
-                  </ul>
-                </PopoverContent>
-              </Popover>
-            </div>
-            <ThresholdInput
-              label={t.ui("accountData.insights.minScoreDiff")}
-              icon={Sliders}
-              color="text-sky-400"
-              value={recommendationPrefs.scoreDiffThreshold}
-              onChange={setScoreDiffThreshold}
-            />
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={recommendationPrefs.includeUpgrades}
-                onChange={(e) => setIncludeUpgrades(e.target.checked)}
-                className="accent-emerald-400 w-4 h-4"
-              />
-              <ArrowBigUpDash className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm text-emerald-400">
-                {t.ui("accountData.insights.includeUpgrades")}
-              </span>
-            </label>
-          </CardContent>
-        </Card>
-      ) : (
+      {!hasRankedChars && (
         <div className="flex flex-col items-center justify-center gap-4 py-12">
           <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center">
             <Info className="w-6 h-6 text-primary" />
@@ -312,6 +334,14 @@ export function RecommendationView({
               {t.ui("accountData.insights.goToTierList")}
             </Link>
           </Button>
+        </div>
+      )}
+
+      {isCalculating && renderCalculationStatus()}
+
+      {recommendationError && (
+        <div className="rounded-lg bg-destructive/10 border border-destructive/30 p-4 text-sm text-destructive">
+          {t.ui("accountData.recommendationsFailed")}
         </div>
       )}
 
@@ -336,6 +366,7 @@ export function RecommendationView({
                   ({chars.length})
                 </span>
               </h2>
+              {tier === firstVisibleTier && renderRecalculateButton()}
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-foreground font-medium">
                   {t.ui("accountData.luckExpectation.label")}:
@@ -387,32 +418,22 @@ export function RecommendationView({
               </div>
             </div>
 
-            {/* Per-character cards — masonry layout */}
-            {(() => {
-              const cols = computeMasonryColumns(
-                chars,
-                (c) => estimateCardHeight(c.recommendations.length, isCompact),
-                columnCount
-              );
-              return (
-                <div className="flex gap-4">
-                  {cols.map((col, i) => (
-                    <div key={i} className="flex-1 flex flex-col gap-4 min-w-0">
-                      {col.map(({ char, scoreResult, recommendations }) => (
-                        <ScoreUpCard
-                          key={char.key}
-                          char={char}
-                          tier={tier}
-                          recommendations={recommendations}
-                          score={scoreResult}
-                          artifactLookup={artifactLookup}
-                        />
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
+            {/* Per-character cards — grid layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+              {chars.map(
+                ({ char, scoreResult, recommendations, allocatedBuild }) => (
+                  <ScoreUpCard
+                    key={char.key}
+                    char={char}
+                    tier={tier}
+                    recommendations={recommendations}
+                    allocatedBuild={allocatedBuild}
+                    score={scoreResult}
+                    artifactLookup={artifactLookup}
+                  />
+                )
+              )}
+            </div>
           </div>
         );
       })}
@@ -481,4 +502,12 @@ export function RecommendationView({
       </p>
     </ScrollLayout>
   );
+}
+
+function hashString(value: string): string {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash * 31 + value.charCodeAt(i)) | 0;
+  }
+  return (hash >>> 0).toString(36);
 }

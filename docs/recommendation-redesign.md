@@ -171,15 +171,15 @@ Build a small benchmark harness:
 ### Known caveat: per-slot K cap inside per-char B&B
 `buildOptimizer.ts` has hidden `TOP_K_SET=30` and `TOP_K_FLEX=15` per-slot caps that prune candidates beyond the K-th best per single-slot score. This is a heuristic — a great-substat artifact ranked >K by single-slot score could be globally optimal in combination with other artifacts. Practically rare, but documented for future tuning.
 
-### Allocation pipeline (3-pass chain)
+### Allocation pipeline (priced 3-pass chain)
 
-The full pipeline guarantees every character gets a build (no empty characters).
+The pipeline preserves artifact uniqueness against the unclaimed pool. Characters usually get rescued by the later passes, but a character can remain empty if the leftover pool cannot satisfy its set after higher-priority claims.
 
-1. **Main packer** — top-K columns per char, packed with DFS-with-pruning.
-2. **Sub-packer** — for characters skipped by the main packer (all their K columns conflicted), enumerate K columns against the post-main-packer leftover pool and pack them. Skipped-char columns are disjoint from main-round picks by construction, so this is a clean sub-problem.
-3. **Sequential greedy** — any character still unassigned after the sub-packer gets their top-1 build via per-char B&B against whatever remains. Since `buildAllocationPool` always includes each character's currently-equipped artifacts, a feasible build is virtually always findable.
+1. **Main priced packer** — generate columns across several shadow-price rounds, then pack accumulated columns with bounded beam search and local repair.
+2. **Sub-packer** — for characters skipped by the main packer, regenerate priced columns against the post-main-packer leftover pool and pack that clean sub-problem.
+3. **Sequential greedy** — any character still unassigned after the sub-packer gets its top-1 build via per-char B&B against whatever remains.
 
-The contract: **every character with a valid `scoreResult` ends up with an allocated build**. No character is ever left empty because the packer's K was too low or the pool was contested.
+The contract: **no allocated build should reuse an already-claimed artifact**. Empty allocations are allowed when the remaining pool is genuinely infeasible.
 
 ### K-sweep results (`scripts/kSweepReal.ts`)
 
@@ -219,19 +219,29 @@ The 3-pass chain absorbs the non-monotonicity: every char gets a build regardles
 
 ### Production K choice
 
-**K=20 default**:
+**Current defaults**:
+- K=30 new columns per character per pricing round.
+- 8 shadow-price rounds.
+- 120 accumulated columns per character.
+- Beam width 1024.
+- 2 local-repair sweeps.
+
+Earlier K=20 DFS baseline:
 - Within 0.5% of best observed total in both scenarios.
-- Zero empty characters guaranteed (3-pass chain).
 - Fast: ~25ms enum + packer per tier of 5 chars.
 - In realistic Genshin accounts (chars with different sets), closer to Scenario B — slightly suboptimal but safe.
 
 Higher K (50–100) trades a bit more compute for an additional ~0.1–0.2% of realistic quality, but can hurt in pathological heavy-contention tiers. K=20 is the safe middle.
 
-### Future algorithmic work (not in V1)
+### Current bounded solver
 
-The packer's myopia (ignores fallback's downstream contribution) is the root of the non-monotonicity. A proper fix would **internalize the fallback value** into the packer's skip-branch score — but the fallback value depends on the rest of the assignment, making it a circular dependency. Approaches worth exploring:
-- Lagrangian / shadow-price iteration (column generation).
-- Iterative local search on top of the 3-pass result (swap moves between assigned and fallback chars).
+The packer's myopia (ignores fallback's downstream contribution) is the root of the non-monotonicity. The current implementation now uses a bounded middle-ground solver:
+
+- **Shadow-price column generation**: artifacts that appear in multiple high-regret character columns get a temporary price. Per-character build enumeration ranks by `realScore - ΣartifactPrice`, but columns keep their real score for final packing and display.
+- **Beam packing**: production packing uses bounded beam search instead of exact DFS over every accumulated column.
+- **Local repair**: after beam packing, single-character and two-character repair sweeps try to improve the allocation while preserving artifact uniqueness.
+
+Future approaches worth exploring if quality gaps show up in larger benchmarks:
 - Integer programming (ILP solver in JS, slow but principled).
 
 None justified for V1 given the current quality is within 0.5%.

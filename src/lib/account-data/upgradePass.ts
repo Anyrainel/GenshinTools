@@ -55,6 +55,8 @@ export interface CharacterUpgrades {
 export interface UpgradePassOptions {
   /** Minimum scoreDiff for a recommendation to surface. */
   minScoreDiff?: number;
+  /** Artifacts allocated to current-or-higher tiers; unavailable as external picks. */
+  blockedArtifactIds?: ReadonlySet<string>;
 }
 
 const MAX_LEVEL: Record<number, number> = { 5: 20, 4: 16 };
@@ -91,10 +93,16 @@ export function runUpgradePassForCharacter(
     const a = allocBuild.artifacts[slot];
     if (a) inBuildIds.add(a.id);
   }
+  const blockedArtifactIds = options.blockedArtifactIds ?? new Set();
 
   const upgradeCandidatesBySlot = bucketBySlot(
     pool
-      .filter((a) => !inBuildIds.has(a.id) && isUpgradeable(a))
+      .filter(
+        (a) =>
+          !inBuildIds.has(a.id) &&
+          !blockedArtifactIds.has(a.id) &&
+          isUpgradeable(a)
+      )
       .map((a) => projectUpgrade(a, luck))
   );
   const inBuildUpgradeBySlot = bucketBySlot(
@@ -105,7 +113,10 @@ export function runUpgradePassForCharacter(
 
   // Max-level artifacts that could serve as swap partners for strategies 2/3.
   const maxLevelBySlot = bucketBySlot(
-    pool.filter((a) => !inBuildIds.has(a.id) && isMaxLevel(a))
+    pool.filter(
+      (a) =>
+        !inBuildIds.has(a.id) && !blockedArtifactIds.has(a.id) && isMaxLevel(a)
+    )
   );
 
   // ─── Strategy 1: upgrade in place ───

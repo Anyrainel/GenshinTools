@@ -257,14 +257,6 @@ export const i18nUiData = {
     characters: { en: "Characters", zh: "角色" },
     inventory: { en: "Inventory", zh: "库存" },
     recommendations: { en: "Recommendations", zh: "提分推荐" },
-    recommendationsRenovatingTitle: {
-      en: "This Page Is Being Renovated",
-      zh: "此页面正在翻新中",
-    },
-    recommendationsRenovatingDesc: {
-      en: "Recommendations are temporarily unavailable while the algorithm and interface are rebuilt.",
-      zh: "提分推荐的算法与界面正在重做，暂时不可用。",
-    },
     weapons: { en: "Weapons", zh: "武器" },
     artifacts: { en: "Artifacts", zh: "圣遗物" },
     equipped: { en: "Equipped", zh: "已装备" },
@@ -422,15 +414,22 @@ export const i18nUiData = {
     insights: {
       upgrade: { en: "Upgrade", zh: "强化" },
       swap: { en: "Swap", zh: "替换" },
-      minScoreDiff: { en: "Min score gain", zh: "最小评分提升" },
-      includeUpgrades: { en: "Include upgrades", zh: "包含强化建议" },
+      keep: { en: "Keep", zh: "保持" },
+      swapDetails: { en: "Swap details", zh: "替换详情" },
+      bestAllocation: { en: "Best allocation", zh: "最佳分配" },
+      bestAllocationScoreLabel: { en: "Best allocation:", zh: "最佳分配：" },
+      additionalUpgrades: { en: "Upgrade suggestions", zh: "升级建议" },
+      noUpgradeSuggestions: {
+        en: "No upgrade suggestions for this allocation.",
+        zh: "当前分配下暂无升级建议。",
+      },
+      noArtifactSwaps: {
+        en: "No artifacts were swapped.",
+        zh: "所有圣遗物均未替换。",
+      },
+      statValue: { en: "Stat Value", zh: "属性值" },
       fromInventory: { en: "In Inventory", zh: "背包中" },
       fromCharacter: { en: "from {0}", zh: "取自 {0}" },
-      allGood: { en: "All Good!", zh: "完美!" },
-      allGoodDescription: {
-        en: "No suggestions for this character.",
-        zh: "这个角色没有优化建议。",
-      },
       poolInfo: {
         en: "Characters in the Pool are not computed for recommendations. Their equipped artifacts may even be suggested for other characters to swap.",
         zh: "角色池中的角色不计算推荐操作。他们装备的圣遗物甚至有可能被推荐给其他角色使用。",
@@ -440,6 +439,26 @@ export const i18nUiData = {
     noRankedChars: {
       en: "Rank your characters in the Tier List to get personalized upgrade recommendations.",
       zh: "在层级列表中为角色排序，即可获得个性化的升级建议。",
+    },
+    recommendationsCalculating: {
+      en: "Calculating recommendations",
+      zh: "正在计算提分推荐",
+    },
+    recommendationsCurrentTier: {
+      en: "Current tier: {0}",
+      zh: "当前层级：{0}",
+    },
+    recommendationsProgress: {
+      en: "{0} of {1} tiers complete",
+      zh: "已完成 {0} / {1} 个层级",
+    },
+    recommendationsFailed: {
+      en: "Recommendation calculation failed. Check the console for details.",
+      zh: "提分推荐计算失败。请查看控制台了解详情。",
+    },
+    recalculateRecommendations: {
+      en: "Recalculate",
+      zh: "重新计算",
     },
     luckExpectation: {
       label: { en: "Roll Value Expectation", zh: "词条期望" },
@@ -454,28 +473,6 @@ export const i18nUiData = {
       cautious: { en: "Cautious", zh: "保守" },
       balanced: { en: "Balanced", zh: "平衡" },
       hopeful: { en: "Hopeful", zh: "乐观" },
-    },
-    investmentLevel: {
-      label: { en: "Min. Score Diff", zh: "推荐时最低分差" },
-    },
-    howItWorks: {
-      title: { en: "How Recommendations Work", zh: "推荐机制说明" },
-      step1: {
-        en: "Each character's artifacts are scored based on how well their substats match the build's stat priorities.",
-        zh: "每个角色的圣遗物根据副属性与配装需求的匹配程度进行评分。",
-      },
-      step2: {
-        en: "The optimizer searches your entire inventory for artifact combinations that could improve the build — including swapping pieces between characters.",
-        zh: "优化器会搜索你整个背包中的圣遗物组合，寻找能提升配装的方案 — 包括在角色之间调换圣遗物。",
-      },
-      step3: {
-        en: 'Only changes that improve the score by at least the "Min. Score Diff" threshold you set above are shown as recommendations.',
-        zh: "只有分数提升达到你设置的「最低分差」阈值的变更才会显示为推荐。",
-      },
-      step4: {
-        en: '"Farm" suggestions estimate what you could gain from new artifact drops, based on the Roll Value Expectation setting per tier.',
-        zh: "「刷取」建议基于每层的词条期望设置，估算新圣遗物掉落带来的提升。",
-      },
     },
     hint: {
       en: "These are quick suggestions based on artifact scoring. For precise team damage optimization, use the {0} tab.",

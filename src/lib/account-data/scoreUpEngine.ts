@@ -21,11 +21,13 @@ import {
   type ArtifactScoreResult,
   scoreSlotWithMainStat,
 } from "../artifact/scoring/artifactScore";
-import type { OptimizedBuild } from "./buildOptimizer";
+import { type OptimizedBuild, scoreFullBuild } from "./buildOptimizer";
 import {
   type AllocatedBuild,
   type AllocationOptions,
+  type AllocationResult,
   runTierWaterfall,
+  runTierWaterfallSteps,
 } from "./tierWaterfall";
 import {
   type CharacterUpgrades,
@@ -59,6 +61,7 @@ export interface ScoreUpAction {
   /** For compound upgrades (strategies 2/3): the additional swap-partner slot. */
   swapSlot?: Slot;
   swapArtifactId?: string;
+  swapCurrentArtifactId?: string | null;
 }
 
 export interface CharacterActions {
@@ -76,6 +79,13 @@ export interface AllActions {
   perCharacter: Record<string, CharacterActions>;
 }
 
+export interface RecommendationTierUpdate {
+  tier: Tier;
+  recommendations: AllActions;
+  completedTierCount: number;
+  totalTierCount: number;
+}
+
 export interface RecommendationPrefs {
   /** Hide actions whose slot score diff falls below this. */
   scoreDiffThreshold: number;
@@ -87,6 +97,8 @@ export const DEFAULT_RECOMMENDATION_PREFS: RecommendationPrefs = {
   scoreDiffThreshold: 1.0,
   includeUpgrades: true,
 };
+
+const DEFAULT_TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
 
 // ─── Main entry ───
 
@@ -106,6 +118,66 @@ export function generateAllRecommendations(
     options
   );
 
+  return buildRecommendationsFromAllocation(
+    accountData,
+    tierAssignments,
+    prefs,
+    options,
+    allocation
+  );
+}
+
+export async function* generateRecommendationsByTier(
+  accountData: AccountData,
+  scores: Record<string, ArtifactScoreResult | null>,
+  tierAssignments: TierAssignment,
+  tierCustomization: TierCustomization = {},
+  prefs: RecommendationPrefs = DEFAULT_RECOMMENDATION_PREFS,
+  options: AllocationOptions = {}
+): AsyncGenerator<RecommendationTierUpdate, void> {
+  const processedCharacterIds = new Set<string>();
+  let latestRecommendations = emptyActions();
+
+  for (const step of runTierWaterfallSteps(
+    accountData,
+    scores,
+    tierAssignments,
+    tierCustomization,
+    options
+  )) {
+    for (const char of accountData.characters) {
+      const tier: Tier = tierAssignments[char.key]?.tier || "Pool";
+      if (tier === step.tier) processedCharacterIds.add(char.key);
+    }
+
+    latestRecommendations = buildRecommendationsFromAllocation(
+      accountData,
+      tierAssignments,
+      prefs,
+      options,
+      step.allocation,
+      processedCharacterIds
+    );
+
+    yield {
+      tier: step.tier,
+      recommendations: latestRecommendations,
+      completedTierCount: step.completedTierCount,
+      totalTierCount: step.totalTierCount,
+    };
+
+    await yieldToBrowser();
+  }
+}
+
+function buildRecommendationsFromAllocation(
+  accountData: AccountData,
+  tierAssignments: TierAssignment,
+  prefs: RecommendationPrefs,
+  options: AllocationOptions,
+  allocation: AllocationResult,
+  includedCharacterIds?: ReadonlySet<string>
+): AllActions {
   const ownerByArtifactId = new Map<string, string>();
   for (const char of accountData.characters) {
     for (const a of Object.values(char.artifacts)) {
@@ -119,6 +191,16 @@ export function generateAllRecommendations(
       Object.values(c.artifacts).filter((a): a is ArtifactData => !!a)
     ),
   ];
+  const artifactById = new Map(allArtifacts.map((a) => [a.id, a]));
+  const tierOrder = options.tierOrder ?? DEFAULT_TIER_ORDER;
+  const tierRank = new Map<Tier, number>(
+    tierOrder.map((tier, index) => [tier, index])
+  );
+  const blockedArtifactIdsByTier = buildBlockedArtifactIdsByTier(
+    allocation.perCharacter,
+    tierOrder,
+    tierRank
+  );
 
   const byActionType: Record<ActionType, ScoreUpAction[]> = {
     swap: [],
@@ -128,6 +210,8 @@ export function generateAllRecommendations(
   const perCharacter: Record<string, CharacterActions> = {};
 
   for (const char of accountData.characters) {
+    if (includedCharacterIds && !includedCharacterIds.has(char.key)) continue;
+
     const alloc = allocation.perCharacter[char.key];
     if (!alloc) {
       perCharacter[char.key] = {
@@ -189,23 +273,31 @@ export function generateAllRecommendations(
       const upgrades: CharacterUpgrades = runUpgradePassForCharacter(
         alloc,
         allArtifacts,
-        { minScoreDiff: prefs.scoreDiffThreshold }
+        {
+          minScoreDiff: prefs.scoreDiffThreshold,
+          blockedArtifactIds: blockedArtifactIdsByTier.get(alloc.tier),
+        }
       );
       for (const up of upgrades.recommendations) {
         const allocatedInSlot = alloc.build.artifacts[up.upgradeSlot];
+        const swapCurrentArtifact = up.swapSlot
+          ? alloc.build.artifacts[up.swapSlot]
+          : undefined;
+        const upgradeArtifact = artifactById.get(up.upgradeArtifactId);
         actions.push({
           actionType: "upgrade",
           characterId: char.key,
           slot: up.upgradeSlot,
           sourceArtifactId: up.upgradeArtifactId,
           currentArtifactId: allocatedInSlot?.id ?? null,
-          setKey: allocatedInSlot?.setKey ?? "",
+          setKey: upgradeArtifact?.setKey ?? allocatedInSlot?.setKey ?? "",
           slotScoreDiff: up.scoreDiff,
           buildScoreDiff: buildScoreDiff + up.scoreDiff,
           maxPotentialScore: up.finalScore,
           upgradeStrategy: up.strategy,
           swapSlot: up.swapSlot,
           swapArtifactId: up.swapArtifactId,
+          swapCurrentArtifactId: swapCurrentArtifact?.id ?? null,
         });
       }
     }
@@ -231,12 +323,80 @@ export function generateAllRecommendations(
 
 // ─── Helpers ───
 
+function emptyActions(): AllActions {
+  return {
+    byActionType: { swap: [], equip: [], upgrade: [] },
+    perCharacter: {},
+  };
+}
+
+function yieldToBrowser(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+function buildBlockedArtifactIdsByTier(
+  perCharacter: Record<string, AllocatedBuild>,
+  tierOrder: Tier[],
+  tierRank: Map<Tier, number>
+): Map<Tier, Set<string>> {
+  const idsByTier = new Map<Tier, Set<string>>();
+  for (const tier of tierOrder) idsByTier.set(tier, new Set());
+
+  for (const alloc of Object.values(perCharacter)) {
+    if (!alloc.build) continue;
+    const ids = idsByTier.get(alloc.tier);
+    if (!ids) continue;
+    for (const slot of allSlots) {
+      const artifact = alloc.build.artifacts[slot];
+      if (artifact) ids.add(artifact.id);
+    }
+  }
+
+  const blockedByTier = new Map<Tier, Set<string>>();
+  for (const tier of tierOrder) {
+    const rank = tierRank.get(tier);
+    if (rank == null) continue;
+    const blocked = new Set<string>();
+    for (const [otherTier, ids] of idsByTier) {
+      const otherRank = tierRank.get(otherTier);
+      if (otherRank == null || otherRank > rank) continue;
+      for (const id of ids) blocked.add(id);
+    }
+    blockedByTier.set(tier, blocked);
+  }
+
+  return blockedByTier;
+}
+
 function currentBuildScore(
   alloc: AllocatedBuild,
   char: AccountData["characters"][number]
 ): number {
   if (!alloc.context) return 0;
   const { config } = alloc.context;
+  const completeArtifacts = {} as OptimizedBuild["artifacts"];
+  let isComplete = true;
+  for (const slot of allSlots) {
+    const eq = char.artifacts[slot];
+    if (!eq) {
+      isComplete = false;
+      break;
+    }
+    completeArtifacts[slot] = {
+      ...eq,
+      source: "current",
+      sourceArtifactId: eq.id,
+    };
+  }
+  if (isComplete) {
+    return scoreFullBuild(
+      completeArtifacts,
+      config.weights,
+      config.targetMainStats,
+      config.crBudget
+    ).finalScore;
+  }
+
   let total = 0;
   for (const slot of allSlots) {
     const eq = char.artifacts[slot];

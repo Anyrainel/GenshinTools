@@ -13,16 +13,13 @@ import type { ArtifactData } from "@/data/types";
 import type { CandidateArtifact } from "./candidatePool";
 
 /**
- * Build per-slot candidate lists from an unclaimed artifact pool, plus the
- * character's currently equipped artifacts (which are always candidates for
- * themselves, regardless of pool membership — they're "free" to keep).
+ * Build per-slot candidate lists from an unclaimed artifact pool. The
+ * character's currently equipped artifacts are still included when they remain
+ * unclaimed, but already-claimed equipped artifacts are not reintroduced.
  *
  * @param char         Character whose pool we're building.
  * @param pool         Unclaimed artifacts (excluding ones already locked by
  *                     higher-tier characters in the waterfall).
- * @param equipped     The character's currently equipped artifacts. Pre-merged
- *                     into the pool for convenience; only one copy of each ID
- *                     ends up in the result.
  */
 export function buildAllocationPool(
   char: { key: string; artifacts: Partial<Record<Slot, ArtifactData>> },
@@ -30,6 +27,7 @@ export function buildAllocationPool(
 ): Record<Slot, CandidateArtifact[]> {
   const result = {} as Record<Slot, CandidateArtifact[]>;
   const equipped = char.artifacts;
+  const poolIds = new Set(pool.map((a) => a.id));
   const equippedIds = new Set<string>();
   for (const slot of allSlots) {
     const e = equipped[slot];
@@ -39,10 +37,10 @@ export function buildAllocationPool(
   for (const slot of allSlots) {
     const candidates: CandidateArtifact[] = [];
 
-    // The character's currently equipped artifact for this slot is always
-    // available to keep, regardless of pool membership.
+    // The character's currently equipped artifact is available only while it
+    // remains unclaimed in the waterfall pool.
     const e = equipped[slot];
-    if (e) {
+    if (e && poolIds.has(e.id)) {
       candidates.push({
         ...e,
         source: "current",

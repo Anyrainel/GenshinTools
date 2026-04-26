@@ -1,6 +1,7 @@
 import type { AccountData } from "@/data/types";
 import { useAccountStore } from "./useAccountStore";
 import { remapFreezeStoreForImport } from "./useFreezeStore";
+import { useRecommendationCacheStore } from "./useRecommendationCacheStore";
 
 /**
  * Atomic account import: remaps frozen artifact IDs, updates account data,
@@ -18,6 +19,7 @@ export function applyAccountImport(opts: {
   /** Old→new artifact ID mapping for freeze-store remapping. */
   artifactIdMap?: Map<string, string>;
 }): void {
+  useRecommendationCacheStore.getState().clear();
   remapFreezeStoreForImport(opts.artifactIdMap);
   const store = useAccountStore.getState();
   store.addOrUpdateAccount(opts.accountId, {

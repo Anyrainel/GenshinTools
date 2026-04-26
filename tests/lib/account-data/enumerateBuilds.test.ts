@@ -287,4 +287,36 @@ describe("enumerateBuilds", () => {
     // 100% — soft cap, contributes 0 past the cap.
     expect(result.builds[0].finalScore).toBeGreaterThan(0);
   });
+
+  it("uses artifact prices for ranking without changing real build scores", () => {
+    const pricedFlower = art("flower", "f-expensive", "CW", { cd: 80 });
+    const cheapFlower = art("flower", "f-cheap", "CW", { cd: 20 });
+    const config: BuildOptimizerConfig = {
+      weights,
+      candidates: {
+        flower: [pricedFlower, cheapFlower],
+        plume: [art("plume", "p1", "CW", { cd: 20 })],
+        sands: [art("sands", "s1", "CW", { cd: 20 })],
+        goblet: [art("goblet", "g1", "CW", { cd: 20 })],
+        circlet: [art("circlet", "c1", "CW", { cd: 20 })],
+      },
+      crBudget: baseCrBudget,
+      targetMainStats: defaultTargetMainStats,
+      setConstraint: { composition: "4pc", artifactSet: "CW" },
+    };
+
+    const unpriced = enumerateBuilds(config, 1).builds[0];
+    expect(unpriced.artifacts.flower.id).toBe("f-expensive");
+
+    const priced = enumerateBuilds(
+      {
+        ...config,
+        artifactPrices: new Map([["f-expensive", 100]]),
+      },
+      1
+    ).builds[0];
+
+    expect(priced.artifacts.flower.id).toBe("f-cheap");
+    expect(unpriced.finalScore).toBeGreaterThan(priced.finalScore);
+  });
 });
