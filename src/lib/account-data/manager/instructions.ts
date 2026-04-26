@@ -1,4 +1,5 @@
 import type { AccountData, ArtifactData } from "@/data/types";
+import type { OptimizedBuild } from "@/lib/account-data/buildOptimizer";
 import type {
   IGOODArtifact,
   IGOODSubstat,
@@ -180,6 +181,60 @@ export function buildBatchEquipInstructions(
       for (const art of Object.values(optimized)) {
         seen.set(art.id, { art, targetCharId: charId });
       }
+    }
+  }
+
+  const equip: { artifact: IGOODArtifact; location: string }[] = [];
+  const artifactIds: string[] = [];
+  const swapMap = new Map<
+    string,
+    { fromChar: string | null; toChar: string }
+  >();
+
+  for (const [artId, { art, targetCharId }] of seen) {
+    const targetGOODKey = charIdToGOODKey(targetCharId);
+    if (!targetGOODKey) continue;
+
+    const currentOwner = ownerMap.get(artId) ?? null;
+    const good = toGOODArtifact(art, currentOwner ?? undefined);
+
+    equip.push({ artifact: good, location: targetGOODKey });
+    artifactIds.push(artId);
+    swapMap.set(artId, { fromChar: currentOwner, toChar: targetCharId });
+  }
+
+  return { request: { equip }, artifactIds, swapMap };
+}
+
+/**
+ * Build equip instructions from account-data recommendation best allocations.
+ * Upgrade-pass suggestions are intentionally excluded; callers pass only the
+ * allocated build selected by the tier waterfall.
+ */
+export function buildRecommendationEquipInstructions(
+  allocations: {
+    characterId: string;
+    allocatedBuild: OptimizedBuild | null;
+  }[],
+  accountData: AccountData | null,
+  artifactLookup: ReadonlyMap<string, ArtifactData>
+): EquipPayload {
+  const ownerMap = new Map<string, string>();
+  if (accountData) {
+    for (const char of accountData.characters) {
+      for (const art of Object.values(char.artifacts)) {
+        if (art) ownerMap.set(art.id, char.key);
+      }
+    }
+  }
+
+  const seen = new Map<string, { art: ArtifactData; targetCharId: string }>();
+  for (const { characterId, allocatedBuild } of allocations) {
+    if (!allocatedBuild) continue;
+    for (const allocated of Object.values(allocatedBuild.artifacts)) {
+      const art =
+        artifactLookup.get(allocated.id) ?? (allocated as ArtifactData);
+      seen.set(art.id, { art, targetCharId: characterId });
     }
   }
 

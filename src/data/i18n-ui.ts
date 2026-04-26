@@ -460,6 +460,18 @@ export const i18nUiData = {
       en: "Recalculate",
       zh: "重新计算",
     },
+    applyRecommendationsToGame: {
+      en: "Apply recommendations to game",
+      zh: "将推荐应用到游戏",
+    },
+    applyRecommendationTiers: {
+      en: "Tiers to apply",
+      zh: "应用层级",
+    },
+    applyRecommendationTiersDesc: {
+      en: "Only best allocation equipment is applied. Upgrade suggestions are not included.",
+      zh: "仅应用最佳分配的装备方案，不包括强化建议。",
+    },
     luckExpectation: {
       label: { en: "Roll Value Expectation", zh: "词条期望" },
       description: {

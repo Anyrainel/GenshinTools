@@ -1,21 +1,25 @@
-import { Info, Loader2, RefreshCw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Info, Loader2, Monitor, RefreshCw } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { LuckExpectation } from "@/data/enums";
+import type { LuckExpectation, Tier } from "@/data/enums";
 import { LUCK_MULTIPLIERS, tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { CharacterData } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAsyncRecommendations } from "@/hooks/useAsyncRecommendations";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { buildRecommendationEquipInstructions } from "@/lib/account-data/manager/instructions";
 import {
   buildArtifactLookup,
   type CharacterActions,
@@ -30,6 +34,8 @@ interface RecommendationViewProps {
   onOpenImport?: () => void;
   onShowTour?: () => void;
 }
+
+const APPLY_RECOMMENDATION_TIERS: Tier[] = ["S", "A", "B", "C", "D"];
 
 export function RecommendationView({
   scores,
@@ -59,6 +65,10 @@ export function RecommendationView({
   const cacheClearKey = useRecommendationCacheStore((s) => s.clearKey);
   const [activeRunKey, setActiveRunKey] = useState<string | null>(null);
   const [recalculateNonce, setRecalculateNonce] = useState(0);
+  const [equipDialogOpen, setEquipDialogOpen] = useState(false);
+  const [selectedApplyTiers, setSelectedApplyTiers] = useState<Tier[]>(
+    APPLY_RECOMMENDATION_TIERS
+  );
 
   const recommendationCacheKey = useMemo(() => {
     if (!activeAccount || !accountData || !hasAnyBuilds) return null;
@@ -238,6 +248,56 @@ export function RecommendationView({
     return byTier;
   }, [accountData, scores, tierAssignments, displayedRecommendations]);
 
+  const selectedApplyTierSet = useMemo(
+    () => new Set(selectedApplyTiers),
+    [selectedApplyTiers]
+  );
+
+  const recommendationAllocationsForApply = useMemo(() => {
+    if (!displayedRecommendations) return [];
+    return Object.values(displayedRecommendations.perCharacter)
+      .filter(
+        (entry) =>
+          selectedApplyTierSet.has(entry.tier) && entry.allocatedBuild !== null
+      )
+      .map((entry) => ({
+        characterId: entry.characterId,
+        allocatedBuild: entry.allocatedBuild,
+      }));
+  }, [displayedRecommendations, selectedApplyTierSet]);
+
+  const applyTierCounts = useMemo(() => {
+    const counts = Object.fromEntries(
+      APPLY_RECOMMENDATION_TIERS.map((tier) => [tier, 0])
+    ) as Record<(typeof APPLY_RECOMMENDATION_TIERS)[number], number>;
+    if (!displayedRecommendations) return counts;
+    for (const entry of Object.values(displayedRecommendations.perCharacter)) {
+      if (entry.tier !== "Pool" && entry.allocatedBuild) {
+        counts[entry.tier as keyof typeof counts] += 1;
+      }
+    }
+    return counts;
+  }, [displayedRecommendations]);
+
+  const buildRecommendationEquipPayload = useCallback(
+    () =>
+      buildRecommendationEquipInstructions(
+        recommendationAllocationsForApply,
+        accountData,
+        artifactLookup
+      ),
+    [recommendationAllocationsForApply, accountData, artifactLookup]
+  );
+
+  const handleToggleApplyTier = useCallback((tier: Tier, checked: boolean) => {
+    setSelectedApplyTiers((prev) => {
+      if (checked) {
+        return prev.includes(tier) ? prev : [...prev, tier];
+      }
+      return prev.filter((value) => value !== tier);
+    });
+  }, []);
+
   if (!accountData || !hasAnyBuilds) {
     return (
       <ScrollLayout>
@@ -308,15 +368,69 @@ export function RecommendationView({
       onClick={handleRecalculate}
       disabled={!recommendationCacheKey || isCalculating}
       title={t.ui("accountData.recalculateRecommendations")}
-      className="ml-auto gap-2"
+      className="h-7 gap-1.5 px-2 text-xs"
     >
       <RefreshCw
-        className={isCalculating ? "h-4 w-4 animate-spin" : "h-4 w-4"}
+        className={isCalculating ? "h-3.5 w-3.5 animate-spin" : "h-3.5 w-3.5"}
       />
       <span className="hidden sm:inline">
         {t.ui("accountData.recalculateRecommendations")}
       </span>
     </Button>
+  );
+
+  const renderApplyButton = () => (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={() => setEquipDialogOpen(true)}
+      disabled={
+        isCalculating ||
+        !displayedRecommendations ||
+        recommendationAllocationsForApply.length === 0
+      }
+      title={t.ui("accountData.applyRecommendationsToGame")}
+      className="h-7 gap-1.5 px-2 text-xs"
+    >
+      <Monitor className="h-3.5 w-3.5" />
+      <span className="hidden sm:inline">{t.ui("manager.applyToGame")}</span>
+    </Button>
+  );
+
+  const renderApplyTierSelection = () => (
+    <div className="space-y-2 rounded-lg border border-border p-3">
+      <div className="space-y-0.5">
+        <p className="text-sm font-medium">
+          {t.ui("accountData.applyRecommendationTiers")}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {t.ui("accountData.applyRecommendationTiersDesc")}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        {APPLY_RECOMMENDATION_TIERS.map((tier) => {
+          const id = `apply-recommendation-tier-${tier}`;
+          return (
+            <div key={tier} className="flex items-center gap-2">
+              <Checkbox
+                id={id}
+                checked={selectedApplyTierSet.has(tier)}
+                onCheckedChange={(checked) =>
+                  handleToggleApplyTier(tier, checked === true)
+                }
+              />
+              <Label htmlFor={id} className="cursor-pointer text-sm">
+                {tierCustomization[tier]?.displayName || t.tier(tier)}
+                <span className="ml-1 text-xs text-muted-foreground">
+                  ({applyTierCounts[tier]})
+                </span>
+              </Label>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 
   return (
@@ -356,8 +470,8 @@ export function RecommendationView({
         const displayName = customization?.displayName || t.tier(tier);
         const luckExpectation = customization?.luckExpectation || "balanced";
 
-        return (
-          <div key={tier} className="space-y-3">
+        const tierSection = (
+          <div className="space-y-3">
             {/* Tier Header */}
             <div className="flex flex-wrap items-center gap-4 border-b border-white/10 pb-2">
               <h2 className="text-2xl font-bold text-white pb-1">
@@ -366,7 +480,6 @@ export function RecommendationView({
                   ({chars.length})
                 </span>
               </h2>
-              {tier === firstVisibleTier && renderRecalculateButton()}
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-foreground font-medium">
                   {t.ui("accountData.luckExpectation.label")}:
@@ -436,6 +549,20 @@ export function RecommendationView({
             </div>
           </div>
         );
+
+        if (tier !== firstVisibleTier) {
+          return <div key={tier}>{tierSection}</div>;
+        }
+
+        return (
+          <div key={tier}>
+            <div className="flex justify-end gap-2">
+              {renderRecalculateButton()}
+              {renderApplyButton()}
+            </div>
+            {tierSection}
+          </div>
+        );
       })}
 
       {/* Pool tier info */}
@@ -500,6 +627,15 @@ export function RecommendationView({
             )
           )}
       </p>
+
+      <ArtifactManagerDialog
+        open={equipDialogOpen}
+        onOpenChange={setEquipDialogOpen}
+        job={{ type: "equip", build: buildRecommendationEquipPayload }}
+        actionLabel={t.ui("manager.equipToGame")}
+        actionDisabled={recommendationAllocationsForApply.length === 0}
+        idleContent={renderApplyTierSelection()}
+      />
     </ScrollLayout>
   );
 }

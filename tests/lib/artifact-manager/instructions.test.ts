@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { ArtifactData } from "@/data/types";
-import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
+import { allSlots } from "@/data/enums";
+import type { AccountData, ArtifactData } from "@/data/types";
+import type { OptimizedBuild } from "@/lib/account-data/buildOptimizer";
+import {
+  buildRecommendationEquipInstructions,
+  buildTriageInstructions,
+} from "@/lib/account-data/manager/instructions";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {
@@ -13,6 +18,25 @@ function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
     lock: false,
     substats: { cr: 3.89, cd: 7.77, er: 5.18, atk: 19 },
     ...overrides,
+  };
+}
+
+function makeOptimizedBuild(
+  artifacts: OptimizedBuild["artifacts"]
+): OptimizedBuild {
+  return {
+    artifacts,
+    slotScores: {
+      flower: 1,
+      plume: 1,
+      sands: 1,
+      goblet: 1,
+      circlet: 1,
+    },
+    rawScore: 5,
+    crPenalty: 0,
+    finalScore: 5,
+    totalArtifactCr: 0,
   };
 }
 
@@ -98,5 +122,74 @@ describe("buildTriageInstructions", () => {
     expect(result.request.lock[0].unactivatedSubstats).toEqual([
       { key: "def", value: 23 },
     ]);
+  });
+});
+
+describe("buildRecommendationEquipInstructions", () => {
+  it("builds equip entries from selected best allocation builds", () => {
+    const allocatedArtifacts = Object.fromEntries(
+      allSlots.map((slot, index) => [
+        slot,
+        makeArtifact({
+          id: `allocated-${slot}`,
+          slotKey: slot,
+          mainStatKey: index === 1 ? "atk" : "hp%",
+        }),
+      ])
+    ) as OptimizedBuild["artifacts"];
+    const currentFlower = makeArtifact({
+      id: "current-flower",
+      slotKey: "flower",
+    });
+    const donorFlower = allocatedArtifacts.flower;
+    const account: AccountData = {
+      characters: [
+        {
+          key: "hu_tao",
+          level: 90,
+          constellation: 0,
+          talent: { auto: 10, skill: 10, burst: 10 },
+          weapon: undefined,
+          artifacts: { flower: currentFlower },
+        },
+        {
+          key: "xiangling",
+          level: 80,
+          constellation: 6,
+          talent: { auto: 1, skill: 9, burst: 12 },
+          weapon: undefined,
+          artifacts: { flower: donorFlower },
+        },
+      ],
+      extraArtifacts: allSlots
+        .filter((slot) => slot !== "flower")
+        .map((slot) => allocatedArtifacts[slot]),
+      extraWeapons: [],
+    };
+    const artifactLookup = new Map(
+      Object.values(allocatedArtifacts).map((art) => [art.id, art])
+    );
+
+    const result = buildRecommendationEquipInstructions(
+      [
+        {
+          characterId: "hu_tao",
+          allocatedBuild: makeOptimizedBuild(allocatedArtifacts),
+        },
+        { characterId: "xiangling", allocatedBuild: null },
+      ],
+      account,
+      artifactLookup
+    );
+
+    expect(result.request.equip).toHaveLength(5);
+    expect(result.artifactIds).toEqual(
+      allSlots.map((slot) => `allocated-${slot}`)
+    );
+    expect(result.request.equip[0].location).toBe("HuTao");
+    expect(result.swapMap.get("allocated-flower")).toEqual({
+      fromChar: "xiangling",
+      toChar: "hu_tao",
+    });
   });
 });

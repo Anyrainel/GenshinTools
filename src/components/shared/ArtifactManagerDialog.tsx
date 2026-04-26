@@ -1,5 +1,5 @@
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -45,6 +45,8 @@ interface ArtifactManagerDialogProps {
   onOpenChange: (open: boolean) => void;
   job: ArtifactManagerJobConfig;
   actionLabel: string;
+  actionDisabled?: boolean;
+  idleContent?: ReactNode;
 }
 
 const DEFAULT_PORT = 8765;
@@ -65,6 +67,8 @@ export function ArtifactManagerDialog({
   onOpenChange,
   job,
   actionLabel,
+  actionDisabled = false,
+  idleContent,
 }: ArtifactManagerDialogProps) {
   const { t } = useLanguage();
   const [port, setPort] = useState(DEFAULT_PORT);
@@ -227,6 +231,7 @@ export function ArtifactManagerDialog({
                   </div>
                 </div>
               )}
+              {idleContent}
             </div>
           )}
 
@@ -281,6 +286,7 @@ export function ArtifactManagerDialog({
             <>
               <Button
                 disabled={
+                  actionDisabled ||
                   !isReady ||
                   (job.type === "manage" && !includeLock && !includeUnlock)
                 }
