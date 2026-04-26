@@ -2412,30 +2412,32 @@ export const i18nUiData = {
 
     // Timeline controls
     loopLabel: { en: "Loop", zh: "循环轴" },
+    loopOnce: { en: "× Once", zh: "× 1次" },
+    loopRepeat: { en: "× Repeat", zh: "× ∞ 重复" },
     startupLabel: { en: "Startup", zh: "启动轴" },
     addStartup: { en: "+ Startup", zh: "+ 启动轴" },
     addStartupTitle: {
-      en: "Add startup timeline",
+      en: "Add startup rotation",
       zh: "在循环轴前添加启动轴",
     },
-    cloneLoop: { en: "Clone → Startup", zh: "复制为启动" },
+    cloneLoop: { en: "Clone as Startup", zh: "复制为启动轴" },
     cloneLoopTitle: {
-      en: "Clone loop as new startup",
+      en: "Clone loop as new startup rota",
       zh: "复制循环轴为新启动轴",
     },
     removeStartupTitle: {
-      en: "Remove this startup",
+      en: "Remove this startup rota",
       zh: "删除此启动轴",
     },
     addAction: { en: "Add action", zh: "添加动作" },
-    addGrant: { en: "+ Custom Energy Event", zh: "+ 自定义能量事件" },
+    addGrant: { en: "+ Energy Event", zh: "+ 能量事件" },
 
     // Grant chip + popover
     grantLabel: { en: "Grant", zh: "赋能" },
     grantEventTitle: { en: "Custom energy", zh: "自定义能量" },
     grantDesc: {
       en: "Grant flat energy to specific chars at this moment. Either as a fixed amount, or as a % of the recipient's burst cost. Neither is ER-scaled. For ER-scaled enemy orb drops, use a separate enemy orb event.",
-      zh: "在此刻向指定角色授予固定能量。可填固定值或爆发消耗的百分比，皆不受充能影响。可充能的敌方产球请使用单独的「敌方产球」事件。",
+      zh: "在此刻向指定角色授予固定能量。可填固定值或爆发消耗的百分比，皆不受充能影响。可充能的敌方产球请使用单独的「怪物产球」事件。",
     },
     grantFlat: { en: "flat", zh: "固定" },
     grantPercent: { en: "%cost", zh: "%消耗" },
@@ -2447,8 +2449,8 @@ export const i18nUiData = {
       en: "% of recipient's burst cost (resolves to flat, not ER-scaled)",
       zh: "对方爆发消耗的百分比（解析为固定能量，不受充能影响）",
     },
-    addEnemyOrb: { en: "+ Enemy Orb", zh: "+ 敌方产球" },
-    enemyOrbTitle: { en: "Enemy orb drop", zh: "敌方产球" },
+    addEnemyOrb: { en: "+ Enemy Orb", zh: "+ 怪物产球" },
+    enemyOrbTitle: { en: "Enemy orb drop", zh: "怪物产球" },
     enemyOrbDesc: {
       en: "Orbs dropped by enemies (shield breaks, kills, etc.). Absorbed by the next on-field char, ER-scaled at 3x particle value.",
       zh: "敌方掉落的元素球（破盾、击杀等）。由下一个前台角色拾取，受充能影响，能量为微粒的 3 倍。",

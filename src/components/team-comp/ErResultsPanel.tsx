@@ -3,6 +3,12 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { CharAvatar } from "@/components/shared/CharAvatar";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  CLEAR_PARTICLE,
+  DIFF_ELEMENT_PARTICLE,
+  OFF_FIELD_MULTIPLIER,
+  SAME_ELEMENT_PARTICLE,
+} from "@/lib/ercalc/constants";
 import type {
   EnergyEvent,
   ERResult,
@@ -30,7 +36,7 @@ interface ErResultsPanelProps {
 
 function getErTextColor(er: number, isInfinity: boolean) {
   if (isInfinity) return "text-destructive";
-  if (er <= 100) return "text-green-400";
+  if (er <= 100) return "text-muted-foreground";
   if (er <= 140) return "text-emerald-400";
   if (er <= 180) return "text-foreground";
   if (er <= 220) return "text-amber-400";
@@ -60,9 +66,9 @@ function summarizeBucket(
 ): SummaryItem[] {
   const grouped = new Map<string, SummaryItem>();
   for (const ev of events) {
-    // Bucket assignment: particles + scalable both ER-scale → "scalable" row.
+    if (ev.type === "particle") continue;
     const evBucket: "flat" | "scalable" =
-      ev.type === "flat" ? "flat" : "scalable";
+      ev.type === "scalable" ? "scalable" : "flat";
     if (evBucket !== bucket) continue;
     // Flat / scalable events carry their recipient in absorberChar.
     if (
@@ -70,10 +76,6 @@ function summarizeBucket(
       ev.absorberChar !== charId
     )
       continue;
-    // Particles use absorberChar = on-field char; we still want them attributed
-    // to the current char (calculator already filters distribution to this
-    // char's accumulator before pushing into the binding events). We accept
-    // every particle event in the array.
     const key = `${ev.type}:${ev.sourceChar}:${ev.sourceAction}`;
     const onField = ev.absorberChar === charId;
     const existing = grouped.get(key);
@@ -93,6 +95,78 @@ function summarizeBucket(
     }
   }
   return Array.from(grouped.values()).sort((a, b) => b.energy - a.energy);
+}
+
+interface ParticleCalcItem {
+  key: string;
+  particleElement: string;
+  particleCount: number;
+  elementValue: number;
+  fieldMultiplier: number;
+  energy: number;
+  count: number;
+}
+
+function particleElementValue(
+  recipientElement: string,
+  particleElement: string
+): number {
+  if (particleElement === "Clear") return CLEAR_PARTICLE;
+  return recipientElement === particleElement
+    ? SAME_ELEMENT_PARTICLE
+    : DIFF_ELEMENT_PARTICLE;
+}
+
+function summarizeParticleCalcs(
+  events: EnergyEvent[],
+  recipientElement: string,
+  partySize: number
+): ParticleCalcItem[] {
+  const offFieldMult =
+    OFF_FIELD_MULTIPLIER[partySize] ?? OFF_FIELD_MULTIPLIER[4];
+  const grouped = new Map<string, ParticleCalcItem>();
+  for (const ev of events) {
+    if (ev.type !== "particle" || ev.particleCount <= 0) continue;
+    const elementValue = particleElementValue(
+      recipientElement,
+      ev.particleElement
+    );
+    const fieldMultiplier = ev.onField ? 1 : offFieldMult;
+    const key = [
+      ev.sourceChar,
+      ev.sourceAction,
+      ev.particleElement,
+      ev.particleCount,
+      elementValue,
+      fieldMultiplier,
+    ].join(":");
+    const existing = grouped.get(key);
+    if (existing) {
+      existing.energy += ev.energyAt100;
+      existing.count += 1;
+    } else {
+      grouped.set(key, {
+        key,
+        particleElement: ev.particleElement,
+        particleCount: ev.particleCount,
+        elementValue,
+        fieldMultiplier,
+        energy: ev.energyAt100,
+        count: 1,
+      });
+    }
+  }
+  return Array.from(grouped.values());
+}
+
+function fmtEnergy(n: number): string {
+  return n % 1 === 0 ? String(n) : n.toFixed(1);
+}
+
+function fmtFactor(n: number): string {
+  return n % 1 === 0
+    ? String(n)
+    : n.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
 }
 
 export function ErResultsPanel({
@@ -316,6 +390,8 @@ export function ErResultsPanel({
                       tErAction={t.erAction}
                       tUi={t.ui}
                       language={language}
+                      recipientElement={slot.element}
+                      partySize={team.length}
                     />
                   ))}
                 </div>
@@ -341,6 +417,8 @@ function QWindowBlock({
   tErAction,
   tUi,
   language,
+  recipientElement,
+  partySize,
 }: {
   window: QWindow;
   charId: string;
@@ -348,14 +426,24 @@ function QWindowBlock({
   tErAction: (action: string) => string;
   tUi: (key: string) => string;
   language: "en" | "zh";
+  recipientElement: string;
+  partySize: number;
 }) {
   const isInfinity = w.erNeeded === Number.POSITIVE_INFINITY;
   const erColor = getErTextColor(w.erNeeded, isInfinity);
   const erDisplay = isInfinity ? "∞" : `${Math.ceil(w.erNeeded)}%`;
   const flatItems = summarizeBucket(w.events, charId, "flat");
   const scalableItems = summarizeBucket(w.events, charId, "scalable");
+  const particleItems = summarizeParticleCalcs(
+    w.events,
+    recipientElement,
+    partySize
+  );
   const flatTotal = flatItems.reduce((a, b) => a + b.energy, 0);
   const scalableTotal = scalableItems.reduce((a, b) => a + b.energy, 0);
+  const particleTotal = particleItems.reduce((a, b) => a + b.energy, 0);
+  const erScaledTotal = particleTotal + scalableTotal;
+  const totalAtBaseER = flatTotal + erScaledTotal;
   const qLabel = tErAction(w.qAction);
   const sourceLabel = formatQWindowSource(w, tUi);
 
@@ -392,6 +480,12 @@ function QWindowBlock({
         tErAction={tErAction}
         empty={tUi("erCalc.qWindowEmpty")}
       />
+      <ParticleCalcRow
+        label={tUi("erCalc.particlesLabel")}
+        items={particleItems}
+        total={particleTotal}
+        empty={tUi("erCalc.qWindowEmpty")}
+      />
       <BreakdownRow
         label={tUi("erCalc.qWindowScalableRow")}
         items={scalableItems}
@@ -404,10 +498,19 @@ function QWindowBlock({
 
       {!isInfinity && (
         <div className="text-[11px] md:text-xs tabular-nums pt-0.5 mt-0.5 border-t border-border/30 text-foreground/80">
-          ({w.burstCost}
-          {flatTotal > 0 ? ` − ${flatTotal.toFixed(1)}` : ""}) /{" "}
-          {scalableTotal.toFixed(1)} × 100 ={" "}
-          <span className={cn(erColor, "font-semibold")}>{erDisplay}</span>
+          {totalAtBaseER >= w.burstCost ? (
+            <>
+              {fmtEnergy(totalAtBaseER)} ≥ {w.burstCost} →{" "}
+              <span className={cn(erColor, "font-semibold")}>{erDisplay}</span>
+            </>
+          ) : (
+            <>
+              ({w.burstCost}
+              {flatTotal > 0 ? ` − ${flatTotal.toFixed(1)}` : ""}) /{" "}
+              {erScaledTotal.toFixed(1)} × 100 ={" "}
+              <span className={cn(erColor, "font-semibold")}>{erDisplay}</span>
+            </>
+          )}
           <span className="ml-1 text-foreground/50">
             {language === "zh" ? "" : ""}
           </span>
@@ -478,6 +581,51 @@ function BreakdownRow({
       </div>
       <span className={cn("font-semibold tabular-nums shrink-0", toneClass)}>
         = {total.toFixed(1)}
+      </span>
+    </div>
+  );
+}
+
+function ParticleCalcRow({
+  label,
+  items,
+  total,
+  empty,
+}: {
+  label: string;
+  items: ParticleCalcItem[];
+  total: number;
+  empty: string;
+}) {
+  return (
+    <div className="flex items-baseline gap-1.5 text-[11px] md:text-xs flex-wrap">
+      <span className="text-foreground/60 shrink-0 w-14">{label}</span>
+      <div className="flex items-baseline gap-1 flex-wrap flex-1 min-w-0">
+        {items.length === 0 ? (
+          <span className="text-foreground/40">{empty}</span>
+        ) : (
+          items.map((it, i) => {
+            const expression =
+              it.count > 1
+                ? `${it.count}×(${fmtFactor(it.particleCount)}×${fmtFactor(
+                    it.elementValue
+                  )}×${fmtFactor(it.fieldMultiplier)})`
+                : `${fmtFactor(it.particleCount)}×${fmtFactor(
+                    it.elementValue
+                  )}×${fmtFactor(it.fieldMultiplier)}`;
+            return (
+              <span key={it.key} className="inline-flex items-baseline gap-0.5">
+                {i > 0 && <span className="text-foreground/40">+</span>}
+                <span className="tabular-nums cursor-help text-primary/90">
+                  {it.particleElement} {expression}={fmtEnergy(it.energy)}
+                </span>
+              </span>
+            );
+          })
+        )}
+      </div>
+      <span className="font-semibold tabular-nums shrink-0 text-primary/90">
+        = {fmtEnergy(total)}
       </span>
     </div>
   );

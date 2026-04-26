@@ -10,21 +10,29 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo } from "@/data/charInfo";
 import type { Element } from "@/data/enums";
+import { characterStatsResource } from "@/data/gameStatsLoader";
 import type { AccountData } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { particles } from "@/lib/ercalc/constants";
+import {
+  DIRECT_PARTICLE_ACTIONS,
+  ORB_MULTIPLIER,
+  PATTERN_ACTIONS,
+  particles,
+} from "@/lib/ercalc/constants";
 import {
   autoPlaceFavonius,
   autoPlacePeriodic,
   autoPlaceReactionProcs,
   calculateTeamERSequence,
+  getActionParticles,
   getDefaultProcCount,
+  getHitParticles,
+  getParticleElement,
   hasPeriodicGeneration,
   hasReactionEnergyTrigger,
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
 import { optimizeWaitBlocks } from "@/lib/ercalc/optimizer";
-import { analyzeRotation } from "@/lib/ercalc/rotationHints";
 import type {
   ActionType,
   CalcMode,
@@ -91,7 +99,77 @@ function resolveCharCtx(
   return { constellation, talentLevels };
 }
 
-function teamToSlots(team: Team, accountData: AccountData | null): TeamSlot[] {
+interface BoundaryParticleBridge {
+  particleCount: number;
+  favoniusBonus: number;
+  particleElement: string | null;
+}
+
+function getHitIndexAt(actions: TimelineAction[], index: number): number {
+  const counts = new Map<string, { NA: number; CA: number; PA: number }>();
+  let hitIndex = 0;
+  for (let i = 0; i <= index; i++) {
+    const act = actions[i];
+    if (!act) continue;
+    let base = counts.get(act.char);
+    if (!base) {
+      base = { NA: 0, CA: 0, PA: 0 };
+      counts.set(act.char, base);
+    }
+    if (act.action === "NA" || act.action === "CA" || act.action === "PA") {
+      hitIndex = base[act.action];
+      base[act.action] += 1;
+    }
+  }
+  return hitIndex;
+}
+
+function getBoundaryParticleBridge(
+  timeline: ERTimeline,
+  team: TeamSlot[],
+  particleMode: ParticleMode
+): BoundaryParticleBridge | undefined {
+  const index = timeline.actions.length - 1;
+  const act = timeline.actions[index];
+  if (!act) return undefined;
+
+  let particleCount = 0;
+  let particleElement: string | null = null;
+  if (act.action === "enemyOrb") {
+    particleCount = (act.orbCount ?? 0) * ORB_MULTIPLIER;
+    particleElement = act.orbElement ?? "Clear";
+  } else if (DIRECT_PARTICLE_ACTIONS.has(act.action)) {
+    particleCount = getActionParticles(act.char, act.action, particleMode);
+    particleElement = getParticleElement(act.char);
+  } else if (PATTERN_ACTIONS.has(act.action)) {
+    particleCount = getHitParticles(
+      act.char,
+      act.action,
+      getHitIndexAt(timeline.actions, index),
+      particleMode
+    );
+    if (particleCount > 0) particleElement = getParticleElement(act.char);
+  }
+
+  const slot = team.find((s) => s.charId === act.char);
+  const weaponEnergy = weaponEnergyById[slot?.weaponId ?? ""]?.energy;
+  const favoniusBonus =
+    act.favoniusProc && weaponEnergy?.effect === "particles"
+      ? weaponEnergy.particleCount
+      : 0;
+  if (particleCount <= 0 && favoniusBonus <= 0) return undefined;
+  return {
+    particleCount,
+    favoniusBonus,
+    particleElement: particleCount > 0 ? particleElement : "Clear",
+  };
+}
+
+function teamToSlots(
+  team: Team,
+  accountData: AccountData | null,
+  characterStats: ReturnType<typeof characterStatsResource.use>
+): TeamSlot[] {
   const charIds = team.characters.filter((id): id is string => id != null);
 
   return charIds
@@ -119,6 +197,12 @@ function teamToSlots(team: Team, accountData: AccountData | null): TeamSlot[] {
         burstCost,
         constellation,
         weaponId,
+        artifactSet:
+          team.artifacts[i]?.type === "4pc" &&
+          team.artifacts[i]?.setId === "scholar"
+            ? null
+            : team.artifacts[i],
+        weaponType: characterStats?.[charId]?.weaponType,
         talentLevels,
         healAction,
       };
@@ -131,9 +215,10 @@ interface ErCalcCardProps {
 }
 
 export function ErCalcCard({ team }: ErCalcCardProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
   const accountData = useActiveAccountData();
+  const characterStats = characterStatsResource.use();
   // Persist open/closed across refresh via session store (sessionStorage-backed).
   const expanded = useSessionNavStore(
     (s) => s.viewSettings.damage.erCalcExpanded
@@ -150,8 +235,8 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
 
   const charIds = team.characters.filter((id): id is string => id != null);
   const erTeam = useMemo(
-    () => teamToSlots(team, accountData),
-    [team, accountData]
+    () => teamToSlots(team, accountData, characterStats),
+    [team, accountData, characterStats]
   );
 
   // Scholar 4pc bonus is not modeled by the engine (particle-gain trigger
@@ -437,13 +522,14 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
     return indices;
   }, [results]);
 
-  const hints = useMemo(
+  const boundaryBridges = useMemo(
     () =>
-      analyzeRotation(
-        concatErTimelines(timelines),
-        erTeam.map((s) => s.charId)
+      timelines.map((timeline, index) =>
+        index < timelines.length - 1
+          ? getBoundaryParticleBridge(timeline, erTeam, particleMode)
+          : undefined
       ),
-    [timelines, erTeam, concatErTimelines]
+    [timelines, erTeam, particleMode]
   );
 
   // Auto-apply Favonius defaults whenever a wielder's weapon or refinement
@@ -590,7 +676,7 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
         <CollapsibleContent>
           <CardContent className="p-0 max-h-[65vh] overflow-y-auto">
             {/* Settings bar */}
-            <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="px-3 py-2 border-b border-border flex flex-wrap items-center gap-x-2 gap-y-2">
               <div className="flex items-center gap-1.5">
                 <span className="text-xs md:text-sm text-foreground/80">
                   {t.ui("erCalc.startEnergy")}
@@ -616,6 +702,8 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                   </ToggleGroupItem>
                 </ToggleGroup>
               </div>
+
+              <div className="h-6 border-r"></div>
 
               <div className="flex items-center gap-1.5">
                 <span className="text-xs md:text-sm text-foreground/80">
@@ -649,6 +737,8 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                 </ToggleGroup>
               </div>
 
+              <div className="h-6 border-r"></div>
+
               <button
                 type="button"
                 onClick={handleResetFavDefaults}
@@ -665,6 +755,16 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
               >
                 {t.ui("erCalc.optimizeWaits")}
               </button>
+              <div className="ml-auto flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={handleAddStartup}
+                  className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                  title={t.ui("erCalc.addStartupTitle")}
+                >
+                  {t.ui("erCalc.addStartup")}
+                </button>
+              </div>
             </div>
 
             {hasScholarEquipped && (
@@ -693,13 +793,13 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                       value="once"
                       className="text-sm font-semibold h-7 px-2.5"
                     >
-                      ×1
+                      {t.ui("erCalc.loopOnce")}
                     </ToggleGroupItem>
                     <ToggleGroupItem
                       value="repeat"
                       className="text-sm font-semibold h-7 px-2.5"
                     >
-                      ×∞
+                      {t.ui("erCalc.loopRepeat")}
                     </ToggleGroupItem>
                   </ToggleGroup>
                 </div>
@@ -719,27 +819,16 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                   {t.ui("erCalc.remove")}
                 </button>
               ) : null;
-
-              const loopControls = isLast ? (
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={handleAddStartup}
-                    className="text-xs md:text-sm hover:text-primary px-2 py-0.5 rounded border border-border/30 hover:border-border"
-                    title={t.ui("erCalc.addStartupTitle")}
-                  >
-                    {t.ui("erCalc.addStartup")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCloneLoopToStartup}
-                    disabled={tl.actions.length === 0}
-                    className="text-xs md:text-sm hover:text-primary px-2 py-0.5 rounded border border-border/30 hover:border-border disabled:opacity-40 disabled:cursor-not-allowed"
-                    title={t.ui("erCalc.cloneLoopTitle")}
-                  >
-                    {t.ui("erCalc.cloneLoop")}
-                  </button>
-                </div>
+              const cloneControl = isLast ? (
+                <button
+                  type="button"
+                  onClick={handleCloneLoopToStartup}
+                  disabled={tl.actions.length === 0}
+                  className="text-xs md:text-sm hover:text-primary px-2 py-0.5 rounded border border-border/30 hover:border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                  title={t.ui("erCalc.cloneLoopTitle")}
+                >
+                  {t.ui("erCalc.cloneLoop")}
+                </button>
               ) : null;
 
               return (
@@ -748,8 +837,13 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                   label={labelNode}
                   ert={tl}
                   team={erTeam}
+                  particleMode={particleMode}
                   bindingQIndices={isLast ? bindingQIndices : undefined}
-                  extraControls={removeControl ?? loopControls}
+                  incomingBridge={
+                    tlIdx > 0 ? boundaryBridges[tlIdx - 1] : undefined
+                  }
+                  outgoingBridge={boundaryBridges[tlIdx]}
+                  extraControls={removeControl ?? cloneControl}
                   onAddAction={(charId, action) =>
                     handleAddAction(charId, action, tlIdx)
                   }
@@ -763,31 +857,6 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
                 />
               );
             })}
-
-            {/* Hints */}
-            {hints.length > 0 && (
-              <div className="px-3 py-2 space-y-1 border-t border-border/30">
-                {hints.map((hint, i) => (
-                  <div
-                    key={`hint-${i}`}
-                    className={cn(
-                      "text-xs md:text-sm",
-                      hint.type === "warning"
-                        ? "text-amber-400"
-                        : "text-foreground/80"
-                    )}
-                  >
-                    {(language === "zh"
-                      ? hint.messageZh
-                      : hint.messageEn
-                    ).replace(
-                      "{char}",
-                      hint.charId ? t.character(hint.charId) : ""
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
 
             {/* Results */}
             {results.length > 0 && (

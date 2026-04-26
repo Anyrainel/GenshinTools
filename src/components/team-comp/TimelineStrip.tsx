@@ -37,6 +37,7 @@ import type {
   ActionType,
   EnergyParticleElement,
   ERTimeline,
+  ParticleMode,
   PeriodicProc,
   TeamSlot,
   TimelineAction,
@@ -46,11 +47,20 @@ import { cn } from "@/lib/utils";
 
 const ORB_ELEMENT_OPTIONS: EnergyParticleElement[] = [...elements, "Clear"];
 
+interface ParticleBridge {
+  particleCount: number;
+  favoniusBonus: number;
+  particleElement: string | null;
+}
+
 interface TimelineStripProps {
   label: React.ReactNode;
   ert: ERTimeline;
   team: TeamSlot[];
+  particleMode: ParticleMode;
   bindingQIndices?: Set<number>;
+  incomingBridge?: ParticleBridge;
+  outgoingBridge?: ParticleBridge;
   extraControls?: React.ReactNode;
   onAddAction: (charId: string, action: ActionType) => void;
   onRemoveAction: (index: number) => void;
@@ -64,7 +74,10 @@ export function TimelineStrip({
   label,
   ert,
   team,
+  particleMode,
   bindingQIndices,
+  incomingBridge,
+  outgoingBridge,
   extraControls,
   onAddAction,
   onRemoveAction,
@@ -232,14 +245,19 @@ export function TimelineStrip({
       const act = actions[i];
       if (!act) return 0;
       if (DIRECT_PARTICLE_ACTIONS.has(act.action)) {
-        return getActionParticles(act.char, act.action, "expected");
+        return getActionParticles(act.char, act.action, particleMode);
       }
       if (PATTERN_ACTIONS.has(act.action)) {
-        return getHitParticles(act.char, act.action, hitIndexAt[i], "expected");
+        return getHitParticles(
+          act.char,
+          act.action,
+          hitIndexAt[i],
+          particleMode
+        );
       }
       return 0;
     },
-    [actions, hitIndexAt]
+    [actions, hitIndexAt, particleMode]
   );
 
   const addPopover = (
@@ -248,8 +266,8 @@ export function TimelineStrip({
         <button
           type="button"
           className={cn(
-            "shrink-0 rounded-md border border-dashed border-border/40 hover:border-border",
-            "flex items-center justify-center text-muted-foreground hover:text-foreground",
+            "shrink-0 rounded-md border border-primary/70 bg-primary/80 hover:bg-primary",
+            "flex items-center justify-center text-primary-foreground shadow-sm",
             CHIP_H,
             actions.length === 0 ? "px-3 gap-1.5 text-xs" : "w-7"
           )}
@@ -276,7 +294,24 @@ export function TimelineStrip({
             }}
           />
         ))}
-        <div className="border-t border-border/40 pt-1.5 mt-1.5">
+        <div className="border-t border-border/40 pt-1.5 mt-1.5 flex gap-1.5">
+          <button
+            type="button"
+            onClick={() => {
+              // Use first team slot as positioning anchor; orbCount edited via chip popover.
+              const anchor = team[0]?.charId;
+              if (!anchor) return;
+              onAddAction(anchor, "enemyOrb");
+              setAddPopoverOpen(false);
+              requestAnimationFrame(() => {
+                if (scrollRef.current)
+                  scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+              });
+            }}
+            className="flex-1 text-xs px-2 py-1 rounded border border-rose-500/40 hover:border-rose-400/70 hover:bg-rose-500/10 text-rose-400"
+          >
+            {t.ui("erCalc.addEnemyOrb")}
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -291,26 +326,9 @@ export function TimelineStrip({
                   scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
               });
             }}
-            className="w-full text-xs md:text-sm px-2 py-1 rounded border border-border/40 hover:border-border hover:bg-blue-500/10 text-blue-400"
+            className="flex-1 text-xs px-2 py-1 rounded border border-blue-500/40 hover:border-blue-400/70 hover:bg-blue-500/10 text-blue-400"
           >
             {t.ui("erCalc.addGrant")}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              // Use first team slot as positioning anchor; orbCount edited via chip popover.
-              const anchor = team[0]?.charId;
-              if (!anchor) return;
-              onAddAction(anchor, "enemyOrb");
-              setAddPopoverOpen(false);
-              requestAnimationFrame(() => {
-                if (scrollRef.current)
-                  scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-              });
-            }}
-            className="mt-1 w-full text-xs md:text-sm px-2 py-1 rounded border border-border/40 hover:border-border hover:bg-rose-500/10 text-rose-400"
-          >
-            {t.ui("erCalc.addEnemyOrb")}
           </button>
         </div>
       </PopoverContent>
@@ -348,6 +366,9 @@ export function TimelineStrip({
             <div className="flex items-end gap-0 relative pt-1">
               {/* Main-track rail — horizontal line running through action chips */}
               <div className="pointer-events-none absolute left-0 right-0 bottom-[13px] h-0.5 bg-primary/20 rounded-full" />
+              {incomingBridge && (
+                <TimelineBridgeArrow bridge={incomingBridge} side="incoming" />
+              )}
               {actions.map((act, i) => {
                 const slot = teamMap.get(act.char);
                 const isBurst = BURST_ACTIONS.has(act.action);
@@ -365,7 +386,7 @@ export function TimelineStrip({
                     getPeriodicParticles(
                       proc.sourceChar,
                       proc.trigger,
-                      "expected"
+                      particleMode
                     ),
                   0
                 );
@@ -373,11 +394,15 @@ export function TimelineStrip({
                 const prevParticles = i > 0 ? actionParticleCount(i - 1) : 0;
                 const prevFavonius =
                   i > 0 && actions[i - 1].favoniusProc
-                    ? weaponEnergyById[
-                        teamMap.get(actions[i - 1].char)?.weaponId ?? ""
-                      ]?.energy.effect === "particles"
-                      ? 3
-                      : 0
+                    ? (() => {
+                        const weaponEnergy =
+                          weaponEnergyById[
+                            teamMap.get(actions[i - 1].char)?.weaponId ?? ""
+                          ]?.energy;
+                        return weaponEnergy?.effect === "particles"
+                          ? weaponEnergy.particleCount
+                          : 0;
+                      })()
                     : 0;
                 const prevEmitter = i > 0 ? actions[i - 1] : null;
                 const prevElement = prevEmitter
@@ -423,7 +448,7 @@ export function TimelineStrip({
                                 particleCount={getPeriodicParticles(
                                   proc.sourceChar,
                                   proc.trigger,
-                                  "expected"
+                                  particleMode
                                 )}
                                 actionLabel={`${t.erAction(proc.trigger)}${t.ui("erCalc.particlesSuffixTriggered")}`}
                                 isDragging={procDrag?.procIndex === procIndex}
@@ -499,6 +524,12 @@ export function TimelineStrip({
                 );
               })}
               <div className="flex items-end shrink-0">
+                {outgoingBridge && (
+                  <TimelineBridgeArrow
+                    bridge={outgoingBridge}
+                    side="outgoing"
+                  />
+                )}
                 <div className="h-px w-2 bg-border/20 self-center" />
                 {addPopover}
               </div>
@@ -555,6 +586,35 @@ function ParticleArrow({
         <span className="ml-0.5 opacity-70">{suffix}</span>
       </span>
       <ArrowRight className="w-3.5 h-3.5 text-emerald-400/60 shrink-0" />
+    </div>
+  );
+}
+
+function TimelineBridgeArrow({
+  bridge,
+  side,
+}: {
+  bridge: ParticleBridge;
+  side: "incoming" | "outgoing";
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center shrink-0 rounded-md border border-emerald-500/30 bg-emerald-500/10",
+        side === "incoming" ? "mr-1" : "mx-1"
+      )}
+    >
+      {side === "incoming" && (
+        <ArrowRight className="w-3.5 h-3.5 text-emerald-400/60 shrink-0 ml-1" />
+      )}
+      <ParticleArrow
+        particleCount={bridge.particleCount}
+        favoniusBonus={bridge.favoniusBonus}
+        particleElement={bridge.particleElement}
+      />
+      {side === "outgoing" && (
+        <ArrowRight className="w-3.5 h-3.5 text-emerald-400/60 shrink-0 mr-1" />
+      )}
     </div>
   );
 }
@@ -1287,6 +1347,7 @@ function QuickAddRow({
           (action === "NA" && hasPatternNA) ||
           (action === "CA" && hasPatternCA) ||
           (action === "PA" && hasPatternPA);
+        const isWait = action === "wait";
 
         return (
           <button
@@ -1294,14 +1355,16 @@ function QuickAddRow({
             type="button"
             onClick={() => onAdd(slot.charId, action)}
             className={cn(
-              "text-xs px-1.5 py-0.5 rounded border",
+              "text-xs px-1.5 py-0.5 rounded border border-border",
               isSkill
-                ? "border-emerald-500/30 text-emerald-400/80 hover:bg-emerald-500/10"
+                ? "border-emerald-500/40 text-emerald-400/80 hover:bg-emerald-500/10"
                 : isBurst
-                  ? "border-amber-500/30 text-amber-400/80 hover:bg-amber-500/10"
+                  ? "border-amber-500/40 text-amber-400/80 hover:bg-amber-500/10"
                   : isInfusion
-                    ? "border-emerald-500/20 text-emerald-400/60 hover:bg-emerald-500/5"
-                    : "border-border/30 hover:bg-accent"
+                    ? "border-border text-emerald-400/70 hover:border-emerald-500/40 hover:bg-emerald-500/5"
+                    : isWait
+                      ? "border-fuchsia-500/40 text-fuchsia-400/80 hover:bg-fuchsia-500/10"
+                      : "border-border hover:bg-accent"
             )}
           >
             {t.erAction(action)}

@@ -1353,6 +1353,8 @@ export function toTeamMember(slot: TeamSlot): TeamMember {
     constellation: slot.constellation,
     weaponId: slot.weaponId,
     refinement: slot.refinement,
+    artifactSet: slot.artifactSet,
+    weaponType: slot.weaponType,
     talentLevels: slot.talentLevels,
     healAction: slot.healAction,
   };

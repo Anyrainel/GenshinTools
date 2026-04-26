@@ -32,6 +32,8 @@ export type TeamSlot = {
   constellation: number;
   weaponId?: string;
   refinement?: number; // 0-4 for R1-R5
+  artifactSet?: ArtifactSetConfig | null;
+  weaponType?: string;
   /** [auto, skill, burst] talent levels, 1-based. */
   talentLevels?: [number, number, number];
   /** Primary heal action (from charInfo.healAction). Unset for non-healers. */
