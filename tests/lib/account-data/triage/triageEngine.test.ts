@@ -15,6 +15,7 @@ import type {
   TriageRule,
   TriageSettings,
 } from "@/lib/account-data/triage/types";
+import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 
 // Helpers
 
@@ -43,6 +44,14 @@ function makeArt(opts: {
     unactivatedSubstats: opts.unactivatedSubstats ?? {},
     totalRolls: opts.totalRolls,
   } as ArtifactData;
+}
+
+function rolls(counts: Partial<Record<SubStat, number>>) {
+  const substats: Record<string, number> = {};
+  for (const [stat, count] of Object.entries(counts)) {
+    substats[stat] = getSubstatAvgRoll(stat as SubStat, 5) * (count ?? 0);
+  }
+  return substats;
 }
 
 function makeBuild(opts?: {
@@ -230,6 +239,31 @@ describe("runTriage", () => {
     );
     expect(decisions[0].specialRules).not.toContain("SP3");
     expect(decisions[0].specialRules).not.toContain("SP4");
+  });
+
+  it("highLevelProtection off: concentrated low-tier artifacts are promoted to quality", () => {
+    const art = makeArt({
+      setKey: "unrelated_set",
+      level: 16,
+      substats: rolls({ "hp%": 6, def: 1, atk: 1, hp: 1 }),
+    });
+    const account = makeAccount([], [art]);
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        setSlotKeep: 0,
+        levelProtection: 12,
+        highLevelProtection: false,
+      }
+    );
+
+    expect(decisions[0].label).toBe("lock");
+    expect(decisions[0].decidingResult?.ruleId).toBe("SV");
+    expect(decisions[0].decidingResult?.tier).toBe("Q");
+    expect(decisions[0].specialRules).toContain("SV:concentrated-hp%");
   });
 
   it("SP4: equipped protection tags equipped artifacts", () => {

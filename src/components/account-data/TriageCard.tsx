@@ -77,9 +77,29 @@ function tierName(tier: string, t: T): string {
   return key ? t.ui(key) : tier;
 }
 
+function strategicValueStatLabel(reason: string, t: T): string {
+  if (reason === "concentrated-crit") {
+    return `${t.statShort("cr")}+${t.statShort("cd")}`;
+  }
+  return t.statShort(reason.replace("concentrated-", ""));
+}
+
 function spName(sp: string, t: T): string {
+  if (sp.startsWith("SV:")) {
+    const reason = sp.slice(3);
+    return t.format(
+      "triage.sv.concentratedStat",
+      strategicValueStatLabel(reason, t)
+    );
+  }
   const key = SP_KEY[sp as keyof typeof SP_KEY];
   return key ? t.ui(key) : sp;
+}
+
+function strategicValueReason(decision: TriageDecision, t: T): string | null {
+  const svRule = decision.specialRules.find((sp) => sp.startsWith("SV:"));
+  if (!svRule) return null;
+  return `${t.ui("triage.detail.lockReason")}: ${spName(svRule, t)}`;
 }
 
 function demandSourceLabel(result: EmbryoResult, t: T): string {
@@ -175,6 +195,7 @@ export function TriageCard({
   const dr = decision.decidingResult;
   const isProtected = section === "protected";
   const isNoDemandDecision = dr?.ruleId === "TD";
+  const strategicValueText = strategicValueReason(decision, t);
   const showFlexTierBadge =
     dr?.tier != null &&
     (dr.tier === "N" || dr.tier === "T") &&
@@ -296,6 +317,10 @@ export function TriageCard({
 
               {/* Right: evaluation details */}
               <div className="flex-1 min-w-0 space-y-2 text-xs">
+                {strategicValueText && (
+                  <div className="text-amber-400">{strategicValueText}</div>
+                )}
+
                 {/* Supply/demand context */}
                 {decision.supplyDemand && !isNoDemandDecision && (
                   <div className="text-muted-foreground space-y-0.5">

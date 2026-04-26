@@ -81,16 +81,16 @@ export type TriageMode = "strict" | "loose";
 export type TriageSettings = {
   /** Triage strictness mode. Loose mode uses looser per-tier probability thresholds. */
   triageMode: TriageMode;
-  mainStatThreshold: number; // default 90 (weight 0-100 scale)
-  optionalSubThreshold: number; // default 50 (weight 0-100 scale)
-  fillerKeep: number; // default 2
-  qualityMargin: number; // default 2
-  setSlotKeep: number; // default 2 (min artifacts to keep per set+slot)
-  ownedOnly: boolean; // default true (only consider owned characters' builds)
-  erHoardingEnabled: boolean; // default true
-  erHoardingAllEnabled: boolean; // default false (all sets, not just support)
-  doubleCritLockEnabled: boolean; // default true
-  levelProtection: number; // default 12 (artifacts >= this level are protected)
+  mainStatThreshold: number;
+  optionalSubThreshold: number;
+  fillerKeep: number;
+  qualityMargin: number;
+  setSlotKeep: number; // min artifacts to keep per set+slot
+  ownedOnly: boolean; // only consider owned characters' builds
+  erHoardingEnabled: boolean;
+  erHoardingAllEnabled: boolean; // all sets, not just support
+  doubleCritLockEnabled: boolean;
+  levelProtection: number; // artifacts >= this level are protected
   /**
    * When true, high-level artifacts (≥ levelProtection) are auto-protected
    * (SP3). When false, they flow through normal triage and, if rejected, are

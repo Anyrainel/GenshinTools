@@ -2001,6 +2001,12 @@ export const i18nUiData = {
       SP6: { en: "Set+slot keep", zh: "套装部位最低保留" },
       FLEX: { en: "Flex match", zh: "散件匹配保留" },
     },
+    sv: {
+      concentratedStat: {
+        en: "Concentrated rolls in {0}",
+        zh: "词条集中在 {0}",
+      },
+    },
     // Detail panel labels
     detail: {
       demand: { en: "Demand", zh: "需求" },
@@ -2009,6 +2015,7 @@ export const i18nUiData = {
         en: "Rank {0}/{1} in {2}",
         zh: "{2}中第{0}/{1}",
       },
+      lockReason: { en: "Lock reason", zh: "锁定原因" },
     },
     // Settings
     flexPatterns: { en: "Flex Patterns", zh: "散件保留" },

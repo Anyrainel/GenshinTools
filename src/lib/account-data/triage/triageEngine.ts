@@ -502,6 +502,12 @@ export function runTriage(
         const result = runStrategicRules(prelim.artifact);
         if (result.kept) {
           setLabel(prelim, "lock", "SV");
+          if (tierRank(prelim.bestTier) > tierRank("Q")) {
+            prelim.bestTier = "Q";
+            if (prelim.bestResult) {
+              prelim.bestResult = { ...prelim.bestResult, tier: "Q" };
+            }
+          }
           prelim.specialRules.push(`SV:${result.reason}`);
         }
       }
