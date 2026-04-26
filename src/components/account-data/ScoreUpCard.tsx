@@ -73,6 +73,22 @@ const STAT_ROWS: StatKey[] = [
 
 const SCALED_STAT_KEYS = new Set(["atk", "hp", "def"]);
 
+function getCompactEnglishCharacterName(
+  name: string,
+  language: string
+): string {
+  if (language !== "en" || name.length <= 15 || !name.includes(" ")) {
+    return name;
+  }
+
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return name;
+
+  return parts.reduce((shortest, part) =>
+    part.length < shortest.length ? part : shortest
+  );
+}
+
 function resolveBuildArtifact(
   artifact: OptimizedBuild["artifacts"][Slot] | undefined,
   artifactLookup: Map<string, ArtifactData>
@@ -187,20 +203,20 @@ function ArtifactStrip({
 
 function HeaderWeaponIcon({
   weapon,
-  compact,
+  size,
 }: {
   weapon: CharacterData["weapon"];
-  compact: boolean;
+  size: "xs" | "sm" | "md";
 }) {
   if (!weapon) return null;
   return (
     <Tooltip>
-      <TooltipTrigger className="lg:-mt-1">
+      <TooltipTrigger>
         <ItemIcon
           weaponId={weapon.key}
           badge={weapon.refinement}
           level={`Lv. ${weapon.level}`}
-          size={compact ? "xs" : "sm"}
+          size={size}
         />
       </TooltipTrigger>
       <TooltipContent side="top" className="p-0 border-none bg-transparent">
@@ -357,10 +373,12 @@ function ScoreUpCardComponent({
   score,
   artifactLookup,
 }: ScoreUpCardProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [activeView, setActiveView] = useState<DetailView | null>(null);
   const isCompact = !useMediaQuery("(min-width: 768px)");
-  const showChevrons = useMediaQuery("(min-width: 1280px)");
+  const isXl = useMediaQuery("(min-width: 1280px)");
+  const showChevrons = isXl;
+  const headerIconSize = isXl ? "md" : isCompact ? "xs" : "sm";
 
   // Set Bonus Logic
   const setCounts: Record<string, number> = {};
@@ -459,6 +477,10 @@ function ScoreUpCardComponent({
 
   const charInfo = charactersById[char.key];
   if (!charInfo) return null;
+  const characterName = getCompactEnglishCharacterName(
+    t.character(char.key),
+    language
+  );
 
   return (
     <div className="w-full min-w-[280px]">
@@ -471,7 +493,7 @@ function ScoreUpCardComponent({
                 characterId={char.key}
                 badge={char.constellation}
                 level={`Lv. ${char.level}`}
-                size={isCompact ? "md" : "lg"}
+                size={headerIconSize}
               />
             </TooltipTrigger>
             <TooltipContent
@@ -483,14 +505,14 @@ function ScoreUpCardComponent({
           </Tooltip>
 
           <div className="flex flex-col min-w-0 flex-1 gap-0.5 md:gap-1">
-            <div className="font-semibold text-base md:text-lg whitespace-nowrap text-white leading-none tracking-tight">
-              {t.character(char.key)}
+            <div className="truncate font-semibold text-xs md:text-sm text-white leading-none tracking-tight">
+              {characterName}
             </div>
-            <div className="flex items-start gap-2">
+            <div className="min-w-0">
               {setInfo && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-tight flex-1 min-w-0 cursor-default">
+                    <div className="text-xs text-muted-foreground line-clamp-2 leading-tight cursor-default">
                       {setInfo.label}
                     </div>
                   </TooltipTrigger>
@@ -512,27 +534,27 @@ function ScoreUpCardComponent({
                   </TooltipContent>
                 </Tooltip>
               )}
-              {score && (
-                <div className="-mt-1 lg:-mt-2">
-                  <ArtifactScoreHoverCard
-                    score={score}
-                    characterId={char.key}
-                    compact={isCompact}
-                  />
-                </div>
-              )}
+              <Link
+                to={`/artifact-filter/configure?char=${char.key}`}
+                className="mt-0.5 flex w-fit items-center gap-0.5 text-xs text-amber-400/60 hover:text-amber-400 transition-colors"
+              >
+                {t.ui("accountData.viewBuilds")}
+                <ArrowUpRight className="w-3 h-3" />
+              </Link>
             </div>
           </div>
 
-          <div className="shrink-0 flex flex-col items-end self-stretch pb-1">
-            <Link
-              to={`/artifact-filter/configure?char=${char.key}`}
-              className="flex items-center gap-0.5 text-xs text-amber-400/60 hover:text-amber-400 transition-colors mb-auto -mt-1"
-            >
-              {t.ui("accountData.viewBuilds")}
-              <ArrowUpRight className="w-3 h-3" />
-            </Link>
-            <HeaderWeaponIcon weapon={char.weapon} compact={isCompact} />
+          {score && (
+            <div className="shrink-0">
+              <ArtifactScoreHoverCard
+                score={score}
+                characterId={char.key}
+                compact
+              />
+            </div>
+          )}
+          <div className="shrink-0">
+            <HeaderWeaponIcon weapon={char.weapon} size={headerIconSize} />
           </div>
         </div>
 
@@ -550,19 +572,20 @@ function ScoreUpCardComponent({
                       <span className="text-amber-400">
                         {normalizedAllocationScore}
                       </span>
-                      {normalizedScoreGain != null && (
-                        <span
-                          className={cn(
-                            "font-bold",
-                            normalizedScoreGain > 0
-                              ? "text-emerald-400"
-                              : "text-amber-400"
-                          )}
-                        >
-                          ({normalizedScoreGain > 0 ? "+" : ""}
-                          {normalizedScoreGain})
-                        </span>
-                      )}
+                      {normalizedScoreGain != null &&
+                        normalizedScoreGain !== 0 && (
+                          <span
+                            className={cn(
+                              "font-bold",
+                              normalizedScoreGain > 0
+                                ? "text-emerald-400"
+                                : "text-amber-400"
+                            )}
+                          >
+                            ({normalizedScoreGain > 0 ? "+" : ""}
+                            {normalizedScoreGain})
+                          </span>
+                        )}
                     </>
                   )}
                 </div>
