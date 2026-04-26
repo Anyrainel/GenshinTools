@@ -66,7 +66,6 @@ Use this as the first routing hint when the user refers to a page or tab in natu
 
 ## Skills And Domain References
 
-- For UI work, use the `frontend-guide` skill first.
 - For Genshin game data, formulas, damage implementations, or calculator review, use the `genshin-knowledge` skill first.
 - For damage, energy, or gcsim batch work, use the dispatcher skills under `.agents/skills/`; they launch Codex `worker` subagents that read `.agents/agents/*.md`.
 - For persisted stores, imports, conversions, or artifact mutation flows, inspect the relevant store, migration code, and nearby tests before editing.

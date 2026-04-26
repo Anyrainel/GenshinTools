@@ -1193,14 +1193,14 @@ class Linnea extends CharacterBase {
     // P2 (Universal Naturalist Archive): EM = 5% DEF granted to either the active
     // Moonsign teammate OR Linnea (when the active char is not Moonsign) — never both.
     // To avoid double-counting Linnea's own off-field reaction damage, we approximate:
-    //   - If team has another Moonsign 5★ Geo teammate (likely the on-field carry),
+    //   - If team has another Moonsign 5★ carry teammate (likely on-field),
     //     emit only the teamOnField/Moonsign buff (the carry receives it on field).
     //   - Otherwise emit only the self buff (covers Linnea on AND off field).
     ...(() => {
       const hasOtherMoonsign5Geo = Object.entries(this.teamMeta.elements).some(
         ([cid, el]) =>
           cid !== this.charId &&
-          el === "Geo" &&
+          ["Geo", "Electro", "Dendro"].includes(el ?? "") &&
           this.teamMeta.factions[cid] === "Moonsign" &&
           this.teamMeta.rarities[cid] === 5
       );

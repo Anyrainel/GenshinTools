@@ -7,9 +7,8 @@ import {
   CLEAR_PARTICLE,
   DIFF_ELEMENT_PARTICLE,
   DIRECT_PARTICLE_ACTIONS,
-  NA_FLAT_ENERGY_PER_PROC,
-  NA_PROC_INTERVAL,
-  NA_PROC_INTERVAL_DEFAULT,
+  NA_PITY,
+  NA_PITY_DEFAULT,
   OFF_FIELD_MULTIPLIER,
   ORB_MULTIPLIER,
   PARAM_DEFAULTS,
@@ -25,6 +24,7 @@ import type {
   ERResult,
   ERSequenceOptions,
   ERTimeline,
+  NAPityConfig,
   ParticleMode,
   PeriodicProc,
   QWindow,
@@ -316,7 +316,10 @@ interface CharSimState {
   particleAccum: number;
   flatAccum: number;
   erScalingAccum: number;
-  consecutiveNAs: number;
+  /** Current NA on-hit pity probability (0–1). Increments each miss, resets on proc or swap-in. */
+  naPityProb: number;
+  /** Probability that no pity proc has fired yet this cycle (expected mode only). */
+  naSurvivalProb: number;
   hitCounts: { NA: number; CA: number; PA: number };
   /** Deferred procs for this recipient; drained on NA/CA/PA actions. */
   pendingProcs: PendingProc[];
@@ -333,12 +336,13 @@ interface CharSimState {
   qWindows: QWindow[];
 }
 
-function freshState(): CharSimState {
+function freshState(pityBase: number): CharSimState {
   return {
     particleAccum: 0,
     flatAccum: 0,
     erScalingAccum: 0,
-    consecutiveNAs: 0,
+    naPityProb: pityBase,
+    naSurvivalProb: 1.0,
     hitCounts: { NA: 0, CA: 0, PA: 0 },
     pendingProcs: [],
     maxER: 0,
@@ -354,11 +358,55 @@ function freshState(): CharSimState {
   };
 }
 
+/** Look up a member's NA pity config from their weaponType. */
+function resolveNAPityConfig(member: TeamMember): NAPityConfig {
+  return NA_PITY[(member.weaponType ?? "").toLowerCase()] ?? NA_PITY_DEFAULT;
+}
+
+/**
+ * Advance the NA pity state machine for one hit and return the energy earned.
+ *
+ * - expected: fractional energy via survival-probability tracking.
+ * - min:      0 until probability reaches 1.0 (guaranteed), then 1.
+ * - max:      always 1 (every hit procs).
+ */
+function advanceNAPity(
+  s: CharSimState,
+  cfg: NAPityConfig,
+  mode: ParticleMode
+): number {
+  if (mode === "max") {
+    s.naPityProb = cfg.base;
+    s.naSurvivalProb = 1.0;
+    return 1.0;
+  }
+  if (mode === "min") {
+    if (s.naPityProb >= 1.0) {
+      s.naPityProb = cfg.base;
+      return 1.0;
+    }
+    s.naPityProb = Math.min(1.0, s.naPityProb + cfg.increment);
+    return 0;
+  }
+  // expected: contribute survivalProb × currentProb, then advance
+  if (s.naPityProb >= 1.0) {
+    // Guaranteed proc — consume remaining survival and restart the cycle.
+    const energy = s.naSurvivalProb;
+    s.naPityProb = cfg.base;
+    s.naSurvivalProb = 1.0;
+    return energy;
+  }
+  const energy = s.naSurvivalProb * s.naPityProb;
+  s.naSurvivalProb *= 1 - s.naPityProb;
+  s.naPityProb = Math.min(1.0, s.naPityProb + cfg.increment);
+  return energy;
+}
+
 function distributeParticles(
   team: TeamMember[],
   state: Map<string, CharSimState>,
   sourceChar: string,
-  sourceAction: ActionType | "periodic" | "favonius",
+  sourceAction: ActionType | "periodic" | "favonius" | "electroResonance",
   sourceIndex: number,
   particleCount: number,
   particleElement: string,
@@ -722,8 +770,14 @@ function simulateSequence(
     qWindowCount.set(act.char, (qWindowCount.get(act.char) ?? 0) + 1);
   }
 
+  const hasElectroResonance =
+    team.filter((m) => m.element === "Electro").length >= 2;
+
   const state = new Map<string, CharSimState>();
-  for (const m of team) state.set(m.id, freshState());
+  for (const m of team) {
+    const pityConfig = resolveNAPityConfig(m);
+    state.set(m.id, freshState(pityConfig.base));
+  }
   if (sequenceOptions?.startFull) {
     for (const m of team) {
       const s = state.get(m.id);
@@ -744,10 +798,21 @@ function simulateSequence(
   }
   const artifactScratch = new Map<string, Record<string, unknown>>();
   const repeatStartIndex = sequenceOptions?.repeatStartIndex ?? 0;
+  let prevActChar: string | undefined;
 
   for (let i = 0; i < actions.length; i++) {
     const act = actions[i];
     if (!teamById.has(act.char)) continue;
+
+    // ── 0. Swap-in detection — reset incoming character's pity state ──
+    if (act.char !== prevActChar) {
+      const incoming = state.get(act.char)!;
+      const incomingMember = teamById.get(act.char)!;
+      const cfg = resolveNAPityConfig(incomingMember);
+      incoming.naPityProb = cfg.base;
+      incoming.naSurvivalProb = 1.0;
+    }
+    prevActChar = act.char;
 
     // ── 1. Periodic procs attached to this action (absorbed by on-field char = act.char) ──
     const incoming = procsByIndex.get(i);
@@ -873,20 +938,15 @@ function simulateSequence(
       }
     }
 
-    // NA pity flat energy (per gcsim; separate from infusion particles).
-    // Only the on-field attacker gains this flat energy; it is not a particle
-    // pickup and does not distribute to off-field party members.
+    // NA pity energy (matches gcsim SetupOnNormalHitEnergy pity model).
+    // Probabilistic: starts at `base`, increments each hit, resets on proc or swap-in.
+    // Only the on-field attacker gains this; it is not distributed to off-field members.
     if (act.action === "NA" || act.action === "CA" || act.action === "PA") {
-      s.consecutiveNAs++;
       const member = teamById.get(act.char)!;
-      const weaponType = member.weaponType?.toLowerCase();
-      const interval = weaponType
-        ? (NA_PROC_INTERVAL[weaponType] ?? NA_PROC_INTERVAL_DEFAULT)
-        : NA_PROC_INTERVAL_DEFAULT;
-      if (s.consecutiveNAs >= interval) {
-        s.consecutiveNAs = 0;
-        const amount = NA_FLAT_ENERGY_PER_PROC;
-        s.flatAccum += amount;
+      const pityCfg = resolveNAPityConfig(member);
+      const pityEnergy = advanceNAPity(s, pityCfg, particleMode);
+      if (pityEnergy > 0) {
+        s.flatAccum += pityEnergy;
         s.currentEvents.push({
           sourceIndex: rotationLength > 0 ? i % rotationLength : i,
           sourceChar: act.char,
@@ -894,13 +954,30 @@ function simulateSequence(
           absorberChar: act.char,
           particleCount: 0,
           particleElement: "",
-          energyAt100: amount,
+          energyAt100: pityEnergy,
           onField: true,
           type: "flat",
         });
       }
-    } else {
-      s.consecutiveNAs = 0;
+    }
+
+    // Electro resonance: ≥2 Electro team members → 1 Electro particle on reaction procs.
+    // ICD (5 s) is user-controlled via placement of reactionProc nodes.
+    if (hasElectroResonance && act.reactionProc) {
+      const absorber = getAbsorber(actions, i, isRepeating, repeatStartIndex);
+      distributeParticles(
+        team,
+        state,
+        act.char,
+        "electroResonance",
+        i,
+        1,
+        "Electro",
+        absorber,
+        offFieldMult,
+        rotationLength,
+        artifactScratch
+      );
     }
 
     // ── 3. Per-action flat / erScaling events (self + party + weapon + artifact + grantEnergy) ──

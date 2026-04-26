@@ -11,6 +11,7 @@ import snezhnayaSE from "@/data/ercalc/selfEnergy-snezhnaya.json";
 import sumeruSE from "@/data/ercalc/selfEnergy-sumeru.json";
 import type {
   ActionType,
+  NAPityConfig,
   ParticleEntry,
   Particles,
   SelfEnergyMap,
@@ -118,18 +119,27 @@ export const PERIODIC_Q_TRIGGERS = new Set<ActionType>(["Q", "specialQ"]);
 // ─── NA energy model ───
 
 /**
- * NA energy generation model (based on gcsim pkg/core/energy.go).
- * Approximates "pity" procs: every N-th NA/CA/PA action by a character drops 1 flat energy.
+ * NA on-hit energy pity model (matches gcsim pkg/core/energy.go SetupOnNormalHitEnergy).
+ * Each hit rolls against `base` probability; on fail, probability increases by `increment`.
+ * On proc: 1 flat energy to the attacker, probability resets to `base`.
+ * On character swap-in: probability resets to `base`.
+ *
+ * Expected hits per proc (ercalc uses survival-probability tracking for "expected" mode):
+ *   sword    base=0.10 dp=0.05  → ~4.52 hits  (~0.22 energy/hit)
+ *   claymore base=0.00 dp=0.10  → ~4.66 hits  (~0.21 energy/hit)
+ *   polearm  base=0.00 dp=0.04  → ~7.04 hits  (~0.14 energy/hit)
+ *   bow      base=0.00 dp=0.05  → ~6.29 hits  (~0.16 energy/hit)
+ *   catalyst base=0.00 dp=0.10  → ~4.66 hits  (~0.21 energy/hit)
  */
-export const NA_PROC_INTERVAL: Record<string, number> = {
-  sword: 2,
-  claymore: 2,
-  polearm: 3,
-  bow: 2,
-  catalyst: 2,
+export const NA_PITY: Record<string, NAPityConfig> = {
+  sword: { base: 0.1, increment: 0.05 },
+  claymore: { base: 0.0, increment: 0.1 },
+  polearm: { base: 0.0, increment: 0.04 },
+  bow: { base: 0.0, increment: 0.05 },
+  catalyst: { base: 0.0, increment: 0.1 },
 };
-export const NA_PROC_INTERVAL_DEFAULT = 2;
-export const NA_FLAT_ENERGY_PER_PROC = 1.0;
+/** Fallback when weaponType is absent — use sword as default. */
+export const NA_PITY_DEFAULT: NAPityConfig = { base: 0.1, increment: 0.05 };
 
 // ─── Param defaults (talent level 10) ───
 

@@ -211,10 +211,16 @@ export interface EROptions {
 
 // ─── Results ───
 
+export interface NAPityConfig {
+  base: number;
+  increment: number;
+}
+
 export type EnergySourceAction =
   | ActionType
   | "periodic"
   | "favonius"
+  | "electroResonance"
   | "grantEnergy"
   | "initialEnergy";
 
