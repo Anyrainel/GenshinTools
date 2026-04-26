@@ -22,7 +22,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { betaEnabled } from "@/data/betaState";
 import type { MainStat, MainStatSlot, Slot } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import { artifactHalfSetsById, artifactsById } from "@/data/gameResources";
@@ -1236,7 +1235,7 @@ export function DamageDetail({
         />
 
         {/* ER Requirements — collapsible; applies to team charSettings.minEr */}
-        {betaEnabled() && <ErCalcCard team={team} />}
+        {<ErCalcCard team={team} />}
 
         {/* Card 3 — Equipment & Damage */}
         <DamageCard
