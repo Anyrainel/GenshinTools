@@ -377,7 +377,6 @@ function ScoreUpCardComponent({
   const [activeView, setActiveView] = useState<DetailView | null>(null);
   const isCompact = !useMediaQuery("(min-width: 768px)");
   const isXl = useMediaQuery("(min-width: 1280px)");
-  const showChevrons = isXl;
   const headerIconSize = isXl ? "md" : isCompact ? "xs" : "sm";
 
   // Set Bonus Logic
@@ -623,20 +622,18 @@ function ScoreUpCardComponent({
                       setActiveView((prev) => (prev === mode ? null : mode))
                     }
                     className={cn(
-                      "flex-1 flex items-center justify-center text-xs font-semibold px-1.5 py-1 rounded-full transition-all",
-                      showChevrons && "gap-0.5",
+                      "flex-1 flex items-center justify-center gap-0.5 text-xs font-semibold px-1.5 py-1 rounded-full transition-all",
                       activeView === mode
                         ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground/80 hover:bg-white/5"
+                        : "bg-white/5 text-foreground/80 hover:bg-white/10"
                     )}
                   >
                     {t.ui(label)}
-                    {showChevrons &&
-                      (activeView === mode ? (
-                        <ChevronUp className="w-3 h-3" />
-                      ) : (
-                        <ChevronDown className="w-3 h-3 opacity-50" />
-                      ))}
+                    {activeView === mode ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3 opacity-50" />
+                    )}
                   </button>
                 ))}
               </div>

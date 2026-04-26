@@ -1,3 +1,5 @@
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { BaseStat } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
@@ -109,6 +111,14 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
             )}
           </div>
         </div>
+
+        <Link
+          to={`/archive/characters?character=${characterId}`}
+          className="relative z-10 flex items-center gap-0.5 text-[10px] text-sky-200 hover:text-white transition-colors shrink-0 self-start"
+        >
+          {t.ui("archive.viewCharacter")}
+          <ArrowUpRight className="w-3 h-3" />
+        </Link>
       </div>
 
       {/* Base stats table */}

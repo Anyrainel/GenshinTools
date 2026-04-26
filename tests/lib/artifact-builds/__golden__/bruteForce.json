@@ -587,8 +587,8 @@
           "substats": [
             "cd",
             "cr",
-            "em",
             "atk%",
+            "em",
             "hp%"
           ],
           "mustPresent": [
@@ -606,8 +606,8 @@
           "substats": [
             "cd",
             "cr",
-            "em",
             "atk%",
+            "em",
             "hp%"
           ],
           "mustPresent": [
@@ -623,8 +623,8 @@
           "substats": [
             "cd",
             "cr",
-            "em",
             "atk%",
+            "em",
             "hp%"
           ],
           "mustPresent": [
@@ -641,8 +641,8 @@
           "substats": [
             "cd",
             "cr",
-            "em",
             "atk%",
+            "em",
             "hp%"
           ],
           "mustPresent": [
@@ -664,6 +664,11 @@
           },
           {
             "characterId": "hu_tao",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "mavuika",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           },
@@ -6485,8 +6490,8 @@
           "substats": [
             "cd",
             "cr",
-            "er",
-            "atk%"
+            "atk%",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -6502,8 +6507,8 @@
           "substats": [
             "cd",
             "cr",
-            "er",
-            "atk%"
+            "atk%",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -6519,8 +6524,8 @@
           "substats": [
             "cd",
             "cr",
-            "er",
-            "atk%"
+            "atk%",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -6536,8 +6541,8 @@
           "substats": [
             "cd",
             "cr",
-            "er",
-            "atk%"
+            "atk%",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -6546,6 +6551,11 @@
           "minStatCount": 3
         },
         "servedCharacters": [
+          {
+            "characterId": "chasca",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
           {
             "characterId": "lynette",
             "hasPerfectMerge": true,

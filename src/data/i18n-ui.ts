@@ -475,11 +475,7 @@ export const i18nUiData = {
       zh: "仅应用最佳分配的装备方案，不包括强化建议。",
     },
     luckExpectation: {
-      label: { en: "Roll Value Expectation", zh: "词条期望" },
-      description: {
-        en: "How much stamina to invest in this group",
-        zh: "为该组角色投入多少体力",
-      },
+      label: { en: "Upgrade Roll Value Expectation", zh: "升级词条值期望" },
       tooltip: {
         en: "Use {0}× max roll value to predict score",
         zh: "使用 {0}× 最高词条值来预测分数",
@@ -695,6 +691,7 @@ export const i18nUiData = {
     weapons: { en: "Weapon Archive", zh: "武器图鉴" },
     artifacts: { en: "Artifact Archive", zh: "圣遗物图鉴" },
     bosses: { en: "Stygian Onslaught", zh: "幽境危战图鉴" },
+    viewCharacter: { en: "View in Archive", zh: "查看图鉴" },
     bossSelectPrompt: {
       en: "Select a boss to view details",
       zh: "选择Boss查看详情",

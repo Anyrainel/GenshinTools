@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
 } from "react";
+import { useSearchParams } from "react-router-dom";
 import { BuildsEmptyState } from "@/components/artifact-builds/BuildsEmptyState";
 import {
   type BuildCardLayout,
@@ -32,10 +33,6 @@ import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 interface CharacterBuildViewProps {
-  /** When set, filters will be configured to show this character */
-  targetCharacterId?: string;
-  /** Called when targetCharacterId has been processed, so parent can clear it */
-  onTargetProcessed?: () => void;
   /** Opens the import dialog (provided by parent page) */
   onOpenImport?: () => void;
   /** Starts the page tour (provided by parent page) */
@@ -43,8 +40,6 @@ interface CharacterBuildViewProps {
 }
 
 export function CharacterBuildView({
-  targetCharacterId,
-  onTargetProcessed,
   onOpenImport,
   onShowTour,
 }: CharacterBuildViewProps) {
@@ -91,20 +86,24 @@ export function CharacterBuildView({
     [characterStats, t]
   );
 
-  // When targetCharacterId is set, configure filters to show that character
+  const [searchParams, setSearchParams] = useSearchParams();
+  const targetCharacterId = searchParams.get("char") ?? undefined;
+
   useEffect(() => {
     if (!targetCharacterId) return;
 
     const character = charactersById[targetCharacterId];
-    if (!character) {
-      onTargetProcessed?.();
-      return;
-    }
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("char");
+      return next;
+    });
+    if (!character) return;
+
     const meta = getCharacterDisplayMeta(
       character,
       characterStats?.[targetCharacterId]
     );
-
     setCheckboxFilters({
       elements: meta.element != null ? [meta.element] : [],
       weaponTypes: meta.weaponType != null ? [meta.weaponType] : [],
@@ -114,14 +113,7 @@ export function CharacterBuildView({
       showManekin: targetCharacterId.startsWith("manekin"),
       searchQuery: "",
     });
-
-    onTargetProcessed?.();
-  }, [
-    targetCharacterId,
-    characterStats,
-    onTargetProcessed,
-    setCheckboxFilters,
-  ]);
+  }, [targetCharacterId, characterStats, setCheckboxFilters, setSearchParams]);
 
   // Compute layout flags once and pass to all CharacterBuildCards
   const isMobile = !useMediaQuery("(min-width: 768px)");

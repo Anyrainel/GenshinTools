@@ -124,6 +124,8 @@ export interface TeamGridProps {
   emptyState?: { importRef: React.RefObject<ControlHandle | null> };
   /** Enable auto-tour on first visit */
   enableTour?: boolean;
+  /** Extra content rendered below the filter/button row, above the grid */
+  headerExtra?: React.ReactNode;
 }
 
 export function TeamGrid({
@@ -137,6 +139,7 @@ export function TeamGrid({
   enableFreeze,
   emptyState,
   enableTour,
+  headerExtra,
 }: TeamGridProps) {
   const { t } = useLanguage();
   const tour = useTour();
@@ -598,6 +601,8 @@ export function TeamGrid({
                 </Button>
               </div>
             </div>
+
+            {headerExtra}
           </div>
         )
       }

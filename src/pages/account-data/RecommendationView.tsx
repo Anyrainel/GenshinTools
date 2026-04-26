@@ -481,7 +481,7 @@ export function RecommendationView({
                 </span>
               </h2>
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-foreground font-medium">
+                <span className="text-muted-foreground font-medium">
                   {t.ui("accountData.luckExpectation.label")}:
                 </span>
                 <ToggleGroup
@@ -525,9 +525,6 @@ export function RecommendationView({
                     {t.ui("accountData.luckExpectation.hopeful")}
                   </ToggleGroupItem>
                 </ToggleGroup>
-                <span className="text-muted-foreground text-xs hidden sm:inline">
-                  ({t.ui("accountData.luckExpectation.description")})
-                </span>
               </div>
             </div>
 

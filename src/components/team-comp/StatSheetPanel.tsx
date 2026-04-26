@@ -535,7 +535,7 @@ export function StatSheetPanel({
                       showChevrons && "gap-0.5",
                       activeView === mode
                         ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground/80 hover:bg-white/5"
+                        : "bg-white/5 text-foreground/80 hover:bg-white/10"
                     )}
                   >
                     {t.ui(label)}

@@ -44,7 +44,6 @@ export default function ArtifactBuildsPage() {
   const { t } = useLanguage();
   const tour = useTour();
   const buildsViewRef = useRef<ArtifactBuildsViewHandle>(null);
-  const [targetCharacterId, setTargetCharacterId] = useState<string>();
 
   // Control refs for ref-based dialog pattern
   const clearRef = useRef<ControlHandle>(null);
@@ -60,21 +59,9 @@ export default function ArtifactBuildsPage() {
   });
 
   useEffect(() => {
-    const charParam = searchParams.get("char");
-    if (!charParam) return;
-
-    setTargetCharacterId(charParam);
-    if (activeTab !== "configure") {
-      setActiveTab("configure");
-      return;
-    }
-
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.delete("char");
-      return newParams;
-    });
-  }, [activeTab, searchParams, setActiveTab, setSearchParams]);
+    if (!searchParams.has("char") || activeTab === "configure") return;
+    setActiveTab("configure");
+  }, [activeTab, searchParams, setActiveTab]);
 
   const importBuilds = useBuildsStore((state) => state.importBuilds);
   const subscribePreset = useBuildsStore((state) => state.subscribePreset);
@@ -246,8 +233,6 @@ export default function ArtifactBuildsPage() {
       >
         <TabsContent value="configure" className="mt-0 h-full">
           <CharacterBuildView
-            targetCharacterId={targetCharacterId}
-            onTargetProcessed={() => setTargetCharacterId(undefined)}
             onOpenImport={() => importRef.current?.open()}
             onShowTour={() => tour.start("artifact-filter")}
           />
@@ -257,8 +242,11 @@ export default function ArtifactBuildsPage() {
           <ArtifactBuildsView
             ref={buildsViewRef}
             onJumpToCharacter={(characterId) => {
-              setTargetCharacterId(characterId);
-              setActiveTab("configure");
+              setSearchParams((prev) => {
+                const next = new URLSearchParams(prev);
+                next.set("char", characterId);
+                return next;
+              });
             }}
             onOpenImport={() => importRef.current?.open()}
           />
