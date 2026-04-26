@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { SortDirection } from "@/data/enums";
-import { PersistedPreferencesStoreSchema } from "./schemas";
+import {
+  DEFAULT_CHARACTER_SORT,
+  PersistedPreferencesStoreSchema,
+} from "./schemas";
 
 interface CharacterSortPreferences {
   tierSort: SortDirection;
@@ -16,16 +19,10 @@ interface PreferencesState {
   setCharacterSort: (sort: Partial<CharacterSortPreferences>) => void;
 }
 
-const defaultCharacterSort: CharacterSortPreferences = {
-  tierSort: "desc",
-  releaseSort: "desc",
-  scoreSort: "off",
-};
-
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
-      characterSort: defaultCharacterSort,
+      characterSort: DEFAULT_CHARACTER_SORT,
 
       setCharacterSort: (sort) =>
         set((state) => ({
@@ -47,7 +44,7 @@ export const usePreferencesStore = create<PreferencesState>()(
           ...currentState,
           ...persisted,
           characterSort: {
-            ...defaultCharacterSort,
+            ...DEFAULT_CHARACTER_SORT,
             ...persisted.characterSort,
           },
         };

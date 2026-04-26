@@ -1,20 +1,19 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { GlobalStatWeights } from "@/data/types";
-import { PersistedArtifactScoreStoreSchema } from "./schemas";
+import {
+  DEFAULT_GLOBAL_STAT_WEIGHTS,
+  PersistedArtifactScoreStoreSchema,
+} from "./schemas";
 import { invalidateScores } from "./useAccountStore";
-
-const DEFAULT_GLOBAL: GlobalStatWeights = {
-  flatAtk: 30,
-  flatHp: 30,
-  flatDef: 30,
-};
 
 type ArtifactScoreGlobalConfig = { global: GlobalStatWeights };
 
 function migratePersisted(persisted: unknown): ArtifactScoreGlobalConfig {
   const parsed = PersistedArtifactScoreStoreSchema.safeParse(persisted);
-  return parsed.success ? parsed.data.config : { global: DEFAULT_GLOBAL };
+  return parsed.success
+    ? parsed.data.config
+    : { global: DEFAULT_GLOBAL_STAT_WEIGHTS };
 }
 
 interface ArtifactScoreState {
@@ -27,7 +26,7 @@ interface ArtifactScoreState {
 export const useArtifactScoreStore = create<ArtifactScoreState>()(
   persist(
     (set) => ({
-      config: { global: DEFAULT_GLOBAL },
+      config: { global: DEFAULT_GLOBAL_STAT_WEIGHTS },
       setGlobalWeight: (key, value) => {
         set((state) => ({
           config: {
@@ -41,14 +40,14 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
         invalidateScores();
       },
       resetConfig: () => {
-        set(() => ({ config: { global: DEFAULT_GLOBAL } }));
+        set(() => ({ config: { global: DEFAULT_GLOBAL_STAT_WEIGHTS } }));
         invalidateScores();
       },
       resetGlobalConfig: () => {
         set((state) => ({
           config: {
             ...state.config,
-            global: DEFAULT_GLOBAL,
+            global: DEFAULT_GLOBAL_STAT_WEIGHTS,
           },
         }));
         invalidateScores();

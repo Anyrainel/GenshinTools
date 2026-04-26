@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { PersistedSessionNavStoreSchema } from "./schemas";
+import {
+  DEFAULT_VIEW_SETTINGS,
+  PersistedSessionNavStoreSchema,
+} from "./schemas";
 
 export type ViewId = "damage" | "investment" | "weaponChoice";
 export type TeamSort = "default" | "tier" | "release";
@@ -20,20 +23,13 @@ interface SessionNavState {
   setErCalcExpanded: (viewId: ViewId, value: boolean) => void;
 }
 
-const defaultViewSettings: ViewSettings = {
-  activeTeamId: null,
-  ownedOnly: null,
-  teamSort: "default",
-  erCalcExpanded: false,
-};
-
 export const useSessionNavStore = create<SessionNavState>()(
   persist(
     (set) => ({
       viewSettings: {
-        damage: { ...defaultViewSettings },
-        investment: { ...defaultViewSettings },
-        weaponChoice: { ...defaultViewSettings },
+        damage: { ...DEFAULT_VIEW_SETTINGS },
+        investment: { ...DEFAULT_VIEW_SETTINGS },
+        weaponChoice: { ...DEFAULT_VIEW_SETTINGS },
       },
       setActiveTeamId: (viewId, id) =>
         set((s) => ({
@@ -80,15 +76,15 @@ export const useSessionNavStore = create<SessionNavState>()(
             if (!s.viewSettings) {
               s.viewSettings = {
                 damage: {
-                  ...defaultViewSettings,
+                  ...DEFAULT_VIEW_SETTINGS,
                   activeTeamId: s.activeTeamId ?? null,
                 },
                 investment: {
-                  ...defaultViewSettings,
+                  ...DEFAULT_VIEW_SETTINGS,
                   activeTeamId: s.activeInvestmentTeamId ?? null,
                 },
                 weaponChoice: {
-                  ...defaultViewSettings,
+                  ...DEFAULT_VIEW_SETTINGS,
                   activeTeamId: s.activeWeaponChoiceTeamId ?? null,
                 },
               };
@@ -100,7 +96,7 @@ export const useSessionNavStore = create<SessionNavState>()(
             // Ensure all views have all fields (in case new fields were added)
             for (const viewId of ["damage", "investment", "weaponChoice"]) {
               s.viewSettings[viewId] = {
-                ...defaultViewSettings,
+                ...DEFAULT_VIEW_SETTINGS,
                 ...s.viewSettings[viewId],
               };
             }

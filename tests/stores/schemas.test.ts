@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
 import {
   AccountDataSchema,
@@ -300,7 +302,7 @@ describe("PersistedBuildsStoreSchema", () => {
       hasPromptedForPreset: false,
       hiddenCharacters: {},
       characterWeapons: {},
-      computeOptions: {},
+      computeOptions: DEFAULT_COMPUTE_OPTIONS,
       author: "",
       description: "",
     });
@@ -541,26 +543,7 @@ describe("PersistedResourceRecStoreSchema", () => {
 // ─── PersistedTriageStoreSchema ───
 
 describe("PersistedTriageStoreSchema", () => {
-  const fullDefaults = {
-    settings: {
-      triageMode: "loose",
-      mainStatThreshold: 90,
-      optionalSubThreshold: 50,
-      fillerKeep: 5,
-      qualityMargin: 5,
-      setSlotKeep: 3,
-      ownedOnly: true,
-      erHoardingEnabled: true,
-      erHoardingAllEnabled: false,
-      doubleCritLockEnabled: true,
-      levelProtection: 12,
-      highLevelProtection: true,
-      equippedProtection: true,
-      disabledFlexPatterns: [],
-      enabledFlexPatterns: [],
-      customFlexInputs: [],
-    },
-  };
+  const fullDefaults = { settings: DEFAULT_TRIAGE_SETTINGS };
 
   it("heals missing or corrupted settings to full defaults", () => {
     expect(PersistedTriageStoreSchema.parse({})).toEqual(fullDefaults);
@@ -599,7 +582,9 @@ describe("PersistedTriageStoreSchema", () => {
     expect(result.settings.ownedOnly).toBe(true);
     expect(result.settings.erHoardingEnabled).toBe(true);
     expect(result.settings.doubleCritLockEnabled).toBe(true);
-    expect(result.settings.mainStatThreshold).toBe(90);
+    expect(result.settings.mainStatThreshold).toBe(
+      DEFAULT_TRIAGE_SETTINGS.mainStatThreshold
+    );
     expect(result.settings.levelProtection).toBe(12);
     expect(result.settings.customFlexInputs).toEqual([]);
   });

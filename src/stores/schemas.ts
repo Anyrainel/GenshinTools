@@ -6,8 +6,40 @@
  * instead of throwing — the app never crashes on corrupted localStorage.
  */
 import { z } from "zod";
-
+import type { SortDirection } from "@/data/enums";
+import type { GlobalStatWeights } from "@/data/types";
+import { DEFAULT_RECOMMENDATION_PREFS } from "@/lib/account-data/scoreUpEngine";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
+
+export const DEFAULT_GLOBAL_STAT_WEIGHTS: GlobalStatWeights = {
+  flatAtk: 30,
+  flatHp: 30,
+  flatDef: 30,
+};
+
+export const DEFAULT_CHARACTER_SORT: {
+  tierSort: SortDirection;
+  releaseSort: SortDirection;
+  scoreSort: SortDirection;
+} = {
+  tierSort: "desc",
+  releaseSort: "desc",
+  scoreSort: "off",
+};
+
+export const DEFAULT_VIEW_SETTINGS: {
+  activeTeamId: string | null;
+  ownedOnly: boolean | null;
+  teamSort: "default" | "tier" | "release";
+  erCalcExpanded: boolean;
+} = {
+  activeTeamId: null,
+  ownedOnly: null,
+  teamSort: "default",
+  erCalcExpanded: false,
+};
 
 // ─── Shared lightweight persisted shapes ───
 
@@ -16,7 +48,7 @@ const TierAssignmentItemSchema = z
     tier: z.string(),
     position: z.number().catch(0),
   })
-  .passthrough();
+  .loose();
 
 const TierCustomizationItemSchema = z
   .object({
@@ -24,7 +56,7 @@ const TierCustomizationItemSchema = z
     hidden: z.boolean().catch(false),
     luckExpectation: z.number().optional(),
   })
-  .passthrough();
+  .loose();
 
 const TierAssignmentSchema = z
   .record(z.string(), TierAssignmentItemSchema)
@@ -47,7 +79,7 @@ export const ArtifactDataSchema = z
     lock: z.boolean().catch(false),
     substats: z.record(z.string(), z.number()).catch({}),
   })
-  .passthrough();
+  .loose();
 
 // ─── WeaponData ───
 
@@ -59,7 +91,7 @@ export const WeaponDataSchema = z
     refinement: z.number(),
     lock: z.boolean().catch(false),
   })
-  .passthrough();
+  .loose();
 
 // ─── CharacterData (replaces repairCharacter) ───
 
@@ -80,7 +112,7 @@ export const CharacterDataSchema = z
       .record(z.string(), ArtifactDataSchema.nullable().catch(null))
       .catch({}),
   })
-  .passthrough();
+  .loose();
 
 // ─── AccountData (replaces repairAccountData) ───
 
@@ -90,7 +122,7 @@ export const AccountDataSchema = z
     extraArtifacts: z.array(ArtifactDataSchema).catch([]),
     extraWeapons: z.array(WeaponDataSchema).catch([]),
   })
-  .passthrough();
+  .loose();
 
 // ─── Account ───
 
@@ -102,7 +134,7 @@ const AccountSchema = z
     scores: z.record(z.string(), z.unknown()).catch({}),
     lastUpdate: z.number().catch(0),
   })
-  .passthrough();
+  .loose();
 
 export const PersistedAccountStoreSchema = z.object({
   accounts: z.record(z.string(), AccountSchema).catch({}),
@@ -125,7 +157,7 @@ export const BuildSchema = z
     circletWeights: z.array(z.unknown()).catch([]),
     normalizer: z.number().catch(0),
   })
-  .passthrough();
+  .loose();
 
 const ComputeOptionsSchema = z
   .object({
@@ -136,8 +168,8 @@ const ComputeOptionsSchema = z
     substatWeightThreshold: z.number().optional(),
     mustPresentWeightThreshold: z.number().optional(),
   })
-  .passthrough()
-  .catch({});
+  .loose()
+  .catch(DEFAULT_COMPUTE_OPTIONS);
 
 export const PersistedBuildsStoreSchema = z.object({
   builds: z.record(z.string(), BuildSchema).catch({}),
@@ -171,7 +203,7 @@ export const TeamSchema = z
     extraBuffs: z.array(z.unknown()).catch([]),
     charSettings: z.record(z.string(), z.unknown()).catch({}),
   })
-  .passthrough();
+  .loose();
 
 export const PersistedTeamStoreSchema = z.object({
   teams: z.array(TeamSchema).catch([]),
@@ -190,7 +222,7 @@ const FrozenTeamSchema = z
     frozenCharIds: z.array(z.string()).catch([]),
     artifactsByChar: z.record(z.string(), FrozenSlotMapSchema).catch({}),
   })
-  .passthrough();
+  .loose();
 
 export const PersistedFreezeStoreSchema = z.object({
   frozenTeams: z.record(z.string(), FrozenTeamSchema).catch({}),
@@ -229,42 +261,43 @@ const CustomFlexInputSchema = z.object({
 export const PersistedTriageStoreSchema = z.object({
   settings: z
     .object({
-      triageMode: z.enum(["strict", "loose"]).catch("loose"),
-      mainStatThreshold: z.number().catch(90),
-      optionalSubThreshold: z.number().catch(50),
-      fillerKeep: z.number().catch(5),
-      qualityMargin: z.number().catch(5),
-      setSlotKeep: z.number().catch(3),
-      ownedOnly: z.boolean().catch(true),
-      erHoardingEnabled: z.boolean().catch(true),
-      erHoardingAllEnabled: z.boolean().catch(false),
-      doubleCritLockEnabled: z.boolean().catch(true),
-      levelProtection: z.number().catch(12),
-      highLevelProtection: z.boolean().catch(true),
-      equippedProtection: z.boolean().catch(true),
+      triageMode: z
+        .enum(["strict", "loose"])
+        .catch(DEFAULT_TRIAGE_SETTINGS.triageMode),
+      mainStatThreshold: z
+        .number()
+        .catch(DEFAULT_TRIAGE_SETTINGS.mainStatThreshold),
+      optionalSubThreshold: z
+        .number()
+        .catch(DEFAULT_TRIAGE_SETTINGS.optionalSubThreshold),
+      fillerKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.fillerKeep),
+      qualityMargin: z.number().catch(DEFAULT_TRIAGE_SETTINGS.qualityMargin),
+      setSlotKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.setSlotKeep),
+      ownedOnly: z.boolean().catch(DEFAULT_TRIAGE_SETTINGS.ownedOnly),
+      erHoardingEnabled: z
+        .boolean()
+        .catch(DEFAULT_TRIAGE_SETTINGS.erHoardingEnabled),
+      erHoardingAllEnabled: z
+        .boolean()
+        .catch(DEFAULT_TRIAGE_SETTINGS.erHoardingAllEnabled),
+      doubleCritLockEnabled: z
+        .boolean()
+        .catch(DEFAULT_TRIAGE_SETTINGS.doubleCritLockEnabled),
+      levelProtection: z
+        .number()
+        .catch(DEFAULT_TRIAGE_SETTINGS.levelProtection),
+      highLevelProtection: z
+        .boolean()
+        .catch(DEFAULT_TRIAGE_SETTINGS.highLevelProtection),
+      equippedProtection: z
+        .boolean()
+        .catch(DEFAULT_TRIAGE_SETTINGS.equippedProtection),
       disabledFlexPatterns: z.array(z.string()).catch([]),
       enabledFlexPatterns: z.array(z.string()).catch([]),
       customFlexInputs: z.array(CustomFlexInputSchema).catch([]),
     })
-    .passthrough()
-    .catch({
-      triageMode: "loose" as const,
-      mainStatThreshold: 90,
-      optionalSubThreshold: 50,
-      fillerKeep: 5,
-      qualityMargin: 5,
-      setSlotKeep: 3,
-      ownedOnly: true,
-      erHoardingEnabled: true,
-      erHoardingAllEnabled: false,
-      doubleCritLockEnabled: true,
-      levelProtection: 12,
-      highLevelProtection: true,
-      equippedProtection: true,
-      disabledFlexPatterns: [],
-      enabledFlexPatterns: [],
-      customFlexInputs: [],
-    }),
+    .loose()
+    .catch(DEFAULT_TRIAGE_SETTINGS),
 });
 
 // ─── Tier list stores ───
@@ -291,10 +324,14 @@ export const PersistedTierListStoreSchema = z.object({
   showManekin: z.boolean().catch(false),
   recommendationPrefs: z
     .object({
-      scoreDiffThreshold: z.number().catch(1),
-      includeUpgrades: z.boolean().catch(true),
+      scoreDiffThreshold: z
+        .number()
+        .catch(DEFAULT_RECOMMENDATION_PREFS.scoreDiffThreshold),
+      includeUpgrades: z
+        .boolean()
+        .catch(DEFAULT_RECOMMENDATION_PREFS.includeUpgrades),
     })
-    .catch({ scoreDiffThreshold: 1, includeUpgrades: true }),
+    .catch(DEFAULT_RECOMMENDATION_PREFS),
 });
 
 // ─── Preferences ───
@@ -302,11 +339,17 @@ export const PersistedTierListStoreSchema = z.object({
 export const PersistedPreferencesStoreSchema = z.object({
   characterSort: z
     .object({
-      tierSort: z.enum(["asc", "desc", "off"]).catch("desc"),
-      releaseSort: z.enum(["asc", "desc", "off"]).catch("desc"),
-      scoreSort: z.enum(["asc", "desc", "off"]).catch("off"),
+      tierSort: z
+        .enum(["asc", "desc", "off"])
+        .catch(DEFAULT_CHARACTER_SORT.tierSort),
+      releaseSort: z
+        .enum(["asc", "desc", "off"])
+        .catch(DEFAULT_CHARACTER_SORT.releaseSort),
+      scoreSort: z
+        .enum(["asc", "desc", "off"])
+        .catch(DEFAULT_CHARACTER_SORT.scoreSort),
     })
-    .catch({ tierSort: "desc", releaseSort: "desc", scoreSort: "off" }),
+    .catch(DEFAULT_CHARACTER_SORT),
 });
 
 // ─── Greeting ───
@@ -323,13 +366,13 @@ export const PersistedArtifactScoreStoreSchema = z.object({
     .object({
       global: z
         .object({
-          flatAtk: z.number().catch(30),
-          flatHp: z.number().catch(30),
-          flatDef: z.number().catch(30),
+          flatAtk: z.number().catch(DEFAULT_GLOBAL_STAT_WEIGHTS.flatAtk),
+          flatHp: z.number().catch(DEFAULT_GLOBAL_STAT_WEIGHTS.flatHp),
+          flatDef: z.number().catch(DEFAULT_GLOBAL_STAT_WEIGHTS.flatDef),
         })
-        .catch({ flatAtk: 30, flatHp: 30, flatDef: 30 }),
+        .catch(DEFAULT_GLOBAL_STAT_WEIGHTS),
     })
-    .catch({ global: { flatAtk: 30, flatHp: 30, flatDef: 30 } }),
+    .catch({ global: DEFAULT_GLOBAL_STAT_WEIGHTS }),
 });
 
 // ─── Archive session ───
@@ -347,17 +390,17 @@ export const PersistedArchiveSessionStoreSchema = z.object({
 
 const ViewSettingsSchema = z
   .object({
-    activeTeamId: z.string().nullable().catch(null),
-    ownedOnly: z.boolean().nullable().catch(null),
-    teamSort: z.enum(["default", "tier", "release"]).catch("default"),
-    erCalcExpanded: z.boolean().catch(false),
+    activeTeamId: z
+      .string()
+      .nullable()
+      .catch(DEFAULT_VIEW_SETTINGS.activeTeamId),
+    ownedOnly: z.boolean().nullable().catch(DEFAULT_VIEW_SETTINGS.ownedOnly),
+    teamSort: z
+      .enum(["default", "tier", "release"])
+      .catch(DEFAULT_VIEW_SETTINGS.teamSort),
+    erCalcExpanded: z.boolean().catch(DEFAULT_VIEW_SETTINGS.erCalcExpanded),
   })
-  .catch({
-    activeTeamId: null,
-    ownedOnly: null,
-    teamSort: "default" as const,
-    erCalcExpanded: false,
-  });
+  .catch(DEFAULT_VIEW_SETTINGS);
 
 export const PersistedSessionNavStoreSchema = z.object({
   viewSettings: z
@@ -367,24 +410,9 @@ export const PersistedSessionNavStoreSchema = z.object({
       weaponChoice: ViewSettingsSchema,
     })
     .catch({
-      damage: {
-        activeTeamId: null,
-        ownedOnly: null,
-        teamSort: "default" as const,
-        erCalcExpanded: false,
-      },
-      investment: {
-        activeTeamId: null,
-        ownedOnly: null,
-        teamSort: "default" as const,
-        erCalcExpanded: false,
-      },
-      weaponChoice: {
-        activeTeamId: null,
-        ownedOnly: null,
-        teamSort: "default" as const,
-        erCalcExpanded: false,
-      },
+      damage: DEFAULT_VIEW_SETTINGS,
+      investment: DEFAULT_VIEW_SETTINGS,
+      weaponChoice: DEFAULT_VIEW_SETTINGS,
     }),
 });
 

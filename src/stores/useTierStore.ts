@@ -6,6 +6,7 @@ import type {
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
+import { DEFAULT_RECOMMENDATION_PREFS } from "@/lib/account-data/scoreUpEngine";
 import { PersistedTierListStoreSchema } from "./schemas";
 
 export interface TierListInstance {
@@ -140,11 +141,6 @@ interface LegacyPersistedState {
   activeTierListId?: number;
   nextId?: number;
 }
-
-export const DEFAULT_RECOMMENDATION_PREFS: RecommendationPrefs = {
-  scoreDiffThreshold: 1,
-  includeUpgrades: true,
-};
 
 function deriveRecommendationPrefs(
   legacy: LegacyInvestmentThresholds | undefined

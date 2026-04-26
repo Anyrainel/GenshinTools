@@ -67,26 +67,30 @@ vi.mock("@/components/artifact-builds/BuildsEmptyState", () => ({
 }));
 
 // Mock data
-vi.mock("@/data/constants", () => ({
-  charactersById: {
-    char1: {
-      id: "char1",
-      element: "Pyro",
-      weaponType: "Sword",
-      rarity: 5,
-      region: "Mondstadt",
+vi.mock("@/data/constants", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/data/constants")>();
+  return {
+    ...actual,
+    charactersById: {
+      char1: {
+        id: "char1",
+        element: "Pyro",
+        weaponType: "Sword",
+        rarity: 5,
+        region: "Mondstadt",
+      },
     },
-  },
-  allCharacters: [
-    {
-      id: "char1",
-      element: "Pyro",
-      weaponType: "Sword",
-      rarity: 5,
-      region: "Mondstadt",
-    },
-  ],
-}));
+    allCharacters: [
+      {
+        id: "char1",
+        element: "Pyro",
+        weaponType: "Sword",
+        rarity: 5,
+        region: "Mondstadt",
+      },
+    ],
+  };
+});
 
 vi.mock("@/data/resources", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/data/resources")>();

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
+import { DEFAULT_RECOMMENDATION_PREFS } from "@/lib/account-data/scoreUpEngine";
 import {
-  DEFAULT_RECOMMENDATION_PREFS,
   migrateTierStore,
   type TierListInstance,
   useTierStore,
