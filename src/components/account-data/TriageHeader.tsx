@@ -15,6 +15,7 @@ import { TriageSettingsPanel } from "@/components/account-data/TriageSettingsPan
 import type { TriageTabContentHandle } from "@/components/account-data/TriageTabContent";
 import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
 import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,7 +56,7 @@ export function TriageHeader({
   tierFilter,
   onToggleTier,
   halfSetFilter,
-  onToggleHalfSet,
+  onHalfSetFilterChange,
   activeSortDim,
   activeSortDir,
   onToggleSort,
@@ -70,7 +71,7 @@ export function TriageHeader({
   tierFilter: Set<string>;
   onToggleTier: (tier: string) => void;
   halfSetFilter: Set<string>;
-  onToggleHalfSet: (hsId: string) => void;
+  onHalfSetFilterChange: (nextValues: Set<string>) => void;
   activeSortDim: SortDimension;
   activeSortDir: "asc" | "desc";
   onToggleSort: (dim: SortDimension) => void;
@@ -222,18 +223,15 @@ export function TriageHeader({
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-1">
-        <span className="text-sm font-medium text-foreground shrink-0">
-          {t.ui("triage.filterByHalfSet")}
-        </span>
-        {allHalfSetIds.map((hsId) => (
-          <FilterChip
-            key={hsId}
-            active={halfSetFilter.size === 0 || halfSetFilter.has(hsId)}
-            onClick={() => onToggleHalfSet(hsId)}
-          >
-            {t.halfSetShort(hsId)}
-          </FilterChip>
-        ))}
+        <FilterChipGroup
+          label={t.ui("triage.filterByHalfSet")}
+          options={allHalfSetIds}
+          selectedValues={halfSetFilter}
+          onSelectedValuesChange={onHalfSetFilterChange}
+          getKey={(halfSetId) => halfSetId}
+          getLabel={(halfSetId) => t.halfSetShort(halfSetId)}
+          className="px-0"
+        />
       </div>
       <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
       <FlexPatternDialog

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { ArtifactCard } from "@/components/archive/ArtifactCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   allHalfSetIds,
@@ -20,15 +20,6 @@ export function ArtifactArchiveView() {
   const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(
     () => new Set()
   );
-
-  const toggleHalfSet = useCallback((id: string) => {
-    setHalfSetFilter((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }, []);
 
   // Determine grid column count to match CSS breakpoints
   const isXl = useMediaQuery("(min-width: 1280px)");
@@ -97,15 +88,14 @@ export function ArtifactArchiveView() {
           onSearchChange={setSearchQuery}
           searchPlaceholder={t.ui("archive.searchItemPlaceholder")}
         >
-          {allHalfSetIds.map((hsId) => (
-            <FilterChip
-              key={hsId}
-              active={halfSetFilter.size === 0 || halfSetFilter.has(hsId)}
-              onClick={() => toggleHalfSet(hsId)}
-            >
-              {t.halfSetShort(hsId)}
-            </FilterChip>
-          ))}
+          <FilterChipGroup
+            options={allHalfSetIds}
+            selectedValues={halfSetFilter}
+            onSelectedValuesChange={setHalfSetFilter}
+            getKey={(halfSetId) => halfSetId}
+            getLabel={(halfSetId) => t.halfSetShort(halfSetId)}
+            className="contents"
+          />
         </ArchiveToolbar>
       }
     >

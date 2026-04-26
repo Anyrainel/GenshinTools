@@ -173,8 +173,8 @@ export function getTriageTierColor(
 // ── Sentiment badge colors (good/bad indicators) ──
 
 export const SENTIMENT_BADGE = {
-  positive: "bg-green-500/20 text-green-300 border-green-500/30",
-  negative: "bg-red-500/20 text-red-300 border-red-500/30",
+  positive: "bg-green-500/10 text-green-400 border-green-500/20",
+  negative: "bg-red-500/10 text-red-400 border-red-500/20",
 } as const;
 // ── Chip color schemes (FilterChip / CategoryChip) ──
 

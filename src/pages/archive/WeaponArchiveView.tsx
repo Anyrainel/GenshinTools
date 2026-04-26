@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { WeaponCard } from "@/components/archive/WeaponCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { MainStat, Rarity, WeaponType } from "@/data/enums";
 import { weaponTypes } from "@/data/enums";
@@ -22,86 +22,80 @@ import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 function WeaponFilterChips({
   sortedWeaponSecondaryStats,
   weaponTypeFilter,
-  onToggleWeaponType,
+  onWeaponTypeFilterChange,
   rarityFilter,
-  onToggleRarity,
+  onRarityFilterChange,
   secondaryStatFilter,
-  onToggleSecondaryStat,
+  onSecondaryStatFilterChange,
 }: {
   sortedWeaponSecondaryStats: MainStat[];
-  weaponTypeFilter: WeaponType[];
-  onToggleWeaponType: (wt: WeaponType) => void;
-  rarityFilter: Rarity[];
-  onToggleRarity: (r: Rarity) => void;
-  secondaryStatFilter: MainStat[];
-  onToggleSecondaryStat: (stat: MainStat) => void;
+  weaponTypeFilter: Set<WeaponType>;
+  onWeaponTypeFilterChange: (nextValues: Set<WeaponType>) => void;
+  rarityFilter: Set<Rarity>;
+  onRarityFilterChange: (nextValues: Set<Rarity>) => void;
+  secondaryStatFilter: Set<MainStat>;
+  onSecondaryStatFilterChange: (nextValues: Set<MainStat>) => void;
 }) {
   const { t } = useLanguage();
 
   return (
     <>
-      {/* Weapon Types */}
-      {weaponTypes.map((wt) => {
-        const active =
-          weaponTypeFilter.length === 0 || weaponTypeFilter.includes(wt);
-        const res = weaponResourcesByName[wt];
-        return (
-          <FilterChip
-            key={wt}
-            active={active}
-            onClick={() => onToggleWeaponType(wt)}
-          >
+      <FilterChipGroup
+        options={weaponTypes}
+        selectedValues={weaponTypeFilter}
+        onSelectedValuesChange={onWeaponTypeFilterChange}
+        getKey={(weaponType) => weaponType}
+        getIcon={(weaponType) => {
+          const res = weaponResourcesByName[weaponType];
+          return (
             <img
               src={getAssetUrl(res.imagePath)}
-              alt={wt}
+              alt={weaponType}
               className="w-4 h-4 brightness-125"
             />
-            <span className="hidden sm:inline">{t.weaponType(wt)}</span>
-          </FilterChip>
-        );
-      })}
+          );
+        }}
+        getLabel={(weaponType) => (
+          <span className="hidden sm:inline">{t.weaponType(weaponType)}</span>
+        )}
+        className="contents"
+      />
 
-      <div className="h-5 w-px bg-border/50 mx-1 hidden sm:block" />
+      <div className="h-5 w-px bg-border mx-1 hidden sm:block" />
 
-      {/* Rarity */}
-      {([5, 4, 3] as Rarity[]).map((r) => {
-        const active = rarityFilter.length === 0 || rarityFilter.includes(r);
-        return (
-          <FilterChip key={r} active={active} onClick={() => onToggleRarity(r)}>
-            <span
-              className={cn(
-                active
-                  ? r === 5
-                    ? "text-amber-400"
-                    : r === 4
-                      ? "text-purple-400"
-                      : "text-blue-400"
-                  : ""
-              )}
-            >
-              ★{r}
-            </span>
-          </FilterChip>
-        );
-      })}
-
-      <div className="h-5 w-px bg-border/50 mx-1 hidden sm:block" />
-
-      {/* Secondary Stats */}
-      {sortedWeaponSecondaryStats.map((stat) => {
-        const active =
-          secondaryStatFilter.length === 0 ||
-          secondaryStatFilter.includes(stat);
-        return (
-          <FilterChip
-            key={stat}
-            active={active}
-            onClick={() => onToggleSecondaryStat(stat)}
+      <FilterChipGroup
+        options={[5, 4, 3] as Rarity[]}
+        selectedValues={rarityFilter}
+        onSelectedValuesChange={onRarityFilterChange}
+        getKey={(rarity) => String(rarity)}
+        getLabel={(rarity, active) => (
+          <span
+            className={cn(
+              active
+                ? rarity === 5
+                  ? "text-amber-400"
+                  : rarity === 4
+                    ? "text-purple-400"
+                    : "text-blue-400"
+                : ""
+            )}
           >
-            {t.statShort(stat)}
-          </FilterChip>
-        );
-      })}
+            ★{rarity}
+          </span>
+        )}
+        className="contents"
+      />
+
+      <div className="h-5 w-px bg-border mx-1 hidden sm:block" />
+
+      <FilterChipGroup
+        options={sortedWeaponSecondaryStats}
+        selectedValues={secondaryStatFilter}
+        onSelectedValuesChange={onSecondaryStatFilterChange}
+        getKey={(stat) => stat}
+        getLabel={(stat) => t.statShort(stat)}
+        className="contents"
+      />
     </>
   );
 }
@@ -182,10 +176,14 @@ export function WeaponArchiveView() {
   );
   const searchQuery = useArchiveSessionStore((s) => s.weaponSearch);
   const setSearchQuery = useArchiveSessionStore((s) => s.setWeaponSearch);
-  const [weaponTypeFilter, setWeaponTypeFilter] = useState<WeaponType[]>([]);
-  const [rarityFilter, setRarityFilter] = useState<Rarity[]>([]);
-  const [secondaryStatFilter, setSecondaryStatFilter] = useState<MainStat[]>(
-    []
+  const [weaponTypeFilter, setWeaponTypeFilter] = useState<Set<WeaponType>>(
+    () => new Set()
+  );
+  const [rarityFilter, setRarityFilter] = useState<Set<Rarity>>(
+    () => new Set()
+  );
+  const [secondaryStatFilter, setSecondaryStatFilter] = useState<Set<MainStat>>(
+    () => new Set()
   );
   const [openSections, setOpenSections] = useState<Record<WeaponType, boolean>>(
     {
@@ -202,17 +200,16 @@ export function WeaponArchiveView() {
 
     const filtered = sortedWeapons.filter((weapon) => {
       const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
-      if (rarityFilter.length > 0 && !rarityFilter.includes(meta.rarity))
-        return false;
+      if (rarityFilter.size > 0 && !rarityFilter.has(meta.rarity)) return false;
       if (
-        secondaryStatFilter.length > 0 &&
+        secondaryStatFilter.size > 0 &&
         (meta.secondaryStat == null ||
-          !secondaryStatFilter.includes(meta.secondaryStat))
+          !secondaryStatFilter.has(meta.secondaryStat))
       )
         return false;
       if (
-        weaponTypeFilter.length > 0 &&
-        (meta.type == null || !weaponTypeFilter.includes(meta.type))
+        weaponTypeFilter.size > 0 &&
+        (meta.type == null || !weaponTypeFilter.has(meta.type))
       )
         return false;
       if (query) {
@@ -262,27 +259,9 @@ export function WeaponArchiveView() {
     }));
   };
 
-  const toggleWeaponType = (wt: WeaponType) => {
-    setWeaponTypeFilter((prev) =>
-      prev.includes(wt) ? prev.filter((w) => w !== wt) : [...prev, wt]
-    );
-  };
-
-  const toggleRarity = (r: Rarity) => {
-    setRarityFilter((prev) =>
-      prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]
-    );
-  };
-
-  const toggleSecondaryStat = (stat: MainStat) => {
-    setSecondaryStatFilter((prev) =>
-      prev.includes(stat) ? prev.filter((s) => s !== stat) : [...prev, stat]
-    );
-  };
-
   // Determine which sections to render (hide empty sections when weapon type filter is active)
   const visibleTypes =
-    weaponTypeFilter.length > 0 ? weaponTypeFilter : weaponTypes;
+    weaponTypeFilter.size > 0 ? [...weaponTypeFilter] : weaponTypes;
 
   return (
     <ScrollLayout
@@ -297,11 +276,11 @@ export function WeaponArchiveView() {
           <WeaponFilterChips
             sortedWeaponSecondaryStats={sortedWeaponSecondaryStats}
             weaponTypeFilter={weaponTypeFilter}
-            onToggleWeaponType={toggleWeaponType}
+            onWeaponTypeFilterChange={setWeaponTypeFilter}
             rarityFilter={rarityFilter}
-            onToggleRarity={toggleRarity}
+            onRarityFilterChange={setRarityFilter}
             secondaryStatFilter={secondaryStatFilter}
-            onToggleSecondaryStat={toggleSecondaryStat}
+            onSecondaryStatFilterChange={setSecondaryStatFilter}
           />
         </ArchiveToolbar>
       }

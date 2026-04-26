@@ -30,7 +30,7 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CategoryChip } from "@/components/shared/CategoryChip";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -191,18 +191,12 @@ export function TeamGrid({
     setViewTeamSort(viewId, teamSort === s ? "default" : s);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [elementFilter, setElementFilter] = useState<Element[]>([]);
-  const [regionFilter, setRegionFilter] = useState<Region[]>([]);
-
-  const toggleElement = (el: Element) =>
-    setElementFilter((prev) =>
-      prev.includes(el) ? prev.filter((e) => e !== el) : [...prev, el]
-    );
-
-  const toggleRegion = (r: Region) =>
-    setRegionFilter((prev) =>
-      prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]
-    );
+  const [elementFilter, setElementFilter] = useState<Set<Element>>(
+    () => new Set()
+  );
+  const [regionFilter, setRegionFilter] = useState<Set<Region>>(
+    () => new Set()
+  );
 
   // Precompute ownership info per team (how many of the filled characters are owned)
   const teamOwnershipMap = useMemo(() => {
@@ -258,7 +252,7 @@ export function TeamGrid({
       });
     }
 
-    if (elementFilter.length > 0 || regionFilter.length > 0) {
+    if (elementFilter.size > 0 || regionFilter.size > 0) {
       result = result.filter((team) => {
         const chars = team.characters
           .filter(Boolean)
@@ -267,18 +261,18 @@ export function TeamGrid({
 
         if (chars.length === 0) return true; // Show unconfigured teams always
 
-        if (elementFilter.length > 0) {
+        if (elementFilter.size > 0) {
           const hasMatchingElement = chars.some((c) => {
             const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
-            return meta.element != null && elementFilter.includes(meta.element);
+            return meta.element != null && elementFilter.has(meta.element);
           });
           if (!hasMatchingElement) return false;
         }
 
-        if (regionFilter.length > 0) {
+        if (regionFilter.size > 0) {
           const hasMatchingRegion = chars.some((c) => {
             const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
-            return meta.region != null && regionFilter.includes(meta.region);
+            return meta.region != null && regionFilter.has(meta.region);
           });
           if (!hasMatchingRegion) return false;
         }
@@ -509,41 +503,39 @@ export function TeamGrid({
 
             {/* Row 1: Element + Region chips */}
             <div className="flex items-center justify-center gap-1 2xl:gap-2 flex-wrap">
-              {elements.map((el) => {
-                const active =
-                  elementFilter.length === 0 || elementFilter.includes(el);
-                const res = elementResourcesByName[el];
-                return (
-                  <FilterChip
-                    key={el}
-                    active={active}
-                    onClick={() => toggleElement(el)}
-                  >
+              <FilterChipGroup
+                options={elements}
+                selectedValues={elementFilter}
+                onSelectedValuesChange={setElementFilter}
+                getKey={(element) => element}
+                getIcon={(element) => {
+                  const res = elementResourcesByName[element];
+                  return (
                     <img
                       src={getAssetUrl(res.imagePath)}
-                      alt={el}
+                      alt={element}
                       className="w-4 h-4"
                     />
-                    <span className="text-xs">{t.element(el)}</span>
-                  </FilterChip>
-                );
-              })}
+                  );
+                }}
+                getLabel={(element) => (
+                  <span className="text-xs">{t.element(element)}</span>
+                )}
+                className="contents"
+              />
 
-              <div className="h-5 w-px bg-border/50 mx-1" />
+              <div className="h-5 w-px bg-border mx-1" />
 
-              {displayRegions.map((r) => {
-                const active =
-                  regionFilter.length === 0 || regionFilter.includes(r);
-                return (
-                  <FilterChip
-                    key={r}
-                    active={active}
-                    onClick={() => toggleRegion(r)}
-                  >
-                    <span className="text-xs">{t.region(r)}</span>
-                  </FilterChip>
-                );
-              })}
+              <FilterChipGroup
+                options={displayRegions}
+                selectedValues={regionFilter}
+                onSelectedValuesChange={setRegionFilter}
+                getKey={(region) => region}
+                getLabel={(region) => (
+                  <span className="text-xs">{t.region(region)}</span>
+                )}
+                className="contents"
+              />
             </div>
 
             {/* Row 2: Owned-only + Sort | New team buttons */}

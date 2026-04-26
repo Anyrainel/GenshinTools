@@ -530,7 +530,7 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
               {news.roadmap.length > 0 && (
                 <article>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="h-px flex-1 bg-border/50" />
+                    <div className="h-px flex-1 bg-border" />
                     <span
                       className={cn(
                         "text-xs font-semibold shrink-0",
@@ -539,7 +539,7 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
                     >
                       {t.ui("whatsNew.roadmap")}
                     </span>
-                    <div className="h-px flex-1 bg-border/50" />
+                    <div className="h-px flex-1 bg-border" />
                   </div>
                   <ul className="space-y-1">
                     {news.roadmap.map((item, i) => (
@@ -558,11 +558,11 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
               {news.entries.map((entry) => (
                 <article key={entry.date}>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="h-px flex-1 bg-border/50" />
+                    <div className="h-px flex-1 bg-border" />
                     <span className="text-sm font-semibold font-mono text-foreground shrink-0">
                       {entry.date}
                     </span>
-                    <div className="h-px flex-1 bg-border/50" />
+                    <div className="h-px flex-1 bg-border" />
                   </div>
                   <div className="space-y-3">
                     {entry.sections.map((section) => (

@@ -236,10 +236,10 @@ export function ArtifactScannerDialog({
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <ScanTargetRow
-                    id="scan-artifacts"
-                    checked={scanArtifacts}
-                    onChange={setScanArtifacts}
-                    label={t.ui("accountData.artifacts")}
+                    id="scan-characters"
+                    checked={scanCharacters}
+                    onChange={setScanCharacters}
+                    label={t.ui("accountData.characters")}
                   />
                   <ScanTargetRow
                     id="scan-weapons"
@@ -248,10 +248,10 @@ export function ArtifactScannerDialog({
                     label={t.ui("accountData.weapons")}
                   />
                   <ScanTargetRow
-                    id="scan-characters"
-                    checked={scanCharacters}
-                    onChange={setScanCharacters}
-                    label={t.ui("accountData.characters")}
+                    id="scan-artifacts"
+                    checked={scanArtifacts}
+                    onChange={setScanArtifacts}
+                    label={t.ui("accountData.artifacts")}
                   />
                 </div>
               </div>

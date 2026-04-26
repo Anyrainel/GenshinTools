@@ -64,11 +64,11 @@ export default function NewsDialog({
           <div className="px-4 pb-4 space-y-4">
             {/* Date heading */}
             <div className="flex items-center gap-2">
-              <div className="h-px flex-1 bg-border/50" />
+              <div className="h-px flex-1 bg-border" />
               <span className="text-sm font-semibold font-mono text-foreground shrink-0">
                 {entry.date}
               </span>
-              <div className="h-px flex-1 bg-border/50" />
+              <div className="h-px flex-1 bg-border" />
             </div>
 
             {/* Sections */}

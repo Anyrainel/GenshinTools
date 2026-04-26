@@ -23,15 +23,24 @@ import {
   characterStatsResource,
   getCharacterDisplayMeta,
 } from "@/data/gameStatsLoader";
-import type { AccountData, CharacterData } from "@/data/types";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import type { AccountData, Build, CharacterData } from "@/data/types";
+import {
+  useActiveAccountData,
+  useActiveAccountScores,
+} from "@/hooks/useActiveAccount";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
+import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { computeCharWeaponNonArtifactCr } from "@/lib/account-data/crBudget";
+import {
+  type ArtifactScoreResult,
+  scoreWithBuilds,
+} from "@/lib/artifact/scoring/artifactScore";
 import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 export interface CharacterViewHandle {
@@ -39,19 +48,69 @@ export interface CharacterViewHandle {
 }
 
 export interface CharacterViewProps {
-  scores: Record<string, ArtifactScoreResult | null>;
   isEditMode?: boolean;
 }
 
 export const CharacterView = forwardRef<
   CharacterViewHandle,
   CharacterViewProps
->(function CharacterView({ scores, isEditMode = false }, ref) {
+>(function CharacterView({ isEditMode = false }, ref) {
   const { t } = useLanguage();
   const characterStats = characterStatsResource.use();
   const accountData = useActiveAccountData();
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
+  const staleScoreCharIds = useAccountStore((s) => s.staleScoreCharIds);
+  const mergeScores = useAccountStore((s) => s.mergeScores);
+
+  const scores = useActiveAccountScores();
+
+  const scoreConfig = useArtifactScoreStore((s) => s.config);
+  const buildGroups = useAllResolvedBuilds();
+
+  const resolvedBuildsMap = useMemo(() => {
+    const map: Record<string, Build[]> = {};
+    for (const group of buildGroups) {
+      const visible = group.builds.filter((b) => b.visible);
+      if (visible.length > 0) {
+        map[group.characterId] = visible;
+      }
+    }
+    return map;
+  }, [buildGroups]);
+
+  const charsToScore = useMemo(() => {
+    if (!accountData || accountData.characters.length === 0) return [];
+    return accountData.characters.filter((c) => {
+      if (
+        staleScoreCharIds === true ||
+        (staleScoreCharIds.length > 0 && staleScoreCharIds.includes(c.key))
+      )
+        return true;
+      if (!(c.key in scores)) return true;
+      if (scores[c.key] === null && (resolvedBuildsMap[c.key]?.length ?? 0) > 0)
+        return true;
+      return false;
+    });
+  }, [accountData, staleScoreCharIds, scores, resolvedBuildsMap]);
+
+  useEffect(() => {
+    if (charsToScore.length === 0) return;
+    const timer = setTimeout(() => {
+      const results: Record<string, ArtifactScoreResult | null> = {};
+      for (const char of charsToScore) {
+        const builds = resolvedBuildsMap[char.key] ?? [];
+        results[char.key] = scoreWithBuilds(
+          char,
+          builds,
+          scoreConfig.global,
+          computeCharWeaponNonArtifactCr(char)
+        );
+      }
+      mergeScores(results);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [charsToScore, scoreConfig, mergeScores, resolvedBuildsMap]);
 
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;

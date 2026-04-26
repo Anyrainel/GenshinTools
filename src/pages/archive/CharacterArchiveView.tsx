@@ -4,7 +4,7 @@ import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { CharacterDetailPanel } from "@/components/archive/CharacterDetailPanel";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
-import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -168,83 +168,89 @@ function CharacterGrid({
 
 function CharacterFilterChips({
   elementFilter,
-  onToggleElement,
+  onElementFilterChange,
   weaponTypeFilter,
-  onToggleWeaponType,
+  onWeaponTypeFilterChange,
   rarityFilter,
-  onToggleRarity,
+  onRarityFilterChange,
 }: {
-  elementFilter: Element[];
-  onToggleElement: (el: Element) => void;
-  weaponTypeFilter: WeaponType[];
-  onToggleWeaponType: (wt: WeaponType) => void;
-  rarityFilter: Rarity[];
-  onToggleRarity: (r: Rarity) => void;
+  elementFilter: Set<Element>;
+  onElementFilterChange: (nextValues: Set<Element>) => void;
+  weaponTypeFilter: Set<WeaponType>;
+  onWeaponTypeFilterChange: (nextValues: Set<WeaponType>) => void;
+  rarityFilter: Set<Rarity>;
+  onRarityFilterChange: (nextValues: Set<Rarity>) => void;
 }) {
   const { t } = useLanguage();
 
   return (
     <>
-      {/* Elements */}
-      {elements.map((el) => {
-        const active = elementFilter.length === 0 || elementFilter.includes(el);
-        const res = elementResourcesByName[el];
-        return (
-          <FilterChip
-            key={el}
-            active={active}
-            onClick={() => onToggleElement(el)}
-          >
+      <FilterChipGroup
+        options={elements}
+        selectedValues={elementFilter}
+        onSelectedValuesChange={onElementFilterChange}
+        getKey={(element) => element}
+        getIcon={(element) => {
+          const res = elementResourcesByName[element];
+          return (
             <img
               src={getAssetUrl(res.imagePath)}
-              alt={el}
+              alt={element}
               className="w-4 h-4"
             />
-            <span className="hidden sm:inline">{t.element(el)}</span>
-          </FilterChip>
-        );
-      })}
+          );
+        }}
+        getLabel={(element) => (
+          <span className="hidden sm:inline">{t.element(element)}</span>
+        )}
+        className="contents"
+      />
 
-      <div className="h-5 w-px bg-border/50 mx-1 hidden sm:block" />
+      <div className="h-5 w-px bg-border mx-1 hidden sm:block" />
 
-      {/* Weapon Types */}
-      {weaponTypes.map((wt) => {
-        const active =
-          weaponTypeFilter.length === 0 || weaponTypeFilter.includes(wt);
-        const res = weaponResourcesByName[wt];
-        return (
-          <FilterChip
-            key={wt}
-            active={active}
-            onClick={() => onToggleWeaponType(wt)}
+      <FilterChipGroup
+        options={[5, 4] as Rarity[]}
+        selectedValues={rarityFilter}
+        onSelectedValuesChange={onRarityFilterChange}
+        getKey={(rarity) => String(rarity)}
+        getLabel={(rarity, active) => (
+          <span
+            className={cn(
+              active
+                ? rarity === 5
+                  ? "text-amber-400"
+                  : "text-purple-400"
+                : ""
+            )}
           >
+            ★{rarity}
+          </span>
+        )}
+        className="contents"
+      />
+
+      <div className="h-5 w-px bg-border mx-1 hidden sm:block" />
+
+      <FilterChipGroup
+        options={weaponTypes}
+        selectedValues={weaponTypeFilter}
+        onSelectedValuesChange={onWeaponTypeFilterChange}
+        getKey={(weaponType) => weaponType}
+        getIcon={(weaponType) => {
+          const res = weaponResourcesByName[weaponType];
+          return (
             <img
               src={getAssetUrl(res.imagePath)}
-              alt={wt}
+              alt={weaponType}
               className="w-4 h-4 brightness-125"
             />
-            <span className="hidden sm:inline">{t.weaponType(wt)}</span>
-          </FilterChip>
-        );
-      })}
-
-      <div className="h-5 w-px bg-border/50 mx-1 hidden sm:block" />
-
-      {/* Rarity */}
-      {([5, 4] as Rarity[]).map((r) => {
-        const active = rarityFilter.length === 0 || rarityFilter.includes(r);
-        return (
-          <FilterChip key={r} active={active} onClick={() => onToggleRarity(r)}>
-            <span
-              className={cn(
-                active ? (r === 5 ? "text-amber-400" : "text-purple-400") : ""
-              )}
-            >
-              ★{r}
-            </span>
-          </FilterChip>
-        );
-      })}
+          );
+        }}
+        getLabel={(weaponType) => (
+          <span className="hidden sm:inline">{t.weaponType(weaponType)}</span>
+        )}
+        className="contents"
+      />
     </>
   );
 }
@@ -282,9 +288,15 @@ export function CharacterArchiveView() {
   const setSearchQuery = useArchiveSessionStore((s) => s.setCharacterSearch);
   const selectedId = useArchiveSessionStore((s) => s.selectedCharacterId);
   const setSelectedId = useArchiveSessionStore((s) => s.setSelectedCharacterId);
-  const [elementFilter, setElementFilter] = useState<Element[]>([]);
-  const [weaponTypeFilter, setWeaponTypeFilter] = useState<WeaponType[]>([]);
-  const [rarityFilter, setRarityFilter] = useState<Rarity[]>([]);
+  const [elementFilter, setElementFilter] = useState<Set<Element>>(
+    () => new Set()
+  );
+  const [weaponTypeFilter, setWeaponTypeFilter] = useState<Set<WeaponType>>(
+    () => new Set()
+  );
+  const [rarityFilter, setRarityFilter] = useState<Set<Rarity>>(
+    () => new Set()
+  );
 
   // Filter characters (use stats-based meta)
   const filteredCharacters = useMemo(() => {
@@ -292,17 +304,16 @@ export function CharacterArchiveView() {
     return sortedCharacters.filter((c) => {
       const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
       if (
-        elementFilter.length > 0 &&
-        (meta.element == null || !elementFilter.includes(meta.element))
+        elementFilter.size > 0 &&
+        (meta.element == null || !elementFilter.has(meta.element))
       )
         return false;
       if (
-        weaponTypeFilter.length > 0 &&
-        (meta.weaponType == null || !weaponTypeFilter.includes(meta.weaponType))
+        weaponTypeFilter.size > 0 &&
+        (meta.weaponType == null || !weaponTypeFilter.has(meta.weaponType))
       )
         return false;
-      if (rarityFilter.length > 0 && !rarityFilter.includes(meta.rarity))
-        return false;
+      if (rarityFilter.size > 0 && !rarityFilter.has(meta.rarity)) return false;
       if (hasSearch) {
         const name = t.character(c.id);
         const skills = t.skills(c.id);
@@ -369,24 +380,6 @@ export function CharacterArchiveView() {
     didSeedRef,
   ]);
 
-  const toggleElement = (el: Element) => {
-    setElementFilter((prev) =>
-      prev.includes(el) ? prev.filter((e) => e !== el) : [...prev, el]
-    );
-  };
-
-  const toggleWeaponType = (wt: WeaponType) => {
-    setWeaponTypeFilter((prev) =>
-      prev.includes(wt) ? prev.filter((w) => w !== wt) : [...prev, wt]
-    );
-  };
-
-  const toggleRarity = (r: Rarity) => {
-    setRarityFilter((prev) =>
-      prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]
-    );
-  };
-
   const toolbar = (
     <ArchiveToolbar
       searchQuery={searchQuery}
@@ -395,11 +388,11 @@ export function CharacterArchiveView() {
     >
       <CharacterFilterChips
         elementFilter={elementFilter}
-        onToggleElement={toggleElement}
+        onElementFilterChange={setElementFilter}
         weaponTypeFilter={weaponTypeFilter}
-        onToggleWeaponType={toggleWeaponType}
+        onWeaponTypeFilterChange={setWeaponTypeFilter}
         rarityFilter={rarityFilter}
-        onToggleRarity={toggleRarity}
+        onRarityFilterChange={setRarityFilter}
       />
     </ArchiveToolbar>
   );

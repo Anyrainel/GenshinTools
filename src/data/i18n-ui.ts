@@ -255,7 +255,7 @@ export const i18nUiData = {
 
   accountData: {
     characters: { en: "Characters", zh: "角色" },
-    inventory: { en: "Inventory", zh: "库存" },
+    inventory: { en: "Inventory", zh: "仓库" },
     recommendations: { en: "Recommendations", zh: "提分推荐" },
     weapons: { en: "Weapons", zh: "武器" },
     artifacts: { en: "Artifacts", zh: "圣遗物" },
@@ -263,11 +263,13 @@ export const i18nUiData = {
     unequipped: { en: "Unequipped", zh: "未装备" },
     maxLevel: { en: "Max Level", zh: "满级" },
     other: { en: "Other Level", zh: "未满级" },
+    filterByElement: { en: "Filter by element:", zh: "按元素过滤:" },
+    filterBySubstat: { en: "Filter by substat:", zh: "按副属性过滤:" },
     sameSet: { en: "Same Set", zh: "同套装" },
     allOther: { en: "All Other", zh: "其他套装" },
     noData: {
       en: "Character Builds & Inventory",
-      zh: "角色配装与库存",
+      zh: "角色配装与仓库",
     },
     importPrompt: {
       en: "View your characters, artifacts, and weapons — with build scoring and upgrade recommendations. Import your data via Enka UID or a GOOD export file to get started.",
@@ -291,7 +293,7 @@ export const i18nUiData = {
     },
     afterImportHint: {
       en: "After importing, you'll see build scores, upgrade recommendations, and inventory insights.",
-      zh: "导入后，你将看到配装评分、升级建议和库存分析。",
+      zh: "导入后，你将看到配装评分、升级建议和套装分析。",
     },
     profileSelect: { en: "Select Profile", zh: "选择账号配置" },
     manageProfiles: { en: "Manage Profiles", zh: "管理账号配置" },

@@ -26,15 +26,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Build } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   deleteInventoryArtifact,
   deleteInventoryWeapon,
 } from "@/lib/account-data/characterEditor";
-import { computeCharWeaponNonArtifactCr } from "@/lib/account-data/crBudget";
 import {
   convertEnkaToGOOD,
   fetchEnkaData,
@@ -60,10 +57,6 @@ import {
   mergePartialAccountData,
 } from "@/lib/account-data/import/mergeAccountData";
 import {
-  type ArtifactScoreResult,
-  scoreWithBuilds,
-} from "@/lib/artifact/scoring/artifactScore";
-import {
   CharacterView,
   type CharacterViewHandle,
 } from "@/pages/account-data/CharacterView";
@@ -74,7 +67,6 @@ import { ResourceView } from "@/pages/account-data/ResourceView";
 import { TriageView } from "@/pages/account-data/TriageView";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 
 const isValidAccountDataTab = (
   tab: string | null
@@ -167,8 +159,6 @@ export default function AccountDataPage() {
   const clearAccounts = useAccountStore((s) => s.clearAccounts);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
   const promoteToUid = useAccountStore((s) => s.promoteToUid);
-  const mergeScores = useAccountStore((s) => s.mergeScores);
-  const staleScoreCharIds = useAccountStore((s) => s.staleScoreCharIds);
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data || null;
   const scores = activeAccount?.scores || {};
@@ -180,64 +170,6 @@ export default function AccountDataPage() {
     null
   );
   const [isAccountManagerOpen, setIsAccountManagerOpen] = useState(false);
-
-  const scoreConfig = useArtifactScoreStore((s) => s.config);
-
-  // Use the hook to get all resolved builds efficiently
-  const buildGroups = useAllResolvedBuilds();
-
-  // Convert array of groups to a map for quick lookup during scoring
-  // Filter out disabled (visible=false) builds so they don't affect scores
-  const resolvedBuildsMap = useMemo(() => {
-    const map: Record<string, Build[]> = {};
-    for (const group of buildGroups) {
-      const visible = group.builds.filter((b) => b.visible);
-      if (visible.length > 0) {
-        map[group.characterId] = visible;
-      }
-    }
-    return map;
-  }, [buildGroups]);
-
-  // Determine which characters need rescoring: stale, missing, or null with builds now available.
-  const charsToScore = useMemo(() => {
-    if (!accountData || accountData.characters.length === 0) return [];
-
-    return accountData.characters.filter((c) => {
-      // Explicitly marked stale (per-character or global)
-      if (
-        staleScoreCharIds === true ||
-        (staleScoreCharIds.length > 0 && staleScoreCharIds.includes(c.key))
-      )
-        return true;
-      // Missing score
-      if (!(c.key in scores)) return true;
-      // Null score with builds now available (async preset loaded)
-      if (scores[c.key] === null && (resolvedBuildsMap[c.key]?.length ?? 0) > 0)
-        return true;
-      return false;
-    });
-  }, [accountData, staleScoreCharIds, scores, resolvedBuildsMap]);
-
-  useEffect(() => {
-    if (charsToScore.length === 0) return;
-
-    // Short delay to let dependencies (e.g. preset loading) stabilize
-    const timer = setTimeout(() => {
-      const results: Record<string, ArtifactScoreResult | null> = {};
-      for (const char of charsToScore) {
-        const builds = resolvedBuildsMap[char.key] ?? [];
-        results[char.key] = scoreWithBuilds(
-          char,
-          builds,
-          scoreConfig.global,
-          computeCharWeaponNonArtifactCr(char)
-        );
-      }
-      mergeScores(results);
-    }, 50);
-    return () => clearTimeout(timer);
-  }, [charsToScore, scoreConfig, mergeScores, resolvedBuildsMap]);
 
   useEffect(() => {
     // Detect old data format (missing extraWeapons or missing talents) and clear it
@@ -680,11 +612,7 @@ export default function AccountDataPage() {
       <Tabs value={activeTab} className="h-full overflow-hidden">
         <TabsContent value="characters" className="mt-0 h-full">
           {accountData ? (
-            <CharacterView
-              ref={characterViewRef}
-              scores={scores}
-              isEditMode={isEditMode}
-            />
+            <CharacterView ref={characterViewRef} isEditMode={isEditMode} />
           ) : (
             <NoDataPlaceholder
               t={t}

@@ -83,15 +83,6 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     });
   };
 
-  const toggleHalfSet = (hsId: string) => {
-    setHalfSetFilter((prev) => {
-      const next = new Set(prev);
-      if (next.has(hsId)) next.delete(hsId);
-      else next.add(hsId);
-      return next;
-    });
-  };
-
   const deferredSettings = useDeferredValue(settings);
   const deferredBuildGroups = useDeferredValue(buildGroups);
   const isStale =
@@ -252,7 +243,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           tierFilter={tierFilter}
           onToggleTier={toggleTier}
           halfSetFilter={halfSetFilter}
-          onToggleHalfSet={toggleHalfSet}
+          onHalfSetFilterChange={setHalfSetFilter}
           activeSortDim={activeSortDim}
           activeSortDir={activeSortDir}
           onToggleSort={toggleSort}

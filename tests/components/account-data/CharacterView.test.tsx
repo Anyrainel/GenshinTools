@@ -10,7 +10,7 @@ describe("CharacterView", () => {
   });
 
   it("returns null when no account data", () => {
-    const { container } = render(<CharacterView scores={{}} />);
+    const { container } = render(<CharacterView />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -39,7 +39,7 @@ describe("CharacterView", () => {
       },
     });
 
-    render(<CharacterView scores={{}} />);
+    render(<CharacterView />);
 
     // Should show at least one grid element with character card
     // CharacterCard should be rendered for the character
@@ -92,7 +92,7 @@ describe("CharacterView", () => {
       xingqiu: { tier: "A", position: 0 },
     });
 
-    render(<CharacterView scores={{}} />);
+    render(<CharacterView />);
 
     // Component should render without errors (filtering and tier ordering work)
     const buttons = screen.getAllByRole("button");
