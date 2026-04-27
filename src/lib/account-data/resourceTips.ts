@@ -48,13 +48,17 @@ export const DEFAULT_TIER_THRESHOLDS: TierCompletenessThresholds = {
 
 export type ResourceKind = "craft" | "reroll" | "levelup";
 
+export type ResourceActionBadge =
+  | { type: "count"; value: number }
+  | { type: "level"; value: number };
+
 /** Per-tier per-kind minimum expected score gain for a suggestion to be shown. */
 export type KindTierMinScore = Record<ResourceKind, TierCompletenessThresholds>;
 
 export const DEFAULT_MIN_SCORE_DIFF: KindTierMinScore = {
-  craft: { S: 0, A: 5, B: 10, C: 15, D: 20, Pool: 20 },
-  reroll: { S: 5, A: 10, B: 15, C: 20, D: 25, Pool: 25 },
-  levelup: { S: 0, A: 5, B: 10, C: 15, D: 20, Pool: 20 },
+  craft: { S: 0, A: 5, B: 10, C: 15, D: 20, Pool: 25 },
+  reroll: { S: 5, A: 10, B: 15, C: 20, D: 25, Pool: 30 },
+  levelup: { S: -5, A: 0, B: 5, C: 10, D: 15, Pool: 20 },
 };
 
 /** Whether an artifact set has a 5★ version available. Resources only work on 5★. */
@@ -77,6 +81,7 @@ function buildIsFiveStar(evalBuild: EvalBuild): boolean {
 
 export type ResourceSuggestion = {
   kind: "craft" | "reroll" | "levelup";
+  actionBadge: ResourceActionBadge;
   characterIds: string[];
   /** Representative tier (best among the build's characters). */
   tier: Tier;
@@ -86,6 +91,12 @@ export type ResourceSuggestion = {
   /** Target artifact set for craft, or existing artifact's set for reroll/levelup. */
   setId: string;
   mainStat: MainStat;
+  /** Card stat line emitted by the recommendation algorithm. */
+  displayStats: {
+    main: MainStat;
+    subs: [SubStat, SubStat];
+  };
+  /** Real locked substats for craft/reroll; level-up keeps this for legacy callers. */
   lockedSubs: [SubStat, SubStat];
   sourceArtifact?: ArtifactData;
   /** Analytic expected slot score after the action, minus current slot score. */
@@ -103,14 +114,14 @@ export type ResourceSuggestion = {
 /**
  * Stable cache key for the pUpgrade value of a suggestion. Includes
  * everything that affects the output: the build identity (captured by
- * buildKey), slot, main stat, locked subs, baseline score, and a hash of
- * the global config.
+ * buildKey), slot, main stat, craft/reroll locked subs, baseline score,
+ * source artifact, and a hash of the global config.
  */
 export function suggestionCacheKey(
   s: ResourceSuggestion,
   globalConfigHash: string
 ): string {
-  const locked = [...s.lockedSubs].sort().join("+");
+  const locked = s.kind === "levelup" ? "" : [...s.lockedSubs].sort().join("+");
   const artId = s.sourceArtifact?.id ?? "";
   return `${globalConfigHash}|${s.kind}|${s.buildKey}|${s.slot}|${s.mainStat}|${locked}|${s.baselineScore.toFixed(6)}|${artId}`;
 }
@@ -923,6 +934,69 @@ function pUpgradeForLevelup(
   return tailP;
 }
 
+function knownLevelupSubstats(art: ArtifactData): SubStat[] {
+  const seen = new Set<SubStat>();
+  const out: SubStat[] = [];
+  const add = (stat: string) => {
+    const substat = stat as SubStat;
+    if (substat === (art.mainStatKey as string)) return;
+    if (seen.has(substat)) return;
+    seen.add(substat);
+    out.push(substat);
+  };
+
+  for (const stat of Object.keys(art.substats ?? {})) add(stat);
+  for (const stat of Object.keys(art.unactivatedSubstats ?? {})) add(stat);
+
+  return out;
+}
+
+function getLevelupDisplaySubs(
+  art: ArtifactData,
+  weights: StatWeightMap
+): [SubStat, SubStat] | null {
+  const knownSubs = knownLevelupSubstats(art);
+  if (knownSubs.length < 2) return null;
+
+  const originalIndex = new Map<SubStat, number>();
+  knownSubs.forEach((stat, index) => {
+    originalIndex.set(stat, index);
+  });
+
+  const weightedSubs = knownSubs
+    .filter((stat) => (weights[stat] ?? 0) > 0)
+    .sort(
+      (a, b) =>
+        (weights[b] ?? 0) - (weights[a] ?? 0) ||
+        (originalIndex.get(a) ?? 0) - (originalIndex.get(b) ?? 0)
+    );
+
+  const displaySubs: SubStat[] = [];
+  for (const stat of weightedSubs) displaySubs.push(stat);
+  for (const stat of knownSubs) {
+    if (displaySubs.includes(stat)) continue;
+    displaySubs.push(stat);
+  }
+
+  return [displaySubs[0], displaySubs[1]];
+}
+
+function actionBadgeForSuggestion(
+  kind: ResourceKind,
+  slot: Slot,
+  sourceArtifact?: ArtifactData
+): ResourceActionBadge {
+  if (kind === "levelup") {
+    return { type: "level", value: sourceArtifact?.level ?? 0 };
+  }
+  if (kind === "reroll") return { type: "count", value: 2 };
+  if (slot === "flower" || slot === "plume") return { type: "count", value: 1 };
+  if (slot === "sands") return { type: "count", value: 2 };
+  if (slot === "circlet") return { type: "count", value: 3 };
+  if (slot === "goblet") return { type: "count", value: 4 };
+  return { type: "count", value: 1 };
+}
+
 // Per-build suggestion generator
 
 const CANDIDATE_POOL_SIZE = 6;
@@ -963,6 +1037,7 @@ function suggestionsForBuild(
         if (bestCraft == null || gain > bestCraft.expectedScoreGain) {
           bestCraft = {
             kind: "craft",
+            actionBadge: actionBadgeForSuggestion("craft", slot),
             characterIds: [...evalBuild.characterIds],
             tier,
             buildKey: evalBuild.key,
@@ -973,6 +1048,7 @@ function suggestionsForBuild(
                 ? evalBuild.artifactSet
                 : (evalBuild.halfSet1SetIds?.[0] ?? evalBuild.artifactSet),
             mainStat,
+            displayStats: { main: mainStat, subs: [s1, s2] },
             lockedSubs: [s1, s2],
             expectedScoreGain: gain,
             baselineScore,
@@ -1019,6 +1095,7 @@ function suggestionsForBuild(
       const gain = expected - baselineScore;
       candidates.push({
         kind: "reroll",
+        actionBadge: actionBadgeForSuggestion("reroll", slot, art),
         characterIds: [...evalBuild.characterIds],
         tier,
         buildKey: evalBuild.key,
@@ -1026,6 +1103,7 @@ function suggestionsForBuild(
         slot,
         setId: art.setKey,
         mainStat: art.mainStatKey,
+        displayStats: { main: art.mainStatKey, subs: lockedSubs },
         lockedSubs,
         sourceArtifact: art,
         expectedScoreGain: gain,
@@ -1043,24 +1121,15 @@ function suggestionsForBuild(
       if (setIdsForBuild && !setIdsForBuild.has(art.setKey)) continue;
       if (!mains.includes(art.mainStatKey)) continue;
 
-      const existingSubs = Object.keys(art.substats ?? {}) as SubStat[];
-      if (existingSubs.length < 2) continue;
+      const displaySubs = getLevelupDisplaySubs(art, weights);
+      if (!displaySubs) continue;
 
       const expected = expectedLevelupScore(art, weights);
       const gain = expected - baselineScore;
 
-      // Use top 2 weighted subs for display
-      const sortedSubs = existingSubs
-        .filter((s) => (weights[s] ?? 0) > 0)
-        .sort((a, b) => (weights[b] ?? 0) - (weights[a] ?? 0));
-      if (sortedSubs.length < 2) {
-        // Fall back to first 2 subs if no weighted ones
-        if (existingSubs.length < 2) continue;
-        sortedSubs.push(...existingSubs.slice(0, 2 - sortedSubs.length));
-      }
-
       candidates.push({
         kind: "levelup",
+        actionBadge: actionBadgeForSuggestion("levelup", slot, art),
         characterIds: [...evalBuild.characterIds],
         tier,
         buildKey: evalBuild.key,
@@ -1068,7 +1137,8 @@ function suggestionsForBuild(
         slot,
         setId: art.setKey,
         mainStat: art.mainStatKey,
-        lockedSubs: [sortedSubs[0], sortedSubs[1]],
+        displayStats: { main: art.mainStatKey, subs: displaySubs },
+        lockedSubs: displaySubs,
         sourceArtifact: art,
         expectedScoreGain: gain,
         baselineScore,

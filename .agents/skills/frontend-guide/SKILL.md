@@ -3,8 +3,9 @@ name: frontend-guide
 description: >
   UI design decision guide for building consistent frontend pages.
   TRIGGER when: building new pages, components, or layouts — any task that
-  produces user-facing HTML/JSX. Read this before writing UI code.
+  produces user-facing HTML/JSX and requires non-trivial UX design.
   DO NOT TRIGGER for: backend logic, data processing, tests, or build config.
+  Skip if instruction is already mechanically clear on UI component changes.
 ---
 
 # Frontend Guide

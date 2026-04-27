@@ -18,7 +18,7 @@ const ZERO_MIN_DIFF = {
 };
 
 import { describe, expect, it } from "vitest";
-import { createAccountData } from "../../fixtures";
+import { createAccountData, createArtifactData } from "../../fixtures";
 
 const GLOBAL_CONFIG: GlobalStatWeights = {
   flatAtk: 30,
@@ -153,5 +153,56 @@ describe("generateResourceSuggestions", () => {
     );
     expect(result.length).toBeGreaterThan(0);
     expect(result.every((s) => s.tier === "S")).toBe(true);
+  });
+
+  it("emits level-up display stats from known activated and unactivated substats", () => {
+    const account = createAccountData({
+      extraArtifacts: [
+        createArtifactData({
+          id: "known-unactivated-crit-sands",
+          setKey: "fragment_of_harmonic_whimsy",
+          slotKey: "sands",
+          level: 0,
+          rarity: 5,
+          mainStatKey: "def%",
+          substats: { cd: 7.8, hp: 299 },
+          unactivatedSubstats: { cr: 3.9 },
+        }),
+      ],
+    });
+    const defBuild = createBuild({
+      sandsWeights: [{ stat: "def%", weight: 100 }],
+      substats: [
+        { stat: "cd", weight: 100 },
+        { stat: "cr", weight: 100 },
+      ],
+    });
+    const setGroups = evaluateAllBuilds(
+      [createBuildGroup("arlecchino", [defBuild])],
+      account,
+      GLOBAL_CONFIG,
+      false
+    );
+
+    const result = generateResourceSuggestions(
+      setGroups,
+      account,
+      {},
+      { S: 1, A: 1, B: 1, C: 1, D: 1, Pool: 1 },
+      ZERO_MIN_DIFF,
+      GLOBAL_CONFIG
+    );
+
+    const suggestion = result.find(
+      (s) =>
+        s.kind === "levelup" &&
+        s.sourceArtifact?.id === "known-unactivated-crit-sands"
+    );
+    expect(suggestion?.actionBadge).toEqual({ type: "level", value: 0 });
+    expect(suggestion?.displayStats).toEqual({
+      main: "def%",
+      subs: ["cd", "cr"],
+    });
+    expect(suggestion?.lockedSubs).toEqual(["cd", "cr"]);
   });
 });
