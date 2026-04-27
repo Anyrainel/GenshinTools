@@ -27,7 +27,7 @@ export function FilterChip({
             : scheme.inactive
           : active
             ? "bg-card/50 border-border/50 text-foreground"
-            : "border-transparent opacity-70 hover:opacity-90 text-muted-foreground"
+            : "border-border text-muted-foreground hover:text-foreground/80"
       )}
     >
       {children}

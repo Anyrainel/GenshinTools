@@ -231,6 +231,7 @@ export function TriageHeader({
           getKey={(halfSetId) => halfSetId}
           getLabel={(halfSetId) => t.halfSetShort(halfSetId)}
           className="px-0"
+          collapsible
         />
       </div>
       <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />

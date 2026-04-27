@@ -97,28 +97,28 @@ export function InventoryArtifactSection({
     {
       key: "unequipped",
       label: t.ui("accountData.unequipped"),
-      color: "teal",
+      color: "lime",
       active: showUnequipped,
       onClick: () => setShowUnequipped((p) => !p),
     },
     {
       key: "equipped",
       label: t.ui("accountData.equipped"),
-      color: "teal",
+      color: "lime",
       active: showEquipped,
       onClick: () => setShowEquipped((p) => !p),
     },
     {
       key: "max-level",
       label: t.ui("accountData.maxLevel"),
-      color: "orange",
+      color: "lime",
       active: showMaxLevel,
       onClick: () => setShowMaxLevel((p) => !p),
     },
     {
       key: "other-level",
       label: t.ui("accountData.other"),
-      color: "orange",
+      color: "lime",
       active: showOther,
       onClick: () => setShowOther((p) => !p),
     },
@@ -142,6 +142,7 @@ export function InventoryArtifactSection({
         onSelectedValuesChange={setHalfSetFilter}
         getKey={(halfSetId) => halfSetId}
         getLabel={(halfSetId) => t.halfSetShort(halfSetId)}
+        collapsible
       />
       <InventoryArtifactGrid
         artifacts={filteredArtifacts}

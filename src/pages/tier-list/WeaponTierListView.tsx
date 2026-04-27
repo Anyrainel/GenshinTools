@@ -4,8 +4,11 @@ import { toast } from "sonner";
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import type { ChipColor } from "@/components/shared/colors";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
+import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
@@ -13,8 +16,6 @@ import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizatio
 import { TierTable } from "@/components/tier-list/TierTable";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { MainStat, Rarity, WeaponType } from "@/data/enums";
 import { weaponTypes } from "@/data/enums";
@@ -98,13 +99,9 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   const exportRef = useRef<ControlHandle>(null);
 
   // Local UI state for filters (not persisted)
-  const [showRarity, setShowRarity] = useState<Record<Rarity, boolean>>({
-    5: true,
-    4: true,
-    3: true,
-    2: false,
-    1: false,
-  });
+  const [rarityFilter, setRarityFilter] = useState<Set<Rarity>>(
+    () => new Set<Rarity>([5, 4, 3])
+  );
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const weaponStats = weaponStatsResource.use();
   const sortedWeaponSecondaryStats = useMemo(
@@ -112,8 +109,8 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
     [weaponStats]
   );
   const [selectedSecondaryStats, setSelectedSecondaryStats] = useState<
-    MainStat[]
-  >([]);
+    Set<MainStat>
+  >(() => new Set<MainStat>());
   const [ownedOnly, setOwnedOnly] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
     () => getCachedPresetMetadata(presetModules) ?? []
@@ -125,15 +122,6 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);
-
-  useEffect(() => {
-    if (
-      sortedWeaponSecondaryStats.length > 0 &&
-      selectedSecondaryStats.length === 0
-    ) {
-      setSelectedSecondaryStats(sortedWeaponSecondaryStats);
-    }
-  }, [sortedWeaponSecondaryStats, selectedSecondaryStats.length]);
 
   const loadPreset = useCallback(async (path: string) => {
     return loadPresetPayload(presetModules, path);
@@ -261,95 +249,45 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
       {
         key: "rarity",
         content: (
-          <>
-            {WEAPON_RARITIES.map((rarity) => (
-              <div key={rarity} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`rarity-${rarity}`}
-                  checked={showRarity[rarity]}
-                  onCheckedChange={(checked) =>
-                    setShowRarity((prev) => ({
-                      ...prev,
-                      [rarity]: checked === true,
-                    }))
-                  }
-                />
-                <Label
-                  htmlFor={`rarity-${rarity}`}
-                  className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-                >
-                  {(() => {
-                    switch (rarity) {
-                      case 5:
-                        return t.ui("buttons.includeRarity5");
-                      case 4:
-                        return t.ui("buttons.includeRarity4");
-                      case 3:
-                        return t.ui("buttons.includeRarity3");
-                      default:
-                        return "";
-                    }
-                  })()}
-                </Label>
-              </div>
-            ))}
-          </>
+          <FilterChipGroup
+            options={WEAPON_RARITIES}
+            selectedValues={rarityFilter}
+            onSelectedValuesChange={setRarityFilter}
+            getKey={(r) => String(r)}
+            getLabel={(r) => `${r}★`}
+            getColor={(r) => `rarity-${r}` as ChipColor}
+            emptyMeansAll={false}
+            className="px-0"
+          />
         ),
       },
       {
         key: "stats",
         content: (
-          <>
-            {sortedWeaponSecondaryStats.map((stat) => (
-              <div key={stat} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`stat-${stat}`}
-                  checked={selectedSecondaryStats.includes(stat)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSelectedSecondaryStats([
-                        ...selectedSecondaryStats,
-                        stat,
-                      ]);
-                    } else {
-                      setSelectedSecondaryStats(
-                        selectedSecondaryStats.filter((s) => s !== stat)
-                      );
-                    }
-                  }}
-                />
-                <Label
-                  htmlFor={`stat-${stat}`}
-                  className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-                >
-                  {t.statShort(stat)}
-                </Label>
-              </div>
-            ))}
-          </>
+          <FilterChipGroup
+            options={sortedWeaponSecondaryStats}
+            selectedValues={selectedSecondaryStats}
+            onSelectedValuesChange={setSelectedSecondaryStats}
+            getKey={(stat) => stat}
+            getLabel={(stat) => t.statShort(stat)}
+            className="px-0"
+          />
         ),
       },
       {
         key: "ownership",
         content: (
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="owned-only"
-              checked={ownedOnly}
-              onCheckedChange={(checked) => setOwnedOnly(checked === true)}
-            />
-            <Label
-              htmlFor="owned-only"
-              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-            >
-              {t.ui("common.ownedOnly")}
-            </Label>
-          </div>
+          <FilterChip
+            active={ownedOnly}
+            onClick={() => setOwnedOnly(!ownedOnly)}
+          >
+            {t.ui("common.ownedOnly")}
+          </FilterChip>
         ),
       },
     ],
     [
-      showRarity,
+      rarityFilter,
       selectedSecondaryStats,
       ownedOnly,
       t,
@@ -415,10 +353,11 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
           getTooltip={(weapon) => <WeaponTooltip weaponId={weapon.id} />}
           filterItem={(weapon) => {
             const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
-            if (!showRarity[meta.rarity]) return false;
+            if (!rarityFilter.has(meta.rarity)) return false;
             if (
+              selectedSecondaryStats.size > 0 &&
               meta.secondaryStat != null &&
-              !selectedSecondaryStats.includes(meta.secondaryStat)
+              !selectedSecondaryStats.has(meta.secondaryStat)
             )
               return false;
             if (ownedOnly && !isOwned("weapon", weapon.id)) return false;

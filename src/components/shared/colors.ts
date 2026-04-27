@@ -128,10 +128,10 @@ export function getValueColor(value: number): string {
 }
 // ── Buff receiver badge colors ──
 const RECEIVER_BADGE_COLORS: Record<string, string> = {
-  charId: "text-sky-300 bg-sky-500/15",
+  charId: "text-sky-300 bg-sky-500/25",
   team: "text-yellow-300 bg-yellow-500/15",
-  teamOnField: "text-orange-300 bg-orange-500/15",
-  teamOffField: "text-amber-300 bg-amber-500/15",
+  teamOnField: "text-orange-300 bg-orange-500/25",
+  teamOffField: "text-amber-300 bg-amber-500/25",
   other: "text-rose-300 bg-rose-500/15",
   otherOnField: "text-pink-300 bg-pink-500/15",
   otherOffField: "text-fuchsia-300 bg-fuchsia-500/15",
@@ -180,38 +180,51 @@ export const SENTIMENT_BADGE = {
 
 export const CHIP_COLORS = {
   teal: {
-    active: "bg-teal-500/15 border-teal-500/40 text-teal-300",
-    inactive: "border-transparent text-teal-400/60 hover:text-teal-400/80",
+    active: "bg-teal-500/25 border-teal-500/40 text-teal-300",
+    inactive:
+      "bg-teal-500/10 border-teal-500/25 text-teal-400/60 hover:text-teal-400/80",
     icon: "text-teal-400",
   },
   orange: {
-    active: "bg-orange-500/15 border-orange-500/40 text-orange-300",
-    inactive: "border-transparent text-orange-400/60 hover:text-orange-400/80",
+    active: "bg-orange-500/25 border-orange-500/40 text-orange-300",
+    inactive:
+      "bg-orange-500/10 border-orange-500/25 text-orange-400/60 hover:text-orange-400/80",
     icon: "text-orange-400",
   },
   amber: {
-    active: "bg-amber-500/15 border-amber-500/40 text-amber-400",
-    inactive: "border-transparent text-amber-400/60 hover:text-amber-400/80",
+    active: "bg-amber-500/25 border-amber-500/40 text-amber-400",
+    inactive:
+      "bg-amber-500/10 border-amber-500/25 text-amber-400/60 hover:text-amber-400/80",
     icon: "text-amber-400",
   },
   sky: {
-    active: "bg-sky-500/15 border-sky-500/40 text-sky-300",
-    inactive: "border-transparent text-sky-400/60 hover:text-sky-400/80",
+    active: "bg-sky-500/25 border-sky-500/40 text-sky-300",
+    inactive:
+      "bg-sky-500/10 border-sky-500/25 text-sky-400/60 hover:text-sky-400/80",
     icon: "text-sky-400",
+  },
+  lime: {
+    active: "bg-lime-500/25 border-lime-500/40 text-lime-300",
+    inactive:
+      "bg-lime-500/10 border-lime-500/25 text-lime-400/60 hover:text-lime-400/80",
+    icon: "text-lime-400",
   },
   "rarity-5": {
     active: "bg-rarity-5/25 border-rarity-5/50 text-rarity-5",
-    inactive: "border-transparent text-rarity-5/60 hover:text-rarity-5/80",
+    inactive:
+      "bg-rarity-5/10 border-rarity-5/30 text-rarity-5/60 hover:text-rarity-5/80",
     icon: "text-rarity-5",
   },
   "rarity-4": {
     active: "bg-rarity-4/25 border-rarity-4/50 text-rarity-4",
-    inactive: "border-transparent text-rarity-4/60 hover:text-rarity-4/80",
+    inactive:
+      "bg-rarity-4/10 border-rarity-4/30 text-rarity-4/60 hover:text-rarity-4/80",
     icon: "text-rarity-4",
   },
   "rarity-3": {
     active: "bg-rarity-3/25 border-rarity-3/50 text-rarity-3",
-    inactive: "border-transparent text-rarity-3/60 hover:text-rarity-3/80",
+    inactive:
+      "bg-rarity-3/10 border-rarity-3/30 text-rarity-3/60 hover:text-rarity-3/80",
     icon: "text-rarity-3",
   },
 } as const;

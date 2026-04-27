@@ -198,6 +198,54 @@ describe("runTriage", () => {
     expect(decisions[0].specialRules).toContain("SP1");
   });
 
+  it("SP1: ER hoarding locks 4L support sands with ER substat", () => {
+    const art = makeArt({
+      setKey: "viridescent_venerer",
+      slotKey: "sands",
+      mainStatKey: "atk%",
+      substats: { er: 1, hp: 1, def: 1, em: 1 },
+    });
+    const build = makeBuild({ artifactSet: "viridescent_venerer" });
+    const account = makeAccount([{ key: "char_a", artifacts: {} }], [art]);
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [build] }],
+      {
+        ...SETTINGS,
+        erHoardingEnabled: true,
+        doubleCritLockEnabled: false,
+        setSlotKeep: 0,
+      }
+    );
+    expect(decisions[0].specialRules).toContain("SP1");
+    expect(decisions[0].label).toBe("lock");
+    expect(decisions[0].decidingResult?.ruleId).toBe("SP1");
+  });
+
+  it("SP7: ER hoarding all sets locks 4L sands with ER substat", () => {
+    const art = makeArt({
+      setKey: "test_set",
+      slotKey: "sands",
+      mainStatKey: "atk%",
+      substats: { er: 1, hp: 1, def: 1, em: 1 },
+    });
+    const account = makeAccount([{ key: "char_a", artifacts: {} }], [art]);
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        erHoardingEnabled: false,
+        erHoardingAllEnabled: true,
+        doubleCritLockEnabled: false,
+        setSlotKeep: 0,
+      }
+    );
+    expect(decisions[0].specialRules).toContain("SP7");
+    expect(decisions[0].label).toBe("lock");
+    expect(decisions[0].decidingResult?.ruleId).toBe("SP7");
+  });
+
   it("SP5: double crit locks 4L artifact with cr+cd", () => {
     const art = makeArt({
       substats: { cr: 1, cd: 1, "hp%": 1, def: 1 },

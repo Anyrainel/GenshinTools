@@ -257,7 +257,7 @@ export function AutoTuneDialog({
             lines.push({
               charId: characterId,
               formulaId: f.formulaId,
-              count: rx === "none" ? comboCount : 0,
+              count: comboCount,
               reaction: rx !== "none" ? { reaction: rx } : undefined,
             });
           }

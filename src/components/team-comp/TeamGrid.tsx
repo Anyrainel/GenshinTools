@@ -521,9 +521,7 @@ export function TeamGrid({
                     />
                   );
                 }}
-                getLabel={(element) => (
-                  <span className="text-xs">{t.element(element)}</span>
-                )}
+                getLabel={(element) => t.element(element)}
                 className="contents"
               />
 
@@ -534,9 +532,7 @@ export function TeamGrid({
                 selectedValues={regionFilter}
                 onSelectedValuesChange={setRegionFilter}
                 getKey={(region) => region}
-                getLabel={(region) => (
-                  <span className="text-xs">{t.region(region)}</span>
-                )}
+                getLabel={(region) => t.region(region)}
                 className="contents"
               />
             </div>

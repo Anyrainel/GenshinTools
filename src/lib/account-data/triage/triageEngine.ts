@@ -120,11 +120,10 @@ export function runTriage(
     const is4L = isInitial4Line(artifact);
 
     // --- Pre-checks (SP1, SP5) ---
-    // SP1: ER hoarding (support sets only, exclude sands which can roll ER main)
+    // SP1: ER hoarding (support sets only)
     if (
       settings.erHoardingEnabled &&
       is4L &&
-      artifact.slotKey !== "sands" &&
       substats.includes("er") &&
       TRIAGE_SUPPORT_ARTIFACT_SETS.has(artifact.setKey)
     ) {
@@ -141,7 +140,6 @@ export function runTriage(
       settings.erHoardingAllEnabled &&
       !specialRules.includes("SP1") &&
       is4L &&
-      artifact.slotKey !== "sands" &&
       substats.includes("er")
     ) {
       const anyRuleNeedsER = rules.some(

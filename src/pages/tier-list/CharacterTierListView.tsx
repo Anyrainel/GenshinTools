@@ -13,9 +13,12 @@ import type { ActionConfig } from "@/components/layout/AppBar";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import type { ChipColor } from "@/components/shared/colors";
 import { getElementColor } from "@/components/shared/colors";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
+import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
@@ -33,11 +36,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element } from "@/data/enums";
+import type { Element, Rarity } from "@/data/enums";
 import { elements } from "@/data/enums";
 import {
   charactersById,
@@ -78,6 +79,8 @@ const generateId = (name: string): string => {
     .replace(/ /g, "_")
     .replace(/[^a-z0-9_]/g, "");
 };
+
+const CHARACTER_RARITIES: readonly Rarity[] = [5, 4];
 
 // Build group config from element resources
 const elementGroupConfig: Record<Element, TierGroupConfig> = Object.fromEntries(
@@ -134,8 +137,9 @@ export function CharacterTierListView({
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>(
     () => getCachedPresetMetadata(presetModules) ?? []
   );
-  const [show5Star, setShow5Star] = useState(true);
-  const [show4Star, setShow4Star] = useState(true);
+  const [rarityFilter, setRarityFilter] = useState<Set<Rarity>>(
+    () => new Set<Rarity>([5, 4])
+  );
   const [ownedOnly, setOwnedOnly] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -329,100 +333,52 @@ export function CharacterTierListView({
       {
         key: "display",
         content: (
-          <>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-weapons"
-                checked={showWeapons}
-                onCheckedChange={(checked) => setShowWeapons(checked === true)}
-              />
-              <Label
-                htmlFor="show-weapons"
-                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-              >
-                {t.ui("buttons.showWeapons")}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-travelers"
-                checked={showTravelers}
-                onCheckedChange={(checked) =>
-                  setShowTravelers(checked === true)
-                }
-              />
-              <Label
-                htmlFor="show-travelers"
-                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-              >
-                {t.ui("buttons.showTravelers")}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-manekin"
-                checked={showManekin}
-                onCheckedChange={(checked) => setShowManekin(checked === true)}
-              />
-              <Label
-                htmlFor="show-manekin"
-                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-              >
-                {t.ui("buttons.showManekin")}
-              </Label>
-            </div>
-          </>
+          <div className="flex flex-wrap gap-1">
+            <FilterChip
+              active={showWeapons}
+              onClick={() => setShowWeapons(!showWeapons)}
+            >
+              {t.ui("buttons.showWeapons")}
+            </FilterChip>
+            <FilterChip
+              active={showTravelers}
+              onClick={() => setShowTravelers(!showTravelers)}
+            >
+              {t.ui("buttons.showTravelers")}
+            </FilterChip>
+            <FilterChip
+              active={showManekin}
+              onClick={() => setShowManekin(!showManekin)}
+            >
+              {t.ui("buttons.showManekin")}
+            </FilterChip>
+          </div>
         ),
       },
       {
         key: "rarity",
         content: (
-          <>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-5star"
-                checked={show5Star}
-                onCheckedChange={(checked) => setShow5Star(checked === true)}
-              />
-              <Label
-                htmlFor="show-5star"
-                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-              >
-                5★
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-4star"
-                checked={show4Star}
-                onCheckedChange={(checked) => setShow4Star(checked === true)}
-              />
-              <Label
-                htmlFor="show-4star"
-                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-              >
-                4★
-              </Label>
-            </div>
-          </>
+          <FilterChipGroup
+            options={CHARACTER_RARITIES}
+            selectedValues={rarityFilter}
+            onSelectedValuesChange={setRarityFilter}
+            getKey={(r) => String(r)}
+            getLabel={(r) => `${r}★`}
+            getColor={(r) => `rarity-${r}` as ChipColor}
+            emptyMeansAll={false}
+            className="px-0"
+          />
         ),
       },
       {
         key: "ownership",
         content: (
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="owned-only"
-              checked={ownedOnly}
-              onCheckedChange={(checked) => setOwnedOnly(checked === true)}
-            />
-            <Label
-              htmlFor="owned-only"
-              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-            >
-              {t.ui("common.ownedOnly")}
-            </Label>
-          </div>
+          <FilterChip
+            active={ownedOnly}
+            onClick={() => setOwnedOnly(!ownedOnly)}
+          >
+            {t.ui("common.ownedOnly")}
+          </FilterChip>
         ),
       },
     ],
@@ -433,8 +389,7 @@ export function CharacterTierListView({
       setShowWeapons,
       setShowTravelers,
       setShowManekin,
-      show5Star,
-      show4Star,
+      rarityFilter,
       ownedOnly,
       t,
     ]
@@ -517,8 +472,7 @@ export function CharacterTierListView({
               character,
               characterStats?.[character.id]
             );
-            if (meta.rarity === 5 && !show5Star) return false;
-            if (meta.rarity === 4 && !show4Star) return false;
+            if (!rarityFilter.has(meta.rarity)) return false;
             if (character.id.startsWith("traveler") && !showTravelers) {
               return false;
             }

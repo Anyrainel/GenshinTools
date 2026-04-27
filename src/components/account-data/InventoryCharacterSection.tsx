@@ -99,14 +99,14 @@ export function InventoryCharacterSection({
     {
       key: "max-level",
       label: t.ui("accountData.maxLevel"),
-      color: "orange",
+      color: "lime",
       active: showMaxLevel,
       onClick: () => setShowMaxLevel((p) => !p),
     },
     {
       key: "other-level",
       label: t.ui("accountData.other"),
-      color: "orange",
+      color: "lime",
       active: showOther,
       onClick: () => setShowOther((p) => !p),
     },

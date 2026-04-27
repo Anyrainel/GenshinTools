@@ -263,8 +263,8 @@ export const i18nUiData = {
     unequipped: { en: "Unequipped", zh: "未装备" },
     maxLevel: { en: "Max Level", zh: "满级" },
     other: { en: "Other Level", zh: "未满级" },
-    filterByElement: { en: "Filter by element:", zh: "按元素过滤:" },
-    filterBySubstat: { en: "Filter by substat:", zh: "按副属性过滤:" },
+    filterByElement: { en: "Filter by element", zh: "按元素过滤" },
+    filterBySubstat: { en: "Filter by substat", zh: "按副属性过滤" },
     sameSet: { en: "Same Set", zh: "同套装" },
     allOther: { en: "All Other", zh: "其他套装" },
     noData: {
@@ -1569,7 +1569,6 @@ export const i18nUiData = {
     customize: { en: "Customize", zh: "自定义" },
     includeRarity5: { en: "5★", zh: "5★" },
     includeRarity4: { en: "4★", zh: "4★" },
-    includeRarity3: { en: "3★", zh: "3★" },
 
     help: { en: "Help", zh: "帮助" },
   },
@@ -2085,7 +2084,7 @@ export const i18nUiData = {
       en: "Protect equipped",
       zh: "保护已装备",
     },
-    filterByHalfSet: { en: "Filter by 2pc set:", zh: "按2件套过滤:" },
+    filterByHalfSet: { en: "Filter by 2pc set", zh: "按2件套过滤" },
     rulePrefixFlex: { en: "Off-piece", zh: "散件" },
     // Help dialog
     help: {

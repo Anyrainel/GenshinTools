@@ -27,7 +27,10 @@ export function CategoryChip({
       onClick={onClick}
       className={cn(
         "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm leading-none font-medium transition-all border",
-        active ? scheme.active : scheme.inactive
+        active ? scheme.active : scheme.inactive,
+        active
+          ? "text-foreground"
+          : "text-foreground/60 hover:text-foreground/80"
       )}
     >
       {active ? (

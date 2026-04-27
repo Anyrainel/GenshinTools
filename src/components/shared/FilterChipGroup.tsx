@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ChipColor } from "./colors";
 import { FilterChip } from "./FilterChip";
@@ -16,6 +16,7 @@ interface FilterChipGroupProps<T> {
   className?: string;
   color?: ChipColor;
   emptyMeansAll?: boolean;
+  collapsible?: boolean;
 }
 
 export function FilterChipGroup<T>({
@@ -31,7 +32,10 @@ export function FilterChipGroup<T>({
   className,
   color,
   emptyMeansAll = true,
+  collapsible = false,
 }: FilterChipGroupProps<T>) {
+  const [expanded, setExpanded] = useState(false);
+
   const handleToggle = useCallback(
     (value: T) => {
       const nextValues = new Set(selectedValues);
@@ -42,31 +46,43 @@ export function FilterChipGroup<T>({
     [onSelectedValuesChange, selectedValues]
   );
 
+  const showChips = !collapsible || expanded;
+
   return (
     <div className={cn("flex flex-wrap items-center gap-1 px-2", className)}>
-      {label && (
-        <span className="text-sm font-medium text-foreground shrink-0">
-          {label}
-        </span>
-      )}
-      {options.map((option) => {
-        const value = getValue(option);
-        const active =
-          (emptyMeansAll && selectedValues.size === 0) ||
-          selectedValues.has(value);
-
-        return (
-          <FilterChip
-            key={getKey(option)}
-            active={active}
-            onClick={() => handleToggle(value)}
-            color={getColor?.(option, active) ?? color}
+      {label &&
+        (collapsible ? (
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="text-sm font-medium text-foreground bg-background/30 hover:bg-background/50 border border-border px-3 py-0.5 rounded-md shrink-0"
           >
-            {getIcon?.(option, active)}
-            {getLabel(option, active)}
-          </FilterChip>
-        );
-      })}
+            {label} {expanded ? "<" : ">"}
+          </button>
+        ) : (
+          <span className="text-sm font-medium text-foreground shrink-0">
+            {label}:
+          </span>
+        ))}
+      {showChips &&
+        options.map((option) => {
+          const value = getValue(option);
+          const active =
+            (emptyMeansAll && selectedValues.size === 0) ||
+            selectedValues.has(value);
+
+          return (
+            <FilterChip
+              key={getKey(option)}
+              active={active}
+              onClick={() => handleToggle(value)}
+              color={getColor?.(option, active) ?? color}
+            >
+              {getIcon?.(option, active)}
+              {getLabel(option, active)}
+            </FilterChip>
+          );
+        })}
     </div>
   );
 }
