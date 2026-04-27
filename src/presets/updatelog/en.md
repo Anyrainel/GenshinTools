@@ -2,6 +2,16 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-04-27
+
+### features
+- GOODScanner's basic scanning workflow now supports HDR
+
+### fixes
+- Fixed several recommendation page issues, such as current scores not updating automatically and upgrade recommendations being too strict
+- Fixed several Lock Helper issues, such as disabling lenient mode making some artifacts require locking; the algorithm is now more stable
+- GOODScanner fixed cases where lock and astral mark state scanning could be unstable
+
 ## 2026-04-26
 
 ### features
