@@ -8,7 +8,6 @@ import type {
 import {
   type AllActions,
   generateRecommendationsByTier,
-  type RecommendationPrefs,
   type RecommendationTierUpdate,
 } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
@@ -19,7 +18,6 @@ export interface RecommendationOptions {
   scores: Record<string, ArtifactScoreResult | null>;
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
-  prefs: RecommendationPrefs;
 }
 
 export interface RecommendationProgress {
@@ -73,8 +71,7 @@ export function useAsyncRecommendations(): AsyncRecommendationsState {
         opts.accountData,
         opts.scores,
         opts.tierAssignments,
-        opts.tierCustomization,
-        opts.prefs
+        opts.tierCustomization
       ),
     []
   );

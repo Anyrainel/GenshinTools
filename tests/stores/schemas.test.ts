@@ -560,7 +560,8 @@ describe("PersistedTriageStoreSchema", () => {
     expect(result.settings.mainStatThreshold).toBe(80);
     // Healed fields
     expect(result.settings.optionalSubThreshold).toBe(50);
-    expect(result.settings.fillerKeep).toBe(5);
+    expect(result.settings.fillerKeep).toBe(DEFAULT_TRIAGE_SETTINGS.fillerKeep);
+    expect(result.settings.alwaysLockSolidArtifacts).toBe(false);
     expect(result.settings.ownedOnly).toBe(true);
     expect(result.settings.levelProtection).toBe(12);
     expect(result.settings.customFlexInputs).toEqual([]);
@@ -575,6 +576,7 @@ describe("PersistedTriageStoreSchema", () => {
         doubleCritLockEnabled: null,
         mainStatThreshold: "high",
         levelProtection: false,
+        alwaysLockSolidArtifacts: "yes",
         customFlexInputs: "not-an-array",
       },
     });
@@ -586,6 +588,7 @@ describe("PersistedTriageStoreSchema", () => {
       DEFAULT_TRIAGE_SETTINGS.mainStatThreshold
     );
     expect(result.settings.levelProtection).toBe(12);
+    expect(result.settings.alwaysLockSolidArtifacts).toBe(false);
     expect(result.settings.customFlexInputs).toEqual([]);
   });
 });
@@ -639,14 +642,10 @@ describe("PersistedTierListStoreSchema", () => {
       showWeapons: true,
       showTravelers: false,
       showManekin: false,
-      recommendationPrefs: {
-        scoreDiffThreshold: 1,
-        includeUpgrades: true,
-      },
     });
   });
 
-  it("heals corrupted flags and recommendation prefs", () => {
+  it("heals corrupted flags and drops removed recommendation prefs", () => {
     const result = PersistedTierListStoreSchema.parse({
       activeTierListId: "bad",
       showWeapons: "yes",
@@ -657,10 +656,7 @@ describe("PersistedTierListStoreSchema", () => {
     });
     expect(result.activeTierListId).toBe(1);
     expect(result.showWeapons).toBe(true);
-    expect(result.recommendationPrefs).toEqual({
-      scoreDiffThreshold: 1,
-      includeUpgrades: true,
-    });
+    expect(result).not.toHaveProperty("recommendationPrefs");
   });
 });
 

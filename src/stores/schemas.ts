@@ -8,7 +8,6 @@
 import { z } from "zod";
 import type { SortDirection } from "@/data/enums";
 import type { GlobalStatWeights } from "@/data/types";
-import { DEFAULT_RECOMMENDATION_PREFS } from "@/lib/account-data/scoreUpEngine";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
@@ -272,6 +271,9 @@ export const PersistedTriageStoreSchema = z.object({
         .catch(DEFAULT_TRIAGE_SETTINGS.optionalSubThreshold),
       fillerKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.fillerKeep),
       qualityMargin: z.number().catch(DEFAULT_TRIAGE_SETTINGS.qualityMargin),
+      alwaysLockSolidArtifacts: z
+        .boolean()
+        .catch(DEFAULT_TRIAGE_SETTINGS.alwaysLockSolidArtifacts),
       setSlotKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.setSlotKeep),
       ownedOnly: z.boolean().catch(DEFAULT_TRIAGE_SETTINGS.ownedOnly),
       erHoardingEnabled: z
@@ -322,16 +324,6 @@ export const PersistedTierListStoreSchema = z.object({
   showWeapons: z.boolean().catch(true),
   showTravelers: z.boolean().catch(false),
   showManekin: z.boolean().catch(false),
-  recommendationPrefs: z
-    .object({
-      scoreDiffThreshold: z
-        .number()
-        .catch(DEFAULT_RECOMMENDATION_PREFS.scoreDiffThreshold),
-      includeUpgrades: z
-        .boolean()
-        .catch(DEFAULT_RECOMMENDATION_PREFS.includeUpgrades),
-    })
-    .catch(DEFAULT_RECOMMENDATION_PREFS),
 });
 
 // ─── Preferences ───

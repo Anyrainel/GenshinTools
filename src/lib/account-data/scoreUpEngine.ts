@@ -6,10 +6,10 @@
  *   1. tierWaterfall  → per-character allocated build (S→A→B→C→D, artifact-disjoint within tier).
  *   2. allocationDiff → ScoreUpAction[] for slots whose allocated artifact differs from equipped.
  *   3. upgradePass    → ScoreUpAction[] for upgrade recommendations (in-place + flex-swap variants).
- *   4. filter & sort  → drop actions below the user's score-diff threshold.
+ *   4. filter & sort  → drop negative-delta actions and sort by impact.
  */
 
-import type { Slot, Tier } from "@/data/enums";
+import type { LuckExpectation, Slot, Tier } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import type {
   AccountData,
@@ -72,6 +72,8 @@ export interface CharacterActions {
   tier: Tier;
   /** Allocated build (post-waterfall). Null when no allocation could be made. */
   allocatedBuild: OptimizedBuild | null;
+  /** Allocation context used to refresh upgrade-only recommendations without rerunning the waterfall. */
+  allocation: AllocatedBuild | null;
 }
 
 export interface AllActions {
@@ -86,17 +88,7 @@ export interface RecommendationTierUpdate {
   totalTierCount: number;
 }
 
-export interface RecommendationPrefs {
-  /** Hide actions whose slot score diff falls below this. */
-  scoreDiffThreshold: number;
-  /** When false, allocation actions are still produced; upgrade actions are skipped. */
-  includeUpgrades: boolean;
-}
-
-export const DEFAULT_RECOMMENDATION_PREFS: RecommendationPrefs = {
-  scoreDiffThreshold: 1.0,
-  includeUpgrades: true,
-};
+const MIN_RECOMMENDATION_SCORE_DIFF = 0;
 
 const DEFAULT_TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
 
@@ -107,7 +99,6 @@ export function generateAllRecommendations(
   scores: Record<string, ArtifactScoreResult | null>,
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {},
-  prefs: RecommendationPrefs = DEFAULT_RECOMMENDATION_PREFS,
   options: AllocationOptions = {}
 ): AllActions {
   const allocation = runTierWaterfall(
@@ -121,10 +112,89 @@ export function generateAllRecommendations(
   return buildRecommendationsFromAllocation(
     accountData,
     tierAssignments,
-    prefs,
     options,
     allocation
   );
+}
+
+export function recomputeTierUpgradeRecommendations(
+  recommendations: AllActions,
+  accountData: AccountData,
+  tier: Tier,
+  luckExpectation: LuckExpectation,
+  options: AllocationOptions = {}
+): AllActions {
+  const allArtifacts = collectAllArtifacts(accountData);
+  const artifactById = new Map(allArtifacts.map((a) => [a.id, a]));
+  const allocationByCharacter: Record<string, AllocatedBuild> = {};
+  for (const [characterId, entry] of Object.entries(
+    recommendations.perCharacter
+  )) {
+    if (!entry.allocation) continue;
+    allocationByCharacter[characterId] =
+      entry.tier === tier
+        ? { ...entry.allocation, luckExpectation }
+        : entry.allocation;
+  }
+
+  const tierOrder = options.tierOrder ?? DEFAULT_TIER_ORDER;
+  const tierRank = new Map<Tier, number>(
+    tierOrder.map((orderedTier, index) => [orderedTier, index])
+  );
+  const blockedArtifactIdsByTier = buildBlockedArtifactIdsByTier(
+    allocationByCharacter,
+    tierOrder,
+    tierRank
+  );
+  const characterById = new Map(
+    accountData.characters.map((char) => [char.key, char])
+  );
+
+  const perCharacter: Record<string, CharacterActions> = {};
+  for (const [characterId, entry] of Object.entries(
+    recommendations.perCharacter
+  )) {
+    if (entry.tier !== tier) {
+      perCharacter[characterId] = entry;
+      continue;
+    }
+
+    const char = characterById.get(characterId);
+    const allocation = allocationByCharacter[characterId];
+    const nonUpgradeActions = entry.actions.filter(
+      (action) => action.actionType !== "upgrade"
+    );
+
+    let upgradeActions: ScoreUpAction[] = [];
+    if (char && allocation) {
+      const buildScoreDiff =
+        allocation.build && allocation.context
+          ? allocation.build.finalScore - currentBuildScore(allocation, char)
+          : 0;
+      upgradeActions = buildUpgradeActions(
+        allocation,
+        allArtifacts,
+        artifactById,
+        blockedArtifactIdsByTier.get(allocation.tier),
+        MIN_RECOMMENDATION_SCORE_DIFF,
+        buildScoreDiff
+      );
+    }
+
+    const actions = [...nonUpgradeActions, ...upgradeActions].sort(
+      (a, b) => b.slotScoreDiff - a.slotScoreDiff
+    );
+    perCharacter[characterId] = {
+      ...entry,
+      actions,
+      allocation,
+    };
+  }
+
+  return {
+    byActionType: indexActionsByType(perCharacter),
+    perCharacter,
+  };
 }
 
 export async function* generateRecommendationsByTier(
@@ -132,7 +202,6 @@ export async function* generateRecommendationsByTier(
   scores: Record<string, ArtifactScoreResult | null>,
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {},
-  prefs: RecommendationPrefs = DEFAULT_RECOMMENDATION_PREFS,
   options: AllocationOptions = {}
 ): AsyncGenerator<RecommendationTierUpdate, void> {
   const processedCharacterIds = new Set<string>();
@@ -153,7 +222,6 @@ export async function* generateRecommendationsByTier(
     latestRecommendations = buildRecommendationsFromAllocation(
       accountData,
       tierAssignments,
-      prefs,
       options,
       step.allocation,
       processedCharacterIds
@@ -173,7 +241,6 @@ export async function* generateRecommendationsByTier(
 function buildRecommendationsFromAllocation(
   accountData: AccountData,
   tierAssignments: TierAssignment,
-  prefs: RecommendationPrefs,
   options: AllocationOptions,
   allocation: AllocationResult,
   includedCharacterIds?: ReadonlySet<string>
@@ -219,6 +286,7 @@ function buildRecommendationsFromAllocation(
         actions: [],
         tier: tierAssignments[char.key]?.tier || "Pool",
         allocatedBuild: null,
+        allocation: null,
       };
       continue;
     }
@@ -247,7 +315,7 @@ function buildRecommendationsFromAllocation(
             )
           : 0;
         const slotScoreDiff = slotScore - currentSlotScore;
-        if (slotScoreDiff < prefs.scoreDiffThreshold) continue;
+        if (slotScoreDiff < MIN_RECOMMENDATION_SCORE_DIFF) continue;
 
         const donor = ownerByArtifactId.get(allocated.id);
         const isSteal = !!donor && donor !== char.key;
@@ -269,37 +337,16 @@ function buildRecommendationsFromAllocation(
     }
 
     // 2. Upgrade actions (post-allocation)
-    if (prefs.includeUpgrades && alloc.build && alloc.context) {
-      const upgrades: CharacterUpgrades = runUpgradePassForCharacter(
+    if (alloc.build && alloc.context) {
+      const upgrades = buildUpgradeActions(
         alloc,
         allArtifacts,
-        {
-          minScoreDiff: prefs.scoreDiffThreshold,
-          blockedArtifactIds: blockedArtifactIdsByTier.get(alloc.tier),
-        }
+        artifactById,
+        blockedArtifactIdsByTier.get(alloc.tier),
+        MIN_RECOMMENDATION_SCORE_DIFF,
+        buildScoreDiff
       );
-      for (const up of upgrades.recommendations) {
-        const allocatedInSlot = alloc.build.artifacts[up.upgradeSlot];
-        const swapCurrentArtifact = up.swapSlot
-          ? alloc.build.artifacts[up.swapSlot]
-          : undefined;
-        const upgradeArtifact = artifactById.get(up.upgradeArtifactId);
-        actions.push({
-          actionType: "upgrade",
-          characterId: char.key,
-          slot: up.upgradeSlot,
-          sourceArtifactId: up.upgradeArtifactId,
-          currentArtifactId: allocatedInSlot?.id ?? null,
-          setKey: upgradeArtifact?.setKey ?? allocatedInSlot?.setKey ?? "",
-          slotScoreDiff: up.scoreDiff,
-          buildScoreDiff: buildScoreDiff + up.scoreDiff,
-          maxPotentialScore: up.finalScore,
-          upgradeStrategy: up.strategy,
-          swapSlot: up.swapSlot,
-          swapArtifactId: up.swapArtifactId,
-          swapCurrentArtifactId: swapCurrentArtifact?.id ?? null,
-        });
-      }
+      actions.push(...upgrades);
     }
 
     actions.sort((a, b) => b.slotScoreDiff - a.slotScoreDiff);
@@ -309,6 +356,7 @@ function buildRecommendationsFromAllocation(
       actions,
       tier: alloc.tier,
       allocatedBuild: alloc.build,
+      allocation: alloc,
     };
 
     for (const a of actions) byActionType[a.actionType].push(a);
@@ -328,6 +376,76 @@ function emptyActions(): AllActions {
     byActionType: { swap: [], equip: [], upgrade: [] },
     perCharacter: {},
   };
+}
+
+function collectAllArtifacts(accountData: AccountData): ArtifactData[] {
+  return [
+    ...accountData.extraArtifacts,
+    ...accountData.characters.flatMap((c) =>
+      Object.values(c.artifacts).filter((a): a is ArtifactData => !!a)
+    ),
+  ];
+}
+
+function buildUpgradeActions(
+  alloc: AllocatedBuild,
+  allArtifacts: ArtifactData[],
+  artifactById: ReadonlyMap<string, ArtifactData>,
+  blockedArtifactIds: ReadonlySet<string> | undefined,
+  minScoreDiff: number,
+  buildScoreDiff: number
+): ScoreUpAction[] {
+  const actions: ScoreUpAction[] = [];
+  const upgrades: CharacterUpgrades = runUpgradePassForCharacter(
+    alloc,
+    allArtifacts,
+    {
+      minScoreDiff,
+      blockedArtifactIds,
+    }
+  );
+  for (const up of upgrades.recommendations) {
+    const allocatedInSlot = alloc.build?.artifacts[up.upgradeSlot];
+    const swapCurrentArtifact = up.swapSlot
+      ? alloc.build?.artifacts[up.swapSlot]
+      : undefined;
+    const upgradeArtifact = artifactById.get(up.upgradeArtifactId);
+    actions.push({
+      actionType: "upgrade",
+      characterId: alloc.characterId,
+      slot: up.upgradeSlot,
+      sourceArtifactId: up.upgradeArtifactId,
+      currentArtifactId: allocatedInSlot?.id ?? null,
+      setKey: upgradeArtifact?.setKey ?? allocatedInSlot?.setKey ?? "",
+      slotScoreDiff: up.scoreDiff,
+      buildScoreDiff: buildScoreDiff + up.scoreDiff,
+      maxPotentialScore: up.finalScore,
+      upgradeStrategy: up.strategy,
+      swapSlot: up.swapSlot,
+      swapArtifactId: up.swapArtifactId,
+      swapCurrentArtifactId: swapCurrentArtifact?.id ?? null,
+    });
+  }
+  return actions;
+}
+
+function indexActionsByType(
+  perCharacter: Record<string, CharacterActions>
+): Record<ActionType, ScoreUpAction[]> {
+  const byActionType: Record<ActionType, ScoreUpAction[]> = {
+    swap: [],
+    equip: [],
+    upgrade: [],
+  };
+  for (const entry of Object.values(perCharacter)) {
+    for (const action of entry.actions) {
+      byActionType[action.actionType].push(action);
+    }
+  }
+  for (const k of Object.keys(byActionType) as ActionType[]) {
+    byActionType[k].sort((a, b) => b.buildScoreDiff - a.buildScoreDiff);
+  }
+  return byActionType;
 }
 
 function yieldToBrowser(): Promise<void> {

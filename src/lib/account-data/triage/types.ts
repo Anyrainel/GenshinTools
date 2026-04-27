@@ -118,6 +118,8 @@ export type TriageSettings = {
   optionalSubThreshold: number;
   fillerKeep: number;
   qualityMargin: number;
+  /** When true, solid-tier artifacts are locked even when supply exceeds demand. */
+  alwaysLockSolidArtifacts: boolean;
   setSlotKeep: number; // min artifacts to keep per set+slot
   ownedOnly: boolean; // only consider owned characters' builds
   erHoardingEnabled: boolean;

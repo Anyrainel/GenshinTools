@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
-import { DEFAULT_RECOMMENDATION_PREFS } from "@/lib/account-data/scoreUpEngine";
 import {
   migrateTierStore,
   type TierListInstance,
@@ -26,7 +25,6 @@ beforeEach(() => {
     showWeapons: true,
     showTravelers: false,
     showManekin: false,
-    recommendationPrefs: { ...DEFAULT_RECOMMENDATION_PREFS },
     tierAssignments: {},
     tierCustomization: {},
     customTitle: "",
@@ -68,11 +66,6 @@ describe("useTierStore", () => {
       expect(state.author).toBe("");
       expect(state.description).toBe("");
       expect(state.customTitle).toBe("");
-    });
-
-    it("has default recommendation prefs", () => {
-      const state = useTierStore.getState();
-      expect(state.recommendationPrefs).toEqual(DEFAULT_RECOMMENDATION_PREFS);
     });
   });
 
@@ -313,26 +306,6 @@ describe("useTierStore", () => {
     });
   });
 
-  describe("recommendation prefs", () => {
-    it("setScoreDiffThreshold updates the threshold", () => {
-      useTierStore.getState().setScoreDiffThreshold(5);
-      expect(
-        useTierStore.getState().recommendationPrefs.scoreDiffThreshold
-      ).toBe(5);
-    });
-
-    it("setIncludeUpgrades toggles the upgrade flag", () => {
-      useTierStore.getState().setIncludeUpgrades(false);
-      expect(useTierStore.getState().recommendationPrefs.includeUpgrades).toBe(
-        false
-      );
-      useTierStore.getState().setIncludeUpgrades(true);
-      expect(useTierStore.getState().recommendationPrefs.includeUpgrades).toBe(
-        true
-      );
-    });
-  });
-
   // CRUD operations
   describe("createTierList", () => {
     it("creates a new list and switches to it", () => {
@@ -502,7 +475,7 @@ describe("useTierStore", () => {
 
   // Migration
   describe("migrateTierStore", () => {
-    it("migrates v0 flat format to v2 multi-instance + recommendation prefs", () => {
+    it("migrates v0 flat format to v2 multi-instance data", () => {
       const v0State = {
         tierAssignments: { venti: { tier: "S", position: 0 } },
         tierCustomization: { S: { displayName: "Best", hidden: false } },
@@ -522,12 +495,7 @@ describe("useTierStore", () => {
       expect(result.showWeapons).toBe(false);
       expect(result.showTravelers).toBe(true);
       expect(result.showManekin).toBe(true);
-      // v0/v1 had per-source thresholds; we collapse to a single score-diff
-      // threshold = min(swap, upgrade) so visible recs stay close.
-      expect(result.recommendationPrefs).toEqual({
-        scoreDiffThreshold: 2,
-        includeUpgrades: true,
-      });
+      expect(result.recommendationPrefs).toBeUndefined();
 
       const tierLists = result.tierLists as Record<number, TierListInstance>;
       expect(tierLists[1]).toBeDefined();
@@ -552,7 +520,7 @@ describe("useTierStore", () => {
       expect(tierLists[1].customTitle).toBe("");
       expect(result.showWeapons).toBe(true);
       expect(result.showTravelers).toBe(false);
-      expect(result.recommendationPrefs).toEqual(DEFAULT_RECOMMENDATION_PREFS);
+      expect(result.recommendationPrefs).toBeUndefined();
     });
 
     it("handles null persisted state for v0", () => {
@@ -563,7 +531,7 @@ describe("useTierStore", () => {
       expect(tierLists[1].tierAssignments).toEqual({});
     });
 
-    it("migrates v1 state to v2 by collapsing investmentThresholds", () => {
+    it("migrates v1 state to v2 by dropping investmentThresholds", () => {
       const v1State = {
         tierLists: { 1: { id: 1, customTitle: "Already v1" } },
         activeTierListId: 1,
@@ -572,10 +540,7 @@ describe("useTierStore", () => {
       };
 
       const result = migrateTierStore(v1State, 1);
-      expect(result.recommendationPrefs).toEqual({
-        scoreDiffThreshold: 3,
-        includeUpgrades: true,
-      });
+      expect(result.recommendationPrefs).toBeUndefined();
       expect(result.investmentThresholds).toBeUndefined();
     });
   });

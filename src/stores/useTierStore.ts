@@ -1,12 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { LuckExpectation } from "@/data/enums";
-import type {
-  RecommendationPrefs,
-  TierAssignment,
-  TierCustomization,
-} from "@/data/types";
-import { DEFAULT_RECOMMENDATION_PREFS } from "@/lib/account-data/scoreUpEngine";
+import type { TierAssignment, TierCustomization } from "@/data/types";
 import { PersistedTierListStoreSchema } from "./schemas";
 
 export interface TierListInstance {
@@ -29,7 +24,6 @@ interface TierListState {
   showWeapons: boolean;
   showTravelers: boolean;
   showManekin: boolean;
-  recommendationPrefs: RecommendationPrefs;
 
   // Derived fields from active list (backward-compatible selectors)
   tierAssignments: TierAssignment;
@@ -56,8 +50,6 @@ interface TierListState {
   setTierLuckExpectation: (tier: string, luck: LuckExpectation) => void;
 
   // View settings setters
-  setScoreDiffThreshold: (value: number) => void;
-  setIncludeUpgrades: (include: boolean) => void;
   setShowWeapons: (show: boolean) => void;
   setShowTravelers: (show: boolean) => void;
   setShowManekin: (show: boolean) => void;
@@ -117,13 +109,7 @@ function updateActiveInstance(
 
 // Migration
 
-/** v0 (single instance, with farm/reroll thresholds) and v1 (multi-instance, same thresholds). */
-interface LegacyInvestmentThresholds {
-  swap?: number;
-  upgrade?: number;
-  reroll?: number;
-  farm?: number;
-}
+/** v0 (single instance) and v1 (multi-instance, with removed investment thresholds). */
 interface LegacyPersistedState {
   // v0 fields
   tierAssignments?: TierAssignment;
@@ -135,27 +121,11 @@ interface LegacyPersistedState {
   showWeapons?: boolean;
   showTravelers?: boolean;
   showManekin?: boolean;
-  investmentThresholds?: LegacyInvestmentThresholds;
+  investmentThresholds?: unknown;
   // v1
   tierLists?: Record<number, TierListInstance>;
   activeTierListId?: number;
   nextId?: number;
-}
-
-function deriveRecommendationPrefs(
-  legacy: LegacyInvestmentThresholds | undefined
-): RecommendationPrefs {
-  // v0/v1 had per-source thresholds (swap/upgrade/reroll/farm). The redesign
-  // collapses these into one score-diff threshold; we take the minimum of the
-  // old swap/upgrade values (the two that survived) to keep visible recs
-  // approximately the same.
-  if (!legacy) return { ...DEFAULT_RECOMMENDATION_PREFS };
-  const candidates = [legacy.swap, legacy.upgrade].filter(
-    (v): v is number => typeof v === "number"
-  );
-  const scoreDiffThreshold =
-    candidates.length > 0 ? Math.min(...candidates) : 1;
-  return { scoreDiffThreshold, includeUpgrades: true };
 }
 
 export function migrateTierStore(
@@ -180,7 +150,6 @@ export function migrateTierStore(
       showWeapons: old.showWeapons ?? true,
       showTravelers: old.showTravelers ?? false,
       showManekin: old.showManekin ?? false,
-      recommendationPrefs: deriveRecommendationPrefs(old.investmentThresholds),
       tierAssignments: instance.tierAssignments,
       tierCustomization: instance.tierCustomization,
       customTitle: instance.customTitle,
@@ -189,13 +158,10 @@ export function migrateTierStore(
     };
   }
   if (version === 1) {
-    // v1 → v2: convert investmentThresholds to recommendationPrefs.
+    // v1 → v2: drop removed investment threshold preferences.
     const old = (persistedState ?? {}) as LegacyPersistedState;
     const { investmentThresholds, ...rest } = old;
-    return {
-      ...rest,
-      recommendationPrefs: deriveRecommendationPrefs(investmentThresholds),
-    };
+    return rest;
   }
   return persistedState as Record<string, unknown>;
 }
@@ -219,7 +185,6 @@ export const useTierStore = create<TierListState>()(
       showWeapons: true,
       showTravelers: false,
       showManekin: false,
-      recommendationPrefs: { ...DEFAULT_RECOMMENDATION_PREFS },
 
       // Derived fields (from default instance)
       tierAssignments: defaultInstance.tierAssignments,
@@ -295,22 +260,6 @@ export const useTierStore = create<TierListState>()(
         }),
 
       // --- View settings setters ---
-
-      setScoreDiffThreshold: (value) =>
-        set((state) => ({
-          recommendationPrefs: {
-            ...state.recommendationPrefs,
-            scoreDiffThreshold: value,
-          },
-        })),
-
-      setIncludeUpgrades: (include) =>
-        set((state) => ({
-          recommendationPrefs: {
-            ...state.recommendationPrefs,
-            includeUpgrades: include,
-          },
-        })),
 
       setShowWeapons: (show) => set({ showWeapons: show }),
       setShowTravelers: (show) => set({ showTravelers: show }),
@@ -429,7 +378,6 @@ export const useTierStore = create<TierListState>()(
         showWeapons: state.showWeapons,
         showTravelers: state.showTravelers,
         showManekin: state.showManekin,
-        recommendationPrefs: state.recommendationPrefs,
       }),
       merge: (persistedState, currentState) => {
         const parsed = PersistedTierListStoreSchema.safeParse(persistedState);

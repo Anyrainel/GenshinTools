@@ -218,13 +218,6 @@ export type TierAssignment = {
   };
 };
 
-export type RecommendationPrefs = {
-  /** Hide actions whose slot score diff falls below this. */
-  scoreDiffThreshold: number;
-  /** When false, allocation actions are still produced; upgrade actions are skipped. */
-  includeUpgrades: boolean;
-};
-
 export type TierCustomization = {
   [tier: string]: {
     displayName: string;

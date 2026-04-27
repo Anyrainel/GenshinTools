@@ -23,6 +23,7 @@ import { buildRecommendationEquipInstructions } from "@/lib/account-data/manager
 import {
   buildArtifactLookup,
   type CharacterActions,
+  recomputeTierUpgradeRecommendations,
   type ScoreUpAction,
 } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
@@ -50,7 +51,6 @@ export function RecommendationView({
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const tierCustomization = useTierStore((s) => s.tierCustomization);
   const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
-  const recommendationPrefs = useTierStore((s) => s.recommendationPrefs);
   const {
     recommendations: allRecs,
     progress,
@@ -78,19 +78,9 @@ export function RecommendationView({
         accountData,
         scores,
         tierAssignments,
-        tierCustomization,
-        recommendationPrefs: { ...recommendationPrefs, includeUpgrades: true },
       })
     )}`;
-  }, [
-    activeAccount,
-    accountData,
-    hasAnyBuilds,
-    scores,
-    tierAssignments,
-    tierCustomization,
-    recommendationPrefs,
-  ]);
+  }, [activeAccount, accountData, hasAnyBuilds, scores, tierAssignments]);
 
   const cachedRecommendations = recommendationCacheKey
     ? cacheGet(recommendationCacheKey)
@@ -117,7 +107,6 @@ export function RecommendationView({
       scores,
       tierAssignments,
       tierCustomization,
-      prefs: { ...recommendationPrefs, includeUpgrades: true },
     });
 
     return stopRecommendations;
@@ -129,7 +118,6 @@ export function RecommendationView({
     scores,
     tierAssignments,
     tierCustomization,
-    recommendationPrefs,
     startRecommendations,
     stopRecommendations,
   ]);
@@ -170,6 +158,40 @@ export function RecommendationView({
           currentTier: null,
         });
   const isCalculating = isComputing && activeRunKey === recommendationCacheKey;
+
+  const handleTierLuckExpectationChange = useCallback(
+    (tier: Tier, value: string) => {
+      if (!value) return;
+      const luckExpectation = value as LuckExpectation;
+      if (
+        accountData &&
+        recommendationCacheKey &&
+        displayedRecommendations &&
+        !isCalculating
+      ) {
+        const recommendations = recomputeTierUpgradeRecommendations(
+          displayedRecommendations,
+          accountData,
+          tier,
+          luckExpectation
+        );
+        cacheSet(recommendationCacheKey, {
+          recommendations,
+          progress: displayedProgress,
+        });
+      }
+      setTierLuckExpectation(tier, luckExpectation);
+    },
+    [
+      accountData,
+      recommendationCacheKey,
+      displayedRecommendations,
+      isCalculating,
+      cacheSet,
+      displayedProgress,
+      setTierLuckExpectation,
+    ]
+  );
 
   const handleRecalculate = () => {
     if (!recommendationCacheKey) return;
@@ -488,10 +510,10 @@ export function RecommendationView({
                   type="single"
                   size="sm"
                   value={luckExpectation}
-                  onValueChange={(value) => {
-                    if (value)
-                      setTierLuckExpectation(tier, value as LuckExpectation);
-                  }}
+                  onValueChange={(value) =>
+                    handleTierLuckExpectationChange(tier, value)
+                  }
+                  disabled={isCalculating}
                   className="bg-black/30 rounded-md p-0.5"
                 >
                   <ToggleGroupItem
