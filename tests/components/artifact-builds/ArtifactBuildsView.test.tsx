@@ -32,6 +32,15 @@ describe("ArtifactBuildsView", () => {
     useBuildsStore.getState().setBuild(buildId, {
       artifactSet: "emblem_of_severed_fate",
       composition: "4pc",
+      roles: ["dps"],
+      styles: ["off-field"],
+      sandsWeights: [{ stat: "atk%", weight: 100 }],
+      gobletWeights: [{ stat: "hydro%", weight: 100 }],
+      circletWeights: [{ stat: "cr", weight: 100 }],
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 100 },
+      ],
       visible: true,
     });
 

@@ -1,5 +1,5 @@
 import { artifactHalfSetsById } from "@/data/gameResources";
-import type { Build } from "@/data/types";
+import type { Build, BuildGroup } from "@/data/types";
 
 /**
  * Validates a build configuration and returns a list of error keys (i18n-ui keys).
@@ -59,4 +59,42 @@ export function getBuildValidationErrors(build: Build): string[] {
   }
 
   return errors;
+}
+
+export interface BuildValidationIssue {
+  characterId: string;
+  buildId: string;
+  buildName: string;
+  errorKeys: string[];
+}
+
+export function getResolvedBuildValidationIssues(
+  groups: BuildGroup[]
+): BuildValidationIssue[] {
+  const issues: BuildValidationIssue[] = [];
+  for (const group of groups) {
+    for (const build of group.builds) {
+      const errorKeys = getBuildValidationErrors(build);
+      if (errorKeys.length === 0) continue;
+      issues.push({
+        characterId: group.characterId,
+        buildId: build.id,
+        buildName: build.name,
+        errorKeys,
+      });
+    }
+  }
+  return issues;
+}
+
+export function filterValidBuildGroups(groups: BuildGroup[]): BuildGroup[] {
+  const filtered: BuildGroup[] = [];
+  for (const group of groups) {
+    const builds = group.builds.filter(
+      (build) => getBuildValidationErrors(build).length === 0
+    );
+    if (builds.length === 0) continue;
+    filtered.push({ ...group, builds });
+  }
+  return filtered;
 }

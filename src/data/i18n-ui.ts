@@ -30,6 +30,7 @@ export const i18nUiData = {
     moveDown: { en: "Move Down", zh: "下移" },
     revert: { en: "Revert Changes", zh: "撤销更改" },
     delete: { en: "Delete", zh: "删除" },
+    unnamed: { en: "Unnamed", zh: "未命名" },
     constellationFormat: { en: "C{0}", zh: "{0}命" },
     refinementFormat: { en: "R{0}", zh: "精{0}" },
     constellationRefinementCompact: { en: "C{0}R{1}", zh: "{0}+{1}" },
@@ -250,6 +251,14 @@ export const i18nUiData = {
     descTeamComp: {
       en: "Fill in the information below to export your team compositions.",
       zh: "填写以下信息以导出您的队伍配队。",
+    },
+    invalidBuildsTitle: {
+      en: "Invalid builds ({0})",
+      zh: "无效配装（{0}）",
+    },
+    invalidBuildsMore: {
+      en: "{0} more invalid builds not shown.",
+      zh: "另有 {0} 个无效配装未显示。",
     },
   },
 

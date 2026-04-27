@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Build } from "@/data/types";
-import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
+import {
+  filterValidBuildGroups,
+  getBuildValidationErrors,
+  getResolvedBuildValidationIssues,
+} from "@/lib/artifact-builds/buildValidation";
 
 const validBuild: Build = {
   id: "test-1",
@@ -177,5 +181,45 @@ describe("getBuildValidationErrors", () => {
     expect(errors).toContain("buildCard.missingGoblet");
     expect(errors).toContain("buildCard.missingCirclet");
     expect(errors).toContain("buildCard.missingSubstat");
+  });
+});
+
+describe("resolved build validation helpers", () => {
+  const invalidBuild: Build = {
+    ...validBuild,
+    id: "invalid",
+    name: "",
+    substats: [],
+  };
+
+  const groups = [
+    {
+      characterId: "hu_tao",
+      hidden: false,
+      weapons: [],
+      builds: [validBuild, invalidBuild],
+    },
+  ];
+
+  it("collects issues for invalid resolved builds", () => {
+    expect(getResolvedBuildValidationIssues(groups)).toEqual([
+      {
+        characterId: "hu_tao",
+        buildId: "invalid",
+        buildName: "",
+        errorKeys: ["buildCard.missingSubstat"],
+      },
+    ]);
+  });
+
+  it("filters invalid builds out of resolved groups", () => {
+    expect(filterValidBuildGroups(groups)).toEqual([
+      {
+        characterId: "hu_tao",
+        hidden: false,
+        weapons: [],
+        builds: [validBuild],
+      },
+    ]);
   });
 });

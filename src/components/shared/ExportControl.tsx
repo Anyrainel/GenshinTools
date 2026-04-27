@@ -148,7 +148,9 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
             {validationInfo.count > 0 && (
               <div className="rounded-md bg-destructive/15 p-3 text-destructive text-sm border border-destructive/20">
                 <p className="font-semibold mb-2">
-                  Validation Warnings ({validationInfo.count} builds):
+                  {t
+                    .ui("export.invalidBuildsTitle")
+                    .replace("{0}", String(validationInfo.count))}
                 </p>
                 <ul className="list-disc pl-4 space-y-1 text-xs">
                   {validationInfo.warnings.map((w, i) => (

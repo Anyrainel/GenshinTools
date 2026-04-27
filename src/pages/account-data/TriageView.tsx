@@ -19,7 +19,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
 import { runTriage } from "@/lib/account-data/triage/triageEngine";
 import type {
@@ -49,7 +49,7 @@ const SLOT_ORDER: Record<string, number> = {
 export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
   const accountData = useActiveAccountData();
-  const buildGroups = useAllResolvedBuilds();
+  const buildGroups = useAllValidResolvedBuilds();
 
   const tabContentRef = useRef<TriageTabContentHandle | null>(null);
 

@@ -21,7 +21,7 @@ import type { Tier } from "@/data/enums";
 import { tiers } from "@/data/enums";
 import { artifactsById } from "@/data/gameResources";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   evaluateAllBuilds,
   filterOwnedBuildGroups,
@@ -122,7 +122,7 @@ interface ResourceViewProps {
 export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
   const { t } = useLanguage();
   const accountData = useActiveAccountData();
-  const buildGroups = useAllResolvedBuilds();
+  const buildGroups = useAllValidResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
   const tierAssignments = useTierStore((s) => s.tierAssignments);

@@ -18,6 +18,7 @@ import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
 import { createBuildExportPayloadV5 } from "@/lib/artifact-builds/buildUtils";
+import { getResolvedBuildValidationIssues } from "@/lib/artifact-builds/buildValidation";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
@@ -113,29 +114,25 @@ export default function ArtifactBuildsPage() {
   }, []);
 
   const handleExportTrigger = useCallback(() => {
-    const state = useBuildsStore.getState();
-    const { characterToBuildIds, builds } = state;
-    let count = 0;
+    const issues = getResolvedBuildValidationIssues(resolveAllBuildsSnapshot());
     const warnings: string[] = [];
 
-    for (const [charId, buildIds] of Object.entries(characterToBuildIds)) {
-      for (const buildId of buildIds) {
-        const build = builds[buildId];
-        if (!build) continue;
-
-        const errorKeys = state.validationErrors?.[buildId] || [];
-        if (errorKeys.length > 0) {
-          count++;
-          if (warnings.length < 3) {
-            const charName = t.character(charId);
-            const details = errorKeys.map((k) => t.ui(k)).join(", ");
-            warnings.push(`${charName} (${build.name}): ${details}`);
-          }
-        }
-      }
+    for (const issue of issues.slice(0, 3)) {
+      const charName = t.character(issue.characterId);
+      const buildName = issue.buildName || t.ui("common.unnamed");
+      const details = issue.errorKeys.map((k) => t.ui(k)).join(", ");
+      warnings.push(`${charName} (${buildName}): ${details}`);
     }
 
-    exportRef.current?.open({ warnings, count });
+    if (issues.length > warnings.length) {
+      warnings.push(
+        t
+          .ui("export.invalidBuildsMore")
+          .replace("{0}", String(issues.length - warnings.length))
+      );
+    }
+
+    exportRef.current?.open({ warnings, count: issues.length });
   }, [t]);
 
   // Tab configuration for AppBar

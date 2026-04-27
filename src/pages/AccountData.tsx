@@ -27,6 +27,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
+import { useArtifactScoreComputation } from "@/hooks/useArtifactScoreComputation";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import {
   deleteInventoryArtifact,
@@ -162,6 +163,7 @@ export default function AccountDataPage() {
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data || null;
   const scores = activeAccount?.scores || {};
+  useArtifactScoreComputation();
   // id IS the uid for non-default profiles
   const lastUid =
     activeAccount && activeAccount.id !== "default" ? activeAccount.id : "";

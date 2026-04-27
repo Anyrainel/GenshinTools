@@ -180,6 +180,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.characterToBuildIds[characterId].push(buildId);
         });
 
+        invalidateScores([characterId]);
         return newBuild;
       },
 
@@ -210,6 +211,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.characterToBuildIds[characterId].push(newBuildId);
         });
 
+        invalidateScores([characterId]);
         return copiedBuild;
       },
 
@@ -456,6 +458,7 @@ export const useBuildsStore = create<BuildsState>()(
           [ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
           state.characterToBuildIds[characterId] = ids;
         });
+        invalidateScores([characterId]);
       },
 
       setCharacterWeapons: (characterId: string, weaponIds: string[]) => {
@@ -489,6 +492,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.author = "";
           state.description = "";
         });
+        invalidateScores();
       },
 
       setComputeOptions: (options: Partial<ComputeOptions>) => {

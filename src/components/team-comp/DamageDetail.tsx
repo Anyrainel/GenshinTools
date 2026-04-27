@@ -39,7 +39,7 @@ import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { useTeamInventory } from "@/hooks/useTeamInventory";
 import {
   type BuildMatchResult,
@@ -193,7 +193,7 @@ export function DamageDetail({
   const characterStats = characterStatsResource.use();
   const weaponStats = weaponStatsResource.use();
   const gameStatsReady = characterStats !== null && weaponStats !== null;
-  const buildGroups = useAllResolvedBuilds();
+  const buildGroups = useAllValidResolvedBuilds();
 
   const ignoreArtifactSets = useMemo(() => {
     if (!team.charSettings) return undefined;

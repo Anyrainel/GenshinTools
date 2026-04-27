@@ -21,7 +21,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { SortDirection } from "@/data/enums";
 import { tiers } from "@/data/enums";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
   COMPLETION_TIERS,
@@ -49,7 +49,7 @@ export function EvaluationView({
 }: EvaluationViewProps) {
   const { t } = useLanguage();
   const accountData = useActiveAccountData();
-  const buildGroups = useAllResolvedBuilds();
+  const buildGroups = useAllValidResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
 
@@ -246,7 +246,7 @@ export function EvaluationView({
                 className={cn(
                   "px-2 py-0.5 rounded-full text-sm font-medium transition-colors",
                   roleFilter === role
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-primary/80 text-primary-foreground"
                     : "bg-muted/50 text-foreground hover:bg-muted"
                 )}
               >

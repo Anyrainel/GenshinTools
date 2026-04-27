@@ -425,10 +425,6 @@ function ScoreUpCardComponent({
   const recs = recommendations ?? [];
   const allocationRecs = recs.filter((rec) => rec.actionType !== "upgrade");
   const upgradeRecs = recs.filter((rec) => rec.actionType === "upgrade");
-  const changedSlots = useMemo(
-    () => new Set(allocationRecs.map((rec) => rec.slot)),
-    [allocationRecs]
-  );
   const currentArtifacts = useMemo(() => {
     const result: Partial<Record<Slot, ArtifactData | null>> = {};
     for (const slot of allSlots) result[slot] = char.artifacts[slot] ?? null;
@@ -445,6 +441,18 @@ function ScoreUpCardComponent({
     }
     return result;
   }, [allocatedBuild, artifactLookup]);
+  const changedSlots = useMemo(() => {
+    const slots = new Set<Slot>();
+    if (!allocatedBuild) return slots;
+    for (const slot of allSlots) {
+      if (currentArtifacts[slot]?.id !== allocationArtifacts[slot]?.id) {
+        slots.add(slot);
+      }
+    }
+    return slots;
+  }, [allocatedBuild, currentArtifacts, allocationArtifacts]);
+  const allocationMatchesCurrent =
+    allocatedBuild != null && changedSlots.size === 0;
   const statRows = useMemo(
     () =>
       buildStatRows(
@@ -461,13 +469,17 @@ function ScoreUpCardComponent({
     : null;
   const normalizedAllocationScore =
     allocatedBuild && score
-      ? Math.min(
-          300,
-          Math.max(
-            0,
-            Math.round(allocatedBuild.finalScore * score.normalized.normalizer)
+      ? allocationMatchesCurrent
+        ? currentNormalizedScore
+        : Math.min(
+            300,
+            Math.max(
+              0,
+              Math.round(
+                allocatedBuild.finalScore * score.normalized.normalizer
+              )
+            )
           )
-        )
       : null;
   const normalizedScoreGain =
     normalizedAllocationScore != null && currentNormalizedScore != null

@@ -6,6 +6,7 @@ import {
   getCachedPreset,
   loadPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
+import { filterValidBuildGroups } from "@/lib/artifact-builds/buildValidation";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
 const EMPTY_ARRAY: string[] = [];
@@ -210,6 +211,11 @@ export function useAllResolvedBuilds() {
   );
 }
 
+export function useAllValidResolvedBuilds() {
+  const groups = useAllResolvedBuilds();
+  return useMemo(() => filterValidBuildGroups(groups), [groups]);
+}
+
 /**
  * Resolve all builds on demand (no hook). Reads current store state + cached preset.
  * Use for actions like export where you don't need reactive updates.
@@ -218,4 +224,8 @@ export function resolveAllBuildsSnapshot(): BuildGroup[] {
   const state = useBuildsStore.getState();
   const preset = getCachedPreset(state.activePresetId);
   return resolveAllBuilds(state, preset);
+}
+
+export function resolveValidAllBuildsSnapshot(): BuildGroup[] {
+  return filterValidBuildGroups(resolveAllBuildsSnapshot());
 }

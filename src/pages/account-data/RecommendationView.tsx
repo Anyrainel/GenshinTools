@@ -18,7 +18,7 @@ import { charactersById } from "@/data/gameResources";
 import type { CharacterData } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAsyncRecommendations } from "@/hooks/useAsyncRecommendations";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { buildRecommendationEquipInstructions } from "@/lib/account-data/manager/instructions";
 import {
   buildArtifactLookup,
@@ -46,7 +46,7 @@ export function RecommendationView({
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useAllResolvedBuilds();
+  const buildGroups = useAllValidResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const tierCustomization = useTierStore((s) => s.tierCustomization);
@@ -430,11 +430,15 @@ export function RecommendationView({
           {t.ui("accountData.applyRecommendationTiersDesc")}
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="flex flex-wrap gap-x-4 gap-y-2">
         {APPLY_RECOMMENDATION_TIERS.map((tier) => {
           const id = `apply-recommendation-tier-${tier}`;
+          const tierLabel = tierCustomization[tier]?.displayName ?? tier;
           return (
-            <div key={tier} className="flex items-center gap-2">
+            <div
+              key={tier}
+              className="flex items-center gap-2 whitespace-nowrap"
+            >
               <Checkbox
                 id={id}
                 checked={selectedApplyTierSet.has(tier)}
@@ -442,8 +446,11 @@ export function RecommendationView({
                   handleToggleApplyTier(tier, checked === true)
                 }
               />
-              <Label htmlFor={id} className="cursor-pointer text-sm">
-                {tierCustomization[tier]?.displayName || t.tier(tier)}
+              <Label
+                htmlFor={id}
+                className="cursor-pointer text-sm whitespace-nowrap"
+              >
+                {tierLabel}
                 <span className="ml-1 text-xs text-muted-foreground">
                   ({applyTierCounts[tier]})
                 </span>

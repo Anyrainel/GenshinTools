@@ -18,7 +18,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { characterStatsResource } from "@/data/gameStatsLoader";
 import type { AccountData, Build, BuildGroup } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { WeightedFormula } from "@/lib/artifact-builds/auto-tune/autoTune";
 import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
 import type {
@@ -243,7 +243,7 @@ function collectEntries(
 export function AutoTuneView() {
   const { t } = useLanguage();
   const characterStats = characterStatsResource.use();
-  const groups = useAllResolvedBuilds();
+  const groups = useAllValidResolvedBuilds();
   const setBuild = useBuildsStore((s) => s.setBuild);
   const allUserTeams = useTeamStore((s) => s.teams);
   const accountData = useActiveAccountData();
