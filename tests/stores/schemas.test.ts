@@ -492,7 +492,7 @@ describe("PersistedFreezeStoreSchema", () => {
 // ─── PersistedResourceRecStoreSchema ───
 
 describe("PersistedResourceRecStoreSchema", () => {
-  it("heals all fields from empty object", () => {
+  it("heals structural fields from empty object", () => {
     const result = PersistedResourceRecStoreSchema.parse({});
     expect(result.thresholds).toEqual({});
     expect(result.minScoreDiff).toEqual({
@@ -501,9 +501,9 @@ describe("PersistedResourceRecStoreSchema", () => {
       levelup: {},
     });
     expect(result.panelOpen).toBe(false);
-    expect(result.showCraft).toBe(true);
-    expect(result.showReroll).toBe(true);
-    expect(result.showLevelup).toBe(true);
+    expect(result.showCraft).toBeUndefined();
+    expect(result.showReroll).toBeUndefined();
+    expect(result.showLevelup).toBeUndefined();
   });
 
   it("heals corrupted minScoreDiff while preserving valid inner data", () => {
@@ -526,7 +526,7 @@ describe("PersistedResourceRecStoreSchema", () => {
     expect(partial.minScoreDiff.levelup).toEqual({});
   });
 
-  it("heals wrong types for boolean fields", () => {
+  it("drops wrong types for optional visibility fields", () => {
     const result = PersistedResourceRecStoreSchema.parse({
       panelOpen: "yes",
       showCraft: 0,
@@ -534,9 +534,9 @@ describe("PersistedResourceRecStoreSchema", () => {
       showLevelup: [],
     });
     expect(result.panelOpen).toBe(false);
-    expect(result.showCraft).toBe(true);
-    expect(result.showReroll).toBe(true);
-    expect(result.showLevelup).toBe(true);
+    expect(result.showCraft).toBeUndefined();
+    expect(result.showReroll).toBeUndefined();
+    expect(result.showLevelup).toBeUndefined();
   });
 });
 

@@ -244,9 +244,9 @@ export const PersistedResourceRecStoreSchema = z.object({
     })
     .catch({ craft: {}, reroll: {}, levelup: {} }),
   panelOpen: z.boolean().catch(false),
-  showCraft: z.boolean().catch(true),
-  showReroll: z.boolean().catch(true),
-  showLevelup: z.boolean().catch(true),
+  showCraft: z.boolean().optional().catch(undefined),
+  showReroll: z.boolean().optional().catch(undefined),
+  showLevelup: z.boolean().optional().catch(undefined),
 });
 
 // ─── Triage ───

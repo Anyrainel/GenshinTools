@@ -71,15 +71,6 @@ export const useResourceRecStore = create<ResourceRecState>()(
       version: 6,
       migrate: (persisted: unknown, version: number) => {
         const state = (persisted ?? {}) as Record<string, unknown>;
-        // v2 → v3: add showCraft / showReroll (default on)
-        if (version < 3) {
-          if (state.showCraft === undefined) state.showCraft = true;
-          if (state.showReroll === undefined) state.showReroll = true;
-        }
-        // v3 → v4: add showLevelup (default on)
-        if (version < 4) {
-          if (state.showLevelup === undefined) state.showLevelup = true;
-        }
         // v<6 → v6: minScoreDiff changed from flat TierCompletenessThresholds
         // to Record<ResourceKind, TierCompletenessThresholds>.
         // Old shape: { S: 0, A: 5, ... }
@@ -102,8 +93,6 @@ export const useResourceRecStore = create<ResourceRecState>()(
               },
               levelup: { ...old },
             };
-          } else {
-            state.minScoreDiff = structuredClone(DEFAULT_MIN_SCORE_DIFF);
           }
           // Remove obsolete kindMinScore field from v5
           state.kindMinScore = undefined;
@@ -126,6 +115,9 @@ export const useResourceRecStore = create<ResourceRecState>()(
         return {
           ...currentState,
           ...persisted,
+          showCraft: persisted.showCraft ?? currentState.showCraft,
+          showReroll: persisted.showReroll ?? currentState.showReroll,
+          showLevelup: persisted.showLevelup ?? currentState.showLevelup,
           thresholds: {
             ...currentState.thresholds,
             ...persisted.thresholds,

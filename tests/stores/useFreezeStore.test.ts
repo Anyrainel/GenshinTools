@@ -398,13 +398,13 @@ describe("useFreezeStore", () => {
 });
 
 describe("migrateFreezeStore", () => {
-  it("migrates v3 → v4: adds frozenArtifactIds", () => {
+  it("leaves missing frozenArtifactIds for hydration defaults", () => {
     const oldState = {
       frozenTeams: {},
       reuseMode: "none",
     };
     const result = migrateFreezeStore(oldState, 3);
-    expect(result.frozenArtifactIds).toEqual([]);
+    expect(result.frozenArtifactIds).toBeUndefined();
   });
 
   it("migrates v3 → v4: preserves existing frozenArtifactIds", () => {
@@ -417,14 +417,14 @@ describe("migrateFreezeStore", () => {
     expect(result.frozenArtifactIds).toEqual(["art-1", "art-2"]);
   });
 
-  it("migrates v2 → v4: allowSameCharReuse + frozenArtifactIds", () => {
+  it("migrates v2 → v4: allowSameCharReuse", () => {
     const oldState = {
       frozenTeams: {},
       allowSameCharReuse: false,
     };
     const result = migrateFreezeStore(oldState, 2);
     expect(result.reuseMode).toBe("none");
-    expect(result.frozenArtifactIds).toEqual([]);
+    expect(result.frozenArtifactIds).toBeUndefined();
   });
 
   it("full migration from v0 applies all steps", () => {
@@ -457,7 +457,7 @@ describe("migrateFreezeStore", () => {
     expect(result.frozenTeams["team-1"].frozenCharIds).toEqual(["hu_tao"]);
     // v1→v2→v3: reuseMode defaults to sameChar
     expect(result.reuseMode).toBe("sameChar");
-    // v3→v4: frozenArtifactIds added
-    expect(result.frozenArtifactIds).toEqual([]);
+    // Missing frozenArtifactIds is healed by the persisted schema/merge layer.
+    expect(result.frozenArtifactIds).toBeUndefined();
   });
 });

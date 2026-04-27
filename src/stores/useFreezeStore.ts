@@ -125,24 +125,12 @@ export function migrateFreezeStore(
       }
     }
   }
-  // v1 → v2: add allowSameCharReuse (default true)
-  if (version < 2) {
-    if (!("allowSameCharReuse" in state)) {
-      (state as Record<string, unknown>).allowSameCharReuse = true;
-    }
-  }
   // v2 → v3: allowSameCharReuse → reuseMode
   if (version < 3) {
     const legacy = state as Record<string, unknown>;
     legacy.reuseMode =
       legacy.allowSameCharReuse === false ? "none" : "sameChar";
     legacy.allowSameCharReuse = undefined;
-  }
-  // v3 → v4: add frozenArtifactIds
-  if (version < 4) {
-    if (!Array.isArray(state.frozenArtifactIds)) {
-      state.frozenArtifactIds = [];
-    }
   }
   return state as Partial<FreezeState> as FreezeState;
 }
