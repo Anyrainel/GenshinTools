@@ -1,4 +1,4 @@
-import type { TriageSettings } from "./types";
+import type { QualityTier, TriageSettings } from "./types";
 
 export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   triageMode: "loose",
@@ -18,4 +18,18 @@ export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   disabledFlexPatterns: [],
   enabledFlexPatterns: [],
   customFlexInputs: [],
+};
+
+export const QUALITY_TIERS = [
+  "prime",
+  "solid",
+  "filler",
+  "fodder",
+] as const satisfies readonly QualityTier[];
+
+export const QUALITY_TIER_RANK: Record<QualityTier, number> = {
+  prime: 0,
+  solid: 1,
+  filler: 2,
+  fodder: 3,
 };

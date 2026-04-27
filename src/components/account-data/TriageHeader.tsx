@@ -27,13 +27,13 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { allSlots, type Slot } from "@/data/enums";
 import { allHalfSetIds } from "@/data/gameResources";
 import type { ManagePayload } from "@/lib/account-data/manager/types";
+import { QUALITY_TIERS } from "@/lib/account-data/triage/constants";
 import type {
   FlexPattern,
   QualityTier,
   TriageDecision,
   TriageSettings,
 } from "@/lib/account-data/triage/types";
-import { QUALITY_TIERS } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 import { TRIAGE_TIER_COLORS } from "../shared/colors";
 

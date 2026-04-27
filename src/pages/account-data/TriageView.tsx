@@ -21,15 +21,15 @@ import { artifactIdToHalfSetId } from "@/data/gameResources";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
+import {
+  QUALITY_TIER_RANK,
+  QUALITY_TIERS,
+} from "@/lib/account-data/triage/constants";
 import { runTriage } from "@/lib/account-data/triage/triageEngine";
 import type {
   FlexPattern,
   QualityTier,
   TriageDecision,
-} from "@/lib/account-data/triage/types";
-import {
-  QUALITY_TIER_RANK,
-  QUALITY_TIERS,
 } from "@/lib/account-data/triage/types";
 import { useTriageStore } from "@/stores/useTriageStore";
 

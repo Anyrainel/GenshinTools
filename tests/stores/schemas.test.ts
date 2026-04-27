@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
 import {

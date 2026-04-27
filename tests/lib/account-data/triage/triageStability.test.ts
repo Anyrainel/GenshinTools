@@ -16,7 +16,7 @@ import type {
   InstructionResult,
   ManagePayload,
 } from "@/lib/account-data/manager/types";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { runTriage } from "@/lib/account-data/triage/triageEngine";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 import presetJson from "@/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";

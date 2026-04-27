@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 import { PersistedTriageStoreSchema } from "./schemas";
 

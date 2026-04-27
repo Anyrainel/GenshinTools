@@ -7,7 +7,7 @@ import type {
   WeightedMainStat,
   WeightedSubStat,
 } from "@/data/types";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { evaluateTier } from "@/lib/account-data/triage/tierEvaluator";
 import { lookupTierEntry } from "@/lib/account-data/triage/tierTableBuilder";
 import { runTriage } from "@/lib/account-data/triage/triageEngine";

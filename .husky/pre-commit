@@ -3,7 +3,7 @@
 # Per-file lint & format (Biome for TS, Ruff for Python)
 npx lint-staged --no-stash
 
-# Run tests related to staged TS/TSX files
+# Run tests related to staged TS/TSX files, plus global convention guards
 # Skip for merge commits — individual commits were already tested
 if [ ! -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
   STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
@@ -14,4 +14,7 @@ if [ ! -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
     echo "Running dependency-cruiser..."
     npm run depcheck || exit 1
   fi
+
+  echo "Running file convention and i18n tests..."
+  npx vitest run tests/fileConventions.test.ts tests/i18n.test.ts || exit 1
 fi

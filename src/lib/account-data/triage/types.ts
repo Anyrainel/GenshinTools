@@ -5,16 +5,7 @@ import type { ArtifactData } from "@/data/types";
 
 export type TriageLabel = "lock" | "unlock";
 
-export const QUALITY_TIERS = ["prime", "solid", "filler", "fodder"] as const;
-
-export type QualityTier = (typeof QUALITY_TIERS)[number];
-
-export const QUALITY_TIER_RANK: Record<QualityTier, number> = {
-  prime: 0,
-  solid: 1,
-  filler: 2,
-  fodder: 3,
-};
+export type QualityTier = "prime" | "solid" | "filler" | "fodder";
 
 // Demand & Embryo
 

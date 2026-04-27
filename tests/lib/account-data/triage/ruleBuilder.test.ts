@@ -5,7 +5,7 @@ import type {
   WeightedMainStat,
   WeightedSubStat,
 } from "@/data/types";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/defaults";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { extractRules } from "@/lib/account-data/triage/ruleBuilder";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 

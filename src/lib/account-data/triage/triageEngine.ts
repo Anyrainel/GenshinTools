@@ -5,6 +5,7 @@ import type { AccountData, ArtifactData, Build } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 import { runConcentrationValueRules } from "./concentrationValue";
+import { QUALITY_TIER_RANK, QUALITY_TIERS } from "./constants";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";
 import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { startedWithFourSubstats } from "./initialSubstats";
@@ -24,7 +25,6 @@ import type {
   TriageSettings,
   TriageSpecialRule,
 } from "./types";
-import { QUALITY_TIER_RANK, QUALITY_TIERS } from "./types";
 
 // Embryo key
 
