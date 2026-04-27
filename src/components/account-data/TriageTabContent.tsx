@@ -16,7 +16,7 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import type { TriageDecision } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 
-type T = ReturnType<typeof useLanguage>["t"];
+type Translator = ReturnType<typeof useLanguage>["t"];
 
 export interface TriageTabContentHandle {
   expandAll: () => void;
@@ -108,7 +108,7 @@ export function TriageTabContent({
   noChange,
   handleRef,
 }: {
-  t: T;
+  t: Translator;
   isStale: boolean;
   recommendLock: TriageDecision[];
   recommendUnlock: TriageDecision[];

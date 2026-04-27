@@ -12,45 +12,46 @@ export type TierResult = {
   hitCount: number;
   hitOptional: number;
   hitTotal: number;
-  hasCrCd: boolean;
+  hasCritPair: boolean;
   hasFill: boolean;
   matchedCondition: TierCondition | null;
 };
 
 export function evaluateTier(
   artifactSubs: SubStat[],
-  is4L: boolean,
+  startedWithFourSubstats: boolean,
   rule: TriageRule
 ): TierResult {
   const hitCount = countHits(artifactSubs, rule.desired);
   const hitOptional = countHits(artifactSubs, rule.optional);
-  const hasCrCd = artifactSubs.includes("cr") && artifactSubs.includes("cd");
+  const hasCritPair =
+    artifactSubs.includes("cr") && artifactSubs.includes("cd");
   const hasFill =
-    hitCount === rule.tierEntry.subN &&
+    hitCount === rule.tierEntry.desiredSubstatCount &&
     rule.fillers.some((f) => artifactSubs.includes(f));
   const hitTotal = hitCount + hitOptional + (hasFill ? 1 : 0);
 
   for (const cond of rule.tierEntry.conditions) {
-    if (hitCount < cond.k) continue;
-    if (cond.crcd && !hasCrCd) continue;
-    if (cond.is4L && !is4L) continue;
-    if (cond.fill && !hasFill) continue;
+    if (hitCount < cond.requiredDesiredHits) continue;
+    if (cond.requiresCritPair && !hasCritPair) continue;
+    if (cond.requiresFourInitialSubstats && !startedWithFourSubstats) continue;
+    if (cond.requiresFillerHit && !hasFill) continue;
     return {
       tier: cond.tier,
       hitCount,
       hitOptional,
       hitTotal,
-      hasCrCd,
+      hasCritPair,
       hasFill,
       matchedCondition: cond,
     };
   }
   return {
-    tier: "T",
+    tier: "fodder",
     hitCount,
     hitOptional,
     hitTotal,
-    hasCrCd,
+    hasCritPair,
     hasFill,
     matchedCondition: null,
   };

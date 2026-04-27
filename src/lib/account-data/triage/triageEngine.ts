@@ -4,11 +4,11 @@ import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData, Build } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
+import { runConcentrationValueRules } from "./concentrationValue";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";
 import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
-import { isInitial4Line } from "./is4L";
+import { startedWithFourSubstats } from "./initialSubstats";
 import { extractRules } from "./ruleBuilder";
-import { runStrategicRules } from "./strategicValue";
 import { evaluateTier, type TierResult } from "./tierEvaluator";
 import type {
   DemandSource,
@@ -20,8 +20,11 @@ import type {
   TriageDecision,
   TriageLabel,
   TriageRule,
+  TriageRuleId,
   TriageSettings,
+  TriageSpecialRule,
 } from "./types";
+import { QUALITY_TIER_RANK, QUALITY_TIERS } from "./types";
 
 // Embryo key
 
@@ -64,22 +67,30 @@ export function runTriage(
   const customFlex = (settings.customFlexInputs ?? [])
     .map(buildCustomFlexPattern)
     .filter(
-      (fp): fp is FlexPattern =>
-        fp !== null && !officialFlex.some((o) => o.key === fp.key)
+      (flexPattern): flexPattern is FlexPattern =>
+        flexPattern !== null &&
+        !officialFlex.some(
+          (officialPattern) => officialPattern.key === flexPattern.key
+        )
     );
   const allFlex = [...officialFlex, ...customFlex];
-  const enabledFlex = allFlex.filter((fp) =>
-    fp.defaultOff
-      ? settings.enabledFlexPatterns.includes(fp.key)
-      : !settings.disabledFlexPatterns.includes(fp.key)
+  const enabledFlex = allFlex.filter((flexPattern) =>
+    flexPattern.defaultOff
+      ? settings.enabledFlexPatterns.includes(flexPattern.key)
+      : !settings.disabledFlexPatterns.includes(flexPattern.key)
   );
 
   // 3. Count demand per embryoKey (unique characters)
   const demandCounts = new Map<string, Set<string>>();
-  for (const r of rules) {
-    const key = makeEmbryoKey(r.demandSource, r.slot, r.mainStat, r.desired);
+  for (const rule of rules) {
+    const key = makeEmbryoKey(
+      rule.demandSource,
+      rule.slot,
+      rule.mainStat,
+      rule.desired
+    );
     if (!demandCounts.has(key)) demandCounts.set(key, new Set());
-    demandCounts.get(key)!.add(r.characterId);
+    demandCounts.get(key)!.add(rule.characterId);
   }
 
   // Collect all artifacts
@@ -96,14 +107,16 @@ export function runTriage(
   }
 
   // TODO: support 4-star artifacts (different thresholds needed)
-  const fiveStarArtifacts = allArtifacts.filter((a) => a.artifact.rarity === 5);
+  const fiveStarArtifacts = allArtifacts.filter(
+    (artifactEntry) => artifactEntry.artifact.rarity === 5
+  );
 
   // Phase 1: Evaluate each artifact
   type PrelimResult = {
     artifact: ArtifactData;
     equippedOn: string | null;
     embryoResults: EmbryoResult[];
-    specialRules: string[];
+    specialRules: TriageSpecialRule[];
     bestLabel: TriageLabel;
     bestResult: EmbryoResult | null;
     bestTier: QualityTier;
@@ -115,56 +128,56 @@ export function runTriage(
   const prelims: PrelimResult[] = [];
 
   for (const { artifact, equippedOn } of fiveStarArtifacts) {
-    const specialRules: string[] = [];
+    const specialRules: TriageSpecialRule[] = [];
     const substats = getAllSubstats(artifact);
-    const is4L = isInitial4Line(artifact);
+    const hasFourInitialSubstats = startedWithFourSubstats(artifact);
 
-    // --- Pre-checks (SP1, SP5) ---
-    // SP1: ER hoarding (support sets only)
+    // --- Pre-checks ---
+    // ER hoarding (support sets only)
     if (
       settings.erHoardingEnabled &&
-      is4L &&
+      hasFourInitialSubstats &&
       substats.includes("er") &&
       TRIAGE_SUPPORT_ARTIFACT_SETS.has(artifact.setKey)
     ) {
       const anyRuleNeedsER = rules.some(
-        (r) => r.desired.includes("er") && r.slot === artifact.slotKey
+        (rule) => rule.desired.includes("er") && rule.slot === artifact.slotKey
       );
       if (anyRuleNeedsER) {
-        specialRules.push("SP1");
+        specialRules.push("supportSetErHoard");
       }
     }
 
-    // SP7: ER hoarding (all sets, not just support — off by default)
+    // ER hoarding (all sets, not just support — off by default)
     if (
       settings.erHoardingAllEnabled &&
-      !specialRules.includes("SP1") &&
-      is4L &&
+      !specialRules.includes("supportSetErHoard") &&
+      hasFourInitialSubstats &&
       substats.includes("er")
     ) {
       const anyRuleNeedsER = rules.some(
-        (r) => r.desired.includes("er") && r.slot === artifact.slotKey
+        (rule) => rule.desired.includes("er") && rule.slot === artifact.slotKey
       );
       if (anyRuleNeedsER) {
-        specialRules.push("SP7");
+        specialRules.push("allSetErHoard");
       }
     }
 
-    // SP5: Double crit lock — tag only, normal evaluation continues
+    // Double crit lock — tag only, normal evaluation continues
     if (
       settings.doubleCritLockEnabled &&
-      is4L &&
+      hasFourInitialSubstats &&
       substats.includes("cr") &&
       substats.includes("cd")
     ) {
       const hasMatch = rules.some(
-        (r) =>
-          r.slot === artifact.slotKey &&
-          r.mainStat === artifact.mainStatKey &&
-          matchesSet(r, artifact.setKey)
+        (rule) =>
+          rule.slot === artifact.slotKey &&
+          rule.mainStat === artifact.mainStatKey &&
+          matchesSet(rule, artifact.setKey)
       );
       if (hasMatch) {
-        specialRules.push("SP5");
+        specialRules.push("doubleCrit");
       }
     }
 
@@ -173,10 +186,10 @@ export function runTriage(
     // assigned group is stable across runs regardless of build/rule ordering.
     const matchedRules = rules
       .filter(
-        (r) =>
-          r.slot === artifact.slotKey &&
-          r.mainStat === artifact.mainStatKey &&
-          matchesSet(r, artifact.setKey)
+        (rule) =>
+          rule.slot === artifact.slotKey &&
+          rule.mainStat === artifact.mainStatKey &&
+          matchesSet(rule, artifact.setKey)
       )
       .sort((a, b) => {
         const ka = makeEmbryoKey(a.demandSource, a.slot, a.mainStat, a.desired);
@@ -184,12 +197,12 @@ export function runTriage(
         return ka.localeCompare(kb);
       });
 
-    let bestTier: QualityTier = "T";
+    let bestTier: QualityTier = "fodder";
     let bestTierResult: TierResult | null = null;
     const embryoResults: EmbryoResult[] = [];
 
     for (const rule of matchedRules) {
-      const tr = evaluateTier(substats, is4L, rule);
+      const tierResult = evaluateTier(substats, hasFourInitialSubstats, rule);
       const embryoKey = makeEmbryoKey(
         rule.demandSource,
         rule.slot,
@@ -208,43 +221,44 @@ export function runTriage(
           valuableStats: rule.optional,
         },
         grade: {
-          coreCount: tr.hitCount,
-          valuableCount: tr.hitOptional,
+          coreCount: tierResult.hitCount,
+          valuableCount: tierResult.hitOptional,
           minorCount: 0,
           unwantedCount:
             substats.length -
-            tr.hitCount -
-            tr.hitOptional -
-            (tr.hasFill ? 1 : 0),
+            tierResult.hitCount -
+            tierResult.hitOptional -
+            (tierResult.hasFill ? 1 : 0),
           totalCount: substats.length,
-          initial4Line: is4L,
+          initial4Line: hasFourInitialSubstats,
         },
         embryoKey,
       };
 
-      const ruleId = tierToRuleId(tr.tier);
+      const ruleId = tierToRuleId(tierResult.tier);
       embryoResults.push({
         embryo: embryoMatch,
-        label: tierToLabel(tr.tier),
+        label: tierToLabel(tierResult.tier),
         ruleId,
         reason: "",
-        reasonArgs: tierReasonArgs(tr),
-        tier: tr.tier,
+        reasonArgs: tierReasonArgs(tierResult),
+        tier: tierResult.tier,
       });
 
-      if (tierRank(tr.tier) < tierRank(bestTier)) {
-        bestTier = tr.tier;
-        bestTierResult = tr;
+      if (tierRank(tierResult.tier) < tierRank(bestTier)) {
+        bestTier = tierResult.tier;
+        bestTierResult = tierResult;
       }
     }
 
     // Flex check: tag only, does not change tier
-    for (const fp of enabledFlex) {
-      if (fp.slot !== artifact.slotKey) continue;
-      if (fp.mainStat !== artifact.mainStatKey) continue;
-      if (!fp.requiredSubs.every((s) => substats.includes(s))) continue;
+    for (const flexPattern of enabledFlex) {
+      if (flexPattern.slot !== artifact.slotKey) continue;
+      if (flexPattern.mainStat !== artifact.mainStatKey) continue;
+      if (!flexPattern.requiredSubs.every((stat) => substats.includes(stat)))
+        continue;
 
-      specialRules.push("FLEX");
+      specialRules.push("offPiecePattern");
       break;
     }
 
@@ -252,7 +266,7 @@ export function runTriage(
     // chosen group is deterministic.
     embryoResults.sort(
       (a, b) =>
-        tierRank(a.tier ?? "T") - tierRank(b.tier ?? "T") ||
+        tierRank(a.tier ?? "fodder") - tierRank(b.tier ?? "fodder") ||
         (a.embryo.embryoKey ?? "").localeCompare(b.embryo.embryoKey ?? "")
     );
 
@@ -269,15 +283,15 @@ export function runTriage(
         bestResult: {
           embryo: null as never,
           label: "unlock",
-          ruleId: "TD",
+          ruleId: "noDemand",
           reason: "",
           reasonArgs: [],
-          tier: "T",
+          tier: "fodder",
         },
-        bestTier: "T",
+        bestTier: "fodder",
         bestTierResult: null,
         embryoKey: null,
-        supplyDemand: null, // filled below in TD supply pass
+        supplyDemand: null, // filled below in no-demand supply pass
       });
     } else {
       prelims.push({
@@ -304,141 +318,152 @@ export function runTriage(
   // --- Supply/demand resolution ---
   // Group by embryoKey
   const groups = new Map<string, PrelimResult[]>();
-  for (const p of prelims) {
-    if (!p.embryoKey) continue;
-    if (!groups.has(p.embryoKey)) groups.set(p.embryoKey, []);
-    groups.get(p.embryoKey)!.push(p);
+  for (const prelim of prelims) {
+    if (!prelim.embryoKey) continue;
+    if (!groups.has(prelim.embryoKey)) groups.set(prelim.embryoKey, []);
+    groups.get(prelim.embryoKey)!.push(prelim);
   }
 
   for (const [key, group] of groups) {
     const demand = demandCounts.get(key)?.size ?? 0;
     if (demand === 0) continue;
 
-    const premium = group.filter((p) => p.bestTier === "P");
-    const quality = group.filter((p) => p.bestTier === "Q");
-    const neutral = group.filter((p) => p.bestTier === "N");
-    const trash = group.filter((p) => p.bestTier === "T");
+    const primeArtifacts = group.filter(
+      (prelim) => prelim.bestTier === "prime"
+    );
+    const solidArtifacts = group.filter(
+      (prelim) => prelim.bestTier === "solid"
+    );
+    const fillerArtifacts = group.filter(
+      (prelim) => prelim.bestTier === "filler"
+    );
+    const fodderArtifacts = group.filter(
+      (prelim) => prelim.bestTier === "fodder"
+    );
 
-    const premiumCount = premium.length;
-    const qualityCount = quality.length;
+    const primeCount = primeArtifacts.length;
+    const solidCount = solidArtifacts.length;
 
-    if (premiumCount + qualityCount < demand + settings.qualityMargin) {
-      // Under-supply (including the margin buffer): lock P, Q, and best N
-      for (const p of premium) setLabel(p, "lock", "TP");
-      for (const p of quality) setLabel(p, "lock", "TQ");
+    if (primeCount + solidCount < demand + settings.qualityMargin) {
+      // Under-supply including the margin buffer: lock prime, solid, and best filler.
+      for (const prelim of primeArtifacts)
+        setLabel(prelim, "lock", "primeTierKeep");
+      for (const prelim of solidArtifacts)
+        setLabel(prelim, "lock", "solidTierKeep");
 
-      // Sort neutral by computed tier rarity (which already encodes is4L,
-      // crcd, hit count, fill), then tie-break by actual stat values.
-      neutral.sort(compareWithinTier);
+      // Sort filler by computed tier rarity, then tie-break by actual stat values.
+      fillerArtifacts.sort(compareWithinTier);
 
-      // Cap neutral locks so total locked (P+Q+N) never exceeds demand+margin.
+      // Cap filler locks so total locked never exceeds demand+margin.
       const shortfall =
-        demand + settings.qualityMargin - premiumCount - qualityCount;
-      const neutralCap = Math.min(shortfall, settings.fillerKeep);
+        demand + settings.qualityMargin - primeCount - solidCount;
+      const fillerCap = Math.min(shortfall, settings.fillerKeep);
 
-      for (let i = 0; i < neutral.length; i++) {
-        if (i < neutralCap) {
-          setLabel(neutral[i], "lock", "NK");
+      for (let i = 0; i < fillerArtifacts.length; i++) {
+        if (i < fillerCap) {
+          setLabel(fillerArtifacts[i], "lock", "fillerShortfallKeep");
         } else {
-          setLabel(neutral[i], "unlock", "TN");
+          setLabel(fillerArtifacts[i], "unlock", "fillerDefaultUnlock");
         }
       }
 
-      // T tier → unlock
-      for (const p of trash) setLabel(p, "unlock", "TF");
+      for (const prelim of fodderArtifacts)
+        setLabel(prelim, "unlock", "fodderSubstatMismatch");
     } else {
       // Adequate/over-supply
-      for (const p of premium) setLabel(p, "lock", "TP");
+      for (const prelim of primeArtifacts)
+        setLabel(prelim, "lock", "primeTierKeep");
 
-      const qualityCap = Math.max(
-        demand + settings.qualityMargin - premiumCount,
+      const solidKeepCap = Math.max(
+        demand + settings.qualityMargin - primeCount,
         0
       );
-      // Sort quality by computed tier rarity (encodes is4L, crcd, hit
-      // count, fill), then tie-break by actual stat values.
-      quality.sort(compareWithinTier);
-      for (let i = 0; i < quality.length; i++) {
-        if (i < qualityCap) {
-          setLabel(quality[i], "lock", "TQ");
+      // Sort solid by computed tier rarity, then tie-break by actual stat values.
+      solidArtifacts.sort(compareWithinTier);
+      for (let i = 0; i < solidArtifacts.length; i++) {
+        if (i < solidKeepCap) {
+          setLabel(solidArtifacts[i], "lock", "solidTierKeep");
         } else {
-          setLabel(quality[i], "unlock", "QB");
+          setLabel(solidArtifacts[i], "unlock", "solidOversupplyUnlock");
         }
       }
 
-      for (const p of neutral) setLabel(p, "unlock", "TN");
-      for (const p of trash) setLabel(p, "unlock", "TF");
+      for (const prelim of fillerArtifacts)
+        setLabel(prelim, "unlock", "fillerDefaultUnlock");
+      for (const prelim of fodderArtifacts)
+        setLabel(prelim, "unlock", "fodderSubstatMismatch");
     }
 
     // Record supply/demand info for all artifacts in this group
     const supplyByTier: Record<QualityTier, number> = {
-      P: premiumCount,
-      Q: qualityCount,
-      N: neutral.length,
-      T: trash.length,
+      prime: primeCount,
+      solid: solidCount,
+      filler: fillerArtifacts.length,
+      fodder: fodderArtifacts.length,
     };
     const tierArrays: Record<QualityTier, PrelimResult[]> = {
-      P: premium,
-      Q: quality,
-      N: neutral,
-      T: trash,
+      prime: primeArtifacts,
+      solid: solidArtifacts,
+      filler: fillerArtifacts,
+      fodder: fodderArtifacts,
     };
-    for (const tier of ["P", "Q", "N", "T"] as QualityTier[]) {
-      const arr = tierArrays[tier];
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].supplyDemand = {
+    for (const tier of QUALITY_TIERS) {
+      const artifactsInTier = tierArrays[tier];
+      for (let i = 0; i < artifactsInTier.length; i++) {
+        artifactsInTier[i].supplyDemand = {
           demand,
           supplyByTier,
           rankInTier: i + 1,
-          tierTotal: arr.length,
+          tierTotal: artifactsInTier.length,
         };
       }
     }
   }
 
-  // --- TD (no demand) supply count ---
-  // Group TD artifacts by set+slot+mainStat so the UI can show fodder total
-  const tdGroups = new Map<string, PrelimResult[]>();
-  for (const p of prelims) {
-    if (p.embryoKey !== null) continue; // has demand, already resolved
-    const key = `${p.artifact.setKey}:${p.artifact.slotKey}:${p.artifact.mainStatKey}`;
-    if (!tdGroups.has(key)) tdGroups.set(key, []);
-    tdGroups.get(key)!.push(p);
+  // --- No-demand supply count ---
+  // Group no-demand artifacts by set+slot+mainStat so the UI can show fodder total.
+  const noDemandGroups = new Map<string, PrelimResult[]>();
+  for (const prelim of prelims) {
+    if (prelim.embryoKey !== null) continue; // has demand, already resolved
+    const key = `${prelim.artifact.setKey}:${prelim.artifact.slotKey}:${prelim.artifact.mainStatKey}`;
+    if (!noDemandGroups.has(key)) noDemandGroups.set(key, []);
+    noDemandGroups.get(key)!.push(prelim);
   }
-  for (const group of tdGroups.values()) {
-    for (const p of group) {
-      p.supplyDemand = {
+  for (const group of noDemandGroups.values()) {
+    for (const prelim of group) {
+      prelim.supplyDemand = {
         demand: 0,
-        supplyByTier: { P: 0, Q: 0, N: 0, T: group.length },
+        supplyByTier: { prime: 0, solid: 0, filler: 0, fodder: group.length },
         rankInTier: 0,
         tierTotal: group.length,
       };
     }
   }
 
-  // --- Special-rule lock promotion (SP1, SP7, SP5, FLEX) ---
+  // --- Special-rule lock promotion ---
   // These force lock without changing the tier determined by 4pc/2pc evaluation.
   for (const prelim of prelims) {
     if (prelim.bestLabel === "lock") continue;
-    const sp = prelim.specialRules;
+    const specialRuleIds = prelim.specialRules;
     if (
-      sp.includes("SP1") ||
-      sp.includes("SP7") ||
-      sp.includes("SP5") ||
-      sp.includes("FLEX")
+      specialRuleIds.includes("supportSetErHoard") ||
+      specialRuleIds.includes("allSetErHoard") ||
+      specialRuleIds.includes("doubleCrit") ||
+      specialRuleIds.includes("offPiecePattern")
     ) {
-      const ruleId = sp.includes("SP1")
-        ? "SP1"
-        : sp.includes("SP7")
-          ? "SP7"
-          : sp.includes("SP5")
-            ? "SP5"
-            : "FLEX";
+      const ruleId = specialRuleIds.includes("supportSetErHoard")
+        ? "supportSetErHoard"
+        : specialRuleIds.includes("allSetErHoard")
+          ? "allSetErHoard"
+          : specialRuleIds.includes("doubleCrit")
+            ? "doubleCrit"
+            : "offPiecePattern";
       setLabel(prelim, "lock", ruleId);
     }
   }
 
   // --- Set+slot minimum keep ---
-  // Runs AFTER special-rule promotions so FLEX/SP-locked artifacts are counted.
+  // Runs after special-rule promotions so off-piece/special locked artifacts are counted.
   //
   // Stability: when we need to fill the floor, prefer artifacts that are
   // already externally locked. Otherwise, rerunning triage right after
@@ -455,39 +480,40 @@ export function runTriage(
       setSlotGroups.get(key)!.push(p);
     }
     for (const group of setSlotGroups.values()) {
-      const want = Math.min(settings.setSlotKeep, group.length);
-      const algoLocked = group.filter((p) => p.bestLabel === "lock").length;
-      const need = want - algoLocked;
-      if (need <= 0) continue;
+      const targetKeepCount = Math.min(settings.setSlotKeep, group.length);
+      const algorithmLockedCount = group.filter(
+        (prelim) => prelim.bestLabel === "lock"
+      ).length;
+      const neededKeepCount = targetKeepCount - algorithmLockedCount;
+      if (neededKeepCount <= 0) continue;
 
       // Candidates: anything not already locked by the algorithm. Sort
       // externally-locked first (for stability), then by tier/intrinsics.
       const candidates = group
-        .filter((p) => p.bestLabel !== "lock")
+        .filter((prelim) => prelim.bestLabel !== "lock")
         .sort(
           (a, b) =>
             (b.artifact.lock ? 1 : 0) - (a.artifact.lock ? 1 : 0) ||
             tierRank(a.bestTier) - tierRank(b.bestTier) ||
-            skTiebreaker(a) - skTiebreaker(b) ||
+            setSlotFloorTiebreaker(a) - setSlotFloorTiebreaker(b) ||
             rollCount(b.artifact) - rollCount(a.artifact) ||
             b.artifact.level - a.artifact.level
         );
 
-      for (let i = 0; i < Math.min(need, candidates.length); i++) {
-        setLabel(candidates[i], "lock", "SK");
-        candidates[i].specialRules.push("SP6");
+      for (let i = 0; i < Math.min(neededKeepCount, candidates.length); i++) {
+        setLabel(candidates[i], "lock", "setSlotFloorKeep");
+        candidates[i].specialRules.push("setSlotFloor");
       }
     }
   }
 
-  // Post-checks: SP3 (level protection), SP4 (equipped) — tag only, no label change.
+  // Post-checks: level/equipped protection — tag only, no label change.
   // These are "protected" artifacts handled by the UI (shown in protected zone).
   //
   // High-level handling: when highLevelProtection is enabled, high-level
-  // artifacts get SP3 (auto-protected). When disabled, they flow through the
-  // normal recommendation buckets, and any still marked "unlock" are run
-  // through the strategic value rules. If a rule fires, promote to lock with
-  // a "SV" (strategic value) ruleId + reason code on specialRules.
+  // artifacts are auto-protected. When disabled, they flow through the normal
+  // recommendation buckets, and any still marked "unlock" are run through the
+  // concentration-value rules.
   for (const prelim of prelims) {
     const isHighLevel =
       settings.levelProtection > 0 &&
@@ -495,24 +521,24 @@ export function runTriage(
 
     if (isHighLevel) {
       if (settings.highLevelProtection) {
-        prelim.specialRules.push("SP3");
+        prelim.specialRules.push("levelProtected");
       } else if (prelim.bestLabel === "unlock") {
-        const result = runStrategicRules(prelim.artifact);
+        const result = runConcentrationValueRules(prelim.artifact);
         if (result.kept) {
-          setLabel(prelim, "lock", "SV");
-          if (tierRank(prelim.bestTier) > tierRank("Q")) {
-            prelim.bestTier = "Q";
+          setLabel(prelim, "lock", "concentrationValue");
+          if (tierRank(prelim.bestTier) > tierRank("solid")) {
+            prelim.bestTier = "solid";
             if (prelim.bestResult) {
-              prelim.bestResult = { ...prelim.bestResult, tier: "Q" };
+              prelim.bestResult = { ...prelim.bestResult, tier: "solid" };
             }
           }
-          prelim.specialRules.push(`SV:${result.reason}`);
+          prelim.specialRules.push(`concentrationValue:${result.reason}`);
         }
       }
     }
 
     if (settings.equippedProtection && prelim.equippedOn) {
-      prelim.specialRules.push("SP4");
+      prelim.specialRules.push("equippedProtected");
     }
   }
 
@@ -533,7 +559,7 @@ export function runTriage(
 // Helpers
 
 function tierRank(t: QualityTier): number {
-  return t === "P" ? 0 : t === "Q" ? 1 : t === "N" ? 2 : 3;
+  return QUALITY_TIER_RANK[t];
 }
 
 const ELEMENTAL_MAINS = new Set<string>([
@@ -580,9 +606,9 @@ function rollCountOn(a: ArtifactData, stats: SubStat[]): number {
 }
 
 /**
- * Primary within-tier rank for Q/N tiers. Sorts by the matched condition's
- * computed rarity (ascending, rarer first) — this already accounts for k
- * (hits), crcd, is4L, and fill — then tie-breaks by actual substat values:
+ * Primary within-tier rank for solid/filler tiers. Sorts by the matched
+ * condition's computed rarity (ascending, rarer first), then tie-breaks by
+ * actual substat values:
  * first on the demanded substats (core + optional), then total roll mass,
  * then level.
  *
@@ -618,18 +644,18 @@ function compareWithinTier(
   );
 }
 
-/** Lower = better. Used as tiebreaker when SK-promoting same-tier artifacts. */
-function skTiebreaker(p: { artifact: ArtifactData }): number {
-  const a = p.artifact;
-  const subs = Object.keys(a.substats ?? {});
+/** Lower = better. Used when set-slot floor promotes same-tier artifacts. */
+function setSlotFloorTiebreaker(prelim: { artifact: ArtifactData }): number {
+  const artifact = prelim.artifact;
+  const subs = Object.keys(artifact.substats ?? {});
   let score = 0;
   // 4-line is best
-  if (!isInitial4Line(a)) score += 100;
+  if (!startedWithFourSubstats(artifact)) score += 100;
   // elemental main stat
-  if (!ELEMENTAL_MAINS.has(a.mainStatKey)) score += 50;
+  if (!ELEMENTAL_MAINS.has(artifact.mainStatKey)) score += 50;
   // desirable stats in main or subs
   const hasStatInMainOrSubs = (stat: string) =>
-    a.mainStatKey === stat || subs.includes(stat);
+    artifact.mainStatKey === stat || subs.includes(stat);
   if (!hasStatInMainOrSubs("er")) score += 25;
   if (!hasStatInMainOrSubs("cr")) score += 12;
   if (!hasStatInMainOrSubs("cd")) score += 6;
@@ -638,11 +664,17 @@ function skTiebreaker(p: { artifact: ArtifactData }): number {
 }
 
 function tierToLabel(t: QualityTier): TriageLabel {
-  return t === "P" || t === "Q" ? "lock" : "unlock";
+  return t === "prime" || t === "solid" ? "lock" : "unlock";
 }
 
-function tierToRuleId(t: QualityTier): string {
-  return t === "P" ? "TP" : t === "Q" ? "TQ" : t === "N" ? "TN" : "TT";
+function tierToRuleId(t: QualityTier): TriageRuleId {
+  return t === "prime"
+    ? "primeTierKeep"
+    : t === "solid"
+      ? "solidTierKeep"
+      : t === "filler"
+        ? "fillerDefaultUnlock"
+        : "fodderTier";
 }
 
 function tierReasonArgs(tr: TierResult): (string | number)[] {
@@ -652,7 +684,7 @@ function tierReasonArgs(tr: TierResult): (string | number)[] {
 function setLabel(
   p: { bestLabel: TriageLabel; bestResult: EmbryoResult | null },
   label: TriageLabel,
-  ruleId: string
+  ruleId: TriageRuleId
 ) {
   p.bestLabel = label;
   if (p.bestResult) {

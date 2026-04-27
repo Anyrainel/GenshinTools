@@ -5,7 +5,16 @@ import type { ArtifactData } from "@/data/types";
 
 export type TriageLabel = "lock" | "unlock";
 
-export type QualityTier = "P" | "Q" | "N" | "T";
+export const QUALITY_TIERS = ["prime", "solid", "filler", "fodder"] as const;
+
+export type QualityTier = (typeof QUALITY_TIERS)[number];
+
+export const QUALITY_TIER_RANK: Record<QualityTier, number> = {
+  prime: 0,
+  solid: 1,
+  filler: 2,
+  fodder: 3,
+};
 
 // Demand & Embryo
 
@@ -41,7 +50,31 @@ export type EmbryoMatch = {
 
 // Decision output
 
-export type TriageRuleId = string;
+export type TriageRuleId =
+  | "primeTierKeep"
+  | "solidTierKeep"
+  | "solidOversupplyUnlock"
+  | "fillerShortfallKeep"
+  | "fillerDefaultUnlock"
+  | "fodderSubstatMismatch"
+  | "fodderTier"
+  | "noDemand"
+  | "setSlotFloorKeep"
+  | "supportSetErHoard"
+  | "allSetErHoard"
+  | "doubleCrit"
+  | "offPiecePattern"
+  | "concentrationValue";
+
+export type TriageSpecialRule =
+  | "supportSetErHoard"
+  | "allSetErHoard"
+  | "levelProtected"
+  | "equippedProtected"
+  | "doubleCrit"
+  | "setSlotFloor"
+  | "offPiecePattern"
+  | `concentrationValue:${string}`;
 
 export type EmbryoResult = {
   embryo: EmbryoMatch;
@@ -50,7 +83,7 @@ export type EmbryoResult = {
   reason: string;
   /** Numeric args for i18n reason templates ({0}, {1}, ...) */
   reasonArgs: (string | number)[];
-  /** Quality tier (P/Q/N/T) */
+  /** Quality tier (prime/solid/filler/fodder) */
   tier?: QualityTier;
 };
 
@@ -68,8 +101,8 @@ export type TriageDecision = {
   decidingResult: EmbryoResult | null;
   /** All embryo evaluations (for detail view) */
   allResults: EmbryoResult[];
-  /** Special rules that fired (SP1, SP5, etc.) */
-  specialRules: string[];
+  /** Special rules that fired, such as ER hoarding or protection rules. */
+  specialRules: TriageSpecialRule[];
   /** Supply/demand context for the deciding embryoKey */
   supplyDemand: SupplyDemandInfo | null;
 };
@@ -93,8 +126,8 @@ export type TriageSettings = {
   levelProtection: number; // artifacts >= this level are protected
   /**
    * When true, high-level artifacts (≥ levelProtection) are auto-protected
-   * (SP3). When false, they flow through normal triage and, if rejected, are
-   * re-evaluated by the strategic value pass (concentrated-stat rule etc.).
+   * When false, they flow through normal triage and, if rejected, are
+   * re-evaluated by the concentration-value pass.
    * Default true.
    */
   highLevelProtection: boolean;
@@ -107,11 +140,11 @@ export type TriageSettings = {
 // Tier system types
 
 export type TierCondition = {
-  k: number; // hit ≥ k desired substats
-  crcd: boolean; // require both CR and CD present
-  is4L: boolean; // require initial 4-line
-  fill: boolean; // require ≥1 filler hit (only when k == subN)
-  tier: Exclude<QualityTier, "T">;
+  requiredDesiredHits: number;
+  requiresCritPair: boolean;
+  requiresFourInitialSubstats: boolean;
+  requiresFillerHit: boolean;
+  tier: Exclude<QualityTier, "fodder">;
   /**
    * End-to-end probability that a random artifact (same set/slot/main-stat
    * scenario) would satisfy this condition. Lower = rarer = better. Used as
@@ -121,10 +154,10 @@ export type TierCondition = {
 };
 
 export type DemandTierEntry = {
-  subN: number;
-  hasCrCd: boolean;
+  desiredSubstatCount: number;
+  hasCritPair: boolean;
   hasFillers: boolean;
-  conditions: TierCondition[]; // sorted best-first (P → Q → N)
+  conditions: TierCondition[]; // sorted best-first (prime → solid → filler)
 };
 
 export type TriageRule = {

@@ -66,20 +66,20 @@ describe("lookupTierEntry", () => {
       ["cr", "cd", "atk%"],
       ["atk"]
     );
-    expect(entry.subN).toBe(3); // cr, cd, atk% (hp excluded as main stat for flower)
-    expect(entry.hasCrCd).toBe(true);
+    expect(entry.desiredSubstatCount).toBe(3); // cr, cd, atk% (hp excluded as main stat for flower)
+    expect(entry.hasCritPair).toBe(true);
     expect(entry.hasFillers).toBe(true);
     expect(entry.conditions.length).toBeGreaterThan(0);
   });
 
-  it("conditions are sorted best-first (P before Q before N)", () => {
+  it("conditions are sorted best-first (prime before solid before filler)", () => {
     const entry = lookupTierEntry(
       "flower",
       "hp",
       ["cr", "cd", "atk%", "er"],
       []
     );
-    const tierOrder = { P: 0, Q: 1, N: 2 };
+    const tierOrder = { prime: 0, solid: 1, filler: 2 };
     for (let i = 1; i < entry.conditions.length; i++) {
       const prev = tierOrder[entry.conditions[i - 1].tier];
       const curr = tierOrder[entry.conditions[i].tier];
@@ -87,10 +87,10 @@ describe("lookupTierEntry", () => {
     }
   });
 
-  it("desired stat matching main stat is excluded from subN", () => {
+  it("desired stat matching main stat is excluded from desired substat count", () => {
     // atk% is both desired and main stat on sands — should be excluded
     const entry = lookupTierEntry("sands", "atk%", ["cr", "cd", "atk%"], []);
-    expect(entry.subN).toBe(2); // only cr, cd remain
+    expect(entry.desiredSubstatCount).toBe(2); // only cr, cd remain
   });
 
   it("caches entries (same key returns same reference)", () => {
@@ -100,24 +100,26 @@ describe("lookupTierEntry", () => {
   });
 
   it("returns empty conditions when no desired substats remain", () => {
-    // flower main = hp, desired = [hp] → hp excluded → subN=0
+    // flower main = hp, desired = [hp] → hp excluded
     const entry = lookupTierEntry("flower", "hp", ["hp"], []);
-    expect(entry.subN).toBe(0);
+    expect(entry.desiredSubstatCount).toBe(0);
     expect(entry.conditions).toHaveLength(0);
   });
 
   it("rare main stat can produce k=0 condition", () => {
     // goblet pyro% is rare (~5%), so even k=0 (any substats) might qualify
     const entry = lookupTierEntry("goblet", "pyro%", ["cr", "cd", "atk%"], []);
-    const k0 = entry.conditions.find((c) => c.k === 0);
-    expect(k0).toBeDefined();
-    // pyro% goblet ~5% main prob, k=0 rarity = mainProb alone
-    expect(["P", "Q", "N"]).toContain(k0!.tier);
+    const noDesiredHitCondition = entry.conditions.find(
+      (condition) => condition.requiredDesiredHits === 0
+    );
+    expect(noDesiredHitCondition).toBeDefined();
+    // pyro% goblet ~5% main prob, no-hit rarity = mainProb alone
+    expect(["prime", "solid", "filler"]).toContain(noDesiredHitCondition!.tier);
   });
 
   it("circlet em has conditions", () => {
     const entry = lookupTierEntry("circlet", "em", ["cr", "cd"], []);
     expect(entry.conditions.length).toBeGreaterThan(0);
-    expect(entry.subN).toBe(2);
+    expect(entry.desiredSubstatCount).toBe(2);
   });
 });

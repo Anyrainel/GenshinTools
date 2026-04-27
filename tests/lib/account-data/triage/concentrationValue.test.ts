@@ -3,8 +3,8 @@ import type { SubStat } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import {
   concentratedStatRule,
-  runStrategicRules,
-} from "@/lib/account-data/triage/strategicValue";
+  runConcentrationValueRules,
+} from "@/lib/account-data/triage/concentrationValue";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 
 /** Build a minimal 5★ ArtifactData with given substat *roll counts*. */
@@ -78,15 +78,15 @@ describe("concentratedStatRule", () => {
   });
 });
 
-describe("runStrategicRules", () => {
+describe("runConcentrationValueRules", () => {
   it("returns not-kept when no rule fires", () => {
     const art = artifactWithRolls({ atk: 3, hp: 3, def: 3 });
-    expect(runStrategicRules(art).kept).toBe(false);
+    expect(runConcentrationValueRules(art).kept).toBe(false);
   });
 
   it("returns first matching rule", () => {
     const art = artifactWithRolls({ cr: 5, cd: 4, atk: 1 });
-    const r = runStrategicRules(art);
+    const r = runConcentrationValueRules(art);
     expect(r.kept).toBe(true);
     if (r.kept) expect(r.reason).toBe("concentrated-crit");
   });

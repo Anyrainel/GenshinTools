@@ -746,9 +746,9 @@ describe("triage is order-independent", () => {
 });
 
 // Lock-state independence: randomizing lock states produces same labels
-// (with SK disabled — SK intentionally uses lock state for tie-breaking)
+// (with set-slot floor disabled — the floor intentionally uses lock state for tie-breaking)
 
-describe("triage is lock-state-independent (SK disabled)", () => {
+describe("triage is lock-state-independent (set-slot floor disabled)", () => {
   const SEEDS = [42, 1337, 271828];
 
   for (const seed of SEEDS) {
@@ -767,7 +767,7 @@ describe("triage is lock-state-independent (SK disabled)", () => {
       const settings: TriageSettings = {
         ...DEFAULT_TRIAGE_SETTINGS,
         ownedOnly: false,
-        setSlotKeep: 0, // disable SK to remove lock-state tie-breaking
+        setSlotKeep: 0, // disable set-slot floor to remove lock-state tie-breaking
       };
 
       // Run with original lock states
@@ -825,10 +825,10 @@ describe("triage is lock-state-independent (SK disabled)", () => {
   }
 });
 
-// Lock-state independence WITH SK enabled: SK may pick different artifacts
+// Lock-state independence with set-slot floor enabled: the floor may pick different artifacts
 // from a tie group, but the total lock/unlock counts per set+slot must match
 
-describe("triage with SK: lock-state changes preserve lock counts per set+slot", () => {
+describe("triage with set-slot floor: lock-state changes preserve lock counts per set+slot", () => {
   const SEEDS = [42, 1337];
 
   for (const seed of SEEDS) {

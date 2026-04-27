@@ -28,19 +28,21 @@ import { allHalfSetIds } from "@/data/gameResources";
 import type { ManagePayload } from "@/lib/account-data/manager/types";
 import type {
   FlexPattern,
+  QualityTier,
   TriageDecision,
   TriageSettings,
 } from "@/lib/account-data/triage/types";
+import { QUALITY_TIERS } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 import { TRIAGE_TIER_COLORS } from "../shared/colors";
 
-type T = ReturnType<typeof useLanguage>["t"];
+type Translator = ReturnType<typeof useLanguage>["t"];
 
 const TIER_KEY = {
-  P: "triage.tier.P",
-  Q: "triage.tier.Q",
-  N: "triage.tier.N",
-  T: "triage.tier.T",
+  prime: "triage.tier.prime",
+  solid: "triage.tier.solid",
+  filler: "triage.tier.filler",
+  fodder: "triage.tier.fodder",
 } as const;
 
 const TIER_COLOR = TRIAGE_TIER_COLORS.text;
@@ -63,13 +65,13 @@ export function TriageHeader({
   buildManagerInstructions,
   tabContentRef,
 }: {
-  t: T;
+  t: Translator;
   settings: TriageSettings;
   onSettingsChange: (s: TriageSettings) => void;
   flexPatterns: FlexPattern[];
   decisions: TriageDecision[];
-  tierFilter: Set<string>;
-  onToggleTier: (tier: string) => void;
+  tierFilter: Set<QualityTier>;
+  onToggleTier: (tier: QualityTier) => void;
   halfSetFilter: Set<string>;
   onHalfSetFilterChange: (nextValues: Set<string>) => void;
   activeSortDim: SortDimension;
@@ -84,10 +86,15 @@ export function TriageHeader({
   const [, forceRender] = useState(0);
 
   const totalArtifacts = decisions.length;
-  const tierCounts = { P: 0, Q: 0, N: 0, T: 0 };
+  const tierCounts: Record<QualityTier, number> = {
+    prime: 0,
+    solid: 0,
+    filler: 0,
+    fodder: 0,
+  };
   for (const d of decisions) {
-    const tier = d.decidingResult?.tier ?? "T";
-    tierCounts[tier as keyof typeof tierCounts]++;
+    const tier = d.decidingResult?.tier ?? "fodder";
+    tierCounts[tier]++;
   }
 
   return (
@@ -145,7 +152,7 @@ export function TriageHeader({
           </button>
         </p>
         <div className="flex items-center gap-1.5 ml-2">
-          {(["P", "Q", "N", "T"] as const).map((tier) => (
+          {QUALITY_TIERS.map((tier) => (
             <FilterChip
               key={tier}
               active={tierFilter.has(tier)}

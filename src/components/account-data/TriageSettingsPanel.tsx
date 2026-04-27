@@ -4,7 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 
-type T = ReturnType<typeof useLanguage>["t"];
+type Translator = ReturnType<typeof useLanguage>["t"];
 
 function SliderRow({
   label,
@@ -79,7 +79,7 @@ export function TriageSettingsPanel({
 }: {
   settings: TriageSettings;
   onChange: (s: TriageSettings) => void;
-  t: T;
+  t: Translator;
 }) {
   const update = <K extends keyof TriageSettings>(
     key: K,

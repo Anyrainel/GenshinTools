@@ -10,10 +10,10 @@ import type { TriageRule, TriageSettings } from "./types";
 /** Key that identifies a build's artifact set configuration. */
 function buildSetKey(build: Build): string {
   if (build.composition === "4pc") return `4pc:${build.artifactSet ?? ""}`;
-  const hs1 = build.halfSet1 != null ? String(build.halfSet1) : "";
-  const hs2 = build.halfSet2 != null ? String(build.halfSet2) : "";
+  const firstHalfSetId = build.halfSet1 != null ? String(build.halfSet1) : "";
+  const secondHalfSetId = build.halfSet2 != null ? String(build.halfSet2) : "";
   // Normalize order so 2pc A+B and 2pc B+A share the same key
-  return `2pc:${[hs1, hs2].sort().join("+")}`;
+  return `2pc:${[firstHalfSetId, secondHalfSetId].sort().join("+")}`;
 }
 
 /**
@@ -34,9 +34,9 @@ function selectBuildPerSet(builds: Build[], constellation: number): Build[] {
   for (const group of groups.values()) {
     let best: Build | null = null;
     for (const b of group) {
-      const mc = b.minCons ?? 0;
-      if (mc > constellation) continue;
-      if (!best || mc > (best.minCons ?? 0)) best = b;
+      const minConstellation = b.minCons ?? 0;
+      if (minConstellation > constellation) continue;
+      if (!best || minConstellation > (best.minCons ?? 0)) best = b;
     }
     // Fallback: build with lowest minCons
     if (!best) {
@@ -109,11 +109,18 @@ function buildToRules(
       source: { type: "4pc", setKey: build.artifactSet },
     });
   } else if (build.composition === "2pc+2pc") {
-    const hs1 = build.halfSet1 != null ? String(build.halfSet1) : null;
-    const hs2 = build.halfSet2 != null ? String(build.halfSet2) : null;
-    if (hs1) demandSources.push({ source: { type: "2pc", halfSetId: hs1 } });
-    if (hs2 && hs2 !== hs1)
-      demandSources.push({ source: { type: "2pc", halfSetId: hs2 } });
+    const firstHalfSetId =
+      build.halfSet1 != null ? String(build.halfSet1) : null;
+    const secondHalfSetId =
+      build.halfSet2 != null ? String(build.halfSet2) : null;
+    if (firstHalfSetId)
+      demandSources.push({
+        source: { type: "2pc", halfSetId: firstHalfSetId },
+      });
+    if (secondHalfSetId && secondHalfSetId !== firstHalfSetId)
+      demandSources.push({
+        source: { type: "2pc", halfSetId: secondHalfSetId },
+      });
   }
 
   for (const { source } of demandSources) {

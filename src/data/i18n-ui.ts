@@ -1973,33 +1973,51 @@ export const i18nUiData = {
     },
     // Quality tier names
     tier: {
-      P: { en: "Prime", zh: "极品" },
-      Q: { en: "Solid", zh: "精良" },
-      N: { en: "Filler", zh: "过渡" },
-      T: { en: "Fodder", zh: "狗粮" },
-      FLEX: { en: "Flex", zh: "散件" },
+      prime: { en: "Prime", zh: "极品" },
+      solid: { en: "Solid", zh: "精良" },
+      filler: { en: "Filler", zh: "过渡" },
+      fodder: { en: "Fodder", zh: "狗粮" },
+      offPiecePattern: { en: "Off-piece keep", zh: "散件保留" },
     },
     // Rule descriptions (what decided the action)
     rule: {
-      TP: { en: "Premium — always keep", zh: "极品装全部保留" },
-      TQ: { en: "Quality — default keep", zh: "精良装默认保留" },
-      QB: { en: "Over-supplied — quality fodder", zh: "供大于求，精良装分解" },
-      NK: { en: "Under-supplied — filler kept", zh: "供不应求，过渡装保留" },
-      TN: { en: "Filler — default fodder", zh: "过渡装默认分解" },
-      TF: { en: "Substats don't match", zh: "副词条不匹配，狗粮分解" },
-      TD: { en: "Main stat no demand", zh: "主词条无需求，狗粮分解" },
+      primeTierKeep: { en: "Prime — always keep", zh: "极品装全部保留" },
+      solidTierKeep: { en: "Solid — default keep", zh: "精良装默认保留" },
+      solidOversupplyUnlock: {
+        en: "Over-supplied — solid fodder",
+        zh: "供大于求，精良装分解",
+      },
+      fillerShortfallKeep: {
+        en: "Under-supplied — filler kept",
+        zh: "供不应求，过渡装保留",
+      },
+      fillerDefaultUnlock: {
+        en: "Filler — default fodder",
+        zh: "过渡装默认分解",
+      },
+      fodderSubstatMismatch: {
+        en: "Substats don't match",
+        zh: "副词条不匹配，狗粮分解",
+      },
+      noDemand: {
+        en: "No build wants this main stat",
+        zh: "主词条无需求，狗粮分解",
+      },
     },
     // Special rule labels (short, for inline display)
     sp: {
-      SP1: { en: "4-liner ER (support set)", zh: "4初始充能（辅助套）" },
-      SP7: { en: "4-liner ER (all sets)", zh: "4初始充能（全套装）" },
-      SP3: { en: "Level protected", zh: "高等级保护" },
-      SP4: { en: "Equipped protected", zh: "已装备保护" },
-      SP5: { en: "4-liner CR+CD", zh: "4初始双暴" },
-      SP6: { en: "Set+slot keep", zh: "套装部位最低保留" },
-      FLEX: { en: "Flex match", zh: "散件匹配保留" },
+      supportSetErHoard: {
+        en: "4-liner ER (support set)",
+        zh: "4初始充能（辅助套）",
+      },
+      allSetErHoard: { en: "4-liner ER (all sets)", zh: "4初始充能（全套装）" },
+      levelProtected: { en: "Level protected", zh: "高等级保护" },
+      equippedProtected: { en: "Equipped protected", zh: "已装备保护" },
+      doubleCrit: { en: "4-liner CR+CD", zh: "4初始双暴" },
+      setSlotFloor: { en: "Set+slot keep", zh: "套装部位最低保留" },
+      offPiecePattern: { en: "Off-piece match", zh: "散件匹配保留" },
     },
-    sv: {
+    concentrationValue: {
       concentratedStat: {
         en: "Concentrated rolls in {0}",
         zh: "词条集中在 {0}",
@@ -2144,9 +2162,9 @@ export const i18nUiData = {
         en: "Extra lock rules (optional)",
         zh: "额外锁定规则（可选）",
       },
-      spSP6Detail: {
-        en: "Set+slot keep: ensures at least N pieces per set+slot.",
-        zh: "套装部位最低保留：确保每个套装的每个部位至少保留 N 个。",
+      setSlotFloorDetail: {
+        en: "Set+slot keep: ensures a minimum piece count per set+slot.",
+        zh: "套装部位最低保留：确保每个套装的每个部位达到最低件数。",
       },
       spProtect: {
         en: "Protection rules (no suggestions)",

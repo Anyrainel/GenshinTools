@@ -4,12 +4,18 @@
  */
 
 import type { MainStat, Slot, SubStat } from "@/data/enums";
-import { getTier, P4L, pJoint, SUB_WEIGHTS, type TriageMode } from "./tierMath";
-import type { DemandTierEntry, TierCondition } from "./types";
+import {
+  FOUR_INITIAL_SUBSTAT_EFFECTIVE_PROBABILITY,
+  getTier,
+  pJoint,
+  SUB_WEIGHTS,
+  type TriageMode,
+} from "./tierMath";
+import type { DemandTierEntry, QualityTier, TierCondition } from "./types";
 
 // Main stat weight pools (same as triage-tier-table.js MAIN_W)
 
-const MAIN_W: Partial<Record<Slot, Record<string, number>>> = {
+const MAIN_STAT_WEIGHTS: Partial<Record<Slot, Record<string, number>>> = {
   sands: { "atk%": 26.66, "hp%": 26.66, "def%": 26.66, em: 10, er: 10 },
   goblet: {
     "atk%": 19.25,
@@ -61,7 +67,7 @@ function makePool(exclude: string[]): Record<string, number> {
 
 export function getMainProb(slot: Slot, mainStat: MainStat): number {
   if (slot === "flower" || slot === "plume") return 1.0;
-  const pool = MAIN_W[slot];
+  const pool = MAIN_STAT_WEIGHTS[slot];
   if (!pool) return 1.0;
   const total = Object.values(pool).reduce((a, b) => a + b, 0);
   const weight = pool[mainStat];
@@ -79,7 +85,10 @@ export function structuralKey(
 ): string {
   const pool = makePool(NON_SUB.has(mainStat) ? [] : [mainStat]);
   const mainProb = getMainProb(slot, mainStat);
-  const tierClass = slot === "flower" || slot === "plume" ? "ff" : "sgc";
+  const tierClass =
+    slot === "flower" || slot === "plume"
+      ? "fixedMainSlots"
+      : "variableMainSlots";
   const mainRounded = mainProb.toFixed(2);
   const poolWeights = Object.values(pool)
     .sort((a, b) => a - b)
@@ -109,71 +118,111 @@ function computeConditionRows(
   slot: Slot,
   mode: TriageMode
 ): TierCondition[] {
-  const subN = remaining.length;
-  if (subN === 0) return [];
+  const desiredSubstatCount = remaining.length;
+  if (desiredSubstatCount === 0) return [];
 
-  const maxK = Math.min(subN, 4);
-  const hasCrCd =
-    subN >= 3 && remaining.includes("cr") && remaining.includes("cd");
-  const crcdStats = ["cr", "cd"];
+  const maxRequiredDesiredHits = Math.min(desiredSubstatCount, 4);
+  const hasCritPair =
+    desiredSubstatCount >= 3 &&
+    remaining.includes("cr") &&
+    remaining.includes("cd");
+  const critPairStats = ["cr", "cd"];
 
   const rows: TierCondition[] = [];
 
   // hit>=0: rare main stat fallback
   {
-    const e2e = mainProb;
-    const tier = getTier(e2e, slot, mode);
-    if (tier !== "T") {
+    const endToEndProbability = mainProb;
+    const tier = getTier(endToEndProbability, slot, mode);
+    if (tier !== "fodder") {
       rows.push({
-        k: 0,
-        crcd: false,
-        is4L: false,
-        fill: false,
+        requiredDesiredHits: 0,
+        requiresCritPair: false,
+        requiresFourInitialSubstats: false,
+        requiresFillerHit: false,
         tier,
-        rarity: e2e,
+        rarity: endToEndProbability,
       });
     }
   }
 
-  for (let k = 1; k <= maxK; k++) {
-    const expandK = k >= 2 || subN === 1;
-    const canCrcd = expandK && hasCrCd && k >= 2 && k < subN;
-    const can4L = expandK;
-    const canFill = expandK && fillers.length > 0 && k === subN && k + 1 <= 4;
+  for (
+    let requiredDesiredHits = 1;
+    requiredDesiredHits <= maxRequiredDesiredHits;
+    requiredDesiredHits++
+  ) {
+    const canUseModifiers =
+      requiredDesiredHits >= 2 || desiredSubstatCount === 1;
+    const canRequireCritPair =
+      canUseModifiers &&
+      hasCritPair &&
+      requiredDesiredHits >= 2 &&
+      requiredDesiredHits < desiredSubstatCount;
+    const canRequireFourInitialSubstats = canUseModifiers;
+    const canRequireFillerHit =
+      canUseModifiers &&
+      fillers.length > 0 &&
+      requiredDesiredHits === desiredSubstatCount &&
+      requiredDesiredHits + 1 <= 4;
 
     // Enumerate modifier combos and compute tiers
     type Combo = {
-      crcd: boolean;
-      fourL: boolean;
-      fill: boolean;
-      e2e: number;
-      tier: Exclude<"T", string>;
+      requiresCritPair: boolean;
+      requiresFourInitialSubstats: boolean;
+      requiresFillerHit: boolean;
+      endToEndProbability: number;
+      tier: QualityTier;
       key: string;
     };
     const comboTier = new Map<string, string>();
     const comboData: Combo[] = [];
 
-    for (const crcd of canCrcd ? [false, true] : [false]) {
-      for (const fourL of can4L ? [false, true] : [false]) {
-        for (const fill of canFill ? [false, true] : [false]) {
-          if (k + (fill ? 1 : 0) > 4) continue;
+    for (const requiresCritPair of canRequireCritPair
+      ? [false, true]
+      : [false]) {
+      for (const requiresFourInitialSubstats of canRequireFourInitialSubstats
+        ? [false, true]
+        : [false]) {
+        for (const requiresFillerHit of canRequireFillerHit
+          ? [false, true]
+          : [false]) {
+          if (requiredDesiredHits + (requiresFillerHit ? 1 : 0) > 4) continue;
 
-          const f = fill ? 1 : 0;
-          const p = crcd
-            ? pJoint(pool, remaining, fillers, k, f, 4, crcdStats)
-            : pJoint(pool, remaining, fillers, k, f, 4);
-          if (p <= 0) continue;
+          const fillerHitCount = requiresFillerHit ? 1 : 0;
+          const substatProbability = requiresCritPair
+            ? pJoint(
+                pool,
+                remaining,
+                fillers,
+                requiredDesiredHits,
+                fillerHitCount,
+                4,
+                critPairStats
+              )
+            : pJoint(
+                pool,
+                remaining,
+                fillers,
+                requiredDesiredHits,
+                fillerHitCount,
+                4
+              );
+          if (substatProbability <= 0) continue;
 
-          const e2e = fourL ? mainProb * P4L * p : mainProb * p;
-          const tier = getTier(e2e, slot, mode);
-          const key = `${+crcd},${+fourL},${+fill}`;
+          const endToEndProbability = requiresFourInitialSubstats
+            ? mainProb *
+              FOUR_INITIAL_SUBSTAT_EFFECTIVE_PROBABILITY *
+              substatProbability
+            : mainProb * substatProbability;
+          const tier = getTier(endToEndProbability, slot, mode);
+          const key = `${+requiresCritPair},${+requiresFourInitialSubstats},${+requiresFillerHit}`;
           comboTier.set(key, tier);
           comboData.push({
-            crcd,
-            fourL,
-            fill,
-            e2e,
-            tier: tier as Exclude<"T", string>,
+            requiresCritPair,
+            requiresFourInitialSubstats,
+            requiresFillerHit,
+            endToEndProbability,
+            tier,
             key,
           });
         }
@@ -182,35 +231,49 @@ function computeConditionRows(
 
     // Lattice filter: show combo only if each active modifier is needed
     for (const combo of comboData) {
-      const { crcd, fourL, fill } = combo;
-      const isBase = !crcd && !fourL && !fill;
+      const {
+        requiresCritPair,
+        requiresFourInitialSubstats,
+        requiresFillerHit,
+      } = combo;
+      const isBase =
+        !requiresCritPair && !requiresFourInitialSubstats && !requiresFillerHit;
 
       if (!isBase) {
         let dominated = false;
-        if (crcd) {
-          const t = comboTier.get(`0,${+fourL},${+fill}`);
-          if (!t || t === "P") dominated = true;
+        if (requiresCritPair) {
+          const tierWithoutModifier = comboTier.get(
+            `0,${+requiresFourInitialSubstats},${+requiresFillerHit}`
+          );
+          if (!tierWithoutModifier || tierWithoutModifier === "prime")
+            dominated = true;
         }
-        if (fourL) {
-          const t = comboTier.get(`${+crcd},0,${+fill}`);
-          if (!t || t === "P") dominated = true;
+        if (requiresFourInitialSubstats) {
+          const tierWithoutModifier = comboTier.get(
+            `${+requiresCritPair},0,${+requiresFillerHit}`
+          );
+          if (!tierWithoutModifier || tierWithoutModifier === "prime")
+            dominated = true;
         }
-        if (fill) {
-          const t = comboTier.get(`${+crcd},${+fourL},0`);
-          if (!t || t === "P") dominated = true;
+        if (requiresFillerHit) {
+          const tierWithoutModifier = comboTier.get(
+            `${+requiresCritPair},${+requiresFourInitialSubstats},0`
+          );
+          if (!tierWithoutModifier || tierWithoutModifier === "prime")
+            dominated = true;
         }
         if (dominated) continue;
       }
 
-      if (combo.tier === "T") continue; // Only keep P/Q/N conditions
+      if (combo.tier === "fodder") continue;
 
       rows.push({
-        k,
-        crcd,
-        is4L: fourL,
-        fill,
-        tier: combo.tier as Exclude<"T", string>,
-        rarity: combo.e2e,
+        requiredDesiredHits,
+        requiresCritPair,
+        requiresFourInitialSubstats,
+        requiresFillerHit,
+        tier: combo.tier as Exclude<ReturnType<typeof getTier>, "fodder">,
+        rarity: combo.endToEndProbability,
       });
     }
   }
@@ -253,14 +316,14 @@ export function lookupTierEntry(
     mode
   );
 
-  const hasCrCd =
+  const hasCritPair =
     remaining.length >= 3 &&
     remaining.includes("cr") &&
     remaining.includes("cd");
 
   const entry: DemandTierEntry = {
-    subN: remaining.length,
-    hasCrCd,
+    desiredSubstatCount: remaining.length,
+    hasCritPair,
     hasFillers: effectiveFillers.length > 0,
     conditions,
   };

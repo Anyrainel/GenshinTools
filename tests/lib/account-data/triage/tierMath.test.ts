@@ -87,49 +87,49 @@ describe("pJoint", () => {
 
 describe("getTier", () => {
   it("very rare flower → Premium", () => {
-    expect(getTier(0.005, "flower")).toBe("P");
+    expect(getTier(0.005, "flower")).toBe("prime");
   });
 
   it("moderately rare flower → Quality", () => {
-    expect(getTier(0.02, "flower")).toBe("Q");
+    expect(getTier(0.02, "flower")).toBe("solid");
   });
 
   it("somewhat rare flower → Neutral", () => {
-    expect(getTier(0.1, "flower")).toBe("N");
+    expect(getTier(0.1, "flower")).toBe("filler");
   });
 
   it("common flower → Trash", () => {
-    expect(getTier(0.5, "flower")).toBe("T");
+    expect(getTier(0.5, "flower")).toBe("fodder");
   });
 
   it("sands has stricter thresholds", () => {
-    // 0.008 is Q for flower but P for sands? No: P threshold for sands = 0.005
-    expect(getTier(0.003, "sands")).toBe("P");
-    expect(getTier(0.008, "sands")).toBe("Q");
-    expect(getTier(0.05, "sands")).toBe("N");
-    expect(getTier(0.15, "sands")).toBe("T");
+    // 0.008 is solid for flower but not prime for sands; prime threshold for sands is 0.005.
+    expect(getTier(0.003, "sands")).toBe("prime");
+    expect(getTier(0.008, "sands")).toBe("solid");
+    expect(getTier(0.05, "sands")).toBe("filler");
+    expect(getTier(0.15, "sands")).toBe("fodder");
   });
 
   it("exact threshold boundaries", () => {
     // flowerFeather: premium=0.01, quality=0.04, neutral=0.15
-    expect(getTier(0.01, "flower")).toBe("P"); // <= 0.01
-    expect(getTier(0.04, "flower")).toBe("Q"); // <= 0.04
-    expect(getTier(0.15, "flower")).toBe("N"); // <= 0.15
-    expect(getTier(0.151, "flower")).toBe("T");
+    expect(getTier(0.01, "flower")).toBe("prime"); // <= 0.01
+    expect(getTier(0.04, "flower")).toBe("solid"); // <= 0.04
+    expect(getTier(0.15, "flower")).toBe("filler"); // <= 0.15
+    expect(getTier(0.151, "flower")).toBe("fodder");
   });
 
   it("loose mode uses looser thresholds — promotes artifacts one tier looser", () => {
-    // A rarity of 0.08 is N in strict (> 0.04 quality cap on flower) but Q in loose (<= 0.08).
-    expect(getTier(0.08, "flower", "strict")).toBe("N");
-    expect(getTier(0.08, "flower", "loose")).toBe("Q");
+    // A rarity of 0.08 is filler in strict (> 0.04 solid cap on flower) but solid in loose.
+    expect(getTier(0.08, "flower", "strict")).toBe("filler");
+    expect(getTier(0.08, "flower", "loose")).toBe("solid");
 
-    // A rarity of 0.2 is T on flower in strict (> 0.15) but N in loose (<= 0.25).
-    expect(getTier(0.2, "flower", "strict")).toBe("T");
-    expect(getTier(0.2, "flower", "loose")).toBe("N");
+    // A rarity of 0.2 is fodder on flower in strict (> 0.15) but filler in loose.
+    expect(getTier(0.2, "flower", "strict")).toBe("fodder");
+    expect(getTier(0.2, "flower", "loose")).toBe("filler");
 
-    // Sands: 0.03 is T strict (> 0.02) but Q loose (<= 0.04).
-    expect(getTier(0.03, "sands", "strict")).toBe("N");
-    expect(getTier(0.03, "sands", "loose")).toBe("Q");
+    // Sands: 0.03 is filler strict (> 0.02) but solid loose (<= 0.04).
+    expect(getTier(0.03, "sands", "strict")).toBe("filler");
+    expect(getTier(0.03, "sands", "loose")).toBe("solid");
   });
 
   it("strict mode is the default when mode argument is omitted", () => {

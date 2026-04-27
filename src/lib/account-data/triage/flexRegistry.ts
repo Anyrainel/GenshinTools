@@ -166,19 +166,19 @@ export function buildFlexPatterns(_rules: TriageRule[]): FlexPattern[] {
   const results: FlexPattern[] = [];
 
   for (const [slot, mainStats, subs, defaultOff] of CURATED) {
-    for (const ms of expandMainStats(mainStats)) {
-      const resolved = resolveSubs(subs, ms);
+    for (const mainStat of expandMainStats(mainStats)) {
+      const resolved = resolveSubs(subs, mainStat);
       if (!resolved) continue;
 
       const sorted = sortSubs(resolved);
-      const rarity = computeRarity(slot, ms, sorted);
+      const rarity = computeRarity(slot, mainStat, sorted);
       if (rarity < 0) continue;
 
-      const key = `flex:${slot}:${ms}:${sorted.join(",")}`;
+      const key = `flex:${slot}:${mainStat}:${sorted.join(",")}`;
       const pattern: FlexPattern = {
         key,
         slot,
-        mainStat: ms,
+        mainStat,
         requiredSubs: sorted,
         rarity,
       };

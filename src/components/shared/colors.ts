@@ -151,16 +151,16 @@ export function getReceiverColor(
 
 export const TRIAGE_TIER_COLORS = {
   badge: {
-    P: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-    Q: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-    N: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    T: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30",
+    prime: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    solid: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    filler: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+    fodder: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30",
   } as Record<string, string>,
   text: {
-    P: "text-amber-300",
-    Q: "text-purple-300",
-    N: "text-blue-300",
-    T: "text-zinc-400",
+    prime: "text-amber-300",
+    solid: "text-purple-300",
+    filler: "text-blue-300",
+    fodder: "text-zinc-400",
   } as Record<string, string>,
 } as const;
 
@@ -168,7 +168,7 @@ export function getTriageTierColor(
   tier: string,
   type: "badge" | "text"
 ): string {
-  return TRIAGE_TIER_COLORS[type][tier] ?? TRIAGE_TIER_COLORS[type].T;
+  return TRIAGE_TIER_COLORS[type][tier] ?? TRIAGE_TIER_COLORS[type].fodder;
 }
 // ── Sentiment badge colors (good/bad indicators) ──
 

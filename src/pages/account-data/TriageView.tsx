@@ -23,7 +23,12 @@ import { buildTriageInstructions } from "@/lib/account-data/manager/instructions
 import { runTriage } from "@/lib/account-data/triage/triageEngine";
 import type {
   FlexPattern,
+  QualityTier,
   TriageDecision,
+} from "@/lib/account-data/triage/types";
+import {
+  QUALITY_TIER_RANK,
+  QUALITY_TIERS,
 } from "@/lib/account-data/triage/types";
 import { useTriageStore } from "@/stores/useTriageStore";
 
@@ -32,7 +37,6 @@ interface TriageViewProps {
   onShowTour?: () => void;
 }
 
-const TIER_RANK_MAP: Record<string, number> = { P: 0, Q: 1, N: 2, T: 3 };
 const SLOT_ORDER: Record<string, number> = {
   flower: 0,
   plume: 1,
@@ -51,8 +55,8 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const settings = useTriageStore((s) => s.settings);
   const setSettings = useTriageStore((s) => s.setSettings);
 
-  const [tierFilter, setTierFilter] = useState<Set<string>>(
-    new Set(["P", "Q", "N", "T"])
+  const [tierFilter, setTierFilter] = useState<Set<QualityTier>>(
+    new Set(QUALITY_TIERS)
   );
   const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(new Set());
 
@@ -71,7 +75,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     [activeSortDim]
   );
 
-  const toggleTier = (tier: string) => {
+  const toggleTier = (tier: QualityTier) => {
     setTierFilter((prev) => {
       const next = new Set(prev);
       if (next.has(tier)) {
@@ -99,11 +103,12 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
 
   const hasSP = useCallback(
     (d: TriageDecision) =>
-      d.specialRules.includes("SP3") || d.specialRules.includes("SP4"),
+      d.specialRules.includes("levelProtected") ||
+      d.specialRules.includes("equippedProtected"),
     []
   );
   const passesTier = useCallback(
-    (d: TriageDecision) => tierFilter.has(d.decidingResult?.tier ?? "T"),
+    (d: TriageDecision) => tierFilter.has(d.decidingResult?.tier ?? "fodder"),
     [tierFilter]
   );
   const passesFilters = useCallback(
@@ -125,8 +130,8 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
         );
       };
       const compareTier = (a: TriageDecision, b: TriageDecision) =>
-        (TIER_RANK_MAP[a.decidingResult?.tier ?? "T"] ?? 3) -
-        (TIER_RANK_MAP[b.decidingResult?.tier ?? "T"] ?? 3);
+        QUALITY_TIER_RANK[a.decidingResult?.tier ?? "fodder"] -
+        QUALITY_TIER_RANK[b.decidingResult?.tier ?? "fodder"];
       const compareLevel = (a: TriageDecision, b: TriageDecision) =>
         b.artifact.level - a.artifact.level;
 

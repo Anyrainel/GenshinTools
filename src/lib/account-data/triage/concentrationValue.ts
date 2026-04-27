@@ -1,5 +1,5 @@
 /**
- * Strategic value pass for high-level artifacts.
+ * Concentration value pass for high-level artifacts.
  *
  * When `highLevelProtection` is disabled, artifacts at or above
  * `levelProtection` that fail normal triage are re-evaluated by a list of
@@ -14,11 +14,11 @@ import type { ArtifactData } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 
-export type StrategicRuleResult =
-  | { kept: true; reason: StrategicReason }
+export type ConcentrationValueRuleResult =
+  | { kept: true; reason: ConcentrationValueReason }
   | { kept: false };
 
-export type StrategicReason =
+export type ConcentrationValueReason =
   | "concentrated-crit"
   | "concentrated-er"
   | "concentrated-em"
@@ -26,7 +26,9 @@ export type StrategicReason =
   | "concentrated-hp%"
   | "concentrated-def%";
 
-export type StrategicRule = (artifact: ArtifactData) => StrategicRuleResult;
+export type ConcentrationValueRule = (
+  artifact: ArtifactData
+) => ConcentrationValueRuleResult;
 
 // Concentrated-stat rule
 
@@ -35,7 +37,7 @@ export type StrategicRule = (artifact: ArtifactData) => StrategicRuleResult;
  * judging concentration. Crit combines CR + CD; everything else is a single
  * substat.
  */
-const CATEGORIES: { reason: StrategicReason; stats: SubStat[] }[] = [
+const CATEGORIES: { reason: ConcentrationValueReason; stats: SubStat[] }[] = [
   { reason: "concentrated-crit", stats: ["cr", "cd"] },
   { reason: "concentrated-er", stats: ["er"] },
   { reason: "concentrated-em", stats: ["em"] },
@@ -95,7 +97,7 @@ function rollCountsByStat(artifact: ArtifactData): {
 
 /** Concentrated-stat rule: fires if ≥60% of upgrade rolls landed in one
  * category. Upgrade rolls = total rolls − number of distinct substats. */
-export const concentratedStatRule: StrategicRule = (artifact) => {
+export const concentratedStatRule: ConcentrationValueRule = (artifact) => {
   const { total, perStat } = rollCountsByStat(artifact);
   const numSubs = Object.values(perStat).filter((n) => (n ?? 0) > 0).length;
   const upgradeTotal = Math.max(0, total - numSubs);
@@ -116,10 +118,12 @@ export const concentratedStatRule: StrategicRule = (artifact) => {
 
 // Rule registry + public runner
 
-const RULES: StrategicRule[] = [concentratedStatRule];
+const RULES: ConcentrationValueRule[] = [concentratedStatRule];
 
-/** Run all strategic rules; return first match or not-kept. */
-export function runStrategicRules(artifact: ArtifactData): StrategicRuleResult {
+/** Run all concentration rules; return first match or not-kept. */
+export function runConcentrationValueRules(
+  artifact: ArtifactData
+): ConcentrationValueRuleResult {
   for (const rule of RULES) {
     const result = rule(artifact);
     if (result.kept) return result;

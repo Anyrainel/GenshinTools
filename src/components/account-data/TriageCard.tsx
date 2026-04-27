@@ -6,7 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   EmbryoResult,
+  QualityTier,
   TriageDecision,
+  TriageRuleId,
+  TriageSpecialRule,
 } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 import { getRarityColor, getTriageTierColor } from "../shared/colors";
@@ -19,24 +22,24 @@ export type TriageCardSection =
 
 // Helpers
 
-type T = ReturnType<typeof useLanguage>["t"];
+type Translator = ReturnType<typeof useLanguage>["t"];
 
 const RULE_KEY = {
-  TP: "triage.rule.TP",
-  TQ: "triage.rule.TQ",
-  QB: "triage.rule.QB",
-  NK: "triage.rule.NK",
-  TN: "triage.rule.TN",
-  TF: "triage.rule.TF",
-  TD: "triage.rule.TD",
+  primeTierKeep: "triage.rule.primeTierKeep",
+  solidTierKeep: "triage.rule.solidTierKeep",
+  solidOversupplyUnlock: "triage.rule.solidOversupplyUnlock",
+  fillerShortfallKeep: "triage.rule.fillerShortfallKeep",
+  fillerDefaultUnlock: "triage.rule.fillerDefaultUnlock",
+  fodderSubstatMismatch: "triage.rule.fodderSubstatMismatch",
+  noDemand: "triage.rule.noDemand",
 } as const;
 
 const TIER_KEY = {
-  P: "triage.tier.P",
-  Q: "triage.tier.Q",
-  N: "triage.tier.N",
-  T: "triage.tier.T",
-  FLEX: "triage.tier.FLEX",
+  prime: "triage.tier.prime",
+  solid: "triage.tier.solid",
+  filler: "triage.tier.filler",
+  fodder: "triage.tier.fodder",
+  offPiecePattern: "triage.tier.offPiecePattern",
 } as const;
 
 const CHIP_KEY = {
@@ -48,19 +51,19 @@ const CHIP_KEY = {
 } as const;
 
 const SP_KEY = {
-  SP1: "triage.sp.SP1",
-  SP3: "triage.sp.SP3",
-  SP4: "triage.sp.SP4",
-  SP5: "triage.sp.SP5",
-  SP6: "triage.sp.SP6",
-  SP7: "triage.sp.SP7",
-  FLEX: "triage.sp.FLEX",
+  supportSetErHoard: "triage.sp.supportSetErHoard",
+  allSetErHoard: "triage.sp.allSetErHoard",
+  levelProtected: "triage.sp.levelProtected",
+  equippedProtected: "triage.sp.equippedProtected",
+  doubleCrit: "triage.sp.doubleCrit",
+  setSlotFloor: "triage.sp.setSlotFloor",
+  offPiecePattern: "triage.sp.offPiecePattern",
 } as const;
 
 function formatRule(
-  ruleId: string,
+  ruleId: TriageRuleId,
   reasonArgs: (string | number)[],
-  t: T
+  t: Translator
 ): string {
   const key = RULE_KEY[ruleId as keyof typeof RULE_KEY];
   if (!key) return "";
@@ -72,37 +75,45 @@ function formatRule(
   return text;
 }
 
-function tierName(tier: string, t: T): string {
+function tierName(
+  tier: QualityTier | "offPiecePattern",
+  t: Translator
+): string {
   const key = TIER_KEY[tier as keyof typeof TIER_KEY];
   return key ? t.ui(key) : tier;
 }
 
-function strategicValueStatLabel(reason: string, t: T): string {
+function concentrationValueStatLabel(reason: string, t: Translator): string {
   if (reason === "concentrated-crit") {
     return `${t.statShort("cr")}+${t.statShort("cd")}`;
   }
   return t.statShort(reason.replace("concentrated-", ""));
 }
 
-function spName(sp: string, t: T): string {
-  if (sp.startsWith("SV:")) {
-    const reason = sp.slice(3);
+function spName(sp: TriageSpecialRule, t: Translator): string {
+  if (sp.startsWith("concentrationValue:")) {
+    const reason = sp.slice("concentrationValue:".length);
     return t.format(
-      "triage.sv.concentratedStat",
-      strategicValueStatLabel(reason, t)
+      "triage.concentrationValue.concentratedStat",
+      concentrationValueStatLabel(reason, t)
     );
   }
   const key = SP_KEY[sp as keyof typeof SP_KEY];
   return key ? t.ui(key) : sp;
 }
 
-function strategicValueReason(decision: TriageDecision, t: T): string | null {
-  const svRule = decision.specialRules.find((sp) => sp.startsWith("SV:"));
-  if (!svRule) return null;
-  return `${t.ui("triage.detail.lockReason")}: ${spName(svRule, t)}`;
+function concentrationValueReason(
+  decision: TriageDecision,
+  t: Translator
+): string | null {
+  const concentrationRule = decision.specialRules.find((specialRule) =>
+    specialRule.startsWith("concentrationValue:")
+  );
+  if (!concentrationRule) return null;
+  return `${t.ui("triage.detail.lockReason")}: ${spName(concentrationRule, t)}`;
 }
 
-function demandSourceLabel(result: EmbryoResult, t: T): string {
+function demandSourceLabel(result: EmbryoResult, t: Translator): string {
   const src = result.embryo.demand.demandSource;
   if (src.type === "4pc") return t.ui("computeFilters.fourPc");
   if (src.type === "2pc") return t.ui("computeFilters.twoPc");
@@ -147,17 +158,19 @@ function groupEvaluationResults(results: EmbryoResult[]) {
 
 function TierBadge({
   tier,
-  colorTier = tier,
+  colorTier,
 }: {
-  tier: string;
-  colorTier?: string;
+  tier: QualityTier | "offPiecePattern";
+  colorTier?: QualityTier;
 }) {
   const { t } = useLanguage();
+  const resolvedColorTier =
+    colorTier ?? (tier === "offPiecePattern" ? "prime" : tier);
   return (
     <span
       className={cn(
         "inline-flex items-center justify-center h-5 px-1 rounded text-[10px] font-bold border shrink-0",
-        getTriageTierColor(colorTier, "badge")
+        getTriageTierColor(resolvedColorTier, "badge")
       )}
     >
       {tierName(tier, t)}
@@ -194,12 +207,12 @@ export function TriageCard({
   const setName = t.artifact(artifact.setKey);
   const dr = decision.decidingResult;
   const isProtected = section === "protected";
-  const isNoDemandDecision = dr?.ruleId === "TD";
-  const strategicValueText = strategicValueReason(decision, t);
+  const isNoDemandDecision = dr?.ruleId === "noDemand";
+  const concentrationValueText = concentrationValueReason(decision, t);
   const showFlexTierBadge =
     dr?.tier != null &&
-    (dr.tier === "N" || dr.tier === "T") &&
-    decision.specialRules.includes("FLEX");
+    (dr.tier === "filler" || dr.tier === "fodder") &&
+    decision.specialRules.includes("offPiecePattern");
 
   const chipKind: keyof typeof CHIP_COLOR =
     section === "recommendLock"
@@ -243,8 +256,8 @@ export function TriageCard({
                   </span>
                   {dr?.tier && !isProtected && (
                     <TierBadge
-                      tier={showFlexTierBadge ? "FLEX" : dr.tier}
-                      colorTier={showFlexTierBadge ? "P" : dr.tier}
+                      tier={showFlexTierBadge ? "offPiecePattern" : dr.tier}
+                      colorTier={showFlexTierBadge ? "prime" : dr.tier}
                     />
                   )}
                 </div>
@@ -270,9 +283,9 @@ export function TriageCard({
             {(() => {
               let spRules = decision.specialRules;
               if (isProtected) {
-                spRules = spRules.includes("SP3")
-                  ? ["SP3"]
-                  : spRules.filter((sp) => sp === "SP4");
+                spRules = spRules.includes("levelProtected")
+                  ? ["levelProtected"]
+                  : spRules.filter((sp) => sp === "equippedProtected");
               }
               if (spRules.length > 0) {
                 return (
@@ -317,8 +330,8 @@ export function TriageCard({
 
               {/* Right: evaluation details */}
               <div className="flex-1 min-w-0 space-y-2 text-xs">
-                {strategicValueText && (
-                  <div className="text-amber-400">{strategicValueText}</div>
+                {concentrationValueText && (
+                  <div className="text-amber-400">{concentrationValueText}</div>
                 )}
 
                 {/* Supply/demand context */}
@@ -341,21 +354,22 @@ export function TriageCard({
                       {decision.supplyDemand.demand > 0 ? (
                         <>
                           {t.ui("triage.detail.supply")}:{" "}
-                          {decision.supplyDemand.supplyByTier.P}{" "}
-                          {tierName("P", t)}
+                          {decision.supplyDemand.supplyByTier.prime}{" "}
+                          {tierName("prime", t)}
                           {" / "}
-                          {decision.supplyDemand.supplyByTier.Q}{" "}
-                          {tierName("Q", t)}
+                          {decision.supplyDemand.supplyByTier.solid}{" "}
+                          {tierName("solid", t)}
                         </>
                       ) : (
                         <>
                           {t.ui("triage.detail.supply")}:{" "}
-                          {decision.supplyDemand.tierTotal} {tierName("T", t)}
+                          {decision.supplyDemand.tierTotal}{" "}
+                          {tierName("fodder", t)}
                         </>
                       )}
                     </div>
                     {dr?.tier &&
-                      (dr.tier === "Q" || dr.tier === "N") &&
+                      (dr.tier === "solid" || dr.tier === "filler") &&
                       decision.supplyDemand.demand > 0 && (
                         <div>
                           {t
@@ -374,11 +388,11 @@ export function TriageCard({
                   </div>
                 )}
 
-                {/* All character evaluations (skip T tier — no meaningful match) */}
-                {decision.allResults.some((r) => r.tier !== "T") && (
+                {/* All character evaluations (skip fodder tier — no meaningful match) */}
+                {decision.allResults.some((r) => r.tier !== "fodder") && (
                   <div className="border-t border-border/50 pt-1.5 space-y-0.5">
                     {groupEvaluationResults(
-                      decision.allResults.filter((r) => r.tier !== "T")
+                      decision.allResults.filter((r) => r.tier !== "fodder")
                     ).map((group) => {
                       const [first] = group.results;
                       const chars = group.results

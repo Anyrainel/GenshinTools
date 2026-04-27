@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS } from "../shared/colors";
 
 const TIER_KEY = {
-  P: "triage.tier.P",
-  Q: "triage.tier.Q",
-  N: "triage.tier.N",
-  T: "triage.tier.T",
+  prime: "triage.tier.prime",
+  solid: "triage.tier.solid",
+  filler: "triage.tier.filler",
+  fodder: "triage.tier.fodder",
 } as const;
 
 const TIER_COLOR = TRIAGE_TIER_COLORS.text;
@@ -29,7 +29,7 @@ export function TriageHelpDialog({
   const { t } = useLanguage();
   const tiers = [
     {
-      tier: "P" as const,
+      tier: "prime" as const,
       border: "border-amber-500/25",
       descKey: "triage.help.tierPrime",
       badges: [
@@ -37,7 +37,7 @@ export function TriageHelpDialog({
       ],
     },
     {
-      tier: "Q" as const,
+      tier: "solid" as const,
       border: "border-purple-500/25",
       descKey: "triage.help.tierSolid",
       badges: [
@@ -46,7 +46,7 @@ export function TriageHelpDialog({
       ],
     },
     {
-      tier: "N" as const,
+      tier: "filler" as const,
       border: "border-blue-500/25",
       descKey: "triage.help.tierFiller",
       badges: [
@@ -55,7 +55,7 @@ export function TriageHelpDialog({
       ],
     },
     {
-      tier: "T" as const,
+      tier: "fodder" as const,
       border: "border-zinc-500/25",
       descKey: "triage.help.tierFodder",
       badges: [
@@ -135,16 +135,16 @@ export function TriageHelpDialog({
                 <span className="shrink-0 w-14" />
                 <div className="flex-1 flex h-6 rounded overflow-hidden">
                   <div className="flex-[2] bg-amber-500/25 text-amber-300 flex items-center justify-center">
-                    {t.ui("triage.tier.P")}
+                    {t.ui("triage.tier.prime")}
                   </div>
                   <div className="flex-[5] bg-purple-500/25 text-purple-300 flex items-center justify-center">
-                    {t.ui("triage.tier.Q")}
+                    {t.ui("triage.tier.solid")}
                   </div>
                   <div className="flex-[5] bg-blue-500/20 text-blue-300 flex items-center justify-center">
-                    {t.ui("triage.tier.N")}
+                    {t.ui("triage.tier.filler")}
                   </div>
                   <div className="flex-[2] bg-zinc-500/15 text-zinc-400 flex items-center justify-center">
-                    {t.ui("triage.tier.T")}
+                    {t.ui("triage.tier.fodder")}
                   </div>
                 </div>
               </div>
@@ -216,9 +216,9 @@ export function TriageHelpDialog({
                 <div className="flex flex-wrap gap-x-4 gap-y-0.5">
                   {(
                     [
-                      { key: "triage.sp.SP1" },
-                      { key: "triage.sp.SP5" },
-                      { key: "triage.sp.FLEX" },
+                      { key: "triage.sp.supportSetErHoard" },
+                      { key: "triage.sp.doubleCrit" },
+                      { key: "triage.sp.offPiecePattern" },
                     ] as const
                   ).map(({ key }) => (
                     <span key={key} className="text-xs text-muted-foreground">
@@ -227,7 +227,7 @@ export function TriageHelpDialog({
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                  · {t.ui("triage.help.spSP6Detail")}
+                  · {t.ui("triage.help.setSlotFloorDetail")}
                 </p>
               </div>
               <div className="rounded-lg border border-border p-2.5">
@@ -240,8 +240,8 @@ export function TriageHelpDialog({
                 <div className="flex flex-wrap gap-x-4 gap-y-0.5">
                   {(
                     [
-                      { key: "triage.sp.SP3" },
-                      { key: "triage.sp.SP4" },
+                      { key: "triage.sp.levelProtected" },
+                      { key: "triage.sp.equippedProtected" },
                     ] as const
                   ).map(({ key }) => (
                     <span key={key} className="text-xs text-muted-foreground">

@@ -11,7 +11,7 @@ function makeRule(opts: {
   optional?: SubStat[];
   fillers?: SubStat[];
   conditions: TierCondition[];
-  subN?: number;
+  desiredSubstatCount?: number;
 }): TriageRule {
   return {
     characterId: "test",
@@ -23,8 +23,8 @@ function makeRule(opts: {
     optional: opts.optional ?? [],
     fillers: opts.fillers ?? [],
     tierEntry: {
-      subN: opts.subN ?? opts.desired.length,
-      hasCrCd: opts.desired.includes("cr") && opts.desired.includes("cd"),
+      desiredSubstatCount: opts.desiredSubstatCount ?? opts.desired.length,
+      hasCritPair: opts.desired.includes("cr") && opts.desired.includes("cd"),
       hasFillers: (opts.fillers ?? []).length > 0,
       conditions: opts.conditions,
     },
@@ -32,15 +32,22 @@ function makeRule(opts: {
 }
 
 describe("evaluateTier", () => {
-  it("returns T when no conditions match", () => {
+  it("returns fodder when no conditions match", () => {
     const rule = makeRule({
       desired: ["cr", "cd", "atk%"],
       conditions: [
-        { k: 3, crcd: false, is4L: false, fill: false, tier: "P", rarity: 0 },
+        {
+          requiredDesiredHits: 3,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "prime",
+          rarity: 0,
+        },
       ],
     });
     const result = evaluateTier(["hp%", "def%", "er", "em"], false, rule);
-    expect(result.tier).toBe("T");
+    expect(result.tier).toBe("fodder");
     expect(result.hitCount).toBe(0);
     expect(result.matchedCondition).toBeNull();
   });
@@ -49,66 +56,129 @@ describe("evaluateTier", () => {
     const rule = makeRule({
       desired: ["cr", "cd", "atk%"],
       conditions: [
-        { k: 3, crcd: false, is4L: false, fill: false, tier: "P", rarity: 0 },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
-        { k: 1, crcd: false, is4L: false, fill: false, tier: "N", rarity: 0 },
+        {
+          requiredDesiredHits: 3,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "prime",
+          rarity: 0,
+        },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "solid",
+          rarity: 0,
+        },
+        {
+          requiredDesiredHits: 1,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "filler",
+          rarity: 0,
+        },
       ],
     });
     const result = evaluateTier(["cr", "cd", "er", "em"], false, rule);
-    expect(result.tier).toBe("Q");
+    expect(result.tier).toBe("solid");
     expect(result.hitCount).toBe(2);
   });
 
-  it("crcd condition requires both cr and cd", () => {
+  it("crit-pair condition requires both cr and cd", () => {
     const rule = makeRule({
       desired: ["cr", "cd", "atk%"],
       conditions: [
-        { k: 2, crcd: true, is4L: false, fill: false, tier: "P", rarity: 0 },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: true,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "prime",
+          rarity: 0,
+        },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "solid",
+          rarity: 0,
+        },
       ],
     });
-    // Has cr+atk% but NOT cd → crcd fails, falls to Q
+    // Has cr+atk% but NOT cd → crit-pair requirement fails, falls to solid.
     const r1 = evaluateTier(["cr", "atk%", "er", "em"], false, rule);
-    expect(r1.tier).toBe("Q");
+    expect(r1.tier).toBe("solid");
 
-    // Has cr+cd → crcd passes
+    // Has cr+cd → crit-pair requirement passes.
     const r2 = evaluateTier(["cr", "cd", "er", "em"], false, rule);
-    expect(r2.tier).toBe("P");
+    expect(r2.tier).toBe("prime");
   });
 
-  it("is4L condition requires 4-line artifact", () => {
+  it("four-initial-substat condition requires 4-line artifact", () => {
     const rule = makeRule({
       desired: ["cr", "cd"],
       conditions: [
-        { k: 2, crcd: false, is4L: true, fill: false, tier: "P", rarity: 0 },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: true,
+          requiresFillerHit: false,
+          tier: "prime",
+          rarity: 0,
+        },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "solid",
+          rarity: 0,
+        },
       ],
     });
     const r3L = evaluateTier(["cr", "cd", "er", "em"], false, rule);
-    expect(r3L.tier).toBe("Q");
+    expect(r3L.tier).toBe("solid");
 
     const r4L = evaluateTier(["cr", "cd", "er", "em"], true, rule);
-    expect(r4L.tier).toBe("P");
+    expect(r4L.tier).toBe("prime");
   });
 
-  it("fill condition requires filler stat present when hitCount == subN", () => {
+  it("filler-hit condition requires filler stat present when all desired substats hit", () => {
     const rule = makeRule({
       desired: ["cr", "cd"],
       fillers: ["atk"],
-      subN: 2,
+      desiredSubstatCount: 2,
       conditions: [
-        { k: 2, crcd: false, is4L: false, fill: true, tier: "P", rarity: 0 },
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: true,
+          tier: "prime",
+          rarity: 0,
+        },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "solid",
+          rarity: 0,
+        },
       ],
     });
     // Has both desired but no filler → fill fails
     const r1 = evaluateTier(["cr", "cd", "er", "em"], false, rule);
-    expect(r1.tier).toBe("Q");
+    expect(r1.tier).toBe("solid");
     expect(r1.hasFill).toBe(false);
 
     // Has both desired + filler
     const r2 = evaluateTier(["cr", "cd", "atk", "em"], false, rule);
-    expect(r2.tier).toBe("P");
+    expect(r2.tier).toBe("prime");
     expect(r2.hasFill).toBe(true);
   });
 
@@ -117,7 +187,14 @@ describe("evaluateTier", () => {
       desired: ["cr", "cd"],
       optional: ["atk%", "er"],
       conditions: [
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "solid",
+          rarity: 0,
+        },
       ],
     });
     const result = evaluateTier(["cr", "cd", "atk%", "em"], false, rule);
@@ -131,9 +208,16 @@ describe("evaluateTier", () => {
       desired: ["cr", "cd"],
       optional: ["er"],
       fillers: ["atk"],
-      subN: 2,
+      desiredSubstatCount: 2,
       conditions: [
-        { k: 2, crcd: false, is4L: false, fill: false, tier: "Q", rarity: 0 },
+        {
+          requiredDesiredHits: 2,
+          requiresCritPair: false,
+          requiresFourInitialSubstats: false,
+          requiresFillerHit: false,
+          tier: "solid",
+          rarity: 0,
+        },
       ],
     });
     const result = evaluateTier(["cr", "cd", "atk", "er"], false, rule);

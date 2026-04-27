@@ -125,7 +125,7 @@ describe("runTriage", () => {
     expect(decisions).toHaveLength(2);
   });
 
-  it("marks unmatched artifacts as TD (no demand)", () => {
+  it("marks unmatched artifacts as no demand", () => {
     // Use substats that won't match any curated flex pattern (no cr+cd pair)
     const art = makeArt({
       setKey: "unrelated_set",
@@ -138,11 +138,11 @@ describe("runTriage", () => {
       ownedOnly: false,
       setSlotKeep: 0,
     });
-    expect(decisions[0].decidingResult?.ruleId).toBe("TD");
+    expect(decisions[0].decidingResult?.ruleId).toBe("noDemand");
     expect(decisions[0].label).toBe("unlock");
   });
 
-  it("TD artifacts get supplyDemand with demand=0", () => {
+  it("no-demand artifacts get supplyDemand with demand=0", () => {
     const art = makeArt({ setKey: "unknown_set" });
     const account = makeAccount([], [art]);
     const builds = [{ characterId: "char_a", builds: [makeBuild()] }];
@@ -163,10 +163,10 @@ describe("runTriage", () => {
     const builds = [{ characterId: "char_a", builds: [makeBuild()] }];
     const { decisions } = runTriage(account, builds, SETTINGS);
     expect(decisions[0].label).toBe("lock");
-    expect(["P", "Q"]).toContain(decisions[0].decidingResult?.tier);
+    expect(["prime", "solid"]).toContain(decisions[0].decidingResult?.tier);
   });
 
-  it("poor substats artifact gets TF (substats don't match)", () => {
+  it("poor substats artifact gets fodder substat mismatch", () => {
     const art = makeArt({
       substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
     });
@@ -178,10 +178,10 @@ describe("runTriage", () => {
       doubleCritLockEnabled: false,
     });
     expect(decisions[0].label).toBe("unlock");
-    expect(decisions[0].decidingResult?.ruleId).toBe("TF");
+    expect(decisions[0].decidingResult?.ruleId).toBe("fodderSubstatMismatch");
   });
 
-  it("SP1: ER hoarding locks 4L support set with ER substat", () => {
+  it("support-set ER hoarding locks 4-line support set with ER substat", () => {
     const art = makeArt({
       setKey: "viridescent_venerer",
       slotKey: "flower",
@@ -195,10 +195,10 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [build] }],
       { ...SETTINGS, erHoardingEnabled: true }
     );
-    expect(decisions[0].specialRules).toContain("SP1");
+    expect(decisions[0].specialRules).toContain("supportSetErHoard");
   });
 
-  it("SP1: ER hoarding locks 4L support sands with ER substat", () => {
+  it("support-set ER hoarding locks 4-line support sands with ER substat", () => {
     const art = makeArt({
       setKey: "viridescent_venerer",
       slotKey: "sands",
@@ -217,12 +217,12 @@ describe("runTriage", () => {
         setSlotKeep: 0,
       }
     );
-    expect(decisions[0].specialRules).toContain("SP1");
+    expect(decisions[0].specialRules).toContain("supportSetErHoard");
     expect(decisions[0].label).toBe("lock");
-    expect(decisions[0].decidingResult?.ruleId).toBe("SP1");
+    expect(decisions[0].decidingResult?.ruleId).toBe("supportSetErHoard");
   });
 
-  it("SP7: ER hoarding all sets locks 4L sands with ER substat", () => {
+  it("all-set ER hoarding locks 4-line sands with ER substat", () => {
     const art = makeArt({
       setKey: "test_set",
       slotKey: "sands",
@@ -241,12 +241,12 @@ describe("runTriage", () => {
         setSlotKeep: 0,
       }
     );
-    expect(decisions[0].specialRules).toContain("SP7");
+    expect(decisions[0].specialRules).toContain("allSetErHoard");
     expect(decisions[0].label).toBe("lock");
-    expect(decisions[0].decidingResult?.ruleId).toBe("SP7");
+    expect(decisions[0].decidingResult?.ruleId).toBe("allSetErHoard");
   });
 
-  it("SP5: double crit locks 4L artifact with cr+cd", () => {
+  it("double crit locks 4-line artifact with cr+cd", () => {
     const art = makeArt({
       substats: { cr: 1, cd: 1, "hp%": 1, def: 1 },
     });
@@ -256,10 +256,10 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [makeBuild()] }],
       { ...SETTINGS, doubleCritLockEnabled: true }
     );
-    expect(decisions[0].specialRules).toContain("SP5");
+    expect(decisions[0].specialRules).toContain("doubleCrit");
   });
 
-  it("SP3: level protection tags high-level artifacts", () => {
+  it("level protection tags high-level artifacts", () => {
     const art = makeArt({ level: 16 });
     const account = makeAccount([], [art]);
     const { decisions } = runTriage(
@@ -267,12 +267,12 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [makeBuild()] }],
       { ...SETTINGS, ownedOnly: false, levelProtection: 12 }
     );
-    expect(decisions[0].specialRules).toContain("SP3");
+    expect(decisions[0].specialRules).toContain("levelProtected");
   });
 
-  it("highLevelProtection off: high-level non-equipped artifact is not SP3-protected", () => {
+  it("highLevelProtection off: high-level non-equipped artifact is not level-protected", () => {
     // Non-equipped high-level artifact should flow through normal triage when
-    // high-level protection is off. Equipped ones still get SP4 as usual.
+    // high-level protection is off. Equipped ones still get equipped protection.
     const art = makeArt({ level: 16 });
     const account = makeAccount([], [art]);
     const { decisions } = runTriage(
@@ -285,11 +285,11 @@ describe("runTriage", () => {
         highLevelProtection: false,
       }
     );
-    expect(decisions[0].specialRules).not.toContain("SP3");
-    expect(decisions[0].specialRules).not.toContain("SP4");
+    expect(decisions[0].specialRules).not.toContain("levelProtected");
+    expect(decisions[0].specialRules).not.toContain("equippedProtected");
   });
 
-  it("highLevelProtection off: concentrated low-tier artifacts are promoted to quality", () => {
+  it("highLevelProtection off: concentrated low-tier artifacts are promoted to solid", () => {
     const art = makeArt({
       setKey: "unrelated_set",
       level: 16,
@@ -309,12 +309,14 @@ describe("runTriage", () => {
     );
 
     expect(decisions[0].label).toBe("lock");
-    expect(decisions[0].decidingResult?.ruleId).toBe("SV");
-    expect(decisions[0].decidingResult?.tier).toBe("Q");
-    expect(decisions[0].specialRules).toContain("SV:concentrated-hp%");
+    expect(decisions[0].decidingResult?.ruleId).toBe("concentrationValue");
+    expect(decisions[0].decidingResult?.tier).toBe("solid");
+    expect(decisions[0].specialRules).toContain(
+      "concentrationValue:concentrated-hp%"
+    );
   });
 
-  it("SP4: equipped protection tags equipped artifacts", () => {
+  it("equipped protection tags equipped artifacts", () => {
     const art = makeArt({});
     const account = makeAccount([
       { key: "char_a", artifacts: { flower: art } },
@@ -324,7 +326,7 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [makeBuild()] }],
       { ...SETTINGS, equippedProtection: true }
     );
-    expect(decisions[0].specialRules).toContain("SP4");
+    expect(decisions[0].specialRules).toContain("equippedProtected");
   });
 
   it("supply/demand resolution: premium artifacts always locked", () => {
@@ -340,11 +342,13 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [makeBuild()] }],
       { ...SETTINGS, setSlotKeep: 0 }
     );
-    // All matching P/Q artifacts for same embryo should be locked (demand=1, but P always locks)
+    // All matching prime/solid artifacts for same embryo should be locked.
     const locked = decisions.filter((d) => d.label === "lock");
     expect(locked.length).toBeGreaterThan(0);
     for (const d of locked) {
-      expect(["TP", "TQ"]).toContain(d.decidingResult?.ruleId);
+      expect(["primeTierKeep", "solidTierKeep"]).toContain(
+        d.decidingResult?.ruleId
+      );
     }
   });
 
@@ -370,7 +374,7 @@ describe("runTriage", () => {
     expect(decisions).toHaveLength(0);
   });
 
-  it("custom patterns from customFlexInputs cause FLEX special rule to fire", () => {
+  it("custom patterns from customFlexInputs cause off-piece special rule to fire", () => {
     // Use a unique custom pattern: sands EM with er+hp%
     // This won't match any official curated pattern (curated EM sands only has cr+cd)
     const art = makeArt({
@@ -393,19 +397,19 @@ describe("runTriage", () => {
         ],
       }
     );
-    expect(decisions[0].specialRules).toContain("FLEX");
+    expect(decisions[0].specialRules).toContain("offPiecePattern");
     expect(decisions[0].label).toBe("lock");
   });
 
-  // fillerKeep: under-supply keeps best N neutrals
+  // fillerKeep: under-supply keeps best filler artifacts
 
-  it("fillerKeep: locks top N neutral artifacts when supply < demand", () => {
+  it("fillerKeep: locks top filler artifacts when supply < demand", () => {
     // 2 characters wanting the same embryo → demand = 2
-    // Supply: 0 P, 0 Q, 4 N → under-supply
-    // fillerKeep = 2 → lock best 2 N, unlock rest
+    // Supply: 0 prime, 0 solid, 4 filler → under-supply
+    // fillerKeep = 2 → lock best 2 filler, unlock rest
     const build1 = makeBuild({ id: "b1" });
     const build2 = makeBuild({ id: "b2" });
-    // N-tier: 2 desired out of 4 (cr+cd match, but missing atk% and er)
+    // Filler tier: 2 desired out of 4 (cr+cd match, but missing atk% and er)
     const neutralArts = Array.from({ length: 4 }, (_, i) =>
       makeArt({
         substats: { cr: 1, cd: 1, hp: 1, def: 1 },
@@ -434,7 +438,7 @@ describe("runTriage", () => {
     expect(locked).toHaveLength(2);
     expect(unlocked).toHaveLength(2);
     for (const d of locked) {
-      expect(d.decidingResult?.ruleId).toBe("NK");
+      expect(d.decidingResult?.ruleId).toBe("fillerShortfallKeep");
     }
   });
 
@@ -490,9 +494,9 @@ describe("runTriage", () => {
   });
 
   it("fillerKeep: clamped by shortfall so total locked ≤ demand+margin", () => {
-    // demand = 1, qualityMargin = 0, P = 0, Q = 0 → shortfall = 1
-    // fillerKeep = 5 → neutralCap = min(1, 5) = 1
-    // 3 neutral artifacts → only 1 should lock
+    // demand = 1, qualityMargin = 0, prime = 0, solid = 0 → shortfall = 1
+    // fillerKeep = 5 → fillerCap = min(1, 5) = 1
+    // 3 filler artifacts → only 1 should lock
     const build1 = makeBuild({ id: "b1" });
     const neutralArts = Array.from({ length: 3 }, (_, i) =>
       makeArt({
@@ -514,12 +518,12 @@ describe("runTriage", () => {
     );
     const locked = r.decisions.filter((d) => d.label === "lock");
     expect(locked).toHaveLength(1);
-    expect(locked[0].decidingResult?.ruleId).toBe("NK");
+    expect(locked[0].decidingResult?.ruleId).toBe("fillerShortfallKeep");
   });
 
   // qualityMargin: over-supply caps non-premium locks
 
-  it("qualityMargin: caps Q-tier locks in over-supply", () => {
+  it("qualityMargin: caps solid-tier locks in over-supply", () => {
     // Use circlet/heal% with a single custom pattern to test margin capping
     // in isolation (no curated patterns exist for heal%, so zero overlap).
     const desired = ["atk%", "cd", "cr", "er"] as SubStat[];
@@ -531,49 +535,58 @@ describe("runTriage", () => {
       fillers
     );
 
-    // Find P-tier and Q-tier conditions from the computed condition table
-    const pCond = entry.conditions.find((c) => c.tier === "P");
-    const qCond = entry.conditions.find((c) => c.tier === "Q");
+    // Find prime-tier and solid-tier conditions from the computed condition table
+    const primeCondition = entry.conditions.find((c) => c.tier === "prime");
+    const solidCondition = entry.conditions.find((c) => c.tier === "solid");
 
-    // Skip test if tier table doesn't produce both P and Q (shouldn't happen)
-    if (!pCond || !qCond) return;
+    // Skip test if tier table doesn't produce both tiers (shouldn't happen)
+    if (!primeCondition || !solidCondition) return;
 
-    // Build artifacts that match P and Q conditions
+    // Build artifacts that match prime and solid conditions
     const allDesired = ["cr", "cd", "atk%", "er"];
     const nonDesired = ["hp", "def", "def%", "hp%", "em"];
 
-    // P-tier artifact: satisfies the P condition
-    const pSubs: Record<string, number> = {};
-    for (let i = 0; i < Math.min(pCond.k, allDesired.length); i++)
-      pSubs[allDesired[i]] = 1;
-    if (pCond.fill && fillers.length > 0) pSubs[fillers[0]] = 1;
-    while (Object.keys(pSubs).length < 4) {
-      const filler = nonDesired.find((s) => !(s in pSubs));
-      if (filler) pSubs[filler] = 1;
+    // Prime-tier artifact: satisfies the prime condition
+    const primeSubstats: Record<string, number> = {};
+    for (
+      let i = 0;
+      i < Math.min(primeCondition.requiredDesiredHits, allDesired.length);
+      i++
+    )
+      primeSubstats[allDesired[i]] = 1;
+    if (primeCondition.requiresFillerHit && fillers.length > 0)
+      primeSubstats[fillers[0]] = 1;
+    while (Object.keys(primeSubstats).length < 4) {
+      const filler = nonDesired.find((s) => !(s in primeSubstats));
+      if (filler) primeSubstats[filler] = 1;
       else break;
     }
 
-    // Q-tier artifact: satisfies Q condition but NOT P condition
-    const qSubs: Record<string, number> = {};
-    // Use only enough desired to meet Q's k, and specifically avoid triggering P
-    const qDesired = pCond.crcd
+    // Solid-tier artifact: satisfies solid condition but NOT prime condition
+    const solidSubstats: Record<string, number> = {};
+    // Use only enough desired to meet solid's hit requirement, and avoid triggering prime.
+    const solidDesired = primeCondition.requiresCritPair
       ? allDesired.filter((s) => s !== "cr" && s !== "cd") // avoid cr+cd pair
       : allDesired;
-    for (let i = 0; i < Math.min(qCond.k, qDesired.length); i++)
-      qSubs[qDesired[i]] = 1;
-    // If Q also needs crcd, add cr+cd
-    if (qCond.crcd) {
-      qSubs.cr = 1;
-      qSubs.cd = 1;
+    for (
+      let i = 0;
+      i < Math.min(solidCondition.requiredDesiredHits, solidDesired.length);
+      i++
+    )
+      solidSubstats[solidDesired[i]] = 1;
+    // If solid also needs a crit pair, add cr+cd.
+    if (solidCondition.requiresCritPair) {
+      solidSubstats.cr = 1;
+      solidSubstats.cd = 1;
     }
-    while (Object.keys(qSubs).length < 4) {
-      const filler = nonDesired.find((s) => !(s in qSubs));
-      if (filler) qSubs[filler] = 1;
+    while (Object.keys(solidSubstats).length < 4) {
+      const filler = nonDesired.find((s) => !(s in solidSubstats));
+      if (filler) solidSubstats[filler] = 1;
       else break;
     }
 
     // Verify tier assignments using the evaluator directly
-    const pRule = {
+    const rule = {
       desired,
       optional: [] as SubStat[],
       fillers,
@@ -582,34 +595,34 @@ describe("runTriage", () => {
       TriageRule,
       "desired" | "optional" | "fillers" | "tierEntry"
     > as TriageRule;
-    const pTier = evaluateTier(
-      Object.keys(pSubs) as SubStat[],
-      !!pCond.is4L,
-      pRule
+    const primeTier = evaluateTier(
+      Object.keys(primeSubstats) as SubStat[],
+      !!primeCondition.requiresFourInitialSubstats,
+      rule
     );
-    const qTier = evaluateTier(
-      Object.keys(qSubs) as SubStat[],
-      !!qCond.is4L,
-      pRule
+    const solidTier = evaluateTier(
+      Object.keys(solidSubstats) as SubStat[],
+      !!solidCondition.requiresFourInitialSubstats,
+      rule
     );
 
     // Only proceed if we got correct tiers
-    if (pTier.tier !== "P" || qTier.tier !== "Q") return;
+    if (primeTier.tier !== "prime" || solidTier.tier !== "solid") return;
 
     const premiumArt = makeArt({
       slotKey: "circlet",
       mainStatKey: "heal%",
-      substats: pSubs,
-      level: pCond.is4L ? 0 : 20,
-      totalRolls: pCond.is4L ? undefined : 9,
+      substats: primeSubstats,
+      level: primeCondition.requiresFourInitialSubstats ? 0 : 20,
+      totalRolls: primeCondition.requiresFourInitialSubstats ? undefined : 9,
     });
-    const qualityArts = Array.from({ length: 5 }, (_, i) =>
+    const solidArts = Array.from({ length: 5 }, (_, i) =>
       makeArt({
         slotKey: "circlet",
         mainStatKey: "heal%",
-        substats: qSubs,
-        level: qCond.is4L ? 0 : 16 - i,
-        totalRolls: qCond.is4L ? undefined : 8,
+        substats: solidSubstats,
+        level: solidCondition.requiresFourInitialSubstats ? 0 : 16 - i,
+        totalRolls: solidCondition.requiresFourInitialSubstats ? undefined : 8,
       })
     );
 
@@ -623,10 +636,10 @@ describe("runTriage", () => {
     };
 
     // demand=1, 1P + 5Q → over-supply
-    // margin=1: Q cap = max(1+1-1,0) = 1 → 1P + 1Q = 2 locked
+    // margin=1: solid cap = max(1+1-1,0) = 1 → 1 prime + 1 solid = 2 locked
     const account1 = makeAccount(
       [{ key: "char_a" }],
-      [premiumArt, ...qualityArts].map((a) => ({ ...a, id: `m1_${a.id}` }))
+      [premiumArt, ...solidArts].map((a) => ({ ...a, id: `m1_${a.id}` }))
     );
     const r1 = runTriage(
       account1,
@@ -641,13 +654,15 @@ describe("runTriage", () => {
       }
     );
     const locked1 = r1.decisions.filter((d) => d.label === "lock");
-    expect(locked1.some((d) => d.decidingResult?.ruleId === "TP")).toBe(true);
+    expect(
+      locked1.some((d) => d.decidingResult?.ruleId === "primeTierKeep")
+    ).toBe(true);
     expect(locked1).toHaveLength(2); // 1P + 1Q
 
-    // margin=5: Q cap = max(1+5-1,0) = 5 → 1P + 5Q = 6 locked
+    // margin=5: solid cap = max(1+5-1,0) = 5 → 1 prime + 5 solid = 6 locked
     const account5 = makeAccount(
       [{ key: "char_a" }],
-      [premiumArt, ...qualityArts].map((a) => ({ ...a, id: `m5_${a.id}` }))
+      [premiumArt, ...solidArts].map((a) => ({ ...a, id: `m5_${a.id}` }))
     );
     const r5 = runTriage(
       account5,
@@ -662,14 +677,14 @@ describe("runTriage", () => {
       }
     );
     const locked5 = r5.decisions.filter((d) => d.label === "lock");
-    expect(locked5).toHaveLength(6); // 1P + 5Q
+    expect(locked5).toHaveLength(6); // 1 prime + 5 solid
   });
 
   // setSlotKeep: per set+slot minimum
 
   it("setSlotKeep: protects sole artifact in a set+slot from unlock", () => {
     // 1 trash-tier flower in test_set → triage wants to unlock it
-    // setSlotKeep=1 → should promote to lock via SK
+    // setSlotKeep=1 → should promote to lock via set-slot floor
     // Use flower/hp (common main stat, no k=0 fallback) and fillerKeep=0
     const art = makeArt({
       substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
@@ -686,12 +701,12 @@ describe("runTriage", () => {
       }
     );
     expect(decisions[0].label).toBe("lock");
-    expect(decisions[0].decidingResult?.ruleId).toBe("SK");
+    expect(decisions[0].decidingResult?.ruleId).toBe("setSlotFloorKeep");
   });
 
   it("setSlotKeep: does not promote when enough are already locked", () => {
     // 3 artifacts, all good → all locked by triage already
-    // setSlotKeep=2 → no SK promotion needed
+    // setSlotKeep=2 → no set-slot floor promotion needed
     const arts = Array.from({ length: 3 }, () =>
       makeArt({
         substats: { cr: 1, cd: 1, "atk%": 1, er: 1 },
@@ -703,9 +718,11 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [makeBuild()] }],
       { ...SETTINGS, setSlotKeep: 2 }
     );
-    // None should have SK rule since enough are locked via tier logic
-    const skDecisions = decisions.filter((d) => d.specialRules.includes("SP6"));
-    expect(skDecisions).toHaveLength(0);
+    // None should have set-slot floor rule since enough are locked via tier logic.
+    const setSlotFloorDecisions = decisions.filter((d) =>
+      d.specialRules.includes("setSlotFloor")
+    );
+    expect(setSlotFloorDecisions).toHaveLength(0);
   });
 
   it("setSlotKeep: locked artifact marked for unlock is not counted as locked", () => {
@@ -727,11 +744,11 @@ describe("runTriage", () => {
       }
     );
     expect(decisions[0].label).toBe("lock");
-    expect(decisions[0].decidingResult?.ruleId).toBe("SK");
+    expect(decisions[0].decidingResult?.ruleId).toBe("setSlotFloorKeep");
   });
 
   it("setSlotKeep=0: disables the feature entirely", () => {
-    // Trash flower → normally SK would protect it, but setSlotKeep=0 disables SK
+    // Fodder flower would normally be protected by the floor, but setSlotKeep=0 disables it.
     const art = makeArt({
       substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
     });
@@ -751,11 +768,11 @@ describe("runTriage", () => {
 
   // Idempotency: applying recommendations and re-running produces no new actions
 
-  it("idempotency: re-running after applying SK locks yields no new recs", () => {
-    // 3 trash flowers in test_set, setSlotKeep=2 → SK promotes 2 to lock.
-    // Simulate "apply": flip artifact.lock on the SK-picked ones.
+  it("idempotency: re-running after applying set-slot floor locks yields no new recs", () => {
+    // 3 fodder flowers in test_set, setSlotKeep=2 → floor promotes 2 to lock.
+    // Simulate "apply": flip artifact.lock on the floor-picked ones.
     // Re-run: recommendLock should be empty AND recommendUnlock should be empty
-    // (the formerly-SK artifacts should still be satisfied/kept).
+    // (the formerly floor-picked artifacts should still be satisfied/kept).
     const arts = Array.from({ length: 3 }, (_, i) =>
       makeArt({
         substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
@@ -803,9 +820,9 @@ describe("runTriage", () => {
     expect(unlockRecs2).toHaveLength(0);
   });
 
-  it("SK prefers already-externally-locked artifacts when filling the floor", () => {
-    // 3 trash flowers: one externally locked, two not. setSlotKeep=1.
-    // SK should promote the externally-locked one (stability), not pick a fresh
+  it("set-slot floor prefers already-externally-locked artifacts when filling the floor", () => {
+    // 3 fodder flowers: one externally locked, two not. setSlotKeep=1.
+    // The floor should promote the externally-locked one (stability), not pick a fresh
     // artifact and leave the user's lock flagged for unlock.
     const lockedTrash = makeArt({
       lock: true,
@@ -836,7 +853,9 @@ describe("runTriage", () => {
     );
     const byId = (id: string) => decisions.find((d) => d.artifact.id === id)!;
     expect(byId(lockedTrash.id).label).toBe("lock");
-    expect(byId(lockedTrash.id).decidingResult?.ruleId).toBe("SK");
+    expect(byId(lockedTrash.id).decidingResult?.ruleId).toBe(
+      "setSlotFloorKeep"
+    );
     expect(byId(freshA.id).label).toBe("unlock");
     expect(byId(freshB.id).label).toBe("unlock");
   });

@@ -21,7 +21,7 @@ export const SUB_WEIGHTS: Record<SubStat, number> = {
   cd: 3,
 };
 
-export const P4L = 0.3; // Inflated from true 20% to prevent 4L cheaply jumping tiers
+export const FOUR_INITIAL_SUBSTAT_EFFECTIVE_PROBABILITY = 0.3;
 
 export type TriageMode = "strict" | "loose";
 
@@ -143,8 +143,8 @@ export function getTier(
   mode: TriageMode = "strict"
 ): QualityTier {
   const t = getThresholds(slot, mode);
-  if (rarity <= t.premium) return "P";
-  if (rarity <= t.quality) return "Q";
-  if (rarity <= t.neutral) return "N";
-  return "T";
+  if (rarity <= t.premium) return "prime";
+  if (rarity <= t.quality) return "solid";
+  if (rarity <= t.neutral) return "filler";
+  return "fodder";
 }
