@@ -534,7 +534,7 @@ export function StatSheetPanel({
                       "flex-1 flex items-center justify-center text-[9px] md:text-[11px] xl:text-xs font-semibold px-1 md:px-1.5 py-0.5 md:py-1 rounded-full transition-all",
                       showChevrons && "gap-0.5",
                       activeView === mode
-                        ? "bg-primary text-primary-foreground shadow-sm"
+                        ? "bg-primary/50 text-primary-foreground shadow-sm"
                         : "bg-white/5 text-foreground/80 hover:bg-white/10"
                     )}
                   >

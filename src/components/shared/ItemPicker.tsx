@@ -1068,7 +1068,7 @@ function FilterChip({
       className={cn(
         "h-7 border rounded-md text-xs font-medium transition-all shrink-0 flex items-center justify-center",
         isActive
-          ? "bg-primary text-primary-foreground border-primary shadow-sm"
+          ? "bg-primary/80 text-primary-foreground border-primary shadow-sm"
           : "bg-secondary text-secondary-foreground border-transparent hover:bg-secondary/80",
         className
       )}

@@ -43,6 +43,7 @@ export function ArtifactSlotGrid({
               artifact={art}
               slot={slot}
               side="bottom"
+              openDrawerOnClick={false}
             >
               <button
                 type="button"
@@ -61,7 +62,7 @@ export function ArtifactSlotGrid({
                   badge={art.astralMark ? "⭐" : undefined}
                   size={compact ? "xs" : "md"}
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
+                <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
                   <ArrowRightLeft className="w-4 h-4 text-primary" />
                 </div>
               </button>

@@ -107,7 +107,8 @@ When changing persisted store shape:
 3. Migrate from the current origin version; merge with any existing local migration bump.
 4. Always add migration test for the old format, ensure all shapes of valid data can be migrated.
 
-If smooth migration is not possible, discuss options before implementing. For non-store refactors, migrate callers to one clean import/implementation path; do not add re-export compatibility shims for internal code.
+If smooth migration is not possible, discuss options before implementing. If default values changed, don't add migration to force the old default value.
+For non-store refactors, migrate callers to one clean import/implementation path; do not add re-export compatibility shims for internal code.
 
 ## Testing
 

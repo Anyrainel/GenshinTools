@@ -238,6 +238,7 @@ interface ArtifactDataHoverCardProps {
   slot: Slot;
   children: ReactNode;
   side?: "left" | "right" | "top" | "bottom";
+  openDrawerOnClick?: boolean;
 }
 
 export function ArtifactDataHoverCard({
@@ -245,6 +246,7 @@ export function ArtifactDataHoverCard({
   slot,
   children,
   side = "right",
+  openDrawerOnClick = true,
 }: ArtifactDataHoverCardProps) {
   const { t } = useLanguage();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -268,7 +270,10 @@ export function ArtifactDataHoverCard({
   );
 
   const trigger = (
-    <div className="cursor-pointer" onClick={() => setDrawerOpen(true)}>
+    <div
+      className="cursor-pointer"
+      onClick={openDrawerOnClick ? () => setDrawerOpen(true) : undefined}
+    >
       {children}
     </div>
   );
@@ -277,7 +282,7 @@ export function ArtifactDataHoverCard({
     return (
       <>
         {trigger}
-        {drawer}
+        {openDrawerOnClick && drawer}
       </>
     );
   }
@@ -294,7 +299,7 @@ export function ArtifactDataHoverCard({
           <ArtifactDataContent artifact={artifact} slot={slot} />
         </HoverCardContent>
       </HoverCard>
-      {drawer}
+      {openDrawerOnClick && drawer}
     </>
   );
 }

@@ -125,7 +125,7 @@ export function TierListManagerDialog({
                       className={cn(
                         "p-1.5 rounded-full shrink-0",
                         isActive
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-primary/80 text-primary-foreground"
                           : "bg-muted text-muted-foreground"
                       )}
                     >
