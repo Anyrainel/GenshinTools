@@ -16,6 +16,7 @@ import {
 } from "@/components/account-data/TriageTabContent";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Slot } from "@/data/enums";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
@@ -59,6 +60,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     new Set(QUALITY_TIERS)
   );
   const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(new Set());
+  const [slotFilter, setSlotFilter] = useState<Set<Slot>>(new Set());
 
   const [activeSortDim, setActiveSortDim] = useState<SortDimension>("name");
   const [activeSortDir, setActiveSortDir] = useState<"asc" | "desc">("desc");
@@ -115,8 +117,9 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     (d: TriageDecision) =>
       passesTier(d) &&
       (halfSetFilter.size === 0 ||
-        halfSetFilter.has(artifactIdToHalfSetId[d.artifact.setKey] ?? "")),
-    [passesTier, halfSetFilter]
+        halfSetFilter.has(artifactIdToHalfSetId[d.artifact.setKey] ?? "")) &&
+      (slotFilter.size === 0 || slotFilter.has(d.artifact.slotKey)),
+    [passesTier, halfSetFilter, slotFilter]
   );
   const sortDecisions = useCallback(
     (arr: TriageDecision[]) => {
@@ -249,6 +252,8 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           onToggleTier={toggleTier}
           halfSetFilter={halfSetFilter}
           onHalfSetFilterChange={setHalfSetFilter}
+          slotFilter={slotFilter}
+          onSlotFilterChange={setSlotFilter}
           activeSortDim={activeSortDim}
           activeSortDir={activeSortDir}
           onToggleSort={toggleSort}

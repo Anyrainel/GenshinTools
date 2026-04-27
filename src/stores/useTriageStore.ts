@@ -24,7 +24,7 @@ export const useTriageStore = create<TriageState>()(
     }),
     {
       name: "triage-settings",
-      version: 4,
+      version: 5,
       migrate: (persisted: unknown, version: number) => {
         const state = persisted as Record<string, unknown>;
         const settings = (state.settings ?? {}) as Record<string, unknown>;
@@ -52,6 +52,12 @@ export const useTriageStore = create<TriageState>()(
           const prev = settings.strategicHighLevelEvaluation;
           settings.highLevelProtection = prev == null ? true : !prev;
           settings.strategicHighLevelEvaluation = undefined;
+        }
+        // v4 → v5: add alwaysLockSolidArtifacts (default off preserves surplus pruning).
+        if (version < 5) {
+          if (settings.alwaysLockSolidArtifacts == null) {
+            settings.alwaysLockSolidArtifacts = false;
+          }
         }
         state.settings = settings;
         return state as Partial<TriageState>;

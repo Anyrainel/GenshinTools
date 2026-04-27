@@ -680,6 +680,132 @@ describe("runTriage", () => {
     expect(locked5).toHaveLength(6); // 1 prime + 5 solid
   });
 
+  it("alwaysLockSolidArtifacts: locks surplus solid artifacts", () => {
+    const solidArts = Array.from({ length: 5 }, () =>
+      makeArt({
+        substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+        level: 0,
+      })
+    );
+    const account = makeAccount([{ key: "char_a" }], solidArts);
+
+    const baseSettings: TriageSettings = {
+      ...SETTINGS,
+      qualityMargin: 1,
+      setSlotKeep: 0,
+      fillerKeep: 0,
+      doubleCritLockEnabled: false,
+    };
+    const capped = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      baseSettings
+    );
+    expect(capped.decisions.filter((d) => d.label === "lock")).toHaveLength(2);
+
+    const alwaysLock = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      { ...baseSettings, alwaysLockSolidArtifacts: true }
+    );
+    expect(
+      alwaysLock.decisions.filter(
+        (d) => d.decidingResult?.ruleId === "solidTierKeep"
+      )
+    ).toHaveLength(5);
+  });
+
+  it("alwaysLockSolidArtifacts: still caps filler locks by demand margin", () => {
+    const solidArt = makeArt({
+      substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+      level: 0,
+    });
+    const fillerArts = Array.from({ length: 5 }, (_, i) =>
+      makeArt({
+        substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+        level: 20 - i,
+      })
+    );
+    const account = makeAccount([{ key: "char_a" }], [solidArt, ...fillerArts]);
+
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        alwaysLockSolidArtifacts: true,
+        qualityMargin: 3,
+        setSlotKeep: 0,
+        fillerKeep: 10,
+        doubleCritLockEnabled: false,
+      }
+    );
+
+    expect(
+      decisions.filter((d) => d.decidingResult?.ruleId === "solidTierKeep")
+    ).toHaveLength(1);
+    expect(
+      decisions.filter(
+        (d) => d.decidingResult?.ruleId === "fillerShortfallKeep"
+      )
+    ).toHaveLength(4);
+  });
+
+  it("loose mode preserves artifacts locked by strict mode", () => {
+    const artifacts = [
+      makeArt({
+        substats: { cr: 1, cd: 1, "atk%": 1, er: 1 },
+        level: 0,
+      }),
+      makeArt({
+        substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+        level: 0,
+      }),
+      makeArt({
+        substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+        level: 20,
+      }),
+      makeArt({
+        substats: { cr: 1, "atk%": 1, er: 1, hp: 1 },
+        level: 20,
+      }),
+      makeArt({
+        substats: { hp: 1, "hp%": 1, def: 1, "def%": 1 },
+        level: 0,
+      }),
+    ];
+    const account = makeAccount([{ key: "char_a" }], artifacts);
+    const commonSettings: TriageSettings = {
+      ...SETTINGS,
+      qualityMargin: 1,
+      fillerKeep: 2,
+      setSlotKeep: 0,
+      doubleCritLockEnabled: false,
+    };
+
+    const strict = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      { ...commonSettings, triageMode: "strict" }
+    );
+    const loose = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      { ...commonSettings, triageMode: "loose" }
+    );
+
+    const looseById = new Map(
+      loose.decisions.map((decision) => [decision.artifact.id, decision])
+    );
+    const strictLockedThenLooseUnlocked = strict.decisions.filter(
+      (decision) =>
+        decision.label === "lock" &&
+        looseById.get(decision.artifact.id)?.label === "unlock"
+    );
+
+    expect(strictLockedThenLooseUnlocked).toHaveLength(0);
+  });
+
   // setSlotKeep: per set+slot minimum
 
   it("setSlotKeep: protects sole artifact in a set+slot from unlock", () => {

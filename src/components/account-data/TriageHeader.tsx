@@ -24,6 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { useLanguage } from "@/contexts/LanguageContext";
+import { allSlots, type Slot } from "@/data/enums";
 import { allHalfSetIds } from "@/data/gameResources";
 import type { ManagePayload } from "@/lib/account-data/manager/types";
 import type {
@@ -59,6 +60,8 @@ export function TriageHeader({
   onToggleTier,
   halfSetFilter,
   onHalfSetFilterChange,
+  slotFilter,
+  onSlotFilterChange,
   activeSortDim,
   activeSortDir,
   onToggleSort,
@@ -74,6 +77,8 @@ export function TriageHeader({
   onToggleTier: (tier: QualityTier) => void;
   halfSetFilter: Set<string>;
   onHalfSetFilterChange: (nextValues: Set<string>) => void;
+  slotFilter: Set<Slot>;
+  onSlotFilterChange: (nextValues: Set<Slot>) => void;
   activeSortDim: SortDimension;
   activeSortDir: "asc" | "desc";
   onToggleSort: (dim: SortDimension) => void;
@@ -237,6 +242,18 @@ export function TriageHeader({
           onSelectedValuesChange={onHalfSetFilterChange}
           getKey={(halfSetId) => halfSetId}
           getLabel={(halfSetId) => t.halfSetShort(halfSetId)}
+          className="px-0"
+          collapsible
+        />
+      </div>
+      <div className="flex flex-wrap items-center gap-1">
+        <FilterChipGroup
+          label={t.ui("triage.filterBySlot")}
+          options={allSlots}
+          selectedValues={slotFilter}
+          onSelectedValuesChange={onSlotFilterChange}
+          getKey={(slot) => slot}
+          getLabel={(slot) => t.slot(slot)}
           className="px-0"
           collapsible
         />

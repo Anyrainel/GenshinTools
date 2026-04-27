@@ -2058,6 +2058,10 @@ export const i18nUiData = {
       en: "Demand margin (extra keep above demand)",
       zh: "需求余量数（满足需求后多留几个备用）",
     },
+    alwaysLockSolidArtifacts: {
+      en: "Always lock solid artifacts",
+      zh: "精良装始终锁定",
+    },
     fillerKeep: {
       en: "Filler backup cap (max backups when short)",
       zh: "过渡保底数（即使需求不足时最多留几个过渡）",
@@ -2103,6 +2107,7 @@ export const i18nUiData = {
       zh: "保护已装备",
     },
     filterByHalfSet: { en: "Filter by 2pc set", zh: "按2件套过滤" },
+    filterBySlot: { en: "Filter by slot", zh: "按部位过滤" },
     rulePrefixFlex: { en: "Off-piece", zh: "散件" },
     // Help dialog
     help: {
@@ -2130,12 +2135,12 @@ export const i18nUiData = {
       badgeOverSupply: { en: "Over-supply → unlock", zh: "供过于求 → 解锁" },
       badgeUnderSupply: { en: "Under-supply → lock", zh: "供不应求 → 锁定" },
       tierPrime: {
-        en: "Flower / Plume ≤ 1%  ·  Others ≤ 0.5%  (relaxed mode: 2% / 1%) — Always locked.",
-        zh: "花/羽 ≤ 1%  ·  沙/杯/头 ≤ 0.5%（宽松模式：2% / 1%）— 无条件锁定。",
+        en: "Flower / Plume ≤ 1.5%  ·  Others ≤ 0.5%  (relaxed mode: 3% / 1%) — Always locked.",
+        zh: "花/羽 ≤ 1.5%  ·  沙/杯/头 ≤ 0.5%（宽松模式：3% / 1%）— 无条件锁定。",
       },
       tierSolid: {
-        en: "Flower / Plume ≤ 4%  ·  Others ≤ 2%  (relaxed mode: 8% / 4%) — Locked unless you have too many.",
-        zh: "花/羽 ≤ 4%  ·  沙/杯/头 ≤ 2%（宽松模式：8% / 4%）— 默认锁定，供过于求时淘汰。",
+        en: "Flower / Plume ≤ 6%  ·  Others ≤ 2%  (relaxed mode: 10% / 4%) — Locked unless you have too many.",
+        zh: "花/羽 ≤ 6%  ·  沙/杯/头 ≤ 2%（宽松模式：10% / 4%）— 默认锁定，供过于求时淘汰。",
       },
       tierFiller: {
         en: "Flower / Plume ≤ 15%  ·  Others ≤ 10%  (relaxed mode: 25% / 20%) — Only kept when supply is short.",

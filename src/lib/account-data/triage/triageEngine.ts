@@ -116,6 +116,7 @@ export function runTriage(
     artifact: ArtifactData;
     equippedOn: string | null;
     embryoResults: EmbryoResult[];
+    evaluations: CandidateEvaluation[];
     specialRules: TriageSpecialRule[];
     bestLabel: TriageLabel;
     bestResult: EmbryoResult | null;
@@ -123,6 +124,18 @@ export function runTriage(
     bestTierResult: TierResult | null;
     embryoKey: string | null;
     supplyDemand: SupplyDemandInfo | null;
+  };
+
+  type CandidateEvaluation = {
+    result: EmbryoResult;
+    tierResult: TierResult;
+    embryoKey: string;
+    tier: QualityTier;
+    rarity: number;
+  };
+
+  type RankedEdge = CandidateEvaluation & {
+    prelim: PrelimResult;
   };
 
   const prelims: PrelimResult[] = [];
@@ -200,6 +213,7 @@ export function runTriage(
     let bestTier: QualityTier = "fodder";
     let bestTierResult: TierResult | null = null;
     const embryoResults: EmbryoResult[] = [];
+    const evaluations: CandidateEvaluation[] = [];
 
     for (const rule of matchedRules) {
       const tierResult = evaluateTier(substats, hasFourInitialSubstats, rule);
@@ -236,13 +250,21 @@ export function runTriage(
       };
 
       const ruleId = tierToRuleId(tierResult.tier);
-      embryoResults.push({
+      const embryoResult: EmbryoResult = {
         embryo: embryoMatch,
         label: tierToLabel(tierResult.tier),
         ruleId,
         reason: "",
         reasonArgs: tierReasonArgs(tierResult),
         tier: tierResult.tier,
+      };
+      embryoResults.push(embryoResult);
+      evaluations.push({
+        result: embryoResult,
+        tierResult,
+        embryoKey,
+        tier: tierResult.tier,
+        rarity: tierResult.matchedCondition?.rarity ?? Number.POSITIVE_INFINITY,
       });
 
       if (tierRank(tierResult.tier) < tierRank(bestTier)) {
@@ -278,6 +300,7 @@ export function runTriage(
         artifact,
         equippedOn,
         embryoResults,
+        evaluations,
         specialRules,
         bestLabel: "unlock",
         bestResult: {
@@ -298,6 +321,7 @@ export function runTriage(
         artifact,
         equippedOn,
         embryoResults,
+        evaluations,
         specialRules,
         bestLabel: tierToLabel(bestTier),
         bestResult: bestEmbryoResult
@@ -316,107 +340,102 @@ export function runTriage(
   }
 
   // --- Supply/demand resolution ---
-  // Group by embryoKey
-  const groups = new Map<string, PrelimResult[]>();
+  //
+  // Keep a stable artifact→embryo edge ordering independent of the current
+  // strict/loose thresholds. Thresholds only decide which edges are eligible;
+  // they do not change the rank key. This makes looser thresholds append
+  // lower-ranked candidates instead of reshuffling already-kept artifacts.
+  const allEdges: RankedEdge[] = [];
   for (const prelim of prelims) {
-    if (!prelim.embryoKey) continue;
-    if (!groups.has(prelim.embryoKey)) groups.set(prelim.embryoKey, []);
-    groups.get(prelim.embryoKey)!.push(prelim);
+    for (const evaluation of prelim.evaluations) {
+      if ((demandCounts.get(evaluation.embryoKey)?.size ?? 0) === 0) continue;
+      allEdges.push({ ...evaluation, prelim });
+    }
+  }
+  allEdges.sort(compareRankedEdges);
+
+  const supplyDemandByEdge = buildSupplyDemandByEdge(allEdges, demandCounts);
+  const bestEdgeByPrelim = new Map<PrelimResult, RankedEdge>();
+  for (const edge of allEdges) {
+    if (!bestEdgeByPrelim.has(edge.prelim)) {
+      bestEdgeByPrelim.set(edge.prelim, edge);
+    }
+  }
+  const allocated = new Set<PrelimResult>();
+  const usedCapacity = new Map<string, number>();
+  const usedFillerCapacity = new Map<string, number>();
+
+  const allocate = (edge: RankedEdge, ruleId: TriageRuleId) => {
+    allocated.add(edge.prelim);
+    edge.prelim.bestLabel = "lock";
+    edge.prelim.bestResult = {
+      ...edge.result,
+      label: "lock",
+      ruleId,
+      tier: edge.tier,
+    };
+    edge.prelim.bestTier = edge.tier;
+    edge.prelim.bestTierResult = edge.tierResult;
+    edge.prelim.embryoKey = edge.embryoKey;
+    edge.prelim.supplyDemand = supplyDemandByEdge.get(edge) ?? null;
+  };
+
+  // Prime, and optionally solid, are hard keeps. They do not consume the
+  // demand+margin backup capacity, so loosening thresholds can only add locks.
+  for (const edge of allEdges) {
+    if (allocated.has(edge.prelim)) continue;
+    if (edge.tier === "prime") {
+      allocate(edge, "primeTierKeep");
+    } else if (settings.alwaysLockSolidArtifacts && edge.tier === "solid") {
+      allocate(edge, "solidTierKeep");
+    }
   }
 
-  for (const [key, group] of groups) {
-    const demand = demandCounts.get(key)?.size ?? 0;
-    if (demand === 0) continue;
+  // Capacity-limited keeps for remaining solid/filler edges. Capacity is fixed
+  // per embryo key, independent of threshold-dependent tier counts.
+  for (const edge of allEdges) {
+    if (allocated.has(edge.prelim)) continue;
+    if (edge.tier !== "solid" && edge.tier !== "filler") continue;
 
-    const primeArtifacts = group.filter(
-      (prelim) => prelim.bestTier === "prime"
-    );
-    const solidArtifacts = group.filter(
-      (prelim) => prelim.bestTier === "solid"
-    );
-    const fillerArtifacts = group.filter(
-      (prelim) => prelim.bestTier === "filler"
-    );
-    const fodderArtifacts = group.filter(
-      (prelim) => prelim.bestTier === "fodder"
-    );
+    const demand = demandCounts.get(edge.embryoKey)?.size ?? 0;
+    const capacity = demand + settings.qualityMargin;
+    const used = usedCapacity.get(edge.embryoKey) ?? 0;
+    if (used >= capacity) continue;
 
-    const primeCount = primeArtifacts.length;
-    const solidCount = solidArtifacts.length;
-
-    if (primeCount + solidCount < demand + settings.qualityMargin) {
-      // Under-supply including the margin buffer: lock prime, solid, and best filler.
-      for (const prelim of primeArtifacts)
-        setLabel(prelim, "lock", "primeTierKeep");
-      for (const prelim of solidArtifacts)
-        setLabel(prelim, "lock", "solidTierKeep");
-
-      // Sort filler by computed tier rarity, then tie-break by actual stat values.
-      fillerArtifacts.sort(compareWithinTier);
-
-      // Cap filler locks so total locked never exceeds demand+margin.
-      const shortfall =
-        demand + settings.qualityMargin - primeCount - solidCount;
-      const fillerCap = Math.min(shortfall, settings.fillerKeep);
-
-      for (let i = 0; i < fillerArtifacts.length; i++) {
-        if (i < fillerCap) {
-          setLabel(fillerArtifacts[i], "lock", "fillerShortfallKeep");
-        } else {
-          setLabel(fillerArtifacts[i], "unlock", "fillerDefaultUnlock");
-        }
-      }
-
-      for (const prelim of fodderArtifacts)
-        setLabel(prelim, "unlock", "fodderSubstatMismatch");
-    } else {
-      // Adequate/over-supply
-      for (const prelim of primeArtifacts)
-        setLabel(prelim, "lock", "primeTierKeep");
-
-      const solidKeepCap = Math.max(
-        demand + settings.qualityMargin - primeCount,
-        0
-      );
-      // Sort solid by computed tier rarity, then tie-break by actual stat values.
-      solidArtifacts.sort(compareWithinTier);
-      for (let i = 0; i < solidArtifacts.length; i++) {
-        if (i < solidKeepCap) {
-          setLabel(solidArtifacts[i], "lock", "solidTierKeep");
-        } else {
-          setLabel(solidArtifacts[i], "unlock", "solidOversupplyUnlock");
-        }
-      }
-
-      for (const prelim of fillerArtifacts)
-        setLabel(prelim, "unlock", "fillerDefaultUnlock");
-      for (const prelim of fodderArtifacts)
-        setLabel(prelim, "unlock", "fodderSubstatMismatch");
+    if (edge.tier === "filler") {
+      const usedFiller = usedFillerCapacity.get(edge.embryoKey) ?? 0;
+      if (usedFiller >= settings.fillerKeep) continue;
+      usedFillerCapacity.set(edge.embryoKey, usedFiller + 1);
     }
 
-    // Record supply/demand info for all artifacts in this group
-    const supplyByTier: Record<QualityTier, number> = {
-      prime: primeCount,
-      solid: solidCount,
-      filler: fillerArtifacts.length,
-      fodder: fodderArtifacts.length,
-    };
-    const tierArrays: Record<QualityTier, PrelimResult[]> = {
-      prime: primeArtifacts,
-      solid: solidArtifacts,
-      filler: fillerArtifacts,
-      fodder: fodderArtifacts,
-    };
-    for (const tier of QUALITY_TIERS) {
-      const artifactsInTier = tierArrays[tier];
-      for (let i = 0; i < artifactsInTier.length; i++) {
-        artifactsInTier[i].supplyDemand = {
-          demand,
-          supplyByTier,
-          rankInTier: i + 1,
-          tierTotal: artifactsInTier.length,
-        };
-      }
+    usedCapacity.set(edge.embryoKey, used + 1);
+    allocate(
+      edge,
+      edge.tier === "solid" ? "solidTierKeep" : "fillerShortfallKeep"
+    );
+  }
+
+  for (const prelim of prelims) {
+    if (allocated.has(prelim)) continue;
+    const bestEdge = bestEdgeByPrelim.get(prelim);
+    if (bestEdge) {
+      const ruleId =
+        bestEdge.tier === "solid"
+          ? "solidOversupplyUnlock"
+          : bestEdge.tier === "filler"
+            ? "fillerDefaultUnlock"
+            : "fodderSubstatMismatch";
+      prelim.bestLabel = "unlock";
+      prelim.bestResult = {
+        ...bestEdge.result,
+        label: "unlock",
+        ruleId,
+        tier: bestEdge.tier,
+      };
+      prelim.bestTier = bestEdge.tier;
+      prelim.bestTierResult = bestEdge.tierResult;
+      prelim.embryoKey = bestEdge.embryoKey;
+      prelim.supplyDemand = supplyDemandByEdge.get(bestEdge) ?? null;
     }
   }
 
@@ -605,43 +624,77 @@ function rollCountOn(a: ArtifactData, stats: SubStat[]): number {
   return total;
 }
 
-/**
- * Primary within-tier rank for solid/filler tiers. Sorts by the matched
- * condition's computed rarity (ascending, rarer first), then tie-breaks by
- * actual substat values:
- * first on the demanded substats (core + optional), then total roll mass,
- * then level.
- *
- * Returns negative if `a` is a "better keeper" than `b`.
- */
-function compareWithinTier(
-  a: {
-    artifact: ArtifactData;
-    bestTierResult: TierResult | null;
-    bestResult: EmbryoResult | null;
-  },
-  b: {
-    artifact: ArtifactData;
-    bestTierResult: TierResult | null;
-    bestResult: EmbryoResult | null;
-  }
-): number {
-  const ra = a.bestTierResult?.matchedCondition?.rarity ?? 1;
-  const rb = b.bestTierResult?.matchedCondition?.rarity ?? 1;
-  if (ra !== rb) return ra - rb;
+type RankedTriageEdge = {
+  prelim: { artifact: ArtifactData };
+  result: EmbryoResult;
+  embryoKey: string;
+  tier: QualityTier;
+  rarity: number;
+};
 
-  const demA = a.bestResult?.embryo?.demand;
-  const demB = b.bestResult?.embryo?.demand;
+/**
+ * Stable cross-threshold edge rank. Rarity is raw end-to-end probability, not
+ * the current threshold bucket, so changing strict/loose thresholds only
+ * admits later edges and does not reorder already-eligible candidates.
+ */
+function compareRankedEdges(a: RankedTriageEdge, b: RankedTriageEdge): number {
+  if (a.rarity !== b.rarity) return a.rarity - b.rarity;
+
+  const demA = a.result.embryo?.demand;
+  const demB = b.result.embryo?.demand;
   const subsA = demA ? [...demA.coreStats, ...demA.valuableStats] : [];
   const subsB = demB ? [...demB.coreStats, ...demB.valuableStats] : [];
-  const relA = rollCountOn(a.artifact, subsA);
-  const relB = rollCountOn(b.artifact, subsB);
+  const relA = rollCountOn(a.prelim.artifact, subsA);
+  const relB = rollCountOn(b.prelim.artifact, subsB);
   if (relA !== relB) return relB - relA;
 
   return (
-    rollCount(b.artifact) - rollCount(a.artifact) ||
-    b.artifact.level - a.artifact.level
+    rollCount(b.prelim.artifact) - rollCount(a.prelim.artifact) ||
+    b.prelim.artifact.level - a.prelim.artifact.level ||
+    a.prelim.artifact.id.localeCompare(b.prelim.artifact.id) ||
+    a.embryoKey.localeCompare(b.embryoKey)
   );
+}
+
+function buildSupplyDemandByEdge<T extends RankedTriageEdge>(
+  edges: T[],
+  demandCounts: Map<string, Set<string>>
+): Map<T, SupplyDemandInfo> {
+  const result = new Map<T, SupplyDemandInfo>();
+  const edgesByKey = new Map<string, T[]>();
+  for (const edge of edges) {
+    if (!edgesByKey.has(edge.embryoKey)) edgesByKey.set(edge.embryoKey, []);
+    edgesByKey.get(edge.embryoKey)!.push(edge);
+  }
+
+  for (const [embryoKey, keyEdges] of edgesByKey) {
+    const demand = demandCounts.get(embryoKey)?.size ?? 0;
+    const supplyByTier: Record<QualityTier, number> = {
+      prime: 0,
+      solid: 0,
+      filler: 0,
+      fodder: 0,
+    };
+    for (const edge of keyEdges) {
+      supplyByTier[edge.tier]++;
+    }
+
+    for (const tier of QUALITY_TIERS) {
+      const tierEdges = keyEdges
+        .filter((edge) => edge.tier === tier)
+        .sort(compareRankedEdges);
+      for (let i = 0; i < tierEdges.length; i++) {
+        result.set(tierEdges[i], {
+          demand,
+          supplyByTier,
+          rankInTier: i + 1,
+          tierTotal: tierEdges.length,
+        });
+      }
+    }
+  }
+
+  return result;
 }
 
 /** Lower = better. Used when set-slot floor promotes same-tier artifacts. */

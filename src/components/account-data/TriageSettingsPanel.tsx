@@ -158,6 +158,12 @@ export function TriageSettingsPanel({
           max={10}
           step={1}
         />
+        <SwitchRow
+          id="alwaysLockSolidArtifacts"
+          label={t.ui("triage.alwaysLockSolidArtifacts")}
+          checked={settings.alwaysLockSolidArtifacts}
+          onChange={(v) => update("alwaysLockSolidArtifacts", v)}
+        />
         <SliderRow
           label={t.ui("triage.fillerKeep")}
           value={settings.fillerKeep}
