@@ -5,7 +5,7 @@ import type { ArtifactData } from "@/data/types";
 import type { OptimizedBuild } from "@/lib/account-data/buildOptimizer";
 import { scoreFullBuild } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
-import type { CrBudgetResult } from "@/lib/account-data/crBudget";
+import type { CrBudgetResult } from "@/lib/account-data/maxCrBuff";
 import type { AllocatedBuild } from "@/lib/account-data/tierWaterfall";
 import { runUpgradePassForCharacter } from "@/lib/account-data/upgradePass";
 
@@ -14,6 +14,7 @@ const weights = { cr: 100, cd: 100, "atk%": 80 } as const;
 const crBudget: CrBudgetResult = {
   baseCr: 0.05,
   ascensionCr: 0,
+  characterBuffCr: 0,
   weaponSecondaryCr: 0,
   weaponPassiveCr: 0,
   artifactSetCr: 0,

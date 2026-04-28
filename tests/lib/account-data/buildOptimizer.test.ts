@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
-import { optimizeBuild } from "@/lib/account-data/buildOptimizer";
+import {
+  optimizeBuild,
+  scoreFullBuild,
+} from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
-import type { CrBudgetResult } from "@/lib/account-data/crBudget";
+import type { CrBudgetResult } from "@/lib/account-data/maxCrBuff";
 import type { StatWeightMap } from "@/lib/artifact/scoring/artifactScore";
 
 const testWeights: StatWeightMap = {
@@ -38,6 +41,7 @@ function makeCandidate(
 const baseCrBudget: CrBudgetResult = {
   baseCr: 0.05,
   ascensionCr: 0,
+  characterBuffCr: 0,
   weaponSecondaryCr: 0,
   weaponPassiveCr: 0,
   artifactSetCr: 0,
@@ -168,6 +172,96 @@ describe("buildOptimizer", () => {
     // With so much CR, penalty should be > 0
     expect(topBuild.crPenalty).toBeGreaterThan(0);
     expect(topBuild.finalScore).toBeLessThan(topBuild.rawScore);
+  });
+
+  it("does not let over-cap CR outrank useful non-CR stats", () => {
+    const highCrFlower = makeCandidate({
+      slotKey: "flower",
+      source: "swap",
+      id: "high-cr-flower",
+      substats: { cr: 20 },
+    });
+    const balancedFlower = makeCandidate({
+      slotKey: "flower",
+      source: "swap",
+      id: "balanced-flower",
+      substats: { cr: 5, "atk%": 20 },
+    });
+    const candidates: Record<Slot, CandidateArtifact[]> = {
+      flower: [highCrFlower, balancedFlower],
+      plume: [
+        makeCandidate({
+          slotKey: "plume",
+          source: "current",
+          substats: {},
+        }),
+      ],
+      sands: [
+        makeCandidate({
+          slotKey: "sands",
+          source: "current",
+          substats: {},
+        }),
+      ],
+      goblet: [
+        makeCandidate({
+          slotKey: "goblet",
+          source: "current",
+          substats: {},
+        }),
+      ],
+      circlet: [
+        makeCandidate({
+          slotKey: "circlet",
+          source: "current",
+          mainStatKey: "cd",
+          substats: {},
+        }),
+      ],
+    };
+
+    const result = optimizeBuild({
+      weights: testWeights,
+      candidates,
+      crBudget: { ...baseCrBudget, totalNonArtifactCr: 0.95 },
+      targetMainStats: { ...defaultTargetMainStats, circlet: new Set(["cd"]) },
+      setConstraint: {
+        composition: "4pc",
+        artifactSet: "CrimsonWitchOfFlames",
+      },
+      topN: 2,
+    });
+
+    expect(result.builds[0].artifacts.flower.id).toBe("balanced-flower");
+
+    const highCrBuild = {
+      ...result.builds[0].artifacts,
+      flower: highCrFlower,
+    };
+    const balancedBuild = {
+      ...result.builds[0].artifacts,
+      flower: balancedFlower,
+    };
+    const scoreConfig = {
+      weights: testWeights,
+      targetMainStats: { ...defaultTargetMainStats, circlet: new Set(["cd"]) },
+      crBudget: { ...baseCrBudget, totalNonArtifactCr: 0.95 },
+    };
+    expect(
+      scoreFullBuild(
+        balancedBuild,
+        scoreConfig.weights,
+        scoreConfig.targetMainStats,
+        scoreConfig.crBudget
+      ).finalScore
+    ).toBeGreaterThan(
+      scoreFullBuild(
+        highCrBuild,
+        scoreConfig.weights,
+        scoreConfig.targetMainStats,
+        scoreConfig.crBudget
+      ).finalScore
+    );
   });
 
   it("filters candidates by set constraint for 4pc", () => {

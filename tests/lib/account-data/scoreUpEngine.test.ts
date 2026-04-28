@@ -4,7 +4,7 @@ import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData } from "@/data/types";
 import { scoreFullBuild } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
-import type { CrBudgetResult } from "@/lib/account-data/crBudget";
+import type { CrBudgetResult } from "@/lib/account-data/maxCrBuff";
 import type {
   AllActions,
   ScoreUpAction,
@@ -17,6 +17,7 @@ const weights = { cr: 100, cd: 100, "atk%": 80 } as const;
 const crBudget: CrBudgetResult = {
   baseCr: 0.05,
   ascensionCr: 0,
+  characterBuffCr: 0,
   weaponSecondaryCr: 0,
   weaponPassiveCr: 0,
   artifactSetCr: 0,

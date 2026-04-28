@@ -5,7 +5,7 @@ import {
   useActiveAccountScores,
 } from "@/hooks/useActiveAccount";
 import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
-import { computeCharWeaponNonArtifactCr } from "@/lib/account-data/crBudget";
+import { getCrBudget } from "@/lib/account-data/maxCrBuff";
 import {
   type ArtifactScoreResult,
   scoreWithBuilds,
@@ -77,7 +77,13 @@ export function useArtifactScoreComputation(): void {
           char,
           builds,
           scoreConfig.global,
-          computeCharWeaponNonArtifactCr(char)
+          getCrBudget({
+            characterId: char.key,
+            characterLevel: char.level,
+            constellation: char.constellation,
+            weaponId: char.weapon?.key,
+            weaponRefinement: char.weapon?.refinement,
+          }).totalNonArtifactCr
         );
       }
       mergeScores(results);

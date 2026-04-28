@@ -6,8 +6,9 @@ import {
   type StatWeightMap,
   scoreSlotWithMainStat,
 } from "../artifact/scoring/artifactScore";
+import { computeCrDeduction } from "../artifact/scoring/utils";
 import type { CandidateArtifact } from "./candidatePool";
-import type { CrBudgetResult } from "./crBudget";
+import type { CrBudgetResult } from "./maxCrBuff";
 
 export interface BuildOptimizerConfig {
   weights: StatWeightMap;
@@ -282,13 +283,15 @@ export function optimizeBuild(
         combinationsEvaluated++;
         const rawScore = partialScores[depth];
         const adjustedRawScore = partialAdjustedScores[depth];
-        const totalCr = crBudget.totalNonArtifactCr + partialCr[depth];
-        const wastedCr = Math.max(0, totalCr - 1.0);
         // Excess CR contributes 0 to the score: subtract the raw value the
         // over-cap CR substats added, leaving them as net-zero. The build is
         // still feasible — going to e.g. 101% CR is allowed if the rest of
         // the substats make it worthwhile.
-        const crPenalty = wastedCr * crWeight;
+        const crPenalty = computeCrDeduction(
+          partialCr[depth],
+          crBudget.totalNonArtifactCr,
+          crWeight
+        );
         const finalScore = rawScore - crPenalty;
         const adjustedScore = adjustedRawScore - crPenalty;
 
@@ -437,9 +440,11 @@ export function scoreFullBuild(
     rawScore += scoreSlotWithMainStat(a, weights, targetMainStats[slot]);
     totalArtifactCr += getCandidateCr(a);
   }
-  const totalCr = crBudget.totalNonArtifactCr + totalArtifactCr;
-  const wastedCr = Math.max(0, totalCr - 1.0);
-  const crPenalty = wastedCr * crWeight;
+  const crPenalty = computeCrDeduction(
+    totalArtifactCr,
+    crBudget.totalNonArtifactCr,
+    crWeight
+  );
   return { rawScore, finalScore: rawScore - crPenalty, totalArtifactCr };
 }
 

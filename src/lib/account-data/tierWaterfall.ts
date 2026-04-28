@@ -26,7 +26,7 @@ import {
   type OptimizedBuild,
 } from "./buildOptimizer";
 import { type PackerCharacter, packColumnsBeam } from "./columnPacker";
-import { type CrBudgetResult, computeCrBudget } from "./crBudget";
+import { type CrBudgetResult, getCrBudget } from "./maxCrBuff";
 
 /**
  * Per-character allocation result. Includes the cached per-char solver config
@@ -167,7 +167,7 @@ export function* runTierWaterfallSteps(
       const buildMatch = scoreResult?.buildMatch;
       if (!scoreResult || !buildMatch) continue;
 
-      const crBudget = safeComputeCrBudget(char, buildMatch);
+      const crBudget = safeGetCrBudget(char, buildMatch);
 
       const targetMainStats = {} as Record<Slot, Set<string>>;
       for (const slot of allSlots) {
@@ -404,16 +404,24 @@ function snapshotAllocation(
   };
 }
 
-function safeComputeCrBudget(
-  char: Parameters<typeof computeCrBudget>[0],
-  buildMatch: Parameters<typeof computeCrBudget>[1]
+function safeGetCrBudget(
+  char: AccountData["characters"][number],
+  buildMatch: ArtifactScoreResult["buildMatch"]
 ): CrBudgetResult {
   try {
-    return computeCrBudget(char, buildMatch);
+    return getCrBudget({
+      characterId: char.key,
+      characterLevel: char.level,
+      constellation: char.constellation,
+      weaponId: char.weapon?.key,
+      weaponRefinement: char.weapon?.refinement,
+      artifact: buildMatch.build,
+    });
   } catch {
     return {
       baseCr: 0.05,
       ascensionCr: 0,
+      characterBuffCr: 0,
       weaponSecondaryCr: 0,
       weaponPassiveCr: 0,
       artifactSetCr: 0,
