@@ -659,6 +659,141 @@ export const i18nUiData = {
     ctaBrowseDetails: { en: "Browse Archive", zh: "浏览图鉴" },
     ctaCalculateDamage: { en: "Optimize Damage", zh: "优化伤害" },
     ctaJoinCommunity: { en: "Join Community", zh: "加入社区" },
+    featureMatrixTitle: { en: "Find a tool", zh: "工具索引" },
+    featureMatrixDesc: {
+      en: "Jump straight to the feature you need.",
+      zh: "快速找到你需要的功能。",
+    },
+    featureRosterProgress: { en: "Check roster progress", zh: "查看角色练度" },
+    featureRosterProgressDesc: {
+      en: "Import data, review builds, and tune scoring.",
+      zh: "导入数据，查看配装并调整评分。",
+    },
+    featureBrowseInventory: {
+      en: "Browse scanned inventory",
+      zh: "浏览扫描背包",
+    },
+    featureBrowseInventoryDesc: {
+      en: "Inspect characters, weapons, and artifacts.",
+      zh: "查看角色、武器与圣遗物。",
+    },
+    featureFindUpgrades: { en: "Allocate artifacts", zh: "合理分配圣遗物" },
+    featureFindUpgradesDesc: {
+      en: "Optimally allocate your artifacts to characters based on tiers.",
+      zh: "基于优先级把圣遗物分配给全部角色。",
+    },
+    featureDiagnoseBuilds: { en: "Diagnose build gaps", zh: "诊断练度缺口" },
+    featureDiagnoseBuildsDesc: {
+      en: "Find which slots hold a build back.",
+      zh: "找出每个圣遗物套装最薄弱的部位。",
+    },
+    featureSpendResources: {
+      en: "Plan artifact resources",
+      zh: "规划资源使用",
+    },
+    featureSpendResourcesDesc: {
+      en: "Recommend elixir, dust, and level-up targets.",
+      zh: "推荐启圣之尘、祝圣之霜等使用目标。",
+    },
+    featureDecideLocks: { en: "Auto lock artifacts", zh: "自动锁定圣遗物" },
+    featureDecideLocksDesc: {
+      en: "Sort artifacts into lock, unlock with rules.",
+      zh: "用实用规则将圣遗物自动锁定、解锁。",
+    },
+    featureSetBuildTargets: {
+      en: "Customize your builds",
+      zh: "自定义角色配装",
+    },
+    featureSetBuildTargetsDesc: {
+      en: "Define how each character should be built.",
+      zh: "定义每个角色需要怎样的圣遗物。",
+    },
+    featureGenerateLockFilters: {
+      en: "Generate lock filters",
+      zh: "生成锁定过滤",
+    },
+    featureGenerateLockFiltersDesc: {
+      en: "Turn build targets into in-game filter rules.",
+      zh: "把配装目标转换成游戏内过滤规则。",
+    },
+    featureTuneWeights: { en: "Tune build weights", zh: "调整配装权重" },
+    featureTuneWeightsDesc: {
+      en: "Derive artifact weights from team damage.",
+      zh: "从队伍伤害中推导圣遗物权重。",
+    },
+    featureOptimizeDamage: { en: "Optimize team damage", zh: "优化伤害" },
+    featureOptimizeDamageDesc: {
+      en: "Calculate rotations and assign artifacts.",
+      zh: "计算队伍伤害，并优化最佳圣遗物。",
+    },
+    featureManageFrozen: { en: "Manage frozen results", zh: "管理优化冻结" },
+    featureManageFrozenDesc: {
+      en: "Review and equip saved team assignments.",
+      zh: "查看并应用保存的队伍分配。",
+    },
+    featureCompareInvestment: {
+      en: "Compare investment gains",
+      zh: "补金收益与顺序",
+    },
+    featureCompareInvestmentDesc: {
+      en: "Test constellations and refinements.",
+      zh: "测试命座与精炼提升。",
+    },
+    featureChooseLoadout: {
+      en: "Choose weapons or artifacts",
+      zh: "选择武器或圣遗物",
+    },
+    featureChooseLoadoutDesc: {
+      en: "Compare loadout options for one team.",
+      zh: "比较同一队伍的配装方案。",
+    },
+    featureLookupKits: { en: "Look up characters", zh: "查询角色" },
+    featureLookupKitsDesc: {
+      en: "Read skills, passives, and constellations.",
+      zh: "查看技能、天赋与命座。",
+    },
+    featureLookupWeapons: { en: "Look up weapons", zh: "查询武器" },
+    featureLookupWeaponsDesc: {
+      en: "Search weapon stats and passives.",
+      zh: "搜索武器属性与特效。",
+    },
+    featureReadSetEffects: {
+      en: "Look up artifact sets",
+      zh: "查询圣遗物",
+    },
+    featureReadSetEffectsDesc: {
+      en: "Check 2-piece and 4-piece text.",
+      zh: "查看圣遗物套装效果。",
+    },
+    featureCheckBosses: { en: "Look up Stygian bosses", zh: "查询Boss" },
+    featureCheckBossesDesc: {
+      en: "Review Stygian Onslaught details.",
+      zh: "查看幽境危战机制详情。",
+    },
+    featureRankCharacters: {
+      en: "Rank character priority",
+      zh: "排列角色优先级",
+    },
+    featureRankCharactersDesc: {
+      en: "Decide who deserves resources first.",
+      zh: "决定谁更值得优先投入。",
+    },
+    featureMakeWeaponList: {
+      en: "Make a weapon tier list",
+      zh: "制作武器榜单",
+    },
+    featureMakeWeaponListDesc: {
+      en: "Create a personal weapon ranking.",
+      zh: "制作个人武器排行。",
+    },
+    featureMakeArtifactList: {
+      en: "Make an artifact tier list",
+      zh: "制作圣遗物榜单",
+    },
+    featureMakeArtifactListDesc: {
+      en: "Create a personal set ranking.",
+      zh: "制作个人套装排行。",
+    },
     tierListTitle: { en: "Character Priority", zh: "角色优先级" },
     weaponTierListTitle: { en: "Weapon Priority", zh: "武器优先级" },
     artifactTierListTitle: {
@@ -682,9 +817,18 @@ export const i18nUiData = {
       en: "Genshin Impact is a trademark of HoYoverse. This project is not affiliated with or endorsed by HoYoverse.",
       zh: "《原神》为米哈游/HoYoverse的商标，本项目与其无关联。",
     },
+    disclaimerPrefix: {
+      en: "Genshin Impact is a trademark of HoYoverse. ",
+      zh: "《原神》为米哈游/HoYoverse的商标，",
+    },
+    disclaimerProject: { en: "This project", zh: "本项目" },
+    disclaimerSuffix: {
+      en: " is not affiliated with or endorsed by HoYoverse.",
+      zh: "与其无关联。",
+    },
     dataAttribution: {
-      en: "Thanks to HoYoWiki for the game data.",
-      zh: "感谢HoYoWiki的游戏数据。",
+      en: "Thanks to HoYoWiki, Lunaris for the game data.",
+      zh: "感谢HoYoWiki、Lunaris的游戏数据。",
     },
     presetAppliedTitle: {
       en: "Preset Builds Loaded",
