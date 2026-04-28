@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { WelcomeGuideManual } from "@/components/greeting/WelcomeGuideManual";
+import { WelcomeGuideManual } from "@/components/home/WelcomeGuideManual";
 import { PageLayout } from "@/components/layout/PageLayout";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { WhatsNew } from "@/components/shared/WhatsNew";

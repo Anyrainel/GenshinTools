@@ -234,9 +234,9 @@ module.exports = {
       severity: "error",
       comment:
         "Domain component folders (account-data, team-comp, tier-list, " +
-        "archive, artifact-builds, artifact-manager, greeting, …) must be " +
+        "archive, artifact-builds, artifact-manager, home, …) must be " +
         "isolated from each other. Cross-domain sharing goes through shared/. " +
-        "Exceptions: (1) src/components/greeting/previews/* compose snapshots " +
+        "Exceptions: (1) src/components/home/previews/* compose snapshots " +
         "of other domains — that's the feature, so they're exempt from the " +
         "`from` side. (2) account-data/CharacterCard.tsx and " +
         "account-data/BuildCard.tsx may be imported by other domains (archive " +
@@ -246,7 +246,7 @@ module.exports = {
         path: "^src/components/([^/]+)/",
         pathNot: [
           "^src/components/(ui|shared|layout)/",
-          "^src/components/greeting/previews/",
+          "^src/components/home/previews/",
         ],
       },
       to: {

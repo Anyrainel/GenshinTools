@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { GreetingGate } from "@/components/greeting/GreetingGate";
+import { GreetingGate } from "@/components/home/GreetingGate";
 import { useTourLabels, useTours } from "@/components/layout/tourConfig";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
