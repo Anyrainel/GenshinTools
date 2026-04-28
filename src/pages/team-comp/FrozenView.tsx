@@ -1,4 +1,4 @@
-import { Snowflake } from "lucide-react";
+import { Snowflake, Swords } from "lucide-react";
 import {
   forwardRef,
   useCallback,
@@ -380,6 +380,11 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
               glowColor="bg-cyan-500/20"
               title={t.ui("teamComp.frozenEmptyTitle")}
               description={t.ui("teamComp.frozenEmptyDesc")}
+              action={{
+                label: t.ui("teamComp.optimizeTeamDamage"),
+                icon: Swords,
+                href: "/team-comp/damage",
+              }}
             />
           )}
 

@@ -93,6 +93,7 @@ import { DamageCard } from "./DamageCard";
 import { ErCalcCard } from "./ErCalcCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import type { ReuseEntry } from "./StatSheetPanel";
+import { TeamDetailAspectLinks } from "./TeamDetailAspectLinks";
 import { TeamRosterCard } from "./TeamRosterCard";
 
 const limitMap = { en: limitEnRaw, zh: limitZhRaw };
@@ -1371,6 +1372,12 @@ export function DamageDetail({
           preferredMainStats={preferredMainStats}
           onPreferredMainStatsChange={handlePreferredMainStatsChange}
           preferredMainStatsDisabled={isComputing}
+        />
+
+        <TeamDetailAspectLinks
+          teamId={team.id}
+          currentAspect="damage"
+          showFrozenLink={isFrozen}
         />
 
         {/* Artifact Swap Dialog */}

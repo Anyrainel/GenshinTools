@@ -37,6 +37,7 @@ import { useTeamStore } from "@/stores/useTeamStore";
 import { AnalyzerComboCard } from "./AnalyzerComboCard";
 import { AnalyzerConfigCard } from "./AnalyzerConfigCard";
 import { AnalyzerResultCard } from "./AnalyzerResultCard";
+import { TeamDetailAspectLinks } from "./TeamDetailAspectLinks";
 
 interface InvestmentDetailProps {
   team: Team;
@@ -402,10 +403,18 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   // ── Loading / error states ──
   if (!gameStatsReady) {
     return (
-      <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" />
-          {t.ui("common.loading")}
+      <ScrollLayout>
+        <div
+          className={cn(
+            "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+            "gap-1.5 lg:gap-2"
+          )}
+        >
+          {headerContent}
+          <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
+            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            {t.ui("common.loading")}
+          </div>
         </div>
       </ScrollLayout>
     );
@@ -413,9 +422,17 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
 
   if (buildError) {
     return (
-      <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center pt-16 md:pt-24 text-destructive">
-          {buildError}
+      <ScrollLayout>
+        <div
+          className={cn(
+            "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+            "gap-1.5 lg:gap-2"
+          )}
+        >
+          {headerContent}
+          <div className="flex items-center justify-center pt-16 md:pt-24 text-destructive">
+            {buildError}
+          </div>
         </div>
       </ScrollLayout>
     );
@@ -423,22 +440,32 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
 
   if (!teamBuild || configs.length === 0) {
     return (
-      <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
-          {t.ui("teamComp.analyzerDesc")}
+      <ScrollLayout>
+        <div
+          className={cn(
+            "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+            "gap-1.5 lg:gap-2"
+          )}
+        >
+          {headerContent}
+          <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
+            {t.ui("teamComp.analyzerDesc")}
+          </div>
         </div>
       </ScrollLayout>
     );
   }
 
   return (
-    <ScrollLayout header={headerContent}>
+    <ScrollLayout>
       <div
         className={cn(
           "flex flex-col w-full animate-in fade-in duration-300 pb-12",
           "gap-1.5 lg:gap-2"
         )}
       >
+        {headerContent}
+
         {/* 1. Character Config Card */}
         <AnalyzerConfigCard
           charConfigs={charConfigs}
@@ -481,6 +508,8 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
           onRun={handleRun}
           onStop={stop}
         />
+
+        <TeamDetailAspectLinks teamId={team.id} currentAspect="investment" />
       </div>
     </ScrollLayout>
   );

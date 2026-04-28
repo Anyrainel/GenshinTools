@@ -41,6 +41,7 @@ import { cn } from "@/lib/utils";
 import type { ViewId } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
+import { TeamDetailAspectLinks } from "./TeamDetailAspectLinks";
 import { TeamRosterCard } from "./TeamRosterCard";
 import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
 
@@ -404,10 +405,18 @@ export function WeaponChoiceDetail({
   // ── Loading / error states ──
   if (!gameStatsReady) {
     return (
-      <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" />
-          {t.ui("common.loading")}
+      <ScrollLayout>
+        <div
+          className={cn(
+            "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+            "gap-1.5 lg:gap-2"
+          )}
+        >
+          {headerContent}
+          <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
+            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            {t.ui("common.loading")}
+          </div>
         </div>
       </ScrollLayout>
     );
@@ -415,9 +424,17 @@ export function WeaponChoiceDetail({
 
   if (buildError) {
     return (
-      <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center pt-16 md:pt-24 text-destructive">
-          {buildError}
+      <ScrollLayout>
+        <div
+          className={cn(
+            "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+            "gap-1.5 lg:gap-2"
+          )}
+        >
+          {headerContent}
+          <div className="flex items-center justify-center pt-16 md:pt-24 text-destructive">
+            {buildError}
+          </div>
         </div>
       </ScrollLayout>
     );
@@ -425,22 +442,32 @@ export function WeaponChoiceDetail({
 
   if (!teamBuild || configs.length === 0) {
     return (
-      <ScrollLayout header={headerContent}>
-        <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
-          {t.ui("teamComp.analyzerDesc")}
+      <ScrollLayout>
+        <div
+          className={cn(
+            "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+            "gap-1.5 lg:gap-2"
+          )}
+        >
+          {headerContent}
+          <div className="flex items-center justify-center pt-16 md:pt-24 text-muted-foreground">
+            {t.ui("teamComp.analyzerDesc")}
+          </div>
         </div>
       </ScrollLayout>
     );
   }
 
   return (
-    <ScrollLayout header={headerContent}>
+    <ScrollLayout>
       <div
         className={cn(
           "flex flex-col w-full animate-in fade-in duration-300 pb-12",
           "gap-1.5 lg:gap-2"
         )}
       >
+        {headerContent}
+
         {/* 1. Team Roster (refinement hidden — weapons are the test variable) */}
         <TeamRosterCard
           team={team}
@@ -499,6 +526,8 @@ export function WeaponChoiceDetail({
           onStop={stop}
           t={t}
         />
+
+        <TeamDetailAspectLinks teamId={team.id} currentAspect="weapon" />
       </div>
     </ScrollLayout>
   );

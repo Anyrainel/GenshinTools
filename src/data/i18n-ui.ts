@@ -1082,6 +1082,26 @@ export const i18nUiData = {
       en: "After running optimization in the Damage tab, freeze the results to lock in your best artifact assignments. Frozen artifacts appear here for review and export.",
       zh: "在伤害页签中运行优化后，冻结结果以锁定最佳圣遗物分配。冻结的圣遗物会显示在此处供查看和导出。",
     },
+    optimizeTeamDamage: {
+      en: "Optimize team damage",
+      zh: "优化队伍伤害",
+    },
+    detailLinkDamage: {
+      en: "Go to damage optimizer",
+      zh: "查看伤害优化",
+    },
+    detailLinkInvestment: {
+      en: "Go to investment analysis",
+      zh: "查看补金分析",
+    },
+    detailLinkWeaponChoice: {
+      en: "Go to weapon and artifact choice",
+      zh: "查看武器圣遗物选择",
+    },
+    detailLinkManageFrozen: {
+      en: "Manage all frozen artifacts",
+      zh: "管理所有冻结圣遗物",
+    },
     downloadAllFrozen: {
       en: "Download All Swaps Image",
       zh: "下载所有换装图片",

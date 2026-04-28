@@ -1,5 +1,6 @@
 import { Skull } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { BossDetailPanel } from "@/components/archive/BossDetailPanel";
 import { BossGrid, BossListPanel } from "@/components/archive/BossListPanel";
@@ -15,12 +16,58 @@ export function BossArchiveView() {
   const setSearchQuery = useArchiveSessionStore((s) => s.setBossSearch);
   const selectedBossId = useArchiveSessionStore((s) => s.selectedBossId);
   const setSelectedBossId = useArchiveSessionStore((s) => s.setSelectedBossId);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const bossParam = searchParams.get("boss");
+  const hasBossParam = searchParams.has("boss");
+  const bossParamId = bossParam == null ? null : Number(bossParam);
+  const bossParamIsValid =
+    bossData != null &&
+    bossParamId != null &&
+    Number.isInteger(bossParamId) &&
+    bossData.getBossInfo(bossParamId) != null;
+
+  const setBossSearchParam = useCallback(
+    (id: number | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (id != null) next.set("boss", String(id));
+          else next.delete("boss");
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
+
+  useEffect(() => {
+    if (!bossData || !hasBossParam) return;
+
+    if (!bossParamIsValid) {
+      setBossSearchParam(null);
+      return;
+    }
+
+    if (selectedBossId !== bossParamId) {
+      setSelectedBossId(bossParamId);
+    }
+  }, [
+    bossData,
+    bossParamId,
+    bossParamIsValid,
+    hasBossParam,
+    selectedBossId,
+    setBossSearchParam,
+    setSelectedBossId,
+  ]);
 
   // Default to a boss from the current rotation only on the very first mount
   // of the session (when nothing has been selected yet). Subsequent nulls —
   // e.g. from the mobile "Back" button — must not be re-seeded.
   const didSeed = useRef(false);
   useEffect(() => {
+    if (hasBossParam) return;
     if (!bossData) return;
     if (didSeed.current) return;
     didSeed.current = true;
@@ -31,18 +78,20 @@ export function BossArchiveView() {
       bossData.schedules[bossData.schedules.length - 1]?.boss_ids[0] ??
       null;
     if (fallback != null) setSelectedBossId(fallback);
-  }, [bossData, selectedBossId, setSelectedBossId]);
+  }, [bossData, hasBossParam, selectedBossId, setSelectedBossId]);
 
   const handleSelect = useCallback(
     (id: number) => {
       setSelectedBossId(id);
+      setBossSearchParam(id);
     },
-    [setSelectedBossId]
+    [setBossSearchParam, setSelectedBossId]
   );
 
   const handleBack = useCallback(() => {
     setSelectedBossId(null);
-  }, [setSelectedBossId]);
+    setBossSearchParam(null);
+  }, [setBossSearchParam, setSelectedBossId]);
 
   const toolbar = (
     <ArchiveToolbar

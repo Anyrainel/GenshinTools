@@ -1,5 +1,6 @@
 import { Book } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { CharacterDetailPanel } from "@/components/archive/CharacterDetailPanel";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
@@ -288,6 +289,12 @@ export function CharacterArchiveView() {
   const setSearchQuery = useArchiveSessionStore((s) => s.setCharacterSearch);
   const selectedId = useArchiveSessionStore((s) => s.selectedCharacterId);
   const setSelectedId = useArchiveSessionStore((s) => s.setSelectedCharacterId);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const characterParam = searchParams.get("character");
+  const hasCharacterParam = searchParams.has("character");
+  const characterParamIsValid =
+    characterParam != null &&
+    allCharacters.some((c) => c.id === characterParam);
   const [elementFilter, setElementFilter] = useState<Set<Element>>(
     () => new Set()
   );
@@ -345,22 +352,60 @@ export function CharacterArchiveView() {
     t,
   ]);
 
+  const setCharacterSearchParam = useCallback(
+    (id: string | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (id) next.set("character", id);
+          else next.delete("character");
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
+
+  useEffect(() => {
+    if (!hasCharacterParam) return;
+
+    if (!characterParamIsValid) {
+      setCharacterSearchParam(null);
+      return;
+    }
+
+    if (selectedId !== characterParam) {
+      setSelectedId(characterParam);
+    }
+  }, [
+    characterParam,
+    characterParamIsValid,
+    hasCharacterParam,
+    selectedId,
+    setCharacterSearchParam,
+    setSelectedId,
+  ]);
+
   const handleSelect = useCallback(
     (id: string) => {
       setSelectedId(id);
+      setCharacterSearchParam(id);
     },
-    [setSelectedId]
+    [setCharacterSearchParam, setSelectedId]
   );
 
   const handleBack = useCallback(() => {
     setSelectedId(null);
-  }, [setSelectedId]);
+    setCharacterSearchParam(null);
+  }, [setCharacterSearchParam, setSelectedId]);
 
   // On desktop, if the session has no selection yet, seed with the first
   // released character. Only runs once per mount so that clearing the
   // selection (e.g. via mobile "Back") doesn't immediately re-seed.
   const didSeedRef = useMemo(() => ({ current: false }), []);
   useEffect(() => {
+    if (hasCharacterParam) return;
     if (didSeedRef.current) return;
     if (!isDesktop || !characterStats || filteredCharacters.length === 0) {
       return;
@@ -376,6 +421,7 @@ export function CharacterArchiveView() {
     selectedId,
     filteredCharacters,
     characterStats,
+    hasCharacterParam,
     setSelectedId,
     didSeedRef,
   ]);

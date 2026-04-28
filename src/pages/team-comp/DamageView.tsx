@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { DamageDetail } from "@/components/team-comp/DamageDetail";
 import { TeamGrid } from "@/components/team-comp/TeamGrid";
@@ -12,6 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactReuseMode } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
+import { useTeamStore } from "@/stores/useTeamStore";
 
 interface DamageViewProps {
   /** Ref to open the import dialog (owned by parent TeamComp). */
@@ -24,8 +27,62 @@ export function DamageView({ importRef }: DamageViewProps) {
     (s) => s.viewSettings.damage.activeTeamId
   );
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
+  const teams = useTeamStore((s) => s.teams);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const teamParam = searchParams.get("team");
+  const hasTeamParam = searchParams.has("team");
+  const teamParamIsValid =
+    teamParam != null && teams.some((team) => team.id === teamParam);
+  const routedTeamId = hasTeamParam && teamParamIsValid ? teamParam : null;
   const reuseMode = useFreezeStore((s) => s.reuseMode);
   const setReuseMode = useFreezeStore((s) => s.setReuseMode);
+
+  const setTeamSearchParam = useCallback(
+    (id: string | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (id) next.set("team", id);
+          else next.delete("team");
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
+
+  useEffect(() => {
+    if (!hasTeamParam) {
+      if (activeTeamId !== null) setActiveTeamId("damage", null);
+      return;
+    }
+
+    if (!teamParamIsValid) {
+      if (activeTeamId !== null) setActiveTeamId("damage", null);
+      setTeamSearchParam(null);
+      return;
+    }
+
+    if (activeTeamId !== teamParam) {
+      setActiveTeamId("damage", teamParam);
+    }
+  }, [
+    activeTeamId,
+    hasTeamParam,
+    setActiveTeamId,
+    setTeamSearchParam,
+    teamParam,
+    teamParamIsValid,
+  ]);
+
+  const handleActiveTeamChange = useCallback(
+    (id: string | null) => {
+      setActiveTeamId("damage", id);
+      setTeamSearchParam(id);
+    },
+    [setActiveTeamId, setTeamSearchParam]
+  );
 
   const reuseModeRow = (
     <div className="flex items-center gap-2 pt-0.5">
@@ -55,8 +112,8 @@ export function DamageView({ importRef }: DamageViewProps) {
   return (
     <TeamGrid
       viewId="damage"
-      activeTeamId={activeTeamId}
-      setActiveTeamId={(id) => setActiveTeamId("damage", id)}
+      activeTeamId={routedTeamId}
+      setActiveTeamId={handleActiveTeamChange}
       renderDetail={(team, onBack) => (
         <DamageDetail team={team} onBack={onBack} />
       )}

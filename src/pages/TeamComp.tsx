@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import "@/lib/dmgcalc";
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import type { ControlHandle } from "@/components/shared/controlHandle";
@@ -53,9 +54,14 @@ export default function TeamCompPage() {
   const tabs = useMemo(() => getTabsForRoute(t, "/team-comp"), [t]);
   const tour = useTour();
   const teams = useTeamStore((state) => state.teams);
-  const activeTeamId = useSessionNavStore(
-    (s) => s.viewSettings.damage.activeTeamId
-  );
+  const [searchParams] = useSearchParams();
+  const teamParam = searchParams.get("team");
+  const routedDamageTeamId =
+    activeTab === "damage" &&
+    teamParam != null &&
+    teams.some((team) => team.id === teamParam)
+      ? teamParam
+      : null;
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const importTeams = useTeamStore((state) => state.importTeams);
@@ -221,8 +227,8 @@ export default function TeamCompPage() {
   }
 
   // Damage tab — detail view (team selected)
-  if (activeTeamId) {
-    const activeTeam = teams.find((t) => t.id === activeTeamId);
+  if (routedDamageTeamId) {
+    const activeTeam = teams.find((t) => t.id === routedDamageTeamId);
     if (!activeTeam) {
       setTimeout(() => setActiveTeamId("damage", null), 0);
       return null;
